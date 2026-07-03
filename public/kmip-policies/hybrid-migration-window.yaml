@@ -1,16 +1,25 @@
 # Hybrid signing migration window — dual-sign with classical + PQC during 2026–2029.
-# Every signing operation produces a composite signature per LAMPS draft-19.
+# Signing keys created or used in the window must be LAMPS draft-19 composites.
 
 schema_version: 1
 
 metadata:
   name: hybrid-migration-window
   description: |
-    During the 2026-01-01 to 2029-12-31 migration window, every Sign operation
-    must produce a composite signature combining a classical algorithm (Ed25519
-    or ECDSA-P384) with a PQC algorithm (ML-DSA-65 or ML-DSA-87) per LAMPS
-    draft-ietf-lamps-pq-composite-sigs-19. After 2029-12-31, pure PQC is
-    permitted; before 2026-01-01, classical-only is permitted (legacy).
+    During the 2026-01-01 to 2029-12-31 migration window, every signing key
+    creation and every Sign operation must use a composite signature scheme
+    combining a classical algorithm with a PQC algorithm per LAMPS
+    draft-ietf-lamps-pq-composite-sigs-19: ML-DSA-65+Ed25519 by default, or
+    ML-DSA-87+ECDSA-P384 for requests tagged x-pqctoday-assurance=high.
+    Pure-classical and pure-PQC signing are both denied in the window, with
+    no exceptions (use the training-permissive policy for lab work). After
+    2029-12-31 the window closes the other way: classical signing-key
+    creation AND classical Sign are denied — pure PQC (or composite) only.
+    Before 2026-01-01, classical-only is permitted (legacy).
+
+    SignatureVerify is never restricted (legacy artefacts must stay
+    verifiable), and symmetric keys (AES/HMAC) and key-agreement key pairs
+    (ML-KEM) are outside this policy's signing scope.
 
     Rationale: protect against both classical-now-broken-tomorrow (PQC tail
     risk) AND PQC-implementation-flaw-discovered-tomorrow (defense in depth).
@@ -24,14 +33,21 @@ metadata:
 
 rules:
 
-  # 1. During migration window, every signing CreateKeyPair must use a
-  #    composite algorithm (LAMPS draft-19).
+  # 1. During the migration window, signing key creation and Sign must use the
+  #    composite (LAMPS draft-19). Scoped to signing intents only —
+  #    "CreateKeyPair:Sign", NOT bare CreateKeyPair, so ML-KEM/ECDH
+  #    key-agreement key pairs are not swept in (the engine's dual-sign rule
+  #    already skips symmetric algorithms; KEM key pairs arrive as
+  #    CreateKeyPair:KeyAgreement and must stay out of a *signing* mandate).
+  #    This rule subsumes the old pure-PQC / pure-classical Create denylists:
+  #    anything non-composite is denied here first, so those rules (and their
+  #    never-reachable exception attributes) are gone.
   - type: hybrid_dual_sign_requirement
     primary:   ML-DSA-65
     secondary: Ed25519
     effective_from: "2026-01-01"
     effective_until: "2029-12-31"
-    ops_affected: [Create, CreateKeyPair, Sign]
+    ops_affected: [Create, "CreateKeyPair:Sign", Sign]
     # id-MLDSA65-Ed25519-SHA512 — LAMPS composite-sigs IANA arc 1.3.6.1.5.5.7.6
     # (was the stale Entrust prototype arc; verified on datatracker 2026-07-01).
     composite_oid: "1.3.6.1.5.5.7.6.48"
@@ -49,43 +65,38 @@ rules:
     secondary: ECDSA-P384
     effective_from: "2026-01-01"
     effective_until: "2029-12-31"
-    ops_affected: [Create, CreateKeyPair, Sign]
+    ops_affected: [Create, "CreateKeyPair:Sign", Sign]
     # id-MLDSA87-ECDSA-P384-SHA512 — LAMPS composite-sigs IANA arc 1.3.6.1.5.5.7.6
     # (was double-assigned to the Entrust ...80.8.1.7 arc; verified 2026-07-01).
     composite_oid: "1.3.6.1.5.5.7.6.49"
     triggered_by_custom_attribute: { name: pqctoday-assurance, value: high }
     reason: "High-assurance context: composite ML-DSA-87 + ECDSA-P384 required"
 
-  # 3. Pure ML-DSA signing creation banned during the migration window.
-  - type: algorithm_denylist
-    ops: [Create]
-    algorithms: [ML-DSA-44, ML-DSA-65, ML-DSA-87]
-    effective_from: "2026-01-01"
-    effective_until: "2029-12-31"
-    exception_custom_attribute: { name: pqctoday-purpose, value: research }
-    reason: "Pure PQC signing creation banned in migration window; use composite OR set x-pqctoday-purpose=research"
-
-  # 4. Pure classical signing creation also banned during the migration window.
-  - type: algorithm_denylist
-    ops: [Create]
-    algorithms: [Ed25519, ECDSA-P256, ECDSA-P384, ECDSA-P521, RSA]
-    effective_from: "2026-01-01"
-    effective_until: "2029-12-31"
-    exception_custom_attribute: { name: pqctoday-purpose, value: legacy-verify }
-    reason: "Pure classical signing creation banned in migration window; use composite OR set x-pqctoday-purpose=legacy-verify"
-
-  # 5. After 2030-01-01, pure ML-DSA is permitted.
+  # 3. After the window closes, classical signing is over: creation of
+  #    classical signing keys AND classical Sign are denied. Class-based (no
+  #    algorithms list) so every classical name — including ECDSA-P521, which
+  #    the old list missed — is covered; symmetric and PQC names are exempt by
+  #    class. One rule per op because temporal_cutoff takes a single op.
   - type: temporal_cutoff
     op: Create
     algorithm_class: classical
-    algorithms: [Ed25519, ECDSA-P256, ECDSA-P384, RSA]
     after: "2030-01-01"
-    reason: "Post-migration: pure classical Create banned"
+    reason: "Post-migration: classical key creation banned"
+  - type: temporal_cutoff
+    op: "CreateKeyPair:Sign"
+    algorithm_class: classical
+    after: "2030-01-01"
+    reason: "Post-migration: classical signing-key creation banned"
+  - type: temporal_cutoff
+    op: Sign
+    algorithm_class: classical
+    after: "2030-01-01"
+    reason: "Post-migration: classical signing banned — rekey to ML-DSA or composite"
 
-  # 6. Verify operations remain unrestricted (need to verify legacy artefacts).
+  # 4. Verify operations remain unrestricted (need to verify legacy artefacts).
   #    No rule needed — absence of Deny = Allow.
 
-  # 7. Composite-sig verification key usage mask must include both Sign + Verify.
+  # 5. Composite-sig verification key usage mask must include both Sign + Verify.
   - type: require_usage_mask
     algorithm: ML-DSA-65-ED25519
     flags: [Sign, Verify]
@@ -95,7 +106,7 @@ rules:
     flags: [Sign, Verify]
     reason: "Composite signing keys must declare both Sign+Verify"
 
-  # 8. Lifecycle gate: only Active keys for signing.
+  # 6. Lifecycle gate: only Active keys for signing.
   - type: lifecycle_state_gate
     op: Sign
     allowed_states: [Active]
