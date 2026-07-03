@@ -552,7 +552,7 @@ export const CRQC_DRIVERS: CrqcDriver[] = [
 export const CRQC_QUBIT_THRESHOLDS = {
   /** secp256k1 / Bitcoin ECC-256 — Google Quantum AI + Ethereum Foundation, 2026 (≤1,200 logical). */
   bitcoinEcc256: 1200,
-  /** RSA-2048 — Chevignard–Fouque–Schrottenloher, 2024 (~1,730 logical-qubit count). */
+  /** RSA-2048 — Chevignard–Fouque–Schrottenloher, 2025 (~1,700 logical-qubit count). */
   rsa2048: 1700,
 } as const
 

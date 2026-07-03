@@ -60,7 +60,7 @@
   },
   {
     "term": "FN-DSA",
-    "definition": "FFT over NTRU-Lattice-Based Digital Signature Algorithm (formerly Falcon), a compact PQC signature scheme. Defined in FIPS 206, published October 2024.",
+    "definition": "FFT over NTRU-Lattice-Based Digital Signature Algorithm (formerly Falcon), a compact PQC signature scheme. Defined in the draft FIPS 206 (still in draft, not yet published).",
     "technicalNote": "Variants: FN-DSA-512 (Level 1) and FN-DSA-1024 (Level 5). Known for very small signatures but requires careful floating-point implementation.",
     "relatedModule": "/algorithms",
     "complexity": "advanced",
