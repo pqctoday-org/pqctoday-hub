@@ -177,7 +177,7 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
               {DRBG_MECHANISMS.find((m) => m.name === 'XOF_DRBG')?.name}
             </span>
             <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 font-bold">
-              Proposed in draft Rev. 2 (2025)
+              Proposed in the Rev. 2 pre-draft (Sep 2025 call for comments)
             </span>
           </div>
           <div className="text-xs text-muted-foreground mb-1">
@@ -194,9 +194,10 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
         </div>
         <p className="text-xs text-muted-foreground">
           <span className="font-medium text-foreground/70">Note:</span> SP 800-90A Rev. 1 (2015)
-          defined CTR, Hash, and HMAC DRBGs. Rev. 2 (2024) removes deprecated TDES and SHA-1, and
-          adds <strong>XOF_DRBG (SHAKE-based)</strong>, which synergizes perfectly with the
-          SHAKE-heavy PQC algorithms (ML-KEM, ML-DSA).
+          defined CTR, Hash, and HMAC DRBGs. The Rev. 2 pre-draft (Sep 2025 call for comments; not
+          yet published) proposes removing deprecated TDES and SHA-1 and adding{' '}
+          <strong>XOF_DRBG (SHAKE-based)</strong>, which synergizes perfectly with the SHAKE-heavy
+          PQC algorithms (ML-KEM, ML-DSA).
         </p>
       </section>
 

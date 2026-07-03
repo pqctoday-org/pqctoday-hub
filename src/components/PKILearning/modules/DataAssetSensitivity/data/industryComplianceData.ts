@@ -37,7 +37,7 @@ export const COMPLIANCE_MANDATES: ComplianceMandate[] = [
     region: 'US Federal',
     scope: 'US National Security Systems',
     pqcRequirement:
-      'Three-phase rollout: (1) 2025 — begin PQC transition planning; (2) 2027 — software and firmware signing must support PQC alongside classical algorithms; (3) 2030 — software/firmware signing exclusively PQC (classical algorithms no longer accepted); (4) 2033 — all NSS communications exclusively PQC. Required algorithms: ML-KEM-1024 (FIPS 203) for key establishment, ML-DSA-87 (FIPS 204) for digital signatures.',
+      'Phased rollout: (1) 2025–2027 — support and prefer CNSA 2.0 (software/firmware signing and web/cloud from 2025, networking from 2026, operating systems from 2027); (2) 2030 — exclusive PQC for signing and networking equipment; (3) 2033 — exclusive PQC for web/cloud, operating systems, and niche/legacy equipment. NSM-10 separately targets all NSS quantum-resistant by 2035. Required algorithms: ML-KEM-1024 (FIPS 203) for key establishment, ML-DSA-87 (FIPS 204) for digital signatures.',
     hardDeadline: '2030',
     deadlineYear: 2030,
     pqcMandatoryNow: true,

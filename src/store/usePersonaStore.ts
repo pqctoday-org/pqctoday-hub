@@ -43,6 +43,8 @@ interface PersonaState {
    * visit Transition or Detailed before the third tab becomes available.
    */
   algorithmsTabsVisited: string[]
+  /** Whether the user has completed the Executive Overview walkthrough (the guided tour). */
+  execOverviewSeen: boolean
   setPersona: (persona: PersonaId | null) => void
   clearPersona: () => void
   markPickerSeen: () => void
@@ -55,6 +57,7 @@ interface PersonaState {
   resetNiceTier: () => void
   dismissCuriousGuide: () => void
   markAlgorithmsTabVisited: (tab: string) => void
+  setExecOverviewSeen: (seen: boolean) => void
   /** Backwards-compat alias: true → 'unlocked', false → 'gated' */
   setAdvancedViewsUnlocked: (unlocked: boolean) => void
   clearPreferences: () => void
@@ -75,6 +78,7 @@ export const usePersonaStore = create<PersonaState>()(
       niceTierOverridden: false,
       curiousGuideDismissed: false,
       algorithmsTabsVisited: [],
+      execOverviewSeen: false,
 
       setPersona: (persona) =>
         set((state) => ({
@@ -120,6 +124,8 @@ export const usePersonaStore = create<PersonaState>()(
           return { algorithmsTabsVisited: [...state.algorithmsTabsVisited, tab] }
         }),
 
+      setExecOverviewSeen: (seen) => set({ execOverviewSeen: seen }),
+
       setAdvancedViewsUnlocked: (unlocked) => set({ viewAccess: unlocked ? 'unlocked' : 'gated' }),
 
       clearPreferences: () =>
@@ -140,7 +146,7 @@ export const usePersonaStore = create<PersonaState>()(
     {
       name: 'pqc-learning-persona',
       storage: createJSONStorage(() => localStorage),
-      version: 8,
+      version: 9,
       migrate: (persisted: unknown, fromVersion: number) => {
         const s = (persisted ?? {}) as Record<string, unknown>
         if (fromVersion < 1) {
@@ -183,6 +189,10 @@ export const usePersonaStore = create<PersonaState>()(
           s.algorithmsTabsVisited = Array.isArray(s.algorithmsTabsVisited)
             ? s.algorithmsTabsVisited
             : []
+        }
+        if (fromVersion < 9) {
+          // Executive Overview walkthrough completion flag.
+          s.execOverviewSeen = s.execOverviewSeen ?? false
         }
         return s
       },

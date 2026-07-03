@@ -264,14 +264,14 @@ export const TDE_MIGRATION_STEPS: TDEMigrationStep[] = [
     classicalApproach:
       'External KMS with RSA-2048/4096 TLS-wrapped KMIP connection. Key wrapping via RSA-OAEP or AES-WRAP.',
     pqcApproach:
-      'Thales CipherTrust (roadmap version) with ML-KEM-1024 key wrapping algorithm. AWS KMS with ML-KEM preview. KMIP 2.1 object type CryptographicAlgorithm = ML-KEM.',
+      'Thales CipherTrust (roadmap version) with ML-KEM-1024 key wrapping algorithm. AWS KMS with ML-KEM preview. KMIP 3.0 object type CryptographicAlgorithm = ML-KEM.',
     downtime: 'None',
     risk: 'medium',
     tooling: [
       'Thales CipherTrust (roadmap)',
       'AWS KMS (PQC preview)',
       'HashiCorp Vault 1.17+',
-      'KMIP 2.1 client',
+      'KMIP 3.0 client',
     ],
   },
   {
@@ -290,7 +290,7 @@ export const TDE_MIGRATION_STEPS: TDEMigrationStep[] = [
       'Oracle Key Vault CLI',
       'SQL Server EKM provider',
       'Thales CipherTrust REST API',
-      'OpenSSL 3.4+',
+      'OpenSSL 3.5+',
     ],
   },
   {
@@ -506,7 +506,7 @@ export const QUERYABLE_ENCRYPTION_SCHEMES: QueryableEncryptionScheme[] = [
     limitations:
       'No queryable encryption. Not in upstream PostgreSQL (requires Percona or custom build). No HSM integration yet. Key provider API supports custom providers (KMIP planned).',
     pqcRoadmap:
-      'Percona pg_tde 2.0 (2026): KMIP 2.1 key provider with ML-KEM support via Thales/AWS. TDE layer upgrade to AES-256-XTS remains unchanged. Column-level queryable encryption not on roadmap.',
+      'Percona pg_tde 2.0 (2026): KMIP 3.0 key provider with ML-KEM support via Thales/AWS. TDE layer upgrade to AES-256-XTS remains unchanged. Column-level queryable encryption not on roadmap.',
   },
 ]
 

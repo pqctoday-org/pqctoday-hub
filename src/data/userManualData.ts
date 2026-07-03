@@ -89,7 +89,7 @@ export const pageManuals: Record<PageId, PageManual> = {
   library: {
     title: 'PQC Library',
     summary:
-      'Search and browse 372+ post-quantum cryptography standards, drafts, RFCs, and reference documents from NIST, IETF, ETSI, and other organizations.',
+      'Search and browse 680+ post-quantum cryptography standards, drafts, RFCs, and reference documents from NIST, IETF, ETSI, and other organizations.',
     sections: [
       {
         heading: 'Search & Filters',
@@ -118,11 +118,11 @@ export const pageManuals: Record<PageId, PageManual> = {
   playground: {
     title: 'Interactive Playground',
     summary:
-      'Generate real post-quantum cryptographic keys, encrypt data, and sign messages directly in your browser using WebAssembly. 21 workshop tools, an interactive crypto lab, and a full PKCS#11 HSM emulator — all running locally.',
+      'Generate real post-quantum cryptographic keys, encrypt data, and sign messages directly in your browser using WebAssembly. 34 workshop tools, an interactive crypto lab, and a full PKCS#11 HSM emulator — all running locally.',
     sections: [
       {
         heading: 'Workshop Grid',
-        body: 'The main /playground view shows a searchable catalog of 21 workshop tools across 6 categories: HSM / PKCS#11, Entropy & Random, Certificates & Proofs, Protocol Simulations, Blockchain & Digital Assets, and OpenSSL Studio (includes TLS 1.3 Simulator). Persona-aware filtering highlights recommended tools with difficulty badges (beginner/intermediate/advanced).',
+        body: 'The main /playground view shows a searchable catalog of 34 workshop tools across 7 categories: HSM / PKCS#11, Entropy & Random, Certificates & Proofs, Protocol Simulations, Blockchain & Digital Assets, Digital Identity, and OpenSSL Studio (includes TLS 1.3 Simulator). Persona-aware filtering highlights recommended tools with difficulty badges (beginner/intermediate/advanced).',
       },
       {
         heading: 'Interactive Crypto Lab',
@@ -216,7 +216,7 @@ export const pageManuals: Record<PageId, PageManual> = {
       },
       {
         heading: 'Leader Details',
-        body: 'Click a leader card to see their full profile: organization, contributions to PQC, key publications, and links to related library resources. 71 leaders are currently profiled.',
+        body: 'Click a leader card to see their full profile: organization, contributions to PQC, key publications, and links to related library resources. 330+ leaders are currently profiled.',
       },
       {
         heading: 'Search',
@@ -232,7 +232,7 @@ export const pageManuals: Record<PageId, PageManual> = {
   compliance: {
     title: 'Compliance Frameworks',
     summary:
-      'Map compliance and certification frameworks to PQC requirements across industries. Track FIPS 140-3, Common Criteria, ACVP, and other certification schemes across 5 tabs.',
+      'Map compliance and certification frameworks to PQC requirements across industries. Track FIPS 140-3, Common Criteria, ACVP, and other certification schemes across 4 tabs.',
     sections: [
       {
         heading: 'Five Tabs',
@@ -261,7 +261,7 @@ export const pageManuals: Record<PageId, PageManual> = {
   migrate: {
     title: 'Migration Workbench',
     summary:
-      'Browse 521+ PQC-ready software products organized across 9 infrastructure layers with certification cross-references and migration planning tools.',
+      'Browse 830+ PQC-ready software products organized across 9 infrastructure layers with certification cross-references and migration planning tools.',
     sections: [
       {
         heading: 'Infrastructure Layer Stack',
@@ -294,7 +294,7 @@ export const pageManuals: Record<PageId, PageManual> = {
   assess: {
     title: 'Risk Assessment',
     summary:
-      "Complete a guided assessment wizard to evaluate your organization's PQC readiness. Choose Quick (6 steps, ~2 min) or Comprehensive (13 steps, ~5 min) mode.",
+      "Complete a guided assessment wizard to evaluate your organization's PQC readiness. Choose Quick (8 steps, ~2 min) or Comprehensive (13 steps, ~5 min) mode.",
     sections: [
       {
         heading: 'Assessment Modes',
@@ -378,7 +378,7 @@ export const pageManuals: Record<PageId, PageManual> = {
   learn: {
     title: 'Learning Center',
     summary:
-      'Structured PQC education with 50 interactive modules covering PKI fundamentals, quantum threats, hybrid cryptography, industry-specific topics, and hands-on workshops.',
+      'Structured PQC education with 62 interactive modules covering PKI fundamentals, quantum threats, hybrid cryptography, industry-specific topics, and hands-on workshops.',
     sections: [
       {
         heading: 'Module Tracks',

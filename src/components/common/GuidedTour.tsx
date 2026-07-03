@@ -72,7 +72,7 @@ const featureSlides: Slide[] = [
     icon: GraduationCap,
     title: 'Learning Modules',
     description:
-      '48 modules across 8 tracks \u2014 from \u201CWhat is PQC?\u201D to migration planning. Follow a guided path or explore at your own pace.',
+      '62 modules across 9 tracks \u2014 from \u201CWhat is PQC?\u201D to migration planning. Follow a guided path or explore at your own pace.',
     route: '/learn',
     path: '/learn',
     essential: true,
@@ -99,7 +99,7 @@ const featureSlides: Slide[] = [
     icon: ArrowRightLeft,
     title: 'Migrate Catalog',
     description:
-      '220+ tools and products verified for PQC support, organized by the infrastructure layer you\u2019re upgrading.',
+      '830+ products tracked for PQC support, organized by the infrastructure layer you\u2019re upgrading.',
     route: '/migrate',
     path: '/migrate',
   },

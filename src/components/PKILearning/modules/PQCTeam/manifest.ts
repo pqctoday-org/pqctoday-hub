@@ -6,7 +6,7 @@ const manifest: ModuleManifest = {
   lm_id: 'LM-056',
   title: 'Building Your PQC Team',
   description:
-    'Staff the migration: core roles, a federated Crypto Champion network, Build-Borrow-Buy decisions, and a 1-per-500 team-sizing calculator.',
+    'Staff the migration: core roles, a federated Crypto Champion network, Build-Borrow-Buy decisions, and a CBOM-driven team-sizing calculator (~1 FTE per 500 cryptographic instances).',
   duration: '20 min',
   difficulty: 'beginner',
   frameworkPhase: 'foundations',

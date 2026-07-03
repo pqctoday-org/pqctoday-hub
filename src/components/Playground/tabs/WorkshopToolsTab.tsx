@@ -140,7 +140,7 @@ const WORKSHOP_TOOLS: WorkshopTool[] = [
     category: 'Entropy & Random',
     algorithms: ['Web Crypto', 'OpenSSL DRBG'],
     icon: Dice5,
-    moduleLink: '/learn/entropy',
+    moduleLink: '/learn/entropy-randomness',
     keywords: ['random', 'rng', 'drbg', 'web crypto', 'openssl', 'math.random', 'statistics'],
   },
   {
@@ -150,7 +150,7 @@ const WORKSHOP_TOOLS: WorkshopTool[] = [
     category: 'Entropy & Random',
     algorithms: ['SP 800-90B', 'Web Crypto'],
     icon: Dice5,
-    moduleLink: '/learn/entropy',
+    moduleLink: '/learn/entropy-randomness',
     keywords: ['entropy', 'testing', 'sp 800-90b', 'monobit', 'frequency', 'min-entropy', 'nist'],
   },
   {
@@ -160,7 +160,7 @@ const WORKSHOP_TOOLS: WorkshopTool[] = [
     category: 'Entropy & Random',
     algorithms: ['TRNG', 'Web Crypto'],
     icon: Dice5,
-    moduleLink: '/learn/entropy',
+    moduleLink: '/learn/entropy-randomness',
     keywords: ['qrng', 'quantum random', 'trng', 'true random', 'statistics'],
   },
   {
@@ -171,7 +171,7 @@ const WORKSHOP_TOOLS: WorkshopTool[] = [
     category: 'Entropy & Random',
     algorithms: ['SHA-256', 'HMAC-SHA-256', 'HKDF', 'AES-CMAC', 'XOR', 'Hash_df'],
     icon: Dice5,
-    moduleLink: '/learn/entropy',
+    moduleLink: '/learn/entropy-randomness',
     keywords: [
       'source combining',
       'xor',
@@ -237,7 +237,7 @@ const WORKSHOP_TOOLS: WorkshopTool[] = [
     category: 'Protocol Simulations',
     algorithms: ['ECDH', 'HKDF', 'AES-128/256'],
     icon: Radio,
-    moduleLink: '/learn/5g',
+    moduleLink: '/learn/5g-security',
     keywords: ['5g', 'suci', 'supi', 'subscriber', 'concealment', 'ecdh', 'hkdf', 'aes'],
   },
 

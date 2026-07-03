@@ -195,7 +195,9 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
             <code className="text-primary font-mono text-sm">EC_*</code>).
           </p>
           <p className="text-muted-foreground">
-            OpenSSL 3.x introduced the <strong className="text-foreground">provider model</strong>:{' '}
+            OpenSSL 3.5+ (April 2025) ships <strong className="text-foreground">native</strong>{' '}
+            ML-KEM, ML-DSA, and SLH-DSA in the default provider — no plugin needed. On older OpenSSL
+            3.2–3.4 installs,{' '}
             <code className="text-primary font-mono text-sm">
               OSSL_PROVIDER_load(NULL, &quot;oqsprovider&quot;)
             </code>{' '}
@@ -203,8 +205,8 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
             <InlineTooltip term="oqsprovider">
               OpenSSL provider for PQC algorithms (liboqs)
             </InlineTooltip>
-            . This means zero application code changes when switching to PQC — only the provider
-            load call and algorithm name change.
+            . Either way, the EVP layer means zero application code changes when switching to PQC —
+            only the algorithm name changes.
           </p>
         </CollapsibleSection>
       </div>
@@ -227,7 +229,7 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
             <code className="text-primary font-mono text-sm">C_Sign</code>.
           </p>
           <p className="text-muted-foreground">
-            PKCS#11 v3.2 (2023) added PQC mechanisms:{' '}
+            PKCS#11 v3.2 (Committee Specification 01, Nov 2025) adds PQC mechanisms:{' '}
             <code className="text-primary font-mono text-sm">CKM_ML_KEM_*</code>,{' '}
             <code className="text-primary font-mono text-sm">CKM_ML_DSA_*</code>,{' '}
             <code className="text-primary font-mono text-sm">CKM_SLH_DSA_*</code>. Hardware tokens
@@ -263,8 +265,8 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
           </p>
           <p className="text-muted-foreground">
             CNG integrates with the Windows certificate store and is the foundation for Windows FIPS
-            mode. PQC support is currently limited: ML-KEM is available in Windows 11 Insider
-            builds; ML-DSA support is on the roadmap for Windows Server 2026+.
+            mode. PQC support went GA in November 2025: ML-KEM, ML-DSA, and SLH-DSA APIs are
+            available on Windows 11 24H2+ and Windows Server 2025 (and in .NET 10).
           </p>
         </CollapsibleSection>
       </div>
@@ -359,7 +361,7 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
                     name: 'liboqs',
                     lang: 'C',
                     use: 'Reference implementations, bindings hub',
-                    fips: 'Via oqsprovider',
+                    fips: 'Not validated (research)',
                   },
                   {
                     name: 'AWS-LC',
@@ -428,7 +430,7 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
               {
                 lang: 'C / C++',
                 libs: ['OpenSSL (EVP)', 'Botan 3.x', 'Crypto++', 'wolfSSL'],
-                pqc: 'Via oqsprovider or liboqs directly',
+                pqc: 'Native in OpenSSL 3.5+ (oqsprovider for 3.2-3.4); liboqs directly',
                 note: 'Maximum performance; requires careful memory management',
               },
               {
@@ -501,9 +503,9 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
                 note: 'ML-KEM, ML-DSA, SLH-DSA, FN-DSA, LMS/XMSS all supported since BC 1.78 (Jan 2024)',
               },
               {
-                api: 'OpenSSL + oqsprovider',
+                api: 'OpenSSL (native)',
                 status: 'production',
-                note: 'All NIST PQC algorithms via oqsprovider 0.7.0+; requires OpenSSL 3.2+',
+                note: 'ML-KEM, ML-DSA, SLH-DSA native since OpenSSL 3.5 (April 2025); oqsprovider only needed on OpenSSL 3.2-3.4',
               },
               {
                 api: 'AWS-LC (aws-lc-rs)',
@@ -512,13 +514,13 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
               },
               {
                 api: 'JCA/JCE (built-in)',
-                status: 'planned',
-                note: 'Oracle JDK PQC planned for Java 25 (LTS); currently requires BC provider',
+                status: 'production',
+                note: 'JDK 24 (March 2025) ships native ML-KEM (JEP 496) and ML-DSA (JEP 497); BC provider for broader coverage',
               },
               {
                 api: 'Windows CNG',
-                status: 'experimental',
-                note: 'ML-KEM in Insider builds; ML-DSA on roadmap for 2026',
+                status: 'production',
+                note: 'ML-KEM, ML-DSA, SLH-DSA GA since Nov 2025 (Windows 11 24H2+ / Server 2025); Schannel TLS hybrid still preview',
               },
               {
                 api: 'PKCS#11 v3.2',

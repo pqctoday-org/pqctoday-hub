@@ -1183,9 +1183,9 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
               Memory Encryption Engines — Quantum Impact
             </div>
             <p className="text-xs text-muted-foreground">
-              Enclave sealing keys and memory encryption are often AES-128, which Grover&apos;s
-              algorithm halves to 64-bit effective post-quantum security — below NIST Level 1
-              (128-bit).
+              Enclave sealing keys and memory encryption are often AES-128 (NIST Category 1), which
+              Grover&apos;s algorithm halves to 64-bit effective post-quantum security — a much
+              thinner margin than AES-256 (Category 5).
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {MEMORY_ENCRYPTION_ENGINES.map((eng) => (

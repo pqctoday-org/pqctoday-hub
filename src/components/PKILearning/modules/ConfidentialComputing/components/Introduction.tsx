@@ -509,12 +509,12 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                   </h4>
                   <p className="text-xs text-muted-foreground">
                     Intel TME-MK and AMD SME/SEV use <strong>AES-XTS-128</strong> for memory
-                    encryption. Grover&apos;s algorithm reduces the effective key strength from
-                    128-bit to <strong>64-bit</strong> &mdash; well below the NIST Level 1 threshold
-                    of 128-bit post-quantum security. While real-time brute-forcing of memory
-                    encryption keys remains impractical even with a CRQC, this weakened margin
-                    erodes the security guarantee. Next-generation CPUs are expected to upgrade to
-                    AES-XTS-256 (128-bit post-quantum security).
+                    encryption. AES-128 sits in NIST security Category 1, and Grover&apos;s
+                    algorithm reduces its effective key strength from 128-bit to{' '}
+                    <strong>64-bit</strong>. While real-time brute-forcing of memory encryption keys
+                    remains impractical even with a CRQC, this weakened margin erodes the security
+                    guarantee. Next-generation CPUs are expected to upgrade to AES-XTS-256 (NIST
+                    Category 5; 128-bit effective post-quantum security).
                   </p>
                 </div>
               </div>

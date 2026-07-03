@@ -300,13 +300,13 @@ export const AUTOMOTIVE_COMPLIANCE_MILESTONES: AutomotiveComplianceMilestone[] =
   {
     id: 'cnsa-2-full',
     csvId: 'CNSA-2',
-    name: 'CNSA 2.0 — Full PQC Transition (all NSS)',
+    name: 'CNSA 2.0 — Exclusive Use Complete',
     authority: 'NSA',
     region: 'us',
     year: 2033,
     quarter: 'Q4',
     description:
-      'All National Security Systems must exclusively use CNSA 2.0 PQC algorithms by 2033.',
+      'CNSA 2.0 exclusive use: signing and networking equipment by 2030; web/cloud, operating systems, and niche/legacy equipment by 2033. NSM-10 separately targets all NSS quantum-resistant by 2035.',
     pqcRelevance: 'direct',
     confidence: 'published',
     affectedSystems: ['All vehicle crypto', 'Supply chain', 'Backend infrastructure'],

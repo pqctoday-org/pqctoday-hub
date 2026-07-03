@@ -138,7 +138,7 @@ export const ENERGY_PROTOCOLS: EnergyProtocol[] = [
   {
     id: 'dnp3-sa',
     name: 'DNP3 Secure Authentication',
-    standard: 'IEEE 1815.1 (DNP3-SA v5)',
+    standard: 'IEEE Std 1815-2012 (DNP3 SAv5)',
     transport: 'Serial',
     typicalBandwidth: '9.6 kbps - 100 Mbps',
     maxMessageBytes: 2048,

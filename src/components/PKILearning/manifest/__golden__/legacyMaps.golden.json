@@ -356,7 +356,7 @@
       "id": "pqc-candidates",
       "lm_id": "LM-053",
       "title": "PQC Candidates & Lifecycle",
-      "description": "How NIST evaluates new post-quantum mechanisms, the 14 second-round signature on-ramp candidates across four math families, and the worldwide parallel tracks (KpqC, CACR, ISO/IEC).",
+      "description": "How NIST evaluates new post-quantum mechanisms, the nine third-round signature on-ramp candidates (NIST IR 8610, May 2026) across four math families, and the worldwide parallel tracks (KpqC, CACR, ISO/IEC).",
       "duration": "55 min",
       "difficulty": "intermediate",
       "frameworkPhase": "foundations"
@@ -383,7 +383,7 @@
       "id": "pqc-team",
       "lm_id": "LM-056",
       "title": "Building Your PQC Team",
-      "description": "Staff the migration: core roles, a federated Crypto Champion network, Build-Borrow-Buy decisions, and a 1-per-500 team-sizing calculator.",
+      "description": "Staff the migration: core roles, a federated Crypto Champion network, Build-Borrow-Buy decisions, and a CBOM-driven team-sizing calculator (~1 FTE per 500 cryptographic instances).",
       "duration": "20 min",
       "difficulty": "beginner",
       "frameworkPhase": "foundations"
@@ -3152,7 +3152,7 @@
           "id": "pqc-candidates",
           "lm_id": "LM-053",
           "title": "PQC Candidates & Lifecycle",
-          "description": "How NIST evaluates new post-quantum mechanisms, the 14 second-round signature on-ramp candidates across four math families, and the worldwide parallel tracks (KpqC, CACR, ISO/IEC).",
+          "description": "How NIST evaluates new post-quantum mechanisms, the nine third-round signature on-ramp candidates (NIST IR 8610, May 2026) across four math families, and the worldwide parallel tracks (KpqC, CACR, ISO/IEC).",
           "duration": "55 min",
           "difficulty": "intermediate",
           "frameworkPhase": "foundations"
@@ -3551,7 +3551,7 @@
           "id": "pqc-team",
           "lm_id": "LM-056",
           "title": "Building Your PQC Team",
-          "description": "Staff the migration: core roles, a federated Crypto Champion network, Build-Borrow-Buy decisions, and a 1-per-500 team-sizing calculator.",
+          "description": "Staff the migration: core roles, a federated Crypto Champion network, Build-Borrow-Buy decisions, and a CBOM-driven team-sizing calculator (~1 FTE per 500 cryptographic instances).",
           "duration": "20 min",
           "difficulty": "beginner",
           "frameworkPhase": "foundations"
@@ -3747,7 +3747,7 @@
     },
     "tls-basics": {
       "algorithms": ["ML-KEM", "X25519", "ECDSA", "ML-DSA"],
-      "standards": ["RFC 9180", "X.509"]
+      "standards": ["RFC 8446", "X.509"]
     },
     "vpn-ssh-pqc": {
       "algorithms": ["ML-KEM", "ECDH"],

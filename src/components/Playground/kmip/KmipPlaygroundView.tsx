@@ -300,6 +300,17 @@ export function KmipPlaygroundView() {
     }
   }
 
+  // Apply an edited policy (from the visual editor) to the engine and surface it
+  // site-wide — the graph is the source of truth, so List/Timeline/YAML + every
+  // plane reflect the edit. Returns the loader result (warnings feed the editor).
+  const onApplyYaml = (yaml: string) => {
+    if (!engine) return undefined
+    const res = engine.loadPolicy(yaml)
+    setPolicyYaml(yaml)
+    refresh(engine)
+    return res
+  }
+
   if (bootError) {
     return (
       <div className="p-6">
@@ -647,7 +658,9 @@ export function KmipPlaygroundView() {
           policy={policy}
           policyYaml={policyYaml}
           busy={busy}
+          expert={expert}
           onLoadPolicy={onLoadPolicy}
+          onApplyYaml={onApplyYaml}
         />
       )}
 

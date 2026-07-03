@@ -61,7 +61,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
             'OpenSSL WASM Studio',
             'PQC Migration Planning',
             'Compliance Tracker (NIST, ANSSI, Common Criteria)',
-            '49 Hands-on Learning Modules',
+            '62 Hands-on Learning Modules',
             'PQC Risk Assessment Wizard',
             'Migration Software Catalog',
             'PQC Patent Landscape',
@@ -75,7 +75,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
               name: 'What is post-quantum cryptography (PQC)?',
               acceptedAnswer: {
                 '@type': 'Answer',
-                text: 'Post-quantum cryptography (PQC) refers to cryptographic algorithms designed to resist attacks from both classical and quantum computers. NIST finalized the first PQC standards in August 2024: FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), and FIPS 205 (SLH-DSA), with FIPS 206 (FN-DSA) expected in 2025.',
+                text: 'Post-quantum cryptography (PQC) refers to cryptographic algorithms designed to resist attacks from both classical and quantum computers. NIST finalized the first PQC standards in August 2024: FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), and FIPS 205 (SLH-DSA), with FIPS 206 (FN-DSA) still in draft.',
               },
             },
             {
@@ -91,7 +91,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
               name: 'What are the NIST PQC standards?',
               acceptedAnswer: {
                 '@type': 'Answer',
-                text: 'NIST published four PQC standards: FIPS 203 (ML-KEM for key encapsulation), FIPS 204 (ML-DSA for digital signatures), FIPS 205 (SLH-DSA for hash-based signatures), and FIPS 206 (FN-DSA for compact signatures). NIST IR 8547 sets the transition timeline: deprecate classical algorithms by 2030, disallow by 2035.',
+                text: 'NIST published three PQC standards in August 2024: FIPS 203 (ML-KEM for key encapsulation), FIPS 204 (ML-DSA for digital signatures), and FIPS 205 (SLH-DSA for hash-based signatures). FIPS 206 (FN-DSA for compact signatures) is still in draft. The draft NIST IR 8547 proposes the transition timeline: deprecate classical algorithms by 2030, disallow by 2035.',
               },
             },
           ],
@@ -124,7 +124,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
               name: 'When does NIST plan to deprecate classical cryptographic algorithms?',
               acceptedAnswer: {
                 '@type': 'Answer',
-                text: 'According to NIST IR 8547, classical algorithms like RSA, ECDSA, and ECDH will be deprecated by 2030 and fully disallowed by 2035. Organizations should begin planning their migration now to meet these deadlines.',
+                text: 'According to the draft NIST IR 8547, classical algorithms like RSA, ECDSA, and ECDH will be deprecated by 2030 and fully disallowed by 2035. Organizations should begin planning their migration now to meet these deadlines.',
               },
             },
             {
@@ -277,14 +277,14 @@ export const ROUTE_META: Record<string, RouteMeta> = {
   '/business/tools': {
     title: 'Business Tools — PQC Planning & Governance Toolkit | PQC Today',
     description:
-      '14 interactive business planning tools for PQC migration — ROI calculators, RACI builders, vendor scorecards, roadmap planners, and compliance checklists.',
+      '34 interactive business planning tools for PQC migration — ROI calculators, RACI builders, vendor scorecards, roadmap planners, and compliance checklists.',
     canonical: `${BASE_URL}/business/tools`,
   },
 
   '/assess': {
     title: 'PQC Risk Assessment — Quantum Readiness Score for Your Organization | PQC Today',
     description:
-      'Understand your quantum risk exposure with a 14-step guided assessment. Get a personalized migration roadmap aligned with your industry, country, and applicable compliance mandates — NIST, ANSSI, BSI, and more.',
+      'Understand your quantum risk exposure with a 13-step guided assessment (8-step quick path). Get a personalized migration roadmap aligned with your industry, country, and applicable compliance mandates — NIST, ANSSI, BSI, and more.',
     canonical: `${BASE_URL}/assess`,
   },
 
@@ -406,19 +406,19 @@ export const ROUTE_META: Record<string, RouteMeta> = {
   // --- Learning modules ---
 
   '/learn': {
-    title: 'Learn Post-Quantum Cryptography — 48 Interactive Modules | PQC Today',
+    title: 'Learn Post-Quantum Cryptography — 62 Interactive Modules | PQC Today',
     description:
-      'Begin your post-quantum transformation with 48 guided learning modules across 8 tracks. Build the knowledge to assess your risk, plan your migration, and meet your regulatory requirements — from PQC fundamentals to advanced protocol implementation.',
+      'Begin your post-quantum transformation with 62 guided learning modules across 9 tracks. Build the knowledge to assess your risk, plan your migration, and meet your regulatory requirements — from PQC fundamentals to advanced protocol implementation.',
     canonical: `${BASE_URL}/learn`,
     structuredData: {
       '@context': 'https://schema.org',
       '@type': 'Course',
       name: 'Post-Quantum Cryptography Learning Path',
       description:
-        '48 interactive modules covering PQC fundamentals, protocols, infrastructure, applications, industry verticals, and role-based guides with real cryptographic operations.',
+        '62 interactive modules covering PQC fundamentals, protocols, infrastructure, applications, industry verticals, and role-based guides with real cryptographic operations.',
       provider: { '@type': 'Organization', name: 'PQC Today', url: BASE_URL },
       isAccessibleForFree: true,
-      numberOfCredits: 48,
+      numberOfCredits: 62,
       hasCourseInstance: {
         '@type': 'CourseInstance',
         courseMode: 'online',
@@ -865,7 +865,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
   '/explore': {
     title: 'Explore | PQC Today',
     description:
-      'Discover post-quantum cryptography resources — interactive timelines, 49 learning modules, compliance tools, migration guides, and the PQC risk assessment.',
+      'Discover post-quantum cryptography resources — interactive timelines, 62 learning modules, compliance tools, migration guides, and the PQC risk assessment.',
     canonical: `${BASE_URL}/explore`,
   },
 

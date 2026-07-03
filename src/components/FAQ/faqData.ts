@@ -181,7 +181,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is CNSA 2.0?',
         answer:
-          'CNSA 2.0 (Commercial National Security Algorithm Suite 2.0) is NSA guidance for protecting national security systems, mandating ML-KEM and ML-DSA adoption by 2025 and the complete disallowance of all classical public-key algorithms by 2033. It is more aggressive than civilian timelines and applies to defense, intelligence, and classified environments. The Compliance Tracker shows CNSA 2.0 milestones alongside other frameworks.',
+          'CNSA 2.0 (Commercial National Security Algorithm Suite 2.0) is NSA guidance for protecting National Security Systems. It sets support-and-prefer milestones by category from 2025 to 2027 (starting with software/firmware signing via LMS/XMSS and web/cloud services in 2025), then requires exclusive use of CNSA 2.0 algorithms by 2030 for signing and networking and by 2033 for web/cloud, operating systems, and large PKI (NSM-10 targets all NSS by 2035). It is more aggressive than civilian timelines and applies to defense, intelligence, and classified environments. The Compliance Tracker shows CNSA 2.0 milestones alongside other frameworks.',
         deepLink: '/compliance',
       },
       {
@@ -193,7 +193,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What does RFC 9629 cover?',
         answer:
-          'RFC 9629 defines the generic KEMRecipientInfo mechanism for using any KEM within the Cryptographic Message Syntax (CMS); the ML-KEM-specific CMS profile is RFC 9936, enabling PQC-protected S/MIME email encryption. It defines algorithm identifiers and encoding rules for ML-KEM only — ML-DSA digital signatures in CMS are covered separately by RFC 9882. The Reference Library includes both RFCs alongside related email security standards.',
+          'RFC 9629 defines the generic KEMRecipientInfo mechanism for using any KEM within the Cryptographic Message Syntax (CMS); the ML-KEM-specific CMS profile is RFC 9936, enabling PQC-protected S/MIME email encryption. ML-DSA digital signatures in CMS are covered separately by RFC 9882. The Reference Library includes these RFCs alongside related email security standards.',
         deepLink: '/library',
       },
       {
@@ -281,7 +281,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What web browsers support ML-KEM for TLS?',
         answer:
-          'Chrome (since version 124), Microsoft Edge, and Firefox all support the X25519MLKEM768 hybrid key exchange in TLS 1.3, combining classical X25519 ECDH with ML-KEM-768 for post-quantum protection. Safari added X25519MLKEM768 support in Safari 26 / iOS 26 / macOS Tahoe 26 (fall 2025). The Migrate catalog tracks browser PQC support alongside other infrastructure categories.',
+          'Chrome (default since version 131, November 2024; version 124 shipped the earlier draft X25519Kyber768Draft00), Microsoft Edge, and Firefox all support the X25519MLKEM768 hybrid key exchange in TLS 1.3, combining classical X25519 ECDH with ML-KEM-768 for post-quantum protection. Safari added X25519MLKEM768 support in Safari 26 / iOS 26 / macOS Tahoe 26 (fall 2025). The Migrate catalog tracks browser PQC support alongside other infrastructure categories.',
         deepLink: '/migrate',
       },
       {
@@ -339,7 +339,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is Executive Order 14306?',
         answer:
-          'Executive Order 14306 (June 2025) ties CNSA 2.0 requirements to federal procurement by linking them to the CISA product category list, effectively mandating that agencies purchase PQC-capable products for national security system use cases. It operationalizes the CNSA 2.0 transition by embedding quantum-readiness into the federal acquisition process rather than leaving it as optional agency guidance. The Compliance Tracker tracks the EO 14306 procurement requirements and their intersection with NIST IR 8547 migration timelines.',
+          "Executive Order 14306 (June 2025) streamlined its predecessor EO 14144 and removed the binding PQC procurement requirement for federal agencies. CISA's PQC product-category list (January 2026) remains advisory, while National Security System acquisitions must be CNSA 2.0-compliant from January 1, 2027 under CNSSP-15. Binding civilian deadlines now come from the June 2026 PQC Executive Order: post-quantum key establishment by 2030 and signatures by 2031. The Compliance Tracker tracks these US federal requirements and their intersection with NIST IR 8547 migration timelines.",
         deepLink: '/compliance',
       },
       {
@@ -385,7 +385,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What infrastructure layers does the Migrate catalog cover?',
         answer:
-          'The Migrate catalog covers seven infrastructure layers: cryptographic libraries, PKI and certificate authorities, network and VPN appliances, web servers and load balancers, cloud services and KMS, hardware security modules (HSMs), and application frameworks and SDKs. Each layer includes products with PQC readiness status and FIPS validation tiers. The catalog also tracks web browser PQC support as a separate category.',
+          'The Migrate catalog covers nine infrastructure layers — Cloud, Network, Application Servers, Libraries, Security Software, Database, Security Stack, OS, and Hardware. Each layer includes products with PQC readiness status and FIPS validation tiers. The catalog also tracks web browser PQC support as a separate category.',
         deepLink: '/migrate',
       },
       {
@@ -403,7 +403,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'How does the PQC Risk Assessment wizard work?',
         answer:
-          'The PQC Risk Assessment is a 14-step wizard that evaluates your organization across dimensions including industry, country, cryptographic usage, data sensitivity, compliance requirements, migration readiness, infrastructure maturity, and vendor dependencies. It produces a scored report with risk categories, compliance gap analysis, and a prioritized migration roadmap. The report can be exported as a PDF.',
+          'The PQC Risk Assessment is a 13-step wizard that evaluates your organization across dimensions including industry, country, cryptographic usage, data sensitivity, compliance requirements, migration readiness, infrastructure maturity, and vendor dependencies. It produces a scored report with risk categories, compliance gap analysis, and a prioritized migration roadmap. The report can be exported as a PDF.',
         deepLink: '/assess',
       },
       {
@@ -415,7 +415,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'How many PQC-ready products does the catalog track?',
         answer:
-          'The Migrate catalog tracks over 140 products across seven infrastructure layers, each assessed for PQC readiness with specific algorithm support details and FIPS validation status. Products range from open-source libraries like OpenSSL and liboqs to commercial HSMs and cloud services from AWS, Azure, and GCP. The catalog is regularly updated as vendors announce new PQC capabilities.',
+          'The Migrate catalog tracks over 830 products across nine infrastructure layers, each assessed for PQC readiness with specific algorithm support details and FIPS validation status. Products range from open-source libraries like OpenSSL and liboqs to commercial HSMs and cloud services from AWS, Azure, and GCP. The catalog is regularly updated as vendors announce new PQC capabilities.',
         deepLink: '/migrate',
       },
       {
@@ -473,7 +473,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What OpenSSH version supports PQC?',
         answer:
-          "OpenSSH 9.x introduced the sntrup761x25519-sha512 hybrid key exchange, which combines the NTRU Prime lattice-based KEM with classical X25519 ECDH. More recent OpenSSH development includes support for ML-KEM-768-based hybrid key exchange, aligning with NIST's standardized algorithms. The VPN/SSH module explains host key migration and client configuration for PQC.",
+          "OpenSSH 8.5 (2021) introduced the sntrup761x25519-sha512 hybrid key exchange, which combines the NTRU Prime lattice-based KEM with classical X25519 ECDH, and OpenSSH 9.0 made it the default. More recent OpenSSH development includes support for ML-KEM-768-based hybrid key exchange, aligning with NIST's standardized algorithms. The VPN/SSH module explains host key migration and client configuration for PQC.",
         deepLink: '/learn/vpn-ssh-pqc',
       },
       {
@@ -659,13 +659,13 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'How many learning modules does PQC Today offer?',
         answer:
-          'PQC Today offers over 70 interactive learning modules organized across nine tracks: Foundations, Protocols, Applications, Hardware Infrastructure, Software Infrastructure, Strategy, Industries, Executive, and Role Guides. Each module includes an introduction with glossary-linked terms, interactive workshop exercises, and knowledge assessment questions. Module durations range from 30 minutes to 120 minutes depending on complexity.',
+          'PQC Today offers 62 interactive learning modules organized across nine tracks: Foundations, Protocols, Applications, Hardware Infrastructure, Software Infrastructure, Strategy, Industries, Executive, and Role Guides. Each module includes an introduction with glossary-linked terms, interactive workshop exercises, and knowledge assessment questions. Module durations range from 10 minutes to 120 minutes depending on complexity.',
         deepLink: '/learn',
       },
       {
         question: 'How does the PQC Risk Assessment work?',
         answer:
-          'The PQC Risk Assessment is a 14-step wizard that evaluates your organization across industry context, country-specific regulations, cryptographic usage patterns, data sensitivity levels, compliance requirements, and infrastructure maturity. It produces a scored report with a risk classification (Critical, High, Moderate, or Low), compliance gap analysis, threat landscape visualization, and a prioritized migration roadmap. The report can be exported as a PDF for stakeholder presentations.',
+          'The PQC Risk Assessment is a 13-step comprehensive wizard (with an 8-step quick path) that evaluates your organization across industry context, country-specific regulations, cryptographic usage patterns, data sensitivity levels, compliance requirements, and infrastructure maturity. It produces a scored report with a risk classification (Critical, High, Moderate, or Low), compliance gap analysis, threat landscape visualization, and a prioritized migration roadmap. The report can be exported as a PDF for stakeholder presentations.',
         deepLink: '/assess',
       },
       {
@@ -677,7 +677,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is the PQC Reference Library?',
         answer:
-          'The PQC Reference Library is a curated collection of over 540 standards, RFCs, research papers, and migration guides relevant to post-quantum cryptography, with cross-references linking related documents and enrichment metadata providing summaries and PQC relevance assessments. Documents are categorized by type, issuing organization, and relevance to specific algorithms and use cases. The Library supports full-text search and filtering.',
+          'The PQC Reference Library is a curated collection of over 680 standards, RFCs, research papers, and migration guides relevant to post-quantum cryptography, with cross-references linking related documents and enrichment metadata providing summaries and PQC relevance assessments. Documents are categorized by type, issuing organization, and relevance to specific algorithms and use cases. The Library supports full-text search and filtering.',
         deepLink: '/library',
       },
       {

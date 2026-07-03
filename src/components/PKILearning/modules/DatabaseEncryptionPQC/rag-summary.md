@@ -69,11 +69,11 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 | Oracle CSQE                 | ✓        | ✗       | ✗      | Planned                   |
 | pg_tde (Percona)            | ✗        | ✗       | ✗      | Not applicable (TDE only) |
 
-**MongoDB FLE 2.0** uses HMAC-SHA-256 tokens for equality queries (quantum-safe) and order-preserving encryption for range queries. DEK wrapping uses RSA-OAEP — ML-KEM-1024 upgrade planned in MongoDB 8.x (2026).
+**MongoDB FLE 2.0** uses HMAC-SHA-256 tokens for equality queries (quantum-safe) and structured encryption over fully randomized ciphertext for range queries. DEK wrapping uses RSA-OAEP — ML-KEM-1024 upgrade planned in MongoDB 8.x (2026).
 
 **SQL Server Always Encrypted** with secure enclaves (VBS/SGX) supports range queries inside the enclave. CMK wrapping uses RSA-OAEP (RSA-2048/4096). Azure Key Vault ML-KEM support planned 2026.
 
-**PQC challenge**: Range-query encryption (OPE, range-revealing encryption) is not yet standardized for PQC. Equality tokens (HMAC-SHA-256) are already quantum-safe. Expect formal NIST standards for PQC-compatible queryable encryption by 2028.
+**PQC challenge**: Range-query encryption (structured encryption range schemes; MongoDB uses fully randomized ciphertext, not order-preserving encryption) is not yet standardized for PQC. Equality tokens (HMAC-SHA-256) are already quantum-safe. Expect formal NIST standards for PQC-compatible queryable encryption by 2028.
 
 ---
 
@@ -135,4 +135,4 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 - **ML-KEM-1024 key sizes**: Public key: 1,568 bytes (vs 256 bytes RSA-2048). Ciphertext: 1,568 bytes. ~6× metadata overhead per DEK — negligible for multi-TB databases.
 - **Online migration**: Oracle (`ALTER TABLESPACE REKEY`) and SQL Server (`ALTER DATABASE ENCRYPTION KEY REGENERATE`) support zero-downtime TDE re-keying.
 - **HNDL risk**: Database backups captured today with RSA-wrapped DEKs may be decryptable after a CRQC arrives. Priority: databases with long data retention (healthcare, financial records, classified).
-- **KMIP 2.1**: Key Management Interoperability Protocol version 2.1 supports `CryptographicAlgorithm = ML-KEM`. Thales CipherTrust 2.15+ and HashiCorp Vault 1.17+ support PQC key types.
+- **KMIP 2.1**: Key Management Interoperability Protocol version 2.1 (published Dec 2020, latest ratified OASIS standard) supports `CryptographicAlgorithm = ML-KEM` via PQC enumerations; KMIP 3.0 is still a Committee Specification Draft, not ratified. Thales CipherTrust 2.15+ supports PQC key types; HashiCorp Vault's only PQC is experimental transit ML-DSA in Vault Enterprise 1.19.

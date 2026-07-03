@@ -550,7 +550,7 @@ export const MEDICAL_DEVICE_CATALOG: MedicalDeviceProfile[] = [
         vector: 'data-exfiltration',
         vectorLabel: 'Data Exfiltration',
         patientImpact: 'nuisance',
-        quantumMechanism: 'Shor',
+        quantumMechanism: 'Grover',
         currentDefense: 'AES-CCM-128 encrypted telemetry',
         attackDescription:
           'Patient cardiac data intercepted during device interrogation. Privacy breach but no immediate physical harm.',
@@ -610,7 +610,7 @@ export const MEDICAL_DEVICE_CATALOG: MedicalDeviceProfile[] = [
         vector: 'replay-attack',
         vectorLabel: 'Replay Attack',
         patientImpact: 'life-threatening',
-        quantumMechanism: 'Shor',
+        quantumMechanism: 'Grover',
         currentDefense: 'Nonce-based AES-CCM',
         attackDescription:
           'Captured and replayed dose delivery commands could cause dangerous insulin stacking.',

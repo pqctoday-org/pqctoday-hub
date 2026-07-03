@@ -13,7 +13,7 @@
  */
 import { useMemo, useState, useEffect, useRef, useCallback, Suspense } from 'react'
 import { Monitor } from 'lucide-react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import {
   BUSINESS_TOOL_COMPONENTS,
   WORKSHOP_TOOL_COMPONENTS,
@@ -36,6 +36,15 @@ import { SIM_ALGORITHM_TABS } from './algorithmTabs'
 import { SIM_REFERENCE_EMBEDS } from './referenceEmbeds'
 import { useSimAutoRunPlayer } from './autorun/useSimAutoRunPlayer'
 import { SimAutoRunOverlay } from './autorun/SimAutoRunOverlay'
+import { SimConceptPeek } from './autorun/SimConceptPeek'
+import { SimArtifactReveal } from './autorun/SimArtifactReveal'
+import { SimExecWalkthroughComplete } from './autorun/SimExecWalkthroughComplete'
+import {
+  EXEC_TOUR_STAGES,
+  EXEC_TOUR_OPENING_CONCEPTS,
+  EXEC_TOUR_CONCEPTS,
+  type TourConcept,
+} from './autorun/execTourConfig'
 import { SimPassIntroModal } from './autorun/SimPassIntroModal'
 import { SimPhaseIntroModal } from './autorun/SimPhaseIntroModal'
 import { SimScenarioIntroCard } from './autorun/SimScenarioIntroCard'
@@ -456,6 +465,41 @@ export function SimulationView() {
   // tick off in view; the clock advances Q1 2026 → Q1 2035.
   const autoRunPlayer = useSimAutoRunPlayer({ openStep, closeEmbed })
 
+  // Deep link: /simulation?run=exec auto-starts the Executive Overview walkthrough,
+  // then strips the param so a reload doesn't re-trigger it.
+  const [searchParams, setSearchParams] = useSearchParams()
+  const ranExecDeepLink = useRef(false)
+  const startRun = autoRunPlayer.start
+  useEffect(() => {
+    if (ranExecDeepLink.current || searchParams.get('run') !== 'exec') return
+    ranExecDeepLink.current = true
+    startRun({ mode: 'walkthrough' })
+    const next = new URLSearchParams(searchParams)
+    next.delete('run')
+    setSearchParams(next, { replace: true })
+  }, [searchParams, setSearchParams, startRun])
+
+  // While the Executive Overview walkthrough is playing (or on its end screen), the
+  // maturity/objective scoreboard and the "did you beat Q-Day?" win ceremony are
+  // suppressed — it's a tour, not a scored run, and it shows no dates. Climb (Play 0→7)
+  // and all interactive play fall through unchanged (mode is never 'walkthrough' there).
+  const suppressWinUI =
+    autoRunPlayer.mode === 'walkthrough' && (autoRunPlayer.running || autoRunPlayer.done)
+
+  // Concept peeks (non-blocking) surfaced during the walkthrough, keyed to the current
+  // phase: HNDL + Mosca at the open (p0), the two-track model at the roadmap, hybrid at
+  // pilots. Empty outside a running walkthrough.
+  const walkthroughConcepts = useMemo<TourConcept[]>(() => {
+    if (autoRunPlayer.mode !== 'walkthrough' || !autoRunPlayer.running) return []
+    const phase = autoRunPlayer.phaseFocus?.phase
+    if (!phase) return []
+    const ids: TourConcept['id'][] = []
+    if (phase === EXEC_TOUR_STAGES[0]?.phase) ids.push(...EXEC_TOUR_OPENING_CONCEPTS)
+    const stage = EXEC_TOUR_STAGES.find((s) => s.phase === phase)
+    if (stage?.conceptCard) ids.push(stage.conceptCard)
+    return ids.map((id) => EXEC_TOUR_CONCEPTS[id])
+  }, [autoRunPlayer.mode, autoRunPlayer.running, autoRunPlayer.phaseFocus?.phase])
+
   // real hub completion state: generated artifacts + Learn-module progress
   const docs = useModuleStore((s) => s.artifacts.executiveDocuments)
   // Read-only inspection of a generated artifact (click a completed row → drawer in view mode).
@@ -541,6 +585,23 @@ export function SimulationView() {
   // ORG / JURISDICTION / SECTOR dials are read-only and derive from here. SEAT
   // defaults from the persona; MODE (difficulty) stays freely editable.
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const setExecOverviewSeen = usePersonaStore((s) => s.setExecOverviewSeen)
+  // Walkthrough end screen: open once when the tour completes (mark the overview seen),
+  // and reset when a new run starts. Dismissing sticks (the ref guards re-opening).
+  const [walkthroughDoneOpen, setWalkthroughDoneOpen] = useState(false)
+  const walkthroughCelebratedRef = useRef(false)
+  useEffect(() => {
+    if (autoRunPlayer.mode === 'walkthrough' && autoRunPlayer.done) {
+      if (!walkthroughCelebratedRef.current) {
+        walkthroughCelebratedRef.current = true
+        setWalkthroughDoneOpen(true)
+        setExecOverviewSeen(true)
+      }
+    } else if (!autoRunPlayer.done) {
+      walkthroughCelebratedRef.current = false
+      setWalkthroughDoneOpen(false)
+    }
+  }, [autoRunPlayer.mode, autoRunPlayer.done, setExecOverviewSeen])
   const assessFrameworkRisk = useMemo(
     () => (assessSnap ? frameworkRiskFromAssess(assessSnap.result) : null),
     [assessSnap]
@@ -1282,7 +1343,7 @@ export function SimulationView() {
             <Button
               type="button"
               variant="ghost"
-              onClick={autoRunPlayer.start}
+              onClick={() => autoRunPlayer.start()}
               disabled={autoRunPlayer.running}
               title={
                 autoRunPlayer.resumable
@@ -1293,7 +1354,19 @@ export function SimulationView() {
             >
               {autoRunPlayer.resumable ? '▶ Resume' : `▶ PLAY ALL ${LIFECYCLE.length}`}
             </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => autoRunPlayer.start({ mode: 'walkthrough' })}
+              disabled={autoRunPlayer.running}
+              title="Play the guided Executive Overview — a short narrated, board-level walk through the whole program (governance, risk, roadmap, verification) with the key documents shown along the way. No technical detail."
+              className="h-auto rounded-md border border-primary/50 bg-primary/15 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background hover:bg-primary/25 disabled:opacity-40"
+            >
+              ▶ Executive overview
+            </Button>
             <SimAutoRunOverlay player={autoRunPlayer} />
+            <SimConceptPeek concepts={walkthroughConcepts} />
+            <SimArtifactReveal type={autoRunPlayer.reveal} />
             {autoRunPlayer.scenarioIntro && (
               <SimScenarioIntroCard
                 scenario={autoRunPlayer.scenarioIntro}
@@ -1402,7 +1475,7 @@ export function SimulationView() {
 
         {/* KPI ribbon */}
         <div className="flex shrink-0 flex-wrap items-stretch gap-3 border-b border-border bg-card px-4 py-3">
-          <TransformationStatusPanel status={txStatus} />
+          {!suppressWinUI && <TransformationStatusPanel status={txStatus} />}
           <Stat
             label="Phases cleared"
             value={`${cleared}/${LIFECYCLE.length}`}
@@ -2895,7 +2968,7 @@ export function SimulationView() {
           />
         )}
         {/* W2b: run-end ceremony — the summative "did you beat Q-Day?" moment */}
-        {runCompleteOpen && (
+        {runCompleteOpen && !suppressWinUI && (
           <SimRunComplete
             objectives={txStatus.objectives.map((o) => ({
               id: o.id,
@@ -2909,6 +2982,9 @@ export function SimulationView() {
             programEndYear={getScenario(country).programEndYear}
             onClose={() => setRunCompleteOpen(false)}
           />
+        )}
+        {walkthroughDoneOpen && (
+          <SimExecWalkthroughComplete onClose={() => setWalkthroughDoneOpen(false)} />
         )}
       </div>
     </>

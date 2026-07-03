@@ -19,8 +19,8 @@ const MIGRATION_STEPS: MigrationStep[] = [
     id: 1,
     title: 'Generate ML-DSA-65 Host Key',
     description:
-      'Generate a new ML-DSA-65 (ssh-mldsa65) host key. This requires OpenSSH 10.0+ with liboqs support, or the OpenSSH experimental PQC branch.',
-    command: `# On the SSH server (requires OpenSSH 10.0+ with PQC support):
+      'Generate a new ML-DSA-65 (ssh-mldsa65) host key. This requires an experimental PQC build of OpenSSH — ssh-mldsa65 is an IETF draft and not yet in a production OpenSSH release (OpenSSH 10.0, released April 2025, already defaults to ML-KEM hybrid key exchange but not ML-DSA host keys).',
+    command: `# On the SSH server (requires an experimental OpenSSH PQC build):
 sudo ssh-keygen -t mldsa65 -f /etc/ssh/ssh_host_mldsa65_key -N ""
 
 # Verify the key was created:
@@ -35,7 +35,7 @@ sudo ssh-keygen -lf /etc/ssh/ssh_host_mldsa65_key.pub`,
 256 SHA256:AbCdEfGhIjKlMnOpQrStUvWxYz0123456789= root@server (MLDSA65)
 # Note: bit count shown is nominal — ML-DSA-65 is NIST Level 3`,
     warning:
-      'ML-DSA-65 host keys are only supported in OpenSSH 10.0+ experimental branch (as of March 2026). Production deployment requires waiting for upstream OpenSSH release.',
+      'ML-DSA-65 host keys are not yet in any production OpenSSH release (as of March 2026) — only experimental PQC builds support them. Note that OpenSSH 10.0 itself shipped in April 2025 and uses the mlkem768x25519-sha256 hybrid key exchange by default; it is host-key signatures that still await ML-DSA.',
   },
   {
     id: 2,
@@ -109,9 +109,9 @@ ssh -v admin@server.example.com 2>&1 | grep "host key algorithm"
 # Test with explicit host key algorithm preference:
 ssh -o "HostKeyAlgorithms=ssh-mldsa65,ssh-ed25519" admin@server.example.com`,
     output: `# Connection summary:
-# ML-KEM hybrid KEX: sntrup761x25519-sha512@openssh.com (OpenSSH 8.5+)
-# or: mlkem768x25519-sha256 (IETF draft, experimental)
-# Host auth: ssh-mldsa65 (OpenSSH 10.0+) or ssh-ed25519 (fallback)`,
+# PQC hybrid KEX: mlkem768x25519-sha256 (standard since OpenSSH 9.9, DEFAULT since 10.0)
+# or legacy: sntrup761x25519-sha512@openssh.com (OpenSSH 8.5+, default in 9.0-9.8)
+# Host auth: ssh-mldsa65 (experimental builds) or ssh-ed25519 (fallback)`,
     warning:
       'As of March 2026, no production SSH client supports ssh-mldsa65 host keys. Only OpenSSH experimental branch has this support. Plan for 2026-2027 production availability.',
   },
@@ -119,15 +119,15 @@ ssh -o "HostKeyAlgorithms=ssh-mldsa65,ssh-ed25519" admin@server.example.com`,
 
 const SSH_CLIENT_COMPAT = [
   {
-    client: 'OpenSSH 10.0+ (experimental PQC)',
-    mlDsaHostKey: 'yes',
+    client: 'OpenSSH 10.0+ (current stable, ML-KEM default)',
+    mlDsaHostKey: 'planned',
     mlKemKex: 'yes',
-    status: 'experimental',
+    status: 'stable',
   },
   {
-    client: 'OpenSSH 9.x (current stable)',
+    client: 'OpenSSH 9.9 (mlkem768x25519 standard)',
     mlDsaHostKey: 'no',
-    mlKemKex: 'partial',
+    mlKemKex: 'yes',
     status: 'stable',
   },
   { client: 'OpenSSH 8.5-8.9', mlDsaHostKey: 'no', mlKemKex: 'no', status: 'outdated' },

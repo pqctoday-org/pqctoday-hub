@@ -47,16 +47,25 @@ rules:
       - X25519
     reason: "KEM not recognised by BSI TR-02102-1 for new key establishment"
 
-  # 2. Hybrid mandate: every signing key created in the window must be a composite
-  #    classical + PQC signature (defence in depth — secure while either half is).
+  # 2. Hybrid signing — STRICTER THAN BSI, by deliberate org choice.
+  #    BSI TR-02102-1 (2026-01) RECOMMENDS hybrid (classical + PQC) signatures
+  #    and permits classical-only RSA/ECC signatures until the end of 2035
+  #    (§2.1/§5.3); it does NOT mandate hybrid. This policy mandates the
+  #    ML-DSA-65 + ECDSA-P384 composite as defence-in-depth (secure while either
+  #    half holds). Encoded via the composite name; the engine's
+  #    hybrid_dual_sign_requirement skips symmetric requests (Y7). composite_oid
+  #    is the IANA-registered LAMPS OID (informational — not enforced).
+  #    Verified against BSI TR-02102-1 v2026-01 on 2026-07-01.
   - type: hybrid_dual_sign_requirement
     primary: ML-DSA-65
     secondary: ECDSA-P384
     effective_from: "2026-01-01"
     effective_until: "2035-12-31"
-    ops_affected: [Create, Sign]
-    composite_oid: "2.16.840.1.114027.80.8.1.7"
-    reason: "BSI: hybrid (classical + PQC) signing required during the transition"
+    ops_affected: [Create, CreateKeyPair, Sign]
+    # id-MLDSA65-ECDSA-P384-SHA512 (LAMPS composite-sigs, IANA arc
+    # 1.3.6.1.5.5.7.6; verified on datatracker 2026-07-01).
+    composite_oid: "1.3.6.1.5.5.7.6.46"
+    reason: "Policy mandates hybrid (ML-DSA-65 + ECDSA-P384) signing — stricter than BSI's recommendation"
 
   # 3. Key-establishment keys must declare the hybrid partner via a custom
   #    attribute — a standalone PQC KEM key (no classical partner) is rejected.

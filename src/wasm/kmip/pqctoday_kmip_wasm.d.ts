@@ -23,8 +23,16 @@ export class KmipPlayground {
    * policy WOULD decide for an operation, without executing it or touching the
    * store. Unlike the REST facade's dry-run (which uses a minimal request that
    * can never produce a rekey or min-key-length decision), this passes the
-   * full request fields. spec:
-   * `{"op":"Sign","algorithm":"ML-DSA-65","length":?,"currentAlgorithm":"ECDSA-P256","state":"Active"}`
+   * full request fields (WP4b: date, custom attrs, usage mask, mechanism
+   * params, and key activation date, so temporal / attribute / mechanism
+   * rules evaluate exactly like the production dispatcher path). spec:
+   * `{"op":"Sign","algorithm":"ML-DSA-65","length":?,"currentAlgorithm":"ECDSA-P256",
+   *   "state":"Active","date":"2027-06-01","attrs":{"pqctoday-purpose":"research"},
+   *   "usageMask":["Sign","Verify"],"activationDate":"2026-01-15",
+   *   "mechanism":{"hash":"SHA-256","blockMode":"GCM","padding":"OAEP",
+   *                "deterministic":true,"mech":"CKM_AES_GCM"}}`
+   * Names resolve through the SAME tables the policy loader validates against
+   * (`policy::hash_name_to_code` etc.) — never a second hand-rolled mapping.
    * Returns `{ kind: Allow|Deny|Rekey, algorithm?, from?, to?, rule?, reason? }`.
    */
   dry_run(spec_json: string): string

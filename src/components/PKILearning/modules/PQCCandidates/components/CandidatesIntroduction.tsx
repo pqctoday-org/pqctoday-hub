@@ -166,10 +166,10 @@ export const CandidatesIntroduction: React.FC<CandidatesIntroductionProps> = ({
           <Boxes size={20} /> Four math families on the table
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
-          The 14 second-round survivors break down into four mathematical families. Diversity across
-          families is the entire point — if lattice math falls, the portfolio survives. The
-          workshop's <strong>Family Math Explainer</strong> step shows animated visualisations of
-          each construction.
+          The nine third-round candidates (NIST IR 8610, May 2026) break down into four mathematical
+          families. Diversity across families is the entire point — if lattice math falls, the
+          portfolio survives. The workshop's <strong>Family Math Explainer</strong> step shows
+          animated visualisations of each construction.
         </p>
         <div className="space-y-3">
           {FAMILY_LIST.map((fam) => (

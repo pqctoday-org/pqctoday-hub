@@ -10,7 +10,7 @@ The PKI Workshop is a hands-on learning module that teaches Public Key Infrastru
 - Classical vs PQC algorithms: RSA/ECDSA signatures (quantum-vulnerable via Shor's algorithm) vs ML-DSA (FIPS 204) and SLH-DSA (FIPS 205) post-quantum replacements
 - Hybrid and composite certificates: combining classical and PQC algorithms in a single certificate for backward compatibility during the transition period
 - Merkle Tree Certificates (MTCs): IETF draft-davidben-tls-merkle-tree-certs proposal by Google and Cloudflare that batches certificates into a Merkle tree, replacing per-certificate PQ signatures with compact inclusion proofs (~736 bytes vs ~12.3 KB for traditional PQC chains)
-- PQC migration challenges: certificate size growth (ML-DSA-87 public keys ~2,592 bytes vs 294 bytes for ECDSA P-256), constrained device support, cross-signed trust chains, and CNSA 2.0 deadline of 2030 for PQC-only PKI
+- PQC migration challenges: certificate size growth (ML-DSA-87 public keys ~2,592 bytes vs ~91 bytes (SPKI) for ECDSA P-256), constrained device support, cross-signed trust chains, and CNSA 2.0 exclusive-use deadlines (2030 for software/firmware signing and networking; 2033 for large PKI systems)
 
 ## Workshop Activities
 

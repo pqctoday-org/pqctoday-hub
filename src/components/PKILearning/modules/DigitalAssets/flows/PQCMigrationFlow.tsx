@@ -21,7 +21,7 @@ const DIGITAL_ASSETS_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'da-txn-sigver',
     useCase: 'Quantum-safe transaction signing',
-    standard: 'EIP-7696 draft + FIPS 204 ACVP',
+    standard: 'NIST FIPS 204 (ACVP)',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
     kind: { type: 'mldsa-sigver', variant: 65 },
@@ -29,7 +29,7 @@ const DIGITAL_ASSETS_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'da-multisig-sigver',
     useCase: 'High-value custodial multi-sig',
-    standard: 'EIP-7696 draft + FIPS 204 ACVP',
+    standard: 'NIST FIPS 204 (ACVP)',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
     kind: { type: 'mldsa-sigver', variant: 87 },
@@ -780,7 +780,7 @@ export const PQCMigrationFlow: React.FC<PQCMigrationFlowProps> = ({ onBack }) =>
         <KatValidationPanel
           specs={DIGITAL_ASSETS_KAT_SPECS}
           label="Digital Assets PQC Known Answer Tests"
-          authorityNote="EIP-7696 draft · NIST FIPS 204"
+          authorityNote="NIST FIPS 204 (ACVP)"
         />
       )}
 

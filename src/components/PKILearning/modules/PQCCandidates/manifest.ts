@@ -6,7 +6,7 @@ const manifest: ModuleManifest = {
   lm_id: 'LM-053',
   title: 'PQC Candidates & Lifecycle',
   description:
-    'How NIST evaluates new post-quantum mechanisms, the 14 second-round signature on-ramp candidates across four math families, and the worldwide parallel tracks (KpqC, CACR, ISO/IEC).',
+    'How NIST evaluates new post-quantum mechanisms, the nine third-round signature on-ramp candidates (NIST IR 8610, May 2026) across four math families, and the worldwide parallel tracks (KpqC, CACR, ISO/IEC).',
   duration: '55 min',
   whyThisMatters:
     "ML-KEM, ML-DSA, and SLH-DSA are the algorithms you'll actually deploy; choosing the wrong one means migrating twice.",

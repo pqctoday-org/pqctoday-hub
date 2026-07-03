@@ -66,7 +66,7 @@ const OperationSimulator: React.FC = () => {
       </div>
       <VendorCoverageNotice migrateLayer="Security Stack" className="mb-2" />
       <p className="text-sm text-muted-foreground">
-        Compare the same key operation expressed as KMIP v2.1 XML vs. provider-specific API calls.
+        Compare the same key operation expressed as KMIP v3.0 XML vs. provider-specific API calls.
         KMIP provides a single vendor-neutral interface — each provider translates it into their
         native API.
       </p>
@@ -100,7 +100,7 @@ const OperationSimulator: React.FC = () => {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-primary uppercase tracking-wider">
-              KMIP v2.1 XML
+              KMIP v3.0 XML
             </span>
             <Button
               variant="ghost"
@@ -189,7 +189,7 @@ const PqcKeyTypeMapping: React.FC = () => {
         <h3 className="text-lg font-bold text-foreground">PQC Key Type Mapping</h3>
       </div>
       <p className="text-sm text-muted-foreground">
-        KMIP 2.1 extends the <code className="text-primary">CryptographicAlgorithm</code>{' '}
+        KMIP 3.0 extends the <code className="text-primary">CryptographicAlgorithm</code>{' '}
         enumeration with PQC key types. This table shows how each algorithm maps to KMIP enums and
         which providers support them.
       </p>

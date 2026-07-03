@@ -177,7 +177,8 @@ export const SAMPLE_INVENTORY: InventoryAsset[] = [
     quantumVulnerable: true,
     tags: ['PCI', 'FIPS-required'],
     riskScore: 4,
-    remediation: 'Swap to BC FIPS 2.0.0 (CMVP #4616); re-run ACVP tests after Sept 2025 IG update',
+    remediation:
+      'Swap to BC FIPS 2.0.0 (CMVP #4616); re-run ACVP tests when implementation guidance updates land',
     initialStage: 'remediate',
     layer: 'source',
     discoverableBy: ['sbom', 'cbomkit-source'],
@@ -247,7 +248,7 @@ export const SAMPLE_INVENTORY: InventoryAsset[] = [
     quantumVulnerable: true,
     tags: ['CNSA-scope', 'FIPS-required'],
     riskScore: 4,
-    remediation: 'Plan ML-DSA-87 dual-sign migration using Luna 7.13 PQC path',
+    remediation: 'Plan ML-DSA-87 dual-sign migration using Luna firmware 7.9+ PQC path',
     initialStage: 'score',
     layer: 'infra',
     discoverableBy: ['hsm-query', 'clm'],
@@ -269,7 +270,7 @@ export const SAMPLE_INVENTORY: InventoryAsset[] = [
     layer: 'cloud',
     discoverableBy: ['cspm', 'hsm-query'],
     management: 'kms',
-    registryKey: 'RSA-2048',
+    registryKey: 'RSA-3072',
     spki: 'SHA256:71bd…3c',
   },
   {
@@ -286,7 +287,7 @@ export const SAMPLE_INVENTORY: InventoryAsset[] = [
     layer: 'infra',
     discoverableBy: ['hsm-query'],
     management: 'hsm',
-    registryKey: 'ECDSA P-256',
+    registryKey: 'ECDSA P-384',
     spki: 'SHA256:c2b0…9a',
   },
   // A true ghost: no tool parses it (legacy appliance), surfaced only by manual/passive note.

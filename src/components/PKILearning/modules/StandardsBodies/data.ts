@@ -95,7 +95,7 @@ export const ORGANIZATIONS: OrgEntry[] = [
     keyPqcOutputs: [
       'ETSI TS 103 744 (Quantum-Safe Cryptography – normative requirements)',
       'ETSI TR 103 619 (PQC Migration Guide)',
-      'ETSI TR 103 616 (Attribute-Based Encryption)',
+      'ETSI TR 103 616 (Quantum-Safe Signatures)',
       'ETSI ISG QKD standards (QKD protocols and infrastructure)',
     ],
     libraryRefs: ['ETSI TS 103 744', 'ETSI TR 103 619'],

@@ -13,17 +13,22 @@ const read = (file: string) => readFileSync(join(POLICY_DIR, file), 'utf8')
 // Rule counts as reported by the real engine's policy loader (the source of truth).
 const EXPECTED_RULES: Record<string, number> = {
   'aead-only.yaml': 2,
-  'auto-migrate-on-use.yaml': 9,
+  // Y5: encrypt-side KEM substitutions removed (deferred to Phase 5) → 9→7.
+  // 2026-07-02: symmetric AES-256 Create default added → 8.
+  'auto-migrate-on-use.yaml': 8,
   'bsi-tr-02102.yaml': 7,
   'classical.yaml': 5,
-  'cnsa-2.0.yaml': 12,
+  // Y9: HSS + XMSS^MT removed (multi-tree not in CNSA 2.0) → 12→11.
+  'cnsa-2.0.yaml': 11,
   'deterministic-signing.yaml': 1,
   'fips-hashing.yaml': 1,
   'fips-only.yaml': 11,
   'hybrid-migration-window.yaml': 8,
   'pkcs11-mechanism-lockdown.yaml': 4,
-  'pqc-migration-2030.yaml': 10,
-  'pqc.yaml': 7,
+  // 2026-07-02: 2027–2029 hybrid composite window added → 11.
+  'pqc-migration-2030.yaml': 11,
+  // Y5: encrypt-side RSA→ML-KEM substitution removed → 7→6.
+  'pqc.yaml': 6,
   'training-permissive.yaml': 0,
 }
 

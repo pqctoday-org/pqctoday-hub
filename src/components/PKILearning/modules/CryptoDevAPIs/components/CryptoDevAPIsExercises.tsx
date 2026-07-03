@@ -35,7 +35,7 @@ export const CryptoDevAPIsExercises: React.FC<ExercisesProps> = ({
       badge: 'Architecture',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'JCA/JCE via JCProv and OpenSSL via PKCS#11 engine both achieve HSM integration, but through different paths. OpenSSL scores higher on PQC readiness (native oqsprovider), while JCA/JCE has broader Java ecosystem integration. For a Java-native stack, JCA+JCProv+BouncyCastle is optimal. For a C/C++ gateway, OpenSSL+oqsprovider is the clear winner.',
+        'JCA/JCE via JCProv and OpenSSL via PKCS#11 engine both achieve HSM integration, but through different paths. OpenSSL scores higher on PQC readiness (native ML-KEM/ML-DSA/SLH-DSA since OpenSSL 3.5), while JCA/JCE has broader Java ecosystem integration. For a Java-native stack, JCA+JCProv+BouncyCastle is optimal. For a C/C++ gateway, OpenSSL 3.5+ is the clear winner.',
       config: { step: 0 },
     },
     {

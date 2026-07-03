@@ -129,8 +129,8 @@ server {
     ssl_protocols TLSv1.3;
 
     # Pure PQC key exchange — no classical fallback (ssl_conf_command preferred for OpenSSL 3.x)
-    # MLKEM768: NIST FIPS 203 ML-KEM at 128-bit security level
-    # MLKEM1024: NIST FIPS 203 ML-KEM at 192-bit security level
+    # MLKEM768: NIST FIPS 203 ML-KEM at security Category 3 (~192-bit)
+    # MLKEM1024: NIST FIPS 203 ML-KEM at security Category 5 (~256-bit)
     # WARNING: clients without PQC support will fail to connect
     ssl_conf_command Groups MLKEM768:MLKEM1024;
 
@@ -204,8 +204,8 @@ function generateApacheConfig(mode: string): string {
     SSLProtocol TLSv1.3
 
     # Pure PQC key exchange — no classical fallback
-    # MLKEM768: FIPS 203 ML-KEM at 128-bit security level
-    # MLKEM1024: FIPS 203 ML-KEM at 192-bit security level
+    # MLKEM768: FIPS 203 ML-KEM at security Category 3 (~192-bit)
+    # MLKEM1024: FIPS 203 ML-KEM at security Category 5 (~256-bit)
     # WARNING: clients without PQC support will fail to connect
     SSLOpenSSLConfCmd Groups MLKEM768:MLKEM1024
 
@@ -278,8 +278,8 @@ global
     ssl-default-bind-ciphersuites TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256
 
     # Pure PQC key exchange — no classical fallback
-    # MLKEM768: FIPS 203 ML-KEM at 128-bit security level
-    # MLKEM1024: FIPS 203 ML-KEM at 192-bit security level
+    # MLKEM768: FIPS 203 ML-KEM at security Category 3 (~192-bit)
+    # MLKEM1024: FIPS 203 ML-KEM at security Category 5 (~256-bit)
     # WARNING: clients without PQC support will fail to connect
     ssl-default-bind-curves MLKEM768:MLKEM1024
 
@@ -346,8 +346,8 @@ example.com {
         protocols tls1.3
 
         # Pure PQC key exchange — no classical fallback
-        # mlkem768: FIPS 203 ML-KEM at 128-bit security level
-        # mlkem1024: FIPS 203 ML-KEM at 192-bit security level
+        # mlkem768: FIPS 203 ML-KEM at security Category 3 (~192-bit)
+        # mlkem1024: FIPS 203 ML-KEM at security Category 5 (~256-bit)
         # WARNING: clients without PQC support will fail to connect
         curves mlkem768 mlkem1024
     }

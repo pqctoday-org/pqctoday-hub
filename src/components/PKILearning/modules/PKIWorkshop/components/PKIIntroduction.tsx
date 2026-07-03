@@ -239,12 +239,13 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
           cryptographically relevant quantum computer could forge signatures and issue rogue
           certificates. <InlineTooltip term="NIST IR 8547">NIST IR 8547</InlineTooltip> recommends
           beginning the transition to post-quantum algorithms immediately, with{' '}
-          <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip> (NSA) setting a 2030 deadline for
-          PQC-only PKI in national security systems.
+          <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip> (NSA) requiring exclusive PQC use
+          in national security systems by 2033 for large PKI systems (2030 for software/firmware
+          signing and networking equipment).
         </p>
         <p className="text-foreground/80 leading-relaxed mb-4">
           Key migration challenges include certificate size growth (ML-DSA-87 public keys are ~2,592
-          bytes vs 294 bytes for ECDSA P-256), constrained device support, and maintaining
+          bytes vs ~91 bytes (SPKI) for ECDSA P-256), constrained device support, and maintaining
           cross-signed trust chains during the transition period. NIST SP 800-131A Rev 2 provides
           guidance on algorithm deprecation timelines.
         </p>

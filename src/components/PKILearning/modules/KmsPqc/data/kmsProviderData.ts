@@ -67,9 +67,9 @@ aws kms sign \\
     catalogName: 'Google Cloud KMS',
     pqcAlgorithms: {
       kem: [
-        { name: 'ML-KEM-768', status: 'GA' },
-        { name: 'ML-KEM-1024', status: 'GA' },
-        { name: 'X-Wing', status: 'GA — X25519+ML-KEM-768 hybrid' },
+        { name: 'ML-KEM-768', status: 'Preview' },
+        { name: 'ML-KEM-1024', status: 'Preview' },
+        { name: 'X-Wing', status: 'Preview — X25519+ML-KEM-768 hybrid' },
       ],
       sign: [
         { name: 'ML-DSA-65', status: 'Preview' },
@@ -93,7 +93,7 @@ gcloud kms keys create my-pqc-key \\
 gcloud kms keys create my-xwing-key \\
   --default-algorithm=X_WING`,
     notes:
-      'Supports ML-KEM-768, ML-KEM-1024, X-Wing hybrid KEM (X25519+ML-KEM-768), ML-DSA-65, and SLH-DSA. X-Wing (draft-connolly-cfrg-xwing-kem) is a community/IETF-CFRG design by Barbosa, Connolly, Schwabe, Westerbaan et al. — not a Google design, and distinct from the TLS group X25519MLKEM768. Powered by BoringCrypto (Google fork of BoringSSL) and Tink library. ML-KEM and X-Wing in GA; ML-DSA and SLH-DSA in preview.',
+      'Supports ML-KEM-768, ML-KEM-1024, X-Wing hybrid KEM (X25519+ML-KEM-768), ML-DSA-65, and SLH-DSA. X-Wing (draft-connolly-cfrg-xwing-kem) is a community/IETF-CFRG design by Barbosa, Connolly, Schwabe, Westerbaan et al. — not a Google design, and distinct from the TLS group X25519MLKEM768. Powered by BoringCrypto (Google fork of BoringSSL) and Tink library. All four are in Preview — ML-DSA and SLH-DSA signatures since February 2025, ML-KEM and X-Wing KEMs since September 2025; none are GA yet.',
   },
   {
     id: 'azure-kv',
@@ -119,10 +119,10 @@ az keyvault key create \\
   --size 3072
 
 // PQC: Not yet available in CLI
-// Microsoft targets CNSA 2.0 compliance by 2029
+// Microsoft targets CNSA 2.0 early adoption by 2029, complete transition by 2033
 // SymCrypt library supports ML-KEM/ML-DSA internally`,
     notes:
-      'PQC APIs available on Windows Server 2025, Windows 11, and .NET 10 via SymCrypt. Key Vault native PQC key types not yet exposed. Microsoft targets full CNSA 2.0 compliance by 2029. OCT-HSM 256-bit AES keys are quantum-resistant for symmetric operations.',
+      'PQC APIs available on Windows Server 2025, Windows 11, and .NET 10 via SymCrypt. Key Vault native PQC key types not yet exposed. Microsoft targets early quantum-safe adoption by 2029 and complete transition by 2033. OCT-HSM 256-bit AES keys are quantum-resistant for symmetric operations.',
   },
   {
     id: 'hashicorp-vault',

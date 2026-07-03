@@ -7,7 +7,7 @@ The 5G Security Architecture module teaches the three pillars of 3GPP 5G securit
 - SUCI concealment: encrypts the subscriber permanent identity (SUPI/IMSI) before transmission over the air interface, preventing IMSI catcher surveillance attacks that plagued 2G/3G/4G networks
 - Profile A (X25519): Curve25519 ECDH key agreement, 32-byte public keys, AES-128-CTR encryption, HMAC-SHA-256 integrity; quantum-vulnerable
 - Profile B (P-256): NIST secp256r1 ECDH, 65-byte uncompressed public keys, AES-128-CTR encryption, HMAC-SHA-256 integrity; quantum-vulnerable
-- Profile C (ML-KEM): lattice-based KEM (ML-KEM-768) with 1,184-byte public keys, AES-256-CTR encryption, HMAC-SHA3-256 integrity; quantum-resistant; supports both hybrid (X25519 + ML-KEM) and pure PQC modes; under 3GPP SA3 study (TR 33.841)
+- Profile C (ML-KEM): lattice-based KEM (ML-KEM-768) with 1,184-byte public keys, AES-256-CTR encryption, HMAC-SHA3-256 integrity; quantum-resistant; supports both hybrid (X25519 + ML-KEM) and pure PQC modes; under 3GPP SA3 study (TR 33.938)
 - SUCI construction pipeline: retrieve HN public key from USIM, generate ephemeral key pair, compute shared secret (ECDH or KEM encapsulation), derive encryption and MAC keys via ANSI X9.63 KDF, encrypt MSIN with AES-CTR, compute HMAC tag, assemble SUCI structure
 - 5G-AKA authentication: mutual authentication using MILENAGE algorithm (AES-128 based, five functions f1-f5 producing MAC-A, XRES, CK, IK, AK); AES-128 is quantum-resistant (Grover's algorithm only halves effective key length to 64 bits)
 - 5G key hierarchy: CK and IK feed KAUSF (anchor key) derived with HMAC-SHA-256 bound to Serving Network Name, then KAUSF to KSEAF to KAMF to KNASint/KNASenc to KgNB for radio layer protection
@@ -22,7 +22,7 @@ The 5G Security Architecture module teaches the three pillars of 3GPP 5G securit
 
 ## Related Standards
 
-- 3GPP TS 33.501 (5G security architecture), 3GPP TS 35.206 (MILENAGE algorithm), 3GPP TR 33.841 (PQC study for 5G)
+- 3GPP TS 33.501 (5G security architecture), 3GPP TS 35.206 (MILENAGE algorithm), 3GPP TR 33.938 (Study on Preparing for Transition to PQC in 3GPP)
 - 3GPP TS 23.003 (SUPI/SUCI identifier formats), 3GPP TS 31.102 (USIM application)
 - FIPS 203 (ML-KEM), NIST SP 800-56C (KDF recommendations)
 - RFC 7748 (X25519 Diffie-Hellman), ANSI X9.63 (Key Derivation Function)

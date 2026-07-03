@@ -158,7 +158,7 @@ export const CertChainBloatAnalyzer: React.FC = () => {
           className="w-full accent-primary"
         />
         <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
-          <span>2 KB (MS-IoT) / 10 KB (Class 0/1)</span>
+          <span>2 KB (Class-0 MCU budget) / 10 KB (Class 1)</span>
           <span>50 KB (Class 2)</span>
           <span>256 KB (Class 3)</span>
         </div>

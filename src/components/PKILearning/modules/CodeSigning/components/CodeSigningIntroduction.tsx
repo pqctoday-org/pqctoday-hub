@@ -445,8 +445,8 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
               <strong>Hybrid signing</strong> (also called composite signing) attaches both a
               classical and PQC signature to the same artifact. This provides backward compatibility
               &mdash; older tools verify the classical signature, while PQC-aware tools verify both.
-              Red Hat&apos;s RPM implementation uses ML-DSA-87+Ed448 composite signatures per the
-              IETF composite signatures draft.
+              Red Hat&apos;s RPM PQC signing uses OpenPGP v6 (RFC 9580, via Sequoia) with the RPM v6
+              package format.
             </p>
           </div>
         </div>
