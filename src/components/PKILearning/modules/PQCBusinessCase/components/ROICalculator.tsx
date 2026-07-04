@@ -917,6 +917,15 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
             <strong>Qualitative factors not modeled:</strong> Operational efficiency from crypto
             agility, competitive advantage from early PQC adoption, customer trust.
           </p>
+          <p>
+            <strong>Which costing model this is:</strong> a bottom-up parametric estimate (assets ×
+            unit cost) with deterministic ±30% sensitivity. It is one of several model families —
+            top-down budget-percentage anchoring, probabilistic Monte-Carlo bands, and
+            expert-elicited scenario ranges are the others. No single method is reliable for PQC
+            under deep uncertainty, so triangulate: treat agreement across two or three independent
+            estimates as confidence, and divergence as a prompt to revisit assumptions. See the
+            Learn tab&apos;s &ldquo;Choosing a Costing Model&rdquo; section for the full comparison.
+          </p>
           <p className="text-xs italic mt-2">
             Educational estimates for planning. Pair with your finance function&apos;s discounted
             cash-flow model before committing capital.
