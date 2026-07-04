@@ -44,6 +44,7 @@ export const REPORT_SECTION_ORDER: readonly ReportSectionId[] = [
   'recommendedActions',
   'migrationRoadmap',
   'migrationToolkit',
+  'vendorRisk',
   'threatLandscape',
 ]
 
@@ -67,6 +68,7 @@ export const REPORT_SECTION_TO_CSWP39: Record<ReportSectionId, ReportSectionCswp
   recommendedActions: { cswp39Step: 'prioritise', frameworkPhase: 'p4' },
   migrationRoadmap: { cswp39Step: 'implement', frameworkPhase: 'p4' },
   migrationToolkit: { cswp39Step: 'implement', frameworkPhase: 'p5' },
+  vendorRisk: { cswp39Step: 'implement', frameworkPhase: 'p5' },
 }
 
 /** Inverse: each CSWP.39 step → list of report section IDs that contribute. */
@@ -90,5 +92,6 @@ export const REPORT_SECTION_LABELS: Record<ReportSectionId, string> = {
   recommendedActions: 'Recommended Actions',
   migrationRoadmap: 'Migration Roadmap',
   migrationToolkit: 'Migration Toolkit',
+  vendorRisk: 'Third-Party & Vendor PQC Risk',
   threatLandscape: 'Industry Threat Landscape',
 }
