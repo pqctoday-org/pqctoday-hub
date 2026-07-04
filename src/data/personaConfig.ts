@@ -547,6 +547,7 @@ export type ReportSectionId =
   | 'executiveSummary'
   | 'assessmentProfile'
   | 'hndlHnfl'
+  | 'discovery'
   | 'algorithmMigration'
   | 'complianceImpact'
   | 'recommendedActions'
@@ -570,6 +571,7 @@ const REPORT_SECTION_DEFAULTS: Record<ReportSectionId, ReportSectionConfig> = {
   executiveSummary: { state: 'open' },
   assessmentProfile: { state: 'collapsed' },
   hndlHnfl: { state: 'open' },
+  discovery: { state: 'collapsed' },
   algorithmMigration: { state: 'open' },
   complianceImpact: { state: 'open' },
   recommendedActions: { state: 'open' },
