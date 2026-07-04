@@ -183,9 +183,9 @@ describe('ReportContent', () => {
           screen.getByText('Architect-specific take on this exact result.')
         ).toBeInTheDocument()
         expect(screen.getByText(/Technology sector.*65\/100/)).toBeInTheDocument()
-        expect(
-          screen.queryAllByText('Architect-specific take on this exact result.')
-        ).toHaveLength(1)
+        expect(screen.queryAllByText('Architect-specific take on this exact result.')).toHaveLength(
+          1
+        )
       } finally {
         usePersonaStore.getState().setPersona(null)
       }

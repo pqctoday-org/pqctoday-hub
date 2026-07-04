@@ -18,9 +18,7 @@ describe('REPORT_SECTION_ORDER stays in sync with the section maps', () => {
   })
 
   it('matches REPORT_SECTION_TO_CSWP39 exactly (same set, order-independent)', () => {
-    expect([...REPORT_SECTION_ORDER].sort()).toEqual(
-      Object.keys(REPORT_SECTION_TO_CSWP39).sort()
-    )
+    expect([...REPORT_SECTION_ORDER].sort()).toEqual(Object.keys(REPORT_SECTION_TO_CSWP39).sort())
   })
 
   it('matches REPORT_SECTION_LABELS exactly (same set, order-independent)', () => {

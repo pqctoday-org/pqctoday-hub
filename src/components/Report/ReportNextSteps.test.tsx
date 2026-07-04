@@ -42,9 +42,27 @@ describe('ReportNextSteps — tailored by result, not just persona', () => {
     renderSteps(
       makeResult({
         algorithmMigrations: [
-          { classical: 'a', quantumVulnerable: true, replacement: 'x', urgency: 'immediate', notes: '' },
-          { classical: 'b', quantumVulnerable: true, replacement: 'x', urgency: 'immediate', notes: '' },
-          { classical: 'c', quantumVulnerable: true, replacement: 'x', urgency: 'immediate', notes: '' },
+          {
+            classical: 'a',
+            quantumVulnerable: true,
+            replacement: 'x',
+            urgency: 'immediate',
+            notes: '',
+          },
+          {
+            classical: 'b',
+            quantumVulnerable: true,
+            replacement: 'x',
+            urgency: 'immediate',
+            notes: '',
+          },
+          {
+            classical: 'c',
+            quantumVulnerable: true,
+            replacement: 'x',
+            urgency: 'immediate',
+            notes: '',
+          },
         ],
       })
     )
@@ -55,7 +73,9 @@ describe('ReportNextSteps — tailored by result, not just persona', () => {
     renderSteps(
       makeResult({
         riskLevel: 'critical',
-        complianceImpacts: [{ framework: 'CNSA 2.0', requiresPQC: true, deadline: '2030', notes: '' }],
+        complianceImpacts: [
+          { framework: 'CNSA 2.0', requiresPQC: true, deadline: '2030', notes: '' },
+        ],
       })
     )
     expect(leadTitle()).toMatch(/Open the executive tools/)

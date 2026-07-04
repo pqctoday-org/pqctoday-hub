@@ -64,8 +64,8 @@ describe('ReportToc — mobile dropdown tracks scroll position', () => {
     })
     // Desktop rail button for the active section carries the active styling class.
     const activeButtons = screen.getAllByText('Section A')
-    expect(activeButtons.some((el) => el.closest('button')?.className.includes('text-primary'))).toBe(
-      true
-    )
+    expect(
+      activeButtons.some((el) => el.closest('button')?.className.includes('text-primary'))
+    ).toBe(true)
   })
 })

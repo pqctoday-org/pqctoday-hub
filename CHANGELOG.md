@@ -26,6 +26,41 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.9.0] - 2026-07-04
+
+A business-case and report release: PQC cost models get an honest rebuild with a new side-by-side comparison tool, the exec-tour's financial docs are now generated from that same math, and the assessment report gains discovery, vendor-risk, and program-ownership sections alongside several accuracy corrections.
+
+### Added
+
+- **Compare six PQC cost-estimation methods side by side** [view:/learn] [view:/business] [persona:executive]: a new Cost Model Explorer runs one scenario through parametric, bottom-up, Monte-Carlo, judgemental, analogical, and risk/ALE costing families at once, including a live seeded Monte-Carlo simulation, so you can see how far the methods diverge instead of trusting a single number.
+- **A "Choosing a Costing Model" methodology guide** [view:/learn]: explains the six cost-model families with authoritative anchors (migration timelines by organization size, Mosca's inequality, the OMB $7.1B federal estimate) and two new peer-reviewed/preprint library references.
+- **Search and filter the Roadmap Builder's regulatory deadline list** [view:/business] [persona:executive]: the 82-entry deadline panel now has a search box and a country filter instead of one unsorted wall of chips.
+- **A program-level ownership block in the assessment report** [view:/report] [persona:executive]: capture the program owner, budget owner, and accountable executive — the accountability level boards actually ask about, distinct from the per-finding "Responsible" column.
+- **A cryptographic discovery / inventory section in the report** [view:/report]: shows your self-reported algorithms (or coarse categories if unknown) as a starting inventory, explicitly labelled "not a scan," with links to the CBOM learning module and Migrate's inventory tooling.
+- **A third-party & vendor PQC risk section in the report** [view:/report]: lists the catalog products matched to your industry/infrastructure profile, their vendor, and that vendor's tracked PQC commitment, framed by your assessed vendor-dependency model.
+
+### Changed
+
+- **Exec-tour and board-deck financial figures are now generated from the same math as the real tools** [view:/simulation] [persona:executive]: the ROI, breach-cost, cost-of-inaction, and board-pitch numbers shown in the narrated executive walkthrough are computed live from shared calculations rather than hand-authored estimates, so they can no longer drift from what you'd get running the tools yourself.
+- **Breach Simulator, Cost of Inaction Analyzer, and Cost Model Explorer are now full Command Center tools** [view:/business] [view:/simulation]: reachable directly from the Command Center and completable as simulation steps, not just standalone workshop exercises.
+- **Program Charter and Initial Scoping Assessment now match the migration framework more completely** [view:/learn] [persona:executive]: the charter adds purpose/objectives, scope, success criteria, and escalation triggers, offers all 8 steering-committee seats, and models a three-tier decision cadence (PMO/SteerCo/Board); scoping now captures a per-system priority tier and ownership rather than a flat list.
+- **Quick assessments no longer silently upgrade to "comprehensive"** [view:/assess]: the quick track was collecting two fields that flipped an internal completeness flag, so it was mislabelled and never showed the upgrade nudge or section locks — the quick path is now genuinely lighter, and report locks reflect the assessment mode you actually chose.
+- **The report's table of contents now covers every section** [view:/report]: the ROI Calculator, progress-over-time, and workforce-gap sections are now reachable from both the desktop rail and mobile menu, and the mobile section-jump menu now tracks your scroll position like the desktop rail does.
+- **The report's persona-aware summary appears once, at the top** [view:/report]: the "what this means for you" narrative previously appeared twice with two different framings; it now lives solely in the top verdict block and reflects your actual result rather than a static per-persona blurb.
+- **The report footer's next-step suggestions now reflect your actual result** [view:/report]: previously ordered by persona alone, the suggested next step now leads with the destination your specific findings point to (e.g. Migrate for a vulnerable algorithm, the executive tools for a hard compliance deadline).
+
+### Fixed
+
+- **The Breach Scenario Simulator's cost model was inflated roughly 2.5–10x** [view:/business] [view:/learn]: it was double-counting reputational cost and the quantum-risk multiplier, and its industry breach-cost table had drifted from the source figures; rebuilt on a single documented baseline.
+- **The Cost of Inaction Analyzer's regulatory penalty never actually applied**, and quantum risk was double-counted when fed from the Breach Simulator [view:/business] [view:/learn]: both calculation bugs are fixed, and "migrate now" no longer shows zero residual risk.
+- **The ROI Calculator now cross-checks its estimate against an independent method** [view:/business]: rather than presenting one bottom-up number as certain, it reconciles it against an assessment-derived estimate and flags whether the two agree.
+- **Removed a fabricated standards quote and an overstated outcome claim from the Roadmap Builder** [view:/business].
+- **Report's Share, Print, and Board-pack buttons now give honest feedback** [view:/report]: they previously could fail or succeed silently; the Download PDF button is relabelled "Print / Save as PDF" to match what it actually does.
+- **The report's harvest-now-decrypt-later narrative no longer conflates your regulatory migration deadline with the separate quantum-computer arrival estimate** [view:/report]: the two drivers are now named distinctly wherever the deadline is shown.
+- **The Framework Risk Lens panel was silently blank on every comprehensive assessment** [view:/report] [view:/simulation]: a scoring bug left it uncomputed on that path; now fixed.
+- **An inverted-polarity bug in the organizational-readiness score could show the best-prepared organizations as highest-risk** in the QRA heatmap and framework-feasibility tile [view:/report]: corrected across scoring, display, and stored results.
+- **The example report shown to first-time visitors used invalid data tokens and rendered as a near-empty report** [view:/report]: now uses valid tokens and shows a realistic example.
+
 ## [4.8.0] - 2026-07-03
 
 A crypto-agility and business-tools release: the CACP playground gains scripted policy test-scenarios and a workbench picker, a persona deep-link bug is fixed, and 30 Command Center business tools are corrected after a fresh accuracy audit.

@@ -160,8 +160,8 @@ export function VendorRiskSection({
           </div>
         ) : (
           <p className="text-xs text-muted-foreground">
-            No catalog products matched your industry and infrastructure yet — add
-            infrastructure details in the assessment for tailored vendor matches.
+            No catalog products matched your industry and infrastructure yet — add infrastructure
+            details in the assessment for tailored vendor matches.
           </p>
         )}
       </div>
