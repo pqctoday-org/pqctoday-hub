@@ -45,6 +45,7 @@ const ALL_ARTIFACT_TYPES: ExecutiveDocumentType[] = [
   'crqc-scenario',
   'breach-scenario',
   'cost-of-inaction',
+  'cost-model-comparison',
   'supply-chain-matrix',
   'deployment-playbook',
   'crypto-architecture',

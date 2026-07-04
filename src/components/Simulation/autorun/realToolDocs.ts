@@ -16,6 +16,7 @@ import {
   deriveBreachDoc,
   deriveInactionDoc,
   deriveBoardDeck,
+  deriveExplorerDoc,
 } from './derivedFinancialDocs'
 import {
   buildMarkdown as buildProgramCharter,
@@ -270,6 +271,7 @@ export const REAL_DOC_GENERATORS: Partial<
   'roi-model': (sector) => deriveRoiDoc(sector),
   'breach-scenario': (sector) => deriveBreachDoc(sector),
   'cost-of-inaction': (sector) => deriveInactionDoc(sector),
+  'cost-model-comparison': (sector) => deriveExplorerDoc(sector),
   'board-deck': (sector) => deriveBoardDeck(sector),
   'program-charter': (sector) => ({
     title: 'Program Charter',

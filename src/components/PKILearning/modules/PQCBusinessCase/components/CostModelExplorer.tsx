@@ -2,6 +2,8 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react'
 import { Info, Play, Sliders } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
+import { useModuleStore } from '@/store/useModuleStore'
 import {
   SIM_CONSTANTS,
   type CostModelInputs,
@@ -35,6 +37,7 @@ interface MethodRow {
 }
 
 export const CostModelExplorer: React.FC = () => {
+  const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
   const [inputs, setInputs] = useState<CostModelInputs>({
     systems: 250,
     itBudgetAnnual: 50_000_000,
@@ -46,6 +49,21 @@ export const CostModelExplorer: React.FC = () => {
     setInputs((prev) => ({ ...prev, [key]: value }))
 
   const comparison = useMemo(() => compareCostModels(inputs, { seed: 42 }), [inputs])
+
+  const exportMarkdown = useMemo(() => {
+    let md = `# Cost Model Comparison\n\n`
+    md += `**Scenario:** ${inputs.systems} systems · ${formatCurrency(inputs.itBudgetAnnual)} IT budget · ${inputs.complexity.toFixed(1)}× complexity · ${inputs.horizonYears}yr\n\n`
+    md += `| Method | Estimate |\n|--------|----------|\n`
+    md += `| Parametric (budget-anchored) | ${formatCurrency(comparison.parametric)} |\n`
+    md += `| Bottom-up (activity-based) | ${formatCurrency(comparison.bottomUp)} |\n`
+    md += `| Probabilistic (Monte Carlo P50) | ${formatCurrency(comparison.monteCarlo.p50)} (P10–P90 ${formatCurrency(comparison.monteCarlo.p10)}–${formatCurrency(comparison.monteCarlo.p90)}) |\n`
+    md += `| Judgemental (scenario expected) | ${formatCurrency(comparison.scenario.expected)} |\n`
+    md += `| Analogical (historical) | ${formatCurrency(comparison.analogical)} |\n\n`
+    md += `**Spread across methods:** ${comparison.spreadRatio.toFixed(1)}×\n\n`
+    md += `**Cost of inaction (reference, not a migration cost):** ${formatCurrency(comparison.aleReference)}\n\n`
+    md += `*Illustrative — the point is how far the methods diverge on identical inputs; triangulate rather than trust any single one.*\n`
+    return md
+  }, [inputs, comparison])
 
   const rows: MethodRow[] = useMemo(
     () => [
@@ -434,6 +452,29 @@ export const CostModelExplorer: React.FC = () => {
           the board, with the humility this explorer just demonstrated.
         </p>
       </div>
+
+      <ExportableArtifact
+        title="Cost Model Comparison — Export"
+        exportData={exportMarkdown}
+        filename="cost-model-comparison"
+        formats={['markdown', 'pdf', 'docx']}
+        onExport={() =>
+          addExecutiveDocument({
+            id: `cost-model-comparison-${Date.now()}`,
+            moduleId: 'pqc-business-case',
+            type: 'cost-model-comparison',
+            title: `Cost Model Comparison — ${new Date().toLocaleDateString()}`,
+            data: exportMarkdown,
+            inputs,
+            createdAt: Date.now(),
+          })
+        }
+      >
+        <p className="text-sm text-muted-foreground">
+          Export the comparison as markdown, PDF, or DOCX — also saved to your Command Center Risk
+          Artifacts.
+        </p>
+      </ExportableArtifact>
 
       <p className="text-[10px] italic text-muted-foreground/70">
         Illustrative simulation for building intuition. Figures derive from the sliders above and

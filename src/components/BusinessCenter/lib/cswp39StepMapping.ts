@@ -68,6 +68,7 @@ export const PILLAR_FOR_TYPE: Record<ExecutiveDocumentType, PillarKey> = {
   'crqc-scenario': 'risk',
   'breach-scenario': 'risk',
   'cost-of-inaction': 'risk',
+  'cost-model-comparison': 'risk',
   'audit-checklist': 'compliance',
   'compliance-checklist': 'compliance',
   'compliance-timeline': 'compliance',
