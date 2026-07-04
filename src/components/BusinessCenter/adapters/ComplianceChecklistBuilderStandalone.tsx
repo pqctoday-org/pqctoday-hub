@@ -13,21 +13,78 @@
  * - Persona/Assess: `industry` + `country` → Cross-cutting context section
  */
 import React, { useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { ExternalLink } from 'lucide-react'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useModuleStore } from '@/store/useModuleStore'
 import { complianceFrameworks } from '@/data/complianceData'
+import { Button } from '@/components/ui/button'
 import { ArtifactBuilder } from '@/components/PKILearning/common/executive'
 import type { ArtifactSection, ArtifactField } from '@/components/PKILearning/common/executive'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
+import { rowsToCsv } from '@/services/export/csvExport'
 
-const STANDARD_CHECKLIST_ITEMS: { value: string; label: string }[] = [
-  { value: 'inventory', label: 'Crypto inventory mapped to this framework' },
-  { value: 'gap-analysis', label: 'Gap analysis vs framework requirements completed' },
-  { value: 'pqc-dependency', label: 'Identified PQC dependency (KEM / signature)' },
-  { value: 'roadmap', label: 'Migration roadmap aligned with framework deadlines' },
-  { value: 'evidence', label: 'Evidence pack (CMVP / ACVP / CC certs) collected' },
-  { value: 'attestation', label: 'Attestation / sign-off from framework owner' },
+interface ChecklistItem {
+  value: string
+  label: string
+  description: string
+  reference: string
+}
+
+const STANDARD_CHECKLIST_ITEMS: ChecklistItem[] = [
+  {
+    value: 'inventory',
+    label: 'Crypto inventory mapped to this framework',
+    description:
+      'Cryptographic assets in scope for this framework (algorithms, protocols, certificates, libraries) are identified and mapped to the requirement.',
+    reference: 'NIST CSWP.39 §5 (asset-centric crypto inventory)',
+  },
+  {
+    value: 'gap-analysis',
+    label: 'Gap analysis vs framework requirements completed',
+    description:
+      "Current cryptographic posture is compared against the framework's requirements to identify enforcement gaps in tooling, configuration, and policy.",
+    reference: 'NIST CSWP.39 §5.2 (Crypto Security Policy Enforcement)',
+  },
+  {
+    value: 'pqc-dependency',
+    label: 'Identified PQC dependency (KEM / signature)',
+    description:
+      'Algorithms in scope are flagged where the framework requires, or will require, a post-quantum key-establishment or signature replacement.',
+    reference: 'NIST CSWP.39 §5.1 (standards, regulations, and mandates)',
+  },
+  {
+    value: 'roadmap',
+    label: 'Migration roadmap aligned with framework deadlines',
+    description:
+      "A migration plan exists with milestones that reach the framework's binding deadline, not just a directional intent.",
+    reference: 'NIST CSWP.39 §5.1 (standards, regulations, and mandates)',
+  },
+  {
+    value: 'evidence',
+    label: 'Evidence pack (CMVP / ACVP / CC certs) collected',
+    description:
+      'Validation evidence — CMVP module certificates, ACVP algorithm test results, or Common Criteria certification — is collected to show the claimed algorithm or module is actually validated.',
+    reference: 'NIST CSWP.39 §5.1 (CAVP/CMVP as a validation prerequisite)',
+  },
+  {
+    value: 'attestation',
+    label: 'Attestation / sign-off from framework owner',
+    description:
+      'A named, accountable owner for this framework has reviewed and signed off on the checklist state.',
+    reference: 'NIST CSWP.39 §5.1 (standards, regulations, and mandates)',
+  },
 ]
+
+/** Flatten each item's description + reference into the option label — the
+ *  generic ArtifactBuilder checklist renderer only displays `option.label`.
+ *  Mirrors AuditReadinessChecklist's `toOptions`. */
+function toChecklistOptions(items: ChecklistItem[]): { value: string; label: string }[] {
+  return items.map((i) => ({
+    value: i.value,
+    label: `${i.label} — ${i.description} [${i.reference}]`,
+  }))
+}
 
 function frameworkSectionId(id: string): string {
   return `fw-${id}`
@@ -78,16 +135,7 @@ function buildSections(opts: {
   }
 
   if (frameworks.length === 0) {
-    return [
-      contextSection,
-      {
-        id: 'no-frameworks',
-        title: 'Frameworks',
-        description:
-          'Star at least one framework on the /compliance page to populate this checklist.',
-        fields: [],
-      },
-    ]
+    return [contextSection]
   }
 
   const fwSections: ArtifactSection[] = frameworks.map((fw) => {
@@ -96,7 +144,7 @@ function buildSections(opts: {
       id: 'controls',
       label: 'Controls',
       type: 'checklist',
-      options: STANDARD_CHECKLIST_ITEMS,
+      options: toChecklistOptions(STANDARD_CHECKLIST_ITEMS),
       defaultValue: isPqcRequired ? ['pqc-dependency'] : [],
     }
     const ownerField: ArtifactField = {
@@ -171,7 +219,7 @@ function renderPreview(
     lines.push('- **Controls:**')
     for (const item of STANDARD_CHECKLIST_ITEMS) {
       const checked = controls.includes(item.value) ? '[x]' : '[ ]'
-      lines.push(`  - ${checked} ${item.label}`)
+      lines.push(`  - ${checked} **${item.label}** — ${item.description} _[${item.reference}]_`)
     }
     if (notes) lines.push(`\n${notes}`)
     lines.push('')
@@ -179,15 +227,47 @@ function renderPreview(
 
   lines.push('---\n')
   lines.push(
-    '*Aligned to NIST CSWP 39 §5.1 - Cryptographic Standards, Regulations, and Mandates. https://doi.org/10.6028/NIST.CSWP.39*\n'
+    '*Aligned to NIST CSWP 39 §5.1 - Cryptographic Standards, Regulations, and Mandates. https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
   )
 
   return lines.join('\n')
 }
 
+/** Structured CSV mirror of `renderPreview` — one row per framework × control,
+ *  built with `rowsToCsv` so `.csv` opens as real spreadsheet rows. Mirrors
+ *  AuditReadinessChecklist's `renderAuditCsv` / ComplianceTimelineBuilder's
+ *  section-labelled CSV export. */
+function renderCsv(
+  data: Record<string, Record<string, string | string[]>>,
+  frameworks: typeof complianceFrameworks
+): string {
+  const rows: (string | number)[][] = []
+  rows.push(['PQC Compliance Checklist'])
+  rows.push(['Framework', 'Deadline', 'Owner', 'Control', 'Checked', 'Reference'])
+  for (const fw of frameworks) {
+    const sec = data[frameworkSectionId(fw.id)]
+    if (!sec) continue
+    const controls = Array.isArray(sec.controls) ? sec.controls : []
+    const owner = (sec.owner as string) || ''
+    const deadline = (sec.deadline as string) || fw.deadline || ''
+    for (const item of STANDARD_CHECKLIST_ITEMS) {
+      rows.push([
+        fw.label,
+        deadline,
+        owner,
+        item.label,
+        controls.includes(item.value) ? 'Yes' : 'No',
+        item.reference,
+      ])
+    }
+  }
+  return rowsToCsv(rows)
+}
+
 export const ComplianceChecklistBuilderStandalone: React.FC = () => {
   const { myFrameworks, industry, country, assessmentResult } = useExecutiveModuleData()
   const { addExecutiveDocument } = useModuleStore()
+  const navigate = useNavigate()
   const [seedCleared, setSeedCleared] = React.useState(false)
 
   const trackedFrameworks = useMemo(() => {
@@ -252,9 +332,16 @@ export const ComplianceChecklistBuilderStandalone: React.FC = () => {
     [trackedFrameworks]
   )
 
+  const csvRenderer = React.useCallback(
+    (data: Record<string, Record<string, string | string[]>>) => renderCsv(data, trackedFrameworks),
+    [trackedFrameworks]
+  )
+
   // Re-mount the inner builder when sections change, so defaultValues take effect.
   // ArtifactBuilder seeds state from sections only on first render.
   const builderKey = `${trackedFrameworks.map((f) => f.id).join(',')}|${seedCleared ? 'cleared' : 'seeded'}`
+
+  const hasFrameworks = !seedCleared && trackedFrameworks.length > 0
 
   return (
     <div className="space-y-4">
@@ -264,6 +351,18 @@ export const ComplianceChecklistBuilderStandalone: React.FC = () => {
           onClear={() => setSeedCleared(true)}
         />
       )}
+      {!hasFrameworks && (
+        <div className="glass-panel p-6 text-center space-y-3">
+          <p className="text-sm text-muted-foreground">
+            Star at least one framework on the Compliance page to add a per-framework control
+            checklist here — the Scope &amp; Context section below still works on its own.
+          </p>
+          <Button variant="gradient" size="sm" onClick={() => navigate('/compliance')}>
+            Go to /compliance
+            <ExternalLink size={12} className="ml-1.5" />
+          </Button>
+        </div>
+      )}
       <ArtifactBuilder
         key={builderKey}
         title="PQC Compliance Checklist"
@@ -271,8 +370,9 @@ export const ComplianceChecklistBuilderStandalone: React.FC = () => {
         sections={sections}
         onExport={handleExport}
         exportFilename="pqc-compliance-checklist"
-        exportFormats={['markdown', 'pdf']}
+        exportFormats={['markdown', 'csv', 'pdf']}
         renderPreview={previewRenderer}
+        renderCsv={csvRenderer}
       />
     </div>
   )

@@ -15,9 +15,11 @@
  */
 import React, { useMemo, useState } from 'react'
 import { isAutoRunFillActive } from '@/components/Simulation/autorun/autoRunFill'
-import { ScrollText } from 'lucide-react'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
+import { ScrollText, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useModuleStore } from '@/store/useModuleStore'
 import { ROLE_CROSSWALK, type FrameworkRoleId } from '@/data/roleCrosswalk'
@@ -27,10 +29,46 @@ import { FRAMEWORK_PHASES } from '@/data/frameworkPhases'
 const CADENCE_OPTIONS = ['Weekly', 'Bi-weekly', 'Monthly', 'Quarterly'] as const
 type Cadence = (typeof CADENCE_OPTIONS)[number]
 
+/** The framework's eight Phase-0 workstreams (Applied Quantum Framework v2.1,
+ *  Activity 0.3 — Establish Governance Structure). One lead per workstream,
+ *  reporting weekly to the QRPM. */
+interface Workstream {
+  id: string
+  label: string
+  detail: string
+}
+
+export const WORKSTREAMS: Workstream[] = [
+  { id: 'inventory-discovery', label: 'Inventory & Discovery', detail: 'Crypto-BOM ownership' },
+  { id: 'network-tls-vpn', label: 'Network & TLS/VPN', detail: 'Hybrid rollouts' },
+  { id: 'pki-code-signing', label: 'PKI & Code Signing', detail: 'Roots, issuers, toolchains' },
+  {
+    id: 'apps-platforms',
+    label: 'Applications & Platforms',
+    detail: 'Libraries, service mesh, cloud',
+  },
+  {
+    id: 'embedded-iot-ot',
+    label: 'Embedded / IoT / OT',
+    detail: 'Gateways, compensating controls',
+  },
+  {
+    id: 'policy-compliance-procurement',
+    label: 'Policy / Compliance / Procurement',
+    detail: 'Standards, contract clauses',
+  },
+  { id: 'vendor-orchestration', label: 'Vendor Orchestration', detail: 'Roadmaps, SLAs' },
+  {
+    id: 'education-change-mgmt',
+    label: 'Education & Change Management',
+    detail: 'Training, communications',
+  },
+]
+
 /** Phase-0 owning roles, surfaced as the suggested SteerCo seat list. The
  *  framework names QRPM + Executive Sponsor as the Phase-0 leads; the broader
  *  set lets the user staff a full committee from one source of truth. */
-const STEERCO_ROLE_IDS: FrameworkRoleId[] = [
+export const STEERCO_ROLE_IDS: FrameworkRoleId[] = [
   'exec-sponsor',
   'qrpm',
   'crypto-architect',
@@ -38,7 +76,7 @@ const STEERCO_ROLE_IDS: FrameworkRoleId[] = [
   'pmo-analyst',
 ]
 
-interface CharterState {
+export interface CharterState {
   programName: string
   sponsorName: string
   sponsorTitle: string
@@ -49,11 +87,13 @@ interface CharterState {
   budgetHorizonYears: string
   steerCo: Record<FrameworkRoleId, boolean>
   signOffDate: string
+  workstreams: Record<string, boolean>
+  riskAppetiteStatement: string
 }
 
 const todayIso = (): string => new Date().toISOString().slice(0, 10)
 
-function buildMarkdown(s: CharterState): string {
+export function buildMarkdown(s: CharterState): string {
   const lines: string[] = []
   const programName = s.programName.trim() || 'Post-Quantum Cryptography Migration Program'
   lines.push(`# Program Charter — ${programName}`)
@@ -105,17 +145,37 @@ function buildMarkdown(s: CharterState): string {
   lines.push(`- **Planning horizon:** ${s.budgetHorizonYears.trim() || '_(TBD)_'} years`)
   lines.push('')
 
+  lines.push('## 5. Workstreams')
+  lines.push('')
+  const activeWorkstreams = WORKSTREAMS.filter((w) => s.workstreams[w.id])
+  if (activeWorkstreams.length === 0) {
+    lines.push('_No workstreams selected._')
+  } else {
+    lines.push('| Workstream | Focus |')
+    lines.push('|---|---|')
+    for (const w of activeWorkstreams) {
+      lines.push(`| ${w.label} | ${w.detail} |`)
+    }
+  }
+  lines.push('')
+
+  lines.push('## 6. Risk appetite statement')
+  lines.push('')
+  lines.push(s.riskAppetiteStatement.trim() || '_(not yet drafted)_')
+  lines.push('')
+
   lines.push('---')
   lines.push('')
   lines.push(
     '*Aligned to NIST CSWP 39 §5 (Crypto Agility Strategic Plan — governance) and the ' +
-      'Applied Quantum Phase 0 Executive Mandate. https://doi.org/10.6028/NIST.CSWP.39*'
+      'Applied Quantum Phase 0 Executive Mandate. https://doi.org/10.6028/NIST.CSWP.39-upd1*'
   )
   return lines.join('\n')
 }
 
 export const ProgramCharter: React.FC = () => {
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
+  const savedInputs = useSavedArtifactInputs<CharterState>('program-charter')
   const [state, setState] = useState<CharterState>(() => {
     const base: CharterState = {
       programName: '',
@@ -137,19 +197,32 @@ export const ProgramCharter: React.FC = () => {
         'ot-specialist': false,
       },
       signOffDate: todayIso(),
+      workstreams: Object.fromEntries(WORKSTREAMS.map((w) => [w.id, false])),
+      riskAppetiteStatement: '',
     }
     // Auto-run demo fill: role titles (no invented names) + framework-anchored
     // illustrative budget (Phase 0 activity 0.2 cost range).
-    if (!isAutoRunFillActive()) return base
-    return {
-      ...base,
-      programName: 'Post-Quantum Cryptography Migration Program',
-      sponsorName: 'Chief Information Security Officer',
-      sponsorTitle: 'Executive Sponsor',
-      qrpmName: 'Head of Cryptographic Engineering',
-      budgetYear1: '$1.5M–$4M — discovery, tooling, 2–3 hybrid pilots, training',
-      budgetMultiYear: 'Phased multi-year program aligned to infrastructure refresh cycles',
+    if (isAutoRunFillActive()) {
+      return {
+        ...base,
+        programName: 'Post-Quantum Cryptography Migration Program',
+        sponsorName: 'Chief Information Security Officer',
+        sponsorTitle: 'Executive Sponsor',
+        qrpmName: 'Head of Cryptographic Engineering',
+        budgetYear1: '$1.5M–$4M — discovery, tooling, 2–3 hybrid pilots, training',
+        budgetMultiYear: 'Phased multi-year program aligned to infrastructure refresh cycles',
+      }
     }
+    // Restore the user's last-saved charter so it round-trips across visits.
+    if (savedInputs) {
+      return {
+        ...base,
+        ...savedInputs,
+        steerCo: { ...base.steerCo, ...savedInputs.steerCo },
+        workstreams: { ...base.workstreams, ...savedInputs.workstreams },
+      }
+    }
+    return base
   })
 
   const set = <K extends keyof CharterState>(key: K, value: CharterState[K]) =>
@@ -159,6 +232,12 @@ export const ProgramCharter: React.FC = () => {
     setState((prev) => ({
       ...prev,
       steerCo: { ...prev.steerCo, [id]: !prev.steerCo[id] },
+    }))
+
+  const toggleWorkstream = (id: string) =>
+    setState((prev) => ({
+      ...prev,
+      workstreams: { ...prev.workstreams, [id]: !prev.workstreams[id] },
     }))
 
   const exportMarkdown = useMemo(() => buildMarkdown(state), [state])
@@ -177,6 +256,34 @@ export const ProgramCharter: React.FC = () => {
           </p>
         </div>
       </header>
+
+      <section className="glass-panel border border-border rounded-lg p-3">
+        <div className="flex items-start gap-2 text-xs text-foreground/80">
+          <Info size={14} className="text-primary shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <p>
+              <span className="font-semibold text-foreground">
+                Gate {FRAMEWORK_PHASES.p0.gate?.id ?? 'G0'}:
+              </span>{' '}
+              {FRAMEWORK_PHASES.p0.gate?.criterion ?? 'Mandate signed'} — sign-off authority:{' '}
+              {FRAMEWORK_PHASES.p0.gate?.authority ?? 'Executive Sponsor'}.
+            </p>
+            <p>
+              Aligned to{' '}
+              <a
+                href="https://doi.org/10.6028/NIST.CSWP.39-upd1"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                NIST CSWP 39
+              </a>{' '}
+              §5 (Crypto Agility Strategic Plan — governance) and the Applied Quantum Phase 0
+              Executive Mandate.
+            </p>
+          </div>
+        </div>
+      </section>
 
       <section className="glass-panel border border-border rounded-lg p-4 space-y-3">
         <h3 className="text-sm font-semibold text-foreground">Program</h3>
@@ -365,6 +472,72 @@ export const ProgramCharter: React.FC = () => {
             />
           </div>
         </div>
+        <div className="flex items-start gap-2 text-xs text-muted-foreground bg-muted/40 rounded p-2.5">
+          <Info size={12} className="text-primary shrink-0 mt-0.5" />
+          <p>
+            <span className="font-medium text-foreground">
+              Cost-driver taxonomy (Framework Activity 0.2c):
+            </span>{' '}
+            discovery &amp; inventory tooling; cryptographic engineering labor (typically the
+            largest line); vendor PQC licensing &amp; upgrades; HSM/hardware refresh (firmware
+            upgrades alone $50K&ndash;$500K+ depending on module count); PKI modernization;
+            performance &amp; capacity uplift; testing environments; program management overhead.{' '}
+            <span className="font-medium text-foreground">Reference program economics:</span> a
+            large-enterprise Year 1 foundation typically runs $1.5M&ndash;$4M (varies by estate
+            complexity); a major global telco&apos;s decade-scale program has run on the order of
+            $300M&ndash;$500M, peaking around 50 FTEs (illustrative anchors, not a quote for your
+            organization).
+          </p>
+        </div>
+      </section>
+
+      <section className="glass-panel border border-border rounded-lg p-4 space-y-3">
+        <h3 className="text-sm font-semibold text-foreground">
+          Workstreams (optional) · {WORKSTREAMS.filter((w) => state.workstreams[w.id]).length}{' '}
+          selected
+        </h3>
+        <p className="text-xs text-muted-foreground">
+          The framework's eight Phase-0 workstreams (Activity 0.3). Select the ones this charter
+          stands up leads for now — the rest can be added as the program scales.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {WORKSTREAMS.map((w) => {
+            const on = state.workstreams[w.id]
+            return (
+              <Button
+                key={w.id}
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => toggleWorkstream(w.id)}
+                aria-pressed={on}
+                className={`h-auto justify-start px-3 py-1.5 rounded-md border text-left text-[11px] font-normal transition-all ${
+                  on
+                    ? 'border-primary/40 bg-primary/10 text-primary'
+                    : 'border-border text-muted-foreground hover:bg-muted/50'
+                }`}
+              >
+                <span className="font-semibold">{w.label}</span>
+                <span className="block text-muted-foreground">{w.detail}</span>
+              </Button>
+            )
+          })}
+        </div>
+        <div className="block">
+          <label
+            htmlFor="charter-risk-appetite"
+            className="text-xs font-medium text-muted-foreground"
+          >
+            Risk appetite statement (optional)
+          </label>
+          <Textarea
+            id="charter-risk-appetite"
+            className="mt-1 min-h-[80px] resize-y"
+            value={state.riskAppetiteStatement}
+            onChange={(e) => set('riskAppetiteStatement', e.target.value)}
+            placeholder="e.g. HNDL: ≤20% of >10-year secrecy data quantum-vulnerable by end of 2027, 0% by end of 2029. TNFL: all production software/firmware signing on NIST-approved quantum-resistant signatures by end of 2027, all CA signing keys PQC-capable by end of 2029."
+          />
+        </div>
       </section>
 
       <ExportableArtifact
@@ -379,12 +552,7 @@ export const ProgramCharter: React.FC = () => {
             type: 'program-charter',
             title: `Program Charter — ${new Date().toLocaleDateString()}`,
             data: exportMarkdown,
-            inputs: {
-              sponsorName: state.sponsorName,
-              qrpmName: state.qrpmName,
-              cadence: state.cadence,
-              seatCount,
-            },
+            inputs: state,
             createdAt: Date.now(),
           })
         }}

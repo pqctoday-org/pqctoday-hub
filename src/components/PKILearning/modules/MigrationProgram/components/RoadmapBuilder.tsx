@@ -450,15 +450,25 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
         <ul className="text-xs text-muted-foreground list-disc pl-5 space-y-0.5">
           <li>
             <span className="font-medium text-foreground">Track A (Confidentiality / KEM)</span> —
-            urgent now because of Harvest-Now-Decrypt-Later.
+            urgent now because of Harvest-Now-Decrypt-Later (HNDL).
           </li>
           <li>
             <span className="font-medium text-foreground">
               Track B (Integrity / Signatures &amp; PKI)
             </span>{' '}
-            — not urgent today but the longest lead time, so it must start early.
+            — not urgent today but the longest lead time, so it must start early because of
+            Trust-Now-Forge-Later (TNFL): forged signatures only matter once a quantum computer can
+            forge them, but replacing signing keys and trust anchors takes years.
           </li>
         </ul>
+        <p className="text-xs text-muted-foreground mt-2 pt-2 border-t border-border">
+          Gates G0→G3 (mandate → inventory → CBOM → risk scoring) are a shared governance spine both
+          tracks pass through together, producing the prioritized backlog and approved roadmap (G4)
+          they then execute against. From there the same phase/gate structure runs independently and
+          in parallel per track — G5 as Track A pilots hybrid key exchange, G6 as Track B modernizes
+          PKI — because the two tracks don&apos;t share deadlines or dependencies once execution
+          begins.
+        </p>
       </div>
 
       {/* Regulatory deadline selector */}

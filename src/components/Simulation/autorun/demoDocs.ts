@@ -29,7 +29,7 @@ export type DemoSector =
   | 'general'
 
 /** Reference org per sector — used in authored content. */
-const ORG: Record<DemoSector, string> = {
+export const ORG: Record<DemoSector, string> = {
   financial: 'mid-size retail bank (US)',
   healthcare: 'regional hospital network (Germany)',
   government: 'federal agency (US)',
@@ -40,7 +40,7 @@ const ORG: Record<DemoSector, string> = {
 }
 
 /** Primary currency symbol per sector. */
-const CUR: Record<DemoSector, string> = {
+export const CUR: Record<DemoSector, string> = {
   financial: '$',
   healthcare: '€',
   government: '$',
@@ -51,7 +51,7 @@ const CUR: Record<DemoSector, string> = {
 }
 
 /** Primary regulation/framework label per sector. */
-const REG: Record<DemoSector, string> = {
+export const REG: Record<DemoSector, string> = {
   financial: 'CISA / SEC / DORA',
   healthcare: 'NIS2 / GDPR / HIPAA',
   government: 'FISMA / OMB M-23-02 / NSM-10',
@@ -467,68 +467,6 @@ function policyDraft(sector: DemoSector): DemoDoc {
 }
 
 // ---------------------------------------------------------------------------
-// program-charter — mirrors ProgramCharter.tsx buildMarkdown() output
-// ---------------------------------------------------------------------------
-function programCharter(sector: DemoSector): DemoDoc {
-  const sponsor =
-    sector === 'government'
-      ? 'Chief Information Officer'
-      : sector === 'energy'
-        ? 'Chief Technology Officer'
-        : 'Chief Information Security Officer'
-  const budget1 =
-    sector === 'government'
-      ? '$2.8M'
-      : sector === 'healthcare'
-        ? '€1.6M'
-        : sector === 'energy'
-          ? '£2.1M'
-          : sector === 'retail'
-            ? 'A$1.2M'
-            : '$1.8M'
-  return {
-    title: 'PQC Program Charter',
-    data: md(
-      `# Program Charter — Post-Quantum Cryptography Migration Program`,
-      '',
-      `*Phase 0 — Executive Mandate (Governance & Sponsorship). Gate G0: Charter, budget & QRPM approved.*`,
-      '',
-      '## 1. Executive sponsorship',
-      '',
-      `- **Sponsor:** ${sponsor}`,
-      `- **Title:** ${sponsor}`,
-      '- **Mandate sign-off date:** _(pending board approval)_',
-      '',
-      '## 2. Program leadership',
-      '',
-      '- **Quantum-Readiness Program Manager (QRPM):** Head of Cryptographic Engineering',
-      '- **Authority to advance Gate G0:** Executive Sponsor',
-      '',
-      '## 3. Steering Committee (SteerCo)',
-      '',
-      '| Seat | Typical FTE |',
-      '| --- | --- |',
-      '| CISO | 0.2 |',
-      '| Enterprise Architect | 0.5 |',
-      '| Compliance Officer | 0.3 |',
-      '| Procurement Lead | 0.1 |',
-      '',
-      '- **Governance cadence:** Monthly SteerCo; quarterly board readout',
-      '',
-      '## 4. Budget commitment',
-      '',
-      `- **Year 1 budget:** ${budget1}`,
-      `- **Multi-year commitment:** ${budget1.replace(/[0-9.]+/, (n) => String(Math.round(parseFloat(n) * 4)))} over 4 years`,
-      '- **Planning horizon:** 4 years',
-      '',
-      '---',
-      '',
-      `*Aligned to NIST CSWP 39 §5 and the Applied Quantum Phase 0 Executive Mandate.*`
-    ),
-  }
-}
-
-// ---------------------------------------------------------------------------
 // board-deck — mirrors BoardPitchBuilder output
 // ---------------------------------------------------------------------------
 function boardDeck(sector: DemoSector): DemoDoc {
@@ -575,173 +513,6 @@ function kpiDashboard(sector: DemoSector): DemoDoc {
       '| Crypto-agility (abstracted services) | 10% | 40% |'
     ),
   }
-}
-
-// ---------------------------------------------------------------------------
-// initial-scoping — mirrors InitialScopingAssessment.tsx buildMarkdown()
-// ---------------------------------------------------------------------------
-const initialScoping: Record<DemoSector, DemoDoc> = {
-  financial: {
-    title: 'Initial Scoping & Asset Assessment',
-    data: md(
-      `# Initial Scoping Assessment`,
-      '',
-      '## Top systems in scope (max 20)',
-      '- Core banking platform (RSA-2048 TLS, ECDSA signing)',
-      '- Payment gateway (EMV kernel, ECDH P-256)',
-      '- Customer mobile app (TLS 1.3 + classical KEM)',
-      '- SWIFT connectivity module (RSA-4096 MQ/TLS)',
-      '- Identity & authentication (ECDSA certificate authority)',
-      '',
-      '## Estate-size estimate',
-      '- Estimated cryptographic instances: ~2,400',
-      '- System count: 18 in-scope systems',
-      '',
-      '## Top vendor dependencies (max 10)',
-      '- Core banking vendor (PQC roadmap: uncommitted)',
-      '- HSM vendor (PQC firmware: available Q3 2025)',
-      '- Payment network (Visa/Mastercard PQC timeline: TBD)',
-      '- Identity provider (partial hybrid support)'
-    ),
-  },
-  healthcare: {
-    title: 'Initial Scoping & Asset Assessment',
-    data: md(
-      `# Initial Scoping Assessment`,
-      '',
-      '## Top systems in scope (max 20)',
-      '- EHR platform (RSA-2048 TLS, HL7 FHIR API)',
-      '- Medical imaging archive (TLS + classical KEM, 20-yr record retention)',
-      '- Pharmacy dispensing system (ECDSA code signing)',
-      '- Patient identity (PKI CA, ECDSA P-256)',
-      '- Medical device management (firmware signing, 10-yr lifecycle)',
-      '',
-      '## Estate-size estimate',
-      '- Estimated cryptographic instances: ~1,800',
-      '- System count: 15 in-scope systems',
-      '',
-      '## Top vendor dependencies (max 10)',
-      '- EHR vendor (PQC roadmap: 2026 target)',
-      '- HSM vendor (firmware update required)',
-      '- Imaging vendor (timeline: uncommitted)',
-      '- Medical device OEMs (7 vendors, none PQC-committed)'
-    ),
-  },
-  government: {
-    title: 'Initial Scoping & Asset Assessment',
-    data: md(
-      `# Initial Scoping Assessment`,
-      '',
-      '## Top systems in scope (max 20)',
-      '- Agency PKI root & subordinate CAs (DoD interop required)',
-      '- Classified network boundary devices (TLS + IKEv2)',
-      '- Document signing platform (ECDSA P-256, 25-yr archival)',
-      '- Citizen identity portal (RSA-2048 authentication)',
-      '- Inter-agency API gateway (classical KEM)',
-      '',
-      '## Estate-size estimate',
-      '- Estimated cryptographic instances: ~3,100',
-      '- System count: 19 in-scope systems',
-      '',
-      '## Top vendor dependencies (max 10)',
-      '- PKI CA vendor (FIPS 140-3 PQC module: pending)',
-      '- Network equipment vendor (IKEv2 PQC profile: available)',
-      '- Cloud provider (GovCloud PQC KMS: GA 2025)',
-      '- Hardware token vendor (PIV PQC card: prototype)'
-    ),
-  },
-  energy: {
-    title: 'Initial Scoping & Asset Assessment',
-    data: md(
-      `# Initial Scoping Assessment`,
-      '',
-      '## Top systems in scope (max 20)',
-      '- SCADA / EMS (DNP3/TLS, IEC 62351 certificate)',
-      '- Substation protection relays (firmware signing, 20-yr lifecycle)',
-      '- Smart meter head-end (ECDSA, 15M endpoints)',
-      '- OT historian (TLS 1.2 classical KEM)',
-      '- IT/OT boundary firewall (IKEv2 PSK)',
-      '',
-      '## Estate-size estimate',
-      '- Estimated cryptographic instances: ~4,200 (IT) + ~18M (OT endpoints)',
-      '- System count: 20 in-scope systems',
-      '',
-      '## Top vendor dependencies (max 10)',
-      '- SCADA vendor (PQC roadmap: 2027 target)',
-      '- Relay vendor (firmware signing: no PQC plan yet)',
-      '- Smart meter chipset OEM (PQC variant in qualification)',
-      '- Industrial firewall vendor (IPsec PQC profile: available)'
-    ),
-  },
-  telecom: {
-    title: 'Initial Scoping & Asset Assessment',
-    data: md(
-      `# Initial Scoping Assessment`,
-      '',
-      '## Top systems in scope (max 20)',
-      '- 5G core (AMF/AUSF — SUCI protection, 3GPP Rel-18)',
-      '- Home Subscriber Server (IMSI protection, ECDH P-256)',
-      '- Network signalling gateway (SS7 / Diameter TLS)',
-      '- Billing platform (RSA-2048 API, 7-yr data retention)',
-      '- Lawful intercept gateway (CALEA, classical KEM)',
-      '',
-      '## Estate-size estimate',
-      '- Estimated cryptographic instances: ~5,400',
-      '- System count: 17 in-scope systems',
-      '',
-      '## Top vendor dependencies (max 10)',
-      '- RAN equipment vendor (PQC air interface: 3GPP Rel-20 target)',
-      '- Core network vendor (PQC profile: available 2025)',
-      '- SIM/eSIM vendor (PQC SUCI: draft spec)',
-      '- Billing platform vendor (TLS PQC: roadmap committed)'
-    ),
-  },
-  retail: {
-    title: 'Initial Scoping & Asset Assessment',
-    data: md(
-      `# Initial Scoping Assessment`,
-      '',
-      '## Top systems in scope (max 20)',
-      '- Checkout / payment processing (TLS 1.3 + classical KEM, PCI DSS scope)',
-      '- Loyalty platform (RSA-2048 API, 7-yr PII retention)',
-      '- Payment firmware (EMV kernel, ECDSA code signing)',
-      '- Fraud detection API (TLS classical KEM)',
-      '- Supplier portal (RSA-2048 mTLS)',
-      '',
-      '## Estate-size estimate',
-      '- Estimated cryptographic instances: ~1,100',
-      '- System count: 14 in-scope systems',
-      '',
-      '## Top vendor dependencies (max 10)',
-      '- Payment gateway (Visa/MC PQC timeline: uncommitted)',
-      '- POS terminal vendor (EMV kernel PQC: prototype)',
-      '- Cloud provider (PQC KMS: available)',
-      '- Loyalty platform vendor (TLS PQC: roadmap pending)'
-    ),
-  },
-  general: {
-    title: 'Initial Scoping & Asset Assessment',
-    data: md(
-      `# Initial Scoping Assessment`,
-      '',
-      '## Top systems in scope (max 20)',
-      '- Customer API gateway (TLS 1.3 + classical KEM)',
-      '- Internal auth platform (RSA-2048 PKI, ECDSA)',
-      '- Product signing pipeline (ECDSA P-256, 10-yr support)',
-      '- Data warehouse (TLS + KMS classical KEK, 10-yr retention)',
-      '- Partner integration hub (mTLS, RSA-2048)',
-      '',
-      '## Estate-size estimate',
-      '- Estimated cryptographic instances: ~900',
-      '- System count: 12 in-scope systems',
-      '',
-      '## Top vendor dependencies (max 10)',
-      '- Cloud KMS provider (PQC KMS: available)',
-      '- Identity provider (PQC hybrid: in roadmap)',
-      '- TLS library vendor (post-quantum draft: in progress)',
-      '- Code signing service (PQC: timeline TBD)'
-    ),
-  },
 }
 
 // ---------------------------------------------------------------------------
@@ -1112,51 +883,6 @@ function cloudResponsibilityMatrix(sector: DemoSector): DemoDoc {
 }
 
 // ---------------------------------------------------------------------------
-// infra-modernization-plan — mirrors InfraModernizationPlanner output
-// ---------------------------------------------------------------------------
-function infraModernizationPlan(sector: DemoSector): DemoDoc {
-  const extraNote =
-    sector === 'energy'
-      ? 'OT/ICS substation firmware signing keys require separate NERC CIP maintenance window coordination.'
-      : sector === 'government'
-        ? 'PIV card issuance chain requires DoD Root CA PQC-hybrid subordinate before end-entity migration.'
-        : ''
-  return {
-    title: 'Infrastructure Modernization Plan',
-    data: md(
-      `# Infrastructure Modernization Plan — ${ORG[sector]}`,
-      '',
-      '## PKI Modernization',
-      '',
-      '| CA tier | Current lifetime | PQC lifetime | Dual-stack | MTC tracking |',
-      '| --- | --- | --- | --- | --- |',
-      '| Root CA | 20 yr | 20 yr (new PQC root) | Yes | Yes |',
-      '| Intermediate CA | 5 yr | 5 yr | Yes | Yes |',
-      '| End-entity | 1 yr | 90 days (automation) | Yes | — |',
-      '',
-      '## HSM & KMS Upgrade Schedule',
-      '',
-      '- HSM firmware update to PQC-capable version: Q2 2025',
-      '- Hardware replacement (end-of-support units): Q4 2025',
-      '- Cloud KMS PQC KEK enabled: Q1 2025 (available now)',
-      '',
-      '## Network Compatibility',
-      '',
-      '- TLS 1.3 + X25519/ML-KEM-768 hybrid: tested on nginx 1.25, Go 1.24',
-      '- IKEv2 + ML-KEM-768: tested on strongSwan 6.0',
-      '- SSH: OpenSSH 9.x ML-KEM draft: tested',
-      '',
-      '## Capacity Plan',
-      '',
-      '- CPU impact: ML-KEM-768 key generation +2–4% vs ECDH P-256',
-      '- Bandwidth: hybrid TLS adds ~1 KB per handshake',
-      '- Certificate-storage multiplier: ×1.8 (dual-stack certs larger)',
-      ...(extraNote ? ['', `*${extraNote}*`] : [])
-    ),
-  }
-}
-
-// ---------------------------------------------------------------------------
 // management-tools-audit
 // ---------------------------------------------------------------------------
 function managementToolsAudit(sector: DemoSector): DemoDoc {
@@ -1261,128 +987,6 @@ function cryptoCbom(sector: DemoSector): DemoDoc {
 }
 
 // ---------------------------------------------------------------------------
-// refresh-cycle-alignment — mirrors RefreshCycleAlignment output
-// ---------------------------------------------------------------------------
-function refreshCycleAlignment(sector: DemoSector): DemoDoc {
-  const programs: [string, string, string, string][] =
-    sector === 'energy'
-      ? [
-          [
-            'Substation relay refresh',
-            '2026',
-            'On budget',
-            'Embed PQC firmware signing in delivery spec',
-          ],
-          ['Smart meter rollout Wave 2', '2027', 'On budget', 'Specify ML-KEM-capable chipset'],
-          ['SCADA upgrade', '2029', 'After horizon', 'Accelerate to 2027 or accept residual risk'],
-        ]
-      : sector === 'government'
-        ? [
-            [
-              'PIV card issuance cycle',
-              '2025',
-              'On budget',
-              'Issue PQC-hybrid PIV cards in next batch',
-            ],
-            ['Network equipment refresh', '2026', 'On budget', 'Require IKEv2 PQC profile in RFP'],
-            ['Agency PKI root renewal', '2028', 'After horizon', 'Trigger early renewal in 2026'],
-          ]
-        : [
-            [
-              'TLS library upgrade cycle',
-              '2025',
-              'On budget',
-              'Enable ML-KEM hybrid in next release',
-            ],
-            [
-              'HSM firmware refresh',
-              '2025',
-              'On budget',
-              'Apply PQC firmware in Q2 maintenance window',
-            ],
-            ['PKI root renewal', '2028', 'After horizon', 'Trigger early renewal in 2026'],
-          ]
-  return {
-    title: 'Refresh-Cycle Alignment',
-    data: md(
-      `# Refresh-Cycle Alignment — ${ORG[sector]}`,
-      '',
-      '| Refresh program | Next refresh | Alignment | PQC task to embed |',
-      '| --- | --- | --- | --- |',
-      ...programs.map(([p, r, a, t]) => `| ${p} | ${r} | ${a} | ${t} |`),
-      '',
-      '*Programs marked "After horizon" require accelerated execution or documented risk acceptance.*'
-    ),
-  }
-}
-
-// ---------------------------------------------------------------------------
-// accelerated-execution-profile — mirrors AcceleratedExecutionProfile output
-// ---------------------------------------------------------------------------
-function acceleratedExecutionProfile(sector: DemoSector): DemoDoc {
-  return {
-    title: 'Accelerated Execution Profile',
-    data: md(
-      `# Accelerated Execution Profile — ${ORG[sector]}`,
-      '',
-      '## 1. Trigger Conditions',
-      `- Regulatory deadline advanced (${REG[sector]} updated timeline)`,
-      '- Credible threat intelligence indicating active quantum-capable adversary',
-      '- Critical vendor EOL announcement requiring forced algorithm migration',
-      '',
-      '## 2. Compressed Sequence',
-      '| Wave | Systems | Duration | Notes |',
-      '| --- | --- | --- | --- |',
-      '| Wave 0 — Emergency pilot | Top 3 Tier-1 | 4 weeks | Hybrid mode only |',
-      '| Wave 1 — Tier-1 internet-facing | 25 systems | 8 weeks | Pure ML-KEM where vendor supports |',
-      '| Wave 2 — Internal + signing | 40 services | 12 weeks | Parallel Track B |',
-      '',
-      '## 3. Pre-Approved Risk Acceptances',
-      '- Skip dual-stack validation period (30 days → 7 days) — CISO authority',
-      '- Emergency procurement above threshold — CFO authority with board notification',
-      '',
-      '## 4. Emergency Resource Request',
-      `- Budget ask: additional ${CUR[sector]}2.1M over 6 months`,
-      '- Headcount: +3 cryptographic engineers (contract)',
-      '',
-      '## 5. Activation Authority',
-      '- **Trigger:** CISO declares quantum emergency',
-      '- **Activation:** Executive Sponsor countersigns within 48 hours',
-      '- **Review:** Board notified within 7 days'
-    ),
-  }
-}
-
-// ---------------------------------------------------------------------------
-// skills-team-plan — mirrors SkillsTeamPlan output (in-scope for future phases)
-// ---------------------------------------------------------------------------
-function skillsTeamPlan(sector: DemoSector): DemoDoc {
-  return {
-    title: 'Skills & Team Plan',
-    data: md(
-      `# Skills & Team Plan — ${ORG[sector]}`,
-      '',
-      '## Sizing heuristic',
-      'Estate: ~1,500 cryptographic instances → 3 dedicated FTE (1 per 500 rule)',
-      '',
-      '## Core roles & FTE',
-      '',
-      '| Role | Typical FTE | NICE work role | Build/Borrow/Buy |',
-      '| --- | --- | --- | --- |',
-      '| Quantum-Readiness Program Manager | 0.5 | OG-WRL-014 (Systems Security Management) | Borrow (CISO team) |',
-      '| Cryptographic Engineer | 1.5 | DD-WRL-003 (Secure Software Development) | Buy (contract) |',
-      '| PKI / CA Specialist | 0.5 | IO-WRL-005 (Systems Administration) | Build (upskill) |',
-      '| Security Architect (PQC) | 0.5 | DD-WRL-001 (Cybersecurity Architecture) | Borrow (external advisory) |',
-      '',
-      '## Build / borrow / buy summary',
-      '- **Build:** PKI specialist upskill via NIST PQC training programme',
-      '- **Borrow:** Program manager from existing CISO function (0.5 FTE)',
-      '- **Buy:** 2× cryptographic engineers on 12-month contract'
-    ),
-  }
-}
-
-// ---------------------------------------------------------------------------
 // DEMO_DOCS_BY_SECTOR — master lookup
 // ---------------------------------------------------------------------------
 export const DEMO_DOCS_BY_SECTOR: Record<
@@ -1394,10 +998,8 @@ export const DEMO_DOCS_BY_SECTOR: Record<
     'roi-model': roiModel.financial,
     'raci-matrix': raciMatrix.financial,
     'policy-draft': policyDraft('financial'),
-    'program-charter': programCharter('financial'),
     'board-deck': boardDeck('financial'),
     'kpi-dashboard': kpiDashboard('financial'),
-    'initial-scoping': initialScoping.financial,
     'risk-register': riskRegister('financial'),
     'risk-treatment-plan': riskTreatmentPlan('financial'),
     'migration-roadmap': migrationRoadmap('financial'),
@@ -1409,24 +1011,18 @@ export const DEMO_DOCS_BY_SECTOR: Record<
     'supply-chain-matrix': supplyChainMatrix('financial'),
     'contract-clause': contractClause('financial'),
     'cloud-responsibility-matrix': cloudResponsibilityMatrix('financial'),
-    'infra-modernization-plan': infraModernizationPlan('financial'),
     'management-tools-audit': managementToolsAudit('financial'),
     'crypto-architecture': cryptoArchitecture('financial'),
     'crypto-vulnerability-watch': cryptoVulnerabilityWatch('financial'),
     'crypto-cbom': cryptoCbom('financial'),
-    'refresh-cycle-alignment': refreshCycleAlignment('financial'),
-    'accelerated-execution-profile': acceleratedExecutionProfile('financial'),
-    'skills-team-plan': skillsTeamPlan('financial'),
   },
   healthcare: {
     'crqc-scenario': crqcScenario.healthcare,
     'roi-model': roiModel.healthcare,
     'raci-matrix': raciMatrix.healthcare,
     'policy-draft': policyDraft('healthcare'),
-    'program-charter': programCharter('healthcare'),
     'board-deck': boardDeck('healthcare'),
     'kpi-dashboard': kpiDashboard('healthcare'),
-    'initial-scoping': initialScoping.healthcare,
     'risk-register': riskRegister('healthcare'),
     'risk-treatment-plan': riskTreatmentPlan('healthcare'),
     'migration-roadmap': migrationRoadmap('healthcare'),
@@ -1438,24 +1034,18 @@ export const DEMO_DOCS_BY_SECTOR: Record<
     'supply-chain-matrix': supplyChainMatrix('healthcare'),
     'contract-clause': contractClause('healthcare'),
     'cloud-responsibility-matrix': cloudResponsibilityMatrix('healthcare'),
-    'infra-modernization-plan': infraModernizationPlan('healthcare'),
     'management-tools-audit': managementToolsAudit('healthcare'),
     'crypto-architecture': cryptoArchitecture('healthcare'),
     'crypto-vulnerability-watch': cryptoVulnerabilityWatch('healthcare'),
     'crypto-cbom': cryptoCbom('healthcare'),
-    'refresh-cycle-alignment': refreshCycleAlignment('healthcare'),
-    'accelerated-execution-profile': acceleratedExecutionProfile('healthcare'),
-    'skills-team-plan': skillsTeamPlan('healthcare'),
   },
   government: {
     'crqc-scenario': crqcScenario.government,
     'roi-model': roiModel.government,
     'raci-matrix': raciMatrix.government,
     'policy-draft': policyDraft('government'),
-    'program-charter': programCharter('government'),
     'board-deck': boardDeck('government'),
     'kpi-dashboard': kpiDashboard('government'),
-    'initial-scoping': initialScoping.government,
     'risk-register': riskRegister('government'),
     'risk-treatment-plan': riskTreatmentPlan('government'),
     'migration-roadmap': migrationRoadmap('government'),
@@ -1467,24 +1057,18 @@ export const DEMO_DOCS_BY_SECTOR: Record<
     'supply-chain-matrix': supplyChainMatrix('government'),
     'contract-clause': contractClause('government'),
     'cloud-responsibility-matrix': cloudResponsibilityMatrix('government'),
-    'infra-modernization-plan': infraModernizationPlan('government'),
     'management-tools-audit': managementToolsAudit('government'),
     'crypto-architecture': cryptoArchitecture('government'),
     'crypto-vulnerability-watch': cryptoVulnerabilityWatch('government'),
     'crypto-cbom': cryptoCbom('government'),
-    'refresh-cycle-alignment': refreshCycleAlignment('government'),
-    'accelerated-execution-profile': acceleratedExecutionProfile('government'),
-    'skills-team-plan': skillsTeamPlan('government'),
   },
   energy: {
     'crqc-scenario': crqcScenario.energy,
     'roi-model': roiModel.energy,
     'raci-matrix': raciMatrix.energy,
     'policy-draft': policyDraft('energy'),
-    'program-charter': programCharter('energy'),
     'board-deck': boardDeck('energy'),
     'kpi-dashboard': kpiDashboard('energy'),
-    'initial-scoping': initialScoping.energy,
     'risk-register': riskRegister('energy'),
     'risk-treatment-plan': riskTreatmentPlan('energy'),
     'migration-roadmap': migrationRoadmap('energy'),
@@ -1496,24 +1080,18 @@ export const DEMO_DOCS_BY_SECTOR: Record<
     'supply-chain-matrix': supplyChainMatrix('energy'),
     'contract-clause': contractClause('energy'),
     'cloud-responsibility-matrix': cloudResponsibilityMatrix('energy'),
-    'infra-modernization-plan': infraModernizationPlan('energy'),
     'management-tools-audit': managementToolsAudit('energy'),
     'crypto-architecture': cryptoArchitecture('energy'),
     'crypto-vulnerability-watch': cryptoVulnerabilityWatch('energy'),
     'crypto-cbom': cryptoCbom('energy'),
-    'refresh-cycle-alignment': refreshCycleAlignment('energy'),
-    'accelerated-execution-profile': acceleratedExecutionProfile('energy'),
-    'skills-team-plan': skillsTeamPlan('energy'),
   },
   telecom: {
     'crqc-scenario': crqcScenario.telecom,
     'roi-model': roiModel.telecom,
     'raci-matrix': raciMatrix.telecom,
     'policy-draft': policyDraft('telecom'),
-    'program-charter': programCharter('telecom'),
     'board-deck': boardDeck('telecom'),
     'kpi-dashboard': kpiDashboard('telecom'),
-    'initial-scoping': initialScoping.telecom,
     'risk-register': riskRegister('telecom'),
     'risk-treatment-plan': riskTreatmentPlan('telecom'),
     'migration-roadmap': migrationRoadmap('telecom'),
@@ -1525,24 +1103,18 @@ export const DEMO_DOCS_BY_SECTOR: Record<
     'supply-chain-matrix': supplyChainMatrix('telecom'),
     'contract-clause': contractClause('telecom'),
     'cloud-responsibility-matrix': cloudResponsibilityMatrix('telecom'),
-    'infra-modernization-plan': infraModernizationPlan('telecom'),
     'management-tools-audit': managementToolsAudit('telecom'),
     'crypto-architecture': cryptoArchitecture('telecom'),
     'crypto-vulnerability-watch': cryptoVulnerabilityWatch('telecom'),
     'crypto-cbom': cryptoCbom('telecom'),
-    'refresh-cycle-alignment': refreshCycleAlignment('telecom'),
-    'accelerated-execution-profile': acceleratedExecutionProfile('telecom'),
-    'skills-team-plan': skillsTeamPlan('telecom'),
   },
   retail: {
     'crqc-scenario': crqcScenario.retail,
     'roi-model': roiModel.retail,
     'raci-matrix': raciMatrix.retail,
     'policy-draft': policyDraft('retail'),
-    'program-charter': programCharter('retail'),
     'board-deck': boardDeck('retail'),
     'kpi-dashboard': kpiDashboard('retail'),
-    'initial-scoping': initialScoping.retail,
     'risk-register': riskRegister('retail'),
     'risk-treatment-plan': riskTreatmentPlan('retail'),
     'migration-roadmap': migrationRoadmap('retail'),
@@ -1554,24 +1126,18 @@ export const DEMO_DOCS_BY_SECTOR: Record<
     'supply-chain-matrix': supplyChainMatrix('retail'),
     'contract-clause': contractClause('retail'),
     'cloud-responsibility-matrix': cloudResponsibilityMatrix('retail'),
-    'infra-modernization-plan': infraModernizationPlan('retail'),
     'management-tools-audit': managementToolsAudit('retail'),
     'crypto-architecture': cryptoArchitecture('retail'),
     'crypto-vulnerability-watch': cryptoVulnerabilityWatch('retail'),
     'crypto-cbom': cryptoCbom('retail'),
-    'refresh-cycle-alignment': refreshCycleAlignment('retail'),
-    'accelerated-execution-profile': acceleratedExecutionProfile('retail'),
-    'skills-team-plan': skillsTeamPlan('retail'),
   },
   general: {
     'crqc-scenario': crqcScenario.general,
     'roi-model': roiModel.general,
     'raci-matrix': raciMatrix.general,
     'policy-draft': policyDraft('general'),
-    'program-charter': programCharter('general'),
     'board-deck': boardDeck('general'),
     'kpi-dashboard': kpiDashboard('general'),
-    'initial-scoping': initialScoping.general,
     'risk-register': riskRegister('general'),
     'risk-treatment-plan': riskTreatmentPlan('general'),
     'migration-roadmap': migrationRoadmap('general'),
@@ -1583,14 +1149,10 @@ export const DEMO_DOCS_BY_SECTOR: Record<
     'supply-chain-matrix': supplyChainMatrix('general'),
     'contract-clause': contractClause('general'),
     'cloud-responsibility-matrix': cloudResponsibilityMatrix('general'),
-    'infra-modernization-plan': infraModernizationPlan('general'),
     'management-tools-audit': managementToolsAudit('general'),
     'crypto-architecture': cryptoArchitecture('general'),
     'crypto-vulnerability-watch': cryptoVulnerabilityWatch('general'),
     'crypto-cbom': cryptoCbom('general'),
-    'refresh-cycle-alignment': refreshCycleAlignment('general'),
-    'accelerated-execution-profile': acceleratedExecutionProfile('general'),
-    'skills-team-plan': skillsTeamPlan('general'),
   },
 }
 

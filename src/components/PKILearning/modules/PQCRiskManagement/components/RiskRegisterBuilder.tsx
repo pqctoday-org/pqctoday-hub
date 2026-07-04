@@ -6,9 +6,11 @@ import { CompleteStepAction } from '../../../common/CompleteStepAction'
 import { useModuleStore } from '@/store/useModuleStore'
 import { markdownToPdf } from '@/services/export/pdfExport'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { copyToClipboard } from '@/utils/clipboard'
 // Single source of truth for the illustrative demo entries (shared with the
 // store + standalone adapter) so the two can't drift.
-import { DEFAULT_RISK_ENTRIES } from '@/store/useRiskRegisterStore'
+import { DEFAULT_RISK_ENTRIES, useRiskRegisterStore } from '@/store/useRiskRegisterStore'
+import { EducationalGuide } from './RiskHeatmapGenerator'
 
 interface RiskEntry {
   id: string
@@ -73,8 +75,12 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
   scenarioCrqcYear,
 }) => {
   const [copied, setCopied] = React.useState(false)
-  const [wasSaved, setWasSaved] = React.useState(false)
-  const [lastSavedKey, setLastSavedKey] = React.useState<string | null>(null)
+  const [guideOpen, setGuideOpen] = React.useState(false)
+  // Persisted (not local useState) so the indicator doesn't falsely flip back
+  // to "unsaved" on remount while the underlying register is still intact.
+  const lastSavedKey = useRiskRegisterStore((s) => s.lastSavedKey)
+  const setLastSavedKey = useRiskRegisterStore((s) => s.setLastSavedKey)
+  const wasSaved = lastSavedKey !== null
   const { addExecutiveDocument } = useModuleStore()
 
   // Initialize with the illustrative demo entries if empty (labelled as examples
@@ -145,7 +151,7 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
 
     md += '\n---\n\n'
     md +=
-      '*Aligned to NIST CSWP 39 §5 (Strategic Plan) and §6.5 (Governance, Risk, and Compliance). https://doi.org/10.6028/NIST.CSWP.39*\n'
+      '*Aligned to NIST CSWP 39 §5 (Strategic Plan) and §6.5 (Maturity Assessment for Crypto Agility). https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
 
     return md
   }, [riskEntries])
@@ -163,11 +169,11 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
       moduleId: 'pqc-risk-management',
     })
     setLastSavedKey(exportMarkdown)
-    setWasSaved(true)
-  }, [exportMarkdown, addExecutiveDocument, lastSavedKey])
+  }, [exportMarkdown, addExecutiveDocument, lastSavedKey, setLastSavedKey])
 
   const handleCopy = useCallback(async () => {
-    await navigator.clipboard.writeText(exportMarkdown)
+    const ok = await copyToClipboard(exportMarkdown)
+    if (!ok) return
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }, [exportMarkdown])
@@ -200,6 +206,11 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
           placeholders, not your data. Edit or replace them to build your own register.
         </div>
       )}
+      <EducationalGuide
+        open={guideOpen}
+        onToggle={() => setGuideOpen(!guideOpen)}
+        variant="register"
+      />
       {/* Action bar */}
       <div className="flex flex-wrap items-center gap-3">
         <Button variant="outline" size="sm" onClick={addEntry}>

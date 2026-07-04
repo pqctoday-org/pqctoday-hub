@@ -270,7 +270,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'roadmap-builder',
     name: 'Roadmap Builder',
     description:
-      'Build a two-track migration roadmap (key-exchange/HNDL ∥ signatures-PKI/TNFL) on the 8-phase spine, with gates G0–G7 and milestone dependencies',
+      'Build a two-track migration roadmap (key-exchange/HNDL ∥ signatures-PKI/TNFL) on the 8-phase spine, with gates G0–G6 (+ G8 at closure) and milestone dependencies',
     category: 'Migration Planning',
     icon: Map,
     keywords: [
@@ -500,8 +500,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     keywords: ['cbom', 'sbom', 'inventory', 'libraries', 'hsm', 'fips', 'cyclonedx'],
     cswp39Zone: 'assets',
     cswp39ZoneSubElement: 'Libraries',
-    cswp39SectionRef: '§5.2',
-    cswp39SubSection: 'Crypto security policy enforcement (CBOM ingestion)',
+    cswp39SectionRef: '§5.3',
+    cswp39SubSection: 'Technology supply chains (CBOM ingestion)',
     frameworkPhase: 'p2',
   },
   {

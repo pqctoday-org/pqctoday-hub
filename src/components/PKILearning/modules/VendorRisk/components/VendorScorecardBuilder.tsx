@@ -6,6 +6,7 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { useSelectedProductIds } from '@/store/useMigrateSelectionStore'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { softwareData } from '@/data/migrateData'
 import { isPqcReady, isFips1403Validated } from '@/data/kpiCatalog'
@@ -97,6 +98,17 @@ function getBarColor(value: number): string {
 
 const productKey = (item: SoftwareItem) => item.productId
 
+interface SavedScorecardInputs {
+  checkedProducts?: Record<string, string[]>
+  useSlider?: Record<string, boolean>
+  sliderScores?: Record<string, number>
+  weightOverrides?: Record<string, number>
+  scannerNotes?: string
+  cveNotes?: string
+  siemNotes?: string
+  ztNotes?: string
+}
+
 export interface VendorScorecardRow {
   vendor: string
   productCount: number
@@ -168,17 +180,19 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
   const { myFrameworks, industry } = useExecutiveModuleData()
   const vendorDependency = useAssessmentStore((s) => s.vendorDependency)
   const [seedCleared, setSeedCleared] = useState(false)
+  const savedInputs = useSavedArtifactInputs<SavedScorecardInputs>('vendor-scorecard')
 
   const selectedItems = useMemo(
     () => (hasProducts ? resolveProductNames(myProducts) : []),
     [myProducts, hasProducts]
   )
 
-  // Per-dimension: which products are checked
+  // Per-dimension: which products are checked. Seeded from the last-saved
+  // artifact's `inputs` (arrays — Sets aren't JSON-serializable) when present.
   const [checkedProducts, setCheckedProducts] = useState<Record<string, Set<string>>>(() => {
     const initial: Record<string, Set<string>> = {}
     for (const d of DIMENSIONS) {
-      initial[d.id] = new Set<string>()
+      initial[d.id] = new Set<string>(savedInputs?.checkedProducts?.[d.id] ?? [])
     }
     return initial
   })
@@ -187,7 +201,7 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
   const [useSlider, setUseSlider] = useState<Record<string, boolean>>(() => {
     const initial: Record<string, boolean> = {}
     for (const d of DIMENSIONS) {
-      initial[d.id] = !hasProducts
+      initial[d.id] = savedInputs?.useSlider?.[d.id] ?? !hasProducts
     }
     return initial
   })
@@ -196,13 +210,15 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
   const [sliderScores, setSliderScores] = useState<Record<string, number>>(() => {
     const initial: Record<string, number> = {}
     for (const d of DIMENSIONS) {
-      initial[d.id] = 0
+      initial[d.id] = savedInputs?.sliderScores?.[d.id] ?? 0
     }
     return initial
   })
 
   // User-adjustable weight overrides (0–1). Saved artifact uses the same values.
-  const [weightOverrides, setWeightOverrides] = useState<Record<string, number>>({})
+  const [weightOverrides, setWeightOverrides] = useState<Record<string, number>>(
+    savedInputs?.weightOverrides ?? {}
+  )
 
   const effectiveWeight = useCallback(
     (dimId: string): number =>
@@ -324,10 +340,10 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
 
   // Export and save to module store
   // CSWP.39 §5.3 — Observability tooling notes per vendor relationship.
-  const [scannerNotes, setScannerNotes] = useState('')
-  const [cveNotes, setCveNotes] = useState('')
-  const [siemNotes, setSiemNotes] = useState('')
-  const [ztNotes, setZtNotes] = useState('')
+  const [scannerNotes, setScannerNotes] = useState(savedInputs?.scannerNotes ?? '')
+  const [cveNotes, setCveNotes] = useState(savedInputs?.cveNotes ?? '')
+  const [siemNotes, setSiemNotes] = useState(savedInputs?.siemNotes ?? '')
+  const [ztNotes, setZtNotes] = useState(savedInputs?.ztNotes ?? '')
 
   const exportMarkdown = useMemo(() => {
     let md = '# Vendor PQC Readiness Scorecard\n\n'
@@ -389,6 +405,10 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
   // Replaces the old silent auto-save; the 0-score hint above tells the user to
   // score a dimension first.
   const handleSaveArtifact = useCallback(() => {
+    const checkedProductsForSave: Record<string, string[]> = {}
+    for (const [dimId, keys] of Object.entries(checkedProducts)) {
+      checkedProductsForSave[dimId] = [...keys]
+    }
     addExecutiveDocument({
       id: `vendor-scorecard-${MODULE_ID}`,
       moduleId: MODULE_ID,
@@ -396,8 +416,30 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
       title: `Vendor PQC Readiness Scorecard (${weightedTotal}/100)`,
       data: exportMarkdown,
       createdAt: Date.now(),
+      inputs: {
+        checkedProducts: checkedProductsForSave,
+        useSlider,
+        sliderScores,
+        weightOverrides,
+        scannerNotes,
+        cveNotes,
+        siemNotes,
+        ztNotes,
+      },
     })
-  }, [addExecutiveDocument, weightedTotal, exportMarkdown])
+  }, [
+    addExecutiveDocument,
+    weightedTotal,
+    exportMarkdown,
+    checkedProducts,
+    useSlider,
+    sliderScores,
+    weightOverrides,
+    scannerNotes,
+    cveNotes,
+    siemNotes,
+    ztNotes,
+  ])
 
   const seedSources: string[] = []
   if (!seedCleared) {
@@ -455,6 +497,14 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
             procurement comparisons.
           </p>
         )}
+        <p className="text-xs text-muted-foreground mt-3 pt-3 border-t border-border/50">
+          <strong className="text-foreground/80">How this is scored:</strong> each dimension score
+          (0–100) is multiplied by its weight, then the six weighted scores are summed and divided
+          by the total weight — a weighted average, not a plain average. For the two auto-detected
+          dimensions (PQC Algorithm Support, FIPS 140-3 Validation), a product only counts toward
+          the score once its reported readiness reaches the "hybrid or full" tier — roughly 70% of
+          the way to fully deployed; planned, pilot, and narrative-only claims don&apos;t count.
+        </p>
       </div>
 
       {/* Save gate hint — until the overall score is above zero the scorecard
@@ -483,6 +533,11 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
                   <th className="py-1.5 pr-3 font-medium">Vendor</th>
                   <th className="py-1.5 px-2 font-medium text-center">Products</th>
                   <th className="py-1.5 px-2 font-medium text-center">Overall</th>
+                  {DIMENSIONS.map((d) => (
+                    <th key={d.id} className="py-1.5 px-2 font-medium text-center" title={d.label}>
+                      {d.label}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
@@ -495,6 +550,14 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
                     <td className={`py-1.5 px-2 text-center font-bold ${getScoreColor(v.overall)}`}>
                       {v.overall}
                     </td>
+                    {DIMENSIONS.map((d) => (
+                      <td
+                        key={d.id}
+                        className={`py-1.5 px-2 text-center ${getScoreColor(v.dimScores[d.id] ?? 0)}`}
+                      >
+                        {v.dimScores[d.id] ?? 0}
+                      </td>
+                    ))}
                   </tr>
                 ))}
               </tbody>

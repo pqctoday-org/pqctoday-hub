@@ -28,6 +28,7 @@ import {
 } from './cbomAdapters'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useModuleStore } from '@/store/useModuleStore'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { useAlgorithmTransitionsForAssessment } from '@/hooks/useAlgorithmTransitionsForAssessment'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
@@ -82,12 +83,36 @@ interface LibraryCBOMBuilderProps {
   onCbomExport?: (items: CbomExportItem[]) => void
 }
 
+interface SavedCbomInputs {
+  mode?: string
+  selectedSbom?: string
+}
+
+const VALID_MODES: readonly Mode[] = ['sbom', 'libs', 'hsm', 'files', 'assessment']
+
 export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomExport }) => {
   const assessmentTransitions = useAlgorithmTransitionsForAssessment()
   const { myProducts } = useExecutiveModuleData()
   const hasAssessmentCrypto = assessmentTransitions.length > 0 || myProducts.length > 0
-  const [mode, setMode] = useState<Mode>(hasAssessmentCrypto ? 'assessment' : 'libs')
-  const [selectedSbom, setSelectedSbom] = useState<string>(SAMPLE_SBOMS[0].id)
+  // Restore the last-saved view (mode + SBOM selection) so the CBOM builder
+  // round-trips like every other Command Center tool.
+  const savedInputs = useSavedArtifactInputs<SavedCbomInputs>('crypto-cbom')
+  const savedMode =
+    savedInputs?.mode && (VALID_MODES as readonly string[]).includes(savedInputs.mode)
+      ? (savedInputs.mode as Mode)
+      : null
+  const [mode, setMode] = useState<Mode>(
+    savedMode && (savedMode !== 'assessment' || hasAssessmentCrypto)
+      ? savedMode
+      : hasAssessmentCrypto
+        ? 'assessment'
+        : 'libs'
+  )
+  const [selectedSbom, setSelectedSbom] = useState<string>(
+    savedInputs?.selectedSbom && SAMPLE_SBOMS.some((s) => s.id === savedInputs.selectedSbom)
+      ? savedInputs.selectedSbom
+      : SAMPLE_SBOMS[0].id
+  )
   const [userSbom, setUserSbom] = useState<string>('')
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
   const liveCmvp = useLiveCmvpStatus()
@@ -189,7 +214,10 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
               : 'From your assessment'
     lines.push(`Mode: **${modeLabel}**`)
     lines.push('')
-    lines.push('Per NIST CSWP.39 §5 (Inventory step) — feeds the Information Repository.')
+    lines.push(
+      'Per NIST CSWP.39 §5 (Inventory step) — a machine-readable crypto asset inventory feeding ' +
+        'downstream risk scoring and management-tool coverage.'
+    )
     lines.push('')
     if (mode === 'assessment') {
       lines.push(
@@ -268,7 +296,10 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
       )
       lines.push('')
       lines.push(
-        '_Covers the Files asset class from NIST CSWP.39 Fig.3 (Code, Libraries, Applications, Files, Protocols, Systems)._'
+        '_Covers the "Files" asset type — one of the nine asset types NIST CSWP.39 identifies for ' +
+          'a cryptographic asset inventory: application codes, libraries, software, hardware, ' +
+          'firmware, user-generated content, communication protocols, enterprise services, and ' +
+          'systems._'
       )
       lines.push('')
       lines.push('| Artifact | Category | Classical | PQC target | Posture | Notes |')
@@ -637,9 +668,11 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
         <div className="overflow-x-auto bg-muted/40 rounded-lg p-3 border border-border">
           <p className="text-xs text-muted-foreground mb-3">
             Cryptographically protected files: signed binaries, encrypted data-at-rest, certificate
-            files, key files, archive signatures. Covers the Files asset class from{' '}
-            <InlineTooltip term="NIST CSWP 39">NIST CSWP.39</InlineTooltip> Fig.3 (Code, Libraries,
-            Applications, Files, Protocols, Systems).
+            files, key files, archive signatures. Covers the "Files" asset type — one of the nine
+            asset types <InlineTooltip term="NIST CSWP 39">NIST CSWP.39</InlineTooltip> identifies
+            for a cryptographic asset inventory: application codes, libraries, software, hardware,
+            firmware, user-generated content, communication protocols, enterprise services, and
+            systems.
           </p>
           <table className="w-full text-xs">
             <thead>

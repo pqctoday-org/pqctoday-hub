@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { markdownToPdf } from '@/services/export/pdfExport'
 import { cn } from '@/lib/utils'
+import { copyToClipboard } from '@/utils/clipboard'
 
 export interface ChecklistItem {
   id: string
@@ -84,7 +85,8 @@ export const OpsChecklist: React.FC<OpsChecklistProps> = ({
   }, [title, description, sections, checkedItems])
 
   const handleCopyMarkdown = useCallback(async () => {
-    await navigator.clipboard.writeText(buildMarkdown())
+    const ok = await copyToClipboard(buildMarkdown())
+    if (!ok) return
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }, [buildMarkdown])

@@ -21,26 +21,34 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useModuleStore } from '@/store/useModuleStore'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 
 /** The five data-at-rest remediation strategies offered per store. Bulk data
  *  stays AES-256 in every case; PQC applies at the key-wrap (KEK) layer. */
-const STRATEGY_OPTIONS = [
+export const STRATEGY_OPTIONS = [
   'Re-encrypt with fresh AES-256 DEK (PQC-wrapped KEK)',
   'Re-wrap existing DEK under PQC KEK',
   'Crypto-shred',
   'Delete',
   'Accept & monitor',
 ] as const
-type Strategy = (typeof STRATEGY_OPTIONS)[number]
+export type Strategy = (typeof STRATEGY_OPTIONS)[number]
 
-interface StoreRow {
+/** Confidentiality horizon / sensitivity — the framework drives strategy choice
+ *  off how long the data must stay confidential, its volume, and exfiltration
+ *  exposure. This is the coarse per-store proxy for that. */
+const SENSITIVITY_OPTIONS = ['Low', 'Medium', 'High'] as const
+type Sensitivity = (typeof SENSITIVITY_OPTIONS)[number]
+
+export interface StoreRow {
   id: string
   name: string
   strategy: Strategy
+  sensitivity: Sensitivity
   note: string
 }
 
-interface DataAtRestState {
+export interface DataAtRestState {
   stores: StoreRow[]
 }
 
@@ -51,19 +59,46 @@ const SEED_STORES: StoreRow[] = [
     id: newId(),
     name: 'Customer PII database',
     strategy: 'Re-encrypt with fresh AES-256 DEK (PQC-wrapped KEK)',
+    sensitivity: 'High',
     note: '',
   },
   {
     id: newId(),
     name: 'Backups & archives',
     strategy: 'Re-wrap existing DEK under PQC KEK',
+    sensitivity: 'High',
     note: '',
   },
-  { id: newId(), name: 'Document store', strategy: 'Re-wrap existing DEK under PQC KEK', note: '' },
-  { id: newId(), name: 'Analytics warehouse', strategy: 'Accept & monitor', note: '' },
+  {
+    id: newId(),
+    name: 'Document store',
+    strategy: 'Re-wrap existing DEK under PQC KEK',
+    sensitivity: 'Medium',
+    note: '',
+  },
+  {
+    id: newId(),
+    name: 'Analytics warehouse',
+    strategy: 'Accept & monitor',
+    sensitivity: 'Low',
+    note: '',
+  },
 ]
 
-function buildMarkdown(s: DataAtRestState): string {
+function isValidStoreRows(rows: unknown): rows is StoreRow[] {
+  return (
+    Array.isArray(rows) &&
+    rows.every(
+      (r) =>
+        r &&
+        typeof r === 'object' &&
+        typeof (r as StoreRow).id === 'string' &&
+        typeof (r as StoreRow).name === 'string'
+    )
+  )
+}
+
+export function buildMarkdown(s: DataAtRestState): string {
   const lines: string[] = []
   lines.push('# Data-at-Rest Strategy')
   lines.push('')
@@ -75,22 +110,28 @@ function buildMarkdown(s: DataAtRestState): string {
   lines.push('')
   lines.push(
     '> **Why most data-at-rest is lower-urgency:** bulk encryption stays AES-256, which ' +
-      "Grover's algorithm only weakens to a ~128-bit effective level (still safe per NIST IR 8547). " +
-      'Post-quantum risk concentrates at the *key-wrapping* layer, so these strategies swap the ' +
-      'KEK to ML-KEM rather than replacing the AES-256 data cipher.'
+      "Grover's algorithm only weakens to a ~128-bit effective level (still safe per NIST IR 8547 " +
+      '— currently an Initial Public Draft, not yet finalized). Post-quantum risk concentrates at ' +
+      'the *key-wrapping* layer, so these strategies swap the KEK to ML-KEM rather than replacing ' +
+      'the AES-256 data cipher.'
   )
   lines.push('')
-  lines.push('| Data store | Strategy | Notes |')
-  lines.push('|---|---|---|')
+  lines.push('| Data store | Sensitivity | Strategy | Notes |')
+  lines.push('|---|---|---|---|')
   for (const row of s.stores) {
     const name = row.name.trim() || '_(unnamed store)_'
     const note = row.note.trim() || '—'
-    lines.push(`| ${name} | ${row.strategy} | ${note} |`)
+    lines.push(`| ${name} | ${row.sensitivity} | ${row.strategy} | ${note} |`)
   }
   lines.push('')
   lines.push(
     '> **Backups & archives:** give cold copies their own line above — they are not ' +
       'automatically covered by the live-store decision and often outlive it.'
+  )
+  lines.push('')
+  lines.push(
+    '> **Delete / Crypto-shred:** carry out per NIST SP 800-88 (*Guidelines for Media ' +
+      'Sanitization*) so destruction of the key material or data is verifiable, not just a delete call.'
   )
   lines.push('')
   lines.push('---')
@@ -104,9 +145,14 @@ function buildMarkdown(s: DataAtRestState): string {
 
 export const DataAtRestStrategy: React.FC = () => {
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
-  const [state, setState] = useState<DataAtRestState>(() => ({
-    stores: SEED_STORES.map((row) => ({ ...row })),
-  }))
+  const savedInputs = useSavedArtifactInputs<DataAtRestState>('data-at-rest-strategy')
+  // Restore the user's last-saved strategy so it round-trips across visits.
+  const [state, setState] = useState<DataAtRestState>(() => {
+    if (isValidStoreRows(savedInputs?.stores)) {
+      return { stores: savedInputs.stores }
+    }
+    return { stores: SEED_STORES.map((row) => ({ ...row })) }
+  })
 
   const setStore = (id: string, patch: Partial<StoreRow>) =>
     setState((prev) => ({
@@ -117,7 +163,10 @@ export const DataAtRestStrategy: React.FC = () => {
   const addStore = () =>
     setState((prev) => ({
       ...prev,
-      stores: [...prev.stores, { id: newId(), name: '', strategy: 'Accept & monitor', note: '' }],
+      stores: [
+        ...prev.stores,
+        { id: newId(), name: '', strategy: 'Accept & monitor', sensitivity: 'Medium', note: '' },
+      ],
     }))
 
   const removeStore = (id: string) =>
@@ -140,7 +189,8 @@ export const DataAtRestStrategy: React.FC = () => {
             Phase 5 — Activity 5.6. Decide a per-data-store strategy: re-wrap the AES-256 key under
             an ML-KEM (PQC) KEK, write a fresh AES-256 DEK with a PQC-wrapped KEK, crypto-shred,
             delete, or accept &amp; monitor. Bulk data stays AES-256 (Grover only halves it to
-            ~128-bit — still quantum-safe); PQC protects the key, not the cipher.
+            ~128-bit — still quantum-safe per NIST IR 8547, currently an Initial Public Draft, not
+            yet finalized); PQC protects the key, not the cipher.
           </p>
         </div>
       </header>
@@ -190,6 +240,42 @@ export const DataAtRestStrategy: React.FC = () => {
                 </div>
               </div>
 
+              <div
+                className="block"
+                role="group"
+                aria-label="Confidentiality horizon / sensitivity"
+              >
+                <span className="text-xs font-medium text-muted-foreground">
+                  Confidentiality horizon / sensitivity
+                </span>
+                <p className="text-[11px] text-muted-foreground">
+                  Strategy choice should track how long this data must stay confidential, its
+                  volume, and its exfiltration exposure — not just what&apos;s convenient.
+                </p>
+                <div className="mt-1 flex flex-wrap gap-2">
+                  {SENSITIVITY_OPTIONS.map((opt) => {
+                    const on = row.sensitivity === opt
+                    return (
+                      <Button
+                        key={opt}
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setStore(row.id, { sensitivity: opt })}
+                        aria-pressed={on}
+                        className={`h-7 px-3 rounded-full border text-[11px] font-semibold transition-all ${
+                          on
+                            ? 'border-primary/40 bg-primary/10 text-primary'
+                            : 'border-border text-muted-foreground hover:bg-muted/50'
+                        }`}
+                      >
+                        {opt}
+                      </Button>
+                    )
+                  })}
+                </div>
+              </div>
+
               <div className="block" role="group" aria-label="Data-at-rest strategy">
                 <span className="text-xs font-medium text-muted-foreground">Strategy</span>
                 <div className="mt-1 flex flex-wrap gap-2">
@@ -214,6 +300,10 @@ export const DataAtRestStrategy: React.FC = () => {
                     )
                   })}
                 </div>
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  Delete and Crypto-shred should be carried out per NIST SP 800-88 (
+                  <em>Guidelines for Media Sanitization</em>) so destruction is verifiable.
+                </p>
               </div>
 
               <div className="flex justify-end">
@@ -255,6 +345,7 @@ export const DataAtRestStrategy: React.FC = () => {
             title: `Data-at-Rest Strategy — ${new Date().toLocaleDateString()}`,
             data: exportMarkdown,
             inputs: {
+              ...state,
               storeCount,
             },
             createdAt: Date.now(),

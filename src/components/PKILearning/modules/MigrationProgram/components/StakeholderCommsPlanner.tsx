@@ -206,12 +206,21 @@ function buildCommsSections(opts: {
   ]
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// CSWP-39 §5 verbatim quote (sanitised to ASCII)
+// ─────────────────────────────────────────────────────────────────────────────
+
+const CSWP39_5_QUOTE =
+  "Integrate crypto agility into the organization's existing governance function to establish, communicate, and monitor the cybersecurity risk management strategy, expectations, and policies related to cryptography. This includes understanding cryptographic standards, regulations, and mandates and communicating these requirements to data owners, IT and development teams, business partners, and technology supply chain vendors prioritized by the criticality of the data for the primary use cases."
+
 function renderCommsPreview(data: Record<string, Record<string, string | string[]>>): string {
   let md = '# PQC Migration — Stakeholder Communications Plan\n\n'
   md += `Generated: ${new Date().toLocaleDateString()}\n\n---\n\n`
 
   // Stakeholder Map
   md += '## 1. Stakeholder Map\n\n'
+  md += `> "${CSWP39_5_QUOTE}"\n`
+  md += `> -- NIST CSWP 39 Section 5\n\n`
   const stakeholders = data['stakeholder-map']?.['key-stakeholders'] || '_Not specified_'
   const concerns = data['stakeholder-map']?.['stakeholder-concerns'] || '_Not specified_'
   const influence = data['stakeholder-map']?.['influence-level'] || '_Not specified_'
@@ -249,7 +258,7 @@ function renderCommsPreview(data: Record<string, Record<string, string | string[
 
   md += '\n---\n\n'
   md +=
-    '*Aligned to NIST CSWP 39 §1 (Introduction) and §5 (Strategic Plan). https://doi.org/10.6028/NIST.CSWP.39*\n'
+    '*Aligned to NIST CSWP 39 §1 (Introduction) and §5 (Strategic Plan). https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
 
   return md
 }

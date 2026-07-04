@@ -16,9 +16,11 @@ import {
 } from 'lucide-react'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useModuleStore } from '@/store/useModuleStore'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { Button } from '@/components/ui/button'
 import { GanttDetailPopover } from '@/components/Timeline/GanttDetailPopover'
 import { AskAssistantButton } from '@/components/ui/AskAssistantButton'
+import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { ExportableArtifact } from '../../../common/executive/ExportableArtifact'
 import { rowsToCsv } from '@/services/export/csvExport'
 import { ComplianceGantt } from './ComplianceGantt'
@@ -44,6 +46,14 @@ export function getDeadlineYear(deadline: string): number | null {
   if (!matches) return null
   return Math.max(...matches.map(Number))
 }
+
+/**
+ * Deadline text describing a publication/finalization milestone (e.g. FIPS
+ * 203/204/205's "Final (published August 2024)"), not a binding compliance
+ * obligation. Rows matching this must be excluded from gap-analysis scoring —
+ * otherwise a standard's publication date reads as a missed deadline.
+ */
+const PUBLICATION_STATUS_PATTERN = /^final\s*\(published/i
 
 /** Group a single body's events into TimelinePhase[] (same logic as transformToGanttData in timelineData.ts) */
 function groupEventsIntoPhases(events: TimelineEvent[]): TimelinePhase[] {
@@ -314,15 +324,27 @@ interface ComplianceTimelineBuilderProps {
   dismissedFrameworkIds?: Set<string>
 }
 
+/** Round-trippable snapshot of this builder's editable state — see
+ *  `useSavedArtifactInputs`. `pinnedDeadlines` is a `Set` in component state
+ *  but must serialize as an array (the executive-document store persists via
+ *  JSON, which drops Sets). `selectedJurisdictions` is included so the
+ *  Standalone adapter (which owns that state) can restore it too. */
+export interface ComplianceTimelineSavedInputs {
+  milestones?: UserMilestone[]
+  pinnedDeadlines?: string[]
+  selectedJurisdictions?: string[]
+}
+
 export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps> = ({
   selectedJurisdictions,
   dismissedFrameworkIds,
 }) => {
   const { frameworks, countryDeadlines } = useExecutiveModuleData()
   const { addExecutiveDocument } = useModuleStore()
+  const savedInputs = useSavedArtifactInputs<ComplianceTimelineSavedInputs>('compliance-timeline')
 
   // Milestone state
-  const [milestones, setMilestones] = useState<UserMilestone[]>([])
+  const [milestones, setMilestones] = useState<UserMilestone[]>(savedInputs?.milestones ?? [])
   const [newLabel, setNewLabel] = useState('')
   const [newYear, setNewYear] = useState(2026)
   const [newCategory, setNewCategory] = useState(MILESTONE_CATEGORIES[0])
@@ -333,7 +355,9 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
   // Gap analysis UI state
   const [gapExpanded, setGapExpanded] = useState(true)
   const [expandedGapIdx, setExpandedGapIdx] = useState<number | null>(null)
-  const [pinnedDeadlines, setPinnedDeadlines] = useState<Set<string>>(new Set())
+  const [pinnedDeadlines, setPinnedDeadlines] = useState<Set<string>>(
+    new Set(savedInputs?.pinnedDeadlines ?? [])
+  )
 
   // Resolve jurisdiction IDs to country names
   const selectedCountryNames = useMemo(() => {
@@ -405,6 +429,7 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
     // From compliance framework CSV
     for (const fw of frameworks) {
       if (dismissedFrameworkIds?.has(fw.id)) continue
+      if (PUBLICATION_STATUS_PATTERN.test(fw.deadline.trim())) continue
       const matchesJurisdiction = fw.countries.some(
         (c) =>
           selectedCountryNames.has(c.toLowerCase()) ||
@@ -547,7 +572,7 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
 
     md += '\n---\n\n'
     md +=
-      '*Aligned to NIST CSWP 39 §5.1 — Cryptographic Standards, Regulations, and Mandates. https://doi.org/10.6028/NIST.CSWP.39*\n'
+      '*Aligned to NIST CSWP 39 §5.1 — Cryptographic Standards, Regulations, and Mandates. https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
 
     return md
   }, [ganttRows, milestones, gapAnalysis])
@@ -589,11 +614,17 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
   }, [ganttRows, milestones, gapAnalysis])
 
   const handleSaveToDocuments = () => {
+    const inputs: ComplianceTimelineSavedInputs = {
+      milestones,
+      pinnedDeadlines: Array.from(pinnedDeadlines),
+      selectedJurisdictions,
+    }
     addExecutiveDocument({
       id: `compliance-timeline-${Date.now()}`,
       type: 'compliance-timeline',
       title: 'Compliance Timeline',
       data: exportMarkdown,
+      inputs,
       createdAt: Date.now(),
       moduleId: 'compliance-strategy',
     })
@@ -629,6 +660,11 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
 
   return (
     <div className="space-y-6">
+      {(savedInputs?.milestones?.length ?? 0) > 0 ||
+      (savedInputs?.pinnedDeadlines?.length ?? 0) > 0 ? (
+        <PreFilledBanner summary="Restored your milestones and pinned deadlines from your last saved timeline." />
+      ) : null}
+
       {/* Gantt Chart */}
       {ganttRows.length > 0 ? (
         <ComplianceGantt
@@ -785,6 +821,15 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
               )}
             </div>
           </div>
+
+          <p className="text-xs text-muted-foreground -mt-2">
+            Status is computed, not editorial: <span className="text-status-success">on track</span>{' '}
+            means your milestone plan reaches the deadline year (or a Certification/Renewal
+            milestone is already marked done); <span className="text-status-error">at risk</span>{' '}
+            means the deadline has passed with nothing marked done, or the plan doesn&apos;t reach
+            it in time. Publication/status entries (e.g. a standard&apos;s &quot;Final (published
+            …)&quot; date) are excluded — they aren&apos;t a compliance obligation.
+          </p>
 
           {gapExpanded && (
             <>

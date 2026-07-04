@@ -21,17 +21,20 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useModuleStore } from '@/store/useModuleStore'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 
-/** Common acceleration triggers offered as toggle chips. */
-const TRIGGER_OPTIONS = [
+/** Common acceleration triggers offered as toggle chips — the three trigger
+ *  types named by framework Activity 4.7. */
+export const TRIGGER_OPTIONS = [
   'CRQC milestone announced',
   'Regulatory deadline pulled forward',
+  'Cryptanalytic event against a deployed algorithm',
   'Active HNDL campaign detected',
   'Vendor critical-path slip',
 ] as const
-type TriggerOption = (typeof TRIGGER_OPTIONS)[number]
+export type TriggerOption = (typeof TRIGGER_OPTIONS)[number]
 
-interface ProfileState {
+export interface ProfileState {
   triggers: Record<TriggerOption, boolean>
   otherTrigger: string
   compressedSequence: string
@@ -40,7 +43,7 @@ interface ProfileState {
   activationAuthority: string
 }
 
-function buildMarkdown(s: ProfileState): string {
+export function buildMarkdown(s: ProfileState): string {
   const lines: string[] = []
   lines.push('# Accelerated Execution Profile')
   lines.push('')
@@ -99,11 +102,13 @@ function buildMarkdown(s: ProfileState): string {
 
 export const AcceleratedExecutionProfile: React.FC = () => {
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
+  const savedInputs = useSavedArtifactInputs<ProfileState>('accelerated-execution-profile')
   const [state, setState] = useState<ProfileState>(() => {
     const base: ProfileState = {
       triggers: {
         'CRQC milestone announced': true,
         'Regulatory deadline pulled forward': false,
+        'Cryptanalytic event against a deployed algorithm': false,
         'Active HNDL campaign detected': false,
         'Vendor critical-path slip': false,
       },
@@ -114,23 +119,33 @@ export const AcceleratedExecutionProfile: React.FC = () => {
       activationAuthority: '',
     }
     // Auto-run demo fill — framework Phase 4 activity 4.7 contingency package.
-    if (!isAutoRunFillActive()) return base
-    return {
-      ...base,
-      triggers: {
-        'CRQC milestone announced': true,
-        'Regulatory deadline pulled forward': true,
-        'Active HNDL campaign detected': true,
-        'Vendor critical-path slip': false,
-      },
-      compressedSequence:
-        'Collapse Phases 4–6: run discovery, risk scoring and Tier-1 pilots in parallel; pre-approve hybrid (X25519+ML-KEM-768) for all internet-facing TLS; defer long-tail / OT to a contained track.',
-      riskAcceptances:
-        'Pre-approved: temporary classical fallback for non-Tier-1 systems during transition; vendor roadmap commitments accepted for up to two quarters; residual risk re-reviewed quarterly.',
-      resourceRequest:
-        'Emergency budget uplift (~30% of Year 1) for surge cryptographic-engineering contractors and expedited HSM firmware procurement.',
-      activationAuthority: 'Executive Sponsor (CISO), on SteerCo recommendation.',
+    if (isAutoRunFillActive()) {
+      return {
+        ...base,
+        triggers: {
+          ...base.triggers,
+          'CRQC milestone announced': true,
+          'Regulatory deadline pulled forward': true,
+          'Active HNDL campaign detected': true,
+        },
+        compressedSequence:
+          'Collapse Phases 4–6: run discovery, risk scoring and Tier-1 pilots in parallel; pre-approve hybrid (X25519+ML-KEM-768) for all internet-facing TLS; defer long-tail / OT to a contained track.',
+        riskAcceptances:
+          'Pre-approved: temporary classical fallback for non-Tier-1 systems during transition; vendor roadmap commitments accepted for up to two quarters; residual risk re-reviewed quarterly.',
+        resourceRequest:
+          'Emergency budget uplift (~30% of Year 1) for surge cryptographic-engineering contractors and expedited HSM firmware procurement.',
+        activationAuthority: 'Executive Sponsor (CISO), on SteerCo recommendation.',
+      }
     }
+    // Restore the user's last-saved profile so it round-trips across visits.
+    if (savedInputs) {
+      return {
+        ...base,
+        ...savedInputs,
+        triggers: { ...base.triggers, ...savedInputs.triggers },
+      }
+    }
+    return base
   })
 
   const set = <K extends keyof ProfileState>(key: K, value: ProfileState[K]) =>
@@ -157,6 +172,11 @@ export const AcceleratedExecutionProfile: React.FC = () => {
             Phase 4 — Activity 4.7. A pre-drafted contingency package activated if the quantum
             timeline accelerates: triggers, a compressed sequence, pre-approved risk acceptances, an
             emergency resource ask, and the activation authority.
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            These 5 elements mirror the framework&apos;s own Activity 4.7 pre-approved package —
+            each one removes a decision that would otherwise wait on a committee cycle when the
+            timeline compresses.
           </p>
         </div>
       </header>
@@ -296,6 +316,7 @@ export const AcceleratedExecutionProfile: React.FC = () => {
             title: `Accelerated Execution Profile — ${new Date().toLocaleDateString()}`,
             data: exportMarkdown,
             inputs: {
+              ...state,
               triggerCount,
             },
             createdAt: Date.now(),
