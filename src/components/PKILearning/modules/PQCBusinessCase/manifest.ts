@@ -19,10 +19,11 @@ const manifest: ModuleManifest = {
     { id: 'board', label: 'Workshop & Resources' },
   ],
   workshopSteps: [
+    { id: 'cost-model-explorer', label: 'Cost Model Explorer' },
     { id: 'roi-calculator', label: 'ROI Calculator' },
     { id: 'breach-simulator', label: 'Breach Scenario Simulator' },
-    { id: 'board-pitch', label: 'Board Pitch Builder' },
     { id: 'cost-of-inaction', label: 'Cost of Inaction' },
+    { id: 'board-pitch', label: 'Board Pitch Builder' },
   ],
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.PQCBusinessCaseModule })),

@@ -367,7 +367,8 @@ const Step1WhyConceptsCosts: React.FC = () => (
           &mdash; the field has too few completed programs to calibrate against. The defensible move
           is to estimate the same program in <em>more than one way</em> and treat agreement between
           methods as confidence, and divergence as a signal to dig deeper. Six model families are in
-          use:
+          use &mdash; the workshop&apos;s Cost Model Explorer (Step 1) lets you watch them diverge
+          on one scenario:
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {[
@@ -507,25 +508,35 @@ const Step2WorkshopAndResources: React.FC<{ onNavigateToWorkshop: () => void }> 
       </div>
       <div className="space-y-4 text-sm text-foreground/80">
         <p>
-          The workshop guides you through three steps to create a complete, data-driven PQC
+          The workshop guides you through five steps to create a complete, data-driven PQC
           investment case:
         </p>
         <div className="space-y-2">
           {[
             {
               n: 1,
-              t: 'ROI Calculator',
-              d: 'Score migration cost, breach avoidance, compliance, operational efficiency, and competitive advantage to calculate overall ROI.',
+              t: 'Cost Model Explorer',
+              d: 'See how the six costing models diverge on one scenario — build the instinct not to trust any single number.',
             },
             {
               n: 2,
+              t: 'ROI Calculator',
+              d: 'Score migration cost, breach avoidance, and compliance, then cross-check the total against your assessment.',
+            },
+            {
+              n: 3,
               t: 'Breach Scenario Simulator',
               d: 'Model the financial impact of classical vs. quantum-enabled breaches with industry-specific cost data.',
             },
             {
-              n: 3,
+              n: 4,
+              t: 'Cost of Inaction',
+              d: 'Quantify the compounding cost of delaying migration — breach risk, complexity premiums, and penalties over five years.',
+            },
+            {
+              n: 5,
               t: 'Board Pitch Builder',
-              d: 'Generate a professional board memo with executive summary, risk overview, cost-benefit analysis, and recommended actions.',
+              d: 'Assemble a professional board memo, populated from the previous steps’ outputs.',
             },
           ].map((step) => (
             <div key={step.n} className="flex items-start gap-3 bg-muted/50 rounded-lg p-3">
