@@ -27,6 +27,11 @@ interface BreachOutput {
   deltaUSD: number
 }
 
+interface InactionOutput {
+  costOfInactionUSD: number
+  delayYears: number
+}
+
 function formatCurrency(amount: number): string {
   const sign = amount < 0 ? '-' : ''
   const abs = Math.abs(amount)
@@ -39,11 +44,13 @@ function formatCurrency(amount: number): string {
 interface BoardPitchBuilderProps {
   roiOutput?: ROIOutput | null
   breachOutput?: BreachOutput | null
+  inactionOutput?: InactionOutput | null
 }
 
 export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
   roiOutput,
   breachOutput,
+  inactionOutput,
 }) => {
   const data = useExecutiveModuleData()
   const { addExecutiveDocument } = useModuleStore()
@@ -62,11 +69,19 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
     return variant.sections.map((s) => ({
       ...s,
       fields: s.fields.map((f) => {
-        if (roiOutput && s.id === 'cost-benefit' && f.id === 'analysis') {
-          return {
-            ...f,
-            defaultValue: `Migration investment: ${formatCurrency(roiOutput.totalCostUSD)} | 3-year ROI: ${roiOutput.roiPercent.toFixed(0)}% | Payback: ${Math.round(roiOutput.paybackMonths)} months | Annual breach cost savings: ${formatCurrency(roiOutput.breachCostSavingsUSD)}`,
+        if ((roiOutput || inactionOutput) && s.id === 'cost-benefit' && f.id === 'analysis') {
+          const parts: string[] = []
+          if (roiOutput) {
+            parts.push(
+              `Migration investment: ${formatCurrency(roiOutput.totalCostUSD)} | 3-year ROI: ${roiOutput.roiPercent.toFixed(0)}% | Payback: ${Math.round(roiOutput.paybackMonths)} months | Annual breach cost savings: ${formatCurrency(roiOutput.breachCostSavingsUSD)}`
+            )
           }
+          if (inactionOutput) {
+            parts.push(
+              `Cost of inaction (delaying ${inactionOutput.delayYears}yr): ${formatCurrency(inactionOutput.costOfInactionUSD)}`
+            )
+          }
+          return { ...f, defaultValue: parts.join('\n') }
         }
         if (breachOutput && s.id === 'quantum-urgency' && f.id === 'urgency') {
           return {
@@ -83,7 +98,7 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
         return f
       }),
     }))
-  }, [variant.sections, roiOutput, breachOutput])
+  }, [variant.sections, roiOutput, breachOutput, inactionOutput])
 
   const sources: string[] = []
   if (!seedCleared) {
@@ -144,13 +159,15 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
         />
       )}
 
-      {(roiOutput || breachOutput) && (
+      {(roiOutput || breachOutput || inactionOutput) && (
         <PreFilledBanner
           summary={[
             roiOutput &&
-              `ROI data from Step 1 (investment: ${formatCurrency(roiOutput.totalCostUSD)}, ROI: ${roiOutput.roiPercent.toFixed(0)}%)`,
+              `ROI data from Step 2 (investment: ${formatCurrency(roiOutput.totalCostUSD)}, ROI: ${roiOutput.roiPercent.toFixed(0)}%)`,
             breachOutput &&
-              `Breach scenario data from Step 2 (delta: ${formatCurrency(breachOutput.deltaUSD)})`,
+              `Breach scenario data from Step 3 (delta: ${formatCurrency(breachOutput.deltaUSD)})`,
+            inactionOutput &&
+              `Cost of inaction from Step 4 (${formatCurrency(inactionOutput.costOfInactionUSD)} over ${inactionOutput.delayYears}yr)`,
           ]
             .filter(Boolean)
             .join(' + ')}
@@ -214,7 +231,7 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
           </p>
           <p className="text-xs italic mt-2">
             Both figures are starting points for board discussion, not a quote — run the ROI
-            Calculator (Step 1 of this workshop) for organization-specific numbers before committing
+            Calculator (Step 2 of this workshop) for organization-specific numbers before committing
             to a budget ask.
           </p>
         </div>

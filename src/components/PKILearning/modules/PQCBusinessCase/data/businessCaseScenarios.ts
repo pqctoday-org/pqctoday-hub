@@ -100,7 +100,5 @@ export const DELAY_COST_PROFILES: DelayCostProfile[] = [
 
 export const DEFAULT_PROFILE = DELAY_COST_PROFILES[0]
 
-/** Annual breach risk: baseline cost × a modest annual probability (5%) */
-export function annualBreachRisk(breachBaseline: number, hndlMultiplier: number): number {
-  return breachBaseline * 0.05 * hndlMultiplier
-}
+// Breach-risk math lives in utils/delayCostModel.ts, driven by an explicit
+// (user-adjustable) breach probability rather than a hidden 5% constant.

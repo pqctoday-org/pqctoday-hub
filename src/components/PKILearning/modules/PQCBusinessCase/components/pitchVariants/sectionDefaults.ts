@@ -233,7 +233,7 @@ export function buildCostBenefitDefault(data: Data): string {
   const multiplier = tier === 'major' ? '3-5×' : '2-3×'
   const parts: string[] = []
   parts.push(
-    `Cost of inaction (${tier}): regulatory penalties, breach response, contract loss, and reputational damage are illustrative and typically fall in the ${multiplier} range of the migration investment - this varies widely by organization, so treat it as a starting estimate and use the ROI Calculator (Step 1 of this workshop) for organization-specific figures.`
+    `Cost of inaction (${tier}): regulatory penalties, breach response, contract loss, and reputational damage are illustrative and typically fall in the ${multiplier} range of the migration investment - this varies widely by organization, so treat it as a starting estimate and use the ROI Calculator (Step 2 of this workshop) for organization-specific figures.`
   )
   if (data.migrationDeadlineYear) {
     parts.push(

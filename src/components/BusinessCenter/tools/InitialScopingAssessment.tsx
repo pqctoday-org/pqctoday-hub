@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * Initial Scoping Assessment — Phase 0 (Executive Mandate) Command Center
- * gap-closer (PHASE-OVERLAY-SPEC.md §6.4).
- *
- * Captures the first-cut scope the framework's Phase 0.5 expects: the top-20
- * in-scope systems, a rough estate-size estimate (cryptographic instances), and
- * the top-10 vendor dependencies. The system + vendor lists are *seedable* from
- * the user's existing /migrate selection and the assessment industry via
- * `useExecutiveModuleData`, so the scoping opens with their context rather than
- * a blank sheet. Emits a downloadable markdown artifact saved under the
- * Governance zone.
+ * gap-closer. Captures the rapid first-cut scope the framework's Activity 0.5
+ * expects: the top-20 in-scope systems (each triaged by priority tier and
+ * ownership), a rough estate-size estimate (optionally itemized by category),
+ * and the top 5–10 vendor dependencies. Detailed per-system crypto (protocols,
+ * algorithms, precise sensitivity) is deliberately deferred to Discovery / the
+ * CBOM Builder — Activity 0.5 is a 2–4 week triage on existing organizational
+ * knowledge, not an inventory. Seedable from /migrate; emits a markdown
+ * artifact under the Governance zone.
  */
 import React, { useMemo, useState } from 'react'
 import { ClipboardList, ChevronDown, ChevronRight, Info } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
@@ -25,28 +25,83 @@ import { INSTANCES_PER_PRODUCT_ESTIMATE } from '@/data/roleCrosswalk'
 const MAX_SYSTEMS = 20
 const MAX_VENDORS = 10
 
-function isValidScopingState(s: unknown): s is ScopingState {
-  return (
-    !!s &&
-    typeof s === 'object' &&
-    Array.isArray((s as ScopingState).systems) &&
-    Array.isArray((s as ScopingState).vendors) &&
-    typeof (s as ScopingState).estateInstances === 'string'
-  )
+export type Priority = '—' | 'A' | 'B' | 'C'
+export type Ownership = 'Internal' | 'Vendor' | 'Mixed'
+const PRIORITIES: Priority[] = ['—', 'A', 'B', 'C']
+const OWNERSHIPS: Ownership[] = ['Internal', 'Vendor', 'Mixed']
+
+export interface ScopedSystem {
+  name: string
+  /** Discovery-priority tier (A/B/C); '—' = not yet triaged. */
+  priority: Priority
+  ownership: Ownership
+  /** Optional "if known" note — protocols / sensitivity / dependents. Discovery + the CBOM fill these in. */
+  notes: string
+}
+
+export interface EstateBreakdown {
+  tlsEndpoints: string
+  certificates: string
+  vpnTunnels: string
+  hsmKeys: string
+  codeSigningPipelines: string
 }
 
 export interface ScopingState {
-  systems: string[]
+  systems: ScopedSystem[]
   vendors: string[]
   estateInstances: string
+  estate: EstateBreakdown
   seeded: boolean
+}
+
+const emptyEstate = (): EstateBreakdown => ({
+  tlsEndpoints: '',
+  certificates: '',
+  vpnTunnels: '',
+  hsmKeys: '',
+  codeSigningPipelines: '',
+})
+
+const emptySystem = (): ScopedSystem => ({
+  name: '',
+  priority: '—',
+  ownership: 'Internal',
+  notes: '',
+})
+
+/** Back-compat: older saved scopes stored systems as plain strings. */
+export function normalizeSystem(v: unknown): ScopedSystem {
+  if (typeof v === 'string') return { ...emptySystem(), name: v }
+  const o = (v ?? {}) as Partial<ScopedSystem>
+  return {
+    name: o.name ?? '',
+    priority: (PRIORITIES.includes(o.priority as Priority) ? o.priority : '—') as Priority,
+    ownership: (OWNERSHIPS.includes(o.ownership as Ownership)
+      ? o.ownership
+      : 'Internal') as Ownership,
+    notes: o.notes ?? '',
+  }
+}
+
+export function normalizeState(s: unknown): ScopingState | null {
+  if (!s || typeof s !== 'object') return null
+  const o = s as Partial<ScopingState> & { systems?: unknown[] }
+  if (!Array.isArray(o.systems) || !Array.isArray(o.vendors)) return null
+  return {
+    systems: o.systems.map(normalizeSystem),
+    vendors: o.vendors as string[],
+    estateInstances: typeof o.estateInstances === 'string' ? o.estateInstances : '',
+    estate: { ...emptyEstate(), ...(o.estate ?? {}) },
+    seeded: !!o.seeded,
+  }
 }
 
 export function buildMarkdown(s: ScopingState, industry: string): string {
   const lines: string[] = []
   lines.push('# Initial Scoping Assessment')
   lines.push('')
-  lines.push('*Phase 0 — Executive Mandate (initial scoping). First-cut estate boundary.*')
+  lines.push('*Phase 0 — Executive Mandate (Activity 0.5). Rapid first-cut estate boundary.*')
   if (industry) {
     lines.push('')
     lines.push(`Industry context: ${industry}`)
@@ -55,21 +110,43 @@ export function buildMarkdown(s: ScopingState, industry: string): string {
 
   lines.push(`## Top systems in scope (max ${MAX_SYSTEMS})`)
   lines.push('')
-  const systems = s.systems.map((v) => v.trim()).filter(Boolean)
+  const systems = s.systems.filter((sys) => sys.name.trim())
   if (systems.length === 0) {
     lines.push('_No systems listed yet._')
   } else {
-    systems.forEach((sys, i) => lines.push(`${i + 1}. ${sys}`))
+    lines.push('| # | System | Priority | Owner | Notes (if known) |')
+    lines.push('|---|--------|----------|-------|------------------|')
+    systems.forEach((sys, i) =>
+      lines.push(
+        `| ${i + 1} | ${sys.name.trim()} | ${sys.priority} | ${sys.ownership} | ${sys.notes.trim() || '—'} |`
+      )
+    )
   }
+  lines.push('')
+  lines.push(
+    '_Priority tiers (framework Activity 1.0): A = internet-exposed + long-lived secrecy/trust; ' +
+      'B = internal Tier-1 with significant data sensitivity; C = everything else. Detailed ' +
+      'per-system protocols and algorithms come from Discovery / the CBOM Builder._'
+  )
   lines.push('')
 
   lines.push('## Estate-size estimate')
   lines.push('')
-  const instances = s.estateInstances.trim()
-  lines.push(`- **Estimated cryptographic instances:** ${instances || '_(TBD)_'}`)
-  lines.push(
-    '  (keys, certificates, library call-sites, protocol endpoints — a rough order of magnitude)'
-  )
+  lines.push(`- **Estimated cryptographic instances:** ${s.estateInstances.trim() || '_(TBD)_'}`)
+  const e = s.estate
+  const rows: [string, string][] = [
+    ['TLS endpoints', e.tlsEndpoints],
+    ['Certificates', e.certificates],
+    ['VPN tunnels', e.vpnTunnels],
+    ['HSM-protected keys', e.hsmKeys],
+    ['Code-signing pipelines', e.codeSigningPipelines],
+  ].filter(([, v]) => v.trim()) as [string, string][]
+  if (rows.length > 0) {
+    lines.push('')
+    lines.push('| Category | Count |')
+    lines.push('|----------|-------|')
+    rows.forEach(([label, v]) => lines.push(`| ${label} | ${v.trim()} |`))
+  }
   lines.push('')
 
   lines.push(`## Top vendor dependencies (max ${MAX_VENDORS})`)
@@ -86,14 +163,12 @@ export function buildMarkdown(s: ScopingState, industry: string): string {
   lines.push('')
   lines.push(
     '*Aligned to NIST CSWP 39 §5 (Crypto Agility Strategic Plan — scope) and the Applied ' +
-      'Quantum Phase 0 initial-scoping step. https://doi.org/10.6028/NIST.CSWP.39-upd1*'
+      'Quantum Activity 0.5 initial-scoping step. https://doi.org/10.6028/NIST.CSWP.39-upd1*'
   )
   return lines.join('\n')
 }
 
-/** Collapsible "how this data is sourced" panel — mirrors the pattern in
- *  CryptoVulnerabilityWatch.tsx, explaining where the caps and the seeding
- *  come from instead of leaving that grounding only in the export footer. */
+/** Collapsible "how this data is sourced" panel. */
 function DataSourcesPanel() {
   const [open, setOpen] = useState(false)
   return (
@@ -119,13 +194,15 @@ function DataSourcesPanel() {
               Applied Quantum Framework, Activity 0.5 — Conduct Initial Scoping Assessment
             </h4>
             <p>
-              This tool captures the four data points the framework's Phase 0.5 defines: a rapid
-              (2&ndash;4 week) scoping pass that (1) identifies the top 20 revenue-generating or
-              mission-critical systems, (2) records each one&apos;s protocols, data sensitivity,
-              dependents, and vendor ownership, (3) estimates the size of the cryptographic estate,
-              and (4) identifies the 5&ndash;10 vendors whose PQC readiness will most constrain the
-              migration timeline. Its output calibrates Year 1 budget and staffing and becomes the
-              input to Phase 1 discovery prioritization.
+              A rapid (2&ndash;4 week) triage on existing organizational knowledge. This tool
+              captures the top 20 revenue-generating or mission-critical systems &mdash; each with a{' '}
+              <strong>priority tier</strong> (A/B/C) and <strong>ownership</strong> (internal vs
+              vendor) &mdash; a rough <strong>estate-size estimate</strong> (optionally itemized),
+              and the <strong>5&ndash;10 vendors</strong> whose PQC readiness will most constrain
+              the timeline. Detailed per-system protocols, algorithms, and precise data sensitivity
+              are deliberately deferred to Discovery and the CBOM Builder; scoping is triage, not an
+              inventory. Its output calibrates Year 1 budget and staffing and seeds Phase 1
+              prioritization.
             </p>
           </section>
           <section className="space-y-1.5">
@@ -150,11 +227,11 @@ function DataSourcesPanel() {
             <p>
               When you have a product selection on <code className="text-[11px]">/migrate</code>,
               the systems and vendor lists open pre-filled from it (systems from the product names,
-              vendors from the distinct vendor ids behind them, each product&apos;s catalog
-              infrastructure layer carried over as a criticality tag). The estate-size estimate is
-              seeded at {INSTANCES_PER_PRODUCT_ESTIMATE} cryptographic instances per selected
-              product — a rough order of magnitude, not a measurement. Everything here is editable;
-              seeding only sets the starting point.
+              with ownership inferred from whether a vendor backs each; vendors from the distinct
+              vendor ids). Priority is left un-triaged (&mdash;) for you to set — it isn&apos;t
+              guessed. The estate-size estimate is seeded at {INSTANCES_PER_PRODUCT_ESTIMATE}{' '}
+              cryptographic instances per selected product — a rough order of magnitude, not a
+              measurement.
             </p>
           </section>
         </div>
@@ -163,7 +240,7 @@ function DataSourcesPanel() {
   )
 }
 
-/** Editable text-row list with add/remove, capped at `max` entries. */
+/** Editable text-row list with add/remove, capped at `max` entries (vendors). */
 function RowList({
   label,
   rows,
@@ -233,21 +310,22 @@ function RowList({
   )
 }
 
+const SELECT_CLASS =
+  'h-7 rounded border border-border bg-background text-[11px] px-1.5 text-foreground'
+
 export const InitialScopingAssessment: React.FC = () => {
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
   const savedInputs = useSavedArtifactInputs<ScopingState>('initial-scoping')
   const { myProducts, industry, totalProducts } = useExecutiveModuleData()
 
-  // Seed systems + vendors from the user's /migrate selection. Systems take the
-  // product (software) names, tagged with the catalog's infrastructure layer as
-  // a lightweight criticality cue; vendors take the distinct vendor ids behind them.
-  const seedSystems = useMemo(
+  const seedSystems = useMemo<ScopedSystem[]>(
     () =>
-      myProducts
-        .slice(0, MAX_SYSTEMS)
-        .map((p) =>
-          p.infrastructureLayer ? `${p.softwareName} [${p.infrastructureLayer}]` : p.softwareName
-        ),
+      myProducts.slice(0, MAX_SYSTEMS).map((p) => ({
+        name: p.softwareName,
+        priority: '—' as Priority,
+        ownership: (p.vendorId ? 'Vendor' : 'Internal') as Ownership,
+        notes: p.infrastructureLayer ? `Layer: ${p.infrastructureLayer}` : '',
+      })),
     [myProducts]
   )
   const seedVendors = useMemo(() => {
@@ -263,31 +341,41 @@ export const InitialScopingAssessment: React.FC = () => {
     }
     return out
   }, [myProducts])
-
-  // Rough estate-size seed: when the user has a /migrate selection we estimate
-  // ~INSTANCES_PER_PRODUCT_ESTIMATE cryptographic instances per selected product
-  // as a starting order of magnitude; otherwise leave blank for the user to enter.
   const seedInstances = useMemo(
     () => (myProducts.length > 0 ? String(myProducts.length * INSTANCES_PER_PRODUCT_ESTIMATE) : ''),
     [myProducts.length]
   )
 
-  // The store-backed /migrate selection is available synchronously on first
-  // render, so the lazy initializer seeds the scope from it; no re-seed effect
-  // needed (and none of the assess data arrives async into an empty form).
-  // A previously-saved scope takes priority over re-seeding from /migrate, so
-  // the user's own edits round-trip across visits instead of being discarded.
   const [state, setState] = useState<ScopingState>(() => {
-    if (isValidScopingState(savedInputs)) return savedInputs
+    const restored = normalizeState(savedInputs)
+    if (restored) return restored
     return {
-      systems: seedSystems.length > 0 ? seedSystems : [''],
+      systems: seedSystems.length > 0 ? seedSystems : [emptySystem()],
       vendors: seedVendors.length > 0 ? seedVendors : [''],
       estateInstances: seedInstances,
+      estate: emptyEstate(),
       seeded: seedSystems.length > 0 || seedVendors.length > 0,
     }
   })
+  const [estateOpen, setEstateOpen] = useState(false)
 
   const exportMarkdown = useMemo(() => buildMarkdown(state, industry), [state, industry])
+
+  const setSystem = (i: number, patch: Partial<ScopedSystem>) =>
+    setState((prev) => ({
+      ...prev,
+      systems: prev.systems.map((sys, idx) => (idx === i ? { ...sys, ...patch } : sys)),
+    }))
+  const removeSystem = (i: number) =>
+    setState((prev) => ({ ...prev, systems: prev.systems.filter((_, idx) => idx !== i) }))
+  const addSystem = () =>
+    setState((prev) =>
+      prev.systems.length < MAX_SYSTEMS
+        ? { ...prev, systems: [...prev.systems, emptySystem()] }
+        : prev
+    )
+  const setEstate = (patch: Partial<EstateBreakdown>) =>
+    setState((prev) => ({ ...prev, estate: { ...prev.estate, ...patch } }))
 
   const sources: string[] = []
   if (myProducts.length > 0)
@@ -302,7 +390,13 @@ export const InitialScopingAssessment: React.FC = () => {
             totalProducts ? ` (estate ~${totalProducts} catalogued products)` : ''
           }.`}
           onClear={() =>
-            setState({ systems: [''], vendors: [''], estateInstances: '', seeded: false })
+            setState({
+              systems: [emptySystem()],
+              vendors: [''],
+              estateInstances: '',
+              estate: emptyEstate(),
+              seeded: false,
+            })
           }
         />
       )}
@@ -311,27 +405,102 @@ export const InitialScopingAssessment: React.FC = () => {
         <div>
           <h2 className="text-lg font-semibold text-foreground">Initial Scoping Assessment</h2>
           <p className="text-sm text-muted-foreground">
-            Phase 0 first-cut scope: your top {MAX_SYSTEMS} in-scope systems, a rough estate-size
-            estimate, and your top {MAX_VENDORS} vendor dependencies.
+            Phase 0 rapid first-cut: your top {MAX_SYSTEMS} systems triaged by priority and owner, a
+            rough estate-size estimate, and your top {MAX_VENDORS} vendor dependencies.
           </p>
         </div>
       </header>
 
       <DataSourcesPanel />
 
-      <section className="glass-panel border border-border rounded-lg p-4 space-y-2">
-        <RowList
-          label={`Top systems in scope`}
-          rows={state.systems}
-          max={MAX_SYSTEMS}
-          placeholder="e.g. Customer-facing TLS gateway"
-          onChange={(systems) => setState((prev) => ({ ...prev, systems }))}
-        />
+      <section className="glass-panel border border-border rounded-lg p-4 space-y-3">
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-semibold text-foreground">Top systems in scope</span>
+          <span className="text-[10px] text-muted-foreground">
+            {state.systems.length} / {MAX_SYSTEMS}
+          </span>
+        </div>
+        <div className="space-y-2">
+          {state.systems.map((sys, i) => (
+            <div key={i} className="rounded border border-border p-2 space-y-1.5">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] tabular-nums text-muted-foreground w-5 shrink-0">
+                  {i + 1}.
+                </span>
+                <Input
+                  value={sys.name}
+                  onChange={(e) => setSystem(i, { name: e.target.value })}
+                  placeholder="e.g. Customer-facing TLS gateway"
+                  className="h-8 flex-1"
+                  aria-label={`System ${i + 1} name`}
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => removeSystem(i)}
+                  aria-label={`Remove system ${i + 1}`}
+                  className="h-8 px-2 text-muted-foreground"
+                >
+                  ✕
+                </Button>
+              </div>
+              <div className="flex flex-wrap items-center gap-2 pl-7">
+                <span className="text-[10px] text-muted-foreground">Priority</span>
+                <select
+                  value={sys.priority}
+                  onChange={(e) => setSystem(i, { priority: e.target.value as Priority })}
+                  className={SELECT_CLASS}
+                  aria-label={`System ${i + 1} priority`}
+                >
+                  {PRIORITIES.map((p) => (
+                    <option key={p} value={p}>
+                      {p === '—' ? '— (untriaged)' : p}
+                    </option>
+                  ))}
+                </select>
+                <span className="text-[10px] text-muted-foreground">Owner</span>
+                <select
+                  value={sys.ownership}
+                  onChange={(e) => setSystem(i, { ownership: e.target.value as Ownership })}
+                  className={SELECT_CLASS}
+                  aria-label={`System ${i + 1} ownership`}
+                >
+                  {OWNERSHIPS.map((o) => (
+                    <option key={o} value={o}>
+                      {o}
+                    </option>
+                  ))}
+                </select>
+                <Input
+                  value={sys.notes}
+                  onChange={(e) => setSystem(i, { notes: e.target.value })}
+                  placeholder="if known: protocols / sensitivity / dependents"
+                  className="h-7 flex-1 min-w-[10rem] text-[11px]"
+                  aria-label={`System ${i + 1} notes`}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={addSystem}
+          disabled={state.systems.length >= MAX_SYSTEMS}
+          className="h-7"
+        >
+          + Add
+        </Button>
         <p className="text-[11px] text-muted-foreground">
-          Capped at {MAX_SYSTEMS} — Framework Activity 0.5 scopes the top 20 revenue-generating or
-          mission-critical systems by rapid organizational-knowledge triage. These become your
-          &ldquo;Tier-1&rdquo; set: the first ones Phase 1 discovers under Priority A
-          (internet-exposed + long-lived secrecy data or trust anchors).
+          Triage the top 20 by <strong>priority tier</strong> (A = internet-exposed + long-lived
+          secrecy/trust; B = internal Tier-1; C = everything else) and <strong>owner</strong>. The
+          detailed crypto per system belongs in the{' '}
+          <Link to="/business/tools/crypto-cbom-builder" className="text-primary hover:underline">
+            CBOM Builder
+          </Link>{' '}
+          — this stays a rapid triage.
         </p>
       </section>
 
@@ -344,7 +513,7 @@ export const InitialScopingAssessment: React.FC = () => {
         </label>
         <p className="text-xs text-muted-foreground mb-1.5">
           Rough count of cryptographic instances (keys, certificates, library call-sites, protocol
-          endpoints). Drives FTE sizing in the Skills &amp; Team plan.
+          endpoints). Calibrates Year 1 FTE sizing.
           {myProducts.length > 0 && (
             <>
               {' '}
@@ -353,8 +522,7 @@ export const InitialScopingAssessment: React.FC = () => {
                 {myProducts.length} product{myProducts.length === 1 ? '' : 's'} ×{' '}
                 {INSTANCES_PER_PRODUCT_ESTIMATE}
               </span>{' '}
-              — a rough order-of-magnitude estimate, not a measurement; refine with your real
-              inventory.
+              — a rough order of magnitude, not a measurement.
             </>
           )}
         </p>
@@ -367,6 +535,42 @@ export const InitialScopingAssessment: React.FC = () => {
           placeholder="e.g. 2400"
           className="max-w-[12rem]"
         />
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setEstateOpen((o) => !o)}
+          aria-expanded={estateOpen}
+          className="h-7 px-2 -ml-2 text-xs text-muted-foreground"
+        >
+          {estateOpen ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
+          Break down by category (optional, if known)
+        </Button>
+        {estateOpen && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+            {(
+              [
+                ['TLS endpoints', 'tlsEndpoints'],
+                ['Certificates', 'certificates'],
+                ['VPN tunnels', 'vpnTunnels'],
+                ['HSM-protected keys', 'hsmKeys'],
+                ['Code-signing pipelines', 'codeSigningPipelines'],
+              ] as const
+            ).map(([label, key]) => (
+              <div key={key} className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                <span className="w-40 shrink-0">{label}</span>
+                <Input
+                  type="number"
+                  min={0}
+                  value={state.estate[key]}
+                  onChange={(e) => setEstate({ [key]: e.target.value })}
+                  placeholder="—"
+                  className="h-7"
+                  aria-label={label}
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="glass-panel border border-border rounded-lg p-4 space-y-2">
@@ -379,8 +583,7 @@ export const InitialScopingAssessment: React.FC = () => {
         />
         <p className="text-[11px] text-muted-foreground">
           Capped at {MAX_VENDORS} — Framework Activity 0.5 asks for the 5&ndash;10 vendors whose PQC
-          readiness will most constrain your migration timeline; {MAX_VENDORS} is the upper bound of
-          that range so the list stays focused on genuine critical-path dependencies.
+          readiness will most constrain your migration timeline.
         </p>
       </section>
 
