@@ -47,7 +47,11 @@ import { ReportTimelineStrip } from './ReportTimelineStrip'
 import { ReportThreatsAppendix, ASSESS_TO_THREATS_INDUSTRY } from './ReportThreatsAppendix'
 import { ReportCswp39Nav } from './ReportCswp39Nav'
 import { ReportLockedOverlay } from './redesign/ReportLockedOverlay'
-import { KpiEmptyState, KpiPreviewSkeleton } from './redesign/ReportKpiStates'
+import {
+  KpiEmptyState,
+  KpiPreviewSkeleton,
+  CategoryBreakdownPreviewSkeleton,
+} from './redesign/ReportKpiStates'
 import { ReportVerdictBlock } from './redesign/ReportVerdictBlock'
 import { ReportUpgradeNudge } from './redesign/ReportUpgradeNudge'
 import { ReportControlDeck } from './redesign/ReportControlDeck'
@@ -608,6 +612,13 @@ export const ReportContent: React.FC<AssessReportProps> = ({
 
   const config = riskConfig[result.riskLevel]
 
+  // The true quick/full signal. NOT `result.categoryScores` — the engine emits
+  // COARSE category scores even on the legacy/quick path (to feed the sim & KPIs),
+  // so categoryScores is always present and can't distinguish the tracks. The
+  // assessment profile mode is derived from `hasExtendedInput`, so it is the
+  // honest gate for the locked/upgrade tiering.
+  const isComprehensive = result.assessmentProfile?.mode === 'comprehensive'
+
   const handlePrint = () => {
     window.print()
   }
@@ -764,17 +775,17 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                       <span
                         className={clsx(
                           'inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full border mt-2',
-                          result.categoryScores
+                          isComprehensive
                             ? 'border-primary/30 bg-primary/10 text-primary'
                             : 'border-border bg-muted/20 text-muted-foreground'
                         )}
                       >
-                        {result.categoryScores ? 'Comprehensive Assessment' : 'Quick Assessment'}
+                        {isComprehensive ? 'Comprehensive Assessment' : 'Quick Assessment'}
                       </span>
                     </div>
 
                     {/* Control deck (redesign) — derived track label + persona lens. */}
-                    <ReportControlDeck fullTrack={!!result.categoryScores} />
+                    <ReportControlDeck fullTrack={isComprehensive} />
 
                     {/* Persona verdict (redesign) — re-leads the result for the active role,
                       above the "Do this first" hero. */}
@@ -782,7 +793,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
 
                     {/* Fast-track upgrade nudge (redesign) — quick assessments only; ties the
                       locked sections to one clear unlock path. */}
-                    {!result.categoryScores && <ReportUpgradeNudge />}
+                    {!isComprehensive && <ReportUpgradeNudge />}
 
                     {/* Top-3 actions hero (P15-P1-02) — teases the highest-priority
                       recommended actions before the full report scroll. Hidden in print. */}
@@ -1020,7 +1031,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         owns this section, so a quick assessment shows a locked preview
                         (redesign) instead of omitting it. */}
                     {phaseVisible('riskBreakdown') &&
-                      (result.categoryScores ? (
+                      (isComprehensive && result.categoryScores ? (
                         <div id="report-section-riskBreakdown">
                           <CategoryBreakdown
                             scores={result.categoryScores}
@@ -1040,15 +1051,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                             reason="Per-domain scores need the full assessment"
                             detail="A quick assessment can't separate Quantum Exposure, Migration Complexity, Regulatory Pressure and Organizational Readiness. Finish the full assessment to unlock the breakdown."
                           >
-                            <CategoryBreakdown
-                              scores={{
-                                quantumExposure: 72,
-                                migrationComplexity: 58,
-                                regulatoryPressure: 65,
-                                organizationalReadiness: 40,
-                              }}
-                              defaultOpen
-                            />
+                            <CategoryBreakdownPreviewSkeleton />
                           </ReportLockedOverlay>
                         </div>
                       ))}
@@ -1147,7 +1150,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                       )}
 
                     {/* HNDL warning for quick assessments with high sensitivity */}
-                    {!result.categoryScores &&
+                    {!isComprehensive &&
                       !result.hndlRiskWindow &&
                       ((dataSensitivity ?? []).includes('critical') ||
                         (dataSensitivity ?? []).includes('high')) && (
@@ -1168,7 +1171,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                       )}
 
                     {/* HNFL warning for quick assessments with signing algorithms */}
-                    {!result.categoryScores && !result.tnflRiskWindow && hasSigningAlgos && (
+                    {!isComprehensive && !result.tnflRiskWindow && hasSigningAlgos && (
                       <div className="glass-panel p-4 border-l-4 border-l-destructive flex items-start gap-3">
                         <AlertTriangle size={18} className="text-destructive shrink-0 mt-0.5" />
                         <div>
@@ -1649,10 +1652,10 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                       infoTip={<SectionInfoTip sectionId="roiCalculator" />}
                     />
 
-                    {/* KPI Trending — comprehensive-gated (categoryScores). Three states:
-                        locked on a quick assessment, empty until ≥2 saved snapshots,
-                        populated otherwise. */}
-                    {result.categoryScores ? (
+                    {/* KPI Trending — comprehensive-gated. Three states: locked on a
+                        quick assessment, empty until ≥2 saved snapshots, populated
+                        otherwise. */}
+                    {isComprehensive ? (
                       assessmentHistory.length >= 2 ? (
                         <KPITrendingSection
                           history={assessmentHistory}

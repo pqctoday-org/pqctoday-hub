@@ -26,6 +26,29 @@ export function KpiEmptyState() {
   )
 }
 
+/** Non-numeric skeleton for the locked per-domain Risk Breakdown preview. Uses
+ *  bars only — no fabricated scores — so nothing legible leaks behind the blur. */
+export function CategoryBreakdownPreviewSkeleton() {
+  return (
+    <div className="glass-panel rounded-2xl p-4">
+      <div className="mb-4 h-3 w-32 rounded bg-muted" />
+      <div className="space-y-4">
+        {[70, 52, 61, 44].map((w, i) => (
+          <div key={i}>
+            <div className="mb-1 flex items-center justify-between">
+              <div className="h-2.5 w-28 rounded bg-muted/70" />
+              <div className="h-2.5 w-8 rounded bg-muted/50" />
+            </div>
+            <div className="h-2.5 w-full overflow-hidden rounded-full bg-border">
+              <div className="h-full rounded-full bg-primary/30" style={{ width: `${w}%` }} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 /** Static skeleton used as the blurred preview behind the locked overlay. */
 export function KpiPreviewSkeleton() {
   return (
