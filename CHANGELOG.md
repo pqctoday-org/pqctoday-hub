@@ -26,6 +26,29 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.8.0] - 2026-07-03
+
+A crypto-agility and business-tools release: the CACP playground gains scripted policy test-scenarios and a workbench picker, a persona deep-link bug is fixed, and 30 Command Center business tools are corrected after a fresh accuracy audit.
+
+### Added
+
+- **Try validated test scenarios in the crypto-agility playground** [view:/playground/cacp]: the Policy screen's workbench now has a scenario picker loaded with validated positive/negative test cases tied to each shipped policy, and the Visual tab's graph trace is now driven directly by the real engine rather than a simulated approximation — what you see highlighted is what the engine actually decided.
+- **A Q-Day horizon stat in the simulation's KPI row** [view:/simulation] [persona:executive]: alongside the win-rate score, the simulation now shows years-to-Q-Day and the modelled horizon year, clearly marked as an illustrative planning anchor rather than a published date.
+- **ENISA hybridization report added to the library** [view:/library]: closes three gaps in the protocol-support matrix's sourcing.
+
+### Changed
+
+- **CACP playground A-grade UX pass** [view:/playground/cacp]: engine/UI sync, batch-operation test coverage, and general Phase 3 polish across the crypto-agility playground.
+
+### Fixed
+
+- **30 Command Center business tools corrected after a fresh accuracy audit** [view:/business] [persona:executive]: a 2026-07-03 grading pass found several tools scoring C or lower; the underlying calculations and logic (not just wording) were corrected. The Executive Overview's narrated walkthrough now generates its explainer text directly from each tool's real logic instead of a hand-maintained copy, so the two can no longer drift apart.
+- **`?persona=` deep links no longer lose the chosen persona** [view:/learn] [persona:executive] [persona:developer]: combining a `?persona=` link with workshop-video autostart triggered a race condition that silently reset the persona to Executive regardless of what the link specified. Anyone sharing or following a non-executive workshop link now lands on the right persona.
+- **Restored the Executive Report reference in Verification & Closure** [view:/simulation] [persona:executive]: an earlier content edit had dropped the only entry point back to the board-facing closure summary from that step.
+- **CACP Lesson 3's rekey sequence had a genuine ordering bug**, now fixed [view:/playground/cacp].
+- **Clearer error when a KMIP batch step references an unset ID placeholder** [view:/playground/cacp]: instead of a raw internal error, the playground now shows a plain message explaining what happened.
+- **Corrected the AWS-LC FIPS certificate number** cited in the product catalog [view:/migrate].
+
 ## [4.7.0] - 2026-07-02
 
 An accuracy, learning, and crypto-agility release: a hub-wide factual re-audit corrects roughly 150 errors, learners get a shorter essentials-first path, executives can watch the whole migration play out as a guided walkthrough, and the crypto-agility playground gains a visual policy editor plus hybrid key exchange.
