@@ -31,6 +31,7 @@ import { useAssessmentStore } from '../../store/useAssessmentStore'
 import { useMigrateSelectionStore } from '../../store/useMigrateSelectionStore'
 import { useMigrationWorkflowStore } from '../../store/useMigrationWorkflowStore'
 import { usePersonaStore } from '../../store/usePersonaStore'
+import { useReportOwnershipStore } from '../../store/useReportOwnershipStore'
 import {
   PERSONA_NAV_PATHS,
   ALWAYS_VISIBLE_PATHS,
@@ -47,7 +48,11 @@ import { ReportTimelineStrip } from './ReportTimelineStrip'
 import { ReportThreatsAppendix, ASSESS_TO_THREATS_INDUSTRY } from './ReportThreatsAppendix'
 import { ReportCswp39Nav } from './ReportCswp39Nav'
 import { ReportLockedOverlay } from './redesign/ReportLockedOverlay'
-import { KpiEmptyState, KpiPreviewSkeleton } from './redesign/ReportKpiStates'
+import {
+  KpiEmptyState,
+  KpiPreviewSkeleton,
+  CategoryBreakdownPreviewSkeleton,
+} from './redesign/ReportKpiStates'
 import { ReportVerdictBlock } from './redesign/ReportVerdictBlock'
 import { ReportUpgradeNudge } from './redesign/ReportUpgradeNudge'
 import { ReportControlDeck } from './redesign/ReportControlDeck'
@@ -55,6 +60,8 @@ import { useThreatsData } from '../../hooks/useThreatsData'
 import { GlossaryAutoWrap } from '../PKILearning/common/GlossaryAutoWrap'
 import { MigrationRoadmap } from './MigrationRoadmap'
 import { MigrationToolkit } from './MigrationToolkit'
+import { VendorRiskSection } from './sections/VendorRiskSection'
+import { DiscoverySection } from './sections/DiscoverySection'
 import { ReportMethodologyModal } from './ReportMethodologyModal'
 import { SectionInfoModal } from './SectionInfoModal'
 import { ROICalculatorSection } from '../shared/ROICalculatorSection'
@@ -62,7 +69,11 @@ import type { ROISummary } from '../shared/ROICalculatorSection'
 import { KPITrendingSection } from './KPITrendingSection'
 import { BoardBriefSection } from './BoardBriefSection'
 import { BoardPackExport } from './BoardPackExport'
-import { REPORT_SECTION_LABELS, REPORT_SECTION_TO_CSWP39 } from '../../data/reportSectionToCswp39'
+import {
+  REPORT_SECTION_ORDER,
+  REPORT_SECTION_LABELS,
+  REPORT_SECTION_TO_CSWP39,
+} from '../../data/reportSectionToCswp39'
 import { FRAMEWORK_PHASES } from '../../data/frameworkPhases'
 import { usePhaseFilter } from '../../hooks/usePhaseFilter'
 import { formatDriver } from '../../data/driverLabels'
@@ -73,6 +84,7 @@ import { SectionExpandContext } from '@/contexts/sectionExpandContext'
 import { HNDLHNFLSection as SharedHNDLHNFLSection } from '../shared/HNDLHNFLSection'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import clsx from 'clsx'
+import toast from 'react-hot-toast'
 import type {
   AssessmentResult,
   AssessmentProfile,
@@ -195,11 +207,18 @@ const CategoryBreakdown = ({
   defaultOpen?: boolean
   headerExtra?: React.ReactNode
 }) => {
+  // organizationalReadiness is higher-is-better (a true readiness score); the
+  // other three are higher-is-worse. `higherIsBetter` inverts the concern value
+  // used for colouring so a high readiness bar reads green, not red.
   const categories = [
-    { label: 'Quantum Exposure', key: 'quantumExposure' as const },
-    { label: 'Migration Complexity', key: 'migrationComplexity' as const },
-    { label: 'Regulatory Pressure', key: 'regulatoryPressure' as const },
-    { label: 'Organizational Readiness', key: 'organizationalReadiness' as const },
+    { label: 'Quantum Exposure', key: 'quantumExposure' as const, higherIsBetter: false },
+    { label: 'Migration Complexity', key: 'migrationComplexity' as const, higherIsBetter: false },
+    { label: 'Regulatory Pressure', key: 'regulatoryPressure' as const, higherIsBetter: false },
+    {
+      label: 'Organizational Readiness',
+      key: 'organizationalReadiness' as const,
+      higherIsBetter: true,
+    },
   ]
 
   // Canonical risk-level thresholds (match orchestrator.ts riskLevel mapping
@@ -228,20 +247,25 @@ const CategoryBreakdown = ({
       infoTip="riskBreakdown"
     >
       <div className="space-y-4">
-        {categories.map(({ label, key }) => {
+        {categories.map(({ label, key, higherIsBetter }) => {
           // eslint-disable-next-line security/detect-object-injection
           const score = scores[key]
+          // Concern drives colour: for higher-is-better axes a high score is LOW
+          // concern (green), so invert before thresholding.
+          const concern = higherIsBetter ? 100 - score : score
           return (
             <div key={key}>
               <div className="flex items-center justify-between mb-1">
                 <span className="text-sm text-muted-foreground">{label}</span>
-                <span className={clsx('text-sm font-bold', getScoreColor(score))}>{score}/100</span>
+                <span className={clsx('text-sm font-bold', getScoreColor(concern))}>
+                  {score}/100
+                </span>
               </div>
               <div className="w-full h-2.5 rounded-full bg-border overflow-hidden">
                 <div
                   className={clsx(
                     'h-full rounded-full transition-all duration-500',
-                    getBarColor(score)
+                    getBarColor(concern)
                   )}
                   style={{ width: `${score}%` }}
                   role="progressbar"
@@ -495,6 +519,20 @@ export const ReportContent: React.FC<AssessReportProps> = ({
   const restoreAllThreats = useAssessmentStore((s) => s.restoreAllThreats)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const hiddenProducts = useMigrateSelectionStore((s) => s.hiddenProducts)
+  // Subscribe to each primitive field separately — a selector that builds a new
+  // object every call breaks useSyncExternalStore's snapshot caching (zustand +
+  // React 18) and can trigger "getSnapshot should be cached" render loops.
+  const ownershipProgramOwner = useReportOwnershipStore((s) => s.programOwner)
+  const ownershipBudgetOwner = useReportOwnershipStore((s) => s.budgetOwner)
+  const ownershipAccountableExecutive = useReportOwnershipStore((s) => s.accountableExecutive)
+  const ownership = useMemo(
+    () => ({
+      programOwner: ownershipProgramOwner,
+      budgetOwner: ownershipBudgetOwner,
+      accountableExecutive: ownershipAccountableExecutive,
+    }),
+    [ownershipProgramOwner, ownershipBudgetOwner, ownershipAccountableExecutive]
+  )
 
   // Migration-Program phase overlay: when `?phase=` is active, narrow the report
   // to the sections that *communicate* that phase (per REPORT_SECTION_TO_CSWP39)
@@ -533,25 +571,6 @@ export const ReportContent: React.FC<AssessReportProps> = ({
   /** Config-driven section state resolver. */
   const cfg = (sectionId: ReportSectionId) =>
     getReportSectionConfig(selectedPersona, sectionId, showFullReport)
-
-  const REPORT_SECTION_ORDER: ReportSectionId[] = useMemo(
-    () => [
-      'countryTimeline',
-      'riskScore',
-      'keyFindings',
-      'riskBreakdown',
-      'executiveSummary',
-      'assessmentProfile',
-      'hndlHnfl',
-      'algorithmMigration',
-      'complianceImpact',
-      'recommendedActions',
-      'migrationRoadmap',
-      'migrationToolkit',
-      'threatLandscape',
-    ],
-    []
-  )
 
   /** Whether the current persona has any hidden sections (enables summary/full toggle). */
   const hasSummaryMode = useMemo(() => {
@@ -596,6 +615,13 @@ export const ReportContent: React.FC<AssessReportProps> = ({
 
   const config = riskConfig[result.riskLevel]
 
+  // The true quick/full signal. NOT `result.categoryScores` — the engine emits
+  // COARSE category scores even on the legacy/quick path (to feed the sim & KPIs),
+  // so categoryScores is always present and can't distinguish the tracks. The
+  // assessment profile mode is derived from `hasExtendedInput`, so it is the
+  // honest gate for the locked/upgrade tiering.
+  const isComprehensive = result.assessmentProfile?.mode === 'comprehensive'
+
   const handlePrint = () => {
     window.print()
   }
@@ -624,11 +650,21 @@ export const ReportContent: React.FC<AssessReportProps> = ({
           text: `Quantum Risk Score: ${result.riskScore}/100 — ${result.narrative}`,
           url,
         })
-      } catch {
-        // User cancelled
+      } catch (err) {
+        // Ignore the user cancelling the native share sheet; surface real failures.
+        if (err instanceof Error && err.name !== 'AbortError') {
+          toast.error('Could not share the report link.')
+        }
       }
     } else {
-      await navigator.clipboard.writeText(url)
+      // Desktop browsers have no navigator.share — copy the link and CONFIRM it,
+      // otherwise the click looks like it did nothing.
+      try {
+        await navigator.clipboard.writeText(url)
+        toast.success('Report link copied to clipboard.')
+      } catch {
+        toast.error('Could not copy the report link.')
+      }
     }
   }
 
@@ -752,25 +788,25 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                       <span
                         className={clsx(
                           'inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full border mt-2',
-                          result.categoryScores
+                          isComprehensive
                             ? 'border-primary/30 bg-primary/10 text-primary'
                             : 'border-border bg-muted/20 text-muted-foreground'
                         )}
                       >
-                        {result.categoryScores ? 'Comprehensive Assessment' : 'Quick Assessment'}
+                        {isComprehensive ? 'Comprehensive Assessment' : 'Quick Assessment'}
                       </span>
                     </div>
 
                     {/* Control deck (redesign) — derived track label + persona lens. */}
-                    <ReportControlDeck fullTrack={!!result.categoryScores} />
+                    <ReportControlDeck fullTrack={isComprehensive} />
 
                     {/* Persona verdict (redesign) — re-leads the result for the active role,
                       above the "Do this first" hero. */}
-                    <ReportVerdictBlock persona={selectedPersona} />
+                    <ReportVerdictBlock persona={selectedPersona} result={result} />
 
                     {/* Fast-track upgrade nudge (redesign) — quick assessments only; ties the
                       locked sections to one clear unlock path. */}
-                    {!result.categoryScores && <ReportUpgradeNudge />}
+                    {!isComprehensive && <ReportUpgradeNudge />}
 
                     {/* Top-3 actions hero (P15-P1-02) — teases the highest-priority
                       recommended actions before the full report scroll. Hidden in print. */}
@@ -934,11 +970,12 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                           </p>
                         )}
                         <p className="text-sm text-muted-foreground text-center mt-4 leading-relaxed print:text-muted-foreground">
-                          {/* Glossary tooltips help every persona decode acronyms in the
-                              narrative (execs/ops most of all), not just the curious reader. */}
-                          <GlossaryAutoWrap>
-                            {result.personaNarrative ?? result.narrative}
-                          </GlossaryAutoWrap>
+                          {/* Neutral, role-independent explanation of the number — the
+                              persona-flavored take now leads in the Verdict block above,
+                              so this section no longer repeats result.personaNarrative.
+                              Glossary tooltips help every persona decode acronyms
+                              (execs/ops most of all), not just the curious reader. */}
+                          <GlossaryAutoWrap>{result.narrative}</GlossaryAutoWrap>
                         </p>
                         {result.boosts &&
                           result.boosts.length > 0 &&
@@ -1008,7 +1045,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         owns this section, so a quick assessment shows a locked preview
                         (redesign) instead of omitting it. */}
                     {phaseVisible('riskBreakdown') &&
-                      (result.categoryScores ? (
+                      (isComprehensive && result.categoryScores ? (
                         <div id="report-section-riskBreakdown">
                           <CategoryBreakdown
                             scores={result.categoryScores}
@@ -1028,15 +1065,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                             reason="Per-domain scores need the full assessment"
                             detail="A quick assessment can't separate Quantum Exposure, Migration Complexity, Regulatory Pressure and Organizational Readiness. Finish the full assessment to unlock the breakdown."
                           >
-                            <CategoryBreakdown
-                              scores={{
-                                quantumExposure: 72,
-                                migrationComplexity: 58,
-                                regulatoryPressure: 65,
-                                organizationalReadiness: 40,
-                              }}
-                              defaultOpen
-                            />
+                            <CategoryBreakdownPreviewSkeleton />
                           </ReportLockedOverlay>
                         </div>
                       ))}
@@ -1135,7 +1164,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                       )}
 
                     {/* HNDL warning for quick assessments with high sensitivity */}
-                    {!result.categoryScores &&
+                    {!isComprehensive &&
                       !result.hndlRiskWindow &&
                       ((dataSensitivity ?? []).includes('critical') ||
                         (dataSensitivity ?? []).includes('high')) && (
@@ -1156,7 +1185,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                       )}
 
                     {/* HNFL warning for quick assessments with signing algorithms */}
-                    {!result.categoryScores && !result.tnflRiskWindow && hasSigningAlgos && (
+                    {!isComprehensive && !result.tnflRiskWindow && hasSigningAlgos && (
                       <div className="glass-panel p-4 border-l-4 border-l-destructive flex items-start gap-3">
                         <AlertTriangle size={18} className="text-destructive shrink-0 mt-0.5" />
                         <div>
@@ -1172,6 +1201,18 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         </div>
                       </div>
                     )}
+
+                    {/* Cryptographic Discovery */}
+                    {phaseVisible('discovery') &&
+                      cfg('discovery').state !== 'hidden' &&
+                      result.assessmentProfile && (
+                        <DiscoverySection
+                          algorithmsSelected={result.assessmentProfile.algorithmsSelected}
+                          algorithmCategories={result.assessmentProfile.algorithmCategories}
+                          algorithmUnknown={result.assessmentProfile.algorithmUnknown}
+                          defaultOpen={cfg('discovery').state === 'open'}
+                        />
+                      )}
 
                     {/* Algorithm Migration Matrix */}
                     {phaseVisible('algorithmMigration') &&
@@ -1628,6 +1669,18 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         </div>
                       )}
 
+                    {/* Third-Party & Vendor PQC Risk */}
+                    {phaseVisible('vendorRisk') &&
+                      cfg('vendorRisk').state !== 'hidden' &&
+                      result.assessmentProfile && (
+                        <VendorRiskSection
+                          vendorDependency={result.assessmentProfile.vendorDependency}
+                          vendorUnknown={result.assessmentProfile.vendorUnknown}
+                          relevantSoftware={relevantSoftware}
+                          defaultOpen={cfg('vendorRisk').state === 'open'}
+                        />
+                      )}
+
                     {/* ROI Calculator */}
                     <ROICalculatorSection
                       result={result}
@@ -1637,27 +1690,29 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                       infoTip={<SectionInfoTip sectionId="roiCalculator" />}
                     />
 
-                    {/* KPI Trending — comprehensive-gated (categoryScores). Three states:
-                        locked on a quick assessment, empty until ≥2 saved snapshots,
-                        populated otherwise. */}
-                    {result.categoryScores ? (
-                      assessmentHistory.length >= 2 ? (
-                        <KPITrendingSection
-                          history={assessmentHistory}
-                          currentResult={result}
-                          defaultOpen={false}
-                        />
+                    {/* KPI Trending — comprehensive-gated. Three states: locked on a
+                        quick assessment, empty until ≥2 saved snapshots, populated
+                        otherwise. */}
+                    <div id="report-section-kpiTrending">
+                      {isComprehensive ? (
+                        assessmentHistory.length >= 2 ? (
+                          <KPITrendingSection
+                            history={assessmentHistory}
+                            currentResult={result}
+                            defaultOpen={false}
+                          />
+                        ) : (
+                          <KpiEmptyState />
+                        )
                       ) : (
-                        <KpiEmptyState />
-                      )
-                    ) : (
-                      <ReportLockedOverlay
-                        reason="Track your risk score over time"
-                        detail="Progress trends come from saved comprehensive assessments. Finish the full assessment to start tracking your risk score and crypto-agility over time."
-                      >
-                        <KpiPreviewSkeleton />
-                      </ReportLockedOverlay>
-                    )}
+                        <ReportLockedOverlay
+                          reason="Track your risk score over time"
+                          detail="Progress trends come from saved comprehensive assessments. Finish the full assessment to start tracking your risk score and crypto-agility over time."
+                        >
+                          <KpiPreviewSkeleton />
+                        </ReportLockedOverlay>
+                      )}
+                    </div>
 
                     {/* Industry Threat Landscape */}
                     {phaseVisible('threatLandscape') &&
@@ -1816,7 +1871,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                           className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
                         >
                           <Printer size={16} />
-                          Download PDF
+                          Print / Save as PDF
                         </Button>
                         <Button
                           variant="ghost"
@@ -1880,6 +1935,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                   roiSummary={roiSummary}
                   generatedAt={result.generatedAt}
                   visible={showBoardBrief}
+                  ownership={ownership}
                 />
               </td>
             </tr>

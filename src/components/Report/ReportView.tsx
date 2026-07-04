@@ -15,9 +15,12 @@ import {
 } from '@/components/PKILearning/common/WorkshopOperationLog'
 import { useModuleStore } from '../../store/useModuleStore'
 import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
-import { REGION_COUNTRIES_MAP, getReportSectionConfig } from '../../data/personaConfig'
-import type { ReportSectionId } from '../../data/personaConfig'
-import { REPORT_SECTION_LABELS } from '../../data/reportSectionToCswp39'
+import {
+  REGION_COUNTRIES_MAP,
+  getReportSectionConfig,
+  type ReportSectionId,
+} from '../../data/personaConfig'
+import { REPORT_SECTION_ORDER, REPORT_SECTION_LABELS } from '../../data/reportSectionToCswp39'
 import {
   AVAILABLE_INDUSTRIES,
   AVAILABLE_ALGORITHMS,
@@ -57,21 +60,24 @@ const VALID_USE_CASES = new Set(AVAILABLE_USE_CASES)
 const VALID_INFRA = new Set(AVAILABLE_INFRASTRUCTURE)
 const VALID_COUNTRIES = new Set(Object.values(REGION_COUNTRIES_MAP).flat())
 
-const REPORT_SECTION_ORDER: ReportSectionId[] = [
-  'countryTimeline',
-  'riskScore',
-  'keyFindings',
-  'riskBreakdown',
-  'executiveSummary',
-  'assessmentProfile',
-  'hndlHnfl',
-  'algorithmMigration',
-  'complianceImpact',
-  'recommendedActions',
-  'migrationRoadmap',
-  'migrationToolkit',
-  'threatLandscape',
-]
+/**
+ * Sections that render outside the persona-config-gated REPORT_SECTION_ORDER
+ * list (QRA, ROI, KPI trending, NICE workforce gap) — they render
+ * unconditionally, not through `getReportSectionConfig`, so they were
+ * previously unreachable from the TOC entirely. Each entry names the
+ * REPORT_SECTION_ORDER id it renders immediately after, in true page order.
+ */
+const EXTRA_TOC_AFTER: Partial<Record<ReportSectionId, { id: string; label: string }[]>> = {
+  riskScore: [{ id: 'report-section-qra', label: 'Quantum Readiness Assessment' }],
+  vendorRisk: [
+    { id: 'report-section-roiCalculator', label: 'ROI & Financial Case' },
+    { id: 'report-section-kpiTrending', label: 'Progress Over Time' },
+  ],
+}
+
+/** Renders after every other section (including threatLandscape) — appended
+ *  at the end of the TOC unconditionally. */
+const TOC_TRAILING = [{ id: 'report-section-niceGap', label: 'NICE Workforce Gap Report' }]
 
 /**
  * Persona-flavored maturity tier chip rendered just under the page header
@@ -194,13 +200,16 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
   const handleCollapseAll = useCallback(() => setCollapseToken((t) => t + 1), [])
 
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
-  const tocSections = useMemo(
-    () =>
-      REPORT_SECTION_ORDER.filter(
-        (id) => getReportSectionConfig(selectedPersona, id).state !== 'hidden'
-      ).map((id) => ({ id: `report-section-${id}`, label: REPORT_SECTION_LABELS[id] })),
-    [selectedPersona]
-  )
+  const tocSections = useMemo(() => {
+    const base = REPORT_SECTION_ORDER.filter(
+      (id) => getReportSectionConfig(selectedPersona, id).state !== 'hidden'
+    ).flatMap((id) => [
+      { id: `report-section-${id}`, label: REPORT_SECTION_LABELS[id] },
+      // eslint-disable-next-line security/detect-object-injection
+      ...(EXTRA_TOC_AFTER[id] ?? []),
+    ])
+    return [...base, ...TOC_TRAILING]
+  }, [selectedPersona])
   const hydratedRef = useRef(false)
 
   // Hydrate store from shared URL params on first mount
@@ -384,7 +393,14 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
       persistedRef.current = true
       logReportViewed(useAssessmentStore.getState().industry, result.riskLevel)
       setResult(result)
-      if (assessmentStatus === 'complete' && result.categoryScores) {
+      // Only comprehensive assessments feed the progress trend — the legacy path
+      // emits coarse categoryScores for the sim/KPIs, so gate on the profile mode
+      // (not categoryScores presence) to avoid polluting the trend with quick runs.
+      if (
+        assessmentStatus === 'complete' &&
+        result.assessmentProfile?.mode === 'comprehensive' &&
+        result.categoryScores
+      ) {
         const store = useAssessmentStore.getState()
         store.pushSnapshot({
           completedAt: store.completedAt ?? result.generatedAt,
@@ -531,31 +547,21 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
         </motion.div>
       )}
 
-      {result ? (
-        <div className="flex flex-col lg:flex-row gap-6 items-start">
-          <ReportToc
-            sections={tocSections}
-            onExpandAll={handleExpandAll}
-            onCollapseAll={handleCollapseAll}
-          />
-          <div className="flex-1 min-w-0 w-full">
-            <ReportContent
-              result={result}
-              expandToken={expandToken}
-              collapseToken={collapseToken}
-            />
-          </div>
+      {/* `result` is guaranteed truthy here — the `!result` early-return above
+          covers the only case where it isn't, so this never had a reachable
+          else branch. */}
+      <div className="flex flex-col lg:flex-row gap-6 items-start">
+        <ReportToc
+          sections={tocSections}
+          onExpandAll={handleExpandAll}
+          onCollapseAll={handleCollapseAll}
+        />
+        <div className="flex-1 min-w-0 w-full">
+          <ReportContent result={result} expandToken={expandToken} collapseToken={collapseToken} />
         </div>
-      ) : (
-        <div className="text-center py-12 text-muted-foreground">
-          <p>Unable to generate report. Please complete all required fields.</p>
-          <Link to="/assess" className="text-primary hover:underline mt-2 inline-block">
-            Go to Assessment
-          </Link>
-        </div>
-      )}
+      </div>
 
-      {result && !simEmbed && <ReportNextSteps />}
+      {result && !simEmbed && <ReportNextSteps result={result} />}
     </div>
   )
 }

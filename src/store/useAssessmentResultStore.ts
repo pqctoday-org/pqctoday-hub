@@ -3,7 +3,11 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import type { CategoryScores, AssessmentResult, ScoreBoost } from '../hooks/assessmentTypes'
 import { useHistoryStore } from './useHistoryStore'
-import { pullLegacyAssessmentState, runLegacyAssessmentMigrations } from './assessmentMigration'
+import {
+  pullLegacyAssessmentState,
+  runLegacyAssessmentMigrations,
+  migrateResultStoreReadinessSign,
+} from './assessmentMigration'
 
 export interface AssessmentSnapshot {
   completedAt: string
@@ -104,7 +108,7 @@ export const useAssessmentResultStore = create<AssessmentResultState>()(
     {
       name: 'pqc-assessment-result',
       storage: createJSONStorage(() => localStorage),
-      version: 0,
+      version: 1,
       migrate: (persistedState: unknown, version: number) => {
         let state = (persistedState ?? {}) as Record<string, unknown>
 
@@ -113,6 +117,11 @@ export const useAssessmentResultStore = create<AssessmentResultState>()(
           if (legacy) {
             state = runLegacyAssessmentMigrations(legacy.state, legacy.version)
           }
+        }
+        // v0 → v1: organizationalReadiness flipped to higher-is-better; convert
+        // persisted gap values (lastResult + history snapshots) to readiness.
+        if (version < 1) {
+          state = migrateResultStoreReadinessSign(state as Record<string, unknown>)
         }
         return state
       },

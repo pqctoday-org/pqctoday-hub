@@ -74,7 +74,7 @@ export function buildQuantumUrgencyDefault(data: Data): string {
     const est = hndl.isEstimated ? ' (estimated - retention unknown)' : ''
     if (hndl.isAtRisk) {
       parts.push(
-        `HNDL (harvest-now-decrypt-later): data with a ${hndl.dataRetentionYears}-year retention is being captured today for future decryption. Exposure window = ${hndl.riskWindowYears} years beyond the estimated quantum threat year (${hndl.estimatedQuantumThreatYear})${est}.`
+        `HNDL (harvest-now-decrypt-later): data with a ${hndl.dataRetentionYears}-year retention is being captured today for future decryption. Exposure window = ${hndl.riskWindowYears} years beyond your ${hndl.estimatedQuantumThreatYear} migration deadline (the earlier of the CRQC estimate and any regulatory mandate)${est}.`
       )
     } else {
       parts.push(

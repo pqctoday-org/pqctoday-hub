@@ -253,11 +253,14 @@ const regulatoryExposureAuto: KpiAutoScoreFn = (data) => {
 const boardReadyCompositeAuto: KpiAutoScoreFn = (data) => {
   const cs = data.categoryScores
   if (!cs) return null
+  // organizationalReadiness is higher-is-better; the other three are
+  // higher-is-worse (exposure/concern). Use its complement so all four terms
+  // are on the same "concern" scale before averaging and inverting.
   const avg =
     (cs.quantumExposure +
       cs.migrationComplexity +
       cs.regulatoryPressure +
-      cs.organizationalReadiness) /
+      (100 - cs.organizationalReadiness)) /
     4
   return clamp(Math.round(100 - avg))
 }

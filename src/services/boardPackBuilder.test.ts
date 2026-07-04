@@ -144,6 +144,29 @@ describe('buildBoardPackBlob', () => {
     expect(parsed.profile.industry).toBe('Finance & Banking')
   })
 
+  it('includes program ownership in the README when provided', async () => {
+    const blob = await buildBoardPackBlob({
+      result: baseResult,
+      profile: {
+        ...baseProfile,
+        programOwner: 'Jane Doe, CISO',
+        budgetOwner: 'John Smith, CFO',
+        accountableExecutive: 'Alex Lee, CEO',
+      },
+    })
+    const files = await extract(blob)
+    const readme = files['board-pack/README.md']
+    expect(readme).toContain('Program Owner:** Jane Doe, CISO')
+    expect(readme).toContain('Budget Owner:** John Smith, CFO')
+    expect(readme).toContain('Accountable Executive:** Alex Lee, CEO')
+  })
+
+  it('omits ownership lines from the README when not provided', async () => {
+    const blob = await buildBoardPackBlob({ result: baseResult, profile: baseProfile })
+    const files = await extract(blob)
+    expect(files['board-pack/README.md']).not.toContain('Program Owner')
+  })
+
   it('handles a result with no key findings', async () => {
     const result: AssessmentResult = { ...baseResult, keyFindings: undefined }
     const blob = await buildBoardPackBlob({ result, profile: baseProfile })

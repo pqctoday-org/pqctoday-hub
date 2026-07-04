@@ -3,6 +3,12 @@ import React from 'react'
 import type { AssessmentResult } from '../../hooks/assessmentTypes'
 import type { ROISummary } from '../shared/ROICalculatorSection'
 
+interface BoardBriefOwnership {
+  programOwner: string
+  budgetOwner: string
+  accountableExecutive: string
+}
+
 interface BoardBriefProps {
   result: AssessmentResult
   industry: string
@@ -10,6 +16,7 @@ interface BoardBriefProps {
   roiSummary: ROISummary | null
   generatedAt: string
   visible: boolean
+  ownership?: BoardBriefOwnership
 }
 
 const RISK_LEVEL_LABEL: Record<string, string> = {
@@ -32,26 +39,39 @@ function formatUSD(value: number): string {
   return `$${value.toFixed(0)}`
 }
 
-const ScoreBar = ({ value, max = 100 }: { value: number; max?: number }) => (
-  <div
-    style={{
-      height: '6px',
-      borderRadius: '3px',
-      background: '#e5e7eb',
-      marginTop: '4px',
-      overflow: 'hidden',
-    }}
-  >
+const ScoreBar = ({
+  value,
+  max = 100,
+  higherIsBetter = false,
+}: {
+  value: number
+  max?: number
+  higherIsBetter?: boolean
+}) => {
+  // Concern drives colour; higher-is-better axes (e.g. Organizational Readiness)
+  // invert so a high value reads green, not red.
+  const concern = higherIsBetter ? max - value : value
+  return (
     <div
       style={{
-        height: '100%',
-        width: `${(value / max) * 100}%`,
-        background: value >= 70 ? '#ef4444' : value >= 40 ? '#f59e0b' : '#22c55e',
+        height: '6px',
         borderRadius: '3px',
+        background: '#e5e7eb',
+        marginTop: '4px',
+        overflow: 'hidden',
       }}
-    />
-  </div>
-)
+    >
+      <div
+        style={{
+          height: '100%',
+          width: `${(value / max) * 100}%`,
+          background: concern >= 70 ? '#ef4444' : concern >= 40 ? '#f59e0b' : '#22c55e',
+          borderRadius: '3px',
+        }}
+      />
+    </div>
+  )
+}
 
 export const BoardBriefSection: React.FC<BoardBriefProps> = ({
   result,
@@ -60,8 +80,15 @@ export const BoardBriefSection: React.FC<BoardBriefProps> = ({
   roiSummary,
   generatedAt,
   visible,
+  ownership,
 }) => {
   if (!visible) return null
+
+  const ownershipRows = [
+    ['Program Owner', ownership?.programOwner],
+    ['Budget Owner', ownership?.budgetOwner],
+    ['Accountable Executive', ownership?.accountableExecutive],
+  ].filter(([, v]) => !!v) as [string, string][]
 
   const riskLevel = result.riskLevel
   const riskColor = RISK_LEVEL_BG[riskLevel] ?? '#f59e0b'
@@ -106,6 +133,29 @@ export const BoardBriefSection: React.FC<BoardBriefProps> = ({
             <div>{formattedDate}</div>
           </div>
         </div>
+
+        {/* Program ownership — only shown once at least one field is filled in */}
+        {ownershipRows.length > 0 && (
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '16pt',
+              marginBottom: '14pt',
+              fontSize: '9pt',
+              color: '#374151',
+            }}
+          >
+            {ownershipRows.map(([label, value]) => (
+              <div key={label}>
+                <span style={{ color: '#6b7280', fontSize: '8pt', textTransform: 'uppercase' }}>
+                  {label}
+                </span>
+                <div style={{ fontWeight: 600 }}>{value}</div>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Risk score + level */}
         <div
@@ -175,8 +225,9 @@ export const BoardBriefSection: React.FC<BoardBriefProps> = ({
                 {
                   label: 'Organizational Readiness',
                   value: categoryScores.organizationalReadiness,
+                  higherIsBetter: true,
                 },
-              ].map(({ label, value }) => (
+              ].map(({ label, value, higherIsBetter }) => (
                 <div
                   key={label}
                   style={{
@@ -195,7 +246,7 @@ export const BoardBriefSection: React.FC<BoardBriefProps> = ({
                     <span style={{ color: '#374151' }}>{label}</span>
                     <span style={{ fontWeight: 700 }}>{value}</span>
                   </div>
-                  <ScoreBar value={value} />
+                  <ScoreBar value={value} higherIsBetter={higherIsBetter} />
                 </div>
               ))}
             </div>

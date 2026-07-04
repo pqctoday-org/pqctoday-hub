@@ -275,6 +275,23 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
     ],
   },
 
+  discovery: {
+    title: 'Cryptographic Discovery',
+    summary:
+      'Frames "where is my crypto" — the standard first pillar of a PQC migration — using your self-reported algorithms/families as a starting inventory, not a scan of your actual systems.',
+    wizardInputs: [
+      {
+        label: 'Algorithms (Step 3)',
+        detail:
+          'The specific algorithms (or, if unknown, the coarse families) you selected are listed as your starting inventory.',
+      },
+    ],
+    personaEffects: [{ persona: 'All personas', effect: 'Section is collapsed by default.' }],
+    dataSources: [
+      'Your own assessment answers only — no external inventory or scan data.',
+    ],
+  },
+
   algorithmMigration: {
     title: 'Algorithm Migration Priority',
     summary:
@@ -444,6 +461,28 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
     ],
     dataSources: [
       'Migrate catalog \u2014 PQC-ready software products with FIPS status, algorithm support, and infrastructure layer classification.',
+    ],
+  },
+
+  vendorRisk: {
+    title: 'Third-Party & Vendor PQC Risk',
+    summary:
+      'Frames what your assessed vendor dependency model means for how much control you have over your own migration timeline, and lists the real catalog products matched to your industry/infrastructure alongside each vendor\u2019s tracked PQC commitment.',
+    wizardInputs: [
+      {
+        label: 'Vendor Dependency (Step 12, part of Infrastructure)',
+        detail:
+          'Heavy-vendor, open-source, mixed, or in-house \u2014 determines the framing text shown for how much of your migration is bound by third parties.',
+      },
+      {
+        label: 'Infrastructure + Industry (Steps 1, 12)',
+        detail:
+          'Same matching used by the Migration Toolkit \u2014 filters the Migrate catalog to products relevant to your estate.',
+      },
+    ],
+    personaEffects: [{ persona: 'All personas', effect: 'Section is collapsed by default.' }],
+    dataSources: [
+      'Migrate catalog + vendor registry \u2014 the same proof-gated product and vendor PQC-commitment data used on the Migrate page.',
     ],
   },
 
