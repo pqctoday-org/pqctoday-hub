@@ -771,6 +771,8 @@ export const ARTIFACT_TYPE_TO_TOOL_ID: Partial<Record<ExecutiveDocumentType, str
   'roi-model': 'roi-calculator',
   'board-deck': 'board-pitch',
   'crqc-scenario': 'crqc-scenario',
+  'breach-scenario': 'breach-simulator',
+  'cost-of-inaction': 'cost-of-inaction',
   'risk-register': 'risk-register',
   'risk-treatment-plan': 'risk-treatment-plan',
   'audit-checklist': 'audit-checklist',
