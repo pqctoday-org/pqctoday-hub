@@ -77,6 +77,7 @@ import { SectionExpandContext } from '@/contexts/sectionExpandContext'
 import { HNDLHNFLSection as SharedHNDLHNFLSection } from '../shared/HNDLHNFLSection'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import clsx from 'clsx'
+import toast from 'react-hot-toast'
 import type {
   AssessmentResult,
   AssessmentProfile,
@@ -647,11 +648,21 @@ export const ReportContent: React.FC<AssessReportProps> = ({
           text: `Quantum Risk Score: ${result.riskScore}/100 — ${result.narrative}`,
           url,
         })
-      } catch {
-        // User cancelled
+      } catch (err) {
+        // Ignore the user cancelling the native share sheet; surface real failures.
+        if (err instanceof Error && err.name !== 'AbortError') {
+          toast.error('Could not share the report link.')
+        }
       }
     } else {
-      await navigator.clipboard.writeText(url)
+      // Desktop browsers have no navigator.share — copy the link and CONFIRM it,
+      // otherwise the click looks like it did nothing.
+      try {
+        await navigator.clipboard.writeText(url)
+        toast.success('Report link copied to clipboard.')
+      } catch {
+        toast.error('Could not copy the report link.')
+      }
     }
   }
 
@@ -1831,7 +1842,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                           className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
                         >
                           <Printer size={16} />
-                          Download PDF
+                          Print / Save as PDF
                         </Button>
                         <Button
                           variant="ghost"
