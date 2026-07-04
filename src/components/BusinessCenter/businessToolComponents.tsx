@@ -30,6 +30,21 @@ export const BUSINESS_TOOL_COMPONENTS: Record<string, LazyComp> = {
       (m) => ({ default: m.BoardPitchBuilder })
     )
   ),
+  'breach-simulator': lazyWithRetry(() =>
+    import('@/components/PKILearning/modules/PQCBusinessCase/components/BreachScenarioSimulator').then(
+      (m) => ({ default: m.BreachScenarioSimulator })
+    )
+  ),
+  'cost-of-inaction': lazyWithRetry(() =>
+    import('@/components/PKILearning/modules/PQCBusinessCase/components/CostOfInactionAnalyzer').then(
+      (m) => ({ default: m.CostOfInactionAnalyzer })
+    )
+  ),
+  'cost-model-explorer': lazyWithRetry(() =>
+    import('@/components/PKILearning/modules/PQCBusinessCase/components/CostModelExplorer').then(
+      (m) => ({ default: m.CostModelExplorer })
+    )
+  ),
   'crqc-scenario': lazyWithRetry(() =>
     import('@/components/PKILearning/modules/PQCRiskManagement/components/CRQCScenarioPlanner').then(
       (m) => ({ default: m.CRQCScenarioPlanner })
