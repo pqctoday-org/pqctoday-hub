@@ -66,6 +66,8 @@ export const PILLAR_FOR_TYPE: Record<ExecutiveDocumentType, PillarKey> = {
   'roi-model': 'risk',
   'board-deck': 'risk',
   'crqc-scenario': 'risk',
+  'breach-scenario': 'risk',
+  'cost-of-inaction': 'risk',
   'audit-checklist': 'compliance',
   'compliance-checklist': 'compliance',
   'compliance-timeline': 'compliance',

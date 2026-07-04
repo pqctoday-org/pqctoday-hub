@@ -2,6 +2,8 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { TrendingDown, AlertTriangle, DollarSign, Calendar, Percent, Info } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
+import { useModuleStore } from '@/store/useModuleStore'
 import { DELAY_COST_PROFILES } from '../data/businessCaseScenarios'
 import { resolveIndustryBreachBaseline } from '@/utils/roiMath'
 import {
@@ -39,6 +41,7 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
   breachOutput,
   onOutput,
 }) => {
+  const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
   const [selectedIndustry, setSelectedIndustry] = useState<string>('Finance & Banking')
   const [delayYears, setDelayYears] = useState<number>(2)
   const [annualBreachProbPct, setAnnualBreachProbPct] = useState<number>(
@@ -82,6 +85,31 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
   useEffect(() => {
     onOutput?.({ costOfInactionUSD: costOfInaction, delayYears })
   }, [onOutput, costOfInaction, delayYears])
+
+  const exportMarkdown = useMemo(() => {
+    let md = `# PQC Cost of Inaction — ${selectedIndustry}\n\n`
+    md += `**Generated:** ${new Date().toLocaleDateString()}\n\n`
+    md += `| Metric | Value |\n|--------|-------|\n`
+    md += `| Migrate now (${inputs.horizonYears}-yr NPV) | ${fmt(nowResult.total)} |\n`
+    md += `| Delay ${delayYears}yr (${inputs.horizonYears}-yr NPV) | ${fmt(delayedResult.total)} |\n`
+    md += `| **Cost of inaction (delay ${delayYears}yr)** | **${fmt(costOfInaction)}** |\n`
+    md += `| Annual breach probability | ${annualBreachProbPct}% |\n\n`
+    md += `## Delay ${delayYears}yr breakdown (NPV)\n\n`
+    md += `| Component | Value |\n|-----------|-------|\n`
+    md += `| Migration (with delay premium) | ${fmt(delayedResult.totalMigration)} |\n`
+    md += `| Expected breach loss | ${fmt(delayedResult.totalBreach)} |\n`
+    md += `| Regulatory penalties | ${fmt(delayedResult.totalPenalty)} |\n\n`
+    md += `*Illustrative — IBM Cost of a Data Breach 2024 baselines, NIST IR 8547. Discounted at ${inputs.discountRatePct}% over ${inputs.horizonYears} years; ${Math.round(inputs.residualFactor * 100)}% HNDL residual after migration.*\n`
+    return md
+  }, [
+    selectedIndustry,
+    delayYears,
+    annualBreachProbPct,
+    nowResult.total,
+    delayedResult,
+    costOfInaction,
+    inputs,
+  ])
 
   return (
     <div className="space-y-6">
@@ -290,6 +318,29 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
           </p>
         </div>
       </details>
+
+      <ExportableArtifact
+        title="Cost of Inaction — Export"
+        exportData={exportMarkdown}
+        filename="pqc-cost-of-inaction"
+        formats={['markdown', 'pdf', 'docx']}
+        onExport={() =>
+          addExecutiveDocument({
+            id: `cost-of-inaction-${Date.now()}`,
+            moduleId: 'pqc-business-case',
+            type: 'cost-of-inaction',
+            title: `Cost of Inaction — ${selectedIndustry} (${new Date().toLocaleDateString()})`,
+            data: exportMarkdown,
+            inputs: { selectedIndustry, delayYears, annualBreachProbPct },
+            createdAt: Date.now(),
+          })
+        }
+      >
+        <p className="text-sm text-muted-foreground">
+          Export the cost-of-inaction analysis as markdown, PDF, or DOCX. It is also saved to your
+          Command Center Risk Artifacts.
+        </p>
+      </ExportableArtifact>
     </div>
   )
 }

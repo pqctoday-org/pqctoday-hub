@@ -26,6 +26,8 @@ export const TYPE_LABELS: Record<ExecutiveDocumentType, string> = {
   'kpi-tracker': 'KPI Tracker',
   'risk-treatment-plan': 'Risk Treatment Plan',
   'crqc-scenario': 'CRQC Scenario',
+  'breach-scenario': 'Breach Scenario',
+  'cost-of-inaction': 'Cost of Inaction',
   'supply-chain-matrix': 'Supply Chain Matrix',
   'deployment-playbook': 'Deployment Playbook',
   'crypto-architecture': 'Crypto Architecture',

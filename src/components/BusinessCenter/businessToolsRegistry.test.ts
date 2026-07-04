@@ -43,6 +43,8 @@ const ALL_ARTIFACT_TYPES: ExecutiveDocumentType[] = [
   'kpi-tracker',
   'risk-treatment-plan',
   'crqc-scenario',
+  'breach-scenario',
+  'cost-of-inaction',
   'supply-chain-matrix',
   'deployment-playbook',
   'crypto-architecture',
