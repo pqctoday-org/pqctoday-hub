@@ -21,6 +21,7 @@ import {
   projectDelayScenario,
   type DelayScenarioResult,
 } from '@/utils/delayCostModel'
+import { compareCostModels } from '@/utils/costModelSim'
 import { DELAY_COST_PROFILES } from '@/components/PKILearning/modules/PQCBusinessCase/data/businessCaseScenarios'
 import { ORG, CUR, REG, type DemoDoc, type DemoSector } from './demoDocs'
 
@@ -251,6 +252,36 @@ export function deriveInactionDoc(sector: DemoSector): DemoDoc {
       `Discounted at ${DELAY_MODEL_DEFAULTS.discountRatePct}% over ${DELAY_MODEL_DEFAULTS.horizonYears} years; ${Math.round(
         DELAY_MODEL_DEFAULTS.residualFactor * 100
       )}% HNDL residual after migration. Derived from the Cost of Inaction Analyzer.`
+    ),
+  }
+}
+
+export function deriveExplorerDoc(sector: DemoSector): DemoDoc {
+  const s = SCENARIO[sector]
+  const cur = CUR[sector]
+  const itBudget = 50_000_000
+  const c = compareCostModels(
+    { systems: s.systems, itBudgetAnnual: itBudget, complexity: 1, horizonYears: 5 },
+    { seed: 42 }
+  )
+  return {
+    title: 'Cost Model Comparison',
+    data: joinMd(
+      `# Cost Model Comparison — ${ORG[sector]}`,
+      '',
+      `Scenario: ${s.systems} systems, ${fmt(cur, itBudget)} IT budget, 5-year horizon.`,
+      '',
+      '| Method | Estimate |',
+      '|--------|----------|',
+      `| Parametric (budget-anchored) | ${fmt(cur, c.parametric)} |`,
+      `| Bottom-up (activity-based) | ${fmt(cur, c.bottomUp)} |`,
+      `| Probabilistic (Monte Carlo P50) | ${fmt(cur, c.monteCarlo.p50)} |`,
+      `| Judgemental (scenario expected) | ${fmt(cur, c.scenario.expected)} |`,
+      `| Analogical (historical) | ${fmt(cur, c.analogical)} |`,
+      '',
+      `Spread across methods: ${c.spreadRatio.toFixed(1)}×. Cost of inaction (reference): ${fmt(cur, c.aleReference)}.`,
+      '',
+      'Derived from the Cost Model Explorer — the point is how far the methods diverge on identical inputs; triangulate rather than trust one.'
     ),
   }
 }

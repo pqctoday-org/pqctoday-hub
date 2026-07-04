@@ -75,6 +75,12 @@ const TREE: PhaseTree = {
           steps: [
             {
               kind: 'activity',
+              label: 'Compare the six costing models before trusting a number',
+              to: '/business/tools/cost-model-explorer',
+              artifactType: 'cost-model-comparison',
+            },
+            {
+              kind: 'activity',
               label: 'Model the multi-year migration budget & ROI',
               to: '/business/tools/roi-calculator',
               artifactType: 'roi-model',
