@@ -447,6 +447,28 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
     ],
   },
 
+  vendorRisk: {
+    title: 'Third-Party & Vendor PQC Risk',
+    summary:
+      'Frames what your assessed vendor dependency model means for how much control you have over your own migration timeline, and lists the real catalog products matched to your industry/infrastructure alongside each vendor\u2019s tracked PQC commitment.',
+    wizardInputs: [
+      {
+        label: 'Vendor Dependency (Step 12, part of Infrastructure)',
+        detail:
+          'Heavy-vendor, open-source, mixed, or in-house \u2014 determines the framing text shown for how much of your migration is bound by third parties.',
+      },
+      {
+        label: 'Infrastructure + Industry (Steps 1, 12)',
+        detail:
+          'Same matching used by the Migration Toolkit \u2014 filters the Migrate catalog to products relevant to your estate.',
+      },
+    ],
+    personaEffects: [{ persona: 'All personas', effect: 'Section is collapsed by default.' }],
+    dataSources: [
+      'Migrate catalog + vendor registry \u2014 the same proof-gated product and vendor PQC-commitment data used on the Migrate page.',
+    ],
+  },
+
   roiCalculator: {
     title: 'ROI Calculator',
     summary:

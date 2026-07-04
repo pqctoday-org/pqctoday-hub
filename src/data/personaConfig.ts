@@ -552,6 +552,7 @@ export type ReportSectionId =
   | 'recommendedActions'
   | 'migrationRoadmap'
   | 'migrationToolkit'
+  | 'vendorRisk'
   | 'threatLandscape'
 
 export interface ReportSectionConfig {
@@ -574,6 +575,7 @@ const REPORT_SECTION_DEFAULTS: Record<ReportSectionId, ReportSectionConfig> = {
   recommendedActions: { state: 'open' },
   migrationRoadmap: { state: 'open' },
   migrationToolkit: { state: 'open' },
+  vendorRisk: { state: 'collapsed' },
   threatLandscape: { state: 'collapsed' },
 }
 

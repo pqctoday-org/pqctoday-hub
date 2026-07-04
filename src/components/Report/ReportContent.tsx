@@ -59,6 +59,7 @@ import { useThreatsData } from '../../hooks/useThreatsData'
 import { GlossaryAutoWrap } from '../PKILearning/common/GlossaryAutoWrap'
 import { MigrationRoadmap } from './MigrationRoadmap'
 import { MigrationToolkit } from './MigrationToolkit'
+import { VendorRiskSection } from './sections/VendorRiskSection'
 import { ReportMethodologyModal } from './ReportMethodologyModal'
 import { SectionInfoModal } from './SectionInfoModal'
 import { ROICalculatorSection } from '../shared/ROICalculatorSection'
@@ -1638,6 +1639,18 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                             defaultOpen={cfg('migrationToolkit').state === 'open'}
                           />
                         </div>
+                      )}
+
+                    {/* Third-Party & Vendor PQC Risk */}
+                    {phaseVisible('vendorRisk') &&
+                      cfg('vendorRisk').state !== 'hidden' &&
+                      result.assessmentProfile && (
+                        <VendorRiskSection
+                          vendorDependency={result.assessmentProfile.vendorDependency}
+                          vendorUnknown={result.assessmentProfile.vendorUnknown}
+                          relevantSoftware={relevantSoftware}
+                          defaultOpen={cfg('vendorRisk').state === 'open'}
+                        />
                       )}
 
                     {/* ROI Calculator */}
