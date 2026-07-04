@@ -26,6 +26,11 @@ export interface BoardPackProfile {
   region?: string
   generatedAt: string
   persona?: string | null
+  /** Program-level accountability (useReportOwnershipStore) — optional,
+   *  since a user may not have filled these in yet. */
+  programOwner?: string
+  budgetOwner?: string
+  accountableExecutive?: string
 }
 
 export interface BuildBoardPackInput {
@@ -70,6 +75,11 @@ function buildReadme(profile: BoardPackProfile, appVersion?: string): string {
     `- **Country:** ${profile.country || 'unspecified'}`,
     profile.region ? `- **Region:** ${profile.region}` : '',
     profile.persona ? `- **Active persona:** ${profile.persona}` : '',
+    profile.programOwner ? `- **Program Owner:** ${profile.programOwner}` : '',
+    profile.budgetOwner ? `- **Budget Owner:** ${profile.budgetOwner}` : '',
+    profile.accountableExecutive
+      ? `- **Accountable Executive:** ${profile.accountableExecutive}`
+      : '',
     '',
   ].filter(Boolean)
   if (appVersion) {

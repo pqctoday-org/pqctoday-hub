@@ -3,6 +3,12 @@ import React from 'react'
 import type { AssessmentResult } from '../../hooks/assessmentTypes'
 import type { ROISummary } from '../shared/ROICalculatorSection'
 
+interface BoardBriefOwnership {
+  programOwner: string
+  budgetOwner: string
+  accountableExecutive: string
+}
+
 interface BoardBriefProps {
   result: AssessmentResult
   industry: string
@@ -10,6 +16,7 @@ interface BoardBriefProps {
   roiSummary: ROISummary | null
   generatedAt: string
   visible: boolean
+  ownership?: BoardBriefOwnership
 }
 
 const RISK_LEVEL_LABEL: Record<string, string> = {
@@ -73,8 +80,15 @@ export const BoardBriefSection: React.FC<BoardBriefProps> = ({
   roiSummary,
   generatedAt,
   visible,
+  ownership,
 }) => {
   if (!visible) return null
+
+  const ownershipRows = [
+    ['Program Owner', ownership?.programOwner],
+    ['Budget Owner', ownership?.budgetOwner],
+    ['Accountable Executive', ownership?.accountableExecutive],
+  ].filter(([, v]) => !!v) as [string, string][]
 
   const riskLevel = result.riskLevel
   const riskColor = RISK_LEVEL_BG[riskLevel] ?? '#f59e0b'
@@ -119,6 +133,29 @@ export const BoardBriefSection: React.FC<BoardBriefProps> = ({
             <div>{formattedDate}</div>
           </div>
         </div>
+
+        {/* Program ownership — only shown once at least one field is filled in */}
+        {ownershipRows.length > 0 && (
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '16pt',
+              marginBottom: '14pt',
+              fontSize: '9pt',
+              color: '#374151',
+            }}
+          >
+            {ownershipRows.map(([label, value]) => (
+              <div key={label}>
+                <span style={{ color: '#6b7280', fontSize: '8pt', textTransform: 'uppercase' }}>
+                  {label}
+                </span>
+                <div style={{ fontWeight: 600 }}>{value}</div>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Risk score + level */}
         <div
