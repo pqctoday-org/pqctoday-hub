@@ -168,6 +168,7 @@ export function migrateResultStoreReadinessSign(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- operates on untyped persisted state
   state: Record<string, any>
 ) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- untyped persisted categoryScores
   const flip = (cs: any) => {
     if (cs && typeof cs.organizationalReadiness === 'number') {
       cs.organizationalReadiness = 100 - cs.organizationalReadiness
