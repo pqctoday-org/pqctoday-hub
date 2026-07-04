@@ -15,7 +15,11 @@ import {
 } from '@/components/PKILearning/common/WorkshopOperationLog'
 import { useModuleStore } from '../../store/useModuleStore'
 import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
-import { REGION_COUNTRIES_MAP, getReportSectionConfig } from '../../data/personaConfig'
+import {
+  REGION_COUNTRIES_MAP,
+  getReportSectionConfig,
+  type ReportSectionId,
+} from '../../data/personaConfig'
 import { REPORT_SECTION_ORDER, REPORT_SECTION_LABELS } from '../../data/reportSectionToCswp39'
 import {
   AVAILABLE_INDUSTRIES,
@@ -55,6 +59,25 @@ const VALID_COMPLIANCE = new Set(AVAILABLE_COMPLIANCE)
 const VALID_USE_CASES = new Set(AVAILABLE_USE_CASES)
 const VALID_INFRA = new Set(AVAILABLE_INFRASTRUCTURE)
 const VALID_COUNTRIES = new Set(Object.values(REGION_COUNTRIES_MAP).flat())
+
+/**
+ * Sections that render outside the persona-config-gated REPORT_SECTION_ORDER
+ * list (QRA, ROI, KPI trending, NICE workforce gap) — they render
+ * unconditionally, not through `getReportSectionConfig`, so they were
+ * previously unreachable from the TOC entirely. Each entry names the
+ * REPORT_SECTION_ORDER id it renders immediately after, in true page order.
+ */
+const EXTRA_TOC_AFTER: Partial<Record<ReportSectionId, { id: string; label: string }[]>> = {
+  riskScore: [{ id: 'report-section-qra', label: 'Quantum Readiness Assessment' }],
+  vendorRisk: [
+    { id: 'report-section-roiCalculator', label: 'ROI & Financial Case' },
+    { id: 'report-section-kpiTrending', label: 'Progress Over Time' },
+  ],
+}
+
+/** Renders after every other section (including threatLandscape) — appended
+ *  at the end of the TOC unconditionally. */
+const TOC_TRAILING = [{ id: 'report-section-niceGap', label: 'NICE Workforce Gap Report' }]
 
 /**
  * Persona-flavored maturity tier chip rendered just under the page header
@@ -177,13 +200,16 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
   const handleCollapseAll = useCallback(() => setCollapseToken((t) => t + 1), [])
 
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
-  const tocSections = useMemo(
-    () =>
-      REPORT_SECTION_ORDER.filter(
-        (id) => getReportSectionConfig(selectedPersona, id).state !== 'hidden'
-      ).map((id) => ({ id: `report-section-${id}`, label: REPORT_SECTION_LABELS[id] })),
-    [selectedPersona]
-  )
+  const tocSections = useMemo(() => {
+    const base = REPORT_SECTION_ORDER.filter(
+      (id) => getReportSectionConfig(selectedPersona, id).state !== 'hidden'
+    ).flatMap((id) => [
+      { id: `report-section-${id}`, label: REPORT_SECTION_LABELS[id] },
+      // eslint-disable-next-line security/detect-object-injection
+      ...(EXTRA_TOC_AFTER[id] ?? []),
+    ])
+    return [...base, ...TOC_TRAILING]
+  }, [selectedPersona])
   const hydratedRef = useRef(false)
 
   // Hydrate store from shared URL params on first mount

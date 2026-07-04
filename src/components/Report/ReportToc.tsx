@@ -108,6 +108,13 @@ export function ReportToc({ sections, onExpandAll, onCollapseAll }: ReportTocPro
       <div className="lg:hidden flex items-center gap-2 mb-4 print:hidden flex-wrap">
         <select
           aria-label="Jump to section"
+          // Controlled by the same IntersectionObserver-driven `activeId` the
+          // desktop rail uses, so the dropdown tracks scroll position instead
+          // of freezing on whichever option was last picked (previously
+          // uncontrolled — it never updated on scroll, and re-picking a
+          // section you'd since scrolled away from silently did nothing
+          // because the DOM's value hadn't changed from the browser's view).
+          value={activeId ?? ''}
           onChange={(e) => {
             if (e.target.value) scrollTo(e.target.value)
           }}

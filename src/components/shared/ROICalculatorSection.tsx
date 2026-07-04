@@ -408,6 +408,7 @@ export const ROICalculatorSection: React.FC<ROICalculatorSectionProps> = ({
 
   return (
     <CollapsibleSection
+      id="report-section-roiCalculator"
       title="ROI & Financial Case"
       icon={<DollarSign size={18} className="text-primary" />}
       defaultOpen={defaultOpen}

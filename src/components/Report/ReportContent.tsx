@@ -1678,24 +1678,26 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                     {/* KPI Trending — comprehensive-gated. Three states: locked on a
                         quick assessment, empty until ≥2 saved snapshots, populated
                         otherwise. */}
-                    {isComprehensive ? (
-                      assessmentHistory.length >= 2 ? (
-                        <KPITrendingSection
-                          history={assessmentHistory}
-                          currentResult={result}
-                          defaultOpen={false}
-                        />
+                    <div id="report-section-kpiTrending">
+                      {isComprehensive ? (
+                        assessmentHistory.length >= 2 ? (
+                          <KPITrendingSection
+                            history={assessmentHistory}
+                            currentResult={result}
+                            defaultOpen={false}
+                          />
+                        ) : (
+                          <KpiEmptyState />
+                        )
                       ) : (
-                        <KpiEmptyState />
-                      )
-                    ) : (
-                      <ReportLockedOverlay
-                        reason="Track your risk score over time"
-                        detail="Progress trends come from saved comprehensive assessments. Finish the full assessment to start tracking your risk score and crypto-agility over time."
-                      >
-                        <KpiPreviewSkeleton />
-                      </ReportLockedOverlay>
-                    )}
+                        <ReportLockedOverlay
+                          reason="Track your risk score over time"
+                          detail="Progress trends come from saved comprehensive assessments. Finish the full assessment to start tracking your risk score and crypto-agility over time."
+                        >
+                          <KpiPreviewSkeleton />
+                        </ReportLockedOverlay>
+                      )}
+                    </div>
 
                     {/* Industry Threat Landscape */}
                     {phaseVisible('threatLandscape') &&
