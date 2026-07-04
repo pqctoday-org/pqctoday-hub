@@ -63,6 +63,17 @@ export const REG: Record<DemoSector, string> = {
 
 const md = (...lines: string[]): string => lines.join('\n')
 
+/**
+ * Planning-assumption disclaimer for the Z (CRQC) figures used in these demo
+ * docs. Framework 2.1 Appendix C states credible CRQC estimates cluster at
+ * 10–20 years out; the sim deliberately uses a more aggressive planning
+ * horizon to stress-test urgency, matching the `provenance:'planning'`
+ * convention already applied to Q-Day / shelf-life in `moscaClock.ts`. This
+ * is a planning choice, not a published estimate — never quote it as one.
+ */
+const MOSCA_PLANNING_NOTE =
+  '*Planning assumption: this CRQC (Z) estimate is deliberately more aggressive than the Applied Quantum Framework 2.1 range (10–20 years) to stress-test urgency. Treat as an illustrative planning anchor, not a published forecast.*'
+
 // ---------------------------------------------------------------------------
 // crqc-scenario
 // ---------------------------------------------------------------------------
@@ -74,14 +85,15 @@ const crqcScenario: Record<DemoSector, DemoDoc> = {
       '',
       '## Harvest-now, decrypt-later (HNDL)',
       '- Customer financial records and transaction histories protected by RSA-2048 / ECDHE have a regulatory retention horizon of 7 years (SOX audit-record retention; sector rules vary).',
-      '- Assume bulk capture today; CRQC availability modelled 2029–2033 — the exposure window opens inside the retention horizon.',
+      '- Assume bulk capture today; CRQC availability modelled 2029–2033 (aggressive planning estimate — see note below) — the exposure window opens inside the retention horizon.',
       '',
       '## Threaten-now, forge-later (TNFL)',
       '- Code-signing keys for core banking software (10-yr support lifecycle) use ECDSA P-256.',
       '- Transaction signing and payment authentication (EMV, SWIFT) depend on RSA-2048.',
       '',
       '## Mosca inequality',
-      '- X (secrecy) ≈ 7y, Y (migration) ≈ 4y, Z (CRQC) ≈ 5–9y → X + Y > Z. Migration cannot wait for refresh cycle alignment.'
+      '- X (secrecy) ≈ 7y, Y (migration) ≈ 4y, Z (CRQC) ≈ 5–9y → X + Y > Z. Migration cannot wait for refresh cycle alignment.',
+      MOSCA_PLANNING_NOTE
     ),
   },
   healthcare: {
@@ -91,13 +103,14 @@ const crqcScenario: Record<DemoSector, DemoDoc> = {
       '',
       '## Harvest-now, decrypt-later (HNDL)',
       '- Patient records carry a ~40-year confidentiality horizon under GDPR Art. 9 / national health data law, today protected by RSA-2048 / ECDHE.',
-      '- Assume capture today; CRQC availability modelled 2030–2034 — the exposure window opens well inside the retention horizon.',
+      '- Assume capture today; CRQC availability modelled 2030–2034 (aggressive planning estimate — see note below) — the exposure window opens well inside the retention horizon.',
       '',
       '## Threaten-now, forge-later (TNFL)',
       '- Long-lived firmware and medical-device code-signing keys (10–15 yr) currently use ECDSA P-256.',
       '',
       '## Mosca inequality',
-      '- X (secrecy) ≈ 40y, Y (migration) ≈ 6y, Z (CRQC) ≈ 6–10y → X + Y > Z. Begin migration now.'
+      '- X (secrecy) ≈ 40y, Y (migration) ≈ 6y, Z (CRQC) ≈ 6–10y → X + Y > Z. Begin migration now.',
+      MOSCA_PLANNING_NOTE
     ),
   },
   government: {
@@ -113,7 +126,8 @@ const crqcScenario: Record<DemoSector, DemoDoc> = {
       '- PKI trust anchors (DoD Root CA) have 20-year lifetimes; firmware signing for embedded systems runs 15+ years.',
       '',
       '## Mosca inequality',
-      "- X (secrecy) ≈ 25y, Y (migration) ≈ 5y, Z (CRQC) ≈ 5–9y → X + Y > Z. The June 2026 EO's 2030 key-establishment deadline is binding (NSM-10 set the 2035 whole-of-NSS goal)."
+      "- X (secrecy) ≈ 25y, Y (migration) ≈ 5y, Z (CRQC) ≈ 5–9y → X + Y > Z. The June 2026 EO's 2030 key-establishment deadline is binding (NSM-10 set the 2035 whole-of-NSS goal).",
+      MOSCA_PLANNING_NOTE
     ),
   },
   energy: {
@@ -129,7 +143,8 @@ const crqcScenario: Record<DemoSector, DemoDoc> = {
       '- A forged firmware update to a transmission substation is a national-security event.',
       '',
       '## Mosca inequality',
-      '- X (secrecy) ≈ 10y, Y (migration) ≈ 7y, Z (CRQC) ≈ 6–10y → X + Y > Z. NERC CIP-014 hardening already mandated.'
+      '- X (secrecy) ≈ 10y, Y (migration) ≈ 7y, Z (CRQC) ≈ 6–10y → X + Y > Z. NERC CIP-014 hardening already mandated.',
+      MOSCA_PLANNING_NOTE
     ),
   },
   telecom: {
@@ -144,7 +159,8 @@ const crqcScenario: Record<DemoSector, DemoDoc> = {
       '- 5G SUCI protection uses ECIES over ECDH P-256; a quantum-capable adversary could de-anonymise SUCI within the 5G RAN lifespan (15 years).',
       '',
       '## Mosca inequality',
-      '- X (secrecy) ≈ 7y, Y (migration) ≈ 5y, Z (CRQC) ≈ 5–9y → X + Y > Z. 3GPP Release 20 PQC profile is in scope.'
+      '- X (secrecy) ≈ 7y, Y (migration) ≈ 5y, Z (CRQC) ≈ 5–9y → X + Y > Z. 3GPP Release 20 PQC profile is in scope.',
+      MOSCA_PLANNING_NOTE
     ),
   },
   retail: {
@@ -159,7 +175,8 @@ const crqcScenario: Record<DemoSector, DemoDoc> = {
       '- Code-signing keys for payment firmware (EMV kernel) have a 10-year lifecycle.',
       '',
       '## Mosca inequality',
-      '- X (secrecy) ≈ 7y, Y (migration) ≈ 4y, Z (CRQC) ≈ 5–9y → X + Y > Z. PCI SSC has signaled PQC attention but published no PQC requirements or v5.0 timeline yet.'
+      '- X (secrecy) ≈ 7y, Y (migration) ≈ 4y, Z (CRQC) ≈ 5–9y → X + Y > Z. PCI SSC has signaled PQC attention but published no PQC requirements or v5.0 timeline yet.',
+      MOSCA_PLANNING_NOTE
     ),
   },
   general: {
@@ -174,10 +191,21 @@ const crqcScenario: Record<DemoSector, DemoDoc> = {
       '- Software release signing keys (ECDSA P-256) have an effective lifecycle matching the product support window (8–12 years).',
       '',
       '## Mosca inequality',
-      '- X (secrecy) ≈ 10y, Y (migration) ≈ 4y, Z (CRQC) ≈ 5–9y → X + Y > Z. CISA roadmap recommends migration start by 2025.'
+      '- X (secrecy) ≈ 10y, Y (migration) ≈ 4y, Z (CRQC) ≈ 5–9y → X + Y > Z. CISA roadmap recommends migration start by 2025.',
+      MOSCA_PLANNING_NOTE
     ),
   },
 }
+
+/**
+ * Fallback disclaimer for the hand-authored `roiModel` figures below. These
+ * static tables are used only when `REAL_DOC_GENERATORS['roi-model']` (the
+ * shared ROI/breach/inaction math in `realToolDocs.ts`) is unavailable to the
+ * caller; unlike the derived figures, these are illustrative and not computed
+ * from a shared, disclosed model.
+ */
+const ROI_ILLUSTRATIVE_NOTE =
+  '*Illustrative figures — pair with your organization’s own finance model before presenting to the board.*'
 
 // ---------------------------------------------------------------------------
 // roi-model
@@ -194,7 +222,8 @@ const roiModel: Record<DemoSector, DemoDoc> = {
       '| SEC / DORA non-compliance penalty exposure | $11.2M |',
       '| Emergency (unplanned) migration premium | $7.1M |',
       '',
-      'Planned program cost (phased, refresh-aligned): $9.2M over 4 years → net positive in year 2.'
+      'Planned program cost (phased, refresh-aligned): $9.2M over 4 years → net positive in year 2.',
+      ROI_ILLUSTRATIVE_NOTE
     ),
   },
   healthcare: {
@@ -208,7 +237,8 @@ const roiModel: Record<DemoSector, DemoDoc> = {
       '| GDPR / NIS2 non-compliance penalty exposure | €9.1M |',
       '| Emergency (unplanned) migration premium | €6.2M |',
       '',
-      'Planned program cost (phased, refresh-aligned): €7.8M over 4 years → net positive in year 2.'
+      'Planned program cost (phased, refresh-aligned): €7.8M over 4 years → net positive in year 2.',
+      ROI_ILLUSTRATIVE_NOTE
     ),
   },
   government: {
@@ -222,7 +252,8 @@ const roiModel: Record<DemoSector, DemoDoc> = {
       '| FISMA / OMB M-23-02 non-compliance remediation cost | $8.4M |',
       '| Emergency migration premium (no refresh alignment) | $9.6M |',
       '',
-      'Planned program cost (phased, NSM-10 aligned): $14.2M over 5 years → mandatory compliance, not optional ROI.'
+      'Planned program cost (phased, NSM-10 aligned): $14.2M over 5 years → mandatory compliance, not optional ROI.',
+      ROI_ILLUSTRATIVE_NOTE
     ),
   },
   energy: {
@@ -236,7 +267,8 @@ const roiModel: Record<DemoSector, DemoDoc> = {
       '| NIS2-UK / NCSC non-compliance penalty | £6.8M |',
       '| Emergency OT migration premium (unplanned outage windows) | £11.3M |',
       '',
-      'Planned program cost (phased, substation refresh cycle): £12.6M over 6 years → ROI positive in year 3; safety case mandatory.'
+      'Planned program cost (phased, substation refresh cycle): £12.6M over 6 years → ROI positive in year 3; safety case mandatory.',
+      ROI_ILLUSTRATIVE_NOTE
     ),
   },
   telecom: {
@@ -455,7 +487,7 @@ function policyDraft(sector: DemoSector): DemoDoc {
       '3. **Crypto-agility** — all new services must externalise algorithm choice behind a provider interface.',
       '4. **Exceptions** — time-boxed, risk-accepted by the CISO, logged in the exception register.',
       '',
-      '## KPI Drift Rules (CSWP.39 §5.2 Crypto Security Policy Enforcement feedback loop)',
+      '## KPI Drift Rules (aligned to NIST CSWP 39 crypto-agility guidance)',
       '',
       '| KPI | Threshold | Policy action |',
       '| --- | --- | --- |',
@@ -487,7 +519,7 @@ function boardDeck(sector: DemoSector): DemoDoc {
     data: md(
       `# Board Pitch — Securing ${ORG[sector]} Against the Quantum Threat`,
       '',
-      `1. **The threat is dated:** adversaries harvest encrypted data today; a cryptographically relevant quantum computer (CRQC) — expert estimates cluster around 2029–2033 — would decrypt it retroactively.`,
+      `1. **The threat is dated:** adversaries harvest encrypted data today; a cryptographically relevant quantum computer (CRQC) would decrypt it retroactively. This deck models an aggressive planning estimate of 2029–2033 to stress-test urgency — the Applied Quantum Framework 2.1 range is 10–20 years; treat either as a planning anchor, not a forecast.`,
       `2. **The deadlines are real:** the June 2026 US Executive Order sets binding PQC deadlines (key establishment 2030, signatures 2031; CNSA 2.0 for national-security systems), and regulators behind ${reg} increasingly expect demonstrable migration progress.`,
       `3. **The ask:** a phased mandate of ${budgetAsk} aligned to existing refresh cycles — deferral doubles cost.`,
       `4. **The cost of waiting:** an unplanned migration runs ~2× and risks regulatory penalty plus a notifiable data breach.`
@@ -561,7 +593,7 @@ function riskRegister(sector: DemoSector): DemoDoc {
           `| ${a} | ${alg} | ${threat} | 4 | 5 | Migrate to ML-KEM-768 / ML-DSA-65 by 2027 |`
       ),
       '',
-      `*Aligned to ${REG[sector]} — quantum risk horizon 2029–2033.*`
+      `*Aligned to ${REG[sector]} — quantum risk horizon modeled at 2029–2033 (aggressive planning assumption; Framework 2.1 states 10–20 years).*`
     ),
   }
 }
@@ -582,7 +614,7 @@ function riskTreatmentPlan(sector: DemoSector): DemoDoc {
       `| Internal PKI | High | Issue PQC-hybrid subordinate CA; dual-stack TLS | PKI team | Q1 2027 |`,
       `| Low-sensitivity systems | Medium | Accept during transition; flag for next refresh | CISO | 2028 |`,
       '',
-      `*Controls aligned to NIST CSWP 39 §5.4 (Cryptographic Architecture) and ${REG[sector]}.*`
+      `*Controls aligned to NIST CSWP 39 (crypto agility) and ${REG[sector]}.*`
     ),
   }
 }
@@ -619,8 +651,8 @@ function migrationRoadmap(sector: DemoSector): DemoDoc {
       '## Milestone Gates',
       '- G0: Charter, budget & QRPM approved; G1: Scoping done, Priority-A ≥90%, classical findings reported, continuous discovery live; G2: CBOM live, freshness governance enforced; G3: CBOM scored; QRA delivered; G4: Roadmap approved; Year 1 plan resourced; G5: Pilots validated; Tier-1 rollout approved; G6: Infrastructure upgrades scheduled; vendor commitments tracked; G8: Verification complete; classical material decommissioned; closed to BAU',
       '',
-      '## Mitigation Gateway (CSWP.39 §4.6)',
-      '- Classical key material decommissioned per SP 800-88 after dual-stack validation.'
+      '## Mitigation Gateway (aligned to NIST CSWP 39 crypto-agility guidance)',
+      "- Classical key material decommissioned per the organization's key-destruction standard (purge or crypto-shred) after dual-stack validation."
     ),
   }
 }
@@ -643,7 +675,7 @@ function stakeholderComms(sector: DemoSector): DemoDoc {
       `Quantum computing threatens current encryption; regulators behind ${REG[sector]} increasingly expect demonstrable PQC progress, and the June 2026 US Executive Order sets binding 2030/2031 deadlines. Planned program: phased, refresh-aligned, net-positive ROI by year 2.`,
       '',
       '### Technical Leadership',
-      'NIST FIPS 203/204/205 (ML-KEM, ML-DSA, SLH-DSA) are final. Two-track plan: Track A (KEM) starts 2025; Track B (signatures) starts 2026. Hybrid mode required during transition per CSWP.39.',
+      'NIST FIPS 203/204/205 (ML-KEM, ML-DSA, SLH-DSA) are final. Two-track plan: Track A (KEM) starts 2025; Track B (signatures) starts 2026. Hybrid mode is used during transition where required by jurisdiction; NIST permits (does not mandate) hybrid.',
       '',
       '### Development Teams',
       'Externalise algorithm choice behind a crypto-provider interface. Use ML-KEM-768 for new KEM, ML-DSA-65 for new signing. No classical RSA/ECDHE in new greenfield after Q3 2025.',
@@ -715,8 +747,8 @@ function deploymentPlaybook(sector: DemoSector): DemoDoc {
       '- [ ] Certificate chain PQC-hybrid verified',
       '- [ ] Downgrade path documented (classical fallback disabled in 90 days)',
       '',
-      '## Decommission Plan (CSWP.39 §4.6)',
-      '- [ ] Classical keys retired per SP 800-88 (purge or crypto-shred)',
+      '## Decommission Plan (aligned to NIST CSWP 39 crypto-agility guidance)',
+      "- [ ] Classical keys retired per the organization's key-destruction standard (purge or crypto-shred)",
       '- [ ] Classical certificates revoked after dual-stack validation period',
       '',
       '## Rollback Procedures',
@@ -775,7 +807,7 @@ function vendorScorecard(sector: DemoSector): DemoDoc {
       '| Identity Provider | 2 | 62 | 70 | 75 | 42 |',
       '| TLS Library | 5 | 82 | 85 | 95 | 75 |',
       '',
-      '## Observability Tooling Notes (CSWP.39 §4.3 / §5.2)',
+      '## Observability Tooling Notes (aligned to NIST CSWP 39 crypto-agility guidance)',
       '- **Crypto scanner:** openssl-scan + syft CBOM extraction (weekly)',
       '- **CVE feed:** NVD subscription, CISA KEV alerting (daily)',
       '- **SIEM rules:** classical-algorithm negotiation alerts active',
@@ -819,7 +851,7 @@ function supplyChainMatrix(sector: DemoSector): DemoDoc {
       '### Cloud / SaaS Layer (2 products)',
       '- Cloud KMS: PQC KEK available; SaaS IdP: hybrid 2025',
       '',
-      '## CBOM (CSWP.39 Fig. 3 — 6 asset classes)',
+      '## CBOM (6 crypto-asset classes, per NIST CSWP 39 crypto-agility guidance)',
       '- Code: 4 classical libs identified; 1 hybrid-capable',
       '- Library: openssl 3.3, libpqcrypto, bouncycastle',
       '- Application: 8 apps using classical KEM directly',
@@ -877,7 +909,7 @@ function cloudResponsibilityMatrix(sector: DemoSector): DemoDoc {
       '| CBOM ingestion & scanning | — | ✓ | Tool-dependent |',
       '| PQC compliance attestation | Provider audit scope | Customer audit scope | ✓ |',
       '',
-      '*Responsibility boundaries aligned to NIST SP 800-210 cloud security guidance and CSWP.39 §5.3 technology supply-chain requirements.*'
+      '*Responsibility boundaries aligned to NIST SP 800-210 cloud security guidance and NIST CSWP 39 crypto-agility guidance.*'
     ),
   }
 }
@@ -891,7 +923,7 @@ function managementToolsAudit(sector: DemoSector): DemoDoc {
     data: md(
       `# Cryptographic Management Tools Audit — ${ORG[sector]}`,
       '',
-      '| Tool category (CSWP.39 Fig. 3 Management Tools) | Current tool | PQC-ready | Gap | Priority |',
+      '| Tool category (management tools, per NIST CSWP 39) | Current tool | PQC-ready | Gap | Priority |',
       '| --- | --- | --- | --- | --- |',
       '| Crypto discovery / CBOM | syft + grype | Partial | No ML-KEM/ML-DSA detection | High |',
       '| Certificate lifecycle | Vault PKI | No | Classical CA only | High |',
@@ -981,7 +1013,7 @@ function cryptoCbom(sector: DemoSector): DemoDoc {
       '',
       '**Total classical assets:** 14 | **PQC-ready:** 0 | **Hybrid-capable:** 2',
       '',
-      `*CycloneDX CBOM v1.5 format. Generated against ${ORG[sector]} production estate.*`
+      `*CycloneDX CBOM v1.6+ format (crypto-asset support). Generated against ${ORG[sector]} production estate.*`
     ),
   }
 }

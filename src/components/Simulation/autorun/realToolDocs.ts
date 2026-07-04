@@ -52,6 +52,20 @@ import {
   type DataAtRestState,
 } from '@/components/BusinessCenter/tools/DataAtRestStrategy'
 import type { FrameworkRoleId } from '@/data/roleCrosswalk'
+import { HSM_VENDORS } from '@/components/PKILearning/modules/HsmPqc/data/hsmVendorData'
+
+/**
+ * Thales Luna is the fleet vendor for this demo org. Derived from `HSM_VENDORS`
+ * (itself catalog-derived, see that module's header) rather than re-typed here,
+ * so a firmware/support update in the single source of truth doesn't leave this
+ * sample input stating a stale fact.
+ */
+const THALES_LUNA_VENDOR = HSM_VENDORS.find((v) => v.id === 'thales-luna')
+const thalesLunaInventoryLine = (): string => {
+  const v = THALES_LUNA_VENDOR
+  if (!v) return 'Thales Luna Network HSM 7; 4 units across 2 data centers'
+  return `${v.product} — full PQC support in firmware ${v.firmwareVersion} (${v.supportedPQCAlgorithms.join(', ')}); 4 units across 2 data centers`
+}
 
 const ALL_ROLE_IDS: FrameworkRoleId[] = [
   'qrpm',
@@ -185,7 +199,7 @@ function infraModernizationPlanState(sector: DemoSector): InfraModernizationStat
     endEntityDays: '90',
     dualStackCa: true,
     trackingMtc: sector === 'telecom' || sector === 'financial',
-    hsmInventory: 'Thales Luna 7.8 (PQC-capable firmware pending); 4 units across 2 data centers',
+    hsmInventory: thalesLunaInventoryLine(),
     firmwareUpgradeScheduled: true,
     hardwareReplacementPlanned: false,
     cloudKmsConfigured: sector !== 'government',
