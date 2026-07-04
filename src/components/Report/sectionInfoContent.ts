@@ -287,9 +287,7 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
       },
     ],
     personaEffects: [{ persona: 'All personas', effect: 'Section is collapsed by default.' }],
-    dataSources: [
-      'Your own assessment answers only — no external inventory or scan data.',
-    ],
+    dataSources: ['Your own assessment answers only — no external inventory or scan data.'],
   },
 
   algorithmMigration: {

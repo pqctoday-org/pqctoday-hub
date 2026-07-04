@@ -34,9 +34,7 @@ describe('DiscoverySection', () => {
 
   it('shows the "not inventoried yet" message when the user said they don\'t know', () => {
     renderSection({ algorithmUnknown: true, algorithmsSelected: [] })
-    expect(
-      screen.getByText(/your cryptography isn.t inventoried yet/i)
-    ).toBeInTheDocument()
+    expect(screen.getByText(/your cryptography isn.t inventoried yet/i)).toBeInTheDocument()
   })
 
   it('never references the fictional sample estate dataset', () => {
@@ -46,10 +44,9 @@ describe('DiscoverySection', () => {
 
   it('links to the CBOM Learn module and the Migrate inventory tooling', () => {
     renderSection()
-    expect(screen.getByRole('link', { name: /Learn how to run a real crypto discovery/i })).toHaveAttribute(
-      'href',
-      '/learn/cbom'
-    )
+    expect(
+      screen.getByRole('link', { name: /Learn how to run a real crypto discovery/i })
+    ).toHaveAttribute('href', '/learn/cbom')
     expect(
       screen.getByRole('link', { name: /Explore discovery & inventory tooling/i })
     ).toHaveAttribute('href', '/migrate')

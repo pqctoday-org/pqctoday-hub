@@ -34,9 +34,7 @@ export function DiscoverySection({
 }: DiscoverySectionProps) {
   const specific = algorithmsSelected.length > 0 ? algorithmsSelected : null
   const categories =
-    !specific && algorithmCategories && algorithmCategories.length > 0
-      ? algorithmCategories
-      : null
+    !specific && algorithmCategories && algorithmCategories.length > 0 ? algorithmCategories : null
 
   return (
     <CollapsibleSection
@@ -48,10 +46,9 @@ export function DiscoverySection({
     >
       <div className="space-y-4">
         <p className="text-sm text-muted-foreground leading-relaxed">
-          Before you can migrate your cryptography, you have to know where it
-          lives. This is the standard first pillar of a PQC migration — often
-          called a Cryptographic Bill of Materials (CBOM) — and it usually
-          turns up more than teams expect: hard-coded algorithms, forgotten
+          Before you can migrate your cryptography, you have to know where it lives. This is the
+          standard first pillar of a PQC migration — often called a Cryptographic Bill of Materials
+          (CBOM) — and it usually turns up more than teams expect: hard-coded algorithms, forgotten
           libraries, third-party dependencies.
         </p>
 
@@ -61,16 +58,13 @@ export function DiscoverySection({
               You told us your cryptography isn&apos;t inventoried yet.
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              That&apos;s exactly the gap this section is about — a real
-              discovery pass is your highest-value next step, before any
-              migration planning.
+              That&apos;s exactly the gap this section is about — a real discovery pass is your
+              highest-value next step, before any migration planning.
             </p>
           </div>
         ) : (
           <div>
-            <h4 className="text-sm font-semibold text-foreground mb-2">
-              Your starting inventory
-            </h4>
+            <h4 className="text-sm font-semibold text-foreground mb-2">Your starting inventory</h4>
             {specific || categories ? (
               <>
                 <div className="flex flex-wrap gap-1.5">
