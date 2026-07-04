@@ -106,7 +106,17 @@ export interface FrameworkRisk {
 
 export interface HNDLRiskWindow {
   dataRetentionYears: number
+  /** The effective act-by year — the EARLIER of the CRQC estimate and the
+   *  jurisdiction's regulatory mandate horizon. Kept for backwards compatibility;
+   *  new copy should use crqcEstimateYear / regulatoryHorizonYear to avoid calling
+   *  a regulatory deadline a "quantum threat" date. */
   estimatedQuantumThreatYear: number
+  /** Cryptographically-relevant quantum computer (CRQC) arrival estimate.
+   *  Optional for backward compatibility with older persisted/mocked windows. */
+  crqcEstimateYear?: number
+  /** Jurisdiction's regulatory mandate horizon, only when it binds earlier than
+   *  the CRQC estimate. Undefined when no mandate is the earlier constraint. */
+  regulatoryHorizonYear?: number
   currentYear: number
   isAtRisk: boolean
   riskWindowYears: number
@@ -116,7 +126,14 @@ export interface HNDLRiskWindow {
 
 export interface TNFLRiskWindow {
   credentialLifetimeYears: number
+  /** Effective act-by year — earlier of the CRQC estimate and the regulatory
+   *  mandate horizon. See HNDLRiskWindow for the split fields below. */
   estimatedQuantumThreatYear: number
+  /** Cryptographically-relevant quantum computer (CRQC) arrival estimate.
+   *  Optional for backward compatibility with older persisted/mocked windows. */
+  crqcEstimateYear?: number
+  /** Jurisdiction's regulatory mandate horizon, only when it binds earlier. */
+  regulatoryHorizonYear?: number
   currentYear: number
   /** true only when signing algorithms are present AND credentials expire past the threat year */
   isAtRisk: boolean
