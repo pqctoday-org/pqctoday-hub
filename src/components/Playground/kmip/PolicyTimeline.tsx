@@ -25,7 +25,15 @@ interface Bar {
   oneSided: boolean
 }
 
-export function PolicyTimeline({ rules }: { rules: ParsedRule[] }) {
+export function PolicyTimeline({
+  rules,
+  asOf,
+}: {
+  rules: ParsedRule[]
+  /** Epoch-ms for the scrub marker (A-grade review item #15) — the shared
+   * as-of date from the Policy view header. Omitted → the real current time. */
+  asOf?: number
+}) {
   const bars: Bar[] = rules.map((r) => {
     const after = dateMs(r.after)
     if (after !== null && !r.effectiveFrom && !r.effectiveUntil) {
@@ -39,8 +47,9 @@ export function PolicyTimeline({ rules }: { rules: ParsedRule[] }) {
     }
   })
 
-  // Domain: span the concrete dates (+ today), padded to whole years.
-  const now = Date.now()
+  // Domain: span the concrete dates (+ the scrub marker), padded to whole years.
+  const now = asOf ?? Date.now()
+  const isToday = asOf === undefined || Math.abs(asOf - Date.now()) < 24 * 3600 * 1000
   const pts = bars.flatMap((b) => [b.start, b.end]).filter((v): v is number => v !== null)
   pts.push(now)
   const minY = new Date(Math.min(...pts)).getUTCFullYear()
@@ -70,14 +79,16 @@ export function PolicyTimeline({ rules }: { rules: ParsedRule[] }) {
       </div>
 
       <div className="relative">
-        {/* "today" marker spanning all rows */}
+        {/* "today" / scrubbed as-of marker spanning all rows */}
         <div
-          className="absolute top-0 bottom-0 w-px bg-primary/70 z-10"
+          className={`absolute top-0 bottom-0 w-px z-10 ${isToday ? 'bg-primary/70' : 'bg-status-warning'}`}
           style={{ left: `calc(148px + ${nowPct}% * (100% - 148px) / 100)` }}
           aria-hidden
         >
-          <span className="absolute -top-0.5 left-1 text-[8px] font-semibold text-primary whitespace-nowrap">
-            today
+          <span
+            className={`absolute -top-0.5 left-1 text-[8px] font-semibold whitespace-nowrap ${isToday ? 'text-primary' : 'text-status-warning'}`}
+          >
+            {isToday ? 'today' : 'as of'}
           </span>
         </div>
 

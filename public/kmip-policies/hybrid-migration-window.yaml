@@ -98,7 +98,7 @@ rules:
 
   # 5. Composite-sig verification key usage mask must include both Sign + Verify.
   - type: require_usage_mask
-    algorithm: ML-DSA-65-ED25519
+    algorithm: ML-DSA-65-Ed25519
     flags: [Sign, Verify]
     reason: "Composite signing keys must declare both Sign+Verify"
   - type: require_usage_mask

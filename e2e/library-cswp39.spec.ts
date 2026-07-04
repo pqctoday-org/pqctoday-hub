@@ -9,6 +9,15 @@ import { test, expect } from '@playwright/test'
  * Uses `BSI TR-02102-2` as a target — it has 26 enriched requirements
  * spanning multiple pillars in the current `pqc_maturity_governance_*.csv`
  * dataset, so the cluster is reliably present.
+ *
+ * QUARANTINED 2026-07-03: the CSWP-39 pillar-pill and the "N reqs" /compliance
+ * deep-link lived on the legacy library card, intentionally removed when the
+ * legacy page trees were retired (commit 13a35844, "retire /legacy page trees
+ * (Migrate, Library, Assess, Patents)"). The dense CSWP-39 data now lives in
+ * the detail drawer with no business/compliance deep links, so there's nothing
+ * equivalent to re-point these at. Skipped (not deleted) to keep the decision
+ * visible and reversible; delete or rewrite if those deep links return. See
+ * e2e/TRIAGE.md.
  */
 test.beforeEach(async ({ page }) => {
   // Suppress the WhatsNew alertdialog so it doesn't intercept clicks.
@@ -20,7 +29,7 @@ test.beforeEach(async ({ page }) => {
   })
 })
 
-test('library tile CSWP 39 pillar pill jumps to /business zone', async ({ page }) => {
+test.skip('library tile CSWP 39 pillar pill jumps to /business zone', async ({ page }) => {
   await page.goto('/library?q=BSI+TR-02102-2')
 
   // Wait for the CSWP 39 cluster to mount on the matching tile.
@@ -43,7 +52,7 @@ test('library tile CSWP 39 pillar pill jumps to /business zone', async ({ page }
   await expect(page).toHaveURL(new RegExp(href!.replace('#', '\\#')))
 })
 
-test('library tile "N reqs" link deep-links into the Compliance CSWP 39 explorer', async ({
+test.skip('library tile "N reqs" link deep-links into the Compliance CSWP 39 explorer', async ({
   page,
 }) => {
   await page.goto('/library?q=BSI+TR-02102-2')

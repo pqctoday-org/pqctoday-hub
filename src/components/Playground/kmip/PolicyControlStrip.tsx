@@ -109,6 +109,7 @@ export function PolicyControlStrip({
               disabled={busy}
               onClick={() => onLoadPolicy(p)}
               title={p.blurb}
+              data-tour={`policy-chip-${p.file}`}
               className={`h-auto gap-2 rounded-lg border px-3 py-2 ${
                 active
                   ? 'border-status-warning/60 bg-status-warning/10'

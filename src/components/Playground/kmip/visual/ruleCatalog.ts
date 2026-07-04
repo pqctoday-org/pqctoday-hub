@@ -305,6 +305,12 @@ export interface RuleSpec {
 }
 
 const reason: FieldSpec = { key: 'reason', kind: 'text', label: 'reason (shown on deny)' }
+const clause: FieldSpec = {
+  key: 'clause',
+  kind: 'text',
+  label: 'implements (clause)',
+  optional: true,
+}
 const opsField: FieldSpec = { key: 'ops', kind: 'ops', label: 'operations' }
 
 export const RULE_CATALOG: Record<RuleTypeId, RuleSpec> = {
@@ -316,7 +322,12 @@ export const RULE_CATALOG: Record<RuleTypeId, RuleSpec> = {
     icon: Sparkles,
     node: 'transform',
     guided: true,
-    fields: [opsField, { key: 'default_algorithm', kind: 'algo', label: 'default →' }, reason],
+    fields: [
+      opsField,
+      { key: 'default_algorithm', kind: 'algo', label: 'default →' },
+      reason,
+      clause,
+    ],
     make: () => ({
       scalars: { default_algorithm: 'ML-DSA-65', reason: 'New keys default to ML-DSA-65' },
       lists: { ops: ['CreateKeyPair:Sign'] },
@@ -331,7 +342,7 @@ export const RULE_CATALOG: Record<RuleTypeId, RuleSpec> = {
     icon: ArrowRight,
     node: 'transform',
     guided: true,
-    fields: [opsField, { key: 'from', kind: 'algo' }, { key: 'to', kind: 'algo' }, reason],
+    fields: [opsField, { key: 'from', kind: 'algo' }, { key: 'to', kind: 'algo' }, reason, clause],
     make: () => ({
       scalars: { from: 'ECDSA-P256', to: 'ML-DSA-65', reason: 'Rekey legacy keys to PQC on use' },
       lists: { ops: ['Sign'] },
@@ -355,6 +366,7 @@ export const RULE_CATALOG: Record<RuleTypeId, RuleSpec> = {
       { key: 'composite_oid', kind: 'text', label: 'composite OID', optional: true },
       { key: 'triggered_by_custom_attribute', kind: 'attrmap', label: 'when', optional: true },
       reason,
+      clause,
     ],
     make: () => ({
       scalars: {
@@ -382,6 +394,7 @@ export const RULE_CATALOG: Record<RuleTypeId, RuleSpec> = {
       { key: 'effective_from', kind: 'date', label: 'effective from', optional: true },
       { key: 'effective_until', kind: 'date', label: 'effective until', optional: true },
       reason,
+      clause,
     ],
     make: () => ({
       scalars: { reason: 'Algorithm not on the approved list' },
@@ -404,6 +417,7 @@ export const RULE_CATALOG: Record<RuleTypeId, RuleSpec> = {
       { key: 'op', kind: 'op', label: 'operation' },
       { key: 'allowed_states', kind: 'states', central: true },
       reason,
+      clause,
     ],
     make: () => ({
       scalars: { op: 'Sign', reason: 'Only Active keys may sign' },
@@ -419,7 +433,7 @@ export const RULE_CATALOG: Record<RuleTypeId, RuleSpec> = {
     icon: BadgeCheck,
     node: 'gate',
     guided: false,
-    fields: [{ key: 'profile', kind: 'text' }, opsField, reason],
+    fields: [{ key: 'profile', kind: 'text' }, opsField, reason, clause],
     make: () => ({
       scalars: { profile: 'CNSA-2.0', reason: 'Request fails the compliance profile' },
       lists: { ops: ['Create', 'CreateKeyPair', 'Sign'] },
@@ -441,6 +455,7 @@ export const RULE_CATALOG: Record<RuleTypeId, RuleSpec> = {
       { key: 'effective_until', kind: 'date', label: 'effective until', optional: true },
       { key: 'exception_custom_attribute', kind: 'attrmap', label: 'except if', optional: true },
       reason,
+      clause,
     ],
     make: () => ({
       scalars: { reason: 'Weak/legacy algorithms banned by policy' },
@@ -456,7 +471,7 @@ export const RULE_CATALOG: Record<RuleTypeId, RuleSpec> = {
     icon: Ban,
     node: 'gate',
     guided: false,
-    fields: [opsField, { key: 'mechanisms', kind: 'list', central: true }, reason],
+    fields: [opsField, { key: 'mechanisms', kind: 'list', central: true }, reason, clause],
     make: () => ({
       scalars: { reason: 'Mechanism banned by policy' },
       lists: { ops: ['Encrypt'], mechanisms: ['CKM_DES3_CBC'] },
@@ -475,6 +490,7 @@ export const RULE_CATALOG: Record<RuleTypeId, RuleSpec> = {
       { key: 'algorithm', kind: 'algo' },
       { key: 'min_bits', kind: 'int', label: 'minimum bits' },
       reason,
+      clause,
     ],
     make: () => ({
       scalars: { algorithm: 'RSA', min_bits: '3072', reason: 'Key below organizational minimum' },
@@ -490,7 +506,7 @@ export const RULE_CATALOG: Record<RuleTypeId, RuleSpec> = {
     icon: KeyRound,
     node: 'gate',
     guided: false,
-    fields: [opsField, { key: 'days', kind: 'int' }, reason],
+    fields: [opsField, { key: 'days', kind: 'int' }, reason, clause],
     make: () => ({
       scalars: { days: '365', reason: 'Key exceeded maximum age; rotate it' },
       lists: { ops: ['Sign'] },
@@ -509,6 +525,7 @@ export const RULE_CATALOG: Record<RuleTypeId, RuleSpec> = {
       { key: 'algorithm', kind: 'algo' },
       { key: 'flags', kind: 'flags', central: true },
       reason,
+      clause,
     ],
     make: () => ({
       scalars: { algorithm: 'ML-KEM-768', reason: 'KEM keys must declare KeyAgreement' },
@@ -528,6 +545,7 @@ export const RULE_CATALOG: Record<RuleTypeId, RuleSpec> = {
       { key: 'attribute_name', kind: 'attr', label: 'attribute name' },
       { key: 'algorithms', kind: 'algos', central: true },
       reason,
+      clause,
     ],
     make: () => ({
       scalars: {
@@ -552,6 +570,7 @@ export const RULE_CATALOG: Record<RuleTypeId, RuleSpec> = {
       { key: 'algorithms', kind: 'algos', optional: true },
       { key: 'after', kind: 'date', label: 'after (cutoff date)' },
       reason,
+      clause,
     ],
     make: () => ({
       scalars: {
@@ -578,6 +597,7 @@ export const RULE_CATALOG: Record<RuleTypeId, RuleSpec> = {
       { key: 'effective_from', kind: 'date', label: 'effective from', optional: true },
       { key: 'effective_until', kind: 'date', label: 'effective until', optional: true },
       reason,
+      clause,
     ],
     make: () => ({
       scalars: { reason: 'Hash not on the approved list' },
@@ -606,6 +626,7 @@ export const RULE_CATALOG: Record<RuleTypeId, RuleSpec> = {
       { key: 'allowed_padding_methods', kind: 'list', label: 'allowed padding', optional: true },
       { key: 'require_deterministic', kind: 'bool', optional: true },
       reason,
+      clause,
     ],
     make: () => ({
       scalars: { reason: 'Mode/padding not permitted' },
@@ -632,6 +653,7 @@ export const RULE_CATALOG: Record<RuleTypeId, RuleSpec> = {
       { key: 'tag_length', kind: 'int', optional: true },
       { key: 'salt_length', kind: 'int', optional: true },
       reason,
+      clause,
     ],
     make: () => ({
       scalars: { block_cipher_mode: 'GCM', reason: 'Default to AEAD when unspecified' },
@@ -647,7 +669,7 @@ export const RULE_CATALOG: Record<RuleTypeId, RuleSpec> = {
     icon: Settings2,
     node: 'gate',
     guided: false,
-    fields: [opsField, { key: 'mechanisms', kind: 'list', central: true }, reason],
+    fields: [opsField, { key: 'mechanisms', kind: 'list', central: true }, reason, clause],
     make: () => ({
       scalars: { reason: 'Mechanism not on the approved list' },
       lists: { ops: ['Encrypt'], mechanisms: ['CKM_AES_GCM'] },
@@ -662,7 +684,7 @@ export const RULE_CATALOG: Record<RuleTypeId, RuleSpec> = {
     icon: Settings2,
     node: 'gate',
     guided: false,
-    fields: [opsField, { key: 'mac_algorithms', kind: 'algos', central: true }, reason],
+    fields: [opsField, { key: 'mac_algorithms', kind: 'algos', central: true }, reason, clause],
     make: () => ({
       scalars: { reason: 'MAC algorithm not permitted' },
       lists: { ops: ['MAC'], mac_algorithms: ['HMAC-SHA-384'] },

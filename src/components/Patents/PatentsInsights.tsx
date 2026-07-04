@@ -151,12 +151,16 @@ export function DonutChart({
   size = 72,
   onClickSegment,
   keyMap,
+  hideLegend = false,
 }: {
   segments: { label: string; value: number; color: string }[]
   solid?: boolean
   size?: number
   onClickSegment?: (label: string) => void
   keyMap?: Record<string, string>
+  // When the caller renders its own legend (e.g. DonutCard), suppress the
+  // built-in one so two legends don't stack and overflow the card.
+  hideLegend?: boolean
 }) {
   const total = segments.reduce((s, seg) => s + seg.value, 0)
   if (total === 0) return null
@@ -190,28 +194,30 @@ export function DonutChart({
               }),
         }}
       />
-      <div className="flex flex-wrap gap-x-4 gap-y-1.5">
-        {positiveSegments.map((seg) => (
-          <Button
-            key={seg.label}
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => onClickSegment?.((keyMap ?? AGILITY_KEY_MAP)[seg.label] ?? seg.label)}
-            disabled={!onClickSegment}
-            className={`h-auto p-0 flex items-center gap-1.5 text-xs text-muted-foreground hover:bg-transparent transition-colors ${
-              onClickSegment ? 'hover:text-foreground cursor-pointer' : 'cursor-default'
-            }`}
-          >
-            <span className={`inline-block h-2 w-2 rounded-sm shrink-0 ${seg.color}`} />
-            {seg.label}
-            <span className="font-semibold text-foreground">
-              {seg.value}
-              <span className="font-normal"> · {Math.round((seg.value / total) * 100)}%</span>
-            </span>
-          </Button>
-        ))}
-      </div>
+      {!hideLegend && (
+        <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+          {positiveSegments.map((seg) => (
+            <Button
+              key={seg.label}
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => onClickSegment?.((keyMap ?? AGILITY_KEY_MAP)[seg.label] ?? seg.label)}
+              disabled={!onClickSegment}
+              className={`h-auto p-0 flex items-center gap-1.5 text-xs text-muted-foreground hover:bg-transparent transition-colors ${
+                onClickSegment ? 'hover:text-foreground cursor-pointer' : 'cursor-default'
+              }`}
+            >
+              <span className={`inline-block h-2 w-2 rounded-sm shrink-0 ${seg.color}`} />
+              {seg.label}
+              <span className="font-semibold text-foreground">
+                {seg.value}
+                <span className="font-normal"> · {Math.round((seg.value / total) * 100)}%</span>
+              </span>
+            </Button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

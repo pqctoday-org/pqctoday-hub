@@ -355,6 +355,10 @@ export function GraphCanvas({
               tabIndex={0}
               aria-label={`${spec?.title ?? r.type} rule #${i + 1}`}
               aria-pressed={sel}
+              // A-grade review E5 — family meaning on hover, so "Deny" /
+              // "Require" / "Time" etc. teach up instead of staying jargon a
+              // learner has to already know.
+              title={fam ? `${spec?.title ?? r.type} — ${FAMILY_META[fam].meaning}` : spec?.title}
               onPointerDown={(e) =>
                 onPointerDown(e, {
                   kind: 'node',

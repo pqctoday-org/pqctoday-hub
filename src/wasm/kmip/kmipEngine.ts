@@ -29,11 +29,15 @@ export interface AuditEvent {
   event: { type?: string; [k: string]: unknown }
 }
 
-/** The rich result of a high-level `run_op` call. */
+/** The rich result of a high-level `run_op` call. `Skip` is synthesized
+ * entirely client-side (never returned by the wasm engine) for an algorithm
+ * `kmipMeta.isRunnable` marks non-runnable — a policy may still reference it,
+ * but no lifecycle op is even attempted, so it must read as distinct from
+ * `OperationFailed` (a real request the engine refused). */
 export interface OpResult {
   ok: boolean
   operation: string | null
-  status: 'Success' | 'OperationFailed' | 'OperationPending' | 'OperationUndone' | 'Error'
+  status: 'Success' | 'OperationFailed' | 'OperationPending' | 'OperationUndone' | 'Error' | 'Skip'
   resultReason: number | null
   message: string | null
   summary: Record<string, unknown>
@@ -94,6 +98,10 @@ export interface OpSpec {
   text?: string
   data?: string // hex
   signature?: string // hex
+  /** Encrypt/Decrypt IV, hex — the engine doesn't auto-generate one for a
+   * plain `Create`d symmetric key, so the caller carries it from Encrypt's
+   * `ivHex` response back into Decrypt's `ivHex` request. */
+  ivHex?: string
 }
 
 /** The ID-Placeholder sentinel (KMIP 3.0 §6.4). Use it as a batch item's `uid`
@@ -134,6 +142,10 @@ export interface BatchResult {
   /** Items returned — fewer than `requested` when `Stop`/`Undo` halted the batch. */
   returned: number
   items: BatchItemResult[]
+  /** The single Request Message that carried every item — the actual "N
+   * operations, ONE request" proof (A-grade review C7). */
+  requestWireHex: string
+  requestWireLen: number
   responseWireHex: string
   responseWireLen: number
   responseTree: TtlvNode
@@ -184,6 +196,14 @@ export const strongestDecision = (audit: AuditEvent[]): PolicyDecision => {
 }
 
 /** What the active policy WOULD decide for an op (no execution). */
+/** One per-rule step of the engine's actual evaluation (1-based `index`). */
+export interface DryRunTraceStep {
+  index: number
+  /** 'resolve' | 'deny' | 'pass' | 'skip' */
+  effect: string
+  note: string
+}
+
 export interface DryRunResult {
   kind: 'Allow' | 'Deny' | 'Rekey'
   algorithm?: string | null
@@ -192,6 +212,8 @@ export interface DryRunResult {
   rule?: number | null
   reason?: string
   denyReason?: string
+  /** Per-rule engine trace — drives the visual simulator's node highlighting. */
+  trace?: DryRunTraceStep[]
 }
 
 export interface DryRunSpec {

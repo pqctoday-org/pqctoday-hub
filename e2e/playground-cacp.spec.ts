@@ -76,26 +76,55 @@ test('boots the in-browser engine and runs a real Create → Activate → Sign �
   await expect(result.getByText('SignatureVerify', { exact: true })).toBeVisible({ timeout: 15000 })
 })
 
-test('agility scenario migrates classical → PQC, and the "migrated" claim is backed by a real Rekey decision', async ({
+test('rekey-on-use policy migrates a classical key to PQC on first Sign, and the "migrated" claim is backed by a real Rekey decision', async ({
   page,
 }) => {
+  // The single-button "Run the agility scenario" narrative this test used to
+  // drive was replaced by the "Test scenarios" dry-run panel (PolicyScenario.tsx,
+  // feat/cacp-policy-scenarios) — deliberately read-only ("nothing is created"),
+  // so it can't stand in for what this test actually needs: proof that a REAL,
+  // side-effecting rekey happens end to end.
+  //
+  // `auto-migrate-on-use.yaml` only rekeys an EXISTING classical key at Sign —
+  // it defaults new Auto keys straight to ML-DSA-65 and outright denies
+  // creating a NEW classical key. So the legacy key has to be made under a
+  // DIFFERENT, more permissive policy (Classical) first, then carried over —
+  // that hand-off, not a same-policy flip, is the actual "no flag day" story.
   await page.goto('/playground/cacp')
   await expect(page.getByRole('heading', { name: /Crypto-Agility Control Plane/i })).toBeVisible({
     timeout: 30000,
   })
 
-  await page.getByRole('button', { name: /Run the agility scenario/i }).click()
+  // Classical: Auto resolves to ECDSA-P256 — exactly what the rekey-on-use
+  // policy's substitution rule watches for later.
+  await page.getByRole('button', { name: /Classical \(the "before"\)/i }).click()
+  await page.getByTestId('kmip-algo').getByRole('button').click()
+  await page.getByText('Auto — let the policy decide').click()
+  await expect(page.getByTestId('kmip-algo')).toContainText('Auto')
 
-  // The headline payoff: the same CreateKeyPair call resolves to two different
-  // algorithms (classical under one policy, PQC under the other).
-  await expect(page.getByText('Same call')).toBeVisible({ timeout: 20000 })
+  const result = page.getByRole('heading', { name: 'Result' }).locator('..')
+  await page.getByRole('button', { name: /Create signing key pair/i }).click()
+  await expect(result.getByText(/policy: Allow/i)).toBeVisible({ timeout: 15000 })
 
-  // The final step claims the OLD classical key was auto-migrated — and that
-  // claim must be accompanied by a real Rekey decision badge (the fix: never
-  // show "migrated" on a plain Allow).
-  const migratedStep = page.getByText(/transparently migrated →/i).locator('../..')
-  await expect(migratedStep).toBeVisible({ timeout: 20000 })
-  await expect(migratedStep.getByText('Rekey')).toBeVisible()
+  const activate = page.getByRole('button', { name: '2 · Activate' })
+  await expect(activate).toBeEnabled()
+  await activate.click()
+
+  // Hand the now-Active classical key over to the rekey-on-use policy — not
+  // in the featured quick-switch strip, so go through the full library.
+  await page.getByRole('tab', { name: 'Policy', exact: true }).click()
+  // The catalog button's accessible name is the whole card (label + rule
+  // count + blurb), so match on the label as a substring, not exactly.
+  await page.getByRole('button', { name: /^Auto-migrate on use\b/ }).click()
+  await expect(page.getByRole('heading', { name: 'Auto-migrate on use' })).toBeVisible()
+  await page.getByRole('tab', { name: 'Agility & Workbench', exact: true }).click()
+
+  // The moment you Sign, the policy rekeys the legacy key to its PQC
+  // equivalent and signs with the new key — the "migrated" claim's actual
+  // engine-backed proof, not just UI copy.
+  await page.getByPlaceholder('message to sign').fill('hello pqc')
+  await page.getByRole('button', { name: '3 · Sign' }).click()
+  await expect(result.getByText(/policy: Rekey/i)).toBeVisible({ timeout: 15000 })
 })
 
 test('switching policy resolves a decision on the agility plane', async ({ page }) => {

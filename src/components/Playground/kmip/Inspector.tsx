@@ -6,19 +6,49 @@
 // trail. Tabs adapt to the disclosure mode — Guided shows Keystore + Activity;
 // Expert adds the raw KMIP Wire tab and the PKCS#11 detail.
 import { useState } from 'react'
-import { Boxes, Server, Database } from 'lucide-react'
+import { Boxes, Server, Database, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import type { KmipObject, AuditEvent, OpResult, OpSpec } from '@/wasm/kmip/kmipEngine'
+import type { KmipObject, AuditEvent, OpResult, OpSpec, PolicyStatus } from '@/wasm/kmip/kmipEngine'
 import { WireTreeView } from './WireTreeView'
 import { AuditTrailPanel } from './AuditTrailPanel'
 
 type Tab = 'keystore' | 'wire' | 'audit'
+
+/** A-grade review item #7 — download the session as a single JSON takeaway:
+ * the active policy (name + source YAML), everything the engine populated
+ * into the keystore, and the full cross-plane audit trail. */
+function downloadSession(
+  policy: PolicyStatus,
+  policyYaml: string | null,
+  objects: KmipObject[],
+  audit: AuditEvent[]
+) {
+  const payload = {
+    exportedAt: new Date().toISOString(),
+    policy: {
+      name: policy.name ?? 'built-in-permissive',
+      fingerprint: policy.fingerprint,
+      yaml: policyYaml,
+    },
+    keystore: objects,
+    audit,
+  }
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `cacp-session-${new Date().toISOString().replace(/[:.]/g, '-')}.json`
+  a.click()
+  URL.revokeObjectURL(url)
+}
 
 export function Inspector({
   objects,
   audit,
   result,
   lastSpec,
+  policy,
+  policyYaml,
   expert,
   onClearAudit,
 }: {
@@ -26,6 +56,8 @@ export function Inspector({
   audit: AuditEvent[]
   result: OpResult | null
   lastSpec: OpSpec | null
+  policy: PolicyStatus
+  policyYaml: string | null
   expert: boolean
   onClearAudit: () => void
 }) {
@@ -68,6 +100,7 @@ export function Inspector({
               size="sm"
               aria-pressed={on}
               onClick={() => setTab(t.id)}
+              data-tour={t.id === 'audit' ? 'insp-audit-tab' : undefined}
               className={`h-7 gap-1.5 rounded-md px-2.5 text-xs ${
                 on ? 'bg-card text-foreground' : 'text-muted-foreground'
               }`}
@@ -77,6 +110,16 @@ export function Inspector({
           )
         })}
         <span className="ml-auto pr-1 text-[10px] text-muted-foreground">{metaCount}</span>
+        <Button
+          variant="ghost"
+          size="sm"
+          disabled={objects.length === 0 && audit.length === 0}
+          onClick={() => downloadSession(policy, policyYaml, objects, audit)}
+          title="Download the active policy, keystore, and audit trail as JSON"
+          className="h-7 gap-1 px-2 text-[11px] text-muted-foreground hover:text-foreground"
+        >
+          <Download size={12} /> session
+        </Button>
         {active === 'audit' && audit.length > 0 && (
           <Button
             variant="ghost"

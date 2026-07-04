@@ -327,13 +327,17 @@ test.describe('S/MIME Workshop — CMS sign+verify and encrypt+decrypt (P0 KAT)'
     await page.goto(WORKSHOP_URL)
     await expect(page.getByText(/Step 4/i).first()).toBeVisible({ timeout: 60_000 })
 
-    // Switch the algorithm dropdown to ML-DSA-87
-    const algSelect = page
-      .locator('select')
-      .filter({ hasText: /ML-DSA/ })
+    // Switch the algorithm dropdown to ML-DSA-87. The native <select> was
+    // replaced by a FilterDropdown combobox (commit 88fd4a77): scope to the
+    // ML-DSA sign demo, click its trigger, then pick the portaled option.
+    const mldsaDemo = page
+      .getByRole('heading', { name: /ML-DSA CMS sign \+ verify/i })
       .first()
-    await expect(algSelect).toBeVisible({ timeout: 30_000 })
-    await algSelect.selectOption('ML-DSA-87')
+      .locator('xpath=../..')
+    const algTrigger = mldsaDemo.getByTestId('filter-dropdown').first()
+    await expect(algTrigger).toBeVisible({ timeout: 30_000 })
+    await algTrigger.click()
+    await page.getByRole('option', { name: 'ML-DSA-87', exact: true }).click()
 
     const signBtn = page.getByRole('button', { name: /Sign \+ Verify/i }).first()
     await signBtn.click()
