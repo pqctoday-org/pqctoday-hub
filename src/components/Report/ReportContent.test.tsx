@@ -288,18 +288,18 @@ describe('ReportContent', () => {
   describe('action buttons', () => {
     it('renders all five action buttons', () => {
       renderReport()
-      expect(screen.getByText('Download PDF')).toBeInTheDocument()
+      expect(screen.getByText('Print / Save as PDF')).toBeInTheDocument()
       expect(screen.getByText('Export CSV')).toBeInTheDocument()
       expect(screen.getByText('Share')).toBeInTheDocument()
       expect(screen.getByText('Edit Answers')).toBeInTheDocument()
       expect(screen.getByText('Start Over')).toBeInTheDocument()
     })
 
-    it('calls window.print when Download PDF is clicked', () => {
+    it('calls window.print when Print / Save as PDF is clicked', () => {
       const printMock = vi.fn()
       vi.spyOn(window, 'print').mockImplementation(printMock)
       renderReport()
-      fireEvent.click(screen.getByText('Download PDF'))
+      fireEvent.click(screen.getByText('Print / Save as PDF'))
       expect(printMock).toHaveBeenCalledOnce()
       vi.restoreAllMocks()
     })

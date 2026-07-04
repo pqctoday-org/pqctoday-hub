@@ -7,6 +7,7 @@ import { downloadBoardPack } from '@/services/boardPackBuilder'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { logEvent, personaLabel } from '@/utils/analytics'
+import toast from 'react-hot-toast'
 
 declare const __APP_VERSION__: string
 
@@ -53,6 +54,9 @@ export const BoardPackExport: React.FC<Props> = ({ result, variant = 'default' }
       setTimeout(() => setStatus('idle'), 1800)
     } catch (err) {
       console.error('Board Pack export failed:', err)
+      // Surface the failure — resetting silently to idle is indistinguishable
+      // from "nothing happened".
+      toast.error('Board pack export failed. Please try again.')
       setStatus('idle')
     }
   }
