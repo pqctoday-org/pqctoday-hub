@@ -32,26 +32,39 @@ function formatUSD(value: number): string {
   return `$${value.toFixed(0)}`
 }
 
-const ScoreBar = ({ value, max = 100 }: { value: number; max?: number }) => (
-  <div
-    style={{
-      height: '6px',
-      borderRadius: '3px',
-      background: '#e5e7eb',
-      marginTop: '4px',
-      overflow: 'hidden',
-    }}
-  >
+const ScoreBar = ({
+  value,
+  max = 100,
+  higherIsBetter = false,
+}: {
+  value: number
+  max?: number
+  higherIsBetter?: boolean
+}) => {
+  // Concern drives colour; higher-is-better axes (e.g. Organizational Readiness)
+  // invert so a high value reads green, not red.
+  const concern = higherIsBetter ? max - value : value
+  return (
     <div
       style={{
-        height: '100%',
-        width: `${(value / max) * 100}%`,
-        background: value >= 70 ? '#ef4444' : value >= 40 ? '#f59e0b' : '#22c55e',
+        height: '6px',
         borderRadius: '3px',
+        background: '#e5e7eb',
+        marginTop: '4px',
+        overflow: 'hidden',
       }}
-    />
-  </div>
-)
+    >
+      <div
+        style={{
+          height: '100%',
+          width: `${(value / max) * 100}%`,
+          background: concern >= 70 ? '#ef4444' : concern >= 40 ? '#f59e0b' : '#22c55e',
+          borderRadius: '3px',
+        }}
+      />
+    </div>
+  )
+}
 
 export const BoardBriefSection: React.FC<BoardBriefProps> = ({
   result,
@@ -175,8 +188,9 @@ export const BoardBriefSection: React.FC<BoardBriefProps> = ({
                 {
                   label: 'Organizational Readiness',
                   value: categoryScores.organizationalReadiness,
+                  higherIsBetter: true,
                 },
-              ].map(({ label, value }) => (
+              ].map(({ label, value, higherIsBetter }) => (
                 <div
                   key={label}
                   style={{
@@ -195,7 +209,7 @@ export const BoardBriefSection: React.FC<BoardBriefProps> = ({
                     <span style={{ color: '#374151' }}>{label}</span>
                     <span style={{ fontWeight: 700 }}>{value}</span>
                   </div>
-                  <ScoreBar value={value} />
+                  <ScoreBar value={value} higherIsBetter={higherIsBetter} />
                 </div>
               ))}
             </div>

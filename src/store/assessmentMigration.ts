@@ -157,6 +157,29 @@ export function runLegacyAssessmentMigrations(state: Record<string, any>, versio
   return state
 }
 
+/**
+ * Result-store v0 → v1: `organizationalReadiness` was stored as a readiness GAP
+ * (higher = worse) but is now a true readiness score (higher = better). Flip the
+ * value (`100 - x`) in every persisted categoryScores so old snapshots and the
+ * cached lastResult trend/render consistently with the new convention. The
+ * composite riskScore is unchanged by the flip, so it is left as-is.
+ */
+export function migrateResultStoreReadinessSign(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- operates on untyped persisted state
+  state: Record<string, any>
+) {
+  const flip = (cs: any) => {
+    if (cs && typeof cs.organizationalReadiness === 'number') {
+      cs.organizationalReadiness = 100 - cs.organizationalReadiness
+    }
+  }
+  if (state?.lastResult?.categoryScores) flip(state.lastResult.categoryScores)
+  if (Array.isArray(state?.assessmentHistory)) {
+    for (const snap of state.assessmentHistory) flip(snap?.categoryScores)
+  }
+  return state
+}
+
 export function pullLegacyAssessmentState() {
   const raw = localStorage.getItem('pqc-assessment')
   if (!raw) return null

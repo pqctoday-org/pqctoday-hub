@@ -4,6 +4,7 @@ import {
   computeCompositeScoreWithBoosts,
   computeQuantumExposure,
   computeFrameworkRisk,
+  computeOrganizationalReadiness,
 } from './scoring'
 import type { AssessmentInput, CategoryScores } from '../assessmentTypes'
 
@@ -160,6 +161,62 @@ describe('computeCompositeScoreWithBoosts', () => {
     }
     const res = computeCompositeScoreWithBoosts(topCategories, input)
     expect(res.score).toBeLessThanOrEqual(100)
+  })
+})
+
+describe('computeOrganizationalReadiness — higher is better', () => {
+  const prepared: AssessmentInput = {
+    industry: 'Technology',
+    currentCrypto: ['RSA-2048'],
+    dataSensitivity: ['medium'],
+    complianceRequirements: [],
+    migrationStatus: 'started',
+    systemCount: '1-10',
+    teamSize: '200-plus',
+    cryptoAgility: 'fully-abstracted',
+    vendorDependency: 'in-house',
+  }
+  const unprepared: AssessmentInput = {
+    industry: 'Technology',
+    currentCrypto: ['RSA-2048'],
+    dataSensitivity: ['medium'],
+    complianceRequirements: [],
+    migrationStatus: 'not-started',
+    systemCount: '200-plus',
+    teamSize: '1-10',
+    cryptoAgility: 'hardcoded',
+    vendorDependency: 'heavy-vendor',
+  }
+
+  it('scores a well-prepared org high (readiness, not gap)', () => {
+    expect(computeOrganizationalReadiness(prepared)).toBeGreaterThan(60)
+  })
+
+  it('scores a poorly-prepared org low', () => {
+    expect(computeOrganizationalReadiness(unprepared)).toBeLessThan(40)
+  })
+
+  it('is monotonic: prepared > unprepared', () => {
+    expect(computeOrganizationalReadiness(prepared)).toBeGreaterThan(
+      computeOrganizationalReadiness(unprepared)
+    )
+  })
+})
+
+describe('computeCompositeScoreWithBoosts — readiness lowers risk', () => {
+  it('a more-ready org yields a lower composite risk score', () => {
+    const input: AssessmentInput = {
+      industry: 'Technology',
+      currentCrypto: ['RSA-2048'],
+      dataSensitivity: ['medium'],
+      complianceRequirements: [],
+      migrationStatus: 'started',
+    }
+    const ready: CategoryScores = { ...BASE_CATEGORIES, organizationalReadiness: 90 }
+    const notReady: CategoryScores = { ...BASE_CATEGORIES, organizationalReadiness: 10 }
+    expect(computeCompositeScoreWithBoosts(ready, input).score).toBeLessThan(
+      computeCompositeScoreWithBoosts(notReady, input).score
+    )
   })
 })
 

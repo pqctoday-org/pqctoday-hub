@@ -195,11 +195,18 @@ const CategoryBreakdown = ({
   defaultOpen?: boolean
   headerExtra?: React.ReactNode
 }) => {
+  // organizationalReadiness is higher-is-better (a true readiness score); the
+  // other three are higher-is-worse. `higherIsBetter` inverts the concern value
+  // used for colouring so a high readiness bar reads green, not red.
   const categories = [
-    { label: 'Quantum Exposure', key: 'quantumExposure' as const },
-    { label: 'Migration Complexity', key: 'migrationComplexity' as const },
-    { label: 'Regulatory Pressure', key: 'regulatoryPressure' as const },
-    { label: 'Organizational Readiness', key: 'organizationalReadiness' as const },
+    { label: 'Quantum Exposure', key: 'quantumExposure' as const, higherIsBetter: false },
+    { label: 'Migration Complexity', key: 'migrationComplexity' as const, higherIsBetter: false },
+    { label: 'Regulatory Pressure', key: 'regulatoryPressure' as const, higherIsBetter: false },
+    {
+      label: 'Organizational Readiness',
+      key: 'organizationalReadiness' as const,
+      higherIsBetter: true,
+    },
   ]
 
   // Canonical risk-level thresholds (match orchestrator.ts riskLevel mapping
@@ -228,20 +235,25 @@ const CategoryBreakdown = ({
       infoTip="riskBreakdown"
     >
       <div className="space-y-4">
-        {categories.map(({ label, key }) => {
+        {categories.map(({ label, key, higherIsBetter }) => {
           // eslint-disable-next-line security/detect-object-injection
           const score = scores[key]
+          // Concern drives colour: for higher-is-better axes a high score is LOW
+          // concern (green), so invert before thresholding.
+          const concern = higherIsBetter ? 100 - score : score
           return (
             <div key={key}>
               <div className="flex items-center justify-between mb-1">
                 <span className="text-sm text-muted-foreground">{label}</span>
-                <span className={clsx('text-sm font-bold', getScoreColor(score))}>{score}/100</span>
+                <span className={clsx('text-sm font-bold', getScoreColor(concern))}>
+                  {score}/100
+                </span>
               </div>
               <div className="w-full h-2.5 rounded-full bg-border overflow-hidden">
                 <div
                   className={clsx(
                     'h-full rounded-full transition-all duration-500',
-                    getBarColor(score)
+                    getBarColor(concern)
                   )}
                   style={{ width: `${score}%` }}
                   role="progressbar"
