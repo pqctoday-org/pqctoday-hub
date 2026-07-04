@@ -36,7 +36,7 @@ export const TRACK_META: Record<RoadmapTrack, TrackMeta> = {
   program: {
     id: 'program',
     label: 'Program — Foundations & Gates',
-    focus: 'Mandate · inventory · governance · gates G0–G7',
+    focus: 'Mandate · inventory · governance · gates G0–G6 (+ G8 at closure)',
     rationale:
       'The cross-cutting spine: executive mandate, discovery/CBOM, risk scoring, governance and KPIs that both technical tracks depend on.',
   },
@@ -49,7 +49,7 @@ export const TRACK_META: Record<RoadmapTrack, TrackMeta> = {
   },
   B: {
     id: 'B',
-    label: 'Track B — Integrity (Signatures / PKI)',
+    label: 'Track B — Integrity (Signatures / PKI / TNFL)',
     focus: 'Code/firmware signing & PKI',
     rationale:
       'Trust-Now-Forge-Later: signing keys and long-lived trust anchors have the longest replacement lead time, so PKI and code/firmware-signing migration must start early even though forgery risk lags decryption risk.',

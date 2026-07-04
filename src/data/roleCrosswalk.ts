@@ -167,10 +167,36 @@ export const ROLE_CROSSWALK: Record<FrameworkRoleId, RoleMapping> = {
 }
 
 /**
- * Sizing heuristic carried as data (spec §7.2): **1 dedicated FTE per this many
- * cryptographic instances** in the CBOM. Drives the Skills/Team gap-closer (§6.5).
+ * Sizing heuristic carried as data (spec §7.2; framework-2.1.yaml
+ * `skills_team.sizing_heuristic`): **1 dedicated FTE per this many cryptographic
+ * instances** in the CBOM, for the program's first two years (discovery, CBOM,
+ * risk scoring, and pilot phases). Drives the Skills/Team gap-closer (§6.5).
+ * See {@link FTE_PER_CRYPTO_INSTANCES_PRODUCTION} for the looser ratio once the
+ * program reaches production rollout.
  */
 export const FTE_PER_CRYPTO_INSTANCES = 500
+
+/**
+ * The same sizing heuristic once the program reaches production rollout: the
+ * ratio loosens to 1 dedicated FTE per this many instances as processes mature
+ * and tooling automates repetitive tasks (framework-2.1.yaml
+ * `skills_team.sizing_heuristic`).
+ */
+export const FTE_PER_CRYPTO_INSTANCES_PRODUCTION = 1000
+
+/**
+ * Roles the framework calls out as dedicated overhead *regardless of estate
+ * size* (framework-2.1.yaml `skills_team.sizing_heuristic`: "The QRPM,
+ * Cryptographic Architect, and PMO Analyst are dedicated overhead regardless
+ * of estate size."). The Skills & Team gap-closer keeps these three pinned to
+ * their baseline FTE and scales the remaining roles against the sizing-
+ * heuristic total instead, so the headline estimate and the role table agree.
+ */
+export const FIXED_OVERHEAD_ROLE_IDS: FrameworkRoleId[] = [
+  'qrpm',
+  'crypto-architect',
+  'pmo-analyst',
+]
 
 /**
  * Rough order-of-magnitude estimate for seeding an estate size from a product

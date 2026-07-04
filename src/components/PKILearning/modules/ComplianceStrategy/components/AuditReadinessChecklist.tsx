@@ -3,10 +3,12 @@
 import React, { useMemo, useState } from 'react'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useModuleStore } from '@/store/useModuleStore'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { Button } from '@/components/ui/button'
 import { ArtifactBuilder } from '../../../common/executive'
 import type { ArtifactSection } from '../../../common/executive'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
+import { rowsToCsv } from '@/services/export/csvExport'
 
 interface ChecklistItem {
   value: string
@@ -28,7 +30,7 @@ const INVENTORY_ITEMS: ChecklistItem[] = [
     label: 'Algorithm usage documented',
     description:
       'Every cryptographic algorithm in use is identified with key sizes, protocol context, and quantum vulnerability status.',
-    reference: 'NIST SP 800-131A Rev 3',
+    reference: 'NIST SP 800-131A Rev 3 (draft)',
   },
   {
     value: 'key-lengths',
@@ -59,7 +61,7 @@ const POLICY_ITEMS: ChecklistItem[] = [
     label: 'PQC policy published',
     description:
       'Organizational policy mandating transition to post-quantum cryptographic algorithms with defined timelines.',
-    reference: 'NIST IR 8547',
+    reference: 'NIST IR 8547 (draft)',
   },
   {
     value: 'raci-defined',
@@ -97,7 +99,7 @@ const RISK_ITEMS: ChecklistItem[] = [
     label: 'HNDL risk assessment completed',
     description:
       'Harvest Now, Decrypt Later (HNDL) exposure assessed — data at risk of retroactive decryption when CRQCs arrive.',
-    reference: 'NSA CNSA 2.0 FAQ; NIST IR 8547',
+    reference: 'NSA CNSA 2.0 FAQ; NIST IR 8547 (draft)',
   },
   {
     value: 'data-classified',
@@ -211,7 +213,7 @@ const EVIDENCE_ITEMS: ChecklistItem[] = [
     label: 'Migration plan documented',
     description:
       'Comprehensive migration plan with timelines, milestones, resource allocation, and success criteria.',
-    reference: 'NIST IR 8547',
+    reference: 'NIST IR 8547 (draft)',
   },
   {
     value: 'test-results',
@@ -483,6 +485,60 @@ function renderExceptionsAndEvidenceMd(
   return md
 }
 
+// Structured CSV (all 30 checklist items + Exceptions + Evidence, section-labelled)
+// so `.csv` opens as real spreadsheet rows, not pipe text. Mirrors the pattern in
+// ComplianceTimelineBuilder (Audit C5).
+function renderAuditCsv(
+  data: Record<string, Record<string, string | string[]>>,
+  exceptions: ExceptionRow[],
+  evidence: EvidenceRow[]
+): string {
+  const sections: (string | number)[][] = []
+  sections.push(['PQC Audit Readiness Checklist'])
+  sections.push(['Section', 'Item', 'Checked', 'Reference'])
+  for (const [sectionId, title] of Object.entries(SECTION_TITLES)) {
+    const sectionData = data[sectionId] ?? {}
+    const items = ALL_ITEMS[sectionId] ?? []
+    const checklistKey = Object.keys(sectionData)[0]
+    const checkedItems = Array.isArray(sectionData[checklistKey])
+      ? (sectionData[checklistKey] as string[])
+      : []
+    for (const item of items) {
+      sections.push([
+        title,
+        item.label,
+        checkedItems.includes(item.value) ? 'Yes' : 'No',
+        item.reference,
+      ])
+    }
+  }
+
+  if (exceptions.length > 0) {
+    sections.push([])
+    sections.push(['Exceptions'])
+    sections.push(['Scope', 'Compensating control', 'Owner', 'Sunset'])
+    for (const e of exceptions) sections.push([e.scope, e.compensatingControl, e.owner, e.sunset])
+  }
+
+  if (evidence.length > 0) {
+    sections.push([])
+    sections.push(['Evidence'])
+    sections.push(['Product / Asset', 'CMVP cert #', 'ACVP run ID', 'ESV status', 'CVE-scan date'])
+    for (const e of evidence)
+      sections.push([e.productOrAsset, e.cmvpCertNumber, e.acvpRunId, e.esvStatus, e.cveScanDate])
+  }
+
+  return rowsToCsv(sections)
+}
+
+/** Persisted shape for the read-back half of the "save with `inputs`, restore
+ *  on mount" pattern — checklist selections plus the Exceptions/Evidence rows. */
+interface SavedAuditInputs {
+  checklistData?: Record<string, Record<string, string | string[]>>
+  exceptions?: ExceptionRow[]
+  evidence?: EvidenceRow[]
+}
+
 interface AuditReadinessChecklistProps {
   selectedJurisdictions?: string[]
 }
@@ -493,8 +549,9 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
   const { isAssessmentComplete, industry, country, myFrameworks, myProducts, myThreats } =
     useExecutiveModuleData()
   const { addExecutiveDocument } = useModuleStore()
-  const [exceptions, setExceptions] = React.useState<ExceptionRow[]>([])
-  const [evidence, setEvidence] = React.useState<EvidenceRow[]>([])
+  const savedInputs = useSavedArtifactInputs<SavedAuditInputs>('audit-checklist')
+  const [exceptions, setExceptions] = React.useState<ExceptionRow[]>(savedInputs?.exceptions ?? [])
+  const [evidence, setEvidence] = React.useState<EvidenceRow[]>(savedInputs?.evidence ?? [])
   const [seedCleared, setSeedCleared] = useState(false)
 
   const seedSources: string[] = []
@@ -547,8 +604,15 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
       data: markdown,
       createdAt: Date.now(),
       moduleId: 'compliance-strategy',
+      inputs: { checklistData: data, exceptions, evidence },
     })
   }
+
+  const csvRenderer = React.useCallback(
+    (data: Record<string, Record<string, string | string[]>>) =>
+      renderAuditCsv(data, exceptions, evidence),
+    [exceptions, evidence]
+  )
 
   const previewRenderer = React.useCallback(
     (data: Record<string, Record<string, string | string[]>>) =>
@@ -623,8 +687,10 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
         sections={sections}
         onExport={handleExport}
         exportFilename="pqc-audit-readiness-checklist"
-        exportFormats={['markdown', 'pdf']}
+        exportFormats={['markdown', 'csv', 'pdf']}
         renderPreview={previewRenderer}
+        renderCsv={csvRenderer}
+        initialData={savedInputs?.checklistData}
       />
 
       {/* CSWP.39 §5.1 — Exceptions */}

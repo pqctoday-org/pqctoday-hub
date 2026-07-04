@@ -5,6 +5,11 @@ export interface HeatmapCell {
   value: number
   label?: string
   tooltip?: string
+  /** Multiple small labeled entries landing in the same cell (e.g. several
+   *  infrastructure layers at the same likelihood×impact bucket) — rendered
+   *  as individual badges instead of the single `label` line. Takes priority
+   *  over `label` when non-empty. */
+  labels?: string[]
 }
 
 interface HeatmapGridProps {
@@ -78,11 +83,24 @@ export const HeatmapGrid: React.FC<HeatmapGridProps> = ({
                   return (
                     <td
                       key={col}
-                      className={`p-2 text-center text-sm font-medium border-b border-border transition-colors ${getCellColor(cell.value, colorScale)} ${onCellClick ? 'cursor-pointer hover:opacity-80' : ''}`}
+                      className={`p-2 text-center text-sm font-medium border-b border-border transition-colors align-top ${getCellColor(cell.value, colorScale)} ${onCellClick ? 'cursor-pointer hover:opacity-80' : ''}`}
                       onClick={() => onCellClick?.(rowIdx, colIdx)}
                       title={cell.tooltip ?? `${row} / ${col}: ${cell.value}`}
                     >
-                      {cell.label ?? cell.value}
+                      {cell.labels && cell.labels.length > 0 ? (
+                        <div className="flex flex-col gap-1 items-stretch">
+                          {cell.labels.map((l) => (
+                            <div
+                              key={l}
+                              className="bg-background/80 rounded px-1 py-0.5 text-[11px] font-medium text-foreground truncate leading-tight"
+                            >
+                              {l}
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        (cell.label ?? cell.value)
+                      )}
                     </td>
                   )
                 })}

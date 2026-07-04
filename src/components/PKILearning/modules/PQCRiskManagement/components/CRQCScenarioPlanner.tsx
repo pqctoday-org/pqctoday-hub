@@ -4,6 +4,7 @@ import { Clock, AlertTriangle, ShieldAlert, ShieldCheck, Calendar, TrendingUp } 
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { useModuleStore } from '@/store/useModuleStore'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { ExportableArtifact } from '../../../common/executive'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
@@ -101,8 +102,16 @@ const COMPLIANCE_DEADLINES = [
     year: 2033,
     advisory: false,
   },
-  { framework: 'NIST \u2014 RSA/ECC Deprecation (NIST IR 8547)', year: 2030, advisory: false },
-  { framework: 'NIST \u2014 RSA/ECC Disallowed (NIST IR 8547)', year: 2035, advisory: false },
+  {
+    framework: 'NIST \u2014 RSA/ECC Deprecation (NIST IR 8547, draft)',
+    year: 2030,
+    advisory: false,
+  },
+  {
+    framework: 'NIST \u2014 RSA/ECC Disallowed (NIST IR 8547, draft)',
+    year: 2035,
+    advisory: false,
+  },
   { framework: 'EU/ANSSI \u2014 PQC Guidance (advisory)', year: 2030, advisory: true },
 ]
 
@@ -115,7 +124,10 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
   // Derive a default CRQC year from the user's nearest framework deadline
   // (deadline + 3-year buffer) — falls back to 2035 if no data.
   const defaultCrqcYear = migrationDeadlineYear ? migrationDeadlineYear + 3 : 2035
-  const [crqcYear, setCrqcYear] = useState(defaultCrqcYear)
+  // Restore the user's last-saved slider position (if any) ahead of the
+  // computed default — the read-back half of persisting `inputs` on export.
+  const savedInputs = useSavedArtifactInputs<{ crqcYear?: number }>('crqc-scenario')
+  const [crqcYear, setCrqcYear] = useState(savedInputs?.crqcYear ?? defaultCrqcYear)
   const [seedCleared, setSeedCleared] = useState(false)
 
   useEffect(() => {
@@ -231,7 +243,7 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
 
     md += '\n---\n\n'
     md +=
-      '*Aligned to NIST CSWP 39 §2.3 (Constant Needs of Transition) and §6.1 (Resource Considerations). https://doi.org/10.6028/NIST.CSWP.39*\n'
+      '*Aligned to NIST CSWP 39 §2.3 (Constant Needs of Transition) and §6.1 (Resource Considerations). https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
 
     // N5: sanitise non-ASCII punctuation in the exported markdown string only
     // (em-dash, en-dash, smart single/double quotes).
@@ -257,6 +269,7 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
       type: 'crqc-scenario',
       title: `CRQC Scenario Analysis (${crqcYear})`,
       data: exportMarkdown,
+      inputs: { crqcYear },
       createdAt: Date.now(),
     })
   }, [addExecutiveDocument, crqcYear, exportMarkdown])
@@ -320,6 +333,23 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
         <p className="text-sm text-muted-foreground mb-4">
           Adjust the slider to model when a cryptographically relevant quantum computer might
           arrive. See the cascading impacts on algorithms, compliance, and data exposure.
+        </p>
+        <p className="text-xs text-muted-foreground mb-4">
+          Default year is your migration deadline
+          {migrationDeadlineYear
+            ? ` (${migrationDeadlineYear})`
+            : ' (no deadline on record: 2035)'}{' '}
+          plus a 3-year buffer &mdash; a planning heuristic, not a probabilistic forecast; move the
+          slider to model an earlier or later arrival. Aligned to{' '}
+          <a
+            href="https://doi.org/10.6028/NIST.CSWP.39-upd1"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+          >
+            NIST CSWP 39
+          </a>{' '}
+          &sect;2.3 (Constant Need of Transition) and &sect;6.1 (Resource Considerations).
         </p>
 
         <div className="space-y-3">

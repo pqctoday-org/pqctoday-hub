@@ -55,6 +55,11 @@ interface RiskRegisterState {
   riskEntries: RiskEntry[]
   setRiskEntries: (entries: RiskEntry[]) => void
   clearRiskEntries: () => void
+  /** Digest (the exported markdown) of the last-saved register, so the
+   *  "Saved" indicator survives a remount instead of resetting to
+   *  "unsaved" even though the underlying data is still intact. */
+  lastSavedKey: string | null
+  setLastSavedKey: (key: string | null) => void
 }
 
 export const useRiskRegisterStore = create<RiskRegisterState>()(
@@ -63,15 +68,18 @@ export const useRiskRegisterStore = create<RiskRegisterState>()(
       riskEntries: [],
       setRiskEntries: (entries) => set({ riskEntries: entries }),
       clearRiskEntries: () => set({ riskEntries: [] }),
+      lastSavedKey: null,
+      setLastSavedKey: (key) => set({ lastSavedKey: key }),
     }),
     {
       name: 'pqc-risk-register',
       storage: createJSONStorage(() => localStorage),
-      version: 1,
+      version: 2,
       migrate: (persistedState: unknown) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const state = (persistedState ?? {}) as any
         state.riskEntries = Array.isArray(state.riskEntries) ? state.riskEntries : []
+        state.lastSavedKey = typeof state.lastSavedKey === 'string' ? state.lastSavedKey : null
         return state
       },
       onRehydrateStorage: () => (_state, error) => {

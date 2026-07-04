@@ -50,9 +50,13 @@ export function buildRiskOverviewDefault(data: Data): string {
   parts.push(
     `${data.totalProducts} products in the infrastructure require PQC evaluation (${data.pqcReadyCount} have a PQC-ready roadmap, ${data.fipsValidatedCount} FIPS-validated).`
   )
-  if (data.frameworksByIndustry.length > 0) {
+  if (data.industry && data.frameworksByIndustry.length > 0) {
     parts.push(
-      `${data.frameworksByIndustry.length} compliance frameworks apply to ${data.industry || 'our sector'}; several carry emerging PQC mandates.`
+      `${data.frameworksByIndustry.length} compliance frameworks apply to ${data.industry}; several carry emerging PQC mandates.`
+    )
+  } else if (data.frameworksByIndustry.length > 0) {
+    parts.push(
+      'Multiple compliance frameworks apply to our sector; several carry emerging PQC mandates.'
     )
   }
   if (parts.length === 0) {

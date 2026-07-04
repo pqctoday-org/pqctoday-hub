@@ -6,6 +6,7 @@ import { CompleteStepAction } from '../CompleteStepAction'
 import { markdownToPptx } from '@/services/export/pptxExport'
 import { markdownToDocx } from '@/services/export/docxExport'
 import { markdownToPdf } from '@/services/export/pdfExport'
+import { copyToClipboard } from '@/utils/clipboard'
 
 type ExportFormat = 'markdown' | 'json' | 'csv' | 'pptx' | 'docx' | 'pdf'
 
@@ -57,7 +58,8 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
   const handleSaveClick = triggerSave
 
   const handleCopy = useCallback(async () => {
-    await navigator.clipboard.writeText(exportData)
+    const ok = await copyToClipboard(exportData)
+    if (!ok) return
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
     triggerSave()

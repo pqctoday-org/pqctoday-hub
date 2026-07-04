@@ -20,9 +20,12 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useModuleStore } from '@/store/useModuleStore'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
+import { getCswp39RefForArtifactType } from '@/components/BusinessCenter/businessToolsRegistry'
+import { Cswp39SectionBadge } from '@/components/BusinessCenter/widgets/Cswp39SectionBadge'
 
 /** Default already-funded refresh programs the user can edit, add to, or remove. */
-const SEED_PROGRAM_NAMES = [
+export const SEED_PROGRAM_NAMES = [
   'Data center hardware',
   'SD-WAN / network',
   'Cloud platform',
@@ -32,16 +35,31 @@ const SEED_PROGRAM_NAMES = [
   'Application modernization',
 ] as const
 
-interface RefreshRow {
+export interface RefreshRow {
   id: string
   programName: string
   nextRefreshYear: string
   pqcTaskToEmbed: string
 }
 
-interface RefreshState {
+export interface RefreshState {
   planningHorizonYears: string
   rows: RefreshRow[]
+}
+
+type SavedRefreshInputs = Partial<RefreshState>
+
+function isValidRows(rows: unknown): rows is RefreshRow[] {
+  return (
+    Array.isArray(rows) &&
+    rows.every(
+      (r) =>
+        r &&
+        typeof r === 'object' &&
+        typeof (r as RefreshRow).id === 'string' &&
+        typeof (r as RefreshRow).programName === 'string'
+    )
+  )
 }
 
 const newId = (): string => `rc-${Math.random().toString(36).slice(2, 9)}`
@@ -68,7 +86,7 @@ const ALIGN_MD_LABEL: Record<RefreshAlignment, string> = {
   unknown: 'TBD',
 }
 
-function buildMarkdown(s: RefreshState, horizonEndYear: number): string {
+export function buildMarkdown(s: RefreshState, horizonEndYear: number): string {
   const lines: string[] = []
   lines.push('# Refresh-Cycle Alignment')
   lines.push('')
@@ -121,15 +139,26 @@ const ALIGN_BADGE: Record<RefreshAlignment, { label: string; cls: string }> = {
 
 export const RefreshCycleAlignment: React.FC = () => {
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
-  const [state, setState] = useState<RefreshState>(() => ({
-    planningHorizonYears: '3',
-    rows: SEED_PROGRAM_NAMES.map((programName) => ({
-      id: newId(),
-      programName,
-      nextRefreshYear: '',
-      pqcTaskToEmbed: '',
-    })),
-  }))
+  const savedInputs = useSavedArtifactInputs<SavedRefreshInputs>('refresh-cycle-alignment')
+  const cswp39Ref = getCswp39RefForArtifactType('refresh-cycle-alignment')
+  // Restore the user's last-saved alignment so it round-trips across visits.
+  const [state, setState] = useState<RefreshState>(() => {
+    if (isValidRows(savedInputs?.rows)) {
+      return {
+        planningHorizonYears: savedInputs?.planningHorizonYears || '3',
+        rows: savedInputs.rows,
+      }
+    }
+    return {
+      planningHorizonYears: '3',
+      rows: SEED_PROGRAM_NAMES.map((programName) => ({
+        id: newId(),
+        programName,
+        nextRefreshYear: '',
+        pqcTaskToEmbed: '',
+      })),
+    }
+  })
 
   const set = <K extends keyof RefreshState>(key: K, value: RefreshState[K]) =>
     setState((prev) => ({ ...prev, [key]: value }))
@@ -177,8 +206,18 @@ export const RefreshCycleAlignment: React.FC = () => {
         <div>
           <h2 className="text-lg font-semibold text-foreground">Refresh-Cycle Alignment</h2>
           <p className="text-sm text-muted-foreground">
-            Phase 4 — Roadmap &amp; Governance (Activity 4.3). Map PQC migration tasks onto your
-            already-funded infrastructure refresh programs so the work rides existing budgets.
+            Phase 4 — Roadmap &amp; Governance (Activity 4.3)
+            {cswp39Ref && (
+              <>
+                {' '}
+                <Cswp39SectionBadge
+                  sectionRef={cswp39Ref.sectionRef}
+                  subSection={cswp39Ref.subSection}
+                />
+              </>
+            )}
+            . Map PQC migration tasks onto your already-funded infrastructure refresh programs so
+            the work rides existing budgets.
           </p>
         </div>
       </header>
@@ -302,6 +341,7 @@ export const RefreshCycleAlignment: React.FC = () => {
             title: `Refresh-Cycle Alignment — ${new Date().toLocaleDateString()}`,
             data: exportMarkdown,
             inputs: {
+              ...state,
               rowCount,
               misalignedCount,
             },

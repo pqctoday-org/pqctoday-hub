@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useCallback, useMemo } from 'react'
+import { Rocket } from 'lucide-react'
 import { OpsChecklist, type ChecklistSection } from '@/components/PKILearning/common/OpsChecklist'
 import { useModuleStore } from '@/store/useModuleStore'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
@@ -155,7 +156,8 @@ const sections: ChecklistSection[] = [
       },
       {
         id: 'decom-sunset-date',
-        label: 'Set a mandatory sunset date — §4.6 "Mitigation is not a permanent solution"',
+        label:
+          'Set a mandatory sunset date — CSWP.39 §4.6 frames a crypto gateway as an architectural fix for legacy systems that cannot be modified directly, not a substitute for migrating the algorithm inside them',
         critical: true,
       },
       {
@@ -251,6 +253,21 @@ export const DeploymentPlaybook: React.FC<DeploymentPlaybookProps> = ({ roadmapO
 
   return (
     <div className="space-y-3">
+      <div className="glass-panel p-4 border-l-4 border-status-info flex items-start gap-3">
+        <Rocket size={20} className="text-status-info mt-0.5 shrink-0" />
+        <div>
+          <h2 className="text-base font-semibold text-foreground">Methodology</h2>
+          <p className="text-xs text-muted-foreground mt-1">
+            Grounded in NIST CSWP.39 §4 — Crypto Agility in System Implementations, which covers how
+            agility is achieved at each layer touched by a rollout: crypto-library APIs, the OS
+            kernel, service mesh, embedded/RTOS, and hardware. The Decommission Plan section below
+            applies §4.6: a crypto gateway restores agility at the network boundary for legacy
+            systems that cannot be modified directly, but the legacy component's own cryptography
+            stays in place — so every gateway entry needs a planned sunset date rather than standing
+            in as the migration itself.
+          </p>
+        </div>
+      </div>
       {roadmapOutput && roadmapOutput.milestones.length > 0 && roadmapSummary && (
         <PreFilledBanner
           summary={`${roadmapOutput.milestones.length} roadmap milestone${roadmapOutput.milestones.length !== 1 ? 's' : ''} from Step 1 are available for reference. Phases covered: ${roadmapSummary}.`}

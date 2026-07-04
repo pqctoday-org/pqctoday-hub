@@ -7,8 +7,10 @@ import type { ExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 // ── Module mocks ───────────────────────────────────────────────────────────
 
 const addExecutiveDocument = vi.fn()
+const mockModuleState = { addExecutiveDocument, artifacts: { executiveDocuments: [] as unknown[] } }
 vi.mock('@/store/useModuleStore', () => ({
-  useModuleStore: () => ({ addExecutiveDocument }),
+  useModuleStore: (selector?: (s: typeof mockModuleState) => unknown) =>
+    selector ? selector(mockModuleState) : mockModuleState,
 }))
 
 const mockData: ExecutiveModuleData = {
