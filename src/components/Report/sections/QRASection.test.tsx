@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import '@testing-library/jest-dom'
 import { QRASection } from './QRASection'
+import { useReportOwnershipStore } from '../../../store/useReportOwnershipStore'
 import type { AssessmentInput, AssessmentResult } from '../../../hooks/assessmentTypes'
 
 // framer-motion is pulled in transitively via CollapsibleSection's tree; mock it
@@ -72,6 +73,14 @@ const renderQRA = (overrides?: Partial<AssessmentResult>) =>
   )
 
 describe('QRASection', () => {
+  beforeEach(() => {
+    useReportOwnershipStore.setState({
+      programOwner: '',
+      budgetOwner: '',
+      accountableExecutive: '',
+    })
+  })
+
   it('renders the five framework section headings', () => {
     renderQRA()
     expect(screen.getByText(/Executive Summary/i)).toBeInTheDocument()
@@ -106,6 +115,25 @@ describe('QRASection', () => {
     const select = screen.getByLabelText('Owner for action 1') as HTMLSelectElement
     fireEvent.change(select, { target: { value: 'qrpm' } })
     expect(select.value).toBe('qrpm')
+  })
+
+  it('renders the program ownership block distinct from per-item owners', () => {
+    renderQRA()
+    expect(screen.getByText('Program Ownership')).toBeInTheDocument()
+    expect(screen.getByLabelText('Program Owner')).toBeInTheDocument()
+    expect(screen.getByLabelText('Budget Owner')).toBeInTheDocument()
+    expect(screen.getByLabelText('Accountable Executive')).toBeInTheDocument()
+  })
+
+  it('persists program ownership input across re-renders (survives store, not just local state)', () => {
+    const { unmount } = renderQRA()
+    fireEvent.change(screen.getByLabelText('Program Owner'), {
+      target: { value: 'Jane Doe, CISO' },
+    })
+    expect(useReportOwnershipStore.getState().programOwner).toBe('Jane Doe, CISO')
+    unmount()
+    renderQRA()
+    expect(screen.getByLabelText('Program Owner')).toHaveValue('Jane Doe, CISO')
   })
 
   it('lists regulatory gaps for PQC-required frameworks only', () => {

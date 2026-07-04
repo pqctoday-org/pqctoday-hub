@@ -26,10 +26,12 @@ import {
   ClipboardList,
   CheckCircle2,
   AlertTriangle,
+  Users,
 } from 'lucide-react'
 import { CollapsibleSection } from '../ReportContent'
 import { buildQRA } from '@/hooks/assessment'
 import { ROLE_CROSSWALK, type FrameworkRoleId } from '@/data/roleCrosswalk'
+import { useReportOwnershipStore } from '@/store/useReportOwnershipStore'
 
 /** Display order for owner-assignment options, derived from the crosswalk. */
 const ROLE_OPTION_ORDER = Object.keys(ROLE_CROSSWALK) as FrameworkRoleId[]
@@ -131,6 +133,67 @@ function Heatmap({ cells }: { cells: QRAHeatmapCell[] }) {
         Bars show attention needed (higher = more urgent). Organizational readiness is inverted —
         low readiness reads as high attention.
       </p>
+    </div>
+  )
+}
+
+/** Program-level accountability, distinct from the per-item "Owner" column
+ *  below: who runs the migration day-to-day, who controls the budget, and
+ *  who's accountable to the board — not who's responsible for one backlog
+ *  item. Genuinely persisted (useReportOwnershipStore), unlike the per-item
+ *  owner overrides. */
+function ProgramOwnership() {
+  const programOwner = useReportOwnershipStore((s) => s.programOwner)
+  const budgetOwner = useReportOwnershipStore((s) => s.budgetOwner)
+  const accountableExecutive = useReportOwnershipStore((s) => s.accountableExecutive)
+  const setProgramOwner = useReportOwnershipStore((s) => s.setProgramOwner)
+  const setBudgetOwner = useReportOwnershipStore((s) => s.setBudgetOwner)
+  const setAccountableExecutive = useReportOwnershipStore((s) => s.setAccountableExecutive)
+
+  const fields = [
+    {
+      id: 'qra-program-owner',
+      label: 'Program Owner',
+      value: programOwner,
+      onChange: setProgramOwner,
+      placeholder: 'Runs the migration day-to-day',
+    },
+    {
+      id: 'qra-budget-owner',
+      label: 'Budget Owner',
+      value: budgetOwner,
+      onChange: setBudgetOwner,
+      placeholder: 'Controls the migration budget',
+    },
+    {
+      id: 'qra-accountable-exec',
+      label: 'Accountable Executive',
+      value: accountableExecutive,
+      onChange: setAccountableExecutive,
+      placeholder: 'Signs off / accountable to the board',
+    },
+  ]
+
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 print:grid-cols-3">
+      {fields.map((f) => (
+        <div key={f.id}>
+          <label
+            htmlFor={f.id}
+            className="block text-[10px] uppercase tracking-wider text-muted-foreground/70 font-medium mb-1"
+          >
+            {f.label}
+          </label>
+          <input
+            id={f.id}
+            type="text"
+            value={f.value}
+            onChange={(e) => f.onChange(e.target.value)}
+            placeholder={f.placeholder}
+            className="w-full rounded-md border border-border bg-background px-2 py-1.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary print:border-none print:p-0 print:bg-transparent"
+          />
+        </div>
+      ))}
     </div>
   )
 }
@@ -356,6 +419,17 @@ export function QRASection({
             <Heatmap cells={qra.heatmap} />
           </section>
 
+          <section aria-labelledby="qra-ownership">
+            <h3
+              id="qra-ownership"
+              className="text-sm font-semibold text-foreground mb-2 inline-flex items-center gap-2"
+            >
+              <Users size={16} className="text-primary" aria-hidden="true" />
+              Program Ownership
+            </h3>
+            <ProgramOwnership />
+          </section>
+
           <section aria-labelledby="qra-backlog">
             <h3
               id="qra-backlog"
@@ -364,6 +438,10 @@ export function QRASection({
               <ListChecks size={16} className="text-primary" aria-hidden="true" />
               Prioritised Backlog
             </h3>
+            <p className="text-xs text-muted-foreground/70 mb-2">
+              Per-item owners below are the <strong>Responsible</strong> role for each action —
+              program-level accountability is set above.
+            </p>
             <Backlog items={qra.backlog} />
           </section>
 

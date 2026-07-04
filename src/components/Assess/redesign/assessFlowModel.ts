@@ -76,7 +76,11 @@ export const RENDER_ORDER_FULL: readonly AssessStepKey[] = [
   'timeline',
 ]
 
-/** Fast-track render order (8). Already domain-contiguous in legacy order. */
+/** Fast-track render order (6). Deliberately excludes `infra` and `timeline`:
+ *  those are extended inputs that flip `hasExtendedInput` true (orchestrator),
+ *  which would produce full category scores and defeat the quick/full tiering —
+ *  the quick report is meant to leave the per-domain breakdown + progress
+ *  tracking locked. Keep this set free of every `hasExtendedInput` field. */
 export const RENDER_ORDER_QUICK: readonly AssessStepKey[] = [
   'industry',
   'country',
@@ -84,8 +88,6 @@ export const RENDER_ORDER_QUICK: readonly AssessStepKey[] = [
   'sensitivity',
   'compliance',
   'migration',
-  'infra',
-  'timeline',
 ]
 
 export interface AssessStepMeta {

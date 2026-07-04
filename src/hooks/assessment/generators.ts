@@ -15,6 +15,23 @@ import { getMaxSensitivity, getMaxRetentionYears, getIndustryRetentionDefault } 
 import type { Cswp39StepId } from '@/data/cswp39ZoneData'
 
 /**
+ * Names the deadline the exposure window is measured against WITHOUT conflating a
+ * regulatory mandate with the arrival of a quantum computer. When a jurisdiction
+ * mandate binds earlier than the CRQC estimate, it is the deadline (and we say
+ * so); otherwise the CRQC estimate governs.
+ */
+function deadlinePhrase(w: {
+  crqcEstimateYear?: number
+  regulatoryHorizonYear?: number
+  estimatedQuantumThreatYear: number
+}): string {
+  const crqc = w.crqcEstimateYear ?? w.estimatedQuantumThreatYear
+  return w.regulatoryHorizonYear !== undefined
+    ? `your ${w.regulatoryHorizonYear} regulatory migration deadline (earlier than the ~${crqc} quantum-threat estimate)`
+    : `the ~${crqc} estimated quantum-threat horizon`
+}
+
+/**
  * Tag a recommended action with its CSWP.39 step (Govern → Inventory →
  * Identify-gaps → Prioritise → Implement) by keyword, so the Assess output is
  * visibly CSWP.39-structured. First match wins; defaults to govern.
@@ -546,13 +563,13 @@ export function generateExecutiveSummary(
 
   if (hndl?.isAtRisk) {
     parts.push(
-      `Data persists ${hndl.riskWindowYears} year${hndl.riskWindowYears !== 1 ? 's' : ''} beyond the estimated quantum threat horizon, making HNDL attacks an active concern.`
+      `Data persists ${hndl.riskWindowYears} year${hndl.riskWindowYears !== 1 ? 's' : ''} beyond ${deadlinePhrase(hndl)}, making HNDL attacks an active concern.`
     )
   }
 
   if (hnfl?.isAtRisk) {
     parts.push(
-      `Credential lifetimes extend ${hnfl.riskWindowYears} year${hnfl.riskWindowYears !== 1 ? 's' : ''} beyond the quantum threat horizon — Harvest-Now-Forge-Later attacks on signature keys are an active concern.`
+      `Credential lifetimes extend ${hnfl.riskWindowYears} year${hnfl.riskWindowYears !== 1 ? 's' : ''} beyond ${deadlinePhrase(hnfl)} — Harvest-Now-Forge-Later attacks on signature keys are an active concern.`
     )
   }
 
@@ -729,7 +746,7 @@ export function generateKeyFindings(
       )
     } else {
       findings.push(
-        `Harvest-Now-Decrypt-Later risk detected: your data retention period extends ${hndlRiskWindow.riskWindowYears} years beyond the estimated quantum threat horizon${suffix}.`
+        `Harvest-Now-Decrypt-Later risk detected: your data retention period extends ${hndlRiskWindow.riskWindowYears} years beyond ${deadlinePhrase(hndlRiskWindow)}${suffix}.`
       )
     }
   }
@@ -737,7 +754,7 @@ export function generateKeyFindings(
   // 3. HNFL risk
   if (tnflRiskWindow?.isAtRisk && tnflRiskWindow.hasSigningAlgorithms) {
     findings.push(
-      `Harvest-Now-Forge-Later risk: signing credentials may remain trusted past the quantum threat year, exposing ${tnflRiskWindow.tnflRelevantUseCases.length} use case${tnflRiskWindow.tnflRelevantUseCases.length !== 1 ? 's' : ''} to forgery attacks.`
+      `Harvest-Now-Forge-Later risk: signing credentials may remain trusted past ${deadlinePhrase(tnflRiskWindow)}, exposing ${tnflRiskWindow.tnflRelevantUseCases.length} use case${tnflRiskWindow.tnflRelevantUseCases.length !== 1 ? 's' : ''} to forgery attacks.`
     )
   }
 

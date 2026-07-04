@@ -219,28 +219,32 @@ export function computeRegulatoryPressure(
 }
 
 export function computeOrganizationalReadiness(input: AssessmentInput): number {
+  // Internally we accumulate a READINESS GAP (higher = less prepared): each
+  // unfavourable answer adds points. We invert it at the end so the returned
+  // `organizationalReadiness` score is a true readiness value — HIGHER = MORE
+  // READY (better). Consumers (QRA heatmap severity, framework feasibility,
+  // module inference, business risk wire) all treat it as higher-is-better;
+  // the composite risk score compensates with `(100 - readiness)`.
   const isExec = input.persona === 'executive'
-  const statusScores: Record<string, number> = {
+  const statusGaps: Record<string, number> = {
     started: 5,
     planning: 20,
     'not-started': 35,
     unknown: isExec ? 35 : 40, // executive "unknown" slightly less punitive
   }
-  const statusScore = statusScores[input.migrationStatus] ?? 30
+  const statusGap = statusGaps[input.migrationStatus] ?? 30
   const sysScale = SYSTEM_SCALE[input.systemCount ?? '11-50'] ?? 1.3
   const teamCap = TEAM_CAPACITY[input.teamSize ?? '11-50'] ?? 0.6
   const capacityGap = sysScale / teamCap
-  const capacityScore = Math.min(25, Math.round(capacityGap * 8))
+  const capacityGapScore = Math.min(25, Math.round(capacityGap * 8))
   const agilityFactor = AGILITY_COMPLEXITY[input.cryptoAgility ?? 'unknown'] ?? 0.7
-  const readinessAgilityScore = Math.round(agilityFactor * 20)
+  const agilityGap = Math.round(agilityFactor * 20)
   const vendorWeight = input.vendorUnknown
     ? VENDOR_DEPENDENCY_WEIGHT['heavy-vendor'] * 0.8 // conservative but not worst-case
     : (VENDOR_DEPENDENCY_WEIGHT[input.vendorDependency ?? 'mixed'] ?? 10)
-  const vendorReadiness = Math.min(15, Math.round(vendorWeight * 0.75))
-  return Math.max(
-    0,
-    Math.min(100, statusScore + capacityScore + readinessAgilityScore + vendorReadiness)
-  )
+  const vendorGap = Math.min(15, Math.round(vendorWeight * 0.75))
+  const gap = Math.max(0, Math.min(100, statusGap + capacityGapScore + agilityGap + vendorGap))
+  return 100 - gap
 }
 
 /** Description of a situational boost that fired during scoring. Returned
@@ -276,7 +280,10 @@ export function computeCompositeScoreWithBoosts(
     categoryScores.quantumExposure * w.qe +
     categoryScores.migrationComplexity * w.mc +
     categoryScores.regulatoryPressure * w.rp +
-    categoryScores.organizationalReadiness * w.or
+    // organizationalReadiness is higher-is-better; a LOW readiness raises risk,
+    // so contribute its complement. Algebraically equal to the old gap*w.or, so
+    // the headline composite score is unchanged by the readiness sign flip.
+    (100 - categoryScores.organizationalReadiness) * w.or
 
   // Situational risk multipliers — each adds an increment, capped at 1.20x total to
   // prevent compound stacking from producing surprising score jumps.

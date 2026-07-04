@@ -106,9 +106,15 @@ export const KPITrendingSection: React.FC<KPITrendingSectionProps> = ({
       previous: previousScores?.regulatoryPressure,
     },
     {
-      subject: 'Org\nReadiness',
-      current: currentScores?.organizationalReadiness ?? 0,
-      previous: previousScores?.organizationalReadiness,
+      // organizationalReadiness is higher-is-better; the other three axes are
+      // higher-is-worse. Plot its GAP (100 − readiness) so the whole radar keeps
+      // one polarity — a smaller shape means better across every spoke.
+      subject: 'Org Readiness\nGap',
+      current: 100 - (currentScores?.organizationalReadiness ?? 0),
+      previous:
+        previousScores?.organizationalReadiness != null
+          ? 100 - previousScores.organizationalReadiness
+          : undefined,
     },
   ]
 
