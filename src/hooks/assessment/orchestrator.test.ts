@@ -38,3 +38,27 @@ describe('computeAssessmentAsync — framework risk lens', () => {
     expect(sync.frameworkRisk).toBeDefined()
   })
 })
+
+describe('quick track keeps the per-domain breakdown locked', () => {
+  // Mirrors RENDER_ORDER_QUICK (6 steps) — none of these fields flip
+  // hasExtendedInput. The legacy path still emits COARSE categoryScores (for the
+  // sim/KPIs), so the report must gate the lock on assessmentProfile.mode, NOT on
+  // categoryScores presence.
+  const quickInput: AssessmentInput = {
+    industry: 'Finance & Banking',
+    country: 'United States',
+    currentCrypto: ['RSA-2048'],
+    dataSensitivity: ['high'],
+    complianceRequirements: [],
+    migrationStatus: 'planning',
+  }
+
+  it('marks a clean quick assessment as mode=quick (the report lock signal)', () => {
+    const result = computeAssessment(quickInput)
+    expect(result.assessmentProfile?.mode).toBe('quick')
+  })
+
+  it('marks a comprehensive assessment as mode=comprehensive', () => {
+    expect(computeAssessment(comprehensiveInput).assessmentProfile?.mode).toBe('comprehensive')
+  })
+})

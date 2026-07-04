@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 // Completion screen — hands off to the report; on fast track it foreshadows the
-// 4 locked sections with the gold fast→full upgrade affordance.
+// genuinely-locked sections with the gold fast→full upgrade affordance.
 import React from 'react'
 import { Check, Lock, RotateCcw, FileBarChart } from 'lucide-react'
 import { Button } from '../../ui/button'
 import { FAST_LOCKED_COUNT } from './reportContract'
-import type { AssessTrack } from './assessFlowModel'
+import { RENDER_ORDER_QUICK, RENDER_ORDER_FULL, type AssessTrack } from './assessFlowModel'
+
+const REMAINING_FULL_QUESTIONS = RENDER_ORDER_FULL.length - RENDER_ORDER_QUICK.length
 
 interface AssessDoneProps {
   mode: AssessTrack
@@ -44,8 +46,8 @@ export const AssessDone: React.FC<AssessDoneProps> = ({
               {FAST_LOCKED_COUNT} report sections are still locked
             </div>
             <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
-              Per-domain scores, your algorithm migration map, the dated roadmap &amp; progress
-              trending unlock with 5 more questions.
+              Your per-domain risk breakdown &amp; progress-over-time tracking unlock with{' '}
+              {REMAINING_FULL_QUESTIONS} more questions.
             </p>
           </div>
           <Button variant="gradient" onClick={onContinueToFull} className="shrink-0 font-bold">

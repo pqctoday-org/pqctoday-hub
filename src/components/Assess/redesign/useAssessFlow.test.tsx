@@ -40,11 +40,11 @@ describe('useAssessFlow', () => {
     expect(result.current.activeKey).toBe('country')
   })
 
-  it('quick track is 8 steps and back from step 1 returns to step 0', () => {
+  it('quick track is 6 steps and back from step 1 returns to step 0', () => {
     const { result } = renderHook(() => useAssessFlow({ mode: 'quick', onLastStep: vi.fn() }), {
       wrapper,
     })
-    expect(result.current.total).toBe(8)
+    expect(result.current.total).toBe(6)
 
     act(() => useAssessmentStore.getState().setIndustry('Healthcare'))
     act(() => result.current.next())

@@ -384,7 +384,14 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
       persistedRef.current = true
       logReportViewed(useAssessmentStore.getState().industry, result.riskLevel)
       setResult(result)
-      if (assessmentStatus === 'complete' && result.categoryScores) {
+      // Only comprehensive assessments feed the progress trend — the legacy path
+      // emits coarse categoryScores for the sim/KPIs, so gate on the profile mode
+      // (not categoryScores presence) to avoid polluting the trend with quick runs.
+      if (
+        assessmentStatus === 'complete' &&
+        result.assessmentProfile?.mode === 'comprehensive' &&
+        result.categoryScores
+      ) {
         const store = useAssessmentStore.getState()
         store.pushSnapshot({
           completedAt: store.completedAt ?? result.generatedAt,
