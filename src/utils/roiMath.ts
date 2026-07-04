@@ -147,6 +147,44 @@ export function breachProbabilityFromRiskScore(riskScore: number): number {
   return Math.min(50, Math.max(0, Math.round(riskScore / 2)))
 }
 
+// ── Estimate reconciliation (cross-check) ───────────────────────────────────
+
+/**
+ * Default max ratio between two independent estimates before they are flagged
+ * as divergent. 2.0 = order-of-magnitude agreement (within 2×). Two bottom-up
+ * methods are never expected to match exactly, so the bar is deliberately loose.
+ */
+export const DEFAULT_CROSSCHECK_RATIO = 2.0
+
+export interface ReconciliationResult {
+  /** Higher estimate ÷ lower estimate (≥ 1). Infinity if the lower is 0. */
+  ratio: number
+  /** |a − b| / mean(a, b), as a percentage. 0 when both are equal. */
+  spreadPct: number
+  verdict: 'aligned' | 'divergent'
+  lower: number
+  higher: number
+}
+
+/**
+ * Reconcile two independent cost estimates. Agreement within `maxRatio`
+ * (default 2×) is treated as an order-of-magnitude cross-check passing; wider is
+ * divergent. Equal values (including both 0) are aligned by definition.
+ */
+export function reconcileEstimates(
+  a: number,
+  b: number,
+  maxRatio: number = DEFAULT_CROSSCHECK_RATIO
+): ReconciliationResult {
+  const lower = Math.min(a, b)
+  const higher = Math.max(a, b)
+  const ratio = higher === lower ? 1 : lower > 0 ? higher / lower : Infinity
+  const mean = (a + b) / 2
+  const spreadPct = mean > 0 ? (Math.abs(a - b) / mean) * 100 : 0
+  const verdict = ratio <= maxRatio ? 'aligned' : 'divergent'
+  return { ratio, spreadPct, verdict, lower, higher }
+}
+
 export function selectCompliancePenalty(
   mandatedFrameworks: string[],
   fallback: number = DEFAULT_MANDATED_PENALTY_FALLBACK

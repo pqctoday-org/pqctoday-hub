@@ -2,6 +2,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   DEFAULT_COMPLIANCE_INCIDENT_RATE,
+  DEFAULT_CROSSCHECK_RATIO,
   DEFAULT_MANDATED_PENALTY_FALLBACK,
   MIGRATION_COST_FLOOR,
   breachProbabilityFromRiskScore,
@@ -10,6 +11,7 @@ import {
   computeAnnualComplianceSavings,
   computeMigrationCostFromProfile,
   computeROI,
+  reconcileEstimates,
   resolveIndustryBreachBaseline,
   selectCompliancePenalty,
 } from './roiMath'
@@ -293,6 +295,62 @@ describe('selectCompliancePenalty', () => {
   it('respects a custom fallback when list is empty', () => {
     const { penalty } = selectCompliancePenalty([], 3_500_000)
     expect(penalty).toBe(3_500_000)
+  })
+})
+
+// ── reconcileEstimates ───────────────────────────────────────────────────
+
+describe('reconcileEstimates', () => {
+  it('defaults the cross-check ratio to 2×', () => {
+    expect(DEFAULT_CROSSCHECK_RATIO).toBe(2.0)
+  })
+
+  it('treats equal estimates as aligned with zero spread', () => {
+    const r = reconcileEstimates(500_000, 500_000)
+    expect(r.ratio).toBe(1)
+    expect(r.spreadPct).toBe(0)
+    expect(r.verdict).toBe('aligned')
+  })
+
+  it('treats a 1.5× gap as aligned', () => {
+    const r = reconcileEstimates(150_000, 100_000)
+    expect(r.ratio).toBeCloseTo(1.5, 6)
+    expect(r.verdict).toBe('aligned')
+    expect(r.lower).toBe(100_000)
+    expect(r.higher).toBe(150_000)
+  })
+
+  it('flags a 3× gap as divergent', () => {
+    const r = reconcileEstimates(300_000, 100_000)
+    expect(r.ratio).toBeCloseTo(3, 6)
+    expect(r.verdict).toBe('divergent')
+    // spread = |300k − 100k| / 200k × 100 = 100%
+    expect(r.spreadPct).toBeCloseTo(100, 6)
+  })
+
+  it('is order-independent', () => {
+    const a = reconcileEstimates(300_000, 100_000)
+    const b = reconcileEstimates(100_000, 300_000)
+    expect(a).toEqual(b)
+  })
+
+  it('returns Infinity ratio (divergent) when one estimate is zero', () => {
+    const r = reconcileEstimates(100_000, 0)
+    expect(r.ratio).toBe(Infinity)
+    expect(r.verdict).toBe('divergent')
+  })
+
+  it('treats both-zero as aligned (no divide-by-zero)', () => {
+    const r = reconcileEstimates(0, 0)
+    expect(r.ratio).toBe(1)
+    expect(r.spreadPct).toBe(0)
+    expect(r.verdict).toBe('aligned')
+  })
+
+  it('respects a custom maxRatio', () => {
+    // 2.5× is aligned at maxRatio 3, divergent at the default 2×
+    expect(reconcileEstimates(250_000, 100_000, 3).verdict).toBe('aligned')
+    expect(reconcileEstimates(250_000, 100_000).verdict).toBe('divergent')
   })
 })
 

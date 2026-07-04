@@ -410,11 +410,12 @@ const Step1WhyConceptsCosts: React.FC = () => (
               Triangulate &mdash; don&apos;t trust one number
             </div>
             <p className="text-xs text-foreground/90">
-              Under deep uncertainty, cross-checking a bottom-up buildup against a top-down
-              budget-percentage anchor and a scenario band is stronger than precision within any
-              single method. The workshop&apos;s ROI Calculator is a bottom-up parametric estimate
-              with deterministic sensitivity &mdash; pair it with a budget-percentage check and your
-              finance team&apos;s discounted-cash-flow model before committing capital.
+              Under deep uncertainty, cross-checking a bottom-up buildup against an independent
+              second estimate is stronger than precision within any single method. The
+              workshop&apos;s ROI Calculator does this for you: it reconciles your per-product
+              estimate against an independent assessment-derived one and flags when the two disagree
+              &mdash; still pair the result with your finance team&apos;s discounted-cash-flow model
+              before committing capital.
             </p>
           </div>
         </div>
