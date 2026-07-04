@@ -2,6 +2,16 @@
 import { test, expect } from '@playwright/test'
 import { injectAxe, checkA11y } from 'axe-playwright'
 
+// Scan with reduced motion so axe never samples a mid-fade/mid-pulse frame of a
+// framer-motion or CSS `animate-*` transition (e.g. the RightPanel FAB's "Need
+// Help?" bubble, the route-loading `animate-pulse` text) — those transient
+// partial-opacity frames read as real color-contrast failures to axe even
+// though the settled UI is fine. The app already honors this: framer-motion is
+// wrapped in `<MotionConfig reducedMotion="user">` (src/AppRoot.tsx) and
+// `styles/index.css` zeroes animation/transition durations under
+// `prefers-reduced-motion: reduce`.
+test.use({ reducedMotion: 'reduce' })
+
 // Only fail on serious and critical violations; moderate/minor tracked separately.
 const A11Y_OPTIONS = {
   axeOptions: {
