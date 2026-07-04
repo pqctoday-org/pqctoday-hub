@@ -785,7 +785,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
 
                     {/* Persona verdict (redesign) — re-leads the result for the active role,
                       above the "Do this first" hero. */}
-                    <ReportVerdictBlock persona={selectedPersona} />
+                    <ReportVerdictBlock persona={selectedPersona} result={result} />
 
                     {/* Fast-track upgrade nudge (redesign) — quick assessments only; ties the
                       locked sections to one clear unlock path. */}
@@ -953,11 +953,12 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                           </p>
                         )}
                         <p className="text-sm text-muted-foreground text-center mt-4 leading-relaxed print:text-muted-foreground">
-                          {/* Glossary tooltips help every persona decode acronyms in the
-                              narrative (execs/ops most of all), not just the curious reader. */}
-                          <GlossaryAutoWrap>
-                            {result.personaNarrative ?? result.narrative}
-                          </GlossaryAutoWrap>
+                          {/* Neutral, role-independent explanation of the number — the
+                              persona-flavored take now leads in the Verdict block above,
+                              so this section no longer repeats result.personaNarrative.
+                              Glossary tooltips help every persona decode acronyms
+                              (execs/ops most of all), not just the curious reader. */}
+                          <GlossaryAutoWrap>{result.narrative}</GlossaryAutoWrap>
                         </p>
                         {result.boosts &&
                           result.boosts.length > 0 &&

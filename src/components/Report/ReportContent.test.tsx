@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { ReportContent } from './ReportContent'
 import '@testing-library/jest-dom'
 import type { AssessmentResult } from '../../hooks/assessmentTypes'
+import { usePersonaStore } from '../../store/usePersonaStore'
 
 // Mock framer-motion
 vi.mock(
@@ -169,6 +170,25 @@ describe('ReportContent', () => {
     it('displays the narrative', () => {
       renderReport()
       expect(screen.getByText(/Technology sector.*65\/100/)).toBeInTheDocument()
+    })
+
+    it('with a persona selected: verdict shows personaNarrative, risk score shows the neutral narrative — never the same text twice', () => {
+      usePersonaStore.getState().setPersona('architect')
+      try {
+        renderReport({
+          ...baseResult,
+          personaNarrative: 'Architect-specific take on this exact result.',
+        })
+        expect(
+          screen.getByText('Architect-specific take on this exact result.')
+        ).toBeInTheDocument()
+        expect(screen.getByText(/Technology sector.*65\/100/)).toBeInTheDocument()
+        expect(
+          screen.queryAllByText('Architect-specific take on this exact result.')
+        ).toHaveLength(1)
+      } finally {
+        usePersonaStore.getState().setPersona(null)
+      }
     })
 
     it('renders correct label for low risk', () => {

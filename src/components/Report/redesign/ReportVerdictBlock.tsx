@@ -8,13 +8,15 @@
 import { Sparkles } from 'lucide-react'
 import { reportVerdict } from '@/data/reportVerdicts'
 import type { PersonaId } from '@/data/learningPersonas'
+import type { AssessmentResult } from '@/hooks/assessmentTypes'
 
 interface ReportVerdictBlockProps {
   persona: PersonaId | null
+  result: AssessmentResult
 }
 
-export function ReportVerdictBlock({ persona }: ReportVerdictBlockProps) {
-  const verdict = reportVerdict(persona)
+export function ReportVerdictBlock({ persona, result }: ReportVerdictBlockProps) {
+  const verdict = reportVerdict(persona, result)
   return (
     <div className="glass-panel rounded-2xl p-4 print:border-0 print:p-0">
       <div className="mb-1.5 flex items-center gap-2">
