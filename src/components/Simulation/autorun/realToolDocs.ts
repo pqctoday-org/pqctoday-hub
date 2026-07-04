@@ -11,6 +11,7 @@
  */
 import type { ExecutiveDocumentType } from '@/services/storage/types'
 import { ORG, CUR, REG, type DemoDoc, type DemoSector } from './demoDocs'
+import { deriveRoiDoc, deriveBreachDoc, deriveInactionDoc } from './derivedFinancialDocs'
 import {
   buildMarkdown as buildProgramCharter,
   STEERCO_ROLE_IDS,
@@ -247,6 +248,11 @@ function dataAtRestStrategyState(sector: DemoSector): DataAtRestState {
 export const REAL_DOC_GENERATORS: Partial<
   Record<ExecutiveDocumentType, (sector: DemoSector) => DemoDoc>
 > = {
+  // Financial artifacts derived from the shared Business Case math so the tour
+  // can never drift from the real ROI / Breach / Cost-of-Inaction tools.
+  'roi-model': (sector) => deriveRoiDoc(sector),
+  'breach-scenario': (sector) => deriveBreachDoc(sector),
+  'cost-of-inaction': (sector) => deriveInactionDoc(sector),
   'program-charter': (sector) => ({
     title: 'Program Charter',
     data: buildProgramCharter(programCharterState(sector)),
