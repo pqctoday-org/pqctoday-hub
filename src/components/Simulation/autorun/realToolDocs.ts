@@ -11,7 +11,12 @@
  */
 import type { ExecutiveDocumentType } from '@/services/storage/types'
 import { ORG, CUR, REG, type DemoDoc, type DemoSector } from './demoDocs'
-import { deriveRoiDoc, deriveBreachDoc, deriveInactionDoc } from './derivedFinancialDocs'
+import {
+  deriveRoiDoc,
+  deriveBreachDoc,
+  deriveInactionDoc,
+  deriveBoardDeck,
+} from './derivedFinancialDocs'
 import {
   buildMarkdown as buildProgramCharter,
   STEERCO_ROLE_IDS,
@@ -253,6 +258,7 @@ export const REAL_DOC_GENERATORS: Partial<
   'roi-model': (sector) => deriveRoiDoc(sector),
   'breach-scenario': (sector) => deriveBreachDoc(sector),
   'cost-of-inaction': (sector) => deriveInactionDoc(sector),
+  'board-deck': (sector) => deriveBoardDeck(sector),
   'program-charter': (sector) => ({
     title: 'Program Charter',
     data: buildProgramCharter(programCharterState(sector)),
