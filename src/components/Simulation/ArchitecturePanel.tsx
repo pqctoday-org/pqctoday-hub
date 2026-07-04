@@ -25,6 +25,7 @@ import {
 import { checkChoice } from '@/data/jurisdiction'
 import type { SimSize } from '@/data/moscaClock'
 import { useSimulationStore } from '@/store/useSimulationStore'
+import { useThemeStore } from '@/store/useThemeStore'
 import { MermaidDiagram } from './MermaidDiagram'
 
 const STATUS_CHIP: Record<PqcStatus, string> = {
@@ -32,6 +33,7 @@ const STATUS_CHIP: Record<PqcStatus, string> = {
   partial: 'bg-status-warning/15 text-status-warning',
   roadmap: 'bg-status-info/15 text-status-info',
   none: 'bg-status-error/15 text-status-error',
+  unverified: 'bg-muted text-muted-foreground',
 }
 
 const NON_MIGRATABLE_BADGE: Partial<Record<EdgeState, { label: string; cls: string }>> = {
@@ -56,6 +58,10 @@ export function ArchitecturePanel({
   const [view, setView] = useState<'list' | 'diagram'>('list')
   const edgeDecisions = useSimulationStore((s) => s.edgeDecisions)
   const setEdgeDecision = useSimulationStore((s) => s.setEdgeDecision)
+  // Mirrors useTheme.ts's effective-theme rule: light until the user has
+  // explicitly chosen a theme. Read directly from the store rather than
+  // useTheme() itself, which also applies the DOM class — that's App.tsx's job.
+  const themeState = useThemeStore((s) => (s.hasSetPreference ? s.theme : 'light'))
 
   const verdict = checkChoice(country, choice)
 
@@ -130,10 +136,15 @@ export function ArchitecturePanel({
 
       {view === 'diagram' ? (
         <div>
-          <MermaidDiagram source={mermaidFromArchitecture(arch)} id={size} />
+          <MermaidDiagram
+            source={mermaidFromArchitecture(arch, edgeDecisions, themeState)}
+            id={size}
+            summary={`${size} architecture: ${done} of ${vulnerable.length} vulnerable links migrated`}
+          />
           <p className="mt-2 text-xs text-muted-foreground">
-            Green nodes = PQC available · red = no PQC yet · dashed edges ⚠ = irreducible
-            (monitor-only). Switch to List to migrate links.
+            Nodes — green: available · yellow: partial · blue: roadmap · red: none · grey: not in
+            catalog. Edges — ✓ migrated/migratable · ⚡ blocked (product) · ⏳ vendor path · ⚠
+            dashed: irreducible (monitor-only). Switch to List to migrate links.
           </p>
         </div>
       ) : (
