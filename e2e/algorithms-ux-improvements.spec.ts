@@ -111,10 +111,13 @@ test.describe('Algorithms UX — Phase 1+2+3', () => {
   })
 
   test('AlgorithmEntryStrip — appears on fresh session, dismisses on X click', async ({ page }) => {
-    // Clear persona so we get the 3-intent picker (not persona-specific CTA)
+    // Clear persona so we get the 3-intent picker (not persona-specific CTA).
+    // NOTE: do NOT clear `algorithms-entry-strip-dismissed` here — addInitScript
+    // re-runs on the page.reload() below, so wiping the flag would defeat the
+    // very persistence this test asserts. A fresh context already has empty
+    // sessionStorage, so the strip shows on first load without clearing it.
     await page.addInitScript(() => {
       localStorage.removeItem('pqc-learning-persona')
-      sessionStorage.removeItem('algorithms-entry-strip-dismissed')
     })
     await page.goto('/algorithms')
     await page.waitForLoadState('domcontentloaded')

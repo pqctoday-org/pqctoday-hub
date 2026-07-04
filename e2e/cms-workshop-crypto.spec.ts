@@ -178,6 +178,22 @@ async function isProviderRegistered(page: Page): Promise<boolean> {
 }
 
 /**
+ * Pick an algorithm from a demo's `FilterDropdown` combobox. Commit `88fd4a77`
+ * (2026-05-19) replaced the native `<select>` in these demos with the shared
+ * `FilterDropdown`, so `select.selectOption()` no longer works — the control is
+ * a `data-testid="filter-dropdown"` trigger button opening a `role="listbox"`
+ * that is `createPortal`-ed to `document.body`. Options carry the algorithm
+ * string as their label (string items → `{id:label:value}`), so we click by
+ * exact accessible name. The `toBeVisible` guard is required: without it a
+ * missing trigger, under `actionTimeout: 0`, hangs the whole test budget.
+ */
+async function pickAlg(page: Page, trigger: Locator, value: string): Promise<void> {
+  await expect(trigger).toBeVisible({ timeout: 15_000 })
+  await trigger.click()
+  await page.getByRole('option', { name: value, exact: true }).click()
+}
+
+/**
  * Drive the MLDSASignDemo with the given algorithm + HSM mode. Returns a
  * `{ ok, bodyText }` pair so the caller can assert success and optionally
  * inspect the result panel. Throws if neither the success nor failure
@@ -190,9 +206,7 @@ async function runSignDemo(
   const demo = demoByHeading(page, /ML-DSA CMS sign \+ verify/i)
   await expect(demo).toBeVisible({ timeout: 30_000 })
 
-  const select = demo.locator('select').first()
-  await expect(select).toBeVisible({ timeout: 15_000 })
-  await select.selectOption(opts.alg)
+  await pickAlg(page, demo.getByTestId('filter-dropdown').first(), opts.alg)
 
   // HSM mode handling. Composite OIDs auto-force HSM; for non-composite the
   // checkbox starts checked when the provider is ready, so we may need to
@@ -236,9 +250,7 @@ async function runKemDemo(
   const demo = demoByHeading(page, /ML-KEM CMS encrypt \+ decrypt/i)
   await expect(demo).toBeVisible({ timeout: 30_000 })
 
-  const select = demo.locator('select').first()
-  await expect(select).toBeVisible({ timeout: 15_000 })
-  await select.selectOption(opts.alg)
+  await pickAlg(page, demo.getByTestId('filter-dropdown').first(), opts.alg)
 
   const hsmCheckbox = demo.getByRole('checkbox', { name: /Use HSM key/i }).first()
   const checked = await hsmCheckbox.isChecked().catch(() => false)
@@ -270,10 +282,12 @@ async function runDualDemo(
   const demo = demoByHeading(page, /PQ \+ classical dual signature/i)
   await expect(demo).toBeVisible({ timeout: 30_000 })
 
-  const selects = demo.locator('select')
-  // First select = PQ alg, second select = classical alg
-  await selects.nth(0).selectOption(opts.pqAlg)
-  await selects.nth(1).selectOption(opts.clAlg)
+  // Two dropdowns: first = PQ alg, second = classical alg. `pickAlg`'s
+  // toBeVisible guard is what stops D1 hanging the full 360s test budget when
+  // the trigger is missing (the pre-fix `.selectOption()` had no guard).
+  const dropdowns = demo.getByTestId('filter-dropdown')
+  await pickAlg(page, dropdowns.nth(0), opts.pqAlg)
+  await pickAlg(page, dropdowns.nth(1), opts.clAlg)
 
   const hsmCheckbox = demo.getByRole('checkbox', { name: /Use HSM key/i }).first()
   const checked = await hsmCheckbox.isChecked().catch(() => false)

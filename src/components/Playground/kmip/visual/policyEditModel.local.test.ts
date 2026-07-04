@@ -257,6 +257,74 @@ describe('validate()', () => {
     expect(issues.some((i) => i.level === 'error' && i.message.includes('Default'))).toBe(true)
   })
 
+  it('flags a rule scoped exclusively to Create that names an asymmetric algorithm', () => {
+    const issues = validate(
+      shell([
+        bareRule({
+          type: 'algorithm_denylist',
+          lists: { ops: ['Create'], algorithms: ['ML-DSA-87'] },
+          scalars: { reason: 'r' },
+        }),
+      ])
+    )
+    expect(
+      issues.some((i) => i.level === 'error' && i.message.includes('Create never matches this'))
+    ).toBe(true)
+  })
+
+  it('does NOT flag Create+asymmetric when the same rule also covers CreateKeyPair', () => {
+    const issues = validate(
+      shell([
+        bareRule({
+          type: 'algorithm_denylist',
+          lists: { ops: ['Create', 'CreateKeyPair'], algorithms: ['ML-DSA-87'] },
+          scalars: { reason: 'r' },
+        }),
+      ])
+    )
+    expect(issues.filter((i) => i.level === 'error')).toEqual([])
+  })
+
+  it('flags a temporal window that never opens (effective_from after effective_until)', () => {
+    const issues = validate(
+      shell([
+        bareRule({
+          type: 'hybrid_dual_sign_requirement',
+          lists: { ops_affected: ['Sign'] },
+          scalars: {
+            primary: 'ML-DSA-65',
+            secondary: 'Ed25519',
+            effective_from: '2029-12-31',
+            effective_until: '2026-01-01',
+            reason: 'r',
+          },
+        }),
+      ])
+    )
+    expect(issues.some((i) => i.level === 'error' && i.message.includes('never opens'))).toBe(true)
+  })
+
+  it('flags an unconditional gating rule that shadows a later same-type rule', () => {
+    const issues = validate(
+      shell([
+        bareRule({
+          type: 'hybrid_dual_sign_requirement',
+          lists: { ops_affected: ['Sign'] },
+          scalars: { primary: 'ML-DSA-65', secondary: 'Ed25519', reason: 'r' },
+        }),
+        bareRule({
+          type: 'hybrid_dual_sign_requirement',
+          lists: { ops_affected: ['Sign'] },
+          scalars: { primary: 'ML-DSA-87', secondary: 'ECDSA-P384', reason: 'r' },
+          maps: { triggered_by_custom_attribute: { name: 'pqctoday-assurance', value: 'high' } },
+        }),
+      ])
+    )
+    expect(issues.some((i) => i.level === 'error' && i.message.includes('is unreachable'))).toBe(
+      true
+    )
+  })
+
   it('flags an empty central list and a disabled substitution', () => {
     const issues = validate(
       shell([
@@ -277,12 +345,32 @@ describe('validate()', () => {
     expect(issues.some((i) => i.message.includes('will not migrate'))).toBe(true)
   })
 
+  // hybrid-migration-window.yaml rule 2 is a DOCUMENTED, intentional gap (its
+  // own comment: "a known limitation of expressing two allowed composites
+  // with single-composite rules... this documents the intended second
+  // option") — the exact shape the unreachable-rule check (A-grade review A3)
+  // exists to catch. It's an expected finding here, not a lint false positive.
+  const KNOWN_INTENTIONAL_ERRORS: Record<string, string[]> = {
+    'hybrid-migration-window.yaml': ['is unreachable'],
+  }
+
   it('is clean on every shipped fixture except known-intentional warnings', () => {
     for (const f of fixtures) {
       const issues = validate(toEditable(read(f)))
-      const errors = issues.filter((i) => i.level === 'error')
+      // `f` is a fixture filename from `readdirSync` of a fixed repo dir, never user input.
+      // eslint-disable-next-line security/detect-object-injection
+      const known = KNOWN_INTENTIONAL_ERRORS[f] ?? []
+      const errors = issues
+        .filter((i) => i.level === 'error')
+        .filter((i) => !known.some((substr) => i.message.includes(substr)))
       expect(errors, `${f}: ${errors.map((e) => e.message).join(' | ')}`).toEqual([])
     }
+  })
+
+  it('flags the documented unreachable rule in hybrid-migration-window.yaml', () => {
+    const issues = validate(toEditable(read('hybrid-migration-window.yaml')))
+    const hit = issues.find((i) => i.level === 'error' && i.message.includes('is unreachable'))
+    expect(hit?.message).toMatch(/Rule 2 .* is unreachable — rule 1/)
   })
 })
 

@@ -79,7 +79,7 @@ function DonutCard({
   return (
     <ChartCard title={title}>
       <div className="flex items-center gap-3">
-        <DonutChart segments={segments} onClickSegment={onClick} />
+        <DonutChart segments={segments} onClickSegment={onClick} hideLegend />
         <ul className="min-w-0 flex-1 space-y-0.5">
           {segments
             .filter((s) => s.value > 0)

@@ -1,28 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-// PolicyScenario — "test the active policy" with two modes, both driving the
-// REAL in-browser engine:
+// PolicyScenario — the Agility Workbench's test-scenario runner. When a policy
+// is active, it shows ONLY the validated scenarios tied to that policy
+// (policyScenarios.ts, `policyFile`). Each scenario carries a description and an
+// expected verdict; running one asks the REAL engine `dry_run` what it decides
+// and compares the answer to the expectation (✓ pass / ✗ mismatch).
 //
-//   • Preview (dry-run)  — asks the engine `dry_run` what it WOULD decide for a
-//     battery of representative requests. No keys are created and the active
-//     policy is untouched. (Dry-run DOES emit a Plane-1 PolicyDecided audit
-//     event per probe — correlation_id `dry-run` — so the decision is traceable;
-//     it just performs no key/store mutation.) Use it to see Allow/Deny/Rekey
-//     instantly and to compare policies side by side (flip the policy, preview
-//     again).
-//
-//   • Run for real        — executes each request as a genuine KMIP batch
-//     (Create → Activate → Sign/Encapsulate) through the same engine the
-//     Workbench uses. Real keys land in the Keystore and every step is logged in
-//     the Activity trail below. It still NEVER changes the active policy (only
-//     the policy library does that), so the verdicts reflect exactly what you
-//     selected.
-//
-// Accuracy note: different policies scope the same algorithm under different op
-// names (RSA is denied via `CreateKeyPair` under PQC but via `Create` under
-// CNSA), so a preview algorithm probe tries every creation op-form and reports
-// the MOST restrictive verdict; a real run reports the strongest decision the
-// engine actually emitted across the batch (e.g. Create allowed but Sign rekeyed).
+// The same scenario dataset is validated end-to-end against the engine AND the
+// visual simulator by e2e/cacp-policy-scenarios.local.spec.ts — so what a user
+// sees here is exactly what the automated gate checks.
 import { useState } from 'react'
 import {
   FlaskConical,
@@ -31,350 +17,277 @@ import {
   CheckCircle2,
   XCircle,
   ArrowRight,
-  CircleSlash,
+  ShieldCheck,
+  ShieldX,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
+import type { KmipEngine } from '@/wasm/kmip/kmipEngine'
 import {
-  strongestDecision,
-  ID_PLACEHOLDER,
-  type KmipEngine,
-  type DryRunResult,
-  type BatchResult,
-  type OpSpec,
-} from '@/wasm/kmip/kmipEngine'
+  scenariosForPolicy,
+  type PolicyTestScenario,
+  type ScenarioVerdict,
+} from './policyScenarios'
 
-type DryKind = 'default' | 'algo' | 'existing'
-interface Probe {
-  id: string
-  label: string
-  sub: string
-  /** What the request asks for, in friendly terms (shown when allowed as-is). */
-  requested: string
-  // ── Preview (dry-run) shape ──
-  dryKind: DryKind
-  op?: string
-  currentAlgorithm?: string
-  algorithm?: string
-  length?: number
-  /** algo probes: the creation op-forms to test (most-restrictive wins). */
-  ops?: string[]
-  // ── Real-execution shape: a genuine KMIP batch run through the engine. ──
-  live: OpSpec[]
+interface RunResult {
+  actual: ScenarioVerdict | 'Error'
+  reason: string
+  pass: boolean
 }
 
-const PROBES: Probe[] = [
-  {
-    id: 'sign',
-    label: 'New signing key',
-    sub: 'request a classical default and let the policy keep or upgrade it',
-    requested: 'ECDSA-P256',
-    dryKind: 'default',
-    op: 'CreateKeyPair:Sign',
-    live: [
-      { op: 'CreateKeyPair', intent: 'sign', algorithm: 'ECDSA-P256' },
-      { op: 'Activate', uid: ID_PLACEHOLDER },
-      { op: 'Sign', uid: ID_PLACEHOLDER, text: 'policy-test message' },
-    ],
+const TONE: Record<string, { badge: string; text: string; icon: typeof CheckCircle2 }> = {
+  Allow: {
+    badge: 'bg-status-success/15 text-status-success',
+    text: 'text-status-success',
+    icon: CheckCircle2,
   },
-  {
-    id: 'kem',
-    label: 'New key-exchange key',
-    sub: 'request a classical default and let the policy keep or upgrade it',
-    requested: 'ECDH-P256',
-    dryKind: 'default',
-    op: 'CreateKeyPair:KeyAgreement',
-    live: [
-      { op: 'CreateKeyPair', intent: 'kem', algorithm: 'ECDH-P256' },
-      { op: 'Activate', uid: ID_PLACEHOLDER },
-      { op: 'Encapsulate', uid: ID_PLACEHOLDER },
-    ],
+  Rekey: {
+    badge: 'bg-status-warning/15 text-status-warning',
+    text: 'text-status-warning',
+    icon: ArrowRight,
   },
-  {
-    id: 'rsa',
-    label: 'A classical RSA-2048 key',
-    sub: 'is legacy RSA still allowed?',
-    requested: 'RSA-2048',
-    dryKind: 'algo',
-    algorithm: 'RSA',
-    length: 2048,
-    ops: ['Create', 'CreateKeyPair', 'CreateKeyPair:Sign'],
-    live: [{ op: 'CreateKeyPair', algorithm: 'RSA', length: 2048 }],
-  },
-  {
-    id: 'mldsa44',
-    label: 'A sub-Level-5 ML-DSA-44 key',
-    sub: 'does the policy demand a higher security level?',
-    requested: 'ML-DSA-44',
-    dryKind: 'algo',
-    algorithm: 'ML-DSA-44',
-    ops: ['Create', 'CreateKeyPair', 'CreateKeyPair:Sign'],
-    live: [{ op: 'CreateKeyPair', algorithm: 'ML-DSA-44' }],
-  },
-  {
-    id: 'frodo',
-    label: 'A FrodoKEM-1344 key',
-    sub: 'a conservative KEM some regimes require and others reject',
-    requested: 'FrodoKEM-1344',
-    dryKind: 'algo',
-    algorithm: 'FrodoKEM-1344',
-    ops: ['Create', 'CreateKeyPair', 'CreateKeyPair:KeyAgreement'],
-    // intent:'kem' shapes the request correctly for when FrodoKEM is
-    // implemented; today the engine rejects the unknown algorithm outright
-    // (H1) and the live run reports "not implemented" — Preview still shows the
-    // real policy verdict for the name.
-    live: [{ op: 'CreateKeyPair', intent: 'kem', algorithm: 'FrodoKEM-1344' }],
-  },
-]
-
-type Verdict = 'Allow' | 'Deny' | 'Rekey' | 'Skip'
-interface Row {
-  probe: Probe
-  kind: Verdict
-  detail: string
+  Deny: { badge: 'bg-destructive/15 text-destructive', text: 'text-destructive', icon: XCircle },
+  Error: { badge: 'bg-muted text-muted-foreground', text: 'text-muted-foreground', icon: XCircle },
 }
 
-const RANK: Record<string, number> = { Deny: 2, Rekey: 1, Allow: 0 }
-const moreRestrictive = (a: DryRunResult | null, b: DryRunResult): DryRunResult =>
-  !a || (RANK[b.kind] ?? 0) > (RANK[a.kind] ?? 0) ? b : a
+/** One-line summary of the request a scenario sends. */
+function summarize(s: PolicyTestScenario): string {
+  const r = s.request
+  const bits: string[] = [r.op]
+  if (r.algorithm) bits.push(r.algorithm + (r.length ? `-${r.length}` : ''))
+  else if (r.length) bits.push(`${r.length}-bit`)
+  if (r.state && r.state !== 'Active') bits.push(`state=${r.state}`)
+  if (r.date) bits.push(`@${r.date}`)
+  if (r.usageMask?.length) bits.push(`mask=${r.usageMask.join('+')}`)
+  if (r.mechanism?.mech) bits.push(r.mechanism.mech)
+  if (r.mechanism?.blockMode) bits.push(r.mechanism.blockMode)
+  if (r.mechanism?.hash) bits.push(r.mechanism.hash)
+  if (r.attrs) for (const [k, v] of Object.entries(r.attrs)) bits.push(`x-${k}=${v}`)
+  return bits.join(' · ')
+}
 
-/** Preview: ask the engine what it WOULD decide (no execution). */
-function previewRow(engine: KmipEngine, p: Probe): Row {
-  let d: DryRunResult
+/** Ask the active engine what it would decide for a scenario's request. */
+function runScenario(engine: KmipEngine, s: PolicyTestScenario): RunResult {
+  const r = s.request
+  const isNew = /^(Create|CreateKeyPair|Register|Import)/.test(r.op)
   try {
-    if (p.dryKind === 'algo' && p.ops) {
-      let worst: DryRunResult | null = null
-      for (const op of p.ops)
-        worst = moreRestrictive(
-          worst,
-          engine.dryRun({ op, algorithm: p.algorithm, length: p.length })
-        )
-      d = worst ?? { kind: 'Allow' }
-    } else {
-      d = engine.dryRun({ op: p.op!, currentAlgorithm: p.currentAlgorithm })
-    }
-  } catch {
-    d = { kind: 'Deny', reason: 'engine error' }
+    const dr = engine.dryRun({
+      op: r.op,
+      algorithm: r.algorithm,
+      currentAlgorithm: isNew ? undefined : r.algorithm,
+      length: r.length,
+      state: r.state,
+      date: r.date,
+      attrs: r.attrs,
+      usageMask: r.usageMask,
+      activationDate: r.activationDate,
+      mechanism: r.mechanism,
+    })
+    const reason =
+      dr.kind === 'Rekey'
+        ? `${dr.from ?? r.algorithm ?? ''} → ${dr.to ?? ''}`
+        : dr.kind === 'Deny'
+          ? dr.reason || dr.denyReason || 'denied'
+          : dr.algorithm
+            ? `→ ${dr.algorithm}`
+            : 'allowed'
+    return { actual: dr.kind, reason, pass: dr.kind === s.expect }
+  } catch (e) {
+    return { actual: 'Error', reason: e instanceof Error ? e.message : String(e), pass: false }
   }
-  const detail =
-    d.kind === 'Rekey'
-      ? `${d.from ?? p.requested} → ${d.to ?? ''}`
-      : d.kind === 'Deny'
-        ? d.reason || d.denyReason || 'denied'
-        : d.algorithm
-          ? `→ ${d.algorithm}`
-          : 'allowed'
-  return { probe: p, kind: d.kind, detail }
-}
-
-/** Real run: execute the request as a genuine KMIP batch and report what the
- * engine actually did (and decided). */
-function liveRow(p: Probe, res: BatchResult): Row {
-  const d = strongestDecision(res.audit)
-  const created = res.items[0]
-  const kind: Verdict = d.kind === 'Unknown' ? (created?.ok ? 'Allow' : 'Deny') : d.kind
-
-  if (kind === 'Deny') {
-    const failed = res.items.find((i) => !i.ok)
-    const msg = failed?.message || 'denied by policy'
-    // H1 — distinguish "the engine can't run this" (unimplemented algorithm)
-    // from a genuine policy denial, so the FrodoKEM probe doesn't read as if the
-    // policy rejected it when really the engine has no such algorithm.
-    if (/unknown algorithm|not implemented|not supported/i.test(msg)) {
-      return { probe: p, kind: 'Skip', detail: 'not implemented by this engine' }
-    }
-    return { probe: p, kind: 'Deny', detail: msg }
-  }
-  const algo = d.algorithm ?? p.requested
-  const signed = res.items.some((i) => i.operation === 'Sign' && i.ok)
-  const encap = res.items.some((i) => i.operation === 'Encapsulate' && i.ok)
-  const extra = signed ? ' · signed' : encap ? ' · encapsulated' : ''
-  return { probe: p, kind, detail: `→ ${algo}${extra}` }
-}
-
-const TONE: Record<Verdict, { badge: string; text: string }> = {
-  Allow: { badge: 'bg-status-success/15 text-status-success', text: 'text-status-success' },
-  Rekey: { badge: 'bg-status-warning/15 text-status-warning', text: 'text-status-warning' },
-  Deny: { badge: 'bg-destructive/15 text-destructive', text: 'text-destructive' },
-  Skip: { badge: 'bg-muted text-muted-foreground', text: 'text-muted-foreground' },
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
 export function PolicyScenario({
   engine,
-  policyFingerprint,
+  policyFile,
   policyLabel,
+  policyFingerprint,
   busy,
   onBusyChange,
-  onChanged,
 }: {
   engine: KmipEngine
-  /** Changes when the active policy changes — stale results are cleared. */
-  policyFingerprint?: string
+  /** Active policy file — scenarios are filtered to this. */
+  policyFile: string
   policyLabel: string
+  /** Changes when the active policy changes — clears stale results. */
+  policyFingerprint?: string
   busy: boolean
   onBusyChange: (b: boolean) => void
-  /** Called after each real op so the parent refreshes the Keystore + Activity. */
-  onChanged: () => void
 }) {
-  const [rows, setRows] = useState<Row[]>([])
-  const [mode, setMode] = useState<'preview' | 'live' | null>(null)
-  const [running, setRunning] = useState<'preview' | 'live' | null>(null)
+  const scenarios = scenariosForPolicy(policyFile)
+  const [results, setResults] = useState<Record<string, RunResult>>({})
+  const [running, setRunning] = useState<string | null>(null)
 
-  // Switching policy invalidates any shown verdicts — clear them so the panel
-  // never shows a result from a policy you're no longer on. Reset during render
-  // (React's recommended pattern) instead of in an effect, which avoids the
-  // extra render pass and the cascading-render lint warning.
-  const [prevFingerprint, setPrevFingerprint] = useState(policyFingerprint)
-  if (policyFingerprint !== prevFingerprint) {
-    setPrevFingerprint(policyFingerprint)
-    setRows([])
-    setMode(null)
+  // Reset results when the active policy changes (render-phase reset pattern).
+  const [prevKey, setPrevKey] = useState(policyFingerprint ?? policyFile)
+  const key = policyFingerprint ?? policyFile
+  if (key !== prevKey) {
+    setPrevKey(key)
+    setResults({})
   }
 
-  // Preview — read-only dry-run, revealed one row at a time.
-  const preview = async () => {
-    setRunning('preview')
+  const runOne = (s: PolicyTestScenario) => {
+    setRunning(s.id)
     onBusyChange(true)
-    const out: Row[] = []
-    for (const p of PROBES) {
-      out.push(previewRow(engine, p))
-      setRows([...out])
-      await sleep(110)
+    // Yield so the spinner paints before the synchronous wasm call.
+    setTimeout(() => {
+      setResults((prev) => ({ ...prev, [s.id]: runScenario(engine, s) }))
+      setRunning(null)
+      onBusyChange(false)
+    }, 0)
+  }
+
+  const runAll = async () => {
+    setRunning('__all__')
+    onBusyChange(true)
+    const out: Record<string, RunResult> = {}
+    for (const s of scenarios) {
+      await sleep(0)
+      out[s.id] = runScenario(engine, s)
+      setResults({ ...out })
+      await sleep(90)
     }
-    setMode('preview')
     setRunning(null)
     onBusyChange(false)
   }
 
-  // Run for real — execute each probe as a genuine KMIP batch; refresh the
-  // Keystore + Activity after every one so the page fills in as it goes.
-  const runForReal = async () => {
-    setRunning('live')
-    onBusyChange(true)
-    const out: Row[] = []
-    for (const p of PROBES) {
-      await sleep(0) // let the spinner paint before the synchronous wasm call
-      let row: Row
-      try {
-        const res = engine.runBatch({ errorContinuation: 'Continue', items: p.live })
-        row = liveRow(p, res)
-      } catch {
-        row = { probe: p, kind: 'Deny', detail: 'engine error' }
-      }
-      out.push(row)
-      setRows([...out])
-      onChanged()
-      await sleep(140)
-    }
-    setMode('live')
-    setRunning(null)
-    onBusyChange(false)
-  }
-
-  const allowed = rows.filter((r) => r.kind === 'Allow').length
-  const rekeyed = rows.filter((r) => r.kind === 'Rekey').length
-  const denied = rows.filter((r) => r.kind === 'Deny').length
+  const ran = scenarios.filter((s) => results[s.id])
+  const passed = ran.filter((s) => results[s.id]?.pass).length
 
   return (
     <section className="rounded-xl border border-primary/30 bg-primary/[0.03] p-4">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
           <h3 className="font-semibold flex items-center gap-2 text-foreground">
-            <FlaskConical size={16} className="text-primary" /> Test the active policy
+            <FlaskConical size={16} className="text-primary" /> Test scenarios
           </h3>
           <p className="text-xs text-muted-foreground mt-1 max-w-xl">
-            {PROBES.length} representative requests against{' '}
-            <span className="font-semibold text-foreground">{policyLabel}</span>.{' '}
-            <span className="font-semibold text-foreground">Preview</span> shows what the policy
-            would decide (nothing is created).{' '}
-            <span className="font-semibold text-foreground">Run for real</span> executes them — keys
-            appear in the Keystore and every step is logged in the Activity trail below. Your policy
-            selection never changes either way.
+            Validated positive &amp; negative requests for{' '}
+            <span className="font-semibold text-foreground">{policyLabel}</span>. Each asks the live
+            engine what it would decide and checks it against the expected verdict — nothing is
+            created.
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="secondary"
-            onClick={preview}
-            disabled={!!running || busy}
-            className="gap-1.5"
-          >
-            {running === 'preview' ? (
-              <Loader2 size={14} className="animate-spin" />
-            ) : (
-              <FlaskConical size={14} />
-            )}{' '}
-            Preview
-          </Button>
-          <Button onClick={runForReal} disabled={!!running || busy} className="gap-1.5">
-            {running === 'live' ? (
-              <Loader2 size={14} className="animate-spin" />
-            ) : (
-              <Play size={14} />
-            )}{' '}
-            Run for real
-          </Button>
-        </div>
+        {scenarios.length > 0 && (
+          <div className="flex items-center gap-2">
+            {ran.length > 0 && (
+              <span
+                className={cn(
+                  'rounded px-2 py-1 text-[11px] font-semibold',
+                  passed === ran.length
+                    ? 'bg-status-success/15 text-status-success'
+                    : 'bg-destructive/15 text-destructive'
+                )}
+              >
+                {passed}/{ran.length} match
+              </span>
+            )}
+            <Button onClick={runAll} disabled={!!running || busy} className="gap-1.5">
+              {running === '__all__' ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : (
+                <Play size={14} />
+              )}{' '}
+              Run all
+            </Button>
+          </div>
+        )}
       </div>
 
-      {rows.length > 0 && (
-        <>
-          <div className="mt-3 flex items-center gap-2 text-[10px] text-muted-foreground flex-wrap">
-            <span
-              className={`rounded px-1.5 py-0.5 font-semibold ${
-                mode === 'live' ? 'bg-primary/15 text-primary' : 'bg-muted text-muted-foreground'
-              }`}
-            >
-              {mode === 'live' ? 'real run — keys created below' : 'preview — nothing created'}
-            </span>
-            <span className="rounded bg-status-success/15 px-1.5 py-0.5 font-semibold text-status-success">
-              {allowed} allowed
-            </span>
-            {rekeyed > 0 && (
-              <span className="rounded bg-status-warning/15 px-1.5 py-0.5 font-semibold text-status-warning">
-                {rekeyed} auto-migrated
-              </span>
-            )}
-            {denied > 0 && (
-              <span className="rounded bg-destructive/15 px-1.5 py-0.5 font-semibold text-destructive">
-                {denied} denied
-              </span>
-            )}
-          </div>
-          <ol className="mt-2 space-y-1.5">
-            {rows.map(({ probe, kind, detail }, i) => (
+      {scenarios.length === 0 ? (
+        <p className="mt-3 rounded-md border border-dashed border-border bg-card/50 p-3 text-xs text-muted-foreground">
+          No validated test scenarios for this policy yet. Pick another policy, or add scenarios in{' '}
+          <code className="font-mono text-[11px]">policyScenarios.ts</code>.
+        </p>
+      ) : (
+        <ul className="mt-3 space-y-1.5">
+          {scenarios.map((s) => {
+            const res = results[s.id]
+            const expectTone = TONE[s.expect]
+            return (
               <li
-                key={i}
-                className="flex items-start gap-2 rounded-md border border-border bg-card p-2"
+                key={s.id}
+                className="rounded-md border border-border bg-card p-2.5"
+                data-testid={`scenario-${s.id}`}
               >
-                {kind === 'Allow' ? (
-                  <CheckCircle2 size={15} className="mt-0.5 shrink-0 text-status-success" />
-                ) : kind === 'Rekey' ? (
-                  <ArrowRight size={15} className="mt-0.5 shrink-0 text-status-warning" />
-                ) : kind === 'Skip' ? (
-                  <CircleSlash size={15} className="mt-0.5 shrink-0 text-muted-foreground" />
-                ) : (
-                  <XCircle size={15} className="mt-0.5 shrink-0 text-destructive" />
-                )}
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-sm text-foreground">{probe.label}</span>
-                    <span
-                      className={`rounded px-1.5 text-[10px] font-semibold ${TONE[kind].badge}`}
-                    >
-                      {kind}
-                    </span>
-                    <span className={`font-mono text-xs ${TONE[kind].text} break-all`}>
-                      {detail}
-                    </span>
+                <div className="flex items-start gap-2">
+                  {/* positive/negative intent marker */}
+                  {s.path === 'positive' ? (
+                    <ShieldCheck size={15} className="mt-0.5 shrink-0 text-status-success" />
+                  ) : (
+                    <ShieldX size={15} className="mt-0.5 shrink-0 text-destructive" />
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-sm font-medium text-foreground">{s.title}</span>
+                      <span
+                        className={cn(
+                          'rounded px-1.5 text-[9px] font-bold uppercase tracking-wide',
+                          expectTone.badge
+                        )}
+                        title="expected verdict"
+                      >
+                        expect {s.expect}
+                      </span>
+                    </div>
+                    <p className="mt-0.5 text-[11px] text-muted-foreground">{s.description}</p>
+                    <p className="mt-0.5 font-mono text-[10.5px] text-muted-foreground/80 break-all">
+                      {summarize(s)}
+                    </p>
+
+                    {res && (
+                      <div className="mt-1.5 flex items-center gap-2 flex-wrap">
+                        {res.pass ? (
+                          <CheckCircle2 size={14} className="text-status-success" />
+                        ) : (
+                          <XCircle size={14} className="text-destructive" />
+                        )}
+                        <span
+                          className={cn(
+                            'text-[11px] font-semibold',
+                            res.pass ? 'text-status-success' : 'text-destructive'
+                          )}
+                        >
+                          {res.pass ? 'matches' : 'MISMATCH'}
+                        </span>
+                        <span
+                          className={cn(
+                            'rounded px-1.5 text-[10px] font-semibold',
+                            TONE[res.actual].badge
+                          )}
+                        >
+                          engine: {res.actual}
+                        </span>
+                        <span
+                          className={cn('font-mono text-[10.5px] break-all', TONE[res.actual].text)}
+                        >
+                          {res.reason}
+                        </span>
+                      </div>
+                    )}
                   </div>
-                  <p className="text-[11px] text-muted-foreground">{probe.sub}</p>
+
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => runOne(s)}
+                    disabled={!!running || busy}
+                    className="h-7 gap-1.5 px-2.5 text-[11px]"
+                  >
+                    {running === s.id ? (
+                      <Loader2 size={12} className="animate-spin" />
+                    ) : (
+                      <Play size={12} />
+                    )}{' '}
+                    Run
+                  </Button>
                 </div>
               </li>
-            ))}
-          </ol>
-        </>
+            )
+          })}
+        </ul>
       )}
     </section>
   )

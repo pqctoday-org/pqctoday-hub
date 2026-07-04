@@ -5,7 +5,15 @@
 
 import { test, expect, type Page } from '@playwright/test'
 
-const BASE = '/playground/hsm?tab=vpn_sim'
+// `vpn-sim` is a standalone Playground tool (workshopRegistry.tsx), not a tab
+// inside /playground/hsm — the old `?tab=vpn_sim` deep-link resolves to no tab
+// at all, so VpnSimulationPanel never mounts and vpn-start-daemon never
+// appears at any timeout (TRIAGE 2026-07-03: the 2026-06-25 SLOW-WASM pass and
+// the 2026-07-03 timeout bump both treated this as a slow-mount problem, but
+// the panel was simply never mounted). vpnMode/vpnAuth/vpnRpc are read off
+// window.location.search inside the panel, so they work unchanged on the
+// standalone route.
+const BASE = '/playground/vpn-sim'
 const HANDSHAKE_TIMEOUT = 120_000
 
 async function suppressWhatsNew(page: Page) {
@@ -21,14 +29,16 @@ test('VPN pure-pqc PSK — explicit Start Daemon click reaches ESTABLISHED', asy
   test.setTimeout(200_000)
   await suppressWhatsNew(page)
 
-  await page.goto(`${BASE}&vpnMode=pure-pqc&vpnAuth=psk&vpnRpc=1`, {
+  await page.goto(`${BASE}?vpnMode=pure-pqc&vpnAuth=psk&vpnRpc=1`, {
     waitUntil: 'networkidle',
     timeout: 45_000,
   })
 
+  // The VpnSimulationPanel is a ~4000-line WASM-heavy component; mount + init
+  // can take a few seconds under load, hence the generous timeout here.
   const startBtn = page.locator('[data-testid="vpn-start-daemon"]')
-  await expect(startBtn).toBeVisible({ timeout: 15_000 })
-  await expect(startBtn).toBeEnabled({ timeout: 15_000 })
+  await expect(startBtn).toBeVisible({ timeout: 60_000 })
+  await expect(startBtn).toBeEnabled({ timeout: 60_000 })
   await startBtn.click()
 
   // Charon log lines render into the daemon log scroll container in the

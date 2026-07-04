@@ -164,9 +164,10 @@ export class KmipPlayground {
    * back (reported as `OperationUndone`).
    *
    * Returns `{ ok, errorContinuation, requested, returned, items[], audit,
-   * responseWireHex, responseWireLen, responseTree }` where each `items[]`
-   * entry mirrors a `run_op` result minus the wire (the wire is the one shared
-   * Response Message).
+   * requestWireHex, requestWireLen, responseWireHex, responseWireLen,
+   * responseTree }` where each `items[]` entry mirrors a `run_op` result
+   * minus the wire (the wire is the one shared Request + Response Message —
+   * the actual "N operations, ONE request" proof).
    * @param {string} spec_json
    * @returns {string}
    */

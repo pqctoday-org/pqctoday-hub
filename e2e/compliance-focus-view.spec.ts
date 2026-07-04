@@ -8,6 +8,14 @@ import { test, expect } from '@playwright/test'
  * with a master-detail layout (left rail of frameworks, right pane detail).
  * Only the `regulations` landscape type is focus-eligible; other facets
  * (standards / technical / certification) do not surface the toggle.
+ *
+ * QUARANTINED 2026-07-03: the "Focus view" master-detail UI was intentionally
+ * removed when /compliance was rebuilt around a 3-pillar pipeline — ComplianceView
+ * now renders <PillarPipeline> instead of <LandscapeTab> (commit 9e44eb8d,
+ * "rebuild /compliance around the define→validate→mandate premise"). There's no
+ * equivalent affordance to re-point these at, so they're skipped (not deleted)
+ * to keep the decision visible and reversible. Delete or rewrite if the
+ * focus/detail UX is ever restored. See e2e/TRIAGE.md.
  */
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
@@ -23,7 +31,7 @@ test.beforeEach(async ({ page }) => {
   })
 })
 
-test('toggling Focus view replaces the grid with master-detail', async ({ page }) => {
+test.skip('toggling Focus view replaces the grid with master-detail', async ({ page }) => {
   // ?tab=compliance lands on the regulations facet of the landscape tab.
   await page.goto('/compliance?tab=compliance')
 
@@ -40,7 +48,7 @@ test('toggling Focus view replaces the grid with master-detail', async ({ page }
   await expect(page.getByRole('navigation', { name: 'Frameworks' })).toBeVisible()
 })
 
-test('Return to framework grid exits Focus view', async ({ page }) => {
+test.skip('Return to framework grid exits Focus view', async ({ page }) => {
   await page.goto('/compliance?tab=compliance')
 
   const toggle = page.getByRole('button', { name: /focus view/i }).first()
@@ -56,7 +64,7 @@ test('Return to framework grid exits Focus view', async ({ page }) => {
   await expect(page.getByRole('button', { name: /focus view/i }).first()).toBeVisible()
 })
 
-test('Focus view is not eligible on the standards facet', async ({ page }) => {
+test.skip('Focus view is not eligible on the standards facet', async ({ page }) => {
   // ?tab=standards → technical landscape type (not focus-eligible).
   await page.goto('/compliance?tab=standards')
 

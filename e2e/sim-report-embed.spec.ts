@@ -70,13 +70,17 @@ test.describe('Simulation — Executive Report embeds under the sim header', () 
         })
       )
     })
-    await page.goto('/report', { waitUntil: 'networkidle', timeout: 45_000 })
+    await page.goto('/report', { waitUntil: 'domcontentloaded', timeout: 45_000 })
     await expect
       .poll(() => page.evaluate(() => localStorage.getItem('pqc-assessment-result')), {
         timeout: 30_000,
       })
       .toBeTruthy()
-    await page.goto('/simulation', { waitUntil: 'networkidle', timeout: 45_000 })
+    // NOT networkidle: on a first visit the PWA service worker precaches the
+    // whole build in the background, so /simulation never goes network-idle
+    // within 45s. domcontentloaded + the End Quarter assertion below is the
+    // real readiness signal (TRIAGE.md 2026-07-03).
+    await page.goto('/simulation', { waitUntil: 'domcontentloaded', timeout: 45_000 })
     await expect(page.getByRole('button', { name: /End Quarter/i })).toBeVisible({
       timeout: 45_000,
     })
@@ -89,10 +93,15 @@ test.describe('Simulation — Executive Report embeds under the sim header', () 
       .first()
       .click()
 
-    // The left-rail journey step (carries the "open here →" affordance) — distinct
-    // from the decision-panel "Option A: …" move button with the same label.
+    // The left-rail journey step (carries the "open here →" affordance). The
+    // Executive-Report embed step was restored to VC.1 on 07032026 (refId
+    // 'report' ∈ REFERENCE_EMBED_IDS → canEmbedStep renders it as a Button, not
+    // a Link). "Executive Report" is its label; the "program closure record"
+    // wording stays on the sibling migration-verification tool step. Filtering
+    // by "open here →" scopes to the journey band, not the resource rail
+    // ("opens in simulation") or a decision-panel "Option A: …" move button.
     const reportStep = page
-      .getByRole('button', { name: /program closure record/i })
+      .getByRole('button', { name: /Executive Report/i })
       .filter({ hasText: /open here/i })
     await expect(reportStep).toBeVisible({ timeout: 15_000 })
     await reportStep.click()

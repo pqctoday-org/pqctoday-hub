@@ -18,13 +18,20 @@ import {
   List as ListIcon,
   Workflow,
   Code2,
+  GitCompare,
+  ChevronRight,
+  LayoutGrid,
+  Landmark,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { cn } from '@/lib/utils'
-import type { KmipEngine, PolicyStatus } from '@/wasm/kmip/kmipEngine'
+import type { DryRunResult, KmipEngine, PolicyStatus } from '@/wasm/kmip/kmipEngine'
 import {
   POLICY_PRESETS,
   POLICY_CATEGORIES,
+  REGULATORS,
+  isRunnable,
   type PolicyPreset,
   type PolicyTone,
 } from '@/wasm/kmip/kmipMeta'
@@ -57,24 +64,34 @@ const isActive = (p: PolicyPreset, policy: PolicyStatus): boolean =>
   policy.name === p.name ||
   (p.name === 'training-permissive' && policy.name === 'built-in-permissive')
 
-// Algorithms shown in the disposition matrix — PQC + classical, for contrast.
-const MATRIX_ALGOS = [
-  'ML-DSA-87',
-  'ML-DSA-65',
-  'ML-KEM-1024',
-  'ML-KEM-768',
-  'SLH-DSA-SHA2-256s',
-  'FrodoKEM-1344',
-  'Classic-McEliece-6688128',
-  'AES-256',
-  'RSA',
-  'ECDSA-P256',
-  'ECDSA-P384',
-  'Ed25519',
-  'ECDH-P256',
-  'SHA-256',
-  'SHA-1',
-  '3DES',
+/** Algorithms shown in the disposition matrix — PQC + classical, for contrast.
+ * `op` is the CREATE-time operation a per-cell `dryRun` exercises (A-grade
+ * review A1/A3 — the matrix used to be a pure static-YAML heuristic with no
+ * notion of time/scope; every entry with an `op` is now a real engine
+ * verdict "would creating this algorithm be allowed right now"). Three
+ * entries have `op: null` — SHA-256/SHA-1/3DES are hashing/legacy-cipher
+ * *mechanism* names, not `CryptographicAlgorithm` values, so they're gated
+ * by a separate `hash_algorithm_allowlist`/MAC rule keyed on the request's
+ * `mechanism` field, not `algorithm`; a single dry-run can't represent that
+ * dimension without inventing an arbitrary carrier key, so these three stay
+ * on the static rule-text heuristic (`dispositionOf`), same as before. */
+const MATRIX_ALGOS: { algo: string; op: string | null }[] = [
+  { algo: 'ML-DSA-87', op: 'CreateKeyPair:Sign' },
+  { algo: 'ML-DSA-65', op: 'CreateKeyPair:Sign' },
+  { algo: 'ML-KEM-1024', op: 'CreateKeyPair:KeyAgreement' },
+  { algo: 'ML-KEM-768', op: 'CreateKeyPair:KeyAgreement' },
+  { algo: 'SLH-DSA-SHA2-256s', op: 'CreateKeyPair:Sign' },
+  { algo: 'FrodoKEM-1344', op: 'CreateKeyPair:KeyAgreement' },
+  { algo: 'Classic-McEliece-6688128', op: 'CreateKeyPair:KeyAgreement' },
+  { algo: 'AES-256', op: 'Create' },
+  { algo: 'RSA', op: 'CreateKeyPair:Sign' },
+  { algo: 'ECDSA-P256', op: 'CreateKeyPair:Sign' },
+  { algo: 'ECDSA-P384', op: 'CreateKeyPair:Sign' },
+  { algo: 'Ed25519', op: 'CreateKeyPair:Sign' },
+  { algo: 'ECDH-P256', op: 'CreateKeyPair:KeyAgreement' },
+  { algo: 'SHA-256', op: null },
+  { algo: 'SHA-1', op: null },
+  { algo: '3DES', op: null },
 ]
 
 const DISPOSITION_STYLE: Record<Disposition, { cls: string; label: string }> = {
@@ -93,6 +110,68 @@ const DISPOSITION_STYLE: Record<Disposition, { cls: string; label: string }> = {
   },
   denied: { cls: 'border-destructive/50 bg-destructive/10 text-destructive', label: 'denied' },
   neutral: { cls: 'border-border bg-muted/30 text-muted-foreground', label: '—' },
+}
+
+/** Engine-computed cells only ever come back Allow/Deny (a `CreateKeyPair`
+ * dry-run with an explicit `algorithm` has no existing object to migrate, so
+ * `Decision::RekeyAndProceed` can't fire) — map straight onto the existing
+ * disposition styling. */
+const dryRunDisposition = (r: DryRunResult): Disposition =>
+  r.kind === 'Deny' ? 'denied' : 'allowed'
+
+/** Sweep every engine-computed MATRIX_ALGOS entry against the CURRENTLY
+ * ACTIVE engine policy at the given as-of date — shared by the List-tab
+ * matrix and the Compare tab (which loads each side in turn before sweeping,
+ * then restores). `date` (YYYY-MM-DD) drives temporal rules; omitted → now. */
+function sweepDispositions(engine: KmipEngine, date?: string): Record<string, Disposition> {
+  const out: Record<string, Disposition> = {}
+  for (const { algo, op } of MATRIX_ALGOS) {
+    if (!op) continue
+    try {
+      out[algo] = dryRunDisposition(engine.dryRun({ op, algorithm: algo, date }))
+    } catch {
+      out[algo] = 'neutral'
+    }
+  }
+  return out
+}
+
+/** The USE-time counterpart of each MATRIX_ALGOS creation op — an existing
+ * key of that algorithm being actually used, not just created. A single
+ * disposition cell can only test one dimension; the coverage sweep (A-grade
+ * review item #10/C2) tests BOTH, since "can I create this" and "can I use
+ * one I already have" are genuinely different questions (e.g. rekey-on-use
+ * policies allow creating a legacy algorithm but rewrite it at first Sign). */
+const USE_OP: Record<string, string> = {
+  'CreateKeyPair:Sign': 'Sign',
+  'CreateKeyPair:KeyAgreement': 'Encapsulate',
+  Create: 'Encrypt',
+}
+
+/** Op × algorithm coverage sweep — two ops per MATRIX_ALGOS entry (creation +
+ * use), each a real dry-run at the shared as-of date. Keyed `${algo}|${op}`. */
+function sweepCoverage(engine: KmipEngine, date?: string): Record<string, Disposition> {
+  const out: Record<string, Disposition> = {}
+  for (const { algo, op: createOp } of MATRIX_ALGOS) {
+    if (!createOp) continue
+    const useOp = USE_OP[createOp]
+    for (const op of [createOp, useOp]) {
+      const key = `${algo}|${op}`
+      try {
+        out[key] = dryRunDisposition(
+          engine.dryRun({
+            op,
+            algorithm: algo,
+            currentAlgorithm: op === useOp ? algo : undefined,
+            date,
+          })
+        )
+      } catch {
+        out[key] = 'neutral'
+      }
+    }
+  }
+  return out
 }
 
 function DefaultPill({ label, algo }: { label: string; algo: string | null }) {
@@ -114,7 +193,7 @@ function DefaultPill({ label, algo }: { label: string; algo: string | null }) {
   )
 }
 
-type DetailTab = 'list' | 'visual' | 'timeline' | 'yaml'
+type DetailTab = 'list' | 'visual' | 'compare' | 'timeline' | 'yaml'
 
 export function PolicyView({
   engine,
@@ -134,10 +213,20 @@ export function PolicyView({
   onApplyYaml: (yaml: string) => { ok: boolean; warnings?: string[]; error?: string } | undefined
 }) {
   const [models, setModels] = useState<Record<string, PolicyModel>>({})
+  const [rawYaml, setRawYaml] = useState<Record<string, string>>({})
   const [detailTab, setDetailTab] = useState<DetailTab>('list')
+  // Shared "as-of" date (A-grade review item #15) — one slider the matrix,
+  // Compare, and Timeline all evaluate at, so a temporal cutoff (e.g. the
+  // 2030 classical-Sign ban) visibly flips as you scrub instead of only
+  // ever being described in prose. Defaults to today.
+  const todayIso = new Date().toISOString().slice(0, 10)
+  const [asOfDate, setAsOfDate] = useState(todayIso)
 
   // Fetch + parse every preset once, so each catalog card can show a rule count
-  // and the detail panel can render without a per-selection round trip.
+  // and the detail panel can render without a per-selection round trip. Also
+  // keeps the raw YAML text (not just the parsed display model) so Compare
+  // (item #14) can temporarily load either side into the engine for a real
+  // per-algorithm dry-run diff.
   useEffect(() => {
     let alive = true
     Promise.all(
@@ -149,9 +238,15 @@ export function PolicyView({
       )
     ).then((entries) => {
       if (!alive) return
-      const next: Record<string, PolicyModel> = {}
-      for (const [file, txt] of entries) if (txt) next[file] = parsePolicyModel(txt)
-      setModels(next)
+      const nextModels: Record<string, PolicyModel> = {}
+      const nextRaw: Record<string, string> = {}
+      for (const [file, txt] of entries) {
+        if (!txt) continue
+        nextModels[file] = parsePolicyModel(txt)
+        nextRaw[file] = txt
+      }
+      setModels(nextModels)
+      setRawYaml(nextRaw)
     })
     return () => {
       alive = false
@@ -168,7 +263,7 @@ export function PolicyView({
   const resolveDefault = (op: string): string | null => {
     void policy.fingerprint
     try {
-      const r = engine.dryRun({ op })
+      const r = engine.dryRun({ op, date: asOfDate })
       return r.kind === 'Deny' ? null : (r.algorithm ?? null)
     } catch {
       return null
@@ -177,12 +272,68 @@ export function PolicyView({
   const signDefault = resolveDefault('CreateKeyPair:Sign')
   const kemDefault = resolveDefault('CreateKeyPair:KeyAgreement')
 
+  // Engine-computed disposition matrix (A-grade review A1/A3) — a real
+  // per-cell dry-run against the LIVE active policy at the shared as-of date,
+  // not a static YAML heuristic. Re-runs whenever the policy or date changes.
+  const matrixDispositions = useMemo(() => {
+    // `dryRun` implicitly reads the engine's active-policy state, keyed by this
+    // fingerprint — not visible to the dep analyzer otherwise (same idiom as
+    // `resolveDefault` above).
+    void policy.fingerprint
+    return sweepDispositions(engine, asOfDate)
+  }, [engine, policy.fingerprint, asOfDate])
+
+  // Op × algorithm coverage sweep (A-grade review C2) — collapsed by default
+  // (26 extra dry-runs); only computed once expanded.
+  const [coverageOpen, setCoverageOpen] = useState(false)
+  const coverageDispositions = useMemo(() => {
+    if (!coverageOpen) return null
+    void policy.fingerprint
+    return sweepCoverage(engine, asOfDate)
+  }, [engine, policy.fingerprint, asOfDate, coverageOpen])
+
+  // ── Compare (A-grade review item #14) ─────────────────────────────────
+  // Two presets, side by side, with a real per-algorithm verdict diff. Each
+  // side is loaded into the engine in turn (`rawYaml` from the fetch above),
+  // swept, then the engine is restored to whatever was actually active. This
+  // MUST run as an effect, not a memo: it mutates the shared engine (each
+  // `loadPolicy` records a Plane-1 `PolicyActivated` audit event — real,
+  // honest side effects React must not run/discard/replay during render).
+  const [compareAFile, setCompareAFile] = useState('classical.yaml')
+  const [compareBFile, setCompareBFile] = useState('pqc.yaml')
+  const [compareResult, setCompareResult] = useState<{
+    a: Record<string, Disposition>
+    b: Record<string, Disposition>
+  } | null>(null)
+  useEffect(() => {
+    if (detailTab !== 'compare') return
+    const yamlA = rawYaml[compareAFile]
+    const yamlB = rawYaml[compareBFile]
+    if (!yamlA || !yamlB) {
+      setCompareResult(null)
+      return
+    }
+    const restoreTo = policyYaml ?? rawYaml['training-permissive.yaml']
+    engine.loadPolicy(yamlA)
+    const a = sweepDispositions(engine, asOfDate)
+    engine.loadPolicy(yamlB)
+    const b = sweepDispositions(engine, asOfDate)
+    if (restoreTo) onApplyYaml(restoreTo)
+    setCompareResult({ a, b })
+    // `onApplyYaml` is a fresh function reference every parent render (not
+    // memoized) — depending on it would re-run this (and re-mutate the shared
+    // engine, re-emitting audit events) on every unrelated re-render. `engine`
+    // already captures the only thing that actually matters.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [engine, detailTab, compareAFile, compareBFile, rawYaml, policyYaml, asOfDate])
+
   const temporal = activeModel ? temporalRules(activeModel) : []
   const visualActive = detailTab === 'visual'
 
   const tabs: { id: DetailTab; label: string; icon: typeof ListIcon }[] = [
     { id: 'list', label: 'List', icon: ListIcon },
     { id: 'visual', label: 'Visual', icon: Workflow },
+    { id: 'compare', label: 'Compare', icon: GitCompare },
     { id: 'timeline', label: 'Timeline', icon: CalendarClock },
     { id: 'yaml', label: 'YAML', icon: Code2 },
   ]
@@ -196,6 +347,7 @@ export function PolicyView({
     >
       {/* ── Catalog (hidden in Visual mode — the palette has its own switcher) ─ */}
       <section
+        data-tour="policy-library"
         className={cn('rounded-xl border border-border bg-card p-3', visualActive && 'hidden')}
       >
         <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
@@ -207,6 +359,41 @@ export function PolicyView({
         <p className="mt-1 text-[11px] text-muted-foreground">
           Selecting a policy activates it — every plane obeys it instantly.
         </p>
+
+        {/* "Which regime governs you?" quick-pick (A-grade review item #18) —
+            same onLoadPolicy handler as the catalog below, just entered by
+            regulator name instead of by what the rule illustrates. */}
+        <div className="mt-3 rounded-lg border border-border bg-background/40 p-2">
+          <p className="flex items-center gap-1 text-[10px] font-semibold text-foreground">
+            <Landmark size={11} className="text-primary" /> Which regime governs you?
+          </p>
+          <div className="mt-1.5 flex flex-wrap gap-1">
+            {REGULATORS.map((r) => {
+              const preset = POLICY_PRESETS.find((p) => p.file === r.file)
+              if (!preset) return null
+              const on = isActive(preset, policy)
+              return (
+                <Button
+                  key={r.file}
+                  variant="ghost"
+                  size="sm"
+                  disabled={busy}
+                  onClick={() => onLoadPolicy(preset)}
+                  title={preset.blurb}
+                  className={cn(
+                    'h-auto rounded-full border px-2 py-0.5 text-[10.5px] font-medium',
+                    on
+                      ? 'border-primary/60 bg-primary/10 text-primary'
+                      : 'border-border bg-background/60 text-muted-foreground hover:border-primary/40 hover:text-foreground'
+                  )}
+                >
+                  {r.label}
+                </Button>
+              )
+            })}
+          </div>
+        </div>
+
         <div className="mt-3 space-y-3">
           {POLICY_CATEGORIES.map((cat) => {
             const presets = POLICY_PRESETS.filter((p) => p.category === cat)
@@ -310,6 +497,38 @@ export function PolicyView({
             </div>
           )}
 
+          {/* Shared as-of date (A-grade review item #15) — drives Resolved
+              defaults above, the List matrix, and Compare; drag to watch a
+              temporal cutoff flip live instead of only reading about it. */}
+          <div className="mt-3 flex items-center gap-2 flex-wrap">
+            <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+              <CalendarClock size={11} /> As of
+            </span>
+            <input
+              type="range"
+              min={Date.UTC(2025, 0, 1)}
+              max={Date.UTC(2036, 0, 1)}
+              step={24 * 3600 * 1000}
+              value={new Date(`${asOfDate}T00:00:00Z`).getTime()}
+              onChange={(e) =>
+                setAsOfDate(new Date(Number(e.target.value)).toISOString().slice(0, 10))
+              }
+              className="w-36 accent-primary"
+              aria-label="As-of date"
+            />
+            <span className="font-mono text-[11px] text-foreground">{asOfDate}</span>
+            {asOfDate !== todayIso && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setAsOfDate(todayIso)}
+                className="h-6 px-1.5 text-[10px] text-muted-foreground hover:text-foreground"
+              >
+                today
+              </Button>
+            )}
+          </div>
+
           {/* Resolved defaults (authoritative) */}
           <div className="mt-3 flex items-center gap-2 flex-wrap">
             <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
@@ -329,7 +548,11 @@ export function PolicyView({
         </section>
 
         {/* ── Sub-tab row ─────────────────────────────────────────────── */}
-        <div className="flex items-center gap-1 border-b border-border" role="tablist">
+        <div
+          className="flex items-center gap-1 border-b border-border"
+          role="tablist"
+          data-tour="policy-subtabs"
+        >
           {tabs.map((t) => {
             const Icon = t.icon
             const on = detailTab === t.id
@@ -368,26 +591,112 @@ export function PolicyView({
                   <Grid3x3 size={14} className="text-primary" /> Algorithm disposition
                 </h4>
                 <div className="mt-2.5 flex flex-wrap gap-1.5">
-                  {MATRIX_ALGOS.map((algo) => {
-                    const d = dispositionOf(activeModel, algo)
+                  {MATRIX_ALGOS.map(({ algo, op }) => {
+                    // 13 of 16 entries: a real per-cell dry-run against the live policy
+                    // (matrixDispositions). The 3 mechanism-only entries (op === null)
+                    // fall back to the static rule-text heuristic — see MATRIX_ALGOS' doc.
+                    const d = op
+                      ? (matrixDispositions[algo] ?? 'neutral')
+                      : dispositionOf(activeModel, algo)
                     const s = DISPOSITION_STYLE[d]
+                    const specOnly = !isRunnable(algo)
                     return (
                       <div
                         key={algo}
-                        className={cn('rounded-md border px-2 py-1', s.cls)}
-                        title={`${algo}: ${s.label}`}
+                        className={cn(
+                          'rounded-md border px-2 py-1',
+                          s.cls,
+                          specOnly && 'opacity-70'
+                        )}
+                        title={
+                          specOnly
+                            ? `${algo}: ${s.label} (per policy) — spec-only, not runnable in this browser engine`
+                            : `${algo}: ${s.label}${op ? ' (live engine verdict)' : ' (from rule text)'}`
+                        }
                       >
                         <span className="font-mono text-[10.5px] text-foreground">{algo}</span>
                         <span className="ml-1.5 text-[9px] font-semibold">{s.label}</span>
+                        {specOnly && (
+                          <span className="ml-1.5 text-[8.5px] font-semibold uppercase tracking-wide text-status-warning">
+                            spec-only
+                          </span>
+                        )}
                       </div>
                     )
                   })}
                 </div>
                 <p className="mt-2 text-[9.5px] text-muted-foreground">
-                  Derived from the rules below (ignores per-op scope, time bounds, and attribute
-                  exceptions). For the engine's live verdict, use the Visual tab's simulator or the
-                  dry-run tester on the Agility tab.
+                  Most cells are a real per-cell dry-run against the active policy right now (not a
+                  static heuristic). Three mechanism-only entries (SHA-256/SHA-1/3DES) are still
+                  derived from rule text, and a "spec-only" cell means the policy names a real
+                  algorithm this in-browser engine can't actually create — for the full op × date ×
+                  attribute picture, use the Visual tab's simulator or the dry-run tester on the
+                  Agility tab.
                 </p>
+
+                {/* Coverage sweep (A-grade review C2) — creation vs. use, not
+                    just one representative op per algorithm. */}
+                <div className="mt-3 border-t border-border pt-3">
+                  <Button
+                    variant="ghost"
+                    onClick={() => setCoverageOpen((o) => !o)}
+                    className="flex h-auto w-full items-center justify-start gap-1.5 p-0 text-left font-normal hover:bg-transparent"
+                  >
+                    <LayoutGrid size={12} className="text-primary" />
+                    <span className="text-[11px] font-semibold text-foreground">
+                      Coverage sweep — creation vs. use, every op
+                    </span>
+                    <ChevronRight
+                      size={12}
+                      className={cn(
+                        'text-muted-foreground transition-transform',
+                        coverageOpen && 'rotate-90'
+                      )}
+                    />
+                  </Button>
+                  {coverageOpen && coverageDispositions && (
+                    <div className="mt-2 overflow-x-auto">
+                      <table className="w-full text-[10.5px]">
+                        <thead className="border-b border-border text-left text-muted-foreground">
+                          <tr>
+                            <th className="py-1 pr-3 font-semibold">Algorithm</th>
+                            <th className="py-1 pr-3 font-semibold">Create</th>
+                            <th className="py-1 font-semibold">Use</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {MATRIX_ALGOS.filter(({ op }) => op).map(({ algo, op: createOp }) => {
+                            const useOp = USE_OP[createOp!]
+                            const dCreate = coverageDispositions[`${algo}|${createOp}`] ?? 'neutral'
+                            const dUse = coverageDispositions[`${algo}|${useOp}`] ?? 'neutral'
+                            return (
+                              <tr key={algo} className="border-b border-border/40">
+                                <td className="py-1 pr-3 font-mono text-foreground">{algo}</td>
+                                <td className="py-1 pr-3">
+                                  <span title={createOp!}>{DISPOSITION_STYLE[dCreate].label}</span>
+                                </td>
+                                <td className="py-1">
+                                  <span title={useOp}>{DISPOSITION_STYLE[dUse].label}</span>
+                                  {dCreate !== dUse && (
+                                    <span className="ml-1.5 text-[9px] font-bold uppercase tracking-wide text-status-warning">
+                                      differs from create
+                                    </span>
+                                  )}
+                                </td>
+                              </tr>
+                            )
+                          })}
+                        </tbody>
+                      </table>
+                      <p className="mt-1.5 text-[9.5px] text-muted-foreground">
+                        "Create" = would creating a new key of this algorithm be allowed. "Use" =
+                        would signing/encapsulating/encrypting with an EXISTING key of this
+                        algorithm be allowed — the two can differ (a rekey-on-use policy lets you
+                        keep an old key but rewrites it the first time you use it).
+                      </p>
+                    </div>
+                  )}
+                </div>
               </section>
             )}
 
@@ -418,6 +727,103 @@ export function PolicyView({
           </section>
         )}
 
+        {/* ── Compare: two policies, one per-algorithm verdict diff ───────── */}
+        {detailTab === 'compare' && (
+          <section className="rounded-xl border border-border bg-card p-4">
+            <h4 className="flex items-center gap-2 text-xs font-semibold text-foreground">
+              <GitCompare size={14} className="text-primary" /> Compare two policies
+            </h4>
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              A real per-algorithm dry-run for each side — the same "flip the policy, watch it
+              change" story, held side by side instead of one at a time. Comparing briefly loads
+              each policy into the engine (you'll see it noted in the Activity trail), then restores
+              whatever was actually active.
+            </p>
+            <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 sm:max-w-md">
+              <FilterDropdown
+                items={POLICY_PRESETS.map((p) => ({ id: p.file, label: p.label }))}
+                selectedId={compareAFile}
+                onSelect={setCompareAFile}
+                label="A"
+                className="w-full"
+              />
+              <FilterDropdown
+                items={POLICY_PRESETS.map((p) => ({ id: p.file, label: p.label }))}
+                selectedId={compareBFile}
+                onSelect={setCompareBFile}
+                label="B"
+                className="w-full"
+              />
+            </div>
+            {!compareResult ? (
+              <p className="mt-4 text-[12px] text-muted-foreground italic">Loading…</p>
+            ) : (
+              <div className="mt-4 overflow-x-auto">
+                <table className="w-full text-[11px]">
+                  <thead className="border-b border-border text-left text-muted-foreground">
+                    <tr>
+                      <th className="py-1 pr-3 font-semibold">Algorithm</th>
+                      <th className="py-1 pr-3 font-semibold">
+                        A · {POLICY_PRESETS.find((p) => p.file === compareAFile)?.label}
+                      </th>
+                      <th className="py-1 font-semibold">
+                        B · {POLICY_PRESETS.find((p) => p.file === compareBFile)?.label}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {MATRIX_ALGOS.filter(({ op }) => op).map(({ algo }) => {
+                      const dA = compareResult.a[algo] ?? 'neutral'
+                      const dB = compareResult.b[algo] ?? 'neutral'
+                      const differs = dA !== dB
+                      return (
+                        <tr
+                          key={algo}
+                          className={cn('border-b border-border/40', differs && 'bg-primary/5')}
+                        >
+                          <td className="py-1 pr-3 font-mono text-foreground">
+                            {algo}
+                            {!isRunnable(algo) && (
+                              <span className="ml-1 text-[8.5px] font-semibold uppercase text-status-warning">
+                                spec-only
+                              </span>
+                            )}
+                          </td>
+                          <td
+                            className={cn(
+                              'py-1 pr-3',
+                              DISPOSITION_STYLE[dA].cls
+                                .split(' ')
+                                .find((c) => c.startsWith('text-'))
+                            )}
+                          >
+                            {DISPOSITION_STYLE[dA].label}
+                          </td>
+                          <td
+                            className={cn(
+                              'py-1',
+                              DISPOSITION_STYLE[dB].cls
+                                .split(' ')
+                                .find((c) => c.startsWith('text-'))
+                            )}
+                          >
+                            {DISPOSITION_STYLE[dB].label}
+                            {differs && (
+                              <span className="ml-1.5 text-[9px] font-bold uppercase tracking-wide text-primary">
+                                differs
+                              </span>
+                            )}
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </section>
+        )}
+
         {/* ── Timeline ──────────────────────────────────────────────────── */}
         {detailTab === 'timeline' && (
           <section className="rounded-xl border border-border bg-card p-4">
@@ -427,7 +833,10 @@ export function PolicyView({
             </h4>
             <div className="mt-3">
               {temporal.length > 0 ? (
-                <PolicyTimeline rules={temporal} />
+                <PolicyTimeline
+                  rules={temporal}
+                  asOf={new Date(`${asOfDate}T00:00:00Z`).getTime()}
+                />
               ) : (
                 <p className="text-[12px] text-muted-foreground">
                   This policy has no time-bounded rules (temporal cutoffs or effective windows).

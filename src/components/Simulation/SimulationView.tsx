@@ -819,7 +819,7 @@ export function SimulationView() {
   const archetypeNotice = useArchetypeChangeNotice(assessProfile?.country)
 
   // Mosca clock (turn-aware: fractional year + CRQC shift) — derived in useSimClock (PR6).
-  const { clock, currentYear, simShelfLifeYears, simMigrationYears } = deriveSimClock({
+  const { clock, currentYear, horizonYear, simShelfLifeYears, simMigrationYears } = deriveSimClock({
     year,
     q,
     country,
@@ -1481,6 +1481,19 @@ export function SimulationView() {
             value={`${cleared}/${LIFECYCLE.length}`}
             sub="win bar = Level 2"
             tone="text-success"
+          />
+          <Stat
+            label="Years to Q-Day"
+            value={`${clock.yearsToHorizon.toFixed(1)}y`}
+            sub={`Q-Day horizon ≈ ${horizonYear} · X+Y>Z`}
+            tone={clock.atRisk ? 'text-destructive' : 'text-foreground'}
+            className="min-w-[132px]"
+            badge={
+              <PlanningBadge
+                label="planning"
+                tip={`The Q-Day horizon (Z ≈ ${horizonYear}) is one of the illustrative planning anchors — a modelled year the CRQC could arrive, not a published date. Re-check the live source.`}
+              />
+            }
           />
           <Stat
             label="Est. readiness"
