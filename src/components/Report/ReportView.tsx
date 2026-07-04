@@ -521,29 +521,19 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
         </motion.div>
       )}
 
-      {result ? (
-        <div className="flex flex-col lg:flex-row gap-6 items-start">
-          <ReportToc
-            sections={tocSections}
-            onExpandAll={handleExpandAll}
-            onCollapseAll={handleCollapseAll}
-          />
-          <div className="flex-1 min-w-0 w-full">
-            <ReportContent
-              result={result}
-              expandToken={expandToken}
-              collapseToken={collapseToken}
-            />
-          </div>
+      {/* `result` is guaranteed truthy here — the `!result` early-return above
+          covers the only case where it isn't, so this never had a reachable
+          else branch. */}
+      <div className="flex flex-col lg:flex-row gap-6 items-start">
+        <ReportToc
+          sections={tocSections}
+          onExpandAll={handleExpandAll}
+          onCollapseAll={handleCollapseAll}
+        />
+        <div className="flex-1 min-w-0 w-full">
+          <ReportContent result={result} expandToken={expandToken} collapseToken={collapseToken} />
         </div>
-      ) : (
-        <div className="text-center py-12 text-muted-foreground">
-          <p>Unable to generate report. Please complete all required fields.</p>
-          <Link to="/assess" className="text-primary hover:underline mt-2 inline-block">
-            Go to Assessment
-          </Link>
-        </div>
-      )}
+      </div>
 
       {result && !simEmbed && <ReportNextSteps />}
     </div>
