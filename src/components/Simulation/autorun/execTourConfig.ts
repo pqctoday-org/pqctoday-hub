@@ -51,6 +51,7 @@ export const EXEC_TOUR_STAGES: readonly TourStage[] = [
     depth: 'deep',
     revealArtifacts: [
       'program-charter',
+      'cost-model-comparison',
       'roi-model',
       'breach-scenario',
       'cost-of-inaction',

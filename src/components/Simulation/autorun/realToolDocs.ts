@@ -128,12 +128,34 @@ function initialScopingState(sector: DemoSector): { state: ScopingState; industr
   return {
     state: {
       systems: [
-        'Customer-facing TLS gateway',
-        'Core transaction database',
-        'Identity & access management',
+        {
+          name: 'Customer-facing TLS gateway',
+          priority: 'A',
+          ownership: 'Vendor',
+          notes: 'External TLS; RSA-2048 / ECDHE',
+        },
+        {
+          name: 'Core transaction database',
+          priority: 'B',
+          ownership: 'Internal',
+          notes: 'Long-lived secrecy data (>10yr)',
+        },
+        {
+          name: 'Identity & access management',
+          priority: 'A',
+          ownership: 'Vendor',
+          notes: 'Trust anchor; ECDSA P-256',
+        },
       ],
       vendors: ['OpenSSL', 'Microsoft', 'F5'],
       estateInstances: '2400',
+      estate: {
+        tlsEndpoints: '1200',
+        certificates: '800',
+        vpnTunnels: '150',
+        hsmKeys: '200',
+        codeSigningPipelines: '50',
+      },
       seeded: false,
     },
     industry: ORG[sector],
