@@ -101,6 +101,9 @@ export const LEARN_PHASES: Record<string, PhaseResource> = {
 export const BUSINESS_PHASES: Record<string, PhaseResource> = {
   'roi-calculator': { phasesServed: ['p0'], legs: ['practice', 'output'] },
   'board-pitch': { phasesServed: ['p0'], legs: ['practice', 'output'] },
+  'breach-simulator': { phasesServed: ['p0'], legs: ['practice', 'output'] },
+  'cost-of-inaction': { phasesServed: ['p0'], legs: ['practice', 'output'] },
+  'cost-model-explorer': { phasesServed: ['p0'], legs: ['practice', 'output'] },
   'crqc-scenario': { phasesServed: ['p0'], legs: ['practice', 'output'] },
   'risk-register': { phasesServed: ['p3'], legs: ['practice', 'output'] },
   'risk-treatment-plan': { phasesServed: ['p3'], legs: ['practice', 'output'] },

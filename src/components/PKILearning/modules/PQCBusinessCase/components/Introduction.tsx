@@ -353,6 +353,100 @@ const Step1WhyConceptsCosts: React.FC = () => (
       </div>
     </section>
 
+    {/* Section 3d: Choosing a costing model + triangulation */}
+    <section className="glass-panel p-6">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="p-2 rounded-lg bg-secondary/10">
+          <Calculator size={24} className="text-secondary" />
+        </div>
+        <h2 className="text-xl font-bold text-gradient">Choosing a Costing Model</h2>
+      </div>
+      <div className="space-y-4 text-sm text-foreground/80">
+        <p>
+          No published methodology yet gives a reliable top-down total for a full PQC migration
+          &mdash; the field has too few completed programs to calibrate against. The defensible move
+          is to estimate the same program in <em>more than one way</em> and treat agreement between
+          methods as confidence, and divergence as a signal to dig deeper. Six model families are in
+          use &mdash; the workshop&apos;s Cost Model Explorer (Step 1) lets you watch them diverge
+          on one scenario:
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {[
+            {
+              t: 'Parametric / budget-anchored',
+              d: 'Top-down: a share of IT or security budget, or a per-asset unit cost (per certificate, per HSM, per application). Fast sanity check on any bottom-up total.',
+            },
+            {
+              t: 'Bottom-up activity-based',
+              d: 'Sum costs per phase and per asset class. The U.S. federal estimate — $7.1B for 2025–2035 — was built this way, aggregating agency-level cryptographic inventories (OMB).',
+            },
+            {
+              t: 'Probabilistic (Monte Carlo)',
+              d: 'Put distributions on the uncertain drivers and simulate to a confidence band (P10/P50/P90) instead of a single number. Demonstrated for real-time payments in a 2026 preprint.',
+            },
+            {
+              t: 'Judgemental / scenario',
+              d: 'Expert-elicited optimistic / expected / conservative columns. Cheap, honest about uncertainty, and legible to a board.',
+            },
+            {
+              t: 'Analogical / historical',
+              d: 'Calibrate against prior cryptographic transitions — SHA-1→SHA-2, TLS 1.3, Y2K — adjusting for PQC’s larger keys and longer-lived assets.',
+            },
+            {
+              t: 'Risk / cost-of-inaction (ALE)',
+              d: 'The benefit side: annualized loss expectancy (impact × likelihood) plus harvest-now-decrypt-later exposure scored by data longevity, sensitivity, and current crypto strength.',
+            },
+          ].map((c, i) => (
+            <div key={i} className="bg-muted/50 rounded-lg p-3 border border-border">
+              <div className="text-xs font-bold text-foreground mb-0.5">{c.t}</div>
+              <p className="text-[11px] text-muted-foreground">{c.d}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="bg-primary/5 rounded-lg p-4 border border-primary/20 flex gap-3">
+          <Scale size={20} className="text-primary shrink-0 mt-0.5" />
+          <div>
+            <div className="text-sm font-bold text-foreground mb-1">
+              Triangulate &mdash; don&apos;t trust one number
+            </div>
+            <p className="text-xs text-foreground/90">
+              Under deep uncertainty, cross-checking a bottom-up buildup against an independent
+              second estimate is stronger than precision within any single method. The
+              workshop&apos;s ROI Calculator does this for you: it reconciles your per-product
+              estimate against an independent assessment-derived one and flags when the two disagree
+              &mdash; still pair the result with your finance team&apos;s discounted-cash-flow model
+              before committing capital.
+            </p>
+          </div>
+        </div>
+
+        <div className="bg-muted/50 rounded-lg p-4 border border-border">
+          <div className="text-xs font-bold text-foreground mb-2">
+            Timeline &amp; urgency anchors (authoritative)
+          </div>
+          <ul className="text-[11px] text-muted-foreground space-y-1">
+            <li>
+              &bull; Full migration runs <strong>5–7 years (small)</strong>,{' '}
+              <strong>8–12 (medium)</strong>, and <strong>12–15+ (large enterprises)</strong> —
+              against a fault-tolerant quantum window of <strong>2028–2033</strong> (Campbell,{' '}
+              <em>Computers</em> 2026, 15(1):9, peer-reviewed).
+            </li>
+            <li>
+              &bull; <strong>Mosca&apos;s inequality (X + Y &gt; Z):</strong> if migration time (X)
+              plus data secrecy shelf-life (Y) exceeds time-to-quantum (Z), you are already late —
+              the arithmetic, not a Q-Day prediction, is what justifies starting now.
+            </li>
+            <li>
+              &bull; The hardest cost driver is legacy systems with cryptography hardwired in
+              hardware or firmware — the OMB report attributes a significant share of the federal
+              total to replacing exactly those.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
     {/* Section 3c: Benefit arguments beyond the urgency drivers */}
     <section className="glass-panel p-6">
       <div className="flex items-center gap-3 mb-4">
@@ -414,25 +508,35 @@ const Step2WorkshopAndResources: React.FC<{ onNavigateToWorkshop: () => void }> 
       </div>
       <div className="space-y-4 text-sm text-foreground/80">
         <p>
-          The workshop guides you through three steps to create a complete, data-driven PQC
+          The workshop guides you through five steps to create a complete, data-driven PQC
           investment case:
         </p>
         <div className="space-y-2">
           {[
             {
               n: 1,
-              t: 'ROI Calculator',
-              d: 'Score migration cost, breach avoidance, compliance, operational efficiency, and competitive advantage to calculate overall ROI.',
+              t: 'Cost Model Explorer',
+              d: 'See how the six costing models diverge on one scenario — build the instinct not to trust any single number.',
             },
             {
               n: 2,
+              t: 'ROI Calculator',
+              d: 'Score migration cost, breach avoidance, and compliance, then cross-check the total against your assessment.',
+            },
+            {
+              n: 3,
               t: 'Breach Scenario Simulator',
               d: 'Model the financial impact of classical vs. quantum-enabled breaches with industry-specific cost data.',
             },
             {
-              n: 3,
+              n: 4,
+              t: 'Cost of Inaction',
+              d: 'Quantify the compounding cost of delaying migration — breach risk, complexity premiums, and penalties over five years.',
+            },
+            {
+              n: 5,
               t: 'Board Pitch Builder',
-              d: 'Generate a professional board memo with executive summary, risk overview, cost-benefit analysis, and recommended actions.',
+              d: 'Assemble a professional board memo, populated from the previous steps’ outputs.',
             },
           ].map((step) => (
             <div key={step.n} className="flex items-start gap-3 bg-muted/50 rounded-lg p-3">

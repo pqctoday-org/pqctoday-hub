@@ -72,23 +72,33 @@ export const STEERCO_ROLE_IDS: FrameworkRoleId[] = [
   'exec-sponsor',
   'qrpm',
   'crypto-architect',
+  'security-eng',
+  'appsec-lead',
+  'ot-specialist',
   'vendor-lead',
   'pmo-analyst',
 ]
 
 export interface CharterState {
   programName: string
+  purpose: string
+  scopeInclude: string
+  scopeExclude: string
   sponsorName: string
   sponsorTitle: string
   qrpmName: string
-  cadence: Cadence
+  cadencePmo: Cadence
+  cadenceSteerCo: Cadence
+  cadenceBoard: Cadence
   budgetYear1: string
   budgetMultiYear: string
   budgetHorizonYears: string
   steerCo: Record<FrameworkRoleId, boolean>
   signOffDate: string
   workstreams: Record<string, boolean>
+  successCriteria: string
   riskAppetiteStatement: string
+  escalationTriggers: string
 }
 
 const todayIso = (): string => new Date().toISOString().slice(0, 10)
@@ -104,14 +114,25 @@ export function buildMarkdown(s: CharterState): string {
   )
   lines.push('')
 
-  lines.push('## 1. Executive sponsorship')
+  lines.push('## 1. Purpose & objectives')
+  lines.push('')
+  lines.push(s.purpose.trim() || '_(not yet drafted)_')
+  lines.push('')
+
+  lines.push('## 2. Scope')
+  lines.push('')
+  lines.push(`- **In scope:** ${s.scopeInclude.trim() || '_(TBD)_'}`)
+  lines.push(`- **Out of scope:** ${s.scopeExclude.trim() || '_(TBD)_'}`)
+  lines.push('')
+
+  lines.push('## 3. Executive sponsorship')
   lines.push('')
   lines.push(`- **Sponsor:** ${s.sponsorName.trim() || '_(unassigned)_'}`)
   lines.push(`- **Title:** ${s.sponsorTitle.trim() || '_(unassigned)_'}`)
   lines.push(`- **Mandate sign-off date:** ${s.signOffDate || '_(pending)_'}`)
   lines.push('')
 
-  lines.push('## 2. Program leadership')
+  lines.push('## 4. Program leadership')
   lines.push('')
   lines.push(
     `- **Quantum-Readiness Program Manager (QRPM):** ${s.qrpmName.trim() || '_(unassigned)_'}`
@@ -121,7 +142,7 @@ export function buildMarkdown(s: CharterState): string {
   )
   lines.push('')
 
-  lines.push('## 3. Steering Committee (SteerCo)')
+  lines.push('## 5. Steering Committee (SteerCo)')
   lines.push('')
   const seats = STEERCO_ROLE_IDS.filter((id) => s.steerCo[id])
   if (seats.length === 0) {
@@ -135,17 +156,21 @@ export function buildMarkdown(s: CharterState): string {
     }
   }
   lines.push('')
-  lines.push(`- **Governance cadence:** ${s.cadence}`)
+  lines.push('**Decision cadence:**')
+  lines.push('')
+  lines.push(`- PMO: ${s.cadencePmo}`)
+  lines.push(`- SteerCo: ${s.cadenceSteerCo}`)
+  lines.push(`- Board / Risk Committee: ${s.cadenceBoard}`)
   lines.push('')
 
-  lines.push('## 4. Budget commitment')
+  lines.push('## 6. Budget commitment')
   lines.push('')
   lines.push(`- **Year 1 budget:** ${s.budgetYear1.trim() || '_(TBD)_'}`)
   lines.push(`- **Multi-year commitment:** ${s.budgetMultiYear.trim() || '_(TBD)_'}`)
   lines.push(`- **Planning horizon:** ${s.budgetHorizonYears.trim() || '_(TBD)_'} years`)
   lines.push('')
 
-  lines.push('## 5. Workstreams')
+  lines.push('## 7. Workstreams')
   lines.push('')
   const activeWorkstreams = WORKSTREAMS.filter((w) => s.workstreams[w.id])
   if (activeWorkstreams.length === 0) {
@@ -159,9 +184,19 @@ export function buildMarkdown(s: CharterState): string {
   }
   lines.push('')
 
-  lines.push('## 6. Risk appetite statement')
+  lines.push('## 8. Success criteria')
+  lines.push('')
+  lines.push(s.successCriteria.trim() || '_(not yet drafted)_')
+  lines.push('')
+
+  lines.push('## 9. Risk appetite statement')
   lines.push('')
   lines.push(s.riskAppetiteStatement.trim() || '_(not yet drafted)_')
+  lines.push('')
+
+  lines.push('## 10. Escalation triggers')
+  lines.push('')
+  lines.push(s.escalationTriggers.trim() || '_(not yet drafted)_')
   lines.push('')
 
   lines.push('---')
@@ -179,10 +214,15 @@ export const ProgramCharter: React.FC = () => {
   const [state, setState] = useState<CharterState>(() => {
     const base: CharterState = {
       programName: '',
+      purpose: '',
+      scopeInclude: '',
+      scopeExclude: '',
       sponsorName: '',
       sponsorTitle: '',
       qrpmName: '',
-      cadence: 'Monthly',
+      cadencePmo: 'Weekly',
+      cadenceSteerCo: 'Monthly',
+      cadenceBoard: 'Quarterly',
       budgetYear1: '',
       budgetMultiYear: '',
       budgetHorizonYears: '3',
@@ -190,27 +230,39 @@ export const ProgramCharter: React.FC = () => {
         'exec-sponsor': true,
         qrpm: true,
         'crypto-architect': true,
-        'vendor-lead': false,
-        'pmo-analyst': true,
-        'security-eng': false,
+        'security-eng': true,
         'appsec-lead': false,
         'ot-specialist': false,
+        'vendor-lead': false,
+        'pmo-analyst': true,
       },
       signOffDate: todayIso(),
       workstreams: Object.fromEntries(WORKSTREAMS.map((w) => [w.id, false])),
+      successCriteria: '',
       riskAppetiteStatement: '',
+      escalationTriggers: '',
     }
     // Auto-run demo fill: role titles (no invented names) + framework-anchored
-    // illustrative budget (Phase 0 activity 0.2 cost range).
+    // illustrative content (Phase 0 activities 0.2c economics / 0.3 governance).
     if (isAutoRunFillActive()) {
       return {
         ...base,
         programName: 'Post-Quantum Cryptography Migration Program',
+        purpose:
+          'Migrate the enterprise to NIST-standardized post-quantum cryptography ahead of mandate deadlines — protecting harvest-now-decrypt-later data and long-lived trust anchors — and establish durable crypto-agility.',
+        scopeInclude:
+          'Internet-exposed key exchange (TLS, VPN), >10-year secrecy data, and signature/PKI trust anchors across Tier-1 systems (Two-Track: HNDL + TNFL).',
+        scopeExclude:
+          'Systems past their confidentiality horizon or slated for retirement — addressed via crypto-shred / decommission rather than migration.',
         sponsorName: 'Chief Information Security Officer',
         sponsorTitle: 'Executive Sponsor',
         qrpmName: 'Head of Cryptographic Engineering',
         budgetYear1: '$1.5M–$4M — discovery, tooling, 2–3 hybrid pilots, training',
         budgetMultiYear: 'Phased multi-year program aligned to infrastructure refresh cycles',
+        successCriteria:
+          'Phase-0 gate passed; board KPI pack baselined (Coverage, Trust, Inventory, Vendors, Agility) with Year-1 targets; CBOM v1 at ≥70% Tier-1 coverage; two hybrid pilots (TLS, VPN) live.',
+        escalationTriggers:
+          'Escalate to SteerCo/Board on: a material change in CRQC timeline estimates; the program running >6 months behind the regulatory buffer; a confirmed vulnerability in a deployed PQC algorithm; a Tier-1 vendor abandoning PQC without an alternative.',
       }
     }
     // Restore the user's last-saved charter so it round-trips across visits.
@@ -301,6 +353,51 @@ export const ProgramCharter: React.FC = () => {
             onChange={(e) => set('programName', e.target.value)}
             placeholder="Post-Quantum Cryptography Migration Program"
           />
+        </div>
+      </section>
+
+      <section className="glass-panel border border-border rounded-lg p-4 space-y-3">
+        <h3 className="text-sm font-semibold text-foreground">Purpose &amp; scope</h3>
+        <div className="block">
+          <label htmlFor="charter-purpose" className="text-xs font-medium text-muted-foreground">
+            Purpose &amp; objectives
+          </label>
+          <Textarea
+            id="charter-purpose"
+            className="mt-1 min-h-[64px] resize-y"
+            value={state.purpose}
+            onChange={(e) => set('purpose', e.target.value)}
+            placeholder="e.g. Migrate the enterprise to NIST-standardized PQC ahead of mandate deadlines — protecting harvest-now-decrypt-later data and long-lived trust anchors — and establish durable crypto-agility."
+          />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="block">
+            <label htmlFor="charter-scope-in" className="text-xs font-medium text-muted-foreground">
+              In scope
+            </label>
+            <Textarea
+              id="charter-scope-in"
+              className="mt-1 min-h-[64px] resize-y"
+              value={state.scopeInclude}
+              onChange={(e) => set('scopeInclude', e.target.value)}
+              placeholder="e.g. Internet-exposed key exchange (TLS, VPN), >10-year secrecy data, signature/PKI trust anchors on Tier-1 systems."
+            />
+          </div>
+          <div className="block">
+            <label
+              htmlFor="charter-scope-out"
+              className="text-xs font-medium text-muted-foreground"
+            >
+              Out of scope
+            </label>
+            <Textarea
+              id="charter-scope-out"
+              className="mt-1 min-h-[64px] resize-y"
+              value={state.scopeExclude}
+              onChange={(e) => set('scopeExclude', e.target.value)}
+              placeholder="e.g. Systems past their confidentiality horizon or slated for retirement (crypto-shred / decommission instead of migrate)."
+            />
+          </div>
         </div>
       </section>
 
@@ -398,27 +495,43 @@ export const ProgramCharter: React.FC = () => {
             )
           })}
         </div>
-        <div className="block" role="group" aria-label="Governance cadence">
-          <span className="text-xs font-medium text-muted-foreground">Governance cadence</span>
-          <div className="mt-1 flex flex-wrap gap-2">
-            {CADENCE_OPTIONS.map((c) => (
-              <Button
-                key={c}
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => set('cadence', c)}
-                aria-pressed={state.cadence === c}
-                className={`h-7 px-3 rounded-full border text-[11px] font-semibold transition-all ${
-                  state.cadence === c
-                    ? 'border-primary/40 bg-primary/10 text-primary'
-                    : 'border-border text-muted-foreground hover:bg-muted/50'
-                }`}
-              >
-                {c}
-              </Button>
-            ))}
-          </div>
+        <p className="text-[11px] text-muted-foreground">
+          The framework&apos;s full SteerCo is broader than the role model&apos;s seats — it also
+          includes Compliance/Legal, PKI/Identity, Infrastructure/NetSec, and Business-Unit
+          representatives. Add them as named members when you formalize the committee.
+        </p>
+        <div className="space-y-2">
+          <span className="text-xs font-medium text-muted-foreground">Decision cadence</span>
+          {(
+            [
+              ['PMO', 'cadencePmo'],
+              ['SteerCo', 'cadenceSteerCo'],
+              ['Board / Risk Committee', 'cadenceBoard'],
+            ] as const
+          ).map(([label, key]) => (
+            <div key={key} className="block" role="group" aria-label={`${label} cadence`}>
+              <span className="text-[11px] text-muted-foreground">{label}</span>
+              <div className="mt-1 flex flex-wrap gap-2">
+                {CADENCE_OPTIONS.map((c) => (
+                  <Button
+                    key={c}
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => set(key, c)}
+                    aria-pressed={state[key] === c}
+                    className={`h-7 px-3 rounded-full border text-[11px] font-semibold transition-all ${
+                      state[key] === c
+                        ? 'border-primary/40 bg-primary/10 text-primary'
+                        : 'border-border text-muted-foreground hover:bg-muted/50'
+                    }`}
+                  >
+                    {c}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -524,6 +637,18 @@ export const ProgramCharter: React.FC = () => {
           })}
         </div>
         <div className="block">
+          <label htmlFor="charter-success" className="text-xs font-medium text-muted-foreground">
+            Success criteria
+          </label>
+          <Textarea
+            id="charter-success"
+            className="mt-1 min-h-[64px] resize-y"
+            value={state.successCriteria}
+            onChange={(e) => set('successCriteria', e.target.value)}
+            placeholder="e.g. Phase-0 gate passed; board KPI pack baselined (Coverage, Trust, Inventory, Vendors, Agility) with Year-1 targets; CBOM v1 at ≥70% Tier-1 coverage; two hybrid pilots (TLS, VPN) live."
+          />
+        </div>
+        <div className="block">
           <label
             htmlFor="charter-risk-appetite"
             className="text-xs font-medium text-muted-foreground"
@@ -536,6 +661,18 @@ export const ProgramCharter: React.FC = () => {
             value={state.riskAppetiteStatement}
             onChange={(e) => set('riskAppetiteStatement', e.target.value)}
             placeholder="e.g. HNDL: ≤20% of >10-year secrecy data quantum-vulnerable by end of 2027, 0% by end of 2029. TNFL: all production software/firmware signing on NIST-approved quantum-resistant signatures by end of 2027, all CA signing keys PQC-capable by end of 2029."
+          />
+        </div>
+        <div className="block">
+          <label htmlFor="charter-escalation" className="text-xs font-medium text-muted-foreground">
+            Escalation triggers
+          </label>
+          <Textarea
+            id="charter-escalation"
+            className="mt-1 min-h-[64px] resize-y"
+            value={state.escalationTriggers}
+            onChange={(e) => set('escalationTriggers', e.target.value)}
+            placeholder="e.g. Escalate to SteerCo/Board on: a material change in CRQC timeline estimates; the program running >6 months behind the regulatory buffer; a confirmed vulnerability in a deployed PQC algorithm; a Tier-1 vendor abandoning PQC without an alternative."
           />
         </div>
       </section>
