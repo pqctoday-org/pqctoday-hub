@@ -78,19 +78,28 @@ test.describe('Simulation — planning-estimate badges (PR-1)', () => {
       )
     })
     // Visiting /report runs the scorer for a "complete" form and persists the result.
-    await page.goto('/report', { waitUntil: 'networkidle', timeout: 45_000 })
+    await page.goto('/report', { waitUntil: 'domcontentloaded', timeout: 45_000 })
     await expect
       .poll(() => page.evaluate(() => localStorage.getItem('pqc-assessment-result')), {
         timeout: 30_000,
       })
       .toBeTruthy()
     // The assessment now exists → the simulation console unlocks.
-    await page.goto('/simulation', { waitUntil: 'networkidle', timeout: 45_000 })
+    // NOT networkidle: on a first visit the PWA service worker precaches the
+    // whole build in the background, so /simulation never goes network-idle
+    // within 45s. domcontentloaded + the End Quarter assertion below is the
+    // real readiness signal (TRIAGE.md 2026-07-03).
+    await page.goto('/simulation', { waitUntil: 'domcontentloaded', timeout: 45_000 })
     await expect(page.getByRole('button', { name: /End Quarter/i })).toBeVisible({
       timeout: 45_000,
     })
   })
 
+  // Fixed 07032026: a "Years to Q-Day" KPI tile was added to the sim ribbon
+  // (SimulationView.tsx) carrying a PlanningBadge whose aria-label names the
+  // Q-Day horizon as an illustrative planning anchor — the persistent, badged
+  // Q-Day figure the desktop console previously lacked (it only had a bare
+  // "outlives Q-Day 2029" sentence in the HNDL tile). See e2e/TRIAGE.md.
   test('the Mosca Q-Day / deadline horizon carries a planning badge', async ({ page }) => {
     const badge = page.getByRole('button', { name: /Q-Day.*illustrative planning anchors/i })
     await expect(badge).toBeVisible({ timeout: 15_000 })

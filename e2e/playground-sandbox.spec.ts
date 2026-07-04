@@ -60,23 +60,26 @@ test.describe('Crypto Lab Workbench — Sandbox facet', () => {
     await expect(card.getByText('needs runtime')).toHaveCount(0)
   })
 
-  test('when the probe fails, sandbox scenarios stay listed but render locked', async ({
+  test('when the probe fails, sandbox scenarios are hidden and the runtime toggle reports them off', async ({
     page,
   }) => {
     // Override the stub: make /api/status fail so the probe lands 'offline'.
     await page.route(`${SANDBOX_ORIGIN}/api/status`, (route) => route.abort('failed'))
     await page.goto(PROTOCOL_SIMS_URL)
 
-    // Sidebar hint reflects the locked runtime.
-    await expect(page.getByText(/Docker scenarios locked/i)).toBeVisible({ timeout: 10000 })
+    // Crypto Lab redesign (commit ee6651aa) changed offline behavior: rather
+    // than listing sandbox scenarios "locked", it STRIPS them from the grid and
+    // the runtime toggle's hint reports the hidden count.
+    await expect(page.getByText(/Docker scenarios hidden/i)).toBeVisible({ timeout: 10000 })
 
-    // The scenario is still in the grid (not stripped), but locked.
-    const card = page.locator('[role="button"]', { hasText: SANDBOX_TILE }).first()
-    await expect(card).toBeVisible()
-    await expect(card.getByText('needs runtime')).toBeVisible()
+    // The scenario is stripped from the grid while the runtime is off.
+    await expect(page.locator('[role="button"]', { hasText: SANDBOX_TILE })).toHaveCount(0)
 
-    // The category surfaces an inline "Start runtime" call to action.
-    await expect(page.getByRole('button', { name: 'Start runtime' })).toBeVisible()
+    // The runtime toggle is present and reports the off state.
+    await expect(page.getByRole('button', { name: 'Sandbox runtime' })).toHaveAttribute(
+      'aria-pressed',
+      'false'
+    )
   })
 
   test('opening an unlocked sandbox scenario routes to its embedded iframe', async ({ page }) => {

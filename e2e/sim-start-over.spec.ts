@@ -69,18 +69,25 @@ test('START OVER clears the assessment and re-locks the sim', async ({ page }) =
   })
 
   // /report computes + persists the assessment result → sim unlocks.
-  await page.goto('/report', { waitUntil: 'networkidle', timeout: 45_000 })
+  await page.goto('/report', { waitUntil: 'domcontentloaded', timeout: 45_000 })
   await expect
     .poll(() => page.evaluate(() => localStorage.getItem('pqc-assessment-result')), {
       timeout: 30_000,
     })
     .toBeTruthy()
-  await page.goto('/simulation', { waitUntil: 'networkidle', timeout: 45_000 })
+  // NOT networkidle: the PWA service worker precaches the whole build on first
+  // visit, so /simulation never goes network-idle within 45s. domcontentloaded
+  // + the End Quarter assertion is the real readiness signal (TRIAGE 2026-07-03).
+  await page.goto('/simulation', { waitUntil: 'domcontentloaded', timeout: 45_000 })
   await expect(page.getByRole('button', { name: /End Quarter/i })).toBeVisible({ timeout: 45_000 })
 
-  // Accept the confirm() dialog, then START OVER.
+  // "Start over" lives in the "⋯ MORE" overflow menu (RunActionsMenu, PR2 —
+  // collapsed the secondary run actions out of the header; TRIAGE 2026-07-03:
+  // the old always-visible "START OVER" button no longer exists, so the test
+  // must open the menu first).
   page.on('dialog', (d) => d.accept())
-  await page.getByRole('button', { name: /START OVER/i }).click()
+  await page.getByRole('button', { name: '⋯ MORE' }).click()
+  await page.getByRole('menuitem', { name: /Start over/i }).click()
 
   // Re-LOCKED: the assessment gate returns.
   await expect(page.getByText(/Simulation locked/i)).toBeVisible({ timeout: 15_000 })

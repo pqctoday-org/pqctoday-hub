@@ -42,16 +42,18 @@ test.beforeEach(async ({ page }) => {
 })
 
 test.describe('Algorithms — persona-aware defaults (plan §P0.2 / P1.2)', () => {
-  test('executive lands on the Detailed tab with status=Certified + NIST picks highlighted', async ({
+  test('executive lands on the Transition tab with its FIPS-picks persona hint', async ({
     page,
   }) => {
+    // Executive's default tab was moved 'detailed' → 'transition' in
+    // personaConfig.ts (commit 15f7f95c, Business persona Phase 3).
     await seedPersona(page, 'executive')
     await page.goto('/algorithms')
     await page.waitForLoadState('domcontentloaded')
 
     // Custom tabs.tsx renders <button data-workshop-target="tab-<value>"> with
     // data-state="active|inactive". Match the stable workshop-target attr.
-    await expect(page.locator('[data-workshop-target="tab-detailed"]')).toHaveAttribute(
+    await expect(page.locator('[data-workshop-target="tab-transition"]')).toHaveAttribute(
       'data-state',
       'active',
       { timeout: 15000 }
@@ -90,15 +92,16 @@ test.describe('Algorithms — persona-aware defaults (plan §P0.2 / P1.2)', () =
     await expect(page.getByText(/All Families/).first()).toBeVisible({ timeout: 10000 })
   })
 
-  test('binary personas hide the dropdown bar behind "More filters" by default', async ({
+  test('binary personas hide the dropdown bar behind the "Filters" disclosure by default', async ({
     page,
   }) => {
     await seedPersona(page, 'executive')
     await page.goto('/algorithms')
     await page.waitForLoadState('domcontentloaded')
 
-    // More filters disclosure is rendered.
-    const moreFilters = page.getByRole('button', { name: /More filters/i })
+    // The dropdown-bar disclosure toggle (renamed "More filters" → "Filters",
+    // commit ff3f309a) is rendered and starts collapsed for binary personas.
+    const moreFilters = page.getByRole('button', { name: /^Filters/i })
     await expect(moreFilters).toBeVisible({ timeout: 10000 })
     // Quick-view presets are rendered above the (collapsed) dropdown bar.
     await expect(page.getByRole('button', { name: /NIST picks/i })).toBeVisible()

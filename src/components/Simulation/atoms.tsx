@@ -279,16 +279,31 @@ export function Stat({
   value,
   sub,
   tone = 'text-foreground',
+  badge,
+  className = '',
 }: {
   label: string
   value: string
   sub: string
   tone?: string
+  /** Optional adornment next to the value — e.g. a <PlanningBadge> marking the
+   *  figure as an illustrative anchor rather than a published fact. */
+  badge?: ReactNode
+  /** Extra classes on the tile — e.g. a min-width so a value+badge pair has
+   *  room to sit inline in the otherwise-narrow KPI ribbon. */
+  className?: string
 }) {
   return (
-    <div className="min-w-0 flex-1 rounded-xl border border-border bg-card px-4 py-2.5">
+    <div
+      className={`min-w-0 flex-1 rounded-xl border border-border bg-card px-4 py-2.5 ${className}`}
+    >
       <Eyebrow>{label}</Eyebrow>
-      <div className={`mt-0.5 text-xl font-extrabold ${tone}`}>{value}</div>
+      {/* Badge rides next to the value (short, e.g. "3.0y"), not the label —
+          the label can wrap in a narrow tile and would clip the badge. */}
+      <div className="mt-0.5 flex items-center gap-1.5">
+        <span className={`text-xl font-extrabold ${tone}`}>{value}</span>
+        {badge}
+      </div>
       <div className="truncate text-[10.5px] text-muted-foreground">{sub}</div>
     </div>
   )

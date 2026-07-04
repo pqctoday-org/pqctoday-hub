@@ -78,13 +78,17 @@ test.describe('Simulation — Verification & Closure is played (PR-3)', () => {
         })
       )
     })
-    await page.goto('/report', { waitUntil: 'networkidle', timeout: 45_000 })
+    await page.goto('/report', { waitUntil: 'domcontentloaded', timeout: 45_000 })
     await expect
       .poll(() => page.evaluate(() => localStorage.getItem('pqc-assessment-result')), {
         timeout: 30_000,
       })
       .toBeTruthy()
-    await page.goto('/simulation', { waitUntil: 'networkidle', timeout: 45_000 })
+    // NOT networkidle: on a first visit the PWA service worker precaches the
+    // whole build in the background, so /simulation never goes network-idle
+    // within 45s. domcontentloaded + the End Quarter assertion below is the
+    // real readiness signal (TRIAGE.md 2026-07-03).
+    await page.goto('/simulation', { waitUntil: 'domcontentloaded', timeout: 45_000 })
     await expect(page.getByRole('button', { name: /End Quarter/i })).toBeVisible({
       timeout: 45_000,
     })
