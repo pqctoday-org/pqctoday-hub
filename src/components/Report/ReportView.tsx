@@ -535,7 +535,7 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
         </div>
       </div>
 
-      {result && !simEmbed && <ReportNextSteps />}
+      {result && !simEmbed && <ReportNextSteps result={result} />}
     </div>
   )
 }

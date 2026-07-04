@@ -1,18 +1,24 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { useMemo } from 'react'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Gamepad2, Map, Briefcase } from 'lucide-react'
 import clsx from 'clsx'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import type { PersonaId } from '@/data/learningPersonas'
+import type { AssessmentResult } from '@/hooks/assessmentTypes'
 import { logReportCta } from '@/utils/analytics'
 
 /**
  * Recommended next steps shown at the foot of a completed report so the user
  * isn't stranded — turns the report into a launchpad for the next action
  * (run the simulation, build the migration plan, or open the executive tools).
- * The three destinations are persona-ordered: the most relevant for the active
- * persona leads (emphasized), the rest follow.
+ *
+ * The lead destination is now derived from the result, not just the persona:
+ * a strong signal in the result (many vulnerable algorithms, a hard compliance
+ * mandate, a low readiness score) picks which of the three destinations leads;
+ * persona order is still used for the remaining two, and as the fallback
+ * ordering when no signal is strong enough to lead.
  */
 interface Step {
   key: 'next-simulation' | 'next-migrate' | 'next-business'
@@ -59,10 +65,39 @@ const ORDER: Record<PersonaId, StepKey[]> = {
 
 const DEFAULT_ORDER: StepKey[] = ['migrate', 'simulation', 'business']
 
-export const ReportNextSteps = () => {
+/** Prefer a concrete action over exploration when two signals tie. */
+const TIE_BREAK_ORDER: StepKey[] = ['migrate', 'business', 'simulation']
+
+/**
+ * Picks which destination leads based on the result, or `null` if no signal
+ * is strong enough to override the persona-based order.
+ */
+function resultLeadKey(result: AssessmentResult): StepKey | null {
+  const vulnerableCount = result.algorithmMigrations.filter((a) => a.quantumVulnerable).length
+  const hasHardMandate = result.complianceImpacts.some((c) => c.requiresPQC === true)
+  const readiness = result.categoryScores?.organizationalReadiness
+  const lowReadiness = readiness !== undefined && readiness < 40
+  const highRisk = result.riskLevel === 'critical' || result.riskLevel === 'high'
+
+  const scores: Record<StepKey, number> = {
+    migrate: vulnerableCount >= 3 ? 2 : vulnerableCount > 0 ? 1 : 0,
+    business: (hasHardMandate ? 2 : 0) + (highRisk ? 1 : 0),
+    simulation: lowReadiness ? 2 : 0,
+  }
+  const maxScore = Math.max(...Object.values(scores))
+  if (maxScore === 0) return null
+  return TIE_BREAK_ORDER.find((k) => scores[k] === maxScore) ?? null
+}
+
+export const ReportNextSteps = ({ result }: { result?: AssessmentResult }) => {
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
-  // eslint-disable-next-line security/detect-object-injection
-  const order = (selectedPersona && ORDER[selectedPersona]) || DEFAULT_ORDER
+  const order = useMemo(() => {
+    // eslint-disable-next-line security/detect-object-injection
+    const personaOrder = (selectedPersona && ORDER[selectedPersona]) || DEFAULT_ORDER
+    const lead = result ? resultLeadKey(result) : null
+    if (!lead) return personaOrder
+    return [lead, ...personaOrder.filter((k) => k !== lead)]
+  }, [selectedPersona, result])
 
   return (
     <section
