@@ -89,10 +89,18 @@ function programCharterState(sector: DemoSector): CharterState {
         : 'Chief Information Security Officer'
   return {
     programName: 'Post-Quantum Cryptography Migration Program',
+    purpose:
+      'Migrate the enterprise to NIST-standardized post-quantum cryptography ahead of mandate deadlines — protecting harvest-now-decrypt-later data and long-lived trust anchors — and establish durable crypto-agility.',
+    scopeInclude:
+      'Internet-exposed key exchange (TLS, VPN), >10-year secrecy data, and signature/PKI trust anchors across Tier-1 systems (Two-Track: HNDL + TNFL).',
+    scopeExclude:
+      'Systems past their confidentiality horizon or slated for retirement — crypto-shred / decommission rather than migrate.',
     sponsorName: sponsorTitle,
     sponsorTitle,
     qrpmName: 'Head of Cryptographic Engineering',
-    cadence: 'Monthly',
+    cadencePmo: 'Weekly',
+    cadenceSteerCo: 'Monthly',
+    cadenceBoard: 'Quarterly',
     budgetYear1: `${budget(sector, 1.8)} — discovery, tooling, 2–3 hybrid pilots, training`,
     budgetMultiYear: 'Phased multi-year program aligned to infrastructure refresh cycles',
     budgetHorizonYears: '3',
@@ -104,10 +112,14 @@ function programCharterState(sector: DemoSector): CharterState {
       string,
       boolean
     >,
+    successCriteria:
+      'Phase-0 gate passed; board KPI pack baselined (Coverage, Trust, Inventory, Vendors, Agility) with Year-1 targets; CBOM v1 at ≥70% Tier-1 coverage; two hybrid pilots (TLS, VPN) live.',
     riskAppetiteStatement:
       'HNDL: ≤20% of >10-year secrecy data quantum-vulnerable by end of 2027, 0% by end of 2029. ' +
       'TNFL: all production software/firmware signing on NIST-approved quantum-resistant ' +
       'signatures by end of 2027.',
+    escalationTriggers:
+      'Escalate to SteerCo/Board on: a material change in CRQC timeline estimates; the program running >6 months behind the regulatory buffer; a confirmed vulnerability in a deployed PQC algorithm; a Tier-1 vendor abandoning PQC without an alternative.',
   }
 }
 
