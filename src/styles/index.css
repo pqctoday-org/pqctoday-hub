@@ -30,6 +30,7 @@
 
   --color-primary: hsl(var(--primary));
   --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary-legible: hsl(var(--primary-legible));
 
   --color-secondary: hsl(var(--secondary));
   --color-secondary-foreground: hsl(var(--secondary-foreground));
@@ -229,6 +230,10 @@
     --popover-foreground: 222.2 84% 4.9%;
     --primary: 189 90% 40%;
     --primary-foreground: 210 40% 98%;
+    /* Darker same-hue variant for small/thin TEXT on light surfaces — --primary
+       itself is ~3.2:1 against white at text-xs/sm weight (fails WCAG AA 4.5:1).
+       Use `text-primary-legible` instead of `text-primary` for body-sized text. */
+    --primary-legible: 189 90% 28%;
     --secondary: 255 85% 60%;
     --secondary-foreground: 222.2 47.4% 11.2%;
     --tertiary: 270 95% 65%;
@@ -299,6 +304,8 @@
     --popover-foreground: 210 40% 98%;
     --primary: 189 83% 53%;
     --primary-foreground: 222.2 47.4% 11.2%;
+    /* --primary already clears AA against the dark background at text sizes. */
+    --primary-legible: 189 83% 53%;
     --secondary: 255 91% 76%;
     --secondary-foreground: 210 40% 98%;
     --tertiary: 270 91% 65%;
