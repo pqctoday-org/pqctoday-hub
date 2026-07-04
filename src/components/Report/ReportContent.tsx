@@ -31,6 +31,7 @@ import { useAssessmentStore } from '../../store/useAssessmentStore'
 import { useMigrateSelectionStore } from '../../store/useMigrateSelectionStore'
 import { useMigrationWorkflowStore } from '../../store/useMigrationWorkflowStore'
 import { usePersonaStore } from '../../store/usePersonaStore'
+import { useReportOwnershipStore } from '../../store/useReportOwnershipStore'
 import {
   PERSONA_NAV_PATHS,
   ALWAYS_VISIBLE_PATHS,
@@ -518,6 +519,20 @@ export const ReportContent: React.FC<AssessReportProps> = ({
   const restoreAllThreats = useAssessmentStore((s) => s.restoreAllThreats)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const hiddenProducts = useMigrateSelectionStore((s) => s.hiddenProducts)
+  // Subscribe to each primitive field separately — a selector that builds a new
+  // object every call breaks useSyncExternalStore's snapshot caching (zustand +
+  // React 18) and can trigger "getSnapshot should be cached" render loops.
+  const ownershipProgramOwner = useReportOwnershipStore((s) => s.programOwner)
+  const ownershipBudgetOwner = useReportOwnershipStore((s) => s.budgetOwner)
+  const ownershipAccountableExecutive = useReportOwnershipStore((s) => s.accountableExecutive)
+  const ownership = useMemo(
+    () => ({
+      programOwner: ownershipProgramOwner,
+      budgetOwner: ownershipBudgetOwner,
+      accountableExecutive: ownershipAccountableExecutive,
+    }),
+    [ownershipProgramOwner, ownershipBudgetOwner, ownershipAccountableExecutive]
+  )
 
   // Migration-Program phase overlay: when `?phase=` is active, narrow the report
   // to the sections that *communicate* that phase (per REPORT_SECTION_TO_CSWP39)
@@ -1920,6 +1935,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                   roiSummary={roiSummary}
                   generatedAt={result.generatedAt}
                   visible={showBoardBrief}
+                  ownership={ownership}
                 />
               </td>
             </tr>

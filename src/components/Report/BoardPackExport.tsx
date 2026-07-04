@@ -6,6 +6,7 @@ import type { AssessmentResult } from '@/hooks/assessmentTypes'
 import { downloadBoardPack } from '@/services/boardPackBuilder'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { useReportOwnershipStore } from '@/store/useReportOwnershipStore'
 import { logEvent, personaLabel } from '@/utils/analytics'
 import toast from 'react-hot-toast'
 
@@ -28,6 +29,9 @@ export const BoardPackExport: React.FC<Props> = ({ result, variant = 'default' }
   const country = useAssessmentStore((s) => s.country)
   const selectedRegion = usePersonaStore((s) => s.selectedRegion)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const programOwner = useReportOwnershipStore((s) => s.programOwner)
+  const budgetOwner = useReportOwnershipStore((s) => s.budgetOwner)
+  const accountableExecutive = useReportOwnershipStore((s) => s.accountableExecutive)
   const [status, setStatus] = useState<'idle' | 'busy' | 'done'>('idle')
 
   const handleClick = async () => {
@@ -42,6 +46,9 @@ export const BoardPackExport: React.FC<Props> = ({ result, variant = 'default' }
           region: selectedRegion ?? undefined,
           persona: selectedPersona,
           generatedAt: new Date().toISOString(),
+          programOwner: programOwner || undefined,
+          budgetOwner: budgetOwner || undefined,
+          accountableExecutive: accountableExecutive || undefined,
         },
         appVersion: typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : undefined,
       })
