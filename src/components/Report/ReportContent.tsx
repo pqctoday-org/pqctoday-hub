@@ -60,6 +60,7 @@ import { GlossaryAutoWrap } from '../PKILearning/common/GlossaryAutoWrap'
 import { MigrationRoadmap } from './MigrationRoadmap'
 import { MigrationToolkit } from './MigrationToolkit'
 import { VendorRiskSection } from './sections/VendorRiskSection'
+import { DiscoverySection } from './sections/DiscoverySection'
 import { ReportMethodologyModal } from './ReportMethodologyModal'
 import { SectionInfoModal } from './SectionInfoModal'
 import { ROICalculatorSection } from '../shared/ROICalculatorSection'
@@ -1185,6 +1186,18 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         </div>
                       </div>
                     )}
+
+                    {/* Cryptographic Discovery */}
+                    {phaseVisible('discovery') &&
+                      cfg('discovery').state !== 'hidden' &&
+                      result.assessmentProfile && (
+                        <DiscoverySection
+                          algorithmsSelected={result.assessmentProfile.algorithmsSelected}
+                          algorithmCategories={result.assessmentProfile.algorithmCategories}
+                          algorithmUnknown={result.assessmentProfile.algorithmUnknown}
+                          defaultOpen={cfg('discovery').state === 'open'}
+                        />
+                      )}
 
                     {/* Algorithm Migration Matrix */}
                     {phaseVisible('algorithmMigration') &&

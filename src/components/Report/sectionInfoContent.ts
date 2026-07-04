@@ -275,6 +275,23 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
     ],
   },
 
+  discovery: {
+    title: 'Cryptographic Discovery',
+    summary:
+      'Frames "where is my crypto" — the standard first pillar of a PQC migration — using your self-reported algorithms/families as a starting inventory, not a scan of your actual systems.',
+    wizardInputs: [
+      {
+        label: 'Algorithms (Step 3)',
+        detail:
+          'The specific algorithms (or, if unknown, the coarse families) you selected are listed as your starting inventory.',
+      },
+    ],
+    personaEffects: [{ persona: 'All personas', effect: 'Section is collapsed by default.' }],
+    dataSources: [
+      'Your own assessment answers only — no external inventory or scan data.',
+    ],
+  },
+
   algorithmMigration: {
     title: 'Algorithm Migration Priority',
     summary:
