@@ -46,7 +46,17 @@ export interface TourStage {
  * Order is program order; pilots (p5) and infrastructure (p6) kept separate.
  */
 export const EXEC_TOUR_STAGES: readonly TourStage[] = [
-  { phase: 'p0', depth: 'deep', revealArtifacts: ['program-charter', 'roi-model', 'board-deck'] },
+  {
+    phase: 'p0',
+    depth: 'deep',
+    revealArtifacts: [
+      'program-charter',
+      'roi-model',
+      'breach-scenario',
+      'cost-of-inaction',
+      'board-deck',
+    ],
+  },
   { phase: 'p1', depth: 'light', lightStep: { kind: 'learn', ref: 'data-asset-sensitivity' } },
   { phase: 'p2', depth: 'light', lightStep: { kind: 'learn', ref: 'cbom' } },
   { phase: 'p3', depth: 'deep', revealArtifacts: ['risk-register'] },
