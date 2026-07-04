@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { TrendingDown, AlertTriangle, DollarSign, Calendar } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import {
@@ -65,11 +65,20 @@ interface BreachOutput {
   deltaUSD: number
 }
 
-interface CostOfInactionAnalyzerProps {
-  breachOutput?: BreachOutput | null
+interface InactionOutput {
+  costOfInactionUSD: number
+  delayYears: number
 }
 
-export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({ breachOutput }) => {
+interface CostOfInactionAnalyzerProps {
+  breachOutput?: BreachOutput | null
+  onOutput?: (output: InactionOutput) => void
+}
+
+export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
+  breachOutput,
+  onOutput,
+}) => {
   const [selectedIndustry, setSelectedIndustry] = useState<string>('Finance & Banking')
   const [migrateNowDelay] = useState(0)
   const [delayYears, setDelayYears] = useState<number>(2)
@@ -104,6 +113,11 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({ 
   const finalNow = rowsNow[rowsNow.length - 1]
   const finalDelayed = rowsDelayed[rowsDelayed.length - 1]
   const costOfInaction = finalDelayed.total - finalNow.total
+
+  // Surface the headline figure so the final Board Pitch step can fold it in.
+  useEffect(() => {
+    onOutput?.({ costOfInactionUSD: costOfInaction, delayYears })
+  }, [onOutput, costOfInaction, delayYears])
 
   return (
     <div className="space-y-6">
