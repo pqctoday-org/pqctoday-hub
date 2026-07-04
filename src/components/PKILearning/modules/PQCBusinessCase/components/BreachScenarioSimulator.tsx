@@ -15,6 +15,7 @@ const AVAILABLE_INDUSTRIES = [
   'Retail & E-Commerce',
   'Aerospace',
   'Automotive',
+  'Education',
   'Other',
 ]
 
