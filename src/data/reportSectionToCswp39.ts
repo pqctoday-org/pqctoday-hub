@@ -21,6 +21,33 @@ export interface ReportSectionCswp39 {
 }
 
 /**
+ * SINGLE SOURCE OF TRUTH for the /report render + table-of-contents order.
+ * Previously duplicated as two independent `ReportSectionId[]` literals in
+ * ReportContent.tsx and ReportView.tsx — nothing enforced they matched, so a
+ * new section could compile fine while silently missing from the TOC or the
+ * render order in one of the two files. Both now import this constant.
+ *
+ * Order here IS the on-page order. Keep in sync with REPORT_SECTION_TO_CSWP39 /
+ * REPORT_SECTION_LABELS below — reportSectionToCswp39.test.ts asserts the sets
+ * match exactly, so an omission fails a test instead of shipping silently.
+ */
+export const REPORT_SECTION_ORDER: readonly ReportSectionId[] = [
+  'countryTimeline',
+  'riskScore',
+  'keyFindings',
+  'riskBreakdown',
+  'executiveSummary',
+  'assessmentProfile',
+  'hndlHnfl',
+  'algorithmMigration',
+  'complianceImpact',
+  'recommendedActions',
+  'migrationRoadmap',
+  'migrationToolkit',
+  'threatLandscape',
+]
+
+/**
  * Maps each /report section to the CSWP.39 process step it primarily serves and
  * the Applied Quantum phase it communicates. Surfaced via the CSWP.39
  * navigation legend at the top of /report so users can see how the long-form

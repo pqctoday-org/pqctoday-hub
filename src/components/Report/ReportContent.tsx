@@ -66,7 +66,11 @@ import type { ROISummary } from '../shared/ROICalculatorSection'
 import { KPITrendingSection } from './KPITrendingSection'
 import { BoardBriefSection } from './BoardBriefSection'
 import { BoardPackExport } from './BoardPackExport'
-import { REPORT_SECTION_LABELS, REPORT_SECTION_TO_CSWP39 } from '../../data/reportSectionToCswp39'
+import {
+  REPORT_SECTION_ORDER,
+  REPORT_SECTION_LABELS,
+  REPORT_SECTION_TO_CSWP39,
+} from '../../data/reportSectionToCswp39'
 import { FRAMEWORK_PHASES } from '../../data/frameworkPhases'
 import { usePhaseFilter } from '../../hooks/usePhaseFilter'
 import { formatDriver } from '../../data/driverLabels'
@@ -550,25 +554,6 @@ export const ReportContent: React.FC<AssessReportProps> = ({
   /** Config-driven section state resolver. */
   const cfg = (sectionId: ReportSectionId) =>
     getReportSectionConfig(selectedPersona, sectionId, showFullReport)
-
-  const REPORT_SECTION_ORDER: ReportSectionId[] = useMemo(
-    () => [
-      'countryTimeline',
-      'riskScore',
-      'keyFindings',
-      'riskBreakdown',
-      'executiveSummary',
-      'assessmentProfile',
-      'hndlHnfl',
-      'algorithmMigration',
-      'complianceImpact',
-      'recommendedActions',
-      'migrationRoadmap',
-      'migrationToolkit',
-      'threatLandscape',
-    ],
-    []
-  )
 
   /** Whether the current persona has any hidden sections (enables summary/full toggle). */
   const hasSummaryMode = useMemo(() => {
