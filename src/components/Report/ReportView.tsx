@@ -16,8 +16,7 @@ import {
 import { useModuleStore } from '../../store/useModuleStore'
 import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
 import { REGION_COUNTRIES_MAP, getReportSectionConfig } from '../../data/personaConfig'
-import type { ReportSectionId } from '../../data/personaConfig'
-import { REPORT_SECTION_LABELS } from '../../data/reportSectionToCswp39'
+import { REPORT_SECTION_ORDER, REPORT_SECTION_LABELS } from '../../data/reportSectionToCswp39'
 import {
   AVAILABLE_INDUSTRIES,
   AVAILABLE_ALGORITHMS,
@@ -56,22 +55,6 @@ const VALID_COMPLIANCE = new Set(AVAILABLE_COMPLIANCE)
 const VALID_USE_CASES = new Set(AVAILABLE_USE_CASES)
 const VALID_INFRA = new Set(AVAILABLE_INFRASTRUCTURE)
 const VALID_COUNTRIES = new Set(Object.values(REGION_COUNTRIES_MAP).flat())
-
-const REPORT_SECTION_ORDER: ReportSectionId[] = [
-  'countryTimeline',
-  'riskScore',
-  'keyFindings',
-  'riskBreakdown',
-  'executiveSummary',
-  'assessmentProfile',
-  'hndlHnfl',
-  'algorithmMigration',
-  'complianceImpact',
-  'recommendedActions',
-  'migrationRoadmap',
-  'migrationToolkit',
-  'threatLandscape',
-]
 
 /**
  * Persona-flavored maturity tier chip rendered just under the page header
