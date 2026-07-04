@@ -361,12 +361,14 @@ describe('board-ready-composite (E4)', () => {
           quantumExposure: 80,
           migrationComplexity: 60,
           regulatoryPressure: 40,
-          organizationalReadiness: 20,
+          // higher-is-better readiness of 80 → concern 20, matching the other
+          // three concern terms' average
+          organizationalReadiness: 80,
         },
       })
     )
     const brc = dims.find((d) => d.id === 'board-ready-composite')
-    // avg = 50 → KPI = 50
+    // concern avg = (80 + 60 + 40 + (100-80)) / 4 = 50 → KPI = 100 - 50 = 50
     expect(brc?.autoScore).toBe(50)
     expect(brc?.disabled).toBe(false)
   })
