@@ -181,7 +181,7 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
       id: 'G1',
       criterion:
         'Scoping doc done; Priority-A inventory ≥90%; classical findings reported; continuous discovery live',
-      authority: 'Cryptographic Architect',
+      authority: 'SteerCo',
     },
     cswp39Zones: ['assets'],
     cswp39Steps: ['inventory'],
@@ -211,7 +211,7 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
       id: 'G2',
       criterion:
         'CBOM live for Layers 1–2; freshness governance enforced; protection controls applied',
-      authority: 'Cryptographic Architect',
+      authority: 'SteerCo',
     },
     cswp39Zones: ['assets'],
     cswp39Steps: ['inventory'],
@@ -237,7 +237,7 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     gate: {
       id: 'G3',
       criterion: 'Risk scoring complete; QRA with prioritized backlog delivered',
-      authority: 'QRPM',
+      authority: 'Executive Sponsor',
     },
     cswp39Zones: ['risk-management'],
     cswp39Steps: ['identify-gaps', 'prioritise'],
@@ -265,7 +265,7 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     gate: {
       id: 'G4',
       criterion: 'Multi-year roadmap approved; Year 1 plan resourced',
-      authority: 'QRPM',
+      authority: 'SteerCo',
     },
     cswp39Zones: ['migration', 'governance'],
     cswp39Steps: ['implement'],

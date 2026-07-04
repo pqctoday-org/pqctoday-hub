@@ -31,7 +31,15 @@ export function SimScenarioIntroCard({
 
         <div className="flex shrink-0 items-center justify-between gap-3 border-t border-border px-6 py-3">
           <span className="font-mono text-[11px] text-muted-foreground">
-            Applied Quantum PQC Migration Framework v2.1
+            Applied Quantum PQC Migration Framework v2.1 by Marin Ivezić ·{' '}
+            <a
+              href="https://creativecommons.org/licenses/by/4.0/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-foreground"
+            >
+              CC BY 4.0
+            </a>
           </span>
           <Button
             onClick={onBegin}
