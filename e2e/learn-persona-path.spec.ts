@@ -2,11 +2,18 @@
 import { test, expect, type Page } from '@playwright/test'
 
 /**
- * P0-P1 — Learn hub persona-path view.
+ * Learn hub — My Path (persona journey) view.
  *
- * Verifies the persona-overwhelm plan: every persona except researcher lands
- * on a curated `'path'` view above the fold; the catalog is one click behind
- * `<details>`; curious is no longer force-filtered to 'All'.
+ * The /learn page was redesigned (commit 2add4c82) into an explicit "My Path" vs
+ * "Browse all" mode switch. My Path is the curated persona journey (the old
+ * "path view"); its depth is controlled by an Essentials⇄Full "Path depth"
+ * toggle (the redesign's replacement for the old "Show me everything" escape).
+ * Every persona now defaults to My Path — the old "researcher/null stay on the
+ * stack catalog" behavior is gone — and the researcher taxonomy filter moved
+ * into Browse's Advanced tray. Two concepts from the old spec were dropped by
+ * the redesign and are re-pointed here: the "Show me everything (advanced)"
+ * escape (now: switch to Browse) and the per-card "Try in playground" affordance
+ * (removed from My Path).
  */
 
 type PersonaId = 'executive' | 'developer' | 'architect' | 'researcher' | 'ops' | 'curious'
@@ -14,7 +21,6 @@ type PersonaId = 'executive' | 'developer' | 'architect' | 'researcher' | 'ops' 
 const seedPersona = async (page: Page, persona: PersonaId | null) => {
   await page.addInitScript(
     ([p]) => {
-      // Suppress WhatsNew modal that intercepts clicks (per CLAUDE.md E2E protocol).
       localStorage.setItem(
         'pqc-version-storage',
         JSON.stringify({ state: { lastSeenVersion: '99.0.0' }, version: 0 })
@@ -23,7 +29,6 @@ const seedPersona = async (page: Page, persona: PersonaId | null) => {
         'pqc-disclaimer-storage',
         JSON.stringify({ state: { acknowledgedMajorVersion: 99 }, version: 0 })
       )
-      // Suppress the GuidedTour overlay (it blocks the page on first visit).
       localStorage.setItem('pqc-tour-completed', 'true')
       if (p !== null) {
         localStorage.setItem(
@@ -44,7 +49,6 @@ const seedPersona = async (page: Page, persona: PersonaId | null) => {
           })
         )
       }
-      // Reset the curious-escape so each test starts on the curated path.
       localStorage.setItem(
         'pqc-learn-storage',
         JSON.stringify({
@@ -57,114 +61,108 @@ const seedPersona = async (page: Page, persona: PersonaId | null) => {
   )
 }
 
-test.describe('Learn — persona-path view', () => {
+/** My Path renders a persona's curated journey with an Essentials⇄Full "Path
+ * depth" toggle — the reliable "a curated path rendered" signal. */
+const pathDepthToggle = (page: Page) => page.getByRole('tablist', { name: /Path depth/i })
+
+test.describe('Learn — My Path (persona journey) view', () => {
   for (const persona of ['executive', 'developer', 'architect', 'ops'] as const) {
-    test(`${persona} lands on the curated path with phase boundaries`, async ({ page }) => {
+    test(`${persona} lands on My Path with a curated journey`, async ({ page }) => {
       await seedPersona(page, persona)
       await page.goto('/learn')
 
-      // Path view exposes the "Browse all" details element. Stack-mode pages don't.
-      // The hub is lazy-loaded; allow ample budget for the chunk to compile cold
-      // (~6-8s observed for executive).
-      await expect(page.getByText(/Browse all \d+ modules \(\d+ tracks\)/i).first()).toBeVisible({
-        timeout: 25000,
-      })
+      // The Path-depth toggle only renders when a curated persona journey is
+      // shown — proving My Path (not the Browse catalog) is the landing view.
+      // The lazy chunk can take a few seconds cold.
+      await expect(pathDepthToggle(page)).toBeVisible({ timeout: 25000 })
 
-      // Catalog is collapsed behind <details> by default
-      const details = page.locator('details').filter({
-        hasText: /Browse all \d+ modules/i,
-      })
-      await expect(details).toHaveCount(1)
+      // The mode switch exposes both My Path (active) and the Browse escape.
+      await expect(page.getByRole('button', { name: /^My Path/ })).toBeVisible()
+      await expect(page.getByRole('button', { name: /^Browse all/ })).toBeVisible()
+
+      // The meta line summarises the curated path as "<label> · N modules · ~Nh".
+      await expect(page.getByText(/\d+ modules · ~\d+h/).first()).toBeVisible()
     })
   }
 
-  test('curious lands on the curated path (NOT the unfiltered catalog) — P0-1 regression guard', async ({
-    page,
-  }) => {
+  test('curious lands on My Path (not the unfiltered catalog)', async ({ page }) => {
     await seedPersona(page, 'curious')
     await page.goto('/learn')
 
-    // Same affordance as the other personas — proves selectedPersonaFilter is
-    // 'curious', not 'All'.
-    await expect(page.getByText(/Browse all \d+ modules/i).first()).toBeVisible({
-      timeout: 25000,
-    })
-
-    // The curious "Show me everything (advanced)" escape is present.
-    await expect(page.getByRole('button', { name: /Show me everything/i })).toBeVisible()
+    // Same curated-journey affordance as the other personas — proves curious is
+    // NOT dumped into the full catalog.
+    await expect(pathDepthToggle(page)).toBeVisible({ timeout: 25000 })
   })
 
-  test('curious "Show me everything" reveals the stack catalog', async ({ page }) => {
+  test('the Browse escape reveals the full catalog', async ({ page }) => {
+    // Replaces the old curious "Show me everything" escape (removed in the
+    // redesign): "Browse all" is now the explicit way to leave the curated path
+    // and see the whole catalog.
     await seedPersona(page, 'curious')
     await page.goto('/learn')
+    await expect(pathDepthToggle(page)).toBeVisible({ timeout: 25000 })
 
-    // Wait for path view to mount before clicking the escape.
-    await expect(page.getByRole('button', { name: /Show me everything/i })).toBeVisible({
-      timeout: 25000,
+    await page.getByRole('button', { name: /^Browse all/ }).click()
+
+    // Catalog is now shown: its search filter appears and the curated Path-depth
+    // toggle is gone.
+    await expect(page.getByRole('textbox', { name: /Search modules/i })).toBeVisible({
+      timeout: 8000,
     })
-    await page.getByRole('button', { name: /Show me everything/i }).click()
-
-    // After the escape, the curated banner / Browse-all details element should
-    // be gone (viewMode flipped to 'stack').
-    await expect(page.getByText(/Browse all \d+ modules/i)).toHaveCount(0)
+    await expect(pathDepthToggle(page)).toHaveCount(0)
   })
 
-  test('researcher stays on stack mode — PersonaPathView NOT rendered', async ({ page }) => {
+  test('researcher also lands on My Path (the redesign unified the default)', async ({ page }) => {
+    // The old behavior — researcher forced onto the stack catalog — no longer
+    // exists; every persona now defaults to My Path.
     await seedPersona(page, 'researcher')
     await page.goto('/learn')
 
-    // Wait for the hub h1 to settle so we know lazy-load is done.
-    await expect(page.getByRole('heading', { level: 1, name: /Learning Workshops/i })).toBeVisible({
-      timeout: 25000,
-    })
-    await expect(page.getByText(/Browse all \d+ modules/i)).toHaveCount(0)
+    await expect(pathDepthToggle(page)).toBeVisible({ timeout: 25000 })
+    await expect(page.getByRole('button', { name: /^Browse all/ })).toBeVisible()
   })
 
-  test('null persona keeps stack default — no regression', async ({ page }) => {
+  test('null persona lands on My Path with no curated path yet', async ({ page }) => {
     await seedPersona(page, null)
     await page.goto('/learn')
 
-    await expect(page.getByRole('heading', { level: 1, name: /Learning Workshops/i })).toBeVisible({
-      timeout: 25000,
-    })
-    await expect(page.getByText(/Browse all \d+ modules/i)).toHaveCount(0)
+    // My Path is the default mode, but with no persona there is no curated path,
+    // so the Path-depth toggle is absent — the user is prompted to pick a role.
+    await expect(page.getByRole('button', { name: /^My Path/ })).toBeVisible({ timeout: 25000 })
+    await expect(pathDepthToggle(page)).toHaveCount(0)
   })
 
-  test('P2-1: ops persona sees the "Try in playground" affordance on mapped module cards', async ({
-    page,
-  }) => {
+  test('ops My Path shows the curated journey with switchable depth', async ({ page }) => {
+    // Replaces the old "Try in playground" per-card test (that affordance was
+    // removed from My Path in the redesign). Verifies the curated path renders
+    // and its Essentials⇄Full depth toggle actually switches.
     await seedPersona(page, 'ops')
     await page.goto('/learn')
 
-    await expect(page.getByText(/Browse all \d+ modules/i).first()).toBeVisible({
-      timeout: 25000,
-    })
-    // Open every persona-path phase so the mapped module cards (and their
-    // "Try in playground" buttons) become visible in the accessibility tree.
-    await page.evaluate(() => {
-      document
-        .querySelectorAll<HTMLDetailsElement>(
-          'section[aria-label="Your curated learning path"] details'
-        )
-        .forEach((d) => {
-          d.open = true
-        })
-    })
-    await expect(page.getByRole('button', { name: /Try in playground/i }).first()).toBeVisible({
-      timeout: 10000,
-    })
+    const toggle = pathDepthToggle(page)
+    await expect(toggle).toBeVisible({ timeout: 25000 })
+
+    // Essentials is the default; switching to Full is honored (reflected in ?tier=).
+    await toggle.getByRole('tab', { name: /Full/i }).click()
+    await expect(page).toHaveURL(/tier=full/)
   })
 
-  test('P2-3: researcher persona sees the algorithm/standard taxonomy filter above stack', async ({
-    page,
-  }) => {
+  test('researcher taxonomy filter lives in Browse’s Advanced tray', async ({ page }) => {
+    // The algorithm/standard taxonomy filter moved from a standalone strip into
+    // the Browse catalog's Advanced tray (BrowseAllView).
     await seedPersona(page, 'researcher')
-    await page.goto('/learn')
+    await page.goto('/learn?mode=browse')
 
+    // Open the Advanced tray, then the taxonomy region appears.
+    await page
+      .getByRole('button', { name: /Advanced/i })
+      .first()
+      .click()
     const region = page.getByRole('region', {
-      name: /Researcher: browse modules by algorithm or standard/i,
+      name: /browse modules by algorithm or standard/i,
     })
-    await expect(region).toBeVisible({ timeout: 25000 })
+    await expect(region).toBeVisible({ timeout: 15000 })
+
     // The two top-level chips are scoped inside the taxonomy region so they
     // don't collide with the global "Algorithms view" nav button.
     await region.getByRole('button', { name: 'Algorithm', exact: true }).click()

@@ -819,6 +819,12 @@ const FRAMEWORK = {
           'migration-verification',
           'Reference: the program closure record & 5-point evidence standard'
         ),
+        // Executive Report embed (refId 'report' ∈ REFERENCE_EMBED_IDS) — opens
+        // the board-facing closure summary INSIDE the sim rather than navigating
+        // out to /report. Restored 07032026: the 06302026 tree dropped the only
+        // report entry point from Verification & Closure when VC.1's closure-
+        // record step was repointed at the migration-verification tool.
+        R('report', 'Reference: the Executive Report — board-facing closure summary'),
         R('compliance', 'Reference: closeout attestations & applicable mandates'),
       ],
     },

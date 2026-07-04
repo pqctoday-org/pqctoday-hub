@@ -39,7 +39,8 @@ test.describe('PQC SSH Simulator', () => {
   })
 
   test('renders comparison panel placeholders for both legs', async ({ page }) => {
-    await expect(page.getByText('Classical (ed25519 + curve25519)')).toBeVisible()
+    // Classical baseline was changed to the ECDSA host key (commit 87042141).
+    await expect(page.getByText('Classical (ecdsa-nistp256 + curve25519)')).toBeVisible()
     await expect(page.getByText(/ML-DSA-65.*ML-KEM-768/i)).toBeVisible()
   })
 
@@ -63,7 +64,9 @@ test.describe('PQC SSH Simulator', () => {
   test('links to the learn module', async ({ page }) => {
     const learnLink = page.getByRole('link', { name: 'Learn', exact: true })
     await expect(learnLink).toBeVisible()
-    await expect(learnLink).toHaveAttribute('href', '/learn/network-security-pqc')
+    // The SSH sim links to the SSH-specific learn module, not the broader
+    // network-security one (SshSimulationPanel.tsx:230, workshopRegistry).
+    await expect(learnLink).toHaveAttribute('href', '/learn/vpn-ssh-pqc')
   })
 
   test('shows SSH Key Roles learn section', async ({ page }) => {
@@ -96,7 +99,10 @@ test.describe('PQC SSH Simulator', () => {
   })
 
   test('appears in the playground grid', async ({ page }) => {
-    await page.goto('/playground')
+    // The plain /playground landing (Overview tab) only lists beginner tools;
+    // this sim is 'advanced' + category 'Protocol Simulations' (workshopRegistry
+    // 268-274), so deep-link into its category to see it in the grid.
+    await page.goto('/playground?cat=Protocol%20Simulations')
     await expect(page.getByText('PQC SSH Simulator').first()).toBeVisible()
   })
 
