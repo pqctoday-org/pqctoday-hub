@@ -67,12 +67,19 @@ export const query = (
 
 export const discoverVersions = (protocolVersions: Array<[number, number]> = []): KmipNode[] =>
   protocolVersions.map(([major, minor]) =>
-    struct('ProtocolVersion', leaf('ProtocolVersionMajor', 'Integer', major), leaf('ProtocolVersionMinor', 'Integer', minor))
+    struct(
+      'ProtocolVersion',
+      leaf('ProtocolVersionMajor', 'Integer', major),
+      leaf('ProtocolVersionMinor', 'Integer', minor)
+    )
   )
 
 export const ping = (): KmipNode[] => []
 
-export const interop = (fn: 'Begin' | 'End' = 'Begin', identifier = 'kmip3-commands'): KmipNode[] => [
+export const interop = (
+  fn: 'Begin' | 'End' = 'Begin',
+  identifier = 'kmip3-commands'
+): KmipNode[] => [
   leaf('InteropFunction', 'Enumeration', fn),
   leaf('InteropIdentifier', 'TextString', identifier),
 ]
@@ -84,9 +91,12 @@ export const login = (leaseTime?: number, requestCount?: number): KmipNode[] => 
   return payload
 }
 
-export const logout = (ticket = ''): KmipNode[] => (ticket ? [leaf('Ticket', 'ByteString', ticket)] : [])
+export const logout = (ticket = ''): KmipNode[] =>
+  ticket ? [leaf('Ticket', 'ByteString', ticket)] : []
 
-export const log = (message = 'kmip3-commands log entry'): KmipNode[] => [leaf('LogMessage', 'TextString', message)]
+export const log = (message = 'kmip3-commands log entry'): KmipNode[] => [
+  leaf('LogMessage', 'TextString', message),
+]
 
 export const createCredential = (username: string, password?: string): KmipNode[] => {
   const cred = [leaf('Username', 'TextString', username)]
@@ -180,7 +190,9 @@ export const importObject = (
 export const exportObject = (uid: string): KmipNode[] => [uidLeaf(uid)]
 
 export const get = (uid: string, keyFormatType?: string): KmipNode[] =>
-  keyFormatType ? [uidLeaf(uid), leaf('KeyFormatType', 'Enumeration', keyFormatType)] : [uidLeaf(uid)]
+  keyFormatType
+    ? [uidLeaf(uid), leaf('KeyFormatType', 'Enumeration', keyFormatType)]
+    : [uidLeaf(uid)]
 
 export const locate = (): KmipNode[] => []
 
@@ -217,15 +229,17 @@ export const getAttributes = (uid: string, attributeReferences: string[] = []): 
 
 export const getAttributeList = (uid: string): KmipNode[] => [uidLeaf(uid)]
 
-export const addAttribute = (uid: string, name = 'Comment', value = 'kmip3-commands'): KmipNode[] => [
-  uidLeaf(uid),
-  struct('NewAttribute', leaf(name, 'TextString', value)),
-]
+export const addAttribute = (
+  uid: string,
+  name = 'Comment',
+  value = 'kmip3-commands'
+): KmipNode[] => [uidLeaf(uid), struct('NewAttribute', leaf(name, 'TextString', value))]
 
-export const modifyAttribute = (uid: string, name = 'Comment', value = 'kmip3-commands'): KmipNode[] => [
-  uidLeaf(uid),
-  struct('NewAttribute', leaf(name, 'TextString', value)),
-]
+export const modifyAttribute = (
+  uid: string,
+  name = 'Comment',
+  value = 'kmip3-commands'
+): KmipNode[] => [uidLeaf(uid), struct('NewAttribute', leaf(name, 'TextString', value))]
 
 export const deleteAttribute = (uid: string, attributeReference = 'Comment'): KmipNode[] => [
   uidLeaf(uid),
@@ -248,7 +262,8 @@ export const adjustAttribute = (
     leaf('AttributeReference', 'Enumeration', attributeReference),
     leaf('AdjustmentType', 'Enumeration', adjustmentType),
   ]
-  if (adjustmentValue !== undefined) payload.push(leaf('AdjustmentValue', 'Integer', adjustmentValue))
+  if (adjustmentValue !== undefined)
+    payload.push(leaf('AdjustmentValue', 'Integer', adjustmentValue))
   return payload
 }
 
@@ -259,7 +274,11 @@ export const setDefaults = (objectType = 'SymmetricKey', name?: string): KmipNod
   return [
     struct(
       'DefaultsInformation',
-      struct('ObjectDefaults', leaf('ObjectType', 'Enumeration', objectType), struct('Attributes', ...attrs))
+      struct(
+        'ObjectDefaults',
+        leaf('ObjectType', 'Enumeration', objectType),
+        struct('Attributes', ...attrs)
+      )
     ),
   ]
 }
@@ -267,20 +286,31 @@ export const setDefaults = (objectType = 'SymmetricKey', name?: string): KmipNod
 // ── 4. Cryptographic Services ───────────────────────────────────────────────
 
 export const encrypt = (uid: string, dataHex: string, ivHex?: string): KmipNode[] => {
-  const payload = [uidLeaf(uid), struct('CryptographicParameters'), leaf('Data', 'ByteString', dataHex)]
+  const payload = [
+    uidLeaf(uid),
+    struct('CryptographicParameters'),
+    leaf('Data', 'ByteString', dataHex),
+  ]
   if (ivHex) payload.push(leaf('IVCounterNonce', 'ByteString', ivHex))
   return payload
 }
 
 export const decrypt = (uid: string, dataHex: string, ivHex?: string): KmipNode[] => {
-  const payload = [uidLeaf(uid), struct('CryptographicParameters'), leaf('Data', 'ByteString', dataHex)]
+  const payload = [
+    uidLeaf(uid),
+    struct('CryptographicParameters'),
+    leaf('Data', 'ByteString', dataHex),
+  ]
   if (ivHex) payload.push(leaf('IVCounterNonce', 'ByteString', ivHex))
   return payload
 }
 
 export const sign = (uid: string, dataHex: string, algorithm?: string): KmipNode[] => {
   const payload = [uidLeaf(uid)]
-  if (algorithm) payload.push(struct('CryptographicParameters', leaf('CryptographicAlgorithm', 'Enumeration', algorithm)))
+  if (algorithm)
+    payload.push(
+      struct('CryptographicParameters', leaf('CryptographicAlgorithm', 'Enumeration', algorithm))
+    )
   payload.push(leaf('Data', 'ByteString', dataHex))
   return payload
 }
@@ -293,9 +323,15 @@ export const signatureVerify = (uid: string, dataHex: string, signatureHex: stri
 
 export const encapsulate = (uid: string): KmipNode[] => [uidLeaf(uid)]
 
-export const decapsulate = (uid: string, dataHex: string): KmipNode[] => [uidLeaf(uid), leaf('Data', 'ByteString', dataHex)]
+export const decapsulate = (uid: string, dataHex: string): KmipNode[] => [
+  uidLeaf(uid),
+  leaf('Data', 'ByteString', dataHex),
+]
 
-export const mac = (uid: string, dataHex: string): KmipNode[] => [uidLeaf(uid), leaf('Data', 'ByteString', dataHex)]
+export const mac = (uid: string, dataHex: string): KmipNode[] => [
+  uidLeaf(uid),
+  leaf('Data', 'ByteString', dataHex),
+]
 
 export const macVerify = (uid: string, dataHex: string, macDataHex: string): KmipNode[] => [
   uidLeaf(uid),
@@ -344,13 +380,16 @@ export const rekeyKeyPair = (uid: string, offset?: number): KmipNode[] => {
 
 // ── 5. RNG & PKCS#11 Passthrough ────────────────────────────────────────────
 
-export const rngRetrieve = (dataLength = 32): KmipNode[] => [leaf('DataLength', 'Integer', dataLength)]
+export const rngRetrieve = (dataLength = 32): KmipNode[] => [
+  leaf('DataLength', 'Integer', dataLength),
+]
 
 export const rngSeed = (dataHex: string): KmipNode[] => [leaf('Data', 'ByteString', dataHex)]
 
 export const pkcs11 = (fn = 'CGetInfo', inputParametersHex?: string): KmipNode[] => {
   const payload = [leaf('PKCS11Function', 'Enumeration', fn)]
-  if (inputParametersHex) payload.push(leaf('PKCS11InputParameters', 'ByteString', inputParametersHex))
+  if (inputParametersHex)
+    payload.push(leaf('PKCS11InputParameters', 'ByteString', inputParametersHex))
   return payload
 }
 
@@ -392,7 +431,13 @@ export const reProvision = (): KmipNode[] => []
 
 export const OP_TEMPLATES: OpTemplate[] = [
   // 1. Discovery & Session
-  { op: 'Query', category: 'Discovery & Session', spec: '§6.1.24 Query', supported: true, build: () => query() },
+  {
+    op: 'Query',
+    category: 'Discovery & Session',
+    spec: '§6.1.24 Query',
+    supported: true,
+    build: () => query(),
+  },
   {
     op: 'DiscoverVersions',
     category: 'Discovery & Session',
@@ -400,7 +445,13 @@ export const OP_TEMPLATES: OpTemplate[] = [
     supported: true,
     build: () => discoverVersions(),
   },
-  { op: 'Ping', category: 'Discovery & Session', spec: '§6.1.59 Ping', supported: true, build: () => ping() },
+  {
+    op: 'Ping',
+    category: 'Discovery & Session',
+    spec: '§6.1.59 Ping',
+    supported: true,
+    build: () => ping(),
+  },
   {
     op: 'Interop',
     category: 'Discovery & Session',
@@ -408,9 +459,27 @@ export const OP_TEMPLATES: OpTemplate[] = [
     supported: true,
     build: () => interop(),
   },
-  { op: 'Login', category: 'Discovery & Session', spec: '§6.1.45 Login', supported: true, build: () => login() },
-  { op: 'Logout', category: 'Discovery & Session', spec: '§6.1.46 Logout', supported: true, build: () => logout() },
-  { op: 'Log', category: 'Discovery & Session', spec: '§6.1.44 Log', supported: true, build: () => log() },
+  {
+    op: 'Login',
+    category: 'Discovery & Session',
+    spec: '§6.1.45 Login',
+    supported: true,
+    build: () => login(),
+  },
+  {
+    op: 'Logout',
+    category: 'Discovery & Session',
+    spec: '§6.1.46 Logout',
+    supported: true,
+    build: () => logout(),
+  },
+  {
+    op: 'Log',
+    category: 'Discovery & Session',
+    spec: '§6.1.44 Log',
+    supported: true,
+    build: () => log(),
+  },
   {
     op: 'CreateCredential',
     category: 'Discovery & Session',
@@ -441,7 +510,13 @@ export const OP_TEMPLATES: OpTemplate[] = [
   },
 
   // 2. Object Lifecycle
-  { op: 'Create', category: 'Object Lifecycle', spec: '§6.1.1 Create', supported: true, build: () => create() },
+  {
+    op: 'Create',
+    category: 'Object Lifecycle',
+    spec: '§6.1.1 Create',
+    supported: true,
+    build: () => create(),
+  },
   {
     op: 'CreateKeyPair',
     category: 'Object Lifecycle',
@@ -470,8 +545,20 @@ export const OP_TEMPLATES: OpTemplate[] = [
     supported: true,
     build: () => exportObject(''),
   },
-  { op: 'Get', category: 'Object Lifecycle', spec: '§6.1.4 Get', supported: true, build: () => get('') },
-  { op: 'Locate', category: 'Object Lifecycle', spec: '§6.1.8 Locate', supported: true, build: () => locate() },
+  {
+    op: 'Get',
+    category: 'Object Lifecycle',
+    spec: '§6.1.4 Get',
+    supported: true,
+    build: () => get(''),
+  },
+  {
+    op: 'Locate',
+    category: 'Object Lifecycle',
+    spec: '§6.1.8 Locate',
+    supported: true,
+    build: () => locate(),
+  },
   {
     op: 'Activate',
     category: 'Object Lifecycle',
@@ -479,7 +566,13 @@ export const OP_TEMPLATES: OpTemplate[] = [
     supported: true,
     build: () => activate(''),
   },
-  { op: 'Revoke', category: 'Object Lifecycle', spec: '§6.1.13 Revoke', supported: true, build: () => revoke('') },
+  {
+    op: 'Revoke',
+    category: 'Object Lifecycle',
+    spec: '§6.1.13 Revoke',
+    supported: true,
+    build: () => revoke(''),
+  },
   {
     op: 'Destroy',
     category: 'Object Lifecycle',
@@ -494,7 +587,13 @@ export const OP_TEMPLATES: OpTemplate[] = [
     supported: true,
     build: () => deactivate(''),
   },
-  { op: 'Check', category: 'Object Lifecycle', spec: '§6.1.9 Check', supported: true, build: () => check('') },
+  {
+    op: 'Check',
+    category: 'Object Lifecycle',
+    spec: '§6.1.9 Check',
+    supported: true,
+    build: () => check(''),
+  },
   {
     op: 'Archive',
     category: 'Object Lifecycle',
@@ -604,7 +703,13 @@ export const OP_TEMPLATES: OpTemplate[] = [
     supported: true,
     build: () => decrypt('', ''),
   },
-  { op: 'Sign', category: 'Cryptographic Services', spec: '§6.1.21 Sign', supported: true, build: () => sign('', '') },
+  {
+    op: 'Sign',
+    category: 'Cryptographic Services',
+    spec: '§6.1.21 Sign',
+    supported: true,
+    build: () => sign('', ''),
+  },
   {
     op: 'SignatureVerify',
     category: 'Cryptographic Services',
@@ -626,7 +731,13 @@ export const OP_TEMPLATES: OpTemplate[] = [
     supported: true,
     build: () => decapsulate('', ''),
   },
-  { op: 'MAC', category: 'Cryptographic Services', spec: '§6.1.23 MAC', supported: true, build: () => mac('', '') },
+  {
+    op: 'MAC',
+    category: 'Cryptographic Services',
+    spec: '§6.1.23 MAC',
+    supported: true,
+    build: () => mac('', ''),
+  },
   {
     op: 'MACVerify',
     category: 'Cryptographic Services',
@@ -634,7 +745,13 @@ export const OP_TEMPLATES: OpTemplate[] = [
     supported: true,
     build: () => macVerify('', '', ''),
   },
-  { op: 'Hash', category: 'Cryptographic Services', spec: '§6.1.53 Hash', supported: true, build: () => hash('') },
+  {
+    op: 'Hash',
+    category: 'Cryptographic Services',
+    spec: '§6.1.53 Hash',
+    supported: true,
+    build: () => hash(''),
+  },
   {
     op: 'DeriveKey',
     category: 'Cryptographic Services',

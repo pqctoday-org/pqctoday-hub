@@ -51,7 +51,12 @@ export interface TestResult {
  * handing out a distinct, never-reused slot per test within one page load
  * (e.g. a simple incrementing counter; slot 0 is reserved for the Agility/
  * Commands tabs' shared engine, so start numbering elsewhere). */
-export async function runCorpusTest(name: string, xmlText: string, table: CodepointTable, slot: number): Promise<TestResult> {
+export async function runCorpusTest(
+  name: string,
+  xmlText: string,
+  table: CodepointTable,
+  slot: number
+): Promise<TestResult> {
   const byName = classifyByName(name)
   if (byName) return { name, status: byName.status, detail: byName.detail, opsUsed: [] }
 
@@ -59,15 +64,26 @@ export async function runCorpusTest(name: string, xmlText: string, table: Codepo
   try {
     transcript = parseTranscriptXml(xmlText)
   } catch (e) {
-    return { name, status: 'SKIP_PARSE', detail: `XML parse: ${e instanceof Error ? e.message : String(e)}`, opsUsed: [] }
+    return {
+      name,
+      status: 'SKIP_PARSE',
+      detail: `XML parse: ${e instanceof Error ? e.message : String(e)}`,
+      opsUsed: [],
+    }
   }
 
   const ops = operationsUsed(transcript)
   const byOps = classifyByOps(ops)
-  if (byOps) return { name, status: byOps.status, detail: byOps.detail, opsUsed: Array.from(ops).sort() }
+  if (byOps)
+    return { name, status: byOps.status, detail: byOps.detail, opsUsed: Array.from(ops).sort() }
 
   if (transcript.length % 2 !== 0) {
-    return { name, status: 'SKIP_PARSE', detail: 'odd message count', opsUsed: Array.from(ops).sort() }
+    return {
+      name,
+      status: 'SKIP_PARSE',
+      detail: 'odd message count',
+      opsUsed: Array.from(ops).sort(),
+    }
   }
 
   const engine = await KmipEngine.boot(slot)
@@ -78,7 +94,10 @@ export async function runCorpusTest(name: string, xmlText: string, table: Codepo
     const req = transcript[i]
     const expectedRsp = transcript[i + 1]
     const pairIndex = i / 2
-    if (norm(req.tag) !== norm('RequestMessage') || norm(expectedRsp.tag) !== norm('ResponseMessage')) {
+    if (
+      norm(req.tag) !== norm('RequestMessage') ||
+      norm(expectedRsp.tag) !== norm('ResponseMessage')
+    ) {
       return {
         name,
         status: 'SKIP_PARSE',
@@ -92,14 +111,24 @@ export async function runCorpusTest(name: string, xmlText: string, table: Codepo
       const resolvedReq = bindings.resolveTree(req)
       requestBytes = engine.encodeTtlv(toWireTree(resolvedReq, table))
     } catch (e) {
-      return { name, status: 'ERROR', detail: `msg #${pairIndex}: encode request: ${e instanceof Error ? e.message : String(e)}`, opsUsed }
+      return {
+        name,
+        status: 'ERROR',
+        detail: `msg #${pairIndex}: encode request: ${e instanceof Error ? e.message : String(e)}`,
+        opsUsed,
+      }
     }
 
     let responseBytes: Uint8Array
     try {
       responseBytes = engine.submit(requestBytes)
     } catch (e) {
-      return { name, status: 'ERROR', detail: `msg #${pairIndex}: submit: ${e instanceof Error ? e.message : String(e)}`, opsUsed }
+      return {
+        name,
+        status: 'ERROR',
+        detail: `msg #${pairIndex}: submit: ${e instanceof Error ? e.message : String(e)}`,
+        opsUsed,
+      }
     }
     if (!responseBytes || responseBytes.length === 0) {
       return { name, status: 'FAIL', detail: `msg #${pairIndex}: engine returned 0 bytes`, opsUsed }
@@ -109,13 +138,23 @@ export async function runCorpusTest(name: string, xmlText: string, table: Codepo
     try {
       actualRsp = annotateNames(engine.decodeTtlv(responseBytes), table)
     } catch (e) {
-      return { name, status: 'FAIL', detail: `msg #${pairIndex}: decode response: ${e instanceof Error ? e.message : String(e)}`, opsUsed }
+      return {
+        name,
+        status: 'FAIL',
+        detail: `msg #${pairIndex}: decode response: ${e instanceof Error ? e.message : String(e)}`,
+        opsUsed,
+      }
     }
 
     bindings.harvestFromResponse(expectedRsp, actualRsp)
     const { ok, detail } = compareResponses(expectedRsp, actualRsp, bindings, table, undefined)
     if (!ok) {
-      return { name, status: 'FAIL', detail: `msg #${pairIndex}: response mismatch: ${detail}`, opsUsed }
+      return {
+        name,
+        status: 'FAIL',
+        detail: `msg #${pairIndex}: response mismatch: ${detail}`,
+        opsUsed,
+      }
     }
   }
 

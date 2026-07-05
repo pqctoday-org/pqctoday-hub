@@ -44,7 +44,12 @@ const RESULT_STATUS_SUCCESS = '0x00000000'
  * (`OperationNotSupported`, `PermissionDenied`, a lifecycle-state gate, …)
  * is never a throw, it's a normal decoded response with `ok: false` and a
  * `resultReason`. */
-export function runOp(engine: KmipEngine, table: CodepointTable, operation: string, payload: KmipNode[]): RunResult {
+export function runOp(
+  engine: KmipEngine,
+  table: CodepointTable,
+  operation: string,
+  payload: KmipNode[]
+): RunResult {
   const requestTree = toWireTree(buildRequest(operation, ...payload), table)
   const requestBytes = engine.encodeTtlv(requestTree)
   const responseBytes = engine.submit(requestBytes)

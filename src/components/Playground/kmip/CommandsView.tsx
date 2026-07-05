@@ -12,7 +12,16 @@
 // tag/value tree the Agility tab's Inspector uses — so the actual response
 // is readable, not just a pass/fail chip.
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { ChevronDown, ChevronRight, Play, Loader2, CheckCircle2, XCircle, KeyRound, Trash2 } from 'lucide-react'
+import {
+  ChevronDown,
+  ChevronRight,
+  Play,
+  Loader2,
+  CheckCircle2,
+  XCircle,
+  KeyRound,
+  Trash2,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { KmipEngine } from '@/wasm/kmip/kmipEngine'
 import { getCodepointTable, type CodepointTable } from '@/wasm/kmip/ttlv/codepointTable'
@@ -96,7 +105,9 @@ function OpRow({
     setRunning(true)
     try {
       const payload =
-        sharedUid && template.op in UID_OVERRIDES ? UID_OVERRIDES[template.op](sharedUid) : template.build()
+        sharedUid && template.op in UID_OVERRIDES
+          ? UID_OVERRIDES[template.op](sharedUid)
+          : template.build()
       onRun(template.op, runOp(engine, table, template.op, payload))
     } finally {
       setRunning(false)
@@ -133,18 +144,21 @@ function LogEntryView({ entry }: { entry: LogEntry }) {
   const { result } = entry
   return (
     <li className="rounded-lg border border-border bg-card p-2.5">
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center gap-2 text-left"
+        className="flex h-auto w-full items-center justify-start gap-2 rounded-none px-0 py-0 text-left font-normal"
       >
         {open ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
         <span className="font-mono text-xs font-semibold text-foreground">{entry.op}</span>
         <StatusBadge ok={result.ok} />
         {!result.ok && result.resultMessage && (
-          <span className="truncate text-[10.5px] text-muted-foreground">{result.resultMessage}</span>
+          <span className="truncate text-[10.5px] text-muted-foreground">
+            {result.resultMessage}
+          </span>
         )}
-      </button>
+      </Button>
       {open && (
         <div className="mt-2 max-h-72 overflow-auto rounded border border-border bg-muted/30 p-2">
           <WireTreeView root={result.responseTree} />
@@ -154,13 +168,7 @@ function LogEntryView({ entry }: { entry: LogEntry }) {
   )
 }
 
-export function CommandsView({
-  engine,
-  onChanged,
-}: {
-  engine: KmipEngine
-  onChanged: () => void
-}) {
+export function CommandsView({ engine, onChanged }: { engine: KmipEngine; onChanged: () => void }) {
   const [table, setTable] = useState<CodepointTable | null>(null)
   const [tableError, setTableError] = useState<string | null>(null)
   const [sharedUid, setSharedUid] = useState('')
@@ -202,7 +210,11 @@ export function CommandsView({
     })
 
   if (tableError) {
-    return <p className="text-sm text-destructive">Couldn't load the KMIP tag/enum table: {tableError}</p>
+    return (
+      <p className="text-sm text-destructive">
+        Couldn't load the KMIP tag/enum table: {tableError}
+      </p>
+    )
   }
 
   return (
@@ -237,15 +249,18 @@ export function CommandsView({
             const isCollapsed = collapsed.has(cat)
             return (
               <section key={cat} className="rounded-xl border border-border bg-card">
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={() => toggleCategory(cat)}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-left"
+                  className="flex h-auto w-full items-center justify-start gap-2 rounded-none px-3 py-2 text-left font-normal"
                 >
                   {isCollapsed ? <ChevronRight size={14} /> : <ChevronDown size={14} />}
-                  <span className="text-xs font-bold uppercase tracking-wide text-foreground">{cat}</span>
+                  <span className="text-xs font-bold uppercase tracking-wide text-foreground">
+                    {cat}
+                  </span>
                   <span className="text-[10.5px] text-muted-foreground">({templates.length})</span>
-                </button>
+                </Button>
                 {!isCollapsed && (
                   <ul className="space-y-1.5 px-3 pb-3">
                     {templates.map((t) => (
@@ -270,7 +285,9 @@ export function CommandsView({
       {/* ── Execution log — every run, decomposed via WireTreeView ────────── */}
       <div className="rounded-xl border border-border bg-card p-3 lg:sticky lg:top-2">
         <div className="mb-2 flex items-center gap-2">
-          <h3 className="text-xs font-bold uppercase tracking-wide text-foreground">Execution Log</h3>
+          <h3 className="text-xs font-bold uppercase tracking-wide text-foreground">
+            Execution Log
+          </h3>
           <span className="text-[10.5px] text-muted-foreground">({log.length})</span>
           <Button
             variant="ghost"
@@ -283,7 +300,9 @@ export function CommandsView({
           </Button>
         </div>
         {log.length === 0 ? (
-          <p className="text-[11px] italic text-muted-foreground">Run an operation to see its decomposed response here.</p>
+          <p className="text-[11px] italic text-muted-foreground">
+            Run an operation to see its decomposed response here.
+          </p>
         ) : (
           <ul className="max-h-[70vh] space-y-2 overflow-auto">
             {log.map((entry) => (
