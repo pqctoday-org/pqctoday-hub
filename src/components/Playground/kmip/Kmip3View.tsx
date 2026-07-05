@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-// Kmip3View — the "KMIP3.0" top-level tab: a category-sorted tester for
-// every KMIP 3.0 operation (Commands), a live in-browser replay of the real
-// OASIS conformance corpus (Corpus Replay), and the existing batch/macro
-// builder (Batch & Macros), unchanged, just relocated here from its own
-// top-level tab.
+// Kmip3View — the "KMIP3.0" top-level tab: six guided classical→PQC
+// walkthroughs (Learn, the on-ramp — first position), a category-sorted
+// tester for every KMIP 3.0 operation (Commands/Reference), a live
+// in-browser replay of the real OASIS conformance corpus (Corpus Replay),
+// and the existing batch/macro builder (Batch & Macros).
 import { useState } from 'react'
-import { Terminal, FlaskConical, Layers } from 'lucide-react'
+import { BookOpen, Terminal, FlaskConical, Layers } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import type { KmipEngine } from '@/wasm/kmip/kmipEngine'
@@ -16,10 +16,12 @@ import { CorpusReplayView } from './CorpusReplayView'
 import { GlossaryProvider } from './kmip3/GlossaryProvider'
 import { GlossaryRail } from './kmip3/GlossaryRail'
 import { KeystoreStrip } from './kmip3/KeystoreStrip'
+import { LearnView } from './kmip3/LearnView'
 
-type Kmip3Tab = 'commands' | 'corpus' | 'batch'
+type Kmip3Tab = 'learn' | 'commands' | 'corpus' | 'batch'
 
 const TABS: { id: Kmip3Tab; label: string; icon: typeof Terminal }[] = [
+  { id: 'learn', label: 'Learn', icon: BookOpen },
   { id: 'commands', label: 'Commands', icon: Terminal },
   { id: 'corpus', label: 'Corpus Replay', icon: FlaskConical },
   { id: 'batch', label: 'Batch & Macros', icon: Layers },
@@ -38,7 +40,7 @@ export function Kmip3View({
   onBusyChange: (running: boolean) => void
   onChanged: () => void
 }) {
-  const [tab, setTab] = useState<Kmip3Tab>('commands')
+  const [tab, setTab] = useState<Kmip3Tab>('learn')
 
   return (
     <GlossaryProvider>
@@ -73,6 +75,14 @@ export function Kmip3View({
               )
             })}
           </div>
+
+          {tab === 'learn' && (
+            <LearnView
+              engine={engine}
+              onChanged={onChanged}
+              onTryInReference={() => setTab('commands')}
+            />
+          )}
 
           {tab === 'commands' && <CommandsView engine={engine} onChanged={onChanged} />}
 
