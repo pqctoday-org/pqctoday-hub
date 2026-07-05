@@ -133,10 +133,10 @@ function LogEntryView({ entry }: { entry: LogEntry }) {
   const { result } = entry
   return (
     <li className="rounded-lg border border-border bg-card p-2.5">
-      <button
-        type="button"
+      <Button
+        variant="ghost"
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center gap-2 text-left"
+        className="flex h-auto w-full items-center justify-start gap-2 p-0 text-left font-normal hover:bg-transparent"
       >
         {open ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
         <span className="font-mono text-xs font-semibold text-foreground">{entry.op}</span>
@@ -144,7 +144,7 @@ function LogEntryView({ entry }: { entry: LogEntry }) {
         {!result.ok && result.resultMessage && (
           <span className="truncate text-[10.5px] text-muted-foreground">{result.resultMessage}</span>
         )}
-      </button>
+      </Button>
       {open && (
         <div className="mt-2 max-h-72 overflow-auto rounded border border-border bg-muted/30 p-2">
           <WireTreeView root={result.responseTree} />
@@ -237,15 +237,15 @@ export function CommandsView({
             const isCollapsed = collapsed.has(cat)
             return (
               <section key={cat} className="rounded-xl border border-border bg-card">
-                <button
-                  type="button"
+                <Button
+                  variant="ghost"
                   onClick={() => toggleCategory(cat)}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-left"
+                  className="flex h-auto w-full items-center justify-start gap-2 rounded-xl px-3 py-2 text-left font-normal hover:bg-transparent"
                 >
                   {isCollapsed ? <ChevronRight size={14} /> : <ChevronDown size={14} />}
                   <span className="text-xs font-bold uppercase tracking-wide text-foreground">{cat}</span>
                   <span className="text-[10.5px] text-muted-foreground">({templates.length})</span>
-                </button>
+                </Button>
                 {!isCollapsed && (
                   <ul className="space-y-1.5 px-3 pb-3">
                     {templates.map((t) => (

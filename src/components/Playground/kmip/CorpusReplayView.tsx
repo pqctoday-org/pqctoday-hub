@@ -198,15 +198,15 @@ export function CorpusReplayView() {
           const isCollapsed = collapsed.has(cat)
           return (
             <section key={cat} className="rounded-xl border border-border bg-card">
-              <button
-                type="button"
+              <Button
+                variant="ghost"
                 onClick={() => toggleCategory(cat)}
-                className="flex w-full items-center gap-2 px-3 py-2 text-left"
+                className="flex h-auto w-full items-center justify-start gap-2 rounded-xl px-3 py-2 text-left font-normal hover:bg-transparent"
               >
                 {isCollapsed ? <ChevronRight size={14} /> : <ChevronDown size={14} />}
                 <span className="text-xs font-bold uppercase tracking-wide text-foreground">{cat}</span>
                 <span className="text-[10.5px] text-muted-foreground">({entries.length})</span>
-              </button>
+              </Button>
               {!isCollapsed && (
                 <ul className="space-y-1.5 px-3 pb-3">
                   {entries.map((entry) => {
