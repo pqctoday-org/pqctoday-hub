@@ -9,7 +9,11 @@
  *  1. Verification recorder — the 5-point evidence standard. A system is
  *     "Verified" ONLY when all five evidence fields are present; otherwise it is
  *     "Unverified (n/5)". You cannot mark a system done off a change-ticket.
- *  2. Decommissioning log — classical key/cert retirement (SP 800-88). An
+ *  2. Decommissioning log — classical key/cert retirement per the org's own
+ *     key-destruction standard (e.g. NIST SP 800-88 purge/destroy procedures —
+ *     the framework names "the organization's key destruction standard," not
+ *     SP 800-88 specifically; SP 800-88 is media sanitization guidance whose
+ *     Purge/Destroy actions are commonly reused for key material). An
  *     unconfirmed signing-key retirement raises a Trust-Now-Forge-Later flag.
  *  3. Closure & BAU handover — closure sign-off + the permanent owners of the
  *     never-ending capabilities (Discovery, CBOM, Risk, Vendor governance).
@@ -66,9 +70,13 @@ const EVIDENCE_FIELDS: { key: EvidenceField; label: string; hint: string }[] = [
 const DECOMMISSION_KINDS = ['signing-key', 'certificate', 'kek', 'other'] as const
 type DecommissionKind = (typeof DECOMMISSION_KINDS)[number]
 
-// NIST SP 800-88 Rev.1 sanitization categories + the crypto-erase variant used
-// for key material. Drives the per-row "Method" select so the decommissioning
-// record captures *how* the material was destroyed, not just that it was.
+// "Purge"/"Destroy" borrow NIST SP 800-88 Rev.1's media-sanitization vocabulary
+// (a common, legitimate way orgs describe destroying key material) — but SP
+// 800-88 itself is not a key-destruction standard; the framework says to
+// follow your organization's own key-destruction standard, which may or may
+// not use SP 800-88's terms. Drives the per-row "Method" select so the
+// decommissioning record captures *how* the material was destroyed, not just
+// that it was.
 const DECOMMISSION_METHODS = [
   'SP 800-88 purge',
   'SP 800-88 destroy',
@@ -195,7 +203,7 @@ export function buildMarkdown(state: VerifyState): string {
     }
     lines.push('')
     lines.push(
-      '> A retired-but-trusted signing key is a standing Trust-Now-Forge-Later liability — destroy per NIST SP 800-88 and confirm.'
+      "> A retired-but-trusted signing key is a standing Trust-Now-Forge-Later liability — destroy per your organization's key-destruction standard and confirm."
     )
   }
   lines.push('')
@@ -310,7 +318,8 @@ export const MigrationVerification: React.FC = () => {
           </h2>
           <p className="text-sm text-muted-foreground">
             Prove migration with the 5-point evidence standard, log classical-key decommissioning
-            (SP 800-88), and record closure &amp; BAU handover. Verification ≠ migration.
+            per your organization's key-destruction standard, and record closure &amp; BAU handover.
+            Verification ≠ migration.
           </p>
         </div>
       </header>
@@ -401,7 +410,8 @@ export const MigrationVerification: React.FC = () => {
         </h3>
         <p className="text-xs text-muted-foreground">
           A retired-but-trusted <span className="font-medium text-foreground">signing key</span> is
-          a standing Trust-Now-Forge-Later liability — destroy per SP 800-88 and confirm.
+          a standing Trust-Now-Forge-Later liability — destroy per your organization's
+          key-destruction standard and confirm.
         </p>
         <div className="space-y-2">
           {state.decommissions.map((d) => (
