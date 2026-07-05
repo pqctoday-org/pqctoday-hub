@@ -94,6 +94,10 @@ export interface OpSpec {
   intent?: 'sign' | 'kem' | 'encrypt'
   algorithm?: string
   length?: number
+  /** KMIP `Name` to attach at Create/CreateKeyPair — the Migration estate's
+   * label-only contract: with `name_pattern` rules in the active policy, the
+   * label alone decides the algorithm. Ignored by non-creation ops. */
+  name?: string
   uid?: string
   text?: string
   data?: string // hex
@@ -228,6 +232,9 @@ export interface DryRunSpec {
   currentAlgorithm?: string
   length?: number
   state?: string
+  /** Key label — drives `name_pattern` rules (label-only agility: the
+   * Migration estate's policies map business key names to algorithms). */
+  name?: string
   /** Simulated request date (YYYY-MM-DD) — drives temporal rules (WP4b).
    * Absent → the engine evaluates at "now". */
   date?: string

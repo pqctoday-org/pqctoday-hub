@@ -386,6 +386,9 @@ export interface PolicyExample {
   hash?: string
   blockMode?: string
   mechanism?: string
+  /** Key label for label-pattern (`name_pattern`) policies — the Migration
+   * estate's label-only contract. Threads into `dryRun`'s `name` field. */
+  name?: string
 }
 
 export interface PolicyPreset {
@@ -457,6 +460,18 @@ export const POLICY_PRESETS: PolicyPreset[] = [
     example: { op: 'Sign', algorithm: 'ECDSA-P256', date: '2026-07-01' },
   },
   // ── Migration & transition ────────────────────────────────────────────────
+  {
+    file: 'migration-classical.yaml',
+    name: 'migration-classical',
+    label: 'Migration estate · classical',
+    blurb:
+      'The Migration tab’s seven-key classical estate — label-pattern rules map business key names (firmware-release-signing, payments-db-cipher, …) to AES-128/256, X25519/X448, RSA-2048, ECDSA and Ed25519.',
+    tone: 'classical',
+    category: 'Migration & transition',
+    illustrates:
+      'Label-pattern defaults — the app passes only a key NAME; the policy decides every algorithm.',
+    example: { op: 'CreateKeyPair:Sign', algorithm: '', name: 'firmware-release-signing' },
+  },
   {
     file: 'pqc-migration-2030.yaml',
     name: 'pqc-migration-2030',

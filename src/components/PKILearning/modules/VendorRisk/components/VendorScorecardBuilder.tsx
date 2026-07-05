@@ -9,6 +9,7 @@ import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { softwareData } from '@/data/migrateData'
+import { vendorMap } from '@/data/vendorData'
 import { isPqcReady, isFips1403Validated } from '@/data/kpiCatalog'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import {
@@ -131,7 +132,10 @@ export function computeVendorScorecards(
 ): VendorScorecardRow[] {
   const groups = new Map<string, SoftwareItem[]>()
   for (const item of items) {
-    const vendor = item.vendorName?.trim() || item.vendorId?.trim() || 'Unknown vendor'
+    const vendor =
+      (item.vendorId && vendorMap.get(item.vendorId)?.vendorName?.trim()) ||
+      item.vendorId?.trim() ||
+      'Unknown vendor'
     const arr = groups.get(vendor) ?? []
     arr.push(item)
     groups.set(vendor, arr)
