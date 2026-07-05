@@ -1,0 +1,76 @@
+<KMIP>
+
+<RequestMessage>
+  <RequestHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <ClientCorrelationValue type="TextString" value="OMOS-M-1-30 step=0"/>
+  </RequestHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Register"/>
+    <RequestPayload>
+      <ObjectType type="Enumeration" value="OpaqueObject"/>
+      <Attributes>
+        <Name type="TextString" value="OMOS-M-1-30"/>
+      </Attributes>
+      <OpaqueObject>
+        <OpaqueDataType type="Enumeration" value="0x80000001"/>
+        <OpaqueDataValue type="ByteString" value="53656372657450617373776f7264"/>
+      </OpaqueObject>
+    </RequestPayload>
+  </BatchItem>
+</RequestMessage>
+
+<ResponseMessage>
+  <ResponseHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <TimeStamp type="DateTime" value="$NOW"/>
+  </ResponseHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Register"/>
+    <ResultStatus type="Enumeration" value="Success"/>
+    <ResponsePayload>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_0"/>
+    </ResponsePayload>
+  </BatchItem>
+</ResponseMessage>
+
+<RequestMessage>
+  <RequestHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <ClientCorrelationValue type="TextString" value="OMOS-M-1-30 step=1"/>
+  </RequestHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Destroy"/>
+    <RequestPayload>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_0"/>
+    </RequestPayload>
+  </BatchItem>
+</RequestMessage>
+
+<ResponseMessage>
+  <ResponseHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <TimeStamp type="DateTime" value="$NOW"/>
+  </ResponseHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Destroy"/>
+    <ResultStatus type="Enumeration" value="Success"/>
+    <ResponsePayload>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_0"/>
+    </ResponsePayload>
+  </BatchItem>
+</ResponseMessage>
+
+</KMIP>

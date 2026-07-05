@@ -1,0 +1,202 @@
+# SLH-DSA-SHAKE-128f-keygen-31-30.xml
+<KMIP>
+# CreateKeyPair, Get, Destroy - note uses seed so answer is fixed value
+
+<RequestMessage>
+  <RequestHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+  </RequestHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="CreateKeyPair"/>
+    <RequestPayload>
+      <CommonAttributes>
+        <CryptographicAlgorithm type="Enumeration" value="SLH_DSA_SHAKE_128f"/>
+        <CryptographicUsageMask type="Integer" value="KeyAgreement"/>
+      </CommonAttributes>
+      <PrivateKeyAttributes>
+        <KeyFormatType type="Enumeration" value="PKCS_8"/>
+      </PrivateKeyAttributes>
+      <Seed type="ByteString" value="CD4A308C03D970508572C0815D7488B7F3FD6D2DCC7E5120FA544846AEDDED81BC435C3E66E4C2E4FBC09779DA5F74D4"/>
+    </RequestPayload>
+  </BatchItem>
+</RequestMessage>
+
+
+<ResponseMessage>
+  <ResponseHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <TimeStamp type="DateTime" value="$NOW"/>
+  </ResponseHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="CreateKeyPair"/>
+    <ResultStatus type="Enumeration" value="Success"/>
+    <ResponsePayload>
+      <PrivateKeyUniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_0"/>
+      <PublicKeyUniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_1"/>
+    </ResponsePayload>
+  </BatchItem>
+</ResponseMessage>
+
+<RequestMessage>
+  <RequestHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+  </RequestHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Get"/>
+    <RequestPayload>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_0"/>
+      <KeyFormatType type="Enumeration" value="Raw"/>
+    </RequestPayload>
+  </BatchItem>
+</RequestMessage>
+
+<ResponseMessage>
+  <ResponseHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <TimeStamp type="DateTime" value="$NOW"/>
+  </ResponseHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Get"/>
+    <ResultStatus type="Enumeration" value="Success"/>
+    <ResponsePayload>
+      <ObjectType type="Enumeration" value="PrivateKey"/>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_0"/>
+      <PrivateKey>
+        <KeyBlock>
+	  <KeyFormatType type="Enumeration" value="Raw"/>
+          <KeyValue>
+            <KeyMaterial type="ByteString" value="CD4A308C03D970508572C0815D7488B7F3FD6D2DCC7E5120FA544846AEDDED81BC435C3E66E4C2E4FBC09779DA5F74D44EA0E0DF05C2457BCC81F59928433390"/>
+          </KeyValue>
+          <CryptographicAlgorithm type="Enumeration" value="SLH_DSA_SHAKE_128f"/>
+          <CryptographicLength type="Integer" value="512"/>
+        </KeyBlock>
+      </PrivateKey>
+    </ResponsePayload>
+  </BatchItem>
+</ResponseMessage>
+
+<RequestMessage>
+  <RequestHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+  </RequestHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Get"/>
+    <RequestPayload>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_1"/>
+      <KeyFormatType type="Enumeration" value="Raw"/>
+    </RequestPayload>
+  </BatchItem>
+</RequestMessage>
+
+<ResponseMessage>
+  <ResponseHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <TimeStamp type="DateTime" value="$NOW"/>
+  </ResponseHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Get"/>
+    <ResultStatus type="Enumeration" value="Success"/>
+    <ResponsePayload>
+      <ObjectType type="Enumeration" value="PublicKey"/>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_1"/>
+      <PublicKey>
+        <KeyBlock>
+	  <KeyFormatType type="Enumeration" value="Raw"/>
+          <KeyValue>
+            <KeyMaterial type="ByteString" value="BC435C3E66E4C2E4FBC09779DA5F74D44EA0E0DF05C2457BCC81F59928433390"/>
+          </KeyValue>
+          <CryptographicAlgorithm type="Enumeration" value="SLH_DSA_SHAKE_128f"/>
+          <CryptographicLength type="Integer" value="256"/>
+        </KeyBlock>
+      </PublicKey>
+    </ResponsePayload>
+  </BatchItem>
+</ResponseMessage>
+
+<RequestMessage>
+  <RequestHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+  </RequestHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Destroy"/>
+    <RequestPayload>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_0"/>
+    </RequestPayload>
+  </BatchItem>
+</RequestMessage>
+
+
+<ResponseMessage>
+  <ResponseHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <TimeStamp type="DateTime" value="$NOW"/>
+  </ResponseHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Destroy"/>
+    <ResultStatus type="Enumeration" value="Success"/>
+    <ResponsePayload>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_0"/>
+    </ResponsePayload>
+  </BatchItem>
+</ResponseMessage>
+
+
+<RequestMessage>
+  <RequestHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+  </RequestHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Destroy"/>
+    <RequestPayload>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_1"/>
+    </RequestPayload>
+  </BatchItem>
+</RequestMessage>
+
+
+<ResponseMessage>
+  <ResponseHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <TimeStamp type="DateTime" value="$NOW"/>
+  </ResponseHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Destroy"/>
+    <ResultStatus type="Enumeration" value="Success"/>
+    <ResponsePayload>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_1"/>
+    </ResponsePayload>
+  </BatchItem>
+</ResponseMessage>
+
+
+</KMIP>

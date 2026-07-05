@@ -263,7 +263,7 @@ interface WasmKmipPlayground {
 }
 
 interface WasmModule {
-  KmipPlayground: { new (): WasmKmipPlayground }
+  KmipPlayground: { new (slot?: number): WasmKmipPlayground }
   decode_ttlv(bytes: Uint8Array): string
   encode_ttlv(treeJson: string): Uint8Array
 }
@@ -278,10 +278,16 @@ export class KmipEngine {
     this.mod = mod
   }
 
-  static async boot(): Promise<KmipEngine> {
+  /** `slot` — which PKCS#11 slot to bootstrap the engine token on. Omit for
+   * the single-tab default (slot 0); pass a distinct value per instance
+   * when booting more than one `KmipEngine` in the same page load (e.g.
+   * the OASIS corpus replay, one engine per test) — the engine's token
+   * storage is keyed by slot, and reusing one with a still-open session
+   * from an earlier instance fails bootstrap. */
+  static async boot(slot?: number): Promise<KmipEngine> {
     // Bundler-target shim; Vite instantiates the .wasm at import time.
     const mod = (await import('./pqctoday_kmip_wasm.js')) as unknown as WasmModule
-    return new KmipEngine(new mod.KmipPlayground(), mod)
+    return new KmipEngine(new mod.KmipPlayground(slot), mod)
   }
 
   /** Build a real KMIP request, dispatch it, and return the rich result. */
