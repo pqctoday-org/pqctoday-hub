@@ -282,7 +282,8 @@ const roiModel: Record<DemoSector, DemoDoc> = {
       '| FCC / CALEA compliance penalties | $5.2M |',
       '| Emergency 5G RAN migration premium | $13.1M |',
       '',
-      'Planned program cost (phased, 5G refresh cycle): $11.4M over 5 years → net positive in year 3.'
+      'Planned program cost (phased, 5G refresh cycle): $11.4M over 5 years → net positive in year 3.',
+      ROI_ILLUSTRATIVE_NOTE
     ),
   },
   retail: {
@@ -296,7 +297,8 @@ const roiModel: Record<DemoSector, DemoDoc> = {
       '| Privacy Act 2020 non-compliance penalty | A$4.1M |',
       '| Emergency migration premium (peak-season blackout) | A$5.8M |',
       '',
-      'Planned program cost (phased, checkout refresh cycle): A$6.4M over 3 years → net positive in year 2.'
+      'Planned program cost (phased, checkout refresh cycle): A$6.4M over 3 years → net positive in year 2.',
+      ROI_ILLUSTRATIVE_NOTE
     ),
   },
   general: {
@@ -310,7 +312,8 @@ const roiModel: Record<DemoSector, DemoDoc> = {
       '| Regulatory / contractual non-compliance exposure | $3.2M |',
       '| Emergency (unplanned) migration premium | $4.1M |',
       '',
-      'Planned program cost (phased, refresh-aligned): $5.4M over 4 years → net positive in year 2.'
+      'Planned program cost (phased, refresh-aligned): $5.4M over 4 years → net positive in year 2.',
+      ROI_ILLUSTRATIVE_NOTE
     ),
   },
 }
