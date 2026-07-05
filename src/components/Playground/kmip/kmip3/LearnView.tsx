@@ -326,7 +326,9 @@ function LessonPanel({
 
   return (
     <div className="space-y-4">
-      <p className="text-[13.5px] leading-relaxed text-foreground">{lesson.setup}</p>
+      <section className="rounded-xl border border-border bg-card p-4">
+        <p className="text-[13.5px] leading-relaxed text-foreground">{lesson.setup}</p>
+      </section>
 
       {/* Classical card */}
       <section className="rounded-xl border border-border bg-card p-4">
