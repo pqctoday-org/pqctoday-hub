@@ -511,7 +511,16 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     description:
       'Size your HSM fleet for the top 10 enterprise use cases. Compare classical vs next-gen PQC HSM, tune per-algorithm TPS, and see whether your fleet is sufficient.',
     category: 'HSM / PKCS#11',
-    algorithms: ['RSA-2048', 'ECDSA P-256', 'ECDH P-256', 'ML-DSA-65', 'AES-128', 'AES-256'],
+    algorithms: [
+      'RSA-2048',
+      'ECDSA P-256',
+      'ECDH P-256',
+      'ML-DSA-65',
+      'ML-KEM-768',
+      'SLH-DSA-128s',
+      'AES-128',
+      'AES-256',
+    ],
     icon: Gauge,
     moduleLink: '/learn/pki-workshop',
     keywords: [

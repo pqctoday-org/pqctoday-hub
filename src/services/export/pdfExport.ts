@@ -262,6 +262,13 @@ export interface PdfExportOptions {
    * noise. Default: `false`. Audit M9.
    */
   stripLearningBanner?: boolean
+  /**
+   * Skip stamping page footers inside `buildArtifactPdf`. Set this when the
+   * caller plans to append more pages (e.g. `addDiagramImagePage`) before
+   * finalising page numbers, then call the exported `drawFooters` themselves
+   * once every page exists. Default: `false`.
+   */
+  skipFooters?: boolean
 }
 
 interface Run {
@@ -625,8 +632,11 @@ function stripInlineForCell(s: string): string {
 }
 
 /** Stamp footer (title left, page N of M right) on every page. Called once,
- *  after all content is laid out and the page count is final. */
-function drawFooters(doc: jsPDF, title: string) {
+ *  after all content is laid out and the page count is final. Exported so
+ *  callers that append extra pages after `buildArtifactPdf` (with
+ *  `skipFooters: true`) can stamp footers themselves once the final page
+ *  count is known. */
+export function drawFooters(doc: jsPDF, title: string) {
   const total = doc.getNumberOfPages()
   const safeTitle = sanitizeForLatin1(title)
   for (let p = 1; p <= total; p++) {
@@ -658,7 +668,7 @@ export function buildArtifactPdf(
   title?: string,
   options: PdfExportOptions = {}
 ): jsPDF {
-  const { wideTable = false, stripLearningBanner = false } = options
+  const { wideTable = false, stripLearningBanner = false, skipFooters = false } = options
 
   const sourceMarkdown = stripLearningBanner ? stripLearningBannerFromMarkdown(markdown) : markdown
 
@@ -953,8 +963,58 @@ export function buildArtifactPdf(
     }
   }
 
-  drawFooters(doc, title ?? '')
+  if (!skipFooters) drawFooters(doc, title ?? '')
   return doc
+}
+
+/**
+ * Append a page containing a raster image (a live-rendered Mermaid diagram,
+ * typically), scaled to fit the content area while preserving aspect ratio.
+ *
+ * This is a deliberate exception to Audit B1 (mermaid fences inside the
+ * flowing markdown are still stripped to a text stub — see `tokenize`):
+ * B1 avoids bundling a headless renderer just for PDF export, but when the
+ * caller already has `mermaid` loaded client-side (e.g. for a live preview)
+ * and has rendered the diagram to a PNG, embedding it here costs nothing
+ * extra. Callers building the doc with `skipFooters: true` should call this
+ * before `drawFooters`, so the page is included in "Page N of M".
+ *
+ * @param image `width`/`height` are the diagram's logical (viewBox) size in
+ *              CSS pixels, used only to compute the fit-to-page scale — the
+ *              PNG itself may be rendered at a higher pixel density for print
+ *              sharpness.
+ */
+export function addDiagramImagePage(
+  doc: jsPDF,
+  image: { dataUrl: string; width: number; height: number },
+  caption?: string
+): void {
+  doc.addPage()
+  const pageWidth = doc.internal.pageSize.getWidth()
+  const pageHeight = doc.internal.pageSize.getHeight()
+  const contentLeft = MARGIN_X
+  const contentRight = pageWidth - MARGIN_X
+  const contentBottom = pageHeight - MARGIN_BOTTOM
+  let y = MARGIN_TOP
+
+  if (caption) {
+    doc.setFont(FONT_BODY, 'bold')
+    doc.setFontSize(SIZE_H3)
+    doc.setTextColor(0)
+    doc.text(sanitizeForLatin1(caption), contentLeft, y)
+    y += SIZE_H3 * LINE_HEIGHT_FACTOR
+  }
+
+  const maxW = contentRight - contentLeft
+  const maxH = contentBottom - y
+  // Never upscale past native size — a small diagram just sits within the
+  // content box rather than being blown up and blurred.
+  const scale = Math.min(maxW / image.width, maxH / image.height, 1)
+  const drawW = image.width * scale
+  const drawH = image.height * scale
+  const x = contentLeft + (maxW - drawW) / 2
+
+  doc.addImage(image.dataUrl, 'PNG', x, y, drawW, drawH)
 }
 
 /**
@@ -978,7 +1038,7 @@ export async function markdownToPdf(
 /** Sanitise candidate filename: strip path separators, OS-rejected punctuation,
  *  and C0 control characters. Mirrors the contract from the previous
  *  exportPdf util so behaviour is identical for callers. */
-function sanitiseFilename(name: string): string {
+export function sanitiseFilename(name: string): string {
   const cleaned = Array.from(name.normalize('NFC'))
     .filter((ch) => {
       if ('\\/:*?"<>|'.includes(ch)) return false

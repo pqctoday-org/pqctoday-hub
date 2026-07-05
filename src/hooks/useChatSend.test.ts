@@ -131,6 +131,7 @@ vi.mock('@/services/chat/WebLLMService', () => ({
   streamResponse: vi.fn(),
   initializeEngine: vi.fn().mockResolvedValue(undefined),
   isEngineReady: vi.fn().mockReturnValue(false),
+  EngineDisconnectedError: class EngineDisconnectedError extends Error {},
 }))
 
 vi.mock('@/services/chat/responseCache', () => ({
