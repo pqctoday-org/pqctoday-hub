@@ -763,10 +763,11 @@ export function SimulationView() {
       : 'climb'
   const defaultPhase = arrivedViaPhaseRef.current ?? sel
   const startFromModal = (mode: SimPlayChoice, phase?: PhaseId) => {
-    if (mode === 'phase') {
-      // v1: Play This Phase deep-links to the board, no auto-run engine — jumping
-      // `sel` doesn't touch the resumable climb queue, so no switch confirmation.
-      if (phase) setSel(phase)
+    if (mode === 'phase' || mode === 'phase-deep') {
+      // A single-phase run never touches the shared climb resume playhead (see
+      // usesSharedResumeIndex in useSimAutoRunPlayer), so it can't clobber an
+      // in-progress climb — no "start a different path?" confirmation needed.
+      autoRunPlayer.start({ mode, phase })
       setPlayModalOpen(false)
       return
     }

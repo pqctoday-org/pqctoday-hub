@@ -283,6 +283,37 @@ export function autoRunDeepQueue(): AutoRunQueueItem[] {
   return items
 }
 
+/**
+ * Play This Phase queue — the same genuine, narrated auto-advance as
+ * `autoRunQueue`/`autoRunDeepQueue`, scoped to a single phase's own bands
+ * instead of climbing all 9 at once. Bands are walked in the phase's own
+ * level order (already monotonic — mirrors `stepsForPhase`), so the
+ * level-major invariant `autoRunQueue` relies on holds trivially here too.
+ */
+export function autoRunPhaseQueue(phase: PhaseId, includeDeepDive: boolean): AutoRunQueueItem[] {
+  const items: AutoRunQueueItem[] = []
+  const seen = new Set<string>()
+  const tree = treeFor(phase)
+  if (!tree) return items
+  for (const band of tree.levels) {
+    const steps = includeDeepDive
+      ? [
+          ...gatingStepsForPhaseLevel(phase, band.level),
+          ...deepDiveStepsForPhaseLevel(phase, band.level),
+        ]
+      : gatingStepsForPhaseLevel(phase, band.level)
+    for (const step of steps) {
+      const key = stepDedupeKey(step)
+      if (key !== null) {
+        if (seen.has(key)) continue
+        seen.add(key)
+      }
+      items.push({ phase, step, level: band.level })
+    }
+  }
+  return items
+}
+
 /** The identifier used to match a hand-picked light-stage step (mirrors stepDedupeKey's fields). */
 function stepRef(step: TreeStep): string | undefined {
   switch (step.kind) {

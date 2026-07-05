@@ -11,12 +11,11 @@
  * Accessibility follows SimConfirmDialog/SimRunComplete's established pattern:
  * role=dialog, aria-modal, focus to the first actionable control, Escape closes.
  *
- * Play This Phase is v1 (deep-links to the board at the chosen phase; no new
- * auto-run engine — see the plan's staging decision). Its Deep Dive checkbox
- * therefore only changes the *displayed estimate*, not the navigation target —
- * the board already shows required + deep-dive content for whichever phase you
- * land on, so there's nothing to gate. Executive Overview and Full Migration
- * Journey's checkboxes are real — they select `climb`/`climb-deep` or
+ * Play This Phase drives the same genuine auto-run engine as Executive Overview
+ * and Full Migration Journey — narrated, auto-advancing steps, genuinely
+ * completed — just scoped to the one phase chosen in its dropdown instead of
+ * all 9. Its Deep Dive checkbox is real: it selects `phase`/`phase-deep`,
+ * exactly like the other two cards select `climb`/`climb-deep` or
  * `walkthrough`/`walkthrough-deep`.
  */
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -39,16 +38,12 @@ import {
  *  player: every card is always fully visible and clickable regardless). */
 export type SimPlayDefaultCard = 'walkthrough' | 'climb' | 'phase'
 
-/** `'phase'` isn't a real `RunMode` — Play This Phase (v1) navigates the board
- *  rather than driving the auto-run engine, so it's deliberately not one of the
- *  engine's literal modes (see `RunMode`'s own doc comment). This callback's
- *  type is the small ad-hoc union of "a real engine mode" or "go to this phase". */
-export type SimPlayChoice = RunMode | 'phase'
+/** Every scope the modal can start is a real engine `RunMode` now. */
+export type SimPlayChoice = RunMode
 
 export interface SimPlayChoiceModalProps {
   onClose: () => void
-  /** Start a run, or (mode 'phase') navigate to a phase — `phase` is only read
-   *  for that case. */
+  /** Start a run — `phase` is only read for `mode: 'phase' | 'phase-deep'`. */
   onStart: (mode: SimPlayChoice, phase?: PhaseId) => void
   defaultCard: SimPlayDefaultCard
   defaultPhase: PhaseId
@@ -239,14 +234,14 @@ export function SimPlayChoiceModal({
             />
             <PlayCard
               title="Play This Phase"
-              scope="One phase's required steps — pick it below."
-              deepScope="That same phase's required steps, plus its optional extras — both are already visible on the board once you're there."
+              scope="One phase's required steps, narrated and auto-advanced — pick it below."
+              deepScope="That same phase's required steps, plus its optional extras, narrated and auto-advanced."
               audience="Someone practicing a specific Learn lesson, or previewing one phase"
               standardMin={phaseStandardMin}
               deepMin={phaseDeepMin}
               recommended={defaultCard === 'phase'}
               firstFocusRef={defaultCard === 'phase' ? primaryRef : undefined}
-              onPlay={() => onStart('phase', phase)}
+              onPlay={(deep) => onStart(deep ? 'phase-deep' : 'phase', phase)}
               extra={
                 <select
                   value={phase}

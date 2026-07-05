@@ -18,6 +18,7 @@ import {
   autoRunQueue,
   autoRunDeepQueue,
   autoRunWalkthroughQueue,
+  autoRunPhaseQueue,
   completeStepGenuine,
   type AutoRunQueueItem,
 } from './simAutoRun'
@@ -47,14 +48,20 @@ export interface ScenarioIntro {
   summary: string
 }
 
-/** Which run the player is driving: the full maturity CLIMB (Play 0→7) or the
- *  executive WALKTHROUGH (a phase-major single pass — a tour, not a win). Each
- *  has a "-deep" variant (Extended Migration Journey / Executive Overview — Deep
+/** Which run the player is driving: the full maturity CLIMB (Play 0→7), the
+ *  executive WALKTHROUGH (a phase-major single pass — a tour, not a win), or a
+ *  single-PHASE run (Play This Phase — the same genuine auto-advance as climb,
+ *  scoped to one phase's own bands). Each has a "-deep" variant (Extended
+ *  Migration Journey / Executive Overview — Deep Dive / Play This Phase — Deep
  *  Dive) that additionally walks the deep-dive (optional, non-gating) content —
- *  see `simulation-unified-play-mechanism-plan-07052026.md`. `'phase'`/`'phase-deep'`
- *  (Play This Phase) are v1-deferred: that card deep-links to the board instead of
- *  driving its own auto-run queue, so no engine mode exists for it yet. */
-export type RunMode = 'climb' | 'climb-deep' | 'walkthrough' | 'walkthrough-deep'
+ *  see `simulation-unified-play-mechanism-plan-07052026.md`. */
+export type RunMode =
+  | 'climb'
+  | 'climb-deep'
+  | 'walkthrough'
+  | 'walkthrough-deep'
+  | 'phase'
+  | 'phase-deep'
 
 /** True for either walkthrough variant — the tour family (frozen clock, no
  *  resume, single linear pass), as opposed to the climb family. Exported: the
@@ -64,8 +71,22 @@ export type RunMode = 'climb' | 'climb-deep' | 'walkthrough' | 'walkthrough-deep
 export const isWalkthroughMode = (m: RunMode): boolean =>
   m === 'walkthrough' || m === 'walkthrough-deep'
 
+/** True for either Play-This-Phase variant — a single-phase run. Like
+ *  walkthrough, it never participates in the shared climb resume playhead
+ *  (`autoRunResumeIndex`): the queue's length/shape differs per phase, so
+ *  reusing that index across modes would resume at a nonsensical position
+ *  (or silently clobber an in-progress climb's saved playhead). Always starts
+ *  fresh from the top of the chosen phase. */
+export const isPhaseMode = (m: RunMode): boolean => m === 'phase' || m === 'phase-deep'
+
 /** True for either "-deep" variant, regardless of family. */
-const includesDeepDive = (m: RunMode): boolean => m === 'climb-deep' || m === 'walkthrough-deep'
+const includesDeepDive = (m: RunMode): boolean =>
+  m === 'climb-deep' || m === 'walkthrough-deep' || m === 'phase-deep'
+
+/** True for a mode that reads/writes the single shared `autoRunResumeIndex`
+ *  playhead — only the climb family. Walkthrough and phase runs always
+ *  restart at 0 and never touch it (see `isPhaseMode`). */
+const usesSharedResumeIndex = (m: RunMode): boolean => m === 'climb' || m === 'climb-deep'
 
 export interface SimAutoRunPlayer {
   running: boolean
@@ -101,7 +122,9 @@ export interface SimAutoRunPlayer {
   /** The mode "▶ Resume" should pass to `start()` — the last climb-family mode
    *  that ran, so an interrupted Extended Migration Journey resumes as itself. */
   resumeMode: RunMode
-  start: (opts?: { mode?: RunMode }) => void
+  /** `phase` is required for `mode: 'phase'` / `'phase-deep'` — which phase's
+   *  own queue to build and drive. Ignored for every other mode. */
+  start: (opts?: { mode?: RunMode; phase?: PhaseId }) => void
   pause: () => void
   resume: () => void
   stop: () => void
@@ -619,13 +642,14 @@ export function useSimAutoRunPlayer({
   }, [])
 
   const start = useCallback(
-    (opts?: { mode?: RunMode }) => {
+    (opts?: { mode?: RunMode; phase?: PhaseId }) => {
       const runMode: RunMode = opts?.mode ?? 'climb'
       setMode(runMode)
       modeRef.current = runMode
       // Remember the mode for "▶ Resume" — only climb-family runs are ever
-      // resumable (walkthrough always restarts at 0), so only persist those.
-      if (!isWalkthroughMode(runMode)) {
+      // resumable (walkthrough and single-phase runs always restart at 0), so
+      // only persist those.
+      if (usesSharedResumeIndex(runMode)) {
         useSimulationStore.getState().setAutoRunLastMode(runMode)
       }
       clearTimer()
@@ -639,9 +663,11 @@ export function useSimAutoRunPlayer({
       const deep = includesDeepDive(runMode)
       const q = isWalkthroughMode(runMode)
         ? autoRunWalkthroughQueue(deep)
-        : deep
-          ? autoRunDeepQueue()
-          : autoRunQueue()
+        : isPhaseMode(runMode)
+          ? autoRunPhaseQueue(opts?.phase ?? useSimulationStore.getState().sel, deep)
+          : deep
+            ? autoRunDeepQueue()
+            : autoRunQueue()
       queueRef.current = q
       // RESUME from the remembered playhead — the queue index where the last run was
       // interrupted (saved by stop(), cleared on completion + by Reset). Completion can
@@ -650,9 +676,12 @@ export function useSimAutoRunPlayer({
       // skips ahead to a unique late step — the closure. The remembered index is the
       // literal last position; Reset clears it (it lives in SEED) so a fresh run starts
       // at the top.
-      const remembered = useSimulationStore.getState().autoRunResumeIndex
-      // The walkthrough is a short linear tour — always start at the top (no resume).
-      const startAt = isWalkthroughMode(runMode)
+      const remembered = usesSharedResumeIndex(runMode)
+        ? useSimulationStore.getState().autoRunResumeIndex
+        : 0
+      // Walkthrough and single-phase runs are short, scoped passes — always start
+      // at the top (no resume).
+      const startAt = !usesSharedResumeIndex(runMode)
         ? 0
         : remembered > 0 && remembered < q.length
           ? remembered
@@ -680,9 +709,16 @@ export function useSimAutoRunPlayer({
       // Only show the one-time scenario-framing card on a FRESH start; resuming
       // mid-queue skips it (it's already been seen).
       // The climb opens on the dated scenario-framing card; the walkthrough suppresses it
-      // (dates are hidden) and leads with its own concept-led opening instead.
+      // (dates are hidden) and leads with its own concept-led opening instead. A
+      // single-phase run is a quick, already-in-context preview — the whole-program
+      // framing ("watch the program climb maturity together") doesn't fit, so it's
+      // suppressed the same way.
       setScenarioIntro(
-        isWalkthroughMode(runMode) ? null : startAt === 0 ? scenarioIntroFor(scenario) : null
+        isWalkthroughMode(runMode) || isPhaseMode(runMode)
+          ? null
+          : startAt === 0
+            ? scenarioIntroFor(scenario)
+            : null
       )
       setTotal(q.length)
       setIndex(startAt)
@@ -703,8 +739,13 @@ export function useSimAutoRunPlayer({
   const stop = useCallback(() => {
     clearTimer()
     stopSpeech()
-    // Remember WHERE we stopped so the play button resumes from here (not the top).
-    useSimulationStore.getState().setAutoRunResumeIndex(indexRef.current)
+    // Remember WHERE we stopped so the play button resumes from here (not the
+    // top) — climb-family only. A walkthrough or single-phase run's index is
+    // meaningless against the climb queue's shape and must never overwrite its
+    // saved playhead.
+    if (usesSharedResumeIndex(modeRef.current)) {
+      useSimulationStore.getState().setAutoRunResumeIndex(indexRef.current)
+    }
     setAutoRunFill(false)
     setRunning(false)
     setPaused(false)
@@ -963,8 +1004,10 @@ export function useSimAutoRunPlayer({
         // New maturity pass — pause for the pass-intro modal (the board stays behind it).
         const sc = scenarioRef.current
         // The walkthrough is a single level-1 pass with no maturity passes — never
-        // interrupt it with a pass-intro modal.
-        if (sc && modeRef.current !== 'walkthrough') {
+        // interrupt it with a pass-intro modal. A single-phase run also skips it:
+        // the modal's copy is whole-program framed ("raise EVERY phase to level
+        // N"), which is wrong when only one phase is being played.
+        if (sc && modeRef.current !== 'walkthrough' && !isPhaseMode(modeRef.current)) {
           setPassIntro(passIntroFor(item.level, sc))
           return
         }
@@ -1049,14 +1092,20 @@ export function useSimAutoRunPlayer({
             setCaption(
               isWalkthroughMode(modeRef.current)
                 ? 'That’s the full program, end to end.'
-                : 'Migration complete — full program maturity reached.'
+                : isPhaseMode(modeRef.current)
+                  ? `${phaseLabel(item.phase)} complete.`
+                  : 'Migration complete — full program maturity reached.'
             )
             setAutoRunFill(false)
             setRunning(false)
             setDone(true)
             // Finished — clear the resume point so the button reads "Play all" and a
-            // fresh press replays from the top (there's nothing left to resume).
-            useSimulationStore.getState().setAutoRunResumeIndex(0)
+            // fresh press replays from the top. Climb-family only: a single-phase
+            // run never touched the shared playhead (usesSharedResumeIndex), so it
+            // must not clear an unrelated in-progress climb's saved position either.
+            if (usesSharedResumeIndex(modeRef.current)) {
+              useSimulationStore.getState().setAutoRunResumeIndex(0)
+            }
           } else {
             setIndex(next)
           }
