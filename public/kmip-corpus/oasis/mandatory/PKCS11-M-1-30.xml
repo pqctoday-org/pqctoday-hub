@@ -1,0 +1,113 @@
+<KMIP>
+
+<RequestMessage>
+  <RequestHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <ClientCorrelationValue type="TextString" value="PKCS11-M-1-30 step=0"/>
+  </RequestHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="PKCS_11"/>
+    <RequestPayload>
+      <PKCS_11Function type="Enumeration" value="C_Initialize"/>
+      <PKCS_11InputParameters type="ByteString" value="01"/>
+    </RequestPayload>
+  </BatchItem>
+</RequestMessage>
+
+<ResponseMessage>
+  <ResponseHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <TimeStamp type="DateTime" value="$NOW"/>
+  </ResponseHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="PKCS_11"/>
+    <ResultStatus type="Enumeration" value="Success"/>
+    <ResponsePayload>
+      <PKCS_11Function type="Enumeration" value="C_Initialize"/>
+      <CorrelationValue type="ByteString" value="$CORRELATION_VALUE"/>
+      <PKCS_11ReturnCode type="Enumeration" value="OK"/>
+    </ResponsePayload>
+  </BatchItem>
+</ResponseMessage>
+
+<RequestMessage>
+  <RequestHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <ClientCorrelationValue type="TextString" value="PKCS11-M-1-30 step=1"/>
+  </RequestHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="PKCS_11"/>
+    <RequestPayload>
+      <PKCS_11Function type="Enumeration" value="C_GetInfo"/>
+      <CorrelationValue type="ByteString" value="$CORRELATION_VALUE"/>
+    </RequestPayload>
+  </BatchItem>
+</RequestMessage>
+
+<ResponseMessage>
+  <ResponseHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <TimeStamp type="DateTime" value="$NOW"/>
+  </ResponseHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="PKCS_11"/>
+    <ResultStatus type="Enumeration" value="Success"/>
+    <ResponsePayload>
+      <PKCS_11Function type="Enumeration" value="C_GetInfo"/>
+      <CorrelationValue type="ByteString" value="$CORRELATION_VALUE"/>
+      <PKCS_11OutputParameters type="ByteString" value="022854455354202020202020507479204c7464202020202020202020202020202020000000000000000054455354202020202020202020202020202020202020202020202020202020200100"/>
+      <PKCS_11ReturnCode type="Enumeration" value="OK"/>
+    </ResponsePayload>
+  </BatchItem>
+</ResponseMessage>
+
+<RequestMessage>
+  <RequestHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <ClientCorrelationValue type="TextString" value="PKCS11-M-1-30 step=2"/>
+  </RequestHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="PKCS_11"/>
+    <RequestPayload>
+      <PKCS_11Function type="Enumeration" value="C_Finalize"/>
+      <CorrelationValue type="ByteString" value="$CORRELATION_VALUE"/>
+    </RequestPayload>
+  </BatchItem>
+</RequestMessage>
+
+<ResponseMessage>
+  <ResponseHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <TimeStamp type="DateTime" value="$NOW"/>
+  </ResponseHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="PKCS_11"/>
+    <ResultStatus type="Enumeration" value="Success"/>
+    <ResponsePayload>
+      <PKCS_11Function type="Enumeration" value="C_Finalize"/>
+      <CorrelationValue type="ByteString" value="$CORRELATION_VALUE"/>
+      <PKCS_11ReturnCode type="Enumeration" value="OK"/>
+    </ResponsePayload>
+  </BatchItem>
+</ResponseMessage>
+
+</KMIP>
+

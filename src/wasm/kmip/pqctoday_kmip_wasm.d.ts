@@ -48,10 +48,24 @@ export class KmipPlayground {
     load_policy(yaml: string): string;
     /**
      * Boot a fresh control plane: a `softhsmrustv3` token + user session on
-     * slot 0 (real crypto), the built-in permissive policy wired to the audit
-     * ring (so Plane-1 decisions are visible), and a volatile `MemoryStore`.
+     * `slot` (real crypto; omitted/`undefined` → slot 0, the single-tab
+     * default every existing caller uses), the built-in permissive policy
+     * wired to the audit ring (so Plane-1 decisions are visible), and a
+     * volatile `MemoryStore`.
+     *
+     * The engine's token/slot storage is a `HashMap<u32, TokenState>`
+     * (`rust/src/state.rs`), not a single fixed slot — so a second
+     * `KmipPlayground` in the SAME wasm module instance (e.g. the OASIS
+     * corpus replay booting one engine per test) needs its own slot;
+     * reusing slot 0 while an earlier instance's session on it is still
+     * open fails bootstrap (confirmed empirically: `CK_RV=0x000000b6`).
+     * The engine boots single-slot (only slot 0 pre-registered) —
+     * `state::ensure_slot` is "the multi-slot configuration surface"
+     * (its own doc comment) that brings a new slot online before
+     * `C_InitToken` will accept it; skipping this for a non-zero slot
+     * fails with `CKR_SLOT_ID_INVALID` (confirmed empirically).
      */
-    constructor();
+    constructor(slot?: number | null);
     /**
      * The currently-active policy (Plane 1): `{ active, name, fingerprint,
      * source, rules }`.

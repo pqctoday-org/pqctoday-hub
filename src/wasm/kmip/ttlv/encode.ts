@@ -59,7 +59,7 @@ const PROTECTION_STORAGE_MASK: Record<string, number> = {
   SameJurisdiction: 0x00002000,
 }
 
-const NAMED_INTEGER_MASKS: Record<string, Record<string, number>> = {
+export const NAMED_INTEGER_MASKS: Record<string, Record<string, number>> = {
   CryptographicUsageMask: CRYPTOGRAPHIC_USAGE_MASK,
   ProtectionStorageMask: PROTECTION_STORAGE_MASK,
 }
@@ -90,6 +90,20 @@ function encodeInteger(tag: string, value: string | number): number {
     return acc
   }
   return Number(value)
+}
+
+/** DateTime accepts either Unix-epoch seconds (a plain/negative integer
+ * string or number — the codec self-test path uses `"0"`) or an ISO 8601
+ * string with a timezone offset (real OASIS corpus fixtures use
+ * `"2000-01-01T00:00:00+10:00"`) — mirrors `_encode_value`'s
+ * `datetime.fromisoformat(sv)` fallback. */
+function encodeDateTime(value: string | number | boolean): number {
+  if (typeof value === 'number') return value
+  const s = String(value)
+  if (/^-?\d+$/.test(s)) return Number(s)
+  const ms = Date.parse(s)
+  if (Number.isNaN(ms)) throw new EncodeError(`invalid DateTime '${s}'`)
+  return Math.floor(ms / 1000)
 }
 
 function encodeEnumeration(tag: string, value: string | number, table: CodepointTable): number {
@@ -135,13 +149,16 @@ export function toWireTree(node: KmipNode, table: CodepointTable): TtlvNode {
     case 'Enumeration':
       return { tag, type: 'Enumeration', value: enumHex(encodeEnumeration(node.tag, v as string | number, table)) }
     case 'Boolean':
-      return { tag, type: 'Boolean', value: Boolean(v) }
+      // A string "false"/"0" (from XML-sourced data) must NOT become the JS
+      // boolean `true` via a bare `Boolean(v)` truthiness check — mirrors
+      // `_encode_value`'s `str(v).lower() in ("true", "1")` explicitly.
+      return { tag, type: 'Boolean', value: typeof v === 'boolean' ? v : ['true', '1'].includes(String(v).toLowerCase()) }
     case 'TextString':
       return { tag, type: 'TextString', value: String(v) }
     case 'ByteString':
       return { tag, type: 'ByteString', value: String(v).toLowerCase() }
     case 'DateTime':
-      return { tag, type: 'DateTime', value: Number(v) }
+      return { tag, type: 'DateTime', value: encodeDateTime(v) }
     case 'Interval':
       return { tag, type: 'Interval', value: Number(v) }
     case 'BigInteger':

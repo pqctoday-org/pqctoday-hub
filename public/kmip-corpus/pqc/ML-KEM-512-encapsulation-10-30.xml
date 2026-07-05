@@ -1,0 +1,310 @@
+# ML-KEM-512-encapsulation-10-30.xml
+<KMIP>
+
+<RequestMessage>
+  <RequestHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+  </RequestHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Register"/>
+    <RequestPayload>
+      <ObjectType type="Enumeration" value="PrivateKey"/>
+      <Attributes>
+        <CryptographicUsageMask type="Integer" value="KeyAgreement"/>
+        <CryptographicAlgorithm type="Enumeration" value="ML_KEM_512"/>
+        <CryptographicLength type="Integer" value="13056"/>
+        <OriginalCreationDate type="DateTime" value="$NOW"/>
+        <ActivationDate type="DateTime" value="$NOW-30"/>
+        <KeyFormatType type="Enumeration" value="Raw"/>
+      </Attributes>
+      <PrivateKey>
+        <KeyBlock>
+          <KeyFormatType type="Enumeration" value="Raw"/>
+          <KeyValue>
+            <KeyMaterial type="ByteString" value="4781C92FC15FDE6B58E3D49E7AA68B9AF27777C3300F312CBBD298AB4142F74770A096589917819D284523C65670764D3E89B0EAE386BDF56AC6AB96A16B39AB8AA0F939884E8598DD375917B94AACA13E91AC25D1F5395D186081436AB2AA332F98C9F4D194B134A8950691F947AA86B1B85A0431D01212E9D086E3B686A8F10A7C4993D6D798C7B9747F5C2FFA8B569D22235B27CC15D32C06F5AE872845B1A716505C6658107C4F0B486F627AF60328F3294E92C2631E13A1FD02373772AFD54234C4A80582933C603B4B445501CFD5617F81C8F6ACABF568182D2B994AE05D93686C2188462503441967183E70465EC085B021A562AA97B8F635A013A137D21D5A1A227F15962266C120568E7B06B140F2716FA2476C7257E5CCA61210B223E834074A0BC6DBC5AB690E3CD27D5525B884DA3B28D4B11F249A0E4C115E73361FE745931301B1520AEE754BC23713F8F577EC3392FF0A420BAB1807F29DA9CB92CC84AED4DA5EA8D27643C2A216F8C8D0507655D530649898FA931041E628DA90A366F78CD574CAD943237186367CCAA629041895A48E4BB440ADD392E264825D138FB3B41886F65398F22AEEB5B1D1CA3ADC2815987CB271BA456AC058FEACA857B57D89D138BDE42E6DCB526E727579624508B54936B8446F9A7B848B673C4A7D9D1189154030D15789BD96074F8538DD42303035449C2479942CA7E412602ED74FA7F476BB76C9B43C30A3C88FEA67512B0AB3332C03627C6929DAA1C4FA063886C2B080A1ABC442692711A69439F4EC2872DB472AB5C3ECC1CEABF92A4EFC6546D5AEE6F830F7C05B40568C6C8440890584E05A4A7639AFC8F06B10549A6F8C9D8E7A9B1D8390937A4F31A09D9D136AD05285BD111E8DD916E215A38D476D1A4CADFAB3AFE7E5B6D177CB0CF02C5CE559F590B991F6B154513307373EF36B379D457B97EC4322A2BD028C48089598BAA720DDA0753806A37DE09CDF728952A32246E67427B8ABCA1461CACB36AC0389F46A4C3CF16877349064925F35FA23E3623F120B8C53D71E83724FE43BBCEF3825B6BAB17E321CCE8161F3DA43AF6510987CC0682B20508B61FBB676A1D225AE9C424B921163326513FA4EE3176E49A2AC3FA279B1E1AF5A46C18EF9526FC699CDCA91B83847FF217367F3044F677B2DB77AFA9C6330E2C6ABE6B88D5A4713C4B56B09663A865B69046F1A029172E19ED6688424A8260D5144699BB641D2CCF867616FE9AB31E9BB8E091A16305F76481912B733354436669C3685F819FD99ADA3B655D12C0F65947BE5D1CBCAF9067450925572AF4951C6C3B1BA2A383122487387D7049C0C82FC51CE75D4B037EC39F73C4BB94BBD34E4B11CCB0A74E15B25B5CEE0749233A122C62C615428217B029E60599D1763CB2006333C931AC96A6F74DC920FE886897250B9B2822DB7851B30A608BB23F84200BA97CBD8FC366BD861FCD1398C698B4EFA80ACA50B768271243202B32B396BD7C3D8217498C0372613AE62E76BD5064EDED95A7B96C5808B83A5A21CE864C177CC2CB1B5A6B18C20CD5868F263480001C17A418147C1C9329343E622423F00A230149D2755B1D7B03E125947F579A1291703563084474660765A3D005DB098EC71247C759300975A812C707C7568430BE7694846C029B51970F079015916B5D6C54DCEB566CF2BA82916378425157A77877EE92C41941336A58EDB4AC47A89709343102E3175A961A9727120410B55F15547519B6156873A9E7285F138A117E76AA03780DC396A2E93B839C05B104B2EFCA48EEEE72F8F078994F02E5721CC3A7197FE799DF9DCA15DE09ADD89C52F823B706825A711AF1499AACB5B359BF3C325569E2203A08C1597F0402EF3BC01B676A28A0C1734CA1CD6428E9E2B8F06EBC7F2C52AF415C8DC4A440FEBA22AE62AB93822DBEAA679201021280A97BCC2BA3C826A07192515059D89A5D4935CB5461C9942BBE41B19946389FD952FCCF05F51F0485F92669ED1BFD02B157AC51A45E6C34931B3CAB57A3FE04DBED5A67CE4A1A24A421B909FD61C2B6920BC9D415968DB99F5C3AAEFC44AC6A0C06B42472D90C1F396CE02673C69E20B15233130E14EF7F32119508838C814CEB457DB4A44BB48CB83CC346DD1697AC2AC53402441045901994002AFE3386B22636A4EC1407EEDD162AC3DFDBCAE18450C4F6FE24ECA211A2DE122A00A84B8DC90A4897B6338843B877408B768D1E8E6E51940C3D23946578BAD075E2F3F6D570B56695958E7AD3F8456B53E52F45D0251EB05B463FFDD326860"/>
+          </KeyValue>
+          <CryptographicAlgorithm type="Enumeration" value="ML_KEM_512"/>
+          <CryptographicLength type="Integer" value="13056"/>
+        </KeyBlock>
+      </PrivateKey>
+    </RequestPayload>
+  </BatchItem>
+</RequestMessage>
+
+
+<ResponseMessage>
+  <ResponseHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <TimeStamp type="DateTime" value="$NOW"/>
+  </ResponseHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Register"/>
+    <ResultStatus type="Enumeration" value="Success"/>
+    <ResponsePayload>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_0"/>
+    </ResponsePayload>
+  </BatchItem>
+</ResponseMessage>
+
+<RequestMessage>
+  <RequestHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+  </RequestHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Register"/>
+    <RequestPayload>
+      <ObjectType type="Enumeration" value="PublicKey"/>
+      <Attributes>
+        <CryptographicUsageMask type="Integer" value="KeyAgreement"/>
+        <CryptographicAlgorithm type="Enumeration" value="ML_KEM_512"/>
+        <CryptographicLength type="Integer" value="6400"/>
+        <OriginalCreationDate type="DateTime" value="$NOW"/>
+        <ActivationDate type="DateTime" value="$NOW-30"/>
+        <KeyFormatType type="Enumeration" value="Raw"/>
+      </Attributes>
+      <PublicKey>
+        <KeyBlock>
+          <KeyFormatType type="Enumeration" value="Raw"/>
+          <KeyValue>
+            <KeyMaterial type="ByteString" value="AF6510987CC0682B20508B61FBB676A1D225AE9C424B921163326513FA4EE3176E49A2AC3FA279B1E1AF5A46C18EF9526FC699CDCA91B83847FF217367F3044F677B2DB77AFA9C6330E2C6ABE6B88D5A4713C4B56B09663A865B69046F1A029172E19ED6688424A8260D5144699BB641D2CCF867616FE9AB31E9BB8E091A16305F76481912B733354436669C3685F819FD99ADA3B655D12C0F65947BE5D1CBCAF9067450925572AF4951C6C3B1BA2A383122487387D7049C0C82FC51CE75D4B037EC39F73C4BB94BBD34E4B11CCB0A74E15B25B5CEE0749233A122C62C615428217B029E60599D1763CB2006333C931AC96A6F74DC920FE886897250B9B2822DB7851B30A608BB23F84200BA97CBD8FC366BD861FCD1398C698B4EFA80ACA50B768271243202B32B396BD7C3D8217498C0372613AE62E76BD5064EDED95A7B96C5808B83A5A21CE864C177CC2CB1B5A6B18C20CD5868F263480001C17A418147C1C9329343E622423F00A230149D2755B1D7B03E125947F579A1291703563084474660765A3D005DB098EC71247C759300975A812C707C7568430BE7694846C029B51970F079015916B5D6C54DCEB566CF2BA82916378425157A77877EE92C41941336A58EDB4AC47A89709343102E3175A961A9727120410B55F15547519B6156873A9E7285F138A117E76AA03780DC396A2E93B839C05B104B2EFCA48EEEE72F8F078994F02E5721CC3A7197FE799DF9DCA15DE09ADD89C52F823B706825A711AF1499AACB5B359BF3C325569E2203A08C1597F0402EF3BC01B676A28A0C1734CA1CD6428E9E2B8F06EBC7F2C52AF415C8DC4A440FEBA22AE62AB93822DBEAA679201021280A97BCC2BA3C826A07192515059D89A5D4935CB5461C9942BBE41B19946389FD952FCCF05F51F0485F92669ED1BFD02B157AC51A45E6C34931B3CAB57A3FE04DBED5A67CE4A1A24A421B909FD61C2B6920BC9D415968DB99F5C3AAEFC44AC6A0C06B42472D90C1F396CE02673C69E20B15233130E14EF7F32119508838C814CEB457DB4A44BB48CB83CC346DD1697AC2AC53402441045901994002AFE3386B22636A4EC1407EEDD162AC3DFDBCAE18450C4F6FE24ECA211A2DE1"/>
+          </KeyValue>
+          <CryptographicAlgorithm type="Enumeration" value="ML_KEM_512"/>
+          <CryptographicLength type="Integer" value="6400"/>
+        </KeyBlock>
+      </PublicKey>
+    </RequestPayload>
+  </BatchItem>
+</RequestMessage>
+
+
+<ResponseMessage>
+  <ResponseHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <TimeStamp type="DateTime" value="$NOW"/>
+  </ResponseHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Register"/>
+    <ResultStatus type="Enumeration" value="Success"/>
+    <ResponsePayload>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_1"/>
+    </ResponsePayload>
+  </BatchItem>
+</ResponseMessage>
+
+<RequestMessage>
+  <RequestHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+  </RequestHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Encapsulate"/>
+    <RequestPayload>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_1"/>
+      <CryptographicParameters>
+	<InputKeyMaterial type="ByteString" value="E0E25025D948C47FB371634B28CD9B08B93CF52527C2E144A424FDA93B7B9017"/>
+      </CryptographicParameters>
+    </RequestPayload>
+  </BatchItem>
+</RequestMessage>
+
+<ResponseMessage>
+  <ResponseHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <TimeStamp type="DateTime" value="$NOW"/>
+  </ResponseHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Encapsulate"/>
+    <ResultStatus type="Enumeration" value="Success"/>
+    <ResponsePayload>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_2"/>
+      <Data type="ByteString" value="E4DF021563FD62CAD1E6F81F1F3D325D8D8E86B584BF0CD38095FAC587B5B6F310ACCF746270BBBCB60EEC917A19DB02EBD6766C1C0DBCF5BA5F02D7A382F1423C6C7787483F9FD0254E37BB937450A5F8F8E2B4FA4A7906C44F6C1403557A8015C4E1B7F8B68A599BE96CE325E377D89BD11D97F664C64045AC103F70654D3DC77B4698127BFA0CABE8DCF6CA6C19DEE6A4CEEAFA9EC3943994E09A2A5DBC306A841F815ADAC8E2B8FACB8A6E189628A6BB9D4394241F8BE752256472BA458C0C5A38E94B531D56E95E2045C3912AD0287648EC52A61CAF314F818660A27A77AE2F159680191D89E0F0F233DF715F42D2D7AD6C1A2FBB171D8936ED924732A3C687FCBF02AE9F0EC68075778FAED559CF96C053399D119E92B609AF16BDE8F90646409AB381C4FE53625F7E43CDBDBDD61E2278DFD3E45B7DBECA08C7A37ECFA0AE9E36D11948590152C4690C81A3B3AA165005790BECBBCDC15419407283B7EE637DFA167E0B7A94C3CE203149D3C12173428773E7BB376760238097298CB5A6FBDEF48701EE0572F712E6B7EE17B70326241FF01C4AE34F93F9759E958DBF96450840109B3C70F07513ADEE54FD1E4DC7F919C9E5F8BFA9F45034663DDE65F7A7725C7DBD491BA501B764962C573F988935AE763CBDE87B1472D8D6A44B22CFC1538730AFE7F89FE102959239B164964C0D1D721D35FC6342D74D5D75C46FDABD0876F5D8B04A7DE2AABA02EDF882CFD6CD88A2251917FAE0A994BF1286A4C74CC31851FB1B4094432C738EABA60469F3C393A9531636160AB10DABE9486551BE0464DC58FE2B17EC27AA3388AF5E0225CDD3943F2359D77306FEF46F3CD34DF6C30927D4298767E74A8D57442EB8E204F3B1A612B74583F6A10A07A44199FF18C4FD62651FDA712CB0EB7E27FBB2BD848AFA8E9B5FE8583A2F1D9EFEA22EE971BDE1842DD78BCC1C2D22C09ABE6DA0EFC50CE9D29E6E66650E597E02AF29C8738455242DBA87DF73061EAFB1769992CEE3C388F460E7C45D7675405DBDD83283630222AE846F3C281DA892F19BFE65DDAB2FD12A601EE107217CEBEEBB05"/>
+    </ResponsePayload>
+  </BatchItem>
+</ResponseMessage>
+
+<RequestMessage>
+  <RequestHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+  </RequestHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Get"/>
+    <RequestPayload>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_2"/>
+    </RequestPayload>
+  </BatchItem>
+</RequestMessage>
+
+<ResponseMessage>
+  <ResponseHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <TimeStamp type="DateTime" value="$NOW"/>
+  </ResponseHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Get"/>
+    <ResultStatus type="Enumeration" value="Success"/>
+    <ResponsePayload>
+      <ObjectType type="Enumeration" value="SecretData"/>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_2"/>
+      <SecretData>
+        <SecretDataType type="Enumeration" value="Seed"/>
+        <KeyBlock>
+          <KeyFormatType type="Enumeration" value="Raw"/>
+          <KeyValue>
+            <KeyMaterial type="ByteString" value="6603B882065B9DB0D4AFB710403ED9BECE3DB8BBC1BB41B28299F1EB0B728A95"/>
+          </KeyValue>
+        </KeyBlock>
+      </SecretData>
+    </ResponsePayload>
+  </BatchItem>
+</ResponseMessage>
+
+<RequestMessage>
+  <RequestHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+  </RequestHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Destroy"/>
+    <RequestPayload>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_2"/>
+    </RequestPayload>
+  </BatchItem>
+</RequestMessage>
+
+<ResponseMessage>
+  <ResponseHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <TimeStamp type="DateTime" value="$NOW"/>
+  </ResponseHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Destroy"/>
+    <ResultStatus type="Enumeration" value="Success"/>
+    <ResponsePayload>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_2"/>
+    </ResponsePayload>
+  </BatchItem>
+</ResponseMessage>
+
+<RequestMessage>
+  <RequestHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+  </RequestHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Revoke"/>
+    <RequestPayload>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_0"/>
+    </RequestPayload>
+  </BatchItem>
+  <BatchItem>
+    <Operation type="Enumeration" value="Destroy"/>
+    <RequestPayload>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_0"/>
+    </RequestPayload>
+  </BatchItem>
+</RequestMessage>
+
+
+<ResponseMessage>
+  <ResponseHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <TimeStamp type="DateTime" value="$NOW"/>
+  </ResponseHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Revoke"/>
+    <ResultStatus type="Enumeration" value="Success"/>
+    <ResponsePayload>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_0"/>
+    </ResponsePayload>
+  </BatchItem>
+  <BatchItem>
+    <Operation type="Enumeration" value="Destroy"/>
+    <ResultStatus type="Enumeration" value="Success"/>
+    <ResponsePayload>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_0"/>
+    </ResponsePayload>
+  </BatchItem>
+</ResponseMessage>
+
+
+<RequestMessage>
+  <RequestHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+  </RequestHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Revoke"/>
+    <RequestPayload>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_1"/>
+    </RequestPayload>
+  </BatchItem>
+  <BatchItem>
+    <Operation type="Enumeration" value="Destroy"/>
+    <RequestPayload>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_1"/>
+    </RequestPayload>
+  </BatchItem>
+</RequestMessage>
+
+
+<ResponseMessage>
+  <ResponseHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <TimeStamp type="DateTime" value="$NOW"/>
+  </ResponseHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Revoke"/>
+    <ResultStatus type="Enumeration" value="Success"/>
+    <ResponsePayload>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_1"/>
+    </ResponsePayload>
+  </BatchItem>
+  <BatchItem>
+    <Operation type="Enumeration" value="Destroy"/>
+    <ResultStatus type="Enumeration" value="Success"/>
+    <ResponsePayload>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_1"/>
+    </ResponsePayload>
+  </BatchItem>
+</ResponseMessage>
+
+
+</KMIP>

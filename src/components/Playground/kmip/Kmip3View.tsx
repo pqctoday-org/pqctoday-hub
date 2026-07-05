@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils'
 import type { KmipEngine } from '@/wasm/kmip/kmipEngine'
 import { BatchView } from './BatchView'
 import { CommandsView } from './CommandsView'
+import { CorpusReplayView } from './CorpusReplayView'
 
 type Kmip3Tab = 'commands' | 'corpus' | 'batch'
 
@@ -65,12 +66,7 @@ export function Kmip3View({
 
       {tab === 'commands' && <CommandsView engine={engine} onChanged={onChanged} />}
 
-      {tab === 'corpus' && (
-        <div className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-          Corpus Replay is coming soon — a live, in-browser replay of the real OASIS KMIP 3.0
-          conformance test corpus.
-        </div>
-      )}
+      {tab === 'corpus' && <CorpusReplayView />}
 
       {tab === 'batch' && (
         <BatchView
