@@ -433,12 +433,22 @@ export function buildDrawerDetail(framework: ComplianceFramework, pillar: Pillar
       framework.pqcRequirement === 'no'
         ? [
             n('Mandate', framework.label, framework.enforcementBody || 'regulation', stance.tone),
-            n('PQC posture', stance.label, 'no PQC requirement identified in this framework', stance.tone),
+            n(
+              'PQC posture',
+              stance.label,
+              'no PQC requirement identified in this framework',
+              stance.tone
+            ),
           ]
         : [
             n('Mandate', framework.label, framework.enforcementBody || 'regulation', stance.tone),
             n('PQC posture', stance.label, framework.deadline || 'see mandate text', stance.tone),
-            n('See also', 'Product Records', 'cross-reference validated modules for your vendor', 'success'),
+            n(
+              'See also',
+              'Product Records',
+              'cross-reference validated modules for your vendor',
+              'success'
+            ),
           ]
     dossierFocus = 'Risk-based crypto exposure assessment & treatment.'
     dossierItems = [

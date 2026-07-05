@@ -1276,7 +1276,7 @@ export function KmipPlaygroundView() {
           {/* Decorative click-to-dismiss backdrop; not a tab stop — keyboard
               users dismiss via Escape (handled above) or the close button. */}
           <div
-            className="absolute inset-0 bg-black/50"
+            className="absolute inset-0 bg-black/60"
             aria-hidden="true"
             onClick={() => setGuideOpen(false)}
           />
