@@ -4,24 +4,40 @@
  * heavy dependency, so it's dynamically imported (kept out of the main bundle)
  * and only loaded when a diagram is actually shown.
  */
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 let mermaidPromise: Promise<typeof import('mermaid').default> | null = null
 async function getMermaid() {
   if (!mermaidPromise) {
     mermaidPromise = import('mermaid').then((m) => {
-      m.default.initialize({ startOnLoad: false, theme: 'neutral', securityLevel: 'loose' })
+      // 'strict' is safe here: every label passed through `source` is plain
+      // text (quotes stripped, no HTML) generated from static internal data —
+      // never anything a user can type. Keep it strict rather than 'loose' so
+      // that stays true if this ever becomes dynamic.
+      m.default.initialize({ startOnLoad: false, theme: 'neutral', securityLevel: 'strict' })
       return m.default
     })
   }
   return mermaidPromise
 }
 
-export function MermaidDiagram({ source, id }: { source: string; id: string }) {
+export function MermaidDiagram({
+  source,
+  id,
+  summary,
+}: {
+  source: string
+  id: string
+  /** Plain-text description of the diagram for screen readers (the injected
+   *  SVG itself has no text alternative). */
+  summary?: string
+}) {
   // Keyed by source so a source change shows "Rendering…" until the new SVG
   // arrives — without any synchronous setState in the effect body.
   const [rendered, setRendered] = useState<{ source: string; svg: string } | null>(null)
   const [failedSource, setFailedSource] = useState<string | null>(null)
+  const [overflowing, setOverflowing] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     let active = true
@@ -38,6 +54,12 @@ export function MermaidDiagram({ source, id }: { source: string; id: string }) {
     }
   }, [source, id])
 
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el || !rendered || rendered.source !== source) return
+    setOverflowing(el.scrollWidth > el.clientWidth + 1)
+  }, [rendered, source])
+
   if (failedSource === source) {
     return (
       <p className="text-xs text-muted-foreground">Diagram couldn’t render — see the list view.</p>
@@ -46,5 +68,20 @@ export function MermaidDiagram({ source, id }: { source: string; id: string }) {
   if (!rendered || rendered.source !== source) {
     return <p className="text-xs text-muted-foreground">Rendering diagram…</p>
   }
-  return <div className="overflow-x-auto" dangerouslySetInnerHTML={{ __html: rendered.svg }} />
+  return (
+    <div>
+      <div
+        ref={containerRef}
+        role="img"
+        aria-label={summary ?? 'Architecture diagram'}
+        className="overflow-x-auto"
+        dangerouslySetInnerHTML={{ __html: rendered.svg }}
+      />
+      {overflowing && (
+        <p className="mt-1 text-center text-[11px] text-muted-foreground">
+          ← scroll to see the full diagram →
+        </p>
+      )}
+    </div>
+  )
 }
