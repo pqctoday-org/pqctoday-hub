@@ -524,12 +524,17 @@ export const RULE_CATALOG: Record<RuleTypeId, RuleSpec> = {
     fields: [
       { key: 'algorithm', kind: 'algo' },
       { key: 'flags', kind: 'flags', central: true },
+      // Optional scope; the engine defaults to the creation/ingress ops
+      // (Create, CreateKeyPair, Register, Import) when omitted (2026-07-04).
+      { key: 'ops', kind: 'ops', label: 'operations (default: creation ops)', optional: true },
       reason,
       clause,
     ],
     make: () => ({
       scalars: { algorithm: 'ML-KEM-768', reason: 'KEM keys must declare KeyAgreement' },
-      lists: { flags: ['KeyAgreement'] },
+      // Explicit creation-scope default (matches the engine's implicit
+      // default) so new rules are self-documenting about where they gate.
+      lists: { flags: ['KeyAgreement'], ops: ['Create', 'CreateKeyPair', 'Register', 'Import'] },
       maps: {},
     }),
   },
@@ -544,6 +549,8 @@ export const RULE_CATALOG: Record<RuleTypeId, RuleSpec> = {
     fields: [
       { key: 'attribute_name', kind: 'attr', label: 'attribute name' },
       { key: 'algorithms', kind: 'algos', central: true },
+      // Optional scope; engine default = creation/ingress ops (2026-07-04).
+      { key: 'ops', kind: 'ops', label: 'operations (default: creation ops)', optional: true },
       reason,
       clause,
     ],
@@ -552,7 +559,10 @@ export const RULE_CATALOG: Record<RuleTypeId, RuleSpec> = {
         attribute_name: 'pqctoday-purpose',
         reason: 'Production keys must declare a purpose',
       },
-      lists: { algorithms: ['ML-DSA-65', 'ML-DSA-87'] },
+      lists: {
+        algorithms: ['ML-DSA-65', 'ML-DSA-87'],
+        ops: ['Create', 'CreateKeyPair', 'Register', 'Import'],
+      },
       maps: {},
     }),
   },

@@ -14,13 +14,20 @@ schema_version: 1
 metadata:
   name: bsi-tr-02102
   description: |
-    Illustrative BSI TR-02102-1 alignment. Key establishment must be HYBRID
-    (a classical KEM/DH combined with a PQC KEM via a KEM combiner); the PQC
-    component may be ML-KEM, FrodoKEM, or Classic McEliece (BSI recognises the
-    conservative lattice/code KEMs for long-term confidentiality). Signatures
-    use ML-DSA / SLH-DSA or stateful hash-based schemes (XMSS / LMS). Minimum
-    120-bit classical-equivalent security. Crypto agility is required so a
-    component can be swapped if weakened.
+    Illustrative BSI TR-02102-1 alignment. Key establishment must be HYBRID:
+    either a combined hybrid KEM (X25519MLKEM768 / SecP256r1MLKEM768) or a
+    standalone PQC KEM (ML-KEM, FrodoKEM, Classic McEliece — BSI recognises
+    the conservative lattice/code KEMs for long-term confidentiality) that
+    declares its classical partner via x-pqctoday-hybrid-partner at creation.
+    Signatures use ML-DSA / SLH-DSA / stateful hash-based schemes (LMS, HSS,
+    XMSS, XMSS-MT) or — until end-2035, per BSI's transition allowance —
+    classical ECDSA/RSA/EdDSA; RSA signing must use PSS and RSA encryption
+    OAEP. Hybrid (composite) signing is RECOMMENDED, matching BSI's stance
+    (BSI recommends but does not mandate hybrid signatures): requests tagged
+    x-pqctoday-hybrid-sign=required are held to the ML-DSA-65 + ECDSA-P384
+    composite. Minimum 120-bit classical-equivalent security. (The previous
+    revision mandated the composite unconditionally, which denied every
+    signature scheme this description advertises — 2026-07-04 gap audit.)
   authority: pqctoday-hsm/training
   effective: "2026-01-01"
   compliance_mapping:
@@ -32,7 +39,10 @@ rules:
 
   # 1. KEM allowlist — BSI-recognised PQC KEMs (note FrodoKEM / Classic McEliece,
   #    which fips-only and cnsa-2.0 deny). Classical KEM/DH stays allowed because
-  #    BSI requires it as the *hybrid* partner, not standalone.
+  #    BSI requires it as the *hybrid* partner, not standalone. The combined
+  #    hybrid KEMs (the one hybrid primitive this stack actually implements)
+  #    were missing — a hybrid-mandating policy that denied the hybrid KEM
+  #    (2026-07-04 gap audit). ECDH-P521 added for completeness.
   - type: algorithm_allowlist
     ops: ["CreateKeyPair:KeyAgreement"]
     algorithms:
@@ -42,44 +52,96 @@ rules:
       - FrodoKEM-1344
       - Classic-McEliece-460896
       - Classic-McEliece-6688128
+      - X25519MLKEM768
+      - SecP256r1MLKEM768
       - ECDH-P256
       - ECDH-P384
+      - ECDH-P521
       - X25519
     reason: "KEM not recognised by BSI TR-02102-1 for new key establishment"
 
-  # 2. Hybrid signing — STRICTER THAN BSI, by deliberate org choice.
-  #    BSI TR-02102-1 (2026-01) RECOMMENDS hybrid (classical + PQC) signatures
-  #    and permits classical-only RSA/ECC signatures until the end of 2035
-  #    (§2.1/§5.3); it does NOT mandate hybrid. This policy mandates the
-  #    ML-DSA-65 + ECDSA-P384 composite as defence-in-depth (secure while either
-  #    half holds). Encoded via the composite name; the engine's
-  #    hybrid_dual_sign_requirement skips symmetric requests (Y7). composite_oid
-  #    is the IANA-registered LAMPS OID (informational — not enforced).
-  #    Verified against BSI TR-02102-1 v2026-01 on 2026-07-01.
+  # 2. Signature allowlist — the schemes BSI TR-02102-1 recognises: ML-DSA,
+  #    SLH-DSA, the SP 800-208 stateful HBS family, the LAMPS composites, and
+  #    (until the end-2035 transition, rule 2b) classical ECDSA/RSA/EdDSA.
+  #    REWRITTEN 2026-07-04: the previous unconditional
+  #    hybrid_dual_sign_requirement denied every one of these — including the
+  #    pure PQC schemes — leaving no signable algorithm at all.
+  - type: algorithm_allowlist
+    ops: ["CreateKeyPair:Sign", Sign]
+    algorithms:
+      - ML-DSA-65
+      - ML-DSA-87
+      - SLH-DSA-SHA2-128s
+      - SLH-DSA-SHA2-128f
+      - SLH-DSA-SHA2-192s
+      - SLH-DSA-SHA2-192f
+      - SLH-DSA-SHA2-256s
+      - SLH-DSA-SHA2-256f
+      - SLH-DSA-SHAKE-128s
+      - SLH-DSA-SHAKE-128f
+      - SLH-DSA-SHAKE-192s
+      - SLH-DSA-SHAKE-192f
+      - SLH-DSA-SHAKE-256s
+      - SLH-DSA-SHAKE-256f
+      - LMS
+      - HSS
+      - XMSS
+      - XMSS-MT
+      - ML-DSA-65-ECDSA-P384
+      - ML-DSA-65-Ed25519
+      - ML-DSA-87-ECDSA-P384
+      - ECDSA-P256
+      - ECDSA-P384
+      - ECDSA-P521
+      - RSA
+      - Ed25519
+      - Ed448
+    reason: "Signature scheme not recognised by BSI TR-02102-1"
+    clause: "BSI TR-02102-1 §2.1/§5.3"
+
+  # 2a. Hybrid signing on demand — BSI RECOMMENDS hybrid signatures; requests
+  #     that opt in via x-pqctoday-hybrid-sign=required are held to the
+  #     ML-DSA-65 + ECDSA-P384 composite. composite_oid is the IANA-registered
+  #     LAMPS OID (informational — not enforced). Verified against BSI
+  #     TR-02102-1 v2026-01 on 2026-07-01.
   - type: hybrid_dual_sign_requirement
     primary: ML-DSA-65
     secondary: ECDSA-P384
     effective_from: "2026-01-01"
     effective_until: "2035-12-31"
-    # Scope to the SIGNING intent only — "CreateKeyPair:Sign", NOT bare
-    # CreateKeyPair. Bare CreateKeyPair prefix-matches CreateKeyPair:KeyAgreement,
-    # so a signing mandate would wrongly deny the KEM key-agreement key pairs that
-    # rule 1 allowlists (ML-KEM / FrodoKEM / Classic McEliece). Same guard the
-    # hybrid-migration-window policy documents (fixed 2026-07-03).
-    ops_affected: [Create, "CreateKeyPair:Sign", Sign]
+    ops_affected: ["CreateKeyPair:Sign", Sign]
     # id-MLDSA65-ECDSA-P384-SHA512 (LAMPS composite-sigs, IANA arc
     # 1.3.6.1.5.5.7.6; verified on datatracker 2026-07-01).
     composite_oid: "1.3.6.1.5.5.7.6.46"
-    reason: "Policy mandates hybrid (ML-DSA-65 + ECDSA-P384) signing — stricter than BSI's recommendation"
+    triggered_by_custom_attribute: { name: pqctoday-hybrid-sign, value: required }
+    reason: "Request opted into hybrid signing: composite ML-DSA-65 + ECDSA-P384 required"
     clause: "BSI TR-02102-1 §2.1/§5.3"
 
-  # 3. Key-establishment keys must declare the hybrid partner via a custom
-  #    attribute — a standalone PQC KEM key (no classical partner) is rejected.
+  # 2b. BSI permits classical-only signatures until the end of 2035; from
+  #     2036 classical signing and classical signing-key creation are over.
+  - type: temporal_cutoff
+    op: "CreateKeyPair:Sign"
+    algorithm_class: classical
+    after: "2036-01-01"
+    reason: "BSI transition ends 2035: classical signing-key creation banned"
+    clause: "BSI TR-02102-1 §2.1/§5.3"
+  - type: temporal_cutoff
+    op: Sign
+    algorithm_class: classical
+    after: "2036-01-01"
+    reason: "BSI transition ends 2035: classical signing banned"
+    clause: "BSI TR-02102-1 §2.1/§5.3"
+
+  # 3. Standalone PQC KEM keys must declare the classical hybrid partner via
+  #    a custom attribute at creation (creation-scoped by engine default —
+  #    un-scoped this rule denied Encapsulate/Decapsulate on untagged keys,
+  #    2026-07-04 gap audit). The combined hybrid KEMs are exempt: they are
+  #    hybrid by construction.
   - type: require_custom_attribute
     attribute_name: pqctoday-hybrid-partner
     algorithms: [ML-KEM-768, ML-KEM-1024, FrodoKEM-976, FrodoKEM-1344,
                  Classic-McEliece-460896, Classic-McEliece-6688128]
-    reason: "BSI hybrid: KEM keys must name their classical partner (x-pqctoday-hybrid-partner)"
+    reason: "BSI hybrid: standalone PQC KEM keys must name their classical partner (x-pqctoday-hybrid-partner)"
 
   # 4. Minimum security level — RSA/DH >= 3000 bits (BSI 120-bit floor).
   - type: min_key_length
@@ -87,11 +149,30 @@ rules:
     min_bits: 3000
     reason: "BSI TR-02102-1 minimum ~120-bit security (RSA >= 3000 bits)"
 
-  # 5. Weak/broken primitives banned outright.
+  # 5. Broken/below-minimum ALGORITHMS banned. DES/3DES are real KMIP
+  #    CryptographicAlgorithm names (spec §11), so they belong here even
+  #    though this engine never instantiates them — a Register/dry-run can
+  #    still carry them. The old list also named RSA-PKCS1-v1_5 / ECDSA-SHA1
+  #    / SHA1 / MD5, which are NOT algorithm names (padding/hash mechanisms
+  #    in KMIP terms) — those entries were silent no-ops; SHA-1 is denied by
+  #    the rule-6 hash allowlist, v1.5 padding by rule 5a (2026-07-04).
   - type: algorithm_denylist
     ops: [Create, CreateKeyPair, Sign, Encrypt]
-    algorithms: [RSA-PKCS1-v1_5, ECDSA-SHA1, SHA1, MD5, DES, 3DES, RSA-2048]
+    algorithms: [RSA-2048, DES, 3DES]
     reason: "Below BSI TR-02102-1 minimums / broken primitive"
+
+  # 5a. RSA mechanism constraints: PSS for signing, OAEP for encryption
+  #     (BSI TR-02102-1 does not recommend PKCS#1 v1.5 for new use).
+  - type: mechanism_parameter_constraint
+    ops: [Sign]
+    algorithm: RSA
+    allowed_padding_methods: [PSS]
+    reason: "BSI: RSA signatures must use PSS padding"
+  - type: mechanism_parameter_constraint
+    ops: [Encrypt]
+    algorithm: RSA
+    allowed_padding_methods: [OAEP]
+    reason: "BSI: RSA encryption must use OAEP padding"
 
   # 6. Hashing restricted to SHA-2 / SHA-3 for signing.
   - type: hash_algorithm_allowlist

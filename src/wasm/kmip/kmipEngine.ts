@@ -102,6 +102,12 @@ export interface OpSpec {
    * plain `Create`d symmetric key, so the caller carries it from Encrypt's
    * `ivHex` response back into Decrypt's `ivHex` request. */
   ivHex?: string
+  /** Custom x-attributes to attach at Create/CreateKeyPair ({name: value},
+   * `x-` prefix optional). Governance-tagged policies (CNSA classification,
+   * BSI hybrid-partner, 2030 purpose) require these at key creation — they
+   * were previously dry-run-only, which made those policies unusable from
+   * the workbench (2026-07-04). Ignored by non-creation ops. */
+  attrs?: Record<string, string>
 }
 
 /** The ID-Placeholder sentinel (KMIP 3.0 §6.4). Use it as a batch item's `uid`
