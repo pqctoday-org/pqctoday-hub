@@ -265,6 +265,7 @@ interface WasmKmipPlayground {
 interface WasmModule {
   KmipPlayground: { new (): WasmKmipPlayground }
   decode_ttlv(bytes: Uint8Array): string
+  encode_ttlv(treeJson: string): Uint8Array
 }
 
 /** Async, JSON-friendly facade over the wasm `KmipPlayground`. */
@@ -329,6 +330,15 @@ export class KmipEngine {
   /** Decode any KMIP TTLV frame (request or response) to a wire-view tree. */
   decodeTtlv(bytes: Uint8Array): TtlvNode {
     return JSON.parse(this.mod.decode_ttlv(bytes)) as TtlvNode
+  }
+
+  /** Encode a wire-view tree (the same `{tag,type,value,children}` shape
+   * `decodeTtlv` produces) to KMIP TTLV wire bytes — the inverse of
+   * `decodeTtlv`. Lets a caller build ANY of the 66 KMIP 3.0 operations (not
+   * just the ones `OpSpec`/`runOp` cover) and hand the bytes to `submit`.
+   * Throws (a thrown `JsError` from the wasm side) on a malformed tree. */
+  encodeTtlv(tree: TtlvNode): Uint8Array {
+    return this.mod.encode_ttlv(JSON.stringify(tree))
   }
 }
 
