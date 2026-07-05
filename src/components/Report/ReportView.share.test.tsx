@@ -19,11 +19,15 @@ vi.mock(
 )
 vi.mock('./ReportContent', () => ({ ReportContent: () => <div data-testid="report-content" /> }))
 vi.mock('./ReportToc', () => ({ ReportToc: () => <div data-testid="report-toc" /> }))
-vi.mock('./ReportNextSteps', () => ({ ReportNextSteps: () => <div data-testid="report-next-steps" /> }))
+vi.mock('./ReportNextSteps', () => ({
+  ReportNextSteps: () => <div data-testid="report-next-steps" />,
+}))
 vi.mock('@/components/Assess/PersonaSuggestionCard', () => ({
   PersonaSuggestionCard: () => <div data-testid="persona-suggestion-card" />,
 }))
-vi.mock('@/hooks/useAwarenessScore', () => ({ useAwarenessScore: () => ({ score: 0, tier: 'novice' }) }))
+vi.mock('@/hooks/useAwarenessScore', () => ({
+  useAwarenessScore: () => ({ score: 0, tier: 'novice' }),
+}))
 vi.mock('@/hooks/useWorkflowPhaseTracker', () => ({ useWorkflowPhaseTracker: () => {} }))
 
 function renderReport(shareToken: string) {

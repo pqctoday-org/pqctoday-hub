@@ -26,6 +26,10 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.10.0] - 2026-07-05
+
+A crypto-agility, simulation, and accuracy release: the CACP playground gains real Ed25519/ECDH operations with an in-app guide, the simulation adds country-specific standards guidance and a reflective run-complete ending, and a wave of accuracy fixes corrects a report-sharing bug that could silently overwrite a recipient's own assessment, a fabricated compliance evidence chain, a stale CVE feed, and several other content and accessibility issues.
+
 ### Added
 
 - **Compare Ed25519 and ECDH key operations in the crypto-agility playground** [view:/playground/cacp]: both are now runnable end-to-end in the workbench (create, sign/verify, key agreement), backed by a rebuilt engine — previously spec-only entries with nothing to actually test.
@@ -54,6 +58,11 @@ first time (don't ship dev-speak and reformat later):
 - **The Executive Overview walkthrough now presents the budget case before the program charter** [view:/simulation] [persona:executive]: it previously opened with the charter, before the financial case that's supposed to justify it.
 - **Fixed onboarding never appearing for anyone who started the simulation via a direct run link** [view:/simulation]: the first-run tour was being permanently marked "seen" just to avoid interrupting an active run.
 - **The simulation's destructive confirmations (reset, start over) are now accessible, styled dialogs** [view:/simulation] instead of the browser's native confirm popup.
+- **A shared assessment link no longer silently overwrites your own in-progress report** [view:/report]: opening someone else's `?share=` link used to immediately apply their answers to your own assessment and mark it complete, contradicting the page's own "read-only snapshot" banner; it now only loads the shared snapshot if you haven't started your own assessment yet, and otherwise explains why the link didn't load.
+- **The Algorithms page's suggested "Standardized" filter for developers no longer leads to a dead end** [view:/algorithms] [persona:developer]: the filter value it applied didn't exist, so clicking the primary suggested action showed zero results; it now applies the correct "Certified" filter.
+- **Common Criteria certificates that were never checked for PQC support no longer look identical to ones checked and found clean** [view:/compliance]: 889 of 1,081 records had simply never been run through PQC detection, but displayed the same "No PQC Mechanisms Detected" label as the 20 that were actually analyzed; unanalyzed records now show "Not Yet Analyzed."
+- **The compliance mandate detail no longer shows a fabricated migration-evidence trail for mandates that don't actually specify one** [view:/compliance]: most non-marquee mandates were rendered with an identical, hardcoded "FIPS 140-3 validated → ML-KEM/ML-DSA → CMVP evidence" chain regardless of what the mandate actually requires; it's now built only from each mandate's real per-row fields.
+- **The compliance glossary no longer cites a draft NIST specification as published** [view:/compliance]: NIST IR 8547 is still a draft; the glossary's "Standard" definition now cites FIPS 205 instead.
 
 ## [4.9.0] - 2026-07-04
 

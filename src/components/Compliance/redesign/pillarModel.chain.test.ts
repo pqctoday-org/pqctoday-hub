@@ -35,7 +35,10 @@ function framework(overrides: Partial<ComplianceFramework>): ComplianceFramework
 
 describe('buildDrawerDetail comply-pillar chain (ACCURACY-0705)', () => {
   it('does NOT assert "FIPS 140-3 validated" / "ML-KEM · ML-DSA" for a framework with no PQC requirement', () => {
-    const d = buildDrawerDetail(framework({ label: 'No-PQC-Mandate Framework', pqcRequirement: 'no' }), 'comply')
+    const d = buildDrawerDetail(
+      framework({ label: 'No-PQC-Mandate Framework', pqcRequirement: 'no' }),
+      'comply'
+    )
     const chainText = d.chain.map((n) => `${n.value} ${n.sub}`).join(' | ')
     expect(chainText).not.toMatch(/FIPS 140-3 validated/)
     expect(chainText).not.toMatch(/ML-KEM/)
@@ -44,7 +47,12 @@ describe('buildDrawerDetail comply-pillar chain (ACCURACY-0705)', () => {
 
   it('two different mandates with different deadlines get DIFFERENT chains (not an identical template)', () => {
     const a = buildDrawerDetail(
-      framework({ id: 'a', label: 'Mandate A', pqcRequirement: 'yes', deadline: '2030 hard deadline' }),
+      framework({
+        id: 'a',
+        label: 'Mandate A',
+        pqcRequirement: 'yes',
+        deadline: '2030 hard deadline',
+      }),
       'comply'
     )
     const b = buildDrawerDetail(
