@@ -41,6 +41,7 @@ export function Kmip3View({
   onChanged: () => void
 }) {
   const [tab, setTab] = useState<Kmip3Tab>('learn')
+  const [pendingOp, setPendingOp] = useState<string | null>(null)
 
   return (
     <GlossaryProvider>
@@ -80,11 +81,21 @@ export function Kmip3View({
             <LearnView
               engine={engine}
               onChanged={onChanged}
-              onTryInReference={() => setTab('commands')}
+              onTryInReference={(op) => {
+                setPendingOp(op)
+                setTab('commands')
+              }}
             />
           )}
 
-          {tab === 'commands' && <CommandsView engine={engine} onChanged={onChanged} />}
+          {tab === 'commands' && (
+            <CommandsView
+              engine={engine}
+              onChanged={onChanged}
+              pendingOp={pendingOp}
+              onPendingOpHandled={() => setPendingOp(null)}
+            />
+          )}
 
           {tab === 'corpus' && <CorpusReplayView />}
 

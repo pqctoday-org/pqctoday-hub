@@ -1,24 +1,38 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-// CommandsView — category-sorted tester for every KMIP 3.0 operation (all
-// 66 the protocol defines), built entirely on the generic op-template
-// pipeline (src/wasm/kmip/ttlv/) rather than a Rust match arm per op. Every
-// Run button fires a REAL request through the same dispatcher path the
-// Agility tab uses — including the 15 permanently-unsupported ops, which
-// get a real `OperationNotSupported` rejection, never a simulated one.
+// CommandsView — "Reference": a category-sorted, individually-parameterized
+// tester for every KMIP 3.0 operation (all 66 the protocol defines), built
+// entirely on the generic op-template pipeline (src/wasm/kmip/ttlv/) rather
+// than a Rust match arm per op. Every Run button fires a REAL request
+// through the same dispatcher path the Agility tab uses — including the 15
+// permanently-unsupported ops, which get a real `OperationNotSupported`
+// rejection, never a simulated one.
 //
-// Every run is appended to a persistent Execution Log (most recent first),
-// each entry rendered with `WireTreeView` — the same decomposed, collapsible
-// tag/value tree the Agility tab's Inspector uses — so the actual response
-// is readable, not just a pass/fail chip.
+// Every op row is individually expandable with a real parameter form (each
+// field's type — algorithm select, uid + datalist, hex/text/number/bool —
+// matches `opTemplates.ts`'s `OpParam.kind`), a plain-English blurb, and
+// "part of Lesson N" backlinks into the Learn tab. Every run is ALSO
+// appended to the persistent Execution Log (most recent first) on the
+// right, so the full session history stays visible across rows.
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { ChevronDown, ChevronRight, Play, Loader2, CheckCircle2, XCircle, KeyRound, Trash2 } from 'lucide-react'
+import {
+  ChevronDown,
+  ChevronRight,
+  Play,
+  Loader2,
+  CheckCircle2,
+  XCircle,
+  Search,
+  Trash2,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import type { KmipEngine } from '@/wasm/kmip/kmipEngine'
 import { getCodepointTable, type CodepointTable } from '@/wasm/kmip/ttlv/codepointTable'
 import { runOp, type RunResult } from '@/wasm/kmip/ttlv/runner'
 import { OP_TEMPLATES, type OpCategory, type OpTemplate } from '@/wasm/kmip/ttlv/opTemplates'
-import * as ops from '@/wasm/kmip/ttlv/opTemplates'
+import { LESSONS } from './kmip3/learnLessons'
+import { ParamField } from './kmip3/ParamField'
 import { WireTreeView } from './WireTreeView'
 
 const CATEGORY_ORDER: OpCategory[] = [
@@ -27,6 +41,9 @@ const CATEGORY_ORDER: OpCategory[] = [
   'Attributes',
   'Cryptographic Services',
   'RNG & PKCS#11 Passthrough',
+]
+
+const HIDDEN_CATEGORIES: OpCategory[] = [
   'Certificate Services (not in this build)',
   'Advertised-only / Not Implemented',
 ]
@@ -39,26 +56,15 @@ interface LogEntry {
   result: RunResult
 }
 
-/** For the handful of ops most useful to chain against a just-created key,
- * rebuild the request using the shared "Object UID" field below instead of
- * the template's zero-arg placeholder. Every other op still runs for real
- * via its own `build()` defaults — this is a convenience for the common
- * "create, then do things to it" flow, not a requirement for coverage. */
-const UID_OVERRIDES: Record<string, (uid: string) => ReturnType<OpTemplate['build']>> = {
-  Get: ops.get,
-  Activate: ops.activate,
-  Revoke: ops.revoke,
-  Destroy: ops.destroy,
-  Deactivate: ops.deactivate,
-  Check: ops.check,
-  Archive: ops.archive,
-  Recover: ops.recover,
-  Obliterate: ops.obliterate,
-  GetAttributes: (uid) => ops.getAttributes(uid),
-  GetAttributeList: ops.getAttributeList,
-  GetUsageAllocation: (uid) => ops.getUsageAllocation(uid),
-  Export: ops.exportObject,
-  Encapsulate: ops.encapsulate,
+/** op name → the lessons that reference it (Learn's "tryRef"), for the
+ * Reference tab's "part of Lesson N" backlink chips. */
+const OP_TO_LESSONS = new Map<string, { id: string; n: number }[]>()
+for (const lesson of LESSONS) {
+  for (const op of lesson.tryRef) {
+    const list = OP_TO_LESSONS.get(op) ?? []
+    list.push({ id: lesson.id, n: lesson.n })
+    OP_TO_LESSONS.set(op, list)
+  }
 }
 
 function StatusBadge({ ok }: { ok: boolean | null }) {
@@ -78,73 +84,181 @@ function OpRow({
   template,
   engine,
   table,
-  sharedUid,
-  lastOk,
+  values,
+  onFieldChange,
+  expanded,
+  onToggleExpand,
+  keystoreUids,
+  lastResult,
   onRun,
+  rowRef,
 }: {
   template: OpTemplate
   engine: KmipEngine
   table: CodepointTable | null
-  sharedUid: string
-  lastOk: boolean | null
+  values: Record<string, string>
+  onFieldChange: (key: string, value: string) => void
+  expanded: boolean
+  onToggleExpand: () => void
+  keystoreUids: string[]
+  lastResult: RunResult | null
   onRun: (op: string, result: RunResult) => void
+  rowRef?: (el: HTMLLIElement | null) => void
 }) {
   const [running, setRunning] = useState(false)
+  const [wireTab, setWireTab] = useState<'request' | 'response'>('response')
+  const [showRawHex, setShowRawHex] = useState(false)
 
   const run = () => {
     if (!table) return
     setRunning(true)
     try {
-      const payload =
-        sharedUid && template.op in UID_OVERRIDES ? UID_OVERRIDES[template.op](sharedUid) : template.build()
-      onRun(template.op, runOp(engine, table, template.op, payload))
+      onRun(template.op, runOp(engine, table, template.op, template.build(values)))
     } finally {
       setRunning(false)
     }
   }
 
+  const lessonRefs = OP_TO_LESSONS.get(template.op) ?? []
+
   return (
-    <li className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-card/60 px-3 py-2">
-      <span className="font-mono text-xs font-semibold text-foreground">{template.op}</span>
-      {!template.supported && (
-        <span className="rounded bg-status-warning/15 px-1.5 py-0.5 text-[9.5px] font-semibold uppercase tracking-wide text-status-warning">
-          not available in this build
-        </span>
+    <li ref={rowRef} className="rounded-lg border border-border bg-card/60">
+      <Button
+        variant="ghost"
+        onClick={onToggleExpand}
+        className="flex h-auto w-full items-center gap-2 rounded-lg px-3 py-2 text-left"
+      >
+        {expanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
+        <span className="font-mono text-xs font-semibold text-foreground">{template.op}</span>
+        {!template.supported && (
+          <span className="rounded bg-status-warning/15 px-1.5 py-0.5 text-[9.5px] font-semibold uppercase tracking-wide text-status-warning">
+            not available in this build
+          </span>
+        )}
+        <span className="text-[10.5px] text-muted-foreground">{template.spec}</span>
+        {!expanded && (
+          <span className="hidden truncate text-[10.5px] text-muted-foreground/80 sm:inline">
+            — {template.blurb}
+          </span>
+        )}
+        <div className="ml-auto flex items-center gap-2">
+          <StatusBadge ok={lastResult ? lastResult.ok : null} />
+        </div>
+      </Button>
+
+      {expanded && (
+        <div className="space-y-3 px-3 pb-3">
+          <p className="text-[11.5px] text-muted-foreground">{template.blurb}</p>
+
+          {lessonRefs.length > 0 && (
+            <div className="flex flex-wrap items-center gap-1.5">
+              {lessonRefs.map((l) => (
+                <span
+                  key={l.id}
+                  className="rounded-full border border-primary/30 bg-primary/5 px-2 py-0.5 text-[10px] font-medium text-primary"
+                >
+                  part of Lesson {l.n}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {template.params.length > 0 && (
+            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+              {template.params.map((p) => (
+                <ParamField
+                  key={p.key}
+                  param={p}
+                  value={values[p.key] ?? p.default ?? ''}
+                  onChange={(v) => onFieldChange(p.key, v)}
+                  keystoreUids={p.kind === 'uid' ? keystoreUids : undefined}
+                />
+              ))}
+            </div>
+          )}
+
+          <Button
+            size="sm"
+            variant="secondary"
+            disabled={running || !table}
+            onClick={run}
+            className="h-7 gap-1.5 px-2.5 text-[11px]"
+          >
+            {running ? <Loader2 size={12} className="animate-spin" /> : <Play size={12} />} Run
+          </Button>
+
+          {lastResult && (
+            <div className="rounded-lg border border-border bg-muted/30 p-2">
+              <div className="mb-1.5 flex flex-wrap items-center gap-2">
+                {!lastResult.ok && lastResult.resultMessage && (
+                  <span className="text-[10.5px] text-muted-foreground">
+                    {lastResult.resultMessage}
+                  </span>
+                )}
+                <div className="ml-auto flex items-center gap-1">
+                  <Button
+                    variant={wireTab === 'request' ? 'secondary' : 'ghost'}
+                    size="sm"
+                    onClick={() => setWireTab('request')}
+                    className="h-6 px-2 text-[10px]"
+                  >
+                    Request
+                  </Button>
+                  <Button
+                    variant={wireTab === 'response' ? 'secondary' : 'ghost'}
+                    size="sm"
+                    onClick={() => setWireTab('response')}
+                    className="h-6 px-2 text-[10px]"
+                  >
+                    Response
+                  </Button>
+                  <Button
+                    variant={showRawHex ? 'secondary' : 'ghost'}
+                    size="sm"
+                    onClick={() => setShowRawHex((s) => !s)}
+                    className="h-6 px-2 text-[10px]"
+                  >
+                    raw hex
+                  </Button>
+                </div>
+              </div>
+              {showRawHex ? (
+                <p className="break-all font-mono text-[10px] text-muted-foreground">
+                  {wireTab === 'request' ? lastResult.requestWireHex : lastResult.responseWireHex}
+                </p>
+              ) : (
+                <WireTreeView
+                  root={wireTab === 'request' ? lastResult.requestTree : lastResult.responseTree}
+                  annotated
+                />
+              )}
+            </div>
+          )}
+        </div>
       )}
-      <span className="text-[10.5px] text-muted-foreground">{template.spec}</span>
-      <div className="ml-auto flex items-center gap-2">
-        <StatusBadge ok={lastOk} />
-        <Button
-          size="sm"
-          variant="secondary"
-          disabled={running || !table}
-          onClick={run}
-          className="h-7 gap-1.5 px-2.5 text-[11px]"
-        >
-          {running ? <Loader2 size={12} className="animate-spin" /> : <Play size={12} />} Run
-        </Button>
-      </div>
     </li>
   )
 }
 
 function LogEntryView({ entry }: { entry: LogEntry }) {
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(false)
   const { result } = entry
   return (
     <li className="rounded-lg border border-border bg-card p-2.5">
-      <button
-        type="button"
+      <Button
+        variant="ghost"
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center gap-2 text-left"
+        className="flex h-auto w-full items-center gap-2 p-0 text-left"
       >
         {open ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
         <span className="font-mono text-xs font-semibold text-foreground">{entry.op}</span>
         <StatusBadge ok={result.ok} />
         {!result.ok && result.resultMessage && (
-          <span className="truncate text-[10.5px] text-muted-foreground">{result.resultMessage}</span>
+          <span className="truncate text-[10.5px] text-muted-foreground">
+            {result.resultMessage}
+          </span>
         )}
-      </button>
+      </Button>
       {open && (
         <div className="mt-2 max-h-72 overflow-auto rounded border border-border bg-muted/30 p-2">
           <WireTreeView root={result.responseTree} />
@@ -157,17 +271,27 @@ function LogEntryView({ entry }: { entry: LogEntry }) {
 export function CommandsView({
   engine,
   onChanged,
+  pendingOp,
+  onPendingOpHandled,
 }: {
   engine: KmipEngine
   onChanged: () => void
+  /** Set by Learn's "Try it yourself in Reference" chips — expand + scroll
+   * that op's row into view, then clear. */
+  pendingOp?: string | null
+  onPendingOpHandled?: () => void
 }) {
   const [table, setTable] = useState<CodepointTable | null>(null)
   const [tableError, setTableError] = useState<string | null>(null)
-  const [sharedUid, setSharedUid] = useState('')
+  const [search, setSearch] = useState('')
   const [collapsed, setCollapsed] = useState<Set<OpCategory>>(new Set())
+  const [hiddenOpen, setHiddenOpen] = useState(false)
+  const [expandedOps, setExpandedOps] = useState<Set<string>>(new Set())
+  const [fieldValues, setFieldValues] = useState<Record<string, Record<string, string>>>({})
   const [log, setLog] = useState<LogEntry[]>([])
-  const [lastByOp, setLastByOp] = useState<Record<string, boolean>>({})
+  const [lastByOp, setLastByOp] = useState<Record<string, RunResult>>({})
   const nextLogId = useRef(0)
+  const rowRefs = useRef(new Map<string, HTMLLIElement>())
 
   useEffect(() => {
     let alive = true
@@ -179,16 +303,30 @@ export function CommandsView({
     }
   }, [])
 
+  useEffect(() => {
+    if (!pendingOp) return
+    setExpandedOps((prev) => new Set(prev).add(pendingOp))
+    setHiddenOpen((prev) => prev || HIDDEN_CATEGORIES.includes(templateCategory(pendingOp)))
+    const el = rowRefs.current.get(pendingOp)
+    el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    onPendingOpHandled?.()
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fires once per pendingOp change, matching the "deep-link then clear" contract Kmip3View owns.
+  }, [pendingOp])
+
   const handleRun = (op: string, result: RunResult) => {
     nextLogId.current += 1
     setLog((prev) => [{ id: nextLogId.current, op, result }, ...prev].slice(0, LOG_LIMIT))
-    setLastByOp((prev) => ({ ...prev, [op]: result.ok }))
+    setLastByOp((prev) => ({ ...prev, [op]: result }))
     onChanged()
   }
 
+  const q = search.trim().toLowerCase()
+  const matches = (t: OpTemplate) =>
+    !q || t.op.toLowerCase().includes(q) || t.blurb.toLowerCase().includes(q)
+
   const byCategory = useMemo(() => {
     const m = new Map<OpCategory, OpTemplate[]>()
-    for (const cat of CATEGORY_ORDER) m.set(cat, [])
+    for (const cat of [...CATEGORY_ORDER, ...HIDDEN_CATEGORIES]) m.set(cat, [])
     for (const t of OP_TEMPLATES) m.get(t.category)?.push(t)
     return m
   }, [])
@@ -201,76 +339,136 @@ export function CommandsView({
       return next
     })
 
+  const keystoreUids = engine.listObjects().map((o) => o.uid)
+  const hiddenCount = HIDDEN_CATEGORIES.reduce((n, c) => n + (byCategory.get(c)?.length ?? 0), 0)
+  const totalCount = OP_TEMPLATES.length
+
   if (tableError) {
-    return <p className="text-sm text-destructive">Couldn't load the KMIP tag/enum table: {tableError}</p>
+    return (
+      <p className="text-sm text-destructive">
+        Couldn't load the KMIP tag/enum table: {tableError}
+      </p>
+    )
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-4 items-start">
+    <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-[1fr_360px]">
       <div>
-        <div className="mb-4 flex items-center gap-2 rounded-xl border border-border bg-card p-3">
-          <KeyRound size={14} className="text-primary" />
-          <label className="text-xs font-medium text-foreground" htmlFor="kmip3-shared-uid">
-            Object UID
-          </label>
-          <input
-            id="kmip3-shared-uid"
-            value={sharedUid}
-            onChange={(e) => setSharedUid(e.target.value)}
-            placeholder="paste a UID from a Create/CreateKeyPair result in the log"
-            className="flex-1 rounded-md border border-border bg-background px-2 py-1 font-mono text-[11px]"
-          />
-          <span className="text-[10.5px] text-muted-foreground">
-            used by Get/Activate/Revoke/Destroy/GetAttributes/…
+        <div className="mb-3 flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search
+              size={13}
+              className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+            />
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search operations…"
+              className="h-9 pl-8 text-[13px]"
+            />
+          </div>
+          <span className="shrink-0 text-[11px] text-muted-foreground">
+            {totalCount} operations
           </span>
         </div>
 
         {!table && (
-          <p className="flex items-center gap-2 text-xs text-muted-foreground">
+          <p className="mb-3 flex items-center gap-2 text-xs text-muted-foreground">
             <Loader2 size={13} className="animate-spin" /> Loading the KMIP tag/enum table…
           </p>
         )}
 
         <div className="space-y-3">
           {CATEGORY_ORDER.map((cat) => {
-            const templates = byCategory.get(cat) ?? []
-            const isCollapsed = collapsed.has(cat)
+            const templates = (byCategory.get(cat) ?? []).filter(matches)
+            if (templates.length === 0 && q) return null
+            const isCollapsed = collapsed.has(cat) && !q
             return (
-              <section key={cat} className="rounded-xl border border-border bg-card">
-                <button
-                  type="button"
-                  onClick={() => toggleCategory(cat)}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-left"
-                >
-                  {isCollapsed ? <ChevronRight size={14} /> : <ChevronDown size={14} />}
-                  <span className="text-xs font-bold uppercase tracking-wide text-foreground">{cat}</span>
-                  <span className="text-[10.5px] text-muted-foreground">({templates.length})</span>
-                </button>
-                {!isCollapsed && (
-                  <ul className="space-y-1.5 px-3 pb-3">
-                    {templates.map((t) => (
-                      <OpRow
-                        key={t.op}
-                        template={t}
-                        engine={engine}
-                        table={table}
-                        sharedUid={sharedUid}
-                        lastOk={lastByOp[t.op] ?? null}
-                        onRun={handleRun}
-                      />
-                    ))}
-                  </ul>
-                )}
-              </section>
+              <CategorySection
+                key={cat}
+                title={cat}
+                count={templates.length}
+                collapsed={isCollapsed}
+                onToggle={() => toggleCategory(cat)}
+              >
+                {templates.map((t) => (
+                  <OpRow
+                    key={t.op}
+                    template={t}
+                    engine={engine}
+                    table={table}
+                    values={fieldValues[t.op] ?? {}}
+                    onFieldChange={(key, v) =>
+                      setFieldValues((prev) => ({ ...prev, [t.op]: { ...prev[t.op], [key]: v } }))
+                    }
+                    expanded={expandedOps.has(t.op)}
+                    onToggleExpand={() =>
+                      setExpandedOps((prev) => {
+                        const next = new Set(prev)
+                        if (next.has(t.op)) next.delete(t.op)
+                        else next.add(t.op)
+                        return next
+                      })
+                    }
+                    keystoreUids={keystoreUids}
+                    lastResult={lastByOp[t.op] ?? null}
+                    onRun={handleRun}
+                    rowRef={(el) => {
+                      if (el) rowRefs.current.set(t.op, el)
+                      else rowRefs.current.delete(t.op)
+                    }}
+                  />
+                ))}
+              </CategorySection>
             )
           })}
+
+          {!q && (
+            <CategorySection
+              title={`Advertised-only & unimplemented (${hiddenCount})`}
+              count={hiddenCount}
+              collapsed={!hiddenOpen}
+              onToggle={() => setHiddenOpen((o) => !o)}
+            >
+              {HIDDEN_CATEGORIES.flatMap((cat) => byCategory.get(cat) ?? []).map((t) => (
+                <OpRow
+                  key={t.op}
+                  template={t}
+                  engine={engine}
+                  table={table}
+                  values={fieldValues[t.op] ?? {}}
+                  onFieldChange={(key, v) =>
+                    setFieldValues((prev) => ({ ...prev, [t.op]: { ...prev[t.op], [key]: v } }))
+                  }
+                  expanded={expandedOps.has(t.op)}
+                  onToggleExpand={() =>
+                    setExpandedOps((prev) => {
+                      const next = new Set(prev)
+                      if (next.has(t.op)) next.delete(t.op)
+                      else next.add(t.op)
+                      return next
+                    })
+                  }
+                  keystoreUids={keystoreUids}
+                  lastResult={lastByOp[t.op] ?? null}
+                  onRun={handleRun}
+                  rowRef={(el) => {
+                    if (el) rowRefs.current.set(t.op, el)
+                    else rowRefs.current.delete(t.op)
+                  }}
+                />
+              ))}
+            </CategorySection>
+          )}
         </div>
       </div>
 
-      {/* ── Execution log — every run, decomposed via WireTreeView ────────── */}
+      {/* ── Execution log — every run this session, most recent first ────── */}
       <div className="rounded-xl border border-border bg-card p-3 lg:sticky lg:top-2">
         <div className="mb-2 flex items-center gap-2">
-          <h3 className="text-xs font-bold uppercase tracking-wide text-foreground">Execution Log</h3>
+          <h3 className="text-xs font-bold uppercase tracking-wide text-foreground">
+            Execution Log
+          </h3>
           <span className="text-[10.5px] text-muted-foreground">({log.length})</span>
           <Button
             variant="ghost"
@@ -283,7 +481,9 @@ export function CommandsView({
           </Button>
         </div>
         {log.length === 0 ? (
-          <p className="text-[11px] italic text-muted-foreground">Run an operation to see its decomposed response here.</p>
+          <p className="text-[11px] italic text-muted-foreground">
+            Run an operation to see its decomposed response here.
+          </p>
         ) : (
           <ul className="max-h-[70vh] space-y-2 overflow-auto">
             {log.map((entry) => (
@@ -294,4 +494,39 @@ export function CommandsView({
       </div>
     </div>
   )
+}
+
+function CategorySection({
+  title,
+  count,
+  collapsed,
+  onToggle,
+  children,
+}: {
+  title: string
+  count: number
+  collapsed: boolean
+  onToggle: () => void
+  children: React.ReactNode
+}) {
+  return (
+    <section className="rounded-xl border border-border bg-card">
+      <Button
+        variant="ghost"
+        onClick={onToggle}
+        className="flex h-auto w-full items-center gap-2 rounded-xl px-3 py-2 text-left"
+      >
+        {collapsed ? <ChevronRight size={14} /> : <ChevronDown size={14} />}
+        <span className="text-xs font-bold uppercase tracking-wide text-foreground">{title}</span>
+        {!title.includes('(') && (
+          <span className="text-[10.5px] text-muted-foreground">({count})</span>
+        )}
+      </Button>
+      {!collapsed && <ul className="space-y-1.5 px-3 pb-3">{children}</ul>}
+    </section>
+  )
+}
+
+function templateCategory(op: string): OpCategory {
+  return OP_TEMPLATES.find((t) => t.op === op)?.category ?? 'Discovery & Session'
 }
