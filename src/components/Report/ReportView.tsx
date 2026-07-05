@@ -211,8 +211,21 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
     return [...base, ...TOC_TRAILING]
   }, [selectedPersona])
   const hydratedRef = useRef(false)
+  // Set when a share/legacy link arrives but the recipient already has their
+  // own assessment (in-progress or complete) — we refuse to silently
+  // overwrite it (see `ACCURACY-0705` fix below) and surface this instead.
+  const [shareBlockedByExistingAssessment, setShareBlockedByExistingAssessment] = useState(false)
 
-  // Hydrate store from shared URL params on first mount
+  // Hydrate store from shared URL params on first mount.
+  //
+  // ACCURACY-0705: this used to unconditionally call `store.set*(...)` +
+  // `store.markComplete()` for ANY share/legacy link, silently overwriting and
+  // completing the recipient's OWN in-progress or already-completed
+  // assessment — directly contradicting the "your own assessment is
+  // unaffected" banner below. Now it only auto-applies when the recipient has
+  // no assessment of their own yet (`assessmentStatus === 'not-started'`);
+  // otherwise it refuses to mutate the store and flips
+  // `shareBlockedByExistingAssessment` so the banner can explain why.
   useEffect(() => {
     if (hydratedRef.current) return
 
@@ -222,6 +235,10 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
       hydratedRef.current = true
       const schema = decodeShareToken(shareToken)
       if (schema) {
+        if (useAssessmentStore.getState().assessmentStatus !== 'not-started') {
+          setShareBlockedByExistingAssessment(true)
+          return
+        }
         logReportShareLinkOpened()
         const store = useAssessmentStore.getState()
         if (schema.industry && VALID_INDUSTRIES.has(schema.industry))
@@ -261,10 +278,15 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
       return
     }
 
-    // Legacy individual-param path: ?i=&cy=&c=&d=&f=&m=…
+    // Legacy individual-param path: ?i=&cy=&c=&d=&f=&m=… — same
+    // no-silent-overwrite guard as the compact-token path above.
     const industry = searchParams.get('i')
     if (!industry) return
     hydratedRef.current = true
+    if (useAssessmentStore.getState().assessmentStatus !== 'not-started') {
+      setShareBlockedByExistingAssessment(true)
+      return
+    }
     logReportShareLinkOpened()
 
     const store = useAssessmentStore.getState()
@@ -445,12 +467,33 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
     )
   }
 
-  // Empty state: no assessment started and no persisted result
+  // Empty state: no assessment started and no persisted result.
+  //
+  // ACCURACY-0705: this early return happens BEFORE the main return's banner
+  // section below, so a blocked share link must be surfaced HERE too —
+  // otherwise a recipient whose own assessment has no computed result yet
+  // (e.g. genuinely in-progress) would see this generic "No Report Yet"
+  // screen with zero indication that a share link even arrived.
   if (!result) {
     const isCurious = selectedPersona === 'curious'
     return (
       <div className="animate-fade-in">
         <div className="max-w-lg mx-auto text-center py-16">
+          {shareBlockedByExistingAssessment && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6 text-left"
+            >
+              <div className="glass-panel p-3 border-l-4 border-l-warning flex items-center gap-3">
+                <AlertCircle size={16} className="text-warning shrink-0" />
+                <span className="text-sm text-foreground">
+                  This link contains someone else&apos;s shared assessment, but you already have
+                  your own in progress. To protect your data, it was not loaded.
+                </span>
+              </div>
+            </motion.div>
+          )}
           <div className="inline-flex items-center justify-center p-4 rounded-full bg-muted mb-6">
             <FileBarChart className="text-muted-foreground" size={32} />
           </div>
@@ -504,18 +547,42 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
 
       <PersonaSuggestionCard />
 
-      {/* Banner when viewing a shared report */}
-      {searchParams.get('share') && (
+      {/* ACCURACY-0705: only claim "unaffected" when that's actually true — i.e.
+          we applied the share link because the recipient had no assessment of
+          their own yet. When one already existed, we refused to overwrite it
+          (see the hydration effect above) and show the honest blocked-state
+          banner instead. */}
+      {(searchParams.get('share') || searchParams.get('i')) &&
+        !shareBlockedByExistingAssessment && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-4"
+          >
+            <div className="glass-panel p-3 border-l-4 border-l-primary flex items-center gap-3">
+              <FileBarChart size={16} className="text-primary shrink-0" />
+              <span className="text-sm text-foreground">
+                Viewing a shared report. This is a read-only snapshot — your own assessment is
+                unaffected.
+              </span>
+            </div>
+          </motion.div>
+        )}
+
+      {/* ACCURACY-0705: honest explanation when a share/legacy link arrived
+          but we refused to silently replace the recipient's own assessment. */}
+      {shareBlockedByExistingAssessment && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-4"
         >
-          <div className="glass-panel p-3 border-l-4 border-l-primary flex items-center gap-3">
-            <FileBarChart size={16} className="text-primary shrink-0" />
+          <div className="glass-panel p-3 border-l-4 border-l-warning flex items-center gap-3">
+            <AlertCircle size={16} className="text-warning shrink-0" />
             <span className="text-sm text-foreground">
-              Viewing a shared report. This is a read-only snapshot — your own assessment is
-              unaffected.
+              This link contains someone else&apos;s shared assessment, but you already have your
+              own. To protect your data, it was not loaded — start a new assessment in a private
+              window to view it, or ask them to send you the summary instead.
             </span>
           </div>
         </motion.div>

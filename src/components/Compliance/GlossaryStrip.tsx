@@ -61,7 +61,9 @@ export function GlossaryStrip() {
         <Chip
           name="Standard"
           swatch={TYPE_COLOURS.standards}
-          def="A published specification. FIPS 203, RFC 9180, NIST IR 8547."
+          // ACCURACY-0705: NIST IR 8547 is still an Initial Public Draft, not
+          // published -- swapped for FIPS 205 (final, Aug 2024).
+          def="A published specification. FIPS 203, FIPS 205, RFC 9180."
         />
         <Chip
           name="Certification"
