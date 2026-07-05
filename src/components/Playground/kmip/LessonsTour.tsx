@@ -39,7 +39,7 @@ export interface Lesson {
   title: string
   icon: LucideIcon
   /** Which top-level tab this lesson lives on — the tour switches to it on start. */
-  plane: 'agility' | 'policy' | 'batch'
+  plane: 'agility' | 'policy' | 'kmip3'
   blurb: string
   steps: LessonStep[]
 }

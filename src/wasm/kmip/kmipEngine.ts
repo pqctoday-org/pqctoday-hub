@@ -263,8 +263,9 @@ interface WasmKmipPlayground {
 }
 
 interface WasmModule {
-  KmipPlayground: { new (): WasmKmipPlayground }
+  KmipPlayground: { new (slot?: number): WasmKmipPlayground }
   decode_ttlv(bytes: Uint8Array): string
+  encode_ttlv(treeJson: string): Uint8Array
 }
 
 /** Async, JSON-friendly facade over the wasm `KmipPlayground`. */
@@ -277,10 +278,16 @@ export class KmipEngine {
     this.mod = mod
   }
 
-  static async boot(): Promise<KmipEngine> {
+  /** `slot` — which PKCS#11 slot to bootstrap the engine token on. Omit for
+   * the single-tab default (slot 0); pass a distinct value per instance
+   * when booting more than one `KmipEngine` in the same page load (e.g.
+   * the OASIS corpus replay, one engine per test) — the engine's token
+   * storage is keyed by slot, and reusing one with a still-open session
+   * from an earlier instance fails bootstrap. */
+  static async boot(slot?: number): Promise<KmipEngine> {
     // Bundler-target shim; Vite instantiates the .wasm at import time.
     const mod = (await import('./pqctoday_kmip_wasm.js')) as unknown as WasmModule
-    return new KmipEngine(new mod.KmipPlayground(), mod)
+    return new KmipEngine(new mod.KmipPlayground(slot), mod)
   }
 
   /** Build a real KMIP request, dispatch it, and return the rich result. */
@@ -329,6 +336,15 @@ export class KmipEngine {
   /** Decode any KMIP TTLV frame (request or response) to a wire-view tree. */
   decodeTtlv(bytes: Uint8Array): TtlvNode {
     return JSON.parse(this.mod.decode_ttlv(bytes)) as TtlvNode
+  }
+
+  /** Encode a wire-view tree (the same `{tag,type,value,children}` shape
+   * `decodeTtlv` produces) to KMIP TTLV wire bytes — the inverse of
+   * `decodeTtlv`. Lets a caller build ANY of the 66 KMIP 3.0 operations (not
+   * just the ones `OpSpec`/`runOp` cover) and hand the bytes to `submit`.
+   * Throws (a thrown `JsError` from the wasm side) on a malformed tree. */
+  encodeTtlv(tree: TtlvNode): Uint8Array {
+    return this.mod.encode_ttlv(JSON.stringify(tree))
   }
 }
 

@@ -1,0 +1,4639 @@
+{
+  "schema_version": 1,
+  "source_file": "spec/oasis-kmip-3.0/kmip-spec-v3.0.html",
+  "source_sha256": "4197ff9090e5dcc684854a0ffdd03e8c7af36a267b13a4554b524655aa06bb40",
+  "extracted_at": "2026-06-07T20:11:42.836879Z",
+  "tags": [
+    {
+      "name": "Activation Date",
+      "codepoint": "0x420001"
+    },
+    {
+      "name": "Application Data",
+      "codepoint": "0x420002"
+    },
+    {
+      "name": "Application Namespace",
+      "codepoint": "0x420003"
+    },
+    {
+      "name": "Application Specific Information",
+      "codepoint": "0x420004"
+    },
+    {
+      "name": "Archive Date",
+      "codepoint": "0x420005"
+    },
+    {
+      "name": "Asynchronous Correlation Value",
+      "codepoint": "0x420006"
+    },
+    {
+      "name": "Asynchronous Indicator",
+      "codepoint": "0x420007"
+    },
+    {
+      "name": "Attribute",
+      "codepoint": "0x420008"
+    },
+    {
+      "name": "(Reserved)",
+      "codepoint": "0x420009"
+    },
+    {
+      "name": "Attribute Name",
+      "codepoint": "0x42000a"
+    },
+    {
+      "name": "Attribute Value",
+      "codepoint": "0x42000b"
+    },
+    {
+      "name": "Authentication",
+      "codepoint": "0x42000c"
+    },
+    {
+      "name": "Batch Error Continuation Option",
+      "codepoint": "0x42000e"
+    },
+    {
+      "name": "Batch Item",
+      "codepoint": "0x42000f"
+    },
+    {
+      "name": "Block Cipher Mode",
+      "codepoint": "0x420011"
+    },
+    {
+      "name": "Cancellation Result",
+      "codepoint": "0x420012"
+    },
+    {
+      "name": "Certificate",
+      "codepoint": "0x420013"
+    },
+    {
+      "name": "Certificate Request",
+      "codepoint": "0x420018"
+    },
+    {
+      "name": "Certificate Request Type",
+      "codepoint": "0x420019"
+    },
+    {
+      "name": "Certificate Type",
+      "codepoint": "0x42001d"
+    },
+    {
+      "name": "Certificate Value",
+      "codepoint": "0x42001e"
+    },
+    {
+      "name": "Compromise \n  Date",
+      "codepoint": "0x420020"
+    },
+    {
+      "name": "Compromise Occurrence Date",
+      "codepoint": "0x420021"
+    },
+    {
+      "name": "Contact Information",
+      "codepoint": "0x420022"
+    },
+    {
+      "name": "Credential",
+      "codepoint": "0x420023"
+    },
+    {
+      "name": "Credential Type",
+      "codepoint": "0x420024"
+    },
+    {
+      "name": "Credential Value",
+      "codepoint": "0x420025"
+    },
+    {
+      "name": "Criticality Indicator",
+      "codepoint": "0x420026"
+    },
+    {
+      "name": "CRT Coefficient",
+      "codepoint": "0x420027"
+    },
+    {
+      "name": "Cryptographic Algorithm",
+      "codepoint": "0x420028"
+    },
+    {
+      "name": "Cryptographic Domain Parameters",
+      "codepoint": "0x420029"
+    },
+    {
+      "name": "Cryptographic Length",
+      "codepoint": "0x42002a"
+    },
+    {
+      "name": "Cryptographic Parameters",
+      "codepoint": "0x42002b"
+    },
+    {
+      "name": "Cryptographic Usage Mask",
+      "codepoint": "0x42002c"
+    },
+    {
+      "name": "D",
+      "codepoint": "0x42002e"
+    },
+    {
+      "name": "Deactivation Date",
+      "codepoint": "0x42002f"
+    },
+    {
+      "name": "Derivation Data",
+      "codepoint": "0x420030"
+    },
+    {
+      "name": "Derivation Method",
+      "codepoint": "0x420031"
+    },
+    {
+      "name": "Derivation Parameters",
+      "codepoint": "0x420032"
+    },
+    {
+      "name": "Destroy Date",
+      "codepoint": "0x420033"
+    },
+    {
+      "name": "Digest",
+      "codepoint": "0x420034"
+    },
+    {
+      "name": "Digest Value",
+      "codepoint": "0x420035"
+    },
+    {
+      "name": "Encryption Key Information",
+      "codepoint": "0x420036"
+    },
+    {
+      "name": "G",
+      "codepoint": "0x420037"
+    },
+    {
+      "name": "Hashing Algorithm",
+      "codepoint": "0x420038"
+    },
+    {
+      "name": "Initial Date",
+      "codepoint": "0x420039"
+    },
+    {
+      "name": "Initialization Vector",
+      "codepoint": "0x42003a"
+    },
+    {
+      "name": "Iteration Count",
+      "codepoint": "0x42003c"
+    },
+    {
+      "name": "IV/Counter/Nonce",
+      "codepoint": "0x42003d"
+    },
+    {
+      "name": "J",
+      "codepoint": "0x42003e"
+    },
+    {
+      "name": "Key",
+      "codepoint": "0x42003f"
+    },
+    {
+      "name": "Key Block",
+      "codepoint": "0x420040"
+    },
+    {
+      "name": "Key Compression Type",
+      "codepoint": "0x420041"
+    },
+    {
+      "name": "Key Format Type",
+      "codepoint": "0x420042"
+    },
+    {
+      "name": "Key Material",
+      "codepoint": "0x420043"
+    },
+    {
+      "name": "Key Part Identifier",
+      "codepoint": "0x420044"
+    },
+    {
+      "name": "Key Value",
+      "codepoint": "0x420045"
+    },
+    {
+      "name": "Key Wrapping Data",
+      "codepoint": "0x420046"
+    },
+    {
+      "name": "Key Wrapping Specification",
+      "codepoint": "0x420047"
+    },
+    {
+      "name": "Last Change Date",
+      "codepoint": "0x420048"
+    },
+    {
+      "name": "Lease Time",
+      "codepoint": "0x420049"
+    },
+    {
+      "name": "MAC/Signature",
+      "codepoint": "0x42004d"
+    },
+    {
+      "name": "MAC/Signature Key Information",
+      "codepoint": "0x42004e"
+    },
+    {
+      "name": "Maximum Items",
+      "codepoint": "0x42004f"
+    },
+    {
+      "name": "Maximum Response Size",
+      "codepoint": "0x420050"
+    },
+    {
+      "name": "Message Extension",
+      "codepoint": "0x420051"
+    },
+    {
+      "name": "Modulus",
+      "codepoint": "0x420052"
+    },
+    {
+      "name": "Name",
+      "codepoint": "0x420053"
+    },
+    {
+      "name": "Object Type",
+      "codepoint": "0x420057"
+    },
+    {
+      "name": "Offset",
+      "codepoint": "0x420058"
+    },
+    {
+      "name": "Opaque Data Type",
+      "codepoint": "0x420059"
+    },
+    {
+      "name": "Opaque Data Value",
+      "codepoint": "0x42005a"
+    },
+    {
+      "name": "Opaque Object",
+      "codepoint": "0x42005b"
+    },
+    {
+      "name": "Operation",
+      "codepoint": "0x42005c"
+    },
+    {
+      "name": "P",
+      "codepoint": "0x42005e"
+    },
+    {
+      "name": "Padding Method",
+      "codepoint": "0x42005f"
+    },
+    {
+      "name": "Prime Exponent P",
+      "codepoint": "0x420060"
+    },
+    {
+      "name": "Prime Exponent Q",
+      "codepoint": "0x420061"
+    },
+    {
+      "name": "Prime Field Size",
+      "codepoint": "0x420062"
+    },
+    {
+      "name": "Private Exponent",
+      "codepoint": "0x420063"
+    },
+    {
+      "name": "Private Key",
+      "codepoint": "0x420064"
+    },
+    {
+      "name": "Private Key Unique Identifier",
+      "codepoint": "0x420066"
+    },
+    {
+      "name": "Process Start Date",
+      "codepoint": "0x420067"
+    },
+    {
+      "name": "Protect Stop Date",
+      "codepoint": "0x420068"
+    },
+    {
+      "name": "Protocol Version",
+      "codepoint": "0x420069"
+    },
+    {
+      "name": "Protocol Version Major",
+      "codepoint": "0x42006a"
+    },
+    {
+      "name": "Protocol Version Minor",
+      "codepoint": "0x42006b"
+    },
+    {
+      "name": "Public Exponent",
+      "codepoint": "0x42006c"
+    },
+    {
+      "name": "Public Key",
+      "codepoint": "0x42006d"
+    },
+    {
+      "name": "Public Key Unique Identifier",
+      "codepoint": "0x42006f"
+    },
+    {
+      "name": "Put Function",
+      "codepoint": "0x420070"
+    },
+    {
+      "name": "Q",
+      "codepoint": "0x420071"
+    },
+    {
+      "name": "Q String",
+      "codepoint": "0x420072"
+    },
+    {
+      "name": "Qlength",
+      "codepoint": "0x420073"
+    },
+    {
+      "name": "Query Function",
+      "codepoint": "0x420074"
+    },
+    {
+      "name": "Recommended Curve",
+      "codepoint": "0x420075"
+    },
+    {
+      "name": "Replaced Unique Identifier",
+      "codepoint": "0x420076"
+    },
+    {
+      "name": "Request Header",
+      "codepoint": "0x420077"
+    },
+    {
+      "name": "Request Message",
+      "codepoint": "0x420078"
+    },
+    {
+      "name": "Request Payload",
+      "codepoint": "0x420079"
+    },
+    {
+      "name": "Response Header",
+      "codepoint": "0x42007a"
+    },
+    {
+      "name": "Response Message",
+      "codepoint": "0x42007b"
+    },
+    {
+      "name": "Response Payload",
+      "codepoint": "0x42007c"
+    },
+    {
+      "name": "Result Message",
+      "codepoint": "0x42007d"
+    },
+    {
+      "name": "Result Reason",
+      "codepoint": "0x42007e"
+    },
+    {
+      "name": "Result Status",
+      "codepoint": "0x42007f"
+    },
+    {
+      "name": "Revocation Message",
+      "codepoint": "0x420080"
+    },
+    {
+      "name": "Revocation Reason",
+      "codepoint": "0x420081"
+    },
+    {
+      "name": "Revocation Reason Code",
+      "codepoint": "0x420082"
+    },
+    {
+      "name": "Key Role Type",
+      "codepoint": "0x420083"
+    },
+    {
+      "name": "Salt",
+      "codepoint": "0x420084"
+    },
+    {
+      "name": "Secret Data",
+      "codepoint": "0x420085"
+    },
+    {
+      "name": "Secret Data Type",
+      "codepoint": "0x420086"
+    },
+    {
+      "name": "Server Information",
+      "codepoint": "0x420088"
+    },
+    {
+      "name": "Split Key",
+      "codepoint": "0x420089"
+    },
+    {
+      "name": "Split Key Method",
+      "codepoint": "0x42008a"
+    },
+    {
+      "name": "Split Key Parts",
+      "codepoint": "0x42008b"
+    },
+    {
+      "name": "Split Key Threshold",
+      "codepoint": "0x42008c"
+    },
+    {
+      "name": "State",
+      "codepoint": "0x42008d"
+    },
+    {
+      "name": "Storage Status Mask",
+      "codepoint": "0x42008e"
+    },
+    {
+      "name": "Symmetric Key",
+      "codepoint": "0x42008f"
+    },
+    {
+      "name": "Time Stamp",
+      "codepoint": "0x420092"
+    },
+    {
+      "name": "Unique Identifier",
+      "codepoint": "0x420094"
+    },
+    {
+      "name": "Usage Limits",
+      "codepoint": "0x420095"
+    },
+    {
+      "name": "Usage Limits Count",
+      "codepoint": "0x420096"
+    },
+    {
+      "name": "Usage Limits Total",
+      "codepoint": "0x420097"
+    },
+    {
+      "name": "Usage Limits Unit",
+      "codepoint": "0x420098"
+    },
+    {
+      "name": "Username",
+      "codepoint": "0x420099"
+    },
+    {
+      "name": "Validity Date",
+      "codepoint": "0x42009a"
+    },
+    {
+      "name": "Validity Indicator",
+      "codepoint": "0x42009b"
+    },
+    {
+      "name": "Vendor Extension",
+      "codepoint": "0x42009c"
+    },
+    {
+      "name": "Vendor Identification",
+      "codepoint": "0x42009d"
+    },
+    {
+      "name": "Wrapping Method",
+      "codepoint": "0x42009e"
+    },
+    {
+      "name": "X",
+      "codepoint": "0x42009f"
+    },
+    {
+      "name": "Y",
+      "codepoint": "0x4200a0"
+    },
+    {
+      "name": "Password",
+      "codepoint": "0x4200a1"
+    },
+    {
+      "name": "Device Identifier",
+      "codepoint": "0x4200a2"
+    },
+    {
+      "name": "Encoding Option",
+      "codepoint": "0x4200a3"
+    },
+    {
+      "name": "Extension Information",
+      "codepoint": "0x4200a4"
+    },
+    {
+      "name": "Extension Name",
+      "codepoint": "0x4200a5"
+    },
+    {
+      "name": "Extension Tag",
+      "codepoint": "0x4200a6"
+    },
+    {
+      "name": "Extension Type",
+      "codepoint": "0x4200a7"
+    },
+    {
+      "name": "Fresh",
+      "codepoint": "0x4200a8"
+    },
+    {
+      "name": "Machine Identifier",
+      "codepoint": "0x4200a9"
+    },
+    {
+      "name": "Media Identifier",
+      "codepoint": "0x4200aa"
+    },
+    {
+      "name": "Network Identifier",
+      "codepoint": "0x4200ab"
+    },
+    {
+      "name": "Certificate Length",
+      "codepoint": "0x4200ad"
+    },
+    {
+      "name": "Digital Signature Algorithm",
+      "codepoint": "0x4200ae"
+    },
+    {
+      "name": "Certificate Serial Number",
+      "codepoint": "0x4200af"
+    },
+    {
+      "name": "Device Serial Number",
+      "codepoint": "0x4200b0"
+    },
+    {
+      "name": "Issuer Alternative Name",
+      "codepoint": "0x4200b1"
+    },
+    {
+      "name": "Issuer Distinguished Name",
+      "codepoint": "0x4200b2"
+    },
+    {
+      "name": "Subject Alternative Name",
+      "codepoint": "0x4200b3"
+    },
+    {
+      "name": "Subject Distinguished Name",
+      "codepoint": "0x4200b4"
+    },
+    {
+      "name": "X.509 Certificate Identifier",
+      "codepoint": "0x4200b5"
+    },
+    {
+      "name": "X.509 Certificate Issuer",
+      "codepoint": "0x4200b6"
+    },
+    {
+      "name": "X.509 Certificate Subject",
+      "codepoint": "0x4200b7"
+    },
+    {
+      "name": "Key Value Location",
+      "codepoint": "0x4200b8"
+    },
+    {
+      "name": "Key Value Location Value",
+      "codepoint": "0x4200b9"
+    },
+    {
+      "name": "Key Value Location Type",
+      "codepoint": "0x4200ba"
+    },
+    {
+      "name": "Key Value Present",
+      "codepoint": "0x4200bb"
+    },
+    {
+      "name": "Original Creation Date",
+      "codepoint": "0x4200bc"
+    },
+    {
+      "name": "PGP Key",
+      "codepoint": "0x4200bd"
+    },
+    {
+      "name": "PGP Key Version",
+      "codepoint": "0x4200be"
+    },
+    {
+      "name": "Alternative Name",
+      "codepoint": "0x4200bf"
+    },
+    {
+      "name": "Alternative Name Value",
+      "codepoint": "0x4200c0"
+    },
+    {
+      "name": "Alternative Name Type",
+      "codepoint": "0x4200c1"
+    },
+    {
+      "name": "Data",
+      "codepoint": "0x4200c2"
+    },
+    {
+      "name": "Signature Data",
+      "codepoint": "0x4200c3"
+    },
+    {
+      "name": "Data Length",
+      "codepoint": "0x4200c4"
+    },
+    {
+      "name": "Random IV",
+      "codepoint": "0x4200c5"
+    },
+    {
+      "name": "MAC Data",
+      "codepoint": "0x4200c6"
+    },
+    {
+      "name": "Attestation Type",
+      "codepoint": "0x4200c7"
+    },
+    {
+      "name": "Nonce",
+      "codepoint": "0x4200c8"
+    },
+    {
+      "name": "Nonce ID",
+      "codepoint": "0x4200c9"
+    },
+    {
+      "name": "Nonce Value",
+      "codepoint": "0x4200ca"
+    },
+    {
+      "name": "Attestation Measurement",
+      "codepoint": "0x4200cb"
+    },
+    {
+      "name": "Attestation Assertion",
+      "codepoint": "0x4200cc"
+    },
+    {
+      "name": "IV Length",
+      "codepoint": "0x4200cd"
+    },
+    {
+      "name": "Tag Length",
+      "codepoint": "0x4200ce"
+    },
+    {
+      "name": "Fixed Field Length",
+      "codepoint": "0x4200cf"
+    },
+    {
+      "name": "Counter Length",
+      "codepoint": "0x4200d0"
+    },
+    {
+      "name": "Initial Counter Value",
+      "codepoint": "0x4200d1"
+    },
+    {
+      "name": "Invocation Field Length",
+      "codepoint": "0x4200d2"
+    },
+    {
+      "name": "Attestation Capable Indicator",
+      "codepoint": "0x4200d3"
+    },
+    {
+      "name": "Offset Items",
+      "codepoint": "0x4200d4"
+    },
+    {
+      "name": "Located Items",
+      "codepoint": "0x4200d5"
+    },
+    {
+      "name": "Correlation Value",
+      "codepoint": "0x4200d6"
+    },
+    {
+      "name": "Init Indicator",
+      "codepoint": "0x4200d7"
+    },
+    {
+      "name": "Final Indicator",
+      "codepoint": "0x4200d8"
+    },
+    {
+      "name": "RNG Parameters",
+      "codepoint": "0x4200d9"
+    },
+    {
+      "name": "RNG Algorithm",
+      "codepoint": "0x4200da"
+    },
+    {
+      "name": "DRBG Algorithm",
+      "codepoint": "0x4200db"
+    },
+    {
+      "name": "FIPS186 Variation",
+      "codepoint": "0x4200dc"
+    },
+    {
+      "name": "Prediction Resistance",
+      "codepoint": "0x4200dd"
+    },
+    {
+      "name": "Random Number Generator",
+      "codepoint": "0x4200de"
+    },
+    {
+      "name": "Validation Information",
+      "codepoint": "0x4200df"
+    },
+    {
+      "name": "Validation Authority Type",
+      "codepoint": "0x4200e0"
+    },
+    {
+      "name": "Validation Authority Country",
+      "codepoint": "0x4200e1"
+    },
+    {
+      "name": "Validation Authority URI",
+      "codepoint": "0x4200e2"
+    },
+    {
+      "name": "Validation Version Major",
+      "codepoint": "0x4200e3"
+    },
+    {
+      "name": "Validation Version Minor",
+      "codepoint": "0x4200e4"
+    },
+    {
+      "name": "Validation Type",
+      "codepoint": "0x4200e5"
+    },
+    {
+      "name": "Validation Level",
+      "codepoint": "0x4200e6"
+    },
+    {
+      "name": "Validation Certificate Identifier",
+      "codepoint": "0x4200e7"
+    },
+    {
+      "name": "Validation Certificate URI",
+      "codepoint": "0x4200e8"
+    },
+    {
+      "name": "Validation Vendor URI",
+      "codepoint": "0x4200e9"
+    },
+    {
+      "name": "Validation Profile",
+      "codepoint": "0x4200ea"
+    },
+    {
+      "name": "Profile Information",
+      "codepoint": "0x4200eb"
+    },
+    {
+      "name": "Profile Name",
+      "codepoint": "0x4200ec"
+    },
+    {
+      "name": "Server URI",
+      "codepoint": "0x4200ed"
+    },
+    {
+      "name": "Server Port",
+      "codepoint": "0x4200ee"
+    },
+    {
+      "name": "Streaming Capability",
+      "codepoint": "0x4200ef"
+    },
+    {
+      "name": "Asynchronous Capability",
+      "codepoint": "0x4200f0"
+    },
+    {
+      "name": "Attestation Capability",
+      "codepoint": "0x4200f1"
+    },
+    {
+      "name": "Unwrap Mode",
+      "codepoint": "0x4200f2"
+    },
+    {
+      "name": "Destroy Action",
+      "codepoint": "0x4200f3"
+    },
+    {
+      "name": "Shredding Algorithm",
+      "codepoint": "0x4200f4"
+    },
+    {
+      "name": "RNG Mode",
+      "codepoint": "0x4200f5"
+    },
+    {
+      "name": "Client Registration Method",
+      "codepoint": "0x4200f6"
+    },
+    {
+      "name": "Capability Information",
+      "codepoint": "0x4200f7"
+    },
+    {
+      "name": "Key Wrap Type",
+      "codepoint": "0x4200f8"
+    },
+    {
+      "name": "Batch Undo Capability",
+      "codepoint": "0x4200f9"
+    },
+    {
+      "name": "Batch Continue Capability",
+      "codepoint": "0x4200fa"
+    },
+    {
+      "name": "PKCS#12 Friendly Name",
+      "codepoint": "0x4200fb"
+    },
+    {
+      "name": "Description",
+      "codepoint": "0x4200fc"
+    },
+    {
+      "name": "Comment",
+      "codepoint": "0x4200fd"
+    },
+    {
+      "name": "Authenticated \n  Encryption Additional Data",
+      "codepoint": "0x4200fe"
+    },
+    {
+      "name": "Authenticated Encryption Tag",
+      "codepoint": "0x4200ff"
+    },
+    {
+      "name": "Salt Length",
+      "codepoint": "0x420100"
+    },
+    {
+      "name": "Mask Generator",
+      "codepoint": "0x420101"
+    },
+    {
+      "name": "Mask Generator Hashing Algorithm",
+      "codepoint": "0x420102"
+    },
+    {
+      "name": "P Source",
+      "codepoint": "0x420103"
+    },
+    {
+      "name": "Trailer Field",
+      "codepoint": "0x420104"
+    },
+    {
+      "name": "Client Correlation Value",
+      "codepoint": "0x420105"
+    },
+    {
+      "name": "Server Correlation Value",
+      "codepoint": "0x420106"
+    },
+    {
+      "name": "Digested Data",
+      "codepoint": "0x420107"
+    },
+    {
+      "name": "Certificate Subject CN",
+      "codepoint": "0x420108"
+    },
+    {
+      "name": "Certificate Subject O",
+      "codepoint": "0x420109"
+    },
+    {
+      "name": "Certificate Subject OU",
+      "codepoint": "0x42010a"
+    },
+    {
+      "name": "Certificate Subject Email",
+      "codepoint": "0x42010b"
+    },
+    {
+      "name": "Certificate Subject C",
+      "codepoint": "0x42010c"
+    },
+    {
+      "name": "Certificate Subject ST",
+      "codepoint": "0x42010d"
+    },
+    {
+      "name": "Certificate Subject L",
+      "codepoint": "0x42010e"
+    },
+    {
+      "name": "Certificate Subject UID",
+      "codepoint": "0x42010f"
+    },
+    {
+      "name": "Certificate Subject Serial Number",
+      "codepoint": "0x420110"
+    },
+    {
+      "name": "Certificate Subject Title",
+      "codepoint": "0x420111"
+    },
+    {
+      "name": "Certificate Subject DC",
+      "codepoint": "0x420112"
+    },
+    {
+      "name": "Certificate Subject DN Qualifier",
+      "codepoint": "0x420113"
+    },
+    {
+      "name": "Certificate Issuer CN",
+      "codepoint": "0x420114"
+    },
+    {
+      "name": "Certificate Issuer O",
+      "codepoint": "0x420115"
+    },
+    {
+      "name": "Certificate Issuer OU",
+      "codepoint": "0x420116"
+    },
+    {
+      "name": "Certificate Issuer Email",
+      "codepoint": "0x420117"
+    },
+    {
+      "name": "Certificate Issuer C",
+      "codepoint": "0x420118"
+    },
+    {
+      "name": "Certificate Issuer ST",
+      "codepoint": "0x420119"
+    },
+    {
+      "name": "Certificate Issuer L",
+      "codepoint": "0x42011a"
+    },
+    {
+      "name": "Certificate Issuer UID",
+      "codepoint": "0x42011b"
+    },
+    {
+      "name": "Certificate Issuer Serial Number",
+      "codepoint": "0x42011c"
+    },
+    {
+      "name": "Certificate Issuer Title",
+      "codepoint": "0x42011d"
+    },
+    {
+      "name": "Certificate Issuer DC",
+      "codepoint": "0x42011e"
+    },
+    {
+      "name": "Certificate Issuer DN Qualifier",
+      "codepoint": "0x42011f"
+    },
+    {
+      "name": "Sensitive",
+      "codepoint": "0x420120"
+    },
+    {
+      "name": "Always Sensitive",
+      "codepoint": "0x420121"
+    },
+    {
+      "name": "Extractable",
+      "codepoint": "0x420122"
+    },
+    {
+      "name": "Never Extractable",
+      "codepoint": "0x420123"
+    },
+    {
+      "name": "Replace Existing",
+      "codepoint": "0x420124"
+    },
+    {
+      "name": "Attributes",
+      "codepoint": "0x420125"
+    },
+    {
+      "name": "Common Attributes",
+      "codepoint": "0x420126"
+    },
+    {
+      "name": "Private Key Attributes",
+      "codepoint": "0x420127"
+    },
+    {
+      "name": "Public Key Attributes",
+      "codepoint": "0x420128"
+    },
+    {
+      "name": "Extension Enumeration",
+      "codepoint": "0x420129"
+    },
+    {
+      "name": "Extension Attribute",
+      "codepoint": "0x42012a"
+    },
+    {
+      "name": "Extension Parent Structure Tag",
+      "codepoint": "0x42012b"
+    },
+    {
+      "name": "Extension Description",
+      "codepoint": "0x42012c"
+    },
+    {
+      "name": "Server Name",
+      "codepoint": "0x42012d"
+    },
+    {
+      "name": "Server Serial Number",
+      "codepoint": "0x42012e"
+    },
+    {
+      "name": "Server Version",
+      "codepoint": "0x42012f"
+    },
+    {
+      "name": "Server Load",
+      "codepoint": "0x420130"
+    },
+    {
+      "name": "Product Name",
+      "codepoint": "0x420131"
+    },
+    {
+      "name": "Build Level",
+      "codepoint": "0x420132"
+    },
+    {
+      "name": "Build Date",
+      "codepoint": "0x420133"
+    },
+    {
+      "name": "Cluster Info",
+      "codepoint": "0x420134"
+    },
+    {
+      "name": "Alternate Failover Endpoints",
+      "codepoint": "0x420135"
+    },
+    {
+      "name": "Short Unique Identifier",
+      "codepoint": "0x420136"
+    },
+    {
+      "name": "Reserved",
+      "codepoint": "0x420137"
+    },
+    {
+      "name": "Tag",
+      "codepoint": "0x420138"
+    },
+    {
+      "name": "Certificate Request Unique Identifier",
+      "codepoint": "0x420139"
+    },
+    {
+      "name": "NIST Key Type",
+      "codepoint": "0x42013a"
+    },
+    {
+      "name": "Attribute Reference",
+      "codepoint": "0x42013b"
+    },
+    {
+      "name": "Current Attribute",
+      "codepoint": "0x42013c"
+    },
+    {
+      "name": "New Attribute",
+      "codepoint": "0x42013d"
+    },
+    {
+      "name": "Certificate Request Value",
+      "codepoint": "0x420140"
+    },
+    {
+      "name": "Log Message",
+      "codepoint": "0x420141"
+    },
+    {
+      "name": "Profile Version",
+      "codepoint": "0x420142"
+    },
+    {
+      "name": "Profile Version Major",
+      "codepoint": "0x420143"
+    },
+    {
+      "name": "Profile Version Minor",
+      "codepoint": "0x420144"
+    },
+    {
+      "name": "Protection Level",
+      "codepoint": "0x420145"
+    },
+    {
+      "name": "Protection Period",
+      "codepoint": "0x420146"
+    },
+    {
+      "name": "Quantum Safe",
+      "codepoint": "0x420147"
+    },
+    {
+      "name": "Quantum Safe Capability",
+      "codepoint": "0x420148"
+    },
+    {
+      "name": "Ticket",
+      "codepoint": "0x420149"
+    },
+    {
+      "name": "Ticket Type",
+      "codepoint": "0x42014a"
+    },
+    {
+      "name": "Ticket Value",
+      "codepoint": "0x42014b"
+    },
+    {
+      "name": "Request Count",
+      "codepoint": "0x42014c"
+    },
+    {
+      "name": "Rights",
+      "codepoint": "0x42014d"
+    },
+    {
+      "name": "Objects",
+      "codepoint": "0x42014e"
+    },
+    {
+      "name": "Operations",
+      "codepoint": "0x42014f"
+    },
+    {
+      "name": "Right",
+      "codepoint": "0x420150"
+    },
+    {
+      "name": "Endpoint Role",
+      "codepoint": "0x420151"
+    },
+    {
+      "name": "Defaults Information",
+      "codepoint": "0x420152"
+    },
+    {
+      "name": "Object Defaults",
+      "codepoint": "0x420153"
+    },
+    {
+      "name": "Ephemeral",
+      "codepoint": "0x420154"
+    },
+    {
+      "name": "Server Hashed Password",
+      "codepoint": "0x420155"
+    },
+    {
+      "name": "One Time Password",
+      "codepoint": "0x420156"
+    },
+    {
+      "name": "Hashed Password",
+      "codepoint": "0x420157"
+    },
+    {
+      "name": "Adjustment Type",
+      "codepoint": "0x420158"
+    },
+    {
+      "name": "PKCS#11 Interface",
+      "codepoint": "0x420159"
+    },
+    {
+      "name": "PKCS#11 Function",
+      "codepoint": "0x42015a"
+    },
+    {
+      "name": "PKCS#11 Input Parameters",
+      "codepoint": "0x42015b"
+    },
+    {
+      "name": "PKCS#11 Output Parameters",
+      "codepoint": "0x42015c"
+    },
+    {
+      "name": "PKCS#11 Return Code",
+      "codepoint": "0x42015d"
+    },
+    {
+      "name": "Protection Storage Mask",
+      "codepoint": "0x42015e"
+    },
+    {
+      "name": "Protection Storage Masks",
+      "codepoint": "0x42015f"
+    },
+    {
+      "name": "Interop Function",
+      "codepoint": "0x420160"
+    },
+    {
+      "name": "Interop Identifier",
+      "codepoint": "0x420161"
+    },
+    {
+      "name": "Adjustment Value",
+      "codepoint": "0x420162"
+    },
+    {
+      "name": "Common Protection Storage Masks",
+      "codepoint": "0x420163"
+    },
+    {
+      "name": "Private Protection Storage Masks",
+      "codepoint": "0x420164"
+    },
+    {
+      "name": "Public Protection Storage Masks",
+      "codepoint": "0x420165"
+    },
+    {
+      "name": "Object Groups",
+      "codepoint": "0x420166"
+    },
+    {
+      "name": "Object Types",
+      "codepoint": "0x420167"
+    },
+    {
+      "name": "Constraints",
+      "codepoint": "0x420168"
+    },
+    {
+      "name": "Constraint",
+      "codepoint": "0x420169"
+    },
+    {
+      "name": "Rotate Interval",
+      "codepoint": "0x42016a"
+    },
+    {
+      "name": "Rotate Automatic",
+      "codepoint": "0x42016b"
+    },
+    {
+      "name": "Rotate Offset",
+      "codepoint": "0x42016c"
+    },
+    {
+      "name": "Rotate Date",
+      "codepoint": "0x42016d"
+    },
+    {
+      "name": "Rotate Generation",
+      "codepoint": "0x42016e"
+    },
+    {
+      "name": "Rotate Name",
+      "codepoint": "0x42016f"
+    },
+    {
+      "name": "Rotate Latest",
+      "codepoint": "0x420172"
+    },
+    {
+      "name": "Asynchronous Request",
+      "codepoint": "0x420173"
+    },
+    {
+      "name": "Submission Date",
+      "codepoint": "0x420174"
+    },
+    {
+      "name": "Processing Stage",
+      "codepoint": "0x420175"
+    },
+    {
+      "name": "Asynchronous Correlation Values",
+      "codepoint": "0x420176"
+    },
+    {
+      "name": "Certificate Link",
+      "codepoint": "0x420190"
+    },
+    {
+      "name": "Child Link",
+      "codepoint": "0x420191"
+    },
+    {
+      "name": "Derivation Object Link",
+      "codepoint": "0x420192"
+    },
+    {
+      "name": "Derived Object Link",
+      "codepoint": "0x420193"
+    },
+    {
+      "name": "Next Link",
+      "codepoint": "0x420194"
+    },
+    {
+      "name": "Parent Link",
+      "codepoint": "0x420195"
+    },
+    {
+      "name": "PKCS#12 Certificate Link",
+      "codepoint": "0x420196"
+    },
+    {
+      "name": "PKCS#12 Password Link",
+      "codepoint": "0x420197"
+    },
+    {
+      "name": "Previous Link",
+      "codepoint": "0x420198"
+    },
+    {
+      "name": "Private Key Link",
+      "codepoint": "0x420199"
+    },
+    {
+      "name": "Public Key Link",
+      "codepoint": "0x42019a"
+    },
+    {
+      "name": "Replaced Object Link",
+      "codepoint": "0x42019b"
+    },
+    {
+      "name": "Replacement Object Link",
+      "codepoint": "0x42019c"
+    },
+    {
+      "name": "Wrapping Key Link",
+      "codepoint": "0x42019d"
+    },
+    {
+      "name": "Object Class",
+      "codepoint": "0x42019e"
+    },
+    {
+      "name": "Object Class Mask",
+      "codepoint": "0x42019f"
+    },
+    {
+      "name": "Credential Link",
+      "codepoint": "0x4201a0"
+    },
+    {
+      "name": "Password Credential",
+      "codepoint": "0x4201a1"
+    },
+    {
+      "name": "Password Salt",
+      "codepoint": "0x4201a2"
+    },
+    {
+      "name": "Password Salt Algorithm",
+      "codepoint": "0x4201a3"
+    },
+    {
+      "name": "Salted Password",
+      "codepoint": "0x4201a4"
+    },
+    {
+      "name": "Password Link",
+      "codepoint": "0x4201a5"
+    },
+    {
+      "name": "Device Credential",
+      "codepoint": "0x4201a6"
+    },
+    {
+      "name": "OTP Credential",
+      "codepoint": "0x4201a7"
+    },
+    {
+      "name": "OTP Algorithm",
+      "codepoint": "0x4201a8"
+    },
+    {
+      "name": "OTP Digest",
+      "codepoint": "0x4201a9"
+    },
+    {
+      "name": "OTP Serial",
+      "codepoint": "0x4201aa"
+    },
+    {
+      "name": "OTP Seed",
+      "codepoint": "0x4201ab"
+    },
+    {
+      "name": "OTP Interval",
+      "codepoint": "0x4201ac"
+    },
+    {
+      "name": "OTP Digits",
+      "codepoint": "0x4201ad"
+    },
+    {
+      "name": "OTP Counter",
+      "codepoint": "0x4201ae"
+    },
+    {
+      "name": "Hashed Password Credential",
+      "codepoint": "0x4201af"
+    },
+    {
+      "name": "Hashed Username Password",
+      "codepoint": "0x4201b0"
+    },
+    {
+      "name": "Hashed Password Username",
+      "codepoint": "0x4201b1"
+    },
+    {
+      "name": "Credential Information",
+      "codepoint": "0x4201b2"
+    },
+    {
+      "name": "Group Link",
+      "codepoint": "0x4201b3"
+    },
+    {
+      "name": "Split Key Base Link",
+      "codepoint": "0x4201b4"
+    },
+    {
+      "name": "Joined Split Key Parts Link",
+      "codepoint": "0x4201b5"
+    },
+    {
+      "name": "Split Key Polynomial",
+      "codepoint": "0x4201b6"
+    },
+    {
+      "name": "Deactivation Message",
+      "codepoint": "0x4201b7"
+    },
+    {
+      "name": "Deactivation Reason",
+      "codepoint": "0x4201b8"
+    },
+    {
+      "name": "Deactivation Reason Code",
+      "codepoint": "0x4201b9"
+    },
+    {
+      "name": "Certificate Subject DN",
+      "codepoint": "0x4201ba"
+    },
+    {
+      "name": "Certificate Issuer DN",
+      "codepoint": "0x4201bb"
+    },
+    {
+      "name": "Certificate Request Link",
+      "codepoint": "0x4201bc"
+    },
+    {
+      "name": "Certify Counter",
+      "codepoint": "0x4201bd"
+    },
+    {
+      "name": "Decrypt Counter",
+      "codepoint": "0x4201be"
+    },
+    {
+      "name": "Encrypt Counter",
+      "codepoint": "0x4201bf"
+    },
+    {
+      "name": "Sign Counter",
+      "codepoint": "0x4201c0"
+    },
+    {
+      "name": "Signature Verify Counter",
+      "codepoint": "0x4201c1"
+    },
+    {
+      "name": "NIST Security Category",
+      "codepoint": "0x4201c2"
+    }
+  ],
+  "enums": {
+    "Adjustment Type": [
+      {
+        "name": "Increment",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Decrement",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Negate",
+        "value": "0x00000003"
+      }
+    ],
+    "Alternative Name Type": [
+      {
+        "name": "Uninterpreted Text String",
+        "value": "0x00000001"
+      },
+      {
+        "name": "URI",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Object Serial Number",
+        "value": "0x00000003"
+      },
+      {
+        "name": "Email Address",
+        "value": "0x00000004"
+      },
+      {
+        "name": "DNS Name",
+        "value": "0x00000005"
+      },
+      {
+        "name": "X.500 Distinguished Name",
+        "value": "0x00000006"
+      },
+      {
+        "name": "IP Address",
+        "value": "0x00000007"
+      }
+    ],
+    "Asynchronous Indicator": [
+      {
+        "name": "Mandatory",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Optional",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Prohibited",
+        "value": "0x00000003"
+      }
+    ],
+    "Attestation Type": [
+      {
+        "name": "TPM Quote",
+        "value": "0x00000001"
+      },
+      {
+        "name": "TCG Integrity Report",
+        "value": "0x00000002"
+      },
+      {
+        "name": "SAML Assertion",
+        "value": "0x00000003"
+      }
+    ],
+    "Batch Error Continuation\nOption": [
+      {
+        "name": "Continue",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Stop",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Undo",
+        "value": "0x00000003"
+      }
+    ],
+    "Block Cipher Mode": [
+      {
+        "name": "CBC",
+        "value": "0x00000001"
+      },
+      {
+        "name": "ECB",
+        "value": "0x00000002"
+      },
+      {
+        "name": "PCBC",
+        "value": "0x00000003"
+      },
+      {
+        "name": "CFB",
+        "value": "0x00000004"
+      },
+      {
+        "name": "OFB",
+        "value": "0x00000005"
+      },
+      {
+        "name": "CTR",
+        "value": "0x00000006"
+      },
+      {
+        "name": "CMAC",
+        "value": "0x00000007"
+      },
+      {
+        "name": "CCM",
+        "value": "0x00000008"
+      },
+      {
+        "name": "GCM",
+        "value": "0x00000009"
+      },
+      {
+        "name": "CBC-MAC",
+        "value": "0x0000000a"
+      },
+      {
+        "name": "XTS",
+        "value": "0x0000000b"
+      },
+      {
+        "name": "AESKeyWrapPadding",
+        "value": "0x0000000c"
+      },
+      {
+        "name": "NISTKeyWrap",
+        "value": "0x0000000d"
+      },
+      {
+        "name": "X9.102 AESKW",
+        "value": "0x0000000e"
+      },
+      {
+        "name": "X9.102 TDKW",
+        "value": "0x0000000f"
+      },
+      {
+        "name": "X9.102 AKW1",
+        "value": "0x00000010"
+      },
+      {
+        "name": "X9.102 AKW2",
+        "value": "0x00000011"
+      },
+      {
+        "name": "AEAD",
+        "value": "0x00000012"
+      }
+    ],
+    "Cancellation Result": [
+      {
+        "name": "Canceled",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Unable to Cancel",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Completed",
+        "value": "0x00000003"
+      },
+      {
+        "name": "Failed",
+        "value": "0x00000004"
+      },
+      {
+        "name": "Unavailable",
+        "value": "0x00000005"
+      }
+    ],
+    "Certificate Request Type": [
+      {
+        "name": "CRMF",
+        "value": "0x00000001"
+      },
+      {
+        "name": "PKCS#10",
+        "value": "0x00000002"
+      },
+      {
+        "name": "PEM",
+        "value": "0x00000003"
+      },
+      {
+        "name": "(Reserved)",
+        "value": "0x00000004"
+      }
+    ],
+    "Certificate Type": [
+      {
+        "name": "X.509",
+        "value": "0x00000001"
+      },
+      {
+        "name": "PGP",
+        "value": "0x00000002"
+      }
+    ],
+    "Client Registration\nMethod": [
+      {
+        "name": "Unspecified",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Server Pre-Generated",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Server On-Demand",
+        "value": "0x00000003"
+      },
+      {
+        "name": "Client Generated",
+        "value": "0x00000004"
+      },
+      {
+        "name": "Client Registered",
+        "value": "0x00000005"
+      }
+    ],
+    "Credential Type": [
+      {
+        "name": "Username and Password",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Device",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Attestation",
+        "value": "0x00000003"
+      },
+      {
+        "name": "One Time Password",
+        "value": "0x00000004"
+      },
+      {
+        "name": "Hashed Password",
+        "value": "0x00000005"
+      },
+      {
+        "name": "Ticket",
+        "value": "0x00000006"
+      },
+      {
+        "name": "Password",
+        "value": "0x00000007"
+      },
+      {
+        "name": "Certificate",
+        "value": "0x00000008"
+      }
+    ],
+    "Cryptographic Algorithm": [
+      {
+        "name": "DES",
+        "value": "0x00000001"
+      },
+      {
+        "name": "3DES",
+        "value": "0x00000002"
+      },
+      {
+        "name": "AES",
+        "value": "0x00000003"
+      },
+      {
+        "name": "RSA",
+        "value": "0x00000004"
+      },
+      {
+        "name": "DSA",
+        "value": "0x00000005"
+      },
+      {
+        "name": "ECDSA",
+        "value": "0x00000006"
+      },
+      {
+        "name": "HMAC-SHA1",
+        "value": "0x00000007"
+      },
+      {
+        "name": "HMAC-SHA224",
+        "value": "0x00000008"
+      },
+      {
+        "name": "HMAC-SHA256",
+        "value": "0x00000009"
+      },
+      {
+        "name": "HMAC-SHA384",
+        "value": "0x0000000a"
+      },
+      {
+        "name": "HMAC-SHA512",
+        "value": "0x0000000b"
+      },
+      {
+        "name": "HMAC-MD5",
+        "value": "0x0000000c"
+      },
+      {
+        "name": "DH",
+        "value": "0x0000000d"
+      },
+      {
+        "name": "ECDH",
+        "value": "0x0000000e"
+      },
+      {
+        "name": "ECMQV",
+        "value": "0x0000000f"
+      },
+      {
+        "name": "Blowfish",
+        "value": "0x00000010"
+      },
+      {
+        "name": "Camellia",
+        "value": "0x00000011"
+      },
+      {
+        "name": "CAST5",
+        "value": "0x00000012"
+      },
+      {
+        "name": "IDEA",
+        "value": "0x00000013"
+      },
+      {
+        "name": "MARS",
+        "value": "0x00000014"
+      },
+      {
+        "name": "RC2",
+        "value": "0x00000015"
+      },
+      {
+        "name": "RC4",
+        "value": "0x00000016"
+      },
+      {
+        "name": "RC5",
+        "value": "0x00000017"
+      },
+      {
+        "name": "SKIPJACK",
+        "value": "0x00000018"
+      },
+      {
+        "name": "Twofish",
+        "value": "0x00000019"
+      },
+      {
+        "name": "EC",
+        "value": "0x0000001a"
+      },
+      {
+        "name": "One Time Pad",
+        "value": "0x0000001b"
+      },
+      {
+        "name": "ChaCha20",
+        "value": "0x0000001c"
+      },
+      {
+        "name": "Poly1305",
+        "value": "0x0000001d"
+      },
+      {
+        "name": "ChaCha20Poly1305",
+        "value": "0x0000001e"
+      },
+      {
+        "name": "SHA3-224",
+        "value": "0x0000001f"
+      },
+      {
+        "name": "SHA3-256",
+        "value": "0x00000020"
+      },
+      {
+        "name": "SHA3-384",
+        "value": "0x00000021"
+      },
+      {
+        "name": "SHA3-512",
+        "value": "0x00000022"
+      },
+      {
+        "name": "HMAC-SHA3-224",
+        "value": "0x00000023"
+      },
+      {
+        "name": "HMAC-SHA3-256",
+        "value": "0x00000024"
+      },
+      {
+        "name": "HMAC-SHA3-384",
+        "value": "0x00000025"
+      },
+      {
+        "name": "HMAC-SHA3-512",
+        "value": "0x00000026"
+      },
+      {
+        "name": "SHAKE-128",
+        "value": "0x00000027"
+      },
+      {
+        "name": "SHAKE-256",
+        "value": "0x00000028"
+      },
+      {
+        "name": "ARIA",
+        "value": "0x00000029"
+      },
+      {
+        "name": "SEED",
+        "value": "0x0000002a"
+      },
+      {
+        "name": "SM2",
+        "value": "0x0000002b"
+      },
+      {
+        "name": "SM3",
+        "value": "0x0000002c"
+      },
+      {
+        "name": "SM4",
+        "value": "0x0000002d"
+      },
+      {
+        "name": "GOST R 34.10-2012",
+        "value": "0x0000002e"
+      },
+      {
+        "name": "GOST R 34.11-2012",
+        "value": "0x0000002f"
+      },
+      {
+        "name": "GOST R 34.13-2015",
+        "value": "0x00000030"
+      },
+      {
+        "name": "GOST 28147-89",
+        "value": "0x00000031"
+      },
+      {
+        "name": "XMSS",
+        "value": "0x00000032"
+      },
+      {
+        "name": "SPHINCS-256",
+        "value": "0x00000033"
+      },
+      {
+        "name": "McEliece",
+        "value": "0x00000034"
+      },
+      {
+        "name": "McEliece-6960119",
+        "value": "0x00000035"
+      },
+      {
+        "name": "McEliece-8192128",
+        "value": "0x00000036"
+      },
+      {
+        "name": "Ed25519",
+        "value": "0x00000037"
+      },
+      {
+        "name": "Ed448",
+        "value": "0x00000038"
+      },
+      {
+        "name": "ML-KEM-512",
+        "value": "0x00000039"
+      },
+      {
+        "name": "ML-KEM-768",
+        "value": "0x0000003a"
+      },
+      {
+        "name": "ML-KEM-1024",
+        "value": "0x0000003b"
+      },
+      {
+        "name": "ML-DSA-44",
+        "value": "0x0000003c"
+      },
+      {
+        "name": "ML-DSA-65",
+        "value": "0x0000003d"
+      },
+      {
+        "name": "ML-DSA-87",
+        "value": "0x0000003e"
+      },
+      {
+        "name": "SLH-DSA-SHA2-128s",
+        "value": "0x0000003f"
+      },
+      {
+        "name": "SLH-DSA-SHA2-128f",
+        "value": "0x00000040"
+      },
+      {
+        "name": "SLH-DSA-SHA2-192s",
+        "value": "0x00000041"
+      },
+      {
+        "name": "SLH-DSA-SHA2-192f",
+        "value": "0x00000042"
+      },
+      {
+        "name": "SLH-DSA-SHA2-256s",
+        "value": "0x00000043"
+      },
+      {
+        "name": "SLH-DSA-SHA2-256f",
+        "value": "0x00000044"
+      },
+      {
+        "name": "SLH-DSA-SHAKE-128s",
+        "value": "0x00000045"
+      },
+      {
+        "name": "SLH-DSA-SHAKE-128f",
+        "value": "0x00000046"
+      },
+      {
+        "name": "SLH-DSA-SHAKE-192s",
+        "value": "0x00000047"
+      },
+      {
+        "name": "SLH-DSA-SHAKE-192f",
+        "value": "0x00000048"
+      },
+      {
+        "name": "SLH-DSA-SHAKE-256s",
+        "value": "0x00000049"
+      },
+      {
+        "name": "SLH-DSA-SHAKE-256f",
+        "value": "0x0000004a"
+      }
+    ],
+    "DRBG Algorithm": [
+      {
+        "name": "Unspecified",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Dual-EC",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Hash",
+        "value": "0x00000003"
+      },
+      {
+        "name": "HMAC",
+        "value": "0x00000004"
+      },
+      {
+        "name": "CTR",
+        "value": "0x00000005"
+      }
+    ],
+    "Data": [
+      {
+        "name": "Decrypt",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Encrypt",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Hash",
+        "value": "0x00000003"
+      },
+      {
+        "name": "MAC MAC Data",
+        "value": "0x00000004"
+      },
+      {
+        "name": "RNG Retrieve",
+        "value": "0x00000005"
+      },
+      {
+        "name": "Sign Signature Data",
+        "value": "0x00000006"
+      },
+      {
+        "name": "Signature Verify",
+        "value": "0x00000007"
+      }
+    ],
+    "Deactivation Reason Code": [
+      {
+        "name": "Unspecified",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Deactivation\n  Date",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Protect Stop Date",
+        "value": "0x00000003"
+      },
+      {
+        "name": "Usage Limit",
+        "value": "0x00000004"
+      }
+    ],
+    "Derivation Method": [
+      {
+        "name": "PBKDF2",
+        "value": "0x00000001"
+      },
+      {
+        "name": "HASH",
+        "value": "0x00000002"
+      },
+      {
+        "name": "HMAC",
+        "value": "0x00000003"
+      },
+      {
+        "name": "ENCRYPT",
+        "value": "0x00000004"
+      },
+      {
+        "name": "NIST800-108-C",
+        "value": "0x00000005"
+      },
+      {
+        "name": "NIST800-108-F",
+        "value": "0x00000006"
+      },
+      {
+        "name": "NIST800-108-DPI",
+        "value": "0x00000007"
+      },
+      {
+        "name": "Asymmetric Key",
+        "value": "0x00000008"
+      },
+      {
+        "name": "AWS Signature Version 4",
+        "value": "0x00000009"
+      },
+      {
+        "name": "HKDF",
+        "value": "0x0000000a"
+      }
+    ],
+    "Destroy Action": [
+      {
+        "name": "Unspecified",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Key Material Deleted",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Key Material Shredded",
+        "value": "0x00000003"
+      },
+      {
+        "name": "Meta Data Deleted",
+        "value": "0x00000004"
+      },
+      {
+        "name": "Meta Data Shredded",
+        "value": "0x00000005"
+      },
+      {
+        "name": "Deleted",
+        "value": "0x00000006"
+      },
+      {
+        "name": "Shredded",
+        "value": "0x00000007"
+      }
+    ],
+    "Digital Signature\nAlgorithm": [
+      {
+        "name": "MD2 with RSA Encryption",
+        "value": "0x00000001"
+      },
+      {
+        "name": "MD5 with RSA Encryption",
+        "value": "0x00000002"
+      },
+      {
+        "name": "SHA-1 with RSA Encryption",
+        "value": "0x00000003"
+      },
+      {
+        "name": "SHA-224 with RSA Encryption",
+        "value": "0x00000004"
+      },
+      {
+        "name": "SHA-256 with RSA Encryption",
+        "value": "0x00000005"
+      },
+      {
+        "name": "SHA-384 with RSA Encryption",
+        "value": "0x00000006"
+      },
+      {
+        "name": "SHA-512 with RSA Encryption",
+        "value": "0x00000007"
+      },
+      {
+        "name": "RSASSA-PSS",
+        "value": "0x00000008"
+      },
+      {
+        "name": "DSA with SHA-1",
+        "value": "0x00000009"
+      },
+      {
+        "name": "DSA with SHA224",
+        "value": "0x0000000a"
+      },
+      {
+        "name": "DSA with SHA256",
+        "value": "0x0000000b"
+      },
+      {
+        "name": "ECDSA with SHA-1",
+        "value": "0x0000000c"
+      },
+      {
+        "name": "ECDSA with SHA224",
+        "value": "0x0000000d"
+      },
+      {
+        "name": "ECDSA with SHA256",
+        "value": "0x0000000e"
+      },
+      {
+        "name": "ECDSA with SHA384",
+        "value": "0x0000000f"
+      },
+      {
+        "name": "ECDSA with SHA512",
+        "value": "0x00000010"
+      },
+      {
+        "name": "SHA3-256 with RSA Encryption",
+        "value": "0x00000011"
+      },
+      {
+        "name": "SHA3-384 with RSA Encryption",
+        "value": "0x00000012"
+      },
+      {
+        "name": "SHA3-512 with RSA Encryption",
+        "value": "0x00000013"
+      }
+    ],
+    "Encoding Option": [
+      {
+        "name": "No Encoding",
+        "value": "0x00000001"
+      },
+      {
+        "name": "TTLV Encoding",
+        "value": "0x00000002"
+      }
+    ],
+    "Endpoint Role": [
+      {
+        "name": "Client",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Server",
+        "value": "0x00000002"
+      }
+    ],
+    "Ephemeral": [
+      {
+        "name": "Data",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Empty",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Unique Identifier",
+        "value": "0x00000003"
+      }
+    ],
+    "FIPS186 Variation": [
+      {
+        "name": "Unspecified",
+        "value": "0x00000001"
+      },
+      {
+        "name": "GP x-Original",
+        "value": "0x00000002"
+      },
+      {
+        "name": "GP x-Change Notice",
+        "value": "0x00000003"
+      },
+      {
+        "name": "x-Original",
+        "value": "0x00000004"
+      },
+      {
+        "name": "x-Change Notice",
+        "value": "0x00000005"
+      },
+      {
+        "name": "k-Original",
+        "value": "0x00000006"
+      },
+      {
+        "name": "k-Change Notice",
+        "value": "0x00000007"
+      }
+    ],
+    "Hashing Algorithm": [
+      {
+        "name": "MD2",
+        "value": "0x00000001"
+      },
+      {
+        "name": "MD4",
+        "value": "0x00000002"
+      },
+      {
+        "name": "MD5",
+        "value": "0x00000003"
+      },
+      {
+        "name": "SHA-1",
+        "value": "0x00000004"
+      },
+      {
+        "name": "SHA-224",
+        "value": "0x00000005"
+      },
+      {
+        "name": "SHA-256",
+        "value": "0x00000006"
+      },
+      {
+        "name": "SHA-384",
+        "value": "0x00000007"
+      },
+      {
+        "name": "SHA-512",
+        "value": "0x00000008"
+      },
+      {
+        "name": "RIPEMD-160",
+        "value": "0x00000009"
+      },
+      {
+        "name": "Tiger",
+        "value": "0x0000000a"
+      },
+      {
+        "name": "Whirlpool",
+        "value": "0x0000000b"
+      },
+      {
+        "name": "SHA-512/224",
+        "value": "0x0000000c"
+      },
+      {
+        "name": "SHA-512/256",
+        "value": "0x0000000d"
+      },
+      {
+        "name": "SHA3-224",
+        "value": "0x0000000e"
+      },
+      {
+        "name": "SHA3-256",
+        "value": "0x0000000f"
+      },
+      {
+        "name": "SHA3-384",
+        "value": "0x00000010"
+      },
+      {
+        "name": "SHA3-512",
+        "value": "0x00000011"
+      }
+    ],
+    "Interop Function": [
+      {
+        "name": "Begin",
+        "value": "0x00000001"
+      },
+      {
+        "name": "End",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Reset",
+        "value": "0x00000003"
+      }
+    ],
+    "Item Type": [
+      {
+        "name": "Structure",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Integer",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Long Integer",
+        "value": "0x00000003"
+      },
+      {
+        "name": "Big Integer",
+        "value": "0x00000004"
+      },
+      {
+        "name": "Enumeration",
+        "value": "0x00000005"
+      },
+      {
+        "name": "Boolean",
+        "value": "0x00000006"
+      },
+      {
+        "name": "Text String",
+        "value": "0x00000007"
+      },
+      {
+        "name": "Byte String",
+        "value": "0x00000008"
+      },
+      {
+        "name": "Date Time",
+        "value": "0x00000009"
+      },
+      {
+        "name": "Interval",
+        "value": "0x0000000a"
+      },
+      {
+        "name": "Date Time Extended",
+        "value": "0x0000000b"
+      },
+      {
+        "name": "Identifier",
+        "value": "0x0000000c"
+      },
+      {
+        "name": "Reference",
+        "value": "0x0000000d"
+      },
+      {
+        "name": "Name Reference",
+        "value": "0x0000000e"
+      }
+    ],
+    "Key\nRole Type": [
+      {
+        "name": "BDK",
+        "value": "0x00000001"
+      },
+      {
+        "name": "CVK",
+        "value": "0x00000002"
+      },
+      {
+        "name": "DEK",
+        "value": "0x00000003"
+      },
+      {
+        "name": "MKAC",
+        "value": "0x00000004"
+      },
+      {
+        "name": "MKSMC",
+        "value": "0x00000005"
+      },
+      {
+        "name": "MKSMI",
+        "value": "0x00000006"
+      },
+      {
+        "name": "MKDAC",
+        "value": "0x00000007"
+      },
+      {
+        "name": "MKDN",
+        "value": "0x00000008"
+      },
+      {
+        "name": "MKCP",
+        "value": "0x00000009"
+      },
+      {
+        "name": "MKOTH",
+        "value": "0x0000000a"
+      },
+      {
+        "name": "KEK",
+        "value": "0x0000000b"
+      },
+      {
+        "name": "MAC16609",
+        "value": "0x0000000c"
+      },
+      {
+        "name": "MAC97971",
+        "value": "0x0000000d"
+      },
+      {
+        "name": "MAC97972",
+        "value": "0x0000000e"
+      },
+      {
+        "name": "MAC97973",
+        "value": "0x0000000f"
+      },
+      {
+        "name": "MAC97974",
+        "value": "0x00000010"
+      },
+      {
+        "name": "MAC97975",
+        "value": "0x00000011"
+      },
+      {
+        "name": "ZPK",
+        "value": "0x00000012"
+      },
+      {
+        "name": "PVKIBM",
+        "value": "0x00000013"
+      },
+      {
+        "name": "PVKPVV",
+        "value": "0x00000014"
+      },
+      {
+        "name": "PVKOTH",
+        "value": "0x00000015"
+      },
+      {
+        "name": "DUKPT",
+        "value": "0x00000016"
+      },
+      {
+        "name": "IV",
+        "value": "0x00000017"
+      },
+      {
+        "name": "TRKBK",
+        "value": "0x00000018"
+      }
+    ],
+    "Key Compression Type": [
+      {
+        "name": "EC Public Key Type Uncompressed",
+        "value": "0x00000001"
+      },
+      {
+        "name": "EC Public Key Type X9.62 Compressed Prime",
+        "value": "0x00000002"
+      },
+      {
+        "name": "EC Public Key Type X9.62 Compressed Char2",
+        "value": "0x00000003"
+      },
+      {
+        "name": "EC Public Key Type X9.62 Hybrid",
+        "value": "0x00000004"
+      }
+    ],
+    "Key Format Type": [
+      {
+        "name": "Raw",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Opaque",
+        "value": "0x00000002"
+      },
+      {
+        "name": "PKCS#1",
+        "value": "0x00000003"
+      },
+      {
+        "name": "PKCS#8",
+        "value": "0x00000004"
+      },
+      {
+        "name": "X.509",
+        "value": "0x00000005"
+      },
+      {
+        "name": "ECPrivateKey",
+        "value": "0x00000006"
+      },
+      {
+        "name": "Transparent Symmetric Key",
+        "value": "0x00000007"
+      },
+      {
+        "name": "Transparent DSA Private Key",
+        "value": "0x00000008"
+      },
+      {
+        "name": "Transparent DSA Public Key",
+        "value": "0x00000009"
+      },
+      {
+        "name": "Transparent RSA Private Key",
+        "value": "0x0000000a"
+      },
+      {
+        "name": "Transparent RSA Public Key",
+        "value": "0x0000000b"
+      },
+      {
+        "name": "Transparent DH Private Key",
+        "value": "0x0000000c"
+      },
+      {
+        "name": "Transparent DH Public Key",
+        "value": "0x0000000d"
+      },
+      {
+        "name": "(Reserved)",
+        "value": "0x0000000e"
+      },
+      {
+        "name": "(Reserved)",
+        "value": "0x0000000f"
+      },
+      {
+        "name": "(Reserved)",
+        "value": "0x00000010"
+      },
+      {
+        "name": "(Reserved)",
+        "value": "0x00000011"
+      },
+      {
+        "name": "(Reserved)",
+        "value": "0x00000012"
+      },
+      {
+        "name": "(Reserved)",
+        "value": "0x00000013"
+      },
+      {
+        "name": "Transparent EC Private Key",
+        "value": "0x00000014"
+      },
+      {
+        "name": "Transparent EC Public Key",
+        "value": "0x00000015"
+      },
+      {
+        "name": "PKCS#12",
+        "value": "0x00000016"
+      },
+      {
+        "name": "PKCS#10",
+        "value": "0x00000017"
+      }
+    ],
+    "Key Value Location Type": [
+      {
+        "name": "Uninterpreted Text String",
+        "value": "0x00000001"
+      },
+      {
+        "name": "URI",
+        "value": "0x00000002"
+      }
+    ],
+    "Key Wrap Type": [
+      {
+        "name": "Not Wrapped",
+        "value": "0x00000001"
+      },
+      {
+        "name": "As Registered",
+        "value": "0x00000002"
+      }
+    ],
+    "Mask Generator": [
+      {
+        "name": "MFG1",
+        "value": "0x00000001"
+      }
+    ],
+    "NIST Key Type": [
+      {
+        "name": "Private\n  signature key",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Public\n  signature verification key",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Symmetric\n  authentication key",
+        "value": "0x00000003"
+      },
+      {
+        "name": "Private\n  authentication key",
+        "value": "0x00000004"
+      },
+      {
+        "name": "Public\n  authentication key",
+        "value": "0x00000005"
+      },
+      {
+        "name": "Symmetric\n  data encryption key",
+        "value": "0x00000006"
+      },
+      {
+        "name": "Symmetric\n  key wrapping key",
+        "value": "0x00000007"
+      },
+      {
+        "name": "Symmetric\n  random number generation key",
+        "value": "0x00000008"
+      },
+      {
+        "name": "Symmetric\n  master key",
+        "value": "0x00000009"
+      },
+      {
+        "name": "Private\n  key transport key",
+        "value": "0x0000000a"
+      },
+      {
+        "name": "Public\n  key transport key",
+        "value": "0x0000000b"
+      },
+      {
+        "name": "Symmetric\n  key agreement key",
+        "value": "0x0000000c"
+      },
+      {
+        "name": "Private\n  static key agreement key",
+        "value": "0x0000000d"
+      },
+      {
+        "name": "Public\n  static key agreement key",
+        "value": "0x0000000e"
+      },
+      {
+        "name": "Private\n  ephemeral key agreement key",
+        "value": "0x0000000f"
+      },
+      {
+        "name": "Public\n  ephemeral key agreement key",
+        "value": "0x00000010"
+      },
+      {
+        "name": "Symmetric\n  authorization key",
+        "value": "0x00000011"
+      },
+      {
+        "name": "Private\n  authorization key",
+        "value": "0x00000012"
+      },
+      {
+        "name": "Public\n  authorization key",
+        "value": "0x00000013"
+      }
+    ],
+    "OTP Algorithm": [
+      {
+        "name": "HOTP",
+        "value": "0x00000001"
+      },
+      {
+        "name": "TOTP",
+        "value": "0x00000002"
+      }
+    ],
+    "Object Class": [
+      {
+        "name": "User",
+        "value": "0x00000001"
+      },
+      {
+        "name": "System",
+        "value": "0x00000002"
+      }
+    ],
+    "Object Type": [
+      {
+        "name": "Certificate",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Symmetric Key",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Public Key",
+        "value": "0x00000003"
+      },
+      {
+        "name": "Private Key",
+        "value": "0x00000004"
+      },
+      {
+        "name": "Split Key",
+        "value": "0x00000005"
+      },
+      {
+        "name": "(Reserved)",
+        "value": "0x00000006"
+      },
+      {
+        "name": "Secret Data",
+        "value": "0x00000007"
+      },
+      {
+        "name": "Opaque Object",
+        "value": "0x00000008"
+      },
+      {
+        "name": "PGP Key",
+        "value": "0x00000009"
+      },
+      {
+        "name": "Certificate Request",
+        "value": "0x0000000a"
+      },
+      {
+        "name": "User",
+        "value": "0x0000000b"
+      },
+      {
+        "name": "Group",
+        "value": "0x0000000c"
+      },
+      {
+        "name": "Password Credential",
+        "value": "0x0000000d"
+      },
+      {
+        "name": "Device Credential",
+        "value": "0x0000000e"
+      },
+      {
+        "name": "One Time Password Credential",
+        "value": "0x0000000f"
+      },
+      {
+        "name": "Hashed Password Credential",
+        "value": "0x00000010"
+      }
+    ],
+    "Operation": [
+      {
+        "name": "Create",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Create Key Pair",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Register",
+        "value": "0x00000003"
+      },
+      {
+        "name": "Re-key",
+        "value": "0x00000004"
+      },
+      {
+        "name": "Derive Key",
+        "value": "0x00000005"
+      },
+      {
+        "name": "Certify",
+        "value": "0x00000006"
+      },
+      {
+        "name": "Re-certify",
+        "value": "0x00000007"
+      },
+      {
+        "name": "Locate",
+        "value": "0x00000008"
+      },
+      {
+        "name": "Check",
+        "value": "0x00000009"
+      },
+      {
+        "name": "Get",
+        "value": "0x0000000a"
+      },
+      {
+        "name": "Get Attributes",
+        "value": "0x0000000b"
+      },
+      {
+        "name": "Get Attribute List",
+        "value": "0x0000000c"
+      },
+      {
+        "name": "Add Attribute",
+        "value": "0x0000000d"
+      },
+      {
+        "name": "Modify Attribute",
+        "value": "0x0000000e"
+      },
+      {
+        "name": "Delete Attribute",
+        "value": "0x0000000f"
+      },
+      {
+        "name": "Obtain Lease",
+        "value": "0x00000010"
+      },
+      {
+        "name": "Get Usage Allocation",
+        "value": "0x00000011"
+      },
+      {
+        "name": "Activate",
+        "value": "0x00000012"
+      },
+      {
+        "name": "Revoke",
+        "value": "0x00000013"
+      },
+      {
+        "name": "Destroy",
+        "value": "0x00000014"
+      },
+      {
+        "name": "Archive",
+        "value": "0x00000015"
+      },
+      {
+        "name": "Recover",
+        "value": "0x00000016"
+      },
+      {
+        "name": "Validate",
+        "value": "0x00000017"
+      },
+      {
+        "name": "Query",
+        "value": "0x00000018"
+      },
+      {
+        "name": "Cancel",
+        "value": "0x00000019"
+      },
+      {
+        "name": "Poll",
+        "value": "0x0000001a"
+      },
+      {
+        "name": "Notify",
+        "value": "0x0000001b"
+      },
+      {
+        "name": "Put",
+        "value": "0x0000001c"
+      },
+      {
+        "name": "Re-key Key Pair",
+        "value": "0x0000001d"
+      },
+      {
+        "name": "Discover Versions",
+        "value": "0x0000001e"
+      },
+      {
+        "name": "Encrypt",
+        "value": "0x0000001f"
+      },
+      {
+        "name": "Decrypt",
+        "value": "0x00000020"
+      },
+      {
+        "name": "Sign",
+        "value": "0x00000021"
+      },
+      {
+        "name": "Signature Verify",
+        "value": "0x00000022"
+      },
+      {
+        "name": "MAC",
+        "value": "0x00000023"
+      },
+      {
+        "name": "MAC Verify",
+        "value": "0x00000024"
+      },
+      {
+        "name": "RNG Retrieve",
+        "value": "0x00000025"
+      },
+      {
+        "name": "RNG Seed",
+        "value": "0x00000026"
+      },
+      {
+        "name": "Hash",
+        "value": "0x00000027"
+      },
+      {
+        "name": "Create Split Key",
+        "value": "0x00000028"
+      },
+      {
+        "name": "Join Split Key",
+        "value": "0x00000029"
+      },
+      {
+        "name": "Import",
+        "value": "0x0000002a"
+      },
+      {
+        "name": "Export",
+        "value": "0x0000002b"
+      },
+      {
+        "name": "Log",
+        "value": "0x0000002c"
+      },
+      {
+        "name": "Login",
+        "value": "0x0000002d"
+      },
+      {
+        "name": "Logout",
+        "value": "0x0000002e"
+      },
+      {
+        "name": "Delegated Login",
+        "value": "0x0000002f"
+      },
+      {
+        "name": "Adjust Attribute",
+        "value": "0x00000030"
+      },
+      {
+        "name": "Set Attribute",
+        "value": "0x00000031"
+      },
+      {
+        "name": "Set Endpoint Role",
+        "value": "0x00000032"
+      },
+      {
+        "name": "PKCS#11",
+        "value": "0x00000033"
+      },
+      {
+        "name": "Interop",
+        "value": "0x00000034"
+      },
+      {
+        "name": "Re-Provision",
+        "value": "0x00000035"
+      },
+      {
+        "name": "Set Defaults",
+        "value": "0x00000036"
+      },
+      {
+        "name": "Set Constraints",
+        "value": "0x00000037"
+      },
+      {
+        "name": "Get Constraints",
+        "value": "0x00000038"
+      },
+      {
+        "name": "Query Asynchronous Requests",
+        "value": "0x00000039"
+      },
+      {
+        "name": "Process",
+        "value": "0x0000003a"
+      },
+      {
+        "name": "Ping",
+        "value": "0x0000003b"
+      },
+      {
+        "name": "Create Group",
+        "value": "0x0000003c"
+      },
+      {
+        "name": "Obliterate",
+        "value": "0x0000003d"
+      },
+      {
+        "name": "Create User",
+        "value": "0x0000003e"
+      },
+      {
+        "name": "Create Credential",
+        "value": "0x0000003f"
+      },
+      {
+        "name": "Deactivate",
+        "value": "0x00000040"
+      }
+    ],
+    "Padding Method": [
+      {
+        "name": "None",
+        "value": "0x00000001"
+      },
+      {
+        "name": "OAEP",
+        "value": "0x00000002"
+      },
+      {
+        "name": "PKCS5",
+        "value": "0x00000003"
+      },
+      {
+        "name": "SSL3",
+        "value": "0x00000004"
+      },
+      {
+        "name": "Zeros",
+        "value": "0x00000005"
+      },
+      {
+        "name": "ANSI X9.23",
+        "value": "0x00000006"
+      },
+      {
+        "name": "ISO 10126",
+        "value": "0x00000007"
+      },
+      {
+        "name": "PKCS1 v1.5",
+        "value": "0x00000008"
+      },
+      {
+        "name": "X9.31",
+        "value": "0x00000009"
+      },
+      {
+        "name": "PSS",
+        "value": "0x0000000a"
+      }
+    ],
+    "Processing Stage": [
+      {
+        "name": "Submitted",
+        "value": "0x00000001"
+      },
+      {
+        "name": "In Process",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Completed",
+        "value": "0x00000003"
+      }
+    ],
+    "Profile Name": [
+      {
+        "name": "Complete Server Basic",
+        "value": "0x00000104"
+      },
+      {
+        "name": "Complete Server TLS v1.2",
+        "value": "0x00000105"
+      },
+      {
+        "name": "Tape Library Client",
+        "value": "0x00000106"
+      },
+      {
+        "name": "Tape Library Server",
+        "value": "0x00000107"
+      },
+      {
+        "name": "Symmetric Key Lifecycle Client",
+        "value": "0x00000108"
+      },
+      {
+        "name": "Symmetric Key Lifecycle Server",
+        "value": "0x00000109"
+      },
+      {
+        "name": "Asymmetric Key Lifecycle Client",
+        "value": "0x0000010a"
+      },
+      {
+        "name": "Asymmetric Key Lifecycle Server",
+        "value": "0x0000010b"
+      },
+      {
+        "name": "Basic Cryptographic Client",
+        "value": "0x0000010c"
+      },
+      {
+        "name": "Basic Cryptographic Server",
+        "value": "0x0000010d"
+      },
+      {
+        "name": "Advanced Cryptographic Client",
+        "value": "0x0000010e"
+      },
+      {
+        "name": "Advanced Cryptographic Server",
+        "value": "0x0000010f"
+      },
+      {
+        "name": "RNG Cryptographic Client",
+        "value": "0x00000110"
+      },
+      {
+        "name": "RNG Cryptographic Server",
+        "value": "0x00000111"
+      },
+      {
+        "name": "Basic Symmetric Key Foundry Client",
+        "value": "0x00000112"
+      },
+      {
+        "name": "Intermediate Symmetric Key Foundry Client",
+        "value": "0x00000113"
+      },
+      {
+        "name": "Advanced Symmetric Key Foundry Client",
+        "value": "0x00000114"
+      },
+      {
+        "name": "Symmetric Key Foundry Server",
+        "value": "0x00000115"
+      },
+      {
+        "name": "Opaque Managed Object Store Client",
+        "value": "0x00000116"
+      },
+      {
+        "name": "Opaque Managed Object Store Server",
+        "value": "0x00000117"
+      },
+      {
+        "name": "(Reserved)",
+        "value": "0x00000118"
+      },
+      {
+        "name": "(Reserved)",
+        "value": "0x00000119"
+      },
+      {
+        "name": "(Reserved)",
+        "value": "0x0000011a"
+      },
+      {
+        "name": "(Reserved)",
+        "value": "0x0000011b"
+      },
+      {
+        "name": "Storage Array with Self Encrypting Drive Client",
+        "value": "0x0000011c"
+      },
+      {
+        "name": "Storage Array with Self Encrypting Drive Server",
+        "value": "0x0000011d"
+      },
+      {
+        "name": "HTTPS Client",
+        "value": "0x0000011e"
+      },
+      {
+        "name": "HTTPS Server",
+        "value": "0x0000011f"
+      },
+      {
+        "name": "JSON Client",
+        "value": "0x00000120"
+      },
+      {
+        "name": "JSON Server",
+        "value": "0x00000121"
+      },
+      {
+        "name": "XML Client",
+        "value": "0x00000122"
+      },
+      {
+        "name": "XML Server",
+        "value": "0x00000123"
+      },
+      {
+        "name": "AES XTS Client",
+        "value": "0x00000124"
+      },
+      {
+        "name": "AES XTS Server",
+        "value": "0x00000125"
+      },
+      {
+        "name": "Quantum Safe Client",
+        "value": "0x00000126"
+      },
+      {
+        "name": "Quantum Safe Server",
+        "value": "0x00000127"
+      },
+      {
+        "name": "PKCS#11 Client",
+        "value": "0x00000128"
+      },
+      {
+        "name": "PKCS#11 Server",
+        "value": "0x00000129"
+      },
+      {
+        "name": "Baseline Client",
+        "value": "0x0000012a"
+      },
+      {
+        "name": "Baseline Server",
+        "value": "0x0000012b"
+      },
+      {
+        "name": "Complete Server",
+        "value": "0x0000012c"
+      }
+    ],
+    "Protection Level": [
+      {
+        "name": "High",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Low",
+        "value": "0x00000002"
+      }
+    ],
+    "Put Function": [
+      {
+        "name": "New",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Replace",
+        "value": "0x00000002"
+      }
+    ],
+    "Query Function": [
+      {
+        "name": "Query Operations",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Query Objects",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Query Server Information",
+        "value": "0x00000003"
+      },
+      {
+        "name": "Query Application Namespaces",
+        "value": "0x00000004"
+      },
+      {
+        "name": "Query Extension List",
+        "value": "0x00000005"
+      },
+      {
+        "name": "Query Extension Map",
+        "value": "0x00000006"
+      },
+      {
+        "name": "Query Attestation Types",
+        "value": "0x00000007"
+      },
+      {
+        "name": "Query RNGs",
+        "value": "0x00000008"
+      },
+      {
+        "name": "Query Validations",
+        "value": "0x00000009"
+      },
+      {
+        "name": "Query Profiles",
+        "value": "0x0000000a"
+      },
+      {
+        "name": "Query Capabilities",
+        "value": "0x0000000b"
+      },
+      {
+        "name": "Query Client Registration Methods",
+        "value": "0x0000000c"
+      },
+      {
+        "name": "Query Defaults Information",
+        "value": "0x0000000d"
+      },
+      {
+        "name": "Query Storage Protection Masks",
+        "value": "0x0000000e"
+      },
+      {
+        "name": "Query Credential Information",
+        "value": "0x0000000f"
+      }
+    ],
+    "RNG Algorithm": [
+      {
+        "name": "Unspecified",
+        "value": "0x00000001"
+      },
+      {
+        "name": "FIPS 186-2",
+        "value": "0x00000002"
+      },
+      {
+        "name": "DRBG",
+        "value": "0x00000003"
+      },
+      {
+        "name": "NRBG",
+        "value": "0x00000004"
+      },
+      {
+        "name": "ANSI X9.31",
+        "value": "0x00000005"
+      },
+      {
+        "name": "ANSI X9.62",
+        "value": "0x00000006"
+      }
+    ],
+    "RNG Mode": [
+      {
+        "name": "Unspecified",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Shared Instantiation",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Non-Shared Instantiation",
+        "value": "0x00000003"
+      }
+    ],
+    "Recommended Curve": [
+      {
+        "name": "P-192",
+        "value": "0x00000001"
+      },
+      {
+        "name": "K-163",
+        "value": "0x00000002"
+      },
+      {
+        "name": "B-163",
+        "value": "0x00000003"
+      },
+      {
+        "name": "P-224",
+        "value": "0x00000004"
+      },
+      {
+        "name": "K-233",
+        "value": "0x00000005"
+      },
+      {
+        "name": "B-233",
+        "value": "0x00000006"
+      },
+      {
+        "name": "P-256",
+        "value": "0x00000007"
+      },
+      {
+        "name": "K-283",
+        "value": "0x00000008"
+      },
+      {
+        "name": "B-283",
+        "value": "0x00000009"
+      },
+      {
+        "name": "P-384",
+        "value": "0x0000000a"
+      },
+      {
+        "name": "K-409",
+        "value": "0x0000000b"
+      },
+      {
+        "name": "B-409",
+        "value": "0x0000000c"
+      },
+      {
+        "name": "P-521",
+        "value": "0x0000000d"
+      },
+      {
+        "name": "K-571",
+        "value": "0x0000000e"
+      },
+      {
+        "name": "B-571",
+        "value": "0x0000000f"
+      },
+      {
+        "name": "SECP112R1",
+        "value": "0x00000010"
+      },
+      {
+        "name": "SECP112R2",
+        "value": "0x00000011"
+      },
+      {
+        "name": "SECP128R1",
+        "value": "0x00000012"
+      },
+      {
+        "name": "SECP128R2",
+        "value": "0x00000013"
+      },
+      {
+        "name": "SECP160K1",
+        "value": "0x00000014"
+      },
+      {
+        "name": "SECP160R1",
+        "value": "0x00000015"
+      },
+      {
+        "name": "SECP160R2",
+        "value": "0x00000016"
+      },
+      {
+        "name": "SECP192K1",
+        "value": "0x00000017"
+      },
+      {
+        "name": "SECP224K1",
+        "value": "0x00000018"
+      },
+      {
+        "name": "SECP256K1",
+        "value": "0x00000019"
+      },
+      {
+        "name": "SECT113R1",
+        "value": "0x0000001a"
+      },
+      {
+        "name": "SECT113R2",
+        "value": "0x0000001b"
+      },
+      {
+        "name": "SECT131R1",
+        "value": "0x0000001c"
+      },
+      {
+        "name": "SECT131R2",
+        "value": "0x0000001d"
+      },
+      {
+        "name": "SECT163R1",
+        "value": "0x0000001e"
+      },
+      {
+        "name": "SECT193R1",
+        "value": "0x0000001f"
+      },
+      {
+        "name": "SECT193R2",
+        "value": "0x00000020"
+      },
+      {
+        "name": "SECT239K1",
+        "value": "0x00000021"
+      },
+      {
+        "name": "ANSIX9P192V2",
+        "value": "0x00000022"
+      },
+      {
+        "name": "ANSIX9P192V3",
+        "value": "0x00000023"
+      },
+      {
+        "name": "ANSIX9P239V1",
+        "value": "0x00000024"
+      },
+      {
+        "name": "ANSIX9P239V2",
+        "value": "0x00000025"
+      },
+      {
+        "name": "ANSIX9P239V3",
+        "value": "0x00000026"
+      },
+      {
+        "name": "ANSIX9C2PNB163V1",
+        "value": "0x00000027"
+      },
+      {
+        "name": "ANSIX9C2PNB163V2",
+        "value": "0x00000028"
+      },
+      {
+        "name": "ANSIX9C2PNB163V3",
+        "value": "0x00000029"
+      },
+      {
+        "name": "ANSIX9C2PNB176V1",
+        "value": "0x0000002a"
+      },
+      {
+        "name": "ANSIX9C2TNB191V1",
+        "value": "0x0000002b"
+      },
+      {
+        "name": "ANSIX9C2TNB191V2",
+        "value": "0x0000002c"
+      },
+      {
+        "name": "ANSIX9C2TNB191V3",
+        "value": "0x0000002d"
+      },
+      {
+        "name": "ANSIX9C2PNB208W1",
+        "value": "0x0000002e"
+      },
+      {
+        "name": "ANSIX9C2TNB239V1",
+        "value": "0x0000002f"
+      },
+      {
+        "name": "ANSIX9C2TNB239V2",
+        "value": "0x00000030"
+      },
+      {
+        "name": "ANSIX9C2TNB239V3",
+        "value": "0x00000031"
+      },
+      {
+        "name": "ANSIX9C2PNB272W1",
+        "value": "0x00000032"
+      },
+      {
+        "name": "ANSIX9C2PNB304W1",
+        "value": "0x00000033"
+      },
+      {
+        "name": "ANSIX9C2TNB359V1",
+        "value": "0x00000034"
+      },
+      {
+        "name": "ANSIX9C2PNB368W1",
+        "value": "0x00000035"
+      },
+      {
+        "name": "ANSIX9C2TNB431R1",
+        "value": "0x00000036"
+      },
+      {
+        "name": "BRAINPOOLP160R1",
+        "value": "0x00000037"
+      },
+      {
+        "name": "BRAINPOOLP160T1",
+        "value": "0x00000038"
+      },
+      {
+        "name": "BRAINPOOLP192R1",
+        "value": "0x00000039"
+      },
+      {
+        "name": "BRAINPOOLP192T1",
+        "value": "0x0000003a"
+      },
+      {
+        "name": "BRAINPOOLP224R1",
+        "value": "0x0000003b"
+      },
+      {
+        "name": "BRAINPOOLP224T1",
+        "value": "0x0000003c"
+      },
+      {
+        "name": "BRAINPOOLP256R1",
+        "value": "0x0000003d"
+      },
+      {
+        "name": "BRAINPOOLP256T1",
+        "value": "0x0000003e"
+      },
+      {
+        "name": "BRAINPOOLP320R1",
+        "value": "0x0000003f"
+      },
+      {
+        "name": "BRAINPOOLP320T1",
+        "value": "0x00000040"
+      },
+      {
+        "name": "BRAINPOOLP384R1",
+        "value": "0x00000041"
+      },
+      {
+        "name": "BRAINPOOLP384T1",
+        "value": "0x00000042"
+      },
+      {
+        "name": "BRAINPOOLP512R1",
+        "value": "0x00000043"
+      },
+      {
+        "name": "BRAINPOOLP512T1",
+        "value": "0x00000044"
+      },
+      {
+        "name": "CURVE25519",
+        "value": "0x00000045"
+      },
+      {
+        "name": "CURVE448",
+        "value": "0x00000046"
+      }
+    ],
+    "Result Reason": [
+      {
+        "name": "Item Not Found",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Response Too Large",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Authentication Not Successful",
+        "value": "0x00000003"
+      },
+      {
+        "name": "Invalid Message",
+        "value": "0x00000004"
+      },
+      {
+        "name": "Operation Not Supported",
+        "value": "0x00000005"
+      },
+      {
+        "name": "Missing Data",
+        "value": "0x00000006"
+      },
+      {
+        "name": "Invalid Field",
+        "value": "0x00000007"
+      },
+      {
+        "name": "Feature Not Supported",
+        "value": "0x00000008"
+      },
+      {
+        "name": "Operation Canceled By Requester",
+        "value": "0x00000009"
+      },
+      {
+        "name": "Cryptographic Failure",
+        "value": "0x0000000a"
+      },
+      {
+        "name": "(Reserved)",
+        "value": "0x0000000b"
+      },
+      {
+        "name": "Permission Denied",
+        "value": "0x0000000c"
+      },
+      {
+        "name": "Object Archived",
+        "value": "0x0000000d"
+      },
+      {
+        "name": "(Reserved)",
+        "value": "0x0000000e"
+      },
+      {
+        "name": "Application Namespace Not Supported",
+        "value": "0x0000000f"
+      },
+      {
+        "name": "Key Format Type Not Supported",
+        "value": "0x00000010"
+      },
+      {
+        "name": "Key Compression Type Not Supported",
+        "value": "0x00000011"
+      },
+      {
+        "name": "Encoding Option Error",
+        "value": "0x00000012"
+      },
+      {
+        "name": "Key Value Not Present",
+        "value": "0x00000013"
+      },
+      {
+        "name": "Attestation Required",
+        "value": "0x00000014"
+      },
+      {
+        "name": "Attestation Failed",
+        "value": "0x00000015"
+      },
+      {
+        "name": "Sensitive",
+        "value": "0x00000016"
+      },
+      {
+        "name": "Not Extractable",
+        "value": "0x00000017"
+      },
+      {
+        "name": "Object Already Exists",
+        "value": "0x00000018"
+      },
+      {
+        "name": "Invalid Ticket",
+        "value": "0x00000019"
+      },
+      {
+        "name": "Usage Limit Exceeded",
+        "value": "0x0000001a"
+      },
+      {
+        "name": "Numeric Range",
+        "value": "0x0000001b"
+      },
+      {
+        "name": "Invalid Data Type",
+        "value": "0x0000001c"
+      },
+      {
+        "name": "Read Only Attribute",
+        "value": "0x0000001d"
+      },
+      {
+        "name": "Multi Valued Attribute",
+        "value": "0x0000001e"
+      },
+      {
+        "name": "Unsupported Attribute",
+        "value": "0x0000001f"
+      },
+      {
+        "name": "Attribute Instance Not Found",
+        "value": "0x00000020"
+      },
+      {
+        "name": "Attribute Not Found",
+        "value": "0x00000021"
+      },
+      {
+        "name": "Attribute Read Only",
+        "value": "0x00000022"
+      },
+      {
+        "name": "Attribute Single Valued",
+        "value": "0x00000023"
+      },
+      {
+        "name": "Bad Cryptographic Parameters",
+        "value": "0x00000024"
+      },
+      {
+        "name": "Bad Password",
+        "value": "0x00000025"
+      },
+      {
+        "name": "Codec Error",
+        "value": "0x00000026"
+      },
+      {
+        "name": "(Reserved)",
+        "value": "0x00000027"
+      },
+      {
+        "name": "Illegal Object Type",
+        "value": "0x00000028"
+      },
+      {
+        "name": "Incompatible Cryptographic Usage Mask",
+        "value": "0x00000029"
+      },
+      {
+        "name": "Internal Server Error",
+        "value": "0x0000002a"
+      },
+      {
+        "name": "Invalid Asynchronous Correlation Value",
+        "value": "0x0000002b"
+      },
+      {
+        "name": "Invalid Attribute",
+        "value": "0x0000002c"
+      },
+      {
+        "name": "Invalid Attribute Value",
+        "value": "0x0000002d"
+      },
+      {
+        "name": "Invalid Correlation Value",
+        "value": "0x0000002e"
+      },
+      {
+        "name": "Invalid CSR",
+        "value": "0x0000002f"
+      },
+      {
+        "name": "Invalid Object Type",
+        "value": "0x00000030"
+      },
+      {
+        "name": "(Reserved)",
+        "value": "0x00000031"
+      },
+      {
+        "name": "Key Wrap Type Not Supported",
+        "value": "0x00000032"
+      },
+      {
+        "name": "(Reserved)",
+        "value": "0x00000033"
+      },
+      {
+        "name": "Missing Initialization Vector",
+        "value": "0x00000034"
+      },
+      {
+        "name": "Non Unique Name Attribute",
+        "value": "0x00000035"
+      },
+      {
+        "name": "Object Destroyed",
+        "value": "0x00000036"
+      },
+      {
+        "name": "Object Not Found",
+        "value": "0x00000037"
+      },
+      {
+        "name": "(Reserved)",
+        "value": "0x00000038"
+      },
+      {
+        "name": "Not Authorised",
+        "value": "0x00000039"
+      },
+      {
+        "name": "Server Limit Exceeded",
+        "value": "0x0000003a"
+      },
+      {
+        "name": "Unknown Enumeration",
+        "value": "0x0000003b"
+      },
+      {
+        "name": "Unknown Message Extension",
+        "value": "0x0000003c"
+      },
+      {
+        "name": "Unknown Tag",
+        "value": "0x0000003d"
+      },
+      {
+        "name": "Unsupported Cryptographic Parameters",
+        "value": "0x0000003e"
+      },
+      {
+        "name": "Unsupported Protocol Version",
+        "value": "0x0000003f"
+      },
+      {
+        "name": "Wrapping Object Archived",
+        "value": "0x00000040"
+      },
+      {
+        "name": "Wrapping Object Destroyed",
+        "value": "0x00000041"
+      },
+      {
+        "name": "Wrapping Object Not Found",
+        "value": "0x00000042"
+      },
+      {
+        "name": "Wrong Key Lifecycle State",
+        "value": "0x00000043"
+      },
+      {
+        "name": "Protection Storage Unavailable",
+        "value": "0x00000044"
+      },
+      {
+        "name": "PKCS#11 Codec Error",
+        "value": "0x00000045"
+      },
+      {
+        "name": "PKCS#11 Invalid Function",
+        "value": "0x00000046"
+      },
+      {
+        "name": "PKCS#11 Invalid Interface",
+        "value": "0x00000047"
+      },
+      {
+        "name": "Private Protection Storage Unavailable",
+        "value": "0x00000048"
+      },
+      {
+        "name": "Public Protection Storage Unavailable",
+        "value": "0x00000049"
+      },
+      {
+        "name": "(Reserved)",
+        "value": "0x0000004a"
+      },
+      {
+        "name": "Constraint Violation",
+        "value": "0x0000004b"
+      },
+      {
+        "name": "Duplicate Process Request",
+        "value": "0x0000004c"
+      },
+      {
+        "name": "Circular Link Error",
+        "value": "0x0000004d"
+      },
+      {
+        "name": "General Failure",
+        "value": "0x00000100"
+      }
+    ],
+    "Result Status": [
+      {
+        "name": "Success",
+        "value": "0x00000000"
+      },
+      {
+        "name": "Operation Failed",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Operation Pending",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Operation Undone",
+        "value": "0x00000003"
+      }
+    ],
+    "Revocation Reason Code": [
+      {
+        "name": "Unspecified",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Key Compromise",
+        "value": "0x00000002"
+      },
+      {
+        "name": "CA Compromise",
+        "value": "0x00000003"
+      },
+      {
+        "name": "Affiliation Changed",
+        "value": "0x00000004"
+      },
+      {
+        "name": "Superseded",
+        "value": "0x00000005"
+      },
+      {
+        "name": "Cessation of Operation",
+        "value": "0x00000006"
+      },
+      {
+        "name": "Privilege Withdrawn",
+        "value": "0x00000007"
+      }
+    ],
+    "Secret Data Type": [
+      {
+        "name": "Password",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Seed",
+        "value": "0x00000002"
+      }
+    ],
+    "Shredding Algorithm": [
+      {
+        "name": "Unspecified",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Cryptographic",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Unsupported",
+        "value": "0x00000003"
+      }
+    ],
+    "Split Key Method": [
+      {
+        "name": "XOR",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Polynomial Sharing GF (216)",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Polynomial Sharing Prime Field",
+        "value": "0x00000003"
+      },
+      {
+        "name": "Polynomial Sharing GF (28)",
+        "value": "0x00000004"
+      }
+    ],
+    "Split Key Polynomial": [
+      {
+        "name": "Polynomial-283",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Polynomial-285",
+        "value": "0x00000002"
+      }
+    ],
+    "State": [
+      {
+        "name": "Pre-Active",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Active",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Deactivated",
+        "value": "0x00000003"
+      },
+      {
+        "name": "Compromised",
+        "value": "0x00000004"
+      },
+      {
+        "name": "Destroyed",
+        "value": "0x00000005"
+      },
+      {
+        "name": "Destroyed Compromised",
+        "value": "0x00000006"
+      }
+    ],
+    "Ticket Type": [
+      {
+        "name": "Login",
+        "value": "0x00000001"
+      }
+    ],
+    "Unique Identifier": [
+      {
+        "name": "ID Placeholder",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Certify",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Create",
+        "value": "0x00000003"
+      },
+      {
+        "name": "Create Key Pair",
+        "value": "0x00000004"
+      },
+      {
+        "name": "Create Key Pair Private\n  Key",
+        "value": "0x00000005"
+      },
+      {
+        "name": "Create Key Pair Public Key",
+        "value": "0x00000006"
+      },
+      {
+        "name": "Create Split Key",
+        "value": "0x00000007"
+      },
+      {
+        "name": "Derive Key",
+        "value": "0x00000008"
+      },
+      {
+        "name": "Import",
+        "value": "0x00000009"
+      },
+      {
+        "name": "Join Split Key",
+        "value": "0x0000000a"
+      },
+      {
+        "name": "Locate",
+        "value": "0x0000000b"
+      },
+      {
+        "name": "Register",
+        "value": "0x0000000c"
+      },
+      {
+        "name": "Re-key",
+        "value": "0x0000000d"
+      },
+      {
+        "name": "Re-certify",
+        "value": "0x0000000e"
+      },
+      {
+        "name": "Re-key Key Pair",
+        "value": "0x0000000f"
+      },
+      {
+        "name": "Re-key Key Pair Private\n  Key",
+        "value": "0x00000010"
+      },
+      {
+        "name": "Re-key Key Pair Public Key",
+        "value": "0x00000011"
+      },
+      {
+        "name": "Re-Provision",
+        "value": "0x00000012"
+      },
+      {
+        "name": "Create User",
+        "value": "0x00000013"
+      },
+      {
+        "name": "Create Group",
+        "value": "0x00000014"
+      },
+      {
+        "name": "Create Credential",
+        "value": "0x00000015"
+      }
+    ],
+    "Unwrap Mode": [
+      {
+        "name": "Unspecified",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Processed",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Not Processed",
+        "value": "0x00000003"
+      }
+    ],
+    "Usage Limits Unit": [
+      {
+        "name": "Byte",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Object",
+        "value": "0x00000002"
+      }
+    ],
+    "Validation Authority Type": [
+      {
+        "name": "Unspecified",
+        "value": "0x00000001"
+      },
+      {
+        "name": "NIST CMVP",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Common Criteria",
+        "value": "0x00000003"
+      }
+    ],
+    "Validation Type": [
+      {
+        "name": "Unspecified",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Hardware",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Software",
+        "value": "0x00000003"
+      },
+      {
+        "name": "Firmware",
+        "value": "0x00000004"
+      },
+      {
+        "name": "Hybrid",
+        "value": "0x00000005"
+      }
+    ],
+    "Validity Indicator": [
+      {
+        "name": "Valid",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Invalid",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Unknown",
+        "value": "0x00000003"
+      }
+    ],
+    "Wrapping Method": [
+      {
+        "name": "Encrypt",
+        "value": "0x00000001"
+      },
+      {
+        "name": "MAC/sign",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Encrypt then MAC/sign",
+        "value": "0x00000003"
+      },
+      {
+        "name": "MAC/sign then encrypt",
+        "value": "0x00000004"
+      },
+      {
+        "name": "TR-31",
+        "value": "0x00000005"
+      }
+    ],
+    "_unattributed": [
+      {
+        "name": "Sign",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Verify",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Encrypt",
+        "value": "0x00000004"
+      },
+      {
+        "name": "Decrypt",
+        "value": "0x00000008"
+      },
+      {
+        "name": "Wrap Key",
+        "value": "0x00000010"
+      },
+      {
+        "name": "Unwrap Key",
+        "value": "0x00000020"
+      },
+      {
+        "name": "(Reserved)",
+        "value": "0x00000040"
+      },
+      {
+        "name": "MAC Generate",
+        "value": "0x00000080"
+      },
+      {
+        "name": "MAC Verify",
+        "value": "0x00000100"
+      },
+      {
+        "name": "Derive Key",
+        "value": "0x00000200"
+      },
+      {
+        "name": "(Reserved)",
+        "value": "0x00000400"
+      },
+      {
+        "name": "Key Agreement",
+        "value": "0x00000800"
+      },
+      {
+        "name": "Certificate Sign",
+        "value": "0x00001000"
+      },
+      {
+        "name": "CRL Sign",
+        "value": "0x00002000"
+      },
+      {
+        "name": "(Reserved)",
+        "value": "0x00004000"
+      },
+      {
+        "name": "(Reserved)",
+        "value": "0x00008000"
+      },
+      {
+        "name": "Software",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Hardware",
+        "value": "0x00000002"
+      },
+      {
+        "name": "On Processor",
+        "value": "0x00000004"
+      },
+      {
+        "name": "On System",
+        "value": "0x00000008"
+      },
+      {
+        "name": "Off System",
+        "value": "0x00000010"
+      },
+      {
+        "name": "Hypervisor",
+        "value": "0x00000020"
+      },
+      {
+        "name": "Operating System",
+        "value": "0x00000040"
+      },
+      {
+        "name": "Container",
+        "value": "0x00000080"
+      },
+      {
+        "name": "On Premises",
+        "value": "0x00000100"
+      },
+      {
+        "name": "Off Premises",
+        "value": "0x00000200"
+      },
+      {
+        "name": "Self\n  Managed",
+        "value": "0x00000400"
+      },
+      {
+        "name": "Outsourced",
+        "value": "0x00000800"
+      },
+      {
+        "name": "Validated",
+        "value": "0x00001000"
+      },
+      {
+        "name": "Same Jurisdiction",
+        "value": "0x00002000"
+      },
+      {
+        "name": "On-line storage",
+        "value": "0x00000001"
+      },
+      {
+        "name": "Archival storage",
+        "value": "0x00000002"
+      },
+      {
+        "name": "Destroyed storage",
+        "value": "0x00000004"
+      },
+      {
+        "name": "User",
+        "value": "0x00000001"
+      },
+      {
+        "name": "System",
+        "value": "0x00000002"
+      }
+    ]
+  },
+  "stats": {
+    "tag_count": 395,
+    "enum_count": 62,
+    "enum_value_count": 730
+  }
+}
