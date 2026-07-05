@@ -144,7 +144,7 @@ export const LandingView = () => {
         )}
 
         <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}>
-          <p className="text-sm font-mono uppercase tracking-widest text-primary mb-4">
+          <p className="text-sm font-mono uppercase tracking-widest text-primary-legible mb-4">
             Prepare for the Quantum Era
           </p>
         </motion.div>
