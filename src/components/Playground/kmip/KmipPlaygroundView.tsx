@@ -10,7 +10,7 @@
 //                        each a REAL KMIP request; see the TTLV wire response.
 //   Plane 3 · PKCS#11  — the keystore the engine actually populated, plus the
 //                        cross-plane audit trail every op emits.
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Cpu,
   KeyRound,
@@ -32,7 +32,10 @@ import {
   ArrowRight,
   Workflow,
   Clock,
+  BookOpen,
+  X,
 } from 'lucide-react'
+import { MarkdownView } from '@/components/ui/MarkdownView'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { cn } from '@/lib/utils'
@@ -267,6 +270,50 @@ export function KmipPlaygroundView() {
     setKeyLength(ALGORITHMS.find((a) => a.value === value)?.sizes?.[0]?.length)
   }
   const [message, setMessage] = useState('hello post-quantum world')
+  /** CACP guide overlay — the canonical markdown guide is staged next to the
+   * policies by scripts/build-kmip-wasm.sh, so it always matches the shipped
+   * policy set. Fetched lazily on first open. */
+  const [guideOpen, setGuideOpen] = useState(false)
+  const [guideMd, setGuideMd] = useState<string | null>(null)
+  const openGuide = () => {
+    setGuideOpen(true)
+    if (guideMd === null) {
+      fetch('/kmip-policies/CACP_GUIDE.md')
+        .then((r) => (r.ok ? r.text() : Promise.reject(new Error(`HTTP ${r.status}`))))
+        .then(setGuideMd)
+        .catch(() => setGuideMd('# Guide unavailable\n\nCould not load CACP_GUIDE.md.'))
+    }
+  }
+  // Keyboard-accessible dismissal (the backdrop's click-to-close is
+  // pointer-only) — Escape closes the guide overlay while it's open.
+  useEffect(() => {
+    if (!guideOpen) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setGuideOpen(false)
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [guideOpen])
+
+  /** Governance x-attributes attached at Create/CreateKeyPair, as free text
+   * "name=value, name=value" (x- prefix optional). Policies like cnsa-2.0 /
+   * bsi-tr-02102 / pqc-migration-2030 REQUIRE one at key creation — without
+   * this input those policies were untestable from the workbench (2026-07-04). */
+  const [govAttrsText, setGovAttrsText] = useState('')
+  const govAttrs = useMemo((): Record<string, string> | undefined => {
+    const entries = govAttrsText
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .map((s) => {
+        const eq = s.indexOf('=')
+        const name = (eq >= 0 ? s.slice(0, eq) : s).trim()
+        const value = eq >= 0 ? s.slice(eq + 1).trim() : 'true'
+        return [name, value] as const
+      })
+      .filter(([n]) => n.length > 0)
+    return entries.length ? Object.fromEntries(entries) : undefined
+  }, [govAttrsText])
   const [priv, setPriv] = useState<string | null>(null)
   const [pub, setPub] = useState<string | null>(null)
   const [sigHex, setSigHex] = useState<string | null>(null)
@@ -348,7 +395,7 @@ export function KmipPlaygroundView() {
       return
     }
     if (isSymmetric) {
-      const r = await run({ op: 'Create', algorithm: algo, length: 256 })
+      const r = await run({ op: 'Create', algorithm: algo, length: 256, attrs: govAttrs })
       if (r?.ok) {
         setPriv(str(r.summary.uid))
         setPub(null)
@@ -359,8 +406,13 @@ export function KmipPlaygroundView() {
       return
     }
     const spec: OpSpec = chosen?.auto
-      ? { op: 'CreateKeyPair', intent: 'sign' }
-      : { op: 'CreateKeyPair', algorithm: algo, length: chosen?.sizes ? keyLength : undefined }
+      ? { op: 'CreateKeyPair', intent: 'sign', attrs: govAttrs }
+      : {
+          op: 'CreateKeyPair',
+          algorithm: algo,
+          length: chosen?.sizes ? keyLength : undefined,
+          attrs: govAttrs,
+        }
     const r = await run(spec)
     if (r?.ok) {
       setPriv(str(r.summary.privateKeyUid))
@@ -721,6 +773,15 @@ export function KmipPlaygroundView() {
           <Button
             variant="ghost"
             size="sm"
+            onClick={openGuide}
+            data-testid="cacp-guide-btn"
+            className="h-7 gap-1.5 px-2.5 text-xs text-muted-foreground hover:text-foreground"
+          >
+            <BookOpen size={13} /> Guide
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={tour.openHub}
             className="h-7 gap-1.5 px-2.5 text-xs text-muted-foreground hover:text-foreground"
           >
@@ -925,6 +986,21 @@ export function KmipPlaygroundView() {
                   </div>
                 </div>
               )}
+
+              <div className="mb-3" data-testid="kmip-gov-attrs">
+                <p className="mb-1 text-[10px] font-medium text-muted-foreground">
+                  Key tags (governance attributes) — some policies require one at key creation, e.g.
+                  CNSA 2.0 needs{' '}
+                  <code className="font-mono">x-pqctoday-cnsa-classification=Secret</code>
+                </p>
+                <input
+                  type="text"
+                  value={govAttrsText}
+                  onChange={(e) => setGovAttrsText(e.target.value)}
+                  placeholder="name=value, name=value (optional)"
+                  className="w-full rounded-md border border-border bg-background/60 px-2 py-1 font-mono text-[11px] text-foreground placeholder:text-muted-foreground/60 focus:border-primary/60 focus:outline-none"
+                />
+              </div>
 
               <div className="grid grid-cols-2 gap-2">
                 <Button
@@ -1190,6 +1266,51 @@ export function KmipPlaygroundView() {
           onBack={tour.backStep}
           onEnd={tour.endTour}
         />
+      )}
+
+      {/* CACP guide overlay — policy language + workbench testing + KMIP 3.0
+          hybrid status; content staged beside the policies so it matches the
+          shipped engine. */}
+      {guideOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Decorative click-to-dismiss backdrop; not a tab stop — keyboard
+              users dismiss via Escape (handled above) or the close button. */}
+          <div
+            className="absolute inset-0 bg-black/50"
+            aria-hidden="true"
+            onClick={() => setGuideOpen(false)}
+          />
+          <div
+            className="relative flex h-[85vh] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-border bg-card shadow-xl"
+            role="dialog"
+            aria-modal="true"
+            aria-label="CACP guide"
+          >
+            <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
+              <span className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+                <BookOpen size={14} className="text-primary" /> CACP guide
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setGuideOpen(false)}
+                aria-label="Close guide"
+                className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground"
+              >
+                <X size={14} />
+              </Button>
+            </div>
+            <div className="flex-1 overflow-y-auto px-5 py-4" data-testid="cacp-guide-body">
+              {guideMd === null ? (
+                <p className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Loader2 size={13} className="animate-spin" /> Loading guide…
+                </p>
+              ) : (
+                <MarkdownView content={guideMd} />
+              )}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )

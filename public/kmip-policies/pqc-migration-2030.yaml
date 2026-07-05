@@ -8,11 +8,13 @@ metadata:
   description: |
     Enterprise PQC migration policy. Before 2030-01-01, classical algorithms
     remain allowed for backward-compatible verification + decryption of
-    legacy artefacts. After 2030-01-01, classical algorithms are banned for
-    signing AND encryption (verify + decrypt of pre-cutoff material remains
-    allowed). Hybrid composite signatures (LAMPS ML-DSA-65+Ed25519) are
-    required for any new signing key created from 2027-01-01 until the 2030
-    cutoff — after 2030-01-01 pure PQC replaces the composite requirement.
+    legacy artefacts. From 2027-01-01 no NEW classical signing key may be
+    created (new signing keys are PQC, or the LAMPS ML-DSA-65+Ed25519
+    composite for requests that opt in via x-pqctoday-hybrid-sign=required).
+    After 2030-01-01, classical algorithms are banned for signing AND
+    encryption, and classical key-pair creation ends for every purpose
+    (verify + decrypt of pre-cutoff material remains allowed indefinitely).
+    Governance tags (x-pqctoday-purpose) are required at key creation only.
 
     STRICTER THAN THE CITED SOURCE: NIST IR 8547 (an initial public draft as
     of Nov 2024) DEPRECATES 112-bit-security classical public-key after 2030
@@ -29,11 +31,34 @@ metadata:
 
 rules:
 
-  # 1. Weak classical algorithms always banned, regardless of date.
+  # 1. Weak mechanisms always banned, regardless of date (2026-07-04 rewrite:
+  #    the old rule denylisted "SHA1"/"MD5"/"DES"/"3DES"/"RSA-PKCS1-v1_5" as
+  #    algorithm names the engine never emits — a silent no-op. SHA-1 is a
+  #    mechanism-side hash, v1.5 a padding method; gate them there.)
+  - type: hash_algorithm_allowlist
+    ops: [Sign]
+    hashing_algorithms:
+      - SHA-256
+      - SHA-384
+      - SHA-512
+      - SHA-512/224
+      - SHA-512/256
+      - SHA3-256
+      - SHA3-384
+      - SHA3-512
+    reason: "Signature hashing restricted to SHA-2/SHA-3 (SHA-1/MD5 banned at all times)"
+  - type: mechanism_parameter_constraint
+    ops: [Encrypt]
+    algorithm: RSA
+    allowed_padding_methods: [OAEP]
+    reason: "RSA encryption must use OAEP (PKCS#1 v1.5 banned; legacy Decrypt stays open)"
+  #    DES/3DES ARE real KMIP algorithm names (spec §11) and stay banned as
+  #    algorithms — a Register or dry-run can carry them even though this
+  #    engine never generates them.
   - type: algorithm_denylist
     ops: [Create, CreateKeyPair, Sign, Encrypt]
-    algorithms: [RSA-PKCS1-v1_5, ECDSA-SHA1, DES, 3DES, MD5, SHA1]
-    reason: "Weak/legacy algorithms banned by policy at all times"
+    algorithms: [DES, 3DES]
+    reason: "Single/Triple-DES banned at all times"
 
   # 2. Minimum RSA key length 3072 bits for any new key after 2026-01-01.
   - type: min_key_length
@@ -41,30 +66,33 @@ rules:
     min_bits: 3072
     reason: "RSA-2048 below organizational minimum; require >= 3072 bits"
 
-  # 3. No new ECDSA P-256 signing keys created after 2027-01-01.
-  #    ECDSA is asymmetric, so the creation op is `CreateKeyPair` (not the
-  #    symmetric `Create`) — the op-name fix (Y2) makes this cutoff bite.
+  # 3. No new CLASSICAL signing keys of any kind after 2027-01-01 — from 2027
+  #    every new signing key must be PQC or a LAMPS composite. (2026-07-04
+  #    rewrite: was a hand list [ECDSA-P256, ECDSA-P384] that missed
+  #    ECDSA-P521, RSA and EdDSA; class-based now. The companion rule that
+  #    mandated the composite for ALL new signing keys 2027–2029 is gone — it
+  #    also denied pure-PQC creation, and composites cannot be instantiated
+  #    by Plane 2 yet, so from 2027 NO new signing key could be created at
+  #    all. Composite opt-in below, rule 3b.)
   - type: temporal_cutoff
-    op: CreateKeyPair
+    op: "CreateKeyPair:Sign"
     algorithm_class: classical
-    algorithms: [ECDSA-P256, ECDSA-P384]
     after: "2027-01-01"
-    reason: "Classical ECDSA new-key creation cutoff per migration roadmap"
+    reason: "From 2027 new signing keys must be PQC (or LAMPS composite) per migration roadmap"
 
-  # 3b. Hybrid composite required for NEW signing keys 2027-01-01 → 2029-12-31
-  #     (the description promised this since day one; the rule now exists —
-  #     2026-07-02 fix). Scoped to signing key-pair creation only: Sign-use of
-  #     existing keys is governed by the 2030 cutoff below, and KEM/symmetric
-  #     creation is out of a signing mandate's scope.
+  # 3b. Composite signing on demand: requests tagged
+  #     x-pqctoday-hybrid-sign=required are held to ML-DSA-65 + Ed25519
+  #     during the migration window (defence-in-depth opt-in).
   - type: hybrid_dual_sign_requirement
     primary:   ML-DSA-65
     secondary: Ed25519
     effective_from: "2027-01-01"
     effective_until: "2029-12-31"
-    ops_affected: ["CreateKeyPair:Sign"]
+    ops_affected: ["CreateKeyPair:Sign", Sign]
     # id-MLDSA65-Ed25519-SHA512 — same LAMPS arc as hybrid-migration-window.
     composite_oid: "1.3.6.1.5.5.7.6.48"
-    reason: "New signing keys from 2027 must be composite ML-DSA-65 + Ed25519 (until the 2030 pure-PQC cutoff)"
+    triggered_by_custom_attribute: { name: pqctoday-hybrid-sign, value: required }
+    reason: "Request opted into hybrid signing: composite ML-DSA-65 + Ed25519 required"
 
   # 4. Hard cutoff: no classical Sign or Encrypt after 2030-01-01.
   - type: temporal_cutoff
@@ -79,17 +107,55 @@ rules:
     after: "2030-01-01"
     reason: "Classical encryption banned by migration roadmap from 2030-01-01"
 
+  # 4b. Post-2030 the ban covers key CREATION too, for every key-pair purpose
+  #     (bare CreateKeyPair prefix-matches :Sign/:Encrypt/:KeyAgreement).
+  #     Before 2026-07-04 only classical *use* was cut off — a new RSA-3072
+  #     encryption key pair could still be created in 2031.
+  - type: temporal_cutoff
+    op: CreateKeyPair
+    algorithm_class: classical
+    after: "2030-01-01"
+    reason: "Classical asymmetric key creation banned by migration roadmap from 2030-01-01"
+
   # 5. Verify + Decrypt of legacy classical artefacts remain allowed
   #    indefinitely (no rule needed — absence of Deny = Allow).
 
   # 6. Production-classification signing keys must be PQC or composite.
+  #    NOTE: does not cover ML-KEM — that's rule 7's job (KeyAgreement usage
+  #    mask), a separate governance mechanism for a separate key purpose.
+  #    2026-07-04: the algorithm list was 2 of 12 SLH-DSA sets and 2 of 3
+  #    ML-DSA levels' composites — an SLH-DSA-SHAKE-256f production signing
+  #    key slipped through ungoverned. Now exhaustive over every signing
+  #    algorithm this stack can instantiate.
   - type: require_custom_attribute
     attribute_name: pqctoday-purpose
-    algorithms: [ML-DSA-44, ML-DSA-65, ML-DSA-87, SLH-DSA-SHA2-128s, SLH-DSA-SHA2-256s,
-                 ML-DSA-65-Ed25519, ML-DSA-87-ECDSA-P384]
+    algorithms:
+      - ML-DSA-44
+      - ML-DSA-65
+      - ML-DSA-87
+      - SLH-DSA-SHA2-128s
+      - SLH-DSA-SHA2-128f
+      - SLH-DSA-SHA2-192s
+      - SLH-DSA-SHA2-192f
+      - SLH-DSA-SHA2-256s
+      - SLH-DSA-SHA2-256f
+      - SLH-DSA-SHAKE-128s
+      - SLH-DSA-SHAKE-128f
+      - SLH-DSA-SHAKE-192s
+      - SLH-DSA-SHAKE-192f
+      - SLH-DSA-SHAKE-256s
+      - SLH-DSA-SHAKE-256f
+      - ML-DSA-65-Ed25519
+      - ML-DSA-87-ECDSA-P384
     reason: "Production PQC signing keys must declare x-pqctoday-purpose"
 
-  # 7. KEM-only keys (ML-KEM) must carry KeyAgreement usage mask.
+  # 7. KEM-only keys (ML-KEM) must carry KeyAgreement usage mask. 2026-07-04:
+  #    ML-KEM-512 was missing — an arbitrary size-based gap, same pattern as
+  #    rule 6.
+  - type: require_usage_mask
+    algorithm: ML-KEM-512
+    flags: [KeyAgreement]
+    reason: "ML-KEM keys must declare KeyAgreement usage"
   - type: require_usage_mask
     algorithm: ML-KEM-768
     flags: [KeyAgreement]

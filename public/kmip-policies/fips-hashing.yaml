@@ -14,7 +14,10 @@ metadata:
   description: |
     Restrict Sign / SignatureVerify hashing to the FIPS 180-4 (SHA-2) and
     FIPS 202 (SHA-3) families. SHA-1 and legacy hashes are denied. Names are
-    KMIP 3.0 `Hashing Algorithm` enum names.
+    KMIP 3.0 `Hashing Algorithm` enum names. Notes: a request that carries
+    no hash parameter is not gated (KMIP §11 — irrelevant params are not an
+    error), and this policy gates signature hashing only; MAC and KDF hash
+    choices are out of its scope.
   authority: pqctoday-hsm/training
   effective: "always"
   compliance_mapping:

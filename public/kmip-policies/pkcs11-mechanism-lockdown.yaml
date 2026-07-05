@@ -30,6 +30,9 @@ rules:
       - CKM_ML_DSA
       - CKM_ML_DSA_KEY_PAIR_GEN
       - CKM_ML_KEM
+      # 2026-07-04: was missing — ML-KEM could be used (CKM_ML_KEM) but an
+      # ML-KEM key pair could never be CREATED under this lockdown.
+      - CKM_ML_KEM_KEY_PAIR_GEN
       - CKM_AES_KEY_GEN
       - CKM_AES_GCM
       - CKM_RSA_PKCS_PSS
