@@ -599,13 +599,20 @@ export function SimulationView() {
     reset: resetAssessment,
   } = useAssessmentStore()
   useEffect(() => {
-    if (assessSnap) return
     if (assessFormStatus !== 'complete') return
     const input = getAssessInput?.()
     if (!input) return
+    // Compare against the CURRENT input, not just "does a result already
+    // exist" — a stale result (sample org, or an earlier answer set the
+    // player has since edited) must still trigger a fresh compute here.
+    const inputKey = JSON.stringify(input)
+    if (useAssessmentResultStore.getState().sourceInputKey === inputKey) return
     const result = computeAssessment(input)
     useAssessmentResultStore.getState().setResult(result)
-    useAssessmentResultStore.setState({ completedAt: new Date().toISOString() })
+    useAssessmentResultStore.setState({
+      completedAt: new Date().toISOString(),
+      sourceInputKey: inputKey,
+    })
   }, [assessSnap, assessFormStatus, getAssessInput])
   // Sample-org cold start — used by the locked-screen "Watch the full migration"
   // and "Explore" buttons so the sim can be tried (and auto-run) without first
@@ -627,7 +634,12 @@ export function SimulationView() {
       timelinePressure: 'within-2-3y',
     } satisfies AssessmentInput)
     useAssessmentResultStore.getState().setResult(result)
-    useAssessmentResultStore.setState({ completedAt: new Date().toISOString() })
+    // Sentinel (not a real input's JSON key) so a later real assessment always
+    // reads as "different from what's stored" and overwrites this demo profile.
+    useAssessmentResultStore.setState({
+      completedAt: new Date().toISOString(),
+      sourceInputKey: '__sample_org__',
+    })
   }, [])
   // The org profile is now SOURCED FROM THE ASSESSMENT (single source of truth):
   // ORG / JURISDICTION / SECTOR dials are read-only and derive from here. SEAT
