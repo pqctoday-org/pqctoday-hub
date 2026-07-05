@@ -418,12 +418,28 @@ export function buildDrawerDetail(framework: ComplianceFramework, pillar: Pillar
     ]
   } else {
     juris = `${region} · ${framework.industries[0] ?? 'All sectors'}`
-    chain = [
-      n('Mandate', framework.label, framework.enforcementBody || 'regulation', stance.tone),
-      n('Requires', 'FIPS 140-3 validated', 'validated modules', 'secondary'),
-      n('Covers', 'ML-KEM · ML-DSA', 'FIPS 203 / 204', 'primary'),
-      n('Live evidence', 'CMVP modules', 'in Product Records →', 'success'),
-    ]
+    // ACCURACY-0705: this used to render an IDENTICAL, hardcoded 4-node chain
+    // ("Requires FIPS 140-3 validated" -> "Covers ML-KEM · ML-DSA" -> "Live
+    // evidence: CMVP modules") for every non-marquee mandate row (verified
+    // live: 111 of 115 'comply'-pillar rows), regardless of what that
+    // specific mandate actually requires -- ComplianceFramework has no field
+    // confirming a FIPS-140-3 dependency or that ML-KEM/ML-DSA are named.
+    // Now built only from real per-row fields: `stance` (already derived from
+    // `pqcRequirement`, the one genuine per-row PQC signal) and `deadline`
+    // (curated per-row text, e.g. "Ongoing" or "2030 (NIST IR 8547
+    // deprecation target)"). A mandate with no PQC requirement gets an
+    // honest 2-node chain instead of a fabricated migration path.
+    chain =
+      framework.pqcRequirement === 'no'
+        ? [
+            n('Mandate', framework.label, framework.enforcementBody || 'regulation', stance.tone),
+            n('PQC posture', stance.label, 'no PQC requirement identified in this framework', stance.tone),
+          ]
+        : [
+            n('Mandate', framework.label, framework.enforcementBody || 'regulation', stance.tone),
+            n('PQC posture', stance.label, framework.deadline || 'see mandate text', stance.tone),
+            n('See also', 'Product Records', 'cross-reference validated modules for your vendor', 'success'),
+          ]
     dossierFocus = 'Risk-based crypto exposure assessment & treatment.'
     dossierItems = [
       'Quantum Risk Assessment (QRA) document',
