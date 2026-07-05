@@ -1,0 +1,100 @@
+<KMIP>
+
+<RequestMessage>
+  <RequestHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <ClientCorrelationValue type="TextString" value="TL-M-2-30 step=0"/>
+  </RequestHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Create"/>
+    <RequestPayload>
+      <ObjectType type="Enumeration" value="SymmetricKey"/>
+      <Attributes>
+        <Attribute>
+          <VendorIdentification type="TextString" value="x"/>
+          <AttributeName type="TextString" value="ID"/>
+          <AttributeValue type="TextString" value="TL-M-2-30"/>
+        </Attribute>
+        <AlternativeName>
+          <AlternativeNameValue type="TextString" value="XXA012A1"/>
+          <AlternativeNameType type="Enumeration" value="UninterpretedTextString"/>
+        </AlternativeName>
+        <Name type="TextString" value="AAAAAAA1A1AA12345678901234567"/>
+        <CryptographicAlgorithm type="Enumeration" value="AES"/>
+        <CryptographicLength type="Integer" value="256"/>
+        <CryptographicUsageMask type="Integer" value="Decrypt Encrypt"/>
+        <ApplicationSpecificInformation>
+          <ApplicationNamespace type="TextString" value="LIBRARY-LTO"/>
+          <ApplicationData type="TextString" value="123456789ABCDEF123456789123456789ABCDEF123456789ABCDEF1234000000"/>
+        </ApplicationSpecificInformation>
+        <Attribute>
+          <VendorIdentification type="TextString" value="x"/>
+          <AttributeName type="TextString" value="Barcode"/>
+          <AttributeValue type="TextString" value="XXA012A1"/>
+        </Attribute>
+        <Attribute>
+          <VendorIdentification type="TextString" value="x"/>
+          <AttributeName type="TextString" value="VendorAttribute1"/>
+          <AttributeValue type="TextString" value="XXA012A1"/>
+        </Attribute>
+        <Attribute>
+          <VendorIdentification type="TextString" value="x"/>
+          <AttributeName type="TextString" value="VendorAttribute2"/>
+          <AttributeValue type="Integer" value="0"/>
+        </Attribute>
+        <Attribute>
+          <VendorIdentification type="TextString" value="x"/>
+          <AttributeName type="TextString" value="VendorAttribute3"/>
+          <AttributeValue type="DateTime" value="$NOW"/>
+        </Attribute>
+      </Attributes>
+    </RequestPayload>
+  </BatchItem>
+  <BatchItem>
+    <Operation type="Enumeration" value="Get"/>
+    <RequestPayload>
+      <UniqueIdentifier type="Enumeration" value="IDPlaceholder"/>
+    </RequestPayload>
+  </BatchItem>
+</RequestMessage>
+
+<ResponseMessage>
+  <ResponseHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <TimeStamp type="DateTime" value="$NOW"/>
+  </ResponseHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Create"/>
+    <ResultStatus type="Enumeration" value="Success"/>
+    <ResponsePayload>
+      <ObjectType type="Enumeration" value="SymmetricKey"/>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_0"/>
+    </ResponsePayload>
+  </BatchItem>
+  <BatchItem>
+    <Operation type="Enumeration" value="Get"/>
+    <ResultStatus type="Enumeration" value="Success"/>
+    <ResponsePayload>
+      <ObjectType type="Enumeration" value="SymmetricKey"/>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_0"/>
+      <SymmetricKey>
+        <KeyBlock>
+          <KeyFormatType type="Enumeration" value="Raw"/>
+          <KeyValue>
+            <KeyMaterial type="ByteString" value="$KEY_MATERIAL"/>
+          </KeyValue>
+          <CryptographicAlgorithm type="Enumeration" value="AES"/>
+          <CryptographicLength type="Integer" value="256"/>
+        </KeyBlock>
+      </SymmetricKey>
+    </ResponsePayload>
+  </BatchItem>
+</ResponseMessage>
+
+</KMIP>

@@ -1,0 +1,870 @@
+{
+  "generated_by": "scripts/build-kmip-wasm.sh (corpus staging step)",
+  "count": 144,
+  "tests": [
+    {
+      "file": "oasis/mandatory/AKLC-M-1-30.xml",
+      "tier": "mandatory",
+      "category": "AKLC",
+      "name": "AKLC-M-1-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/AKLC-M-2-30.xml",
+      "tier": "mandatory",
+      "category": "AKLC",
+      "name": "AKLC-M-2-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/AKLC-M-3-30.xml",
+      "tier": "mandatory",
+      "category": "AKLC",
+      "name": "AKLC-M-3-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/AX-M-1-30.xml",
+      "tier": "mandatory",
+      "category": "AX",
+      "name": "AX-M-1-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/AX-M-2-30.xml",
+      "tier": "mandatory",
+      "category": "AX",
+      "name": "AX-M-2-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/BL-M-1-30.xml",
+      "tier": "mandatory",
+      "category": "BL",
+      "name": "BL-M-1-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/BL-M-10-30.xml",
+      "tier": "mandatory",
+      "category": "BL",
+      "name": "BL-M-10-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/BL-M-11-30.xml",
+      "tier": "mandatory",
+      "category": "BL",
+      "name": "BL-M-11-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/BL-M-12-30.xml",
+      "tier": "mandatory",
+      "category": "BL",
+      "name": "BL-M-12-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/BL-M-13-30.xml",
+      "tier": "mandatory",
+      "category": "BL",
+      "name": "BL-M-13-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/BL-M-14-30.xml",
+      "tier": "mandatory",
+      "category": "BL",
+      "name": "BL-M-14-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/BL-M-15-30.xml",
+      "tier": "mandatory",
+      "category": "BL",
+      "name": "BL-M-15-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/BL-M-16-30.xml",
+      "tier": "mandatory",
+      "category": "BL",
+      "name": "BL-M-16-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/BL-M-17-30.xml",
+      "tier": "mandatory",
+      "category": "BL",
+      "name": "BL-M-17-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/BL-M-18-30.xml",
+      "tier": "mandatory",
+      "category": "BL",
+      "name": "BL-M-18-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/BL-M-19-30.xml",
+      "tier": "mandatory",
+      "category": "BL",
+      "name": "BL-M-19-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/BL-M-2-30.xml",
+      "tier": "mandatory",
+      "category": "BL",
+      "name": "BL-M-2-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/BL-M-20-30.xml",
+      "tier": "mandatory",
+      "category": "BL",
+      "name": "BL-M-20-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/BL-M-21-30.xml",
+      "tier": "mandatory",
+      "category": "BL",
+      "name": "BL-M-21-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/BL-M-3-30.xml",
+      "tier": "mandatory",
+      "category": "BL",
+      "name": "BL-M-3-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/BL-M-4-30.xml",
+      "tier": "mandatory",
+      "category": "BL",
+      "name": "BL-M-4-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/BL-M-5-30.xml",
+      "tier": "mandatory",
+      "category": "BL",
+      "name": "BL-M-5-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/BL-M-6-30.xml",
+      "tier": "mandatory",
+      "category": "BL",
+      "name": "BL-M-6-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/BL-M-7-30.xml",
+      "tier": "mandatory",
+      "category": "BL",
+      "name": "BL-M-7-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/BL-M-8-30.xml",
+      "tier": "mandatory",
+      "category": "BL",
+      "name": "BL-M-8-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/BL-M-9-30.xml",
+      "tier": "mandatory",
+      "category": "BL",
+      "name": "BL-M-9-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-AC-M-1-30.xml",
+      "tier": "mandatory",
+      "category": "CS-AC",
+      "name": "CS-AC-M-1-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-AC-M-2-30.xml",
+      "tier": "mandatory",
+      "category": "CS-AC",
+      "name": "CS-AC-M-2-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-AC-M-3-30.xml",
+      "tier": "mandatory",
+      "category": "CS-AC",
+      "name": "CS-AC-M-3-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-AC-M-4-30.xml",
+      "tier": "mandatory",
+      "category": "CS-AC",
+      "name": "CS-AC-M-4-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-AC-M-5-30.xml",
+      "tier": "mandatory",
+      "category": "CS-AC",
+      "name": "CS-AC-M-5-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-AC-M-6-30.xml",
+      "tier": "mandatory",
+      "category": "CS-AC",
+      "name": "CS-AC-M-6-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-AC-M-7-30.xml",
+      "tier": "mandatory",
+      "category": "CS-AC",
+      "name": "CS-AC-M-7-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-AC-M-8-30.xml",
+      "tier": "mandatory",
+      "category": "CS-AC",
+      "name": "CS-AC-M-8-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-AC-M-OAEP-1-30.xml",
+      "tier": "mandatory",
+      "category": "CS-AC",
+      "name": "CS-AC-M-OAEP-1-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-AC-M-OAEP-10-30.xml",
+      "tier": "mandatory",
+      "category": "CS-AC",
+      "name": "CS-AC-M-OAEP-10-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-AC-M-OAEP-2-30.xml",
+      "tier": "mandatory",
+      "category": "CS-AC",
+      "name": "CS-AC-M-OAEP-2-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-AC-M-OAEP-3-30.xml",
+      "tier": "mandatory",
+      "category": "CS-AC",
+      "name": "CS-AC-M-OAEP-3-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-AC-M-OAEP-4-30.xml",
+      "tier": "mandatory",
+      "category": "CS-AC",
+      "name": "CS-AC-M-OAEP-4-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-AC-M-OAEP-5-30.xml",
+      "tier": "mandatory",
+      "category": "CS-AC",
+      "name": "CS-AC-M-OAEP-5-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-AC-M-OAEP-6-30.xml",
+      "tier": "mandatory",
+      "category": "CS-AC",
+      "name": "CS-AC-M-OAEP-6-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-AC-M-OAEP-7-30.xml",
+      "tier": "mandatory",
+      "category": "CS-AC",
+      "name": "CS-AC-M-OAEP-7-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-AC-M-OAEP-8-30.xml",
+      "tier": "mandatory",
+      "category": "CS-AC",
+      "name": "CS-AC-M-OAEP-8-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-AC-M-OAEP-9-30.xml",
+      "tier": "mandatory",
+      "category": "CS-AC",
+      "name": "CS-AC-M-OAEP-9-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-BC-M-1-30.xml",
+      "tier": "mandatory",
+      "category": "CS-BC",
+      "name": "CS-BC-M-1-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-BC-M-10-30.xml",
+      "tier": "mandatory",
+      "category": "CS-BC",
+      "name": "CS-BC-M-10-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-BC-M-11-30.xml",
+      "tier": "mandatory",
+      "category": "CS-BC",
+      "name": "CS-BC-M-11-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-BC-M-12-30.xml",
+      "tier": "mandatory",
+      "category": "CS-BC",
+      "name": "CS-BC-M-12-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-BC-M-13-30.xml",
+      "tier": "mandatory",
+      "category": "CS-BC",
+      "name": "CS-BC-M-13-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-BC-M-14-30.xml",
+      "tier": "mandatory",
+      "category": "CS-BC",
+      "name": "CS-BC-M-14-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-BC-M-2-30.xml",
+      "tier": "mandatory",
+      "category": "CS-BC",
+      "name": "CS-BC-M-2-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-BC-M-3-30.xml",
+      "tier": "mandatory",
+      "category": "CS-BC",
+      "name": "CS-BC-M-3-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-BC-M-4-30.xml",
+      "tier": "mandatory",
+      "category": "CS-BC",
+      "name": "CS-BC-M-4-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-BC-M-5-30.xml",
+      "tier": "mandatory",
+      "category": "CS-BC",
+      "name": "CS-BC-M-5-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-BC-M-6-30.xml",
+      "tier": "mandatory",
+      "category": "CS-BC",
+      "name": "CS-BC-M-6-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-BC-M-7-30.xml",
+      "tier": "mandatory",
+      "category": "CS-BC",
+      "name": "CS-BC-M-7-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-BC-M-8-30.xml",
+      "tier": "mandatory",
+      "category": "CS-BC",
+      "name": "CS-BC-M-8-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-BC-M-9-30.xml",
+      "tier": "mandatory",
+      "category": "CS-BC",
+      "name": "CS-BC-M-9-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-BC-M-CHACHA20-1-30.xml",
+      "tier": "mandatory",
+      "category": "CS-BC",
+      "name": "CS-BC-M-CHACHA20-1-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-BC-M-CHACHA20-2-30.xml",
+      "tier": "mandatory",
+      "category": "CS-BC",
+      "name": "CS-BC-M-CHACHA20-2-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-BC-M-CHACHA20-3-30.xml",
+      "tier": "mandatory",
+      "category": "CS-BC",
+      "name": "CS-BC-M-CHACHA20-3-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-BC-M-CHACHA20-4-30.xml",
+      "tier": "mandatory",
+      "category": "CS-BC",
+      "name": "CS-BC-M-CHACHA20-4-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-BC-M-CHACHA20POLY1305-1-30.xml",
+      "tier": "mandatory",
+      "category": "CS-BC",
+      "name": "CS-BC-M-CHACHA20POLY1305-1-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-BC-M-GCM-1-30.xml",
+      "tier": "mandatory",
+      "category": "CS-BC",
+      "name": "CS-BC-M-GCM-1-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-BC-M-GCM-2-30.xml",
+      "tier": "mandatory",
+      "category": "CS-BC",
+      "name": "CS-BC-M-GCM-2-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-BC-M-GCM-3-30.xml",
+      "tier": "mandatory",
+      "category": "CS-BC",
+      "name": "CS-BC-M-GCM-3-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/CS-RNG-M-1-30.xml",
+      "tier": "mandatory",
+      "category": "CS-RNG",
+      "name": "CS-RNG-M-1-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/MSGENC-HTTPS-M-1-30.xml",
+      "tier": "mandatory",
+      "category": "MSGENC-HTTPS",
+      "name": "MSGENC-HTTPS-M-1-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/MSGENC-JSON-M-1-30.xml",
+      "tier": "mandatory",
+      "category": "MSGENC-JSON",
+      "name": "MSGENC-JSON-M-1-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/MSGENC-XML-M-1-30.xml",
+      "tier": "mandatory",
+      "category": "MSGENC-XML",
+      "name": "MSGENC-XML-M-1-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/OMOS-M-1-30.xml",
+      "tier": "mandatory",
+      "category": "OMOS",
+      "name": "OMOS-M-1-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/PKCS11-M-1-30.xml",
+      "tier": "mandatory",
+      "category": "PKCS11",
+      "name": "PKCS11-M-1-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/QS-M-1-30.xml",
+      "tier": "mandatory",
+      "category": "QS",
+      "name": "QS-M-1-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/QS-M-2-30.xml",
+      "tier": "mandatory",
+      "category": "QS",
+      "name": "QS-M-2-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/SASED-M-1-30.xml",
+      "tier": "mandatory",
+      "category": "SASED",
+      "name": "SASED-M-1-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/SASED-M-2-30.xml",
+      "tier": "mandatory",
+      "category": "SASED",
+      "name": "SASED-M-2-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/SASED-M-3-30.xml",
+      "tier": "mandatory",
+      "category": "SASED",
+      "name": "SASED-M-3-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/SKFF-M-1-30.xml",
+      "tier": "mandatory",
+      "category": "SKFF",
+      "name": "SKFF-M-1-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/SKFF-M-10-30.xml",
+      "tier": "mandatory",
+      "category": "SKFF",
+      "name": "SKFF-M-10-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/SKFF-M-11-30.xml",
+      "tier": "mandatory",
+      "category": "SKFF",
+      "name": "SKFF-M-11-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/SKFF-M-12-30.xml",
+      "tier": "mandatory",
+      "category": "SKFF",
+      "name": "SKFF-M-12-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/SKFF-M-2-30.xml",
+      "tier": "mandatory",
+      "category": "SKFF",
+      "name": "SKFF-M-2-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/SKFF-M-3-30.xml",
+      "tier": "mandatory",
+      "category": "SKFF",
+      "name": "SKFF-M-3-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/SKFF-M-4-30.xml",
+      "tier": "mandatory",
+      "category": "SKFF",
+      "name": "SKFF-M-4-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/SKFF-M-5-30.xml",
+      "tier": "mandatory",
+      "category": "SKFF",
+      "name": "SKFF-M-5-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/SKFF-M-6-30.xml",
+      "tier": "mandatory",
+      "category": "SKFF",
+      "name": "SKFF-M-6-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/SKFF-M-7-30.xml",
+      "tier": "mandatory",
+      "category": "SKFF",
+      "name": "SKFF-M-7-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/SKFF-M-8-30.xml",
+      "tier": "mandatory",
+      "category": "SKFF",
+      "name": "SKFF-M-8-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/SKFF-M-9-30.xml",
+      "tier": "mandatory",
+      "category": "SKFF",
+      "name": "SKFF-M-9-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/SKLC-M-1-30.xml",
+      "tier": "mandatory",
+      "category": "SKLC",
+      "name": "SKLC-M-1-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/SKLC-M-2-30.xml",
+      "tier": "mandatory",
+      "category": "SKLC",
+      "name": "SKLC-M-2-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/SKLC-M-3-30.xml",
+      "tier": "mandatory",
+      "category": "SKLC",
+      "name": "SKLC-M-3-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/TL-M-1-30.xml",
+      "tier": "mandatory",
+      "category": "TL",
+      "name": "TL-M-1-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/TL-M-2-30.xml",
+      "tier": "mandatory",
+      "category": "TL",
+      "name": "TL-M-2-30.xml"
+    },
+    {
+      "file": "oasis/mandatory/TL-M-3-30.xml",
+      "tier": "mandatory",
+      "category": "TL",
+      "name": "TL-M-3-30.xml"
+    },
+    {
+      "file": "oasis/optional/AKLC-O-1-30.xml",
+      "tier": "optional",
+      "category": "AKLC",
+      "name": "AKLC-O-1-30.xml"
+    },
+    {
+      "file": "oasis/optional/CS-RNG-O-1-30.xml",
+      "tier": "optional",
+      "category": "CS-RNG",
+      "name": "CS-RNG-O-1-30.xml"
+    },
+    {
+      "file": "oasis/optional/CS-RNG-O-2-30.xml",
+      "tier": "optional",
+      "category": "CS-RNG",
+      "name": "CS-RNG-O-2-30.xml"
+    },
+    {
+      "file": "oasis/optional/CS-RNG-O-3-30.xml",
+      "tier": "optional",
+      "category": "CS-RNG",
+      "name": "CS-RNG-O-3-30.xml"
+    },
+    {
+      "file": "oasis/optional/CS-RNG-O-4-30.xml",
+      "tier": "optional",
+      "category": "CS-RNG",
+      "name": "CS-RNG-O-4-30.xml"
+    },
+    {
+      "file": "oasis/optional/OMOS-O-1-30.xml",
+      "tier": "optional",
+      "category": "OMOS",
+      "name": "OMOS-O-1-30.xml"
+    },
+    {
+      "file": "oasis/optional/SKLC-O-1-30.xml",
+      "tier": "optional",
+      "category": "SKLC",
+      "name": "SKLC-O-1-30.xml"
+    },
+    {
+      "file": "pqc/ML-DSA-44-keygen-1-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-DSA-44-keygen-1-30.xml"
+    },
+    {
+      "file": "pqc/ML-DSA-44-keygen-10-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-DSA-44-keygen-10-30.xml"
+    },
+    {
+      "file": "pqc/ML-DSA-44-siggen-1-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-DSA-44-siggen-1-30.xml"
+    },
+    {
+      "file": "pqc/ML-DSA-44-siggen-10-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-DSA-44-siggen-10-30.xml"
+    },
+    {
+      "file": "pqc/ML-DSA-44-sigver-1-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-DSA-44-sigver-1-30.xml"
+    },
+    {
+      "file": "pqc/ML-DSA-44-sigver-10-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-DSA-44-sigver-10-30.xml"
+    },
+    {
+      "file": "pqc/ML-DSA-65-keygen-26-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-DSA-65-keygen-26-30.xml"
+    },
+    {
+      "file": "pqc/ML-DSA-65-keygen-27-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-DSA-65-keygen-27-30.xml"
+    },
+    {
+      "file": "pqc/ML-DSA-65-siggen-121-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-DSA-65-siggen-121-30.xml"
+    },
+    {
+      "file": "pqc/ML-DSA-65-siggen-122-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-DSA-65-siggen-122-30.xml"
+    },
+    {
+      "file": "pqc/ML-DSA-65-sigver-121-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-DSA-65-sigver-121-30.xml"
+    },
+    {
+      "file": "pqc/ML-DSA-65-sigver-122-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-DSA-65-sigver-122-30.xml"
+    },
+    {
+      "file": "pqc/ML-DSA-87-keygen-51-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-DSA-87-keygen-51-30.xml"
+    },
+    {
+      "file": "pqc/ML-DSA-87-keygen-52-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-DSA-87-keygen-52-30.xml"
+    },
+    {
+      "file": "pqc/ML-DSA-87-siggen-151-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-DSA-87-siggen-151-30.xml"
+    },
+    {
+      "file": "pqc/ML-DSA-87-siggen-152-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-DSA-87-siggen-152-30.xml"
+    },
+    {
+      "file": "pqc/ML-DSA-87-sigver-151-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-DSA-87-sigver-151-30.xml"
+    },
+    {
+      "file": "pqc/ML-DSA-87-sigver-152-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-DSA-87-sigver-152-30.xml"
+    },
+    {
+      "file": "pqc/ML-KEM-1024-encapsulation-51-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-KEM-1024-encapsulation-51-30.xml"
+    },
+    {
+      "file": "pqc/ML-KEM-1024-encapsulation-52-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-KEM-1024-encapsulation-52-30.xml"
+    },
+    {
+      "file": "pqc/ML-KEM-1024-keygen-51-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-KEM-1024-keygen-51-30.xml"
+    },
+    {
+      "file": "pqc/ML-KEM-1024-keygen-52-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-KEM-1024-keygen-52-30.xml"
+    },
+    {
+      "file": "pqc/ML-KEM-512-decapsulation-76-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-KEM-512-decapsulation-76-30.xml"
+    },
+    {
+      "file": "pqc/ML-KEM-512-decapsulation-77-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-KEM-512-decapsulation-77-30.xml"
+    },
+    {
+      "file": "pqc/ML-KEM-512-encapsulation-1-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-KEM-512-encapsulation-1-30.xml"
+    },
+    {
+      "file": "pqc/ML-KEM-512-encapsulation-10-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-KEM-512-encapsulation-10-30.xml"
+    },
+    {
+      "file": "pqc/ML-KEM-512-keygen-1-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-KEM-512-keygen-1-30.xml"
+    },
+    {
+      "file": "pqc/ML-KEM-512-keygen-10-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-KEM-512-keygen-10-30.xml"
+    },
+    {
+      "file": "pqc/ML-KEM-768-decapsulation-86-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-KEM-768-decapsulation-86-30.xml"
+    },
+    {
+      "file": "pqc/ML-KEM-768-decapsulation-87-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-KEM-768-decapsulation-87-30.xml"
+    },
+    {
+      "file": "pqc/ML-KEM-768-encapsulation-26-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-KEM-768-encapsulation-26-30.xml"
+    },
+    {
+      "file": "pqc/ML-KEM-768-encapsulation-27-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-KEM-768-encapsulation-27-30.xml"
+    },
+    {
+      "file": "pqc/ML-KEM-768-keygen-26-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-KEM-768-keygen-26-30.xml"
+    },
+    {
+      "file": "pqc/ML-KEM-768-keygen-27-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "ML-KEM-768-keygen-27-30.xml"
+    },
+    {
+      "file": "pqc/SLH-DSA-SHA2-128f-keygen-21-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "SLH-DSA-SHA2-128f-keygen-21-30.xml"
+    },
+    {
+      "file": "pqc/SLH-DSA-SHA2-128f-keygen-22-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "SLH-DSA-SHA2-128f-keygen-22-30.xml"
+    },
+    {
+      "file": "pqc/SLH-DSA-SHA2-128f-siggen-1-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "SLH-DSA-SHA2-128f-siggen-1-30.xml"
+    },
+    {
+      "file": "pqc/SLH-DSA-SHA2-128f-siggen-115-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "SLH-DSA-SHA2-128f-siggen-115-30.xml"
+    },
+    {
+      "file": "pqc/SLH-DSA-SHA2-128f-sigver-1-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "SLH-DSA-SHA2-128f-sigver-1-30.xml"
+    },
+    {
+      "file": "pqc/SLH-DSA-SHA2-128f-sigver-10-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "SLH-DSA-SHA2-128f-sigver-10-30.xml"
+    },
+    {
+      "file": "pqc/SLH-DSA-SHAKE-128f-keygen-31-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "SLH-DSA-SHAKE-128f-keygen-31-30.xml"
+    },
+    {
+      "file": "pqc/SLH-DSA-SHAKE-128f-keygen-32-30.xml",
+      "tier": "pqc",
+      "category": "PQC Interop",
+      "name": "SLH-DSA-SHAKE-128f-keygen-32-30.xml"
+    }
+  ]
+}

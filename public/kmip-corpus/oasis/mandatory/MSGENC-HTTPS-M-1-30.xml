@@ -1,0 +1,145 @@
+<KMIP>
+
+<RequestMessage>
+  <RequestHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <MaximumResponseSize type="Integer" value="256"/>
+    <ClientCorrelationValue type="TextString" value="MSGENC-HTTPS-M-1-30 step=0"/>
+  </RequestHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Query"/>
+    <RequestPayload>
+      <QueryFunction type="Enumeration" value="QueryOperations"/>
+      <QueryFunction type="Enumeration" value="QueryObjects"/>
+    </RequestPayload>
+  </BatchItem>
+</RequestMessage>
+
+<ResponseMessage>
+  <ResponseHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <TimeStamp type="DateTime" value="$NOW"/>
+  </ResponseHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Query"/>
+    <ResultStatus type="Enumeration" value="OperationFailed"/>
+    <ResultReason type="Enumeration" value="ResponseTooLarge"/>
+    <ResultMessage type="TextString" value="TOO_LARGE"/>
+  </BatchItem>
+</ResponseMessage>
+
+<RequestMessage>
+  <RequestHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <MaximumResponseSize type="Integer" value="2048"/>
+    <ClientCorrelationValue type="TextString" value="MSGENC-HTTPS-M-1-30 step=1"/>
+  </RequestHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Query"/>
+    <RequestPayload>
+      <QueryFunction type="Enumeration" value="QueryOperations"/>
+      <QueryFunction type="Enumeration" value="QueryObjects"/>
+    </RequestPayload>
+  </BatchItem>
+</RequestMessage>
+
+<ResponseMessage>
+  <ResponseHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <TimeStamp type="DateTime" value="$NOW"/>
+  </ResponseHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Query"/>
+    <ResultStatus type="Enumeration" value="Success"/>
+    <ResponsePayload>
+      <Operation type="Enumeration" value="Query"/>
+      <Operation type="Enumeration" value="Locate"/>
+      <Operation type="Enumeration" value="Destroy"/>
+      <Operation type="Enumeration" value="Get"/>
+      <Operation type="Enumeration" value="Create"/>
+      <Operation type="Enumeration" value="Register"/>
+      <Operation type="Enumeration" value="GetAttributes"/>
+      <Operation type="Enumeration" value="GetAttributeList"/>
+      <Operation type="Enumeration" value="AddAttribute"/>
+      <Operation type="Enumeration" value="ModifyAttribute"/>
+      <Operation type="Enumeration" value="DeleteAttribute"/>
+      <Operation type="Enumeration" value="Activate"/>
+      <Operation type="Enumeration" value="Revoke"/>
+      <Operation type="Enumeration" value="Poll"/>
+      <Operation type="Enumeration" value="Cancel"/>
+      <Operation type="Enumeration" value="Check"/>
+      <Operation type="Enumeration" value="GetUsageAllocation"/>
+      <Operation type="Enumeration" value="CreateKeyPair"/>
+      <Operation type="Enumeration" value="ReKey"/>
+      <Operation type="Enumeration" value="Archive"/>
+      <Operation type="Enumeration" value="Recover"/>
+      <Operation type="Enumeration" value="ObtainLease"/>
+      <Operation type="Enumeration" value="ReKeyKeyPair"/>
+      <Operation type="Enumeration" value="Certify"/>
+      <Operation type="Enumeration" value="ReCertify"/>
+      <Operation type="Enumeration" value="DiscoverVersions"/>
+      <Operation type="Enumeration" value="Notify"/>
+      <Operation type="Enumeration" value="Put"/>
+      <Operation type="Enumeration" value="DeriveKey"/>
+      <Operation type="Enumeration" value="Validate"/>
+      <Operation type="Enumeration" value="RNGRetrieve"/>
+      <Operation type="Enumeration" value="RNGSeed"/>
+      <Operation type="Enumeration" value="Encrypt"/>
+      <Operation type="Enumeration" value="Decrypt"/>
+      <Operation type="Enumeration" value="Sign"/>
+      <Operation type="Enumeration" value="SignatureVerify"/>
+      <Operation type="Enumeration" value="MAC"/>
+      <Operation type="Enumeration" value="MACVerify"/>
+      <Operation type="Enumeration" value="Hash"/>
+      <Operation type="Enumeration" value="CreateSplitKey"/>
+      <Operation type="Enumeration" value="JoinSplitKey"/>
+      <Operation type="Enumeration" value="Import"/>
+      <Operation type="Enumeration" value="Export"/>
+      <Operation type="Enumeration" value="Log"/>
+      <Operation type="Enumeration" value="Interop"/>
+      <Operation type="Enumeration" value="SetEndpointRole"/>
+      <Operation type="Enumeration" value="SetAttribute"/>
+      <Operation type="Enumeration" value="AdjustAttribute"/>
+      <Operation type="Enumeration" value="Login"/>
+      <Operation type="Enumeration" value="Logout"/>
+      <Operation type="Enumeration" value="QueryAsynchronousRequests"/>
+      <Operation type="Enumeration" value="SetConstraints"/>
+      <Operation type="Enumeration" value="GetConstraints"/>
+      <Operation type="Enumeration" value="Process"/>
+      <Operation type="Enumeration" value="Ping"/>
+      <Operation type="Enumeration" value="Obliterate"/>
+      <Operation type="Enumeration" value="Deactivate"/>
+      <Operation type="Enumeration" value="CreateUser"/>
+      <Operation type="Enumeration" value="CreateGroup"/>
+      <Operation type="Enumeration" value="CreateCredential"/>
+      <ObjectType type="Enumeration" value="Certificate"/>
+      <ObjectType type="Enumeration" value="SymmetricKey"/>
+      <ObjectType type="Enumeration" value="SecretData"/>
+      <ObjectType type="Enumeration" value="PublicKey"/>
+      <ObjectType type="Enumeration" value="PrivateKey"/>
+      <ObjectType type="Enumeration" value="OpaqueObject"/>
+      <ObjectType type="Enumeration" value="SplitKey"/>
+      <ObjectType type="Enumeration" value="CertificateRequest"/>
+      <ObjectType type="Enumeration" value="Group"/>
+      <ObjectType type="Enumeration" value="User"/>
+      <ObjectType type="Enumeration" value="HashedPasswordCredential"/>
+      <ObjectType type="Enumeration" value="OneTimePasswordCredential"/>
+      <ObjectType type="Enumeration" value="DeviceCredential"/>
+      <ObjectType type="Enumeration" value="PasswordCredential"/>
+    </ResponsePayload>
+  </BatchItem>
+</ResponseMessage>
+
+</KMIP>
