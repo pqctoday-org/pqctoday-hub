@@ -419,6 +419,17 @@ const FRAMEWORK = {
       ],
     },
   ],
+  // Phase 3 tops out at L2 by design, not by omission: Framework 2.1 defines
+  // exactly four Phase 3 activities (3.1-3.4; confirmed against the YAML —
+  // there is no 3.5/3.6). The framework's own L3 ("QRA updated quarterly...")
+  // and L4 ("...automated re-scoring... QRA integrated into enterprise risk
+  // register") indicators describe 3.4 maturing operationally over time, not
+  // additional named activities — the same pattern already accepted for
+  // Phases 0/1/2/6, which also have no activity carrying their L4 (p0/p1/p2)
+  // or, for p6, top out at L3. Re-tagging 3.4 across L2-L4 (or splitting it)
+  // would be an editorial reinterpretation with no basis in an explicit
+  // per-activity level in the source — left for a deliberate product call,
+  // not invented here. See simulation-mode-improvement-plan-07042026.md, W3-3.
   p3: [
     {
       id: '3.1',

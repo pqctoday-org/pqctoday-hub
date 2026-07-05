@@ -49,12 +49,18 @@ export const EXEC_TOUR_STAGES: readonly TourStage[] = [
   {
     phase: 'p0',
     depth: 'deep',
+    // Order follows the real Phase 0 activity sequence (see simTree.p0): the four
+    // financial-justification docs are Activity 0.2 (Build the Budget Structure);
+    // program-charter and board-deck are Activity 0.4 (Draft the Program Charter) —
+    // the charter formalizes the case the budget docs just built, and the board
+    // pitch follows the charter. Previously program-charter was listed first,
+    // ahead of the case that justifies it — fixed 07042026.
     revealArtifacts: [
-      'program-charter',
       'cost-model-comparison',
       'roi-model',
       'breach-scenario',
       'cost-of-inaction',
+      'program-charter',
       'board-deck',
     ],
   },
