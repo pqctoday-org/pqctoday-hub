@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import {
   BarChart,
   Bar,
@@ -27,6 +28,7 @@ import {
   Lock,
   CreditCard,
   Shield,
+  ArrowRight,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
@@ -45,7 +47,11 @@ import {
   ORG_PARAM_RANGES,
   REGION_PRESETS,
   BASE_UNIT_ALGO,
+  SIGNATURE_ALGOS,
+  PQC_SIG_ALGOS,
   deriveUseCaseTps,
+  type MigrationHorizon,
+  type CodeSigningAlg,
   type AlgoId,
   type DeploymentSize,
   type UseCase,
@@ -53,6 +59,7 @@ import {
   type OrgParams,
 } from '@/data/hsmCapacityDefaults'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
+import { getUseCaseMaturity } from '@/data/hsmCapacityMatrixLink'
 
 type Workload = 'classical' | 'pqc'
 type Redundancy = 'n+1' | '2n'
@@ -106,10 +113,30 @@ function applyRedundancy(n: number, mode: Redundancy): number {
   return mode === '2n' ? n * 2 : n + 1
 }
 
+/** Resolve the per-transaction op profile for one use case under a PQC workload. */
+function resolvePqcOps(
+  uc: UseCase,
+  migrationHorizon: MigrationHorizon,
+  codeSigningAlg: CodeSigningAlg
+): Partial<Record<AlgoId, number>> {
+  const base = migrationHorizon === 'standards-today' ? uc.pqcTodayOps : uc.pqcOps
+  // Code-signing algorithm choice (C3): swap the ML-DSA share for the selected
+  // hash-based algorithm. Applies in both horizons — X.509 SLH-DSA certs are
+  // RFC 9909, so the swap is standards-valid under "standards today" as well.
+  if (uc.id === 'code-signing' && codeSigningAlg !== 'ml-dsa-65' && base['ml-dsa-65']) {
+    const { 'ml-dsa-65': mlDsaShare, ...rest } = base
+    return { ...rest, [codeSigningAlg]: mlDsaShare }
+  }
+  return base
+}
+
 function computeAlgoLoad(
   useCases: UseCase[],
   state: Record<string, UseCaseState>,
-  workload: Workload
+  workload: Workload,
+  hybridSigningTransition = false,
+  migrationHorizon: MigrationHorizon = 'end-state',
+  codeSigningAlg: CodeSigningAlg = 'ml-dsa-65'
 ): AlgoLoad[] {
   const totals: Record<AlgoId, number> = {
     'rsa-2048': 0,
@@ -117,15 +144,33 @@ function computeAlgoLoad(
     'ecdh-p256': 0,
     'ml-dsa-65': 0,
     'ml-kem-768': 0,
+    'slh-dsa-128s': 0,
     'aes-128': 0,
     'aes-256': 0,
   }
   for (const uc of useCases) {
     const s = state[uc.id]
     if (!s || !s.enabled) continue
-    const ops = workload === 'classical' ? uc.classicalOps : uc.pqcOps
+    const ops =
+      workload === 'classical'
+        ? uc.classicalOps
+        : resolvePqcOps(uc, migrationHorizon, codeSigningAlg)
     for (const [algo, perTx] of Object.entries(ops)) {
       totals[algo as AlgoId] += s.tps * (perTx as number)
+    }
+    // Transition-window hybrid signing: operators who dual-sign every artifact
+    // (RSA/ECDSA + ML-DSA) during migration keep the classical signature load
+    // alongside the PQC signature — not just alongside a hybrid KEM. Only
+    // meaningful where the selected PQC ops actually contain a PQC signature
+    // (under "standards today", protocols still signing classically are skipped
+    // so the classical signature is not double-counted).
+    const hasPqcSig = Object.keys(ops).some((a) => PQC_SIG_ALGOS.includes(a as AlgoId))
+    if (workload === 'pqc' && hybridSigningTransition && hasPqcSig) {
+      for (const [algo, perTx] of Object.entries(uc.classicalOps)) {
+        if (SIGNATURE_ALGOS.includes(algo as AlgoId)) {
+          totals[algo as AlgoId] += s.tps * (perTx as number)
+        }
+      }
     }
   }
   return ALGO_IDS.map((algo) => ({ algo, opsPerSec: totals[algo] }))
@@ -167,29 +212,58 @@ function computeScenario(
   state: Record<string, UseCaseState>,
   redundancy: Redundancy,
   hsmsPerLocation: number,
-  numLocations: number
+  numLocations: number,
+  targetUtilizationPct: number,
+  hybridSigningTransition: boolean,
+  migrationHorizon: MigrationHorizon,
+  codeSigningAlg: CodeSigningAlg
 ): ScenarioResult {
-  const algoLoad = computeAlgoLoad(useCases, state, workload)
+  const algoLoad = computeAlgoLoad(
+    useCases,
+    state,
+    workload,
+    hybridSigningTransition,
+    migrationHorizon,
+    codeSigningAlg
+  )
   const perAlgoHsms = algoLoad.map(({ algo, opsPerSec }) => {
     const capacity = hsmProfile.opsPerSec[algo]
-    // Per-site demand = full slider load (geo-redundant active-active, no splitting).
+    // Per-algorithm HSM count if this algorithm alone were dedicated a pool
+    // (used for the per-algo bars and the bottleneck label, not the fleet total).
     const hsms = opsPerSec > 0 ? Math.ceil(opsPerSec / capacity) : 0
     const perLocCapacity = capacity * hsmsPerLocation
     const utilizationPct = hsmsPerLocation > 0 ? (opsPerSec / perLocCapacity) * 100 : 0
     return { algo, hsms, utilizationPct, load: opsPerSec, capacity }
   })
-  // Per-site raw need (bottleneck algorithm).
-  const perLocationRaw = perAlgoHsms.reduce((m, r) => Math.max(m, r.hsms), 0)
+  // Shared-fleet model: any HSM in the fleet can run any algorithm, so every
+  // operation consumes shared device time. Per-site raw need is the SUM of each
+  // algorithm's share of one HSM's capacity, rounded up — not the max of any
+  // single algorithm (that would only be correct for dedicated per-algorithm pools).
+  const rawFraction = perAlgoHsms.reduce(
+    (sum, r) => sum + (r.capacity > 0 ? r.load / r.capacity : 0),
+    0
+  )
+  // Target-utilization headroom: sizing at less than 100% of true capacity means
+  // more HSM-equivalents are needed to keep actual utilization at the target under
+  // spikes. Utilization reporting below still compares against TRUE capacity — the
+  // target only affects how many HSMs get procured, not what "100% busy" means.
+  const targetFactor = Math.min(100, Math.max(1, targetUtilizationPct)) / 100
+  const perLocationRaw = rawFraction > 0 ? Math.ceil(rawFraction / targetFactor) : 0
   const requiredRaw = perLocationRaw // global figure under per-site model; each site = R
-  const bottleneck = perAlgoHsms.reduce<{ algo: AlgoId; hsms: number }>(
-    (m, r) => (r.hsms > m.hsms ? { algo: r.algo, hsms: r.hsms } : m),
-    { algo: 'rsa-2048', hsms: 0 }
+  const bottleneck = perAlgoHsms.reduce<{ algo: AlgoId; fraction: number }>(
+    (m, r) => {
+      const fraction = r.capacity > 0 ? r.load / r.capacity : 0
+      return fraction > m.fraction ? { algo: r.algo, fraction } : m
+    },
+    { algo: 'rsa-2048', fraction: 0 }
   ).algo
   const perLocationRequired = applyRedundancy(perLocationRaw, redundancy)
   const requiredWithRedundancy = numLocations * perLocationRequired
   const deployedHsms = numLocations * hsmsPerLocation
   const perLocationSufficient = hsmsPerLocation >= perLocationRequired
-  const fleetUtilizationPct = perAlgoHsms.reduce((m, r) => Math.max(m, r.utilizationPct), 0)
+  // Fleet-wide utilization = shared HSM-time consumed ÷ HSM-time deployed (sum
+  // across algorithms), matching the shared-fleet raw-count model above.
+  const fleetUtilizationPct = hsmsPerLocation > 0 ? (rawFraction / hsmsPerLocation) * 100 : 0
   return {
     key,
     label,
@@ -220,8 +294,33 @@ export function computeScenarios(params: {
   redundancy: Redundancy
   hsmsPerLocation: { today: number; tomorrow: number; upgraded: number }
   numLocations: number
+  /** Sizing headroom — HSMs are procured so true utilization stays at or below
+   * this target (default 100 = size to 100% capacity, no headroom). */
+  targetUtilizationPct?: number
+  /** Transition-window hybrid signing — when true, the PQC workload keeps the
+   * classical signature (RSA/ECDSA) alongside ML-DSA for every use case, modelling
+   * operators who dual-sign during migration instead of cutting over. Default false. */
+  hybridSigningTransition?: boolean
+  /** Which post-PQC op profile to apply — 'standards-today' (only published/deployed
+   * standards per pqcProtocolMatrix) or 'end-state' (every use case fully migrated).
+   * Default 'end-state' (the tool's original full-migration story). */
+  migrationHorizon?: MigrationHorizon
+  /** Signature algorithm for the code-signing use case (CNSA 2.0 favors hash-based). */
+  codeSigningAlg?: CodeSigningAlg
 }): ScenarioResult[] {
-  const { useCases, state, classical, pqc, redundancy, hsmsPerLocation, numLocations } = params
+  const {
+    useCases,
+    state,
+    classical,
+    pqc,
+    redundancy,
+    hsmsPerLocation,
+    numLocations,
+    targetUtilizationPct = 100,
+    hybridSigningTransition = false,
+    migrationHorizon = 'end-state',
+    codeSigningAlg = 'ml-dsa-65',
+  } = params
   return [
     computeScenario(
       'today',
@@ -233,7 +332,11 @@ export function computeScenarios(params: {
       state,
       redundancy,
       hsmsPerLocation.today,
-      numLocations
+      numLocations,
+      targetUtilizationPct,
+      hybridSigningTransition,
+      migrationHorizon,
+      codeSigningAlg
     ),
     computeScenario(
       'tomorrow',
@@ -245,7 +348,11 @@ export function computeScenarios(params: {
       state,
       redundancy,
       hsmsPerLocation.tomorrow,
-      numLocations
+      numLocations,
+      targetUtilizationPct,
+      hybridSigningTransition,
+      migrationHorizon,
+      codeSigningAlg
     ),
     computeScenario(
       'upgraded',
@@ -257,7 +364,11 @@ export function computeScenarios(params: {
       state,
       redundancy,
       hsmsPerLocation.upgraded,
-      numLocations
+      numLocations,
+      targetUtilizationPct,
+      hybridSigningTransition,
+      migrationHorizon,
+      codeSigningAlg
     ),
   ]
 }
@@ -597,7 +708,7 @@ function ScenarioCard({
             {scenario.hsmsPerLocation} <span className="text-xs text-muted-foreground">HSMs</span>
           </p>
           <p className={clsx('text-[10px]', utilizationClass(scenario.fleetUtilizationPct))}>
-            Peak {scenario.fleetUtilizationPct.toFixed(0)}% util
+            Fleet {scenario.fleetUtilizationPct.toFixed(0)}% util
           </p>
         </div>
         <div className="rounded-md bg-muted/30 px-2 py-1.5">
@@ -684,14 +795,78 @@ function ScenarioCard({
       <p className="text-[10px] text-muted-foreground italic">
         Bottleneck: <span className="font-mono">{ALGO_LABELS[scenario.bottleneck]}</span>
         {scenario.numLocations > 1 && (
-          <span> · load split across {scenario.numLocations} locations</span>
+          <span> · replicated at {scenario.numLocations} locations (geo-redundant, not split)</span>
         )}
       </p>
     </div>
   )
 }
 
-function TpsToHsmExplainer({
+export function PqcReadinessVerdict({
+  scenarios,
+  numLocations,
+}: {
+  scenarios: ScenarioResult[]
+  numLocations: number
+}) {
+  const [today, tomorrow, upgraded] = scenarios
+  const tomorrowMultiplier =
+    today.requiredWithRedundancy > 0
+      ? tomorrow.requiredWithRedundancy / today.requiredWithRedundancy
+      : null
+  const reductionFactor =
+    upgraded.requiredWithRedundancy > 0
+      ? tomorrow.requiredWithRedundancy / upgraded.requiredWithRedundancy
+      : null
+  const fmt = (n: number) => (n < 10 ? n.toFixed(1) : Math.round(n).toString())
+
+  return (
+    <div className="glass-panel p-4 space-y-2 border border-primary/30 bg-primary/5">
+      <div className="flex items-center gap-2">
+        <Gauge size={14} className="text-primary" aria-hidden="true" />
+        <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+          PQC readiness verdict
+        </p>
+      </div>
+      <p className="text-sm text-foreground leading-relaxed">
+        Your current fleet of <span className="font-mono text-primary">{today.deployedHsms}</span>{' '}
+        HSM{today.deployedHsms !== 1 ? 's' : ''} across{' '}
+        <span className="font-mono">{numLocations}</span> location
+        {numLocations !== 1 ? 's' : ''} is{' '}
+        <span
+          className={clsx(
+            'font-semibold',
+            today.sufficient ? 'text-status-success' : 'text-status-error'
+          )}
+        >
+          {today.sufficient ? 'sufficient' : 'insufficient'}
+        </span>{' '}
+        for today&apos;s classical workload. Migrating to PQC on that same hardware would need{' '}
+        <span className="font-mono text-primary">{tomorrow.requiredWithRedundancy}</span> HSMs total
+        {tomorrowMultiplier !== null && tomorrowMultiplier > 1.05 && (
+          <>
+            {' '}
+            — <span className="font-mono text-status-warning">{fmt(tomorrowMultiplier)}×</span> more
+            than today
+          </>
+        )}
+        . Upgrading to next-gen PQC hardware brings that back down to{' '}
+        <span className="font-mono text-status-success">{upgraded.requiredWithRedundancy}</span>{' '}
+        HSMs
+        {reductionFactor !== null && reductionFactor > 1.05 && (
+          <>
+            {' '}
+            (<span className="font-mono">{fmt(reductionFactor)}×</span> fewer than staying on
+            classical hardware)
+          </>
+        )}
+        .
+      </p>
+    </div>
+  )
+}
+
+export function TpsToHsmExplainer({
   scenarios,
   redundancy,
   numLocations,
@@ -704,7 +879,9 @@ function TpsToHsmExplainer({
   const worst = scenarios.reduce((m, s) => (s.requiredRaw > m.requiredRaw ? s : m), scenarios[0])
   const R = worst.requiredRaw
   const L = Math.max(1, numLocations)
-  const perLocRaw = R > 0 ? Math.ceil(R / L) : 0
+  // Per-site model: every location independently carries the full per-site demand R —
+  // there is no splitting, so perLocRaw === R (matches worst.perLocationRaw exactly).
+  const perLocRaw = R
   const nPlus1 = perLocRaw + 1
   const twoN = perLocRaw * 2
   const bottleneckLabel = ALGO_LABELS[worst.bottleneck]
@@ -959,6 +1136,17 @@ export function HsmCapacityCalculator() {
   const [size, setSize] = useState<DeploymentSize>('medium')
   const [redundancy, setRedundancy] = useState<Redundancy>('n+1')
   const [numLocations, setNumLocations] = useState(1)
+  // Sizing headroom: 100 = size to 100% of true capacity (no headroom, matches the
+  // pre-2026-07 default). Production ops typically target ~70% to absorb spikes.
+  const [targetUtilizationPct, setTargetUtilizationPct] = useState(100)
+  // Transition-window hybrid signing: dual-sign (classical + ML-DSA) instead of
+  // cutting over. Off by default — matches the pre-2026-07 single-signature model.
+  const [hybridSigningTransition, setHybridSigningTransition] = useState(false)
+  // Migration horizon: 'end-state' (default, full migration — the tool's original
+  // story) vs 'standards-today' (only swaps standardized per pqcProtocolMatrix).
+  const [migrationHorizon, setMigrationHorizon] = useState<MigrationHorizon>('end-state')
+  // Code-signing signature algorithm (CNSA 2.0 favors hash-based SLH-DSA/LMS).
+  const [codeSigningAlg, setCodeSigningAlg] = useState<CodeSigningAlg>('ml-dsa-65')
   const [orgParams, setOrgParams] = useState<OrgParams>(() => ORG_PARAM_DEFAULTS.medium)
 
   const [hasManualTpsAdjustments, setHasManualTpsAdjustments] = useState(false)
@@ -1051,6 +1239,10 @@ export function HsmCapacityCalculator() {
         redundancy,
         numLocations,
         hsmsPerLocation: { today: perLocClassical, tomorrow: perLocClassical, upgraded: 1 },
+        targetUtilizationPct,
+        hybridSigningTransition,
+        migrationHorizon,
+        codeSigningAlg,
       })[2]
       hpl = {
         today: perLocClassical,
@@ -1066,6 +1258,10 @@ export function HsmCapacityCalculator() {
       redundancy,
       numLocations,
       hsmsPerLocation: hpl,
+      targetUtilizationPct,
+      hybridSigningTransition,
+      migrationHorizon,
+      codeSigningAlg,
     })
   }, [
     useCaseState,
@@ -1076,6 +1272,10 @@ export function HsmCapacityCalculator() {
     numLocations,
     planningMode,
     inventoryHsmCount,
+    targetUtilizationPct,
+    hybridSigningTransition,
+    migrationHorizon,
+    codeSigningAlg,
   ])
 
   // Auto-track per-location slider to computed requirement (demand mode only).
@@ -1180,7 +1380,18 @@ export function HsmCapacityCalculator() {
     Deployed: s.deployedHsms,
   }))
 
-  const pqcLoad = useMemo(() => computeAlgoLoad(USE_CASES, useCaseState, 'pqc'), [useCaseState])
+  const pqcLoad = useMemo(
+    () =>
+      computeAlgoLoad(
+        USE_CASES,
+        useCaseState,
+        'pqc',
+        hybridSigningTransition,
+        migrationHorizon,
+        codeSigningAlg
+      ),
+    [useCaseState, hybridSigningTransition, migrationHorizon, codeSigningAlg]
+  )
   const classicalLoad = useMemo(
     () => computeAlgoLoad(USE_CASES, useCaseState, 'classical'),
     [useCaseState]
@@ -1282,8 +1493,9 @@ export function HsmCapacityCalculator() {
           that raw per-site count.
         </p>
         <p className="text-xs text-muted-foreground leading-relaxed mt-2">
-          <span className="font-mono text-secondary">Per-site raw (R)</span> = max over all
-          algorithms of ⌈ algo_ops/s ÷ hsm_capacity ⌉
+          <span className="font-mono text-secondary">Per-site raw (R)</span> = ⌈ Σ over all
+          algorithms of algo_ops/s ÷ hsm_capacity ⌉ — every operation consumes shared HSM time, so
+          each algorithm&apos;s share adds up; the dominant algorithm is reported as the bottleneck.
           <br />
           <span className="font-mono text-secondary">N+1 per location</span> = R + 1
           <br />
@@ -1291,14 +1503,16 @@ export function HsmCapacityCalculator() {
           <br />
           <span className="font-mono text-secondary">Total fleet</span> = L × per-location HA need
           <br />
-          <span className="font-mono text-secondary">Utilization (per location)</span> = load ÷
-          (capacity × deployed/location)
+          <span className="font-mono text-secondary">Fleet utilization (per location)</span> = Σ
+          (load ÷ capacity) ÷ deployed/location
         </p>
         <p className="text-[10px] text-muted-foreground/80 leading-relaxed mt-2">
           <span className="font-semibold text-foreground">Assumptions:</span> every site carries the
           same workload (no regional weighting; no load splitting); any HSM in the fleet can run any
-          algorithm; redundancy is site-local; geo-redundancy across sites is in addition to local
-          HA (most conservative sizing).
+          algorithm — if you instead dedicate a separate HSM pool per algorithm/use case, size each
+          pool with the per-algorithm max (⌈ algo_ops/s ÷ hsm_capacity ⌉) rather than the
+          shared-fleet sum shown here; redundancy is site-local; geo-redundancy across sites is in
+          addition to local HA (most conservative sizing).
         </p>
       </CollapsibleSection>
 
@@ -1338,10 +1552,12 @@ export function HsmCapacityCalculator() {
                 calculator does not size for.
               </li>
               <li>
-                <span className="text-foreground">No headroom / target-utilization factor.</span>{' '}
-                Sizing rounds up to 100% HSM capacity. Production ops typically design for ~70%
-                target utilization to absorb spikes. Add 30–40% to required HSMs as a working rule
-                if you do not run a separate peak-vs-average study.
+                <span className="text-foreground">Headroom is a manual slider, not a study.</span>{' '}
+                The &quot;Sizing headroom&quot; control (default 100% = size to exact demand)
+                inflates the raw HSM count so true utilization stays at or below the target you pick
+                — but it applies one flat percentage across every algorithm and scenario. Production
+                ops typically target ~70%; a real peak-vs-average study may want different headroom
+                per workload.
               </li>
             </ul>
           </div>
@@ -1361,10 +1577,20 @@ export function HsmCapacityCalculator() {
                 dedicated payment / PKI / KMS HSMs) need separate calculations per partition.
               </li>
               <li>
-                <span className="text-foreground">Single PQC parameter set per algorithm.</span> The
-                model uses ML-DSA-65 and ML-KEM-768. ML-DSA-44 (faster) and ML-DSA-87 (slower) are
-                not selectable, and SLH-DSA / FN-DSA — required by some compliance regimes for
-                code-signing roots — are not modelled at all.
+                <span className="text-foreground">Limited PQC parameter sets.</span> The model uses
+                ML-DSA-65 and ML-KEM-768, plus SLH-DSA-128s selectable for code signing (CNSA 2.0 /
+                SP 800-208 favor hash-based signatures there). ML-DSA-44 (faster), ML-DSA-87
+                (slower), other SLH-DSA variants, and stateful LMS/XMSS — whose key-state management
+                is itself an HSM constraint — are not modelled.
+              </li>
+              <li>
+                <span className="text-foreground">Two migration horizons, one at a time.</span>{' '}
+                &quot;Standards today&quot; applies only algorithm swaps that are
+                standardized/deployed per the PQC Protocol Matrix (hybrid ML-KEM key exchange; PQC
+                signatures only where the RFC is published). &quot;Full end-state&quot; assumes
+                every protocol finishes standardizing — DNSSEC and SSH signature migration are
+                hypothetical there. Real fleets will pass through intermediate mixes the selector
+                cannot express.
               </li>
               <li>
                 <span className="text-foreground">No batching / amortization.</span> Op counts
@@ -1412,9 +1638,10 @@ export function HsmCapacityCalculator() {
               </li>
               <li>
                 <span className="text-foreground">Hybrid signature transitions.</span> Only TLS is
-                modelled as hybrid (X25519MLKEM768 KEM). Some operators run hybrid signatures (RSA +
-                ML-DSA on every artifact) during the transition window — that doubles signing load
-                and is not in the current model.
+                modelled as a hybrid KEM (ML-KEM-768 + ECDH P-256). The &quot;Transition window:
+                hybrid signatures&quot; toggle above models dual-signing (RSA/ECDSA + ML-DSA on
+                every artifact) for every other use case — but it applies uniformly; real rollouts
+                usually dual-sign some use cases and cut over others.
               </li>
               <li>
                 <span className="text-foreground">Audit, backup, and key-import load.</span> HSM
@@ -1523,6 +1750,60 @@ export function HsmCapacityCalculator() {
               ? 'Enter workload → compute required HSMs'
               : 'Enter your existing fleet → compute headroom & replacement'}
           </span>
+        </div>
+
+        {/* Migration horizon — standards-today vs full end-state */}
+        <div className="flex flex-wrap items-center gap-3 pb-3 border-b border-border/40">
+          <span className="text-xs text-muted-foreground shrink-0">Migration horizon:</span>
+          <div className="flex rounded-md overflow-hidden border border-border">
+            {(
+              [
+                ['standards-today', 'Standards today'],
+                ['end-state', 'Full end-state'],
+              ] as Array<[MigrationHorizon, string]>
+            ).map(([h, label]) => (
+              <Button
+                key={h}
+                variant="ghost"
+                size="sm"
+                onClick={() => setMigrationHorizon(h)}
+                className={clsx(
+                  'px-3 py-1 text-xs font-mono rounded-none h-auto',
+                  migrationHorizon === h
+                    ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                    : 'bg-muted/30 text-foreground hover:bg-muted/60'
+                )}
+                aria-pressed={migrationHorizon === h}
+              >
+                {label}
+              </Button>
+            ))}
+          </div>
+          <span className="text-[10px] text-muted-foreground">
+            {migrationHorizon === 'standards-today'
+              ? 'Only swaps standardized/deployed per the PQC Protocol Matrix (hybrid KEM everywhere; PQC signatures only where the RFC is published)'
+              : 'Every use case fully migrated to PQC — the hypothetical final state'}
+          </span>
+        </div>
+
+        {/* Transition-window hybrid signing toggle */}
+        <div className="flex items-start gap-2 pb-3 border-b border-border/40">
+          <Switch
+            checked={hybridSigningTransition}
+            onCheckedChange={setHybridSigningTransition}
+            aria-label="Model transition-window hybrid signing"
+            className="mt-0.5 shrink-0"
+          />
+          <div>
+            <p className="text-xs font-medium text-foreground">
+              Transition window: hybrid signatures
+            </p>
+            <p className="text-[10px] text-muted-foreground">
+              When on, the post-PQC workload keeps the classical signature (RSA/ECDSA) alongside
+              ML-DSA on every artifact — modelling operators who dual-sign during migration instead
+              of cutting over. Doubles signing load on the &quot;Post-PQC&quot; scenarios.
+            </p>
+          </div>
         </div>
 
         {/* Inventory mode input */}
@@ -1642,6 +1923,19 @@ export function HsmCapacityCalculator() {
               </span>
             </div>
 
+            <div className="border-t border-border/40 pt-4">
+              <NumericSliderRow
+                label="Sizing headroom (target utilization)"
+                value={targetUtilizationPct}
+                min={50}
+                max={100}
+                step={5}
+                format={(v) => (v === 100 ? '100% (no headroom)' : `${v}%`)}
+                tooltip="HSMs are procured so true utilization stays at or below this target. 100% sizes to exact demand; production ops typically target ~70% to absorb spikes."
+                onChange={setTargetUtilizationPct}
+              />
+            </div>
+
             <div className="border-t border-border/40 pt-4 space-y-3">
               <div className="flex items-center gap-2">
                 <MapPin size={13} className="text-primary" aria-hidden="true" />
@@ -1671,8 +1965,9 @@ export function HsmCapacityCalculator() {
               >
                 <div className="text-[10px] space-y-2 font-mono text-muted-foreground">
                   <p>
-                    <span className="text-secondary">Per-site raw (R)</span> = max over all
-                    algorithms of ⌈ algo_ops/s ÷ hsm_capacity ⌉
+                    <span className="text-secondary">Per-site raw (R)</span> = ⌈ Σ over all
+                    algorithms of algo_ops/s ÷ hsm_capacity ⌉ — shared-fleet model, every op
+                    consumes shared HSM time
                   </p>
                   <p>
                     <span className="text-secondary">Per-location HA need</span> = redundancy
@@ -1685,19 +1980,24 @@ export function HsmCapacityCalculator() {
                     HA need
                   </p>
                   <p className="text-muted-foreground/70">
-                    R = per-site raw HSMs (bottleneck algorithm) · L = number of geo-redundant sites
+                    R = per-site raw HSMs (summed across algorithms; largest share = bottleneck) · L
+                    = number of geo-redundant sites
                   </p>
                   <div className="mt-2 pt-2 border-t border-border/30 space-y-0.5">
-                    <p className="text-foreground font-semibold">Example A — N+1, R=13, L=3:</p>
-                    <p>Per-location raw = R = 13 HSMs</p>
-                    <p>Per-location HA = 13 + 1 = 14 HSMs</p>
-                    <p>Total required = 3 × 14 = 42 HSMs</p>
+                    <p className="text-foreground font-semibold">
+                      Example A — N+1, R=49, L=3 (medium org, post-PQC on existing fleet):
+                    </p>
+                    <p>Per-location raw = R = 49 HSMs</p>
+                    <p>Per-location HA = 49 + 1 = 50 HSMs</p>
+                    <p>Total required = 3 × 50 = 150 HSMs</p>
                   </div>
                   <div className="mt-2 pt-2 border-t border-border/30 space-y-0.5">
-                    <p className="text-foreground font-semibold">Example B — 2N, R=13, L=3:</p>
-                    <p>Per-location raw = R = 13 HSMs</p>
-                    <p>Per-location HA = 13 × 2 = 26 HSMs</p>
-                    <p>Total required = 3 × 26 = 78 HSMs</p>
+                    <p className="text-foreground font-semibold">
+                      Example B — 2N, R=49, L=3 (same scenario, fully redundant):
+                    </p>
+                    <p>Per-location raw = R = 49 HSMs</p>
+                    <p>Per-location HA = 49 × 2 = 98 HSMs</p>
+                    <p>Total required = 3 × 98 = 294 HSMs</p>
                   </div>
                   <p className="text-muted-foreground/70 mt-2">
                     Note: this model treats each site as fully active-active. Adding L locations
@@ -1773,7 +2073,10 @@ export function HsmCapacityCalculator() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {categoryUseCases.map((uc) => {
                     const s = useCaseState[uc.id]
-                    const pqcAlgos = Object.keys(uc.pqcOps) as AlgoId[]
+                    const pqcAlgos = Object.keys(
+                      resolvePqcOps(uc, migrationHorizon, codeSigningAlg)
+                    ) as AlgoId[]
+                    const maturity = getUseCaseMaturity(uc.id)
                     return (
                       <div
                         key={uc.id}
@@ -1793,10 +2096,84 @@ export function HsmCapacityCalculator() {
                             <p className="text-sm font-medium text-foreground">{uc.name}</p>
                             <p className="text-[10px] text-muted-foreground">{uc.description}</p>
                             <p className="text-[10px] font-mono text-secondary mt-1">
-                              Post-PQC ops: {pqcAlgos.map((a) => ALGO_LABELS[a]).join(' + ')}
+                              Post-PQC ops (
+                              {migrationHorizon === 'standards-today'
+                                ? 'standards today'
+                                : 'end-state'}
+                              ): {pqcAlgos.map((a) => ALGO_LABELS[a]).join(' + ')}
                             </p>
+                            {maturity && (maturity.kem || maturity.sig || maturity.note) && (
+                              <div className="flex flex-wrap items-center gap-1 mt-1">
+                                {[maturity.kem, maturity.sig]
+                                  .filter((c): c is NonNullable<typeof c> => Boolean(c))
+                                  .map((chip) => (
+                                    <span
+                                      key={chip.label}
+                                      title={chip.detail}
+                                      className={clsx(
+                                        'text-[9px] font-mono px-1.5 py-0.5 rounded border',
+                                        chip.tone === 'success' &&
+                                          'text-status-success border-status-success/40 bg-status-success/5',
+                                        chip.tone === 'warning' &&
+                                          'text-status-warning border-status-warning/40 bg-status-warning/5',
+                                        chip.tone === 'muted' &&
+                                          'text-muted-foreground border-border bg-muted/20',
+                                        chip.tone === 'error' &&
+                                          'text-status-error border-status-error/40 bg-status-error/5'
+                                      )}
+                                    >
+                                      {chip.label}
+                                    </span>
+                                  ))}
+                                {!maturity.kem && !maturity.sig && maturity.note && (
+                                  <span
+                                    className="text-[9px] font-mono px-1.5 py-0.5 rounded border text-status-warning border-status-warning/40 bg-status-warning/5"
+                                    title={maturity.note}
+                                  >
+                                    No published standard
+                                  </span>
+                                )}
+                              </div>
+                            )}
                           </div>
                         </div>
+                        {uc.id === 'code-signing' && (
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] text-muted-foreground shrink-0">
+                              PQC signature:
+                            </span>
+                            <div className="flex rounded-md overflow-hidden border border-border">
+                              {(
+                                [
+                                  ['ml-dsa-65', 'ML-DSA-65'],
+                                  ['slh-dsa-128s', 'SLH-DSA-128s'],
+                                ] as Array<[CodeSigningAlg, string]>
+                              ).map(([alg, label]) => (
+                                <Button
+                                  key={alg}
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => setCodeSigningAlg(alg)}
+                                  className={clsx(
+                                    'px-2 py-0.5 text-[10px] font-mono rounded-none h-auto',
+                                    codeSigningAlg === alg
+                                      ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                                      : 'bg-muted/30 text-foreground hover:bg-muted/60'
+                                  )}
+                                  aria-pressed={codeSigningAlg === alg}
+                                >
+                                  {label}
+                                </Button>
+                              ))}
+                            </div>
+                            <span
+                              className="text-muted-foreground cursor-help"
+                              title="CNSA 2.0 / SP 800-208 favor hash-based signatures for software and firmware signing. SLH-DSA-128s signs ~75× slower than ML-DSA-65 on classical HSM firmware — watch the fleet requirement change."
+                            >
+                              <Info size={11} aria-hidden="true" />
+                            </span>
+                          </div>
+                        )}
                         <SliderRow
                           label="Transactions / sec"
                           value={s.tps}
@@ -1894,6 +2271,9 @@ export function HsmCapacityCalculator() {
         </div>
       </div>
 
+      {/* PQC readiness verdict — plain-language synthesis of the three scenario cards */}
+      <PqcReadinessVerdict scenarios={scenarios} numLocations={numLocations} />
+
       {/* How TPS becomes HSM count — explainer */}
       <TpsToHsmExplainer
         scenarios={scenarios}
@@ -1952,45 +2332,52 @@ export function HsmCapacityCalculator() {
               HSMs required vs deployed
             </p>
           </div>
-          <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={fleetChartData} margin={{ top: 5, right: 5, bottom: 40, left: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
-              <XAxis
-                dataKey="name"
-                tick={{ fontSize: 9, fill: 'var(--color-muted-foreground)' }}
-                angle={-25}
-                textAnchor="end"
-                interval={0}
-              />
-              <YAxis tick={{ fontSize: 9, fill: 'var(--color-muted-foreground)' }} />
-              <Tooltip
-                contentStyle={{
-                  background: 'var(--color-card)',
-                  border: '1px solid var(--color-border)',
-                  fontSize: 11,
-                }}
-              />
-              <Legend wrapperStyle={{ fontSize: 10 }} />
-              <Bar
-                dataKey="Required (demand)"
-                fill="var(--color-muted-foreground)"
-                radius={[3, 3, 0, 0]}
-              />
-              <Bar
-                dataKey="Required (HA target)"
-                fill="var(--color-primary)"
-                radius={[3, 3, 0, 0]}
-              />
-              <Bar dataKey="Deployed" fill="var(--color-secondary)" radius={[3, 3, 0, 0]}>
-                {fleetChartData.map((_d, i) => (
-                  <Cell
-                    key={i}
-                    fill={scenarios[i].sufficient ? 'var(--color-secondary)' : 'var(--destructive)'}
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+          <div
+            role="img"
+            aria-label="Bar chart comparing HSMs required by demand and HA target against HSMs deployed, per scenario"
+          >
+            <ResponsiveContainer width="100%" height={220}>
+              <BarChart data={fleetChartData} margin={{ top: 5, right: 5, bottom: 40, left: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                <XAxis
+                  dataKey="name"
+                  tick={{ fontSize: 9, fill: 'var(--color-muted-foreground)' }}
+                  angle={-25}
+                  textAnchor="end"
+                  interval={0}
+                />
+                <YAxis tick={{ fontSize: 9, fill: 'var(--color-muted-foreground)' }} />
+                <Tooltip
+                  contentStyle={{
+                    background: 'var(--color-card)',
+                    border: '1px solid var(--color-border)',
+                    fontSize: 11,
+                  }}
+                />
+                <Legend wrapperStyle={{ fontSize: 10 }} />
+                <Bar
+                  dataKey="Required (demand)"
+                  fill="var(--color-muted-foreground)"
+                  radius={[3, 3, 0, 0]}
+                />
+                <Bar
+                  dataKey="Required (HA target)"
+                  fill="var(--color-primary)"
+                  radius={[3, 3, 0, 0]}
+                />
+                <Bar dataKey="Deployed" fill="var(--color-secondary)" radius={[3, 3, 0, 0]}>
+                  {fleetChartData.map((_d, i) => (
+                    <Cell
+                      key={i}
+                      fill={
+                        scenarios[i].sufficient ? 'var(--color-secondary)' : 'var(--destructive)'
+                      }
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
 
         <div className="glass-panel p-4">
@@ -2000,29 +2387,34 @@ export function HsmCapacityCalculator() {
               Workload per algorithm (ops / sec)
             </p>
           </div>
-          <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={loadChartData} margin={{ top: 5, right: 5, bottom: 40, left: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
-              <XAxis
-                dataKey="name"
-                tick={{ fontSize: 9, fill: 'var(--color-muted-foreground)' }}
-                angle={-25}
-                textAnchor="end"
-                interval={0}
-              />
-              <YAxis tick={{ fontSize: 9, fill: 'var(--color-muted-foreground)' }} />
-              <Tooltip
-                contentStyle={{
-                  background: 'var(--color-card)',
-                  border: '1px solid var(--color-border)',
-                  fontSize: 11,
-                }}
-              />
-              <Legend wrapperStyle={{ fontSize: 10 }} />
-              <Bar dataKey="Classical" fill="var(--color-primary)" radius={[3, 3, 0, 0]} />
-              <Bar dataKey="PQC" fill="var(--color-accent)" radius={[3, 3, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+          <div
+            role="img"
+            aria-label="Bar chart comparing classical versus post-quantum operations per second, by algorithm"
+          >
+            <ResponsiveContainer width="100%" height={220}>
+              <BarChart data={loadChartData} margin={{ top: 5, right: 5, bottom: 40, left: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                <XAxis
+                  dataKey="name"
+                  tick={{ fontSize: 9, fill: 'var(--color-muted-foreground)' }}
+                  angle={-25}
+                  textAnchor="end"
+                  interval={0}
+                />
+                <YAxis tick={{ fontSize: 9, fill: 'var(--color-muted-foreground)' }} />
+                <Tooltip
+                  contentStyle={{
+                    background: 'var(--color-card)',
+                    border: '1px solid var(--color-border)',
+                    fontSize: 11,
+                  }}
+                />
+                <Legend wrapperStyle={{ fontSize: 10 }} />
+                <Bar dataKey="Classical" fill="var(--color-primary)" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="PQC" fill="var(--color-accent)" radius={[3, 3, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
 
@@ -2091,6 +2483,26 @@ export function HsmCapacityCalculator() {
           })}
         </div>
       </CollapsibleSection>
+
+      <div className="glass-panel p-3 flex flex-wrap items-center justify-between gap-3">
+        <p className="text-xs text-muted-foreground">
+          Also sizing certificate storage and TLS bandwidth for the migration?
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <Link
+            to="/playground/cert-capacity"
+            className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+          >
+            Cert Capacity Calculator <ArrowRight size={12} aria-hidden="true" />
+          </Link>
+          <Link
+            to="/learn/hsm-pqc"
+            className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+          >
+            HSM &amp; PQC Operations module <ArrowRight size={12} aria-hidden="true" />
+          </Link>
+        </div>
+      </div>
 
       <div className="flex justify-end">
         <Button variant="outline" size="sm" onClick={handleExport} className="gap-2">
