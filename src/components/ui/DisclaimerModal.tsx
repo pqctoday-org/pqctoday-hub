@@ -88,7 +88,7 @@ export function DisclaimerModal() {
               href="https://github.com/pqctoday-org/pqctoday-hub/discussions/108"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline"
+              className="inline-flex items-center gap-1.5 text-xs text-primary-legible hover:underline"
             >
               <MessageSquare size={12} />
               GitHub Discussions
@@ -98,7 +98,7 @@ export function DisclaimerModal() {
               href="https://www.linkedin.com/in/eric-amador-971850a"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline"
+              className="inline-flex items-center gap-1.5 text-xs text-primary-legible hover:underline"
             >
               <ExternalLink size={12} />
               Eric Amador
