@@ -46,6 +46,14 @@ export interface TreeStep {
   /** scenario: sandbox scenario id (C3 — embed a live sandbox lab in the sim).
    *  Completion via the visited-scenarios set, set when the lab reports done. */
   scenarioId?: string
+  /** True for a step sourced from an activity's `deepDive` array. Stamped
+   *  automatically by `flattenTree` (never hand-authored) so `isGatingStep`
+   *  excludes it, same as `scenario` — this is what keeps deep-dive content
+   *  non-gating even after `flattenTree` merges it in with the required `steps`,
+   *  so consumers that do `flattenTree(tree).filter(isGatingStep)` (auto-run's
+   *  `gatingStepsForPhase`, the board's step-count denominator) don't silently
+   *  start treating optional content as required. */
+  optional?: boolean
 }
 
 /** A framework Activity (e.g. "1.2 Deploy Cryptographic Discovery") + its leaves. */
@@ -60,6 +68,12 @@ export interface TreeActivity {
   output?: string
   /** Leaf steps that clear this activity, in unlock order. */
   steps: TreeStep[]
+  /** Optional, non-gating extra steps — richer hands-on practice or further
+   *  reading beyond what the framework requires. Never enters `isGatingStep` /
+   *  `achievedTreeLevel` (both only ever read `steps`), so adding content here
+   *  can never change a phase's maturity math. Included in `flattenTree` so the
+   *  embed/drift-guard tests still validate these ids against the live registries. */
+  deepDive?: TreeStep[]
 }
 
 /** All activities that deliver one maturity level, with the framework indicator. */
@@ -93,15 +107,25 @@ export interface PhaseTree {
   pitfalls: Pitfall[]
 }
 
-/** Flatten a tree's steps in level → activity → step order (the unlock order). */
+/** Flatten a tree's steps in level → activity → step order (the unlock order).
+ *  Includes `deepDive` steps (after each activity's required `steps`, stamped
+ *  `optional: true`) so the embed/drift-guard tests validate them too — but
+ *  every consumer that filters with `isGatingStep` still correctly excludes
+ *  them, exactly like `scenario` steps. */
 export function flattenTree(tree: PhaseTree): TreeStep[] {
-  return tree.levels.flatMap((b) => b.activities.flatMap((a) => a.steps))
+  return tree.levels.flatMap((b) =>
+    b.activities.flatMap((a) => [
+      ...a.steps,
+      ...(a.deepDive ?? []).map((s) => ({ ...s, optional: true })),
+    ])
+  )
 }
 
 /** Steps that GATE a band's completion. `scenario` (live sandbox lab) steps are
  *  BONUS: they require a running sandbox most players don't have, so they never
- *  block a maturity band — completing them is optional. */
-export const isGatingStep = (s: TreeStep): boolean => s.kind !== 'scenario'
+ *  block a maturity band — completing them is optional. Steps stamped
+ *  `optional` (deep-dive content, flattened via `flattenTree`) are bonus too. */
+export const isGatingStep = (s: TreeStep): boolean => s.kind !== 'scenario' && !s.optional
 
 /**
  * The maturity level the player has EARNED from real hub state — the highest

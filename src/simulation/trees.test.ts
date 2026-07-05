@@ -4,7 +4,7 @@
  * REAL hub resource; if hub coverage changes and a tree goes stale, this fails.
  */
 import { describe, it, expect } from 'vitest'
-import { SIM_TREES, flattenTree, achievedTreeLevel, isGatingStep } from './index'
+import { SIM_TREES, flattenTree, achievedTreeLevel, isGatingStep, type TreeStep } from './index'
 import { SANDBOX_SCENARIOS } from '@/data/sandboxScenarios'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { ARTIFACT_TYPE_TO_TOOL_ID } from '@/components/BusinessCenter/businessToolsRegistry'
@@ -138,6 +138,86 @@ describe('SIM_TREES — coverage & shape', () => {
     expect(achievedTreeLevel(tree, (s) => s.kind !== 'scenario')).toBe(2)
     expect(isGatingStep({ kind: 'scenario', label: '', to: '', scenarioId: 'pki' })).toBe(false)
     expect(isGatingStep({ kind: 'activity', label: '', to: '' })).toBe(true)
+  })
+
+  it('P6-DD: deepDive steps are optional — never gate a band (07052026)', () => {
+    // achievedTreeLevel/isGatingStep only ever read `a.steps` — `a.deepDive` is a
+    // second, parallel array that must never enter the gating calculation. A band
+    // whose `steps` are all done, but whose `deepDive` steps are left untouched
+    // (isDone always false below), must still earn its level.
+    const tree = {
+      phase: 'p6',
+      generated: '0',
+      source: 'x',
+      pitfalls: [],
+      levels: [
+        {
+          level: 2,
+          indicator: 'i',
+          activities: [
+            {
+              id: '6.1',
+              title: 't',
+              steps: [
+                { kind: 'learn', label: 'required', to: '/learn/pki-workshop', moduleId: 'x' },
+              ],
+              deepDive: [
+                { kind: 'workshop', label: 'bonus', to: '/playground/x', workshopId: 'x' },
+              ],
+            },
+          ],
+        },
+      ],
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any
+    expect(achievedTreeLevel(tree, () => false)).toBe(0) // required step not done → not earned
+    expect(achievedTreeLevel(tree, (s) => s.kind === 'learn')).toBe(2) // deepDive ignored → earned
+  })
+
+  it('P6-DD: the shipped P6 tree carries deep-dive content that never gates', () => {
+    const p6 = SIM_TREES.p6!
+    const withDeepDive = p6.levels.flatMap((b) => b.activities).filter((a) => a.deepDive?.length)
+    expect(withDeepDive.length, 'expected every P6 activity to carry deep-dive content').toBe(5)
+    // no deepDive step id duplicates a required step already in `steps` for that activity
+    for (const a of withDeepDive) {
+      const requiredIds = new Set(a.steps.map((s) => s.moduleId ?? s.workshopId ?? s.refId))
+      for (const s of a.deepDive!) {
+        const id = s.moduleId ?? s.workshopId ?? s.refId
+        expect(requiredIds.has(id), `${a.id}: deepDive id ${id} duplicates a required step`).toBe(
+          false
+        )
+      }
+    }
+    // deepDive never widens what's needed to reach L2/L3 — achievedTreeLevel with
+    // only the required steps satisfied still reaches the top band P6 ships.
+    const requiredOnlyDone = (s: TreeStep) =>
+      p6.levels.some((b) => b.activities.some((a) => a.steps.includes(s)))
+    expect(achievedTreeLevel(p6, requiredOnlyDone)).toBe(3)
+  })
+
+  it('P6-DD: flattenTree stamps deepDive steps `optional` so isGatingStep excludes them', () => {
+    // Regression: flattenTree merges `deepDive` into the flat list (so drift-guard
+    // tests validate the ids), but several REAL consumers do
+    // `flattenTree(tree).filter(isGatingStep)` expecting only the required path
+    // (simAutoRun's gatingStepsForPhase for the "PLAY ALL 9" walkthrough; the
+    // board's stepsTotal/stepsDone progress counter). Before this fix, P6 showed
+    // "0/23" instead of the correct "0/14" — deep-dive steps were leaking in as
+    // if gating. This asserts the flattened, gating-filtered count matches the
+    // required-only count, using the real shipped P6 tree.
+    const p6 = SIM_TREES.p6!
+    const flattenedGating = flattenTree(p6).filter(isGatingStep)
+    const requiredOnly = p6.levels.flatMap((b) =>
+      b.activities.flatMap((a) => a.steps.filter(isGatingStep))
+    )
+    expect(flattenedGating.length).toBe(requiredOnly.length)
+    // every deepDive-sourced step, once flattened, is excluded by isGatingStep
+    const deepDiveSteps = p6.levels.flatMap((b) => b.activities.flatMap((a) => a.deepDive ?? []))
+    expect(deepDiveSteps.length).toBeGreaterThan(0)
+    for (const s of flattenTree(p6)) {
+      const isDeepDiveId =
+        deepDiveSteps.some((d) => d.to === s.to) && !requiredOnly.some((r) => r.to === s.to)
+      if (isDeepDiveId) expect(isGatingStep(s), `${s.to} should not be a gating step`).toBe(false)
+    }
   })
 
   it('WS-11: every tree is pinned to the current framework version', () => {

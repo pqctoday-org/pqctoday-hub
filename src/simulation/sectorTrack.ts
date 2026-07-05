@@ -39,6 +39,13 @@ export const SECTOR_STEPS: Partial<Record<string, Partial<Record<PhaseId, Sector
         to: '/learn/pqc-grc',
       },
     ],
+    p5: [
+      {
+        moduleId: 'iam-pqc',
+        label: 'Identity & access management PQC migration for financial services',
+        to: '/learn/iam-pqc',
+      },
+    ],
     p7: [
       {
         moduleId: 'vendor-risk',
@@ -78,6 +85,13 @@ export const SECTOR_STEPS: Partial<Record<string, Partial<Record<PhaseId, Sector
         to: '/learn/standards-bodies',
       },
     ],
+    p5: [
+      {
+        moduleId: 'pki-enrollment-protocols',
+        label: 'PKI enrollment protocols for government credentialing (PIV/CAC-style)',
+        to: '/learn/pki-enrollment-protocols',
+      },
+    ],
   },
   energy: {
     p0: [
@@ -109,6 +123,11 @@ export const SECTOR_STEPS: Partial<Record<string, Partial<Record<PhaseId, Sector
         label: 'PQC deployment patterns for telecom network infrastructure',
         to: '/learn/network-security-pqc',
       },
+      {
+        moduleId: 'api-security-jwt',
+        label: 'API & JWT security for telecom network-API exposure (Open Gateway)',
+        to: '/learn/api-security-jwt',
+      },
     ],
   },
   retail: {
@@ -117,6 +136,13 @@ export const SECTOR_STEPS: Partial<Record<string, Partial<Record<PhaseId, Sector
         moduleId: 'emv-payment-pqc',
         label: 'PQC for payment systems — EMV, PCI DSS & contactless',
         to: '/learn/emv-payment-pqc',
+      },
+    ],
+    p5: [
+      {
+        moduleId: 'email-signing',
+        label: 'Transactional email & receipt signing PQC migration for retail',
+        to: '/learn/email-signing',
       },
     ],
     p7: [

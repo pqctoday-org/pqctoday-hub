@@ -1226,6 +1226,13 @@ export const TOOL_COMPONENTS: Record<string, LazyComp> = {
       (m) => ({ default: m.APISecurityJWTPlayground })
     )
   ),
+  // Reuses the same view mounted at the dedicated /playground/cacp route (App.tsx)
+  // so the tool can also embed as a sim `workshop` step (WS-P6-DD, 07052026).
+  'cacp-kmip': lazyWithRetry(() =>
+    import('@/components/Playground/kmip/KmipPlaygroundView').then((m) => ({
+      default: m.KmipPlaygroundView,
+    }))
+  ),
 }
 
 export function makeLazyWithOnBack(
