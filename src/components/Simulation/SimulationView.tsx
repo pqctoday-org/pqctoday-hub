@@ -480,6 +480,23 @@ export function SimulationView() {
     setSearchParams(next, { replace: true })
   }, [searchParams, setSearchParams, startRun])
 
+  // Deep link: /simulation?phase=p3 jumps the board to that phase on load — e.g.
+  // a Learn module's "practice this in the sim" CTA can target the exact phase it
+  // teaches, instead of the generic /simulation entry point. Validated against the
+  // real phase set (a typo/renamed id is silently ignored, not a broken jump); the
+  // param is consumed then stripped, same as ?run.
+  const ranPhaseDeepLink = useRef(false)
+  useEffect(() => {
+    if (ranPhaseDeepLink.current) return
+    const phaseParam = searchParams.get('phase')
+    if (!phaseParam) return
+    ranPhaseDeepLink.current = true
+    if (phaseParam in FRAMEWORK_PHASES) setSel(phaseParam as PhaseId)
+    const next = new URLSearchParams(searchParams)
+    next.delete('phase')
+    setSearchParams(next, { replace: true })
+  }, [searchParams, setSearchParams, setSel])
+
   // While the Executive Overview walkthrough is playing (or on its end screen), the
   // maturity/objective scoreboard and the "did you beat Q-Day?" win ceremony are
   // suppressed — it's a tour, not a scored run, and it shows no dates. Climb (Play 0→7)
