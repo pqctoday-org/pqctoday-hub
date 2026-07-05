@@ -1,5 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { ExternalLink, ShieldAlert, Cpu, Zap, KeyRound, Code2, AlertTriangle } from 'lucide-react'
+import {
+  ExternalLink,
+  ShieldAlert,
+  Cpu,
+  Zap,
+  KeyRound,
+  Code2,
+  AlertTriangle,
+  EyeOff,
+  Brain,
+} from 'lucide-react'
 import clsx from 'clsx'
 import {
   ATTACK_PROFILES,
@@ -35,6 +45,16 @@ const ATTACK_CATEGORY_META: Record<
     label: 'API/Integration',
     icon: Code2,
     color: 'text-status-info',
+  },
+  kleptography: {
+    label: 'Kleptography',
+    icon: EyeOff,
+    color: 'text-status-error',
+  },
+  'ai-cryptanalysis': {
+    label: 'AI-Assisted Cryptanalysis',
+    icon: Brain,
+    color: 'text-status-warning',
   },
 }
 
