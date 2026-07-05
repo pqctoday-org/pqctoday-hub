@@ -161,6 +161,7 @@ import type { AssessmentInput } from '@/hooks/assessmentTypes'
 import { useAwarenessScore } from '@/hooks/useAwarenessScore'
 import { ModuleCompletionCard } from '@/components/PKILearning/ModuleCompletionCard'
 import { SimRunComplete } from './SimRunComplete'
+import { SimConfirmDialog } from './SimConfirmDialog'
 import pqctodayLogo from '@/assets/pqctoday-logo.png'
 
 // ---- option lists (from real hub data) ----------------------------------
@@ -678,14 +679,9 @@ export function SimulationView() {
   // RESET clears the sim turn-state plus ONLY the sim-tracked hub progress the
   // gating reads from (the Learn modules + artifacts referenced by the trees) —
   // the player's other hub progress is left untouched.
-  const resetAll = () => {
-    if (
-      typeof window !== 'undefined' &&
-      !window.confirm(
-        "Reset the simulation? This clears the simulation's Learn-module and activity progress."
-      )
-    )
-      return
+  const [pendingConfirm, setPendingConfirm] = useState<'reset' | 'start-over' | null>(null)
+  const resetAll = () => setPendingConfirm('reset')
+  const runResetAll = () => {
     for (const id of SIM_TRACKED.modules) resetModuleProgress(id)
     for (const d of docs ?? []) if (SIM_TRACKED.artifacts.has(d.type)) deleteExecutiveDocument(d.id)
     reset()
@@ -695,14 +691,8 @@ export function SimulationView() {
   // scratch. Clearing the result alone wouldn't be enough — the self-unlock
   // effect would re-derive it from the still-complete form — so resetAssessment()
   // (proxy: form.reset() + result.reset()) clears both.
-  const startOver = () => {
-    if (
-      typeof window !== 'undefined' &&
-      !window.confirm(
-        'Start over completely? This clears your simulation run AND your assessment — you will run the assessment again before the simulation unlocks.'
-      )
-    )
-      return
+  const startOver = () => setPendingConfirm('start-over')
+  const runStartOver = () => {
     for (const id of SIM_TRACKED.modules) resetModuleProgress(id)
     for (const d of docs ?? []) if (SIM_TRACKED.artifacts.has(d.type)) deleteExecutiveDocument(d.id)
     reset()
@@ -2969,8 +2959,14 @@ export function SimulationView() {
         )}
 
         {report && <QuarterReport report={report} onClose={() => setReport(null)} />}
-        {/* WS-12: skippable first-run guide, shown until dismissed/finished */}
-        {(!tourSeen || tourOpen) && (
+        {/* WS-12: skippable first-run guide, shown until dismissed/finished.
+            Suppressed for the DURATION of an active auto-run (including the very first
+            paint of a ?run=exec deep link, checked directly to avoid a one-frame flash
+            before `running` flips) — but tourSeen is never force-set here, so a user who
+            enters via auto-run and never organically saw the tour is offered it once the
+            run ends, instead of it being silently burned forever. */}
+        {((!tourSeen && !autoRunPlayer.running && searchParams.get('run') !== 'exec') ||
+          tourOpen) && (
           <SimTour
             guided={guided}
             onEnableGuided={() => setGuided(true)}
@@ -2998,6 +2994,30 @@ export function SimulationView() {
         )}
         {walkthroughDoneOpen && (
           <SimExecWalkthroughComplete onClose={() => setWalkthroughDoneOpen(false)} />
+        )}
+        {pendingConfirm === 'reset' && (
+          <SimConfirmDialog
+            title="Reset the simulation?"
+            description="This clears the simulation's Learn-module and activity progress. Your assessment is kept."
+            confirmLabel="Reset run"
+            onCancel={() => setPendingConfirm(null)}
+            onConfirm={() => {
+              runResetAll()
+              setPendingConfirm(null)
+            }}
+          />
+        )}
+        {pendingConfirm === 'start-over' && (
+          <SimConfirmDialog
+            title="Start over completely?"
+            description="This clears your simulation run AND your assessment — you will run the assessment again before the simulation unlocks."
+            confirmLabel="Start over"
+            onCancel={() => setPendingConfirm(null)}
+            onConfirm={() => {
+              runStartOver()
+              setPendingConfirm(null)
+            }}
+          />
         )}
       </div>
     </>
