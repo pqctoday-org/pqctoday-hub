@@ -34,8 +34,14 @@ export const STEP_ARTIFACT_TYPES: Record<CSWP39StepId, ExecutiveDocumentType[]> 
     'program-charter',
     'initial-scoping',
   ],
-  inventory: ['supply-chain-matrix', 'crypto-cbom', 'crypto-vulnerability-watch'],
-  'identify-gaps': ['risk-register', 'vendor-scorecard'],
+  inventory: ['supply-chain-matrix', 'crypto-cbom'],
+  // crypto-vulnerability-watch lives here (not Inventory) to match the hub's own
+  // CSWP.39 crosswalk, which files "Vulnerability management — CVE feeds,
+  // library EoL tracking" under §5.3 Identify Gaps
+  // (src/components/Compliance/cswp39Data.ts). It previously sat under
+  // Inventory, disagreeing with that crosswalk and with the tool's own export
+  // footer citation — both now say §5.3.
+  'identify-gaps': ['risk-register', 'vendor-scorecard', 'crypto-vulnerability-watch'],
   prioritise: [
     'kpi-dashboard',
     'kpi-tracker',
@@ -66,6 +72,9 @@ export const PILLAR_FOR_TYPE: Record<ExecutiveDocumentType, PillarKey> = {
   'roi-model': 'risk',
   'board-deck': 'risk',
   'crqc-scenario': 'risk',
+  'breach-scenario': 'risk',
+  'cost-of-inaction': 'risk',
+  'cost-model-comparison': 'risk',
   'audit-checklist': 'compliance',
   'compliance-checklist': 'compliance',
   'compliance-timeline': 'compliance',

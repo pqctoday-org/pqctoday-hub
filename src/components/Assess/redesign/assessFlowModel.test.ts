@@ -53,12 +53,29 @@ describe('assess flow model — orders', () => {
     expect([...RENDER_ORDER_FULL].sort()).toEqual([...LEGACY_ORDER].sort())
   })
 
-  it('quick render order is the 8-step fast track with migration before infra', () => {
-    expect(RENDER_ORDER_QUICK).toHaveLength(8)
-    expect(RENDER_ORDER_QUICK.indexOf('migration')).toBeLessThan(
-      RENDER_ORDER_QUICK.indexOf('infra')
-    )
-    expect(RENDER_ORDER_QUICK).not.toContain('use-cases')
+  it('quick render order is the 6-step fast track, free of every hasExtendedInput field', () => {
+    expect(RENDER_ORDER_QUICK).toHaveLength(6)
+    expect(RENDER_ORDER_QUICK).toEqual([
+      'industry',
+      'country',
+      'crypto',
+      'sensitivity',
+      'compliance',
+      'migration',
+    ])
+    // These flip hasExtendedInput true and must stay out of the quick track so
+    // the quick report keeps the per-domain breakdown + progress locked.
+    for (const extended of [
+      'use-cases',
+      'retention',
+      'credential-lifetime',
+      'scale',
+      'agility',
+      'infra',
+      'timeline',
+    ] as const) {
+      expect(RENDER_ORDER_QUICK).not.toContain(extended)
+    }
   })
 
   it('renderOrderFor maps modes', () => {
@@ -143,8 +160,12 @@ describe('assess flow model — track info matches the report contract', () => {
     expect(TRACK_INFO.comprehensive.count).toBe(RENDER_ORDER_FULL.length)
   })
 
-  it('report contract has 6 fast summary rows + 4 hard-locked sections', () => {
+  it('report contract has 6 fast summary rows + 2 hard-locked sections', () => {
     expect(FAST_REPORT_SECTIONS).toHaveLength(6)
-    expect(FULL_LOCKED_SECTIONS).toHaveLength(4)
+    // Only the per-domain breakdown and progress-over-time are truly gated
+    // behind ReportLockedOverlay; the algorithm map and roadmap render on both
+    // tracks, so advertising them as locked was misleading.
+    expect(FULL_LOCKED_SECTIONS).toHaveLength(2)
+    expect(FULL_LOCKED_SECTIONS).toEqual(['Per-domain risk breakdown', 'Progress over time'])
   })
 })

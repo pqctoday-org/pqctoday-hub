@@ -20,6 +20,7 @@ import { LibraryEmbed } from '@/components/shared/widgets/LibraryEmbed'
 import { ComplianceEmbed } from '@/components/shared/widgets/ComplianceEmbed'
 import { ThreatsEmbed } from '@/components/shared/widgets/ThreatsEmbed'
 import { ReportEmbed } from '@/components/shared/widgets/ReportEmbed'
+import { MigrationVerification } from '@/components/BusinessCenter/tools/MigrationVerification'
 
 export interface ReferenceEmbedSpec {
   /** Header chip label shown under the Simulation-mode bar. */
@@ -36,4 +37,9 @@ export const SIM_REFERENCE_EMBEDS: Record<string, ReferenceEmbedSpec> = {
   'compliance-cert-check': { label: 'Compliance', Component: ComplianceEmbed },
   threats: { label: 'Threats', Component: ThreatsEmbed },
   report: { label: 'Executive Report', Component: ReportEmbed },
+  // Same Command-Center tool component VC.2's `activity` step embeds (imported
+  // directly rather than via the lazy-loaded BUSINESS_TOOL_COMPONENTS registry,
+  // matching every other entry here being a plain, non-lazy component) — reused
+  // as-is, since it's already embed-safe there with no simEmbed prop needed.
+  'migration-verification': { label: 'Migration Verification', Component: MigrationVerification },
 }

@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState } from 'react'
 import type { FC } from 'react'
-import { Calculator, ShieldAlert, Presentation, TrendingDown } from 'lucide-react'
+import { BarChart3, Calculator, ShieldAlert, Presentation, TrendingDown } from 'lucide-react'
 import { Introduction } from './components/Introduction'
+import { CostModelExplorer } from './components/CostModelExplorer'
 import { ROICalculator } from './components/ROICalculator'
 import { BreachScenarioSimulator } from './components/BreachScenarioSimulator'
 import { BoardPitchBuilder } from './components/BoardPitchBuilder'
@@ -24,24 +25,30 @@ export interface BreachOutput {
   deltaUSD: number
 }
 
+export interface InactionOutput {
+  costOfInactionUSD: number
+  delayYears: number
+}
+
 const PARTS: WorkshopPart[] = [
   {
+    id: 'cost-model-explorer',
+    title: 'Step 1: Cost Model Explorer',
+    description:
+      'See how the six costing models diverge on one scenario before you commit to any single number.',
+    icon: BarChart3,
+  },
+  {
     id: 'roi-calculator',
-    title: 'Step 1: ROI Calculator',
+    title: 'Step 2: ROI Calculator',
     description: 'Calculate the return on investment for PQC migration across your infrastructure.',
     icon: Calculator,
   },
   {
     id: 'breach-simulator',
-    title: 'Step 2: Breach Scenario Simulator',
+    title: 'Step 3: Breach Scenario Simulator',
     description: 'Compare breach costs today vs. quantum-enabled breaches of tomorrow.',
     icon: ShieldAlert,
-  },
-  {
-    id: 'board-pitch',
-    title: 'Step 3: Board Pitch Builder',
-    description: 'Generate a board-ready executive brief for PQC investment approval.',
-    icon: Presentation,
   },
   {
     id: 'cost-of-inaction',
@@ -50,11 +57,19 @@ const PARTS: WorkshopPart[] = [
       'Model the compounding cost of delaying PQC migration — breach risk, complexity premiums, and regulatory penalties over 5 years.',
     icon: TrendingDown,
   },
+  {
+    id: 'board-pitch',
+    title: 'Step 5: Board Pitch Builder',
+    description:
+      'Assemble a board-ready executive brief for PQC investment approval, populated from the earlier steps.',
+    icon: Presentation,
+  },
 ]
 
 export const PQCBusinessCaseModule: FC = () => {
   const [roiOutput, setROIOutput] = useState<ROIOutput | null>(null)
   const [breachOutput, setBreachOutput] = useState<BreachOutput | null>(null)
+  const [inactionOutput, setInactionOutput] = useState<InactionOutput | null>(null)
 
   return (
     <ModuleShell
@@ -67,26 +82,34 @@ export const PQCBusinessCaseModule: FC = () => {
       onReset={() => {
         setROIOutput(null)
         setBreachOutput(null)
+        setInactionOutput(null)
       }}
       renderWorkshopStep={(index, configKey) => {
         switch (index) {
           case 0:
-            return <ROICalculator key={`roi-${configKey}`} onOutput={setROIOutput} />
+            return <CostModelExplorer key={`explorer-${configKey}`} />
           case 1:
+            return <ROICalculator key={`roi-${configKey}`} onOutput={setROIOutput} />
+          case 2:
             return (
               <BreachScenarioSimulator key={`breach-${configKey}`} onOutput={setBreachOutput} />
             )
-          case 2:
+          case 3:
+            return (
+              <CostOfInactionAnalyzer
+                key={`inaction-${configKey}`}
+                breachOutput={breachOutput}
+                onOutput={setInactionOutput}
+              />
+            )
+          case 4:
             return (
               <BoardPitchBuilder
                 key={`board-${configKey}`}
                 roiOutput={roiOutput}
                 breachOutput={breachOutput}
+                inactionOutput={inactionOutput}
               />
-            )
-          case 3:
-            return (
-              <CostOfInactionAnalyzer key={`inaction-${configKey}`} breachOutput={breachOutput} />
             )
           default:
             return null

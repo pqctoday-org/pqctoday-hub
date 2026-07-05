@@ -284,7 +284,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
   '/assess': {
     title: 'PQC Risk Assessment — Quantum Readiness Score for Your Organization | PQC Today',
     description:
-      'Understand your quantum risk exposure with a 13-step guided assessment (8-step quick path). Get a personalized migration roadmap aligned with your industry, country, and applicable compliance mandates — NIST, ANSSI, BSI, and more.',
+      'Understand your quantum risk exposure with a 13-step guided assessment (6-step quick path). Get a personalized migration roadmap aligned with your industry, country, and applicable compliance mandates — NIST, ANSSI, BSI, and more.',
     canonical: `${BASE_URL}/assess`,
   },
 

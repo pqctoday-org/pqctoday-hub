@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { ReportContent } from './ReportContent'
 import '@testing-library/jest-dom'
 import type { AssessmentResult } from '../../hooks/assessmentTypes'
+import { usePersonaStore } from '../../store/usePersonaStore'
 
 // Mock framer-motion
 vi.mock(
@@ -171,6 +172,25 @@ describe('ReportContent', () => {
       expect(screen.getByText(/Technology sector.*65\/100/)).toBeInTheDocument()
     })
 
+    it('with a persona selected: verdict shows personaNarrative, risk score shows the neutral narrative — never the same text twice', () => {
+      usePersonaStore.getState().setPersona('architect')
+      try {
+        renderReport({
+          ...baseResult,
+          personaNarrative: 'Architect-specific take on this exact result.',
+        })
+        expect(
+          screen.getByText('Architect-specific take on this exact result.')
+        ).toBeInTheDocument()
+        expect(screen.getByText(/Technology sector.*65\/100/)).toBeInTheDocument()
+        expect(screen.queryAllByText('Architect-specific take on this exact result.')).toHaveLength(
+          1
+        )
+      } finally {
+        usePersonaStore.getState().setPersona(null)
+      }
+    })
+
     it('renders correct label for low risk', () => {
       renderReport({ ...baseResult, riskScore: 10, riskLevel: 'low' })
       expect(screen.getByText(/Low Risk/)).toBeInTheDocument()
@@ -288,18 +308,18 @@ describe('ReportContent', () => {
   describe('action buttons', () => {
     it('renders all five action buttons', () => {
       renderReport()
-      expect(screen.getByText('Download PDF')).toBeInTheDocument()
+      expect(screen.getByText('Print / Save as PDF')).toBeInTheDocument()
       expect(screen.getByText('Export CSV')).toBeInTheDocument()
       expect(screen.getByText('Share')).toBeInTheDocument()
       expect(screen.getByText('Edit Answers')).toBeInTheDocument()
       expect(screen.getByText('Start Over')).toBeInTheDocument()
     })
 
-    it('calls window.print when Download PDF is clicked', () => {
+    it('calls window.print when Print / Save as PDF is clicked', () => {
       const printMock = vi.fn()
       vi.spyOn(window, 'print').mockImplementation(printMock)
       renderReport()
-      fireEvent.click(screen.getByText('Download PDF'))
+      fireEvent.click(screen.getByText('Print / Save as PDF'))
       expect(printMock).toHaveBeenCalledOnce()
       vi.restoreAllMocks()
     })

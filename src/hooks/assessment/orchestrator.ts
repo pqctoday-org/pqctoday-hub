@@ -542,6 +542,11 @@ export async function computeAssessmentAsync(
     boosts = compositeResult.boosts
     hndlRiskWindow = await stage('Computing HNDL risk window', () => computeHNDLRiskWindow(input))
     tnflRiskWindow = await stage('Computing HNFL risk window', () => computeTNFLRiskWindow(input))
+    // Derive the framework risk lens for the comprehensive path too — mirrors the
+    // sync computeAssessment path. Without this the async result returned
+    // `frameworkRisk: undefined`, hiding the Report's Framework Risk Lens panel
+    // and starving the Simulation P3 view for every comprehensive assessment.
+    frameworkRisk = computeFrameworkRisk(categoryScores, hndlRiskWindow, tnflRiskWindow)
     migrationEffort = await stage('Estimating migration effort', () =>
       computeMigrationEffort(input)
     )

@@ -8,15 +8,17 @@ import { FRAMEWORK_PHASES, PHASE_ORDER, type FrameworkPhase } from '@/data/frame
  * Milestone-gate column / legend (PER-PAGE-CHANGES Timeline #3).
  *
  * The Gantt's Status field tells you *when* things are due; the framework's
- * Phase 4 §4.6 (p.88) decision gates G0–G7 tell you *what must be true to
+ * Phase 4 §4.6 (p.88) decision gates tell you *what must be true to
  * advance*. This surfaces each phase's gate criterion and decision authority
  * directly from `FRAMEWORK_PHASES[*].gate`, so the timeline gains the gate model
- * it lacks. Phases without a gate (continuous / spanning) are shown as such.
+ * it lacks. Phase 7 (continuous, no gate) is simply absent from the list rather
+ * than shown with a placeholder; Verification & Closure (G8) is a sim-specific
+ * gate not present in the framework's G0–G6 stage-gate table.
  *
  * Additive: collapsed by default — the Gantt is unchanged unless expanded.
  */
 
-// Ordered phases that actually define a gate (G0–G7).
+// Ordered phases that actually define a gate (G0–G6, plus the sim's G8 for Verification & Closure).
 const GATED_PHASES: FrameworkPhase[] = PHASE_ORDER.map(
   // eslint-disable-next-line security/detect-object-injection
   (id) => FRAMEWORK_PHASES[id]
@@ -39,7 +41,7 @@ export const MilestoneGateColumn: React.FC = () => {
               id="milestone-gate-heading"
               className="text-base font-bold text-foreground flex items-center gap-2 flex-wrap"
             >
-              Milestone Gates (G0–G7)
+              Milestone Gates (G0–G6 + Verification)
               <span className="text-sim-chip font-medium px-1.5 py-0.5 rounded border border-primary/30 bg-primary/10 text-primary uppercase tracking-wide">
                 Phase 4 · Governance
               </span>
@@ -103,8 +105,9 @@ export const MilestoneGateColumn: React.FC = () => {
             </table>
           </div>
           <p className="text-sim-micro text-muted-foreground mt-3">
-            Source: Applied Quantum Phase 4 Activity 4.6 (p.88). Gates are informational labels in
-            v1 — phase context, not enforced sign-off.
+            G0–G6 sourced to Applied Quantum Phase 4 Activity 4.6 (p.88); G8 (Verification &amp;
+            Closure) is a sim-specific addition, not in the framework's stage-gate table. Gates are
+            informational labels in v1 — phase context, not enforced sign-off.
           </p>
         </div>
       )}

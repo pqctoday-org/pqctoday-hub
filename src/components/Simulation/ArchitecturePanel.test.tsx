@@ -1,8 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { ArchitecturePanel } from './ArchitecturePanel'
 import { useSimulationStore } from '@/store/useSimulationStore'
+
+// MermaidDiagram dynamically imports the real `mermaid` package and renders
+// SVG via an effect — irrelevant to what we're testing here (that the
+// Diagram view is handed a source string reflecting the player's progress).
+// Mock it to capture the `source` prop directly instead of mocking `mermaid`.
+vi.mock('./MermaidDiagram', () => ({
+  MermaidDiagram: ({ source }: { source: string }) => (
+    <div data-testid="mermaid-source">{source}</div>
+  ),
+}))
 
 describe('ArchitecturePanel (interactive, two-gate)', () => {
   beforeEach(() => {
@@ -43,5 +53,12 @@ describe('ArchitecturePanel (interactive, two-gate)', () => {
     expect(bulk).not.toBeDisabled()
     fireEvent.click(bulk)
     expect(screen.getByText(/3\/6 links migrated/)).toBeInTheDocument()
+  })
+
+  it('the Diagram view reflects a migration made in List view, not just a static start state', () => {
+    render(<ArchitecturePanel size="small" country="US" p5Frac={1} />)
+    fireEvent.click(screen.getByRole('button', { name: /Migrate eligible/i }))
+    fireEvent.click(screen.getByRole('button', { name: /^Diagram$/i }))
+    expect(screen.getByTestId('mermaid-source').textContent).toContain('✓ migrated')
   })
 })

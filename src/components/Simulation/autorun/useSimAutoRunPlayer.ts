@@ -606,7 +606,11 @@ export function useSimAutoRunPlayer({
       clearTimer()
       seedDemoOrg() // populate the scenario context so embeds have data + a scope to filter by
       setAutoRunFill(true) // tools opened during the run fill their forms with demo content
-      useSimulationStore.getState().markTourSeen() // the first-run tour must not block the playthrough
+      // The first-run tour must not block the playthrough — but permanently marking it
+      // seen here (as this used to do) meant a user entering via ?run=exec or "Play all"
+      // never got onboarded, even after the run ended. The consumer (SimulationView)
+      // suppresses the tour for the DURATION of an active run via `running`, without
+      // burning the persisted `tourSeen` flag — so it's offered once the run completes.
       const q = runMode === 'walkthrough' ? autoRunWalkthroughQueue() : autoRunQueue()
       queueRef.current = q
       // RESUME from the remembered playhead — the queue index where the last run was

@@ -597,7 +597,7 @@
     "ops-quantum-impact": 4,
     "pki-enrollment-protocols": 6,
     "pki-workshop": 6,
-    "pqc-business-case": 4,
+    "pqc-business-case": 5,
     "pqc-candidates": 6,
     "pqc-governance": 4,
     "pqc-risk-management": 4,
@@ -2630,6 +2630,10 @@
     ],
     "pqc-business-case": [
       {
+        "id": "cost-model-explorer",
+        "label": "Cost Model Explorer"
+      },
+      {
         "id": "roi-calculator",
         "label": "ROI Calculator"
       },
@@ -2638,12 +2642,12 @@
         "label": "Breach Scenario Simulator"
       },
       {
-        "id": "board-pitch",
-        "label": "Board Pitch Builder"
-      },
-      {
         "id": "cost-of-inaction",
         "label": "Cost of Inaction"
+      },
+      {
+        "id": "board-pitch",
+        "label": "Board Pitch Builder"
       }
     ],
     "pqc-candidates": [

@@ -84,10 +84,15 @@ test('START OVER clears the assessment and re-locks the sim', async ({ page }) =
   // "Start over" lives in the "⋯ MORE" overflow menu (RunActionsMenu, PR2 —
   // collapsed the secondary run actions out of the header; TRIAGE 2026-07-03:
   // the old always-visible "START OVER" button no longer exists, so the test
-  // must open the menu first).
-  page.on('dialog', (d) => d.accept())
+  // must open the menu first). The confirm is a styled in-app dialog
+  // (SimConfirmDialog), not a native window.confirm — no page.on('dialog')
+  // needed; click its own "Start over" confirm button instead.
   await page.getByRole('button', { name: '⋯ MORE' }).click()
   await page.getByRole('menuitem', { name: /Start over/i }).click()
+  await page
+    .getByRole('alertdialog', { name: /Start over completely/i })
+    .getByRole('button', { name: /^Start over$/ })
+    .click()
 
   // Re-LOCKED: the assessment gate returns.
   await expect(page.getByText(/Simulation locked/i)).toBeVisible({ timeout: 15_000 })

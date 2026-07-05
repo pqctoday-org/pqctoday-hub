@@ -15,9 +15,12 @@ import {
 } from '@/components/PKILearning/common/WorkshopOperationLog'
 import { useModuleStore } from '../../store/useModuleStore'
 import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
-import { REGION_COUNTRIES_MAP, getReportSectionConfig } from '../../data/personaConfig'
-import type { ReportSectionId } from '../../data/personaConfig'
-import { REPORT_SECTION_LABELS } from '../../data/reportSectionToCswp39'
+import {
+  REGION_COUNTRIES_MAP,
+  getReportSectionConfig,
+  type ReportSectionId,
+} from '../../data/personaConfig'
+import { REPORT_SECTION_ORDER, REPORT_SECTION_LABELS } from '../../data/reportSectionToCswp39'
 import {
   AVAILABLE_INDUSTRIES,
   AVAILABLE_ALGORITHMS,
@@ -57,21 +60,24 @@ const VALID_USE_CASES = new Set(AVAILABLE_USE_CASES)
 const VALID_INFRA = new Set(AVAILABLE_INFRASTRUCTURE)
 const VALID_COUNTRIES = new Set(Object.values(REGION_COUNTRIES_MAP).flat())
 
-const REPORT_SECTION_ORDER: ReportSectionId[] = [
-  'countryTimeline',
-  'riskScore',
-  'keyFindings',
-  'riskBreakdown',
-  'executiveSummary',
-  'assessmentProfile',
-  'hndlHnfl',
-  'algorithmMigration',
-  'complianceImpact',
-  'recommendedActions',
-  'migrationRoadmap',
-  'migrationToolkit',
-  'threatLandscape',
-]
+/**
+ * Sections that render outside the persona-config-gated REPORT_SECTION_ORDER
+ * list (QRA, ROI, KPI trending, NICE workforce gap) — they render
+ * unconditionally, not through `getReportSectionConfig`, so they were
+ * previously unreachable from the TOC entirely. Each entry names the
+ * REPORT_SECTION_ORDER id it renders immediately after, in true page order.
+ */
+const EXTRA_TOC_AFTER: Partial<Record<ReportSectionId, { id: string; label: string }[]>> = {
+  riskScore: [{ id: 'report-section-qra', label: 'Quantum Readiness Assessment' }],
+  vendorRisk: [
+    { id: 'report-section-roiCalculator', label: 'ROI & Financial Case' },
+    { id: 'report-section-kpiTrending', label: 'Progress Over Time' },
+  ],
+}
+
+/** Renders after every other section (including threatLandscape) — appended
+ *  at the end of the TOC unconditionally. */
+const TOC_TRAILING = [{ id: 'report-section-niceGap', label: 'NICE Workforce Gap Report' }]
 
 /**
  * Persona-flavored maturity tier chip rendered just under the page header
@@ -194,16 +200,32 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
   const handleCollapseAll = useCallback(() => setCollapseToken((t) => t + 1), [])
 
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
-  const tocSections = useMemo(
-    () =>
-      REPORT_SECTION_ORDER.filter(
-        (id) => getReportSectionConfig(selectedPersona, id).state !== 'hidden'
-      ).map((id) => ({ id: `report-section-${id}`, label: REPORT_SECTION_LABELS[id] })),
-    [selectedPersona]
-  )
+  const tocSections = useMemo(() => {
+    const base = REPORT_SECTION_ORDER.filter(
+      (id) => getReportSectionConfig(selectedPersona, id).state !== 'hidden'
+    ).flatMap((id) => [
+      { id: `report-section-${id}`, label: REPORT_SECTION_LABELS[id] },
+      // eslint-disable-next-line security/detect-object-injection
+      ...(EXTRA_TOC_AFTER[id] ?? []),
+    ])
+    return [...base, ...TOC_TRAILING]
+  }, [selectedPersona])
   const hydratedRef = useRef(false)
+  // Set when a share/legacy link arrives but the recipient already has their
+  // own assessment (in-progress or complete) — we refuse to silently
+  // overwrite it (see `ACCURACY-0705` fix below) and surface this instead.
+  const [shareBlockedByExistingAssessment, setShareBlockedByExistingAssessment] = useState(false)
 
-  // Hydrate store from shared URL params on first mount
+  // Hydrate store from shared URL params on first mount.
+  //
+  // ACCURACY-0705: this used to unconditionally call `store.set*(...)` +
+  // `store.markComplete()` for ANY share/legacy link, silently overwriting and
+  // completing the recipient's OWN in-progress or already-completed
+  // assessment — directly contradicting the "your own assessment is
+  // unaffected" banner below. Now it only auto-applies when the recipient has
+  // no assessment of their own yet (`assessmentStatus === 'not-started'`);
+  // otherwise it refuses to mutate the store and flips
+  // `shareBlockedByExistingAssessment` so the banner can explain why.
   useEffect(() => {
     if (hydratedRef.current) return
 
@@ -213,6 +235,10 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
       hydratedRef.current = true
       const schema = decodeShareToken(shareToken)
       if (schema) {
+        if (useAssessmentStore.getState().assessmentStatus !== 'not-started') {
+          setShareBlockedByExistingAssessment(true)
+          return
+        }
         logReportShareLinkOpened()
         const store = useAssessmentStore.getState()
         if (schema.industry && VALID_INDUSTRIES.has(schema.industry))
@@ -252,10 +278,15 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
       return
     }
 
-    // Legacy individual-param path: ?i=&cy=&c=&d=&f=&m=…
+    // Legacy individual-param path: ?i=&cy=&c=&d=&f=&m=… — same
+    // no-silent-overwrite guard as the compact-token path above.
     const industry = searchParams.get('i')
     if (!industry) return
     hydratedRef.current = true
+    if (useAssessmentStore.getState().assessmentStatus !== 'not-started') {
+      setShareBlockedByExistingAssessment(true)
+      return
+    }
     logReportShareLinkOpened()
 
     const store = useAssessmentStore.getState()
@@ -384,7 +415,14 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
       persistedRef.current = true
       logReportViewed(useAssessmentStore.getState().industry, result.riskLevel)
       setResult(result)
-      if (assessmentStatus === 'complete' && result.categoryScores) {
+      // Only comprehensive assessments feed the progress trend — the legacy path
+      // emits coarse categoryScores for the sim/KPIs, so gate on the profile mode
+      // (not categoryScores presence) to avoid polluting the trend with quick runs.
+      if (
+        assessmentStatus === 'complete' &&
+        result.assessmentProfile?.mode === 'comprehensive' &&
+        result.categoryScores
+      ) {
         const store = useAssessmentStore.getState()
         store.pushSnapshot({
           completedAt: store.completedAt ?? result.generatedAt,
@@ -429,12 +467,33 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
     )
   }
 
-  // Empty state: no assessment started and no persisted result
+  // Empty state: no assessment started and no persisted result.
+  //
+  // ACCURACY-0705: this early return happens BEFORE the main return's banner
+  // section below, so a blocked share link must be surfaced HERE too —
+  // otherwise a recipient whose own assessment has no computed result yet
+  // (e.g. genuinely in-progress) would see this generic "No Report Yet"
+  // screen with zero indication that a share link even arrived.
   if (!result) {
     const isCurious = selectedPersona === 'curious'
     return (
       <div className="animate-fade-in">
         <div className="max-w-lg mx-auto text-center py-16">
+          {shareBlockedByExistingAssessment && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6 text-left"
+            >
+              <div className="glass-panel p-3 border-l-4 border-l-warning flex items-center gap-3">
+                <AlertCircle size={16} className="text-warning shrink-0" />
+                <span className="text-sm text-foreground">
+                  This link contains someone else&apos;s shared assessment, but you already have
+                  your own in progress. To protect your data, it was not loaded.
+                </span>
+              </div>
+            </motion.div>
+          )}
           <div className="inline-flex items-center justify-center p-4 rounded-full bg-muted mb-6">
             <FileBarChart className="text-muted-foreground" size={32} />
           </div>
@@ -488,18 +547,42 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
 
       <PersonaSuggestionCard />
 
-      {/* Banner when viewing a shared report */}
-      {searchParams.get('share') && (
+      {/* ACCURACY-0705: only claim "unaffected" when that's actually true — i.e.
+          we applied the share link because the recipient had no assessment of
+          their own yet. When one already existed, we refused to overwrite it
+          (see the hydration effect above) and show the honest blocked-state
+          banner instead. */}
+      {(searchParams.get('share') || searchParams.get('i')) &&
+        !shareBlockedByExistingAssessment && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-4"
+          >
+            <div className="glass-panel p-3 border-l-4 border-l-primary flex items-center gap-3">
+              <FileBarChart size={16} className="text-primary shrink-0" />
+              <span className="text-sm text-foreground">
+                Viewing a shared report. This is a read-only snapshot — your own assessment is
+                unaffected.
+              </span>
+            </div>
+          </motion.div>
+        )}
+
+      {/* ACCURACY-0705: honest explanation when a share/legacy link arrived
+          but we refused to silently replace the recipient's own assessment. */}
+      {shareBlockedByExistingAssessment && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-4"
         >
-          <div className="glass-panel p-3 border-l-4 border-l-primary flex items-center gap-3">
-            <FileBarChart size={16} className="text-primary shrink-0" />
+          <div className="glass-panel p-3 border-l-4 border-l-warning flex items-center gap-3">
+            <AlertCircle size={16} className="text-warning shrink-0" />
             <span className="text-sm text-foreground">
-              Viewing a shared report. This is a read-only snapshot — your own assessment is
-              unaffected.
+              This link contains someone else&apos;s shared assessment, but you already have your
+              own. To protect your data, it was not loaded — start a new assessment in a private
+              window to view it, or ask them to send you the summary instead.
             </span>
           </div>
         </motion.div>
@@ -531,31 +614,21 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
         </motion.div>
       )}
 
-      {result ? (
-        <div className="flex flex-col lg:flex-row gap-6 items-start">
-          <ReportToc
-            sections={tocSections}
-            onExpandAll={handleExpandAll}
-            onCollapseAll={handleCollapseAll}
-          />
-          <div className="flex-1 min-w-0 w-full">
-            <ReportContent
-              result={result}
-              expandToken={expandToken}
-              collapseToken={collapseToken}
-            />
-          </div>
+      {/* `result` is guaranteed truthy here — the `!result` early-return above
+          covers the only case where it isn't, so this never had a reachable
+          else branch. */}
+      <div className="flex flex-col lg:flex-row gap-6 items-start">
+        <ReportToc
+          sections={tocSections}
+          onExpandAll={handleExpandAll}
+          onCollapseAll={handleCollapseAll}
+        />
+        <div className="flex-1 min-w-0 w-full">
+          <ReportContent result={result} expandToken={expandToken} collapseToken={collapseToken} />
         </div>
-      ) : (
-        <div className="text-center py-12 text-muted-foreground">
-          <p>Unable to generate report. Please complete all required fields.</p>
-          <Link to="/assess" className="text-primary hover:underline mt-2 inline-block">
-            Go to Assessment
-          </Link>
-        </div>
-      )}
+      </div>
 
-      {result && !simEmbed && <ReportNextSteps />}
+      {result && !simEmbed && <ReportNextSteps result={result} />}
     </div>
   )
 }

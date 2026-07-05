@@ -25,6 +25,25 @@ export function getEffectiveThreatYear(country?: string): number {
   )
 }
 
+/**
+ * Splits the effective "act-by" year into its two distinct drivers so the report
+ * never conflates a regulatory mandate with the arrival of a quantum computer:
+ *  - crqc: the cryptographically-relevant quantum computer arrival estimate
+ *  - regulatory: the jurisdiction's mandate horizon, ONLY when it binds earlier
+ *    than the CRQC estimate (otherwise undefined — the CRQC estimate governs)
+ *  - effective: the earlier of the two (the conservative deadline)
+ */
+export function getThreatHorizon(country?: string): {
+  effective: number
+  crqc: number
+  regulatory?: number
+} {
+  const crqc = ESTIMATED_QUANTUM_THREAT_YEAR
+  const horizon = COUNTRY_PLANNING_HORIZON[country ?? '']
+  const regulatory = horizon !== undefined && horizon < crqc ? horizon : undefined
+  return { effective: Math.min(crqc, horizon ?? crqc), crqc, regulatory }
+}
+
 export function computeHNDLRiskWindow(input: AssessmentInput): HNDLRiskWindow | undefined {
   const isEstimated = !!input.retentionUnknown
   if (!input.dataRetention?.length && !isEstimated) return undefined
@@ -32,12 +51,14 @@ export function computeHNDLRiskWindow(input: AssessmentInput): HNDLRiskWindow | 
   const retentionYears = isEstimated
     ? getIndustryRetentionDefault(input.industry)
     : getMaxRetentionYears(input.dataRetention ?? [])
-  const effectiveThreatYear = getEffectiveThreatYear(input.country)
+  const horizon = getThreatHorizon(input.country)
   const dataExpirationYear = currentYear + retentionYears
-  const riskWindowYears = dataExpirationYear - effectiveThreatYear
+  const riskWindowYears = dataExpirationYear - horizon.effective
   return {
     dataRetentionYears: retentionYears,
-    estimatedQuantumThreatYear: effectiveThreatYear,
+    estimatedQuantumThreatYear: horizon.effective,
+    crqcEstimateYear: horizon.crqc,
+    regulatoryHorizonYear: horizon.regulatory,
     currentYear,
     isAtRisk: riskWindowYears > 0,
     riskWindowYears: Math.max(0, riskWindowYears),
@@ -57,15 +78,17 @@ export function computeTNFLRiskWindow(input: AssessmentInput): TNFLRiskWindow | 
     : Math.max(
         ...input.credentialLifetime!.map((v) => CREDENTIAL_LIFETIME_YEARS[v] ?? 0) // eslint-disable-line security/detect-object-injection
       )
-  const effectiveThreatYear = getEffectiveThreatYear(input.country)
+  const horizon = getThreatHorizon(input.country)
   const credentialExpiryYear = currentYear + lifetimeYears
-  const riskWindowYears = credentialExpiryYear - effectiveThreatYear
+  const riskWindowYears = credentialExpiryYear - horizon.effective
   const tnflRelevantUseCases = (input.cryptoUseCases ?? []).filter(
     (uc) => (USE_CASE_WEIGHTS[uc]?.tnflRelevance ?? 0) >= 7 // eslint-disable-line security/detect-object-injection
   )
   return {
     credentialLifetimeYears: lifetimeYears,
-    estimatedQuantumThreatYear: effectiveThreatYear,
+    estimatedQuantumThreatYear: horizon.effective,
+    crqcEstimateYear: horizon.crqc,
+    regulatoryHorizonYear: horizon.regulatory,
     currentYear,
     isAtRisk: riskWindowYears > 0 && hasSigningAlgorithms,
     riskWindowYears: Math.max(0, riskWindowYears),

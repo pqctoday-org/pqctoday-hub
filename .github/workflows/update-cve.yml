@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 jobs:
   scrape-and-update:
@@ -26,12 +27,45 @@ jobs:
         # NVD_API_KEY is optional but recommended — bumps the rate limit from
         # 5 req/30s to 50 req/30s, cutting runtime ~30 min → ~3 min. Without
         # the secret, the script falls back to public-rate (slower but works).
+        # continue-on-error so a failure still opens a tracking issue below
+        # instead of going unnoticed — this exact silent-failure mode (a
+        # missing scripts/scrape-nvd.py) previously ran red for weeks with
+        # nothing surfacing it outside `gh run list` history.
+        id: scrape
+        continue-on-error: true
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
         run: python3 scripts/scrape-nvd.py
 
+      - name: Open tracking issue on scrape failure
+        if: steps.scrape.outcome == 'failure'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `CVE snapshot scrape failed (week of ${context.runId})`,
+              body: [
+                'The weekly NVD CVE snapshot refresh (`update-cve.yml`) failed.',
+                '',
+                `Run: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+                '',
+                'public/data/cve-snapshot.json was NOT updated this run — the Crypto',
+                'Vulnerability Watch tool is now serving an older snapshot than usual.',
+                'Check the run log for the failure, fix it, and re-run via workflow_dispatch.',
+              ].join('\n'),
+              labels: ['cve-snapshot:failure'],
+            })
+
       - name: Commit and Push Changes
+        if: steps.scrape.outcome == 'success'
         uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7
         with:
           commit_message: 'chore(data): update cve-snapshot.json [skip ci]'
           file_pattern: 'public/data/cve-snapshot.json'
+
+      - name: Fail the job if the scrape failed
+        if: steps.scrape.outcome == 'failure'
+        run: exit 1

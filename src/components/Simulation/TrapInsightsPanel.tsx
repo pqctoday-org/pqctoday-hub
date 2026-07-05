@@ -12,24 +12,14 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ChevronDown, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { FRAMEWORK_PHASES, type PhaseId } from '@/data/frameworkPhases'
-import { resourcesForPhase } from '@/data/phaseResourceMap'
-import { MODULE_CATALOG } from './resourceContract'
-import { readTrapTally, clearTrapTally, TRAP_EVENT, type TrapTallyEntry } from './simTrapTally'
-
-// The remediating resource for a misconception = the first Learn module that
-// serves its phase, so a spike points straight at the lesson that fixes it.
-function remediation(phaseId: string): { to: string; label: string } | null {
-  const learn = resourcesForPhase('learn', phaseId as PhaseId)[0]
-  if (!learn) return null
-  return { to: `/learn/${learn}`, label: MODULE_CATALOG[learn]?.title ?? learn }
-}
-
-const phaseName = (phaseId: string): string => {
-  const fp = FRAMEWORK_PHASES[phaseId as PhaseId]
-  if (!fp) return phaseId
-  return fp.number === null ? fp.name : `P${fp.number} · ${fp.name}`
-}
+import {
+  readTrapTally,
+  clearTrapTally,
+  remediation,
+  phaseName,
+  TRAP_EVENT,
+  type TrapTallyEntry,
+} from './simTrapTally'
 
 export function TrapInsightsPanel() {
   const [tally, setTally] = useState<TrapTallyEntry[]>(() => readTrapTally())

@@ -150,6 +150,13 @@ const TREE: PhaseTree = {
               to: '/learn/cbom',
               moduleId: 'cbom',
             },
+            {
+              kind: 'learn',
+              label:
+                'Learn: what CVE-based vulnerability watch misses (side-channel, quantum progress)',
+              to: '/learn/entropy-randomness',
+              moduleId: 'entropy-randomness',
+            },
           ],
         },
       ],

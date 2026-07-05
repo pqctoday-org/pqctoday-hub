@@ -75,9 +75,27 @@ const TREE: PhaseTree = {
           steps: [
             {
               kind: 'activity',
+              label: 'Compare the six costing models before trusting a number',
+              to: '/business/tools/cost-model-explorer',
+              artifactType: 'cost-model-comparison',
+            },
+            {
+              kind: 'activity',
               label: 'Model the multi-year migration budget & ROI',
               to: '/business/tools/roi-calculator',
               artifactType: 'roi-model',
+            },
+            {
+              kind: 'activity',
+              label: 'Quantify breach exposure (classical vs quantum)',
+              to: '/business/tools/breach-simulator',
+              artifactType: 'breach-scenario',
+            },
+            {
+              kind: 'activity',
+              label: 'Model the cost of inaction (delay vs migrate now)',
+              to: '/business/tools/cost-of-inaction',
+              artifactType: 'cost-of-inaction',
             },
           ],
         },

@@ -46,7 +46,24 @@ export interface TourStage {
  * Order is program order; pilots (p5) and infrastructure (p6) kept separate.
  */
 export const EXEC_TOUR_STAGES: readonly TourStage[] = [
-  { phase: 'p0', depth: 'deep', revealArtifacts: ['program-charter', 'roi-model', 'board-deck'] },
+  {
+    phase: 'p0',
+    depth: 'deep',
+    // Order follows the real Phase 0 activity sequence (see simTree.p0): the four
+    // financial-justification docs are Activity 0.2 (Build the Budget Structure);
+    // program-charter and board-deck are Activity 0.4 (Draft the Program Charter) —
+    // the charter formalizes the case the budget docs just built, and the board
+    // pitch follows the charter. Previously program-charter was listed first,
+    // ahead of the case that justifies it — fixed 07042026.
+    revealArtifacts: [
+      'cost-model-comparison',
+      'roi-model',
+      'breach-scenario',
+      'cost-of-inaction',
+      'program-charter',
+      'board-deck',
+    ],
+  },
   { phase: 'p1', depth: 'light', lightStep: { kind: 'learn', ref: 'data-asset-sensitivity' } },
   { phase: 'p2', depth: 'light', lightStep: { kind: 'learn', ref: 'cbom' } },
   { phase: 'p3', depth: 'deep', revealArtifacts: ['risk-register'] },

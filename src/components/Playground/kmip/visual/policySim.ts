@@ -78,7 +78,9 @@ const inNameList = (list: string[] | undefined, a: string): boolean =>
  * cutoff; unknown names fall to classical (fail-closed for cutoffs). */
 const isPqc = (a: string): boolean =>
   /^(ML-KEM|ML-DSA|SLH-DSA|HSS|LMS|XMSS|Falcon|HQC|BIKE|FrodoKEM|Classic-McEliece)/i.test(a) ||
-  /ML-DSA|ML-KEM/i.test(a) // composite names carry a PQC primary
+  // composite names carry a PQC primary; hybrid KEMs spell it without the
+  // hyphen (X25519MLKEM768) — rule.rs matches_class, 2026-07-04 parity.
+  /ML-DSA|ML-KEM|MLKEM/i.test(a)
 const isSymmetric = (a: string): boolean => /^(AES|ChaCha20|HMAC|KMAC|SHA)/i.test(a) && !isPqc(a)
 const matchesClass = (algo: string, cls: string | undefined): boolean => {
   if (!cls) return true // no class on the rule → class dimension unconstrained
@@ -100,6 +102,13 @@ const opMatches = (ruleOps: string[], reqOp: string): boolean => {
 
 const opsOf = (r: EditableRule): string[] =>
   r.lists.ops ?? r.lists.ops_affected ?? (r.scalars.op ? [r.scalars.op] : [])
+
+/** rule.rs::DEFAULT_PROVENANCE_OPS + scoped_op_matches (2026-07-04): the
+ * require_* provenance rules gate the creation/ingress surface when the
+ * policy writes no `ops:` — never the use ops policies leave open. */
+const DEFAULT_PROVENANCE_OPS = ['Create', 'CreateKeyPair', 'Register', 'Import']
+const scopedOpMatches = (ruleOps: string[] | undefined, reqOp: string): boolean =>
+  (ruleOps?.length ? ruleOps : DEFAULT_PROVENANCE_OPS).some((o) => opMatch1(o, reqOp))
 
 const parseDate = (s: string | undefined): Date | null =>
   s && /^\d{4}-\d{2}-\d{2}/.test(s) ? new Date(s.slice(0, 10)) : null
@@ -268,15 +277,19 @@ export function evaluatePolicy(policy: EditablePolicy, req: SimRequest): SimResu
       case 'temporal_cutoff': {
         if (!opMatches(ops, req.op)) break
         const after = r.scalars.after
-        if (!after || after === 'always') break
-        if (!reqDate) {
+        if (!after) break
+        // Engine parity (TimeBound::Always, 2026-07-04): `after: "always"`
+        // means the cutoff ALWAYS bites — it is an unconditional class ban
+        // (classical.yaml uses this), not a rule to skip.
+        const always = after === 'always'
+        if (!always && !reqDate) {
           skip('no request date — not evaluated')
           break
         }
         if (!carried) break
         // Engine order: date bites → algorithms list (if any) → class. Both
         // the list AND the class must hold (rule.rs L597-622).
-        const bites = reqDate >= new Date(after)
+        const bites = always || (reqDate !== null && reqDate >= new Date(after))
         const listOk = !r.lists.algorithms?.length || inAlgoList(r.lists.algorithms, carried)
         const classOk = matchesClass(carried, r.scalars.algorithm_class)
         if (bites && listOk && classOk) {
@@ -289,6 +302,9 @@ export function evaluatePolicy(policy: EditablePolicy, req: SimRequest): SimResu
         break
       }
       case 'require_custom_attribute':
+        // Creation-scoped by default (rule.rs scoped_op_matches, 2026-07-04)
+        // — an untagged key's Encrypt/Decrypt/Verify is not this rule's business.
+        if (!scopedOpMatches(r.lists.ops, req.op)) break
         if (inAlgoList(r.lists.algorithms, carried)) {
           matched = true
           const name = lc(r.scalars.attribute_name ?? '').replace(/^x-/, '')
@@ -302,6 +318,8 @@ export function evaluatePolicy(policy: EditablePolicy, req: SimRequest): SimResu
         }
         break
       case 'require_usage_mask':
+        // Creation-scoped by default, mirroring require_custom_attribute.
+        if (!scopedOpMatches(r.lists.ops, req.op)) break
         if (algoMatches(r.scalars.algorithm ?? '', carried)) {
           matched = true
           const ok = (r.lists.flags ?? []).every((f) => flags.includes(lc(f)))

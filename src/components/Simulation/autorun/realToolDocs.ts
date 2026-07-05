@@ -12,6 +12,13 @@
 import type { ExecutiveDocumentType } from '@/services/storage/types'
 import { ORG, CUR, REG, type DemoDoc, type DemoSector } from './demoDocs'
 import {
+  deriveRoiDoc,
+  deriveBreachDoc,
+  deriveInactionDoc,
+  deriveBoardDeck,
+  deriveExplorerDoc,
+} from './derivedFinancialDocs'
+import {
   buildMarkdown as buildProgramCharter,
   STEERCO_ROLE_IDS,
   WORKSTREAMS,
@@ -45,6 +52,20 @@ import {
   type DataAtRestState,
 } from '@/components/BusinessCenter/tools/DataAtRestStrategy'
 import type { FrameworkRoleId } from '@/data/roleCrosswalk'
+import { HSM_VENDORS } from '@/components/PKILearning/modules/HsmPqc/data/hsmVendorData'
+
+/**
+ * Thales Luna is the fleet vendor for this demo org. Derived from `HSM_VENDORS`
+ * (itself catalog-derived, see that module's header) rather than re-typed here,
+ * so a firmware/support update in the single source of truth doesn't leave this
+ * sample input stating a stale fact.
+ */
+const THALES_LUNA_VENDOR = HSM_VENDORS.find((v) => v.id === 'thales-luna')
+const thalesLunaInventoryLine = (): string => {
+  const v = THALES_LUNA_VENDOR
+  if (!v) return 'Thales Luna Network HSM 7; 4 units across 2 data centers'
+  return `${v.product} — full PQC support in firmware ${v.firmwareVersion} (${v.supportedPQCAlgorithms.join(', ')}); 4 units across 2 data centers`
+}
 
 const ALL_ROLE_IDS: FrameworkRoleId[] = [
   'qrpm',
@@ -83,10 +104,18 @@ function programCharterState(sector: DemoSector): CharterState {
         : 'Chief Information Security Officer'
   return {
     programName: 'Post-Quantum Cryptography Migration Program',
+    purpose:
+      'Migrate the enterprise to NIST-standardized post-quantum cryptography ahead of mandate deadlines — protecting harvest-now-decrypt-later data and long-lived trust anchors — and establish durable crypto-agility.',
+    scopeInclude:
+      'Internet-exposed key exchange (TLS, VPN), >10-year secrecy data, and signature/PKI trust anchors across Tier-1 systems (Two-Track: HNDL + TNFL).',
+    scopeExclude:
+      'Systems past their confidentiality horizon or slated for retirement — crypto-shred / decommission rather than migrate.',
     sponsorName: sponsorTitle,
     sponsorTitle,
     qrpmName: 'Head of Cryptographic Engineering',
-    cadence: 'Monthly',
+    cadencePmo: 'Weekly',
+    cadenceSteerCo: 'Monthly',
+    cadenceBoard: 'Quarterly',
     budgetYear1: `${budget(sector, 1.8)} — discovery, tooling, 2–3 hybrid pilots, training`,
     budgetMultiYear: 'Phased multi-year program aligned to infrastructure refresh cycles',
     budgetHorizonYears: '3',
@@ -98,10 +127,14 @@ function programCharterState(sector: DemoSector): CharterState {
       string,
       boolean
     >,
+    successCriteria:
+      'Phase-0 gate passed; board KPI pack baselined (Coverage, Trust, Inventory, Vendors, Agility) with Year-1 targets; CBOM v1 at ≥70% Tier-1 coverage; two hybrid pilots (TLS, VPN) live.',
     riskAppetiteStatement:
       'HNDL: ≤20% of >10-year secrecy data quantum-vulnerable by end of 2027, 0% by end of 2029. ' +
       'TNFL: all production software/firmware signing on NIST-approved quantum-resistant ' +
       'signatures by end of 2027.',
+    escalationTriggers:
+      'Escalate to SteerCo/Board on: a material change in CRQC timeline estimates; the program running >6 months behind the regulatory buffer; a confirmed vulnerability in a deployed PQC algorithm; a Tier-1 vendor abandoning PQC without an alternative.',
   }
 }
 
@@ -109,12 +142,34 @@ function initialScopingState(sector: DemoSector): { state: ScopingState; industr
   return {
     state: {
       systems: [
-        'Customer-facing TLS gateway',
-        'Core transaction database',
-        'Identity & access management',
+        {
+          name: 'Customer-facing TLS gateway',
+          priority: 'A',
+          ownership: 'Vendor',
+          notes: 'External TLS; RSA-2048 / ECDHE',
+        },
+        {
+          name: 'Core transaction database',
+          priority: 'B',
+          ownership: 'Internal',
+          notes: 'Long-lived secrecy data (>10yr)',
+        },
+        {
+          name: 'Identity & access management',
+          priority: 'A',
+          ownership: 'Vendor',
+          notes: 'Trust anchor; ECDSA P-256',
+        },
       ],
       vendors: ['OpenSSL', 'Microsoft', 'F5'],
       estateInstances: '2400',
+      estate: {
+        tlsEndpoints: '1200',
+        certificates: '800',
+        vpnTunnels: '150',
+        hsmKeys: '200',
+        codeSigningPipelines: '50',
+      },
       seeded: false,
     },
     industry: ORG[sector],
@@ -144,7 +199,7 @@ function infraModernizationPlanState(sector: DemoSector): InfraModernizationStat
     endEntityDays: '90',
     dualStackCa: true,
     trackingMtc: sector === 'telecom' || sector === 'financial',
-    hsmInventory: 'Thales Luna 7.8 (PQC-capable firmware pending); 4 units across 2 data centers',
+    hsmInventory: thalesLunaInventoryLine(),
     firmwareUpgradeScheduled: true,
     hardwareReplacementPlanned: false,
     cloudKmsConfigured: sector !== 'government',
@@ -247,6 +302,13 @@ function dataAtRestStrategyState(sector: DemoSector): DataAtRestState {
 export const REAL_DOC_GENERATORS: Partial<
   Record<ExecutiveDocumentType, (sector: DemoSector) => DemoDoc>
 > = {
+  // Financial artifacts derived from the shared Business Case math so the tour
+  // can never drift from the real ROI / Breach / Cost-of-Inaction tools.
+  'roi-model': (sector) => deriveRoiDoc(sector),
+  'breach-scenario': (sector) => deriveBreachDoc(sector),
+  'cost-of-inaction': (sector) => deriveInactionDoc(sector),
+  'cost-model-comparison': (sector) => deriveExplorerDoc(sector),
+  'board-deck': (sector) => deriveBoardDeck(sector),
   'program-charter': (sector) => ({
     title: 'Program Charter',
     data: buildProgramCharter(programCharterState(sector)),

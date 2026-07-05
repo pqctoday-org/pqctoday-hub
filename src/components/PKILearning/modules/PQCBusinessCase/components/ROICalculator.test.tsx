@@ -2,8 +2,18 @@
 import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import { ROICalculator } from './ROICalculator'
 import type { ExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+import type { AssessmentProfile } from '@/hooks/assessmentTypes'
+
+// The calculator renders <Link> in its cross-check panel, so tests need a Router.
+const renderCalc = () =>
+  render(
+    <MemoryRouter>
+      <ROICalculator />
+    </MemoryRouter>
+  )
 
 // ── Mocks ──────────────────────────────────────────────────────────────────
 
@@ -95,7 +105,7 @@ describe('ROICalculator', () => {
   })
 
   it('renders the executive framing banner and all four KPI cards', () => {
-    render(<ROICalculator />)
+    renderCalc()
     expect(screen.getByText(/Board-ready business case/i)).toBeInTheDocument()
     expect(screen.getByText(/Total Cost \(3yr\)/i)).toBeInTheDocument()
     expect(screen.getByText(/Cost of Inaction \(3yr\)/i)).toBeInTheDocument()
@@ -104,26 +114,26 @@ describe('ROICalculator', () => {
   })
 
   it('offers markdown, PDF, and DOCX export formats', () => {
-    render(<ROICalculator />)
+    renderCalc()
     const exportable = screen.getByTestId('exportable')
     expect(exportable.dataset.formats).toBe('markdown,pdf,docx')
   })
 
   it('renders the three decomposed quantum-multiplier sliders (HNDL, CRQC, detection)', () => {
-    render(<ROICalculator />)
+    renderCalc()
     expect(screen.getByLabelText(/HNDL Exposure/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/Post-CRQC Attacker Uplift/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/Detection-Timeline Uplift/i)).toBeInTheDocument()
   })
 
   it('renders the annual opex and discount-rate inputs', () => {
-    render(<ROICalculator />)
+    renderCalc()
     expect(screen.getByLabelText(/Annual Opex \(% of capex\)/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/Discount Rate \(WACC\)/i)).toBeInTheDocument()
   })
 
   it('shows the methodology section explaining NPV, payback, and sensitivity', () => {
-    render(<ROICalculator />)
+    renderCalc()
     expect(screen.getByText(/Calculation Methodology/i)).toBeInTheDocument()
     // The methodology accordion contains these concepts (text may appear elsewhere too,
     // so we just verify their presence somewhere in the rendered component).
@@ -151,7 +161,7 @@ describe('ROICalculator', () => {
         generatedAt: '',
       },
     }
-    render(<ROICalculator />)
+    renderCalc()
     const frameworksSlider = screen.getByLabelText(/Applicable Frameworks/i) as HTMLInputElement
     // Only 2 of the 3 compliance impacts have requiresPQC=true; default should be 2.
     expect(frameworksSlider.value).toBe('2')
@@ -162,20 +172,20 @@ describe('ROICalculator', () => {
       ...baseMockData,
       complianceSelections: ['ISO 27001', 'FedRAMP', 'SOC 2'],
     }
-    render(<ROICalculator />)
+    renderCalc()
     const frameworksSlider = screen.getByLabelText(/Applicable Frameworks/i) as HTMLInputElement
     expect(frameworksSlider.value).toBe('3')
   })
 
   it('falls back to industry frameworks length when neither assessment nor selections exist', () => {
     // baseMockData has 5 frameworksByIndustry and empty complianceSelections
-    render(<ROICalculator />)
+    renderCalc()
     const frameworksSlider = screen.getByLabelText(/Applicable Frameworks/i) as HTMLInputElement
     expect(frameworksSlider.value).toBe('5')
   })
 
   it('recomputes the quantum multiplier when the HNDL slider changes', () => {
-    render(<ROICalculator />)
+    renderCalc()
     const hndlSlider = screen.getByLabelText(/HNDL Exposure/i) as HTMLInputElement
     // Default 50/50/50 = 2.5x — rendered in a <span> next to "quantum amp".
     expect(screen.getByText(/^2\.50×$/)).toBeInTheDocument()
@@ -185,9 +195,58 @@ describe('ROICalculator', () => {
   })
 
   it('exposes a tornado chart for sensitivity analysis', () => {
-    render(<ROICalculator />)
+    renderCalc()
     // The recharts mock replaces BarChart with a div carrying testId "tornado-chart".
     expect(screen.getByTestId('tornado-chart')).toBeInTheDocument()
     expect(screen.getByText(/Sensitivity — NPV impact at ±30%/i)).toBeInTheDocument()
+  })
+
+  it('cross-checks the per-product model against the assessment-derived estimate', () => {
+    mockData = {
+      ...baseMockData,
+      isAssessmentComplete: true,
+      assessmentResult: {
+        riskScore: 60,
+        riskLevel: 'medium',
+        algorithmMigrations: [
+          {
+            classical: 'RSA-2048',
+            quantumVulnerable: true,
+            replacement: 'ML-KEM-768',
+            urgency: 'near-term',
+            notes: '',
+          },
+          {
+            classical: 'ECDSA',
+            quantumVulnerable: true,
+            replacement: 'ML-DSA-65',
+            urgency: 'near-term',
+            notes: '',
+          },
+        ],
+        complianceImpacts: [],
+        recommendedActions: [],
+        narrative: '',
+        generatedAt: '',
+        // Partial profile is enough — computeMigrationCostFromProfile reads fields
+        // defensively with defaults.
+        assessmentProfile: {
+          infrastructure: ['Hardware', 'Cloud'],
+          systemScale: '51-200',
+        } as unknown as AssessmentProfile,
+      },
+    }
+    renderCalc()
+    expect(screen.getByText(/Cross-check vs your assessment/i)).toBeInTheDocument()
+    expect(screen.getByText(/Assessment-derived estimate/i)).toBeInTheDocument()
+    // The reconciliation renders exactly one verdict (aligned or divergent).
+    expect(screen.getByText(/Aligned\.|Divergent\./)).toBeInTheDocument()
+  })
+
+  it('prompts to run the assessment when none is complete (cross-check empty state)', () => {
+    // baseMockData has isAssessmentComplete=false and assessmentResult=null.
+    renderCalc()
+    expect(screen.getByText(/Cross-check vs your assessment/i)).toBeInTheDocument()
+    expect(screen.getByText(/generate a second, independent cost estimate/i)).toBeInTheDocument()
   })
 })

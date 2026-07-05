@@ -12,6 +12,10 @@ const HNDLTimelineBar = ({ hndl }: { hndl: HNDLRiskWindow }) => {
   )
   const threatOffset = ((hndl.estimatedQuantumThreatYear - hndl.currentYear) / totalSpan) * 100
   const dataEndOffset = (hndl.dataRetentionYears / totalSpan) * 100
+  // The marker is the effective act-by year: the earlier of the CRQC estimate and
+  // (when it binds first) the jurisdiction's regulatory mandate horizon.
+  const bindsOnRegulation = hndl.regulatoryHorizonYear !== undefined
+  const crqcYear = hndl.crqcEstimateYear ?? hndl.estimatedQuantumThreatYear
 
   return (
     <div>
@@ -20,8 +24,8 @@ const HNDLTimelineBar = ({ hndl }: { hndl: HNDLRiskWindow }) => {
         role="img"
         aria-label={
           hndl.isAtRisk
-            ? `Your data persists ${hndl.riskWindowYears} years beyond the quantum threat horizon. HNDL attacks are an active concern.`
-            : 'Your data retention period does not extend beyond the estimated quantum threat year.'
+            ? `Your data persists ${hndl.riskWindowYears} years beyond your ${hndl.estimatedQuantumThreatYear} migration deadline. HNDL attacks are an active concern.`
+            : `Your data retention period does not extend beyond your ${hndl.estimatedQuantumThreatYear} migration deadline.`
         }
       >
         <div className="absolute top-5 left-0 right-0 h-2 rounded-full bg-border" />
@@ -79,7 +83,13 @@ const HNDLTimelineBar = ({ hndl }: { hndl: HNDLRiskWindow }) => {
       {hndl.isAtRisk ? (
         <p className="text-sm text-destructive mt-3 font-medium">
           Your data persists {hndl.riskWindowYears} year{hndl.riskWindowYears !== 1 ? 's' : ''}{' '}
-          beyond the estimated quantum threat horizon. HNDL attacks are an active concern.
+          beyond your ~{hndl.estimatedQuantumThreatYear} migration deadline. HNDL attacks are an
+          active concern.
+          <span className="text-xs text-muted-foreground font-normal block mt-1">
+            {bindsOnRegulation
+              ? `Deadline set by your jurisdiction's ${hndl.regulatoryHorizonYear} mandate — earlier than the ~${crqcYear} quantum-computer (CRQC) arrival estimate.`
+              : `Deadline based on the ~${crqcYear} quantum-computer (CRQC) arrival estimate.`}
+          </span>
           {hndl.isEstimated && (
             <span className="text-xs text-muted-foreground font-normal block mt-1">
               Based on a conservative 15-year retention estimate — define your retention policy for
@@ -89,7 +99,8 @@ const HNDLTimelineBar = ({ hndl }: { hndl: HNDLRiskWindow }) => {
         </p>
       ) : (
         <p className="text-sm text-success mt-3 font-medium">
-          Your data retention period does not extend beyond the estimated quantum threat year.
+          Your data retention period does not extend beyond your ~{hndl.estimatedQuantumThreatYear}{' '}
+          migration deadline.
           {hndl.isEstimated && (
             <span className="text-xs text-muted-foreground font-normal block mt-1">
               Based on a conservative 15-year retention estimate.
@@ -108,6 +119,8 @@ const HNFLTimelineBar = ({ hnfl }: { hnfl: TNFLRiskWindow }) => {
   )
   const threatOffset = ((hnfl.estimatedQuantumThreatYear - hnfl.currentYear) / totalSpan) * 100
   const credEndOffset = (hnfl.credentialLifetimeYears / totalSpan) * 100
+  const bindsOnRegulation = hnfl.regulatoryHorizonYear !== undefined
+  const crqcYear = hnfl.crqcEstimateYear ?? hnfl.estimatedQuantumThreatYear
 
   return (
     <div>
@@ -116,8 +129,8 @@ const HNFLTimelineBar = ({ hnfl }: { hnfl: TNFLRiskWindow }) => {
         role="img"
         aria-label={
           hnfl.isAtRisk
-            ? `Your credentials remain trusted ${hnfl.riskWindowYears} years beyond the quantum threat horizon. HNFL attacks on signature keys are an active concern.`
-            : 'Your credential lifetimes expire before the estimated quantum threat year.'
+            ? `Your credentials remain trusted ${hnfl.riskWindowYears} years beyond your ${hnfl.estimatedQuantumThreatYear} migration deadline. HNFL attacks on signature keys are an active concern.`
+            : `Your credential lifetimes expire before your ${hnfl.estimatedQuantumThreatYear} migration deadline.`
         }
       >
         <div className="absolute top-5 left-0 right-0 h-2 rounded-full bg-border" />
@@ -176,8 +189,14 @@ const HNFLTimelineBar = ({ hnfl }: { hnfl: TNFLRiskWindow }) => {
         <div className="mt-3 space-y-1">
           <p className="text-sm text-destructive font-medium">
             Your credentials are trusted {hnfl.riskWindowYears} year
-            {hnfl.riskWindowYears !== 1 ? 's' : ''} beyond the quantum threat horizon. Signature
-            keys must be migrated before {hnfl.estimatedQuantumThreatYear}.
+            {hnfl.riskWindowYears !== 1 ? 's' : ''} beyond your ~{hnfl.estimatedQuantumThreatYear}{' '}
+            migration deadline. Signature keys must be migrated before{' '}
+            {hnfl.estimatedQuantumThreatYear}.
+            <span className="text-xs text-muted-foreground font-normal block mt-1">
+              {bindsOnRegulation
+                ? `Deadline set by your jurisdiction's ${hnfl.regulatoryHorizonYear} mandate — earlier than the ~${crqcYear} quantum-computer (CRQC) arrival estimate.`
+                : `Deadline based on the ~${crqcYear} quantum-computer (CRQC) arrival estimate.`}
+            </span>
             {hnfl.isEstimated && (
               <span className="text-xs text-muted-foreground font-normal block mt-1">
                 Based on a conservative 10-year credential lifetime estimate — audit your

@@ -90,7 +90,7 @@ export function buildExecutiveVariant(data: ExecutiveModuleData): PitchVariant {
     {
       id: 'cost-benefit',
       title: 'Cost-Benefit Analysis',
-      description: 'Migration cost vs. cost of inaction. Refine with the ROI Calculator (Step 1).',
+      description: 'Migration cost vs. cost of inaction. Refine with the ROI Calculator (Step 2).',
       fields: [
         {
           id: 'analysis',
