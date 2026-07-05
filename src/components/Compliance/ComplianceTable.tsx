@@ -83,7 +83,9 @@ export type SortColumn = keyof ComplianceRecord
 
 const PQC_ALGOS = ['ML-KEM', 'ML-DSA', 'SLH-DSA', 'LMS', 'XMSS', 'HSS', 'FN-DSA', 'Falcon']
 
-const ComplianceRow = ({
+// Exported (ACCURACY-0705) so a focused test can render just one row and
+// assert the pqcCoverage rendering without mounting the full 1500+-line table.
+export const ComplianceRow = ({
   record,
   index,
   onEnrich,
@@ -164,7 +166,15 @@ const ComplianceRow = ({
 
       {/* PQC Coverage Column */}
       <td className="px-4 py-3 relative group">
-        {record.pqcCoverage === 'Not Yet Analyzed' ? (
+        {/* ACCURACY-0705: an empty-string pqcCoverage (e.g. the 889 Common
+            Criteria certs that were never run through PQC detection) used to
+            fall through to the same terminal branch as an explicit, analyzed
+            'No PQC Mechanisms Detected' -- making "we never checked this"
+            visually indistinguishable from "we checked, found nothing".
+            Scoped to the empty-STRING case only -- the boolean `false` value
+            this field can also carry (services.ts) has different, unverified
+            semantics and isn't touched here. */}
+        {record.pqcCoverage === 'Not Yet Analyzed' || record.pqcCoverage === '' ? (
           <span className="text-xs text-muted-foreground italic">Not yet analyzed</span>
         ) : record.pqcCoverage && record.pqcCoverage !== 'No PQC Mechanisms Detected' ? (
           <div className="flex items-center">
