@@ -73,23 +73,30 @@ describe('hybrid-migration-window — composite signing window', () => {
     expect(r.verdict.kind).toBe('allow')
   })
 
-  it('ENGINE PARITY: classical Create past the 2030 cutoff is denied (temporal_cutoff)', () => {
+  it('ENGINE PARITY: classical CreateKeyPair past the 2030 cutoff is denied (temporal_cutoff)', () => {
+    // 2026-07-04 fix: the old rule gated the bare `Create` op — the
+    // SYMMETRIC creation op (AES/HMAC) — which can never carry a classical
+    // ASYMMETRIC algorithm like ECDSA-P256/ECDH-P256 (those always arrive via
+    // `CreateKeyPair`), so the rule was a permanent no-op. The corrected rule
+    // gates `CreateKeyPair`. Exercised here on the `:KeyAgreement` purpose,
+    // since `:Sign` is already denied from the window's START (2026) by an
+    // earlier rule — this isolates the NEW post-2030 cutoff specifically.
     const r = run('hybrid-migration-window.yaml', {
-      op: 'Create',
-      algorithm: 'ECDSA-P256',
+      op: 'CreateKeyPair:KeyAgreement',
+      algorithm: 'ECDH-P256',
       date: '2031-12-30',
     })
     expect(r.verdict.kind).toBe('deny')
   })
 
-  it('classical Create in-window is denied with no exception (Phase 3: dead exception rules removed)', () => {
-    // Phase 3 replaced the pure-classical/pure-PQC denylists (and their
-    // never-reachable exception attributes) with the composite requirement:
-    // the description now says the window has NO exceptions. So the old
-    // legacy-verify tag is inert, and classical Create is denied for wanting
-    // a composite — cleanly, by one rule.
+  it('classical signing-key creation in-window is denied with no exception', () => {
+    // 2026-07-04 rewrite: classical signing is cut off from the window's
+    // START (2026-01-01) by a class-based temporal_cutoff on
+    // `CreateKeyPair:Sign` (replacing the old unconditional composite mandate
+    // that also denied pure PQC — see the hybrid-migration-window.yaml
+    // description). No attribute exempts it.
     const r = run('hybrid-migration-window.yaml', {
-      op: 'Create',
+      op: 'CreateKeyPair:Sign',
       algorithm: 'ECDSA-P256',
       date: '2027-06-01',
       attrs: ['x-pqctoday-purpose=legacy-verify'],
@@ -384,20 +391,28 @@ describe('layer 2 — sim verdict ≡ real engine dry_run verdict', () => {
   // (policy file, request, expected verdict) — expected is what BOTH layers
   // must produce. Rekey cases compare kind only.
   const MATRIX: [string, Partial<SimRequest>, 'allow' | 'deny' | 'rekey'][] = [
-    // date reaches temporal + windowed rules
+    // date reaches temporal + windowed rules. 2026-07-04: these three used
+    // to run against the bare `Create` op (symmetric — AES/HMAC only), which
+    // can never actually carry a classical asymmetric algorithm like
+    // ECDSA-P256 (real requests use `CreateKeyPair` for that); it "worked"
+    // only because the OLD unconditional composite mandate listed `Create`
+    // in its ops_affected as a belt-and-braces catch-all. The corrected
+    // policy scopes signing rules to signing ops, so this progression now
+    // runs against `CreateKeyPair:Sign` — the real op a classical signing
+    // key creation request uses.
     [
       'hybrid-migration-window.yaml',
-      { op: 'Create', algorithm: 'ECDSA-P256', date: '2025-06-01' },
+      { op: 'CreateKeyPair:Sign', algorithm: 'ECDSA-P256', date: '2025-06-01' },
       'allow',
     ],
     [
       'hybrid-migration-window.yaml',
-      { op: 'Create', algorithm: 'ECDSA-P256', date: '2027-06-01' },
+      { op: 'CreateKeyPair:Sign', algorithm: 'ECDSA-P256', date: '2027-06-01' },
       'deny',
     ],
     [
       'hybrid-migration-window.yaml',
-      { op: 'Create', algorithm: 'ECDSA-P256', date: '2031-12-30' },
+      { op: 'CreateKeyPair:Sign', algorithm: 'ECDSA-P256', date: '2031-12-30' },
       'deny',
     ],
     [
@@ -411,16 +426,25 @@ describe('layer 2 — sim verdict ≡ real engine dry_run verdict', () => {
       { op: 'Sign', algorithm: 'ECDSA-P256', date: '2031-12-30' },
       'deny',
     ],
-    // usage mask fails closed / passes when declared (composite Sign)
+    // usage mask fails closed / passes when declared (composite key
+    // CREATION — 2026-07-04: require_usage_mask is now creation-scoped by
+    // engine default (Create/CreateKeyPair/Register/Import), so it no
+    // longer gates a `Sign` USE request at all; test it on the creation op
+    // it actually governs).
     [
       'hybrid-migration-window.yaml',
-      { op: 'Sign', algorithm: 'ML-DSA-65-ED25519', date: '2027-06-01', usageFlags: [] },
+      {
+        op: 'CreateKeyPair:Sign',
+        algorithm: 'ML-DSA-65-ED25519',
+        date: '2027-06-01',
+        usageFlags: [],
+      },
       'deny',
     ],
     [
       'hybrid-migration-window.yaml',
       {
-        op: 'Sign',
+        op: 'CreateKeyPair:Sign',
         algorithm: 'ML-DSA-65-ED25519',
         date: '2027-06-01',
         usageFlags: ['Sign', 'Verify'],

@@ -81,6 +81,12 @@ const MATRIX_ALGOS: { algo: string; op: string | null }[] = [
   { algo: 'ML-KEM-1024', op: 'CreateKeyPair:KeyAgreement' },
   { algo: 'ML-KEM-768', op: 'CreateKeyPair:KeyAgreement' },
   { algo: 'SLH-DSA-SHA2-256s', op: 'CreateKeyPair:Sign' },
+  // Stateful HBS (SP 800-208) + the WD19 hybrid KEM — CNSA 2.0 allows
+  // LMS/XMSS and denies HSS; BSI mandates hybrid establishment. None of
+  // these were visible anywhere in the UI (2026-07-04 gap audit).
+  { algo: 'LMS', op: 'CreateKeyPair:Sign' },
+  { algo: 'HSS', op: 'CreateKeyPair:Sign' },
+  { algo: 'X25519MLKEM768', op: 'CreateKeyPair:KeyAgreement' },
   { algo: 'FrodoKEM-1344', op: 'CreateKeyPair:KeyAgreement' },
   { algo: 'Classic-McEliece-6688128', op: 'CreateKeyPair:KeyAgreement' },
   { algo: 'AES-256', op: 'Create' },
@@ -119,6 +125,19 @@ const DISPOSITION_STYLE: Record<Disposition, { cls: string; label: string }> = {
 const dryRunDisposition = (r: DryRunResult): Disposition =>
   r.kind === 'Deny' ? 'denied' : 'allowed'
 
+/** Governance tags supplied on every sweep dry-run (2026-07-04). The matrix
+ * answers "what does this policy say about the ALGORITHM" — without these,
+ * attribute-gated policies (cnsa-2.0 classification, bsi hybrid-partner,
+ * 2030 purpose) denied every creation cell for the missing tag and the whole
+ * matrix read as "everything denied", contradicting the preset blurb next to
+ * it. `require_custom_attribute` checks presence, not value, so a superset
+ * is safe and never changes an algorithm verdict. */
+const SWEEP_GOV_ATTRS: Record<string, string> = {
+  'pqctoday-cnsa-classification': 'Secret',
+  'pqctoday-hybrid-partner': 'ECDH-P384',
+  'pqctoday-purpose': 'production',
+}
+
 /** Sweep every engine-computed MATRIX_ALGOS entry against the CURRENTLY
  * ACTIVE engine policy at the given as-of date — shared by the List-tab
  * matrix and the Compare tab (which loads each side in turn before sweeping,
@@ -128,7 +147,9 @@ function sweepDispositions(engine: KmipEngine, date?: string): Record<string, Di
   for (const { algo, op } of MATRIX_ALGOS) {
     if (!op) continue
     try {
-      out[algo] = dryRunDisposition(engine.dryRun({ op, algorithm: algo, date }))
+      out[algo] = dryRunDisposition(
+        engine.dryRun({ op, algorithm: algo, date, attrs: SWEEP_GOV_ATTRS })
+      )
     } catch {
       out[algo] = 'neutral'
     }
@@ -142,28 +163,35 @@ function sweepDispositions(engine: KmipEngine, date?: string): Record<string, Di
  * review item #10/C2) tests BOTH, since "can I create this" and "can I use
  * one I already have" are genuinely different questions (e.g. rekey-on-use
  * policies allow creating a legacy algorithm but rewrite it at first Sign). */
-const USE_OP: Record<string, string> = {
-  'CreateKeyPair:Sign': 'Sign',
-  'CreateKeyPair:KeyAgreement': 'Encapsulate',
-  Create: 'Encrypt',
+const USE_OPS: Record<string, [string, string]> = {
+  // [protect-side use, recover-side use]. The recover column (Verify /
+  // Decrypt / Decapsulate) was missing entirely (2026-07-04) — exactly the
+  // ops transition policies promise to keep open for legacy artefacts, so
+  // their openness must be visible, and a policy that accidentally closes
+  // them must show up here.
+  'CreateKeyPair:Sign': ['Sign', 'SignatureVerify'],
+  'CreateKeyPair:KeyAgreement': ['Encapsulate', 'Decapsulate'],
+  Create: ['Encrypt', 'Decrypt'],
 }
 
-/** Op × algorithm coverage sweep — two ops per MATRIX_ALGOS entry (creation +
- * use), each a real dry-run at the shared as-of date. Keyed `${algo}|${op}`. */
+/** Op × algorithm coverage sweep — three ops per MATRIX_ALGOS entry (creation
+ * + protect-use + recover-use), each a real dry-run at the shared as-of date.
+ * Keyed `${algo}|${op}`. Use-side dry-runs model an EXISTING key: it carries
+ * the governance tags (a compliant creation stored them) and an Active state. */
 function sweepCoverage(engine: KmipEngine, date?: string): Record<string, Disposition> {
   const out: Record<string, Disposition> = {}
   for (const { algo, op: createOp } of MATRIX_ALGOS) {
     if (!createOp) continue
-    const useOp = USE_OP[createOp]
-    for (const op of [createOp, useOp]) {
+    for (const op of [createOp, ...USE_OPS[createOp]]) {
       const key = `${algo}|${op}`
       try {
         out[key] = dryRunDisposition(
           engine.dryRun({
             op,
             algorithm: algo,
-            currentAlgorithm: op === useOp ? algo : undefined,
+            currentAlgorithm: op === createOp ? undefined : algo,
             date,
+            attrs: SWEEP_GOV_ATTRS,
           })
         )
       } catch {
@@ -661,25 +689,37 @@ export function PolicyView({
                           <tr>
                             <th className="py-1 pr-3 font-semibold">Algorithm</th>
                             <th className="py-1 pr-3 font-semibold">Create</th>
-                            <th className="py-1 font-semibold">Use</th>
+                            <th className="py-1 pr-3 font-semibold">Protect</th>
+                            <th className="py-1 font-semibold">Recover</th>
                           </tr>
                         </thead>
                         <tbody>
                           {MATRIX_ALGOS.filter(({ op }) => op).map(({ algo, op: createOp }) => {
-                            const useOp = USE_OP[createOp!]
+                            const [protectOp, recoverOp] = USE_OPS[createOp!]
                             const dCreate = coverageDispositions[`${algo}|${createOp}`] ?? 'neutral'
-                            const dUse = coverageDispositions[`${algo}|${useOp}`] ?? 'neutral'
+                            const dProtect =
+                              coverageDispositions[`${algo}|${protectOp}`] ?? 'neutral'
+                            const dRecover =
+                              coverageDispositions[`${algo}|${recoverOp}`] ?? 'neutral'
                             return (
                               <tr key={algo} className="border-b border-border/40">
                                 <td className="py-1 pr-3 font-mono text-foreground">{algo}</td>
                                 <td className="py-1 pr-3">
                                   <span title={createOp!}>{DISPOSITION_STYLE[dCreate].label}</span>
                                 </td>
-                                <td className="py-1">
-                                  <span title={useOp}>{DISPOSITION_STYLE[dUse].label}</span>
-                                  {dCreate !== dUse && (
+                                <td className="py-1 pr-3">
+                                  <span title={protectOp}>{DISPOSITION_STYLE[dProtect].label}</span>
+                                  {dCreate !== dProtect && (
                                     <span className="ml-1.5 text-[9px] font-bold uppercase tracking-wide text-status-warning">
-                                      differs from create
+                                      differs
+                                    </span>
+                                  )}
+                                </td>
+                                <td className="py-1">
+                                  <span title={recoverOp}>{DISPOSITION_STYLE[dRecover].label}</span>
+                                  {dRecover === 'denied' && dProtect !== 'denied' && (
+                                    <span className="ml-1.5 text-[9px] font-bold uppercase tracking-wide text-destructive">
+                                      legacy locked out
                                     </span>
                                   )}
                                 </td>
@@ -689,10 +729,12 @@ export function PolicyView({
                         </tbody>
                       </table>
                       <p className="mt-1.5 text-[9.5px] text-muted-foreground">
-                        "Create" = would creating a new key of this algorithm be allowed. "Use" =
-                        would signing/encapsulating/encrypting with an EXISTING key of this
-                        algorithm be allowed — the two can differ (a rekey-on-use policy lets you
-                        keep an old key but rewrites it the first time you use it).
+                        "Create" = new key of this algorithm. "Protect" = Sign / Encrypt /
+                        Encapsulate with an existing key. "Recover" = Verify / Decrypt / Decapsulate
+                        — the ops transition policies keep open so legacy artefacts stay readable; a
+                        denial here on an otherwise-allowed algorithm is a red flag. Sweeps run with
+                        the governance tags supplied (classification, hybrid-partner, purpose), so
+                        cells reflect the ALGORITHM verdict, not a missing tag.
                       </p>
                     </div>
                   )}

@@ -16,19 +16,30 @@ const EXPECTED_RULES: Record<string, number> = {
   // Y5: encrypt-side KEM substitutions removed (deferred to Phase 5) → 9→7.
   // 2026-07-02: symmetric AES-256 Create default added → 8.
   'auto-migrate-on-use.yaml': 8,
-  'bsi-tr-02102.yaml': 7,
-  'classical.yaml': 5,
-  // Y9: HSS + XMSS^MT removed (multi-tree not in CNSA 2.0) → 12→11.
-  'cnsa-2.0.yaml': 11,
+  // 2026-07-04 gap-audit remediation: signature allowlist + opt-in composite
+  // + 2036 cutoffs + RSA PSS/OAEP constraints → 7→12.
+  'bsi-tr-02102.yaml': 12,
+  // 2026-07-04: hand-listed PQC denylist → class-based cutoffs ×5 → 5→9.
+  'classical.yaml': 9,
+  // 2026-07-04: SHA-384/512 hash gate + Encrypt/Encapsulate lifecycle gates → 11→14.
+  'cnsa-2.0.yaml': 14,
   'deterministic-signing.yaml': 1,
   'fips-hashing.yaml': 1,
-  'fips-only.yaml': 11,
+  // 2026-07-04: hash allowlist + OAEP constraint replace the dead weak-digest
+  // rule; usage-mask rules cover all FIPS 203/204 sets, then all 12 SLH-DSA
+  // sets (SLH-DSA was fully allowlisted but had no usage-mask rule at all)
+  // → 11→14→26.
+  'fips-only.yaml': 26,
+  // 2026-07-04: unconditional composite → window cutoffs ×2 + opt-in composite;
+  // the no-op post-2030 Create cutoff folded into one CreateKeyPair cutoff → 8.
   'hybrid-migration-window.yaml': 8,
   'pkcs11-mechanism-lockdown.yaml': 4,
-  // 2026-07-02: 2027–2029 hybrid composite window added → 11.
-  'pqc-migration-2030.yaml': 11,
-  // Y5: encrypt-side RSA→ML-KEM substitution removed → 7→6.
-  'pqc.yaml': 6,
+  // 2026-07-04: mechanism-dimension weak-crypto rules + DES/3DES denylist +
+  // class-based 2027 cutoff + post-2030 creation cutoff → 11→14; +ML-KEM-512
+  // usage-mask rule (rule 7 was missing the smallest KEM size) → 15.
+  'pqc-migration-2030.yaml': 15,
+  // 2026-07-04: Sign-path rekey extended to P-384/P-521/RSA-3072 → 6→9.
+  'pqc.yaml': 9,
   'training-permissive.yaml': 0,
 }
 

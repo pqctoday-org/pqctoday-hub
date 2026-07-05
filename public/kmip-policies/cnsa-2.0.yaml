@@ -15,9 +15,13 @@ metadata:
     outside the CNSA 2.0 approved list — at key creation/import AND at use
     (Sign, Encrypt, Encapsulate). SignatureVerify, Decrypt and Decapsulate
     stay open so legacy artefacts remain verifiable and recoverable during
-    the transition. The compliance_profile_gate rule at the end is a profile
-    label for reporting tools, not a gate — enforcement comes from the
-    allowlist/denylist rules above it.
+    the transition; governance rules (classification attribute, usage masks)
+    are creation-scoped for the same reason. Signature hashing is gated to
+    SHA-384/512 per the CNSA 2.0 FAQ. The compliance_profile_gate rule at
+    the end is a profile label for reporting tools, not a gate — enforcement
+    comes from the allowlist/denylist rules above it. NOTE: LMS and XMSS are
+    enforced at the policy plane, but this stack's Plane 2 cannot instantiate
+    stateful HBS keys yet — they are spec-only here.
 
     Approved suite (CNSA 2.0):
       - Symmetric:   AES-256
@@ -127,31 +131,59 @@ rules:
       - Classic-McEliece-6688128
     reason: "Algorithm not in CNSA 2.0 (FIPS-approved alternatives not in NSA suite)"
 
-  # 7. Custom attribute required tagging the CNSA classification.
+  # 7. Custom attribute required tagging the CNSA classification — at key
+  #    creation/ingress ONLY (explicit ops). Un-scoped, this rule fired on
+  #    every op and denied Encrypt/Decrypt/Verify/Get on any untagged key,
+  #    contradicting the legacy-recovery promise above (2026-07-04 gap audit).
   - type: require_custom_attribute
     attribute_name: pqctoday-cnsa-classification
     algorithms: [ML-DSA-87, ML-KEM-1024, AES-256, LMS, XMSS]
+    ops: [Create, CreateKeyPair, Register, Import]
     reason: "CNSA 2.0 keys must declare x-pqctoday-cnsa-classification (Unclassified|Secret|TopSecret)"
 
   # 8. Stateful HBS usage mask — LMS/XMSS are approved for firmware/software
   #    signing only, so they must carry Sign+Verify (stateful: track remaining
-  #    one-time signatures).
+  #    one-time signatures). Creation-scoped (2026-07-04): a mask-less legacy
+  #    SignatureVerify must not be denied by a key-provenance rule.
   - type: require_usage_mask
     algorithm: LMS
     flags: [Sign, Verify]
+    ops: [Create, CreateKeyPair, Register, Import]
     reason: "LMS keys must declare Sign+Verify (stateful — track remaining signatures)"
   - type: require_usage_mask
     algorithm: XMSS
     flags: [Sign, Verify]
+    ops: [Create, CreateKeyPair, Register, Import]
     reason: "XMSS keys must declare Sign+Verify (stateful — firmware/software signing)"
 
-  # 9. Lifecycle: only Active CNSA keys may sign.
+  # 9. Hashing: CNSA 2.0 mandates SHA-384 or SHA-512 (FIPS 180-4) for ALL
+  #    hashing; SHA-256 is not in the suite (NSA CNSA 2.0 FAQ, verified
+  #    2026-07-04). Gates the KMIP `Hashing Algorithm` mechanism parameter on
+  #    Sign — previously an ML-DSA-87 signature over SHA-256 passed. Scoped to
+  #    Sign only: SignatureVerify stays open so legacy SHA-256-hashed
+  #    artefacts remain verifiable during the transition.
+  - type: hash_algorithm_allowlist
+    ops: [Sign]
+    hashing_algorithms: [SHA-384, SHA-512]
+    reason: "CNSA 2.0 requires SHA-384 or SHA-512 for signature hashing"
+
+  # 10. Lifecycle: only Active CNSA keys may sign, encrypt, or encapsulate
+  #     (Encrypt/Encapsulate gates added 2026-07-04 — Sign-only was
+  #     inconsistent with the fips/2030 policies).
   - type: lifecycle_state_gate
     op: Sign
     allowed_states: [Active]
     reason: "CNSA signing only with Active keys"
+  - type: lifecycle_state_gate
+    op: Encrypt
+    allowed_states: [Active]
+    reason: "CNSA encryption only with Active keys"
+  - type: lifecycle_state_gate
+    op: Encapsulate
+    allowed_states: [Active]
+    reason: "CNSA encapsulation only with Active keys"
 
-  # 10. Compliance profile catch-all.
+  # 11. Compliance profile catch-all.
   - type: compliance_profile_gate
     profile: CNSA-2.0
     ops: [Create, CreateKeyPair, Sign, Encrypt, Encapsulate]
