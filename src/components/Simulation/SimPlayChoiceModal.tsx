@@ -86,6 +86,12 @@ function PlayCard({
   firstFocusRef,
 }: CardProps) {
   const [deep, setDeep] = useState(false)
+  // Deep-dive content is authored per phase — today only Phase 6 has any, so
+  // most phases' delta rounds to 0. A checkbox that's always clickable but
+  // silently adds "+0 min" reads as broken; hide it and say so instead.
+  const deepDeltaMin = Math.round(deepMin - standardMin)
+  const hasDeepContent = deepDeltaMin > 0
+  const effectiveDeep = deep && hasDeepContent
   return (
     <div
       className={`flex flex-col gap-2.5 rounded-xl border p-4 ${
@@ -98,24 +104,33 @@ function PlayCard({
         </span>
       )}
       <h3 className="text-sm font-bold text-foreground">{title}</h3>
-      <p className="text-[12.5px] leading-snug text-muted-foreground">{deep ? deepScope : scope}</p>
+      <p className="text-[12.5px] leading-snug text-muted-foreground">
+        {effectiveDeep ? deepScope : scope}
+      </p>
       <p className="text-[11px] text-muted-foreground">
         <span className="font-semibold text-foreground/80">Audience: </span>
         {audience}
       </p>
       {extra}
-      <label className="flex items-center gap-2 text-[12px] text-foreground">
-        <input
-          type="checkbox"
-          checked={deep}
-          onChange={(e) => setDeep(e.target.checked)}
-          className="h-3.5 w-3.5 rounded border-border"
-        />
-        Include deep-dive content (+{Math.round(deepMin - standardMin)} min)
-      </label>
+      {hasDeepContent ? (
+        <label className="flex items-center gap-2 text-[12px] text-foreground">
+          <input
+            type="checkbox"
+            checked={deep}
+            onChange={(e) => setDeep(e.target.checked)}
+            className="h-3.5 w-3.5 rounded border-border"
+          />
+          Include deep-dive content (+{deepDeltaMin} min)
+        </label>
+      ) : (
+        <p className="text-[12px] italic text-muted-foreground">
+          No deep-dive content available for this yet
+        </p>
+      )}
       <div className="mt-1 flex items-center justify-between gap-2">
         <span className="font-mono text-[11px] text-muted-foreground">
-          {fmtMin(deep ? deepMin : standardMin)} <span className="italic">(approximate)</span>
+          {fmtMin(effectiveDeep ? deepMin : standardMin)}{' '}
+          <span className="italic">(approximate)</span>
         </span>
         <Button
           ref={firstFocusRef}
@@ -123,7 +138,7 @@ function PlayCard({
           variant="gradient"
           size="sm"
           className="gap-1.5"
-          onClick={() => onPlay(deep)}
+          onClick={() => onPlay(effectiveDeep)}
         >
           <Play size={13} aria-hidden="true" />▶ Play
         </Button>
