@@ -20,7 +20,11 @@ interface Intent {
   params: Record<string, string | null>
 }
 
-const INTENTS: Intent[] = [
+// Exported (ACCURACY-0705) so a drift-guard test can assert every literal
+// `status:` value here is a real member of AlgorithmFilters' STATUS_ITEMS —
+// this is exactly the class of bug that shipped a 'Standardized' value no
+// filter enum recognised, silently producing a zero-result CTA.
+export const INTENTS: Intent[] = [
   {
     label: 'Replace a classical algorithm',
     description: 'Find the right PQC drop-in for RSA, ECC, or AES',
@@ -41,7 +45,7 @@ const INTENTS: Intent[] = [
   },
 ]
 
-const PERSONA_INTENTS: Partial<Record<PersonaId, Intent>> = {
+export const PERSONA_INTENTS: Partial<Record<PersonaId, Intent>> = {
   executive: {
     label: 'View top compliance picks',
     description: 'ML-KEM-768 and ML-DSA-65 — the FIPS-required choices for US federal compliance',
@@ -56,7 +60,11 @@ const PERSONA_INTENTS: Partial<Record<PersonaId, Intent>> = {
     label: 'Find a drop-in replacement',
     description: 'Transition table with key sizes, performance, and standardization status',
     icon: <Shuffle size={15} />,
-    params: { tab: 'transition', status: 'Standardized' },
+    // ACCURACY-0705: 'Standardized' is not a value in STATUS_ITEMS
+    // (AlgorithmFilters.tsx) — this was a zero-result dead end for every
+    // Developer-persona user, since it's the persona's default entry CTA.
+    // 'Certified' is the closest existing status (FIPS 203/204/205 finalized).
+    params: { tab: 'transition', status: 'Certified' },
   },
   architect: {
     label: 'See protocol readiness',
