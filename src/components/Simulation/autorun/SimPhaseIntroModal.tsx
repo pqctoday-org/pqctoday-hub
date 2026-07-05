@@ -5,6 +5,7 @@
  * activities from `frameworkPhaseIntros.generated.ts` (extracted from
  * framework-2.1.json, the SoT) — nothing is authored here.
  */
+import { useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { FRAMEWORK_PHASE_INTROS } from '@/data/frameworkPhaseIntros.generated'
 import type { PhaseId } from '@/data/frameworkPhases'
@@ -12,16 +13,34 @@ import type { PhaseId } from '@/data/frameworkPhases'
 export function SimPhaseIntroModal({ phase, onBegin }: { phase: PhaseId; onBegin: () => void }) {
   // eslint-disable-next-line security/detect-object-injection
   const intro = FRAMEWORK_PHASE_INTROS[phase]
+  const beginRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    beginRef.current?.focus()
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onBegin()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onBegin])
+
   if (!intro) return null
 
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-      <div className="flex max-h-[85vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-2xl">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="sim-phase-intro-heading"
+        className="flex max-h-[85vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-2xl"
+      >
         <div className="shrink-0 border-b border-border bg-gradient-to-r from-primary/15 to-secondary/15 px-6 py-4">
           <div className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-primary">
             Up next · what to expect
           </div>
-          <h2 className="mt-1 text-lg font-extrabold text-foreground">{intro.name}</h2>
+          <h2 id="sim-phase-intro-heading" className="mt-1 text-lg font-extrabold text-foreground">
+            {intro.name}
+          </h2>
         </div>
 
         <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-6 py-4">
@@ -78,6 +97,7 @@ export function SimPhaseIntroModal({ phase, onBegin }: { phase: PhaseId; onBegin
             </a>
           </span>
           <Button
+            ref={beginRef}
             onClick={onBegin}
             className="h-auto rounded-lg bg-primary px-5 py-2 text-[13px] font-extrabold text-background hover:opacity-90"
           >
