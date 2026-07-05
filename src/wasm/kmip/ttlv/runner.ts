@@ -6,6 +6,7 @@
 // time) and the OASIS corpus replay (one op per transcript step) — neither
 // needs a Rust match arm per operation; both go through this one generic path.
 
+import { arrayBufferToHex } from '@/utils/webCrypto'
 import type { KmipEngine, TtlvNode } from '../kmipEngine'
 import { buildRequest } from './request'
 import { toWireTree } from './encode'
@@ -29,6 +30,10 @@ export interface RunResult {
   /** `ResultReason` wire codepoint (KMIP 3.0 §9.2), when the op failed. */
   resultReason?: string
   resultMessage?: string
+  /** Raw wire bytes as hex — for a "raw hex" toggle alongside the decomposed
+   * tree view (the Commands tab's per-op inline result). */
+  requestWireHex: string
+  responseWireHex: string
 }
 
 const RESULT_STATUS_SUCCESS = '0x00000000'
@@ -44,11 +49,18 @@ const RESULT_STATUS_SUCCESS = '0x00000000'
  * (`OperationNotSupported`, `PermissionDenied`, a lifecycle-state gate, …)
  * is never a throw, it's a normal decoded response with `ok: false` and a
  * `resultReason`. */
-export function runOp(engine: KmipEngine, table: CodepointTable, operation: string, payload: KmipNode[]): RunResult {
+export function runOp(
+  engine: KmipEngine,
+  table: CodepointTable,
+  operation: string,
+  payload: KmipNode[]
+): RunResult {
   const requestTree = toWireTree(buildRequest(operation, ...payload), table)
   const requestBytes = engine.encodeTtlv(requestTree)
   const responseBytes = engine.submit(requestBytes)
   const responseTree = engine.decodeTtlv(responseBytes)
+  const requestWireHex = arrayBufferToHex(requestBytes.buffer as ArrayBuffer)
+  const responseWireHex = arrayBufferToHex(responseBytes.buffer as ArrayBuffer)
 
   // `decode_ttlv` never resolves tag codes to names (that's a UI-layer
   // concern — see `WireTreeView.tsx`), so look the well-known result fields
@@ -65,5 +77,7 @@ export function runOp(engine: KmipEngine, table: CodepointTable, operation: stri
     ok: status?.value === RESULT_STATUS_SUCCESS,
     resultReason: typeof reason?.value === 'string' ? reason.value : undefined,
     resultMessage: typeof message?.value === 'string' ? message.value : undefined,
+    requestWireHex,
+    responseWireHex,
   }
 }

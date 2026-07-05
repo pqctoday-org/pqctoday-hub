@@ -60,7 +60,15 @@ export const TAG_NAMES: Record<string, string> = {
   '0x42006C': 'PublicExponent',
 }
 
-export const tagName = (tag: string): string => TAG_NAMES[tag.toUpperCase()] ?? tag
+/** Case-normalize a `0x`-prefixed hex codepoint for dictionary lookup — every
+ * table here keys on a LOWERCASE `0x` prefix + UPPERCASE hex digits. A bare
+ * `.toUpperCase()` on the whole string corrupts the prefix to `0X`, which
+ * then never matches any key regardless of the input's own casing — this
+ * silently broke every `tagName`/`ENUM_NAMES` lookup (raw hex rendered
+ * everywhere instead of names) until fixed here. */
+export const normalizeHexKey = (hex: string): string => '0x' + hex.replace(/^0x/i, '').toUpperCase()
+
+export const tagName = (tag: string): string => TAG_NAMES[normalizeHexKey(tag)] ?? tag
 
 /** ResultStatus enumeration value → label. */
 export const RESULT_STATUS: Record<string, string> = {
