@@ -352,12 +352,29 @@ export const POLICY_SCENARIOS: PolicyTestScenario[] = [
     expect: 'Deny',
   },
   {
-    id: 'hybrid-deny-pure-pqc',
+    id: 'hybrid-allow-pure-pqc',
     policyFile: 'hybrid-migration-window.yaml',
-    title: 'Pure-PQC Sign inside the window',
-    description: 'Even pure PQC is denied in the window — the composite is mandatory.',
-    path: 'negative',
+    title: 'Pure-PQC Sign inside the window (untagged)',
+    description:
+      'Pure PQC is allowed untagged — Plane 2 cannot instantiate composite keys yet, so the composite mandate is opt-in (2026-07-04 remediation).',
+    path: 'positive',
     request: { op: 'Sign', algorithm: 'ML-DSA-87', state: 'Active', date: '2027-06-01' },
+    expect: 'Allow',
+  },
+  {
+    id: 'hybrid-deny-pure-pqc-optin',
+    policyFile: 'hybrid-migration-window.yaml',
+    title: 'Opted-in dual-sign with pure PQC',
+    description:
+      'A request tagged x-pqctoday-dual-sign=required is held to the ML-DSA-65+Ed25519 composite — pure PQC is denied for it.',
+    path: 'negative',
+    request: {
+      op: 'Sign',
+      algorithm: 'ML-DSA-87',
+      state: 'Active',
+      date: '2027-06-01',
+      attrs: { 'pqctoday-dual-sign': 'required' },
+    },
     expect: 'Deny',
   },
   {
@@ -690,12 +707,29 @@ export const POLICY_SCENARIOS: PolicyTestScenario[] = [
     expect: 'Deny',
   },
   {
-    id: 'mig2030-deny-md5',
+    id: 'mig2030-deny-3des',
     policyFile: 'pqc-migration-2030.yaml',
-    title: 'Sign with MD5',
-    description: 'Weak/legacy algorithms are banned at all times, regardless of date.',
+    title: 'Sign with 3DES',
+    description:
+      'Single/Triple-DES are banned at all times, regardless of date. (Was "MD5" — not a KMIP algorithm name; weak hashes are now gated on the mechanism dimension.)',
     path: 'negative',
-    request: { op: 'Sign', algorithm: 'MD5', state: 'Active', date: '2027-06-01' },
+    request: { op: 'Sign', algorithm: '3DES', state: 'Active', date: '2027-06-01' },
+    expect: 'Deny',
+  },
+  {
+    id: 'mig2030-deny-sha1-hash',
+    policyFile: 'pqc-migration-2030.yaml',
+    title: 'Sign hashed with SHA-1',
+    description:
+      'Weak hashes are gated on the KMIP Hashing Algorithm mechanism — the old "MD5/SHA1 algorithm" denylist entries could never fire (2026-07-04 remediation).',
+    path: 'negative',
+    request: {
+      op: 'Sign',
+      algorithm: 'ECDSA-P256',
+      state: 'Active',
+      date: '2027-06-01',
+      mechanism: { hash: 'SHA-1' },
+    },
     expect: 'Deny',
   },
 
@@ -846,6 +880,287 @@ export const POLICY_SCENARIOS: PolicyTestScenario[] = [
       op: 'CreateKeyPair',
       algorithm: 'ML-DSA-87',
       mechanism: { mech: 'CKM_ML_DSA_KEY_PAIR_GEN' },
+    },
+    expect: 'Allow',
+  },
+
+  // ── 2026-07-04 gap-audit regression net ─────────────────────────────────
+  // Each of these encodes a bug found (and fixed) in the policy-library gap
+  // audit — if any regresses, the validation gate goes red.
+
+  // cnsa-2.0: the original user-reported bug — AES-256 allowed but every use
+  // op denied for the missing classification tag. Governance tags are
+  // creation-scoped now; use/recover ops on untagged (legacy) keys stay open.
+  {
+    id: 'cnsa-allow-encrypt-untagged',
+    policyFile: 'cnsa-2.0.yaml',
+    title: 'Encrypt with an untagged AES-256 key',
+    description:
+      'THE reported bug: the classification tag is required at key creation only — Encrypt with an existing (e.g. legacy) untagged key is allowed.',
+    path: 'positive',
+    request: {
+      op: 'Encrypt',
+      algorithm: 'AES-256',
+      state: 'Active',
+      mechanism: { blockMode: 'GCM' },
+    },
+    expect: 'Allow',
+  },
+  {
+    id: 'cnsa-allow-decrypt-legacy',
+    policyFile: 'cnsa-2.0.yaml',
+    title: 'Decrypt with a legacy AES-256 key',
+    description:
+      'Decrypt stays open so legacy artefacts remain recoverable — exactly what the policy description promises.',
+    path: 'positive',
+    request: { op: 'Decrypt', algorithm: 'AES-256', state: 'Active' },
+    expect: 'Allow',
+  },
+  {
+    id: 'cnsa-allow-verify-legacy',
+    policyFile: 'cnsa-2.0.yaml',
+    title: 'Verify a signature from an untagged ML-DSA-87 key',
+    description: 'SignatureVerify is never gated by the governance tag.',
+    path: 'positive',
+    request: { op: 'SignatureVerify', algorithm: 'ML-DSA-87' },
+    expect: 'Allow',
+  },
+  {
+    id: 'cnsa-deny-sha256-hash',
+    policyFile: 'cnsa-2.0.yaml',
+    title: 'Sign hashed with SHA-256',
+    description:
+      'CNSA 2.0 mandates SHA-384/512 for all hashing (NSA CNSA 2.0 FAQ) — SHA-256-hashed signing was silently allowed before the audit.',
+    path: 'negative',
+    request: {
+      op: 'Sign',
+      algorithm: 'ML-DSA-87',
+      state: 'Active',
+      mechanism: { hash: 'SHA-256' },
+    },
+    expect: 'Deny',
+  },
+  {
+    id: 'cnsa-allow-sha384-hash',
+    policyFile: 'cnsa-2.0.yaml',
+    title: 'Sign hashed with SHA-384',
+    description: 'SHA-384 is in the CNSA 2.0 suite.',
+    path: 'positive',
+    request: {
+      op: 'Sign',
+      algorithm: 'ML-DSA-87',
+      state: 'Active',
+      mechanism: { hash: 'SHA-384' },
+    },
+    expect: 'Allow',
+  },
+  {
+    id: 'cnsa-deny-hss',
+    policyFile: 'cnsa-2.0.yaml',
+    title: 'Create an HSS key',
+    description:
+      'Only the SINGLE-tree stateful HBS schemes (LMS, XMSS) are CNSA 2.0-approved; multi-tree HSS/XMSS-MT are explicitly not (NSA CNSA 2.0 FAQ).',
+    path: 'negative',
+    request: {
+      op: 'CreateKeyPair',
+      algorithm: 'HSS',
+      usageMask: ['Sign', 'Verify'],
+      attrs: { 'pqctoday-cnsa-classification': 'Secret' },
+    },
+    expect: 'Deny',
+  },
+
+  // fips-only: ECDH restored; mechanism-dimension fail-opens closed.
+  {
+    id: 'fips-allow-ecdh',
+    policyFile: 'fips-only.yaml',
+    title: 'Create an ECDH-P256 key-agreement pair',
+    description:
+      'SP 800-56A ECDH over the P-curves is FIPS-approved — its omission from the allowlist made every classical key agreement impossible (gap audit).',
+    path: 'positive',
+    request: { op: 'CreateKeyPair:KeyAgreement', algorithm: 'ECDH-P256', length: 256 },
+    expect: 'Allow',
+  },
+  {
+    id: 'fips-deny-pkcs1v15-encrypt',
+    policyFile: 'fips-only.yaml',
+    title: 'RSA Encrypt with PKCS#1 v1.5 padding',
+    description:
+      'SP 800-131A r2 disallows v1.5 encryption after 2023 — OAEP only (legacy Decrypt stays open).',
+    path: 'negative',
+    request: {
+      op: 'Encrypt',
+      algorithm: 'RSA-3072',
+      state: 'Active',
+      mechanism: { padding: 'PKCS1 v1.5' },
+    },
+    expect: 'Deny',
+  },
+  {
+    id: 'fips-deny-sha1-sign',
+    policyFile: 'fips-only.yaml',
+    title: 'Sign hashed with SHA-1',
+    description:
+      'The old "SHA1 algorithm" denylist entry could never fire; SHA-1 is now denied on the hashing mechanism.',
+    path: 'negative',
+    request: {
+      op: 'Sign',
+      algorithm: 'ECDSA-P256',
+      state: 'Active',
+      mechanism: { hash: 'SHA-1' },
+    },
+    expect: 'Deny',
+  },
+
+  // bsi-tr-02102: every advertised signature scheme is actually signable now;
+  // the composite is an opt-in, and the real hybrid KEM is allowlisted.
+  {
+    id: 'bsi-allow-pure-mldsa',
+    policyFile: 'bsi-tr-02102.yaml',
+    title: 'Sign with pure ML-DSA-87',
+    description:
+      'BSI recommends (not mandates) hybrid signatures — before the audit the unconditional composite mandate denied every signature scheme, including this one.',
+    path: 'positive',
+    request: { op: 'Sign', algorithm: 'ML-DSA-87', state: 'Active', date: '2027-06-01' },
+    expect: 'Allow',
+  },
+  {
+    id: 'bsi-allow-hybrid-kem',
+    policyFile: 'bsi-tr-02102.yaml',
+    title: 'Create an X25519MLKEM768 hybrid key pair',
+    description:
+      'The combined hybrid KEM is hybrid by construction — no partner attribute needed. It was DENIED by the hybrid-mandating policy before the audit.',
+    path: 'positive',
+    request: { op: 'CreateKeyPair:KeyAgreement', algorithm: 'X25519MLKEM768' },
+    expect: 'Allow',
+  },
+  {
+    id: 'bsi-deny-composite-optin-pure',
+    policyFile: 'bsi-tr-02102.yaml',
+    title: 'Opted-in hybrid signing with a pure algorithm',
+    description:
+      'A request tagged x-pqctoday-hybrid-sign=required must carry the ML-DSA-65+ECDSA-P384 composite.',
+    path: 'negative',
+    request: {
+      op: 'CreateKeyPair:Sign',
+      algorithm: 'ML-DSA-87',
+      date: '2027-06-01',
+      attrs: { 'pqctoday-hybrid-sign': 'required' },
+    },
+    expect: 'Deny',
+  },
+  {
+    id: 'bsi-allow-decap-untagged',
+    policyFile: 'bsi-tr-02102.yaml',
+    title: 'Decapsulate with an untagged ML-KEM key',
+    description:
+      'The hybrid-partner tag is a creation-time requirement — using an existing KEM key is not re-gated (gap audit).',
+    path: 'positive',
+    request: { op: 'Decapsulate', algorithm: 'ML-KEM-1024', state: 'Active' },
+    expect: 'Allow',
+  },
+
+  // pqc-migration-2030: pure PQC creatable in the window, post-2030 creation
+  // banned, verify never gated by the purpose tag.
+  {
+    id: 'mig2030-allow-mldsa-create-2028',
+    policyFile: 'pqc-migration-2030.yaml',
+    title: 'Create a pure ML-DSA-65 signing key in 2028',
+    description:
+      'The old unconditional composite mandate made pure-PQC signing keys uncreatable 2027–2029 — with composites not instantiable, NO signing key could be created at all.',
+    path: 'positive',
+    request: {
+      op: 'CreateKeyPair:Sign',
+      algorithm: 'ML-DSA-65',
+      usageMask: ['Sign', 'Verify'],
+      date: '2028-06-01',
+      attrs: { 'pqctoday-purpose': 'production' },
+    },
+    expect: 'Allow',
+  },
+  {
+    id: 'mig2030-deny-classical-create-2031',
+    policyFile: 'pqc-migration-2030.yaml',
+    title: 'Create an RSA-3072 encryption pair in 2031',
+    description:
+      'Post-2030 the roadmap bans classical key CREATION for every purpose — before the audit only classical USE was cut off.',
+    path: 'negative',
+    request: {
+      op: 'CreateKeyPair:Encrypt',
+      algorithm: 'RSA-3072',
+      length: 3072,
+      date: '2031-06-01',
+    },
+    expect: 'Deny',
+  },
+  {
+    id: 'mig2030-allow-verify-untagged',
+    policyFile: 'pqc-migration-2030.yaml',
+    title: 'Verify with an untagged ML-DSA-87 key',
+    description:
+      'The purpose tag is required at key creation only — verification of legacy artefacts is never gated (gap audit).',
+    path: 'positive',
+    request: { op: 'SignatureVerify', algorithm: 'ML-DSA-87', date: '2031-06-01' },
+    expect: 'Allow',
+  },
+
+  // classical: the PQC boundary is class-based now — the old hand list let
+  // LMS/XMSS/HSS/XMSS-MT, most SLH-DSA sets and the hybrid KEMs through.
+  {
+    id: 'classical-deny-lms',
+    policyFile: 'classical.yaml',
+    title: 'Create an LMS key under the classical policy',
+    description:
+      'The PQC boundary is class-based — stateful HBS schemes no longer leak through the "before" policy (gap audit).',
+    path: 'negative',
+    request: { op: 'CreateKeyPair:Sign', algorithm: 'LMS' },
+    expect: 'Deny',
+  },
+  {
+    id: 'classical-deny-hybrid-kem',
+    policyFile: 'classical.yaml',
+    title: 'Create an X25519MLKEM768 pair under the classical policy',
+    description:
+      'Hybrid KEMs carry a PQC component and are caught by the class-based boundary (they classified as "classical" before the audit).',
+    path: 'negative',
+    request: { op: 'CreateKeyPair:KeyAgreement', algorithm: 'X25519MLKEM768' },
+    expect: 'Deny',
+  },
+
+  // pqc: X25519 joined the classical denylist; RSA signing keys now rekey.
+  {
+    id: 'pqc-deny-x25519',
+    policyFile: 'pqc.yaml',
+    title: 'Create an X25519 key under the PQC policy',
+    description:
+      'X25519/X448 were missing from the classical denylist — new classical key-agreement keys were creatable under the "after" policy (gap audit).',
+    path: 'negative',
+    request: { op: 'CreateKeyPair:KeyAgreement', algorithm: 'X25519' },
+    expect: 'Deny',
+  },
+  {
+    id: 'pqc-rekey-rsa-sign',
+    policyFile: 'pqc.yaml',
+    title: 'Sign with a legacy RSA-3072 key',
+    description:
+      'Legacy RSA signing keys now auto-rekey to ML-DSA-87 at first use — only ECDSA-P256 did before the audit.',
+    path: 'positive',
+    request: { op: 'Sign', algorithm: 'RSA-3072', state: 'Active' },
+    expect: 'Rekey',
+  },
+
+  // pkcs11-mechanism-lockdown: ML-KEM keys can be CREATED, not just used.
+  {
+    id: 'ckm-allow-mlkem-gen',
+    policyFile: 'pkcs11-mechanism-lockdown.yaml',
+    title: 'Create an ML-KEM key with CKM_ML_KEM_KEY_PAIR_GEN',
+    description:
+      'CKM_ML_KEM_KEY_PAIR_GEN was missing from the allowlist — ML-KEM could be used but never created under this lockdown (gap audit).',
+    path: 'positive',
+    request: {
+      op: 'CreateKeyPair',
+      algorithm: 'ML-KEM-768',
+      mechanism: { mech: 'CKM_ML_KEM_KEY_PAIR_GEN' },
     },
     expect: 'Allow',
   },

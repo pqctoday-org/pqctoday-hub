@@ -345,14 +345,14 @@ describe('validate()', () => {
     expect(issues.some((i) => i.message.includes('will not migrate'))).toBe(true)
   })
 
-  // hybrid-migration-window.yaml rule 2 is a DOCUMENTED, intentional gap (its
-  // own comment: "a known limitation of expressing two allowed composites
-  // with single-composite rules... this documents the intended second
-  // option") — the exact shape the unreachable-rule check (A-grade review A3)
-  // exists to catch. It's an expected finding here, not a lint false positive.
-  const KNOWN_INTENTIONAL_ERRORS: Record<string, string[]> = {
-    'hybrid-migration-window.yaml': ['is unreachable'],
-  }
+  // 2026-07-04 gap-audit remediation: hybrid-migration-window.yaml's rule 2
+  // (the high-assurance composite alternative) used to be unreachable — an
+  // earlier UNCONDITIONAL rule 1 shadowed it (both matched every Sign; rule 1
+  // always won, first-match-wins). Fixed by giving BOTH composite rules their
+  // own `triggered_by_custom_attribute` (x-pqctoday-dual-sign=required vs
+  // x-pqctoday-assurance=high) — each is now independently reachable, so no
+  // fixture should carry this finding any more.
+  const KNOWN_INTENTIONAL_ERRORS: Record<string, string[]> = {}
 
   it('is clean on every shipped fixture except known-intentional warnings', () => {
     for (const f of fixtures) {
@@ -367,10 +367,11 @@ describe('validate()', () => {
     }
   })
 
-  it('flags the documented unreachable rule in hybrid-migration-window.yaml', () => {
+  it('hybrid-migration-window.yaml no longer has an unreachable composite rule (2026-07-04 fix)', () => {
     const issues = validate(toEditable(read('hybrid-migration-window.yaml')))
-    const hit = issues.find((i) => i.level === 'error' && i.message.includes('is unreachable'))
-    expect(hit?.message).toMatch(/Rule 2 .* is unreachable — rule 1/)
+    expect(issues.some((i) => i.level === 'error' && i.message.includes('is unreachable'))).toBe(
+      false
+    )
   })
 })
 

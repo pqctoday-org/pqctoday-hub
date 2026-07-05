@@ -319,6 +319,30 @@ const opsOverlap = (a: string[], b: string[]): boolean => {
   return a.some((o) => bs.has(base(o)))
 }
 
+/** rule.rs::op_matches (Y2) — `ruleOp` covers `reqOp` when they're equal, or
+ * `reqOp` is a colon-suffixed purpose refinement of `ruleOp` (bare
+ * `CreateKeyPair` covers `CreateKeyPair:Sign`, but `CreateKeyPair:Sign` does
+ * NOT cover `CreateKeyPair:Encrypt`). Mirrors `policySim.ts::opMatch1`. */
+const opCovers = (ruleOp: string, reqOp: string): boolean =>
+  ruleOp === reqOp || reqOp.startsWith(`${ruleOp}:`)
+
+/** `true` if EVERY op `later` can match is already matched by `earlier` — the
+ * precise condition for "earlier always decides first" (first-match-wins).
+ * Unlike `opsOverlap` (family-level, used for the coarser "these two rules
+ * might conflict" heuristics), this requires full subsumption: an earlier
+ * `CreateKeyPair:Sign` cutoff does NOT make a later bare `CreateKeyPair`
+ * cutoff unreachable, because the later rule still independently governs
+ * `CreateKeyPair:Encrypt` / `:KeyAgreement` — only the `:Sign` slice of it is
+ * shadowed (2026-07-04: `opsOverlap`'s base-op-only check flagged this as a
+ * false "fully unreachable" positive on pqc-migration-2030.yaml). Unscoped
+ * `earlier` (`[]`) subsumes everything; unscoped `later` is never fully
+ * subsumed by a scoped `earlier`. */
+const opsFullySubsumedBy = (later: string[], earlier: string[]): boolean => {
+  if (!earlier.length) return true
+  if (!later.length) return false
+  return later.every((lo) => earlier.some((eo) => opCovers(eo, lo)))
+}
+
 /** Rule types that can independently DENY/gate a request on their own (as
  * opposed to `algorithm_default`/`algorithm_allowlist`, whose "no match" case
  * is silent, not a deny). Two ENABLED rules of the *same* gating type, in
@@ -458,14 +482,18 @@ export function validate(policy: EditablePolicy): EditorIssue[] {
   }
 
   // (e) unreachable rule — an earlier, unconditional, same-type gating rule
-  // with an overlapping op scope always decides first (first-match-wins), so
-  // a later rule of the same type can never fire.
+  // whose op scope FULLY SUBSUMES the later rule's always decides first
+  // (first-match-wins), so the later rule can never fire. Full subsumption
+  // (not mere overlap, 2026-07-04) — a later bare `CreateKeyPair` cutoff
+  // is NOT unreachable just because an earlier `CreateKeyPair:Sign` cutoff
+  // shares a family: the later rule still independently governs
+  // `:Encrypt` / `:KeyAgreement`, which the earlier one never touches.
   for (const [j, later] of enabled.entries()) {
     if (!GATING_TYPES.has(later.type)) continue
     for (let k = 0; k < j; k++) {
       const earlier = enabled[k]
       if (earlier.type !== later.type || !isUnconditional(earlier)) continue
-      if (!opsOverlap(opsOf(earlier), opsOf(later))) continue
+      if (!opsFullySubsumedBy(opsOf(later), opsOf(earlier))) continue
       if (algorithmScopesDisjoint(earlier, later)) continue
       const earlierIdx = rules.indexOf(earlier) + 1
       const laterIdx = rules.indexOf(later) + 1

@@ -14,7 +14,10 @@ metadata:
   description: |
     AES Encrypt/Decrypt restricted to authenticated modes (GCM / CCM); RSA
     Encrypt/Decrypt restricted to OAEP padding. Names are KMIP 3.0 `Block
-    Cipher Mode` / `Padding Method` enum names.
+    Cipher Mode` / `Padding Method` enum names. Note: constraint rules gate
+    parameters that are PRESENT on the request — a request that omits the
+    mode/padding entirely is not denied here (the op handler's own resolver
+    then applies its defaults).
   authority: pqctoday-hsm/training
   effective: "always"
 

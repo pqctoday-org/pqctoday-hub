@@ -233,6 +233,64 @@ export const ALGORITHMS: AlgoChoice[] = [
     ],
   },
   { value: 'AES', label: 'AES-256 (symmetric, quantum-safe)', kind: 'symmetric', pqc: false },
+  // Hybrid KEMs (KMIP 3.0 WD19 names, draft-track codepoints) — RUNNABLE:
+  // the engine composes them in-process (K6). These are the one hybrid
+  // primitive the stack executes; BSI-style hybrid mandates are testable.
+  { value: 'X25519MLKEM768', label: 'X25519MLKEM768 (hybrid KEM)', kind: 'kem', pqc: true },
+  { value: 'SecP256r1MLKEM768', label: 'SecP256r1MLKEM768 (hybrid KEM)', kind: 'kem', pqc: true },
+  {
+    value: 'ECDH',
+    label: 'ECDH (classical key agreement)',
+    kind: 'kem',
+    pqc: false,
+    sizes: [
+      { length: 256, label: 'P-256' },
+      { length: 384, label: 'P-384' },
+      { length: 521, label: 'P-521' },
+    ],
+  },
+  // Stateful hash-based signatures (SP 800-208) — spec-only: policies gate
+  // them (CNSA 2.0 allows single-tree LMS/XMSS for firmware signing and
+  // denies multi-tree HSS/XMSS-MT) but this in-browser engine cannot
+  // instantiate stateful HBS keys, so picking one demonstrates the policy
+  // verdict. Previously none were selectable, so CNSA's own firmware-signing
+  // suite was untestable either way (2026-07-04 gap audit).
+  {
+    value: 'LMS',
+    label: 'LMS (stateful HBS, spec-only)',
+    kind: 'signature',
+    pqc: true,
+    runnable: false,
+  },
+  {
+    value: 'HSS',
+    label: 'HSS (multi-tree HBS, spec-only)',
+    kind: 'signature',
+    pqc: true,
+    runnable: false,
+  },
+  {
+    value: 'XMSS',
+    label: 'XMSS (stateful HBS, spec-only)',
+    kind: 'signature',
+    pqc: true,
+    runnable: false,
+  },
+  {
+    value: 'XMSS-MT',
+    label: 'XMSS-MT (multi-tree HBS, spec-only)',
+    kind: 'signature',
+    pqc: true,
+    runnable: false,
+  },
+  {
+    value: 'Ed25519',
+    label: 'Ed25519 (spec-only)',
+    kind: 'signature',
+    pqc: false,
+    runnable: false,
+  },
+  { value: 'X25519', label: 'X25519 (spec-only)', kind: 'kem', pqc: false, runnable: false },
   {
     value: 'FrodoKEM-1344',
     label: 'FrodoKEM-1344 (spec-only)',
@@ -401,7 +459,7 @@ export const POLICY_PRESETS: PolicyPreset[] = [
     name: 'pqc-migration-2030',
     label: 'PQC migration · 2030 cutoff',
     blurb:
-      'Enterprise roadmap with dated cutoffs — classical Sign/Encrypt banned after 2030-01-01; verify/decrypt stays.',
+      'Enterprise roadmap with dated cutoffs — new classical signing keys end 2027; classical Sign/Encrypt and key creation banned after 2030-01-01; verify/decrypt stays.',
     tone: 'migration',
     category: 'Migration & transition',
     illustrates: 'Temporal cutoffs + min-key-length + lifecycle gates on a roadmap.',
@@ -414,10 +472,10 @@ export const POLICY_PRESETS: PolicyPreset[] = [
     name: 'hybrid-migration-window',
     label: 'Hybrid window (2026–2029)',
     blurb:
-      'Every signature must be a composite classical + PQC (LAMPS draft-19) during the migration window.',
+      'Classical signing ends 2026; PQC or LAMPS composites only. Tag x-pqctoday-dual-sign=required to mandate the composite.',
     tone: 'hybrid',
     category: 'Migration & transition',
-    illustrates: 'Hybrid dual-sign requirement inside a time window.',
+    illustrates: 'Class-based cutoffs + opt-in hybrid dual-sign inside a time window.',
     example: { op: 'Sign', algorithm: 'ECDSA-P256', date: '2027-06-01' },
   },
   // ── Compliance regimes ────────────────────────────────────────────────────
@@ -426,10 +484,10 @@ export const POLICY_PRESETS: PolicyPreset[] = [
     name: 'cnsa-2.0',
     label: 'NSA CNSA 2.0',
     blurb:
-      'Only the CNSA 2.0 Level-5 suite (ML-DSA-87, ML-KEM-1024, AES-256, SHA-384/512); everything else denied.',
+      'Only the CNSA 2.0 Level-5 suite (ML-DSA-87, ML-KEM-1024, AES-256, LMS/XMSS, SHA-384/512). New keys must carry x-pqctoday-cnsa-classification; decrypt/verify of legacy artefacts stays open.',
     tone: 'compliance',
     category: 'Compliance regimes',
-    illustrates: 'Strict allowlist to a single national-security suite.',
+    illustrates: 'Strict allowlist + creation-time governance tag + hash gating.',
     featured: true,
     example: { op: 'Sign', algorithm: 'RSA-3072', date: '2026-07-01' },
   },
@@ -437,7 +495,8 @@ export const POLICY_PRESETS: PolicyPreset[] = [
     file: 'fips-only.yaml',
     name: 'fips-only',
     label: 'FIPS-only',
-    blurb: 'Restrict to FIPS 203/204/205 + FIPS-validated classical; deny Round-4 / alternate PQC.',
+    blurb:
+      'Restrict to FIPS 203/204/205 + FIPS-validated classical (incl. ECDH); SHA-1 signing and RSA PKCS#1 v1.5 encryption denied; deny Round-4 / alternate PQC.',
     tone: 'compliance',
     category: 'Compliance regimes',
     illustrates: 'FIPS 140-3 algorithm boundary — allowlist + min-key-length.',
@@ -448,7 +507,7 @@ export const POLICY_PRESETS: PolicyPreset[] = [
     name: 'bsi-tr-02102',
     label: 'BSI TR-02102-1 (Germany)',
     blurb:
-      'Hybrid key establishment + the conservative KEMs (FrodoKEM, Classic McEliece) that FIPS/CNSA deny.',
+      'Hybrid key establishment (combined hybrid KEMs, or a PQC KEM declaring its classical partner) + the conservative KEMs (FrodoKEM, Classic McEliece) that FIPS/CNSA deny. PQC and classical signatures allowed; composite on opt-in.',
     tone: 'regional',
     category: 'Compliance regimes',
     illustrates: 'A different regulator, a different algorithm set — regional contrast.',

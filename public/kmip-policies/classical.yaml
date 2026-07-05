@@ -70,24 +70,35 @@ rules:
     reason: "Symmetric encryption default (AES-256)"
 
   # ── PQC explicitly denied (proves the boundary) ───────────────────────
-  # If the application directly asks for ML-DSA / ML-KEM under the
-  # classical policy, deny — this policy is the "before" state.
-  - type: algorithm_denylist
-    ops:
-      - Create
-      - CreateKeyPair
-      - "CreateKeyPair:KeyAgreement"
-      - "CreateKeyPair:Sign"
-      - "CreateKeyPair:Encrypt"
-      - Sign
-      - Encrypt
-    algorithms:
-      - ML-KEM-512
-      - ML-KEM-768
-      - ML-KEM-1024
-      - ML-DSA-44
-      - ML-DSA-65
-      - ML-DSA-87
-      - SLH-DSA-SHA2-128s
-      - SLH-DSA-SHA2-256s
+  # If the application directly asks for any PQC algorithm under the
+  # classical policy, deny — this policy is the "before" state. Class-based
+  # (2026-07-04): the old hand list named 8 algorithms and let LMS/XMSS/HSS/
+  # XMSS-MT, 10 of 12 SLH-DSA sets, Falcon/HQC/FrodoKEM/McEliece and the
+  # hybrid KEMs straight through the "boundary". `algorithm_class: pqc`
+  # covers every PQC and hybrid-KEM name, present and future; `after:
+  # "always"` makes the cutoff unconditional. One rule per op.
+  - type: temporal_cutoff
+    op: Create
+    algorithm_class: pqc
+    after: "always"
+    reason: "PQC algorithms gated off under the classical policy — flip to pqc.yaml to enable"
+  - type: temporal_cutoff
+    op: CreateKeyPair
+    algorithm_class: pqc
+    after: "always"
+    reason: "PQC algorithms gated off under the classical policy — flip to pqc.yaml to enable"
+  - type: temporal_cutoff
+    op: Sign
+    algorithm_class: pqc
+    after: "always"
+    reason: "PQC algorithms gated off under the classical policy — flip to pqc.yaml to enable"
+  - type: temporal_cutoff
+    op: Encrypt
+    algorithm_class: pqc
+    after: "always"
+    reason: "PQC algorithms gated off under the classical policy — flip to pqc.yaml to enable"
+  - type: temporal_cutoff
+    op: Encapsulate
+    algorithm_class: pqc
+    after: "always"
     reason: "PQC algorithms gated off under the classical policy — flip to pqc.yaml to enable"
