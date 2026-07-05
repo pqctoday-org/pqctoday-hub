@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { SimulationView } from './SimulationView'
 import { useSimulationStore } from '@/store/useSimulationStore'
 import { useAssessmentResultStore } from '@/store/useAssessmentResultStore'
+import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { SIM_TREES, flattenTree } from '@/simulation'
 import type { AssessmentResult } from '@/hooks/assessmentTypes'
@@ -105,6 +106,29 @@ describe('SimulationView (Mission Control)', () => {
     // the console is NOT rendered
     expect(screen.queryByText('Phases cleared')).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /End Quarter/ })).not.toBeInTheDocument()
+  })
+
+  // Regression: the self-unlock effect used to bail out whenever ANY result
+  // already existed in the store, even a stale one (e.g. the sample org, or an
+  // older answer set). That left the JURISDICTION/SECTOR dials frozen on the
+  // stale org after completing a new real assessment, unless the player
+  // separately visited /report (which always recomputes). The effect must
+  // instead compare against the CURRENT form input and refresh on a mismatch.
+  it('refreshes the org dials from a newly completed assessment even when a stale result is already stored', () => {
+    // Seed a stale/sample result (Healthcare/Germany from minimalAssessment,
+    // via seedAssessment in beforeEach) — mimics the sample-org / previous-run case.
+    useAssessmentFormStore.getState().reset()
+    useAssessmentFormStore.setState({
+      industry: 'Technology',
+      country: 'Australia',
+      sensitivityUnknown: true,
+      migrationStatus: 'not-started',
+      assessmentStatus: 'complete',
+    })
+    renderPage()
+    expect(screen.getByText('Australia')).toBeInTheDocument()
+    expect(screen.queryByText('Germany')).not.toBeInTheDocument()
+    useAssessmentFormStore.getState().reset()
   })
 
   // W2c — honest delegation: a phase auto-completed by the AI team must be flagged

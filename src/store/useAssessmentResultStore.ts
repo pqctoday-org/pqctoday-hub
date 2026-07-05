@@ -30,6 +30,11 @@ export interface AssessmentResultState {
   lastModifiedAt: string | null
   previousRiskScore: number | null
   assessmentHistory: AssessmentSnapshot[]
+  /** JSON key of the AssessmentInput that produced `lastResult` — lets callers
+   *  (e.g. the sim's self-unlock effect) tell a stale result (from an older
+   *  answer set, or the sample org) apart from one that already matches the
+   *  current form, without re-deriving a richer result unnecessarily. */
+  sourceInputKey: string | null
 
   // Actions
   hideThreat: (threatId: string) => void
@@ -48,6 +53,7 @@ const INITIAL_STATE = {
   lastModifiedAt: null as string | null,
   previousRiskScore: null as number | null,
   assessmentHistory: [] as AssessmentSnapshot[],
+  sourceInputKey: null as string | null,
 }
 
 export const useAssessmentResultStore = create<AssessmentResultState>()(
@@ -132,6 +138,7 @@ export const useAssessmentResultStore = create<AssessmentResultState>()(
         lastModifiedAt: state.lastModifiedAt,
         previousRiskScore: state.previousRiskScore,
         assessmentHistory: state.assessmentHistory,
+        sourceInputKey: state.sourceInputKey,
       }),
       onRehydrateStorage: () => (_state, error) => {
         if (error) console.error('Assessment result store rehydration failed:', error)
