@@ -26,6 +26,30 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.11.0] - 2026-07-05
+
+A simulation and crypto-agility release: the simulation gets one unified PLAY entry point with an explicit Standard/Deep Dive choice and new sector-specific deep-dive content, the crypto-agility playground's KMIP 3.0 support grows a full operation tester and a real OASIS conformance-corpus replay, and the HSM Capacity Calculator's fleet-sizing formula is corrected after being found to undercount by up to 46%.
+
+### Added
+
+- **One unified "▶ PLAY" entry point for the simulation** [view:/simulation]: replaces two separate, unlabeled buttons with a single entry point that opens a choice screen showing all 3 ways to play — Executive Overview, Full Migration Journey, and Play This Phase — each with its audience and estimated duration visible up front, and a Standard/Deep Dive checkbox per choice. A resumable run skips straight back in via "▶ Resume" instead of reopening the choice screen.
+- **The crypto-agility (CACP/KMIP) workshop is now playable from inside the simulation** [view:/simulation] [view:/playground/cacp]: previously listed as relevant to Phase 6 but never actually embedded in any run.
+- **New Deep Dive learning content for Phase 5, tailored by sector** [view:/simulation]: finance (identity & access management), government (PIV/CAC-style enrollment protocols), telecom (API/JWT security for network-API exposure), and retail (transactional email/receipt signing) each get sector-specific optional content that never affects your maturity score.
+- **Test any of KMIP 3.0's 66 operations directly in the crypto-agility playground** [view:/playground/cacp] [persona:developer]: a new "Commands" sub-tab runs a real request through the engine for every operation — including honest "not supported" rejections for the 15 that aren't — with the full decoded response visible in an execution log.
+- **Replay the real OASIS KMIP 3.0 conformance test corpus in your browser** [view:/playground/cacp] [persona:developer]: a new "Corpus Replay" sub-tab runs all 102 mandatory/optional OASIS transcripts plus 42 vendored PQC interop tests entirely client-side, with any skips labeled and explained.
+- **A plain-language verdict card, a hybrid-signing transition toggle, and a sizing headroom slider in the HSM Capacity Calculator** [view:/playground/hsm-capacity] [persona:architect].
+- **The Crypto Architecture PDF export now includes the actual diagram** [view:/learn] [view:/business]: previously the diagram was stripped down to a text stub to avoid bundling a renderer; it's now rendered client-side and appended as an image page.
+
+### Changed
+
+- **The Crypto Architecture diagram is easier to read** [view:/learn] [view:/business]: nodes are now grouped into color-coded subgraphs by component kind (application/protocol/library/key-store/HSM/CA) instead of one flat diagram of identical gray boxes, reducing clutter as more components are added.
+- **The Vendor Scorecard and its exported reports now show vendor names instead of internal vendor IDs** [view:/learn] [persona:executive]: the per-vendor readiness table, low-readiness list, and both exported documents used to display the raw ID.
+
+### Fixed
+
+- **The HSM Capacity Calculator was undercounting how many HSMs you need, by up to 46%** [view:/playground/hsm-capacity] [persona:architect]: it sized a shared fleet on its single worst algorithm instead of summing every algorithm's share of HSM time, even though the tool itself describes a shared fleet where any HSM can run any algorithm (a medium-sized organization's estimate went from 37 to 49 HSMs once corrected). Also corrects a per-location explainer that divided demand incorrectly, several externally-verified-wrong standards citations (ETSI, IETF drafts, a nonexistent DNSSEC draft, a Marvell FIPS certification claim), and realigns all 10 use cases with the protocol matrix — SSH and IKEv2 now correctly show the standardized hybrid classical+ML-KEM mode instead of pure PQC, and code signing gains an SLH-DSA option.
+- **The PQC Assistant chat no longer gets permanently stuck after the browser reclaims GPU memory from a backgrounded tab** [persona:developer]: this could happen because the local model holds several gigabytes of GPU memory that browsers aggressively reclaim from background tabs; the assistant now detects this, reloads the model, and retries your message automatically instead of leaving it failing silently.
+
 ## [4.10.0] - 2026-07-05
 
 A crypto-agility, simulation, and accuracy release: the CACP playground gains real Ed25519/ECDH operations with an in-app guide, the simulation adds country-specific standards guidance and a reflective run-complete ending, and a wave of accuracy fixes corrects a report-sharing bug that could silently overwrite a recipient's own assessment, a fabricated compliance evidence chain, a stale CVE feed, and several other content and accessibility issues.

@@ -22,7 +22,9 @@ export class Bindings {
 
   bind(name: string, value: unknown): void {
     if (this.values.has(name) && this.values.get(name) !== value) {
-      throw new Error(`placeholder '${name}' re-bound: was ${String(this.values.get(name))}, now ${String(value)}`)
+      throw new Error(
+        `placeholder '${name}' re-bound: was ${String(this.values.get(name))}, now ${String(value)}`
+      )
     }
     this.values.set(name, value)
   }
@@ -74,7 +76,11 @@ export class Bindings {
    * attribute binds against THAT attribute's actual value. */
   harvestFromResponse(expected: KmipNode, actual: TtlvNode): void {
     if (isVolatileTag(expected.tag)) return
-    if (typeof expected.value === 'string' && expected.value.startsWith('$') && expected.value !== '$NOW') {
+    if (
+      typeof expected.value === 'string' &&
+      expected.value.startsWith('$') &&
+      expected.value !== '$NOW'
+    ) {
       try {
         this.bind(expected.value, actual.value)
       } catch {

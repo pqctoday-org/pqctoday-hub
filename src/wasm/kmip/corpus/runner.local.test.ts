@@ -17,9 +17,9 @@ import { CodepointTable } from '../ttlv/codepointTable'
 import { runCorpusTest } from './runner'
 
 const CORPUS_ROOT = join(__dirname, '../../../../public/kmip-corpus')
-const SPEC_JSON = JSON.parse(readFileSync(join(CORPUS_ROOT, 'tags-enums.json'), 'utf8')) as Parameters<
-  typeof CodepointTable.fromSpec
->[0]
+const SPEC_JSON = JSON.parse(
+  readFileSync(join(CORPUS_ROOT, 'tags-enums.json'), 'utf8')
+) as Parameters<typeof CodepointTable.fromSpec>[0]
 const table = CodepointTable.fromSpec(SPEC_JSON)
 
 function readCorpusFile(relPath: string): string {

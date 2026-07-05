@@ -39,7 +39,11 @@ export function Kmip3View({
 
   return (
     <div>
-      <div className="mb-4 flex items-center gap-1 border-b border-border" role="tablist" data-tour="kmip3-subtabs">
+      <div
+        className="mb-4 flex items-center gap-1 border-b border-border"
+        role="tablist"
+        data-tour="kmip3-subtabs"
+      >
         {TABS.map((t) => {
           const Icon = t.icon
           const on = tab === t.id

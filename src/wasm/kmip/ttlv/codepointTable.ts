@@ -131,7 +131,9 @@ let tablePromise: Promise<CodepointTable> | null = null
  * needed once the KMIP3.0 Commands or Corpus Replay sub-tabs are opened. */
 export const getCodepointTable = (): Promise<CodepointTable> => {
   tablePromise ??= fetch('/kmip-corpus/tags-enums.json')
-    .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status} loading tags-enums.json`))))
+    .then((r) =>
+      r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status} loading tags-enums.json`))
+    )
     .then((spec: SpecJson) => CodepointTable.fromSpec(spec))
   return tablePromise
 }
