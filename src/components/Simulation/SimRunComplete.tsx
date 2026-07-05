@@ -6,11 +6,19 @@
  * completed — and the maturity reached, rather than the old static Mosca "beat Q-Day" verdict
  * (which was unwinnable for most orgs). Presentational + props-driven; reduced-motion safe;
  * accessible (role=dialog, Escape closes, focus to the primary action).
+ *
+ * Extended (07042026, simulation-mode-improvement-plan W2-4): a completed run used to dead-end
+ * at "Back to the board" with no reflection or next step, while the lighter Executive Overview
+ * ending offered both. Now the ceremony folds in the trap tally (the Common Failures the player
+ * actually fell for, each linking to the lesson that fixes it — the same instrument
+ * TrapInsightsPanel surfaces mid-run) and the same next-step links the walkthrough ending gives.
  */
 import { useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { Trophy, ShieldCheck } from 'lucide-react'
+import { Trophy, ShieldCheck, LayoutDashboard, CalendarClock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { readTrapTally, remediation, phaseName } from './simTrapTally'
 
 export interface SimRunCompleteObjective {
   id: string
@@ -40,6 +48,8 @@ export function SimRunComplete({
   const reduce = useReducedMotion()
   const primaryRef = useRef<HTMLButtonElement>(null)
   const allMet = objectives.length > 0 && objectives.every((o) => o.done)
+  // Top 3 — this is a closing reflection, not the full TrapInsightsPanel dashboard.
+  const topTraps = readTrapTally().slice(0, 3)
 
   useEffect(() => {
     primaryRef.current?.focus()
@@ -68,7 +78,7 @@ export function SimRunComplete({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.96 }}
           transition={{ duration: reduce ? 0 : 0.24, ease: 'easeOut' }}
-          className="glass-panel relative w-full max-w-md rounded-2xl border-2 border-primary/40 p-6 text-center shadow-xl sm:p-8"
+          className="glass-panel relative max-h-[85vh] w-full max-w-md overflow-y-auto rounded-2xl border-2 border-primary/40 p-6 text-center shadow-xl sm:p-8"
         >
           <div
             className="mx-auto mb-3 flex items-center justify-center rounded-full text-primary-foreground"
@@ -117,6 +127,56 @@ export function SimRunComplete({
               ? `Critical assets protected and the migration completed on the program timeline — operating at full maturity through ${programEndYear}.`
               : 'Program complete — some objectives finished behind their target dates.'}
           </p>
+
+          {topTraps.length > 0 && (
+            <div className="mb-4 rounded-lg border border-warning/30 bg-warning/5 p-3 text-left">
+              <div className="mb-1.5 font-mono text-sim-micro font-bold uppercase tracking-wide text-warning">
+                What you&rsquo;d do differently
+              </div>
+              <ol className="space-y-1">
+                {topTraps.map((t, i) => {
+                  const rem = remediation(t.phaseId)
+                  return (
+                    <li key={`${t.phaseId} ${t.label}`} className="text-[12px] leading-snug">
+                      <span className="font-semibold text-foreground">
+                        {i + 1}. {t.label}
+                      </span>{' '}
+                      <span className="text-muted-foreground">
+                        ({phaseName(t.phaseId)} · fell for it {t.count}×)
+                      </span>
+                      {rem && (
+                        <>
+                          {' — '}
+                          <Link
+                            to={rem.to}
+                            onClick={onClose}
+                            className="font-semibold text-primary underline-offset-2 hover:underline"
+                          >
+                            Learn: {rem.label}
+                          </Link>
+                        </>
+                      )}
+                    </li>
+                  )
+                })}
+              </ol>
+            </div>
+          )}
+
+          <div className="mb-4 flex flex-wrap justify-center gap-2">
+            <Link to="/business" onClick={onClose}>
+              <Button variant="outline" size="sm" className="gap-1.5">
+                <LayoutDashboard size={14} aria-hidden="true" />
+                Open the Command Center
+              </Button>
+            </Link>
+            <Link to="/compliance" onClick={onClose}>
+              <Button variant="outline" size="sm" className="gap-1.5">
+                <CalendarClock size={14} aria-hidden="true" />
+                See your deadlines
+              </Button>
+            </Link>
+          </div>
 
           <Button
             ref={primaryRef}
