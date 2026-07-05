@@ -235,12 +235,13 @@ describe('ModuleShell', () => {
     cancel.mockRestore()
   })
 
-  it('shows the sim CTA when the active persona practices the module phase', () => {
-    // exec practices p0 (Executive Mandate); base.frameworkPhase is 'p0'.
+  it('shows the sim CTA pointing at the module phase when the persona practices it', () => {
+    // exec practices p0 (Executive Mandate); base.frameworkPhase is 'p0', so the
+    // CTA deep-links straight to that phase (?phase=p0) rather than the generic sim.
     usePersonaStore.getState().setPersona('executive')
     renderShell(<ModuleShell manifest={base} learn={<div>L</div>} />)
     const cta = screen.getByRole('link', { name: /Practice in the Simulation/i })
-    expect(cta).toHaveAttribute('href', '/simulation')
+    expect(cta).toHaveAttribute('href', '/simulation?phase=p0')
   })
 
   it('hides the sim CTA when the active persona does NOT practice the module phase', () => {
