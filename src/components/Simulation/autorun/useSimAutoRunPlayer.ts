@@ -16,6 +16,7 @@ import type { PhaseId } from '@/data/frameworkPhases'
 import type { TreeStep } from '@/simulation'
 import {
   autoRunQueue,
+  autoRunDeepQueue,
   autoRunWalkthroughQueue,
   completeStepGenuine,
   type AutoRunQueueItem,
@@ -47,8 +48,24 @@ export interface ScenarioIntro {
 }
 
 /** Which run the player is driving: the full maturity CLIMB (Play 0→7) or the
- *  executive WALKTHROUGH (a phase-major single pass — a tour, not a win). */
-export type RunMode = 'climb' | 'walkthrough'
+ *  executive WALKTHROUGH (a phase-major single pass — a tour, not a win). Each
+ *  has a "-deep" variant (Extended Migration Journey / Executive Overview — Deep
+ *  Dive) that additionally walks the deep-dive (optional, non-gating) content —
+ *  see `simulation-unified-play-mechanism-plan-07052026.md`. `'phase'`/`'phase-deep'`
+ *  (Play This Phase) are v1-deferred: that card deep-links to the board instead of
+ *  driving its own auto-run queue, so no engine mode exists for it yet. */
+export type RunMode = 'climb' | 'climb-deep' | 'walkthrough' | 'walkthrough-deep'
+
+/** True for either walkthrough variant — the tour family (frozen clock, no
+ *  resume, single linear pass), as opposed to the climb family. Exported: the
+ *  board (`SimulationView.tsx`) needs the same check for its win-UI suppression
+ *  and concept-peek gating, which predate the "-deep" variants and only checked
+ *  `=== 'walkthrough'`. */
+export const isWalkthroughMode = (m: RunMode): boolean =>
+  m === 'walkthrough' || m === 'walkthrough-deep'
+
+/** True for either "-deep" variant, regardless of family. */
+const includesDeepDive = (m: RunMode): boolean => m === 'climb-deep' || m === 'walkthrough-deep'
 
 export interface SimAutoRunPlayer {
   running: boolean
@@ -81,6 +98,9 @@ export interface SimAutoRunPlayer {
    *  top). Reactive: flips as steps complete and back to false after a Reset clears
    *  completion. Drives the play button's "Resume" vs "PLAY ALL" label. */
   resumable: boolean
+  /** The mode "▶ Resume" should pass to `start()` — the last climb-family mode
+   *  that ran, so an interrupted Extended Migration Journey resumes as itself. */
+  resumeMode: RunMode
   start: (opts?: { mode?: RunMode }) => void
   pause: () => void
   resume: () => void
@@ -603,6 +623,11 @@ export function useSimAutoRunPlayer({
       const runMode: RunMode = opts?.mode ?? 'climb'
       setMode(runMode)
       modeRef.current = runMode
+      // Remember the mode for "▶ Resume" — only climb-family runs are ever
+      // resumable (walkthrough always restarts at 0), so only persist those.
+      if (!isWalkthroughMode(runMode)) {
+        useSimulationStore.getState().setAutoRunLastMode(runMode)
+      }
       clearTimer()
       seedDemoOrg() // populate the scenario context so embeds have data + a scope to filter by
       setAutoRunFill(true) // tools opened during the run fill their forms with demo content
@@ -611,7 +636,12 @@ export function useSimAutoRunPlayer({
       // never got onboarded, even after the run ended. The consumer (SimulationView)
       // suppresses the tour for the DURATION of an active run via `running`, without
       // burning the persisted `tourSeen` flag — so it's offered once the run completes.
-      const q = runMode === 'walkthrough' ? autoRunWalkthroughQueue() : autoRunQueue()
+      const deep = includesDeepDive(runMode)
+      const q = isWalkthroughMode(runMode)
+        ? autoRunWalkthroughQueue(deep)
+        : deep
+          ? autoRunDeepQueue()
+          : autoRunQueue()
       queueRef.current = q
       // RESUME from the remembered playhead — the queue index where the last run was
       // interrupted (saved by stop(), cleared on completion + by Reset). Completion can
@@ -622,13 +652,16 @@ export function useSimAutoRunPlayer({
       // at the top.
       const remembered = useSimulationStore.getState().autoRunResumeIndex
       // The walkthrough is a short linear tour — always start at the top (no resume).
-      const startAt =
-        runMode === 'walkthrough' ? 0 : remembered > 0 && remembered < q.length ? remembered : 0
+      const startAt = isWalkthroughMode(runMode)
+        ? 0
+        : remembered > 0 && remembered < q.length
+          ? remembered
+          : 0
       const scenario = getScenario(useSimulationStore.getState().country)
       scenarioRef.current = scenario
       // Walkthrough freezes the calendar (a tour, not a timed run): an empty clock plan
       // means the per-step advance never calls applyQuarter, so no dates ever move.
-      clockPlanRef.current = runMode === 'walkthrough' ? [] : buildClockPlan(q, scenario)
+      clockPlanRef.current = isWalkthroughMode(runMode) ? [] : buildClockPlan(q, scenario)
       const starts: { level: number; start: number }[] = []
       q.forEach((it, i) => {
         const last = starts.at(-1)
@@ -649,7 +682,7 @@ export function useSimAutoRunPlayer({
       // The climb opens on the dated scenario-framing card; the walkthrough suppresses it
       // (dates are hidden) and leads with its own concept-led opening instead.
       setScenarioIntro(
-        runMode === 'walkthrough' ? null : startAt === 0 ? scenarioIntroFor(scenario) : null
+        isWalkthroughMode(runMode) ? null : startAt === 0 ? scenarioIntroFor(scenario) : null
       )
       setTotal(q.length)
       setIndex(startAt)
@@ -987,7 +1020,7 @@ export function useSimAutoRunPlayer({
         completeStepGenuine(item.step)
         // Walkthrough: when a board document is generated, surface its "what this is" line.
         if (
-          modeRef.current === 'walkthrough' &&
+          isWalkthroughMode(modeRef.current) &&
           item.step.kind === 'activity' &&
           item.step.artifactType &&
           EXEC_TOUR_REVEAL_TYPES.includes(item.step.artifactType)
@@ -1014,7 +1047,7 @@ export function useSimAutoRunPlayer({
           if (cancelled) return
           if (next >= q.length) {
             setCaption(
-              modeRef.current === 'walkthrough'
+              isWalkthroughMode(modeRef.current)
                 ? 'That’s the full program, end to end.'
                 : 'Migration complete — full program maturity reached.'
             )
@@ -1066,6 +1099,13 @@ export function useSimAutoRunPlayer({
   // the play button flip to "Resume" the moment a run is interrupted, and back to
   // "Play all" after the run finishes or the simulation is reset.
   const resumable = useSimulationStore((s) => s.autoRunResumeIndex) > 0
+  // The mode "▶ Resume" should restart — the last climb-family mode that was
+  // running, so resuming an Extended Migration Journey doesn't silently drop
+  // back to plain Full Migration Journey. Defaults to 'climb' if never set
+  // (fresh state / older persisted saves from before this field existed).
+  const resumeModeRaw = useSimulationStore((s) => s.autoRunLastMode)
+  const resumeMode: RunMode =
+    resumeModeRaw === 'climb' || resumeModeRaw === 'climb-deep' ? resumeModeRaw : 'climb'
 
   // Stop the timer + any speech if the sim unmounts mid-run.
   useEffect(
@@ -1094,6 +1134,7 @@ export function useSimAutoRunPlayer({
     phaseIntro,
     scenarioIntro,
     resumable,
+    resumeMode,
     start,
     pause,
     resume,

@@ -52,6 +52,12 @@ const WORKSHOP_TOOLS = new Set([
   'merkle-proof',
   'hsm-capacity',
   'cert-capacity',
+  // Added 07052026 (P6 deep-dive wave) — deepDive-only, see FRAMEWORK.p6 below.
+  'pki-enrollment',
+  'hybrid-certs',
+  'tpm-playground',
+  'cacp-kmip',
+  'tee-channel',
 ])
 const ART_TOOL = {
   'roi-model': 'roi-calculator',
@@ -636,6 +642,11 @@ const FRAMEWORK = {
         S('pki', 'Lab: enterprise PQC PKI chain (Root SLH-DSA → Int ML-DSA → Leaf)'),
         A('infra-modernization-plan', 'Draft the infrastructure modernization plan'),
       ],
+      // Deep dive (optional, non-gating — added 07052026, P6 depth wave).
+      deepDive: [
+        W('pki-enrollment', 'Deep dive — Practice: PKI enrollment protocols'),
+        W('hybrid-certs', 'Deep dive — Practice: hybrid (classical + PQC) certificate chains'),
+      ],
     },
     {
       id: '6.2',
@@ -648,6 +659,11 @@ const FRAMEWORK = {
         L('kms-pqc', 'Learn: KMS & PQC'),
         W('hsm-capacity', 'Practice: HSM capacity calculator'),
         W('envelope-encrypt', 'Practice: PQC key-wrapping — bridge for HSMs not yet upgradeable'),
+      ],
+      deepDive: [
+        W('tpm-playground', 'Deep dive — Practice: hardware root-of-trust (TPM)'),
+        L('secrets-management-pqc', 'Deep dive — Learn: Secrets Management & PQC'),
+        W('cacp-kmip', 'Deep dive — Practice: Crypto-Agility Control Plane (KMIP)'),
       ],
     },
     {
@@ -662,6 +678,7 @@ const FRAMEWORK = {
         W('cert-capacity', 'Practice: certificate chain / handshake size'),
         S('ab-handshake-bench', 'Lab: A/B TLS handshake throughput (classical vs hybrid)'),
       ],
+      deepDive: [L('web-gateway-pqc', 'Deep dive — Learn: API Gateways & Reverse Proxies + PQC')],
     },
     {
       id: '6.4',
@@ -673,6 +690,10 @@ const FRAMEWORK = {
         L('pqc-testing-validation', 'Learn: PQC Testing & Validation'),
         R('compliance-cert-check', 'Reference: algorithm sizes & FIPS/CC certs'),
       ],
+      deepDive: [
+        W('tee-channel', 'Deep dive — Practice: TEE↔HSM trusted channel'),
+        L('secure-boot-pqc', 'Deep dive — Learn: Secure Boot & PQC'),
+      ],
     },
     {
       id: '6.5',
@@ -681,6 +702,7 @@ const FRAMEWORK = {
       do: 'Estimate CPU, memory, bandwidth and storage impact; benchmark on production hardware.',
       output: 'Capacity plan',
       steps: [R('algorithms-detailed', 'Reference: detailed algorithm size comparison')],
+      deepDive: [L('os-pqc', 'Deep dive — Learn: Operating Systems & PQC')],
     },
   ],
   p7: [
@@ -1114,6 +1136,7 @@ for (const phase of Object.keys(FRAMEWORK)) {
         do: a.do,
         output: a.output ?? undefined,
         steps: a.steps,
+        deepDive: a.deepDive ?? undefined,
       })),
   }))
   const tree = {

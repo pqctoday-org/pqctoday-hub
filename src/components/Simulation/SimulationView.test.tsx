@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { SimulationView } from './SimulationView'
 import { useSimulationStore } from '@/store/useSimulationStore'
 import { useAssessmentResultStore } from '@/store/useAssessmentResultStore'
+import { usePersonaStore } from '@/store/usePersonaStore'
 import { SIM_TREES, flattenTree } from '@/simulation'
 import type { AssessmentResult } from '@/hooks/assessmentTypes'
 
@@ -246,5 +247,68 @@ describe('SimulationView (Mission Control)', () => {
     // inherited Object.prototype keys (e.g. "toString") as a "valid" phase.
     renderPage(['/simulation?phase=toString'])
     expect(useSimulationStore.getState().sel).toBe('p0')
+  })
+})
+
+// simulation-unified-play-mechanism-plan-07052026.md — the unified PLAY entry
+// point. Rev. 3: the modal always opens (except when resumable, which stays a
+// direct one-click Resume); persona only changes which card is pre-emphasized,
+// never which one auto-starts.
+describe('SimulationView — unified PLAY modal', () => {
+  beforeEach(() => {
+    usePersonaStore.getState().setPersona(null)
+  })
+
+  it('clicking ▶ PLAY opens the modal with all 3 scopes visible', () => {
+    renderPage()
+    fireEvent.click(screen.getByRole('button', { name: /^▶ PLAY$/ }))
+    expect(screen.getByRole('dialog', { name: /choose how to play/i })).toBeInTheDocument()
+    expect(screen.getByText('Executive Overview')).toBeInTheDocument()
+    expect(screen.getByText('Full Migration Journey')).toBeInTheDocument()
+    expect(screen.getByText('Play This Phase')).toBeInTheDocument()
+  })
+
+  it('with no persona set, Full Migration Journey is the recommended default', () => {
+    renderPage()
+    fireEvent.click(screen.getByRole('button', { name: /^▶ PLAY$/ }))
+    const dialog = screen.getByRole('dialog', { name: /choose how to play/i })
+    const journeyCard = within(dialog).getByText('Full Migration Journey').closest('div')!
+    expect(within(journeyCard).getByText(/recommended for you/i)).toBeInTheDocument()
+  })
+
+  it('a business persona (executive) recommends Executive Overview instead', () => {
+    usePersonaStore.getState().setPersona('executive')
+    renderPage()
+    fireEvent.click(screen.getByRole('button', { name: /^▶ PLAY$/ }))
+    const dialog = screen.getByRole('dialog', { name: /choose how to play/i })
+    const execCard = within(dialog).getByText('Executive Overview').closest('div')!
+    expect(within(execCard).getByText(/recommended for you/i)).toBeInTheDocument()
+    // and Full Migration Journey is NOT the one marked recommended
+    const journeyCard = within(dialog).getByText('Full Migration Journey').closest('div')!
+    expect(within(journeyCard).queryByText(/recommended for you/i)).not.toBeInTheDocument()
+  })
+
+  it('a technical persona (developer) recommends Full Migration Journey', () => {
+    usePersonaStore.getState().setPersona('developer')
+    renderPage()
+    fireEvent.click(screen.getByRole('button', { name: /^▶ PLAY$/ }))
+    const dialog = screen.getByRole('dialog', { name: /choose how to play/i })
+    const journeyCard = within(dialog).getByText('Full Migration Journey').closest('div')!
+    expect(within(journeyCard).getByText(/recommended for you/i)).toBeInTheDocument()
+  })
+
+  it('when a run is resumable, the button reads ▶ Resume and does not open the modal', () => {
+    useSimulationStore.setState({ autoRunResumeIndex: 1 })
+    renderPage()
+    expect(screen.getByRole('button', { name: /^▶ Resume$/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /start a different path/i })).toBeInTheDocument()
+    expect(screen.queryByRole('dialog', { name: /choose how to play/i })).not.toBeInTheDocument()
+  })
+
+  it('"start a different path" opens the modal even while resumable', () => {
+    useSimulationStore.setState({ autoRunResumeIndex: 1 })
+    renderPage()
+    fireEvent.click(screen.getByRole('button', { name: /start a different path/i }))
+    expect(screen.getByRole('dialog', { name: /choose how to play/i })).toBeInTheDocument()
   })
 })
