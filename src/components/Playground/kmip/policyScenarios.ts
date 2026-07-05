@@ -981,6 +981,38 @@ export const POLICY_SCENARIOS: PolicyTestScenario[] = [
     request: { op: 'CreateKeyPair:KeyAgreement', algorithm: 'ECDH-P256', length: 256 },
     expect: 'Allow',
   },
+  // Ed25519 — runnable at the engine as of 2026-07-05 (P1). FIPS 186-5
+  // approves it (fips-only allows); CNSA 2.0 does not (cnsa-2.0 denies as
+  // classical asymmetric). These are also the first scenarios where the
+  // Allow verdict is backed by a key the workbench can now actually create.
+  {
+    id: 'fips-allow-ed25519',
+    policyFile: 'fips-only.yaml',
+    title: 'Create an Ed25519 signing key',
+    description: 'Ed25519 (EdDSA) is FIPS 186-5-approved — fips-only allowlists it.',
+    path: 'positive',
+    request: {
+      op: 'CreateKeyPair:Sign',
+      algorithm: 'Ed25519',
+      usageMask: ['Sign', 'Verify'],
+    },
+    expect: 'Allow',
+  },
+  {
+    id: 'cnsa-deny-ed25519',
+    policyFile: 'cnsa-2.0.yaml',
+    title: 'Create an Ed25519 signing key',
+    description:
+      'CNSA 2.0 mandates ML-DSA-87 for signatures — classical EdDSA is denied like RSA/ECDSA.',
+    path: 'negative',
+    request: {
+      op: 'CreateKeyPair:Sign',
+      algorithm: 'Ed25519',
+      usageMask: ['Sign', 'Verify'],
+      attrs: { 'pqctoday-cnsa-classification': 'Secret' },
+    },
+    expect: 'Deny',
+  },
   {
     id: 'fips-deny-pkcs1v15-encrypt',
     policyFile: 'fips-only.yaml',
