@@ -9,11 +9,21 @@
 // Python/TLS harness produces — this is the same test suite, running
 // entirely in the tab instead of against a server.
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { ChevronDown, ChevronRight, FlaskConical, Loader2, Play, CheckCircle2, XCircle, MinusCircle } from 'lucide-react'
+import {
+  ChevronDown,
+  ChevronRight,
+  FlaskConical,
+  Loader2,
+  Play,
+  CheckCircle2,
+  XCircle,
+  MinusCircle,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { getCodepointTable, type CodepointTable } from '@/wasm/kmip/ttlv/codepointTable'
 import { runCorpusTest, type TestResult, type TestStatus } from '@/wasm/kmip/corpus/runner'
+import { WireTreeView } from './WireTreeView'
 
 interface ManifestEntry {
   file: string
@@ -75,13 +85,16 @@ export function CorpusReplayView() {
   const [results, setResults] = useState<Record<string, TestResult>>({})
   const [running, setRunning] = useState<string | null>(null)
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set())
+  const [expandedTests, setExpandedTests] = useState<Set<string>>(new Set())
   const nextSlot = useRef(SLOT_BASE)
 
   useEffect(() => {
     let alive = true
     Promise.all([
       getCodepointTable(),
-      fetch('/kmip-corpus/manifest.json').then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`)))),
+      fetch('/kmip-corpus/manifest.json').then((r) =>
+        r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))
+      ),
     ])
       .then(([t, m]) => {
         if (!alive) return
@@ -147,7 +160,9 @@ export function CorpusReplayView() {
 
   const ran = Object.keys(results)
   const passed = ran.filter((k) => results[k].status === 'PASS').length
-  const failed = ran.filter((k) => results[k].status === 'FAIL' || results[k].status === 'ERROR').length
+  const failed = ran.filter(
+    (k) => results[k].status === 'FAIL' || results[k].status === 'ERROR'
+  ).length
 
   if (error) {
     return <p className="text-sm text-destructive">Couldn't load the OASIS corpus: {error}</p>
@@ -162,8 +177,8 @@ export function CorpusReplayView() {
               <FlaskConical size={16} className="text-primary" /> OASIS KMIP 3.0 conformance corpus
             </h3>
             <p className="mt-1 max-w-xl text-xs text-muted-foreground">
-              {manifest?.count ?? '…'} real OASIS test transcripts (mandatory + optional) plus vendored
-              PQC interop tests — the same suite behind{' '}
+              {manifest?.count ?? '…'} real OASIS test transcripts (mandatory + optional) plus
+              vendored PQC interop tests — the same suite behind{' '}
               <code className="text-foreground">conformance/REPLAY_REPORT.md</code>, replayed live
               against this tab's engine instead of over a network.
             </p>
@@ -173,7 +188,9 @@ export function CorpusReplayView() {
               <span
                 className={cn(
                   'rounded px-2 py-1 text-[11px] font-semibold',
-                  failed === 0 ? 'bg-status-success/15 text-status-success' : 'bg-destructive/15 text-destructive'
+                  failed === 0
+                    ? 'bg-status-success/15 text-status-success'
+                    : 'bg-destructive/15 text-destructive'
                 )}
               >
                 {passed}/{ran.length} pass
@@ -181,7 +198,12 @@ export function CorpusReplayView() {
               </span>
             )}
             <Button onClick={runAll} disabled={!table || !!running} className="gap-1.5">
-              {running === '__all__' ? <Loader2 size={14} className="animate-spin" /> : <Play size={14} />} Run all
+              {running === '__all__' ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : (
+                <Play size={14} />
+              )}{' '}
+              Run all
             </Button>
           </div>
         </div>
@@ -198,44 +220,88 @@ export function CorpusReplayView() {
           const isCollapsed = collapsed.has(cat)
           return (
             <section key={cat} className="rounded-xl border border-border bg-card">
-              <button
-                type="button"
+              <Button
+                variant="ghost"
                 onClick={() => toggleCategory(cat)}
-                className="flex w-full items-center gap-2 px-3 py-2 text-left"
+                className="flex h-auto w-full items-center gap-2 rounded-xl px-3 py-2 text-left"
               >
                 {isCollapsed ? <ChevronRight size={14} /> : <ChevronDown size={14} />}
-                <span className="text-xs font-bold uppercase tracking-wide text-foreground">{cat}</span>
+                <span className="text-xs font-bold uppercase tracking-wide text-foreground">
+                  {cat}
+                </span>
                 <span className="text-[10.5px] text-muted-foreground">({entries.length})</span>
-              </button>
+              </Button>
               {!isCollapsed && (
                 <ul className="space-y-1.5 px-3 pb-3">
                   {entries.map((entry) => {
                     const result = results[entry.name]
+                    const open = expandedTests.has(entry.name)
                     return (
                       <li
                         key={entry.name}
-                        className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-card/60 px-3 py-2"
+                        className="rounded-lg border border-border bg-card/60 px-3 py-2"
                       >
-                        <span className="font-mono text-xs text-foreground">{entry.name}</span>
-                        {result && (
-                          <>
-                            <StatusBadge status={result.status} />
-                            {result.detail && (
-                              <span className="max-w-md truncate text-[10.5px] text-muted-foreground" title={result.detail}>
-                                {result.detail}
-                              </span>
-                            )}
-                          </>
+                        <div className="flex flex-wrap items-center gap-2">
+                          {result && result.pairs.length > 0 && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() =>
+                                setExpandedTests((prev) => {
+                                  const next = new Set(prev)
+                                  if (next.has(entry.name)) next.delete(entry.name)
+                                  else next.add(entry.name)
+                                  return next
+                                })
+                              }
+                              className="h-auto p-0.5"
+                            >
+                              {open ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
+                            </Button>
+                          )}
+                          <span className="font-mono text-xs text-foreground">{entry.name}</span>
+                          {result && (
+                            <>
+                              <StatusBadge status={result.status} />
+                              {result.detail && (
+                                <span
+                                  className="max-w-md truncate text-[10.5px] text-muted-foreground"
+                                  title={result.detail}
+                                >
+                                  {result.detail}
+                                </span>
+                              )}
+                            </>
+                          )}
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            disabled={!table || !!running}
+                            onClick={() => runOne(entry)}
+                            className="ml-auto h-7 gap-1.5 px-2.5 text-[11px]"
+                          >
+                            {running === entry.name ? (
+                              <Loader2 size={12} className="animate-spin" />
+                            ) : (
+                              <Play size={12} />
+                            )}{' '}
+                            Run
+                          </Button>
+                        </div>
+                        {open && result && result.pairs.length > 0 && (
+                          <div className="mt-2 space-y-2">
+                            {result.pairs.map((pair, i) => (
+                              <div key={i}>
+                                {result.pairs.length > 1 && (
+                                  <p className="mb-1 text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                                    Pair {i + 1} of {result.pairs.length}
+                                  </p>
+                                )}
+                                <WireTreeView root={pair.responseTree} annotated />
+                              </div>
+                            ))}
+                          </div>
                         )}
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          disabled={!table || !!running}
-                          onClick={() => runOne(entry)}
-                          className="ml-auto h-7 gap-1.5 px-2.5 text-[11px]"
-                        >
-                          {running === entry.name ? <Loader2 size={12} className="animate-spin" /> : <Play size={12} />} Run
-                        </Button>
                       </li>
                     )
                   })}
