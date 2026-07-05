@@ -131,7 +131,7 @@ export function computeVendorScorecards(
 ): VendorScorecardRow[] {
   const groups = new Map<string, SoftwareItem[]>()
   for (const item of items) {
-    const vendor = item.vendorName?.trim() || item.vendorId?.trim() || 'Unknown vendor'
+    const vendor = item.vendorId?.trim() || 'Unknown vendor'
     const arr = groups.get(vendor) ?? []
     arr.push(item)
     groups.set(vendor, arr)
