@@ -120,6 +120,10 @@ export const REFERENCE_EMBED_IDS = new Set([
   'compliance-cert-check',
   'threats',
   'report',
+  // The verify-close tree's VC.1 reference step pointed at the same tool VC.2's
+  // activity step embeds — fixed 07042026 so it embeds here too instead of
+  // hard-navigating to /business/tools/migration-verification.
+  'migration-verification',
 ])
 
 /** True for a reference step that has a full-page embed widget. */
