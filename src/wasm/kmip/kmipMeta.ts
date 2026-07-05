@@ -283,13 +283,11 @@ export const ALGORITHMS: AlgoChoice[] = [
     pqc: true,
     runnable: false,
   },
-  {
-    value: 'Ed25519',
-    label: 'Ed25519 (spec-only)',
-    kind: 'signature',
-    pqc: false,
-    runnable: false,
-  },
+  // Ed25519 (RFC 8032 EdDSA) — runnable as of 2026-07-05 (P1): keygen/sign/
+  // verify wired through the KMIP layer to the existing PKCS#11 engine path.
+  { value: 'Ed25519', label: 'Ed25519 (EdDSA)', kind: 'signature', pqc: false },
+  // X25519 stays spec-only: the KMIP layer has no key-agreement OPERATION
+  // yet (DeriveKey's Asymmetric Key method) — keygen alone would be inert.
   { value: 'X25519', label: 'X25519 (spec-only)', kind: 'kem', pqc: false, runnable: false },
   {
     value: 'FrodoKEM-1344',
@@ -332,15 +330,20 @@ const RUNNABLE_EXACT = new Set([
   'SLH-DSA-SHAKE-256f',
   'X25519MLKEM768',
   'SecP256r1MLKEM768',
+  // 2026-07-05 (P1): Ed25519 keygen/sign/verify wired KMIP → PKCS#11 engine.
+  'Ed25519',
 ])
 
 /** Family prefixes `parse_algorithm` collapses to a concrete algorithm
- * regardless of the qualifying suffix (`ECDSA-P256` → `Ecdsa`, etc.). */
+ * regardless of the qualifying suffix (`ECDSA-P256` → `Ecdsa`, etc.).
+ * ECDH became genuinely runnable on 2026-07-05 (P0) — before that it was in
+ * this set but CreateKeyPair failed at the engine (the standing bug P0
+ * fixed); the set was aspirational, now it's accurate. */
 const RUNNABLE_FAMILIES = new Set(['AES', 'RSA', 'ECDSA', 'ECDH'])
 
 /** `true` if the wasm engine can actually create/use a real key for this
  * algorithm name — a policy may still reference a non-runnable name (e.g.
- * `FrodoKEM-1344`, bare `Ed25519`, a hash name like `SHA-1`) in an
+ * `FrodoKEM-1344`, `X25519`, a hash name like `SHA-1`) in an
  * allow/denylist, and the dry-run engine will happily evaluate a verdict for
  * the literal string, but no lifecycle op can create/sign/encapsulate one
  * here. Distinguishing this is the fix for A-grade review finding A1 — "the
