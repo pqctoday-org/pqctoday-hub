@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useMemo, useCallback, useEffect } from 'react'
+import React, { useMemo, useCallback, useEffect, useState } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useAlgorithmTransitionsForAssessment } from '@/hooks/useAlgorithmTransitionsForAssessment'
@@ -299,6 +299,34 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
         : [...prev, d]
     )
 
+  // Deadline browser: search text + country filter, grouped by source so 80+ entries
+  // stay scannable instead of one giant unsorted wrap of chips.
+  const [deadlineSearch, setDeadlineSearch] = useState('')
+  const [deadlineCountryFilter, setDeadlineCountryFilter] = useState('')
+  const deadlineCountries = useMemo(
+    () => [...new Set(externalDeadlines.map((d) => d.source))].sort(),
+    [externalDeadlines]
+  )
+  const deadlineGroups = useMemo(() => {
+    const query = deadlineSearch.trim().toLowerCase()
+    const filtered = externalDeadlines.filter((d) => {
+      if (deadlineCountryFilter && d.source !== deadlineCountryFilter) return false
+      if (!query) return true
+      return (
+        d.label.toLowerCase().includes(query) ||
+        d.source.toLowerCase().includes(query) ||
+        String(d.year).includes(query)
+      )
+    })
+    const bySource = new Map<string, ExternalDeadline[]>()
+    for (const d of filtered) {
+      const group = bySource.get(d.source)
+      if (group) group.push(d)
+      else bySource.set(d.source, [d])
+    }
+    return [...bySource.entries()].sort(([a], [b]) => a.localeCompare(b))
+  }, [externalDeadlines, deadlineSearch, deadlineCountryFilter])
+
   // CSWP.39 §4.6 — Mitigation gateway rows for assets where direct migration is blocked.
   const myProductIds = useMigrateSelectionStore((s) => s.myProducts)
   const candidateGateways = useMemo(() => {
@@ -383,7 +411,7 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
     md += '## Mitigation Gateway (CSWP.39 §4.6)\n\n'
     if (mitigations.length === 0) {
       md +=
-        '_No mitigation gateways specified. Per §4.6: "Mitigation is not a permanent solution" — every mitigation requires a sunset date._\n\n'
+        '_No mitigation gateways specified. CSWP.39 §4.6 frames a crypto gateway as an architectural fix for legacy systems that cannot be modified directly, not a substitute for migrating the algorithm inside them — every mitigation requires a sunset date._\n\n'
     } else {
       md += '| Asset | Gateway product | Reason | Sunset |\n|---|---|---|---|\n'
       for (const m of mitigations) {
@@ -465,39 +493,74 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
           Gates G0→G3 (mandate → inventory → CBOM → risk scoring) are a shared governance spine both
           tracks pass through together, producing the prioritized backlog and approved roadmap (G4)
           they then execute against. From there the same phase/gate structure runs independently and
-          in parallel per track — G5 as Track A pilots hybrid key exchange, G6 as Track B modernizes
-          PKI — because the two tracks don&apos;t share deadlines or dependencies once execution
-          begins.
+          in parallel per track, because the two tracks don&apos;t share deadlines or dependencies
+          once execution begins. The illustrative milestones below show one example: Track A
+          piloting hybrid key exchange (G5) while Track B first migrates code-signing algorithms
+          (also G5) before later re-issuing PKI root/intermediate CAs (G6) — infrastructure work
+          that only shows up once a roadmap actually reaches that stage.
         </p>
       </div>
 
       {/* Regulatory deadline selector */}
       {externalDeadlines.length > 0 && (
-        <div className="glass-panel p-4 space-y-2">
-          <p className="text-sm font-medium text-foreground">
-            Regulatory deadlines ({selectedDeadlines.length}/{externalDeadlines.length} selected)
-          </p>
-          <div className="flex flex-wrap gap-1.5">
-            {externalDeadlines.map((d) => {
-              const on = selectedDeadlines.some((x) => deadlineKey(x) === deadlineKey(d))
-              return (
-                <Button
-                  key={deadlineKey(d)}
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleDeadline(d)}
-                  className={`h-auto rounded px-2 py-0.5 text-[11px] border font-normal ${
-                    on
-                      ? 'bg-status-error/15 border-status-error/40 text-status-error'
-                      : 'bg-background border-border text-muted-foreground'
-                  }`}
-                >
-                  {d.year} · {d.label} ({d.source})
-                </Button>
-              )
-            })}
+        <div className="glass-panel p-4 space-y-3">
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <p className="text-sm font-medium text-foreground">
+              Regulatory deadlines ({selectedDeadlines.length}/{externalDeadlines.length} selected)
+            </p>
+            <div className="flex items-center gap-2 flex-wrap">
+              <input
+                type="text"
+                value={deadlineSearch}
+                onChange={(e) => setDeadlineSearch(e.target.value)}
+                placeholder="Search year, country, or name…"
+                aria-label="Search regulatory deadlines"
+                className="text-xs rounded-md border border-input bg-background px-2 py-1 w-56"
+              />
+              <FilterDropdown
+                items={deadlineCountries}
+                selectedId={deadlineCountryFilter}
+                onSelect={setDeadlineCountryFilter}
+                defaultLabel="All countries"
+                searchable
+                size="sm"
+              />
+            </div>
           </div>
+          {deadlineGroups.length === 0 ? (
+            <p className="text-xs text-muted-foreground italic">No deadlines match this filter.</p>
+          ) : (
+            <div className="space-y-2.5 max-h-80 overflow-y-auto pr-1">
+              {deadlineGroups.map(([source, group]) => (
+                <div key={source}>
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">
+                    {source} ({group.length})
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {group.map((d) => {
+                      const on = selectedDeadlines.some((x) => deadlineKey(x) === deadlineKey(d))
+                      return (
+                        <Button
+                          key={deadlineKey(d)}
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => toggleDeadline(d)}
+                          className={`h-auto rounded px-2 py-0.5 text-[11px] border font-normal ${
+                            on
+                              ? 'bg-status-error/15 border-status-error/40 text-status-error'
+                              : 'bg-background border-border text-muted-foreground'
+                          }`}
+                        >
+                          {d.year} · {d.label}
+                        </Button>
+                      )
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

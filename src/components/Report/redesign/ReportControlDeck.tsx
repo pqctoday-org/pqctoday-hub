@@ -51,7 +51,7 @@ export function ReportControlDeck({ fullTrack, shared = false }: ReportControlDe
           {fullTrack ? 'Full report' : 'Fast report'}
         </span>
         <span className="font-mono text-[11px] text-muted-foreground">
-          {fullTrack ? '13 questions · ~5 min' : '8 questions · ~3 min'}
+          {fullTrack ? '13 questions · ~5 min' : '6 questions · ~3 min'}
         </span>
       </span>
 

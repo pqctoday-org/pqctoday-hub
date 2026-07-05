@@ -234,6 +234,12 @@ docs/pqctoday-investor*
 scripts/*
 # CI scripts are public — they run in GitHub Actions and must be tracked
 !scripts/ci/
+
+# NVD CVE scraper — runs weekly in .github/workflows/update-cve.yml (public
+# CI), must be tracked or that workflow fails with "No such file or directory"
+# (as it silently did for weeks — see git history). Reads public CPE xref CSV,
+# calls the public NVD API, writes public cve-snapshot.json: nothing private.
+!scripts/scrape-nvd.py
 # Build-pipeline generators are public — `npm run build` invokes them to
 # produce OSCAL + CBOM JSON from committed CSV data. Reading public input,
 # emitting public output: nothing private to protect.

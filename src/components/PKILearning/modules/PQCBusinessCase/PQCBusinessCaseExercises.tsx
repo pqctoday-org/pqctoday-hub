@@ -14,8 +14,8 @@ const EXERCISES = [
     badgeColor: 'bg-primary/20 text-primary border-primary/50',
     scenario:
       'Your CFO asks why the organization should invest $2M in PQC migration when "quantum computers are years away." Prepare a cost justification using breach cost data and compliance deadlines.',
-    hint: 'Use the ROI Calculator (Step 1) to model the total cost of inaction vs. proactive migration. Consider HNDL risk for data already being harvested today.',
-    step: 0,
+    hint: 'Use the ROI Calculator (Step 2) to model the total cost of inaction vs. proactive migration. Consider HNDL risk for data already being harvested today.',
+    step: 1,
   },
   {
     id: 'regulatory-urgency',
@@ -24,8 +24,8 @@ const EXERCISES = [
     badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
     scenario:
       'Your organization operates in a regulated industry (finance or healthcare) and your country has announced mandatory PQC deadlines. Build a case showing the cost of non-compliance vs. early adoption.',
-    hint: 'Use the Breach Scenario Simulator (Step 2) to model quantum-amplified breach costs including regulatory fines. Compare with the migration investment required.',
-    step: 1,
+    hint: 'Use the Breach Scenario Simulator (Step 3) to model quantum-amplified breach costs including regulatory fines. Compare with the migration investment required.',
+    step: 2,
   },
   {
     id: 'board-presentation',
@@ -34,8 +34,8 @@ const EXERCISES = [
     badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
     scenario:
       'You have 10 minutes at the next board meeting to secure PQC migration funding. Create a complete executive brief that covers risk, cost-benefit, timeline, and recommended actions.',
-    hint: 'Complete all three workshop steps, then use the Board Pitch Builder (Step 3) to generate a polished board memo. Export it as a document you could present.',
-    step: 2,
+    hint: 'Work through the earlier steps, then use the Board Pitch Builder (Step 5) to generate a polished board memo. Export it as a document you could present.',
+    step: 4,
   },
   {
     id: 'delay-analysis',

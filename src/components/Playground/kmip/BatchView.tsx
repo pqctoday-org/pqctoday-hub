@@ -93,7 +93,14 @@ const ADDABLE: OpSpec['op'][] = [
   'Create',
   'Activate',
   'Sign',
+  // SignatureVerify / Encrypt / Decrypt / Decapsulate were missing
+  // (2026-07-04) — the builder couldn't express a full lifecycle round trip
+  // (create → activate → protect → recover) that the policies gate.
+  'SignatureVerify',
   'Encapsulate',
+  'Decapsulate',
+  'Encrypt',
+  'Decrypt',
   'Query',
   'Locate',
   'Get',
@@ -167,9 +174,20 @@ export function BatchView({
           ? { op, algorithm: 'AES', length: 256 }
           : op === 'Sign'
             ? { op, uid: ID_PLACEHOLDER, text: 'hello' }
-            : ['Activate', 'Encapsulate', 'Get', 'Revoke', 'Destroy'].includes(op)
-              ? { op, uid: ID_PLACEHOLDER }
-              : { op },
+            : op === 'Encrypt'
+              ? { op, uid: ID_PLACEHOLDER, text: 'hello' }
+              : [
+                    'Activate',
+                    'Encapsulate',
+                    'Decapsulate',
+                    'SignatureVerify',
+                    'Decrypt',
+                    'Get',
+                    'Revoke',
+                    'Destroy',
+                  ].includes(op)
+                ? { op, uid: ID_PLACEHOLDER }
+                : { op },
     ])
 
   const run = async () => {

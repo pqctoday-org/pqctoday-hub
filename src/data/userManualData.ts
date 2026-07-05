@@ -294,7 +294,7 @@ export const pageManuals: Record<PageId, PageManual> = {
   assess: {
     title: 'Risk Assessment',
     summary:
-      "Complete a guided assessment wizard to evaluate your organization's PQC readiness. Choose Quick (8 steps, ~2 min) or Comprehensive (13 steps, ~5 min) mode.",
+      "Complete a guided assessment wizard to evaluate your organization's PQC readiness. Choose Quick (6 steps, ~2 min) or Comprehensive (13 steps, ~5 min) mode.",
     sections: [
       {
         heading: 'Assessment Modes',

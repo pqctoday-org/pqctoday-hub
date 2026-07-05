@@ -22,8 +22,11 @@ metadata:
   description: |
     Post-PQC default policy. KEM = ML-KEM-1024, signature = ML-DSA-87,
     asymmetric-encrypt = ML-KEM-1024 (key delivery) + AES-256 (bulk).
-    Existing classical keys are auto-rekeyed at first use via
-    algorithm_substitution rules — application sees only the handle.
+    Existing classical SIGNING keys (ECDSA P-256/384/521, RSA-3072) are
+    auto-rekeyed to ML-DSA-87 at first Sign via algorithm_substitution —
+    the application sees only the handle. The Encrypt-path rekey (RSA →
+    ML-KEM) is deferred to the Phase-5 encapsulation work; legacy classical
+    keys can still Verify/Decrypt during the transition.
   authority: pqctoday-hsm/demo
   effective: "2026-01-01"
   compliance_mapping:
@@ -61,16 +64,33 @@ rules:
     default_algorithm: AES-256
     reason: "AES-256 — PQC-safe symmetric (Grover-resistant)"
 
-  # ── Existing-key rekey: ECDSA-P256 → ML-DSA-87 on Sign ────────────────
+  # ── Existing-key rekey: classical signing → ML-DSA-87 on Sign ─────────
   # Triggered when the application calls Sign against a key created under
   # classical.yaml. Engine emits Decision::RekeyAndProceed — dispatcher
-  # generates a fresh ML-DSA-87 keypair, marks the ECDSA key Deprecated,
+  # generates a fresh ML-DSA-87 keypair, marks the classical key Deprecated,
   # links new ↔ old via x-pqctoday-supersedes, re-issues the Sign.
+  # 2026-07-04: was ECDSA-P256 only — RSA/P-384/P-521 signing keys kept
+  # signing classically forever under the "PQC" policy.
   - type: algorithm_substitution
     ops: [Sign]
     from: ECDSA-P256
     to: ML-DSA-87
     reason: "Rekey legacy ECDSA signing key to ML-DSA-87 at first use"
+  - type: algorithm_substitution
+    ops: [Sign]
+    from: ECDSA-P384
+    to: ML-DSA-87
+    reason: "Rekey legacy ECDSA-P384 signing key to ML-DSA-87 at first use"
+  - type: algorithm_substitution
+    ops: [Sign]
+    from: ECDSA-P521
+    to: ML-DSA-87
+    reason: "Rekey legacy ECDSA-P521 signing key to ML-DSA-87 at first use"
+  - type: algorithm_substitution
+    ops: [Sign]
+    from: RSA-3072
+    to: ML-DSA-87
+    reason: "Rekey legacy RSA-3072 signing key to ML-DSA-87 at first use"
 
   # ── Existing-key rekey on the KEM path — DEFERRED to Phase 5 ─────────
   # RSA key-transport → ML-KEM is a cross-primitive migration (encrypt →
@@ -89,16 +109,19 @@ rules:
       - "CreateKeyPair:KeyAgreement"
       - "CreateKeyPair:Sign"
       - "CreateKeyPair:Encrypt"
+    # RSA family entry covers every size; X25519/X448 and ECDH-P521 were
+    # missing (new X25519 keys were creatable under the PQC policy —
+    # 2026-07-04 gap audit).
     algorithms:
       - RSA
-      - RSA-2048
-      - RSA-3072
-      - RSA-4096
       - ECDSA-P256
       - ECDSA-P384
       - ECDSA-P521
       - ECDH-P256
       - ECDH-P384
+      - ECDH-P521
       - Ed25519
       - Ed448
+      - X25519
+      - X448
     reason: "Classical asymmetric Create denied under PQC policy — use defaults or migrate"

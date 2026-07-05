@@ -9,7 +9,12 @@ metadata:
     Enforces FIPS 140-3 algorithm boundary. Only FIPS-approved PQC (FIPS 203
     ML-KEM, FIPS 204 ML-DSA, FIPS 205 SLH-DSA — all 12 parameter sets, SHA2
     AND SHAKE) and FIPS-approved classical (RSA >= 3072, ECDSA P-256/384/521,
-    Ed25519/Ed448 per FIPS 186-5, AES-128/192/256 per FIPS 197) are permitted.
+    ECDH P-256/384/521 per SP 800-56A, Ed25519/Ed448 per FIPS 186-5,
+    AES-128/192/256 per FIPS 197) are permitted. Signature hashing is gated
+    to FIPS 180-4/202 digests (no SHA-1) and RSA encryption to OAEP padding
+    (SP 800-131A). X25519/X448 key agreement is excluded — FIPS 140-3 IG C.K
+    disallows it under SP 800-56A. Hybrid KEMs (X25519MLKEM768 etc.) are
+    likewise outside today's strict FIPS boundary and denied by omission.
     Any Round-4 / alternate / non-FIPS algorithm (Falcon, HQC, BIKE, FrodoKEM,
     Classic McEliece) is denied at the policy plane before reaching Plane 2.
     Note: LMS/XMSS are NIST-approved under SP 800-208 (not FIPS 205) and are
@@ -62,11 +67,18 @@ rules:
       - SLH-DSA-SHAKE-192f
       - SLH-DSA-SHAKE-256s
       - SLH-DSA-SHAKE-256f
-      # FIPS-approved classical (FIPS 186-5 signatures, FIPS 197 AES)
+      # FIPS-approved classical (FIPS 186-5 signatures, SP 800-56A key
+      # agreement, FIPS 197 AES). ECDH added 2026-07-04 — its omission made
+      # every classical key-agreement creation fail, contradicting this
+      # description. X25519/X448 stay out: FIPS 140-3 IG C.K disallows them
+      # under SP 800-56A (signature-side Ed25519/Ed448 are 186-5-approved).
       - RSA
       - ECDSA-P256
       - ECDSA-P384
       - ECDSA-P521
+      - ECDH-P256
+      - ECDH-P384
+      - ECDH-P521
       - Ed25519
       - Ed448
       - AES-128
@@ -116,13 +128,42 @@ rules:
     min_bits: 256
     reason: "HMAC minimum effective key length"
 
-  # 6. Weak digests banned globally.
-  - type: algorithm_denylist
-    ops: [Sign, Encrypt, Create]
-    algorithms: [MD5, SHA1, RSA-PKCS1-v1_5]
-    reason: "Pre-FIPS digest / padding banned"
+  # 6. Weak digests banned via the MECHANISM dimension (2026-07-04 rewrite).
+  #    The old rule denylisted the strings "MD5"/"SHA1"/"RSA-PKCS1-v1_5" as
+  #    *algorithm* names the engine never emits (canonical spellings are
+  #    mechanism-side: hash "SHA-1", padding "PKCS1 v1.5") — a silent no-op.
+  #    Real enforcement: FIPS 180-4 / FIPS 202 hash allowlist on Sign (SHA-1
+  #    denied by omission; SignatureVerify stays open for legacy artefacts)…
+  - type: hash_algorithm_allowlist
+    ops: [Sign]
+    hashing_algorithms:
+      - SHA-224
+      - SHA-256
+      - SHA-384
+      - SHA-512
+      - SHA-512/224
+      - SHA-512/256
+      - SHA3-224
+      - SHA3-256
+      - SHA3-384
+      - SHA3-512
+    reason: "Only FIPS 180-4 / FIPS 202 hashes may sign (SHA-1/MD5 excluded)"
 
-  # 7. KEM usage mask required.
+  #    …and RSA encryption padding pinned to OAEP: SP 800-131A r2 disallows
+  #    PKCS#1 v1.5 encryption after 2023 (Decrypt stays open so legacy
+  #    ciphertext remains recoverable).
+  - type: mechanism_parameter_constraint
+    ops: [Encrypt]
+    algorithm: RSA
+    allowed_padding_methods: [OAEP]
+    reason: "RSA encryption must use OAEP (PKCS#1 v1.5 disallowed per SP 800-131A)"
+
+  # 7. KEM usage mask required at creation (all three FIPS 203 sets —
+  #    ML-KEM-512 was missing, an arbitrary inconsistency).
+  - type: require_usage_mask
+    algorithm: ML-KEM-512
+    flags: [KeyAgreement]
+    reason: "FIPS 203 KEM keys must declare KeyAgreement"
   - type: require_usage_mask
     algorithm: ML-KEM-768
     flags: [KeyAgreement]
@@ -132,7 +173,12 @@ rules:
     flags: [KeyAgreement]
     reason: "FIPS 203 KEM keys must declare KeyAgreement"
 
-  # 8. Signing usage mask required for sig keys.
+  # 8. Signing usage mask required at creation for sig keys (all three FIPS
+  #    204 sets — ML-DSA-44 was missing).
+  - type: require_usage_mask
+    algorithm: ML-DSA-44
+    flags: [Sign, Verify]
+    reason: "FIPS 204 sig keys must declare Sign+Verify"
   - type: require_usage_mask
     algorithm: ML-DSA-65
     flags: [Sign, Verify]
@@ -141,6 +187,58 @@ rules:
     algorithm: ML-DSA-87
     flags: [Sign, Verify]
     reason: "FIPS 204 sig keys must declare Sign+Verify"
+
+  # 8b. FIPS 205 SLH-DSA sig keys — same requirement, all 12 parameter sets
+  #     (2026-07-04: this policy fully allowlists SLH-DSA but had no usage-mask
+  #     rule for it at all — the same coverage gap rule 8 had for ML-DSA-44).
+  - type: require_usage_mask
+    algorithm: SLH-DSA-SHA2-128s
+    flags: [Sign, Verify]
+    reason: "FIPS 205 sig keys must declare Sign+Verify"
+  - type: require_usage_mask
+    algorithm: SLH-DSA-SHA2-128f
+    flags: [Sign, Verify]
+    reason: "FIPS 205 sig keys must declare Sign+Verify"
+  - type: require_usage_mask
+    algorithm: SLH-DSA-SHA2-192s
+    flags: [Sign, Verify]
+    reason: "FIPS 205 sig keys must declare Sign+Verify"
+  - type: require_usage_mask
+    algorithm: SLH-DSA-SHA2-192f
+    flags: [Sign, Verify]
+    reason: "FIPS 205 sig keys must declare Sign+Verify"
+  - type: require_usage_mask
+    algorithm: SLH-DSA-SHA2-256s
+    flags: [Sign, Verify]
+    reason: "FIPS 205 sig keys must declare Sign+Verify"
+  - type: require_usage_mask
+    algorithm: SLH-DSA-SHA2-256f
+    flags: [Sign, Verify]
+    reason: "FIPS 205 sig keys must declare Sign+Verify"
+  - type: require_usage_mask
+    algorithm: SLH-DSA-SHAKE-128s
+    flags: [Sign, Verify]
+    reason: "FIPS 205 sig keys must declare Sign+Verify"
+  - type: require_usage_mask
+    algorithm: SLH-DSA-SHAKE-128f
+    flags: [Sign, Verify]
+    reason: "FIPS 205 sig keys must declare Sign+Verify"
+  - type: require_usage_mask
+    algorithm: SLH-DSA-SHAKE-192s
+    flags: [Sign, Verify]
+    reason: "FIPS 205 sig keys must declare Sign+Verify"
+  - type: require_usage_mask
+    algorithm: SLH-DSA-SHAKE-192f
+    flags: [Sign, Verify]
+    reason: "FIPS 205 sig keys must declare Sign+Verify"
+  - type: require_usage_mask
+    algorithm: SLH-DSA-SHAKE-256s
+    flags: [Sign, Verify]
+    reason: "FIPS 205 sig keys must declare Sign+Verify"
+  - type: require_usage_mask
+    algorithm: SLH-DSA-SHAKE-256f
+    flags: [Sign, Verify]
+    reason: "FIPS 205 sig keys must declare Sign+Verify"
 
   # 9. Compliance profile gate (catch-all).
   - type: compliance_profile_gate

@@ -27,7 +27,10 @@ const ALGO_PERSONA_HINTS: Record<PersonaId, string> = {
   executive:
     'Start with FIPS-standardized picks: ML-KEM-768 and ML-DSA-65 — the required choices for US federal compliance.',
   developer:
-    "Filter by 'Standardized' status and compare key/signature sizes — performance varies 10× across families.",
+    // ACCURACY-0705: 'Standardized' isn't a real filter value (see
+    // AlgorithmFilters.tsx STATUS_ITEMS) — this instructed users into a
+    // zero-result filter. 'Certified' is the actual status value.
+    "Filter by 'Certified' status and compare key/signature sizes — performance varies 10× across families.",
   architect:
     'Use the Transition tab to find your classical algorithms and their recommended PQC replacements.',
   researcher:

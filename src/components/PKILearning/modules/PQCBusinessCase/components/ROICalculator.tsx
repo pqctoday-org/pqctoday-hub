@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo, useCallback, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import {
   TrendingUp,
   TrendingDown,
@@ -30,10 +31,13 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import {
   DEFAULT_COMPLIANCE_INCIDENT_RATE,
+  MIGRATION_COST_FLOOR,
   composeQuantumMultiplier,
   computeAnnualBreachSavings,
   computeAnnualComplianceSavings,
+  computeMigrationCostFromProfile,
   computeROI,
+  reconcileEstimates,
   resolveIndustryBreachBaseline,
 } from '@/utils/roiMath'
 
@@ -203,6 +207,32 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     }
   }, [assumptions, industryBreachBaseline, quantumMultiplier])
 
+  // Independent second estimate: the cost the user's assessment profile implies
+  // (infra layers × algo count × agility/vendor/team multipliers). This is a
+  // different method from the per-product slider, so reconciling the two is an
+  // honest cross-check rather than a restatement of the same number.
+  const assessmentDerived = useMemo(
+    () =>
+      data.isAssessmentComplete && data.assessmentResult
+        ? computeMigrationCostFromProfile(data.assessmentResult)
+        : null,
+    [data.isAssessmentComplete, data.assessmentResult]
+  )
+
+  const crossCheck = useMemo(() => {
+    if (!assessmentDerived) return null
+    // Compare methodologies at full-estate scale so a user modeling a subset via
+    // productsToMigrate doesn't produce a spurious divergence.
+    const methodAFullEstate = assumptions.costPerProduct * data.totalProducts
+    const assessmentCost = assessmentDerived.migrationCost
+    return {
+      methodAFullEstate,
+      assessmentCost,
+      lowConfidence: assessmentCost === MIGRATION_COST_FLOOR,
+      recon: reconcileEstimates(methodAFullEstate, assessmentCost),
+    }
+  }, [assessmentDerived, assumptions.costPerProduct, data.totalProducts])
+
   useEffect(() => {
     if (onOutput && financials.totalCost > 0) {
       onOutput({
@@ -319,6 +349,19 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     md += `- Planning horizon: ${assumptions.horizonYears} years\n`
     md += `- Discount rate (WACC): ${assumptions.discountRatePct}%\n`
     md += `- Total gross benefit: ${formatCurrency(financials.totalBenefit)}\n\n`
+    if (crossCheck) {
+      md += `## Cross-Check (independent second estimate)\n\n`
+      if (crossCheck.lowConfidence) {
+        md += `Assessment profile too thin for a reliable second estimate (fell back to the floor).\n\n`
+      } else {
+        md += `| Method | Estimate |\n|--------|----------|\n`
+        md += `| Per-product model (full estate) | ${formatCurrency(crossCheck.methodAFullEstate)} |\n`
+        md += `| Assessment-derived | ${formatCurrency(crossCheck.assessmentCost)} |\n`
+        md += `| Verdict | ${crossCheck.recon.verdict} (${
+          crossCheck.recon.ratio === Infinity ? '∞' : `${crossCheck.recon.ratio.toFixed(1)}×`
+        }, ${Math.round(crossCheck.recon.spreadPct)}% spread) |\n\n`
+      }
+    }
     md += `## Sensitivity (NPV impact at ±30%)\n\n`
     md += `| Driver | Low | High | Range |\n|--------|-----|------|-------|\n`
     for (const row of tornado) {
@@ -340,6 +383,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     quantumMultiplier,
     tornado,
     costOfInaction,
+    crossCheck,
   ])
 
   const primaryTornadoColor = 'hsl(var(--primary))'
@@ -543,6 +587,109 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
               total
             </p>
           </div>
+        </div>
+      </details>
+
+      {/* ── Cross-check vs your assessment (independent second estimate) ── */}
+      <details className="glass-panel p-4" open>
+        <summary className="text-sm font-semibold text-foreground cursor-pointer flex items-center gap-2">
+          <Scale size={16} className="text-primary shrink-0" />
+          Cross-check vs your assessment
+        </summary>
+        <div className="mt-4 space-y-3">
+          {crossCheck ? (
+            <>
+              <p className="text-xs text-muted-foreground">
+                A single number is easy to challenge. Below, your per-product model (scaled to your
+                full estate) sits next to the cost your assessment implies from your infrastructure,
+                vendors, and crypto-agility. These are two <em>independent</em> methods &mdash;
+                expect a ballpark match, not an exact one.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="bg-muted/50 rounded-lg p-3 border border-border">
+                  <div className="text-xs text-muted-foreground mb-1">
+                    Your per-product model (full estate)
+                  </div>
+                  <div className="text-lg font-bold text-foreground">
+                    {formatCurrency(crossCheck.methodAFullEstate)}
+                  </div>
+                  <div className="text-[11px] text-muted-foreground mt-1 font-mono">
+                    {formatCurrency(assumptions.costPerProduct)} × {data.totalProducts} products
+                  </div>
+                </div>
+                <div className="bg-muted/50 rounded-lg p-3 border border-border">
+                  <div className="text-xs text-muted-foreground mb-1">
+                    Assessment-derived estimate
+                  </div>
+                  <div className="text-lg font-bold text-foreground">
+                    {formatCurrency(crossCheck.assessmentCost)}
+                  </div>
+                  <div className="text-[11px] text-muted-foreground mt-1">
+                    From your infrastructure, vendor &amp; agility profile
+                  </div>
+                </div>
+              </div>
+              {crossCheck.lowConfidence ? (
+                <div className="bg-status-warning/10 rounded-lg p-3 border border-status-warning/30 flex items-start gap-2">
+                  <Info size={14} className="text-status-warning shrink-0 mt-0.5" />
+                  <p className="text-xs text-foreground/90">
+                    Your assessment profile is too thin for a reliable second estimate (it fell back
+                    to the floor). Fill in more of the{' '}
+                    <Link to="/assess" className="text-primary hover:underline">
+                      assessment
+                    </Link>{' '}
+                    to sharpen this cross-check.
+                  </p>
+                </div>
+              ) : (
+                <div
+                  className={`rounded-lg p-3 border flex items-start gap-2 ${
+                    crossCheck.recon.verdict === 'aligned'
+                      ? 'bg-status-success/10 border-status-success/30'
+                      : 'bg-status-warning/10 border-status-warning/30'
+                  }`}
+                >
+                  {crossCheck.recon.verdict === 'aligned' ? (
+                    <TrendingUp size={14} className="text-status-success shrink-0 mt-0.5" />
+                  ) : (
+                    <TrendingDown size={14} className="text-status-warning shrink-0 mt-0.5" />
+                  )}
+                  <p className="text-xs text-foreground/90">
+                    {crossCheck.recon.verdict === 'aligned' ? (
+                      <>
+                        <strong>Aligned.</strong> The two methods agree within{' '}
+                        {crossCheck.recon.ratio.toFixed(1)}× (
+                        {Math.round(crossCheck.recon.spreadPct)}% spread) &mdash; a reassuring sign
+                        your headline number is in the right ballpark.
+                      </>
+                    ) : (
+                      <>
+                        <strong>Divergent.</strong> The two methods differ by{' '}
+                        {crossCheck.recon.ratio === Infinity
+                          ? '∞'
+                          : `${crossCheck.recon.ratio.toFixed(1)}×`}{' '}
+                        ({Math.round(crossCheck.recon.spreadPct)}% spread). Before you present this,
+                        close the gap &mdash; revisit your capex-per-product, your product count, or
+                        the assessment inputs.
+                      </>
+                    )}
+                  </p>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="bg-muted/50 rounded-lg p-3 border border-border flex items-start gap-2">
+              <Info size={14} className="text-muted-foreground shrink-0 mt-0.5" />
+              <p className="text-xs text-muted-foreground">
+                Run the{' '}
+                <Link to="/assess" className="text-primary hover:underline">
+                  assessment
+                </Link>{' '}
+                to generate a second, independent cost estimate &mdash; then this panel cross-checks
+                it against your per-product model so you never present a single unverified number.
+              </p>
+            </div>
+          )}
         </div>
       </details>
 
@@ -916,6 +1063,15 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
           <p>
             <strong>Qualitative factors not modeled:</strong> Operational efficiency from crypto
             agility, competitive advantage from early PQC adoption, customer trust.
+          </p>
+          <p>
+            <strong>Which costing model this is:</strong> a bottom-up parametric estimate (assets ×
+            unit cost) with deterministic ±30% sensitivity. It is one of several model families —
+            top-down budget-percentage anchoring, probabilistic Monte-Carlo bands, and
+            expert-elicited scenario ranges are the others. No single method is reliable for PQC
+            under deep uncertainty, so triangulate: treat agreement across two or three independent
+            estimates as confidence, and divergence as a prompt to revisit assumptions. See the
+            Learn tab&apos;s &ldquo;Choosing a Costing Model&rdquo; section for the full comparison.
           </p>
           <p className="text-xs italic mt-2">
             Educational estimates for planning. Pair with your finance function&apos;s discounted

@@ -2,8 +2,17 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import { AlertTriangle, Info, TrendingUp, Shield } from 'lucide-react'
 import { BreachCostModel } from '@/components/PKILearning/common/executive'
+import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+import { useModuleStore } from '@/store/useModuleStore'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+
+function fmtCurrency(n: number): string {
+  if (n >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(1)}B`
+  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`
+  if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`
+  return `$${n.toFixed(0)}`
+}
 
 const AVAILABLE_INDUSTRIES = [
   'Finance & Banking',
@@ -15,6 +24,7 @@ const AVAILABLE_INDUSTRIES = [
   'Retail & E-Commerce',
   'Aerospace',
   'Automotive',
+  'Education',
   'Other',
 ]
 
@@ -30,6 +40,7 @@ interface BreachScenarioSimulatorProps {
 
 export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = ({ onOutput }) => {
   const data = useExecutiveModuleData()
+  const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
   const [selectedIndustry, setSelectedIndustry] = useState(data.industry || 'Other')
   const [breachCosts, setBreachCosts] = useState<{
     classicalCost: number
@@ -74,6 +85,23 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
 
     return items
   }, [breachCosts, selectedIndustry, data.criticalThreatCount, data.migrationDeadlineYear])
+
+  const exportMarkdown = useMemo(() => {
+    if (!breachCosts) return ''
+    let md = `# PQC Breach Scenario — ${selectedIndustry}\n\n`
+    md += `**Generated:** ${new Date().toLocaleDateString()}\n\n`
+    md += `| Metric | Value |\n|--------|-------|\n`
+    md += `| Classical breach (per event) | ${fmtCurrency(breachCosts.classicalCost)} |\n`
+    md += `| Quantum-enabled breach (per event) | ${fmtCurrency(breachCosts.quantumCost)} |\n`
+    md += `| Additional quantum risk | ${fmtCurrency(breachCosts.delta)} |\n\n`
+    if (findings.length > 0) {
+      md += `## Key findings\n\n`
+      for (const f of findings) md += `- ${f}\n`
+      md += `\n`
+    }
+    md += `*Illustrative — IBM Cost of a Data Breach 2024 baselines.*\n`
+    return md
+  }, [breachCosts, selectedIndustry, findings])
 
   useEffect(() => {
     if (onOutput && breachCosts) {
@@ -174,6 +202,31 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
             </div>
           )}
         </div>
+      )}
+
+      {breachCosts && (
+        <ExportableArtifact
+          title="Breach Scenario — Export"
+          exportData={exportMarkdown}
+          filename="pqc-breach-scenario"
+          formats={['markdown', 'pdf', 'docx']}
+          onExport={() =>
+            addExecutiveDocument({
+              id: `breach-scenario-${Date.now()}`,
+              moduleId: 'pqc-business-case',
+              type: 'breach-scenario',
+              title: `Breach Scenario — ${selectedIndustry} (${new Date().toLocaleDateString()})`,
+              data: exportMarkdown,
+              inputs: { selectedIndustry },
+              createdAt: Date.now(),
+            })
+          }
+        >
+          <p className="text-sm text-muted-foreground">
+            Export the breach scenario as markdown, PDF, or DOCX — also saved to your Command Center
+            Risk Artifacts.
+          </p>
+        </ExportableArtifact>
       )}
     </div>
   )

@@ -21,6 +21,35 @@ export interface ReportSectionCswp39 {
 }
 
 /**
+ * SINGLE SOURCE OF TRUTH for the /report render + table-of-contents order.
+ * Previously duplicated as two independent `ReportSectionId[]` literals in
+ * ReportContent.tsx and ReportView.tsx — nothing enforced they matched, so a
+ * new section could compile fine while silently missing from the TOC or the
+ * render order in one of the two files. Both now import this constant.
+ *
+ * Order here IS the on-page order. Keep in sync with REPORT_SECTION_TO_CSWP39 /
+ * REPORT_SECTION_LABELS below — reportSectionToCswp39.test.ts asserts the sets
+ * match exactly, so an omission fails a test instead of shipping silently.
+ */
+export const REPORT_SECTION_ORDER: readonly ReportSectionId[] = [
+  'countryTimeline',
+  'riskScore',
+  'keyFindings',
+  'riskBreakdown',
+  'executiveSummary',
+  'assessmentProfile',
+  'hndlHnfl',
+  'discovery',
+  'algorithmMigration',
+  'complianceImpact',
+  'recommendedActions',
+  'migrationRoadmap',
+  'migrationToolkit',
+  'vendorRisk',
+  'threatLandscape',
+]
+
+/**
  * Maps each /report section to the CSWP.39 process step it primarily serves and
  * the Applied Quantum phase it communicates. Surfaced via the CSWP.39
  * navigation legend at the top of /report so users can see how the long-form
@@ -30,6 +59,7 @@ export const REPORT_SECTION_TO_CSWP39: Record<ReportSectionId, ReportSectionCswp
   countryTimeline: { cswp39Step: 'govern', frameworkPhase: 'p4' },
   complianceImpact: { cswp39Step: 'govern', frameworkPhase: 'p7' },
   assessmentProfile: { cswp39Step: 'inventory', frameworkPhase: 'p1' },
+  discovery: { cswp39Step: 'inventory', frameworkPhase: 'p1' },
   algorithmMigration: { cswp39Step: 'inventory', frameworkPhase: 'p1' },
   hndlHnfl: { cswp39Step: 'identify-gaps', frameworkPhase: 'p3' },
   riskBreakdown: { cswp39Step: 'identify-gaps', frameworkPhase: 'p3' },
@@ -40,6 +70,7 @@ export const REPORT_SECTION_TO_CSWP39: Record<ReportSectionId, ReportSectionCswp
   recommendedActions: { cswp39Step: 'prioritise', frameworkPhase: 'p4' },
   migrationRoadmap: { cswp39Step: 'implement', frameworkPhase: 'p4' },
   migrationToolkit: { cswp39Step: 'implement', frameworkPhase: 'p5' },
+  vendorRisk: { cswp39Step: 'implement', frameworkPhase: 'p5' },
 }
 
 /** Inverse: each CSWP.39 step → list of report section IDs that contribute. */
@@ -58,10 +89,12 @@ export const REPORT_SECTION_LABELS: Record<ReportSectionId, string> = {
   executiveSummary: 'Executive Summary',
   assessmentProfile: 'Assessment Profile',
   hndlHnfl: 'HNDL / HNFL Risk Windows',
+  discovery: 'Cryptographic Discovery',
   algorithmMigration: 'Algorithm Migration Priority',
   complianceImpact: 'Compliance Impact',
   recommendedActions: 'Recommended Actions',
   migrationRoadmap: 'Migration Roadmap',
   migrationToolkit: 'Migration Toolkit',
+  vendorRisk: 'Third-Party & Vendor PQC Risk',
   threatLandscape: 'Industry Threat Landscape',
 }

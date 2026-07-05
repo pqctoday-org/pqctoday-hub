@@ -45,6 +45,15 @@ function phaseChipLabel(phase: PhaseId | PhaseId[]): string | null {
   return p.number !== null ? `Phase ${p.number} · ${p.name}` : p.name
 }
 
+/** The sim deep-link target for a module — jumps the board to the phase this
+ *  lesson teaches (?phase=), so "Practice in the Simulation" lands where it's
+ *  relevant instead of the generic entry point. First phase wins for the few
+ *  multi-phase modules (same choice phaseChipLabel makes). */
+function simPracticeHref(phase: PhaseId | PhaseId[]): string {
+  const id = Array.isArray(phase) ? phase[0] : phase
+  return FRAMEWORK_PHASES[id] ? `/simulation?phase=${id}` : '/simulation'
+}
+
 const difficultyChip: Record<NonNullable<ModuleManifest['difficulty']>, string> = {
   beginner: 'bg-status-success/15 text-status-success',
   intermediate: 'bg-status-warning/15 text-status-warning',
@@ -392,7 +401,7 @@ export const ModuleShell = ({
       </div>
       {showSimCta ? (
         <Link
-          to="/simulation"
+          to={simPracticeHref(manifest.frameworkPhase)}
           className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-bold text-primary transition-colors hover:bg-primary/20"
         >
           <Gamepad2 size={16} />

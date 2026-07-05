@@ -589,8 +589,10 @@ export const MainLayout = () => {
         {/* First-visit disclaimer — must acknowledge before using the app */}
         <DisclaimerModal />
 
-        {/* Toast notifications — aria-live so screen readers announce them */}
-        <div aria-live="polite" aria-label="Notifications" aria-atomic="false">
+        {/* Toast notifications — role="status" so screen readers announce them.
+            A plain <div>'s implicit role is "generic", which prohibits aria-label
+            (axe: aria-prohibited-attr) since a generic element can't have a name. */}
+        <div role="status" aria-live="polite" aria-label="Notifications" aria-atomic="false">
           {/* Achievement Toast Notification */}
           <AchievementToast />
 

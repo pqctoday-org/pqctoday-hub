@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 // The outcome-framed track chooser — replaces the legacy ModeSelector's
-// "8 questions / 13 questions" effort framing with "here's exactly which report
+// "6 questions / 13 questions" effort framing with "here's exactly which report
 // sections each track unlocks". The section lists come from reportContract so
 // they stay in sync with the report's gated sections.
 import React from 'react'

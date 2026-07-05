@@ -665,7 +665,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'How does the PQC Risk Assessment work?',
         answer:
-          'The PQC Risk Assessment is a 13-step comprehensive wizard (with an 8-step quick path) that evaluates your organization across industry context, country-specific regulations, cryptographic usage patterns, data sensitivity levels, compliance requirements, and infrastructure maturity. It produces a scored report with a risk classification (Critical, High, Moderate, or Low), compliance gap analysis, threat landscape visualization, and a prioritized migration roadmap. The report can be exported as a PDF for stakeholder presentations.',
+          'The PQC Risk Assessment is a 13-step comprehensive wizard (with a 6-step quick path) that evaluates your organization across industry context, country-specific regulations, cryptographic usage patterns, data sensitivity levels, compliance requirements, and infrastructure maturity. It produces a scored report with a risk classification (Critical, High, Moderate, or Low), compliance gap analysis, threat landscape visualization, and a prioritized migration roadmap. The report can be exported as a PDF for stakeholder presentations.',
         deepLink: '/assess',
       },
       {

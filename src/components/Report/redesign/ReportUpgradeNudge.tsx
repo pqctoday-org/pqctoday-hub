@@ -22,8 +22,8 @@ export function ReportUpgradeNudge({ shared = false }: ReportUpgradeNudgeProps) 
         You&apos;re viewing the fast report.
       </span>
       <span className="text-[12.5px] text-muted-foreground">
-        Four deeper sections — per-domain scores, your algorithm map, a dated roadmap and trend
-        tracking — unlock with the full assessment.
+        Two deeper sections — your per-domain risk breakdown and progress-over-time tracking —
+        unlock with the full assessment.
       </span>
       <Link
         to="/assess?mode=comprehensive"
