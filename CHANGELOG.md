@@ -26,6 +26,35 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+### Added
+
+- **Compare Ed25519 and ECDH key operations in the crypto-agility playground** [view:/playground/cacp]: both are now runnable end-to-end in the workbench (create, sign/verify, key agreement), backed by a rebuilt engine — previously spec-only entries with nothing to actually test.
+- **A "Key tags" field in the crypto-agility workbench** [view:/playground/cacp]: tag real key-creation operations with governance attributes so tag-gated policies (CNSA, BSI, the 2030 migration policy) can actually be exercised interactively, instead of only in dry-run mode.
+- **An in-app guide for the crypto-agility playground** [view:/playground/cacp]: a "Guide" button opens a full walkthrough of the policy model without leaving the page.
+- **A "Recover" column in the crypto-agility policy coverage matrix** [view:/playground/cacp]: shows the real verdict for Verify/Decrypt/Decapsulate operations alongside Create/Protect, surfacing gaps that were previously invisible.
+- **Two new implementation-attack categories in the Algorithms view** [view:/algorithms]: kleptography (deliberately backdoored crypto, e.g. the Dual_EC_DRBG backdoor) and AI-assisted cryptanalysis, each with real, cited research — including a reminder that today's classical RSA/ECDSA/AES are exposed to these independent of quantum progress.
+- **Germany, France, and UK now have their own cited standards guidance in the simulation** [view:/simulation]: national migration deadlines were already tracked, but the underlying standards-body guidance (BSI, ANSSI, NCSC) is now named and sourced per country instead of only the US.
+- **The simulation's run-complete ending now offers a reflection and next steps** [view:/simulation]: finishing the full maturity climb now surfaces your top recurring mistakes (each linking to the Learn module that addresses it) and the same "what to do next" links the shorter Executive Overview ending already had.
+- **A "Practice in the Simulation" link from Learn now jumps to the exact phase you just studied** [view:/learn] [view:/simulation]: previously it always opened the simulation from the very beginning.
+- **The Verification & Closure phase's reference tool now opens inside the simulation** [view:/simulation]: it used to leave the simulation entirely; it now embeds like every other reference step.
+
+### Changed
+
+- **The Architecture diagram in the simulation now reflects your real migration progress** [view:/simulation]: node status used to be a fixed snapshot (and had drifted from the actual product catalog for some vendors); it now derives live from the same catalog data used everywhere else, updates as you make migration decisions, and adds a legend, dark-mode-aware colors, and an accessible label.
+- **Small text in the disclaimer banner and the homepage tagline is now easier to read** [view:/about] [view:/]: the color used didn't meet minimum contrast guidelines at that size; corrected.
+
+### Fixed
+
+- **The Crypto Vulnerability Watch tool's CVE data was 66 days stale** [view:/business] [persona:developer]: the automated update pipeline had been silently failing since mid-June; restored, refreshed against 96 tracked components (631 CVEs), and the update job now fails loudly instead of silently if it breaks again. The tool now also clearly discloses what it doesn't cover (side-channel research, AI-assisted cryptanalysis, quantum-computing progress) with links to the tools that do.
+- **Corrected a citation mismatch for where vulnerability management sits in the CSWP 39 framework** [view:/business], shown inconsistently across the tool, the report mapping, and the module registry.
+- **Fixed an overlapping layout in the About page's software bill-of-materials section** [view:/about].
+- **The crypto-agility policy engine no longer blocks unrelated operations because of an unrelated governance rule** [view:/playground/cacp]: a reported bug ("CNSA 2.0 allows AES-256 but denies Encrypt/Decrypt") traced to governance-attribute rules that were gating every operation instead of just key creation; corrected across the engine, policy files, and the visual policy simulator, with ~20 new regression scenarios covering every fixed policy.
+- **The Migration Verification tool no longer cites the wrong standard for key destruction** [view:/business]: it referenced NIST SP 800-88, which covers media sanitization, not key destruction; corrected to point to your organization's own key-destruction standard.
+- **Several accuracy corrections to the simulation's narration** [view:/simulation]: the CRQC timing estimate is now labeled as a planning assumption rather than stated as fact, a false "hybrid cryptography is mandated by CSWP 39" claim was removed (NIST permits but doesn't require it), stage-gate decision authorities now match the framework's own table, and an HSM firmware claim now derives from the hub's own product data instead of a stale hand-typed fact.
+- **The Executive Overview walkthrough now presents the budget case before the program charter** [view:/simulation] [persona:executive]: it previously opened with the charter, before the financial case that's supposed to justify it.
+- **Fixed onboarding never appearing for anyone who started the simulation via a direct run link** [view:/simulation]: the first-run tour was being permanently marked "seen" just to avoid interrupting an active run.
+- **The simulation's destructive confirmations (reset, start over) are now accessible, styled dialogs** [view:/simulation] instead of the browser's native confirm popup.
+
 ## [4.9.0] - 2026-07-04
 
 A business-case and report release: PQC cost models get an honest rebuild with a new side-by-side comparison tool, the exec-tour's financial docs are now generated from that same math, and the assessment report gains discovery, vendor-risk, and program-ownership sections alongside several accuracy corrections.
