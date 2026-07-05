@@ -518,7 +518,7 @@ export const SupplyChainRiskMatrix: React.FC<{ scorecardOutput?: ScorecardOutput
       }
       md += `| Product | Vendor | PQC Support | FIPS |\n|---|---|---|---|\n`
       for (const item of items) {
-        md += `| ${item.softwareName} | ${item.vendorId ?? '—'} | ${item.pqcSupport || 'Unknown'} | ${item.fipsValidated || '—'} |\n`
+        md += `| ${item.softwareName} | ${item.vendorName ?? item.vendorId ?? '—'} | ${item.pqcSupport || 'Unknown'} | ${item.fipsValidated || '—'} |\n`
       }
       md += '\n'
     }
