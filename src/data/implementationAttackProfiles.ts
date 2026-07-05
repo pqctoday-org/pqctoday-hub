@@ -9,6 +9,8 @@ export type AttackCategory =
   | 'rng-failure'
   | 'secret-handling'
   | 'api-misuse'
+  | 'kleptography'
+  | 'ai-cryptanalysis'
 
 export interface AttackReference {
   referenceId: string
@@ -38,7 +40,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
     algorithm: 'ML-KEM / Kyber',
     family: 'Lattice-based KEM',
     summary:
-      'Single-trace key recovery demonstrated on unmasked implementations. Attacks remain effective against masked and shuffled countermeasures. Clock/voltage glitching, laser and EM fault injection exploit polynomial multiplication and decryption routines on ARM Cortex-M4.',
+      'Single-trace key recovery demonstrated on unmasked implementations. Attacks remain effective against masked and shuffled countermeasures. Clock/voltage glitching, laser and EM fault injection exploit polynomial multiplication and decryption routines on ARM Cortex-M4. A practical kleptographic backdoor has been demonstrated in key generation itself, and profiled deep-learning power analysis has broken masked hardware implementations — both without a quantum computer or any break of the underlying lattice problem.',
     attacks: [
       {
         category: 'side-channel',
@@ -66,12 +68,27 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
         severity: 'medium',
         detail: 'Misconfigurations and insecure protocol usage',
       },
+      {
+        category: 'kleptography',
+        status: 'yes',
+        severity: 'critical',
+        detail:
+          'Practical SETUP backdoor demonstrated in key generation — the public key covertly leaks the secret key to the backdoor holder; validated end-to-end on TLS 1.3',
+      },
+      {
+        category: 'ai-cryptanalysis',
+        status: 'yes',
+        severity: 'high',
+        detail:
+          'Profiled deep-learning power analysis recovers keys from 1st/2nd/3rd-order masked hardware implementations; transformer models separately shown to attack LWE-based lattice problems directly (smaller parameter sets, not yet standardized ML-KEM sizes)',
+      },
     ],
     countermeasures: [
       'Use masked implementations (first-order or higher-order masking of NTT operations)',
       'Enable constant-time polynomial arithmetic; avoid branch-dependent execution',
       'Deploy NIST SP 800-90B compliant DRBG for all randomness',
       'Use FIPS 140-3 validated modules with CAVP/ACVP certification',
+      'Source key-generation implementations only from vetted, reproducible builds — a kleptographic backdoor is invisible in the algorithm spec and only auditable in the actual code',
     ],
     references: [
       {
@@ -86,6 +103,25 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
           'Practical Fault Injection Attacks on Lattice-based NIST PQC Standards (NIST Seminar)',
         url: 'https://www.nist.gov/video/pqc-seminar-practical-fault-injection-attacks-lattice-based-nist-pqc-standards-kyber-and',
         localFile: 'public/library/NIST-PQC-Seminar-FaultInjection-Lattice.html',
+      },
+      {
+        referenceId: 'KLEPTO-2022-Kyber-Backdoor',
+        title: 'Backdooring Post-Quantum Cryptography: Kleptographic Attacks on Lattice-based KEMs',
+        url: 'https://eprint.iacr.org/2022/1681',
+        localFile: 'public/library/KLEPTO-2022-Kyber-Backdoor.html',
+      },
+      {
+        referenceId: 'SCA-2023-Masked-Kyber-DL',
+        title:
+          'A Side-Channel Attack on a Bitsliced Higher-Order Masked CRYSTALS-Kyber Implementation',
+        url: 'https://eprint.iacr.org/2023/1042',
+        localFile: 'public/library/SCA-2023-Masked-Kyber-DL.html',
+      },
+      {
+        referenceId: 'SALSA-2022-Lattice-Transformer',
+        title: 'SALSA: Attacking Lattice Cryptography with Transformers',
+        url: 'https://arxiv.org/abs/2207.04785',
+        localFile: 'public/library/SALSA-2022-Lattice-Transformer.pdf',
       },
     ],
   },
@@ -646,18 +682,105 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
       },
     ],
   },
+  {
+    // Classical (non-PQC) entries. The message these two carry: current,
+    // widely-deployed classical crypto is broken today via kleptography and
+    // AI-assisted side-channel analysis — with no dependence on a quantum
+    // computer, and no need to wait for one. PQC migration urgency should not
+    // read as "safe until Q-day"; these are live, demonstrated risks now.
+    algorithm: 'RSA / ECDSA (Classical)',
+    family: 'Classical Public-Key',
+    summary:
+      'The most famous real-world kleptographic backdoor targeted a classical elliptic-curve RNG (Dual_EC_DRBG), not a PQC scheme: covertly leaking the private key to whoever held the backdoor key, standardized by NIST and practically exploitable against real TLS stacks (OpenSSL-FIPS, RSA BSAFE, Windows SChannel). This predates any PQC algorithm and has nothing to do with quantum computing.',
+    attacks: [
+      { category: 'side-channel', status: 'unknown' },
+      { category: 'fault-injection', status: 'unknown' },
+      { category: 'rng-failure', status: 'unknown' },
+      { category: 'secret-handling', status: 'unknown' },
+      { category: 'api-misuse', status: 'unknown' },
+      {
+        category: 'kleptography',
+        status: 'yes',
+        severity: 'critical',
+        detail:
+          'NSA-inserted Dual_EC_DRBG backdoor (SETUP construction) practically exploited against real TLS implementations',
+      },
+      { category: 'ai-cryptanalysis', status: 'unknown' },
+    ],
+    countermeasures: [
+      'Never trust an RNG/DRBG whose internal constants are not independently verifiable as nothing-up-my-sleeve',
+      'Prefer NIST SP 800-90A/B compliant DRBGs with published, reproducible constant derivations (e.g. CTR_DRBG, HMAC_DRBG)',
+      'Audit third-party cryptographic libraries for undisclosed algorithm substitutions or vendor-set defaults',
+    ],
+    references: [
+      {
+        referenceId: 'KLEPTO-2014-DualEC-Backdoor',
+        title: 'On the Practical Exploitability of Dual EC in TLS Implementations',
+        url: 'https://www.usenix.org/system/files/conference/usenixsecurity14/sec14-paper-checkoway.pdf',
+        localFile: 'public/library/KLEPTO-2014-DualEC-Backdoor.pdf',
+      },
+    ],
+  },
+  {
+    algorithm: 'AES (Classical)',
+    family: 'Symmetric',
+    summary:
+      'AES is the current, widely-deployed symmetric standard — and remains vulnerable to AI/ML-based side-channel analysis today. Convolutional neural networks profile and defeat jitter-based hiding countermeasures without trace realignment, a foundational result that established deep learning as a practical side-channel technique, independent of any quantum computer or algorithmic weakness in AES itself.',
+    attacks: [
+      {
+        category: 'side-channel',
+        status: 'yes',
+        severity: 'high',
+        detail:
+          'Power/EM leakage defeats hiding countermeasures via profiled deep-learning analysis',
+      },
+      { category: 'fault-injection', status: 'unknown' },
+      { category: 'rng-failure', status: 'unknown' },
+      { category: 'secret-handling', status: 'unknown' },
+      { category: 'api-misuse', status: 'unknown' },
+      { category: 'kleptography', status: 'unknown' },
+      {
+        category: 'ai-cryptanalysis',
+        status: 'yes',
+        severity: 'high',
+        detail:
+          'Convolutional neural networks profile and recover keys through jitter-based countermeasures without trace realignment (foundational deep-learning side-channel result)',
+      },
+    ],
+    countermeasures: [
+      'Combine masking with hiding countermeasures — ML-based side-channel analysis has shown hiding alone is insufficient',
+      'Evaluate implementations against profiled deep-learning attacks, not just classical DPA/CPA, during certification',
+      'Use FIPS 140-3 validated modules with side-channel-resistant implementations',
+    ],
+    references: [
+      {
+        referenceId: 'SCA-2017-AES-CNN-Jitter',
+        title:
+          'Convolutional Neural Networks with Data Augmentation Against Jitter-Based Countermeasures',
+        url: 'https://hal.science/hal-01661212',
+        localFile: 'public/library/SCA-2017-AES-CNN-Jitter.html',
+      },
+    ],
+  },
 ]
 
-/** Classical component tokens that appear inside composite/hybrid profile labels
- *  (e.g. "Composite Signatures (ML-DSA+ECDSA)") but must NOT match a bare classical
- *  algorithm name — those have no PQC implementation-attack profile. */
+/** Classical component tokens that appear inside COMPOSITE/HYBRID profile labels
+ *  (e.g. "Composite Signatures (ML-DSA+ECDSA)") but must not, on their own, match
+ *  that composite profile — a bare "ECDSA" should resolve to the dedicated
+ *  classical profile below, not to the PQC+classical composite one. Gated on
+ *  `family` containing "Classical)" (only the two composite/hybrid entries use
+ *  that convention) so this exclusion never applies to a genuinely classical,
+ *  standalone profile like "RSA / ECDSA (Classical)" or "AES (Classical)". */
 const CLASSICAL_ALIAS_TOKENS = new Set(['rsa', 'ecdsa', 'ecdh', 'x25519', 'ed25519', 'dh', 'aes'])
+const isCompositeOrHybrid = (p: AlgorithmAttackProfile): boolean => p.family.includes('Classical)')
 
 /**
  * Look up the implementation-attack profile whose algorithm label matches a
- * free-text name (e.g. "ML-KEM-768" -> "ML-KEM / Kyber"). Returns undefined when
- * no PQC profile applies — including for a bare classical name like "ECDSA" or
- * "X25519", which only appear as *components* of composite/hybrid profiles.
+ * free-text name (e.g. "ML-KEM-768" -> "ML-KEM / Kyber", "AES-256" -> "AES
+ * (Classical)"). Returns undefined when no profile applies — including for a
+ * bare classical name like "ECDSA" or "X25519" used only as a *component* of a
+ * composite/hybrid profile's label (e.g. inside "Composite Signatures
+ * (ML-DSA+ECDSA)"), which must not falsely match that composite entry.
  */
 export function getAttackProfile(name: string): AlgorithmAttackProfile | undefined {
   const n = name.toLowerCase().trim()
@@ -667,7 +790,12 @@ export function getAttackProfile(name: string): AlgorithmAttackProfile | undefin
       .toLowerCase()
       .split(/[/()+]/)
       .map((s) => s.trim())
-      .some((alias) => alias.length > 2 && !CLASSICAL_ALIAS_TOKENS.has(alias) && n.includes(alias))
+      .some(
+        (alias) =>
+          alias.length > 2 &&
+          !(isCompositeOrHybrid(p) && CLASSICAL_ALIAS_TOKENS.has(alias)) &&
+          n.includes(alias)
+      )
   )
 }
 
