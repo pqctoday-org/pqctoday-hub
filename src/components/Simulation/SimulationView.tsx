@@ -82,6 +82,7 @@ import {
   FRAMEWORK_URL,
   FRAMEWORK_VERSION,
   LIFECYCLE_PHASES,
+  PHASE_ORDER,
   type PhaseId,
 } from '@/data/frameworkPhases'
 import { MATURITY_LEVEL_NAMES, PHASE_WIN_LEVEL, LEVEL_EVIDENCE } from '@/data/phaseMaturity'
@@ -491,7 +492,9 @@ export function SimulationView() {
     const phaseParam = searchParams.get('phase')
     if (!phaseParam) return
     ranPhaseDeepLink.current = true
-    if (phaseParam in FRAMEWORK_PHASES) setSel(phaseParam as PhaseId)
+    // Array membership, not `in FRAMEWORK_PHASES` — a plain-object `in` check also
+    // matches inherited Object.prototype keys (?phase=toString would otherwise pass).
+    if (PHASE_ORDER.includes(phaseParam as PhaseId)) setSel(phaseParam as PhaseId)
     const next = new URLSearchParams(searchParams)
     next.delete('phase')
     setSearchParams(next, { replace: true })
