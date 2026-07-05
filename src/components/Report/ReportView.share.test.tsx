@@ -4,8 +4,8 @@
 // overwrite the recipient's own already-in-progress or completed assessment.
 // Uses the REAL useAssessmentStore (not mocked) so the assertion is on actual
 // persisted state, not a stand-in.
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { render, screen, waitFor, cleanup } from '@testing-library/react'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import '@testing-library/jest-dom'
 import { ReportView } from './ReportView'
@@ -37,15 +37,6 @@ function renderReport(shareToken: string) {
 describe('ReportView share-link hydration (ACCURACY-0705)', () => {
   beforeEach(() => {
     useAssessmentStore.getState().reset()
-  })
-
-  // This project's global test setup does not call RTL's cleanup() between
-  // tests, so without this, each test's <ReportView/> mount stacks up in the
-  // jsdom document and `screen.findByText` (which queries the whole document,
-  // not a per-render container) can match stale content left by an earlier
-  // test's still-mounted instance.
-  afterEach(() => {
-    cleanup()
   })
 
   it('applies a shared assessment when the recipient has none of their own yet', async () => {
