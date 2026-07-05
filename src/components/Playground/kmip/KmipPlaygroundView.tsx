@@ -55,7 +55,7 @@ import { PolicyControlStrip } from './PolicyControlStrip'
 import { PolicyScenario } from './PolicyScenario'
 import { Inspector } from './Inspector'
 import { PolicyView } from './PolicyView'
-import { BatchView } from './BatchView'
+import { Kmip3View } from './Kmip3View'
 import {
   useLessonsTour,
   LessonsHub,
@@ -89,7 +89,7 @@ function Term({ t }: { t: keyof typeof GLOSSARY }) {
 }
 
 /** Top-level surface of the CACP playground. */
-type Plane = 'agility' | 'policy' | 'batch'
+type Plane = 'agility' | 'policy' | 'kmip3'
 
 const str = (v: unknown): string => (typeof v === 'string' ? v : '')
 
@@ -856,7 +856,7 @@ export function KmipPlaygroundView() {
             [
               { id: 'agility', label: 'Agility & Workbench', icon: Wand2 },
               { id: 'policy', label: 'Policy', icon: ShieldCheck },
-              { id: 'batch', label: 'Batch & Macros', icon: Layers },
+              { id: 'kmip3', label: 'KMIP3.0', icon: Layers },
             ] as const
           ).map((t) => {
             const on = plane === t.id
@@ -1228,8 +1228,8 @@ export function KmipPlaygroundView() {
         />
       )}
 
-      {plane === 'batch' && (
-        <BatchView
+      {plane === 'kmip3' && (
+        <Kmip3View
           engine={engine}
           busy={busy}
           expert={expert}
