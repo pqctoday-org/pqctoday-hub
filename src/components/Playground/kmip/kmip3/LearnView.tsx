@@ -498,7 +498,7 @@ export function LearnView({
               variant="ghost"
               onClick={() => setActiveId(lesson.id)}
               className={cn(
-                'flex h-auto w-full flex-col items-start gap-0.5 rounded-lg border px-3 py-2 text-left',
+                'flex h-auto w-full flex-col items-start gap-0.5 whitespace-normal rounded-lg border px-3 py-2 text-left',
                 on ? 'border-primary/50 bg-primary/5' : 'border-border hover:border-primary/30'
               )}
             >
