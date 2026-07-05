@@ -61,8 +61,21 @@ const GENERAL_HNDL_LAG = 3 // general HNDL trails critical HNDL (framework: gene
 const GOVERNANCE_LEAD = 3 // governance in place ahead of critical HNDL migration
 
 /** Named standards per scenario; defaults are generic so an untagged country still renders. */
+/**
+ * National PQC standards-body guidance, verified against each body's own
+ * published guidance (not inferred): BSI TR-02102-1 (Germany, v2026-01,
+ * endorses ML-KEM/FrodoKEM for key encapsulation and requires hybrid
+ * signatures); ANSSI (France, requires hybrid ML-KEM/ML-DSA — neither
+ * satisfies certification alone); NCSC (UK, "Timelines for migration to
+ * post-quantum cryptography", recommends ML-KEM-768 / ML-DSA-65 / SLH-DSA).
+ * Countries not listed fall back to DEFAULT_STANDARDS below rather than a
+ * guessed standard name.
+ */
 const STANDARDS_BY_COUNTRY: Record<string, { HNDL: string; TNFL: string }> = {
   US: { HNDL: 'FIPS 203 / ML-KEM', TNFL: 'FIPS 204 / ML-DSA' },
+  DE: { HNDL: 'BSI TR-02102-1 / ML-KEM (hybrid)', TNFL: 'BSI TR-02102-1 / ML-DSA (hybrid)' },
+  FR: { HNDL: 'ANSSI / ML-KEM (hybrid required)', TNFL: 'ANSSI / ML-DSA (hybrid required)' },
+  UK: { HNDL: 'NCSC / ML-KEM-768', TNFL: 'NCSC / ML-DSA-65' },
 }
 const DEFAULT_STANDARDS = { HNDL: 'PQC key establishment', TNFL: 'PQC digital signatures' }
 

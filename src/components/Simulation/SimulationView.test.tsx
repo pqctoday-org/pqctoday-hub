@@ -8,9 +8,9 @@ import { useAssessmentResultStore } from '@/store/useAssessmentResultStore'
 import { SIM_TREES, flattenTree } from '@/simulation'
 import type { AssessmentResult } from '@/hooks/assessmentTypes'
 
-const renderPage = () =>
+const renderPage = (initialEntries: string[] = ['/simulation']) =>
   render(
-    <MemoryRouter>
+    <MemoryRouter initialEntries={initialEntries}>
       <SimulationView />
     </MemoryRouter>
   )
@@ -233,5 +233,18 @@ describe('SimulationView (Mission Control)', () => {
     expect(screen.getByRole('button', { name: /seat:.*activate to change/i })).toBeInTheDocument()
     // the first decision option is named
     expect(screen.getByRole('button', { name: /^Option A:/ })).toBeInTheDocument()
+  })
+
+  // Deep link: /simulation?phase=<id> jumps the board to that phase on load.
+  it('jumps to the phase named by ?phase= on load, then strips the param', () => {
+    renderPage(['/simulation?phase=p3'])
+    expect(useSimulationStore.getState().sel).toBe('p3')
+  })
+
+  it('ignores an unknown ?phase= value instead of corrupting the selected phase', () => {
+    // Regression: `phaseParam in FRAMEWORK_PHASES` would previously accept
+    // inherited Object.prototype keys (e.g. "toString") as a "valid" phase.
+    renderPage(['/simulation?phase=toString'])
+    expect(useSimulationStore.getState().sel).toBe('p0')
   })
 })
