@@ -17,11 +17,15 @@ export interface MigrationKeyConfig {
   /** Business-role key name the policies pattern-match on. */
   defaultLabel: string
   kind: MigrationKeyKind
+  /** Human operation this key performs — shown on the card + migration map. */
+  operation: string
   /** One-line business story shown on the card. */
   blurb: string
-  /** What migration-classical.yaml resolves this label to (display hint for
-   * the "expected" column; the ENGINE result is always what's shown live). */
+  /** What each policy resolves this label to (display hints for the migration
+   * map; the ENGINE result is always what's shown live on the card/keystore). */
   classicalAlgorithm: string
+  hybridAlgorithm: string
+  pqcAlgorithm: string
 }
 
 export const MIGRATION_KEYS: MigrationKeyConfig[] = [
@@ -29,50 +33,71 @@ export const MIGRATION_KEYS: MigrationKeyConfig[] = [
     id: 'vault',
     defaultLabel: 'vault-archive-cipher',
     kind: 'symmetric',
+    operation: 'Encrypt / Decrypt',
     blurb: 'Long-term records vault — bulk encryption at rest.',
     classicalAlgorithm: 'AES-256',
+    hybridAlgorithm: 'AES-256',
+    pqcAlgorithm: 'AES-256',
   },
   {
     id: 'payments',
     defaultLabel: 'payments-db-cipher',
     kind: 'symmetric',
+    operation: 'Encrypt / Decrypt',
     blurb: 'Legacy payments database cipher, sized in 2014.',
     classicalAlgorithm: 'AES-128',
+    hybridAlgorithm: 'AES-256',
+    pqcAlgorithm: 'AES-256',
   },
   {
     id: 'partner',
     defaultLabel: 'partner-tls-kex',
     kind: 'kem',
+    operation: 'Key agreement',
     blurb: 'Key agreement for the partner TLS channel.',
     classicalAlgorithm: 'X25519',
+    hybridAlgorithm: 'X25519MLKEM768',
+    pqcAlgorithm: 'ML-KEM-768',
   },
   {
     id: 'interbank',
     defaultLabel: 'interbank-vpn-kex',
     kind: 'kem',
+    operation: 'Key agreement',
     blurb: 'Key agreement for the interbank VPN backbone.',
     classicalAlgorithm: 'X448',
+    hybridAlgorithm: 'X25519MLKEM768',
+    pqcAlgorithm: 'ML-KEM-1024',
   },
   {
     id: 'firmware',
     defaultLabel: 'firmware-release-signing',
     kind: 'sign',
+    operation: 'Sign / Verify',
     blurb: 'Signs every firmware release the fleet installs.',
     classicalAlgorithm: 'RSA-2048',
+    hybridAlgorithm: 'ML-DSA-65',
+    pqcAlgorithm: 'ML-DSA-44',
   },
   {
     id: 'api',
     defaultLabel: 'api-gateway-signing',
     kind: 'sign',
+    operation: 'Sign / Verify',
     blurb: 'Signs API gateway tokens (millions/day).',
     classicalAlgorithm: 'ECDSA-P256',
+    hybridAlgorithm: 'ML-DSA-65',
+    pqcAlgorithm: 'ML-DSA-44',
   },
   {
     id: 'code',
     defaultLabel: 'code-commit-signing',
     kind: 'sign',
+    operation: 'Sign / Verify',
     blurb: 'Signs source-control commits and tags.',
     classicalAlgorithm: 'Ed25519',
+    hybridAlgorithm: 'ML-DSA-65',
+    pqcAlgorithm: 'ML-DSA-44',
   },
 ]
 
@@ -99,15 +124,17 @@ export const MIGRATION_POLICIES: MigrationPolicyChip[] = [
     file: 'migration-hybrid.yaml',
     name: 'migration-hybrid',
     label: 'Hybrid',
-    blurb: 'Hybrid KEM + dual/composite signing — arrives with the next milestone.',
-    available: false,
+    blurb:
+      'Belt-and-braces: key agreement → X25519MLKEM768 (classical + PQC in one key), signing → ML-DSA-65. Exercise an at-risk key to migrate it. (Composite signatures are a later milestone.)',
+    available: true,
   },
   {
     file: 'migration-pqc.yaml',
     name: 'migration-pqc',
     label: 'Full PQC',
-    blurb: 'Pure ML-KEM / ML-DSA targets with automated rekey — arrives with the next milestone.',
-    available: false,
+    blurb:
+      'Pure ML-KEM / ML-DSA targets. Switch, then exercise any at-risk key (Encrypt / Sign / Establish) — the engine rekeys it to its PQC successor on first use.',
+    available: true,
   },
 ]
 

@@ -10,11 +10,12 @@
 // a curve, or a key size. It passes business key labels; the active policy's
 // name_pattern rules decide everything else. That is the whole demo.
 
-import { useCallback, useMemo, useState } from 'react'
-import { ArrowRightLeft, Loader2, ShieldAlert, ShieldCheck, RotateCcw } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { ArrowRightLeft, Boxes, Loader2, ShieldAlert, ShieldCheck, RotateCcw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { MIGRATION_KEYS, MIGRATION_POLICIES } from './migrationKeys'
+import type { KmipEngine } from '@/wasm/kmip/kmipEngine'
+import { MIGRATION_KEYS, MIGRATION_POLICIES, type MigrationPolicyChip } from './migrationKeys'
 import { useMigrationEngine } from './useMigrationEngine'
 import { MigrationKeyCard } from './MigrationKeyCard'
 
@@ -22,8 +23,37 @@ export function MigrationView() {
   const { engine, policyName, bootError } = useMigrationEngine()
   const [keystoreBump, setKeystoreBump] = useState(0)
   const [epoch, setEpoch] = useState(0)
+  // Active policy name — starts from the engine's boot policy, then tracks
+  // whatever the rail last switched to.
+  const [activePolicy, setActivePolicy] = useState<string | null>(null)
+  const [switching, setSwitching] = useState(false)
+  useEffect(() => {
+    if (policyName && activePolicy === null) setActivePolicy(policyName)
+  }, [policyName, activePolicy])
 
   const onKeystoreChange = useCallback(() => setKeystoreBump((n) => n + 1), [])
+
+  /** Flip the active crypto-agility policy. Loading a new policy does NOT
+   * touch existing keys — they stay classical (and at-risk) until each is
+   * exercised (Encrypt / Sign / Establish), at which point the engine rekeys
+   * it to the policy's PQC/hybrid target on first use. */
+  const switchPolicy = useCallback(
+    async (chip: MigrationPolicyChip) => {
+      if (!engine || !chip.available || switching) return
+      setSwitching(true)
+      try {
+        const yaml = await fetch(`/kmip-policies/${chip.file}`).then((r) => r.text())
+        const res = engine.loadPolicy(yaml)
+        if (res.ok) {
+          setActivePolicy(engine.policyStatus().name ?? chip.name)
+          setKeystoreBump((n) => n + 1)
+        }
+      } finally {
+        setSwitching(false)
+      }
+    },
+    [engine, switching],
+  )
 
   // Estate risk summary — recomputed from the REAL keystore after every op.
   const estate = useMemo(() => {
@@ -89,7 +119,7 @@ export function MigrationView() {
           Policy
         </span>
         {MIGRATION_POLICIES.map((p) => {
-          const active = policyName === p.name
+          const active = activePolicy === p.name
           return (
             <Button
               key={p.name}
@@ -97,8 +127,9 @@ export function MigrationView() {
               size="sm"
               role="radio"
               aria-checked={active}
-              disabled={!p.available}
+              disabled={!p.available || switching}
               title={p.blurb}
+              onClick={() => switchPolicy(p)}
               className={cn(
                 'h-7 rounded-full border px-3 text-[11px] font-medium',
                 active
@@ -113,7 +144,7 @@ export function MigrationView() {
           )
         })}
         <span className="text-[11px] text-muted-foreground">
-          — Hybrid and Full PQC unlock with the rekey milestones.
+          — switch, then exercise an at-risk key (Encrypt / Sign / Establish) to migrate it.
         </span>
 
         {/* estate summary + reset */}
@@ -139,6 +170,9 @@ export function MigrationView() {
         </span>
       </div>
 
+      {/* ── Migration map — label → algorithm per mode ────────────────────── */}
+      <MigrationMap activePolicy={activePolicy} />
+
       {/* ── Section 1 · classical estate ──────────────────────────────────── */}
       <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-2 xl:grid-cols-3" data-tour="migration-estate">
         {MIGRATION_KEYS.map((k) => (
@@ -150,6 +184,151 @@ export function MigrationView() {
             epoch={epoch}
           />
         ))}
+      </div>
+
+      {/* ── Keystore inspector — the REAL KMIP objects on this tab's engine ── */}
+      <MigrationKeystore engine={engine} bump={keystoreBump} />
+    </div>
+  )
+}
+
+/** Static reference: which key label serves which operation, and what each
+ * policy resolves it to. The column matching the active policy is highlighted
+ * so it's obvious which algorithm is in force per label right now. */
+function MigrationMap({ activePolicy }: { activePolicy: string | null }) {
+  const mode =
+    activePolicy === 'migration-pqc'
+      ? 'pqc'
+      : activePolicy === 'migration-hybrid'
+        ? 'hybrid'
+        : 'classical'
+  const col = (m: string) =>
+    cn('py-1.5 px-3 font-mono', mode === m && 'bg-primary/10 font-semibold text-primary')
+  return (
+    <div className="overflow-x-auto rounded-xl border border-border bg-card p-4">
+      <h4 className="mb-2 text-sm font-semibold text-primary">
+        Migration map — which label, which operation, which algorithm per mode
+      </h4>
+      <table className="w-full min-w-[720px] text-left text-[11px]">
+        <thead className="text-[10px] uppercase tracking-wide text-muted-foreground">
+          <tr className="border-b border-border">
+            <th className="py-1.5 px-3 font-medium">Key label</th>
+            <th className="py-1.5 px-3 font-medium">Operation</th>
+            <th className={cn('py-1.5 px-3 font-medium', mode === 'classical' && 'text-primary')}>
+              Classical
+            </th>
+            <th className={cn('py-1.5 px-3 font-medium', mode === 'hybrid' && 'text-primary')}>
+              Hybrid
+            </th>
+            <th className={cn('py-1.5 px-3 font-medium', mode === 'pqc' && 'text-primary')}>
+              Full PQC
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {MIGRATION_KEYS.map((k) => (
+            <tr key={k.id} className="border-b border-border/50">
+              <td className="py-1.5 px-3 font-mono font-medium">{k.defaultLabel}</td>
+              <td className="py-1.5 px-3 text-muted-foreground">{k.operation}</td>
+              <td className={col('classical')}>{k.classicalAlgorithm}</td>
+              <td className={col('hybrid')}>{k.hybridAlgorithm}</td>
+              <td className={col('pqc')}>{k.pqcAlgorithm}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+/** Live table of every KMIP object on the Migration tab's dedicated engine
+ * instance. This is where a rekey becomes visible: the old key flips to
+ * `Deactivated` and a fresh `Active` successor appears under the SAME label
+ * but a quantum-safe algorithm. (The other playground tabs run a different
+ * engine instance, so they don't show these objects.) */
+function MigrationKeystore({ engine, bump }: { engine: KmipEngine; bump: number }) {
+  const objects = useMemo(() => {
+    void bump
+    return engine
+      .listObjects()
+      .filter((o) => o.objectType !== 'SecretData')
+      .sort((a, b) => (a.name ?? '').localeCompare(b.name ?? '') || a.objectType.localeCompare(b.objectType))
+  }, [engine, bump])
+
+  const byUid = useMemo(() => new Map(objects.map((o) => [o.uid, o])), [objects])
+  const shortUid = (uid: string) => uid.replace(/^urn:pqctoday:obj:/, '').slice(0, 8)
+
+  if (objects.length === 0) return null
+
+  return (
+    <div className="rounded-xl border border-border bg-card p-4" data-testid="migration-keystore">
+      <h4 className="mb-2 flex items-center gap-2 text-sm font-semibold text-primary">
+        <Boxes size={15} /> Key objects on this engine
+        <span className="text-[11px] font-normal text-muted-foreground">
+          — {objects.length} objects; deactivated rows are superseded predecessors, linked to their
+          rekeyed successor
+        </span>
+      </h4>
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[760px] text-left text-[11px]">
+          <thead className="text-[10px] uppercase tracking-wide text-muted-foreground">
+            <tr className="border-b border-border">
+              <th className="py-1.5 pr-3 font-medium">Label</th>
+              <th className="py-1.5 pr-3 font-medium">UID</th>
+              <th className="py-1.5 pr-3 font-medium">Type</th>
+              <th className="py-1.5 pr-3 font-medium">Algorithm</th>
+              <th className="py-1.5 pr-3 font-medium">Bits</th>
+              <th className="py-1.5 pr-3 font-medium">State</th>
+              <th className="py-1.5 pr-3 font-medium">Quantum</th>
+              <th className="py-1.5 pr-3 font-medium">Rekey lineage</th>
+            </tr>
+          </thead>
+          <tbody className="font-mono">
+            {objects.map((o) => {
+              const superseded = o.state === 'Deactivated'
+              const successor = o.supersedes ? byUid.get(o.supersedes) : undefined
+              return (
+                <tr
+                  key={o.uid}
+                  className={cn('border-b border-border/50', superseded && 'opacity-60')}
+                  data-testid={`migration-obj-${o.name ?? o.uid}-${o.objectType}`}
+                >
+                  <td className="py-1.5 pr-3 font-sans">{o.name ?? <span className="text-muted-foreground">—</span>}</td>
+                  <td className="py-1.5 pr-3 text-muted-foreground">{shortUid(o.uid)}…</td>
+                  <td className="py-1.5 pr-3 text-muted-foreground">{o.objectType}</td>
+                  <td className="py-1.5 pr-3 font-semibold text-foreground">{o.algorithm}</td>
+                  <td className="py-1.5 pr-3 text-muted-foreground">{o.length || '—'}</td>
+                  <td className="py-1.5 pr-3">
+                    <span className={cn(superseded ? 'text-muted-foreground' : 'text-foreground')}>
+                      {o.state}
+                    </span>
+                  </td>
+                  <td className="py-1.5 pr-3">
+                    {o.quantumSafe ? (
+                      <span className="inline-flex items-center gap-1 text-status-success">
+                        <ShieldCheck size={11} /> safe
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-status-error">
+                        <ShieldAlert size={11} /> at risk
+                      </span>
+                    )}
+                  </td>
+                  <td className="py-1.5 pr-3">
+                    {o.supersedes ? (
+                      <span className="inline-flex items-center gap-1 text-primary">
+                        <ArrowRightLeft size={10} /> superseded by {shortUid(o.supersedes)}…
+                        {successor ? ` (${successor.algorithm})` : ''}
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground/60">—</span>
+                    )}
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
       </div>
     </div>
   )

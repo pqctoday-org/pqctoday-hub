@@ -481,6 +481,28 @@ export const POLICY_PRESETS: PolicyPreset[] = [
     example: { op: 'CreateKeyPair:Sign', algorithm: '', name: 'firmware-release-signing' },
   },
   {
+    file: 'migration-hybrid.yaml',
+    name: 'migration-hybrid',
+    label: 'Migration estate · hybrid',
+    blurb:
+      'The Migration tab’s hybrid transition — key agreement → X25519MLKEM768 (classical + PQC in one key), signing → ML-DSA-65; legacy keys auto-rekey on use.',
+    tone: 'hybrid',
+    category: 'Migration & transition',
+    illustrates: 'Hybrid KEM + rekey-on-use — belt-and-braces migration.',
+    example: { op: 'Encapsulate', algorithm: 'X25519', name: 'partner-tls-kex' },
+  },
+  {
+    file: 'migration-pqc.yaml',
+    name: 'migration-pqc',
+    label: 'Migration estate · full PQC',
+    blurb:
+      'The Migration tab’s full-PQC target — ML-KEM / ML-DSA everywhere; every legacy key auto-rekeys to its PQC successor on first use or via ReKey sweep.',
+    tone: 'pqc',
+    category: 'Migration & transition',
+    illustrates: 'Full-PQC defaults + rekey-on-use + substitution-aware ReKey.',
+    example: { op: 'Sign', algorithm: 'RSA-2048', name: 'firmware-release-signing' },
+  },
+  {
     file: 'pqc-migration-2030.yaml',
     name: 'pqc-migration-2030',
     label: 'PQC migration · 2030 cutoff',

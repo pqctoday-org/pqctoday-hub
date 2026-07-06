@@ -171,8 +171,13 @@ export const LESSONS: Lesson[] = [
         },
         {
           op: 'Activate',
-          label: 'Activate the private key',
+          label: 'Activate the private (signing) key',
           buildSpec: (r) => ({ op: 'Activate', uid: field(r, 0, 'privateKeyUid') }),
+        },
+        {
+          op: 'Activate',
+          label: 'Activate the public (verification) key',
+          buildSpec: (r) => ({ op: 'Activate', uid: field(r, 0, 'publicKeyUid') }),
         },
         {
           op: 'Sign',
@@ -186,7 +191,7 @@ export const LESSONS: Lesson[] = [
             op: 'SignatureVerify',
             uid: field(r, 0, 'publicKeyUid'),
             text: MESSAGE,
-            signature: field(r, 2, 'signatureHex'),
+            signature: field(r, 3, 'signatureHex'),
           }),
         },
       ],
@@ -203,8 +208,13 @@ export const LESSONS: Lesson[] = [
         },
         {
           op: 'Activate',
-          label: 'Activate the private key',
+          label: 'Activate the private (signing) key',
           buildSpec: (r) => ({ op: 'Activate', uid: field(r, 0, 'privateKeyUid') }),
+        },
+        {
+          op: 'Activate',
+          label: 'Activate the public (verification) key',
+          buildSpec: (r) => ({ op: 'Activate', uid: field(r, 0, 'publicKeyUid') }),
         },
         {
           op: 'Sign',
@@ -218,7 +228,7 @@ export const LESSONS: Lesson[] = [
             op: 'SignatureVerify',
             uid: field(r, 0, 'publicKeyUid'),
             text: MESSAGE,
-            signature: field(r, 2, 'signatureHex'),
+            signature: field(r, 3, 'signatureHex'),
           }),
         },
       ],
@@ -293,8 +303,13 @@ export const LESSONS: Lesson[] = [
         },
         {
           op: 'Activate',
-          label: 'Activate the private key',
+          label: 'Activate the private (decapsulation) key',
           buildSpec: (r) => ({ op: 'Activate', uid: field(r, 0, 'privateKeyUid') }),
+        },
+        {
+          op: 'Activate',
+          label: 'Activate the public (encapsulation) key',
+          buildSpec: (r) => ({ op: 'Activate', uid: field(r, 0, 'publicKeyUid') }),
         },
         {
           op: 'Encapsulate',
@@ -307,7 +322,7 @@ export const LESSONS: Lesson[] = [
           buildSpec: (r) => ({
             op: 'Decapsulate',
             uid: field(r, 0, 'privateKeyUid'),
-            data: field(r, 2, 'ciphertextHex'),
+            data: field(r, 3, 'ciphertextHex'),
           }),
         },
       ],
@@ -369,8 +384,13 @@ export const LESSONS: Lesson[] = [
         },
         {
           op: 'Activate',
-          label: 'Activate the private key',
+          label: 'Activate the private (signing) key',
           buildSpec: (r) => ({ op: 'Activate', uid: field(r, 0, 'privateKeyUid') }),
+        },
+        {
+          op: 'Activate',
+          label: 'Activate the public (verification) key',
+          buildSpec: (r) => ({ op: 'Activate', uid: field(r, 0, 'publicKeyUid') }),
         },
         {
           op: 'Sign',
@@ -384,7 +404,7 @@ export const LESSONS: Lesson[] = [
             op: 'SignatureVerify',
             uid: field(r, 0, 'publicKeyUid'),
             text: MESSAGE,
-            signature: field(r, 2, 'signatureHex'),
+            signature: field(r, 3, 'signatureHex'),
           }),
         },
       ],
@@ -510,8 +530,13 @@ export const LESSONS: Lesson[] = [
         },
         {
           op: 'Activate',
-          label: 'Activate the private key',
+          label: 'Activate the private (decapsulation) key',
           buildSpec: (r) => ({ op: 'Activate', uid: field(r, 0, 'privateKeyUid') }),
+        },
+        {
+          op: 'Activate',
+          label: 'Activate the public (encapsulation) key',
+          buildSpec: (r) => ({ op: 'Activate', uid: field(r, 0, 'publicKeyUid') }),
         },
         {
           op: 'Encapsulate',
@@ -533,8 +558,13 @@ export const LESSONS: Lesson[] = [
         },
         {
           op: 'Activate',
-          label: 'Activate the private key',
+          label: 'Activate the private (decapsulation) key',
           buildSpec: (r) => ({ op: 'Activate', uid: field(r, 0, 'privateKeyUid') }),
+        },
+        {
+          op: 'Activate',
+          label: 'Activate the public (encapsulation) key',
+          buildSpec: (r) => ({ op: 'Activate', uid: field(r, 0, 'publicKeyUid') }),
         },
         {
           op: 'Encapsulate',
