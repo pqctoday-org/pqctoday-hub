@@ -17,9 +17,10 @@ import {
   ShieldCheck,
   Handshake,
 } from 'lucide-react'
+import { ScrollText } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import type { KmipEngine, OpResult } from '@/wasm/kmip/kmipEngine'
+import type { AuditEvent, KmipEngine, OpResult } from '@/wasm/kmip/kmipEngine'
 import { getRandomBytes, arrayBufferToHex } from '@/utils/webCrypto'
 import type { MigrationKeyConfig } from './migrationKeys'
 
@@ -28,11 +29,28 @@ interface Props {
   engine: KmipEngine
   /** Called after any op that changed the keystore (estate summary refresh). */
   onKeystoreChange: () => void
-  /** Called after every KMIP op with its result, so the view can bucket the
-   * audit trail into the per-mode (classical / hybrid / pqc) log panels. */
-  onOpLog: (op: string, label: string, result: OpResult) => void
+  /** The policy mode active right now — every op this card runs is tagged with
+   * it in the card's own KMIP log so you can compare classical vs hybrid vs
+   * full-PQC runs of the SAME operation, in place. */
+  activeMode: 'classical' | 'hybrid' | 'pqc'
   /** Reset epoch — bump to clear the card back to "not generated". */
   epoch: number
+}
+
+/** One KMIP operation's audit trail on this card, tagged with the mode it ran
+ * under. */
+interface CardLogEntry {
+  op: string
+  mode: 'classical' | 'hybrid' | 'pqc'
+  ok: boolean
+  message: string | null
+  events: AuditEvent[]
+}
+
+const MODE_LABEL: Record<CardLogEntry['mode'], string> = {
+  classical: 'Classical',
+  hybrid: 'Hybrid',
+  pqc: 'Full PQC',
 }
 
 interface KeyIds {
@@ -78,7 +96,7 @@ function Field({
   )
 }
 
-export function MigrationKeyCard({ config, engine, onKeystoreChange, onOpLog, epoch }: Props) {
+export function MigrationKeyCard({ config, engine, onKeystoreChange, activeMode, epoch }: Props) {
   const [label, setLabel] = useState(config.defaultLabel)
   const [ids, setIds] = useState<KeyIds | null>(null)
   const [algorithm, setAlgorithm] = useState<string | null>(null)
@@ -98,6 +116,10 @@ export function MigrationKeyCard({ config, engine, onKeystoreChange, onOpLog, ep
   const [kemCiphertext, setKemCiphertext] = useState('')
   const [secretA, setSecretA] = useState('')
   const [secretB, setSecretB] = useState('')
+  // This card's own KMIP log — one flat, chronological list of every op this
+  // key ran, each tagged with the mode it ran under. Lives IN the tile so the
+  // log is unambiguously tied to this use case.
+  const [opLog, setOpLog] = useState<CardLogEntry[]>([])
 
   // Reset epoch: parent bumps after "Reset estate".
   const [seenEpoch, setSeenEpoch] = useState(epoch)
@@ -116,22 +138,25 @@ export function MigrationKeyCard({ config, engine, onKeystoreChange, onOpLog, ep
     setKemCiphertext('')
     setSecretA('')
     setSecretB('')
+    setOpLog([])
   }
 
-  /** Run one op; surface engine refusals as the card's error line. */
+  /** Run one op; surface engine refusals as the card's error line and append
+   * the op's audit trail to THIS card's log (tagged with the active mode). */
   const run = useCallback(
     (spec: Parameters<KmipEngine['runOp']>[0]): OpResult | null => {
       const r = engine.runOp(spec)
-      // Report every KMIP op (success or refusal) up so the view can bucket
-      // its audit trail into the per-mode (classical/hybrid/pqc) log panels.
-      onOpLog(spec.op, label, r)
+      setOpLog((log) => [
+        ...log,
+        { op: spec.op, mode: activeMode, ok: r.ok, message: r.message, events: r.audit ?? [] },
+      ])
       if (!r.ok) {
         setError(r.message ?? `${spec.op} failed`)
         return null
       }
       return r
     },
-    [engine, onOpLog, label],
+    [engine, activeMode],
   )
 
   /** Re-resolve this card's key by its LABEL and update the shown algorithm +
@@ -459,6 +484,59 @@ export function MigrationKeyCard({ config, engine, onKeystoreChange, onOpLog, ep
         <p className="text-[11px] text-status-error" data-testid={`migration-error-${config.id}`}>
           {error}
         </p>
+      )}
+
+      {/* This use-case's own KMIP log — flat + chronological, each op tagged
+          with the mode it ran under. */}
+      {opLog.length > 0 && (
+        <details className="rounded-lg border border-border bg-background" data-testid={`migration-log-${config.id}`}>
+          <summary className="cursor-pointer select-none px-2.5 py-1.5 text-[11px] font-medium">
+            <ScrollText size={12} className="mr-1 inline text-primary" />
+            KMIP log
+            <span className="ml-1.5 font-normal text-muted-foreground">
+              — {opLog.length} operation{opLog.length === 1 ? '' : 's'} on this key
+            </span>
+          </summary>
+          <ol className="space-y-1 px-2.5 pb-2.5 pt-1">
+            {opLog.map((e, i) => (
+              <li key={i} className="rounded border border-border/60 bg-card p-1.5 text-[10.5px]">
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="rounded bg-primary/10 px-1 py-0.5 text-[9px] font-semibold text-primary">
+                    {MODE_LABEL[e.mode]}
+                  </span>
+                  <span className="font-mono font-semibold text-foreground">{e.op}</span>
+                  <span
+                    className={cn(
+                      'rounded px-1 py-0.5 text-[9px] font-semibold',
+                      e.ok
+                        ? 'bg-status-success/15 text-status-success'
+                        : 'bg-status-error/15 text-status-error',
+                    )}
+                  >
+                    {e.ok ? 'OK' : 'refused'}
+                  </span>
+                  {!e.ok && e.message && <span className="text-status-error">{e.message}</span>}
+                </div>
+                {e.events.length > 0 && (
+                  <div className="mt-1 flex flex-wrap gap-1 font-mono text-[9.5px] text-muted-foreground">
+                    {e.events.map((ev, j) => (
+                      <span
+                        key={j}
+                        className="rounded bg-muted px-1 py-0.5"
+                        title={JSON.stringify(ev.event)}
+                      >
+                        {({ p1: 'policy', p2: 'kmip', p3: 'pkcs11' } as Record<string, string>)[
+                          ev.plane
+                        ] ?? ev.plane}
+                        :{String(ev.event.type ?? '?')}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </li>
+            ))}
+          </ol>
+        </details>
       )}
     </section>
   )
