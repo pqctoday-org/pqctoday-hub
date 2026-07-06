@@ -14,7 +14,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ArrowRightLeft, Boxes, Loader2, ShieldAlert, ShieldCheck, RotateCcw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import type { KmipEngine } from '@/wasm/kmip/kmipEngine'
+import type { AuditEvent, KmipEngine, OpResult } from '@/wasm/kmip/kmipEngine'
 import { MIGRATION_KEYS, MIGRATION_POLICIES, type MigrationPolicyChip } from './migrationKeys'
 import { useMigrationEngine } from './useMigrationEngine'
 import { MigrationKeyCard } from './MigrationKeyCard'
@@ -32,6 +32,30 @@ export function MigrationView() {
   }, [policyName, activePolicy])
 
   const onKeystoreChange = useCallback(() => setKeystoreBump((n) => n + 1), [])
+
+  // Per-mode KMIP audit log — every op is bucketed by the policy active when it
+  // ran, so you can compare the exact wire/engine trail under Classical vs
+  // Hybrid vs Full PQC.
+  const modeOf = (policy: string | null): 'classical' | 'hybrid' | 'pqc' =>
+    policy === 'migration-pqc' ? 'pqc' : policy === 'migration-hybrid' ? 'hybrid' : 'classical'
+  const [logs, setLogs] = useState<Record<'classical' | 'hybrid' | 'pqc', LogEntry[]>>({
+    classical: [],
+    hybrid: [],
+    pqc: [],
+  })
+  const onOpLog = useCallback(
+    (op: string, keyLabel: string, result: OpResult) => {
+      const mode = modeOf(activePolicy)
+      setLogs((l) => ({
+        ...l,
+        [mode]: [
+          ...l[mode],
+          { op, keyLabel, ok: result.ok, message: result.message, events: result.audit ?? [] },
+        ],
+      }))
+    },
+    [activePolicy],
+  )
 
   /** Flip the active crypto-agility policy. Loading a new policy does NOT
    * touch existing keys — they stay classical (and at-risk) until each is
@@ -181,6 +205,7 @@ export function MigrationView() {
             config={k}
             engine={engine}
             onKeystoreChange={onKeystoreChange}
+            onOpLog={onOpLog}
             epoch={epoch}
           />
         ))}
@@ -188,6 +213,112 @@ export function MigrationView() {
 
       {/* ── Keystore inspector — the REAL KMIP objects on this tab's engine ── */}
       <MigrationKeystore engine={engine} bump={keystoreBump} />
+
+      {/* ── Per-mode KMIP audit logs (collapsible) ─────────────────────────── */}
+      <MigrationLogs logs={logs} onClear={() => setLogs({ classical: [], hybrid: [], pqc: [] })} />
+    </div>
+  )
+}
+
+/** One KMIP operation's audit trail, tagged with the key it touched. */
+interface LogEntry {
+  op: string
+  keyLabel: string
+  ok: boolean
+  message: string | null
+  events: AuditEvent[]
+}
+
+/** Three collapsible KMIP logs — one per policy mode. Each groups the audit
+ * events of every operation run while that policy was active, so you can read
+ * exactly what the engine did under Classical vs Hybrid vs Full PQC. */
+function MigrationLogs({
+  logs,
+  onClear,
+}: {
+  logs: Record<'classical' | 'hybrid' | 'pqc', LogEntry[]>
+  onClear: () => void
+}) {
+  const total = logs.classical.length + logs.hybrid.length + logs.pqc.length
+  const PLANE: Record<string, string> = { p1: 'policy', p2: 'kmip', p3: 'pkcs11' }
+  const sections: { mode: 'classical' | 'hybrid' | 'pqc'; label: string }[] = [
+    { mode: 'classical', label: 'Classical' },
+    { mode: 'hybrid', label: 'Hybrid' },
+    { mode: 'pqc', label: 'Full PQC' },
+  ]
+  return (
+    <div className="rounded-xl border border-border bg-card p-4" data-testid="migration-logs">
+      <div className="mb-2 flex items-center gap-2">
+        <h4 className="text-sm font-semibold text-primary">KMIP logs by mode</h4>
+        <span className="text-[11px] text-muted-foreground">
+          — every operation's engine audit trail, grouped by the policy active when it ran
+        </span>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onClear}
+          className="ml-auto h-6 px-2 text-[10px] text-muted-foreground hover:text-foreground"
+        >
+          Clear
+        </Button>
+      </div>
+      <div className="space-y-2">
+        {sections.map(({ mode, label }) => {
+          const entries = logs[mode]
+          return (
+            <details
+              key={mode}
+              className="rounded-lg border border-border bg-background"
+              data-testid={`migration-log-${mode}`}
+            >
+              <summary className="cursor-pointer select-none px-3 py-2 text-xs font-medium">
+                {label}
+                <span className="ml-2 text-[11px] font-normal text-muted-foreground">
+                  {entries.length} operation{entries.length === 1 ? '' : 's'}
+                </span>
+              </summary>
+              {entries.length > 0 && (
+                <ol className="space-y-1.5 px-3 pb-3 pt-1">
+                  {entries.map((e, i) => (
+                    <li key={i} className="rounded border border-border/60 bg-card p-2 text-[11px]">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="font-mono font-semibold text-foreground">{e.op}</span>
+                        <span className="text-muted-foreground">{e.keyLabel}</span>
+                        <span
+                          className={cn(
+                            'rounded px-1.5 py-0.5 text-[9.5px] font-semibold',
+                            e.ok
+                              ? 'bg-status-success/15 text-status-success'
+                              : 'bg-status-error/15 text-status-error',
+                          )}
+                        >
+                          {e.ok ? 'OK' : 'refused'}
+                        </span>
+                        {!e.ok && e.message && (
+                          <span className="text-[10.5px] text-status-error">{e.message}</span>
+                        )}
+                      </div>
+                      {e.events.length > 0 && (
+                        <div className="mt-1 flex flex-wrap gap-1 font-mono text-[10px] text-muted-foreground">
+                          {e.events.map((ev, j) => (
+                            <span
+                              key={j}
+                              className="rounded bg-muted px-1 py-0.5"
+                              title={JSON.stringify(ev.event)}
+                            >
+                              {PLANE[ev.plane] ?? ev.plane}:{String(ev.event.type ?? '?')}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </li>
+                  ))}
+                </ol>
+              )}
+            </details>
+          )
+        })}
+      </div>
     </div>
   )
 }

@@ -9,7 +9,7 @@
 # Executable-today scope: the hybrid KEM (X25519MLKEM768) is real, in-engine
 # crypto. Hybrid *signatures* in the full sense (a single composite
 # ML-DSA+EdDSA blob) are a later milestone; here the signing keys migrate to
-# ML-DSA-65 so the hybrid policy is fully runnable end to end.
+# ML-DSA-44 so the hybrid policy is fully runnable end to end.
 
 schema_version: 1
 
@@ -17,7 +17,7 @@ metadata:
   name: migration-hybrid
   description: |
     Hybrid transition for the Migration tab. Key establishment → X25519MLKEM768
-    (classical + PQC in one key); signing → ML-DSA-65; symmetric → AES-256.
+    (classical + PQC in one key); signing → ML-DSA-44; symmetric → AES-256.
     Legacy keys auto-rekey to the hybrid/PQC target on first use or via ReKey.
   authority: pqctoday-hsm/demo
   effective: "2026-01-01"
@@ -35,7 +35,7 @@ rules:
 
   - type: algorithm_default
     ops: ["CreateKeyPair:Sign"]
-    default_algorithm: ML-DSA-65
+    default_algorithm: ML-DSA-44
     reason: "PQC signing default during the hybrid window (FIPS 204)"
 
   - type: algorithm_default
@@ -65,20 +65,20 @@ rules:
   - type: algorithm_substitution
     ops: [Sign, ReKeyKeyPair]
     from: RSA-2048
-    to: ML-DSA-65
-    reason: "Hybrid window — RSA-2048 signing to ML-DSA-65"
+    to: ML-DSA-44
+    reason: "Hybrid window — RSA-2048 signing to ML-DSA-44"
 
   - type: algorithm_substitution
     ops: [Sign, ReKeyKeyPair]
     from: ECDSA-P256
-    to: ML-DSA-65
-    reason: "Hybrid window — ECDSA-P256 to ML-DSA-65"
+    to: ML-DSA-44
+    reason: "Hybrid window — ECDSA-P256 to ML-DSA-44"
 
   - type: algorithm_substitution
     ops: [Sign, ReKeyKeyPair]
     from: Ed25519
-    to: ML-DSA-65
-    reason: "Hybrid window — Ed25519 to ML-DSA-65"
+    to: ML-DSA-44
+    reason: "Hybrid window — Ed25519 to ML-DSA-44"
 
   # ── No NEW pure-classical asymmetric keys during the hybrid window ────
   - type: algorithm_denylist
