@@ -198,6 +198,55 @@ export function MigrationView() {
   )
 }
 
+/** Static reference: which key label serves which operation, and what each
+ * policy resolves it to. The column matching the active policy is highlighted
+ * so it's obvious which algorithm is in force per label right now. */
+function MigrationMap({ activePolicy }: { activePolicy: string | null }) {
+  const mode =
+    activePolicy === 'migration-pqc'
+      ? 'pqc'
+      : activePolicy === 'migration-hybrid'
+        ? 'hybrid'
+        : 'classical'
+  const col = (m: string) =>
+    cn('py-1.5 px-3 font-mono', mode === m && 'bg-primary/10 font-semibold text-primary')
+  return (
+    <div className="overflow-x-auto rounded-xl border border-border bg-card p-4">
+      <h4 className="mb-2 text-sm font-semibold text-primary">
+        Migration map — which label, which operation, which algorithm per mode
+      </h4>
+      <table className="w-full min-w-[720px] text-left text-[11px]">
+        <thead className="text-[10px] uppercase tracking-wide text-muted-foreground">
+          <tr className="border-b border-border">
+            <th className="py-1.5 px-3 font-medium">Key label</th>
+            <th className="py-1.5 px-3 font-medium">Operation</th>
+            <th className={cn('py-1.5 px-3 font-medium', mode === 'classical' && 'text-primary')}>
+              Classical
+            </th>
+            <th className={cn('py-1.5 px-3 font-medium', mode === 'hybrid' && 'text-primary')}>
+              Hybrid
+            </th>
+            <th className={cn('py-1.5 px-3 font-medium', mode === 'pqc' && 'text-primary')}>
+              Full PQC
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {MIGRATION_KEYS.map((k) => (
+            <tr key={k.id} className="border-b border-border/50">
+              <td className="py-1.5 px-3 font-mono font-medium">{k.defaultLabel}</td>
+              <td className="py-1.5 px-3 text-muted-foreground">{k.operation}</td>
+              <td className={col('classical')}>{k.classicalAlgorithm}</td>
+              <td className={col('hybrid')}>{k.hybridAlgorithm}</td>
+              <td className={col('pqc')}>{k.pqcAlgorithm}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
 /** Live table of every KMIP object on the Migration tab's dedicated engine
  * instance. This is where a rekey becomes visible: the old key flips to
  * `Deactivated` and a fresh `Active` successor appears under the SAME label
