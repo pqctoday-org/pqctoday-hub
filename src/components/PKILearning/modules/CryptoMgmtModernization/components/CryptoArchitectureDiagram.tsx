@@ -18,12 +18,19 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { useModuleStore } from '@/store/useModuleStore'
-import { markdownToPdf } from '@/services/export/pdfExport'
+import {
+  buildArtifactPdf,
+  addDiagramImagePage,
+  drawFooters,
+  sanitiseFilename,
+} from '@/services/export/pdfExport'
 import { useAssessmentSnapshot } from '@/hooks/assessment/useAssessmentSnapshot'
 import { useAlgorithmTransitionsForAssessment } from '@/hooks/useAlgorithmTransitionsForAssessment'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { MermaidDiagram } from '@/components/Simulation/MermaidDiagram'
+import { renderMermaidToPngDataUrl } from '@/components/Simulation/mermaidRender'
+import { useThemeStore } from '@/store/useThemeStore'
 
 type ComponentKind =
   | 'application'
@@ -59,6 +66,54 @@ const KIND_PLACEHOLDERS: Record<ComponentKind, string> = {
   protocol: 'e.g. TLS 1.3 hybrid X25519+ML-KEM-768',
   'key-store': 'e.g. HashiCorp Vault, transit engine',
   'certificate-authority': 'e.g. Internal Root CA, RSA-3072 (no PQC yet)',
+}
+
+// Order components cluster in the diagram, left to right — roughly the
+// dependency chain (app uses a protocol, implemented by a library, backed by
+// a key store/HSM, trusted via a CA) so most edges point forward rather than
+// looping back across the layout.
+const KIND_DIAGRAM_ORDER: ComponentKind[] = [
+  'application',
+  'protocol',
+  'library',
+  'key-store',
+  'hsm',
+  'certificate-authority',
+]
+
+// One colour per kind (light/dark variants) so components are distinguishable
+// at a glance without reading every label — same technique as
+// simArchitecture.ts's NODE_PALETTE.
+const KIND_STYLE: Record<ComponentKind, { light: string; dark: string }> = {
+  application: {
+    light: 'fill:#e0f2fe,stroke:#0284c7,color:#075985',
+    dark: 'fill:#0c4a6e,stroke:#38bdf8,color:#e0f2fe',
+  },
+  protocol: {
+    light: 'fill:#fef3c7,stroke:#d97706,color:#92400e',
+    dark: 'fill:#78350f,stroke:#f59e0b,color:#fef3c7',
+  },
+  library: {
+    light: 'fill:#ede9fe,stroke:#7c3aed,color:#5b21b6',
+    dark: 'fill:#4c1d95,stroke:#a78bfa,color:#ede9fe',
+  },
+  'key-store': {
+    light: 'fill:#d1fae5,stroke:#059669,color:#065f46',
+    dark: 'fill:#064e3b,stroke:#10b981,color:#d1fae5',
+  },
+  hsm: {
+    light: 'fill:#fee2e2,stroke:#dc2626,color:#991b1b',
+    dark: 'fill:#7f1d1d,stroke:#f87171,color:#fee2e2',
+  },
+  'certificate-authority': {
+    light: 'fill:#f1f5f9,stroke:#64748b,color:#334155',
+    dark: 'fill:#334155,stroke:#94a3b8,color:#f1f5f9',
+  },
+}
+
+function kindClass(kind: ComponentKind): string {
+  // Mermaid classDef/subgraph ids only allow alphanumerics/underscore.
+  return kind.replace(/-/g, '_')
 }
 
 const newId = () => `c-${Math.random().toString(36).slice(2, 9)}`
@@ -99,14 +154,24 @@ function sanitiseId(id: string): string {
   return id.replace(/[^a-zA-Z0-9_]/g, '_') || 'node'
 }
 
-function buildMermaid(components: ArchComponent[]): string {
+function buildMermaid(components: ArchComponent[], theme: 'light' | 'dark' = 'light'): string {
   const lines: string[] = ['flowchart LR']
-  for (const c of components) {
-    const id = sanitiseId(c.id)
-    const label = `${KIND_LABELS[c.kind]}: ${c.name || c.id}`
-    const safeLabel = label.replace(/"/g, "'")
-    lines.push(`  ${id}["${safeLabel}"]`)
+  const kindsPresent = KIND_DIAGRAM_ORDER.filter((kind) => components.some((c) => c.kind === kind))
+
+  // One subgraph per kind, so same-type components cluster together instead
+  // of scattering across the layout — the label itself no longer needs to
+  // repeat the kind, which keeps the boxes short and the graph compact.
+  for (const kind of kindsPresent) {
+    // eslint-disable-next-line security/detect-object-injection -- kind is drawn from KIND_DIAGRAM_ORDER itself
+    lines.push(`  subgraph sg_${kindClass(kind)} ["${KIND_LABELS[kind]}"]`)
+    for (const c of components.filter((row) => row.kind === kind)) {
+      const id = sanitiseId(c.id)
+      const label = (c.name || c.id).replace(/"/g, "'")
+      lines.push(`    ${id}["${label}"]:::${kindClass(kind)}`)
+    }
+    lines.push('  end')
   }
+
   for (const c of components) {
     const targets = c.dependsOn
       .split(',')
@@ -119,10 +184,15 @@ function buildMermaid(components: ArchComponent[]): string {
       }
     }
   }
+
+  for (const kind of kindsPresent) {
+    // eslint-disable-next-line security/detect-object-injection -- kind is drawn from KIND_DIAGRAM_ORDER itself
+    lines.push(`  classDef ${kindClass(kind)} ${KIND_STYLE[kind][theme]}`)
+  }
   return lines.join('\n')
 }
 
-function buildMarkdown(components: ArchComponent[]): string {
+function buildMarkdown(components: ArchComponent[], theme: 'light' | 'dark' = 'light'): string {
   let md = '# Crypto Architecture\n\n'
   md +=
     "*Documents the organisation's cryptographic architecture per NIST CSWP.39 §5.4 — " +
@@ -138,11 +208,12 @@ function buildMarkdown(components: ArchComponent[]): string {
 
   md += '\n## Dependency diagram\n\n'
   md +=
-    '_Rendered as an interactive diagram in the PQC Today Hub web app. In exported ' +
-    'PDF/print, the Components table above is the textual equivalent — its "Depends on" ' +
-    'column lists every edge in this diagram._\n\n'
+    "_Rendered as an interactive diagram in the PQC Today Hub web app — this tool's " +
+    '"Download PDF" button includes it as an image. If this markdown is exported or ' +
+    're-downloaded elsewhere without a live renderer, the Components table above is the ' +
+    'textual equivalent — its "Depends on" column lists every edge in this diagram._\n\n'
   md += '```mermaid\n'
-  md += buildMermaid(components)
+  md += buildMermaid(components, theme)
   md += '\n```\n'
 
   md += '\n## Notes\n\n'
@@ -221,8 +292,15 @@ export const CryptoArchitectureDiagram: React.FC = () => {
   const [lastSavedMarkdown, setLastSavedMarkdown] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
 
-  const markdown = useMemo(() => buildMarkdown(components), [components])
-  const mermaidSource = useMemo(() => buildMermaid(components), [components])
+  // Mirrors ArchitecturePanel.tsx's rule: light until the user has explicitly
+  // chosen a theme, so the diagram's node colours match the rest of the app.
+  const themeState = useThemeStore((s) => (s.hasSetPreference ? s.theme : 'light'))
+
+  const markdown = useMemo(() => buildMarkdown(components, themeState), [components, themeState])
+  const mermaidSource = useMemo(
+    () => buildMermaid(components, themeState),
+    [components, themeState]
+  )
 
   const updateRow = useCallback((id: string, patch: Partial<ArchComponent>) => {
     setComponents((rows) => rows.map((r) => (r.id === id ? { ...r, ...patch } : r)))
@@ -259,14 +337,27 @@ export const CryptoArchitectureDiagram: React.FC = () => {
   }, [markdown])
 
   const handleDownloadPdf = useCallback(async () => {
-    await markdownToPdf(markdown, 'crypto-architecture', 'Crypto Architecture (CSWP.39 §5.4)', {
-      // The Components table carries free-text Detail/Depends-on columns; render
-      // landscape so they don't cramp in portrait. The Mermaid diagram itself is
-      // not rasterised into the PDF (see the note in the Dependency diagram
-      // section) — the table is its textual equivalent.
+    const title = 'Crypto Architecture (CSWP.39 §5.4)'
+    const doc = buildArtifactPdf(markdown, title, {
+      // The Components table carries free-text Detail/Depends-on columns;
+      // render landscape so they don't cramp in portrait — also a better fit
+      // for the wide LR diagram appended below.
       wideTable: true,
+      // Footers are stamped after the diagram page below, so "Page N of M"
+      // counts it too.
+      skipFooters: true,
     })
-  }, [markdown])
+    try {
+      const diagram = await renderMermaidToPngDataUrl(mermaidSource)
+      addDiagramImagePage(doc, diagram, 'Dependency diagram')
+    } catch {
+      // Diagram couldn't be rasterised (e.g. renderer error) — the
+      // Components table already carries the same information as text, so
+      // the PDF is still complete without it.
+    }
+    drawFooters(doc, title)
+    doc.save(`${sanitiseFilename('crypto-architecture')}.pdf`)
+  }, [markdown, mermaidSource])
 
   return (
     <div className="space-y-6">

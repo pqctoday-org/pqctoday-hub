@@ -9,7 +9,19 @@
  */
 import { describe, it, expect } from 'vitest'
 import type { jsPDF } from 'jspdf'
-import { buildArtifactPdf, markdownToPdf, sanitizeForLatin1 } from './pdfExport'
+import {
+  buildArtifactPdf,
+  markdownToPdf,
+  sanitizeForLatin1,
+  addDiagramImagePage,
+  drawFooters,
+  sanitiseFilename,
+} from './pdfExport'
+
+// Smallest possible valid PNG (1x1 transparent pixel) — enough to exercise
+// jsPDF's addImage without needing a real rasterised diagram.
+const TINY_PNG =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII='
 
 /**
  * Extract every drawn text fragment from the PDF before serialization (so the
@@ -426,5 +438,67 @@ describe('markdownToPdf', () => {
     await expect(
       markdownToPdf('# x', 'wide-test', 'Wide Test', { wideTable: true })
     ).resolves.toBeUndefined()
+  })
+})
+
+// ── skipFooters + addDiagramImagePage (live-rendered diagram export) ───────
+describe('buildArtifactPdf — skipFooters option', () => {
+  it('omits footers when skipFooters: true, unlike the default', () => {
+    const withFooters = buildArtifactPdf('# Title\n\nBody.', 'Title')
+    const withoutFooters = buildArtifactPdf('# Title\n\nBody.', 'Title', { skipFooters: true })
+    expect(drawnText(withFooters)).toMatch(/Page 1 of 1/)
+    expect(drawnText(withoutFooters)).not.toMatch(/Page \d+ of \d+/)
+  })
+})
+
+describe('drawFooters', () => {
+  it('stamps "Page N of M" using the page count at call time', () => {
+    const doc = buildArtifactPdf('# Title\n\nBody.', 'Title', { skipFooters: true })
+    doc.addPage()
+    drawFooters(doc, 'Title')
+    const drawn = drawnText(doc)
+    expect(drawn).toContain('Page 1 of 2')
+    expect(drawn).toContain('Page 2 of 2')
+  })
+})
+
+describe('addDiagramImagePage', () => {
+  it('appends exactly one page containing the supplied image', () => {
+    const doc = buildArtifactPdf('# Title\n\nBody.', 'Title', { skipFooters: true })
+    const before = doc.getNumberOfPages()
+    addDiagramImagePage(doc, { dataUrl: TINY_PNG, width: 800, height: 400 })
+    expect(doc.getNumberOfPages()).toBe(before + 1)
+  })
+
+  it('renders the caption as text on the new page', () => {
+    const doc = buildArtifactPdf('# Title\n\nBody.', 'Title', { skipFooters: true })
+    addDiagramImagePage(doc, { dataUrl: TINY_PNG, width: 800, height: 400 }, 'Dependency diagram')
+    expect(drawnText(doc)).toContain('Dependency diagram')
+  })
+
+  it('does not throw for a very tall/narrow image (extreme aspect ratio)', () => {
+    const doc = buildArtifactPdf('# Title\n\nBody.', 'Title', { skipFooters: true })
+    expect(() =>
+      addDiagramImagePage(doc, { dataUrl: TINY_PNG, width: 50, height: 4000 })
+    ).not.toThrow()
+  })
+
+  it('composes with skipFooters + drawFooters so the diagram page is counted', () => {
+    const doc = buildArtifactPdf('# Title\n\nBody.', 'Title', { skipFooters: true })
+    addDiagramImagePage(doc, { dataUrl: TINY_PNG, width: 800, height: 400 }, 'Dependency diagram')
+    drawFooters(doc, 'Title')
+    const drawn = drawnText(doc)
+    const total = doc.getNumberOfPages()
+    expect(drawn).toContain(`Page ${total} of ${total}`)
+  })
+})
+
+describe('sanitiseFilename (exported for callers that build a custom PDF pipeline)', () => {
+  it('strips path separators and OS-rejected punctuation', () => {
+    expect(sanitiseFilename('a/b\\c:d*e?f"g<h>i|j')).toBe('abcdefghij')
+  })
+
+  it('falls back to "artifact" when nothing survives sanitisation', () => {
+    expect(sanitiseFilename('////')).toBe('artifact')
   })
 })

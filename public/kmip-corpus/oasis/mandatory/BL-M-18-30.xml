@@ -1,0 +1,161 @@
+<KMIP>
+<RequestMessage>
+  <RequestHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+  </RequestHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Interop"/>
+    <RequestPayload>
+      <InteropFunction type="Enumeration" value="Begin"/>
+      <InteropIdentifier type="TextString" value="BL-M-18-30"/>
+    </RequestPayload>
+  </BatchItem>
+</RequestMessage>
+
+<ResponseMessage>
+  <ResponseHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <TimeStamp type="DateTime" value="$NOW"/>
+    <ServerCorrelationValue type="TextString" value="A5E83842-2A456820-0"/>
+  </ResponseHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Interop"/>
+    <ResultStatus type="Enumeration" value="Success"/>
+    <ResponsePayload>
+    </ResponsePayload>
+  </BatchItem>
+</ResponseMessage>
+
+<RequestMessage>
+  <RequestHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <Authentication>
+      <Credential>
+        <CredentialType type="Enumeration" value="UsernameAndPassword"/>
+        <CredentialValue>
+          <Username type="TextString" value="administrator"/>
+          <Password type="TextString" value="password"/>
+        </CredentialValue>
+      </Credential>
+    </Authentication>
+  </RequestHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="CreateCredential"/>
+    <RequestPayload>
+      <CredentialType type="Enumeration" value="Certificate"/>
+      <Attributes>
+      </Attributes>
+      <Certificate>
+        <CertificateType type="Enumeration" value="X_509"/>
+        <CertificateValue type="ByteString" value="308203363082021ea003020102020102300d06092a864886f70d01010b0500302c310b3009060355040613025553310d300b060355040a130454455354310e300c060355040b13054f41534953301e170d3233303232363036323030395a170d3237303232353036323030395a3042310b3009060355040613025553310d300b060355040a130454455354310e300c060355040b13054f41534953311430120603550403130b746573742d757365722d3230820122300d06092a864886f70d01010105000382010f003082010a0282010100c4bebed76a8abf3c0518636e5f5bf321e60b269bea3e37f7541aaa69346757aedfe476c08bf44133fd0f758670b13bd53b910d630b80c6fcd790ce7867556effa3b266f1bdb6f052d8e59ce584ec0812068789fdbf1fc11ce27fce998174a66633be2d4f6a0185dee03f18624d74551300a8630b326edc7a25205f100570d18ec5fed3b973474b884be797a88e2a2a56e8f4960ab0f88e4b406bfe696cd7dbddbe054cbc5c463a832119351273abcb0ef1a38520fadfabb2eb2c8326dcd27587b342dd7cc12109e07bf97e6a6553b1f4c649ad49b6f4c97a6911c84ac39eb34542bd77581ad481c624913fa2af21535654fb63dd7adffbbf0862b357e0ba9eb70203010001a34d304b30090603551d1304023000301d0603551d0e04160414e26494f6cf7957075243cd8fa1a6ab6715179818301f0603551d23041830168014ac96f09bef1ce244d72d4c62706534d9017d558c300d06092a864886f70d01010b050003820101007188b79270159bd1f393fd999ff6341759242e798ed206efa59c557538dfcb8b2da6dabbe8695e3d81739b10eb5a37f553611fd3b0b7a252e6ddf047ec0dfa34a101fad66027c9386046f82c6892b46ebec6d92789c89fe250eeda1345498847a2b56266e806ab8bd93e474c60d2ccd9070064bc6ea0c53003fa75fc8f522d8ae4eb4ed4339f7b81167a737e9e81519acc04a7a2e3b2979748478b3e4c477d5dd9c5d511f2ba9c572e19391f7d7375aa418e1d4be37a4da95edfd7db45e14b2d0b4616d06f0bf7d30131a174f3e818db32fd1edbeca667944a746929626aa5ccc6f2d798ad9a3d6fefea53e357b4debe54429bb63ddbdce631b30efac4583b1b"/>
+      </Certificate>
+    </RequestPayload>
+  </BatchItem>
+</RequestMessage>
+
+<ResponseMessage>
+  <ResponseHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <TimeStamp type="DateTime" value="$NOW"/>
+    <ServerCorrelationValue type="TextString" value="A5E83842-2A456820-1"/>
+  </ResponseHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="CreateCredential"/>
+    <ResultStatus type="Enumeration" value="Success"/>
+    <ResponsePayload>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_0"/>
+    </ResponsePayload>
+  </BatchItem>
+</ResponseMessage>
+
+<RequestMessage>
+  <RequestHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <Authentication>
+      <Credential>
+        <CredentialType type="Enumeration" value="UsernameAndPassword"/>
+        <CredentialValue>
+          <Username type="TextString" value="administrator"/>
+          <Password type="TextString" value="password"/>
+        </CredentialValue>
+      </Credential>
+    </Authentication>
+  </RequestHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="CreateUser"/>
+    <RequestPayload>
+      <Attributes>
+        <CredentialLink type="Reference" value="$UNIQUE_IDENTIFIER_0"/>
+        <Name type="TextString" value="test-user-2"/>
+      </Attributes>
+    </RequestPayload>
+  </BatchItem>
+</RequestMessage>
+
+<ResponseMessage>
+  <ResponseHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <TimeStamp type="DateTime" value="$NOW"/>
+    <ServerCorrelationValue type="TextString" value="A5E83842-2A456820-2"/>
+  </ResponseHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="CreateUser"/>
+    <ResultStatus type="Enumeration" value="Success"/>
+    <ResponsePayload>
+      <UniqueIdentifier type="Identifier" value="$UNIQUE_IDENTIFIER_1"/>
+    </ResponsePayload>
+  </BatchItem>
+</ResponseMessage>
+
+<RequestMessage>
+  <RequestHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+  </RequestHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Interop"/>
+    <RequestPayload>
+      <InteropFunction type="Enumeration" value="End"/>
+      <InteropIdentifier type="TextString" value="BL-M-18-30"/>
+    </RequestPayload>
+  </BatchItem>
+</RequestMessage>
+
+<ResponseMessage>
+  <ResponseHeader>
+    <ProtocolVersion>
+      <ProtocolVersionMajor type="Integer" value="3"/>
+      <ProtocolVersionMinor type="Integer" value="0"/>
+    </ProtocolVersion>
+    <TimeStamp type="DateTime" value="$NOW"/>
+    <ServerCorrelationValue type="TextString" value="A5E83842-2A456820-3"/>
+  </ResponseHeader>
+  <BatchItem>
+    <Operation type="Enumeration" value="Interop"/>
+    <ResultStatus type="Enumeration" value="Success"/>
+    <ResponsePayload>
+    </ResponsePayload>
+  </BatchItem>
+</ResponseMessage>
+
+</KMIP>

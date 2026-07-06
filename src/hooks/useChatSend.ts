@@ -12,6 +12,7 @@ import {
   streamResponse as localStreamResponse,
   initializeEngine,
   isEngineReady,
+  EngineDisconnectedError,
 } from '@/services/chat/WebLLMService'
 import { parseFollowUps } from '@/services/chat/parseFollowUps'
 import { checkGrounding } from '@/services/chat/groundingCheck'
@@ -80,7 +81,11 @@ export function useChatSend() {
   const abortRef = useRef<AbortController | null>(null)
 
   const sendQuery = useCallback(
-    async (queryText: string, onInputRestore?: (text: string) => void) => {
+    async (
+      queryText: string,
+      onInputRestore?: (text: string) => void,
+      isDisconnectRetry = false
+    ) => {
       const trimmed = queryText.trim().slice(0, MAX_INPUT_LENGTH)
       if (!trimmed || isLoading || isStreaming) return
       // Provider-specific guards
@@ -348,6 +353,19 @@ export function useChatSend() {
           provider ?? undefined
         )
       } catch (err) {
+        // Local model's GPU session died mid-request (commonly: the tab was
+        // backgrounded and the browser reclaimed WebGPU memory). The engine
+        // has already been reset — silently reload and retry once instead of
+        // leaving the user with a dead end. Remove the just-added user
+        // message first so the retry doesn't duplicate it.
+        if (err instanceof EngineDisconnectedError && !isDisconnectRetry) {
+          deleteMessagesFrom(userMessage.id)
+          setWebLLMStatus('idle')
+          setWebLLMError(null)
+          void sendQuery(trimmed, onInputRestore, true)
+          return
+        }
+
         if (err instanceof Error && err.name === 'AbortError') {
           if (timedOut) {
             if (fullContent.trim()) {
@@ -421,6 +439,7 @@ export function useChatSend() {
       pageContext,
       webllmStatus,
       addMessage,
+      deleteMessagesFrom,
       setLoading,
       setError,
       setStreaming,

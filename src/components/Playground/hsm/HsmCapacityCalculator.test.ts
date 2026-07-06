@@ -38,9 +38,9 @@ describe('HSM capacity — computeScenarios', () => {
   })
 
   it('aggregates load across multiple enabled use cases (shared fleet)', () => {
-    // TLS alone at 10,000 TPS in PQC workload = 10,000 ML-DSA sign/s + 10,000 ML-KEM-768 ops/s.
-    // On classical HSM (ML-DSA = 150 ops/s) that is 67 HSMs just for ML-DSA (bottleneck).
-    // ML-KEM-768 at 500 ops/s needs ceil(10k/500)=20 HSMs — less than ML-DSA.
+    // TLS alone at 10,000 TPS in PQC workload = 10,000 ML-DSA sign/s + 10,000 ML-KEM-768 ops/s
+    // + 10,000 ECDH P-256 ops/s. Shared-fleet model sums each algorithm's share of one HSM's
+    // capacity: ML-DSA 10000/150=66.67 + ML-KEM 10000/500=20 + ECDH 10000/10000=1 = 87.67 → 88.
     const r = computeScenarios({
       useCases: USE_CASES,
       state: stateWith(['tls'], 10_000),
@@ -52,8 +52,8 @@ describe('HSM capacity — computeScenarios', () => {
     })
     const [, tomorrow, upgraded] = r
     expect(tomorrow.bottleneck).toBe('ml-dsa-65')
-    expect(tomorrow.requiredRaw).toBe(67)
-    expect(tomorrow.requiredWithRedundancy).toBe(68) // N+1 with 1 location: ceil(67/1)+1 = 68
+    expect(tomorrow.requiredRaw).toBe(88)
+    expect(tomorrow.requiredWithRedundancy).toBe(89) // N+1 with 1 location: 88 + 1 = 89
     // Next-gen HSM at 8,000 ML-DSA/s handles the same load with far fewer units.
     expect(upgraded.requiredRaw).toBeLessThan(tomorrow.requiredRaw)
   })
@@ -68,7 +68,7 @@ describe('HSM capacity — computeScenarios', () => {
       hsmsPerLocation: { today: 1, tomorrow: 5, upgraded: 1 },
       numLocations: 1,
     })
-    // Post-PQC on classical fleet needs 68 HSMs/location but only 5 are deployed.
+    // Post-PQC on classical fleet needs 89 HSMs/location but only 5 are deployed.
     expect(r[1].sufficient).toBe(false)
     expect(r[1].fleetUtilizationPct).toBeGreaterThan(100)
   })
@@ -80,7 +80,7 @@ describe('HSM capacity — computeScenarios', () => {
       classical: CLASSICAL_HSM_DEFAULT,
       pqc: PQC_HSM_DEFAULT,
       redundancy: 'n+1',
-      hsmsPerLocation: { today: 2, tomorrow: 68, upgraded: 3 },
+      hsmsPerLocation: { today: 2, tomorrow: 89, upgraded: 3 },
       numLocations: 1,
     })
     expect(r[1].sufficient).toBe(true)
@@ -101,8 +101,10 @@ describe('HSM capacity — computeScenarios', () => {
   })
 
   it('adds load across multiple checked use cases (shared fleet)', () => {
-    // Enable TLS (10k TPS × 1 sign) + SSH (10k TPS × 1 sign) — total 20k ML-DSA/s.
-    // On classical HSM (150 ops/s) that is ceil(20000/150)=134 HSMs for ML-DSA.
+    // Enable TLS (10k TPS) + SSH (10k TPS). PQC ops (both hybrid KEX): TLS = ml-dsa 1,
+    // ml-kem 1, ecdh 1; SSH = ml-dsa 1, ml-kem 1, ecdh 1 (mlkem768x25519-style hybrid).
+    // Loads: ml-dsa=20,000, ml-kem=20,000, ecdh=20,000.
+    // Shared-fleet sum: 20000/150 + 20000/500 + 20000/10000 = 133.33+40+2=175.33 → 176.
     const r = computeScenarios({
       useCases: USE_CASES,
       state: stateWith(['tls', 'ssh'], 10_000),
@@ -112,34 +114,35 @@ describe('HSM capacity — computeScenarios', () => {
       hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
       numLocations: 1,
     })
-    expect(r[1].requiredRaw).toBe(134)
+    expect(r[1].requiredRaw).toBe(176)
   })
 
   it('replicates per-site load across locations (geo-redundant active-active)', () => {
-    // 3 locations, N+1, TLS at 10k TPS → raw = 67 HSMs PER SITE (ceil(10000/150))
-    // Under per-site model, perLocationRaw = R = 67 (no splitting).
-    // perLocationRequired = 67 + 1 = 68 (N+1), total = 3 × 68 = 204.
+    // 3 locations, N+1, TLS at 10k TPS → shared-fleet raw = 88 HSMs PER SITE (see above).
+    // Under per-site model, perLocationRaw = R = 88 (no splitting).
+    // perLocationRequired = 88 + 1 = 89 (N+1), total = 3 × 89 = 267.
     const r = computeScenarios({
       useCases: USE_CASES,
       state: stateWith(['tls'], 10_000),
       classical: CLASSICAL_HSM_DEFAULT,
       pqc: PQC_HSM_DEFAULT,
       redundancy: 'n+1',
-      hsmsPerLocation: { today: 1, tomorrow: 68, upgraded: 1 },
+      hsmsPerLocation: { today: 1, tomorrow: 89, upgraded: 1 },
       numLocations: 3,
     })
     const tomorrow = r[1]
-    expect(tomorrow.requiredRaw).toBe(67)
-    expect(tomorrow.perLocationRaw).toBe(67) // per-site model: each location runs full demand
-    expect(tomorrow.perLocationRequired).toBe(68) // 67 + 1 (N+1)
-    expect(tomorrow.requiredWithRedundancy).toBe(204) // 3 × 68
-    expect(tomorrow.sufficient).toBe(true) // 68 HSMs/loc meets perLocationRequired=68
+    expect(tomorrow.requiredRaw).toBe(88)
+    expect(tomorrow.perLocationRaw).toBe(88) // per-site model: each location runs full demand
+    expect(tomorrow.perLocationRequired).toBe(89) // 88 + 1 (N+1)
+    expect(tomorrow.requiredWithRedundancy).toBe(267) // 3 × 89
+    expect(tomorrow.sufficient).toBe(true) // 89 HSMs/loc meets perLocationRequired=89
   })
 
   it('inventory mode: N=10 classical HSMs at TLS 5k PQC TPS — today sufficient, tomorrow overloaded', () => {
     // Inventory mode: user owns 10 classical HSMs.
-    // TLS at 5,000 PQC TPS → ML-DSA load = 5,000 ops/s, needs ceil(5k/150)=34 raw → N+1=35
-    // With 10 deployed: tomorrow is overloaded (needs 35, has 10).
+    // TLS at 5,000 PQC TPS → ml-dsa=5,000, ml-kem=5,000, ecdh=5,000.
+    // Shared-fleet sum: 5000/150 + 5000/500 + 5000/10000 = 33.33+10+0.5=43.83 → 44 raw → N+1=45.
+    // With 10 deployed: tomorrow is overloaded (needs 45, has 10).
     const inventoryHsmCount = 10
     const numLocations = 1
     const perLocClassical = Math.ceil(inventoryHsmCount / numLocations) // 10
@@ -154,9 +157,9 @@ describe('HSM capacity — computeScenarios', () => {
       numLocations,
     })
     expect(r[0].sufficient).toBe(true) // classical workload on 10 HSMs is fine
-    expect(r[1].requiredRaw).toBe(34) // ceil(5000/150)=34 raw for ML-DSA
-    expect(r[1].perLocationRequired).toBe(35) // 34+1 N+1
-    expect(r[1].sufficient).toBe(false) // 10 deployed < 35 required
+    expect(r[1].requiredRaw).toBe(44) // shared-fleet raw for TLS PQC load at 5k TPS
+    expect(r[1].perLocationRequired).toBe(45) // 44+1 N+1
+    expect(r[1].sufficient).toBe(false) // 10 deployed < 45 required
   })
 
   it('inventory mode: equivalentNextGenTotal formula matches expected replacement ratio', () => {
@@ -177,10 +180,10 @@ describe('HSM capacity — computeScenarios', () => {
 
   it('inventory mode: large fleet — 1000 HSMs across 10 locations, N+1', () => {
     // 1000 HSMs ÷ 10 locations = 100/location.
-    // TLS at 5000 per-site TPS PQC → ML-DSA load = 5000 ops/s, raw = ceil(5000/150) = 34
-    // PER LOCATION (each site runs full per-site demand).
-    // perLocationRaw = 34, perLocationRequired (N+1) = 35
-    // Total required = 10 × 35 = 350. With 100/location deployed: sufficient (100 ≥ 35).
+    // TLS at 5000 per-site TPS PQC → shared-fleet raw = 44 (see above) PER LOCATION
+    // (each site runs full per-site demand).
+    // perLocationRaw = 44, perLocationRequired (N+1) = 45
+    // Total required = 10 × 45 = 450. With 100/location deployed: sufficient (100 ≥ 45).
     const inventoryHsmCount = 1000
     const numLocations = 10
     const perLocClassical = Math.ceil(inventoryHsmCount / numLocations) // 100
@@ -194,10 +197,10 @@ describe('HSM capacity — computeScenarios', () => {
       hsmsPerLocation: { today: perLocClassical, tomorrow: perLocClassical, upgraded: 2 },
       numLocations,
     })
-    expect(r[1].perLocationRaw).toBe(34) // per-site model: full demand per location
-    expect(r[1].perLocationRequired).toBe(35) // 34+1 N+1
-    expect(r[1].requiredWithRedundancy).toBe(350) // 10 × 35
-    expect(r[1].sufficient).toBe(true) // 100/loc ≥ 35 required/loc
+    expect(r[1].perLocationRaw).toBe(44) // per-site model: full demand per location
+    expect(r[1].perLocationRequired).toBe(45) // 44+1 N+1
+    expect(r[1].requiredWithRedundancy).toBe(450) // 10 × 45
+    expect(r[1].sufficient).toBe(true) // 100/loc ≥ 45 required/loc
   })
 
   it('ML-KEM-768 load is correctly aggregated for PQC TLS workload', () => {
@@ -271,13 +274,15 @@ function siteExpect(R: number, L: number, mode: 'n+1' | '2n', bottleneck?: strin
 }
 
 /**
- * Hand-derived raw-demand values per size (under per-site model, perLocationRaw = R).
- * Computed from the default org params via deriveUseCaseTps + classicalOps/pqcOps mapping.
+ * Hand-derived raw-demand values per size (under the shared-fleet per-site model:
+ * perLocationRaw = R = ⌈ Σ over algorithms of load ÷ capacity ⌉ — NOT the per-algorithm max).
+ * Computed from the default org params via deriveUseCaseTps + classicalOps/pqcOps mapping,
+ * summed across every algorithm actually loaded (any HSM in the fleet runs any algorithm).
  */
 const RAW_BY_SIZE: Record<DeploymentSize, { today: number; tomorrow: number; upgraded: number }> = {
-  small: { today: 1, tomorrow: 4, upgraded: 1 },
-  medium: { today: 1, tomorrow: 37, upgraded: 1 },
-  large: { today: 6, tomorrow: 370, upgraded: 7 },
+  small: { today: 1, tomorrow: 5, upgraded: 1 },
+  medium: { today: 1, tomorrow: 49, upgraded: 2 },
+  large: { today: 10, tomorrow: 487, upgraded: 13 },
 }
 
 function caseFor(size: DeploymentSize, locations: number, mode: 'n+1' | '2n'): MatrixCase {
@@ -345,17 +350,27 @@ describe('HSM capacity — size × locations matrix (PQC extra-capacity validati
     expect(sumPqc).toBe(3)
   })
 
-  it('every non-TLS use case preserves op count under PQC (algorithm substitution only)', () => {
+  it('op counts under PQC: +1 classical KEX for hybrid-KEM protocols, unchanged otherwise', () => {
+    // TLS, SSH, and IKEv2 are hybrid key exchange per their standards (the classical
+    // (EC)DH op is retained alongside ML-KEM); every other use case is a pure
+    // algorithm substitution with an identical op count.
+    const HYBRID_KEM_USE_CASES = ['tls', 'ssh', 'vpn-ike']
     for (const uc of USE_CASES) {
-      if (uc.id === 'tls') continue
       const sumC = Object.values(uc.classicalOps).reduce((s, v) => s + (v as number), 0)
       const sumP = Object.values(uc.pqcOps).reduce((s, v) => s + (v as number), 0)
-      expect(sumP).toBe(sumC)
+      if (HYBRID_KEM_USE_CASES.includes(uc.id)) {
+        expect(sumP, uc.id).toBe(sumC + 1)
+        // The classical KEX op must be present alongside ML-KEM (hybrid, not pure).
+        expect(uc.pqcOps['ecdh-p256'], uc.id).toBeGreaterThan(0)
+        expect(uc.pqcOps['ml-kem-768'], uc.id).toBeGreaterThan(0)
+      } else {
+        expect(sumP, uc.id).toBe(sumC)
+      }
     }
   })
 
   it('per-site model: 2N at L locations multiplies the per-site doubled count by L', () => {
-    // medium × 3 locations, 2N: R=37, perLocRaw=R=37, perLocReq=74, total=3×74=222.
+    // medium × 3 locations, 2N: R=49 (shared-fleet), perLocRaw=R=49, perLocReq=98, total=3×98=294.
     const r = computeScenarios({
       useCases: USE_CASES,
       state: stateForSize('medium'),
@@ -366,10 +381,10 @@ describe('HSM capacity — size × locations matrix (PQC extra-capacity validati
       numLocations: 3,
     })
     const tm = r[1]
-    expect(tm.requiredRaw).toBe(37)
-    expect(tm.perLocationRaw).toBe(37) // per-site: each location runs full demand
-    expect(tm.perLocationRequired).toBe(74) // 37 × 2
-    expect(tm.requiredWithRedundancy).toBe(222) // 3 × 74
+    expect(tm.requiredRaw).toBe(49)
+    expect(tm.perLocationRaw).toBe(49) // per-site: each location runs full demand
+    expect(tm.perLocationRequired).toBe(98) // 49 × 2
+    expect(tm.requiredWithRedundancy).toBe(294) // 3 × 98
   })
 
   it('per-site model: per-location utilization is independent of numLocations', () => {
@@ -391,8 +406,8 @@ describe('HSM capacity — size × locations matrix (PQC extra-capacity validati
   })
 
   it('per-site N+1 buys exactly L spare HSMs across the fleet (one per location)', () => {
-    // medium × 5 locations, N+1: R=37, perLocRaw=37, perLocReq=38, total=5×38=190.
-    // Spares relative to "just enough per site": 190 − (5×37) = 5 = L.
+    // medium × 5 locations, N+1: R=49 (shared-fleet), perLocRaw=49, perLocReq=50, total=5×50=250.
+    // Spares relative to "just enough per site": 250 − (5×49) = 5 = L.
     const r = computeScenarios({
       useCases: USE_CASES,
       state: stateForSize('medium'),
@@ -403,17 +418,17 @@ describe('HSM capacity — size × locations matrix (PQC extra-capacity validati
       numLocations: 5,
     })
     const tm = r[1]
-    expect(tm.requiredRaw).toBe(37)
-    expect(tm.perLocationRaw).toBe(37) // per-site model
-    expect(tm.perLocationRequired).toBe(38)
-    expect(tm.requiredWithRedundancy).toBe(190)
+    expect(tm.requiredRaw).toBe(49)
+    expect(tm.perLocationRaw).toBe(49) // per-site model
+    expect(tm.perLocationRequired).toBe(50)
+    expect(tm.requiredWithRedundancy).toBe(250)
     const spares = tm.requiredWithRedundancy - tm.numLocations * tm.perLocationRaw
     expect(spares).toBe(tm.numLocations)
   })
 
   it('per-site N+1 at L=20: totals scale linearly with raw demand × L', () => {
-    // small × 20 × N+1: today R=1 → 20×(1+1)=40; tomorrow R=4 → 20×(4+1)=100;
-    // upgraded R=1 → 40.
+    // small × 20 × N+1 (shared-fleet raw): today R=1 → 20×(1+1)=40;
+    // tomorrow R=5 → 20×(5+1)=120; upgraded R=1 → 40.
     const r = computeScenarios({
       useCases: USE_CASES,
       state: stateForSize('small'),
@@ -424,7 +439,7 @@ describe('HSM capacity — size × locations matrix (PQC extra-capacity validati
       numLocations: 20,
     })
     expect(r[0].requiredWithRedundancy).toBe(40)
-    expect(r[1].requiredWithRedundancy).toBe(100)
+    expect(r[1].requiredWithRedundancy).toBe(120)
     expect(r[2].requiredWithRedundancy).toBe(40)
   })
 })
@@ -485,7 +500,7 @@ describe('HSM capacity — size × locations matrix (2N redundancy)', () => {
   )
 
   it('per-site 2N totals scale linearly with L (no divisibility quirks)', () => {
-    // R=370, 2N → perLocRaw=370, perLocReq=740, total = L × 740.
+    // R=487 (shared-fleet), 2N → perLocRaw=487, perLocReq=974, total = L × 974.
     const r2 = computeScenarios({
       useCases: USE_CASES,
       state: stateForSize('large'),
@@ -495,7 +510,7 @@ describe('HSM capacity — size × locations matrix (2N redundancy)', () => {
       hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
       numLocations: 2,
     })
-    expect(r2[1].requiredWithRedundancy).toBe(2 * 370 * 2) // 1480
+    expect(r2[1].requiredWithRedundancy).toBe(2 * 487 * 2) // 1948
 
     const r3 = computeScenarios({
       useCases: USE_CASES,
@@ -506,7 +521,7 @@ describe('HSM capacity — size × locations matrix (2N redundancy)', () => {
       hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
       numLocations: 3,
     })
-    expect(r3[1].requiredWithRedundancy).toBe(3 * 370 * 2) // 2220
+    expect(r3[1].requiredWithRedundancy).toBe(3 * 487 * 2) // 2922
   })
 })
 
@@ -518,14 +533,14 @@ describe('HSM capacity — single-DC (numLocations = 1) at all sizes, both redun
     tomorrow: number
     upgraded: number
   }> = [
-    // N+1 at L=1: perLocReq = R + 1. Total = R + 1.
-    { size: 'small', redundancy: 'n+1', today: 2, tomorrow: 5, upgraded: 2 },
-    { size: 'medium', redundancy: 'n+1', today: 2, tomorrow: 38, upgraded: 2 },
-    { size: 'large', redundancy: 'n+1', today: 7, tomorrow: 371, upgraded: 8 },
+    // N+1 at L=1: perLocReq = R + 1. Total = R + 1. (R = shared-fleet raw, see RAW_BY_SIZE.)
+    { size: 'small', redundancy: 'n+1', today: 2, tomorrow: 6, upgraded: 2 },
+    { size: 'medium', redundancy: 'n+1', today: 2, tomorrow: 50, upgraded: 3 },
+    { size: 'large', redundancy: 'n+1', today: 11, tomorrow: 488, upgraded: 14 },
     // 2N at L=1: perLocReq = R × 2. Total = R × 2.
-    { size: 'small', redundancy: '2n', today: 2, tomorrow: 8, upgraded: 2 },
-    { size: 'medium', redundancy: '2n', today: 2, tomorrow: 74, upgraded: 2 },
-    { size: 'large', redundancy: '2n', today: 12, tomorrow: 740, upgraded: 14 },
+    { size: 'small', redundancy: '2n', today: 2, tomorrow: 10, upgraded: 2 },
+    { size: 'medium', redundancy: '2n', today: 2, tomorrow: 98, upgraded: 4 },
+    { size: 'large', redundancy: '2n', today: 20, tomorrow: 974, upgraded: 26 },
   ]
 
   it.each(SINGLE_DC)(
@@ -553,8 +568,8 @@ describe('HSM capacity — bottleneck switching', () => {
   it('KMS-only at large scale: bottleneck flips to ML-KEM-768 (no ML-DSA load)', () => {
     // KMS PQC ops: { 'aes-256': 1, 'ml-kem-768': 0.2 }. No ML-DSA at all.
     // At 10,000 TPS: ML-KEM-768 = 2,000 ops/s; AES-256 = 10,000 ops/s.
-    // Classical HSM: ml-kem-768 cap=500 → ⌈2000/500⌉=4; aes-256 cap=20000 → 1.
-    // Bottleneck: ml-kem-768; requiredRaw = 4.
+    // Classical HSM shared-fleet sum: 2000/500 + 10000/20000 = 4 + 0.5 = 4.5 → ceil = 5.
+    // Bottleneck: ml-kem-768 (largest fraction, 4 vs aes-256's 0.5); requiredRaw = 5.
     const r = computeScenarios({
       useCases: USE_CASES,
       state: stateWith(['kms'], 10_000),
@@ -566,7 +581,7 @@ describe('HSM capacity — bottleneck switching', () => {
     })
     const tomorrow = r[1]
     expect(tomorrow.bottleneck).toBe('ml-kem-768')
-    expect(tomorrow.requiredRaw).toBe(4)
+    expect(tomorrow.requiredRaw).toBe(5)
     // ML-DSA load is exactly zero
     const mlDsa = tomorrow.perAlgoHsms.find((x) => x.algo === 'ml-dsa-65')!
     expect(mlDsa.load).toBe(0)
@@ -617,6 +632,11 @@ describe('HSM capacity — model invariants', () => {
       } else {
         expect(s.perLocationRequired).toBe(0)
       }
+      // Invariant 4: shared-fleet sum is never less than any single algorithm's own
+      // dedicated-pool count — sizing for a shared fleet can only need as many or more
+      // HSMs than sizing the bottleneck algorithm alone.
+      const maxPerAlgo = s.perAlgoHsms.reduce((m, r) => Math.max(m, r.hsms), 0)
+      expect(s.perLocationRaw).toBeGreaterThanOrEqual(maxPerAlgo)
     }
   })
 })
@@ -703,6 +723,340 @@ describe('HSM capacity — demand vs availability separation', () => {
     expect(nPlus1.perLocationRaw).toBe(twoN.perLocationRaw) // same demand
     expect(nPlus1.perLocationRequired).toBe(nPlus1.perLocationRaw + 1)
     expect(twoN.perLocationRequired).toBe(twoN.perLocationRaw * 2)
+  })
+})
+
+describe('HSM capacity — shared-fleet sum-model regression (2026-07-05 accuracy fix)', () => {
+  it('medium org, all default use cases: post-PQC-on-classical raw is 49, not 37', () => {
+    // Prior to this fix, computeScenario sized the fleet on the WORST single algorithm only
+    // (max), which contradicts the model's own "any HSM can run any algorithm" assumption.
+    // On a shared fleet every op consumes device time, so the correct raw count sums each
+    // algorithm's share: 37 (bottleneck-only) undercounts the true requirement by 24%.
+    // See docs/platform/ux/playground-audit/PT-026-hsm-capacity-accuracy-2026-07-05.md §A1.
+    const r = computeScenarios({
+      useCases: USE_CASES,
+      state: stateForSize('medium'),
+      classical: CLASSICAL_HSM_DEFAULT,
+      pqc: PQC_HSM_DEFAULT,
+      redundancy: 'n+1',
+      hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
+      numLocations: 1,
+    })
+    expect(r[1].requiredRaw).toBe(49)
+    expect(r[1].requiredRaw).not.toBe(37) // the old (incorrect) bottleneck-only figure
+  })
+})
+
+describe('HSM capacity — target-utilization headroom', () => {
+  it('defaults to 100% (no headroom) — identical to omitting the parameter', () => {
+    const withDefault = computeScenarios({
+      useCases: USE_CASES,
+      state: stateWith(['tls'], 10_000),
+      classical: CLASSICAL_HSM_DEFAULT,
+      pqc: PQC_HSM_DEFAULT,
+      redundancy: 'n+1',
+      hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
+      numLocations: 1,
+    })
+    const withExplicit100 = computeScenarios({
+      useCases: USE_CASES,
+      state: stateWith(['tls'], 10_000),
+      classical: CLASSICAL_HSM_DEFAULT,
+      pqc: PQC_HSM_DEFAULT,
+      redundancy: 'n+1',
+      hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
+      numLocations: 1,
+      targetUtilizationPct: 100,
+    })
+    expect(withExplicit100[1].requiredRaw).toBe(withDefault[1].requiredRaw)
+  })
+
+  it('70% target inflates the raw count by 1/0.7 relative to 100%', () => {
+    const full = computeScenarios({
+      useCases: USE_CASES,
+      state: stateWith(['tls'], 10_000),
+      classical: CLASSICAL_HSM_DEFAULT,
+      pqc: PQC_HSM_DEFAULT,
+      redundancy: 'n+1',
+      hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
+      numLocations: 1,
+      targetUtilizationPct: 100,
+    })
+    const headroom = computeScenarios({
+      useCases: USE_CASES,
+      state: stateWith(['tls'], 10_000),
+      classical: CLASSICAL_HSM_DEFAULT,
+      pqc: PQC_HSM_DEFAULT,
+      redundancy: 'n+1',
+      hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
+      numLocations: 1,
+      targetUtilizationPct: 70,
+    })
+    // requiredRaw(full)=88 (see earlier test); at 70% target: ceil(87.67 / 0.7) = 126.
+    expect(full[1].requiredRaw).toBe(88)
+    expect(headroom[1].requiredRaw).toBe(126)
+    expect(headroom[1].requiredRaw).toBeGreaterThan(full[1].requiredRaw)
+  })
+
+  it('headroom does not change fleetUtilizationPct reporting (true-capacity basis)', () => {
+    const r = computeScenarios({
+      useCases: USE_CASES,
+      state: stateWith(['tls'], 10_000),
+      classical: CLASSICAL_HSM_DEFAULT,
+      pqc: PQC_HSM_DEFAULT,
+      redundancy: 'n+1',
+      hsmsPerLocation: { today: 1, tomorrow: 126, upgraded: 1 },
+      numLocations: 1,
+      targetUtilizationPct: 70,
+    })
+    // Deployed exactly at the headroom-inflated raw count → true utilization ≈ 70%, not 100%.
+    expect(r[1].fleetUtilizationPct).toBeCloseTo(70, 0)
+  })
+})
+
+describe('HSM capacity — transition-window hybrid signing', () => {
+  it('defaults to off — identical to omitting the parameter', () => {
+    const withDefault = computeScenarios({
+      useCases: USE_CASES,
+      state: stateWith(['code-signing'], 1_000),
+      classical: CLASSICAL_HSM_DEFAULT,
+      pqc: PQC_HSM_DEFAULT,
+      redundancy: 'n+1',
+      hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
+      numLocations: 1,
+    })
+    const withExplicitFalse = computeScenarios({
+      useCases: USE_CASES,
+      state: stateWith(['code-signing'], 1_000),
+      classical: CLASSICAL_HSM_DEFAULT,
+      pqc: PQC_HSM_DEFAULT,
+      redundancy: 'n+1',
+      hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
+      numLocations: 1,
+      hybridSigningTransition: false,
+    })
+    expect(withExplicitFalse[1].requiredRaw).toBe(withDefault[1].requiredRaw)
+  })
+
+  it('adds classical RSA signing load on top of ML-DSA when enabled', () => {
+    // code-signing: classicalOps={rsa-2048:1}, pqcOps={ml-dsa-65:1}. At 1,000 TPS:
+    // off → ml-dsa=1000, rsa=0. on → ml-dsa=1000, rsa=1000 (dual-signed).
+    const r = computeScenarios({
+      useCases: USE_CASES,
+      state: stateWith(['code-signing'], 1_000),
+      classical: CLASSICAL_HSM_DEFAULT,
+      pqc: PQC_HSM_DEFAULT,
+      redundancy: 'n+1',
+      hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
+      numLocations: 1,
+      hybridSigningTransition: true,
+    })
+    const tomorrow = r[1]
+    const rsaEntry = tomorrow.perAlgoHsms.find((x) => x.algo === 'rsa-2048')!
+    const mlDsaEntry = tomorrow.perAlgoHsms.find((x) => x.algo === 'ml-dsa-65')!
+    expect(rsaEntry.load).toBe(1_000)
+    expect(mlDsaEntry.load).toBe(1_000)
+  })
+
+  it('does not add KEM load — signature-only practice', () => {
+    // tls PQC ops include ml-kem-768 and ecdh-p256 already; hybrid signing must not
+    // double-count ecdh-p256 beyond what pqcOps already specifies.
+    const off = computeScenarios({
+      useCases: USE_CASES,
+      state: stateWith(['tls'], 1_000),
+      classical: CLASSICAL_HSM_DEFAULT,
+      pqc: PQC_HSM_DEFAULT,
+      redundancy: 'n+1',
+      hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
+      numLocations: 1,
+      hybridSigningTransition: false,
+    })
+    const on = computeScenarios({
+      useCases: USE_CASES,
+      state: stateWith(['tls'], 1_000),
+      classical: CLASSICAL_HSM_DEFAULT,
+      pqc: PQC_HSM_DEFAULT,
+      redundancy: 'n+1',
+      hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
+      numLocations: 1,
+      hybridSigningTransition: true,
+    })
+    const offEcdh = off[1].perAlgoHsms.find((x) => x.algo === 'ecdh-p256')!
+    const onEcdh = on[1].perAlgoHsms.find((x) => x.algo === 'ecdh-p256')!
+    expect(onEcdh.load).toBe(offEcdh.load) // unchanged — KEM load is not doubled
+    const onEcdsa = on[1].perAlgoHsms.find((x) => x.algo === 'ecdsa-p256')!
+    expect(onEcdsa.load).toBe(1_000) // classical signature added back on top
+  })
+
+  it('never decreases requiredRaw relative to the same load without the toggle', () => {
+    const off = computeScenarios({
+      useCases: USE_CASES,
+      state: stateForSize('medium'),
+      classical: CLASSICAL_HSM_DEFAULT,
+      pqc: PQC_HSM_DEFAULT,
+      redundancy: 'n+1',
+      hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
+      numLocations: 1,
+      hybridSigningTransition: false,
+    })
+    const on = computeScenarios({
+      useCases: USE_CASES,
+      state: stateForSize('medium'),
+      classical: CLASSICAL_HSM_DEFAULT,
+      pqc: PQC_HSM_DEFAULT,
+      redundancy: 'n+1',
+      hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
+      numLocations: 1,
+      hybridSigningTransition: true,
+    })
+    expect(on[1].requiredRaw).toBeGreaterThanOrEqual(off[1].requiredRaw)
+    expect(on[2].requiredRaw).toBeGreaterThanOrEqual(off[2].requiredRaw)
+    // "today" (classical workload) is unaffected — the toggle only applies to pqc workload.
+    expect(on[0].requiredRaw).toBe(off[0].requiredRaw)
+  })
+})
+
+describe('HSM capacity — migration horizon (standards-today vs end-state)', () => {
+  it("defaults to 'end-state' — identical to omitting the parameter", () => {
+    const args = {
+      useCases: USE_CASES,
+      state: stateForSize('medium'),
+      classical: CLASSICAL_HSM_DEFAULT,
+      pqc: PQC_HSM_DEFAULT,
+      redundancy: 'n+1' as const,
+      hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
+      numLocations: 1,
+    }
+    const dflt = computeScenarios(args)
+    const explicit = computeScenarios({ ...args, migrationHorizon: 'end-state' })
+    expect(explicit[1].requiredRaw).toBe(dflt[1].requiredRaw)
+  })
+
+  it('standards-today: TLS keeps ECDSA signing (draft-ietf-tls-mldsa not yet RFC), hybrid ML-KEM on', () => {
+    const r = computeScenarios({
+      useCases: USE_CASES,
+      state: stateWith(['tls'], 1_000),
+      classical: CLASSICAL_HSM_DEFAULT,
+      pqc: PQC_HSM_DEFAULT,
+      redundancy: 'n+1',
+      hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
+      numLocations: 1,
+      migrationHorizon: 'standards-today',
+    })
+    const tomorrow = r[1]
+    const load = (a: string) => tomorrow.perAlgoHsms.find((x) => x.algo === a)!.load
+    expect(load('ecdsa-p256')).toBe(1_000) // server sig stays classical today
+    expect(load('ml-dsa-65')).toBe(0)
+    expect(load('ml-kem-768')).toBe(1_000) // hybrid KEM is standardized/deployed
+    expect(load('ecdh-p256')).toBe(1_000) // classical share of the hybrid KEX
+  })
+
+  it('standards-today: DNSSEC stays fully classical (no WG draft, no IANA code point)', () => {
+    const r = computeScenarios({
+      useCases: USE_CASES,
+      state: stateWith(['dnssec'], 1_000),
+      classical: CLASSICAL_HSM_DEFAULT,
+      pqc: PQC_HSM_DEFAULT,
+      redundancy: 'n+1',
+      hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
+      numLocations: 1,
+      migrationHorizon: 'standards-today',
+    })
+    const load = (a: string) => r[1].perAlgoHsms.find((x) => x.algo === a)!.load
+    expect(load('ml-dsa-65')).toBe(0)
+    expect(load('ecdsa-p256')).toBe(1_000)
+  })
+
+  it('standards-today: PKI CA signs with ML-DSA (RFC 9881 published)', () => {
+    const r = computeScenarios({
+      useCases: USE_CASES,
+      state: stateWith(['pki-ca'], 1_000),
+      classical: CLASSICAL_HSM_DEFAULT,
+      pqc: PQC_HSM_DEFAULT,
+      redundancy: 'n+1',
+      hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
+      numLocations: 1,
+      migrationHorizon: 'standards-today',
+    })
+    const load = (a: string) => r[1].perAlgoHsms.find((x) => x.algo === a)!.load
+    expect(load('ml-dsa-65')).toBe(1_000)
+    expect(load('rsa-2048')).toBe(0)
+  })
+
+  it('standards-today requires no more HSMs than end-state at default medium', () => {
+    const args = {
+      useCases: USE_CASES,
+      state: stateForSize('medium'),
+      classical: CLASSICAL_HSM_DEFAULT,
+      pqc: PQC_HSM_DEFAULT,
+      redundancy: 'n+1' as const,
+      hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
+      numLocations: 1,
+    }
+    const today = computeScenarios({ ...args, migrationHorizon: 'standards-today' })
+    const endState = computeScenarios({ ...args, migrationHorizon: 'end-state' })
+    expect(today[1].requiredRaw).toBeLessThanOrEqual(endState[1].requiredRaw)
+    // And the classical baseline scenario is unaffected by the horizon.
+    expect(today[0].requiredRaw).toBe(endState[0].requiredRaw)
+  })
+
+  it('standards-today + hybrid-signing toggle: no dual-sign load for use cases still signing classically', () => {
+    const r = computeScenarios({
+      useCases: USE_CASES,
+      state: stateWith(['tls'], 1_000),
+      classical: CLASSICAL_HSM_DEFAULT,
+      pqc: PQC_HSM_DEFAULT,
+      redundancy: 'n+1',
+      hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
+      numLocations: 1,
+      migrationHorizon: 'standards-today',
+      hybridSigningTransition: true,
+    })
+    // TLS signs classically under standards-today — the toggle must NOT double it.
+    const load = (a: string) => r[1].perAlgoHsms.find((x) => x.algo === a)!.load
+    expect(load('ecdsa-p256')).toBe(1_000)
+  })
+})
+
+describe('HSM capacity — code-signing algorithm choice (SLH-DSA)', () => {
+  it('SLH-DSA-128s swaps the code-signing signature and explodes the per-algo HSM need', () => {
+    // 20 TPS on ML-DSA-65 (150 ops/s) is a rounding error; on SLH-DSA-128s
+    // (2 sign/s firmware fallback) the same 20 TPS needs 10 HSMs of signing capacity.
+    const args = {
+      useCases: USE_CASES,
+      state: stateWith(['code-signing'], 20),
+      classical: CLASSICAL_HSM_DEFAULT,
+      pqc: PQC_HSM_DEFAULT,
+      redundancy: 'n+1' as const,
+      hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
+      numLocations: 1,
+    }
+    const mlDsa = computeScenarios(args)
+    const slhDsa = computeScenarios({ ...args, codeSigningAlg: 'slh-dsa-128s' })
+
+    expect(mlDsa[1].requiredRaw).toBe(1) // 20/150 → rounds to 1
+    const slhEntry = slhDsa[1].perAlgoHsms.find((x) => x.algo === 'slh-dsa-128s')!
+    expect(slhEntry.load).toBe(20)
+    expect(slhDsa[1].requiredRaw).toBe(10) // 20/2 = 10 — code signing becomes the constraint
+    expect(slhDsa[1].bottleneck).toBe('slh-dsa-128s')
+    const mlEntry = slhDsa[1].perAlgoHsms.find((x) => x.algo === 'ml-dsa-65')!
+    expect(mlEntry.load).toBe(0) // swapped, not added
+  })
+
+  it('the choice only affects code-signing — other ML-DSA use cases are untouched', () => {
+    const r = computeScenarios({
+      useCases: USE_CASES,
+      state: stateWith(['pki-ca'], 1_000),
+      classical: CLASSICAL_HSM_DEFAULT,
+      pqc: PQC_HSM_DEFAULT,
+      redundancy: 'n+1',
+      hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
+      numLocations: 1,
+      codeSigningAlg: 'slh-dsa-128s',
+    })
+    const load = (a: string) => r[1].perAlgoHsms.find((x) => x.algo === a)!.load
+    expect(load('ml-dsa-65')).toBe(1_000)
+    expect(load('slh-dsa-128s')).toBe(0)
   })
 })
 

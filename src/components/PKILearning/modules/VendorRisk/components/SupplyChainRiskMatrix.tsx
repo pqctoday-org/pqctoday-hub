@@ -6,6 +6,7 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { useSelectedProductIds } from '@/store/useMigrateSelectionStore'
 import { softwareData } from '@/data/migrateData'
+import { vendorMap } from '@/data/vendorData'
 import { LAYERS } from '@/components/Migrate/InfrastructureStack'
 import { softwareItemToCbomInput } from '@/components/Migrate/cbomExport'
 import { buildCbomDocument, downloadCbomJson } from '@/services/cbom/cycloneDx'
@@ -518,7 +519,9 @@ export const SupplyChainRiskMatrix: React.FC<{ scorecardOutput?: ScorecardOutput
       }
       md += `| Product | Vendor | PQC Support | FIPS |\n|---|---|---|---|\n`
       for (const item of items) {
-        md += `| ${item.softwareName} | ${item.vendorId ?? '—'} | ${item.pqcSupport || 'Unknown'} | ${item.fipsValidated || '—'} |\n`
+        const vendorName =
+          (item.vendorId && vendorMap.get(item.vendorId)?.vendorName) || item.vendorId || '—'
+        md += `| ${item.softwareName} | ${vendorName} | ${item.pqcSupport || 'Unknown'} | ${item.fipsValidated || '—'} |\n`
       }
       md += '\n'
     }

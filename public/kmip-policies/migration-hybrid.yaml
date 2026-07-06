@@ -1,0 +1,109 @@
+# Migration tab — hybrid transition state (the "hedge").
+#
+# Same seven-key application, same labels. Selecting this policy migrates the
+# estate to a BELT-AND-BRACES posture: key establishment pairs a classical
+# ECDH with ML-KEM (X25519MLKEM768 — secure as long as EITHER half holds), and
+# signing moves to ML-DSA. Existing classical keys auto-rekey to their hybrid /
+# PQC target on first use (Encrypt / Sign / Encapsulate) or via the ReKey sweep.
+#
+# Executable-today scope: the hybrid KEM (X25519MLKEM768) is real, in-engine
+# crypto. Hybrid *signatures* in the full sense (a single composite
+# ML-DSA+EdDSA blob) are a later milestone; here the signing keys migrate to
+# ML-DSA-44 so the hybrid policy is fully runnable end to end.
+
+schema_version: 1
+
+metadata:
+  name: migration-hybrid
+  description: |
+    Hybrid transition for the Migration tab. Key establishment → X25519MLKEM768
+    (classical + PQC in one key); signing → ML-DSA-44; symmetric → AES-256.
+    Legacy keys auto-rekey to the hybrid/PQC target on first use or via ReKey.
+  authority: pqctoday-hsm/demo
+  effective: "2026-01-01"
+  compliance_mapping:
+    - { framework: "IETF hybrid KEM (draft-ietf-tls-ecdhe-mlkem)", status: aligned }
+    - { framework: "BSI TR-02102 hybrid guidance", status: aligned }
+
+rules:
+
+  # ── Defaults for NEW keys ─────────────────────────────────────────────
+  - type: algorithm_default
+    ops: ["CreateKeyPair:KeyAgreement"]
+    default_algorithm: X25519MLKEM768
+    reason: "Hybrid KEM default — classical + PQC in one key"
+
+  - type: algorithm_default
+    ops: ["CreateKeyPair:Sign"]
+    default_algorithm: ML-DSA-44
+    reason: "PQC signing default during the hybrid window (FIPS 204)"
+
+  - type: algorithm_default
+    ops: [Create]
+    default_algorithm: AES-256
+    reason: "AES-256 — Grover-resistant symmetric default"
+
+  # ── Rekey-on-use + sweep substitutions ────────────────────────────────
+  - type: algorithm_substitution
+    ops: [Encrypt, ReKey]
+    from: AES-128
+    to: AES-256
+    reason: "Grover margin — rekey AES-128 to AES-256"
+
+  - type: algorithm_substitution
+    ops: [Encapsulate, ReKeyKeyPair]
+    from: X25519
+    to: X25519MLKEM768
+    reason: "Hybrid — X25519 keeps its classical half, gains ML-KEM"
+
+  - type: algorithm_substitution
+    ops: [Encapsulate, ReKeyKeyPair]
+    from: X448
+    to: X25519MLKEM768
+    reason: "Hybrid KEM (NOTE: L5→L3 until SecP384r1MLKEM1024 lands)"
+
+  - type: algorithm_substitution
+    ops: [Sign, ReKeyKeyPair]
+    from: RSA-2048
+    to: ML-DSA-44
+    reason: "Hybrid window — RSA-2048 signing to ML-DSA-44"
+
+  - type: algorithm_substitution
+    ops: [Sign, ReKeyKeyPair]
+    from: ECDSA-P256
+    to: ML-DSA-44
+    reason: "Hybrid window — ECDSA-P256 to ML-DSA-44"
+
+  - type: algorithm_substitution
+    ops: [Sign, ReKeyKeyPair]
+    from: Ed25519
+    to: ML-DSA-44
+    reason: "Hybrid window — Ed25519 to ML-DSA-44"
+
+  # ── No NEW pure-classical asymmetric keys during the hybrid window ────
+  - type: algorithm_denylist
+    ops:
+      - CreateKeyPair
+      - "CreateKeyPair:KeyAgreement"
+      - "CreateKeyPair:Sign"
+      - "CreateKeyPair:Encrypt"
+    algorithms:
+      - RSA
+      - RSA-2048
+      - RSA-3072
+      - RSA-4096
+      - ECDSA-P256
+      - ECDSA-P384
+      - ECDSA-P521
+      - ECDH-P256
+      - ECDH-P384
+      - Ed25519
+      - Ed448
+      - X25519
+      - X448
+    reason: "No new pure-classical asymmetric keys during the hybrid window"
+
+  - type: algorithm_denylist
+    ops: [Create]
+    algorithms: [AES-128]
+    reason: "No new sub-256-bit symmetric keys (Grover margin)"

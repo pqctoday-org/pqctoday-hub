@@ -114,5 +114,6 @@ export {
   _malloc,
   _set_kat_seed,
   decode_ttlv,
+  encode_ttlv,
   wasm_start,
 } from './pqctoday_kmip_wasm_bg.js'

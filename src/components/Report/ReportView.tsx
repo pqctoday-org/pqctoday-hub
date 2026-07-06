@@ -7,6 +7,7 @@ import { ReportContent } from './ReportContent'
 import { ReportToc } from './ReportToc'
 import { ReportNextSteps } from './ReportNextSteps'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
+import { useAssessmentResultStore } from '../../store/useAssessmentResultStore'
 import { computeAssessment } from '../../hooks/assessmentUtils'
 import { computeAssessmentAsync } from '../../hooks/assessment/orchestrator'
 import {
@@ -415,6 +416,9 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
       persistedRef.current = true
       logReportViewed(useAssessmentStore.getState().industry, result.riskLevel)
       setResult(result)
+      // Tag with the input that produced this result so the sim's self-unlock
+      // effect can tell it's already current and skip its own (coarser) recompute.
+      useAssessmentResultStore.setState({ sourceInputKey: inputKey })
       // Only comprehensive assessments feed the progress trend — the legacy path
       // emits coarse categoryScores for the sim/KPIs, so gate on the profile mode
       // (not categoryScores presence) to avoid polluting the trend with quick runs.

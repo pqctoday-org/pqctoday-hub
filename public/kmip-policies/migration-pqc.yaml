@@ -1,0 +1,132 @@
+# Migration tab — full-PQC target state (the "after").
+#
+# Same seven-key application, same labels, ZERO code change. Flipping the
+# Migration tab's policy rail from migration-classical to this file does two
+# things to the running estate:
+#
+#   1. NEW keys default to FIPS 203/204 algorithms (label-mapped where the
+#      security level matters), and
+#   2. EXISTING classical keys auto-rekey to their PQC equivalent — on first
+#      use (Sign / Encrypt / Encapsulate re-issue the op under the migrated
+#      key) OR via the "Migrate all remaining" sweep (ReKey / ReKeyKeyPair).
+#
+# The from:/to: mappings below follow the Hub algorithm-transitions dataset
+# (algorithms_transitions_06252026.csv):
+#   AES-128      → AES-256      (Grover margin; symmetric)
+#   RSA-2048     → ML-DSA-44    (CSV row 22 — RSA-PSS 2048 → ML-DSA-44)
+#   ECDSA-P256   → ML-DSA-44    (CSV row 24)
+#   Ed25519      → ML-DSA-44    (CSV row 35)
+#   X25519       → ML-KEM-768   (CSV row 8)
+#   X448         → ML-KEM-1024  (CSV row 9 — keeps L5)
+#
+# Legacy keys stay usable for Verify / Decrypt / Decapsulate until migrated
+# (a signature made under the old key must still verify) — only the
+# *creating*/*producing* ops (Sign/Encrypt/Encapsulate) drive the rekey.
+
+schema_version: 1
+
+metadata:
+  name: migration-pqc
+  description: |
+    Full-PQC target state for the Migration tab. New keys default to FIPS
+    203/204; existing classical keys auto-rekey at first use or via the
+    ReKey sweep. Mappings follow the Hub algorithm-transitions dataset.
+  authority: pqctoday-hsm/demo
+  effective: "2026-01-01"
+  compliance_mapping:
+    - { framework: "FIPS 203 ML-KEM", status: required }
+    - { framework: "FIPS 204 ML-DSA", status: required }
+    - { framework: "FIPS 197 AES-256", status: required }
+
+rules:
+
+  # ── Defaults for NEW keys ─────────────────────────────────────────────
+  - type: algorithm_default
+    ops: ["CreateKeyPair:Sign"]
+    default_algorithm: ML-DSA-44
+    reason: "PQC signing default (FIPS 204, ML-DSA-44)"
+
+  - type: algorithm_default
+    ops: ["CreateKeyPair:KeyAgreement"]
+    name_pattern: "interbank-*"
+    default_algorithm: ML-KEM-1024
+    reason: "L5 key establishment for the interbank backbone (X448 successor)"
+
+  - type: algorithm_default
+    ops: ["CreateKeyPair:KeyAgreement"]
+    default_algorithm: ML-KEM-768
+    reason: "PQC KEM default (FIPS 203, ML-KEM-768)"
+
+  - type: algorithm_default
+    ops: [Create]
+    default_algorithm: AES-256
+    reason: "AES-256 — Grover-resistant symmetric default"
+
+  # ── Rekey-on-use + sweep substitutions ────────────────────────────────
+  # Each lists the producing op(s) AND ReKey/ReKeyKeyPair so the same rule
+  # drives both the on-first-use migration and the manual sweep.
+  - type: algorithm_substitution
+    ops: [Encrypt, ReKey]
+    from: AES-128
+    to: AES-256
+    reason: "Grover margin — rekey AES-128 to AES-256"
+
+  - type: algorithm_substitution
+    ops: [Sign, ReKeyKeyPair]
+    from: RSA-2048
+    to: ML-DSA-44
+    reason: "FIPS 204 — RSA-2048 signing to ML-DSA-44 (CSV row 22)"
+
+  - type: algorithm_substitution
+    ops: [Sign, ReKeyKeyPair]
+    from: ECDSA-P256
+    to: ML-DSA-44
+    reason: "FIPS 204 — ECDSA-P256 to ML-DSA-44 (CSV row 24)"
+
+  - type: algorithm_substitution
+    ops: [Sign, ReKeyKeyPair]
+    from: Ed25519
+    to: ML-DSA-44
+    reason: "FIPS 204 — Ed25519 to ML-DSA-44 (CSV row 35)"
+
+  - type: algorithm_substitution
+    ops: [Encapsulate, ReKeyKeyPair]
+    from: X25519
+    to: ML-KEM-768
+    reason: "FIPS 203 — X25519 to ML-KEM-768 (CSV row 8)"
+
+  - type: algorithm_substitution
+    ops: [Encapsulate, ReKeyKeyPair]
+    from: X448
+    to: ML-KEM-1024
+    reason: "FIPS 203 — X448 to ML-KEM-1024 (CSV row 9, keeps L5)"
+
+  # ── No NEW classical asymmetric keys ─────────────────────────────────
+  # Existing ones remain usable for Verify/Decrypt/Decapsulate until rekeyed.
+  - type: algorithm_denylist
+    ops:
+      - CreateKeyPair
+      - "CreateKeyPair:KeyAgreement"
+      - "CreateKeyPair:Sign"
+      - "CreateKeyPair:Encrypt"
+    algorithms:
+      - RSA
+      - RSA-2048
+      - RSA-3072
+      - RSA-4096
+      - ECDSA-P256
+      - ECDSA-P384
+      - ECDSA-P521
+      - ECDH-P256
+      - ECDH-P384
+      - Ed25519
+      - Ed448
+      - X25519
+      - X448
+    reason: "No new classical asymmetric keys under the full-PQC policy"
+
+  # ── No NEW sub-256-bit symmetric keys ────────────────────────────────
+  - type: algorithm_denylist
+    ops: [Create]
+    algorithms: [AES-128]
+    reason: "No new sub-256-bit symmetric keys (Grover margin)"

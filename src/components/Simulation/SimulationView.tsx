@@ -34,7 +34,12 @@ import {
 } from './embedContract'
 import { SIM_ALGORITHM_TABS } from './algorithmTabs'
 import { SIM_REFERENCE_EMBEDS } from './referenceEmbeds'
-import { useSimAutoRunPlayer } from './autorun/useSimAutoRunPlayer'
+import { useSimAutoRunPlayer, isWalkthroughMode, type RunMode } from './autorun/useSimAutoRunPlayer'
+import {
+  SimPlayChoiceModal,
+  type SimPlayDefaultCard,
+  type SimPlayChoice,
+} from './SimPlayChoiceModal'
 import { SimAutoRunOverlay } from './autorun/SimAutoRunOverlay'
 import { SimConceptPeek } from './autorun/SimConceptPeek'
 import { SimArtifactReveal } from './autorun/SimArtifactReveal'
@@ -467,15 +472,30 @@ export function SimulationView() {
   // tick off in view; the clock advances Q1 2026 → Q1 2035.
   const autoRunPlayer = useSimAutoRunPlayer({ openStep, closeEmbed })
 
-  // Deep link: /simulation?run=exec auto-starts the Executive Overview walkthrough,
-  // then strips the param so a reload doesn't re-trigger it.
+  // Deep link: /simulation?run=<mode> auto-starts a run directly, skipping the
+  // PLAY modal entirely — a URL is a pre-committed choice already made by
+  // whoever shared or clicked it (simulation-unified-play-mechanism-plan,
+  // "deep-link consistency"), unlike the in-app button which always asks.
+  // 'exec'/'exec-deep' map to the walkthrough family for URL friendliness;
+  // 'climb'/'climb-deep' pass straight through. Then strips the param so a
+  // reload doesn't re-trigger it.
   const [searchParams, setSearchParams] = useSearchParams()
   const ranExecDeepLink = useRef(false)
   const startRun = autoRunPlayer.start
   useEffect(() => {
-    if (ranExecDeepLink.current || searchParams.get('run') !== 'exec') return
+    if (ranExecDeepLink.current) return
+    const runParam = searchParams.get('run')
+    const RUN_PARAM_TO_MODE: Partial<Record<string, RunMode>> = {
+      exec: 'walkthrough',
+      'exec-deep': 'walkthrough-deep',
+      climb: 'climb',
+      'climb-deep': 'climb-deep',
+    }
+    // eslint-disable-next-line security/detect-object-injection
+    const mode = runParam ? RUN_PARAM_TO_MODE[runParam] : undefined
+    if (!mode) return
     ranExecDeepLink.current = true
-    startRun({ mode: 'walkthrough' })
+    startRun({ mode })
     const next = new URLSearchParams(searchParams)
     next.delete('run')
     setSearchParams(next, { replace: true })
@@ -485,8 +505,12 @@ export function SimulationView() {
   // a Learn module's "practice this in the sim" CTA can target the exact phase it
   // teaches, instead of the generic /simulation entry point. Validated against the
   // real phase set (a typo/renamed id is silently ignored, not a broken jump); the
-  // param is consumed then stripped, same as ?run.
+  // param is consumed then stripped, same as ?run. This IS "Play This Phase v1" —
+  // no separate `?run=phase` link is needed, jumping the board to the phase is the
+  // whole of v1's behavior. `arrivedViaPhaseRef` remembers it (post-strip) as a
+  // signal for which card the PLAY modal pre-selects.
   const ranPhaseDeepLink = useRef(false)
+  const arrivedViaPhaseRef = useRef<PhaseId | null>(null)
   useEffect(() => {
     if (ranPhaseDeepLink.current) return
     const phaseParam = searchParams.get('phase')
@@ -494,7 +518,10 @@ export function SimulationView() {
     ranPhaseDeepLink.current = true
     // Array membership, not `in FRAMEWORK_PHASES` — a plain-object `in` check also
     // matches inherited Object.prototype keys (?phase=toString would otherwise pass).
-    if (PHASE_ORDER.includes(phaseParam as PhaseId)) setSel(phaseParam as PhaseId)
+    if (PHASE_ORDER.includes(phaseParam as PhaseId)) {
+      setSel(phaseParam as PhaseId)
+      arrivedViaPhaseRef.current = phaseParam as PhaseId
+    }
     const next = new URLSearchParams(searchParams)
     next.delete('phase')
     setSearchParams(next, { replace: true })
@@ -505,13 +532,13 @@ export function SimulationView() {
   // suppressed — it's a tour, not a scored run, and it shows no dates. Climb (Play 0→7)
   // and all interactive play fall through unchanged (mode is never 'walkthrough' there).
   const suppressWinUI =
-    autoRunPlayer.mode === 'walkthrough' && (autoRunPlayer.running || autoRunPlayer.done)
+    isWalkthroughMode(autoRunPlayer.mode) && (autoRunPlayer.running || autoRunPlayer.done)
 
   // Concept peeks (non-blocking) surfaced during the walkthrough, keyed to the current
   // phase: HNDL + Mosca at the open (p0), the two-track model at the roadmap, hybrid at
   // pilots. Empty outside a running walkthrough.
   const walkthroughConcepts = useMemo<TourConcept[]>(() => {
-    if (autoRunPlayer.mode !== 'walkthrough' || !autoRunPlayer.running) return []
+    if (!isWalkthroughMode(autoRunPlayer.mode) || !autoRunPlayer.running) return []
     const phase = autoRunPlayer.phaseFocus?.phase
     if (!phase) return []
     const ids: TourConcept['id'][] = []
@@ -572,13 +599,20 @@ export function SimulationView() {
     reset: resetAssessment,
   } = useAssessmentStore()
   useEffect(() => {
-    if (assessSnap) return
     if (assessFormStatus !== 'complete') return
     const input = getAssessInput?.()
     if (!input) return
+    // Compare against the CURRENT input, not just "does a result already
+    // exist" — a stale result (sample org, or an earlier answer set the
+    // player has since edited) must still trigger a fresh compute here.
+    const inputKey = JSON.stringify(input)
+    if (useAssessmentResultStore.getState().sourceInputKey === inputKey) return
     const result = computeAssessment(input)
     useAssessmentResultStore.getState().setResult(result)
-    useAssessmentResultStore.setState({ completedAt: new Date().toISOString() })
+    useAssessmentResultStore.setState({
+      completedAt: new Date().toISOString(),
+      sourceInputKey: inputKey,
+    })
   }, [assessSnap, assessFormStatus, getAssessInput])
   // Sample-org cold start — used by the locked-screen "Watch the full migration"
   // and "Explore" buttons so the sim can be tried (and auto-run) without first
@@ -600,7 +634,12 @@ export function SimulationView() {
       timelinePressure: 'within-2-3y',
     } satisfies AssessmentInput)
     useAssessmentResultStore.getState().setResult(result)
-    useAssessmentResultStore.setState({ completedAt: new Date().toISOString() })
+    // Sentinel (not a real input's JSON key) so a later real assessment always
+    // reads as "different from what's stored" and overwrites this demo profile.
+    useAssessmentResultStore.setState({
+      completedAt: new Date().toISOString(),
+      sourceInputKey: '__sample_org__',
+    })
   }, [])
   // The org profile is now SOURCED FROM THE ASSESSMENT (single source of truth):
   // ORG / JURISDICTION / SECTOR dials are read-only and derive from here. SEAT
@@ -612,7 +651,7 @@ export function SimulationView() {
   const [walkthroughDoneOpen, setWalkthroughDoneOpen] = useState(false)
   const walkthroughCelebratedRef = useRef(false)
   useEffect(() => {
-    if (autoRunPlayer.mode === 'walkthrough' && autoRunPlayer.done) {
+    if (isWalkthroughMode(autoRunPlayer.mode) && autoRunPlayer.done) {
       if (!walkthroughCelebratedRef.current) {
         walkthroughCelebratedRef.current = true
         setWalkthroughDoneOpen(true)
@@ -717,6 +756,39 @@ export function SimulationView() {
     for (const d of docs ?? []) if (SIM_TRACKED.artifacts.has(d.type)) deleteExecutiveDocument(d.id)
     reset()
     resetAssessment()
+  }
+
+  // ---- Unified PLAY entry point (simulation-unified-play-mechanism-plan) ----
+  // "▶ Resume" (when resumable) bypasses the modal entirely — the one genuine
+  // regression-fix, matching today's actual behavior. Every other case opens
+  // the modal; nothing is ever auto-started for a persona/phase-context guess
+  // (that was tried, found to undermine the modal's whole point, and reverted —
+  // see the plan's rev. 3 notes). Persona/phase-context only pick which card
+  // opens visually emphasized.
+  const [playModalOpen, setPlayModalOpen] = useState(false)
+  const [pendingModeSwitch, setPendingModeSwitch] = useState<RunMode | null>(null)
+  const businessPersona = selectedPersona === 'executive' || selectedPersona === 'curious'
+  const defaultCard: SimPlayDefaultCard = arrivedViaPhaseRef.current
+    ? 'phase'
+    : businessPersona
+      ? 'walkthrough'
+      : 'climb'
+  const defaultPhase = arrivedViaPhaseRef.current ?? sel
+  const startFromModal = (mode: SimPlayChoice, phase?: PhaseId) => {
+    if (mode === 'phase' || mode === 'phase-deep') {
+      // A single-phase run never touches the shared climb resume playhead (see
+      // usesSharedResumeIndex in useSimAutoRunPlayer), so it can't clobber an
+      // in-progress climb — no "start a different path?" confirmation needed.
+      autoRunPlayer.start({ mode, phase })
+      setPlayModalOpen(false)
+      return
+    }
+    if (autoRunPlayer.resumable && mode !== autoRunPlayer.resumeMode) {
+      setPendingModeSwitch(mode)
+      return
+    }
+    autoRunPlayer.start({ mode })
+    setPlayModalOpen(false)
   }
   // WS-08 — durable save: download the run as JSON / restore it from a file, so a
   // run survives a cache-clear or moves between browsers without an account.
@@ -1160,7 +1232,7 @@ export function SimulationView() {
               <Button
                 onClick={() => {
                   loadSampleOrg()
-                  autoRunPlayer.start()
+                  setPlayModalOpen(true)
                 }}
                 className="h-auto w-full whitespace-normal bg-primary py-2.5 text-[13px] font-extrabold text-background hover:opacity-90"
               >
@@ -1174,9 +1246,9 @@ export function SimulationView() {
                 Explore with a sample organization
               </Button>
               <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
-                “Watch the full migration” loads a sample Finance &amp; Banking · US run and plays
-                the whole thing automatically. Run your own assessment anytime to replace it with
-                your real numbers.
+                “Watch the full migration” loads a sample Finance &amp; Banking · US run — pick how
+                you'd like to play it. Run your own assessment anytime to replace it with your real
+                numbers.
               </p>
             </div>
           </div>
@@ -1350,30 +1422,41 @@ export function SimulationView() {
             </Link>
           </div>
           <div className="ml-auto flex shrink-0 items-center gap-2.5">
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => autoRunPlayer.start()}
-              disabled={autoRunPlayer.running}
-              title={
-                autoRunPlayer.resumable
-                  ? 'Resume the narrated migration walkthrough from where you left off (it picks up at the first step you haven’t completed). Use Reset run to start over from the beginning.'
-                  : 'Auto-play the whole migration (all 9 stages — P0 through Verification & Closure) as a narrated walkthrough — opens each tool, completes every step for real, and clears the run. Reversible via Reset run.'
-              }
-              className="h-auto rounded-md border border-secondary/50 bg-secondary/15 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background hover:bg-secondary/25 disabled:opacity-40"
-            >
-              {autoRunPlayer.resumable ? '▶ Resume' : `▶ PLAY ALL ${LIFECYCLE.length}`}
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => autoRunPlayer.start({ mode: 'walkthrough' })}
-              disabled={autoRunPlayer.running}
-              title="Play the guided Executive Overview — a short narrated, board-level walk through the whole program (governance, risk, roadmap, verification) with the key documents shown along the way. No technical detail."
-              className="h-auto rounded-md border border-primary/50 bg-primary/15 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background hover:bg-primary/25 disabled:opacity-40"
-            >
-              ▶ Executive overview
-            </Button>
+            {autoRunPlayer.resumable ? (
+              <>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => autoRunPlayer.start({ mode: autoRunPlayer.resumeMode })}
+                  disabled={autoRunPlayer.running}
+                  title="Resume the migration run from where you left off (it picks up at the first step you haven’t completed). Use Reset run to start over from the beginning."
+                  className="h-auto rounded-md border border-secondary/50 bg-secondary/15 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background hover:bg-secondary/25 disabled:opacity-40"
+                >
+                  ▶ Resume
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setPlayModalOpen(true)}
+                  disabled={autoRunPlayer.running}
+                  title="Start a different path instead of resuming"
+                  className="h-auto rounded-md px-1.5 font-mono text-sim-micro text-background/60 hover:text-background hover:underline"
+                >
+                  ↻ start a different path
+                </Button>
+              </>
+            ) : (
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setPlayModalOpen(true)}
+                disabled={autoRunPlayer.running}
+                title="Choose how to play the simulation — Executive Overview, Full Migration Journey, or a single phase, each with an optional deep-dive."
+                className="h-auto rounded-md border border-primary/50 bg-primary/15 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background hover:bg-primary/25 disabled:opacity-40"
+              >
+                ▶ PLAY
+              </Button>
+            )}
             <SimAutoRunOverlay player={autoRunPlayer} />
             <SimConceptPeek concepts={walkthroughConcepts} />
             <SimArtifactReveal type={autoRunPlayer.reveal} />
@@ -2132,207 +2215,328 @@ export function SimulationView() {
                         )}{' '}
                         <span className="italic">(rises as you complete phases)</span>
                       </p>
-                      {/* ANY-ORDER WITHIN THE ACTIVE LEVEL: the in-progress band (level+1)
-                    expands its steps as individually-openable controls — the player
-                    can open/complete ALL of them in ANY ORDER, not forced through a
-                    single sequential step. Already-earned bands show ✓; higher
-                    bands stay locked (🔒) until the lower levels are earned, so the
-                    level gating is preserved (achievedTreeLevel is unchanged). */}
+                      {/* ANY-ORDER WITHIN THE ACTIVE LEVEL: the in-progress band (the first
+                    not-yet-earned band, in ascending order) expands its steps as
+                    individually-openable controls — the player can open/complete ALL of
+                    them in ANY ORDER, not forced through a single sequential step.
+                    Already-earned bands show ✓; higher bands stay locked (🔒) until the
+                    lower levels are earned, so the level gating is preserved
+                    (achievedTreeLevel is unchanged).
+                    NOTE (fixed 07052026): "current" used to be `band.level === level + 1`,
+                    which silently assumed every phase's lowest band is Level 1. P6's tree
+                    has no Level-1 band (its lowest is L2) — for a fresh org (level=0),
+                    that made `2 === 1` false forever, so P6's L2 band never showed as
+                    "current" (only ever locked, then straight to earned). Finding the
+                    first not-yet-earned band BY POSITION instead of by raw level-number
+                    arithmetic fixes P6 and is a no-op for every other phase, whose bands
+                    already run 1,2,3[,4] with no gaps. */}
                       <div className="mb-4 flex flex-col gap-1.5">
-                        {phaseTree.levels.map((band) => {
-                          // Required (gating) steps only — bonus scenario labs don't count
-                          // toward the band's "checks" tally (they never gate the level).
-                          const total = band.activities.reduce(
-                            (n, a) => n + a.steps.filter(isGatingStep).length,
-                            0
+                        {(() => {
+                          const firstUnearnedIdx = phaseTree.levels.findIndex(
+                            (b) => level < b.level
                           )
-                          const done = band.activities.reduce(
-                            (n, a) =>
-                              n + a.steps.filter((s) => isGatingStep(s) && stepDone(s, sel)).length,
-                            0
-                          )
-                          const earned = level >= band.level
-                          const current = band.level === level + 1 // the gate in progress (active band)
-                          const locked = band.level > level + 1
-                          const goal = band.level === PHASE_WIN_LEVEL
-                          // the active band's leaf steps — openable in any order
-                          const bandSteps = current ? band.activities.flatMap((a) => a.steps) : []
-                          return (
-                            <div key={band.level}>
-                              <div
-                                className={`flex items-center gap-3 rounded-lg border px-3 py-2 ${
-                                  goal
-                                    ? 'border-warning'
-                                    : earned
-                                      ? 'border-success'
-                                      : 'border-border'
-                                } ${earned ? 'bg-success/10' : 'bg-muted'} ${locked ? 'opacity-50' : ''}`}
-                              >
-                                <span
-                                  className={`grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md font-mono text-sim-micro font-extrabold ${
-                                    earned
-                                      ? 'bg-success text-success-foreground'
-                                      : 'bg-card text-muted-foreground'
-                                  }`}
+                          return phaseTree.levels.map((band, bandIdx) => {
+                            // Required (gating) steps only — bonus scenario labs don't count
+                            // toward the band's "checks" tally (they never gate the level).
+                            const total = band.activities.reduce(
+                              (n, a) => n + a.steps.filter(isGatingStep).length,
+                              0
+                            )
+                            const done = band.activities.reduce(
+                              (n, a) =>
+                                n +
+                                a.steps.filter((s) => isGatingStep(s) && stepDone(s, sel)).length,
+                              0
+                            )
+                            const earned = level >= band.level
+                            const current = bandIdx === firstUnearnedIdx // the gate in progress
+                            const locked = !earned && !current
+                            const goal = band.level === PHASE_WIN_LEVEL
+                            // the active band's leaf steps — openable in any order
+                            const bandSteps = current ? band.activities.flatMap((a) => a.steps) : []
+                            // optional, non-gating extra practice/reading for the active band
+                            // (never affects `total`/`done`/`earned` above — those only read
+                            // `a.steps`, exactly like the bonus `scenario` steps already do).
+                            const bandDeepDive = current
+                              ? band.activities.flatMap((a) => a.deepDive ?? [])
+                              : []
+                            return (
+                              <div key={band.level}>
+                                <div
+                                  className={`flex items-center gap-3 rounded-lg border px-3 py-2 ${
+                                    goal
+                                      ? 'border-warning'
+                                      : earned
+                                        ? 'border-success'
+                                        : 'border-border'
+                                  } ${earned ? 'bg-success/10' : 'bg-muted'} ${locked ? 'opacity-50' : ''}`}
                                 >
-                                  {earned ? '✓' : locked ? '🔒' : band.level}
-                                </span>
-                                <span className="w-[88px] shrink-0 text-[11.5px] font-bold text-foreground">
-                                  L{band.level} · {MATURITY_LEVEL_NAMES[band.level]}
-                                </span>
-                                <span className="flex-1 text-sim-body leading-tight text-muted-foreground">
-                                  {band.indicator}
-                                </span>
-                                <span
-                                  className={`shrink-0 font-mono text-sim-micro font-bold ${
-                                    earned
-                                      ? 'text-success'
-                                      : current
-                                        ? 'text-primary'
-                                        : 'text-muted-foreground'
-                                  }`}
-                                >
-                                  {earned ? 'passed ✓' : `${done}/${total} checks`}
-                                </span>
-                                {goal && (
-                                  <span className="shrink-0 rounded-full bg-warning/15 px-2 py-0.5 font-mono text-sim-chip font-bold text-warning">
-                                    GOAL
+                                  <span
+                                    className={`grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md font-mono text-sim-micro font-extrabold ${
+                                      earned
+                                        ? 'bg-success text-success-foreground'
+                                        : 'bg-card text-muted-foreground'
+                                    }`}
+                                  >
+                                    {earned ? '✓' : locked ? '🔒' : band.level}
                                   </span>
-                                )}
-                              </div>
-                              {/* active band → open any of its steps, in any order */}
-                              {current && bandSteps.length > 0 && (
-                                <div className="ml-3 mt-1 flex flex-col gap-1 border-l border-primary/30 pl-3">
-                                  <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.12em] text-primary">
-                                    Do these in any order to pass L{band.level}
+                                  <span className="w-[88px] shrink-0 text-[11.5px] font-bold text-foreground">
+                                    L{band.level} · {MATURITY_LEVEL_NAMES[band.level]}
                                   </span>
-                                  {bandSteps.map((step, i) => {
-                                    const sDone = stepDone(step, sel)
-                                    const embeddable = canEmbedStep(step)
-                                    const navigable = canResolveDeepLink(step.to)
-                                    const chip = (
-                                      <span
-                                        className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${KIND_CHIP[step.kind]}`}
-                                      >
-                                        {step.kind}
-                                      </span>
-                                    )
-                                    const cls = `flex w-full items-center gap-2 rounded-md border px-2.5 py-1.5 ${
-                                      sDone
-                                        ? 'border-success/40 bg-success/5'
-                                        : 'border-border bg-card hover:bg-muted/60'
-                                    }`
-                                    // completed → static ✓ row
-                                    if (sDone)
-                                      return (
-                                        <div key={`${step.to}-${i}`} className={cls}>
-                                          <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-success text-sim-chip font-bold text-success-foreground">
-                                            ✓
-                                          </span>
-                                          {chip}
-                                          <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
-                                            {step.label}
-                                          </span>
-                                          <span className="shrink-0 font-mono text-sim-micro text-success">
-                                            done
-                                          </span>
-                                        </div>
+                                  <span className="flex-1 text-sim-body leading-tight text-muted-foreground">
+                                    {band.indicator}
+                                  </span>
+                                  <span
+                                    className={`shrink-0 font-mono text-sim-micro font-bold ${
+                                      earned
+                                        ? 'text-success'
+                                        : current
+                                          ? 'text-primary'
+                                          : 'text-muted-foreground'
+                                    }`}
+                                  >
+                                    {earned ? 'passed ✓' : `${done}/${total} checks`}
+                                  </span>
+                                  {goal && (
+                                    <span className="shrink-0 rounded-full bg-warning/15 px-2 py-0.5 font-mono text-sim-chip font-bold text-warning">
+                                      GOAL
+                                    </span>
+                                  )}
+                                </div>
+                                {/* active band → open any of its steps, in any order */}
+                                {current && bandSteps.length > 0 && (
+                                  <div className="ml-3 mt-1 flex flex-col gap-1 border-l border-primary/30 pl-3">
+                                    <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.12em] text-primary">
+                                      Do these in any order to pass L{band.level}
+                                    </span>
+                                    {bandSteps.map((step, i) => {
+                                      const sDone = stepDone(step, sel)
+                                      const embeddable = canEmbedStep(step)
+                                      const navigable = canResolveDeepLink(step.to)
+                                      const chip = (
+                                        <span
+                                          className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${KIND_CHIP[step.kind]}`}
+                                        >
+                                          {step.kind}
+                                        </span>
                                       )
-                                    // scenario lab needs a running sandbox — when none is
-                                    // reachable show it LOCKED (bonus, non-gating) instead
-                                    // of opening a broken/unreachable panel.
-                                    if (isScenarioStep(step) && sandboxAvail !== 'available')
+                                      const cls = `flex w-full items-center gap-2 rounded-md border px-2.5 py-1.5 ${
+                                        sDone
+                                          ? 'border-success/40 bg-success/5'
+                                          : 'border-border bg-card hover:bg-muted/60'
+                                      }`
+                                      // completed → static ✓ row
+                                      if (sDone)
+                                        return (
+                                          <div key={`${step.to}-${i}`} className={cls}>
+                                            <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-success text-sim-chip font-bold text-success-foreground">
+                                              ✓
+                                            </span>
+                                            {chip}
+                                            <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
+                                              {step.label}
+                                            </span>
+                                            <span className="shrink-0 font-mono text-sim-micro text-success">
+                                              done
+                                            </span>
+                                          </div>
+                                        )
+                                      // scenario lab needs a running sandbox — when none is
+                                      // reachable show it LOCKED (bonus, non-gating) instead
+                                      // of opening a broken/unreachable panel.
+                                      if (isScenarioStep(step) && sandboxAvail !== 'available')
+                                        return (
+                                          <div
+                                            key={`${step.to}-${i}`}
+                                            aria-disabled="true"
+                                            title="Hands-on lab — start a sandbox to run it. Optional: it never blocks your maturity level."
+                                            className="flex w-full items-center gap-2 rounded-md border border-border bg-card px-2.5 py-1.5 opacity-60"
+                                          >
+                                            <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full border border-border text-muted-foreground">
+                                              🔒
+                                            </span>
+                                            {chip}
+                                            <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
+                                              {step.label}
+                                            </span>
+                                            <span className="shrink-0 font-mono text-sim-micro text-muted-foreground">
+                                              {sandboxAvail === 'checking'
+                                                ? 'checking sandbox…'
+                                                : 'bonus · start sandbox'}
+                                            </span>
+                                          </div>
+                                        )
+                                      // open IN the sim (embed) when possible
+                                      if (embeddable)
+                                        return (
+                                          <Button
+                                            key={`${step.to}-${i}`}
+                                            type="button"
+                                            variant="ghost"
+                                            onClick={() => openStep(step)}
+                                            className={`h-auto justify-start whitespace-normal ${cls}`}
+                                          >
+                                            <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full border border-border text-transparent">
+                                              ✓
+                                            </span>
+                                            {chip}
+                                            <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
+                                              {step.label}
+                                            </span>
+                                            <span className="shrink-0 font-mono text-sim-micro text-primary">
+                                              open here →
+                                            </span>
+                                          </Button>
+                                        )
+                                      // else navigate to the real hub resource (reference)
+                                      if (navigable)
+                                        return (
+                                          <Link
+                                            key={`${step.to}-${i}`}
+                                            to={step.to}
+                                            onClick={() => {
+                                              markSimResume()
+                                              if (step.kind === 'reference' && step.refId)
+                                                markRefVisited(step.refId)
+                                            }}
+                                            className={cls}
+                                          >
+                                            <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full border border-border text-transparent">
+                                              ✓
+                                            </span>
+                                            {chip}
+                                            <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
+                                              {step.label}
+                                            </span>
+                                            <span className="shrink-0 font-mono text-sim-micro text-primary">
+                                              open →
+                                            </span>
+                                          </Link>
+                                        )
+                                      // WS-06: target no longer resolves — never a dead link
                                       return (
                                         <div
                                           key={`${step.to}-${i}`}
                                           aria-disabled="true"
-                                          title="Hands-on lab — start a sandbox to run it. Optional: it never blocks your maturity level."
-                                          className="flex w-full items-center gap-2 rounded-md border border-border bg-card px-2.5 py-1.5 opacity-60"
+                                          title="This resource has moved — it'll return when the link is updated."
+                                          className={`flex w-full items-center gap-2 rounded-md border border-warning/40 bg-warning/5 px-2.5 py-1.5 opacity-60`}
                                         >
-                                          <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full border border-border text-muted-foreground">
-                                            🔒
-                                          </span>
                                           {chip}
                                           <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
                                             {step.label}
                                           </span>
-                                          <span className="shrink-0 font-mono text-sim-micro text-muted-foreground">
-                                            {sandboxAvail === 'checking'
-                                              ? 'checking sandbox…'
-                                              : 'bonus · start sandbox'}
+                                          <span className="shrink-0 font-mono text-sim-micro text-warning">
+                                            resource moved
                                           </span>
                                         </div>
                                       )
-                                    // open IN the sim (embed) when possible
-                                    if (embeddable)
-                                      return (
-                                        <Button
-                                          key={`${step.to}-${i}`}
-                                          type="button"
-                                          variant="ghost"
-                                          onClick={() => openStep(step)}
-                                          className={`h-auto justify-start whitespace-normal ${cls}`}
+                                    })}
+                                  </div>
+                                )}
+                                {/* Deep dive — optional, non-gating extra practice/reading for
+                                  the active band. Never counted in `total`/`done` above. */}
+                                {current && bandDeepDive.length > 0 && (
+                                  <div className="ml-3 mt-1 flex flex-col gap-1 border-l border-dashed border-primary/30 pl-3">
+                                    <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.12em] text-primary/60">
+                                      Deep dive — optional, doesn&rsquo;t affect your level
+                                    </span>
+                                    {bandDeepDive.map((step, i) => {
+                                      const sDone = stepDone(step, sel)
+                                      const embeddable = canEmbedStep(step)
+                                      const navigable = canResolveDeepLink(step.to)
+                                      const chip = (
+                                        <span
+                                          className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${KIND_CHIP[step.kind]}`}
                                         >
-                                          <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full border border-border text-transparent">
-                                            ✓
-                                          </span>
+                                          {step.kind}
+                                        </span>
+                                      )
+                                      const cls = `flex w-full items-center gap-2 rounded-md border border-dashed px-2.5 py-1.5 ${
+                                        sDone
+                                          ? 'border-success/40 bg-success/5'
+                                          : 'border-border/60 bg-card/60 hover:bg-muted/60'
+                                      }`
+                                      if (embeddable)
+                                        return (
+                                          <Button
+                                            key={`${step.to}-${i}`}
+                                            type="button"
+                                            variant="ghost"
+                                            onClick={() => openStep(step)}
+                                            className={`h-auto justify-start whitespace-normal ${cls}`}
+                                          >
+                                            {sDone ? (
+                                              <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-success text-sim-chip font-bold text-success-foreground">
+                                                ✓
+                                              </span>
+                                            ) : (
+                                              <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full border border-border text-transparent">
+                                                ✓
+                                              </span>
+                                            )}
+                                            {chip}
+                                            <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
+                                              {step.label}
+                                            </span>
+                                            <span className="shrink-0 font-mono text-sim-micro text-primary/70">
+                                              {sDone ? 'done' : 'open here →'}
+                                            </span>
+                                          </Button>
+                                        )
+                                      if (navigable)
+                                        return (
+                                          <Link
+                                            key={`${step.to}-${i}`}
+                                            to={step.to}
+                                            onClick={() => {
+                                              markSimResume()
+                                              if (step.kind === 'reference' && step.refId)
+                                                markRefVisited(step.refId)
+                                            }}
+                                            className={cls}
+                                          >
+                                            {sDone ? (
+                                              <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-success text-sim-chip font-bold text-success-foreground">
+                                                ✓
+                                              </span>
+                                            ) : (
+                                              <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full border border-border text-transparent">
+                                                ✓
+                                              </span>
+                                            )}
+                                            {chip}
+                                            <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
+                                              {step.label}
+                                            </span>
+                                            <span className="shrink-0 font-mono text-sim-micro text-primary/70">
+                                              {sDone ? 'done' : 'open →'}
+                                            </span>
+                                          </Link>
+                                        )
+                                      // WS-06: target no longer resolves — never a dead link
+                                      return (
+                                        <div
+                                          key={`${step.to}-${i}`}
+                                          aria-disabled="true"
+                                          title="This resource has moved — it'll return when the link is updated."
+                                          className="flex w-full items-center gap-2 rounded-md border border-warning/40 bg-warning/5 px-2.5 py-1.5 opacity-60"
+                                        >
                                           {chip}
                                           <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
                                             {step.label}
                                           </span>
-                                          <span className="shrink-0 font-mono text-sim-micro text-primary">
-                                            open here →
+                                          <span className="shrink-0 font-mono text-sim-micro text-warning">
+                                            resource moved
                                           </span>
-                                        </Button>
+                                        </div>
                                       )
-                                    // else navigate to the real hub resource (reference)
-                                    if (navigable)
-                                      return (
-                                        <Link
-                                          key={`${step.to}-${i}`}
-                                          to={step.to}
-                                          onClick={() => {
-                                            markSimResume()
-                                            if (step.kind === 'reference' && step.refId)
-                                              markRefVisited(step.refId)
-                                          }}
-                                          className={cls}
-                                        >
-                                          <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full border border-border text-transparent">
-                                            ✓
-                                          </span>
-                                          {chip}
-                                          <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
-                                            {step.label}
-                                          </span>
-                                          <span className="shrink-0 font-mono text-sim-micro text-primary">
-                                            open →
-                                          </span>
-                                        </Link>
-                                      )
-                                    // WS-06: target no longer resolves — never a dead link
-                                    return (
-                                      <div
-                                        key={`${step.to}-${i}`}
-                                        aria-disabled="true"
-                                        title="This resource has moved — it'll return when the link is updated."
-                                        className={`flex w-full items-center gap-2 rounded-md border border-warning/40 bg-warning/5 px-2.5 py-1.5 opacity-60`}
-                                      >
-                                        {chip}
-                                        <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
-                                          {step.label}
-                                        </span>
-                                        <span className="shrink-0 font-mono text-sim-micro text-warning">
-                                          resource moved
-                                        </span>
-                                      </div>
-                                    )
-                                  })}
-                                </div>
-                              )}
-                            </div>
-                          )
-                        })}
+                                    })}
+                                  </div>
+                                )}
+                              </div>
+                            )
+                          })
+                        })()}
                       </div>
 
                       {/* Sector track — optional non-gating learn steps for the
@@ -3036,6 +3240,28 @@ export function SimulationView() {
             onConfirm={() => {
               runStartOver()
               setPendingConfirm(null)
+            }}
+          />
+        )}
+        {playModalOpen && (
+          <SimPlayChoiceModal
+            onClose={() => setPlayModalOpen(false)}
+            onStart={startFromModal}
+            defaultCard={defaultCard}
+            defaultPhase={defaultPhase}
+            sectorLabel={sectorOpt.label}
+          />
+        )}
+        {pendingModeSwitch && (
+          <SimConfirmDialog
+            title="Start a different path?"
+            description="You have an in-progress run. Starting this path will restart the guided playhead — steps you've already completed stay completed, but the run begins its new queue from the top."
+            confirmLabel="Start this path"
+            onCancel={() => setPendingModeSwitch(null)}
+            onConfirm={() => {
+              autoRunPlayer.start({ mode: pendingModeSwitch })
+              setPendingModeSwitch(null)
+              setPlayModalOpen(false)
             }}
           />
         )}

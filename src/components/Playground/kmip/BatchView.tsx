@@ -30,6 +30,7 @@ import {
   type BatchErrorContinuation,
   ID_PLACEHOLDER,
 } from '@/wasm/kmip/kmipEngine'
+import { WireTreeView } from './WireTreeView'
 
 interface Recipe {
   id: string
@@ -460,14 +461,14 @@ export function BatchView({
               </pre>
             </details>
           )}
-          {expert && result.responseWireHex && (
-            <details className="mt-2">
+          {expert && result.responseTree && (
+            <details className="mt-2" open>
               <summary className="cursor-pointer text-[11px] font-semibold text-muted-foreground hover:text-foreground">
-                shared Response Message — {result.responseWireLen} bytes (hex)
+                shared Response Message — {result.responseWireLen} bytes
               </summary>
-              <pre className="mt-1 max-h-40 overflow-auto whitespace-pre-wrap break-all rounded border border-border bg-muted/40 p-2 font-mono text-[9.5px] text-muted-foreground">
-                {result.responseWireHex}
-              </pre>
+              <div className="mt-1.5">
+                <WireTreeView root={result.responseTree} annotated />
+              </div>
             </details>
           )}
         </section>

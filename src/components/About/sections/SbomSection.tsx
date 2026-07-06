@@ -383,7 +383,7 @@ export function SbomSection() {
                   </li>
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
                     <a
-                      href="https://github.com/pqctoday-org/pqctoday-hsm/releases/tag/v0.6.1"
+                      href="https://github.com/pqctoday-org/pqctoday-hsm/releases/tag/v0.10.0"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-primary hover:underline flex items-center gap-1"
@@ -396,14 +396,14 @@ export function SbomSection() {
                         BSD-2-Clause
                       </span>
                       <span className="text-xs text-muted-foreground/60">
-                        v0.6.1 — native PKCS#11 v3.2 C-ABI 315/315, KMIP CACP control plane,
-                        crypto-agility policies
+                        v0.10.0 — native PKCS#11 v3.2 C-ABI 315/315, KMIP CACP control plane,
+                        Ed25519 + classical X25519/X448 KEM, crypto-agility policies
                       </span>
                     </div>
                   </li>
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
                     <a
-                      href="https://github.com/pqctoday-org/pqctoday-hsm/releases/tag/v0.6.1"
+                      href="https://github.com/pqctoday-org/pqctoday-hsm/releases/tag/v0.10.0"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-primary hover:underline flex items-center gap-1"
@@ -414,8 +414,8 @@ export function SbomSection() {
                     <div className="flex flex-col items-end shrink-0">
                       <span className="text-xs text-muted-foreground/40 font-mono">MIT</span>
                       <span className="text-xs text-muted-foreground/60">
-                        v0.6.1 — in-browser KMIP 3.0 crypto-agility control plane (run_batch,
-                        policies, dry-run, audit)
+                        v0.10.0 — in-browser KMIP 3.0 crypto-agility control plane (label-only
+                        migration, rekey-on-use, run_batch, policies, dry-run, audit)
                       </span>
                     </div>
                   </li>
