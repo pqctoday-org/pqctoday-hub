@@ -36,7 +36,11 @@ export function MigrationView() {
   // The policy mode active right now — passed to each card so its in-tile KMIP
   // log tags every op with the mode it ran under.
   const activeMode: 'classical' | 'hybrid' | 'pqc' =
-    activePolicy === 'migration-pqc' ? 'pqc' : activePolicy === 'migration-hybrid' ? 'hybrid' : 'classical'
+    activePolicy === 'migration-pqc'
+      ? 'pqc'
+      : activePolicy === 'migration-hybrid'
+        ? 'hybrid'
+        : 'classical'
 
   /** Flip the active crypto-agility policy. Loading a new policy does NOT
    * touch existing keys — they stay classical (and at-risk) until each is
@@ -57,7 +61,7 @@ export function MigrationView() {
         setSwitching(false)
       }
     },
-    [engine, switching],
+    [engine, switching]
   )
 
   // Estate risk summary — recomputed from the REAL keystore after every op.
@@ -140,7 +144,7 @@ export function MigrationView() {
                 active
                   ? 'border-primary bg-primary/10 text-primary'
                   : 'border-border text-muted-foreground',
-                p.available ? 'hover:border-primary/60' : 'cursor-not-allowed opacity-50',
+                p.available ? 'hover:border-primary/60' : 'cursor-not-allowed opacity-50'
               )}
               data-testid={`migration-policy-${p.name}`}
             >
@@ -179,7 +183,10 @@ export function MigrationView() {
       <MigrationMap activePolicy={activePolicy} />
 
       {/* ── Section 1 · classical estate ──────────────────────────────────── */}
-      <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-2 xl:grid-cols-3" data-tour="migration-estate">
+      <div
+        className="grid grid-cols-1 items-start gap-4 md:grid-cols-2 xl:grid-cols-3"
+        data-tour="migration-estate"
+      >
         {MIGRATION_KEYS.map((k) => (
           <MigrationKeyCard
             key={k.id}
@@ -258,7 +265,10 @@ function MigrationKeystore({ engine, bump }: { engine: KmipEngine; bump: number 
     return engine
       .listObjects()
       .filter((o) => o.objectType !== 'SecretData')
-      .sort((a, b) => (a.name ?? '').localeCompare(b.name ?? '') || a.objectType.localeCompare(b.objectType))
+      .sort(
+        (a, b) =>
+          (a.name ?? '').localeCompare(b.name ?? '') || a.objectType.localeCompare(b.objectType)
+      )
   }, [engine, bump])
 
   const byUid = useMemo(() => new Map(objects.map((o) => [o.uid, o])), [objects])
@@ -299,7 +309,9 @@ function MigrationKeystore({ engine, bump }: { engine: KmipEngine; bump: number 
                   className={cn('border-b border-border/50', superseded && 'opacity-60')}
                   data-testid={`migration-obj-${o.name ?? o.uid}-${o.objectType}`}
                 >
-                  <td className="py-1.5 pr-3 font-sans">{o.name ?? <span className="text-muted-foreground">—</span>}</td>
+                  <td className="py-1.5 pr-3 font-sans">
+                    {o.name ?? <span className="text-muted-foreground">—</span>}
+                  </td>
                   <td className="py-1.5 pr-3 text-muted-foreground">{shortUid(o.uid)}…</td>
                   <td className="py-1.5 pr-3 text-muted-foreground">{o.objectType}</td>
                   <td className="py-1.5 pr-3 font-semibold text-foreground">{o.algorithm}</td>

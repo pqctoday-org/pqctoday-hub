@@ -505,7 +505,7 @@ export function LearnView({
               <div className="flex w-full items-center gap-1.5">
                 <span
                   className={cn(
-                    'flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[9px] font-bold text-white',
+                    'flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[9px] font-bold text-background',
                     isDone ? 'bg-status-success' : TONE_DOT[lesson.tone]
                   )}
                 >

@@ -15,7 +15,9 @@ const EXPECTED_RULES: Record<string, number> = {
   'aead-only.yaml': 2,
   // Y5: encrypt-side KEM substitutions removed (deferred to Phase 5) → 9→7.
   // 2026-07-02: symmetric AES-256 Create default added → 8.
-  'auto-migrate-on-use.yaml': 8,
+  // 2026-07-05: classical-KEM merge adds ECDH-P256/P384 → ML-KEM-768
+  // Encapsulate-rekey substitutions → 10.
+  'auto-migrate-on-use.yaml': 10,
   // 2026-07-04 gap-audit remediation: signature allowlist + opt-in composite
   // + 2036 cutoffs + RSA PSS/OAEP constraints → 7→12.
   'bsi-tr-02102.yaml': 12,
@@ -46,7 +48,9 @@ const EXPECTED_RULES: Record<string, number> = {
   // usage-mask rule (rule 7 was missing the smallest KEM size) → 15.
   'pqc-migration-2030.yaml': 15,
   // 2026-07-04: Sign-path rekey extended to P-384/P-521/RSA-3072 → 6→9.
-  'pqc.yaml': 9,
+  // 2026-07-05: classical-KEM merge adds ECDH-P256/P384 + RSA-3072
+  // Encapsulate-rekey substitutions to ML-KEM-1024 → 12.
+  'pqc.yaml': 12,
   'training-permissive.yaml': 0,
 }
 

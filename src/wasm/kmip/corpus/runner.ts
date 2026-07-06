@@ -75,6 +75,19 @@ export async function runCorpusTest(
       detail: `XML parse: ${e instanceof Error ? e.message : String(e)}`,
       opsUsed: [],
       pairs: [],
+    }
+  }
+
+  const ops = operationsUsed(transcript)
+  const byOps = classifyByOps(ops)
+  if (byOps)
+    return {
+      name,
+      status: byOps.status,
+      detail: byOps.detail,
+      opsUsed: Array.from(ops).sort(),
+      pairs: [],
+    }
 
   if (transcript.length % 2 !== 0) {
     return {
@@ -83,6 +96,44 @@ export async function runCorpusTest(
       detail: 'odd message count',
       opsUsed: Array.from(ops).sort(),
       pairs: [],
+    }
+  }
+
+  const engine = await KmipEngine.boot(slot)
+  const bindings = new Bindings()
+  const opsUsed = Array.from(ops).sort()
+  const pairs: TestResult['pairs'] = []
+
+  for (let i = 0; i < transcript.length; i += 2) {
+    const req = transcript[i]
+    const expectedRsp = transcript[i + 1]
+    const pairIndex = i / 2
+    if (
+      norm(req.tag) !== norm('RequestMessage') ||
+      norm(expectedRsp.tag) !== norm('ResponseMessage')
+    ) {
+      return {
+        name,
+        status: 'SKIP_PARSE',
+        detail: `msg #${pairIndex}: not a Req/Resp pair (${req.tag}/${expectedRsp.tag})`,
+        opsUsed,
+        pairs,
+      }
+    }
+
+    let requestTree: TtlvNode
+    let requestBytes: Uint8Array
+    try {
+      const resolvedReq = bindings.resolveTree(req)
+      requestTree = toWireTree(resolvedReq, table)
+      requestBytes = engine.encodeTtlv(requestTree)
+    } catch (e) {
+      return {
+        name,
+        status: 'ERROR',
+        detail: `msg #${pairIndex}: encode request: ${e instanceof Error ? e.message : String(e)}`,
+        opsUsed,
+        pairs,
       }
     }
 
@@ -94,6 +145,38 @@ export async function runCorpusTest(
         name,
         status: 'ERROR',
         detail: `msg #${pairIndex}: submit: ${e instanceof Error ? e.message : String(e)}`,
+        opsUsed,
+        pairs,
+      }
+    }
+    if (!responseBytes || responseBytes.length === 0) {
+      return {
+        name,
+        status: 'FAIL',
+        detail: `msg #${pairIndex}: engine returned 0 bytes`,
+        opsUsed,
+        pairs,
+      }
+    }
+
+    // `rawResponseTree` keeps raw hex tags (0x42xxxx) — the shape
+    // `WireTreeView.tsx`'s own `tagName()`/`ENUM_NAMES` resolution expects,
+    // same as every other caller of this component. `actualRsp` is a
+    // SEPARATE name-annotated copy (via this module's own `CodepointTable`,
+    // not `kmipMeta.ts`'s dictionary) used only for the harvest/compare
+    // logic below — never fed to `WireTreeView`, or its friendly tag
+    // strings defeat `tagName()`'s hex lookup and enum values stop
+    // resolving.
+    let rawResponseTree: TtlvNode
+    let actualRsp: TtlvNode
+    try {
+      rawResponseTree = engine.decodeTtlv(responseBytes)
+      actualRsp = annotateNames(rawResponseTree, table)
+    } catch (e) {
+      return {
+        name,
+        status: 'FAIL',
+        detail: `msg #${pairIndex}: decode response: ${e instanceof Error ? e.message : String(e)}`,
         opsUsed,
         pairs,
       }
