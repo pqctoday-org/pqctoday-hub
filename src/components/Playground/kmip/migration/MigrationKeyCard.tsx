@@ -28,6 +28,9 @@ interface Props {
   engine: KmipEngine
   /** Called after any op that changed the keystore (estate summary refresh). */
   onKeystoreChange: () => void
+  /** Called after every KMIP op with its result, so the view can bucket the
+   * audit trail into the per-mode (classical / hybrid / pqc) log panels. */
+  onOpLog: (op: string, label: string, result: OpResult) => void
   /** Reset epoch — bump to clear the card back to "not generated". */
   epoch: number
 }
@@ -75,7 +78,7 @@ function Field({
   )
 }
 
-export function MigrationKeyCard({ config, engine, onKeystoreChange, epoch }: Props) {
+export function MigrationKeyCard({ config, engine, onKeystoreChange, onOpLog, epoch }: Props) {
   const [label, setLabel] = useState(config.defaultLabel)
   const [ids, setIds] = useState<KeyIds | null>(null)
   const [algorithm, setAlgorithm] = useState<string | null>(null)
@@ -119,13 +122,16 @@ export function MigrationKeyCard({ config, engine, onKeystoreChange, epoch }: Pr
   const run = useCallback(
     (spec: Parameters<KmipEngine['runOp']>[0]): OpResult | null => {
       const r = engine.runOp(spec)
+      // Report every KMIP op (success or refusal) up so the view can bucket
+      // its audit trail into the per-mode (classical/hybrid/pqc) log panels.
+      onOpLog(spec.op, label, r)
       if (!r.ok) {
         setError(r.message ?? `${spec.op} failed`)
         return null
       }
       return r
     },
-    [engine],
+    [engine, onOpLog, label],
   )
 
   /** Re-resolve this card's key by its LABEL and update the shown algorithm +

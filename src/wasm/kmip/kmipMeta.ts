@@ -485,7 +485,7 @@ export const POLICY_PRESETS: PolicyPreset[] = [
     name: 'migration-hybrid',
     label: 'Migration estate · hybrid',
     blurb:
-      'The Migration tab’s hybrid transition — key agreement → X25519MLKEM768 (classical + PQC in one key), signing → ML-DSA-65; legacy keys auto-rekey on use.',
+      'The Migration tab’s hybrid transition — key agreement → X25519MLKEM768 (classical + PQC in one key), signing → ML-DSA-44; legacy keys auto-rekey on use.',
     tone: 'hybrid',
     category: 'Migration & transition',
     illustrates: 'Hybrid KEM + rekey-on-use — belt-and-braces migration.',

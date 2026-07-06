@@ -76,7 +76,7 @@ export const MIGRATION_KEYS: MigrationKeyConfig[] = [
     operation: 'Sign / Verify',
     blurb: 'Signs every firmware release the fleet installs.',
     classicalAlgorithm: 'RSA-2048',
-    hybridAlgorithm: 'ML-DSA-65',
+    hybridAlgorithm: 'ML-DSA-44',
     pqcAlgorithm: 'ML-DSA-44',
   },
   {
@@ -86,7 +86,7 @@ export const MIGRATION_KEYS: MigrationKeyConfig[] = [
     operation: 'Sign / Verify',
     blurb: 'Signs API gateway tokens (millions/day).',
     classicalAlgorithm: 'ECDSA-P256',
-    hybridAlgorithm: 'ML-DSA-65',
+    hybridAlgorithm: 'ML-DSA-44',
     pqcAlgorithm: 'ML-DSA-44',
   },
   {
@@ -96,7 +96,7 @@ export const MIGRATION_KEYS: MigrationKeyConfig[] = [
     operation: 'Sign / Verify',
     blurb: 'Signs source-control commits and tags.',
     classicalAlgorithm: 'Ed25519',
-    hybridAlgorithm: 'ML-DSA-65',
+    hybridAlgorithm: 'ML-DSA-44',
     pqcAlgorithm: 'ML-DSA-44',
   },
 ]
@@ -125,7 +125,7 @@ export const MIGRATION_POLICIES: MigrationPolicyChip[] = [
     name: 'migration-hybrid',
     label: 'Hybrid',
     blurb:
-      'Belt-and-braces: key agreement → X25519MLKEM768 (classical + PQC in one key), signing → ML-DSA-65. Exercise an at-risk key to migrate it. (Composite signatures are a later milestone.)',
+      'Belt-and-braces: key agreement → X25519MLKEM768 (classical + PQC in one key), signing → ML-DSA-44. Exercise an at-risk key to migrate it. (Composite signatures are a later milestone.)',
     available: true,
   },
   {
