@@ -37,7 +37,11 @@ export interface KmipNode {
 }
 
 /** Construct a leaf node. */
-export const leaf = (tag: string, type: TtlvTypeName, value: string | number | boolean): KmipNode => ({
+export const leaf = (
+  tag: string,
+  type: TtlvTypeName,
+  value: string | number | boolean
+): KmipNode => ({
   tag,
   type,
   value,
@@ -54,7 +58,10 @@ export const struct = (tag: string, ...children: KmipNode[]): KmipNode => ({
  * "cryptographicAlgorithm" key to the same lookup entry. Matches
  * `_ttlv.py`'s `_norm`. Shared by `encode.ts`'s codepoint/enum lookups and
  * by any BFS-by-tag-name traversal over a friendly or wire tree. */
-export const norm = (name: string): string => Array.from(name).filter((c) => /[a-zA-Z0-9]/.test(c)).join('')
+export const norm = (name: string): string =>
+  Array.from(name)
+    .filter((c) => /[a-zA-Z0-9]/.test(c))
+    .join('')
 
 /** The minimal shape BFS traversal needs — satisfied by both `KmipNode`
  * (friendly, tag by name) and `kmipEngine.ts`'s `TtlvNode` (wire, tag as raw

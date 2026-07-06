@@ -8,7 +8,12 @@
 import type { KmipNode } from '../ttlv/nodes'
 
 export type SkipReason = {
-  status: 'SKIP_DEPRECATED' | 'SKIP_PRECONDITION' | 'SKIP_POLICY_VARIANT' | 'SKIP_OP' | 'SKIP_TRANSPORT'
+  status:
+    | 'SKIP_DEPRECATED'
+    | 'SKIP_PRECONDITION'
+    | 'SKIP_POLICY_VARIANT'
+    | 'SKIP_OP'
+    | 'SKIP_TRANSPORT'
   detail: string
 }
 
@@ -30,8 +35,10 @@ const DEPRECATED_ALGO_TESTS: Record<string, string> = {
  * the Locate-by-attribute pipeline itself (verified by the M-1/M-2
  * transcripts in the same families). */
 const PRECONDITION_TESTS: Record<string, string> = {
-  'TL-M-3-30.xml': 'Locate-by-ApplicationSpecificInformation of object Created in TL-M-2; hermetic per-test isolation wipes it',
-  'SASED-M-3-30.xml': 'Locate-by-GroupLink of SecretData Registered in SASED-M-2; hermetic per-test isolation wipes it',
+  'TL-M-3-30.xml':
+    'Locate-by-ApplicationSpecificInformation of object Created in TL-M-2; hermetic per-test isolation wipes it',
+  'SASED-M-3-30.xml':
+    'Locate-by-GroupLink of SecretData Registered in SASED-M-2; hermetic per-test isolation wipes it',
 }
 
 /** OASIS tests that pin one of several MUTUALLY EXCLUSIVE conformant
@@ -40,9 +47,12 @@ const PRECONDITION_TESTS: Record<string, string> = {
  * full-consume; the others would require per-test policy injection this
  * hermetic harness doesn't do. */
 const POLICY_VARIANT_TESTS: Record<string, string> = {
-  'CS-RNG-O-2-30.xml': 'RNGSeed policy variant: partial-consume (DataLength=16). We implement full-consume per CS-RNG-O-1',
-  'CS-RNG-O-3-30.xml': 'RNGSeed policy variant: ignore-seed (DataLength=0). We implement full-consume per CS-RNG-O-1',
-  'CS-RNG-O-4-30.xml': 'RNGSeed policy variant: deny (PermissionDenied). We implement full-consume per CS-RNG-O-1',
+  'CS-RNG-O-2-30.xml':
+    'RNGSeed policy variant: partial-consume (DataLength=16). We implement full-consume per CS-RNG-O-1',
+  'CS-RNG-O-3-30.xml':
+    'RNGSeed policy variant: ignore-seed (DataLength=0). We implement full-consume per CS-RNG-O-1',
+  'CS-RNG-O-4-30.xml':
+    'RNGSeed policy variant: deny (PermissionDenied). We implement full-consume per CS-RNG-O-1',
 }
 
 /** OASIS tests whose expected outcome depends on `MaximumResponseSize`
@@ -60,9 +70,12 @@ const POLICY_VARIANT_TESTS: Record<string, string> = {
  * this replay port. The native/Python harness (which runs the real TLS
  * listener) correctly passes all three of these. */
 const TRANSPORT_TESTS: Record<string, string> = {
-  'MSGENC-HTTPS-M-1-30.xml': 'MaximumResponseSize (§9.10) enforcement lives in the native TLS listener, not dispatch() — no seam to implement it on in this wasm build',
-  'MSGENC-JSON-M-1-30.xml': 'MaximumResponseSize (§9.10) enforcement lives in the native TLS listener, not dispatch() — no seam to implement it on in this wasm build',
-  'MSGENC-XML-M-1-30.xml': 'MaximumResponseSize (§9.10) enforcement lives in the native TLS listener, not dispatch() — no seam to implement it on in this wasm build',
+  'MSGENC-HTTPS-M-1-30.xml':
+    'MaximumResponseSize (§9.10) enforcement lives in the native TLS listener, not dispatch() — no seam to implement it on in this wasm build',
+  'MSGENC-JSON-M-1-30.xml':
+    'MaximumResponseSize (§9.10) enforcement lives in the native TLS listener, not dispatch() — no seam to implement it on in this wasm build',
+  'MSGENC-XML-M-1-30.xml':
+    'MaximumResponseSize (§9.10) enforcement lives in the native TLS listener, not dispatch() — no seam to implement it on in this wasm build',
 }
 
 /** The 3 native-gated (Validate/Certify/ReCertify — wasm32 crypto-backend
@@ -94,7 +107,8 @@ const PERMANENTLY_UNSUPPORTED_OPS = new Set([
 export function operationsUsed(transcript: KmipNode[]): Set<string> {
   const ops = new Set<string>()
   const walk = (n: KmipNode) => {
-    if (n.tag === 'Operation' && n.type === 'Enumeration' && typeof n.value === 'string') ops.add(n.value)
+    if (n.tag === 'Operation' && n.type === 'Enumeration' && typeof n.value === 'string')
+      ops.add(n.value)
     for (const c of n.children ?? []) walk(c)
   }
   for (const msg of transcript) {
@@ -108,10 +122,14 @@ export function operationsUsed(transcript: KmipNode[]): Set<string> {
  * the parsed transcript's operation set. Returns `null` when the test
  * should actually be replayed. */
 export function classifyByName(fileName: string): SkipReason | null {
-  if (fileName in DEPRECATED_ALGO_TESTS) return { status: 'SKIP_DEPRECATED', detail: DEPRECATED_ALGO_TESTS[fileName] }
-  if (fileName in PRECONDITION_TESTS) return { status: 'SKIP_PRECONDITION', detail: PRECONDITION_TESTS[fileName] }
-  if (fileName in POLICY_VARIANT_TESTS) return { status: 'SKIP_POLICY_VARIANT', detail: POLICY_VARIANT_TESTS[fileName] }
-  if (fileName in TRANSPORT_TESTS) return { status: 'SKIP_TRANSPORT', detail: TRANSPORT_TESTS[fileName] }
+  if (fileName in DEPRECATED_ALGO_TESTS)
+    return { status: 'SKIP_DEPRECATED', detail: DEPRECATED_ALGO_TESTS[fileName] }
+  if (fileName in PRECONDITION_TESTS)
+    return { status: 'SKIP_PRECONDITION', detail: PRECONDITION_TESTS[fileName] }
+  if (fileName in POLICY_VARIANT_TESTS)
+    return { status: 'SKIP_POLICY_VARIANT', detail: POLICY_VARIANT_TESTS[fileName] }
+  if (fileName in TRANSPORT_TESTS)
+    return { status: 'SKIP_TRANSPORT', detail: TRANSPORT_TESTS[fileName] }
   return null
 }
 

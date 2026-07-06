@@ -10,14 +10,15 @@ metadata:
   name: auto-migrate-on-use
   description: |
     Lazy, transparent migration. Each legacy classical signing key is rekeyed
-    to PQC the first time traffic touches it (Sign), and new keys default to
-    quantum-safe algorithms: signing key pairs to ML-DSA-65, key-establishment
-    key pairs to ML-KEM-768, symmetric keys to AES-256. (Asymmetric-encrypt
-    key pairs and Encrypt-path rekey are deferred with the Phase-5
-    encapsulation work — see the rule comments.) There is no flag day and no
-    application change — migration advances key-by-key as the workload
-    exercises each one. This is the substitution ("rekey-on-use") dimension
-    of crypto agility that KMIP alone cannot express.
+    to PQC the first time traffic touches it (Sign), each legacy classical
+    key-establishment key likewise rekeys at first Encapsulate (2026-07-05),
+    and new keys default to quantum-safe algorithms: signing key pairs to
+    ML-DSA-65, key-establishment key pairs to ML-KEM-768, symmetric keys to
+    AES-256. (RSA key-transport's Encrypt-path rekey remains deferred — see
+    the rule comments.) There is no flag day and no application change —
+    migration advances key-by-key as the workload exercises each one. This
+    is the substitution ("rekey-on-use") dimension of crypto agility that
+    KMIP alone cannot express.
   authority: pqctoday-hsm/training
   effective: "2026-01-01"
   compliance_mapping:
@@ -61,12 +62,35 @@ rules:
     to: ML-DSA-65
     reason: "Rekey legacy RSA-3072 signing key to ML-DSA-65 at first use"
 
-  # ── Key-establishment auto-rekey — DEFERRED to Phase 5 ───────────────
-  # RSA/ECDH key-establishment → ML-KEM is a cross-primitive migration the
-  # Encrypt path cannot execute (it would rekey to a KEM the Encrypt op can't
-  # drive), so these substitutions are held back until the Encapsulate rekey
-  # path lands in Phase 5 — advertising them now would promise behaviour the
-  # engine rejects (Y5). The Sign-side rekeys above are the live demo.
+  # ── Existing key-establishment keys auto-rekey at first Encapsulate
+  # (2026-07-05 — closes the deferral below for the ECDH side) ──────────
+  # Classical ECDH key-establishment now goes through `Encapsulate` (DHKEM
+  # mode), the same op ML-KEM/hybrid use, so — unlike RSA key-transport
+  # below — this is a same-op rekey the engine can execute directly, exactly
+  # like the Sign-side rules above.
+  #
+  # NOTE — `from:` collision (pre-existing `qualified_name` limitation, not
+  # introduced here): X25519 (256 bits) and X448 (448→default 256) both
+  # currently stringify identically to real P-256 (`ECDH-P256`), so the
+  # first rule below already covers all three (harmless — all migrate to
+  # the same ML-KEM-768 target); a future fix to give them distinct names
+  # would need a corresponding split.
+  - type: algorithm_substitution
+    ops: [Encapsulate]
+    from: ECDH-P256
+    to: ML-KEM-768
+    reason: "Rekey legacy ECDH-P256/X25519/X448 key-establishment key to ML-KEM-768 at first use"
+  - type: algorithm_substitution
+    ops: [Encapsulate]
+    from: ECDH-P384
+    to: ML-KEM-768
+    reason: "Rekey legacy ECDH-P384 key-establishment key to ML-KEM-768 at first use"
+
+  # RSA key-TRANSPORT (Encrypt/Decrypt, distinct from ECDH key-ESTABLISHMENT
+  # above) → ML-KEM remains deferred: a cross-primitive migration (encrypt →
+  # encapsulate) the Encrypt op cannot execute in one call. The Sign-side
+  # and Encapsulate-side rekeys above are the live demo for their
+  # respective primitives.
 
   # ── No NEW classical asymmetric keys while migrating ──────────────────
   - type: algorithm_denylist

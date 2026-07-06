@@ -33,7 +33,8 @@ describe('op-template pipeline (real wasm engine)', () => {
     table = CodepointTable.fromSpec(SPEC_JSON)
   })
 
-  const run = (operation: string, payload: ReturnType<typeof ops.query>) => runOp(engine, table, operation, payload)
+  const run = (operation: string, payload: ReturnType<typeof ops.query>) =>
+    runOp(engine, table, operation, payload)
 
   it('has exactly one template per KMIP 3.0 operation, 66 total', () => {
     expect(OP_TEMPLATES).toHaveLength(66)

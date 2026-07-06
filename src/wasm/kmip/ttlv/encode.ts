@@ -70,7 +70,8 @@ const isDigits = (s: string): boolean => /^-?\d+$/.test(s)
 const isHexLiteral = (s: string): boolean => /^0x[0-9a-fA-F]+$/.test(s)
 
 const tagHex = (code: number): string => `0x${code.toString(16).toUpperCase().padStart(6, '0')}`
-const enumHex = (code: number): string => `0x${(code >>> 0).toString(16).toUpperCase().padStart(8, '0')}`
+const enumHex = (code: number): string =>
+  `0x${(code >>> 0).toString(16).toUpperCase().padStart(8, '0')}`
 
 function encodeInteger(tag: string, value: string | number): number {
   if (typeof value === 'number') return value
@@ -135,7 +136,11 @@ export function toWireTree(node: KmipNode, table: CodepointTable): TtlvNode {
   const tag = tagHex(code)
 
   if (node.type === 'Structure') {
-    return { tag, type: 'Structure', children: (node.children ?? []).map((c) => toWireTree(c, table)) }
+    return {
+      tag,
+      type: 'Structure',
+      children: (node.children ?? []).map((c) => toWireTree(c, table)),
+    }
   }
 
   const v = node.value
@@ -147,12 +152,20 @@ export function toWireTree(node: KmipNode, table: CodepointTable): TtlvNode {
     case 'LongInteger':
       return { tag, type: 'LongInteger', value: Number(v) }
     case 'Enumeration':
-      return { tag, type: 'Enumeration', value: enumHex(encodeEnumeration(node.tag, v as string | number, table)) }
+      return {
+        tag,
+        type: 'Enumeration',
+        value: enumHex(encodeEnumeration(node.tag, v as string | number, table)),
+      }
     case 'Boolean':
       // A string "false"/"0" (from XML-sourced data) must NOT become the JS
       // boolean `true` via a bare `Boolean(v)` truthiness check — mirrors
       // `_encode_value`'s `str(v).lower() in ("true", "1")` explicitly.
-      return { tag, type: 'Boolean', value: typeof v === 'boolean' ? v : ['true', '1'].includes(String(v).toLowerCase()) }
+      return {
+        tag,
+        type: 'Boolean',
+        value: typeof v === 'boolean' ? v : ['true', '1'].includes(String(v).toLowerCase()),
+      }
     case 'TextString':
       return { tag, type: 'TextString', value: String(v) }
     case 'ByteString':

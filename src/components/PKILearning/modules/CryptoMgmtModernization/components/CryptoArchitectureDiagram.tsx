@@ -18,12 +18,18 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { useModuleStore } from '@/store/useModuleStore'
-import { markdownToPdf } from '@/services/export/pdfExport'
+import {
+  buildArtifactPdf,
+  addDiagramImagePage,
+  drawFooters,
+  sanitiseFilename,
+} from '@/services/export/pdfExport'
 import { useAssessmentSnapshot } from '@/hooks/assessment/useAssessmentSnapshot'
 import { useAlgorithmTransitionsForAssessment } from '@/hooks/useAlgorithmTransitionsForAssessment'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { MermaidDiagram } from '@/components/Simulation/MermaidDiagram'
+import { renderMermaidToPngDataUrl } from '@/components/Simulation/mermaidRender'
 import { useThemeStore } from '@/store/useThemeStore'
 
 type ComponentKind =
@@ -202,9 +208,10 @@ function buildMarkdown(components: ArchComponent[], theme: 'light' | 'dark' = 'l
 
   md += '\n## Dependency diagram\n\n'
   md +=
-    '_Rendered as an interactive diagram in the PQC Today Hub web app. In exported ' +
-    'PDF/print, the Components table above is the textual equivalent — its "Depends on" ' +
-    'column lists every edge in this diagram._\n\n'
+    "_Rendered as an interactive diagram in the PQC Today Hub web app — this tool's " +
+    '"Download PDF" button includes it as an image. If this markdown is exported or ' +
+    're-downloaded elsewhere without a live renderer, the Components table above is the ' +
+    'textual equivalent — its "Depends on" column lists every edge in this diagram._\n\n'
   md += '```mermaid\n'
   md += buildMermaid(components, theme)
   md += '\n```\n'
@@ -330,14 +337,27 @@ export const CryptoArchitectureDiagram: React.FC = () => {
   }, [markdown])
 
   const handleDownloadPdf = useCallback(async () => {
-    await markdownToPdf(markdown, 'crypto-architecture', 'Crypto Architecture (CSWP.39 §5.4)', {
-      // The Components table carries free-text Detail/Depends-on columns; render
-      // landscape so they don't cramp in portrait. The Mermaid diagram itself is
-      // not rasterised into the PDF (see the note in the Dependency diagram
-      // section) — the table is its textual equivalent.
+    const title = 'Crypto Architecture (CSWP.39 §5.4)'
+    const doc = buildArtifactPdf(markdown, title, {
+      // The Components table carries free-text Detail/Depends-on columns;
+      // render landscape so they don't cramp in portrait — also a better fit
+      // for the wide LR diagram appended below.
       wideTable: true,
+      // Footers are stamped after the diagram page below, so "Page N of M"
+      // counts it too.
+      skipFooters: true,
     })
-  }, [markdown])
+    try {
+      const diagram = await renderMermaidToPngDataUrl(mermaidSource)
+      addDiagramImagePage(doc, diagram, 'Dependency diagram')
+    } catch {
+      // Diagram couldn't be rasterised (e.g. renderer error) — the
+      // Components table already carries the same information as text, so
+      // the PDF is still complete without it.
+    }
+    drawFooters(doc, title)
+    doc.save(`${sanitiseFilename('crypto-architecture')}.pdf`)
+  }, [markdown, mermaidSource])
 
   return (
     <div className="space-y-6">
