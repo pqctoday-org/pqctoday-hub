@@ -49,7 +49,12 @@ export const isVolatileTag = (tag: string): boolean => VARIABLE_ITEM_TAGS.has(no
  * (child-count) comparison, rather than treating presence/absence as a
  * mismatch. */
 const OPTIONAL_PRESENCE_TAGS = new Set(
-  ['ServerCorrelationValue', 'ClientCorrelationValue', 'PKCS_11OutputParameters', 'PKCS11OutputParameters'].map(norm)
+  [
+    'ServerCorrelationValue',
+    'ClientCorrelationValue',
+    'PKCS_11OutputParameters',
+    'PKCS11OutputParameters',
+  ].map(norm)
 )
 
 export const isOptionalPresence = (tag: string): boolean => OPTIONAL_PRESENCE_TAGS.has(norm(tag))
@@ -57,7 +62,9 @@ export const isOptionalPresence = (tag: string): boolean => OPTIONAL_PRESENCE_TA
 /** §4.1 Response Variations item 8 (Server Information) + item 10/12
  * (Digest) + item 6 (RNG fields) — the structure's presence is checked,
  * its interior is opaque. */
-const OPAQUE_STRUCTURE_TAGS = new Set(['ServerInformation', 'Digest', 'RandomNumberGenerator'].map(norm))
+const OPAQUE_STRUCTURE_TAGS = new Set(
+  ['ServerInformation', 'Digest', 'RandomNumberGenerator'].map(norm)
+)
 
 export const isOpaqueStructure = (tag: string): boolean => OPAQUE_STRUCTURE_TAGS.has(norm(tag))
 
@@ -65,7 +72,13 @@ export const isOpaqueStructure = (tag: string): boolean => OPAQUE_STRUCTURE_TAGS
  * in the §4.1.1 Variable Items table — auto-binding from these would bind
  * a stale value into a later request. UID is bound via the positional
  * `$UNIQUE_IDENTIFIER_n` mechanism, not by tag name. */
-const AUTO_BIND_SKIP = new Set(['TimeStamp', 'UniqueIdentifier', 'ServerCorrelationValue', 'ClientCorrelationValue', 'CorrelationValue'])
+const AUTO_BIND_SKIP = new Set([
+  'TimeStamp',
+  'UniqueIdentifier',
+  'ServerCorrelationValue',
+  'ClientCorrelationValue',
+  'CorrelationValue',
+])
 
 /** `MACData` → `MAC_DATA`; `KeyMaterial` → `KEY_MATERIAL`. OASIS transcripts
  * use this convention for placeholders like `$MAC_DATA` — the leaf value

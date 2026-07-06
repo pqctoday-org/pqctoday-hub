@@ -46,7 +46,8 @@ function directChild(node: KmipNode, tag: string): KmipNode | undefined {
  * mirrors that by accepting a bare number for `actual` too. */
 function enumMatch(expected: unknown, actual: unknown, table: CodepointTable): boolean {
   if (expected === actual) return true
-  const actNum = typeof actual === 'number' ? actual : typeof actual === 'string' ? Number(actual) : NaN
+  const actNum =
+    typeof actual === 'number' ? actual : typeof actual === 'string' ? Number(actual) : NaN
   if (typeof expected === 'string' && !Number.isNaN(actNum)) {
     const expNum = Number(expected)
     if (!Number.isNaN(expNum) && expNum === actNum) return true
@@ -71,7 +72,13 @@ function valuesEqual(
   table: CodepointTable
 ): boolean {
   if (expected === actual) return true
-  if (ttlvType === 'Integer' || ttlvType === 'LongInteger' || ttlvType === 'DateTime' || ttlvType === 'DateTimeExtended' || ttlvType === 'Interval') {
+  if (
+    ttlvType === 'Integer' ||
+    ttlvType === 'LongInteger' ||
+    ttlvType === 'DateTime' ||
+    ttlvType === 'DateTimeExtended' ||
+    ttlvType === 'Interval'
+  ) {
     const expNum = Number(expected)
     if (!Number.isNaN(expNum) && expNum === actual) return true
     if (tagName) {
@@ -90,10 +97,14 @@ function valuesEqual(
   }
   if (ttlvType === 'Boolean') {
     const e = String(expected).toLowerCase()
-    return (['true', '1'].includes(e) && actual === true) || (['false', '0'].includes(e) && actual === false)
+    return (
+      (['true', '1'].includes(e) && actual === true) ||
+      (['false', '0'].includes(e) && actual === false)
+    )
   }
   if (ttlvType === 'Enumeration') return enumMatch(expected, actual, table)
-  if (ttlvType === 'ByteString' || ttlvType === 'BigInteger') return String(expected).toLowerCase() === String(actual).toLowerCase()
+  if (ttlvType === 'ByteString' || ttlvType === 'BigInteger')
+    return String(expected).toLowerCase() === String(actual).toLowerCase()
   if (ttlvType === 'TextString') return String(expected) === String(actual)
   return expected === actual
 }
@@ -102,7 +113,12 @@ function valuesEqual(
  * attributes) + §4.1.2 item 5 (any permutation of order is allowed). Bag
  * semantics: every expected child must find a matching actual child (by
  * tag name + deep-equal value); the actual side MAY include extras. */
-function compareAttributesContainer(expected: KmipNode, actual: TtlvNode, bindings: Bindings, table: CodepointTable): CompareResult {
+function compareAttributesContainer(
+  expected: KmipNode,
+  actual: TtlvNode,
+  bindings: Bindings,
+  table: CodepointTable
+): CompareResult {
   const actualByName = new Map<string, TtlvNode[]>()
   for (const c of actual.children ?? []) {
     const key = norm(c.tag)
@@ -113,7 +129,9 @@ function compareAttributesContainer(expected: KmipNode, actual: TtlvNode, bindin
   for (const ec of expected.children ?? []) {
     const candidates = actualByName.get(norm(ec.tag)) ?? []
     if (candidates.length === 0) {
-      return fail(`Attributes: missing expected attribute '${ec.tag}' (§4.1.1 item 20 permits server *extras* — not omissions)`)
+      return fail(
+        `Attributes: missing expected attribute '${ec.tag}' (§4.1.1 item 20 permits server *extras* — not omissions)`
+      )
     }
     let matchedIdx = -1
     for (let i = 0; i < candidates.length; i++) {
@@ -131,7 +149,12 @@ function compareAttributesContainer(expected: KmipNode, actual: TtlvNode, bindin
 /** §4.1.2 item 5 also applies to GetAttributeList's ResponsePayload: the
  * UniqueIdentifier is positional, but the AttributeReference list order is
  * explicitly variable, and the server MAY include extras (§4.1.1 item 20). */
-function compareAttributeReferenceList(expected: KmipNode, actual: TtlvNode, bindings: Bindings, table: CodepointTable): CompareResult {
+function compareAttributeReferenceList(
+  expected: KmipNode,
+  actual: TtlvNode,
+  bindings: Bindings,
+  table: CodepointTable
+): CompareResult {
   const split = <T extends { tag: string; children?: T[] }>(node: T) => {
     let uid: T | undefined
     const refs: T[] = []
@@ -154,7 +177,9 @@ function compareAttributeReferenceList(expected: KmipNode, actual: TtlvNode, bin
     let found = actualCodes.has(ev)
     if (!found && typeof ev === 'string') {
       const code = table.tagNameToCode.get(norm(ev))
-      found = code !== undefined && actualCodes.has(`0x${code.toString(16).toUpperCase().padStart(8, '0')}`)
+      found =
+        code !== undefined &&
+        actualCodes.has(`0x${code.toString(16).toUpperCase().padStart(8, '0')}`)
     }
     if (!found) {
       return fail(
@@ -167,7 +192,12 @@ function compareAttributeReferenceList(expected: KmipNode, actual: TtlvNode, bin
 
 /** §4.1.1 items 15-16 — Query's Operation/ObjectType lists MAY be a
  * superset of what the test enumerates. */
-function compareQueryResponsePayload(expected: KmipNode, actual: TtlvNode, bindings: Bindings, table: CodepointTable): CompareResult {
+function compareQueryResponsePayload(
+  expected: KmipNode,
+  actual: TtlvNode,
+  bindings: Bindings,
+  table: CodepointTable
+): CompareResult {
   const supersetTags = new Set([norm('Operation'), norm('ObjectType')])
   const byName = <T extends { tag: string; children?: T[] }>(node: T) => {
     const m = new Map<string, T[]>()
@@ -197,7 +227,9 @@ function compareQueryResponsePayload(expected: KmipNode, actual: TtlvNode, bindi
   const otherExpected = (expected.children ?? []).filter((c) => !supersetTags.has(norm(c.tag)))
   const otherActual = (actual.children ?? []).filter((c) => !supersetTags.has(norm(c.tag)))
   if (otherExpected.length !== otherActual.length) {
-    return fail(`Query ResponsePayload: non-list child count ${otherExpected.length} != ${otherActual.length}`)
+    return fail(
+      `Query ResponsePayload: non-list child count ${otherExpected.length} != ${otherActual.length}`
+    )
   }
   for (let i = 0; i < otherExpected.length; i++) {
     const r = compareResponses(otherExpected[i], otherActual[i], bindings, table, 'Query')
@@ -210,7 +242,12 @@ function compareQueryResponsePayload(expected: KmipNode, actual: TtlvNode, bindi
  * BatchItem; servers MAY omit it even on failures. Also derives
  * `opContext` from the Operation child so the ResponsePayload comparison
  * knows which §4.1 carve-out to apply. */
-function compareBatchItem(expected: KmipNode, actual: TtlvNode, bindings: Bindings, table: CodepointTable): CompareResult {
+function compareBatchItem(
+  expected: KmipNode,
+  actual: TtlvNode,
+  bindings: Bindings,
+  table: CodepointTable
+): CompareResult {
   const opEnum = directChild(expected, 'Operation')
   const opContext = typeof opEnum?.value === 'string' ? opEnum.value : undefined
 
@@ -240,7 +277,8 @@ export function compareResponses(
   table: CodepointTable,
   opContext: string | undefined
 ): CompareResult {
-  if (norm(expected.tag) !== norm(actual.tag)) return fail(`tag '${expected.tag}' != '${actual.tag}'`)
+  if (norm(expected.tag) !== norm(actual.tag))
+    return fail(`tag '${expected.tag}' != '${actual.tag}'`)
   if (isVolatileTag(expected.tag)) return ok('skipped (volatile)')
 
   if (expected.type === 'Structure') {
@@ -251,7 +289,8 @@ export function compareResponses(
     if (normTag === norm('ResponsePayload') && opContext === 'Query') {
       return compareQueryResponsePayload(expected, actual, bindings, table)
     }
-    if (normTag === norm('Attributes')) return compareAttributesContainer(expected, actual, bindings, table)
+    if (normTag === norm('Attributes'))
+      return compareAttributesContainer(expected, actual, bindings, table)
     if (normTag === norm('ResponsePayload') && opContext === 'GetAttributeList') {
       return compareAttributeReferenceList(expected, actual, bindings, table)
     }

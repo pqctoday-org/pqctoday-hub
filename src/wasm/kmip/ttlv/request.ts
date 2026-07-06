@@ -9,7 +9,11 @@
 import { leaf, struct, type KmipNode } from './nodes'
 
 const protocolVersion = (): KmipNode =>
-  struct('ProtocolVersion', leaf('ProtocolVersionMajor', 'Integer', 3), leaf('ProtocolVersionMinor', 'Integer', 0))
+  struct(
+    'ProtocolVersion',
+    leaf('ProtocolVersionMajor', 'Integer', 3),
+    leaf('ProtocolVersionMinor', 'Integer', 0)
+  )
 
 /** One single-batch-item KMIP 3.0 Request Message for `operation`, carrying
  * `payload` as its RequestPayload's children. */
@@ -17,6 +21,10 @@ export function buildRequest(operation: string, ...payload: KmipNode[]): KmipNod
   return struct(
     'RequestMessage',
     struct('RequestHeader', protocolVersion()),
-    struct('BatchItem', leaf('Operation', 'Enumeration', operation), struct('RequestPayload', ...payload))
+    struct(
+      'BatchItem',
+      leaf('Operation', 'Enumeration', operation),
+      struct('RequestPayload', ...payload)
+    )
   )
 }

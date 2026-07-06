@@ -28,7 +28,7 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.11.0] - 2026-07-05
 
-A crypto-agility migration release: the CACP playground gains a new **Migration** tab that walks a seven-key business estate from classical crypto through hybrid to full post-quantum — driven entirely by policy, keyed on each key's business name — plus guided Learn walkthroughs and a per-operation KMIP log. Backed by a rebuilt engine (v0.10.0) that adds Ed25519 signing and real classical X25519/X448 key agreement.
+A crypto-agility and simulation release: the CACP playground gains a new **Migration** tab that walks a seven-key business estate from classical crypto through hybrid to full post-quantum, a full KMIP 3.0 operation tester and a real OASIS conformance-corpus replay; the simulation gets one unified PLAY entry point with new sector-specific deep-dive content; and the HSM Capacity Calculator's fleet-sizing formula is corrected after being found to undercount by up to 46%. Backed by a rebuilt engine (v0.10.0) that adds Ed25519 signing and real classical X25519/X448 key agreement.
 
 ### Added
 
@@ -37,16 +37,27 @@ A crypto-agility migration release: the CACP playground gains a new **Migration*
 - **A live key-object inspector in the Migration tab** [view:/playground/cacp]: the real KMIP objects on the tab's engine — label, unique ID, type, algorithm, state, quantum-safety, and the rekey link from a retired key to its successor.
 - **A KMIP log inside each key tile** [view:/playground/cacp]: every operation you run on a key is logged in place, tagged with the mode (Classical / Hybrid / Full PQC) it ran under and expandable to the underlying policy/KMIP/PKCS#11 events.
 - **Guided "Learn" walkthroughs and an operation Reference in the playground** [view:/playground/cacp]: classical→PQC walkthroughs (create/activate, sign & verify, key encapsulation, hedged hybrid, and more) that run for real against the in-browser engine, plus a per-operation reference with parameter forms and a shared glossary.
+- **Test any of KMIP 3.0's 66 operations directly in the crypto-agility playground** [view:/playground/cacp] [persona:developer]: a "Commands" sub-tab runs a real request through the engine for every operation — including honest "not supported" rejections for the 15 that aren't — with the full decoded response visible in an execution log.
+- **Replay the real OASIS KMIP 3.0 conformance test corpus in your browser** [view:/playground/cacp] [persona:developer]: a "Corpus Replay" sub-tab runs all 102 mandatory/optional OASIS transcripts plus 42 vendored PQC interop tests entirely client-side, with any skips labeled and explained.
+- **One unified "▶ PLAY" entry point for the simulation** [view:/simulation]: replaces two separate, unlabeled buttons with a single entry point that opens a choice screen showing all 3 ways to play — Executive Overview, Full Migration Journey, and Play This Phase — each with its audience and estimated duration visible up front, and a Standard/Deep Dive checkbox per choice. Play This Phase now runs the same narrated, auto-advancing playthrough as the other two, just scoped to the one phase you pick, and genuinely clears that phase's maturity gates. A resumable run skips straight back in via "▶ Resume" instead of reopening the choice screen.
+- **The crypto-agility (CACP/KMIP) workshop is now playable from inside the simulation** [view:/simulation] [view:/playground/cacp]: previously listed as relevant to Phase 6 but never actually embedded in any run.
+- **New Deep Dive learning content for Phase 5, tailored by sector** [view:/simulation]: finance (identity & access management), government (PIV/CAC-style enrollment protocols), telecom (API/JWT security for network-API exposure), and retail (transactional email/receipt signing) each get sector-specific optional content that never affects your maturity score.
+- **A plain-language verdict card, a hybrid-signing transition toggle, and a sizing headroom slider in the HSM Capacity Calculator** [view:/playground/hsm-capacity] [persona:architect].
+- **The Crypto Architecture PDF export now includes the actual diagram** [view:/learn] [view:/business]: previously the diagram was stripped down to a text stub to avoid bundling a renderer; it's now rendered client-side and appended as an image page.
+
+### Changed
+
+- **The About page's software bill of materials now lists the current engine** [view:/about]: the pqctoday-hsm crypto engine entries were refreshed to v0.10.0 (Ed25519 + classical X25519/X448 KEM, label-only migration).
+- **The Crypto Architecture diagram is easier to read** [view:/learn] [view:/business]: nodes are now grouped into color-coded subgraphs by component kind (application/protocol/library/key-store/HSM/CA) instead of one flat diagram of identical gray boxes, reducing clutter as more components are added.
+- **The Vendor Scorecard and its exported reports now show vendor names instead of internal vendor IDs** [view:/learn] [persona:executive]: the per-vendor readiness table, low-readiness list, and both exported documents used to display the raw ID.
 
 ### Fixed
 
 - **Signature verification after a post-quantum migration** [view:/playground/cacp]: migrating a signing key to ML-DSA could leave the old public key active and make a valid new signature read as invalid; the whole key pair is now retired together, so verification is reliable across hybrid and full-PQC.
 - **A key-agreement error after switching to a post-quantum policy** [view:/playground/cacp]: establishing a shared secret after migrating a key could fail with a "bad arguments" error because the operation still pointed at the retired key; it now follows the migrated key.
 - **The guided sign-and-verify lessons** [view:/playground/cacp]: verification and key-encapsulation steps failed because the public key wasn't activated first; the lessons now activate both halves.
-
-### Changed
-
-- **The About page's software bill of materials now lists the current engine** [view:/about]: the pqctoday-hsm crypto engine entries were refreshed to v0.10.0 (Ed25519 + classical X25519/X448 KEM, label-only migration).
+- **The HSM Capacity Calculator was undercounting how many HSMs you need, by up to 46%** [view:/playground/hsm-capacity] [persona:architect]: it sized a shared fleet on its single worst algorithm instead of summing every algorithm's share of HSM time, even though the tool itself describes a shared fleet where any HSM can run any algorithm (a medium-sized organization's estimate went from 37 to 49 HSMs once corrected). Also corrects a per-location explainer that divided demand incorrectly, several externally-verified-wrong standards citations (ETSI, IETF drafts, a nonexistent DNSSEC draft, a Marvell FIPS certification claim), and realigns all 10 use cases with the protocol matrix — SSH and IKEv2 now correctly show the standardized hybrid classical+ML-KEM mode instead of pure PQC, and code signing gains an SLH-DSA option.
+- **The PQC Assistant chat no longer gets permanently stuck after the browser reclaims GPU memory from a backgrounded tab** [persona:developer]: this could happen because the local model holds several gigabytes of GPU memory that browsers aggressively reclaim from background tabs; the assistant now detects this, reloads the model, and retries your message automatically instead of leaving it failing silently.
 
 ## [4.10.0] - 2026-07-05
 

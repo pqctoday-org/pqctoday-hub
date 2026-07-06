@@ -271,6 +271,39 @@ export async function unloadEngine(): Promise<void> {
 }
 
 /**
+ * Thrown when the local engine stops responding mid-session — most commonly
+ * because the browser reclaimed the WebGPU device from a backgrounded tab
+ * (Qwen 3 8B holds ~5.7GB of VRAM, which browsers reclaim aggressively).
+ * Callers should re-run initializeEngine() and retry rather than treat this
+ * as a terminal error, since the underlying model files are still cached.
+ */
+export class EngineDisconnectedError extends Error {
+  constructor() {
+    super(
+      'The local model lost its GPU session (this can happen when the browser reclaims ' +
+        'memory from a backgrounded tab). Reloading the model automatically.'
+    )
+    this.name = 'EngineDisconnectedError'
+  }
+}
+
+/**
+ * Detect errors that mean the underlying WebGPU device/engine is dead rather
+ * than a normal generation failure. web-llm surfaces this either as a
+ * `DeviceLostError` (thrown synchronously from init/reload) or, if the device
+ * is lost while idle, as a `ModelNotLoadedError` on the next call (web-llm's
+ * internal device.lost handler silently unloads its own pipeline first).
+ */
+function isEngineDisconnectedError(err: unknown): boolean {
+  if (!(err instanceof Error)) return false
+  return (
+    err.name === 'DeviceLostError' ||
+    err.name === 'ModelNotLoadedError' ||
+    /device was lost|gpudevice|lost the device/i.test(err.message)
+  )
+}
+
+/**
  * Stream a chat completion from the local WebLLM engine.
  * Uses the same RAG pipeline as GeminiService — same corpus, same retrieval,
  * but with a streamlined system prompt optimized for smaller models.
@@ -340,16 +373,6 @@ export async function* streamResponse(
     ...history,
   ]
 
-  const stream = await engine.chat.completions.create({
-    messages: formattedMessages,
-    temperature: 0.2,
-    max_tokens: maxResponseTokens,
-    top_p: 0.85,
-    frequency_penalty: 0.4,
-    stream: true,
-    stream_options: { include_usage: true },
-  })
-
   // Strip <think>...</think> blocks from Qwen 3 output.
   // Approach: accumulate full text, regex-strip after each chunk, yield only new clean content.
   // This handles all edge cases (split tags, nested whitespace, unclosed blocks).
@@ -358,42 +381,63 @@ export async function* streamResponse(
   let yieldedLength = 0
   let seenThink = false
 
-  for await (const chunk of stream) {
-    if (signal?.aborted) {
-      try {
-        await engine.interruptGenerate()
-      } catch {
-        // Best effort interrupt
+  try {
+    const stream = await engine.chat.completions.create({
+      messages: formattedMessages,
+      temperature: 0.2,
+      max_tokens: maxResponseTokens,
+      top_p: 0.85,
+      frequency_penalty: 0.4,
+      stream: true,
+      stream_options: { include_usage: true },
+    })
+
+    for await (const chunk of stream) {
+      if (signal?.aborted) {
+        try {
+          await engine.interruptGenerate()
+        } catch {
+          // Best effort interrupt
+        }
+        return
       }
-      return
-    }
 
-    const delta = chunk.choices?.[0]?.delta?.content
-    if (!delta) {
-      const finishReason = chunk.choices?.[0]?.finish_reason
-      if (finishReason === 'length') {
-        yield '\n\n*(Response truncated — try asking a more specific question.)*'
+      const delta = chunk.choices?.[0]?.delta?.content
+      if (!delta) {
+        const finishReason = chunk.choices?.[0]?.finish_reason
+        if (finishReason === 'length') {
+          yield '\n\n*(Response truncated — try asking a more specific question.)*'
+        }
+        continue
       }
-      continue
+
+      accumulated += delta
+
+      // Track whether we've ever seen a <think> tag to skip regex on clean streams
+      if (!seenThink && accumulated.includes('<think>')) seenThink = true
+
+      // Strip all closed <think>...</think> blocks, then truncate at any unclosed <think>
+      let cleaned = seenThink ? accumulated.replace(/<think>[\s\S]*?<\/think>/g, '') : accumulated
+      if (seenThink) {
+        const unclosedIdx = cleaned.indexOf('<think>')
+        if (unclosedIdx !== -1) cleaned = cleaned.slice(0, unclosedIdx)
+      }
+
+      // Yield only the new portion since last yield
+      if (cleaned.length > yieldedLength) {
+        yield cleaned.slice(yieldedLength)
+        yieldedLength = cleaned.length
+      }
     }
-
-    accumulated += delta
-
-    // Track whether we've ever seen a <think> tag to skip regex on clean streams
-    if (!seenThink && accumulated.includes('<think>')) seenThink = true
-
-    // Strip all closed <think>...</think> blocks, then truncate at any unclosed <think>
-    let cleaned = seenThink ? accumulated.replace(/<think>[\s\S]*?<\/think>/g, '') : accumulated
-    if (seenThink) {
-      const unclosedIdx = cleaned.indexOf('<think>')
-      if (unclosedIdx !== -1) cleaned = cleaned.slice(0, unclosedIdx)
+  } catch (err) {
+    if (isEngineDisconnectedError(err)) {
+      // The engine is unusable now regardless of what our module thinks —
+      // clear our state so the next call re-initializes from scratch instead
+      // of repeatedly hitting the same dead engine.
+      await unloadEngine()
+      throw new EngineDisconnectedError()
     }
-
-    // Yield only the new portion since last yield
-    if (cleaned.length > yieldedLength) {
-      yield cleaned.slice(yieldedLength)
-      yieldedLength = cleaned.length
-    }
+    throw err
   }
 
   // Final flush: strip any trailing unclosed <think> block

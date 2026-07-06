@@ -6,11 +6,11 @@
 #
 #   1. New KEM keys default to ML-KEM-1024 (was ECDH-P256).
 #   2. New signing keys default to ML-DSA-87 (was ECDSA-P256).
-#   3. Existing classical keys auto-rekey to PQC at first Sign / Encrypt
+#   3. Existing classical keys auto-rekey to PQC at first Sign / Encapsulate
 #      via the substitution rules below — the engine emits
-#      Decision::RekeyAndProceed, the Phase-5 dispatcher executes the
-#      multi-op rekey transaction (new key → mark old Deprecated →
-#      link via x-pqctoday-supersedes → re-issue the original op).
+#      Decision::RekeyAndProceed, the dispatcher executes the multi-op
+#      rekey transaction (new key pair → activate both halves → deactivate
+#      + supersede both old halves → re-issue the original op).
 #
 # This is the bit KMIP 3.0 alone cannot do — it's the agility engine's
 # value-add. See `classical.yaml` for the op-name convention.
@@ -24,9 +24,12 @@ metadata:
     asymmetric-encrypt = ML-KEM-1024 (key delivery) + AES-256 (bulk).
     Existing classical SIGNING keys (ECDSA P-256/384/521, RSA-3072) are
     auto-rekeyed to ML-DSA-87 at first Sign via algorithm_substitution —
-    the application sees only the handle. The Encrypt-path rekey (RSA →
-    ML-KEM) is deferred to the Phase-5 encapsulation work; legacy classical
-    keys can still Verify/Decrypt during the transition.
+    the application sees only the handle. Existing classical
+    KEY-ESTABLISHMENT keys (ECDH-P256/384/521, X25519, X448) are likewise
+    auto-rekeyed to ML-KEM-1024 at first Encapsulate (2026-07-05). RSA
+    key-TRANSPORT (the Encrypt/Decrypt path) → ML-KEM remains deferred — a
+    cross-primitive migration the Encrypt op cannot execute in one call;
+    legacy classical keys can still Verify/Decrypt during the transition.
   authority: pqctoday-hsm/demo
   effective: "2026-01-01"
   compliance_mapping:
@@ -92,13 +95,47 @@ rules:
     to: ML-DSA-87
     reason: "Rekey legacy RSA-3072 signing key to ML-DSA-87 at first use"
 
-  # ── Existing-key rekey on the KEM path — DEFERRED to Phase 5 ─────────
-  # RSA key-transport → ML-KEM is a cross-primitive migration (encrypt →
-  # encapsulate), not a like-for-like rekey the Encrypt path can execute, so
-  # advertising it here would promise behaviour the engine rejects (Y5). The
-  # KEM-side auto-migration lands with the Encapsulate rekey work in Phase 5;
-  # the Sign-side rekey above is the live crypto-agility demo. Do NOT add an
-  # `ops: [Encrypt]` substitution to a KEM target until that path executes it.
+  # ── Existing-key rekey: classical key-establishment → ML-KEM-1024 on
+  # Encapsulate (2026-07-05 — the deferral below is now closed) ──────────
+  # Classical ECDH key-establishment keys now go through `Encapsulate`
+  # (DHKEM mode — `kmip/spec/crossref/kem-encapsulate-decapsulate.yaml`),
+  # the same op ML-KEM/hybrid use, so this is a same-op rekey exactly like
+  # the Sign-side rules above: engine emits RekeyAndProceed,
+  # `encapsulate.rs::rekey_and_encapsulate` mints a fresh ML-KEM-1024 pair,
+  # activates both halves, deactivates+supersedes both halves of the old
+  # pair, re-issues the Encapsulate. The application (an Encapsulate caller
+  # holding the public-key UID) sees only the handle.
+  #
+  # NOTE on `from:` values — `helpers::qualified_name` derives the qualified
+  # algorithm name from bit-length only (pre-existing limitation, not
+  # introduced here): X25519 (256 bits) and X448 (448→ default 256) both
+  # currently stringify identically to real P-256, i.e. as `ECDH-P256`. That
+  # means this ONE rule below already covers P-256/X25519/X448 keys today
+  # (harmless — all three correctly migrate to ML-KEM-1024), but a future
+  # fix to `qualified_name` to give X25519/X448 their own distinct names
+  # would need a corresponding split here.
+  - type: algorithm_substitution
+    ops: [Encapsulate]
+    from: ECDH-P256
+    to: ML-KEM-1024
+    reason: "Rekey legacy ECDH-P256/X25519/X448 key-establishment key to ML-KEM-1024 at first use"
+  - type: algorithm_substitution
+    ops: [Encapsulate]
+    from: ECDH-P384
+    to: ML-KEM-1024
+    reason: "Rekey legacy ECDH-P384 key-establishment key to ML-KEM-1024 at first use"
+  - type: algorithm_substitution
+    ops: [Encapsulate]
+    from: ECDH-P521
+    to: ML-KEM-1024
+    reason: "Rekey legacy ECDH-P521 key-establishment key to ML-KEM-1024 at first use"
+
+  # RSA key-TRANSPORT (Encrypt/Decrypt path, distinct from the ECDH
+  # key-ESTABLISHMENT path above) → ML-KEM remains deferred: that is a
+  # cross-primitive migration (encrypt → encapsulate) the Encrypt op cannot
+  # execute in one call (see `encrypt.rs`'s own honest RekeyAndProceed
+  # failure). Do NOT add an `ops: [Encrypt]` substitution to a KEM target
+  # until that separate path is built.
 
   # ── Classical asymmetric Create denied ───────────────────────────────
   # Once flipped to PQC, no new classical asymmetric keys may be created.

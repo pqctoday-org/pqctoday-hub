@@ -53,3 +53,54 @@ describe('autoRunWalkthroughQueue', () => {
     expect(new Set(keys).size).toBe(keys.length)
   })
 })
+
+describe('autoRunWalkthroughQueue(includeDeepDive=true) — Executive Overview Deep Dive', () => {
+  const standard = autoRunWalkthroughQueue(false)
+  const deep = autoRunWalkthroughQueue(true)
+
+  // NOTE: as of this writing, only P6 carries any `deepDive` content, and P6 is
+  // configured as a 'light'-depth exec-tour stage (not 'deep') — so today the two
+  // queues happen to be IDENTICAL (deep-dive is only pulled for 'deep' stages, by
+  // design — see the plan). That's correct current behavior, not something these
+  // tests should assume away: they check the queue never SHRINKS or drops
+  // anything (>=, not >), and separately prove the underlying mechanism actually
+  // works using `autoRunDeepQueue` (deepQueue.test.ts), which walks every phase
+  // regardless of exec-tour curation.
+  it('is a superset of the standard queue (equal today, until a "deep" stage phase gets deep-dive content)', () => {
+    expect(deep.length).toBeGreaterThanOrEqual(standard.length)
+    const standardKeys = new Set(standard.map((it) => `${it.phase}:${it.step.kind}:${it.step.to}`))
+    for (const key of standardKeys) {
+      expect(deep.some((it) => `${it.phase}:${it.step.kind}:${it.step.to}` === key)).toBe(true)
+    }
+  })
+
+  it('any added items are optional (deep-dive) and normalized to level 1', () => {
+    const standardTos = new Set(standard.map((it) => it.step.to))
+    const added = deep.filter((it) => !standardTos.has(it.step.to))
+    for (const it of added) {
+      expect(it.level).toBe(1)
+      expect(it.step.optional, `${it.step.to} should be stamped optional`).toBe(true)
+    }
+  })
+
+  it('data fact the assertions above rely on: p6 (the only phase with deepDive content) is a light stage', () => {
+    // If this ever flips (p6 becomes a 'deep' stage, or a 'deep' stage phase
+    // gains deepDive content), the superset test above starts asserting a real
+    // inequality instead of an equality — no test change needed either way. The
+    // actual inclusion MECHANISM is proven directly in deepQueue.test.ts via
+    // `autoRunDeepQueue`, which walks every phase regardless of exec-tour curation.
+    const p6Stage = EXEC_TOUR_STAGES.find((s) => s.phase === 'p6')
+    expect(p6Stage?.depth).toBe('light')
+  })
+
+  it('light-depth stages are unaffected by includeDeepDive (still one hand-picked step)', () => {
+    for (const stage of EXEC_TOUR_STAGES) {
+      if (stage.depth !== 'light') continue
+      const standardCount = standard.filter((it) => it.phase === stage.phase).length
+      const deepCount = deep.filter((it) => it.phase === stage.phase).length
+      expect(deepCount, `${stage.phase}: light stage grew under includeDeepDive`).toBe(
+        standardCount
+      )
+    }
+  })
+})
