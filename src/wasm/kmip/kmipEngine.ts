@@ -70,6 +70,9 @@ export interface KmipObject {
   name: string | null
   usageMask: number
   quantumSafe: boolean | null
+  /** On a superseded (Deactivated) key, the UID of the replacement it was
+   * rekeyed to (KMIP `x-pqctoday-supersedes`). `null` if never rekeyed. */
+  supersedes?: string | null
 }
 
 /** A KMIP op spec the UI builds from friendly controls. */

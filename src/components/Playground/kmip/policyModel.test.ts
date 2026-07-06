@@ -36,6 +36,10 @@ const EXPECTED_RULES: Record<string, number> = {
   // Migration tab estate (2026-07-05): 9 label-pattern/generic defaults + the
   // PQC boundary denylist → 10.
   'migration-classical.yaml': 10,
+  // Migration full-PQC target: 4 defaults + 6 substitutions + 2 denylists → 12.
+  'migration-pqc.yaml': 12,
+  // Migration hybrid transition: 3 defaults + 6 substitutions + 2 denylists → 11.
+  'migration-hybrid.yaml': 11,
   'pkcs11-mechanism-lockdown.yaml': 4,
   // 2026-07-04: mechanism-dimension weak-crypto rules + DES/3DES denylist +
   // class-based 2027 cutoff + post-2030 creation cutoff → 11→14; +ML-KEM-512

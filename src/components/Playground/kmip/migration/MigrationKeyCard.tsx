@@ -128,21 +128,55 @@ export function MigrationKeyCard({ config, engine, onKeystoreChange, epoch }: Pr
     [engine],
   )
 
+  /** Re-resolve this card's key by its LABEL and update the shown algorithm +
+   * risk badge + op uids. The label survives a crypto-agility rekey (the
+   * engine copies it onto the successor), so this is how the card FOLLOWS its
+   * key across a migration: after a rekey-on-use the old key is Deactivated and
+   * a new Active key carries the same label. Returns the algorithm now in force
+   * so the caller can narrate a change. */
+  const resyncByLabel = useCallback((): string | null => {
+    const objs = engine.listObjects()
+    const activeWith = (t: string) =>
+      objs.find((o) => o.name === label && o.state === 'Active' && o.objectType === t)
+    if (config.kind === 'symmetric') {
+      const rec = activeWith('SymmetricKey')
+      if (!rec) return null
+      setAlgorithm(rec.algorithm)
+      setQuantumSafe(rec.quantumSafe)
+      setIds({ priv: rec.uid, pub: rec.uid })
+      return rec.algorithm
+    }
+    const priv = activeWith('PrivateKey')
+    const pub = activeWith('PublicKey')
+    if (!priv) return null
+    setAlgorithm(priv.algorithm)
+    setQuantumSafe(priv.quantumSafe)
+    setIds({ priv: priv.uid, pub: pub?.uid ?? priv.uid })
+    return priv.algorithm
+  }, [engine, label, config.kind])
+
   const withBusy = useCallback(
     (fn: () => void) => {
       setBusy(true)
       setError(null)
       setNote(null)
+      const before = algorithm
       try {
         fn()
       } catch (e) {
         setError(String(e))
       } finally {
+        // Follow the key across any rekey the op triggered, and narrate a
+        // migration when the algorithm actually changed.
+        const after = resyncByLabel()
+        if (after && before && after !== before) {
+          setNote(`migrated ${before} ➜ ${after} — old key deactivated, label carried over`)
+        }
         setBusy(false)
         onKeystoreChange()
       }
     },
-    [onKeystoreChange],
+    [onKeystoreChange, resyncByLabel, algorithm],
   )
 
   const refreshFromStore = useCallback(
@@ -284,6 +318,9 @@ export function MigrationKeyCard({ config, engine, onKeystoreChange, epoch }: Pr
             aria-label="Key label"
             data-testid={`migration-label-${config.id}`}
           />
+          <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+            {config.operation}
+          </p>
           <p className="text-[11px] text-muted-foreground">{config.blurb}</p>
         </div>
         {quantumSafe !== null &&
