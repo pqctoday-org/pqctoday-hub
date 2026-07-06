@@ -26,6 +26,28 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.11.0] - 2026-07-05
+
+A crypto-agility migration release: the CACP playground gains a new **Migration** tab that walks a seven-key business estate from classical crypto through hybrid to full post-quantum — driven entirely by policy, keyed on each key's business name — plus guided Learn walkthroughs and a per-operation KMIP log. Backed by a rebuilt engine (v0.10.0) that adds Ed25519 signing and real classical X25519/X448 key agreement.
+
+### Added
+
+- **A new "Migration" tab in the crypto-agility playground** [view:/playground/cacp] [persona:technical]: build a seven-key estate (encryption, key-agreement, and signing keys) by *business name only* — the active policy decides every algorithm — then switch Classical → Hybrid → Full PQC and watch each vulnerable key rekey to its post-quantum successor the first time you use it. Every key keeps its business handle across the migration; old and new versions are shown side by side with their state and lineage.
+- **A migration map** [view:/playground/cacp]: a table showing which key label serves which operation and what each policy resolves it to under Classical, Hybrid, and Full PQC, with the active mode highlighted.
+- **A live key-object inspector in the Migration tab** [view:/playground/cacp]: the real KMIP objects on the tab's engine — label, unique ID, type, algorithm, state, quantum-safety, and the rekey link from a retired key to its successor.
+- **A KMIP log inside each key tile** [view:/playground/cacp]: every operation you run on a key is logged in place, tagged with the mode (Classical / Hybrid / Full PQC) it ran under and expandable to the underlying policy/KMIP/PKCS#11 events.
+- **Guided "Learn" walkthroughs and an operation Reference in the playground** [view:/playground/cacp]: classical→PQC walkthroughs (create/activate, sign & verify, key encapsulation, hedged hybrid, and more) that run for real against the in-browser engine, plus a per-operation reference with parameter forms and a shared glossary.
+
+### Fixed
+
+- **Signature verification after a post-quantum migration** [view:/playground/cacp]: migrating a signing key to ML-DSA could leave the old public key active and make a valid new signature read as invalid; the whole key pair is now retired together, so verification is reliable across hybrid and full-PQC.
+- **A key-agreement error after switching to a post-quantum policy** [view:/playground/cacp]: establishing a shared secret after migrating a key could fail with a "bad arguments" error because the operation still pointed at the retired key; it now follows the migrated key.
+- **The guided sign-and-verify lessons** [view:/playground/cacp]: verification and key-encapsulation steps failed because the public key wasn't activated first; the lessons now activate both halves.
+
+### Changed
+
+- **The About page's software bill of materials now lists the current engine** [view:/about]: the pqctoday-hsm crypto engine entries were refreshed to v0.10.0 (Ed25519 + classical X25519/X448 KEM, label-only migration).
+
 ## [4.10.0] - 2026-07-05
 
 A crypto-agility, simulation, and accuracy release: the CACP playground gains real Ed25519/ECDH operations with an in-app guide, the simulation adds country-specific standards guidance and a reflective run-complete ending, and a wave of accuracy fixes corrects a report-sharing bug that could silently overwrite a recipient's own assessment, a fabricated compliance evidence chain, a stale CVE feed, and several other content and accessibility issues.
