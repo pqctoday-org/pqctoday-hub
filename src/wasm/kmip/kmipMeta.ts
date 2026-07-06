@@ -60,7 +60,15 @@ export const TAG_NAMES: Record<string, string> = {
   '0x42006C': 'PublicExponent',
 }
 
-export const tagName = (tag: string): string => TAG_NAMES[tag.toUpperCase()] ?? tag
+/** Case-normalize a `0x`-prefixed hex codepoint for dictionary lookup — every
+ * table here keys on a LOWERCASE `0x` prefix + UPPERCASE hex digits. A bare
+ * `.toUpperCase()` on the whole string corrupts the prefix to `0X`, which
+ * then never matches any key regardless of the input's own casing — this
+ * silently broke every `tagName`/`ENUM_NAMES` lookup (raw hex rendered
+ * everywhere instead of names) until fixed here. */
+export const normalizeHexKey = (hex: string): string => '0x' + hex.replace(/^0x/i, '').toUpperCase()
+
+export const tagName = (tag: string): string => TAG_NAMES[normalizeHexKey(tag)] ?? tag
 
 /** ResultStatus enumeration value → label. */
 export const RESULT_STATUS: Record<string, string> = {
@@ -386,6 +394,9 @@ export interface PolicyExample {
   hash?: string
   blockMode?: string
   mechanism?: string
+  /** Key label for label-pattern (`name_pattern`) policies — the Migration
+   * estate's label-only contract. Threads into `dryRun`'s `name` field. */
+  name?: string
 }
 
 export interface PolicyPreset {
@@ -457,6 +468,40 @@ export const POLICY_PRESETS: PolicyPreset[] = [
     example: { op: 'Sign', algorithm: 'ECDSA-P256', date: '2026-07-01' },
   },
   // ── Migration & transition ────────────────────────────────────────────────
+  {
+    file: 'migration-classical.yaml',
+    name: 'migration-classical',
+    label: 'Migration estate · classical',
+    blurb:
+      'The Migration tab’s seven-key classical estate — label-pattern rules map business key names (firmware-release-signing, payments-db-cipher, …) to AES-128/256, X25519/X448, RSA-2048, ECDSA and Ed25519.',
+    tone: 'classical',
+    category: 'Migration & transition',
+    illustrates:
+      'Label-pattern defaults — the app passes only a key NAME; the policy decides every algorithm.',
+    example: { op: 'CreateKeyPair:Sign', algorithm: '', name: 'firmware-release-signing' },
+  },
+  {
+    file: 'migration-hybrid.yaml',
+    name: 'migration-hybrid',
+    label: 'Migration estate · hybrid',
+    blurb:
+      'The Migration tab’s hybrid transition — key agreement → X25519MLKEM768 (classical + PQC in one key), signing → ML-DSA-44; legacy keys auto-rekey on use.',
+    tone: 'hybrid',
+    category: 'Migration & transition',
+    illustrates: 'Hybrid KEM + rekey-on-use — belt-and-braces migration.',
+    example: { op: 'Encapsulate', algorithm: 'X25519', name: 'partner-tls-kex' },
+  },
+  {
+    file: 'migration-pqc.yaml',
+    name: 'migration-pqc',
+    label: 'Migration estate · full PQC',
+    blurb:
+      'The Migration tab’s full-PQC target — ML-KEM / ML-DSA everywhere; every legacy key auto-rekeys to its PQC successor on first use or via ReKey sweep.',
+    tone: 'pqc',
+    category: 'Migration & transition',
+    illustrates: 'Full-PQC defaults + rekey-on-use + substitution-aware ReKey.',
+    example: { op: 'Sign', algorithm: 'RSA-2048', name: 'firmware-release-signing' },
+  },
   {
     file: 'pqc-migration-2030.yaml',
     name: 'pqc-migration-2030',

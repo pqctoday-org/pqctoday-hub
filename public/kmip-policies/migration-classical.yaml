@@ -1,0 +1,118 @@
+# Migration tab — classical estate baseline (the "before" state).
+#
+# The Migration playground's application script passes ONLY key labels
+# (business-role names like `firmware-release-signing`); every crypto
+# parameter below is THIS policy's decision, via label-pattern
+# (`name_pattern`) defaults. Flip to migration-pqc.yaml /
+# migration-hybrid.yaml and the same labels resolve to quantum-safe
+# algorithms — with the legacy keys auto-rekeyed on use or via ReKey sweep.
+#
+# The seven-key classical estate this policy shapes:
+#
+#   vault-archive-cipher      → AES-256      (already quantum-safe)
+#   payments-db-cipher        → AES-128      (Grover margin — at risk)
+#   partner-tls-kex           → X25519       (key agreement, DHKEM-style)
+#   interbank-vpn-kex         → X448         (key agreement, DHKEM-style)
+#   firmware-release-signing  → RSA-2048     (signature)
+#   api-gateway-signing       → ECDSA-P256   (signature)
+#   code-commit-signing       → Ed25519      (signature)
+#
+# Name-patterned defaults are evaluated before generic ones
+# (most-specific-wins), so the generic AES-256 rule below cannot shadow
+# the payments-* AES-128 rule regardless of listing order.
+
+schema_version: 1
+
+metadata:
+  name: migration-classical
+  description: |
+    Classical estate baseline for the Migration tab. Label-pattern rules
+    give each business key class its legacy algorithm; the application
+    passes only key names. Pair with migration-pqc.yaml (pure FIPS
+    203/204 targets) and migration-hybrid.yaml (hybrid KEM + composite
+    signing) to drive the automated rekey story.
+  authority: pqctoday-hsm/demo
+  effective: "always"
+  compliance_mapping:
+    - { framework: "Pre-PQC baseline", status: representative }
+
+rules:
+
+  # ── Encryption keys (Create, symmetric) ───────────────────────────────
+  - type: algorithm_default
+    ops: [Create]
+    name_pattern: "payments-*"
+    default_algorithm: AES-128
+    reason: "Legacy payments DB cipher (AES-128 — flagged quantum-at-risk)"
+
+  - type: algorithm_default
+    ops: [Create]
+    default_algorithm: AES-256
+    reason: "Symmetric default (AES-256, Grover-resistant)"
+
+  # ── Key agreement (CreateKeyPair:KeyAgreement) ────────────────────────
+  - type: algorithm_default
+    ops: ["CreateKeyPair:KeyAgreement"]
+    name_pattern: "partner-*"
+    default_algorithm: X25519
+    reason: "Partner TLS key agreement (X25519, RFC 7748)"
+
+  - type: algorithm_default
+    ops: ["CreateKeyPair:KeyAgreement"]
+    name_pattern: "interbank-*"
+    default_algorithm: X448
+    reason: "Interbank VPN key agreement (X448, RFC 7748)"
+
+  - type: algorithm_default
+    ops: ["CreateKeyPair:KeyAgreement"]
+    default_algorithm: ECDH-P256
+    reason: "Classical KEM fallback for unlabelled requests (ECDH-P256)"
+
+  # ── Signing keys (CreateKeyPair:Sign) ─────────────────────────────────
+  - type: algorithm_default
+    ops: ["CreateKeyPair:Sign"]
+    name_pattern: "firmware-*"
+    default_algorithm: RSA-2048
+    reason: "Firmware release signing (RSA-2048, RSASSA-PSS)"
+
+  - type: algorithm_default
+    ops: ["CreateKeyPair:Sign"]
+    name_pattern: "api-*"
+    default_algorithm: ECDSA-P256
+    reason: "API gateway signing (ECDSA-P256)"
+
+  - type: algorithm_default
+    ops: ["CreateKeyPair:Sign"]
+    name_pattern: "code-*"
+    default_algorithm: Ed25519
+    reason: "Code commit signing (Ed25519, RFC 8032)"
+
+  - type: algorithm_default
+    ops: ["CreateKeyPair:Sign"]
+    default_algorithm: ECDSA-P256
+    reason: "Classical signing fallback for unlabelled requests"
+
+  # ── PQC gated off — this policy IS the before state ──────────────────
+  - type: algorithm_denylist
+    ops:
+      - Create
+      - CreateKeyPair
+      - "CreateKeyPair:KeyAgreement"
+      - "CreateKeyPair:Sign"
+      - "CreateKeyPair:Encrypt"
+      - Sign
+      - Encrypt
+      - Encapsulate
+    algorithms:
+      - ML-KEM-512
+      - ML-KEM-768
+      - ML-KEM-1024
+      - ML-DSA-44
+      - ML-DSA-65
+      - ML-DSA-87
+      - X25519MLKEM768
+      - SecP256r1MLKEM768
+      - ML-DSA-65-Ed25519
+      - SLH-DSA-SHA2-128s
+      - SLH-DSA-SHA2-256s
+    reason: "PQC gated off under the classical baseline — flip policy to migrate"

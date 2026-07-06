@@ -54,7 +54,16 @@ rules:                       # ordered list — order matters (see 2.2)
    match wins**, so write "general default, then specific exception".
    A substitution firing against an *existing* stored key becomes
    **`RekeyAndProceed`** — the transparent-migration decision KMIP alone
-   cannot express.
+   cannot express. Implemented for `Sign` (RSA/ECDSA → ML-DSA) and, since
+   2026-07-05, `Encapsulate` (classical ECDH/X25519/X448 → ML-KEM/hybrid,
+   `encapsulate.rs::rekey_and_encapsulate`) — both **originator** ops that
+   produce fresh output each call, so there's nothing yet to contradict.
+   **Engine invariant:** `algorithm_substitution` can never fire for
+   `Decapsulate`, `DeriveKey`, or `Decrypt` — these **consumer ops**
+   (`policy::rule::is_consumer_op`) operate on material a peer already
+   fixed to a specific algorithm at an earlier call, so there is no
+   "instead use algorithm X" available; a rule naming one of them is
+   rejected at policy-load time, not silently ignored at request time.
 2. **Pass 2 — gating.** All other rules, in file order. **First Deny wins**;
    no Deny ⇒ Allow. A substitution that points at a banned algorithm is
    caught here (no rekey to a forbidden algorithm).
@@ -220,7 +229,8 @@ A batch is **one** KMIP Request Message carrying N operations:
 | …but legacy decrypt stays open | Simulate: op `Decrypt`, algorithm `AES-256`, no attributes → **Allow** |
 | CNSA 2.0 hash gating | Simulate: `Sign`, `ML-DSA-87`, hash `SHA-256` → **Deny**; `SHA-384` → **Allow** |
 | A temporal cutoff | Simulate the same request at two dates (e.g. `Sign` ECDSA-P256 under the 2030 roadmap at 2029 vs 2031) |
-| Rekey-on-use | Activate `pqc` or `auto-migrate-on-use` → workbench `Sign` with an ECDSA/RSA key created under `classical` → watch `RekeyAndProceed` |
+| Rekey-on-use (signing) | Activate `pqc` or `auto-migrate-on-use` → workbench `Sign` with an ECDSA/RSA key created under `classical` → watch `RekeyAndProceed` |
+| Rekey-on-use (key establishment) | Activate `pqc` or `auto-migrate-on-use` → workbench `Encapsulate` with an ECDH-P256/P384 key created under `classical` → watch `RekeyAndProceed`, both new-pair halves land Active, both old-pair halves Deactivated + `x-pqctoday-supersedes`-linked (2026-07-05) |
 | Hybrid opt-in | Simulate `Sign` `ML-DSA-87` with attribute `pqctoday-dual-sign=required` under the hybrid window → **Deny** (composite required); untagged → **Allow** |
 | Batch atomicity | Batch tab → atomic-undo recipe under the `pqc` policy → RSA item fails, earlier AES create is **undone** |
 

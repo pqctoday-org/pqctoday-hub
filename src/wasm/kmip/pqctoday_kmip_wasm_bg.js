@@ -110,11 +110,26 @@ export class KmipPlayground {
   }
   /**
    * Boot a fresh control plane: a `softhsmrustv3` token + user session on
-   * slot 0 (real crypto), the built-in permissive policy wired to the audit
-   * ring (so Plane-1 decisions are visible), and a volatile `MemoryStore`.
+   * `slot` (real crypto; omitted/`undefined` → slot 0, the single-tab
+   * default every existing caller uses), the built-in permissive policy
+   * wired to the audit ring (so Plane-1 decisions are visible), and a
+   * volatile `MemoryStore`.
+   *
+   * The engine's token/slot storage is a `HashMap<u32, TokenState>`
+   * (`rust/src/state.rs`), not a single fixed slot — so a second
+   * `KmipPlayground` in the SAME wasm module instance (e.g. the OASIS
+   * corpus replay booting one engine per test) needs its own slot;
+   * reusing slot 0 while an earlier instance's session on it is still
+   * open fails bootstrap (confirmed empirically: `CK_RV=0x000000b6`).
+   * The engine boots single-slot (only slot 0 pre-registered) —
+   * `state::ensure_slot` is "the multi-slot configuration surface"
+   * (its own doc comment) that brings a new slot online before
+   * `C_InitToken` will accept it; skipping this for a non-zero slot
+   * fails with `CKR_SLOT_ID_INVALID` (confirmed empirically).
+   * @param {number | null} [slot]
    */
-  constructor() {
-    const ret = wasm.kmipplayground_new()
+  constructor(slot) {
+    const ret = wasm.kmipplayground_new(isLikeNone(slot) ? 0x100000001 : slot >>> 0)
     if (ret[2]) {
       throw takeFromExternrefTable0(ret[1])
     }
@@ -2092,6 +2107,31 @@ export function decode_ttlv(bytes) {
   } finally {
     wasm.__wbindgen_free(deferred2_0, deferred2_1, 1)
   }
+}
+
+/**
+ * Encode a JSON tree (`{tag, type, value?, children?}` — the exact shape
+ * `decode_ttlv` emits) to KMIP TTLV wire bytes. The inverse of `decode_ttlv`;
+ * lets a caller build an arbitrary request by hand (any of the 66 KMIP 3.0
+ * operations, not just the ones `run_op`'s friendly `build_payload` below
+ * covers) and hand the resulting bytes to `submit`, which dispatches them
+ * through the exact same path a real request takes. Malformed input here is
+ * a caller bug (a hand-built tree or a corpus-port bug), not a KMIP-protocol
+ * outcome, so it throws rather than returning the `{ok:false,...}` JSON
+ * convention `dry_run`/`load_policy` use.
+ * @param {string} tree_json
+ * @returns {Uint8Array}
+ */
+export function encode_ttlv(tree_json) {
+  const ptr0 = passStringToWasm0(tree_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc)
+  const len0 = WASM_VECTOR_LEN
+  const ret = wasm.encode_ttlv(ptr0, len0)
+  if (ret[3]) {
+    throw takeFromExternrefTable0(ret[2])
+  }
+  var v2 = getArrayU8FromWasm0(ret[0], ret[1]).slice()
+  wasm.__wbindgen_free(ret[0], ret[1] * 1, 1)
+  return v2
 }
 
 export function wasm_start() {

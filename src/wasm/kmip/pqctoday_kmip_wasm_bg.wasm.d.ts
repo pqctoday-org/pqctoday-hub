@@ -3,12 +3,13 @@
 export const memory: WebAssembly.Memory
 export const __wbg_kmipplayground_free: (a: number, b: number) => void
 export const decode_ttlv: (a: number, b: number) => [number, number]
+export const encode_ttlv: (a: number, b: number) => [number, number, number, number]
 export const kmipplayground_audit_snapshot: (a: number, b: number) => [number, number]
 export const kmipplayground_clear_audit: (a: number) => void
 export const kmipplayground_dry_run: (a: number, b: number, c: number) => [number, number]
 export const kmipplayground_list_objects: (a: number) => [number, number]
 export const kmipplayground_load_policy: (a: number, b: number, c: number) => [number, number]
-export const kmipplayground_new: () => [number, number, number]
+export const kmipplayground_new: (a: number) => [number, number, number]
 export const kmipplayground_policy_status: (a: number) => [number, number]
 export const kmipplayground_run_batch: (a: number, b: number, c: number) => [number, number]
 export const kmipplayground_run_op: (a: number, b: number, c: number) => [number, number]
@@ -327,9 +328,9 @@ export const _C_SetOperationState: (a: number, b: number, c: number, d: number, 
 export const _C_SignRecover: (a: number, b: number, c: number, d: number, e: number) => number
 export const _C_VerifyRecover: (a: number, b: number, c: number, d: number, e: number) => number
 export const wasm_start: () => void
-export const _C_GetMechanismList: (a: number, b: number, c: number) => number
 export const _free: (a: number, b: number) => void
 export const _malloc: (a: number) => number
+export const _C_GetMechanismList: (a: number, b: number, c: number) => number
 export const __wbindgen_exn_store: (a: number) => void
 export const __externref_table_alloc: () => number
 export const __wbindgen_externrefs: WebAssembly.Table

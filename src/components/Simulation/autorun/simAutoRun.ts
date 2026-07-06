@@ -23,7 +23,7 @@
 import { useSimulationStore } from '@/store/useSimulationStore'
 import { useModuleStore } from '@/store/useModuleStore'
 import { SIM_TREES, flattenTree, isGatingStep, achievedTreeLevel } from '@/simulation'
-import type { TreeStep, PhaseTree } from '@/simulation'
+import type { TreeStep, PhaseTree, StepKind } from '@/simulation'
 import { isStepComplete, type StepCompletionContext } from '../embedContract'
 import { PHASE_ORDER, LIFECYCLE_PHASES, type PhaseId } from '@/data/frameworkPhases'
 import { PHASE_WIN_LEVEL } from '@/data/phaseMaturity'
@@ -95,6 +95,20 @@ export function gatingStepsForPhaseLevel(phase: PhaseId, level: number): TreeSte
   if (!tree) return []
   const band = tree.levels.find((b) => b.level === level)
   return band ? band.activities.flatMap((a) => a.steps).filter(isGatingStep) : []
+}
+
+/** The optional deep-dive steps of a single phase that belong to one maturity
+ *  band (level), in the same per-activity order `deepDive` is authored. Stamped
+ *  `optional: true` (mirrors `flattenTree`'s own stamping) so any consumer that
+ *  checks `step.optional` sees the same signal regardless of which function
+ *  produced the step. Empty when the phase has no band at that level, or the
+ *  band's activities carry no deep-dive content. */
+export function deepDiveStepsForPhaseLevel(phase: PhaseId, level: number): TreeStep[] {
+  const tree = treeFor(phase)
+  if (!tree) return []
+  const band = tree.levels.find((b) => b.level === level)
+  if (!band) return []
+  return band.activities.flatMap((a) => (a.deepDive ?? []).map((s) => ({ ...s, optional: true })))
 }
 
 /** The maturity level a phase has currently EARNED from live hub state. */
@@ -237,6 +251,69 @@ export function autoRunQueue(): AutoRunQueueItem[] {
   return items
 }
 
+/**
+ * Extended Migration Journey queue — same breadth-first maturity climb as
+ * `autoRunQueue`, but after each phase's gating steps for a level, appends that
+ * same band's deep-dive steps before moving to the next phase. Deep-dive steps
+ * are still deduplicated against everything already queued (a deep-dive tool
+ * that happens to share a completion key with a required step elsewhere is
+ * only shown once), but they never gate — `achievedTreeLevel` only ever reads
+ * `steps`, never `deepDive`, so their presence here is purely additive content,
+ * not a change to what "reaching a level" means.
+ */
+export function autoRunDeepQueue(): AutoRunQueueItem[] {
+  const items: AutoRunQueueItem[] = []
+  const seen = new Set<string>()
+  const phases = PHASE_ORDER.filter(hasTree)
+  for (let level = 1; level <= AUTO_RUN_MAX_LEVEL; level++) {
+    for (const phase of phases) {
+      for (const step of [
+        ...gatingStepsForPhaseLevel(phase, level),
+        ...deepDiveStepsForPhaseLevel(phase, level),
+      ]) {
+        const key = stepDedupeKey(step)
+        if (key !== null) {
+          if (seen.has(key)) continue
+          seen.add(key)
+        }
+        items.push({ phase, step, level })
+      }
+    }
+  }
+  return items
+}
+
+/**
+ * Play This Phase queue — the same genuine, narrated auto-advance as
+ * `autoRunQueue`/`autoRunDeepQueue`, scoped to a single phase's own bands
+ * instead of climbing all 9 at once. Bands are walked in the phase's own
+ * level order (already monotonic — mirrors `stepsForPhase`), so the
+ * level-major invariant `autoRunQueue` relies on holds trivially here too.
+ */
+export function autoRunPhaseQueue(phase: PhaseId, includeDeepDive: boolean): AutoRunQueueItem[] {
+  const items: AutoRunQueueItem[] = []
+  const seen = new Set<string>()
+  const tree = treeFor(phase)
+  if (!tree) return items
+  for (const band of tree.levels) {
+    const steps = includeDeepDive
+      ? [
+          ...gatingStepsForPhaseLevel(phase, band.level),
+          ...deepDiveStepsForPhaseLevel(phase, band.level),
+        ]
+      : gatingStepsForPhaseLevel(phase, band.level)
+    for (const step of steps) {
+      const key = stepDedupeKey(step)
+      if (key !== null) {
+        if (seen.has(key)) continue
+        seen.add(key)
+      }
+      items.push({ phase, step, level: band.level })
+    }
+  }
+  return items
+}
+
 /** The identifier used to match a hand-picked light-stage step (mirrors stepDedupeKey's fields). */
 function stepRef(step: TreeStep): string | undefined {
   switch (step.kind) {
@@ -263,8 +340,15 @@ function stepRef(step: TreeStep): string | undefined {
  * stages contribute their one hand-picked step. Every item's level is normalized to 1
  * so the walkthrough fires no maturity-pass intros (the player also empties the clock
  * plan, so the calendar stays frozen). Reveal order follows revealArtifacts.
+ *
+ * `includeDeepDive` (Executive Overview — Deep Dive): for each `'deep'`-depth stage
+ * only, additionally appends that stage's phase's deep-dive steps across every band
+ * it has (the walkthrough already normalizes level to 1, so deep-dive content is
+ * hoisted the same way the deep-stage reveal steps already are). `'light'` stages are
+ * unaffected — they stay a single hand-picked step either way, since they're meant to
+ * stay brief regardless of depth.
  */
-export function autoRunWalkthroughQueue(): AutoRunQueueItem[] {
+export function autoRunWalkthroughQueue(includeDeepDive = false): AutoRunQueueItem[] {
   const items: AutoRunQueueItem[] = []
   const seen = new Set<string>()
   for (const stage of EXEC_TOUR_STAGES) {
@@ -276,6 +360,12 @@ export function autoRunWalkthroughQueue(): AutoRunQueueItem[] {
           (s) => s.kind === 'activity' && s.artifactType === artifactType
         )
         if (match) steps.push(match)
+      }
+      if (includeDeepDive) {
+        const tree = treeFor(stage.phase)
+        for (const band of tree?.levels ?? []) {
+          steps.push(...deepDiveStepsForPhaseLevel(stage.phase, band.level))
+        }
       }
     } else if (stage.lightStep) {
       const { kind, ref } = stage.lightStep
@@ -326,4 +416,43 @@ export function driveAllPhases(opts: DriveOptions = {}): AutoRunReport {
   })
   const runComplete = LIFECYCLE_PHASES.every((p) => levelOfPhase(p, ctx) >= PHASE_WIN_LEVEL)
   return { phases: results, runComplete }
+}
+
+// ---- PLAY-modal duration estimates (simulation-unified-play-mechanism-plan) -------
+//
+// Weighted by step `kind`, not a flat per-step constant: a multi-step hands-on
+// workshop (e.g. the PKI enrollment WASM lab) runs meaningfully longer than a
+// one-click reference link, and a uniform constant would systematically
+// under/over-estimate paths depending on their step-kind mix. Placeholder minutes —
+// tune once real analytics on completed runs exist; `scenario` is excluded
+// entirely (sandbox-gated bonus content, usually locked/skipped, not something a
+// duration estimate should count against the player).
+const PER_STEP_MINUTES: Partial<Record<StepKind, number>> = {
+  reference: 1,
+  learn: 3,
+  activity: 3,
+  catalog: 2,
+  workshop: 5.5,
+}
+
+/** Approximate minutes to work through a set of steps, weighted by kind. Used
+ *  for the PLAY modal's "~N min (approximate)" labels — never measured wall-clock
+ *  time, always derived from the live tree data so it can't drift stale. */
+export function estimatedMinutes(steps: TreeStep[]): number {
+  return steps.reduce((sum, s) => sum + (PER_STEP_MINUTES[s.kind] ?? 2), 0)
+}
+
+/** All of one phase's steps across every level it has — required only, or
+ *  required + deep-dive. Used by the Play This Phase card (no auto-run queue
+ *  needed for v1, which just deep-links to the board at that phase; this is
+ *  purely for the card's live duration estimate as the phase dropdown changes). */
+export function stepsForPhase(phase: PhaseId, includeDeepDive: boolean): TreeStep[] {
+  const tree = treeFor(phase)
+  if (!tree) return []
+  const steps: TreeStep[] = []
+  for (const band of tree.levels) {
+    steps.push(...gatingStepsForPhaseLevel(phase, band.level))
+    if (includeDeepDive) steps.push(...deepDiveStepsForPhaseLevel(phase, band.level))
+  }
+  return steps
 }

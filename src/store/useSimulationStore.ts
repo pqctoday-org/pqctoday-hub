@@ -38,6 +38,13 @@ export interface SimulationState {
    *  playthrough was interrupted). 0 = no run in progress / start from the top.
    *  Transient run-control state (not part of saveSlice); cleared by reset(). */
   autoRunResumeIndex: number
+  /** The RunMode string of the last-started climb-family run (`'climb'` or
+   *  `'climb-deep'` — walkthrough never resumes, so it's never stored here).
+   *  Untyped as `RunMode` here to avoid an import cycle with the autorun hook;
+   *  narrowed back to `RunMode` at the one call site that resumes with it. Lets
+   *  "▶ Resume" restart the SAME mode (e.g. Extended Migration Journey) instead
+   *  of silently dropping back to plain `climb`. Transient, cleared by reset(). */
+  autoRunLastMode: string | null
   /** Reference resources the player has opened (playbook completion). */
   visitedRefs: string[]
   /** Hands-on workshops the player has opened in-sim (playbook completion). */
@@ -77,6 +84,8 @@ export interface SimulationState {
   setSel: (v: PhaseId) => void
   /** Remember the auto-run playhead so the play button resumes from it (0 = top). */
   setAutoRunResumeIndex: (n: number) => void
+  /** Remember which climb-family mode was last started, for "▶ Resume". */
+  setAutoRunLastMode: (mode: string | null) => void
   /** Record that a reference resource was opened. */
   markRefVisited: (id: string) => void
   /** Record that a hands-on workshop was opened in-sim. */
@@ -151,6 +160,7 @@ const SEED = {
     { sev: 'info', t: 'Q2 2026', txt: 'OpenSSL 3.6 ships ML-DSA hardware acceleration' },
   ] as SimEvent[],
   autoRunResumeIndex: 0,
+  autoRunLastMode: null as string | null,
   visitedRefs: [] as string[],
   visitedWorkshops: [] as string[],
   visitedScenarios: [] as string[],
@@ -239,6 +249,7 @@ export const useSimulationStore = create<SimulationState>()(
       setSeat: (seat) => set({ seat }),
       setSel: (sel) => set({ sel }),
       setAutoRunResumeIndex: (autoRunResumeIndex) => set({ autoRunResumeIndex }),
+      setAutoRunLastMode: (autoRunLastMode) => set({ autoRunLastMode }),
       markRefVisited: (id) =>
         set((s) => (s.visitedRefs.includes(id) ? s : { visitedRefs: [...s.visitedRefs, id] })),
       markWorkshopVisited: (id) =>

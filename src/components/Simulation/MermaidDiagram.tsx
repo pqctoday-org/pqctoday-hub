@@ -5,21 +5,7 @@
  * and only loaded when a diagram is actually shown.
  */
 import { useEffect, useRef, useState } from 'react'
-
-let mermaidPromise: Promise<typeof import('mermaid').default> | null = null
-async function getMermaid() {
-  if (!mermaidPromise) {
-    mermaidPromise = import('mermaid').then((m) => {
-      // 'strict' is safe here: every label passed through `source` is plain
-      // text (quotes stripped, no HTML) generated from static internal data —
-      // never anything a user can type. Keep it strict rather than 'loose' so
-      // that stays true if this ever becomes dynamic.
-      m.default.initialize({ startOnLoad: false, theme: 'neutral', securityLevel: 'strict' })
-      return m.default
-    })
-  }
-  return mermaidPromise
-}
+import { getMermaid } from './mermaidRender'
 
 export function MermaidDiagram({
   source,
