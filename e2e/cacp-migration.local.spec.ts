@@ -47,10 +47,9 @@ test('classical estate: label-only generation, real crypto, tamper detection', a
   // Generate all seven keys label-only; assert the POLICY chose the algorithm.
   for (const k of ESTATE) {
     await page.getByTestId(`migration-generate-${k.id}`).click()
-    await expect(page.getByTestId(`migration-algo-${k.id}`)).toHaveText(
-      `policy chose ${k.algo}`,
-      { timeout: 15_000 }
-    )
+    await expect(page.getByTestId(`migration-algo-${k.id}`)).toHaveText(`policy chose ${k.algo}`, {
+      timeout: 15_000,
+    })
   }
 
   // Length-aware risk badges: 1 safe (AES-256), 6 at risk.

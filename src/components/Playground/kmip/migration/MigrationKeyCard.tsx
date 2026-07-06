@@ -156,7 +156,7 @@ export function MigrationKeyCard({ config, engine, onKeystoreChange, activeMode,
       }
       return r
     },
-    [engine, activeMode],
+    [engine, activeMode]
   )
 
   /** Re-resolve this card's key by its LABEL and update the shown algorithm +
@@ -207,7 +207,7 @@ export function MigrationKeyCard({ config, engine, onKeystoreChange, activeMode,
         onKeystoreChange()
       }
     },
-    [onKeystoreChange, resyncByLabel, algorithm],
+    [onKeystoreChange, resyncByLabel, algorithm]
   )
 
   const refreshFromStore = useCallback(
@@ -218,7 +218,7 @@ export function MigrationKeyCard({ config, engine, onKeystoreChange, activeMode,
         setQuantumSafe(rec.quantumSafe)
       }
     },
-    [engine],
+    [engine]
   )
 
   // ── Generate: label-only — no algorithm, no length, no curve ─────────────
@@ -300,7 +300,7 @@ export function MigrationKeyCard({ config, engine, onKeystoreChange, activeMode,
       setVerdict(
         /Valid/.test(v)
           ? 'valid — signature matches this exact message'
-          : 'INVALID — the message or signature was changed since signing',
+          : 'INVALID — the message or signature was changed since signing'
       )
     })
 
@@ -392,18 +392,41 @@ export function MigrationKeyCard({ config, engine, onKeystoreChange, activeMode,
       {/* per-kind operate area — every field editable */}
       {ids && config.kind === 'symmetric' && (
         <div className="space-y-2">
-          <Field label="Data to encrypt" value={plaintext} onChange={setPlaintext} testId={`migration-plaintext-${config.id}`} />
+          <Field
+            label="Data to encrypt"
+            value={plaintext}
+            onChange={setPlaintext}
+            testId={`migration-plaintext-${config.id}`}
+          />
           <div className="flex gap-2">
-            <Button size="sm" variant="outline" className="h-7 gap-1.5 px-2.5 text-[11px]" onClick={onEncrypt} disabled={busy}>
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-7 gap-1.5 px-2.5 text-[11px]"
+              onClick={onEncrypt}
+              disabled={busy}
+            >
               <Lock size={12} /> Encrypt
             </Button>
-            <Button size="sm" variant="outline" className="h-7 gap-1.5 px-2.5 text-[11px]" onClick={onDecrypt} disabled={busy || !ciphertext}>
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-7 gap-1.5 px-2.5 text-[11px]"
+              onClick={onDecrypt}
+              disabled={busy || !ciphertext}
+            >
               <LockOpen size={12} /> Decrypt
             </Button>
           </div>
           {(ciphertext || iv) && (
             <>
-              <Field label="Ciphertext + tag (hex — edit me and try Decrypt)" value={ciphertext} onChange={setCiphertext} rows={3} testId={`migration-ciphertext-${config.id}`} />
+              <Field
+                label="Ciphertext + tag (hex — edit me and try Decrypt)"
+                value={ciphertext}
+                onChange={setCiphertext}
+                rows={3}
+                testId={`migration-ciphertext-${config.id}`}
+              />
               <Field label="IV (hex)" value={iv} onChange={setIv} rows={1} />
             </>
           )}
@@ -418,23 +441,46 @@ export function MigrationKeyCard({ config, engine, onKeystoreChange, activeMode,
 
       {ids && config.kind === 'sign' && (
         <div className="space-y-2">
-          <Field label="Message to sign" value={message} onChange={setMessage} testId={`migration-message-${config.id}`} />
+          <Field
+            label="Message to sign"
+            value={message}
+            onChange={setMessage}
+            testId={`migration-message-${config.id}`}
+          />
           <div className="flex gap-2">
-            <Button size="sm" variant="outline" className="h-7 gap-1.5 px-2.5 text-[11px]" onClick={onSign} disabled={busy}>
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-7 gap-1.5 px-2.5 text-[11px]"
+              onClick={onSign}
+              disabled={busy}
+            >
               <PenLine size={12} /> Sign
             </Button>
-            <Button size="sm" variant="outline" className="h-7 gap-1.5 px-2.5 text-[11px]" onClick={onVerify} disabled={busy || !signature}>
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-7 gap-1.5 px-2.5 text-[11px]"
+              onClick={onVerify}
+              disabled={busy || !signature}
+            >
               <BadgeCheck size={12} /> Verify
             </Button>
           </div>
           {signature && (
-            <Field label="Signature (hex — edit me and try Verify)" value={signature} onChange={setSignature} rows={3} testId={`migration-signature-${config.id}`} />
+            <Field
+              label="Signature (hex — edit me and try Verify)"
+              value={signature}
+              onChange={setSignature}
+              rows={3}
+              testId={`migration-signature-${config.id}`}
+            />
           )}
           {verdict && (
             <p
               className={cn(
                 'text-[11px] font-medium',
-                verdict.startsWith('valid') ? 'text-status-success' : 'text-status-error',
+                verdict.startsWith('valid') ? 'text-status-success' : 'text-status-error'
               )}
               data-testid={`migration-verdict-${config.id}`}
             >
@@ -447,26 +493,54 @@ export function MigrationKeyCard({ config, engine, onKeystoreChange, activeMode,
       {ids && config.kind === 'kem' && (
         <div className="space-y-2">
           <div className="flex gap-2">
-            <Button size="sm" variant="outline" className="h-7 gap-1.5 px-2.5 text-[11px]" onClick={onEstablish} disabled={busy}>
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-7 gap-1.5 px-2.5 text-[11px]"
+              onClick={onEstablish}
+              disabled={busy}
+            >
               <Handshake size={12} /> Establish shared secret
             </Button>
-            <Button size="sm" variant="outline" className="h-7 gap-1.5 px-2.5 text-[11px]" onClick={onDecapsulate} disabled={busy || !kemCiphertext}>
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-7 gap-1.5 px-2.5 text-[11px]"
+              onClick={onDecapsulate}
+              disabled={busy || !kemCiphertext}
+            >
               <LockOpen size={12} /> Decapsulate
             </Button>
           </div>
           {kemCiphertext && (
-            <Field label="KEM ciphertext (hex — edit me and try Decapsulate)" value={kemCiphertext} onChange={setKemCiphertext} rows={2} testId={`migration-kemct-${config.id}`} />
+            <Field
+              label="KEM ciphertext (hex — edit me and try Decapsulate)"
+              value={kemCiphertext}
+              onChange={setKemCiphertext}
+              rows={2}
+              testId={`migration-kemct-${config.id}`}
+            />
           )}
           {secretA && (
-            <Field label="Shared secret · encapsulator (hex)" value={secretA} onChange={setSecretA} rows={2} />
+            <Field
+              label="Shared secret · encapsulator (hex)"
+              value={secretA}
+              onChange={setSecretA}
+              rows={2}
+            />
           )}
           {secretB && (
             <>
-              <Field label="Shared secret · decapsulator (hex)" value={secretB} onChange={setSecretB} rows={2} />
+              <Field
+                label="Shared secret · decapsulator (hex)"
+                value={secretB}
+                onChange={setSecretB}
+                rows={2}
+              />
               <p
                 className={cn(
                   'text-[11px] font-medium',
-                  secretsMatch ? 'text-status-success' : 'text-status-error',
+                  secretsMatch ? 'text-status-success' : 'text-status-error'
                 )}
                 data-testid={`migration-kem-match-${config.id}`}
               >
@@ -489,7 +563,10 @@ export function MigrationKeyCard({ config, engine, onKeystoreChange, activeMode,
       {/* This use-case's own KMIP log — flat + chronological, each op tagged
           with the mode it ran under. */}
       {opLog.length > 0 && (
-        <details className="rounded-lg border border-border bg-background" data-testid={`migration-log-${config.id}`}>
+        <details
+          className="rounded-lg border border-border bg-background"
+          data-testid={`migration-log-${config.id}`}
+        >
           <summary className="cursor-pointer select-none px-2.5 py-1.5 text-[11px] font-medium">
             <ScrollText size={12} className="mr-1 inline text-primary" />
             KMIP log
@@ -510,7 +587,7 @@ export function MigrationKeyCard({ config, engine, onKeystoreChange, activeMode,
                       'rounded px-1 py-0.5 text-[9px] font-semibold',
                       e.ok
                         ? 'bg-status-success/15 text-status-success'
-                        : 'bg-status-error/15 text-status-error',
+                        : 'bg-status-error/15 text-status-error'
                     )}
                   >
                     {e.ok ? 'OK' : 'refused'}

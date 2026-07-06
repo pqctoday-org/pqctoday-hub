@@ -14,14 +14,19 @@ import { POLICY_PRESETS } from '@/wasm/kmip/kmipMeta'
 
 const yaml = readFileSync(
   join(__dirname, '../../../../../public/kmip-policies/migration-classical.yaml'),
-  'utf8',
+  'utf8'
 )
 
 /** Tiny mirror of the engine's rule glob (`*` any run, `?` one char). */
 const globMatch = (pattern: string, name: string): boolean => {
   const re = new RegExp(
-    '^' + pattern.split('').map((c) => (c === '*' ? '.*' : c === '?' ? '.' : c.replace(/[.+^${}()|[\]\\]/g, '\\$&'))).join('') + '$',
-    'i',
+    '^' +
+      pattern
+        .split('')
+        .map((c) => (c === '*' ? '.*' : c === '?' ? '.' : c.replace(/[.+^${}()|[\]\\]/g, '\\$&')))
+        .join('') +
+      '$',
+    'i'
   )
   return re.test(name)
 }
@@ -66,10 +71,10 @@ describe('migration estate ↔ migration-classical.yaml', () => {
     for (const p of MIGRATION_POLICIES.filter((p) => p.available)) {
       expect(
         POLICY_PRESETS.some((preset) => preset.file === p.file),
-        `${p.file} missing from POLICY_PRESETS`,
+        `${p.file} missing from POLICY_PRESETS`
       ).toBe(true)
       expect(() =>
-        readFileSync(join(__dirname, '../../../../../public/kmip-policies', p.file), 'utf8'),
+        readFileSync(join(__dirname, '../../../../../public/kmip-policies', p.file), 'utf8')
       ).not.toThrow()
     }
   })
