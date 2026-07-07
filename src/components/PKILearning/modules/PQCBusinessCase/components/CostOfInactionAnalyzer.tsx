@@ -99,7 +99,7 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
     md += `| Migration (with delay premium) | ${fmt(delayedResult.totalMigration)} |\n`
     md += `| Expected breach loss | ${fmt(delayedResult.totalBreach)} |\n`
     md += `| Regulatory penalties | ${fmt(delayedResult.totalPenalty)} |\n\n`
-    md += `*Illustrative — IBM Cost of a Data Breach 2024 baselines, NIST IR 8547. Discounted at ${inputs.discountRatePct}% over ${inputs.horizonYears} years; ${Math.round(inputs.residualFactor * 100)}% HNDL residual after migration.*\n`
+    md += `*Illustrative — IBM Cost of a Data Breach 2025 baselines, NIST IR 8547. Discounted at ${inputs.discountRatePct}% over ${inputs.horizonYears} years; ${Math.round(inputs.residualFactor * 100)}% HNDL residual after migration.*\n`
     return md
   }, [
     selectedIndustry,
@@ -313,7 +313,7 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
             {inputs.horizonYears} years, matching the ROI Calculator.
           </p>
           <p className="italic">
-            Illustrative estimates — IBM Cost of a Data Breach 2024 baselines and NIST IR 8547
+            Illustrative estimates — IBM Cost of a Data Breach 2025 baselines and NIST IR 8547
             urgency guidance. Pair with your finance model before committing capital.
           </p>
         </div>

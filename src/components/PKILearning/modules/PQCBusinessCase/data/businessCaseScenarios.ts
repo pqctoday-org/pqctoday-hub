@@ -3,7 +3,7 @@
  * Industry-specific cost-of-inaction profiles for the PQC Business Case module.
  * Used by the CostOfInactionAnalyzer workshop step.
  *
- * Sources: IBM Cost of a Data Breach Report 2024, NIST IR 8547 migration urgency guidance,
+ * Sources: IBM Cost of a Data Breach Report 2025, NIST IR 8547 migration urgency guidance,
  * and industry analyst estimates for PQC migration complexity.
  */
 
