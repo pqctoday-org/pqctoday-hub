@@ -2434,11 +2434,14 @@ export function SimulationView() {
                                   </div>
                                 )}
                                 {/* Deep dive — optional, non-gating extra practice/reading for
-                                  the active band. Never counted in `total`/`done` above. */}
+                                  the active band. Never counted in `total`/`done` above. Boxed
+                                  (not just indented) and badged per-row so it reads as a distinct
+                                  zone even mid-scroll, not a continuation of the required list. */}
                                 {current && bandDeepDive.length > 0 && (
-                                  <div className="ml-3 mt-1 flex flex-col gap-1 border-l border-dashed border-primary/30 pl-3">
-                                    <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.12em] text-primary/60">
-                                      Deep dive — optional, doesn&rsquo;t affect your level
+                                  <div className="ml-3 mt-2 flex flex-col gap-1.5 rounded-lg border border-dashed border-primary/30 bg-primary/[0.03] p-2.5">
+                                    <span className="flex items-center gap-1.5 font-mono text-sim-micro font-bold uppercase tracking-[0.12em] text-primary/70">
+                                      <span aria-hidden="true">✦</span> Deep dive — optional,
+                                      doesn&rsquo;t affect your level
                                     </span>
                                     {bandDeepDive.map((step, i) => {
                                       const sDone = stepDone(step, sel)
@@ -2446,9 +2449,14 @@ export function SimulationView() {
                                       const navigable = canResolveDeepLink(step.to)
                                       const chip = (
                                         <span
-                                          className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${KIND_CHIP[step.kind]}`}
+                                          className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase opacity-70 ${KIND_CHIP[step.kind]}`}
                                         >
                                           {step.kind}
+                                        </span>
+                                      )
+                                      const optionalBadge = (
+                                        <span className="shrink-0 rounded-full border border-dashed border-primary/40 px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wide text-primary/60">
+                                          optional
                                         </span>
                                       )
                                       const cls = `flex w-full items-center gap-2 rounded-md border border-dashed px-2.5 py-1.5 ${
@@ -2475,6 +2483,7 @@ export function SimulationView() {
                                               </span>
                                             )}
                                             {chip}
+                                            {optionalBadge}
                                             <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
                                               {step.label}
                                             </span>
@@ -2505,6 +2514,7 @@ export function SimulationView() {
                                               </span>
                                             )}
                                             {chip}
+                                            {optionalBadge}
                                             <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
                                               {step.label}
                                             </span>
@@ -2522,6 +2532,7 @@ export function SimulationView() {
                                           className="flex w-full items-center gap-2 rounded-md border border-warning/40 bg-warning/5 px-2.5 py-1.5 opacity-60"
                                         >
                                           {chip}
+                                          {optionalBadge}
                                           <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
                                             {step.label}
                                           </span>

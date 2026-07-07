@@ -58,6 +58,33 @@ const WORKSHOP_TOOLS = new Set([
   'tpm-playground',
   'cacp-kmip',
   'tee-channel',
+  // Added 07062026 (learning-resource-gaps Wave 1) — deepDive-only, pairing
+  // already-required Learn modules with practice tools that had no route in.
+  // See simulation-learning-resource-gaps-remediation-plan-07052026.md.
+  'rng-demo',
+  'entropy-test',
+  'qrng-demo',
+  'source-combining',
+  'drbg-demo',
+  'vpn-sim',
+  'pqc-ssh-sim',
+  'hybrid-encrypt',
+  'hybrid-sigs',
+  'firmware-signing',
+  // Added 07062026 (learning-resource-gaps Wave 2) — sector-track tools made
+  // universal deep-dive practice; each id's Learn-module half stays
+  // sector-conditional (see src/simulation/sectorTrack.ts), only the tool
+  // moves here since it isn't actually sector-specific.
+  'api-security-jwt',
+  'email-signing',
+  'token-migration',
+  // Added 07062026 (learning-resource-gaps Wave 3) — brand-new verticals with
+  // no prior route into the sim; placed as deep-dive-only content in the
+  // thinnest bands of P5/Foundations. See the remediation plan's Wave 3 table.
+  'mls-group-messaging',
+  'slh-dsa',
+  'lms-hss',
+  'openssl-studio',
 ])
 const ART_TOOL = {
   'roi-model': 'roi-calculator',
@@ -65,6 +92,12 @@ const ART_TOOL = {
   'crqc-scenario': 'crqc-scenario',
   'raci-matrix': 'raci-builder',
   'policy-draft': 'policy-generator',
+  // Restored 07062026 — present in the shipped 06302026 P0 snapshot (business-
+  // case tools wired in by a158af38/f52cedd4) but missing from this generator
+  // source (pre-existing drift, found while auditing for the deep-dive work).
+  'cost-model-comparison': 'cost-model-explorer',
+  'breach-scenario': 'breach-simulator',
+  'cost-of-inaction': 'cost-of-inaction',
   'program-charter': 'program-charter',
   'initial-scoping': 'initial-scoping',
   'management-tools-audit': 'management-tools-audit',
@@ -264,7 +297,16 @@ const FRAMEWORK = {
       title: 'Build the Budget Structure',
       do: 'Structure funding as a phased multi-year program aligned to existing infrastructure refresh cycles, sized from migration cost estimates and ROI.',
       output: 'Multi-year budget commitment',
-      steps: [A('roi-model', 'Model the multi-year migration budget & ROI')],
+      // Restored 07062026 — the shipped 06302026 snapshot carries 4 steps here
+      // (cost-model-comparison and breach-scenario/cost-of-inaction bracketing
+      // roi-model); this generator only had roi-model. Pre-existing drift,
+      // unrelated to the deep-dive work, found while auditing for it.
+      steps: [
+        A('cost-model-comparison', 'Compare the six costing models before trusting a number'),
+        A('roi-model', 'Model the multi-year migration budget & ROI'),
+        A('breach-scenario', 'Quantify breach exposure (classical vs quantum)'),
+        A('cost-of-inaction', 'Model the cost of inaction (delay vs migrate now)'),
+      ],
     },
     {
       id: '0.3',
@@ -372,6 +414,26 @@ const FRAMEWORK = {
       steps: [
         A('crypto-vulnerability-watch', 'Set up the Crypto-Vulnerability Watch'),
         L('cbom', 'Learn: CBOM-driven continuous discovery'),
+        // Restored 07062026 — present in the shipped 06302026 snapshot but
+        // missing from this generator source (pre-existing drift, unrelated to
+        // the Wave 1 deep-dive work below; fixed here so regenerating doesn't
+        // silently drop it).
+        L(
+          'entropy-randomness',
+          'Learn: what CVE-based vulnerability watch misses (side-channel, quantum progress)'
+        ),
+      ],
+      // Deep dive (optional, non-gating — learning-resource-gaps Wave 1,
+      // 07062026): pairs the required entropy-randomness lesson above with 5
+      // hands-on tools that had no route into the sim until now.
+      deepDive: [
+        W('rng-demo', 'Deep dive — Practice: RNG demo (deterministic vs true randomness)'),
+        W('entropy-test', 'Deep dive — Practice: entropy testing'),
+        W('qrng-demo', 'Deep dive — Practice: QRNG demo'),
+        W('source-combining', 'Deep dive — Practice: combining entropy sources'),
+        W('drbg-demo', 'Deep dive — Practice: SP 800-90A DRBG'),
+        // Added 07062026 (Wave 3) — untouched vertical, no required-module anchor.
+        L('platform-eng-pqc', 'Deep dive — Learn: Platform Engineering & PQC'),
       ],
     },
   ],
@@ -564,6 +626,12 @@ const FRAMEWORK = {
         L('hybrid-crypto', 'Learn: Hybrid Cryptography'),
         C('Pick pilots from the Migrate catalog', 'pilots'),
       ],
+      // Deep dive (Wave 1, 07062026): two hands-on companions to the required
+      // Hybrid Cryptography lesson above — encryption then signatures.
+      deepDive: [
+        W('hybrid-encrypt', 'Deep dive — Practice: hybrid KEM + ECDH encryption'),
+        W('hybrid-sigs', 'Deep dive — Practice: hybrid signature spectrums'),
+      ],
     },
     {
       id: '5.2',
@@ -581,6 +649,12 @@ const FRAMEWORK = {
         L('code-signing', 'Learn: code & firmware signing (Track B — integrity)'),
         A('hybrid-transition', 'Plan the hybrid transition'),
       ],
+      // Deep dive (Wave 1, 07062026): pairs the required vpn-ssh-pqc and
+      // code-signing lessons above with practice tools that had no route in.
+      deepDive: [
+        W('pqc-ssh-sim', 'Deep dive — Practice: PQC SSH simulator'),
+        W('firmware-signing', 'Deep dive — Practice: firmware signing'),
+      ],
     },
     {
       id: '5.3',
@@ -596,6 +670,18 @@ const FRAMEWORK = {
         ),
         A('deployment-playbook', 'Draft a Deployment Playbook'),
       ],
+      // Deep dive (Wave 2, 07062026): 3 tools already used in sector-specific
+      // Learn tracks (telecom/retail/generic IAM — see sectorTrack.ts), made
+      // available here as universal practice regardless of assessed sector.
+      deepDive: [
+        W('api-security-jwt', 'Deep dive — Practice: API Security & JWT Workshop'),
+        W('email-signing', 'Deep dive — Practice: S/MIME & CMS email signing'),
+        W('token-migration', 'Deep dive — Practice: multi-algorithm token/signing migration'),
+        // Added 07062026 (Wave 3) — untouched verticals, no required-module anchor.
+        L('ai-security-pqc', 'Deep dive — Learn: AI Security & PQC'),
+        L('mls-group-messaging', 'Deep dive — Learn: MLS Group Messaging'),
+        W('mls-group-messaging', 'Deep dive — Practice: MLS Group Messaging workshop'),
+      ],
     },
     {
       id: '5.4',
@@ -604,6 +690,8 @@ const FRAMEWORK = {
       do: 'Execute a 6-wave rollout from lab to long tail with success criteria at each stage.',
       output: 'Wave deployment plan',
       steps: [A('mti-negotiator', 'Negotiate the minimum-interop baseline')],
+      // Added 07062026 (Wave 3) — untouched vertical, no required-module anchor.
+      deepDive: [L('automotive-pqc', 'Deep dive — Learn: Automotive PQC')],
     },
     {
       id: '5.5–5.6',
@@ -626,6 +714,20 @@ const FRAMEWORK = {
       do: 'Use AI to triage and enrich, but keep full review rigor on AI-modified cryptographic code.',
       output: null,
       steps: [A('crypto-api-refactor', 'Audit AI-assisted crypto refactors')],
+      // Added 07062026 (Wave 3) — untouched verticals, no required-module
+      // anchor; placed here since 5.7 is P5's thinnest band (1 required step).
+      // NOTE: the plan also proposed the digital-id/bitcoin-flow/solana-flow/
+      // hd-wallet *tools* here, but those 4 are registered in workshopRegistry's
+      // ONBACK_COMPONENTS (a separate contract for the standalone Playground
+      // route, which supplies its own onBack callback) rather than
+      // TOOL_COMPONENTS/WORKSHOP_TOOL_COMPONENTS — embedContract.test.ts (C2)
+      // correctly rejects a workshop step that can't embed in the sim. Kept
+      // only the two Learn halves, which use the separate (and compatible)
+      // SIM_LEARN_MODULES registry.
+      deepDive: [
+        L('digital-id', 'Deep dive — Learn: Digital ID'),
+        L('digital-assets', 'Deep dive — Learn: Digital Assets'),
+      ],
     },
   ],
   p6: [
@@ -643,6 +745,12 @@ const FRAMEWORK = {
         A('infra-modernization-plan', 'Draft the infrastructure modernization plan'),
       ],
       // Deep dive (optional, non-gating — added 07052026, P6 depth wave).
+      // NOTE: Wave 1 proposed adding the pki-workshop *tool* here too (an
+      // accessibility fallback for the sandbox lab above), but 6.1's required
+      // Learn step already uses moduleId 'pki-workshop' — the drift guard
+      // (trees.test.ts) correctly rejects a deepDive id that duplicates a
+      // required id in the same band, even across the learn/workshop
+      // namespaces. Skipped rather than weakening that guard.
       deepDive: [
         W('pki-enrollment', 'Deep dive — Practice: PKI enrollment protocols'),
         W('hybrid-certs', 'Deep dive — Practice: hybrid (classical + PQC) certificate chains'),
@@ -678,7 +786,12 @@ const FRAMEWORK = {
         W('cert-capacity', 'Practice: certificate chain / handshake size'),
         S('ab-handshake-bench', 'Lab: A/B TLS handshake throughput (classical vs hybrid)'),
       ],
-      deepDive: [L('web-gateway-pqc', 'Deep dive — Learn: API Gateways & Reverse Proxies + PQC')],
+      deepDive: [
+        L('web-gateway-pqc', 'Deep dive — Learn: API Gateways & Reverse Proxies + PQC'),
+        // Added 07062026, Wave 1 — pairs the required network-security-pqc
+        // lesson above with a practice tool that had no route into the sim.
+        W('vpn-sim', 'Deep dive — Practice: PQC VPN simulator'),
+      ],
     },
     {
       id: '6.4',
@@ -813,6 +926,15 @@ const FRAMEWORK = {
         L('skills-team-structure', 'Learn: skills & team structure (roles, FTE sizing)'),
         A('skills-team-plan', 'Plan skills & team'),
       ],
+      // Added 07062026 (Wave 3) — untouched verticals, no required-module anchor.
+      deepDive: [
+        L('crypto-dev-apis', 'Deep dive — Learn: Cryptographic APIs & Developer Languages'),
+        L('slh-dsa', 'Deep dive — Learn: SLH-DSA'),
+        W('slh-dsa', 'Deep dive — Practice: SLH-DSA sign & verify'),
+        L('stateful-signatures', 'Deep dive — Learn: Stateful Hash Signatures'),
+        W('lms-hss', 'Deep dive — Practice: LMS/HSS stateful signatures'),
+        W('openssl-studio', 'Deep dive — Practice: OpenSSL Studio'),
+      ],
     },
     {
       id: 'F.4',
@@ -824,6 +946,8 @@ const FRAMEWORK = {
         L('standards-bodies', 'Learn: Standards, Certification & Compliance Bodies'),
         R('compliance', 'Maintain the regulatory & standards alignment map'),
       ],
+      // Added 07062026 (Wave 3) — untouched vertical, no required-module anchor.
+      deepDive: [L('pqc-candidates', 'Deep dive — Learn: PQC Candidates & Lifecycle')],
     },
     {
       id: 'F.5',
