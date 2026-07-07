@@ -65,6 +65,9 @@ export const ROUTE_META: Record<string, RouteMeta> = {
             'PQC Risk Assessment Wizard',
             'Migration Software Catalog',
             'PQC Patent Landscape',
+            'Enterprise PQC Migration Simulation',
+            'CRQC Threat Horizon Dashboard',
+            'PQC Business & Governance Tools',
           ],
         },
         {
