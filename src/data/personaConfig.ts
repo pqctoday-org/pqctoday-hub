@@ -499,13 +499,17 @@ export const INDUSTRY_SLUG_TO_LABEL: Record<string, string> = {
  * Researcher + curious are intentionally empty: researcher wants the
  * full corpus; curious gets a plain-language narrative card instead
  * (see `personaSummary` in ThreatsDashboard).
+ *
+ * 'Cross-cutting & Other' is included for every narrowed persona — it
+ * covers threats (e.g. NIST FIPS finalization, cross-industry mandates)
+ * that don't belong to any single sector but are broadly relevant.
  */
 export const PERSONA_THREATS_DEFAULT_INDUSTRIES: Record<PersonaId, string[]> = {
-  executive: ['Finance & Banking', 'Government & Defense'],
-  developer: ['Technology'],
-  architect: ['Technology', 'Telecommunications'],
+  executive: ['Finance & Banking', 'Government & Defense', 'Cross-cutting & Other'],
+  developer: ['Technology', 'Cross-cutting & Other'],
+  architect: ['Technology', 'Telecommunications', 'Cross-cutting & Other'],
   researcher: [],
-  ops: ['Energy & Utilities', 'Telecommunications'],
+  ops: ['Energy & Utilities', 'Telecommunications', 'Cross-cutting & Other'],
   curious: [],
 }
 
@@ -525,11 +529,17 @@ export const INDUSTRY_TO_THREATS_MAP: Record<string, string[]> = {
     'Internet of Things (IoT)',
     'Media / Entertainment / DRM',
     'Supply Chain / Logistics',
+    'Hardware Security Modules',
   ],
-  'Energy & Utilities': ['Energy / Critical Infrastructure', 'Water / Wastewater'],
+  'Energy & Utilities': [
+    'Energy / Critical Infrastructure',
+    'Water / Wastewater',
+    'Critical Infrastructure',
+  ],
   Automotive: ['Automotive / Connected Vehicles', 'Rail / Transit'],
   Aerospace: ['Aerospace / Aviation'],
   'Retail & E-Commerce': ['Retail / E-Commerce'],
+  'Cross-cutting & Other': ['Cross-Industry', 'Education / Research'],
   Other: [],
 }
 
