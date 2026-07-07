@@ -26,6 +26,7 @@ import {
   GitMerge,
   Download,
   Link2,
+  ChevronDown,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -313,9 +314,18 @@ function SupplyChainRiskGrid({ entriesMap }: { entriesMap: Map<string, LayerMatr
   return <HeatmapGrid rows={rows} columns={columns} cells={cells} colorScale="risk" />
 }
 
-export const SupplyChainRiskMatrix: React.FC<{ scorecardOutput?: ScorecardOutput | null }> = ({
-  scorecardOutput,
-}) => {
+export const SupplyChainRiskMatrix: React.FC<{
+  scorecardOutput?: ScorecardOutput | null
+  /** 'glass' (default) matches this component's home in the Learn-module vendor-
+   *  risk wizard. Migrate's asset-first workbench uses flat cards everywhere
+   *  else, so it mounts this with 'flat' instead of a global restyle. */
+  variant?: 'glass' | 'flat'
+}> = ({ scorecardOutput, variant = 'glass' }) => {
+  const cardClass = (extra = '') =>
+    variant === 'flat'
+      ? `rounded-xl border border-border bg-card ${extra}`.trim()
+      : `glass-panel ${extra}`.trim()
+  const [docsOpen, setDocsOpen] = useState(false)
   const myProducts = useSelectedProductIds()
   const {
     vendorsByLayer,
@@ -670,9 +680,11 @@ export const SupplyChainRiskMatrix: React.FC<{ scorecardOutput?: ScorecardOutput
         </div>
       )}
 
-      {/* Scorecard import summary from Step 2 */}
+      {/* Scorecard import summary from Step 2 — only ever reachable when a caller
+          passes scorecardOutput (the Learn-module wizard); Migrate's workbench
+          mounts this with none, so this whole block stays dead code there. */}
       {scorecardOutput && scorecardOutput.rows.length > 0 && (
-        <div className="glass-panel p-4">
+        <div className={cardClass('p-4')}>
           <PreFilledBanner
             summary={`Vendor data imported from Step 2 scorecard — ${scorecardOutput.rows.length} vendor${scorecardOutput.rows.length !== 1 ? 's' : ''}.`}
           />
@@ -727,7 +739,7 @@ export const SupplyChainRiskMatrix: React.FC<{ scorecardOutput?: ScorecardOutput
       )}
 
       {/* Likelihood × Impact Risk Matrix */}
-      <div className="glass-panel p-4">
+      <div className={cardClass('p-4')}>
         <h3 className="text-base font-semibold text-foreground mb-1">
           Supply Chain Risk Matrix (Likelihood × Impact)
         </h3>
@@ -758,7 +770,7 @@ export const SupplyChainRiskMatrix: React.FC<{ scorecardOutput?: ScorecardOutput
 
       {/* Product Dependencies */}
       {dependencyRelations.length > 0 && (
-        <div className="glass-panel p-4">
+        <div className={cardClass('p-4')}>
           <div className="flex items-center gap-2 mb-1">
             <Link2 size={16} className="text-primary" />
             <h3 className="text-base font-semibold text-foreground">Product Dependencies</h3>
@@ -810,7 +822,7 @@ export const SupplyChainRiskMatrix: React.FC<{ scorecardOutput?: ScorecardOutput
           const label = layerDef?.label ?? stat.layerId
 
           return (
-            <div key={stat.layerId} className="glass-panel p-4">
+            <div key={stat.layerId} className={cardClass('p-4')}>
               {/* Layer header — matches InfrastructureSelector pattern */}
               <div className="flex items-center gap-3 mb-4">
                 <div className={`p-2 rounded-lg bg-muted/20 border ${borderColor} ${iconColor}`}>
@@ -861,14 +873,14 @@ export const SupplyChainRiskMatrix: React.FC<{ scorecardOutput?: ScorecardOutput
 
       {/* Summary Statistics */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="glass-panel p-4 text-center">
+        <div className={cardClass('p-4 text-center')}>
           <p className="text-sm text-muted-foreground mb-1">Total Products Tracked</p>
           <p className="text-3xl font-bold text-foreground">{totalProducts}</p>
           <p className="text-xs text-muted-foreground mt-1">
             across {layerStats.length} infrastructure layers
           </p>
         </div>
-        <div className="glass-panel p-4 text-center">
+        <div className={cardClass('p-4 text-center')}>
           <p className="text-sm text-muted-foreground mb-1">PQC Ready</p>
           <p
             className={`text-3xl font-bold ${overallPqcPct >= 50 ? 'text-status-success' : 'text-status-warning'}`}
@@ -879,7 +891,7 @@ export const SupplyChainRiskMatrix: React.FC<{ scorecardOutput?: ScorecardOutput
             {pqcReadyCount} of {totalProducts} products
           </p>
         </div>
-        <div className="glass-panel p-4 text-center">
+        <div className={cardClass('p-4 text-center')}>
           <p className="text-sm text-muted-foreground mb-1">FIPS Validated</p>
           <p
             className={`text-3xl font-bold ${overallFipsPct >= 50 ? 'text-status-success' : 'text-status-warning'}`}
@@ -893,7 +905,7 @@ export const SupplyChainRiskMatrix: React.FC<{ scorecardOutput?: ScorecardOutput
       </div>
 
       {/* CSWP.39 §5.3 — CBOM by 6 asset classes */}
-      <div className="glass-panel p-4">
+      <div className={cardClass('p-4')}>
         <h3 className="text-base font-semibold text-foreground mb-1">
           CBOM — CSWP.39 §5.3 (6 asset classes)
         </h3>
@@ -926,62 +938,79 @@ export const SupplyChainRiskMatrix: React.FC<{ scorecardOutput?: ScorecardOutput
         </div>
       </div>
 
-      {/* CSWP.39 §5.3 — Pipeline + Refresh + CMDB metadata */}
-      <div className="glass-panel p-4 space-y-3">
-        <div>
-          <h3 className="text-base font-semibold text-foreground">
-            Inventory Pipeline (CSWP.39 §5.3)
-          </h3>
-          <p className="text-xs text-muted-foreground mt-1">
-            Document the upstream sources that should keep the CBOM fresh and the cadence at which
-            they refresh it. Educational only — these notes export with the artifact below.
-          </p>
-        </div>
-        <div>
-          <label
-            htmlFor="cswp39-pipeline-sources"
-            className="text-xs font-medium text-foreground block mb-1"
-          >
-            Pipeline sources (SBOM / CMDB / scanners feeding the CBOM)
-          </label>
-          <textarea
-            id="cswp39-pipeline-sources"
-            className="w-full text-sm rounded-md border border-input bg-background p-2 min-h-[60px]"
-            placeholder="e.g., CycloneDX SBOMs from CI; ServiceNow CMDB nightly export; Keyfactor AgileSec scan output"
-            value={pipelineSources}
-            onChange={(e) => setPipelineSources(e.target.value)}
+      {/* CSWP.39 §5.3 — Pipeline + Refresh + CMDB metadata. Collapsed by default
+          (fix #12) — optional documentation, not required to use the matrix. */}
+      <div className={cardClass('p-4')}>
+        <Button
+          variant="ghost"
+          onClick={() => setDocsOpen((v) => !v)}
+          aria-expanded={docsOpen}
+          className="flex h-auto w-full items-start justify-between gap-3 whitespace-normal p-0 text-left font-normal"
+        >
+          <div>
+            <h3 className="text-base font-semibold text-foreground">
+              Document your pipeline (optional)
+            </h3>
+            <p className="text-xs text-muted-foreground mt-1">
+              Note the upstream sources that keep the CBOM fresh and the cadence at which they
+              refresh it. Educational only — these notes export with the artifact below.
+            </p>
+          </div>
+          <ChevronDown
+            size={16}
+            className={`mt-1 shrink-0 text-muted-foreground transition-transform ${docsOpen ? 'rotate-180' : ''}`}
+            aria-hidden
           />
-        </div>
-        <div>
-          <label
-            htmlFor="cswp39-refresh-cadence"
-            className="text-xs font-medium text-foreground block mb-1"
-          >
-            Refresh cadence
-          </label>
-          <Input
-            id="cswp39-refresh-cadence"
-            type="text"
-            placeholder="Daily / Weekly / Quarterly / Annually"
-            value={refreshCadence}
-            onChange={(e) => setRefreshCadence(e.target.value)}
-          />
-        </div>
-        <div>
-          <label
-            htmlFor="cswp39-cmdb-mapping"
-            className="text-xs font-medium text-foreground block mb-1"
-          >
-            CMDB → CBOM mapping notes
-          </label>
-          <textarea
-            id="cswp39-cmdb-mapping"
-            className="w-full text-sm rounded-md border border-input bg-background p-2 min-h-[60px]"
-            placeholder="Which CMDB asset fields map to CBOM fields (asset class, criticality, FIPS status, ESV status)…"
-            value={cmdbMapping}
-            onChange={(e) => setCmdbMapping(e.target.value)}
-          />
-        </div>
+        </Button>
+        {docsOpen && (
+          <div className="mt-3 space-y-3">
+            <div>
+              <label
+                htmlFor="cswp39-pipeline-sources"
+                className="text-xs font-medium text-foreground block mb-1"
+              >
+                Pipeline sources (SBOM / CMDB / scanners feeding the CBOM)
+              </label>
+              <textarea
+                id="cswp39-pipeline-sources"
+                className="w-full text-sm rounded-md border border-input bg-background p-2 min-h-[60px]"
+                placeholder="e.g., CycloneDX SBOMs from CI; ServiceNow CMDB nightly export; Keyfactor AgileSec scan output"
+                value={pipelineSources}
+                onChange={(e) => setPipelineSources(e.target.value)}
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="cswp39-refresh-cadence"
+                className="text-xs font-medium text-foreground block mb-1"
+              >
+                Refresh cadence
+              </label>
+              <Input
+                id="cswp39-refresh-cadence"
+                type="text"
+                placeholder="Daily / Weekly / Quarterly / Annually"
+                value={refreshCadence}
+                onChange={(e) => setRefreshCadence(e.target.value)}
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="cswp39-cmdb-mapping"
+                className="text-xs font-medium text-foreground block mb-1"
+              >
+                CMDB → CBOM mapping notes
+              </label>
+              <textarea
+                id="cswp39-cmdb-mapping"
+                className="w-full text-sm rounded-md border border-input bg-background p-2 min-h-[60px]"
+                placeholder="Which CMDB asset fields map to CBOM fields (asset class, criticality, FIPS status, ESV status)…"
+                value={cmdbMapping}
+                onChange={(e) => setCmdbMapping(e.target.value)}
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Export */}

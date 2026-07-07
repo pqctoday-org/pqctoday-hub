@@ -1,11 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, RotateCcw } from 'lucide-react'
 import { REPLACE_ASSETS, DECISIONS } from '@/data/migrationAssets'
+import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
+import { Button } from '../../ui/button'
+import { ConfirmButton } from './workbenchUi'
 import type { MigrationPosture } from './useMigrationPlan'
 
 const TOTAL_ASSETS = REPLACE_ASSETS.length
 
-export function PostureCommandCenter({ posture }: { posture: MigrationPosture }) {
+export function PostureCommandCenter({
+  posture,
+  onGoToReplace,
+}: {
+  posture: MigrationPosture
+  onGoToReplace: () => void
+}) {
+  const clearPlan = useMigrateSelectionStore((s) => s.clearPlan)
   const {
     plannedAssets,
     readyN,
@@ -16,7 +26,23 @@ export function PostureCommandCenter({ posture }: { posture: MigrationPosture })
     nearestYear,
     nearestAsset,
     nextMove,
+    foundations,
   } = posture
+
+  if (plannedAssets.length === 0 && foundations.length === 0) {
+    return (
+      <div className="rounded-2xl border border-dashed border-border p-8 text-center">
+        <p className="text-sm font-semibold text-foreground">Build your migration plan</p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Pick the cryptography you run — TLS, VPN, SSH, certs and more — to get a sequenced,
+          quantum-safe plan aligned to NIST IR 8547 &amp; CNSA 2.0.
+        </p>
+        <Button variant="gradient" size="sm" className="mt-3" onClick={onGoToReplace}>
+          Add what you run
+        </Button>
+      </div>
+    )
+  }
 
   return (
     <div className="rounded-2xl border border-secondary/30 bg-gradient-to-br from-primary/[0.06] to-secondary/[0.04] p-4">
@@ -81,6 +107,18 @@ export function PostureCommandCenter({ posture }: { posture: MigrationPosture })
             Wave {nextMove.asset.wave} · {nextMove.asset.cnsaYear}
           </span>
         )}
+        <ConfirmButton
+          size="sm"
+          className="shrink-0 text-muted-foreground hover:text-foreground"
+          onConfirm={clearPlan}
+          confirmChildren={
+            <>
+              <RotateCcw size={13} /> Clear it all?
+            </>
+          }
+        >
+          <RotateCcw size={13} /> Start over
+        </ConfirmButton>
       </div>
     </div>
   )
