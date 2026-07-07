@@ -547,7 +547,7 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
       },
     ],
     dataSources: [
-      'Industry breach cost baselines from IBM Cost of a Data Breach Report 2024.',
+      'Industry breach cost baselines from IBM Cost of a Data Breach Report 2025.',
       'Compliance penalty baselines from published regulatory enforcement data (GDPR Art. 83, HIPAA, PCI SSC, NERC, MiCA, etc.).',
       'Infrastructure layer cost estimates based on industry migration complexity analysis.',
     ],

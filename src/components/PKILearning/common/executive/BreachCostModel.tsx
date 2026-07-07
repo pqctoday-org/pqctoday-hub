@@ -1,20 +1,62 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo, useEffect } from 'react'
-import { TrendingUp, AlertTriangle, DollarSign, Sliders, Zap, Info, Percent } from 'lucide-react'
+import {
+  TrendingUp,
+  AlertTriangle,
+  DollarSign,
+  Sliders,
+  Zap,
+  Info,
+  Percent,
+  Clock,
+  BookOpen,
+} from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { resolveIndustryBreachBaseline } from '@/utils/roiMath'
-import { computeBreachCosts, HNDL_MULTIPLIER_CAP } from '@/utils/breachCostModel'
+import { US_VS_GLOBAL_BREACH_COST_MULTIPLIER } from '@/data/roiBaselines'
+import {
+  computeBreachCosts,
+  HNDL_MULTIPLIER_CAP,
+  DATA_SHELF_LIFE_YEARS,
+  DATA_SHELF_LIFE_HAS_CITATION,
+  DATA_SENSITIVITY_LABELS,
+  type DataSensitivityClass,
+} from '@/utils/breachCostModel'
+import { computeMoscaVerdict, costOfWaiting } from '@/utils/moscaTheorem'
 
 interface BreachCostModelProps {
   industry?: string
-  onCostCalculated?: (costs: { classicalCost: number; quantumCost: number; delta: number }) => void
+  onCostCalculated?: (costs: {
+    classicalCost: number
+    quantumCost: number
+    delta: number
+    pCrqc: number
+    quantumALE: number
+    latestSafeStartYear: number
+    alreadyLate: boolean
+    dataSensitivityClass: DataSensitivityClass
+    yearsOfData: number
+    hndlFactorPct: number
+    annualBreachProbPct: number
+  }) => void
 }
 
 function formatCurrency(amount: number): string {
-  if (amount >= 1_000_000_000) return `$${(amount / 1_000_000_000).toFixed(1)}B`
-  if (amount >= 1_000_000) return `$${(amount / 1_000_000).toFixed(1)}M`
-  if (amount >= 1_000) return `$${(amount / 1_000).toFixed(0)}K`
-  return `$${amount.toFixed(0)}`
+  const sign = amount < 0 ? '-' : ''
+  const a = Math.abs(amount)
+  if (a >= 1_000_000_000) return `${sign}$${(a / 1_000_000_000).toFixed(1)}B`
+  if (a >= 1_000_000) return `${sign}$${(a / 1_000_000).toFixed(1)}M`
+  if (a >= 1_000) return `${sign}$${(a / 1_000).toFixed(0)}K`
+  return `${sign}$${a.toFixed(0)}`
 }
+
+const DATA_CLASS_OPTIONS: DataSensitivityClass[] = [
+  'general-pii',
+  'payment-card',
+  'health-record',
+  'ip-trade-secret',
+  'state-secret',
+]
 
 export const BreachCostModel: React.FC<BreachCostModelProps> = ({
   industry = 'Other',
@@ -26,22 +68,61 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
   const [yearsOfData, setYearsOfData] = useState(5)
   const [annualBreachProbPct, setAnnualBreachProbPct] = useState(15)
   const [hndlFactorPct, setHndlFactorPct] = useState(30)
+  const [dataSensitivityClass, setDataSensitivityClass] =
+    useState<DataSensitivityClass>('general-pii')
+  const [planningHorizonYears, setPlanningHorizonYears] = useState(10)
+  const [discountRateAnnual, setDiscountRateAnnual] = useState(0.06)
+  const [migrationDurationYears, setMigrationDurationYears] = useState(3)
+  const [region, setRegion] = useState<'global' | 'us'>('global')
 
-  // Single source of truth — the same IBM 2024 baseline the ROI Calculator and
+  const asOfYear = useMemo(() => new Date().getFullYear(), [])
+
+  // Single source of truth — the same IBM 2025 baseline the ROI Calculator and
   // Cost Model Explorer use. No private, drifted table.
-  const baseline = resolveIndustryBreachBaseline(industry)
+  const globalBaseline = resolveIndustryBreachBaseline(industry)
+  const baseline =
+    region === 'us' ? globalBaseline * US_VS_GLOBAL_BREACH_COST_MULTIPLIER : globalBaseline
 
-  const costs = useMemo(
-    () =>
-      computeBreachCosts({
-        baseline,
-        breachScale,
-        yearsOfData,
-        hndlFactorPct,
-        annualBreachProbPct,
-      }),
-    [baseline, breachScale, yearsOfData, hndlFactorPct, annualBreachProbPct]
+  const modelInputs = useMemo(
+    () => ({
+      baseline,
+      breachScale,
+      yearsOfData,
+      hndlFactorPct,
+      annualBreachProbPct,
+      dataSensitivityClass,
+      asOfYear,
+      planningHorizonYears,
+      discountRateAnnual,
+    }),
+    [
+      baseline,
+      breachScale,
+      yearsOfData,
+      hndlFactorPct,
+      annualBreachProbPct,
+      dataSensitivityClass,
+      asOfYear,
+      planningHorizonYears,
+      discountRateAnnual,
+    ]
   )
+
+  const costs = useMemo(() => computeBreachCosts(modelInputs), [modelInputs])
+
+  const shelfLifeYears = DATA_SHELF_LIFE_YEARS[dataSensitivityClass]
+  const shelfLifeHasCitation = DATA_SHELF_LIFE_HAS_CITATION[dataSensitivityClass]
+
+  const mosca = useMemo(
+    () =>
+      computeMoscaVerdict(
+        { shelfLifeYears, migrationDurationYears, crqcScenario: 'consensus' },
+        asOfYear
+      ),
+    [shelfLifeYears, migrationDurationYears, asOfYear]
+  )
+
+  const waitTwoYearsCost = useMemo(() => costOfWaiting(modelInputs, 2), [modelInputs])
 
   // Emit in an effect, not during render/useMemo (the previous model called the
   // parent setter inside useMemo — a side effect during render).
@@ -50,8 +131,24 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
       classicalCost: costs.classicalSLE,
       quantumCost: costs.quantumSLE,
       delta: costs.delta,
+      pCrqc: costs.pCrqc,
+      quantumALE: costs.quantumALE,
+      latestSafeStartYear: mosca.latestSafeStartYear,
+      alreadyLate: mosca.alreadyLate,
+      dataSensitivityClass,
+      yearsOfData,
+      hndlFactorPct,
+      annualBreachProbPct,
     })
-  }, [onCostCalculated, costs.classicalSLE, costs.quantumSLE, costs.delta])
+  }, [
+    onCostCalculated,
+    costs,
+    mosca,
+    dataSensitivityClass,
+    yearsOfData,
+    hndlFactorPct,
+    annualBreachProbPct,
+  ])
 
   const pctIncrease = costs.classicalSLE > 0 ? (costs.delta / costs.classicalSLE) * 100 : 0
 
@@ -66,15 +163,44 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
         <div className="mt-4">
           <div className="bg-muted/50 rounded-lg p-3 flex items-start gap-2 mb-4">
             <Info size={14} className="text-muted-foreground shrink-0 mt-0.5" />
-            <p className="text-xs text-muted-foreground">
-              Industry baseline ({industry}):{' '}
-              <span className="font-mono text-foreground font-semibold">
-                {formatCurrency(baseline)}
-              </span>{' '}
-              average total breach cost &mdash; IBM Cost of a Data Breach 2024. This total already
-              includes detection, notification, lost business and reputational damage, so those are
-              not added again.
-            </p>
+            <div className="text-xs text-muted-foreground">
+              <p>
+                Industry baseline ({industry}, {region === 'us' ? 'US' : 'global'}):{' '}
+                <span className="font-mono text-foreground font-semibold">
+                  {formatCurrency(baseline)}
+                </span>{' '}
+                average total breach cost &mdash; IBM Cost of a Data Breach 2025. This total already
+                includes detection, notification, lost business and reputational damage, so those
+                are not added again.
+              </p>
+              <div className="flex items-center gap-2 mt-2">
+                <span>Region:</span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setRegion('global')}
+                  className={`h-auto px-2 py-0.5 rounded-full border text-[11px] ${
+                    region === 'global'
+                      ? 'bg-primary text-primary-foreground border-primary'
+                      : 'border-border hover:text-foreground'
+                  }`}
+                >
+                  Global
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setRegion('us')}
+                  className={`h-auto px-2 py-0.5 rounded-full border text-[11px] ${
+                    region === 'us'
+                      ? 'bg-primary text-primary-foreground border-primary'
+                      : 'border-border hover:text-foreground'
+                  }`}
+                >
+                  US ({US_VS_GLOBAL_BREACH_COST_MULTIPLIER.toFixed(1)}× global)
+                </Button>
+              </div>
+            </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
@@ -144,6 +270,106 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
                 <span className="text-sm font-mono text-primary">{annualBreachProbPct}%</span>
                 <span>50%</span>
               </div>
+              <p className="text-[10px] text-muted-foreground mt-1">
+                Default 15%; size-specific anchors (Cyentia IRIS 2025): SMB ~2%/yr, average org
+                ~9%/yr, Fortune-1000-class ~25%/yr.
+              </p>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      {/* ── Data sensitivity & horizon ── */}
+      <details className="glass-panel p-4" open>
+        <summary className="text-sm font-semibold text-foreground cursor-pointer flex items-center gap-2">
+          <Clock size={16} className="text-primary shrink-0" />
+          Data Sensitivity &amp; Planning Horizon
+        </summary>
+        <div className="mt-4 space-y-4">
+          <div>
+            <span
+              id="data-sensitivity-label"
+              className="block text-sm font-medium text-foreground mb-2"
+            >
+              What kind of data is at HNDL risk?
+            </span>
+            <div
+              className="flex flex-wrap gap-2"
+              role="group"
+              aria-labelledby="data-sensitivity-label"
+            >
+              {DATA_CLASS_OPTIONS.map((key) => (
+                <Button
+                  key={key}
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setDataSensitivityClass(key)}
+                  className={`h-auto text-xs px-3 py-1.5 rounded-full border transition-colors ${
+                    dataSensitivityClass === key
+                      ? 'bg-primary text-primary-foreground border-primary'
+                      : 'border-border text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {DATA_SENSITIVITY_LABELS[key]}
+                </Button>
+              ))}
+            </div>
+            <p className="text-[10px] text-muted-foreground mt-2">
+              Shelf life: <span className="font-mono text-foreground">{shelfLifeYears} years</span>{' '}
+              &mdash; how long this data class stays damaging if later decrypted.{' '}
+              {shelfLifeHasCitation
+                ? 'Approximates automatic-declassification schedules (e.g. US EO 13526: 25 years).'
+                : 'Assumption — no single authoritative source; adjust to your own retention/sensitivity policy.'}
+            </p>
+          </div>
+          <div>
+            <label
+              htmlFor="planning-horizon"
+              className="block text-sm font-medium text-foreground mb-2"
+            >
+              Planning Horizon
+            </label>
+            <input
+              id="planning-horizon"
+              type="range"
+              min={5}
+              max={20}
+              value={planningHorizonYears}
+              onChange={(e) => setPlanningHorizonYears(parseInt(e.target.value))}
+              className="w-full accent-primary"
+            />
+            <div className="flex justify-between text-xs text-muted-foreground mt-1">
+              <span>5 yrs</span>
+              <span className="text-sm font-mono text-primary">{planningHorizonYears} years</span>
+              <span>20 yrs</span>
+            </div>
+            <p className="text-[10px] text-muted-foreground mt-1">
+              Also the window used to look up CRQC-arrival probability below.
+            </p>
+          </div>
+          <div>
+            <label
+              htmlFor="discount-rate"
+              className="block text-sm font-medium text-foreground mb-2"
+            >
+              Discount Rate (for future losses)
+            </label>
+            <input
+              id="discount-rate"
+              type="range"
+              min={0}
+              max={0.12}
+              step={0.01}
+              value={discountRateAnnual}
+              onChange={(e) => setDiscountRateAnnual(parseFloat(e.target.value))}
+              className="w-full accent-primary"
+            />
+            <div className="flex justify-between text-xs text-muted-foreground mt-1">
+              <span>0%</span>
+              <span className="text-sm font-mono text-primary">
+                {Math.round(discountRateAnnual * 100)}%
+              </span>
+              <span>12%</span>
             </div>
           </div>
         </div>
@@ -159,11 +385,13 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
           <div className="bg-muted/50 rounded-lg p-3 flex items-start gap-2 mb-4">
             <Info size={14} className="text-muted-foreground shrink-0 mt-0.5" />
             <p className="text-xs text-muted-foreground">
-              The single quantum effect modelled here is{' '}
-              <strong className="text-foreground">harvest-now-decrypt-later</strong>: once a quantum
-              computer exists, a breach exposes years of accumulated harvested data, not just
-              today&apos;s. Amplification = 1 + (years × exposure), capped at{' '}
-              {1 + HNDL_MULTIPLIER_CAP}×.
+              Two separate ingredients: (1){' '}
+              <strong className="text-foreground">harvest-now-decrypt-later</strong> amplification —
+              once a quantum computer exists, a breach exposes years of accumulated harvested data,
+              decayed by how long this data class stays sensitive; and (2) the{' '}
+              <strong className="text-foreground">probability a CRQC exists</strong> within your
+              planning horizon, from the Global Risk Institute&apos;s 2025 expert survey. The
+              headline expected-loss figure blends both — it does not assume a CRQC already exists.
             </p>
           </div>
           <div className="max-w-sm">
@@ -189,8 +417,9 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
               <span>100%</span>
             </div>
             <p className="text-xs text-muted-foreground mt-2 font-mono">
-              Amplification:{' '}
-              <span className="text-foreground font-bold">{costs.hndlMultiplier.toFixed(2)}×</span>
+              Amplification (decay-adjusted):{' '}
+              <span className="text-foreground font-bold">{costs.hndlMultiplier.toFixed(2)}×</span>{' '}
+              &middot; decay factor {costs.decayFactor.toFixed(2)}
             </p>
           </div>
         </div>
@@ -199,7 +428,7 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
       {/* ── Per-event cost comparison (SLE) ── */}
       <div>
         <p className="text-xs text-muted-foreground mb-2">
-          Cost <em>if</em> a breach occurs (single-loss expectancy):
+          Cost <em>if</em> a breach occurs, assuming a CRQC already exists (single-loss expectancy):
         </p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="glass-panel p-6 text-center">
@@ -216,30 +445,35 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
             <p className="text-3xl font-bold text-status-error">
               {formatCurrency(costs.quantumSLE)}
             </p>
-            <p className="text-xs text-muted-foreground mt-2">Includes HNDL historical exposure</p>
+            <p className="text-xs text-muted-foreground mt-2">
+              If CRQC exists — includes decayed HNDL exposure
+            </p>
           </div>
           <div className="glass-panel p-6 text-center">
             <TrendingUp size={24} className="mx-auto text-status-warning mb-2" />
             <p className="text-sm text-muted-foreground mb-1">Additional Quantum Risk</p>
             <p className="text-3xl font-bold text-status-warning">{formatCurrency(costs.delta)}</p>
             <p className="text-xs text-muted-foreground mt-2">
-              {pctIncrease.toFixed(0)}% increase over classical
+              {pctIncrease.toFixed(0)}% increase over classical, if CRQC exists
             </p>
           </div>
         </div>
       </div>
 
-      {/* ── Expected annual loss (ALE) ── */}
+      {/* ── Expected annual loss (ALE), probability-weighted ── */}
       <div className="glass-panel p-4 border-l-4 border-l-primary">
         <div className="flex items-start gap-2 mb-3">
           <Info size={14} className="text-primary shrink-0 mt-0.5" />
           <p className="text-xs text-muted-foreground">
-            A breach cost is not an annual cost. <strong>Expected annual loss</strong> = breach cost
-            × the {annualBreachProbPct}% annual probability — this is the figure that belongs in an
-            ROI model, and what the ROI Calculator (Step 2) multiplies out.
+            <strong>Expected annual loss</strong> blends the classical and quantum-enabled cases,
+            weighted by the probability a CRQC exists within your {planningHorizonYears}-year
+            horizon (
+            <span className="font-mono text-foreground">{Math.round(costs.pCrqc * 100)}%</span>,
+            consensus scenario) — this is the figure that belongs in an ROI model, not the fully
+            quantum-conditional number above.
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
           <div className="bg-muted/50 rounded-lg p-3 text-center">
             <p className="text-xs text-muted-foreground mb-1">Classical — annual expected loss</p>
             <p className="text-xl font-bold text-foreground">
@@ -247,12 +481,116 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 text-center">
-            <p className="text-xs text-muted-foreground mb-1">Quantum — annual expected loss</p>
+            <p className="text-xs text-muted-foreground mb-1">
+              Quantum-weighted — annual expected loss
+            </p>
             <p className="text-xl font-bold text-status-error">
               {formatCurrency(costs.quantumALE)}
             </p>
           </div>
         </div>
+        <div className="bg-muted/30 rounded-lg p-3">
+          <p className="text-[10px] text-muted-foreground mb-2">
+            Range across CRQC-arrival scenarios (GRI 2025 survey bounds) — not a single point
+            estimate:
+          </p>
+          <div className="flex items-center justify-between text-xs font-mono">
+            <span>
+              Low ({Math.round(costs.range.low.pCrqc * 100)}%):{' '}
+              <span className="text-foreground">{formatCurrency(costs.range.low.quantumALE)}</span>
+            </span>
+            <span>
+              Central ({Math.round(costs.range.central.pCrqc * 100)}%):{' '}
+              <span className="text-foreground font-bold">
+                {formatCurrency(costs.range.central.quantumALE)}
+              </span>
+            </span>
+            <span>
+              High ({Math.round(costs.range.high.pCrqc * 100)}%):{' '}
+              <span className="text-foreground">{formatCurrency(costs.range.high.quantumALE)}</span>
+            </span>
+          </div>
+        </div>
+        <p className="text-[10px] text-muted-foreground mt-2">
+          Present value of the {planningHorizonYears}-year quantum-risk delta at{' '}
+          {Math.round(discountRateAnnual * 100)}% discount:{' '}
+          <span className="font-mono text-foreground font-semibold">
+            {formatCurrency(costs.pvQuantumDelta)}
+          </span>
+        </p>
+      </div>
+
+      {/* ── Mosca decision layer ── */}
+      <div className="glass-panel p-4 space-y-3 border-l-4 border-l-status-warning">
+        <div className="flex items-center gap-2">
+          <Clock size={16} className="text-status-warning" />
+          <h4 className="text-sm font-bold text-foreground">
+            When does migration need to start? (Mosca&apos;s theorem)
+          </h4>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          If (data shelf life) + (migration time) exceeds the time until a CRQC exists, you are
+          already too late.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+          <div className="bg-muted/50 rounded-lg p-3">
+            <p className="text-muted-foreground">x — shelf life</p>
+            <p className="font-mono text-foreground text-lg font-bold">{shelfLifeYears} yrs</p>
+          </div>
+          <div className="bg-muted/50 rounded-lg p-3">
+            <label htmlFor="migration-duration" className="text-muted-foreground block mb-1">
+              y — migration time
+            </label>
+            <input
+              id="migration-duration"
+              type="range"
+              min={1}
+              max={8}
+              value={migrationDurationYears}
+              onChange={(e) => setMigrationDurationYears(parseInt(e.target.value))}
+              className="w-full accent-primary mb-1"
+            />
+            <p className="font-mono text-foreground text-lg font-bold">
+              {migrationDurationYears} yrs
+            </p>
+          </div>
+          <div className="bg-muted/50 rounded-lg p-3">
+            <p className="text-muted-foreground">z — median CRQC year (consensus)</p>
+            <p className="font-mono text-foreground text-lg font-bold">
+              {Math.round(mosca.crqcYear)}
+            </p>
+          </div>
+        </div>
+        <div
+          className={`rounded-lg p-3 text-sm ${
+            mosca.alreadyLate
+              ? 'bg-status-error/10 border border-status-error/30 text-status-error'
+              : 'bg-status-success/10 border border-status-success/30 text-status-success'
+          }`}
+        >
+          {mosca.alreadyLate ? (
+            <>
+              <strong>Already {Math.round(mosca.yearsLate)} year(s) late:</strong> migration should
+              have started by {Math.round(mosca.latestSafeStartYear)} to protect{' '}
+              {DATA_SENSITIVITY_LABELS[dataSensitivityClass].toLowerCase()} created today through
+              the median CRQC arrival year.
+            </>
+          ) : (
+            <>
+              <strong>Latest safe start year: {Math.round(mosca.latestSafeStartYear)}.</strong>{' '}
+              Starting migration by then keeps{' '}
+              {DATA_SENSITIVITY_LABELS[dataSensitivityClass].toLowerCase()} protected through the
+              median CRQC arrival year.
+            </>
+          )}
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Cost of waiting 2 more years to start:{' '}
+          <span className="font-mono text-status-warning font-semibold">
+            +{formatCurrency(Math.max(0, waitTwoYearsCost))}
+          </span>{' '}
+          in present-value quantum-risk exposure.
+        </p>
       </div>
 
       {/* ── Breakdown ── */}
@@ -269,15 +607,29 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
             </span>
           </p>
           <p className="text-xs font-mono text-muted-foreground">
-            HNDL amplification: 1 + min({HNDL_MULTIPLIER_CAP}, {yearsOfData}yr × {hndlFactorPct}%) ={' '}
+            Shelf-life decay ({shelfLifeYears}yr {DATA_SENSITIVITY_LABELS[dataSensitivityClass]}):{' '}
+            <span className="text-foreground font-semibold">{costs.decayFactor.toFixed(2)}×</span>
+          </p>
+          <p className="text-xs font-mono text-muted-foreground">
+            HNDL amplification: 1 + min({HNDL_MULTIPLIER_CAP}, {yearsOfData}yr × {hndlFactorPct}% ×
+            decay) ={' '}
             <span className="text-foreground font-semibold">
               {costs.hndlMultiplier.toFixed(2)}×
             </span>
           </p>
           <p className="text-xs font-mono text-muted-foreground">
-            Quantum: {formatCurrency(costs.classicalSLE)} × {costs.hndlMultiplier.toFixed(2)} ={' '}
-            <span className="text-status-error font-bold">{formatCurrency(costs.quantumSLE)}</span>{' '}
-            (+{formatCurrency(costs.delta)} vs. classical)
+            Quantum SLE: {formatCurrency(costs.classicalSLE)} × {costs.hndlMultiplier.toFixed(2)} ={' '}
+            <span className="text-status-error font-bold">{formatCurrency(costs.quantumSLE)}</span>
+          </p>
+          <p className="text-xs font-mono text-muted-foreground">
+            CRQC probability within {planningHorizonYears}yr horizon (consensus):{' '}
+            <span className="text-foreground font-semibold">{Math.round(costs.pCrqc * 100)}%</span>
+          </p>
+          <p className="text-xs font-mono text-muted-foreground">
+            Blended ALE: {formatCurrency(costs.classicalALE)} × (1 − {Math.round(costs.pCrqc * 100)}
+            %) + {formatCurrency(costs.quantumSLE)} × {Math.round(annualBreachProbPct)}% ×{' '}
+            {Math.round(costs.pCrqc * 100)}% ={' '}
+            <span className="text-status-error font-bold">{formatCurrency(costs.quantumALE)}</span>
           </p>
         </div>
       </details>
@@ -290,7 +642,7 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
         <div className="mt-3 text-sm text-muted-foreground space-y-2">
           <p>
             <strong>Baseline:</strong> the industry average total breach cost (IBM Cost of a Data
-            Breach 2024), shared with the ROI Calculator and Cost Model Explorer — one source, no
+            Breach 2025), shared with the ROI Calculator and Cost Model Explorer — one source, no
             drift. It already includes reputational and lost-business costs, so those are not added
             separately.
           </p>
@@ -299,20 +651,104 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
             a flat per-record cost that would grow without bound.
           </p>
           <p>
-            <strong>Quantum effect (HNDL only):</strong> 1 + (years × exposure factor), capped at{' '}
-            {1 + HNDL_MULTIPLIER_CAP}×. A quantum computer changes how much data is exposed, not the
-            unit cost of a record — so there is a single amplification, not a separate per-record
-            multiplier.
+            <strong>HNDL amplification:</strong> 1 + (years × exposure factor × shelf-life decay),
+            capped at {1 + HNDL_MULTIPLIER_CAP}×. Decay is linear to zero at the data class&apos;s
+            shelf life, using the harvested corpus&apos;s average age — a simplification, not an
+            exponential curve.
           </p>
           <p>
-            <strong>Impact vs likelihood:</strong> the cards above are the cost <em>if</em> a breach
-            happens (SLE); expected annual loss (ALE) = SLE × annual probability.
+            <strong>CRQC probability:</strong> looked up from the Global Risk Institute 2025 expert
+            survey curve for the chosen planning horizon. This is a simple cumulative-probability
+            difference, not conditioned on a CRQC not already existing today — a simplification that
+            is negligible for near-term reference years.
+          </p>
+          <p>
+            <strong>Expected annual loss:</strong> blends the classical and CRQC-conditional cases,
+            weighted by that probability — not the old model&apos;s assumption that a CRQC already
+            exists.
+          </p>
+          <p>
+            <strong>Present value:</strong> the annual expected-loss delta is discounted as a level
+            annuity over the planning horizon — an approximation, not a year-by-year integration of
+            a growing risk curve.
+          </p>
+          <p>
+            <strong>Mosca&apos;s theorem:</strong> compares data shelf life + migration time against
+            the median CRQC arrival year to flag whether migration is already overdue.
           </p>
           <p className="text-xs italic mt-2">
             Educational estimates for planning. Actual costs vary widely by organization size,
             geography, and regulatory environment.
           </p>
         </div>
+      </details>
+
+      {/* ── References ── */}
+      <details className="glass-panel p-4">
+        <summary className="text-sm font-medium text-foreground cursor-pointer flex items-center gap-2">
+          <BookOpen size={14} className="text-primary shrink-0" />
+          References
+        </summary>
+        <ul className="mt-3 text-xs text-muted-foreground space-y-1.5 list-disc list-inside">
+          <li>
+            <a
+              href="https://www.ibm.com/reports/data-breach"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              IBM Cost of a Data Breach Report 2025
+            </a>{' '}
+            — industry breach-cost baselines and per-record costs by data type.
+          </li>
+          <li>
+            <a
+              href="https://globalriskinstitute.org/publication/quantum-threat-timeline-report-2025b/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              Global Risk Institute — Quantum Threat Timeline Report 2025
+            </a>{' '}
+            — expert-survey CRQC-arrival probability curve.
+          </li>
+          <li>
+            <a
+              href="https://netdiligence.com/cyber-claims-study-2025-report/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              NetDiligence Cyber Claims Study 2025
+            </a>{' '}
+            — organization-size cost anchors used elsewhere in this workshop.
+          </li>
+          <li>
+            <a
+              href="https://www.cyentia.com/iris/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              Cyentia Institute — Information Risk Insights Study (IRIS) 2025
+            </a>{' '}
+            — annual breach-probability defaults by organization size.
+          </li>
+          {shelfLifeHasCitation && (
+            <li>
+              <a
+                href="https://www.archives.gov/isoo/policy-documents/eo-13526.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                US Executive Order 13526
+              </a>{' '}
+              — 25-year automatic declassification schedule, the basis for the classified/state
+              secret shelf-life estimate.
+            </li>
+          )}
+        </ul>
       </details>
     </div>
   )

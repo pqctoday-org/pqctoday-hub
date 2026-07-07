@@ -1,19 +1,29 @@
 {
   "_meta": {
-    "description": "Annual probability of 'Harvest Now, Decrypt Later' (HNDL) risk materialization, 2026–2035.",
+    "description": "Cumulative probability that a Cryptographically Relevant Quantum Computer (CRQC) exists by a given year, 2026–2046.",
     "sources": [
-      "NIST IR 8547 (https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf) — migration timeline assumptions",
-      "ENISA Post-Quantum Cryptography Migration Report 2024 (https://www.enisa.europa.eu/publications/post-quantum-cryptography-migration-report)",
-      "NIST SP 800-131A Rev 3 transition guidance",
-      "Global Risk Institute — Quantum Threat Timeline Report 2023 (https://globalriskinstitute.org/publication/2023-quantum-threat-timeline-report/)"
+      "Global Risk Institute — Quantum Threat Timeline Report 2025 (https://globalriskinstitute.org/publication/quantum-threat-timeline-report-2025b/) — expert survey (26 respondents): 28-49% probability within 10 years (by 2035), 51-70% within 15 years (by 2040), 92% of respondents ≥50% within 20 years (by 2045), ~50% call 20-year arrival 'extremely likely' (>99%)",
+      "NIST IR 8547 (https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf) — migration timeline assumptions"
     ],
+    "methodology": "Values at 2026, 2035, 2040 and 2045 are anchored to the GRI 2025 survey ranges above (low end of each range = 'slow' scenario, high end = 'fast' scenario). All other years are LINEARLY INTERPOLATED between those anchors — this curve is not itself a GRI-published series, only the four anchor points are. 2046 repeats the 2045 value (no anchor beyond 20 years).",
     "scenarios": {
-      "optimistic": "Cryptographically Relevant Quantum Computer (CRQC) no earlier than 2032 (GRI 2023 median estimate). Low near-term materialization probability.",
-      "pessimistic": "CRQC as early as 2028 (GRI 2023 5th-percentile estimate / ENISA worst-case). Aggressive HNDL harvesting begins 2024–2026 materializes earlier."
+      "slow": "Lower bound of each GRI 2025 survey range — a more conservative view of quantum computing progress.",
+      "fast": "Upper bound of each GRI 2025 survey range — a more aggressive view of quantum computing progress.",
+      "consensus": "Computed as the midpoint of slow and fast at each year (not independently sourced — see breachCostModel.ts crqcProbabilityAt())."
     },
-    "note": "Educational model — probabilities represent expert consensus estimates, not certified actuarial outputs."
+    "note": "Educational model — probabilities represent one expert survey's aggregated estimates, not certified actuarial or scientific predictions of when a CRQC will exist.",
+    "supersedes": "Previously anchored to GRI 2023 (optimistic/pessimistic keys); refreshed 2026-07 to GRI 2025. Key names 'optimistic'/'pessimistic' kept for backward compatibility with existing consumers — 'optimistic' now maps to the 'slow' CRQC scenario (best case for defenders), 'pessimistic' to 'fast'."
   },
-  "years": [2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033, 2034, 2035],
-  "optimistic": [0.01, 0.02, 0.04, 0.07, 0.11, 0.18, 0.38, 0.65, 0.82, 0.93],
-  "pessimistic": [0.03, 0.07, 0.18, 0.4, 0.62, 0.76, 0.86, 0.92, 0.96, 0.98]
+  "years": [
+    2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033, 2034, 2035, 2036, 2037, 2038, 2039, 2040, 2041,
+    2042, 2043, 2044, 2045, 2046
+  ],
+  "optimistic": [
+    0.01, 0.04, 0.07, 0.1, 0.13, 0.16, 0.19, 0.22, 0.25, 0.28, 0.33, 0.37, 0.42, 0.46, 0.51, 0.52,
+    0.53, 0.53, 0.54, 0.55, 0.55
+  ],
+  "pessimistic": [
+    0.03, 0.08, 0.13, 0.18, 0.23, 0.29, 0.34, 0.39, 0.44, 0.49, 0.53, 0.57, 0.62, 0.66, 0.7, 0.75,
+    0.81, 0.86, 0.92, 0.97, 0.97
+  ]
 }
