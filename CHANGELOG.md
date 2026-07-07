@@ -26,6 +26,22 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.13.0] - 2026-07-07
+
+A Threats page redesign: one continuous page instead of a hidden second tab, a consolidated actions menu, and a simplified view-mode set. Plus a refreshed SEO feature list reflecting the site's current surface.
+
+### Added
+
+- **The Threats page's most decision-forcing number — the CRQC migration deadline — is now visible without clicking a tab** [view:/threats]: the page previously split into a "Threat Catalog" tab (default) and a "CRQC Threat Horizon" tab; nothing on the default tab prompted anyone to find the second one. Both are now one continuous page, with the sector-exposure summary, the economics header, the capability strip, and the real CRQC trajectory chart all visible by default.
+
+### Changed
+
+- **Threats page actions consolidated into one menu** [view:/threats]: each threat card/row showed up to 8 small controls at once (criticality pill, ID, status, class badge, Shor-tier badge, trust score, Endorse, Flag, bookmark). Endorse and Flag now live behind a single "···" menu shared by both the card and table views; bookmark stays a dedicated visible control.
+- **Mobile Threats view now uses the same component as desktop** [view:/threats]: the mobile list was a separate, hand-maintained implementation that had quietly drifted out of sync — it was missing the class badge, Shor-tier badge, trust score, and bookmark toggle entirely. It's now the same responsive grid used everywhere else, so a future change can't silently disappear on mobile again.
+- **Removed the "Industry Stack" view mode on Threats** [view:/threats]: it duplicated grouping already available via the section headers and left-rail table of contents, with more visual weight and less density.
+- **The Shor-tier badge moved from the Criticality column to the crypto-at-risk row it actually describes** [view:/threats]: Shor tier is about how easily the underlying crypto breaks, not a second criticality scale; this also narrows the table and reduces horizontal scrolling.
+- **The landing page's feature list is up to date** [view:/]: it still said "49 Hands-on Learning Modules" (now 62) and didn't mention the Simulation, the Threats CRQC dashboard, or the Business Center tools at all.
+
 ## [4.12.0] - 2026-07-06
 
 A crypto-agility, algorithms, and Migration Workbench release: FrodoKEM and Classic McEliece now run for real in the CACP Playground per BSI TR-02102-1; the Migration Workbench gets a search-and-confirm UX pass; several algorithm data gaps are closed; and the Breach Scenario Simulator / Cost of Inaction Analyzer are rebuilt on a verified 2025 risk model with realistic migration timing.
