@@ -180,6 +180,10 @@ export function useAlgorithmExplorer(
   // narrow to the CNSA 2.0 suite. Synced to the URL via ?cnsa=1.
   const [cnsaLens, setCnsaLens] = useState(() => searchParams.get('cnsa') === '1')
 
+  // Research-gap filter — additive, same pattern as cnsaLens. Narrows to
+  // algorithms with at least one 'Research needed' field. Synced to ?gap=1.
+  const [researchGapOnly, setResearchGapOnly] = useState(() => searchParams.get('gap') === '1')
+
   // --- Comparison state (synced to URL) ---
   const [compareKeys, setCompareKeys] = useState<string[]>(() => {
     const raw = searchParams.get('compare')
@@ -259,6 +263,14 @@ export function useAlgorithmExplorer(
     setCnsaLens((prev) => {
       const next = !prev
       updateSearchParams({ cnsa: next ? '1' : null })
+      return next
+    })
+  }, [updateSearchParams])
+
+  const handleToggleResearchGapOnly = useCallback(() => {
+    setResearchGapOnly((prev) => {
+      const next = !prev
+      updateSearchParams({ gap: next ? '1' : null })
       return next
     })
   }, [updateSearchParams])
@@ -449,6 +461,7 @@ export function useAlgorithmExplorer(
   const passesAlgoFilters = useCallback(
     (algo: AlgorithmDetail, opts: { applyLevel: boolean } = { applyLevel: true }) => {
       if (cnsaLens && !passesCnsa20Filter(algo)) return false
+      if (researchGapOnly && !algo.hasResearchGap) return false
       if (filterCryptoFamily !== 'All' && algo.cryptoFamily !== filterCryptoFamily) return false
       if (filterFunction !== 'All') {
         const group = getFunctionGroup(algo)
@@ -478,6 +491,7 @@ export function useAlgorithmExplorer(
     },
     [
       cnsaLens,
+      researchGapOnly,
       filterCryptoFamily,
       filterFunction,
       filterSecurityLevel,
@@ -573,6 +587,7 @@ export function useAlgorithmExplorer(
     filterStatus,
     searchQuery,
     cnsaLens,
+    researchGapOnly,
     detailMode,
     // url sync
     searchParams,
@@ -588,6 +603,7 @@ export function useAlgorithmExplorer(
     handleTabChange,
     handleQuickView,
     handleToggleCnsaLens,
+    handleToggleResearchGapOnly,
     handleDetailModeChange,
     handleToggleCompare,
     handleToggleTransitionRow,

@@ -17,6 +17,9 @@ interface ThreatCardProps {
   index?: number
   onClick?: (item: ThreatItem) => void
   dimmed?: boolean
+  /** Explanation shown as a tooltip when `dimmed` is true, so the opacity
+   *  change isn't a silent, unexplained visual state. */
+  dimmedReason?: string
 }
 
 /** Criticality → severity-bar / badge tone (icon+text, never colour alone). */
@@ -78,7 +81,13 @@ const Chips = ({
   )
 }
 
-export const ThreatCard = ({ item, index = 0, onClick, dimmed = false }: ThreatCardProps) => {
+export const ThreatCard = ({
+  item,
+  index = 0,
+  onClick,
+  dimmed = false,
+  dimmedReason,
+}: ThreatCardProps) => {
   const isBookmarked = useBookmarkStore((s) => s.myThreats.includes(item.threatId))
   const toggleMyThreat = useBookmarkStore((s) => s.toggleMyThreat)
   const tone = critTone(item.criticality)
@@ -87,6 +96,7 @@ export const ThreatCard = ({ item, index = 0, onClick, dimmed = false }: ThreatC
     <motion.article
       id={`threat-${item.threatId}`}
       data-workshop-target={`threats-card-${item.threatId}`}
+      title={dimmed ? dimmedReason : undefined}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2, delay: index * 0.03 }}

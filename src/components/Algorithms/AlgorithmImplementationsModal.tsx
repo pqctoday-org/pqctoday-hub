@@ -5,46 +5,13 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, GitBranch, ExternalLink, PackageOpen, BookOpen, Library } from 'lucide-react'
 import FocusLock from 'react-focus-lock'
 import { Button } from '../ui/button'
-import { implsByAlgorithm } from '../../data/algoProductXrefData'
+import { baseAlgoName, resolveAlgoXrefs } from '../../data/algoProductXrefData'
 import type { AlgoProductXref } from '../../data/algoProductXrefData'
 
 interface AlgorithmImplementationsModalProps {
   algorithmName: string
   isOpen: boolean
   onClose: () => void
-}
-
-/** Strip parenthetical suffix: "ML-KEM-768 (NIST Level 3)" → "ML-KEM-768" */
-function baseName(pqcName: string): string {
-  return pqcName.split('(')[0].trim()
-}
-
-/** Also try the family prefix: "ML-KEM-768" → "ML-KEM" as a fallback key */
-function familyPrefix(name: string): string | null {
-  const idx = name.lastIndexOf('-')
-  if (idx < 4) return null
-  return name.substring(0, idx)
-}
-
-function resolveXrefs(algorithmName: string): AlgoProductXref[] {
-  const base = baseName(algorithmName)
-  const direct = implsByAlgorithm.get(base)
-  if (direct && direct.length > 0) return direct
-
-  // Fallback: try family prefix (e.g. "SLH-DSA" covers all SLH-DSA-* variants)
-  const prefix = familyPrefix(base)
-  if (!prefix) return []
-  const accumulated: AlgoProductXref[] = []
-  for (const [key, xrefs] of implsByAlgorithm) {
-    if (key.startsWith(prefix + '-') || key === prefix) {
-      for (const x of xrefs) {
-        if (!accumulated.some((a) => a.implementationName === x.implementationName)) {
-          accumulated.push(x)
-        }
-      }
-    }
-  }
-  return accumulated
 }
 
 export function AlgorithmImplementationsModal({
@@ -60,7 +27,7 @@ export function AlgorithmImplementationsModal({
     return () => document.removeEventListener('keydown', handleEscape)
   }, [isOpen, onClose])
 
-  const xrefs = useMemo(() => resolveXrefs(algorithmName), [algorithmName])
+  const xrefs = useMemo(() => resolveAlgoXrefs(algorithmName), [algorithmName])
 
   const libraries = useMemo(() => xrefs.filter((x) => x.implementationType === 'Library'), [xrefs])
   const references = useMemo(
@@ -68,7 +35,7 @@ export function AlgorithmImplementationsModal({
     [xrefs]
   )
 
-  const displayName = baseName(algorithmName)
+  const displayName = baseAlgoName(algorithmName)
 
   return (
     <AnimatePresence>

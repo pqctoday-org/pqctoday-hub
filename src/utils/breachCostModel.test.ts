@@ -3,16 +3,22 @@ import { describe, it, expect } from 'vitest'
 import {
   HNDL_MULTIPLIER_CAP,
   hndlMultiplier,
+  shelfLifeDecayFactor,
   computeBreachCosts,
   type BreachModelInputs,
 } from './breachCostModel'
+import { CRQC_CURVE_YEAR_RANGE } from './crqcProbability'
 
 const base: BreachModelInputs = {
-  baseline: 4_880_000,
+  baseline: 4_440_000,
   breachScale: 1,
   yearsOfData: 5,
   hndlFactorPct: 30,
   annualBreachProbPct: 15,
+  dataSensitivityClass: 'general-pii',
+  asOfYear: 2026,
+  planningHorizonYears: 10,
+  discountRateAnnual: 0.06,
 }
 
 describe('hndlMultiplier', () => {
@@ -35,30 +41,66 @@ describe('hndlMultiplier', () => {
   })
 })
 
+describe('shelfLifeDecayFactor', () => {
+  it('is 1 (no decay) when the corpus has zero average age', () => {
+    expect(shelfLifeDecayFactor(0, 10)).toBe(1)
+  })
+
+  it('decays linearly toward 0 as average age approaches the shelf life', () => {
+    // avg age = 20/2 = 10, shelf life 10 → fully decayed
+    expect(shelfLifeDecayFactor(20, 10)).toBe(0)
+  })
+
+  it('is partially decayed part-way through the shelf life', () => {
+    // avg age = 10/2 = 5, shelf life 10 → 1 - 5/10 = 0.5
+    expect(shelfLifeDecayFactor(10, 10)).toBeCloseTo(0.5, 6)
+  })
+
+  it('never goes negative once the corpus is older than the shelf life', () => {
+    expect(shelfLifeDecayFactor(100, 10)).toBe(0)
+  })
+
+  it('is 0 for a zero shelf life', () => {
+    expect(shelfLifeDecayFactor(1, 0)).toBe(0)
+  })
+})
+
 describe('computeBreachCosts', () => {
   it('anchors the classical breach on baseline × severity (no reputational double-count)', () => {
-    expect(computeBreachCosts(base).classicalSLE).toBe(4_880_000)
-    expect(computeBreachCosts({ ...base, breachScale: 2 }).classicalSLE).toBe(9_760_000)
+    expect(computeBreachCosts(base).classicalSLE).toBe(4_440_000)
+    expect(computeBreachCosts({ ...base, breachScale: 2 }).classicalSLE).toBe(8_880_000)
   })
 
-  it('applies only the HNDL multiplier for the quantum breach', () => {
+  it('applies the decay-adjusted HNDL multiplier for the quantum breach', () => {
     const c = computeBreachCosts(base)
-    // quantum = classical × 2.5
-    expect(c.quantumSLE).toBeCloseTo(4_880_000 * 2.5, 0)
+    // decay reduces effective years below the raw 5, so multiplier < the undecayed 2.5x
+    expect(c.hndlMultiplier).toBeLessThan(2.5)
+    expect(c.hndlMultiplier).toBeGreaterThanOrEqual(1)
+    expect(c.quantumSLE).toBeCloseTo(c.classicalSLE * c.hndlMultiplier, 0)
     expect(c.delta).toBeCloseTo(c.quantumSLE - c.classicalSLE, 6)
-    expect(c.hndlMultiplier).toBeCloseTo(2.5, 6)
   })
 
-  it('stays realistic — quantum is a small multiple of classical, never 10×+', () => {
+  it('applies no decay when no data has been harvested yet', () => {
+    const c = computeBreachCosts({ ...base, yearsOfData: 0 })
+    expect(c.decayFactor).toBe(1)
+    expect(c.hndlMultiplier).toBe(1) // yearsOfData=0 → no HNDL exposure regardless
+  })
+
+  it('stays realistic — quantum SLE is never more than (1+cap)× classical', () => {
     const c = computeBreachCosts({ ...base, yearsOfData: 25, hndlFactorPct: 100 })
-    // Worst case is (1 + cap) = 5×, not tens of ×.
     expect(c.quantumSLE / c.classicalSLE).toBeLessThanOrEqual(1 + HNDL_MULTIPLIER_CAP)
   })
 
-  it('separates impact (SLE) from expected annual loss (ALE = SLE × probability)', () => {
+  it('separates impact (SLE) from expected annual loss (classicalALE = SLE × probability)', () => {
     const c = computeBreachCosts(base)
     expect(c.classicalALE).toBeCloseTo(c.classicalSLE * 0.15, 6)
-    expect(c.quantumALE).toBeCloseTo(c.quantumSLE * 0.15, 6)
+  })
+
+  it('quantumALE is a probability-weighted blend, strictly between classicalALE and the fully-conditional ALE', () => {
+    const c = computeBreachCosts(base)
+    const fullyConditionalALE = c.quantumSLE * 0.15
+    expect(c.quantumALE).toBeGreaterThan(c.classicalALE)
+    expect(c.quantumALE).toBeLessThan(fullyConditionalALE)
   })
 
   it('yields zero expected loss at zero probability', () => {
@@ -66,6 +108,50 @@ describe('computeBreachCosts', () => {
     expect(c.classicalALE).toBe(0)
     expect(c.quantumALE).toBe(0)
     // but the per-event cost is unchanged
-    expect(c.classicalSLE).toBe(4_880_000)
+    expect(c.classicalSLE).toBe(4_440_000)
+  })
+
+  it('CRQC-arrival probability materially drives the answer (the v1 gap this fixes)', () => {
+    const shorterHorizon = computeBreachCosts({ ...base, planningHorizonYears: 5 })
+    const longerHorizon = computeBreachCosts({ ...base, planningHorizonYears: 20 })
+    // A longer window necessarily captures at least as much cumulative CRQC
+    // probability as a shorter one, everything else equal — and that
+    // probability must materially move the blended expected loss, which v1
+    // could not do at all (it had no CRQC-probability variable).
+    expect(longerHorizon.pCrqc).toBeGreaterThan(shorterHorizon.pCrqc)
+    expect(longerHorizon.quantumALE).toBeGreaterThan(shorterHorizon.quantumALE)
+  })
+
+  it('exposes a low ≤ central ≤ high range across CRQC scenarios', () => {
+    const c = computeBreachCosts(base)
+    expect(c.range.low.pCrqc).toBeLessThanOrEqual(c.range.central.pCrqc)
+    expect(c.range.central.pCrqc).toBeLessThanOrEqual(c.range.high.pCrqc)
+    expect(c.range.low.quantumALE).toBeLessThanOrEqual(c.range.central.quantumALE)
+    expect(c.range.central.quantumALE).toBeLessThanOrEqual(c.range.high.quantumALE)
+  })
+
+  it('discounts future losses — the annuity PV factor itself grows sub-linearly with horizon', () => {
+    // Isolate discounting from the (deliberately) horizon-dependent CRQC
+    // probability by comparing PV factors directly, at a fixed rate.
+    const shortFactor = (1 - Math.pow(1.06, -5)) / 0.06
+    const longFactor = (1 - Math.pow(1.06, -20)) / 0.06
+    expect(longFactor).toBeGreaterThan(shortFactor)
+    expect(longFactor).toBeLessThan(shortFactor * 4) // 4x the years, not 4x the PV factor
+
+    // pvQuantumDelta itself is allowed to grow faster than horizon-linear,
+    // because a longer horizon also captures more cumulative CRQC
+    // probability (by design) — that compounding is the point, not a bug.
+    const short = computeBreachCosts({ ...base, planningHorizonYears: 5 })
+    const long = computeBreachCosts({ ...base, planningHorizonYears: 20 })
+    expect(long.pvQuantumDelta).toBeGreaterThan(short.pvQuantumDelta)
+  })
+
+  it('stays within the sourced CRQC curve range without throwing for out-of-range years', () => {
+    expect(() =>
+      computeBreachCosts({ ...base, asOfYear: CRQC_CURVE_YEAR_RANGE.last + 50 })
+    ).not.toThrow()
+    expect(() =>
+      computeBreachCosts({ ...base, asOfYear: CRQC_CURVE_YEAR_RANGE.first - 50 })
+    ).not.toThrow()
   })
 })

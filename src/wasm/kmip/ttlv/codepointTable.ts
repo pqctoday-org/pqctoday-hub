@@ -51,7 +51,26 @@ const SPEC_EXTRACT_PATCHES: Record<string, Record<string, number>> = {
     HashedPassword: 0x00000005,
     Ticket: 0x00000006,
   },
-  CryptographicAlgorithm: { DES: 0x00000001, DES3: 0x00000002, RC4: 0x00000005 },
+  CryptographicAlgorithm: {
+    DES: 0x00000001,
+    DES3: 0x00000002,
+    RC4: 0x00000005,
+    // BSI TR-02102-1 §2.4.1/§2.4.2 vendor KEMs (2026-07-06) — not in the
+    // published-3.0 spec JSON since they're vendor extensions, not OASIS
+    // codepoints (Classic McEliece's 0x34 is a real OASIS value; FrodoKEM's
+    // 0x8000_005f-0x64 range is ours). Bare family names default to the AES
+    // variant, mirroring create_key_pair.rs::parse_algorithm's convention.
+    'FrodoKEM-640': 0x8000005f,
+    'FrodoKEM-640-AES': 0x8000005f,
+    'FrodoKEM-640-SHAKE': 0x80000060,
+    'FrodoKEM-976': 0x80000061,
+    'FrodoKEM-976-AES': 0x80000061,
+    'FrodoKEM-976-SHAKE': 0x80000062,
+    'FrodoKEM-1344': 0x80000063,
+    'FrodoKEM-1344-AES': 0x80000063,
+    'FrodoKEM-1344-SHAKE': 0x80000064,
+    'Classic-McEliece-6688128': 0x00000034,
+  },
   Operation: {
     ReKey: 0x00000004,
     ReKeyKeyPair: 0x0000001e,

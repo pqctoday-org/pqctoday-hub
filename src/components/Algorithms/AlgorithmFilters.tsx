@@ -93,6 +93,9 @@ interface AlgorithmFiltersProps {
   /** CNSA 2.0 lens state — rendered as a Row-1 toggle inside the deck. */
   cnsaLens?: boolean
   onToggleCnsaLens?: () => void
+  /** Research-gap filter — narrows to algorithms with an incomplete data row. */
+  researchGapOnly?: boolean
+  onToggleResearchGapOnly?: () => void
   /** One-line persona hint shown as the deck's bottom row; dismissible. */
   personaHint?: string
   /** Optional action rendered at the end of the persona-hint line (e.g. executive "View Top 4"). */
@@ -195,6 +198,8 @@ export function AlgorithmFilters({
   onQuickView,
   cnsaLens = false,
   onToggleCnsaLens,
+  researchGapOnly = false,
+  onToggleResearchGapOnly,
   personaHint,
   hintAction,
   onDismissHint,
@@ -258,6 +263,21 @@ export function AlgorithmFilters({
           >
             <ShieldCheck size={13} aria-hidden="true" />
             CNSA 2.0
+          </Button>
+        )}
+
+        {/* Research-gap toggle — narrows to algorithms with an incomplete data row */}
+        {onToggleResearchGapOnly && (
+          <Button
+            variant={researchGapOnly ? 'gradient' : 'outline'}
+            size="sm"
+            onClick={onToggleResearchGapOnly}
+            aria-pressed={researchGapOnly}
+            className="min-h-[44px] md:min-h-0 md:h-7 gap-1.5 px-2 text-xs"
+            title="Filter to algorithms with at least one 'Research needed' field"
+          >
+            <Lightbulb size={13} aria-hidden="true" />
+            Research needed
           </Button>
         )}
 

@@ -9,8 +9,9 @@
       "sourceDirs": ["kmip", "wasm"],
       "track": "tip",
       "status": "built",
-      "hsmCommit": "4a4e9bca81249a586844c74f01661b402586648d",
-      "builtAt": "2026-06-26"
+      "hsmCommit": "8829dceb1bf3a50e5d0780e31868418a9b12a937",
+      "builtAt": "2026-07-06",
+      "_buildNote": "FrodoKEM (6 variants) + Classic McEliece-6688128 (BSI TR-02102-1), fully wired end to end: engine, KMIP ops, raw PKCS#11 C-ABI, and the hub's own algorithm picker/TTLV encoder (alg_from_name bare-name fallback, kmipMeta.ts RUNNABLE_EXACT, codepointTable.ts CryptographicAlgorithm patches). Also required bumping build-kmip-wasm.sh's wasm32 stack size to 8MiB: FrodoKEM-1344's matrix generation overflowed the ~1MiB default even in --release. hsmCommit is pqctoday-hsm PR #131's merge commit on main (built from the branch tip just before merge; PR #131 also fixed a native test-thread stack overflow and a PKCS#11 constants-gate gap — neither touches this bundle's compiled output)."
     },
     {
       "name": "softhsmrustv3-engine",
@@ -19,9 +20,9 @@
       "sourceDirs": ["rust"],
       "track": "tip",
       "status": "built",
-      "hsmCommit": "e912488d3db86bd18bd23f15f70661a252613df2",
-      "builtAt": "2026-06-27",
-      "_buildNote": "Must be built with --features acvp (added to build script 2026-06-27). Without it C_Initialize rejects non-null pReserved with CKR_ARGUMENTS_BAD, breaking all ACVP KAT seeding."
+      "hsmCommit": "8829dceb1bf3a50e5d0780e31868418a9b12a937",
+      "builtAt": "2026-07-06",
+      "_buildNote": "Rebuilt to pick up FrodoKEM/Classic McEliece-6688128 on the raw PKCS#11 C-ABI (C_GenerateKeyPair/C_EncapsulateKey/C_DecapsulateKey) plus a large amount of accumulated PKCS#11 v3.2 surface added since the last build (2026-06-27, e912488): C_GetInterface/C_GetInterfaceList, C_LoginUser, C_SetPIN, C_SessionCancel, message-based sign/verify, and more — this bundle had drifted well behind the engine. Still built with --features acvp (required since 2026-06-27: C_Initialize rejects non-null pReserved without it, breaking ACVP KAT seeding)."
     },
     {
       "name": "softhsm-cpp-engine",

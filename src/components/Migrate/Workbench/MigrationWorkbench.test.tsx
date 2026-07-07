@@ -19,12 +19,12 @@ describe('MigrationWorkbench (integration)', () => {
     useMigrateSelectionStore.setState({ plan: [], choice: {}, tab: 'replace' })
   })
 
-  it('renders the asset list + posture', () => {
+  it('renders the asset list; posture shows an empty-state invitation until something is planned', () => {
     renderWorkbench()
     expect(screen.getByText('What you run — pick to see replacements')).toBeInTheDocument()
-    expect(screen.getByText('Your readiness')).toBeInTheDocument()
-    // 0% with empty plan
-    expect(screen.getByText('0%')).toBeInTheDocument()
+    // An empty plan is an unstarted task, not a bad "0%" score.
+    expect(screen.getByText('Build your migration plan')).toBeInTheDocument()
+    expect(screen.queryByText('Your readiness')).not.toBeInTheDocument()
   })
 
   it('adding an asset to the plan updates readiness + plan count', () => {
