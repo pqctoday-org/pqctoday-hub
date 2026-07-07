@@ -2460,7 +2460,7 @@ export function SimulationView() {
                                         </span>
                                       )
                                       const optionalBadge = (
-                                        <span className="shrink-0 rounded-full border border-dashed border-primary/40 px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wide text-primary/60">
+                                        <span className="shrink-0 rounded-full border border-dashed border-primary/40 px-1.5 py-0.5 font-mono text-sim-chip font-bold uppercase tracking-wide text-primary/60">
                                           optional
                                         </span>
                                       )
