@@ -56,7 +56,6 @@ import { ThreatsViewToggle, type ThreatsViewMode } from './ThreatsViewToggle'
 import { LeftNavTOC } from '@/components/common/LeftNavTOC'
 import { ThreatsCardGrid } from './ThreatsCardGrid'
 import { ThreatsTable } from './ThreatsTable'
-import { IndustryStack } from './IndustryStack'
 
 // Lazy: keeps the implementation-attack data the dialog pulls in out of the
 // Threats route chunk until a user opens a threat detail.
@@ -178,10 +177,12 @@ export const ThreatsDashboard: React.FC<{
   const [showMobileFilters, setShowMobileFilters] = useState(false)
   const [personaModalOpen, setPersonaModalOpen] = useState(false)
   const tierFilter = useTrustTierFilter()
-  const [viewMode, setViewMode] = useState<ThreatsViewMode>(
-    () => (searchParams.get('mode') as ThreatsViewMode | null) ?? 'table'
-  )
-  const [activeLayer, setActiveLayer] = useState<string>('All')
+  const [viewMode, setViewMode] = useState<ThreatsViewMode>(() => {
+    const param = searchParams.get('mode')
+    // A bookmarked/shared `?mode=stack` link (the removed Industry Stack view)
+    // falls back to Table rather than rendering nothing.
+    return param === 'cards' || param === 'table' ? param : 'table'
+  })
   const [activeNavIndustry, setActiveNavIndustry] = useState<string | null>(null)
 
   // Sync all filter params on same-route navigations (e.g. chatbot deep links).
@@ -842,16 +843,9 @@ export const ThreatsDashboard: React.FC<{
                 activeItemId={activeNavIndustry}
                 onSelect={(slug) => {
                   setActiveNavIndustry(slug)
-                  if (viewMode === 'stack') {
-                    const ind = filteredAndSortedData.find(
-                      (t) => t.industry.toLowerCase().replace(/[^a-z0-9]+/g, '-') === slug
-                    )?.industry
-                    if (ind) setActiveLayer(ind)
-                  } else {
-                    document
-                      .getElementById(`industry-${slug}`)
-                      ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                  }
+                  document
+                    .getElementById(`industry-${slug}`)
+                    ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
                 }}
                 groups={[
                   {
@@ -876,27 +870,6 @@ export const ThreatsDashboard: React.FC<{
             </aside>
 
             <div className="flex-1 min-w-0">
-              {viewMode === 'stack' && (
-                <IndustryStack
-                  activeLayer={activeLayer}
-                  onSelectLayer={setActiveLayer}
-                  items={filteredAndSortedData}
-                  expandedContent={
-                    <ThreatsTable
-                      items={filteredAndSortedData.filter(
-                        (t) => t.industry === activeLayer || activeLayer === 'All'
-                      )}
-                      sortField={sortField}
-                      sortDirection={sortDirection}
-                      onSort={handleSort}
-                      onItemClick={(item) => {
-                        setSelectedThreat(item)
-                        syncFiltersToUrl({ id: item.threatId })
-                      }}
-                    />
-                  }
-                />
-              )}
               {viewMode === 'cards' && (
                 <div className="mb-8">
                   <ThreatsCardGrid
