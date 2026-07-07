@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ChevronRight, Check, Plus, Search } from 'lucide-react'
 import type { PersonaId } from '@/data/learningPersonas'
 import {
@@ -10,6 +10,7 @@ import {
   type ReplaceAsset,
 } from '@/data/migrationAssets'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
+import { logMigrateAction } from '@/utils/analytics'
 import { domainProductCount } from './workbenchCatalog'
 import { Input } from '../../ui/input'
 import { Button } from '../../ui/button'
@@ -47,6 +48,12 @@ export function AssetList({ persona, selectedDomain, onSelect }: AssetListProps)
     [persona]
   )
   const narrowingActive = narrowed.length > 0 && dismissedFor !== persona
+
+  useEffect(() => {
+    if (!query.trim()) return
+    const t = window.setTimeout(() => logMigrateAction('Search Assets', query.trim()), 600)
+    return () => window.clearTimeout(t)
+  }, [query])
 
   const assets = useMemo(
     () => canonicalOrder(narrowingActive ? narrowed : REPLACE_ASSETS),
@@ -86,7 +93,10 @@ export function AssetList({ persona, selectedDomain, onSelect }: AssetListProps)
             variant="link"
             size="sm"
             className="h-auto shrink-0 p-0 text-[11px]"
-            onClick={() => setDismissedFor(persona)}
+            onClick={() => {
+              logMigrateAction('See All Clicked', persona ?? undefined)
+              setDismissedFor(persona)
+            }}
           >
             See all
           </Button>

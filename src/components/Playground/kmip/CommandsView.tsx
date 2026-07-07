@@ -27,6 +27,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { logEvent } from '@/utils/analytics'
 import type { KmipEngine } from '@/wasm/kmip/kmipEngine'
 import { getCodepointTable, type CodepointTable } from '@/wasm/kmip/ttlv/codepointTable'
 import { runOp, type RunResult } from '@/wasm/kmip/ttlv/runner'
@@ -317,6 +318,7 @@ export function CommandsView({
     nextLogId.current += 1
     setLog((prev) => [{ id: nextLogId.current, op, result }, ...prev].slice(0, LOG_LIMIT))
     setLastByOp((prev) => ({ ...prev, [op]: result }))
+    logEvent('Playground', 'KMIP Command Run', `${op}:${result.ok ? 'ok' : 'fail'}`)
     onChanged()
   }
 

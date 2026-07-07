@@ -127,10 +127,20 @@ test('every policy scenario: engine + sim match the declared verdict', async ({ 
         const re = s.realExecution
         try {
           if (re.outcome === 'refused') {
-            const ckp = engine.runOp({ op: 'CreateKeyPair', algorithm: re.algorithm, attrs: re.attrs })
-            real = ckp.ok ? `FAIL: expected refusal, CreateKeyPair succeeded (${ckp.message})` : 'pass'
+            const ckp = engine.runOp({
+              op: 'CreateKeyPair',
+              algorithm: re.algorithm,
+              attrs: re.attrs,
+            })
+            real = ckp.ok
+              ? `FAIL: expected refusal, CreateKeyPair succeeded (${ckp.message})`
+              : 'pass'
           } else {
-            const ckp = engine.runOp({ op: 'CreateKeyPair', algorithm: re.algorithm, attrs: re.attrs })
+            const ckp = engine.runOp({
+              op: 'CreateKeyPair',
+              algorithm: re.algorithm,
+              attrs: re.attrs,
+            })
             if (!ckp.ok) {
               real = `FAIL: CreateKeyPair refused (${ckp.message})`
             } else {
