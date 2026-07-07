@@ -21,6 +21,7 @@ import {
   ArrowRight,
 } from 'lucide-react'
 import clsx from 'clsx'
+import { resolveAlgoXrefs } from '../../data/algoProductXrefData'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
 import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
@@ -361,6 +362,22 @@ function ResearchNeededBadge({ algo }: { algo: AlgorithmDetail }) {
   )
 }
 
+/** Badge for algorithms with zero indexed library/reference implementations — same
+ *  match logic as the Implementations modal, so the badge and its drilldown agree. */
+function NoImplementationBadge({ algo }: { algo: AlgorithmDetail }) {
+  const hasImpls = useMemo(() => resolveAlgoXrefs(algo.name).length > 0, [algo.name])
+  if (hasImpls) return null
+  return (
+    <span
+      className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border font-medium"
+      title="No indexed library or reference implementation found for this algorithm yet."
+    >
+      <SearchX size={10} aria-hidden="true" />
+      No known implementation
+    </span>
+  )
+}
+
 /** Render either the formatted byte count or the literal "Research needed" placeholder. */
 function ByteSize({ value, unknown }: { value: number | null; unknown: boolean }) {
   if (unknown || value === null || value === undefined) {
@@ -595,6 +612,7 @@ function BrowseTable({
                         <DraftBadge algo={algo} />
                         <Cnsa20Badge algo={algo} />
                         <ResearchNeededBadge algo={algo} />
+                        <NoImplementationBadge algo={algo} />
                       </div>
                       {algo.securityLevel && (
                         <span
@@ -701,6 +719,7 @@ function BrowseTable({
                   <DraftBadge algo={algo} />
                   <Cnsa20Badge algo={algo} />
                   <ResearchNeededBadge algo={algo} />
+                  <NoImplementationBadge algo={algo} />
                   <span className="text-xs text-muted-foreground">{algo.family}</span>
                 </div>
                 {algo.securityLevel && (

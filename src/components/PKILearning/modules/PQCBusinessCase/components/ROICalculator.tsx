@@ -367,7 +367,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     for (const row of tornado) {
       md += `| ${row.label} | ${formatCurrency(row.low)} | ${formatCurrency(row.high)} | ${formatCurrency(row.delta)} |\n`
     }
-    md += `\n*Educational estimate for planning purposes. Breach baseline: IBM Cost of a Data Breach Report 2024. Compliance penalties: published regulatory enforcement data.*\n`
+    md += `\n*Educational estimate for planning purposes. Breach baseline: IBM Cost of a Data Breach Report 2025. Compliance penalties: published regulatory enforcement data.*\n`
     md += '\n---\n\n'
     md +=
       '*Aligned to NIST CSWP 39 §2.4 (Resource and Performance Challenges) and §5 (Strategic Plan). https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
@@ -707,7 +707,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
               <span className="font-mono text-foreground font-semibold">
                 {formatCurrency(industryBreachBaseline)}
               </span>{' '}
-              &mdash; IBM Cost of a Data Breach Report 2024. Quantum amplification is composed from
+              &mdash; IBM Cost of a Data Breach Report 2025. Quantum amplification is composed from
               three defensible factors below.
             </p>
           </div>

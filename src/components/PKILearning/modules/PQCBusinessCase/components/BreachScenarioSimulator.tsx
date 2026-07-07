@@ -6,6 +6,9 @@ import { ExportableArtifact } from '@/components/PKILearning/common/executive/Ex
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useModuleStore } from '@/store/useModuleStore'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { ForgeryRiskPanel } from './ForgeryRiskPanel'
+import type { BreachOutput } from '../types'
+import type { DataSensitivityClass } from '@/utils/breachCostModel'
 
 function fmtCurrency(n: number): string {
   if (n >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(1)}B`
@@ -28,12 +31,6 @@ const AVAILABLE_INDUSTRIES = [
   'Other',
 ]
 
-interface BreachOutput {
-  classicalCostUSD: number
-  quantumCostUSD: number
-  deltaUSD: number
-}
-
 interface BreachScenarioSimulatorProps {
   onOutput?: (output: BreachOutput) => void
 }
@@ -46,6 +43,14 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
     classicalCost: number
     quantumCost: number
     delta: number
+    pCrqc: number
+    quantumALE: number
+    latestSafeStartYear: number
+    alreadyLate: boolean
+    dataSensitivityClass: DataSensitivityClass
+    yearsOfData: number
+    hndlFactorPct: number
+    annualBreachProbPct: number
   } | null>(null)
 
   const findings = useMemo(() => {
@@ -53,18 +58,23 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
 
     const items: string[] = []
 
-    const multiplier = breachCosts.quantumCost / Math.max(breachCosts.classicalCost, 1)
     items.push(
-      `Quantum-enabled breaches cost ${multiplier.toFixed(1)}x more than classical breaches in the ${selectedIndustry} sector.`
+      `A CRQC (cryptographically relevant quantum computer) has a ${Math.round(breachCosts.pCrqc * 100)}% chance of existing within the planning horizon (consensus scenario, GRI 2025) — the probability-weighted expected annual loss for the ${selectedIndustry} sector is ${fmtCurrency(breachCosts.quantumALE)}.`
     )
+
+    if (breachCosts.alreadyLate) {
+      items.push(
+        `Migration is already overdue: it should have started by ${Math.round(breachCosts.latestSafeStartYear)} to keep the selected data class protected through the median CRQC arrival year.`
+      )
+    } else {
+      items.push(
+        `Migration should start no later than ${Math.round(breachCosts.latestSafeStartYear)} to keep the selected data class protected through the median CRQC arrival year (Mosca's theorem: shelf life + migration time ≤ time until CRQC).`
+      )
+    }
 
     if (breachCosts.delta > 5_000_000) {
       items.push(
-        `The additional quantum risk exposure exceeds $5M, making proactive PQC migration a high-priority investment.`
-      )
-    } else if (breachCosts.delta > 1_000_000) {
-      items.push(
-        `The additional quantum risk of $${(breachCosts.delta / 1_000_000).toFixed(1)}M provides strong justification for migration investment.`
+        `If a CRQC already existed, the additional quantum risk exposure would exceed $5M — but that figure alone overstates near-term urgency versus the probability-weighted number above.`
       )
     }
 
@@ -92,26 +102,38 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
     md += `**Generated:** ${new Date().toLocaleDateString()}\n\n`
     md += `| Metric | Value |\n|--------|-------|\n`
     md += `| Classical breach (per event) | ${fmtCurrency(breachCosts.classicalCost)} |\n`
-    md += `| Quantum-enabled breach (per event) | ${fmtCurrency(breachCosts.quantumCost)} |\n`
-    md += `| Additional quantum risk | ${fmtCurrency(breachCosts.delta)} |\n\n`
+    md += `| Quantum-enabled breach (per event, if CRQC exists) | ${fmtCurrency(breachCosts.quantumCost)} |\n`
+    md += `| Additional quantum risk (if CRQC exists) | ${fmtCurrency(breachCosts.delta)} |\n`
+    md += `| Probability CRQC exists within horizon | ${Math.round(breachCosts.pCrqc * 100)}% |\n`
+    md += `| Probability-weighted expected annual loss | ${fmtCurrency(breachCosts.quantumALE)} |\n`
+    md += `| Latest safe migration start year | ${Math.round(breachCosts.latestSafeStartYear)} |\n\n`
     if (findings.length > 0) {
       md += `## Key findings\n\n`
       for (const f of findings) md += `- ${f}\n`
       md += `\n`
     }
-    md += `*Illustrative — IBM Cost of a Data Breach 2024 baselines.*\n`
+    md += `*Illustrative — IBM Cost of a Data Breach 2025 and Global Risk Institute Quantum Threat Timeline 2025 baselines.*\n`
     return md
   }, [breachCosts, selectedIndustry, findings])
 
   useEffect(() => {
     if (onOutput && breachCosts) {
       onOutput({
+        industry: selectedIndustry,
         classicalCostUSD: breachCosts.classicalCost,
         quantumCostUSD: breachCosts.quantumCost,
         deltaUSD: breachCosts.delta,
+        pCrqc: breachCosts.pCrqc,
+        quantumALEUSD: breachCosts.quantumALE,
+        latestSafeStartYear: breachCosts.latestSafeStartYear,
+        alreadyLate: breachCosts.alreadyLate,
+        dataSensitivityClass: breachCosts.dataSensitivityClass,
+        yearsOfData: breachCosts.yearsOfData,
+        hndlFactorPct: breachCosts.hndlFactorPct,
+        annualBreachProbPct: breachCosts.annualBreachProbPct,
       })
     }
-  }, [onOutput, breachCosts])
+  }, [onOutput, breachCosts, selectedIndustry])
 
   return (
     <div className="space-y-8">
@@ -203,6 +225,9 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
           )}
         </div>
       )}
+
+      {/* Signature-forgery risk — the quantum attack class the cost model above cannot represent */}
+      {breachCosts && <ForgeryRiskPanel />}
 
       {breachCosts && (
         <ExportableArtifact

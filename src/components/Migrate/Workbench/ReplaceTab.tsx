@@ -10,12 +10,14 @@ import {
   type ReplaceAsset,
 } from '@/data/migrationAssets'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
+import { logMigrateAction } from '@/utils/analytics'
 import { Button } from '../../ui/button'
 import { Input } from '../../ui/input'
 import { AssetList } from './AssetList'
 import { ProductRow } from './ProductRow'
 import { Pill, DECISION_ICON } from './workbenchUi'
 import { productsForDomain, filterProducts } from './workbenchCatalog'
+import { MobileFilterDrawer } from '../MobileFilterDrawer'
 
 const ASSET_BY_ID = new Map<string, ReplaceAsset>(REPLACE_ASSETS.map((a) => [a.id, a]))
 
@@ -23,9 +25,12 @@ interface ReplaceTabProps {
   persona: PersonaId | null
   /** Optional domain to pre-select (e.g. a sim catalog step opening 'discovery'). */
   initialDomain?: DomainId
+  /** Empty-domain dead end (fix #6) routes here — MigrationWorkbench wires this
+   *  to its own "Vendor roadmaps" tab. */
+  onGoToRoadmaps?: () => void
 }
 
-export function ReplaceTab({ persona, initialDomain }: ReplaceTabProps) {
+export function ReplaceTab({ persona, initialDomain, onGoToRoadmaps }: ReplaceTabProps) {
   const plan = useMigrateSelectionStore((s) => s.plan)
   const choice = useMigrateSelectionStore((s) => s.choice)
   const togglePlanAsset = useMigrateSelectionStore((s) => s.togglePlanAsset)
@@ -46,9 +51,27 @@ export function ReplaceTab({ persona, initialDomain }: ReplaceTabProps) {
   )
   const filtered = useMemo(() => filterProducts(products, filter), [products, filter])
 
+  const viewingLabel = asset?.label ?? (selectedDomain ? DOMAINS[selectedDomain].label : '')
+
   return (
     <div className="flex flex-col items-start gap-4 lg:flex-row">
-      <AssetList persona={persona} selectedDomain={selectedDomain} onSelect={onSelect} />
+      <div className="hidden w-full lg:block lg:w-auto">
+        <AssetList persona={persona} selectedDomain={selectedDomain} onSelect={onSelect} />
+      </div>
+      <div className="w-full space-y-2 lg:hidden">
+        {viewingLabel && (
+          <p className="text-xs text-muted-foreground">
+            Viewing: <span className="font-semibold text-foreground">{viewingLabel}</span>
+          </p>
+        )}
+        <MobileFilterDrawer
+          filterContent={
+            <AssetList persona={persona} selectedDomain={selectedDomain} onSelect={onSelect} />
+          }
+          activeFilterCount={0}
+          onClearAll={() => onSelect('tls')}
+        />
+      </div>
 
       <div className="min-w-0 flex-1 lg:min-w-[380px]">
         {asset ? (
@@ -98,9 +121,25 @@ export function ReplaceTab({ persona, initialDomain }: ReplaceTabProps) {
 
             <div className="mt-3 flex flex-col gap-2">
               {products.length === 0 ? (
-                <p className="rounded-xl border border-dashed border-border p-4 text-center text-sm text-muted-foreground">
-                  No catalog products mapped here yet.
-                </p>
+                <div className="rounded-xl border border-dashed border-border p-4 text-center text-sm text-muted-foreground">
+                  <p>No catalog products mapped here yet.</p>
+                  {onGoToRoadmaps && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="mt-3"
+                      onClick={() => {
+                        logMigrateAction(
+                          'Check Vendor Roadmaps Instead',
+                          selectedDomain ?? undefined
+                        )
+                        onGoToRoadmaps()
+                      }}
+                    >
+                      Check vendor roadmaps instead
+                    </Button>
+                  )}
+                </div>
               ) : filtered.length === 0 ? (
                 <p className="rounded-xl border border-dashed border-border p-4 text-center text-sm text-muted-foreground">
                   No products match “{filter}”.

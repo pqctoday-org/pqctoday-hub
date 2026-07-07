@@ -11,24 +11,9 @@ import { CostOfInactionAnalyzer } from './components/CostOfInactionAnalyzer'
 import { PQCBusinessCaseExercises } from './PQCBusinessCaseExercises'
 import { ModuleShell, type WorkshopPart } from '@/components/PKILearning/common/ModuleShell'
 import manifest from './manifest'
+import type { ROIOutput, BreachOutput, InactionOutput } from './types'
 
-export interface ROIOutput {
-  totalCostUSD: number
-  roiPercent: number
-  paybackMonths: number
-  breachCostSavingsUSD: number
-}
-
-export interface BreachOutput {
-  classicalCostUSD: number
-  quantumCostUSD: number
-  deltaUSD: number
-}
-
-export interface InactionOutput {
-  costOfInactionUSD: number
-  delayYears: number
-}
+export type { ROIOutput, BreachOutput, InactionOutput }
 
 const PARTS: WorkshopPart[] = [
   {
