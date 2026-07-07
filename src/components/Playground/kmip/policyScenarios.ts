@@ -61,6 +61,26 @@ export interface PolicyTestScenario {
   path: 'positive' | 'negative'
   request: ScenarioRequest
   expect: ScenarioVerdict
+  /**
+   * Optional real-execution companion to `request`/`expect`. `request` above
+   * only ever feeds `dryRun`/`evaluatePolicy` (policy-decision simulations) —
+   * it can carry a bare family name like "FrodoKEM-1344" because policy rules
+   * match on the canonical (AES/SHAKE-collapsed) name. `runOp`'s CreateKeyPair
+   * path resolves an exact algorithm variant, so real execution needs a
+   * fully-qualified name instead (e.g. "FrodoKEM-1344-AES").
+   *
+   * `outcome: 'roundtrip'` — the policy allows this, so prove the engine can
+   * actually DO it: CreateKeyPair -> Activate x2 -> Encapsulate -> Decapsulate
+   * must all report `ok: true` and the two sides' shared secrets must match.
+   * `outcome: 'refused'` — the policy denies this; a *real* CreateKeyPair
+   * attempt (not just the dry-run simulation) must also come back `ok: false`,
+   * proving enforcement isn't dry-run-only.
+   */
+  realExecution?: {
+    algorithm: string
+    attrs?: Record<string, string>
+    outcome: 'roundtrip' | 'refused'
+  }
 }
 
 export const POLICY_SCENARIOS: PolicyTestScenario[] = [
@@ -198,6 +218,7 @@ export const POLICY_SCENARIOS: PolicyTestScenario[] = [
     path: 'negative',
     request: { op: 'CreateKeyPair', algorithm: 'FrodoKEM-1344', usageMask: ['KeyAgreement'] },
     expect: 'Deny',
+    realExecution: { algorithm: 'FrodoKEM-1344-AES', outcome: 'refused' },
   },
   {
     id: 'fips-deny-falcon',
@@ -288,6 +309,11 @@ export const POLICY_SCENARIOS: PolicyTestScenario[] = [
       attrs: { 'pqctoday-hybrid-partner': 'X25519' },
     },
     expect: 'Allow',
+    realExecution: {
+      algorithm: 'FrodoKEM-1344-AES',
+      attrs: { 'pqctoday-hybrid-partner': 'X25519' },
+      outcome: 'roundtrip',
+    },
   },
   {
     id: 'bsi-deny-frodo-nopartner',
@@ -297,6 +323,7 @@ export const POLICY_SCENARIOS: PolicyTestScenario[] = [
     path: 'negative',
     request: { op: 'CreateKeyPair:KeyAgreement', algorithm: 'FrodoKEM-1344' },
     expect: 'Deny',
+    realExecution: { algorithm: 'FrodoKEM-1344-AES', outcome: 'refused' },
   },
   {
     id: 'bsi-deny-mlkem512',

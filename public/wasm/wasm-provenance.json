@@ -9,8 +9,9 @@
       "sourceDirs": ["kmip", "wasm"],
       "track": "tip",
       "status": "built",
-      "hsmCommit": "4a4e9bca81249a586844c74f01661b402586648d",
-      "builtAt": "2026-06-26"
+      "hsmCommit": "5888fac806519bfc3567dc97fd56b05e60bb9c5b",
+      "builtAt": "2026-07-06",
+      "_buildNote": "FrodoKEM (6 variants) + Classic McEliece-6688128 (BSI TR-02102-1), fully wired end to end: engine, KMIP ops, raw PKCS#11 C-ABI, and the hub's own algorithm picker/TTLV encoder (alg_from_name bare-name fallback, kmipMeta.ts RUNNABLE_EXACT, codepointTable.ts CryptographicAlgorithm patches). hsmCommit is on an UNPUSHED local branch (worktree-pqctoday-hsm+pqc-frodo-mceliece-hqc) as of this build, not yet on pqctoday-hsm's default branch — re-verify this SHA is reachable once that branch merges. Also required bumping build-kmip-wasm.sh's wasm32 stack size to 8MiB: FrodoKEM-1344's matrix generation overflowed the ~1MiB default even in --release."
     },
     {
       "name": "softhsmrustv3-engine",
