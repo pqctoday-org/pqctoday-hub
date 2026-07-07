@@ -108,8 +108,13 @@ export const FRAMEWORK_PENALTY_BASELINES: Record<string, FrameworkPenalty> = {
   'EU Recommendation 2024/1101': {
     annualPenalty: 1_000_000,
     source: 'EU recommendation — no direct fine but procurement impact',
+    penaltyType: 'contract-loss',
   },
-  EUCC: { annualPenalty: 2_000_000, source: 'EU cybersecurity certification scheme' },
+  EUCC: {
+    annualPenalty: 2_000_000,
+    source: 'EU cybersecurity certification scheme',
+    penaltyType: 'certification-loss',
+  },
 
   // US regulatory
   HIPAA: { annualPenalty: 1_500_000, source: 'HIPAA: up to $1.5M per violation tier per year' },
@@ -120,15 +125,25 @@ export const FRAMEWORK_PENALTY_BASELINES: Record<string, FrameworkPenalty> = {
   'CNSA 2.0': {
     annualPenalty: 5_000_000,
     source: 'Loss of DoD/federal contracts; estimated procurement impact',
+    penaltyType: 'contract-loss',
   },
-  FedRAMP: { annualPenalty: 5_000_000, source: 'Loss of federal cloud contracts' },
+  FedRAMP: {
+    annualPenalty: 5_000_000,
+    source: 'Loss of federal cloud contracts',
+    penaltyType: 'contract-loss',
+  },
   FISMA: { annualPenalty: 3_000_000, source: 'Federal agency budget/contract penalties' },
-  'DISA STIGs': { annualPenalty: 3_000_000, source: 'DoD system authorization loss' },
+  'DISA STIGs': {
+    annualPenalty: 3_000_000,
+    source: 'DoD system authorization loss',
+    penaltyType: 'contract-loss',
+  },
   FERPA: { annualPenalty: 500_000, source: 'Loss of federal education funding' },
   COPPA: { annualPenalty: 500_000, source: 'FTC enforcement actions' },
   'CISA PQC Federal Buying Guidance': {
     annualPenalty: 3_000_000,
     source: 'Federal procurement eligibility impact',
+    penaltyType: 'contract-loss',
   },
   'FDA 21 CFR Part 11': {
     annualPenalty: 1_000_000,
@@ -141,7 +156,11 @@ export const FRAMEWORK_PENALTY_BASELINES: Record<string, FrameworkPenalty> = {
     annualPenalty: 2_000_000,
     source: 'SWIFT exclusion and remediation costs',
   },
-  'SOC 2': { annualPenalty: 1_000_000, source: 'Loss of enterprise contracts requiring SOC 2' },
+  'SOC 2': {
+    annualPenalty: 1_000_000,
+    source: 'Loss of enterprise contracts requiring SOC 2',
+    penaltyType: 'contract-loss',
+  },
   'BOI Quantum Risk Directive': {
     annualPenalty: 1_500_000,
     source: 'Bank of Israel enforcement',
@@ -163,9 +182,18 @@ export const FRAMEWORK_PENALTY_BASELINES: Record<string, FrameworkPenalty> = {
   'FIPS 140-3': {
     annualPenalty: 3_000_000,
     source: 'Module validation loss; federal procurement impact',
+    penaltyType: 'certification-loss',
   },
-  'Common Criteria': { annualPenalty: 2_000_000, source: 'Product certification loss' },
-  'ISO 27001': { annualPenalty: 500_000, source: 'Certification loss, contract consequences' },
+  'Common Criteria': {
+    annualPenalty: 2_000_000,
+    source: 'Product certification loss',
+    penaltyType: 'certification-loss',
+  },
+  'ISO 27001': {
+    annualPenalty: 500_000,
+    source: 'Certification loss, contract consequences',
+    penaltyType: 'certification-loss',
+  },
 
   // Energy & critical infrastructure
   'NERC CIP': { annualPenalty: 1_000_000, source: 'NERC: up to $1M per violation per day' },
@@ -176,6 +204,7 @@ export const FRAMEWORK_PENALTY_BASELINES: Record<string, FrameworkPenalty> = {
   'IEC 62443': {
     annualPenalty: 1_000_000,
     source: 'OT certification loss, industrial contract impact',
+    penaltyType: 'certification-loss',
   },
 
   // Automotive & aerospace
@@ -183,18 +212,29 @@ export const FRAMEWORK_PENALTY_BASELINES: Record<string, FrameworkPenalty> = {
   'UN ECE WP.29 R155/R156': {
     annualPenalty: 3_000_000,
     source: 'Vehicle market access denial in 60+ countries',
+    penaltyType: 'contract-loss',
   },
   'DO-326A / ED-202A': {
     annualPenalty: 5_000_000,
     source: 'Airworthiness certification impact',
+    penaltyType: 'certification-loss',
   },
-  'RTCA DO-355A': { annualPenalty: 3_000_000, source: 'Avionics security certification' },
-  TISAX: { annualPenalty: 1_000_000, source: 'Automotive supply chain access loss' },
+  'RTCA DO-355A': {
+    annualPenalty: 3_000_000,
+    source: 'Avionics security certification',
+    penaltyType: 'certification-loss',
+  },
+  TISAX: {
+    annualPenalty: 1_000_000,
+    source: 'Automotive supply chain access loss',
+    penaltyType: 'contract-loss',
+  },
 
   // Telecom
   'GSMA NG.116 / FS.40': {
     annualPenalty: 2_000_000,
     source: 'Network equipment certification impact',
+    penaltyType: 'certification-loss',
   },
   'ETSI TS 103 744': {
     annualPenalty: 1_000_000,
@@ -202,11 +242,16 @@ export const FRAMEWORK_PENALTY_BASELINES: Record<string, FrameworkPenalty> = {
   },
 
   // Country-specific guidance
-  ANSSI: { annualPenalty: 1_000_000, source: 'French government procurement impact' },
+  ANSSI: {
+    annualPenalty: 1_000_000,
+    source: 'French government procurement impact',
+    penaltyType: 'contract-loss',
+  },
   'BSI TR-02102': { annualPenalty: 1_000_000, source: 'German government IT compliance' },
   'UK NCSC PQC Guidance': {
     annualPenalty: 500_000,
     source: 'UK government procurement guidance',
+    penaltyType: 'contract-loss',
   },
   'ASD ISM': {
     annualPenalty: 500_000,

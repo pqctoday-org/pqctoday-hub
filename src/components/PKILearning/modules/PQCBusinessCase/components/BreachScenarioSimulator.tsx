@@ -7,6 +7,8 @@ import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useModuleStore } from '@/store/useModuleStore'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { ForgeryRiskPanel } from './ForgeryRiskPanel'
+import type { BreachOutput } from '../types'
+import type { DataSensitivityClass } from '@/utils/breachCostModel'
 
 function fmtCurrency(n: number): string {
   if (n >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(1)}B`
@@ -29,16 +31,6 @@ const AVAILABLE_INDUSTRIES = [
   'Other',
 ]
 
-interface BreachOutput {
-  classicalCostUSD: number
-  quantumCostUSD: number
-  deltaUSD: number
-  pCrqc: number
-  quantumALEUSD: number
-  latestSafeStartYear: number
-  alreadyLate: boolean
-}
-
 interface BreachScenarioSimulatorProps {
   onOutput?: (output: BreachOutput) => void
 }
@@ -55,6 +47,10 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
     quantumALE: number
     latestSafeStartYear: number
     alreadyLate: boolean
+    dataSensitivityClass: DataSensitivityClass
+    yearsOfData: number
+    hndlFactorPct: number
+    annualBreachProbPct: number
   } | null>(null)
 
   const findings = useMemo(() => {
@@ -123,6 +119,7 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
   useEffect(() => {
     if (onOutput && breachCosts) {
       onOutput({
+        industry: selectedIndustry,
         classicalCostUSD: breachCosts.classicalCost,
         quantumCostUSD: breachCosts.quantumCost,
         deltaUSD: breachCosts.delta,
@@ -130,9 +127,13 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
         quantumALEUSD: breachCosts.quantumALE,
         latestSafeStartYear: breachCosts.latestSafeStartYear,
         alreadyLate: breachCosts.alreadyLate,
+        dataSensitivityClass: breachCosts.dataSensitivityClass,
+        yearsOfData: breachCosts.yearsOfData,
+        hndlFactorPct: breachCosts.hndlFactorPct,
+        annualBreachProbPct: breachCosts.annualBreachProbPct,
       })
     }
-  }, [onOutput, breachCosts])
+  }, [onOutput, breachCosts, selectedIndustry])
 
   return (
     <div className="space-y-8">

@@ -34,6 +34,10 @@ interface BreachCostModelProps {
     quantumALE: number
     latestSafeStartYear: number
     alreadyLate: boolean
+    dataSensitivityClass: DataSensitivityClass
+    yearsOfData: number
+    hndlFactorPct: number
+    annualBreachProbPct: number
   }) => void
 }
 
@@ -131,8 +135,20 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
       quantumALE: costs.quantumALE,
       latestSafeStartYear: mosca.latestSafeStartYear,
       alreadyLate: mosca.alreadyLate,
+      dataSensitivityClass,
+      yearsOfData,
+      hndlFactorPct,
+      annualBreachProbPct,
     })
-  }, [onCostCalculated, costs, mosca])
+  }, [
+    onCostCalculated,
+    costs,
+    mosca,
+    dataSensitivityClass,
+    yearsOfData,
+    hndlFactorPct,
+    annualBreachProbPct,
+  ])
 
   const pctIncrease = costs.classicalSLE > 0 ? (costs.delta / costs.classicalSLE) * 100 : 0
 
