@@ -2,7 +2,6 @@
 import React, { useMemo, useState } from 'react'
 import { Activity, ChevronDown, Cpu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Link } from 'react-router-dom'
 import {
   CRQC_ESTIMATES,
   CURRENT_QUANTUM_COMPUTERS,
@@ -154,26 +153,6 @@ export const CrqcCapabilityStrip: React.FC<{ defaultExpanded?: boolean }> = ({
           </div>
         </div>
       </div>
-
-      {/* Concise pointer — the full trajectory chart, technology tracks and driver
-          explanations live in the Quantum Threats learn module. */}
-      <Link
-        to="/learn/quantum-threats?tab=workshop&step=5"
-        className="mt-3 flex items-center justify-between gap-3 rounded-lg border border-warning/20 bg-warning/5 p-3 transition-colors hover:bg-warning/10"
-      >
-        <div>
-          <div className="text-xs font-semibold text-foreground">
-            See the full trajectory to Q-Day
-          </div>
-          <div className="text-[11px] text-muted-foreground mt-0.5">
-            Logical-qubit progress vs the qubits to break ECC &amp; RSA, the competing technology
-            tracks, and what&apos;s driving the timeline — explained.
-          </div>
-        </div>
-        <span className="shrink-0 text-xs font-medium text-warning" aria-hidden="true">
-          Open →
-        </span>
-      </Link>
 
       {/* Per-source + per-machine detail — collapsible */}
       {expanded && (
