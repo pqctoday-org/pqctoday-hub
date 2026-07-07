@@ -42,6 +42,7 @@ import {
 } from './SimPlayChoiceModal'
 import { SimAutoRunOverlay } from './autorun/SimAutoRunOverlay'
 import { SimConceptPeek } from './autorun/SimConceptPeek'
+import { logEvent } from '@/utils/analytics'
 import { SimArtifactReveal } from './autorun/SimArtifactReveal'
 import { SimExecWalkthroughComplete } from './autorun/SimExecWalkthroughComplete'
 import {
@@ -413,6 +414,10 @@ export function SimulationView() {
     setScenarioEmbed(null)
   }
   const openStep = (s: TreeStep) => {
+    // Embedded steps render inline without a URL/route change, so they're
+    // invisible to the pathname-based pageview tracker (AnalyticsTracker in
+    // App.tsx) — log them explicitly instead.
+    logEvent('Simulation', 'Embed Open', `${s.kind}:${s.label}`)
     if (s.kind === 'learn' && s.moduleId && isEmbeddableModule(s.moduleId)) {
       clearAllEmbeds()
       const lqIdx = s.to.indexOf('?')

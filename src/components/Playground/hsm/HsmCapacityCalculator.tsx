@@ -1202,9 +1202,7 @@ export function HsmCapacityCalculator() {
 
   // Key-storage capacity ("Memory space required") — models HSM key-object
   // storage (private key + certificate), independent of the throughput model above.
-  const [keyStorageCapacityBytes, setKeyStorageCapacityBytes] = useState(
-    CAPACITY_OPTIONS[1].bytes
-  )
+  const [keyStorageCapacityBytes, setKeyStorageCapacityBytes] = useState(CAPACITY_OPTIONS[1].bytes)
   const [keyStorageMode, setKeyStorageMode] = useState<KeyStorageMode>('hybrid')
   const [keyStorageRsaAlg, setKeyStorageRsaAlg] = useState<RsaAlg>('RSA-2048')
   const [keyStoragePqcFamily, setKeyStoragePqcFamily] = useState<PqcFamily>('ML-DSA')
@@ -2576,9 +2574,9 @@ export function HsmCapacityCalculator() {
         defaultOpen={false}
       >
         <p className="text-[10px] text-muted-foreground mb-3">
-          How many key objects fit in a given amount of HSM key storage under classical, hybrid,
-          and pure-PQC key material. Each key object is modelled as a private key plus the
-          certificate that carries its public key. This estimates raw HSM object storage — see the{' '}
+          How many key objects fit in a given amount of HSM key storage under classical, hybrid, and
+          pure-PQC key material. Each key object is modelled as a private key plus the certificate
+          that carries its public key. This estimates raw HSM object storage — see the{' '}
           <Link to="/playground/cert-capacity" className="text-primary hover:underline">
             Cert Capacity Calculator
           </Link>{' '}
@@ -2799,8 +2797,8 @@ export function HsmCapacityCalculator() {
               ML-DSA variant at the matching NIST security category — 512↔44, 768↔65, 1024↔87). In{' '}
               <span className="text-foreground">Hybrid</span> mode the private key, certificate
               public-key field, and certificate signature all carry{' '}
-              <span className="italic">both</span> algorithms (composite/dual-signature
-              certificate) — classical + PQC bytes summed.
+              <span className="italic">both</span> algorithms (composite/dual-signature certificate)
+              — classical + PQC bytes summed.
             </p>
           </div>
 
@@ -2819,7 +2817,7 @@ export function HsmCapacityCalculator() {
                 className="h-3.5 w-3.5 accent-primary"
               />
               <label htmlFor="key-storage-include-seed" className="text-foreground">
-                Store the {SEED_OVERHEAD_BYTES['ML-DSA']}-byte seed (ML-DSA) / {' '}
+                Store the {SEED_OVERHEAD_BYTES['ML-DSA']}-byte seed (ML-DSA) /{' '}
                 {SEED_OVERHEAD_BYTES['ML-KEM']}-byte seed (ML-KEM) alongside the expanded private
                 key
               </label>
@@ -2869,7 +2867,9 @@ export function HsmCapacityCalculator() {
           <div>
             <p className="font-semibold text-foreground mb-0.5">What this does not model</p>
             <ul className="list-disc list-inside space-y-0.5 marker:text-muted-foreground/60">
-              <li>Certificate chains (intermediate/root storage) — sized per leaf key object only.</li>
+              <li>
+                Certificate chains (intermediate/root storage) — sized per leaf key object only.
+              </li>
               <li>
                 RSA private-key size is an approximate PKCS#1 DER figure ({formatBytes(1192)} /
                 2048-bit, {formatBytes(1770)} / 3072-bit) — actual DER size varies by a handful of

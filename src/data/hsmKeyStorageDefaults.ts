@@ -119,8 +119,7 @@ export function computeKeyStorage(params: KeyStorageParams): KeyStorageResult {
   const rsa = sizeOf(rsaAlg)
   const pqc = sizeOf(pqcVariant)
   const pqcPriv = pqc.priv + (includeSeedOverhead ? SEED_OVERHEAD_BYTES[pqcFamily] : 0)
-  const pqcCertSig =
-    pqcFamily === 'ML-KEM' ? sizeOf(ML_KEM_TO_ML_DSA[pqcVariant]).sig : pqc.sig
+  const pqcCertSig = pqcFamily === 'ML-KEM' ? sizeOf(ML_KEM_TO_ML_DSA[pqcVariant]).sig : pqc.sig
 
   let privBytes = 0
   let certPubBytes = 0

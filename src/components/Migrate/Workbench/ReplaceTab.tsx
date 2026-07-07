@@ -10,6 +10,7 @@ import {
   type ReplaceAsset,
 } from '@/data/migrationAssets'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
+import { logMigrateAction } from '@/utils/analytics'
 import { Button } from '../../ui/button'
 import { Input } from '../../ui/input'
 import { AssetList } from './AssetList'
@@ -123,7 +124,18 @@ export function ReplaceTab({ persona, initialDomain, onGoToRoadmaps }: ReplaceTa
                 <div className="rounded-xl border border-dashed border-border p-4 text-center text-sm text-muted-foreground">
                   <p>No catalog products mapped here yet.</p>
                   {onGoToRoadmaps && (
-                    <Button variant="outline" size="sm" className="mt-3" onClick={onGoToRoadmaps}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="mt-3"
+                      onClick={() => {
+                        logMigrateAction(
+                          'Check Vendor Roadmaps Instead',
+                          selectedDomain ?? undefined
+                        )
+                        onGoToRoadmaps()
+                      }}
+                    >
                       Check vendor roadmaps instead
                     </Button>
                   )}
