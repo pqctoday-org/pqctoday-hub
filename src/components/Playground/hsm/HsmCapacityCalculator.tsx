@@ -29,6 +29,7 @@ import {
   CreditCard,
   Shield,
   ArrowRight,
+  HardDrive,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
@@ -60,6 +61,21 @@ import {
 } from '@/data/hsmCapacityDefaults'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { getUseCaseMaturity } from '@/data/hsmCapacityMatrixLink'
+import {
+  CAPACITY_OPTIONS,
+  RSA_ALGS,
+  PQC_FAMILIES,
+  PQC_VARIANTS,
+  PQC_FAMILY_DEFAULT_VARIANT,
+  DEFAULT_BLOB_OVERHEAD_PCT,
+  CERT_TEMPLATE_BYTES,
+  SPKI_WRAPPER_BYTES,
+  SEED_OVERHEAD_BYTES,
+  computeKeyStorage,
+  type KeyStorageMode,
+  type PqcFamily,
+  type RsaAlg,
+} from '@/data/hsmKeyStorageDefaults'
 
 type Workload = 'classical' | 'pqc'
 type Redundancy = 'n+1' | '2n'
@@ -371,6 +387,25 @@ export function computeScenarios(params: {
       codeSigningAlg
     ),
   ]
+}
+
+function formatBytes(n: number): string {
+  if (n >= 1024 * 1024 * 1024) return `${(n / (1024 * 1024 * 1024)).toFixed(2)} GB`
+  if (n >= 1024 * 1024) return `${(n / (1024 * 1024)).toFixed(2)} MB`
+  if (n >= 1024) return `${(n / 1024).toFixed(2)} KB`
+  return `${Math.round(n).toLocaleString()} B`
+}
+
+const KEY_STORAGE_PQC_VARIANT_LABELS: Record<string, string> = {
+  'ML-DSA-44': 'ML-DSA-44',
+  'ML-DSA-65': 'ML-DSA-65',
+  'ML-DSA-87': 'ML-DSA-87',
+  'ML-KEM-512': 'ML-KEM-512',
+  'ML-KEM-768': 'ML-KEM-768',
+  'ML-KEM-1024': 'ML-KEM-1024',
+  'SLH-DSA-SHA2-128s': 'SLH-DSA-128s',
+  'SLH-DSA-SHA2-192s': 'SLH-DSA-192s',
+  'SLH-DSA-SHA2-256s': 'SLH-DSA-256s',
 }
 
 const INVENTORY_SIZING: Record<
@@ -1164,6 +1199,56 @@ export function HsmCapacityCalculator() {
 
   const [classicalHsm, setClassicalHsm] = useState<HsmProfile>(CLASSICAL_HSM_DEFAULT)
   const [pqcHsm, setPqcHsm] = useState<HsmProfile>(PQC_HSM_DEFAULT)
+
+  // Key-storage capacity ("Memory space required") — models HSM key-object
+  // storage (private key + certificate), independent of the throughput model above.
+  const [keyStorageCapacityBytes, setKeyStorageCapacityBytes] = useState(
+    CAPACITY_OPTIONS[1].bytes
+  )
+  const [keyStorageMode, setKeyStorageMode] = useState<KeyStorageMode>('hybrid')
+  const [keyStorageRsaAlg, setKeyStorageRsaAlg] = useState<RsaAlg>('RSA-2048')
+  const [keyStoragePqcFamily, setKeyStoragePqcFamily] = useState<PqcFamily>('ML-DSA')
+  const [keyStoragePqcVariant, setKeyStoragePqcVariant] = useState(
+    PQC_FAMILY_DEFAULT_VARIANT['ML-DSA']
+  )
+  const [keyStorageOverheadPct, setKeyStorageOverheadPct] = useState(DEFAULT_BLOB_OVERHEAD_PCT)
+  // Advanced, editable model parameters — every default below can be unchecked
+  // or overridden, matching this calculator's "no hidden constants" convention.
+  const [keyStorageIncludeSeed, setKeyStorageIncludeSeed] = useState(true)
+  const [keyStorageCertTemplateBytes, setKeyStorageCertTemplateBytes] =
+    useState(CERT_TEMPLATE_BYTES)
+  const [keyStorageSpkiWrapperBytes, setKeyStorageSpkiWrapperBytes] = useState(SPKI_WRAPPER_BYTES)
+
+  const selectKeyStoragePqcFamily = useCallback((family: PqcFamily) => {
+    setKeyStoragePqcFamily(family)
+    setKeyStoragePqcVariant(PQC_FAMILY_DEFAULT_VARIANT[family])
+  }, [])
+
+  const keyStorageResult = useMemo(
+    () =>
+      computeKeyStorage({
+        mode: keyStorageMode,
+        capacityBytes: keyStorageCapacityBytes,
+        rsaAlg: keyStorageRsaAlg,
+        pqcFamily: keyStoragePqcFamily,
+        pqcVariant: keyStoragePqcVariant,
+        overheadPct: keyStorageOverheadPct,
+        includeSeedOverhead: keyStorageIncludeSeed,
+        certTemplateBytes: keyStorageCertTemplateBytes,
+        spkiWrapperBytes: keyStorageSpkiWrapperBytes,
+      }),
+    [
+      keyStorageMode,
+      keyStorageCapacityBytes,
+      keyStorageRsaAlg,
+      keyStoragePqcFamily,
+      keyStoragePqcVariant,
+      keyStorageOverheadPct,
+      keyStorageIncludeSeed,
+      keyStorageCertTemplateBytes,
+      keyStorageSpkiWrapperBytes,
+    ]
+  )
 
   const [planningMode, setPlanningMode] = useState<'demand' | 'inventory'>('demand')
   const [inventoryHsmCount, setInventoryHsmCount] = useState(5)
@@ -2481,6 +2566,318 @@ export function HsmCapacityCalculator() {
               </div>
             )
           })}
+        </div>
+      </CollapsibleSection>
+
+      {/* Memory space required — key-object storage capacity, independent of the throughput model above */}
+      <CollapsibleSection
+        title="Memory space required (key storage)"
+        icon={<HardDrive size={14} className="text-primary" aria-hidden="true" />}
+        defaultOpen={false}
+      >
+        <p className="text-[10px] text-muted-foreground mb-3">
+          How many key objects fit in a given amount of HSM key storage under classical, hybrid,
+          and pure-PQC key material. Each key object is modelled as a private key plus the
+          certificate that carries its public key. This estimates raw HSM object storage — see the{' '}
+          <Link to="/playground/cert-capacity" className="text-primary hover:underline">
+            Cert Capacity Calculator
+          </Link>{' '}
+          for certificate-chain and TLS bandwidth sizing.
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <div>
+              <p className="text-[10px] text-muted-foreground mb-1">HSM key storage capacity</p>
+              <div className="flex flex-wrap rounded-md overflow-hidden border border-border w-fit">
+                {CAPACITY_OPTIONS.map((opt) => (
+                  <Button
+                    key={opt.label}
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setKeyStorageCapacityBytes(opt.bytes)}
+                    className={clsx(
+                      'px-2 py-0.5 text-[10px] font-mono rounded-none h-auto',
+                      keyStorageCapacityBytes === opt.bytes
+                        ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                        : 'bg-muted/30 text-foreground hover:bg-muted/60'
+                    )}
+                    aria-pressed={keyStorageCapacityBytes === opt.bytes}
+                  >
+                    {opt.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p className="text-[10px] text-muted-foreground mb-1">Key material</p>
+              <div className="flex rounded-md overflow-hidden border border-border w-fit">
+                {(
+                  [
+                    ['classical', 'Classical'],
+                    ['hybrid', 'Hybrid'],
+                    ['pure-pqc', 'Pure PQC'],
+                  ] as Array<[KeyStorageMode, string]>
+                ).map(([mode, label]) => (
+                  <Button
+                    key={mode}
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setKeyStorageMode(mode)}
+                    className={clsx(
+                      'px-2 py-0.5 text-[10px] font-mono rounded-none h-auto',
+                      keyStorageMode === mode
+                        ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                        : 'bg-muted/30 text-foreground hover:bg-muted/60'
+                    )}
+                    aria-pressed={keyStorageMode === mode}
+                  >
+                    {label}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            {(keyStorageMode === 'classical' || keyStorageMode === 'hybrid') && (
+              <div>
+                <p className="text-[10px] text-muted-foreground mb-1">RSA key pair</p>
+                <div className="flex rounded-md overflow-hidden border border-border w-fit">
+                  {RSA_ALGS.map((alg) => (
+                    <Button
+                      key={alg}
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setKeyStorageRsaAlg(alg)}
+                      className={clsx(
+                        'px-2 py-0.5 text-[10px] font-mono rounded-none h-auto',
+                        keyStorageRsaAlg === alg
+                          ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                          : 'bg-muted/30 text-foreground hover:bg-muted/60'
+                      )}
+                      aria-pressed={keyStorageRsaAlg === alg}
+                    >
+                      {alg}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {(keyStorageMode === 'hybrid' || keyStorageMode === 'pure-pqc') && (
+              <>
+                <div>
+                  <p className="text-[10px] text-muted-foreground mb-1">PQC algorithm family</p>
+                  <div className="flex rounded-md overflow-hidden border border-border w-fit">
+                    {PQC_FAMILIES.map((family) => (
+                      <Button
+                        key={family}
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => selectKeyStoragePqcFamily(family)}
+                        className={clsx(
+                          'px-2 py-0.5 text-[10px] font-mono rounded-none h-auto',
+                          keyStoragePqcFamily === family
+                            ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                            : 'bg-muted/30 text-foreground hover:bg-muted/60'
+                        )}
+                        aria-pressed={keyStoragePqcFamily === family}
+                      >
+                        {family}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-[10px] text-muted-foreground mb-1">FIPS parameter set</p>
+                  <div className="flex rounded-md overflow-hidden border border-border w-fit">
+                    {PQC_VARIANTS[keyStoragePqcFamily].map((variant) => (
+                      <Button
+                        key={variant}
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setKeyStoragePqcVariant(variant)}
+                        className={clsx(
+                          'px-2 py-0.5 text-[10px] font-mono rounded-none h-auto',
+                          keyStoragePqcVariant === variant
+                            ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                            : 'bg-muted/30 text-foreground hover:bg-muted/60'
+                        )}
+                        aria-pressed={keyStoragePqcVariant === variant}
+                      >
+                        {KEY_STORAGE_PQC_VARIANT_LABELS[variant] ?? variant}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+
+            <SliderRow
+              label="Blob overhead — object header, ACLs, integrity/MAC, wrap"
+              value={keyStorageOverheadPct}
+              min={0}
+              max={30}
+              step={0.5}
+              format={(v) => `${v}%`}
+              onChange={setKeyStorageOverheadPct}
+              tooltip="Per-object storage the HSM adds beyond the raw key and certificate bytes: attribute/ACL metadata, integrity MAC, and (if wrapped under a master key) wrapping overhead."
+            />
+          </div>
+
+          <div className="rounded-md border border-primary/30 bg-primary/5 p-3 space-y-2 h-fit">
+            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-mono">
+              Keys that fit
+            </p>
+            <p className="text-2xl font-mono text-primary">
+              {keyStorageResult.numKeys.toLocaleString()}{' '}
+              <span className="text-xs text-muted-foreground">keys</span>
+            </p>
+            <div className="text-[10px] text-muted-foreground space-y-0.5 pt-1 border-t border-border/50">
+              <p>
+                Private key material:{' '}
+                <span className="font-mono text-foreground">
+                  {formatBytes(keyStorageResult.privBytes)}
+                </span>
+              </p>
+              <p>
+                Certificate (pub {formatBytes(keyStorageResult.certPubBytes)} + sig{' '}
+                {formatBytes(keyStorageResult.certSigBytes)} + template/SPKI):{' '}
+                <span className="font-mono text-foreground">
+                  {formatBytes(keyStorageResult.certBytes)}
+                </span>
+              </p>
+              <p>
+                Per key, before blob overhead:{' '}
+                <span className="font-mono text-foreground">
+                  {formatBytes(keyStorageResult.perKeyBytes)}
+                </span>
+              </p>
+              <p>
+                Per key, with {keyStorageOverheadPct}% blob overhead:{' '}
+                <span className="font-mono text-foreground">
+                  {formatBytes(keyStorageResult.effectivePerKeyBytes)}
+                </span>
+              </p>
+              <p>
+                Used:{' '}
+                <span className="font-mono text-foreground">
+                  {formatBytes(keyStorageResult.usedBytes)}
+                </span>{' '}
+                / {formatBytes(keyStorageCapacityBytes)}
+              </p>
+              <p>
+                Remaining:{' '}
+                <span className="font-mono text-foreground">
+                  {formatBytes(keyStorageResult.remainderBytes)}
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </CollapsibleSection>
+
+      {/* How memory usage is computed — explainer + editable model defaults */}
+      <CollapsibleSection
+        title="How memory usage is computed"
+        icon={<Info size={14} className="text-muted-foreground" aria-hidden="true" />}
+        defaultOpen={false}
+      >
+        <div className="space-y-3 text-[11px] text-muted-foreground leading-relaxed">
+          <div>
+            <p className="font-semibold text-foreground mb-0.5">Formula</p>
+            <p className="font-mono text-[10px] text-foreground bg-muted/30 rounded px-2 py-1.5">
+              keys = floor( capacity ÷ ( (private key + certificate) × (1 + blob overhead %) ) )
+            </p>
+            <p className="mt-1">
+              <span className="text-foreground">Certificate</span> = template overhead + SPKI
+              wrapper + public key bytes + issuer signature bytes. In{' '}
+              <span className="text-foreground">Classical</span> mode the RSA key signs its own
+              certificate. In <span className="text-foreground">Pure PQC</span> mode the PQC key
+              signs its own certificate (ML-KEM cannot sign, so an ML-KEM cert is signed by the
+              ML-DSA variant at the matching NIST security category — 512↔44, 768↔65, 1024↔87). In{' '}
+              <span className="text-foreground">Hybrid</span> mode the private key, certificate
+              public-key field, and certificate signature all carry{' '}
+              <span className="italic">both</span> algorithms (composite/dual-signature
+              certificate) — classical + PQC bytes summed.
+            </p>
+          </div>
+
+          <div>
+            <p className="font-semibold text-foreground mb-0.5">Editable model defaults</p>
+            <p className="mb-2">
+              Every constant below is a modelling assumption, not a fixed fact — override it to
+              match your CA/PKI and HSM vendor.
+            </p>
+            <div className="flex items-center gap-2 mb-2">
+              <input
+                id="key-storage-include-seed"
+                type="checkbox"
+                checked={keyStorageIncludeSeed}
+                onChange={(e) => setKeyStorageIncludeSeed(e.target.checked)}
+                className="h-3.5 w-3.5 accent-primary"
+              />
+              <label htmlFor="key-storage-include-seed" className="text-foreground">
+                Store the {SEED_OVERHEAD_BYTES['ML-DSA']}-byte seed (ML-DSA) / {' '}
+                {SEED_OVERHEAD_BYTES['ML-KEM']}-byte seed (ML-KEM) alongside the expanded private
+                key
+              </label>
+              <span
+                className="text-muted-foreground cursor-help"
+                title="FIPS 203/204 allow deriving the full private key from a small seed. Many HSM implementations cache both the seed (compact, portable) and the expanded key (fast sign/decaps). Uncheck if your HSM stores only the expanded key."
+              >
+                <Info size={11} aria-hidden="true" />
+              </span>
+            </div>
+            <div className="flex flex-wrap items-center gap-4">
+              <label className="flex items-center gap-1.5 text-foreground">
+                Cert template overhead (bytes)
+                <input
+                  type="number"
+                  min={0}
+                  step={1}
+                  value={keyStorageCertTemplateBytes}
+                  onChange={(e) =>
+                    setKeyStorageCertTemplateBytes(Math.max(0, Number(e.target.value) || 0))
+                  }
+                  className="w-20 rounded border border-border bg-muted/20 px-2 py-0.5 text-xs font-mono text-foreground"
+                />
+              </label>
+              <label className="flex items-center gap-1.5 text-foreground">
+                SPKI wrapper (bytes)
+                <input
+                  type="number"
+                  min={0}
+                  step={1}
+                  value={keyStorageSpkiWrapperBytes}
+                  onChange={(e) =>
+                    setKeyStorageSpkiWrapperBytes(Math.max(0, Number(e.target.value) || 0))
+                  }
+                  className="w-20 rounded border border-border bg-muted/20 px-2 py-0.5 text-xs font-mono text-foreground"
+                />
+              </label>
+            </div>
+            <p className="text-[10px] text-muted-foreground/80 italic mt-2">
+              Defaults: {CERT_TEMPLATE_BYTES} B template (issuer/subject DN, validity, serial,
+              extensions) + {SPKI_WRAPPER_BYTES} B SPKI algorithm-identifier wrapper — a typical
+              enterprise-PKI leaf certificate. The blob-overhead slider above (default{' '}
+              {DEFAULT_BLOB_OVERHEAD_PCT}%) is the HSM object-storage overhead on top of this.
+            </p>
+          </div>
+
+          <div>
+            <p className="font-semibold text-foreground mb-0.5">What this does not model</p>
+            <ul className="list-disc list-inside space-y-0.5 marker:text-muted-foreground/60">
+              <li>Certificate chains (intermediate/root storage) — sized per leaf key object only.</li>
+              <li>
+                RSA private-key size is an approximate PKCS#1 DER figure ({formatBytes(1192)} /
+                2048-bit, {formatBytes(1770)} / 3072-bit) — actual DER size varies by a handful of
+                bytes per key.
+              </li>
+              <li>Vendor-specific wrapping/HSM firmware key-slot alignment or padding.</li>
+            </ul>
+          </div>
         </div>
       </CollapsibleSection>
 
