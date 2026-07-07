@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Small presentational helpers shared across the workbench. Semantic tokens only.
 
-import type { ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import type { DecisionKey } from '@/data/migrationAssets'
 import {
   CheckCircle2,
@@ -11,6 +11,7 @@ import {
   AlertTriangle,
   type LucideIcon,
 } from 'lucide-react'
+import { Button, type ButtonProps } from '../../ui/button'
 
 export type Tone = 'success' | 'primary' | 'info' | 'warning' | 'destructive' | 'muted'
 
@@ -61,4 +62,53 @@ export const DECISION_ICON: Record<DecisionKey, LucideIcon> = {
   rekey: RefreshCw,
   roadmap: Clock,
   mitigate: AlertTriangle,
+}
+
+const ARM_MS = 3000
+
+/** Arm-then-confirm destructive action: first click arms it (swapping to
+ *  `confirmChildren` for a few seconds), second click within the window fires
+ *  `onConfirm`. Cheaper than a dialog for low-stakes, reversible-by-redoing
+ *  actions like clearing a plan. Auto-disarms if left untouched. */
+export function ConfirmButton({
+  children,
+  confirmChildren,
+  onConfirm,
+  variant = 'ghost',
+  confirmVariant = 'destructive',
+  ...buttonProps
+}: {
+  children: ReactNode
+  confirmChildren: ReactNode
+  onConfirm: () => void
+  confirmVariant?: ButtonProps['variant']
+} & Omit<ButtonProps, 'onClick' | 'children'>) {
+  const [armed, setArmed] = useState(false)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(
+    () => () => {
+      if (timerRef.current) clearTimeout(timerRef.current)
+    },
+    []
+  )
+
+  return (
+    <Button
+      {...buttonProps}
+      variant={armed ? confirmVariant : variant}
+      onClick={() => {
+        if (!armed) {
+          setArmed(true)
+          timerRef.current = setTimeout(() => setArmed(false), ARM_MS)
+          return
+        }
+        if (timerRef.current) clearTimeout(timerRef.current)
+        setArmed(false)
+        onConfirm()
+      }}
+    >
+      {armed ? confirmChildren : children}
+    </Button>
+  )
 }

@@ -146,7 +146,7 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
       )}
 
       <div className="mt-2">
-        <PostureCommandCenter posture={posture} />
+        <PostureCommandCenter posture={posture} onGoToReplace={() => setTab('replace')} />
       </div>
 
       <Tabs value={activeTab} onValueChange={setTab} className="mt-5">
@@ -179,7 +179,11 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
         </TabsList>
 
         <TabsContent value="replace" className="mt-4">
-          <ReplaceTab persona={persona} initialDomain={focus?.domain} />
+          <ReplaceTab
+            persona={persona}
+            initialDomain={focus?.domain}
+            onGoToRoadmaps={() => setTab('roadmaps')}
+          />
         </TabsContent>
         <TabsContent value="plan" className="mt-4">
           <PlanTab posture={posture} onGoToReplace={() => setTab('replace')} />
@@ -188,7 +192,7 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
           <RoadmapsTab />
         </TabsContent>
         <TabsContent value="vendorrisk" className="mt-4">
-          <SupplyChainRiskMatrix />
+          <SupplyChainRiskMatrix variant="flat" />
         </TabsContent>
       </Tabs>
     </div>

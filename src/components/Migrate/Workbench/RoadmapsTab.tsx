@@ -8,12 +8,21 @@ import { useMemo, useState } from 'react'
 import { Search, Map as MapIcon, ChevronDown } from 'lucide-react'
 import { roadmapByVendorId } from '@/data/vendorRoadmapData'
 import { enrichmentByVendorId } from '@/data/vendorRoadmapEnrichmentData'
-import { vendorMap } from '@/data/migrateData'
+import { vendorMap, softwareData } from '@/data/migrateData'
+import { useSelectedProductIds } from '@/store/useMigrateSelectionStore'
 import { Input } from '../../ui/input'
 import { Button } from '../../ui/button'
 import { VendorRoadmapPanel } from '../VendorRoadmapPanel'
 import { ProductRow } from './ProductRow'
 import { productsForVendor } from './workbenchCatalog'
+
+/** productId → vendorId, to resolve the user's cross-page product selection
+ *  (see {@link useSelectedProductIds}) back to the vendors that own them. */
+const VENDOR_ID_BY_PRODUCT_ID = new Map<string, string>(
+  softwareData
+    .filter((s): s is typeof s & { vendorId: string } => Boolean(s.vendorId))
+    .map((s) => [s.productId, s.vendorId])
+)
 
 interface RoadmapEntry {
   vendorId: string
@@ -37,6 +46,16 @@ const ROADMAP_ENTRIES: RoadmapEntry[] = (() => {
 
 export function RoadmapsTab() {
   const [query, setQuery] = useState('')
+  const selectedProductIds = useSelectedProductIds()
+
+  const myVendorIds = useMemo(() => {
+    const ids = new Set<string>()
+    for (const productId of selectedProductIds) {
+      const vendorId = VENDOR_ID_BY_PRODUCT_ID.get(productId)
+      if (vendorId) ids.add(vendorId)
+    }
+    return ids
+  }, [selectedProductIds])
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -45,6 +64,15 @@ export function RoadmapsTab() {
       (e) => e.vendorName.toLowerCase().includes(q) || e.vendorId.toLowerCase().includes(q)
     )
   }, [query])
+
+  const myVendors = useMemo(
+    () => filtered.filter((e) => myVendorIds.has(e.vendorId)),
+    [filtered, myVendorIds]
+  )
+  const otherVendors = useMemo(
+    () => filtered.filter((e) => !myVendorIds.has(e.vendorId)),
+    [filtered, myVendorIds]
+  )
 
   return (
     <div className="flex flex-col gap-4">
@@ -75,11 +103,32 @@ export function RoadmapsTab() {
           No vendors match “{query}”.
         </p>
       ) : (
-        <div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-2">
-          {filtered.map((e) => (
-            <RoadmapCard key={e.vendorId} vendorId={e.vendorId} vendorName={e.vendorName} />
-          ))}
-        </div>
+        <>
+          {myVendors.length > 0 && (
+            <div>
+              <p className="mb-2 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+                Your vendors · <span className="text-foreground">{myVendors.length}</span>
+              </p>
+              <div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-2">
+                {myVendors.map((e) => (
+                  <RoadmapCard key={e.vendorId} vendorId={e.vendorId} vendorName={e.vendorName} />
+                ))}
+              </div>
+            </div>
+          )}
+          <div>
+            {myVendors.length > 0 && (
+              <p className="mb-2 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+                All vendors
+              </p>
+            )}
+            <div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-2">
+              {otherVendors.map((e) => (
+                <RoadmapCard key={e.vendorId} vendorId={e.vendorId} vendorName={e.vendorName} />
+              ))}
+            </div>
+          </div>
+        </>
       )}
     </div>
   )
