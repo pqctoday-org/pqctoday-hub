@@ -3,9 +3,15 @@
  * Industry-specific cost-of-inaction profiles for the PQC Business Case module.
  * Used by the CostOfInactionAnalyzer workshop step.
  *
- * Sources: IBM Cost of a Data Breach Report 2025, NIST IR 8547 migration urgency guidance,
- * and industry analyst estimates for PQC migration complexity.
+ * Migration cost and delay premium are industry-analyst estimates for a
+ * mid-size org — illustrative, not cited figures. Everything else this step
+ * needs (breach baseline, HNDL/CRQC modeling, regulatory deadline and
+ * penalty) is DERIVED, not hand-maintained here: breach baseline from
+ * roiBaselines.ts (IBM 2025), quantum-risk modeling from breachCostModel.ts
+ * (GRI 2025 CRQC curve + data-class shelf-life decay), and deadline/penalty
+ * from inactionDrivers.ts (complianceData.ts + the timeline CSV).
  */
+import type { DataSensitivityClass } from '@/utils/breachCostModel'
 
 export interface DelayCostProfile {
   industry: string
@@ -13,14 +19,8 @@ export interface DelayCostProfile {
   migrationCostUSD: number
   /** Additional cost per year of delay due to complexity premium and deferred planning */
   delayPremiumPerYear: number
-  /** Multiplier applied to annual breach risk per year of HNDL exposure window */
-  hndlExposureMultiplier: number
-  /** Regulatory penalty per year of non-compliance after the hard deadline (USD) */
-  regulatoryPenaltyUSD: number
-  /** Year by which best-practice adoption is recommended */
-  softDeadline: number
-  /** Year by which compliance is mandated (hard deadline) */
-  hardDeadline: number
+  /** Data class most representative of what this industry protects — drives HNDL shelf-life decay. */
+  dataSensitivityClass: DataSensitivityClass
 }
 
 export const DELAY_COST_PROFILES: DelayCostProfile[] = [
@@ -28,77 +28,68 @@ export const DELAY_COST_PROFILES: DelayCostProfile[] = [
     industry: 'Finance & Banking',
     migrationCostUSD: 4_500_000,
     delayPremiumPerYear: 450_000,
-    hndlExposureMultiplier: 1.35,
-    regulatoryPenaltyUSD: 2_000_000,
-    softDeadline: 2027,
-    hardDeadline: 2030,
+    dataSensitivityClass: 'payment-card',
   },
   {
     industry: 'Healthcare',
     migrationCostUSD: 3_200_000,
     delayPremiumPerYear: 320_000,
-    hndlExposureMultiplier: 1.6,
-    regulatoryPenaltyUSD: 1_500_000,
-    softDeadline: 2027,
-    hardDeadline: 2030,
+    dataSensitivityClass: 'health-record',
   },
   {
     industry: 'Government & Defense',
     migrationCostUSD: 6_800_000,
     delayPremiumPerYear: 680_000,
-    hndlExposureMultiplier: 1.8,
-    regulatoryPenaltyUSD: 5_000_000,
-    softDeadline: 2025,
-    hardDeadline: 2030,
+    dataSensitivityClass: 'state-secret',
   },
   {
     industry: 'Technology',
     migrationCostUSD: 2_900_000,
     delayPremiumPerYear: 290_000,
-    hndlExposureMultiplier: 1.25,
-    regulatoryPenaltyUSD: 800_000,
-    softDeadline: 2027,
-    hardDeadline: 2033,
+    dataSensitivityClass: 'ip-trade-secret',
   },
   {
     industry: 'Telecommunications',
     migrationCostUSD: 5_100_000,
     delayPremiumPerYear: 510_000,
-    hndlExposureMultiplier: 1.3,
-    regulatoryPenaltyUSD: 1_200_000,
-    softDeadline: 2027,
-    hardDeadline: 2030,
+    dataSensitivityClass: 'general-pii',
   },
   {
     industry: 'Energy & Utilities',
     migrationCostUSD: 4_200_000,
     delayPremiumPerYear: 420_000,
-    hndlExposureMultiplier: 1.5,
-    regulatoryPenaltyUSD: 2_500_000,
-    softDeadline: 2026,
-    hardDeadline: 2030,
+    dataSensitivityClass: 'general-pii',
   },
   {
     industry: 'Retail & E-Commerce',
     migrationCostUSD: 1_800_000,
     delayPremiumPerYear: 180_000,
-    hndlExposureMultiplier: 1.15,
-    regulatoryPenaltyUSD: 500_000,
-    softDeadline: 2028,
-    hardDeadline: 2033,
+    dataSensitivityClass: 'payment-card',
   },
   {
     industry: 'Aerospace',
     migrationCostUSD: 5_800_000,
     delayPremiumPerYear: 580_000,
-    hndlExposureMultiplier: 1.7,
-    regulatoryPenaltyUSD: 3_000_000,
-    softDeadline: 2026,
-    hardDeadline: 2030,
+    dataSensitivityClass: 'ip-trade-secret',
+  },
+  {
+    industry: 'Automotive',
+    migrationCostUSD: 5_200_000,
+    delayPremiumPerYear: 520_000,
+    dataSensitivityClass: 'ip-trade-secret',
+  },
+  {
+    industry: 'Education',
+    migrationCostUSD: 1_600_000,
+    delayPremiumPerYear: 160_000,
+    dataSensitivityClass: 'general-pii',
+  },
+  {
+    industry: 'Other',
+    migrationCostUSD: 3_500_000,
+    delayPremiumPerYear: 350_000,
+    dataSensitivityClass: 'general-pii',
   },
 ]
 
 export const DEFAULT_PROFILE = DELAY_COST_PROFILES[0]
-
-// Breach-risk math lives in utils/delayCostModel.ts, driven by an explicit
-// (user-adjustable) breach probability rather than a hidden 5% constant.

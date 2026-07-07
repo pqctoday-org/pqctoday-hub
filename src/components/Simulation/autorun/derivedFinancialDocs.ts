@@ -21,6 +21,7 @@ import {
   projectDelayScenario,
   type DelayScenarioResult,
 } from '@/utils/delayCostModel'
+import { deriveIndustryMandate, deriveIndustryPenalty } from '@/utils/inactionDrivers'
 import { compareCostModels } from '@/utils/costModelSim'
 import { DELAY_COST_PROFILES } from '@/components/PKILearning/modules/PQCBusinessCase/data/businessCaseScenarios'
 import { ORG, CUR, REG, type DemoDoc, type DemoSector } from './demoDocs'
@@ -162,17 +163,25 @@ function sectorFinancials(sector: DemoSector): SectorFinancials {
 
   const profile =
     DELAY_COST_PROFILES.find((p) => p.industry === s.industry) ?? DELAY_COST_PROFILES[0]
+  const mandate = deriveIndustryMandate(s.industry)
+  const penalty = deriveIndustryPenalty(s.industry)
   const delayInputs = {
-    quantumBreachPerEvent: breach.quantumSLE,
-    annualBreachProbPct: DELAY_MODEL_DEFAULTS.annualBreachProbPct,
+    breachBaseline: baseline,
+    breachScale: 1,
+    baseYearsOfData: 5,
+    hndlFactorPct: 30,
+    dataSensitivityClass: profile.dataSensitivityClass,
+    annualBreachProbPct: BREACH_PROB_PCT,
     migrationCostUSD: profile.migrationCostUSD,
     delayPremiumPerYear: profile.delayPremiumPerYear,
-    regulatoryPenaltyUSD: profile.regulatoryPenaltyUSD,
-    hardDeadlineYear: profile.hardDeadline,
+    migrationDurationYears: DELAY_MODEL_DEFAULTS.migrationDurationYears,
+    mandateType: mandate.mandateType,
+    hardDeadlineYear: mandate.deadlineYear,
+    annualFineUSD: penalty.annualFineUSD,
+    cliffLossUSD: penalty.cliffLossUSD,
     currentYear: CURRENT_YEAR,
     horizonYears: DELAY_MODEL_DEFAULTS.horizonYears,
     discountRatePct: DELAY_MODEL_DEFAULTS.discountRatePct,
-    residualFactor: DELAY_MODEL_DEFAULTS.residualFactor,
   }
   const now = projectDelayScenario(delayInputs, 0)
   const delayed = projectDelayScenario(delayInputs, DELAY_YEARS)
@@ -256,9 +265,7 @@ export function deriveInactionDoc(sector: DemoSector): DemoDoc {
       `| Delay ${DELAY_YEARS}yr (${DELAY_MODEL_DEFAULTS.horizonYears}-yr NPV) | ${fmt(cur, delayed.total)} |`,
       `| **Cost of inaction** | **${fmt(cur, costOfInaction)}** |`,
       '',
-      `Discounted at ${DELAY_MODEL_DEFAULTS.discountRatePct}% over ${DELAY_MODEL_DEFAULTS.horizonYears} years; ${Math.round(
-        DELAY_MODEL_DEFAULTS.residualFactor * 100
-      )}% HNDL residual after migration. Derived from the Cost of Inaction Analyzer.`
+      `Discounted at ${DELAY_MODEL_DEFAULTS.discountRatePct}% over ${DELAY_MODEL_DEFAULTS.horizonYears} years; a residual HNDL tail persists after migration from data harvested before then. Derived from the Cost of Inaction Analyzer.`
     ),
   }
 }
