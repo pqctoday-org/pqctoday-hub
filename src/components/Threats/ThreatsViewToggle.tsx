@@ -1,17 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { Layers, LayoutGrid, Table } from 'lucide-react'
+import { LayoutGrid, Table } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 
-export type ThreatsViewMode = 'stack' | 'cards' | 'table'
+export type ThreatsViewMode = 'cards' | 'table'
 
 interface ThreatsViewToggleProps {
   mode: ThreatsViewMode
   onChange: (mode: ThreatsViewMode) => void
 }
 
-const OPTIONS: { value: ThreatsViewMode; label: string; icon: typeof Layers }[] = [
-  { value: 'stack', label: 'Industry Stack', icon: Layers },
+const OPTIONS: { value: ThreatsViewMode; label: string; icon: typeof LayoutGrid }[] = [
   { value: 'cards', label: 'Cards', icon: LayoutGrid },
   { value: 'table', label: 'Table', icon: Table },
 ]
