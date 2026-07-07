@@ -10,6 +10,9 @@ interface ThreatsCardGridProps {
   items: ThreatItem[]
   onItemClick: (item: ThreatItem) => void
   relevantIndustries?: Set<string>
+  /** Display label for the active persona (e.g. "Executive") — used to explain
+   *  why non-matching cards are dimmed, instead of a silent opacity change. */
+  personaLabel?: string
 }
 
 function industrySlug(industry: string) {
@@ -20,6 +23,7 @@ export const ThreatsCardGrid = ({
   items,
   onItemClick,
   relevantIndustries,
+  personaLabel,
 }: ThreatsCardGridProps) => {
   if (items.length === 0) {
     return (
@@ -59,6 +63,11 @@ export const ThreatsCardGrid = ({
                   index={gi * 100 + i}
                   onClick={onItemClick}
                   dimmed={relevantIndustries != null && !relevantIndustries.has(item.industry)}
+                  dimmedReason={
+                    personaLabel
+                      ? `Outside your ${personaLabel} role's usual focus — still shown, just deprioritized`
+                      : "Outside your role's usual focus — still shown, just deprioritized"
+                  }
                 />
               ))}
             </AnimatePresence>

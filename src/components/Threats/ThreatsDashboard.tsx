@@ -25,12 +25,14 @@ import {
 } from '../common/TrustTierFilter'
 import { logEvent, personaLabel } from '../../utils/analytics'
 import { usePersonaStore } from '../../store/usePersonaStore'
+import type { PersonaId } from '../../data/learningPersonas'
 import { useBookmarkStore } from '../../store/useBookmarkStore'
 import {
   INDUSTRY_TO_THREATS_MAP,
   PERSONA_THREATS_DEFAULT_INDUSTRIES,
 } from '../../data/personaConfig'
 import { PersonaDefaultsBanner } from '../common/PersonaDefaultsBanner'
+import { PersonaSwitchModal } from '../Persona/PersonaSwitchModal'
 import { usePersonaDefaults } from '@/hooks/usePersonaDefaults'
 import clsx from 'clsx'
 import { PageHeader } from '../common/PageHeader'
@@ -39,6 +41,15 @@ import { Button } from '../ui/button'
 
 type SortField = 'industry' | 'threatId' | 'criticality'
 type SortDirection = 'asc' | 'desc'
+
+const PERSONA_SHORT_LABELS: Record<PersonaId, string> = {
+  executive: 'Executive',
+  developer: 'Developer',
+  architect: 'Architect',
+  ops: 'IT Ops',
+  researcher: 'Researcher',
+  curious: 'Curious',
+}
 
 import { getIndustryIcon } from './threatsHelper'
 import { ThreatsViewToggle, type ThreatsViewMode } from './ThreatsViewToggle'
@@ -121,7 +132,7 @@ export const ThreatsDashboard: React.FC<{
     [simEmbed, setSearchParams]
   )
 
-  const { selectedIndustries: storeIndustries, selectedPersona, setPersona } = usePersonaStore()
+  const { selectedIndustries: storeIndustries, selectedPersona } = usePersonaStore()
 
   const initialIndustries = useMemo(() => {
     const param = searchParams.get('industry')
@@ -165,6 +176,7 @@ export const ThreatsDashboard: React.FC<{
     return null
   })
   const [showMobileFilters, setShowMobileFilters] = useState(false)
+  const [personaModalOpen, setPersonaModalOpen] = useState(false)
   const tierFilter = useTrustTierFilter()
   const [viewMode, setViewMode] = useState<ThreatsViewMode>(
     () => (searchParams.get('mode') as ThreatsViewMode | null) ?? 'table'
@@ -472,27 +484,15 @@ export const ThreatsDashboard: React.FC<{
     return mapped.length > 0 ? new Set(mapped) : undefined
   }, [selectedPersona, selectedIndustries, storeIndustries])
 
-  // Persona-aware summary statistics
+  // Curious gets a plain-language intro card regardless of industry selection —
+  // the only persona with no PersonaDefaultsBanner (its default industry set is
+  // empty by design), so this is its sole in-page framing. Other personas'
+  // equivalent framing now comes from PersonaDefaultsBanner alone (previously
+  // duplicated here via a separate criticality-count sentence).
   const personaSummary = useMemo(() => {
-    if (!selectedPersona) return null
-    // Curious gets a plain-language intro regardless of industry selection
-    if (selectedPersona === 'curious') {
-      return `${threatsData.length} known quantum-era threats — each one is a place where today's encryption could be broken once a large quantum computer exists. Pick an industry below to see the ones closest to you.`
-    }
-    if (selectedIndustries.length === 0) return null
-    const industryThreats = threatsData.filter((t) => selectedIndustries.includes(t.industry))
-    const criticalHigh = industryThreats.filter(
-      (t) => t.criticality === 'Critical' || t.criticality === 'High'
-    )
-    const PERSONA_FRAMING: Record<string, string> = {
-      executive: `${criticalHigh.length} high-impact threat${criticalHigh.length !== 1 ? 's' : ''} across ${selectedIndustries.length} industr${selectedIndustries.length !== 1 ? 'ies' : 'y'} require board-level attention`,
-      developer: `${criticalHigh.length} critical/high threat${criticalHigh.length !== 1 ? 's' : ''} affect algorithms in your stack — review migration paths`,
-      architect: `${industryThreats.length} threat${industryThreats.length !== 1 ? 's' : ''} across ${selectedIndustries.length} industr${selectedIndustries.length !== 1 ? 'ies' : 'y'} — ${criticalHigh.length} require architectural mitigation`,
-      ops: `${criticalHigh.length} high-priority threat${criticalHigh.length !== 1 ? 's' : ''} require configuration updates across your infrastructure`,
-      researcher: `${industryThreats.length} threat${industryThreats.length !== 1 ? 's' : ''} cataloged — ${criticalHigh.length} critical/high severity with active quantum exposure`,
-    }
-    return PERSONA_FRAMING[selectedPersona] ?? null // eslint-disable-line security/detect-object-injection
-  }, [selectedPersona, selectedIndustries])
+    if (selectedPersona !== 'curious') return null
+    return `${threatsData.length} known quantum-era threats — each one is a place where today's encryption could be broken once a large quantum computer exists. Pick an industry below to see the ones closest to you.`
+  }, [selectedPersona])
 
   // Effective industries the page is scoped to (explicit selection, else persona default).
   const heroScopedIndustries = useMemo<string[]>(
@@ -715,42 +715,21 @@ export const ThreatsDashboard: React.FC<{
                 </div>
               </div>
 
-              {/* Row 2 — role lens + severity + class + trust + my + view + count */}
+              {/* Row 2 — persona switch + severity + class + trust + my + view + count.
+              Persona is a global identity setting (usePersonaStore) — this is a single
+              entry point into the real switcher (PersonaSwitchModal, same one the nav's
+              PersonaChip uses), not a page-local filter that mutates global state. */}
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-border pt-3">
-                <div className="flex flex-wrap items-center gap-1.5">
-                  <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
-                    Role
-                  </span>
-                  {(
-                    [
-                      { id: 'executive', label: 'Executive' },
-                      { id: 'developer', label: 'Developer' },
-                      { id: 'architect', label: 'Architect' },
-                      { id: 'ops', label: 'IT Ops' },
-                      { id: 'researcher', label: 'Researcher' },
-                      { id: 'curious', label: 'Curious' },
-                    ] as const
-                  ).map((r) => {
-                    const active = selectedPersona === r.id
-                    return (
-                      <Button
-                        key={r.id}
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setPersona(active ? null : r.id)}
-                        aria-pressed={active}
-                        className={clsx(
-                          'h-auto rounded-full border px-2.5 py-0.5 text-[11px] font-semibold',
-                          active
-                            ? 'border-secondary/50 bg-secondary/10 text-secondary'
-                            : 'border-border text-muted-foreground hover:text-foreground'
-                        )}
-                      >
-                        {r.label}
-                      </Button>
-                    )
-                  })}
-                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setPersonaModalOpen(true)}
+                  className="h-auto rounded-full border border-border px-2.5 py-0.5 text-[11px] font-semibold text-muted-foreground hover:text-foreground"
+                >
+                  {selectedPersona
+                    ? `Viewing as: ${PERSONA_SHORT_LABELS[selectedPersona]} · change` // eslint-disable-line security/detect-object-injection
+                    : 'Set your role'}
+                </Button>
 
                 <div className="flex flex-wrap items-center gap-1.5">
                   <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
@@ -927,6 +906,9 @@ export const ThreatsDashboard: React.FC<{
                       syncFiltersToUrl({ id: item.threatId })
                     }}
                     relevantIndustries={personaRelevantIndustries}
+                    personaLabel={
+                      selectedPersona ? PERSONA_SHORT_LABELS[selectedPersona] : undefined // eslint-disable-line security/detect-object-injection
+                    }
                   />
                 </div>
               )}
@@ -974,6 +956,7 @@ export const ThreatsDashboard: React.FC<{
           </Suspense>
         )}
       </AnimatePresence>
+      {personaModalOpen && <PersonaSwitchModal onClose={() => setPersonaModalOpen(false)} />}
     </div>
   )
 }
