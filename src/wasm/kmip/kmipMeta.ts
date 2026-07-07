@@ -194,10 +194,13 @@ export const AUTO_ALGO = '__auto__'
  * the engine's full set — PQC first, classical for the agility contrast).
  * "Auto" is first: the headline crypto-agility lesson (A-grade review C1) —
  * omit the algorithm, let the active policy resolve it, flip the policy,
- * watch the SAME request resolve differently. The two spec-only entries
- * (A-grade review A1) show real PQC algorithms a policy can reference that
- * this in-browser engine cannot actually create, so picking one explains
- * why rather than silently disappearing from the catalog. */
+ * watch the SAME request resolve differently. The remaining spec-only
+ * entries (A-grade review A1) show real PQC algorithms a policy can
+ * reference that this in-browser engine cannot actually create, so picking
+ * one explains why rather than silently disappearing from the catalog.
+ * FrodoKEM/Classic McEliece graduated OUT of that spec-only set on
+ * 2026-07-06 (BSI TR-02102-1 support) — they're genuinely runnable now,
+ * see RUNNABLE_EXACT below. */
 export const ALGORITHMS: AlgoChoice[] = [
   {
     value: AUTO_ALGO,
@@ -297,19 +300,19 @@ export const ALGORITHMS: AlgoChoice[] = [
   // X25519 stays spec-only: the KMIP layer has no key-agreement OPERATION
   // yet (DeriveKey's Asymmetric Key method) — keygen alone would be inert.
   { value: 'X25519', label: 'X25519 (spec-only)', kind: 'kem', pqc: false, runnable: false },
-  {
-    value: 'FrodoKEM-1344',
-    label: 'FrodoKEM-1344 (spec-only)',
-    kind: 'kem',
-    pqc: true,
-    runnable: false,
-  },
+  // FrodoKEM / Classic McEliece (BSI TR-02102-1 §2.4.1/§2.4.2) — runnable as
+  // of 2026-07-06: keygen/encapsulate/decapsulate wired through the KMIP
+  // layer to the softhsmrustv3 engine (frodo-kem + classic-mceliece-rust).
+  // The bare "FrodoKEM-1344" value resolves to the AES variant (mirrors
+  // create_key_pair.rs::parse_algorithm's own bare-name convention) — the
+  // SHAKE variant and the 640/976 sizes exist but aren't in this curated
+  // picker, same as most SLH-DSA parameter sets aren't.
+  { value: 'FrodoKEM-1344', label: 'FrodoKEM-1344 (BSI TR-02102-1)', kind: 'kem', pqc: true },
   {
     value: 'Classic-McEliece-6688128',
-    label: 'Classic-McEliece-6688128 (spec-only)',
+    label: 'Classic-McEliece-6688128 (BSI TR-02102-1)',
     kind: 'kem',
     pqc: true,
-    runnable: false,
   },
 ]
 
@@ -340,6 +343,12 @@ const RUNNABLE_EXACT = new Set([
   'SecP256r1MLKEM768',
   // 2026-07-05 (P1): Ed25519 keygen/sign/verify wired KMIP → PKCS#11 engine.
   'Ed25519',
+  // 2026-07-06: BSI TR-02102-1 §2.4.1/§2.4.2 — the bare name resolves to the
+  // AES variant (wasm/src/lib.rs::alg_from_name mirrors parse_algorithm's own
+  // bare-name-defaults-to-AES convention); Classic McEliece has only the one
+  // BSI-recommended parameter set, so its name is already unambiguous.
+  'FrodoKEM-1344',
+  'Classic-McEliece-6688128',
 ])
 
 /** Family prefixes `parse_algorithm` collapses to a concrete algorithm
@@ -351,11 +360,13 @@ const RUNNABLE_FAMILIES = new Set(['AES', 'RSA', 'ECDSA', 'ECDH'])
 
 /** `true` if the wasm engine can actually create/use a real key for this
  * algorithm name — a policy may still reference a non-runnable name (e.g.
- * `FrodoKEM-1344`, `X25519`, a hash name like `SHA-1`) in an
- * allow/denylist, and the dry-run engine will happily evaluate a verdict for
- * the literal string, but no lifecycle op can create/sign/encapsulate one
- * here. Distinguishing this is the fix for A-grade review finding A1 — "the
- * tool proves BSI permits FrodoKEM" when the tool simply can't do FrodoKEM. */
+ * `LMS`, `X25519`, a hash name like `SHA-1`) in an allow/denylist, and the
+ * dry-run engine will happily evaluate a verdict for the literal string, but
+ * no lifecycle op can create/sign/encapsulate one here. Distinguishing this
+ * is the fix for A-grade review finding A1 — "the tool proves a policy
+ * permits X" when the tool simply can't do X. (FrodoKEM/Classic McEliece
+ * used to be this docstring's example of that gap; BSI TR-02102-1 support
+ * landed 2026-07-06, so they graduated to RUNNABLE_EXACT instead.) */
 export const isRunnable = (algo: string): boolean =>
   RUNNABLE_EXACT.has(algo) || RUNNABLE_FAMILIES.has(algo.split('-')[0])
 
