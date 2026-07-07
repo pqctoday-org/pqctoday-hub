@@ -108,7 +108,7 @@ export const NATIONAL_CANDIDATES: NationalCandidate[] = [
     kind: 'KEM',
     family: 'Lattice (Ring-LWE)',
     summary:
-      'CACR competition winner. Originally a NIST Round 2 candidate but withdrew; continued as a domestic Chinese reference design.',
+      'CACR national competition winner (as LAC.KEX, ~2018-2020). Also a NIST Round 2 KEM candidate, not advanced to Round 3 (concerns included non-constant-time error-correction routines). No evidence it was subsequently adopted as an official OSCCA/GB national standard — a competition win, not a deployed design.',
     alsoInNistOnRamp: false,
   },
   {
