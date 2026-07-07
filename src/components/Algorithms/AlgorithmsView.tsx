@@ -65,6 +65,7 @@ export function AlgorithmsView() {
     filterStatus,
     searchQuery,
     cnsaLens,
+    researchGapOnly,
     searchParams,
     setSearchParams,
     updateSearchParams,
@@ -77,6 +78,7 @@ export function AlgorithmsView() {
     handleTabChange,
     handleQuickView,
     handleToggleCnsaLens,
+    handleToggleResearchGapOnly,
     detailMode,
     handleDetailModeChange,
     handleToggleCompare,
@@ -132,6 +134,7 @@ export function AlgorithmsView() {
       'section',
       'subtab',
       'cnsa',
+      'gap',
     ]
     return watched.some((key) => searchParams.has(key))
   }, [searchParams])
@@ -329,6 +332,8 @@ export function AlgorithmsView() {
             onQuickView={handleQuickView}
             cnsaLens={cnsaLens}
             onToggleCnsaLens={handleToggleCnsaLens}
+            researchGapOnly={researchGapOnly}
+            onToggleResearchGapOnly={handleToggleResearchGapOnly}
             onClearAll={handleClearAllFilters}
             personaHint={
               /* eslint-disable-next-line security/detect-object-injection */
