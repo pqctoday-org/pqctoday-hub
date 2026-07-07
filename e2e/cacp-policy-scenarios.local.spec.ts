@@ -24,6 +24,11 @@ interface CaseResult {
   engine: string
   engineReason: string
   sim: string
+  /** Set only for scenarios carrying `realExecution` — 'pass' if the actual
+   * runOp sequence matched the declared outcome ('roundtrip'/'refused'),
+   * otherwise a short failure reason. Absent means this scenario has no
+   * real-execution companion (policy-decision-only, same as before). */
+  real?: string
 }
 
 test.beforeEach(async ({ page }) => {
@@ -113,6 +118,45 @@ test('every policy scenario: engine + sim match the declared verdict', async ({ 
         simKind = 'ERR:' + String(e)
       }
 
+      // 3) REAL EXECUTION — only for scenarios that declare it. Proves the
+      // engine's actual enforcement (runOp), not just the dry-run simulation,
+      // matches what's declared: a real CreateKeyPair->Activate->Encapsulate->
+      // Decapsulate round trip for an allow, or a real refusal for a deny.
+      let real: string | undefined
+      if (s.realExecution) {
+        const re = s.realExecution
+        try {
+          if (re.outcome === 'refused') {
+            const ckp = engine.runOp({ op: 'CreateKeyPair', algorithm: re.algorithm, attrs: re.attrs })
+            real = ckp.ok ? `FAIL: expected refusal, CreateKeyPair succeeded (${ckp.message})` : 'pass'
+          } else {
+            const ckp = engine.runOp({ op: 'CreateKeyPair', algorithm: re.algorithm, attrs: re.attrs })
+            if (!ckp.ok) {
+              real = `FAIL: CreateKeyPair refused (${ckp.message})`
+            } else {
+              const privUid = String(ckp.summary.privateKeyUid)
+              const pubUid = String(ckp.summary.publicKeyUid)
+              const actPriv = engine.runOp({ op: 'Activate', uid: privUid })
+              const actPub = engine.runOp({ op: 'Activate', uid: pubUid })
+              if (!actPriv.ok || !actPub.ok) {
+                real = `FAIL: activate (${actPriv.message}/${actPub.message})`
+              } else {
+                const enc = engine.runOp({ op: 'Encapsulate', uid: pubUid })
+                if (!enc.ok) {
+                  real = `FAIL: Encapsulate (${enc.message})`
+                } else {
+                  const ciphertextHex = String(enc.summary.ciphertextHex)
+                  const dec = engine.runOp({ op: 'Decapsulate', uid: privUid, data: ciphertextHex })
+                  real = dec.ok ? 'pass' : `FAIL: Decapsulate (${dec.message})`
+                }
+              }
+            }
+          }
+        } catch (e) {
+          real = 'FAIL: ' + String(e)
+        }
+      }
+
       out.push({
         id: s.id,
         policyFile: s.policyFile,
@@ -122,6 +166,7 @@ test('every policy scenario: engine + sim match the declared verdict', async ({ 
         engine: engineKind,
         engineReason,
         sim: simKind,
+        real,
       })
     }
     return out
@@ -163,9 +208,24 @@ test('every policy scenario: engine + sim match the declared verdict', async ({ 
       console.log(`  ${r.policyFile} :: ${r.id} — engine ${r.engine} vs sim ${r.sim}`)
   }
 
+  // ── Real execution (only scenarios carrying `realExecution`) ──
+  const realCases = results.filter((r) => r.real !== undefined)
+  const realFails = realCases.filter((r) => r.real !== 'pass')
+  if (realCases.length) {
+    console.log('\n──────── REAL EXECUTION (runOp, not dry-run) ────────')
+    for (const r of realCases) {
+      console.log(`${r.real === 'pass' ? '✓' : '✗'} ${pad(r.id, 26)} ${r.real}`)
+    }
+    console.log(`\nREAL EXECUTION: ${realCases.length - realFails.length}/${realCases.length} pass`)
+  }
+
   // Engine correctness is the primary gate; sim parity is reported for triage.
   expect(
     engineFails,
     `engine verdict mismatches: ${engineFails.map((r) => r.id).join(', ')}`
+  ).toEqual([])
+  expect(
+    realFails,
+    `real-execution mismatches: ${realFails.map((r) => `${r.id} (${r.real})`).join(', ')}`
   ).toEqual([])
 })
