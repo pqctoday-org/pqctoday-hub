@@ -26,6 +26,26 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+### Added
+
+- **A "Memory space required" section in the HSM Capacity Calculator** [view:/playground/hsm-capacity] [persona:architect]: estimates how many keys (private key plus certificate) fit in a given HSM's key-storage budget across classical, hybrid, and post-quantum key types, with the underlying formula and its assumptions shown and editable rather than hidden.
+- **New Deep Dive learning content on three more simulation phases** [view:/simulation]: previously only Phase 6 had optional deep-dive material; Phase 1, Phase 5, and Foundations now have it too, adding practice tools for already-required lessons and covering several previously-untouched topics (AI security, secure messaging, automotive, digital ID/assets, developer crypto APIs, hash-based signatures, PQC candidate algorithms).
+- **A signature-forgery risk panel in the Breach Scenario Simulator** [view:/learn/pqc-business-case] [persona:executive]: the cost model only covers harvest-now-decrypt-later risk (confidentiality); this explains the separate risk to digital signatures and why it argues for protecting signatures by the time a quantum computer exists, rather than immediately like encrypted data.
+- **A "latest safe migration start year" and "cost of waiting" reading in the Breach Scenario Simulator and Cost of Inaction Analyzer** [view:/learn/pqc-business-case]: both tools now name the specific year migration must start by to stay protected — based on how long your data must stay secure, how long migration takes, and when a quantum computer is likely to exist — instead of only a dollar total.
+- **A "crossover year" reading in the Cost of Inaction Analyzer** [view:/learn/pqc-business-case]: shows the specific year delaying migration becomes permanently more expensive than migrating now.
+
+### Changed
+
+- **Deep-dive resources on the Simulation page are now visually distinct from required steps** [view:/simulation]: they previously used the same styling as required steps, making them easy to mistake for mandatory; now shown in a tinted panel with a persistent "OPTIONAL" badge.
+- **Migration in the Cost of Inaction Analyzer now takes realistic time to complete** [view:/learn/pqc-business-case]: previously switched instantly from fully exposed to fully protected on the day you chose; now ramps down over a migration duration you can set, and stops counting newly-harvested data once migration begins rather than once it finishes.
+
+### Fixed
+
+- **The Breach Scenario Simulator and Cost of Inaction Analyzer no longer assume a quantum computer already exists** [view:/learn/pqc-business-case]: the previous model multiplied breach costs by a fixed "quantum risk" factor as if decryption were already possible today; both tools now weight that risk by how likely a quantum computer actually exists within your chosen time horizon, using a 2025 expert-survey estimate, and blend it with today's classical-only risk.
+- **Breach cost figures were citing a stale 2024 report and had drifted from it for 8 of 11 industries** [view:/learn/pqc-business-case]: refreshed to IBM's 2025 Cost of a Data Breach report, read directly from the source; the 2 industries with no matching report sector are now labeled as estimates rather than presented as cited figures.
+- **Cost of Inaction's regulatory deadlines and fines were invented, flat per-industry constants** [view:/learn/pqc-business-case]: every industry showed the same made-up 2030 deadline and fine regardless of what actually applies to it; both now derive from the same compliance and country-deadline data used elsewhere on the site, correctly distinguish a real binding requirement from non-binding guidance, and show "no applicable mandate found" rather than a fabricated date when neither exists.
+- **Switching industries between the Breach Scenario Simulator and Cost of Inaction Analyzer could silently keep the previous industry's numbers** [view:/learn/pqc-business-case]: the tools now detect the mismatch and fall back to the newly-selected industry's own baseline instead.
+
 ## [4.11.0] - 2026-07-05
 
 A crypto-agility and simulation release: the CACP playground gains a new **Migration** tab that walks a seven-key business estate from classical crypto through hybrid to full post-quantum, a full KMIP 3.0 operation tester and a real OASIS conformance-corpus replay; the simulation gets one unified PLAY entry point with new sector-specific deep-dive content; and the HSM Capacity Calculator's fleet-sizing formula is corrected after being found to undercount by up to 46%. Backed by a rebuilt engine (v0.10.0) that adds Ed25519 signing and real classical X25519/X448 key agreement.
