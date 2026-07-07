@@ -52,6 +52,7 @@ A crypto-agility, algorithms, and Migration Workbench release: FrodoKEM and Clas
 - **An empty Migration Workbench now invites you to build a plan instead of showing a 0% score** [view:/migrate]: a plan with nothing in it read as failing readiness; it now shows a plain "Build your migration plan" prompt with a direct link to add what you run.
 - **Clearing a plan or removing a multi-product asset in the Migration Workbench now asks for confirmation** [view:/migrate]: the button arms on first click and fires on a second click within a few seconds, instead of deleting immediately on one click.
 - **The Vendor Risk supply-chain matrix's optional pipeline-documentation fields are now collapsed by default** [view:/migrate]: the SBOM/CMDB source notes were taking up permanent space above the risk matrix itself; they're now tucked behind a "Document your pipeline (optional)" toggle.
+- **The Threats page shows one persona signal instead of three at once** [view:/threats]: a role-narrowing banner, an in-page role-pill row, and silent dimming on non-matching cards used to all appear together; the role-pill row is now a single "Set your role" / "Viewing as: X · change" link into the same role switcher used everywhere else on the site, and dimmed cards now explain why via a tooltip instead of just fading silently.
 
 ### Fixed
 
@@ -59,6 +60,7 @@ A crypto-agility, algorithms, and Migration Workbench release: FrodoKEM and Clas
 - **Breach cost figures were citing a stale 2024 report and had drifted from it for 8 of 11 industries** [view:/learn/pqc-business-case]: refreshed to IBM's 2025 Cost of a Data Breach report, read directly from the source; the 2 industries with no matching report sector are now labeled as estimates rather than presented as cited figures.
 - **Cost of Inaction's regulatory deadlines and fines were invented, flat per-industry constants** [view:/learn/pqc-business-case]: every industry showed the same made-up 2030 deadline and fine regardless of what actually applies to it; both now derive from the same compliance and country-deadline data used elsewhere on the site, correctly distinguish a real binding requirement from non-binding guidance, and show "no applicable mandate found" rather than a fabricated date when neither exists.
 - **Switching industries between the Breach Scenario Simulator and Cost of Inaction Analyzer could silently keep the previous industry's numbers** [view:/learn/pqc-business-case]: the tools now detect the mismatch and fall back to the newly-selected industry's own baseline instead.
+- **About a quarter of Threats entries could never appear in any role's default view** [view:/threats]: threats tagged Cross-Industry, Education/Research, Critical Infrastructure, or Hardware Security Modules (including the NIST FIPS 203/204/205/206 finalizations and the HQC selection) had no matching role bucket; every role now includes them.
 
 ### Data
 
