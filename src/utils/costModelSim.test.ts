@@ -64,10 +64,10 @@ describe('analogicalEstimate', () => {
 
 describe('aleReference', () => {
   it('is a cost-of-inaction figure independent of the migration scope', () => {
-    // 4.88M × 2.5 × 0.15 × 5 = 9.15M
-    expect(aleReference(scenario)).toBeCloseTo(9_150_000, 0)
+    // 4.44M × 2.5 × 0.15 × 5 = 8.325M
+    expect(aleReference(scenario)).toBeCloseTo(8_325_000, 0)
     // Does not depend on system count (it is not a migration-cost method).
-    expect(aleReference({ ...scenario, systems: 9999 })).toBeCloseTo(9_150_000, 0)
+    expect(aleReference({ ...scenario, systems: 9999 })).toBeCloseTo(8_325_000, 0)
   })
 })
 

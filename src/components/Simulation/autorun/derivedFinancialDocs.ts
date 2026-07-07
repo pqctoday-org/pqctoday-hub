@@ -86,7 +86,6 @@ const SCENARIO: Record<DemoSector, DemoScenario> = {
   },
 }
 
-const QUANTUM_MULTIPLIER = 2.5
 const BREACH_PROB_PCT = 15
 const HORIZON_YEARS = 4
 const DISCOUNT_RATE = 0.1
@@ -132,14 +131,21 @@ function sectorFinancials(sector: DemoSector): SectorFinancials {
     yearsOfData: 5,
     hndlFactorPct: 30,
     annualBreachProbPct: BREACH_PROB_PCT,
+    dataSensitivityClass: 'general-pii',
+    asOfYear: CURRENT_YEAR,
+    planningHorizonYears: HORIZON_YEARS,
+    discountRateAnnual: DISCOUNT_RATE,
   })
 
   const migrationCost = s.systems * s.costPerProduct
   const annualOpex = migrationCost * 0.15
+  // quantumMultiplier derived from the same probability-weighted model (not a
+  // flat assumed amplification) so this ROI figure can't drift from the
+  // Breach Scenario Simulator's own numbers.
   const breachSavings = computeAnnualBreachSavings({
     breachBaseline: baseline,
     breachProbabilityPct: BREACH_PROB_PCT,
-    quantumMultiplier: QUANTUM_MULTIPLIER,
+    quantumMultiplier: breach.classicalALE > 0 ? breach.quantumALE / breach.classicalALE : 1,
   })
   const complianceSavings = computeAnnualComplianceSavings({
     frameworkCount: s.frameworks,
@@ -195,17 +201,18 @@ export function deriveBreachDoc(sector: DemoSector): DemoDoc {
     data: joinMd(
       `# Breach Scenario — ${ORG[sector]}`,
       '',
-      `Industry baseline (${s.industry}), IBM Cost of a Data Breach 2024.`,
+      `Industry baseline (${s.industry}), IBM Cost of a Data Breach 2025.`,
       '',
       '| Metric | Value |',
       '|--------|-------|',
       `| Classical breach (per event) | ${fmt(cur, breach.classicalSLE)} |`,
-      `| Quantum-enabled breach (per event) | ${fmt(cur, breach.quantumSLE)} |`,
-      `| Additional quantum risk (HNDL) | ${fmt(cur, breach.delta)} |`,
+      `| Quantum-enabled breach (per event, if CRQC exists) | ${fmt(cur, breach.quantumSLE)} |`,
+      `| Additional quantum risk (HNDL, if CRQC exists) | ${fmt(cur, breach.delta)} |`,
       `| Annual expected loss (classical) | ${fmt(cur, breach.classicalALE)} |`,
-      `| Annual expected loss (quantum) | ${fmt(cur, breach.quantumALE)} |`,
+      `| Annual expected loss (quantum-weighted) | ${fmt(cur, breach.quantumALE)} |`,
+      `| Probability CRQC exists within horizon | ${Math.round(breach.pCrqc * 100)}% |`,
       '',
-      `HNDL amplification ${breach.hndlMultiplier.toFixed(2)}× at ${BREACH_PROB_PCT}% annual probability. Derived from the Breach Scenario Simulator's model.`
+      `HNDL amplification ${breach.hndlMultiplier.toFixed(2)}× at ${BREACH_PROB_PCT}% annual breach probability, weighted by a ${Math.round(breach.pCrqc * 100)}% chance a CRQC exists within the horizon (GRI 2025). Derived from the Breach Scenario Simulator's model.`
     ),
   }
 }

@@ -266,7 +266,7 @@ function ComputationBreakdown({
               <BreakdownRow
                 label="Industry breach baseline"
                 value={formatUSD(breachBaseline)}
-                detail={`${industry} — IBM Cost of a Data Breach 2024`}
+                detail={`${industry} — IBM Cost of a Data Breach 2025`}
               />
             </div>
           </div>
@@ -667,7 +667,7 @@ export const ROICalculatorSection: React.FC<ROICalculatorSectionProps> = ({
       <div className="flex items-start gap-2 text-xs text-muted-foreground mt-2">
         <AlertCircle size={13} className="shrink-0 mt-0.5" />
         <span>
-          Breach cost baselines from IBM Cost of a Data Breach Report 2024. Compliance penalties
+          Breach cost baselines from IBM Cost of a Data Breach Report 2025. Compliance penalties
           from published regulatory enforcement data. Figures are illustrative estimates for
           financial planning purposes only.
         </span>

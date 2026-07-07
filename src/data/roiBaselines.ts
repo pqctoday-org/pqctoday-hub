@@ -1,29 +1,60 @@
 // SPDX-License-Identifier: GPL-3.0-only
-// Industry breach cost baselines — IBM Cost of a Data Breach Report 2024
-// TODO(F11): refresh to the IBM Cost of a Data Breach Report 2025 (published
-// July 2025). Publicly reported 2025 headline figures (global average $4.44M,
-// down from $4.88M; Healthcare $7.42M, down from $9.77M; Financial Services
-// $5.56M, down from $6.08M) confirm the numbers below have shifted materially,
-// but a safe refresh needs the primary IBM PDF table, not secondary summaries —
-// this file has 11 industry buckets and IBM's public per-sector breakdown for
-// 2025 only reliably covers Healthcare, Financial Services, and the global
-// average; the rest (Government & Defense, Technology, Telecommunications,
-// Energy & Utilities, Retail & E-Commerce, Aerospace, Automotive, Education)
-// need the full 17-industry table from https://www.ibm.com/reports/data-breach
-// to avoid mixing report vintages/methodologies across categories.
-export const INDUSTRY_BREACH_BASELINES_AS_OF = '2024-07'
+// Industry breach cost baselines — IBM Cost of a Data Breach Report 2025
+// (https://www.ibm.com/reports/data-breach), read directly from the primary
+// report's Figure 3 (average total cost of a breach by industry, USD). IBM's
+// per-sector table does not use this app's taxonomy 1:1, so each key below is
+// mapped to its nearest IBM sector — see the inline comment on each line.
+// Aerospace and Automotive have no IBM sector at all; they use the Industrial
+// figure as a labeled proxy (F11 follow-up: source a dedicated figure if one
+// becomes available).
+export const INDUSTRY_BREACH_BASELINES_AS_OF = '2025-07'
 export const INDUSTRY_BREACH_BASELINES: Record<string, number> = {
-  'Finance & Banking': 6_080_000,
-  Healthcare: 9_770_000,
-  'Government & Defense': 2_760_000,
-  Technology: 4_970_000,
-  Telecommunications: 4_290_000,
-  'Energy & Utilities': 4_780_000,
-  'Retail & E-Commerce': 3_280_000,
-  Aerospace: 4_560_000,
-  Automotive: 3_850_000,
-  Education: 2_730_000,
-  Other: 4_880_000,
+  'Finance & Banking': 5_560_000, // IBM Financial
+  Healthcare: 7_420_000, // IBM Healthcare
+  'Government & Defense': 2_860_000, // IBM Public sector
+  Technology: 4_790_000, // IBM Technology
+  Telecommunications: 3_750_000, // IBM Communications
+  'Energy & Utilities': 4_830_000, // IBM Energy
+  'Retail & E-Commerce': 3_540_000, // IBM Retail
+  Aerospace: 5_000_000, // proxy — IBM Industrial (no dedicated IBM sector)
+  Automotive: 5_000_000, // proxy — IBM Industrial (no dedicated IBM sector)
+  Education: 3_800_000, // IBM Education
+  Other: 4_440_000, // IBM global average
+}
+
+/** Sectors above with no dedicated IBM figure — surfaced in the UI as "proxy". */
+export const INDUSTRY_BASELINE_IS_PROXY: Record<string, boolean> = {
+  Aerospace: true,
+  Automotive: true,
+}
+
+/**
+ * US breach costs run far above the global average (IBM 2025: $10.22M vs
+ * $4.44M) — driven by regulatory fines and detection/escalation costs. Kept
+ * as a single global multiplier (not a full US-specific industry table, which
+ * IBM does not publish) so the simulator can offer a US/global toggle.
+ */
+export const US_VS_GLOBAL_BREACH_COST_MULTIPLIER = 10.22 / 4.44
+
+// ── Organization-size anchors (NetDiligence Cyber Claims Study 2025) ──────
+// 10,402 real cyber-insurance claims, 2020–2024. SMEs = 98% of claims by
+// volume but large orgs dominate total cost due to scale. Used to scale the
+// industry-average baseline for organizations far from that average.
+// Source: https://netdiligence.com/cyber-claims-study-2025-report/
+export const ORG_SIZE_BREACH_COST_ANCHORS = {
+  sme: 246_000, // <$2B revenue, 5-yr average total incident cost
+  large: 10_300_000, // 5-yr average total incident cost
+}
+
+// ── Annual breach-probability defaults, by org-size tier ──────────────────
+// Source: Cyentia Institute, Information Risk Insights Study (IRIS) 2025,
+// 150k+ incidents. https://www.cyentia.com/iris/
+// Replaces a single unsourced flat default (previously 15% for all sizes).
+export type OrgSizeTier = 'smb' | 'average' | 'fortune1000'
+export const ANNUAL_BREACH_PROBABILITY_PCT: Record<OrgSizeTier, number> = {
+  smb: 2, // Cyentia IRIS 2025: SMBs <2%/yr
+  average: 9, // Cyentia IRIS 2025: ~9.3%/yr average across all orgs
+  fortune1000: 25, // Cyentia IRIS 2025: ~1 in 4 Fortune-1000-class firms/yr
 }
 
 // ── Framework-specific compliance penalty baselines (USD/year) ───────────
