@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useMemo } from 'react'
-import { ChevronRight, Check, Plus } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { ChevronRight, Check, Plus, Search } from 'lucide-react'
 import type { PersonaId } from '@/data/learningPersonas'
 import {
   REPLACE_ASSETS,
@@ -11,6 +11,8 @@ import {
 } from '@/data/migrationAssets'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { domainProductCount } from './workbenchCatalog'
+import { Input } from '../../ui/input'
+import { Button } from '../../ui/button'
 import { TONE_DOT } from './workbenchUi'
 
 interface AssetListProps {
@@ -23,30 +25,85 @@ const FOUNDATION_DOMAINS: DomainId[] = Object.values(DOMAINS)
   .filter((d) => d.kind === 'foundation')
   .map((d) => d.id)
 
-/** Persona-focused assets float to the top, otherwise canonical (wave) order. */
-function sortAssets(persona: PersonaId | null): ReplaceAsset[] {
-  const list = [...REPLACE_ASSETS]
-  list.sort((a, b) => {
-    const fa = persona && a.focusPersonas.includes(persona) ? 0 : 1
-    const fb = persona && b.focusPersonas.includes(persona) ? 0 : 1
-    return fa - fb || a.wave - b.wave || a.cnsaYear - b.cnsaYear
-  })
-  return list
+/** Canonical (wave, deadline) order — the order shown once no persona
+ *  narrowing applies, or once the user asks to see everything. */
+function canonicalOrder(list: ReplaceAsset[]): ReplaceAsset[] {
+  return [...list].sort((a, b) => a.wave - b.wave || a.cnsaYear - b.cnsaYear)
 }
 
 export function AssetList({ persona, selectedDomain, onSelect }: AssetListProps) {
   const plan = useMigrateSelectionStore((s) => s.plan)
   const togglePlanAsset = useMigrateSelectionStore((s) => s.togglePlanAsset)
-  const assets = useMemo(() => sortAssets(persona), [persona])
+  const [query, setQuery] = useState('')
+  // Persona whose narrowed set the user has dismissed this session (via "See
+  // all") — tracking the persona itself, not just a boolean, means switching
+  // to a different persona brings narrowing back if that persona has one.
+  const [dismissedFor, setDismissedFor] = useState<PersonaId | null>(null)
+
+  // Assets relevant to the active persona. Empty for personas with no content
+  // yet (executive/developer/researcher/curious) — narrowing stays off for them.
+  const narrowed = useMemo(
+    () => (persona ? REPLACE_ASSETS.filter((a) => a.focusPersonas.includes(persona)) : []),
+    [persona]
+  )
+  const narrowingActive = narrowed.length > 0 && dismissedFor !== persona
+
+  const assets = useMemo(
+    () => canonicalOrder(narrowingActive ? narrowed : REPLACE_ASSETS),
+    [narrowingActive, narrowed]
+  )
+
+  const q = query.trim().toLowerCase()
+  const filteredAssets = q ? assets.filter((a) => a.label.toLowerCase().includes(q)) : assets
+  const filteredFoundationDomains = q
+    ? FOUNDATION_DOMAINS.filter((id) => DOMAINS[id].label.toLowerCase().includes(q))
+    : FOUNDATION_DOMAINS
 
   return (
     <div className="flex w-full flex-col gap-4 md:w-[352px] md:min-w-[300px] md:shrink-0">
+      <div className="relative">
+        <Search
+          size={14}
+          className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+          aria-hidden
+        />
+        <Input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search what you run…"
+          aria-label="Search assets and categories"
+          className="pl-8"
+        />
+      </div>
+
+      {narrowingActive && (
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-[11px]">
+          <span className="text-foreground">
+            Showing {narrowed.length} matched to your role ·{' '}
+            <span className="text-muted-foreground">{REPLACE_ASSETS.length} total</span>
+          </span>
+          <Button
+            variant="link"
+            size="sm"
+            className="h-auto shrink-0 p-0 text-[11px]"
+            onClick={() => setDismissedFor(persona)}
+          >
+            See all
+          </Button>
+        </div>
+      )}
+
       <div>
         <p className="mb-2 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
           What you run — pick to see replacements
         </p>
         <div className="flex flex-col gap-2">
-          {assets.map((asset) => {
+          {filteredAssets.length === 0 && (
+            <p className="rounded-xl border border-dashed border-border p-4 text-center text-xs text-muted-foreground">
+              No matches for “{query}”.
+            </p>
+          )}
+          {filteredAssets.map((asset) => {
             const inPlan = plan.includes(asset.id)
             const isSelected = selectedDomain === asset.id
             const decision = DECISIONS[asset.decision]
@@ -138,7 +195,12 @@ export function AssetList({ persona, selectedDomain, onSelect }: AssetListProps)
           Foundations &amp; infrastructure
         </p>
         <div className="flex flex-col gap-1.5">
-          {FOUNDATION_DOMAINS.map((id) => {
+          {q && filteredFoundationDomains.length === 0 && (
+            <p className="rounded-xl border border-dashed border-border p-4 text-center text-xs text-muted-foreground">
+              No matches for “{query}”.
+            </p>
+          )}
+          {filteredFoundationDomains.map((id) => {
             const meta = DOMAINS[id]
             const isSelected = selectedDomain === id
             const count = domainProductCount(id)

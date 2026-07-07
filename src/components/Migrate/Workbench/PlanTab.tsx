@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useMemo, useState } from 'react'
-import { FileText, AlertTriangle, X, ChevronDown } from 'lucide-react'
+import { FileText, AlertTriangle, RotateCcw, X, ChevronDown } from 'lucide-react'
 import { WAVES_FALLBACK } from './waves'
 import { DECISIONS, type DomainId } from '@/data/migrationAssets'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { Button } from '../../ui/button'
-import { Pill, DECISION_ICON, TONE_DOT } from './workbenchUi'
+import { Pill, DECISION_ICON, TONE_DOT, ConfirmButton } from './workbenchUi'
 import type { MigrationPosture } from './useMigrationPlan'
 import { downloadPlanCbom } from './cbomExport'
 import { productsForDomain } from './workbenchCatalog'
@@ -78,6 +78,7 @@ export function PlanTab({ posture, onGoToReplace }: PlanTabProps) {
   const removeFromPlan = useMigrateSelectionStore((s) => s.removeFromPlan)
   const chooseProduct = useMigrateSelectionStore((s) => s.chooseProduct)
   const plan = useMigrateSelectionStore((s) => s.plan)
+  const clearPlan = useMigrateSelectionStore((s) => s.clearPlan)
 
   // One entry per selected foundation product (for the empty-state + count).
   const foundationItems = posture.foundations.flatMap((f) =>
@@ -100,10 +101,24 @@ export function PlanTab({ posture, onGoToReplace }: PlanTabProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-xs text-muted-foreground">
-        Your assets, sequenced by exposure — <strong>external-facing traffic first</strong>. Open
-        any product for its roadmap, certifications and evidence.
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-xs text-muted-foreground">
+          Your assets, sequenced by exposure — <strong>external-facing traffic first</strong>. Open
+          any product for its roadmap, certifications and evidence.
+        </p>
+        <ConfirmButton
+          size="sm"
+          className="shrink-0 text-muted-foreground hover:text-foreground"
+          onConfirm={clearPlan}
+          confirmChildren={
+            <>
+              <RotateCcw size={13} /> Clear it all?
+            </>
+          }
+        >
+          <RotateCcw size={13} /> Clear entire plan
+        </ConfirmButton>
+      </div>
 
       {posture.gaps.length > 0 && (
         <div className="rounded-xl border border-status-error/25 bg-status-error/[0.07] p-3">
@@ -164,15 +179,32 @@ export function PlanTab({ posture, onGoToReplace }: PlanTabProps) {
                       <span className="font-mono text-[11px] text-status-warning">
                         {asset.cnsaYear}
                       </span>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeFromPlan(asset.id)}
-                        aria-label={`Remove ${asset.label} from plan`}
-                        className="h-7 w-7 shrink-0 p-0 text-muted-foreground hover:text-foreground"
-                      >
-                        <X size={14} />
-                      </Button>
+                      {chosen.length > 1 ? (
+                        <ConfirmButton
+                          size="sm"
+                          aria-label={`Remove ${asset.label} from plan`}
+                          className="h-7 w-7 shrink-0 p-0 text-muted-foreground hover:text-foreground"
+                          onConfirm={() => removeFromPlan(asset.id)}
+                          confirmChildren={
+                            <X
+                              size={14}
+                              aria-label={`Confirm removing ${chosen.length} products`}
+                            />
+                          }
+                        >
+                          <X size={14} />
+                        </ConfirmButton>
+                      ) : (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeFromPlan(asset.id)}
+                          aria-label={`Remove ${asset.label} from plan`}
+                          className="h-7 w-7 shrink-0 p-0 text-muted-foreground hover:text-foreground"
+                        >
+                          <X size={14} />
+                        </Button>
+                      )}
                     </div>
                     {/* Chosen products — same row component as Foundations */}
                     {chosen.length > 0 ? (
