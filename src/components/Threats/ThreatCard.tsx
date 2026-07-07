@@ -8,8 +8,7 @@ import { StatusBadge } from '../common/StatusBadge'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import { useBookmarkStore } from '../../store/useBookmarkStore'
 import { Button } from '@/components/ui/button'
-import { EndorseButton } from '../ui/EndorseButton'
-import { FlagButton } from '../ui/FlagButton'
+import { ThreatActionsMenu } from './ThreatActionsMenu'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 
 interface ThreatCardProps {
@@ -133,9 +132,8 @@ export const ThreatCard = ({
           {item.status && <StatusBadge status={item.status} size="sm" />}
           <div className="ml-auto flex items-center gap-1.5">
             <ThreatClassBadge threat={item} />
-            <ShorTierBadge threat={item} />
             <TrustScoreBadge resourceType="threats" resourceId={item.threatId} size="sm" />
-            <EndorseButton
+            <ThreatActionsMenu
               endorseUrl={buildEndorsementUrl({
                 category: 'threat-endorsement',
                 title: `Endorse: ${item.threatId} — ${item.industry}`,
@@ -148,10 +146,6 @@ export const ThreatCard = ({
                 ].join('\n'),
                 pageUrl: `/threats?threat=${encodeURIComponent(item.threatId)}`,
               })}
-              resourceLabel={item.threatId}
-              resourceType="Threat"
-            />
-            <FlagButton
               flagUrl={buildFlagUrl({
                 category: 'threat-endorsement',
                 title: `Flag: ${item.threatId} — ${item.industry}`,
@@ -197,6 +191,10 @@ export const ThreatCard = ({
             <span className="mr-0.5 font-sans text-[10px] uppercase tracking-wide text-muted-foreground/70">
               At risk
             </span>
+            {/* Shor tier describes the urgency of breaking this specific crypto, so
+            it lives alongside the at-risk chips rather than as a co-equal pill
+            next to Criticality. */}
+            <ShorTierBadge threat={item} />
             <Chips values={item.cryptoAtRisk} tone="risk" />
             <ArrowRight
               size={12}
