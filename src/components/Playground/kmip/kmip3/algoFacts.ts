@@ -34,6 +34,7 @@ export const ALGO_FACTS: Record<string, AlgoFacts> = {
     standard: 'PKCS#1 v1.5 / FIPS 186-5',
     basis: 'Integer factorization',
     pub: 256,
+    priv: 1192,
     sig: 256,
   },
   'RSA-3072': {
@@ -42,6 +43,7 @@ export const ALGO_FACTS: Record<string, AlgoFacts> = {
     standard: 'PKCS#1 v1.5 / FIPS 186-5',
     basis: 'Integer factorization',
     pub: 384,
+    priv: 1770,
     sig: 384,
   },
   'RSA-4096': {
@@ -50,6 +52,7 @@ export const ALGO_FACTS: Record<string, AlgoFacts> = {
     standard: 'PKCS#1 v1.5 / FIPS 186-5',
     basis: 'Integer factorization',
     pub: 512,
+    priv: 2348,
     sig: 512,
   },
   'ECDSA-P256': {
@@ -162,6 +165,24 @@ export const ALGO_FACTS: Record<string, AlgoFacts> = {
     pub: 32,
     priv: 64,
     sig: 7856,
+  },
+  'SLH-DSA-SHA2-192s': {
+    family: 'pqc',
+    kind: 'signature',
+    standard: 'FIPS 205',
+    basis: 'Hash-based (stateless: FORS + WOTS+ + Merkle)',
+    pub: 48,
+    priv: 96,
+    sig: 16224,
+  },
+  'SLH-DSA-SHA2-256s': {
+    family: 'pqc',
+    kind: 'signature',
+    standard: 'FIPS 205',
+    basis: 'Hash-based (stateless: FORS + WOTS+ + Merkle)',
+    pub: 64,
+    priv: 128,
+    sig: 29792,
   },
   X25519MLKEM768: {
     family: 'hybrid',
