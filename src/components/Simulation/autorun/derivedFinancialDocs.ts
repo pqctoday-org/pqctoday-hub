@@ -21,6 +21,7 @@ import {
   projectDelayScenario,
   type DelayScenarioResult,
 } from '@/utils/delayCostModel'
+import { deriveIndustryMandate, deriveIndustryPenalty } from '@/utils/inactionDrivers'
 import { compareCostModels } from '@/utils/costModelSim'
 import { DELAY_COST_PROFILES } from '@/components/PKILearning/modules/PQCBusinessCase/data/businessCaseScenarios'
 import { ORG, CUR, REG, type DemoDoc, type DemoSector } from './demoDocs'
@@ -86,7 +87,6 @@ const SCENARIO: Record<DemoSector, DemoScenario> = {
   },
 }
 
-const QUANTUM_MULTIPLIER = 2.5
 const BREACH_PROB_PCT = 15
 const HORIZON_YEARS = 4
 const DISCOUNT_RATE = 0.1
@@ -132,14 +132,21 @@ function sectorFinancials(sector: DemoSector): SectorFinancials {
     yearsOfData: 5,
     hndlFactorPct: 30,
     annualBreachProbPct: BREACH_PROB_PCT,
+    dataSensitivityClass: 'general-pii',
+    asOfYear: CURRENT_YEAR,
+    planningHorizonYears: HORIZON_YEARS,
+    discountRateAnnual: DISCOUNT_RATE,
   })
 
   const migrationCost = s.systems * s.costPerProduct
   const annualOpex = migrationCost * 0.15
+  // quantumMultiplier derived from the same probability-weighted model (not a
+  // flat assumed amplification) so this ROI figure can't drift from the
+  // Breach Scenario Simulator's own numbers.
   const breachSavings = computeAnnualBreachSavings({
     breachBaseline: baseline,
     breachProbabilityPct: BREACH_PROB_PCT,
-    quantumMultiplier: QUANTUM_MULTIPLIER,
+    quantumMultiplier: breach.classicalALE > 0 ? breach.quantumALE / breach.classicalALE : 1,
   })
   const complianceSavings = computeAnnualComplianceSavings({
     frameworkCount: s.frameworks,
@@ -156,17 +163,25 @@ function sectorFinancials(sector: DemoSector): SectorFinancials {
 
   const profile =
     DELAY_COST_PROFILES.find((p) => p.industry === s.industry) ?? DELAY_COST_PROFILES[0]
+  const mandate = deriveIndustryMandate(s.industry)
+  const penalty = deriveIndustryPenalty(s.industry)
   const delayInputs = {
-    quantumBreachPerEvent: breach.quantumSLE,
-    annualBreachProbPct: DELAY_MODEL_DEFAULTS.annualBreachProbPct,
+    breachBaseline: baseline,
+    breachScale: 1,
+    baseYearsOfData: 5,
+    hndlFactorPct: 30,
+    dataSensitivityClass: profile.dataSensitivityClass,
+    annualBreachProbPct: BREACH_PROB_PCT,
     migrationCostUSD: profile.migrationCostUSD,
     delayPremiumPerYear: profile.delayPremiumPerYear,
-    regulatoryPenaltyUSD: profile.regulatoryPenaltyUSD,
-    hardDeadlineYear: profile.hardDeadline,
+    migrationDurationYears: DELAY_MODEL_DEFAULTS.migrationDurationYears,
+    mandateType: mandate.mandateType,
+    hardDeadlineYear: mandate.deadlineYear,
+    annualFineUSD: penalty.annualFineUSD,
+    cliffLossUSD: penalty.cliffLossUSD,
     currentYear: CURRENT_YEAR,
     horizonYears: DELAY_MODEL_DEFAULTS.horizonYears,
     discountRatePct: DELAY_MODEL_DEFAULTS.discountRatePct,
-    residualFactor: DELAY_MODEL_DEFAULTS.residualFactor,
   }
   const now = projectDelayScenario(delayInputs, 0)
   const delayed = projectDelayScenario(delayInputs, DELAY_YEARS)
@@ -195,17 +210,18 @@ export function deriveBreachDoc(sector: DemoSector): DemoDoc {
     data: joinMd(
       `# Breach Scenario — ${ORG[sector]}`,
       '',
-      `Industry baseline (${s.industry}), IBM Cost of a Data Breach 2024.`,
+      `Industry baseline (${s.industry}), IBM Cost of a Data Breach 2025.`,
       '',
       '| Metric | Value |',
       '|--------|-------|',
       `| Classical breach (per event) | ${fmt(cur, breach.classicalSLE)} |`,
-      `| Quantum-enabled breach (per event) | ${fmt(cur, breach.quantumSLE)} |`,
-      `| Additional quantum risk (HNDL) | ${fmt(cur, breach.delta)} |`,
+      `| Quantum-enabled breach (per event, if CRQC exists) | ${fmt(cur, breach.quantumSLE)} |`,
+      `| Additional quantum risk (HNDL, if CRQC exists) | ${fmt(cur, breach.delta)} |`,
       `| Annual expected loss (classical) | ${fmt(cur, breach.classicalALE)} |`,
-      `| Annual expected loss (quantum) | ${fmt(cur, breach.quantumALE)} |`,
+      `| Annual expected loss (quantum-weighted) | ${fmt(cur, breach.quantumALE)} |`,
+      `| Probability CRQC exists within horizon | ${Math.round(breach.pCrqc * 100)}% |`,
       '',
-      `HNDL amplification ${breach.hndlMultiplier.toFixed(2)}× at ${BREACH_PROB_PCT}% annual probability. Derived from the Breach Scenario Simulator's model.`
+      `HNDL amplification ${breach.hndlMultiplier.toFixed(2)}× at ${BREACH_PROB_PCT}% annual breach probability, weighted by a ${Math.round(breach.pCrqc * 100)}% chance a CRQC exists within the horizon (GRI 2025). Derived from the Breach Scenario Simulator's model.`
     ),
   }
 }
@@ -249,9 +265,7 @@ export function deriveInactionDoc(sector: DemoSector): DemoDoc {
       `| Delay ${DELAY_YEARS}yr (${DELAY_MODEL_DEFAULTS.horizonYears}-yr NPV) | ${fmt(cur, delayed.total)} |`,
       `| **Cost of inaction** | **${fmt(cur, costOfInaction)}** |`,
       '',
-      `Discounted at ${DELAY_MODEL_DEFAULTS.discountRatePct}% over ${DELAY_MODEL_DEFAULTS.horizonYears} years; ${Math.round(
-        DELAY_MODEL_DEFAULTS.residualFactor * 100
-      )}% HNDL residual after migration. Derived from the Cost of Inaction Analyzer.`
+      `Discounted at ${DELAY_MODEL_DEFAULTS.discountRatePct}% over ${DELAY_MODEL_DEFAULTS.horizonYears} years; a residual HNDL tail persists after migration from data harvested before then. Derived from the Cost of Inaction Analyzer.`
     ),
   }
 }

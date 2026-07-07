@@ -11,6 +11,8 @@
  * mixed into the migration-cost comparison.
  */
 
+import { INDUSTRY_BREACH_BASELINES } from '@/data/roiBaselines'
+
 export interface CostModelInputs {
   /** Number of systems / applications in scope. */
   systems: number
@@ -41,8 +43,8 @@ export const SIM_CONSTANTS = {
   /** Monte-Carlo lens: triangular spread on the average per-system cost. */
   mcMinFactor: 0.5,
   mcMaxFactor: 2.5,
-  /** ALE reference (cost of inaction). Industry-neutral IBM 2024 "Other". */
-  breachBaseline: 4_880_000,
+  /** ALE reference (cost of inaction). Same source as the Breach Scenario Simulator — no drift. */
+  breachBaseline: INDUSTRY_BREACH_BASELINES.Other,
   annualBreachProb: 0.15,
   quantumFactor: 2.5,
 } as const

@@ -11,26 +11,9 @@ import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBa
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { getPitchVariant } from './pitchVariants'
 import type { FormData } from './pitchVariants'
+import type { ROIOutput, BreachOutput, InactionOutput } from '../types'
 
 const MODULE_ID = 'pqc-business-case'
-
-interface ROIOutput {
-  totalCostUSD: number
-  roiPercent: number
-  paybackMonths: number
-  breachCostSavingsUSD: number
-}
-
-interface BreachOutput {
-  classicalCostUSD: number
-  quantumCostUSD: number
-  deltaUSD: number
-}
-
-interface InactionOutput {
-  costOfInactionUSD: number
-  delayYears: number
-}
 
 function formatCurrency(amount: number): string {
   const sign = amount < 0 ? '-' : ''

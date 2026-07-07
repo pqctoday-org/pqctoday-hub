@@ -21,15 +21,15 @@ import type { AssessmentResult, AssessmentProfile } from '@/hooks/assessmentType
 
 describe('resolveIndustryBreachBaseline', () => {
   it('returns the known baseline for Healthcare', () => {
-    expect(resolveIndustryBreachBaseline('Healthcare')).toBe(9_770_000)
+    expect(resolveIndustryBreachBaseline('Healthcare')).toBe(7_420_000)
   })
 
   it('falls back to Other for an unknown industry', () => {
-    expect(resolveIndustryBreachBaseline('Blockchain Ponies')).toBe(4_880_000)
+    expect(resolveIndustryBreachBaseline('Blockchain Ponies')).toBe(4_440_000)
   })
 
   it('falls back to Other when industry is undefined', () => {
-    expect(resolveIndustryBreachBaseline(undefined)).toBe(4_880_000)
+    expect(resolveIndustryBreachBaseline(undefined)).toBe(4_440_000)
   })
 })
 

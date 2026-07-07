@@ -19,7 +19,14 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 
 const INDUSTRY_ITEMS = breachData.industries.map((i) => ({ id: i.id, label: i.label }))
 
-const DEFAULT_MIGRATION: number[] = [0.05, 0.12, 0.22, 0.35, 0.5, 0.63, 0.74, 0.83, 0.9, 0.95]
+// One entry per year in hndlExposureCurve.json (2026–2046). Ramps to 95% by
+// 2035 (unchanged from the original curve) then continues to ~99.9% by 2046
+// so migration progress isn't silently reset to 0% for the years the curve
+// was extended to cover.
+const DEFAULT_MIGRATION: number[] = [
+  0.05, 0.12, 0.22, 0.35, 0.5, 0.63, 0.74, 0.83, 0.9, 0.95, 0.96, 0.97, 0.978, 0.984, 0.989, 0.992,
+  0.995, 0.997, 0.998, 0.999, 0.999,
+]
 
 const COVERAGE_STATUS_CONFIG = {
   covered: {
@@ -174,7 +181,7 @@ export function CyberInsuranceLensSection() {
           <div className="rounded-lg border border-status-warning/40 bg-status-warning/5 px-4 py-3">
             <p className="text-xs text-status-warning leading-relaxed">
               Educational model — values are derived from published industry averages (IBM CODB
-              2024, Verizon DBIR 2024, NetDiligence 2024) and are{' '}
+              2025, NetDiligence 2025, GRI Quantum Threat Timeline 2025) and are{' '}
               <span className="font-semibold">not a substitute for actuarial certification</span> or
               formal insurance advice.
             </p>
@@ -252,12 +259,12 @@ export function CyberInsuranceLensSection() {
                 </a>{' '}
                 ·{' '}
                 <a
-                  href="https://globalriskinstitute.org/publication/2023-quantum-threat-timeline-report/"
+                  href="https://globalriskinstitute.org/publication/quantum-threat-timeline-report-2025b/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-primary hover:underline"
                 >
-                  GRI Quantum Timeline 2023
+                  GRI Quantum Timeline 2025
                 </a>
               </p>
             </div>
@@ -285,12 +292,12 @@ export function CyberInsuranceLensSection() {
               <p className="text-[10px] text-muted-foreground mt-3 leading-relaxed">
                 Anchored to quantum-rider uplift range +15–50% from{' '}
                 <a
-                  href="https://netdiligence.com/wp-content/uploads/2024/10/2024-NetDiligence-Cyber-Claims-Study.pdf"
+                  href="https://netdiligence.com/cyber-claims-study-2025-report/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-primary hover:underline"
                 >
-                  NetDiligence 2024
+                  NetDiligence 2025
                 </a>
                 . Higher migration lowers uplift.
               </p>
@@ -352,7 +359,7 @@ export function CyberInsuranceLensSection() {
                 max={2.0}
                 step={0.1}
                 format={(v) => `${v.toFixed(1)}×`}
-                tooltip={`Scales the per-record breach cost vs. IBM CODB 2024 average ($${breachData.industries.find((i) => i.id === industryId)?.meanCostPerRecord ?? 0}/record). Use > 1 if your data is more sensitive than the industry average.`}
+                tooltip={`Scales the per-record breach cost vs. IBM CODB 2025 average ($${breachData.industries.find((i) => i.id === industryId)?.meanCostPerRecord ?? 0}/record). Use > 1 if your data is more sensitive than the industry average.`}
                 onChange={setBreachCostMult}
               />
               <SliderRow
