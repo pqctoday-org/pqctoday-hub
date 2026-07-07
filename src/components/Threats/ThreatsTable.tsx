@@ -5,8 +5,7 @@ import { ChevronUp, ChevronDown, ShieldAlert, BookmarkCheck, Bookmark } from 'lu
 import type { ThreatItem } from '../../data/threatsData'
 import { StatusBadge } from '../common/StatusBadge'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
-import { EndorseButton } from '../ui/EndorseButton'
-import { FlagButton } from '../ui/FlagButton'
+import { ThreatActionsMenu } from './ThreatActionsMenu'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import clsx from 'clsx'
 import { getIndustryIcon } from './threatsHelper'
@@ -49,12 +48,12 @@ export const ThreatsTable = ({
   return (
     <div className="glass-panel overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[1050px] text-left border-collapse table-fixed">
+        <table className="w-full min-w-[1035px] text-left border-collapse table-fixed">
           <colgroup>
             <col className="w-[155px]" />
             <col className="w-[155px]" />
             <col className="w-[215px]" />
-            <col className="w-[95px]" />
+            <col className="w-[80px]" />
             <col className="w-[185px]" />
             <col className="w-[195px]" />
             <col className="w-[95px]" />
@@ -183,14 +182,17 @@ export const ThreatsTable = ({
                             >
                               {item.criticality}
                             </span>
-                            {/* Derived dimensions: threat class + Shor tier — Threats #2/#4 */}
+                            {/* Derived dimension: threat class — Threats #2 */}
                             <div className="hidden md:flex flex-wrap gap-1 mt-1.5">
                               <ThreatClassBadge threat={item} />
-                              <ShorTierBadge threat={item} />
                             </div>
                           </td>
                           <td className="p-4 text-xs font-mono overflow-hidden">
-                            <div className="flex flex-wrap gap-1">
+                            <div className="flex flex-wrap items-center gap-1">
+                              {/* Shor tier describes the urgency of breaking this specific
+                              crypto, so it lives alongside the at-risk chips it qualifies
+                              rather than as a co-equal pill next to Criticality. */}
+                              <ShorTierBadge threat={item} />
                               {item.cryptoAtRisk.split(',').map((c, i) => (
                                 <span
                                   key={i}
@@ -239,7 +241,7 @@ export const ThreatsTable = ({
                                   <Bookmark size={16} />
                                 )}
                               </Button>
-                              <EndorseButton
+                              <ThreatActionsMenu
                                 endorseUrl={buildEndorsementUrl({
                                   category: 'threat-endorsement',
                                   title: `Endorse: ${item.threatId} — ${item.industry}`,
@@ -252,10 +254,6 @@ export const ThreatsTable = ({
                                   ].join('\n'),
                                   pageUrl: `/threats?threat=${encodeURIComponent(item.threatId)}`,
                                 })}
-                                resourceLabel={item.threatId}
-                                resourceType="Threat"
-                              />
-                              <FlagButton
                                 flagUrl={buildFlagUrl({
                                   category: 'threat-endorsement',
                                   title: `Flag: ${item.threatId} — ${item.industry}`,
