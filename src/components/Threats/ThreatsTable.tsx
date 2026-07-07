@@ -5,8 +5,7 @@ import { ChevronUp, ChevronDown, ShieldAlert, BookmarkCheck, Bookmark } from 'lu
 import type { ThreatItem } from '../../data/threatsData'
 import { StatusBadge } from '../common/StatusBadge'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
-import { EndorseButton } from '../ui/EndorseButton'
-import { FlagButton } from '../ui/FlagButton'
+import { ThreatActionsMenu } from './ThreatActionsMenu'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import clsx from 'clsx'
 import { getIndustryIcon } from './threatsHelper'
@@ -242,7 +241,7 @@ export const ThreatsTable = ({
                                   <Bookmark size={16} />
                                 )}
                               </Button>
-                              <EndorseButton
+                              <ThreatActionsMenu
                                 endorseUrl={buildEndorsementUrl({
                                   category: 'threat-endorsement',
                                   title: `Endorse: ${item.threatId} — ${item.industry}`,
@@ -255,10 +254,6 @@ export const ThreatsTable = ({
                                   ].join('\n'),
                                   pageUrl: `/threats?threat=${encodeURIComponent(item.threatId)}`,
                                 })}
-                                resourceLabel={item.threatId}
-                                resourceType="Threat"
-                              />
-                              <FlagButton
                                 flagUrl={buildFlagUrl({
                                   category: 'threat-endorsement',
                                   title: `Flag: ${item.threatId} — ${item.industry}`,

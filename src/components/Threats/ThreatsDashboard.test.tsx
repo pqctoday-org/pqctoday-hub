@@ -252,8 +252,12 @@ describe('ThreatsDashboard', () => {
     const searchInput = screen.getAllByPlaceholderText('Search threats...')[0]
     fireEvent.change(searchInput, { target: { value: 'NonExistentTermXYZ' } })
 
-    // Both mobile and desktop render the empty state message
-    expect(screen.getAllByText('No threats found matching your filters.').length).toBeGreaterThan(0)
+    // Desktop table view renders an empty state; mobile now reuses the same
+    // responsive ThreatCard grid as the Cards view (Threats Fix #6), which
+    // renders its own empty state with different copy — both are present in
+    // jsdom simultaneously since CSS breakpoints aren't applied here.
+    expect(screen.getAllByText('No threats found').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('No threats match the constraints.').length).toBeGreaterThan(0)
   })
 
   describe('Phase 3 — semantic search supplement', () => {
@@ -271,9 +275,7 @@ describe('ThreatsDashboard', () => {
       const searchInput = screen.getAllByPlaceholderText('Search threats...')[0]
       fireEvent.change(searchInput, { target: { value: 'NonExistentTermXYZ' } })
       // No semantic hits → empty state remains.
-      expect(screen.getAllByText('No threats found matching your filters.').length).toBeGreaterThan(
-        0
-      )
+      expect(screen.getAllByText('No threats found').length).toBeGreaterThan(0)
     })
 
     it('includes a semantic-only threat in the result set via union', () => {

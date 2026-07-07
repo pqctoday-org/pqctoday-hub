@@ -62,7 +62,6 @@ import { ThreatsTable } from './ThreatsTable'
 const ThreatDetailDialog = lazy(() =>
   import('./ThreatDetailDialog').then((m) => ({ default: m.ThreatDetailDialog }))
 )
-import { MobileThreatsList } from './MobileThreatsList'
 import { ThreatEconomicsHeader } from './ThreatEconomicsHeader'
 import { CrqcCapabilityStrip } from './CrqcCapabilityStrip'
 import { SectorExposureHero } from './SectorExposureHero'
@@ -887,6 +886,9 @@ export const ThreatsDashboard: React.FC<{
               )}
               {viewMode === 'table' && (
                 <>
+                  {/* Table doesn't work below md — reuse the same responsive ThreatCard
+                  grid as the Cards view instead of a separate, hand-duplicated mobile
+                  list (which had drifted out of sync with the desktop card's features). */}
                   <div className="hidden md:block">
                     <ThreatsTable
                       items={filteredAndSortedData}
@@ -899,13 +901,17 @@ export const ThreatsDashboard: React.FC<{
                       }}
                     />
                   </div>
-                  <div className="md:hidden">
-                    <MobileThreatsList
+                  <div className="mb-8 md:hidden">
+                    <ThreatsCardGrid
                       items={filteredAndSortedData}
                       onItemClick={(item) => {
                         setSelectedThreat(item)
                         syncFiltersToUrl({ id: item.threatId })
                       }}
+                      relevantIndustries={personaRelevantIndustries}
+                      personaLabel={
+                        selectedPersona ? PERSONA_SHORT_LABELS[selectedPersona] : undefined // eslint-disable-line security/detect-object-injection
+                      }
                     />
                   </div>
                 </>
