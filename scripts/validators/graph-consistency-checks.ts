@@ -605,7 +605,13 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
     const findings: Finding[] = []
     const vendorProductCount = new Map<string, number>()
     for (const r of vendors.rows) {
-      if (r.vendor_id !== 'VND-000') vendorProductCount.set(r.vendor_id, 0)
+      // Skip deprecated vendors -- a deprecated row (e.g. a merged duplicate)
+      // having 0 products is expected, not an "orphan node" to flag. Fixed
+      // 2026-07-07 after deprecating a genuine duplicate (VND-374) and
+      // finding it still flagged here.
+      if (r.vendor_id !== 'VND-000' && (r.status || '').toLowerCase() !== 'deprecated') {
+        vendorProductCount.set(r.vendor_id, 0)
+      }
     }
     for (const r of migrate.rows) {
       if (r.vendor_id && vendorProductCount.has(r.vendor_id)) {
