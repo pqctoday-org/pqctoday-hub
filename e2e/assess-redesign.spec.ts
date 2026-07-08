@@ -78,7 +78,11 @@ test.describe('Assess redesign — happy path', () => {
       timeout: 15000,
     })
     // Outcome-framed: the chooser names the report sections each track unlocks.
-    await expect(page.getByText('Algorithm migration map')).toBeVisible()
+    // ('Algorithm migration map' was dropped from FAST_REPORT_SECTIONS on
+    // 2026-07-04 (commit 0e07d90b) -- both tracks populate it, so advertising
+    // it as a track-specific unlock was misleading. Assert against the current
+    // list in reportContract.ts instead.)
+    await expect(page.getByText('Key findings & threat landscape')).toBeVisible()
     await expect(page.getByText('Risk score & verdict')).toBeVisible()
 
     await page.getByRole('button', { name: /start full track/i }).click()

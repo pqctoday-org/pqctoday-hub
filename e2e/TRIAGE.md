@@ -157,3 +157,40 @@ Net: of the original 54 red tests plus these 5 second-pass finds, exactly
 last 2 quarantined here) — everything else was test staleness or environment
 timing. All fixes verified against a `vite preview` production build, not
 just the dev server.
+
+**Correction (2026-07-08):** the "8 remaining skips" count above undercounted.
+`migrate-persona-defaults.spec.ts` (2 tests, quarantined 2026-06-25 — see "Done
+in this commit" at the top of this file) was omitted from that tally by
+mistake; it was never un-skipped or deleted and is still quarantined today.
+Also, `tls-hsm.spec.ts` (3 tests) has been permanently skipped since
+2026-05-15 (commit "TLS sim composite credentials..." #210, predating this
+triage doc entirely) and was never entered here. **Actual total: 14
+permanently-skipped tests across 7 files** — `compliance-focus-view` ×3,
+`library-cswp39` ×2, `algorithms-ux-improvements` ×2, `library.spec.ts`
+curious-mode ×1, `migrate-persona-defaults` ×2, `sim-type-floor` ×1,
+`tls-hsm` ×3. Three of those seven files are now **100% skipped — every test
+in the file is dead** (`compliance-focus-view.spec.ts`, `library-cswp39.spec.ts`,
+`migrate-persona-defaults.spec.ts`): they still run in nightly CI (spin up a
+browser, navigate, immediately no-op) for zero coverage. Per the "delete or
+rewrite" guidance already in this doc, these three need a product-owner call
+on whether to delete outright — not fixed here, flagging for that decision.
+
+# Update — 2026-07-08: two post-07-03 regressions found and fixed, one still open
+
+The nightly full suite had drifted back to red since the 07-03 green
+snapshot above (104 passed / 8 skipped / 0 failed) — tonight's run showed
+2 failed + 1 flaky per shard (4 failed / 1 flaky / 210 passed total). Both
+fixable regressions trace to the same 2026-07-04 commit (`0e07d90b`, "honest
+quick/full tiering — trim quick track, gate on profile mode"), which trimmed
+the quick assessment track from 8 steps to 6 and removed
+`'Algorithm migration map'` from the report-section list — both intentional
+product changes that shipped without a matching test update.
+
+| Spec                        | Finding                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Status                                                                                                                                                                                                                                                                                                                                                               |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `assess-redesign.spec.ts`   | Asserted `getByText('Algorithm migration map')`, which `reportContract.ts` deliberately dropped from `FAST_REPORT_SECTIONS` on 2026-07-04 (both tracks populate it; advertising it as a track-specific unlock was misleading). **STALE-REMOVED**, not load/flaky as previously assumed.                                                                                                                                                                                                                                                        | **Fixed** — assertion now targets `'Key findings & threat landscape'`, still current.                                                                                                                                                                                                                                                                                |
+| `sim-assess-return.spec.ts` | Never previously triaged (added 2026-06-21). Seed fixture set `currentStep: 7` with `infrastructure`/`timelinePressure` fields — valid against the pre-07-04 8-item `RENDER_ORDER_QUICK`, but that array is now 6 items (indices 0-5); index 5 (`'migration'`) is the new last step. A stale in-source comment in `assessFlowModel.ts` ("8-item quick array") reinforced the same wrong assumption.                                                                                                                                            | **Fixed** — fixture now uses `currentStep: 5` and drops the two removed fields; comment corrected too.                                                                                                                                                                                                                                                               |
+| `acvp-validator.spec.ts`    | Times out waiting for `'Validation Suite Completed'` (30s window) after the WASM test-vector loop. Ruled out: vector count hasn't grown (6 fixed KATs, unchanged since 2025-11-27) and there's no artificial delay in `ACVPTesting.tsx`'s `runTests()`. Measured locally: 21.6s to reach that point, only ~8s of headroom under the old 30s cap — reliably tips over on GitHub's slower shared runners. Genuine per-call WASM/liboqs latency (same category as the already-accepted `pki-enrollment-protocols` timing issue), not a code hang. | **Fixed** — widened just this checkpoint to 90s (not the whole 180s budget, and not a re-guess: workload and code path were ruled out first, and the 21.6s local measurement shows this is a load-margin problem, not a hang). If still red at 90s in a real nightly run, that _would_ indicate a genuine hang — investigate at the source then, don't bump further. |
+
+`cmdk-trust-order.spec.ts` remains flaky (not hard-failing), consistent with
+its existing LOAD/FLAKY categorization above — no new finding.
