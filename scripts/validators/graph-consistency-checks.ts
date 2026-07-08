@@ -62,6 +62,21 @@ const ALGORITHM_CANONICAL: { pattern: RegExp; canonical: string }[] = [
   { pattern: /\bmldsa\b/i, canonical: 'ML-DSA' },
   { pattern: /\bslhdsa\b/i, canonical: 'SLH-DSA' },
   { pattern: /\bfndsa\b/i, canonical: 'FN-DSA' },
+  // Added 2026-07-07: a `\b` word boundary does NOT match between two word
+  // characters, so "Kyber768" or "ML-KEM768" (algorithm name immediately
+  // followed by a parameter-size digit, no separator) silently failed every
+  // pattern above -- found on real rows (libsodium's "ML-KEM768", Genua's
+  // "Kyber768") that already had a specific, correct algorithm named.
+  { pattern: /\bkyber\d+\b/i, canonical: 'ML-KEM' },
+  { pattern: /\bml-?kem\d+\b/i, canonical: 'ML-KEM' },
+  { pattern: /\bdilithium\d+\b/i, canonical: 'ML-DSA' },
+  { pattern: /\bml-?dsa\d+\b/i, canonical: 'ML-DSA' },
+  // NIST round-2 "additional signatures" candidates -- distinct, real
+  // algorithm names, not synonyms of an existing FIPS standard. Added
+  // 2026-07-07 after confirming both via their own spec/NIST pages, not
+  // guessed (see aimer-reference-implementation / mayo-reference-implementation).
+  { pattern: /\baimer\b/i, canonical: 'AIMer' },
+  { pattern: /\bmayo\b/i, canonical: 'MAYO' },
 ]
 
 const ALGORITHM_SKIP = new Set([
