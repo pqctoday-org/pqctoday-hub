@@ -161,17 +161,17 @@ export const ALGORITHM_PERSONA_DEFAULTS: Record<PersonaId, AlgorithmDefaults> = 
   },
   developer: {
     tab: 'transition',
-    filters: {},
+    filters: { status: 'Certified' },
     openSections: ['sizes', 'performance'],
   },
   architect: {
     tab: 'transition',
-    filters: {},
+    filters: { status: 'Certified' },
     openSections: ['sizes', 'performance'],
   },
   researcher: {
     tab: 'detailed',
-    filters: {},
+    filters: { status: 'Certified' },
     openSections: ['performance', 'security', 'sizes', 'attacks', 'kat'],
   },
   curious: {
@@ -184,7 +184,7 @@ export const ALGORITHM_PERSONA_DEFAULTS: Record<PersonaId, AlgorithmDefaults> = 
 
 const ALGORITHM_FALLBACK_DEFAULTS: AlgorithmDefaults = {
   tab: 'transition',
-  filters: {},
+  filters: { status: 'Certified' },
   openSections: ['performance', 'security', 'sizes'],
 }
 
