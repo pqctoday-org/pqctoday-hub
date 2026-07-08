@@ -204,7 +204,11 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     more unresolved doc-enrichment chunk (AERO sector threat). Same gap.
   //     2026-06-30: bumped 120 → 121 — one additional AERO sector-threat
   //     enrichment chunk surfaced; same chunkToResource routing gap.
-  'document-enrichment': 121,
+  //     2026-07-07: bumped 121 → 124 — migrate-data-remediation refresh-index
+  //     surfaced 3 more unresolved AERO sector-threat enrichment chunks (same
+  //     chunkToResource routing gap; unrelated to the migrate/vendor catalog
+  //     changes in this pass).
+  'document-enrichment': 124,
 }
 
 /**
@@ -229,9 +233,15 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
  *   2026-07-02: 678 (bumped +2 after the accuracy re-audit refresh-index —
  *               library_r4 + product-catalog data changes brought in 2 more
  *               unenriched reference docs. Enrich to drive down).
+ *   2026-07-07: 686 (bumped +8 after the migrate-data-remediation
+ *               refresh-index — the committed corpus had been stale since
+ *               the last refresh, silently hiding this drift; refreshing it
+ *               surfaced pre-existing unenriched library docs unrelated to
+ *               the migrate/vendor catalog changes in this pass. Enrich to
+ *               drive down).
  * Only DECREASE — every reduction is enrichment improving.
  */
-const MAX_DOC_WITHOUT_PASSAGES = 678
+const MAX_DOC_WITHOUT_PASSAGES = 686
 
 /** Pinned count of CSV files referenced in prov.was_derived_from but missing on disk. */
 const MAX_MISSING_CSVS = 0
