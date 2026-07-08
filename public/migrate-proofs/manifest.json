@@ -1,7 +1,7 @@
 {
-  "description": "Downloaded digital proofs backing pqc_product_catalog_06062026 refresh",
-  "generated": "2026-06-06",
-  "count": 785,
+  "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
+  "generated": "2026-07-07",
+  "count": 805,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -3518,9 +3518,9 @@
       "url": "https://www.wolfssl.com/wolftpm-add-tpm-2-0-v1-85-pqc-post-quantum-support/",
       "ok": true,
       "file": "wolftpm-pqc-3ce00c73.html",
-      "bytes": 71099,
+      "bytes": 71636,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "current"
+      "tier": "partB-07072026"
     },
     {
       "product_id": "crypto4a-qxvault",
@@ -5540,9 +5540,11 @@
     {
       "product_id": "strongswan",
       "url": "https://kivicore.com/en/embedded-security-blog/integrating-pqc-into-strongswan",
+      "ok": true,
       "file": "strongswan-a04af414.html",
-      "bytes": 123514,
-      "tier": "curl_cffi:chrome124"
+      "bytes": 298896,
+      "content_type": "text/html;charset=utf-8",
+      "tier": "a2-recheck"
     },
     {
       "product_id": "thales-payshield-10k",
@@ -6119,13 +6121,6 @@
       "tier": "curl_cffi:chrome124"
     },
     {
-      "product_id": "cato-networks-sase",
-      "url": "https://www.catonetworks.com/blog/the-post-quantum-journey-begins/",
-      "file": "cato-networks-sase-b6f74c05.html",
-      "bytes": 643555,
-      "tier": "curl_cffi:chrome124"
-    },
-    {
       "product_id": "ironcore-labs-saas-shield",
       "url": "https://ironcorelabs.com/crypto-agility-post-quantum/",
       "file": "ironcore-labs-saas-shield-24a83140.html",
@@ -6268,9 +6263,11 @@
     {
       "product_id": "rustcrypto-ml-kem-2",
       "url": "https://raw.githubusercontent.com/RustCrypto/KEMs/master/ml-kem/README.md",
+      "ok": true,
       "file": "rustcrypto-ml-kem-2-0f23a042.html",
-      "bytes": 3914,
-      "tier": "curl_cffi:chrome124"
+      "bytes": 3928,
+      "content_type": "text/plain; charset=utf-8",
+      "tier": "a2-recheck"
     },
     {
       "product_id": "ssh-com-tectia",
@@ -6705,6 +6702,195 @@
       "file": "wolfcrypt-post-quantum-c93d4ba1.html",
       "bytes": 73532,
       "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "cockroachdb-encryption",
+      "url": "https://www.cockroachlabs.com/docs/stable/security-reference/transport-layer-security",
+      "ok": true,
+      "file": "cockroachdb-encryption-24a05484.html",
+      "bytes": 456589,
+      "content_type": "text/html; charset=UTF-8",
+      "tier": "a3-restale"
+    },
+    {
+      "product_id": "aws-secrets-manager",
+      "url": "https://docs.aws.amazon.com/secretsmanager/latest/userguide/pqtls.html",
+      "ok": true,
+      "file": "aws-secrets-manager-1b73f7aa.html",
+      "bytes": 16504,
+      "content_type": "text/html",
+      "tier": "a5-a6-07072026"
+    },
+    {
+      "product_id": "pqctoday-pkcs11-provider",
+      "url": "https://github.com/latchset/pkcs11-provider/releases",
+      "ok": true,
+      "file": "pqctoday-pkcs11-provider-d06691fd.html",
+      "bytes": 648607,
+      "content_type": "text/html; charset=utf-8",
+      "tier": "a5-a6-07072026"
+    },
+    {
+      "product_id": "pqctoday-hsm-softhsmv3",
+      "url": "https://github.com/pqctoday-org/pqctoday-hsm/releases/tag/v0.4.28",
+      "ok": true,
+      "file": "pqctoday-hsm-softhsmv3-8e13e56c.html",
+      "bytes": 215026,
+      "content_type": "text/html; charset=utf-8",
+      "tier": "a5-a6-07072026"
+    },
+    {
+      "product_id": "pqctoday-composite-mkcert",
+      "url": "https://lamps-wg.github.io/draft-composite-sigs/draft-ietf-lamps-pq-composite-sigs.html",
+      "ok": true,
+      "file": "pqctoday-composite-mkcert-4e8daa25.html",
+      "bytes": 796891,
+      "content_type": "text/html; charset=utf-8",
+      "tier": "a5-a6-07072026"
+    },
+    {
+      "product_id": "pqctoday-opgpkcs11",
+      "url": "https://raw.githubusercontent.com/pqctoday-org/pqctoday-hsm/main/openpgp/lib/src/signer.rs",
+      "ok": true,
+      "file": "pqctoday-opgpkcs11-ef2ad938.html",
+      "bytes": 9099,
+      "content_type": "text/plain; charset=utf-8",
+      "tier": "a5-a6-07072026"
+    },
+    {
+      "product_id": "jtesta-ssh-audit",
+      "url": "https://github.com/jtesta/ssh-audit/releases/tag/v3.3.0",
+      "ok": true,
+      "file": "jtesta-ssh-audit-6a104135.html",
+      "bytes": 223386,
+      "content_type": "text/html; charset=utf-8",
+      "tier": "a5-a6-07072026"
+    },
+    {
+      "product_id": "age-plugin-pqkem",
+      "url": "https://github.com/FiloSottile/age/releases",
+      "ok": true,
+      "file": "age-plugin-pqkem-2491d9c9.html",
+      "bytes": 525230,
+      "content_type": "text/html; charset=utf-8",
+      "tier": "a5-a6-07072026"
+    },
+    {
+      "product_id": "bwesterb-mtc",
+      "url": "https://github.com/bwesterb/mtc/releases/tag/v0.1.2",
+      "ok": true,
+      "file": "bwesterb-mtc-313ced8e.html",
+      "bytes": 213577,
+      "content_type": "text/html; charset=utf-8",
+      "tier": "a5-a6-07072026"
+    },
+    {
+      "product_id": "rosenpass",
+      "url": "https://rosenpass.eu/about/",
+      "ok": true,
+      "file": "rosenpass-42b0b752.html",
+      "bytes": 104974,
+      "content_type": "text/html",
+      "tier": "a5-a6-07072026"
+    },
+    {
+      "product_id": "cryptsoft",
+      "url": "https://www.cryptsoft.com/",
+      "ok": true,
+      "file": "cryptsoft-09d2b72d.html",
+      "bytes": 33011,
+      "content_type": "text/html",
+      "tier": "a5-a6-07072026"
+    },
+    {
+      "product_id": "python-cryptography",
+      "url": "https://cryptography.io/en/stable/changelog/",
+      "ok": true,
+      "file": "python-cryptography-258d8efb.html",
+      "bytes": 361494,
+      "content_type": "text/html; charset=utf-8",
+      "tier": "a5-a6-07072026"
+    },
+    {
+      "product_id": "prometheus",
+      "url": "https://go.dev/doc/go1.24",
+      "ok": true,
+      "file": "prometheus-35a7bff2.html",
+      "bytes": 82420,
+      "content_type": "text/html; charset=utf-8",
+      "tier": "a5-a6-07072026"
+    },
+    {
+      "product_id": "microsoft-365",
+      "url": "https://www.microsoft.com/en-us/security/blog/2025/08/20/quantum-safe-security-progress-towards-next-generation-cryptography/",
+      "ok": true,
+      "file": "microsoft-365-429e3ba8.html",
+      "bytes": 291413,
+      "content_type": "text/html; charset=UTF-8",
+      "tier": "a5-a6-07072026"
+    },
+    {
+      "product_id": "python-ssl-module",
+      "url": "https://docs.python.org/3.15/whatsnew/3.15.html",
+      "ok": true,
+      "file": "python-ssl-module-479ab647.html",
+      "bytes": 426463,
+      "content_type": "text/html",
+      "tier": "a5-a6-07072026"
+    },
+    {
+      "product_id": "amazon-cloudfront-pqc",
+      "url": "https://aws.amazon.com/about-aws/whats-new/2025/09/amazon-cloudfront-TLS-policy-post-quantum-support/",
+      "ok": true,
+      "file": "amazon-cloudfront-pqc-fbeaf33e.html",
+      "bytes": 179354,
+      "content_type": "text/html;charset=utf-8",
+      "tier": "partB-07072026"
+    },
+    {
+      "product_id": "f5-big-ip-pqc",
+      "url": "https://www.f5.com/company/blog/f5-extends-nist-compliant-pqc-cipher-support",
+      "ok": true,
+      "file": "f5-big-ip-pqc-3a78e86e.html",
+      "bytes": 380357,
+      "content_type": "text/html; charset=utf-8",
+      "tier": "partB-07072026"
+    },
+    {
+      "product_id": "traefik-proxy-pqc",
+      "url": "https://traefik.io/blog/traefik-proxy-v3-5",
+      "ok": true,
+      "file": "traefik-proxy-pqc-5736031d.html",
+      "bytes": 217602,
+      "content_type": "text/html; charset=utf-8",
+      "tier": "partB-07072026"
+    },
+    {
+      "product_id": "zscaler-zia-pqc",
+      "url": "https://www.zscaler.com/blogs/product-insights/future-proof-security-first-quantum-ready-security-service-edge-sse",
+      "ok": true,
+      "file": "zscaler-zia-pqc-18bb3e26.html",
+      "bytes": 274982,
+      "content_type": "text/html; charset=utf-8",
+      "tier": "partB-07072026"
+    },
+    {
+      "product_id": "entrust-cryptographic-platform",
+      "url": "https://thequantuminsider.com/2025/04/16/entrust-announces-unified-cryptographic-security-platform/",
+      "ok": true,
+      "file": "entrust-cryptographic-platform-c3d98d94.html",
+      "bytes": 250375,
+      "content_type": "text/html; charset=UTF-8",
+      "tier": "resolved-07072026"
+    },
+    {
+      "product_id": "debian-13-trixie",
+      "url": "https://manpages.debian.org/trixie/openssl/OSSL_PROVIDER-default.7ssl.en.html",
+      "ok": true,
+      "file": "debian-13-trixie-c15d8715.html",
+      "bytes": 50289,
+      "content_type": "text/html; charset=utf-8",
+      "tier": "resolved-07072026-alt"
     }
   ]
 }

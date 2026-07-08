@@ -43,5 +43,10 @@
     "vendorId": "VND-391",
     "reason": "forbidden",
     "date": "2026-06-06T18:38:56.765Z"
+  },
+  "https://www.marvell.com/content/dam/marvell/en/public-collateral/fibre-channel/marvell-fibre-channel-storcryption-post-quantum-technology-brief.pdf": {
+    "vendorId": "VND-026",
+    "reason": "forbidden",
+    "date": "2026-07-08T01:23:43.874Z"
   }
 }
