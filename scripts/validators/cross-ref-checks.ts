@@ -71,6 +71,20 @@ const MODULE_IDS = new Set([
   'os-pqc',
   'quiz',
   'assess',
+  // Added 2026-07-07: modules that ship in the Simulation feature
+  // (src/simulation/trees/*.ts) but were never added here, so N14/C4/GC-6
+  // falsely flagged real, actively-referenced migrate/library/Q&A rows as
+  // broken. Confirmed each is genuinely used in non-validator source before
+  // adding (not guessed) -- see migrate-data-remediation-plan-07072026.md.
+  'slh-dsa',
+  'cbom',
+  'verification-closure',
+  'crypto-mgmt-modernization',
+  'pqc-candidates',
+  'pki-enrollment-protocols',
+  'mls-group-messaging',
+  'cbom-compliance',
+  'crypto-discovery',
 ])
 
 const QUIZ_CATEGORIES = new Set([
