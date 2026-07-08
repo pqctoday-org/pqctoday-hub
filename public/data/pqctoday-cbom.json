@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:pqctoday-cbom-20260706",
+  "serialNumber": "urn:uuid:pqctoday-cbom-20260707",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-07-06T00:00:00.000Z",
+    "timestamp": "2026-07-07T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -22230,11 +22230,11 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
           "primitive": "KEM"
         }
       },
-      "description": "Payment HSM with crypto-agile architecture. Futurex CryptoHub general-purpose HSM has ML-DSA, ML-KEM, and SLH-DSA support with PCI HSM validation (June 2025) — currently the only PCI-HSM-validated option with PQC. Vectera Plus payment-specific firmware PQC status unclear. PCI PTS HSM v3 certified.",
+      "description": "Vectera Plus is a FIPS 140-2 Level 3 HSM with no post-quantum algorithms. The ML-KEM/ML-DSA hybrid PQC advertised on Futurex's quantum-safe-cryptography page belongs to the separate CryptoHub and Excrypt HSM platforms, not Vectera Plus.",
       "externalReferences": [
         {
           "type": "website",
@@ -22256,7 +22256,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (PCI PTS HSM v3 FIPS 140-2 L3)"
+          "value": "FIPS 140-2 Level 3"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -24857,7 +24857,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Hardware Security & Semiconductors"
+          "value": "Trusted Platform Module Software"
         },
         {
           "name": "pqctoday:layer",
@@ -28327,9 +28327,13 @@
       "name": "Renesas Veridify PQC for RA MCUs",
       "version": "2025",
       "cryptoProperties": {
-        "assetType": "related-crypto-material"
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, FN-DSA",
+          "primitive": "KEM"
+        }
       },
-      "description": "Fast energy-efficient PQC for Renesas RA MCUs. 10x faster than ECC with ultra-low power.",
+      "description": "Veridify's DOME identity platform page (the catalog's own cited proof_url, veridify.com/dome/) states support for FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), and FALCON. However, that page makes no mention of Renesas or RA MCUs, and the previously archived CES press-release proof for the Renesas partnership is a dead link (404, confirmed by direct fetch). The Renesas RA MCU + Veridify PQC claim is currently unconfirmed by any live source.",
       "externalReferences": [
         {
           "type": "website",
@@ -41531,6 +41535,183 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "75"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "ccfbc6fd2d38f99b",
+      "name": "Amazon CloudFront Post-Quantum TLS",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Amazon CloudFront supports hybrid post-quantum key establishment across all existing TLS connections at client-to-edge, automatically enabled for TLS 1.3 customers at no additional cost, across all CloudFront edge locations.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://aws.amazon.com/cloudfront/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "amazon-cloudfront-pqc"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "CDN & Edge Security"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Network"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "80"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "77f60588d040ad38",
+      "name": "F5 BIG-IP Post-Quantum Cryptography",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "KEM"
+        }
+      },
+      "description": "F5 has added support for two hybrid post-quantum cryptography ciphers in the latest F5 BIG-IP release: SecP256r1ML-KEM-768 and SecP384r1ML-KEM-1024, built on NIST FIPS 203 parameters, extending to quantum-secure VPN tunneling as well as TLS.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.f5.com/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "f5-big-ip-pqc"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Web Servers & Reverse Proxies"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Application"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "80"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "59b428de9807ec56",
+      "name": "Traefik Proxy v3.5 Post-Quantum TLS",
+      "version": "v3.5",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Traefik Proxy v3.5 introduces X25519MLKEM768 for post-quantum-secure TLS, implemented via pull request #11731.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/traefik/traefik"
+        },
+        {
+          "type": "website",
+          "url": "https://traefik.io/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "traefik-proxy-pqc"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Web Servers & Reverse Proxies"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Application"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "80"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "301ca4e2ebabbce9",
+      "name": "Zscaler Internet Access (ZIA) Post-Quantum TLS",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "KEM"
+        }
+      },
+      "description": "Zscaler Internet Access inline inspection now supports hybrid PQC key exchange, using NIST FIPS 203 ML-KEM, compliant with draft-ietf-tls-ecdhe-mlkem, as part of the Zero Trust Exchange platform.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.zscaler.com/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "zscaler-zia-pqc"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "SASE & Zero Trust"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Network"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "80"
         }
       ]
     }
