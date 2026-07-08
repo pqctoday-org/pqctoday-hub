@@ -63,6 +63,15 @@ const KNOWN_INDIRECT: Array<{ prefix: string; vnd: string }> = [
   { prefix: 'ios-', vnd: 'VND-002' },
   { prefix: 'macos-', vnd: 'VND-002' },
   { prefix: 'filevault-', vnd: 'VND-002' },
+  // QNu Labs — 'qverse' is a product name/brand, not a QNu Labs name token;
+  // genuine QNu Labs product (see correction_notes on the qverse row).
+  // Added 2026-07-07 after retagging qverse off a duplicate vendor row.
+  { prefix: 'qverse', vnd: 'VND-319' },
+  // HP Inc. — 'hp' is filtered by nameTokens() (length > 2), so
+  // hp-enterprise-printers-pqc never token-matches "HP Inc." even though
+  // it's a genuine HP product. Added 2026-07-07 after this false positive
+  // surfaced once a VND-244 vendor-roadmap row was added in the same pass.
+  { prefix: 'hp-enterprise-printers-pqc', vnd: 'VND-244' },
   // Cisco
   { prefix: 'snort-', vnd: 'VND-008' },
   { prefix: 'mlspp', vnd: 'VND-008' },

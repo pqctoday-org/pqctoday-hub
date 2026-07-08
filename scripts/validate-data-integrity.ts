@@ -43,6 +43,7 @@ import {
   runOrphanCheck,
 } from './validators/self-containment-checks.js'
 import { runThreatsProofRule } from './validators/threats-proof-rule.js'
+import { runMigrateProofRule } from './validators/migrate-proof-rule.js'
 import { buildReport, printReport } from './validators/report-builder.js'
 import type { CheckResult } from './validators/types.js'
 import fs from 'fs'
@@ -155,6 +156,11 @@ try {
   // downloadable, ≥5 KB on-disk proof. See:
   // reports/threats-gap-fixes-05212026.md
   allResults.push(...runThreatsProofRule())
+  // 7h. Migrate catalog proof-gate rule (MP-1 + MP-2 + MP-3) — added
+  // 2026-07-07 after two of five authorized proof-less corrections
+  // silently regressed across two later catalog passes with nothing
+  // catching it. See: pqctoday-hub-migrate-data-remediation-plan-07072026.md
+  allResults.push(...runMigrateProofRule())
 
   // 8. Graph consistency checks (GC-1..GC-12)
   const { results: graphResults, markdownReport: graphMarkdown } = runGraphConsistencyChecks()

@@ -1,43 +1,62 @@
 {
-  "generated": "2026-07-02T03:51:12.797Z",
-  "source": "src/data/migrate_vendor_roadmap_07012026_r1.csv",
+  "generated": "2026-07-08T01:23:43.532Z",
+  "source": "src/data/migrate_vendor_roadmap_07072026.csv",
   "summary": {
-    "downloaded": 3,
+    "downloaded": 4,
     "skipped": 0,
-    "failed": 0,
+    "failed": 1,
     "persisted_skip": 0,
     "no_url": 8
   },
   "entries": [
     {
-      "vendorId": "VND-002",
-      "vendorName": "Apple Inc.",
-      "title": "Quantum-secure cryptography in Apple operating systems",
-      "url": "https://support.apple.com/guide/security/quantum-secure-cryptography-apple-devices-secc7c82e533/web",
+      "vendorId": "VND-026",
+      "vendorName": "Marvell Technology Inc.",
+      "title": "Marvell Fibre Channel StorCryption Post-Quantum Technology Brief",
+      "url": "https://www.marvell.com/content/dam/marvell/en/public-collateral/fibre-channel/marvell-fibre-channel-storcryption-post-quantum-technology-brief.pdf",
+      "status": "failed",
+      "reason": "forbidden",
+      "persistent": true
+    },
+    {
+      "vendorId": "VND-308",
+      "vendorName": "Fastly, Inc.",
+      "title": "Future-proofing TLS encryption against quantum threats",
+      "url": "https://www.fastly.com/blog/future-proofing-tls-encryption-against-quantum-threats",
       "status": "downloaded",
-      "filename": "VND-002_Apple_Inc..html",
-      "sizeBytes": 727184,
+      "filename": "VND-308_Fastly_Inc..html",
+      "sizeBytes": 256895,
+      "contentType": "text/html"
+    },
+    {
+      "vendorId": "VND-238",
+      "vendorName": "Toshiba Research Europe Ltd.",
+      "title": "Toshiba Cambridge Research Laboratory satellite QKD milestones",
+      "url": "https://www.toshiba-clip.com/en/detail/p=5165",
+      "status": "downloaded",
+      "filename": "VND-238_Toshiba_Research_Europe_Ltd..html",
+      "sizeBytes": 63310,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "vendorId": "VND-234",
+      "vendorName": "NTT Corporation",
+      "title": "NTT quantum-safe secure transport system",
+      "url": "https://group.ntt/en/newsrelease/2024/10/30/241030a.html",
+      "status": "downloaded",
+      "filename": "VND-234_NTT_Corporation.html",
+      "sizeBytes": 125805,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "vendorId": "VND-244",
+      "vendorName": "HP Inc.",
+      "title": "HP business PCs with quantum-resistant firmware protection",
+      "url": "https://www.hp.com/us-en/newsroom/blogs/2024/hp-launches-business-pc-to-protect-against-quantum-computer-hacks.html",
+      "status": "downloaded",
+      "filename": "VND-244_HP_Inc..html",
+      "sizeBytes": 273075,
       "contentType": "text/html;charset=utf-8"
-    },
-    {
-      "vendorId": "VND-028",
-      "vendorName": "NXP Semiconductors N.V.",
-      "title": "Conservative Post-Quantum Security with FrodoKEM",
-      "url": "https://www.nxp.com/company/about-nxp/smarter-world-blog/BL-POST-QUANTUM-SECURITY-WITH-FRODOKEM",
-      "status": "downloaded",
-      "filename": "VND-028_NXP_Semiconductors_N.V..html",
-      "sizeBytes": 70599,
-      "contentType": "text/html; charset=utf-8"
-    },
-    {
-      "vendorId": "VND-149",
-      "vendorName": "Arm Ltd.",
-      "title": "Mbed TLS PQC plan — planned, no committed order or date",
-      "url": "https://lists.trustedfirmware.org/archives/list/mbed-tls@lists.trustedfirmware.org/thread/D73QWEQBW5LHMFMG35S3IPV62NTKR4SO/",
-      "status": "downloaded",
-      "filename": "VND-149_Arm_Ltd..html",
-      "sizeBytes": 46192,
-      "contentType": "text/html; charset=utf-8"
     }
   ]
 }
