@@ -37,19 +37,20 @@ test.describe('TLS 1.3 Simulator — Phase 3 HSM Integration', () => {
 
   // ── Quick visibility checks (no WASM execution) ──────────────────────────
 
+  // QUARANTINED 2026-05-15 (commit "TLS sim composite credentials + matrix/
+  // library/migrate UX + TPM v0.8.0 compliance", #210): the TLS simulator HSM
+  // ON/OFF toggle was removed — the wiring never produced a successful
+  // handshake and was misleading. Skipped pending deliberate revival. See
+  // TLSBasicsModule.tsx "⚠ HSM-backed signing — removed" callout. Not
+  // previously tracked in e2e/TRIAGE.md; added there 2026-07-08.
   test.skip('HSM mode toggle is visible and changes label to HSM ON when clicked', async ({
-    // The TLS simulator HSM ON/OFF toggle was removed — the wiring never produced a
-    // successful handshake and was misleading. Skipped pending deliberate revival.
-    // See TLSBasicsModule.tsx "⚠ HSM-backed signing — removed" callout.
     page: _page,
   }) => {
     void _page
   })
 
-  test.skip('Playground TLS simulator HSM toggle is visible', async ({
-    // Toggle removed — see above.
-    page: _page,
-  }) => {
+  // QUARANTINED 2026-05-15 — same removal, see above.
+  test.skip('Playground TLS simulator HSM toggle is visible', async ({ page: _page }) => {
     void _page
   })
 
@@ -75,10 +76,9 @@ test.describe('TLS 1.3 Simulator — Phase 3 HSM Integration', () => {
     await expect(page.getByText(/Negotiation Successful/i).first()).toBeVisible()
   })
 
+  // QUARANTINED 2026-05-15 — same removal; JS plumbing to
+  // tls_simulation_set_hsm_mode was never wired. See above.
   test.skip('HSM ON run enters the HSM code path (trace proves WASM execution)', async ({
-    // The TLS simulator HSM ON/OFF toggle was removed — JS plumbing to
-    // tls_simulation_set_hsm_mode was never wired. Skipped pending deliberate revival.
-    // See TLSBasicsModule.tsx "⚠ HSM-backed signing — removed" callout.
     page: _page,
   }) => {
     void _page

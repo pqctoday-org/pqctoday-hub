@@ -313,7 +313,7 @@ export function keyAtLegacyIndex(i: number): AssessStepKey | undefined {
 }
 
 // The meaning of `store.currentStep` is TRACK-RELATIVE, matching the legacy
-// wizard: in quick mode it indexes the 8-item quick array (which equals
+// wizard: in quick mode it indexes the 6-item quick array (which equals
 // RENDER_ORDER_QUICK), in comprehensive mode it indexes the full 13 in
 // LEGACY_ORDER (the original ALL_STEPS order). The redesign renders
 // RENDER_ORDER_* but reads/writes currentStep through these helpers so the two
