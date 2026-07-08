@@ -44,6 +44,18 @@ const ALGORITHM_CANONICAL: { pattern: RegExp; canonical: string }[] = [
   { pattern: /\bclassical\b/i, canonical: 'Classical' },
   { pattern: /\brsa\b/i, canonical: 'Classical' },
   { pattern: /elliptic curve/i, canonical: 'Classical' },
+  // Added 2026-07-07: common informal/synonym names that were producing
+  // false "no algorithm match" findings on real, specific text (e.g.
+  // "McEliece/Goppa-based PQC" without the "Classic" prefix, or bare
+  // "LMS"/"HSS" without the "hash-based (stateful)" phrasing the original
+  // patterns required). Confirmed against real GC-10/GC-11 findings before
+  // adding, not guessed.
+  { pattern: /\bkyber\b/i, canonical: 'ML-KEM' },
+  { pattern: /\bdilithium\b/i, canonical: 'ML-DSA' },
+  { pattern: /\bxmss\b/i, canonical: 'LMS/XMSS' },
+  { pattern: /\bhss\b/i, canonical: 'LMS/XMSS' },
+  { pattern: /\blms\b/i, canonical: 'LMS/XMSS' },
+  { pattern: /\bmceliece\b/i, canonical: 'Classic McEliece' },
 ]
 
 const ALGORITHM_SKIP = new Set([
@@ -54,6 +66,12 @@ const ALGORITHM_SKIP = new Set([
   'all',
   'all pqc families',
   '',
+  // Added 2026-07-07: explicit, honest negative/hedged statements -- these
+  // are not gaps to report, they're the data correctly saying "none" or
+  // "uncertain". Confirmed via real GC-10 findings (850 + 10 of 912 were
+  // exactly these two strings) before adding.
+  'no pqc mechanisms detected',
+  'potentially pqc (name match)',
 ])
 
 const MODULE_IDS = new Set([
@@ -107,6 +125,19 @@ const MODULE_IDS = new Set([
   'iam-pqc',
   'secure-boot-pqc',
   'os-pqc',
+  // Added 2026-07-07: kept in sync with the same fix in cross-ref-checks.ts
+  // (this file keeps its own separate copy of MODULE_IDS rather than
+  // importing it) -- modules that ship in the Simulation feature but were
+  // missing from both copies.
+  'slh-dsa',
+  'cbom',
+  'verification-closure',
+  'crypto-mgmt-modernization',
+  'pqc-candidates',
+  'pki-enrollment-protocols',
+  'mls-group-messaging',
+  'cbom-compliance',
+  'crypto-discovery',
 ])
 
 const SPECIAL_MODULE_IDS = new Set(['quiz', 'assess'])
