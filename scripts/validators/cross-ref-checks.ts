@@ -670,10 +670,20 @@ export function runCrossRefChecks(): CheckResult[] {
   // N2: authoritative_sources boolean flags → actual CSV presence
   {
     const f: Finding[] = []
+    // Migrate rows can cite a source two ways: the legacy free-text
+    // `authoritative_source` column (name substring match, the original
+    // mechanism this check was written against), or the newer `trusted_source_id`
+    // foreign key (added for the CM-AT-migrate proof-gate rule, 2026-07-07).
+    // A source used only via the newer FK previously looked "unused" here —
+    // false positive fixed 2026-07-07 after it fired on 419 legitimately-used
+    // sources added in the same pass.
+    const migrateTrustedSourceIds = new Set(
+      migrate.rows.map((r) => (r.trusted_source_id || '').trim()).filter(Boolean)
+    )
     const csvFieldMap: Array<{
       flag: string
       label: string
-      checkFn: (sourceName: string) => boolean
+      checkFn: (sourceName: string, sourceId: string) => boolean
     }> = [
       {
         flag: 'Leaders_CSV',
@@ -712,7 +722,8 @@ export function runCrossRefChecks(): CheckResult[] {
       {
         flag: 'Migrate_CSV',
         label: 'migrate',
-        checkFn: (s) =>
+        checkFn: (s, id) =>
+          migrateTrustedSourceIds.has(id) ||
           migrate.rows.some((r) =>
             (r.authoritative_source || '').toLowerCase().includes(s.toLowerCase())
           ),
@@ -730,7 +741,7 @@ export function runCrossRefChecks(): CheckResult[] {
       if (!sourceName) return
       for (const { flag, label, checkFn } of csvFieldMap) {
         const claimed = (row[flag] || '').toLowerCase() === 'yes'
-        if (claimed && !checkFn(sourceName)) {
+        if (claimed && !checkFn(sourceName, row.id || '')) {
           f.push(
             finding(
               authSources.file,

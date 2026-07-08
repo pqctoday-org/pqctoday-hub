@@ -27,7 +27,16 @@
  *       already happened twice (06-06 correction reverted by two later
  *       "global accuracy pass" runs before anyone noticed).
  *
- * Severity: ERROR for MP-1/MP-2, ERROR for MP-3. A catalog row with an
+ * MP-4  Every non-empty `trusted_source_id` on an active migrate or vendor
+ *       row MUST resolve to an `id` in pqc_authoritative_sources_reference_*.csv.
+ *       Added 2026-07-07 after finding 286 migrate rows + 9 vendor rows whose
+ *       trusted_source_id was SET but pointed at nothing — worse than blank,
+ *       since CM-AT-migrate/CM-AT-vendors only check for blank, so a dangling
+ *       (non-resolving) value silently passed as "compliant". Mirrors TP-3
+ *       (threats) and CM-T-02 (timeline), which already existed for their
+ *       domains; migrate/vendors had no equivalent.
+ *
+ * Severity: ERROR for MP-1/MP-2/MP-4, ERROR for MP-3. A catalog row with an
  * unproven PQC claim is a public-facing correctness bug, not a warning.
  *
  * Wiring: invoked from scripts/validate-data-integrity.ts alongside the
@@ -51,6 +60,18 @@ interface CatalogRow {
   proof_url?: string
   status?: string
   correction_notes?: string
+  trusted_source_id?: string
+}
+
+interface VendorRow {
+  vendor_id?: string
+  vendor_name?: string
+  status?: string
+  trusted_source_id?: string
+}
+
+interface AuthSourceRow {
+  id?: string
 }
 
 interface ManifestEntry {
@@ -77,20 +98,28 @@ const KNOWN_FRAGILE: Record<string, { allowed: string[]; disprovenClaim: string 
   opnsense: { allowed: ['none', 'partial', 'unknown'], disprovenClaim: 'available (strongSwan 6.0/ML-KEM — not in release notes; OPNsense partial is legitimate via OpenSSH mgmt plane)' },
 }
 
-function findLatestCatalogCsv(): string | null {
+function findLatestCsv(prefix: string): string | null {
   if (!fs.existsSync(dataDir())) return null
-  const files = fs.readdirSync(dataDir()).filter((f) => /^pqc_product_catalog_\d{8}(?:_r\d+)?\.csv$/.test(f))
+  const re = new RegExp(`^${prefix}(\\d{8})(?:_r(\\d+))?\\.csv$`)
+  const files = fs.readdirSync(dataDir()).filter((f) => re.test(f))
   if (files.length === 0) return null
   files.sort((a, b) => {
     const parse = (name: string): number => {
-      const m = name.match(/pqc_product_catalog_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/)
+      const m = name.match(re)
       if (!m) return 0
-      const [, mm, dd, yyyy, r] = m
-      return Number(`${yyyy}${mm}${dd}${(r || '0').padStart(2, '0')}`)
+      const mm = m[1].slice(0, 2)
+      const dd = m[1].slice(2, 4)
+      const yyyy = m[1].slice(4, 8)
+      const r = m[2] || '0'
+      return Number(`${yyyy}${mm}${dd}${r.padStart(2, '0')}`)
     }
     return parse(b) - parse(a)
   })
   return path.join(dataDir(), files[0])
+}
+
+function findLatestCatalogCsv(): string | null {
+  return findLatestCsv('pqc_product_catalog_')
 }
 
 function loadManifest(): { byProductId: Map<string, ManifestEntry>; name: string } {
@@ -186,6 +215,58 @@ export function runMigrateProofRule(): CheckResult[] {
     }
   })
 
+  // MP-4: trusted_source_id must resolve, for both migrate and vendors rows.
+  const mp4: Finding[] = []
+  const authPath = findLatestCsv('pqc_authoritative_sources_reference_')
+  const authIds = authPath
+    ? new Set(
+        Papa.parse<AuthSourceRow>(fs.readFileSync(authPath, 'utf-8'), { header: true, skipEmptyLines: true })
+          .data.map((r) => (r.id || '').trim())
+          .filter(Boolean)
+      )
+    : null
+  const authName = authPath ? path.basename(authPath) : 'pqc_authoritative_sources_reference_*.csv'
+
+  if (authIds) {
+    rows.forEach((r, idx) => {
+      const status = (r.status || '').trim().toLowerCase()
+      if (status === 'deprecated') return
+      const tsid = (r.trusted_source_id || '').trim()
+      if (tsid && !authIds.has(tsid)) {
+        mp4.push({
+          csv: csvName,
+          row: idx + 2,
+          field: 'trusted_source_id',
+          value: tsid,
+          message: `Active product ${(r.product_id || '').trim()} trusted_source_id="${tsid}" does not resolve to any id in ${authName}`,
+        })
+      }
+    })
+
+    const vendorsPath = findLatestCsv('vendors_')
+    if (vendorsPath) {
+      const vendorRows = Papa.parse<VendorRow>(fs.readFileSync(vendorsPath, 'utf-8'), {
+        header: true,
+        skipEmptyLines: true,
+      }).data
+      const vendorsName = path.basename(vendorsPath)
+      vendorRows.forEach((r, idx) => {
+        const status = (r.status || '').trim().toLowerCase()
+        if (status === 'deprecated') return
+        const tsid = (r.trusted_source_id || '').trim()
+        if (tsid && !authIds.has(tsid)) {
+          mp4.push({
+            csv: vendorsName,
+            row: idx + 2,
+            field: 'trusted_source_id',
+            value: tsid,
+            message: `Active vendor ${(r.vendor_id || '').trim()} trusted_source_id="${tsid}" does not resolve to any id in ${authName}`,
+          })
+        }
+      })
+    }
+  }
+
   return [
     {
       id: 'MP-1',
@@ -216,6 +297,18 @@ export function runMigrateProofRule(): CheckResult[] {
       severity: 'ERROR',
       status: mp3.length === 0 ? 'PASS' : 'FAIL',
       findings: mp3,
+    },
+    {
+      id: 'MP-4',
+      category: 'cross-reference',
+      description: 'Every active migrate/vendor trusted_source_id resolves to the authoritative-sources catalog',
+      sourceA: csvName,
+      sourceB: authName,
+      severity: 'ERROR',
+      status: authIds === null ? 'SKIP' : mp4.length === 0 ? 'PASS' : 'FAIL',
+      findings: authIds === null
+        ? [{ csv: '', row: null, field: '', value: '', message: 'No pqc_authoritative_sources_reference_*.csv found' }]
+        : mp4,
     },
   ]
 }
