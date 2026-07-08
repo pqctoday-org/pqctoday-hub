@@ -194,3 +194,33 @@ product changes that shipped without a matching test update.
 
 `cmdk-trust-order.spec.ts` remains flaky (not hard-failing), consistent with
 its existing LOAD/FLAKY categorization above — no new finding.
+
+## `pki-enrollment-protocols.spec.ts` — corrected root cause (was mis-triaged twice)
+
+The 2026-07-03 pass concluded this was "confirmed — genuinely load/env
+timing... all asserted text/elements match current source exactly," and
+recommended leaving it alone. That conclusion was wrong: the failure
+reproduces **100% of the time, including on a fast unloaded local machine**
+(not intermittent under load), which by itself should have ruled out a
+timing explanation.
+
+Actual cause: `CmpInitialReq.tsx` renders the decoded certificate through
+the shared `<CopyableOutput>` component (`src/components/ui/CopyableOutput.tsx`),
+which is a readOnly `<textarea>`, not a `<pre>`. A controlled `<textarea>`'s
+content lives in its DOM `.value` property, not its `textContent` — so
+`page.locator('pre').filter({ hasText: 'Certificate:' })` can never match
+it, at any timeout. This predates both prior triage passes (component last
+touched 2026-05-31) and was never actually verified against source, just
+assumed to be a timing issue because it superficially resembled the
+already-accepted WASM-timing cases nearby.
+
+**Fixed** — the test now scopes to the "Decoded certificate" `<details>`
+block (there's a second `<CopyableOutput>` on the same page for the raw
+cert PEM) and reads `.inputValue()` instead of `.textContent()`. Passes in
+~2.5s locally, every run.
+
+**Lesson for this doc:** "matches current source exactly" claims in earlier
+passes checked _text strings_ against source, not whether the _locator
+strategy_ (tag name, `hasText` vs `.value`) could structurally match at
+all. A selector search that can never succeed looks identical to a slow
+one until someone runs it on a fast, idle machine.
