@@ -26,6 +26,27 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.14.0] - 2026-07-07
+
+A Migrate data accuracy release: a broad, evidence-based cleanup of the product and vendor catalog closes hundreds of unproven or vague claims, fixes mistagged vendors and duplicate listings, and restores a site-wide data-quality check that had been silently broken for months.
+
+### Fixed
+
+- **Two product listings had quietly reverted to disproven claims** [view:/migrate] [persona:technical]: a Futurex HSM and a Renesas/Veridify chip were both re-showing post-quantum support that an earlier correction had already disproven, with nothing catching the regression. Both are corrected again, this time with an automated check in place so it can't silently happen a third time.
+- **429 product and vendor entries cited a source that didn't actually exist** [view:/migrate]: some had no citation at all; others cited one that had never been registered anywhere, which is worse, because nothing was flagging it. Nearly all now point at a real, checkable source.
+- **~175 product listings said "yes, it supports this" with no specifics** [view:/migrate]: several were a literal unfilled placeholder. Each now names the actual technology involved, sourced from the product's own saved evidence or fresh research — not guessed.
+- **A dozen products were tagged to the wrong company**, including two duplicated vendor records and one of pqctoday's own project listings misattributed to an unrelated company. All retagged to the correct vendor.
+- **Several duplicate product listings merged** [view:/migrate]: the same product was showing up twice under slightly different names citing the same announcement.
+- **Two products were claiming current support for something their own documentation says is still just a future plan** [view:/migrate]: corrected to show "planned" instead of "yes."
+- **The site's overall data-quality checking tool had been silently broken since April** and couldn't run at all — a cleanup had removed a file it depended on. Restored, and confirmed the missing file was genuinely safe to bring back (no private information in it).
+- **A "successful" evidence download was actually a bot-block page in disguise**, twice — caught by reading the content instead of trusting the download status, and fixed so it can't slip through silently again.
+
+### Data
+
+- Closed the evidence-download backlog for the migrate catalog's trust-score archive from 580 missing entries down to 10.
+- Removed 117 leftover categories from the migration-priority dashboard that predated a recent category reorganization, after individually checking each one so nothing intentional was deleted.
+- Added a new automated check ensuring every product and vendor entry's cited source actually resolves to something real, mirroring an existing check already used elsewhere on the site.
+
 ## [4.13.0] - 2026-07-07
 
 A Threats page redesign: one continuous page instead of a hidden second tab, a consolidated actions menu, and a simplified view-mode set. Plus a refreshed SEO feature list reflecting the site's current surface.
