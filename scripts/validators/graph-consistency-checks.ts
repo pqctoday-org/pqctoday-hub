@@ -56,6 +56,12 @@ const ALGORITHM_CANONICAL: { pattern: RegExp; canonical: string }[] = [
   { pattern: /\bhss\b/i, canonical: 'LMS/XMSS' },
   { pattern: /\blms\b/i, canonical: 'LMS/XMSS' },
   { pattern: /\bmceliece\b/i, canonical: 'Classic McEliece' },
+  // Added 2026-07-07: no-hyphen forms used by IETF hybrid-KEM naming (e.g.
+  // "X25519MLKEM768") -- found while reading real proof text, not guessed.
+  { pattern: /\bmlkem\b/i, canonical: 'ML-KEM' },
+  { pattern: /\bmldsa\b/i, canonical: 'ML-DSA' },
+  { pattern: /\bslhdsa\b/i, canonical: 'SLH-DSA' },
+  { pattern: /\bfndsa\b/i, canonical: 'FN-DSA' },
 ]
 
 const ALGORITHM_SKIP = new Set([

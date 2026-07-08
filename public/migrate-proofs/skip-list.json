@@ -1,7 +1,7 @@
 {
  "description": "Proof URLs not downloadable (paywall/403/404/JS-shell), accumulated across passes",
  "generated": "2026-07-07",
- "count": 10,
+ "count": 18,
  "skipped": [
   {
    "product_id": "cato-networks-sase",
@@ -62,6 +62,54 @@
    "url": "https://www.marvell.com/company/newsroom/marvell-liquidSecurity2-hardware-security-multi-cloud-era.html",
    "ok": false,
    "reason": "http-403"
+  },
+  {
+   "product_id": "ibm-z-vse",
+   "url": "https://www.slideshare.net/ibm/titlenews-on-zvse-security-crypto-support",
+   "ok": false,
+   "reason": "js-shell"
+  },
+  {
+   "product_id": "nxp-edgelock-se051h",
+   "url": "https://www.nxp.com/docs/en/data-sheet/SE051.pdf",
+   "ok": false,
+   "reason": "http-404"
+  },
+  {
+   "product_id": "hpe-alletra-mp",
+   "url": "https://www.hpe.com/psnow/doc/a00138815enw",
+   "ok": false,
+   "reason": "http-000"
+  },
+  {
+   "product_id": "rubrik-security-cloud",
+   "url": "https://www.rubrik.com/content/dam/rubrik/en/resources/white-paper/wp-",
+   "ok": false,
+   "reason": "http-403"
+  },
+  {
+   "product_id": "fis-modern-banking",
+   "url": "https://www.fisglobal.com/products/fis-modern-banking-platform",
+   "ok": false,
+   "reason": "http-000"
+  },
+  {
+   "product_id": "galileo-ai-platform",
+   "url": "https://docs.galileo.ai/deployments/data-privacy-and-compliance",
+   "ok": false,
+   "reason": "http-404"
+  },
+  {
+   "product_id": "anydesk-remote-desktop",
+   "url": "https://anydesk.com/en/security",
+   "ok": false,
+   "reason": "http-403"
+  },
+  {
+   "product_id": "pqctoday-kmip",
+   "url": "https://github.com/pqctoday-org/pqctoday-kmip",
+   "ok": false,
+   "reason": "http-404"
   }
  ]
 }
