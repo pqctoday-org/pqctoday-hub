@@ -1,7 +1,7 @@
 {
  "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
  "generated": "2026-07-07",
- "count": 804,
+ "count": 805,
  "downloads": [
   {
    "product_id": "btq-bitcoin-quantum",
@@ -6121,13 +6121,6 @@
    "tier": "curl_cffi:chrome124"
   },
   {
-   "product_id": "cato-networks-sase",
-   "url": "https://www.catonetworks.com/blog/the-post-quantum-journey-begins/",
-   "file": "cato-networks-sase-b6f74c05.html",
-   "bytes": 643555,
-   "tier": "curl_cffi:chrome124"
-  },
-  {
    "product_id": "ironcore-labs-saas-shield",
    "url": "https://ironcorelabs.com/crypto-agility-post-quantum/",
    "file": "ironcore-labs-saas-shield-24a83140.html",
@@ -6880,6 +6873,24 @@
    "bytes": 274982,
    "content_type": "text/html; charset=utf-8",
    "tier": "partB-07072026"
+  },
+  {
+   "product_id": "entrust-cryptographic-platform",
+   "url": "https://thequantuminsider.com/2025/04/16/entrust-announces-unified-cryptographic-security-platform/",
+   "ok": true,
+   "file": "entrust-cryptographic-platform-c3d98d94.html",
+   "bytes": 250375,
+   "content_type": "text/html; charset=UTF-8",
+   "tier": "resolved-07072026"
+  },
+  {
+   "product_id": "debian-13-trixie",
+   "url": "https://manpages.debian.org/trixie/openssl/OSSL_PROVIDER-default.7ssl.en.html",
+   "ok": true,
+   "file": "debian-13-trixie-c15d8715.html",
+   "bytes": 50289,
+   "content_type": "text/html; charset=utf-8",
+   "tier": "resolved-07072026-alt"
   }
  ]
 }
