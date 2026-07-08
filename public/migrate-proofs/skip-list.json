@@ -1,115 +1,115 @@
 {
- "description": "Proof URLs not downloadable (paywall/403/404/JS-shell), accumulated across passes",
- "generated": "2026-07-07",
- "count": 18,
- "skipped": [
-  {
-   "product_id": "cato-networks-sase",
-   "url": "https://www.catonetworks.com/blog/the-post-quantum-journey-begins/",
-   "ok": false,
-   "reason": "too-small-212b"
-  },
-  {
-   "product_id": "nzism-new-zealand-pqc-guidance",
-   "url": "https://nzism.gcsb.govt.nz/ism-document/pdf/Section/12224",
-   "ok": false,
-   "reason": "too-small-212b"
-  },
-  {
-   "product_id": "rustcrypto-ml-kem-2",
-   "url": "https://crates.io/crates/ml-kem",
-   "ok": false,
-   "reason": "http-404"
-  },
-  {
-   "product_id": "strongswan",
-   "url": "https://downloads.strongswan.org/blog/2026/04/22/strongswan-6.0.6-released.html",
-   "ok": false,
-   "reason": "http-000"
-  },
-  {
-   "product_id": "azure-dedicated-hsm-marvell-liquidsecurity",
-   "url": "https://www.marvell.com/products/security-solutions/liquidsecurity2.html",
-   "ok": false,
-   "reason": "http-403"
-  },
-  {
-   "product_id": "keysight-cyperf",
-   "url": "https://www.keysight.com/blogs/en/tech/nwvs/2025/08/05/post-quantum-handshakes",
-   "ok": false,
-   "reason": "http-403"
-  },
-  {
-   "product_id": "entrust-cryptographic-platform",
-   "url": "https://www.entrust.com/company/newsroom/entrust-nshield-hsms-achieve-validation-from-nist-cryptographic-algorithm-validation-program",
-   "ok": false,
-   "reason": "http-403"
-  },
-  {
-   "product_id": "debian-13-trixie",
-   "url": "https://packages.debian.org/trixie/openssl",
-   "ok": false,
-   "reason": "js-shell"
-  },
-  {
-   "product_id": "entrust-cryptographic-platform",
-   "url": "https://www.entrust.com/solutions/post-quantum-cryptography",
-   "ok": false,
-   "reason": "http-403"
-  },
-  {
-   "product_id": "azure-dedicated-hsm-marvell-liquidsecurity",
-   "url": "https://www.marvell.com/company/newsroom/marvell-liquidSecurity2-hardware-security-multi-cloud-era.html",
-   "ok": false,
-   "reason": "http-403"
-  },
-  {
-   "product_id": "ibm-z-vse",
-   "url": "https://www.slideshare.net/ibm/titlenews-on-zvse-security-crypto-support",
-   "ok": false,
-   "reason": "js-shell"
-  },
-  {
-   "product_id": "nxp-edgelock-se051h",
-   "url": "https://www.nxp.com/docs/en/data-sheet/SE051.pdf",
-   "ok": false,
-   "reason": "http-404"
-  },
-  {
-   "product_id": "hpe-alletra-mp",
-   "url": "https://www.hpe.com/psnow/doc/a00138815enw",
-   "ok": false,
-   "reason": "http-000"
-  },
-  {
-   "product_id": "rubrik-security-cloud",
-   "url": "https://www.rubrik.com/content/dam/rubrik/en/resources/white-paper/wp-",
-   "ok": false,
-   "reason": "http-403"
-  },
-  {
-   "product_id": "fis-modern-banking",
-   "url": "https://www.fisglobal.com/products/fis-modern-banking-platform",
-   "ok": false,
-   "reason": "http-000"
-  },
-  {
-   "product_id": "galileo-ai-platform",
-   "url": "https://docs.galileo.ai/deployments/data-privacy-and-compliance",
-   "ok": false,
-   "reason": "http-404"
-  },
-  {
-   "product_id": "anydesk-remote-desktop",
-   "url": "https://anydesk.com/en/security",
-   "ok": false,
-   "reason": "http-403"
-  },
-  {
-   "product_id": "pqctoday-kmip",
-   "url": "https://github.com/pqctoday-org/pqctoday-kmip",
-   "ok": false,
-   "reason": "http-404"
-  }
- ]
+  "description": "Proof URLs not downloadable (paywall/403/404/JS-shell), accumulated across passes",
+  "generated": "2026-07-07",
+  "count": 18,
+  "skipped": [
+    {
+      "product_id": "cato-networks-sase",
+      "url": "https://www.catonetworks.com/blog/the-post-quantum-journey-begins/",
+      "ok": false,
+      "reason": "too-small-212b"
+    },
+    {
+      "product_id": "nzism-new-zealand-pqc-guidance",
+      "url": "https://nzism.gcsb.govt.nz/ism-document/pdf/Section/12224",
+      "ok": false,
+      "reason": "too-small-212b"
+    },
+    {
+      "product_id": "rustcrypto-ml-kem-2",
+      "url": "https://crates.io/crates/ml-kem",
+      "ok": false,
+      "reason": "http-404"
+    },
+    {
+      "product_id": "strongswan",
+      "url": "https://downloads.strongswan.org/blog/2026/04/22/strongswan-6.0.6-released.html",
+      "ok": false,
+      "reason": "http-000"
+    },
+    {
+      "product_id": "azure-dedicated-hsm-marvell-liquidsecurity",
+      "url": "https://www.marvell.com/products/security-solutions/liquidsecurity2.html",
+      "ok": false,
+      "reason": "http-403"
+    },
+    {
+      "product_id": "keysight-cyperf",
+      "url": "https://www.keysight.com/blogs/en/tech/nwvs/2025/08/05/post-quantum-handshakes",
+      "ok": false,
+      "reason": "http-403"
+    },
+    {
+      "product_id": "entrust-cryptographic-platform",
+      "url": "https://www.entrust.com/company/newsroom/entrust-nshield-hsms-achieve-validation-from-nist-cryptographic-algorithm-validation-program",
+      "ok": false,
+      "reason": "http-403"
+    },
+    {
+      "product_id": "debian-13-trixie",
+      "url": "https://packages.debian.org/trixie/openssl",
+      "ok": false,
+      "reason": "js-shell"
+    },
+    {
+      "product_id": "entrust-cryptographic-platform",
+      "url": "https://www.entrust.com/solutions/post-quantum-cryptography",
+      "ok": false,
+      "reason": "http-403"
+    },
+    {
+      "product_id": "azure-dedicated-hsm-marvell-liquidsecurity",
+      "url": "https://www.marvell.com/company/newsroom/marvell-liquidSecurity2-hardware-security-multi-cloud-era.html",
+      "ok": false,
+      "reason": "http-403"
+    },
+    {
+      "product_id": "ibm-z-vse",
+      "url": "https://www.slideshare.net/ibm/titlenews-on-zvse-security-crypto-support",
+      "ok": false,
+      "reason": "js-shell"
+    },
+    {
+      "product_id": "nxp-edgelock-se051h",
+      "url": "https://www.nxp.com/docs/en/data-sheet/SE051.pdf",
+      "ok": false,
+      "reason": "http-404"
+    },
+    {
+      "product_id": "hpe-alletra-mp",
+      "url": "https://www.hpe.com/psnow/doc/a00138815enw",
+      "ok": false,
+      "reason": "http-000"
+    },
+    {
+      "product_id": "rubrik-security-cloud",
+      "url": "https://www.rubrik.com/content/dam/rubrik/en/resources/white-paper/wp-",
+      "ok": false,
+      "reason": "http-403"
+    },
+    {
+      "product_id": "fis-modern-banking",
+      "url": "https://www.fisglobal.com/products/fis-modern-banking-platform",
+      "ok": false,
+      "reason": "http-000"
+    },
+    {
+      "product_id": "galileo-ai-platform",
+      "url": "https://docs.galileo.ai/deployments/data-privacy-and-compliance",
+      "ok": false,
+      "reason": "http-404"
+    },
+    {
+      "product_id": "anydesk-remote-desktop",
+      "url": "https://anydesk.com/en/security",
+      "ok": false,
+      "reason": "http-403"
+    },
+    {
+      "product_id": "pqctoday-kmip",
+      "url": "https://github.com/pqctoday-org/pqctoday-kmip",
+      "ok": false,
+      "reason": "http-404"
+    }
+  ]
 }
