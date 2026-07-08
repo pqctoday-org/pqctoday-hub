@@ -96,71 +96,65 @@ export function runLocalResourceChecks(): {
     })
   }
 
-  // ── products directory coverage ─────────────────────────────────────────
+  // ── products evidence coverage ──────────────────────────────────────────
+  // Was checking for a per-product SUBDIRECTORY under public/products/, which
+  // has never existed -- the real archive (like public/migrate-proofs/) is
+  // flat hashed files (e.g. btq-bitcoin-quantum-46a6efc1.html) tracked in
+  // public/products/manifest.json, which is what src/data/trustScore/
+  // trustScoreData.ts actually reads. The directory check matched nothing,
+  // 100% of the time, since the first entry. Fixed 2026-07-07 to check the
+  // manifest instead, mirroring the MP-1 pattern used for migrate-proofs.
   {
     const migrate = loadCSV('pqc_product_catalog_')
     const findings: Finding[] = []
-    const productsDir = path.join(ROOT, 'public', 'products')
-    const productDirs = new Set(
-      fs.existsSync(productsDir)
-        ? fs.readdirSync(productsDir).filter((f) => {
-            const fullPath = path.join(productsDir, f)
-            return fs.statSync(fullPath).isDirectory()
-          })
-        : []
-    )
+    const manifestPath = path.join(ROOT, 'public', 'products', 'manifest.json')
+    const downloadedNames = new Set<string>()
+    if (fs.existsSync(manifestPath)) {
+      const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8')) as {
+        entries?: Array<{ softwareName?: string; status?: string }>
+      }
+      for (const e of manifest.entries || []) {
+        if (e.softwareName && e.status === 'downloaded') downloadedNames.add(e.softwareName)
+      }
+    }
 
-    let expectedDirs = 0
-    let presentDirs = 0
+    let expectedCount = 0
+    let presentCount = 0
 
     migrate.rows.forEach((row, i) => {
       const status = (row.verification_status || '').toLowerCase()
       if (status !== 'verified') return
 
-      expectedDirs++
+      expectedCount++
       const name = row.software_name
-      // Normalize: lowercase, replace spaces with hyphens
-      const normalized = name
-        .toLowerCase()
-        .replace(/\s+/g, '-')
-        .replace(/[^a-z0-9-]/g, '')
-
-      // Check if any directory matches (fuzzy)
-      const found =
-        productDirs.has(name) ||
-        productDirs.has(normalized) ||
-        [...productDirs].some(
-          (d) => d.toLowerCase() === normalized || d.toLowerCase() === name.toLowerCase()
-        )
-
-      if (found) {
-        presentDirs++
+      if (downloadedNames.has(name)) {
+        presentCount++
       } else {
         findings.push({
           csv: migrate.file,
           row: i + 2,
           field: 'software_name',
           value: name,
-          message: `Migrate "${name}" (Verified) has no product docs directory in public/products/`,
+          message: `Migrate "${name}" (Verified) has no downloaded evidence entry in public/products/manifest.json`,
         })
       }
     })
 
     resources.push({
       directory: 'public/products/',
-      expectedFiles: expectedDirs,
-      presentFiles: presentDirs,
+      expectedFiles: expectedCount,
+      presentFiles: presentCount,
       missingFiles: findings.map((f) => f.value).slice(0, 30),
       orphanedFiles: [],
-      coverage: expectedDirs > 0 ? `${((presentDirs / expectedDirs) * 100).toFixed(1)}%` : 'N/A',
+      coverage: expectedCount > 0 ? `${((presentCount / expectedCount) * 100).toFixed(1)}%` : 'N/A',
     })
 
     results.push({
       id: 'N18-products-directory',
       category: 'local-resource',
-      description: 'migrate (Verified) → public/products/ directories',
+      description: 'migrate (Verified) → public/products/manifest.json evidence coverage',
       sourceA: 'migrate',
-      sourceB: 'public/products/',
+      sourceB: 'public/products/manifest.json',
       severity: 'INFO',
       status: findings.length === 0 ? 'PASS' : 'FAIL',
       findings,
