@@ -122,6 +122,11 @@ export function runLocalResourceChecks(): {
     let presentCount = 0
 
     migrate.rows.forEach((row, i) => {
+      // Skip deprecated rows -- verification_status can still say "Verified"
+      // on a row that was later deprecated for an unrelated reason (e.g.
+      // "not a real product"); it shouldn't need evidence coverage. Fixed
+      // 2026-07-07, same gap already found in CM-AT/GC-5/MP-4.
+      if ((row.status || '').toLowerCase() === 'deprecated') return
       const status = (row.verification_status || '').toLowerCase()
       if (status !== 'verified') return
 
