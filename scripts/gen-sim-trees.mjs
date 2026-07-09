@@ -85,6 +85,11 @@ const WORKSHOP_TOOLS = new Set([
   'slh-dsa',
   'lms-hss',
   'openssl-studio',
+  // Added 07082026 (audit remediation) — real, mounted Playground tool
+  // (workshopRegistry.tsx), phase-tagged p6 in phaseResourceMap.ts, but never
+  // referenced by any tree until now. Distinct from the LEARN module of the
+  // same id already required at P6 6.1.
+  'pki-workshop',
 ])
 const ART_TOOL = {
   'roi-model': 'roi-calculator',
@@ -288,7 +293,11 @@ const FRAMEWORK = {
         L('compliance-strategy', 'Learn: Compliance & Regulatory Strategy'),
         R('threats', 'Check the CRQC threat horizon', '/threats?view=horizon'),
         R('compliance', 'Map the binding regulatory deadlines'),
-        A('crqc-scenario', 'Quantify HNDL/TNFL exposure with a CRQC scenario'),
+        // 07082026: was 'Quantify HNDL/TNFL exposure' — the tool this links to
+        // (CRQCScenarioPlanner) only builds an HNDL exposure table, no TNFL/
+        // signature-forgery content. Reworded rather than promise what it
+        // doesn't deliver; a TNFL table is a real build, tracked separately.
+        A('crqc-scenario', 'Quantify HNDL exposure with a CRQC scenario'),
       ],
     },
     {
@@ -423,16 +432,20 @@ const FRAMEWORK = {
           'Learn: what CVE-based vulnerability watch misses (side-channel, quantum progress)'
         ),
       ],
-      // Deep dive (optional, non-gating — learning-resource-gaps Wave 1,
-      // 07062026): pairs the required entropy-randomness lesson above with 5
-      // hands-on tools that had no route into the sim until now.
+      // Reworked 07082026 (audit remediation): the 5 entropy/RNG practice tools
+      // below were topically about randomness-generation mechanics, not
+      // discovery — P1 shipped zero deep-dive content actually about finding/
+      // scanning crypto, and phaseResourceMap.ts tags entropy-randomness itself
+      // as serving 'foundations' only, so it didn't even show in P1's own Learn
+      // column. Replaced with content genuinely about code-level discovery.
+      // platform-eng-pqc kept (infrastructure-wide crypto visibility is
+      // discovery-adjacent); the 5 entropy tools remain registered Playground
+      // tools, just no longer referenced from P1.
       deepDive: [
-        W('rng-demo', 'Deep dive — Practice: RNG demo (deterministic vs true randomness)'),
-        W('entropy-test', 'Deep dive — Practice: entropy testing'),
-        W('qrng-demo', 'Deep dive — Practice: QRNG demo'),
-        W('source-combining', 'Deep dive — Practice: combining entropy sources'),
-        W('drbg-demo', 'Deep dive — Practice: SP 800-90A DRBG'),
-        // Added 07062026 (Wave 3) — untouched vertical, no required-module anchor.
+        L(
+          'crypto-dev-apis',
+          'Deep dive — Learn: finding hardcoded crypto in application code & APIs'
+        ),
         L('platform-eng-pqc', 'Deep dive — Learn: Platform Engineering & PQC'),
       ],
     },
@@ -462,6 +475,19 @@ const FRAMEWORK = {
           'Learn: CBOM population — six-step transformation (import → enrich → SBOM link → certs → classify → vendor flags)'
         ),
         A('crypto-cbom', 'Build a CycloneDX CBOM'),
+        // Added 07082026 (audit remediation): the real CycloneDX exporter
+        // (Migrate workbench) was previously reachable only via a non-gating
+        // reference row — a player could clear Gate G2 without ever touching
+        // the export surface frameworkPhases.ts advertises as this phase's
+        // deliverable. Now required.
+        R('migrate', 'Export your CBOM as CycloneDX from the Migrate workbench'),
+      ],
+      // Added 07082026 — P2 was the only phase with zero deep-dive content.
+      deepDive: [
+        L(
+          'crypto-dev-apis',
+          'Deep dive — Learn: enriching the CBOM from code-level crypto API calls'
+        ),
       ],
     },
     {
@@ -548,7 +574,14 @@ const FRAMEWORK = {
       output: 'Quantum Readiness Assessment (QRA)',
       steps: [
         R('compliance', 'Map the QRA to NIST / CNSA 2.0 / ETSI / sector rules'),
-        R('report', 'Assemble the QRA on the Report page'),
+        // Reworded 07082026: was 'Assemble the QRA on the Report page', written
+        // before QRASection.tsx existed. It now auto-builds the QRA (exec
+        // summary, heatmap, backlog, gap analysis, compliance mapping) from the
+        // player's own assessment data — a visit, not manual assembly.
+        R(
+          'report',
+          'View your auto-assembled QRA — heatmap, backlog, gap analysis, compliance mapping — on the Report page'
+        ),
       ],
     },
   ],
@@ -648,6 +681,14 @@ const FRAMEWORK = {
         L('vpn-ssh-pqc', 'Learn: VPN/IPsec & SSH PQC patterns'),
         L('code-signing', 'Learn: code & firmware signing (Track B — integrity)'),
         A('hybrid-transition', 'Plan the hybrid transition'),
+        // Moved from 5.4 07082026: MTI (minimum-interop) negotiation is
+        // protocol-design work — it belongs with the rest of 5.2's hybrid
+        // deployment design, not with 5.4's wave-sequencing (which it never
+        // actually taught; see 5.4 below).
+        A(
+          'mti-negotiator',
+          'Negotiate the minimum-interop baseline for your hybrid protocol design'
+        ),
       ],
       // Deep dive (Wave 1, 07062026): pairs the required vpn-ssh-pqc and
       // code-signing lessons above with practice tools that had no route in.
@@ -687,11 +728,17 @@ const FRAMEWORK = {
       id: '5.4',
       level: 3,
       title: 'Scale from Pilot to Production Through Waves',
-      do: 'Execute a 6-wave rollout from lab to long tail with success criteria at each stage.',
+      // Reworked 07082026: previously delegated entirely to mti-negotiator
+      // (moved to 5.2 — it's MTI algorithm selection, not wave sequencing) and
+      // an automotive-pqc deep-dive that simRelevance.ts hardcodes as never
+      // relevant to any sim sector. Neither taught the wave model this
+      // activity is actually about. No dedicated wave-planning tool exists in
+      // the hub yet (a real gap — see the remediation plan's Wave 4 items), so
+      // the six stages are taught directly here, now that this text renders in
+      // the manual-play card, not just the auto-run intro.
+      do: 'Sequence deployment through six controlled waves, each with a defined scope and an explicit prerequisite gate from the one before: Lab/Staging → Internal Non-Critical → Internal Production → External Controlled (partners) → External Broad (public-facing) → Long Tail (legacy, OT, embedded).',
       output: 'Wave deployment plan',
-      steps: [A('mti-negotiator', 'Negotiate the minimum-interop baseline')],
-      // Added 07062026 (Wave 3) — untouched vertical, no required-module anchor.
-      deepDive: [L('automotive-pqc', 'Deep dive — Learn: Automotive PQC')],
+      steps: [R('library', 'Reference: staged-rollout & wave-sequencing patterns in the Library')],
     },
     {
       id: '5.5–5.6',
@@ -754,6 +801,10 @@ const FRAMEWORK = {
       deepDive: [
         W('pki-enrollment', 'Deep dive — Practice: PKI enrollment protocols'),
         W('hybrid-certs', 'Deep dive — Practice: hybrid (classical + PQC) certificate chains'),
+        // Added 07082026 — the real Playground PKI Workshop tool (distinct from
+        // the Learn module of the same id required above) was registered and
+        // phase-tagged p6 but never referenced by any tree.
+        W('pki-workshop', 'Deep dive — Practice: PKI Workshop (hands-on cert lifecycle)'),
       ],
     },
     {
@@ -952,15 +1003,19 @@ const FRAMEWORK = {
     {
       id: 'F.5',
       level: 4,
-      title: 'Migration Verification & Program Closure',
-      do: 'Apply the 5-point verification evidence standard, decommission classical material, and hand the capability to funded BAU owners.',
-      output: 'Verification record & BAU handover',
-      // Cross-cutting pointer into the terminal Verification & Closure phase (VC.x)
-      // rather than re-running its artifacts here — keeps foundations' L4 band
-      // without duplicating the closure flow (the audit-checklist activity lives in VC.2).
-      steps: [
-        R('report', 'Apply the 5-point verification standard in the Verification & Closure phase'),
-      ],
+      // Reworked 07082026 (audit finding): this band and 2 of Foundations'
+      // 3 pitfalls previously near-duplicated the dedicated Verify & Close
+      // phase's own content (verification/decommissioning), even though that
+      // ground is already covered better there. The L4 indicator's own text
+      // ("algorithm changes are routine") points at crypto-agility maturity,
+      // not closure — this band now actually matches its own indicator,
+      // grounded in the framework's cross-cutting crypto-agility roadmap
+      // (Year 3 Verification: production algorithm-swap drill; OKRs tracked
+      // as BAU).
+      title: 'Run Crypto-Agility as BAU',
+      do: 'Fold the crypto-agility OKRs into standing operations — an annual algorithm-swap drill, continuous drift monitoring, and the Agility KPI tracked alongside Coverage/Trust/Inventory/Vendors — so a new algorithm recommendation becomes a routine change, not a re-run of the whole migration.',
+      output: 'Crypto-agility OKR evidence, tracked as BAU',
+      steps: [A('kpi-tracker', 'Track the Agility KPI as a standing, recurring metric')],
     },
   ],
   'verify-close': [
@@ -1213,13 +1268,13 @@ const PITFALLS = {
     },
   ],
   foundations: [
+    // The first two pitfalls here previously duplicated verify-close's own
+    // (below) near-verbatim — replaced 07082026 with a genuine Foundations
+    // pitfall (grounded in the framework's evidence-dossier/litigation-defense
+    // guidance) instead of restating VC.1/VC.2's closure-specific failures.
     {
-      title: 'Declare the migration "done" on milestones',
-      why: 'Closing on milestone completion instead of verified posture — without verification evidence (observed negotiation, negative testing, dossier) the migration is a belief, not a fact.',
-    },
-    {
-      title: 'Orphan the capabilities at closure',
-      why: 'Treating closure as end-of-funding rather than handover — CBOM, discovery and vendor governance decay within quarters without funded BAU owners.',
+      title: 'Let the evidence dossier lapse',
+      why: "A documented decision to defer is defensible; undocumented inaction is not. Without a maintained record of risk-acceptance decisions, denied budget requests, and annual threat reassessments, there's no negligence defense if a known, unaddressed quantum risk turns into an incident.",
     },
     {
       title: 'Skip the maturity baseline (run no assessment)',
