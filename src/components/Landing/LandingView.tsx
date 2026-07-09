@@ -2,7 +2,8 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, Save, Upload, Cloud, CloudOff, Loader2, LogOut } from 'lucide-react'
+import { ArrowRight, Save, Upload } from 'lucide-react'
+import toast from 'react-hot-toast'
 import { Button } from '../ui/button'
 import { loadPQCAlgorithmsData } from '@/data/pqcAlgorithmsData'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -18,13 +19,8 @@ import { PersonaChip } from '@/components/Persona/PersonaChip'
 import { ResumeBanner } from '@/components/common/ResumeBanner'
 import { CuriousGuide } from '@/components/common/CuriousGuide'
 import { logEvent, personaLabel } from '@/utils/analytics'
-import { useGoogleAuth } from '@/contexts/GoogleAuthContext'
 
 const MODULE_COUNT = Object.keys(MODULE_CATALOG).filter((k) => k !== 'quiz').length
-
-// Google Drive cloud-sync UI is HIDDEN for now (code kept — flip to re-enable). The local
-// Export/Import backup remains available; only the "Sync to Google Drive" entry is hidden.
-const SHOW_GOOGLE_DRIVE_SYNC = false
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -69,18 +65,36 @@ const PERSONA_HERO_CTA: Record<
 // each role's natural worry: deadlines for execs, library choices for devs,
 // hierarchy redesign for architects, evidence for researchers, fleet rotation
 // for ops, and "what is this" for the curious.
+//
+// {{nssDeadline}} and {{latestRfc}} are placeholders resolved at render time
+// from live timeline/library data (see NSS_DEADLINE_FALLBACK / LATEST_RFC_FALLBACK
+// and the useEffect below) so these two facts can't silently age out the way a
+// hand-dated string would — word-count/keyword tests below run against the raw
+// template, not the substituted value.
 export const PERSONA_HERO_TAGLINE: Record<string, string> = {
   executive:
-    'Boards are asking now. CNSA 2.0 deadlines are already landing; NSS acquisitions due January 2027. Get a defensible answer before the next audit cycle.',
+    'Boards are asking now. CNSA 2.0 deadlines are already landing; {{nssDeadline}}. Get a defensible answer before the next audit cycle.',
   developer:
     'OpenSSL 3.x, BoringSSL, and JOSE are already shipping PQC. See the algorithms, test the libraries, and find the one that fits your stack.',
   architect:
     'Hybrid certs, composite signatures, and multi-fold key/signature growth reshape every PKI. Map the redesign before it maps you.',
   researcher:
-    'FIPS 203/204/205 are out, RFC 9964 just landed, and ACVP vectors are live. Trace the citations and KATs end-to-end.',
+    'FIPS 203/204/205 are out, {{latestRfc}}, and ACVP vectors are live. Trace the citations and KATs end-to-end.',
   ops: 'Cert rotations get longer, keys get bigger, HSMs get pickier. Plan the cutover before the next renewal window.',
   curious:
     "Nothing breaks today. But what runs the padlock icon will look very different in five years — here's the short version.",
+}
+
+// Rendered until the live derivation below resolves (and if it ever can't find
+// a matching row) — both verified against their authoritative source as of
+// this writing (NSA CSI CNSA 2.0 FAQ; RFC 9964 / RFC Editor).
+const NSS_DEADLINE_FALLBACK = 'NSS acquisitions due January 2027'
+const LATEST_RFC_FALLBACK = 'RFC 9964 just landed'
+
+function resolveTagline(template: string, values: Record<string, string>): string {
+  return template.replace(/\{\{(\w+)\}\}/g, (_match, key: string) =>
+    Object.prototype.hasOwnProperty.call(values, key) ? values[key] : ''
+  )
 }
 
 const DEFAULT_HERO_CTA = {
@@ -90,7 +104,6 @@ const DEFAULT_HERO_CTA = {
 
 export const LandingView = () => {
   const { selectedPersona, selectedRegion, setPersona } = usePersonaStore()
-  const { signIn, signOut, isSignedIn, syncStatus, lastSyncedAt, isConfigured } = useGoogleAuth()
   const assessmentStatus = useAssessmentStore((s) => s.assessmentStatus)
 
   const moduleModules = useModuleStore((s) => s.modules)
@@ -122,14 +135,56 @@ export const LandingView = () => {
   const [algorithmCount, setAlgorithmCount] = useState<number | null>(null)
   const [timelineEventCount, setTimelineEventCount] = useState<number | null>(null)
   const [libraryCount, setLibraryCount] = useState<number | null>(null)
+  const [nssDeadline, setNssDeadline] = useState(NSS_DEADLINE_FALLBACK)
+  const [latestRfc, setLatestRfc] = useState(LATEST_RFC_FALLBACK)
+
+  const heroTagline = useMemo(() => {
+    if (!selectedPersona) return null
+    // eslint-disable-next-line security/detect-object-injection
+    const template = PERSONA_HERO_TAGLINE[selectedPersona]
+    if (!template) return null
+    return resolveTagline(template, { nssDeadline, latestRfc })
+  }, [selectedPersona, nssDeadline, latestRfc])
 
   useEffect(() => {
     loadPQCAlgorithmsData().then((data) => setAlgorithmCount(data.length))
     import('@/data/timelineData').then(({ timelineData }) => {
       setTimelineEventCount(timelineData.flatMap((c) => c.bodies.flatMap((b) => b.events)).length)
+
+      // The CSV loader buckets every NSA row (all CNSA 2.0 related) under a
+      // synthetic "United States (CNSA)" country so they get their own Gantt
+      // lane — see timelineData.ts. That means every event here is already
+      // CNSA-scoped; no extra region/org filter is needed.
+      const cnsaLane = timelineData.find((c) => c.countryName === 'United States (CNSA)')
+      const deadlineEvents =
+        cnsaLane?.bodies.flatMap((b) => b.events).filter((e) => e.phase === 'Deadline') ?? []
+      const currentYear = new Date().getFullYear()
+      const nextDeadline = deadlineEvents
+        .filter((e) => e.endYear >= currentYear)
+        .sort((a, b) => a.endYear - b.endYear)[0]
+      if (nextDeadline) {
+        setNssDeadline(`${nextDeadline.title} due ${nextDeadline.endYear}`)
+      }
     })
     import('@/data/libraryData').then(({ libraryData }) => {
       setLibraryCount(libraryData.length)
+
+      // Newest-by-publication-date RFC in the library, not gated on the 30-day
+      // "New" recency badge — a badge window this narrow would make the tagline
+      // fall back to generic text for most of a document's life, defeating the
+      // point of deriving it live at all.
+      const rfcItems = libraryData
+        .map((item) => ({
+          item,
+          rfcNumber: /\bRFC[ -]?(\d{3,5})\b/i.exec(item.referenceId)?.[1] ?? null,
+        }))
+        .filter(
+          (r): r is { item: (typeof libraryData)[number]; rfcNumber: string } => !!r.rfcNumber
+        )
+        .sort((a, b) => b.item.initialPublicationDate.localeCompare(a.item.initialPublicationDate))
+      if (rfcItems[0]) {
+        setLatestRfc(`RFC ${rfcItems[0].rfcNumber} just landed`)
+      }
     })
   }, [])
 
@@ -174,7 +229,7 @@ export const LandingView = () => {
           understanding the threat to deploying quantum-resistant cryptography — step by step.
         </motion.p>
 
-        {selectedPersona && PERSONA_HERO_TAGLINE[selectedPersona] && (
+        {heroTagline && (
           <motion.p
             initial="hidden"
             animate="visible"
@@ -182,7 +237,7 @@ export const LandingView = () => {
             custom={2.2}
             className="text-base text-foreground/85 max-w-2xl mx-auto mb-8 font-medium"
           >
-            {PERSONA_HERO_TAGLINE[selectedPersona]}
+            {heroTagline}
           </motion.p>
         )}
         {!selectedPersona && <div className="mb-5" />}
@@ -313,7 +368,7 @@ export const LandingView = () => {
             },
             {
               value: libraryCount !== null ? String(libraryCount) : '...',
-              label: 'Standards Tracked',
+              label: 'Library Documents',
             },
             { value: String(MODULE_COUNT), label: 'Learning Modules' },
           ].map((stat) => (
@@ -345,7 +400,7 @@ export const LandingView = () => {
               — export or import your saved progress
             </span>
           </summary>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
             <motion.button
               type="button"
               variants={fadeUp}
@@ -359,7 +414,7 @@ export const LandingView = () => {
                   UnifiedStorageService.downloadSnapshot()
                 } catch (error) {
                   console.error('Failed to export backup:', error)
-                  alert('Failed to export backup')
+                  toast.error('Failed to export backup')
                 }
               }}
             >
@@ -393,11 +448,11 @@ export const LandingView = () => {
                   try {
                     const snapshot = await UnifiedStorageService.importSnapshot(file)
                     UnifiedStorageService.restoreSnapshot(snapshot)
-                    alert('Backup restored successfully. The page will now reload.')
+                    toast.success('Backup restored successfully. The page will now reload.')
                     setTimeout(() => window.location.reload(), 500)
                   } catch (error) {
                     console.error('Failed to restore backup:', error)
-                    alert(error instanceof Error ? error.message : 'Failed to restore backup')
+                    toast.error(error instanceof Error ? error.message : 'Failed to restore backup')
                   }
                 }
                 input.click()
@@ -414,77 +469,6 @@ export const LandingView = () => {
                 </p>
               </div>
             </motion.button>
-
-            {/* Google Drive Cloud Sync — hidden via SHOW_GOOGLE_DRIVE_SYNC (code retained) */}
-            {SHOW_GOOGLE_DRIVE_SYNC && isConfigured && (
-              <motion.div
-                variants={fadeUp}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-              >
-                {isSignedIn ? (
-                  <div className="glass-panel p-3 flex flex-col gap-2 h-full border-primary/20">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
-                        {syncStatus === 'syncing' ? (
-                          <Loader2 size={18} aria-hidden="true" className="animate-spin" />
-                        ) : syncStatus === 'error' ? (
-                          <CloudOff size={18} aria-hidden="true" className="text-status-error" />
-                        ) : (
-                          <Cloud size={18} aria-hidden="true" />
-                        )}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <h4 className="text-sm font-semibold text-foreground">Google Drive Sync</h4>
-                        <p className="text-xs text-muted-foreground leading-snug">Connected</p>
-                      </div>
-                    </div>
-                    <p className="text-xs text-muted-foreground leading-snug">
-                      {syncStatus === 'syncing'
-                        ? 'Syncing…'
-                        : syncStatus === 'error'
-                          ? 'Sync failed — will retry on next change'
-                          : syncStatus === 'success' && lastSyncedAt
-                            ? `Synced ${new Date(lastSyncedAt).toLocaleTimeString()}`
-                            : 'Auto-sync active — changes save to your Drive'}
-                    </p>
-                    <Button
-                      variant="ghost"
-                      type="button"
-                      onClick={signOut}
-                      className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mt-auto"
-                    >
-                      <LogOut size={12} aria-hidden="true" />
-                      Sign out
-                    </Button>
-                  </div>
-                ) : (
-                  <Button
-                    variant="ghost"
-                    type="button"
-                    onClick={signIn}
-                    className="glass-panel p-3 flex items-center gap-3 hover:border-primary/50 transition-colors text-left w-full h-full"
-                    aria-label="Sign in with Google to sync progress to Google Drive"
-                  >
-                    <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
-                      <Cloud size={18} aria-hidden="true" />
-                    </div>
-                    <div className="min-w-0">
-                      <h4 className="text-sm font-semibold text-foreground flex items-center gap-2 flex-wrap">
-                        Sync to Google Drive
-                        <span className="text-[10px] font-mono uppercase tracking-widest px-1.5 py-0.5 rounded bg-status-warning/10 text-status-warning border border-status-warning/30">
-                          WIP
-                        </span>
-                      </h4>
-                      <p className="text-xs text-muted-foreground leading-snug">
-                        Auto-save progress across devices.
-                      </p>
-                    </div>
-                  </Button>
-                )}
-              </motion.div>
-            )}
           </div>
         </details>
       </section>
