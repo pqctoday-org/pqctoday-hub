@@ -1,9 +1,9 @@
 #!/usr/bin/env tsx
 // SPDX-License-Identifier: GPL-3.0-only
 /**
- * generate-cbom.ts — CycloneDX 1.6 Cryptography Bill of Materials (CBOM)
+ * generate-cbom.ts — CycloneDX 1.7 Cryptography Bill of Materials (CBOM)
  *
- * Reads four CSVs from src/data/ and emits a CycloneDX 1.6 CBOM at
+ * Reads four CSVs from src/data/ and emits a CycloneDX 1.7 CBOM at
  * public/data/pqctoday-cbom.json. The inputs are the migrate /
  * product-catalogue family that ships from the same source-of-truth as
  * the /migrate route:
@@ -42,6 +42,25 @@ function dataVersionFromCsvName(filename: string): string {
   if (!m) throw new Error(`Cannot parse data-version date from CSV name: ${filename}`)
   const [, mm, dd, yyyy] = m
   return `${yyyy}-${mm}-${dd}T00:00:00.000Z`
+}
+
+/** A deterministic, real v4-shaped UUID derived from `seed` — same seed always
+ *  produces the same UUID (required so identical input data still produces a
+ *  byte-identical CBOM across rebuilds), but the output is an actual RFC 4122
+ *  v4 pattern, not just a human-readable string that happens to start with
+ *  "urn:uuid:". Not cryptographically random by design — determinism is the
+ *  point here, not unpredictability. */
+function deterministicUuid(seed: string): string {
+  const h = createHash('sha256').update(seed).digest('hex')
+  const version = '4'
+  const variant = ((parseInt(h[16], 16) & 0x3) | 0x8).toString(16)
+  return [
+    h.slice(0, 8),
+    h.slice(8, 12),
+    version + h.slice(13, 16),
+    variant + h.slice(17, 20),
+    h.slice(20, 32),
+  ].join('-')
 }
 
 interface RawProduct {
@@ -84,30 +103,45 @@ interface RawCpeXref {
   status: string
 }
 
-type CycloneDXAlgorithmType = 'KEM' | 'Signature' | 'Hash' | 'SymmetricEncryption' | 'Other'
+// 07092026: values are the REAL CycloneDX 1.7 `algorithmProperties.primitive`
+// enum (lowercase, hyphenated) — the previous 'KEM'/'Signature'/'Hash'/
+// 'SymmetricEncryption'/'Other' were never valid enum members under 1.6
+// either (verified against the vendored official schema); this file's output
+// was schema-invalid before this fix, independent of the 1.6→1.7 bump.
+type CycloneDXAlgorithmType = 'kem' | 'signature' | 'hash' | 'block-cipher' | 'other'
+
+/** The only 3 PQC families with a published FIPS standard as of 07092026 —
+ *  the only ones valid to assert as `algorithmFamily` (a constrained
+ *  Cryptography Registry enum). Kept in sync with services/cbom/cycloneDx.ts. */
+const STANDARDIZED_FAMILIES = new Set(['ML-KEM', 'ML-DSA', 'SLH-DSA'])
 
 function inferAlgorithmType(name: string, desc: string): CycloneDXAlgorithmType {
   const s = (name + ' ' + desc).toLowerCase()
-  if (s.includes('ml-kem') || s.includes('kyber') || s.includes('kem')) return 'KEM'
+  if (s.includes('ml-kem') || s.includes('kyber') || s.includes('kem')) return 'kem'
   if (
     s.includes('ml-dsa') ||
     s.includes('dilithium') ||
     s.includes('slh-dsa') ||
     s.includes('signature')
   )
-    return 'Signature'
-  if (s.includes('sha') || s.includes('hash')) return 'Hash'
-  if (s.includes('aes') || s.includes('symmetric')) return 'SymmetricEncryption'
-  return 'Other'
+    return 'signature'
+  if (s.includes('sha') || s.includes('hash')) return 'hash'
+  if (s.includes('aes') || s.includes('symmetric')) return 'block-cipher'
+  return 'other'
 }
 
+// Standard names where the Cryptography Registry actually has one published
+// (ML-KEM/ML-DSA/SLH-DSA — FIPS 203/204/205); kept as pre-standardization
+// names otherwise (Falcon, HQC, FrodoKEM, Classic-McEliece all lack a
+// published FIPS number as of 07092026 — same fallback table as
+// services/cbom/cycloneDx.ts's PQC_ALGO_TOKENS, kept in sync deliberately).
 function pqcAlgorithmsFromCapability(desc: string): string[] {
   const algorithms: string[] = []
   const text = desc.toUpperCase()
   if (text.includes('ML-KEM') || text.includes('KYBER')) algorithms.push('ML-KEM')
   if (text.includes('ML-DSA') || text.includes('DILITHIUM')) algorithms.push('ML-DSA')
   if (text.includes('SLH-DSA') || text.includes('SPHINCS')) algorithms.push('SLH-DSA')
-  if (text.includes('FN-DSA') || text.includes('FALCON')) algorithms.push('FN-DSA')
+  if (text.includes('FN-DSA') || text.includes('FALCON')) algorithms.push('Falcon')
   if (text.includes('HQC')) algorithms.push('HQC')
   if (text.includes('FRODOKEM') || text.includes('FRODO-KEM')) algorithms.push('FrodoKEM')
   if (text.includes('CLASSIC MCELIECE') || text.includes('CLASSIC-MCELIECE'))
@@ -229,6 +263,13 @@ async function main() {
             ? {
                 parameterSetIdentifier: algos.join(', '),
                 primitive: inferAlgorithmType(p.software_name, p.pqc_capability_description || ''),
+                // algorithmFamily is a CONSTRAINED registry enum — only set it
+                // when exactly one algorithm was detected and it's one of the
+                // 3 families with a published standard (multi-algorithm
+                // products have no single correct family value to assert).
+                ...(algos.length === 1 && STANDARDIZED_FAMILIES.has(algos[0])
+                  ? { algorithmFamily: algos[0] }
+                  : {}),
               }
             : undefined,
         oid: undefined,
@@ -268,8 +309,14 @@ async function main() {
 
   const cbom = {
     bomFormat: 'CycloneDX',
-    specVersion: '1.6',
-    serialNumber: `urn:uuid:pqctoday-cbom-${dataVersion.slice(0, 10).replace(/-/g, '')}`,
+    specVersion: '1.7',
+    // 07092026: was `urn:uuid:pqctoday-cbom-YYYYMMDD` — deterministic (by
+    // design, see the comment above dataVersionFromCsvName) but not actually
+    // UUID-shaped, so it failed schema validation (pre-existing, independent
+    // of the 1.6→1.7 bump — verified against the vendored official schema).
+    // Fixed by hashing the same deterministic seed into a real v4-shaped UUID
+    // — identical input data still produces a byte-identical serialNumber.
+    serialNumber: `urn:uuid:${deterministicUuid(`pqctoday-cbom-${dataVersion}`)}`,
     version: 1,
     metadata: {
       timestamp: dataVersion,

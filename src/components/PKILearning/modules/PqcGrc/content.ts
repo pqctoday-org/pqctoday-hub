@@ -48,7 +48,7 @@ export const content: ModuleContent = {
     workshopSummary:
       'The workshop has two interactive steps. KRI Cascade Builder — assign each of seventeen KRIs to a board / CISO / operational level and set a status (green / amber / red), with validation that warns when a level is missing its required indicators or when a board KRI is left red; exports a dashboard to the learning portfolio. Exception Register Triage — classify deferral entries as Active, Expiring, or Stale and decide which propagate to the SOC suppression list versus which trigger escalation, mirroring the framework’s ">6 months without a remediation plan" rule.',
     relatedStandards:
-      'NIST IR 8547 (Transition to Post-Quantum Cryptography Standards). NSA CNSA 2.0. FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA). NIST SP 800-208 (Stateful Hash-Based Signatures). CycloneDX 1.6 (CBOM). ISO 27005 / ISO 31000 (risk management). COBIT (governance).',
+      'NIST IR 8547 (Transition to Post-Quantum Cryptography Standards). NSA CNSA 2.0. FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA). NIST SP 800-208 (Stateful Hash-Based Signatures). CycloneDX 1.7 (CBOM). ISO 27005 / ISO 31000 (risk management). COBIT (governance).',
   },
 }
 

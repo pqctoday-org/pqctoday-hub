@@ -602,6 +602,7 @@ export type ReportSectionId =
   | 'assessmentProfile'
   | 'hndlHnfl'
   | 'discovery'
+  | 'cbom'
   | 'algorithmMigration'
   | 'complianceImpact'
   | 'recommendedActions'
@@ -626,6 +627,7 @@ const REPORT_SECTION_DEFAULTS: Record<ReportSectionId, ReportSectionConfig> = {
   assessmentProfile: { state: 'collapsed' },
   hndlHnfl: { state: 'open' },
   discovery: { state: 'collapsed' },
+  cbom: { state: 'collapsed' },
   algorithmMigration: { state: 'open' },
   complianceImpact: { state: 'open' },
   recommendedActions: { state: 'open' },
