@@ -79,10 +79,17 @@ describe('Learn walkthrough step specs (real wasm engine)', () => {
   }
 
   for (const lesson of LESSONS) {
-    it(`lesson ${lesson.n} "${lesson.title}" — every step achieves its declared outcome`, () => {
-      runSide(lesson.id, 'classical', lesson.classical)
-      if (!lesson.modernize.skipReplay) runSide(lesson.id, 'modernize', lesson.modernize)
-    })
+    // Generous timeout: lesson 2's classical side generates an RSA-3072 key
+    // in wasm — multi-second on its own, slower still under parallel suite
+    // load. The budget is for real crypto, not slack.
+    it(
+      `lesson ${lesson.n} "${lesson.title}" — every step achieves its declared outcome`,
+      { timeout: 60_000 },
+      () => {
+        runSide(lesson.id, 'classical', lesson.classical)
+        if (!lesson.modernize.skipReplay) runSide(lesson.id, 'modernize', lesson.modernize)
+      }
+    )
   }
 
   it('every lesson has exactly one builder per step and unique ids', () => {
