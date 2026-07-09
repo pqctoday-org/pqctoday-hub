@@ -60,10 +60,8 @@ import { usePhaseFilter } from '../../hooks/usePhaseFilter'
 import { Button } from '../ui/button'
 import { SectionExpandContext } from '@/contexts/sectionExpandContext'
 import clsx from 'clsx'
-import toast from 'react-hot-toast'
 import type { AssessmentResult } from '../../hooks/assessmentTypes'
 import { SIGNING_ALGORITHMS } from '../../hooks/assessmentData'
-import { encodeShareToken } from '@/utils/reportShareToken'
 import { NiceGapReportSection } from './NiceGapReportSection'
 import { QRASection } from './sections/QRASection'
 import {
@@ -88,6 +86,11 @@ import { AlgorithmMigrationSection } from './sections/AlgorithmMigrationSection'
 import { ComplianceImpactSection } from './sections/ComplianceImpactSection'
 import { RecommendedActionsSection } from './sections/RecommendedActionsSection'
 import { ThreatLandscapeSection } from './sections/ThreatLandscapeSection'
+import {
+  printReport,
+  shareReport,
+  exportAlgorithmMigrationsCsv,
+} from './sections/reportContentActions'
 
 declare const __APP_VERSION__: string
 const APP_VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0'
@@ -280,101 +283,11 @@ export const ReportContent: React.FC<AssessReportProps> = ({
   // honest gate for the locked/upgrade tiering.
   const isComprehensive = result.assessmentProfile?.mode === 'comprehensive'
 
-  const handlePrint = () => {
-    window.print()
-  }
+  const handlePrint = printReport
 
-  const handleShare = async () => {
-    // ACCURACY-0708-2: share the sender's exact computed `result` as a
-    // snapshot (v2 token) rather than the partial quick-track inputs the old
-    // v1 token carried — decode then renders this directly, with no
-    // recompute, so the recipient sees precisely what's on screen right now.
-    //
-    // For an already-shared/example view, re-share the URL the recipient
-    // opened rather than regenerating a token from `getInput()` — that would
-    // read the recipient's own (unrelated, likely empty) assessment input,
-    // not the report they're actually looking at.
-    const url = shared
-      ? window.location.href
-      : (() => {
-          const personaState = usePersonaStore.getState()
-          const token = encodeShareToken({
-            result,
-            persona: personaState.selectedPersona,
-          })
-          return `${window.location.origin}${window.location.pathname}?share=${token}`
-        })()
+  const handleShare = () => shareReport(result, shared)
 
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: 'PQC Risk Assessment Report',
-          text: `Quantum Risk Score: ${result.riskScore}/100 — ${result.narrative}`,
-          url,
-        })
-      } catch (err) {
-        // Ignore the user cancelling the native share sheet; surface real failures.
-        if (err instanceof Error && err.name !== 'AbortError') {
-          toast.error('Could not share the report link.')
-        }
-      }
-    } else {
-      // Desktop browsers have no navigator.share — copy the link and CONFIRM it,
-      // otherwise the click looks like it did nothing.
-      try {
-        await navigator.clipboard.writeText(url)
-        toast.success('Report link copied to clipboard.')
-      } catch {
-        toast.error('Could not copy the report link.')
-      }
-    }
-  }
-
-  const handleCSVExport = () => {
-    const hasEffort = result.migrationEffort && result.migrationEffort.length > 0
-    const effortMap = new Map(result.migrationEffort?.map((e) => [e.algorithm, e]))
-
-    const headers = hasEffort
-      ? [
-          'Algorithm',
-          'Quantum Vulnerable',
-          'PQC Replacement',
-          'Urgency',
-          'Migration Effort',
-          'Estimated Scope',
-          'Rationale',
-          'Notes',
-        ]
-      : ['Algorithm', 'Quantum Vulnerable', 'PQC Replacement', 'Urgency', 'Notes']
-
-    const rows = result.algorithmMigrations.map((algo) => {
-      const effort = effortMap.get(algo.classical)
-      const baseRow = [
-        algo.classical,
-        algo.quantumVulnerable ? 'Yes' : 'No',
-        algo.replacement,
-        algo.urgency,
-      ]
-      if (hasEffort) {
-        baseRow.push(
-          effort?.complexity ?? 'N/A',
-          effort?.estimatedScope ?? 'N/A',
-          `"${(effort?.rationale ?? '').replace(/"/g, '""')}"`
-        )
-      }
-      baseRow.push(`"${algo.notes.replace(/"/g, '""')}"`)
-      return baseRow
-    })
-
-    const csv = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n')
-    const blob = new Blob([csv], { type: 'text/csv' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `pqc-risk-assessment-${new Date(result.generatedAt).toISOString().slice(0, 10)}.csv`
-    a.click()
-    URL.revokeObjectURL(url)
-  }
+  const handleCSVExport = () => exportAlgorithmMigrationsCsv(result)
 
   const generatedDate = new Date(result.generatedAt).toLocaleDateString('en-US', {
     year: 'numeric',
