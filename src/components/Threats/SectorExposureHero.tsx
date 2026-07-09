@@ -2,7 +2,10 @@
 import { Radar, Clock, ShieldAlert } from 'lucide-react'
 import type { ThreatData } from '@/data/threatsData'
 import { getThreatClass } from './threatClassification'
-import { CRQC_ESTIMATES } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
+import {
+  CRQC_ESTIMATES,
+  getCrqcConsensus,
+} from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
 
 /**
  * Persona-forward exposure hero for /threats. Leads the page with the user's own
@@ -70,11 +73,10 @@ export const SectorExposureHero = ({
     if (c === 'hnfl' || c === 'both') hnfl++
   }
 
-  // CRQC consensus — same derivation as CrqcCapabilityStrip (median of midpoints).
-  const earliest = Math.min(...CRQC_ESTIMATES.map((e) => e.yearLow))
-  const latest = Math.max(...CRQC_ESTIMATES.map((e) => e.yearHigh))
-  const mids = CRQC_ESTIMATES.map((e) => (e.yearLow + e.yearHigh) / 2).sort((a, b) => a - b)
-  const z = Math.round(mids[Math.floor(mids.length / 2)])
+  // CRQC consensus — single-sourced via getCrqcConsensus() so this figure always
+  // agrees with CrqcCapabilityStrip, CrqcTrajectoryChart, and the economics
+  // calculator's default (Threats #1).
+  const { earliest, latest, zEstimate: z } = getCrqcConsensus()
 
   // Per-sector Mosca — most urgent across the scoped sectors (longest data life wins).
   const driver =

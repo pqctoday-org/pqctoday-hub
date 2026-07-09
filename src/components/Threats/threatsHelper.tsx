@@ -65,3 +65,18 @@ export const getIndustryIcon = (industry: string, size: number = 16, className?:
     return <Droplets size={size} className={className} />
   return <Layers size={size} className={className} />
 }
+
+/**
+ * Splits a comma-separated crypto-chip field and caps the number of chips
+ * rendered inline, returning the visible slice plus a count of hidden items —
+ * the table used to render every comma-split token as its own chip with no
+ * cap, which is part of why the table forced 1035px of horizontal scroll
+ * (Threats #6). The full, uncapped text is still shown in the detail dialog.
+ */
+export function capChips(text: string, max = 3): { visible: string[]; hiddenCount: number } {
+  const items = text
+    .split(',')
+    .map((c) => c.trim())
+    .filter(Boolean)
+  return { visible: items.slice(0, max), hiddenCount: Math.max(0, items.length - max) }
+}
