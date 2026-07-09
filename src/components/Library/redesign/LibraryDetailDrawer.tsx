@@ -317,6 +317,10 @@ function DrawerPanel({
               <KeyFact label="Source quality" value={item.downloadUrlQuality} />
               <KeyFact label="Vetting body" value={item.vettingBody?.join(', ')} />
               <KeyFact label="Peer reviewed" value={item.peerReviewed} />
+              <KeyFact
+                label="Confidence score"
+                value={item.confidenceScore != null ? `${item.confidenceScore}/100` : undefined}
+              />
             </dl>
           </Section>
 

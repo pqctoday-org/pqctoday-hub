@@ -4,6 +4,7 @@ import {
   computeCitationCounts,
   attachPriorRevisions,
   detectPurpose,
+  resolvePurpose,
   findLibraryItemByRef,
   REFERENCE_ID_ALIASES,
   LIBRARY_PURPOSES,
@@ -99,6 +100,26 @@ describe('detectPurpose', () => {
     expect(detectPurpose('', 'Migration Playbook')).toBe('planning')
     expect(detectPurpose(undefined, 'Research Paper')).toBe('education')
     expect(detectPurpose('   ', 'Technical Specification')).toBe('reference')
+  })
+})
+
+describe('resolvePurpose', () => {
+  it('prefers a recognized CSV purpose column over the heuristic', () => {
+    // manual_category alone would heuristically land 'planning' (contains
+    // "Migration"), but a dedicated override should win.
+    expect(resolvePurpose('reference', 'Migration Guidance', 'Technical Standard')).toBe(
+      'reference'
+    )
+  })
+
+  it('is case/whitespace-tolerant on the CSV value', () => {
+    expect(resolvePurpose(' Education ', 'Industry & Research', '')).toBe('education')
+  })
+
+  it('falls back to the heuristic when the CSV value is blank or unrecognized', () => {
+    expect(resolvePurpose('', 'Migration Guidance', '')).toBe('planning')
+    expect(resolvePurpose(undefined, 'Protocols', '')).toBe('reference')
+    expect(resolvePurpose('not-a-real-purpose', 'Protocols', '')).toBe('reference')
   })
 })
 
