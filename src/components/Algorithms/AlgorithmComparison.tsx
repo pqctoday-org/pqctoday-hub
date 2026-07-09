@@ -30,6 +30,7 @@ import { TrustScoreBadge } from '../ui/TrustScoreBadge'
 import { RevisionDrilldownPanel } from '../ui/RevisionDrilldownPanel'
 import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import { jurisdictionStanceForRegion, type JurisdictionStance } from './cnsa20'
+import { isCertifiedTier } from '../../data/algorithmStatusTier'
 
 type SortColumn = 'function' | 'classical' | 'pqc' | 'deprecation' | 'region' | 'status'
 type SortDirection = 'asc' | 'desc' | null
@@ -481,14 +482,20 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                 </thead>
                 <tbody className="divide-y divide-border/40">
                   {sortedData.map((algo, index) => {
+                    const pqcName = algo.pqc.split(/\s*\(/)[0].trim()
+                    // Highlight sets are a mix of classical names (architect/
+                    // developer pick RSA/ECDH to anchor "what replaces this")
+                    // and PQC names (executive/curious pick ML-KEM-768 etc. —
+                    // see ALGORITHM_PERSONA_DEFAULTS in personaConfig.ts) —
+                    // check both columns, not just classical.
                     const isHighlighted =
                       highlightAlgorithms &&
                       Array.from(highlightAlgorithms).some(
                         (h) =>
                           algo.classical.toLowerCase().includes(h.toLowerCase()) ||
-                          h.toLowerCase().includes(algo.classical.toLowerCase())
+                          h.toLowerCase().includes(algo.classical.toLowerCase()) ||
+                          pqcName.toLowerCase() === h.toLowerCase()
                       )
-                    const pqcName = algo.pqc.split(/\s*\(/)[0].trim()
                     const pqcDetail = pqcDetailMap.get(pqcName.toLowerCase())
                     const isCompared = compareSet.has(pqcName)
                     const isSignatureType =
@@ -655,7 +662,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                         </td>
                         <td className="px-4 py-3" style={{ width: `${columnWidths.status}px` }}>
                           {algo.status &&
-                            (algo.status !== 'Candidate' && algo.status !== 'To Be Checked' ? (
+                            (isCertifiedTier(algo.statusTier) ? (
                               algo.statusUrl ? (
                                 <a
                                   href={algo.statusUrl}

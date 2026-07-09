@@ -41,7 +41,9 @@ export const INTENTS: Intent[] = [
     label: 'Run a live test',
     description: 'Execute KAT vectors against real WASM implementations',
     icon: <FlaskConical size={15} />,
-    params: { tab: 'detailed', section: 'kat' },
+    // KAT Validation lives on the Validation tab (moved from Detailed
+    // Comparison) — see AlgorithmValidationView.tsx.
+    params: { tab: 'validation', section: 'kat' },
   },
 ]
 
@@ -76,7 +78,7 @@ export const PERSONA_INTENTS: Partial<Record<PersonaId, Intent>> = {
     label: 'Run KAT validation',
     description: 'Execute ACVP-style vectors and cross-validate against WASM implementations',
     icon: <FlaskConical size={15} />,
-    params: { tab: 'detailed', section: 'kat' },
+    params: { tab: 'validation', section: 'kat' },
   },
 }
 

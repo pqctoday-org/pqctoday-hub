@@ -6,6 +6,7 @@ import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 import { AlgorithmCheckButton } from './AlgorithmCheckButton'
 import { AlgoCtaStrip } from './AlgoCtaStrip'
+import { isCertifiedTier } from '../../data/algorithmStatusTier'
 
 interface MobileAlgorithmListProps {
   data: AlgorithmTransition[]
@@ -90,7 +91,7 @@ export const MobileAlgorithmList = ({
                     </span>
                   )}
                   {algo.status &&
-                    (algo.status !== 'Candidate' && algo.status !== 'To Be Checked' ? (
+                    (isCertifiedTier(algo.statusTier) ? (
                       <span className="text-[10px] px-1.5 py-0.5 rounded border bg-status-success/10 text-status-success border-status-success/30">
                         {algo.status}
                       </span>
