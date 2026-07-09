@@ -5,8 +5,23 @@ import clsx from 'clsx'
 import { Info, Sparkles, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { getCurrentVersion } from '@/store/useVersionStore'
-import { MISSION_TAGS, PRINCIPLES, NOT_ITEMS } from '../aboutData'
+import { buildMissionTags, PRINCIPLES, NOT_ITEMS } from '../aboutData'
 import { CareerJourneyModal } from '../CareerJourneyModal'
+import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
+import { STEP_COMPONENTS } from '@/components/Assess/redesign/stepRegistry'
+import { patentsData } from '@/data/patentsData'
+
+// Excludes the synthetic 'quiz' entry — matches the count Landing already shows.
+const MODULE_COUNT = Object.keys(MODULE_CATALOG).filter((k) => k !== 'quiz').length
+// The Assess step registry, not the raw file count under steps/ — a step file
+// that isn't wired into STEP_COMPONENTS isn't part of the real flow a user sees.
+const STEP_COUNT = Object.keys(STEP_COMPONENTS).length
+
+const MISSION_TAGS = buildMissionTags({
+  moduleCount: MODULE_COUNT,
+  stepCount: STEP_COUNT,
+  patentCount: patentsData.length,
+})
 
 export function VisionSection({ defaultExpanded = false }: { defaultExpanded?: boolean }) {
   const version = getCurrentVersion()

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
 import { FileText, Sparkles, ChevronRight } from 'lucide-react'
 import { getCurrentVersion, useVersionStore } from '@/store/useVersionStore'
 import { Button } from '@/components/ui/button'
@@ -40,14 +41,14 @@ export function ReleaseNotesSection() {
             <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4" />
             What&apos;s New
           </Button>
-          <a
-            href="/changelog"
+          <Link
+            to="/changelog"
             className="flex flex-1 sm:flex-none justify-center items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 rounded-lg bg-gradient-to-r from-secondary to-primary text-primary-foreground font-bold text-xs md:text-sm hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200"
           >
             View
             <span className="hidden sm:inline"> Changelog</span>
             <ChevronRight className="w-4 h-4" />
-          </a>
+          </Link>
         </div>
       </div>
     </motion.div>
