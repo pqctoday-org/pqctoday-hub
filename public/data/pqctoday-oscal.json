@@ -2924,7 +2924,7 @@
               },
               {
                 "name": "reviewer-display",
-                "value": "unreviewed",
+                "value": "claude-agent (automated remediation)",
                 "class": "trust-engine"
               },
               {
@@ -3275,7 +3275,7 @@
               },
               {
                 "name": "reviewer-display",
-                "value": "unreviewed",
+                "value": "claude-agent (automated remediation)",
                 "class": "trust-engine"
               },
               {
@@ -3356,7 +3356,7 @@
               },
               {
                 "name": "reviewer-display",
-                "value": "unreviewed",
+                "value": "claude-agent (automated remediation)",
                 "class": "trust-engine"
               },
               {
@@ -3383,7 +3383,7 @@
               },
               {
                 "name": "reviewer-display",
-                "value": "unreviewed",
+                "value": "claude-agent (automated remediation)",
                 "class": "trust-engine"
               },
               {
@@ -3626,7 +3626,7 @@
               },
               {
                 "name": "reviewer-display",
-                "value": "unreviewed",
+                "value": "claude-agent (automated remediation)",
                 "class": "trust-engine"
               },
               {
@@ -3788,7 +3788,7 @@
               },
               {
                 "name": "reviewer-display",
-                "value": "unreviewed",
+                "value": "claude-agent (automated remediation)",
                 "class": "trust-engine"
               },
               {
@@ -10681,7 +10681,7 @@
               },
               {
                 "name": "reviewer-display",
-                "value": "unreviewed",
+                "value": "claude-agent (automated remediation)",
                 "class": "trust-engine"
               },
               {
@@ -11032,7 +11032,7 @@
               },
               {
                 "name": "reviewer-display",
-                "value": "unreviewed",
+                "value": "claude-agent (automated remediation)",
                 "class": "trust-engine"
               },
               {
@@ -11113,7 +11113,7 @@
               },
               {
                 "name": "reviewer-display",
-                "value": "unreviewed",
+                "value": "claude-agent (automated remediation)",
                 "class": "trust-engine"
               },
               {
@@ -11140,7 +11140,7 @@
               },
               {
                 "name": "reviewer-display",
-                "value": "unreviewed",
+                "value": "claude-agent (automated remediation)",
                 "class": "trust-engine"
               },
               {
@@ -11383,7 +11383,7 @@
               },
               {
                 "name": "reviewer-display",
-                "value": "unreviewed",
+                "value": "claude-agent (automated remediation)",
                 "class": "trust-engine"
               },
               {
@@ -11545,7 +11545,7 @@
               },
               {
                 "name": "reviewer-display",
-                "value": "unreviewed",
+                "value": "claude-agent (automated remediation)",
                 "class": "trust-engine"
               },
               {
