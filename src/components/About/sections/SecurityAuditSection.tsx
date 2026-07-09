@@ -1,8 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { motion } from 'framer-motion'
 import { ShieldCheck } from 'lucide-react'
+import { securityAuditDate } from '@/data/securityAuditData'
 
 export function SecurityAuditSection() {
+  const lastAudited = securityAuditDate
+    ? securityAuditDate.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+    : 'date unavailable'
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -14,7 +23,7 @@ export function SecurityAuditSection() {
         <ShieldCheck className="text-primary" size={24} />
         <div>
           <h2 className="text-xl font-semibold">Security Audit</h2>
-          <p className="text-xs text-muted-foreground">Last audited: June 21, 2026</p>
+          <p className="text-xs text-muted-foreground">Last audited: {lastAudited}</p>
         </div>
       </div>
 
