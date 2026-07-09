@@ -10,16 +10,28 @@ import type { PhaseId } from './frameworkPhases'
  * active persona practices that module's `frameworkPhase` (the sim climbs the
  * same phases p0–p7 + verify-close, and every module carries one).
  *
- * Relevance is profile-dependent, not lesson-track-dependent: an exec practices
- * the governance/program phases; an architect/ops/dev practices the technical
- * execution & infrastructure phases (p5/p6) where TLS, HSM, 5G, etc. live.
+ * Linked to `ROLE_CROSSWALK`/`personaToRoles` (`roleCrosswalk.ts`), which is the
+ * source of truth for which phases a seat actually *owns* in-sim (spec §7).
+ * Every set below is the union of that persona's owned phases, so the CTA can
+ * never point a player at a phase their seat doesn't own — the exact drift the
+ * two-vocabulary split used to allow (07082026 remediation, simulation.md item
+ * 2). `executive` carries three phases (p1/p2/p3) beyond its owned set as a
+ * documented, deliberate exception: the Executive Overview tour
+ * (`execTourConfig.ts` `EXEC_TOUR_STAGES`) genuinely walks the exec persona
+ * through those phases' content (data-asset-sensitivity, CBOM, risk-register)
+ * for board-oversight framing, even though `crypto-architect` — not any
+ * executive-mapped role — drives them programmatically. The drift guard in
+ * `personaConfig.test.ts` pins this relationship (owned ⊆ set, extras ⊆
+ * allowlist) so it can't silently drift further.
+ *
  * Personas with no entry here (researcher / curious / none) see the CTA on
- * every phase — a deliberate broad fallback. Tune the per-persona sets below.
+ * every phase — a deliberate broad fallback (neither holds a program role in
+ * `ROLE_CROSSWALK`, so there is no "owned" set to link to; see item 1).
  */
 export const PERSONA_SIM_PRACTICE_PHASES: Partial<Record<PersonaId, PhaseId[]>> = {
-  executive: ['p0', 'p1', 'p2', 'p3', 'p4', 'p7', 'verify-close'],
-  architect: ['p2', 'p5', 'p6'],
-  ops: ['p5', 'p6', 'verify-close'],
+  executive: ['p0', 'p1', 'p2', 'p3', 'p4', 'p7', 'verify-close', 'foundations'],
+  architect: ['p1', 'p2', 'p3', 'p5'],
+  ops: ['p5', 'p6'],
   developer: ['p5', 'p6'],
   // researcher / curious / (no persona) → undefined ⇒ broad (see helper)
 }

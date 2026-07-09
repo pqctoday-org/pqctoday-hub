@@ -364,9 +364,15 @@ export function HNDLHNFLSection({
 
       {hnfl && (
         <div>
-          <p className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+          <p
+            className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2"
+            title="Same risk as TNFL (Trust Now, Forge Later), the term used in the Simulation — the Applied Quantum framework and the simulation say TNFL, this report and the Learn modules say HNFL."
+          >
             <span className="w-2 h-2 rounded-full bg-destructive shrink-0" />
             HNFL — Harvest Now, Forge Later
+            <span className="text-xs font-normal text-muted-foreground">
+              (called TNFL in the Simulation)
+            </span>
           </p>
           <HNFLTimelineBar hnfl={hnfl} />
         </div>
