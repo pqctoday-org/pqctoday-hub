@@ -13,15 +13,15 @@
 export const COMPLIANCE_CURIOUS_PREFACES: Record<string, string> = {
   NIST: 'The US National Institute of Standards and Technology — the lab that picked the first three post-quantum algorithms (ML-KEM, ML-DSA, SLH-DSA) and wrote the timeline every other regulator points to. If you only learn about one body on this page, make it this one.',
   ENISA:
-    "The European Union's cybersecurity agency. ENISA's PQC reports and the EUCC certification scheme are how the EU enforces the same algorithms NIST chose, but with its own audit trail and a 2027 mandate window.",
-  BSI: "Germany's federal information-security agency. Its TR-02102 series tells every German company which algorithms are still allowed, which are deprecated, and which must be retired by 2030.",
+    "The European Union's cybersecurity agency. ENISA's PQC reports and the EUCC certification scheme are how the EU coordinates the same algorithms NIST chose — but there's no single binding EU-wide PQC mandate yet, so ENISA's guidance is influential rather than (currently) enforceable law.",
+  BSI: "Germany's federal information-security agency. Its TR-02102 series tells every German company which algorithms are still allowed, which are deprecated, and on what timeline — the most technically detailed national PQC guidance in Europe.",
   ANSSI:
-    'France\'s national cybersecurity authority. ANSSI tends to publish stricter PQC guidance than the EU average — when ANSSI says "hybrid mandatory until 2030," that\'s the floor for French government contracts.',
+    "France's national cybersecurity authority. ANSSI tends to publish stricter PQC guidance than the EU average — it recommends (not legally mandates) hybrid PQC for new systems from 2025, with standalone PQC becoming an option from 2030, and that recommendation is the de facto floor for French government contracts.",
   'FIPS-140-3':
     'The US Federal Information Processing Standard for cryptographic modules. A product that claims "FIPS 140-3 validated" has been tested by an accredited lab against NIST\'s published spec. FIPS 203/204/205 are the algorithm standards that modules must implement — FIPS 140-3 is the envelope that certifies the implementation is correct.',
   'CNSA-2':
-    'The NSA\'s "Commercial National Security Algorithm" suite, version 2. CNSA 2.0 is the deadline that matters most for US defense and federal contracts — software signing must move to PQC by 2025, web traffic by 2030, and everything else by 2033.',
-  DORA: "The EU's Digital Operational Resilience Act. DORA forces financial firms (banks, insurers, market infrastructure) to prove their crypto can survive a quantum break — and to test that resilience continuously, not just once.",
+    'The NSA\'s "Commercial National Security Algorithm" suite, version 2. CNSA 2.0 is the deadline that matters most for US defense and federal contracts — it\'s staged by category: software and firmware signing should prefer PQC by 2025 and must use it exclusively by 2030, with web/cloud, networking, OS, and legacy systems phasing in through 2033.',
+  DORA: "The EU's Digital Operational Resilience Act. DORA requires financial firms (banks, insurers, market infrastructure) to manage ICT risk and prove operational resilience — it doesn't name PQC as an explicit mandate, but its Article 9 protection-of-information duties are increasingly read to cover quantum-safe crypto.",
   NIS2: 'The EU\'s second Network and Information Security directive. NIS2 vastly expands which sectors must report cybersecurity incidents within 24 hours and prove "state-of-the-art" crypto — and PQC is on the way to becoming part of "state-of-the-art."',
   'PCI-DSS':
     'The Payment Card Industry Data Security Standard. Anyone handling credit-card numbers has to meet PCI-DSS. The v4 update (mandatory March 2025) added crypto-agility requirements that explicitly point toward PQC.',
