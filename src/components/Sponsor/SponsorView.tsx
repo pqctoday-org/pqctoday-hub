@@ -379,7 +379,7 @@ function EditorialPromise() {
             This is the entire reason vendors and enterprises trust our data — and the entire reason
             sponsoring is worth what we charge.
           </p>
-          <Link to="/editorial-independence">
+          <Link to="/editorial-independence#editorial-independence-what-sponsorship-buys">
             <Button variant="outline" size="sm" className="gap-2">
               Read the full policy
               <ArrowRight size={14} />
