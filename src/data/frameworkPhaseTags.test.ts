@@ -132,6 +132,37 @@ describe('spine consistency (2: produce-ref ↔ tool tag)', () => {
       ).toBe(phase)
     }
   })
+
+  // NOTE: a stricter "every BUSINESS_TOOLS entry's frameworkPhase tag must
+  // appear in that phase's produce list" guard was tried here and reverted —
+  // BUSINESS_TOOLS.frameworkPhase tags every tool for RESOURCE-RAIL filtering
+  // (resourcesForPhase), regardless of whether the sim tree actually gates on
+  // it, so most tools legitimately have no produce entry. The guard that
+  // actually matches the bug class found (produce lists silently missing tools
+  // the tree DOES gate on) is tree-grounded instead — see
+  // "every tree artifact-step has a matching produce entry" in trees.test.ts.
+
+  // 07082026 audit finding: frameworkPhases.ts had ref 'cbom-section' tagged
+  // 'live' though no matching Report section exists, and ref 'cc-infra-plan'
+  // tagged 'live' though no tool by that id exists (the real tool id was
+  // 'infra-modernization-planner'). This guard catches the second class — a
+  // 'live' business-tool ref that doesn't resolve to a real registered tool —
+  // automatically. It cannot check '/report' or '/assess' refs the same way (no
+  // equivalent queryable registry of report-section ids exists), so those stay
+  // on manual review.
+  it("every 'live' business-tool produce ref resolves to a real registered tool", () => {
+    const bad: string[] = []
+    for (const id of PHASE_ORDER) {
+      for (const s of FRAMEWORK_PHASES[id].produce ?? []) {
+        if (s.route === '/business' && s.status === 'live' && !toolById.has(s.ref)) {
+          bad.push(
+            `${id}: produce ref '${s.ref}' tagged live but no BUSINESS_TOOLS entry has that id`
+          )
+        }
+      }
+    }
+    expect(bad, `unresolvable 'live' business-tool refs:\n${bad.join('\n')}`).toEqual([])
+  })
 })
 
 describe('completeness (3: nothing untagged)', () => {
