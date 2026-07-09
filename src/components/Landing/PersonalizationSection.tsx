@@ -42,7 +42,11 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import type { Region } from '@/store/usePersonaStore'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
-import { REGION_COUNTRIES_MAP } from '@/data/personaConfig'
+import {
+  REGION_COUNTRIES_MAP,
+  PERSONA_RECOMMENDED_PATHS,
+  NAV_PATH_LABELS,
+} from '@/data/personaConfig'
 import { AVAILABLE_INDUSTRIES } from '@/hooks/assessmentData'
 import { PersonalizedAvatar } from './PersonalizedAvatar'
 import { ScoreCard } from './ScoreCard'
@@ -240,6 +244,11 @@ const SelectionCard = ({
 
 // ─── Modal content data ───────────────────────────────────────────────────────
 
+// Substituted at render time with the persona's live PERSONA_RECOMMENDED_PATHS
+// (see RoleModalContent) so the "Featured surfaces" line can never drift from
+// what the nav/landing cards actually configure.
+const FEATURED_SURFACES_PLACEHOLDER = '__FEATURED_SURFACES__'
+
 const ROLE_ADAPTATIONS: {
   id: PersonaId
   icon: LucideIcon
@@ -252,7 +261,7 @@ const ROLE_ADAPTATIONS: {
     color: 'text-primary',
     highlights: [
       'Primary CTA opens "Start the Journey"; secondary opens the Command Center for board-pack artifacts',
-      'Featured surfaces: Learn modules, Risk Assessment, Compliance, Timeline',
+      FEATURED_SURFACES_PLACEHOLDER,
       'Headings and descriptions focus on governance, risk, and compliance deadlines',
     ],
   },
@@ -262,7 +271,7 @@ const ROLE_ADAPTATIONS: {
     color: 'text-secondary',
     highlights: [
       'Primary CTA opens "Start the Journey"; secondary jumps directly to the Playground',
-      'Featured surfaces: Learn modules, Algorithms, Playground, OpenSSL Studio',
+      FEATURED_SURFACES_PLACEHOLDER,
       'Headings and descriptions focus on hands-on crypto operations and APIs',
     ],
   },
@@ -272,7 +281,7 @@ const ROLE_ADAPTATIONS: {
     color: 'text-accent',
     highlights: [
       'Primary CTA opens "Start the Journey"; secondary jumps directly to the Timeline',
-      'Featured surfaces: Learn modules, Timeline, Risk Assessment, Compliance',
+      FEATURED_SURFACES_PLACEHOLDER,
       'Headings and descriptions focus on migration blueprints and system design',
     ],
   },
@@ -282,7 +291,7 @@ const ROLE_ADAPTATIONS: {
     color: 'text-secondary',
     highlights: [
       'Primary CTA opens "Start the Journey"; secondary jumps directly to the Migration Workbench',
-      'Featured surfaces: Learn modules, Migrate, OpenSSL Studio, Risk Assessment',
+      FEATURED_SURFACES_PLACEHOLDER,
       'Headings and descriptions focus on infrastructure deployment and operations',
     ],
   },
@@ -302,7 +311,7 @@ const ROLE_ADAPTATIONS: {
     color: 'text-accent',
     highlights: [
       'Hero CTA leads to "Start Learning" — beginning with PQC 101',
-      'Learn, Timeline, Threats, and Assess steps are featured',
+      FEATURED_SURFACES_PLACEHOLDER,
       'Everything explained in plain language — no technical jargon assumed',
     ],
   },
@@ -451,6 +460,9 @@ const InfoModal = ({
 
 // ─── Modal content per section ────────────────────────────────────────────────
 
+const featuredSurfacesLine = (id: PersonaId): string =>
+  `Featured surfaces: ${PERSONA_RECOMMENDED_PATHS[id].map((path) => NAV_PATH_LABELS[path] ?? path).join(', ')}`
+
 const RoleModalContent = () => (
   <div className="space-y-3">
     <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
@@ -464,12 +476,15 @@ const RoleModalContent = () => (
           <span className="text-xs text-muted-foreground">— {PERSONAS[id].subtitle}</span>
         </div>
         <ul className="space-y-1">
-          {highlights.map((h) => (
-            <li key={h} className="text-xs text-muted-foreground flex items-start gap-2">
-              <span className="text-primary mt-0.5 shrink-0">·</span>
-              {h}
-            </li>
-          ))}
+          {highlights.map((h) => {
+            const text = h === FEATURED_SURFACES_PLACEHOLDER ? featuredSurfacesLine(id) : h
+            return (
+              <li key={text} className="text-xs text-muted-foreground flex items-start gap-2">
+                <span className="text-primary mt-0.5 shrink-0">·</span>
+                {text}
+              </li>
+            )
+          })}
         </ul>
       </div>
     ))}
@@ -581,10 +596,11 @@ export const PersonalizationSection = () => {
   const location = useLocation()
   const navigate = useNavigate()
 
-  // Handle ?scroll=persona deep-link from PQC-101 "Update profile" CTA
+  // Handle ?scroll=persona (PQC-101 "Update profile" CTA) and ?picker=open
+  // (About's fallback CTA when the wizard didn't happen to be open) deep-links.
   useEffect(() => {
     const params = new URLSearchParams(location.search)
-    if (params.get('scroll') !== 'persona') return
+    if (params.get('scroll') !== 'persona' && params.get('picker') !== 'open') return
     // Deep-link from another page: synchronously reset wizard state on mount.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsCompleted(false)
