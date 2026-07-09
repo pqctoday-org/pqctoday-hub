@@ -566,9 +566,10 @@ export const SupplyChainRiskMatrix: React.FC<{
     cmdbMapping,
   ])
 
-  // A real, schema-valid CycloneDX 1.6 CBOM (shared emitter). Each product maps
+  // A real, schema-valid CycloneDX 1.7 CBOM (shared emitter). Each product maps
   // through the same SoftwareItem adapter the Migrate export uses, tagged with its
-  // CSWP.39 asset class; PQC algorithms surface as `cryptographic-asset` children
+  // CSWP.39 asset class; PQC and classical algorithms both surface as
+  // `cryptographic-asset` children
   // carrying `cryptoProperties` (the part the old inline JSON was missing).
   const cbomResult = useMemo(() => {
     const inputs = (Object.keys(cbomBuckets) as CSWP39AssetClass[]).flatMap((cls) =>
@@ -933,7 +934,7 @@ export const SupplyChainRiskMatrix: React.FC<{
         <div className="mt-3">
           <Button variant="outline" size="sm" onClick={handleDownloadCbomJson}>
             <Download size={14} className="mr-1" />
-            Download CBOM JSON (CycloneDX 1.6)
+            Download CBOM JSON (CycloneDX 1.7)
           </Button>
         </div>
       </div>

@@ -150,7 +150,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-primary mb-1">Standard Format</div>
               <p className="text-xs text-muted-foreground">
-                CycloneDX 1.6+ includes a crypto extension for machine-readable CBOM data. The
+                CycloneDX 1.7 includes a crypto extension for machine-readable CBOM data. The
                 CycloneDX community (cyclonedx.org) maintains the specification, originally an OWASP
                 project.
               </p>

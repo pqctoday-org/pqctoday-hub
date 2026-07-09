@@ -1,17 +1,23 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
- * Validates the emitter's output against the OFFICIAL CycloneDX 1.6 JSON Schema
+ * Validates the emitter's output against the OFFICIAL CycloneDX 1.7 JSON Schema
  * (vendored under ./schema). This is the airtight check behind the structural
  * tests in cycloneDx.test.ts — it catches any real schema violation (missing
  * required fields, bad enums, malformed evidence) the hand-written assertions
- * might miss.
+ * might miss. `algorithmFamily`/`ellipticCurve` are enums constrained by the
+ * Cryptography Registry schema (cryptography-defs.schema.json, also vendored)
+ * that bom-1.7.schema.json $refs — loaded here too, or AJV can't resolve it.
  */
 import { describe, it, expect } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import Ajv from 'ajv'
 import addFormats from 'ajv-formats'
-import { buildCbomDocument, type CbomComponentInput } from './cycloneDx'
+import {
+  buildCbomDocument,
+  extractAllAlgorithmsFromText,
+  type CbomComponentInput,
+} from './cycloneDx'
 import { CRYPTO_LIBRARIES } from '@/components/PKILearning/modules/CryptoMgmtModernization/data/cryptoLibraries'
 import { HSM_VENDORS } from '@/components/PKILearning/modules/CryptoMgmtModernization/data/hsmVendors'
 import { FILE_ARTIFACTS } from '@/components/PKILearning/modules/CryptoMgmtModernization/data/fileArtifacts'
@@ -28,19 +34,21 @@ function loadSchema(name: string): Record<string, unknown> {
 }
 
 // draft-07 schema set; strict:false so CycloneDX's own meta-keywords don't trip
-// ajv's strict mode. spdx + jsf are referenced by the bom schema via relative $ref.
+// ajv's strict mode. spdx + jsf + cryptography-defs are referenced by the bom
+// schema via relative $ref.
 const ajv = new Ajv({ strict: false, allErrors: true })
 addFormats(ajv)
 ajv.addSchema(loadSchema('spdx.schema.json'))
 ajv.addSchema(loadSchema('jsf-0.82.schema.json'))
-const validateBom = ajv.compile(loadSchema('bom-1.6.schema.json'))
+ajv.addSchema(loadSchema('cryptography-defs.schema.json'))
+const validateBom = ajv.compile(loadSchema('bom-1.7.schema.json'))
 
 function validateCbom(json: string): { valid: boolean; errors: string } {
   const valid = validateBom(JSON.parse(json)) as boolean
   return { valid, errors: valid ? '' : ajv.errorsText(validateBom.errors, { separator: '\n' }) }
 }
 
-describe('CycloneDX 1.6 — official JSON Schema validation', () => {
+describe('CycloneDX 1.7 — official JSON Schema validation', () => {
   it('validates a CBOM built from every real catalog row (libraries + HSMs + files)', () => {
     const inputs = [
       ...CRYPTO_LIBRARIES.map(libraryToCbomInput),
@@ -89,6 +97,37 @@ describe('CycloneDX 1.6 — official JSON Schema validation', () => {
 
   it('validates the empty-inventory CBOM', () => {
     const { valid, errors } = validateCbom(buildCbomDocument([]).json)
+    expect(errors).toBe('')
+    expect(valid).toBe(true)
+  })
+
+  // 07092026: classical algorithms (RSA/ECDSA/ECDH/EdDSA) are now real
+  // crypto-assets too — validate each family's shape, including `ellipticCurve`
+  // (the 1.7 replacement for the deprecated `curve` field) against the
+  // Cryptography Registry's constrained enum, not just structurally.
+  it('validates a component with classical (RSA + ECDSA + ECDH + EdDSA) crypto-assets', () => {
+    const input: CbomComponentInput = {
+      type: 'library',
+      name: 'Classical Test Library',
+      bomRef: 'pkg:classical-test',
+      algorithms: extractAllAlgorithmsFromText(
+        'RSA-2048 certificate signing, ECDSA P-256, ECDH P-384 key exchange, Ed25519 signatures'
+      ),
+    }
+    expect(input.algorithms!.length).toBe(4)
+    const { valid, errors } = validateCbom(buildCbomDocument([input]).json)
+    expect(errors).toBe('')
+    expect(valid).toBe(true)
+  })
+
+  it('validates a hybrid pairing (X25519+ML-KEM-768) with linked hybridGroup properties', () => {
+    const input: CbomComponentInput = {
+      type: 'library',
+      name: 'Hybrid Test Library',
+      bomRef: 'pkg:hybrid-test',
+      algorithms: extractAllAlgorithmsFromText('TLS 1.3 hybrid X25519+ML-KEM-768 key exchange'),
+    }
+    const { valid, errors } = validateCbom(buildCbomDocument([input]).json)
     expect(errors).toBe('')
     expect(valid).toBe(true)
   })

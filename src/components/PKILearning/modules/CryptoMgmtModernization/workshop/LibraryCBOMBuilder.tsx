@@ -164,7 +164,7 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
     onCbomExport(items)
   }, [cbomSlice, onCbomExport])
 
-  /** A schema-valid CycloneDX 1.6 CBOM for the current mode's inventory. Unlike
+  /** A schema-valid CycloneDX 1.7 CBOM for the current mode's inventory. Unlike
    *  the Markdown export, this is a real machine-readable artifact downstream
    *  tooling (Dependency-Track, scanners, auditors) can ingest. */
   const cycloneDxJson = useMemo(() => {
@@ -710,17 +710,17 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
         </div>
       )}
 
-      {/* Machine-readable CycloneDX 1.6 export */}
+      {/* Machine-readable CycloneDX 1.7 export */}
       <div className="glass-panel p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground">
-          Download a schema-valid <span className="font-medium text-foreground">CycloneDX 1.6</span>{' '}
+          Download a schema-valid <span className="font-medium text-foreground">CycloneDX 1.7</span>{' '}
           CBOM of the current view — a real machine-readable artifact for Dependency-Track,
-          scanners, or auditors (PQC algorithms emit as <code>cryptographic-asset</code>{' '}
-          components).
+          scanners, or auditors (PQC and classical algorithms both emit as{' '}
+          <code>cryptographic-asset</code> components).
         </p>
         <Button onClick={handleDownloadCycloneDx} variant="outline" className="shrink-0">
           <Download className="w-4 h-4 mr-2" />
-          Download CycloneDX 1.6
+          Download CycloneDX 1.7
         </Button>
       </div>
 
