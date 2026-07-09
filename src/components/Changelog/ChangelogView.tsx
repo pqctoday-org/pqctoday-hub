@@ -22,6 +22,7 @@ import {
   Calendar,
   UserCheck,
   Search,
+  Heart,
 } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import clsx from 'clsx'
@@ -36,6 +37,7 @@ import {
 } from '../../utils/changelogParser'
 import { sortCSVFiles } from '../../data/csvUtils'
 import { Button } from '@/components/ui/button'
+import { SPONSORS } from '@/data/sponsors'
 
 type FilterType = 'added' | 'changed' | 'fixed' | 'data' | 'security'
 
@@ -363,6 +365,39 @@ export const ChangelogView = () => {
           </Link>
         </div>
       </motion.div>
+
+      {/* Sponsor thanks — real, wired to src/data/sponsors.ts (the same
+          registry that drives the /migrate "Sponsor" badge). Renders nothing
+          until a sponsorship actually closes, so this never displays a name
+          that isn't real — see /sponsor's "Thank-you note in the monthly
+          changelog" benefit, which this makes literally true rather than
+          aspirational copy. */}
+      {SPONSORS.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.03 }}
+          className="glass-panel p-4 mb-6"
+        >
+          <div className="flex items-center gap-2 mb-2 text-sm font-medium text-foreground">
+            <Heart size={14} className="text-primary shrink-0" aria-hidden="true" />
+            Thank you to our sponsors
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {SPONSORS.map((s) => (
+              <a
+                key={s.name}
+                href={s.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-2.5 py-1 rounded-full text-xs border border-border bg-muted/30 text-muted-foreground hover:text-primary hover:border-primary/40 transition-colors"
+              >
+                {s.name}
+              </a>
+            ))}
+          </div>
+        </motion.div>
+      )}
 
       {/* Data Freshness Bar */}
       {DATA_FRESHNESS.some((f) => f.date !== null) && (
