@@ -80,8 +80,19 @@ describe('full-catalog CBOM validity (CycloneDX 1.6 enums + uniqueness)', () => 
     'platform',
     'cryptographic-asset',
   ])
-  const VALID_PRIMITIVES = new Set(['kem', 'signature'])
-  const VALID_FUNCTIONS = new Set(['encapsulate', 'decapsulate', 'sign', 'verify'])
+  // 07092026: classical algorithms (RSA/ECDSA/ECDH/EdDSA) now also emit as
+  // crypto-assets, adding 'pke'/'key-agree' primitives and their functions.
+  const VALID_PRIMITIVES = new Set(['kem', 'signature', 'pke', 'key-agree'])
+  const VALID_FUNCTIONS = new Set([
+    'encapsulate',
+    'decapsulate',
+    'sign',
+    'verify',
+    'encrypt',
+    'decrypt',
+    'keygen',
+    'keyderive',
+  ])
 
   it('every real catalog row emits enum-valid components with unique bom-refs', () => {
     const inputs = [

@@ -1016,7 +1016,7 @@ function cryptoCbom(sector: DemoSector): DemoDoc {
       '',
       '**Total classical assets:** 14 | **PQC-ready:** 0 | **Hybrid-capable:** 2',
       '',
-      `*CycloneDX CBOM v1.6+ format (crypto-asset support). Generated against ${ORG[sector]} production estate.*`
+      `*CycloneDX CBOM v1.7 format (crypto-asset support). Generated against ${ORG[sector]} production estate.*`
     ),
   }
 }
