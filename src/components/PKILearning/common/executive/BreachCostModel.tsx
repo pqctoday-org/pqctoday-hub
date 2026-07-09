@@ -13,7 +13,11 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { resolveIndustryBreachBaseline } from '@/utils/roiMath'
-import { US_VS_GLOBAL_BREACH_COST_MULTIPLIER } from '@/data/roiBaselines'
+import {
+  US_VS_GLOBAL_BREACH_COST_MULTIPLIER,
+  ANNUAL_BREACH_PROBABILITY_PCT,
+  type OrgSizeTier,
+} from '@/data/roiBaselines'
 import {
   computeBreachCosts,
   HNDL_MULTIPLIER_CAP,
@@ -58,6 +62,12 @@ const DATA_CLASS_OPTIONS: DataSensitivityClass[] = [
   'state-secret',
 ]
 
+const ORG_SIZE_TIER_OPTIONS: { tier: OrgSizeTier; label: string }[] = [
+  { tier: 'smb', label: 'SMB' },
+  { tier: 'average', label: 'Average org' },
+  { tier: 'fortune1000', label: 'Fortune-1000-class' },
+]
+
 export const BreachCostModel: React.FC<BreachCostModelProps> = ({
   industry = 'Other',
   onCostCalculated,
@@ -66,7 +76,16 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
   // total breach cost, rather than a fabricated flat per-record figure.
   const [breachScale, setBreachScale] = useState(1)
   const [yearsOfData, setYearsOfData] = useState(5)
-  const [annualBreachProbPct, setAnnualBreachProbPct] = useState(15)
+  // Default prior comes from Cyentia IRIS 2025's organization-size anchors
+  // (average org ~9%/yr), not an unsourced flat figure — see roiBaselines.ts.
+  const [orgSizeTier, setOrgSizeTier] = useState<OrgSizeTier>('average')
+  const [annualBreachProbPct, setAnnualBreachProbPct] = useState(
+    ANNUAL_BREACH_PROBABILITY_PCT.average
+  )
+  const selectOrgSizeTier = (tier: OrgSizeTier) => {
+    setOrgSizeTier(tier)
+    setAnnualBreachProbPct(ANNUAL_BREACH_PROBABILITY_PCT[tier])
+  }
   const [hndlFactorPct, setHndlFactorPct] = useState(30)
   const [dataSensitivityClass, setDataSensitivityClass] =
     useState<DataSensitivityClass>('general-pii')
@@ -256,6 +275,23 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
                 <Percent size={13} className="text-muted-foreground" />
                 Annual Breach Probability
               </label>
+              <div className="flex flex-wrap items-center gap-1.5 mb-2">
+                {ORG_SIZE_TIER_OPTIONS.map(({ tier, label }) => (
+                  <Button
+                    key={tier}
+                    type="button"
+                    variant="ghost"
+                    onClick={() => selectOrgSizeTier(tier)}
+                    className={`h-auto px-2 py-0.5 rounded-full border text-[11px] ${
+                      orgSizeTier === tier
+                        ? 'bg-primary text-primary-foreground border-primary'
+                        : 'border-border hover:text-foreground'
+                    }`}
+                  >
+                    {label} ({ANNUAL_BREACH_PROBABILITY_PCT[tier]}%)
+                  </Button>
+                ))}
+              </div>
               <input
                 id="breach-annual-prob"
                 type="range"
@@ -271,8 +307,8 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
                 <span>50%</span>
               </div>
               <p className="text-[10px] text-muted-foreground mt-1">
-                Default 15%; size-specific anchors (Cyentia IRIS 2025): SMB ~2%/yr, average org
-                ~9%/yr, Fortune-1000-class ~25%/yr.
+                Default reflects the selected organization size — Cyentia IRIS 2025 anchors: SMB
+                ~2%/yr, average org ~9%/yr, Fortune-1000-class ~25%/yr. Drag the slider to override.
               </p>
             </div>
           </div>

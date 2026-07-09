@@ -11,6 +11,7 @@ import {
   Wrench,
 } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { Button } from '@/components/ui/button'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useModuleStore } from '@/store/useModuleStore'
@@ -21,6 +22,7 @@ import {
   reconcileEstimates,
   MIGRATION_COST_FLOOR,
 } from '@/utils/roiMath'
+import { ANNUAL_BREACH_PROBABILITY_PCT, type OrgSizeTier } from '@/data/roiBaselines'
 import {
   DELAY_MODEL_DEFAULTS,
   projectDelayScenario,
@@ -31,6 +33,12 @@ import { DATA_SHELF_LIFE_YEARS, DATA_SENSITIVITY_LABELS } from '@/utils/breachCo
 import { computeMoscaVerdict } from '@/utils/moscaTheorem'
 import { deriveIndustryMandate, deriveIndustryPenalty } from '@/utils/inactionDrivers'
 import type { BreachOutput, InactionOutput } from '../types'
+
+const ORG_SIZE_TIER_OPTIONS: { tier: OrgSizeTier; label: string }[] = [
+  { tier: 'smb', label: 'SMB' },
+  { tier: 'average', label: 'Average' },
+  { tier: 'fortune1000', label: 'F1000' },
+]
 
 function fmt(n: number): string {
   const sign = n < 0 ? '-' : ''
@@ -265,6 +273,23 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
             Annual breach probability:{' '}
             <span className="text-primary font-bold">{annualBreachProbPct}%</span>
           </label>
+          <div className="flex flex-wrap items-center gap-1">
+            {ORG_SIZE_TIER_OPTIONS.map(({ tier, label }) => (
+              <Button
+                key={tier}
+                type="button"
+                variant="ghost"
+                onClick={() => setAnnualBreachProbPct(ANNUAL_BREACH_PROBABILITY_PCT[tier])}
+                className={`h-auto px-1.5 py-0.5 rounded-full border text-[10px] ${
+                  annualBreachProbPct === ANNUAL_BREACH_PROBABILITY_PCT[tier]
+                    ? 'bg-primary text-primary-foreground border-primary'
+                    : 'border-border text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {label}
+              </Button>
+            ))}
+          </div>
           <input
             id="inaction-prob"
             type="range"
