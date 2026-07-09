@@ -63,6 +63,13 @@ export type QuizCategory =
   | 'slh-dsa'
   | 'mls-group-messaging'
   | 'pqc-candidates'
+  | 'sbom'
+  | 'cbom'
+  | 'crypto-registry'
+  | 'verification-closure'
+  | 'pqc-grc'
+  | 'skills-team-structure'
+  | 'soc-implementation-pqc'
 
 export interface QuizOption {
   id: string

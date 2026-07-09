@@ -11,7 +11,7 @@ const manifest: ModuleManifest = {
   difficulty: 'intermediate',
   frameworkPhase: 'foundations',
   track: 'Executive',
-  trackOrder: 9,
+  trackOrder: 8,
   learnSections: [
     { id: 'kri-cascade', label: 'KRI Cascade Thresholds' },
     { id: 'exception-triage', label: 'GRC-SOC Exception Triage' },

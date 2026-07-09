@@ -2,6 +2,8 @@
 import { describe, it, expect } from 'vitest'
 import {
   computePathProgress,
+  isCheckpointPassed,
+  CHECKPOINT_PASS_THRESHOLD,
   TOTAL_MODULE_COUNT,
   TRACK_COUNT,
   PERSONA_ORDER,
@@ -9,11 +11,11 @@ import {
 } from './learnRedesign.helpers'
 import type { PersonaPathPhase } from '../usePersonaPathItems'
 
-const phase = (id: string, moduleIds: string[]): PersonaPathPhase => ({
+const phase = (id: string, moduleIds: string[], categories: string[] = []): PersonaPathPhase => ({
   id,
   title: id,
   moduleIds,
-  categories: [],
+  categories,
 })
 
 describe('computePathProgress', () => {
@@ -76,6 +78,64 @@ describe('computePathProgress', () => {
     expect(p.essentialsComplete).toBe(true)
     expect(p.fullTrackComplete).toBe(true)
     expect(p.capstoneUnlocked).toBe(true)
+  })
+})
+
+describe('isCheckpointPassed — score-aware checkpoints (remediation item 3)', () => {
+  it('does NOT mark a checkpoint passed on module completion alone when it has quiz categories', () => {
+    const cp = phase('cp-1', ['a', 'b'], ['cat-x', 'cat-y'])
+    const status = { a: 'completed', b: 'completed' }
+    expect(isCheckpointPassed(cp, status, undefined)).toBe(false)
+    expect(isCheckpointPassed(cp, status, {})).toBe(false)
+  })
+
+  it('requires EVERY listed category to meet the pass threshold, not just one', () => {
+    const cp = phase('cp-1', ['a', 'b'], ['cat-x', 'cat-y'])
+    const status = { a: 'completed', b: 'completed' }
+    expect(isCheckpointPassed(cp, status, { 'cat-x': 90 })).toBe(false) // cat-y missing
+    expect(isCheckpointPassed(cp, status, { 'cat-x': 90, 'cat-y': 79 })).toBe(false) // below bar
+    expect(
+      isCheckpointPassed(cp, status, { 'cat-x': CHECKPOINT_PASS_THRESHOLD, 'cat-y': 100 })
+    ).toBe(true)
+  })
+
+  it('passes regardless of module completion once every category clears the bar (quiz-gated, not module-gated)', () => {
+    const cp = phase('cp-1', ['a', 'b'], ['cat-x'])
+    const status = { a: 'in-progress', b: 'not-started' }
+    expect(isCheckpointPassed(cp, status, { 'cat-x': 100 })).toBe(true)
+  })
+
+  it('falls back to module completion for a categoryless phase (defensive implicit-final case)', () => {
+    const cp = phase('implicit-final', ['a', 'b'], [])
+    expect(isCheckpointPassed(cp, { a: 'completed', b: 'completed' }, undefined)).toBe(true)
+    expect(isCheckpointPassed(cp, { a: 'completed', b: 'in-progress' }, undefined)).toBe(false)
+  })
+
+  it('computePathProgress.checkpointsPassed reflects quiz scores, not module completion', () => {
+    const scoredPhases: PersonaPathPhase[] = [
+      phase('cp-1', ['a', 'b'], ['cat-a']),
+      phase('cp-2', ['c', 'd'], ['cat-b']),
+      phase('wrap-up', ['quiz']),
+    ]
+    const allModulesDone = { a: 'completed', b: 'completed', c: 'completed', d: 'completed' }
+
+    // Modules finished, quiz never attempted → nothing passed yet.
+    const beforeQuiz = computePathProgress(scoredPhases, allModulesDone, [], undefined)
+    expect(beforeQuiz.doneModules).toBe(4) // module completion tracking is unaffected
+    expect(beforeQuiz.checkpointsPassed).toBe(0)
+
+    // Pass cp-1's quiz only.
+    const afterOneQuiz = computePathProgress(scoredPhases, allModulesDone, [], {
+      'cat-a': CHECKPOINT_PASS_THRESHOLD,
+    })
+    expect(afterOneQuiz.checkpointsPassed).toBe(1)
+
+    // Pass both.
+    const afterBothQuizzes = computePathProgress(scoredPhases, allModulesDone, [], {
+      'cat-a': CHECKPOINT_PASS_THRESHOLD,
+      'cat-b': CHECKPOINT_PASS_THRESHOLD,
+    })
+    expect(afterBothQuizzes.checkpointsPassed).toBe(2)
   })
 })
 
