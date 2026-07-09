@@ -54,9 +54,12 @@ interface SimpleGanttChartProps {
   asOfYear?: number
 }
 
-const START_YEAR = 2024
-const END_YEAR = 2035
-const YEARS = Array.from({ length: END_YEAR - START_YEAR + 1 }, (_, i) => START_YEAR + i)
+// The year axis auto-scales to whatever's actually in view (see `yearRange` below)
+// instead of a fixed window — a hardcoded 2024–2035 clamp squashed every 2035+
+// deadline (EU/JP/KR/UK, and any future later date) onto the same edge column with
+// no breathing room. These are just the floor for the fallback/minimum span.
+const YEAR_AXIS_PAD_END = 2
+const YEAR_AXIS_MIN_SPAN = 6
 const PHASE_ORDER = [
   'Guidance',
   'Policy',
@@ -272,6 +275,33 @@ export const SimpleGanttChart = ({
     [processedData]
   )
 
+  // Auto-scaled year axis: min/max computed from what's actually in view, with a
+  // couple of padding columns past the latest deadline so 2035+ (or later) dates
+  // don't sit flush against the chart's right edge, plus a minimum span so a
+  // narrow filtered view doesn't look absurdly zoomed in.
+  const yearRange = useMemo(() => {
+    let minYear = Infinity
+    let maxYear = -Infinity
+    for (const c of processedData) {
+      for (const p of c.phases) {
+        if (p.startYear < minYear) minYear = p.startYear
+        if (p.endYear > maxYear) maxYear = p.endYear
+      }
+    }
+    if (!Number.isFinite(minYear) || !Number.isFinite(maxYear)) {
+      return { start: currentYear, end: currentYear + YEAR_AXIS_MIN_SPAN }
+    }
+    let end = maxYear + YEAR_AXIS_PAD_END
+    if (end - minYear < YEAR_AXIS_MIN_SPAN) end = minYear + YEAR_AXIS_MIN_SPAN
+    return { start: minYear, end }
+  }, [processedData, currentYear])
+
+  const years = useMemo(
+    () =>
+      Array.from({ length: yearRange.end - yearRange.start + 1 }, (_, i) => yearRange.start + i),
+    [yearRange]
+  )
+
   useEffect(() => {
     if (!filterText || processedData.length === 0) return
     const slug = processedData[0].country.countryName.toLowerCase().replace(/\s+/g, '-')
@@ -386,8 +416,8 @@ export const SimpleGanttChart = ({
 
   const renderPhaseCells = (phaseData: TimelinePhase, rowIdx: number, phaseIdx: number) => {
     const cells: React.ReactNode[] = []
-    const startYear = Math.max(START_YEAR, phaseData.startYear)
-    const endYear = Math.min(END_YEAR, phaseData.endYear)
+    const startYear = Math.max(yearRange.start, phaseData.startYear)
+    const endYear = Math.min(yearRange.end, phaseData.endYear)
     const colors = phaseColors[phaseData.phase as Phase] || {
       start: 'hsl(var(--muted-foreground))',
       end: 'hsl(var(--muted))',
@@ -397,7 +427,7 @@ export const SimpleGanttChart = ({
     const milestoneElapsed = isMilestone && phaseData.startYear < currentYear
     const milestoneActive = isMilestone && phaseData.startYear === currentYear
 
-    for (let year = START_YEAR; year <= END_YEAR; year++) {
+    for (let year = yearRange.start; year <= yearRange.end; year++) {
       const isInPhase = year >= startYear && year <= endYear
       const isFirst = year === startYear
       const isLast = year === endYear
@@ -752,7 +782,7 @@ export const SimpleGanttChart = ({
                   )}
                 </div>
               </th>
-              {YEARS.map((year) => (
+              {years.map((year) => (
                 <th
                   key={year}
                   scope="col"
@@ -761,7 +791,11 @@ export const SimpleGanttChart = ({
                   <span
                     className={`font-mono text-sm ${year === currentYear ? 'text-foreground font-bold' : 'text-muted-foreground'}`}
                   >
-                    {year === 2024 ? '<2024' : year}
+                    {year === yearRange.start
+                      ? `<${yearRange.start}`
+                      : year === yearRange.end
+                        ? `${yearRange.end}+`
+                        : year}
                     {year === currentYear && (
                       <span className="ml-1 text-[8px] uppercase tracking-wide text-primary align-top">
                         now
