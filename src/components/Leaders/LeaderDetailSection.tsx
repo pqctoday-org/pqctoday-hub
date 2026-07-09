@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useEffect, useRef } from 'react'
-import { MapPin, BookOpen, ExternalLink, Clock, ShieldCheck, X } from 'lucide-react'
+import { MapPin, BookOpen, ExternalLink, Clock, ShieldCheck, X, CheckCircle2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import type { Leader } from '../../data/leadersData'
@@ -46,6 +46,15 @@ export const LeaderDetailSection = ({ leader, onClose }: LeaderDetailSectionProp
                 <MapPin size={12} className="shrink-0" aria-hidden="true" />
                 <CountryFlag code={flagCode} width={16} height={11} />
                 {leader.country}
+              </span>
+            )}
+            {leader.verifiedDate && (
+              <span
+                className="inline-flex items-center gap-1.5 text-status-success"
+                title="Affiliation and role last confirmed against public sources"
+              >
+                <CheckCircle2 size={12} className="shrink-0" aria-hidden="true" />
+                Verified as of {leader.verifiedDate}
               </span>
             )}
           </div>
