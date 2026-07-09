@@ -534,9 +534,11 @@ export const INDUSTRY_TO_THREATS_MAP: Record<string, string[]> = {
     'Hardware Security Modules',
   ],
   'Energy & Utilities': [
-    'Energy / Critical Infrastructure',
+    // "Critical Infrastructure" and "Energy / Critical Infrastructure" are
+    // canonicalized to one sector in threatsData.ts (Threats #5) — reference
+    // the single post-canonicalization label here.
+    'Critical Infrastructure / Energy',
     'Water / Wastewater',
-    'Critical Infrastructure',
   ],
   Automotive: ['Automotive / Connected Vehicles', 'Rail / Transit'],
   Aerospace: ['Aerospace / Aviation'],
