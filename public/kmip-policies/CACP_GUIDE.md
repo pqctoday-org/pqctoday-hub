@@ -294,7 +294,45 @@ Sources: [KMIP 3.0 CSD01](https://docs.oasis-open.org/kmip/kmip-spec/v3.0/csd01/
 [KMIP 2.1 OS announcement](https://www.oasis-open.org/2020/12/18/key-management-interoperability-protocol-specification-and-key-management-interoperability-protocol-profiles-oasis-standards-published/) ·
 vendored `kmip-spec-v3.0-wd19-clean.pdf` (Table 552) + `kmip-spec-v3.0.html`.
 
-## 5. FAQ / pitfalls
+## 5. Engine 0.12/0.13 — the "honest maximum" additions (verified 2026-07-09)
+
+Two engine releases closed the gap between what the server *advertises* and
+what it *does*. Everything below is real in the in-browser playground too,
+and each has a hands-on surface:
+
+- **Split keys (§6.1.12 / §6.1.31).** `Create Split Key` divides a key into
+  N share objects where any M (the threshold) reconstruct it via
+  `Join Split Key`; below-threshold joins are refused with the shortfall
+  named. All four §11.54 methods are implemented (XOR requires N == M;
+  the three polynomial methods are true Shamir M-of-N). Try it: Learn
+  walkthrough 7, or the Commands tab's Object Lifecycle category.
+- **Asynchronous processing (§8.1.2, §6.1.43/5/44/46).** A request carrying
+  `Asynchronous Indicator = Mandatory` is enqueued as a real job — the
+  response is `OperationPending` + a correlation value; `Poll` returns the
+  identical payload the synchronous op would have; `Cancel` handles its
+  race honestly; `Query Asynchronous Requests` lists what's in flight. Try
+  it: Learn walkthrough 8, or the Commands tab's Asynchronous Processing
+  category (enqueue via Hash's "Run asynchronously" toggle).
+- **Honest Query.** The advertised-operations list is audited down to
+  what genuinely runs: 62 of the 66 KMIP 3.0 operations. The four that
+  don't (Notify/Put — server-to-client scope boundary; DelegatedLogin/
+  Re-Provision — no handler) are no longer advertised at all.
+- **13 honesty fixes (0.13.0).** Destroy zeroizes material and securely
+  deletes it from storage; Set/Modify/Delete/AdjustAttribute never again
+  answer Success while persisting nothing (read-only sets are refused);
+  Locate really filters by length/usage-mask/UID; batch `Undo` and
+  `$IDPlaceholder` now cover the UID-minting Encapsulate/Decapsulate/
+  split-key ops; Register refuses malformed keys at registration; a
+  granted usage allocation can't be silently re-budgeted (§4.69). Try it:
+  Learn walkthrough 9, and the Batch tab's "Rollback reaches Encapsulate"
+  recipe.
+- **Conformance baseline.** The native CI gate pins an exact 97 PASS /
+  5 deprecated-skip on the 102 OASIS tests. The playground's Corpus Replay
+  matches it except six honestly-labelled wasm-seam skips (three need the
+  native TLS listener's MaximumResponseSize enforcement; three need the
+  per-test RNG-seed mode the wasm binding doesn't expose).
+
+## 6. FAQ / pitfalls
 
 - **"The policy allows the algorithm but the workbench says Deny."** Check
   the deny *reason* first (rule index + reason string are shown). Most

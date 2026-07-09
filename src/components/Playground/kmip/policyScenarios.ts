@@ -29,6 +29,10 @@ export interface ScenarioRequest {
   op: string
   /** Algorithm the request carries. Omit to let an algorithm_default resolve it. */
   algorithm?: string
+  /** Key label — drives `name_pattern` rules (the Migration estate's
+   * label-only contract: the app passes only a business key name and the
+   * policy decides every crypto parameter). */
+  name?: string
   /** Key length in bits — drives min_key_length. */
   length?: number
   /** Lifecycle state of the target key — drives lifecycle_state_gate. */
@@ -188,6 +192,141 @@ export const POLICY_SCENARIOS: PolicyTestScenario[] = [
     description: 'Migration in progress — no NEW classical asymmetric keys (RSA family denied).',
     path: 'negative',
     request: { op: 'CreateKeyPair:Sign', algorithm: 'RSA', length: 3072 },
+    expect: 'Deny',
+  },
+
+  // ── migration-classical — label-pattern defaults, PQC gated off ─────────
+  // The Migration tab's "before" estate: the request carries ONLY a business
+  // key name; every algorithm below is the policy's decision (name_pattern
+  // defaults, most-specific-wins).
+  {
+    id: 'mig-classical-payments-label',
+    policyFile: 'migration-classical.yaml',
+    title: 'Label-only create: payments-db-cipher',
+    description:
+      'The app names the KEY, not the algorithm — the payments-* name_pattern rule resolves it to AES-128 (deliberately at-risk, to migrate later).',
+    path: 'positive',
+    request: { op: 'Create', name: 'payments-db-cipher' },
+    expect: 'Allow',
+  },
+  {
+    id: 'mig-classical-firmware-label',
+    policyFile: 'migration-classical.yaml',
+    title: 'Label-only create: firmware-release-signing',
+    description: 'The firmware-* name_pattern rule resolves the signing key to RSA-2048.',
+    path: 'positive',
+    request: { op: 'CreateKeyPair:Sign', name: 'firmware-release-signing' },
+    expect: 'Allow',
+  },
+  {
+    id: 'mig-classical-unlabelled',
+    policyFile: 'migration-classical.yaml',
+    title: 'Unlabelled signing key',
+    description:
+      'No label match → the generic fallback default (ECDSA-P256) resolves it; name-patterned rules beat generic ones only when they match.',
+    path: 'positive',
+    request: { op: 'CreateKeyPair:Sign' },
+    expect: 'Allow',
+  },
+  {
+    id: 'mig-classical-deny-pqc',
+    policyFile: 'migration-classical.yaml',
+    title: 'Ask for ML-DSA-65 directly',
+    description:
+      'This policy IS the pre-migration baseline — PQC is explicitly gated off until the estate flips policy.',
+    path: 'negative',
+    request: { op: 'CreateKeyPair:Sign', algorithm: 'ML-DSA-65' },
+    expect: 'Deny',
+  },
+
+  // ── migration-hybrid — hybrid KEM + PQC signing, rekey-on-use ───────────
+  {
+    id: 'mig-hybrid-kex-default',
+    policyFile: 'migration-hybrid.yaml',
+    title: 'New key-agreement key (no algorithm)',
+    description:
+      'Key establishment defaults to X25519MLKEM768 — classical + PQC in ONE key, secure if either half survives.',
+    path: 'positive',
+    request: { op: 'CreateKeyPair:KeyAgreement' },
+    expect: 'Allow',
+    realExecution: { algorithm: 'X25519MLKEM768', outcome: 'roundtrip' },
+  },
+  {
+    id: 'mig-hybrid-rekey-x25519',
+    policyFile: 'migration-hybrid.yaml',
+    title: 'Encapsulate with a legacy X25519 key',
+    description:
+      'Rekey-on-use: the classical key gains an ML-KEM half (X25519 → X25519MLKEM768) the moment it is used.',
+    path: 'positive',
+    request: { op: 'Encapsulate', algorithm: 'X25519', state: 'Active' },
+    expect: 'Rekey',
+  },
+  {
+    id: 'mig-hybrid-deny-classical',
+    policyFile: 'migration-hybrid.yaml',
+    title: 'Create a new ECDSA-P256 key pair',
+    description: 'No NEW pure-classical asymmetric keys during the hybrid window.',
+    path: 'negative',
+    request: { op: 'CreateKeyPair:Sign', algorithm: 'ECDSA-P256' },
+    expect: 'Deny',
+    realExecution: { algorithm: 'ECDSA', outcome: 'refused' },
+  },
+  {
+    id: 'mig-hybrid-deny-aes128',
+    policyFile: 'migration-hybrid.yaml',
+    title: 'Create a new AES-128 key',
+    description: 'No new sub-256-bit symmetric keys — the Grover margin rule.',
+    path: 'negative',
+    request: { op: 'Create', algorithm: 'AES-128' },
+    expect: 'Deny',
+  },
+
+  // ── migration-pqc — full-PQC target, label-mapped security levels ────────
+  {
+    id: 'mig-pqc-interbank-label',
+    policyFile: 'migration-pqc.yaml',
+    title: 'Label-only create: interbank-vpn-kex',
+    description:
+      'The interbank-* name_pattern rule resolves to ML-KEM-1024 — the label carries the SECURITY LEVEL (X448 successor keeps L5), not just the algorithm family.',
+    path: 'positive',
+    request: { op: 'CreateKeyPair:KeyAgreement', name: 'interbank-vpn-kex' },
+    expect: 'Allow',
+  },
+  {
+    id: 'mig-pqc-rekey-ed25519',
+    policyFile: 'migration-pqc.yaml',
+    title: 'Sign with a legacy Ed25519 key',
+    description: 'Rekey-on-use per the Hub transitions dataset: Ed25519 → ML-DSA-44 at first Sign.',
+    path: 'positive',
+    request: { op: 'Sign', algorithm: 'Ed25519', state: 'Active' },
+    expect: 'Rekey',
+  },
+  {
+    id: 'mig-pqc-rekey-x448',
+    policyFile: 'migration-pqc.yaml',
+    title: 'Encapsulate with a legacy X448 key',
+    description: 'X448 → ML-KEM-1024 (keeps Level 5) on first use or via the ReKey sweep.',
+    path: 'positive',
+    request: { op: 'Encapsulate', algorithm: 'X448', state: 'Active' },
+    expect: 'Rekey',
+  },
+  {
+    id: 'mig-pqc-verify-legacy',
+    policyFile: 'migration-pqc.yaml',
+    title: 'Verify a legacy ECDSA-P256 signature',
+    description:
+      'Verify/Decrypt of existing artefacts stays open — only the producing ops (Sign/Encrypt/Encapsulate) drive the migration.',
+    path: 'positive',
+    request: { op: 'SignatureVerify', algorithm: 'ECDSA-P256', state: 'Active' },
+    expect: 'Allow',
+  },
+  {
+    id: 'mig-pqc-deny-rsa',
+    policyFile: 'migration-pqc.yaml',
+    title: 'Create a new RSA-2048 key pair',
+    description: 'No new classical asymmetric keys under the full-PQC target policy.',
+    path: 'negative',
+    request: { op: 'CreateKeyPair:Sign', algorithm: 'RSA-2048' },
     expect: 'Deny',
   },
 
