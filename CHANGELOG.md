@@ -28,6 +28,44 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.17.0] - 2026-07-09
+
+A cross-page accuracy release covering Timeline, Compliance, Threats, Patents, Leaders, and Learn: deadline mandates on the Timeline are now individually sourced and labeled instead of guessed, the Compliance page covers the actual federal executive order behind the 2030/2031 deadlines, the Threats page's quantum-computer arrival estimate is now the same number everywhere it appears, Patents share links no longer lose your filters, Leaders profiles are split into a curated set and the full contributor list, and several Learn modules got corrected facts, real quiz coverage, and checkpoints that only count as passed when you've actually passed them.
+
+### Fixed
+
+- **Every deadline on the Timeline now shows whether it's a binding legal mandate, informal guidance, or still-draft language** [view:/timeline] [persona:executive] [persona:architect]: most rows previously had no label at all. All deadline and CNSA 2.0 migration rows are now individually labeled from their own primary source, and the popover and the headline deadline banner now agree with each other instead of computing "binding" two different ways.
+- **The Timeline's chart no longer clips future or historical entries to a fixed 2024–2035 window** [view:/timeline]: the year axis now scales to whatever data is actually in view.
+- **Malformed dates in the Timeline's underlying data no longer silently render as blank bars** [view:/timeline]: bad values are now excluded with a logged warning instead of failing invisibly.
+- **The Compliance page now covers the actual U.S. executive order behind the post-quantum migration deadlines** [view:/compliance] [persona:executive]: the operative order (with its 2030 key-establishment and 2031 digital-signature deadlines) previously only appeared on the Timeline page, not in the Compliance framework list.
+- **Several "plain-English summary" blurbs on the Compliance page were overstating what their underlying framework actually requires** [view:/compliance] (including DORA, CNSA 2.0, ANSSI, and BSI guidance): rewritten to match what's actually in the framework record, including the difference between a binding deadline and a staged recommendation.
+- **The Compliance Records tab no longer shows a live-sounding "Refresh Data" button that does nothing on the deployed site** [view:/compliance]: it's now disabled with an explanation, and the freshness date reflects the actual data snapshot instead of the moment you loaded the page.
+- **The Compliance page's "New to PQC compliance?" intro banner no longer reappears every visit** [view:/compliance] once you've already seen it.
+- **Threat-horizon (Q-Day) estimates now agree across the whole Threats page** [view:/threats]: the hero summary, the trajectory chart, the economics calculator, and the capability strip previously each computed their own version of "when could a quantum computer break today's encryption," and could disagree with each other. All four now derive from one shared calculation.
+- **Fixed a false-positive bug in the Threats page's "harvest-now" vs. "forge-now" risk classification** [view:/threats]: threats whose description merely mentioned a post-quantum replacement algorithm's name (like ML-KEM or ML-DSA) were sometimes being misclassified based on that mention alone. Threats that genuinely can't be classified from available data now say so honestly instead of defaulting to a guess.
+- **The Threats page now shows why each threat was vetted the way it was** [view:/threats] [persona:researcher]: peer-review status, confidence level, the body that vetted it, and any data-quality notes are now visible in the threat detail view, and CRQC arrival-estimate citations are now clickable links to their sources.
+- **Merged two near-duplicate industry categories on the Threats page** [view:/threats] ("Critical Infrastructure" and "Energy / Critical Infrastructure") that were splitting the same sector's threats across two filter buckets.
+- **Threat classification definitions are now readable on touchscreens** [view:/threats]: they previously only appeared on hover, which doesn't work on mobile; tapping now opens the same explanation.
+- **Fixed a data-loading bug that could conflate "this patent has no post-quantum relevance score" with "this patent scored zero"** [view:/patents].
+- **Sharing a filtered Patents view now preserves what you were actually looking at** [view:/patents]: the corpus scope (post-quantum only vs. everything) and your chosen columns weren't part of the shareable link, so recipients could land on a different view than the one you sent. Also added a Share button to the page, which it didn't previously have.
+- **Corrected the classification of Classic McEliece across the Patents catalog** [view:/patents]: it was mislabeled as a classical (pre-quantum) algorithm; it's actually a NIST post-quantum Round 4 candidate, recommended by Germany's BSI. Fixed on all 13 affected records.
+- **Patent search now finds algorithms by either their original filing-era name or their finalized NIST name** [view:/patents] (e.g. "Kyber" and "ML-KEM," or "Dilithium" and "ML-DSA," now both work).
+- **Added a small glossary for patent-specific terms** [view:/patents] [persona:developer] (CPC classification codes, priority/filing/issue dates, independent claims), available as inline tooltips.
+- **The Leaders page now separates the curated, individually-vetted profile set from the larger auto-imported contributor list** [view:/leaders]: it previously showed all 332 profiles mixed together with no way to tell which had been individually reviewed. The default view now shows the 208 curated profiles, with a toggle to see everyone.
+- **Refreshed and spot-checked Leaders profile data** [view:/leaders], fixing two out-of-date entries and adding a visible "verified as of" date to each profile.
+- **Fixed a bug where an executive's explicit "sort by name" choice on the Leaders page was silently overridden back to a relevance-based order** [view:/leaders] [persona:executive].
+- **Added a Skeptic/Critic filter category to the Leaders page** [view:/leaders] and a couple of previously-missing sourced entries to that category and to Industry Adopter.
+- **Fixed two overstated claims in Learn module content** [view:/learn] [persona:executive]: a national security algorithm mandate was described as a blanket 2030 government-wide requirement (it's staged and scoped to national security systems), and a post-quantum certificate size comparison significantly overstated the size difference versus real measured figures (it said certificates are 10–50x larger; they're actually roughly 4–7x larger).
+- **Learn checkpoints now only count as "passed" once you've actually scored well enough on them** [view:/learn]: previously, simply opening every module in a section marked its checkpoint as passed regardless of quiz performance. Existing progress isn't reset; you'll see a one-time notice explaining the change.
+- **Fixed a Learn progress-tracking bug where browsing a "curious mode" module's workshop steps counted as completing them** [view:/learn]: viewing now only marks a module as viewed; workshop credit requires actually doing the workshop.
+- **Three previously-orphaned Learn modules (governance/risk, team staffing, and SOC incident response) now have quiz coverage and are properly routed into the relevant role-based learning path** [view:/learn], instead of being reachable only by direct link with no way to test your understanding.
+- **Retired a redundant Learn module that duplicated a newer, fuller one on team staffing** [view:/learn], and retired the old five-mode Learn dashboard (old links now redirect to the current Learn experience).
+- **Learn module reference panels now show when each module's content was last reviewed** [view:/learn] [persona:researcher].
+
+### Data
+
+- Refreshed the Timeline, Compliance, Patents, and Leaders datasets with new dated snapshots and re-verified sourcing; added quiz question coverage for previously-untested Learn topics (software bill of materials, cryptography bill of materials, crypto-algorithm registry naming, and post-quantum verification/closure).
+
 ## [4.16.0] - 2026-07-09
 
 A cross-page accuracy and trust release touching Report, Business tools, Revisions, Changelog, FAQ, Playground, OpenSSL Studio, Terms, About, and Migrate: shared report links now show the sender's real score, breach-cost defaults finally agree across three business tools, the revisions feed surfaces corrections that were previously invisible, the Playground and OpenSSL Studio get clearer status indicators and fewer dead ends, the Migrate workbench now shows which products are still awaiting verification proof, and several dead links and stale numbers are fixed across the site.
