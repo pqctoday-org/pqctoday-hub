@@ -421,6 +421,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://www.pqctoday.com/revisions</loc>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://www.pqctoday.com/simulation</loc>
     <lastmod>2026-06-24</lastmod>
     <changefreq>monthly</changefreq>

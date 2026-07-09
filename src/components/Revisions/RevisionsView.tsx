@@ -64,6 +64,10 @@ export function RevisionsView() {
           </Link>{' '}
           for how changes are approved.
         </p>
+        <p className="text-sm text-muted-foreground">
+          In plain terms: if a fact on this site turned out to be wrong or out of date, what
+          changed, who reviewed it, and why is recorded below — nothing gets corrected silently.
+        </p>
         <RevisionsSummary />
       </header>
 
