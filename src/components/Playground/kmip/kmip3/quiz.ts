@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-// quiz.ts — knowledge-check question banks for the Learn walkthroughs
-// (currently the three engine-0.12/0.13 lessons). Every question is
-// answerable from the lesson the learner just ran — no outside trivia —
-// and every `why` cites the behavior the walkthrough demonstrated live.
+// quiz.ts — knowledge-check question banks for all nine Learn walkthroughs.
+// Every question is answerable from the lesson the learner just ran — no
+// outside trivia — and every `why` cites the behavior the walkthrough
+// demonstrated live.
 
 export interface QuizQuestion {
   q: string
@@ -16,6 +16,198 @@ export interface QuizQuestion {
 
 /** Keyed by `Lesson.id`. A lesson without an entry simply shows no quiz. */
 export const QUIZZES: Record<string, QuizQuestion[]> = {
+  provision: [
+    {
+      q: 'What does "modernizing" the RSA key to ML-DSA actually do?',
+      options: [
+        'Converts the RSA key material to ML-DSA in place, keeping its UID',
+        'Creates a brand-new key object with its own UniqueIdentifier; the old key keeps working until you retire it',
+        'Re-wraps the RSA key under an ML-DSA wrapping key',
+      ],
+      answer: 1,
+      why: 'In-place algorithm conversion is not how KMIP or real crypto works — the walkthrough deliberately runs a fresh CreateKeyPair. The old key stays valid (e.g. to verify old signatures) until deliberately retired.',
+    },
+    {
+      q: 'What changed between the RSA-3072 request and the ML-DSA-65 request on the wire?',
+      options: [
+        'The whole request payload was restructured for PQC',
+        'Only the CryptographicAlgorithm value (and the sizes that come back)',
+        'A new PQC-specific operation replaced CreateKeyPair',
+      ],
+      answer: 1,
+      why: 'The request/response SHAPE is identical — same CreateKeyPair, same lifecycle. That protocol-level equivalence is what makes the algorithm a swappable parameter: crypto-agility.',
+    },
+    {
+      q: 'Why must you Activate a freshly created key before using it?',
+      options: [
+        'Activation generates the actual key material',
+        'A new key starts Pre-Active, and operations like Sign are gated on the Active lifecycle state by the protocol itself',
+        'Activation registers the key with the policy engine',
+      ],
+      answer: 1,
+      why: 'The KMIP lifecycle (Pre-Active → Active → … → Destroyed) is enforced by the base protocol, independent of any policy — Sign on a Pre-Active key is refused before a policy even runs.',
+    },
+  ],
+  sign: [
+    {
+      q: 'What is the biggest visible difference when signing with ML-DSA-65 instead of RSA-3072 or ECDSA?',
+      options: [
+        'The signature is much larger (kilobytes instead of tens/hundreds of bytes)',
+        'Signing needs two round trips instead of one',
+        'Verification requires the private key',
+      ],
+      answer: 0,
+      why: 'An ML-DSA-65 signature is ~3.3 KB versus 384 B for RSA-3072 and ~64-72 B for ECDSA — the size jump is the migration cost you actually feel; the operations themselves are unchanged.',
+    },
+    {
+      q: 'What stays exactly the same across the classical and PQC sign flows?',
+      options: [
+        'The signature length',
+        'The operation sequence and wire shape: Sign with a UID + data, SignatureVerify with the public key',
+        'The private key encoding',
+      ],
+      answer: 1,
+      why: 'Same Sign / SignatureVerify requests, same fields — only the CryptographicAlgorithm and the byte counts differ. Integration code that treats UIDs as opaque handles migrates with zero changes.',
+    },
+    {
+      q: 'Why do signatures need to migrate to PQC sooner than you might think?',
+      options: [
+        "They don't — signatures aren't affected by quantum computers",
+        'Anything signed today with a quantum-breakable key can be forged once a large quantum computer exists — long-lived signatures (firmware, documents) outlive the algorithm',
+        'PQC signatures are faster, so migration saves money',
+      ],
+      answer: 1,
+      why: "Shor's algorithm breaks RSA/ECDSA outright. A firmware image or contract that must remain verifiable for 10+ years needs a signature that will still be trustworthy then.",
+    },
+  ],
+  kem: [
+    {
+      q: 'ML-KEM replaces ECDH for key establishment. How do the two differ in SHAPE?',
+      options: [
+        'They are identical — both derive a shared secret from two key pairs',
+        'ML-KEM is a KEM: Encapsulate (public key → ciphertext + secret) / Decapsulate (ciphertext + private key → the same secret) — not a Diffie-Hellman exchange',
+        'ML-KEM needs three round trips instead of two',
+      ],
+      answer: 1,
+      why: "A KEM is a genuinely different primitive from Diffie-Hellman: one side encapsulates to the other's public key and SENDS a ciphertext. Same goal — a shared secret — completely different wire shape.",
+    },
+    {
+      q: 'After Encapsulate and Decapsulate complete, what do the two parties hold?',
+      options: [
+        'Two different secrets they must reconcile',
+        'The same shared secret — the encapsulator derived it, the decapsulator re-derived it from the ciphertext',
+        'The ciphertext, which IS the shared secret',
+      ],
+      answer: 1,
+      why: "The walkthrough's Decapsulate step re-derives exactly the secret Encapsulate produced — that agreement is the whole point, and it's what feeds a KDF to key your session cipher.",
+    },
+    {
+      q: 'Why is key establishment the MOST urgent thing to migrate?',
+      options: [
+        'Harvest-now-decrypt-later: traffic recorded today can be decrypted once a quantum computer exists, so secrets with long confidentiality needs are already at risk',
+        'ECDH is already broken by classical computers',
+        'KEM ciphertexts are smaller, saving bandwidth',
+      ],
+      answer: 0,
+      why: 'An attacker recording your ECDH-protected traffic today just waits. Anything that must stay confidential past the arrival of a quantum computer needs quantum-safe key establishment NOW.',
+    },
+  ],
+  hbs: [
+    {
+      q: "What does SLH-DSA's security rest on?",
+      options: [
+        'Lattice problems, like ML-DSA',
+        "Nothing but the hash function's collision resistance — the most conservative assumption available",
+        'The difficulty of factoring large integers',
+      ],
+      answer: 1,
+      why: 'Hash-based signatures need no structured mathematical problem at all. If the hash function stands, the signature stands — which is why it exists ALONGSIDE ML-DSA as the conservative option, not a replacement.',
+    },
+    {
+      q: 'What is the practical trade-off for that conservatism?',
+      options: [
+        'Very large signatures (and slower signing) in exchange for tiny keys and the minimal assumption',
+        'Keys that expire after a fixed number of days',
+        'It only works for encryption, not signing',
+      ],
+      answer: 0,
+      why: 'SLH-DSA-SHA2-128f: a ~32 B public key but a ~17 KB signature. You pay in bytes and speed for the smallest possible security assumption.',
+    },
+    {
+      q: 'Why does this lesson have no classical side to compare against?',
+      options: [
+        'The classical equivalent was removed from the engine',
+        'SLH-DSA has no classical predecessor — it is a new option in the toolbox, not a drop-in replacement for something',
+        'Classical hash-based signatures are export-controlled',
+      ],
+      answer: 1,
+      why: 'RSA→ML-DSA is a like-for-like swap; SLH-DSA is an addition. That is why the lesson frames it as "a new option" rather than a migration pair.',
+    },
+  ],
+  symmetric: [
+    {
+      q: 'What must change about AES-256 for the post-quantum era?',
+      options: [
+        'Nothing — that is the entire lesson',
+        'It must be re-keyed to AES-512',
+        'It must be wrapped in an ML-KEM layer',
+      ],
+      answer: 0,
+      why: "Grover's algorithm gives only a quadratic speedup, roughly halving effective key strength — AES-256 still offers ~128-bit quantum security, which is plenty. The shortest lesson, on purpose.",
+    },
+    {
+      q: 'Which quantum algorithm threatens symmetric ciphers, and how badly?',
+      options: [
+        "Shor's — it breaks them completely",
+        "Grover's — a quadratic search speedup that roughly halves effective key strength",
+        'Neither — quantum computers cannot touch symmetric crypto at all',
+      ],
+      answer: 1,
+      why: "Shor's exponential speedup applies to factoring and discrete logs (asymmetric crypto). Symmetric ciphers only face Grover's quadratic speedup — manageable with a big enough key.",
+    },
+    {
+      q: 'If AES-256 is fine, why does AES-128 appear on migration risk lists?',
+      options: [
+        'AES-128 has a known classical break',
+        'Grover halves its effective strength to ~64-bit — below acceptable margin — so long-lived AES-128 data should re-key to AES-256',
+        'AES-128 is incompatible with KMIP 3.0',
+      ],
+      answer: 1,
+      why: "Same math, less headroom: 128-bit keys drop to ~64-bit effective quantum strength. That's exactly why the Migration estate's payments-db-cipher (AES-128) is flagged at-risk and rekeys to AES-256.",
+    },
+  ],
+  hybrid: [
+    {
+      q: 'When is a hybrid KEM like X25519MLKEM768 broken?',
+      options: [
+        'When EITHER X25519 or ML-KEM falls',
+        'Only when BOTH X25519 AND ML-KEM fall',
+        'It cannot be broken',
+      ],
+      answer: 1,
+      why: 'The two shared secrets are combined through a KDF — an attacker needs both halves. Secure as long as either algorithm survives: a hedge against ML-KEM being young AND X25519 being quantum-vulnerable.',
+    },
+    {
+      q: 'How does your client code drive the hybrid — two algorithms, so two operations?',
+      options: [
+        'Yes: Encapsulate twice, once per half, then combine client-side',
+        'No: one managed object, one ordinary Encapsulate — the engine runs both algorithms and combines the secrets underneath',
+        'Via a dedicated HybridEncapsulate operation',
+      ],
+      answer: 1,
+      why: 'X25519MLKEM768 is a single first-class CryptographicAlgorithm value (KMIP 3.0 WD19). Your code sees one key and one Encapsulate — that opacity is what makes the hybrid deployable with no code change.',
+    },
+    {
+      q: 'What is the state of hybrid (composite) SIGNATURES in KMIP?',
+      options: [
+        'Fully standardized alongside hybrid KEMs',
+        'No native composite-signature algorithm or dual-sign operation exists yet — workarounds are an extension codepoint or two linked keys signed in one batch',
+        'Signatures cannot be hybridized even in principle',
+      ],
+      answer: 1,
+      why: "KMIP defines exactly one hybrid primitive today: the KEM. For signatures you either register a vendor extension codepoint (8XXXXXXX) or batch two independent signatures — the lesson's note walks both options.",
+    },
+  ],
   splitkey: [
     {
       q: 'You split a key 3-of-5 and then permanently lose two shares. What happens?',
