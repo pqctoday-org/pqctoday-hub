@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { loadLatestCSV, splitSemicolon } from './csvUtils'
+import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
 import type {
   PatentItem,
   CryptoAgilityMode,
@@ -156,8 +157,17 @@ const modules = import.meta.glob('./patents_*.csv', {
 const result = loadLatestCSV<RawPatentRow, PatentItem>(
   modules,
   /patents_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
-  transformRow
+  transformRow,
+  true // withPrevious for New/Updated status badges
 )
 
-export const patentsData: PatentItem[] = result.data
+// Compute status map if previous data exists
+const statusMap = result.previousData
+  ? compareDatasets(result.data, result.previousData, 'patentNumber')
+  : new Map<string, ItemStatus>()
+
+export const patentsData: PatentItem[] = result.data.map((item) => ({
+  ...item,
+  status: statusMap.get(item.patentNumber) as 'New' | 'Updated' | undefined,
+}))
 export const patentsMetadata = result.metadata

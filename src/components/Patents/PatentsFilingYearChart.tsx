@@ -28,7 +28,14 @@ interface YearRow {
  * PQC-only the classical segment is simply zero; on "PQC + classical" both
  * segments show and the migration trend appears.
  */
-export function PatentsFilingYearChart({ patents }: { patents: PatentItem[] }) {
+interface PatentsFilingYearChartProps {
+  patents: PatentItem[]
+  /** Bar click → filter Explore to that filing year (drill-down, matches the
+   * other Insights charts' onClick* convention). */
+  onYearClick?: (year: number) => void
+}
+
+export function PatentsFilingYearChart({ patents, onYearClick }: PatentsFilingYearChartProps) {
   const { data, total } = useMemo(() => {
     const pqcByYear = new Map<number, number>()
     const classicalByYear = new Map<number, number>()
@@ -109,8 +116,33 @@ export function PatentsFilingYearChart({ patents }: { patents: PatentItem[] }) {
             formatter={(value, name) => [`${value}`, name === 'pqc' ? 'PQC' : 'Classical']}
           />
           {/* Classical on the bottom, PQC stacked on top (rounded cap). */}
-          <Bar dataKey="classical" stackId="a" fill="var(--color-muted-foreground)" />
-          <Bar dataKey="pqc" stackId="a" fill="var(--color-primary)" radius={[3, 3, 0, 0]} />
+          <Bar
+            dataKey="classical"
+            stackId="a"
+            fill="var(--color-muted-foreground)"
+            onClick={
+              onYearClick
+                ? (data: { payload?: YearRow }) => {
+                    if (data.payload) onYearClick(data.payload.year)
+                  }
+                : undefined
+            }
+            cursor={onYearClick ? 'pointer' : undefined}
+          />
+          <Bar
+            dataKey="pqc"
+            stackId="a"
+            fill="var(--color-primary)"
+            radius={[3, 3, 0, 0]}
+            onClick={
+              onYearClick
+                ? (data: { payload?: YearRow }) => {
+                    if (data.payload) onYearClick(data.payload.year)
+                  }
+                : undefined
+            }
+            cursor={onYearClick ? 'pointer' : undefined}
+          />
         </BarChart>
       </ResponsiveContainer>
     </div>

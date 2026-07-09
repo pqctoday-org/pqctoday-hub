@@ -64,6 +64,7 @@ export const COLUMN_PRESETS: Record<PresetKey, ColumnId[]> = {
     'num',
     'title',
     'assignee',
+    'issueDate',
     'pqcAlgorithms',
     'classicalAlgorithms',
     'quantumRelevance',
