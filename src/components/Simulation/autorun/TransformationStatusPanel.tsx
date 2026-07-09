@@ -59,7 +59,13 @@ export function TransformationStatusPanel({ status }: { status: TransformationSt
         {status.tracks.map((t) => (
           <div key={t.id} className="font-mono text-[10px]">
             <div className="flex justify-between text-muted-foreground">
-              <span>
+              <span
+                title={
+                  t.track === 'TNFL'
+                    ? 'Trust Now, Forge Later — same risk as HNFL (Harvest Now, Forge Later), the term used on /report and in Learn. The simulation and the Applied Quantum framework say TNFL.'
+                    : undefined
+                }
+              >
                 {t.track} · {t.tier}
               </span>
               <span>{t.year}</span>
