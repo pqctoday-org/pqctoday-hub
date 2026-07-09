@@ -2,6 +2,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { FilterDropdown } from '../../../common/FilterDropdown'
+import { PqcVersionNote } from '../PqcVersionNote'
 
 interface GenPkeyConfigProps {
   keyAlgo: string
@@ -90,6 +91,8 @@ export const GenPkeyConfig: React.FC<GenPkeyConfigProps> = ({
           </p>
         )}
       </div>
+
+      {pqcRef && <PqcVersionNote />}
 
       {keyAlgo === 'rsa' && (
         <div className="space-y-3">

@@ -32,7 +32,8 @@ export const ConfigUtlConfig: React.FC<ConfigUtlConfigProps> = ({
         </div>
         <p className="text-xs text-muted-foreground pl-6">
           The openssl configutl command is used to read and verify the syntax of OpenSSL
-          configuration files.
+          configuration files. It is a real subcommand, but only in OpenSSL 3.6 and later — it does
+          not exist in 3.5 or earlier, so copy-pasting it onto an older install will fail.
         </p>
       </div>
 

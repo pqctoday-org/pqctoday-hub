@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import { useOpenSSLStore } from '../../store'
 import { FilterDropdown } from '../../../common/FilterDropdown'
 import { Button } from '@/components/ui/button'
+import { PqcVersionNote } from '../PqcVersionNote'
 
 interface KemConfigProps {
   kemAction: 'encap' | 'decap'
@@ -38,6 +39,8 @@ export const KemConfig: React.FC<KemConfigProps> = ({
       <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider block">
         2. Configuration
       </span>
+
+      <PqcVersionNote />
 
       {/* PQC context */}
       <div className="text-xs text-muted-foreground bg-muted/50 rounded-lg px-3 py-2 border border-border space-y-1">
