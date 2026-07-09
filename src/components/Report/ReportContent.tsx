@@ -36,11 +36,7 @@ import { softwareData } from '../../data/migrateData'
 import { ReportThreatsAppendix, ASSESS_TO_THREATS_INDUSTRY } from './ReportThreatsAppendix'
 import { ReportCswp39Nav } from './ReportCswp39Nav'
 import { ReportLockedOverlay } from './redesign/ReportLockedOverlay'
-import {
-  KpiEmptyState,
-  KpiPreviewSkeleton,
-  CategoryBreakdownPreviewSkeleton,
-} from './redesign/ReportKpiStates'
+import { KpiEmptyState, KpiPreviewSkeleton } from './redesign/ReportKpiStates'
 import { ReportVerdictBlock } from './redesign/ReportVerdictBlock'
 import { ReportUpgradeNudge } from './redesign/ReportUpgradeNudge'
 import { ReportControlDeck } from './redesign/ReportControlDeck'
@@ -64,7 +60,6 @@ import { FRAMEWORK_PHASES } from '../../data/frameworkPhases'
 import { usePhaseFilter } from '../../hooks/usePhaseFilter'
 import { Button } from '../ui/button'
 import { SectionExpandContext } from '@/contexts/sectionExpandContext'
-import { AskAssistantButton } from '../ui/AskAssistantButton'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
 import type { AssessmentResult } from '../../hooks/assessmentTypes'
@@ -73,7 +68,11 @@ import { encodeShareToken } from '@/utils/reportShareToken'
 import { FilteredChip } from './FilteredChip'
 import { NiceGapReportSection } from './NiceGapReportSection'
 import { QRASection } from './sections/QRASection'
-import { CategoryBreakdown } from './sections/CategoryBreakdownSection'
+import {
+  RiskBreakdownUnlocked,
+  RiskBreakdownLocked,
+  FrameworkRiskLensSection,
+} from './sections/CategoryBreakdownSection'
 import { AssessmentProfileSummary } from './sections/AssessmentProfileSection'
 import {
   CountryTimelineSection,
@@ -620,72 +619,23 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         (redesign) instead of omitting it. */}
                     {phaseVisible('riskBreakdown') &&
                       (isComprehensive && result.categoryScores ? (
-                        <div id="report-section-riskBreakdown">
-                          <CategoryBreakdown
-                            scores={result.categoryScores}
-                            drivers={result.categoryDrivers}
-                            defaultOpen={cfg('riskBreakdown').state === 'open'}
-                            headerExtra={
-                              <AskAssistantButton
-                                question={`Explain my PQC risk score of ${result.riskScore}/100 (${result.riskLevel}) for ${industry}`}
-                                className="print:hidden"
-                              />
-                            }
-                          />
-                        </div>
+                        <RiskBreakdownUnlocked
+                          scores={result.categoryScores}
+                          drivers={result.categoryDrivers}
+                          riskScore={result.riskScore}
+                          riskLevel={result.riskLevel}
+                          industry={industry}
+                          defaultOpen={cfg('riskBreakdown').state === 'open'}
+                        />
                       ) : (
-                        <div id="report-section-riskBreakdown">
-                          <ReportLockedOverlay
-                            reason="Per-domain scores need the full assessment"
-                            detail="A quick assessment can't separate Quantum Exposure, Migration Complexity, Regulatory Pressure and Organizational Readiness. Finish the full assessment to unlock the breakdown."
-                          >
-                            <CategoryBreakdownPreviewSkeleton />
-                          </ReportLockedOverlay>
-                        </div>
+                        <RiskBreakdownLocked />
                       ))}
 
                     {/* Framework Risk Lens (Applied Quantum P3) — derived alongside the categories */}
                     {phaseVisible('riskBreakdown') &&
                       result.frameworkRisk &&
                       cfg('riskBreakdown').state !== 'hidden' && (
-                        <CollapsibleSection
-                          title="Framework Risk Lens (Applied Quantum)"
-                          icon={<ShieldAlert className="text-primary" size={20} />}
-                          defaultOpen={false}
-                        >
-                          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                            {(
-                              [
-                                ['HNDL', result.frameworkRisk.hndl, 'Harvest-now confidentiality'],
-                                ['TNFL', result.frameworkRisk.tnfl, 'Forge-later integrity'],
-                                [
-                                  'Regulatory',
-                                  result.frameworkRisk.regulatory,
-                                  'Compliance / deadline pressure',
-                                ],
-                                [
-                                  'Feasibility',
-                                  result.frameworkRisk.feasibility,
-                                  'Ease of migration (higher = easier)',
-                                ],
-                              ] as const
-                            ).map(([label, val, note]) => (
-                              <div
-                                key={label}
-                                className="rounded-lg border border-border bg-card p-3"
-                              >
-                                <div className="text-2xl font-extrabold text-foreground">{val}</div>
-                                <div className="text-sm font-semibold text-foreground">{label}</div>
-                                <div className="text-xs text-muted-foreground">{note}</div>
-                              </div>
-                            ))}
-                          </div>
-                          <p className="mt-2 text-xs text-muted-foreground">
-                            The framework&apos;s P3 risk dimensions, derived alongside the category
-                            scores. HNDL / TNFL / Regulatory are exposure (higher = more risk);
-                            Feasibility is ease of migration (higher = easier).
-                          </p>
-                        </CollapsibleSection>
+                        <FrameworkRiskLensSection frameworkRisk={result.frameworkRisk} />
                       )}
 
                     {/* Executive Summary */}
