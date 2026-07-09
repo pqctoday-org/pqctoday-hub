@@ -1,6 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable react-refresh/only-export-components */
-import { Scale, Briefcase, Building2, Lightbulb, Landmark, Trophy } from 'lucide-react'
+import {
+  Scale,
+  Briefcase,
+  Building2,
+  Lightbulb,
+  Landmark,
+  Trophy,
+  MessageSquareWarning,
+} from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 
@@ -10,6 +18,7 @@ export const LEADER_CATEGORIES = [
   'Industry Adopter',
   'Algorithm Inventor',
   'Government',
+  'Skeptic/Critic',
 ] as const
 
 export type LeaderCategory = (typeof LEADER_CATEGORIES)[number]
@@ -34,6 +43,7 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   'Industry Adopter': <Building2 size={18} aria-hidden="true" />,
   'Algorithm Inventor': <Lightbulb size={18} aria-hidden="true" />,
   Government: <Landmark size={18} aria-hidden="true" />,
+  'Skeptic/Critic': <MessageSquareWarning size={18} aria-hidden="true" />,
 }
 
 export const LeaderCategorySidebar = ({
