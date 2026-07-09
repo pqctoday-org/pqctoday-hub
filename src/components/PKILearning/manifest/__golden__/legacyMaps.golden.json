@@ -397,15 +397,6 @@
       "difficulty": "beginner",
       "frameworkPhase": "p3"
     },
-    "pqc-team": {
-      "id": "pqc-team",
-      "lm_id": "LM-056",
-      "title": "Building Your PQC Team",
-      "description": "Staff the migration: core roles, a federated Crypto Champion network, Build-Borrow-Buy decisions, and a CBOM-driven team-sizing calculator (~1 FTE per 500 cryptographic instances).",
-      "duration": "20 min",
-      "difficulty": "beginner",
-      "frameworkPhase": "foundations"
-    },
     "pqc-testing-validation": {
       "id": "pqc-testing-validation",
       "lm_id": "LM-014",
@@ -621,7 +612,6 @@
     "pqc-candidates": 6,
     "pqc-governance": 4,
     "pqc-risk-management": 4,
-    "pqc-team": 1,
     "pqc-testing-validation": 7,
     "platform-eng-pqc": 6,
     "pqc-grc": 2,
@@ -1538,16 +1528,6 @@
       {
         "id": "heatmap",
         "label": "Risk Heatmap"
-      }
-    ],
-    "pqc-team": [
-      {
-        "id": "roles",
-        "label": "Crypto Champion Network"
-      },
-      {
-        "id": "build-borrow-buy",
-        "label": "Build-Borrow-Buy"
       }
     ],
     "pqc-testing-validation": [
@@ -2800,12 +2780,6 @@
         "label": "Compliance Gap Analysis"
       }
     ],
-    "pqc-team": [
-      {
-        "id": "team-sizing",
-        "label": "Team Sizing Calculator"
-      }
-    ],
     "pqc-testing-validation": [
       {
         "id": "passive-discovery-lab",
@@ -3656,15 +3630,6 @@
           "duration": "30 min",
           "difficulty": "intermediate",
           "frameworkPhase": "p4"
-        },
-        {
-          "id": "pqc-team",
-          "lm_id": "LM-056",
-          "title": "Building Your PQC Team",
-          "description": "Staff the migration: core roles, a federated Crypto Champion network, Build-Borrow-Buy decisions, and a CBOM-driven team-sizing calculator (~1 FTE per 500 cryptographic instances).",
-          "duration": "20 min",
-          "difficulty": "beginner",
-          "frameworkPhase": "foundations"
         },
         {
           "id": "skills-team-structure",

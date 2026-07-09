@@ -44,10 +44,35 @@ export const TOTAL_MODULE_COUNT: number = MODULE_TRACKS.reduce((n, t) => n + t.m
 export const TRACK_COUNT: number = MODULE_TRACKS.length
 
 /**
+ * Checkpoint quizzes pass at the same 80% bar as the capstone (QuizResults.tsx's
+ * own "80% passing grade" badge) — one passing threshold, used consistently.
+ */
+export const CHECKPOINT_PASS_THRESHOLD = 80
+
+/**
+ * A checkpoint phase is "passed" once every one of its quiz categories has a
+ * recorded best score at or above the passing threshold — not merely once its
+ * modules are marked complete (remediation item 3). Phases with no categories
+ * (the defensive 'implicit-final' phase for a path with a trailing, uncapped
+ * module run) have no quiz to gate on, so they fall back to module completion.
+ */
+export function isCheckpointPassed(
+  phase: Pick<PersonaPathPhase, 'categories' | 'moduleIds'>,
+  statusById: Record<string, string | undefined>,
+  quizScores: Record<string, number> | undefined
+): boolean {
+  if (phase.categories.length === 0) {
+    return (
+      phase.moduleIds.length > 0 && phase.moduleIds.every((id) => statusById[id] === 'completed')
+    )
+  }
+  return phase.categories.every((cat) => (quizScores?.[cat] ?? 0) >= CHECKPOINT_PASS_THRESHOLD)
+}
+
+/**
  * Phase completion roll-up for the progress dial + capstone gate.
- * "passed" is keyed to MODULE COMPLETION (Decision 2 revised) — a checkpoint
- * phase counts as passed once all its modules are done; the wrap-up/quiz phase
- * is excluded from the checkpoint tally.
+ * "passed" requires a passing checkpoint-quiz score (see `isCheckpointPassed`),
+ * not just finished modules; the wrap-up/quiz phase is excluded from the tally.
  */
 export interface PathProgress {
   doneModules: number
@@ -80,7 +105,8 @@ export interface PathProgress {
 export function computePathProgress(
   phases: PersonaPathPhase[],
   statusById: Record<string, string | undefined>,
-  essentialsIds: readonly string[] = []
+  essentialsIds: readonly string[] = [],
+  quizScores: Record<string, number> | undefined = undefined
 ): PathProgress {
   const checkpointPhases = phases.filter((p) => p.id !== 'wrap-up')
   let doneModules = 0
@@ -91,7 +117,7 @@ export function computePathProgress(
     const done = phase.moduleIds.filter((id) => statusById[id] === 'completed').length
     totalModules += total
     doneModules += done
-    if (total > 0 && done === total) checkpointsPassed += 1
+    if (isCheckpointPassed(phase, statusById, quizScores)) checkpointsPassed += 1
   }
   const checkpointsTotal = checkpointPhases.length
   const pct = totalModules > 0 ? Math.round((doneModules / totalModules) * 100) : 0

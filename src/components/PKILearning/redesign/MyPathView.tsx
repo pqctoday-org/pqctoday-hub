@@ -12,6 +12,8 @@ import {
   CheckCircle2,
   Circle,
   Award,
+  Info,
+  X,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { PERSONAS, essentialsQuizCategories, type PersonaId } from '@/data/learningPersonas'
@@ -24,7 +26,7 @@ import { usePersonaPathItems } from '../usePersonaPathItems'
 import { PersonaPathView, computeNextIncompleteModuleId } from '../PersonaPathView'
 import { AssessmentRecommendationsBanner } from '../AssessmentRecommendationsBanner'
 import { ProgressDial } from './ProgressDial'
-import { computePathProgress } from './learnRedesign.helpers'
+import { computePathProgress, CHECKPOINT_PASS_THRESHOLD } from './learnRedesign.helpers'
 
 interface MyPathViewProps {
   personaId: PersonaId
@@ -52,6 +54,8 @@ export const MyPathView = ({ personaId, onOpenCatalog }: MyPathViewProps) => {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const modules = useModuleStore((s) => s.modules)
+  const checkpointScoringNoticeSeen = useModuleStore((s) => s.checkpointScoringNoticeSeen ?? true)
+  const dismissCheckpointScoringNotice = useModuleStore((s) => s.dismissCheckpointScoringNotice)
   const summary = usePersonaPathItems(personaId)
   const persona = PERSONAS[personaId]
 
@@ -80,9 +84,11 @@ export const MyPathView = ({ personaId, onOpenCatalog }: MyPathViewProps) => {
     return map
   }, [modules])
 
+  const quizScores = modules['quiz']?.quizScores
+
   const progress = useMemo(
-    () => computePathProgress(summary?.phases ?? [], statusById, persona.essentials),
-    [summary, statusById, persona.essentials]
+    () => computePathProgress(summary?.phases ?? [], statusById, persona.essentials, quizScores),
+    [summary, statusById, persona.essentials, quizScores]
   )
 
   // Resume respects the active tier: the next incomplete *essential* in Essentials
@@ -131,6 +137,35 @@ export const MyPathView = ({ personaId, onOpenCatalog }: MyPathViewProps) => {
 
   return (
     <div className="space-y-3">
+      {/* One-time notice: checkpoints now require a passing quiz score */}
+      {!checkpointScoringNoticeSeen && (
+        <div className="glass-panel border border-accent/25 rounded-xl px-4 py-3 flex items-start justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <Info className="text-accent shrink-0 mt-0.5" size={16} aria-hidden="true" />
+            <div>
+              <span className="text-sm font-semibold text-foreground">
+                Checkpoints now require a quiz pass
+              </span>
+              <p className="text-xs text-muted-foreground">
+                Finishing a phase&apos;s modules is no longer enough on its own — a checkpoint marks
+                as passed once you score {CHECKPOINT_PASS_THRESHOLD}% or higher on its quiz. Your
+                module progress is fully preserved; take each checkpoint&apos;s quiz to mark it
+                passed.
+              </p>
+            </div>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={dismissCheckpointScoringNotice}
+            className="shrink-0 text-xs gap-1"
+            aria-label="Dismiss notice"
+          >
+            <X size={14} />
+          </Button>
+        </div>
+      )}
+
       {/* Assessment focus strip */}
       {recommendedModuleIds.length > 0 && (
         <AssessmentRecommendationsBanner

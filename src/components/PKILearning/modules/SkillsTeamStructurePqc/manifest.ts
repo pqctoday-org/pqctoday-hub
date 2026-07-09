@@ -11,7 +11,7 @@ const manifest: ModuleManifest = {
   difficulty: 'intermediate',
   frameworkPhase: 'foundations',
   track: 'Executive',
-  trackOrder: 8,
+  trackOrder: 7,
   learnSections: [
     { id: 'team-sizing', label: 'Team Sizing Heuristic' },
     { id: 'crypto-champions', label: 'Crypto Champion Roster' },

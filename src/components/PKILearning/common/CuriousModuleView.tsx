@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
-import { MODULE_CATALOG, WORKSHOP_STEPS } from '../moduleData'
+import { MODULE_CATALOG } from '../moduleData'
 import { CuriousSummaryBanner } from './CuriousSummaryBanner'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -19,22 +19,22 @@ interface CuriousModuleViewProps {
 export const CuriousModuleView: React.FC<CuriousModuleViewProps> = ({ moduleId }) => {
   const navigate = useNavigate()
   const moduleMeta = MODULE_CATALOG[moduleId] // eslint-disable-line security/detect-object-injection
-  const { updateModuleProgress, markStepComplete, modules } = useModuleStore()
+  const { updateModuleProgress, modules } = useModuleStore()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const isCompleted = modules[moduleId]?.status === 'completed'
 
-  // Mark module as reviewed AND credit all workshop steps for belt progression
+  // Mark the module as reviewed — curious mode is intentionally low-friction, so
+  // "I read the summary" is fine to credit on a click. Workshop-step credit is
+  // deliberately NOT granted here: those steps require actually interacting with
+  // the real workshop (via "Dive Deeper"), same discipline as the non-curious
+  // module view (ModuleShell), where completedSteps only advance through
+  // markStepComplete calls made from inside each interactive step, never as a
+  // side effect of finishing the Learn tab.
   const markModuleReviewed = useCallback(
     (id: string) => {
       updateModuleProgress(id, { status: 'completed' })
-      const steps = WORKSHOP_STEPS[id] // eslint-disable-line security/detect-object-injection
-      if (steps) {
-        for (const step of steps) {
-          markStepComplete(id, step.id)
-        }
-      }
     },
-    [updateModuleProgress, markStepComplete]
+    [updateModuleProgress]
   )
 
   const handleMarkReviewed = () => {

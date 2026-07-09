@@ -11,7 +11,7 @@ const manifest: ModuleManifest = {
   difficulty: 'intermediate',
   frameworkPhase: 'verify-close',
   track: 'Executive',
-  trackOrder: 11,
+  trackOrder: 10,
   learnSections: [
     { id: 'decommission', label: 'Retire Classical Crypto' },
     { id: 'verify-evidence', label: 'Prove the Migration' },
