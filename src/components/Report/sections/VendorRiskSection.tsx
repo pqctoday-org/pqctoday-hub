@@ -19,7 +19,7 @@
 import clsx from 'clsx'
 import { Building2, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { CollapsibleSection } from '../ReportContent'
+import { CollapsibleSection } from './reportContentShared'
 import { DefaultsUsedChip } from '../DefaultsUsedChip'
 import { vendorMap } from '@/data/migrateData'
 import type { SoftwareItem } from '@/types/MigrateTypes'
