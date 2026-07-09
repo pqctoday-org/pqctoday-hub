@@ -26,11 +26,15 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.15.0] - 2026-07-08
+
+A Learn modules and Patents refresh release: two new modules close a cross-reference gap that's existed since earlier modules started pointing at them, the Patents page now highlights what's new since your last visit, and Algorithms defaults to only showing FIPS-validated results.
+
 ### Added
 
 - **A "recently added" view for Patents, and click-to-drill on the filing-year chart** [view:/patents] [persona:technical]: newly published or updated patents are now marked so you don't have to compare snapshots yourself to spot what's new, and clicking a bar in the filing-year chart now filters straight to that year.
-- **A CycloneDX Cryptography Registry learning module** [view:/library] [persona:technical]: covers CycloneDX's standardized naming registry for cryptographic algorithms and curves, with hands-on algorithm-normalizer and curve-lookup workshops.
-- **A Software Bill of Materials (SBOM) learning module** [view:/library] [persona:technical]: covers SBOM formats and generation tooling and how an SBOM feeds into a CBOM — closing a gap where SBOM was referenced by several other modules but had no dedicated module of its own.
+- **A CycloneDX Cryptography Registry learning module** [view:/learn/crypto-registry] [persona:technical]: covers CycloneDX's standardized naming registry for cryptographic algorithms and curves, with hands-on algorithm-normalizer and curve-lookup workshops.
+- **A Software Bill of Materials (SBOM) learning module** [view:/learn/sbom] [persona:technical]: covers SBOM formats and generation tooling and how an SBOM feeds into a CBOM — closing a gap where SBOM was referenced by several other modules but had no dedicated module of its own.
 
 ### Fixed
 
