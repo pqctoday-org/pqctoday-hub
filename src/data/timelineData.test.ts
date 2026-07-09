@@ -1,5 +1,10 @@
-import { describe, it, expect } from 'vitest'
-import { timelineData, computeTimelineConfidence, phaseColors } from './timelineData'
+import { describe, it, expect, vi, afterEach } from 'vitest'
+import {
+  timelineData,
+  computeTimelineConfidence,
+  parseTimelineCSV,
+  phaseColors,
+} from './timelineData'
 import type { Phase, EntityType } from '../types/timeline'
 import { CATEGORY_DEFAULT, matchesCategoryFilter } from '../components/Timeline/CategoryFilter'
 
@@ -139,5 +144,57 @@ describe('computeTimelineConfidence', () => {
         EndYear: '2025', // 10
       })
     ).toBe(35)
+  })
+
+  // Recency must be scored against the CSV's own snapshot date (referenceDate),
+  // not real wall-clock time — otherwise the same row's score silently drifts
+  // downward as calendar time passes with no underlying data change.
+  it('scores recency against the supplied referenceDate, not real time', () => {
+    const row = { ...base, source_url_quality: '', peer_reviewed: '', SourceDate: '2026-01-01' }
+    // 6 months after the source date, relative to a fixed snapshot reference — within
+    // the ≤12mo bucket regardless of when the test itself actually runs.
+    expect(computeTimelineConfidence(row, new Date('2026-07-01'))).toBe(20 + 10) // recency + date-specificity
+    // 20 months after the source date — falls into the ≤36mo (10pt) bucket instead.
+    expect(computeTimelineConfidence(row, new Date('2027-09-01'))).toBe(10 + 10)
+    // 40 months after — too stale for any recency credit.
+    expect(computeTimelineConfidence(row, new Date('2029-05-01'))).toBe(0 + 10)
+  })
+})
+
+describe('parseTimelineCSV — malformed year hardening', () => {
+  const header =
+    'Country,FlagCode,OrgName,OrgFullName,OrgLogoUrl,Type,Category,StartYear,EndYear,Title,Description,SourceUrl,SourceDate,Status,trusted_source_id,local_file,peer_reviewed,vetting_body,source_url_quality,trusted_source_id_status,data_quality_notes,confidence_score,status,deprecated_at,deprecated_reason,related_standards,entity_type,is_sim_deadline,sim_milestone,mandate_type'
+
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  it('excludes a row with a malformed StartYear and logs a loud warning instead of injecting NaN', () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const csv = [
+      header,
+      'Testland,TL,Agency,Agency Full,,Phase,Research,Q1 2030,2031,Bad Row,desc,,,,,,,,,,,,,,,,,,',
+      'Testland,TL,Agency,Agency Full,,Phase,Research,2026,2027,Good Row,desc,,,,,,,,,,,,,,,,,,',
+    ].join('\n')
+
+    const parsed = parseTimelineCSV(csv)
+    const events = parsed.flatMap((c) => c.bodies.flatMap((b) => b.events))
+
+    expect(events.map((e) => e.title)).toEqual(['Good Row'])
+    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining('Malformed year value'))
+  })
+
+  it('excludes a row with an out-of-range year (e.g. a typo like 20030)', () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const csv = [
+      header,
+      'Testland,TL,Agency,Agency Full,,Phase,Research,20030,20031,Typo Row,desc,,,,,,,,,,,,,,,,,,',
+    ].join('\n')
+
+    const parsed = parseTimelineCSV(csv)
+    const events = parsed.flatMap((c) => c.bodies.flatMap((b) => b.events))
+
+    expect(events).toHaveLength(0)
+    expect(errorSpy).toHaveBeenCalled()
   })
 })
