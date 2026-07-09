@@ -2,9 +2,12 @@
 // /report's "Risk Breakdown" section (REPORT_SECTION_ORDER: 'riskBreakdown').
 // Extracted from ReportContent.tsx — see reportSectionToCswp39.ts.
 import React from 'react'
-import { BarChart3 } from 'lucide-react'
+import { BarChart3, ShieldAlert } from 'lucide-react'
 import clsx from 'clsx'
-import type { CategoryScores, CategoryDrivers } from '../../../hooks/assessmentTypes'
+import type { CategoryScores, CategoryDrivers, FrameworkRisk } from '../../../hooks/assessmentTypes'
+import { ReportLockedOverlay } from '../redesign/ReportLockedOverlay'
+import { CategoryBreakdownPreviewSkeleton } from '../redesign/ReportKpiStates'
+import { AskAssistantButton } from '../../ui/AskAssistantButton'
 import { CollapsibleSection } from './reportContentShared'
 
 export const CategoryBreakdown = ({
@@ -100,3 +103,74 @@ export const CategoryBreakdown = ({
     </CollapsibleSection>
   )
 }
+
+export const RiskBreakdownUnlocked = ({
+  scores,
+  drivers,
+  riskScore,
+  riskLevel,
+  industry,
+  defaultOpen,
+}: {
+  scores: CategoryScores
+  drivers?: CategoryDrivers
+  riskScore: number
+  riskLevel: string
+  industry: string
+  defaultOpen: boolean
+}) => (
+  <div id="report-section-riskBreakdown">
+    <CategoryBreakdown
+      scores={scores}
+      drivers={drivers}
+      defaultOpen={defaultOpen}
+      headerExtra={
+        <AskAssistantButton
+          question={`Explain my PQC risk score of ${riskScore}/100 (${riskLevel}) for ${industry}`}
+          className="print:hidden"
+        />
+      }
+    />
+  </div>
+)
+
+export const RiskBreakdownLocked = () => (
+  <div id="report-section-riskBreakdown">
+    <ReportLockedOverlay
+      reason="Per-domain scores need the full assessment"
+      detail="A quick assessment can't separate Quantum Exposure, Migration Complexity, Regulatory Pressure and Organizational Readiness. Finish the full assessment to unlock the breakdown."
+    >
+      <CategoryBreakdownPreviewSkeleton />
+    </ReportLockedOverlay>
+  </div>
+)
+
+export const FrameworkRiskLensSection = ({ frameworkRisk }: { frameworkRisk: FrameworkRisk }) => (
+  <CollapsibleSection
+    title="Framework Risk Lens (Applied Quantum)"
+    icon={<ShieldAlert className="text-primary" size={20} />}
+    defaultOpen={false}
+  >
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      {(
+        [
+          ['HNDL', frameworkRisk.hndl, 'Harvest-now confidentiality'],
+          ['TNFL', frameworkRisk.tnfl, 'Forge-later integrity'],
+          ['Regulatory', frameworkRisk.regulatory, 'Compliance / deadline pressure'],
+          ['Feasibility', frameworkRisk.feasibility, 'Ease of migration (higher = easier)'],
+        ] as const
+      ).map(([label, val, note]) => (
+        <div key={label} className="rounded-lg border border-border bg-card p-3">
+          <div className="text-2xl font-extrabold text-foreground">{val}</div>
+          <div className="text-sm font-semibold text-foreground">{label}</div>
+          <div className="text-xs text-muted-foreground">{note}</div>
+        </div>
+      ))}
+    </div>
+    <p className="mt-2 text-xs text-muted-foreground">
+      The framework&apos;s P3 risk dimensions, derived alongside the category scores. HNDL / TNFL /
+      Regulatory are exposure (higher = more risk); Feasibility is ease of migration (higher =
+      easier).
+    </p>
+  </CollapsibleSection>
+)
