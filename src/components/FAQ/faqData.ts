@@ -1,9 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import type { PersonaId } from '@/data/learningPersonas'
 
 export interface FAQItem {
   question: string
   answer: string
   deepLink: string
+  /** Persona this Q&A is written for — used only to float/highlight matching
+   *  entries in the "Role-Specific Guidance" category for the active persona.
+   *  Never used to hide questions from other viewers. */
+  persona?: PersonaId
 }
 
 export interface FAQCategory {
@@ -176,7 +181,7 @@ export const FAQ_DATA: FAQCategory[] = [
         question: 'What is NIST IR 8547?',
         answer:
           'NIST IR 8547 (Interagency Report) provides transition guidance for migrating federal cryptographic systems to post-quantum algorithms, recommending that classical algorithms like RSA and ECDSA be deprecated by 2030 and disallowed by 2035. Note: it is still an Initial Public Draft (published Nov 2024, not yet finalized), so its 2030/2035 dates are draft guidance rather than settled policy. It is the most widely referenced US government transition timeline and complements the FIPS algorithm standards. The Reference Library links to the full document with implementation details.',
-        deepLink: '/library?ref=NIST-IR-8547',
+        deepLink: '/library',
       },
       {
         question: 'What is CNSA 2.0?',
@@ -407,15 +412,9 @@ export const FAQ_DATA: FAQCategory[] = [
         deepLink: '/assess',
       },
       {
-        question: 'What is a CBOM (Cryptography Bill of Materials)?',
-        answer:
-          'A Cryptography Bill of Materials (CBOM) is a machine-readable inventory of all cryptographic algorithms, keys, certificates, and protocols used in a system, typically formatted using the CycloneDX standard. It enables automated detection of quantum-vulnerable components and tracking of migration progress across an organization. The Crypto Agility module includes a CBOM scanning workshop.',
-        deepLink: '/learn/crypto-agility',
-      },
-      {
         question: 'How many PQC-ready products does the catalog track?',
         answer:
-          'The Migrate catalog tracks over 830 products across nine infrastructure layers, each assessed for PQC readiness with specific algorithm support details and FIPS validation status. Products range from open-source libraries like OpenSSL and liboqs to commercial HSMs and cloud services from AWS, Azure, and GCP. The catalog is regularly updated as vendors announce new PQC capabilities.',
+          'The Migrate catalog tracks hundreds of products across nine infrastructure layers, each assessed for PQC readiness with specific algorithm support details and FIPS validation status. Products range from open-source libraries like OpenSSL and liboqs to commercial HSMs and cloud services from AWS, Azure, and GCP. The catalog is regularly updated as vendors announce new PQC capabilities.',
         deepLink: '/migrate',
       },
       {
@@ -433,7 +432,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is a Cryptography Bill of Materials (CBOM)?',
         answer:
-          'A CBOM is a structured inventory of where and how your systems use cryptography — algorithms, key lengths, certificates, protocols, and libraries — analogous to a software bill of materials (SBOM). It is the foundation of crypto-agility: you cannot migrate what you cannot see. The Cryptography Bill of Materials (CBOM) module walks through building one and using it to drive a prioritized migration.',
+          'A CBOM is a structured, machine-readable inventory of where and how your systems use cryptography — algorithms, key lengths, certificates, protocols, and libraries — typically formatted using the CycloneDX standard, analogous to a software bill of materials (SBOM). It enables automated detection of quantum-vulnerable components and is the foundation of crypto-agility: you cannot migrate what you cannot see. The Cryptography Bill of Materials (CBOM) module walks through building one and using it to drive a prioritized migration.',
         deepLink: '/learn/cbom',
       },
       {
@@ -659,7 +658,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'How many learning modules does PQC Today offer?',
         answer:
-          'PQC Today offers 62 interactive learning modules organized across nine tracks: Foundations, Protocols, Applications, Hardware Infrastructure, Software Infrastructure, Strategy, Industries, Executive, and Role Guides. Each module includes an introduction with glossary-linked terms, interactive workshop exercises, and knowledge assessment questions. Module durations range from 10 minutes to 120 minutes depending on complexity.',
+          'PQC Today offers dozens of interactive learning modules organized across nine tracks: Foundations, Protocols, Applications, Hardware Infrastructure, Software Infrastructure, Strategy, Industries, Executive, and Role Guides. Each module includes an introduction with glossary-linked terms, interactive workshop exercises, and knowledge assessment questions. Module durations range from 10 minutes to 120 minutes depending on complexity.',
         deepLink: '/learn',
       },
       {
@@ -671,13 +670,13 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'Is PQC Today open source?',
         answer:
-          'Yes, PQC Today is fully open source under the GPL-3.0 license, with source code available on GitHub at pqctoday/pqctoday-hub. Community contributions are welcome for new modules, data updates, and platform improvements. The codebase is a React SPA built with TypeScript, Vite, and Tailwind CSS.',
+          'Yes, PQC Today is fully open source under the GPL-3.0 license, with source code available on GitHub at pqctoday-org/pqctoday-hub. Community contributions are welcome for new modules, data updates, and platform improvements. The codebase is a React SPA built with TypeScript, Vite, and Tailwind CSS.',
         deepLink: '/about',
       },
       {
         question: 'What is the PQC Reference Library?',
         answer:
-          'The PQC Reference Library is a curated collection of over 680 standards, RFCs, research papers, and migration guides relevant to post-quantum cryptography, with cross-references linking related documents and enrichment metadata providing summaries and PQC relevance assessments. Documents are categorized by type, issuing organization, and relevance to specific algorithms and use cases. The Library supports full-text search and filtering.',
+          'The PQC Reference Library is a curated collection of hundreds of standards, RFCs, research papers, and migration guides relevant to post-quantum cryptography, with cross-references linking related documents and enrichment metadata providing summaries and PQC relevance assessments. Documents are categorized by type, issuing organization, and relevance to specific algorithms and use cases. The Library supports full-text search and filtering.',
         deepLink: '/library',
       },
       {
@@ -737,30 +736,35 @@ export const FAQ_DATA: FAQCategory[] = [
         answer:
           'The Executive Quantum Impact module is a 30-minute briefing covering the Harvest Now Decrypt Later threat to corporate data, regulatory compliance deadlines (NIST 2030/2035, CNSA 2.0 2033, EU directives), budget implications of infrastructure-wide crypto migration, and board-level action items for starting a PQC program. It includes a risk assessment framework calibrated for business decision-makers rather than technical staff. The module provides a board-ready presentation template.',
         deepLink: '/learn/exec-quantum-impact',
+        persona: 'executive',
       },
       {
         question: 'What PQC libraries should developers use?',
         answer:
           'The recommended PQC libraries depend on your language ecosystem: liboqs for C/C++, Bouncy Castle for Java, oqsprovider for OpenSSL-based applications, pqcrypto for Rust, and aws-lc (AWS LibCrypto) for AWS-integrated systems. For Python, oqs-python wraps liboqs, and for Go, the standard library is adding PQC support. The Developer Quantum Impact module compares these libraries across security level support, FIPS validation status, and API ergonomics.',
         deepLink: '/learn/dev-quantum-impact',
+        persona: 'developer',
       },
       {
         question: 'How should architects design for PQC?',
         answer:
           'PQC-ready architecture requires crypto-agility patterns that abstract algorithm selection behind configuration, hybrid deployment strategies that combine classical and PQC algorithms during the transition, and infrastructure migration sequencing that prioritizes the highest-risk components. Architects should design for algorithm replaceability from day one rather than treating PQC as a drop-in replacement. The Architect module includes algorithm decision trees and reference architectures.',
         deepLink: '/learn/arch-quantum-impact',
+        persona: 'architect',
       },
       {
         question: 'What PQC operations tasks should IT teams plan?',
         answer:
           'IT operations teams should plan for automated certificate rotation (PQC certificates may need more frequent rotation due to larger revocation lists), HSM firmware upgrades to support PKCS#11 v3.2 PQC mechanisms, system-wide crypto-policy updates via tools like update-crypto-policies, and monitoring dashboards to track algorithm deprecation across the infrastructure. The Operations module provides runbooks and automation templates.',
         deepLink: '/learn/ops-quantum-impact',
+        persona: 'ops',
       },
       {
         question: 'What PQC research areas are active?',
         answer:
           'Active PQC research areas include tightening lattice security proofs (especially for ML-KEM and ML-DSA), developing side-channel-resistant implementations for constrained devices, exploring alternative paradigms such as multivariate, code-based, and isogeny-based cryptography, and integrating quantum random number generators (QRNG) for enhanced key generation. The Research module surveys the frontiers and open questions in post-quantum cryptography.',
         deepLink: '/learn/research-quantum-impact',
+        persona: 'researcher',
       },
       {
         question: 'How do I build a PQC business case for the board?',
@@ -835,7 +839,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'How do I navigate the PQC Risk Assessment wizard?',
         answer:
-          'The Risk Assessment wizard walks through 14 sequential steps, starting with your industry and country to anchor regulatory context, then progressing through cryptographic usage patterns, data sensitivity levels (you can select multiple), compliance frameworks you must meet, infrastructure maturity, vendor dependencies, and migration timeline constraints. Each step has an informational tooltip explaining why the question matters. Your answers are auto-saved to localStorage so you can pause and resume — no account needed. The final step previews your risk tier before generating the full scored report.',
+          'The Risk Assessment wizard walks through 13 sequential steps, starting with your industry and country to anchor regulatory context, then progressing through cryptographic usage patterns, data sensitivity levels (you can select multiple), compliance frameworks you must meet, infrastructure maturity, vendor dependencies, and migration timeline constraints. Each step has an informational tooltip explaining why the question matters. Your answers are auto-saved to localStorage so you can pause and resume — no account needed. The final step previews your risk tier before generating the full scored report.',
         deepLink: '/assess',
       },
       {

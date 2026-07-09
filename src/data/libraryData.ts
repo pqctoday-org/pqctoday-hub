@@ -570,3 +570,19 @@ import { conceptIdForStoreKey } from './conceptRegistry'
 export function conceptIdForLibraryItem(item: { referenceId: string }): string | undefined {
   return conceptIdForStoreKey('library', item.referenceId)
 }
+
+// ── Renamed reference_id aliases ──────────────────────────────────────────
+// CSV snapshots occasionally rename a reference_id (e.g. a draft's id gains a
+// revision suffix). Stale deep links elsewhere in the app — the FAQ, chat
+// citations, external bookmarks — may still use the old id. Add an entry here
+// whenever a rename happens so `findLibraryItemByRef` keeps resolving old
+// links instead of silently opening to nothing.
+export const REFERENCE_ID_ALIASES: Record<string, string> = {
+  'NIST-IR-8547': 'NIST-IR-8547-IPD2',
+}
+
+/** Resolve a `?ref=` value to a live library item, tolerating known reference_id renames. */
+export function findLibraryItemByRef(ref: string): LibraryItem | undefined {
+  const resolved = REFERENCE_ID_ALIASES[ref] ?? ref
+  return libraryData.find((item) => item.referenceId === resolved)
+}

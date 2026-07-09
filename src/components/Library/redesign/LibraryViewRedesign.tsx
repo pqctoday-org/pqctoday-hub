@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button'
 import {
   libraryData,
   libraryMetadata,
+  findLibraryItemByRef,
   type LibraryItem,
   type LibraryPurpose,
 } from '@/data/libraryData'
@@ -313,7 +314,7 @@ export function LibraryViewRedesign({
   }, [])
 
   const detailItem: LibraryItem | null = useMemo(
-    () => (detailRef ? (libraryData.find((i) => i.referenceId === detailRef) ?? null) : null),
+    () => (detailRef ? (findLibraryItemByRef(detailRef) ?? null) : null),
     [detailRef]
   )
 
