@@ -4,9 +4,9 @@
 // tester for every KMIP 3.0 operation (all 66 the protocol defines), built
 // entirely on the generic op-template pipeline (src/wasm/kmip/ttlv/) rather
 // than a Rust match arm per op. Every Run button fires a REAL request
-// through the same dispatcher path the Agility tab uses — including the 15
-// permanently-unsupported ops, which get a real `OperationNotSupported`
-// rejection, never a simulated one.
+// through the same dispatcher path the Agility tab uses — including the 7
+// unsupported ops (3 native-gated certificate ops + 4 out-of-scope), which
+// get a real `OperationNotSupported` rejection, never a simulated one.
 //
 // Every op row is individually expandable with a real parameter form (each
 // field's type — algorithm select, uid + datalist, hex/text/number/bool —
@@ -42,11 +42,12 @@ const CATEGORY_ORDER: OpCategory[] = [
   'Attributes',
   'Cryptographic Services',
   'RNG & PKCS#11 Passthrough',
+  'Asynchronous Processing',
 ]
 
 const HIDDEN_CATEGORIES: OpCategory[] = [
   'Certificate Services (not in this build)',
-  'Advertised-only / Not Implemented',
+  'Not Implemented (out of scope)',
 ]
 
 const LOG_LIMIT = 50
@@ -114,7 +115,10 @@ function OpRow({
     if (!table) return
     setRunning(true)
     try {
-      onRun(template.op, runOp(engine, table, template.op, template.build(values)))
+      onRun(
+        template.op,
+        runOp(engine, table, template.op, template.build(values), template.headerBuild?.(values))
+      )
     } finally {
       setRunning(false)
     }
@@ -427,7 +431,7 @@ export function CommandsView({
 
           {!q && (
             <CategorySection
-              title={`Advertised-only & unimplemented (${hiddenCount})`}
+              title={`Not implemented in this build (${hiddenCount})`}
               count={hiddenCount}
               collapsed={!hiddenOpen}
               onToggle={() => setHiddenOpen((o) => !o)}
