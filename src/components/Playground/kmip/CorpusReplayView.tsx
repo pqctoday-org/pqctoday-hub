@@ -51,7 +51,6 @@ const STATUS_LABEL: Record<TestStatus, string> = {
   SKIP_OP: 'SKIP (op not implemented)',
   SKIP_PARSE: 'SKIP (XML malformed)',
   SKIP_DEPRECATED: 'SKIP (deprecated algorithm)',
-  SKIP_POLICY_VARIANT: 'SKIP (mutually-exclusive policy)',
   SKIP_TRANSPORT: 'SKIP (native-transport-only feature)',
 }
 
@@ -197,10 +196,10 @@ export function CorpusReplayView() {
               vendored PQC interop tests — the same suite behind{' '}
               <code className="text-foreground">conformance/REPLAY_REPORT.md</code>, replayed live
               against this tab's engine instead of over a network. The engine's native CI pins an
-              exact 97-pass / 5-deprecated-skip baseline on the 102 OASIS tests; in-browser, 6 of
-              those passes become honestly-labelled skips (3 need the native TLS listener, 3 need a
-              per-test RNG-seed mode the wasm binding doesn't expose), and every remaining test must
-              pass.
+              exact 97-pass / 5-deprecated-skip baseline on the 102 OASIS tests; in-browser, 94 pass
+              — the RNG-seed variant tests each boot an engine pinned to their expected mode — and
+              only the 3 tests needing the native TLS listener are honestly skipped. Zero failures
+              tolerated.
             </p>
           </div>
           <div className="flex items-center gap-2">

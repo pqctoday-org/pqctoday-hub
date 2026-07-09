@@ -6,9 +6,10 @@
 // pass/fail in this harness (not a workaround for a bug) — see the
 // per-table comments for the spec/policy citation.
 import type { KmipNode } from '../ttlv/nodes'
+import type { RngSeedMode } from '../kmipEngine'
 
 export type SkipReason = {
-  status: 'SKIP_DEPRECATED' | 'SKIP_POLICY_VARIANT' | 'SKIP_OP' | 'SKIP_TRANSPORT'
+  status: 'SKIP_DEPRECATED' | 'SKIP_OP' | 'SKIP_TRANSPORT'
   detail: string
 }
 
@@ -38,19 +39,16 @@ export const CHAINED_TEST_GROUPS: Record<string, string[]> = {
 
 /** OASIS tests that pin one of several MUTUALLY EXCLUSIVE conformant
  * server behaviors (RNGSeed: full-consume / partial-consume / ignore-seed
- * / deny — KMIP 3.0 §6.1.45 permits any). Engine 0.12.0 made all four
- * modes real via `ops/deps.rs::RngSeedMode`, and the native harness now
- * passes these three by constructing per-test Deps with the pinned mode —
- * but the wasm binding (`KmipPlayground::new`) hardcodes
- * `DepsConfig::default()` (full-consume) with no config seam, so the
- * variants stay unreplayable HERE until the binding exposes it. */
-const POLICY_VARIANT_TESTS: Record<string, string> = {
-  'CS-RNG-O-2-30.xml':
-    'RNGSeed variant: partial-consume. Real in the engine (RngSeedMode) and passing natively; the wasm binding pins DepsConfig::default() — no seam to select it here yet',
-  'CS-RNG-O-3-30.xml':
-    'RNGSeed variant: ignore-seed. Real in the engine (RngSeedMode) and passing natively; the wasm binding pins DepsConfig::default() — no seam to select it here yet',
-  'CS-RNG-O-4-30.xml':
-    'RNGSeed variant: deny. Real in the engine (RngSeedMode) and passing natively; the wasm binding pins DepsConfig::default() — no seam to select it here yet',
+ * / deny — KMIP 3.0 §6.1.55 permits any; `ops/deps.rs::RngSeedMode` made
+ * all four real in engine 0.12.0). The wasm binding now exposes the mode
+ * as a constructor parameter, so instead of skipping these, the replay
+ * BOOTS each variant test on an engine pinned to its expected mode —
+ * exactly how the native harness constructs per-test Deps. CS-RNG-O-1
+ * (full-consume) needs no entry; that's the default. */
+export const RNG_SEED_MODE_TESTS: Record<string, RngSeedMode> = {
+  'CS-RNG-O-2-30.xml': 'partial-consume',
+  'CS-RNG-O-3-30.xml': 'ignore',
+  'CS-RNG-O-4-30.xml': 'deny',
 }
 
 /** OASIS tests whose expected outcome depends on `MaximumResponseSize`
@@ -115,8 +113,6 @@ export function operationsUsed(transcript: KmipNode[]): Set<string> {
 export function classifyByName(fileName: string): SkipReason | null {
   if (fileName in DEPRECATED_ALGO_TESTS)
     return { status: 'SKIP_DEPRECATED', detail: DEPRECATED_ALGO_TESTS[fileName] }
-  if (fileName in POLICY_VARIANT_TESTS)
-    return { status: 'SKIP_POLICY_VARIANT', detail: POLICY_VARIANT_TESTS[fileName] }
   if (fileName in TRANSPORT_TESTS)
     return { status: 'SKIP_TRANSPORT', detail: TRANSPORT_TESTS[fileName] }
   return null

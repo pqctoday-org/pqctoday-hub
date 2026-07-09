@@ -68,10 +68,16 @@ describe('OASIS corpus replay (real wasm engine)', () => {
     expect(result.status).not.toBe('PASS')
   })
 
-  it('a policy-variant test is SKIP_POLICY_VARIANT', async () => {
+  it('an RNG-seed variant test PASSES on an engine pinned to its mode (partial-consume)', async () => {
     const xml = readCorpusFile('oasis/optional/CS-RNG-O-2-30.xml')
     const result = await runCorpusTest('CS-RNG-O-2-30.xml', xml, table, freshSlot())
-    expect(result.status).toBe('SKIP_POLICY_VARIANT')
+    expect(result.status, result.detail).toBe('PASS')
+  })
+
+  it('the deny-mode variant (CS-RNG-O-4) also passes — the engine refuses the seed as pinned', async () => {
+    const xml = readCorpusFile('oasis/optional/CS-RNG-O-4-30.xml')
+    const result = await runCorpusTest('CS-RNG-O-4-30.xml', xml, table, freshSlot())
+    expect(result.status, result.detail).toBe('PASS')
   })
 
   // Full-corpus sweep: 102 hermetic engine boots + 2 chained prerequisite
@@ -104,23 +110,20 @@ describe('OASIS corpus replay (real wasm engine)', () => {
       // The engine-0.13.x native baseline (conformance/REPLAY_REPORT.md,
       // 2026-07-09) is an exact 97 PASS / 5 SKIP_DEPRECATED / 0 everything
       // else on the 102-file OASIS corpus. This in-browser replay matches it
-      // except for 6 tests with a REAL wasm-vs-native seam gap, honestly
-      // labelled rather than approximated:
-      //  - 3 SKIP_TRANSPORT: MaximumResponseSize (§9.10) enforcement lives in
-      //    the native TLS listener; `KmipPlayground::submit` calls
-      //    `dispatch()` directly, so there is no seam to implement it on.
-      //  - 3 SKIP_POLICY_VARIANT: the RNGSeed variants are real in the engine
-      //    (ops/deps.rs RngSeedMode — the native harness passes them by
-      //    constructing per-test Deps) but the wasm binding hardcodes
-      //    DepsConfig::default(), exposing no way to select a mode.
-      // The former 2 SKIP_PRECONDITION tests (TL-M-3 / SASED-M-3) now PASS
-      // via chained prerequisite replay, mirroring the Python harness's
-      // _CHAINED_TEST_GROUPS. 0 FAIL / 0 ERROR is enforced strictly; that is
-      // the one thing that must never regress.
+      // except for the ONE remaining wasm-vs-native seam gap, honestly
+      // labelled rather than approximated: 3 SKIP_TRANSPORT —
+      // MaximumResponseSize (§9.10) enforcement lives in the native TLS
+      // listener; `KmipPlayground::submit` calls `dispatch()` directly, so
+      // there is no seam to implement it on.
+      // The former 2 SKIP_PRECONDITION tests (TL-M-3 / SASED-M-3) PASS via
+      // chained prerequisite replay (_CHAINED_TEST_GROUPS), and the former
+      // 3 SKIP_POLICY_VARIANT tests (CS-RNG-O-2/3/4) PASS by booting each
+      // on an engine pinned to its RngSeedMode via the wasm constructor.
+      // 0 FAIL / 0 ERROR is enforced strictly; that is the one thing that
+      // must never regress.
       expect(failures, failures.join('\n')).toEqual([])
-      expect(counts.PASS ?? 0).toBe(91)
+      expect(counts.PASS ?? 0).toBe(94)
       expect(counts.SKIP_DEPRECATED ?? 0).toBe(5)
-      expect(counts.SKIP_POLICY_VARIANT ?? 0).toBe(3)
       expect(counts.SKIP_TRANSPORT ?? 0).toBe(3)
       expect(counts.SKIP_OP ?? 0).toBe(0)
       expect(counts.FAIL ?? 0).toBe(0)

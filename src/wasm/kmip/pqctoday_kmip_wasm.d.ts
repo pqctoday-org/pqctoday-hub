@@ -64,8 +64,15 @@ export class KmipPlayground {
      * (its own doc comment) that brings a new slot online before
      * `C_InitToken` will accept it; skipping this for a non-zero slot
      * fails with `CKR_SLOT_ID_INVALID` (confirmed empirically).
+     * `rng_seed_mode` — the server's §6.1.55 RNG Seed policy choice
+     * (`RngSeedMode`): `"full-consume"` (default) / `"partial-consume"` /
+     * `"ignore"` / `"deny"`. Server-chosen and mutually exclusive per the
+     * spec, so it's a CONSTRUCTOR parameter, not per-request — exposed so
+     * the in-browser OASIS corpus replay can boot each CS-RNG-O variant
+     * test on an engine pinned to that test's mode, exactly as the native
+     * harness constructs per-test `Deps`.
      */
-    constructor(slot?: number | null);
+    constructor(slot?: number | null, rng_seed_mode?: string | null);
     /**
      * The currently-active policy (Plane 1): `{ active, name, fingerprint,
      * source, rules }`.
