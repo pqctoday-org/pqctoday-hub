@@ -30,7 +30,7 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.16.0] - 2026-07-09
 
-A cross-page accuracy and trust release touching Report, Business tools, Revisions, Changelog, FAQ, Playground, OpenSSL Studio, Terms, and About: shared report links now show the sender's real score, breach-cost defaults finally agree across three business tools, the revisions feed surfaces corrections that were previously invisible, the Playground and OpenSSL Studio get clearer status indicators and fewer dead ends, and several dead links and stale numbers are fixed across the site.
+A cross-page accuracy and trust release touching Report, Business tools, Revisions, Changelog, FAQ, Playground, OpenSSL Studio, Terms, About, and Migrate: shared report links now show the sender's real score, breach-cost defaults finally agree across three business tools, the revisions feed surfaces corrections that were previously invisible, the Playground and OpenSSL Studio get clearer status indicators and fewer dead ends, the Migrate workbench now shows which products are still awaiting verification proof, and several dead links and stale numbers are fixed across the site.
 
 ### Fixed
 
@@ -65,6 +65,11 @@ A cross-page accuracy and trust release touching Report, Business tools, Revisio
 - **Fixed an overstated "refreshed weekly" claim about compliance data on the About page** [view:/about]; it now shows the actual last-updated date.
 - **Fixed the About page's "last security audit" date, which no longer matched the actual audit report it was describing** [view:/about].
 - **The About page's changelog link now navigates within the app instead of triggering a full page reload** [view:/about].
+- **The Migrate workbench now labels NIST IR 8547 as a draft** [view:/migrate] everywhere it's cited, rather than implying it's a finished standard.
+- **Vendor roadmap entries in Migrate now show when they were last verified, plus a "new" or "updated" marker** [view:/migrate], so it's clear how current each vendor's stated plans are.
+- **Fixed a duplicate Migrate workbench address** [view:/migrate] that could show two different URLs for the same page; both now lead to the same place.
+- **Each migration wave in the Migrate planner now explains why it's sequenced where it is** [view:/migrate] [persona:architect], and the "harvest now, decrypt later" risk term is explained in plain language the first time it appears.
+- **Fixed a handful of product records in the migration catalog with inconsistent verification labels** [view:/migrate] so their status now displays correctly.
 
 ### Added
 
@@ -75,6 +80,8 @@ A cross-page accuracy and trust release touching Report, Business tools, Revisio
 - **The Business Center's learning module list now collapses by default for advanced users** [view:/business] [persona:developer], keeping its header visible so it's a one-click expand rather than taking up space unasked.
 - **The Playground's algorithm picker now shows a "Draft" badge with an explanatory tooltip for algorithms that aren't yet finalized standards** [view:/playground] [persona:developer], so it's clear at a glance which selections are backup candidates rather than production-ready standards.
 - **Executive-persona guidance banners added to three more Playground tools** [view:/playground] [persona:executive] (the interactive, HSM, and KMIP control-plane tools), pointing toward the business-focused Command Center and Compliance views instead of leaving executives on a developer-oriented tool.
+- **Products in the Migrate workbench now show a verification badge and last-verified date** [view:/migrate], and the page now tells you how many catalog entries are hidden because they're still awaiting verification proof, instead of leaving that count invisible.
+- **The Migrate workbench's asset guidance is now tailored for executive and developer views** [view:/migrate] [persona:executive] [persona:developer], highlighting the systems (cloud key management, TLS, code signing, databases) most relevant to each role instead of showing the same generic list to everyone.
 
 ## [4.15.0] - 2026-07-08
 
