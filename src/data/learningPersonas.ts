@@ -302,7 +302,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 1665,
+    estimatedMinutes: 1695,
     essentials: [
       'pqc-101',
       'dev-quantum-impact',
@@ -495,7 +495,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 1755,
+    estimatedMinutes: 1785,
     essentials: [
       'pqc-101',
       'arch-quantum-impact',
@@ -912,7 +912,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 1675,
+    estimatedMinutes: 1705,
     essentials: [
       'pqc-101',
       'ops-quantum-impact',

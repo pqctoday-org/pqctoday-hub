@@ -193,7 +193,16 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     will resolve to 0 on the next refresh-index run.
   migrate: 1,
   timeline: 0,
-  algorithms: 0,
+  //     2026-07-08: bumped 0 → 2 — NGCC-BC and NGCC-CH (China's NGCC program
+  //     block-cipher and hash track placeholders) exist as rows in
+  //     pqc_complete_algorithm_reference_07062026.csv but have no matching
+  //     pqc_replacement entry in algorithms_transitions_06252026.csv, so the
+  //     per-algorithm trust-score loop (trustScoreData.ts, sourced from
+  //     algorithmsData) never sees them. Same gap class as the historical
+  //     "variants missing from algorithms_transitions CSV" residual above.
+  //     Resolve by adding SM4→NGCC-BC / SM3→NGCC-CH transition rows once the
+  //     classical pairing is verified against a primary OSCCA/ICCS source.
+  algorithms: 2,
   //     2026-05-31: bumped 113 → 118 — 5 new catalog enrichments (Tectia SSH, IVPN, libcrux, Trail of Bits ml-dsa, InfoSec Global AgileSec)
   //     2026-06-19: bumped 118 → 119 — pre-existing drift (the committed corpus
   //     was already at 119; the pin lagged). One more sector-threat enrichment
@@ -239,9 +248,15 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
  *               surfaced pre-existing unenriched library docs unrelated to
  *               the migrate/vendor catalog changes in this pass. Enrich to
  *               drive down).
+ *   2026-07-08: 687 (bumped +1 after the crypto-registry + SBOM module
+ *               consolidation's refresh-index — 5 new library catalog rows
+ *               (CycloneDX Cryptography Registry, CycloneDX Spec Overview,
+ *               NTIA SBOM Minimum Elements, OASIS CSAF/VEX, SPDX spec)
+ *               landed without enrichment passages yet. Enrich to drive
+ *               down).
  * Only DECREASE — every reduction is enrichment improving.
  */
-const MAX_DOC_WITHOUT_PASSAGES = 686
+const MAX_DOC_WITHOUT_PASSAGES = 687
 
 /** Pinned count of CSV files referenced in prov.was_derived_from but missing on disk. */
 const MAX_MISSING_CSVS = 0

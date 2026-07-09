@@ -13,7 +13,7 @@ const manifest: ModuleManifest = {
   difficulty: 'intermediate',
   frameworkPhase: 'p2',
   track: 'Strategy',
-  trackOrder: 5,
+  trackOrder: 6,
   learnSections: [
     { id: 'cbom-why', label: 'Why a CBOM' },
     { id: 'cbom-formats', label: 'CycloneDX vs SPDX' },

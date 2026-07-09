@@ -3300,20 +3300,20 @@
           "frameworkPhase": "p1"
         },
         {
-          "id": "cbom",
-          "lm_id": "LM-060",
-          "title": "Cryptography Bill of Materials (CBOM)",
-          "description": "Choose a CBOM format, discover all your cryptography — including the crypto nobody tracks — give each key its identity and provenance, and make the inventory machine-verifiable.",
-          "duration": "60 min",
-          "difficulty": "intermediate",
-          "frameworkPhase": "p2"
-        },
-        {
           "id": "crypto-registry",
           "lm_id": "LM-062",
           "title": "CycloneDX Cryptography Registry",
           "description": "One canonical name per cryptographic mechanism — resolve the same algorithm or curve across HSM, certificate, protocol and library notations, and see exactly where PQC families fit.",
           "duration": "30 min",
+          "difficulty": "intermediate",
+          "frameworkPhase": "p2"
+        },
+        {
+          "id": "cbom",
+          "lm_id": "LM-060",
+          "title": "Cryptography Bill of Materials (CBOM)",
+          "description": "Choose a CBOM format, discover all your cryptography — including the crypto nobody tracks — give each key its identity and provenance, and make the inventory machine-verifiable.",
+          "duration": "60 min",
           "difficulty": "intermediate",
           "frameworkPhase": "p2"
         }
