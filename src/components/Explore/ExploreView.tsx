@@ -9,6 +9,9 @@ import {
   ClipboardCheck,
   Shield,
   LayoutDashboard,
+  ArrowRightLeft,
+  FlaskConical,
+  BookOpen,
   Unlock,
   Sparkles,
   type LucideIcon,
@@ -16,6 +19,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { logExploreTileClick, logExploreUnlock } from '@/utils/analytics'
+import { PERSONA_RECOMMENDED_PATHS } from '@/data/personaConfig'
 
 interface ExploreTile {
   icon: LucideIcon
@@ -25,8 +29,6 @@ interface ExploreTile {
   /** Alternate destination for gated-curious users (avoids sending them to blocked routes). */
   gatedPath?: string
   accent: string
-  /** Persona IDs for which this tile is highlighted as recommended. */
-  recommendedFor?: string[]
 }
 
 const TILES: ExploreTile[] = [
@@ -37,7 +39,6 @@ const TILES: ExploreTile[] = [
       "Start with the essentials. Why quantum computers threaten today's encryption and what's being done about it.",
     path: '/learn',
     accent: 'text-primary bg-primary/10',
-    recommendedFor: ['executive', 'developer', 'architect', 'researcher'],
   },
   {
     icon: Globe,
@@ -46,7 +47,6 @@ const TILES: ExploreTile[] = [
       'See which governments and organizations have already committed to post-quantum cryptography — and when.',
     path: '/timeline',
     accent: 'text-secondary bg-secondary/10',
-    recommendedFor: ['executive', 'architect'],
   },
   {
     icon: AlertTriangle,
@@ -55,7 +55,6 @@ const TILES: ExploreTile[] = [
       '"Harvest now, decrypt later" attacks are happening today. Learn what data is already at risk.',
     path: '/threats',
     accent: 'text-status-warning bg-status-warning/10',
-    recommendedFor: ['executive'],
   },
   {
     icon: ShieldCheck,
@@ -64,16 +63,22 @@ const TILES: ExploreTile[] = [
       'NIST, FIPS, NSA CNSA — see which regulations apply to your industry and how to stay ahead.',
     path: '/compliance',
     accent: 'text-accent bg-accent/10',
-    recommendedFor: ['executive', 'architect'],
   },
   {
     icon: ClipboardCheck,
     title: 'Assess Your Risk',
     description:
-      "A 2-minute questionnaire that estimates your organization's exposure to the quantum threat.",
+      "A short questionnaire that estimates your organization's exposure to the quantum threat.",
     path: '/assess',
     accent: 'text-primary bg-primary/10',
-    recommendedFor: ['executive', 'architect'],
+  },
+  {
+    icon: ArrowRightLeft,
+    title: 'Migration Workbench',
+    description:
+      'Track PQC readiness across your software and infrastructure stack — libraries, protocols, hardware, and more.',
+    path: '/migrate',
+    accent: 'text-secondary bg-secondary/10',
   },
   {
     icon: LayoutDashboard,
@@ -81,8 +86,8 @@ const TILES: ExploreTile[] = [
     description:
       'Executive planning tools — ROI calculators, board packs, vendor scorecards, and a sequenced migration roadmap.',
     path: '/business',
+    gatedPath: '/learn/pqc-business-case',
     accent: 'text-accent bg-accent/10',
-    recommendedFor: ['executive'],
   },
   {
     icon: Shield,
@@ -92,7 +97,22 @@ const TILES: ExploreTile[] = [
     path: '/algorithms',
     gatedPath: '/learn/pqc-101',
     accent: 'text-secondary bg-secondary/10',
-    recommendedFor: ['developer', 'researcher'],
+  },
+  {
+    icon: FlaskConical,
+    title: 'Try the Playground',
+    description:
+      'Generate post-quantum keys, encrypt, sign, and verify with ML-KEM, ML-DSA, and 40+ algorithms — right in your browser.',
+    path: '/playground',
+    accent: 'text-primary bg-primary/10',
+  },
+  {
+    icon: BookOpen,
+    title: 'Reference Library',
+    description:
+      'Standards, research papers, and migration guides — curated and searchable in one place.',
+    path: '/library',
+    accent: 'text-accent bg-accent/10',
   },
 ]
 
@@ -103,11 +123,15 @@ export function ExploreView() {
   const isGated = isCurious && viewAccess !== 'unlocked'
   const showUnlockPrompt = isGated
 
-  // A tile is "recommended" for the current (non-curious) persona when it lists them.
+  // A tile is "recommended" for the current (non-curious) persona when its path
+  // appears in that persona's PERSONA_RECOMMENDED_PATHS — the same config that
+  // drives "Recommended" badges elsewhere on the site, so this page can't drift
+  // from it the way a hand-maintained per-tile list did.
   const isTileRecommended = (tile: ExploreTile) =>
     selectedPersona != null &&
     selectedPersona !== 'curious' &&
-    !!tile.recommendedFor?.includes(selectedPersona)
+    // eslint-disable-next-line security/detect-object-injection
+    PERSONA_RECOMMENDED_PATHS[selectedPersona].includes(tile.path)
 
   // Surface each viewer's own recommended tiles first (stable sort preserves the
   // authored order within each group). For curious / no-persona users nothing is
