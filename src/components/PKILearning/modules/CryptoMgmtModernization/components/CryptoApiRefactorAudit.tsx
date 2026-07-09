@@ -363,11 +363,13 @@ export function auditCryptoApi(inputs: CryptoApiInputs): CryptoApiRecommendation
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// CSWP-39 §4.1 verbatim quote (sanitised to ASCII)
+// CSWP-39 Section 4 quote (sanitised to ASCII) — two verbatim sentences from
+// non-adjacent paragraphs, joined with an ellipsis rather than presented as
+// one contiguous quotation.
 // ─────────────────────────────────────────────────────────────────────────────
 
 const CSWP39_41_QUOTE =
-  'A cryptographic application programming interface (crypto API) separates the implementation of applications that use cryptographic algorithms from implementation of the cryptographic algorithms themselves. To achieve crypto agility, system designers must introduce mechanisms that simplify the replacement of cryptographic algorithms in software, libraries, hardware, firmware, and infrastructures.'
+  'A cryptographic application programming interface (crypto API) separates the implementation of applications that use cryptographic algorithms from implementation of the cryptographic algorithms themselves. [...] To achieve crypto agility, system designers must introduce mechanisms that simplify the replacement of cryptographic algorithms in software, libraries, hardware, firmware, and infrastructures.'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Wizard section definitions
