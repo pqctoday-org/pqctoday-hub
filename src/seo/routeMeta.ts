@@ -406,6 +406,13 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     canonical: `${BASE_URL}/changelog`,
   },
 
+  '/revisions': {
+    title: 'Content Revisions — PQC Today Data Trust Log',
+    description:
+      'Every correction to our compliance, vendor, and migration data, reviewed and logged: what changed, who reviewed it, and why — the audit trail behind the data you rely on.',
+    canonical: `${BASE_URL}/revisions`,
+  },
+
   // --- Learning modules ---
 
   '/learn': {
