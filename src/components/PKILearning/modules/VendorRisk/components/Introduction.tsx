@@ -135,9 +135,13 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
             A <InlineTooltip term="CBOM">CBOM</InlineTooltip> (Cryptographic Bill of Materials)
-            extends the SBOM concept to track every cryptographic algorithm, key, certificate, and
-            protocol used by a software product. Demanding CBOMs from vendors is the single most
-            impactful step toward supply chain quantum readiness.
+            extends the{' '}
+            <Link to="/learn/sbom" className="text-primary hover:underline">
+              SBOM
+            </Link>{' '}
+            concept to track every cryptographic algorithm, key, certificate, and protocol used by a
+            software product. Demanding CBOMs from vendors is the single most impactful step toward
+            supply chain quantum readiness.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
