@@ -246,10 +246,16 @@ export function LessonsHub({
                         'rounded px-1.5 py-0.5 text-[8.5px] font-bold uppercase tracking-wide',
                         l.plane === 'policy'
                           ? 'bg-primary/10 text-primary'
-                          : 'bg-status-warning/10 text-status-warning'
+                          : l.plane === 'kmip3'
+                            ? 'bg-status-info/10 text-status-info'
+                            : 'bg-status-warning/10 text-status-warning'
                       )}
                     >
-                      {l.plane === 'policy' ? 'Policy' : 'Workbench'}
+                      {l.plane === 'policy'
+                        ? 'Policy'
+                        : l.plane === 'kmip3'
+                          ? 'KMIP3.0'
+                          : 'Workbench'}
                     </span>
                   </span>
                   <span className="block text-[11px] text-muted-foreground">{l.blurb}</span>

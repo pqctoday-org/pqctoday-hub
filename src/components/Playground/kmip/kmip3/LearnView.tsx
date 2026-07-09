@@ -1,19 +1,26 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 // LearnView — the KMIP3.0 tab's "Learn" sub-tab (first position, the
-// on-ramp): six guided classical→PQC walkthroughs, each running real KMIP
-// 3.0 operations against the live WASM engine via `engine.runOp(spec)` (the
-// same call `KmipPlaygroundView.tsx`'s `run()` makes). The "Modernize" CTA
-// never mutates the classical key in place — it always runs a brand-new
-// CreateKeyPair and shows the result as a parallel comparison; in-place
-// algorithm conversion isn't how KMIP or real crypto works, and the whole
-// lesson would be wrong if it implied otherwise.
+// on-ramp): nine guided walkthroughs, each running real KMIP 3.0
+// operations against the live WASM engine — six classical→PQC comparisons
+// via `engine.runOp(spec)` (the same call `KmipPlaygroundView.tsx`'s
+// `run()` makes), plus three engine-0.12/0.13 lessons (split custody,
+// async jobs, honesty) whose steps outside `run_op`'s friendly union run
+// through the same raw-TTLV pipeline the Commands tab uses. The
+// "Modernize" CTA never mutates the classical key in place — it always
+// runs a brand-new CreateKeyPair and shows the result as a parallel
+// comparison; in-place algorithm conversion isn't how KMIP or real crypto
+// works, and the whole lesson would be wrong if it implied otherwise.
 import { useState } from 'react'
 import { CheckCircle2, ChevronDown, ChevronRight, Sparkles, Wand2, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import type { KmipEngine, OpResult } from '@/wasm/kmip/kmipEngine'
+import { getCodepointTable } from '@/wasm/kmip/ttlv/codepointTable'
+import { runOp as runRawOp } from '@/wasm/kmip/ttlv/runner'
+import { find } from '@/wasm/kmip/ttlv/nodes'
 import { WireTreeView } from '../WireTreeView'
+import { QuizCard } from './QuizCard'
 import { ALGO_FACTS, fmtBytes } from './algoFacts'
 import {
   LESSONS,
@@ -21,6 +28,7 @@ import {
   type CompareRow3,
   type Lesson,
   type LessonSide,
+  type LessonStep,
 } from './learnLessons'
 
 const str = (v: unknown): string => (typeof v === 'string' ? v : '')
@@ -46,8 +54,22 @@ const TONE_TEXT: Record<Lesson['tone'], string> = {
 function narrateStep(r: OpResult): string {
   const s = r.summary
   if (r.status === 'Skip') return r.message ?? 'Not runnable in this browser engine.'
+  if (r.status === 'OperationPending')
+    return `Accepted as a background job — correlation value ${str(s.cv) || '(see wire)'}. Nothing computed yet.`
   if (!r.ok) return r.message ? `Refused: ${r.message}` : 'Operation failed.'
   switch (r.operation) {
+    case 'CreateSplitKey': {
+      const n = str(s.uidsCsv) ? str(s.uidsCsv).split(',').length : 0
+      return `Split into ${n} share objects — none of them is the key.`
+    }
+    case 'JoinSplitKey':
+      return 'Original key reconstructed from the shares.'
+    case 'Poll':
+      return 'Job complete — the response is identical to what the synchronous op would have returned.'
+    case 'Hash':
+      return 'Digest returned in the same round trip.'
+    case 'QueryAsynchronousRequests':
+      return 'Outstanding-jobs list returned.'
     case 'CreateKeyPair':
       return `Private ${str(s.privateKeyUid).slice(0, 20)}…, public ${str(s.publicKeyUid).slice(0, 20)}….`
     case 'Create':
@@ -258,24 +280,34 @@ function LessonPanel({
     classicalRuns.length > 0 && classicalRuns.every((r) => r.status === 'success')
   const canModernize = lesson.classical.steps.length === 0 || classicalDone
 
-  const runSide = async (
-    side: LessonSide,
-    setRuns: (fn: (prev: StepRun[]) => StepRun[]) => void
-  ) => {
-    const results: (OpResult | null)[] = []
-    for (let i = 0; i < side.steps.length; i++) {
-      setRuns((prev) => prev.map((r, idx) => (idx === i ? { ...r, status: 'running' } : r)))
-      // Yield so the "running…" state paints before the (synchronous) wasm call.
-      await new Promise((r) => setTimeout(r, 0))
-      // eslint-disable-next-line security/detect-object-injection -- `i` is this loop's own bounded counter (0..side.steps.length), never user input.
-      const spec = side.steps[i].buildSpec(results)
-      let result: OpResult | null = null
+  /** Run one step through the friendly `run_op` path (`buildSpec`) or the
+   * generic raw-TTLV pipeline (`buildRaw` — same path the Commands tab
+   * uses, for the ops outside `run_op`'s union: split keys, async, Hash,
+   * attribute ops). Both come back as an [`OpResult`] so narration and the
+   * wire view work identically. */
+  const runStep = async (step: LessonStep, results: (OpResult | null)[]): Promise<OpResult> => {
+    if (step.buildRaw) {
+      const raw = step.buildRaw(results)
       try {
-        result = engine.runOp(spec)
+        const table = await getCodepointTable()
+        const rr = runRawOp(engine, table, raw.op, raw.payload, raw.headerExtras)
+        const pending = find(rr.namedResponseTree, 'ResultStatus')?.value === '0x00000002'
+        return {
+          ok: rr.ok,
+          operation: raw.op,
+          status: rr.ok ? 'Success' : pending ? 'OperationPending' : 'OperationFailed',
+          resultReason: null,
+          message: rr.resultMessage ?? null,
+          summary: raw.harvest?.(rr.namedResponseTree) ?? {},
+          responseWireHex: rr.responseWireHex,
+          responseWireLen: rr.responseWireHex.length / 2,
+          responseTree: rr.responseTree,
+          audit: [],
+        }
       } catch (err) {
-        result = {
+        return {
           ok: false,
-          operation: spec.op,
+          operation: raw.op,
           status: 'Error',
           resultReason: null,
           message: err instanceof Error ? err.message : String(err),
@@ -286,19 +318,61 @@ function LessonPanel({
           audit: [],
         }
       }
-      // Remember any client-supplied ivHex (Encrypt/Decrypt) alongside the
-      // engine's own summary fields — see learnLessons.ts's `freshIvHex`.
-      const stored: OpResult = spec.ivHex
-        ? { ...result, summary: { ...result.summary, ivHex: spec.ivHex } }
-        : result
+    }
+    const spec = step.buildSpec!(results)
+    let result: OpResult
+    try {
+      result = engine.runOp(spec)
+    } catch (err) {
+      result = {
+        ok: false,
+        operation: spec.op,
+        status: 'Error',
+        resultReason: null,
+        message: err instanceof Error ? err.message : String(err),
+        summary: {},
+        responseWireHex: '',
+        responseWireLen: 0,
+        responseTree: { tag: '', type: 'Structure' },
+        audit: [],
+      }
+    }
+    // Remember any client-supplied ivHex (Encrypt/Decrypt) alongside the
+    // engine's own summary fields — see learnLessons.ts's `freshIvHex`.
+    return spec.ivHex ? { ...result, summary: { ...result.summary, ivHex: spec.ivHex } } : result
+  }
+
+  const runSide = async (
+    side: LessonSide,
+    setRuns: (fn: (prev: StepRun[]) => StepRun[]) => void
+  ) => {
+    const results: (OpResult | null)[] = []
+    for (let i = 0; i < side.steps.length; i++) {
+      setRuns((prev) => prev.map((r, idx) => (idx === i ? { ...r, status: 'running' } : r)))
+      // Yield so the "running…" state paints before the (synchronous) wasm call.
+      await new Promise((r) => setTimeout(r, 0))
+      // eslint-disable-next-line security/detect-object-injection -- `i` is this loop's own bounded counter (0..side.steps.length), never user input.
+      const step = side.steps[i]
+      const stored = await runStep(step, results)
       results.push(stored)
+      // What outcome is this step SUPPOSED to have? A 'refusal' step (the
+      // below-threshold join, reading a destroyed key) succeeds AS A LESSON
+      // exactly when the engine honestly refuses; 'pending' when the async
+      // accept comes back OperationPending.
+      const want = step.expect ?? 'success'
+      const achieved =
+        want === 'success'
+          ? stored.ok
+          : want === 'pending'
+            ? stored.status === 'OperationPending'
+            : !stored.ok && stored.status !== 'Error'
       setRuns((prev) =>
         prev.map((r, idx) =>
-          idx === i ? { ...r, status: stored.ok ? 'success' : 'error', result: stored } : r
+          idx === i ? { ...r, status: achieved ? 'success' : 'error', result: stored } : r
         )
       )
       onChanged()
-      if (!stored.ok) break
+      if (!achieved) break
     }
     return results
   }
@@ -333,7 +407,7 @@ function LessonPanel({
       {/* Classical card */}
       <section className="rounded-xl border border-border bg-card p-4">
         <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
-          Classical
+          {lesson.sideHeaders?.[0] ?? 'Classical'}
         </p>
         <h4 className="mt-0.5 font-mono text-[14px] font-semibold text-foreground">
           {lesson.classical.algoLabel}
@@ -397,7 +471,7 @@ function LessonPanel({
       {(modernizeStarted || lesson.modernize.steps.length === 0) && (
         <section className="rounded-xl border border-border bg-card p-4">
           <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
-            Post-quantum
+            {lesson.sideHeaders?.[1] ?? 'Post-quantum'}
           </p>
           <h4 className="mt-0.5 font-mono text-[14px] font-semibold text-foreground">
             {lesson.modernize.algoLabel}
@@ -453,6 +527,9 @@ function LessonPanel({
         </p>
         <p className="mt-1 text-[12.5px] leading-relaxed text-foreground">{lesson.whyItMatters}</p>
       </div>
+
+      {/* Knowledge check (only for lessons with a question bank) */}
+      <QuizCard key={lesson.id} lessonId={lesson.id} />
 
       {/* Try it in Reference */}
       <div className="flex flex-wrap items-center gap-1.5">

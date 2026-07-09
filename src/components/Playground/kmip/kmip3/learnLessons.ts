@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-// learnLessons.ts — the 6 guided lessons driving the Learn tab. Content
+// learnLessons.ts — the 9 guided lessons driving the Learn tab. Content
 // ported from the design handoff's cacp3-lessons-data.js (prose/structure
 // verbatim), re-pointed at real `OpSpec` fields per the handoff's verified
 // engine-wiring mapping: `RSA-3072`→`{algorithm:'RSA',length:3072}`,
@@ -14,7 +14,16 @@
 // engine infers usage mask from the algorithm's kind (signature/kem/
 // symmetric) — `kmipMeta.ts`'s catalog confirms this, so no explicit usage
 // mask field exists on `OpSpec` and none is threaded here.
-import type { OpResult, OpSpec } from '@/wasm/kmip/kmipEngine'
+import type { OpResult, OpSpec, TtlvNode } from '@/wasm/kmip/kmipEngine'
+import type { KmipNode } from '@/wasm/kmip/ttlv/nodes'
+import { findAll, find, leaf } from '@/wasm/kmip/ttlv/nodes'
+import {
+  createSplitKey,
+  joinSplitKey,
+  hash,
+  poll,
+  setAttribute,
+} from '@/wasm/kmip/ttlv/opTemplates'
 import { arrayBufferToHex, getRandomBytes } from '@/utils/webCrypto'
 
 const str = (v: unknown): string => (typeof v === 'string' ? v : '')
@@ -28,11 +37,46 @@ const field = (results: (OpResult | null)[], step: number, key: string): string 
 
 export type LessonTone = 'ok' | 'primary' | 'spec' | 'warn' | 'info'
 
-export interface LessonStep {
-  op: OpSpec['op']
-  label: string
-  buildSpec: (results: (OpResult | null)[]) => OpSpec
+/** A raw-TTLV step — for the ops the wasm's friendly `run_op` union doesn't
+ * carry (split keys, the async quartet, Hash, attribute ops). Runs through
+ * the same generic pipeline the Commands tab uses (`ttlv/runner.ts`), so
+ * the wire shown is exactly what a Commands-tab run would show. */
+export interface RawStepSpec {
+  op: string
+  payload: KmipNode[]
+  /** Extra RequestHeader fields (§8.1.2 Asynchronous Indicator). */
+  headerExtras?: KmipNode[]
+  /** Pull fields off the name-annotated response tree into this step's
+   * `summary`, so later steps can chain on them via `field()`. */
+  harvest?: (named: TtlvNode) => Record<string, unknown>
 }
+
+export interface LessonStep {
+  op: string
+  label: string
+  /** Friendly path — exactly one of `buildSpec`/`buildRaw` per step. */
+  buildSpec?: (results: (OpResult | null)[]) => OpSpec
+  buildRaw?: (results: (OpResult | null)[]) => RawStepSpec
+  /** The outcome this step is SUPPOSED to have. 'refusal': the honest
+   * rejection IS the lesson (below-threshold join, reading a destroyed
+   * key); 'pending': §8.1.2 async accept — OperationPending + a correlation
+   * value, not a payload. Default: 'success'. */
+  expect?: 'success' | 'refusal' | 'pending'
+}
+
+/** Collect every UniqueIdentifier in a response tree (e.g. CreateSplitKey's
+ * share UIDs), joined to one CSV string so `field()` can read it back. */
+const harvestUids = (named: TtlvNode): Record<string, unknown> => ({
+  uidsCsv: findAll(named, 'UniqueIdentifier')
+    .map((n) => n.value)
+    .filter((v): v is string => typeof v === 'string')
+    .join(','),
+})
+
+/** Harvest the §9.1 Asynchronous Correlation Value off an async accept. */
+const harvestCorrelation = (named: TtlvNode): Record<string, unknown> => ({
+  cv: str(find(named, 'AsynchronousCorrelationValue')?.value),
+})
 
 export interface LessonSide {
   /** `null` when this side has no runnable algorithm (Lesson 4's classical
@@ -71,6 +115,10 @@ export interface Lesson {
   title: string
   blurb: string
   setup: string
+  /** Card headers for the two sides — defaults to
+   * ['Classical', 'Post-quantum']; the 0.12/0.13 lessons reframe them
+   * ('One custodian' / 'Split custody', 'Synchronous' / 'Asynchronous'). */
+  sideHeaders?: [string, string]
   classical: LessonSide
   modernize: LessonSide
   compare?: CompareRow[]
@@ -601,6 +649,256 @@ export const LESSONS: Lesson[] = [
     whyItMatters:
       'The Agility tab\'s "Hybrid window (2026–2029)" policy can mandate exactly this composite for new keys — flip to it, then run this Encapsulate again and watch the policy verdict change instead of the wire shape.',
     tryRef: ['CreateKeyPair', 'Encapsulate', 'Decapsulate'],
+  },
+
+  // ── Lessons 7–9: the engine-0.12/0.13 "honest maximum" additions ──────────
+  {
+    id: 'splitkey',
+    n: 7,
+    tag: 'New in 0.12',
+    tone: 'info',
+    title: 'Split custody: M-of-N key shares',
+    blurb: 'Split a key into 5 shares where any 3 recover it — and 2 honestly cannot.',
+    setup:
+      "A root key guarded by one custodian is one phished laptop away from disaster. KMIP 3.0's Create Split Key / Join Split Key (§6.1.12/§6.1.31) split a key into N share objects where any M — the threshold — reconstruct it, and fewer than M genuinely cannot. All four §11.54 secret-sharing methods run for real in this engine; this lesson uses polynomial (Shamir) sharing over GF(2⁸). Fun fact: implementing the GF(2¹⁶) variant surfaced a transcription error in the KMIP 3.0 draft's own multiplication formula — re-derived from first principles and cross-checked against the spec's inverse formula before the implementation shipped.",
+    sideHeaders: ['One custodian', 'Split custody'],
+    classical: {
+      algorithm: 'AES-256',
+      algoLabel: 'AES-256 · one key, one holder',
+      steps: [
+        {
+          op: 'Create',
+          label: 'Create the AES-256 key to protect',
+          buildSpec: () => ({ op: 'Create', algorithm: 'AES', length: 256 }),
+        },
+        {
+          op: 'Activate',
+          label: 'Activate it',
+          buildSpec: (r) => ({ op: 'Activate', uid: field(r, 0, 'uid') }),
+        },
+      ],
+      prose:
+        'This key now exists in exactly one place. Whoever controls its UID — or compromises the account that does — controls the key. The lifecycle has no notion of "requires two people to agree."',
+    },
+    modernize: {
+      algorithm: null,
+      algoLabel: 'Split Key · Shamir 3-of-5, GF(2⁸)',
+      cta: 'Split it 3-of-5, then prove recovery',
+      steps: [
+        {
+          op: 'Create',
+          label: 'Create a fresh AES-256 key to split',
+          buildSpec: () => ({ op: 'Create', algorithm: 'AES', length: 256 }),
+        },
+        {
+          op: 'Activate',
+          label: 'Activate it',
+          buildSpec: (r) => ({ op: 'Activate', uid: field(r, 0, 'uid') }),
+        },
+        {
+          op: 'CreateSplitKey',
+          label: 'Split into 5 shares, threshold 3 (polynomial sharing)',
+          buildRaw: (r) => ({
+            op: 'CreateSplitKey',
+            payload: createSplitKey(field(r, 0, 'uid'), 5, 3),
+            harvest: harvestUids,
+          }),
+        },
+        {
+          op: 'JoinSplitKey',
+          label: 'Join with 3 shares — the original key is reconstructed',
+          buildRaw: (r) => ({
+            op: 'JoinSplitKey',
+            payload: joinSplitKey(field(r, 2, 'uidsCsv').split(',').slice(0, 3)),
+          }),
+        },
+        {
+          op: 'JoinSplitKey',
+          label: 'Try with only 2 shares — honestly refused',
+          expect: 'refusal',
+          buildRaw: (r) => ({
+            op: 'JoinSplitKey',
+            payload: joinSplitKey(field(r, 2, 'uidsCsv').split(',').slice(0, 2)),
+          }),
+        },
+      ],
+    },
+    compare: [
+      { label: 'Objects holding the secret', a: '1', b: '5 shares (none is the key)', same: false },
+      { label: 'Compromises needed to steal it', a: '1', b: '3 (the threshold)', same: false },
+      { label: 'Losses survivable', a: '0', b: '2 of 5 shares', same: false },
+      { label: 'Below-threshold join', a: 'n/a', b: 'refused, shortfall named', same: false },
+    ],
+    notes: [
+      "The XOR method (§13.1) requires N == M — every share is needed, nothing is lost-share-tolerant. True M-of-N needs one of the three polynomial (Shamir) methods. The Commands tab's CreateSplitKey form lets you try all four.",
+      'The split runs behind an opaque PKCS#11 vendor mechanism — the KMIP server never sees a raw secret byte, split or whole. Shares are ordinary managed objects: they can be Activated, Located, Destroyed, and policy-gated like any key.',
+    ],
+    whyItMatters:
+      'Root-of-trust ceremonies, key escrow, disaster recovery across data centers — every one of them is "no single person can reconstruct this key." That guarantee is exactly a threshold scheme, and now it is an ordinary pair of KMIP operations your policy engine governs like everything else.',
+    tryRef: ['CreateSplitKey', 'JoinSplitKey'],
+  },
+  {
+    id: 'async',
+    n: 8,
+    tag: 'New in 0.12',
+    tone: 'primary',
+    title: 'Ask now, answer later: asynchronous jobs',
+    blurb: 'Enqueue an op as a real background job, then Poll its correlation value.',
+    setup:
+      "Some HSM operations are slow — a Classic McEliece keygen takes real time even on good hardware. KMIP 3.0 §8.1.2 lets a client mark a request 'Asynchronous Indicator = Mandatory': instead of blocking, the server answers OperationPending plus a correlation value — a claim ticket for a genuine background job. Poll (§6.1.43) redeems the ticket; Cancel (§6.1.5) races the executor to stop it; Process (§6.1.44) blocks until it finishes; Query Asynchronous Requests (§6.1.46) lists what's in flight. All four are real in this engine as of 0.12.0 — this lesson runs the whole loop on a Hash, the one op that needs no key setup.",
+    sideHeaders: ['Synchronous', 'Asynchronous'],
+    classical: {
+      algorithm: null,
+      algoLabel: 'Hash · answered in the same round trip',
+      steps: [
+        {
+          op: 'Hash',
+          label: 'Hash "hello" — the digest comes back immediately',
+          buildRaw: () => ({ op: 'Hash', payload: hash('68656c6c6f') }),
+        },
+      ],
+      prose:
+        'The ordinary shape: one request, one response, the SHA-256 digest in the payload. The client thread waits however long the op takes.',
+    },
+    modernize: {
+      algorithm: null,
+      algoLabel: 'Hash · queued as a background job',
+      cta: 'Run the same Hash asynchronously',
+      steps: [
+        {
+          op: 'Hash',
+          label: 'Same Hash, with Asynchronous Indicator = Mandatory in the header',
+          expect: 'pending',
+          buildRaw: () => ({
+            op: 'Hash',
+            payload: hash('68656c6c6f'),
+            headerExtras: [leaf('AsynchronousIndicator', 'Enumeration', 'Mandatory')],
+            harvest: harvestCorrelation,
+          }),
+        },
+        {
+          op: 'Poll',
+          label: 'Poll the correlation value — the digest arrives',
+          buildRaw: (r) => ({ op: 'Poll', payload: poll(field(r, 0, 'cv')) }),
+        },
+        {
+          op: 'QueryAsynchronousRequests',
+          label: 'List outstanding jobs — empty again once polled',
+          buildRaw: () => ({ op: 'QueryAsynchronousRequests', payload: [] }),
+        },
+      ],
+    },
+    compare: [
+      {
+        label: 'First response carries',
+        a: 'the digest',
+        b: 'OperationPending + a ticket',
+        same: false,
+      },
+      {
+        label: 'Digest delivered by',
+        a: 'the same round trip',
+        b: 'Poll, once the job completes',
+        same: false,
+      },
+      {
+        label: 'Poll response shape',
+        a: 'n/a',
+        b: 'identical to the synchronous response (§6.1.43)',
+        same: false,
+      },
+      { label: 'Digest value', a: 'SHA-256("hello")', b: 'the same bytes', same: true },
+    ],
+    notes: [
+      'Almost every operation is eligible — the spec says any MAY be processed asynchronously. The exceptions are the async-management ops themselves and the trivial negotiation ops (Query / DiscoverVersions / Ping).',
+      "Cancel is honest about its race: a job that already started executing may finish anyway — the response tells you which way it went, never pretends. Try it from the Commands tab's Asynchronous Processing category.",
+    ],
+    whyItMatters:
+      'Slow PQC keygens (stateful hash-based trees, code-based KEMs) make async handling more relevant, not less, in a post-quantum world. A client that understands correlation values keeps its threads free while the HSM grinds — and your audit trail still sees every step.',
+    tryRef: ['Hash', 'Poll', 'Cancel', 'Process', 'QueryAsynchronousRequests'],
+  },
+  {
+    id: 'honesty',
+    n: 9,
+    tag: 'New in 0.13',
+    tone: 'warn',
+    title: 'An honest HSM: claims you can check',
+    blurb: 'Destroy really scrubs, read-only refuses, Locate really filters.',
+    setup:
+      'A Success status is only worth what the server actually did. A 2026 audit of this engine hunted precisely that gap and found 13 places where the wire said Success while nothing (or the wrong thing) happened — attributes silently dropped, Destroy that only flipped a flag while plaintext sat in the database, Locate filters accepted and ignored. Engine 0.13.0 fixed all of them, and 0.12.0\'s "honest maximum" pass emptied Query\'s advertised-but-not-implemented list. This lesson runs three of those honesty guarantees live.',
+    sideHeaders: ['The claim', 'The proof'],
+    classical: {
+      algorithm: null,
+      algoLabel: 'What the wire used to hide',
+      steps: [],
+      prose:
+        'Before the audit: SetAttribute on a read-only attribute answered Success and persisted nothing. Destroy answered Success and left the key bytes in storage. Locate with a filter answered Success — with every object, unfiltered. Each response was well-formed, spec-shaped, and wrong. Nothing on the wire distinguished them from the real thing; only reading the engine (or trying to use what it claimed) did.',
+    },
+    modernize: {
+      algorithm: null,
+      algoLabel: 'The same claims, now checkable',
+      cta: 'Run the honesty checks',
+      steps: [
+        {
+          op: 'Create',
+          label: 'Create an AES-256 key',
+          buildSpec: () => ({ op: 'Create', algorithm: 'AES', length: 256 }),
+        },
+        {
+          op: 'SetAttribute',
+          label: 'Set a read-only attribute — honestly refused, not silently dropped',
+          expect: 'refusal',
+          buildRaw: (r) => ({
+            op: 'SetAttribute',
+            payload: setAttribute(field(r, 0, 'uid'), 'ProtectionStorageMask', 'Software'),
+          }),
+        },
+        {
+          op: 'Destroy',
+          label: 'Destroy the key — material zeroized, storage securely deleted',
+          buildSpec: (r) => ({ op: 'Destroy', uid: field(r, 0, 'uid') }),
+        },
+        {
+          op: 'Get',
+          label: 'Try to Get it back — the material is genuinely gone',
+          expect: 'refusal',
+          buildSpec: (r) => ({ op: 'Get', uid: field(r, 0, 'uid') }),
+        },
+      ],
+    },
+    compare: [
+      {
+        label: 'Read-only SetAttribute',
+        a: 'Success (nothing saved)',
+        b: 'refused, reason named',
+        same: false,
+      },
+      {
+        label: 'Destroy',
+        a: 'flag flipped, bytes kept',
+        b: 'zeroized + secure_delete',
+        same: false,
+      },
+      {
+        label: 'Query advertises',
+        a: 'a superset with stubs',
+        b: 'only what genuinely runs (62 ops)',
+        same: false,
+      },
+      {
+        label: 'Locate with filters',
+        a: 'everything, unfiltered',
+        b: 'only real matches',
+        same: false,
+      },
+    ],
+    notes: [
+      "The Corpus Replay tab is the systematic version of this lesson: 97 of the 102 OASIS conformance tests pass against the engine's native baseline, and the in-browser replay pins its own exact breakdown — a new silent skip fails the suite rather than shrinking the pass count.",
+      "The same audit fixed usage-budget honesty: once Get Usage Allocation grants part of a key's operation budget, re-setting the UsageLimits attribute is refused (§4.69) — a budget you can silently reset is not a budget.",
+    ],
+    whyItMatters:
+      'Compliance evidence is only as good as the server\'s honesty — "the key material SHALL be destroyed" is an auditable claim, not a status code. An engine that refuses what it cannot do, and does what it says, is the difference between a conformance REPORT and conformance.',
+    tryRef: ['SetAttribute', 'Destroy', 'Locate', 'GetUsageAllocation'],
   },
 ]
 
