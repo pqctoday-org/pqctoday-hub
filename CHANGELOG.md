@@ -26,6 +26,20 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+### Added
+
+- **A "recently added" view for Patents, and click-to-drill on the filing-year chart** [view:/patents] [persona:technical]: newly published or updated patents are now marked so you don't have to compare snapshots yourself to spot what's new, and clicking a bar in the filing-year chart now filters straight to that year.
+- **A CycloneDX Cryptography Registry learning module** [view:/library] [persona:technical]: covers CycloneDX's standardized naming registry for cryptographic algorithms and curves, with hands-on algorithm-normalizer and curve-lookup workshops.
+- **A Software Bill of Materials (SBOM) learning module** [view:/library] [persona:technical]: covers SBOM formats and generation tooling and how an SBOM feeds into a CBOM — closing a gap where SBOM was referenced by several other modules but had no dedicated module of its own.
+
+### Fixed
+
+- **The Algorithms page now defaults to showing only FIPS-validated algorithms** [view:/algorithms]: it previously defaulted to also showing unvalidated/candidate entries, several with stale round-status left over from before NIST's May 2026 update (NIST IR 8610) moved or eliminated them. Also removed two fabricated placeholder algorithm entries and replaced 14 citations that pointed to unrelated papers with verified sources.
+
+### Data
+
+- Added CycloneDX, NTIA, OASIS CSAF/VEX, and SPDX reference entries to the library catalog backing the new SBOM and Crypto Registry modules.
+
 ## [4.14.0] - 2026-07-07
 
 A Migrate data accuracy release: a broad, evidence-based cleanup of the product and vendor catalog closes hundreds of unproven or vague claims, fixes mistagged vendors and duplicate listings, and restores a site-wide data-quality check that had been silently broken for months.
