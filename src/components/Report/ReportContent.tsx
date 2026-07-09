@@ -8,7 +8,6 @@ import {
   RotateCcw,
   Download,
   Pencil,
-  ShieldAlert,
   Briefcase,
   BookOpen,
   Info,
@@ -33,7 +32,7 @@ import { PERSONAS } from '../../data/learningPersonas'
 import type { PersonaId } from '../../data/learningPersonas'
 import { TopThreeActions } from '../common/TopThreeActions'
 import { softwareData } from '../../data/migrateData'
-import { ReportThreatsAppendix, ASSESS_TO_THREATS_INDUSTRY } from './ReportThreatsAppendix'
+import { ASSESS_TO_THREATS_INDUSTRY } from './ReportThreatsAppendix'
 import { ReportCswp39Nav } from './ReportCswp39Nav'
 import { ReportLockedOverlay } from './redesign/ReportLockedOverlay'
 import { KpiEmptyState, KpiPreviewSkeleton } from './redesign/ReportKpiStates'
@@ -65,7 +64,6 @@ import toast from 'react-hot-toast'
 import type { AssessmentResult } from '../../hooks/assessmentTypes'
 import { SIGNING_ALGORITHMS } from '../../hooks/assessmentData'
 import { encodeShareToken } from '@/utils/reportShareToken'
-import { FilteredChip } from './FilteredChip'
 import { NiceGapReportSection } from './NiceGapReportSection'
 import { QRASection } from './sections/QRASection'
 import {
@@ -89,6 +87,7 @@ import {
 import { AlgorithmMigrationSection } from './sections/AlgorithmMigrationSection'
 import { ComplianceImpactSection } from './sections/ComplianceImpactSection'
 import { RecommendedActionsSection } from './sections/RecommendedActionsSection'
+import { ThreatLandscapeSection } from './sections/ThreatLandscapeSection'
 
 declare const __APP_VERSION__: string
 const APP_VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0'
@@ -806,40 +805,15 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                     {/* Industry Threat Landscape */}
                     {phaseVisible('threatLandscape') &&
                       cfg('threatLandscape').state !== 'hidden' && (
-                        <div
-                          id="report-section-threatLandscape"
-                          className="print:break-before-page print:break-inside-auto"
-                        >
-                          <CollapsibleSection
-                            title={
-                              industry
-                                ? `${industry} Threat Landscape`
-                                : 'Industry Threat Landscape'
-                            }
-                            icon={<ShieldAlert className="text-destructive" size={20} />}
-                            defaultOpen={cfg('threatLandscape').state === 'open'}
-                            infoTip="threatLandscape"
-                            headerExtra={
-                              hiddenForIndustryCount > 0 ? (
-                                <FilteredChip
-                                  context={industry ?? 'industry'}
-                                  hiddenCount={hiddenForIndustryCount}
-                                  onRestore={(e) => {
-                                    e.stopPropagation()
-                                    restoreAllThreats()
-                                  }}
-                                />
-                              ) : undefined
-                            }
-                          >
-                            <ReportThreatsAppendix
-                              industry={industry}
-                              userAlgorithms={currentCrypto}
-                              hiddenThreatIds={hiddenThreats}
-                              onHideThreat={hideThreat}
-                            />
-                          </CollapsibleSection>
-                        </div>
+                        <ThreatLandscapeSection
+                          industry={industry}
+                          currentCrypto={currentCrypto}
+                          hiddenThreats={hiddenThreats}
+                          hideThreat={hideThreat}
+                          restoreAllThreats={restoreAllThreats}
+                          hiddenForIndustryCount={hiddenForIndustryCount}
+                          defaultOpen={cfg('threatLandscape').state === 'open'}
+                        />
                       )}
 
                     {/* NICE Framework Workforce Gap Report. Skipped on a shared/example
