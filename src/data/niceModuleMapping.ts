@@ -232,6 +232,13 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     nfExtra: ['NF-COM-004', 'NF-COM-011'],
   },
   {
+    moduleId: 'crypto-registry',
+    competencyAreas: ['CA-CRYPTO'],
+    tier: 'practitioner',
+    workRoles: ['security-architect', 'security-developer', 'systems-security-analyst'],
+    isCommonGround: false,
+  },
+  {
     moduleId: 'verification-closure',
     competencyAreas: ['CA-RISK', 'CA-GOVCOMP'],
     tier: 'practitioner',

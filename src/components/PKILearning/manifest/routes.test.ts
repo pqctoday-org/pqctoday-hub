@@ -32,6 +32,7 @@ const GOLDEN_ROUTE_PATHS = [
   'crypto-agility',
   'crypto-dev-apis',
   'crypto-mgmt-modernization',
+  'crypto-registry',
   'data-asset-sensitivity',
   'database-encryption-pqc',
   'dev-quantum-impact',

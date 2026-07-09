@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { FC } from 'react'
+import { Link } from 'react-router-dom'
 import {
   BookOpen,
   FileText,
@@ -273,6 +274,13 @@ export const CbomIntroduction: FC<Props> = ({ onNavigateToWorkshop }) => (
         Registry) while <strong>never over-collapsing</strong> security-relevant parameters (mode,
         padding, curve, hash). The PKIC CBOM-Profiles WG is the neutral venue maintaining this as
         registries keep moving.
+      </p>
+      <p className="text-xs text-muted-foreground">
+        For the full family/curve reference and a hands-on normalizer, see the dedicated{' '}
+        <Link to="/learn/crypto-registry" className="text-primary hover:underline">
+          CycloneDX Cryptography Registry
+        </Link>{' '}
+        module.
       </p>
     </Section>
 

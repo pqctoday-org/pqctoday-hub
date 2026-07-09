@@ -34,6 +34,7 @@ export const LEARN_PHASES: Record<string, PhaseResource> = {
   'hybrid-crypto': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
   'crypto-agility': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
   cbom: { phasesServed: ['p1', 'p2'], legs: ['learn', 'practice', 'reference'] },
+  'crypto-registry': { phasesServed: ['p2'], legs: ['learn', 'practice', 'reference'] },
   'verification-closure': {
     phasesServed: ['verify-close'],
     legs: ['learn', 'practice', 'reference'],
