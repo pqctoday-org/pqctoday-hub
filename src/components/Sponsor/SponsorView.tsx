@@ -18,8 +18,9 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { EXAMPLE_REPORT_URL } from '@/data/exampleReport'
 
-const SPONSORSHIP_EMAIL = 'pqctoday@gmail.com'
+const SPONSORSHIP_EMAIL = 'sponsor@pqctoday.com'
 const GITHUB_SPONSORS_URL = 'https://github.com/sponsors/pqctoday-org'
 
 type BillingMode = 'monthly' | 'one-time'
@@ -59,7 +60,7 @@ const TIERS: Tier[] = [
       'one-time': { amount: '$100', suffix: 'one-time' },
     },
     description:
-      'Help fund standards summaries, vendor mapping, and the monthly compliance digest.',
+      'Help fund standards summaries, vendor-mapping refreshes, and the planned compliance digest.',
     benefits: [
       'Everything in Supporter',
       'Logo (or name) linked on the Sponsors page',
@@ -102,7 +103,7 @@ const PERSONAS: SponsorPersona[] = [
       'Sponsor badge next to your existing listing',
       'Co-marketing slots and joint webinars',
       'Named recognition where buyers are evaluating',
-      'Engagement reports on listing traffic',
+      'Engagement reports on listing traffic — planned, not yet built',
     ],
   },
   {
@@ -111,11 +112,11 @@ const PERSONAS: SponsorPersona[] = [
     description: 'You sponsor for audit-ready evidence and compliance support.',
     bullets: [
       'Audit-ready PDF of migration-readiness assessments',
-      'Named in the quarterly compliance digest',
+      'Named in the compliance digest — planned, not yet built',
       'Vendor-mapping data refreshed monthly',
       'Priority support and onboarding calls',
     ],
-    cta: { label: 'See a sample migration-readiness report', to: '/report' },
+    cta: { label: 'See a sample migration-readiness report', to: EXAMPLE_REPORT_URL },
   },
   {
     icon: UserRoundCog,
@@ -133,13 +134,19 @@ const PERSONAS: SponsorPersona[] = [
 interface FundedItem {
   icon: LucideIcon
   label: string
+  /** Link to a real, existing page a skeptical visitor can check today. Only
+   *  set for items with something verifiable behind them — the two items
+   *  that are purely aspirational (not yet built at any funding level) are
+   *  left unlinked rather than pointed at a page that doesn't actually
+   *  substantiate the claim. */
+  to?: string
 }
 
 const FUNDED: FundedItem[] = [
-  { icon: BookOpenCheck, label: 'Full-time PQC standards analyst' },
-  { icon: Globe, label: 'Monthly compliance digest' },
-  { icon: ShieldCheck, label: 'Quarterly vendor-mapping refresh' },
-  { icon: Lock, label: 'Protected editorial independence' },
+  { icon: BookOpenCheck, label: 'Full-time PQC standards analyst — once fully funded' },
+  { icon: Globe, label: 'Monthly compliance digest — planned' },
+  { icon: ShieldCheck, label: 'Monthly vendor-mapping refresh', to: '/revisions' },
+  { icon: Lock, label: 'Protected editorial independence', to: '/editorial-independence' },
 ]
 
 function Hero() {
@@ -403,12 +410,30 @@ function Goal() {
         Sponsors revenue, additive to any custom direct sponsorship agreements. Reaching it funds:
       </p>
       <div className="grid sm:grid-cols-2 gap-3">
-        {FUNDED.map(({ icon: Icon, label }) => (
-          <div key={label} className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
-            <Icon className="text-primary shrink-0" size={18} />
-            <span className="text-sm text-foreground">{label}</span>
-          </div>
-        ))}
+        {FUNDED.map(({ icon: Icon, label, to }) => {
+          const content = (
+            <>
+              <Icon className="text-primary shrink-0" size={18} />
+              <span className="text-sm text-foreground">{label}</span>
+              {to && (
+                <span className="text-xs text-primary ml-auto whitespace-nowrap">Verify →</span>
+              )}
+            </>
+          )
+          return to ? (
+            <Link
+              key={label}
+              to={to}
+              className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
+            >
+              {content}
+            </Link>
+          ) : (
+            <div key={label} className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
+              {content}
+            </div>
+          )
+        })}
       </div>
     </section>
   )
