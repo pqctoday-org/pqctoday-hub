@@ -97,8 +97,12 @@ import {
   effortConfig,
   complexityConfig,
   scopeConfig,
-  ReportHNDLHNFLSection,
 } from './sections/reportContentShared'
+import {
+  HndlHnflWindowsSection,
+  HndlNotQuantifiedWarning,
+  HnflNotQuantifiedWarning,
+} from './sections/HndlHnflSection'
 
 declare const __APP_VERSION__: string
 const APP_VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0'
@@ -723,58 +727,22 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                     {phaseVisible('hndlHnfl') &&
                       (result.hndlRiskWindow || result.tnflRiskWindow) &&
                       cfg('hndlHnfl').state !== 'hidden' && (
-                        <div id="report-section-hndlHnfl">
-                          <ReportHNDLHNFLSection
-                            hndl={result.hndlRiskWindow}
-                            hnfl={result.tnflRiskWindow}
-                            defaultOpen={cfg('hndlHnfl').state === 'open'}
-                            headerExtra={
-                              <AskAssistantButton
-                                question="Explain Harvest Now Decrypt Later risk for my organization"
-                                className="print:hidden"
-                              />
-                            }
-                          />
-                        </div>
+                        <HndlHnflWindowsSection
+                          hndl={result.hndlRiskWindow}
+                          hnfl={result.tnflRiskWindow}
+                          defaultOpen={cfg('hndlHnfl').state === 'open'}
+                        />
                       )}
 
                     {/* HNDL warning for quick assessments with high sensitivity */}
                     {!isComprehensive &&
                       !result.hndlRiskWindow &&
                       ((dataSensitivity ?? []).includes('critical') ||
-                        (dataSensitivity ?? []).includes('high')) && (
-                        <div className="glass-panel p-4 border-l-4 border-l-warning flex items-start gap-3">
-                          <AlertTriangle size={18} className="text-warning shrink-0 mt-0.5" />
-                          <div>
-                            <p className="text-sm font-semibold text-foreground">
-                              HNDL Risk Not Quantified
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              This quick assessment did not include data retention information.
-                              Harvest-Now-Decrypt-Later risk cannot be calculated. For sensitive
-                              long-lived data, run a Comprehensive Assessment to quantify this
-                              exposure.
-                            </p>
-                          </div>
-                        </div>
-                      )}
+                        (dataSensitivity ?? []).includes('high')) && <HndlNotQuantifiedWarning />}
 
                     {/* HNFL warning for quick assessments with signing algorithms */}
                     {!isComprehensive && !result.tnflRiskWindow && hasSigningAlgos && (
-                      <div className="glass-panel p-4 border-l-4 border-l-destructive flex items-start gap-3">
-                        <AlertTriangle size={18} className="text-destructive shrink-0 mt-0.5" />
-                        <div>
-                          <p className="text-sm font-semibold text-foreground">
-                            HNFL Risk Not Quantified
-                          </p>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Your assessment includes signature algorithms vulnerable to Shor&apos;s
-                            algorithm. Harvest-Now-Forge-Later risk cannot be calculated without
-                            credential lifetime data. Run a Comprehensive Assessment to quantify
-                            signature key exposure.
-                          </p>
-                        </div>
-                      </div>
+                      <HnflNotQuantifiedWarning />
                     )}
 
                     {/* Cryptographic Discovery */}
