@@ -7,6 +7,7 @@ import type { AlgorithmDetail } from '../../data/pqcAlgorithmsData'
 import { Button } from '@/components/ui/button'
 import { AlgorithmCheckButton } from './AlgorithmCheckButton'
 import { AlgoCtaStrip } from './AlgoCtaStrip'
+import { isCertifiedTier } from '../../data/algorithmStatusTier'
 
 type Priority = 'speed' | 'keysize' | 'standardization'
 
@@ -55,11 +56,8 @@ function sortByPriority(
       return aPk - bPk
     }
 
-    // standardization: non-Candidate, non-TBC first; then by securityLevel desc
-    const statusScore = (row: AlgorithmTransition) => {
-      if (row.status === 'Candidate' || row.status === 'To Be Checked') return 1
-      return 0
-    }
+    // standardization: certified (final/regional) first; then by securityLevel desc
+    const statusScore = (row: AlgorithmTransition) => (isCertifiedTier(row.statusTier) ? 0 : 1)
     const diff = statusScore(a) - statusScore(b)
     if (diff !== 0) return diff
     const aLevel = da?.securityLevel ?? 0
@@ -242,13 +240,11 @@ export function MobileTransitionWizard({
                             L{detail.securityLevel}
                           </span>
                         )}
-                        {row.status &&
-                          row.status !== 'Candidate' &&
-                          row.status !== 'To Be Checked' && (
-                            <span className="text-[10px] px-1 py-0.5 rounded border bg-status-success/10 text-status-success border-status-success/20">
-                              {row.status}
-                            </span>
-                          )}
+                        {row.status && isCertifiedTier(row.statusTier) && (
+                          <span className="text-[10px] px-1 py-0.5 rounded border bg-status-success/10 text-status-success border-status-success/20">
+                            {row.status}
+                          </span>
+                        )}
                       </div>
                     )}
                   </div>
