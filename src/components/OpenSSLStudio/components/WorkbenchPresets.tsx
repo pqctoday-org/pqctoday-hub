@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState } from 'react'
-import { ChevronDown, ChevronRight, Sparkles } from 'lucide-react'
+import { ChevronDown, ChevronRight, Sparkles, TerminalSquare } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useOpenSSLStore } from '../store'
 import type { WorkbenchCategory } from './WorkbenchToolbar'
@@ -9,6 +9,14 @@ interface Preset {
   label: string
   cmd: string
   category: WorkbenchCategory
+  /**
+   * False for presets that use shell pipe syntax (`A | B`) or `echo` — the
+   * Studio's command runner is a whitespace-splitting parser with no shell
+   * semantics, so these can't actually run in-browser. They're kept as
+   * reference commands to copy onto a real machine (OpenSSL 3.5+), not to
+   * run here. Defaults to true when omitted.
+   */
+  runnable?: boolean
 }
 
 const PRESET_GROUPS: { group: string; presets: Preset[] }[] = [
@@ -66,9 +74,10 @@ const PRESET_GROUPS: { group: string; presets: Preset[] }[] = [
     group: 'Hashing & Signing',
     presets: [
       {
-        label: 'SHA-256 digest',
+        label: 'SHA-256 digest (reference only — not runnable in-Studio)',
         cmd: 'echo "hello world" | openssl dgst -sha256',
         category: 'dgst',
+        runnable: false,
       },
       {
         label: 'Verify FIPS-validated cert fingerprint',
@@ -87,7 +96,11 @@ const PRESET_GROUPS: { group: string; presets: Preset[] }[] = [
       },
       {
         label: 'ML-KEM-768 decapsulate',
-        cmd: 'openssl pkeyutl -decap -inkey ml-kem-768.key -in ciphertext.bin -secret recovered.bin',
+        // -out (not -secret) is the correct decap output flag — verified
+        // against the bundled OpenSSL 3.6.2 binary's real `pkeyutl -decap`
+        // behavior; -secret is documented for encapsulation only. See the
+        // `pkeyutl -decap` KAT test for the regression guard.
+        cmd: 'openssl pkeyutl -decap -inkey ml-kem-768.key -in ciphertext.bin -out recovered.bin',
         category: 'kem',
       },
     ],
@@ -96,9 +109,10 @@ const PRESET_GROUPS: { group: string; presets: Preset[] }[] = [
     group: 'Info',
     presets: [
       {
-        label: 'List PQC algorithms',
+        label: 'List PQC algorithms (reference only — not runnable in-Studio)',
         cmd: 'openssl list -signature-algorithms | grep -i "ml\\|slh\\|falcon\\|pqc"',
         category: 'version',
+        runnable: false,
       },
       {
         label: 'Show OpenSSL version',
@@ -156,9 +170,17 @@ export const WorkbenchPresets: React.FC<WorkbenchPresetsProps> = ({ setCategory 
                     variant="ghost"
                     size="sm"
                     onClick={() => applyPreset(p)}
-                    className="w-full justify-start text-xs h-auto py-1.5 px-2 text-muted-foreground hover:text-foreground hover:bg-muted/80 font-normal"
+                    title={
+                      p.runnable === false
+                        ? 'Uses shell pipe syntax the Studio cannot execute — copy this command to run on your own machine with OpenSSL 3.5+ installed.'
+                        : undefined
+                    }
+                    className="w-full justify-start gap-1.5 text-xs h-auto py-1.5 px-2 text-muted-foreground hover:text-foreground hover:bg-muted/80 font-normal"
                   >
-                    {p.label}
+                    {p.runnable === false && (
+                      <TerminalSquare size={11} className="shrink-0 text-status-warning" />
+                    )}
+                    <span>{p.label}</span>
                   </Button>
                 ))}
               </div>

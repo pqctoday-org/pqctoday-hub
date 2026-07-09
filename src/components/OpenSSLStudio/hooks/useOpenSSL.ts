@@ -16,6 +16,7 @@ export const useOpenSSL = () => {
     setLastExecutionTime,
     addStructuredLog,
     setIsReady,
+    setLoadError,
   } = useOpenSSLStore()
 
   const startTimeRef = useRef<number | null>(null)
@@ -61,6 +62,7 @@ export const useOpenSSL = () => {
         case 'READY':
           addLog('info', 'OpenSSL System Ready')
           setIsReady(true)
+          setLoadError(null)
           break
         case 'ERROR':
           addLog('error', `System Error: ${event.data.error} `)
@@ -69,6 +71,7 @@ export const useOpenSSL = () => {
           // Per-command errors (with requestId) are normal failures — the worker stays alive.
           if (!event.data.requestId) {
             setIsReady(false)
+            setLoadError(event.data.error || 'Failed to load the OpenSSL WASM module.')
           }
           break
         case 'DONE':
@@ -141,6 +144,7 @@ export const useOpenSSL = () => {
     workerRef.current = worker
 
     // Signal load
+    setLoadError(null)
     worker.postMessage({ type: 'LOAD', url: '/wasm/openssl.js' })
 
     return () => {
@@ -148,12 +152,42 @@ export const useOpenSSL = () => {
       worker.terminate()
       setIsReady(false)
     }
-  }, [addLog, addFile, setIsProcessing, addStructuredLog, setLastExecutionTime, setIsReady])
+  }, [
+    addLog,
+    addFile,
+    setIsProcessing,
+    addStructuredLog,
+    setLastExecutionTime,
+    setIsReady,
+    setLoadError,
+  ])
+
+  /** Re-send the LOAD message on the existing worker after a load failure. */
+  const retryLoad = useCallback(() => {
+    if (!workerRef.current) return
+    setLoadError(null)
+    addLog('info', 'Retrying OpenSSL WASM load...')
+    workerRef.current.postMessage({ type: 'LOAD', url: '/wasm/openssl.js' })
+  }, [addLog, setLoadError])
 
   const executeCommand = useCallback(
     async (cmdOverride?: string) => {
       const commandToExecute = cmdOverride || currentCommand
       if (!commandToExecute || isProcessing) return
+
+      // The command runner below is a whitespace-splitting parser with no
+      // shell semantics — it has no concept of pipes, so `A | B` gets split
+      // into literal positional args of A rather than piping A's output into
+      // B. Refuse up front with a clear message instead of silently
+      // mis-parsing (this is what let both the `echo | dgst` and
+      // `list | grep` presets fail with no explanation).
+      if (/\|/.test(commandToExecute.replace(/"[^"]*"/g, ''))) {
+        addLog(
+          'error',
+          "This command uses a shell pipe ( | ), which the Studio's in-browser runner does not support (no real shell — just a single OpenSSL binary). Copy it and run it in a real terminal with OpenSSL 3.5+ installed instead."
+        )
+        return
+      }
 
       commandRef.current = commandToExecute
       setIsProcessing(true)
@@ -243,5 +277,5 @@ export const useOpenSSL = () => {
     [setIsProcessing, clearTerminalLogs, addLog, setLastExecutionTime]
   )
 
-  return { executeCommand, executeSkey }
+  return { executeCommand, executeSkey, retryLoad }
 }

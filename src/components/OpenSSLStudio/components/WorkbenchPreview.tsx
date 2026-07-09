@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
-import { Play, Settings, Copy, Terminal, BookOpen } from 'lucide-react'
+import { Play, Settings, Copy, Terminal, BookOpen, AlertTriangle, RotateCcw } from 'lucide-react'
 import { useOpenSSLStore } from '../store'
 import { useOpenSSL } from '../hooks/useOpenSSL'
 import { logEvent } from '../../../utils/analytics'
@@ -14,8 +14,8 @@ interface WorkbenchPreviewProps {
 }
 
 export const WorkbenchPreview: React.FC<WorkbenchPreviewProps> = ({ category, skeyParams }) => {
-  const { isProcessing, command, isReady } = useOpenSSLStore()
-  const { executeCommand, executeSkey } = useOpenSSL()
+  const { isProcessing, command, isReady, loadError } = useOpenSSLStore()
+  const { executeCommand, executeSkey, retryLoad } = useOpenSSL()
 
   const handleRun = () => {
     if (category === 'skey' && skeyParams) {
@@ -50,7 +50,18 @@ export const WorkbenchPreview: React.FC<WorkbenchPreviewProps> = ({ category, sk
               <span className="hidden sm:inline">Docs</span>
             </a>
 
-            {category === 'lms' ? (
+            {loadError ? (
+              <Button
+                variant="ghost"
+                onClick={retryLoad}
+                title={loadError}
+                className="flex items-center gap-2 px-4 py-1.5 text-xs font-bold rounded border border-destructive/40 bg-destructive/10 text-destructive hover:bg-destructive/20 shrink-0"
+              >
+                <AlertTriangle size={13} />
+                WASM failed to load
+                <RotateCcw size={12} />
+              </Button>
+            ) : category === 'lms' ? (
               <span className="text-xs text-status-warning px-4 py-1.5 bg-status-warning/10 border border-status-warning/20 rounded">
                 Use WASM buttons in config panel ↑
               </span>
@@ -73,6 +84,17 @@ export const WorkbenchPreview: React.FC<WorkbenchPreviewProps> = ({ category, sk
             )}
           </div>
         </div>
+
+        {loadError && (
+          <div className="px-3 py-2 bg-destructive/10 border-b border-destructive/20 text-xs text-destructive flex items-start gap-2">
+            <AlertTriangle size={13} className="shrink-0 mt-0.5" aria-hidden="true" />
+            <span>
+              The OpenSSL WASM engine failed to load, so commands can&apos;t run in this session.
+              {loadError && <span className="block text-destructive/70 mt-0.5">{loadError}</span>}
+              Click &ldquo;WASM failed to load&rdquo; above to retry, or reload the page.
+            </span>
+          </div>
+        )}
 
         <div className="p-4 bg-muted/40 flex gap-3 group min-h-[80px] sm:min-h-[160px] relative">
           <code className="text-primary flex-1 break-all font-mono text-sm leading-relaxed whitespace-pre-wrap">
