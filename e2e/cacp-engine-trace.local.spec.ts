@@ -18,7 +18,7 @@ test.beforeEach(async ({ page }) => {
 
 test('engine dry_run returns a per-rule trace consistent with its verdict', async ({ page }) => {
   await page.goto('/playground/cacp')
-  await expect(page.getByRole('heading', { name: /Crypto-Agility Control Plane/i })).toBeVisible({
+  await expect(page.getByRole('heading', { name: /KMIP Control Plane/i })).toBeVisible({
     timeout: 30000,
   })
 

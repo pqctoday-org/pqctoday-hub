@@ -36,7 +36,7 @@ test('boots the in-browser engine and runs a real Create → Activate → Sign �
 
   // Engine boot: the "Booting…" loader is replaced by the control-plane header.
   // wasm instantiate + engine init can take a moment, so allow generous time.
-  await expect(page.getByRole('heading', { name: /Crypto-Agility Control Plane/i })).toBeVisible({
+  await expect(page.getByRole('heading', { name: /KMIP Control Plane/i })).toBeVisible({
     timeout: 30000,
   })
 
@@ -91,7 +91,7 @@ test('rekey-on-use policy migrates a classical key to PQC on first Sign, and the
   // DIFFERENT, more permissive policy (Classical) first, then carried over —
   // that hand-off, not a same-policy flip, is the actual "no flag day" story.
   await page.goto('/playground/cacp')
-  await expect(page.getByRole('heading', { name: /Crypto-Agility Control Plane/i })).toBeVisible({
+  await expect(page.getByRole('heading', { name: /KMIP Control Plane/i })).toBeVisible({
     timeout: 30000,
   })
 
@@ -129,7 +129,7 @@ test('rekey-on-use policy migrates a classical key to PQC on first Sign, and the
 
 test('switching policy resolves a decision on the agility plane', async ({ page }) => {
   await page.goto('/playground/cacp')
-  await expect(page.getByRole('heading', { name: /Crypto-Agility Control Plane/i })).toBeVisible({
+  await expect(page.getByRole('heading', { name: /KMIP Control Plane/i })).toBeVisible({
     timeout: 30000,
   })
 
