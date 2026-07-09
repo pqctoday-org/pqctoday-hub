@@ -28,6 +28,12 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.19.0] - 2026-07-09
+
+### Changed
+
+- **Reorganized the Report page's internal code for easier maintenance** [view:/report] [persona:developer] [persona:architect]: the report's sections (risk breakdown, compliance impact, recommended actions, threat landscape, and others) now each live in their own file instead of one large file. This is an internal, behind-the-scenes change — the report itself looks and behaves exactly the same, including sharing a report link and viewing a sample report.
+
 ## [4.18.0] - 2026-07-08
 
 A cross-page accuracy release covering Editorial Independence, Simulation, Explore, the Landing page, and the Sponsor page: the Editorial Independence page's promises about sponsor badges and the anonymous tipline now match what's actually built, the Simulation board acknowledges when Researcher and Curious visitors are shown the Executive seat by default, the Explore launcher's "recommended for you" badges are now driven by a single source of truth instead of a hand-maintained list, the Landing page's headline facts and role-adaptation summary are now derived from live data instead of hardcoded text, and the Sponsor page's tier benefits now match what's actually delivered today.
