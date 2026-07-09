@@ -22,11 +22,16 @@ test('completing the assessment from the sim gate returns to /simulation', async
     sessionStorage.setItem('sim:resume', '1')
     // Fully-answered Fast-track assessment, NOT yet marked complete, parked on the
     // final step so a single Continue reaches the review screen.
+    // currentStep is interpreted against RENDER_ORDER_QUICK for quick mode
+    // (assessFlowModel.ts storeIndexOf) -- 2026-07-04 commit 0e07d90b trimmed
+    // that array from 8 to 6 steps (dropped `infra` + `timeline`), so the last
+    // index is now 5 ('migration'), not 7, and the two dropped fields no
+    // longer belong in a quick-track fixture.
     localStorage.setItem(
       'pqc-assessment-form',
       JSON.stringify({
         state: {
-          currentStep: 7,
+          currentStep: 5,
           assessmentMode: 'quick',
           industry: 'finance',
           country: 'US',
@@ -50,13 +55,8 @@ test('completing the assessment from the sim gate returns to /simulation', async
           scaleUnknown: false,
           cryptoAgility: 'hardcoded',
           agilityUnknown: false,
-          infrastructure: ['cloud'],
-          infrastructureUnknown: false,
-          infrastructureSubCategories: {},
           vendorDependency: 'heavy-vendor',
           vendorUnknown: false,
-          timelinePressure: 'within-2-3y',
-          timelineUnknown: false,
           importComplianceSelection: true,
           importProductSelection: true,
           assessmentStatus: 'in-progress',
