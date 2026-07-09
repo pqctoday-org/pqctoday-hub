@@ -59,6 +59,12 @@ interface OpenSSLStudioState {
   setIsProcessing: (isProcessing: boolean) => void
   isReady: boolean
   setIsReady: (isReady: boolean) => void
+  // Set when the WASM module fails to load (e.g. fetch/network failure,
+  // missing/corrupt asset). Distinct from `!isReady`, which is also true
+  // during normal in-progress loading — this is the terminal failure case
+  // the Run button needs to distinguish from "still initializing".
+  loadError: string | null
+  setLoadError: (loadError: string | null) => void
 
   // Editor State
   editingFile: VirtualFile | null
@@ -162,6 +168,8 @@ export const useOpenSSLStore = create<OpenSSLStudioState>()(
       setIsProcessing: (isProcessing) => set({ isProcessing }),
       isReady: false,
       setIsReady: (isReady) => set({ isReady }),
+      loadError: null,
+      setLoadError: (loadError) => set({ loadError }),
 
       // Editor State
       editingFile: null,
@@ -183,6 +191,7 @@ export const useOpenSSLStore = create<OpenSSLStudioState>()(
           command: '',
           isProcessing: false,
           isReady: false,
+          loadError: null,
           editingFile: null,
           viewingFile: null,
           lastExecutionTime: null,

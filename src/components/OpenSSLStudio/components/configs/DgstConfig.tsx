@@ -4,6 +4,7 @@ import clsx from 'clsx'
 import { useOpenSSLStore } from '../../store'
 import { FilterDropdown } from '../../../common/FilterDropdown'
 import { Button } from '@/components/ui/button'
+import { PqcVersionNote } from '../PqcVersionNote'
 
 interface DgstConfigProps {
   signAction: 'sign' | 'verify'
@@ -40,6 +41,9 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
   setUseRawIn,
 }) => {
   const { files } = useOpenSSLStore()
+  // Mirrors the isPQCKey heuristic in Workbench.tsx: PQC (ML-DSA/SLH-DSA)
+  // signatures route through `pkeyutl -sign`/`-verify`, not classical `dgst`.
+  const isPQCKey = selectedKeyFile.includes('mldsa') || selectedKeyFile.includes('slhdsa')
 
   return (
     <div className="space-y-4 animate-fade-in">
@@ -186,6 +190,8 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
           </div>
         </div>
       )}
+
+      {isPQCKey && <PqcVersionNote />}
 
       <div className="space-y-3">
         <span className="text-xs text-muted-foreground block">Key File</span>
