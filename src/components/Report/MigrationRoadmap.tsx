@@ -6,7 +6,7 @@ import { timelineData, transformToGanttData } from '../../data/timelineData'
 import type { RecommendedAction } from '../../hooks/assessmentTypes'
 import { COUNTRY_PLANNING_MANDATE } from '../../hooks/assessmentData'
 import { Button } from '../ui/button'
-import { SectionInfoTip } from './ReportContent'
+import { SectionInfoTip } from './sections/reportContentShared'
 
 interface MigrationRoadmapProps {
   actions: RecommendedAction[]
