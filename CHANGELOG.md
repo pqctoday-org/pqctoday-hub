@@ -28,6 +28,31 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.18.0] - 2026-07-08
+
+A cross-page accuracy release covering Editorial Independence, Simulation, Explore, and the Landing page: the Editorial Independence page's promises about sponsor badges and the anonymous tipline now match what's actually built, the Simulation board acknowledges when Researcher and Curious visitors are shown the Executive seat by default, the Explore launcher's "recommended for you" badges are now driven by a single source of truth instead of a hand-maintained list, and the Landing page's headline facts and role-adaptation summary are now derived from live data instead of hardcoded text.
+
+### Fixed
+
+- **The Editorial Independence page's "Sponsor" badge claim is now real** [view:/editorial-independence] [view:/migrate] [persona:executive]: the badge is now genuinely wired to the sponsor list and appears on a product's Migrate listing only when that vendor is an actual sponsor. It shows for zero products today (there are no sponsors yet), but the mechanism is live and will work the moment a sponsor is added.
+- **The anonymous tip line promise is now honest about its status** [view:/editorial-independence]: it's labeled as planned rather than implying it already exists, with a working pseudonymous GitHub Discussions link as an interim way to reach us.
+- **Funding-source language on the Editorial Independence page now matches the real Sponsor page** [view:/editorial-independence] [view:/sponsor]: removed a reference to a "Consultant tier" that doesn't exist; the real tiers (Supporter, Sponsor, Patron) are now named consistently in both places.
+- **Added a table of contents with jump-links to the Editorial Independence page** [view:/editorial-independence], matching the pattern already used on the Terms and About pages.
+- **The Simulation board now explains why Researcher and Curious visitors start in the Executive seat** [view:/simulation] [persona:researcher] [persona:curious]: previously this happened silently with no explanation; a dismissible banner and a hint on the seat switcher now point these visitors to the tour best suited to them.
+- **Fixed mismatched phase recommendations in the Simulation board's "keep learning" prompts** [view:/simulation] [persona:architect] [persona:ops]: the architect and operations personas were being pointed to Learn content for phases that aren't actually part of their role, and were missing content for phases that are.
+- **Corrected stale "coming soon" labels on several Simulation framework references** [view:/simulation] [persona:researcher]: a few report and business-tool destinations referenced as not-yet-built were actually already live; those references now point to the real, working pages.
+- **Added a cross-reference between the Simulation board's "TNFL" label and the Report page's "HNFL" label** [view:/simulation] [view:/report]: these refer to the same "harvest-now" risk concept under two different names; each page now links to the other so the terminology isn't confusing.
+- **Explore page's "recommended for you" badges no longer drift out of sync with the rest of the site** [view:/explore]: badges are now computed from the same persona-recommendation data used elsewhere, instead of a separately hand-maintained list that could disagree with it.
+- **Added a Migrate tile to the Explore launcher** [view:/explore] [persona:ops], and Playground and Library tiles for developers and researchers.
+- **Fixed the Explore page's Command Center tile for the Curious persona** [view:/explore] [persona:curious]: clicking it previously sent Curious visitors to a page they don't have access to; it now sends them to the relevant learning module instead.
+- **Corrected a stale "2-minute questionnaire" claim on the Explore page's Assess tile** [view:/explore]: the fast-track assessment now takes about 6 questions; the copy no longer cites an outdated time estimate.
+- **The Landing page's headline facts are now pulled from live data** [view:/] [persona:executive] [persona:researcher]: the executive tagline's compliance-deadline reference and the researcher tagline's "just landed" standards reference previously were hand-typed and could go stale; both now recompute from the same Timeline and Library data shown elsewhere on the site.
+- **The Landing page's persona welcome modal now lists your recommended pages from a single source** [view:/]: previously each persona's "featured surfaces" text was written by hand and could disagree with the site's actual navigation and recommendations; it's now generated from the same data.
+- **Renamed the misleading "Standards Tracked" stat on the Landing page to "Library Documents"** [view:/]: the number was always a count of Library entries, not standards specifically.
+- **Replaced browser popup alerts with the site's normal notification style** [view:/] in the backup/restore settings panel.
+- **Removed a non-functional Google Drive sync option** [view:/] from the backup/restore settings panel that was permanently disabled and had no way to turn on.
+- **Fixed the Landing page's `?picker=open` link** [view:/]: following this link from other pages now actually opens the persona picker instead of doing nothing.
+
 ## [4.17.0] - 2026-07-09
 
 A cross-page accuracy release covering Timeline, Compliance, Threats, Patents, Leaders, Learn, and the Library: deadline mandates on the Timeline are now individually sourced and labeled instead of guessed, the Compliance page covers the actual federal executive order behind the 2030/2031 deadlines, the Threats page's quantum-computer arrival estimate is now the same number everywhere it appears, Patents share links no longer lose your filters, Leaders profiles are split into a curated set and the full contributor list, several Learn modules got corrected facts and real quiz coverage, and dozens of Library references were re-verified, fixed, or retired.
