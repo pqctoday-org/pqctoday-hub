@@ -471,7 +471,8 @@ function renderExceptionsAndEvidenceMd(
     md += '\n'
   }
 
-  md += '## Evidence (CSWP.39 §5.5 — CMVP / ACVP / ESV / CVE-scan)\n\n'
+  md +=
+    '## Evidence (CSWP.39 §5.1 — CAVP/CMVP as a validation prerequisite; ACVP / ESV / CVE-scan)\n\n'
   if (evidence.length === 0) {
     md += '_No evidence rows documented._\n\n'
   } else {
@@ -759,7 +760,7 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
         )}
       </div>
 
-      {/* CSWP.39 §5.5 — Evidence */}
+      {/* CSWP.39 §5.1 — Evidence (CAVP/CMVP validation prerequisite) */}
       <div className="glass-panel p-4 space-y-3">
         <div className="flex items-start justify-between gap-3 flex-wrap">
           <div>
