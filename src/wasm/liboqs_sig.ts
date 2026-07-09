@@ -2,7 +2,8 @@
 // Wrapper for Falcon (FN-DSA), SLH-DSA, MAYO, CROSS, OV, and SNOVA using @oqs/liboqs-js
 /* eslint-disable */
 import {
-  // Falcon (FN-DSA) — FIPS 206
+  // Falcon (FN-DSA) — candidate for FIPS 206, which remains an unpublished draft
+  // (submitted for NIST internal clearance Aug 2025; final expected late 2026/early 2027)
   createFalcon512,
   createFalcon1024,
   createFalconPadded512,
@@ -66,7 +67,7 @@ const getInstance = async (algorithmName: string): Promise<SigInstance> => {
 
     let createAlgo
     switch (algorithmName) {
-      // Falcon (FN-DSA) — FIPS 206, maps from NIST naming convention
+      // Falcon (FN-DSA) — candidate for FIPS 206 (still an unpublished draft); maps from NIST naming convention
       case 'FN-DSA-512':
       case 'Falcon-512':
         createAlgo = createFalcon512

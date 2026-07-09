@@ -1,0 +1,37 @@
+name: 🧪 Request Sandbox Access
+description: Request a hosted Docker sandbox container for the Playground labs (pqctoday-sandbox).
+title: '[Sandbox Access] '
+labels: ['sandbox-access', 'needs-triage']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Sandbox scenarios run inside isolated Docker containers hosted by PQC Today. Fill this in and we'll provision an environment for you — containers are spun up on demand and destroyed after the session.
+
+  - type: input
+    id: contact
+    attributes:
+      label: Contact (email or preferred way to reach you)
+      placeholder: you@example.com
+    validations:
+      required: true
+
+  - type: dropdown
+    id: use_case
+    attributes:
+      label: What are you trying to do?
+      options:
+        - Evaluate a specific sandbox scenario / lab
+        - Team training or workshop
+        - Vendor / product integration testing
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Which scenario(s) or track(s), how many people, and any timing constraints.
+    validations:
+      required: false

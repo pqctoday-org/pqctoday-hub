@@ -34,7 +34,7 @@ test.beforeEach(async ({ page }) => {
 test('classical estate: label-only generation, real crypto, tamper detection', async ({ page }) => {
   test.setTimeout(180_000)
   await page.goto('/playground/cacp')
-  await expect(page.getByRole('heading', { name: /Crypto-Agility Control Plane/i })).toBeVisible({
+  await expect(page.getByRole('heading', { name: /KMIP Control Plane/i })).toBeVisible({
     timeout: 30_000,
   })
   await page.getByRole('tab', { name: 'Migration', exact: true }).click()

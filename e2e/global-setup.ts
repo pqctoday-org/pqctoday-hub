@@ -25,7 +25,7 @@ async function globalSetup(config: FullConfig): Promise<void> {
       try {
         await page.goto(`${baseURL}/playground/cacp`, { waitUntil: 'domcontentloaded' })
         await page
-          .getByRole('heading', { name: /Crypto-Agility Control Plane/i })
+          .getByRole('heading', { name: /KMIP Control Plane/i })
           .waitFor({ state: 'visible', timeout: 15000 })
         break // optimizer warm — page renders
       } catch {

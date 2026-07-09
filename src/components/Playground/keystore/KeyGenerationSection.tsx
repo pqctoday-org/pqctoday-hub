@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import {
   Key as KeyIcon,
   RefreshCw,
@@ -10,8 +10,9 @@ import {
   Copy,
   Check,
 } from 'lucide-react'
-import { FilterDropdown } from '../../common/FilterDropdown'
+import { FilterDropdown, type FilterDropdownItem } from '../../common/FilterDropdown'
 import { Button } from '@/components/ui/button'
+import { useAlgorithmStatusTiers, getPickerTier, PickerDraftBadge } from '../algorithmPickerStatus'
 
 // Maps a selected algorithm/keySize to OpenSSL CLI + liboqs-python + Go snippets
 function getCodeSnippets(
@@ -192,6 +193,67 @@ function CodeSnippetPanel({ algorithm, keySize }: { algorithm: string; keySize: 
   )
 }
 
+// Algorithm/security-level options for the PQC picker — badge-less here; a Draft/Candidate
+// badge (WORKSTREAMS.md §WS-A) is attached per-item at render time once status-tier data loads.
+const PQC_ALGORITHM_ITEMS: FilterDropdownItem[] = [
+  { id: '512', label: 'ML-KEM-512 (NIST Level 1)' },
+  { id: '768', label: 'ML-KEM-768 (NIST Level 3)' },
+  { id: '1024', label: 'ML-KEM-1024 (NIST Level 5)' },
+  { id: 'HQC-128', label: 'HQC-128 (NIST Level 1)' },
+  { id: 'HQC-192', label: 'HQC-192 (NIST Level 3)' },
+  { id: 'HQC-256', label: 'HQC-256 (NIST Level 5)' },
+  { id: 'FrodoKEM-640-AES', label: 'FrodoKEM-640-AES (Level 1)' },
+  { id: 'FrodoKEM-976-AES', label: 'FrodoKEM-976-AES (Level 3)' },
+  { id: 'FrodoKEM-1344-AES', label: 'FrodoKEM-1344-AES (Level 5)' },
+  { id: 'FrodoKEM-640-SHAKE', label: 'FrodoKEM-640-SHAKE (Level 1)' },
+  { id: 'FrodoKEM-976-SHAKE', label: 'FrodoKEM-976-SHAKE (Level 3)' },
+  { id: 'FrodoKEM-1344-SHAKE', label: 'FrodoKEM-1344-SHAKE (Level 5)' },
+  { id: 'Classic-McEliece-348864', label: 'Classic McEliece 348864' },
+  { id: 'Classic-McEliece-460896', label: 'Classic McEliece 460896' },
+  { id: 'Classic-McEliece-6688128', label: 'Classic McEliece 6688128' },
+  { id: 'Classic-McEliece-6960119', label: 'Classic McEliece 6960119' },
+  { id: 'Classic-McEliece-8192128', label: 'Classic McEliece 8192128' },
+  { id: '44', label: 'ML-DSA-44 (NIST Level 2)' },
+  { id: '65', label: 'ML-DSA-65 (NIST Level 3)' },
+  { id: '87', label: 'ML-DSA-87 (NIST Level 5)' },
+  { id: 'SLH-DSA-SHA2-128f', label: 'SLH-DSA-SHA2-128f (Level 1, Fast)' },
+  { id: 'SLH-DSA-SHA2-128s', label: 'SLH-DSA-SHA2-128s (Level 1, Small)' },
+  { id: 'SLH-DSA-SHA2-192f', label: 'SLH-DSA-SHA2-192f (Level 3, Fast)' },
+  { id: 'SLH-DSA-SHA2-192s', label: 'SLH-DSA-SHA2-192s (Level 3, Small)' },
+  { id: 'SLH-DSA-SHA2-256f', label: 'SLH-DSA-SHA2-256f (Level 5, Fast)' },
+  { id: 'SLH-DSA-SHA2-256s', label: 'SLH-DSA-SHA2-256s (Level 5, Small)' },
+  { id: 'SLH-DSA-SHAKE-128f', label: 'SLH-DSA-SHAKE-128f (Level 1, Fast)' },
+  { id: 'SLH-DSA-SHAKE-128s', label: 'SLH-DSA-SHAKE-128s (Level 1, Small)' },
+  { id: 'SLH-DSA-SHAKE-192f', label: 'SLH-DSA-SHAKE-192f (Level 3, Fast)' },
+  { id: 'SLH-DSA-SHAKE-192s', label: 'SLH-DSA-SHAKE-192s (Level 3, Small)' },
+  { id: 'SLH-DSA-SHAKE-256f', label: 'SLH-DSA-SHAKE-256f (Level 5, Fast)' },
+  { id: 'SLH-DSA-SHAKE-256s', label: 'SLH-DSA-SHAKE-256s (Level 5, Small)' },
+  { id: 'FN-DSA-512', label: 'FN-DSA-512 / Falcon-512 (Level 1)' },
+  { id: 'FN-DSA-1024', label: 'FN-DSA-1024 / Falcon-1024 (Level 5)' },
+  { id: 'FN-DSA-padded-512', label: 'FN-DSA-padded-512 (Level 1, CT)' },
+  { id: 'FN-DSA-padded-1024', label: 'FN-DSA-padded-1024 (Level 5, CT)' },
+  { id: 'MAYO-1', label: 'MAYO-1 (Level 1, Round 2)' },
+  { id: 'MAYO-2', label: 'MAYO-2 (Level 1, Round 2)' },
+  { id: 'MAYO-3', label: 'MAYO-3 (Level 3, Round 2)' },
+  { id: 'MAYO-5', label: 'MAYO-5 (Level 5, Round 2)' },
+  { id: 'CROSS-RSDP-128-balanced', label: 'CROSS-RSDP-128-balanced (Level 1, Round 2)' },
+  { id: 'CROSS-RSDP-192-balanced', label: 'CROSS-RSDP-192-balanced (Level 3, Round 2)' },
+  { id: 'CROSS-RSDP-256-balanced', label: 'CROSS-RSDP-256-balanced (Level 5, Round 2)' },
+  { id: 'CROSS-RSDPg-128-balanced', label: 'CROSS-RSDPg-128-balanced (Level 1, Round 2)' },
+  { id: 'CROSS-RSDPg-192-balanced', label: 'CROSS-RSDPg-192-balanced (Level 3, Round 2)' },
+  { id: 'CROSS-RSDPg-256-balanced', label: 'CROSS-RSDPg-256-balanced (Level 5, Round 2)' },
+  { id: 'OV-Ip', label: 'OV-Ip / UOV (Level 1, Round 2)' },
+  { id: 'OV-Is', label: 'OV-Is / UOV (Level 1, Round 2)' },
+  { id: 'OV-III', label: 'OV-III / UOV (Level 3, Round 2)' },
+  { id: 'OV-V', label: 'OV-V / UOV (Level 5, Round 2)' },
+  { id: 'SNOVA-24-5-4', label: 'SNOVA-24-5-4 (Level 1, Round 2)' },
+  { id: 'SNOVA-29-6-5', label: 'SNOVA-29-6-5 (Level 3, Round 2)' },
+  { id: 'SNOVA-49-11-3', label: 'SNOVA-49-11-3 (Level 5, Round 2)' },
+  { id: 'LMS-SHA256-H10', label: 'LMS SHA-256 H=10 (1,024 sigs)' },
+  { id: 'LMS-SHA256-H15', label: 'LMS SHA-256 H=15 (32,768 sigs)' },
+  { id: 'LMS-SHA256-H20', label: 'LMS SHA-256 H=20 (1,048,576 sigs)' },
+]
+
 interface KeyGenerationSectionProps {
   algorithm: string
   keySize: string
@@ -221,6 +283,16 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
   onGenerateClassicalKeys,
   hideSnippets,
 }) => {
+  const statusTiers = useAlgorithmStatusTiers()
+  const pqcItemsWithBadges = useMemo(
+    () =>
+      PQC_ALGORITHM_ITEMS.map((item) => ({
+        ...item,
+        trailing: <PickerDraftBadge tier={getPickerTier(item.id, statusTiers)} />,
+      })),
+    [statusTiers]
+  )
+
   return (
     <>
       {/* PQC Key Generation Section */}
@@ -278,82 +350,7 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
                   }
                 }
               }}
-              items={[
-                { id: '512', label: 'ML-KEM-512 (NIST Level 1)' },
-                { id: '768', label: 'ML-KEM-768 (NIST Level 3)' },
-                { id: '1024', label: 'ML-KEM-1024 (NIST Level 5)' },
-                { id: 'HQC-128', label: 'HQC-128 (NIST Level 1)' },
-                { id: 'HQC-192', label: 'HQC-192 (NIST Level 3)' },
-                { id: 'HQC-256', label: 'HQC-256 (NIST Level 5)' },
-                { id: 'FrodoKEM-640-AES', label: 'FrodoKEM-640-AES (Level 1)' },
-                { id: 'FrodoKEM-976-AES', label: 'FrodoKEM-976-AES (Level 3)' },
-                { id: 'FrodoKEM-1344-AES', label: 'FrodoKEM-1344-AES (Level 5)' },
-                { id: 'FrodoKEM-640-SHAKE', label: 'FrodoKEM-640-SHAKE (Level 1)' },
-                { id: 'FrodoKEM-976-SHAKE', label: 'FrodoKEM-976-SHAKE (Level 3)' },
-                { id: 'FrodoKEM-1344-SHAKE', label: 'FrodoKEM-1344-SHAKE (Level 5)' },
-                { id: 'Classic-McEliece-348864', label: 'Classic McEliece 348864' },
-                { id: 'Classic-McEliece-460896', label: 'Classic McEliece 460896' },
-                { id: 'Classic-McEliece-6688128', label: 'Classic McEliece 6688128' },
-                { id: 'Classic-McEliece-6960119', label: 'Classic McEliece 6960119' },
-                { id: 'Classic-McEliece-8192128', label: 'Classic McEliece 8192128' },
-                { id: '44', label: 'ML-DSA-44 (NIST Level 2)' },
-                { id: '65', label: 'ML-DSA-65 (NIST Level 3)' },
-                { id: '87', label: 'ML-DSA-87 (NIST Level 5)' },
-                { id: 'SLH-DSA-SHA2-128f', label: 'SLH-DSA-SHA2-128f (Level 1, Fast)' },
-                { id: 'SLH-DSA-SHA2-128s', label: 'SLH-DSA-SHA2-128s (Level 1, Small)' },
-                { id: 'SLH-DSA-SHA2-192f', label: 'SLH-DSA-SHA2-192f (Level 3, Fast)' },
-                { id: 'SLH-DSA-SHA2-192s', label: 'SLH-DSA-SHA2-192s (Level 3, Small)' },
-                { id: 'SLH-DSA-SHA2-256f', label: 'SLH-DSA-SHA2-256f (Level 5, Fast)' },
-                { id: 'SLH-DSA-SHA2-256s', label: 'SLH-DSA-SHA2-256s (Level 5, Small)' },
-                { id: 'SLH-DSA-SHAKE-128f', label: 'SLH-DSA-SHAKE-128f (Level 1, Fast)' },
-                { id: 'SLH-DSA-SHAKE-128s', label: 'SLH-DSA-SHAKE-128s (Level 1, Small)' },
-                { id: 'SLH-DSA-SHAKE-192f', label: 'SLH-DSA-SHAKE-192f (Level 3, Fast)' },
-                { id: 'SLH-DSA-SHAKE-192s', label: 'SLH-DSA-SHAKE-192s (Level 3, Small)' },
-                { id: 'SLH-DSA-SHAKE-256f', label: 'SLH-DSA-SHAKE-256f (Level 5, Fast)' },
-                { id: 'SLH-DSA-SHAKE-256s', label: 'SLH-DSA-SHAKE-256s (Level 5, Small)' },
-                { id: 'FN-DSA-512', label: 'FN-DSA-512 / Falcon-512 (Level 1)' },
-                { id: 'FN-DSA-1024', label: 'FN-DSA-1024 / Falcon-1024 (Level 5)' },
-                { id: 'FN-DSA-padded-512', label: 'FN-DSA-padded-512 (Level 1, CT)' },
-                { id: 'FN-DSA-padded-1024', label: 'FN-DSA-padded-1024 (Level 5, CT)' },
-                { id: 'MAYO-1', label: 'MAYO-1 (Level 1, Round 2)' },
-                { id: 'MAYO-2', label: 'MAYO-2 (Level 1, Round 2)' },
-                { id: 'MAYO-3', label: 'MAYO-3 (Level 3, Round 2)' },
-                { id: 'MAYO-5', label: 'MAYO-5 (Level 5, Round 2)' },
-                {
-                  id: 'CROSS-RSDP-128-balanced',
-                  label: 'CROSS-RSDP-128-balanced (Level 1, Round 2)',
-                },
-                {
-                  id: 'CROSS-RSDP-192-balanced',
-                  label: 'CROSS-RSDP-192-balanced (Level 3, Round 2)',
-                },
-                {
-                  id: 'CROSS-RSDP-256-balanced',
-                  label: 'CROSS-RSDP-256-balanced (Level 5, Round 2)',
-                },
-                {
-                  id: 'CROSS-RSDPg-128-balanced',
-                  label: 'CROSS-RSDPg-128-balanced (Level 1, Round 2)',
-                },
-                {
-                  id: 'CROSS-RSDPg-192-balanced',
-                  label: 'CROSS-RSDPg-192-balanced (Level 3, Round 2)',
-                },
-                {
-                  id: 'CROSS-RSDPg-256-balanced',
-                  label: 'CROSS-RSDPg-256-balanced (Level 5, Round 2)',
-                },
-                { id: 'OV-Ip', label: 'OV-Ip / UOV (Level 1, Round 2)' },
-                { id: 'OV-Is', label: 'OV-Is / UOV (Level 1, Round 2)' },
-                { id: 'OV-III', label: 'OV-III / UOV (Level 3, Round 2)' },
-                { id: 'OV-V', label: 'OV-V / UOV (Level 5, Round 2)' },
-                { id: 'SNOVA-24-5-4', label: 'SNOVA-24-5-4 (Level 1, Round 2)' },
-                { id: 'SNOVA-29-6-5', label: 'SNOVA-29-6-5 (Level 3, Round 2)' },
-                { id: 'SNOVA-49-11-3', label: 'SNOVA-49-11-3 (Level 5, Round 2)' },
-                { id: 'LMS-SHA256-H10', label: 'LMS SHA-256 H=10 (1,024 sigs)' },
-                { id: 'LMS-SHA256-H15', label: 'LMS SHA-256 H=15 (32,768 sigs)' },
-                { id: 'LMS-SHA256-H20', label: 'LMS SHA-256 H=20 (1,048,576 sigs)' },
-              ]}
+              items={pqcItemsWithBadges}
               defaultLabel="Select Algorithm..."
               noContainer
             />

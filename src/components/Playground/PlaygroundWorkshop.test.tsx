@@ -37,7 +37,10 @@ describe('Crypto Lab Workbench', () => {
     ).toBeInTheDocument()
     expect(screen.getByText('Interactive Playground')).toBeInTheDocument()
     expect(screen.getByText('PKCS#11 HSM')).toBeInTheDocument()
-    expect(screen.getByText('KMIP Control Plane')).toBeInTheDocument()
+    // "KMIP Control Plane" is the one consistent name used both on the feature card
+    // and on the "Featured" banner further down this same Overview (playground.md
+    // item 3) — expect both, not a single unique match.
+    expect(screen.getAllByText('KMIP Control Plane').length).toBe(2)
   })
 
   it('the featured playground cards link to the special playground routes', () => {
@@ -46,7 +49,8 @@ describe('Crypto Lab Workbench', () => {
       'href',
       '/playground/interactive'
     )
-    expect(screen.getByText('KMIP Control Plane').closest('a')).toHaveAttribute(
+    // First match is the feature card; both it and the banner link to /playground/cacp.
+    expect(screen.getAllByText('KMIP Control Plane')[0].closest('a')).toHaveAttribute(
       'href',
       '/playground/cacp'
     )
