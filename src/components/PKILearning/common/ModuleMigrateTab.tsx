@@ -2,7 +2,7 @@
 import { ExternalLink, Package, CheckCircle, ShieldAlert } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { getMigrateItemsForModule } from '@/data/migrateData'
-import { LAYERS } from '@/components/Migrate/InfrastructureStack'
+import { LAYERS } from '@/data/infrastructureLayers'
 import { CertBadges } from '@/components/Migrate/migrateHelpers'
 import { certsByProduct } from '@/data/certificationXrefData'
 import type { SoftwareItem } from '@/types/MigrateTypes'

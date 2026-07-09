@@ -61,3 +61,27 @@ export function productFipsBadge(item: SoftwareItem): FipsBadge | null {
   // "yes", "140-3", "validated", a cert number, etc.
   return { label: 'FIPS 140-3', tone: 'success' }
 }
+
+export interface VerificationBadge {
+  label: string
+  tone: 'success' | 'info' | 'warning' | 'muted'
+}
+
+/**
+ * Badge for the already-computed `verificationStatus` field (derived from proof
+ * evidence at load time, see `deriveVerificationStatus` in migrateData.ts) — makes
+ * the proof-gate discipline visible on the product card/detail, not just enforced
+ * silently behind the scenes.
+ */
+export function productVerificationBadge(item: SoftwareItem): VerificationBadge {
+  switch ((item.verificationStatus || '').toLowerCase()) {
+    case 'verified':
+      return { label: 'Verified', tone: 'success' }
+    case 'partially verified':
+      return { label: 'Partially Verified', tone: 'info' }
+    case 'pending verification':
+      return { label: 'Pending Verification', tone: 'warning' }
+    default:
+      return { label: 'Needs Verification', tone: 'muted' }
+  }
+}

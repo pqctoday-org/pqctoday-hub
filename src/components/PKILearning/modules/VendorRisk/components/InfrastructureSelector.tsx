@@ -5,7 +5,7 @@ import { Package, ExternalLink, Trash2, CheckCircle, ShieldAlert } from 'lucide-
 import { Button } from '@/components/ui/button'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { softwareData } from '@/data/migrateData'
-import { LAYERS } from '@/components/Migrate/InfrastructureStack'
+import { LAYERS } from '@/data/infrastructureLayers'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 
 /** Resolve product keys to SoftwareItem objects, grouped by infrastructure layer */

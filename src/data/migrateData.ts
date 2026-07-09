@@ -118,6 +118,11 @@ function deriveVerificationStatus(
   return 'Needs Verification'
 }
 
+// Count of rows hidden by the no-record-without-proof deprecation gate (mechanical
+// at parse time, not authored) — surfaced to the UI so the proof-gate discipline is
+// visible rather than silently dropping rows from the catalog.
+let deprecatedRowCount = 0
+
 const {
   data: currentItems,
   previousData: previousItems,
@@ -126,7 +131,10 @@ const {
   modules,
   /catalog_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
   (row) => {
-    if (row.status && row.status !== 'active') return null
+    if (row.status && row.status !== 'active') {
+      deprecatedRowCount += 1
+      return null
+    }
     return {
       productId: row.product_id || '',
       softwareName: row.software_name,
@@ -200,6 +208,9 @@ const statusMap = previousItems
   : new Map<string, ItemStatus>()
 
 export const softwareMetadata = metadata
+
+/** Count of catalog rows currently hidden pending proof (no-record-without-proof gate). */
+export const deprecatedProductCount = deprecatedRowCount
 
 export const softwareData: SoftwareItem[] = currentItems.map((item) => ({
   ...item,

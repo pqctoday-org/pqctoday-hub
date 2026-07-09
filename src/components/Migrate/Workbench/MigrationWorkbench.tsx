@@ -123,7 +123,7 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
           <PageHeader
             icon={TrendingUp}
             title="PQC Migration Workbench"
-            description="Start from what you run — get a sequenced, quantum-safe plan aligned to NIST IR 8547 & CNSA 2.0."
+            description="Start from what you run — get a sequenced, quantum-safe plan aligned to NIST IR 8547 (Initial Public Draft) & CNSA 2.0."
           />
           {hasSelection && (
             <ShareButton
