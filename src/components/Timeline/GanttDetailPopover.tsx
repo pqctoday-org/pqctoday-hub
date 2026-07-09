@@ -92,11 +92,17 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
   const sourceUrl = primaryEvent?.sourceUrl
   const sourceDate = primaryEvent?.sourceDate
 
-  // Binding legal mandate (HARD) vs soft published guidance (SOFT) for this country's
-  // PQC deadline — single source: the timeline CSV `mandate_type`. Only meaningful on a
-  // Deadline phase; absent for countries with no curated national deadline.
+  // Binding legal mandate (HARD) vs soft published guidance (SOFT) for this milestone
+  // — single source: the timeline CSV `mandate_type`. Any row can carry its OWN
+  // curated event-level label now (the mandate-label sweep covers Deadline rows
+  // AND the CNSA 2.0 Migration lanes) — show it whenever present, regardless of
+  // phase. Only Deadline-phase rows without their own label fall back to the
+  // country-level map (the one row per country tagged `is_sim_deadline`); other
+  // phases have no country-level equivalent to fall back to.
   let deadlineMandate: DeadlineMandate | undefined
-  if (phase.phase === 'Deadline' && primaryEvent) {
+  if (primaryEvent?.mandateType) {
+    deadlineMandate = primaryEvent.mandateType
+  } else if (phase.phase === 'Deadline' && primaryEvent) {
     deadlineMandate = TIMELINE_COUNTRY_DEADLINE_MANDATE_BY_NAME[primaryEvent.countryName]
   }
 
@@ -150,21 +156,29 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
                   {phase.title}
                 </h3>
                 <StatusBadge status={phase.status} size="sm" />
-                {(deadlineMandate === 'HARD' || deadlineMandate === 'SOFT') && (
+                {deadlineMandate && (
                   <span
                     title={
                       deadlineMandate === 'HARD'
                         ? 'Binding legal mandate — law, regulation, or executive order.'
-                        : 'Published guidance — a target, not a binding legal mandate.'
+                        : deadlineMandate === 'SOFT'
+                          ? 'Published guidance — a target, not a binding legal mandate.'
+                          : 'Binding status could not be confirmed from an authoritative source yet — treat as neither binding nor advisory until reviewed.'
                     }
                     className={clsx(
                       'inline-flex items-center rounded border px-1.5 py-0.5 text-[10px] font-medium',
                       deadlineMandate === 'HARD'
                         ? 'border-destructive/30 bg-destructive/10 text-destructive'
-                        : 'border-border bg-muted text-muted-foreground'
+                        : deadlineMandate === 'SOFT'
+                          ? 'border-border bg-muted text-muted-foreground'
+                          : 'border-status-warning/30 bg-status-warning/10 text-status-warning'
                     )}
                   >
-                    {deadlineMandate === 'HARD' ? 'binding mandate' : 'guidance'}
+                    {deadlineMandate === 'HARD'
+                      ? 'binding mandate'
+                      : deadlineMandate === 'SOFT'
+                        ? 'guidance'
+                        : 'label pending'}
                   </span>
                 )}
               </div>

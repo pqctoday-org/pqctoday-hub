@@ -40,6 +40,12 @@ export interface TimelineEvent {
   trustedSourceId?: string
   localFile?: string
 
+  // Curated binding-vs-guidance label for this specific row, from the CSV
+  // `mandate_type` column (event-level — distinct from the generated facts'
+  // country-level fallback, which only covers the one row per country tagged
+  // `is_sim_deadline`). Absent when the row hasn't been reviewed yet.
+  mandateType?: 'HARD' | 'SOFT' | 'DRAFT'
+
   // Org classification for the category filter (FR-T-06)
   entityType: EntityType
 

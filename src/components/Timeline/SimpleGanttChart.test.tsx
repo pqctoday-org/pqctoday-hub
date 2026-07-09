@@ -152,9 +152,11 @@ describe('SimpleGanttChart', () => {
     // Check headers
     expect(screen.getByText('Country')).toBeInTheDocument()
     expect(screen.getByText('Organization')).toBeInTheDocument()
-    // Check years range (2024 - 2035)
+    // Year axis auto-scales to the data in view (mockData spans 2024–2027) with a
+    // minimum 6-column span and a "+" overflow bucket on the right edge — see
+    // yearRange in SimpleGanttChart.tsx. First column is the "<start" bucket.
     expect(screen.getByText('<2024')).toBeInTheDocument()
-    expect(screen.getByText('2035')).toBeInTheDocument()
+    expect(screen.getByText('2030+')).toBeInTheDocument()
   })
 
   it('renders country and organization data', () => {
@@ -447,7 +449,8 @@ describe('SimpleGanttChart', () => {
       ]
 
       renderG(<SimpleGanttChart {...defaultProps} data={preRangeData} countryItems={[]} />)
-      // Should render without crashing, phase clamped to 2024
+      // Should render without crashing — the axis now auto-scales to include 2020
+      // rather than clamping it to a fixed start year.
       expect(screen.getAllByLabelText(/Research: Early Research/i).length).toBeGreaterThan(0)
     })
 
