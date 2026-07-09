@@ -11,7 +11,7 @@ const manifest: ModuleManifest = {
   difficulty: 'advanced',
   frameworkPhase: 'p6',
   track: 'Executive',
-  trackOrder: 10,
+  trackOrder: 9,
   learnSections: [
     { id: 'why-it-matters', label: 'Why It Matters' },
     { id: 'what-to-learn', label: 'Detection & CTI Skills' },

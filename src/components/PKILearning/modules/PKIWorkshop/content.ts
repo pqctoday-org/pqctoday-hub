@@ -17,11 +17,11 @@ export const content: ModuleContent = {
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
     getStandard('RFC 5280'),
-    getStandard('RFC 8555'),
+    getStandard('IETF-RFC-8555'),
     getStandard('RFC 9881'),
-    getStandard('RFC 9763'),
+    getStandard('RFC-9763'),
     getStandard('RFC 9794'),
-    getStandard('FIPS 140-3'),
+    getStandard('FIPS-140-3-STANDARD'),
   ],
 
   algorithms: [

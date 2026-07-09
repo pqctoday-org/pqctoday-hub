@@ -15,11 +15,11 @@ export const OPS_GUIDE_DATA: RoleGuideData = {
       id: 'cert-rotation',
       title: 'Certificate Rotation at Scale',
       description:
-        'PQC certificates are 10-50x larger. Automated certificate management (ACME, cert-manager) needs testing with new sizes.',
+        'PQC certificates are roughly 4-7x larger than typical ECDSA certificates (SLH-DSA-based certificates can run considerably larger still). Automated certificate management (ACME, cert-manager) needs testing with new sizes.',
       severity: 'critical',
       timeframe: '2025-2028',
       exampleScenario:
-        'Your Kubernetes cluster uses cert-manager to auto-rotate 500 TLS certificates. ML-DSA certificates are 4KB each vs. 400 bytes for ECDSA. The cert-manager CRD size limits are exceeded, and certificate renewal starts failing silently across the cluster.',
+        'Your Kubernetes cluster uses cert-manager to auto-rotate 500 TLS certificates. ML-DSA-65 certificates run about 5.5KB each vs. roughly 1.4KB for a typical ECDSA certificate. The cert-manager CRD size limits are exceeded, and certificate renewal starts failing silently across the cluster.',
     },
     {
       id: 'vpn-ssh-upgrade',
