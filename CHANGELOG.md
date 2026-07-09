@@ -30,7 +30,7 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.18.0] - 2026-07-08
 
-A cross-page accuracy release covering Editorial Independence, Simulation, Explore, and the Landing page: the Editorial Independence page's promises about sponsor badges and the anonymous tipline now match what's actually built, the Simulation board acknowledges when Researcher and Curious visitors are shown the Executive seat by default, the Explore launcher's "recommended for you" badges are now driven by a single source of truth instead of a hand-maintained list, and the Landing page's headline facts and role-adaptation summary are now derived from live data instead of hardcoded text.
+A cross-page accuracy release covering Editorial Independence, Simulation, Explore, the Landing page, and the Sponsor page: the Editorial Independence page's promises about sponsor badges and the anonymous tipline now match what's actually built, the Simulation board acknowledges when Researcher and Curious visitors are shown the Executive seat by default, the Explore launcher's "recommended for you" badges are now driven by a single source of truth instead of a hand-maintained list, the Landing page's headline facts and role-adaptation summary are now derived from live data instead of hardcoded text, and the Sponsor page's tier benefits now match what's actually delivered today.
 
 ### Fixed
 
@@ -52,6 +52,10 @@ A cross-page accuracy release covering Editorial Independence, Simulation, Explo
 - **Replaced browser popup alerts with the site's normal notification style** [view:/] in the backup/restore settings panel.
 - **Removed a non-functional Google Drive sync option** [view:/] from the backup/restore settings panel that was permanently disabled and had no way to turn on.
 - **Fixed the Landing page's `?picker=open` link** [view:/]: following this link from other pages now actually opens the persona picker instead of doing nothing.
+- **Sponsor page benefits now match what's actually delivered** [view:/sponsor] [persona:executive]: perks that aren't built yet (listing-traffic reports, a full-time standards analyst, a monthly compliance digest) are now honestly labeled as planned rather than implied to be active today; the "thank-you note in the changelog" perk is now real and appears on the Changelog page.
+- **Sample-report link on the Sponsor page now opens a real example report** [view:/sponsor] [view:/report]: previously it pointed at an empty report page; it now opens a working sample that doesn't affect your own saved progress.
+- **Replaced a personal email address with the official contact address** [view:/sponsor].
+- **Funding-goal line items on the Sponsor page now link to where you can verify them** [view:/sponsor] [view:/revisions] [view:/editorial-independence]: for example, the "monthly vendor-mapping refresh" goal links to the page showing that refresh history.
 
 ## [4.17.0] - 2026-07-09
 
