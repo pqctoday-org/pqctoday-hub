@@ -15,8 +15,10 @@ first time (don't ship dev-speak and reformat later):
 - **Lead with the outcome.** Start each entry with what changed for the user —
   what they can now do, see, or trust — not the mechanism. Bold the entry with a
   plain-language title: `- **What changed, in plain words** [view:/page]: …`.
-- **Keep the `[view:/page]` and `[persona:role]` tags** — they drive the page's
-  filters and "For me" view. Tag every entry with the surface(s) it affects.
+- **Keep the `[view:/page]` and `[persona:id]` tags** — they drive the page's
+  filters and "For me" view. Valid persona ids: `executive`, `developer`,
+  `architect`, `researcher`, `ops`, `curious`. Tag every entry with the
+  surface(s) it affects.
 - **Put the human-readable detail in the sentence; leave deep internals out.**
   Filenames, function names, commit hashes, byte offsets, and spec section
   numbers belong in the PR/commit, not here. Keep concrete specifics a user
@@ -32,9 +34,9 @@ A Learn modules and Patents refresh release: two new modules close a cross-refer
 
 ### Added
 
-- **A "recently added" view for Patents, and click-to-drill on the filing-year chart** [view:/patents] [persona:technical]: newly published or updated patents are now marked so you don't have to compare snapshots yourself to spot what's new, and clicking a bar in the filing-year chart now filters straight to that year.
-- **A CycloneDX Cryptography Registry learning module** [view:/learn/crypto-registry] [persona:technical]: covers CycloneDX's standardized naming registry for cryptographic algorithms and curves, with hands-on algorithm-normalizer and curve-lookup workshops.
-- **A Software Bill of Materials (SBOM) learning module** [view:/learn/sbom] [persona:technical]: covers SBOM formats and generation tooling and how an SBOM feeds into a CBOM — closing a gap where SBOM was referenced by several other modules but had no dedicated module of its own.
+- **A "recently added" view for Patents, and click-to-drill on the filing-year chart** [view:/patents] [persona:researcher]: newly published or updated patents are now marked so you don't have to compare snapshots yourself to spot what's new, and clicking a bar in the filing-year chart now filters straight to that year.
+- **A CycloneDX Cryptography Registry learning module** [view:/learn/crypto-registry] [persona:developer]: covers CycloneDX's standardized naming registry for cryptographic algorithms and curves, with hands-on algorithm-normalizer and curve-lookup workshops.
+- **A Software Bill of Materials (SBOM) learning module** [view:/learn/sbom] [persona:developer]: covers SBOM formats and generation tooling and how an SBOM feeds into a CBOM — closing a gap where SBOM was referenced by several other modules but had no dedicated module of its own.
 
 ### Fixed
 
@@ -50,7 +52,7 @@ A Migrate data accuracy release: a broad, evidence-based cleanup of the product 
 
 ### Fixed
 
-- **Two product listings had quietly reverted to disproven claims** [view:/migrate] [persona:technical]: a Futurex HSM and a Renesas/Veridify chip were both re-showing post-quantum support that an earlier correction had already disproven, with nothing catching the regression. Both are corrected again, this time with an automated check in place so it can't silently happen a third time.
+- **Two product listings had quietly reverted to disproven claims** [view:/migrate] [persona:ops]: a Futurex HSM and a Renesas/Veridify chip were both re-showing post-quantum support that an earlier correction had already disproven, with nothing catching the regression. Both are corrected again, this time with an automated check in place so it can't silently happen a third time.
 - **429 product and vendor entries cited a source that didn't actually exist** [view:/migrate]: some had no citation at all; others cited one that had never been registered anywhere, which is worse, because nothing was flagging it. Nearly all now point at a real, checkable source.
 - **~175 product listings said "yes, it supports this" with no specifics** [view:/migrate]: several were a literal unfilled placeholder. Each now names the actual technology involved, sourced from the product's own saved evidence or fresh research — not guessed.
 - **A dozen products were tagged to the wrong company**, including two duplicated vendor records and one of pqctoday's own project listings misattributed to an unrelated company. All retagged to the correct vendor.
@@ -130,7 +132,7 @@ A crypto-agility and simulation release: the CACP playground gains a new **Migra
 
 ### Added
 
-- **A new "Migration" tab in the crypto-agility playground** [view:/playground/cacp] [persona:technical]: build a seven-key estate (encryption, key-agreement, and signing keys) by _business name only_ — the active policy decides every algorithm — then switch Classical → Hybrid → Full PQC and watch each vulnerable key rekey to its post-quantum successor the first time you use it. Every key keeps its business handle across the migration; old and new versions are shown side by side with their state and lineage.
+- **A new "Migration" tab in the crypto-agility playground** [view:/playground/cacp] [persona:architect]: build a seven-key estate (encryption, key-agreement, and signing keys) by _business name only_ — the active policy decides every algorithm — then switch Classical → Hybrid → Full PQC and watch each vulnerable key rekey to its post-quantum successor the first time you use it. Every key keeps its business handle across the migration; old and new versions are shown side by side with their state and lineage.
 - **A migration map** [view:/playground/cacp]: a table showing which key label serves which operation and what each policy resolves it to under Classical, Hybrid, and Full PQC, with the active mode highlighted.
 - **A live key-object inspector in the Migration tab** [view:/playground/cacp]: the real KMIP objects on the tab's engine — label, unique ID, type, algorithm, state, quantum-safety, and the rekey link from a retired key to its successor.
 - **A KMIP log inside each key tile** [view:/playground/cacp]: every operation you run on a key is logged in place, tagged with the mode (Classical / Hybrid / Full PQC) it ran under and expandable to the underlying policy/KMIP/PKCS#11 events.
