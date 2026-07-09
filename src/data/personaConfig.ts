@@ -198,6 +198,34 @@ export function getAlgorithmDefaults(persona: PersonaId | null): AlgorithmDefaul
 }
 
 /**
+ * Canonical path → human label for every path referenced by PERSONA_NAV_PATHS /
+ * PERSONA_RECOMMENDED_PATHS. MainLayout's nav items source their labels from
+ * this same map, so a rename here propagates to every consumer that lists
+ * paths by label (e.g. Landing's "How does this adapt content?" modal).
+ */
+export const NAV_PATH_LABELS: Record<string, string> = {
+  '/': 'Home',
+  '/simulation': 'Simulation',
+  '/explore': 'Explore',
+  '/learn': 'Learn',
+  '/timeline': 'Timeline',
+  '/algorithms': 'Algorithms',
+  '/migrate': 'Migrate',
+  '/compliance': 'Compliance',
+  '/assess': 'Assess',
+  '/report': 'Report',
+  '/business': 'Command Center',
+  '/playground': 'Playground',
+  '/threats': 'Threats',
+  '/library': 'Library',
+  '/leaders': 'Community',
+  '/patents': 'Patents',
+  '/openssl': 'OpenSSL Studio',
+  '/revisions': 'Revisions',
+  '/about': 'About',
+}
+
+/**
  * Top 3 landing page feature card paths to badge as "Recommended" per persona.
  */
 export const PERSONA_RECOMMENDED_PATHS: Record<PersonaId, string[]> = {

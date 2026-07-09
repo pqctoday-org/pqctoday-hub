@@ -62,7 +62,7 @@ const WorkshopOverlayHost = React.lazy(() =>
 )
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { useHistoryStore } from '../../store/useHistoryStore'
-import { PERSONA_NAV_PATHS, ALWAYS_VISIBLE_PATHS } from '../../data/personaConfig'
+import { PERSONA_NAV_PATHS, ALWAYS_VISIBLE_PATHS, NAV_PATH_LABELS } from '../../data/personaConfig'
 
 export const MainLayout = () => {
   const location = useLocation()
@@ -101,16 +101,27 @@ export const MainLayout = () => {
   const buildTime = __BUILD_TIMESTAMP__
 
   const navItems = [
-    { path: '/', label: 'Home', icon: Home, end: true },
-    { path: '/simulation', label: 'Simulation', icon: Gamepad2, section: 'start' },
+    { path: '/', label: NAV_PATH_LABELS['/'], icon: Home, end: true },
+    {
+      path: '/simulation',
+      label: NAV_PATH_LABELS['/simulation'],
+      icon: Gamepad2,
+      section: 'start',
+    },
     // — Explore entry point (curious persona only) —
-    { path: '/explore', label: 'Explore', icon: Compass, section: 'start', curiousOnly: true },
+    {
+      path: '/explore',
+      label: NAV_PATH_LABELS['/explore'],
+      icon: Compass,
+      section: 'start',
+      curiousOnly: true,
+    },
     // — Start the Journey —
-    { path: '/learn', label: 'Learn', icon: GraduationCap, section: 'start' },
-    { path: '/timeline', label: 'Timeline', icon: Globe, section: 'start' },
+    { path: '/learn', label: NAV_PATH_LABELS['/learn'], icon: GraduationCap, section: 'start' },
+    { path: '/timeline', label: NAV_PATH_LABELS['/timeline'], icon: Globe, section: 'start' },
     {
       path: '/algorithms',
-      label: 'Algorithms',
+      label: NAV_PATH_LABELS['/algorithms'],
       icon: Shield,
       section: 'start',
       hiddenOnMobile: true,
@@ -118,10 +129,15 @@ export const MainLayout = () => {
       moreOrder: 1,
     },
     // — My Journey —
-    { path: '/migrate', label: 'Migrate', icon: ArrowRightLeft, section: 'journey' },
+    {
+      path: '/migrate',
+      label: NAV_PATH_LABELS['/migrate'],
+      icon: ArrowRightLeft,
+      section: 'journey',
+    },
     {
       path: '/compliance',
-      label: 'Compliance',
+      label: NAV_PATH_LABELS['/compliance'],
       icon: ShieldCheck,
       section: 'journey',
       hiddenOnMobile: true,
@@ -129,10 +145,10 @@ export const MainLayout = () => {
       moreOrder: 3,
     },
     // — Assess & Report —
-    { path: '/assess', label: 'Assess', icon: ClipboardCheck, section: 'assess' },
+    { path: '/assess', label: NAV_PATH_LABELS['/assess'], icon: ClipboardCheck, section: 'assess' },
     {
       path: '/report',
-      label: 'Report',
+      label: NAV_PATH_LABELS['/report'],
       icon: FileBarChart,
       section: 'assess',
       hiddenOnMobile: true,
@@ -141,7 +157,7 @@ export const MainLayout = () => {
     },
     {
       path: '/business',
-      label: 'Command Center',
+      label: NAV_PATH_LABELS['/business'],
       icon: LayoutDashboard,
       section: 'assess',
       // Visible on mobile for executive/architect; hidden for others
@@ -151,7 +167,7 @@ export const MainLayout = () => {
     },
     {
       path: '/playground',
-      label: 'Playground',
+      label: NAV_PATH_LABELS['/playground'],
       icon: FlaskConical,
       hiddenOnMobile: true,
       mobileMore: true,
@@ -159,11 +175,16 @@ export const MainLayout = () => {
       moreOrder: 2,
     },
     // — Keep Up to Date —
-    { path: '/threats', label: 'Threats', icon: AlertTriangle, section: 'current' },
-    { path: '/library', label: 'Library', icon: BookOpen, section: 'current' },
+    {
+      path: '/threats',
+      label: NAV_PATH_LABELS['/threats'],
+      icon: AlertTriangle,
+      section: 'current',
+    },
+    { path: '/library', label: NAV_PATH_LABELS['/library'], icon: BookOpen, section: 'current' },
     {
       path: '/leaders',
-      label: 'Community',
+      label: NAV_PATH_LABELS['/leaders'],
       icon: Users,
       section: 'current',
       hiddenOnMobile: true,
@@ -172,7 +193,7 @@ export const MainLayout = () => {
     },
     {
       path: '/patents',
-      label: 'Patents',
+      label: NAV_PATH_LABELS['/patents'],
       icon: ScrollText,
       section: 'current',
       hiddenOnMobile: true,
@@ -181,7 +202,7 @@ export const MainLayout = () => {
     },
     {
       path: '/about',
-      label: 'About',
+      label: NAV_PATH_LABELS['/about'],
       icon: Info,
       hiddenOnMobile: true,
       mobileMore: true,
