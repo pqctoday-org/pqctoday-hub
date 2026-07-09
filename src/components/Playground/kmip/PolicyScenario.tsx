@@ -54,6 +54,7 @@ const TONE: Record<string, { badge: string; text: string; icon: typeof CheckCirc
 function summarize(s: PolicyTestScenario): string {
   const r = s.request
   const bits: string[] = [r.op]
+  if (r.name) bits.push(`name="${r.name}"`)
   if (r.algorithm) bits.push(r.algorithm + (r.length ? `-${r.length}` : ''))
   else if (r.length) bits.push(`${r.length}-bit`)
   if (r.state && r.state !== 'Active') bits.push(`state=${r.state}`)
@@ -77,6 +78,7 @@ function runScenario(engine: KmipEngine, s: PolicyTestScenario): RunResult {
       currentAlgorithm: isNew ? undefined : r.algorithm,
       length: r.length,
       state: r.state,
+      name: r.name,
       date: r.date,
       attrs: r.attrs,
       usageMask: r.usageMask,

@@ -102,4 +102,33 @@ describe('runBatch — policy enforcement + Undo (real wasm engine)', () => {
     expect(objects.some((o) => o.uid === rekeyed!.newPrivateKeyUid)).toBe(false)
     expect(objects.some((o) => o.uid === rekeyed!.newPublicKeyUid)).toBe(false)
   })
+
+  it('Undo rolls back a UID-minting Encapsulate chain (engine 0.13.0 rollback coverage)', () => {
+    // Mirrors BatchView's "Rollback reaches Encapsulate" recipe. Before
+    // 0.13.0 the dispatcher had no rollback bookkeeping for Encapsulate /
+    // Decapsulate / the split-key ops — an Undo left their minted objects
+    // behind and $IDPlaceholder couldn't chain past them.
+    engine.loadPolicy(PERMISSIVE_YAML)
+    const before = engine.listObjects().length
+
+    const batch = engine.runBatch({
+      errorContinuation: 'Undo',
+      items: [
+        { op: 'CreateKeyPair', intent: 'kem', algorithm: 'ML-KEM-768' },
+        { op: 'Activate', uid: '$IDPlaceholder' },
+        { op: 'Encapsulate', uid: '$IDPlaceholder' },
+        { op: 'Destroy', uid: 'urn:pqctoday:ghost' }, // guaranteed ObjectNotFound
+      ],
+    })
+
+    expect(batch.items).toHaveLength(4)
+    expect(batch.items[0].status).toBe('OperationUndone')
+    expect(batch.items[1].status).toBe('OperationUndone')
+    expect(batch.items[2].status).toBe('OperationUndone')
+    expect(batch.items[3].status).toBe('OperationFailed')
+
+    // Every object the batch minted (key pair + encapsulation output) is
+    // genuinely gone — the keystore is byte-for-byte back where it started.
+    expect(engine.listObjects().length).toBe(before)
+  })
 })
