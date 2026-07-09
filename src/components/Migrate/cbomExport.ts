@@ -2,12 +2,12 @@
 /**
  * CycloneDX CBOM (Cryptographic Bill of Materials) export for the Migrate page.
  *
- * Thin `SoftwareItem` adapter over the shared CycloneDX 1.6 emitter in
+ * Thin `SoftwareItem` adapter over the shared CycloneDX 1.7 emitter in
  * `services/cbom/cycloneDx.ts`. Maps each product to a `library` component
  * carrying its CPE / PURL / FIPS-cert identity plus a child `cryptographic-asset`
- * per exposed PQC algorithm. The same emitter now backs the Library CBOM Builder
- * and the Supply-Chain Risk Matrix, so all three produce identical schema-valid
- * documents.
+ * per exposed algorithm (PQC or classical). The same emitter now backs the
+ * Library CBOM Builder and the Supply-Chain Risk Matrix, so all three produce
+ * identical schema-valid documents.
  *
  * Additive: nothing here runs unless the user clicks "Export CBOM". When unused,
  * the Migrate page behaves exactly as before.
@@ -20,7 +20,7 @@ import {
   buildCbomDocument,
   cbomBomRef,
   downloadCbomJson,
-  extractPqcAlgorithmsFromText,
+  extractAllAlgorithmsFromText,
   type CbomAlgorithm,
   type CbomBuildResult,
   type CbomComponentInput,
@@ -29,7 +29,11 @@ import {
 
 export type { CbomBuildResult }
 
-/** Extract the distinct canonical PQC algorithms a product (and its certs) expose. */
+/** Extract the distinct algorithms (PQC and classical) a product (and its
+ *  certs) expose. `SoftwareItem`/`CertificationXref` have no dedicated
+ *  classical-algorithm field today (verified 07092026) — this scans the same
+ *  PQC-labeled text it always has, now through the combined extractor, so
+ *  it's ready the moment that text (or a future field) names one. */
 export function extractPqcAlgorithms(
   item: SoftwareItem,
   certs: CertificationXref[]
@@ -41,7 +45,7 @@ export function extractPqcAlgorithms(
   ]
     .filter(Boolean)
     .join(' ')
-  return extractPqcAlgorithmsFromText(haystack)
+  return extractAllAlgorithmsFromText(haystack)
 }
 
 /**
@@ -86,7 +90,7 @@ export function softwareItemToCbomInput(
   }
 }
 
-/** Build a CycloneDX 1.6 CBOM document from the given product set. */
+/** Build a CycloneDX 1.7 CBOM document from the given product set. */
 export function buildCycloneDxCbom(items: SoftwareItem[]): CbomBuildResult {
   return buildCbomDocument(
     items.map((item) => softwareItemToCbomInput(item)),

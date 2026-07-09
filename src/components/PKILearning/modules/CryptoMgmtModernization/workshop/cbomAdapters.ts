@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * Pure adapters mapping the Library CBOM Builder's catalog/SBOM rows onto the
- * shared CycloneDX 1.6 component model (`services/cbom/cycloneDx.ts`), plus the
+ * shared CycloneDX 1.7 component model (`services/cbom/cycloneDx.ts`), plus the
  * version-aware SBOM→catalog matcher. Split out of the component so the matcher
  * and adapters stay unit-testable (and the component file stays component-only).
  */
@@ -16,7 +16,7 @@ import type { HsmVendorRecord } from '../data/hsmVendors'
 import type { FileArtifactRecord } from '../data/fileArtifacts'
 import {
   cbomBomRef,
-  extractPqcAlgorithmsFromText,
+  extractAllAlgorithmsFromText,
   type CbomComponentInput,
   type CbomProperty,
 } from '@/services/cbom/cycloneDx'
@@ -99,7 +99,7 @@ export function libraryToCbomInput(lib: CryptoLibrary): CbomComponentInput {
     certifications: lib.cmvpCertNumber
       ? [{ certType: 'FIPS 140-3 CMVP', certId: lib.cmvpCertNumber }]
       : [],
-    algorithms: extractPqcAlgorithmsFromText(lib.pqcSupport),
+    algorithms: extractAllAlgorithmsFromText(lib.pqcSupport),
   }
 }
 
@@ -120,7 +120,7 @@ export function hsmToCbomInput(h: HsmVendorRecord): CbomComponentInput {
     certifications: h.cmvpCertNumber
       ? [{ certType: 'FIPS 140-3 CMVP', certId: h.cmvpCertNumber }]
       : [],
-    algorithms: extractPqcAlgorithmsFromText(h.pqcSupport),
+    algorithms: extractAllAlgorithmsFromText(h.pqcSupport),
   }
 }
 
@@ -136,7 +136,11 @@ export function fileArtifactToCbomInput(f: FileArtifactRecord): CbomComponentInp
       { name: 'pqctoday:pqcTarget', value: f.pqcTarget },
       { name: 'pqctoday:posture', value: f.posture },
     ],
-    algorithms: extractPqcAlgorithmsFromText(f.pqcTarget),
+    // 07092026: `f.classical` (e.g. "RSA-4096 or Ed25519") previously only
+    // appeared as a flat property string — now also detected as a real
+    // crypto-asset, combined with `f.pqcTarget` so a migration-target pairing
+    // in the same record can be recognized as hybrid when the text signals it.
+    algorithms: extractAllAlgorithmsFromText(`${f.classical} ${f.pqcTarget}`),
   }
 }
 
@@ -153,6 +157,6 @@ export function cbomRowToCbomInput(r: CbomRow): CbomComponentInput {
       { name: 'pqctoday:posture', value: r.posture },
     ],
     algorithms:
-      r.pqcSupport && r.pqcSupport !== '—' ? extractPqcAlgorithmsFromText(r.pqcSupport) : [],
+      r.pqcSupport && r.pqcSupport !== '—' ? extractAllAlgorithmsFromText(r.pqcSupport) : [],
   }
 }

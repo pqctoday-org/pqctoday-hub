@@ -63,6 +63,7 @@ import { MigrationRoadmap } from './MigrationRoadmap'
 import { MigrationToolkit } from './MigrationToolkit'
 import { VendorRiskSection } from './sections/VendorRiskSection'
 import { DiscoverySection } from './sections/DiscoverySection'
+import { CbomSection } from './sections/CbomSection'
 import { ReportMethodologyModal } from './ReportMethodologyModal'
 import { SectionInfoModal } from './SectionInfoModal'
 import { ROICalculatorSection } from '../shared/ROICalculatorSection'
@@ -1280,6 +1281,14 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                           defaultOpen={cfg('discovery').state === 'open'}
                         />
                       )}
+
+                    {/* Cryptographic Bill of Materials (CBOM) — the Communicate
+                        expression of Phase 2 (frameworkPhases.ts p2). Reads its
+                        own saved artifact rather than assessment `result`, so it
+                        isn't gated on `result.assessmentProfile` like Discovery. */}
+                    {phaseVisible('cbom') && cfg('cbom').state !== 'hidden' && (
+                      <CbomSection defaultOpen={cfg('cbom').state === 'open'} />
+                    )}
 
                     {/* Algorithm Migration Matrix */}
                     {phaseVisible('algorithmMigration') &&
