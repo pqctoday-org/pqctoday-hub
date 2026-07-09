@@ -66,7 +66,7 @@ describe('CbomSection', () => {
     expect(screen.getByText(/haven.t saved one to your Command Center yet/i)).toBeInTheDocument()
     expect(
       screen.getByRole('link', { name: /Build your CBOM in the CBOM Builder/i })
-    ).toHaveAttribute('href', '/learn/crypto-mgmt-modernization')
+    ).toHaveAttribute('href', '/learn/crypto-mgmt-modernization?tab=workshop&step=2')
   })
 
   it('legacy state: prompts a re-save when a saved CBOM predates the structured summary', () => {
@@ -86,7 +86,7 @@ describe('CbomSection', () => {
     expect(screen.getByText(/CBOM — Jun 1, 2026/)).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Re-open the CBOM Builder/i })).toHaveAttribute(
       'href',
-      '/learn/crypto-mgmt-modernization'
+      '/learn/crypto-mgmt-modernization?tab=workshop&step=2'
     )
   })
 

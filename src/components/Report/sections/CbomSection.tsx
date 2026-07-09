@@ -52,10 +52,11 @@ const TYPE_LABEL: Record<string, string> = {
   platform: 'Platforms',
 }
 
-/** `/learn/crypto-mgmt-modernization` hosts the Library CBOM Builder as its
- *  workshop step — there's no deep-link to that specific step, so this points
- *  at the module itself (same precision as DiscoverySection's `/migrate` link). */
-const CBOM_BUILDER_LINK = '/learn/crypto-mgmt-modernization'
+/** Deep-links straight to the Library CBOM Builder workshop step (index 2 of
+ *  crypto-mgmt-modernization's PARTS array) via useModuleDeepLink's `?tab=
+ *  workshop&step=N` convention — confirmed live for a normal (non-embedded)
+ *  page visit, not just the Simulation embed context. */
+const CBOM_BUILDER_LINK = '/learn/crypto-mgmt-modernization?tab=workshop&step=2'
 
 function formatDate(ts: number | undefined): string {
   if (!ts) return 'an earlier date'
