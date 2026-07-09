@@ -160,6 +160,7 @@ export function PolicyGraphView({
   const [req, setReq] = useState<SimRequest>({
     op: 'Sign',
     algorithm: 'ECDSA-P256',
+    keyName: '',
     keyState: 'Active',
     bits: '',
     date: '2026-06-01',
@@ -330,6 +331,7 @@ export function PolicyGraphView({
           currentAlgorithm: newObject ? undefined : activeReq.algorithm || undefined,
           length: activeReq.bits === '' ? undefined : Number(activeReq.bits),
           state: activeReq.keyState || undefined,
+          name: activeReq.keyName || undefined,
           date: activeReq.date || undefined,
           attrs: Object.keys(attrs).length ? attrs : undefined,
           usageMask: activeReq.usageFlags.length ? activeReq.usageFlags : undefined,
@@ -457,7 +459,10 @@ export function PolicyGraphView({
   const example = POLICY_PRESETS.find((p) => p.file === presetFile)?.example
   const onLoadExample = () => {
     if (!example) return
-    const merged: SimRequest = { ...req, ...example }
+    // PolicyExample mirrors SimRequest except its `name` field, which maps
+    // to the simulator's `keyName` (the label name_pattern rules match on).
+    const { name, ...rest } = example
+    const merged: SimRequest = { ...req, ...rest, keyName: name ?? '' }
     setReq(merged)
     run(merged)
   }

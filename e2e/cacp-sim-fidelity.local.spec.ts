@@ -78,6 +78,7 @@ test('visual sim fidelity vs engine — verdict, algorithm, rekey, decider, reas
           currentAlgorithm: isNew ? undefined : r.algorithm,
           length: r.length,
           state: r.state,
+          name: r.name,
           date: r.date,
           attrs: r.attrs,
           usageMask: r.usageMask,
@@ -93,6 +94,7 @@ test('visual sim fidelity vs engine — verdict, algorithm, rekey, decider, reas
       const res = sim.evaluatePolicy(editable, {
         op: r.op,
         algorithm: r.algorithm ?? '',
+        keyName: r.name ?? '',
         keyState: r.state ?? 'Active',
         bits: r.length == null ? '' : String(r.length),
         date: r.date ?? '',
