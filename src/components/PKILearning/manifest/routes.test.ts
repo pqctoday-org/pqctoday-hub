@@ -71,6 +71,7 @@ const GOLDEN_ROUTE_PATHS = [
   'quiz',
   'research-quantum-impact',
   'secrets-management-pqc',
+  'sbom',
   'secure-boot-pqc',
   'skills-team-structure',
   'slh-dsa',

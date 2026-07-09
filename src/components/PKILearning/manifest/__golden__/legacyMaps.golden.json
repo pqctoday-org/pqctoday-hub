@@ -45,6 +45,15 @@
       "difficulty": "advanced",
       "frameworkPhase": "p5"
     },
+    "sbom": {
+      "id": "sbom",
+      "lm_id": "LM-063",
+      "title": "Software Bill of Materials (SBOM)",
+      "description": "Inventory every software component a product depends on — supplier, version, dependency graph — the discovery input that feeds a CBOM and closes the vulnerability-triage loop with VEX.",
+      "duration": "30 min",
+      "difficulty": "intermediate",
+      "frameworkPhase": "p1"
+    },
     "cbom": {
       "id": "cbom",
       "lm_id": "LM-060",
@@ -564,6 +573,7 @@
     "aerospace-pqc": 6,
     "arch-quantum-impact": 4,
     "automotive-pqc": 6,
+    "sbom": 2,
     "cbom": 4,
     "code-signing": 5,
     "compliance-strategy": 4,
@@ -748,6 +758,32 @@
       {
         "id": "supply-chain",
         "label": "TISAX, VDA & AUTOSAR"
+      }
+    ],
+    "sbom": [
+      {
+        "id": "sbom-why",
+        "label": "Why an SBOM"
+      },
+      {
+        "id": "sbom-formats",
+        "label": "SPDX vs CycloneDX"
+      },
+      {
+        "id": "sbom-elements",
+        "label": "Minimum Elements"
+      },
+      {
+        "id": "sbom-vex",
+        "label": "VEX & Vulnerability Triage"
+      },
+      {
+        "id": "sbom-regulation",
+        "label": "EO 14028 & EU CRA"
+      },
+      {
+        "id": "sbom-to-cbom",
+        "label": "Bridge: From SBOM to CBOM"
       }
     ],
     "cbom": [
@@ -1928,6 +1964,16 @@
       {
         "id": "lifecycle-migration-roadmap",
         "label": "Lifecycle Migration Roadmap"
+      }
+    ],
+    "sbom": [
+      {
+        "id": "sbom-format-explorer",
+        "label": "SBOM Format Explorer"
+      },
+      {
+        "id": "sbom-generation-picker",
+        "label": "Generation Tool Picker"
       }
     ],
     "cbom": [
@@ -3203,6 +3249,15 @@
           "frameworkPhase": "foundations"
         },
         {
+          "id": "sbom",
+          "lm_id": "LM-063",
+          "title": "Software Bill of Materials (SBOM)",
+          "description": "Inventory every software component a product depends on — supplier, version, dependency graph — the discovery input that feeds a CBOM and closes the vulnerability-triage loop with VEX.",
+          "duration": "30 min",
+          "difficulty": "intermediate",
+          "frameworkPhase": "p1"
+        },
+        {
           "id": "cbom",
           "lm_id": "LM-060",
           "title": "Cryptography Bill of Materials (CBOM)",
@@ -3691,6 +3746,14 @@
     "api-security-jwt": {
       "algorithms": ["ML-DSA", "SLH-DSA"],
       "standards": ["JOSE", "RFC 9421"]
+    },
+    "sbom": {
+      "standards": [
+        "SPDX / ISO 5962",
+        "CycloneDX / ECMA-424",
+        "NTIA Minimum Elements",
+        "OASIS CSAF 2.0 (VEX)"
+      ]
     },
     "cbom": {
       "standards": ["CycloneDX / ECMA-424", "SPDX / ISO 5962", "NIST SP 1800-38"]
