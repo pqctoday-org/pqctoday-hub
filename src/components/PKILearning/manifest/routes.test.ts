@@ -65,7 +65,6 @@ const GOLDEN_ROUTE_PATHS = [
   'pqc-governance',
   'pqc-grc',
   'pqc-risk-management',
-  'pqc-team',
   'pqc-testing-validation',
   'qkd',
   'quantum-threats',

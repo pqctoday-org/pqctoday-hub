@@ -1,11 +1,23 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { ExternalLink, BookOpen } from 'lucide-react'
+import { ExternalLink, BookOpen, CalendarCheck } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { getLibraryItemsForModule } from '@/data/libraryData'
+import { MODULE_LAST_REVIEWED } from '@/data/moduleContentRegistry'
 import { EmptyState } from '@/components/ui/empty-state'
 
 interface ModuleReferencesTabProps {
   moduleId: string
+}
+
+function LastReviewedNote({ moduleId }: { moduleId: string }) {
+  const lastReviewed = MODULE_LAST_REVIEWED[moduleId] // eslint-disable-line security/detect-object-injection
+  if (!lastReviewed) return null
+  return (
+    <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-3">
+      <CalendarCheck size={13} aria-hidden="true" />
+      <span>Content last reviewed {lastReviewed}</span>
+    </div>
+  )
 }
 
 export function ModuleReferencesTab({ moduleId }: ModuleReferencesTabProps) {
@@ -13,16 +25,20 @@ export function ModuleReferencesTab({ moduleId }: ModuleReferencesTabProps) {
 
   if (items.length === 0) {
     return (
-      <EmptyState
-        icon={<BookOpen size={32} />}
-        title="No references yet"
-        description="This module doesn't have linked references — the Learn tab is the place to dive in."
-      />
+      <div>
+        <LastReviewedNote moduleId={moduleId} />
+        <EmptyState
+          icon={<BookOpen size={32} />}
+          title="No references yet"
+          description="This module doesn't have linked references — the Learn tab is the place to dive in."
+        />
+      </div>
     )
   }
 
   return (
     <div className="space-y-3">
+      <LastReviewedNote moduleId={moduleId} />
       <p className="text-sm text-muted-foreground mb-4">
         Standards, RFCs, and guidance documents relevant to this module. All items are also
         available in the{' '}

@@ -90,7 +90,7 @@ describe('PKILearning', () => {
     expect(screen.queryByTestId('module-digital-assets')).not.toBeInTheDocument()
   })
 
-  it('keeps the legacy five-mode dashboard reachable at /learn/legacy', () => {
+  it('redirects the retired legacy five-mode dashboard at /learn/legacy to /learn', () => {
     render(
       <EmbedProvider>
         <MemoryRouter initialEntries={['/learn/legacy']}>
@@ -101,7 +101,9 @@ describe('PKILearning', () => {
       </EmbedProvider>
     )
 
-    // The legacy dashboard keeps its view-mode radiogroup (Journey/Stack/Cards/Table)
-    expect(screen.getByRole('radiogroup', { name: /view mode/i })).toBeInTheDocument()
+    // The legacy dashboard's view-mode radiogroup (Journey/Stack/Cards/Table) is gone —
+    // /learn/legacy now redirects to the redesigned dashboard at /learn.
+    expect(screen.queryByRole('radiogroup', { name: /view mode/i })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /browse all \d+ modules/i })).toBeInTheDocument()
   })
 })
