@@ -4,6 +4,8 @@ import {
   computeCitationCounts,
   attachPriorRevisions,
   detectPurpose,
+  findLibraryItemByRef,
+  REFERENCE_ID_ALIASES,
   LIBRARY_PURPOSES,
   type LibraryItem,
   type PriorRevision,
@@ -46,6 +48,29 @@ describe('libraryData', () => {
   it('assigns every item one of the three canonical purposes', () => {
     for (const item of libraryData) {
       expect(LIBRARY_PURPOSES).toContain(item.purpose)
+    }
+  })
+})
+
+describe('findLibraryItemByRef', () => {
+  it('resolves a live item by its current reference_id', () => {
+    const anyLive = libraryData[0]
+    expect(findLibraryItemByRef(anyLive.referenceId)).toBe(anyLive)
+  })
+
+  it('resolves an unknown ref to undefined rather than throwing', () => {
+    expect(findLibraryItemByRef('DOES-NOT-EXIST')).toBeUndefined()
+  })
+
+  it('every alias target that is currently active resolves to a live item', () => {
+    // Aliases whose target has itself been deprecated/orphaned in the current
+    // CSV snapshot are a separate data-integrity issue (see revisions.jsonl /
+    // library remediation), not a bug in the alias mechanism itself — so this
+    // only asserts on aliases whose target actually appears in libraryData.
+    for (const [oldRef, newRef] of Object.entries(REFERENCE_ID_ALIASES)) {
+      const targetIsLive = libraryData.some((item) => item.referenceId === newRef)
+      if (!targetIsLive) continue
+      expect(findLibraryItemByRef(oldRef)?.referenceId).toBe(newRef)
     }
   })
 })
