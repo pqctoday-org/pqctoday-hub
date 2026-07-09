@@ -2489,5 +2489,38 @@
     "technicalNote": "CKM_AES_KWP (RFC 5649) is the padded variant for wrapping keys whose length is not a multiple of 8 bytes.",
     "complexity": "intermediate",
     "category": "concept"
+  },
+  {
+    "term": "CPC Code",
+    "acronym": "CPC",
+    "definition": "A Cooperative Patent Classification symbol (e.g. H04L9/0852) that categorizes a patent by subject matter. Jointly developed and maintained by the USPTO and the European Patent Office, CPC codes are hierarchical — sections (letters) subdivide into classes, subclasses, groups, and subgroups, with longer codes indicating more specific technology.",
+    "technicalNote": "The USPTO replaced its own classification system (USPC) with CPC on January 1, 2013. A single patent typically carries several CPC codes.",
+    "complexity": "beginner",
+    "category": "concept"
+  },
+  {
+    "term": "Priority Date",
+    "definition": "The earliest date an inventor can claim to have disclosed an invention, typically from an earlier-filed provisional or foreign application. It is the date patent examiners use to judge whether the claimed invention is novel against prior art.",
+    "technicalNote": "The priority date often equals the filing date, but not always — a later non-provisional filing can claim priority back to an earlier provisional.",
+    "complexity": "beginner",
+    "category": "concept"
+  },
+  {
+    "term": "Filing Date",
+    "definition": "The date a complete patent application was formally submitted to the patent office. It anchors the start of prosecution and (for the earliest non-provisional filing in a family) the patent term calculation.",
+    "complexity": "beginner",
+    "category": "concept"
+  },
+  {
+    "term": "Issue Date",
+    "definition": "The date a patent is formally granted and becomes enforceable — sometimes called the grant date. It marks the end of examination, when the patentee gains the legal right to exclude others from the claimed invention.",
+    "complexity": "beginner",
+    "category": "concept"
+  },
+  {
+    "term": "Independent Claim",
+    "definition": "A patent claim that stands alone and defines the invention completely without referring to any other claim. Every patent has at least one. Independent claims set the broadest scope of protection; dependent claims narrow an independent claim by adding further limitations and must be read together with it.",
+    "complexity": "beginner",
+    "category": "concept"
   }
 ]

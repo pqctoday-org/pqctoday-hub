@@ -45,6 +45,14 @@ const PQC_ONLY_LS_KEY = 'pqc-patents-pqc-only'
 const SORT_LS_KEY = 'pqc-patents-sort'
 const VALID_SORT_KEYS: SortKey[] = ['issueDate', 'impactScore', 'title', 'priorityDate']
 const VALID_SORT_DIRS: SortDir[] = ['asc', 'desc']
+// URL params that carry scope/columns explicitly — when present (e.g. from a
+// shared link) they win over the recipient's own saved localStorage state, so
+// a shared link shows what the sender configured, not the recipient's prior
+// preferences. Set alongside localStorage on every user-initiated change,
+// mirroring the existing sort/dir params below.
+const SCOPE_PARAM = 'scope'
+const COLUMNS_PARAM = 'columns'
+const PRESET_PARAM = 'preset'
 const FILTER_PARAMS = [
   'search',
   'assignee',
@@ -70,6 +78,32 @@ function readPqcOnly(): boolean {
   } catch {
     return true
   }
+}
+
+/** Explicit scope from a shared-link URL, if present. `null` = not present in URL. */
+function readScopeParam(params: URLSearchParams): boolean | null {
+  const s = params.get(SCOPE_PARAM)
+  if (s === 'all') return false
+  if (s === 'pqc') return true
+  return null
+}
+
+/** Explicit columns/preset from a shared-link URL, if present. */
+function readColumnsParam(
+  params: URLSearchParams
+): { preset: PresetKey | 'custom'; columns: ColumnId[] } | null {
+  const columnsRaw = params.get(COLUMNS_PARAM)
+  if (!columnsRaw) return null
+  const columns = columnsRaw
+    .split(',')
+    .filter((c): c is ColumnId => ALL_COLUMN_IDS.includes(c as ColumnId))
+  if (columns.length === 0) return null
+  const presetRaw = params.get(PRESET_PARAM)
+  const preset: PresetKey | 'custom' =
+    presetRaw && (['essential', 'algorithms', 'full'] as string[]).includes(presetRaw)
+      ? (presetRaw as PresetKey)
+      : 'custom'
+  return { preset, columns }
 }
 
 function readSavedColumns(): { preset: PresetKey | 'custom'; columns: ColumnId[] } {
@@ -112,22 +146,30 @@ export function PatentsViewRedesign() {
   const activeTab = params.get('tab') ?? 'insights'
   const selectedPatent = params.get('patent')
 
-  const [pqcOnly, setPqcOnly] = useState<boolean>(() => readPqcOnly())
+  const [pqcOnly, setPqcOnly] = useState<boolean>(() => readScopeParam(params) ?? readPqcOnly())
   const [columnPreset, setColumnPreset] = useState<PresetKey | 'custom'>(
-    () => readSavedColumns().preset
+    () => readColumnsParam(params)?.preset ?? readSavedColumns().preset
   )
-  const [visibleColumns, setVisibleColumns] = useState<ColumnId[]>(() => readSavedColumns().columns)
+  const [visibleColumns, setVisibleColumns] = useState<ColumnId[]>(
+    () => readColumnsParam(params)?.columns ?? readSavedColumns().columns
+  )
   const [searchResults, setSearchResults] = useState<PatentItem[]>([])
   const [drawerFromSearch, setDrawerFromSearch] = useState(false)
 
-  const handlePqcOnlyChange = useCallback((value: boolean) => {
-    setPqcOnly(value)
-    try {
-      localStorage.setItem(PQC_ONLY_LS_KEY, String(value))
-    } catch {
-      /* ignore */
-    }
-  }, [])
+  const handlePqcOnlyChange = useCallback(
+    (value: boolean) => {
+      setPqcOnly(value)
+      try {
+        localStorage.setItem(PQC_ONLY_LS_KEY, String(value))
+      } catch {
+        /* ignore */
+      }
+      const next = new URLSearchParams(params)
+      next.set(SCOPE_PARAM, value ? 'pqc' : 'all')
+      setParams(next, { replace: true })
+    },
+    [params, setParams]
+  )
 
   const displayPatents = useMemo(
     () => (pqcOnly ? patentsData.filter(isPqcPatent) : patentsData),
@@ -187,25 +229,39 @@ export function PatentsViewRedesign() {
     [sortKey, sortDir, params, setParams]
   )
 
-  const handlePresetChange = useCallback((preset: PresetKey) => {
-    const columns = COLUMN_PRESETS[preset]
-    setColumnPreset(preset)
-    setVisibleColumns(columns)
-    try {
-      localStorage.setItem(COLUMNS_LS_KEY, JSON.stringify({ preset, columns }))
-    } catch {
-      /* ignore */
-    }
-  }, [])
-  const handleColumnsChange = useCallback((columns: ColumnId[]) => {
-    setColumnPreset('custom')
-    setVisibleColumns(columns)
-    try {
-      localStorage.setItem(COLUMNS_LS_KEY, JSON.stringify({ preset: 'custom', columns }))
-    } catch {
-      /* ignore */
-    }
-  }, [])
+  const handlePresetChange = useCallback(
+    (preset: PresetKey) => {
+      const columns = COLUMN_PRESETS[preset]
+      setColumnPreset(preset)
+      setVisibleColumns(columns)
+      try {
+        localStorage.setItem(COLUMNS_LS_KEY, JSON.stringify({ preset, columns }))
+      } catch {
+        /* ignore */
+      }
+      const next = new URLSearchParams(params)
+      next.set(PRESET_PARAM, preset)
+      next.set(COLUMNS_PARAM, columns.join(','))
+      setParams(next, { replace: true })
+    },
+    [params, setParams]
+  )
+  const handleColumnsChange = useCallback(
+    (columns: ColumnId[]) => {
+      setColumnPreset('custom')
+      setVisibleColumns(columns)
+      try {
+        localStorage.setItem(COLUMNS_LS_KEY, JSON.stringify({ preset: 'custom', columns }))
+      } catch {
+        /* ignore */
+      }
+      const next = new URLSearchParams(params)
+      next.set(PRESET_PARAM, 'custom')
+      next.set(COLUMNS_PARAM, columns.join(','))
+      setParams(next, { replace: true })
+    },
+    [params, setParams]
+  )
 
   // Explore row select → open drawer from the Explore list.
   const handleSelect = useCallback(
@@ -311,6 +367,8 @@ export function PatentsViewRedesign() {
         description="Cryptographic patents relevant to post-quantum migration, enriched across 25 technical dimensions. For research — not legal or IP advice."
         dataSource={dataSource}
         onExport={handleExport}
+        shareTitle="PQC Patents — Post-Quantum Migration Patent Corpus"
+        shareText="Cryptographic patents relevant to post-quantum migration, enriched across 25 technical dimensions."
         endorseUrl={buildEndorsementUrl({
           category: 'patent-endorsement',
           title: 'Endorse: PQC Patents',
