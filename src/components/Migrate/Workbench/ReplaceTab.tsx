@@ -9,6 +9,7 @@ import {
   type DomainId,
   type ReplaceAsset,
 } from '@/data/migrationAssets'
+import { deprecatedProductCount } from '@/data/migrateData'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { logMigrateAction } from '@/utils/analytics'
 import { Button } from '../../ui/button'
@@ -53,6 +54,10 @@ export function ReplaceTab({ persona, initialDomain, onGoToRoadmaps }: ReplaceTa
 
   const viewingLabel = asset?.label ?? (selectedDomain ? DOMAINS[selectedDomain].label : '')
 
+  // "Filters" here means: viewing something other than the default domain, and/or
+  // a product-name search is narrowing the list — the two things `onClearAll` resets.
+  const activeFilterCount = (selectedDomain !== 'tls' ? 1 : 0) + (filter.trim() ? 1 : 0)
+
   return (
     <div className="flex flex-col items-start gap-4 lg:flex-row">
       <div className="hidden w-full lg:block lg:w-auto">
@@ -68,7 +73,7 @@ export function ReplaceTab({ persona, initialDomain, onGoToRoadmaps }: ReplaceTa
           filterContent={
             <AssetList persona={persona} selectedDomain={selectedDomain} onSelect={onSelect} />
           }
-          activeFilterCount={0}
+          activeFilterCount={activeFilterCount}
           onClearAll={() => onSelect('tls')}
         />
       </div>
@@ -118,6 +123,13 @@ export function ReplaceTab({ persona, initialDomain, onGoToRoadmaps }: ReplaceTa
                 />
               </div>
             </div>
+            {deprecatedProductCount > 0 && (
+              <p className="mt-1 text-[11px] text-muted-foreground">
+                {deprecatedProductCount} additional catalog{' '}
+                {deprecatedProductCount === 1 ? 'entry is' : 'entries are'} currently hidden pending
+                downloadable proof.
+              </p>
+            )}
 
             <div className="mt-3 flex flex-col gap-2">
               {products.length === 0 ? (

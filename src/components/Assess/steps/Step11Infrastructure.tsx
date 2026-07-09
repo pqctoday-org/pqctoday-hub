@@ -10,7 +10,7 @@ import { useSelectedProductIds } from '../../../store/useMigrateSelectionStore'
 import { InlineTooltip } from '../../ui/InlineTooltip'
 import { getPersonaStepContent } from '../../../data/personaWizardHints'
 import { PersonaHint } from './PersonaHint'
-import { LAYERS } from '../../Migrate/InfrastructureStack'
+import { LAYERS } from '../../../data/infrastructureLayers'
 import { softwareData } from '../../../data/migrateData'
 import type { EmbeddedStepProps } from '../redesign/assessFlowModel'
 

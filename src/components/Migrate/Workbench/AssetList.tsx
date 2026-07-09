@@ -41,8 +41,8 @@ export function AssetList({ persona, selectedDomain, onSelect }: AssetListProps)
   // to a different persona brings narrowing back if that persona has one.
   const [dismissedFor, setDismissedFor] = useState<PersonaId | null>(null)
 
-  // Assets relevant to the active persona. Empty for personas with no content
-  // yet (executive/developer/researcher/curious) — narrowing stays off for them.
+  // Assets relevant to the active persona. Empty for researcher/curious, who
+  // intentionally see the unfiltered catalog — narrowing stays off for them.
   const narrowed = useMemo(
     () => (persona ? REPLACE_ASSETS.filter((a) => a.focusPersonas.includes(persona)) : []),
     [persona]

@@ -4,7 +4,7 @@ import { Plus, Check, ChevronDown } from 'lucide-react'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import { Button } from '../../ui/button'
 import { Pill } from './workbenchUi'
-import { productFipsBadge, productPqcStatus } from './productStatus'
+import { productFipsBadge, productPqcStatus, productVerificationBadge } from './productStatus'
 import { ProductDetail } from './ProductDetail'
 
 interface ProductRowProps {
@@ -20,6 +20,7 @@ export function ProductRow({ product, chosen, onChoose }: ProductRowProps) {
   const [expanded, setExpanded] = useState(false)
   const pqc = productPqcStatus(product)
   const fips = productFipsBadge(product)
+  const verification = productVerificationBadge(product)
 
   return (
     <div
@@ -56,6 +57,7 @@ export function ProductRow({ product, chosen, onChoose }: ProductRowProps) {
             )}
             <Pill tone={pqc.tone}>{pqc.label}</Pill>
             {fips && <Pill tone={fips.tone}>{fips.label}</Pill>}
+            <Pill tone={verification.tone}>{verification.label}</Pill>
             {product.wip && <Pill tone="warning">WIP</Pill>}
           </div>
           <p className="mt-1 pl-6 font-mono text-[11px] text-muted-foreground">

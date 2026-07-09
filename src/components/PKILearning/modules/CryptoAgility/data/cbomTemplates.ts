@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import type { InfrastructureLayerType } from '@/components/Migrate/InfrastructureStack'
+import type { InfrastructureLayerType } from '@/data/infrastructureLayers'
 
 export interface CBOMEntry {
   id: string

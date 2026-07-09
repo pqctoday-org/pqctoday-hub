@@ -35,7 +35,7 @@ export function PostureCommandCenter({
         <p className="text-sm font-semibold text-foreground">Build your migration plan</p>
         <p className="mt-1 text-xs text-muted-foreground">
           Pick the cryptography you run — TLS, VPN, SSH, certs and more — to get a sequenced,
-          quantum-safe plan aligned to NIST IR 8547 &amp; CNSA 2.0.
+          quantum-safe plan aligned to NIST IR 8547 (Initial Public Draft) &amp; CNSA 2.0.
         </p>
         <Button variant="gradient" size="sm" className="mt-3" onClick={onGoToReplace}>
           Add what you run

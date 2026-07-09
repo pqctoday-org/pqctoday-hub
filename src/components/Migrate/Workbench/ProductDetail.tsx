@@ -16,6 +16,8 @@ import { CertBadges, EvidenceWarnings } from '../migrateHelpers'
 import { EndorseButton } from '@/components/ui/EndorseButton'
 import { FlagButton } from '@/components/ui/FlagButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
+import { Pill } from './workbenchUi'
+import { productVerificationBadge } from './productStatus'
 
 export function ProductDetail({ product }: { product: SoftwareItem }) {
   const certs = certsByProduct.get(product.softwareName) ?? []
@@ -30,8 +32,22 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
     .replace(/^\(|\)$/g, '')
     .trim()
 
+  const verification = productVerificationBadge(product)
+
   return (
     <div className="flex flex-col gap-3 border-t border-border bg-muted/20 px-3 py-3 text-xs">
+      <div className="flex items-center gap-2">
+        <span className="font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+          Verification status
+        </span>
+        <Pill tone={verification.tone}>{verification.label}</Pill>
+        {product.lastVerifiedDate && (
+          <span className="text-[11px] text-muted-foreground">
+            as of {product.lastVerifiedDate}
+          </span>
+        )}
+      </div>
+
       {(supportDetail || product.pqcCapabilityDescription) && (
         <div>
           <p className="mb-1 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
