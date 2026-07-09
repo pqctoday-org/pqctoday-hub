@@ -1,19 +1,42 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { Scale, ExternalLink } from 'lucide-react'
 
+// Bump this date whenever a substantive edit is made to this file.
 const EFFECTIVE_DATE = 'March 22, 2026'
+
+const TOC_SECTIONS = [
+  { number: 1, slug: 'acceptance', title: 'Acceptance of Terms' },
+  { number: 2, slug: 'license', title: 'License' },
+  {
+    number: 3,
+    slug: 'educational-disclaimer',
+    title: 'Educational Purpose and Cryptographic Disclaimer',
+  },
+  { number: 4, slug: 'export-compliance', title: 'Export Compliance and Sanctions' },
+  { number: 5, slug: 'acceptable-use', title: 'Acceptable Use' },
+  { number: 6, slug: 'no-warranty', title: 'No Warranty' },
+  { number: 7, slug: 'limitation-of-liability', title: 'Limitation of Liability' },
+  { number: 8, slug: 'third-party-content', title: 'Third-Party Content and Attribution' },
+  { number: 9, slug: 'intellectual-property', title: 'Intellectual Property' },
+  { number: 10, slug: 'privacy-analytics', title: 'Privacy and Analytics' },
+  { number: 11, slug: 'modifications', title: 'Modifications' },
+  { number: 12, slug: 'governing-law', title: 'Governing Law' },
+  { number: 13, slug: 'contact', title: 'Contact' },
+] as const
 
 function Section({
   number,
+  slug,
   title,
   children,
 }: {
   number: number
+  slug: string
   title: string
   children: React.ReactNode
 }) {
   return (
-    <section className="glass-panel p-6">
+    <section id={`terms-${slug}`} className="glass-panel p-6 scroll-mt-20">
       <h2 className="text-lg font-semibold text-foreground mb-4">
         {number}. {title}
       </h2>
@@ -37,19 +60,36 @@ export function TermsView() {
         <p className="text-xs text-muted-foreground mt-2">
           Effective Date: {EFFECTIVE_DATE} &middot; Last Updated: {EFFECTIVE_DATE}
         </p>
+        <p className="text-xs text-muted-foreground mt-1">
+          This document is updated when the platform&apos;s terms materially change; see the date
+          above.
+        </p>
       </div>
 
+      <nav aria-label="Table of contents" className="glass-panel p-4 mb-6">
+        <h2 className="text-sm font-semibold text-foreground mb-2">Contents</h2>
+        <ol className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-sm list-decimal list-inside">
+          {TOC_SECTIONS.map((s) => (
+            <li key={s.slug}>
+              <a href={`#terms-${s.slug}`} className="text-accent hover:underline">
+                {s.title}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+
       <div className="space-y-4">
-        <Section number={1} title="Acceptance of Terms">
+        <Section number={1} slug="acceptance" title="Acceptance of Terms">
           <p>
             By accessing or using PQC Today (the &ldquo;Platform&rdquo;), available at{' '}
             <a
-              href="https://pqctoday.github.io/pqctoday-hub/"
+              href="https://www.pqctoday.com/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-accent hover:underline"
             >
-              pqctoday.github.io/pqctoday-hub
+              www.pqctoday.com
             </a>{' '}
             and its associated GitHub repositories, you agree to be bound by these Terms of Service
             (&ldquo;Terms&rdquo;). If you do not agree to these Terms, do not access or use the
@@ -57,7 +97,7 @@ export function TermsView() {
           </p>
         </Section>
 
-        <Section number={2} title="License">
+        <Section number={2} slug="license" title="License">
           <p>
             The Platform&apos;s source code is licensed under the{' '}
             <strong>GNU General Public License v3.0 (GPL-3.0-only)</strong>. The full license text
@@ -75,13 +115,21 @@ export function TermsView() {
           </p>
         </Section>
 
-        <Section number={3} title="Educational Purpose and Cryptographic Disclaimer">
+        <Section
+          number={3}
+          slug="educational-disclaimer"
+          title="Educational Purpose and Cryptographic Disclaimer"
+        >
           <p>
             The Platform is an <strong>educational and research tool</strong> for post-quantum
             cryptography (PQC). All cryptographic operations &mdash; including key generation,
             signing, verification, encryption, decryption, and key encapsulation &mdash; are
             performed <strong>client-side in your browser</strong> using WebAssembly (WASM) and are
             intended <strong>for educational and demonstration purposes only</strong>.
+          </p>
+          <p className="text-xs bg-accent/10 border border-accent/30 rounded px-3 py-2">
+            In short: this is a demo, not a certified crypto library &mdash; never use keys it
+            generates to protect anything real.
           </p>
           <p className="font-medium text-foreground">You must not:</p>
           <ul className="list-disc pl-5 space-y-1">
@@ -100,8 +148,12 @@ export function TermsView() {
           </ul>
         </Section>
 
-        <Section number={4} title="Export Compliance and Sanctions">
+        <Section number={4} slug="export-compliance" title="Export Compliance and Sanctions">
           <div className="space-y-4">
+            <p className="text-xs bg-accent/10 border border-accent/30 rounded px-3 py-2">
+              In short: because this Platform bundles real cryptographic source code, U.S. export
+              control and sanctions law applies to who can access it &mdash; details below.
+            </p>
             <div>
               <h3 className="font-medium text-foreground mb-1">4.1 Classification</h3>
               <p>
@@ -157,7 +209,7 @@ export function TermsView() {
           </div>
         </Section>
 
-        <Section number={5} title="Acceptable Use">
+        <Section number={5} slug="acceptable-use" title="Acceptable Use">
           <p>You agree not to:</p>
           <ul className="list-disc pl-5 space-y-1">
             <li>
@@ -183,7 +235,7 @@ export function TermsView() {
           </ul>
         </Section>
 
-        <Section number={6} title="No Warranty">
+        <Section number={6} slug="no-warranty" title="No Warranty">
           <p className="uppercase font-medium text-foreground">
             The Platform is provided &ldquo;as is&rdquo; and &ldquo;as available&rdquo; without
             warranties of any kind, express or implied, including but not limited to warranties of
@@ -197,7 +249,7 @@ export function TermsView() {
           </p>
         </Section>
 
-        <Section number={7} title="Limitation of Liability">
+        <Section number={7} slug="limitation-of-liability" title="Limitation of Liability">
           <p className="uppercase font-medium text-foreground">
             To the maximum extent permitted by law, the maintainers, contributors, and affiliates of
             PQC Today shall not be liable for any indirect, incidental, special, consequential, or
@@ -206,7 +258,7 @@ export function TermsView() {
           </p>
         </Section>
 
-        <Section number={8} title="Third-Party Content and Attribution">
+        <Section number={8} slug="third-party-content" title="Third-Party Content and Attribution">
           <p>
             The Platform references and aggregates content from third-party organizations including
             but not limited to:
@@ -242,7 +294,7 @@ export function TermsView() {
           </p>
         </Section>
 
-        <Section number={9} title="Intellectual Property">
+        <Section number={9} slug="intellectual-property" title="Intellectual Property">
           <ul className="list-disc pl-5 space-y-1">
             <li>The Platform&apos;s source code is licensed under GPL-3.0.</li>
             <li>
@@ -256,7 +308,7 @@ export function TermsView() {
           </ul>
         </Section>
 
-        <Section number={10} title="Privacy and Analytics">
+        <Section number={10} slug="privacy-analytics" title="Privacy and Analytics">
           <p>
             The Platform collects <strong>no personal data</strong>. There are no user accounts, no
             login credentials, and no server-side data processing. All cryptographic operations and
@@ -308,7 +360,7 @@ export function TermsView() {
           </p>
         </Section>
 
-        <Section number={11} title="Modifications">
+        <Section number={11} slug="modifications" title="Modifications">
           <p>
             We reserve the right to modify these Terms at any time. Changes will be indicated by
             updating the &ldquo;Last Updated&rdquo; date. Continued use of the Platform after
@@ -316,14 +368,14 @@ export function TermsView() {
           </p>
         </Section>
 
-        <Section number={12} title="Governing Law">
+        <Section number={12} slug="governing-law" title="Governing Law">
           <p>
             These Terms are governed by and construed in accordance with the laws of the State of
             Texas, United States, without regard to its conflict of law provisions.
           </p>
         </Section>
 
-        <Section number={13} title="Contact">
+        <Section number={13} slug="contact" title="Contact">
           <p>
             For questions about these Terms, please open a discussion on{' '}
             <a
