@@ -45,8 +45,9 @@ export type OpCategory =
   | 'Attributes'
   | 'Cryptographic Services'
   | 'RNG & PKCS#11 Passthrough'
+  | 'Asynchronous Processing'
   | 'Certificate Services (not in this build)'
-  | 'Advertised-only / Not Implemented'
+  | 'Not Implemented (out of scope)'
 
 export type ParamKind = 'uid' | 'algorithm' | 'text' | 'hex' | 'number' | 'select' | 'bool'
 
@@ -70,17 +71,20 @@ export interface OpTemplate {
   category: OpCategory
   /** One-line KMIP 3.0 spec citation, e.g. "§6.1.18 Derive Key". */
   spec: string
-  /** `false` for the 3 native-gated + 12 zero-handler ops — the Run button
+  /** `false` for the 3 native-gated + 4 zero-handler ops — the Run button
    * still fires a REAL request and shows the real `OperationNotSupported`
    * response; this only flags the Commands tab to label the card. */
   supported: boolean
   /** One-line plain-English description shown in the op row. */
   blurb: string
   /** Editable fields the Reference tab's per-op form renders. Empty for ops
-   * with no meaningful input (Query, Ping, the 15 unimplemented ops, …). */
+   * with no meaningful input (Query, Ping, the unimplemented ops, …). */
   params: OpParam[]
   /** RequestPayload children for `buildRequest(op, ...build(values))`. */
   build: (values: Record<string, string>) => KmipNode[]
+  /** Extra RequestHeader fields (KMIP 3.0 §8.1.2 `Asynchronous Indicator`) —
+   * header-level, so `build`'s payload can't carry them. */
+  headerBuild?: (values: Record<string, string>) => KmipNode[]
 }
 
 const uidLeaf = (uid: string) => leaf('UniqueIdentifier', 'TextString', uid)
@@ -230,7 +234,17 @@ export const get = (uid: string, keyFormatType?: string): KmipNode[] =>
     ? [uidLeaf(uid), leaf('KeyFormatType', 'Enumeration', keyFormatType)]
     : [uidLeaf(uid)]
 
-export const locate = (): KmipNode[] => []
+/** Locate filters ride in an `Attributes` structure (§6.1.32). Length /
+ * usage-mask / UID filtering became REAL in engine 0.13.0 — previously the
+ * server accepted these as valid syntax and silently ignored them,
+ * returning every object instead of narrowing. */
+export const locate = (algorithm?: string, length?: number, uid?: string): KmipNode[] => {
+  const filters: KmipNode[] = []
+  if (algorithm) filters.push(leaf('CryptographicAlgorithm', 'Enumeration', algorithm))
+  if (length !== undefined) filters.push(leaf('CryptographicLength', 'Integer', length))
+  if (uid) filters.push(leaf('UniqueIdentifier', 'TextString', uid))
+  return filters.length ? [struct('Attributes', ...filters)] : []
+}
 
 export const activate = (uid: string): KmipNode[] => [uidLeaf(uid)]
 
@@ -440,22 +454,79 @@ export const validate = (): KmipNode[] => []
 export const certify = (): KmipNode[] => []
 export const reCertify = (): KmipNode[] => []
 
-// ── 7. Advertised-only / Not Implemented ────────────────────────────────────
-// These 12 have NO handler at all — `RequestPayload::Unsupported(op)` — the
-// dispatcher rejects them with `OperationNotSupported (0x05)` before payload
-// semantics matter (KMIP 3.0 §11 advertises the codepoint; nothing consumes
-// it). Empty payload is the correct, real request.
+// ── 7. Split keys, leases, async (engine 0.12.0 "honest maximum") ───────────
+// Real since engine 0.12.0 — request shapes mirror the wire decoders in
+// `pqctoday-hsm/kmip/src/kmip30/wire.rs` (`decode_create_split_key_req`,
+// `decode_join_split_key_req`, `decode_poll_req`, …) and were verified
+// end-to-end against the wasm build before promotion out of the
+// "Advertised-only / Not Implemented" bucket.
 
-export const obtainLease = (): KmipNode[] => []
-export const poll = (): KmipNode[] => []
+/** §6.1.12 Create Split Key — splits an existing key into N share objects,
+ * any M (threshold) of which reconstruct it. NOTE: the XOR method requires
+ * parts == threshold (KMIP 3.0 §13.1 — every share is needed); true M-of-N
+ * needs one of the polynomial (Shamir) methods. */
+export const createSplitKey = (
+  uid: string,
+  parts = 5,
+  threshold = 3,
+  method = 'Polynomial Sharing GF (28)'
+): KmipNode[] => [
+  leaf('ObjectType', 'Enumeration', 'SymmetricKey'),
+  uidLeaf(uid),
+  leaf('SplitKeyParts', 'Integer', parts),
+  leaf('SplitKeyThreshold', 'Integer', threshold),
+  leaf('SplitKeyMethod', 'Enumeration', method),
+]
+
+/** §6.1.31 Join Split Key — reconstruct from a threshold-sized subset of
+ * share UIDs (repeated UniqueIdentifier leaves). Below-threshold subsets are
+ * refused with the exact shortfall named, never garbage. */
+export const joinSplitKey = (uids: string[]): KmipNode[] => [
+  leaf('ObjectType', 'Enumeration', 'SymmetricKey'),
+  ...uids.map((u) => leaf('UniqueIdentifier', 'TextString', u)),
+]
+
+/** §6.1.40 Obtain Lease — grant/renew a lease on a managed object. */
+export const obtainLease = (uid: string): KmipNode[] => [uidLeaf(uid)]
+
+/** §6.1.57 Set Constraints — replace the server's constraint table. */
+export const setConstraints = (): KmipNode[] => [struct('Constraints')]
+
+/** §6.1.43/§6.1.5/§6.1.44 — the async-management trio all address a job by
+ * the Asynchronous Correlation Value the enqueue response returned. */
+export const poll = (correlationValueHex: string): KmipNode[] => [
+  leaf('AsynchronousCorrelationValue', 'ByteString', correlationValueHex),
+]
+export const cancel = (correlationValueHex: string): KmipNode[] => [
+  leaf('AsynchronousCorrelationValue', 'ByteString', correlationValueHex),
+]
+export const process = (correlationValueHex: string): KmipNode[] => [
+  leaf('AsynchronousCorrelationValue', 'ByteString', correlationValueHex),
+]
+
+/** §6.1.46 Query Asynchronous Requests — both filters optional; an empty
+ * payload lists every outstanding job. */
+export const queryAsynchronousRequests = (correlationValueHex?: string): KmipNode[] =>
+  correlationValueHex
+    ? [
+        struct(
+          'AsynchronousCorrelationValues',
+          leaf('AsynchronousCorrelationValue', 'ByteString', correlationValueHex)
+        ),
+      ]
+    : []
+
+// ── 8. Not implemented (out of scope) ────────────────────────────────────────
+// The last 4 truly-unimplemented ops. Since engine 0.12.0's honest-Query
+// audit these are NOT advertised either — `Query` lists only real
+// capabilities. Notify/Put are server-to-client push (a deliberate,
+// documented scope boundary — the spec leaves that transport unspecified);
+// DelegatedLogin/Re-Provision simply have no handler. The dispatcher rejects
+// all four with a real `OperationNotSupported (0x05)`, so an empty payload
+// is the correct, real request.
+
 export const notify = (): KmipNode[] => []
 export const put = (): KmipNode[] => []
-export const createSplitKey = (): KmipNode[] => []
-export const setConstraints = (): KmipNode[] => []
-export const queryAsynchronousRequests = (): KmipNode[] => []
-export const process = (): KmipNode[] => []
-export const cancel = (): KmipNode[] => []
-export const joinSplitKey = (): KmipNode[] => []
 export const delegatedLogin = (): KmipNode[] => []
 export const reProvision = (): KmipNode[] => []
 
@@ -474,7 +545,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
     spec: '§6.1.24 Query',
     supported: true,
     blurb:
-      'Ask the server what it supports — operations, object types, vendor info. The first call any client makes.',
+      'Ask the server what it supports — operations, object types, vendor info. The first call any client makes. Since engine 0.12.0 the answer is audited-honest: every one of the 62 operations it advertises is genuinely implemented.',
     params: [],
     build: () => query(),
   },
@@ -625,7 +696,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
     spec: '§6.1.3 Register',
     supported: true,
     blurb:
-      'Hand the server key material you already generated elsewhere, so it can manage (not generate) it.',
+      'Hand the server key material you already generated elsewhere, so it can manage (not generate) it. Since engine 0.13.0 a malformed or unsupported key is refused HERE, at registration — not silently accepted to fail on first use.',
     params: [
       { key: 'algorithm', label: 'Algorithm', kind: 'algorithm', default: 'AES' },
       { key: 'length', label: 'Length (bits)', kind: 'number', default: '256' },
@@ -689,9 +760,13 @@ export const OP_TEMPLATES: OpTemplate[] = [
     spec: '§6.1.8 Locate',
     supported: true,
     blurb:
-      "Search for objects matching attribute filters (this build doesn't wire filter fields yet — it returns everything in scope).",
-    params: [],
-    build: () => locate(),
+      'Search for objects matching attribute filters — algorithm, key length, or UID. Leave all filters empty to list everything in scope. (Length/UID filtering became real in engine 0.13.0; before that it was accepted and silently ignored.)',
+    params: [
+      { key: 'algorithm', label: 'Filter: algorithm', kind: 'algorithm', default: '' },
+      { key: 'length', label: 'Filter: length (bits)', kind: 'number', default: '' },
+      { key: 'uid', label: 'Filter: UID', kind: 'uid', default: '' },
+    ],
+    build: (v) => locate(orUndef(v.algorithm), orUndefNum(v.length), orUndef(v.uid)),
   },
   {
     op: 'Activate',
@@ -734,7 +809,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
     spec: '§6.1.14 Destroy',
     supported: true,
     blurb:
-      "Irrevocably remove a key's material. The object's UID and history remain; the key itself is gone.",
+      "Irrevocably remove a key's material — genuinely: since engine 0.13.0 the raw bytes are zeroized in memory and securely deleted from storage, not just flagged. The object's UID and history remain.",
     params: [{ key: 'uid', label: 'Object UID', kind: 'uid', default: '' }],
     build: (v) => destroy(v.uid ?? ''),
   },
@@ -869,7 +944,8 @@ export const OP_TEMPLATES: OpTemplate[] = [
     category: 'Attributes',
     spec: '§6.1.7 Set Attribute',
     supported: true,
-    blurb: 'Add-or-replace in one call, for single-instance attributes.',
+    blurb:
+      'Add-or-replace in one call, for single-instance attributes. Honest since engine 0.13.0: a writable attribute genuinely persists, and a read-only one (e.g. ProtectionStorageMask) is refused — never a Success that saved nothing.',
     params: [
       { key: 'uid', label: 'Object UID', kind: 'uid', default: '' },
       { key: 'name', label: 'Attribute name', kind: 'text', default: 'Name' },
@@ -1049,11 +1125,19 @@ export const OP_TEMPLATES: OpTemplate[] = [
       macVerify(v.uid ?? '', textHex(v.data || 'hello post-quantum world'), v.macDataHex ?? ''),
   },
   {
+    // `headerBuild` (KMIP 3.0 §8.1.2): with "Run asynchronously" on, the
+    // request carries `Asynchronous Indicator = Mandatory` in its HEADER —
+    // the server enqueues a real background job and answers
+    // `OperationPending` + an Asynchronous Correlation Value instead of the
+    // digest. Feed that value to Poll/Cancel/Process (category below). Hash
+    // is the demo op because it needs no key setup; ANY handled op except
+    // the async-management/negotiation ops is eligible.
     op: 'Hash',
     category: 'Cryptographic Services',
     spec: '§6.1.53 Hash',
     supported: true,
-    blurb: "Compute a cryptographic hash over Data — doesn't touch a managed key at all.",
+    blurb:
+      "Compute a cryptographic hash over Data — doesn't touch a managed key at all. Turn on 'Run asynchronously' to enqueue it as a real background job instead: the response is OperationPending + a correlation value for the Asynchronous Processing ops.",
     params: [
       { key: 'data', label: 'Message', kind: 'text', default: 'hello post-quantum world' },
       {
@@ -1063,8 +1147,11 @@ export const OP_TEMPLATES: OpTemplate[] = [
         options: ['SHA256', 'SHA384', 'SHA512', 'SHA3-256'],
         default: 'SHA256',
       },
+      { key: 'async', label: 'Run asynchronously', kind: 'bool', default: 'false' },
     ],
     build: (v) => hash(textHex(v.data || 'hello post-quantum world'), v.algorithm || 'SHA256'),
+    headerBuild: (v) =>
+      v.async === 'true' ? [leaf('AsynchronousIndicator', 'Enumeration', 'Mandatory')] : [],
   },
   {
     op: 'DeriveKey',
@@ -1184,120 +1271,162 @@ export const OP_TEMPLATES: OpTemplate[] = [
     build: () => reCertify(),
   },
 
-  // 7. Advertised-only / Not Implemented
+  // 7. Split keys, leases, constraints, async — real since engine 0.12.0
+  // (each verified end-to-end against this wasm build before being promoted
+  // out of the old "Advertised-only / Not Implemented" bucket).
+  {
+    op: 'CreateSplitKey',
+    category: 'Object Lifecycle',
+    spec: '§6.1.12 Create Split Key',
+    supported: true,
+    blurb:
+      'Split an existing key into N share objects where any M (the threshold) reconstruct it — all four §11.54 secret-sharing methods are real. XOR requires N == M (every share needed); the polynomial (Shamir) methods give true M-of-N.',
+    params: [
+      { key: 'uid', label: 'Key to split (UID)', kind: 'uid', default: '' },
+      { key: 'parts', label: 'Shares (N)', kind: 'number', default: '5' },
+      { key: 'threshold', label: 'Threshold (M)', kind: 'number', default: '3' },
+      {
+        key: 'method',
+        label: 'Method',
+        kind: 'select',
+        options: [
+          'Polynomial Sharing GF (28)',
+          'Polynomial Sharing GF (216)',
+          'Polynomial Sharing Prime Field',
+          'XOR',
+        ],
+        default: 'Polynomial Sharing GF (28)',
+      },
+    ],
+    build: (v) =>
+      createSplitKey(
+        v.uid ?? '',
+        numOr(v.parts, 5),
+        numOr(v.threshold, 3),
+        v.method || 'Polynomial Sharing GF (28)'
+      ),
+  },
+  {
+    op: 'JoinSplitKey',
+    category: 'Object Lifecycle',
+    spec: '§6.1.31 Join Split Key',
+    supported: true,
+    blurb:
+      'Reconstruct the original key from any threshold-sized subset of share UIDs. Fewer than the threshold is honestly refused with the exact shortfall named — never silently-wrong key material.',
+    params: [
+      {
+        key: 'uids',
+        label: 'Share UIDs (comma-sep)',
+        kind: 'text',
+        default: '',
+      },
+    ],
+    build: (v) => joinSplitKey(splitList(v.uids)),
+  },
   {
     op: 'ObtainLease',
-    category: 'Advertised-only / Not Implemented',
-    spec: '§11 Obtain Lease (advertised, unimplemented)',
-    supported: false,
-    blurb: 'Spec purpose: renew a lease on a managed object. No handler in this build.',
-    params: [],
-    build: () => obtainLease(),
+    category: 'Object Lifecycle',
+    spec: '§6.1.40 Obtain Lease',
+    supported: true,
+    blurb:
+      "Grant or renew a time-boxed lease on a managed object — the response carries the lease time and the object's last-change date.",
+    params: [{ key: 'uid', label: 'Object UID', kind: 'uid', default: '' }],
+    build: (v) => obtainLease(v.uid ?? ''),
   },
+  {
+    op: 'SetConstraints',
+    category: 'Attributes',
+    spec: '§6.1.57 Set Constraints',
+    supported: true,
+    blurb:
+      "Replace the server's usage-constraint table — the write-side counterpart of Get Constraints. An empty Constraints structure clears it.",
+    params: [],
+    build: () => setConstraints(),
+  },
+
+  // Asynchronous processing — real since engine 0.12.0. Enqueue a job by
+  // running any eligible op (e.g. Hash) with the header's Asynchronous
+  // Indicator = Mandatory, then manage it here by correlation value.
   {
     op: 'Poll',
-    category: 'Advertised-only / Not Implemented',
-    spec: '§11 Poll (advertised, unimplemented)',
-    supported: false,
-    blurb: "Spec purpose: check on an asynchronous operation's progress. No handler in this build.",
-    params: [],
-    build: () => poll(),
+    category: 'Asynchronous Processing',
+    spec: '§6.1.43 Poll',
+    supported: true,
+    blurb:
+      "Fetch an asynchronous job's outcome by its correlation value. Once complete, the response is identical to what the synchronous op would have returned. Enqueue a job first: run Hash with 'Run asynchronously' on, then paste the correlation value here.",
+    params: [{ key: 'cv', label: 'Correlation value (hex)', kind: 'hex', default: '' }],
+    build: (v) => poll(v.cv ?? ''),
   },
   {
+    op: 'Cancel',
+    category: 'Asynchronous Processing',
+    spec: '§6.1.5 Cancel',
+    supported: true,
+    blurb:
+      'Best-effort stop of an in-flight asynchronous job — a job that already started executing can finish first; the response says which way the race went.',
+    params: [{ key: 'cv', label: 'Correlation value (hex)', kind: 'hex', default: '' }],
+    build: (v) => cancel(v.cv ?? ''),
+  },
+  {
+    op: 'Process',
+    category: 'Asynchronous Processing',
+    spec: '§6.1.44 Process',
+    supported: true,
+    blurb:
+      'Block until a deferred asynchronous job completes — the "wait for it now after all" alternative to repeated polling.',
+    params: [{ key: 'cv', label: 'Correlation value (hex)', kind: 'hex', default: '' }],
+    build: (v) => process(v.cv ?? ''),
+  },
+  {
+    op: 'QueryAsynchronousRequests',
+    category: 'Asynchronous Processing',
+    spec: '§6.1.46 Query Asynchronous Requests',
+    supported: true,
+    blurb:
+      "List this client's outstanding asynchronous jobs — optionally filtered to one correlation value. Empty when every job has completed and been polled.",
+    params: [{ key: 'cv', label: 'Filter: correlation value (hex)', kind: 'hex', default: '' }],
+    build: (v) => queryAsynchronousRequests(orUndef(v.cv)),
+  },
+
+  // The 4 genuinely-unimplemented ops — no longer advertised by Query either
+  // (engine 0.12.0's honest-Query audit).
+  {
     op: 'Notify',
-    category: 'Advertised-only / Not Implemented',
-    spec: '§11 Notify (advertised, unimplemented)',
+    category: 'Not Implemented (out of scope)',
+    spec: '§6.1.36 Notify (server-to-client; out of scope)',
     supported: false,
     blurb:
-      'Spec purpose: server-to-client push notification of an object change. No handler in this build.',
+      'Server-to-client push notification of an object change. A deliberate, documented scope boundary — the spec leaves the server-initiated transport unspecified — and since the honest-Query audit the server no longer advertises it.',
     params: [],
     build: () => notify(),
   },
   {
     op: 'Put',
-    category: 'Advertised-only / Not Implemented',
-    spec: '§11 Put (advertised, unimplemented)',
+    category: 'Not Implemented (out of scope)',
+    spec: '§6.1.45 Put (server-to-client; out of scope)',
     supported: false,
     blurb:
-      'Spec purpose: server-to-client push of a full object — the inverse direction of Get. No handler in this build.',
+      'Server-to-client push of a full object — the inverse direction of Get. Same deliberate scope boundary as Notify; not advertised.',
     params: [],
     build: () => put(),
   },
   {
-    op: 'CreateSplitKey',
-    category: 'Advertised-only / Not Implemented',
-    spec: '§11 Create Split Key (advertised, unimplemented)',
-    supported: false,
-    blurb:
-      'Spec purpose: split one key into N shares requiring M to reconstruct. No handler in this build.',
-    params: [],
-    build: () => createSplitKey(),
-  },
-  {
-    op: 'SetConstraints',
-    category: 'Advertised-only / Not Implemented',
-    spec: '§11 Set Constraints (advertised, unimplemented)',
-    supported: false,
-    blurb: 'Spec purpose: set usage constraints on an object. No handler in this build.',
-    params: [],
-    build: () => setConstraints(),
-  },
-  {
-    op: 'QueryAsynchronousRequests',
-    category: 'Advertised-only / Not Implemented',
-    spec: '§11 Query Asynchronous Requests (advertised, unimplemented)',
-    supported: false,
-    blurb:
-      "Spec purpose: list a client's in-flight asynchronous requests. No handler in this build.",
-    params: [],
-    build: () => queryAsynchronousRequests(),
-  },
-  {
-    op: 'Process',
-    category: 'Advertised-only / Not Implemented',
-    spec: '§11 Process (advertised, unimplemented)',
-    supported: false,
-    blurb:
-      'Spec purpose: process a previously-deferred asynchronous request. No handler in this build.',
-    params: [],
-    build: () => process(),
-  },
-  {
-    op: 'Cancel',
-    category: 'Advertised-only / Not Implemented',
-    spec: '§11 Cancel (advertised, unimplemented)',
-    supported: false,
-    blurb: 'Spec purpose: cancel an in-flight asynchronous request. No handler in this build.',
-    params: [],
-    build: () => cancel(),
-  },
-  {
-    op: 'JoinSplitKey',
-    category: 'Advertised-only / Not Implemented',
-    spec: '§11 Join Split Key (advertised, unimplemented)',
-    supported: false,
-    blurb:
-      'Spec purpose: reconstruct a key from M-of-N split-key shares. No handler in this build.',
-    params: [],
-    build: () => joinSplitKey(),
-  },
-  {
     op: 'DelegatedLogin',
-    category: 'Advertised-only / Not Implemented',
-    spec: '§11 Delegated Login (advertised, unimplemented)',
+    category: 'Not Implemented (out of scope)',
+    spec: '§6.1.16 Delegated Login (unimplemented)',
     supported: false,
     blurb:
-      'Spec purpose: federated/delegated authentication via an external IdP. No handler in this build.',
+      'Federated/delegated authentication via an external IdP. No handler in this build — and honestly not advertised.',
     params: [],
     build: () => delegatedLogin(),
   },
   {
     op: 'Re-Provision',
-    category: 'Advertised-only / Not Implemented',
-    spec: '§11 Re-Provision (advertised, unimplemented)',
+    category: 'Not Implemented (out of scope)',
+    spec: '§6.1.49 Re-Provision (unimplemented)',
     supported: false,
     blurb:
-      "Spec purpose: re-provision an object's material in place under a new mechanism. No handler in this build.",
+      "Re-provision an object's material in place under a new mechanism. No handler in this build — and honestly not advertised.",
     params: [],
     build: () => reProvision(),
   },

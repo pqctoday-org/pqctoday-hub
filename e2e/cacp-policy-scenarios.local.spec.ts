@@ -79,6 +79,7 @@ test('every policy scenario: engine + sim match the declared verdict', async ({ 
           currentAlgorithm: isNew ? undefined : r.algorithm,
           length: r.length,
           state: r.state,
+          name: r.name,
           date: r.date,
           attrs: r.attrs,
           usageMask: r.usageMask,

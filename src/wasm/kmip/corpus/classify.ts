@@ -8,12 +8,7 @@
 import type { KmipNode } from '../ttlv/nodes'
 
 export type SkipReason = {
-  status:
-    | 'SKIP_DEPRECATED'
-    | 'SKIP_PRECONDITION'
-    | 'SKIP_POLICY_VARIANT'
-    | 'SKIP_OP'
-    | 'SKIP_TRANSPORT'
+  status: 'SKIP_DEPRECATED' | 'SKIP_POLICY_VARIANT' | 'SKIP_OP' | 'SKIP_TRANSPORT'
   detail: string
 }
 
@@ -29,30 +24,33 @@ const DEPRECATED_ALGO_TESTS: Record<string, string> = {
 }
 
 /** OASIS tests whose first request assumes Managed Object state left over
- * from an earlier transcript in the same profile run. This harness (like
- * the Python original) runs each test hermetically (a fresh engine per
- * test), so any cross-test state is intentionally wiped — not a gap in
- * the Locate-by-attribute pipeline itself (verified by the M-1/M-2
- * transcripts in the same families). */
-const PRECONDITION_TESTS: Record<string, string> = {
-  'TL-M-3-30.xml':
-    'Locate-by-ApplicationSpecificInformation of object Created in TL-M-2; hermetic per-test isolation wipes it',
-  'SASED-M-3-30.xml':
-    'Locate-by-GroupLink of SecretData Registered in SASED-M-2; hermetic per-test isolation wipes it',
+ * from an earlier transcript in the same profile run. Mirrors the Python
+ * harness's `_CHAINED_TEST_GROUPS` (Honest-Maximum Phase 2.1, 2026-07-07):
+ * instead of skipping these, the listed prerequisite transcripts are
+ * replayed first ON THE SAME ENGINE, then the test itself runs — the spec
+ * itself sequences these transcripts within one profile run, so shared
+ * state is the CORRECT reading, not a harness compromise. The native
+ * baseline passes both; so does this port. */
+export const CHAINED_TEST_GROUPS: Record<string, string[]> = {
+  'TL-M-3-30.xml': ['TL-M-2-30.xml'],
+  'SASED-M-3-30.xml': ['SASED-M-2-30.xml'],
 }
 
 /** OASIS tests that pin one of several MUTUALLY EXCLUSIVE conformant
- * server behaviors (e.g. RNGSeed: full-consume / partial-consume /
- * ignore-seed / deny — KMIP 3.0 §6.1.45 permits any). We implement
- * full-consume; the others would require per-test policy injection this
- * hermetic harness doesn't do. */
+ * server behaviors (RNGSeed: full-consume / partial-consume / ignore-seed
+ * / deny — KMIP 3.0 §6.1.45 permits any). Engine 0.12.0 made all four
+ * modes real via `ops/deps.rs::RngSeedMode`, and the native harness now
+ * passes these three by constructing per-test Deps with the pinned mode —
+ * but the wasm binding (`KmipPlayground::new`) hardcodes
+ * `DepsConfig::default()` (full-consume) with no config seam, so the
+ * variants stay unreplayable HERE until the binding exposes it. */
 const POLICY_VARIANT_TESTS: Record<string, string> = {
   'CS-RNG-O-2-30.xml':
-    'RNGSeed policy variant: partial-consume (DataLength=16). We implement full-consume per CS-RNG-O-1',
+    'RNGSeed variant: partial-consume. Real in the engine (RngSeedMode) and passing natively; the wasm binding pins DepsConfig::default() — no seam to select it here yet',
   'CS-RNG-O-3-30.xml':
-    'RNGSeed policy variant: ignore-seed (DataLength=0). We implement full-consume per CS-RNG-O-1',
+    'RNGSeed variant: ignore-seed. Real in the engine (RngSeedMode) and passing natively; the wasm binding pins DepsConfig::default() — no seam to select it here yet',
   'CS-RNG-O-4-30.xml':
-    'RNGSeed policy variant: deny (PermissionDenied). We implement full-consume per CS-RNG-O-1',
+    'RNGSeed variant: deny. Real in the engine (RngSeedMode) and passing natively; the wasm binding pins DepsConfig::default() — no seam to select it here yet',
 }
 
 /** OASIS tests whose expected outcome depends on `MaximumResponseSize`
@@ -79,25 +77,18 @@ const TRANSPORT_TESTS: Record<string, string> = {
 }
 
 /** The 3 native-gated (Validate/Certify/ReCertify — wasm32 crypto-backend
- * gap) + 12 zero-handler (advertised-only, §11) ops. Unlike the Python
- * harness's `IMPLEMENTED_OPS` allowlist (which the KMIP3.0 Commands-tab
- * audit found 7 ops stale — see kmip commit 110a7f9), this is the
- * complement: everything else in the 66-op enum genuinely works, so a
- * test is only unreplayable if it needs one of these 15. */
+ * gap) + 4 zero-handler (Notify/Put server-to-client scope boundary;
+ * DelegatedLogin/Re-Provision no handler) ops. Engine 0.12.0's honest
+ * maximum made the other 8 formerly-listed ops real (split keys, async
+ * quartet, ObtainLease, SetConstraints) — everything else in the 66-op
+ * enum genuinely works IN THIS WASM BUILD, so a test is only unreplayable
+ * if it needs one of these 7. */
 const PERMANENTLY_UNSUPPORTED_OPS = new Set([
   'Validate',
   'Certify',
   'ReCertify',
-  'ObtainLease',
-  'Poll',
   'Notify',
   'Put',
-  'CreateSplitKey',
-  'SetConstraints',
-  'QueryAsynchronousRequests',
-  'Process',
-  'Cancel',
-  'JoinSplitKey',
   'DelegatedLogin',
   'Re-Provision',
 ])
@@ -124,8 +115,6 @@ export function operationsUsed(transcript: KmipNode[]): Set<string> {
 export function classifyByName(fileName: string): SkipReason | null {
   if (fileName in DEPRECATED_ALGO_TESTS)
     return { status: 'SKIP_DEPRECATED', detail: DEPRECATED_ALGO_TESTS[fileName] }
-  if (fileName in PRECONDITION_TESTS)
-    return { status: 'SKIP_PRECONDITION', detail: PRECONDITION_TESTS[fileName] }
   if (fileName in POLICY_VARIANT_TESTS)
     return { status: 'SKIP_POLICY_VARIANT', detail: POLICY_VARIANT_TESTS[fileName] }
   if (fileName in TRANSPORT_TESTS)

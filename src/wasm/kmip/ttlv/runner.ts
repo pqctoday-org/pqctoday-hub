@@ -8,7 +8,7 @@
 
 import { arrayBufferToHex } from '@/utils/webCrypto'
 import type { KmipEngine, TtlvNode } from '../kmipEngine'
-import { buildRequest } from './request'
+import { buildRequestWithHeader } from './request'
 import { toWireTree } from './encode'
 import { annotateNames } from './decode'
 import type { CodepointTable } from './codepointTable'
@@ -53,9 +53,12 @@ export function runOp(
   engine: KmipEngine,
   table: CodepointTable,
   operation: string,
-  payload: KmipNode[]
+  payload: KmipNode[],
+  /** Extra RequestHeader fields (KMIP 3.0 §8.1.2 `Asynchronous Indicator`,
+   * …) — header-level, so they can't ride in `payload`. */
+  headerExtras: KmipNode[] = []
 ): RunResult {
-  const requestTree = toWireTree(buildRequest(operation, ...payload), table)
+  const requestTree = toWireTree(buildRequestWithHeader(operation, headerExtras, payload), table)
   const requestBytes = engine.encodeTtlv(requestTree)
   const responseBytes = engine.submit(requestBytes)
   const responseTree = engine.decodeTtlv(responseBytes)
