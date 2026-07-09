@@ -26,7 +26,9 @@ export const ASSESS_TO_THREATS_INDUSTRY: Record<string, string[]> = {
     'Supply Chain / Logistics',
   ],
   'Energy & Utilities': [
-    'Energy / Critical Infrastructure',
+    // Canonicalized to one sector in threatsData.ts (Threats #5) — reference
+    // the single post-canonicalization label here.
+    'Critical Infrastructure / Energy',
     'Water / Wastewater',
     'Rail / Transit',
   ],

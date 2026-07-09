@@ -17,6 +17,7 @@ import {
   CRQC_MODALITY_TRACKS,
   CRQC_QUBIT_THRESHOLDS,
   CRQC_TRAJECTORY,
+  getCrqcConsensus,
 } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
 
 /**
@@ -38,9 +39,10 @@ const X_MIN = 2020
 const X_MAX = 2035
 const TODAY = 2026
 
-// Q-Day window: where the forecast band crosses the Bitcoin/ECC line.
-const QDAY_LOW = 2028
-const QDAY_HIGH = 2032
+// Q-Day window — derived from CRQC_ESTIMATES via getCrqcConsensus() (Threats #1)
+// rather than a separately hardcoded guess, so it agrees with the hero's stated
+// window and the economics calculator's default Z.
+const { qdayLow: QDAY_LOW, qdayHigh: QDAY_HIGH } = getCrqcConsensus()
 
 const AXIS_ORDER = [
   'Hardware',

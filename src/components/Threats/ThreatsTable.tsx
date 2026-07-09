@@ -8,7 +8,7 @@ import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import { ThreatActionsMenu } from './ThreatActionsMenu'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import clsx from 'clsx'
-import { getIndustryIcon } from './threatsHelper'
+import { getIndustryIcon, capChips } from './threatsHelper'
 import { ThreatClassBadge, ShorTierBadge } from './ThreatClassBadges'
 import { EmptyState } from '../ui/empty-state'
 import { useBookmarkStore } from '../../store/useBookmarkStore'
@@ -48,14 +48,17 @@ export const ThreatsTable = ({
   return (
     <div className="glass-panel overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[1035px] text-left border-collapse table-fixed">
+        {/* min-w lowered from 1035px — the crypto/PQC-replacement columns no
+          longer need as much room now that their chip lists are capped
+          (Threats #6), so the table reflows into scroll-free range sooner. */}
+        <table className="w-full min-w-[925px] text-left border-collapse table-fixed">
           <colgroup>
-            <col className="w-[155px]" />
-            <col className="w-[155px]" />
-            <col className="w-[215px]" />
+            <col className="w-[140px]" />
+            <col className="w-[130px]" />
+            <col className="w-[190px]" />
             <col className="w-[80px]" />
-            <col className="w-[185px]" />
-            <col className="w-[195px]" />
+            <col className="w-[165px]" />
+            <col className="w-[170px]" />
             <col className="w-[95px]" />
             <col className="w-[50px]" />
           </colgroup>
@@ -193,26 +196,56 @@ export const ThreatsTable = ({
                               crypto, so it lives alongside the at-risk chips it qualifies
                               rather than as a co-equal pill next to Criticality. */}
                               <ShorTierBadge threat={item} />
-                              {item.cryptoAtRisk.split(',').map((c, i) => (
-                                <span
-                                  key={i}
-                                  className="px-1.5 py-0.5 rounded-sm bg-muted/50 border border-border/50 text-muted-foreground break-words"
-                                >
-                                  {c.trim()}
-                                </span>
-                              ))}
+                              {(() => {
+                                const { visible, hiddenCount } = capChips(item.cryptoAtRisk)
+                                return (
+                                  <>
+                                    {visible.map((c, i) => (
+                                      <span
+                                        key={i}
+                                        className="px-1.5 py-0.5 rounded-sm bg-muted/50 border border-border/50 text-muted-foreground break-words"
+                                      >
+                                        {c}
+                                      </span>
+                                    ))}
+                                    {hiddenCount > 0 && (
+                                      <span
+                                        className="px-1.5 py-0.5 rounded-sm bg-muted/30 border border-border/50 text-muted-foreground/70"
+                                        title={item.cryptoAtRisk}
+                                      >
+                                        +{hiddenCount} more
+                                      </span>
+                                    )}
+                                  </>
+                                )
+                              })()}
                             </div>
                           </td>
                           <td className="p-4 text-xs font-mono overflow-hidden">
                             <div className="flex flex-wrap gap-1">
-                              {item.pqcReplacement.split(',').map((c, i) => (
-                                <span
-                                  key={i}
-                                  className="px-1.5 py-0.5 rounded-sm bg-status-success/10 border border-status-success/20 text-status-success/80 break-words"
-                                >
-                                  {c.trim()}
-                                </span>
-                              ))}
+                              {(() => {
+                                const { visible, hiddenCount } = capChips(item.pqcReplacement)
+                                return (
+                                  <>
+                                    {visible.map((c, i) => (
+                                      <span
+                                        key={i}
+                                        className="px-1.5 py-0.5 rounded-sm bg-status-success/10 border border-status-success/20 text-status-success/80 break-words"
+                                      >
+                                        {c}
+                                      </span>
+                                    ))}
+                                    {hiddenCount > 0 && (
+                                      <span
+                                        className="px-1.5 py-0.5 rounded-sm bg-status-success/5 border border-status-success/10 text-status-success/60"
+                                        title={item.pqcReplacement}
+                                      >
+                                        +{hiddenCount} more
+                                      </span>
+                                    )}
+                                  </>
+                                )
+                              })()}
                             </div>
                           </td>
                           <td className="hidden lg:table-cell p-4 text-center">
