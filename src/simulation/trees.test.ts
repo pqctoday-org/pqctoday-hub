@@ -14,6 +14,7 @@ import { FRAMEWORK_VERSION, PHASE_ORDER } from '@/data/frameworkPhases'
 import { resolveDeepLink } from './deepLinks'
 import { REFERENCE_PHASES } from '@/data/phaseResourceMap'
 import { resLinks } from '@/components/Simulation/sections'
+import { FRAMEWORK_PHASES, type PhaseId } from '@/data/frameworkPhases'
 
 const PHASES = ['p0', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7'] as const
 // Foundations (spanning band) and verify-close (terminal Verification & Closure
@@ -336,6 +337,64 @@ describe('SIM_TREES — coverage & shape', () => {
           `${phase}: an open L${bands[0].level} step must block all higher levels`
         ).toBe(0)
       }
+    }
+  })
+
+  // 07082026 audit finding: frameworkPhases.ts's `produce` lists had drifted
+  // from what the shipped trees actually gate on — P0 was missing 3 tools, P6
+  // had a stale ref name. This is the general guard: every 'activity' step a
+  // phase's tree actually gates on must have a matching produce entry for that
+  // phase. Tree-grounded (not registry-tag-grounded — see the note in
+  // frameworkPhaseTags.test.ts for why the tag-based version false-positived).
+  //
+  // Some tools are legitimately gated on by MORE THAN ONE phase's tree (e.g. the
+  // board KPI pack is touched at P0 0.4, Foundations F.2, P4 4.4 and P7 7.5) —
+  // frameworkPhaseTags.test.ts's spine-consistency check means a produce ref can
+  // only be "owned" by one phase, so the others gate on it without listing it.
+  // Each entry here is a verified, intentional instance of that — a NEW,
+  // undocumented gap for any other tool still fails the guard.
+  const SHARED_TOOL_OWNER: Record<string, PhaseId> = {
+    'kpi-dashboard': 'foundations', // also gated by p0 (0.4), p4 (4.4), p7 (7.5)
+    'raci-builder': 'p0', // also gated by p4 (4.4)
+    'crypto-vulnerability-watch': 'p1', // also gated by p2 (2.3)
+    'deployment-playbook': 'p5', // also gated by p7 (7.4)
+    'risk-register': 'p3', // also gated by p7 (7.4)
+    'stakeholder-comms': 'p4', // also gated by p7 (7.6)
+  }
+  it("every tree artifact-step has a matching produce entry in that phase's frameworkPhases.ts", () => {
+    const missing: string[] = []
+    for (const phase of PHASES) {
+      const toolIds = new Set(
+        flattenTree(SIM_TREES[phase]!)
+          .filter((s) => s.kind === 'activity' && s.artifactType)
+          .map((s) => ARTIFACT_TYPE_TO_TOOL_ID[s.artifactType!])
+          .filter((id): id is string => !!id)
+      )
+      const produceRefs = new Set((FRAMEWORK_PHASES[phase].produce ?? []).map((s) => s.ref))
+      for (const id of toolIds) {
+        if (produceRefs.has(id)) continue
+        if (SHARED_TOOL_OWNER[id] && SHARED_TOOL_OWNER[id] !== phase) continue // known shared tool
+        missing.push(`${phase}: tree gates on '${id}', not in produce`)
+      }
+    }
+    expect(missing, `tree → produce drift:\n${missing.join('\n')}`).toEqual([])
+  })
+  it('SHARED_TOOL_OWNER only lists tools genuinely gated on by more than one phase', () => {
+    // Guards the exceptions list itself: an entry that stops being shared (or
+    // was never accurate) should be caught, not silently keep masking phases.
+    for (const [toolId, owner] of Object.entries(SHARED_TOOL_OWNER)) {
+      const gatingPhases = ALL_TREE_PHASES.filter((phase) =>
+        flattenTree(SIM_TREES[phase]!).some(
+          (s) => s.kind === 'activity' && ARTIFACT_TYPE_TO_TOOL_ID[s.artifactType!] === toolId
+        )
+      )
+      expect(
+        gatingPhases.length,
+        `'${toolId}': expected >1 gating phase, got [${gatingPhases}]`
+      ).toBeGreaterThan(1)
+      expect(gatingPhases, `'${toolId}': owner '${owner}' does not actually gate on it`).toContain(
+        owner
+      )
     }
   })
 

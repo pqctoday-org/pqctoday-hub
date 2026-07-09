@@ -3086,7 +3086,7 @@ export function SimulationView() {
                       </div>
                       <p className="mt-2 text-sim-micro leading-snug text-muted-foreground">
                         These are the framework's Phase-3 scoring dimensions for your org — they
-                        drive the QRA you produce here.
+                        feed the Quantum Readiness Assessment on your Report page.
                       </p>
                     </div>
                   )}
