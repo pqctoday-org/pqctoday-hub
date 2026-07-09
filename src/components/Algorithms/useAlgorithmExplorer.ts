@@ -15,6 +15,7 @@ import {
   getCryptoFamilyFromPQCName,
   getTransitionFunctionGroup,
 } from '../../data/algorithmsData'
+import { isCertifiedTier, type AlgorithmStatusTier } from '../../data/algorithmStatusTier'
 import { passesCnsa20Filter } from './cnsa20'
 import { generateCsv, downloadCsv, csvFilename } from '../../utils/csvExport'
 import { ALGORITHM_CSV_COLUMNS } from '../../utils/csvExportConfigs'
@@ -435,11 +436,15 @@ export function useAlgorithmExplorer(
     }, 100)
   }, [])
 
-  // Status filter helper: "Certified" matches anything that isn't Candidate or To Be Checked
+  // Status filter helper. "Certified" reads the normalized status-maturity
+  // enum (WORKSTREAMS.md §WS-A) instead of comparing the raw status string —
+  // the whitelist is exactly ['final', 'regional']. The 'Candidate' /
+  // 'To Be Checked' dropdown options remain raw-string matches since those
+  // are literal values the CSVs still use verbatim.
   const matchesStatusFilter = useCallback(
-    (status: string) => {
+    (status: string, tier: AlgorithmStatusTier) => {
       if (filterStatus === 'All') return true
-      if (filterStatus === 'Certified') return status !== 'Candidate' && status !== 'To Be Checked'
+      if (filterStatus === 'Certified') return isCertifiedTier(tier)
       return status === filterStatus
     },
     [filterStatus]
@@ -474,7 +479,7 @@ export function useAlgorithmExplorer(
       )
         return false
       if (filterRegion !== 'All' && algo.region !== filterRegion) return false
-      if (!matchesStatusFilter(algo.status)) return false
+      if (!matchesStatusFilter(algo.status, algo.statusTier)) return false
       if (searchQuery) {
         const q = searchQuery.toLowerCase()
         const lexicalMatch =
@@ -521,7 +526,7 @@ export function useAlgorithmExplorer(
         if (family !== filterCryptoFamily) return false
       }
       if (filterRegion !== 'All' && t.region !== filterRegion) return false
-      if (!matchesStatusFilter(t.status)) return false
+      if (!matchesStatusFilter(t.status, t.statusTier)) return false
       if (searchQuery) {
         const q = searchQuery.toLowerCase()
         const lexicalMatch =

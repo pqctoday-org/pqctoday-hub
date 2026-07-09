@@ -22,6 +22,7 @@ import {
 } from 'lucide-react'
 import clsx from 'clsx'
 import { resolveAlgoXrefs } from '../../data/algoProductXrefData'
+import { isDraftTier } from '../../data/algorithmStatusTier'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
 import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
@@ -304,11 +305,7 @@ function isHighlighted(algo: AlgorithmDetail, highlights?: Set<string>): boolean
 }
 
 function isDraftCandidate(algo: AlgorithmDetail): boolean {
-  return (
-    algo.status === 'Candidate' ||
-    algo.status === 'Draft' ||
-    (algo.fipsStandard.includes('Draft') && !algo.fipsStandard.startsWith('FIPS'))
-  )
+  return isDraftTier(algo.statusTier)
 }
 
 function DraftBadge({ algo }: { algo: AlgorithmDetail }) {

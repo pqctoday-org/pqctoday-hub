@@ -479,7 +479,7 @@ export function AlgorithmsView() {
                 transition={{ duration: 0.3 }}
                 data-workshop-target="section-algorithm-validation"
               >
-                <AlgorithmValidationView />
+                <AlgorithmValidationView sectionParam={searchParams.get('section')} />
               </motion.div>
             </TabsContent>
           </Tabs>
