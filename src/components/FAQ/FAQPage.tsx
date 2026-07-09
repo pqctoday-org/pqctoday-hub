@@ -1,20 +1,22 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useMemo, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { HelpCircle, ChevronDown, ChevronRight, Search, ExternalLink } from 'lucide-react'
+import { HelpCircle, ChevronDown, ChevronRight, Search, ExternalLink, Sparkles } from 'lucide-react'
 import { FAQ_DATA, type FAQCategory, type FAQItem } from './faqData'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { logFaqSearch, logFaqExpand } from '@/utils/analytics'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import type { PersonaId } from '@/data/learningPersonas'
 
-function FAQAccordionItem({ item }: { item: FAQItem }) {
+function FAQAccordionItem({ item, recommended }: { item: FAQItem; recommended: boolean }) {
   const [open, setOpen] = useState(false)
 
   return (
     <div className="border-b border-border last:border-b-0">
       <Button
         variant="ghost"
-        className="flex w-full items-start gap-3 py-4 min-h-[44px] text-left transition-colors hover:text-accent"
+        className={`flex w-full items-start gap-3 py-4 min-h-[44px] text-left transition-colors hover:text-accent ${recommended ? 'bg-primary/5' : ''}`}
         onClick={() => {
           if (!open) logFaqExpand(item.question)
           setOpen((o) => !o)
@@ -26,7 +28,13 @@ function FAQAccordionItem({ item }: { item: FAQItem }) {
         ) : (
           <ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
         )}
-        <span className="font-medium text-foreground">{item.question}</span>
+        <span className="flex-1 font-medium text-foreground">{item.question}</span>
+        {recommended && (
+          <span className="flex shrink-0 items-center gap-1 text-[10px] font-semibold text-primary bg-primary/10 px-1.5 py-0.5 rounded">
+            <Sparkles size={9} aria-hidden="true" />
+            For you
+          </span>
+        )}
       </Button>
       {open && (
         <div className="pb-4 pl-7">
@@ -44,13 +52,29 @@ function FAQAccordionItem({ item }: { item: FAQItem }) {
   )
 }
 
-function FAQCategorySection({ category }: { category: FAQCategory }) {
+function FAQCategorySection({
+  category,
+  activePersona,
+}: {
+  category: FAQCategory
+  activePersona: PersonaId | null
+}) {
+  // "Float, don't filter" (same pattern as /explore's tile sort): a persona-matching
+  // Q&A rises to the top of its category and gets a light highlight, but nothing is
+  // hidden — the FAQ's un-gated, see-everything nature is part of why it works.
+  const orderedItems = useMemo(() => {
+    if (!activePersona) return category.items
+    return [...category.items].sort(
+      (a, b) => Number(b.persona === activePersona) - Number(a.persona === activePersona)
+    )
+  }, [category.items, activePersona])
+
   return (
     <section className="glass-panel p-6" id={category.id}>
       <h2 className="mb-4 text-lg font-semibold text-foreground">{category.title}</h2>
       <div>
-        {category.items.map((item, i) => (
-          <FAQAccordionItem key={i} item={item} />
+        {orderedItems.map((item, i) => (
+          <FAQAccordionItem key={i} item={item} recommended={item.persona === activePersona} />
         ))}
       </div>
     </section>
@@ -79,6 +103,7 @@ function buildFAQPageSchema(data: FAQCategory[]) {
 
 export function FAQPage() {
   const [search, setSearch] = useState('')
+  const { selectedPersona } = usePersonaStore()
 
   useEffect(() => {
     if (!search.trim()) return
@@ -144,7 +169,9 @@ export function FAQPage() {
 
       {/* FAQ sections */}
       {filteredData.length > 0 ? (
-        filteredData.map((cat) => <FAQCategorySection key={cat.id} category={cat} />)
+        filteredData.map((cat) => (
+          <FAQCategorySection key={cat.id} category={cat} activePersona={selectedPersona} />
+        ))
       ) : (
         <div className="glass-panel p-8 text-center">
           <p className="text-muted-foreground">
