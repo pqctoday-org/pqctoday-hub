@@ -290,6 +290,21 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
     dataSources: ['Your own assessment answers only — no external inventory or scan data.'],
   },
 
+  cbom: {
+    title: 'Cryptographic Bill of Materials (CBOM)',
+    summary:
+      'Renders the latest CBOM you saved from the Library CBOM Builder (Command Center) as real numbers — component/crypto-asset counts, a quantum-safe vs. quantum-vulnerable split, and per-algorithm standard citations from the CycloneDX Cryptography Registry.',
+    wizardInputs: [],
+    scoringPrinciples: [
+      'Every algorithm is either post-quantum (safe) or classical (quantum-vulnerable) at detection time — there is no "unknown" bucket, since text-based detection either identifies a specific algorithm or finds nothing at all.',
+      'Standard citations (e.g. FIPS 203/204/205) come only from the official CycloneDX Cryptography Registry — never fabricated. Algorithms without a published standard yet (e.g. Falcon, pending FIPS 206) show that honestly instead of a placeholder citation.',
+    ],
+    personaEffects: [{ persona: 'All personas', effect: 'Section is collapsed by default.' }],
+    dataSources: [
+      'Your own saved CBOM export from the Library CBOM Builder — not a scan of your actual systems, and independent of the assessment wizard.',
+    ],
+  },
+
   algorithmMigration: {
     title: 'Algorithm Migration Priority',
     summary:

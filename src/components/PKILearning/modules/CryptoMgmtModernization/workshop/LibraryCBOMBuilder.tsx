@@ -18,6 +18,7 @@ import {
   downloadCbomJson,
   type CbomComponentInput,
 } from '@/services/cbom/cycloneDx'
+import { summarizeCbom, type CbomReportSummary } from '@/services/cbom/reportSummary'
 import {
   cbomRowToCbomInput,
   fileArtifactToCbomInput,
@@ -86,6 +87,10 @@ interface LibraryCBOMBuilderProps {
 interface SavedCbomInputs {
   mode?: string
   selectedSbom?: string
+  assessmentSeed?: string[]
+  /** Structured summary the /report CBOM section reads back — see
+   *  cbom-cyclonedx17-registry-report-section-plan-07092026.md, Part 2.1. */
+  reportSummary?: CbomReportSummary
 }
 
 const VALID_MODES: readonly Mode[] = ['sbom', 'libs', 'hsm', 'files', 'assessment']
@@ -164,35 +169,40 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
     onCbomExport(items)
   }, [cbomSlice, onCbomExport])
 
+  /** The current mode's inventory, in the neutral shape both the CycloneDX
+   *  export and the /report structured summary are derived from — computed
+   *  once so the two can never drift apart. */
+  const cbomInputs = useMemo((): CbomComponentInput[] => {
+    switch (mode) {
+      case 'sbom':
+        return cbomSlice.map(cbomRowToCbomInput)
+      case 'hsm':
+        return HSM_VENDORS.map(hsmToCbomInput)
+      case 'files':
+        return FILE_ARTIFACTS.map(fileArtifactToCbomInput)
+      // 'libs' and 'assessment' both export the library posture inventory.
+      default:
+        return CRYPTO_LIBRARIES.map(libraryToCbomInput)
+    }
+  }, [mode, cbomSlice])
+
   /** A schema-valid CycloneDX 1.7 CBOM for the current mode's inventory. Unlike
    *  the Markdown export, this is a real machine-readable artifact downstream
    *  tooling (Dependency-Track, scanners, auditors) can ingest. */
   const cycloneDxJson = useMemo(() => {
-    let inputs: CbomComponentInput[]
-    switch (mode) {
-      case 'sbom':
-        inputs = cbomSlice.map(cbomRowToCbomInput)
-        break
-      case 'hsm':
-        inputs = HSM_VENDORS.map(hsmToCbomInput)
-        break
-      case 'files':
-        inputs = FILE_ARTIFACTS.map(fileArtifactToCbomInput)
-        break
-      // 'libs' and 'assessment' both export the library posture inventory.
-      default:
-        inputs = CRYPTO_LIBRARIES.map(libraryToCbomInput)
-        break
-    }
-    return buildCbomDocument(inputs, {
+    return buildCbomDocument(cbomInputs, {
       toolName: 'PQC Today CBOM Builder',
       properties: [{ name: 'pqctoday:mode', value: mode }],
     }).json
-  }, [mode, cbomSlice])
+  }, [cbomInputs, mode])
 
   const handleDownloadCycloneDx = useCallback(() => {
     downloadCbomJson(cycloneDxJson, 'crypto-bom-cyclonedx')
   }, [cycloneDxJson])
+
+  /** Compact structured summary persisted alongside the save so /report can
+   *  render real numbers without re-parsing the CycloneDX JSON. */
+  const reportSummary = useMemo(() => summarizeCbom(cbomInputs, mode), [cbomInputs, mode])
 
   /** Markdown serialization of the current CBOM slice + library posture +
    *  HSM coverage for Command Center export. The format mirrors a CycloneDX
@@ -743,7 +753,8 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
               selectedSbom,
               assessmentSeed:
                 mode === 'assessment' ? assessmentTransitions.map((t) => t.storedKey) : undefined,
-            },
+              reportSummary,
+            } satisfies SavedCbomInputs,
             createdAt: Date.now(),
           })
         }}
