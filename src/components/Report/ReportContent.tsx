@@ -40,6 +40,7 @@ import {
 } from '../../data/personaConfig'
 import type { ReportSectionId, ReportCTA } from '../../data/personaConfig'
 import { PERSONAS } from '../../data/learningPersonas'
+import type { PersonaId } from '../../data/learningPersonas'
 import { complianceFrameworks } from '../../data/complianceData'
 import { ApplicabilityPanel } from '../applicability/ApplicabilityPanel'
 import { TopThreeActions } from '../common/TopThreeActions'
@@ -101,6 +102,12 @@ import { QRASection } from './sections/QRASection'
 
 declare const __APP_VERSION__: string
 const APP_VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0'
+
+// Stable empty fallbacks for shared/example-view profile field overrides —
+// see the `sharedView` derivation below. Reused so an absent field doesn't
+// allocate a fresh array/object identity on every render.
+const EMPTY_STRING_ARRAY: string[] = []
+const EMPTY_SUBCATEGORIES: Record<string, string[]> = {}
 
 /** Resolves icon name string to LucideIcon component for report CTAs. */
 const CTA_ICONS: Record<string, LucideIcon> = {
@@ -482,6 +489,18 @@ interface AssessReportProps {
   result: AssessmentResult
   expandToken?: number
   collapseToken?: number
+  /**
+   * Present when rendering someone else's shared report or the curious-mode
+   * example (ACCURACY-0708-2) — an ephemeral, read-only view. `persona` is
+   * the sender's persona at share time, used only to reproduce their
+   * section-gating in this view; it is never written to the recipient's own
+   * `usePersonaStore`. When set, this component must not read or write the
+   * recipient's own persisted assessment/persona state for anything that
+   * would make the rendered report diverge from what the sender saw, or let
+   * the recipient accidentally edit/reset/complete their own assessment
+   * while looking at someone else's.
+   */
+  sharedView?: { persona: PersonaId | null }
 }
 
 /** Report-specific HNDL/HNFL wrapper that injects SectionInfoTip */
@@ -496,28 +515,64 @@ export const ReportContent: React.FC<AssessReportProps> = ({
   result,
   expandToken = 0,
   collapseToken = 0,
+  sharedView,
 }) => {
+  const shared = !!sharedView
   const navigate = useNavigate()
   const { data: threatsData } = useThreatsData()
   const { reset, editFromStep, getInput } = useAssessmentStore()
   const assessmentStatus = useAssessmentStore((s) => s.assessmentStatus)
   const { workflowActive, startWorkflow } = useMigrationWorkflowStore()
-  const previousRiskScore = useAssessmentStore((s) => s.previousRiskScore)
-  const lastModifiedAt = useAssessmentStore((s) => s.lastModifiedAt)
+  // Recipient's own score history/timestamp — never relevant when viewing
+  // someone else's shared/example report, so it's suppressed rather than
+  // shown alongside the sender's score.
+  const livePreviousRiskScore = useAssessmentStore((s) => s.previousRiskScore)
+  const liveLastModifiedAt = useAssessmentStore((s) => s.lastModifiedAt)
+  const previousRiskScore = shared ? null : livePreviousRiskScore
+  const lastModifiedAt = shared ? null : liveLastModifiedAt
   const assessmentHistory = useAssessmentStore((s) => s.assessmentHistory)
-  const industry = useAssessmentStore((s) => s.industry)
-  const country = useAssessmentStore((s) => s.country)
-  const dataSensitivity = useAssessmentStore((s) => s.dataSensitivity)
-  const currentCrypto = useAssessmentStore((s) => s.currentCrypto)
-  const cryptoUnknown = useAssessmentStore((s) => s.cryptoUnknown)
+  // ACCURACY-0708-2: for a shared/example view, every field the report
+  // renders must come from the sender's snapshot (`result.assessmentProfile`)
+  // rather than the recipient's own live assessment store — otherwise a
+  // recipient with their own in-progress/completed assessment would see a
+  // report mixing the sender's score with their own industry/crypto/etc.
+  // Fallbacks use these stable module-level constants (not fresh `[]`/`{}`
+  // literals) so `infrastructure`/`infrastructureSubCategories` keep a
+  // stable reference across renders when unset — `relevantSoftware`'s
+  // useMemo below depends on `infrastructure` and would otherwise recompute
+  // on every render of a shared view.
+  const profile = result.assessmentProfile
+  const liveIndustry = useAssessmentStore((s) => s.industry)
+  const liveCountry = useAssessmentStore((s) => s.country)
+  const liveDataSensitivity = useAssessmentStore((s) => s.dataSensitivity)
+  const liveCurrentCrypto = useAssessmentStore((s) => s.currentCrypto)
+  const liveCryptoUnknown = useAssessmentStore((s) => s.cryptoUnknown)
+  const liveInfrastructure = useAssessmentStore((s) => s.infrastructure)
+  const liveInfrastructureSubCategories = useAssessmentStore((s) => s.infrastructureSubCategories)
+  const industry = shared ? (profile?.industry ?? '') : liveIndustry
+  const country = shared ? (profile?.country ?? '') : liveCountry
+  const dataSensitivity = shared
+    ? (profile?.sensitivityLevels ?? EMPTY_STRING_ARRAY)
+    : liveDataSensitivity
+  const currentCrypto = shared
+    ? (profile?.algorithmsSelected ?? EMPTY_STRING_ARRAY)
+    : liveCurrentCrypto
+  const cryptoUnknown = shared ? !!profile?.algorithmUnknown : liveCryptoUnknown
   const hasSigningAlgos =
     (currentCrypto ?? []).some((a) => SIGNING_ALGORITHMS.has(a)) || cryptoUnknown
-  const infrastructure = useAssessmentStore((s) => s.infrastructure)
-  const infrastructureSubCategories = useAssessmentStore((s) => s.infrastructureSubCategories)
+  const infrastructure = shared
+    ? (profile?.infrastructure ?? EMPTY_STRING_ARRAY)
+    : liveInfrastructure
+  const infrastructureSubCategories = shared
+    ? (profile?.infrastructureSubCategories ?? EMPTY_SUBCATEGORIES)
+    : liveInfrastructureSubCategories
   const hiddenThreats = useAssessmentStore((s) => s.hiddenThreats)
   const hideThreat = useAssessmentStore((s) => s.hideThreat)
   const restoreAllThreats = useAssessmentStore((s) => s.restoreAllThreats)
-  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const livePersona = usePersonaStore((s) => s.selectedPersona)
+  // The sender's persona (ephemeral, from the token) drives section gating
+  // for a shared/example view — never the recipient's own persona store.
+  const selectedPersona = shared ? (sharedView.persona ?? null) : livePersona
   const hiddenProducts = useMigrateSelectionStore((s) => s.hiddenProducts)
   // Subscribe to each primitive field separately — a selector that builds a new
   // object every call breaks useSyncExternalStore's snapshot caching (zustand +
@@ -627,21 +682,25 @@ export const ReportContent: React.FC<AssessReportProps> = ({
   }
 
   const handleShare = async () => {
-    const input = useAssessmentStore.getState().getInput()
-    const personaState = usePersonaStore.getState()
-    const token = encodeShareToken({
-      industry: input?.industry,
-      country: input?.country ?? undefined,
-      region: personaState.selectedRegion ?? undefined,
-      currentCrypto: input?.currentCrypto,
-      dataSensitivity: input?.dataSensitivity,
-      complianceRequirements: input?.complianceRequirements,
-      migrationStatus: input?.migrationStatus,
-      persona: personaState.selectedPersona ?? undefined,
-      riskScore: result.riskScore,
-      riskLevel: result.riskLevel,
-    })
-    const url = `${window.location.origin}${window.location.pathname}?share=${token}`
+    // ACCURACY-0708-2: share the sender's exact computed `result` as a
+    // snapshot (v2 token) rather than the partial quick-track inputs the old
+    // v1 token carried — decode then renders this directly, with no
+    // recompute, so the recipient sees precisely what's on screen right now.
+    //
+    // For an already-shared/example view, re-share the URL the recipient
+    // opened rather than regenerating a token from `getInput()` — that would
+    // read the recipient's own (unrelated, likely empty) assessment input,
+    // not the report they're actually looking at.
+    const url = shared
+      ? window.location.href
+      : (() => {
+          const personaState = usePersonaStore.getState()
+          const token = encodeShareToken({
+            result,
+            persona: personaState.selectedPersona,
+          })
+          return `${window.location.origin}${window.location.pathname}?share=${token}`
+        })()
 
     if (navigator.share) {
       try {
@@ -797,16 +856,21 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                       </span>
                     </div>
 
-                    {/* Control deck (redesign) — derived track label + persona lens. */}
-                    <ReportControlDeck fullTrack={isComprehensive} />
+                    {/* Control deck (redesign) — derived track label + persona lens.
+                      Hidden on shared/example views: the persona picker mutates the
+                      recipient's own global persona, which must not happen while
+                      they're looking at someone else's report. */}
+                    <ReportControlDeck fullTrack={isComprehensive} shared={shared} />
 
                     {/* Persona verdict (redesign) — re-leads the result for the active role,
                       above the "Do this first" hero. */}
                     <ReportVerdictBlock persona={selectedPersona} result={result} />
 
                     {/* Fast-track upgrade nudge (redesign) — quick assessments only; ties the
-                      locked sections to one clear unlock path. */}
-                    {!isComprehensive && <ReportUpgradeNudge />}
+                      locked sections to one clear unlock path. Suppressed on shared/example
+                      views — a recipient shouldn't be prompted to finish someone else's
+                      assessment. */}
+                    {!isComprehensive && <ReportUpgradeNudge shared={shared} />}
 
                     {/* Top-3 actions hero (P15-P1-02) — teases the highest-priority
                       recommended actions before the full report scroll. Hidden in print. */}
@@ -1006,8 +1070,11 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                     {/* Quantum Readiness Assessment (QRA) — the framework's
                         communicate artifact (spec §6.1; Report #1). Phase 3.
                         Additive: only renders when an assessment exists (input
-                        present) and respects the `?phase=` overlay. */}
-                    {matches('p3') &&
+                        present) and respects the `?phase=` overlay. Skipped on a
+                        shared/example view: `getInput()` is always the RECIPIENT's
+                        own live input, which would mismatch a sender's `result`. */}
+                    {!shared &&
+                      matches('p3') &&
                       getInput() &&
                       (() => {
                         const qraInput = getInput()
@@ -1678,6 +1745,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                           vendorUnknown={result.assessmentProfile.vendorUnknown}
                           relevantSoftware={relevantSoftware}
                           defaultOpen={cfg('vendorRisk').state === 'open'}
+                          quickTrack={!isComprehensive}
                         />
                       )}
 
@@ -1688,6 +1756,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                       defaultOpen={false}
                       onSummaryChange={setRoiSummary}
                       infoTip={<SectionInfoTip sectionId="roiCalculator" />}
+                      quickTrack={!isComprehensive}
                     />
 
                     {/* KPI Trending — comprehensive-gated. Three states: locked on a
@@ -1753,8 +1822,10 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         </div>
                       )}
 
-                    {/* NICE Framework Workforce Gap Report */}
-                    {getInput() && (
+                    {/* NICE Framework Workforce Gap Report. Skipped on a shared/example
+                        view for the same reason as QRA above — `getInput()` is the
+                        recipient's own live input, not the sender's. */}
+                    {!shared && getInput() && (
                       <div id="report-section-niceGap" className="print:break-before-page">
                         <CollapsibleSection
                           title="NICE Framework Workforce Gap Report"
@@ -1844,8 +1915,10 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         )
                       })()}
 
-                    {/* Migration Workflow activation CTA */}
-                    {!workflowActive && assessmentStatus === 'complete' && (
+                    {/* Migration Workflow activation CTA — starts the RECIPIENT's own
+                      workflow, so it must not appear while they're looking at someone
+                      else's shared/example report. */}
+                    {!shared && !workflowActive && assessmentStatus === 'complete' && (
                       <div className="glass-panel p-4 print:hidden">
                         <div className="mt-0 pt-0 border-t border-border">
                           <Button
@@ -1902,28 +1975,35 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                           <Share2 size={16} />
                           Share
                         </Button>
-                        <Button
-                          variant="ghost"
-                          onClick={() => {
-                            editFromStep(0)
-                            navigate('/assess')
-                          }}
-                          className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
-                        >
-                          <Pencil size={16} />
-                          Edit Answers
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          onClick={() => {
-                            reset()
-                            navigate('/assess')
-                          }}
-                          className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
-                        >
-                          <RotateCcw size={16} />
-                          Start Over
-                        </Button>
+                        {/* Edit/Reset act on the RECIPIENT's own store — hidden on a
+                          shared/example view since there's no "your answers" here to
+                          edit or reset. */}
+                        {!shared && (
+                          <>
+                            <Button
+                              variant="ghost"
+                              onClick={() => {
+                                editFromStep(0)
+                                navigate('/assess')
+                              }}
+                              className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
+                            >
+                              <Pencil size={16} />
+                              Edit Answers
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              onClick={() => {
+                                reset()
+                                navigate('/assess')
+                              }}
+                              className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
+                            >
+                              <RotateCcw size={16} />
+                              Start Over
+                            </Button>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
