@@ -12,6 +12,7 @@ import {
   Percent,
 } from 'lucide-react'
 import { CollapsibleSection } from '../ui/CollapsibleSection'
+import { DefaultsUsedChip } from '../Report/DefaultsUsedChip'
 import { FRAMEWORK_PENALTY_BASELINES } from '@/data/roiBaselines'
 import type { AssessmentResult } from '@/hooks/assessmentTypes'
 import { Button } from '@/components/ui/button'
@@ -47,6 +48,11 @@ interface ROICalculatorSectionProps {
   defaultOpen?: boolean
   onSummaryChange: (summary: ROISummary) => void
   infoTip?: React.ReactNode
+  /** Quick-track assessments never collect vendor dependency, infrastructure,
+   *  agility, team size, or system scale — every one of those falls back to a
+   *  neutral multiplier in `computeMigrationCostFromProfile`, so the dollar
+   *  figures below are partly defaulted, not fully input-driven. */
+  quickTrack?: boolean
 }
 
 function formatUSD(value: number): string {
@@ -308,6 +314,7 @@ export const ROICalculatorSection: React.FC<ROICalculatorSectionProps> = ({
   defaultOpen = false,
   onSummaryChange,
   infoTip,
+  quickTrack = false,
 }) => {
   const defaults = useMemo(() => {
     const { migrationCost, details: costDetails } = computeMigrationCostFromProfile(result)
@@ -413,6 +420,7 @@ export const ROICalculatorSection: React.FC<ROICalculatorSectionProps> = ({
       icon={<DollarSign size={18} className="text-primary" />}
       defaultOpen={defaultOpen}
       infoTip={infoTip}
+      headerExtra={quickTrack ? <DefaultsUsedChip /> : undefined}
     >
       {/* Print-only summary */}
       <div className="hidden print:block mb-4 text-sm">

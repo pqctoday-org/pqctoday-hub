@@ -10,6 +10,8 @@ import { useAssessmentStore } from '../../store/useAssessmentStore'
 import { useAssessmentResultStore } from '../../store/useAssessmentResultStore'
 import { computeAssessment } from '../../hooks/assessmentUtils'
 import { computeAssessmentAsync } from '../../hooks/assessment/orchestrator'
+import type { AssessmentResult } from '../../hooks/assessmentTypes'
+import type { PersonaId } from '../../data/learningPersonas'
 import {
   WorkshopOperationLog,
   type LogEntry,
@@ -37,7 +39,7 @@ import { EXAMPLE_REPORT_URL } from '@/data/exampleReport'
 import { PersonaSuggestionCard } from '@/components/Assess/PersonaSuggestionCard'
 import { getBeltTierLabel } from '@/data/personaConfig'
 import { useAwarenessScore } from '@/hooks/useAwarenessScore'
-import { decodeShareToken } from '@/utils/reportShareToken'
+import { decodeShareToken, type ReportShareSchemaV1 } from '@/utils/reportShareToken'
 import { usePersonaStore } from '@/store/usePersonaStore'
 
 const VALID_SENSITIVITIES = new Set(['low', 'medium', 'high', 'critical'])
@@ -60,6 +62,94 @@ const VALID_COMPLIANCE = new Set(AVAILABLE_COMPLIANCE)
 const VALID_USE_CASES = new Set(AVAILABLE_USE_CASES)
 const VALID_INFRA = new Set(AVAILABLE_INFRASTRUCTURE)
 const VALID_COUNTRIES = new Set(Object.values(REGION_COUNTRIES_MAP).flat())
+const VALID_PERSONAS = new Set<string>([
+  'executive',
+  'developer',
+  'architect',
+  'researcher',
+  'ops',
+  'curious',
+])
+
+function toValidPersona(persona: string | undefined): PersonaId | null {
+  return persona && VALID_PERSONAS.has(persona) ? (persona as PersonaId) : null
+}
+
+/**
+ * Builds an `AssessmentInput` from a legacy pre-token share schema (v1
+ * `reportShareToken`, or the even older `?i=&cy=&c=&…` per-param links —
+ * see the two decode branches in the hydration effect below). Both formats
+ * predate score snapshotting, so there is no sender result to honor; the
+ * best we can do is recompute from whatever fields survive validation, the
+ * same way `useAssessmentFormStore.getInput()` requires (non-empty industry
+ * + migration status, sensitivity present or explicitly unknown). Returns
+ * null when the link doesn't carry enough to produce a meaningful report.
+ */
+function buildLegacyInput(fields: {
+  industry?: string
+  country?: string
+  currentCrypto?: string[]
+  dataSensitivity?: string[]
+  complianceRequirements?: string[]
+  migrationStatus?: string
+  cryptoUseCases?: string[]
+  dataRetention?: string[]
+  systemCount?: string
+  teamSize?: string
+  cryptoAgility?: string
+  infrastructure?: string[]
+  vendorDependency?: string
+  timelinePressure?: string
+}): AssessmentInput | null {
+  if (!fields.industry || !VALID_INDUSTRIES.has(fields.industry)) return null
+  const dataSensitivity = (fields.dataSensitivity ?? []).filter((s) => VALID_SENSITIVITIES.has(s))
+  const input: AssessmentInput = {
+    industry: fields.industry,
+    currentCrypto: (fields.currentCrypto ?? []).filter((a) => VALID_ALGORITHMS.has(a)),
+    dataSensitivity,
+    complianceRequirements: (fields.complianceRequirements ?? []).filter((f) =>
+      VALID_COMPLIANCE.has(f)
+    ),
+    migrationStatus:
+      fields.migrationStatus && VALID_MIGRATIONS.has(fields.migrationStatus)
+        ? (fields.migrationStatus as AssessmentInput['migrationStatus'])
+        : 'unknown',
+  }
+  if (dataSensitivity.length === 0) input.sensitivityUnknown = true
+  if (fields.country && VALID_COUNTRIES.has(fields.country)) input.country = fields.country
+  if (fields.cryptoUseCases) {
+    const useCases = fields.cryptoUseCases.filter((uc) => VALID_USE_CASES.has(uc))
+    if (useCases.length > 0) input.cryptoUseCases = useCases
+  }
+  if (fields.dataRetention) {
+    const retention = fields.dataRetention.filter((v) => VALID_RETENTION.has(v))
+    if (retention.length > 0) input.dataRetention = retention
+  }
+  if (fields.systemCount && VALID_SYSTEM_COUNT.has(fields.systemCount)) {
+    input.systemCount = fields.systemCount as NonNullable<AssessmentInput['systemCount']>
+  }
+  if (fields.teamSize && VALID_TEAM_SIZE.has(fields.teamSize)) {
+    input.teamSize = fields.teamSize as NonNullable<AssessmentInput['teamSize']>
+  }
+  if (fields.cryptoAgility && VALID_AGILITY.has(fields.cryptoAgility)) {
+    input.cryptoAgility = fields.cryptoAgility as NonNullable<AssessmentInput['cryptoAgility']>
+  }
+  if (fields.infrastructure) {
+    const infra = fields.infrastructure.filter((item) => VALID_INFRA.has(item))
+    if (infra.length > 0) input.infrastructure = infra
+  }
+  if (fields.vendorDependency && VALID_VENDOR.has(fields.vendorDependency)) {
+    input.vendorDependency = fields.vendorDependency as NonNullable<
+      AssessmentInput['vendorDependency']
+    >
+  }
+  if (fields.timelinePressure && VALID_PRESSURE.has(fields.timelinePressure)) {
+    input.timelinePressure = fields.timelinePressure as NonNullable<
+      AssessmentInput['timelinePressure']
+    >
+  }
+  return input
+}
 
 /**
  * Sections that render outside the persona-config-gated REPORT_SECTION_ORDER
@@ -67,9 +157,31 @@ const VALID_COUNTRIES = new Set(Object.values(REGION_COUNTRIES_MAP).flat())
  * unconditionally, not through `getReportSectionConfig`, so they were
  * previously unreachable from the TOC entirely. Each entry names the
  * REPORT_SECTION_ORDER id it renders immediately after, in true page order.
+ *
+ * ACCURACY-0708-2: these entries used to only appear in the TOC when their
+ * anchor id's own base entry survived the persona hidden-state filter (e.g.
+ * the ROI/KPI-trending entries were nested under `vendorRisk`) — but the
+ * sections they name render unconditionally regardless of that anchor's
+ * visibility, so if any persona config ever hid `vendorRisk`, the TOC would
+ * silently drop two sections still visible on the page. `tocSections` below
+ * now appends these independently of the anchor's own filtered visibility.
  */
-const EXTRA_TOC_AFTER: Partial<Record<ReportSectionId, { id: string; label: string }[]>> = {
-  riskScore: [{ id: 'report-section-qra', label: 'Quantum Readiness Assessment' }],
+interface TocExtra {
+  id: string
+  label: string
+  /** QRA and the NICE gap report both key off `getInput()` — the RECIPIENT's
+   *  own live assessment input — so ReportContent skips rendering them
+   *  entirely on a shared/example view (see the `shared` guards there) to
+   *  avoid mixing the sender's result with the recipient's own inputs.
+   *  Their TOC entries must be dropped too, or they'd point at an anchor
+   *  that was never rendered. */
+  hideWhenShared?: boolean
+}
+
+const EXTRA_TOC_AFTER: Partial<Record<ReportSectionId, TocExtra[]>> = {
+  riskScore: [
+    { id: 'report-section-qra', label: 'Quantum Readiness Assessment', hideWhenShared: true },
+  ],
   vendorRisk: [
     { id: 'report-section-roiCalculator', label: 'ROI & Financial Case' },
     { id: 'report-section-kpiTrending', label: 'Progress Over Time' },
@@ -77,8 +189,11 @@ const EXTRA_TOC_AFTER: Partial<Record<ReportSectionId, { id: string; label: stri
 }
 
 /** Renders after every other section (including threatLandscape) — appended
- *  at the end of the TOC unconditionally. */
-const TOC_TRAILING = [{ id: 'report-section-niceGap', label: 'NICE Workforce Gap Report' }]
+ *  at the end of the TOC unconditionally (except on a shared/example view —
+ *  see `hideWhenShared` above). */
+const TOC_TRAILING: TocExtra[] = [
+  { id: 'report-section-niceGap', label: 'NICE Workforce Gap Report', hideWhenShared: true },
+]
 
 /**
  * Persona-flavored maturity tier chip rendered just under the page header
@@ -189,7 +304,7 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputKey, assessmentStatus, lastResult])
 
-  const result = computeState.result
+  const ownResult = computeState.result
   const reportComputing = computeState.computing
   const reportLogEntries = computeState.log
   const persistedRef = useRef(false)
@@ -200,222 +315,116 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
   const handleExpandAll = useCallback(() => setExpandToken((t) => t + 1), [])
   const handleCollapseAll = useCallback(() => setCollapseToken((t) => t + 1), [])
 
-  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
-  const tocSections = useMemo(() => {
-    const base = REPORT_SECTION_ORDER.filter(
-      (id) => getReportSectionConfig(selectedPersona, id).state !== 'hidden'
-    ).flatMap((id) => [
-      { id: `report-section-${id}`, label: REPORT_SECTION_LABELS[id] },
-      // eslint-disable-next-line security/detect-object-injection
-      ...(EXTRA_TOC_AFTER[id] ?? []),
-    ])
-    return [...base, ...TOC_TRAILING]
-  }, [selectedPersona])
-  const hydratedRef = useRef(false)
-  // Set when a share/legacy link arrives but the recipient already has their
-  // own assessment (in-progress or complete) — we refuse to silently
-  // overwrite it (see `ACCURACY-0705` fix below) and surface this instead.
-  const [shareBlockedByExistingAssessment, setShareBlockedByExistingAssessment] = useState(false)
+  const livePersona = usePersonaStore((s) => s.selectedPersona)
 
-  // Hydrate store from shared URL params on first mount.
-  //
-  // ACCURACY-0705: this used to unconditionally call `store.set*(...)` +
-  // `store.markComplete()` for ANY share/legacy link, silently overwriting and
-  // completing the recipient's OWN in-progress or already-completed
-  // assessment — directly contradicting the "your own assessment is
-  // unaffected" banner below. Now it only auto-applies when the recipient has
-  // no assessment of their own yet (`assessmentStatus === 'not-started'`);
-  // otherwise it refuses to mutate the store and flips
-  // `shareBlockedByExistingAssessment` so the banner can explain why.
+  // ACCURACY-0708-2: a shared/example report is now an ephemeral, in-memory
+  // view — decoding a `?share=` link NEVER writes into the recipient's own
+  // persisted assessment or persona store (no `markComplete`, no
+  // `setPersona`), so it's safe to render regardless of whatever the
+  // recipient's own assessment state already is. `approximate` is true for
+  // pre-snapshot links (v1 token or the even older per-param format), which
+  // have no sender score to honor and must be recomputed best-effort.
+  const [sharedView, setSharedView] = useState<{
+    result: AssessmentResult
+    persona: PersonaId | null
+    approximate: boolean
+  } | null>(null)
+  const hydratedRef = useRef(false)
+
+  const selectedPersona = sharedView ? sharedView.persona : livePersona
+  const isShared = !!sharedView
+  const tocSections = useMemo(() => {
+    const keep = (extra: TocExtra) => !(extra.hideWhenShared && isShared)
+    const base = REPORT_SECTION_ORDER.flatMap((id) => [
+      ...(getReportSectionConfig(selectedPersona, id).state !== 'hidden'
+        ? [{ id: `report-section-${id}`, label: REPORT_SECTION_LABELS[id] }]
+        : []),
+      // These extras render unconditionally on the page (see EXTRA_TOC_AFTER
+      // doc comment) — always include them here too, independent of whether
+      // their anchor id's own entry survived the hidden-state filter above.
+      // eslint-disable-next-line security/detect-object-injection
+      ...(EXTRA_TOC_AFTER[id] ?? []).filter(keep),
+    ])
+    return [...base, ...TOC_TRAILING.filter(keep)]
+  }, [selectedPersona, isShared])
+
+  // Decode a shared/example link on first mount, purely into local state —
+  // see the `sharedView` doc comment above for why this never touches the
+  // recipient's own persisted store.
   useEffect(() => {
     if (hydratedRef.current) return
+    hydratedRef.current = true
 
-    // New compact token path: ?share=<base64token>
+    // Current token path: ?share=<base64 v2 token>, or an older v1 token
+    // still circulating from before this fix shipped.
     const shareToken = searchParams.get('share')
     if (shareToken) {
-      hydratedRef.current = true
       const schema = decodeShareToken(shareToken)
-      if (schema) {
-        if (useAssessmentStore.getState().assessmentStatus !== 'not-started') {
-          setShareBlockedByExistingAssessment(true)
-          return
-        }
+      if (!schema) return
+      if (schema.v === 2) {
         logReportShareLinkOpened()
-        const store = useAssessmentStore.getState()
-        if (schema.industry && VALID_INDUSTRIES.has(schema.industry))
-          store.setIndustry(schema.industry)
-        if (schema.country && VALID_COUNTRIES.has(schema.country)) store.setCountry(schema.country)
-        if (schema.currentCrypto) {
-          schema.currentCrypto
-            .filter((a) => VALID_ALGORITHMS.has(a))
-            .forEach((a) => {
-              if (!store.currentCrypto.includes(a)) store.toggleCrypto(a)
-            })
-        }
-        if (schema.dataSensitivity) {
-          schema.dataSensitivity
-            .filter((s) => VALID_SENSITIVITIES.has(s))
-            .forEach((s) => {
-              if (!store.dataSensitivity.includes(s)) store.toggleDataSensitivity(s)
-            })
-        }
-        if (schema.complianceRequirements) {
-          schema.complianceRequirements
-            .filter((f) => VALID_COMPLIANCE.has(f))
-            .forEach((f) => {
-              if (!store.complianceRequirements.includes(f)) store.toggleCompliance(f)
-            })
-        }
-        if (schema.migrationStatus && VALID_MIGRATIONS.has(schema.migrationStatus)) {
-          store.setMigrationStatus(schema.migrationStatus as AssessmentInput['migrationStatus'])
-        }
-        if (schema.persona) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          usePersonaStore.getState().setPersona(schema.persona as any)
-        }
-        store.setAssessmentMode('comprehensive')
-        store.markComplete()
+        setSharedView({
+          result: schema.result,
+          persona: toValidPersona(schema.persona),
+          approximate: false,
+        })
+        return
       }
+      // v1: partial quick-track-only inputs + a score that was never
+      // actually honored — recompute best-effort and say so plainly.
+      const v1 = schema as ReportShareSchemaV1
+      const input = buildLegacyInput(v1)
+      if (!input) return
+      logReportShareLinkOpened()
+      setSharedView({
+        result: computeAssessment(input),
+        persona: toValidPersona(v1.persona),
+        approximate: true,
+      })
       return
     }
 
-    // Legacy individual-param path: ?i=&cy=&c=&d=&f=&m=… — same
-    // no-silent-overwrite guard as the compact-token path above.
+    // Legacy individual-param path: ?i=&cy=&c=&d=&f=&m=&u=&r=&s=&t=&a=&n=&v=&p=
+    // — predates the token format entirely, so likewise has no score to
+    // honor; recompute from whichever fields survive validation.
     const industry = searchParams.get('i')
     if (!industry) return
-    hydratedRef.current = true
-    if (useAssessmentStore.getState().assessmentStatus !== 'not-started') {
-      setShareBlockedByExistingAssessment(true)
-      return
-    }
+    const csv = (key: string): string[] | undefined => searchParams.get(key)?.split(',')
+    const input = buildLegacyInput({
+      industry,
+      country: searchParams.get('cy') ? decodeURIComponent(searchParams.get('cy')!) : undefined,
+      currentCrypto: csv('c'),
+      dataSensitivity: csv('d'),
+      complianceRequirements: csv('f'),
+      migrationStatus: searchParams.get('m') ?? undefined,
+      cryptoUseCases: csv('u'),
+      dataRetention: csv('r'),
+      systemCount: searchParams.get('s') ?? undefined,
+      teamSize: searchParams.get('t') ?? undefined,
+      cryptoAgility: searchParams.get('a') ?? undefined,
+      infrastructure: csv('n'),
+      vendorDependency: searchParams.get('v') ?? undefined,
+      timelinePressure: searchParams.get('p') ?? undefined,
+    })
+    if (!input) return
     logReportShareLinkOpened()
-
-    const store = useAssessmentStore.getState()
-    if (VALID_INDUSTRIES.has(industry)) store.setIndustry(industry)
-
-    const countryParam = searchParams.get('cy')
-    if (countryParam) {
-      const decoded = decodeURIComponent(countryParam)
-      if (VALID_COUNTRIES.has(decoded)) store.setCountry(decoded)
-    }
-
-    const crypto = searchParams.get('c')
-    if (crypto) {
-      crypto
-        .split(',')
-        .filter((a) => VALID_ALGORITHMS.has(a))
-        .forEach((a) => {
-          if (!store.currentCrypto.includes(a)) store.toggleCrypto(a)
-        })
-    }
-
-    const sensitivity = searchParams.get('d')
-    if (sensitivity) {
-      sensitivity
-        .split(',')
-        .filter((s) => VALID_SENSITIVITIES.has(s))
-        .forEach((s) => {
-          if (!store.dataSensitivity.includes(s)) store.toggleDataSensitivity(s)
-        })
-    }
-
-    const frameworks = searchParams.get('f')
-    if (frameworks) {
-      frameworks
-        .split(',')
-        .filter((f) => VALID_COMPLIANCE.has(f))
-        .forEach((f) => {
-          if (!store.complianceRequirements.includes(f)) store.toggleCompliance(f)
-        })
-    }
-
-    const migration = searchParams.get('m')
-    if (migration && VALID_MIGRATIONS.has(migration)) {
-      if (migration === 'unknown') {
-        store.setMigrationUnknown(true)
-      } else {
-        store.setMigrationStatus(migration as AssessmentInput['migrationStatus'])
-      }
-    }
-
-    const useCases = searchParams.get('u')
-    if (useCases) {
-      useCases
-        .split(',')
-        .filter((uc) => VALID_USE_CASES.has(uc))
-        .forEach((uc) => {
-          if (!store.cryptoUseCases.includes(uc)) store.toggleCryptoUseCase(uc)
-        })
-    }
-
-    const retention = searchParams.get('r')
-    if (retention) {
-      retention
-        .split(',')
-        .filter((v) => VALID_RETENTION.has(v))
-        .forEach((v) => {
-          if (!store.dataRetention.includes(v)) store.toggleDataRetention(v)
-        })
-    }
-
-    const sysCount = searchParams.get('s')
-    if (sysCount && VALID_SYSTEM_COUNT.has(sysCount)) {
-      store.setSystemCount(sysCount as NonNullable<AssessmentInput['systemCount']>)
-    }
-
-    const tSize = searchParams.get('t')
-    if (tSize && VALID_TEAM_SIZE.has(tSize)) {
-      store.setTeamSize(tSize as NonNullable<AssessmentInput['teamSize']>)
-    }
-
-    const agility = searchParams.get('a')
-    if (agility && VALID_AGILITY.has(agility)) {
-      if (agility === 'unknown') {
-        store.setAgilityUnknown(true)
-      } else {
-        store.setCryptoAgility(agility as NonNullable<AssessmentInput['cryptoAgility']>)
-      }
-    }
-
-    const infra = searchParams.get('n')
-    if (infra) {
-      infra
-        .split(',')
-        .filter((item) => VALID_INFRA.has(item))
-        .forEach((item) => {
-          if (!store.infrastructure.includes(item)) store.toggleInfrastructure(item)
-        })
-    }
-
-    const vendor = searchParams.get('v')
-    if (vendor && VALID_VENDOR.has(vendor)) {
-      store.setVendorDependency(vendor as NonNullable<AssessmentInput['vendorDependency']>)
-    }
-
-    const pressure = searchParams.get('p')
-    if (pressure && VALID_PRESSURE.has(pressure)) {
-      if (pressure === 'unknown') {
-        store.setTimelineUnknown(true)
-      } else {
-        store.setTimelinePressure(pressure as NonNullable<AssessmentInput['timelinePressure']>)
-      }
-    }
-
-    store.setAssessmentMode('comprehensive')
-    store.markComplete()
+    setSharedView({ result: computeAssessment(input), persona: null, approximate: true })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Persist result and mark module complete
+  // Persist result and mark module complete. Deliberately keyed on
+  // `ownResult` (the recipient's own live-store-driven compute), never on
+  // `sharedView` — a shared/example view must not write into the
+  // recipient's own persisted result/history.
   useEffect(() => {
     if (assessmentStatus === 'not-started') {
       persistedRef.current = false
       return
     }
-    if (result && !persistedRef.current) {
+    if (ownResult && !persistedRef.current) {
       persistedRef.current = true
-      logReportViewed(useAssessmentStore.getState().industry, result.riskLevel)
-      setResult(result)
+      logReportViewed(useAssessmentStore.getState().industry, ownResult.riskLevel)
+      setResult(ownResult)
       // Tag with the input that produced this result so the sim's self-unlock
       // effect can tell it's already current and skip its own (coarser) recompute.
       useAssessmentResultStore.setState({ sourceInputKey: inputKey })
@@ -424,22 +433,22 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
       // (not categoryScores presence) to avoid polluting the trend with quick runs.
       if (
         assessmentStatus === 'complete' &&
-        result.assessmentProfile?.mode === 'comprehensive' &&
-        result.categoryScores
+        ownResult.assessmentProfile?.mode === 'comprehensive' &&
+        ownResult.categoryScores
       ) {
         const store = useAssessmentStore.getState()
         store.pushSnapshot({
-          completedAt: store.completedAt ?? result.generatedAt,
-          riskScore: result.riskScore,
-          categoryScores: result.categoryScores,
-          riskLevel: result.riskLevel,
+          completedAt: store.completedAt ?? ownResult.generatedAt,
+          riskScore: ownResult.riskScore,
+          categoryScores: ownResult.categoryScores,
+          riskLevel: ownResult.riskLevel,
           industry: store.industry,
-          preBoostScore: result.preBoostScore,
-          boosts: result.boosts,
+          preBoostScore: ownResult.preBoostScore,
+          boosts: ownResult.boosts,
         })
       }
     }
-  }, [assessmentStatus, result, setResult])
+  }, [assessmentStatus, ownResult, setResult])
 
   useEffect(() => {
     if (assessmentStatus !== 'complete') return
@@ -449,10 +458,15 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
     })
   }, [assessmentStatus])
 
+  // What actually renders: the sender's ephemeral snapshot when viewing a
+  // shared/example link, otherwise the recipient's own live result.
+  const result = sharedView ? sharedView.result : ownResult
+
   // Active compute state: assessment exists, result still pending. Show
   // the progress log so users see the 10-stage pipeline grinding rather
-  // than a blank page or stale spinner.
-  if (!result && reportComputing) {
+  // than a blank page or stale spinner. Never applies to a shared view —
+  // that result is already fully computed.
+  if (!sharedView && !result && reportComputing) {
     return (
       <div className="animate-fade-in">
         <div className="max-w-xl mx-auto py-12">
@@ -471,33 +485,14 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
     )
   }
 
-  // Empty state: no assessment started and no persisted result.
-  //
-  // ACCURACY-0705: this early return happens BEFORE the main return's banner
-  // section below, so a blocked share link must be surfaced HERE too —
-  // otherwise a recipient whose own assessment has no computed result yet
-  // (e.g. genuinely in-progress) would see this generic "No Report Yet"
-  // screen with zero indication that a share link even arrived.
+  // Empty state: no assessment started, no persisted result, and no
+  // decodable shared/example link either (an undecodable token is ignored
+  // rather than surfaced as an error — falls through to this same screen).
   if (!result) {
     const isCurious = selectedPersona === 'curious'
     return (
       <div className="animate-fade-in">
         <div className="max-w-lg mx-auto text-center py-16">
-          {shareBlockedByExistingAssessment && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-6 text-left"
-            >
-              <div className="glass-panel p-3 border-l-4 border-l-warning flex items-center gap-3">
-                <AlertCircle size={16} className="text-warning shrink-0" />
-                <span className="text-sm text-foreground">
-                  This link contains someone else&apos;s shared assessment, but you already have
-                  your own in progress. To protect your data, it was not loaded.
-                </span>
-              </div>
-            </motion.div>
-          )}
           <div className="inline-flex items-center justify-center p-4 rounded-full bg-muted mb-6">
             <FileBarChart className="text-muted-foreground" size={32} />
           </div>
@@ -547,35 +542,35 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
         />
       )}
 
-      <MaturityTierChip />
+      {!sharedView && <MaturityTierChip />}
 
-      <PersonaSuggestionCard />
+      {!sharedView && <PersonaSuggestionCard />}
 
-      {/* ACCURACY-0705: only claim "unaffected" when that's actually true — i.e.
-          we applied the share link because the recipient had no assessment of
-          their own yet. When one already existed, we refused to overwrite it
-          (see the hydration effect above) and show the honest blocked-state
-          banner instead. */}
-      {(searchParams.get('share') || searchParams.get('i')) &&
-        !shareBlockedByExistingAssessment && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-4"
-          >
-            <div className="glass-panel p-3 border-l-4 border-l-primary flex items-center gap-3">
-              <FileBarChart size={16} className="text-primary shrink-0" />
-              <span className="text-sm text-foreground">
-                Viewing a shared report. This is a read-only snapshot — your own assessment is
-                unaffected.
-              </span>
-            </div>
-          </motion.div>
-        )}
+      {/* ACCURACY-0708-2: this is now literally true — a shared/example view
+          is rendered entirely from `sharedView.result`, never written into
+          the recipient's own persisted assessment/persona state (see the
+          hydration effect above), so "unaffected" no longer depends on the
+          recipient happening to have no assessment of their own yet. */}
+      {sharedView && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-4"
+        >
+          <div className="glass-panel p-3 border-l-4 border-l-primary flex items-center gap-3">
+            <FileBarChart size={16} className="text-primary shrink-0" />
+            <span className="text-sm text-foreground">
+              Viewing a shared report. This is a read-only snapshot — your own assessment is
+              unaffected.
+            </span>
+          </div>
+        </motion.div>
+      )}
 
-      {/* ACCURACY-0705: honest explanation when a share/legacy link arrived
-          but we refused to silently replace the recipient's own assessment. */}
-      {shareBlockedByExistingAssessment && (
+      {/* Older links (pre-dating score snapshotting) have no sender score to
+          honor — say so plainly rather than silently passing off a
+          recomputed approximation as the sender's exact report. */}
+      {sharedView?.approximate && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -584,16 +579,17 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
           <div className="glass-panel p-3 border-l-4 border-l-warning flex items-center gap-3">
             <AlertCircle size={16} className="text-warning shrink-0" />
             <span className="text-sm text-foreground">
-              This link contains someone else&apos;s shared assessment, but you already have your
-              own. To protect your data, it was not loaded — start a new assessment in a private
-              window to view it, or ask them to send you the summary instead.
+              This is an older share link — an approximate view recomputed from what it carries,
+              which may not exactly match the score the sender saw.
             </span>
           </div>
         </motion.div>
       )}
 
-      {/* Banner when assessment is in-progress */}
-      {assessmentStatus === 'in-progress' && (
+      {/* Banner when assessment is in-progress — about the recipient's own
+          in-progress assessment, so it never applies while viewing someone
+          else's shared/example report. */}
+      {!sharedView && assessmentStatus === 'in-progress' && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -628,11 +624,16 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
           onCollapseAll={handleCollapseAll}
         />
         <div className="flex-1 min-w-0 w-full">
-          <ReportContent result={result} expandToken={expandToken} collapseToken={collapseToken} />
+          <ReportContent
+            result={result}
+            expandToken={expandToken}
+            collapseToken={collapseToken}
+            sharedView={sharedView ? { persona: sharedView.persona } : undefined}
+          />
         </div>
       </div>
 
-      {result && !simEmbed && <ReportNextSteps result={result} />}
+      {result && !simEmbed && !sharedView && <ReportNextSteps result={result} />}
     </div>
   )
 }
