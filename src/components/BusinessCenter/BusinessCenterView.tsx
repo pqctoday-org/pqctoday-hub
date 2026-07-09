@@ -48,6 +48,7 @@ import {
   showSectionsNav,
   showTopToolbar,
   actionItemCap,
+  collapseLowerSections,
   BASIC_DENSITY_DEFAULT_ZONE,
 } from './lib/density'
 import { ArtifactDrawer, type DrawerMode } from './ArtifactDrawer'
@@ -213,7 +214,7 @@ const TYPE_FILTER_ITEMS = [
 
 /**
  * Phase-filtered tools view — rendered only when `?phase=<id>` is active.
- * Narrows the 26 BUSINESS_TOOLS to the few tagged for the active phase and
+ * Narrows the registered BUSINESS_TOOLS to the few tagged for the active phase and
  * fronts them with a compact "Phase N — <name>" header (from FRAMEWORK_PHASES)
  * plus a "clear phase" affordance. When no phase is active this component is not
  * mounted at all, so the default Command Center renders unchanged.
@@ -514,10 +515,6 @@ export function BusinessCenterView() {
     onCreateArtifact: handleCreateArtifact,
   }
 
-  // Native zone-keyed persona emphasis (BC_ZONE_EMPHASIS_BY_PERSONA).
-  const allFeaturedArtifacts: ExecutiveDocumentType[] = Object.values(
-    zoneEmphasis.featuredArtifacts
-  ).flatMap((arr) => arr ?? [])
   // ?zone=<id> deep-link wins over user selection.
   const effectiveOpenZone: ZoneId | null = zoneFromQuery ?? openZone
 
@@ -725,7 +722,7 @@ export function BusinessCenterView() {
                         metrics={metrics}
                         open={zone === effectiveOpenZone}
                         onToggle={() => handleZoneToggle(zone)}
-                        featuredArtifacts={allFeaturedArtifacts}
+                        featuredArtifacts={zoneEmphasis.featuredArtifacts[zone]}
                         density={density}
                         {...zoneCallbacks}
                       />
@@ -735,8 +732,15 @@ export function BusinessCenterView() {
                 </div>
               </div>
 
-              {/* Bottom cross-cut: learning bar */}
-              <CompactLearningBar modules={metrics.execModuleProgress} />
+              {/* Bottom cross-cut: learning bar. Collapsed by default at advanced
+               density (developer/researcher persona, or no persona picked yet —
+               the default a first-time visitor lands on) so they reach the
+               actionable zone panels above faster; header stays visible, one
+               click away, not removed. */}
+              <CompactLearningBar
+                modules={metrics.execModuleProgress}
+                defaultCollapsed={collapseLowerSections(density)}
+              />
 
               {/* Hidden-by-lens transparency footer (P14-P1-04) — names the zones
                this persona emphasizes so the user knows other lenses exist.

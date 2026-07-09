@@ -78,3 +78,11 @@ export function actionItemCap(d: Density): number {
 /** When density is basic, only this zone is expanded by default; the rest are
  *  one-line collapsed teasers. Other densities use persona emphasis. */
 export const BASIC_DENSITY_DEFAULT_ZONE = 'assets' as const
+
+/** True if the lower dashboard sections (learning bar, glossary) should default
+ *  to collapsed so a first-time executive visitor reaches the actionable
+ *  content faster. Advanced-density visitors (developer/researcher) already
+ *  know where these live and can expand them in one click. */
+export function collapseLowerSections(d: Density): boolean {
+  return d === 'advanced'
+}

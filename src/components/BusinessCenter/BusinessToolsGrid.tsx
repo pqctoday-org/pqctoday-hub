@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useMemo, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Search, Wrench } from 'lucide-react'
+import { Search, Wrench, Filter } from 'lucide-react'
 import { PageHeader } from '../common/PageHeader'
 import { Input } from '../ui/input'
 import { EmptyState } from '../ui/empty-state'
@@ -11,6 +11,9 @@ import {
   type BusinessToolAudience,
 } from './businessToolsRegistry'
 import { Button } from '@/components/ui/button'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { CSWP39_ZONE_ORDER, CSWP39_ZONE_DETAILS, type ZoneId } from '@/data/cswp39ZoneData'
+import { PHASE_ORDER, FRAMEWORK_PHASES, type PhaseId } from '@/data/frameworkPhases'
 import { logBusinessToolsSearch, logBusinessToolsFilter } from '@/utils/analytics'
 
 // Badge shown only for the non-default (technical) audiences, so an executive can
@@ -31,9 +34,30 @@ const START_HERE: { step: number; label: string; id: string }[] = [
   { step: 5, label: 'Verify', id: 'migration-verification' },
 ]
 
+// Every tool already carries CSWP.39 zone / framework-phase / audience metadata
+// in the registry — these facets expose it in the grid's filter UI (additive,
+// on top of the existing category + text search).
+const ZONE_FILTER_ITEMS = [
+  { id: 'all', label: 'All Zones' },
+  ...CSWP39_ZONE_ORDER.map((z) => ({ id: z, label: CSWP39_ZONE_DETAILS[z].title })),
+]
+const PHASE_FILTER_ITEMS = [
+  { id: 'all', label: 'All Phases' },
+  ...PHASE_ORDER.map((p) => ({ id: p, label: FRAMEWORK_PHASES[p].name })),
+]
+const AUDIENCE_FILTER_ITEMS: { id: string; label: string }[] = [
+  { id: 'all', label: 'All Audiences' },
+  { id: 'business', label: 'Business / GRC' },
+  { id: 'architect', label: 'Architect' },
+  { id: 'developer', label: 'Developer' },
+]
+
 export const BusinessToolsGrid = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
+  const [zoneFilter, setZoneFilter] = useState<'all' | ZoneId>('all')
+  const [phaseFilter, setPhaseFilter] = useState<'all' | PhaseId>('all')
+  const [audienceFilter, setAudienceFilter] = useState<'all' | BusinessToolAudience>('all')
 
   useEffect(() => {
     if (!searchQuery.trim()) return
@@ -45,15 +69,19 @@ export const BusinessToolsGrid = () => {
     const q = searchQuery.toLowerCase()
     return BUSINESS_TOOLS.filter((t) => {
       const matchesCategory = !activeCategory || t.category === activeCategory
+      const matchesZone = zoneFilter === 'all' || t.cswp39Zone === zoneFilter
+      const matchesPhase = phaseFilter === 'all' || t.frameworkPhase === phaseFilter
+      const matchesAudience =
+        audienceFilter === 'all' || (t.audience ?? 'business') === audienceFilter
       const matchesSearch =
         !q ||
         t.name.toLowerCase().includes(q) ||
         t.description.toLowerCase().includes(q) ||
         t.keywords.some((k) => k.includes(q)) ||
         t.category.toLowerCase().includes(q)
-      return matchesCategory && matchesSearch
+      return matchesCategory && matchesZone && matchesPhase && matchesAudience && matchesSearch
     })
-  }, [searchQuery, activeCategory])
+  }, [searchQuery, activeCategory, zoneFilter, phaseFilter, audienceFilter])
 
   const groupedTools: Record<string, typeof filteredTools> = {}
   for (const cat of BUSINESS_CATEGORIES) {
@@ -140,6 +168,45 @@ export const BusinessToolsGrid = () => {
               </Button>
             )
           })}
+        </div>
+
+        {/* Zone / phase / audience facets — same registry metadata each tool card
+            already carries, just exposed as filters (additive to category + text). */}
+        <div className="flex flex-wrap items-center gap-2">
+          <Filter size={14} className="text-muted-foreground shrink-0" />
+          <FilterDropdown
+            items={ZONE_FILTER_ITEMS}
+            selectedId={zoneFilter}
+            onSelect={(id) => {
+              logBusinessToolsFilter(id === 'all' ? null : `zone:${id}`)
+              setZoneFilter(id as 'all' | ZoneId)
+            }}
+            label="Zone"
+            size="sm"
+            noContainer
+          />
+          <FilterDropdown
+            items={PHASE_FILTER_ITEMS}
+            selectedId={phaseFilter}
+            onSelect={(id) => {
+              logBusinessToolsFilter(id === 'all' ? null : `phase:${id}`)
+              setPhaseFilter(id as 'all' | PhaseId)
+            }}
+            label="Phase"
+            size="sm"
+            noContainer
+          />
+          <FilterDropdown
+            items={AUDIENCE_FILTER_ITEMS}
+            selectedId={audienceFilter}
+            onSelect={(id) => {
+              logBusinessToolsFilter(id === 'all' ? null : `audience:${id}`)
+              setAudienceFilter(id as 'all' | BusinessToolAudience)
+            }}
+            label="Audience"
+            size="sm"
+            noContainer
+          />
         </div>
       </div>
 
