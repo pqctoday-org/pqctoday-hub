@@ -126,20 +126,21 @@ export type AlgorithmTabId = 'transition' | 'detailed' | 'support' | 'validation
 
 export type AlgorithmFilterKey = 'family' | 'fn' | 'level' | 'region' | 'status'
 
-export type AlgorithmSectionId =
-  | 'performance'
-  | 'security'
-  | 'sizes'
-  | 'usecases'
-  | 'attacks'
-  | 'kat'
+// Was 6 values ('performance' | 'security' | 'sizes' | 'usecases' | 'attacks'
+// | 'kat') seeded from a since-removed accordion layout on the Detailed
+// Comparison view (see ca994b18); that view is now a flat sortable table
+// with no per-section open/closed state, so those 4 ids had zero consumers.
+// Narrowed to the two ids that still map to real UI — the Validation tab's
+// two collapsible sections (AlgorithmValidationView.tsx) — and wired below
+// instead of left as dead config.
+export type AlgorithmSectionId = 'attacks' | 'kat'
 
 export interface AlgorithmDefaults {
   /** First-paint tab. */
   tab: AlgorithmTabId
   /** Filter preset; keys map to the URL params used by AlgorithmsView. */
   filters: Partial<Record<AlgorithmFilterKey, string>>
-  /** Sections open by default in the Detailed Comparison view. */
+  /** Validation-tab sections open by default (see AlgorithmValidationView.tsx). */
   openSections: AlgorithmSectionId[]
   /** Algorithm names to pre-highlight in the Detailed table. */
   highlight?: string[]
@@ -151,33 +152,34 @@ export const ALGORITHM_PERSONA_DEFAULTS: Record<PersonaId, AlgorithmDefaults> = 
     // not the developer parameter comparison. Specialist tabs are one click away.
     tab: 'transition',
     filters: { status: 'Certified' },
-    openSections: ['sizes'],
-    highlight: ['ML-KEM-768', 'ML-DSA-65', 'SLH-DSA-SHA2-128s', 'Falcon-512'],
+    openSections: [],
+    highlight: ['ML-KEM-768', 'ML-DSA-65', 'SLH-DSA-SHA2-128s', 'FN-DSA-512'],
   },
   ops: {
     tab: 'transition',
     filters: { status: 'Certified' },
-    openSections: ['sizes'],
+    openSections: [],
   },
   developer: {
     tab: 'transition',
     filters: { status: 'Certified' },
-    openSections: ['sizes', 'performance'],
+    openSections: [],
   },
   architect: {
     tab: 'transition',
     filters: { status: 'Certified' },
-    openSections: ['sizes', 'performance'],
+    openSections: [],
   },
   researcher: {
+    // "All sections open" — both Validation-tab sections, not just KAT.
     tab: 'detailed',
     filters: { status: 'Certified' },
-    openSections: ['performance', 'security', 'sizes', 'attacks', 'kat'],
+    openSections: ['attacks', 'kat'],
   },
   curious: {
     tab: 'transition',
     filters: { status: 'Certified', fn: 'KEM' },
-    openSections: ['sizes'],
+    openSections: [],
     highlight: ['ML-KEM-768', 'ML-DSA-65', 'SLH-DSA-SHA2-128s'],
   },
 }
@@ -185,7 +187,7 @@ export const ALGORITHM_PERSONA_DEFAULTS: Record<PersonaId, AlgorithmDefaults> = 
 const ALGORITHM_FALLBACK_DEFAULTS: AlgorithmDefaults = {
   tab: 'transition',
   filters: { status: 'Certified' },
-  openSections: ['performance', 'security', 'sizes'],
+  openSections: [],
 }
 
 /** Resolve the algorithms-page defaults for the active persona, or a

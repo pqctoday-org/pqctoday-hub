@@ -187,34 +187,32 @@ export const CNSA20_TIMELINE: Cnsa20Milestone[] = [
       'NIST finalizes FIPS 203 (ML-KEM), 204 (ML-DSA), 205 (SLH-DSA). CNSA 2.0 selections — ML-KEM-1024 and ML-DSA-87 — are now standardized and deployable.',
   },
   {
-    year: '2025–2026',
-    title: 'Begin transition',
+    year: '2025',
+    title: 'Signing, browsers & cloud: support and prefer',
     detail:
-      'Software/firmware signing should already prefer CNSA 2.0 (LMS/XMSS now; ML-DSA-87 as products ship). New equipment acquisition starts requiring PQC support.',
+      'Software/firmware signing and web browsers, servers, and cloud services must support and prefer CNSA 2.0 algorithms.',
+  },
+  {
+    year: '2026',
+    title: 'Networking equipment: support and prefer',
+    detail: 'Traditional networking equipment (VPNs, routers) must support and prefer CNSA 2.0.',
   },
   {
     year: '2027',
-    title: 'Software/firmware signing',
-    detail:
-      'CNSA 2.0 expects software- and firmware-signing solutions to support and prefer the CNSA 2.0 algorithms.',
+    title: 'Operating systems: support and prefer',
+    detail: 'Operating systems must support and prefer CNSA 2.0.',
   },
   {
     year: '2030',
-    title: 'Networking & most equipment',
+    title: 'Signing & networking: exclusive use',
     detail:
-      'CNSA 2.0 expects networking equipment (and most other classes) to use the CNSA 2.0 algorithms by default.',
+      'Software/firmware signing and traditional networking equipment must use CNSA 2.0 exclusively. Niche equipment (constrained devices, large PKI systems) reaches its support-and-prefer date.',
   },
   {
-    year: '2031–2033',
-    title: 'Browsers, servers, cloud, OS',
+    year: '2033',
+    title: 'Exclusive use — National Security Systems-wide',
     detail:
-      'Web browsers/servers, cloud services and operating systems transition to CNSA 2.0 as a default.',
-  },
-  {
-    year: '2035',
-    title: 'Exclusive use',
-    detail:
-      'CNSA 2.0 algorithms are the exclusive requirement across National Security Systems; classical RSA/ECC disallowed.',
+      'Web browsers/servers/cloud services, operating systems, niche equipment, and custom/legacy applications must use CNSA 2.0 exclusively — the final CNSA 2.0 deadline; classical RSA/ECC disallowed.',
   },
 ]
 

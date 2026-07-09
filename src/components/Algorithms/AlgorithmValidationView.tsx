@@ -6,21 +6,31 @@ import { Button } from '@/components/ui/button'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { ImplementationAttacksView } from './ImplementationAttacksView'
 import { KATView } from './KATView'
+import { getAlgorithmDefaults, type AlgorithmSectionId } from '@/data/personaConfig'
 
-type ValidationSection = 'attacks' | 'kat'
+type ValidationSection = AlgorithmSectionId
+
+interface AlgorithmValidationViewProps {
+  /** `?section=` value from the URL — deep-link wins over the persona default. */
+  sectionParam?: string | null
+}
 
 /**
  * "Validation" tab — houses the two interactive reference views that used to be
  * buried as the 5th/6th accordion sections of the Detailed Comparison tab:
  * Implementation Attacks (side-channel / fault reference) and KAT Validation
  * (live in-browser known-answer-test vectors). Each is a collapsible section so
- * the heavy KAT runner only mounts when opened. Researchers land with KAT open.
+ * the heavy KAT runner only mounts when opened. Which sections open by default
+ * comes from ALGORITHM_PERSONA_DEFAULTS.openSections (researcher: both), plus
+ * the `?section=kat` deep link (e.g. the Entry Strip's "Run a live test" CTA).
  */
-export function AlgorithmValidationView() {
+export function AlgorithmValidationView({ sectionParam }: AlgorithmValidationViewProps = {}) {
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
-  const [open, setOpen] = useState<Set<ValidationSection>>(
-    () => new Set<ValidationSection>(selectedPersona === 'researcher' ? ['kat'] : [])
-  )
+  const [open, setOpen] = useState<Set<ValidationSection>>(() => {
+    const defaults = new Set<ValidationSection>(getAlgorithmDefaults(selectedPersona).openSections)
+    if (sectionParam === 'attacks' || sectionParam === 'kat') defaults.add(sectionParam)
+    return defaults
+  })
 
   const toggle = (id: ValidationSection) =>
     setOpen((prev) => {

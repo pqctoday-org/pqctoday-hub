@@ -50,6 +50,12 @@ export const REGION_ITEMS = [
   { id: 'ETSI', label: 'ETSI (Europe)' },
   { id: 'KpqC', label: 'KpqC (Korea)' },
   { id: 'CACR', label: 'CACR (China)' },
+  // Distinct literal region values the CSVs also use alongside 'KpqC'/'CACR'
+  // above — both spellings appear in the wired data, so both must be
+  // independently selectable or their rows are unreachable via this facet.
+  { id: 'Global', label: 'Global' },
+  { id: 'KR', label: 'KR (South Korea)' },
+  { id: 'CN', label: 'CN (China)' },
 ]
 
 export const STATUS_ITEMS = [
