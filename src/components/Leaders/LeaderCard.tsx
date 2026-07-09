@@ -1,7 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { User, Building2, Briefcase, ChevronDown, ChevronUp } from 'lucide-react'
+import {
+  User,
+  Building2,
+  Briefcase,
+  ChevronDown,
+  ChevronUp,
+  ShieldCheck,
+  BookOpen,
+} from 'lucide-react'
 import type { Leader } from '../../data/leadersData'
 import clsx from 'clsx'
 import { StatusBadge } from '../common/StatusBadge'
@@ -76,6 +84,24 @@ export const LeaderCard = ({
           {isIndustryMatch && (
             <span className="text-[10px] bg-accent/10 text-accent px-1.5 py-0.5 rounded-full font-medium">
               Relevant to you
+            </span>
+          )}
+          {leader.sourceKind === 'auto-imported' && (
+            <span
+              className="inline-flex items-center gap-1 text-[10px] bg-muted/50 text-muted-foreground px-1.5 py-0.5 rounded-full font-medium"
+              title="Auto-generated from a library authorship link, not a curated profile"
+            >
+              <BookOpen size={10} aria-hidden="true" />
+              Document contributor
+            </span>
+          )}
+          {leader.verifiedDate && (
+            <span
+              className="inline-flex items-center gap-1 text-[10px] bg-status-success/10 text-status-success px-1.5 py-0.5 rounded-full font-medium"
+              title={`Affiliation last confirmed against public sources on ${leader.verifiedDate}`}
+            >
+              <ShieldCheck size={10} aria-hidden="true" />
+              Verified {leader.verifiedDate}
             </span>
           )}
         </div>

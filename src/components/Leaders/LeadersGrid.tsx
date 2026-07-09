@@ -14,6 +14,7 @@ import {
   ShieldX,
   Info,
   X,
+  BookOpen,
 } from 'lucide-react'
 
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -140,7 +141,7 @@ const REGION_LABELS: Record<string, string> = {
   apac: 'Asia-Pacific',
 }
 
-type LeaderSortOption = 'name' | 'country' | 'category'
+type LeaderSortOption = 'name' | 'country' | 'category' | 'relevance'
 
 const LEADER_SORT_OPTIONS: { id: LeaderSortOption; label: string }[] = [
   { id: 'name', label: 'Name A-Z' },
@@ -148,8 +149,14 @@ const LEADER_SORT_OPTIONS: { id: LeaderSortOption; label: string }[] = [
   { id: 'category', label: 'Category' },
 ]
 
-// Executive lens: float the governance-relevant categories (regulators, standards
-// authors, suppliers) ahead of pure research contributors. Lower = higher.
+const EXECUTIVE_SORT_OPTION: { id: LeaderSortOption; label: string } = {
+  id: 'relevance',
+  label: 'By relevance to you',
+}
+
+// Executive lens: rank governance-relevant categories (regulators, standards
+// authors, suppliers) ahead of pure research contributors when 'relevance' is the
+// chosen sort. Lower = higher. Selectable, not a float applied on top of every sort.
 const EXEC_CATEGORY_PRIORITY: Record<string, number> = {
   Government: 0,
   Standards: 1,
@@ -185,14 +192,24 @@ export const LeadersGrid = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+  const { selectedIndustries, selectedPersona, experienceLevel } = usePersonaStore()
+  // Executives get "By relevance to you" (governance-relevant categories first) as
+  // their default sort — but it's a selectable option like any other, not a float
+  // that silently re-applies on top of whatever the user explicitly picks.
   const [sortBy, setSortBy] = useState<LeaderSortOption>(
-    () => (searchParams.get('sort') as LeaderSortOption | null) ?? 'name'
+    () =>
+      (searchParams.get('sort') as LeaderSortOption | null) ??
+      (selectedPersona === 'executive' ? 'relevance' : 'name')
+  )
+  // Default view leads with the 208 hand-curated profiles; the 124 single-sentence
+  // library-authorship stubs are reachable but opt-in, so they don't dilute browsing.
+  const [showAllContributors, setShowAllContributors] = useState<boolean>(
+    () => searchParams.get('all') === '1'
   )
   const [expandedLeaderId, setExpandedLeaderId] = useState<string | null>(null)
   const [isConsentModalOpen, setIsConsentModalOpen] = useState(false)
   const [isRemovalModalOpen, setIsRemovalModalOpen] = useState(false)
   const gridRef = useRef<HTMLDivElement>(null)
-  const { selectedIndustries, selectedPersona, experienceLevel } = usePersonaStore()
 
   const activeFilterCount =
     FILTER_KEYS.filter((k) => filters.values[k] !== LEADER_FILTERS[k].defaultValue).length +
@@ -215,8 +232,11 @@ export const LeadersGrid = () => {
   // Filter params (region/country/sector/cat/layer) are synced by useLeaderFilters internally.
   useEffect(() => {
     const nextQ = searchParams.get('q') ?? ''
-    const nextSort = (searchParams.get('sort') as LeaderSortOption | null) ?? 'name'
+    const nextSort =
+      (searchParams.get('sort') as LeaderSortOption | null) ??
+      (selectedPersona === 'executive' ? 'relevance' : 'name')
     const nextMode = (searchParams.get('mode') as LeadersViewMode | null) ?? 'cards'
+    const nextShowAll = searchParams.get('all') === '1'
     const nextLeader = searchParams.get('leader')
     // ?leader=<name> is the shareable "open this leader" deep link. Resolve the
     // name to its id so the matching card expands (open), in addition to the
@@ -228,9 +248,10 @@ export const LeadersGrid = () => {
     setSearchQuery((prev) => (prev !== nextQ ? nextQ : prev))
     setSortBy((prev) => (prev !== nextSort ? nextSort : prev))
     setViewMode((prev) => (prev !== nextMode ? nextMode : prev))
+    setShowAllContributors((prev) => (prev !== nextShowAll ? nextShowAll : prev))
     setExpandedLeaderId((prev) => (prev !== nextLeaderId ? nextLeaderId : prev))
     if (nextLeader) setHighlightedLeader((prev) => (prev !== nextLeader ? nextLeader : prev))
-  }, [searchParams])
+  }, [searchParams, selectedPersona])
 
   // Scroll to highlighted leader after render
   useEffect(() => {
@@ -245,9 +266,13 @@ export const LeadersGrid = () => {
         // Check if leader exists in unfiltered data but is hidden by filters
         const existsUnfiltered = leadersData.some((l) => l.name === highlightedLeader)
         if (existsUnfiltered) {
-          // Clear filters so the card becomes visible, then re-trigger scroll
+          // Clear filters so the card becomes visible, then re-trigger scroll.
+          // Also reveal auto-imported stubs if that's what's hiding this leader —
+          // a deep link should always be able to resolve to its target.
           setFilters({ region: 'All', country: 'All', sector: 'All', category: 'All' })
           setSearchQuery('')
+          const target = leadersData.find((l) => l.name === highlightedLeader)
+          if (target?.sourceKind === 'auto-imported') setShowAllContributors(true)
         } else {
           // Leader doesn't exist in database at all
           setNotFoundMessage(`"${highlightedLeader}" was not found in the Community list.`)
@@ -315,19 +340,44 @@ export const LeadersGrid = () => {
   // Category tabs for mobile dropdown
   const categoryTabs = useMemo(() => ['All', ...LEADER_CATEGORIES], [])
 
-  // Category info for the sidebar pills
+  // "By relevance to you" is only offered as a sort choice for executives — it's
+  // a selectable option, not a float that silently re-applies for everyone.
+  const sortOptions = useMemo(
+    () =>
+      selectedPersona === 'executive'
+        ? [EXECUTIVE_SORT_OPTION, ...LEADER_SORT_OPTIONS]
+        : LEADER_SORT_OPTIONS,
+    [selectedPersona]
+  )
+
+  // Curated (hand-written) vs. auto-imported (single-sentence library-authorship
+  // stub) profiles. Curated leads by default; the toggle below reveals the rest.
+  const curatedCount = useMemo(
+    () => leadersData.filter((l) => l.sourceKind === 'curated').length,
+    []
+  )
+  const tierScopedLeaders = useMemo(
+    () =>
+      showAllContributors ? leadersData : leadersData.filter((l) => l.sourceKind === 'curated'),
+    [showAllContributors]
+  )
+
+  // Category info for the sidebar pills — scoped to the current curated/all tier
+  // so counts always match what's actually browsable.
   const categoryInfo = useMemo(() => {
     return LEADER_CATEGORIES.map((name) => {
-      const items = leadersData.filter((l) => l.category === name)
+      const items = tierScopedLeaders.filter((l) => l.category === name)
       return {
         name,
         count: items.length,
         hasUpdates: items.some((l) => l.status === 'New' || l.status === 'Updated'),
       }
     })
-  }, [])
+  }, [tierScopedLeaders])
 
-  const totalHasUpdates = leadersData.some((l) => l.status === 'New' || l.status === 'Updated')
+  const totalHasUpdates = tierScopedLeaders.some(
+    (l) => l.status === 'New' || l.status === 'Updated'
+  )
 
   // Phase 3 — semantic supplement. Queries like "academic lattice
   // researchers" or "EU regulatory leaders" surface relevant profiles
@@ -341,7 +391,7 @@ export const LeadersGrid = () => {
 
   // Filter leaders
   const filteredLeaders = useMemo(() => {
-    let result = leadersData
+    let result = tierScopedLeaders
 
     // Category filter
     if (activeCategory !== 'All') {
@@ -381,6 +431,7 @@ export const LeadersGrid = () => {
 
     return result
   }, [
+    tierScopedLeaders,
     selectedRegion,
     selectedCountry,
     selectedSector,
@@ -417,14 +468,16 @@ export const LeadersGrid = () => {
       case 'category':
         items.sort((a, b) => a.category.localeCompare(b.category))
         break
-    }
-    // Executive lens: float governance-relevant categories first (applied before
-    // the industry-relevance float, so industry match stays the dominant signal).
-    if (selectedPersona === 'executive') {
-      const rank = (c: string) =>
-        // eslint-disable-next-line security/detect-object-injection -- c is a leader category string
-        EXEC_CATEGORY_PRIORITY[c] ?? 99
-      items.sort((a, b) => rank(a.category) - rank(b.category))
+      case 'relevance': {
+        // Executive-only sort option: governance-relevant categories first, then
+        // name within each category. Only applies when explicitly chosen — it no
+        // longer re-runs on top of every other sort choice.
+        const rank = (c: string) =>
+          // eslint-disable-next-line security/detect-object-injection -- c is a leader category string
+          EXEC_CATEGORY_PRIORITY[c] ?? 99
+        items.sort((a, b) => rank(a.category) - rank(b.category) || a.name.localeCompare(b.name))
+        break
+      }
     }
     // Stable secondary sort: industry-relevant leaders float to top
     if (industryRelevant.size > 0) {
@@ -435,12 +488,27 @@ export const LeadersGrid = () => {
       })
     }
     return items
-  }, [filteredLeaders, sortBy, industryRelevant, selectedPersona])
+  }, [filteredLeaders, sortBy, industryRelevant])
 
   const handleExportCsv = useCallback(() => {
     const csv = generateCsv(sortedLeaders, LEADERS_CSV_COLUMNS)
     downloadCsv(csv, csvFilename('pqc-leaders'))
   }, [sortedLeaders])
+
+  const handleToggleShowAllContributors = useCallback(() => {
+    const next = !showAllContributors
+    setShowAllContributors(next)
+    setSearchParams(
+      (prev) => {
+        const params = new URLSearchParams(prev)
+        if (next) params.set('all', '1')
+        else params.delete('all')
+        return params
+      },
+      { replace: true }
+    )
+    logEvent('Leaders', 'Toggle Show All Contributors', next ? 'all' : 'curated')
+  }, [showAllContributors, setSearchParams])
 
   const handleCategorySelect = (category: string) => {
     filters.set({ category })
@@ -566,7 +634,7 @@ export const LeadersGrid = () => {
         categories={categoryInfo}
         active={activeCategory}
         onSelect={handleCategorySelect}
-        totalCount={leadersData.length}
+        totalCount={tierScopedLeaders.length}
         totalHasUpdates={totalHasUpdates}
       />
 
@@ -681,7 +749,7 @@ export const LeadersGrid = () => {
                   { replace: true }
                 )
               }}
-              options={LEADER_SORT_OPTIONS}
+              options={sortOptions}
             />
           )}
 
@@ -726,7 +794,33 @@ export const LeadersGrid = () => {
             <X size={12} /> Clear all
           </Button>
         )}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleToggleShowAllContributors}
+          className="ml-auto h-auto py-1 px-2.5 text-xs gap-1.5"
+          aria-pressed={showAllContributors}
+        >
+          <BookOpen size={12} aria-hidden="true" />
+          {showAllContributors
+            ? `Curated profiles only (${curatedCount})`
+            : `Show all contributors (${leadersData.length})`}
+        </Button>
       </div>
+      {!showAllContributors && (
+        <p className="text-[11px] text-muted-foreground -mt-4">
+          Showing {curatedCount} hand-curated profiles. {leadersData.length - curatedCount} more
+          people are listed as document contributors —{' '}
+          <Button
+            variant="ghost"
+            onClick={handleToggleShowAllContributors}
+            className="h-auto p-0 inline text-[11px] underline hover:text-foreground text-muted-foreground"
+          >
+            show all
+          </Button>
+          .
+        </p>
+      )}
 
       {/* Not found toast */}
       <AnimatePresence>
