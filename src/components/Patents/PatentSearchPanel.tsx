@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import type { PatentItem } from '@/types/PatentTypes'
 import { logPatentSearch, logPatentView } from '@/utils/analytics'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
+import { expandAlgorithmAliases } from '@/data/algorithmNameAliases'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -78,19 +79,25 @@ function buildIndex(patents: PatentItem[]): MiniSearch<SearchDoc> {
       prefix: true,
     },
   })
-  const docs: SearchDoc[] = patents.map((p) => ({
-    patentNumber: p.patentNumber,
-    title: p.title,
-    assignee: p.assignee,
-    summary: p.summary,
-    claim: p.primaryInventiveClaim,
-    algos: [...p.pqcAlgorithms, ...p.classicalAlgorithms].join(' '),
-    domain: p.applicationDomain.join(' '),
-    protocols: p.protocols.join(' '),
-    qtechnology: p.quantumTechnology.join(' '),
-    threatModel: p.threatModel.join(' '),
-    standards: p.standardsReferenced.join(' '),
-  }))
+  const docs: SearchDoc[] = patents.map((p) => {
+    const algoNames = [...p.pqcAlgorithms, ...p.classicalAlgorithms]
+    return {
+      patentNumber: p.patentNumber,
+      title: p.title,
+      assignee: p.assignee,
+      summary: p.summary,
+      claim: p.primaryInventiveClaim,
+      // Legacy filing-era names (Kyber, Dilithium, SPHINCS+) are indexed
+      // alongside their FIPS names (ML-KEM, ML-DSA, SLH-DSA) and vice versa,
+      // so a search for either naming era finds the patent.
+      algos: [...algoNames, ...expandAlgorithmAliases(algoNames)].join(' '),
+      domain: p.applicationDomain.join(' '),
+      protocols: p.protocols.join(' '),
+      qtechnology: p.quantumTechnology.join(' '),
+      threatModel: p.threatModel.join(' '),
+      standards: p.standardsReferenced.join(' '),
+    }
+  })
   idx.addAll(docs)
   return idx
 }

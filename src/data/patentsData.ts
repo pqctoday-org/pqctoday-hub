@@ -140,7 +140,15 @@ function transformRow(row: RawPatentRow): PatentItem | null {
     nistRoundStatus: parseJsonField<NistStatus[]>(row.nist_round_status, []),
     priorityYear: parseInt(row.priority_date?.slice(0, 4) ?? '0', 10) || 0,
     filingYear: parseInt(row.filing_date?.slice(0, 4) ?? '0', 10) || 0,
-    pqcMigrationScore: parseInt(row.pqc_migration_score ?? '0', 10) || 0,
+    // Preserve null for missing/unparseable scores rather than coercing to 0 — an
+    // unscored patent is not the same as one genuinely scored at the bottom.
+    // parseFloat (not parseInt) because pqc_migration_score is a decimal string ("8.0").
+    pqcMigrationScore: (() => {
+      const raw = row.pqc_migration_score?.trim()
+      if (!raw) return null
+      const n = parseFloat(raw)
+      return Number.isFinite(n) ? n : null
+    })(),
     pqcMigrationReason: row.pqc_migration_reason?.trim() ?? '',
   }
 

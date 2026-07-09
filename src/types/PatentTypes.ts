@@ -90,8 +90,9 @@ export interface PatentItem {
   citationGraph: string[]
   claimDependencies: ClaimDependency[]
   nistRoundStatus: NistStatus[]
-  // PQC migration relevance score (1–10, from score_patents_pqc.py)
-  pqcMigrationScore: number
+  // PQC migration relevance score (1–10, from score_patents_pqc.py). null when the
+  // enrichment pipeline hasn't scored this patent yet — distinct from a genuine 0.
+  pqcMigrationScore: number | null
   pqcMigrationReason: string
   // Computed
   impactScore: number
