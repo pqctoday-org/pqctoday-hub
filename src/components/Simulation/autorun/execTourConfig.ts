@@ -17,7 +17,7 @@ import type { PhaseId } from '@/data/frameworkPhases'
 import type { ExecutiveDocumentType } from '@/services/storage/types'
 import type { StepKind } from '@/simulation'
 
-export type TourConceptId = 'hndl' | 'mosca' | 'hybrid' | 'two-track'
+export type TourConceptId = 'hndl' | 'mosca' | 'hybrid' | 'two-track' | 'tnfl'
 
 /**
  * A hand-picked representative step for a LIGHT stage, matched in the phase tree by
@@ -63,6 +63,11 @@ export const EXEC_TOUR_STAGES: readonly TourStage[] = [
       'program-charter',
       'board-deck',
     ],
+    // TNFL is paired with HNDL from Activity 0.1 onward (and shown in the KPI
+    // ribbon from the first screen) but wasn't in the concept system at all
+    // before 07082026 — added here so it's introduced the same way HNDL/Mosca
+    // are, right where the tour first shows it.
+    conceptCard: 'tnfl',
   },
   { phase: 'p1', depth: 'light', lightStep: { kind: 'learn', ref: 'data-asset-sensitivity' } },
   { phase: 'p2', depth: 'light', lightStep: { kind: 'learn', ref: 'cbom' } },
@@ -104,6 +109,7 @@ export const EXEC_TOUR_CONCEPTS: Record<TourConceptId, TourConcept> = {
   hndl: { id: 'hndl', title: 'Harvest now, decrypt later', source: 'guidedDef', key: 'HNDL' },
   mosca: { id: 'mosca', title: 'Mosca’s inequality', source: 'guidedDef', key: 'Mosca' },
   hybrid: { id: 'hybrid', title: 'Hybrid vs pure', source: 'guidedDef', key: 'hybrid' },
+  tnfl: { id: 'tnfl', title: 'Trust now, forge later', source: 'guidedDef', key: 'TNFL' },
   'two-track': {
     id: 'two-track',
     title: 'Two tracks: confidentiality and integrity',
