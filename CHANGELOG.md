@@ -30,7 +30,7 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.16.0] - 2026-07-09
 
-A cross-page accuracy and trust release touching Report, Business tools, Revisions, Changelog, and the FAQ: shared report links now show the sender's real score, breach-cost defaults finally agree across three business tools, the revisions feed surfaces corrections that were previously invisible, and several dead links and stale numbers are fixed.
+A cross-page accuracy and trust release touching Report, Business tools, Revisions, Changelog, FAQ, Playground, OpenSSL Studio, Terms, and About: shared report links now show the sender's real score, breach-cost defaults finally agree across three business tools, the revisions feed surfaces corrections that were previously invisible, the Playground and OpenSSL Studio get clearer status indicators and fewer dead ends, and several dead links and stale numbers are fixed across the site.
 
 ### Fixed
 
@@ -49,6 +49,22 @@ A cross-page accuracy and trust release touching Report, Business tools, Revisio
 - **Fixed an inconsistent step count on the FAQ page** [view:/faq]: the risk assessment wizard's step count was quoted as both 13 and 14 in different places; confirmed the real count (13) and made every mention match.
 - **Fixed the project's GitHub repository name** [view:/faq] where it had been quoted incorrectly.
 - **Replaced a few exact module/document/product counts on the FAQ page with wording that won't go stale** [view:/faq] (e.g. "dozens of modules" instead of a fixed number that was already out of date).
+- **The Docker-based playground tool no longer shows a dead, unresponsive embedded window when the sandbox isn't reachable** [view:/playground] [persona:developer]: it now checks whether the sandbox is actually reachable and shows a clear "request access" link instead of a blank iframe pointed at a local address that only works for the sandbox's own operators.
+- **Renamed the KMIP control-plane tool consistently across the Playground** [view:/playground] so its name, banner, and page heading all match instead of showing three different names for the same tool.
+- **Replaced a personal email link for sandbox-access requests with a trackable request form** [view:/playground].
+- **Fixed OpenSSL Studio's documentation links** [view:/openssl] [persona:developer]: every "view docs" link across all OpenSSL commands pointed at a broken or outdated page (wrong version, malformed URL); all now go to the correct, current OpenSSL documentation.
+- **Removed a non-functional option from OpenSSL Studio's configuration-file helper command** [view:/openssl] that produced an "unknown option" error when used, and clarified that the command itself requires OpenSSL 3.6 or newer.
+- **OpenSSL Studio's post-quantum key/signature tools now note the OpenSSL version they require** [view:/openssl] [persona:developer] (3.5 or newer for ML-KEM, ML-DSA, and SLH-DSA), so it's clear up front rather than discovered via an error.
+- **Fixed OpenSSL Studio's key-decapsulation example, which was using the wrong output flag** [view:/openssl] and silently producing empty results in some cases.
+- **OpenSSL Studio now shows a clear error and retry option if the underlying engine fails to load** [view:/openssl], instead of leaving the page stuck on "Initializing..." indefinitely.
+- **Marked two OpenSSL Studio example commands as reference-only** [view:/openssl] since they use shell piping the in-browser tool can't run directly, and running them now shows a clear message instead of a confusing partial result.
+- **Fixed the Terms page's binding-acceptance clause, which pointed to a retired mirror site that no longer resolves** [view:/terms]: it now correctly references the live production site.
+- **Added a table of contents with jump-to-section links to the Terms page** [view:/terms], plus a note on when the terms were last substantively updated.
+- **Added plain-language summaries above the Terms page's export-control section and its "don't use generated keys in production" guidance** [view:/terms], so the legal text now has a plain-English preview.
+- **The About page's platform statistics (module counts, dataset sizes, and similar figures) are now computed from the live data** [view:/about] instead of hand-typed numbers that could silently drift out of date as datasets grew.
+- **Fixed an overstated "refreshed weekly" claim about compliance data on the About page** [view:/about]; it now shows the actual last-updated date.
+- **Fixed the About page's "last security audit" date, which no longer matched the actual audit report it was describing** [view:/about].
+- **The About page's changelog link now navigates within the app instead of triggering a full page reload** [view:/about].
 
 ### Added
 
@@ -57,6 +73,8 @@ A cross-page accuracy and trust release touching Report, Business tools, Revisio
 - **Filters by zone, phase, and audience on the Business tools grid** [view:/business] [persona:executive], in addition to the existing category and text search.
 - **FAQ questions aimed at your role now float to the top of their section** [view:/faq] with a small "For you" marker, when you've selected a persona (executive, developer, architect, ops, or researcher).
 - **The Business Center's learning module list now collapses by default for advanced users** [view:/business] [persona:developer], keeping its header visible so it's a one-click expand rather than taking up space unasked.
+- **The Playground's algorithm picker now shows a "Draft" badge with an explanatory tooltip for algorithms that aren't yet finalized standards** [view:/playground] [persona:developer], so it's clear at a glance which selections are backup candidates rather than production-ready standards.
+- **Executive-persona guidance banners added to three more Playground tools** [view:/playground] [persona:executive] (the interactive, HSM, and KMIP control-plane tools), pointing toward the business-focused Command Center and Compliance views instead of leaving executives on a developer-oriented tool.
 
 ## [4.15.0] - 2026-07-08
 
