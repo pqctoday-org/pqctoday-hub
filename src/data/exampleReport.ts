@@ -2,34 +2,40 @@
 /**
  * Example report fixture for the curious-persona empty state on /report.
  *
- * The share-token hydration path on `<ReportView>` accepts any base64url-encoded
- * `ReportShareSchema`. This module encodes a realistic but fictional sample —
- * "a fintech CISO who has started thinking about PQC but hasn't migrated yet" —
- * so a first-time visitor can see what a real report looks like without
- * completing the wizard themselves.
+ * ACCURACY-0708-2: this used to encode partial inputs and let `<ReportView>`
+ * recompute a score from them at decode time. It now computes the result
+ * once, at module load, with the same `computeAssessment` pipeline every
+ * real assessment uses, and embeds that snapshot in a v2 share token — the
+ * example report an example-report visitor sees is byte-identical every
+ * time, and opening it is now a read-only ephemeral view (see ReportView)
+ * that never writes into the visitor's own assessment/persona store.
  */
+import { computeAssessment } from '@/hooks/assessment/orchestrator'
+import type { AssessmentInput } from '@/hooks/assessmentTypes'
 import { encodeShareToken } from '@/utils/reportShareToken'
 
-// Every token here MUST be a canonical value the report's share-hydration
-// validators accept (AVAILABLE_INDUSTRIES / AVAILABLE_ALGORITHMS /
-// AVAILABLE_COMPLIANCE / the sensitivity enum / VALID_MIGRATIONS) — otherwise the
-// field is silently dropped on hydration and the "example" recomputes to a near
-// empty report. `exampleReport.test.ts` guards this.
-//
-// The report recomputes the risk score/level from the seeded inputs, so no
-// precomputed score is stored (an out-of-band number would only drift).
-export const EXAMPLE_REPORT_SHARE_PAYLOAD = {
+// A realistic but fictional sample — "a fintech CISO who has started
+// thinking about PQC but hasn't migrated yet." Every value here should be a
+// canonical value from the assess wizard's own vocabulary (AVAILABLE_*
+// constants) so the computed report reads the way a real quick-track user's
+// would. `exampleReport.test.ts` guards this.
+export const EXAMPLE_REPORT_SHARE_PAYLOAD: AssessmentInput = {
   industry: 'Finance & Banking',
   country: 'United States',
-  region: 'americas' as const,
   currentCrypto: ['RSA-2048', 'ECDSA P-256'],
   dataSensitivity: ['high', 'critical'],
   complianceRequirements: ['PCI DSS', 'FIPS 140-3'],
-  migrationStatus: 'planning' as const,
-  persona: 'curious' as const,
+  migrationStatus: 'planning',
 }
 
-export const EXAMPLE_REPORT_SHARE_TOKEN = encodeShareToken(EXAMPLE_REPORT_SHARE_PAYLOAD)
+export const EXAMPLE_REPORT_PERSONA = 'curious'
+
+export const EXAMPLE_REPORT_RESULT = computeAssessment(EXAMPLE_REPORT_SHARE_PAYLOAD)
+
+export const EXAMPLE_REPORT_SHARE_TOKEN = encodeShareToken({
+  result: EXAMPLE_REPORT_RESULT,
+  persona: EXAMPLE_REPORT_PERSONA,
+})
 
 /** Convenience URL for direct linking from the curious empty state. */
 export const EXAMPLE_REPORT_URL = `/report?share=${EXAMPLE_REPORT_SHARE_TOKEN}`
