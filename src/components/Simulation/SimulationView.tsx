@@ -901,6 +901,13 @@ export function SimulationView() {
   const sectorOpt = SECTORS.find((s) => s.id === sector) ?? SECTORS[0]
   const jur = JURISDICTION_RULES[country]
   const seatOpt = SEATS.find((s) => s.id === seat) ?? SEATS[0]
+  // Researcher / Curious hold no FrameworkRoleId in ROLE_CROSSWALK (personaToRoles
+  // deliberately maps them to [] — spec §4 orphan-personas decision, audience
+  // segments rather than program jobs), so SEATS never contains them and the
+  // interactive board silently plays them as the Executive seat. Acknowledge it
+  // rather than saying nothing (dismissible banner below + SEAT dial tooltip).
+  const isOrphanSeatPersona = selectedPersona === 'researcher' || selectedPersona === 'curious'
+  const [seatNoticeDismissed, setSeatNoticeDismissed] = useState(false)
 
   // One-time notice for users whose assessment country gained its own archetype.
   const archetypeNotice = useArchetypeChangeNotice(assessProfile?.country)
@@ -1395,7 +1402,12 @@ export function SimulationView() {
             <Dial
               label="SEAT"
               value={seatOpt.label}
-              hint="rest = AI team"
+              hint={isOrphanSeatPersona ? 'no role for your persona' : 'rest = AI team'}
+              title={
+                isOrphanSeatPersona
+                  ? `${selectedPersona ? PERSONAS[selectedPersona].label : 'Your persona'} has no dedicated team role in this program, so the board defaults to Executive — click to cycle seats anyway, or see Play for a mode built for your persona.`
+                  : 'click to change'
+              }
               onClick={() => setSeat(cycle(SEATS, seat))}
             />
             <Dial
@@ -1875,6 +1887,43 @@ export function SimulationView() {
           </div>
         ) : (
           <div className="flex min-h-0 flex-1 flex-col">
+            {isOrphanSeatPersona &&
+              !seatNoticeDismissed &&
+              !autoRunPlayer.running &&
+              !autoRunPlayer.done && (
+                <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border bg-muted/60 px-4 py-2 text-sm text-muted-foreground">
+                  <span>
+                    <strong className="text-foreground">
+                      {selectedPersona ? PERSONAS[selectedPersona].label : ''}
+                    </strong>{' '}
+                    has no dedicated team role in this program (Researcher and Curious are audience
+                    lenses, not program jobs) — the interactive board plays the Executive seat for
+                    you by default; switch it anytime with the SEAT dial.{' '}
+                    {selectedPersona === 'researcher'
+                      ? 'Full Migration Journey (Play) is built for a comprehensive, phase-by-phase pass instead.'
+                      : 'Executive Overview (Play) is built for a plain-language, no-scoring tour instead.'}
+                  </span>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setPlayModalOpen(true)}
+                      className="text-xs"
+                    >
+                      Open Play
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSeatNoticeDismissed(true)}
+                      className="text-xs"
+                      aria-label="Dismiss"
+                    >
+                      Dismiss
+                    </Button>
+                  </div>
+                </div>
+              )}
             {archetypeNotice.shouldShow && (
               <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border bg-muted/60 px-4 py-2 text-sm text-muted-foreground">
                 <span>
