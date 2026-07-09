@@ -28,6 +28,36 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.16.0] - 2026-07-09
+
+A cross-page accuracy and trust release touching Report, Business tools, Revisions, Changelog, and the FAQ: shared report links now show the sender's real score, breach-cost defaults finally agree across three business tools, the revisions feed surfaces corrections that were previously invisible, and several dead links and stale numbers are fixed.
+
+### Fixed
+
+- **Shared and example report links now show the exact score the sender saw** [view:/report]: previously, opening a shared link recomputed the score from scratch, so a scoring-logic update after a link was shared could silently show the recipient a different result than the sender intended. Older links already in circulation still open, now with a note that they're an approximate view.
+- **Viewing someone else's shared report can no longer overwrite your own saved assessment** [view:/report]: a partial safeguard only covered visitors who already had a saved assessment; first-time visitors opening a shared link were having their own (not-yet-started) assessment silently populated with the sender's data. Every input a shared report displays — industry, country, current cryptography, persona, and more — is now drawn strictly from the sender's snapshot.
+- **ROI and vendor-risk figures now flag when they're using default estimates** [view:/report] [persona:executive]: the fast-track assessment path skips some inputs (like vendor dependency), so those sections were quietly falling back to neutral assumptions with no indication. They now show a "uses default estimates" note.
+- **Breach-probability defaults now agree across the ROI Calculator, Breach Cost Model, and Cost of Inaction tools** [view:/business] [persona:executive]: two of the three tools were using an unsourced flat 15% instead of the sourced, size-tiered default (from Cyentia's 2025 breach research) the site had already adopted elsewhere, so the same organization could get three different breach-cost estimates depending which tool they used. All three now share one sourced default, with a simple small/average/large organization picker to adjust it.
+- **Fixed a stale year in the ROI Calculator's source citation** [view:/business]: it cited a 2024 report; the figures themselves were already the 2025 update.
+- **The Roadmap Builder now cites the actual federal order and deadlines behind the PQC transition mandate** [view:/business] [persona:executive]: added a sourced callout with the order number and both key-establishment and signature deadlines, verified against the official published text.
+- **The "data" category on the Revisions feed was invisible** [view:/revisions]: a filtering bug hid every entry logged under the data-corrections category (28 entries) from the page entirely; it's now visible like every other category, and empty categories now auto-hide instead of sitting there as a dead click.
+- **The Revisions feed was missing about seven weeks of real corrections** [view:/revisions]: several dataset updates had shipped without being logged. Backfilled with accurate before/after summaries tied to the actual changes, and the feed's signature was re-verified.
+- **Freshness date labels on the Changelog page were showing the wrong file's date** [view:/changelog]: a pattern-matching bug meant some "last updated" chips (Compliance, Timeline) skipped past the newest snapshot to an older one. Also fixed the Software freshness chip, which had been pointing at a renamed file and so never appeared at all.
+- **Cleaned up mislabeled role tags on several changelog entries** [view:/changelog] so each one now correctly routes to the researcher, developer, ops, or architect "For me" filter instead of a generic catch-all.
+- **Fixed a dead reference link on the FAQ page** [view:/faq]: a NIST document link had gone stale after the underlying reference was renamed; FAQ links to renamed references now resolve automatically instead of opening an empty page.
+- **Merged two near-duplicate FAQ questions about the Cryptography Bill of Materials** [view:/faq] into one clearer answer.
+- **Fixed an inconsistent step count on the FAQ page** [view:/faq]: the risk assessment wizard's step count was quoted as both 13 and 14 in different places; confirmed the real count (13) and made every mention match.
+- **Fixed the project's GitHub repository name** [view:/faq] where it had been quoted incorrectly.
+- **Replaced a few exact module/document/product counts on the FAQ page with wording that won't go stale** [view:/faq] (e.g. "dozens of modules" instead of a fixed number that was already out of date).
+
+### Added
+
+- **Search on the Changelog page** [view:/changelog]: a free-text box now filters entries by title and body, on top of the existing category and role filters.
+- **Explanatory tooltips on the Changelog page's freshness indicators** [view:/changelog] clarifying what each date measures and what a stale marker means.
+- **Filters by zone, phase, and audience on the Business tools grid** [view:/business] [persona:executive], in addition to the existing category and text search.
+- **FAQ questions aimed at your role now float to the top of their section** [view:/faq] with a small "For you" marker, when you've selected a persona (executive, developer, architect, ops, or researcher).
+- **The Business Center's learning module list now collapses by default for advanced users** [view:/business] [persona:developer], keeping its header visible so it's a one-click expand rather than taking up space unasked.
+
 ## [4.15.0] - 2026-07-08
 
 A Learn modules and Patents refresh release: two new modules close a cross-reference gap that's existed since earlier modules started pointing at them, the Patents page now highlights what's new since your last visit, and Algorithms defaults to only showing FIPS-validated results.
