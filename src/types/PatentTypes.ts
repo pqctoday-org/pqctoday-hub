@@ -41,6 +41,8 @@ export interface InsightsFilter {
   pqc?: string
   /** Redesign: synthetic predicate — patents mapping to a FIPS 203/4/5 standard (KPI drill). */
   fips?: string
+  /** Redesign: filing-year chart bar click drill. */
+  filingYear?: string
 }
 
 export interface ClaimDependency {
@@ -96,4 +98,7 @@ export interface PatentItem {
   impactLevel: ImpactLevel
   priorityYear: number
   filingYear: number
+  // Corpus-diff badge: 'New' when absent from the previous dated CSV, 'Updated'
+  // when present but any field changed. Undefined = unchanged since last update.
+  status?: 'New' | 'Updated'
 }

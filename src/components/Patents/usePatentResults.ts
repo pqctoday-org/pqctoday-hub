@@ -28,6 +28,7 @@ export function filterPatents(patents: PatentItem[], params: URLSearchParams): P
   const nistStatusF = params.get('nistStatus') ?? ''
   const pqcF = params.get('pqc') ?? ''
   const fipsF = params.get('fips') ?? ''
+  const filingYearF = params.get('filingYear') ?? ''
 
   return patents.filter((p) => {
     if (
@@ -53,6 +54,7 @@ export function filterPatents(patents: PatentItem[], params: URLSearchParams): P
     // Redesign-only filters (legacy never sets these params):
     if (pqcF && !p.pqcAlgorithms.includes(pqcF)) return false
     if (fipsF && !p.nistRoundStatus.some((n) => n.status.startsWith('fips_'))) return false
+    if (filingYearF && p.filingYear !== Number(filingYearF)) return false
     return true
   })
 }
