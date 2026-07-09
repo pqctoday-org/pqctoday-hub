@@ -12,7 +12,6 @@ import {
   CheckCircle,
   ArrowRight,
   ShieldAlert,
-  BarChart3,
   Briefcase,
   Calendar,
   FlaskConical,
@@ -79,17 +78,14 @@ import { SectionExpandContext } from '@/contexts/sectionExpandContext'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
-import type {
-  AssessmentResult,
-  AssessmentProfile,
-  CategoryScores,
-  CategoryDrivers,
-} from '../../hooks/assessmentTypes'
+import type { AssessmentResult } from '../../hooks/assessmentTypes'
 import { SIGNING_ALGORITHMS } from '../../hooks/assessmentData'
 import { encodeShareToken } from '@/utils/reportShareToken'
 import { FilteredChip } from './FilteredChip'
 import { NiceGapReportSection } from './NiceGapReportSection'
 import { QRASection } from './sections/QRASection'
+import { CategoryBreakdown } from './sections/CategoryBreakdownSection'
+import { AssessmentProfileSummary } from './sections/AssessmentProfileSection'
 import {
   SectionInfoTip,
   CollapsibleSection,
@@ -98,12 +94,6 @@ import {
   effortConfig,
   complexityConfig,
   scopeConfig,
-  AGILITY_LABELS,
-  MIGRATION_STATUS_LABELS,
-  TIMELINE_LABELS,
-  CREDENTIAL_LIFETIME_LABELS,
-  SCALE_LABELS,
-  ProfileField,
   ReportHNDLHNFLSection,
 } from './sections/reportContentShared'
 
@@ -115,238 +105,6 @@ const APP_VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '
 // allocate a fresh array/object identity on every render.
 const EMPTY_STRING_ARRAY: string[] = []
 const EMPTY_SUBCATEGORIES: Record<string, string[]> = {}
-
-const CategoryBreakdown = ({
-  scores,
-  drivers,
-  defaultOpen = true,
-  headerExtra,
-}: {
-  scores: CategoryScores
-  drivers?: CategoryDrivers
-  defaultOpen?: boolean
-  headerExtra?: React.ReactNode
-}) => {
-  // organizationalReadiness is higher-is-better (a true readiness score); the
-  // other three are higher-is-worse. `higherIsBetter` inverts the concern value
-  // used for colouring so a high readiness bar reads green, not red.
-  const categories = [
-    { label: 'Quantum Exposure', key: 'quantumExposure' as const, higherIsBetter: false },
-    { label: 'Migration Complexity', key: 'migrationComplexity' as const, higherIsBetter: false },
-    { label: 'Regulatory Pressure', key: 'regulatoryPressure' as const, higherIsBetter: false },
-    {
-      label: 'Organizational Readiness',
-      key: 'organizationalReadiness' as const,
-      higherIsBetter: true,
-    },
-  ]
-
-  // Canonical risk-level thresholds (match orchestrator.ts riskLevel mapping
-  // and SECTION_INFO copy). Previously this component used 30/60 boundaries
-  // which contradicted the gauge — same score rendered yellow here, red there.
-  const getBarColor = (score: number) => {
-    if (score <= 25) return 'bg-success'
-    if (score <= 55) return 'bg-warning'
-    if (score <= 75) return 'bg-destructive'
-    return 'bg-critical'
-  }
-
-  const getScoreColor = (score: number) => {
-    if (score <= 25) return 'text-success'
-    if (score <= 55) return 'text-warning'
-    if (score <= 75) return 'text-destructive'
-    return 'text-critical'
-  }
-
-  return (
-    <CollapsibleSection
-      title="Risk Breakdown"
-      icon={<BarChart3 className="text-primary" size={20} />}
-      defaultOpen={defaultOpen}
-      headerExtra={headerExtra}
-      infoTip="riskBreakdown"
-    >
-      <div className="space-y-4">
-        {categories.map(({ label, key, higherIsBetter }) => {
-          // eslint-disable-next-line security/detect-object-injection
-          const score = scores[key]
-          // Concern drives colour: for higher-is-better axes a high score is LOW
-          // concern (green), so invert before thresholding.
-          const concern = higherIsBetter ? 100 - score : score
-          return (
-            <div key={key}>
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-sm text-muted-foreground">{label}</span>
-                <span className={clsx('text-sm font-bold', getScoreColor(concern))}>
-                  {score}/100
-                </span>
-              </div>
-              <div className="w-full h-2.5 rounded-full bg-border overflow-hidden">
-                <div
-                  className={clsx(
-                    'h-full rounded-full transition-all duration-500',
-                    getBarColor(concern)
-                  )}
-                  style={{ width: `${score}%` }}
-                  role="progressbar"
-                  aria-valuenow={score}
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                  aria-label={`${label}: ${score} out of 100`}
-                />
-              </div>
-              {/* eslint-disable-next-line security/detect-object-injection */}
-              {drivers?.[key] && (
-                <p className="text-xs text-muted-foreground/70 mt-1 capitalize">
-                  {/* eslint-disable-next-line security/detect-object-injection */}
-                  {drivers[key]}
-                </p>
-              )}
-            </div>
-          )
-        })}
-      </div>
-    </CollapsibleSection>
-  )
-}
-
-const AssessmentProfileSummary = ({
-  profile,
-  defaultOpen = false,
-}: {
-  profile: AssessmentProfile
-  defaultOpen?: boolean
-}) => {
-  return (
-    <CollapsibleSection
-      title="Assessment Profile"
-      icon={<Briefcase className="text-primary" size={20} />}
-      defaultOpen={defaultOpen}
-      infoTip="assessmentProfile"
-    >
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        <ProfileField label="Industry" value={profile.industry} />
-        <ProfileField label="Country" value={profile.country || 'Not specified'} />
-        <ProfileField
-          label="Algorithms"
-          value={
-            profile.algorithmUnknown
-              ? 'Unknown (conservative defaults)'
-              : profile.algorithmsSelected.length > 0
-                ? `${profile.algorithmsSelected.length} selected`
-                : 'None'
-          }
-        />
-        <ProfileField
-          label="Sensitivity"
-          value={
-            profile.sensitivityUnknown
-              ? 'Unknown (assumed high)'
-              : profile.sensitivityLevels.join(', ') || 'None'
-          }
-        />
-        <ProfileField
-          label="Compliance"
-          value={
-            profile.complianceUnknown
-              ? 'Unknown'
-              : profile.complianceFrameworks.length > 0
-                ? `${profile.complianceFrameworks.length} framework${profile.complianceFrameworks.length !== 1 ? 's' : ''}`
-                : 'None'
-          }
-        />
-        <ProfileField
-          label="Migration Status"
-          value={MIGRATION_STATUS_LABELS[profile.migrationStatus] ?? profile.migrationStatus}
-        />
-        {profile.mode === 'comprehensive' && (
-          <>
-            <ProfileField
-              label="Use Cases"
-              value={
-                profile.useCasesUnknown
-                  ? 'Unknown'
-                  : profile.useCases?.length
-                    ? profile.useCases.join(', ')
-                    : 'None'
-              }
-            />
-            <ProfileField
-              label="Data Retention"
-              value={
-                profile.retentionUnknown
-                  ? 'Unknown (industry default)'
-                  : profile.retentionPeriods?.join(', ') || 'None'
-              }
-            />
-            <ProfileField
-              label="Credential Lifetime"
-              value={
-                profile.credentialLifetimeUnknown
-                  ? 'Unknown (conservative 10y)'
-                  : profile.credentialLifetimes?.length
-                    ? profile.credentialLifetimes
-                        .map((v) => CREDENTIAL_LIFETIME_LABELS[v] ?? v)
-                        .join(', ')
-                    : 'None'
-              }
-            />
-            <ProfileField
-              label="Org Scale"
-              value={
-                profile.scaleUnknown
-                  ? 'Unknown (industry default)'
-                  : profile.systemScale
-                    ? `${SCALE_LABELS[profile.systemScale] ?? profile.systemScale} systems, ${SCALE_LABELS[profile.teamSize ?? ''] ?? profile.teamSize} engineers`
-                    : undefined
-              }
-            />
-            <ProfileField
-              label="Crypto Agility"
-              value={profile.cryptoAgility ? AGILITY_LABELS[profile.cryptoAgility] : undefined}
-            />
-            <ProfileField
-              label="Infrastructure"
-              value={
-                profile.infrastructureUnknown
-                  ? 'Unknown'
-                  : profile.infrastructure?.length
-                    ? `${profile.infrastructure.length} layer${profile.infrastructure.length !== 1 ? 's' : ''}`
-                    : 'None'
-              }
-            />
-            <ProfileField
-              label="Vendor Model"
-              value={
-                profile.vendorUnknown
-                  ? 'Unknown'
-                  : profile.vendorDependency?.replace('-', ' ') || undefined
-              }
-            />
-            <ProfileField
-              label="Timeline Pressure"
-              value={
-                profile.timelinePressure ? TIMELINE_LABELS[profile.timelinePressure] : undefined
-              }
-            />
-          </>
-        )}
-      </div>
-      <div className="mt-2">
-        <span
-          className={clsx(
-            'inline-flex text-[10px] font-bold px-2 py-0.5 rounded-full',
-            profile.mode === 'comprehensive'
-              ? 'bg-primary/10 text-primary'
-              : 'bg-muted/20 text-muted-foreground'
-          )}
-        >
-          {profile.mode === 'comprehensive' ? 'Comprehensive' : 'Quick'} Assessment
-        </span>
-      </div>
-    </CollapsibleSection>
-  )
-}
 
 interface AssessReportProps {
   result: AssessmentResult
