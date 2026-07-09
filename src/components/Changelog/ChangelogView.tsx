@@ -21,6 +21,7 @@ import {
   Compass,
   Calendar,
   UserCheck,
+  Search,
 } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import clsx from 'clsx'
@@ -33,6 +34,7 @@ import {
   type ChangelogVersion,
   type ChangelogSection,
 } from '../../utils/changelogParser'
+import { sortCSVFiles } from '../../data/csvUtils'
 import { Button } from '@/components/ui/button'
 
 type FilterType = 'added' | 'changed' | 'fixed' | 'data' | 'security'
@@ -124,7 +126,7 @@ const CSV_PATHS = Object.keys(import.meta.glob('../../data/*.csv'))
 const FRESHNESS_CATEGORIES = [
   { label: 'Compliance', prefix: 'compliance_' },
   { label: 'Algorithms', prefix: 'pqc_complete_algorithm_reference_' },
-  { label: 'Software', prefix: 'quantum_safe_cryptographic_software_reference_' },
+  { label: 'Software', prefix: 'pqc_product_catalog_' },
   { label: 'Timeline', prefix: 'timeline_' },
   { label: 'Library', prefix: 'library_' },
 ]
@@ -134,25 +136,16 @@ interface FreshnessEntry {
   date: Date | null
 }
 
-function parseCsvDate(filePath: string): Date | null {
-  const match = filePath.match(/_(\d{8})\.csv$/)
-  if (!match) return null
-  const digits = match[1]
-  const month = parseInt(digits.slice(0, 2), 10) - 1
-  const day = parseInt(digits.slice(2, 4), 10)
-  const year = parseInt(digits.slice(4, 8), 10)
-  const date = new Date(year, month, day)
-  return isNaN(date.getTime()) ? null : date
-}
-
+// Freshness only needs each category's newest filename/date, not parsed CSV
+// content, but `sortCSVFiles` (the same date-desc/revision-desc sort every
+// CSV loader in the app uses) expects a modules-shaped record — pass
+// placeholder content since it's never read.
 const DATA_FRESHNESS: FreshnessEntry[] = FRESHNESS_CATEGORIES.map(({ label, prefix }) => {
-  const matches = CSV_PATHS.filter((p) => {
-    const basename = p.split('/').pop() ?? ''
-    return basename.startsWith(prefix)
-  })
-  const dates = matches.map(parseCsvDate).filter((d): d is Date => d !== null)
-  const latest = dates.length > 0 ? new Date(Math.max(...dates.map((d) => d.getTime()))) : null
-  return { label, date: latest }
+  const matchingPaths = CSV_PATHS.filter((p) => (p.split('/').pop() ?? '').startsWith(prefix))
+  const modules = Object.fromEntries(matchingPaths.map((p) => [p, '']))
+  const dateRegex = new RegExp(`${prefix}(\\d{2})(\\d{2})(\\d{4})(?:_r(\\d+))?\\.csv$`)
+  const [latest] = sortCSVFiles(modules, dateRegex)
+  return { label, date: latest?.date ?? null }
 })
 
 const now = Date.now()
@@ -267,6 +260,7 @@ export const ChangelogView = () => {
   })
   const [personaOnly, setPersonaOnly] = useState(false)
   const [showDetails, setShowDetails] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
 
   const toggleFilter = (type: FilterType) => {
     setFilters((prev) => ({ ...prev, [type]: !prev[type] }))
@@ -277,6 +271,8 @@ export const ChangelogView = () => {
       ? // eslint-disable-next-line security/detect-object-injection
         (PERSONA_KEYWORDS[selectedPersona] ?? null)
       : null
+
+  const normalizedQuery = searchQuery.trim().toLowerCase()
 
   const filteredVersions = useMemo(() => {
     return ALL_CHANGELOG_VERSIONS.map((v) => ({
@@ -292,17 +288,24 @@ export const ChangelogView = () => {
           return true
         })
         .map((s) => {
-          if (!personaOnly || !selectedPersona) return s
-          const filteredEntries = s.entries.filter((e) => {
-            if (e.meta.personas.includes(selectedPersona)) return true
-            if (personaKeyword && personaKeyword.test(`${e.title} ${e.body}`)) return true
-            return false
-          })
-          return { ...s, entries: filteredEntries }
+          let entries = s.entries
+          if (personaOnly && selectedPersona) {
+            entries = entries.filter((e) => {
+              if (e.meta.personas.includes(selectedPersona)) return true
+              if (personaKeyword && personaKeyword.test(`${e.title} ${e.body}`)) return true
+              return false
+            })
+          }
+          if (normalizedQuery) {
+            entries = entries.filter((e) =>
+              `${e.title} ${e.body}`.toLowerCase().includes(normalizedQuery)
+            )
+          }
+          return { ...s, entries }
         })
         .filter((s) => s.entries.length > 0),
     })).filter((v) => v.sections.length > 0)
-  }, [filters, personaOnly, selectedPersona, personaKeyword])
+  }, [filters, personaOnly, selectedPersona, personaKeyword, normalizedQuery])
 
   const groupedByDate = useMemo(() => groupVersionsByDate(filteredVersions), [filteredVersions])
 
@@ -370,7 +373,10 @@ export const ChangelogView = () => {
           className="glass-panel px-4 py-3 mb-6"
         >
           <div className="flex flex-wrap items-center gap-2">
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground shrink-0">
+            <div
+              className="flex items-center gap-1.5 text-xs text-muted-foreground shrink-0"
+              title="Days since each dataset's newest snapshot file. An amber dot means that dataset hasn't been refreshed in over 30 days."
+            >
               <Calendar size={12} />
               <span>Data last updated:</span>
             </div>
@@ -380,6 +386,11 @@ export const ChangelogView = () => {
               return (
                 <span
                   key={label}
+                  title={
+                    isStale
+                      ? `${label} dataset hasn't been refreshed in over 30 days`
+                      : `${label} dataset's newest snapshot`
+                  }
                   className={clsx(
                     'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border',
                     isStale
@@ -411,6 +422,20 @@ export const ChangelogView = () => {
         transition={{ delay: 0.1 }}
         className="glass-panel p-4 mb-6"
       >
+        <div className="relative mb-3">
+          <Search
+            size={14}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+          />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search changelog entries…"
+            aria-label="Search changelog entries"
+            className="w-full pl-9 pr-3 py-2 min-h-[44px] rounded-lg border border-border bg-muted/20 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+          />
+        </div>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-sm">
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-muted-foreground">Filter:</span>
