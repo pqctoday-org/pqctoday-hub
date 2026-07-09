@@ -316,6 +316,9 @@ export interface CRQCEstimate {
   yearHigh: number
   confidence: string
   notes: string
+  /** Link to the primary publication, so the citation on the Threats page can
+   *  be hyperlinked instead of standing as unverifiable free text. */
+  url: string
 }
 
 /**
@@ -336,6 +339,7 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     confidence: 'Architecture-dependent',
     notes:
       'Mar 2026: secp256k1 ECDLP breakable with \u22641,200 logical qubits. Introduces fast-clock (superconducting/photonic) vs slow-clock (trapped ion/neutral atom) CRQC distinction. Fast-clock CRQCs enable on-spend attacks on public mempools; slow-clock enable at-rest attacks on dormant wallets. 2.3M BTC identified as at-risk.',
+    url: 'https://quantumai.google/static/site-assets/downloads/cryptocurrency-whitepaper.pdf',
   },
   {
     source: 'Global Risk Institute (2025)',
@@ -344,6 +348,7 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     confidence: '28-49% by 2036, 51-70% by 2041',
     notes:
       '26-expert survey (March 2026). Significant acceleration: 28-49% probability within 10 years (up from 19-34% in 2024). Majority consider CRQC by 2035 quite likely.',
+    url: 'https://globalriskinstitute.org/publication/quantum-threat-timeline-report-2025b/',
   },
   {
     source: 'NIST IR 8547 (IPD, Nov 2024)',
@@ -352,6 +357,7 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     confidence: 'Planning horizon',
     notes:
       'Deprecate RSA/ECC by 2030, disallow by 2035. Assumes CRQC is imminent enough to act now.',
+    url: 'https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf',
   },
   {
     source: 'NSA CNSA 2.0 (2022)',
@@ -360,6 +366,7 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     confidence: 'Mandate',
     notes:
       'Migration MANDATE dates (not a CRQC-arrival prediction): support-and-prefer from 2025 (sw/fw signing) and 2026 (networking); exclusive use 2030 (signing, networking) and 2033 (web/cloud, OS). NSM-10 targets all NSS quantum-resistant by 2035.',
+    url: 'https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF',
   },
   {
     source: 'BSI Germany (2024)',
@@ -367,6 +374,7 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     yearHigh: 2040,
     confidence: 'Recommend migration now',
     notes: 'Recommends hybrid crypto today. Assumes CRQC within planning horizon.',
+    url: 'https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Crypto/Migration_to_Post_Quantum_Cryptography.pdf?__blob=publicationFile&v=2',
   },
   {
     source: 'ANSSI France (2022, upd. 2023)',
@@ -375,8 +383,52 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     confidence: 'Migration milestone, not a CRQC forecast',
     notes:
       'ANSSI gives no CRQC arrival date; 2030/2035 are transition milestones. Hybrid PQC is required only where quantum-resistance is claimed, not mandated for all government systems.',
+    url: 'https://cyber.gouv.fr/en/publications/anssi-views-post-quantum-cryptography-transition',
   },
 ]
+
+/**
+ * Single-sourced CRQC consensus derivation \u2014 the ONE place that reduces
+ * `CRQC_ESTIMATES` down to headline numbers. Every Threats-page component that
+ * shows a Q-Day figure (`SectorExposureHero`, `CrqcCapabilityStrip`,
+ * `CrqcTrajectoryChart`, `ThreatEconomicsHeader`) calls this instead of
+ * re-deriving its own value, so the four displayed numbers agree by
+ * construction. `zEstimate` is the median of each source's midpoint
+ * (yearLow+yearHigh)/2; `qdayLow`/`qdayHigh` are the median of the per-source
+ * low/high bounds \u2014 a data-derived consensus window, narrower than the full
+ * min/max spread but not a single hardcoded guess.
+ */
+function median(nums: number[]): number {
+  const sorted = [...nums].sort((a, b) => a - b)
+  const mid = Math.floor(sorted.length / 2)
+  return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2
+}
+
+export interface CrqcConsensus {
+  /** Earliest yearLow across all sources \u2014 the low end of the full spread. */
+  earliest: number
+  /** Latest yearHigh across all sources \u2014 the high end of the full spread. */
+  latest: number
+  /** Median of each source's (yearLow+yearHigh)/2 \u2014 the single headline Z-estimate. */
+  zEstimate: number
+  /** Median of the per-source yearLow values \u2014 a data-derived consensus window floor. */
+  qdayLow: number
+  /** Median of the per-source yearHigh values \u2014 a data-derived consensus window ceiling. */
+  qdayHigh: number
+}
+
+export function getCrqcConsensus(): CrqcConsensus {
+  const lows = CRQC_ESTIMATES.map((e) => e.yearLow)
+  const highs = CRQC_ESTIMATES.map((e) => e.yearHigh)
+  const mids = CRQC_ESTIMATES.map((e) => (e.yearLow + e.yearHigh) / 2)
+  return {
+    earliest: Math.min(...lows),
+    latest: Math.max(...highs),
+    zEstimate: Math.round(median(mids)),
+    qdayLow: Math.round(median(lows)),
+    qdayHigh: Math.round(median(highs)),
+  }
+}
 
 export const NIST_SECURITY_LEVELS = [
   { level: 1, description: 'At least as hard as AES-128 key recovery', aesEquivalent: 128 },

@@ -23,7 +23,7 @@ import type { ThreatItem } from '@/data/threatsData'
 // #2 — Threat class: HNDL (confidentiality) vs HNFL/TNFL (authenticity)
 // ---------------------------------------------------------------------------
 
-export type ThreatClass = 'hndl' | 'hnfl' | 'both'
+export type ThreatClass = 'hndl' | 'hnfl' | 'both' | 'unclassified'
 
 export interface ThreatClassDef {
   id: ThreatClass
@@ -34,7 +34,7 @@ export interface ThreatClassDef {
   /** What the attacker's clock is. */
   clock: string
   /** Security property at stake. */
-  property: 'Confidentiality' | 'Authenticity' | 'Both'
+  property: 'Confidentiality' | 'Authenticity' | 'Both' | 'Unknown'
 }
 
 export const THREAT_CLASS_DEFS: Record<ThreatClass, ThreatClassDef> = {
@@ -58,6 +58,13 @@ export const THREAT_CLASS_DEFS: Record<ThreatClass, ThreatClassDef> = {
     full: 'Both decrypt-later and forge-later exposure',
     clock: 'whichever expires first',
     property: 'Both',
+  },
+  unclassified: {
+    id: 'unclassified',
+    label: 'Unclassified',
+    full: 'No clear HNDL/HNFL signal in the at-risk cryptography',
+    clock: 'unknown — review manually',
+    property: 'Unknown',
   },
 }
 
@@ -105,9 +112,17 @@ const ENCRYPTION_HINTS = [
   'vpn',
 ]
 
-/** Substring presence in any of the threat's free-text crypto fields. */
+/**
+ * Substring presence in the threat's `cryptoAtRisk` field ONLY. Deliberately
+ * excludes `pqcReplacement` (and `description`, which often echoes the
+ * replacement) — those fields name the recommended PQC fix, e.g. "ML-DSA" /
+ * "ML-KEM", and including them let the match fire on the substrings "dsa" /
+ * "kem" *inside the replacement algorithm's own name*, misclassifying threats
+ * regardless of what crypto is actually at risk. `cryptoAtRisk` describes what
+ * the threat endangers, which is the only field that should drive HNDL/HNFL.
+ */
 function corpus(threat: ThreatItem): string {
-  return `${threat.cryptoAtRisk} ${threat.pqcReplacement} ${threat.description}`.toLowerCase()
+  return threat.cryptoAtRisk.toLowerCase()
 }
 
 function anyHit(haystack: string, needles: string[]): boolean {
@@ -115,10 +130,12 @@ function anyHit(haystack: string, needles: string[]): boolean {
 }
 
 /**
- * Derive a threat's economic class. A threat exposing both encryption and
- * signing crypto (e.g. a full-PKI estate) is `both`; otherwise it leans to
- * whichever signal is present. Defaults to `hndl` (the harvest-now baseline)
- * when neither hint fires, matching the page's existing decrypt-later framing.
+ * Derive a threat's economic class from its at-risk cryptography. A threat
+ * exposing both encryption and signing crypto (e.g. a full-PKI estate) is
+ * `both`; otherwise it leans to whichever signal is present. Threats whose
+ * `cryptoAtRisk` text doesn't clearly match either signal render as
+ * `unclassified` rather than being silently defaulted to `hndl` — an honest
+ * "needs manual review" state instead of a guess.
  */
 export function getThreatClass(threat: ThreatItem): ThreatClass {
   const text = corpus(threat)
@@ -126,7 +143,8 @@ export function getThreatClass(threat: ThreatItem): ThreatClass {
   const enc = anyHit(text, ENCRYPTION_HINTS)
   if (sig && enc) return 'both'
   if (sig) return 'hnfl'
-  return 'hndl'
+  if (enc) return 'hndl'
+  return 'unclassified'
 }
 
 /** Does a threat match a selected class filter? `both` matches either lens. */
@@ -366,6 +384,13 @@ export const IR_PLAYBOOKS: Record<ThreatClass, IrPlaybook> = {
     summary:
       'Run both the decrypt-later and forge-later playbooks: contain harvested data and revoke/re-issue credentials in parallel.',
     href: '/business?tool=ir-playbook&scenario=combined',
+  },
+  unclassified: {
+    id: 'pb-unclassified',
+    title: 'Manual Triage Required',
+    summary:
+      "This threat's at-risk cryptography didn't clearly match a known HNDL or HNFL signal — review manually to determine whether it threatens confidentiality (decrypt-later), authenticity (forge-later), or both before assigning a response playbook.",
+    href: '/business?tool=ir-playbook&scenario=unclassified',
   },
 }
 

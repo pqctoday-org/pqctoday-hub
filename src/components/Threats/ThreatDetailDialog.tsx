@@ -12,6 +12,7 @@ import {
   Clock,
   DollarSign,
   Shield,
+  ShieldCheck,
   ClipboardCheck,
   ArrowRight,
 } from 'lucide-react'
@@ -184,6 +185,77 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
                 </p>
               </div>
             </div>
+
+            {/* Data provenance — surfaces fields the loader already parses
+              (accuracy_pct, peer_reviewed, vetting_body, confidence_score,
+              data_quality_notes) but that were previously thrown away at render
+              time. Shown honestly: unfavorable provenance (peer_reviewed=no,
+              low confidence) renders the same way as favorable, not hidden. */}
+            {(threat.peerReviewed !== undefined ||
+              threat.confidenceScore !== undefined ||
+              threat.accuracyPct !== undefined ||
+              (threat.vettingBody && threat.vettingBody.length > 0) ||
+              threat.dataQualityNotes) && (
+              <div className="pt-4 border-t border-border">
+                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-2">
+                  <ShieldCheck size={14} className="text-primary" /> Data Provenance
+                </h3>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                  <div>
+                    <span className="block text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                      Peer reviewed
+                    </span>
+                    <span
+                      className={`inline-flex items-center mt-0.5 px-1.5 py-0.5 rounded text-[11px] font-semibold border ${
+                        threat.peerReviewed === 'yes'
+                          ? 'bg-status-success/10 text-status-success border-status-success/20'
+                          : threat.peerReviewed === 'partial'
+                            ? 'bg-status-warning/10 text-status-warning border-status-warning/20'
+                            : threat.peerReviewed === 'no'
+                              ? 'bg-muted/40 text-muted-foreground border-border'
+                              : 'bg-muted/40 text-muted-foreground border-border'
+                      }`}
+                    >
+                      {threat.peerReviewed
+                        ? threat.peerReviewed.charAt(0).toUpperCase() + threat.peerReviewed.slice(1)
+                        : 'Unknown'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="block text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                      Confidence score
+                    </span>
+                    <span className="text-foreground font-mono">
+                      {threat.confidenceScore != null ? `${threat.confidenceScore}` : '—'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="block text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                      Accuracy
+                    </span>
+                    <span className="text-foreground font-mono">
+                      {threat.accuracyPct != null ? `${threat.accuracyPct}%` : '—'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="block text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                      Vetting body
+                    </span>
+                    <span className="text-foreground">
+                      {threat.vettingBody && threat.vettingBody.length > 0
+                        ? threat.vettingBody.join(', ')
+                        : '—'}
+                    </span>
+                  </div>
+                </div>
+                {threat.dataQualityNotes && (
+                  <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
+                    <span className="font-semibold text-foreground">Data quality notes: </span>
+                    {threat.dataQualityNotes}
+                  </p>
+                )}
+              </div>
+            )}
 
             {/* Detection / SOC + Incident-Response — Threats #3 / #6 */}
             <div className="pt-4 border-t border-border mt-4">

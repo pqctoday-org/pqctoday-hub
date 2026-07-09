@@ -4,7 +4,9 @@ import { Activity, ChevronDown, Cpu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   CRQC_ESTIMATES,
+  CRQC_QUBIT_THRESHOLDS,
   CURRENT_QUANTUM_COMPUTERS,
+  getCrqcConsensus,
 } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
 
 /**
@@ -28,18 +30,14 @@ export const CrqcCapabilityStrip: React.FC<{ defaultExpanded?: boolean }> = ({
 }) => {
   const [expanded, setExpanded] = useState(defaultExpanded)
 
+  // Single-sourced via getCrqcConsensus() (Threats #1) — the same derivation
+  // SectorExposureHero, CrqcTrajectoryChart, and ThreatEconomicsHeader use.
   const consensus = useMemo(() => {
-    const lows = CRQC_ESTIMATES.map((e) => e.yearLow)
-    const highs = CRQC_ESTIMATES.map((e) => e.yearHigh)
-    const earliest = Math.min(...lows)
-    const latest = Math.max(...highs)
-    // Median of the per-source midpoints as the headline Z-estimate.
-    const mids = CRQC_ESTIMATES.map((e) => (e.yearLow + e.yearHigh) / 2).sort((a, b) => a - b)
-    const mid = mids[Math.floor(mids.length / 2)]
+    const { earliest, latest, zEstimate } = getCrqcConsensus()
     return {
       earliest,
       latest,
-      zEstimate: Math.round(mid),
+      zEstimate,
       yearsToEarliest: earliest - CURRENT_YEAR,
     }
   }, [])
@@ -53,11 +51,13 @@ export const CrqcCapabilityStrip: React.FC<{ defaultExpanded?: boolean }> = ({
   )
 
   // The most-urgent target needs the fewest logical qubits — show progress toward the
-  // low-end Shor target for ECC-256 (≈1,200 logical qubits; published estimates range to ~2,330+).
-  const SHOR_TARGET_QUBITS = 1200
+  // low-end Shor target for ECC-256, derived from the same CRQC_QUBIT_THRESHOLDS
+  // the trajectory chart's reference lines use (Threats #1), not a separate hardcoded
+  // number. Published estimates range to ~2,330+.
+  const shorTargetQubits = CRQC_QUBIT_THRESHOLDS.bitcoinEcc256
   const progressPct = useMemo(
-    () => Math.min(100, (leadMachine.estimatedLogicalQubits / SHOR_TARGET_QUBITS) * 100),
-    [leadMachine]
+    () => Math.min(100, (leadMachine.estimatedLogicalQubits / shorTargetQubits) * 100),
+    [leadMachine, shorTargetQubits]
   )
 
   return (
@@ -131,7 +131,10 @@ export const CrqcCapabilityStrip: React.FC<{ defaultExpanded?: boolean }> = ({
           </div>
           <div className="text-2xl font-bold text-primary">
             {leadMachine.estimatedLogicalQubits}
-            <span className="text-sm font-normal text-muted-foreground"> / ~1,200 LQ</span>
+            <span className="text-sm font-normal text-muted-foreground">
+              {' '}
+              / ~{shorTargetQubits.toLocaleString()} LQ
+            </span>
           </div>
           <div
             className="mt-1.5 h-1.5 w-full rounded-full bg-muted overflow-hidden"
@@ -144,9 +147,10 @@ export const CrqcCapabilityStrip: React.FC<{ defaultExpanded?: boolean }> = ({
             <div className="h-full bg-primary rounded-full" style={{ width: `${progressPct}%` }} />
           </div>
           <div className="text-[10px] text-muted-foreground mt-1">
-            ~1,200 LQ is the low-end ECC-256 estimate (Google/Ethereum, 2026); earlier work ranged
-            to ~2,330+ LQ. The bar to break RSA-2048 keeps falling: ~20M physical qubits (2019) →
-            &lt;1M (Gidney 2025) → &lt;100k projected (qLDPC, 2026).
+            ~{shorTargetQubits.toLocaleString()} LQ is the low-end ECC-256 estimate
+            (Google/Ethereum, 2026); earlier work ranged to ~2,330+ LQ. The bar to break RSA-2048
+            keeps falling: ~20M physical qubits (2019) → &lt;1M (Gidney 2025) → &lt;100k projected
+            (qLDPC, 2026).
           </div>
           <div className="text-[10px] text-muted-foreground mt-1">
             Lead: {leadMachine.vendor} {leadMachine.name} ({leadMachine.qubitType})
@@ -170,7 +174,14 @@ export const CrqcCapabilityStrip: React.FC<{ defaultExpanded?: boolean }> = ({
                   <span className="font-mono font-semibold text-warning w-24 shrink-0">
                     {e.yearLow}–{e.yearHigh}
                   </span>
-                  <span className="font-medium text-foreground sm:w-64 shrink-0">{e.source}</span>
+                  <a
+                    href={e.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-medium text-foreground sm:w-64 shrink-0 hover:text-primary hover:underline"
+                  >
+                    {e.source}
+                  </a>
                   <span className="text-muted-foreground">{e.confidence}</span>
                 </li>
               ))}
