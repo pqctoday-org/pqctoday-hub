@@ -1995,10 +1995,10 @@ export function SimulationView() {
                                 <span className="truncate text-[12px] font-bold text-foreground">
                                   {fp.name}
                                 </span>
-                                {/* WS-YY: fp.cadence/parallelWith were tracked but never
-                                    rendered — nothing told the player P1/P2 run in parallel
-                                    or P5/P6 iterate together. Same marker convention as the
-                                    hub's PhaseRail.tsx (∥ parallel, ⇄ iterative). */}
+                                {/* 07082026 audit remediation: fp.cadence/parallelWith were
+                                    tracked but never rendered — nothing told the player P1/P2
+                                    run in parallel or P5/P6 iterate together. Same marker
+                                    convention as the hub's PhaseRail.tsx (∥ parallel, ⇄ iterative). */}
                                 {fp.parallelWith && fp.parallelWith.length > 0 && (
                                   <span
                                     className="shrink-0 rounded-full bg-secondary/15 px-1.5 py-0.5 font-mono text-sim-micro font-bold text-secondary"
