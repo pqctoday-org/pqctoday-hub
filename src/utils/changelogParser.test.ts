@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { ALL_CHANGELOG_VERSIONS, compareChangelogVersion, parseChangelog } from './changelogParser'
+import { PERSONAS } from '../data/learningPersonas'
 
 describe('changelogParser', () => {
   describe('parseChangelog', () => {
@@ -156,6 +157,29 @@ describe('changelogParser', () => {
 `
       const versions = parseChangelog(content)
       expect(versions[0].date).toBe('April 20, 2026')
+    })
+  })
+
+  // Local lint (not a new CI job): catches `[persona:X]` tags in CHANGELOG.md
+  // whose X isn't one of the six real PersonaId values. A dirty tag doesn't
+  // error at parse time — `PERSONA_CONFIG[p]` in ChangelogView just silently
+  // drops the badge — so this only surfaces via an explicit check like this.
+  describe('persona tag lint — CHANGELOG.md', () => {
+    it('every [persona:X] tag resolves to a canonical persona id', () => {
+      const validPersonaIds = new Set(Object.keys(PERSONAS))
+      const offenders: string[] = []
+      for (const version of ALL_CHANGELOG_VERSIONS) {
+        for (const section of version.sections) {
+          for (const entry of section.entries) {
+            for (const p of entry.meta.personas) {
+              if (!validPersonaIds.has(p)) {
+                offenders.push(`v${version.version} "${entry.title}": [persona:${p}]`)
+              }
+            }
+          }
+        }
+      }
+      expect(offenders, `Invalid persona tag(s):\n${offenders.join('\n')}`).toEqual([])
     })
   })
 

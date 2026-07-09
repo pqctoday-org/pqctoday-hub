@@ -109,7 +109,7 @@ export async function loadLatestCSVAsync<TRaw extends object, T>(
 
 // ── Internals ────────────────────────────────────────────────────────────────
 
-function sortCSVFiles(modules: Record<string, unknown>, regex: RegExp): CSVFileEntry[] {
+export function sortCSVFiles(modules: Record<string, unknown>, regex: RegExp): CSVFileEntry[] {
   const files = Object.keys(modules)
     .map((path): CSVFileEntry | null => {
       const match = path.match(regex)
