@@ -16,6 +16,7 @@ import type { PatentItem, NistStatus } from '@/types/PatentTypes'
 import { logExternalLink } from '@/utils/analytics'
 import { EndorseButton } from '@/components/ui/EndorseButton'
 import { FlagButton } from '@/components/ui/FlagButton'
+import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 
 interface Props {
@@ -198,6 +199,11 @@ export function PatentDetail({
   onToggleExpand,
 }: Props) {
   const googlePatentsUrl = `https://patents.google.com/patent/${patent.patentNumber}/en`
+  const dateParts = [
+    patent.priorityDate && { label: 'Priority', term: 'Priority Date', value: patent.priorityDate },
+    patent.filingDate && { label: 'Filed', term: 'Filing Date', value: patent.filingDate },
+    patent.issueDate && { label: 'Issued', term: 'Issue Date', value: patent.issueDate },
+  ].filter((d): d is { label: string; term: string; value: string } => Boolean(d))
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
@@ -206,8 +212,19 @@ export function PatentDetail({
         <div className="min-w-0">
           <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
             <span className="font-mono">{patent.patentNumber}</span>
-            <span>·</span>
-            <span>{patent.issueDate || patent.priorityDate}</span>
+            {dateParts.length > 0 && (
+              <>
+                <span>·</span>
+                <span className="inline-flex items-center gap-1.5">
+                  {dateParts.map(({ label, term, value }, i) => (
+                    <span key={term} className="inline-flex items-center gap-1">
+                      {i > 0 && <span className="text-muted-foreground/50">/</span>}
+                      <InlineTooltip term={term}>{label}</InlineTooltip> {value}
+                    </span>
+                  ))}
+                </span>
+              </>
+            )}
             <a
               href={googlePatentsUrl}
               target="_blank"
@@ -230,8 +247,11 @@ export function PatentDetail({
             </p>
           )}
           {patent.cpcCodes && (
-            <p className="mt-1 text-[10px] font-mono text-muted-foreground/60 leading-relaxed break-all">
-              {patent.cpcCodes}
+            <p className="mt-1 text-[10px] text-muted-foreground/60 leading-relaxed break-all">
+              <span className="font-sans">
+                <InlineTooltip term="CPC Code">CPC</InlineTooltip>:{' '}
+              </span>
+              <span className="font-mono">{patent.cpcCodes}</span>
             </p>
           )}
         </div>
@@ -339,7 +359,7 @@ export function PatentDetail({
         {patent.primaryInventiveClaim && (
           <div className="space-y-1">
             <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-              Primary Inventive Claim
+              <InlineTooltip term="Independent Claim">Primary Inventive Claim</InlineTooltip>
             </div>
             <p className="text-sm text-foreground leading-relaxed">
               {patent.primaryInventiveClaim}
