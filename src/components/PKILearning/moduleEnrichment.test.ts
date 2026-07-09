@@ -96,6 +96,7 @@ describe('moduleEnrichment — researcher taxonomy (P2-3)', () => {
       'PKCS#11',
       'JOSE',
       'CycloneDX / ECMA-424',
+      'CycloneDX Cryptography Registry',
       'SPDX / ISO 5962',
       'NIST SP 1800-38',
       'NIST IR 8547',

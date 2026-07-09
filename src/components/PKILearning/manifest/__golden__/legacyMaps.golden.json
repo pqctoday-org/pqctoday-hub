@@ -54,6 +54,15 @@
       "difficulty": "intermediate",
       "frameworkPhase": "p2"
     },
+    "crypto-registry": {
+      "id": "crypto-registry",
+      "lm_id": "LM-062",
+      "title": "CycloneDX Cryptography Registry",
+      "description": "One canonical name per cryptographic mechanism — resolve the same algorithm or curve across HSM, certificate, protocol and library notations, and see exactly where PQC families fit.",
+      "duration": "30 min",
+      "difficulty": "intermediate",
+      "frameworkPhase": "p2"
+    },
     "code-signing": {
       "id": "code-signing",
       "lm_id": "LM-029",
@@ -565,6 +574,7 @@
     "arch-quantum-impact": 4,
     "automotive-pqc": 6,
     "cbom": 4,
+    "crypto-registry": 2,
     "code-signing": 5,
     "compliance-strategy": 4,
     "confidential-computing": 5,
@@ -774,6 +784,28 @@
       {
         "id": "cbom-verify",
         "label": "Machine-Verifiable CBOM"
+      }
+    ],
+    "crypto-registry": [
+      {
+        "id": "registry-why",
+        "label": "Why a Registry"
+      },
+      {
+        "id": "registry-scope",
+        "label": "What's Inside"
+      },
+      {
+        "id": "registry-pqc",
+        "label": "PQC Coverage"
+      },
+      {
+        "id": "registry-independent",
+        "label": "Beyond CBOM"
+      },
+      {
+        "id": "registry-practice",
+        "label": "Using It in Practice"
       }
     ],
     "code-signing": [
@@ -1946,6 +1978,16 @@
       {
         "id": "key-correlator",
         "label": "Key Correlator"
+      }
+    ],
+    "crypto-registry": [
+      {
+        "id": "algorithm-normalizer",
+        "label": "Algorithm Name Normalizer"
+      },
+      {
+        "id": "curve-lookup",
+        "label": "Curve Identifier Lookup"
       }
     ],
     "code-signing": [
@@ -3210,6 +3252,15 @@
           "duration": "60 min",
           "difficulty": "intermediate",
           "frameworkPhase": "p2"
+        },
+        {
+          "id": "crypto-registry",
+          "lm_id": "LM-062",
+          "title": "CycloneDX Cryptography Registry",
+          "description": "One canonical name per cryptographic mechanism — resolve the same algorithm or curve across HSM, certificate, protocol and library notations, and see exactly where PQC families fit.",
+          "duration": "30 min",
+          "difficulty": "intermediate",
+          "frameworkPhase": "p2"
         }
       ]
     },
@@ -3694,6 +3745,9 @@
     },
     "cbom": {
       "standards": ["CycloneDX / ECMA-424", "SPDX / ISO 5962", "NIST SP 1800-38"]
+    },
+    "crypto-registry": {
+      "standards": ["CycloneDX Cryptography Registry"]
     },
     "code-signing": {
       "algorithms": ["ML-DSA", "LMS/XMSS"],
