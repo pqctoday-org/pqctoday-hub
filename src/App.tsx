@@ -318,14 +318,10 @@ function App() {
           </ErrorBoundary>
         }
       />
-      <Route
-        path="migrate/workbench"
-        element={
-          <ErrorBoundary>
-            <MigrationWorkbench />
-          </ErrorBoundary>
-        }
-      />
+      {/* /migrate and /migrate/workbench rendered the byte-identical component with
+          no internal link ever pointing at /workbench — collapse the silent
+          duplicate into a redirect rather than keep two routes for one page. */}
+      <Route path="migrate/workbench" element={<Navigate to="/migrate" replace />} />
       <Route
         path="about"
         element={

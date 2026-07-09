@@ -66,7 +66,7 @@ vi.mock('@/data/migrateData', () => ({
   }),
 }))
 
-vi.mock('@/components/Migrate/InfrastructureStack', () => ({
+vi.mock('@/data/infrastructureLayers', () => ({
   LAYERS: [
     { id: 'Cloud', label: 'Cloud', icon: () => null },
     { id: 'Network', label: 'Network', icon: () => null },

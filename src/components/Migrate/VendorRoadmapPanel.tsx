@@ -8,8 +8,10 @@ import {
   GitMerge,
   Quote,
   Layers,
+  Clock,
 } from 'lucide-react'
 import type { VendorRoadmap, VendorRoadmapEnrichment } from '../../types/MigrateTypes'
+import { StatusBadge } from '../common/StatusBadge'
 
 interface VendorRoadmapPanelProps {
   roadmap: VendorRoadmap | undefined
@@ -75,6 +77,7 @@ export const VendorRoadmapPanel = ({ roadmap, enrichment }: VendorRoadmapPanelPr
             {roadmap?.roadmapTitle || 'Vendor PQC Roadmap'}
           </span>
           {enrichment && <GaStatusChip status={enrichment.currentGaStatus} />}
+          {roadmap?.status && <StatusBadge status={roadmap.status} size="sm" />}
           {scopeChip && (
             <span
               className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium border ${scopeChip.cls}`}
@@ -98,6 +101,17 @@ export const VendorRoadmapPanel = ({ roadmap, enrichment }: VendorRoadmapPanelPr
           </a>
         )}
       </div>
+
+      {(roadmap?.lastVerifiedDate || roadmap?.publishDate) && (
+        <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground/80">
+          <Clock size={10} className="shrink-0" aria-hidden="true" />
+          {roadmap.lastVerifiedDate ? (
+            <span>Last verified {roadmap.lastVerifiedDate}</span>
+          ) : (
+            <span>Published {roadmap.publishDate}</span>
+          )}
+        </div>
+      )}
 
       {enrichment && (
         <>
