@@ -99,12 +99,21 @@ test('Step 2: CMP IR issues a real X.509 cert with ML-DSA-65 CA signature (opens
   // is decoded with `openssl x509 -text -noout`.
   await expect(page.getByText(/Certificate issued/)).toBeVisible({ timeout: WASM_TIMEOUT })
 
-  // `openssl x509 -text -noout` always emits "Certificate:" as its first line.
-  const decodedCert = page.locator('pre').filter({ hasText: 'Certificate:' }).first()
+  // The decoded cert renders via the shared <CopyableOutput> component, which is
+  // a readOnly <textarea> (component/ui/CopyableOutput.tsx), not a <pre> -- a
+  // controlled textarea's value lives in the DOM `.value` property, not its
+  // textContent, so neither a `pre` locator nor `hasText` can ever match it.
+  // This was a 100%-reproducible stale selector (not the load/timing issue
+  // TRIAGE.md previously assumed), scoped via the "Decoded certificate"
+  // <details> block since a second CopyableOutput (raw cert PEM) also renders
+  // on this page.
+  const decodedCertBox = page.locator('details', { hasText: 'Decoded certificate' })
+  const decodedCert = decodedCertBox.locator('textarea')
   await expect(decodedCert).toBeVisible()
 
   // Subject DN contains "Workshop EE" (the default Subject input value).
-  const certText = (await decodedCert.textContent()) ?? ''
+  const certText = await decodedCert.inputValue()
+  expect(certText).toMatch(/Certificate:/)
   expect(certText).toMatch(/Workshop EE/)
 
   // Signature algorithm OID: the mock CA signs with ML-DSA-65. OpenSSL 3.6+
