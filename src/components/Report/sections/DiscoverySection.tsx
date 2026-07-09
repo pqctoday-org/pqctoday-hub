@@ -17,7 +17,7 @@
  */
 import { Search, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { CollapsibleSection } from '../ReportContent'
+import { CollapsibleSection } from './reportContentShared'
 
 interface DiscoverySectionProps {
   algorithmsSelected: string[]

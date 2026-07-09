@@ -8,25 +8,14 @@ import {
   RotateCcw,
   Download,
   Pencil,
-  AlertTriangle,
-  CheckCircle,
-  ArrowRight,
-  ShieldAlert,
-  BarChart3,
   Briefcase,
-  Calendar,
-  FlaskConical,
   BookOpen,
   Info,
-  Package,
-  Terminal,
-  Layers,
   Compass,
   GraduationCap,
   Filter,
   X,
 } from 'lucide-react'
-import type { LucideIcon } from 'lucide-react'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import { useMigrateSelectionStore } from '../../store/useMigrateSelectionStore'
 import { useMigrationWorkflowStore } from '../../store/useMigrationWorkflowStore'
@@ -41,30 +30,21 @@ import {
 import type { ReportSectionId, ReportCTA } from '../../data/personaConfig'
 import { PERSONAS } from '../../data/learningPersonas'
 import type { PersonaId } from '../../data/learningPersonas'
-import { complianceFrameworks } from '../../data/complianceData'
-import { ApplicabilityPanel } from '../applicability/ApplicabilityPanel'
 import { TopThreeActions } from '../common/TopThreeActions'
 import { softwareData } from '../../data/migrateData'
-import { ReportTimelineStrip } from './ReportTimelineStrip'
-import { ReportThreatsAppendix, ASSESS_TO_THREATS_INDUSTRY } from './ReportThreatsAppendix'
+import { ASSESS_TO_THREATS_INDUSTRY } from './ReportThreatsAppendix'
 import { ReportCswp39Nav } from './ReportCswp39Nav'
 import { ReportLockedOverlay } from './redesign/ReportLockedOverlay'
-import {
-  KpiEmptyState,
-  KpiPreviewSkeleton,
-  CategoryBreakdownPreviewSkeleton,
-} from './redesign/ReportKpiStates'
+import { KpiEmptyState, KpiPreviewSkeleton } from './redesign/ReportKpiStates'
 import { ReportVerdictBlock } from './redesign/ReportVerdictBlock'
 import { ReportUpgradeNudge } from './redesign/ReportUpgradeNudge'
 import { ReportControlDeck } from './redesign/ReportControlDeck'
 import { useThreatsData } from '../../hooks/useThreatsData'
-import { GlossaryAutoWrap } from '../PKILearning/common/GlossaryAutoWrap'
 import { MigrationRoadmap } from './MigrationRoadmap'
 import { MigrationToolkit } from './MigrationToolkit'
 import { VendorRiskSection } from './sections/VendorRiskSection'
 import { DiscoverySection } from './sections/DiscoverySection'
 import { ReportMethodologyModal } from './ReportMethodologyModal'
-import { SectionInfoModal } from './SectionInfoModal'
 import { ROICalculatorSection } from '../shared/ROICalculatorSection'
 import type { ROISummary } from '../shared/ROICalculatorSection'
 import { KPITrendingSection } from './KPITrendingSection'
@@ -77,28 +57,40 @@ import {
 } from '../../data/reportSectionToCswp39'
 import { FRAMEWORK_PHASES } from '../../data/frameworkPhases'
 import { usePhaseFilter } from '../../hooks/usePhaseFilter'
-import { formatDriver } from '../../data/driverLabels'
-import { RiskGauge, riskConfig } from '../shared/widgets/RiskGauge'
 import { Button } from '../ui/button'
-import { CollapsibleSection as BaseCollapsibleSection } from '../ui/CollapsibleSection'
 import { SectionExpandContext } from '@/contexts/sectionExpandContext'
-import { HNDLHNFLSection as SharedHNDLHNFLSection } from '../shared/HNDLHNFLSection'
-import { AskAssistantButton } from '../ui/AskAssistantButton'
 import clsx from 'clsx'
-import toast from 'react-hot-toast'
-import type {
-  AssessmentResult,
-  AssessmentProfile,
-  CategoryScores,
-  CategoryDrivers,
-  HNDLRiskWindow,
-  TNFLRiskWindow,
-} from '../../hooks/assessmentTypes'
+import type { AssessmentResult } from '../../hooks/assessmentTypes'
 import { SIGNING_ALGORITHMS } from '../../hooks/assessmentData'
-import { encodeShareToken } from '@/utils/reportShareToken'
-import { FilteredChip } from './FilteredChip'
 import { NiceGapReportSection } from './NiceGapReportSection'
 import { QRASection } from './sections/QRASection'
+import {
+  RiskBreakdownUnlocked,
+  RiskBreakdownLocked,
+  FrameworkRiskLensSection,
+} from './sections/CategoryBreakdownSection'
+import { AssessmentProfileSummary } from './sections/AssessmentProfileSection'
+import {
+  CountryTimelineSection,
+  RiskScoreSection,
+  KeyFindingsSection,
+  ExecutiveSummarySection,
+} from './sections/ReportOverviewSections'
+import { SectionInfoTip, CollapsibleSection, CTA_ICONS } from './sections/reportContentShared'
+import {
+  HndlHnflWindowsSection,
+  HndlNotQuantifiedWarning,
+  HnflNotQuantifiedWarning,
+} from './sections/HndlHnflSection'
+import { AlgorithmMigrationSection } from './sections/AlgorithmMigrationSection'
+import { ComplianceImpactSection } from './sections/ComplianceImpactSection'
+import { RecommendedActionsSection } from './sections/RecommendedActionsSection'
+import { ThreatLandscapeSection } from './sections/ThreatLandscapeSection'
+import {
+  printReport,
+  shareReport,
+  exportAlgorithmMigrationsCsv,
+} from './sections/reportContentActions'
 
 declare const __APP_VERSION__: string
 const APP_VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0'
@@ -108,382 +100,6 @@ const APP_VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '
 // allocate a fresh array/object identity on every render.
 const EMPTY_STRING_ARRAY: string[] = []
 const EMPTY_SUBCATEGORIES: Record<string, string[]> = {}
-
-/** Resolves icon name string to LucideIcon component for report CTAs. */
-const CTA_ICONS: Record<string, LucideIcon> = {
-  Share2,
-  Calendar,
-  BookOpen,
-  FlaskConical,
-  Package,
-  BarChart3,
-  Terminal,
-  Layers,
-}
-
-/** Maps PQC replacement algorithm names to relevant Learn module paths. */
-const ALGO_LEARN_LINKS: Record<string, { path: string; label: string }> = {
-  'ML-KEM': { path: '/learn/pki-workshop', label: 'PKI Workshop' },
-  'ML-DSA': { path: '/learn/pki-workshop', label: 'PKI Workshop' },
-  'SLH-DSA': { path: '/learn/stateful-signatures', label: 'Signatures' },
-  LMS: { path: '/learn/stateful-signatures', label: 'Signatures' },
-  hybrid: { path: '/learn/hybrid-crypto', label: 'Hybrid Crypto' },
-}
-function getLearnLink(replacement: string): { path: string; label: string } | null {
-  if (replacement.includes('hybrid') || replacement.includes('Hybrid'))
-    return ALGO_LEARN_LINKS['hybrid']
-  for (const [key, value] of Object.entries(ALGO_LEARN_LINKS)) {
-    if (replacement.includes(key)) return value
-  }
-  return null
-}
-
-export function SectionInfoTip({ sectionId }: { sectionId: string }) {
-  const [open, setOpen] = useState(false)
-  return (
-    <span className="relative inline-flex print:hidden">
-      <Button
-        variant="ghost"
-        onClick={(e) => {
-          e.stopPropagation()
-          setOpen(true)
-        }}
-        className="p-1 h-auto w-auto rounded hover:bg-muted/30 text-muted-foreground hover:text-foreground"
-        aria-label="Section info"
-      >
-        <Info size={14} />
-      </Button>
-      <SectionInfoModal isOpen={open} onClose={() => setOpen(false)} sectionId={sectionId} />
-    </span>
-  )
-}
-
-/** Report-specific wrapper that converts `infoTip` string IDs to SectionInfoTip nodes */
-export function CollapsibleSection({
-  infoTip,
-  ...rest
-}: {
-  title: string
-  icon: React.ReactNode
-  children: React.ReactNode
-  defaultOpen?: boolean
-  infoTip?: string
-  className?: string
-  headerExtra?: React.ReactNode
-  id?: string
-  /** Workshop selector slug — emits `data-workshop-target="section-<targetId>"`
-   *  on the toggle button so `expand-section` cues can open the section. */
-  targetId?: string
-}) {
-  return (
-    <BaseCollapsibleSection
-      {...rest}
-      infoTip={infoTip ? <SectionInfoTip sectionId={infoTip} /> : undefined}
-    />
-  )
-}
-
-const effortConfig = {
-  low: { color: 'text-success', bg: 'bg-success/10', label: 'Low' },
-  medium: { color: 'text-primary', bg: 'bg-primary/10', label: 'Medium' },
-  high: { color: 'text-warning', bg: 'bg-warning/10', label: 'High' },
-}
-
-const complexityConfig = {
-  low: { color: 'text-success', bg: 'bg-success/10', label: 'Low' },
-  medium: { color: 'text-primary', bg: 'bg-primary/10', label: 'Medium' },
-  high: { color: 'text-warning', bg: 'bg-warning/10', label: 'High' },
-  critical: { color: 'text-destructive', bg: 'bg-destructive/10', label: 'Critical' },
-}
-
-const scopeConfig = {
-  'quick-win': { color: 'text-success', bg: 'bg-success/10', label: 'Quick Win' },
-  moderate: { color: 'text-primary', bg: 'bg-primary/10', label: 'Moderate' },
-  'major-project': { color: 'text-warning', bg: 'bg-warning/10', label: 'Major Project' },
-  'multi-year': { color: 'text-destructive', bg: 'bg-destructive/10', label: 'Multi-Year' },
-}
-
-const CategoryBreakdown = ({
-  scores,
-  drivers,
-  defaultOpen = true,
-  headerExtra,
-}: {
-  scores: CategoryScores
-  drivers?: CategoryDrivers
-  defaultOpen?: boolean
-  headerExtra?: React.ReactNode
-}) => {
-  // organizationalReadiness is higher-is-better (a true readiness score); the
-  // other three are higher-is-worse. `higherIsBetter` inverts the concern value
-  // used for colouring so a high readiness bar reads green, not red.
-  const categories = [
-    { label: 'Quantum Exposure', key: 'quantumExposure' as const, higherIsBetter: false },
-    { label: 'Migration Complexity', key: 'migrationComplexity' as const, higherIsBetter: false },
-    { label: 'Regulatory Pressure', key: 'regulatoryPressure' as const, higherIsBetter: false },
-    {
-      label: 'Organizational Readiness',
-      key: 'organizationalReadiness' as const,
-      higherIsBetter: true,
-    },
-  ]
-
-  // Canonical risk-level thresholds (match orchestrator.ts riskLevel mapping
-  // and SECTION_INFO copy). Previously this component used 30/60 boundaries
-  // which contradicted the gauge — same score rendered yellow here, red there.
-  const getBarColor = (score: number) => {
-    if (score <= 25) return 'bg-success'
-    if (score <= 55) return 'bg-warning'
-    if (score <= 75) return 'bg-destructive'
-    return 'bg-critical'
-  }
-
-  const getScoreColor = (score: number) => {
-    if (score <= 25) return 'text-success'
-    if (score <= 55) return 'text-warning'
-    if (score <= 75) return 'text-destructive'
-    return 'text-critical'
-  }
-
-  return (
-    <CollapsibleSection
-      title="Risk Breakdown"
-      icon={<BarChart3 className="text-primary" size={20} />}
-      defaultOpen={defaultOpen}
-      headerExtra={headerExtra}
-      infoTip="riskBreakdown"
-    >
-      <div className="space-y-4">
-        {categories.map(({ label, key, higherIsBetter }) => {
-          // eslint-disable-next-line security/detect-object-injection
-          const score = scores[key]
-          // Concern drives colour: for higher-is-better axes a high score is LOW
-          // concern (green), so invert before thresholding.
-          const concern = higherIsBetter ? 100 - score : score
-          return (
-            <div key={key}>
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-sm text-muted-foreground">{label}</span>
-                <span className={clsx('text-sm font-bold', getScoreColor(concern))}>
-                  {score}/100
-                </span>
-              </div>
-              <div className="w-full h-2.5 rounded-full bg-border overflow-hidden">
-                <div
-                  className={clsx(
-                    'h-full rounded-full transition-all duration-500',
-                    getBarColor(concern)
-                  )}
-                  style={{ width: `${score}%` }}
-                  role="progressbar"
-                  aria-valuenow={score}
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                  aria-label={`${label}: ${score} out of 100`}
-                />
-              </div>
-              {/* eslint-disable-next-line security/detect-object-injection */}
-              {drivers?.[key] && (
-                <p className="text-xs text-muted-foreground/70 mt-1 capitalize">
-                  {/* eslint-disable-next-line security/detect-object-injection */}
-                  {drivers[key]}
-                </p>
-              )}
-            </div>
-          )
-        })}
-      </div>
-    </CollapsibleSection>
-  )
-}
-
-const AGILITY_LABELS: Record<string, string> = {
-  'fully-abstracted': 'Fully abstracted',
-  'partially-abstracted': 'Partially abstracted',
-  hardcoded: 'Hardcoded',
-  unknown: 'Unknown',
-}
-
-const MIGRATION_STATUS_LABELS: Record<string, string> = {
-  started: 'Started',
-  planning: 'Planning',
-  'not-started': 'Not started',
-  unknown: 'Unknown',
-}
-
-const TIMELINE_LABELS: Record<string, string> = {
-  'within-1y': 'Within 1 year',
-  'within-2-3y': 'Within 2-3 years',
-  'internal-deadline': 'Internal deadline',
-  'no-deadline': 'No deadline',
-  unknown: 'Unknown',
-}
-
-const CREDENTIAL_LIFETIME_LABELS: Record<string, string> = {
-  'under-1y': 'Under 1 year',
-  '1-3y': '1-3 years',
-  '3-10y': '3-10 years',
-  '10-25y': '10-25 years',
-  '25-plus': '25+ years',
-  indefinite: 'Indefinite',
-}
-
-const SCALE_LABELS: Record<string, string> = {
-  '1-10': '1-10',
-  '11-50': '11-50',
-  '51-200': '51-200',
-  '200-plus': '200+',
-}
-
-const ProfileField = ({ label, value }: { label: string; value: string | undefined }) => {
-  if (!value) return null
-  return (
-    <div className="flex flex-col gap-0.5">
-      <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70 font-medium">
-        {label}
-      </span>
-      <span className="text-xs text-foreground">{value}</span>
-    </div>
-  )
-}
-
-const AssessmentProfileSummary = ({
-  profile,
-  defaultOpen = false,
-}: {
-  profile: AssessmentProfile
-  defaultOpen?: boolean
-}) => {
-  return (
-    <CollapsibleSection
-      title="Assessment Profile"
-      icon={<Briefcase className="text-primary" size={20} />}
-      defaultOpen={defaultOpen}
-      infoTip="assessmentProfile"
-    >
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        <ProfileField label="Industry" value={profile.industry} />
-        <ProfileField label="Country" value={profile.country || 'Not specified'} />
-        <ProfileField
-          label="Algorithms"
-          value={
-            profile.algorithmUnknown
-              ? 'Unknown (conservative defaults)'
-              : profile.algorithmsSelected.length > 0
-                ? `${profile.algorithmsSelected.length} selected`
-                : 'None'
-          }
-        />
-        <ProfileField
-          label="Sensitivity"
-          value={
-            profile.sensitivityUnknown
-              ? 'Unknown (assumed high)'
-              : profile.sensitivityLevels.join(', ') || 'None'
-          }
-        />
-        <ProfileField
-          label="Compliance"
-          value={
-            profile.complianceUnknown
-              ? 'Unknown'
-              : profile.complianceFrameworks.length > 0
-                ? `${profile.complianceFrameworks.length} framework${profile.complianceFrameworks.length !== 1 ? 's' : ''}`
-                : 'None'
-          }
-        />
-        <ProfileField
-          label="Migration Status"
-          value={MIGRATION_STATUS_LABELS[profile.migrationStatus] ?? profile.migrationStatus}
-        />
-        {profile.mode === 'comprehensive' && (
-          <>
-            <ProfileField
-              label="Use Cases"
-              value={
-                profile.useCasesUnknown
-                  ? 'Unknown'
-                  : profile.useCases?.length
-                    ? profile.useCases.join(', ')
-                    : 'None'
-              }
-            />
-            <ProfileField
-              label="Data Retention"
-              value={
-                profile.retentionUnknown
-                  ? 'Unknown (industry default)'
-                  : profile.retentionPeriods?.join(', ') || 'None'
-              }
-            />
-            <ProfileField
-              label="Credential Lifetime"
-              value={
-                profile.credentialLifetimeUnknown
-                  ? 'Unknown (conservative 10y)'
-                  : profile.credentialLifetimes?.length
-                    ? profile.credentialLifetimes
-                        .map((v) => CREDENTIAL_LIFETIME_LABELS[v] ?? v)
-                        .join(', ')
-                    : 'None'
-              }
-            />
-            <ProfileField
-              label="Org Scale"
-              value={
-                profile.scaleUnknown
-                  ? 'Unknown (industry default)'
-                  : profile.systemScale
-                    ? `${SCALE_LABELS[profile.systemScale] ?? profile.systemScale} systems, ${SCALE_LABELS[profile.teamSize ?? ''] ?? profile.teamSize} engineers`
-                    : undefined
-              }
-            />
-            <ProfileField
-              label="Crypto Agility"
-              value={profile.cryptoAgility ? AGILITY_LABELS[profile.cryptoAgility] : undefined}
-            />
-            <ProfileField
-              label="Infrastructure"
-              value={
-                profile.infrastructureUnknown
-                  ? 'Unknown'
-                  : profile.infrastructure?.length
-                    ? `${profile.infrastructure.length} layer${profile.infrastructure.length !== 1 ? 's' : ''}`
-                    : 'None'
-              }
-            />
-            <ProfileField
-              label="Vendor Model"
-              value={
-                profile.vendorUnknown
-                  ? 'Unknown'
-                  : profile.vendorDependency?.replace('-', ' ') || undefined
-              }
-            />
-            <ProfileField
-              label="Timeline Pressure"
-              value={
-                profile.timelinePressure ? TIMELINE_LABELS[profile.timelinePressure] : undefined
-              }
-            />
-          </>
-        )}
-      </div>
-      <div className="mt-2">
-        <span
-          className={clsx(
-            'inline-flex text-[10px] font-bold px-2 py-0.5 rounded-full',
-            profile.mode === 'comprehensive'
-              ? 'bg-primary/10 text-primary'
-              : 'bg-muted/20 text-muted-foreground'
-          )}
-        >
-          {profile.mode === 'comprehensive' ? 'Comprehensive' : 'Quick'} Assessment
-        </span>
-      </div>
-    </CollapsibleSection>
-  )
-}
 
 interface AssessReportProps {
   result: AssessmentResult
@@ -502,14 +118,6 @@ interface AssessReportProps {
    */
   sharedView?: { persona: PersonaId | null }
 }
-
-/** Report-specific HNDL/HNFL wrapper that injects SectionInfoTip */
-const ReportHNDLHNFLSection = (props: {
-  hndl?: HNDLRiskWindow
-  hnfl?: TNFLRiskWindow
-  defaultOpen?: boolean
-  headerExtra?: React.ReactNode
-}) => <SharedHNDLHNFLSection {...props} infoTip={<SectionInfoTip sectionId="hndlHnfl" />} />
 
 export const ReportContent: React.FC<AssessReportProps> = ({
   result,
@@ -668,8 +276,6 @@ export const ReportContent: React.FC<AssessReportProps> = ({
     return ALWAYS_VISIBLE_PATHS.includes(basePath) || personaPaths.includes(basePath)
   }
 
-  const config = riskConfig[result.riskLevel]
-
   // The true quick/full signal. NOT `result.categoryScores` — the engine emits
   // COARSE category scores even on the legacy/quick path (to feed the sim & KPIs),
   // so categoryScores is always present and can't distinguish the tracks. The
@@ -677,101 +283,11 @@ export const ReportContent: React.FC<AssessReportProps> = ({
   // honest gate for the locked/upgrade tiering.
   const isComprehensive = result.assessmentProfile?.mode === 'comprehensive'
 
-  const handlePrint = () => {
-    window.print()
-  }
+  const handlePrint = printReport
 
-  const handleShare = async () => {
-    // ACCURACY-0708-2: share the sender's exact computed `result` as a
-    // snapshot (v2 token) rather than the partial quick-track inputs the old
-    // v1 token carried — decode then renders this directly, with no
-    // recompute, so the recipient sees precisely what's on screen right now.
-    //
-    // For an already-shared/example view, re-share the URL the recipient
-    // opened rather than regenerating a token from `getInput()` — that would
-    // read the recipient's own (unrelated, likely empty) assessment input,
-    // not the report they're actually looking at.
-    const url = shared
-      ? window.location.href
-      : (() => {
-          const personaState = usePersonaStore.getState()
-          const token = encodeShareToken({
-            result,
-            persona: personaState.selectedPersona,
-          })
-          return `${window.location.origin}${window.location.pathname}?share=${token}`
-        })()
+  const handleShare = () => shareReport(result, shared)
 
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: 'PQC Risk Assessment Report',
-          text: `Quantum Risk Score: ${result.riskScore}/100 — ${result.narrative}`,
-          url,
-        })
-      } catch (err) {
-        // Ignore the user cancelling the native share sheet; surface real failures.
-        if (err instanceof Error && err.name !== 'AbortError') {
-          toast.error('Could not share the report link.')
-        }
-      }
-    } else {
-      // Desktop browsers have no navigator.share — copy the link and CONFIRM it,
-      // otherwise the click looks like it did nothing.
-      try {
-        await navigator.clipboard.writeText(url)
-        toast.success('Report link copied to clipboard.')
-      } catch {
-        toast.error('Could not copy the report link.')
-      }
-    }
-  }
-
-  const handleCSVExport = () => {
-    const hasEffort = result.migrationEffort && result.migrationEffort.length > 0
-    const effortMap = new Map(result.migrationEffort?.map((e) => [e.algorithm, e]))
-
-    const headers = hasEffort
-      ? [
-          'Algorithm',
-          'Quantum Vulnerable',
-          'PQC Replacement',
-          'Urgency',
-          'Migration Effort',
-          'Estimated Scope',
-          'Rationale',
-          'Notes',
-        ]
-      : ['Algorithm', 'Quantum Vulnerable', 'PQC Replacement', 'Urgency', 'Notes']
-
-    const rows = result.algorithmMigrations.map((algo) => {
-      const effort = effortMap.get(algo.classical)
-      const baseRow = [
-        algo.classical,
-        algo.quantumVulnerable ? 'Yes' : 'No',
-        algo.replacement,
-        algo.urgency,
-      ]
-      if (hasEffort) {
-        baseRow.push(
-          effort?.complexity ?? 'N/A',
-          effort?.estimatedScope ?? 'N/A',
-          `"${(effort?.rationale ?? '').replace(/"/g, '""')}"`
-        )
-      }
-      baseRow.push(`"${algo.notes.replace(/"/g, '""')}"`)
-      return baseRow
-    })
-
-    const csv = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n')
-    const blob = new Blob([csv], { type: 'text/csv' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `pqc-risk-assessment-${new Date(result.generatedAt).toISOString().slice(0, 10)}.csv`
-    a.click()
-    URL.revokeObjectURL(url)
-  }
+  const handleCSVExport = () => exportAlgorithmMigrationsCsv(result)
 
   const generatedDate = new Date(result.generatedAt).toLocaleDateString('en-US', {
     year: 'numeric',
@@ -969,102 +485,20 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                     {/* Country PQC Migration Timeline */}
                     {phaseVisible('countryTimeline') &&
                       cfg('countryTimeline').state !== 'hidden' && (
-                        <CollapsibleSection
-                          id="report-section-countryTimeline"
-                          title={
-                            country
-                              ? `${country} PQC Migration Timeline`
-                              : 'Country PQC Migration Timeline'
-                          }
-                          icon={<Calendar className="text-primary" size={20} />}
+                        <CountryTimelineSection
+                          country={country}
                           defaultOpen={cfg('countryTimeline').state === 'open'}
-                          infoTip="countryTimeline"
-                        >
-                          <ReportTimelineStrip countryName={country} />
-                          <Link
-                            to={
-                              country
-                                ? `/timeline?country=${encodeURIComponent(country)}`
-                                : '/timeline'
-                            }
-                            className="flex items-center gap-1.5 text-xs text-primary hover:underline mt-3 print:hidden"
-                          >
-                            <ArrowRight size={12} />
-                            View full {country ? `${country} ` : ''}timeline
-                          </Link>
-                        </CollapsibleSection>
+                        />
                       )}
 
                     {/* Risk Score */}
                     {phaseVisible('riskScore') && (
-                      <CollapsibleSection
-                        id="report-section-riskScore"
-                        title="Risk Score"
-                        icon={<ShieldAlert className={config.color} size={20} />}
+                      <RiskScoreSection
+                        result={result}
+                        previousRiskScore={previousRiskScore}
+                        lastModifiedAt={lastModifiedAt}
                         defaultOpen={cfg('riskScore').state === 'open'}
-                        className={clsx('border-l-4', config.border)}
-                        infoTip="riskScore"
-                      >
-                        <RiskGauge score={result.riskScore} level={result.riskLevel} />
-                        {previousRiskScore !== null && previousRiskScore !== result.riskScore && (
-                          <div className="flex items-center justify-center gap-2 mt-2 print:hidden">
-                            <span
-                              className={clsx(
-                                'text-xs font-mono px-2 py-0.5 rounded-full',
-                                result.riskScore < previousRiskScore
-                                  ? 'bg-success/10 text-success'
-                                  : 'bg-destructive/10 text-destructive'
-                              )}
-                            >
-                              {result.riskScore < previousRiskScore ? '' : '+'}
-                              {result.riskScore - previousRiskScore} since last assessment
-                            </span>
-                          </div>
-                        )}
-                        {lastModifiedAt && (
-                          <p className="text-[10px] text-muted-foreground/60 text-center mt-1 font-mono print:hidden">
-                            Last updated:{' '}
-                            {new Date(lastModifiedAt).toLocaleDateString(undefined, {
-                              month: 'short',
-                              day: 'numeric',
-                              year: 'numeric',
-                              hour: 'numeric',
-                              minute: '2-digit',
-                            })}
-                          </p>
-                        )}
-                        <p className="text-sm text-muted-foreground text-center mt-4 leading-relaxed print:text-muted-foreground">
-                          {/* Neutral, role-independent explanation of the number — the
-                              persona-flavored take now leads in the Verdict block above,
-                              so this section no longer repeats result.personaNarrative.
-                              Glossary tooltips help every persona decode acronyms
-                              (execs/ops most of all), not just the curious reader. */}
-                          <GlossaryAutoWrap>{result.narrative}</GlossaryAutoWrap>
-                        </p>
-                        {result.boosts &&
-                          result.boosts.length > 0 &&
-                          result.preBoostScore !== undefined && (
-                            <div className="mt-4 p-3 rounded-lg border border-border bg-muted/20 print:bg-transparent">
-                              <p className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground mb-2">
-                                Situational boosts raised this score from {result.preBoostScore} to{' '}
-                                {result.riskScore}
-                              </p>
-                              <ul className="space-y-1">
-                                {result.boosts.map((b) => (
-                                  <li
-                                    key={b.id}
-                                    className="flex items-start gap-2 text-xs text-foreground"
-                                  >
-                                    <span className="text-destructive shrink-0 font-mono">
-                                      +{(b.delta * 100).toFixed(0)}%
-                                    </span>
-                                    <span>{b.label}</span>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                      </CollapsibleSection>
+                      />
                     )}
 
                     {/* Quantum Readiness Assessment (QRA) — the framework's
@@ -1086,26 +520,10 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                       result.keyFindings &&
                       result.keyFindings.length > 0 &&
                       cfg('keyFindings').state !== 'hidden' && (
-                        <CollapsibleSection
-                          id="report-section-keyFindings"
-                          title="Key Findings"
-                          icon={<AlertTriangle className="text-warning" size={20} />}
+                        <KeyFindingsSection
+                          keyFindings={result.keyFindings}
                           defaultOpen={cfg('keyFindings').state === 'open'}
-                          className="border-l-4 border-l-warning"
-                          infoTip="keyFindings"
-                        >
-                          <ul className="space-y-2">
-                            {result.keyFindings.map((finding, i) => (
-                              <li
-                                key={i}
-                                className="flex gap-2 text-sm text-muted-foreground leading-relaxed"
-                              >
-                                <span className="text-warning font-bold shrink-0">{i + 1}.</span>
-                                {finding}
-                              </li>
-                            ))}
-                          </ul>
-                        </CollapsibleSection>
+                        />
                       )}
 
                     {/* Category Score Breakdown — comprehensive-only; the lock model
@@ -1113,90 +531,33 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         (redesign) instead of omitting it. */}
                     {phaseVisible('riskBreakdown') &&
                       (isComprehensive && result.categoryScores ? (
-                        <div id="report-section-riskBreakdown">
-                          <CategoryBreakdown
-                            scores={result.categoryScores}
-                            drivers={result.categoryDrivers}
-                            defaultOpen={cfg('riskBreakdown').state === 'open'}
-                            headerExtra={
-                              <AskAssistantButton
-                                question={`Explain my PQC risk score of ${result.riskScore}/100 (${result.riskLevel}) for ${industry}`}
-                                className="print:hidden"
-                              />
-                            }
-                          />
-                        </div>
+                        <RiskBreakdownUnlocked
+                          scores={result.categoryScores}
+                          drivers={result.categoryDrivers}
+                          riskScore={result.riskScore}
+                          riskLevel={result.riskLevel}
+                          industry={industry}
+                          defaultOpen={cfg('riskBreakdown').state === 'open'}
+                        />
                       ) : (
-                        <div id="report-section-riskBreakdown">
-                          <ReportLockedOverlay
-                            reason="Per-domain scores need the full assessment"
-                            detail="A quick assessment can't separate Quantum Exposure, Migration Complexity, Regulatory Pressure and Organizational Readiness. Finish the full assessment to unlock the breakdown."
-                          >
-                            <CategoryBreakdownPreviewSkeleton />
-                          </ReportLockedOverlay>
-                        </div>
+                        <RiskBreakdownLocked />
                       ))}
 
                     {/* Framework Risk Lens (Applied Quantum P3) — derived alongside the categories */}
                     {phaseVisible('riskBreakdown') &&
                       result.frameworkRisk &&
                       cfg('riskBreakdown').state !== 'hidden' && (
-                        <CollapsibleSection
-                          title="Framework Risk Lens (Applied Quantum)"
-                          icon={<ShieldAlert className="text-primary" size={20} />}
-                          defaultOpen={false}
-                        >
-                          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                            {(
-                              [
-                                ['HNDL', result.frameworkRisk.hndl, 'Harvest-now confidentiality'],
-                                ['TNFL', result.frameworkRisk.tnfl, 'Forge-later integrity'],
-                                [
-                                  'Regulatory',
-                                  result.frameworkRisk.regulatory,
-                                  'Compliance / deadline pressure',
-                                ],
-                                [
-                                  'Feasibility',
-                                  result.frameworkRisk.feasibility,
-                                  'Ease of migration (higher = easier)',
-                                ],
-                              ] as const
-                            ).map(([label, val, note]) => (
-                              <div
-                                key={label}
-                                className="rounded-lg border border-border bg-card p-3"
-                              >
-                                <div className="text-2xl font-extrabold text-foreground">{val}</div>
-                                <div className="text-sm font-semibold text-foreground">{label}</div>
-                                <div className="text-xs text-muted-foreground">{note}</div>
-                              </div>
-                            ))}
-                          </div>
-                          <p className="mt-2 text-xs text-muted-foreground">
-                            The framework&apos;s P3 risk dimensions, derived alongside the category
-                            scores. HNDL / TNFL / Regulatory are exposure (higher = more risk);
-                            Feasibility is ease of migration (higher = easier).
-                          </p>
-                        </CollapsibleSection>
+                        <FrameworkRiskLensSection frameworkRisk={result.frameworkRisk} />
                       )}
 
                     {/* Executive Summary */}
                     {phaseVisible('executiveSummary') &&
                       result.executiveSummary &&
                       cfg('executiveSummary').state !== 'hidden' && (
-                        <CollapsibleSection
-                          id="report-section-executiveSummary"
-                          title="Executive Summary"
-                          icon={<Briefcase className="text-primary" size={20} />}
+                        <ExecutiveSummarySection
+                          executiveSummary={result.executiveSummary}
                           defaultOpen={cfg('executiveSummary').state === 'open'}
-                          className="border-l-4 border-l-primary"
-                          infoTip="executiveSummary"
-                        >
-                          <p className="text-sm text-muted-foreground leading-relaxed">
-                            {result.executiveSummary}
-                          </p>
-                        </CollapsibleSection>
+                        />
                       )}
 
                     {/* Assessment Profile */}
@@ -1215,58 +576,22 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                     {phaseVisible('hndlHnfl') &&
                       (result.hndlRiskWindow || result.tnflRiskWindow) &&
                       cfg('hndlHnfl').state !== 'hidden' && (
-                        <div id="report-section-hndlHnfl">
-                          <ReportHNDLHNFLSection
-                            hndl={result.hndlRiskWindow}
-                            hnfl={result.tnflRiskWindow}
-                            defaultOpen={cfg('hndlHnfl').state === 'open'}
-                            headerExtra={
-                              <AskAssistantButton
-                                question="Explain Harvest Now Decrypt Later risk for my organization"
-                                className="print:hidden"
-                              />
-                            }
-                          />
-                        </div>
+                        <HndlHnflWindowsSection
+                          hndl={result.hndlRiskWindow}
+                          hnfl={result.tnflRiskWindow}
+                          defaultOpen={cfg('hndlHnfl').state === 'open'}
+                        />
                       )}
 
                     {/* HNDL warning for quick assessments with high sensitivity */}
                     {!isComprehensive &&
                       !result.hndlRiskWindow &&
                       ((dataSensitivity ?? []).includes('critical') ||
-                        (dataSensitivity ?? []).includes('high')) && (
-                        <div className="glass-panel p-4 border-l-4 border-l-warning flex items-start gap-3">
-                          <AlertTriangle size={18} className="text-warning shrink-0 mt-0.5" />
-                          <div>
-                            <p className="text-sm font-semibold text-foreground">
-                              HNDL Risk Not Quantified
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              This quick assessment did not include data retention information.
-                              Harvest-Now-Decrypt-Later risk cannot be calculated. For sensitive
-                              long-lived data, run a Comprehensive Assessment to quantify this
-                              exposure.
-                            </p>
-                          </div>
-                        </div>
-                      )}
+                        (dataSensitivity ?? []).includes('high')) && <HndlNotQuantifiedWarning />}
 
                     {/* HNFL warning for quick assessments with signing algorithms */}
                     {!isComprehensive && !result.tnflRiskWindow && hasSigningAlgos && (
-                      <div className="glass-panel p-4 border-l-4 border-l-destructive flex items-start gap-3">
-                        <AlertTriangle size={18} className="text-destructive shrink-0 mt-0.5" />
-                        <div>
-                          <p className="text-sm font-semibold text-foreground">
-                            HNFL Risk Not Quantified
-                          </p>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Your assessment includes signature algorithms vulnerable to Shor&apos;s
-                            algorithm. Harvest-Now-Forge-Later risk cannot be calculated without
-                            credential lifetime data. Run a Comprehensive Assessment to quantify
-                            signature key exposure.
-                          </p>
-                        </div>
-                      </div>
+                      <HnflNotQuantifiedWarning />
                     )}
 
                     {/* Cryptographic Discovery */}
@@ -1285,430 +610,37 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                     {phaseVisible('algorithmMigration') &&
                       result.algorithmMigrations.length > 0 &&
                       cfg('algorithmMigration').state !== 'hidden' && (
-                        <CollapsibleSection
-                          id="report-section-algorithmMigration"
-                          title="Algorithm Migration Priority"
-                          icon={<ShieldAlert className="text-primary" size={20} />}
+                        <AlgorithmMigrationSection
+                          algorithmMigrations={result.algorithmMigrations}
+                          migrationEffort={result.migrationEffort}
+                          industry={industry}
                           defaultOpen={cfg('algorithmMigration').state === 'open'}
-                          className="print:break-inside-auto"
-                          infoTip="algorithmMigration"
-                          headerExtra={
-                            <AskAssistantButton
-                              question={`What are the recommended PQC algorithm migrations for ${industry}?`}
-                              className="print:hidden"
-                            />
-                          }
-                        >
-                          <div className="overflow-x-auto">
-                            <table className="w-full text-sm">
-                              <thead>
-                                <tr className="border-b border-border text-left">
-                                  <th
-                                    scope="col"
-                                    className="py-2 pr-3 text-muted-foreground font-medium"
-                                  >
-                                    Current
-                                  </th>
-                                  <th
-                                    scope="col"
-                                    className="py-2 pr-3 text-muted-foreground font-medium"
-                                  >
-                                    Vulnerable?
-                                  </th>
-                                  <th
-                                    scope="col"
-                                    className="py-2 pr-3 text-muted-foreground font-medium"
-                                  >
-                                    PQC Replacement
-                                  </th>
-                                  {result.migrationEffort && (
-                                    <>
-                                      <th
-                                        scope="col"
-                                        className="py-2 pr-3 text-muted-foreground font-medium"
-                                      >
-                                        Effort
-                                      </th>
-                                      <th
-                                        scope="col"
-                                        className="py-2 pr-3 text-muted-foreground font-medium"
-                                      >
-                                        Scope
-                                      </th>
-                                    </>
-                                  )}
-                                  <th
-                                    scope="col"
-                                    className="py-2 text-muted-foreground font-medium"
-                                  >
-                                    Notes
-                                  </th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {result.algorithmMigrations.map((algo) => {
-                                  const effort = result.migrationEffort?.find(
-                                    (e) => e.algorithm === algo.classical
-                                  )
-                                  return (
-                                    <tr key={algo.classical} className="border-b border-border/50">
-                                      <td className="py-2.5 pr-3 font-medium text-foreground">
-                                        {algo.classical}
-                                      </td>
-                                      <td className="py-2.5 pr-3">
-                                        {algo.quantumVulnerable ? (
-                                          <span className="flex items-center gap-1 text-destructive">
-                                            <AlertTriangle size={14} /> Yes
-                                          </span>
-                                        ) : (
-                                          <span className="flex items-center gap-1 text-success">
-                                            <CheckCircle size={14} /> No
-                                          </span>
-                                        )}
-                                      </td>
-                                      <td className="py-2.5 pr-3 text-primary">
-                                        <div className="flex items-center gap-2">
-                                          <span>{algo.replacement}</span>
-                                          {algo.quantumVulnerable &&
-                                            !algo.replacement.includes('No change') && (
-                                              <>
-                                                <Link
-                                                  to="/playground"
-                                                  className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground hover:text-primary transition-colors whitespace-nowrap print:hidden"
-                                                  title="Try in Playground"
-                                                >
-                                                  <FlaskConical size={10} />
-                                                  <span className="hidden lg:inline">Try</span>
-                                                </Link>
-                                                {(() => {
-                                                  const learnLink = getLearnLink(algo.replacement)
-                                                  if (!learnLink) return null
-                                                  return (
-                                                    <Link
-                                                      to={learnLink.path}
-                                                      className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground hover:text-primary transition-colors whitespace-nowrap print:hidden"
-                                                      title={`Learn about ${learnLink.label}`}
-                                                    >
-                                                      <BookOpen size={10} />
-                                                      <span className="hidden lg:inline">
-                                                        {learnLink.label}
-                                                      </span>
-                                                    </Link>
-                                                  )
-                                                })()}
-                                              </>
-                                            )}
-                                        </div>
-                                      </td>
-                                      {result.migrationEffort && (
-                                        <>
-                                          <td className="py-2.5 pr-3">
-                                            {effort ? (
-                                              <span
-                                                className={clsx(
-                                                  'text-xs font-bold px-2 py-0.5 rounded-full',
-
-                                                  complexityConfig[effort.complexity]?.bg ??
-                                                    'bg-muted',
-
-                                                  complexityConfig[effort.complexity]?.color ??
-                                                    'text-muted-foreground'
-                                                )}
-                                              >
-                                                {effort.complexity}
-                                              </span>
-                                            ) : (
-                                              <span className="text-xs text-muted-foreground">
-                                                —
-                                              </span>
-                                            )}
-                                          </td>
-                                          <td className="py-2.5 pr-3">
-                                            {effort ? (
-                                              <span
-                                                className={clsx(
-                                                  'text-xs font-bold px-2 py-0.5 rounded-full',
-
-                                                  scopeConfig[effort.estimatedScope]?.bg ??
-                                                    'bg-muted',
-
-                                                  scopeConfig[effort.estimatedScope]?.color ??
-                                                    'text-muted-foreground'
-                                                )}
-                                              >
-                                                {scopeConfig[effort.estimatedScope]?.label ??
-                                                  effort.estimatedScope}
-                                              </span>
-                                            ) : (
-                                              <span className="text-xs text-muted-foreground">
-                                                —
-                                              </span>
-                                            )}
-                                          </td>
-                                        </>
-                                      )}
-                                      <td className="py-2.5 text-muted-foreground text-xs">
-                                        {algo.notes}
-                                      </td>
-                                    </tr>
-                                  )
-                                })}
-                              </tbody>
-                            </table>
-                            <div className="flex items-center gap-4 mt-3 print:hidden">
-                              <Link
-                                to={`/algorithms${
-                                  result.algorithmMigrations
-                                    .filter((a) => a.quantumVulnerable)
-                                    .map((a) => a.classical).length > 0
-                                    ? `?highlight=${encodeURIComponent(
-                                        result.algorithmMigrations
-                                          .filter((a) => a.quantumVulnerable)
-                                          .map((a) => a.classical)
-                                          .join(',')
-                                      )}`
-                                    : ''
-                                }`}
-                                className="flex items-center gap-1.5 text-xs text-primary hover:underline"
-                              >
-                                <ArrowRight size={12} />
-                                Compare algorithms
-                              </Link>
-                            </div>
-                          </div>
-                        </CollapsibleSection>
+                        />
                       )}
 
                     {/* Compliance Impact */}
                     {phaseVisible('complianceImpact') &&
                       result.complianceImpacts.length > 0 &&
                       cfg('complianceImpact').state !== 'hidden' && (
-                        <CollapsibleSection
-                          id="report-section-complianceImpact"
-                          title="Compliance Impact"
-                          icon={<CheckCircle className="text-primary" size={20} />}
+                        <ComplianceImpactSection
+                          complianceImpacts={result.complianceImpacts}
+                          industry={industry}
+                          country={country}
                           defaultOpen={cfg('complianceImpact').state === 'open'}
-                          className="print:break-inside-auto"
-                          infoTip="complianceImpact"
-                          headerExtra={
-                            <AskAssistantButton
-                              question={`What PQC compliance requirements apply to ${industry} in ${country}?`}
-                              className="print:hidden"
-                            />
-                          }
-                        >
-                          <div className="space-y-3">
-                            {result.complianceImpacts.map((c) => (
-                              <div
-                                key={c.framework}
-                                className={clsx(
-                                  'p-3 rounded-lg border text-sm',
-                                  c.requiresPQC === true
-                                    ? 'border-warning/30 bg-warning/5'
-                                    : c.requiresPQC === null
-                                      ? 'border-muted/50 bg-muted/5'
-                                      : 'border-border'
-                                )}
-                              >
-                                <div className="flex items-center justify-between mb-1">
-                                  <span className="font-semibold text-foreground">
-                                    {c.framework}
-                                  </span>
-                                  <span
-                                    className={clsx(
-                                      'text-xs font-bold px-2 py-0.5 rounded-full',
-                                      c.requiresPQC === true
-                                        ? 'bg-warning/10 text-warning'
-                                        : c.requiresPQC === null
-                                          ? 'bg-muted/20 text-muted-foreground'
-                                          : 'bg-muted text-muted-foreground'
-                                    )}
-                                  >
-                                    {c.requiresPQC === true
-                                      ? 'PQC Required'
-                                      : c.requiresPQC === null
-                                        ? 'Status unknown'
-                                        : 'No PQC mandate yet'}
-                                  </span>
-                                </div>
-                                <p className="text-xs text-muted-foreground">
-                                  <strong>Deadline:</strong> {c.deadline}
-                                </p>
-                                <p className="text-xs text-muted-foreground">{c.notes}</p>
-                                {(() => {
-                                  const fullFw = complianceFrameworks.find(
-                                    (f) => f.label === c.framework
-                                  )
-                                  if (!fullFw) return null
-                                  const hasRefs =
-                                    fullFw.libraryRefs.length > 0 || fullFw.timelineRefs.length > 0
-                                  if (!hasRefs) return null
-                                  return (
-                                    <div className="flex flex-wrap gap-1 mt-1.5 print:hidden">
-                                      {fullFw.libraryRefs.map((ref) => (
-                                        <Link
-                                          to={`/library?q=${encodeURIComponent(ref)}`}
-                                          key={ref}
-                                          className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors"
-                                          title={`View ${ref} in Library`}
-                                        >
-                                          <BookOpen size={8} />
-                                          {ref}
-                                        </Link>
-                                      ))}
-                                      {fullFw.timelineRefs.map((ref) => (
-                                        <Link
-                                          to="/timeline"
-                                          key={ref}
-                                          className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent font-medium hover:bg-accent/20 transition-colors"
-                                          title={`${ref} in Timeline`}
-                                        >
-                                          <Calendar size={8} />
-                                          {ref}
-                                        </Link>
-                                      ))}
-                                    </div>
-                                  )
-                                })()}
-                              </div>
-                            ))}
-                            <Link
-                              to={`/compliance?tab=compliance${industry ? `&industry=${encodeURIComponent(industry)}` : ''}${country ? `&country=${encodeURIComponent(country)}` : ''}`}
-                              className="flex items-center gap-1.5 text-xs text-primary hover:underline mt-3 print:hidden"
-                            >
-                              <ArrowRight size={12} />
-                              Explore all compliance frameworks
-                            </Link>
-                          </div>
-                          <div className="mt-4 pt-4 border-t border-border">
-                            <h4 className="text-sm font-semibold text-foreground mb-2">
-                              Profile-driven applicability
-                            </h4>
-                            <p className="text-xs text-muted-foreground mb-3">
-                              Frameworks, threats, library docs, and milestones the engine
-                              identifies as applicable to your industry and country.
-                            </p>
-                            <ApplicabilityPanel variant="report-section" />
-                          </div>
-                        </CollapsibleSection>
+                        />
                       )}
 
                     {/* Recommended Actions */}
                     {phaseVisible('recommendedActions') &&
                       cfg('recommendedActions').state !== 'hidden' && (
-                        <CollapsibleSection
-                          id="report-section-recommendedActions"
-                          title={`Recommended Actions${cfg('recommendedActions').maxItems ? ` (Top ${cfg('recommendedActions').maxItems})` : ''}`}
-                          icon={<ArrowRight className="text-primary" size={20} />}
+                        <RecommendedActionsSection
+                          recommendedActions={result.recommendedActions}
+                          maxItems={cfg('recommendedActions').maxItems}
+                          industry={industry}
+                          relevantSoftware={relevantSoftware}
+                          isPathVisible={isPathVisible}
                           defaultOpen={cfg('recommendedActions').state === 'open'}
-                          className="print:break-inside-auto"
-                          infoTip="recommendedActions"
-                          headerExtra={
-                            <AskAssistantButton
-                              question={`What should I prioritize for PQC migration in ${industry}?`}
-                              className="print:hidden"
-                            />
-                          }
-                        >
-                          <div className="space-y-3">
-                            {result.recommendedActions
-                              .slice(0, cfg('recommendedActions').maxItems)
-                              .map((action) => (
-                                <div
-                                  key={action.priority}
-                                  className="flex items-start gap-3 p-3 rounded-lg border border-border hover:border-primary/30 transition-colors"
-                                >
-                                  <div
-                                    className={clsx(
-                                      'w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 border-2',
-                                      action.category === 'immediate'
-                                        ? 'border-destructive text-destructive'
-                                        : action.category === 'short-term'
-                                          ? 'border-warning text-warning'
-                                          : 'border-border text-muted-foreground'
-                                    )}
-                                  >
-                                    {action.priority}
-                                  </div>
-                                  <div className="flex-1">
-                                    <p className="text-sm text-foreground">{action.action}</p>
-                                    <div className="flex items-center gap-3 mt-1">
-                                      <span
-                                        className={clsx(
-                                          'text-[10px] font-bold uppercase',
-                                          action.category === 'immediate'
-                                            ? 'text-destructive'
-                                            : action.category === 'short-term'
-                                              ? 'text-warning'
-                                              : 'text-muted-foreground'
-                                        )}
-                                      >
-                                        {action.category}
-                                      </span>
-                                      {action.effort && (
-                                        <span
-                                          className={clsx(
-                                            'text-[10px] font-bold uppercase px-1.5 py-0.5 rounded',
-
-                                            effortConfig[action.effort]?.bg ?? 'bg-muted',
-
-                                            effortConfig[action.effort]?.color ??
-                                              'text-muted-foreground'
-                                          )}
-                                        >
-                                          {effortConfig[action.effort]?.label ?? action.effort}{' '}
-                                          effort
-                                        </span>
-                                      )}
-                                      {isPathVisible(action.relatedModule) && (
-                                        <Link
-                                          to={
-                                            action.relatedModule.startsWith('/migrate') && industry
-                                              ? `${action.relatedModule}${action.relatedModule.includes('?') ? '&' : '?'}industry=${encodeURIComponent(industry)}`
-                                              : action.relatedModule
-                                          }
-                                          className="text-xs text-primary hover:underline flex items-center gap-1 print:hidden"
-                                        >
-                                          <ArrowRight size={10} />
-                                          Explore
-                                        </Link>
-                                      )}
-                                    </div>
-                                    {action.relatedModule.startsWith('/migrate') &&
-                                      relevantSoftware.length > 0 && (
-                                        <div className="flex flex-wrap gap-1 mt-1.5 print:hidden">
-                                          <span className="text-[10px] text-muted-foreground/70">
-                                            Tools:
-                                          </span>
-                                          {relevantSoftware.slice(0, 2).map((sw) => (
-                                            <Link
-                                              to={`/migrate?industry=${encodeURIComponent(industry)}`}
-                                              key={sw.softwareName}
-                                              className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors"
-                                            >
-                                              {sw.softwareName}
-                                            </Link>
-                                          ))}
-                                        </div>
-                                      )}
-                                    {action.drivers && action.drivers.length > 0 && (
-                                      <div
-                                        className="mt-1.5 text-[10px] text-muted-foreground leading-relaxed"
-                                        title={`Based on your answers: ${action.drivers
-                                          .map(formatDriver)
-                                          .join('; ')}`}
-                                      >
-                                        <span className="font-semibold">
-                                          Based on your answers:{' '}
-                                        </span>
-                                        {action.drivers.map(formatDriver).join('; ')}
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                              ))}
-                          </div>
-                        </CollapsibleSection>
+                        />
                       )}
 
                     {/* Migration Roadmap */}
@@ -1786,40 +718,15 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                     {/* Industry Threat Landscape */}
                     {phaseVisible('threatLandscape') &&
                       cfg('threatLandscape').state !== 'hidden' && (
-                        <div
-                          id="report-section-threatLandscape"
-                          className="print:break-before-page print:break-inside-auto"
-                        >
-                          <CollapsibleSection
-                            title={
-                              industry
-                                ? `${industry} Threat Landscape`
-                                : 'Industry Threat Landscape'
-                            }
-                            icon={<ShieldAlert className="text-destructive" size={20} />}
-                            defaultOpen={cfg('threatLandscape').state === 'open'}
-                            infoTip="threatLandscape"
-                            headerExtra={
-                              hiddenForIndustryCount > 0 ? (
-                                <FilteredChip
-                                  context={industry ?? 'industry'}
-                                  hiddenCount={hiddenForIndustryCount}
-                                  onRestore={(e) => {
-                                    e.stopPropagation()
-                                    restoreAllThreats()
-                                  }}
-                                />
-                              ) : undefined
-                            }
-                          >
-                            <ReportThreatsAppendix
-                              industry={industry}
-                              userAlgorithms={currentCrypto}
-                              hiddenThreatIds={hiddenThreats}
-                              onHideThreat={hideThreat}
-                            />
-                          </CollapsibleSection>
-                        </div>
+                        <ThreatLandscapeSection
+                          industry={industry}
+                          currentCrypto={currentCrypto}
+                          hiddenThreats={hiddenThreats}
+                          hideThreat={hideThreat}
+                          restoreAllThreats={restoreAllThreats}
+                          hiddenForIndustryCount={hiddenForIndustryCount}
+                          defaultOpen={cfg('threatLandscape').state === 'open'}
+                        />
                       )}
 
                     {/* NICE Framework Workforce Gap Report. Skipped on a shared/example
