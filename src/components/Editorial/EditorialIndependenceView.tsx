@@ -4,17 +4,33 @@ import { ShieldCheck, ExternalLink } from 'lucide-react'
 const EFFECTIVE_DATE = 'May 9, 2026'
 const POLICY_VERSION = '1.0'
 
+const TOC_SECTIONS = [
+  {
+    number: 1,
+    slug: 'what-sponsorship-buys',
+    title: 'What sponsorship buys, and what it does not',
+  },
+  { number: 2, slug: 'inclusion-criteria', title: 'Inclusion and assessment criteria' },
+  { number: 3, slug: 'coi-disclosure', title: 'Conflict-of-interest disclosure' },
+  { number: 4, slug: 'requests-to-modify', title: 'Requests to modify content' },
+  { number: 5, slug: 'funding-sources', title: 'Funding sources' },
+  { number: 6, slug: 'flag-a-violation', title: 'How to flag a violation' },
+  { number: 7, slug: 'policy-changes', title: 'Changes to this policy' },
+] as const
+
 function Section({
   number,
+  slug,
   title,
   children,
 }: {
   number: number
+  slug: string
   title: string
   children: React.ReactNode
 }) {
   return (
-    <section className="glass-panel p-6">
+    <section id={`editorial-independence-${slug}`} className="glass-panel p-6 scroll-mt-20">
       <h2 className="text-lg font-semibold text-foreground mb-4">
         {number}. {title}
       </h2>
@@ -41,6 +57,19 @@ export function EditorialIndependenceView() {
         </p>
       </div>
 
+      <nav aria-label="Table of contents" className="glass-panel p-4 mb-6">
+        <h2 className="text-sm font-semibold text-foreground mb-2">Contents</h2>
+        <ol className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-sm list-decimal list-inside">
+          {TOC_SECTIONS.map((s) => (
+            <li key={s.slug}>
+              <a href={`#editorial-independence-${s.slug}`} className="text-accent hover:underline">
+                {s.title}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+
       <div className="space-y-4">
         <section className="glass-panel p-6">
           <p className="text-sm leading-relaxed text-secondary">
@@ -51,7 +80,11 @@ export function EditorialIndependenceView() {
           </p>
         </section>
 
-        <Section number={1} title="What sponsorship buys, and what it does not">
+        <Section
+          number={1}
+          slug="what-sponsorship-buys"
+          title="What sponsorship buys, and what it does not"
+        >
           <p>
             <strong className="text-foreground">Sponsorship buys recognition.</strong> Sponsors
             receive named acknowledgment on a dedicated Sponsors page, in the site footer, and
@@ -92,7 +125,7 @@ export function EditorialIndependenceView() {
           </ul>
         </Section>
 
-        <Section number={2} title="Inclusion and assessment criteria">
+        <Section number={2} slug="inclusion-criteria" title="Inclusion and assessment criteria">
           <p>Inclusion and assessment criteria are documented and applied uniformly:</p>
           <ul className="list-disc pl-5 space-y-1">
             <li>
@@ -112,12 +145,12 @@ export function EditorialIndependenceView() {
           </ul>
           <p>
             Where a sponsor&apos;s product appears in this data, it appears on the same basis as any
-            non-sponsor product, and is marked with a &ldquo;Sponsor&rdquo; badge so readers can see
-            the relationship.
+            non-sponsor product, and is marked with a &ldquo;Sponsor&rdquo; badge on its listing in{' '}
+            <code className="text-accent">/migrate</code> so readers can see the relationship.
           </p>
         </Section>
 
-        <Section number={3} title="Conflict-of-interest disclosure">
+        <Section number={3} slug="coi-disclosure" title="Conflict-of-interest disclosure">
           <p>
             When a sponsor&apos;s product appears in editorial content &mdash; a deep-dive, case
             study, webinar, or named example &mdash; that content carries a visible sponsorship
@@ -130,7 +163,7 @@ export function EditorialIndependenceView() {
           </p>
         </Section>
 
-        <Section number={4} title="Requests to modify content">
+        <Section number={4} slug="requests-to-modify" title="Requests to modify content">
           <p>
             We will publicly disclose any vendor request to modify, remove, or re-rank a listing in
             our reference data. We will not act on such requests, except to:
@@ -146,12 +179,14 @@ export function EditorialIndependenceView() {
           <p>Disclosure is published in the changelog and on the relevant data page.</p>
         </Section>
 
-        <Section number={5} title="Funding sources">
+        <Section number={5} slug="funding-sources" title="Funding sources">
           <p>PQC Today is funded by:</p>
           <ul className="list-disc pl-5 space-y-1">
-            <li>Vendor and enterprise sponsorship</li>
-            <li>Consultant tier subscriptions</li>
-            <li>Individual donations</li>
+            <li>Vendor and enterprise sponsorship (custom direct agreements)</li>
+            <li>
+              Community sponsorship via GitHub Sponsors &mdash; Supporter, Sponsor, and Patron tiers
+              (see <code className="text-accent">/sponsor</code>)
+            </li>
           </ul>
           <p>
             We do not accept funding from any source that requires editorial influence as a
@@ -159,7 +194,7 @@ export function EditorialIndependenceView() {
           </p>
         </Section>
 
-        <Section number={6} title="How to flag a violation">
+        <Section number={6} slug="flag-a-violation" title="How to flag a violation">
           <p>
             If you believe this policy has been violated &mdash; that a listing, ranking,
             assessment, or content item has been influenced by sponsorship &mdash; please report it
@@ -177,11 +212,24 @@ export function EditorialIndependenceView() {
           </p>
           <p>
             We will investigate, respond publicly within 30 days, and publish findings in the
-            changelog. Reports may be made anonymously through a third-party tipline (planned).
+            changelog. An anonymous third-party tipline is planned but not yet built &mdash; no
+            target date is committed yet, and this paragraph will be updated with a real link the
+            day it ships. Until then, reports that need to stay anonymous from us can still be filed
+            under a pseudonymous GitHub account via{' '}
+            <a
+              href="https://github.com/pqctoday-org/pqctoday-hub/discussions/new/choose"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent hover:underline inline-flex items-center gap-1"
+            >
+              GitHub Discussions
+              <ExternalLink size={12} />
+            </a>
+            , which does not require disclosing your real identity to us.
           </p>
         </Section>
 
-        <Section number={7} title="Changes to this policy">
+        <Section number={7} slug="policy-changes" title="Changes to this policy">
           <p>
             Changes to this policy are tracked in the changelog and require a 30-day notice period
             before taking effect. Material weakening of the policy &mdash; reducing transparency,
