@@ -78,6 +78,7 @@ const MODULE_IDS = new Set([
   // adding (not guessed) -- see migrate-data-remediation-plan-07072026.md.
   'slh-dsa',
   'cbom',
+  'crypto-registry',
   'verification-closure',
   'crypto-mgmt-modernization',
   'pqc-candidates',

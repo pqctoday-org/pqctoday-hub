@@ -39,6 +39,7 @@ import { PatentsInsightsRedesign } from './PatentsInsightsRedesign'
 import { PatentsFilterBar } from './PatentsFilterBar'
 import { PatentsDrillBanner } from './PatentsDrillBanner'
 import { PatentDetailDrawer } from './PatentDetailDrawer'
+import { PatentsRecentlyAdded } from './PatentsRecentlyAdded'
 
 const PQC_ONLY_LS_KEY = 'pqc-patents-pqc-only'
 const SORT_LS_KEY = 'pqc-patents-sort'
@@ -59,6 +60,7 @@ const FILTER_PARAMS = [
   'nistStatus',
   'pqc',
   'fips',
+  'filingYear',
 ]
 
 function readPqcOnly(): boolean {
@@ -151,6 +153,13 @@ export function PatentsViewRedesign() {
 
   const exploreResults = usePatentResults(displayPatents, params, sortKey, sortDir)
   const kpis = usePatentKpis(displayPatents)
+  const recentlyAdded = useMemo(
+    () =>
+      displayPatents
+        .filter((p) => p.status === 'New')
+        .sort((a, b) => new Date(b.issueDate).getTime() - new Date(a.issueDate).getTime()),
+    [displayPatents]
+  )
 
   const setTab = useCallback(
     (tab: string, opts?: { keepPatent?: boolean }) => {
@@ -335,6 +344,8 @@ export function PatentsViewRedesign() {
       {selectedPersona === 'curious' && (
         <PreviewBanner pageContext="Researcher, Architect, Developer" />
       )}
+
+      <PatentsRecentlyAdded items={recentlyAdded} onOpen={handleSelect} />
 
       <Tabs value={activeTab} onValueChange={(t) => setTab(t)}>
         <TabsList>

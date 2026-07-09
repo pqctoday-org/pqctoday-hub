@@ -277,7 +277,11 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               <span>
                 <strong className="text-foreground">SLH-DSA for SBOMs</strong> — stateless
                 hash-based signatures preferred for long-lived attestation documents (20+ year
-                validity).
+                validity). See the{' '}
+                <Link to="/learn/sbom" className="text-primary hover:underline">
+                  SBOM module
+                </Link>{' '}
+                for what those attestation documents actually contain.
               </span>
             </div>
             <div className="flex items-start gap-2">
