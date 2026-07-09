@@ -50,7 +50,7 @@ export function buildPlanCbom(input: PlanExportInput): Record<string, unknown> {
       timestamp: input.timestamp,
       component: { type: 'application', name: 'PQC Migration Plan' },
       properties: [
-        { name: 'pqc:standard', value: 'NIST IR 8547 / CNSA 2.0' },
+        { name: 'pqc:standard', value: 'NIST IR 8547 (Initial Public Draft) / CNSA 2.0' },
         { name: 'pqc:assetCount', value: String(assets.length) },
       ],
     },

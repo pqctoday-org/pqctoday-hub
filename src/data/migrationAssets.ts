@@ -153,7 +153,7 @@ export const REPLACE_ASSETS: ReplaceAsset[] = [
     hndl: true,
     deadlineLabel: 'External-facing — highest HNDL exposure',
     note: 'Enable hybrid X25519+ML-KEM-768 key exchange on edge TLS terminators. Drop-in for modern stacks (OpenSSL 3.5+, BoringSSL, recent CDNs) — no application change required.',
-    focusPersonas: ['architect'],
+    focusPersonas: ['architect', 'executive'],
   },
   {
     id: 'vpn',
@@ -209,7 +209,7 @@ export const REPLACE_ASSETS: ReplaceAsset[] = [
     hndl: false,
     deadlineLabel: 'Firmware outlives the signing key',
     note: 'Adopt SLH-DSA (stateless, conservative) or ML-DSA for long-lived firmware. Verifiers in the field must understand the new algorithm before you switch — stage a hybrid signature period.',
-    focusPersonas: ['architect'],
+    focusPersonas: ['architect', 'developer'],
   },
   {
     id: 'hsm',
@@ -237,7 +237,7 @@ export const REPLACE_ASSETS: ReplaceAsset[] = [
     hndl: true,
     deadlineLabel: 'API transport carries HNDL risk',
     note: 'The KMS API transport (TLS) is the near-term exposure; key-wrap algorithm support follows the provider roadmap. Prefer providers exposing hybrid KEM key-wrap.',
-    focusPersonas: ['ops'],
+    focusPersonas: ['ops', 'executive', 'developer'],
   },
   {
     id: 'msg',
@@ -279,7 +279,7 @@ export const REPLACE_ASSETS: ReplaceAsset[] = [
     hndl: true,
     deadlineLabel: 'Symmetric-safe; re-wrap the keys',
     note: 'AES-256 itself is quantum-resistant — the exposure is the RSA/ECDH key-wrapping of the data-encryption keys. Re-wrap DEKs under an ML-KEM hybrid KEK; no bulk re-encryption needed.',
-    focusPersonas: ['ops'],
+    focusPersonas: ['ops', 'developer'],
   },
 ]
 
