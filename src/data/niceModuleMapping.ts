@@ -224,12 +224,27 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     isCommonGround: false,
   },
   {
+    moduleId: 'sbom',
+    competencyAreas: ['CA-RISK'],
+    tier: 'practitioner',
+    workRoles: ['security-architect', 'security-developer', 'systems-security-analyst'],
+    isCommonGround: false,
+    nfExtra: ['NF-COM-011'],
+  },
+  {
     moduleId: 'cbom',
     competencyAreas: ['CA-CRYPTO', 'CA-RISK'],
     tier: 'practitioner',
     workRoles: ['security-architect', 'security-developer', 'systems-security-analyst'],
     isCommonGround: false,
     nfExtra: ['NF-COM-004', 'NF-COM-011'],
+  },
+  {
+    moduleId: 'crypto-registry',
+    competencyAreas: ['CA-CRYPTO'],
+    tier: 'practitioner',
+    workRoles: ['security-architect', 'security-developer', 'systems-security-analyst'],
+    isCommonGround: false,
   },
   {
     moduleId: 'verification-closure',

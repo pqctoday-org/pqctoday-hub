@@ -247,7 +247,10 @@ export function PatentsInsightsRedesign({ patents, onFilter }: Props) {
         <h3 className="mb-2 text-[10.5px] font-bold uppercase tracking-[0.06em] text-muted-foreground">
           Filing activity over time
         </h3>
-        <PatentsFilingYearChart patents={patents} />
+        <PatentsFilingYearChart
+          patents={patents}
+          onYearClick={(year) => onFilter({ filingYear: String(year) })}
+        />
       </div>
 
       {/* Four landscape donuts */}

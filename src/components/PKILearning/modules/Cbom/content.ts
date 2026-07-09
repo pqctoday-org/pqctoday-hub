@@ -1,22 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * Structured content for the CBOM module.
- *
- * `standards` is intentionally empty until the CBOM/codification standards
- * (CycloneDX/ECMA-424, SP 1800-38, PKCS#11, KMIP, RFC 9881, …) are added to
- * the library CSV — `getStandard()` throws on an unknown id, so these are
- * back-filled in the data-layer pass once the library entries exist.
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
+import { getStandard } from '@/data/standardsRegistry'
 import { getAlgorithm } from '@/data/algorithmProperties'
 
 export const content: ModuleContent = {
   moduleId: 'cbom',
   version: '1.0.0',
-  lastReviewed: '2026-06-23',
+  lastReviewed: '2026-07-08',
 
-  // Back-filled in the data-layer pass once library entries exist.
-  standards: [],
+  standards: [
+    getStandard('OWASP-CycloneDX-CBOM-Guide'),
+    getStandard('CycloneDX-Cryptography-Registry'),
+  ],
 
   algorithms: [
     getAlgorithm('ML-KEM-768'),
