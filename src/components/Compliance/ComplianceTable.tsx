@@ -26,6 +26,7 @@ import { complianceFrameworks } from '@/data/complianceData'
 import { MobileFilterDrawer } from '../Migrate/MobileFilterDrawer'
 import { matchesTrustTierFilter } from '../common/TrustTierFilter'
 import type { TrustTier } from '@/data/trustScore'
+import { canLiveRefreshComplianceData } from './services'
 
 /**
  * Maps a live cert record's `source` to the framework ID used to look up
@@ -336,6 +337,9 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   certType = 'all',
   onCertTypeChange,
 }) => {
+  // Static production build has no live-scrape backend — refresh can only do
+  // something meaningfully different from re-reading the bundled snapshot in dev.
+  const canLiveRefresh = useMemo(() => canLiveRefreshComplianceData(), [])
   // Local state fallbacks (used when not in controlled mode)
   const [localFilterText, setLocalFilterText] = useState(initialFilter ?? '')
   const [localPqcFilters, setLocalPqcFilters] = useState<string[]>([])
@@ -771,9 +775,12 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
         </div>
         <div className="flex items-center gap-2">
           {lastUpdated && (
-            <span className="hidden md:flex items-center gap-1 text-sm text-muted-foreground">
+            <span
+              className="hidden md:flex items-center gap-1 text-sm text-muted-foreground"
+              title="Newest record date in this dataset — not the moment your browser loaded the page."
+            >
               <Calendar size={14} />
-              Last Updated: {lastUpdated.toLocaleDateString()} {lastUpdated.toLocaleTimeString()}
+              Records as of {lastUpdated.toLocaleDateString()}
             </span>
           )}
           <Button
@@ -786,18 +793,34 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
             <Download size={14} />
             Export CSV
           </Button>
-          {onRefresh && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onRefresh}
-              disabled={isRefreshing}
-              className="gap-2"
-            >
-              <RefreshCw size={14} className={clsx(isRefreshing && 'animate-spin')} />
-              Refresh Data
-            </Button>
-          )}
+          {onRefresh &&
+            (canLiveRefresh ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onRefresh}
+                disabled={isRefreshing}
+                className="gap-2"
+              >
+                <RefreshCw size={14} className={clsx(isRefreshing && 'animate-spin')} />
+                Refresh Data
+              </Button>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                disabled
+                className="gap-2"
+                title={
+                  lastUpdated
+                    ? `Live refresh requires a dev environment — showing the ${lastUpdated.toLocaleDateString()} snapshot published with this site.`
+                    : 'Live refresh requires a dev environment — showing the snapshot published with this site.'
+                }
+              >
+                <RefreshCw size={14} />
+                Refresh Data
+              </Button>
+            ))}
         </div>
       </div>
 
