@@ -12,6 +12,10 @@
 #
 # Signing key: set ATTESTATION_PRIVATE_KEY_FILE, or place the maintainer key at
 # ~/.pqctoday-attestation/maintainer-private.key (default).
+#
+# Any CSV snapshot change (new dated / _rN file, old one archived) must be
+# accompanied by a public/data/revisions.jsonl entry in the same session,
+# following the schema in src/hooks/useRevisions.ts — see /revisions.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
