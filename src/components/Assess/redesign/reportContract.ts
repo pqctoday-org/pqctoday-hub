@@ -5,13 +5,14 @@
 // Fast track produces the always-visible report sections; the extra full-track
 // questions unlock the 2 genuinely-gated analytical sections (per-domain risk
 // breakdown, progress-over-time). The live report gates exactly those two on
-// `result.categoryScores` (ReportLockedOverlay) — the only data a comprehensive
-// assessment adds that a quick one lacks. The algorithm migration map and the
-// dated roadmap are NOT gated (both tracks populate them), so they are
-// deliberately absent here — advertising them as locked was misleading.
+// `result.assessmentProfile?.mode === 'comprehensive'` (ReportLockedOverlay) —
+// NOT on `result.categoryScores`, which the engine emits (coarse) on every
+// track to feed the sim & KPIs, so its mere presence can't distinguish a fast
+// report from a full one. `mode` is the honest signal, derived from whether
+// the extended full-track questions were actually answered.
 //
 // FULL_LOCKED_SECTIONS is the HARD contract: these names must match the report's
-// `!result.categoryScores` ReportLockedOverlay sections. Keep them in sync if the
+// `!isComprehensive` ReportLockedOverlay sections. Keep them in sync if the
 // report's gated set changes. FAST_REPORT_SECTIONS is a curated summary for the
 // chooser card (it merges the report's separate "Key findings" and "Threat
 // landscape" into one line), so it is intentionally not a 1:1 section map.
