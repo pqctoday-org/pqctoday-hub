@@ -29,6 +29,8 @@ import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBa
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
+import { Button } from '@/components/ui/button'
+import { ANNUAL_BREACH_PROBABILITY_PCT, type OrgSizeTier } from '@/data/roiBaselines'
 import {
   DEFAULT_COMPLIANCE_INCIDENT_RATE,
   MIGRATION_COST_FLOOR,
@@ -61,12 +63,21 @@ interface ROIAssumptions {
   hndlExposurePct: number
   crqcAttackerUpliftPct: number
   detectionTimelineUpliftPct: number
+  /** Organization-size tier driving the default `breachProbability` prior
+   *  (Cyentia IRIS 2025). The slider can still override the resulting number. */
+  orgSizeTier: OrgSizeTier
   breachProbability: number
   applicableFrameworks: number
   penaltyPerIncident: number
   horizonYears: number
   discountRatePct: number
 }
+
+const ORG_SIZE_TIER_OPTIONS: { tier: OrgSizeTier; label: string }[] = [
+  { tier: 'smb', label: 'SMB' },
+  { tier: 'average', label: 'Average org' },
+  { tier: 'fortune1000', label: 'Fortune-1000-class' },
+]
 
 interface TornadoRow {
   label: string
@@ -122,7 +133,11 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
       hndlExposurePct: 50,
       crqcAttackerUpliftPct: 50,
       detectionTimelineUpliftPct: 50,
-      breachProbability: 15,
+      // Default prior comes from Cyentia IRIS 2025's organization-size anchors
+      // (average org ~9%/yr), replacing the previous unsourced flat 15% —
+      // matches the same tiered values BreachCostModel uses.
+      orgSizeTier: 'average',
+      breachProbability: ANNUAL_BREACH_PROBABILITY_PCT.average,
       applicableFrameworks: defaultApplicableFrameworks,
       penaltyPerIncident: 2_000_000,
       horizonYears: 3,
@@ -131,9 +146,13 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     [data.totalProducts, defaultApplicableFrameworks]
   )
 
-  const [assumptions, setAssumptions] = useState<ROIAssumptions>(
-    () => savedAssumptions ?? computeDefaultAssumptions()
-  )
+  const [assumptions, setAssumptions] = useState<ROIAssumptions>(() => {
+    // Merge over fresh defaults (not just `savedAssumptions ?? defaults`) so a
+    // model saved before a field was added (e.g. orgSizeTier) still round-trips
+    // without a crash or an undefined value reaching the UI.
+    const defaults = computeDefaultAssumptions()
+    return savedAssumptions ? { ...defaults, ...savedAssumptions } : defaults
+  })
 
   // A restored saved model never re-derives from the user's current /migrate +
   // assessment data on its own (the lazy initializer above only runs once) —
@@ -148,6 +167,14 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     },
     []
   )
+
+  const selectOrgSizeTier = useCallback((tier: OrgSizeTier) => {
+    setAssumptions((prev) => ({
+      ...prev,
+      orgSizeTier: tier,
+      breachProbability: ANNUAL_BREACH_PROBABILITY_PCT[tier],
+    }))
+  }, [])
 
   const quantumMultiplier = useMemo(
     () =>
@@ -334,11 +361,13 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     md += `- **Total capex: ${formatCurrency(financials.totalMigrationCost)}**\n`
     md += `- Annual opex: ${assumptions.annualOpexPct}% of capex = ${formatCurrency(financials.annualOpex)}/year\n\n`
     md += `### Risk Reduction (quantum amplification ${quantumMultiplier.toFixed(2)}× - illustrative)\n`
-    md += `- Industry baseline (${data.industry || 'Other'}): ${formatCurrency(industryBreachBaseline)} (IBM 2024)\n`
+    md += `- Industry baseline (${data.industry || 'Other'}): ${formatCurrency(industryBreachBaseline)} (IBM 2025)\n`
     md += `- HNDL exposure: ${assumptions.hndlExposurePct}%\n`
     md += `- Post-CRQC attacker uplift: ${assumptions.crqcAttackerUpliftPct}%\n`
     md += `- Detection-timeline uplift: ${assumptions.detectionTimelineUpliftPct}%\n`
-    md += `- Annual breach probability: ${assumptions.breachProbability}%\n`
+    md += `- Annual breach probability: ${assumptions.breachProbability}% (organization size: ${
+      ORG_SIZE_TIER_OPTIONS.find((o) => o.tier === assumptions.orgSizeTier)?.label ?? 'Average org'
+    } — Cyentia IRIS 2025)\n`
     md += `- **Annual savings: ${formatCurrency(financials.breachCostSavings)}**\n\n`
     md += `### Regulatory Exposure\n`
     md += `- Applicable frameworks: ${assumptions.applicableFrameworks} of ${data.frameworksByIndustry.length}\n`
@@ -793,6 +822,23 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
             >
               Annual Breach Probability
             </label>
+            <div className="flex flex-wrap items-center gap-1.5 mb-2">
+              {ORG_SIZE_TIER_OPTIONS.map(({ tier, label }) => (
+                <Button
+                  key={tier}
+                  type="button"
+                  variant="ghost"
+                  onClick={() => selectOrgSizeTier(tier)}
+                  className={`h-auto px-2 py-0.5 rounded-full border text-[11px] ${
+                    assumptions.orgSizeTier === tier
+                      ? 'bg-primary text-primary-foreground border-primary'
+                      : 'border-border hover:text-foreground'
+                  }`}
+                >
+                  {label} ({ANNUAL_BREACH_PROBABILITY_PCT[tier]}%)
+                </Button>
+              ))}
+            </div>
             <input
               id="roi-breach-probability"
               type="range"
@@ -810,6 +856,10 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
               </span>
               <span>50%</span>
             </div>
+            <p className="text-[10px] text-muted-foreground mt-1">
+              Default reflects the selected organization size — Cyentia IRIS 2025 anchors: SMB
+              ~2%/yr, average org ~9%/yr, Fortune-1000-class ~25%/yr. Drag the slider to override.
+            </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-3">
             <p className="text-xs font-mono text-muted-foreground">

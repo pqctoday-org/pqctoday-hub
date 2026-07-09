@@ -32,6 +32,7 @@
  *    penalty. See inactionDrivers.ts for how the deadline/penalty are sourced.
  */
 import { computeBreachCosts, type DataSensitivityClass } from './breachCostModel'
+import { ANNUAL_BREACH_PROBABILITY_PCT } from '@/data/roiBaselines'
 import type { InactionMandateType } from './inactionDrivers'
 
 export interface DelayScenarioInputs {
@@ -69,7 +70,9 @@ export interface DelayScenarioInputs {
 }
 
 export const DELAY_MODEL_DEFAULTS = {
-  annualBreachProbPct: 15,
+  // Cyentia IRIS 2025 average-org anchor, not an unsourced flat figure — see
+  // roiBaselines.ts. Matches the ROI Calculator and Breach Scenario Simulator.
+  annualBreachProbPct: ANNUAL_BREACH_PROBABILITY_PCT.average,
   baseYearsOfData: 5,
   hndlFactorPct: 30,
   dataSensitivityClass: 'general-pii' as DataSensitivityClass,
