@@ -28,7 +28,33 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
-## [4.18.0] - 2026-07-08
+## [4.19.0] - 2026-07-09
+
+A hands-on release for the KMIP playground, the Report page, and the Simulation
+board: the in-browser KMIP engine is rebuilt from the real 0.13.1 engine with
+eight more operations now genuinely executed instead of simulated, the report
+gains a Cryptographic Bill of Materials section built on the new CycloneDX 1.7
+standard, and the Simulation board's framework references were audited line by
+line against what actually ships.
+
+### Added
+
+- **Three new KMIP lessons with a guided tour, glossary, and knowledge checks** [view:/playground] [persona:developer] [persona:architect]: the CACP Learn track now continues past the basics with three new walkthroughs (lessons 7–9), a guided tour of the KMIP 3.0 tab, an in-context glossary, and knowledge checks so you can confirm what you learned.
+- **A rollback recipe for batch key migrations** [view:/playground] [persona:ops] [persona:architect]: the KMIP workbench now ships a batch-Undo rollback recipe plus validated pass/fail scenarios for each migration policy, so you can see what a safe abort looks like before trying one for real.
+- **The Report page now includes a Cryptographic Bill of Materials (CBOM) section** [view:/report] [persona:architect] [persona:executive]: your report can now show the site's machine-readable inventory of cryptographic assets alongside the existing risk and compliance sections.
+
+### Changed
+
+- **The site's CBOM now follows CycloneDX 1.7** [view:/report] [persona:architect] [persona:developer]: upgraded from 1.6, adopting the new Cryptography Registry identifiers and adding classical (non-PQC) crypto assets, so the inventory names algorithms the same way scanning tools do.
+- **Eight KMIP operations promoted from simulated to real** [view:/playground] [persona:developer]: the in-browser KMIP engine was rebuilt from engine release 0.13.1; operation labels are now honest about which commands execute for real versus which are simulated, and the OASIS test-corpus replay is aligned to the exact engine baseline it runs against.
+
+### Fixed
+
+- **Simulation framework references now match what actually ships** [view:/simulation]: corrected gate approval authorities, stale live/gap labels on linked tools and reports, and drift in each phase's list of produced artifacts.
+- **Simulation jargon is now explained where it appears** [view:/simulation] [persona:curious] [persona:executive]: terms like TNFL and the governance vocabulary get plain-language glosses, activities surface their teaching text, and the board now shows which phases run in parallel instead of implying a strict sequence.
+- **Closed topical gaps in Simulation phase content** [view:/simulation]: fixed Phase 5 wave content, filled Phase 1 and 2 topical gaps, corrected the Phase 3 risk-scoring label, and added the missing Foundations F.5 coverage.
+
+## [4.18.0] - 2026-07-09
 
 A cross-page accuracy release covering Editorial Independence, Simulation, Explore, the Landing page, and the Sponsor page: the Editorial Independence page's promises about sponsor badges and the anonymous tipline now match what's actually built, the Simulation board acknowledges when Researcher and Curious visitors are shown the Executive seat by default, the Explore launcher's "recommended for you" badges are now driven by a single source of truth instead of a hand-maintained list, the Landing page's headline facts and role-adaptation summary are now derived from live data instead of hardcoded text, and the Sponsor page's tier benefits now match what's actually delivered today.
 
