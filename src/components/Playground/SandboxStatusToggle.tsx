@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { Container, Loader2, Mail, RefreshCw } from 'lucide-react'
+import { Container, Loader2, ExternalLink, RefreshCw } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '../ui/button'
 import { useSandboxStore } from '@/store/useSandboxStore'
+import { SANDBOX_ACCESS_URL } from './cryptoLabMeta'
 
 interface SandboxStatusToggleProps {
   className?: string
@@ -117,18 +118,20 @@ export const SandboxStatusToggle: React.FC<SandboxStatusToggleProps> = ({ classN
             <div className="min-w-0">
               <p className="text-sm font-semibold text-foreground">Container access required</p>
               <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                Sandbox scenarios run inside isolated Docker containers hosted by PQC Today. Contact
-                us to have your environment provisioned — containers are spun up on demand and
+                Sandbox scenarios run inside isolated Docker containers hosted by PQC Today. File a
+                request to have your environment provisioned — containers are spun up on demand and
                 destroyed after the session.
               </p>
             </div>
           </div>
           <a
-            href="mailto:pqctoday@gmail.com?subject=Sandbox%20Access%20Request"
+            href={SANDBOX_ACCESS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-foreground text-xs font-medium rounded-lg transition-colors border border-primary/20 w-full justify-center"
           >
-            <Mail className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-            pqctoday@gmail.com — Request access
+            <ExternalLink className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+            Request sandbox access
           </a>
           <Button
             variant="ghost"

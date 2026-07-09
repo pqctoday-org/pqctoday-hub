@@ -23,7 +23,7 @@ import {
   Star,
   Container,
   FlaskConical,
-  Mail,
+  ExternalLink,
   Wrench,
   RefreshCw,
   Zap,
@@ -47,7 +47,7 @@ import {
   PERSONA_CHIP_LABEL,
   FEATURE_PLAYGROUNDS,
   KMIP_PLAYGROUND_ROUTE,
-  SANDBOX_ACCESS_MAILTO,
+  SANDBOX_ACCESS_URL,
   type FeatureAccent,
 } from './cryptoLabMeta'
 import {
@@ -613,10 +613,12 @@ const ToolDetailModal: React.FC<ToolModalProps> = ({
 
           {locked && (
             <a
-              href={SANDBOX_ACCESS_MAILTO}
+              href={SANDBOX_ACCESS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="mt-3 flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground"
             >
-              <Mail className="w-3 h-3" aria-hidden="true" />
+              <ExternalLink className="w-3 h-3" aria-hidden="true" />
               Container access required — request access
             </a>
           )}
@@ -736,17 +738,19 @@ const SandboxRuntimeToggle: React.FC = () => {
             <div className="min-w-0">
               <p className="text-[12px] font-semibold text-foreground">Container access required</p>
               <p className="mt-0.5 text-[10.5px] leading-relaxed text-muted-foreground">
-                Sandbox scenarios run in isolated Docker containers hosted by PQC Today. Contact us
-                to have your environment provisioned.
+                Sandbox scenarios run in isolated Docker containers hosted by PQC Today. File a
+                request to have your environment provisioned.
               </p>
             </div>
           </div>
           <a
-            href={SANDBOX_ACCESS_MAILTO}
+            href={SANDBOX_ACCESS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
             className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-primary/20 bg-primary/10 px-2.5 py-1.5 text-[11px] font-medium text-foreground hover:bg-primary/20"
           >
-            <Mail className="h-3 w-3" aria-hidden="true" />
-            pqctoday@gmail.com — Request access
+            <ExternalLink className="h-3 w-3" aria-hidden="true" />
+            Request sandbox access
           </a>
           <Button
             variant="ghost"
@@ -1391,7 +1395,7 @@ export const PlaygroundWorkshop = () => {
           </span>
           <div className="min-w-0 flex-1">
             <p className="text-[14px] font-bold text-foreground">
-              Crypto-Agile KMIP Playground
+              KMIP Control Plane
               <span className="ml-1.5 rounded bg-primary/15 px-1.5 py-0.5 text-[10px] font-semibold text-primary align-middle">
                 Featured
               </span>

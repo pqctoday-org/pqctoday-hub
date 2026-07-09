@@ -20,7 +20,7 @@ test.beforeEach(async ({ page }) => {
 
 test('scenario picker: filters by active policy and validates verdicts', async ({ page }) => {
   await page.goto('/playground/cacp')
-  await expect(page.getByRole('heading', { name: /Crypto-Agility Control Plane/i })).toBeVisible({
+  await expect(page.getByRole('heading', { name: /KMIP Control Plane/i })).toBeVisible({
     timeout: 30000,
   })
   await expect(page.getByRole('heading', { name: 'Test scenarios' })).toBeVisible({
