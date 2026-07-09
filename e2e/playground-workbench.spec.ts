@@ -45,7 +45,9 @@ test('renders the two-pane workbench — sidebar, Overview and full-playground c
   // The three full-playground feature cards (link to the special routes).
   await expect(page.getByText('Interactive Playground')).toBeVisible()
   await expect(page.locator('a[href="/playground/hsm"]')).toBeVisible()
-  await expect(page.getByText('KMIP Control Plane')).toBeVisible()
+  // "KMIP Control Plane" is now the one consistent name used on both the feature
+  // card and the "Featured" banner further down this Overview (playground.md item 3).
+  await expect(page.getByText('KMIP Control Plane').first()).toBeVisible()
 
   // Default role is Everyone; no minimal-mode gate exists anymore.
   await expect(page.getByText('Everyone')).toBeVisible()
@@ -82,4 +84,42 @@ test('search spans all categories and switches to a flat result list', async ({ 
   await page.getByRole('searchbox', { name: /search tools/i }).fill('bitcoin')
   await expect(page.getByRole('heading', { name: /Results for/i })).toBeVisible()
   await expect(page.getByText('Bitcoin Transaction')).toBeVisible()
+})
+
+// playground.md item 4 — deep-linked sub-pages must show executive orientation
+// too, not just the workshop index (previously the only page with this banner).
+test('executive persona deep-linked directly to /playground/interactive sees orientation framing', async ({
+  page,
+}) => {
+  await page.addInitScript(seedPersona, 'executive')
+  await page.goto('/playground/interactive')
+
+  await expect(
+    page.getByText('Interactive Playground is a hands-on engineering workbench.')
+  ).toBeVisible({
+    timeout: 15000,
+  })
+  await expect(page.getByRole('link', { name: 'Command Center →' })).toBeVisible()
+})
+
+test('executive persona deep-linked directly to /playground/hsm sees orientation framing', async ({
+  page,
+}) => {
+  await page.addInitScript(seedPersona, 'executive')
+  await page.goto('/playground/hsm')
+
+  await expect(
+    page.getByText('PKCS#11 HSM Playground is a hands-on engineering workbench.')
+  ).toBeVisible({ timeout: 15000 })
+})
+
+test('executive persona deep-linked directly to /playground/cacp sees orientation framing', async ({
+  page,
+}) => {
+  await page.addInitScript(seedPersona, 'executive')
+  await page.goto('/playground/cacp')
+
+  await expect(
+    page.getByText('KMIP Control Plane is a hands-on engineering workbench.')
+  ).toBeVisible({ timeout: 20000 })
 })
