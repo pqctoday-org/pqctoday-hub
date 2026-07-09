@@ -856,6 +856,34 @@ const debouncedSaveACVP = (records: ComplianceRecord[]) => {
   }, 1000)
 }
 
+/**
+ * The genuine "as of" date for a set of compliance records: the newest
+ * per-record `date` (ISO YYYY-MM-DD) actually present in the data, not the
+ * moment the browser happened to fetch it. On the static production build,
+ * `fetchComplianceData` always returns the same snapshot regardless of a
+ * "refresh" click, so a wall-clock timestamp would falsely imply the data
+ * just changed — this instead reports when the underlying records were last
+ * dated.
+ */
+export const computeRecordsSnapshotDate = (records: ComplianceRecord[]): Date | null => {
+  let latest: number | null = null
+  for (const record of records) {
+    if (!record.date) continue
+    const t = new Date(record.date).getTime()
+    if (Number.isNaN(t)) continue
+    if (latest === null || t > latest) latest = t
+  }
+  return latest === null ? null : new Date(latest)
+}
+
+/**
+ * Whether a "Refresh Data" action can do anything beyond re-reading the same
+ * static snapshot. The static production build has no live-scrape backend
+ * (`fetchComplianceData` short-circuits to the bundled JSON whenever
+ * `import.meta.env.PROD`), so refresh is only meaningfully live in dev.
+ */
+export const canLiveRefreshComplianceData = (): boolean => !import.meta.env.PROD
+
 export const useComplianceRefresh = () => {
   const [data, setData] = useState<ComplianceRecord[]>([])
   const [loading, setLoading] = useState(false)
@@ -868,13 +896,7 @@ export const useComplianceRefresh = () => {
     try {
       const records = await fetchComplianceData(force)
       setData(records)
-
-      const tsMap = await localforage.getItem<Record<string, string>>(CACHE_TIMESTAMP_KEY)
-      if (tsMap && tsMap['_global']) {
-        setLastUpdated(new Date(tsMap['_global']))
-      } else {
-        setLastUpdated(new Date())
-      }
+      setLastUpdated(computeRecordsSnapshotDate(records))
     } catch (err) {
       console.error('Failed to fetch compliance data:', err)
       setError('Failed to refresh data. Please try again.')
