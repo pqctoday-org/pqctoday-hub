@@ -30,7 +30,7 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.17.0] - 2026-07-09
 
-A cross-page accuracy release covering Timeline, Compliance, Threats, Patents, Leaders, and Learn: deadline mandates on the Timeline are now individually sourced and labeled instead of guessed, the Compliance page covers the actual federal executive order behind the 2030/2031 deadlines, the Threats page's quantum-computer arrival estimate is now the same number everywhere it appears, Patents share links no longer lose your filters, Leaders profiles are split into a curated set and the full contributor list, and several Learn modules got corrected facts, real quiz coverage, and checkpoints that only count as passed when you've actually passed them.
+A cross-page accuracy release covering Timeline, Compliance, Threats, Patents, Leaders, Learn, and the Library: deadline mandates on the Timeline are now individually sourced and labeled instead of guessed, the Compliance page covers the actual federal executive order behind the 2030/2031 deadlines, the Threats page's quantum-computer arrival estimate is now the same number everywhere it appears, Patents share links no longer lose your filters, Leaders profiles are split into a curated set and the full contributor list, several Learn modules got corrected facts and real quiz coverage, and dozens of Library references were re-verified, fixed, or retired.
 
 ### Fixed
 
@@ -61,10 +61,16 @@ A cross-page accuracy release covering Timeline, Compliance, Threats, Patents, L
 - **Three previously-orphaned Learn modules (governance/risk, team staffing, and SOC incident response) now have quiz coverage and are properly routed into the relevant role-based learning path** [view:/learn], instead of being reachable only by direct link with no way to test your understanding.
 - **Retired a redundant Learn module that duplicated a newer, fuller one on team staffing** [view:/learn], and retired the old five-mode Learn dashboard (old links now redirect to the current Learn experience).
 - **Learn module reference panels now show when each module's content was last reviewed** [view:/learn] [persona:researcher].
+- **Filled in missing descriptions for 29 Library entries** [view:/library] that previously just repeated the document's title with no summary of what it actually covers.
+- **Re-checked every Library link that was flagged as broken or unverified** [view:/library]: of the 100+ flagged links, the large majority were confirmed live and corrected (including a wrong ETSI document version), and the remainder that are genuinely unreachable (or fabricated document numbers that don't exist in the issuing standards body's catalog) are now retired instead of sitting in the catalog unresolved.
+- **Fixed a Library entry that incorrectly implied FN-DSA (FIPS 206) has already been published** [view:/library]; it remains in draft.
+- **Corrected a mismatched document title on a Library reference** [view:/library] that had been carrying an unrelated draft's title instead of its own.
+- **Normalized a handful of Library confidence scores that were on the wrong 0–1 scale** [view:/library] instead of the 0–100 scale used everywhere else, and surfaced the confidence score in the document detail view.
+- **The Library can now be filtered by why you're looking something up** [view:/library] (reference material vs. general education), corrected for about 40 entries that a keyword-based guess had filed under the wrong purpose.
 
 ### Data
 
-- Refreshed the Timeline, Compliance, Patents, and Leaders datasets with new dated snapshots and re-verified sourcing; added quiz question coverage for previously-untested Learn topics (software bill of materials, cryptography bill of materials, crypto-algorithm registry naming, and post-quantum verification/closure).
+- Refreshed the Timeline, Compliance, Patents, Leaders, and Library datasets with new dated snapshots and re-verified sourcing; added quiz question coverage for previously-untested Learn topics (software bill of materials, cryptography bill of materials, crypto-algorithm registry naming, and post-quantum verification/closure).
 
 ## [4.16.0] - 2026-07-09
 
