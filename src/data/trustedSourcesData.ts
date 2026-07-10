@@ -10,6 +10,8 @@ export interface TrustedSource {
     | 'Industry_Workgroup'
     | 'Academic'
     | 'Industry_Analyst'
+    | 'Vendor'
+    | 'Open_Source_Project'
   trustTier: '1_Authoritative' | '2_Core' | '3_Supporting' | '4_Contextual'
   region: 'Americas' | 'EMEA' | 'APAC' | 'Global'
   primaryUrl: string
