@@ -1,73 +1,270 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
- * self-containment-checks.ts — DS03 + DS19 + DS20 (STUB, not implemented)
+ * self-containment-checks.ts — DS03 / DS19 / DS19-VOCAB / DS20
  *
- * validate-data-integrity.ts has imported runSelfContainmentChecks,
- * runStatusColumnChecks, runVocabTagChecks, and runOrphanCheck from this
- * module since commit 8b8b80d8 (2026-05-10, "feat(phase2.1): missing-
- * reference candidate suggestions via embeddings"). This file itself was
- * never committed — `git log --all --follow` finds zero history for it at
- * any point, on any branch. It is not part of the 2026-04-25 "strip private
- * tooling" removal (that commit predates the first reference to it); it
- * looks like the intended module was written locally and never pushed, or
- * the import was added in anticipation of a file that was never finished.
+ * Implemented 2026-07-09 (data-pipelines remediation, WP1.1). The original
+ * module referenced by validate-data-integrity.ts was never committed and had
+ * no recoverable git history (see the 07-07 stub this file replaces), so these
+ * checks are defined from the repo's actual, documented CSV lifecycle rules:
  *
- * Discovered 2026-07-07 while restoring the OTHER 10 validator modules that
- * genuinely were stripped by the 04-25 commit (all recovered cleanly from
- * git history — see scripts/validators/{content-accuracy,cross-ref,
- * enrichment-accuracy,enrichment-crosscheck,freshness,graph-consistency,
- * local-resource,report-builder,source-document-quality,url-coverage}-checks.ts).
- * This one has no history to recover from.
+ *   DS03  Self-containment: every dated snapshot is cut from the genuine
+ *         previous generation — a key present in the previous file must still
+ *         exist in the latest one (active or deprecated). Rows are never
+ *         silently dropped; retirement is an explicit status change.
+ *   DS19  Status column integrity: status ∈ {active, deprecated}; a
+ *         deprecated row must carry deprecated_at + deprecated_reason.
+ *   DS19-VOCAB  Controlled vocabularies on shared provenance columns:
+ *         peer_reviewed ∈ {yes, no, partial, ''} and source_url_quality ∈
+ *         {url_authoritative, url_needs_review, url_unverified, ''}.
+ *   DS20  Restore integrity: a row that flips deprecated → active between
+ *         generations must show new proof (local_file / proof_url / SourceUrl)
+ *         — deprecation-for-lost-proof may only be reversed with real proof.
  *
- * This stub exists ONLY so validate-data-integrity.ts can import successfully
- * and run its other ~19 check families. It deliberately does NOT invent DS03/
- * DS19/DS20 logic — the original rule definitions may differ from any guess
- * made here, and a fabricated check that reports PASS would be worse than an
- * honest SKIP (silent false confidence vs. a visible gap). Real
- * self-containment/status-column/vocab-tag/orphan-row rules need someone who
- * knows the intended DS03/DS19/DS20 spec to write this for real.
- *
- * See: pqctoday-hub-migrate-data-remediation-plan-07072026.md,
- * project_validate_data_integrity_broken.md (memory).
+ * The patents family is deliberately not covered here: its lifecycle is
+ * enforced by the patents pipeline itself (pqctoday-priv/patents).
  */
 
-import type { CheckResult } from './types.js'
+import fs from 'fs'
+import path from 'path'
+import Papa from 'papaparse'
+import { getDataDir } from './data-loader.js'
+import type { CheckResult, Finding } from './types.js'
 
-function stub(id: string, description: string): CheckResult {
+type Row = Record<string, string>
+
+interface Family {
+  prefix: string
+  /** Key column(s); multiple columns form a composite key. */
+  key: string[]
+  /** Column holding proof/source evidence, for the DS20 restore rule. */
+  proofColumns?: string[]
+}
+
+const FAMILIES: Family[] = [
+  { prefix: 'library_', key: ['reference_id'], proofColumns: ['local_file', 'url'] },
+  { prefix: 'compliance_', key: ['id'], proofColumns: ['url'] },
+  { prefix: 'quantum_threats_hsm_industries_', key: ['threat_id'], proofColumns: ['local_file'] },
+  {
+    prefix: 'timeline_',
+    key: ['Country', 'OrgName', 'Title'],
+    proofColumns: ['local_file', 'SourceUrl'],
+  },
+  { prefix: 'pqc_product_catalog_', key: ['product_id'], proofColumns: ['proof_url'] },
+  { prefix: 'vendors_', key: ['vendor_id'] },
+  { prefix: 'leaders_', key: ['Name'] },
+]
+
+const VALID_STATUS = new Set(['active', 'deprecated'])
+const VALID_PEER_REVIEWED = new Set(['yes', 'no', 'partial', ''])
+const VALID_URL_QUALITY = new Set(['url_authoritative', 'url_needs_review', 'url_unverified', ''])
+
+interface Generation {
+  file: string
+  rows: Row[]
+}
+
+/** The two most recent dated generations of a family (latest first). */
+function latestGenerations(prefix: string, count: number): Generation[] {
+  const dir = getDataDir()
+  const parsed = fs
+    .readdirSync(dir)
+    .filter((f) => f.startsWith(prefix))
+    .map((f) => {
+      const m = f.match(/_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/)
+      if (!m) return null
+      return {
+        file: f,
+        key: `${m[3]}-${m[1]}-${m[2]}#${String(Number(m[4] ?? 0)).padStart(3, '0')}`,
+      }
+    })
+    .filter((p): p is { file: string; key: string } => p !== null)
+    .sort((a, b) => b.key.localeCompare(a.key))
+    .slice(0, count)
+  return parsed.map(({ file }) => ({
+    file,
+    rows: Papa.parse<Row>(fs.readFileSync(path.join(dir, file), 'utf-8').trim(), {
+      header: true,
+      skipEmptyLines: true,
+    }).data,
+  }))
+}
+
+function rowKey(row: Row, key: string[]): string {
+  return key.map((k) => (row[k] ?? '').trim()).join('|')
+}
+
+function check(
+  id: string,
+  description: string,
+  sourceA: string,
+  severity: CheckResult['severity'],
+  findings: Finding[]
+): CheckResult {
   return {
     id,
     category: 'structure',
     description,
-    sourceA: 'scripts/validators/self-containment-checks.ts',
+    sourceA,
     sourceB: null,
-    severity: 'WARNING',
-    status: 'SKIP',
-    findings: [
-      {
-        csv: '',
-        row: null,
-        field: '',
-        value: '',
-        message:
-          'Not implemented — this module was never committed (no git history found). ' +
-          'Needs real design/implementation, not a guessed stand-in. See file header.',
-      },
-    ],
+    severity,
+    status: findings.length === 0 ? 'PASS' : 'FAIL',
+    findings,
   }
 }
 
 export function runSelfContainmentChecks(): CheckResult[] {
-  return [stub('DS03', 'Data self-containment check (rows do not depend on external un-committed state)')]
+  const findings: Finding[] = []
+  for (const fam of FAMILIES) {
+    const gens = latestGenerations(fam.prefix, 2)
+    if (gens.length < 2) continue
+    const [latest, previous] = gens
+    const latestKeys = new Set(latest.rows.map((r) => rowKey(r, fam.key)))
+    previous.rows.forEach((r, i) => {
+      const k = rowKey(r, fam.key)
+      if (k.replaceAll('|', '') === '') return
+      if (!latestKeys.has(k)) {
+        findings.push({
+          csv: latest.file,
+          row: i + 2,
+          field: fam.key.join('|'),
+          value: k,
+          message: `Row present in ${previous.file} is missing from ${latest.file} — rows must be deprecated, never dropped`,
+        })
+      }
+    })
+  }
+  return [
+    check(
+      'DS03',
+      'Self-containment: latest snapshot carries every key from the previous generation',
+      'dated CSV families',
+      'ERROR',
+      findings
+    ),
+  ]
 }
 
 export function runStatusColumnChecks(): CheckResult[] {
-  return [stub('DS19', 'Status column vocabulary/consistency check')]
+  const findings: Finding[] = []
+  for (const fam of FAMILIES) {
+    const [latest] = latestGenerations(fam.prefix, 1)
+    if (!latest || latest.rows.length === 0 || !('status' in latest.rows[0])) continue
+    latest.rows.forEach((r, i) => {
+      const status = (r.status ?? '').trim()
+      if (!VALID_STATUS.has(status)) {
+        findings.push({
+          csv: latest.file,
+          row: i + 2,
+          field: 'status',
+          value: status,
+          message: `status must be 'active' or 'deprecated'`,
+        })
+        return
+      }
+      if (status === 'deprecated') {
+        if (!(r.deprecated_at ?? '').trim())
+          findings.push({
+            csv: latest.file,
+            row: i + 2,
+            field: 'deprecated_at',
+            value: '',
+            message: 'deprecated row is missing deprecated_at',
+          })
+        if (!(r.deprecated_reason ?? '').trim())
+          findings.push({
+            csv: latest.file,
+            row: i + 2,
+            field: 'deprecated_reason',
+            value: '',
+            message: 'deprecated row is missing deprecated_reason',
+          })
+      }
+    })
+  }
+  return [
+    check(
+      'DS19',
+      'Status column integrity: active|deprecated enum + deprecation metadata',
+      'dated CSV families',
+      'ERROR',
+      findings
+    ),
+  ]
 }
 
 export function runVocabTagChecks(): CheckResult[] {
-  return [stub('DS19-VOCAB', 'Controlled-vocabulary tag check')]
+  const findings: Finding[] = []
+  for (const fam of FAMILIES) {
+    const [latest] = latestGenerations(fam.prefix, 1)
+    if (!latest || latest.rows.length === 0) continue
+    const cols = Object.keys(latest.rows[0])
+    latest.rows.forEach((r, i) => {
+      if (cols.includes('peer_reviewed')) {
+        const v = (r.peer_reviewed ?? '').trim()
+        if (!VALID_PEER_REVIEWED.has(v))
+          findings.push({
+            csv: latest.file,
+            row: i + 2,
+            field: 'peer_reviewed',
+            value: v,
+            message: `peer_reviewed must be yes|no|partial|'' (got '${v}')`,
+          })
+      }
+      if (cols.includes('source_url_quality')) {
+        const v = (r.source_url_quality ?? '').trim()
+        if (!VALID_URL_QUALITY.has(v))
+          findings.push({
+            csv: latest.file,
+            row: i + 2,
+            field: 'source_url_quality',
+            value: v,
+            message: `source_url_quality must be url_authoritative|url_needs_review|url_unverified|'' (got '${v}')`,
+          })
+      }
+    })
+  }
+  return [
+    check(
+      'DS19-VOCAB',
+      'Controlled vocabulary: peer_reviewed + source_url_quality canonical values',
+      'dated CSV families',
+      'ERROR',
+      findings
+    ),
+  ]
 }
 
 export function runOrphanCheck(): CheckResult[] {
-  return [stub('DS20', 'Trust-path orphan check on restored/deprecated rows')]
+  const findings: Finding[] = []
+  for (const fam of FAMILIES) {
+    const gens = latestGenerations(fam.prefix, 2)
+    if (gens.length < 2) continue
+    const [latest, previous] = gens
+    const prevStatus = new Map(
+      previous.rows.map((r) => [rowKey(r, fam.key), (r.status ?? '').trim()])
+    )
+    latest.rows.forEach((r, i) => {
+      const k = rowKey(r, fam.key)
+      if ((r.status ?? '').trim() !== 'active') return
+      if (prevStatus.get(k) !== 'deprecated') return
+      const hasProof = (fam.proofColumns ?? []).some((c) => (r[c] ?? '').trim() !== '')
+      if (!hasProof)
+        findings.push({
+          csv: latest.file,
+          row: i + 2,
+          field: 'status',
+          value: k,
+          message: `Row was deprecated in ${previous.file} and re-activated without proof (${(fam.proofColumns ?? []).join('/')} all empty) — re-activation requires real proof`,
+        })
+    })
+  }
+  return [
+    check(
+      'DS20',
+      'Restore integrity: deprecated → active flips carry new proof',
+      'dated CSV families',
+      'WARNING',
+      findings
+    ),
+  ]
 }
