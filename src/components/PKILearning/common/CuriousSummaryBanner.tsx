@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { ChevronDown, ChevronUp, Lightbulb, X, ImageOff } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -152,13 +152,21 @@ export const CuriousSummaryBanner = ({
   const idealImgSrc = `/images/infographics/pqcstd_${moduleId}.png`
 
   const [imgSrc, setImgSrc] = useState(idealImgSrc)
-
-  useEffect(() => {
+  const [imgFailed, setImgFailed] = useState(false)
+  // Reset when the module changes (adjust-state-during-render pattern —
+  // avoids a cascading-render setState-in-effect).
+  const [prevIdealImgSrc, setPrevIdealImgSrc] = useState(idealImgSrc)
+  if (prevIdealImgSrc !== idealImgSrc) {
+    setPrevIdealImgSrc(idealImgSrc)
     setImgSrc(idealImgSrc)
-  }, [idealImgSrc])
+    setImgFailed(false)
+  }
 
   const handleImgError = () => {
-    // Single-variant policy: only pqcstd_*.png is shipped. No fallback chain.
+    // Single-variant policy: only pqcstd_*.png is shipped. No fallback chain —
+    // a module without its infographic hides the visual pane entirely rather
+    // than rendering a broken image.
+    setImgFailed(true)
   }
 
   if (!isCuriousMode && !isFullPage) return null
@@ -215,26 +223,28 @@ export const CuriousSummaryBanner = ({
         <div className={isFullPage ? '' : 'px-4 pb-4 -mt-1'}>
           {/* Mobile Layout: Full-width visual stacked above In Simple Terms */}
           <div className="md:hidden flex flex-col gap-y-4">
-            <div className="w-full bg-muted/30 rounded-lg border border-border p-2 sm:p-3 flex flex-col items-center">
-              <Button
-                variant="ghost"
-                type="button"
-                onClick={() => setLightboxOpen(true)}
-                className="block w-full p-0 h-auto bg-transparent hover:bg-transparent cursor-zoom-in"
-                aria-label="View infographic full size"
-              >
-                <img
-                  src={`${imgSrc}?v=pqcstd_v3`}
-                  alt={altText}
-                  loading="lazy"
-                  onError={handleImgError}
-                  className="w-full h-auto max-h-[60vh] object-contain rounded-md shadow-md"
-                />
-              </Button>
-              <p className="text-center text-[11px] text-muted-foreground mt-1.5">
-                Tap image to zoom
-              </p>
-            </div>
+            {!imgFailed && (
+              <div className="w-full bg-muted/30 rounded-lg border border-border p-2 sm:p-3 flex flex-col items-center">
+                <Button
+                  variant="ghost"
+                  type="button"
+                  onClick={() => setLightboxOpen(true)}
+                  className="block w-full p-0 h-auto bg-transparent hover:bg-transparent cursor-zoom-in"
+                  aria-label="View infographic full size"
+                >
+                  <img
+                    src={`${imgSrc}?v=pqcstd_v3`}
+                    alt={altText}
+                    loading="lazy"
+                    onError={handleImgError}
+                    className="w-full h-auto max-h-[60vh] object-contain rounded-md shadow-md"
+                  />
+                </Button>
+                <p className="text-center text-[11px] text-muted-foreground mt-1.5">
+                  Tap image to zoom
+                </p>
+              </div>
+            )}
 
             <div className="overflow-x-auto">
               <div className="prose prose-sm max-w-none text-muted-foreground prose-headings:text-foreground prose-headings:text-sm prose-headings:font-semibold prose-p:text-sm prose-p:leading-relaxed prose-strong:text-foreground prose-ul:text-sm prose-li:text-sm">
@@ -260,28 +270,34 @@ export const CuriousSummaryBanner = ({
           </div>
 
           {/* Desktop Layout: Visual on left, In Simple Terms on right */}
-          <div className="hidden md:grid md:grid-cols-[6fr_4fr] gap-x-6">
+          <div
+            className={
+              imgFailed ? 'hidden md:block' : 'hidden md:grid md:grid-cols-[6fr_4fr] gap-x-6'
+            }
+          >
             {/* Left: Infographic */}
-            <div className="w-full bg-muted/30 rounded-lg border border-border p-3 flex flex-col items-center self-start">
-              <Button
-                variant="ghost"
-                type="button"
-                onClick={() => setLightboxOpen(true)}
-                className="block w-full p-0 h-auto bg-transparent hover:bg-transparent cursor-zoom-in"
-                aria-label="View infographic full size"
-              >
-                <img
-                  src={`${imgSrc}?v=pqcstd_v3`}
-                  alt={altText}
-                  loading="lazy"
-                  onError={handleImgError}
-                  className="w-full h-auto object-contain rounded-md shadow-md"
-                />
-              </Button>
-              <p className="text-center text-[11px] text-muted-foreground mt-2">
-                Click image to zoom
-              </p>
-            </div>
+            {!imgFailed && (
+              <div className="w-full bg-muted/30 rounded-lg border border-border p-3 flex flex-col items-center self-start">
+                <Button
+                  variant="ghost"
+                  type="button"
+                  onClick={() => setLightboxOpen(true)}
+                  className="block w-full p-0 h-auto bg-transparent hover:bg-transparent cursor-zoom-in"
+                  aria-label="View infographic full size"
+                >
+                  <img
+                    src={`${imgSrc}?v=pqcstd_v3`}
+                    alt={altText}
+                    loading="lazy"
+                    onError={handleImgError}
+                    className="w-full h-auto object-contain rounded-md shadow-md"
+                  />
+                </Button>
+                <p className="text-center text-[11px] text-muted-foreground mt-2">
+                  Click image to zoom
+                </p>
+              </div>
+            )}
 
             {/* Right: In Simple Terms */}
             <div className="overflow-x-auto">

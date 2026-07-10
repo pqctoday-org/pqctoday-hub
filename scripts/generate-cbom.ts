@@ -18,7 +18,13 @@
  *   4. migrate_cpe_xref_*.csv     — NVD CPE 2.3 URIs per product, when
  *      NVD has indexed the product
  *
- * Only products with pqc_support !== 'None' are included.
+ * Inclusion filter: products whose pqc_support is 'No' (including annotated
+ * variants like 'No (classical RSA/EC only)') are EXCLUDED — a CBOM of PQC
+ * capability has nothing to assert for them. All other values in the
+ * catalog's real vocabulary ('Yes …', 'Partial …', 'Planned …', 'Unknown',
+ * 'Pending Verification', …) are INCLUDED; in particular 'Pending
+ * Verification' stays in because verification status is separate from the
+ * capability claim itself.
  *
  * Usage: npx tsx scripts/generate-cbom.ts [--dry-run]
  */
@@ -42,6 +48,15 @@ function dataVersionFromCsvName(filename: string): string {
   if (!m) throw new Error(`Cannot parse data-version date from CSV name: ${filename}`)
   const [, mm, dd, yyyy] = m
   return `${yyyy}-${mm}-${dd}T00:00:00.000Z`
+}
+
+/** Chronological sort key for dated CSVs: raw MMDDYYYY[_rN] filenames sort
+ *  lexicographically wrong across year boundaries (01…2027 < 12…2026). */
+function csvDateKey(filename: string): string {
+  const m = filename.match(/_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/)
+  if (!m) return `0000-00-00#000_${filename}`
+  const [, mm, dd, yyyy, r] = m
+  return `${yyyy}-${mm}-${dd}#${String(Number(r ?? 0)).padStart(3, '0')}`
 }
 
 /** A deterministic, real v4-shaped UUID derived from `seed` — same seed always
@@ -153,7 +168,7 @@ async function loadLatest<T extends object>(
   pattern: string
 ): Promise<{ filename: string; rows: T[] }> {
   const files = await glob(pattern, { cwd: DATA_DIR })
-  files.sort()
+  files.sort((a, b) => csvDateKey(a).localeCompare(csvDateKey(b)))
   const latest = files.at(-1)
   if (!latest) throw new Error(`No CSV found for pattern ${pattern}`)
   const raw = fs.readFileSync(path.join(DATA_DIR, latest), 'utf8')
@@ -218,9 +233,17 @@ async function main() {
       `${cpeXref.filename} (${cpeByProductId.size} matched CPEs)`
   )
 
-  const pqcProducts = products.rows.filter(
-    (p) => p.pqc_support && p.pqc_support.trim().toLowerCase() !== 'none'
-  )
+  // 07092026: the previous test (`!== 'none'`) matched ZERO catalog rows —
+  // the catalog's real vocabulary is 'Yes …' / 'Partial …' / 'Planned …' /
+  // 'No' / 'No (…)' / 'Unknown' / 'Pending Verification', never 'None' — so
+  // every row (including 221 'No' rows) shipped in the CBOM. Exclude rows
+  // whose base value (text before any parenthetical annotation) is 'No',
+  // case-insensitively. 'Pending Verification' is deliberately kept:
+  // verification status is separate from the capability claim.
+  const pqcProducts = products.rows.filter((p) => {
+    const base = (p.pqc_support || '').split('(')[0].trim().toLowerCase()
+    return base !== '' && base !== 'no'
+  })
 
   const components = pqcProducts.map((p) => {
     // Prefer the precise algorithm list from algo_product_xref. Fall back

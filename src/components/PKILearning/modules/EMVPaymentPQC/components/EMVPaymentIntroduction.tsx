@@ -496,9 +496,9 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
           <h3 className="text-sm font-semibold text-foreground">Key Migration Factors</h3>
           <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1.5">
             <li>
-              <strong className="text-foreground">FN-DSA (Falcon, FIPS 206 draft):</strong> Leading
-              candidate for constrained card chips — compact signatures (~690 bytes vs ML-DSA&apos;s
-              ~2,420 bytes)
+              <strong className="text-foreground">FN-DSA (Falcon, FIPS 206 in development):</strong>{' '}
+              Leading candidate for constrained card chips — compact signatures (~690 bytes vs
+              ML-DSA&apos;s ~2,420 bytes)
             </li>
             <li>
               <strong className="text-foreground">Hybrid approach:</strong> Dual-signature cards

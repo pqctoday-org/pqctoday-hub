@@ -32,19 +32,38 @@ jobs:
         run: npm ci
 
       - name: Run Deterministic Stage Refresh
+        id: refresh
         # No LLM in CI (per project policy: no API keys / Ollama in CI).
-        # Only Phase 1 of the enrichment script runs here. Exit code 1 just
-        # means "drift detected" — that is the trigger for the PR job below.
+        # Only the deterministic datatracker refresh runs here. Exit code 1
+        # means "drift detected" (reports written) — that is the trigger for
+        # the PR job below. Any other non-zero exit is a real script failure
+        # and must fail the workflow loudly, not be swallowed.
         run: |
-          python3 scripts/enrich-protocol-matrix.py || true
+          set +e
+          python3 scripts/enrich-protocol-matrix.py
+          code=$?
+          set -e
+          if [ "$code" -eq 0 ]; then
+            echo "drift=false" >> "$GITHUB_OUTPUT"
+          elif [ "$code" -eq 1 ] && [ -f reports/protocol-matrix-updates.json ]; then
+            echo "drift=true" >> "$GITHUB_OUTPUT"
+            # reports/ is gitignored, so surface the review doc in the run log
+            echo "--- reports/protocol-matrix-changes.md ---"
+            cat reports/protocol-matrix-changes.md
+          else
+            echo "::error::enrich-protocol-matrix.py failed (exit $code) — this is NOT drift"
+            exit "$code"
+          fi
 
       - name: Audit Matrix Hygiene
         run: npm run audit:matrix-refs
 
       - name: Apply Stage Drift (in-place edit)
-        run: npx tsx scripts/apply-protocol-matrix-updates.ts --apply --allow-dirty || true
+        if: steps.refresh.outputs.drift == 'true'
+        run: npx tsx scripts/apply-protocol-matrix-updates.ts --apply --allow-dirty
 
       - name: Open PR if changed
+        if: steps.refresh.outputs.drift == 'true'
         uses: peter-evans/create-pull-request@v8
         with:
           commit-message: 'chore(matrix): refresh protocol-matrix stages from IETF datatracker'
@@ -53,8 +72,9 @@ jobs:
             Automated weekly refresh of the PQC Protocol Support Matrix
             (`src/data/pqcProtocolMatrix.ts`).
 
-            - Source: IETF datatracker (Phase 1, deterministic — no LLM)
-            - Generated report: `reports/protocol-matrix-changes.md`
+            - Source: IETF datatracker (deterministic — no LLM)
+            - Review report: `reports/protocol-matrix-changes.md` in the
+              triggering Actions run log (reports/ is not tracked in git)
             - Hygiene gate: `npm run audit:matrix-refs` passed before this PR.
 
             Please review the diff against the report before merging. The
@@ -64,5 +84,3 @@ jobs:
           delete-branch: true
           add-paths: |
             src/data/pqcProtocolMatrix.ts
-            reports/protocol-matrix-changes.md
-            reports/protocol-matrix-updates.json

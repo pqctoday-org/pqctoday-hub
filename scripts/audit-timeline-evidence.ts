@@ -2,10 +2,19 @@
 /**
  * scripts/audit-timeline-evidence.ts
  *
- * CI gate that asserts every active Timeline CSV row has a corresponding
- * entry in `public/timeline/evidence/manifest.json` whose download_status is
- * acceptable (`ok` or `paywall`). Exits non-zero if any active row is missing
- * its on-disk evidence.
+ * CI gate that asserts every active Timeline CSV row has real, verifiable
+ * evidence. A row passes when at least one of the following holds:
+ *
+ *   (a) its `local_file` exists on disk under public/timeline/
+ *   (b) it appears in `public/timeline/evidence/manifest.json` with a healthy
+ *       download_status (`ok`, `paywall`, or `skipped`)
+ *   (c) its SourceUrl is listed in `public/timeline/skip-list.json`
+ *       (operator-acknowledged: manually-verified real source, auto-fetch
+ *       blocked — e.g. WAF or TLS incompatibility)
+ *
+ * The audit is driven by the LATEST dated src/data/timeline_*.csv — not by the
+ * manifest — so newly added rows with no evidence are caught even when the
+ * manifest is stale. Exits non-zero if any active row fails all three checks.
  *
  * Modes:
  *   (default) human-readable report
@@ -17,6 +26,7 @@
  */
 
 import { readFileSync, existsSync, readdirSync } from 'fs'
+import { createHash } from 'crypto'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import Papa from 'papaparse'
@@ -46,6 +56,7 @@ function findLatestTimelineCsv(): string {
 
 const CSV_PATH = findLatestTimelineCsv()
 const MANIFEST_PATH = join(ROOT, 'public/timeline/evidence/manifest.json')
+const SKIP_LIST_PATH = join(ROOT, 'public/timeline/skip-list.json')
 
 const JSON_MODE = process.argv.slice(2).includes('--json')
 
@@ -100,6 +111,35 @@ interface AuditSummary {
   passed: boolean
 }
 
+// --- row_key reproduction (must match scripts/download-timeline-evidence.ts) ---
+
+function slug(input: string): string {
+  return input
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
+function shortHash(input: string): string {
+  return createHash('sha256').update(input).digest('hex').slice(0, 8)
+}
+
+function rowKey(
+  country: string,
+  org: string,
+  startYear: number,
+  title: string,
+  url: string
+): string {
+  return `TL-${slug(country)}-${slug(org)}-${startYear}-${shortHash(title + url)}`
+}
+
+// Acceptable = ok | paywall | skipped. paywall is an acceptable proof-of-real-source
+// even when access is locked. skipped means the operator added the URL to
+// public/timeline/skip-list.json (manually-verified real source, but auto-fetch
+// blocked — e.g. WAF or TLS incompatibility); the skip-list entry is the audit trail.
+const ACCEPTABLE: ReadonlySet<DownloadStatus> = new Set(['ok', 'paywall', 'skipped'])
+
 function fail(message: string): never {
   if (JSON_MODE) {
     process.stdout.write(JSON.stringify({ passed: false, error: message }, null, 2) + '\n')
@@ -107,6 +147,11 @@ function fail(message: string): never {
     console.error(`audit-timeline-evidence: ${message}`)
   }
   process.exit(1)
+}
+
+/** Resolve a CSV local_file value to an absolute path under the repo. */
+function localFilePath(lf: string): string {
+  return lf.startsWith('public/') ? join(ROOT, lf) : join(ROOT, 'public/timeline', lf)
 }
 
 function main(): void {
@@ -124,35 +169,95 @@ function main(): void {
   })
   const activeRows = data.filter(
     (r): r is RawTimelineRow =>
-      !!r && !!r.Country && (r.status ?? '').trim().toLowerCase() !== 'deprecated'
+      !!r && !!r.Country && (r.status ?? '').trim().toLowerCase() === 'active'
   )
+  if (activeRows.length === 0) {
+    fail(`No active rows found in ${CSV_PATH} — a 0-row audit cannot pass.`)
+  }
 
   const manifest: TimelineManifest = JSON.parse(readFileSync(MANIFEST_PATH, 'utf-8'))
+  const byRowKey = new Map<string, TimelineManifestEntry>(
+    manifest.entries.map((e) => [e.row_key, e])
+  )
+  const bySourceUrl = new Map<string, TimelineManifestEntry>()
+  for (const e of manifest.entries) {
+    if (e.source_url && !bySourceUrl.has(e.source_url)) bySourceUrl.set(e.source_url, e)
+  }
 
-  const rowsWithCsvLocalFile = activeRows.filter((r) => !!r.local_file?.trim()).length
-  const rowsResolved = manifest.entries.filter((e) => !!e.resolved_local_file).length
+  const skipUrls: ReadonlySet<string> = existsSync(SKIP_LIST_PATH)
+    ? new Set(Object.keys(JSON.parse(readFileSync(SKIP_LIST_PATH, 'utf-8'))))
+    : new Set()
 
-  // Acceptable = ok | paywall | skipped. paywall is an acceptable proof-of-real-source
-  // even when access is locked. skipped means the operator added the URL to
-  // public/timeline/skip-list.json (manually-verified real source, but auto-fetch
-  // blocked — e.g. WAF or TLS incompatibility); the skip-list entry is the audit trail.
-  const ACCEPTABLE: ReadonlySet<DownloadStatus> = new Set(['ok', 'paywall', 'skipped'])
+  const statusCounts: Record<DownloadStatus, number> = {
+    ok: 0,
+    paywall: 0,
+    error: 0,
+    missing: 0,
+    no_url: 0,
+    skipped: 0,
+  }
+  let rowsWithCsvLocalFile = 0
+  let rowsOnDisk = 0
+  const problems: AuditSummary['problem_rows'] = []
 
-  const problems = manifest.entries.filter((e) => !ACCEPTABLE.has(e.download_status))
+  for (const row of activeRows) {
+    const country = (row.Country ?? '').trim()
+    const org = (row.OrgName ?? '').trim()
+    const title = (row.Title ?? '').trim()
+    const url = (row.SourceUrl ?? '').trim()
+    const startYear = parseInt(row.StartYear, 10) || 0
+    const localFile = (row.local_file ?? '').trim()
+    const key = rowKey(country, org, startYear, title, url)
+
+    if (localFile) rowsWithCsvLocalFile++
+
+    // (a) evidence file on disk under public/timeline/
+    const onDisk = !!localFile && existsSync(localFilePath(localFile))
+    if (onDisk) rowsOnDisk++
+
+    // (b) manifest entry with a healthy status (join by row_key, fall back to
+    //     source_url so cosmetic title edits don't orphan existing evidence)
+    const entry = byRowKey.get(key) ?? (url ? bySourceUrl.get(url) : undefined)
+    const inManifestHealthy = !!entry && ACCEPTABLE.has(entry.download_status)
+
+    // (c) operator-acknowledged skip-list entry
+    const inSkipList = !!url && skipUrls.has(url)
+
+    const rowStatus: DownloadStatus = onDisk
+      ? 'ok'
+      : inManifestHealthy
+        ? entry!.download_status
+        : inSkipList
+          ? 'skipped'
+          : entry
+            ? entry.download_status
+            : url
+              ? 'missing'
+              : 'no_url'
+    statusCounts[rowStatus]++
+
+    if (!onDisk && !inManifestHealthy && !inSkipList) {
+      problems.push({
+        row_key: key,
+        country,
+        org,
+        title,
+        download_status: rowStatus,
+        error_message:
+          entry?.error_message ??
+          (entry
+            ? null
+            : 'not on disk, not in evidence manifest, not in skip-list — run `npm run download:timeline-evidence`'),
+      })
+    }
+  }
 
   const summary: AuditSummary = {
     total_active_rows: activeRows.length,
     rows_with_csv_local_file: rowsWithCsvLocalFile,
-    rows_with_resolved_local_file: rowsResolved,
-    status_counts: manifest.status_counts,
-    problem_rows: problems.slice(0, 20).map((p) => ({
-      row_key: p.row_key,
-      country: p.country,
-      org: p.org,
-      title: p.title,
-      download_status: p.download_status,
-      error_message: p.error_message,
-    })),
+    rows_with_resolved_local_file: rowsOnDisk,
+    status_counts: statusCounts,
+    problem_rows: problems.slice(0, 20),
     passed: problems.length === 0,
   }
 
@@ -163,22 +268,24 @@ function main(): void {
 
   console.log('Timeline evidence audit')
   console.log('=======================')
-  console.log(`Source CSV       : ${manifest.source_csv}`)
+  console.log(`Source CSV       : ${CSV_PATH.replace(ROOT + '/', '')}`)
   console.log(`Manifest         : ${MANIFEST_PATH.replace(ROOT + '/', '')}`)
-  console.log(`Manifest emitted : ${manifest.generated_at}`)
+  console.log(`Manifest emitted : ${manifest.generated_at} (from ${manifest.source_csv})`)
   console.log('')
   console.log(`Active rows                       : ${summary.total_active_rows}`)
   console.log(`Rows w/ csv_local_file set        : ${summary.rows_with_csv_local_file}`)
-  console.log(`Rows w/ on-disk resolved_local_file: ${summary.rows_with_resolved_local_file}`)
+  console.log(`Rows w/ evidence file on disk     : ${summary.rows_with_resolved_local_file}`)
   console.log('')
-  console.log('Status counts:')
+  console.log('Row evidence status counts:')
   for (const [k, v] of Object.entries(summary.status_counts)) {
     console.log(`  ${k.padEnd(8)} ${v}`)
   }
   console.log('')
 
   if (problems.length === 0) {
-    console.log(`PASS — every active row has acceptable evidence (ok, paywall, or skipped).`)
+    console.log(
+      `PASS — every active row has acceptable evidence (on disk, manifest ok/paywall/skipped, or skip-listed).`
+    )
     process.exit(0)
   }
 

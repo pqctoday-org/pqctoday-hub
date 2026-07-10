@@ -456,16 +456,40 @@ function computeAllScores(): Map<string, TrustScore> {
 // Exports
 // ---------------------------------------------------------------------------
 
-function safeComputeAllScores(): Map<string, TrustScore> {
+/**
+ * Compute all trust scores without ever throwing (the UI must not crash on
+ * bad data), but NEVER silently: on failure the underlying error is logged
+ * via console.error and the returned `degraded` flag is set so callers can
+ * distinguish "no scores because computation failed" from "no scores".
+ *
+ * Exported (with an injectable compute fn) so the degraded path is testable.
+ */
+export function safeComputeAllScores(compute: () => Map<string, TrustScore> = computeAllScores): {
+  scores: Map<string, TrustScore>
+  degraded: boolean
+} {
   try {
-    return computeAllScores()
-  } catch {
-    // In test environments, data modules may not be fully available
-    return new Map()
+    return { scores: compute(), degraded: false }
+  } catch (err) {
+    console.error(
+      '[trustScore] Failed to compute trust scores — trust badges/tiers are degraded to an empty score set:',
+      err
+    )
+    return { scores: new Map(), degraded: true }
   }
 }
 
-export const trustScores: Map<string, TrustScore> = safeComputeAllScores()
+const computed = safeComputeAllScores()
+
+export const trustScores: Map<string, TrustScore> = computed.scores
+
+/**
+ * True when trust-score computation threw at module load and `trustScores`
+ * is an empty fallback map rather than real data. Callers rendering trust
+ * badges/tiers can use this to show a degraded state instead of treating
+ * every resource as unscored.
+ */
+export const trustScoresDegraded: boolean = computed.degraded
 
 export function getTrustScore(
   resourceType: ScoredResourceType,

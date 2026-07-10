@@ -7,7 +7,9 @@
  * then writes public/data/pqctoday-oscal.json.
  *
  * Two results arrays are produced:
- *   1. Governance subset — records with non-empty cswp39_tags or governance body types
+ *   1. Governance subset — records tagged `cswp39:governance` or whose
+ *      body_type is a governing body (standardization / certification /
+ *      regulatory)
  *   2. Full inventory — all compliance records
  *
  * Usage: npx tsx scripts/generate-oscal.ts [--dry-run]
@@ -29,11 +31,29 @@ const OUT_GOVERNANCE_PATH = path.resolve(
 const OUT_FULL_PATH = path.resolve(process.cwd(), 'public/data/pqctoday-oscal-full.json')
 const DRY_RUN = process.argv.includes('--dry-run')
 
+// 07092026: the governance subset used to be (any cswp39 tag || body_type in
+// {standardization_body, compliance_framework, certification_body}). That
+// matched 181/181 rows — subset == full inventory — because (a) a batch
+// enrichment tagged 175/181 rows with SOME cswp39 dimension, and (b) the only
+// 6 untagged rows are compliance_framework, which was itself in the set.
+// Tightened on the actual value distribution (compliance_07092026.csv:
+// compliance_framework 108, technical_standard 32, standardization_body 21,
+// certification_body 9, regulatory_body 8, industry_alliance 3):
+//   - tag prong: only the governance-specific `cswp39:governance` tag counts,
+//     not any tag (assurance/lifecycle/inventory/observability are other
+//     CSWP 39 dimensions, not governance);
+//   - body-type prong: only bodies that actually govern — set standards,
+//     certify, or regulate. compliance_framework and technical_standard are
+//     documents, not governance bodies (dropped); regulatory_body is
+//     self-evidently governance-relevant (added — its omission while
+//     compliance_framework was included looked inverted).
 const GOVERNANCE_BODY_TYPES = new Set([
   'standardization_body',
-  'compliance_framework',
   'certification_body',
+  'regulatory_body',
 ])
+
+const GOVERNANCE_TAG = 'cswp39:governance'
 
 interface RawComplianceRow {
   id: string
@@ -127,6 +147,15 @@ function dataVersionFromCsvName(filename: string): string {
   return `${yyyy}-${mm}-${dd}T00:00:00.000Z`
 }
 
+/** Chronological sort key for dated CSVs: raw MMDDYYYY[_rN] filenames sort
+ *  lexicographically wrong across year boundaries (01…2027 < 12…2026). */
+function csvDateKey(filename: string): string {
+  const m = filename.match(/_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/)
+  if (!m) return `0000-00-00#000_${filename}`
+  const [, mm, dd, yyyy, r] = m
+  return `${yyyy}-${mm}-${dd}#${String(Number(r ?? 0)).padStart(3, '0')}`
+}
+
 // ── Build a single OSCAL result object for a compliance record ─────────────
 
 function buildResult(row: RawComplianceRow, reviewerMap: Map<string, string>, dataVersion: string) {
@@ -213,7 +242,7 @@ function buildResult(row: RawComplianceRow, reviewerMap: Map<string, string>, da
 async function main() {
   // 1. Locate latest compliance CSV
   const files = await glob('compliance_*.csv', { cwd: DATA_DIR })
-  files.sort()
+  files.sort((a, b) => csvDateKey(a).localeCompare(csvDateKey(b)))
   const latest = files.at(-1)
   if (!latest) {
     console.error('[generate-oscal] No compliance CSV found in src/data/')
@@ -229,11 +258,17 @@ async function main() {
   // 3. Build reviewer map
   const reviewerMap = loadReviewerMap()
 
-  // 4. Partition into governance subset and full inventory
+  // 4. Partition into governance subset and full inventory (see the
+  //    GOVERNANCE_BODY_TYPES comment for why the tag test is governance-tag-
+  //    specific rather than any-tag).
   const governanceRows = rows.filter((r) => {
-    const hasCswp39Tags = r.cswp39_tags?.trim() && r.cswp39_tags.trim() !== ''
+    const hasGovernanceTag = (r.cswp39_tags ?? '')
+      .toLowerCase()
+      .split(';')
+      .map((t) => t.trim())
+      .includes(GOVERNANCE_TAG)
     const isGovernanceBodyType = GOVERNANCE_BODY_TYPES.has(r.body_type)
-    return hasCswp39Tags || isGovernanceBodyType
+    return hasGovernanceTag || isGovernanceBodyType
   })
 
   // 4b. Compute the deterministic data-version date once from the input CSV.
@@ -270,7 +305,7 @@ async function main() {
           uuid: deterministicUuid('pqctoday-governance-subset'),
           title: 'PQCToday Governance Compliance Subset',
           description:
-            'Compliance records with CSWP 39 alignment tags or governance body type classification',
+            'Compliance records tagged cswp39:governance or classified as a governing body type (standardization, certification, or regulatory body)',
           start: dataVersion.slice(0, 10),
           'reviewed-controls': {
             'control-selections': [
