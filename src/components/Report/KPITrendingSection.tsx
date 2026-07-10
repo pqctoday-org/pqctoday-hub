@@ -15,7 +15,7 @@ import {
   Legend,
 } from 'recharts'
 import { TrendingUp, Info } from 'lucide-react'
-import { CollapsibleSection } from './ReportContent'
+import { CollapsibleSection } from './sections/reportContentShared'
 import type { AssessmentResult } from '../../hooks/assessmentTypes'
 import type { AssessmentSnapshot } from '../../store/useAssessmentStore'
 

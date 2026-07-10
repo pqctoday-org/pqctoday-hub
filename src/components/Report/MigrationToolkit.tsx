@@ -9,7 +9,7 @@ import {
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import { softwareData } from '../../data/migrateData'
 import { Button } from '../ui/button'
-import { SectionInfoTip } from './ReportContent'
+import { SectionInfoTip } from './sections/reportContentShared'
 import clsx from 'clsx'
 
 const priorityConfig = {

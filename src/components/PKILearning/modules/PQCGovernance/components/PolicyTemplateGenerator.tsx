@@ -428,7 +428,7 @@ function keyManagementSections(args: BuildArgs): ArtifactSection[] {
           label: 'Key Destruction Policy',
           type: 'textarea',
           placeholder:
-            'e.g., Key material must be zeroized upon rotation. HSM key destruction must follow NIST SP 800-88 guidelines.',
+            "e.g., Key material must be zeroized upon rotation. HSM key destruction must follow your organization's key-destruction standard (e.g. NIST SP 800-88 purge/destroy procedures, which is media-sanitization guidance commonly reused for key material, not a key-destruction standard itself).",
         },
       ],
     },
