@@ -90,6 +90,13 @@ const SPEC_EXTRACT_PATCHES: Record<string, Record<string, number>> = {
     'FrodoKEM-1344-AES': 0x80000063,
     'FrodoKEM-1344-SHAKE': 0x80000064,
     'Classic-McEliece-6688128': 0x00000034,
+    // LAMPS composite signatures (draft-ietf-lamps-pq-composite-sigs-19,
+    // 2026-07-10) — vendor-extension range per KMIP 3.0 §11.12, immediately
+    // after Hss's 0x80000065 (kmip/src/kmip30/algos.rs is the source of truth
+    // for these values).
+    'ML-DSA-44-RSA2048-PSS': 0x80000066,
+    'ML-DSA-65-ECDSA-P256': 0x80000067,
+    'ML-DSA-87-ECDSA-P384': 0x80000068,
   },
   Operation: {
     ReKey: 0x00000004,

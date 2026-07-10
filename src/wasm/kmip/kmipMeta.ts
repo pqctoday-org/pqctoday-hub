@@ -222,6 +222,31 @@ export const ALGORITHMS: AlgoChoice[] = [
   { value: 'ML-DSA-44', label: 'ML-DSA-44 (FIPS 204)', kind: 'signature', pqc: true },
   { value: 'ML-DSA-65', label: 'ML-DSA-65 (FIPS 204)', kind: 'signature', pqc: true },
   { value: 'ML-DSA-87', label: 'ML-DSA-87 (FIPS 204)', kind: 'signature', pqc: true },
+  // LAMPS composite signatures (draft-ietf-lamps-pq-composite-sigs-19) —
+  // RUNNABLE: CreateKeyPair generates both component keys in-engine, Certify
+  // signs with both, Validate verifies both independently. Composite-KEM
+  // needs NO separate entry here — certifying an existing X25519MLKEM768
+  // hybrid-KEM key (below) automatically produces the composite-KEM
+  // certificate format; SecP256r1MLKEM768 doesn't (no verified draft-17
+  // byte-order reference — see the kmip crate's composite_kem.rs).
+  {
+    value: 'ML-DSA-44-RSA2048-PSS',
+    label: 'ML-DSA-44 + RSA-2048-PSS (composite, draft-19)',
+    kind: 'signature',
+    pqc: true,
+  },
+  {
+    value: 'ML-DSA-65-ECDSA-P256',
+    label: 'ML-DSA-65 + ECDSA-P256 (composite, draft-19)',
+    kind: 'signature',
+    pqc: true,
+  },
+  {
+    value: 'ML-DSA-87-ECDSA-P384',
+    label: 'ML-DSA-87 + ECDSA-P384 (composite, draft-19)',
+    kind: 'signature',
+    pqc: true,
+  },
   {
     value: 'SLH-DSA-SHA2-128f',
     label: 'SLH-DSA-SHA2-128f (FIPS 205)',
@@ -337,6 +362,10 @@ const RUNNABLE_EXACT = new Set([
   'ML-DSA-44',
   'ML-DSA-65',
   'ML-DSA-87',
+  // LAMPS composite signatures (draft-ietf-lamps-pq-composite-sigs-19).
+  'ML-DSA-44-RSA2048-PSS',
+  'ML-DSA-65-ECDSA-P256',
+  'ML-DSA-87-ECDSA-P384',
   'SLH-DSA-SHA2-128s',
   'SLH-DSA-SHA2-128f',
   'SLH-DSA-SHA2-192s',
