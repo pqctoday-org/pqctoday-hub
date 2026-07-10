@@ -1,7 +1,10 @@
 /**
- * PQC Protocol Support Matrix — 10 standard families × release / draft / 4 PQC dimensions / OSS libs / playground.
+ * PQC Protocol Support Matrix — 25 protocol rows (IETF, TCG, OASIS, 3GPP, IEEE,
+ * UEFI, and vendor-published specs) × release / draft / 4 PQC dimensions / OSS
+ * libs / playground.
  *
- * Snapshot date: 2026-05-20.
+ * Snapshot date: see PROTOCOL_MATRIX_LAST_UPDATED below — this header comment
+ * is not kept in sync automatically; treat the constant as authoritative.
  *
  * The 4 dimensions reflect the published external PQC-readiness heatmap:
  *  - pureKem   = pure post-quantum KEM (e.g. ML-KEM-only, no classical fallback)
@@ -47,7 +50,7 @@
 import type { Freshness } from './contentFreshness'
 
 /** ISO date of the last manual update to PROTOCOL_MATRIX below. */
-export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-07-03'
+export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-07-09'
 
 /**
  * Structured freshness for the content-freshness manifest — pairs the snapshot
@@ -325,8 +328,12 @@ export interface ProtocolMatrixRow {
   inheritedBy?: string[]
   /**
    * If this row is itself an inheritance row, points to the parent protocol
-   * `id` whose dimensions are reused. Inheritance rows render visually muted
-   * and reuse the parent's dimension badges at render time.
+   * `id` for display purposes (an "inherits from X" chip, visually muted
+   * styling). NOTE: the row's own `dimensions` are still hand-authored,
+   * stage-less copies — nothing re-reads the parent's badges at render time.
+   * When the parent's stage changes, every inheritance row must be updated
+   * by hand or it silently drifts out of sync (see dtls-1-3, fido-2, macsec,
+   * uefi).
    */
   inheritsFromProtocolId?: string
   /**
@@ -525,7 +532,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       {
         productId: 'openssh',
         name: 'OpenSSH',
-        versionNote: '10.0+ (mlkem768x25519 default); 10.3p1 latest (2026-04)',
+        versionNote: '10.0+ (mlkem768x25519 default); 10.4 latest (2026-07)',
       },
     ],
     commercialLibraries: [
@@ -555,7 +562,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       {
         provider: 'GitHub SSH',
-        what: 'sntrup761x25519-sha512 on github.com (from 2025-09-17)',
+        what: 'sntrup761x25519-sha512 on github.com and GHEC (from 2025-09-17); US data-residency region excluded for FIPS compliance',
         since: '2025-09',
         referenceUrl:
           'https://github.blog/engineering/platform-security/post-quantum-security-for-ssh-access-on-github/',
@@ -575,7 +582,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       {
         label: 'OpenSSH release notes',
         url: 'https://www.openssh.com/releasenotes.html',
-        note: 'mlkem768x25519 default since 10.0 (Apr 2025); 10.3p1 latest (Apr 2026)',
+        note: 'mlkem768x25519 default since 10.0 (Apr 2025); 10.4 latest (2026-07-06)',
       },
       {
         label: 'IETF SSHM working group documents',
@@ -673,15 +680,15 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         date: '2026-06-24',
       },
       {
-        id: 'draft-ietf-tls-mldsa-04',
-        title: 'draft-ietf-tls-mldsa-04 — ML-DSA in TLS 1.3',
+        id: 'draft-ietf-tls-mldsa-05',
+        title: 'draft-ietf-tls-mldsa-05 — ML-DSA in TLS 1.3 (Approved — AD Followup)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-mldsa/',
-        date: '2026-06-18',
+        date: '2026-07-06',
         localFile: '/library/draft-ietf-tls-mldsa-04.html',
       },
       {
         id: 'draft-ietf-tls-hybrid-design-16',
-        title: 'draft-ietf-tls-hybrid-design-16 — Hybrid KEX design framework',
+        title: 'draft-ietf-tls-hybrid-design-16 — Hybrid KEX design framework (RFC Ed Queue)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-hybrid-design/',
         date: '2025-09-07',
         localFile: '/library/draft-ietf-tls-hybrid-design-16.html',
@@ -731,8 +738,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'draft',
-        stage: 'iesg-submitted',
-        stageNote: 'Submitted to IESG — on 2026-07-02 telechat (draft-ietf-tls-mldsa-04)',
+        stage: 'rfc-editor-queue',
+        stageNote:
+          'Approved by IESG at the 2026-07-02 telechat — AD Followup ahead of RFC Editor queue (draft-ietf-tls-mldsa-05)',
         refs: [
           {
             kind: 'draft',
@@ -811,26 +819,26 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       {
         provider: 'Google Chrome',
-        what: 'X25519MLKEM768 default for TLS 1.3 and QUIC in Chrome',
-        since: '2024-04',
-        referenceUrl: 'https://blog.google/chromium/advancing-our-amazing-bet-on-asymmetric/',
+        what: 'X25519MLKEM768 default for TLS 1.3 and QUIC in Chrome 131 (Chrome 124, Apr 2024, shipped the earlier X25519Kyber768Draft00 pre-standard group, not ML-KEM)',
+        since: '2024-11',
+        referenceUrl: 'https://blog.cloudflare.com/pq-2025/',
       },
       {
         provider: 'AWS',
-        what: 'ML-KEM hybrid TLS supported in AWS KMS, ACM, and Secrets Manager; Kyber support being retired in favor of ML-KEM',
-        since: '2025-05',
+        what: 'ML-KEM hybrid TLS supported in AWS KMS, ACM, and Secrets Manager; Kyber support runs alongside ML-KEM, with removal slated for 2026',
+        since: '2025-04',
         referenceUrl:
           'https://aws.amazon.com/blogs/security/ml-kem-post-quantum-tls-now-supported-in-aws-kms-acm-and-secrets-manager/',
       },
       {
         provider: 'Apple iOS / macOS',
-        what: 'X25519MLKEM768 advertised in TLS 1.3 from iOS 26 / macOS 26',
+        what: 'X25519MLKEM768 advertised in TLS 1.3 from iOS 26 / macOS 26 (shipped 2025-09-15)',
         since: '2025-09',
-        referenceUrl: 'https://blog.cloudflare.com/pq-2025/',
+        referenceUrl: 'https://support.apple.com/en-us/122756',
       },
       {
-        provider: 'Microsoft (Azure / Windows)',
-        what: 'SymCrypt ships ML-KEM + ML-DSA across Azure, Win11, Server 2025',
+        provider: 'Microsoft (Windows / Server / .NET)',
+        what: 'SymCrypt ships ML-KEM + ML-DSA GA via CNG/certificate APIs on Windows 11 (24H2/25H2), Windows Server 2025, and .NET 10; Azure service-level PQC (e.g. Key Vault) is rolling out separately through 2026–27, not GA alongside this release',
         since: '2025-11',
         referenceUrl:
           'https://techcommunity.microsoft.com/blog/microsoft-security-blog/post-quantum-cryptography-apis-now-generally-available-on-microsoft-platforms/4469093',
@@ -843,10 +851,10 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       {
         provider: 'F5 BIG-IP',
-        what: 'X25519_ML-KEM-768 hybrid in TLS 1.3 (BIG-IP v17.5+)',
+        what: 'X25519_ML-KEM-768 hybrid in TLS 1.3 (named group requires TMOS 17.5.1+; 17.5.0 shipped an earlier Kyber hybrid)',
         since: '2025',
         referenceUrl:
-          'https://www.f5.com/products/big-ip-services/quantum-resistance-with-pqc-in-ltm',
+          'https://community.f5.com/kb/technicalarticles/future-proofing-your-network-enabling-quantum-ciphers-on-f5-big-ip-tmos-17-5-1/342586',
       },
       {
         provider: 'Symantec SWG (Broadcom)',
@@ -862,13 +870,13 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       {
         provider: 'Google Android',
-        what: 'Android 17 adds ML-DSA to Keystore and Verified Boot (phased PQC rollout)',
-        since: '2026-03',
+        what: 'Android 17 adds ML-DSA to Keystore and Verified Boot; announced/beta Mar 2026, stable rollout (Pixel) 2026-06-16',
+        since: '2026-06',
         referenceUrl:
-          'https://blog.google/security/security-for-the-quantum-era-implementing-post-quantum-cryptography-in-android/',
+          'https://security.googleblog.com/2026/03/post-quantum-cryptography-in-android.html',
       },
     ],
-    inheritedBy: ['DTLS 1.3', 'FIDO 2', 'MACsec'],
+    inheritedBy: ['DTLS 1.3', 'FIDO 2', 'MACsec', 'QUIC'],
     recommended: true,
     recommendedReason:
       'X25519MLKEM768 hybrid group already in production at Cloudflare, Google, and AWS; spec is in the RFC Editor queue (EDIT) — the de-facto standard for TLS PQC migration today.',
@@ -923,10 +931,10 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         localFile: '/library/draft-ietf-lamps-pq-composite-sigs-19.html',
       },
       {
-        id: 'draft-ietf-lamps-pq-composite-kem-16',
-        title: 'draft-ietf-lamps-pq-composite-kem-16 — Composite ML-KEM in X.509',
+        id: 'draft-ietf-lamps-pq-composite-kem-17',
+        title: 'draft-ietf-lamps-pq-composite-kem-17 — Composite ML-KEM in X.509 (IETF Last Call)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-kem/',
-        date: '2026-06-15',
+        date: '2026-07',
         localFile: '/library/draft-ietf-lamps-pq-composite-kem-16.html',
       },
     ],
@@ -949,8 +957,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stage: 'iesg-submitted',
-        stageNote: 'Submitted to IESG — AD Evaluation (draft-16, Jun 2026)',
+        stage: 'ietf-last-call',
+        stageNote: 'IETF Last Call — ends 2026-07-27 (draft-17)',
         note: 'Composite mode pairs ML-KEM with RSA-OAEP / ECDH / X25519 / X448 classical KEMs.',
         refs: [
           {
@@ -1137,10 +1145,10 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         date: '2026-05-06',
       },
       {
-        id: 'draft-ietf-lamps-cms-composite-sigs-04',
-        title: 'draft-ietf-lamps-cms-composite-sigs-04 — Composite ML-DSA for CMS',
+        id: 'draft-ietf-lamps-cms-composite-sigs-05',
+        title: 'draft-ietf-lamps-cms-composite-sigs-05 — Composite ML-DSA for CMS (RFC Ed Queue)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-cms-composite-sigs/',
-        date: '2026-02',
+        date: '2026-04',
       },
     ],
     dimensions: {
@@ -1189,8 +1197,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridSig: {
         value: 'draft',
-        stage: 'ietf-last-call',
-        stageNote: 'IETF Last Call (Mar 2026)',
+        stage: 'rfc-editor-queue',
+        stageNote: 'IETF Last Call completed (directorate reviews Apr 2026) — now in RFC Editor queue (draft-05)',
         note: 'Composite ML-DSA SignerInfo construction mirrors the X.509 composite-sigs row.',
         refs: [
           {
@@ -1210,12 +1218,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     commercialLibraries: [
       { productId: 'zscaler-zero-trust-exchange', name: 'Zscaler Zero Trust Exchange' },
-      { productId: 'gmail-google-workspace', name: 'Gmail / Google Workspace' },
-      {
-        productId: 'proton-mail-pqc-openpgp',
-        name: 'Proton Mail PQC OpenPGP',
-        versionNote: 'Open Source / Commercial',
-      },
     ],
     playgrounds: [
       {
@@ -1451,6 +1453,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
+        stage: 'wg-document',
+        stageNote: 'JOSE WG document, "I-D Exists" (draft-06, 2026-07-06) — not yet in WG Last Call',
         refs: [
           {
             kind: 'draft',
@@ -1548,8 +1552,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     liveDeployments: [
       {
         provider: 'AWS KMS',
-        what: 'ML-DSA signing GA for JWT/JWS (and CMS, COSE, UEFI) — US West (N. California), Europe (Milan)',
-        since: '2025',
+        what: 'ML-DSA signing GA for JWT/JWS (and CMS, COSE, UEFI); launched in US West (N. California) and Europe (Milan), with remaining commercial regions following within days',
+        since: '2025-06',
         referenceUrl:
           'https://aws.amazon.com/blogs/security/how-to-create-post-quantum-signatures-using-aws-kms-and-ml-dsa/',
       },
@@ -1578,10 +1582,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     latestDraft: [
       {
-        id: 'draft-ietf-lamps-pq-composite-kem-16',
-        title: 'draft-ietf-lamps-pq-composite-kem-16 — Composite ML-KEM (enrollment payload)',
+        id: 'draft-ietf-lamps-pq-composite-kem-17',
+        title:
+          'draft-ietf-lamps-pq-composite-kem-17 — Composite ML-KEM (enrollment payload, IETF Last Call)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-kem/',
-        date: '2026-06-15',
+        date: '2026-07',
         localFile: '/library/draft-ietf-lamps-pq-composite-kem-16.html',
       },
       {
@@ -1595,6 +1600,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'rfc',
+        stage: 'rfc-published',
+        stageNote: 'RFC 9810 (CMP KEM support, Jul 2025) + RFC 9935 (X.509 ML-KEM OIDs, Mar 2026)',
         note: 'ML-KEM X.509 OIDs apply from the X.509 row; CMP adds KEM key-transport semantics on top.',
         refs: [
           {
@@ -1615,6 +1622,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
+        stage: 'ietf-last-call',
+        stageNote: 'Inherited from X.509 row — draft-ietf-lamps-pq-composite-kem-17 in IETF Last Call (ends 2026-07-27)',
         note: 'Composite enrollment uses PKCS#10 / CMP wrappers — see X.509 row for the composite KEM construction.',
         refs: [
           {
@@ -1628,6 +1637,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'rfc',
+        stage: 'rfc-published',
+        stageNote: 'RFC 7030 (EST, 2013) + RFC 9881 (X.509 ML-DSA OIDs, Oct 2025)',
         note: 'ML-DSA enrollment uses X.509 ML-DSA OIDs (see X.509 row); CSR and CMP response flows defined.',
         refs: [
           {
@@ -1648,6 +1659,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridSig: {
         value: 'draft',
+        stage: 'rfc-editor-queue',
+        stageNote: 'Inherited from X.509 row — draft-ietf-lamps-pq-composite-sigs-19 in RFC Editor queue',
         note: 'Composite-sig CSR / issuance flows wrap the X.509 composite-sigs construction — see X.509 row.',
         refs: [
           {
@@ -1704,7 +1717,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     id: '5g-suci',
     name: '5G SUCI (3GPP)',
     description:
-      '3GPP 5G Subscription Concealed Identifier — Profile C study introduces ML-KEM-768 and X25519+ML-KEM-768 hybrid for SUPI/IMSI concealment.',
+      '3GPP 5G Subscription Concealed Identifier — protects the subscriber IMSI/SUPI in transit. No 3GPP TR or TS currently defines a PQC concealment profile; ML-KEM-based SUCI schemes exist only as vendor research.',
     latestRelease: [
       {
         id: '3GPP-TS-33.501',
@@ -1717,36 +1730,36 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     latestDraft: [
       {
         id: '3GPP-TR-33.938',
-        title: '3GPP TR 33.938 — Study on Preparing for Transition to PQC in 3GPP',
+        title: '3GPP TR 33.938 — 3GPP Cryptographic Inventory',
         url: 'https://www.3gpp.org/ftp/Specs/archive/33_series/33.938/',
-        date: '2025-05',
+        date: '2026-01',
         localFile: '/library/3GPP-PQC-Study-2025.html',
       },
     ],
     dimensions: {
       pureKem: {
         value: 'experimental',
-        note: '3GPP TR 33.938 "Profile C" — ML-KEM-768 standalone for SUCI concealment (study item).',
+        note: 'No chartered 3GPP study or work item defines a PQC SUCI concealment profile. TR 33.938 ("3GPP Cryptographic Inventory", latest V19.2.0) surveys existing algorithm usage across 3GPP specs and does not specify ML-KEM-based SUCI concealment or any "Profile C". ML-KEM-based SUCI schemes exist only in vendor whitepapers (e.g. Ericsson, Nokia) ahead of any 3GPP normative process.',
         refs: [
           {
             kind: 'spec',
             id: '3GPP TR 33.938',
-            title: 'Study on Preparing for Transition to PQC in 3GPP (Profile C)',
+            title: '3GPP Cryptographic Inventory (does not define PQC SUCI concealment)',
             url: 'https://www.3gpp.org/ftp/Specs/archive/33_series/33.938/',
-            publishedOn: '2025-05',
+            publishedOn: '2026-01',
           },
         ],
       },
       hybridKem: {
         value: 'experimental',
-        note: '3GPP TR 33.938 Profile C hybrid mode — X25519 + ML-KEM-768 SUCI concealment (study item).',
+        note: 'Same gap as Pure KEM — no 3GPP TR or TS defines a hybrid X25519+ML-KEM-768 SUCI construction. Vendor whitepapers discuss such combiners informally; no 3GPP normative or study text has been found to confirm it.',
         refs: [
           {
             kind: 'spec',
             id: '3GPP TR 33.938',
-            title: 'Study on Preparing for Transition to PQC in 3GPP (Profile C hybrid)',
+            title: '3GPP Cryptographic Inventory (does not define PQC SUCI concealment)',
             url: 'https://www.3gpp.org/ftp/Specs/archive/33_series/33.938/',
-            publishedOn: '2025-05',
+            publishedOn: '2026-01',
           },
         ],
       },
@@ -1773,16 +1786,16 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         toolName: '5G SUCI Construction',
         testability: { pureKem: 'partial', hybridKem: 'partial', pureSig: 'na', hybridSig: 'na' },
         pureKemNote:
-          'SUCI tool demonstrates Profile C ML-KEM-768 concealment in pre-standard form (3GPP TR 33.938 is a study item, not standardized).',
+          'SUCI tool demonstrates a vendor-proposed ML-KEM-768 concealment scheme in illustrative, pre-standard form — no 3GPP TR or TS defines this profile today.',
         hybridKemNote:
-          'Hybrid X25519 + ML-KEM-768 mode is illustrative — 3GPP has not finalized Profile C wire format.',
+          'Hybrid X25519 + ML-KEM-768 mode is illustrative only — no 3GPP specification defines this construction.',
       },
     ],
     liveDeployments: [
       {
         provider: 'SK Telecom + Thales',
-        what: 'Crystals-Kyber (ML-KEM) PQ trial on 5G SA network with 5G SIM cards to protect subscriber identity',
-        since: '2024',
+        what: 'Crystals-Kyber (ML-KEM) lab trial on a 5G SA network with 5G SIM cards to protect subscriber identity — a trial, not a commercial deployment',
+        since: '2023-12',
         referenceUrl: 'https://news.sktelecom.com/en/628',
       },
     ],
@@ -1892,7 +1905,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     liveDeployments: [
       {
         provider: 'Proton Mail',
-        what: 'Hybrid ML-KEM (OpenPGP v6) encryption rolled out to all plans incl. free, for new encrypted mail',
+        what: 'Hybrid ML-KEM (OpenPGP v6) encryption available to all plans incl. free — opt-in, gradual rollout, applies to new messages only',
         since: '2026-05',
         referenceUrl: 'https://proton.me/blog/introducing-post-quantum-encryption',
       },
@@ -1952,10 +1965,10 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     latestDraft: [
       {
-        id: 'draft-ietf-ipsecme-ikev2-mlkem-08',
-        title: 'draft-ietf-ipsecme-ikev2-mlkem-08 — ML-KEM in IKEv2',
+        id: 'draft-ietf-ipsecme-ikev2-mlkem-09',
+        title: 'draft-ietf-ipsecme-ikev2-mlkem-09 — ML-KEM in IKEv2 (DISCUSS cleared, RFC Ed Queue)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-ipsecme-ikev2-mlkem/',
-        date: '2026-06-27',
+        date: '2026-07-05',
       },
       {
         id: 'draft-ietf-ipsecme-ikev2-pqc-auth-08',
@@ -1974,9 +1987,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        stage: 'iesg-submitted',
+        stage: 'rfc-editor-queue',
         stageNote:
-          'Submitted to IESG — on 2026-07-02 telechat (draft-08, has a DISCUSS); same draft covers Pure + Hybrid KEM',
+          'DISCUSS cleared after the 2026-07-02 telechat — now in RFC Editor queue (draft-09); same draft covers Pure + Hybrid KEM',
         note: 'IKEv2 multi-KE framework (RFC 9370) carries either pure or hybrid ML-KEM. There is NO RFC for IKEv2 hybrid KEM yet — both modes ride the same draft.',
         refs: [
           {
@@ -1990,9 +2003,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stage: 'iesg-submitted',
+        stage: 'rfc-editor-queue',
         stageNote:
-          'Submitted to IESG — on 2026-07-02 telechat (draft-08, has a DISCUSS); same draft as Pure KEM; no RFC yet',
+          'DISCUSS cleared after the 2026-07-02 telechat — now in RFC Editor queue (draft-09); same draft as Pure KEM; no RFC yet',
         note: 'Same draft as Pure KEM. No standalone RFC for hybrid KEM in IKEv2 (corrects an earlier mis-encoding to "rfc"). RFC 9370 multi-KE framework + draft-ietf-ipsecme-ikev2-mlkem together define the hybrid binding.',
         deploymentPosture: 'production',
         deploymentNote:
@@ -2087,22 +2100,15 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         referenceUrl: 'https://www.expressvpn.com/blog/ml-kem-lightway-upgrade/',
       },
       {
-        provider: 'Mullvad VPN',
-        what: 'Quantum-resistant WireGuard default on all desktop platforms',
-        since: '2025-01',
-        referenceUrl:
-          'https://mullvad.net/en/blog/quantum-resistant-tunnels-are-now-the-default-on-desktop',
-      },
-      {
         provider: 'Cisco Secure Firewall',
-        what: 'Hybrid IKEv2 (IKE_INTERMEDIATE + multi-KE RFCs) on ASA 9.19+; ML-KEM in FTD 10.5 / ASA 9.25',
+        what: 'Hybrid IKEv2 (IKE_INTERMEDIATE + multi-KE RFCs) live on ASA 9.19+; ML-KEM support in FTD 10.5 / ASA 9.25 is ROADMAP, targeted for late 2026 — not yet shipped',
         since: '2024',
         referenceUrl:
           'https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap',
       },
       {
         provider: 'Palo Alto Networks PAN-OS',
-        what: 'PQC Site-to-Site VPN with hybrid IKEv2 + ML-KEM (PAN-OS 11.2, 12.1+)',
+        what: 'PQC Site-to-Site VPN with hybrid IKEv2; PAN-OS 11.2 uses pre-standard KEMs (Kyber/BIKE/FrodoKEM/HQC) — ML-KEM itself arrived only in PAN-OS 12.1+',
         since: '2025',
         referenceUrl:
           'https://docs.paloaltonetworks.com/network-security/quantum-security/administration/quantum-security-concepts/support-for-quantum-features',
@@ -2112,6 +2118,81 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       {
         label: 'IETF IPSECME working group documents',
         url: 'https://datatracker.ietf.org/wg/ipsecme/documents/',
+      },
+    ],
+  },
+  {
+    id: 'wireguard',
+    name: 'WireGuard',
+    description:
+      'Modern kernel-level VPN tunnel protocol — no IETF/formal PQC standardization track. PQ protection is added by injecting a post-quantum KEM-derived secret into the existing pre-shared-key (PSK) mechanism (e.g. the Rosenpass protocol), not by changing the wire protocol itself.',
+    latestRelease: [
+      {
+        id: 'Rosenpass-Protocol',
+        title: 'Rosenpass: Formally Verified Post-Quantum Protocol for WireGuard',
+        url: 'https://rosenpass.eu/whitepaper.pdf',
+        date: '2024-06',
+        localFile: '/library/Rosenpass-Protocol.pdf',
+      },
+    ],
+    latestDraft: [],
+    dimensions: {
+      pureKem: {
+        value: 'na',
+        note: "WireGuard's Noise-based handshake has no pure-PQ-only mode — PQ protection rides on the existing PSK mechanism (see Hybrid KEM).",
+      },
+      hybridKem: {
+        value: 'experimental',
+        stageNote:
+          'Vendor/community technique (Rosenpass whitepaper, formally verified with ProVerif) — not an IETF or WireGuard-project standard',
+        note: "Rosenpass runs a separate ML-KEM-768 + Classic McEliece handshake and injects the combined shared secret into WireGuard's existing pre-shared-key (PSK) slot — an out-of-band combiner, not a change to the WireGuard wire protocol. Several VPN vendors ship equivalent WireGuard + ML-KEM hybrid combiners.",
+        deploymentPosture: 'production',
+        deploymentNote:
+          'Mullvad ships this by default on all desktop platforms since Jan 2025; NordVPN, Surfshark, Windscribe, and IVPN ship comparable WireGuard + ML-KEM hybrid combiners.',
+      },
+      pureSig: {
+        value: 'na',
+        note: 'WireGuard authenticates peers with static Curve25519 keys, not certificates or signatures — no PQ signature dimension applies.',
+      },
+      hybridSig: {
+        value: 'na',
+        note: 'Same as Pure Signature — WireGuard has no signature dimension to hybridize.',
+      },
+    },
+    ossLibraries: [
+      { productId: 'wireguard', name: 'WireGuard', versionNote: 'Upstream — no native PQC' },
+      {
+        productId: 'wireguard-go',
+        name: 'wireguard-go',
+        versionNote: 'Partial — PQC via pre-shared-key injection',
+      },
+      {
+        productId: 'rosenpass',
+        name: 'Rosenpass',
+        versionNote: 'Rust daemon — ML-KEM + Classic McEliece PSK injection',
+      },
+    ],
+    commercialLibraries: [
+      { productId: 'mullvad-vpn-app', name: 'Mullvad VPN App' },
+      { productId: 'nordvpn', name: 'NordVPN' },
+      { productId: 'surfshark', name: 'Surfshark' },
+      { productId: 'windscribe', name: 'Windscribe' },
+      { productId: 'ivpn', name: 'IVPN' },
+    ],
+    playgrounds: [],
+    liveDeployments: [
+      {
+        provider: 'Mullvad VPN',
+        what: 'Quantum-resistant WireGuard default on all desktop platforms — PQ KEM-negotiated PSK (Rosenpass-style) injected into the WireGuard handshake',
+        since: '2025-01',
+        referenceUrl:
+          'https://mullvad.net/en/blog/quantum-resistant-tunnels-are-now-the-default-on-desktop',
+      },
+    ],
+    sources: [
+      {
+        label: 'Rosenpass project',
+        url: 'https://rosenpass.eu/',
       },
     ],
   },
@@ -2131,10 +2212,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     latestDraft: [
       {
-        id: 'draft-ietf-mls-pq-ciphersuites-04',
-        title: 'draft-ietf-mls-pq-ciphersuites-04 — PQ Cipher Suites for MLS (WGLC)',
+        id: 'draft-ietf-mls-pq-ciphersuites-05',
+        title:
+          'draft-ietf-mls-pq-ciphersuites-05 — PQ Cipher Suites for MLS (Waiting for WG Chair Go-Ahead)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-mls-pq-ciphersuites/',
-        date: '2026-03-19',
+        date: '2026-07-02',
         localFile: '/library/draft-ietf-mls-pq-ciphersuites-04.html',
       },
       {
@@ -2157,14 +2239,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'wg-last-call',
         stageNote:
-          'WG Last Call — awaiting WG chair go-ahead; revised I-D needed after WGLC feedback (draft-04). Single draft covers all 4 cases',
+          'Waiting for WG Chair Go-Ahead (draft-05, 2026-07-02); revised I-D needed after WGLC feedback. Single draft covers all 4 cases',
         refs: [
           {
             kind: 'draft',
             id: 'draft-ietf-mls-pq-ciphersuites',
             title: 'PQ Cipher Suites for MLS (covers all 4 cases)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-mls-pq-ciphersuites/',
-            publishedOn: '2026-03-19',
+            publishedOn: '2026-07-02',
           },
         ],
       },
@@ -2172,7 +2254,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'wg-last-call',
         stageNote:
-          'WG Last Call — revised I-D needed after WGLC feedback (draft-04); same draft as Pure KEM',
+          'Waiting for WG Chair Go-Ahead (draft-05, 2026-07-02); revised I-D needed after WGLC feedback; same draft as Pure KEM',
         note: 'Combiner seeds PQ guarantees into the traditional ciphersuite via the exporter secret.',
         refs: [
           {
@@ -2180,7 +2262,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-ietf-mls-pq-ciphersuites',
             title: 'PQ Cipher Suites for MLS (covers all 4 cases)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-mls-pq-ciphersuites/',
-            publishedOn: '2026-03-19',
+            publishedOn: '2026-07-02',
           },
         ],
       },
@@ -2188,7 +2270,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'wg-last-call',
         stageNote:
-          'WG Last Call — revised I-D needed after WGLC feedback (draft-04); same draft as Pure KEM',
+          'Waiting for WG Chair Go-Ahead (draft-05, 2026-07-02); revised I-D needed after WGLC feedback; same draft as Pure KEM',
         note: 'Cipher suites bundle ML-DSA with the PQ KEM as a paired choice.',
         refs: [
           {
@@ -2196,7 +2278,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-ietf-mls-pq-ciphersuites',
             title: 'PQ Cipher Suites for MLS (covers all 4 cases)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-mls-pq-ciphersuites/',
-            publishedOn: '2026-03-19',
+            publishedOn: '2026-07-02',
           },
         ],
       },
@@ -2204,7 +2286,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'wg-last-call',
         stageNote:
-          'WG Last Call — revised I-D needed after WGLC feedback (draft-04); same draft as Pure KEM',
+          'Waiting for WG Chair Go-Ahead (draft-05, 2026-07-02); revised I-D needed after WGLC feedback; same draft as Pure KEM',
         note: 'Hybrid sig path is via session combination; cert-layer composite-sigs lives in the X.509 row.',
         refs: [
           {
@@ -2212,7 +2294,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-ietf-mls-pq-ciphersuites',
             title: 'PQ Cipher Suites for MLS (covers all 4 cases)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-mls-pq-ciphersuites/',
-            publishedOn: '2026-03-19',
+            publishedOn: '2026-07-02',
           },
         ],
       },
@@ -2226,18 +2308,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       { productId: 'mls-rs', name: 'mls-rs', versionNote: 'AWS Rust SDK' },
       { productId: 'mlspp', name: 'mlspp', versionNote: 'C++ reference impl' },
     ],
-    commercialLibraries: [
-      {
-        productId: 'apple-pq3-corecrypto',
-        name: 'Apple PQ3 / CoreCrypto',
-        versionNote: 'Proprietary (iMessage PQ3)',
-      },
-      {
-        productId: 'whatsapp',
-        name: 'WhatsApp',
-        versionNote: 'Proprietary (PQXDH on Signal protocol)',
-      },
-    ],
+    commercialLibraries: [],
     playgrounds: [
       {
         toolId: 'mls-group-messaging',
@@ -2245,20 +2316,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         testability: { pureKem: 'partial', hybridKem: 'none', pureSig: 'none', hybridSig: 'none' },
       },
     ],
-    liveDeployments: [
-      {
-        provider: 'Apple iMessage (PQ3)',
-        what: 'iMessage PQ3 — three-key continuous PQ ratcheting',
-        since: '2024-02',
-        referenceUrl: 'https://security.apple.com/blog/imessage-pq3/',
-      },
-      {
-        provider: 'Signal Protocol (PQXDH)',
-        what: 'X3DH replaced with PQXDH (Kyber + X25519) for the initial key agreement',
-        since: '2023-09',
-        referenceUrl: 'https://signal.org/blog/pqxdh/',
-      },
-    ],
+    liveDeployments: [],
+    noDeploymentReason:
+      'No product ships PQ-MLS (RFC 9420 + draft-ietf-mls-pq-ciphersuites) today — the draft is still awaiting WG Chair Go-Ahead after WG Last Call. Apple iMessage PQ3 and Signal’s PQXDH are genuine production PQ messaging deployments, but they are proprietary ratchet protocols, NOT MLS — see the Signal (PQXDH) row for that deployment; iMessage PQ3 has no dedicated row since it is Apple-internal and unpublished as a formal spec.',
     sources: [
       {
         label: 'IETF MLS working group documents',
@@ -2282,16 +2342,16 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       {
         id: 'TCG-PC-Client-Platform-TPM-Profile-v1.07',
-        title: 'TCG PC Client Specific Platform TPM Profile v1.07 (Published)',
+        title: 'TCG PC Client Specific Platform TPM Profile v1.07 (Published) — mandates ML-KEM + ML-DSA support',
         url: 'https://trustedcomputinggroup.org/resource/pc-client-platform-tpm-profile-ptp-specification/',
-        date: '2026-03-12',
+        date: '2026-03-23',
         localFile: '/library/PC-Client-Specific-Platform-TPM-Profile-for-TPM-2p0-v1p07_Pub.pdf',
       },
       {
         id: 'TCG-EK-Credential-Profile-v2.7',
         title: 'TCG EK Credential Profile for TPM 2.0, Level 0, v2.7 (Published)',
         url: 'https://trustedcomputinggroup.org/resource/tcg-ek-credential-profile-for-tpm-family-2-0/',
-        date: '2026-03-12',
+        date: '2026-03-19',
         localFile:
           '/library/TCG-EK-Credential-Profile-for-TPM-Family-2.0-Level-0-Version-2.7_Pub.pdf',
       },
@@ -2308,15 +2368,23 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       pureKem: {
         value: 'rfc',
         stage: 'rfc-published',
-        stageNote: 'TPM 2.0 Library v1.85 published 2026-03 — ML-KEM, ML-DSA, HashML-DSA',
-        note: 'TPM 2.0 SHALL support ML-KEM-768 or ML-KEM-1024.',
+        stageNote:
+          'TPM 2.0 Library v1.85 (Mar 2026) adds ML-KEM as an OPTIONAL algorithm; PC Client Platform TPM Profile v1.07 (2026-03-23) makes it mandatory',
+        note: 'TPM 2.0 Library v1.85 defines ML-KEM-512/768/1024 as an optional algorithm (TPMA_ML_PARAMETER_SET capability bits) — the Library spec itself contains no SHALL-support text. The requirement to support ML-KEM-768 or ML-KEM-1024 comes from PC Client Platform TPM Profile v1.07, which governs PC-class TPMs, not the Library spec.',
         refs: [
           {
             kind: 'spec',
             id: 'TCG TPM 2.0 v1.85',
-            title: 'TCG TPM 2.0 Library v1.85 — ML-KEM commands',
+            title: 'TCG TPM 2.0 Library v1.85 — ML-KEM commands (optional)',
             url: 'https://trustedcomputinggroup.org/resource/tpm-library-specification/',
             publishedOn: '2026-03-12',
+          },
+          {
+            kind: 'spec',
+            id: 'TCG PC Client PTP v1.07',
+            title: 'PC Client Platform TPM Profile v1.07 — mandates ML-KEM-768 or ML-KEM-1024',
+            url: 'https://trustedcomputinggroup.org/resource/pc-client-platform-tpm-profile-ptp-specification/',
+            publishedOn: '2026-03-23',
           },
         ],
       },
@@ -2329,15 +2397,23 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       pureSig: {
         value: 'rfc',
         stage: 'rfc-published',
-        stageNote: 'TPM 2.0 Library v1.85 published 2026-03',
-        note: 'TPM 2.0 SHALL support ML-DSA-65 or ML-DSA-87 (incl. HashML-DSA).',
+        stageNote:
+          'TPM 2.0 Library v1.85 (Mar 2026) adds ML-DSA as an OPTIONAL algorithm; PC Client Platform TPM Profile v1.07 (2026-03-23) makes it mandatory',
+        note: 'TPM 2.0 Library v1.85 defines ML-DSA-44/65/87 (incl. HashML-DSA) as optional — no SHALL-support text in the Library spec itself. The requirement to support ML-DSA-65 or ML-DSA-87 comes from PC Client Platform TPM Profile v1.07.',
         refs: [
           {
             kind: 'spec',
             id: 'TCG TPM 2.0 v1.85',
-            title: 'TCG TPM 2.0 Library v1.85 — ML-DSA + HashML-DSA commands',
+            title: 'TCG TPM 2.0 Library v1.85 — ML-DSA + HashML-DSA commands (optional)',
             url: 'https://trustedcomputinggroup.org/resource/tpm-library-specification/',
             publishedOn: '2026-03-12',
+          },
+          {
+            kind: 'spec',
+            id: 'TCG PC Client PTP v1.07',
+            title: 'PC Client Platform TPM Profile v1.07 — mandates ML-DSA-65 or ML-DSA-87',
+            url: 'https://trustedcomputinggroup.org/resource/pc-client-platform-tpm-profile-ptp-specification/',
+            publishedOn: '2026-03-23',
           },
         ],
       },
@@ -2786,7 +2862,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     liveDeployments: [
       {
         provider: 'Turkcell + Juniper + ID Quantique',
-        what: 'Quantum-safe MACsec validated on Juniper SRX/MX/ACX for 5G mobile backhaul (QKD-based key delivery)',
+        what: 'Quantum-safe MACsec validated on Juniper SRX/MX/ACX for 5G mobile backhaul (QKD-based key delivery) — a proof-of-concept validation, not a commercial rollout',
         since: '2025-06',
         referenceUrl:
           'https://www.juniper.net/gb/en/company/press-releases/2025/pr-2025-06-26-00-00.html',
@@ -2801,10 +2877,10 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       'UEFI Secure Boot — image verification inherits X.509 PKI; PQ migration tracks X.509 algorithm OIDs.',
     latestRelease: [
       {
-        id: 'UEFI-2.10',
-        title: 'UEFI Specification 2.10 (Aug 2022 + errata)',
+        id: 'UEFI-2.11',
+        title: 'UEFI Specification 2.11 (Nov 2024) — adds no PQC content; PQ readiness tracks X.509 OIDs only',
         url: 'https://uefi.org/specifications',
-        date: '2022-08',
+        date: '2024-11',
       },
     ],
     latestDraft: [],
@@ -2896,30 +2972,30 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     id: 'pkcs11',
     name: 'PKCS#11',
     description:
-      'OASIS PKCS#11 v3.2 — the HSM / crypto-token API. v3.2 adds ML-KEM, ML-DSA and SLH-DSA mechanisms (CKM_ML_KEM, CKM_ML_DSA, CKM_SLH_DSA) plus C_EncapsulateKey / C_DecapsulateKey.',
+      'OASIS PKCS#11 v3.2 — the HSM / crypto-token API, now a full OASIS Standard. v3.2 adds ML-KEM, ML-DSA and SLH-DSA mechanisms (CKM_ML_KEM, CKM_ML_DSA, CKM_SLH_DSA) plus C_EncapsulateKey / C_DecapsulateKey.',
     latestRelease: [
       {
-        id: 'PKCS11-v3.2-CS01',
-        title: 'PKCS#11 Specification v3.2 — Committee Specification 01',
-        url: 'https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/pkcs11-spec-v3.2.html',
-        date: '2025-11-14',
+        id: 'PKCS11-v3.2-OS',
+        title: 'PKCS#11 Specification v3.2 — OASIS Standard',
+        url: 'https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/os/pkcs11-spec-v3.2-os.pdf',
+        date: '2026-06-03',
       },
     ],
     latestDraft: [],
     dimensions: {
       pureKem: {
-        value: 'draft',
-        stageNote:
-          'OASIS Committee Specification CS01 (2025-11-14) — one step from OASIS Standard; ML-KEM mechanisms (CKM_ML_KEM)',
+        value: 'rfc',
+        stage: 'rfc-published',
+        stageNote: 'PKCS#11 v3.2 reached full OASIS Standard 2026-06-03; ML-KEM mechanisms (CKM_ML_KEM)',
         note: 'ML-KEM-512/768/1024 via CKM_ML_KEM + C_EncapsulateKey / C_DecapsulateKey.',
         deploymentPosture: 'production',
         refs: [
           {
             kind: 'spec',
-            id: 'PKCS#11 v3.2 CS01',
-            title: 'PKCS#11 v3.2 — ML-KEM mechanisms',
-            url: 'https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/pkcs11-spec-v3.2.html',
-            publishedOn: '2025-11-14',
+            id: 'PKCS#11 v3.2 OS',
+            title: 'PKCS#11 v3.2 — ML-KEM mechanisms (OASIS Standard)',
+            url: 'https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/os/pkcs11-spec-v3.2-os.pdf',
+            publishedOn: '2026-06-03',
           },
         ],
       },
@@ -2928,18 +3004,19 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         note: 'PKCS#11 is a mechanism-level token API; hybrid/composite KEMs are composed by callers, not defined by the spec.',
       },
       pureSig: {
-        value: 'draft',
+        value: 'rfc',
+        stage: 'rfc-published',
         stageNote:
-          'OASIS CS01 (2025-11-14) — ML-DSA + SLH-DSA mechanisms (CKM_ML_DSA, CKM_SLH_DSA)',
+          'PKCS#11 v3.2 reached full OASIS Standard 2026-06-03; ML-DSA + SLH-DSA mechanisms (CKM_ML_DSA, CKM_SLH_DSA)',
         note: 'ML-DSA-44/65/87 (incl. HashML-DSA) + SLH-DSA via CKM_ML_DSA / CKM_SLH_DSA.',
         deploymentPosture: 'production',
         refs: [
           {
             kind: 'spec',
-            id: 'PKCS#11 v3.2 CS01',
-            title: 'PKCS#11 v3.2 — ML-DSA / SLH-DSA mechanisms',
-            url: 'https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/pkcs11-spec-v3.2.html',
-            publishedOn: '2025-11-14',
+            id: 'PKCS#11 v3.2 OS',
+            title: 'PKCS#11 v3.2 — ML-DSA / SLH-DSA mechanisms (OASIS Standard)',
+            url: 'https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/os/pkcs11-spec-v3.2-os.pdf',
+            publishedOn: '2026-06-03',
           },
         ],
       },
@@ -2980,7 +3057,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       {
         productId: 'utimaco-securityserver',
         name: 'Utimaco SecurityServer',
-        versionNote: 'fw 4.40+ — PQC (ML-KEM / ML-DSA) via PKCS#11',
+        versionNote:
+          'Quantum Protect application package (u.trust GP HSM Se-Series, announced 2025-04-02) — ML-KEM / ML-DSA / LMS / XMSS via PKCS#11',
       },
     ],
     playgrounds: [
@@ -3001,28 +3079,27 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     recommended: true,
     recommendedReason:
-      'PKCS#11 v3.2 (OASIS CS01) fully supports ML-KEM + ML-DSA and is already implemented (our SoftHSM v3 + vendor HSMs); exercisable live in the HSM playground.',
+      'PKCS#11 v3.2 (full OASIS Standard) fully supports ML-KEM + ML-DSA and is already implemented (our SoftHSM v3 + vendor HSMs); exercisable live in the HSM playground.',
   },
   {
     id: 'kmip',
     name: 'KMIP',
     description:
-      'OASIS Key Management Interoperability Protocol v3.0 — key lifecycle over the wire. Adds PQC managed objects + operations: ML-KEM (Encapsulate / Decapsulate) and ML-DSA (Sign / SignatureVerify).',
+      'OASIS Key Management Interoperability Protocol v3.0 — key lifecycle over the wire. CSD01 defines ML-KEM and ML-DSA managed-object algorithm enumerations; our own server (pqctoday-kmip) implements Encapsulate/Decapsulate operations as a forward-looking extension ahead of the published draft.',
     latestRelease: [],
     latestDraft: [
       {
         id: 'KMIP-v3.0-CSD01',
         title: 'KMIP Specification v3.0 — Committee Specification Draft 01',
         url: 'https://docs.oasis-open.org/kmip/kmip-spec/v3.0/',
-        date: '2026-01-01',
+        date: '2024-08-23',
       },
     ],
     dimensions: {
       pureKem: {
         value: 'draft',
-        stageNote:
-          'OASIS Committee Specification Draft CSD01 — ML-KEM objects + Encapsulate/Decapsulate',
-        note: 'ML-KEM-512/768/1024 managed objects with Encapsulate / Decapsulate operations.',
+        stageNote: 'OASIS Committee Specification Draft CSD01 (2024-08-23) — ML-KEM algorithm enumerations',
+        note: 'ML-KEM-512/768/1024 managed-object algorithm enumerations are defined in CSD01. The public draft does NOT yet define Encapsulate/Decapsulate operations — pqctoday-kmip implements them as a forward-looking extension, ahead of the OASIS spec.',
         deploymentPosture: 'pilot',
         refs: [
           {
@@ -3030,7 +3107,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'KMIP 3.0 CSD01',
             title: 'KMIP v3.0 — PQC objects (ML-KEM)',
             url: 'https://docs.oasis-open.org/kmip/kmip-spec/v3.0/',
-            publishedOn: '2026-01-01',
+            publishedOn: '2024-08-23',
           },
         ],
       },
@@ -3040,8 +3117,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'draft',
-        stageNote: 'OASIS CSD01 — ML-DSA objects + Sign / SignatureVerify',
-        note: 'ML-DSA-44/65/87 managed objects with Sign / SignatureVerify operations.',
+        stageNote: 'OASIS CSD01 (2024-08-23) — ML-DSA algorithm enumeration used by KMIP’s existing Sign / SignatureVerify operations',
+        note: 'ML-DSA-44/65/87 managed objects use the pre-existing KMIP Sign / SignatureVerify operations once the ML-DSA algorithm enum value is present — CSD01 adds the enum, not new operations.',
         deploymentPosture: 'pilot',
         refs: [
           {
@@ -3049,7 +3126,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'KMIP 3.0 CSD01',
             title: 'KMIP v3.0 — PQC objects (ML-DSA)',
             url: 'https://docs.oasis-open.org/kmip/kmip-spec/v3.0/',
-            publishedOn: '2026-01-01',
+            publishedOn: '2024-08-23',
           },
         ],
       },

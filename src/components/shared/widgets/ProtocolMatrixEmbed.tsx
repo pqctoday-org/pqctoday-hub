@@ -4,11 +4,16 @@
  * "Protocol Support" tab (PQCProtocolMatrix) inside the simulation.
  *
  * PQCProtocolMatrix owns all its filter/view state and only READS `?highlight=`
- * from the URL (it never writes search params), so it renders cleanly inside the
- * app's existing Router with no isolation needed — and it must NOT wrap itself in
- * a <Router>, since the app already has one (React Router forbids nesting:
- * "You cannot render a <Router> inside another <Router>"). In `/simulation` the
- * `highlight` param simply isn't present, so the auto-scroll no-ops.
+ * on mount for the auto-scroll — that part renders cleanly inside the app's
+ * existing Router with no isolation needed. NOTE: PQCProtocolMatrix's protocol
+ * detail modal DOES write `?protocol=<id>` via setSearchParams when opened/closed
+ * (pushes a history entry on open, replaces on close) — this was true when this
+ * comment was first written to say otherwise; not yet re-verified inside the
+ * Simulation embed's own navigation/history handling.
+ * It must NOT wrap itself in a <Router>, since the app already has one (React
+ * Router forbids nesting: "You cannot render a <Router> inside another
+ * <Router>"). In `/simulation` the `highlight` param simply isn't present, so
+ * the auto-scroll no-ops.
  *
  * Per the C5-a decision, Protocol Support completes as a "reviewed" reference-mark
  * (visited-on-open), wired through the existing `reference` completion path.
