@@ -1,9 +1,0 @@
-{
-  "_comment": "One-shot alias remap for trusted_source_id values in data CSVs, produced by the 2026-07-09 trust-spine registry rebuild. Each key is an alias id currently used by data rows (library/leaders/etc.); each value is the canonical source_id in trusted_sources_07092026.csv. Apply to the data CSVs AFTER the in-flight 07-09 snapshots land (the referencing files were frozen during this rebuild), then delete this file. Verified per-row: 'nist' rows cite NIST publications (CSF 2.0) -> nist-csrc; 'nsa' rows cite CNSS/NSA advisories, NSM-8, NIAP and CNSA 2.0 profiles -> nsa-advisory (advisory/guidance portal, not the media.defense.gov mirror); 'cisco' rows cite blogs.cisco.com -> cisco-systems; 'tno' rows cite the AIVD/CWI/TNO PQC Migration Handbook -> tno-nl; 'csa' rows cite cloudsecurityalliance.org (Cloud Security Alliance, not CSA Singapore) -> csa-cloud; 'cabforum' rows cite cabforum.org, already registered as 'cabf' -> cabf.",
-  "nist": "nist-csrc",
-  "nsa": "nsa-advisory",
-  "cisco": "cisco-systems",
-  "tno": "tno-nl",
-  "csa": "csa-cloud",
-  "cabforum": "cabf"
-}
