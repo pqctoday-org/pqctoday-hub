@@ -156,15 +156,25 @@ function transformRow(row: RawPatentRow): PatentItem | null {
   return { ...partial, impactScore, impactLevel: toImpactLevel(impactScore) }
 }
 
-// Source records mix casing conventions across pulls (e.g. "Intel Corporation" vs
-// "INTEL CORPORATION"), which fragments the same company into separate rows in
-// filters and Top Assignees. Collapse each case-insensitive group onto whichever
-// exact spelling is most common, so duplicates merge without hand-maintained rules.
+// Source records mix casing and punctuation conventions across pulls (e.g.
+// "Intel Corporation" vs "INTEL CORPORATION", "Thales Dis Cpl Usa, Inc." vs
+// "THALES DIS CPL USA, INC" with no trailing period), which fragments the same
+// company into separate rows in filters and Top Assignees. Collapse each
+// normalized-key group onto whichever exact spelling is most common, so
+// duplicates merge without hand-maintained rules. Punctuation is stripped only
+// for the grouping key, not the displayed name — and only trivial noise
+// (periods/commas/whitespace), not corporate-suffix letters (e.g. "SA" vs
+// "SAS" stay distinct, since that can reflect a genuinely different legal
+// entity rather than a typo).
+function normalizeAssigneeKey(name: string): string {
+  return name.toLowerCase().replace(/[.,]/g, '').replace(/\s+/g, ' ').trim()
+}
+
 function canonicalizeAssignees(items: PatentItem[]): PatentItem[] {
   const variantCounts = new Map<string, Map<string, number>>()
   for (const item of items) {
     if (!item.assignee) continue
-    const key = item.assignee.toLowerCase()
+    const key = normalizeAssigneeKey(item.assignee)
     const variants = variantCounts.get(key) ?? new Map<string, number>()
     variants.set(item.assignee, (variants.get(item.assignee) ?? 0) + 1)
     variantCounts.set(key, variants)
@@ -175,7 +185,9 @@ function canonicalizeAssignees(items: PatentItem[]): PatentItem[] {
     canonical.set(key, best)
   }
   return items.map((item) =>
-    item.assignee ? { ...item, assignee: canonical.get(item.assignee.toLowerCase())! } : item
+    item.assignee
+      ? { ...item, assignee: canonical.get(normalizeAssigneeKey(item.assignee))! }
+      : item
   )
 }
 
