@@ -15,6 +15,7 @@ import {
   splitSemicolon,
   splitComma,
 } from './data-loader.js'
+import { QUIZ_CATEGORIES as APP_QUIZ_CATEGORIES } from '../../src/components/PKILearning/modules/Quiz/types.js'
 
 // ── Reference constants ─────────────────────────────────────────────────────
 
@@ -88,66 +89,14 @@ const MODULE_IDS = new Set([
   'crypto-discovery',
 ])
 
-const QUIZ_CATEGORIES = new Set([
-  'pqc-fundamentals',
-  'algorithm-families',
-  'nist-standards',
-  'migration-planning',
-  'compliance',
-  'protocol-integration',
-  'industry-threats',
-  'crypto-operations',
-  'digital-assets',
-  'tls-basics',
-  'pki-infrastructure',
-  'digital-id',
-  '5g-security',
-  'quantum-threats',
-  'hybrid-crypto',
-  'crypto-agility',
-  'vpn-ssh-pqc',
-  'stateful-signatures',
-  'email-signing',
-  'key-management',
-  'kms-pqc',
-  'hsm-pqc',
-  'entropy-randomness',
-  'merkle-tree-certs',
-  'qkd',
-  'code-signing',
-  'api-security-jwt',
-  'iot-ot-pqc',
-  'pqc-risk-management',
-  'pqc-business-case',
-  'pqc-governance',
-  'compliance-strategy',
-  'migration-program',
-  'vendor-risk',
-  'data-asset-sensitivity',
-  'standards-bodies',
-  'web-gateway-pqc',
-  'emv-payment-pqc',
-  'ai-security-pqc',
-  'energy-utilities-pqc',
-  'healthcare-pqc',
-  'aerospace-pqc',
-  'automotive-pqc',
-  'crypto-dev-apis',
-  'confidential-computing',
-  'platform-eng-pqc',
-  'secrets-management-pqc',
-  'network-security-pqc',
-  'database-encryption-pqc',
-  'iam-pqc',
-  'secure-boot-pqc',
-  'os-pqc',
-  'exec-quantum-impact',
-  'dev-quantum-impact',
-  'arch-quantum-impact',
-  'ops-quantum-impact',
-  'research-quantum-impact',
-  'pqc-testing-validation',
-])
+// Quiz category vocabulary is derived from the app's own QuizCategory type
+// (src/components/PKILearning/modules/Quiz/types.ts exports the runtime
+// QUIZ_CATEGORIES array the type is derived from). Importing it means check C8
+// validates the CSV against the exact vocabulary the app compiles with and can
+// never drift from it. Before 2026-07-10 this was a stale hand-copied list
+// (missing 11 real categories, plus one — 'key-management' — that the app
+// never had), which produced 128 false C8 errors.
+const QUIZ_CATEGORIES = new Set<string>(APP_QUIZ_CATEGORIES)
 
 const VALID_ROUTE_PREFIXES = [
   '/',
