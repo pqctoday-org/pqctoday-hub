@@ -113,7 +113,12 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
     'final',
   'Standardised (ETSI TS 104 015)|||ETSI TS 104 015 (published Feb 2025)': 'final',
   'Candidate|||Draft (Selected 2025)': 'fips-draft', // HQC
-  'Candidate|||FIPS 206 (Draft)': 'fips-draft', // FN-DSA
+  // FN-DSA: FIPS 206 is announced/in development — NO public draft exists yet
+  // (csrc.nist.gov is the source of truth; the ipd URL 404s). Tier stays
+  // 'fips-draft' (the NIST-FIPS-pipeline tier HQC also uses) — see
+  // algorithmStatusTier.ts for the honest tier description.
+  'Candidate|||FIPS 206 (in development)': 'fips-draft', // FN-DSA (07092026 snapshot)
+  'Candidate|||FIPS 206 (Draft)': 'fips-draft', // FN-DSA (legacy ≤07082026 snapshots)
   'Draft|||NIST SP 800-230 (Draft)': 'sp-draft', // SLH-DSA-*-24
   'Candidate|||draft-ietf-tls-hybrid-design': 'ietf-draft', // X25519MLKEM768 etc.
   'IETF Internet-Draft|||IETF Internet-Draft — DRAFT (not yet RFC)': 'ietf-draft',

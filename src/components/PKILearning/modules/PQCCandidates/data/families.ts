@@ -129,7 +129,7 @@ export const FAMILIES: Record<FamilyId, MathFamily> = {
     bgClass: 'bg-primary/10',
     layman: {
       analogy:
-        'Picture a five-hundred-dimensional crystal where atoms sit at regular grid points. Find the atom closest to a randomly-pointed laser dot — easy enough if your math handles five-hundred-dimensional rounding. Falcon (selected for standardisation as FN-DSA, FIPS 206 still in draft) does this with fractional decimal numbers, which is brittle to implement safely on a phone or a smart card. HAWK does the exact same problem with whole numbers only — same security, simpler implementation, fewer ways to accidentally leak the secret.',
+        'Picture a five-hundred-dimensional crystal where atoms sit at regular grid points. Find the atom closest to a randomly-pointed laser dot — easy enough if your math handles five-hundred-dimensional rounding. Falcon (selected for standardisation as FN-DSA, FIPS 206 still in development) does this with fractional decimal numbers, which is brittle to implement safely on a phone or a smart card. HAWK does the exact same problem with whole numbers only — same security, simpler implementation, fewer ways to accidentally leak the secret.',
       whatsDifferent:
         "This is the same broad family of math as ML-DSA — the lattice signer that's already standardised — so the underlying assumptions are the most-studied of the four families. What makes HAWK distinctive is a fresh approach that ditches floating-point math entirely. That matters enormously for tiny devices where one rounding bug can leak your key over time.",
       catch:

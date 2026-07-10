@@ -15,7 +15,7 @@
  */
 export type AlgorithmStatusTier =
   | 'final' // published FIPS/SP/RFC/ISO/ETSI standard
-  | 'fips-draft' // NIST FIPS in draft (FN-DSA/FIPS 206, HQC pre-FIPS-number)
+  | 'fips-draft' // NIST FIPS in development, not yet final (FN-DSA/FIPS 206 announced — no public draft published yet; HQC pre-FIPS-number)
   | 'sp-draft' // NIST Special Publication in draft (e.g. SP 800-230 parameter sets)
   | 'ietf-draft' // an Internet-Draft, not yet an RFC
   | 'round2-candidate' // NIST Additional Signatures Round 2 (MAYO, CROSS, UOV, SNOVA, etc.)

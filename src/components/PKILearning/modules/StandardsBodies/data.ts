@@ -48,7 +48,7 @@ export const ORGANIZATIONS: OrgEntry[] = [
       'FIPS 203 (ML-KEM, August 2024)',
       'FIPS 204 (ML-DSA, August 2024)',
       'FIPS 205 (SLH-DSA, August 2024)',
-      'FIPS 206 (FN-DSA / Falcon — draft, not yet published)',
+      'FIPS 206 (FN-DSA / Falcon — in development, not yet published)',
       'NIST IR 8547 (Transition to PQC, initial public draft Nov 2024)',
       'NIST SP 800-227 (KEM recommendations)',
       'FIPS 140-3 (cryptographic module standard)',

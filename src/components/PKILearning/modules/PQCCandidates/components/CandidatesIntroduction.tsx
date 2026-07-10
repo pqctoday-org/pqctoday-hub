@@ -59,7 +59,7 @@ export const CandidatesIntroduction: React.FC<CandidatesIntroductionProps> = ({
         <p className="text-foreground/80 leading-relaxed mb-4">
           Post-quantum cryptography is not a single 2024 event. NIST has already published one KEM
           (FIPS 203 ML-KEM) and two signatures (FIPS 204 ML-DSA, FIPS 205 SLH-DSA) — with a third,
-          FN-DSA (FIPS 206), still in draft — picked an alternate KEM, and is mid-flight on a
+          FN-DSA (FIPS 206), still in development — picked an alternate KEM, and is mid-flight on a
           signature on-ramp. Korea, China, and Japan each run parallel national tracks.
           International bodies (ISO/IEC, IETF, ETSI) layer compatibility and protocol bindings on
           top. New candidates will keep arriving — the operational question is not{' '}
