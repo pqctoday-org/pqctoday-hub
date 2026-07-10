@@ -100,11 +100,16 @@ test('Step 2: CMP IR issues a real X.509 cert with ML-DSA-65 CA signature (opens
   await expect(page.getByText(/Certificate issued/)).toBeVisible({ timeout: WASM_TIMEOUT })
 
   // `openssl x509 -text -noout` always emits "Certificate:" as its first line.
-  const decodedCert = page.locator('pre').filter({ hasText: 'Certificate:' }).first()
+  // The decoded text lives in a read-only <textarea> (CopyableOutput — added in
+  // Sprint E for copy/download support), exposed via ARIA as a textbox with the
+  // default label "output" (CopyableOutput falls back to that when no `label`
+  // prop is passed) — not a <pre> element.
+  const decodedCert = page.getByRole('textbox', { name: 'output' })
   await expect(decodedCert).toBeVisible()
+  await expect(decodedCert).toHaveValue(/Certificate:/)
 
   // Subject DN contains "Workshop EE" (the default Subject input value).
-  const certText = (await decodedCert.textContent()) ?? ''
+  const certText = (await decodedCert.inputValue()) ?? ''
   expect(certText).toMatch(/Workshop EE/)
 
   // Signature algorithm OID: the mock CA signs with ML-DSA-65. OpenSSL 3.6+
