@@ -77,9 +77,11 @@ test.describe('Assess redesign — happy path', () => {
     await expect(page.getByRole('button', { name: /start full track/i })).toBeVisible({
       timeout: 15000,
     })
-    // Outcome-framed: the chooser names the report sections each track unlocks.
-    await expect(page.getByText('Algorithm migration map')).toBeVisible()
+    // Outcome-framed: the chooser names the report sections each track unlocks
+    // (fast track's included sections, full track's genuinely-gated ones -- see
+    // reportContract.ts for the hard contract with the report page).
     await expect(page.getByText('Risk score & verdict')).toBeVisible()
+    await expect(page.getByText('Per-domain risk breakdown')).toBeVisible()
 
     await page.getByRole('button', { name: /start full track/i }).click()
 
