@@ -18,7 +18,13 @@
  *   4. migrate_cpe_xref_*.csv     — NVD CPE 2.3 URIs per product, when
  *      NVD has indexed the product
  *
- * Only products with pqc_support !== 'None' are included.
+ * Inclusion filter: products whose pqc_support is 'No' (including annotated
+ * variants like 'No (classical RSA/EC only)') are EXCLUDED — a CBOM of PQC
+ * capability has nothing to assert for them. All other values in the
+ * catalog's real vocabulary ('Yes …', 'Partial …', 'Planned …', 'Unknown',
+ * 'Pending Verification', …) are INCLUDED; in particular 'Pending
+ * Verification' stays in because verification status is separate from the
+ * capability claim itself.
  *
  * Usage: npx tsx scripts/generate-cbom.ts [--dry-run]
  */
@@ -227,9 +233,17 @@ async function main() {
       `${cpeXref.filename} (${cpeByProductId.size} matched CPEs)`
   )
 
-  const pqcProducts = products.rows.filter(
-    (p) => p.pqc_support && p.pqc_support.trim().toLowerCase() !== 'none'
-  )
+  // 07092026: the previous test (`!== 'none'`) matched ZERO catalog rows —
+  // the catalog's real vocabulary is 'Yes …' / 'Partial …' / 'Planned …' /
+  // 'No' / 'No (…)' / 'Unknown' / 'Pending Verification', never 'None' — so
+  // every row (including 221 'No' rows) shipped in the CBOM. Exclude rows
+  // whose base value (text before any parenthetical annotation) is 'No',
+  // case-insensitively. 'Pending Verification' is deliberately kept:
+  // verification status is separate from the capability claim.
+  const pqcProducts = products.rows.filter((p) => {
+    const base = (p.pqc_support || '').split('(')[0].trim().toLowerCase()
+    return base !== '' && base !== 'no'
+  })
 
   const components = pqcProducts.map((p) => {
     // Prefer the precise algorithm list from algo_product_xref. Fall back
