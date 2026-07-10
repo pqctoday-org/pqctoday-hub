@@ -79,6 +79,7 @@ test('every policy scenario: engine + sim match the declared verdict', async ({ 
           currentAlgorithm: isNew ? undefined : r.algorithm,
           length: r.length,
           state: r.state,
+          name: r.name,
           date: r.date,
           attrs: r.attrs,
           usageMask: r.usageMask,
@@ -99,6 +100,7 @@ test('every policy scenario: engine + sim match the declared verdict', async ({ 
         const res = sim.evaluatePolicy(editable, {
           op: r.op,
           algorithm: r.algorithm ?? '',
+          keyName: r.name ?? '',
           keyState: r.state ?? 'Active',
           bits: r.length == null ? '' : String(r.length),
           date: r.date ?? '',

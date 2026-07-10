@@ -17,6 +17,10 @@ import type { EditableRule, EditablePolicy } from './policyEditModel'
 export interface SimRequest {
   op: string
   algorithm: string
+  /** Key label (KMIP `Name`) — drives `name_pattern` rules: the Migration
+   * estate's label-only contract, where the request carries only a business
+   * key name and the policy resolves every crypto parameter from it. */
+  keyName: string
   keyState: string
   bits: string
   date: string
@@ -103,6 +107,31 @@ const opMatches = (ruleOps: string[], reqOp: string): boolean => {
 const opsOf = (r: EditableRule): string[] =>
   r.lists.ops ?? r.lists.ops_affected ?? (r.scalars.op ? [r.scalars.op] : [])
 
+/** rule.rs::name_pattern_matches — case-insensitive glob (`*` = any run
+ * including empty, `?` = any single char, everything else literal). A rule
+ * WITH a pattern only fires when the request HAS a name that matches — an
+ * unnamed request never satisfies a patterned rule. */
+export const namePatternMatches = (pattern: string, name: string): boolean => {
+  if (!name) return false
+  const glob = (p: string, s: string): boolean => {
+    if (p === '') return s === ''
+    if (p[0] === '*') return glob(p.slice(1), s) || (s !== '' && glob(p, s.slice(1)))
+    if (s === '') return false
+    if (p[0] === '?' || lc(p[0]) === lc(s[0])) return glob(p.slice(1), s.slice(1))
+    return false
+  }
+  return glob(pattern, name)
+}
+
+/** `true` when this resolution rule carries a `name_pattern` and the request
+ * satisfies it; `false` when it carries one the request doesn't satisfy;
+ * `null` when the rule has no pattern at all (unconstrained). */
+const namePatternGate = (r: EditableRule, keyName: string): boolean | null => {
+  const pattern = r.scalars.name_pattern
+  if (!pattern) return null
+  return namePatternMatches(pattern, keyName)
+}
+
 /** rule.rs::DEFAULT_PROVENANCE_OPS + scoped_op_matches (2026-07-04): the
  * require_* provenance rules gate the creation/ingress surface when the
  * policy writes no `ops:` — never the use ops policies leave open. */
@@ -161,6 +190,25 @@ export function evaluatePolicy(policy: EditablePolicy, req: SimRequest): SimResu
   const flags = req.usageFlags.map(lc)
   const bits = req.bits === '' ? null : Number(req.bits)
 
+  // engine.rs Pass 0 two-phase defaults (most-specific-wins): NAME-PATTERNED
+  // defaults are evaluated before generic ones regardless of YAML order, so a
+  // `name_pattern: "payments-*"` → AES-128 rule beats the policy's generic
+  // AES-256 default. Resolve the winning default rule id up front; the
+  // sequential walk below then fires only that one.
+  const winningDefaultId = ((): string | null => {
+    if (req.algorithm) return null // defaults only fill an unspecified algorithm
+    for (const patternedPhase of [true, false]) {
+      for (const r of policy.rules) {
+        if (!r.enabled || r.type !== 'algorithm_default') continue
+        const gate = namePatternGate(r, req.keyName)
+        if ((gate !== null) !== patternedPhase) continue
+        if (gate === false) continue
+        if (opMatches(opsOf(r), req.op)) return r.id
+      }
+    }
+    return null
+  })()
+
   for (const r of policy.rules) {
     if (verdict) {
       trace.push({ ruleId: r.id, matched: false, effect: 'skip', note: 'after decision' })
@@ -190,14 +238,36 @@ export function evaluatePolicy(policy: EditablePolicy, req: SimRequest): SimResu
     switch (r.type) {
       case 'algorithm_default':
         if (opMatches(ops, req.op) && !carried) {
+          if (winningDefaultId !== null && r.id !== winningDefaultId) {
+            skip(
+              r.scalars.name_pattern
+                ? `name_pattern "${r.scalars.name_pattern}" doesn't match "${req.keyName || '(unnamed)'}"`
+                : 'a name-patterned default takes precedence (most-specific-wins)'
+            )
+            break
+          }
+          if (winningDefaultId === null && namePatternGate(r, req.keyName) === false) {
+            skip(
+              `name_pattern "${r.scalars.name_pattern}" doesn't match "${req.keyName || '(unnamed)'}"`
+            )
+            break
+          }
           matched = true
           effect = 'resolve'
           carried = r.scalars.default_algorithm ?? carried
-          note = `default → ${carried}`
+          note = r.scalars.name_pattern
+            ? `"${req.keyName}" matches ${r.scalars.name_pattern} → ${carried}`
+            : `default → ${carried}`
         }
         break
       case 'algorithm_substitution':
         if (opMatches(ops, req.op) && lc(carried) === lc(r.scalars.from ?? '')) {
+          if (namePatternGate(r, req.keyName) === false) {
+            skip(
+              `name_pattern "${r.scalars.name_pattern}" doesn't match "${req.keyName || '(unnamed)'}"`
+            )
+            break
+          }
           matched = true
           effect = 'resolve'
           rekey = { from: carried, to: r.scalars.to ?? '' }

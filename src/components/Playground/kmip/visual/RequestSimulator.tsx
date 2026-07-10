@@ -182,6 +182,17 @@ export function RequestSimulator({
         />
       </div>
 
+      <div>
+        <FieldLabel>key name (label) — drives name_pattern rules</FieldLabel>
+        <input
+          type="text"
+          value={req.keyName}
+          onChange={(e) => patch('keyName', e.target.value)}
+          placeholder="e.g. payments-db-cipher (leave empty for unnamed)"
+          className="w-full rounded-lg border border-input bg-background/40 px-2 py-1.5 font-mono text-[12px] text-foreground outline-none focus:border-primary"
+        />
+      </div>
+
       <div className="grid grid-cols-2 gap-2.5">
         <div>
           <FieldLabel>request date</FieldLabel>

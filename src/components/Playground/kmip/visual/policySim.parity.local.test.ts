@@ -27,6 +27,7 @@ const load = (file: string) => toEditable(readFileSync(join(POLICY_DIR, file), '
 const REQ_DEFAULTS: SimRequest = {
   op: 'Sign',
   algorithm: '',
+  keyName: '',
   keyState: 'Active',
   bits: '',
   date: '2026-07-01',
@@ -362,6 +363,7 @@ const toDrySpec = (r: SimRequest): Record<string, unknown> => {
     currentAlgorithm: newObject ? undefined : r.algorithm || undefined,
     length: r.bits === '' ? undefined : Number(r.bits),
     state: r.keyState || undefined,
+    name: r.keyName || undefined,
     date: r.date || undefined,
     attrs: Object.keys(attrs).length ? attrs : undefined,
     usageMask: r.usageFlags.length ? r.usageFlags : undefined,
@@ -542,6 +544,34 @@ describe('layer 2 — sim verdict ≡ real engine dry_run verdict', () => {
     ],
     // Phase 3: auto-migrate-on-use now defaults a new symmetric key to AES-256
     ['auto-migrate-on-use.yaml', { op: 'Create', algorithm: '', date: '2026-07-01' }, 'allow'],
+    // name_pattern (label-only agility) — the Migration estate's contract:
+    // the request carries only a business key NAME; patterned defaults beat
+    // generic ones (most-specific-wins), and a patterned rule never fires
+    // for an unnamed request. Both layers must agree on all of these.
+    [
+      'migration-classical.yaml',
+      { op: 'Create', algorithm: '', keyName: 'payments-db-cipher' },
+      'allow',
+    ],
+    [
+      'migration-classical.yaml',
+      { op: 'CreateKeyPair:Sign', algorithm: '', keyName: 'firmware-release-signing' },
+      'allow',
+    ],
+    ['migration-classical.yaml', { op: 'CreateKeyPair:Sign', algorithm: '' }, 'allow'],
+    ['migration-classical.yaml', { op: 'CreateKeyPair:Sign', algorithm: 'ML-DSA-65' }, 'deny'],
+    [
+      'migration-pqc.yaml',
+      { op: 'CreateKeyPair:KeyAgreement', algorithm: '', keyName: 'interbank-vpn-kex' },
+      'allow',
+    ],
+    [
+      'migration-pqc.yaml',
+      { op: 'Sign', algorithm: 'Ed25519', keyName: 'code-commit-signing' },
+      'rekey',
+    ],
+    ['migration-hybrid.yaml', { op: 'Encapsulate', algorithm: 'X25519' }, 'rekey'],
+    ['migration-hybrid.yaml', { op: 'Create', algorithm: 'AES-128' }, 'deny'],
   ]
 
   it('every matrix case: sim verdict === engine verdict === expected', () => {
@@ -564,5 +594,109 @@ describe('layer 2 — sim verdict ≡ real engine dry_run verdict', () => {
       expect(engKind, `${label}: engine`).toBe(expected)
     }
     pg.free()
+  })
+})
+
+describe('name_pattern — label-only resolution (engine.rs Pass-0 semantics)', () => {
+  it('the label decides the algorithm: each estate name resolves per its pattern rule', () => {
+    const cases: [string, Partial<SimRequest>, string][] = [
+      [
+        'migration-classical.yaml',
+        { op: 'Create', algorithm: '', keyName: 'payments-db-cipher' },
+        'AES-128',
+      ],
+      ['migration-classical.yaml', { op: 'Create', algorithm: '' }, 'AES-256'],
+      [
+        'migration-classical.yaml',
+        { op: 'CreateKeyPair:Sign', algorithm: '', keyName: 'firmware-release-signing' },
+        'RSA-2048',
+      ],
+      [
+        'migration-classical.yaml',
+        { op: 'CreateKeyPair:Sign', algorithm: '', keyName: 'api-gateway-signing' },
+        'ECDSA-P256',
+      ],
+      [
+        'migration-classical.yaml',
+        { op: 'CreateKeyPair:Sign', algorithm: '', keyName: 'code-commit-signing' },
+        'Ed25519',
+      ],
+      // The label carries the SECURITY LEVEL, not just the family:
+      [
+        'migration-pqc.yaml',
+        { op: 'CreateKeyPair:KeyAgreement', algorithm: '', keyName: 'interbank-vpn-kex' },
+        'ML-KEM-1024',
+      ],
+      ['migration-pqc.yaml', { op: 'CreateKeyPair:KeyAgreement', algorithm: '' }, 'ML-KEM-768'],
+    ]
+    for (const [file, over, algo] of cases) {
+      const r = run(file, over)
+      expect(r.verdict.kind, `${file} ${JSON.stringify(over)}`).toBe('allow')
+      expect(r.verdict.algorithm, `${file} ${JSON.stringify(over)}`).toBe(algo)
+    }
+  })
+
+  it('most-specific-wins is order-INDEPENDENT: a generic default listed FIRST still loses to a matching pattern', () => {
+    // Synthetic policy: generic rule deliberately listed before the patterned
+    // one — the engine evaluates patterned defaults in their own phase first
+    // (engine.rs Pass 0), so YAML order must not matter.
+    const yaml = [
+      'schema_version: 1',
+      'metadata:',
+      '  name: order-test',
+      '  description: t',
+      '  authority: t',
+      '  effective: "always"',
+      'rules:',
+      '  - type: algorithm_default',
+      '    ops: [Create]',
+      '    default_algorithm: AES-256',
+      '    reason: "generic first"',
+      '  - type: algorithm_default',
+      '    ops: [Create]',
+      '    name_pattern: "payments-*"',
+      '    default_algorithm: AES-128',
+      '    reason: "patterned second"',
+      '',
+    ].join('\n')
+    const policy = toEditable(yaml)
+    const named = evaluatePolicy(
+      policy,
+      req({ op: 'Create', algorithm: '', keyName: 'payments-db-cipher' })
+    )
+    expect(named.verdict.algorithm).toBe('AES-128')
+    const unnamed = evaluatePolicy(policy, req({ op: 'Create', algorithm: '' }))
+    expect(unnamed.verdict.algorithm).toBe('AES-256')
+  })
+
+  it('a patterned rule never fires for an unnamed request, and the glob is case-insensitive with ? wildcards', () => {
+    const yaml = [
+      'schema_version: 1',
+      'metadata:',
+      '  name: glob-test',
+      '  description: t',
+      '  authority: t',
+      '  effective: "always"',
+      'rules:',
+      '  - type: algorithm_default',
+      '    ops: [Create]',
+      '    name_pattern: "Payments-??-*"',
+      '    default_algorithm: AES-128',
+      '    reason: "glob"',
+      '',
+    ].join('\n')
+    const policy = toEditable(yaml)
+    expect(
+      evaluatePolicy(policy, req({ op: 'Create', algorithm: '', keyName: 'payments-eu-cipher' }))
+        .verdict.algorithm
+    ).toBe('AES-128')
+    // ? = exactly one char — a 3-char region must not match ??
+    expect(
+      evaluatePolicy(policy, req({ op: 'Create', algorithm: '', keyName: 'payments-eur-cipher' }))
+        .verdict.algorithm
+    ).toBeFalsy()
+    expect(
+      evaluatePolicy(policy, req({ op: 'Create', algorithm: '' })).verdict.algorithm
+    ).toBeFalsy()
   })
 })

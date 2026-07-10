@@ -126,10 +126,20 @@ export class KmipPlayground {
      * (its own doc comment) that brings a new slot online before
      * `C_InitToken` will accept it; skipping this for a non-zero slot
      * fails with `CKR_SLOT_ID_INVALID` (confirmed empirically).
+     * `rng_seed_mode` — the server's §6.1.55 RNG Seed policy choice
+     * (`RngSeedMode`): `"full-consume"` (default) / `"partial-consume"` /
+     * `"ignore"` / `"deny"`. Server-chosen and mutually exclusive per the
+     * spec, so it's a CONSTRUCTOR parameter, not per-request — exposed so
+     * the in-browser OASIS corpus replay can boot each CS-RNG-O variant
+     * test on an engine pinned to that test's mode, exactly as the native
+     * harness constructs per-test `Deps`.
      * @param {number | null} [slot]
+     * @param {string | null} [rng_seed_mode]
      */
-    constructor(slot) {
-        const ret = wasm.kmipplayground_new(isLikeNone(slot) ? 0x100000001 : (slot) >>> 0);
+    constructor(slot, rng_seed_mode) {
+        var ptr0 = isLikeNone(rng_seed_mode) ? 0 : passStringToWasm0(rng_seed_mode, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        const ret = wasm.kmipplayground_new(isLikeNone(slot) ? 0x100000001 : (slot) >>> 0, ptr0, len0);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }

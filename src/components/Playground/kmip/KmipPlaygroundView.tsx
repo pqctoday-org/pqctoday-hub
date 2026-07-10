@@ -717,6 +717,45 @@ export function KmipPlaygroundView() {
         },
       ],
     },
+    {
+      id: 'honest',
+      title: "What's new: the honest maximum",
+      icon: Layers,
+      plane: 'kmip3',
+      blurb: 'Split keys, async jobs, and an engine that proves every claim.',
+      steps: [
+        {
+          title: 'A server that only claims what it does',
+          body: 'Engine 0.12/0.13 closed the gap between what this KMIP server SAYS and what it DOES: real M-of-N key splitting, real asynchronous jobs, Destroy that genuinely scrubs key material, and a Query response with zero advertised-but-fake capabilities. This tour shows you where to run each one.',
+        },
+        {
+          title: 'Learn it hands-on',
+          target: '[data-tour="kmip3-subtabs"]',
+          body: 'Walkthroughs 7–9 in the Learn tab run the new capabilities live: split a key 3-of-5 and watch 2 shares honestly fail to recover it; queue a background job and redeem its correlation value; try to sneak a read-only attribute past the server.',
+        },
+        {
+          title: 'Every operation, honestly labelled',
+          target: '[data-tour="kmip3-subtabs"] button',
+          targetText: 'Commands',
+          act: () => clickByText('[data-tour="kmip3-subtabs"] button', 'Commands'),
+          body: '62 of the 66 KMIP 3.0 operations genuinely run here — split keys and the async quartet included, with real parameter forms. The 7 that cannot run say exactly why (native-only crypto backend, or a documented scope boundary) instead of pretending.',
+        },
+        {
+          title: 'Prove it against the OASIS suite',
+          target: '[data-tour="kmip3-subtabs"] button',
+          targetText: 'Corpus Replay',
+          act: () => clickByText('[data-tour="kmip3-subtabs"] button', 'Corpus Replay'),
+          body: "Replay the official conformance corpus right in this tab. The engine's CI pins an exact 97-pass baseline; the in-browser run labels its few wasm-seam skips honestly and tolerates zero failures.",
+        },
+        {
+          title: 'Rollback that reaches everything',
+          target: '[data-tour="kmip3-subtabs"] button',
+          targetText: 'Batch & Macros',
+          act: () => clickByText('[data-tour="kmip3-subtabs"] button', 'Batch & Macros'),
+          body: 'Batch Undo now rolls back even the UID-minting KEM and split-key operations — run the "Rollback reaches Encapsulate" recipe and watch every minted object disappear when a later item fails.',
+        },
+      ],
+    },
   ]
   const tour = useLessonsTour(lessons, setPlane)
 

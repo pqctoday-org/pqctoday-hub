@@ -75,6 +75,18 @@ const RECIPES: Recipe[] = [
     ],
   },
   {
+    id: 'undo-covers-kem',
+    label: 'Rollback reaches Encapsulate (0.13.0)',
+    desc: 'Provision a KEM key, Encapsulate with it, then hit a guaranteed failure (Destroy of a ghost UID) under Undo. Engine 0.13.0 taught rollback about the UID-minting KEM/split-key ops — every earlier item reports OperationUndone and the minted objects are genuinely gone. Before 0.13.0 the Encapsulate survived the "rollback".',
+    cont: 'Undo',
+    items: [
+      { op: 'CreateKeyPair', intent: 'kem', algorithm: 'ML-KEM-768' },
+      { op: 'Activate', uid: ID_PLACEHOLDER },
+      { op: 'Encapsulate', uid: ID_PLACEHOLDER },
+      { op: 'Destroy', uid: 'urn:pqctoday:ghost' },
+    ],
+  },
+  {
     id: 'inventory',
     label: 'Server inventory',
     desc: 'Query + Locate together — capabilities and stored objects in one batch.',
