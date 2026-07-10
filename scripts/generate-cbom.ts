@@ -44,6 +44,15 @@ function dataVersionFromCsvName(filename: string): string {
   return `${yyyy}-${mm}-${dd}T00:00:00.000Z`
 }
 
+/** Chronological sort key for dated CSVs: raw MMDDYYYY[_rN] filenames sort
+ *  lexicographically wrong across year boundaries (01…2027 < 12…2026). */
+function csvDateKey(filename: string): string {
+  const m = filename.match(/_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/)
+  if (!m) return `0000-00-00#000_${filename}`
+  const [, mm, dd, yyyy, r] = m
+  return `${yyyy}-${mm}-${dd}#${String(Number(r ?? 0)).padStart(3, '0')}`
+}
+
 /** A deterministic, real v4-shaped UUID derived from `seed` — same seed always
  *  produces the same UUID (required so identical input data still produces a
  *  byte-identical CBOM across rebuilds), but the output is an actual RFC 4122
@@ -153,7 +162,7 @@ async function loadLatest<T extends object>(
   pattern: string
 ): Promise<{ filename: string; rows: T[] }> {
   const files = await glob(pattern, { cwd: DATA_DIR })
-  files.sort()
+  files.sort((a, b) => csvDateKey(a).localeCompare(csvDateKey(b)))
   const latest = files.at(-1)
   if (!latest) throw new Error(`No CSV found for pattern ${pattern}`)
   const raw = fs.readFileSync(path.join(DATA_DIR, latest), 'utf8')
