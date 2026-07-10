@@ -43,11 +43,15 @@ registries and refreshes the algorithm and learning-module data.
 
 - **Refreshed the algorithm reference data** [view:/algorithms] [persona:researcher] [persona:developer]: the algorithm properties, status tiers, and candidate-family data were rebuilt from a fresh, canonical July 2026 reference snapshot so the tables and pickers reflect the current standardization state.
 - **Rebuilt the site's data trust-spine** [view:/library] [persona:architect] [persona:researcher]: the registries the site trusts (glossary, sources, migrate proofs, timeline evidence) were rebuilt to be complete, canonical, and consistency-guarded, and the data validators can now actually fail on defects instead of passing silently.
+- **Added PKCS#11 v3.2 as a finalized OASIS Standard to the Library** [view:/library] [persona:developer] [persona:architect]: the June 2026 OASIS Standard is now the active reference, with the earlier Committee Specification Draft kept as a previous revision rather than deleted.
 
 ### Fixed
 
 - **The Report page's CBOM Builder link now lands in the right place** [view:/report] [persona:architect] [persona:developer]: corrected the CBOM Builder deep link so it opens the builder directly, backed by new real-browser test coverage.
 - **Corrected content across several PKI learning modules** [view:/learn] [persona:developer] [persona:curious]: the EMV payment, IoT/OT, PQC candidates, governance, skills/team-structure, and standards-bodies modules picked up data and copy corrections from the trust-spine sweep.
+- **Fixed a compliance KPI and cleaned up certification data** [view:/compliance] [persona:executive] [persona:architect]: corrected a fine-lookup key mismatch that affected an executive KPI, fixed PQC-coverage on several certification records against their published NIST security policies, and populated product links across certification cross-reference rows.
+- **Tidied the Migrate catalog** [view:/migrate] [persona:architect] [persona:developer]: deprecated three duplicate product entries, corrected an inaccurate PQC-support claim, fixed a status label that showed non-PQC products as fully verified, and remapped catalog rows to the current category taxonomy.
+- **Recovered broken Library sources and cross-references** [view:/library] [persona:researcher] [persona:architect]: restored missing or broken source documents (including two corrected ETSI version numbers) and repointed internal cross-references, and fixed leader resource links.
 
 ### Data
 
