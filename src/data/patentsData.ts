@@ -156,6 +156,29 @@ function transformRow(row: RawPatentRow): PatentItem | null {
   return { ...partial, impactScore, impactLevel: toImpactLevel(impactScore) }
 }
 
+// Source records mix casing conventions across pulls (e.g. "Intel Corporation" vs
+// "INTEL CORPORATION"), which fragments the same company into separate rows in
+// filters and Top Assignees. Collapse each case-insensitive group onto whichever
+// exact spelling is most common, so duplicates merge without hand-maintained rules.
+function canonicalizeAssignees(items: PatentItem[]): PatentItem[] {
+  const variantCounts = new Map<string, Map<string, number>>()
+  for (const item of items) {
+    if (!item.assignee) continue
+    const key = item.assignee.toLowerCase()
+    const variants = variantCounts.get(key) ?? new Map<string, number>()
+    variants.set(item.assignee, (variants.get(item.assignee) ?? 0) + 1)
+    variantCounts.set(key, variants)
+  }
+  const canonical = new Map<string, string>()
+  for (const [key, variants] of variantCounts) {
+    const best = [...variants.entries()].sort((a, b) => b[1] - a[1])[0][0]
+    canonical.set(key, best)
+  }
+  return items.map((item) =>
+    item.assignee ? { ...item, assignee: canonical.get(item.assignee.toLowerCase())! } : item
+  )
+}
+
 const modules = import.meta.glob('./patents_*.csv', {
   query: '?raw',
   import: 'default',
@@ -169,12 +192,14 @@ const result = loadLatestCSV<RawPatentRow, PatentItem>(
   true // withPrevious for New/Updated status badges
 )
 
+const canonicalizedData = canonicalizeAssignees(result.data)
+
 // Compute status map if previous data exists
 const statusMap = result.previousData
-  ? compareDatasets(result.data, result.previousData, 'patentNumber')
+  ? compareDatasets(canonicalizedData, result.previousData, 'patentNumber')
   : new Map<string, ItemStatus>()
 
-export const patentsData: PatentItem[] = result.data.map((item) => ({
+export const patentsData: PatentItem[] = canonicalizedData.map((item) => ({
   ...item,
   status: statusMap.get(item.patentNumber) as 'New' | 'Updated' | undefined,
 }))

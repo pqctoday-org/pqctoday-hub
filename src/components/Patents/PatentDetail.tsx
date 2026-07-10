@@ -237,12 +237,13 @@ export function PatentDetail({
             </a>
           </div>
           <h2 className="text-sm font-semibold text-foreground leading-snug">{patent.title}</h2>
-          <p className="mt-0.5 text-xs text-muted-foreground">{patent.assignee}</p>
+          {patent.assignee ? (
+            <p className="mt-0.5 text-xs text-muted-foreground">{patent.assignee}</p>
+          ) : (
+            <p className="mt-0.5 text-xs italic text-muted-foreground/70">Assignee not available</p>
+          )}
           {patent.inventors && (
-            <p
-              className="mt-0.5 text-xs text-muted-foreground/70 truncate"
-              title={patent.inventors}
-            >
+            <p className="mt-0.5 text-xs text-muted-foreground truncate" title={patent.inventors}>
               {patent.inventors}
             </p>
           )}
