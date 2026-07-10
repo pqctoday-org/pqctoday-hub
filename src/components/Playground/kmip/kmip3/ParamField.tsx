@@ -49,6 +49,10 @@ const PARAM_TAG: Record<string, string> = {
   identifier: 'InteropIdentifier',
   replaceExisting: 'ReplaceExisting',
   keyFormatType: 'KeyFormatType',
+  certificateHex: 'CertificateValue',
+  csrHex: 'CertificateRequest',
+  validityDate: 'ValidityDate',
+  offsetSeconds: 'Offset',
 }
 
 function FieldLabel({ param }: { param: OpParam }) {

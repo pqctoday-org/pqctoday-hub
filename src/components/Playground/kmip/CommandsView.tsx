@@ -4,9 +4,11 @@
 // tester for every KMIP 3.0 operation (all 66 the protocol defines), built
 // entirely on the generic op-template pipeline (src/wasm/kmip/ttlv/) rather
 // than a Rust match arm per op. Every Run button fires a REAL request
-// through the same dispatcher path the Agility tab uses — including the 7
-// unsupported ops (3 native-gated certificate ops + 4 out-of-scope), which
-// get a real `OperationNotSupported` rejection, never a simulated one.
+// through the same dispatcher path the Agility tab uses — including the 4
+// permanently-unsupported ops (out of scope, not a wasm32 backend gap —
+// since the pure-Rust cert-ops port, Certify/Re-certify/Validate are real
+// here too), which get a real `OperationNotSupported` rejection, never a
+// simulated one.
 //
 // Every op row is individually expandable with a real parameter form (each
 // field's type — algorithm select, uid + datalist, hex/text/number/bool —
@@ -41,14 +43,12 @@ const CATEGORY_ORDER: OpCategory[] = [
   'Object Lifecycle',
   'Attributes',
   'Cryptographic Services',
+  'Certificate Services',
   'RNG & PKCS#11 Passthrough',
   'Asynchronous Processing',
 ]
 
-const HIDDEN_CATEGORIES: OpCategory[] = [
-  'Certificate Services (not in this build)',
-  'Not Implemented (out of scope)',
-]
+const HIDDEN_CATEGORIES: OpCategory[] = ['Not Implemented (out of scope)']
 
 const LOG_LIMIT = 50
 
@@ -295,6 +295,11 @@ export function CommandsView({
   const [fieldValues, setFieldValues] = useState<Record<string, Record<string, string>>>({})
   const [log, setLog] = useState<LogEntry[]>([])
   const [lastByOp, setLastByOp] = useState<Record<string, RunResult>>({})
+  // Bumped after "Set up demo CA" succeeds — its only job is forcing a
+  // re-render so `keystoreUids` (recomputed fresh below, not memoized)
+  // picks up the new CA's private/public keys and certificate for the
+  // uid-kind fields' datalist.
+  const [, forceRefresh] = useState(0)
   const nextLogId = useRef(0)
   const rowRefs = useRef(new Map<string, HTMLLIElement>())
 
@@ -396,6 +401,11 @@ export function CommandsView({
                 count={templates.length}
                 collapsed={isCollapsed}
                 onToggle={() => toggleCategory(cat)}
+                headerExtra={
+                  cat === 'Certificate Services' ? (
+                    <DemoCaSetup engine={engine} onDone={() => forceRefresh((n) => n + 1)} />
+                  ) : undefined
+                }
               >
                 {templates.map((t) => (
                   <OpRow
@@ -507,29 +517,97 @@ function CategorySection({
   count,
   collapsed,
   onToggle,
+  headerExtra,
   children,
 }: {
   title: string
   count: number
   collapsed: boolean
   onToggle: () => void
+  headerExtra?: React.ReactNode
   children: React.ReactNode
 }) {
   return (
     <section className="rounded-xl border border-border bg-card">
-      <Button
-        variant="ghost"
-        onClick={onToggle}
-        className="flex h-auto w-full items-center gap-2 rounded-xl px-3 py-2 text-left"
-      >
-        {collapsed ? <ChevronRight size={14} /> : <ChevronDown size={14} />}
-        <span className="text-xs font-bold uppercase tracking-wide text-foreground">{title}</span>
-        {!title.includes('(') && (
-          <span className="text-[10.5px] text-muted-foreground">({count})</span>
-        )}
-      </Button>
+      <div className="flex items-center gap-2 px-1">
+        <Button
+          variant="ghost"
+          onClick={onToggle}
+          className="flex h-auto flex-1 items-center gap-2 rounded-xl px-2 py-2 text-left"
+        >
+          {collapsed ? <ChevronRight size={14} /> : <ChevronDown size={14} />}
+          <span className="text-xs font-bold uppercase tracking-wide text-foreground">{title}</span>
+          {!title.includes('(') && (
+            <span className="text-[10.5px] text-muted-foreground">({count})</span>
+          )}
+        </Button>
+        {headerExtra}
+      </div>
       {!collapsed && <ul className="space-y-1.5 px-3 pb-3">{children}</ul>}
     </section>
+  )
+}
+
+const DEMO_CA_ALGORITHMS = ['ECDSA-P256', 'RSA-2048', 'ML-DSA-65', 'SLH-DSA-SHA2-128f'] as const
+
+/** "Set up demo CA" — the affordance Certify/Re-certify need before either
+ * can sign anything: mints a fresh keypair + self-signed root cert via
+ * `KmipEngine.setupDemoCa` (the SAME `certify::bootstrap_ca_certificate`
+ * path the native server's `--ca-key` bootstrap uses) and designates it.
+ * Safe to click more than once — each call mints an independently-UID'd CA
+ * and re-designates it as the active one, e.g. to try a different
+ * algorithm mid-session. */
+function DemoCaSetup({ engine, onDone }: { engine: KmipEngine; onDone: () => void }) {
+  const [algorithm, setAlgorithm] = useState<(typeof DEMO_CA_ALGORITHMS)[number]>('ECDSA-P256')
+  const [busy, setBusy] = useState(false)
+  const [result, setResult] = useState<{ ok: boolean; label: string } | null>(null)
+
+  const run = () => {
+    setBusy(true)
+    try {
+      const r = engine.setupDemoCa(algorithm, 'Playground Demo CA')
+      setResult(
+        r.ok
+          ? { ok: true, label: `CA ready: ${r.certificateUid}` }
+          : { ok: false, label: r.error ?? 'setup failed' }
+      )
+      onDone()
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-1.5 py-1 pr-2">
+      {result && (
+        <span
+          className={`hidden max-w-[220px] truncate text-[10px] sm:inline ${result.ok ? 'text-status-success' : 'text-destructive'}`}
+          title={result.label}
+        >
+          {result.label}
+        </span>
+      )}
+      <select
+        value={algorithm}
+        onChange={(e) => setAlgorithm(e.target.value as (typeof DEMO_CA_ALGORITHMS)[number])}
+        className="h-7 rounded border border-border bg-background px-1.5 text-[10.5px]"
+      >
+        {DEMO_CA_ALGORITHMS.map((a) => (
+          <option key={a} value={a}>
+            {a}
+          </option>
+        ))}
+      </select>
+      <Button
+        size="sm"
+        variant="outline"
+        className="h-7 px-2 text-[10.5px]"
+        disabled={busy}
+        onClick={run}
+      >
+        {busy ? <Loader2 size={12} className="animate-spin" /> : 'Set up demo CA'}
+      </Button>
+    </div>
   )
 }
 

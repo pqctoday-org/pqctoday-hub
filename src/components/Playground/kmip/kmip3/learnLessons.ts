@@ -14,7 +14,7 @@
 // engine infers usage mask from the algorithm's kind (signature/kem/
 // symmetric) — `kmipMeta.ts`'s catalog confirms this, so no explicit usage
 // mask field exists on `OpSpec` and none is threaded here.
-import type { OpResult, OpSpec, TtlvNode } from '@/wasm/kmip/kmipEngine'
+import type { KmipEngine, OpResult, OpSpec, TtlvNode } from '@/wasm/kmip/kmipEngine'
 import type { KmipNode } from '@/wasm/kmip/ttlv/nodes'
 import { findAll, find, leaf } from '@/wasm/kmip/ttlv/nodes'
 import {
@@ -23,6 +23,7 @@ import {
   hash,
   poll,
   setAttribute,
+  validate,
 } from '@/wasm/kmip/ttlv/opTemplates'
 import { arrayBufferToHex, getRandomBytes } from '@/utils/webCrypto'
 
@@ -57,6 +58,15 @@ export interface LessonStep {
   /** Friendly path — exactly one of `buildSpec`/`buildRaw` per step. */
   buildSpec?: (results: (OpResult | null)[]) => OpSpec
   buildRaw?: (results: (OpResult | null)[]) => RawStepSpec
+  /** Out-of-band engine setup that isn't a KMIP wire operation at all —
+   * only `KmipEngine.setupDemoCa` today (Certificate Services' "Set up
+   * demo CA": real keygen + a real self-signed root cert via the SAME
+   * `certify::bootstrap_ca_certificate` path the native server's
+   * `--ca-key` bootstrap uses, then designated). No KMIP request/response
+   * exists for this — Certify literally cannot sign anything without a
+   * CA designated first, and nothing in the wire protocol designates
+   * one. Runs before this step's request is built/dispatched. */
+  preRun?: (engine: KmipEngine) => void
   /** The outcome this step is SUPPOSED to have. 'refusal': the honest
    * rejection IS the lesson (below-threshold join, reading a destroyed
    * key); 'pending': §8.1.2 async accept — OperationPending + a correlation
@@ -900,7 +910,117 @@ export const LESSONS: Lesson[] = [
       'Compliance evidence is only as good as the server\'s honesty — "the key material SHALL be destroyed" is an auditable claim, not a status code. An engine that refuses what it cannot do, and does what it says, is the difference between a conformance REPORT and conformance.',
     tryRef: ['SetAttribute', 'Destroy', 'Locate', 'GetUsageAllocation'],
   },
+  {
+    id: 'certificate-services',
+    n: 10,
+    tag: 'New in 0.14',
+    tone: 'primary',
+    title: 'Certificate Services: a real X.509 CA, PQC included',
+    blurb: 'Certify / Re-certify / Validate — pure Rust, ML-DSA and SLH-DSA chains included.',
+    setup:
+      "Through 0.13, Certify/Re-certify/Validate were real, spec'd KMIP operations with real native handlers — but this in-browser build answered all three with OperationNotSupported, because their crypto backends (ring for Validate's chain-signature check, rcgen for Certify's CSR check) don't cross-compile to wasm32. The 0.14 cert-ops port replaced both with pure-Rust `spki`/`der` decoding routed through this SAME engine — the identical code now runs natively and in this browser tab. It also closed a real gap rcgen never could: rcgen has no ML-DSA in its signature-algorithm table, so a genuinely valid PQC-signed CSR was rejected as Invalid CSR purely because the OLD checker couldn't evaluate it, not because anything was wrong with it.",
+    sideHeaders: ['ECDSA-P256 CA', 'ML-DSA-65 CA'],
+    classical: {
+      algorithm: 'ECDSA-P256',
+      algoLabel: 'ECDSA-P256 root CA',
+      steps: [
+        {
+          op: 'Validate',
+          label:
+            'Set up a demo CA (real ECDSA keygen + a real self-signed root cert) and Validate it',
+          preRun: (engine) => {
+            const r = engine.setupDemoCa('ECDSA-P256', 'Lesson 10 ECDSA demo CA')
+            lastDemoCa.uid = r.certificateUid ?? ''
+            lastDemoCa.derHex = r.certificateDerHex ?? ''
+          },
+          buildRaw: () => ({
+            op: 'Validate',
+            payload: validate([], [lastDemoCa.uid]),
+            harvest: (named) => ({ validity: str(find(named, 'ValidityIndicator')?.value) }),
+          }),
+        },
+        {
+          op: 'Validate',
+          label: 'Corrupt one hex nibble of the SAME certificate and Validate again',
+          buildRaw: () => ({
+            op: 'Validate',
+            payload: validate([tamperedHex(lastDemoCa.derHex)]),
+            harvest: (named) => ({ validity: str(find(named, 'ValidityIndicator')?.value) }),
+          }),
+        },
+      ],
+    },
+    modernize: {
+      algorithm: 'ML-DSA-65',
+      algoLabel: 'ML-DSA-65 root CA (FIPS 204)',
+      cta: 'Issue a post-quantum CA instead',
+      steps: [
+        {
+          op: 'Validate',
+          label:
+            'Set up a demo CA (real ML-DSA-65 keygen + a real self-signed root cert) and Validate it',
+          preRun: (engine) => {
+            const r = engine.setupDemoCa('ML-DSA-65', 'Lesson 10 ML-DSA demo CA')
+            lastDemoCa.uid = r.certificateUid ?? ''
+            lastDemoCa.derHex = r.certificateDerHex ?? ''
+          },
+          buildRaw: () => ({
+            op: 'Validate',
+            payload: validate([], [lastDemoCa.uid]),
+            harvest: (named) => ({ validity: str(find(named, 'ValidityIndicator')?.value) }),
+          }),
+        },
+        {
+          op: 'Validate',
+          label: 'Corrupt one hex nibble of the SAME certificate and Validate again',
+          buildRaw: () => ({
+            op: 'Validate',
+            payload: validate([tamperedHex(lastDemoCa.derHex)]),
+            harvest: (named) => ({ validity: str(find(named, 'ValidityIndicator')?.value) }),
+          }),
+        },
+      ],
+    },
+    compare: [
+      { label: 'Operation', a: 'Validate', b: 'Validate', same: true },
+      { label: 'Signature algorithm', a: 'ECDSA-SHA256', b: 'ML-DSA-65 (FIPS 204)', same: false },
+      { label: 'Genuine cert, Validity Indicator', a: 'Valid', b: 'Valid', same: true },
+      { label: 'One byte corrupted, Validity Indicator', a: 'Invalid', b: 'Invalid', same: true },
+      {
+        label: 'Would this have worked before 0.14?',
+        a: 'No — OperationNotSupported',
+        b: "No — OperationNotSupported (and rcgen still couldn't have signed it even natively)",
+        same: true,
+      },
+    ],
+    notes: [
+      'A negative Validity Indicator is NOT a KMIP error (§6.1.62) — the response status is still Success. Only ResultStatus=OperationFailed is a protocol-level failure (a missing UID, an unrecognized object type); Invalid and Unknown are both honest ANSWERS, read off the ValidityIndicator field itself.',
+      'Try Certify directly in Reference (Certificate Services): with neither a stored PublicKey UID nor a CSR supplied, it comes back with a precise, spec-shaped rejection ("neither a Certificate Request nor a Unique Identifier supplied") — real Certify logic, not a stub.',
+      "Certify's stored-PublicKey-UID path resolves that PublicKey's SubjectPublicKeyInfo from a Register'd record when there is one, and otherwise falls back to a live lookup on the engine itself — so a bare CreateKeyPair output works too, not just a Register'd key. \"Set up demo CA\" uses that same live-engine SPKI read, via the bootstrap_ca_certificate path the native server's --ca-key flag also uses.",
+    ],
+    whyItMatters:
+      "A KMIP server that can only validate RSA/ECDSA chains can't be the CA for a PQC-signed fleet — every ML-DSA or SLH-DSA certificate it's handed comes back Unknown, not because anything is wrong with them, but because the checker can't evaluate the algorithm. Pure-Rust Certificate Services closes that gap for the algorithms this engine issues, in the browser and on the server, from the same source.",
+    tryRef: ['Certify', 'ReCertify', 'Validate'],
+  },
 ]
+
+/** Out-of-band scratch state for Lesson 10's `preRun` steps
+ * (`setupDemoCa`) — there is no KMIP request/response for "set up a demo
+ * CA", so nothing flows through the normal `results[]`/`harvest` path.
+ * Module-scoped (not component state) because `buildRaw` closures here
+ * are plain functions with no access to React state; a lesson re-run
+ * simply overwrites these, which is the correct behavior. */
+const lastDemoCa = { uid: '', derHex: '' }
+
+/** Flip the last hex nibble — corrupts the DER's final byte (inside the
+ * signature's low-order bits for every cert this lesson mints) without
+ * touching ASN.1 framing, so the tampered chain still PARSES; only the
+ * signature genuinely fails. */
+function tamperedHex(hex: string): string {
+  if (!hex) return hex
+  const last = hex.at(-1)
+  return hex.slice(0, -1) + (last === '0' ? '1' : '0')
+}
 
 /** Generate a fresh 12-byte IV as hex for a Lesson 5 Encrypt step (same
  * pattern `KmipPlaygroundView.tsx`'s `onEncrypt` uses). */

@@ -328,11 +328,73 @@ and each has a hands-on surface:
   recipe.
 - **Conformance baseline.** The native CI gate pins an exact 97 PASS /
   5 deprecated-skip on the 102 OASIS tests. The playground's Corpus Replay
-  matches it except six honestly-labelled wasm-seam skips (three need the
-  native TLS listener's MaximumResponseSize enforcement; three need the
-  per-test RNG-seed mode the wasm binding doesn't expose).
+  matches it except three honestly-labelled wasm-seam skips — the native
+  TLS listener's MaximumResponseSize enforcement, which `KmipPlayground::
+  submit`'s direct `dispatch()` call has no seam for (94 PASS / 5 deprecated
+  / 3 transport-skip, still summing to the same 97 the native gate pins).
+  The RNG-seed-mode gap this used to also list is closed: the three
+  per-test-RngSeedMode corpus tests now pass by booting the wasm engine
+  pinned to each test's mode via its constructor. Re-verified 2026-07-10
+  against the cert-ops port's Certify/Re-certify/Validate change to
+  `classify.ts` (`runner.local.test.ts`'s full-corpus breakdown test) —
+  unaffected, still exactly this baseline.
 
-## 6. FAQ / pitfalls
+## 6. Certificate Services — pure-Rust cert-ops port (0.14, verified 2026-07-09)
+
+Through 0.13, §6.1.6 Certify, §6.1.50 Re-certify, and §6.1.62 Validate were
+real, spec'd operations with real NATIVE handlers — but this in-browser
+playground answered all three with `OperationNotSupported`, because their
+crypto backends (`rcgen` for Certify's CSR check, `ring`-backed
+`x509-parser` for Validate's chain-signature check) are C-backed and don't
+cross-compile to `wasm32-unknown-unknown`.
+
+The 0.14 cert-ops port replaced both with a single pure-Rust primitive —
+`ops::spki_verify::verify_with_spki` — built on RustCrypto's `x509-cert`/
+`der`/`spki` crates plus the SAME engine every other operation drives (no
+second crypto stack). Certify's CSR self-signature check and Validate's
+chain-link signature check both call it now. The identical source compiles
+for native and `wasm32-unknown-unknown`; the `native` Cargo feature no
+longer gates either module.
+
+**What's real here now:**
+- **Certify (§6.1.6).** Issues a certificate over a stored PublicKey UID or
+  a PKCS#10 CSR, signed by a designated CA key in the engine. Every
+  algorithm the engine signs with is issuable — RSA, ECDSA, Ed25519,
+  ML-DSA (all 3 parameter sets), and SLH-DSA (all 12 FIPS 205 parameter
+  sets, RFC 9909 OIDs). The stored-PublicKey-UID path needs that key's
+  real `SubjectPublicKeyInfo` on record (true for a `Register`'d key; NOT
+  true for a bare `CreateKeyPair` output, whose material lives only in the
+  engine) — use "Set up demo CA" (below) or a CSR to sidestep this.
+- **Re-certify (§6.1.50).** Renews an existing certificate with a fresh
+  validity window (`Offset` seconds from now), or re-keys it with a new
+  CSR. Links `Replaced`/`Replacement` back to the original.
+- **Validate (§6.1.62).** Checks a supplied/stored certificate chain:
+  `Valid` only when every certificate parses, is within its validity
+  window, every non-root signature verifies against its issuer, and the
+  chain reaches a self-signed trust anchor present in the set. Anything
+  that can't be affirmatively checked degrades to `Unknown`; anything that
+  affirmatively fails is `Invalid`. **A negative result is not a KMIP
+  error** — `ResultStatus` stays `Success`; only the `ValidityIndicator`
+  field carries the answer.
+- **NEW capability this unlocks — real PQC chains.** `rcgen`/`aws_lc_rs`
+  has no ML-DSA entry in its `SignatureAlgorithm` table at all, so a
+  genuinely valid, self-signed ML-DSA CSR was rejected as `Invalid CSR`
+  purely because the OLD checker couldn't evaluate it — not because
+  anything was wrong with it. Likewise, `ring` had no ML-DSA/SLH-DSA
+  verify path, so an all-PQC certificate chain could only ever come back
+  `Unknown` from Validate, never `Valid`. Both are fixed: PQC CSRs are
+  now acceptable, and PQC chains now genuinely validate.
+- **"Set up demo CA"** (Commands tab, Certificate Services category): a
+  one-click convenience — generate a fresh keypair (`RSA-2048 | ECDSA-P256
+  | ML-DSA-65 | SLH-DSA-SHA2-128f`) and self-sign it into a root CA via
+  the SAME `certify::bootstrap_ca_certificate` path the native server's
+  `--ca-key` bootstrap uses, then designate it. Not a KMIP wire operation
+  (there's no request/response for "become a CA") — a `KmipEngine`
+  convenience method (`setupDemoCa`) that reads the real SPKI straight off
+  the engine, sidestepping the stored-PublicKey-UID limitation above. Try
+  it: Learn walkthrough 10, or the Commands tab directly.
+
+## 7. FAQ / pitfalls
 
 - **"The policy allows the algorithm but the workbench says Deny."** Check
   the deny *reason* first (rule index + reason string are shown). Most
