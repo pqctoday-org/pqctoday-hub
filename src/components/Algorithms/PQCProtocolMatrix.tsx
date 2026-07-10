@@ -78,6 +78,15 @@ const DIMENSION_MATURITY: Record<DimensionStatusValue, number> = {
   na: 0,
 }
 
+function rowDimensionValues(row: ProtocolMatrixRow): DimensionStatusValue[] {
+  return [
+    row.dimensions.pureKem.value,
+    row.dimensions.hybridKem.value,
+    row.dimensions.pureSig.value,
+    row.dimensions.hybridSig.value,
+  ]
+}
+
 function rowMaturity(row: ProtocolMatrixRow): number {
   return (
     DIMENSION_MATURITY[row.dimensions.pureKem.value] +
@@ -87,13 +96,21 @@ function rowMaturity(row: ProtocolMatrixRow): number {
   )
 }
 
-function rowDimensionValues(row: ProtocolMatrixRow): DimensionStatusValue[] {
-  return [
-    row.dimensions.pureKem.value,
-    row.dimensions.hybridKem.value,
-    row.dimensions.pureSig.value,
-    row.dimensions.hybridSig.value,
-  ]
+/** Max possible maturity score for this row — 4 points per dimension that
+ *  actually applies (`na` dimensions don't count against the row). Prevents
+ *  signature-only or KEM-only protocols (DNSSEC, Signal PQXDH, PKCS#11) from
+ *  reading as structurally immature purely for having fewer applicable
+ *  dimensions than a full 4-dimension protocol like TLS 1.3. */
+function rowMaturityMax(row: ProtocolMatrixRow): number {
+  return rowDimensionValues(row).filter((v) => v !== 'na').length * 4
+}
+
+/** Normalized 0..1 maturity ratio — 0 when no dimension applies at all. Use
+ *  this (not the raw score) for sorting and percentage-bar width so rows with
+ *  different applicable-dimension counts compare fairly. */
+function rowMaturityRatio(row: ProtocolMatrixRow): number {
+  const max = rowMaturityMax(row)
+  return max === 0 ? 0 : rowMaturity(row) / max
 }
 
 type ViewMode = 'heatmap' | 'detailed'
@@ -543,7 +560,9 @@ function CardSection({ label, children }: { label: string; children: React.React
 /**
  * Detailed-mode protocol card (progressive disclosure). Collapsed: name +
  * recommended star + inheritance chip + OSS/commercial/live summary + a
- * maturity meter (score /16). Always-visible 4-dimension status strip. On
+ * maturity meter (score normalized over applicable dimensions only, so
+ * signature-only/KEM-only protocols aren't penalized for `na` cells).
+ * Always-visible 4-dimension status strip. On
  * expand: specifications, implementations, live deployments, playground links,
  * and any transport-layer blockers. Replaces the old 8-column-wide table row.
  */
@@ -566,6 +585,7 @@ function ProtocolCard({
   const com = p.commercialLibraries.length
   const live = p.liveDeployments?.length ?? 0
   const maturity = rowMaturity(p)
+  const maturityMax = rowMaturityMax(p)
   const blockers = getRowBlockerNames(p.id)
   const specs = [...p.latestRelease, ...p.latestDraft]
 
@@ -630,14 +650,23 @@ function ProtocolCard({
           <span className="text-[10px] text-muted-foreground">
             {oss} OSS · {com} commercial · {live} live
           </span>
-          <div className="flex items-center gap-1.5" title={`Maturity ${maturity} / 16`}>
+          <div
+            className="flex items-center gap-1.5"
+            title={
+              maturityMax === 0
+                ? 'No dimension applies to this protocol'
+                : `Maturity ${maturity} / ${maturityMax} (of dimensions that apply)`
+            }
+          >
             <div className="h-1.5 w-20 rounded-full bg-border/60">
               <div
                 className="h-full rounded-full bg-primary"
-                style={{ width: `${(maturity / 16) * 100}%` }}
+                style={{ width: `${maturityMax === 0 ? 0 : (maturity / maturityMax) * 100}%` }}
               />
             </div>
-            <span className="font-mono text-[10px] text-muted-foreground">{maturity}/16</span>
+            <span className="font-mono text-[10px] text-muted-foreground">
+              {maturityMax === 0 ? 'N/A' : `${maturity}/${maturityMax}`}
+            </span>
           </div>
         </div>
       </div>
@@ -834,7 +863,7 @@ export function PQCProtocolMatrix() {
         case 'name':
           return a.name.localeCompare(b.name) * dir
         case 'maturity':
-          return (rowMaturity(a) - rowMaturity(b)) * dir
+          return (rowMaturityRatio(a) - rowMaturityRatio(b)) * dir
         case 'oss':
           return (a.ossLibraries.length - b.ossLibraries.length) * dir
         case 'commercial':

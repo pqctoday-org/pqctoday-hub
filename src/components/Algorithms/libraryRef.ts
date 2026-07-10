@@ -23,10 +23,15 @@ function normalizeRefKey(id: string): string {
 // too much for the normalizer (different vendor/version naming). Each target is
 // verified to exist in the loaded Library.
 const SPEC_ALIASES: Record<string, string> = {
-  'PKCS11-v3.2-CS01': 'PKCS11-V32-OASIS',
-  'KMIP-v3.0-CSD01': 'KMIP-V2-1-OASIS',
+  'PKCS11-v3.2-OS': 'PKCS11-V32-OASIS',
+  // No KMIP 3.0 entry exists in the Library — only KMIP 2.1 (2021, pre-PQC).
+  // Deliberately NOT aliased to KMIP-V2-1-OASIS: that would present a
+  // pre-quantum spec as if it were the cited v3.0 CSD01. Falls through to the
+  // `?q=` search fallback below, which is honestly labeled as a search.
   'Signal-PQXDH-Rev3': 'Signal-PQXDH-Spec',
-  'UEFI-2.10': 'UEFI-SPEC-2.10-SecureBoot',
+  // Library only has the UEFI 2.10 write-up cached; 2.11 (current) adds no PQC
+  // content of its own, so the underlying PQC-readiness story is identical.
+  'UEFI-2.11': 'UEFI-SPEC-2.10-SecureBoot',
   '3GPP-TR-33.938': '3GPP-PQC-Study-2025',
   // The matrix's "…Part3-Published" was superseded in the Library by the v1.85 Errata.
   'TCG-TPM-2.0-Library-v1.85-Part3-Published': 'TCG-TPM-2.0-Library-v1.85-Errata',
