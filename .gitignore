@@ -253,6 +253,9 @@ scripts/*
 # emitting public output: nothing private to protect.
 !scripts/generate-oscal.ts
 !scripts/generate-cbom.ts
+# Derives algorithmProperties.ts from the committed algorithm reference CSV;
+# CI-relevant --check mode. Public input, public output.
+!scripts/generate-algorithm-properties.ts
 # SEO build steps — `npm run build` invokes both: generate-sitemap emits
 # public/sitemap.xml, and prerender writes per-route static HTML into dist/.
 # Read public routeMeta, emit public output: nothing private to protect.
