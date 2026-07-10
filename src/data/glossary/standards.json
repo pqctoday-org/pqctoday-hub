@@ -76,14 +76,6 @@
     "category": "standard"
   },
   {
-    "term": "ACVP",
-    "acronym": "ACVP",
-    "definition": "Automated Cryptographic Validation Protocol, used by NIST to test that cryptographic implementations produce correct results.",
-    "relatedModule": "/compliance",
-    "complexity": "advanced",
-    "category": "standard"
-  },
-  {
     "term": "PKCS#12",
     "definition": "A file format for storing a private key together with its X.509 certificate, commonly used for importing/exporting credentials.",
     "relatedModule": "/openssl",
@@ -148,14 +140,6 @@
     "definition": "Health Insurance Portability and Accountability Act, the U.S. law requiring encryption of protected health information. Patient data faces HNDL risk.",
     "relatedModule": "/threats",
     "complexity": "intermediate",
-    "category": "standard"
-  },
-  {
-    "term": "CMVP",
-    "acronym": "CMVP",
-    "definition": "Cryptographic Module Validation Program, the NIST/CSE program that tests and certifies cryptographic modules for government use under FIPS 140-3.",
-    "relatedModule": "/compliance",
-    "complexity": "advanced",
     "category": "standard"
   },
   {

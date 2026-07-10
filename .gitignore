@@ -240,6 +240,14 @@ scripts/*
 # (as it silently did for weeks — see git history). Reads public CPE xref CSV,
 # calls the public NVD API, writes public cve-snapshot.json: nothing private.
 !scripts/scrape-nvd.py
+# Weekly-cron CI scripts — invoked on GitHub runners by
+# .github/workflows/trusted-source-freshness.yml and update-protocol-matrix.yml;
+# must be tracked or those workflows fail file-not-found (the scrape-nvd.py
+# failure mode above). Sanitized ports: public inputs (trusted_sources CSV,
+# pqcProtocolMatrix.ts, IETF datatracker), public outputs. No LLM phase.
+!scripts/audit-trusted-source-freshness.ts
+!scripts/enrich-protocol-matrix.py
+!scripts/apply-protocol-matrix-updates.ts
 # Build-pipeline generators are public — `npm run build` invokes them to
 # produce OSCAL + CBOM JSON from committed CSV data. Reading public input,
 # emitting public output: nothing private to protect.

@@ -10,7 +10,7 @@ export type XrefResourceType =
   | 'compliance'
   | 'algorithm'
 
-export type XrefMatchMethod = 'direct' | 'mapped' | 'inferred' | 'category-inferred'
+export type XrefMatchMethod = 'exact' | 'direct' | 'mapped' | 'inferred' | 'category-inferred'
 
 export interface TrustedSourceXref {
   resourceType: XrefResourceType

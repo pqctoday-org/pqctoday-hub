@@ -63,7 +63,7 @@ export const CARD_AUTH_SPECS: CardAuthSpec[] = [
       'Quantum computers could forge ICC signatures, undermining the entire offline trust model',
     ],
     pqcMigrationPath:
-      'FN-DSA-512 (Falcon, FIPS 206 draft) produces compact signatures (~666 bytes, fixed padded size) that fit constrained card NVM. ML-DSA-44 signatures are ~2,420 bytes. FIPS 206 standardization for FN-DSA is pending.',
+      'FN-DSA-512 (Falcon, FIPS 206 in development) produces compact signatures (~666 bytes, fixed padded size) that fit constrained card NVM. ML-DSA-44 signatures are ~2,420 bytes. FIPS 206 standardization for FN-DSA is pending.',
     prevalence: '~35% of active EMV cards',
   },
   {
@@ -275,10 +275,10 @@ export const CERT_CHAIN_COMPARISONS: CertChainComparison[] = [
   },
   {
     algorithm: 'fn-dsa-512',
-    label: 'FN-DSA-512 (FIPS 206 Draft)',
+    label: 'FN-DSA-512 (FIPS 206 in development)',
     description:
-      'Hash-and-sign lattice scheme with compact signatures. Leading candidate for EMV cards due to smaller footprint. FIPS 206 still in draft as of March 2026.',
-    fipsStatus: 'FIPS 206 (draft \u2014 not yet approved)',
+      'Hash-and-sign lattice scheme with compact signatures. Leading candidate for EMV cards due to smaller footprint. FIPS 206 still in development — no public draft released as of 2026.',
+    fipsStatus: 'FIPS 206 (in development \u2014 not yet published)',
     levels: [
       {
         level: 'root',
@@ -332,7 +332,7 @@ export const PQC_ALGORITHM_SIZES = [
     signatureOrCiphertextBytes: 666,
     suitableForCard: true,
     suitableForTerminal: true,
-    notes: 'Compact signatures. Best fit for card NVM. FIPS 206 draft.',
+    notes: 'Compact signatures. Best fit for card NVM. FIPS 206 in development.',
   },
   {
     algorithm: 'ML-DSA-44',

@@ -18,7 +18,10 @@
   "https://www.gov.il/en/departments/incd/govil-landing-page": {
     "label": "Israel:INCD — National Cybersecurity Strategy 2025-2028",
     "reason": "forbidden",
-    "date": "2026-02-27T04:19:20.397Z"
+    "date": "2026-02-27T04:19:20.397Z",
+    "localFile": "Playwright_www-gov-il_govil-landing-page.html",
+    "resolved": "2026-07-10T04:12:06.666Z",
+    "note": "Playwright snapshot (27583b) saved as Playwright_www-gov-il_govil-landing-page.html."
   },
   "https://www.congress.gov/bill/117th-congress/house-bill/7535": {
     "label": "United States:Congress — Quantum Computing Cybersecurity Preparedness Act",
@@ -111,7 +114,10 @@
   "https://dodcio.defense.gov/Library/": {
     "label": "United States:DoD — DoD PQC Migration Memorandum",
     "reason": "forbidden",
-    "date": "2026-05-07T02:28:50.858Z"
+    "date": "2026-05-07T02:28:50.858Z",
+    "localFile": "Wayback_dodcio-defense-gov_library.html",
+    "resolved": "2026-07-10T04:10:11.013Z",
+    "note": "Wayback snapshot 20260519034013 (69908b) saved as Wayback_dodcio-defense-gov_library.html."
   },
   "https://www.gsma.com/solutions-and-impact/technologies/networks/ng116/": {
     "label": "International:GSMA — Mobile Network Operator PQC Transition Window",
@@ -121,8 +127,10 @@
   "https://www.cyber.gov.au/business-government/secure-design/planning-for-post-quantum-cryptography": {
     "label": "Australia:ASD — Planning for Post-Quantum Cryptography (canonical, multi-row)",
     "reason": "forbidden",
-    "note": "Akamai/Cloudflare-style WAF returns 503 to any automated GET (verified via manual curl: HTTP/2 stream reset, exit 92). Referenced by 6 timeline rows. Future: fetch via Wayback (web.archive.org has 2025-09-23 snapshot).",
-    "date": "2026-05-22T19:50:00.000Z"
+    "note": "Akamai/Cloudflare-style WAF returns 503 to any automated GET (verified via manual curl: HTTP/2 stream reset, exit 92). Referenced by 6 timeline rows. Future: fetch via Wayback (web.archive.org has 2025-09-23 snapshot). Wayback snapshot 20260216083317 (326633b) saved as Wayback_www-cyber-gov-au_planning-for-post-quantum-cryptography.html.",
+    "date": "2026-05-22T19:50:00.000Z",
+    "localFile": "Wayback_www-cyber-gov-au_planning-for-post-quantum-cryptography.html",
+    "resolved": "2026-07-10T04:10:21.141Z"
   },
   "https://inforegulator.org.za": {
     "label": "South Africa:IR — Information Regulator (POPIA enforcement landing)",
@@ -165,6 +173,15 @@
   "https://www.tii.ae/news/tii-researchers-contribute-nist-post-quantum-cryptography-standardization": {
     "label": "United Arab Emirates:TII — NIST Additional Signatures Round 2 Contributions",
     "reason": "forbidden",
-    "date": "2026-06-06T16:25:59.943Z"
+    "date": "2026-06-06T16:25:59.943Z",
+    "localFile": "Wayback_www-tii-ae_tii-researchers-contribute-nist-post-quantum-cryptography-st.html",
+    "resolved": "2026-07-10T04:10:24.124Z",
+    "note": "Wayback snapshot 20260308031801 (62485b) saved as Wayback_www-tii-ae_tii-researchers-contribute-nist-post-quantum-cryptography-st.html."
+  },
+  "https://bsn.go.id/main/berita/detail/25342/bsn-bssn-perkuat-sinergi-persiapan-migrasi-ke-algoritma-post-quantum-cryptography": {
+    "label": "Indonesia:BSSN — Indonesia BSSN PQC Migration Initiated",
+    "reason": "fetch-error",
+    "date": "2026-07-09T00:00:00.000Z",
+    "note": "Direct curl fetch fails (connection error from this network); no Wayback snapshot exists. Queued for Playwright browser snapshot."
   }
 }

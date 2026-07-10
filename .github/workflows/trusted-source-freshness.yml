@@ -34,16 +34,33 @@ jobs:
 
       - name: Run trusted-source freshness audit
         id: audit
-        continue-on-error: true
+        # Exit codes: 0 = no drift, 20 = drift detected (report written),
+        # anything else = the script itself failed. Only exit 20 opens an
+        # issue; a real script failure fails this workflow loudly instead
+        # of opening a bogus "drift" issue from a stale report file.
         run: |
           FLAGS=""
           if [ "${{ github.event.inputs.baseline }}" = "true" ]; then
             FLAGS="--baseline"
           fi
+          # Remove any stale report so the issue step can never pick up
+          # output from a previous run.
+          rm -f public/data/trusted-source-drift-report.md
+          set +e
           npx tsx scripts/audit-trusted-source-freshness.ts $FLAGS
+          code=$?
+          set -e
+          if [ "$code" -eq 20 ]; then
+            echo "drift=true" >> "$GITHUB_OUTPUT"
+          elif [ "$code" -eq 0 ]; then
+            echo "drift=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::freshness audit script failed (exit $code) — this is NOT drift"
+            exit "$code"
+          fi
 
       - name: Open issue on drift
-        if: steps.audit.outcome == 'failure'
+        if: steps.audit.outputs.drift == 'true'
         uses: peter-evans/create-issue-from-file@v6
         with:
           title: 'Trusted-source drift detected (week of ${{ github.run_id }})'
@@ -51,7 +68,10 @@ jobs:
           labels: trusted-source:drift, trust-engine
 
       - name: Commit updated baseline
+        # Only the hash baseline is persisted. The drift report is a per-run
+        # artifact surfaced via the issue above — committing it caused stale
+        # reports to be re-published as "drift" when later runs crashed.
         uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7
         with:
           commit_message: 'chore(trust-engine): refresh trusted-source hash baseline [skip ci]'
-          file_pattern: 'public/data/trusted-source-hashes.json public/data/trusted-source-drift-report.md'
+          file_pattern: 'public/data/trusted-source-hashes.json'

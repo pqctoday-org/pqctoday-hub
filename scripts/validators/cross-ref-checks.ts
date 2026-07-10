@@ -1100,7 +1100,9 @@ export function runCrossRefChecks(): CheckResult[] {
     ])
     const f: Finding[] = []
     transitions.rows.forEach((row, i) => {
-      const replacement = row['PQC Replacement']
+      // Header renamed to snake_case in the 06252026 snapshot; keep the old
+      // name as fallback so the check still works on archived files.
+      const replacement = row.pqc_replacement ?? row['PQC Replacement']
       if (!replacement) return
       // Extract base algorithm name: "ML-KEM-512 (NIST Level 1)" → "ML-KEM-512"
       const baseName = replacement.split('(')[0].trim()

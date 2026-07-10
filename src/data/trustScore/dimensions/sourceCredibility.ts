@@ -1,14 +1,27 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { DimensionResult, ScoringContext } from '../types'
 
-const TIER_SCORES: Record<string, number> = {
+/**
+ * Tier scores keyed on the trusted-sources registry vocabulary
+ * (trust_tier column of src/data/trusted_sources_*.csv):
+ * 1_Authoritative > 2_Core > 3_Supporting > 4_Contextual.
+ * A drift-guard test (sourceCredibility.registry.test.ts) asserts every
+ * distinct tier value in the registry CSV is a key here.
+ */
+export const TIER_SCORES: Record<string, number> = {
   '1_Authoritative': 100,
-  '2_Primary': 80,
+  '2_Core': 80,
   '3_Supporting': 55,
-  '4_Supplementary': 30,
+  '4_Contextual': 30,
 }
 
-const MATCH_PENALTY: Record<string, number> = {
+/**
+ * Penalty by xref match method. 'exact' is an exact match — strongest
+ * evidence, penalized no worse than 'direct'. Unknown methods fall back
+ * to -10 (see scorer below).
+ */
+export const MATCH_PENALTY: Record<string, number> = {
+  exact: 0,
   direct: 0,
   mapped: -5,
   inferred: -10,

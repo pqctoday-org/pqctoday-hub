@@ -32,6 +32,15 @@ import {
 } from '../src/data/regulatoryTimelines'
 import { FRAMEWORK_MAX_FINE_USD_MILLIONS } from '../src/data/frameworkFines'
 
+/** Chronological sort key for MMDDYYYY-dated filenames, which sort
+ *  lexicographically wrong across year boundaries (01…2027 < 12…2026). */
+function datedFileKey(filename: string): string {
+  const m = filename.match(/(\d{2})(\d{2})(\d{4})/)
+  if (!m) return `0000-00-00_${filename}`
+  const [, mm, dd, yyyy] = m
+  return `${yyyy}-${mm}-${dd}`
+}
+
 /**
  * Provenance chain for a RAG chunk — enables tracing any answer back to its source.
  * Populated at generation time; consumed by citation verification and debugging tools.
@@ -130,7 +139,7 @@ function loadSourcePassages(): Map<string, string[]> {
   const files = fs
     .readdirSync(SCRIPTS_DIR)
     .filter((f) => f.startsWith('source-passages-') && f.endsWith('.json'))
-    .sort()
+    .sort((a, b) => datedFileKey(a).localeCompare(datedFileKey(b)))
     .reverse()
   if (files.length === 0) return new Map()
   try {
@@ -567,7 +576,7 @@ function processTimeline(): RAGChunk[] {
     const f = fs
       .readdirSync(dir)
       .filter((n) => n.startsWith('timeline_doc_enrichments_') && n.endsWith('.md'))
-      .sort()
+      .sort((a, b) => datedFileKey(a).localeCompare(datedFileKey(b)))
       .reverse()[0]
     return f ?? undefined
   })()

@@ -2,6 +2,27 @@
 
 This document describes the testing strategy and how to run tests for the PQC Timeline App.
 
+## Local gate (run before every push)
+
+The local gate is the enforcement layer for data integrity — it runs checks
+that are deliberately **not** in CI (new suites stay local-only by policy):
+
+```bash
+npm run gate:data    # all data gates incl. the unified validate:data
+                     # (~20 check families: proof gates, FK integrity,
+                     # lifecycle/self-containment, enrichment coverage)
+npm run gate:local   # format + lint + gate:data + unit tests
+```
+
+`npm run validate:data` runs the unified validator on its own
+(`--json` / `--verbose` / `--staleness N` supported). The migrate proof gate
+(MP-1..MP-4), threats proof gate (TP-1..3), and DS03/DS19/DS20 lifecycle
+checks only run here — CI does not cover them, so a red `gate:data` must
+block a push even when CI would be green. Note: proof directories
+(`public/library/`, `public/migrate-proofs/`, `public/threats/`,
+`public/timeline/`) are untracked working-tree assets — run the gate in a
+checkout that has them (the main checkout, or copy them into your worktree).
+
 ## Test Structure
 
 The project uses a comprehensive testing approach with three layers:

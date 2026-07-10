@@ -3,7 +3,7 @@ import { loadLatestCSV, parseBoolYesNo } from './csvUtils'
 
 export interface AuthoritativeSource {
   sourceName: string
-  sourceType: 'Government' | 'Academic' | 'Industry Workgroup'
+  sourceType: 'Government' | 'Academic' | 'Industry Workgroup' | 'Vendor'
   region: 'Americas' | 'EMEA' | 'APAC' | 'Global'
   primaryUrl: string
   description: string
