@@ -21,12 +21,16 @@ test('completing the assessment from the sim gate returns to /simulation', async
     // Came FROM the sim (the gate link arms this before navigating to /assess).
     sessionStorage.setItem('sim:resume', '1')
     // Fully-answered Fast-track assessment, NOT yet marked complete, parked on the
-    // final step so a single Continue reaches the review screen.
+    // final step so a single Continue reaches the review screen. `currentStep` is
+    // TRACK-RELATIVE (see assessFlowModel.ts): quick mode is a 6-item order
+    // (industry, country, crypto, sensitivity, compliance, migration), so index 5
+    // ('migration') is the last step — NOT 7, which was the last index back when
+    // the quick track still included infra + timeline (trimmed in 0e07d90b).
     localStorage.setItem(
       'pqc-assessment-form',
       JSON.stringify({
         state: {
-          currentStep: 7,
+          currentStep: 5,
           assessmentMode: 'quick',
           industry: 'finance',
           country: 'US',
