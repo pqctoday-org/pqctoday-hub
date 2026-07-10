@@ -23,6 +23,7 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { getCodepointTable, type CodepointTable } from '@/wasm/kmip/ttlv/codepointTable'
 import { runCorpusTest, type TestResult, type TestStatus } from '@/wasm/kmip/corpus/runner'
+import { CHAINED_TEST_GROUPS } from '@/wasm/kmip/corpus/classify'
 import { WireTreeView } from './WireTreeView'
 
 interface ManifestEntry {
@@ -50,8 +51,6 @@ const STATUS_LABEL: Record<TestStatus, string> = {
   SKIP_OP: 'SKIP (op not implemented)',
   SKIP_PARSE: 'SKIP (XML malformed)',
   SKIP_DEPRECATED: 'SKIP (deprecated algorithm)',
-  SKIP_PRECONDITION: 'SKIP (needs prior-transcript state)',
-  SKIP_POLICY_VARIANT: 'SKIP (mutually-exclusive policy)',
   SKIP_TRANSPORT: 'SKIP (native-transport-only feature)',
 }
 
@@ -125,12 +124,27 @@ export function CorpusReplayView() {
     return text
   }
 
+  /** Chained prerequisites (classify.ts CHAINED_TEST_GROUPS) — fetch the
+   * earlier transcripts this test's state depends on. Prereqs live in the
+   * same directory as the dependent test. */
+  async function fetchPrereqs(entry: ManifestEntry): Promise<{ name: string; xml: string }[]> {
+    const names = CHAINED_TEST_GROUPS[entry.name] ?? []
+    const dir = entry.file.slice(0, entry.file.lastIndexOf('/') + 1)
+    return Promise.all(
+      names.map(async (name) => ({
+        name,
+        xml: await fetchXml({ ...entry, name, file: dir + name }),
+      }))
+    )
+  }
+
   async function runOne(entry: ManifestEntry) {
     if (!table) return
     setRunning(entry.name)
     try {
       const xml = await fetchXml(entry)
-      const result = await runCorpusTest(entry.name, xml, table, nextSlot.current++)
+      const prereqs = await fetchPrereqs(entry)
+      const result = await runCorpusTest(entry.name, xml, table, nextSlot.current++, prereqs)
       setResults((prev) => ({ ...prev, [entry.name]: result }))
     } finally {
       setRunning(null)
@@ -144,7 +158,8 @@ export function CorpusReplayView() {
     for (const entry of manifest.tests) {
       await sleep(0)
       const xml = await fetchXml(entry)
-      out[entry.name] = await runCorpusTest(entry.name, xml, table, nextSlot.current++)
+      const prereqs = await fetchPrereqs(entry)
+      out[entry.name] = await runCorpusTest(entry.name, xml, table, nextSlot.current++, prereqs)
       setResults({ ...out })
     }
     setRunning(null)
@@ -180,7 +195,11 @@ export function CorpusReplayView() {
               {manifest?.count ?? '…'} real OASIS test transcripts (mandatory + optional) plus
               vendored PQC interop tests — the same suite behind{' '}
               <code className="text-foreground">conformance/REPLAY_REPORT.md</code>, replayed live
-              against this tab's engine instead of over a network.
+              against this tab's engine instead of over a network. The engine's native CI pins an
+              exact 97-pass / 5-deprecated-skip baseline on the 102 OASIS tests; in-browser, 94 pass
+              — the RNG-seed variant tests each boot an engine pinned to their expected mode — and
+              only the 3 tests needing the native TLS listener are honestly skipped. Zero failures
+              tolerated.
             </p>
           </div>
           <div className="flex items-center gap-2">

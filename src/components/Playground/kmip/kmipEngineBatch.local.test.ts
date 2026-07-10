@@ -64,8 +64,14 @@ describe('runBatch — policy enforcement + Undo (real wasm engine)', () => {
     engine.loadPolicy(PERMISSIVE_YAML)
     const legacy = engine.runOp({ op: 'CreateKeyPair', algorithm: 'ECDSA' })
     expect(legacy.ok).toBe(true)
-    const { privateKeyUid: privUid } = legacy.summary as unknown as CreateKeyPairSummary
+    const { privateKeyUid: privUid, publicKeyUid: pubUid } =
+      legacy.summary as unknown as CreateKeyPairSummary
+    // BOTH halves must be Active (as the workbench's Activate button does):
+    // since engine 0.13.0 the rekey-on-use supersedes the whole legacy key
+    // pair, and the lifecycle FSM rejects Deactivating a PreActive public key
+    // — a PreActive public half fails the batched Sign outright.
     expect(engine.runOp({ op: 'Activate', uid: privUid }).ok).toBe(true)
+    expect(engine.runOp({ op: 'Activate', uid: pubUid }).ok).toBe(true)
 
     engine.loadPolicy(AUTO_MIGRATE_YAML)
 
@@ -95,5 +101,34 @@ describe('runBatch — policy enforcement + Undo (real wasm engine)', () => {
     // The freshly-minted replacement key pair must be gone entirely.
     expect(objects.some((o) => o.uid === rekeyed!.newPrivateKeyUid)).toBe(false)
     expect(objects.some((o) => o.uid === rekeyed!.newPublicKeyUid)).toBe(false)
+  })
+
+  it('Undo rolls back a UID-minting Encapsulate chain (engine 0.13.0 rollback coverage)', () => {
+    // Mirrors BatchView's "Rollback reaches Encapsulate" recipe. Before
+    // 0.13.0 the dispatcher had no rollback bookkeeping for Encapsulate /
+    // Decapsulate / the split-key ops — an Undo left their minted objects
+    // behind and $IDPlaceholder couldn't chain past them.
+    engine.loadPolicy(PERMISSIVE_YAML)
+    const before = engine.listObjects().length
+
+    const batch = engine.runBatch({
+      errorContinuation: 'Undo',
+      items: [
+        { op: 'CreateKeyPair', intent: 'kem', algorithm: 'ML-KEM-768' },
+        { op: 'Activate', uid: '$IDPlaceholder' },
+        { op: 'Encapsulate', uid: '$IDPlaceholder' },
+        { op: 'Destroy', uid: 'urn:pqctoday:ghost' }, // guaranteed ObjectNotFound
+      ],
+    })
+
+    expect(batch.items).toHaveLength(4)
+    expect(batch.items[0].status).toBe('OperationUndone')
+    expect(batch.items[1].status).toBe('OperationUndone')
+    expect(batch.items[2].status).toBe('OperationUndone')
+    expect(batch.items[3].status).toBe('OperationFailed')
+
+    // Every object the batch minted (key pair + encapsulation output) is
+    // genuinely gone — the keystore is byte-for-byte back where it started.
+    expect(engine.listObjects().length).toBe(before)
   })
 })

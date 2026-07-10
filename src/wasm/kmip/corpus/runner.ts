@@ -19,6 +19,7 @@
 // bootstrap — confirmed empirically, `CK_RV=0x000000b6` — which is why
 // `KmipPlayground::new`/`KmipEngine.boot` took an optional `slot` param.)
 import { KmipEngine, type TtlvNode } from '../kmipEngine'
+import { RNG_SEED_MODE_TESTS } from './classify'
 import { toWireTree } from '../ttlv/encode'
 import { annotateNames } from '../ttlv/decode'
 import type { CodepointTable } from '../ttlv/codepointTable'
@@ -35,8 +36,6 @@ export type TestStatus =
   | 'SKIP_OP'
   | 'SKIP_PARSE'
   | 'SKIP_DEPRECATED'
-  | 'SKIP_PRECONDITION'
-  | 'SKIP_POLICY_VARIANT'
   | 'SKIP_TRANSPORT'
 
 export interface TestResult {
@@ -55,12 +54,20 @@ export interface TestResult {
  * on `slot` — the caller (the "run all" orchestrator) is responsible for
  * handing out a distinct, never-reused slot per test within one page load
  * (e.g. a simple incrementing counter; slot 0 is reserved for the Agility/
- * Commands tabs' shared engine, so start numbering elsewhere). */
+ * Commands tabs' shared engine, so start numbering elsewhere).
+ *
+ * `prereqs` — for `classify.ts`'s `CHAINED_TEST_GROUPS` tests (TL-M-3,
+ * SASED-M-3), the prerequisite transcripts to fully replay FIRST on the
+ * SAME engine, mirroring the Python harness's chained groups: the spec
+ * sequences these transcripts within one profile run, so the state the
+ * later test Locates genuinely exists. A prerequisite that itself fails
+ * makes this test ERROR (never a silent half-run). */
 export async function runCorpusTest(
   name: string,
   xmlText: string,
   table: CodepointTable,
-  slot: number
+  slot: number,
+  prereqs: { name: string; xml: string }[] = []
 ): Promise<TestResult> {
   const byName = classifyByName(name)
   if (byName) return { name, status: byName.status, detail: byName.detail, opsUsed: [], pairs: [] }
@@ -99,10 +106,46 @@ export async function runCorpusTest(
     }
   }
 
-  const engine = await KmipEngine.boot(slot)
-  const bindings = new Bindings()
+  // CS-RNG-O variant tests get an engine PINNED to the RNG-seed mode the
+  // transcript expects (classify.ts RNG_SEED_MODE_TESTS) — same per-test
+  // configuration the native harness applies; everything else boots the
+  // default (full-consume).
+  const engine = await KmipEngine.boot(slot, RNG_SEED_MODE_TESTS[name])
+
+  // Chained prerequisites — full replay (placeholders, comparison and all,
+  // via each prerequisite's own Bindings) so the shared state is EXACTLY
+  // what the earlier transcript produces, not a hand-approximation of it.
+  for (const p of prereqs) {
+    const r = await replayTranscriptOn(engine, p.name, p.xml, table)
+    if (r !== null) {
+      return {
+        name,
+        status: 'ERROR',
+        detail: `chained prerequisite ${p.name} failed: ${r}`,
+        opsUsed: Array.from(ops).sort(),
+        pairs: [],
+      }
+    }
+  }
   const opsUsed = Array.from(ops).sort()
   const pairs: TestResult['pairs'] = []
+
+  const failure = replayPairs(engine, transcript, table, pairs)
+  if (failure) return { name, status: failure.status, detail: failure.detail, opsUsed, pairs }
+
+  return { name, status: 'PASS', detail: '', opsUsed, pairs }
+}
+
+/** Replay every Request/Response pair of one parsed transcript on `engine`,
+ * with its own fresh `Bindings`. Appends each decoded pair to `pairs`.
+ * Returns `null` on a clean full replay, or the first failure. */
+function replayPairs(
+  engine: KmipEngine,
+  transcript: KmipNode[],
+  table: CodepointTable,
+  pairs: TestResult['pairs']
+): { status: 'ERROR' | 'FAIL' | 'SKIP_PARSE'; detail: string } | null {
+  const bindings = new Bindings()
 
   for (let i = 0; i < transcript.length; i += 2) {
     const req = transcript[i]
@@ -113,11 +156,8 @@ export async function runCorpusTest(
       norm(expectedRsp.tag) !== norm('ResponseMessage')
     ) {
       return {
-        name,
         status: 'SKIP_PARSE',
         detail: `msg #${pairIndex}: not a Req/Resp pair (${req.tag}/${expectedRsp.tag})`,
-        opsUsed,
-        pairs,
       }
     }
 
@@ -129,11 +169,8 @@ export async function runCorpusTest(
       requestBytes = engine.encodeTtlv(requestTree)
     } catch (e) {
       return {
-        name,
         status: 'ERROR',
         detail: `msg #${pairIndex}: encode request: ${e instanceof Error ? e.message : String(e)}`,
-        opsUsed,
-        pairs,
       }
     }
 
@@ -142,21 +179,12 @@ export async function runCorpusTest(
       responseBytes = engine.submit(requestBytes)
     } catch (e) {
       return {
-        name,
         status: 'ERROR',
         detail: `msg #${pairIndex}: submit: ${e instanceof Error ? e.message : String(e)}`,
-        opsUsed,
-        pairs,
       }
     }
     if (!responseBytes || responseBytes.length === 0) {
-      return {
-        name,
-        status: 'FAIL',
-        detail: `msg #${pairIndex}: engine returned 0 bytes`,
-        opsUsed,
-        pairs,
-      }
+      return { status: 'FAIL', detail: `msg #${pairIndex}: engine returned 0 bytes` }
     }
 
     // `rawResponseTree` keeps raw hex tags (0x42xxxx) — the shape
@@ -174,11 +202,8 @@ export async function runCorpusTest(
       actualRsp = annotateNames(rawResponseTree, table)
     } catch (e) {
       return {
-        name,
         status: 'FAIL',
         detail: `msg #${pairIndex}: decode response: ${e instanceof Error ? e.message : String(e)}`,
-        opsUsed,
-        pairs,
       }
     }
 
@@ -187,15 +212,30 @@ export async function runCorpusTest(
     bindings.harvestFromResponse(expectedRsp, actualRsp)
     const { ok, detail } = compareResponses(expectedRsp, actualRsp, bindings, table, undefined)
     if (!ok) {
-      return {
-        name,
-        status: 'FAIL',
-        detail: `msg #${pairIndex}: response mismatch: ${detail}`,
-        opsUsed,
-        pairs,
-      }
+      return { status: 'FAIL', detail: `msg #${pairIndex}: response mismatch: ${detail}` }
     }
   }
 
-  return { name, status: 'PASS', detail: '', opsUsed, pairs }
+  return null
+}
+
+/** Fully replay a chained PREREQUISITE transcript on an existing engine.
+ * Returns an error detail string, or `null` on a clean pass. The decoded
+ * pairs are discarded — only the resulting engine state matters to the
+ * dependent test. */
+async function replayTranscriptOn(
+  engine: KmipEngine,
+  name: string,
+  xmlText: string,
+  table: CodepointTable
+): Promise<string | null> {
+  let transcript: KmipNode[]
+  try {
+    transcript = parseTranscriptXml(xmlText)
+  } catch (e) {
+    return `${name}: XML parse: ${e instanceof Error ? e.message : String(e)}`
+  }
+  if (transcript.length % 2 !== 0) return `${name}: odd message count`
+  const failure = replayPairs(engine, transcript, table, [])
+  return failure ? `${name}: ${failure.detail}` : null
 }

@@ -324,6 +324,11 @@ export const RULE_CATALOG: Record<RuleTypeId, RuleSpec> = {
     guided: true,
     fields: [
       opsField,
+      // Label-only agility (engine 0.10.0): an optional case-insensitive
+      // glob over the request's key NAME (`*` any run, `?` one char).
+      // Name-patterned defaults beat generic ones (most-specific-wins),
+      // and a patterned rule never fires for an unnamed request.
+      { key: 'name_pattern', kind: 'text', label: 'key-name pattern (glob)', optional: true },
       { key: 'default_algorithm', kind: 'algo', label: 'default →' },
       reason,
       clause,
@@ -342,7 +347,14 @@ export const RULE_CATALOG: Record<RuleTypeId, RuleSpec> = {
     icon: ArrowRight,
     node: 'transform',
     guided: true,
-    fields: [opsField, { key: 'from', kind: 'algo' }, { key: 'to', kind: 'algo' }, reason, clause],
+    fields: [
+      opsField,
+      { key: 'name_pattern', kind: 'text', label: 'key-name pattern (glob)', optional: true },
+      { key: 'from', kind: 'algo' },
+      { key: 'to', kind: 'algo' },
+      reason,
+      clause,
+    ],
     make: () => ({
       scalars: { from: 'ECDSA-P256', to: 'ML-DSA-65', reason: 'Rekey legacy keys to PQC on use' },
       lists: { ops: ['Sign'] },
