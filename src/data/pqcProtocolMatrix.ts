@@ -1,5 +1,5 @@
 /**
- * PQC Protocol Support Matrix — 25 protocol rows (IETF, TCG, OASIS, 3GPP, IEEE,
+ * PQC Protocol Support Matrix — 28 protocol rows (IETF, TCG, OASIS, 3GPP, IEEE,
  * UEFI, and vendor-published specs) × release / draft / 4 PQC dimensions / OSS
  * libs / playground.
  *
@@ -387,6 +387,22 @@ export const TRANSPORT_ISSUES: TransportIssue[] = [
     description:
       'PLANTS WG draft (draft-ietf-plants-merkle-tree-certs) defines a new X.509 cert form with integrated Certificate-Transparency-style logging, designed to reduce overhead for short-lived certs and large PQ signatures. Optional signatureless mode avoids signatures entirely when relying parties have current transparency state.',
     referenceUrl: 'https://datatracker.ietf.org/doc/draft-ietf-plants-merkle-tree-certs/',
+  },
+  {
+    id: 'eap-large-cert-fragmentation',
+    name: 'EAP Certificate Fragmentation Limits',
+    affectedProtocolIds: ['eap-radius'],
+    description:
+      'EAP fragments messages into ~1020–1500-octet chunks and many authenticators cap round trips at 40–50; RFC 9191 (2022) explicitly anticipated PQ certificate chains blowing past both limits ("lattice-based cryptography would have public keys of approximately 1000 bytes and signatures of approximately 2000 bytes"). draft-ietf-emu-pqc-eap-tls is the EMU WG\'s direct follow-on addressing this.',
+    referenceUrl: 'https://datatracker.ietf.org/doc/html/rfc9191',
+  },
+  {
+    id: 'rpki-repository-bulk-validation',
+    name: 'RPKI Repository Bulk-Validation Cost',
+    affectedProtocolIds: ['rpki-bgpsec'],
+    description:
+      'Every RPKI relying party downloads and re-validates the ENTIRE global repository, not one cert chain. A SIDN Labs thesis (2025) measured the RSA-2048 baseline at ~838 MB / ~14.5s download / ~13 CPU-s verify, growing to ~3.0 GB / ~51s / ~34 CPU-s at ML-DSA-44, and 6.7–14.0 GB / 1,376–3,729 CPU-s at SLH-DSA — the last judged impractical. Not a hard protocol ceiling like DNS UDP fragmentation, but a real, independently quantified bulk-validation scaling problem.',
+    referenceUrl: 'https://labs.ripe.net/author/dirk/pqc-for-the-rpki/',
   },
 ]
 
@@ -912,7 +928,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: 'RFC 9935 — X.509 Algorithm Identifiers for ML-KEM',
         url: 'https://datatracker.ietf.org/doc/html/rfc9935',
         date: '2026-03',
-        localFile: '/library/RFC_9935.html',
+        localFile: '/library/RFC-9935.html',
       },
       {
         id: 'RFC-9909',
@@ -1113,7 +1129,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: 'RFC 9936 — Use of ML-KEM in CMS',
         url: 'https://datatracker.ietf.org/doc/html/rfc9936',
         date: '2026-03',
-        localFile: '/library/RFC_9936.html',
+        localFile: '/library/RFC-9936.html',
       },
       {
         id: 'RFC-9882',
@@ -1714,6 +1730,144 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
   },
   {
+    id: 'kerberos',
+    name: 'Kerberos',
+    description:
+      'Network authentication protocol (AS/TGS exchanges) — the core protocol is symmetric-key by design and already quantum-safe by construction. PKINIT, the optional public-key preauthentication extension, is the only asymmetric-crypto surface and has no chartered PQC work — only individual (non-WG) drafts.',
+    latestRelease: [
+      {
+        id: 'RFC-4120',
+        title: 'RFC 4120 — The Kerberos Network Authentication Service (V5)',
+        url: 'https://datatracker.ietf.org/doc/html/rfc4120',
+        date: '2005-07',
+      },
+      {
+        id: 'RFC-4556',
+        title: 'RFC 4556 — PKINIT (Public Key Cryptography for Initial Authentication in Kerberos)',
+        url: 'https://datatracker.ietf.org/doc/html/rfc4556',
+        date: '2006-06',
+      },
+      {
+        id: 'RFC-8636',
+        title: 'RFC 8636 — PKINIT Algorithm Agility',
+        url: 'https://datatracker.ietf.org/doc/html/rfc8636',
+        date: '2019-07',
+      },
+      {
+        id: 'RFC-3961',
+        title: 'RFC 3961 — Encryption and Checksum Specifications for Kerberos 5',
+        url: 'https://datatracker.ietf.org/doc/html/rfc3961',
+        date: '2005-02',
+      },
+    ],
+    latestDraft: [
+      {
+        id: 'draft-bokovoy-kitten-pkinit-pqc-01',
+        title:
+          'draft-bokovoy-kitten-pkinit-pqc-01 — Post-Quantum ML-KEM for PKINIT (individual, not WG-adopted)',
+        url: 'https://datatracker.ietf.org/doc/html/draft-bokovoy-kitten-pkinit-pqc-01',
+        date: '2026-06-26',
+      },
+    ],
+    dimensions: {
+      pureKem: {
+        value: 'draft',
+        stage: 'individual-draft',
+        stageNote:
+          'Individual submission (draft-bokovoy-kitten-pkinit-pqc-01, 2026-06-26) — not adopted by the KITTEN working group',
+        note: 'Core Kerberos (AS-REQ/AS-REP/TGS-REQ/TGS-REP without PKINIT) uses only symmetric long-term/session keys (RFC 3961 framework) — no KEM applies, and NIST/academic consensus treats symmetric crypto as already quantum-resistant (Grover gives only a quadratic speedup, already covered by AES-256/SHA-384+). PKINIT\'s key establishment is classical Diffie-Hellman with no PQC-safe path via existing agility mechanisms — this draft adds a new KDCKEMInfo structure carrying ML-KEM (RFC 9935 X.509 OIDs) alongside the existing DH fields. Red Hat is prototyping this under the EU-funded QARC consortium (2026–2028) against MIT krb5 + FreeIPA; no public code yet.',
+        refs: [
+          {
+            kind: 'draft',
+            id: 'draft-bokovoy-kitten-pkinit-pqc',
+            title: 'Post-Quantum ML-KEM for PKINIT',
+            url: 'https://datatracker.ietf.org/doc/html/draft-bokovoy-kitten-pkinit-pqc-01',
+            publishedOn: '2026-06-26',
+          },
+          {
+            kind: 'rfc',
+            id: 'RFC 9935',
+            title: 'X.509 Algorithm Identifiers for ML-KEM (dependency for KDCKEMInfo)',
+            url: 'https://datatracker.ietf.org/doc/html/rfc9935',
+            publishedOn: '2026-03',
+          },
+        ],
+      },
+      hybridKem: {
+        value: 'draft',
+        stage: 'individual-draft',
+        stageNote:
+          'Same individual draft as Pure KEM — optionally allows composite ML-KEM per the (also unadopted) LAMPS composite-KEM draft',
+        note: 'Same draft as Pure KEM; hybrid mode composes with draft-ietf-lamps-pq-composite-kem, itself still in IETF Last Call at the X.509 layer (see X.509 row).',
+        refs: [
+          {
+            kind: 'draft',
+            id: 'draft-bokovoy-kitten-pkinit-pqc',
+            title: 'Post-Quantum ML-KEM for PKINIT',
+            url: 'https://datatracker.ietf.org/doc/html/draft-bokovoy-kitten-pkinit-pqc-01',
+            publishedOn: '2026-06-26',
+          },
+          {
+            kind: 'draft',
+            id: 'draft-ietf-lamps-pq-composite-kem',
+            title: 'Composite ML-KEM in X.509 (optional composite mode, inherited via X.509 row)',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-kem/',
+            publishedOn: '2026-03-27',
+          },
+        ],
+      },
+      pureSig: {
+        value: 'experimental',
+        note: 'PKINIT already has signature/digest algorithm agility (RFC 8636, 2019), so a KDC/client could in principle present ML-DSA certificates (RFC 9881 X.509 OIDs, RFC 9882 CMS) without a new PKINIT-specific spec — but no implementation has been confirmed to do this. Microsoft AD CS (Windows Server 2025) can issue ML-DSA certificates generally (GA, May 2026) but this is NOT confirmed to be wired into Kerberos/PKINIT specifically.',
+        refs: [
+          {
+            kind: 'rfc',
+            id: 'RFC 9881',
+            title: 'X.509 Algorithm Identifiers for ML-DSA (usable via PKINIT algorithm agility)',
+            url: 'https://datatracker.ietf.org/doc/html/rfc9881',
+            publishedOn: '2025-10',
+          },
+          {
+            kind: 'rfc',
+            id: 'RFC 9882',
+            title: 'Use of ML-DSA in CMS (PKINIT\'s PA-PK-AS-REQ/REP payloads are CMS SignedData)',
+            url: 'https://datatracker.ietf.org/doc/html/rfc9882',
+            publishedOn: '2025-10',
+          },
+        ],
+      },
+      hybridSig: {
+        value: 'experimental',
+        note: 'Same agility-based path as Pure Signature; draft-bokovoy-kitten-pkinit-pqc optionally mentions composite ML-DSA per the LAMPS composite-sigs draft, but this is unadopted and unimplemented.',
+        refs: [
+          {
+            kind: 'draft',
+            id: 'draft-bokovoy-kitten-pkinit-pqc',
+            title: 'Post-Quantum ML-KEM for PKINIT (mentions optional composite ML-DSA)',
+            url: 'https://datatracker.ietf.org/doc/html/draft-bokovoy-kitten-pkinit-pqc-01',
+            publishedOn: '2026-06-26',
+          },
+        ],
+      },
+    },
+    ossLibraries: [],
+    commercialLibraries: [],
+    playgrounds: [],
+    liveDeployments: [],
+    noDeploymentReason:
+      'No shipping implementation exists. MIT krb5 has no public PQC roadmap item or commit. Red Hat is prototyping PKINIT+ML-KEM under the EU Horizon-funded QARC consortium (2026–2028, targeting MIT krb5 + FreeIPA) — the same engineers behind the one individual IETF draft above — but no public code has landed yet. Microsoft has GA\'d general ML-DSA certificate issuance (AD CS, Windows Server 2025) and lists "Kerberos" in one generic future-roadmap sentence, but has made no concrete, verified announcement of PQC support inside the Kerberos/PKINIT authentication path itself.',
+    sources: [
+      {
+        label: 'Red Hat Research — the post-quantum cryptography transition (QARC pilot)',
+        url: 'https://research.redhat.com/blog/article/the-post-quantum-cryptography-transition-researching-a-quantum-safe-future/',
+      },
+      {
+        label: 'IETF KITTEN working group documents',
+        url: 'https://datatracker.ietf.org/group/kitten/documents/',
+      },
+    ],
+  },
+  {
     id: '5g-suci',
     name: '5G SUCI (3GPP)',
     description:
@@ -1960,7 +2114,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: 'RFC 9242 — IKE_INTERMEDIATE Exchange',
         url: 'https://datatracker.ietf.org/doc/html/rfc9242',
         date: '2022-05',
-        localFile: '/library/RFC_9242.html',
+        localFile: '/library/IETF_RFC_9242.html',
       },
     ],
     latestDraft: [
@@ -2337,30 +2491,32 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: 'TCG TPM 2.0 Library v1.85 Part 3: Commands (Published 2026-03-12)',
         url: 'https://trustedcomputinggroup.org/resource/tpm-library-specification/',
         date: '2026-03-12',
-        localFile:
-          '/library/Trusted-Platform-Module-2.0-Library-Part-3-Commands_Version-185_pub.pdf',
+        // Not independently cached — TCG's site returns 403 for this URL (persisted
+        // in scripts/download-library.js's skip-list). The in-app Library link
+        // already redirects this citation to the Errata entry below (see
+        // SPEC_ALIASES in libraryRef.ts); point the raw asset the same way.
+        localFile: '/library/TCG-TPM-2.0-Library-v1.85-Errata.html',
       },
       {
         id: 'TCG-PC-Client-Platform-TPM-Profile-v1.07',
         title: 'TCG PC Client Specific Platform TPM Profile v1.07 (Published) — mandates ML-KEM + ML-DSA support',
         url: 'https://trustedcomputinggroup.org/resource/pc-client-platform-tpm-profile-ptp-specification/',
         date: '2026-03-23',
-        localFile: '/library/PC-Client-Specific-Platform-TPM-Profile-for-TPM-2p0-v1p07_Pub.pdf',
+        localFile: '/library/TCG-PC-Client-Platform-TPM-Profile-v1.07.html',
       },
       {
         id: 'TCG-EK-Credential-Profile-v2.7',
         title: 'TCG EK Credential Profile for TPM 2.0, Level 0, v2.7 (Published)',
         url: 'https://trustedcomputinggroup.org/resource/tcg-ek-credential-profile-for-tpm-family-2-0/',
         date: '2026-03-19',
-        localFile:
-          '/library/TCG-EK-Credential-Profile-for-TPM-Family-2.0-Level-0-Version-2.7_Pub.pdf',
+        localFile: '/library/TCG-EK-Credential-Profile-v2.7.html',
       },
       {
         id: 'TCG-TPM-2.0-Library-v1.85-Errata',
         title: 'TCG TPM 2.0 Library v1.85 — Errata',
         url: 'https://trustedcomputinggroup.org/resource/tpm-library-specification/',
         date: '2026-03-12',
-        localFile: '/library/Eratta-Trusted-Platform-Module-2.0-Library_Version-185_pub.pdf',
+        localFile: '/library/TCG-TPM-2.0-Library-v1.85-Errata.html',
       },
     ],
     latestDraft: [],
@@ -2581,6 +2737,121 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       "No IANA DNSKEY algorithm code point has been assigned for any PQ scheme — definitionally cannot be in operational production. Signature sizes (ML-DSA 2.4–4.6 KB, SLH-DSA 7.8–49.8 KB) blow past the ~1232-byte DNS UDP limit, forcing TCP fallback. Resolver compatibility studies (SIDN Labs on .nl/.se/.nu zones) find roughly half of Internet resolvers fail when zones carry unknown algorithms. Verisign's Merkle Tree Ladder (MTL) mode draft and IETF 123/124 Hackathon work (BIND, NSD, CoreDNS extensions) are all lab/R&D — no live DNSSEC zone has been signed with PQ today. Verisign estimates the next root-zone algorithm rollover (mid-2030s) is the realistic deployment window.",
   },
   {
+    id: 'rpki-bgpsec',
+    name: 'RPKI / BGPsec',
+    description:
+      'Resource Public Key Infrastructure (RPKI certs + ROAs) and BGPsec (per-AS-hop path signatures) — signature-only PKI mechanisms for routing security. RPKI has one very early individual (non-WG) PQC draft; BGPsec has none at all, and itself remains almost entirely undeployed.',
+    latestRelease: [
+      {
+        id: 'RFC-6480',
+        title: 'RFC 6480 — An Infrastructure to Support Secure Internet Routing (RPKI)',
+        url: 'https://datatracker.ietf.org/doc/html/rfc6480',
+        date: '2012-02',
+      },
+      {
+        id: 'RFC-8205',
+        title: 'RFC 8205 — BGPsec Protocol Specification',
+        url: 'https://datatracker.ietf.org/doc/html/rfc8205',
+        date: '2017-09',
+      },
+      {
+        id: 'RFC-8608',
+        title: 'RFC 8608 — BGPsec Algorithms, Key Formats, and Signature Formats',
+        url: 'https://www.rfc-editor.org/rfc/rfc8608',
+        date: '2019-06',
+      },
+    ],
+    latestDraft: [
+      {
+        id: 'draft-yoshikawa-sidrops-pqc-rpki-01',
+        title:
+          'draft-yoshikawa-sidrops-pqc-rpki-01 — Post-Quantum Signature Profile for RPKI (individual, not WG-adopted)',
+        url: 'https://datatracker.ietf.org/doc/draft-yoshikawa-sidrops-pqc-rpki/',
+        date: '2026-07-04',
+      },
+    ],
+    dimensions: {
+      pureKem: {
+        value: 'na',
+        note: 'RPKI and BGPsec are signature-only PKI mechanisms; no key exchange.',
+      },
+      hybridKem: {
+        value: 'na',
+        note: 'RPKI and BGPsec are signature-only PKI mechanisms; no key exchange.',
+      },
+      pureSig: {
+        value: 'experimental',
+        note: 'RPKI certs/ROAs are ordinary X.509 (RFC 5280) + CMS (RFC 6488) objects, so they could technically reuse the generic ML-DSA/SLH-DSA X.509 OIDs (RFC 9881/9909) — but no RPKI-specific draft proposes a pure-PQ profile; the one real draft targets composite only (see Hybrid). The real blocker is repository-scale bulk validation, not the certificate format: every relying party fetches and re-validates the ENTIRE global repository, and a SIDN Labs thesis measured this growing from ~838 MB (RSA-2048) to 3+ GB at ML-DSA-44 and 6.7–14 GB (judged impractical) at SLH-DSA.',
+        refs: [
+          {
+            kind: 'rfc',
+            id: 'RFC 5280',
+            title: 'Internet X.509 PKI Certificate and CRL Profile (RPKI cert base format)',
+            url: 'https://datatracker.ietf.org/doc/html/rfc5280',
+            publishedOn: '2008-05',
+          },
+          {
+            kind: 'rfc',
+            id: 'RFC 6488',
+            title: 'Signed Object Template for the RPKI (CMS profile for ROAs/manifests)',
+            url: 'https://datatracker.ietf.org/doc/html/rfc6488',
+            publishedOn: '2012-02',
+          },
+          {
+            kind: 'rfc',
+            id: 'RFC 9881',
+            title: 'X.509 Algorithm Identifiers for ML-DSA (generically reusable, not RPKI-specific)',
+            url: 'https://datatracker.ietf.org/doc/html/rfc9881',
+            publishedOn: '2025-10',
+          },
+          {
+            kind: 'rfc',
+            id: 'RFC 9909',
+            title: 'X.509 Algorithm Identifiers for SLH-DSA (generically reusable, not RPKI-specific)',
+            url: 'https://datatracker.ietf.org/doc/html/rfc9909',
+            publishedOn: '2025-12',
+          },
+        ],
+      },
+      hybridSig: {
+        value: 'draft',
+        stage: 'individual-draft',
+        stageNote:
+          'Individual submission (draft-yoshikawa-sidrops-pqc-rpki-01, posted 2026-07-04) — not adopted by the SIDROPS working group, no IESG standing',
+        note: 'Proposes Composite ML-DSA-65 + ECDSA-P256 for RPKI certificates. Explicitly flags open questions: HSM readiness, untested RRDP snapshot/delta size impact, no Krill/relying-party integration yet. BGPsec path signatures have NO PQC work of any kind, chartered or individual — and BGPsec itself remains almost entirely undeployed in production networks (unlike RPKI ROA validation, which covers ~50%+ of routes), which independent sources cite as the reason nobody is prioritizing BGPsec-specific PQC engineering.',
+        refs: [
+          {
+            kind: 'draft',
+            id: 'draft-yoshikawa-sidrops-pqc-rpki',
+            title: 'Post-Quantum Signature Profile for RPKI (individual)',
+            url: 'https://datatracker.ietf.org/doc/draft-yoshikawa-sidrops-pqc-rpki/',
+            publishedOn: '2026-07-04',
+          },
+        ],
+      },
+    },
+    ossLibraries: [],
+    commercialLibraries: [],
+    playgrounds: [],
+    liveDeployments: [],
+    noDeploymentReason:
+      'No RIR (RIPE NCC, ARIN, APNIC) or router vendor (Cisco, Juniper) has announced a PQC-RPKI or PQC-BGPsec pilot. The only PQC-RPKI work anywhere is a single researcher\'s (SIDN Labs) proof-of-concept patch to Routinator + Krill, published as an MSc thesis — not a production or RIR-run pilot — plus the one five-day-old individual IETF draft above. BGPsec-specific PQC work does not exist at all, consistent with BGPsec\'s own near-zero real-world deployment despite being standardized since 2017.',
+    sources: [
+      {
+        label: 'SIDN Labs — Post-Quantum Cryptography for the RPKI',
+        url: 'https://labs.ripe.net/author/dirk/pqc-for-the-rpki/',
+      },
+      {
+        label: 'APNIC Blog — How can RPKI be made quantum-safe?',
+        url: 'https://blog.apnic.net/2025/07/22/how-can-rpki-can-be-made-quantum-safe/',
+      },
+      {
+        label: 'IETF SIDROPS working group documents',
+        url: 'https://datatracker.ietf.org/wg/sidrops/documents/',
+      },
+    ],
+  },
+  {
     id: 'dtls-1-2',
     name: 'DTLS 1.2',
     description: 'Datagram TLS 1.2 — inherits TLS 1.2 PQC posture (none).',
@@ -2635,6 +2906,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
+        stage: 'wg-last-call',
         note: 'Inherits TLS 1.3 — pure ML-KEM groups.',
         refs: [
           {
@@ -2648,6 +2920,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
+        stage: 'rfc-editor-queue',
         note: 'Inherits TLS 1.3 — X25519MLKEM768 hybrid group.',
         deploymentPosture: 'pilot',
         deploymentNote:
@@ -2664,6 +2937,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'draft',
+        stage: 'rfc-editor-queue',
         note: 'Inherits TLS 1.3 — ML-DSA SignatureScheme values.',
         refs: [
           {
@@ -2677,6 +2951,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridSig: {
         value: 'draft',
+        stage: 'rfc-editor-queue',
         note: 'Inherits TLS 1.3 — composite via X.509.',
         refs: [
           {
@@ -2727,6 +3002,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
+        stage: 'wg-last-call',
         note: 'Inherits TLS 1.3 — pure ML-KEM groups.',
         refs: [
           {
@@ -2740,6 +3016,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
+        stage: 'rfc-editor-queue',
         note: 'Inherits TLS 1.3 — X25519MLKEM768 hybrid group.',
         deploymentPosture: 'production',
         deploymentNote:
@@ -2756,6 +3033,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'experimental',
+        stage: 'experimental',
         note: 'Algorithm IDs sourced from the COSE row. Constraint: authenticator-side ML-DSA private key (~5–7 KB) strains secure-element storage budgets.',
         refs: [
           {
@@ -2769,6 +3047,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridSig: {
         value: 'experimental',
+        stage: 'experimental',
         note: 'Composite path inherits from the JOSE row; no FIDO Alliance profile yet.',
         refs: [
           {
@@ -2803,6 +3082,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
+        stage: 'wg-last-call',
         note: 'Inherits TLS 1.3 (EAP-TLS bootstrap) — pure ML-KEM via TLS 1.3 KEX.',
         refs: [
           {
@@ -2816,6 +3096,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
+        stage: 'rfc-editor-queue',
         note: 'Inherits TLS 1.3 (EAP-TLS bootstrap) — X25519MLKEM768 hybrid.',
         deploymentPosture: 'pilot',
         deploymentNote: 'Cisco / Juniper MACsec stacks pilot PQ EAP-TLS bootstrap in 2025–2026.',
@@ -2831,6 +3112,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'draft',
+        stage: 'rfc-editor-queue',
         note: 'Inherits TLS 1.3 — ML-DSA via certificate-based EAP-TLS auth.',
         refs: [
           {
@@ -2844,6 +3126,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridSig: {
         value: 'draft',
+        stage: 'rfc-editor-queue',
         note: 'Inherits TLS 1.3 — composite via X.509.',
         refs: [
           {
@@ -2871,6 +3154,152 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     inheritsFromProtocolId: 'tls-1-3',
   },
   {
+    id: 'eap-radius',
+    name: 'EAP / RADIUS',
+    description:
+      'Extensible Authentication Protocol (802.1X) + RADIUS AAA transport. TLS-tunneled EAP methods (EAP-TLS/TTLS/PEAP/TEAP) inherit TLS 1.3’s PQC posture; EAP-AKA’ (no TLS tunnel) has its own bespoke ML-KEM work; RadSec inherits TLS/DTLS; legacy RADIUS/UDP has no PQC path at all.',
+    latestRelease: [
+      {
+        id: 'RFC-2865',
+        title: 'RFC 2865 — Remote Authentication Dial In User Service (RADIUS)',
+        url: 'https://datatracker.ietf.org/doc/html/rfc2865',
+        date: '2000-06',
+      },
+      {
+        id: 'RFC-3748',
+        title: 'RFC 3748 — Extensible Authentication Protocol (EAP)',
+        url: 'https://datatracker.ietf.org/doc/html/rfc3748',
+        date: '2004-06',
+      },
+      {
+        id: 'RFC-9048',
+        title: 'RFC 9048 — Improved EAP-AKA’',
+        url: 'https://datatracker.ietf.org/doc/html/rfc9048',
+        date: '2021-06',
+      },
+      {
+        id: 'RFC-9190',
+        title: 'RFC 9190 — EAP-TLS 1.3',
+        url: 'https://datatracker.ietf.org/doc/html/rfc9190',
+        date: '2022-02',
+      },
+      {
+        id: 'RFC-9191',
+        title: 'RFC 9191 — Handling Large Certificates and Long Certificate Chains in TLS-Based EAP Methods',
+        url: 'https://datatracker.ietf.org/doc/html/rfc9191',
+        date: '2022-02',
+      },
+    ],
+    latestDraft: [
+      {
+        id: 'draft-ietf-emu-pqc-eap-tls-00',
+        title: 'draft-ietf-emu-pqc-eap-tls-00 — Post-Quantum Enhancements to TLS-Based EAP Methods',
+        url: 'https://datatracker.ietf.org/doc/draft-ietf-emu-pqc-eap-tls/',
+        date: '2026-05-13',
+      },
+      {
+        id: 'draft-ietf-emu-pqc-eapaka-02',
+        title: 'draft-ietf-emu-pqc-eapaka-02 — Post-Quantum ML-KEM for EAP-AKA’ (WG Last Call)',
+        url: 'https://datatracker.ietf.org/doc/draft-ietf-emu-pqc-eapaka/',
+        date: '2026-06-19',
+      },
+      {
+        id: 'draft-ietf-emu-hybrid-pqc-eapaka-01',
+        title: 'draft-ietf-emu-hybrid-pqc-eapaka-01 — Hybrid PQC for EAP-AKA’ (WG Last Call)',
+        url: 'https://datatracker.ietf.org/doc/draft-ietf-emu-hybrid-pqc-eapaka/',
+        date: '2026-02-26',
+      },
+      {
+        id: 'draft-ietf-radext-review-radius-01',
+        title:
+          'draft-ietf-radext-review-radius-01 — RADIUS security review (legacy RADIUS/UDP deprecation)',
+        url: 'https://datatracker.ietf.org/doc/draft-ietf-radext-review-radius/',
+        date: '2026-07-03',
+      },
+    ],
+    dimensions: {
+      pureKem: {
+        value: 'draft',
+        stage: 'wg-last-call',
+        stageNote:
+          'EAP-AKA’ bespoke ML-KEM (draft-ietf-emu-pqc-eapaka-02) in WG Last Call — new AT_PUB_KEM/AT_KEM_CT attributes',
+        note: 'TLS-tunneled EAP methods (EAP-TLS/TTLS/PEAP/TEAP) inherit ML-KEM directly from TLS 1.3 (see that row) — no new crypto is defined here, only cert-size/fragmentation mitigation (RFC 9191, draft-ietf-emu-pqc-eap-tls). EAP-AKA’ does not tunnel TLS, so it needs its own KEM carriage: new AT_PUB_KEM / AT_KEM_CT attributes plus attribute-level fragmentation for oversized ML-KEM keys/ciphertexts.',
+        refs: [
+          {
+            kind: 'draft',
+            id: 'draft-ietf-emu-pqc-eapaka',
+            title: 'Post-Quantum ML-KEM for EAP-AKA’',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-emu-pqc-eapaka/',
+            publishedOn: '2026-06-19',
+          },
+        ],
+      },
+      hybridKem: {
+        value: 'draft',
+        stage: 'wg-last-call',
+        stageNote:
+          'EAP-AKA’ bespoke hybrid (draft-ietf-emu-hybrid-pqc-eapaka-01) in WG Last Call — ML-KEM-768 + P-256/X25519 via AT_PUB_HYBRID + HPKE',
+        note: 'TLS-tunneled EAP methods already benefit from TLS 1.3’s X25519MLKEM768 hybrid group in production wherever the underlying TLS stack supports it (see TLS 1.3 row) — no EAP-specific extension needed. EAP-AKA’ defines its own AT_PUB_HYBRID + HPKE construction since it has no TLS layer to inherit from.',
+        deploymentPosture: 'pilot',
+        deploymentNote:
+          'A University of Tübingen testbed (FreeRADIUS + hostapd, arXiv:2601.22892, Jan 2026) measured real 802.1X/WPA-Enterprise latency for ML-DSA-65 + ML-KEM hybrid combinations — a research testbed, not a shipped vendor feature.',
+        refs: [
+          {
+            kind: 'draft',
+            id: 'draft-ietf-emu-hybrid-pqc-eapaka',
+            title: 'Hybrid PQC for EAP-AKA’',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-emu-hybrid-pqc-eapaka/',
+            publishedOn: '2026-02-26',
+          },
+        ],
+      },
+      pureSig: {
+        value: 'draft',
+        stage: 'rfc-editor-queue',
+        note: 'EAP-TLS/TTLS/PEAP/TEAP inherit ML-DSA/SLH-DSA certificates via TLS 1.3 + X.509 (see those rows). The resulting oversized certificate chains are exactly the problem RFC 9191 anticipated (“lattice-based cryptography would have public keys of approximately 1000 bytes and signatures of approximately 2000 bytes”) and draft-ietf-emu-pqc-eap-tls now addresses directly. EAP-AKA’ is a symmetric SIM-credential method with no signature dimension — N/A for that variant.',
+        refs: [
+          {
+            kind: 'draft',
+            id: 'draft-ietf-emu-pqc-eap-tls',
+            title: 'Post-Quantum Enhancements to TLS-Based EAP Methods (cert-size mitigation)',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-emu-pqc-eap-tls/',
+            publishedOn: '2026-05-13',
+          },
+        ],
+      },
+      hybridSig: {
+        value: 'draft',
+        stage: 'rfc-editor-queue',
+        note: 'Same inheritance as Pure Signature — composite ML-DSA certificate chains flow through TLS 1.3 / X.509 (see those rows); EAP-AKA’ is N/A (no signature dimension).',
+        refs: [
+          {
+            kind: 'draft',
+            id: 'draft-ietf-lamps-pq-composite-sigs',
+            title: 'Composite ML-DSA in X.509 (inherited via TLS 1.3 / X.509 row)',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/',
+            publishedOn: '2026-04-21',
+          },
+        ],
+      },
+    },
+    ossLibraries: [],
+    commercialLibraries: [],
+    playgrounds: [],
+    liveDeployments: [],
+    noDeploymentReason:
+      'No vendor (Cisco ISE, Aruba ClearPass, FreeRADIUS) has announced PQC support for EAP-TLS or RadSec specifically. The one real-world PQC 802.1X measurement is a University of Tübingen research testbed (FreeRADIUS + hostapd, arXiv:2601.22892) — not a shipped product. Legacy RADIUS/UDP (RFC 2865) has no PQC path at all: its MD5-keyed obfuscation is already broken for classical reasons, and draft-ietf-radext-review-radius explicitly states “all new cryptographic work in RADIUS [itself] is forbidden” — the sanctioned exit is full migration to RadSec (TLS/DTLS transport), not an in-place upgrade.',
+    sources: [
+      {
+        label: 'IETF EMU working group documents',
+        url: 'https://datatracker.ietf.org/wg/emu/documents/',
+      },
+      {
+        label: 'RADEXT: deprecating classic RADIUS',
+        url: 'https://datatracker.ietf.org/doc/draft-ietf-radext-deprecating-radius/',
+      },
+    ],
+  },
+  {
     id: 'uefi',
     name: 'UEFI Secure Boot',
     description:
@@ -2895,6 +3324,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'rfc',
+        stage: 'rfc-published',
         note: 'Inherits X.509 ML-DSA / SLH-DSA OIDs in PE/COFF Authenticode. Constraint: ML-DSA-65 signatures (~3 KB) inflate Authenticode blocks vs. ~256 B RSA-2048.',
         deploymentPosture: 'pilot',
         deploymentNote:
@@ -2916,15 +3346,16 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           },
           {
             kind: 'spec',
-            id: 'UEFI 2.10',
-            title: 'UEFI Specification 2.10 (PE/COFF Authenticode chain consumes X.509 PQ OIDs)',
+            id: 'UEFI 2.11',
+            title: 'UEFI Specification 2.11 (PE/COFF Authenticode chain consumes X.509 PQ OIDs)',
             url: 'https://uefi.org/specifications',
-            publishedOn: '2022-08',
+            publishedOn: '2024-11',
           },
         ],
       },
       hybridSig: {
         value: 'draft',
+        stage: 'rfc-editor-queue',
         note: 'Inherits X.509 composite-sigs for dual-cert dual-algorithm boot — see X.509 row.',
         refs: [
           {
