@@ -127,6 +127,15 @@ function dataVersionFromCsvName(filename: string): string {
   return `${yyyy}-${mm}-${dd}T00:00:00.000Z`
 }
 
+/** Chronological sort key for dated CSVs: raw MMDDYYYY[_rN] filenames sort
+ *  lexicographically wrong across year boundaries (01…2027 < 12…2026). */
+function csvDateKey(filename: string): string {
+  const m = filename.match(/_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/)
+  if (!m) return `0000-00-00#000_${filename}`
+  const [, mm, dd, yyyy, r] = m
+  return `${yyyy}-${mm}-${dd}#${String(Number(r ?? 0)).padStart(3, '0')}`
+}
+
 // ── Build a single OSCAL result object for a compliance record ─────────────
 
 function buildResult(row: RawComplianceRow, reviewerMap: Map<string, string>, dataVersion: string) {
@@ -213,7 +222,7 @@ function buildResult(row: RawComplianceRow, reviewerMap: Map<string, string>, da
 async function main() {
   // 1. Locate latest compliance CSV
   const files = await glob('compliance_*.csv', { cwd: DATA_DIR })
-  files.sort()
+  files.sort((a, b) => csvDateKey(a).localeCompare(csvDateKey(b)))
   const latest = files.at(-1)
   if (!latest) {
     console.error('[generate-oscal] No compliance CSV found in src/data/')
