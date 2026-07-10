@@ -17,10 +17,7 @@ import {
   resetEmbeddingRuntime,
   type EmbeddingMeta,
 } from '../../../src/services/search/embeddingRetrieval'
-import {
-  proposeReferenceCandidates,
-  runMissingReferenceChecks,
-} from '../missing-reference-checks'
+import { proposeReferenceCandidates, runMissingReferenceChecks } from '../missing-reference-checks'
 
 const REPO_ROOT = process.cwd()
 const META_PATH = path.join(REPO_ROOT, 'public/data/embeddings-meta.json')

@@ -174,10 +174,7 @@ function runCmC(): CheckResult {
         `find ${path.join(REPO_ROOT, 'src/components/PKILearning/modules')} -name content.ts`,
         { encoding: 'utf-8', cwd: REPO_ROOT }
       )
-      return result
-        .trim()
-        .split('\n')
-        .filter(Boolean)
+      return result.trim().split('\n').filter(Boolean)
     } catch {
       return []
     }
@@ -197,9 +194,7 @@ function runCmC(): CheckResult {
     const relModuleDir = path.relative(REPO_ROOT, moduleDir)
 
     // Get last git commit date for the module directory
-    const lastCommitDate = run(
-      `git log --format="%aI" -1 -- "${relModuleDir}"`
-    )
+    const lastCommitDate = run(`git log --format="%aI" -1 -- "${relModuleDir}"`)
 
     if (!lastCommitDate) continue
 
@@ -338,20 +333,20 @@ function runQaCswp(): CheckResult {
   }
 
   if (findings.length > 0) {
-    return fail(
-      'QA-CSWP',
-      'Crypto-agility CSWP 39 citation check',
-      relPath,
-      findings,
-      'ERROR'
-    )
+    return fail('QA-CSWP', 'Crypto-agility CSWP 39 citation check', relPath, findings, 'ERROR')
   }
   return pass('QA-CSWP', 'Crypto-agility CSWP 39 citation check', relPath)
 }
 
 // ── CM-1: Xwalk relationship_type validation ─────────────────────────────────
 
-const VALID_RELATIONSHIP_TYPES = new Set(['subset_of', 'superset_of', 'equivalent', 'intersects_with', 'not_related'])
+const VALID_RELATIONSHIP_TYPES = new Set([
+  'subset_of',
+  'superset_of',
+  'equivalent',
+  'intersects_with',
+  'not_related',
+])
 
 async function runCm1(): Promise<CheckResult> {
   const files = await glob('src/data/concept_xwalks_*.csv', { cwd: REPO_ROOT })
@@ -368,13 +363,17 @@ async function runCm1(): Promise<CheckResult> {
   for (const row of parsed.data) {
     if (!VALID_RELATIONSHIP_TYPES.has(row['relationship_type'] ?? '')) {
       findings.push({
-        csv: relPath, row: null, field: 'relationship_type',
+        csv: relPath,
+        row: null,
+        field: 'relationship_type',
         value: row['xwalk_id'] ?? '',
         message: `xwalk '${row['xwalk_id']}' has invalid relationship_type: '${row['relationship_type']}'`,
       })
     }
   }
-  return findings.length > 0 ? fail('CM-1', 'Xwalk relationship_type validation', relPath, findings) : pass('CM-1', 'Xwalk relationship_type validation', relPath)
+  return findings.length > 0
+    ? fail('CM-1', 'Xwalk relationship_type validation', relPath, findings)
+    : pass('CM-1', 'Xwalk relationship_type validation', relPath)
 }
 
 // ── CM-2: Xwalk rationale_type validation ────────────────────────────────────
@@ -408,13 +407,17 @@ async function runCm2(): Promise<CheckResult> {
   for (const row of parsed.data) {
     if (!VALID_RATIONALE_TYPES.has(row['rationale_type'] ?? '')) {
       findings.push({
-        csv: relPath, row: null, field: 'rationale_type',
+        csv: relPath,
+        row: null,
+        field: 'rationale_type',
         value: row['xwalk_id'] ?? '',
         message: `xwalk '${row['xwalk_id']}' has invalid rationale_type: '${row['rationale_type']}'`,
       })
     }
   }
-  return findings.length > 0 ? fail('CM-2', 'Xwalk rationale_type validation', relPath, findings) : pass('CM-2', 'Xwalk rationale_type validation', relPath)
+  return findings.length > 0
+    ? fail('CM-2', 'Xwalk rationale_type validation', relPath, findings)
+    : pass('CM-2', 'Xwalk rationale_type validation', relPath)
 }
 
 // ── CM-3: Xwalk evidence non-empty ───────────────────────────────────────────
@@ -434,13 +437,17 @@ async function runCm3(): Promise<CheckResult> {
   for (const row of parsed.data) {
     if (!(row['evidence'] ?? '').trim()) {
       findings.push({
-        csv: relPath, row: null, field: 'evidence',
+        csv: relPath,
+        row: null,
+        field: 'evidence',
         value: row['xwalk_id'] ?? '',
         message: `xwalk '${row['xwalk_id']}' has empty evidence field`,
       })
     }
   }
-  return findings.length > 0 ? fail('CM-3', 'Xwalk evidence non-empty', relPath, findings) : pass('CM-3', 'Xwalk evidence non-empty', relPath)
+  return findings.length > 0
+    ? fail('CM-3', 'Xwalk evidence non-empty', relPath, findings)
+    : pass('CM-3', 'Xwalk evidence non-empty', relPath)
 }
 
 // ── CM-4: Xwalk from/to concept must resolve to library IDs ─────────────────
@@ -458,7 +465,10 @@ async function runCm4(): Promise<CheckResult> {
   if (!libLatest) return pass('CM-4', 'Xwalk concept resolution', sourceDesc)
 
   const libSrc = fs.readFileSync(libLatest, 'utf-8')
-  const libParsed = Papa.parse<Record<string, string>>(libSrc, { header: true, skipEmptyLines: true })
+  const libParsed = Papa.parse<Record<string, string>>(libSrc, {
+    header: true,
+    skipEmptyLines: true,
+  })
   const knownLibIds = new Set(libParsed.data.map((r) => r['reference_id']?.trim()).filter(Boolean))
 
   // For timeline_anchor rows: to_concept resolves against timeline event titles
@@ -468,7 +478,10 @@ async function runCm4(): Promise<CheckResult> {
   const knownTimelineTitles = new Set<string>()
   if (timelineLatest) {
     const tlSrc = fs.readFileSync(timelineLatest, 'utf-8')
-    const tlParsed = Papa.parse<Record<string, string>>(tlSrc, { header: true, skipEmptyLines: true })
+    const tlParsed = Papa.parse<Record<string, string>>(tlSrc, {
+      header: true,
+      skipEmptyLines: true,
+    })
     for (const r of tlParsed.data) {
       const title = r['title']?.trim() ?? r['Title']?.trim() ?? r['event_title']?.trim()
       if (title) knownTimelineTitles.add(title)
@@ -476,7 +489,10 @@ async function runCm4(): Promise<CheckResult> {
   }
 
   const xwalkSrc = fs.readFileSync(xwalkLatest, 'utf-8')
-  const xwalkParsed = Papa.parse<Record<string, string>>(xwalkSrc, { header: true, skipEmptyLines: true })
+  const xwalkParsed = Papa.parse<Record<string, string>>(xwalkSrc, {
+    header: true,
+    skipEmptyLines: true,
+  })
   const relPath = path.relative(REPO_ROOT, xwalkLatest)
   const findings: Finding[] = []
 
@@ -489,7 +505,9 @@ async function runCm4(): Promise<CheckResult> {
       if (isTimelineAnchor && field === 'to_concept') {
         if (!knownTimelineTitles.has(concept)) {
           findings.push({
-            csv: relPath, row: null, field,
+            csv: relPath,
+            row: null,
+            field,
             value: row['xwalk_id'] ?? '',
             message: `xwalk '${row['xwalk_id']}' ${field} '${concept}' does not match any timeline event title`,
           })
@@ -497,7 +515,9 @@ async function runCm4(): Promise<CheckResult> {
       } else {
         if (!knownLibIds.has(concept)) {
           findings.push({
-            csv: relPath, row: null, field,
+            csv: relPath,
+            row: null,
+            field,
             value: row['xwalk_id'] ?? '',
             message: `xwalk '${row['xwalk_id']}' ${field} '${concept}' does not match any library reference_id`,
           })
@@ -505,7 +525,9 @@ async function runCm4(): Promise<CheckResult> {
       }
     }
   }
-  return findings.length > 0 ? fail('CM-4', 'Xwalk concept resolution', relPath, findings) : pass('CM-4', 'Xwalk concept resolution', relPath)
+  return findings.length > 0
+    ? fail('CM-4', 'Xwalk concept resolution', relPath, findings)
+    : pass('CM-4', 'Xwalk concept resolution', relPath)
 }
 
 // ── CM-E: Compliance countries ISO 3166 validation (warning/grace period) ────
@@ -527,11 +549,16 @@ async function runCmE(): Promise<CheckResult> {
   const ISO2_OR_GLOBAL = /^([A-Z]{2}|Global|International|Worldwide)$/
 
   for (const row of parsed.data) {
-    const countries = (row['countries'] ?? '').split(';').map((s) => s.trim()).filter(Boolean)
+    const countries = (row['countries'] ?? '')
+      .split(';')
+      .map((s) => s.trim())
+      .filter(Boolean)
     for (const country of countries) {
       if (!ISO2_OR_GLOBAL.test(country) && !ISO2_RE.test(country)) {
         findings.push({
-          csv: relPath, row: null, field: 'countries',
+          csv: relPath,
+          row: null,
+          field: 'countries',
           value: row['id'] ?? '',
           message: `Compliance '${row['id']}' country '${country}' is not an ISO 3166 alpha-2 code or recognized global value`,
         })
@@ -539,7 +566,15 @@ async function runCmE(): Promise<CheckResult> {
     }
   }
   // Warning during normalization grace period — not a hard fail
-  return findings.length > 0 ? fail('CM-E', 'Compliance countries ISO 3166 check (grace period)', relPath, findings, 'WARNING') : pass('CM-E', 'Compliance countries ISO 3166 check (grace period)', relPath)
+  return findings.length > 0
+    ? fail(
+        'CM-E',
+        'Compliance countries ISO 3166 check (grace period)',
+        relPath,
+        findings,
+        'WARNING'
+      )
+    : pass('CM-E', 'Compliance countries ISO 3166 check (grace period)', relPath)
 }
 
 // ── CM-CSWP: cswp39_tags closed set validation ───────────────────────────────
@@ -548,8 +583,11 @@ async function runCmE(): Promise<CheckResult> {
 // vocabulary actually used by compliance_*.csv `cswp39_tags` (and matching the
 // CPM pillar names in src/data/cswp39ZoneData.ts).
 const VALID_CSWP39_TAGS = new Set([
-  'cswp39:governance', 'cswp39:inventory', 'cswp39:observability',
-  'cswp39:assurance', 'cswp39:lifecycle',
+  'cswp39:governance',
+  'cswp39:inventory',
+  'cswp39:observability',
+  'cswp39:assurance',
+  'cswp39:lifecycle',
 ])
 
 async function runCmCswp(): Promise<CheckResult> {
@@ -566,18 +604,25 @@ async function runCmCswp(): Promise<CheckResult> {
 
   // Only validate rows that have cswp39_tags filled in
   for (const row of parsed.data) {
-    const tags = (row['cswp39_tags'] ?? '').split(';').map((s) => s.trim()).filter(Boolean)
+    const tags = (row['cswp39_tags'] ?? '')
+      .split(';')
+      .map((s) => s.trim())
+      .filter(Boolean)
     for (const tag of tags) {
       if (!VALID_CSWP39_TAGS.has(tag)) {
         findings.push({
-          csv: relPath, row: null, field: 'cswp39_tags',
+          csv: relPath,
+          row: null,
+          field: 'cswp39_tags',
           value: row['id'] ?? '',
           message: `Compliance '${row['id']}' cswp39_tags contains invalid value '${tag}'. Allowed: ${[...VALID_CSWP39_TAGS].join(', ')}`,
         })
       }
     }
   }
-  return findings.length > 0 ? fail('CM-CSWP', 'cswp39_tags closed set validation', relPath, findings) : pass('CM-CSWP', 'cswp39_tags closed set validation', relPath)
+  return findings.length > 0
+    ? fail('CM-CSWP', 'cswp39_tags closed set validation', relPath, findings)
+    : pass('CM-CSWP', 'cswp39_tags closed set validation', relPath)
 }
 
 // ── CM-G: Threats NAICS / PQC overlay code validation (warning/grace period) ─
@@ -590,7 +635,8 @@ async function runCmG(): Promise<CheckResult> {
   files.sort()
   const latest = files.at(-1)
   const sourceDesc = 'src/data/quantum_threats_hsm_industries_*.csv'
-  if (!latest) return pass('CM-G', 'Threats NAICS/PQC overlay validation (grace period)', sourceDesc)
+  if (!latest)
+    return pass('CM-G', 'Threats NAICS/PQC overlay validation (grace period)', sourceDesc)
 
   const relPath = path.relative(REPO_ROOT, latest)
   const src = fs.readFileSync(latest, 'utf-8')
@@ -601,11 +647,16 @@ async function runCmG(): Promise<CheckResult> {
     const normalized = (row['applicable_industries_normalized'] ?? '').trim()
     if (!normalized) continue // Empty is OK during grace period
 
-    const codes = normalized.split(';').map((s) => s.trim()).filter(Boolean)
+    const codes = normalized
+      .split(';')
+      .map((s) => s.trim())
+      .filter(Boolean)
     for (const code of codes) {
       if (!NAICS_RE.test(code) && !PQC_OVERLAY_RE.test(code)) {
         findings.push({
-          csv: relPath, row: null, field: 'applicable_industries_normalized',
+          csv: relPath,
+          row: null,
+          field: 'applicable_industries_normalized',
           value: row['threat_id'] ?? '',
           message: `Threat '${row['threat_id']}' industry code '${code}' is neither a valid NAICS code nor a PQC-* overlay code`,
         })
@@ -613,7 +664,15 @@ async function runCmG(): Promise<CheckResult> {
     }
   }
   // Warning only — NAICS normalization is a grace-period migration
-  return findings.length > 0 ? fail('CM-G', 'Threats NAICS/PQC overlay validation (grace period)', relPath, findings, 'WARNING') : pass('CM-G', 'Threats NAICS/PQC overlay validation (grace period)', relPath)
+  return findings.length > 0
+    ? fail(
+        'CM-G',
+        'Threats NAICS/PQC overlay validation (grace period)',
+        relPath,
+        findings,
+        'WARNING'
+      )
+    : pass('CM-G', 'Threats NAICS/PQC overlay validation (grace period)', relPath)
 }
 
 // ── CM-T: Timeline evidence quality checks ───────────────────────────────────
@@ -626,19 +685,28 @@ async function runCmT(): Promise<CheckResult[]> {
   const timelineFiles = await glob('src/data/timeline_*.csv', { cwd: REPO_ROOT })
   timelineFiles.sort()
   const latestTimeline = timelineFiles.at(-1)
-  if (!latestTimeline) return [pass('CM-T-01', 'Timeline trusted_source_id on completed events', 'src/data/timeline_*.csv')]
+  if (!latestTimeline)
+    return [
+      pass('CM-T-01', 'Timeline trusted_source_id on completed events', 'src/data/timeline_*.csv'),
+    ]
 
   const trustedSourceFiles = await glob('src/data/trusted_sources_*.csv', { cwd: REPO_ROOT })
   trustedSourceFiles.sort()
   const latestTrusted = trustedSourceFiles.at(-1)
 
   const timelineRaw = fs.readFileSync(path.join(REPO_ROOT, latestTimeline), 'utf-8')
-  const { data: timelineRows } = Papa.parse<Record<string, string>>(timelineRaw, { header: true, skipEmptyLines: true })
+  const { data: timelineRows } = Papa.parse<Record<string, string>>(timelineRaw, {
+    header: true,
+    skipEmptyLines: true,
+  })
 
   const knownSourceIds = new Set<string>()
   if (latestTrusted) {
     const trustedRaw = fs.readFileSync(path.join(REPO_ROOT, latestTrusted), 'utf-8')
-    const { data: trustedRows } = Papa.parse<Record<string, string>>(trustedRaw, { header: true, skipEmptyLines: true })
+    const { data: trustedRows } = Papa.parse<Record<string, string>>(trustedRaw, {
+      header: true,
+      skipEmptyLines: true,
+    })
     for (const r of trustedRows) {
       if (r['source_id']?.trim()) knownSourceIds.add(r['source_id'].trim())
     }
@@ -655,25 +723,68 @@ async function runCmT(): Promise<CheckResult[]> {
     const localFile = (row['local_file'] ?? '').trim()
 
     if ((status === 'Completed' || status === 'In Progress') && !srcId) {
-      f01.push({ csv: latestTimeline, row: null, field: 'trusted_source_id', value: title, message: `"${title}" (${status}) has no trusted_source_id` })
+      f01.push({
+        csv: latestTimeline,
+        row: null,
+        field: 'trusted_source_id',
+        value: title,
+        message: `"${title}" (${status}) has no trusted_source_id`,
+      })
     }
 
     if (srcId && knownSourceIds.size > 0 && !knownSourceIds.has(srcId)) {
-      f02.push({ csv: latestTimeline, row: null, field: 'trusted_source_id', value: title, message: `"${title}" has unresolved trusted_source_id: "${srcId}"` })
+      f02.push({
+        csv: latestTimeline,
+        row: null,
+        field: 'trusted_source_id',
+        value: title,
+        message: `"${title}" has unresolved trusted_source_id: "${srcId}"`,
+      })
     }
 
     if (localFile) {
       const absPath = path.join(REPO_ROOT, localFile.replace(/^public\//, 'public/'))
       if (!fs.existsSync(absPath)) {
-        f03.push({ csv: latestTimeline, row: null, field: 'local_file', value: title, message: `"${title}" references missing local_file: "${localFile}"` })
+        f03.push({
+          csv: latestTimeline,
+          row: null,
+          field: 'local_file',
+          value: title,
+          message: `"${title}" references missing local_file: "${localFile}"`,
+        })
       }
     }
   }
 
   return [
-    f01.length > 0 ? fail('CM-T-01', 'Timeline trusted_source_id on completed/in-progress events', latestTimeline, f01, 'WARNING') : pass('CM-T-01', 'Timeline trusted_source_id on completed/in-progress events', latestTimeline),
-    f02.length > 0 ? fail('CM-T-02', 'Timeline trusted_source_id resolves in trusted_sources CSV', latestTimeline, f02) : pass('CM-T-02', 'Timeline trusted_source_id resolves in trusted_sources CSV', latestTimeline),
-    f03.length > 0 ? fail('CM-T-03', 'Timeline local_file exists in public/timeline/', latestTimeline, f03) : pass('CM-T-03', 'Timeline local_file exists in public/timeline/', latestTimeline),
+    f01.length > 0
+      ? fail(
+          'CM-T-01',
+          'Timeline trusted_source_id on completed/in-progress events',
+          latestTimeline,
+          f01,
+          'WARNING'
+        )
+      : pass(
+          'CM-T-01',
+          'Timeline trusted_source_id on completed/in-progress events',
+          latestTimeline
+        ),
+    f02.length > 0
+      ? fail(
+          'CM-T-02',
+          'Timeline trusted_source_id resolves in trusted_sources CSV',
+          latestTimeline,
+          f02
+        )
+      : pass(
+          'CM-T-02',
+          'Timeline trusted_source_id resolves in trusted_sources CSV',
+          latestTimeline
+        ),
+    f03.length > 0
+      ? fail('CM-T-03', 'Timeline local_file exists in public/timeline/', latestTimeline, f03)
+      : pass('CM-T-03', 'Timeline local_file exists in public/timeline/', latestTimeline),
   ]
 }
 
@@ -685,10 +796,18 @@ async function runCmTs(): Promise<CheckResult> {
   const files = await glob('src/data/trusted_sources_*.csv', { cwd: REPO_ROOT })
   files.sort()
   const latest = files.at(-1)
-  if (!latest) return pass('CM-TS', 'Trusted-source trust_tier vocabulary normalised', 'src/data/trusted_sources_*.csv')
+  if (!latest)
+    return pass(
+      'CM-TS',
+      'Trusted-source trust_tier vocabulary normalised',
+      'src/data/trusted_sources_*.csv'
+    )
 
   const raw = fs.readFileSync(path.join(REPO_ROOT, latest), 'utf-8')
-  const { data: rows } = Papa.parse<Record<string, string>>(raw, { header: true, skipEmptyLines: true })
+  const { data: rows } = Papa.parse<Record<string, string>>(raw, {
+    header: true,
+    skipEmptyLines: true,
+  })
 
   const findings: Finding[] = []
   for (const r of rows) {
@@ -705,7 +824,12 @@ async function runCmTs(): Promise<CheckResult> {
   }
 
   return findings.length > 0
-    ? fail('CM-TS', 'Trusted-source trust_tier vocabulary normalised (4-value v2)', latest, findings)
+    ? fail(
+        'CM-TS',
+        'Trusted-source trust_tier vocabulary normalised (4-value v2)',
+        latest,
+        findings
+      )
     : pass('CM-TS', 'Trusted-source trust_tier vocabulary normalised (4-value v2)', latest)
 }
 
@@ -814,13 +938,23 @@ async function runCmAlgoXref(): Promise<CheckResult[]> {
       ? fail('CM-ALGO-XREF-STD', 'Xref standard_id resolves to a library row', relPath, stdFindings)
       : pass('CM-ALGO-XREF-STD', 'Xref standard_id resolves to a library row', relPath),
     paramFindings.length > 0
-      ? fail('CM-ALGO-XREF-PARAM', 'Xref param_set matches canonical PQC pattern', relPath, paramFindings)
+      ? fail(
+          'CM-ALGO-XREF-PARAM',
+          'Xref param_set matches canonical PQC pattern',
+          relPath,
+          paramFindings
+        )
       : pass('CM-ALGO-XREF-PARAM', 'Xref param_set matches canonical PQC pattern', relPath),
     familyFindings.length > 0
       ? fail('CM-ALGO-XREF-FAM', 'Xref family is in closed set', relPath, familyFindings)
       : pass('CM-ALGO-XREF-FAM', 'Xref family is in closed set', relPath),
     defaultFindings.length > 0
-      ? fail('CM-ALGO-XREF-DEFAULT', 'Exactly one default per standard_id', relPath, defaultFindings)
+      ? fail(
+          'CM-ALGO-XREF-DEFAULT',
+          'Exactly one default per standard_id',
+          relPath,
+          defaultFindings
+        )
       : pass('CM-ALGO-XREF-DEFAULT', 'Exactly one default per standard_id', relPath),
   ]
 }
@@ -969,7 +1103,13 @@ async function runCmRegistry(): Promise<CheckResult[]> {
       ? fail('CM-REGISTRY-DUP', 'Registry concept_id uniqueness', relPath, dupFindings)
       : pass('CM-REGISTRY-DUP', 'Registry concept_id uniqueness', relPath),
     refFindings.length > 0
-      ? fail('CM-REGISTRY-REF', 'Registry source_row_id resolves to a real record', relPath, refFindings, 'WARNING')
+      ? fail(
+          'CM-REGISTRY-REF',
+          'Registry source_row_id resolves to a real record',
+          relPath,
+          refFindings,
+          'WARNING'
+        )
       : pass('CM-REGISTRY-REF', 'Registry source_row_id resolves to a real record', relPath),
   ]
 }
@@ -1064,10 +1204,22 @@ async function runCmConcept(): Promise<CheckResult[]> {
 
   return [
     fromFindings.length > 0
-      ? fail('CM-CONCEPT-FROM', 'Xwalk from_concept_id resolves to registry', relPath, fromFindings, 'WARNING')
+      ? fail(
+          'CM-CONCEPT-FROM',
+          'Xwalk from_concept_id resolves to registry',
+          relPath,
+          fromFindings,
+          'WARNING'
+        )
       : pass('CM-CONCEPT-FROM', 'Xwalk from_concept_id resolves to registry', relPath),
     toFindings.length > 0
-      ? fail('CM-CONCEPT-TO', 'Xwalk to_concept_id resolves to registry', relPath, toFindings, 'WARNING')
+      ? fail(
+          'CM-CONCEPT-TO',
+          'Xwalk to_concept_id resolves to registry',
+          relPath,
+          toFindings,
+          'WARNING'
+        )
       : pass('CM-CONCEPT-TO', 'Xwalk to_concept_id resolves to registry', relPath),
   ]
 }
@@ -1089,9 +1241,19 @@ interface AttrTarget {
 }
 
 const CM_AT_TARGETS: AttrTarget[] = [
-  { domain: 'vendors', csvGlob: 'src/data/vendors_*.csv', idCol: 'vendor_id', dateCol: 'last_verified_date' },
+  {
+    domain: 'vendors',
+    csvGlob: 'src/data/vendors_*.csv',
+    idCol: 'vendor_id',
+    dateCol: 'last_verified_date',
+  },
   { domain: 'leaders', csvGlob: 'src/data/leaders_*.csv', idCol: 'Name' },
-  { domain: 'migrate', csvGlob: 'src/data/pqc_product_catalog_*.csv', idCol: 'product_id', dateCol: 'last_verified_date' },
+  {
+    domain: 'migrate',
+    csvGlob: 'src/data/pqc_product_catalog_*.csv',
+    idCol: 'product_id',
+    dateCol: 'last_verified_date',
+  },
 ]
 
 async function runCmAt(): Promise<CheckResult[]> {
@@ -1106,7 +1268,10 @@ async function runCmAt(): Promise<CheckResult[]> {
       continue
     }
     const raw = fs.readFileSync(path.join(REPO_ROOT, latest), 'utf-8')
-    const { data: rows } = Papa.parse<Record<string, string>>(raw, { header: true, skipEmptyLines: true })
+    const { data: rows } = Papa.parse<Record<string, string>>(raw, {
+      header: true,
+      skipEmptyLines: true,
+    })
 
     const warnFindings: Finding[] = []
     const errorFindings: Finding[] = []
@@ -1121,7 +1286,9 @@ async function runCmAt(): Promise<CheckResult[]> {
         row: null,
         field: 'trusted_source_id',
         value: id,
-        message: `${t.domain} "${id}" lacks trusted_source_id` + (date ? ` (last_verified_date=${date})` : ''),
+        message:
+          `${t.domain} "${id}" lacks trusted_source_id` +
+          (date ? ` (last_verified_date=${date})` : ''),
       }
       if (date && date >= CM_AT_CUTOFF) errorFindings.push(finding)
       else warnFindings.push(finding)
@@ -1147,7 +1314,9 @@ async function runCmAt(): Promise<CheckResult[]> {
         )
       )
     } else {
-      results.push(pass(`CM-AT-${t.domain}`, `${t.domain}: trusted_source_id coverage complete`, latest))
+      results.push(
+        pass(`CM-AT-${t.domain}`, `${t.domain}: trusted_source_id coverage complete`, latest)
+      )
     }
   }
   return results
@@ -1320,7 +1489,11 @@ interface CommunitySignalsPayload {
 export function runCmFlag(): CheckResult {
   const signalsPath = path.join(REPO_ROOT, 'public/data/community-signals.json')
   if (!fs.existsSync(signalsPath)) {
-    return pass('CM-Flag', 'Community flag surfacing (no signals file)', 'public/data/community-signals.json')
+    return pass(
+      'CM-Flag',
+      'Community flag surfacing (no signals file)',
+      'public/data/community-signals.json'
+    )
   }
   let payload: CommunitySignalsPayload
   try {
@@ -1380,7 +1553,13 @@ export function runCmFlag(): CheckResult {
 //
 // All findings are ERROR severity — production xwalk drift is a real bug.
 
-const XWALK_VOCAB_REL = new Set(['subset_of', 'superset_of', 'equivalent', 'intersects_with', 'not_related'])
+const XWALK_VOCAB_REL = new Set([
+  'subset_of',
+  'superset_of',
+  'equivalent',
+  'intersects_with',
+  'not_related',
+])
 const XWALK_VOCAB_RATIONALE = new Set([
   'syntactic',
   'semantic',
@@ -1494,19 +1673,28 @@ async function runCmXwalk(): Promise<CheckResult[]> {
     // Vocab
     if (rel && !XWALK_VOCAB_REL.has(rel)) {
       vocabFindings.push({
-        csv: relPath, row: null, field: 'relationship_type', value: xid,
+        csv: relPath,
+        row: null,
+        field: 'relationship_type',
+        value: xid,
         message: `${xid}: relationship_type="${rel}" is not in the closed vocabulary`,
       })
     }
     if (rat && !XWALK_VOCAB_RATIONALE.has(rat)) {
       vocabFindings.push({
-        csv: relPath, row: null, field: 'rationale_type', value: xid,
+        csv: relPath,
+        row: null,
+        field: 'rationale_type',
+        value: xid,
         message: `${xid}: rationale_type="${rat}" is not in the closed vocabulary`,
       })
     }
     if (conf && !XWALK_VOCAB_CONFIDENCE.has(conf)) {
       vocabFindings.push({
-        csv: relPath, row: null, field: 'confidence', value: xid,
+        csv: relPath,
+        row: null,
+        field: 'confidence',
+        value: xid,
         message: `${xid}: confidence="${conf}" must be high|medium|low`,
       })
     }
@@ -1518,12 +1706,18 @@ async function runCmXwalk(): Promise<CheckResult[]> {
       const canonical = normalisedKnown.get(normalizeConceptId(from))
       if (canonical) {
         fromSoftFindings.push({
-          csv: relPath, row: null, field: 'from_concept', value: xid,
+          csv: relPath,
+          row: null,
+          field: 'from_concept',
+          value: xid,
           message: `${xid}: from_concept="${from}" is non-canonical — should be "${canonical}". Re-run merge-xwalk to canonicalise.`,
         })
       } else {
         fromHardFindings.push({
-          csv: relPath, row: null, field: 'from_concept', value: xid,
+          csv: relPath,
+          row: null,
+          field: 'from_concept',
+          value: xid,
           message: `${xid}: from_concept="${from}" does not resolve to library/compliance/timeline (no normalised match either)`,
         })
       }
@@ -1532,12 +1726,18 @@ async function runCmXwalk(): Promise<CheckResult[]> {
       const canonical = normalisedKnown.get(normalizeConceptId(to))
       if (canonical) {
         toSoftFindings.push({
-          csv: relPath, row: null, field: 'to_concept', value: xid,
+          csv: relPath,
+          row: null,
+          field: 'to_concept',
+          value: xid,
           message: `${xid}: to_concept="${to}" is non-canonical — should be "${canonical}". Re-run merge-xwalk to canonicalise.`,
         })
       } else {
         toHardFindings.push({
-          csv: relPath, row: null, field: 'to_concept', value: xid,
+          csv: relPath,
+          row: null,
+          field: 'to_concept',
+          value: xid,
           message: `${xid}: to_concept="${to}" does not resolve to library/compliance/timeline (no normalised match either)`,
         })
       }
@@ -1546,12 +1746,18 @@ async function runCmXwalk(): Promise<CheckResult[]> {
     // Evidence
     if (!ev) {
       evidenceFindings.push({
-        csv: relPath, row: null, field: 'evidence', value: xid,
+        csv: relPath,
+        row: null,
+        field: 'evidence',
+        value: xid,
         message: `${xid}: evidence field is empty`,
       })
     } else if (ev.length < 40) {
       evidenceFindings.push({
-        csv: relPath, row: null, field: 'evidence', value: xid,
+        csv: relPath,
+        row: null,
+        field: 'evidence',
+        value: xid,
         message: `${xid}: evidence is only ${ev.length} chars (recommended ≥40)`,
       })
     }
@@ -1562,7 +1768,10 @@ async function runCmXwalk(): Promise<CheckResult[]> {
       const first = seenTuples.get(tuple)
       if (first) {
         dupFindings.push({
-          csv: relPath, row: null, field: 'tuple', value: xid,
+          csv: relPath,
+          row: null,
+          field: 'tuple',
+          value: xid,
           message: `${xid}: duplicate of ${first} on tuple "${from}" → "${to}" (${rel})`,
         })
       } else {
@@ -1602,7 +1811,13 @@ async function runCmXwalk(): Promise<CheckResult[]> {
         )
       : pass('CM-Xwalk-TO', 'Xwalk to_concept ID resolution', relPath),
     evidenceFindings.length > 0
-      ? fail('CM-Xwalk-EVIDENCE', 'Xwalk evidence field minimum length', relPath, evidenceFindings, 'WARNING')
+      ? fail(
+          'CM-Xwalk-EVIDENCE',
+          'Xwalk evidence field minimum length',
+          relPath,
+          evidenceFindings,
+          'WARNING'
+        )
       : pass('CM-Xwalk-EVIDENCE', 'Xwalk evidence field minimum length', relPath),
     dupFindings.length > 0
       ? fail('CM-Xwalk-DUPLICATE', 'Xwalk duplicate tuple detection', relPath, dupFindings, 'ERROR')
@@ -1613,8 +1828,44 @@ async function runCmXwalk(): Promise<CheckResult[]> {
 // ── Entry point ──────────────────────────────────────────────────────────────
 
 export async function runTrustEngineChecks(): Promise<CheckResult[]> {
-  const [cm1, cm2, cm3, cm4, cmE, cmCswp, cmG, cmT, cmTs, cmAt, cmF, cmXw, cmAx, cmRg, cmCn] = await Promise.all([
-    runCm1(), runCm2(), runCm3(), runCm4(), runCmE(), runCmCswp(), runCmG(), runCmT(), runCmTs(), runCmAt(), runCmF(), runCmXwalk(), runCmAlgoXref(), runCmRegistry(), runCmConcept(),
-  ])
-  return [runCmW(), runCmC(), runQaS(), runQaCswp(), cm1, cm2, cm3, cm4, cmE, cmCswp, cmG, ...cmT, cmTs, ...cmAt, ...cmF, runCmFlag(), ...cmXw, ...cmAx, ...cmRg, ...cmCn]
+  const [cm1, cm2, cm3, cm4, cmE, cmCswp, cmG, cmT, cmTs, cmAt, cmF, cmXw, cmAx, cmRg, cmCn] =
+    await Promise.all([
+      runCm1(),
+      runCm2(),
+      runCm3(),
+      runCm4(),
+      runCmE(),
+      runCmCswp(),
+      runCmG(),
+      runCmT(),
+      runCmTs(),
+      runCmAt(),
+      runCmF(),
+      runCmXwalk(),
+      runCmAlgoXref(),
+      runCmRegistry(),
+      runCmConcept(),
+    ])
+  return [
+    runCmW(),
+    runCmC(),
+    runQaS(),
+    runQaCswp(),
+    cm1,
+    cm2,
+    cm3,
+    cm4,
+    cmE,
+    cmCswp,
+    cmG,
+    ...cmT,
+    cmTs,
+    ...cmAt,
+    ...cmF,
+    runCmFlag(),
+    ...cmXw,
+    ...cmAx,
+    ...cmRg,
+    ...cmCn,
+  ]
 }
