@@ -28,6 +28,31 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.20.0] - 2026-07-10
+
+A consolidation release: a hands-on KMIP Command Lab for certificate
+operations in the playground, a fix to the Report page's CBOM Builder link,
+and a broad data-quality sweep that rebuilds the site's trust-spine
+registries and refreshes the algorithm and learning-module data.
+
+### Added
+
+- **A Command Lab for KMIP certificate operations** [view:/playground] [persona:developer] [persona:architect]: the KMIP 3.0 tab now runs certificate operations — Certify, Validate, and public-key verification — in the browser against a rebuilt engine, with per-operation forms, an expanded glossary, extra lessons, and knowledge checks so you can learn each command hands-on.
+
+### Changed
+
+- **Refreshed the algorithm reference data** [view:/algorithms] [persona:researcher] [persona:developer]: the algorithm properties, status tiers, and candidate-family data were rebuilt from a fresh, canonical July 2026 reference snapshot so the tables and pickers reflect the current standardization state.
+- **Rebuilt the site's data trust-spine** [view:/library] [persona:architect] [persona:researcher]: the registries the site trusts (glossary, sources, migrate proofs, timeline evidence) were rebuilt to be complete, canonical, and consistency-guarded, and the data validators can now actually fail on defects instead of passing silently.
+
+### Fixed
+
+- **The Report page's CBOM Builder link now lands in the right place** [view:/report] [persona:architect] [persona:developer]: corrected the CBOM Builder deep link so it opens the builder directly, backed by new real-browser test coverage.
+- **Corrected content across several PKI learning modules** [view:/learn] [persona:developer] [persona:curious]: the EMV payment, IoT/OT, PQC candidates, governance, skills/team-structure, and standards-bodies modules picked up data and copy corrections from the trust-spine sweep.
+
+### Data
+
+- **New canonical algorithm reference snapshot (July 2026)** replaces the older implementation-attacks table; timeline snapshot refreshed with fresh enrichment.
+
 ## [4.19.0] - 2026-07-09
 
 A hands-on release for the KMIP playground, the Report page, the Business
