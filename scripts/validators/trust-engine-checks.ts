@@ -544,9 +544,12 @@ async function runCmE(): Promise<CheckResult> {
 
 // ── CM-CSWP: cswp39_tags closed set validation ───────────────────────────────
 
+// NIST CSWP.39 crypto-agility pillars, namespaced `cswp39:<pillar>` — the
+// vocabulary actually used by compliance_*.csv `cswp39_tags` (and matching the
+// CPM pillar names in src/data/cswp39ZoneData.ts).
 const VALID_CSWP39_TAGS = new Set([
-  'ml-kem', 'ml-dsa', 'slh-dsa', 'transition', 'cryptographic-agility',
-  'hybrid', 'tls-pqc', 'pki-pqc', 'cnsa2',
+  'cswp39:governance', 'cswp39:inventory', 'cswp39:observability',
+  'cswp39:assurance', 'cswp39:lifecycle',
 ])
 
 async function runCmCswp(): Promise<CheckResult> {
