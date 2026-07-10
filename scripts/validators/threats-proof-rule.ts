@@ -73,7 +73,7 @@ function findLatestSourcesCsv(): string | null {
   files.sort((a, b) => {
     const parse = (name: string): number => {
       const m = name.match(
-        /pqc_authoritative_sources_reference_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
+        /pqc_authoritative_sources_reference_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/
       )
       if (!m) return 0
       const [, mm, dd, yyyy, r] = m
@@ -229,7 +229,8 @@ export function runThreatsProofRule(): CheckResult[] {
     results.push({
       id: 'TP-3',
       category: 'cross-reference',
-      description: 'Every active threat trusted_source_id resolves to the authoritative-sources catalog id',
+      description:
+        'Every active threat trusted_source_id resolves to the authoritative-sources catalog id',
       sourceA: csvName,
       sourceB: catalogName,
       severity: 'ERROR',
@@ -240,7 +241,8 @@ export function runThreatsProofRule(): CheckResult[] {
     results.push({
       id: 'TP-3',
       category: 'cross-reference',
-      description: 'Every active threat trusted_source_id resolves to the authoritative-sources catalog id',
+      description:
+        'Every active threat trusted_source_id resolves to the authoritative-sources catalog id',
       sourceA: csvName,
       sourceB: 'pqc_authoritative_sources_reference_*.csv',
       severity: 'ERROR',

@@ -81,9 +81,7 @@ export interface DuplicateCheckOptions {
  * Run DUP-1 across library, migrate, timeline pools. Returns one
  * CheckResult per source plus a roll-up. WARNING severity throughout.
  */
-export async function runDuplicateChecks(
-  opts: DuplicateCheckOptions = {}
-): Promise<CheckResult[]> {
+export async function runDuplicateChecks(opts: DuplicateCheckOptions = {}): Promise<CheckResult[]> {
   if (!isEmbeddingRuntimeReady()) {
     return POOLS.map((p) => ({
       id: `DUP-1:${p.source}`,
