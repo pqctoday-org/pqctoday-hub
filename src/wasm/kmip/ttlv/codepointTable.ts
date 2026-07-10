@@ -36,6 +36,18 @@ const SPEC_EXTRACT_TAG_PATCHES: Record<string, number> = {
   Internal: 0x4201c8,
   ExternalMu: 0x4201c9,
   Random: 0x4201ca,
+  // §6.1.62 Validate / §6.1.6 Certify / §6.1.50 Re-certify (Certificate
+  // Services, WP5) — also absent from the spec-extraction JSON. Values
+  // cross-checked against `pqctoday-hsm/kmip/src/kmip30/wire.rs`'s own
+  // `tags::*` constants (the decoder these requests are built to match),
+  // not re-derived independently.
+  CertificateValue: 0x42001e,
+  CertificateRequestType: 0x420019,
+  CertificateRequest: 0x420018,
+  CertificateRequestValue: 0x420140,
+  CertificateRequestUniqueIdentifier: 0x420139,
+  ValidityDate: 0x42009a,
+  ValidityIndicator: 0x42009b,
 }
 
 /** Enum members absent/incomplete in the published-3.0 spec JSON — mirrors
@@ -43,6 +55,14 @@ const SPEC_EXTRACT_TAG_PATCHES: Record<string, number> = {
 const SPEC_EXTRACT_PATCHES: Record<string, Record<string, number>> = {
   MaskGenerator: { MGF1: 0x00000001 },
   KeyFormatType: { SeedPrivateKey: 0x00000018 },
+  // §6.1.6 Certify / §6.1.50 Re-certify's `Certificate Request Type`
+  // (Certificate Services, WP5) — matches `kmip30::ops::CertificateRequestType`.
+  // Only PKCS10 is meaningful here (Certify rejects Crmf/Pem as
+  // OperationNotSupported — see certify.rs's `resolve_subject`).
+  CertificateRequestType: { Crmf: 0x00000001, PKCS10: 0x00000002, PEM: 0x00000003 },
+  // §6.1.62 Validate's three-way answer — matches
+  // `kmip30::ops::SignatureValidity`.
+  ValidityIndicator: { Valid: 0x00000001, Invalid: 0x00000002, Unknown: 0x00000003 },
   CredentialType: {
     UsernameAndPassword: 0x00000001,
     Device: 0x00000002,

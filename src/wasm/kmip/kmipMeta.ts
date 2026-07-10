@@ -47,6 +47,16 @@ export const TAG_NAMES: Record<string, string> = {
   '0x420064': 'PrivateKey',
   '0x420092': 'TimeStamp',
   '0x420094': 'UniqueIdentifier',
+  // §6.1.62 Validate / §6.1.6 Certify / §6.1.50 Re-certify (Certificate
+  // Services, WP5) — cross-checked against `pqctoday-hsm/kmip/src/kmip30/
+  // wire.rs`'s `tags::*` constants (the decoder these are built to match).
+  '0x420013': 'Certificate',
+  '0x42001E': 'CertificateValue',
+  '0x420018': 'CertificateRequest',
+  '0x420019': 'CertificateRequestType',
+  '0x420140': 'CertificateRequestValue',
+  '0x420139': 'CertificateRequestUniqueIdentifier',
+  '0x42009A': 'ValidityDate',
   '0x42009B': 'ValidityIndicator',
   '0x42009D': 'VendorIdentification',
   '0x420126': 'CommonAttributes',

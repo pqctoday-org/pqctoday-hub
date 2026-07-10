@@ -233,6 +233,40 @@ export class KmipPlayground {
         }
     }
     /**
+     * WP5 — "Set up demo CA" affordance for the Certificate Services
+     * teaching flow: generate a fresh keypair of `algorithm` in the
+     * engine, self-sign it into a CA certificate via the SAME production
+     * `certify::bootstrap_ca_certificate` path the native server's
+     * `--ca-key` bootstrap uses (not a wasm-only shortcut), and
+     * designate it on this session's `Deps` so subsequent Certify /
+     * Re-certify calls (via [`submit`](KmipPlayground::submit) /
+     * [`run_op`](KmipPlayground::run_op)) have a signer. `algorithm` ∈
+     * `RSA-2048 | ECDSA-P256 | ML-DSA-65 | SLH-DSA-SHA2-128f`; empty
+     * `subject_cn` defaults to "Playground Demo CA". Returns
+     * `{ ok, privateKeyUid, certificateUid, certificateDerHex,
+     * algorithm }` on success, `{ ok: false, error }` on failure — never
+     * partially designates a CA it failed to fully mint.
+     * @param {string} algorithm
+     * @param {string} subject_cn
+     * @returns {string}
+     */
+    setup_demo_ca(algorithm, subject_cn) {
+        let deferred3_0;
+        let deferred3_1;
+        try {
+            const ptr0 = passStringToWasm0(algorithm, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            const len0 = WASM_VECTOR_LEN;
+            const ptr1 = passStringToWasm0(subject_cn, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            const len1 = WASM_VECTOR_LEN;
+            const ret = wasm.kmipplayground_setup_demo_ca(this.__wbg_ptr, ptr0, len0, ptr1, len1);
+            deferred3_0 = ret[0];
+            deferred3_1 = ret[1];
+            return getStringFromWasm0(ret[0], ret[1]);
+        } finally {
+            wasm.__wbindgen_free(deferred3_0, deferred3_1, 1);
+        }
+    }
+    /**
      * Raw entry: one KMIP 3.0 `Request Message` (TTLV wire bytes) → encoded
      * `Response Message` (TTLV wire bytes). The identical decode → dispatch →
      * encode path the TLS listener runs per connection. A wire-decode failure

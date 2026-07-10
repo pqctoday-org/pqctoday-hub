@@ -35,6 +35,7 @@ describe('Learn walkthrough step specs (real wasm engine)', () => {
 
   /** Mirror of LearnView's `runStep` + outcome evaluation. */
   const runStep = (step: LessonStep, results: (OpResult | null)[]): OpResult => {
+    step.preRun?.(engine)
     if (step.buildRaw) {
       const raw = step.buildRaw(results)
       const rr = runRawOp(engine, table, raw.op, raw.payload, raw.headerExtras)

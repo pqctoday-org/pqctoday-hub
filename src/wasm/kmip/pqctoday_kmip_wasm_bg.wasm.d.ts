@@ -13,6 +13,7 @@ export const kmipplayground_new: (a: number) => [number, number, number];
 export const kmipplayground_policy_status: (a: number) => [number, number];
 export const kmipplayground_run_batch: (a: number, b: number, c: number) => [number, number];
 export const kmipplayground_run_op: (a: number, b: number, c: number) => [number, number];
+export const kmipplayground_setup_demo_ca: (a: number, b: number, c: number, d: number, e: number) => [number, number];
 export const kmipplayground_submit: (a: number, b: number, c: number) => [number, number];
 export const _C_AsyncComplete: (a: number, b: number, c: number) => number;
 export const _C_AsyncJoin: (a: number, b: number, c: number, d: number, e: number) => number;

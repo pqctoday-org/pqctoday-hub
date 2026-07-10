@@ -120,6 +120,22 @@ export class KmipPlayground {
      */
     run_op(spec_json: string): string;
     /**
+     * WP5 — "Set up demo CA" affordance for the Certificate Services
+     * teaching flow: generate a fresh keypair of `algorithm` in the
+     * engine, self-sign it into a CA certificate via the SAME production
+     * `certify::bootstrap_ca_certificate` path the native server's
+     * `--ca-key` bootstrap uses (not a wasm-only shortcut), and
+     * designate it on this session's `Deps` so subsequent Certify /
+     * Re-certify calls (via [`submit`](KmipPlayground::submit) /
+     * [`run_op`](KmipPlayground::run_op)) have a signer. `algorithm` ∈
+     * `RSA-2048 | ECDSA-P256 | ML-DSA-65 | SLH-DSA-SHA2-128f`; empty
+     * `subject_cn` defaults to "Playground Demo CA". Returns
+     * `{ ok, privateKeyUid, certificateUid, certificateDerHex,
+     * algorithm }` on success, `{ ok: false, error }` on failure — never
+     * partially designates a CA it failed to fully mint.
+     */
+    setup_demo_ca(algorithm: string, subject_cn: string): string;
+    /**
      * Raw entry: one KMIP 3.0 `Request Message` (TTLV wire bytes) → encoded
      * `Response Message` (TTLV wire bytes). The identical decode → dispatch →
      * encode path the TLS listener runs per connection. A wire-decode failure

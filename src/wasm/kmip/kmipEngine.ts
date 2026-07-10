@@ -270,6 +270,19 @@ interface WasmKmipPlayground {
   list_objects(): string
   audit_snapshot(limit: number): string
   clear_audit(): void
+  setup_demo_ca(algorithm: string, subjectCn: string): string
+}
+
+/** `KmipEngine.setupDemoCa`'s result. Mirrors the wasm binding's
+ * `{ ok: true, privateKeyUid, certificateUid, certificateDerHex, algorithm }`
+ * / `{ ok: false, error }` shape exactly — no reshaping in this layer. */
+export interface SetupDemoCaResult {
+  ok: boolean
+  privateKeyUid?: string
+  certificateUid?: string
+  certificateDerHex?: string
+  algorithm?: string
+  error?: string
 }
 
 interface WasmModule {
@@ -315,6 +328,18 @@ export class KmipEngine {
   /** Raw wire entry: TTLV bytes in → TTLV bytes out. */
   submit(ttlv: Uint8Array): Uint8Array {
     return this.pg.submit(ttlv)
+  }
+
+  /** Certificate Services "Set up demo CA": generate a fresh keypair,
+   * self-sign it into a CA certificate via the SAME production
+   * `certify::bootstrap_ca_certificate` path the native server's
+   * `--ca-key` bootstrap uses, and designate it so subsequent Certify /
+   * Re-certify calls have a signer. `algorithm` ∈ `RSA-2048 | ECDSA-P256 |
+   * ML-DSA-65 | SLH-DSA-SHA2-128f`. Safe to call more than once (e.g. to
+   * try a different algorithm) — each call mints a fresh, independently
+   * UID'd CA and re-designates it as the active one. */
+  setupDemoCa(algorithm: string, subjectCn = ''): SetupDemoCaResult {
+    return JSON.parse(this.pg.setup_demo_ca(algorithm, subjectCn)) as SetupDemoCaResult
   }
 
   /** Activate a crypto-agility policy from YAML (Plane 1). */
