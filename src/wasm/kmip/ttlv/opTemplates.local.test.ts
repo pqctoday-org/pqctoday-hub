@@ -41,6 +41,9 @@ import {
   ECDSA_SHA256_OID_STR,
   EC_PUBLIC_KEY_OID_STR,
   ML_DSA_65_OID_STR,
+  COMPOSITE_MLDSA65_ECDSA_P256_SHA512_OID_STR,
+  COMPOSITE_PROFILE_MLDSA65_ECDSA_P256_SHA512,
+  buildCompositeCertDraft19,
 } from '../../../components/PKILearning/modules/HybridCrypto/services/certBuilder'
 
 const SPEC_JSON = JSON.parse(
@@ -329,6 +332,108 @@ describe('op-template pipeline (real wasm engine)', () => {
     expect(valid.ok).toBe(true)
     expect(find(valid.namedResponseTree, 'ValidityIndicator')?.value).toBe('0x00000001')
 
+    const tampered = certHex.slice(0, -1) + (certHex.at(-1) === '0' ? '1' : '0')
+    const invalid = run('Validate', ops.validate([tampered]))
+    expect(invalid.ok).toBe(true)
+    expect(find(invalid.namedResponseTree, 'ValidityIndicator')?.value).toBe('0x00000002')
+  })
+
+  it('WP-C8 direction 1: a KMIP-issued composite cert (ML-DSA-65+ECDSA-P256) parses correctly via derParser.ts', () => {
+    // Cross-check #1 of 2 (composite/hybrid remediation plan §WP-C8):
+    // this Rust engine's OWN composite encoder, read back by the
+    // workshop's independent derParser.ts (not a re-implementation —
+    // agreement is the actual check, same principle as WP6-b above).
+    const ca = engine.setupDemoCa('ML-DSA-65-ECDSA-P256', 'WP-C8 composite CA')
+    expect(ca.ok).toBe(true)
+
+    const created = run('CreateKeyPair', ops.createKeyPair('ML-DSA-65-ECDSA-P256', 'Sign Verify'))
+    expect(created.ok).toBe(true)
+    const pubUid = find(created.namedResponseTree, 'PublicKeyUniqueIdentifier')?.value as string
+    expect(pubUid).toBeDefined()
+
+    const certified = run('Certify', ops.certify(pubUid))
+    expect(certified.ok).toBe(true)
+    const certUid = find(certified.namedResponseTree, 'UniqueIdentifier')?.value as string
+    expect(certUid).toBeDefined()
+
+    const got = run('Get', ops.get(certUid))
+    expect(got.ok).toBe(true)
+    const certHex = find(got.namedResponseTree, 'Key Material')?.value as string
+    expect(certHex).toBeDefined()
+    const info = parseCertificateInfo(hexToBytes(certHex))
+
+    // Composite certs use ONE AlgorithmIdentifier for both the outer
+    // signature and the SPKI — no separate "public key OID", the same
+    // single-arc convention ML-DSA itself uses (unlike RSA/ECDSA, where
+    // the signature and SPKI OIDs legitimately differ). certBuilder.ts's
+    // buildCompositeCertDraft19 reuses ONE compositeAlgId for both
+    // fields too — confirmed by direct read, not assumed.
+    expect(info.algorithmOID).toBe(COMPOSITE_MLDSA65_ECDSA_P256_SHA512_OID_STR)
+    expect(info.publicKeyOID).toBe(COMPOSITE_MLDSA65_ECDSA_P256_SHA512_OID_STR)
+    expect(info.extensionOIDs).toEqual([])
+
+    // Composite SPKI = mldsaPubKey(1952) || ecdsaPubKey(65, uncompressed
+    // P-256 point) — draft-19 §4.1, byte-exact split point.
+    expect(info.publicKeySizeBytes).toBe(1952 + 65)
+    // Composite signature = mldsaSig(3309, fixed) || DER-wrapped
+    // Ecdsa-Sig-Value (variable ~70-72 bytes depending on r/s leading-
+    // zero padding) — only the fixed ML-DSA floor is an exact bound.
+    expect(info.signatureSizeBytes).toBeGreaterThan(3309)
+
+    const valid = run('Validate', ops.validate([], [certUid, ca.certificateUid as string]))
+    expect(valid.ok).toBe(true)
+    expect(find(valid.namedResponseTree, 'ValidityIndicator')?.value).toBe('0x00000001')
+  })
+
+  it('WP-C8 direction 2: an independently-built composite cert (@noble/post-quantum + node:crypto) Validates — cross-engine, no shared code with this Rust engine', async () => {
+    // Cross-check #2 of 2. Resolves the plan's flagged open question
+    // ("Node has no native ML-DSA signing... a real open question, not
+    // a solved problem") — probed 2026-07-10: @noble/post-quantum/
+    // ml-dsa.js DOES sign under plain Node (pure JS, no wasm), and its
+    // `context` option implements FIPS 204 Algorithm 2's ctx parameter
+    // correctly (verified standalone: matching context verifies,
+    // missing/wrong context fails) — the one thing that MUST be right
+    // for a draft-19 verifier to accept the signature (draft-19 §9.2.3
+    // weak/strong non-separability — buildCompositeCertDraft19's own
+    // module doc warns "vanilla ML-DSA.Sign without ctx produces
+    // signatures a draft-19 verifier rejects").
+    //
+    // Built via buildCompositeCertDraft19 itself (not hand-rolled, per
+    // the plan's direction 2 wording) — mirrors WP6-c's classical-half
+    // choice too: node:crypto's legacy sign() for the SAME reason
+    // (real DER SEQUENCE(r,s), not WebCrypto's raw r||s).
+    const { ml_dsa65 } = await import('@noble/post-quantum/ml-dsa.js')
+    const crypto = await import('node:crypto')
+
+    const mldsaKp = ml_dsa65.keygen()
+    const { publicKey, privateKey } = crypto.generateKeyPairSync('ec', { namedCurve: 'prime256v1' })
+    const jwk = publicKey.export({ format: 'jwk' }) as { x: string; y: string }
+    const ecPubPoint = new Uint8Array([
+      0x04,
+      ...Buffer.from(jwk.x, 'base64url'),
+      ...Buffer.from(jwk.y, 'base64url'),
+    ])
+
+    const cert = await buildCompositeCertDraft19(
+      COMPOSITE_PROFILE_MLDSA65_ECDSA_P256_SHA512,
+      mldsaKp.publicKey,
+      ecPubPoint,
+      (mprime, mldsaCtx) =>
+        Promise.resolve(ml_dsa65.sign(mprime, mldsaKp.secretKey, { context: mldsaCtx })),
+      (mprime) =>
+        Promise.resolve(new Uint8Array(crypto.sign('sha512', Buffer.from(mprime), privateKey))),
+      '/CN=wp-c8-direction2-external-composite'
+    )
+    const certHex = Buffer.from(cert).toString('hex')
+
+    const valid = run('Validate', ops.validate([certHex]))
+    expect(valid.ok).toBe(true)
+    expect(find(valid.namedResponseTree, 'ValidityIndicator')?.value).toBe('0x00000001')
+
+    // A corrupted byte anywhere in the cert (covering both signature
+    // components, since it's a single flipped nibble at the end —
+    // inside the classical half's DER encoding) must never come back
+    // Valid.
     const tampered = certHex.slice(0, -1) + (certHex.at(-1) === '0' ? '1' : '0')
     const invalid = run('Validate', ops.validate([tampered]))
     expect(invalid.ok).toBe(true)
