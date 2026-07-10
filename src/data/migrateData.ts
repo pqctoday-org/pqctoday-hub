@@ -84,12 +84,16 @@ function deriveCisaCategory(categoryName: string, layer: string): string {
 /**
  * Derive verification_status from proof fields at load time.
  * Rules:
+ * - Verified (No PQC): the archived proof verified the ABSENCE of PQC support
+ *   (VALIDATED_NO_PQC) — must never present as a plain PQC-'Verified'
  * - Verified: proof_url present + validation confirms PQC (VALIDATED, FIPS_VERIFIED, CORRECTED)
  * - Partially Verified: proof_url present but validation incomplete or evidence indirect
  * - Pending Verification: no proof_url or validation negative
  * - Preserves manually set "Verified" if proof_url exists (manual override)
+ *
+ * Exported for tests.
  */
-function deriveVerificationStatus(
+export function deriveVerificationStatus(
   csvStatus: string,
   proofUrl?: string,
   validationResult?: string,
@@ -100,6 +104,14 @@ function deriveVerificationStatus(
   const vr = (validationResult || '').toUpperCase()
   const ef = (evidenceFlags || '').toLowerCase()
   const hasProofContent = !!(proofRelevantInfo || '').trim()
+
+  // A proof that validated the ABSENCE of PQC must take precedence over the
+  // manual 'Verified' override below — otherwise rows whose evidence disproves
+  // the PQC claim display the same badge as rows whose evidence confirms it
+  // (160 active VALIDATED_NO_PQC rows leaked through as plain 'Verified').
+  if (vr === 'VALIDATED_NO_PQC') {
+    return hasProofUrl ? 'Verified (No PQC)' : 'Pending Verification'
+  }
 
   // If CSV already says Verified and proof_url exists, trust it
   if (csvStatus === 'Verified' && hasProofUrl) return 'Verified'
