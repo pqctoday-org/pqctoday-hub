@@ -8,4 +8,4 @@ export type {
   PeerReviewStatus,
 } from './types'
 export { getTrustTier, DIMENSION_LABELS, BASE_WEIGHTS } from './weights'
-export { getTrustScore, getScoresForType, trustScores } from './trustScoreData'
+export { getTrustScore, getScoresForType, trustScores, trustScoresDegraded } from './trustScoreData'
