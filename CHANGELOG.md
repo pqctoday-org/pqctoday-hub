@@ -30,12 +30,14 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.19.0] - 2026-07-09
 
-A hands-on release for the KMIP playground, the Report page, and the Simulation
-board: the in-browser KMIP engine is rebuilt from the real 0.13.1 engine with
-eight more operations now genuinely executed instead of simulated, the report
-gains a Cryptographic Bill of Materials section built on the new CycloneDX 1.7
-standard, and the Simulation board's framework references were audited line by
-line against what actually ships.
+A hands-on release for the KMIP playground, the Report page, the Business
+Center, and the Simulation board: the in-browser KMIP engine is rebuilt from
+the real 0.13.1 engine with eight more operations now genuinely executed
+instead of simulated, the report gains a Cryptographic Bill of Materials
+section built on the new CycloneDX 1.7 standard, the Simulation board's
+framework references were audited line by line against what actually ships,
+and a sourcing sweep across the Business Center tools corrected several
+citation and data errors.
 
 ### Added
 
@@ -47,9 +49,11 @@ line against what actually ships.
 
 - **The site's CBOM now follows CycloneDX 1.7** [view:/report] [persona:architect] [persona:developer]: upgraded from 1.6, adopting the new Cryptography Registry identifiers and adding classical (non-PQC) crypto assets, so the inventory names algorithms the same way scanning tools do.
 - **Eight KMIP operations promoted from simulated to real** [view:/playground] [persona:developer]: the in-browser KMIP engine was rebuilt from engine release 0.13.1; operation labels are now honest about which commands execute for real versus which are simulated, and the OASIS test-corpus replay is aligned to the exact engine baseline it runs against.
+- **Reorganized the Report page's internal code for easier maintenance** [view:/report] [persona:developer] [persona:architect]: the report's sections (risk breakdown, compliance impact, recommended actions, threat landscape, and others) now each live in their own file instead of one large file. This is an internal, behind-the-scenes change — the report itself looks and behaves exactly the same, including sharing a report link and viewing a sample report.
 
 ### Fixed
 
+- **Corrected several sourcing and citation errors across Business Center tools** [view:/business] [persona:executive] [persona:architect]: the Cost Model Explorer's breach-probability default now uses the same sourced, size-tiered figure as the ROI Calculator and Breach Cost Model instead of an older unsourced flat estimate; the CRQC Scenario Planner's "Software/Firmware Signing" compliance deadline was corrected from 2025 to 2030 to match the actual exclusive-use date (2025 was NSA's earlier "prefer by" milestone, not the deadline); the Policy Template Generator no longer cites NIST SP 800-88 (a media-sanitization standard) as if it were a key-destruction standard; the Supply Chain Risk Matrix no longer claims NIST's crypto-agility guidance defines a specific "six asset class" taxonomy (it doesn't — this is the tool's own simplified classification); the Audit Readiness Checklist's citation for CMVP/CAVP validation evidence was corrected to the right section; and several tools' references to NIST's crypto-agility guidance were updated to the current, non-withdrawn version of that document.
 - **Simulation framework references now match what actually ships** [view:/simulation]: corrected gate approval authorities, stale live/gap labels on linked tools and reports, and drift in each phase's list of produced artifacts.
 - **Simulation jargon is now explained where it appears** [view:/simulation] [persona:curious] [persona:executive]: terms like TNFL and the governance vocabulary get plain-language glosses, activities surface their teaching text, and the board now shows which phases run in parallel instead of implying a strict sequence.
 - **Closed topical gaps in Simulation phase content** [view:/simulation]: fixed Phase 5 wave content, filled Phase 1 and 2 topical gaps, corrected the Phase 3 risk-scoring label, and added the missing Foundations F.5 coverage.

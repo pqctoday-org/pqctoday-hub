@@ -28,7 +28,7 @@ import {
   AlertTriangle,
   Users,
 } from 'lucide-react'
-import { CollapsibleSection } from '../ReportContent'
+import { CollapsibleSection } from './reportContentShared'
 import { buildQRA } from '@/hooks/assessment'
 import { ROLE_CROSSWALK, type FrameworkRoleId } from '@/data/roleCrosswalk'
 import { useReportOwnershipStore } from '@/store/useReportOwnershipStore'

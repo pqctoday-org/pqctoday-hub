@@ -149,9 +149,9 @@ export function buildMarkdown(s: InfraModernizationState): string {
       '(activities 6.1–6.5).*'
   )
   lines.push(
-    '*PKI modernization grounded in NIST CSWP 39 §4.2 (Key Store and Certificate Management); ' +
-      'network/protocol compatibility grounded in NIST CSWP 39 §3.2.1 (Algorithm Transitions in ' +
-      'Deployed Protocols). https://doi.org/10.6028/NIST.CSWP.39-upd1*'
+    '*PKI modernization and network/protocol compatibility both grounded in NIST CSWP 39 §3.2.1 ' +
+      '(Preserving Protocol Interoperability — long-lived CA certificates hinder algorithm ' +
+      'transitions). https://doi.org/10.6028/NIST.CSWP.39-upd1*'
   )
   return lines.join('\n')
 }
@@ -231,7 +231,7 @@ export const InfraModernizationPlanner: React.FC = () => {
           lifetimes from 20+ years to 10 years, intermediate CAs to 5 years, and end-entity
           certificates to 90–365 days — this limits Trust-Now-Forge-Later exposure on long-lived
           signing keys and builds the certificate-rotation discipline needed before dual-stack/PQC
-          certificates arrive (NIST CSWP 39 §4.2 — Key Store and Certificate Management).
+          certificates arrive (NIST CSWP 39 §3.2.1 — Preserving Protocol Interoperability).
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="block">
@@ -388,8 +388,7 @@ export const InfraModernizationPlanner: React.FC = () => {
         </h3>
         <p className="text-xs text-muted-foreground">
           Mark each protocol verified to complete a PQC handshake through your production network
-          and middleboxes. Grounded in NIST CSWP 39 §3.2.1 (Algorithm Transitions in Deployed
-          Protocols).
+          and middleboxes. Grounded in NIST CSWP 39 §3.2.1 (Preserving Protocol Interoperability).
         </p>
         <div className="flex flex-wrap gap-2">
           {PROTOCOL_OPTIONS.map((id) => {

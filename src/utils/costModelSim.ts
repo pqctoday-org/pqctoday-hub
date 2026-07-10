@@ -11,7 +11,7 @@
  * mixed into the migration-cost comparison.
  */
 
-import { INDUSTRY_BREACH_BASELINES } from '@/data/roiBaselines'
+import { INDUSTRY_BREACH_BASELINES, ANNUAL_BREACH_PROBABILITY_PCT } from '@/data/roiBaselines'
 
 export interface CostModelInputs {
   /** Number of systems / applications in scope. */
@@ -45,7 +45,9 @@ export const SIM_CONSTANTS = {
   mcMaxFactor: 2.5,
   /** ALE reference (cost of inaction). Same source as the Breach Scenario Simulator — no drift. */
   breachBaseline: INDUSTRY_BREACH_BASELINES.Other,
-  annualBreachProb: 0.15,
+  /** Cyentia IRIS 2025 "average" org-size tier — same default as the Breach
+   *  Scenario Simulator and Cost of Inaction Analyzer (no flat unsourced default). */
+  annualBreachProb: ANNUAL_BREACH_PROBABILITY_PCT.average / 100,
   quantumFactor: 2.5,
 } as const
 
