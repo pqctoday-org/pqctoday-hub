@@ -415,8 +415,7 @@ function checkComplianceFwVocab(records: EnrichmentRecord[]): Finding[] {
       if (!norm) continue
       // Loose match: any token in the framework name appears in the vocab.
       const hit = [...KNOWN_COMPLIANCE_FRAMEWORKS].some(
-        (k) =>
-          lc(norm).includes(lc(k)) || lc(k).includes(lc(norm))
+        (k) => lc(norm).includes(lc(k)) || lc(k).includes(lc(norm))
       )
       if (!hit) {
         findings.push({
@@ -462,9 +461,7 @@ export interface QASemanticOptions {
  * runtime first (via `loadEmbeddingsFromDisk`); otherwise the semantic
  * checks (F7, F10) self-skip with an empty SKIP result.
  */
-export async function runQASemanticChecks(
-  opts: QASemanticOptions = {}
-): Promise<CheckResult[]> {
+export async function runQASemanticChecks(opts: QASemanticOptions = {}): Promise<CheckResult[]> {
   const { chunks, records } = loadCorpus()
   const pools = buildCollectionPools(chunks)
   const tier1 = buildTrustedSourcePool(chunks)

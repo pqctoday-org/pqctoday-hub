@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
   "generated": "2026-07-09",
-  "count": 805,
+  "count": 806,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -6891,6 +6891,15 @@
       "bytes": 50289,
       "content_type": "text/html; charset=utf-8",
       "tier": "resolved-07072026-alt"
+    },
+    {
+      "product_id": "strongswan",
+      "url": "https://www.strongswan.org/blog/2024/12/03/strongswan-6.0.0-released.html",
+      "ok": true,
+      "file": "strongswan-4daba946.html",
+      "bytes": 19233,
+      "content_type": "text/html; charset=UTF-8",
+      "tier": "first-party-correction-07092026"
     }
   ]
 }
