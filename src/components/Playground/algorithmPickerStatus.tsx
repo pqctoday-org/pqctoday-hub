@@ -58,7 +58,7 @@ export const PICKER_ID_TO_ALGO_NAME: Record<string, string> = {
   'SLH-DSA-SHAKE-192s': 'SLH-DSA-SHAKE-192s',
   'SLH-DSA-SHAKE-256f': 'SLH-DSA-SHAKE-256f',
   'SLH-DSA-SHAKE-256s': 'SLH-DSA-SHAKE-256s',
-  // FN-DSA / Falcon — FIPS 206 still draft; padded variants share the base tier
+  // FN-DSA / Falcon — FIPS 206 still in development (no public draft); padded variants share the base tier
   'FN-DSA-512': 'FN-DSA-512',
   'FN-DSA-1024': 'FN-DSA-1024',
   'FN-DSA-padded-512': 'FN-DSA-512',
@@ -126,7 +126,7 @@ export function getPickerTier(
  */
 const TIER_ROLE_NOTE: Partial<Record<AlgorithmStatusTier, string>> = {
   'fips-draft':
-    'NIST is finalizing this as a FIPS standard — the draft is public but not yet published; sizes/parameters can still change.',
+    'NIST has selected this algorithm and is developing the FIPS standard — no public draft has been published yet; sizes/parameters can still change.',
   'sp-draft':
     'Defined in a draft NIST Special Publication, not yet final — sizes/parameters can still change.',
   'ietf-draft': 'Defined in an IETF Internet-Draft — not yet a published RFC.',

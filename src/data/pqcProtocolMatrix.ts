@@ -1704,7 +1704,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     id: '5g-suci',
     name: '5G SUCI (3GPP)',
     description:
-      '3GPP 5G Subscription Concealed Identifier — Profile C study introduces ML-KEM-768 and X25519+ML-KEM-768 hybrid for SUPI/IMSI concealment.',
+      '3GPP 5G Subscription Concealed Identifier — 3GPP TR 33.938 (Cryptographic Inventory) catalogues SUCI ECIES profiles for the PQC transition; no ML-KEM SUCI profile has been standardized yet.',
     latestRelease: [
       {
         id: '3GPP-TS-33.501',
@@ -1717,7 +1717,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     latestDraft: [
       {
         id: '3GPP-TR-33.938',
-        title: '3GPP TR 33.938 — Study on Preparing for Transition to PQC in 3GPP',
+        title: '3GPP TR 33.938 — 3GPP Cryptographic Inventory',
         url: 'https://www.3gpp.org/ftp/Specs/archive/33_series/33.938/',
         date: '2025-05',
         localFile: '/library/3GPP-PQC-Study-2025.html',
@@ -1725,26 +1725,28 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     dimensions: {
       pureKem: {
-        value: 'experimental',
-        note: '3GPP TR 33.938 "Profile C" — ML-KEM-768 standalone for SUCI concealment (study item).',
+        value: 'none',
+        stage: 'identified',
+        note: 'PQC transition for SUCI is flagged in 3GPP TR 33.938 (Cryptographic Inventory), but 3GPP has not standardized an ML-KEM SUCI profile — no normative TS/TR text defines one yet.',
         refs: [
           {
             kind: 'spec',
             id: '3GPP TR 33.938',
-            title: 'Study on Preparing for Transition to PQC in 3GPP (Profile C)',
+            title: '3GPP Cryptographic Inventory',
             url: 'https://www.3gpp.org/ftp/Specs/archive/33_series/33.938/',
             publishedOn: '2025-05',
           },
         ],
       },
       hybridKem: {
-        value: 'experimental',
-        note: '3GPP TR 33.938 Profile C hybrid mode — X25519 + ML-KEM-768 SUCI concealment (study item).',
+        value: 'none',
+        stage: 'identified',
+        note: 'A hybrid (X25519 + ML-KEM) SUCI mode is a study-level idea only; 3GPP TR 33.938 inventories current SUCI ECIES profiles and does not define a hybrid PQC profile.',
         refs: [
           {
             kind: 'spec',
             id: '3GPP TR 33.938',
-            title: 'Study on Preparing for Transition to PQC in 3GPP (Profile C hybrid)',
+            title: '3GPP Cryptographic Inventory',
             url: 'https://www.3gpp.org/ftp/Specs/archive/33_series/33.938/',
             publishedOn: '2025-05',
           },
@@ -1773,9 +1775,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         toolName: '5G SUCI Construction',
         testability: { pureKem: 'partial', hybridKem: 'partial', pureSig: 'na', hybridSig: 'na' },
         pureKemNote:
-          'SUCI tool demonstrates Profile C ML-KEM-768 concealment in pre-standard form (3GPP TR 33.938 is a study item, not standardized).',
+          'SUCI tool demonstrates ML-KEM-768 concealment in illustrative pre-standard form — 3GPP has not standardized any ML-KEM SUCI profile.',
         hybridKemNote:
-          'Hybrid X25519 + ML-KEM-768 mode is illustrative — 3GPP has not finalized Profile C wire format.',
+          'Hybrid X25519 + ML-KEM-768 mode is illustrative — 3GPP has not defined a hybrid SUCI wire format.',
       },
     ],
     liveDeployments: [
@@ -2226,18 +2228,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       { productId: 'mls-rs', name: 'mls-rs', versionNote: 'AWS Rust SDK' },
       { productId: 'mlspp', name: 'mlspp', versionNote: 'C++ reference impl' },
     ],
-    commercialLibraries: [
-      {
-        productId: 'apple-pq3-corecrypto',
-        name: 'Apple PQ3 / CoreCrypto',
-        versionNote: 'Proprietary (iMessage PQ3)',
-      },
-      {
-        productId: 'whatsapp',
-        name: 'WhatsApp',
-        versionNote: 'Proprietary (PQXDH on Signal protocol)',
-      },
-    ],
+    commercialLibraries: [],
     playgrounds: [
       {
         toolId: 'mls-group-messaging',
@@ -2245,20 +2236,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         testability: { pureKem: 'partial', hybridKem: 'none', pureSig: 'none', hybridSig: 'none' },
       },
     ],
-    liveDeployments: [
-      {
-        provider: 'Apple iMessage (PQ3)',
-        what: 'iMessage PQ3 — three-key continuous PQ ratcheting',
-        since: '2024-02',
-        referenceUrl: 'https://security.apple.com/blog/imessage-pq3/',
-      },
-      {
-        provider: 'Signal Protocol (PQXDH)',
-        what: 'X3DH replaced with PQXDH (Kyber + X25519) for the initial key agreement',
-        since: '2023-09',
-        referenceUrl: 'https://signal.org/blog/pqxdh/',
-      },
-    ],
+    liveDeployments: [],
+    noDeploymentReason:
+      'No production PQ-MLS deployment yet — the PQ cipher-suites draft is still in WG Last Call. The high-profile PQ messaging deployments (Apple iMessage PQ3, Signal/WhatsApp PQXDH) run proprietary or Signal-protocol stacks, not the IETF MLS protocol; see the Signal (PQXDH) row.',
     sources: [
       {
         label: 'IETF MLS working group documents',
@@ -2282,16 +2262,16 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       {
         id: 'TCG-PC-Client-Platform-TPM-Profile-v1.07',
-        title: 'TCG PC Client Specific Platform TPM Profile v1.07 (Published)',
+        title: 'TCG PC Client Specific Platform TPM Profile v1.07 (Published 2026-03-23)',
         url: 'https://trustedcomputinggroup.org/resource/pc-client-platform-tpm-profile-ptp-specification/',
-        date: '2026-03-12',
+        date: '2026-03-23',
         localFile: '/library/PC-Client-Specific-Platform-TPM-Profile-for-TPM-2p0-v1p07_Pub.pdf',
       },
       {
         id: 'TCG-EK-Credential-Profile-v2.7',
-        title: 'TCG EK Credential Profile for TPM 2.0, Level 0, v2.7 (Published)',
+        title: 'TCG EK Credential Profile for TPM 2.0, Level 0, v2.7 (Published 2026-03-19)',
         url: 'https://trustedcomputinggroup.org/resource/tcg-ek-credential-profile-for-tpm-family-2-0/',
-        date: '2026-03-12',
+        date: '2026-03-19',
         localFile:
           '/library/TCG-EK-Credential-Profile-for-TPM-Family-2.0-Level-0-Version-2.7_Pub.pdf',
       },
@@ -2309,7 +2289,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'rfc',
         stage: 'rfc-published',
         stageNote: 'TPM 2.0 Library v1.85 published 2026-03 — ML-KEM, ML-DSA, HashML-DSA',
-        note: 'TPM 2.0 SHALL support ML-KEM-768 or ML-KEM-1024.',
+        note: 'TPM 2.0 Library v1.85 adds ML-KEM commands as optional algorithms. The mandate — "The TPM SHALL support either ML-KEM-768 or ML-KEM-1024" — is in PC Client PTP v1.07 (mandatory as of PTP 1.07 for PC Client platforms).',
         refs: [
           {
             kind: 'spec',
@@ -2317,6 +2297,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             title: 'TCG TPM 2.0 Library v1.85 — ML-KEM commands',
             url: 'https://trustedcomputinggroup.org/resource/tpm-library-specification/',
             publishedOn: '2026-03-12',
+          },
+          {
+            kind: 'spec',
+            id: 'TCG PC Client PTP v1.07',
+            title:
+              'TCG PC Client Platform TPM Profile v1.07 — SHALL support ML-KEM-768 or ML-KEM-1024',
+            url: 'https://trustedcomputinggroup.org/resource/pc-client-platform-tpm-profile-ptp-specification/',
+            publishedOn: '2026-03-23',
           },
         ],
       },
@@ -2330,7 +2318,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'rfc',
         stage: 'rfc-published',
         stageNote: 'TPM 2.0 Library v1.85 published 2026-03',
-        note: 'TPM 2.0 SHALL support ML-DSA-65 or ML-DSA-87 (incl. HashML-DSA).',
+        note: 'TPM 2.0 Library v1.85 adds ML-DSA + HashML-DSA commands as optional algorithms. The mandate — "The TPM SHALL support either ML-DSA-65 or ML-DSA-87" — is in PC Client PTP v1.07 (mandatory as of PTP 1.07 for PC Client platforms).',
         refs: [
           {
             kind: 'spec',
@@ -2338,6 +2326,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             title: 'TCG TPM 2.0 Library v1.85 — ML-DSA + HashML-DSA commands',
             url: 'https://trustedcomputinggroup.org/resource/tpm-library-specification/',
             publishedOn: '2026-03-12',
+          },
+          {
+            kind: 'spec',
+            id: 'TCG PC Client PTP v1.07',
+            title:
+              'TCG PC Client Platform TPM Profile v1.07 — SHALL support ML-DSA-65 or ML-DSA-87',
+            url: 'https://trustedcomputinggroup.org/resource/pc-client-platform-tpm-profile-ptp-specification/',
+            publishedOn: '2026-03-23',
           },
         ],
       },
@@ -3007,22 +3003,22 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     id: 'kmip',
     name: 'KMIP',
     description:
-      'OASIS Key Management Interoperability Protocol v3.0 — key lifecycle over the wire. Adds PQC managed objects + operations: ML-KEM (Encapsulate / Decapsulate) and ML-DSA (Sign / SignatureVerify).',
+      'OASIS Key Management Interoperability Protocol v3.0 — key lifecycle over the wire. CSD01 adds PQC algorithm enumerations and managed objects (ML-KEM, ML-DSA) usable with the generic Sign / Signature Verify operations; it defines no Encapsulate / Decapsulate operations.',
     latestRelease: [],
     latestDraft: [
       {
         id: 'KMIP-v3.0-CSD01',
         title: 'KMIP Specification v3.0 — Committee Specification Draft 01',
         url: 'https://docs.oasis-open.org/kmip/kmip-spec/v3.0/',
-        date: '2026-01-01',
+        date: '2024-08-23',
       },
     ],
     dimensions: {
       pureKem: {
         value: 'draft',
         stageNote:
-          'OASIS Committee Specification Draft CSD01 — ML-KEM objects + Encapsulate/Decapsulate',
-        note: 'ML-KEM-512/768/1024 managed objects with Encapsulate / Decapsulate operations.',
+          'OASIS Committee Specification Draft CSD01 (2024-08-23) — ML-KEM algorithm enumerations + managed objects',
+        note: 'ML-KEM-512/768/1024 algorithm enumerations and managed objects. The public CSD01 defines no Encapsulate / Decapsulate operations — our pqctoday-kmip server implements them as a pre-standard extension.',
         deploymentPosture: 'pilot',
         refs: [
           {
@@ -3030,7 +3026,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'KMIP 3.0 CSD01',
             title: 'KMIP v3.0 — PQC objects (ML-KEM)',
             url: 'https://docs.oasis-open.org/kmip/kmip-spec/v3.0/',
-            publishedOn: '2026-01-01',
+            publishedOn: '2024-08-23',
           },
         ],
       },
@@ -3040,8 +3036,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'draft',
-        stageNote: 'OASIS CSD01 — ML-DSA objects + Sign / SignatureVerify',
-        note: 'ML-DSA-44/65/87 managed objects with Sign / SignatureVerify operations.',
+        stageNote:
+          'OASIS CSD01 (2024-08-23) — ML-DSA enumerations usable with the generic Sign / Signature Verify operations',
+        note: 'ML-DSA-44/65/87 algorithm enumerations and managed objects, used with the protocol’s generic Sign / Signature Verify operations.',
         deploymentPosture: 'pilot',
         refs: [
           {
@@ -3049,7 +3046,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'KMIP 3.0 CSD01',
             title: 'KMIP v3.0 — PQC objects (ML-DSA)',
             url: 'https://docs.oasis-open.org/kmip/kmip-spec/v3.0/',
-            publishedOn: '2026-01-01',
+            publishedOn: '2024-08-23',
           },
         ],
       },
@@ -3090,7 +3087,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     recommended: true,
     recommendedReason:
-      'KMIP 3.0 fully supports ML-KEM + ML-DSA; we ship a working Rust KMIP 3.0 control plane (pqctoday-kmip) exercisable live in the CACP playground.',
+      'KMIP 3.0 CSD01 defines ML-KEM + ML-DSA managed objects; we ship a working Rust KMIP 3.0 control plane (pqctoday-kmip, incl. pre-standard Encapsulate/Decapsulate) exercisable live in the CACP playground.',
   },
   {
     id: 'signal-pqxdh',

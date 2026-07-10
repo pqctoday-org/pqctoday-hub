@@ -26491,7 +26491,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5300",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "Falcon, LMS, ML-DSA, ML-KEM",
+    "pqcCoverage": "LMS",
     "classicalAlgorithms": "RSA (112, 509, 2048, 4096), ECDSA (P-256, P-384, P-521)",
     "productName": "Luna M7 Cryptographic Module",
     "productCategory": "Cryptographic Module",

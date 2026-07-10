@@ -158,7 +158,7 @@ export const CONSTRAINED_ALGORITHMS: ConstrainedAlgorithm[] = [
     nistLevel: 1,
     quantumSafe: true,
     suitableForClass: [1, 2, 3],
-    notes: 'Most compact PQC signature (~666 avg, 690 max). FIPS 206 (draft).',
+    notes: 'Most compact PQC signature (~666 avg, 690 max). FIPS 206 (in development).',
   },
   {
     name: 'ML-DSA-44',

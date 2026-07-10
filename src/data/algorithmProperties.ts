@@ -6,12 +6,18 @@
  * All learn modules and workshop components should import from here instead
  * of hardcoding algorithm parameters.
  *
- * Data sourced from:
- *   - scripts/fact_allowlists.json (size_map, security_level_map, fips_to_algorithm)
- *   - src/data/pqc_complete_algorithm_reference_*.csv (family, fipsStandard)
+ * AUTO-GENERATED — do not edit by hand.
  *
- * To update: modify the algorithm CSV or fact_allowlists.json, then regenerate
- * this file with: npx tsx scripts/generate-algorithm-properties.ts
+ * Data sourced from:
+ *   - src/data/pqc_complete_algorithm_reference_07092026.csv (latest reference snapshot)
+ *   - HAND_CURATED blocks in scripts/generate-algorithm-properties.ts
+ *     (algorithm selection, fips_standard normalization, per-algorithm overrides)
+ *
+ * To update: modify the algorithm CSV (cut a NEW dated snapshot — never edit a
+ * dated CSV in place) or the generator's HAND_CURATED blocks, then regenerate:
+ *   npx tsx scripts/generate-algorithm-properties.ts
+ * Verify freshness (CI-friendly; exits 1 when this file is stale):
+ *   npx tsx scripts/generate-algorithm-properties.ts --check
  */
 
 export interface AlgorithmProps {
@@ -33,10 +39,10 @@ export interface AlgorithmProps {
   fipsStandard: string | null
 }
 
-// ── Registry (auto-generated from fact_allowlists.json) ──────────────────
+// ── Registry (auto-generated from the latest algorithm reference CSV) ─────
 
 export const ALGORITHM_REGISTRY: Record<string, AlgorithmProps> = {
-  // ── ML-KEM (FIPS 203) ──────────────────────────────────────────────────
+  // ── ML-KEM (FIPS 203) ─────────────────────────────────────────────────
   'ML-KEM-512': {
     name: 'ML-KEM-512',
     family: 'KEM',
@@ -207,7 +213,7 @@ export const ALGORITHM_REGISTRY: Record<string, AlgorithmProps> = {
     fipsStandard: 'FIPS 205',
   },
 
-  // ── FN-DSA (FIPS 206, planned — not yet drafted) ──────────────────────
+  // ── FN-DSA (FIPS 206, in development — no public draft yet) ───────────
   'FN-DSA-512': {
     name: 'FN-DSA-512',
     family: 'Signature',
@@ -215,7 +221,7 @@ export const ALGORITHM_REGISTRY: Record<string, AlgorithmProps> = {
     privateKeyBytes: 1281,
     signatureOrCiphertextBytes: 666,
     securityLevel: 1,
-    fipsStandard: 'FIPS 206 (planned)',
+    fipsStandard: 'FIPS 206 (in development)',
   },
   'FN-DSA-1024': {
     name: 'FN-DSA-1024',
@@ -224,7 +230,7 @@ export const ALGORITHM_REGISTRY: Record<string, AlgorithmProps> = {
     privateKeyBytes: 2305,
     signatureOrCiphertextBytes: 1280,
     securityLevel: 5,
-    fipsStandard: 'FIPS 206 (planned)',
+    fipsStandard: 'FIPS 206 (in development)',
   },
 
   // ── FrodoKEM (not NIST-selected) ──────────────────────────────────────
@@ -259,7 +265,7 @@ export const ALGORITHM_REGISTRY: Record<string, AlgorithmProps> = {
     fipsStandard: null,
   },
 
-  // ── HQC (selected for standardization 2025) ──────────────────────────
+  // ── HQC (selected for standardization 2025) ───────────────────────────
   'HQC-128': {
     name: 'HQC-128',
     family: 'KEM',
@@ -464,7 +470,7 @@ export function getAlgorithm(name: string): AlgorithmProps {
   if (!algo) {
     throw new Error(
       `[algorithmProperties] Unknown algorithm: "${name}". ` +
-        'Add it to the algorithm CSV or fact_allowlists.json, then regenerate this registry.'
+        'Add it to the algorithm CSV and scripts/generate-algorithm-properties.ts, then regenerate this registry.'
     )
   }
   return algo
