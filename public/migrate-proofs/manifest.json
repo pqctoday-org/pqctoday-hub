@@ -1,6 +1,6 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
-  "generated": "2026-07-07",
+  "generated": "2026-07-09",
   "count": 805,
   "downloads": [
     {
@@ -6710,7 +6710,7 @@
       "file": "cockroachdb-encryption-24a05484.html",
       "bytes": 456589,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "a3-restale"
+      "tier": null
     },
     {
       "product_id": "aws-secrets-manager",
@@ -6719,25 +6719,25 @@
       "file": "aws-secrets-manager-1b73f7aa.html",
       "bytes": 16504,
       "content_type": "text/html",
-      "tier": "a5-a6-07072026"
+      "tier": null
     },
     {
       "product_id": "pqctoday-pkcs11-provider",
       "url": "https://github.com/latchset/pkcs11-provider/releases",
       "ok": true,
       "file": "pqctoday-pkcs11-provider-d06691fd.html",
-      "bytes": 648607,
+      "bytes": 648868,
       "content_type": "text/html; charset=utf-8",
-      "tier": "a5-a6-07072026"
+      "tier": null
     },
     {
       "product_id": "pqctoday-hsm-softhsmv3",
       "url": "https://github.com/pqctoday-org/pqctoday-hsm/releases/tag/v0.4.28",
       "ok": true,
       "file": "pqctoday-hsm-softhsmv3-8e13e56c.html",
-      "bytes": 215026,
+      "bytes": 215288,
       "content_type": "text/html; charset=utf-8",
-      "tier": "a5-a6-07072026"
+      "tier": null
     },
     {
       "product_id": "pqctoday-composite-mkcert",
@@ -6746,7 +6746,7 @@
       "file": "pqctoday-composite-mkcert-4e8daa25.html",
       "bytes": 796891,
       "content_type": "text/html; charset=utf-8",
-      "tier": "a5-a6-07072026"
+      "tier": null
     },
     {
       "product_id": "pqctoday-opgpkcs11",
@@ -6755,34 +6755,34 @@
       "file": "pqctoday-opgpkcs11-ef2ad938.html",
       "bytes": 9099,
       "content_type": "text/plain; charset=utf-8",
-      "tier": "a5-a6-07072026"
+      "tier": null
     },
     {
       "product_id": "jtesta-ssh-audit",
       "url": "https://github.com/jtesta/ssh-audit/releases/tag/v3.3.0",
       "ok": true,
       "file": "jtesta-ssh-audit-6a104135.html",
-      "bytes": 223386,
+      "bytes": 223648,
       "content_type": "text/html; charset=utf-8",
-      "tier": "a5-a6-07072026"
+      "tier": null
     },
     {
       "product_id": "age-plugin-pqkem",
       "url": "https://github.com/FiloSottile/age/releases",
       "ok": true,
       "file": "age-plugin-pqkem-2491d9c9.html",
-      "bytes": 525230,
+      "bytes": 525487,
       "content_type": "text/html; charset=utf-8",
-      "tier": "a5-a6-07072026"
+      "tier": null
     },
     {
       "product_id": "bwesterb-mtc",
       "url": "https://github.com/bwesterb/mtc/releases/tag/v0.1.2",
       "ok": true,
       "file": "bwesterb-mtc-313ced8e.html",
-      "bytes": 213577,
+      "bytes": 213834,
       "content_type": "text/html; charset=utf-8",
-      "tier": "a5-a6-07072026"
+      "tier": null
     },
     {
       "product_id": "rosenpass",
@@ -6791,16 +6791,16 @@
       "file": "rosenpass-42b0b752.html",
       "bytes": 104974,
       "content_type": "text/html",
-      "tier": "a5-a6-07072026"
+      "tier": null
     },
     {
       "product_id": "cryptsoft",
       "url": "https://www.cryptsoft.com/",
       "ok": true,
       "file": "cryptsoft-09d2b72d.html",
-      "bytes": 33011,
+      "bytes": 107833,
       "content_type": "text/html",
-      "tier": "a5-a6-07072026"
+      "tier": null
     },
     {
       "product_id": "python-cryptography",
@@ -6809,7 +6809,7 @@
       "file": "python-cryptography-258d8efb.html",
       "bytes": 361494,
       "content_type": "text/html; charset=utf-8",
-      "tier": "a5-a6-07072026"
+      "tier": null
     },
     {
       "product_id": "prometheus",
@@ -6818,7 +6818,7 @@
       "file": "prometheus-35a7bff2.html",
       "bytes": 82420,
       "content_type": "text/html; charset=utf-8",
-      "tier": "a5-a6-07072026"
+      "tier": null
     },
     {
       "product_id": "microsoft-365",
@@ -6843,27 +6843,27 @@
       "url": "https://aws.amazon.com/about-aws/whats-new/2025/09/amazon-cloudfront-TLS-policy-post-quantum-support/",
       "ok": true,
       "file": "amazon-cloudfront-pqc-fbeaf33e.html",
-      "bytes": 179354,
+      "bytes": 177317,
       "content_type": "text/html;charset=utf-8",
-      "tier": "partB-07072026"
+      "tier": null
     },
     {
       "product_id": "f5-big-ip-pqc",
       "url": "https://www.f5.com/company/blog/f5-extends-nist-compliant-pqc-cipher-support",
       "ok": true,
       "file": "f5-big-ip-pqc-3a78e86e.html",
-      "bytes": 380357,
+      "bytes": 383035,
       "content_type": "text/html; charset=utf-8",
-      "tier": "partB-07072026"
+      "tier": null
     },
     {
       "product_id": "traefik-proxy-pqc",
       "url": "https://traefik.io/blog/traefik-proxy-v3-5",
       "ok": true,
       "file": "traefik-proxy-pqc-5736031d.html",
-      "bytes": 217602,
+      "bytes": 203734,
       "content_type": "text/html; charset=utf-8",
-      "tier": "partB-07072026"
+      "tier": null
     },
     {
       "product_id": "zscaler-zia-pqc",
@@ -6872,7 +6872,7 @@
       "file": "zscaler-zia-pqc-18bb3e26.html",
       "bytes": 274982,
       "content_type": "text/html; charset=utf-8",
-      "tier": "partB-07072026"
+      "tier": null
     },
     {
       "product_id": "entrust-cryptographic-platform",
