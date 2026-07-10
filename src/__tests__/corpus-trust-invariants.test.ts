@@ -217,7 +217,12 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     surfaced 3 more unresolved AERO sector-threat enrichment chunks (same
   //     chunkToResource routing gap; unrelated to the migrate/vendor catalog
   //     changes in this pass).
-  'document-enrichment': 124,
+  //     2026-07-10: bumped 124 → 127 — data-pipelines-remediation refresh-index
+  //     surfaced 3 more unresolved sector-threat enrichment chunks (incl. more
+  //     AERO-* doc-enrichment ids). Same chunkToResource routing gap as every
+  //     entry above; unrelated to this pass's threats/library/timeline content
+  //     fixes. Drive back down via the same trustScoreData.ts extension.
+  'document-enrichment': 127,
 }
 
 /**
@@ -254,9 +259,14 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
  *               NTIA SBOM Minimum Elements, OASIS CSAF/VEX, SPDX spec)
  *               landed without enrichment passages yet. Enrich to drive
  *               down).
+ *   2026-07-10: 693 (bumped +6 after the data-pipelines-remediation
+ *               refresh-index — library proof recovery filled 18 previously
+ *               missing/broken local_file rows and the trust-registry rebuild
+ *               added source rows; several landed without enrichment
+ *               passages yet. Enrich to drive down).
  * Only DECREASE — every reduction is enrichment improving.
  */
-const MAX_DOC_WITHOUT_PASSAGES = 687
+const MAX_DOC_WITHOUT_PASSAGES = 693
 
 /** Pinned count of CSV files referenced in prov.was_derived_from but missing on disk. */
 const MAX_MISSING_CSVS = 0

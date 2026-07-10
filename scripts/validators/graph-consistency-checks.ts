@@ -2,11 +2,46 @@
 /**
  * Graph consistency checks (GC-1 through GC-12).
  *
- * Validates the Knowledge Graph's structural integrity, coverage gaps,
- * orphaned entities, algorithm canonicalization, and connectivity.
+ * HISTORY / SCOPE (re-scoped 2026-07-10): this module was originally written
+ * for the Knowledge Graph / mind-map feature (graphBuilder.ts), which was
+ * DELETED from the app on 2026-04-24. The "graph" these checks validated no
+ * longer exists, so each check was re-audited against what it still proves
+ * about the underlying datasets:
  *
- * Graph-perspective only — skips checks already covered by C1–C10.
- * Focuses on gaps that cause missing edges or unreachable nodes.
+ *   - GC-1  cross-dataset linkage report          INFO   (was WARNING — orphan
+ *           "nodes" are not defects without the graph; kept as a data-shape
+ *           report of entities nothing else references)
+ *   - GC-2  Learn-module content coverage report  INFO   (edge-type score was
+ *           a mindmap-richness metric; kept as a per-module coverage report)
+ *   - GC-3  algorithm-name canonicalization       WARNING (REAL: guards the
+ *           shared canonical naming table against cross-source drift)
+ *   - GC-4  country coverage report               INFO   (was WARNING — the
+ *           country "nodes" are gone; most findings are the expected ISO-code
+ *           vs full-name format split between compliance and timeline/leaders)
+ *   - GC-5  vendor ↔ software cardinality         INFO   (REAL: invalid
+ *           vendor_id = broken /migrate join; 0-product vendors = unused rows)
+ *   - GC-6  Learn-module Q&A coverage             WARNING (REAL: module-qa
+ *           data feeds the Learn module Q&A surfaces)
+ *   - GC-7  REMOVED — exact duplicate of N15-leaders-library-refs
+ *           (cross-ref-checks.ts), which validates the same
+ *           leaders.KeyResourceUrl → library.reference_id references at ERROR
+ *           severity. Keeping both double-reported every regression.
+ *   - GC-8  transitions canonicalization report   INFO   (data-shape: which
+ *           transition rows name algorithms outside the canonical vocabulary)
+ *   - GC-9  library dependency cycle detection    WARNING (REAL: relational
+ *           sanity of library.dependencies, feature-independent)
+ *   - GC-10 cert → algorithm text parseability    INFO   (REAL, low-stakes)
+ *   - GC-11 "Yes" PQC support w/o algorithm name  INFO   (REAL: /migrate rows
+ *           claiming PQC support without naming an algorithm)
+ *   - GC-12 cross-dataset stats summary           INFO   (reporting only)
+ *
+ * Also fixed 2026-07-10: GC-1/GC-3 read `algorithm_family` and GC-3/GC-8 read
+ * `Classical Algorithm` / `PQC Replacement` — column names that do not exist
+ * in the current CSVs (`AlgorithmFamily`, `classical_algorithm`,
+ * `pqc_replacement`), so those paths silently checked nothing. Every check now
+ * carries a zero-enumeration guard (same policy as audit-module-infographics.ts):
+ * if a source enumerates 0 rows the check FAILS at ERROR instead of passing
+ * against nothing.
  *
  * PRIVATE TOOL — not included in public repo.
  */
@@ -17,7 +52,10 @@ import { loadCSV, readCSV, splitSemicolon, getDataDir } from './data-loader.js'
 
 // ── Reference constants ─────────────────────────────────────────────────────
 
-// Must stay in sync with graphBuilder.ts ALGORITHM_CANONICAL (line 70–96)
+// This table originally mirrored graphBuilder.ts ALGORITHM_CANONICAL; that
+// file was deleted with the mind-map feature on 2026-04-24, so this is now the
+// sole owner of the canonical algorithm-name vocabulary used by GC-3/GC-8/
+// GC-10/GC-11 to detect cross-source naming drift.
 const ALGORITHM_CANONICAL: { pattern: RegExp; canonical: string }[] = [
   { pattern: /\bml-kem\b/i, canonical: 'ML-KEM' },
   { pattern: /\bml-dsa\b/i, canonical: 'ML-DSA' },
@@ -95,75 +133,48 @@ const ALGORITHM_SKIP = new Set([
   'potentially pqc (name match)',
 ])
 
-const MODULE_IDS = new Set([
-  'pqc-101',
-  'quantum-threats',
-  'hybrid-crypto',
-  'crypto-agility',
-  'tls-basics',
-  'vpn-ssh-pqc',
-  'email-signing',
-  'pki-workshop',
-  'kms-pqc',
-  'hsm-pqc',
-  'stateful-signatures',
-  'digital-assets',
-  '5g-security',
-  'digital-id',
-  'entropy-randomness',
-  'merkle-tree-certs',
-  'qkd',
-  'code-signing',
-  'api-security-jwt',
-  'crypto-dev-apis',
-  'web-gateway-pqc',
-  'iot-ot-pqc',
-  'pqc-risk-management',
-  'pqc-business-case',
-  'pqc-governance',
-  'vendor-risk',
-  'migration-program',
-  'compliance-strategy',
-  'data-asset-sensitivity',
-  'standards-bodies',
-  'confidential-computing',
-  'database-encryption-pqc',
-  'energy-utilities-pqc',
-  'emv-payment-pqc',
-  'ai-security-pqc',
-  'platform-eng-pqc',
-  'healthcare-pqc',
-  'aerospace-pqc',
-  'automotive-pqc',
-  'exec-quantum-impact',
-  'dev-quantum-impact',
-  'arch-quantum-impact',
-  'ops-quantum-impact',
-  'research-quantum-impact',
-  'secrets-management-pqc',
-  'network-security-pqc',
-  'pqc-testing-validation',
-  'iam-pqc',
-  'secure-boot-pqc',
-  'os-pqc',
-  // Added 2026-07-07: kept in sync with the same fix in cross-ref-checks.ts
-  // (this file keeps its own separate copy of MODULE_IDS rather than
-  // importing it) -- modules that ship in the Simulation feature but were
-  // missing from both copies.
-  'slh-dsa',
-  'cbom',
-  'verification-closure',
-  'crypto-mgmt-modernization',
-  'pqc-candidates',
-  'pki-enrollment-protocols',
-  'mls-group-messaging',
-  'cbom-compliance',
-  'crypto-discovery',
-])
+/**
+ * Learn-module ids, derived from the real module tree
+ * (src/components/PKILearning/modules/<Dir>/manifest.ts top-level `id`) —
+ * the same enumeration audit-module-infographics.ts uses. Replaces a
+ * hand-copied list that had drifted (missing crypto-registry, pqc-grc, sbom,
+ * skills-team-structure, soc-implementation-pqc as of 2026-07-10).
+ * GC-2/GC-6 fail at ERROR if this enumerates 0 modules (see guardEmpty).
+ */
+function loadManifestModuleIds(): Set<string> {
+  // Anchored to the repo root (same convention as data-loader.ts ROOT), not
+  // getDataDir(): --data-dir overrides relocate the CSVs, never the app tree.
+  const modulesDir = path.resolve(process.cwd(), 'src/components/PKILearning/modules')
+  const ids = new Set<string>()
+  if (!fs.existsSync(modulesDir)) return ids
+  for (const entry of fs.readdirSync(modulesDir, { withFileTypes: true })) {
+    if (!entry.isDirectory()) continue
+    const manifest = path.join(modulesDir, entry.name, 'manifest.ts')
+    if (!fs.existsSync(manifest)) continue
+    // Top-level id only: two-space indent inside `const manifest = {`.
+    const m = fs.readFileSync(manifest, 'utf-8').match(/^ {2}id:\s*'([a-z0-9-]+)',?\s*$/m)
+    if (m) ids.add(m[1])
+  }
+  return ids
+}
+
+const MODULE_IDS = loadManifestModuleIds()
+
+// Valid learning-destination ids that are NOT Learn modules: sandbox scenarios
+// (src/data/sandboxScenarios.ts) referenced by migrate.learning_modules.
+// They have no manifest and no Q&A surface, so GC-2/GC-6 must not treat them
+// as missing-content modules (they were in the old hand-copied MODULE_IDS and
+// produced permanent false "no Q&A" findings). Validity of learning_modules
+// values themselves is N14's job (cross-ref-checks.ts).
+const SANDBOX_SCENARIO_LEARNING_TARGETS = new Set(['cbom-compliance', 'crypto-discovery'])
+void SANDBOX_SCENARIO_LEARNING_TARGETS // documented above; not enumerated by any GC check
 
 const SPECIAL_MODULE_IDS = new Set(['quiz', 'assess'])
 
-// Same as graphBuilder QUIZ_CATEGORY_TO_MODULE
+// Quiz categories that map onto a Learn module without sharing its id.
+// (Originally mirrored the deleted graphBuilder.ts QUIZ_CATEGORY_TO_MODULE;
+// now owned here, used only by the GC-2 coverage report. 'key-management' was
+// dropped 2026-07-10 — it is not in the app's QuizCategory vocabulary.)
 const QUIZ_CATEGORY_TO_MODULE: Record<string, string> = {
   'pqc-fundamentals': 'pqc-101',
   'algorithm-families': 'pqc-101',
@@ -174,7 +185,6 @@ const QUIZ_CATEGORY_TO_MODULE: Record<string, string> = {
   'industry-threats': 'quantum-threats',
   'crypto-operations': 'pki-workshop',
   'pki-infrastructure': 'pki-workshop',
-  'key-management': 'kms-pqc',
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -217,6 +227,29 @@ function makeCheck(
   }
 }
 
+/**
+ * Zero-enumeration guard (same policy as audit-module-infographics.ts): a
+ * check that enumerates 0 items has checked nothing and must not report PASS.
+ * Returns guard findings for every empty source; the caller escalates the
+ * check to ERROR when any are present (see guardedSeverity).
+ */
+function guardEmpty(sources: [name: string, count: number][]): Finding[] {
+  return sources
+    .filter(([, count]) => count === 0)
+    .map(([name]) => ({
+      csv: name,
+      row: null,
+      field: 'enumeration',
+      value: '0 rows',
+      message: `${name} enumerated 0 rows — this check ran against nothing (0-checked pass is not allowed; fix the source discovery or the data)`,
+    }))
+}
+
+/** ERROR when a zero-enumeration guard tripped, otherwise the check's severity. */
+function guardedSeverity(base: Severity, guardFindings: Finding[]): Severity {
+  return guardFindings.length > 0 ? 'ERROR' : base
+}
+
 function loadModuleQaCombined(): { rows: Record<string, string>[]; file: string } {
   const qaDir = path.join(getDataDir(), 'module-qa')
   if (!fs.existsSync(qaDir)) return { rows: [], file: '' }
@@ -253,7 +286,6 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
 
   // ── Build ID lookup sets ───────────────────────────────────────────────
 
-  const libraryIds = new Set(library.rows.map((r) => r.reference_id).filter(Boolean))
   const vendorIds = new Set(vendors.rows.map((r) => r.vendor_id).filter(Boolean))
   const countryNames = new Set(timeline.rows.map((r) => r.Country).filter(Boolean))
   const quizCategories = new Set(quiz.rows.map((r) => r.category).filter(Boolean))
@@ -285,9 +317,11 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
     for (const r of library.rows) {
       if (splitSemicolon(r.module_ids).length > 0) libraryReferenced.add(r.reference_id)
     }
-    // library.algorithmFamily (has outgoing edge)
+    // library.AlgorithmFamily (has outgoing edge). Column name fixed
+    // 2026-07-10: was read as `algorithm_family`, which does not exist in the
+    // library CSV, so this path silently never counted anything.
     for (const r of library.rows) {
-      if (extractAlgorithmFamilies(r.algorithm_family).length > 0)
+      if (extractAlgorithmFamilies(r.AlgorithmFamily).length > 0)
         libraryReferenced.add(r.reference_id)
     }
     // QA libraryRefs
@@ -400,19 +434,31 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
           row: null,
           field: 'orphaned',
           value: `${s.orphaned}/${s.total}`,
-          message: `${s.orphaned} ${s.type} entities have zero graph edges: ${s.ids.join(', ')}${s.orphaned > 15 ? ` (+${s.orphaned - 15} more)` : ''}`,
+          message: `${s.orphaned} ${s.type} entities are not cross-referenced by any other dataset: ${s.ids.join(', ')}${s.orphaned > 15 ? ` (+${s.orphaned - 15} more)` : ''}`,
         })
       }
     }
 
+    // INFO since 2026-07-10: "zero graph edges" only mattered to the deleted
+    // (2026-04-24) mind-map feature. An un-referenced entity is not a defect —
+    // every dataset is independently browsable — so this is retained as a
+    // cross-dataset linkage report only.
+    const guards = guardEmpty([
+      ['library', library.rows.length],
+      ['migrate', migrate.rows.length],
+      ['leaders', leaders.rows.length],
+      ['vendors', vendors.rows.length],
+      ['threats', threats.rows.length],
+      ['compliance', compliance.rows.length],
+    ])
     results.push(
       makeCheck(
         'GC-1',
-        'Orphaned entity detection — entities with zero graph edges',
+        'Cross-dataset linkage report — entities no other dataset references (data-shape report; the knowledge-graph feature this scored was deleted 2026-04-24)',
         'graph',
         null,
-        'WARNING',
-        findings
+        guardedSeverity('INFO', guards),
+        [...guards, ...findings]
       )
     )
 
@@ -424,7 +470,7 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
       })
       .join('\n')
 
-    let md = `## GC-1: Orphaned Entity Detection\n\n| Type | Total | Orphaned | Coverage |\n| ---- | ----- | -------- | -------- |\n${mdTable}\n`
+    let md = `## GC-1: Cross-Dataset Linkage Report (informational — graph feature deleted 2026-04-24)\n\n| Type | Total | Orphaned | Coverage |\n| ---- | ----- | -------- | -------- |\n${mdTable}\n`
     for (const s of orphanStats) {
       if (s.orphaned > 0) {
         md += `\n**${s.type} orphans** (${s.orphaned}): ${s.ids.map((id) => `\`${id}\``).join(', ')}${s.orphaned > 15 ? ` (+${s.orphaned - 15} more)` : ''}\n`
@@ -493,22 +539,28 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
 
     for (const m of underConnected) {
       findings.push({
-        csv: 'MODULE_CATALOG',
+        csv: 'module-manifests',
         row: null,
         field: 'connectivity',
         value: `${m.score} types`,
-        message: `Module "${m.id}" has only ${m.score} connection types: [${m.types.join(', ')}]`,
+        message: `Module "${m.id}" is referenced by only ${m.score} content source(s): [${m.types.join(', ')}]`,
       })
     }
 
+    // Retained as a per-module content-coverage report only: the "< 3 edge
+    // types" threshold was a mind-map richness score (feature deleted
+    // 2026-04-24). It still usefully reports which Learn modules have little
+    // supporting content (library refs, threats, quiz, Q&A, glossary) across
+    // the datasets.
+    const guards = guardEmpty([['PKILearning module manifests', MODULE_IDS.size]])
     results.push(
       makeCheck(
         'GC-2',
-        'Module connectivity score — modules with < 3 edge types',
+        'Learn-module content coverage — modules referenced by < 3 content sources (data-shape report)',
         'modules',
         null,
-        'INFO',
-        findings
+        guardedSeverity('INFO', guards),
+        [...guards, ...findings]
       )
     )
 
@@ -516,7 +568,7 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
       .map((m) => `| ${m.id} | ${m.score} | ${m.types.join(', ') || '(none)'} |`)
       .join('\n')
     mdSections.push(
-      `## GC-2: Module Connectivity Score\n\n| Module | Score | Connection Types |\n| ------ | ----- | ---------------- |\n${mdTable}\n`
+      `## GC-2: Learn-Module Content Coverage (informational)\n\n| Module | Score | Connection Types |\n| ------ | ----- | ---------------- |\n${mdTable}\n`
     )
   }
 
@@ -533,7 +585,12 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
       }
     }
 
-    for (const r of library.rows) recordAlgos(r.algorithm_family, 'library')
+    // Column names fixed 2026-07-10: library uses `AlgorithmFamily` and the
+    // transitions CSV uses `classical_algorithm` / `pqc_replacement`. The old
+    // reads (`algorithm_family`, `Classical Algorithm`, `PQC Replacement`)
+    // hit columns that do not exist, so neither source was ever recorded and
+    // the single-source findings below were distorted.
+    for (const r of library.rows) recordAlgos(r.AlgorithmFamily, 'library')
     for (const r of threats.rows) {
       recordAlgos(r.crypto_at_risk, 'threats')
       recordAlgos(r.pqc_replacement, 'threats')
@@ -541,8 +598,8 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
     for (const r of migrate.rows) recordAlgos(r.pqc_support, 'migrate')
     for (const r of certXref.rows) recordAlgos(r.pqc_algorithms, 'certXref')
     for (const r of algTransitions.rows) {
-      recordAlgos(r['Classical Algorithm'], 'transitions')
-      recordAlgos(r['PQC Replacement'], 'transitions')
+      recordAlgos(r.classical_algorithm, 'transitions')
+      recordAlgos(r.pqc_replacement, 'transitions')
     }
 
     // Flag single-source algorithms
@@ -558,10 +615,10 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
       }
     }
 
-    // Flag algorithm_family values that produce no match
+    // Flag library AlgorithmFamily values that produce no canonical match
     const unmatchedAlgo = new Set<string>()
     for (const r of library.rows) {
-      const fam = r.algorithm_family?.trim()
+      const fam = r.AlgorithmFamily?.trim()
       if (!fam || ALGORITHM_SKIP.has(fam.toLowerCase())) continue
       if (extractAlgorithmFamilies(fam).length === 0) unmatchedAlgo.add(fam)
     }
@@ -569,20 +626,29 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
       findings.push({
         csv: 'library',
         row: null,
-        field: 'algorithm_family',
+        field: 'AlgorithmFamily',
         value: val,
-        message: `Algorithm family "${val}" matches no canonical pattern — will produce no graph node`,
+        message: `Algorithm family "${val}" matches no canonical naming pattern — invisible to family-based filters and cross-source comparisons`,
       })
     }
 
+    // REAL data-quality check (kept at WARNING): algorithm names must
+    // canonicalize consistently across library/threats/migrate/certXref/
+    // transitions regardless of any visualization feature.
+    const guards = guardEmpty([
+      [
+        'algorithm-bearing sources (library+threats+migrate+certXref+transitions)',
+        algoSources.size,
+      ],
+    ])
     results.push(
       makeCheck(
         'GC-3',
         'Algorithm canonicalization consistency across sources',
         'algorithms',
         null,
-        'WARNING',
-        findings
+        guardedSeverity('WARNING', guards),
+        [...guards, ...findings]
       )
     )
 
@@ -627,23 +693,29 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
         row: null,
         field: 'Country',
         value: c,
-        message: `Country "${c}" is referenced by compliance/leaders/vendors but has no timeline entry — edges to this country are silently dropped`,
+        message: `Country "${c}" is referenced by compliance/leaders/vendors but has no timeline rows`,
       })
     }
 
+    // INFO since 2026-07-10: the country "nodes" this protected belonged to
+    // the mind-map (deleted 2026-04-24). A country without timeline events is
+    // not a defect, and most findings are the expected format split —
+    // compliance.countries holds ISO 3166 codes (validated by CM-E) while
+    // timeline/leaders/vendors hold full names. Retained as a coverage report.
+    const guards = guardEmpty([['timeline', timeline.rows.length]])
     results.push(
       makeCheck(
         'GC-4',
-        'Country node coverage — countries referenced but missing from timeline',
+        'Country coverage report — countries referenced by compliance/leaders/vendors with no timeline rows (data-shape report; expect ISO-code vs full-name mismatches)',
         'timeline',
         'compliance/leaders/vendors',
-        'WARNING',
-        findings
+        guardedSeverity('INFO', guards),
+        [...guards, ...findings]
       )
     )
 
     mdSections.push(
-      `## GC-4: Country Node Coverage Gaps\n\n${
+      `## GC-4: Country Coverage Report (informational)\n\n${
         missingCountries.length === 0
           ? 'All referenced countries exist in timeline data.'
           : `**Missing countries** (${missingCountries.length}): ${missingCountries.map((c) => `\`${c}\``).join(', ')}\n\nThese appear in compliance/leaders/vendors but not in timeline CSV, so no country node is created in the graph.`
@@ -680,7 +752,7 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
         row: null,
         field: 'vendor_id',
         value: vid,
-        message: `Vendor "${vendor?.vendor_display_name ?? vid}" has 0 software products — orphan vendor node`,
+        message: `Vendor "${vendor?.vendor_display_name ?? vid}" has 0 catalog products — unused vendor row`,
       })
     }
 
@@ -697,14 +769,21 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
       }
     }
 
+    // REAL cross-dataset integrity, independent of the deleted graph feature
+    // (severity kept as-is): an invalid migrate.vendor_id is a broken join on
+    // /migrate vendor lookups; a 0-product active vendor is an unused row.
+    const guards = guardEmpty([
+      ['vendors', vendors.rows.length],
+      ['migrate', migrate.rows.length],
+    ])
     results.push(
       makeCheck(
         'GC-5',
-        'Vendor ↔ Software cardinality — orphan vendors and invalid vendor_ids',
+        'Vendor ↔ Software cardinality — unused vendor rows and invalid migrate.vendor_id joins',
         'vendors',
         'migrate',
-        'INFO',
-        findings
+        guardedSeverity('INFO', guards),
+        [...guards, ...findings]
       )
     )
 
@@ -741,7 +820,7 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
         row: null,
         field: 'module_id',
         value: modId,
-        message: `Module "${modId}" has 0 Q&A rows — no module-qa-references edges`,
+        message: `Module "${modId}" has 0 Q&A rows — its Learn-module Q&A surface has no content`,
       })
     }
 
@@ -755,18 +834,26 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
         row: null,
         field: 'module_id',
         value: modId,
-        message: `Q&A module_id "${modId}" not in MODULE_CATALOG — orphan Q&A data`,
+        message: `Q&A module_id "${modId}" matches no module manifest — orphan Q&A data`,
       })
     }
 
+    // REAL content check, independent of the deleted graph feature (severity
+    // kept at WARNING): module-qa CSVs feed the Learn modules' Q&A surfaces,
+    // so a manifest module with 0 rows ships an empty surface, and rows whose
+    // module_id matches no manifest are unreachable content.
+    const guards = guardEmpty([
+      ['PKILearning module manifests', MODULE_IDS.size],
+      ['module-qa combined CSV', qaRows.length],
+    ])
     results.push(
       makeCheck(
         'GC-6',
-        'Q&A module coverage — modules missing Q&A data',
+        'Q&A module coverage — Learn modules with no Q&A rows / Q&A rows with no module',
         'module-qa',
-        'MODULE_CATALOG',
-        'WARNING',
-        findings
+        'module-manifests',
+        guardedSeverity('WARNING', guards),
+        [...guards, ...findings]
       )
     )
 
@@ -788,52 +875,12 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
     )
   }
 
-  // ── GC-7: Leader → Library Reference Validity ──────────────────────────
-
-  {
-    const findings: Finding[] = []
-    let totalRefs = 0
-    let validRefs = 0
-
-    for (const r of leaders.rows) {
-      const refs = splitSemicolon(r.KeyResourceUrl)
-      for (const ref of refs) {
-        totalRefs++
-        if (libraryIds.has(ref)) {
-          validRefs++
-        } else {
-          findings.push({
-            csv: leaders.file,
-            row: null,
-            field: 'KeyResourceUrl',
-            value: ref,
-            message: `Leader "${r.Name}" references library "${ref}" which doesn't exist — edge dropped`,
-          })
-        }
-      }
-    }
-
-    results.push(
-      makeCheck(
-        'GC-7',
-        'Leader → Library reference validity — lost leader-references-library edges',
-        'leaders',
-        'library',
-        'WARNING',
-        findings
-      )
-    )
-    mdSections.push(
-      `## GC-7: Leader → Library Reference Validity\n\n- **Total refs**: ${totalRefs}\n- **Valid**: ${validRefs}\n- **Invalid (lost edges)**: ${totalRefs - validRefs}\n${
-        findings.length > 0
-          ? `\n**Broken references**:\n${findings
-              .slice(0, 20)
-              .map((f) => `- ${f.message}`)
-              .join('\n')}${findings.length > 20 ? `\n- (+${findings.length - 20} more)` : ''}\n`
-          : ''
-      }`
-    )
-  }
+  // ── GC-7: REMOVED 2026-07-10 ───────────────────────────────────────────
+  // Leader → Library reference validity was an exact duplicate of
+  // N15-leaders-library-refs (cross-ref-checks.ts), which validates the same
+  // leaders.KeyResourceUrl → library.reference_id references at ERROR
+  // severity. Keeping both double-reported every regression and could never
+  // surface anything N15 does not; the id is retired, not renumbered.
 
   // ── GC-8: Algorithm Transition Completeness ────────────────────────────
 
@@ -842,38 +889,47 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
     const totalTransitions = algTransitions.rows.length
     let matchedBoth = 0
 
+    // Column names fixed 2026-07-10: the transitions CSV headers are
+    // `classical_algorithm` / `pqc_replacement`. The old bracket reads
+    // (`Classical Algorithm` / `PQC Replacement`) returned undefined for
+    // every row, so this check flagged all rows as "undefined → no match"
+    // and never inspected real values.
     for (const r of algTransitions.rows) {
-      const classical = extractAlgorithmFamilies(r['Classical Algorithm'])
-      const pqc = extractAlgorithmFamilies(r['PQC Replacement'])
+      const classical = extractAlgorithmFamilies(r.classical_algorithm)
+      const pqc = extractAlgorithmFamilies(r.pqc_replacement)
       if (classical.length > 0 && pqc.length > 0) {
         matchedBoth++
       } else {
         const issues: string[] = []
-        if (classical.length === 0)
-          issues.push(`classical "${r['Classical Algorithm']}" → no match`)
-        if (pqc.length === 0) issues.push(`pqc "${r['PQC Replacement']}" → no match`)
+        if (classical.length === 0) issues.push(`classical "${r.classical_algorithm}" → no match`)
+        if (pqc.length === 0) issues.push(`pqc "${r.pqc_replacement}" → no match`)
         findings.push({
           csv: algTransitions.file,
           row: null,
           field: 'algorithm',
-          value: `${r['Classical Algorithm']} → ${r['PQC Replacement']}`,
-          message: `Transition has unmatched side: ${issues.join('; ')}`,
+          value: `${r.classical_algorithm} → ${r.pqc_replacement}`,
+          message: `Transition has a side outside the canonical algorithm vocabulary: ${issues.join('; ')}`,
         })
       }
     }
 
+    // Data-shape report (INFO): flags transition rows whose algorithm names
+    // fall outside the canonical vocabulary above. Exact-name resolution of
+    // pqc_replacement against the algorithms CSV is N10's job
+    // (cross-ref-checks.ts); this reports vocabulary coverage only.
+    const guards = guardEmpty([['algorithms_transitions', algTransitions.rows.length]])
     results.push(
       makeCheck(
         'GC-8',
-        'Algorithm transition completeness — transitions with unmatched sides',
+        'Algorithm transition canonical-name coverage (data-shape report)',
         'algorithm_transitions',
         null,
-        'INFO',
-        findings
+        guardedSeverity('INFO', guards),
+        [...guards, ...findings]
       )
     )
     mdSections.push(
-      `## GC-8: Algorithm Transition Completeness\n\n- **Total transitions**: ${totalTransitions}\n- **Both sides matched**: ${matchedBoth}\n- **Incomplete**: ${totalTransitions - matchedBoth}\n`
+      `## GC-8: Algorithm Transition Canonical-Name Coverage\n\n- **Total transitions**: ${totalTransitions}\n- **Both sides matched**: ${matchedBoth}\n- **Incomplete**: ${totalTransitions - matchedBoth}\n`
     )
   }
 
@@ -921,8 +977,19 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
       })
     }
 
+    // REAL relational-sanity check, independent of the deleted graph feature
+    // (severity kept at WARNING): library.dependencies is a directed
+    // depends-on relation; cycles indicate mis-entered references.
+    const guards = guardEmpty([['library', library.rows.length]])
     results.push(
-      makeCheck('GC-9', 'Library dependency cycle detection', 'library', null, 'WARNING', findings)
+      makeCheck(
+        'GC-9',
+        'Library dependency cycle detection',
+        'library',
+        null,
+        guardedSeverity('WARNING', guards),
+        [...guards, ...findings]
+      )
     )
     mdSections.push(
       `## GC-9: Dependency Cycle Detection\n\n${
@@ -954,20 +1021,23 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
       }
     }
 
+    // REAL data-quality report (severity kept at INFO): certification rows
+    // whose pqc_algorithms free text names no recognizable algorithm.
+    const guards = guardEmpty([['migrate_certification_xref', certXref.rows.length]])
     results.push(
       makeCheck(
         'GC-10',
-        'Certification → Algorithm edge gaps — certs with no algorithm edges',
+        'Certification pqc_algorithms parseability — certs whose algorithm text matches no canonical name',
         'certXref',
         'algorithms',
-        'INFO',
-        findings
+        guardedSeverity('INFO', guards),
+        [...guards, ...findings]
       )
     )
     const pct =
       certXref.rows.length > 0 ? ((withAlgo / certXref.rows.length) * 100).toFixed(1) : '0.0'
     mdSections.push(
-      `## GC-10: Certification → Algorithm Edge Gaps\n\n- **Total certifications**: ${certXref.rows.length}\n- **With algorithm edges**: ${withAlgo} (${pct}%)\n- **No match**: ${certXref.rows.length - withAlgo}\n`
+      `## GC-10: Certification pqc_algorithms Parseability\n\n- **Total certifications**: ${certXref.rows.length}\n- **With algorithm edges**: ${withAlgo} (${pct}%)\n- **No match**: ${certXref.rows.length - withAlgo}\n`
     )
   }
 
@@ -996,19 +1066,22 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
       }
     }
 
+    // REAL data-quality report (severity kept at INFO): catalog rows claiming
+    // "Yes" PQC support should name at least one recognizable algorithm.
+    const guards = guardEmpty([['migrate', migrate.rows.length]])
     results.push(
       makeCheck(
         'GC-11',
-        'Software → Algorithm edge gaps — "Yes" PQC support with no algorithm match',
+        'Software PQC-support specificity — "Yes" pqc_support naming no canonical algorithm',
         'migrate',
         'algorithms',
-        'INFO',
-        findings
+        guardedSeverity('INFO', guards),
+        [...guards, ...findings]
       )
     )
     const pct = yesTotal > 0 ? ((yesWithAlgo / yesTotal) * 100).toFixed(1) : '0.0'
     mdSections.push(
-      `## GC-11: Software → Algorithm Edge Gaps\n\n- **Software with "Yes" PQC support**: ${yesTotal}\n- **With algorithm edges**: ${yesWithAlgo} (${pct}%)\n- **"Yes" but no match**: ${yesTotal - yesWithAlgo}\n`
+      `## GC-11: Software PQC-Support Specificity\n\n- **Software with "Yes" PQC support**: ${yesTotal}\n- **With algorithm edges**: ${yesWithAlgo} (${pct}%)\n- **"Yes" but no match**: ${yesTotal - yesWithAlgo}\n`
     )
   }
 
@@ -1171,8 +1244,12 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
 
     const totalEdges = edgeEstimates.reduce((s, e) => s + e.count, 0)
 
-    // This check always passes — it's just a summary
-    results.push(makeCheck('GC-12', 'Graph stats summary', 'graph', null, 'INFO', []))
+    // This check always passes — it's a stats summary for the markdown
+    // report only ("edges" here means cross-dataset references, a term kept
+    // from the deleted 2026-04-24 graph feature).
+    results.push(
+      makeCheck('GC-12', 'Cross-dataset stats summary (reporting only)', 'graph', null, 'INFO', [])
+    )
 
     const entityTable = entityCounts
       .filter((e) => e.records > 0)
@@ -1188,7 +1265,7 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
       .join('\n')
 
     mdSections.push(
-      `## GC-12: Graph Stats Summary\n\n### Entity Coverage\n\n| Type | Records | With Edges | Coverage |\n| ---- | ------- | ---------- | -------- |\n${entityTable}\n\n**Total**: ${totalRecords} records, ${totalConnected} connected (${totalRecords > 0 ? ((totalConnected / totalRecords) * 100).toFixed(1) : 0}%)\n\n### Edge Estimates\n\n| Relationship Type | Est. Edges |\n| ----------------- | ---------- |\n${edgeTable}\n\n**Total estimated edges**: ${totalEdges}\n`
+      `## GC-12: Cross-Dataset Stats Summary (reporting only)\n\n### Entity Coverage\n\n| Type | Records | With Edges | Coverage |\n| ---- | ------- | ---------- | -------- |\n${entityTable}\n\n**Total**: ${totalRecords} records, ${totalConnected} connected (${totalRecords > 0 ? ((totalConnected / totalRecords) * 100).toFixed(1) : 0}%)\n\n### Edge Estimates\n\n| Relationship Type | Est. Edges |\n| ----------------- | ---------- |\n${edgeTable}\n\n**Total estimated edges**: ${totalEdges}\n`
     )
   }
 

@@ -234,6 +234,13 @@ docs/pqctoday-investor*
 scripts/*
 # CI scripts are public — they run in GitHub Actions and must be tracked
 !scripts/ci/
+# Unified data-integrity validator — runs in the local gate (npm run
+# validate:data / gate:data, see TESTING.md); its check modules and their
+# tests must be tracked or new files silently can't be added (existing
+# validator files stayed tracked only because they predated this ignore
+# rule — a real gap, found 2026-07-10 adding a new test file here).
+!scripts/validators/
+!scripts/validate-data-integrity.ts
 
 # NVD CVE scraper — runs weekly in .github/workflows/update-cve.yml (public
 # CI), must be tracked or that workflow fails with "No such file or directory"

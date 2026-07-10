@@ -88,14 +88,27 @@ interface ManifestEntry {
 // are NOT valid values here (a first draft of this rule used them and
 // produced 3 false positives against legitimately re-validated rows).
 const KNOWN_FRAGILE: Record<string, { allowed: string[]; disprovenClaim: string }> = {
-  'futurex-vectera-plus': { allowed: ['none'], disprovenClaim: 'available (Vectera Plus PQC — conflates with CryptoHub)' },
+  'futurex-vectera-plus': {
+    allowed: ['none'],
+    disprovenClaim: 'available (Vectera Plus PQC — conflates with CryptoHub)',
+  },
   'renesas-veridify-pqc-for-ra-mcus': {
     allowed: ['unknown', 'none'],
     disprovenClaim: 'available (NIST ML-DSA/ML-KEM tied to Renesas RA MCUs — unconfirmed)',
   },
-  'hyperledger-besu': { allowed: ['none', 'unknown'], disprovenClaim: 'available (PQC via JDK dependency only, not a Besu feature)' },
-  'pfsense-community-edition': { allowed: ['none', 'unknown'], disprovenClaim: 'available (strongSwan 6.0/ML-KEM — not in release notes)' },
-  opnsense: { allowed: ['none', 'partial', 'unknown'], disprovenClaim: 'available (strongSwan 6.0/ML-KEM — not in release notes; OPNsense partial is legitimate via OpenSSH mgmt plane)' },
+  'hyperledger-besu': {
+    allowed: ['none', 'unknown'],
+    disprovenClaim: 'available (PQC via JDK dependency only, not a Besu feature)',
+  },
+  'pfsense-community-edition': {
+    allowed: ['none', 'unknown'],
+    disprovenClaim: 'available (strongSwan 6.0/ML-KEM — not in release notes)',
+  },
+  opnsense: {
+    allowed: ['none', 'partial', 'unknown'],
+    disprovenClaim:
+      'available (strongSwan 6.0/ML-KEM — not in release notes; OPNsense partial is legitimate via OpenSSH mgmt plane)',
+  },
 }
 
 function findLatestCsv(prefix: string): string | null {
@@ -151,7 +164,15 @@ export function runMigrateProofRule(): CheckResult[] {
         sourceB: 'public/migrate-proofs/',
         severity: 'ERROR',
         status: 'SKIP',
-        findings: [{ csv: '', row: null, field: '', value: '', message: 'No pqc_product_catalog_*.csv found in src/data/' }],
+        findings: [
+          {
+            csv: '',
+            row: null,
+            field: '',
+            value: '',
+            message: 'No pqc_product_catalog_*.csv found in src/data/',
+          },
+        ],
       },
     ]
   }
@@ -220,7 +241,10 @@ export function runMigrateProofRule(): CheckResult[] {
   const authPath = findLatestCsv('pqc_authoritative_sources_reference_')
   const authIds = authPath
     ? new Set(
-        Papa.parse<AuthSourceRow>(fs.readFileSync(authPath, 'utf-8'), { header: true, skipEmptyLines: true })
+        Papa.parse<AuthSourceRow>(fs.readFileSync(authPath, 'utf-8'), {
+          header: true,
+          skipEmptyLines: true,
+        })
           .data.map((r) => (r.id || '').trim())
           .filter(Boolean)
       )
@@ -271,7 +295,8 @@ export function runMigrateProofRule(): CheckResult[] {
     {
       id: 'MP-1',
       category: 'local-resource',
-      description: "Every active 'available'/'partial' catalog row has a downloaded proof recorded in manifest.json",
+      description:
+        "Every active 'available'/'partial' catalog row has a downloaded proof recorded in manifest.json",
       sourceA: csvName,
       sourceB: manifestName,
       severity: 'ERROR',
@@ -281,7 +306,8 @@ export function runMigrateProofRule(): CheckResult[] {
     {
       id: 'MP-2',
       category: 'local-resource',
-      description: 'Every manifest-recorded proof file actually exists on disk under public/migrate-proofs/',
+      description:
+        'Every manifest-recorded proof file actually exists on disk under public/migrate-proofs/',
       sourceA: manifestName,
       sourceB: 'public/migrate-proofs/',
       severity: 'ERROR',
@@ -291,7 +317,8 @@ export function runMigrateProofRule(): CheckResult[] {
     {
       id: 'MP-3',
       category: 'local-resource',
-      description: 'Known-fragile rows (prior authorized proof-less corrections) have not regressed',
+      description:
+        'Known-fragile rows (prior authorized proof-less corrections) have not regressed',
       sourceA: csvName,
       sourceB: null,
       severity: 'ERROR',
@@ -301,14 +328,24 @@ export function runMigrateProofRule(): CheckResult[] {
     {
       id: 'MP-4',
       category: 'cross-reference',
-      description: 'Every active migrate/vendor trusted_source_id resolves to the authoritative-sources catalog',
+      description:
+        'Every active migrate/vendor trusted_source_id resolves to the authoritative-sources catalog',
       sourceA: csvName,
       sourceB: authName,
       severity: 'ERROR',
       status: authIds === null ? 'SKIP' : mp4.length === 0 ? 'PASS' : 'FAIL',
-      findings: authIds === null
-        ? [{ csv: '', row: null, field: '', value: '', message: 'No pqc_authoritative_sources_reference_*.csv found' }]
-        : mp4,
+      findings:
+        authIds === null
+          ? [
+              {
+                csv: '',
+                row: null,
+                field: '',
+                value: '',
+                message: 'No pqc_authoritative_sources_reference_*.csv found',
+              },
+            ]
+          : mp4,
     },
   ]
 }

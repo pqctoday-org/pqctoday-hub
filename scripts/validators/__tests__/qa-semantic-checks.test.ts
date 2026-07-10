@@ -79,8 +79,7 @@ describe('QA-F semantic validators — synthetic corpus', () => {
         id: 'doc-enrichment-FAKE-001',
         source: 'document-enrichment',
         title: 'Fake',
-        content:
-          'Title: Fake\nMain Topic: Test.\nPQC Algorithms Covered: ML-KEM-768; UNICORN-999',
+        content: 'Title: Fake\nMain Topic: Test.\nPQC Algorithms Covered: ML-KEM-768; UNICORN-999',
         metadata: { refId: 'FAKE-001', collection: 'library' },
       },
       {
