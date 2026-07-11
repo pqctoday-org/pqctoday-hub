@@ -130,8 +130,10 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
  *
  * Drives the first-paint experience on `/algorithms` when no URL params are
  * present. Deep-links win; once any of {tab, family, fn, level, region, status,
- * highlight, q, compare, section, subtab} are set in the URL, defaults give way
- * to the URL-driven state. See `AlgorithmsView.tsx` `hasActiveParams`.
+ * highlight, q, compare, section, cnsa, gap, mode, protocol, matrixView,
+ * matrixQ, matrixStatus, matrixAvailability, matrixSort} are set in the URL,
+ * defaults give way to the URL-driven state. See `AlgorithmsView.tsx`
+ * `hasActiveParams`.
  * ────────────────────────────────────────────────────────────────────────────── */
 
 export type AlgorithmTabId = 'transition' | 'detailed' | 'support' | 'validation'

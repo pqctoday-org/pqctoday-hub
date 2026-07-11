@@ -248,6 +248,42 @@ describe('usePageContext', () => {
     })
   })
 
+  // ─── Algorithms URL State Tests ─────────────────────────────────────────
+
+  describe('algorithms URL state', () => {
+    it('omits tab and filters when the URL has no algorithms params', () => {
+      const { result } = renderHook(() => usePageContext(), {
+        wrapper: createWrapper('/algorithms'),
+      })
+      expect(result.current.tab).toBeUndefined()
+      expect(result.current.filters).toBeUndefined()
+    })
+
+    it('surfaces the active tab from ?tab=', () => {
+      const { result } = renderHook(() => usePageContext(), {
+        wrapper: createWrapper('/algorithms?tab=support'),
+      })
+      expect(result.current.tab).toBe('support')
+      expect(result.current.filters).toBe('tab=support')
+    })
+
+    it('surfaces Protocol Matrix view/filter state alongside the tab', () => {
+      const { result } = renderHook(() => usePageContext(), {
+        wrapper: createWrapper('/algorithms?tab=support&matrixView=detailed&matrixStatus=rfc'),
+      })
+      expect(result.current.tab).toBe('support')
+      expect(result.current.filters).toBe('tab=support, matrixView=detailed, matrixStatus=rfc')
+    })
+
+    it('surfaces shared filters (family/level/status) without a tab param', () => {
+      const { result } = renderHook(() => usePageContext(), {
+        wrapper: createWrapper('/algorithms?family=Lattice&level=3'),
+      })
+      expect(result.current.tab).toBeUndefined()
+      expect(result.current.filters).toBe('family=Lattice, level=3')
+    })
+  })
+
   // ─── Suggested Questions Tests ──────────────────────────────────────────
 
   describe('suggested questions', () => {

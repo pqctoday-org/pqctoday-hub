@@ -752,6 +752,39 @@ function ProtocolCard({
 
 const RECOMMENDED_ROWS = PROTOCOL_MATRIX.filter((r) => r.recommended)
 
+const VALID_STATUS_VALUES: DimensionStatusValue[] = ['rfc', 'draft', 'experimental', 'none', 'na']
+const VALID_AVAILABILITY_FILTERS: AvailabilityFilter[] = [
+  'all',
+  'has-oss',
+  'has-commercial',
+  'has-playground',
+  'has-deployment',
+  'no-oss',
+  'no-commercial',
+  'no-deployment',
+]
+const VALID_SORT_KEYS: SortKey[] = [
+  'matrix',
+  'name',
+  'maturity',
+  'oss',
+  'commercial',
+  'deployments',
+]
+
+/** Serializes sort state to `?matrixSort=key:direction`; omitted at the default (matrix:asc). */
+function matrixSortParam(key: SortKey, direction: SortDirection): string | null {
+  if (key === 'matrix' && direction === 'asc') return null
+  return `${key}:${direction}`
+}
+
+function parseMatrixSortParam(raw: string | null): { key: SortKey; direction: SortDirection } {
+  const [rawKey, rawDir] = (raw ?? '').split(':')
+  const key = VALID_SORT_KEYS.includes(rawKey as SortKey) ? (rawKey as SortKey) : 'matrix'
+  const direction: SortDirection = rawDir === 'desc' ? 'desc' : 'asc'
+  return { key, direction }
+}
+
 export function PQCProtocolMatrix() {
   const [searchParams, setSearchParams] = useSearchParams()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
@@ -762,12 +795,36 @@ export function PQCProtocolMatrix() {
     null
   )
   const effectiveGranularity: PersonaStageGranularity = granularityOverride ?? personaGranularity
-  const [viewMode, setViewMode] = useState<ViewMode>('heatmap')
-  const [searchText, setSearchText] = useState('')
-  const [statusFilter, setStatusFilter] = useState<DimensionStatusValue[]>([])
-  const [availabilityFilter, setAvailabilityFilter] = useState<AvailabilityFilter>('all')
-  const [sortKey, setSortKey] = useState<SortKey>('matrix')
-  const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
+  // View/filter/sort state below is seeded from — and mirrored back to — the
+  // URL (?matrixView/matrixQ/matrixStatus/matrixAvailability/matrixSort) so a
+  // deep link or a refresh reproduces the exact same table. Values are
+  // validated against the known-good sets so a malformed/hallucinated link
+  // degrades to the default instead of crashing.
+  const [viewMode, setViewMode] = useState<ViewMode>(() =>
+    searchParams.get('matrixView') === 'detailed' ? 'detailed' : 'heatmap'
+  )
+  const [searchText, setSearchText] = useState(() => searchParams.get('matrixQ') ?? '')
+  const [statusFilter, setStatusFilter] = useState<DimensionStatusValue[]>(() => {
+    const raw = searchParams.get('matrixStatus')
+    if (!raw) return []
+    return raw
+      .split(',')
+      .filter((s): s is DimensionStatusValue =>
+        VALID_STATUS_VALUES.includes(s as DimensionStatusValue)
+      )
+  })
+  const [availabilityFilter, setAvailabilityFilter] = useState<AvailabilityFilter>(() => {
+    const raw = searchParams.get('matrixAvailability')
+    return raw && VALID_AVAILABILITY_FILTERS.includes(raw as AvailabilityFilter)
+      ? (raw as AvailabilityFilter)
+      : 'all'
+  })
+  const [sortKey, setSortKey] = useState<SortKey>(
+    () => parseMatrixSortParam(searchParams.get('matrixSort')).key
+  )
+  const [sortDirection, setSortDirection] = useState<SortDirection>(
+    () => parseMatrixSortParam(searchParams.get('matrixSort')).direction
+  )
   const [showStageHelp, setShowStageHelp] = useState(false)
   // ?protocol=<id> preselects that row's detail modal (powers the
   // "Related: Protocol Matrix" breadcrumb from sandbox scenarios). Resolved
@@ -780,6 +837,74 @@ export function PQCProtocolMatrix() {
   // Single-open accordion for the detailed-mode protocol cards.
   const [expandedProtocolId, setExpandedProtocolId] = useState<string | null>(null)
   const isHeatmap = viewMode === 'heatmap'
+
+  // Mirrors view/filter/sort changes to the URL in place (replace, not push —
+  // these are filters, not "opening an item"; matches the house rule used
+  // elsewhere on this page for family/fn/level/etc).
+  const updateMatrixParams = useCallback(
+    (updates: Record<string, string | null>) => {
+      setSearchParams(
+        (sp) => {
+          const next = new URLSearchParams(sp)
+          for (const [key, value] of Object.entries(updates)) {
+            if (value === null || value === '') next.delete(key)
+            else next.set(key, value)
+          }
+          return next
+        },
+        { replace: true }
+      )
+    },
+    [setSearchParams]
+  )
+
+  const handleViewModeChange = useCallback(
+    (mode: ViewMode) => {
+      setViewMode(mode)
+      updateMatrixParams({ matrixView: mode === 'heatmap' ? null : mode })
+    },
+    [updateMatrixParams]
+  )
+
+  const handleSearchTextChange = useCallback(
+    (value: string) => {
+      setSearchText(value)
+      updateMatrixParams({ matrixQ: value || null })
+    },
+    [updateMatrixParams]
+  )
+
+  const handleStatusFilterChange = useCallback(
+    (values: DimensionStatusValue[]) => {
+      setStatusFilter(values)
+      updateMatrixParams({ matrixStatus: values.length > 0 ? values.join(',') : null })
+    },
+    [updateMatrixParams]
+  )
+
+  const handleAvailabilityFilterChange = useCallback(
+    (value: AvailabilityFilter) => {
+      setAvailabilityFilter(value)
+      updateMatrixParams({ matrixAvailability: value === 'all' ? null : value })
+    },
+    [updateMatrixParams]
+  )
+
+  const handleSortKeyChange = useCallback(
+    (key: SortKey) => {
+      setSortKey(key)
+      updateMatrixParams({ matrixSort: matrixSortParam(key, sortDirection) })
+    },
+    [updateMatrixParams, sortDirection]
+  )
+
+  const handleToggleSortDirection = useCallback(() => {
+    setSortDirection((prev) => {
+      const next: SortDirection = prev === 'asc' ? 'desc' : 'asc'
+      updateMatrixParams({ matrixSort: matrixSortParam(sortKey, next) })
+      return next
+    })
+  }, [updateMatrixParams, sortKey])
 
   // Open/close the protocol detail and mirror it to ?protocol=<id> so a specific
   // protocol's detail is a shareable/bookmarkable deep link. Opening pushes a
@@ -888,6 +1013,12 @@ export function PQCProtocolMatrix() {
     setAvailabilityFilter('all')
     setSortKey('matrix')
     setSortDirection('asc')
+    updateMatrixParams({
+      matrixQ: null,
+      matrixStatus: null,
+      matrixAvailability: null,
+      matrixSort: null,
+    })
   }
 
   return (
@@ -956,7 +1087,7 @@ export function PQCProtocolMatrix() {
             <Button
               variant={isHeatmap ? 'gradient' : 'ghost'}
               size="sm"
-              onClick={() => setViewMode('heatmap')}
+              onClick={() => handleViewModeChange('heatmap')}
               className="gap-1.5"
               aria-pressed={isHeatmap}
             >
@@ -966,7 +1097,7 @@ export function PQCProtocolMatrix() {
             <Button
               variant={!isHeatmap ? 'gradient' : 'ghost'}
               size="sm"
-              onClick={() => setViewMode('detailed')}
+              onClick={() => handleViewModeChange('detailed')}
               className="gap-1.5"
               aria-pressed={!isHeatmap}
             >
@@ -1119,7 +1250,7 @@ export function PQCProtocolMatrix() {
           <Input
             type="search"
             value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
+            onChange={(e) => handleSearchTextChange(e.target.value)}
             placeholder="Search protocols…"
             className="pl-8 h-9"
             aria-label="Search protocols"
@@ -1137,7 +1268,7 @@ export function PQCProtocolMatrix() {
           selectedId=""
           onSelect={() => undefined}
           multiSelectedIds={statusFilter}
-          onMultiSelect={(ids) => setStatusFilter(ids as DimensionStatusValue[])}
+          onMultiSelect={(ids) => handleStatusFilterChange(ids as DimensionStatusValue[])}
           defaultLabel="Status"
           size="sm"
         />
@@ -1154,7 +1285,7 @@ export function PQCProtocolMatrix() {
             { id: 'no-deployment', label: 'No live deployment' },
           ]}
           selectedId={availabilityFilter}
-          onSelect={(id) => setAvailabilityFilter(id as AvailabilityFilter)}
+          onSelect={(id) => handleAvailabilityFilterChange(id as AvailabilityFilter)}
           defaultLabel="Filter"
           size="sm"
         />
@@ -1170,7 +1301,7 @@ export function PQCProtocolMatrix() {
               { id: 'deployments', label: 'Live deployments' },
             ]}
             selectedId={sortKey}
-            onSelect={(id) => setSortKey(id as SortKey)}
+            onSelect={(id) => handleSortKeyChange(id as SortKey)}
             defaultLabel="Sort"
             size="sm"
             variant="ghost"
@@ -1179,7 +1310,7 @@ export function PQCProtocolMatrix() {
             type="button"
             variant="ghost"
             size="icon"
-            onClick={() => setSortDirection((d) => (d === 'asc' ? 'desc' : 'asc'))}
+            onClick={handleToggleSortDirection}
             className="h-7 w-7"
             aria-label={`Sort ${sortDirection === 'asc' ? 'ascending' : 'descending'} — click to reverse`}
             title={`Sort ${sortDirection === 'asc' ? 'ascending' : 'descending'}`}
