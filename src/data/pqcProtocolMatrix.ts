@@ -1214,7 +1214,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       hybridSig: {
         value: 'draft',
         stage: 'rfc-editor-queue',
-        stageNote: 'IETF Last Call completed (directorate reviews Apr 2026) — now in RFC Editor queue (draft-05)',
+        stageNote:
+          'IETF Last Call completed (directorate reviews Apr 2026) — now in RFC Editor queue (draft-05)',
         note: 'Composite ML-DSA SignerInfo construction mirrors the X.509 composite-sigs row.',
         refs: [
           {
@@ -1470,7 +1471,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       pureKem: {
         value: 'draft',
         stage: 'wg-document',
-        stageNote: 'JOSE WG document, "I-D Exists" (draft-06, 2026-07-06) — not yet in WG Last Call',
+        stageNote:
+          'JOSE WG document, "I-D Exists" (draft-06, 2026-07-06) — not yet in WG Last Call',
         refs: [
           {
             kind: 'draft',
@@ -1639,7 +1641,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       hybridKem: {
         value: 'draft',
         stage: 'ietf-last-call',
-        stageNote: 'Inherited from X.509 row — draft-ietf-lamps-pq-composite-kem-17 in IETF Last Call (ends 2026-07-27)',
+        stageNote:
+          'Inherited from X.509 row — draft-ietf-lamps-pq-composite-kem-17 in IETF Last Call (ends 2026-07-27)',
         note: 'Composite enrollment uses PKCS#10 / CMP wrappers — see X.509 row for the composite KEM construction.',
         refs: [
           {
@@ -1676,7 +1679,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       hybridSig: {
         value: 'draft',
         stage: 'rfc-editor-queue',
-        stageNote: 'Inherited from X.509 row — draft-ietf-lamps-pq-composite-sigs-19 in RFC Editor queue',
+        stageNote:
+          'Inherited from X.509 row — draft-ietf-lamps-pq-composite-sigs-19 in RFC Editor queue',
         note: 'Composite-sig CSR / issuance flows wrap the X.509 composite-sigs construction — see X.509 row.',
         refs: [
           {
@@ -1775,7 +1779,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         stage: 'individual-draft',
         stageNote:
           'Individual submission (draft-bokovoy-kitten-pkinit-pqc-01, 2026-06-26) — not adopted by the KITTEN working group',
-        note: 'Core Kerberos (AS-REQ/AS-REP/TGS-REQ/TGS-REP without PKINIT) uses only symmetric long-term/session keys (RFC 3961 framework) — no KEM applies, and NIST/academic consensus treats symmetric crypto as already quantum-resistant (Grover gives only a quadratic speedup, already covered by AES-256/SHA-384+). PKINIT\'s key establishment is classical Diffie-Hellman with no PQC-safe path via existing agility mechanisms — this draft adds a new KDCKEMInfo structure carrying ML-KEM (RFC 9935 X.509 OIDs) alongside the existing DH fields. Red Hat is prototyping this under the EU-funded QARC consortium (2026–2028) against MIT krb5 + FreeIPA; no public code yet.',
+        note: "Core Kerberos (AS-REQ/AS-REP/TGS-REQ/TGS-REP without PKINIT) uses only symmetric long-term/session keys (RFC 3961 framework) — no KEM applies, and NIST/academic consensus treats symmetric crypto as already quantum-resistant (Grover gives only a quadratic speedup, already covered by AES-256/SHA-384+). PKINIT's key establishment is classical Diffie-Hellman with no PQC-safe path via existing agility mechanisms — this draft adds a new KDCKEMInfo structure carrying ML-KEM (RFC 9935 X.509 OIDs) alongside the existing DH fields. Red Hat is prototyping this under the EU-funded QARC consortium (2026–2028) against MIT krb5 + FreeIPA; no public code yet.",
         refs: [
           {
             kind: 'draft',
@@ -1830,7 +1834,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           {
             kind: 'rfc',
             id: 'RFC 9882',
-            title: 'Use of ML-DSA in CMS (PKINIT\'s PA-PK-AS-REQ/REP payloads are CMS SignedData)',
+            title: "Use of ML-DSA in CMS (PKINIT's PA-PK-AS-REQ/REP payloads are CMS SignedData)",
             url: 'https://datatracker.ietf.org/doc/html/rfc9882',
             publishedOn: '2025-10',
           },
@@ -2120,7 +2124,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     latestDraft: [
       {
         id: 'draft-ietf-ipsecme-ikev2-mlkem-09',
-        title: 'draft-ietf-ipsecme-ikev2-mlkem-09 — ML-KEM in IKEv2 (DISCUSS cleared, RFC Ed Queue)',
+        title:
+          'draft-ietf-ipsecme-ikev2-mlkem-09 — ML-KEM in IKEv2 (DISCUSS cleared, RFC Ed Queue)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-ipsecme-ikev2-mlkem/',
         date: '2026-07-05',
       },
@@ -2499,7 +2504,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       {
         id: 'TCG-PC-Client-Platform-TPM-Profile-v1.07',
-        title: 'TCG PC Client Specific Platform TPM Profile v1.07 (Published) — mandates ML-KEM + ML-DSA support',
+        title:
+          'TCG PC Client Specific Platform TPM Profile v1.07 (Published) — mandates ML-KEM + ML-DSA support',
         url: 'https://trustedcomputinggroup.org/resource/pc-client-platform-tpm-profile-ptp-specification/',
         date: '2026-03-23',
         localFile: '/library/TCG-PC-Client-Platform-TPM-Profile-v1.07.html',
@@ -2800,14 +2806,16 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           {
             kind: 'rfc',
             id: 'RFC 9881',
-            title: 'X.509 Algorithm Identifiers for ML-DSA (generically reusable, not RPKI-specific)',
+            title:
+              'X.509 Algorithm Identifiers for ML-DSA (generically reusable, not RPKI-specific)',
             url: 'https://datatracker.ietf.org/doc/html/rfc9881',
             publishedOn: '2025-10',
           },
           {
             kind: 'rfc',
             id: 'RFC 9909',
-            title: 'X.509 Algorithm Identifiers for SLH-DSA (generically reusable, not RPKI-specific)',
+            title:
+              'X.509 Algorithm Identifiers for SLH-DSA (generically reusable, not RPKI-specific)',
             url: 'https://datatracker.ietf.org/doc/html/rfc9909',
             publishedOn: '2025-12',
           },
@@ -2835,7 +2843,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     playgrounds: [],
     liveDeployments: [],
     noDeploymentReason:
-      'No RIR (RIPE NCC, ARIN, APNIC) or router vendor (Cisco, Juniper) has announced a PQC-RPKI or PQC-BGPsec pilot. The only PQC-RPKI work anywhere is a single researcher\'s (SIDN Labs) proof-of-concept patch to Routinator + Krill, published as an MSc thesis — not a production or RIR-run pilot — plus the one five-day-old individual IETF draft above. BGPsec-specific PQC work does not exist at all, consistent with BGPsec\'s own near-zero real-world deployment despite being standardized since 2017.',
+      "No RIR (RIPE NCC, ARIN, APNIC) or router vendor (Cisco, Juniper) has announced a PQC-RPKI or PQC-BGPsec pilot. The only PQC-RPKI work anywhere is a single researcher's (SIDN Labs) proof-of-concept patch to Routinator + Krill, published as an MSc thesis — not a production or RIR-run pilot — plus the one five-day-old individual IETF draft above. BGPsec-specific PQC work does not exist at all, consistent with BGPsec's own near-zero real-world deployment despite being standardized since 2017.",
     sources: [
       {
         label: 'SIDN Labs — Post-Quantum Cryptography for the RPKI',
@@ -3185,7 +3193,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       {
         id: 'RFC-9191',
-        title: 'RFC 9191 — Handling Large Certificates and Long Certificate Chains in TLS-Based EAP Methods',
+        title:
+          'RFC 9191 — Handling Large Certificates and Long Certificate Chains in TLS-Based EAP Methods',
         url: 'https://datatracker.ietf.org/doc/html/rfc9191',
         date: '2022-02',
       },
@@ -3307,7 +3316,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     latestRelease: [
       {
         id: 'UEFI-2.11',
-        title: 'UEFI Specification 2.11 (Nov 2024) — adds no PQC content; PQ readiness tracks X.509 OIDs only',
+        title:
+          'UEFI Specification 2.11 (Nov 2024) — adds no PQC content; PQ readiness tracks X.509 OIDs only',
         url: 'https://uefi.org/specifications',
         date: '2024-11',
       },
@@ -3417,7 +3427,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       pureKem: {
         value: 'rfc',
         stage: 'rfc-published',
-        stageNote: 'PKCS#11 v3.2 reached full OASIS Standard 2026-06-03; ML-KEM mechanisms (CKM_ML_KEM)',
+        stageNote:
+          'PKCS#11 v3.2 reached full OASIS Standard 2026-06-03; ML-KEM mechanisms (CKM_ML_KEM)',
         note: 'ML-KEM-512/768/1024 via CKM_ML_KEM + C_EncapsulateKey / C_DecapsulateKey.',
         deploymentPosture: 'production',
         refs: [
@@ -3529,7 +3540,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        stageNote: 'OASIS Committee Specification Draft CSD01 (2024-08-23) — ML-KEM algorithm enumerations',
+        stageNote:
+          'OASIS Committee Specification Draft CSD01 (2024-08-23) — ML-KEM algorithm enumerations',
         note: 'ML-KEM-512/768/1024 managed-object algorithm enumerations are defined in CSD01. The public draft does NOT yet define Encapsulate/Decapsulate operations — pqctoday-kmip implements them as a forward-looking extension, ahead of the OASIS spec.',
         deploymentPosture: 'pilot',
         refs: [
@@ -3548,7 +3560,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'draft',
-        stageNote: 'OASIS CSD01 (2024-08-23) — ML-DSA algorithm enumeration used by KMIP’s existing Sign / SignatureVerify operations',
+        stageNote:
+          'OASIS CSD01 (2024-08-23) — ML-DSA algorithm enumeration used by KMIP’s existing Sign / SignatureVerify operations',
         note: 'ML-DSA-44/65/87 managed objects use the pre-existing KMIP Sign / SignatureVerify operations once the ML-DSA algorithm enum value is present — CSD01 adds the enum, not new operations.',
         deploymentPosture: 'pilot',
         refs: [
