@@ -302,6 +302,9 @@ interface WasmKmipPlayground {
   audit_snapshot(limit: number): string
   clear_audit(): void
   setup_demo_ca(algorithm: string, subjectCn: string): string
+  raw_pkcs11_encrypt_probe(public_key_uid: string): string
+  register_certificate_demo(linked_public_key_uid: string, cert_der_hex: string): string
+  engine_certificate_attributes(certificate_uid: string): string
 }
 
 /** `KmipEngine.setupDemoCa`'s result. Mirrors the wasm binding's

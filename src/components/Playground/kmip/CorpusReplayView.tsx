@@ -51,7 +51,6 @@ const STATUS_LABEL: Record<TestStatus, string> = {
   SKIP_OP: 'SKIP (op not implemented)',
   SKIP_PARSE: 'SKIP (XML malformed)',
   SKIP_DEPRECATED: 'SKIP (deprecated algorithm)',
-  SKIP_POLICY_VARIANT: 'SKIP (mutually-exclusive policy)',
   SKIP_TRANSPORT: 'SKIP (native-transport-only feature)',
 }
 
