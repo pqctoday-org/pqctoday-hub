@@ -169,6 +169,9 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
       { route: '/business', ref: 'policy-generator', status: 'live' },
       { route: '/business', ref: 'program-charter', status: 'live' },
       { route: '/business', ref: 'initial-scoping', status: 'live' },
+      { route: '/business', ref: 'cost-of-inaction', status: 'live' },
+      { route: '/business', ref: 'cost-model-explorer', status: 'live' },
+      { route: '/business', ref: 'breach-simulator', status: 'live' },
     ],
     surfaces: ['/assess', '/business', '/report'],
     crosswalk: {
@@ -199,6 +202,8 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
       { route: '/migrate', ref: 'migrate-stack', status: 'live' },
       { route: '/migrate', ref: 'cbom-scanner', status: 'live' },
       { route: '/business', ref: 'management-tools-audit', status: 'partial' },
+      { route: '/business', ref: 'crypto-architecture-diagram', status: 'live' },
+      { route: '/business', ref: 'crypto-vulnerability-watch', status: 'live' },
     ],
     surfaces: ['/assess', '/migrate', '/business', '/report'],
     crosswalk: {
@@ -276,7 +281,7 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     gate: {
       id: 'G4',
       criterion: 'Multi-year roadmap approved; Year 1 plan resourced',
-      authority: 'SteerCo',
+      authority: 'Executive Sponsor',
     },
     cswp39Zones: ['migration', 'governance'],
     cswp39Steps: ['implement'],
@@ -284,6 +289,8 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
       { route: '/business', ref: 'roadmap-builder', status: 'live' },
       { route: '/timeline', ref: 'compliance-timeline', status: 'live' },
       { route: '/business', ref: 'stakeholder-comms', status: 'live' },
+      { route: '/business', ref: 'refresh-cycle-alignment', status: 'live' },
+      { route: '/business', ref: 'accelerated-execution-profile', status: 'live' },
     ],
     communicate: { route: '/report', ref: 'migration-roadmap', status: 'live' },
     surfaces: ['/business', '/timeline', '/report'],
@@ -315,6 +322,7 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
       { route: '/business', ref: 'crypto-api-refactor-audit', status: 'live' },
       { route: '/migrate', ref: 'migrate', status: 'live' },
       { route: '/migrate', ref: 'wave-data-at-rest-ai', status: 'gap' },
+      { route: '/business', ref: 'data-at-rest-strategy', status: 'live' },
     ],
     communicate: {
       route: '/report',
