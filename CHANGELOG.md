@@ -38,6 +38,7 @@ registries and refreshes the algorithm and learning-module data.
 ### Added
 
 - **A Command Lab for KMIP certificate operations** [view:/playground] [persona:developer] [persona:architect]: the KMIP 3.0 tab now runs certificate operations — Certify, Validate, and public-key verification — in the browser against a rebuilt engine, with per-operation forms, an expanded glossary, extra lessons, and knowledge checks so you can learn each command hands-on.
+- **Composite-signature algorithms in the KMIP Commands tab** [view:/playground] [persona:developer] [persona:architect]: the Commands tab now surfaces the LAMPS composite-signature algorithms so you can exercise hybrid classical+PQC signatures.
 
 ### Changed
 
@@ -52,6 +53,7 @@ registries and refreshes the algorithm and learning-module data.
 - **Fixed a compliance KPI and cleaned up certification data** [view:/compliance] [persona:executive] [persona:architect]: corrected a fine-lookup key mismatch that affected an executive KPI, fixed PQC-coverage on several certification records against their published NIST security policies, and populated product links across certification cross-reference rows.
 - **Tidied the Migrate catalog** [view:/migrate] [persona:architect] [persona:developer]: deprecated three duplicate product entries, corrected an inaccurate PQC-support claim, fixed a status label that showed non-PQC products as fully verified, and remapped catalog rows to the current category taxonomy.
 - **Recovered broken Library sources and cross-references** [view:/library] [persona:researcher] [persona:architect]: restored missing or broken source documents (including two corrected ETSI version numbers) and repointed internal cross-references, and fixed leader resource links.
+- **Re-enriched and recovered more Library documents** [view:/library] [persona:researcher] [persona:architect]: refreshed enrichment on several long documents with an improved pre-filter (e.g. ANSSI PQC SSH/IPsec guidance, APRA CPS 234, OpenSSL 3.x docs) and recovered two more cached sources with stale URLs.
 
 ### Data
 
