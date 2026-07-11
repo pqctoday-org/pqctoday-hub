@@ -283,8 +283,8 @@ GUIDELINES:
    - /leaders?leader=<name>, /leaders?sector=<Public|Private|Academic>&country=<name>, /leaders?cat=<category>, /leaders?region=<name>, /leaders?q=<text>, /leaders?view=<grid|list>
    - /compliance?tab=<standards|technical|certification|compliance>&q=<label>, /compliance?cert=<id>, /compliance?mcat=<category>, /compliance?org=<org>, /compliance?ind=<industry>, /compliance?vendor=<name>, /compliance?pqc=<true|false>, /compliance?cat=<cat>, /compliance?src=<source>, /compliance?rtab=<tab>, /compliance?evref=<evidenceId> (CSWP.39 maturity-evidence reference deep link)
    - /threats?id=<threatId>&industry=<industry>, /threats?criticality=<level>, /threats?q=<text>, /threats?sort=<field>&dir=<asc|desc>
-   - /playground/<toolId> (workshop tool — actual toolIds: interactive, hsm, docker, plus per-tool slugs), /playground?algo=<name>&tab=<tab>
-   - /playground/interactive?tab=<tab>&algo=<algo>, /playground/hsm (softhsmv3 HSM emulator workshop)
+   - /playground/<toolId> (one page per tool — 63+ native + Docker-sandbox tools; each has its own "playground-guide" context chunk with a Deep Link: field — ALWAYS use that exact toolId rather than guessing one), /playground?algo=<name>&tab=<tab>
+   - /playground/interactive?tab=<tab>&algo=<algo> (multi-tab lab), /playground/hsm (softhsmv3 HSM emulator workshop), /playground/cacp (KMIP 3.0 control plane), /playground/docker (Docker-sandbox launcher)
    - /business (GRC Command Center, CSWP.39-aligned), /business/tools (planning tools grid)
    - /business/tools/<toolId> — actual toolIds: roi-calculator, board-pitch, crqc-scenario, risk-register, risk-treatment-plan, audit-checklist, compliance-timeline, raci-builder, policy-generator, kpi-dashboard, vendor-scorecard, contract-clause, supply-chain-matrix, roadmap-builder, stakeholder-comms, kpi-tracker, deployment-playbook
    - /learn (catalog) — /learn?mode=<mypath|browse> (My Path guided journey vs Browse all modules). Track filtering only applies in Browse mode, so ALWAYS pair it: /learn?mode=browse&track=<trackName> (track names: Role Guides, Foundations, Strategy, Protocols, Hardware Infrastructure, Software Infrastructure, Applications, Executive, Industries). /learn?persona=<id> presets the persona path/lens (executive|developer|architect|researcher|ops|curious).
@@ -385,7 +385,7 @@ Use "Deep Link:" from context chunks when available. Otherwise use these pattern
 - /algorithms?tab=detailed&subtab=<performance|security|sizes|usecases>, /algorithms?tab=support&protocol=<id> (Protocol Support detail), /timeline?country=<name>, /library?ref=<id>
 - /migrate?q=<name>, /migrate?tab=<replace|plan|roadmaps|vendorrisk>, /leaders?leader=<name>, /compliance?tab=standards&q=<label>, /compliance?tab=standards&cert=<id>
 - /threats?id=<threatId>, /learn/<module-id>, /learn?mode=<mypath|browse>, /assess?step=<n> (0-based: 0=industry, 1=country, ...)
-- /playground/<toolId>, /playground/hsm, /openssl?cmd=<category>
+- /playground/<toolId> (use the toolId from a chunk's Deep Link, never guess), /playground/hsm, /playground/cacp, /playground/docker, /openssl?cmd=<category>
 - /business/tools/<toolId> (e.g. roi-calculator, board-pitch, risk-register, compliance-timeline, roadmap-builder, deployment-playbook)
 - /patents, /patents?patent=<id>, /patents?tab=insights, /patents?assignee=<name>, /patents?quantumTech=<family>, /patents?nistStatus=<status>
 Example: [ML-KEM-768](/algorithms?highlight=ml-kem-768), [RSA transition](/algorithms?tab=transition&highlight=rsa), [NIST IR 8547](/library?ref=NIST-IR-8547)
