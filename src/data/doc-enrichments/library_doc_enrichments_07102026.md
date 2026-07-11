@@ -1,31 +1,31 @@
 ---
 generated: 2026-07-10
 collection: library
-documents_processed: 5
+documents_processed: 2
 enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 ---
 
-## ISO-IEC-27001-2022
+## APRA-CPS-234
 
-- **Reference ID**: ISO-IEC-27001-2022
-- **Title**: ISO/IEC 27001:2022 — Information Security Management Systems — Requirements
-- **Authors**: ISO/IEC
-- **Publication Date**: 2022-10-25
-- **Last Updated**: 2022-10-25
-- **Document Status**: International Standard
-- **Main Topic**: International standard specifying requirements for establishing, implementing, maintaining and continually improving an information security management system (ISMS).
+- **Reference ID**: APRA-CPS-234
+- **Title**: APRA Prudential Standard CPS 234 Information Security
+- **Authors**: APRA; Australian Prudential Regulation Authority
+- **Publication Date**: 2019-07-01
+- **Last Updated**: 2023-04-01
+- **Document Status**: Published
+- **Main Topic**: APRA Prudential Standard CPS 234 mandates information security capabilities, board accountability, and incident notification for regulated Australian financial entities.
 - **PQC Algorithms Covered**: None detected
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: None detected
+- **Applicable Regions / Bodies**: Regions: Australia; Bodies: APRA
 - **Leaders Contributions Mentioned**: None detected
 - **PQC Products Mentioned**: None detected
 - **Protocols Covered**: None detected
 - **Infrastructure Layers**: None detected
-- **Standardization Bodies**: ISO
-- **Compliance Frameworks Referenced**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: Prudential Standard CPS 234; Prudential Standard CPS 231 Outsourcing; Prudential Standard SPS 231 Outsourcing; Prudential Standard CPS 232 Business Continuity Management; Prudential Standard SPS 232 Business Continuity Management
 - **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: ISO/IEC 27001:2022 serves as the governance anchor for accepting residual risk; The standard supports operating standing security capabilities after a PQC migration; The document specifies requirements for establishing and maintaining an ISMS
+- **Key Takeaways**: Boards are ultimately responsible for maintaining information security; Entities must implement controls commensurate with asset criticality and sensitivity; Material information security incidents must be notified to APRA within 10 business days; Third-party managed assets are subject to these requirements from contract renewal or 1 July 2020
 - **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: None detected
 - **Pure PQC KEM Support**: Not Applicable
@@ -40,9 +40,64 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **PQC Heatmap Protocols Evidence**: None detected
 - **Lifecycle State**: Released
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: Compliance Officer; CISO
+- **Target Audience**: Compliance Officer; CISO; Security Architect
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: pqc-governance; compliance-strategy; migration-program
+- **Relevant PQC Today Features**: Compliance; pqc-governance; data-asset-sensitivity; vendor-risk
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: systematic testing and assurance regarding the effectiveness of those controls
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: evaluate the design of that party’s information security controls that protects the information assets
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Board is ultimately responsible for ensuring that the entity maintains its information security
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: APRA-CPS-234.pdf (274,706 bytes, 10,202 extracted chars)
+- **Extraction Timestamp**: 2026-07-10T21:52:50
+
+---
+
+## OpenSSL-3x-Docs
+
+- **Reference ID**: OpenSSL-3x-Docs
+- **Title**: OpenSSL 3.x Documentation
+- **Authors**: OpenSSL Project
+- **Publication Date**: 2021-09-07
+- **Last Updated**: 2026-01-27
+- **Document Status**: Current
+- **Main Topic**: Official documentation for the OpenSSL 3.x series, including references to libraries, commands, and FIPS validation.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: OpenSSL
+- **Protocols Covered**: TLS; QUIC
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: FIPS 140-2
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: OpenSSL 3.5.0 introduced native support for ML-KEM, ML-DSA, and SLH-DSA without requiring the OQS provider; OpenSSL 3.6.1 is the current stable release as of January 2026; The documentation provides guides for writing TLS and QUIC clients and servers; FIPS 140-2 validation information is available within the documentation.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Algorithms; OpenSSL Studio
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -54,9 +109,9 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Math Family**: None detected
-- **PQC Round**: Not Applicable
-- **Source Document**: ISO-IEC-27001-2022.html (6,121 bytes, 237 extracted chars)
-- **Extraction Timestamp**: 2026-07-10T21:51:17
+- **PQC Round**: Standardised
+- **Source Document**: OpenSSL-3x-Docs.html (21,365 bytes, 1,303 extracted chars)
+- **Extraction Timestamp**: 2026-07-10T21:52:51
 
 ---
 
@@ -1136,60 +1191,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Organizational Readiness**: None detected
 - **Math Family**: Lattice
 - **PQC Round**: Standardised
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## APRA-CPS-234
-
-- **Reference ID**: APRA-CPS-234
-- **Title**: APRA Prudential Standard CPS 234 Information Security
-- **Authors**: APRA; Australian Prudential Regulation Authority
-- **Publication Date**: 2019-07-01
-- **Last Updated**: 2023-04-01
-- **Document Status**: Published
-- **Main Topic**: APRA Prudential Standard CPS 234 mandates information security capabilities, board accountability, and control implementation for regulated Australian financial entities.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: Australia; Bodies: APRA
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: Prudential Standard CPS 234
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Boards are ultimately responsible for maintaining information security commensurate with threats; Entities must implement controls based on asset criticality and sensitivity; Third-party information security capabilities must be assessed; Entities must test control effectiveness systematically and report deficiencies to the Board
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: Not Applicable
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Not Applicable
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: Not Applicable
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: Not Applicable
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: CISO; Compliance Officer; Security Architect
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Compliance; pqc-governance; data-asset-sensitivity; vendor-risk
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: Systematic testing program; annual review and test of response plans
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: Assess information security capability of related parties or third parties; evaluate design of third-party controls
-- **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: Board ultimately responsible; define roles for senior management and governing bodies; maintain policy framework
-- **Math Family**: None detected
-- **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
@@ -17232,6 +17233,60 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
+## ISO-IEC-27001-2022
+
+- **Reference ID**: ISO-IEC-27001-2022
+- **Title**: ISO/IEC 27001:2022 — Information Security Management Systems — Requirements
+- **Authors**: ISO/IEC
+- **Publication Date**: 2022-10-25
+- **Last Updated**: 2022-10-25
+- **Document Status**: International Standard
+- **Main Topic**: International standard specifying requirements for establishing, implementing, maintaining and continually improving an information security management system (ISMS).
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: ISO
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: ISO/IEC 27001:2022 serves as the governance anchor for accepting residual risk; The standard supports operating standing security capabilities after a PQC migration; The document specifies requirements for establishing and maintaining an ISMS
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer; CISO
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: pqc-governance; compliance-strategy; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
 ## ISO/IEC 14888-4:2024
 
 - **Reference ID**: ISO/IEC 14888-4:2024
@@ -24572,60 +24627,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Organizational Readiness**: None detected
 - **Math Family**: Lattice; Hash-based
 - **PQC Round**: Standardised
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## OpenSSL-3x-Docs
-
-- **Reference ID**: OpenSSL-3x-Docs
-- **Title**: OpenSSL 3.x Documentation
-- **Authors**: OpenSSL Project
-- **Publication Date**: 2021-09-07
-- **Last Updated**: 2021-09-07
-- **Document Status**: Current
-- **Main Topic**: Official documentation for OpenSSL 3.x series, covering the FIPS provider module, EVP API, command-line tools, and configuration options. The FIPS provider in OpenSSL 3.x enables FIPS 140-3 compliant operation. While OpenSSL 3.x currently focuses on traditional algorithms, the OQS-OpenSSL fork extends it with PQC algorithm support using liboqs, and future OpenSSL versions are expected to incorporate NIST-standardized PQC algorithms natively.
-- **PQC Algorithms Covered**: None detected (OQS fork adds ML-KEM, ML-DSA via liboqs)
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: Global; Bodies: OpenSSL Project, Linux Foundation
-- **Leaders Contributions Mentioned**: OpenSSL project contributors
-- **PQC Products Mentioned**: OQS-OpenSSL fork, liboqs
-- **Protocols Covered**: TLS, DTLS, PKI, X.509
-- **Infrastructure Layers**: Cryptographic Libraries, Web Servers, Developer Tools
-- **Standardization Bodies**: NIST (FIPS provider), IETF
-- **Compliance Frameworks Referenced**: FIPS 140-3
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: None detected
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: None detected
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: None detected
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: None detected
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
