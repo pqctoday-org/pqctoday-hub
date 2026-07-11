@@ -29,9 +29,16 @@ export function Pkcs11BypassDemo({ engine }: { engine: KmipEngine }) {
     setProbe(null)
     try {
       const created = engine.runOp({ op: 'CreateKeyPair', algorithm: 'RSA', length: 2048 })
-      const uid = str(created.summary.publicKeyUid)
+      const uid = str(created.summary?.publicKeyUid)
       if (!created.ok || !uid) {
-        setError(created.message || 'CreateKeyPair failed')
+        // The most common cause is a non-permissive policy active above (CNSA
+        // 2.0 / FIPS-only / a PQC-only profile) that forbids creating an RSA
+        // key at all — this demo needs one. Surface the engine's own reason.
+        setError(
+          created.message
+            ? `Couldn't create the RSA key: ${created.message}. This demo needs an RSA key — switch the active policy to one that permits RSA (e.g. Classical or the built-in permissive policy).`
+            : 'CreateKeyPair failed',
+        )
         setStep('error')
         return
       }
