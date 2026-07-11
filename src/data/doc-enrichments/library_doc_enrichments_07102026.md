@@ -1,118 +1,8 @@
 ---
 generated: 2026-07-10
 collection: library
-documents_processed: 2
+documents_processed: 1
 enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
----
-
-## ANSSI-PQC-SSH-Transition-v2
-
-- **Reference ID**: ANSSI-PQC-SSH-Transition-v2
-- **Title**: Post-Quantum Transition of SSHv2 (ANSSI-FT-116)
-- **Authors**: ANSSI
-- **Publication Date**: 2026-02-02
-- **Last Updated**: 2026-02-02
-- **Document Status**: Published
-- **Main Topic**: ANSSI technical fact sheet recommending hybrid key exchange and signature authentication for the post-quantum transition of SSHv2.
-- **PQC Algorithms Covered**: ML-KEM; NTRU Prime
-- **Quantum Threats Addressed**: Harvest-Now-Decrypt-Later
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Bodies: ANSSI
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: OpenSSH
-- **Protocols Covered**: SSHv2
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: IETF
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: Diffie-Hellman; X25519; SHA-512
-- **Key Takeaways**: Hybrid key exchange combining classical and post-quantum mechanisms is recommended for SSHv2; OpenSSH 9.9+ implements hybrid key exchanges using NTRU Prime and ML-KEM; Hybrid signature authentication requires hybrid certificates, for which no official standards currently exist; Post-quantum mechanisms increase message sizes, requiring protocols to handle fragmentation; Pre-shared key mechanisms are not available in SSHv2 for post-quantum transition.
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: Hybrid key exchange; Hybrid signature authentication; Hybrid certificates
-- **Pure PQC KEM Support**: No
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Yes
-- **Hybrid PQC KEM Evidence**: "hybrid key exchange combining a classical scheme (X25519 / sntrup761) with ML-KEM"
-- **Pure PQC Signature Support**: No
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: Yes
-- **Hybrid PQC Signature Evidence**: "Hybridation de l'authentification par signature" (§3.2.2)
-- **PQC Heatmap Protocols Covered**: SSH
-- **PQC Heatmap Protocols Evidence**: SSH: "Transition Post-Quantique de SSHv2"
-- **Lifecycle State**: Released
-- **Performance & Size Considerations**: Increase in message sizes during key exchange and authentication phases; requires handling of message fragmentation
-- **Target Audience**: Developer; Administrator; CISO; DSI; User
-- **Implementation Prerequisites**: OpenSSH 9.9+ for hybrid key exchange support; validation by system administrator
-- **Relevant PQC Today Features**: vpn-ssh-pqc; hybrid-crypto; migration-program
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: Lattice
-- **PQC Round**: Standardised
-- **Source Document**: ANSSI-PQC-SSH-Transition-v2.pdf (1,448,272 bytes, 12,645 extracted chars)
-- **Extraction Timestamp**: 2026-07-10T21:20:42
-
----
-
-## ANSSI-PQC-IPsec-Transition
-
-- **Reference ID**: ANSSI-PQC-IPsec-Transition
-- **Title**: Post-Quantum Transition of IPsec / IKEv2 (ANSSI-FT-117)
-- **Authors**: ANSSI
-- **Publication Date**: 2026-02-02
-- **Last Updated**: 2026-02-02
-- **Document Status**: Published
-- **Main Topic**: ANSSI technical fact sheet recommending hybrid key exchange and signature authentication for the post-quantum transition of IPsec/IKEv2.
-- **PQC Algorithms Covered**: ML-KEM
-- **Quantum Threats Addressed**: Quantum threat; attacks on classical asymmetric cryptography
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: France; ANSSI
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: strongSwan
-- **Protocols Covered**: IPsec; IKEv2; UDP
-- **Infrastructure Layers**: PKI; Certificate chains
-- **Standardization Bodies**: IETF; NIST
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: Diffie-Hellman; DH
-- **Key Takeaways**: Hybridization of key exchange and authentication is recommended during the transition; ML-KEM is specified for hybrid key exchange in IKEv2; Message fragmentation (RFC 7383) is required due to increased PQC message sizes; Hybrid signature authentication lacks official standards and requires further work; strongSwan 6.0 implements hybrid key exchange with ML-KEM
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: Hybrid key exchange; Hybrid signature authentication; Hybrid certificates; Pre-shared key mixing (RFC 8784)
-- **Pure PQC KEM Support**: No
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Yes
-- **Hybrid PQC KEM Evidence**: "hybrid key exchange with ML-KEM in the Internet Key Exchange Protocol Version 2" (§3.2.1)
-- **Pure PQC Signature Support**: No
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: Yes
-- **Hybrid PQC Signature Evidence**: "Hybridation de l’authentification par signature" (§3.2.2)
-- **PQC Heatmap Protocols Covered**: IKE/IPsec
-- **PQC Heatmap Protocols Evidence**: IKE/IPsec: "Transition Post-Quantique d’IPsec" (Title)
-- **Lifecycle State**: Released
-- **Performance & Size Considerations**: Increased message sizes for key exchange and authentication; Large public keys and ciphertexts; Large signature sizes
-- **Target Audience**: Developer; Administrator; CISO; CIO; User
-- **Implementation Prerequisites**: IKEv2 message fragmentation support (RFC 7383); strongSwan 6.0+ for hybrid key exchange implementation
-- **Relevant PQC Today Features**: vpn-ssh-pqc; hybrid-crypto; migration-program; pqc-risk-management
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: Message fragmentation required; Lack of standards for hybrid signature authentication increases complexity
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: Lattice
-- **PQC Round**: Standardised
-- **Source Document**: ANSSI-PQC-IPsec-Transition.pdf (1,480,897 bytes, 12,463 extracted chars)
-- **Extraction Timestamp**: 2026-07-10T21:20:43
-
 ---
 
 ## 1775309727973
@@ -979,6 +869,60 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
+## ANSSI-PQC-IPsec-Transition
+
+- **Reference ID**: ANSSI-PQC-IPsec-Transition
+- **Title**: Post-Quantum Transition of IPsec / IKEv2 (ANSSI-FT-117)
+- **Authors**: ANSSI
+- **Publication Date**: 2026-02-02
+- **Last Updated**: 2026-02-02
+- **Document Status**: Published
+- **Main Topic**: ANSSI technical fact sheet recommending hybrid key exchange and signature authentication for the post-quantum transition of IPsec/IKEv2.
+- **PQC Algorithms Covered**: ML-KEM
+- **Quantum Threats Addressed**: Quantum threat; attacks on classical asymmetric cryptography
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: France; ANSSI
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: strongSwan
+- **Protocols Covered**: IPsec; IKEv2; UDP
+- **Infrastructure Layers**: PKI; Certificate chains
+- **Standardization Bodies**: IETF; NIST
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: Diffie-Hellman; DH
+- **Key Takeaways**: Hybridization of key exchange and authentication is recommended during the transition; ML-KEM is specified for hybrid key exchange in IKEv2; Message fragmentation (RFC 7383) is required due to increased PQC message sizes; Hybrid signature authentication lacks official standards and requires further work; strongSwan 6.0 implements hybrid key exchange with ML-KEM
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Hybrid key exchange; Hybrid signature authentication; Hybrid certificates; Pre-shared key mixing (RFC 8784)
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: "hybrid key exchange with ML-KEM in the Internet Key Exchange Protocol Version 2" (§3.2.1)
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Yes
+- **Hybrid PQC Signature Evidence**: "Hybridation de l’authentification par signature" (§3.2.2)
+- **PQC Heatmap Protocols Covered**: IKE/IPsec
+- **PQC Heatmap Protocols Evidence**: IKE/IPsec: "Transition Post-Quantique d’IPsec" (Title)
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: Increased message sizes for key exchange and authentication; Large public keys and ciphertexts; Large signature sizes
+- **Target Audience**: Developer; Administrator; CISO; CIO; User
+- **Implementation Prerequisites**: IKEv2 message fragmentation support (RFC 7383); strongSwan 6.0+ for hybrid key exchange implementation
+- **Relevant PQC Today Features**: vpn-ssh-pqc; hybrid-crypto; migration-program; pqc-risk-management
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Message fragmentation required; Lack of standards for hybrid signature authentication increases complexity
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Validation by system administrator and security personnel required
+- **Math Family**: Lattice
+- **PQC Round**: Standardised
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
 ## ANSSI-PQC-Position-2022
 
 - **Reference ID**: ANSSI-PQC-Position-2022
@@ -1029,6 +973,60 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Organizational Readiness**: None detected
 - **Math Family**: None detected
 - **PQC Round**: None detected
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## ANSSI-PQC-SSH-Transition-v2
+
+- **Reference ID**: ANSSI-PQC-SSH-Transition-v2
+- **Title**: Post-Quantum Transition of SSHv2 (ANSSI-FT-116)
+- **Authors**: ANSSI
+- **Publication Date**: 2026-02-02
+- **Last Updated**: 2026-02-02
+- **Document Status**: Published
+- **Main Topic**: ANSSI technical fact sheet recommending hybrid key exchange and signature authentication for the post-quantum transition of SSHv2.
+- **PQC Algorithms Covered**: ML-KEM; NTRU Prime
+- **Quantum Threats Addressed**: Harvest-Now-Decrypt-Later
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Bodies: ANSSI
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: OpenSSH
+- **Protocols Covered**: SSHv2
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: IETF
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: Diffie-Hellman; X25519; SHA-512
+- **Key Takeaways**: Hybrid key exchange combining classical and post-quantum mechanisms is recommended for SSHv2; OpenSSH 9.9+ implements hybrid key exchanges using NTRU Prime and ML-KEM; Hybrid signature authentication requires hybrid certificates, for which no official standards currently exist; Post-quantum mechanisms increase message sizes, requiring protocols to handle fragmentation; Pre-shared key mechanisms are not available in SSHv2 for post-quantum transition.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Hybrid key exchange; Hybrid signature authentication; Hybrid certificates
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: "hybrid key exchange combining a classical scheme (X25519 / sntrup761) with ML-KEM"
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Yes
+- **Hybrid PQC Signature Evidence**: "Hybridation de l'authentification par signature" (§3.2.2)
+- **PQC Heatmap Protocols Covered**: SSH
+- **PQC Heatmap Protocols Evidence**: SSH: "Transition Post-Quantique de SSHv2"
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: Increase in message sizes during key exchange and authentication phases; requires handling of message fragmentation
+- **Target Audience**: Developer; Administrator; CISO; DSI; User
+- **Implementation Prerequisites**: OpenSSH 9.9+ for hybrid key exchange support; validation by system administrator
+- **Relevant PQC Today Features**: vpn-ssh-pqc; hybrid-crypto; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Hybridization requires modification of multiple SSH messages; significant bandwidth overhead due to larger PQC keys/signatures
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
