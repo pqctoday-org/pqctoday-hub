@@ -42,6 +42,7 @@ import {
   type PolicyModel,
   type Disposition,
 } from './policyModel'
+import { Pkcs11BypassDemo } from './Pkcs11BypassDemo'
 import { PolicyRulesDisplay, PolicyRulesLegend } from './PolicyRulesDisplay'
 import { PolicyTimeline } from './PolicyTimeline'
 import { PolicyGraphView } from './visual/PolicyGraphView'
@@ -751,6 +752,8 @@ export function PolicyView({
                 <PolicyRulesDisplay rules={activeModel?.rules ?? []} />
               </div>
             </section>
+
+            <Pkcs11BypassDemo engine={engine} />
           </>
         )}
 

@@ -61,6 +61,18 @@ export interface LoadPolicyResult {
   error?: string
 }
 
+/** Result of {@link KmipEngine.rawPkcs11EncryptProbe} — a raw, KMIP/CACP-bypassing
+ * PKCS#11 Encrypt attempt against a KMIP-created key's own engine object. */
+export interface RawPkcs11EncryptProbeResult {
+  blocked: boolean
+  mechanism: string
+  message: string
+  rv?: string
+  rvName?: string
+  ciphertextLen?: number
+  error?: string
+}
+
 export interface KmipObject {
   uid: string
   objectType: string
@@ -270,6 +282,7 @@ interface WasmKmipPlayground {
   list_objects(): string
   audit_snapshot(limit: number): string
   clear_audit(): void
+  raw_pkcs11_encrypt_probe(publicKeyUid: string): string
 }
 
 /** The server's §6.1.55 RNG Seed policy choice — server-chosen and mutually
@@ -351,6 +364,18 @@ export class KmipEngine {
 
   clearAudit(): void {
     this.pg.clear_audit()
+  }
+
+  /** WP-4 showcase — bypass the KMIP dispatcher and CACP policy plane
+   * entirely, calling straight into the engine's native PKCS#11 Encrypt
+   * path against `publicKeyUid`'s own engine object with `CKM_RSA_PKCS_OAEP`.
+   * Demonstrates that PKCS#11 v3.2 §4.8 Table 13 (`CKA_ALLOWED_MECHANISMS`)
+   * — derived from the key's `CryptographicUsageMask` at `CreateKeyPair`
+   * time — is enforced by the engine itself, not just by KMIP/CACP policy,
+   * which this call never touches. Only meaningful against an RSA public
+   * key; other algorithms/object types return an `error`. */
+  rawPkcs11EncryptProbe(publicKeyUid: string): RawPkcs11EncryptProbeResult {
+    return JSON.parse(this.pg.raw_pkcs11_encrypt_probe(publicKeyUid)) as RawPkcs11EncryptProbeResult
   }
 
   /** Decode any KMIP TTLV frame (request or response) to a wire-view tree. */
