@@ -12,6 +12,7 @@ import {
   getSoftHSMRustModule,
   createLoggingProxy,
   hsm_initialize,
+  hsm_finalize,
   hsm_getFirstSlot,
   hsm_initToken,
   hsm_openUserSession,
@@ -83,11 +84,19 @@ export const TokenSetupPanel = () => {
         const engineLabel = engineMode === 'rust' ? 'rust' : 'cpp'
         const proxy = createLoggingProxy(M, addHsmLog, engineLabel)
         moduleRef.current = proxy
+        // The underlying WASM engine is a page-lifetime singleton (especially the
+        // Rust wasm-bindgen module — a dynamic import() always returns the same
+        // already-running instance). Re-entering this panel after a prior session
+        // (e.g. navigating away and back) leaves C_Initialize already called, so a
+        // bare hsm_initialize() throws CKR_CRYPTOKI_ALREADY_INITIALIZED forever.
+        // Finalize first, best-effort, exactly like HsmContext's autoInit() does.
+        hsm_finalize(proxy, hSessionRef.current)
         hsm_initialize(proxy)
 
         if (checkM) {
           const checkProxy = createLoggingProxy(checkM, addHsmLog, 'rust')
           crossCheckModuleRef.current = checkProxy
+          hsm_finalize(checkProxy, hSessionRef.current)
           hsm_initialize(checkProxy)
         }
 
