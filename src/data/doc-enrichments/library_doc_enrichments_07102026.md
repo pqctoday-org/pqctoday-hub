@@ -1,63 +1,8 @@
 ---
 generated: 2026-07-10
 collection: library
-documents_processed: 5
+documents_processed: 2
 enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
----
-
-## PKCS11-V32-OS-OASIS
-
-- **Reference ID**: PKCS11-V32-OS-OASIS
-- **Title**: PKCS #11 Specification Version 3.2 (OASIS Standard)
-- **Authors**: OASIS PKCS11 Technical Committee
-- **Publication Date**: 2026-06-03
-- **Last Updated**: 2026-06-03
-- **Document Status**: OASIS Standard
-- **Main Topic**: PKCS #11 Specification Version 3.2 defines the Cryptoki interface data types, functions, and mechanisms, including post-quantum algorithms ML-KEM, ML-DSA, and SLH-DSA.
-- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: None detected
-- **Leaders Contributions Mentioned**: Valerie Fenwick (TC Chair); Robert Relyea (TC Chair); Dieter Bong (Editor); Greg Scott (Editor); Tony Cox (Editor of v3.1); Tim Hudson (Editor of Profiles)
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: HSM; Key Management
-- **Standardization Bodies**: OASIS
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: RSA; DSA; ECDSA; EdDSA; XEdDSA; Diffie-Hellman; AES; SHA-1
-- **Key Takeaways**: PKCS #11 v3.2 is finalized as an OASIS Standard with no substantive changes from the prior Committee Specification Draft; The specification adds explicit mechanisms for ML-KEM, ML-DSA, and SLH-DSA to the Cryptoki interface; Machine-readable header files (pkcs11.h, pkcs11f.h, pkcs11t.h) are provided as normative artifacts; The document supersedes PKCS #11 Specification Version 3.1; Key words like MUST and SHALL are interpreted per BCP 14.
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: Yes
-- **Pure PQC KEM Evidence**: "CKM_ML_KEM 0x00000017"
-- **Hybrid PQC KEM Support**: No
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: Yes
-- **Pure PQC Signature Evidence**: "CKM_ML_DSA 0x0000001d"
-- **Hybrid PQC Signature Support**: No
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Developer; Security Architect
-- **Implementation Prerequisites**: C or C++ compiler; pkcs11.h header file
-- **Relevant PQC Today Features**: Algorithms; hsm-pqc; kms-pqc; crypto-agility
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: Lattice; Hash-based
-- **PQC Round**: Standardised
-- **Source Document**: PKCS11-V32-OS-OASIS.html (18,943,965 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-07-10T20:25:20
-
 ---
 
 ## 1775309727973
@@ -24896,6 +24841,60 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Organizational Readiness**: None detected
 - **Math Family**: Lattice; Hash-based
 - **PQC Round**: Draft
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## PKCS11-V32-OS-OASIS
+
+- **Reference ID**: PKCS11-V32-OS-OASIS
+- **Title**: PKCS #11 Specification Version 3.2 (OASIS Standard)
+- **Authors**: OASIS PKCS11 Technical Committee
+- **Publication Date**: 2026-06-03
+- **Last Updated**: 2026-06-03
+- **Document Status**: OASIS Standard
+- **Main Topic**: PKCS #11 Specification Version 3.2 defines the Cryptoki interface data types, functions, and mechanisms, including post-quantum algorithms ML-KEM, ML-DSA, and SLH-DSA.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Valerie Fenwick (TC Chair); Robert Relyea (TC Chair); Dieter Bong (Editor); Greg Scott (Editor); Tony Cox (Editor of v3.1); Tim Hudson (Editor of Profiles)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: HSM; Key Management
+- **Standardization Bodies**: OASIS
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA; DSA; ECDSA; EdDSA; XEdDSA; Diffie-Hellman; AES; SHA-1
+- **Key Takeaways**: PKCS #11 v3.2 is finalized as an OASIS Standard with no substantive changes from the prior Committee Specification Draft; The specification adds explicit mechanisms for ML-KEM, ML-DSA, and SLH-DSA to the Cryptoki interface; Machine-readable header files (pkcs11.h, pkcs11f.h, pkcs11t.h) are provided as normative artifacts; The document supersedes PKCS #11 Specification Version 3.1; Key words like MUST and SHALL are interpreted per BCP 14.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Yes
+- **Pure PQC KEM Evidence**: "CKM_ML_KEM 0x00000017"
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "CKM_ML_DSA 0x0000001d"
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: C or C++ compiler; pkcs11.h header file
+- **Relevant PQC Today Features**: Algorithms; hsm-pqc; kms-pqc; crypto-agility
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice; Hash-based
+- **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
