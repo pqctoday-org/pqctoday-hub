@@ -9,9 +9,9 @@
       "sourceDirs": ["kmip", "wasm"],
       "track": "tip",
       "status": "built",
-      "hsmCommit": "8829dceb1bf3a50e5d0780e31868418a9b12a937",
-      "builtAt": "2026-07-06",
-      "_buildNote": "FrodoKEM (6 variants) + Classic McEliece-6688128 (BSI TR-02102-1), fully wired end to end: engine, KMIP ops, raw PKCS#11 C-ABI, and the hub's own algorithm picker/TTLV encoder (alg_from_name bare-name fallback, kmipMeta.ts RUNNABLE_EXACT, codepointTable.ts CryptographicAlgorithm patches). Also required bumping build-kmip-wasm.sh's wasm32 stack size to 8MiB: FrodoKEM-1344's matrix generation overflowed the ~1MiB default even in --release. hsmCommit is pqctoday-hsm PR #131's merge commit on main (built from the branch tip just before merge; PR #131 also fixed a native test-thread stack overflow and a PKCS#11 constants-gate gap — neither touches this bundle's compiled output)."
+      "hsmCommit": "5e08aa980bc7f495ba54890feeda129cd22e795f",
+      "builtAt": "2026-07-11",
+      "_buildNote": "Prior rebuilds (2026-07-10/11, merged via hub #410/#411/#412, hsm #139/#140): corrected a stale manifest entry, picked up CKA_ALLOWED_MECHANISMS/CKO_CERTIFICATE engine-side support, fixed the wasm32 compile break in Register/Import's certificate projection, and added the WP-4 raw_pkcs11_encrypt_probe showcase export. This rebuild (hub #413, merged) adds the WP-3 showcase (`Pkcs11CertificateDemo.tsx`): a real fix (Register(Certificate) with a PublicKeyLink now reuses that key's own CKA_ID instead of minting a fresh one, matching the native Certify path — hsm #141, merged; `hsmCommit` above is that PR's squash-merge commit on hsm main) plus two wasm exports, `register_certificate_demo` and `engine_certificate_attributes`. Verified: native `cargo test -p pqctoday-kmip` (593 passed), wasm32 build + smoke test, and a standalone node script + a real-browser Playwright pass confirming a genuine Register → engine-projection → real CKA_SUBJECT/CKA_ISSUER/CKA_SERIAL_NUMBER/CKA_VALUE readback (not simulated)."
     },
     {
       "name": "softhsmrustv3-engine",
@@ -20,9 +20,9 @@
       "sourceDirs": ["rust"],
       "track": "tip",
       "status": "built",
-      "hsmCommit": "8829dceb1bf3a50e5d0780e31868418a9b12a937",
-      "builtAt": "2026-07-06",
-      "_buildNote": "Rebuilt to pick up FrodoKEM/Classic McEliece-6688128 on the raw PKCS#11 C-ABI (C_GenerateKeyPair/C_EncapsulateKey/C_DecapsulateKey) plus a large amount of accumulated PKCS#11 v3.2 surface added since the last build (2026-06-27, e912488): C_GetInterface/C_GetInterfaceList, C_LoginUser, C_SetPIN, C_SessionCancel, message-based sign/verify, and more — this bundle had drifted well behind the engine. Still built with --features acvp (required since 2026-06-27: C_Initialize rejects non-null pReserved without it, breaking ACVP KAT seeding)."
+      "hsmCommit": "5303bd3b6c278077c28cbc2e174a6771fc3c2f94",
+      "builtAt": "2026-07-11",
+      "_buildNote": "Prior rebuild (2026-07-10, merged via hub #410): 10 commits behind, picked up Split Key + HSS/LMS + v0.13.0/PKCS#11-v3.2 gap-remediation fixes. This rebuild (WP-6, hsm #142, merged; hub #415, merged) fixes a genuine wasm32 shadow-stack overflow: CKM_PQCTODAY_FRODOKEM_ENCAPSULATE / CKM_PQCTODAY_CLASSIC_MCELIECE_ENCAPSULATE (BSI TR-02102-1 §2.4.1/§2.4.2) trapped with 'memory access out of bounds' in the raw PKCS#11 C-ABI (used by the hub's HsmKemPanel, distinct from the KMIP-side native:: API which already worked) — Classic McEliece's 1MB+ public key exceeds wasm's default 1MB shadow stack even in --release. Fixed by bumping build-wasm-bundle.sh's linker stack-size to 8MB for every profile. No new exported functions — same API surface, hence no .js/.d.ts diff, only the .wasm binary changed. Verified live in a browser: FrodoKEM-1344 and Classic-McEliece-6688128 both now genuinely complete CreateKeyPair → Encapsulate → Decapsulate with matching shared secrets through the raw C-ABI. `hsmCommit` above is #142's squash-merge commit on hsm main."
     },
     {
       "name": "softhsm-cpp-engine",
@@ -42,8 +42,9 @@
       "sourceDirs": ["openssh-pkcs11"],
       "track": "tip",
       "status": "built",
-      "hsmCommit": "07cd2e0e1154508d0658beb5e804de93f1f46660",
-      "builtAt": "2026-06-27"
+      "hsmCommit": "1c637d3a3916b08fe59445120d93f26dfd79d639",
+      "builtAt": "2026-07-10",
+      "_buildNote": "Re-stamped, not rebuilt: verified `git log 07cd2e0e1..1c637d3 -- openssh-pkcs11/` touches only CHANGELOG.md and STATUS.md (2 doc-only commits, zero source/behavior change). No emsdk/Emscripten toolchain is installed on this machine, so an actual rebuild wasn't attempted or needed — the existing binary is bit-for-bit what v0.14.0's source would produce."
     },
     {
       "name": "strongswan",
@@ -52,8 +53,9 @@
       "sourceDirs": ["strongswan-wasm-shims", "strongswan-wasm-v2-shims"],
       "track": "tip",
       "status": "built",
-      "hsmCommit": "8e436210c521033d3bc04bded5339208a59c7ead",
-      "builtAt": "2026-06-12"
+      "hsmCommit": "1c637d3a3916b08fe59445120d93f26dfd79d639",
+      "builtAt": "2026-07-10",
+      "_buildNote": "Re-stamped, not rebuilt: verified `git log 8e436210c..1c637d3 -- strongswan-wasm-shims/ strongswan-wasm-v2-shims/` touches only STATUS.md and README.md (1 doc-only commit, zero source/behavior change). No emsdk/Emscripten toolchain is installed on this machine, so an actual rebuild wasn't attempted or needed — the existing binary is bit-for-bit what v0.14.0's source would produce."
     }
   ]
 }

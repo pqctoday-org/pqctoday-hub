@@ -6,6 +6,7 @@
 // pass/fail in this harness (not a workaround for a bug) — see the
 // per-table comments for the spec/policy citation.
 import type { KmipNode } from '../ttlv/nodes'
+import type { RngSeedMode } from '../kmipEngine'
 
 export type SkipReason = {
   status: 'SKIP_DEPRECATED' | 'SKIP_POLICY_VARIANT' | 'SKIP_OP' | 'SKIP_TRANSPORT'

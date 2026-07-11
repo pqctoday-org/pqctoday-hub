@@ -61,6 +61,37 @@ export interface LoadPolicyResult {
   error?: string
 }
 
+/** Result of {@link KmipEngine.rawPkcs11EncryptProbe} — a raw, KMIP/CACP-bypassing
+ * PKCS#11 Encrypt attempt against a KMIP-created key's own engine object. */
+export interface RawPkcs11EncryptProbeResult {
+  blocked: boolean
+  mechanism: string
+  message: string
+  rv?: string
+  rvName?: string
+  ciphertextLen?: number
+  error?: string
+}
+
+/** Result of {@link KmipEngine.registerCertificateDemo}. */
+export interface RegisterCertificateResult {
+  ok: boolean
+  uid?: string
+  error?: string
+}
+
+/** Result of {@link KmipEngine.engineCertificateAttributes} — the REAL engine-side
+ * PKCS#11 attributes of a projected `CKO_CERTIFICATE` object (not the KMIP store record). */
+export interface EngineCertificateAttributes {
+  ckaId?: string
+  ckaValueLen?: number
+  ckaSubjectDerLen?: number
+  ckaIssuerDerLen?: number
+  ckaSerialNumberHex?: string
+  subjectCn?: string | null
+  error?: string
+}
+
 export interface KmipObject {
   uid: string
   objectType: string
@@ -285,8 +316,13 @@ export interface SetupDemoCaResult {
   error?: string
 }
 
+/** The server's §6.1.55 RNG Seed policy choice — server-chosen and mutually
+ * exclusive per the spec (a constructor-time config, not per-request). The
+ * OASIS CS-RNG-O-1..4 optional-profile tests each pin one of these. */
+export type RngSeedMode = 'full-consume' | 'partial-consume' | 'ignore' | 'deny'
+
 interface WasmModule {
-  KmipPlayground: { new (slot?: number): WasmKmipPlayground }
+  KmipPlayground: { new (slot?: number, rngSeedMode?: RngSeedMode): WasmKmipPlayground }
   decode_ttlv(bytes: Uint8Array): string
   encode_ttlv(treeJson: string): Uint8Array
 }
@@ -306,11 +342,16 @@ export class KmipEngine {
    * when booting more than one `KmipEngine` in the same page load (e.g.
    * the OASIS corpus replay, one engine per test) — the engine's token
    * storage is keyed by slot, and reusing one with a still-open session
-   * from an earlier instance fails bootstrap. */
-  static async boot(slot?: number): Promise<KmipEngine> {
+   * from an earlier instance fails bootstrap.
+   *
+   * `rngSeedMode` — pin the server's §6.1.55 RNG Seed behavior for this
+   * engine (default full-consume). The corpus replay uses it to boot each
+   * CS-RNG-O variant test on an engine configured the way that test
+   * expects, mirroring the native harness's per-test Deps. */
+  static async boot(slot?: number, rngSeedMode?: RngSeedMode): Promise<KmipEngine> {
     // Bundler-target shim; Vite instantiates the .wasm at import time.
     const mod = (await import('./pqctoday_kmip_wasm.js')) as unknown as WasmModule
-    return new KmipEngine(new mod.KmipPlayground(slot), mod)
+    return new KmipEngine(new mod.KmipPlayground(slot, rngSeedMode), mod)
   }
 
   /** Build a real KMIP request, dispatch it, and return the rich result. */
@@ -366,6 +407,43 @@ export class KmipEngine {
 
   clearAudit(): void {
     this.pg.clear_audit()
+  }
+
+  /** WP-4 showcase — bypass the KMIP dispatcher and CACP policy plane
+   * entirely, calling straight into the engine's native PKCS#11 Encrypt
+   * path against `publicKeyUid`'s own engine object with `CKM_RSA_PKCS_OAEP`.
+   * Demonstrates that PKCS#11 v3.2 §4.8 Table 13 (`CKA_ALLOWED_MECHANISMS`)
+   * — derived from the key's `CryptographicUsageMask` at `CreateKeyPair`
+   * time — is enforced by the engine itself, not just by KMIP/CACP policy,
+   * which this call never touches. Only meaningful against an RSA public
+   * key; other algorithms/object types return an `error`. */
+  rawPkcs11EncryptProbe(publicKeyUid: string): RawPkcs11EncryptProbeResult {
+    return JSON.parse(this.pg.raw_pkcs11_encrypt_probe(publicKeyUid)) as RawPkcs11EncryptProbeResult
+  }
+
+  /** WP-3 showcase — register a caller-supplied X.509 certificate (DER,
+   * hex-encoded) linked to an existing KMIP public key, projecting it onto
+   * the engine as a real `CKO_CERTIFICATE` object sharing that key's
+   * `CKA_ID`. Native CA issuance (`Certify`) isn't reachable in wasm, so
+   * this exercises `Register`'s wasm-reachable certificate projection on a
+   * certificate the caller already holds — the strongSwan cert-to-key
+   * pattern, not a full in-browser CA workflow. */
+  registerCertificateDemo(
+    linkedPublicKeyUid: string,
+    certDerHex: string
+  ): RegisterCertificateResult {
+    return JSON.parse(
+      this.pg.register_certificate_demo(linkedPublicKeyUid, certDerHex)
+    ) as RegisterCertificateResult
+  }
+
+  /** WP-3 showcase — read back a Certificate object's real engine-side
+   * PKCS#11 attributes (CKA_ID, CKA_VALUE, CKA_SUBJECT, CKA_ISSUER,
+   * CKA_SERIAL_NUMBER) by its KMIP uid. */
+  engineCertificateAttributes(certificateUid: string): EngineCertificateAttributes {
+    return JSON.parse(
+      this.pg.engine_certificate_attributes(certificateUid)
+    ) as EngineCertificateAttributes
   }
 
   /** Decode any KMIP TTLV frame (request or response) to a wire-view tree. */

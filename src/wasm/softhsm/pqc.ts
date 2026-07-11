@@ -27,6 +27,8 @@ import {
   CKH_HEDGE_REQUIRED,
   CKK_ML_DSA,
   CKK_ML_KEM,
+  CKK_PQCTODAY_FRODOKEM,
+  CKK_PQCTODAY_CLASSIC_MCELIECE,
   CKK_SLH_DSA,
   CKM_ECDSA_SHA256,
   CKM_HASH_ML_DSA_SHA224,
@@ -54,6 +56,12 @@ import {
   CKM_ML_DSA_KEY_PAIR_GEN,
   CKM_ML_KEM,
   CKM_ML_KEM_KEY_PAIR_GEN,
+  CKM_PQCTODAY_FRODOKEM_KEY_PAIR_GEN,
+  CKM_PQCTODAY_FRODOKEM_ENCAPSULATE,
+  CKM_PQCTODAY_CLASSIC_MCELIECE_KEY_PAIR_GEN,
+  CKM_PQCTODAY_CLASSIC_MCELIECE_ENCAPSULATE,
+  CKP_FRODOKEM_1344_AES,
+  CKP_CLASSIC_MCELIECE_6688128,
   CKM_SLH_DSA,
   CKM_SLH_DSA_KEY_PAIR_GEN,
   CKO_PRIVATE_KEY,
@@ -309,6 +317,225 @@ export const hsm_decapsulate = (
     M._free(secretHPtr)
   }
 }
+
+// ── Vendor PQC KEMs (BSI TR-02102-1 §2.4.1/§2.4.2) — Rust engine only ──────
+// FrodoKEM and Classic McEliece are NOT implemented in the C++ engine; these
+// functions throw if called against a C++ `SoftHSMModule`. Scoped to the
+// single preset parameter set each showcase uses (FrodoKEM-1344-AES,
+// mceliece6688128) — see rust/src/ffi.rs for the full parameter-set table.
+
+/** C_GenerateKeyPair(CKM_PQCTODAY_FRODOKEM_KEY_PAIR_GEN, FrodoKEM-1344-AES). */
+export const hsm_generateFrodoKEMKeyPair = (
+  M: SoftHSMModule,
+  hSession: number,
+  extractable = false
+): { pubHandle: number; privHandle: number } => {
+  const mech = M._malloc(12)
+  M.setValue(mech, CKM_PQCTODAY_FRODOKEM_KEY_PAIR_GEN, 'i32')
+  M.setValue(mech + 4, 0, 'i32')
+  M.setValue(mech + 8, 0, 'i32')
+
+  const pubTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_PQCTODAY_FRODOKEM },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_ENCAPSULATE, boolVal: true },
+    { type: CKA_PARAMETER_SET, ulongVal: CKP_FRODOKEM_1344_AES },
+  ])
+  const prvTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_PQCTODAY_FRODOKEM },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_PRIVATE, boolVal: true },
+    { type: CKA_SENSITIVE, boolVal: !extractable },
+    { type: CKA_EXTRACTABLE, boolVal: extractable },
+    { type: CKA_DECAPSULATE, boolVal: true },
+    { type: CKA_PARAMETER_SET, ulongVal: CKP_FRODOKEM_1344_AES },
+  ])
+
+  const pubHPtr = allocUlong(M)
+  const prvHPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 5, prvTpl.ptr, 8, pubHPtr, prvHPtr),
+      'C_GenerateKeyPair(FrodoKEM-1344-AES)'
+    )
+    return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
+  } finally {
+    M._free(mech)
+    freeTemplate(M, pubTpl, 5)
+    freeTemplate(M, prvTpl, 8)
+    M._free(pubHPtr)
+    M._free(prvHPtr)
+  }
+}
+
+/** C_GenerateKeyPair(CKM_PQCTODAY_CLASSIC_MCELIECE_KEY_PAIR_GEN, mceliece6688128).
+ * Slower than the other keygens here — a large Goppa-code public key. */
+export const hsm_generateClassicMcElieceKeyPair = (
+  M: SoftHSMModule,
+  hSession: number,
+  extractable = false
+): { pubHandle: number; privHandle: number } => {
+  const mech = M._malloc(12)
+  M.setValue(mech, CKM_PQCTODAY_CLASSIC_MCELIECE_KEY_PAIR_GEN, 'i32')
+  M.setValue(mech + 4, 0, 'i32')
+  M.setValue(mech + 8, 0, 'i32')
+
+  const pubTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_PQCTODAY_CLASSIC_MCELIECE },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_ENCAPSULATE, boolVal: true },
+    { type: CKA_PARAMETER_SET, ulongVal: CKP_CLASSIC_MCELIECE_6688128 },
+  ])
+  const prvTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_PQCTODAY_CLASSIC_MCELIECE },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_PRIVATE, boolVal: true },
+    { type: CKA_SENSITIVE, boolVal: !extractable },
+    { type: CKA_EXTRACTABLE, boolVal: extractable },
+    { type: CKA_DECAPSULATE, boolVal: true },
+    { type: CKA_PARAMETER_SET, ulongVal: CKP_CLASSIC_MCELIECE_6688128 },
+  ])
+
+  const pubHPtr = allocUlong(M)
+  const prvHPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 5, prvTpl.ptr, 8, pubHPtr, prvHPtr),
+      'C_GenerateKeyPair(Classic-McEliece-6688128)'
+    )
+    return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
+  } finally {
+    M._free(mech)
+    freeTemplate(M, pubTpl, 5)
+    freeTemplate(M, prvTpl, 8)
+    M._free(pubHPtr)
+    M._free(prvHPtr)
+  }
+}
+
+/** Shared C_EncapsulateKey query-then-call pattern for the vendor KEMs.
+ * Unlike ML-KEM's `hsm_encapsulate` above, these pass NO secret template
+ * (`pTemplate=NULL, ulCount=0`) — matching rust/src/ffi.rs's own
+ * `round_trip` conformance test exactly; the engine derives the secret
+ * object's attributes itself for these two mechanisms. Passing a
+ * template here (as ML-KEM's own call requires) traps with "memory
+ * access out of bounds", since this dispatch path doesn't expect one. */
+const encapsulatePqcKem = (
+  M: SoftHSMModule,
+  hSession: number,
+  pubHandle: number,
+  mechanism: number
+): { ciphertextBytes: Uint8Array; secretHandle: number } => {
+  const mech = M._malloc(12)
+  M.setValue(mech, mechanism, 'i32')
+  M.setValue(mech + 4, 0, 'i32')
+  M.setValue(mech + 8, 0, 'i32')
+
+  const ctLenPtr = allocUlong(M)
+  const secretHPtr = allocUlong(M)
+
+  checkRV(
+    M._C_EncapsulateKey(hSession, mech, pubHandle, 0, 0, 0, ctLenPtr, secretHPtr),
+    'C_EncapsulateKey(size)'
+  )
+  const ctLen = readUlong(M, ctLenPtr)
+  const ctPtr = M._malloc(ctLen)
+
+  try {
+    writeUlong(M, ctLenPtr, ctLen)
+    checkRV(
+      M._C_EncapsulateKey(hSession, mech, pubHandle, 0, 0, ctPtr, ctLenPtr, secretHPtr),
+      'C_EncapsulateKey'
+    )
+    const ciphertextBytes = M.HEAPU8.slice(ctPtr, ctPtr + readUlong(M, ctLenPtr))
+    return { ciphertextBytes, secretHandle: readUlong(M, secretHPtr) }
+  } finally {
+    M._free(mech)
+    M._free(ctLenPtr)
+    M._free(ctPtr)
+    M._free(secretHPtr)
+  }
+}
+
+/** Shared C_DecapsulateKey call for the vendor KEMs — see `encapsulatePqcKem`
+ * for why no secret template is passed. */
+const decapsulatePqcKem = (
+  M: SoftHSMModule,
+  hSession: number,
+  privHandle: number,
+  ciphertextBytes: Uint8Array,
+  mechanism: number
+): number => {
+  const mech = M._malloc(12)
+  M.setValue(mech, mechanism, 'i32')
+  M.setValue(mech + 4, 0, 'i32')
+  M.setValue(mech + 8, 0, 'i32')
+
+  const ctPtr = M._malloc(ciphertextBytes.length)
+  M.HEAPU8.set(ciphertextBytes, ctPtr)
+  const secretHPtr = allocUlong(M)
+
+  try {
+    checkRV(
+      M._C_DecapsulateKey(
+        hSession,
+        mech,
+        privHandle,
+        0,
+        0,
+        ctPtr,
+        ciphertextBytes.length,
+        secretHPtr
+      ),
+      'C_DecapsulateKey'
+    )
+    return readUlong(M, secretHPtr)
+  } finally {
+    M._free(mech)
+    M._free(ctPtr)
+    M._free(secretHPtr)
+  }
+}
+
+export const hsm_encapsulateFrodoKEM = (
+  M: SoftHSMModule,
+  hSession: number,
+  pubHandle: number
+): { ciphertextBytes: Uint8Array; secretHandle: number } =>
+  encapsulatePqcKem(M, hSession, pubHandle, CKM_PQCTODAY_FRODOKEM_ENCAPSULATE)
+
+export const hsm_decapsulateFrodoKEM = (
+  M: SoftHSMModule,
+  hSession: number,
+  privHandle: number,
+  ciphertextBytes: Uint8Array
+): number =>
+  decapsulatePqcKem(M, hSession, privHandle, ciphertextBytes, CKM_PQCTODAY_FRODOKEM_ENCAPSULATE)
+
+export const hsm_encapsulateClassicMcEliece = (
+  M: SoftHSMModule,
+  hSession: number,
+  pubHandle: number
+): { ciphertextBytes: Uint8Array; secretHandle: number } =>
+  encapsulatePqcKem(M, hSession, pubHandle, CKM_PQCTODAY_CLASSIC_MCELIECE_ENCAPSULATE)
+
+export const hsm_decapsulateClassicMcEliece = (
+  M: SoftHSMModule,
+  hSession: number,
+  privHandle: number,
+  ciphertextBytes: Uint8Array
+): number =>
+  decapsulatePqcKem(
+    M,
+    hSession,
+    privHandle,
+    ciphertextBytes,
+    CKM_PQCTODAY_CLASSIC_MCELIECE_ENCAPSULATE
+  )
 
 /** C_GetAttributeValue(CKA_VALUE) → Uint8Array */
 export const hsm_extractKeyValue = (
