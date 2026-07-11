@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Server, Container, ServerCrash, ExternalLink } from 'lucide-react'
 import { EmptyState } from '../ui/empty-state'
 import { Card } from '../ui/card'
+import { ShareButton } from '../ui/ShareButton'
 import { useSandboxAvailable } from './useSandboxAvailable'
 import { SANDBOX_ACCESS_URL } from './cryptoLabMeta'
 
@@ -123,9 +124,16 @@ export const DockerPlaygroundView = () => {
             <Server className="text-primary" aria-hidden="true" />
             Enterprise Docker Simulation
           </h3>
-          <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-            Sandbox
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+              Sandbox
+            </span>
+            <ShareButton
+              title="Enterprise Docker Simulation — PQC Today"
+              text="Explore the PQC enterprise sandbox simulation"
+              variant="icon"
+            />
+          </div>
         </div>
         <p className="text-sm text-muted-foreground">
           Powered by pqctoday-sandbox — requires the local UI server on port 4000.
