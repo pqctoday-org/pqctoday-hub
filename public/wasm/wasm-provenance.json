@@ -9,9 +9,9 @@
       "sourceDirs": ["kmip", "wasm"],
       "track": "tip",
       "status": "built",
-      "hsmCommit": "8829dceb1bf3a50e5d0780e31868418a9b12a937",
-      "builtAt": "2026-07-06",
-      "_buildNote": "FrodoKEM (6 variants) + Classic McEliece-6688128 (BSI TR-02102-1), fully wired end to end: engine, KMIP ops, raw PKCS#11 C-ABI, and the hub's own algorithm picker/TTLV encoder (alg_from_name bare-name fallback, kmipMeta.ts RUNNABLE_EXACT, codepointTable.ts CryptographicAlgorithm patches). Also required bumping build-kmip-wasm.sh's wasm32 stack size to 8MiB: FrodoKEM-1344's matrix generation overflowed the ~1MiB default even in --release. hsmCommit is pqctoday-hsm PR #131's merge commit on main (built from the branch tip just before merge; PR #131 also fixed a native test-thread stack overflow and a PKCS#11 constants-gate gap — neither touches this bundle's compiled output)."
+      "hsmCommit": "1c637d3a3916b08fe59445120d93f26dfd79d639",
+      "builtAt": "2026-07-10",
+      "_buildNote": "Rebuilt from pqctoday-hsm v0.14.0 (this entry was stale: hub commit 2ae5cc16/#409 had already rebuilt this bundle from v0.13.1 without updating this manifest — real remaining drift was 2 commits, not 23). Picks up CKA_ALLOWED_MECHANISMS (§4.8 Table 13) engine-side enforcement, CKO_CERTIFICATE (§4.6, X.509-only) with KMIP-certificate-to-engine projection via Register/Import, and the same day's gap-remediation pass (mechanism-mismatch regression fix, Register/Certify certificate parity, 6 class-blind CKA_ID lookups, C_CopyObject CKA_TRUSTED/identity-respoofing fix, CKA_ALLOWED_MECHANISMS length validation, certificate-projection observability). Correction (2026-07-10): does NOT pick up the 'Re-certify CKA_ID-collision fix' — verified that fix (kmip/src/ops/certify.rs `recertify()`, the explicit destroy-old-engine-object-before-registering-new step) is inline in the native-only `certify` module and has no wasm-reachable equivalent; Certify/Re-certify remain `#[cfg(feature = \"native\")]`-gated and answer `OperationNotSupported` in this wasm build, same as before this rebuild. Register/Import's own certificate projection (the part that IS wasm-reachable) has no equivalent collision-avoidance either, in native or wasm — a real, pre-existing, separate gap, out of scope for today's fix. Required an hsm-side fix first: `certify::project_certificate_to_engine` was called unconditionally from `register_import_export.rs` (Register/Import), but the `certify` module is `#[cfg(feature = \"native\")]`-gated (its CSR/rcgen-based issuance logic doesn't cross-compile to wasm32) — the wasm32 build had never actually been attempted since certificate support was added, so this had been silently broken. Fixed by extracting the wasm-safe projection helper into its own always-compiled `cert_projection` module (hsm branch `fix/kmip-wasm-cert-projection-gate`, not yet merged to hsm main as of this build — needs its own follow-up PR on the hsm side). Full in-wasm smoke test passed: real ML-DSA-65 CreateKeyPair/Sign/Verify roundtrip and hybrid KEM (X25519MLKEM768) encapsulate/decapsulate, both executing inside the wasm engine."
     },
     {
       "name": "softhsmrustv3-engine",
@@ -20,9 +20,9 @@
       "sourceDirs": ["rust"],
       "track": "tip",
       "status": "built",
-      "hsmCommit": "8829dceb1bf3a50e5d0780e31868418a9b12a937",
-      "builtAt": "2026-07-06",
-      "_buildNote": "Rebuilt to pick up FrodoKEM/Classic McEliece-6688128 on the raw PKCS#11 C-ABI (C_GenerateKeyPair/C_EncapsulateKey/C_DecapsulateKey) plus a large amount of accumulated PKCS#11 v3.2 surface added since the last build (2026-06-27, e912488): C_GetInterface/C_GetInterfaceList, C_LoginUser, C_SetPIN, C_SessionCancel, message-based sign/verify, and more — this bundle had drifted well behind the engine. Still built with --features acvp (required since 2026-06-27: C_Initialize rejects non-null pReserved without it, breaking ACVP KAT seeding)."
+      "hsmCommit": "1c637d3a3916b08fe59445120d93f26dfd79d639",
+      "builtAt": "2026-07-10",
+      "_buildNote": "Rebuilt from pqctoday-hsm v0.14.0 (was genuinely 10 commits / ~7 functional behind — this manifest entry was accurate, unlike cacp-kmip's). Picks up: Split Key secret-sharing math + handle-based native API, HSS/LMS wired into native::sign + Register-import, the v0.13.0 gap-remediation audit fixes (Destroy scrubbing, attribute-mutation honesty, RSA-Register/Encrypt-Decrypt/Locate fixes), and the same day's PKCS#11 v3.2 gap-remediation pass (CKA_ALLOWED_MECHANISMS mechanism-mismatch fix, CKO_CERTIFICATE, Register/Certify parity, Re-certify collision fix, class-blind CKA_ID lookups, C_CopyObject trust gate, mechanism-length validation). Still built with --features acvp (required since 2026-06-27 for ACVP KAT seeding). Binary grew from 2,209,912 to 2,885,179 bytes (~30%), consistent with the real new compiled surface (FrodoKEM/Classic McEliece were already in this bundle from the prior build)."
     },
     {
       "name": "softhsm-cpp-engine",
@@ -42,8 +42,9 @@
       "sourceDirs": ["openssh-pkcs11"],
       "track": "tip",
       "status": "built",
-      "hsmCommit": "07cd2e0e1154508d0658beb5e804de93f1f46660",
-      "builtAt": "2026-06-27"
+      "hsmCommit": "1c637d3a3916b08fe59445120d93f26dfd79d639",
+      "builtAt": "2026-07-10",
+      "_buildNote": "Re-stamped, not rebuilt: verified `git log 07cd2e0e1..1c637d3 -- openssh-pkcs11/` touches only CHANGELOG.md and STATUS.md (2 doc-only commits, zero source/behavior change). No emsdk/Emscripten toolchain is installed on this machine, so an actual rebuild wasn't attempted or needed — the existing binary is bit-for-bit what v0.14.0's source would produce."
     },
     {
       "name": "strongswan",
@@ -52,8 +53,9 @@
       "sourceDirs": ["strongswan-wasm-shims", "strongswan-wasm-v2-shims"],
       "track": "tip",
       "status": "built",
-      "hsmCommit": "8e436210c521033d3bc04bded5339208a59c7ead",
-      "builtAt": "2026-06-12"
+      "hsmCommit": "1c637d3a3916b08fe59445120d93f26dfd79d639",
+      "builtAt": "2026-07-10",
+      "_buildNote": "Re-stamped, not rebuilt: verified `git log 8e436210c..1c637d3 -- strongswan-wasm-shims/ strongswan-wasm-v2-shims/` touches only STATUS.md and README.md (1 doc-only commit, zero source/behavior change). No emsdk/Emscripten toolchain is installed on this machine, so an actual rebuild wasn't attempted or needed — the existing binary is bit-for-bit what v0.14.0's source would produce."
     }
   ]
 }
