@@ -41,6 +41,8 @@ import {
   runStatusColumnChecks,
   runVocabTagChecks,
   runOrphanCheck,
+  runSupersededByChecks,
+  runSupersededByCandidateChecks,
 } from './validators/self-containment-checks.js'
 import { runThreatsProofRule } from './validators/threats-proof-rule.js'
 import { runMigrateProofRule } from './validators/migrate-proof-rule.js'
@@ -151,6 +153,12 @@ try {
   allResults.push(...runVocabTagChecks())
   // 7f. Trust-path orphan check on restored/deprecated rows (DS20)
   allResults.push(...runOrphanCheck())
+  // 7f.5. Revision-chain integrity (DS21 + DS21-CANDIDATES) — added 2026-07-11
+  // after PKCS11's current standard was found deprecated+unlinked (invisible
+  // in the UI) with 22 more broken chains elsewhere in library_*.csv. See
+  // scripts/validators/self-containment-checks.ts docblock for the story.
+  allResults.push(...runSupersededByChecks())
+  allResults.push(...runSupersededByCandidateChecks())
   // 7g. Threats validated-proof rule (TP-1 + TP-2) — added 2026-05-21 to
   // block any future re-introduction of an active threat without a
   // downloadable, ≥5 KB on-disk proof. See:

@@ -184,7 +184,8 @@ function buildSharedSections(chunks: RAGChunk[], pageContext?: PageContext, maxE
       pageContext.tab && pageContext.tab !== 'learn'
         ? ` (${pageContext.tab} tab${pageContext.step ? `, step ${pageContext.step + 1}` : ''})`
         : ''
-    pageNote = `\nThe user is currently viewing the ${pageContext.page} page${tabInfo}. Tailor your response accordingly when relevant.\n`
+    const filterInfo = pageContext.filters ? ` with ${pageContext.filters} already applied` : ''
+    pageNote = `\nThe user is currently viewing the ${pageContext.page} page${tabInfo}${filterInfo}. Tailor your response accordingly when relevant — when linking back to this page, preserve state the user already has set instead of resetting it.\n`
   }
 
   let personaSection = ''
@@ -274,17 +275,19 @@ GUIDELINES:
    When a context chunk has a "Deep Link:" field, ALWAYS use that URL. Otherwise construct links using these patterns:
    - /algorithms?highlight=<slug> (PQC algorithm detail, e.g. ml-kem-768, ml-dsa-65, slh-dsa-128f)
    - /algorithms?tab=transition&highlight=<classical-slug> — **MUST** use this exact form for any classical → PQC transition (e.g. rsa, diffie-hellman, ecdsa, ecdh, dsa, 3des). Omitting \`?tab=transition\` lands on the detailed tab where classical algos do not exist. Correct: [RSA → ML-KEM transition](/algorithms?tab=transition&highlight=rsa). Wrong: \`/algorithms?highlight=rsa\`.
-   - /algorithms?tab=detailed&subtab=<performance|security|sizes|usecases> (algorithm comparison sub-views)
-   - /algorithms?compare=<algo1>,<algo2>, /algorithms?family=<name>, /algorithms?level=<1|3|5>, /algorithms?fn=<sig|kem>, /algorithms?q=<text>
-   - /algorithms?tab=support (Protocol Support matrix — PQC readiness per protocol), /algorithms?tab=support&protocol=<id> (open one protocol's support detail, e.g. tls-1-3, ssh, ike-ipsec, smime, dnssec, kmip, mls), /algorithms?tab=validation (validation evidence tab)
+   - /algorithms?tab=detailed&mode=compare (Detailed tab's Compare view — side-by-side matrix; omit \`mode\` for the default Browse table)
+   - /algorithms?compare=<algo1>,<algo2>, /algorithms?family=<name>, /algorithms?level=<1|3|5>, /algorithms?fn=<sig|kem>, /algorithms?q=<text>, /algorithms?status=<Certified|Candidate>, /algorithms?region=<name>, /algorithms?cnsa=1 (CNSA 2.0 lens), /algorithms?gap=1 (research-gap-only filter)
+   - /algorithms?tab=support (Protocol Support matrix — PQC readiness per protocol), /algorithms?tab=support&protocol=<id> (open one protocol's support detail, e.g. tls-1-3, ssh, ike-ipsec, smime, dnssec, kmip, mls)
+   - /algorithms?tab=support&matrixView=detailed (Protocol Support's card view; default is heatmap — omit for heatmap), /algorithms?tab=support&matrixQ=<text> (search protocols), /algorithms?tab=support&matrixStatus=<rfc|draft|experimental|none|na> (comma-separated), /algorithms?tab=support&matrixAvailability=<has-oss|no-oss|has-commercial|no-commercial|has-playground|has-deployment|no-deployment>, /algorithms?tab=support&matrixSort=<name|maturity|oss|commercial|deployments>:<asc|desc>
+   - /algorithms?tab=validation (validation evidence tab), /algorithms?tab=validation&section=<attacks|kat> (open the implementation-attacks or live-KAT accordion — \`section\` ONLY works paired with \`tab=validation\`; there is no per-tab "sub-tab" concept anywhere else on this page)
    - /timeline?country=<name>, /timeline?region=<name>, /timeline?q=<text>, /timeline?event=<title> (open a specific milestone/phase detail)
    - /library?ref=<id>, /library?cat=<category>&org=<org>, /library?ind=<industry>, /library?view=<grid|table>, /library?sort=<field>
    - /migrate?q=<name>, /migrate?vendor=<name>, /migrate?industry=<name>, /migrate?tab=<replace|plan|roadmaps|vendorrisk> (workbench tabs: Replace what you own / Plan & sequence / Vendor roadmaps / Vendor risk)
    - /leaders?leader=<name>, /leaders?sector=<Public|Private|Academic>&country=<name>, /leaders?cat=<category>, /leaders?region=<name>, /leaders?q=<text>, /leaders?view=<grid|list>
    - /compliance?tab=<standards|technical|certification|compliance>&q=<label>, /compliance?cert=<id>, /compliance?mcat=<category>, /compliance?org=<org>, /compliance?ind=<industry>, /compliance?vendor=<name>, /compliance?pqc=<true|false>, /compliance?cat=<cat>, /compliance?src=<source>, /compliance?rtab=<tab>, /compliance?evref=<evidenceId> (CSWP.39 maturity-evidence reference deep link)
    - /threats?id=<threatId>&industry=<industry>, /threats?criticality=<level>, /threats?q=<text>, /threats?sort=<field>&dir=<asc|desc>
-   - /playground/<toolId> (workshop tool — actual toolIds: interactive, hsm, docker, plus per-tool slugs), /playground?algo=<name>&tab=<tab>
-   - /playground/interactive?tab=<tab>&algo=<algo>, /playground/hsm (softhsmv3 HSM emulator workshop)
+   - /playground/<toolId> (one page per tool — 63+ native + Docker-sandbox tools; each has its own "playground-guide" context chunk with a Deep Link: field — ALWAYS use that exact toolId rather than guessing one), /playground?algo=<name>&tab=<tab>
+   - /playground/interactive?tab=<tab>&algo=<algo> (multi-tab lab), /playground/hsm (softhsmv3 HSM emulator workshop), /playground/cacp (KMIP 3.0 control plane), /playground/docker (Docker-sandbox launcher)
    - /business (GRC Command Center, CSWP.39-aligned), /business/tools (planning tools grid)
    - /business/tools/<toolId> — actual toolIds: roi-calculator, board-pitch, crqc-scenario, risk-register, risk-treatment-plan, audit-checklist, compliance-timeline, raci-builder, policy-generator, kpi-dashboard, vendor-scorecard, contract-clause, supply-chain-matrix, roadmap-builder, stakeholder-comms, kpi-tracker, deployment-playbook
    - /learn (catalog) — /learn?mode=<mypath|browse> (My Path guided journey vs Browse all modules). Track filtering only applies in Browse mode, so ALWAYS pair it: /learn?mode=browse&track=<trackName> (track names: Role Guides, Foundations, Strategy, Protocols, Hardware Infrastructure, Software Infrastructure, Applications, Executive, Industries). /learn?persona=<id> presets the persona path/lens (executive|developer|architect|researcher|ops|curious).
@@ -331,7 +334,8 @@ export function buildLocalSystemPrompt(
   // Compact page/persona context — every token counts at 4K
   let pageNote = ''
   if (pageContext?.page) {
-    pageNote = `User is on: ${pageContext.page} page.\n`
+    const filterInfo = pageContext.filters ? ` (${pageContext.filters})` : ''
+    pageNote = `User is on: ${pageContext.page} page${filterInfo}.\n`
   }
   let personaNote = ''
   if (pageContext?.persona) {
@@ -382,10 +386,10 @@ ${topModules}
 LINKING (MANDATORY): Every named item (algorithm, product, leader, document, threat) MUST be a markdown link.
 Use "Deep Link:" from context chunks when available. Otherwise use these patterns:
 - /algorithms?highlight=<slug> (PQC algo, e.g. ml-kem-768, ml-dsa-65). MUST: /algorithms?tab=transition&highlight=<classical-slug> for classical algos (rsa, ecdsa, dh) — never bare ?highlight= for classical.
-- /algorithms?tab=detailed&subtab=<performance|security|sizes|usecases>, /algorithms?tab=support&protocol=<id> (Protocol Support detail), /timeline?country=<name>, /library?ref=<id>
+- /algorithms?tab=detailed&mode=compare (Compare view), /algorithms?tab=support&protocol=<id> (Protocol Support detail), /algorithms?tab=support&matrixView=detailed (card view), /algorithms?tab=validation&section=<attacks|kat>, /timeline?country=<name>, /library?ref=<id>
 - /migrate?q=<name>, /migrate?tab=<replace|plan|roadmaps|vendorrisk>, /leaders?leader=<name>, /compliance?tab=standards&q=<label>, /compliance?tab=standards&cert=<id>
 - /threats?id=<threatId>, /learn/<module-id>, /learn?mode=<mypath|browse>, /assess?step=<n> (0-based: 0=industry, 1=country, ...)
-- /playground/<toolId>, /playground/hsm, /openssl?cmd=<category>
+- /playground/<toolId> (use the toolId from a chunk's Deep Link, never guess), /playground/hsm, /playground/cacp, /playground/docker, /openssl?cmd=<category>
 - /business/tools/<toolId> (e.g. roi-calculator, board-pitch, risk-register, compliance-timeline, roadmap-builder, deployment-playbook)
 - /patents, /patents?patent=<id>, /patents?tab=insights, /patents?assignee=<name>, /patents?quantumTech=<family>, /patents?nistStatus=<status>
 Example: [ML-KEM-768](/algorithms?highlight=ml-kem-768), [RSA transition](/algorithms?tab=transition&highlight=rsa), [NIST IR 8547](/library?ref=NIST-IR-8547)

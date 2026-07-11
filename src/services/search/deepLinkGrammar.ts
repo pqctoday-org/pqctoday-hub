@@ -50,7 +50,31 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
   {
     path: exact('/algorithms'),
     // `protocol` opens a Protocol Support matrix row's detail (tab=support).
-    queryKeys: ['highlight', 'tab', 'subtab', 'compare', 'family', 'level', 'fn', 'q', 'protocol'],
+    // `mode=compare` is the Detailed tab's Browse↔Compare toggle. `section`
+    // is the Validation tab's accordion preset (attacks|kat only — NOT a
+    // general sub-tab; see personaConfig.ts AlgorithmSectionId). The
+    // `matrix*` keys are Protocol Support's own view/filter/sort state.
+    queryKeys: [
+      'highlight',
+      'tab',
+      'compare',
+      'family',
+      'level',
+      'fn',
+      'q',
+      'status',
+      'region',
+      'mode',
+      'cnsa',
+      'gap',
+      'section',
+      'protocol',
+      'matrixView',
+      'matrixQ',
+      'matrixStatus',
+      'matrixAvailability',
+      'matrixSort',
+    ],
     description: 'Algorithms',
   },
   {
@@ -261,4 +285,49 @@ export function validateCorpusDeepLinks(
     }
   }
   return failures
+}
+
+/**
+ * Runtime (not build-time) counterpart to `validateDeepLink` — used right
+ * before navigating an Assistant-authored chat link. Unlike the build-time
+ * validator, this never blocks navigation: an internal URL whose path matches
+ * a known route gets any query key NOT in that route's grammar stripped (the
+ * user still lands on the right page); a URL whose path matches no known
+ * route, or an external URL, passes through unchanged — the grammar isn't a
+ * complete map of every route, so an unmatched path is "unknown", not
+ * "invalid". Returns the (possibly unchanged) url plus any keys removed, so
+ * the caller can log what happened.
+ */
+export function sanitizeDeepLink(url: string): { url: string; strippedKeys: string[] } {
+  if (!url || typeof url !== 'string' || /^https?:\/\//.test(url) || !url.startsWith('/')) {
+    return { url, strippedKeys: [] }
+  }
+
+  const hashIdx = url.indexOf('#')
+  const queryIdx = url.indexOf('?')
+  if (queryIdx < 0) return { url, strippedKeys: [] }
+
+  const pathname = url.slice(0, queryIdx)
+  const hash = hashIdx > queryIdx ? url.slice(hashIdx) : ''
+  const search = hashIdx > queryIdx ? url.slice(queryIdx + 1, hashIdx) : url.slice(queryIdx + 1)
+
+  const pattern = ROUTE_PATTERNS.find((pat) => pat.path.test(pathname))
+  if (!pattern || pattern.queryKeys === '*') return { url, strippedKeys: [] }
+
+  const allowed = new Set(pattern.queryKeys)
+  const params = new URLSearchParams(search)
+  const strippedKeys: string[] = []
+  for (const key of [...params.keys()]) {
+    if (!allowed.has(key)) {
+      params.delete(key)
+      strippedKeys.push(key)
+    }
+  }
+  if (strippedKeys.length === 0) return { url, strippedKeys: [] }
+
+  const nextSearch = params.toString()
+  return {
+    url: `${pathname}${nextSearch ? `?${nextSearch}` : ''}${hash}`,
+    strippedKeys,
+  }
 }

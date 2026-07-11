@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
   "generated": "2026-07-09",
-  "count": 806,
+  "count": 808,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -6900,6 +6900,20 @@
       "bytes": 19233,
       "content_type": "text/html; charset=UTF-8",
       "tier": "first-party-correction-07092026"
+    },
+    {
+      "product_id": "sql-server-tde-always-encrypted",
+      "url": "https://learn.microsoft.com/en-us/sql/relational-databases/security/encryption/always-encrypted-cryptography?view=sql-server-ver17",
+      "file": "sql-server-tde-always-encrypted-67ae1b49.html",
+      "bytes": 62992,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "forgerock-access-management",
+      "url": "https://docs.pingidentity.com/pingam/release-notes/requirements.html",
+      "file": "forgerock-access-management-2d466b98.html",
+      "bytes": 39936,
+      "tier": "curl_cffi:chrome124"
     }
   ]
 }

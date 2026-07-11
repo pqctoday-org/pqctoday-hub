@@ -31,6 +31,11 @@ import {
   CRQC_ESTIMATES,
 } from '../src/data/regulatoryTimelines'
 import { FRAMEWORK_MAX_FINE_USD_MILLIONS } from '../src/data/frameworkFines'
+// NOTE: workshopRegistry.tsx uses `@/*`-aliased imports internally, so this
+// script must be invoked with TSX_TSCONFIG_PATH=tsconfig.app.json (see
+// refresh-index.sh and scripts/ci/check-index-freshness.ts) for tsx to
+// resolve them — the root tsconfig.json is solution-style (references only).
+import { WORKSHOP_TOOLS, SANDBOX_TOOL_PREFIX } from '../src/components/Playground/workshopRegistry'
 
 /** Chronological sort key for MMDDYYYY-dated filenames, which sort
  *  lexicographically wrong across year boundaries (01…2027 < 12…2026). */
@@ -2576,6 +2581,92 @@ function processGettingStarted(): RAGChunk[] {
 // Playground guide
 // ---------------------------------------------------------------------------
 
+/**
+ * Playground tool catalog — derived live from WORKSHOP_TOOLS (the same
+ * registry that drives /playground routing and the workshop grid UI) so the
+ * corpus can never silently drift from the actual tool count/ids again, as
+ * the old hand-maintained "22 tools" prose did (last true count: 34 native +
+ * 29 Docker-sandbox scenarios = 63, and growing).
+ */
+const PLAYGROUND_NATIVE_TOOLS = WORKSHOP_TOOLS.filter(
+  (t) => !t.id.startsWith(SANDBOX_TOOL_PREFIX)
+)
+const PLAYGROUND_SANDBOX_TOOLS = WORKSHOP_TOOLS.filter((t) =>
+  t.id.startsWith(SANDBOX_TOOL_PREFIX)
+)
+
+const PLAYGROUND_PERSONA_LABELS: Record<string, string> = {
+  executive: 'Executive / GRC',
+  developer: 'Developer / Engineer',
+  architect: 'Security Architect',
+  researcher: 'Researcher / Academic',
+  ops: 'IT Ops / DevOps',
+  curious: 'Curious Explorer',
+}
+
+function playgroundPersonaBody(): string {
+  const byPersona = new Map<string, string[]>()
+  for (const t of PLAYGROUND_NATIVE_TOOLS) {
+    for (const p of t.recommendedPersonas) {
+      const arr = byPersona.get(p) ?? []
+      arr.push(t.name)
+      byPersona.set(p, arr)
+    }
+  }
+  return [...byPersona.entries()]
+    .map(([p, names]) => {
+      const label = PLAYGROUND_PERSONA_LABELS[p] ?? p
+      const shown = names.slice(0, 4)
+      const more = names.length > shown.length ? `, +${names.length - shown.length} more` : ''
+      return `- ${label} — ${shown.join(', ')}${more}`
+    })
+    .join('\n')
+}
+
+function playgroundCatalogBody(): string {
+  const byCategory = new Map<string, string[]>()
+  for (const t of PLAYGROUND_NATIVE_TOOLS) {
+    const arr = byCategory.get(t.category) ?? []
+    arr.push(`${t.name} (${t.difficulty}) — ${t.description}`)
+    byCategory.set(t.category, arr)
+  }
+  return [...byCategory.entries()]
+    .map(([cat, names]) => `${cat} (${names.length}):\n- ${names.join('\n- ')}`)
+    .join('\n\n')
+}
+
+/** One deep-linkable RAG chunk per tool — native WASM tools and Docker-sandbox
+ *  scenarios alike — so a query about any specific tool retrieves its own
+ *  chunk with a grammar-valid `/playground/<id>` deep link, instead of only
+ *  the generic /playground catalog page. */
+function processPlaygroundTools(): RAGChunk[] {
+  return WORKSHOP_TOOLS.map((t) => {
+    const lines = [
+      `${t.name} — ${t.category} (${t.difficulty})`,
+      t.description,
+      `Algorithms: ${t.algorithms.join(', ')}`,
+    ]
+    if (t.sandbox)
+      lines.push(
+        'Runs as a Docker-backed sandbox scenario against a real open-source tool (not in-browser WASM) — requires the sandbox environment to be reachable.'
+      )
+    if (t.wip) lines.push('Under active development — functionality may be incomplete.')
+    if (t.moduleLink.startsWith('/learn/')) lines.push(`Companion Learn module: ${t.moduleLink}`)
+    if (t.opensourceTool)
+      lines.push(`Built on: ${t.opensourceTool.name} (${t.opensourceTool.url})`)
+
+    return {
+      id: `playground-tool-${t.id}`,
+      source: 'playground-guide',
+      title: `Playground Tool — ${t.name}`,
+      content: lines.join('\n\n'),
+      category: 'playground',
+      metadata: { feature: 'tool', toolId: t.id, toolCategory: t.category, difficulty: t.difficulty },
+      deepLink: `/playground/${t.id}`,
+    }
+  })
+}
+
 function processPlaygroundGuide(): RAGChunk[] {
   return [
     {
@@ -2583,7 +2674,7 @@ function processPlaygroundGuide(): RAGChunk[] {
       source: 'playground-guide',
       title: 'PQC Playground — Interactive Crypto Workshop',
       content:
-        'PQC Playground Overview\n\nThe PQC Playground (/playground) is a browser-based cryptographic workshop with 22 interactive tools, an interactive lab, and a full PKCS#11 HSM emulator. All operations run locally via WebAssembly — no data leaves the browser.\n\nFour sub-routes:\n1. /playground — Workshop grid: searchable catalog of 22 tools across 6 categories (HSM / PKCS#11, Entropy & Random, Certificates & Proofs, Protocol Simulations, Blockchain & Digital Assets, OpenSSL Studio). Persona-aware filtering with difficulty badges (beginner/intermediate/advanced). Each persona (Executive, Developer, Architect, Researcher, Ops, Curious) sees tailored tool recommendations.\n2. /playground/interactive — Interactive lab with 7 tabs: keystore (key generation), data (hex editor), kem_ops (ML-KEM + X25519 ECDH), symmetric (AES/ChaCha), hashing (SHA/SHAKE), sign_verify (PQC + classical signing), logs (operation history with timing).\n3. /playground/hsm — PKCS#11 v3.2 HSM playground via SoftHSMv3 WASM with 10 tabs: keystore, symmetric, key_wrap, hashing, sign_verify, key_agree, key_derive, mechanisms, acvp (NIST KAT vectors), logs. Supports C++, Rust, and Dual engine modes with parity cross-check.\n4. /playground/:toolId — Individual tool detail pages with lazy-loaded components, breadcrumbs, and endorse/flag buttons.\n\nSupported algorithms: ML-KEM-512/768/1024 (FIPS 203), ML-DSA-44/65/87 (FIPS 204), SLH-DSA all 12 parameter sets (FIPS 205), X25519, P-256, RSA-2048/4096, Ed25519, secp256k1, AES-128/256, ChaCha20. All generated keys are for educational purposes only.\n\nURL deep-linking: ?tab= selects Interactive lab tab (kem_ops, sign_verify, symmetric, hashing, data, keystore, logs). ?algo= pre-selects an algorithm. Combine: /playground/interactive?tab=kem_ops&algo=ML-KEM-768.',
+        `PQC Playground Overview\n\nThe PQC Playground (/playground) is a browser-based cryptographic workshop with ${PLAYGROUND_NATIVE_TOOLS.length} native interactive tools, ${PLAYGROUND_SANDBOX_TOOLS.length} Docker-backed sandbox scenarios, an interactive lab, and a full PKCS#11 HSM emulator. Native tools run locally via WebAssembly — no data leaves the browser; sandbox scenarios proxy a real containerized open-source tool.\n\nSix sub-routes:\n1. /playground — Workshop grid: searchable catalog of all tools across categories (HSM / PKCS#11, Entropy & Random, Certificates & Proofs, Protocol Simulations, Blockchain & Digital Assets, OpenSSL Studio). Persona-aware filtering with difficulty badges (beginner/intermediate/advanced). Each persona (Executive, Developer, Architect, Researcher, Ops, Curious) sees tailored tool recommendations.\n2. /playground/interactive — Interactive lab with 7 tabs: keystore (key generation), data (hex editor), kem_ops (ML-KEM + X25519 ECDH), symmetric (AES/ChaCha), hashing (SHA/SHAKE), sign_verify (PQC + classical signing), logs (operation history with timing).\n3. /playground/hsm — PKCS#11 v3.2 HSM playground via SoftHSMv3 WASM with 11 tabs: keystore, kem (standalone ML-KEM encap/decap), symmetric, key_wrap, hashing, sign_verify, key_agree, key_derive, mechanisms, acvp (NIST KAT vectors), logs. Supports C++, Rust, and Dual engine modes with parity cross-check.\n4. /playground/cacp — KMIP 3.0 Control Plane: in-browser softhsmrustv3 HSM + crypto-agility policy engine (also reachable at /playground/cacp-kmip).\n5. /playground/docker — Docker sandbox launcher: embeds the containerized sandbox environment (pqctoday-sandbox) that backs every sandbox-flagged tool.\n6. /playground/:toolId — Individual tool detail pages (both native and sandbox) with lazy-loaded components, breadcrumbs, and endorse/flag buttons.\n\nSupported algorithms: ML-KEM-512/768/1024 (FIPS 203), ML-DSA-44/65/87 (FIPS 204), SLH-DSA all 12 parameter sets (FIPS 205), X25519, P-256, RSA-2048/4096, Ed25519, secp256k1, AES-128/256, ChaCha20. All generated keys are for educational purposes only.\n\nURL deep-linking: ?tab= selects Interactive lab tab (kem_ops, sign_verify, symmetric, hashing, data, keystore, logs). ?algo= pre-selects an algorithm. Combine: /playground/interactive?tab=kem_ops&algo=ML-KEM-768. Every individual tool also has its own /playground/<toolId> deep link — see the per-tool catalog entries.`,
       category: 'playground',
       metadata: { feature: 'overview' },
       deepLink: '/playground',
@@ -2591,9 +2682,8 @@ function processPlaygroundGuide(): RAGChunk[] {
     {
       id: 'playground-workshop-tools',
       source: 'playground-guide',
-      title: 'Playground — 22 Workshop Tools Catalog',
-      content:
-        'Workshop Tools in the PQC Playground\n\nThe workshop grid at /playground lists 22 interactive tools organized into 6 categories. Each tool has a difficulty level and recommended personas.\n\nHSM / PKCS#11 (8 tools):\n- SLH-DSA Sign & Verify (Advanced) — FIPS 205 hash-based signatures with all 12 parameter sets\n- Hybrid KEM + ECDH (Intermediate) — ML-KEM-768 + X25519 + HKDF combined key exchange\n- Envelope Encryption (Intermediate) — ML-KEM + AES key wrap for data-at-rest\n- Multi-Algorithm Signing (Intermediate) — ML-DSA / ECDSA / RSA side-by-side comparison\n- TEE-HSM Secure Channel (Advanced) — ML-DSA + ML-KEM + AES wrap trusted execution demo\n- PKCS#11 Walkthrough (Intermediate) — Step-by-step HSM operations tutorial\n- Firmware Signing (Intermediate) — ML-DSA-87 UEFI secure boot simulation\n- SP 800-108 KDF (Advanced) — NIST counter-mode key derivation\n\nEntropy & Random (4 tools):\n- Random Generation (Beginner) — Web Crypto + OpenSSL DRBG with statistical analysis\n- Entropy Testing (Intermediate) — NIST SP 800-90B test suite\n- QRNG Demo (Beginner) — CSPRNG simulation (in-browser, not physical QRNG)\n- Source Combining (Advanced) — SP 800-90C entropy combining via SoftHSMv3\n\nCertificates & Proofs (3 tools):\n- Hybrid Certificates (Intermediate) — PQC + composite X.509v3 via OpenSSL WASM\n- Merkle Proof Verifier (Beginner) — SHA-256 Merkle tree inclusion proofs\n- Hybrid Signature Demo (Intermediate) — ECDSA-P256 + ML-DSA-65 parallel dual-signing\n\nProtocol Simulations (1 tool):\n- 5G SUCI Construction (Advanced) — ECDH + HKDF + AES subscriber concealment\n\nBlockchain & Digital Assets (3 tools):\n- Bitcoin Transaction (Intermediate) — secp256k1 + SHA-256 + RIPEMD160 flow\n- Solana Transaction (Intermediate) — Ed25519 keypair + signing flow\n- HD Wallet Derivation (Intermediate) — BIP39 + BIP32/SLIP-0010\n\nOpenSSL Studio (2 tools):\n- OpenSSL Studio (Intermediate) — Full OpenSSL v3.6.1 WASM terminal\n- TLS 1.3 Simulator (Intermediate) — PQC TLS 1.3 handshake simulation with ML-KEM\n\nAll tools link back to their corresponding Learn module for deeper education.',
+      title: `Playground — ${PLAYGROUND_NATIVE_TOOLS.length} Workshop Tools Catalog`,
+      content: `Workshop Tools in the PQC Playground\n\nThe workshop grid at /playground lists ${PLAYGROUND_NATIVE_TOOLS.length} native interactive tools (plus ${PLAYGROUND_SANDBOX_TOOLS.length} Docker-sandbox scenarios) organized by category. Each tool has a difficulty level, recommended personas, and its own /playground/<toolId> deep link.\n\n${playgroundCatalogBody()}\n\nMost tools link back to a corresponding Learn module for deeper education.`,
       category: 'playground',
       metadata: { feature: 'workshop-tools' },
       deepLink: '/playground',
@@ -2623,7 +2713,7 @@ function processPlaygroundGuide(): RAGChunk[] {
       source: 'playground-guide',
       title: 'Playground — PKCS#11 v3.2 HSM Playground',
       content:
-        'PKCS#11 HSM Playground\n\nThe HSM Playground at /playground/hsm emulates a PKCS#11 v3.2 hardware security module in the browser using SoftHSMv3 (a fork of SoftHSM2 compiled to WebAssembly). All operations use real PKCS#11 C_ interfaces — mirroring what applications do against hardware HSMs.\n\nEngine modes: C++ (default), Rust, Dual (cross-check where one engine generates and the other verifies for parity validation).\n\n10 tabs:\n1. Keystore — Token initialization, HSM key table with generated keys\n2. Symmetric — AES-GCM/CBC/CTR, ChaCha20 encrypt/decrypt via C_EncryptInit/C_Encrypt\n3. Key Wrap — AES key wrap/unwrap, AES-GCM wrap, RSA-OAEP wrap via C_WrapKey/C_UnwrapKey\n4. Hashing — SHA-256/384/512, SHA3 digests via C_DigestInit/C_Digest\n5. Sign/Verify — ML-DSA-44/65/87 and SLH-DSA (all 12 FIPS 205 parameter sets) signing with pre-hash support (SHA-256, SHA-384, SHA-512, SHA3-256, SHA3-384, SHA3-512, SHAKE-128, SHAKE-256, Pure). Classical RSA/ECDSA also available. Uses C_SignInit/C_Sign/C_VerifyInit/C_Verify.\n6. Key Agreement — ML-KEM encap/decap (C_EncapsulateKey/C_DecapsulateKey), ECDH, X25519\n7. Key Derivation — HKDF (SP 800-56C), PBKDF2 (BIP39 mnemonic to seed) via C_DeriveKey\n8. Mechanisms — PKCS#11 mechanism introspection (C_GetMechanismList/C_GetMechanismInfo)\n9. ACVP — NIST ACVP Known Answer Test (KAT) vectors for ML-KEM, ML-DSA, SLH-DSA\n10. Logs — Full PKCS#11 operation log with C_ function calls, parameters, and timing\n\nKey attributes follow PKCS#11 v3.2 CKA_* conventions: CKA_EXTRACTABLE, CKA_SENSITIVE, CKA_ENCRYPT, CKA_DECRYPT, CKA_WRAP, CKA_UNWRAP, CKA_SIGN, CKA_VERIFY configured via key templates at generation time.',
+        'PKCS#11 HSM Playground\n\nThe HSM Playground at /playground/hsm emulates a PKCS#11 v3.2 hardware security module in the browser using SoftHSMv3 (a fork of SoftHSM2 compiled to WebAssembly). All operations use real PKCS#11 C_ interfaces — mirroring what applications do against hardware HSMs.\n\nEngine modes: C++ (default), Rust, Dual (cross-check where one engine generates and the other verifies for parity validation).\n\n11 tabs:\n1. Keystore — Token initialization, HSM key table with generated keys\n2. KEM — standalone ML-KEM encapsulate/decapsulate via C_EncapsulateKey/C_DecapsulateKey\n3. Symmetric — AES-GCM/CBC/CTR, ChaCha20 encrypt/decrypt via C_EncryptInit/C_Encrypt\n4. Key Wrap — AES key wrap/unwrap, AES-GCM wrap, RSA-OAEP wrap via C_WrapKey/C_UnwrapKey\n5. Hashing — SHA-256/384/512, SHA3 digests via C_DigestInit/C_Digest\n6. Sign/Verify — ML-DSA-44/65/87 and SLH-DSA (all 12 FIPS 205 parameter sets) signing with pre-hash support (SHA-256, SHA-384, SHA-512, SHA3-256, SHA3-384, SHA3-512, SHAKE-128, SHAKE-256, Pure). Classical RSA/ECDSA also available. Uses C_SignInit/C_Sign/C_VerifyInit/C_Verify.\n7. Key Agreement — ECDH, X25519 via C_DeriveKey\n8. Key Derivation — HKDF (SP 800-56C), PBKDF2 (BIP39 mnemonic to seed) via C_DeriveKey\n9. Mechanisms — PKCS#11 mechanism introspection (C_GetMechanismList/C_GetMechanismInfo)\n10. ACVP — NIST ACVP Known Answer Test (KAT) vectors for ML-KEM, ML-DSA, SLH-DSA\n11. Logs — Full PKCS#11 operation log with C_ function calls, parameters, and timing\n\nKey attributes follow PKCS#11 v3.2 CKA_* conventions: CKA_EXTRACTABLE, CKA_SENSITIVE, CKA_ENCRYPT, CKA_DECRYPT, CKA_WRAP, CKA_UNWRAP, CKA_SIGN, CKA_VERIFY configured via key templates at generation time.',
       category: 'playground',
       metadata: { feature: 'hsm' },
       deepLink: '/playground/hsm',
@@ -2632,8 +2722,7 @@ function processPlaygroundGuide(): RAGChunk[] {
       id: 'playground-personas',
       source: 'playground-guide',
       title: 'Playground — Persona-Aware Tool Recommendations',
-      content:
-        'Persona-Aware Workshop in the PQC Playground\n\nThe workshop grid at /playground adapts to the active persona from usePersonaStore. Each persona sees a tailored banner, recommended tools, and difficulty-appropriate suggestions.\n\nPersona tool recommendations:\n- Executive / GRC — Risk & governance focus: PQC vs Classical comparison, Hybrid Certificates, Multi-Algorithm Signing\n- Developer / Engineer — Protocol & implementation focus: Code Signing, Hybrid Signature Demo, OpenSSL Studio\n- Security Architect — Architecture & infrastructure focus: PKCS#11 Walkthrough, Envelope Encryption, Hybrid Certificates\n- Researcher / Academic — Comprehensive deep dive: Entropy Testing, QKD Post-Processing, SLH-DSA Sign & Verify\n- IT Ops / DevOps — Deploy & operate focus: Firmware Signing, Hybrid Certificates, Multi-Algorithm Signing\n- Curious Explorer — New to cryptography: QKD Post-Processing, QRNG Demo, PQC vs Classical comparison\n\nDifficulty levels distributed across 22 tools. Tools are tagged with color-coded badges (green/amber/red). Category filter pills show counts per category. Search works across tool names, descriptions, algorithms, and keywords.',
+      content: `Persona-Aware Workshop in the PQC Playground\n\nThe workshop grid at /playground adapts to the active persona from usePersonaStore. Each persona sees a tailored banner, recommended tools, and difficulty-appropriate suggestions.\n\nPersona tool recommendations:\n${playgroundPersonaBody()}\n\nDifficulty levels distributed across ${PLAYGROUND_NATIVE_TOOLS.length} native tools plus ${PLAYGROUND_SANDBOX_TOOLS.length} sandbox scenarios. Tools are tagged with color-coded badges (green/amber/red). Category filter pills show counts per category. Search works across tool names, descriptions, algorithms, and keywords.`,
       category: 'playground',
       metadata: { feature: 'personas' },
       deepLink: '/playground',
@@ -3679,7 +3768,7 @@ function processPageGuides(): RAGChunk[] {
       source: 'documentation',
       title: 'Algorithms Page — Transition Guide & Detailed Comparison',
       content:
-        "Algorithms Page Overview\n\nThe Algorithms page has two main tabs: Transition Guide (default) shows classical → PQC migration paths (e.g., RSA-2048 → ML-KEM-768 + ML-DSA-65), and Detailed Comparison provides full specs for 49 algorithms side by side.\n\nThe Detailed Comparison tab has four sub-tabs: Performance (benchmarks and timing), Security (levels and threat analysis), Sizes (key, ciphertext, and signature sizes), and Use Cases (recommended applications). A baseline algorithm is auto-selected for comparison: ECDH P-256 for KEM families, RSA-2048 for Signature families.\n\nPQC algorithm families: ML-KEM (FIPS 203, lattice-based KEM — 512/768/1024 parameter sets), ML-DSA (FIPS 204, lattice-based signatures — 44/65/87), SLH-DSA (FIPS 205, stateless hash-based signatures — 12 variants), FN-DSA (FIPS 206, compact lattice signatures — 512/1024), HQC (code-based KEM, NIST Round 4 backup), FrodoKEM (conservative LWE, not standardized), Classic McEliece (large keys, impractical), LMS/XMSS (SP 800-208, stateful hash-based, firmware signing).\n\nClassical algorithms shown as deprecated: RSA (all sizes), ECDSA (P-256/384/521), ECDH (X25519/X448), EdDSA — all vulnerable to Shor's algorithm.\n\nNIST Security Levels: L1 (AES-128), L2 (SHA-256 collision), L3 (AES-192), L4 (SHA-384 collision), L5 (AES-256). Data per algorithm: security level, AES equivalent, public/private key sizes, signature/ciphertext size, performance benchmarks, stack RAM, FIPS status, use case notes.\n\nURL deep links: ?tab=transition (default) or ?tab=detailed; ?subtab=performance|security|sizes|usecases (default: performance, omitted from URL); ?highlight= to highlight specific algorithms (comma-separated); ?compare= for pre-selected comparisons; ?family=, ?fn=, ?level=, ?q= for filters. Example: /algorithms?tab=detailed&subtab=sizes&family=KEM.",
+        "Algorithms Page Overview\n\nThe Algorithms page has four tabs: Transition Guide (default) shows classical → PQC migration paths (e.g., RSA-2048 → ML-KEM-768 + ML-DSA-65); Detailed Comparison is a flat, sortable table with full specs for every algorithm, with a Browse ↔ Compare toggle; Protocol Support (the PQC Protocol Matrix) tracks IETF/TCG/OASIS/3GPP/IEEE/UEFI protocol standardization across 4 PQC dimensions (pure-KEM, hybrid-KEM, pure-Sig, hybrid-Sig) in a Heatmap or Detailed card view; Validation runs live in-browser KAT (known-answer-test) vectors and documents implementation-level attacks (side-channel, fault injection, RNG). A baseline algorithm is auto-selected for Detailed-tab comparisons: ECDH P-256 for KEM families, RSA-2048 for Signature families.\n\nPQC algorithm families: ML-KEM (FIPS 203, lattice-based KEM — 512/768/1024 parameter sets), ML-DSA (FIPS 204, lattice-based signatures — 44/65/87), SLH-DSA (FIPS 205, stateless hash-based signatures — 12 variants), FN-DSA (FIPS 206, compact lattice signatures — 512/1024), HQC (code-based KEM, NIST Round 4 backup), FrodoKEM (conservative LWE, not standardized), Classic McEliece (large keys, impractical), LMS/XMSS (SP 800-208, stateful hash-based, firmware signing).\n\nClassical algorithms shown as deprecated: RSA (all sizes), ECDSA (P-256/384/521), ECDH (X25519/X448), EdDSA — all vulnerable to Shor's algorithm.\n\nNIST Security Levels: L1 (AES-128), L2 (SHA-256 collision), L3 (AES-192), L4 (SHA-384 collision), L5 (AES-256). Data per algorithm: security level, AES equivalent, public/private key sizes, signature/ciphertext size, performance benchmarks, stack RAM, FIPS status, use case notes.\n\nURL deep links: ?tab=transition|detailed|support|validation (default: transition); ?family=, ?fn=, ?level=, ?region=, ?status=, ?q= to filter (Transition & Detailed tabs); ?mode=compare for the Detailed tab's Compare view; ?highlight= to highlight specific algorithms (comma-separated); ?compare= for pre-selected comparisons; ?section=attacks|kat opens a Validation-tab accordion; ?protocol=<id> opens one Protocol Support row's detail. On Protocol Support: ?matrixView=detailed for the card view (default: heatmap), ?matrixQ= to search, ?matrixStatus=<rfc|draft|experimental|none|na> (comma-separated) and ?matrixAvailability=<has-oss|no-oss|has-commercial|no-commercial|has-playground|has-deployment|no-deployment> to filter, ?matrixSort=<name|maturity|oss|commercial|deployments>:<asc|desc> to sort. Example: /algorithms?tab=support&matrixView=detailed&matrixStatus=rfc.",
       category: 'page-guide',
       metadata: { page: 'algorithms' },
       deepLink: '/algorithms',
@@ -4847,6 +4936,7 @@ async function main() {
     { name: 'Assessment Guide', fn: processAssessmentGuide },
     { name: 'Getting Started', fn: processGettingStarted },
     { name: 'Playground Guide', fn: processPlaygroundGuide },
+    { name: 'Playground Tools', fn: processPlaygroundTools },
     { name: 'OpenSSL Studio Guide', fn: processOpenSSLStudioGuide },
     { name: 'Achievement Catalog', fn: processAchievementCatalog },
     { name: 'Belt Ranks', fn: processBeltRanks },

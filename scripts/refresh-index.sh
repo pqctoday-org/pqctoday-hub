@@ -20,7 +20,11 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 echo "▶ 1/3  Generating RAG corpus (fast, pure JS)…"
-npx tsx scripts/generate-rag-corpus.ts
+# TSX_TSCONFIG_PATH: the generator imports WORKSHOP_TOOLS from a .tsx component
+# file that uses `@/*` aliases; tsx only auto-resolves paths from the nearest
+# tsconfig.json, which is solution-style (references only) — point it at the
+# tsconfig that actually declares "@/*": ["./src/*"].
+TSX_TSCONFIG_PATH=tsconfig.app.json npx tsx scripts/generate-rag-corpus.ts
 
 echo "▶ 2/3  Building embedding index (local ONNX — a few minutes)…"
 npm run --silent generate-embeddings

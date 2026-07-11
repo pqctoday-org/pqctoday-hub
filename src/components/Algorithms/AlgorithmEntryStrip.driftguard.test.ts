@@ -24,3 +24,31 @@ describe('AlgorithmEntryStrip status params (ACCURACY-0705)', () => {
     expect(offenders).toEqual([])
   })
 })
+
+// Same class of bug as ACCURACY-0705, caught 2026-07-11: the executive
+// persona's default CTA set `section: 'security'` with `tab: 'detailed'` —
+// `section` is only ever read by AlgorithmValidationView on the Validation
+// tab, and only recognises 'attacks' | 'kat', so that key silently did
+// nothing. This structural check makes the same mistake fail a test instead
+// of shipping a dead param again.
+describe('AlgorithmEntryStrip section params', () => {
+  const validSectionIds = new Set(['attacks', 'kat'])
+
+  it('every intent whose params include a section targets tab=validation with a real section id', () => {
+    const allIntents = [...INTENTS, ...Object.values(PERSONA_INTENTS)]
+    const offenders = allIntents
+      .filter((intent) => intent.params.section != null)
+      .filter(
+        (intent) =>
+          intent.params.tab !== 'validation' ||
+          !validSectionIds.has(intent.params.section as string)
+      )
+      .map((intent) => ({
+        label: intent.label,
+        tab: intent.params.tab,
+        section: intent.params.section,
+      }))
+
+    expect(offenders).toEqual([])
+  })
+})

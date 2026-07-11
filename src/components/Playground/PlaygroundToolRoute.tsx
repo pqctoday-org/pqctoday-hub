@@ -10,6 +10,7 @@ import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
 import { HistoryButton } from '../ui/HistoryButton'
+import { ShareButton } from '../ui/ShareButton'
 
 export const PlaygroundToolRoute = () => {
   const { toolId } = useParams<{ toolId: string }>()
@@ -58,6 +59,11 @@ export const PlaygroundToolRoute = () => {
           {tool.category} / {tool.name}
         </span>
         <div className="ml-auto flex items-center gap-1">
+          <ShareButton
+            title={`${tool.name} — PQC Playground`}
+            text={`Try the ${tool.name} tool in the PQC Today Playground`}
+            variant="icon"
+          />
           <EndorseButton
             endorseUrl={buildEndorsementUrl({
               category: 'pqc-tool-endorsement',

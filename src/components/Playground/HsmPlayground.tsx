@@ -36,6 +36,7 @@ import { HsmSignCombinedPanel } from './tabs/SignVerifyTab'
 import { Button } from '../ui/button'
 import { Card } from '../ui/card'
 import { InlineTooltip } from '../ui/InlineTooltip'
+import { ShareButton } from '../ui/ShareButton'
 import { ExecutiveRedirectBanner } from '../common/ExecutiveRedirectBanner'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { logEvent } from '../../utils/analytics'
@@ -283,6 +284,11 @@ export const HsmPlayground = () => {
         </h3>
 
         <div className="flex flex-wrap items-center gap-2">
+          <ShareButton
+            title="PKCS#11 HSM Playground — PQC Today"
+            text="Drive a real PKCS#11 HSM in your browser"
+            variant="icon"
+          />
           {/* Engine mode selector */}
           <div className="flex items-center gap-2 sm:gap-4 bg-muted/50 px-2 sm:px-3 py-1.5 rounded-full shadow-inner">
             <span className="text-xs font-semibold text-muted-foreground mr-1 hidden sm:inline">

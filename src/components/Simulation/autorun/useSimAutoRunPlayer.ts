@@ -1099,6 +1099,7 @@ export function useSimAutoRunPlayer({
             setAutoRunFill(false)
             setRunning(false)
             setDone(true)
+            setIndex(q.length) // land the counter on N/N — it never advances past the last item otherwise
             // Finished — clear the resume point so the button reads "Play all" and a
             // fresh press replays from the top. Climb-family only: a single-phase
             // run never touched the shared playhead (usesSharedResumeIndex), so it

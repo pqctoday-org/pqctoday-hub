@@ -44,7 +44,10 @@ function regenerateCorpusToTemp(): string {
   const out = path.join(mkdtempSync(path.join(tmpdir(), 'rag-fresh-')), 'rag-corpus.json')
   execFileSync('npx', ['tsx', 'scripts/generate-rag-corpus.ts'], {
     cwd: ROOT,
-    env: { ...process.env, RAG_CORPUS_OUT: out },
+    // TSX_TSCONFIG_PATH: see comment in refresh-index.sh — the generator
+    // imports a `@/*`-aliased .tsx file (workshopRegistry) that tsx can't
+    // resolve from the solution-style root tsconfig.json.
+    env: { ...process.env, RAG_CORPUS_OUT: out, TSX_TSCONFIG_PATH: 'tsconfig.app.json' },
     stdio: 'ignore',
   })
   return out
