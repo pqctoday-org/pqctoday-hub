@@ -8,27 +8,73 @@ source: public/vendor-roadmaps/
 # Vendor PQC Roadmap Enrichments
 
 
-## VND-308 — Fastly, Inc.
+## VND-244 — HP Inc.
 
-- **Vendor ID**: VND-308
-- **Vendor Name**: Fastly, Inc.
-- **Roadmap Title**: Future-proofing TLS encryption against quantum threats
-- **Roadmap URL**: https://www.fastly.com/blog/future-proofing-tls-encryption-against-quantum-threats
-- **Publish Date**: 2025-04-02
-- **Local File**: public/vendor-roadmaps/VND-308_Fastly_Inc..html
-- **CSV Coverage Notes**: Rollout of ML-KEM across Fastly's global CDN fleet starting April 2025, automatic for TLS 1.3 customers, with measured early adoption data (~5% of TLS 1.3 clients at time of writing). Added 2026-07-07 via migrate-data remediation; independently re-fetched before adding.
-- **PQC Algorithms Announced**: ML-KEM; Kyber
-- **Target Migration Dates**: Starting April 2025
-- **Products / Services Covered**: global CDN fleet
-- **Compliance Frameworks**: NIST
+- **Vendor ID**: VND-244
+- **Vendor Name**: HP Inc.
+- **Roadmap Title**: HP business PCs with quantum-resistant firmware protection
+- **Roadmap URL**: https://www.hp.com/us-en/newsroom/blogs/2024/hp-launches-business-pc-to-protect-against-quantum-computer-hacks.html
+- **Publish Date**: 2024-03-07
+- **Local File**: public/vendor-roadmaps/VND-244_HP_Inc..html
+- **CSV Coverage Notes**: HP shipped business PCs with an upgraded Endpoint Security Controller (ESC) chip using quantum-resistant cryptography to protect firmware integrity, positioned ahead of US government guidance (quantum-resistant crypto recommended from 2025, required from 2030 for sensitive systems). Added 2026-07-07 via migrate-data remediation; independently re-fetched before adding.
+- **PQC Algorithms Announced**: None detected
+- **Target Migration Dates**: 2025 (recommended for sensitive systems); 2030 (required for sensitive systems)
+- **Products / Services Covered**: 5th generation Endpoint Security Controller (ESC) chip; select business PCs
+- **Compliance Frameworks**: None detected
 - **Hybrid Mode Support**: None detected
+- **Current GA Status**: GA
+- **Customer Action Required**: Identify highest priority use cases; talk to technology providers to understand vendor plans; ensure a plan to protect against the quantum threat
+- **Key Commitments & Quotes**: "HP has announced the world’s first business PCs to protect firmware against quantum computer attacks"; "recommending quantum-resistant cryptography be used from 2025, and be required from 2030, for sensitive systems"; "hardware will be in place to protect PC firmware integrity with Quantum-Resistant Cryptography"
+- **Coverage Verification**: CONSISTENT — The document confirms the launch of business PCs with an upgraded ESC chip for quantum-resistant firmware protection and cites the US government guidance recommending use from 2025 and requiring it from 2030.
+- **Extraction Quality**: MEDIUM
+- **Source Document**: VND-244_HP_Inc..html (266.7 KB)
+- **Extraction Timestamp**: 2026-07-11T15:57:00
+
+
+## VND-238 — Toshiba Research Europe Ltd.
+
+- **Vendor ID**: VND-238
+- **Vendor Name**: Toshiba Research Europe Ltd.
+- **Roadmap Title**: Toshiba Cambridge Research Laboratory satellite QKD milestones
+- **Roadmap URL**: https://www.toshiba-clip.com/en/detail/p=5165
+- **Publish Date**: 2026-04-24
+- **Local File**: public/vendor-roadmaps/VND-238_Toshiba_Research_Europe_Ltd..html
+- **CSV Coverage Notes**: Completed milestone (Jan 2026): compact satellite QKD transmitter, ground-demonstrated. Target milestone (FY2027): long-distance LEO-satellite-to-ground QKD communication, building on 25 years of Cambridge QKD research. Added 2026-07-07 via migrate-data remediation; independently re-fetched before adding.
+- **PQC Algorithms Announced**: None detected
+- **Target Migration Dates**: None detected
+- **Products / Services Covered**: None detected
+- **Compliance Frameworks**: ETSI
+- **Hybrid Mode Support**: None detected
+- **Current GA Status**: No PQC
+- **Customer Action Required**: None detected
+- **Key Commitments & Quotes**: "Satellite QKD is indispensable for building quantum networks that span continents."; "Toshiba aims to demonstrate long-distance communication between low-Earth-orbit satellites and ground stations by fiscal year 2027."; "Satellite QKD will not replace all communications, but it will serve as a foundational layer securing the most critical information across continents."
+- **Coverage Verification**: CONSISTENT — The document confirms the Jan 2026 ground demonstration of the compact satellite QKD transmitter and the FY2027 target for long-distance LEO-satellite-to-ground communication, citing 25+ years of research.
+- **Extraction Quality**: LOW
+- **Source Document**: VND-238_Toshiba_Research_Europe_Ltd..html (61.8 KB)
+- **Extraction Timestamp**: 2026-07-11T15:57:00
+
+
+## VND-234 — NTT Corporation
+
+- **Vendor ID**: VND-234
+- **Vendor Name**: NTT Corporation
+- **Roadmap Title**: NTT quantum-safe secure transport system
+- **Roadmap URL**: https://group.ntt/en/newsrelease/2024/10/30/241030a.html
+- **Publish Date**: 2024-10-30
+- **Local File**: public/vendor-roadmaps/VND-234_NTT_Corporation.html
+- **CSV Coverage Notes**: NTT's 'quantum-safe secure transport system' using proprietary Elastic Key Control to switch cryptographic methods without service interruption, deployed on the Japan-Taiwan IOWN all-photonics network; framed around the '2030 Cryptography Problem.' Added 2026-07-07 via migrate-data remediation; independently re-fetched before adding.
+- **PQC Algorithms Announced**: None detected
+- **Target Migration Dates**: None detected
+- **Products / Services Covered**: quantum-safe secure transport system; open optical transponder
+- **Compliance Frameworks**: NIST
+- **Hybrid Mode Support**: Yes; combines multiple key exchange algorithms and hybridizes keys to generate a single common key
 - **Current GA Status**: Planned
 - **Customer Action Required**: None detected
-- **Key Commitments & Quotes**: "Starting April 2025 , we will be rolling out ML-KEM support across our global CDN fleet"
-- **Coverage Verification**: PARTIAL - The document confirms the April 2025 rollout of ML-KEM across the global CDN fleet, but does not mention automatic application for TLS 1.3 customers or the ~5% early adoption data.
+- **Key Commitments & Quotes**: "NTT has developed the world's first post-quantum secure transport system that supports advanced crypto-agility."
+- **Coverage Verification**: CONSISTENT; The document confirms the system uses Elastic Key Control, switches methods without interruption, is deployed on the Japan-Taiwan IOWN network, and addresses the 2030 Cryptography Problem.
 - **Extraction Quality**: MEDIUM
-- **Source Document**: VND-308_Fastly_Inc..html (250.9 KB)
-- **Extraction Timestamp**: 2026-07-11T08:59:32
+- **Source Document**: VND-234_NTT_Corporation.html (122.9 KB)
+- **Extraction Timestamp**: 2026-07-11T15:57:00
 
 ## VND-001 — Amazon Web Services Inc.
 
