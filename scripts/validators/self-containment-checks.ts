@@ -19,6 +19,27 @@
  *   DS20  Restore integrity: a row that flips deprecated → active between
  *         generations must show new proof (local_file / proof_url / SourceUrl)
  *         — deprecation-for-lost-proof may only be reversed with real proof.
+ *   DS21  Revision-chain integrity: a deprecated row's superseded_by must
+ *         resolve directly to a row with status='active'. The UI
+ *         (attachPriorRevisions in libraryData.ts) only resolves ONE hop
+ *         against active rows — a chain of deprecated rows pointing at each
+ *         other never surfaces as a "PREVIOUS REVISIONS" tile. Added
+ *         2026-07-11 after PKCS11's current OASIS Standard (v3.2, finalized
+ *         2026-06-03) was found deprecated with no superseded_by at all —
+ *         invisible in the UI — while two other rows describing older
+ *         revisions stood as separate, wrongly-labeled active tiles. A sweep
+ *         of the rest of library_*.csv found 22 more rows whose own
+ *         deprecated_reason already named a real successor that was never
+ *         linked via superseded_by; nothing in the maintainer-agent toolset
+ *         reads or writes this column today (confirmed by grep — it is
+ *         purely hand-maintained), so this check is the only thing that
+ *         will catch a repeat.
+ *   DS21-CANDIDATES  Non-blocking companion to DS21: deprecated rows with an
+ *         EMPTY superseded_by whose deprecated_reason text names another
+ *         in-CSV reference_id. Most of these are legitimate no-successor
+ *         retirements (a dead vendor blog link, a withdrawn whitepaper) —
+ *         the reason just happens to mention a sibling row for context, not
+ *         as a successor. Reported as INFO for human triage, never ERROR.
  *
  * The patents family is deliberately not covered here: its lifecycle is
  * enforced by the patents pipeline itself (pqctoday-priv/patents).
@@ -264,6 +285,88 @@ export function runOrphanCheck(): CheckResult[] {
       'Restore integrity: deprecated → active flips carry new proof',
       'dated CSV families',
       'WARNING',
+      findings
+    ),
+  ]
+}
+
+export function runSupersededByChecks(): CheckResult[] {
+  const findings: Finding[] = []
+  for (const fam of FAMILIES) {
+    const [latest] = latestGenerations(fam.prefix, 1)
+    if (!latest || latest.rows.length === 0 || !('superseded_by' in latest.rows[0])) continue
+    const idCol = fam.key[0]
+    const byId = new Map(latest.rows.map((r) => [(r[idCol] ?? '').trim(), r]))
+    latest.rows.forEach((r, i) => {
+      const target = (r.superseded_by ?? '').trim()
+      if (!target) return
+      const targetRow = byId.get(target)
+      if (!targetRow) {
+        findings.push({
+          csv: latest.file,
+          row: i + 2,
+          field: 'superseded_by',
+          value: target,
+          message: `superseded_by references '${target}', which does not exist in ${latest.file}`,
+        })
+        return
+      }
+      if ((targetRow.status ?? '').trim() !== 'active') {
+        findings.push({
+          csv: latest.file,
+          row: i + 2,
+          field: 'superseded_by',
+          value: target,
+          message: `superseded_by points at '${target}', which is itself status='${(targetRow.status ?? '').trim()}' — the UI only resolves one hop against an active row, so this revision will never attach to a tile. Point superseded_by directly at the current active row.`,
+        })
+      }
+    })
+  }
+  return [
+    check(
+      'DS21',
+      'Revision-chain integrity: superseded_by resolves directly to an active row (single-hop)',
+      'dated CSV families',
+      'ERROR',
+      findings
+    ),
+  ]
+}
+
+export function runSupersededByCandidateChecks(): CheckResult[] {
+  const findings: Finding[] = []
+  for (const fam of FAMILIES) {
+    const [latest] = latestGenerations(fam.prefix, 1)
+    if (!latest || latest.rows.length === 0 || !('superseded_by' in latest.rows[0])) continue
+    const idCol = fam.key[0]
+    const allIds = latest.rows
+      .map((r) => (r[idCol] ?? '').trim())
+      .filter((id) => id.length >= 4)
+      .sort((a, b) => b.length - a.length) // longest first — avoid substring false-positives
+    latest.rows.forEach((r, i) => {
+      const status = (r.status ?? '').trim()
+      const supersededBy = (r.superseded_by ?? '').trim()
+      const reason = (r.deprecated_reason ?? '').trim()
+      if (status !== 'deprecated' || supersededBy || !reason) return
+      const rowId = (r[idCol] ?? '').trim()
+      const mentioned = allIds.find((id) => id !== rowId && reason.includes(id))
+      if (mentioned) {
+        findings.push({
+          csv: latest.file,
+          row: i + 2,
+          field: 'deprecated_reason',
+          value: mentioned,
+          message: `deprecated_reason mentions '${mentioned}' but superseded_by is empty — verify whether this is a real successor (then link it) or just a contextual mention (then leave as-is)`,
+        })
+      }
+    })
+  }
+  return [
+    check(
+      'DS21-CANDIDATES',
+      'Unlinked revision-chain candidates — deprecated_reason names a sibling row not reflected in superseded_by (human triage)',
+      'dated CSV families',
+      'INFO',
       findings
     ),
   ]

@@ -106,10 +106,10 @@
   },
   {
     "vendor": "Oracle Corporation",
-    "fips": 21,
+    "fips": 22,
     "acvp": 1,
     "cc": 0,
-    "total": 22
+    "total": 23
   },
   {
     "vendor": "Palo Alto Networks, Inc.",
@@ -161,6 +161,13 @@
     "total": 17
   },
   {
+    "vendor": "Motorola Solutions, Inc.",
+    "fips": 17,
+    "acvp": 0,
+    "cc": 0,
+    "total": 17
+  },
+  {
     "vendor": "Chainguard, Inc.",
     "fips": 3,
     "acvp": 12,
@@ -172,13 +179,6 @@
     "fips": 0,
     "acvp": 0,
     "cc": 15,
-    "total": 15
-  },
-  {
-    "vendor": "Motorola Solutions, Inc.",
-    "fips": 15,
-    "acvp": 0,
-    "cc": 0,
     "total": 15
   },
   {
@@ -196,18 +196,18 @@
     "total": 14
   },
   {
-    "vendor": "Canonical Ltd.",
+    "vendor": "F5, Inc.",
     "fips": 14,
     "acvp": 0,
     "cc": 0,
     "total": 14
   },
   {
-    "vendor": "F5, Inc.",
-    "fips": 13,
+    "vendor": "Canonical Ltd.",
+    "fips": 14,
     "acvp": 0,
     "cc": 0,
-    "total": 13
+    "total": 14
   },
   {
     "vendor": "Lexmark International, Inc. (Scheme: CA)",
@@ -266,6 +266,13 @@
     "total": 10
   },
   {
+    "vendor": "Xerox Corporation (Scheme: CA)",
+    "fips": 0,
+    "acvp": 0,
+    "cc": 10,
+    "total": 10
+  },
+  {
     "vendor": "Google, LLC.",
     "fips": 10,
     "acvp": 0,
@@ -288,13 +295,6 @@
   },
   {
     "vendor": "Idemia (Scheme: FR)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 9,
-    "total": 9
-  },
-  {
-    "vendor": "Xerox Corporation (Scheme: CA)",
     "fips": 0,
     "acvp": 0,
     "cc": 9,
@@ -395,6 +395,13 @@
     "vendor": "Legion of the Bouncy Castle Inc.",
     "fips": 3,
     "acvp": 4,
+    "cc": 0,
+    "total": 7
+  },
+  {
+    "vendor": "Rambus Inc.",
+    "fips": 5,
+    "acvp": 2,
     "cc": 0,
     "total": 7
   },
@@ -511,13 +518,6 @@
     "total": 6
   },
   {
-    "vendor": "Rambus Inc.",
-    "fips": 4,
-    "acvp": 2,
-    "cc": 0,
-    "total": 6
-  },
-  {
     "vendor": "Securosys SA",
     "fips": 0,
     "acvp": 6,
@@ -564,6 +564,13 @@
     "fips": 0,
     "acvp": 0,
     "cc": 6,
+    "total": 6
+  },
+  {
+    "vendor": "NetApp, Inc.",
+    "fips": 6,
+    "acvp": 0,
+    "cc": 0,
     "total": 6
   },
   {
@@ -624,13 +631,6 @@
   },
   {
     "vendor": "Zebra Technologies Corporation",
-    "fips": 5,
-    "acvp": 0,
-    "cc": 0,
-    "total": 5
-  },
-  {
-    "vendor": "NetApp, Inc.",
     "fips": 5,
     "acvp": 0,
     "cc": 0,
@@ -1407,6 +1407,13 @@
     "total": 3
   },
   {
+    "vendor": "Apricorn",
+    "fips": 3,
+    "acvp": 0,
+    "cc": 0,
+    "total": 3
+  },
+  {
     "vendor": "Seagate Technology LLC",
     "fips": 3,
     "acvp": 0,
@@ -1974,6 +1981,13 @@
     "total": 2
   },
   {
+    "vendor": "I4P-informatikai Kft. (I4P Informatics Ltd.) (Scheme: IT)",
+    "fips": 0,
+    "acvp": 0,
+    "cc": 2,
+    "total": 2
+  },
+  {
     "vendor": "Utimaco IS GmbH (Scheme: NL)",
     "fips": 0,
     "acvp": 0,
@@ -2338,13 +2352,6 @@
     "total": 2
   },
   {
-    "vendor": "Apricorn",
-    "fips": 2,
-    "acvp": 0,
-    "cc": 0,
-    "total": 2
-  },
-  {
     "vendor": "Fungible, Inc.",
     "fips": 2,
     "acvp": 0,
@@ -2432,6 +2439,13 @@
     "vendor": "NXP Semiconductors",
     "fips": 2,
     "acvp": 0,
+    "cc": 0,
+    "total": 2
+  },
+  {
+    "vendor": "Fortanix, Inc.",
+    "fips": 1,
+    "acvp": 1,
     "cc": 0,
     "total": 2
   },
@@ -4054,13 +4068,6 @@
   },
   {
     "vendor": "Marvell Semiconductor, Inc (Scheme: NL)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 1,
-    "total": 1
-  },
-  {
-    "vendor": "I4P-informatikai Kft. (I4P Informatics Ltd.) (Scheme: IT)",
     "fips": 0,
     "acvp": 0,
     "cc": 1,
@@ -5698,13 +5705,6 @@
     "total": 1
   },
   {
-    "vendor": "Fortanix, Inc.",
-    "fips": 1,
-    "acvp": 0,
-    "cc": 0,
-    "total": 1
-  },
-  {
     "vendor": "Hub Security LTD",
     "fips": 1,
     "acvp": 0,
@@ -5832,6 +5832,13 @@
   },
   {
     "vendor": "Progress Software, Inc.",
+    "fips": 1,
+    "acvp": 0,
+    "cc": 0,
+    "total": 1
+  },
+  {
+    "vendor": "Fescaro Co. Ltd.",
     "fips": 1,
     "acvp": 0,
     "cc": 0,

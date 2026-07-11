@@ -10,6 +10,10 @@ export interface PageContext {
   moduleId?: string
   tab?: string
   step?: number
+  /** One-line summary of active filter/view-mode URL params (e.g. Algorithms'
+   *  family/status/matrixView) — lets the Assistant compose "from here" links
+   *  and avoid contradicting state the user already has applied. */
+  filters?: string
   relevantSources: string[]
   suggestedQuestions: string[]
   // Persona context
@@ -535,6 +539,42 @@ const DEFAULT_CONTEXT: PageContext = {
   ],
 }
 
+// Query keys the Algorithms page actually reads (see PQCProtocolMatrix.tsx,
+// useAlgorithmExplorer.ts, AlgorithmValidationView.tsx) — kept in sync with
+// deepLinkGrammar.ts's '/algorithms' entry. Only params present in the URL
+// are surfaced; nothing is inferred from persona defaults.
+const ALGORITHMS_STATE_KEYS = [
+  'tab',
+  'family',
+  'fn',
+  'level',
+  'region',
+  'status',
+  'q',
+  'mode',
+  'cnsa',
+  'gap',
+  'compare',
+  'highlight',
+  'section',
+  'protocol',
+  'matrixView',
+  'matrixQ',
+  'matrixStatus',
+  'matrixAvailability',
+  'matrixSort',
+] as const
+
+/** Compact `key=value` summary of the Algorithms page's current URL state,
+ *  or undefined when no such param is present (fresh/default view). */
+function describeAlgorithmsUrlState(search: string): string | undefined {
+  const params = new URLSearchParams(search)
+  const parts = ALGORITHMS_STATE_KEYS.filter((key) => params.has(key)).map(
+    (key) => `${key}=${params.get(key)}`
+  )
+  return parts.length > 0 ? parts.join(', ') : undefined
+}
+
 export function usePageContext(): PageContext {
   const location = useLocation()
   const { selectedPersona, selectedIndustry, selectedRegion, experienceLevel } = usePersonaStore()
@@ -549,7 +589,7 @@ export function usePageContext(): PageContext {
   } = useAssessmentStore()
 
   return useMemo(() => {
-    const { pathname } = location
+    const { pathname, search } = location
 
     // Persona fields — always included (may be null)
     const personaFields = {
@@ -613,7 +653,17 @@ export function usePageContext(): PageContext {
       const curiousOverride =
         experienceLevel === 'curious' ? CURIOUS_PAGE_QUESTIONS[pathname] : undefined
       const resolved = curiousOverride ? { ...ctx, suggestedQuestions: curiousOverride } : ctx
-      return { ...resolved, ...personaFields, ...assessmentFields }
+      // Algorithms: surface the active tab + any filter/view-mode params so the
+      // Assistant knows what the user is already looking at (e.g. Protocol
+      // Support in Detailed view with a status filter) instead of starting cold.
+      const urlStateFields: Partial<PageContext> =
+        pathname === '/algorithms'
+          ? {
+              tab: new URLSearchParams(search).get('tab') ?? undefined,
+              filters: describeAlgorithmsUrlState(search),
+            }
+          : {}
+      return { ...resolved, ...personaFields, ...assessmentFields, ...urlStateFields }
     }
 
     // Fallback for /learn (without sub-path) or unknown routes

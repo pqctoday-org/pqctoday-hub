@@ -1,7 +1,7 @@
 {
   "name": "pqctoday-hub",
   "private": true,
-  "version": "4.20.0",
+  "version": "4.21.0",
   "license": "GPL-3.0-only",
   "type": "module",
   "engines": {
@@ -21,7 +21,7 @@
     "predev": "npm run gen:timeline-facts && cp -r node_modules/@oqs/liboqs-js/dist public/dist && mkdir -p public/wasm && (test -f public/wasm/softhsm.wasm || cp node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.js node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.wasm public/wasm/)",
     "prebuild": "npm run gen:timeline-facts",
     "dev": "vite",
-    "build": "npm run build:sdk && cp -r node_modules/@oqs/liboqs-js/dist public/dist && mkdir -p public/wasm && (test -f public/wasm/softhsm.wasm || cp node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.js node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.wasm public/wasm/) && npm run generate-oscal && npm run generate-cbom && npm run generate:sitemap && tsc -b && vite build && npm run prerender && cp dist/index.html dist/404.html",
+    "build": "npm run build:sdk && cp -r node_modules/@oqs/liboqs-js/dist public/dist && mkdir -p public/wasm && (test -f public/wasm/softhsm.wasm || cp node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.js node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.wasm public/wasm/) && npm run generate-oscal && npm run generate-cbom && npm run generate:sitemap && tsc -b && NODE_OPTIONS=--max-old-space-size=6144 vite build && NODE_OPTIONS=--max-old-space-size=6144 npm run prerender && cp dist/index.html dist/404.html",
     "build:sdk": "npx esbuild src/embed/sdk.ts --bundle --outfile=public/embed/sdk.js --format=esm --target=es2020 --minify",
     "lint": "eslint --no-error-on-unmatched-pattern src e2e *.ts *.js *.cjs",
     "gate:cacp": "npm run test -- src/components/Playground/kmip src/wasm/kmip && npm run test:local",

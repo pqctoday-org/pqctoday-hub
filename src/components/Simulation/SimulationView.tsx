@@ -34,7 +34,12 @@ import {
 } from './embedContract'
 import { SIM_ALGORITHM_TABS } from './algorithmTabs'
 import { SIM_REFERENCE_EMBEDS } from './referenceEmbeds'
-import { useSimAutoRunPlayer, isWalkthroughMode, type RunMode } from './autorun/useSimAutoRunPlayer'
+import {
+  useSimAutoRunPlayer,
+  isWalkthroughMode,
+  isPhaseMode,
+  type RunMode,
+} from './autorun/useSimAutoRunPlayer'
 import {
   SimPlayChoiceModal,
   type SimPlayDefaultCard,
@@ -45,6 +50,7 @@ import { SimConceptPeek } from './autorun/SimConceptPeek'
 import { logEvent } from '@/utils/analytics'
 import { SimArtifactReveal } from './autorun/SimArtifactReveal'
 import { SimExecWalkthroughComplete } from './autorun/SimExecWalkthroughComplete'
+import { SimPhaseRunComplete } from './autorun/SimPhaseRunComplete'
 import {
   EXEC_TOUR_STAGES,
   EXEC_TOUR_OPENING_CONCEPTS,
@@ -667,6 +673,22 @@ export function SimulationView() {
       setWalkthroughDoneOpen(false)
     }
   }, [autoRunPlayer.mode, autoRunPlayer.done, setExecOverviewSeen])
+  // Play-This-Phase end screen: same one-shot-per-run pattern as the walkthrough
+  // above, but its own guard/state — a distinct mode family that must reset
+  // independently of the walkthrough's.
+  const [phaseRunDoneOpen, setPhaseRunDoneOpen] = useState(false)
+  const phaseRunCelebratedRef = useRef(false)
+  useEffect(() => {
+    if (isPhaseMode(autoRunPlayer.mode) && autoRunPlayer.done) {
+      if (!phaseRunCelebratedRef.current) {
+        phaseRunCelebratedRef.current = true
+        setPhaseRunDoneOpen(true)
+      }
+    } else if (!autoRunPlayer.done) {
+      phaseRunCelebratedRef.current = false
+      setPhaseRunDoneOpen(false)
+    }
+  }, [autoRunPlayer.mode, autoRunPlayer.done])
   const assessFrameworkRisk = useMemo(
     () => (assessSnap ? frameworkRiskFromAssess(assessSnap.result) : null),
     [assessSnap]
@@ -3302,6 +3324,12 @@ export function SimulationView() {
         )}
         {walkthroughDoneOpen && (
           <SimExecWalkthroughComplete onClose={() => setWalkthroughDoneOpen(false)} />
+        )}
+        {phaseRunDoneOpen && (
+          <SimPhaseRunComplete
+            phaseFocus={autoRunPlayer.phaseFocus}
+            onClose={() => setPhaseRunDoneOpen(false)}
+          />
         )}
         {pendingConfirm === 'reset' && (
           <SimConfirmDialog

@@ -32,6 +32,7 @@ import {
 import { cn } from '@/lib/utils'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
+import { ShareButton } from '../ui/ShareButton'
 import {
   WORKSHOP_TOOLS,
   type WorkshopTool,
@@ -507,6 +508,12 @@ const ToolDetailModal: React.FC<ToolModalProps> = ({
               </div>
               <p className="mt-1 text-[11.5px] text-muted-foreground">{tool.category}</p>
             </div>
+            <ShareButton
+              title={`${tool.name} — PQC Playground`}
+              text={`Try the ${tool.name} tool in the PQC Today Playground`}
+              url={`${window.location.origin}/playground/${tool.id}`}
+              variant="icon"
+            />
             <Button
               variant="ghost"
               onClick={onClose}

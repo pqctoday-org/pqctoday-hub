@@ -37,6 +37,7 @@ import {
 } from 'lucide-react'
 import { MarkdownView } from '@/components/ui/MarkdownView'
 import { Button } from '@/components/ui/button'
+import { ShareButton } from '@/components/ui/ShareButton'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { ExecutiveRedirectBanner } from '@/components/common/ExecutiveRedirectBanner'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -824,6 +825,11 @@ export function KmipPlaygroundView() {
         </div>
         {/* VIEW · Guided / Expert progressive-disclosure toggle */}
         <div className="shrink-0 flex items-center gap-2">
+          <ShareButton
+            title="KMIP Control Plane — PQC Today"
+            text="A real KMIP 3.0 control plane + PKCS#11 HSM running in the browser"
+            variant="icon"
+          />
           <Button
             variant="ghost"
             size="sm"
