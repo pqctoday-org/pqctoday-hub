@@ -1,8 +1,63 @@
 ---
 generated: 2026-07-10
 collection: library
-documents_processed: 3
+documents_processed: 1
 enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
+---
+
+## ref-bindel-hybrid-sigs
+
+- **Reference ID**: ref-bindel-hybrid-sigs
+- **Title**: A note on hybrid signature schemes
+- **Authors**: N. Bindel and B. Hale
+- **Publication Date**: 2023-01-01
+- **Last Updated**: 2023-01-01
+- **Document Status**: Published
+- **Main Topic**: Analysis of design goals and security properties for hybrid digital signature schemes combining classical and post-quantum algorithms.
+- **PQC Algorithms Covered**: Dilithium; Falcon; SIKE
+- **Quantum Threats Addressed**: Harvest Now Decrypt Later; quantum computers executing cryptanalysis
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Nina Bindel; Britta Hale
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: PKI; certificate chain
+- **Standardization Bodies**: NIST; IETF
+- **Compliance Frameworks Referenced**: FIPS 186; FIPS 140
+- **Classical Algorithms Referenced**: RSA; DSA
+- **Key Takeaways**: Hybrid signatures should aim for proof composability to link security to component algorithms; Weak non-separability ensures artifacts remain if a signature is stripped; Backwards compatibility allows legacy receivers to verify only the classical component; Simultaneous verification requires verifying both components to prevent early exit; FIPS 140 validation may treat non-approved PQ components as non-security functions if a NIST-approved classical component is present.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Parallel signing; concatenation; hybrid generality; backwards compatibility; forwards compatibility
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Yes
+- **Hybrid PQC Signature Evidence**: "tailored combinations of Fiat-Shamir based signature schemes... with RSA or DSA" (§Abstract)
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Researcher; Developer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: hybrid-crypto; crypto-agility; pki-workshop; pqc-risk-management
+- **Implementation Attack Surface**: signature stripping attack; downgrading attacks
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: formal security analysis; FIPS 140 validation
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: acquisition and procurement time; system integration and testing; hardware encoding replacement
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice; Isogeny; Symmetric
+- **PQC Round**: Round 3
+- **Source Document**: ref-bindel-hybrid-sigs.pdf (1,012,356 bytes, 14,654 extracted chars)
+- **Extraction Timestamp**: 2026-07-10T21:00:03
+
 ---
 
 ## 1775309727973
@@ -1039,36 +1094,36 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Publication Date**: 2026-02-02
 - **Last Updated**: 2026-02-02
 - **Document Status**: Published
-- **Main Topic**: ANSSI technical fact sheet on the post-quantum transition of TLS 1.3, recommending hybrid key exchange and addressing ML-DSA-based authentication.
+- **Main Topic**: ANSSI technical fact sheet recommending hybrid key exchange and authentication for the post-quantum transition of TLS 1.3.
 - **PQC Algorithms Covered**: ML-KEM; ML-DSA
-- **Quantum Threats Addressed**: store-now decrypt-later
+- **Quantum Threats Addressed**: Harvest Now Decrypt Later
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: France; ANSSI
 - **Leaders Contributions Mentioned**: None detected
 - **PQC Products Mentioned**: None detected
 - **Protocols Covered**: TLS 1.3
-- **Infrastructure Layers**: Key Management
-- **Standardization Bodies**: None detected
+- **Infrastructure Layers**: PKI
+- **Standardization Bodies**: NIST; IETF
 - **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: Diffie-Hellman
-- **Key Takeaways**: Hybridization of classical and post-quantum mechanisms is recommended for TLS 1.3 transition; Pre-shared keys can provide post-quantum confidentiality but compromise Perfect Forward Secrecy; Post-quantum mechanisms significantly increase message sizes during key exchange and authentication; Confidentiality transition is more urgent than authentication due to store-now decrypt-later attacks
+- **Classical Algorithms Referenced**: DH
+- **Key Takeaways**: ANSSI recommends hybridization for both key exchange and signature authentication in TLS 1.3; Confidentiality transition is more urgent than authentication due to store-now decrypt-later attacks; Hybridization increases message sizes, requiring fragmentation handling native to TLS 1.3; No standards currently exist for hybrid authentication certificate formats.
 - **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: Hybrid key exchange; Hybrid signature authentication; Pre-shared key transition
+- **Hybrid & Transition Approaches**: Hybrid key exchange; Hybrid signature authentication; Pre-shared keys
 - **Pure PQC KEM Support**: No
 - **Pure PQC KEM Evidence**: None detected
 - **Hybrid PQC KEM Support**: Yes
-- **Hybrid PQC KEM Evidence**: "hybridization of the key exchange" (§3.2.1)
+- **Hybrid PQC KEM Evidence**: "hybridation de l’échange de clés" (§3.2.1)
 - **Pure PQC Signature Support**: No
 - **Pure PQC Signature Evidence**: None detected
 - **Hybrid PQC Signature Support**: Yes
-- **Hybrid PQC Signature Evidence**: "hybridization of signature authentication" (§3.2.2)
+- **Hybrid PQC Signature Evidence**: "hybridation de l’authentification par signature" (§3.2.2)
 - **PQC Heatmap Protocols Covered**: TLS-1.3
-- **PQC Heatmap Protocols Evidence**: TLS-1.3: "Post-Quantum Transition of TLS 1.3" (Title)
+- **PQC Heatmap Protocols Evidence**: TLS-1.3: "Transition Post-Quantique de TLS 1.3" (Title)
 - **Lifecycle State**: Released
-- **Performance & Size Considerations**: Significant increase in message sizes for key exchange and authentication phases
+- **Performance & Size Considerations**: Increased message sizes during key exchange and authentication phases
 - **Target Audience**: Developer; Administrator; CISO; CIO; User
 - **Implementation Prerequisites**: Validation by system administrator or security personnel
-- **Relevant PQC Today Features**: hybrid-crypto; tls-basics; pqc-risk-management; migration-program
+- **Relevant PQC Today Features**: hybrid-crypto; tls-basics; migration-program; pqc-risk-management
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -1076,7 +1131,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **QRNG & Entropy Sources**: None detected
 - **Constrained Device & IoT Suitability**: None detected
 - **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: Phased transition using hybridization; temporary use of pre-shared keys
+- **Deployment & Migration Complexity**: Message fragmentation handling required due to increased size
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Math Family**: Lattice
@@ -24853,7 +24908,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Publication Date**: 2026-06-03
 - **Last Updated**: 2026-06-03
 - **Document Status**: OASIS Standard
-- **Main Topic**: PKCS #11 Specification Version 3.2 defines the Cryptoki interface data types, functions, and mechanisms, including post-quantum algorithms ML-KEM, ML-DSA, and SLH-DSA.
+- **Main Topic**: PKCS #11 Specification Version 3.2 defines the Cryptoki interface data types and functions, adding post-quantum mechanisms for ML-KEM, ML-DSA, and SLH-DSA.
 - **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
@@ -24863,9 +24918,9 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Protocols Covered**: None detected
 - **Infrastructure Layers**: HSM; Key Management
 - **Standardization Bodies**: OASIS
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: RSA; DSA; ECDSA; EdDSA; XEdDSA; Diffie-Hellman; AES; SHA-1
-- **Key Takeaways**: PKCS #11 v3.2 is finalized as an OASIS Standard with no substantive changes from the prior Committee Specification Draft; The specification adds explicit mechanisms for ML-KEM, ML-DSA, and SLH-DSA to the Cryptoki interface; Machine-readable header files (pkcs11.h, pkcs11f.h, pkcs11t.h) are provided as normative artifacts; The document supersedes PKCS #11 Specification Version 3.1; Key words like MUST and SHALL are interpreted per BCP 14.
+- **Compliance Frameworks Referenced**: FIPS 140-2; FIPS PUB 197; FIPS PUB 81; FIPS PUB 186-4; FIPS 140-3
+- **Classical Algorithms Referenced**: AES; BLOWFISH; CAMELLIA; ECDH; ECDSA; ECMQV; GOST 28147-89; GOST R 34.11-94; GOST R 34.10-2001; DSA; RSA; MD5; SHA-2; ARIA
+- **Key Takeaways**: PKCS #11 v3.2 standardizes ML-KEM, ML-DSA, and SLH-DSA mechanisms for HSM integration; The specification provides ANSI C header files and function definitions for PQC operations; Implementations must support new mechanism types like CKM_ML_KEM and CKM_ML_DSA; The standard maintains backward compatibility with legacy cryptographic functions; Validation attributes are defined for tracking module compliance and security levels
 - **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: None detected
 - **Pure PQC KEM Support**: Yes
@@ -24880,12 +24935,12 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **PQC Heatmap Protocols Evidence**: None detected
 - **Lifecycle State**: Released
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: Developer; Security Architect
-- **Implementation Prerequisites**: C or C++ compiler; pkcs11.h header file
-- **Relevant PQC Today Features**: Algorithms; hsm-pqc; kms-pqc; crypto-agility
+- **Target Audience**: Developer; Security Architect; Compliance Officer
+- **Implementation Prerequisites**: ANSI C programming language; Cryptoki library implementation; PKCS #11 header files
+- **Relevant PQC Today Features**: Algorithms; hsm-pqc; crypto-agility; migration-program
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
+- **Testing & Validation Methods**: FIPS 140-2 power-up self-test; conditional self-test; continuous random number generator test; pair-wise consistency test
 - **QKD Protocols & Quantum Networking**: None detected
 - **QRNG & Entropy Sources**: None detected
 - **Constrained Device & IoT Suitability**: None detected
@@ -37003,47 +37058,47 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Publication Date**: 2025-07-01
 - **Last Updated**: 2026-03-12
 - **Document Status**: Draft (July 2025)
-- **Main Topic**: TPM 2.0 Library Specification Version 185 updates adding FIPS 203/204 PQC algorithms with hybrid classical+PQ support.
-- **PQC Algorithms Covered**: FIPS 203; FIPS 204
+- **Main Topic**: Trusted Platform Module 2.0 Library Specification Version 185 defining architecture and adding FIPS 203/204 PQC algorithms with hybrid support.
+- **PQC Algorithms Covered**: ML-KEM
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: None detected
 - **Leaders Contributions Mentioned**: None detected
 - **PQC Products Mentioned**: None detected
 - **Protocols Covered**: TPM
-- **Infrastructure Layers**: Hardware root of trust
+- **Infrastructure Layers**: HSM
 - **Standardization Bodies**: Trusted Computing Group
 - **Compliance Frameworks Referenced**: FIPS 203; FIPS 204
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: TPM 2.0 Library v185 adds support for FIPS 203 and FIPS 204 PQC algorithms; The specification includes hybrid classical+PQ support; The update affects PCs, servers, and embedded devices using hardware root of trust; The document is a published TCG specification from March 2026
+- **Classical Algorithms Referenced**: RSA; ECC; HMAC; SMAC
+- **Key Takeaways**: TPM 2.0 Library v185 integrates FIPS 203/204 PQC algorithms into the hardware root of trust; The specification defines labeled KEMs for domain separation in restricted decryption protocols; Hybrid classical+PQ support is included for backward compatibility and transition; The update affects PCs, servers, and embedded devices using TPMs for trust establishment.
 - **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: hybrid classical+PQ support
 - **Pure PQC KEM Support**: No
 - **Pure PQC KEM Evidence**: None detected
 - **Hybrid PQC KEM Support**: Yes
-- **Hybrid PQC KEM Evidence**: "hybrid classical+PQ support"
+- **Hybrid PQC KEM Evidence**: "adding FIPS 203/204 PQC algorithms with hybrid classical+PQ support"
 - **Pure PQC Signature Support**: No
 - **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: Yes
+- **Hybrid PQC Signature Support**: No
 - **Hybrid PQC Signature Evidence**: "hybrid classical+PQ support"
 - **PQC Heatmap Protocols Covered**: TPM
 - **PQC Heatmap Protocols Evidence**: TPM: "Trusted Platform Module 2.0 Library Part 1: Architecture"
 - **Lifecycle State**: Released
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect; Developer; Compliance Officer
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: hsm-pqc; hybrid-crypto; Algorithms
-- **Implementation Attack Surface**: None detected
+- **Implementation Prerequisites**: TPM 2.0 hardware; firmware upgrade to v185
+- **Relevant PQC Today Features**: hsm-pqc; hybrid-crypto; Algorithms; Migrate
+- **Implementation Attack Surface**: physical attack; subversion; off-line attack on authValue
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
 - **QKD Protocols & Quantum Networking**: None detected
 - **QRNG & Entropy Sources**: None detected
 - **Constrained Device & IoT Suitability**: embedded device
 - **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: None detected
+- **Deployment & Migration Complexity**: field upgrade to a trusted firmware version
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Math Family**: None detected
+- **Math Family**: Lattice
 - **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
@@ -45955,60 +46010,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Organizational Readiness**: None detected
 - **Math Family**: Symmetric
 - **PQC Round**: Not Applicable
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## ref-bindel-hybrid-sigs
-
-- **Reference ID**: ref-bindel-hybrid-sigs
-- **Title**: A note on hybrid signature schemes
-- **Authors**: N. Bindel and B. Hale
-- **Publication Date**: 2023-01-01
-- **Last Updated**: 2023-01-01
-- **Document Status**: Published
-- **Main Topic**: Analysis of design goals and security properties for hybrid digital signature schemes combining classical and post-quantum algorithms.
-- **PQC Algorithms Covered**: Dilithium; Falcon
-- **Quantum Threats Addressed**: Harvest Now Decrypt Later
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: United States; Department of Defense; U.S. Government
-- **Leaders Contributions Mentioned**: Nina Bindel; Britta Hale
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: PKI (public key certificate chains)
-- **Standardization Bodies**: NIST
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: RSA; DSA
-- **Key Takeaways**: Hybrid signatures should ensure proof composability to link security to component algorithms; Strong Non-Separability prevents adversaries from stripping components without verification failure; Backwards compatibility is mutually exclusive with Strong Non-Separability; Simultaneous Verification ensures verifiers cannot quit before checking both components.
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: Parallel signing; Concatenation; Hybrid generality; Backwards compatibility; Forwards compatibility
-- **Pure PQC KEM Support**: Not Applicable
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: No
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: No
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: Yes
-- **Hybrid PQC Signature Evidence**: "tailored combinations of Fiat-Shamir based signature schemes... with RSA or DSA"
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Draft
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Security Architect; Researcher
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: hybrid-crypto; crypto-agility; pqc-risk-management
-- **Implementation Attack Surface**: Downgrading attacks; Signature stripping attacks
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: Formal security analysis (mentioned as future work); cryptanalysis
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: Backwards compatibility; Forwards compatibility
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: Lattice; Hybrid
-- **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
