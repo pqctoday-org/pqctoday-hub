@@ -1,8 +1,63 @@
 ---
 generated: 2026-07-10
 collection: library
-documents_processed: 1
+documents_processed: 5
 enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
+---
+
+## ISO-IEC-27001-2022
+
+- **Reference ID**: ISO-IEC-27001-2022
+- **Title**: ISO/IEC 27001:2022 — Information Security Management Systems — Requirements
+- **Authors**: ISO/IEC
+- **Publication Date**: 2022-10-25
+- **Last Updated**: 2022-10-25
+- **Document Status**: International Standard
+- **Main Topic**: International standard specifying requirements for establishing, implementing, maintaining and continually improving an information security management system (ISMS).
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: ISO
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: ISO/IEC 27001:2022 serves as the governance anchor for accepting residual risk; The standard supports operating standing security capabilities after a PQC migration; The document specifies requirements for establishing and maintaining an ISMS
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer; CISO
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: pqc-governance; compliance-strategy; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: ISO-IEC-27001-2022.html (6,121 bytes, 237 extracted chars)
+- **Extraction Timestamp**: 2026-07-10T21:51:17
+
 ---
 
 ## 1775309727973
