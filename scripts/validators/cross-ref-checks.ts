@@ -194,9 +194,7 @@ export function runCrossRefChecks(): CheckResult[] {
     if (id.startsWith('draft-')) return id.replace(/-\d+$/, '')
     return id
   }
-  const canonicalLibraryIds = new Set(
-    [...libraryIds].map((id) => canonicalizeLibraryHeading(id))
-  )
+  const canonicalLibraryIds = new Set([...libraryIds].map((id) => canonicalizeLibraryHeading(id)))
   const migrateNames = new Set(migrate.rows.map((r) => r.software_name).filter(Boolean))
   const migrateCategoryIds = new Set(migrate.rows.map((r) => r.category_id).filter(Boolean))
   const threatIds = new Set(threats.rows.map((r) => r.threat_id).filter(Boolean))
@@ -817,7 +815,9 @@ export function runCrossRefChecks(): CheckResult[] {
 
     const f: Finding[] = []
     for (const id of allIds) {
-      const idTitle = id.includes(' \u2014 ') ? id.split(' \u2014 ').slice(1).join(' \u2014 ') : null
+      const idTitle = id.includes(' \u2014 ')
+        ? id.split(' \u2014 ').slice(1).join(' \u2014 ')
+        : null
       const found =
         timelineEnrichmentKeys.has(id) ||
         timelineEnrichmentKeysFallback.has(id) ||

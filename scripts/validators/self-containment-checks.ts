@@ -325,7 +325,7 @@ export function runSupersededByChecks(): CheckResult[] {
   return [
     check(
       'DS21',
-      "Revision-chain integrity: superseded_by resolves directly to an active row (single-hop)",
+      'Revision-chain integrity: superseded_by resolves directly to an active row (single-hop)',
       'dated CSV families',
       'ERROR',
       findings
