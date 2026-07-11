@@ -165,6 +165,35 @@ export class KmipPlayground {
         }
     }
     /**
+     * WP-4 showcase — bypass the KMIP dispatcher and CACP policy plane
+     * entirely, calling straight into the engine's native PKCS#11 Encrypt
+     * path against a KMIP object's own engine handle. Demonstrates that
+     * PKCS#11 v3.2 §4.8 Table 13 (`CKA_ALLOWED_MECHANISMS`) — derived from
+     * the key's `CryptographicUsageMask` at `CreateKeyPair` time — is
+     * enforced by the engine ITSELF, not just by KMIP/CACP's policy layer,
+     * which this call never touches. RSA public keys default to
+     * `CKA_ENCRYPT=true` in PKCS#11 regardless of KMIP usage (§4.8's own
+     * key-generation defaults), so a boolean-flag check alone would NOT
+     * catch a Sign/Verify-only key being used to encrypt — only the
+     * mechanism whitelist does, which is exactly what this probes.
+     * @param {string} public_key_uid
+     * @returns {string}
+     */
+    raw_pkcs11_encrypt_probe(public_key_uid) {
+        let deferred2_0;
+        let deferred2_1;
+        try {
+            const ptr0 = passStringToWasm0(public_key_uid, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            const len0 = WASM_VECTOR_LEN;
+            const ret = wasm.kmipplayground_raw_pkcs11_encrypt_probe(this.__wbg_ptr, ptr0, len0);
+            deferred2_0 = ret[0];
+            deferred2_1 = ret[1];
+            return getStringFromWasm0(ret[0], ret[1]);
+        } finally {
+            wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
+        }
+    }
+    /**
      * High-level **batch** driver: build ONE KMIP 3.0 `Request Message` carrying
      * many operations and dispatch it through the identical decode → dispatch →
      * encode path `submit`/`run_op` use. This is a *real* on-the-wire batch (one
