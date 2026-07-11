@@ -9,6 +9,7 @@ import { BUSINESS_TOOL_COMPONENTS } from './businessToolComponents'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
+import { ShareButton } from '../ui/ShareButton'
 import { useAchievementStore } from '@/store/useAchievementStore'
 import { logBusinessToolOpen } from '@/utils/analytics'
 
@@ -44,6 +45,11 @@ export const BusinessToolRoute = () => {
           {tool.category} / {tool.name}
         </span>
         <div className="ml-auto flex items-center gap-1">
+          <ShareButton
+            title={`${tool.name} — PQC Business Tools`}
+            text={`Try the ${tool.name} tool in the PQC Today Business Center`}
+            variant="icon"
+          />
           <EndorseButton
             endorseUrl={buildEndorsementUrl({
               category: 'pqc-tool-endorsement',
