@@ -38,7 +38,8 @@ registries and refreshes the algorithm and learning-module data.
 ### Added
 
 - **A Command Lab for KMIP certificate operations** [view:/playground] [persona:developer] [persona:architect]: the KMIP 3.0 tab now runs certificate operations — Certify, Validate, and public-key verification — in the browser against a rebuilt engine, with per-operation forms, an expanded glossary, extra lessons, and knowledge checks so you can learn each command hands-on.
-- **Composite-signature algorithms in the KMIP Commands tab** [view:/playground] [persona:developer] [persona:architect]: the Commands tab now surfaces the LAMPS composite-signature algorithms so you can exercise hybrid classical+PQC signatures.
+- **Composite (hybrid classical+PQC) certificates end-to-end** [view:/playground] [persona:developer] [persona:architect]: the Commands tab surfaces the LAMPS composite-signature algorithms, and the in-browser engine now issues and validates composite ML-DSA+ECDSA certificate chains for real — each component signature independently verified.
+- **Cross-plane certificate showcases** [view:/playground] [persona:developer] [persona:architect]: WP-3/4/6 demos — observe a KMIP-issued certificate as a raw PKCS#11 object, watch `CKA_ALLOWED_MECHANISMS` enforcement across planes, and run FrodoKEM/Classic McEliece through the PKCS#11 side.
 
 ### Changed
 
