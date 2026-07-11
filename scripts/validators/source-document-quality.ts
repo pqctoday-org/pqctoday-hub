@@ -48,6 +48,16 @@ const MIN_PDF_BYTES = 10240 // < 10KB PDF = suspicious
 function stripHtmlTags(html: string): string {
   let text = html.replace(/<script[\s\S]*?<\/script>/gi, ' ')
   text = text.replace(/<style[\s\S]*?<\/style>/gi, ' ')
+  // <noscript> fallback text ("Please enable JavaScript to view the site")
+  // is never visible when JS runs — it's polite boilerplate on nearly every
+  // modern SSR/hydrated page, not evidence the real content failed to
+  // render. Without this, a genuinely-recovered page can still false-flag
+  // as an "Error page: ... in first 500 chars" if its noscript fallback
+  // happens to land early in the raw HTML (found 2026-07-11 recovering
+  // Deloitte-TechTrends-2025-Quantum.html — a real 331KB article, correctly
+  // fetched via a browser-TLS-fingerprint tier, still failed this check
+  // purely because of a <noscript> div at byte offset ~20K).
+  text = text.replace(/<noscript[\s\S]*?<\/noscript>/gi, ' ')
   text = text.replace(/<[^>]+>/g, ' ')
   text = text
     .replace(/&nbsp;/g, ' ')
