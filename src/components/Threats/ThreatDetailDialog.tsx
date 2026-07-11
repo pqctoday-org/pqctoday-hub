@@ -150,7 +150,7 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
                   })}
                 </div>
                 <Link
-                  to="/algorithms?subtab=attacks"
+                  to="/algorithms?tab=validation&section=attacks"
                   className="mt-3 inline-flex items-center gap-1 text-xs text-primary hover:underline"
                 >
                   Full attack profiles &amp; countermeasures <ArrowRight size={12} />

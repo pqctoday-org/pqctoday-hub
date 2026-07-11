@@ -132,9 +132,15 @@ export function AlgorithmsView() {
       'q',
       'compare',
       'section',
-      'subtab',
       'cnsa',
       'gap',
+      'mode',
+      'protocol',
+      'matrixView',
+      'matrixQ',
+      'matrixStatus',
+      'matrixAvailability',
+      'matrixSort',
     ]
     return watched.some((key) => searchParams.has(key))
   }, [searchParams])
@@ -311,80 +317,91 @@ export function AlgorithmsView() {
             </div>
           )}
 
-          {/* Control deck — filters + QuickView + CNSA lens + persona hint in one panel */}
-          <AlgorithmFilters
-            cryptoFamily={filterCryptoFamily}
-            onCryptoFamilyChange={handleCryptoFamilyChange}
-            functionGroup={filterFunction}
-            onFunctionGroupChange={handleFunctionChange}
-            securityLevel={filterSecurityLevel}
-            onSecurityLevelChange={handleSecurityLevelChange}
-            region={filterRegion}
-            onRegionChange={handleRegionChange}
-            status={filterStatus}
-            onStatusChange={handleStatusChange}
-            searchQuery={searchQuery}
-            onSearchChange={handleSearchChange}
-            filteredCount={filteredCount}
-            totalCount={totalAlgoCount}
-            availableLevels={availableLevels}
-            persona={selectedPersona}
-            onQuickView={handleQuickView}
-            cnsaLens={cnsaLens}
-            onToggleCnsaLens={handleToggleCnsaLens}
-            researchGapOnly={researchGapOnly}
-            onToggleResearchGapOnly={handleToggleResearchGapOnly}
-            onClearAll={handleClearAllFilters}
-            personaHint={
-              /* eslint-disable-next-line security/detect-object-injection */
-              selectedPersona && !hintDismissed ? ALGO_PERSONA_HINTS[selectedPersona] : undefined
-            }
-            onDismissHint={() => setHintDismissed(true)}
-            hintAction={
-              selectedPersona === 'executive' ? (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-auto px-2 py-0.5 text-[10px] font-medium text-primary hover:bg-primary/10 border border-primary/20 rounded shrink-0"
-                  onClick={() =>
-                    setSearchParams(
-                      (prev) => {
-                        const next = new URLSearchParams(prev)
-                        next.set('highlight', 'ML-KEM-768,ML-DSA-65,SLH-DSA-SHA2-128s,FN-DSA-512')
-                        next.set('tab', 'detailed')
-                        return next
-                      },
-                      { replace: true }
-                    )
-                  }
-                >
-                  View Top 4 →
-                </Button>
-              ) : undefined
-            }
-          />
+          {/* Control deck — filters + QuickView + CNSA lens + persona hint in one panel.
+              Hidden on Protocol Support: that tab filters/sorts its own table
+              (family/fn/level/region/status here have no effect on it). */}
+          {activeTab !== 'support' && (
+            <>
+              <AlgorithmFilters
+                cryptoFamily={filterCryptoFamily}
+                onCryptoFamilyChange={handleCryptoFamilyChange}
+                functionGroup={filterFunction}
+                onFunctionGroupChange={handleFunctionChange}
+                securityLevel={filterSecurityLevel}
+                onSecurityLevelChange={handleSecurityLevelChange}
+                region={filterRegion}
+                onRegionChange={handleRegionChange}
+                status={filterStatus}
+                onStatusChange={handleStatusChange}
+                searchQuery={searchQuery}
+                onSearchChange={handleSearchChange}
+                filteredCount={filteredCount}
+                totalCount={totalAlgoCount}
+                availableLevels={availableLevels}
+                persona={selectedPersona}
+                onQuickView={handleQuickView}
+                cnsaLens={cnsaLens}
+                onToggleCnsaLens={handleToggleCnsaLens}
+                researchGapOnly={researchGapOnly}
+                onToggleResearchGapOnly={handleToggleResearchGapOnly}
+                onClearAll={handleClearAllFilters}
+                personaHint={
+                  /* eslint-disable-next-line security/detect-object-injection */
+                  selectedPersona && !hintDismissed
+                    ? ALGO_PERSONA_HINTS[selectedPersona]
+                    : undefined
+                }
+                onDismissHint={() => setHintDismissed(true)}
+                hintAction={
+                  selectedPersona === 'executive' ? (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-auto px-2 py-0.5 text-[10px] font-medium text-primary hover:bg-primary/10 border border-primary/20 rounded shrink-0"
+                      onClick={() =>
+                        setSearchParams(
+                          (prev) => {
+                            const next = new URLSearchParams(prev)
+                            next.set(
+                              'highlight',
+                              'ML-KEM-768,ML-DSA-65,SLH-DSA-SHA2-128s,FN-DSA-512'
+                            )
+                            next.set('tab', 'detailed')
+                            return next
+                          },
+                          { replace: true }
+                        )
+                      }
+                    >
+                      View Top 4 →
+                    </Button>
+                  ) : undefined
+                }
+              />
 
-          {/* CNSA 2.0 suite detail — inline below the deck only when the lens is on */}
-          {cnsaLens && <Cnsa20Panel />}
+              {/* CNSA 2.0 suite detail — inline below the deck only when the lens is on */}
+              {cnsaLens && <Cnsa20Panel />}
 
-          {/* Cross-link to PQC Candidates module when filtering by Candidate status */}
-          {filterStatus === 'Candidate' && (
-            <div className="mt-3 rounded-lg border border-info/30 bg-info/5 p-3 flex items-start gap-2">
-              <Info size={16} className="text-info shrink-0 mt-0.5" />
-              <p className="text-xs text-foreground/85 leading-relaxed">
-                These are NIST Additional Signatures Round-2 / Round-3 candidates, not yet
-                standardised. To understand the standardisation lifecycle — the four math families,
-                the cryptanalysis events, and the worldwide parallel tracks (KpqC, CACR, ISO/IEC) —
-                see the{' '}
-                <Link
-                  to="/learn/pqc-candidates"
-                  className="text-info hover:underline font-semibold inline-flex items-center gap-1"
-                >
-                  PQC Candidates &amp; Standardisation Lifecycle <ArrowRight size={11} />
-                </Link>{' '}
-                learn module.
-              </p>
-            </div>
+              {/* Cross-link to PQC Candidates module when filtering by Candidate status */}
+              {filterStatus === 'Candidate' && (
+                <div className="mt-3 rounded-lg border border-info/30 bg-info/5 p-3 flex items-start gap-2">
+                  <Info size={16} className="text-info shrink-0 mt-0.5" />
+                  <p className="text-xs text-foreground/85 leading-relaxed">
+                    These are NIST Additional Signatures Round-2 / Round-3 candidates, not yet
+                    standardised. To understand the standardisation lifecycle — the four math
+                    families, the cryptanalysis events, and the worldwide parallel tracks (KpqC,
+                    CACR, ISO/IEC) — see the{' '}
+                    <Link
+                      to="/learn/pqc-candidates"
+                      className="text-info hover:underline font-semibold inline-flex items-center gap-1"
+                    >
+                      PQC Candidates &amp; Standardisation Lifecycle <ArrowRight size={11} />
+                    </Link>{' '}
+                    learn module.
+                  </p>
+                </div>
+              )}
+            </>
           )}
 
           {/* View Tabs */}

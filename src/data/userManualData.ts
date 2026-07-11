@@ -68,7 +68,7 @@ export const pageManuals: Record<PageId, PageManual> = {
       },
       {
         heading: 'Detailed Comparison Tab',
-        body: 'Deep-dive into individual PQC algorithms with four sub-tabs: Performance (benchmarks and timing), Security (levels and threat analysis), Sizes (key, ciphertext, and signature sizes), and Use Cases (recommended applications). A baseline algorithm is auto-selected for comparison (ECDH P-256 for KEM, RSA-2048 for Signatures). Filter by crypto family, function group, or security level.',
+        body: 'Deep-dive into individual PQC algorithms in a single flat, sortable table covering performance benchmarks, security levels, key/ciphertext/signature sizes, and recommended use cases. Toggle Browse ↔ Compare mode. A baseline algorithm is auto-selected for comparison (ECDH P-256 for KEM, RSA-2048 for Signatures). Filter by crypto family, function group, or security level.',
       },
       {
         heading: 'Compare Panel',
@@ -76,13 +76,13 @@ export const pageManuals: Record<PageId, PageManual> = {
       },
       {
         heading: 'URL Parameters',
-        body: 'Deep link to specific views: ?tab=transition|detailed, ?subtab=performance|security|sizes|usecases, ?highlight= to highlight algorithms, ?compare= for pre-selected comparisons. Use the Share button to copy a link to your current selection.',
+        body: 'Deep link to specific views: ?tab=transition|detailed|support|validation, ?family=, ?fn=, ?level=, ?region=, ?status= and ?q= to filter, ?mode=compare for the Detailed tab, ?section=attacks|kat for the Validation tab, ?highlight= to highlight algorithms, ?compare= for pre-selected comparisons. On the Protocol Support tab: ?matrixView=detailed, ?matrixQ=, ?matrixStatus=, ?matrixAvailability=, ?matrixSort=key:direction. Use the Share button to copy a link to your current selection.',
       },
     ],
     tips: [
       'Use the Detailed tab filters to quickly narrow down algorithms by security level or standardization status.',
       'The compare panel is great for preparing algorithm selection reports.',
-      'Switch between sub-tabs (Performance, Security, Sizes, Use Cases) for focused analysis.',
+      'Toggle Browse ↔ Compare mode on the Detailed tab, or open the Validation tab for implementation attacks and live KAT tests.',
     ],
   },
 

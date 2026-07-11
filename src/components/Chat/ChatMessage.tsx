@@ -20,6 +20,10 @@ import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { generateFollowUps } from './generateFollowUps'
 import type { ChatSourceRef } from '@/types/ChatTypes'
 import { CitationTierChip } from '@/components/ui/CitationTierChip'
+import { sanitizeDeepLink } from '@/services/search/deepLinkGrammar'
+import { createLogger } from '@/utils/logger'
+
+const deepLinkLogger = createLogger('ChatDeepLink')
 
 interface ChatMessageProps {
   sender: 'user' | 'assistant'
@@ -152,7 +156,19 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
                         onClick={(e) => {
                           e.preventDefault()
                           closePanel()
-                          if (href) navigate(href)
+                          if (href) {
+                            // Soft guardrail: the Assistant's links are free-text
+                            // model output, not programmatically built — strip any
+                            // query key a route doesn't recognize rather than
+                            // failing the navigation closed.
+                            const { url, strippedKeys } = sanitizeDeepLink(href)
+                            if (strippedKeys.length > 0) {
+                              deepLinkLogger.warn(
+                                `Stripped unrecognized param(s) [${strippedKeys.join(', ')}] from Assistant link "${href}"`
+                              )
+                            }
+                            navigate(url)
+                          }
                         }}
                       >
                         {children}

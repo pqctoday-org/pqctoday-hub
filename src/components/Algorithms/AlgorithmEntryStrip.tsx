@@ -55,7 +55,6 @@ export const PERSONA_INTENTS: Partial<Record<PersonaId, Intent>> = {
     params: {
       tab: 'detailed',
       highlight: 'ML-KEM-768,ML-DSA-65,SLH-DSA-SHA2-128s',
-      section: 'security',
     },
   },
   developer: {

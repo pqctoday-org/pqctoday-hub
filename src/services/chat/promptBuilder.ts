@@ -184,7 +184,8 @@ function buildSharedSections(chunks: RAGChunk[], pageContext?: PageContext, maxE
       pageContext.tab && pageContext.tab !== 'learn'
         ? ` (${pageContext.tab} tab${pageContext.step ? `, step ${pageContext.step + 1}` : ''})`
         : ''
-    pageNote = `\nThe user is currently viewing the ${pageContext.page} page${tabInfo}. Tailor your response accordingly when relevant.\n`
+    const filterInfo = pageContext.filters ? ` with ${pageContext.filters} already applied` : ''
+    pageNote = `\nThe user is currently viewing the ${pageContext.page} page${tabInfo}${filterInfo}. Tailor your response accordingly when relevant — when linking back to this page, preserve state the user already has set instead of resetting it.\n`
   }
 
   let personaSection = ''
@@ -274,9 +275,11 @@ GUIDELINES:
    When a context chunk has a "Deep Link:" field, ALWAYS use that URL. Otherwise construct links using these patterns:
    - /algorithms?highlight=<slug> (PQC algorithm detail, e.g. ml-kem-768, ml-dsa-65, slh-dsa-128f)
    - /algorithms?tab=transition&highlight=<classical-slug> — **MUST** use this exact form for any classical → PQC transition (e.g. rsa, diffie-hellman, ecdsa, ecdh, dsa, 3des). Omitting \`?tab=transition\` lands on the detailed tab where classical algos do not exist. Correct: [RSA → ML-KEM transition](/algorithms?tab=transition&highlight=rsa). Wrong: \`/algorithms?highlight=rsa\`.
-   - /algorithms?tab=detailed&subtab=<performance|security|sizes|usecases> (algorithm comparison sub-views)
-   - /algorithms?compare=<algo1>,<algo2>, /algorithms?family=<name>, /algorithms?level=<1|3|5>, /algorithms?fn=<sig|kem>, /algorithms?q=<text>
-   - /algorithms?tab=support (Protocol Support matrix — PQC readiness per protocol), /algorithms?tab=support&protocol=<id> (open one protocol's support detail, e.g. tls-1-3, ssh, ike-ipsec, smime, dnssec, kmip, mls), /algorithms?tab=validation (validation evidence tab)
+   - /algorithms?tab=detailed&mode=compare (Detailed tab's Compare view — side-by-side matrix; omit \`mode\` for the default Browse table)
+   - /algorithms?compare=<algo1>,<algo2>, /algorithms?family=<name>, /algorithms?level=<1|3|5>, /algorithms?fn=<sig|kem>, /algorithms?q=<text>, /algorithms?status=<Certified|Candidate>, /algorithms?region=<name>, /algorithms?cnsa=1 (CNSA 2.0 lens), /algorithms?gap=1 (research-gap-only filter)
+   - /algorithms?tab=support (Protocol Support matrix — PQC readiness per protocol), /algorithms?tab=support&protocol=<id> (open one protocol's support detail, e.g. tls-1-3, ssh, ike-ipsec, smime, dnssec, kmip, mls)
+   - /algorithms?tab=support&matrixView=detailed (Protocol Support's card view; default is heatmap — omit for heatmap), /algorithms?tab=support&matrixQ=<text> (search protocols), /algorithms?tab=support&matrixStatus=<rfc|draft|experimental|none|na> (comma-separated), /algorithms?tab=support&matrixAvailability=<has-oss|no-oss|has-commercial|no-commercial|has-playground|has-deployment|no-deployment>, /algorithms?tab=support&matrixSort=<name|maturity|oss|commercial|deployments>:<asc|desc>
+   - /algorithms?tab=validation (validation evidence tab), /algorithms?tab=validation&section=<attacks|kat> (open the implementation-attacks or live-KAT accordion — \`section\` ONLY works paired with \`tab=validation\`; there is no per-tab "sub-tab" concept anywhere else on this page)
    - /timeline?country=<name>, /timeline?region=<name>, /timeline?q=<text>, /timeline?event=<title> (open a specific milestone/phase detail)
    - /library?ref=<id>, /library?cat=<category>&org=<org>, /library?ind=<industry>, /library?view=<grid|table>, /library?sort=<field>
    - /migrate?q=<name>, /migrate?vendor=<name>, /migrate?industry=<name>, /migrate?tab=<replace|plan|roadmaps|vendorrisk> (workbench tabs: Replace what you own / Plan & sequence / Vendor roadmaps / Vendor risk)
@@ -331,7 +334,8 @@ export function buildLocalSystemPrompt(
   // Compact page/persona context — every token counts at 4K
   let pageNote = ''
   if (pageContext?.page) {
-    pageNote = `User is on: ${pageContext.page} page.\n`
+    const filterInfo = pageContext.filters ? ` (${pageContext.filters})` : ''
+    pageNote = `User is on: ${pageContext.page} page${filterInfo}.\n`
   }
   let personaNote = ''
   if (pageContext?.persona) {
@@ -382,7 +386,7 @@ ${topModules}
 LINKING (MANDATORY): Every named item (algorithm, product, leader, document, threat) MUST be a markdown link.
 Use "Deep Link:" from context chunks when available. Otherwise use these patterns:
 - /algorithms?highlight=<slug> (PQC algo, e.g. ml-kem-768, ml-dsa-65). MUST: /algorithms?tab=transition&highlight=<classical-slug> for classical algos (rsa, ecdsa, dh) — never bare ?highlight= for classical.
-- /algorithms?tab=detailed&subtab=<performance|security|sizes|usecases>, /algorithms?tab=support&protocol=<id> (Protocol Support detail), /timeline?country=<name>, /library?ref=<id>
+- /algorithms?tab=detailed&mode=compare (Compare view), /algorithms?tab=support&protocol=<id> (Protocol Support detail), /algorithms?tab=support&matrixView=detailed (card view), /algorithms?tab=validation&section=<attacks|kat>, /timeline?country=<name>, /library?ref=<id>
 - /migrate?q=<name>, /migrate?tab=<replace|plan|roadmaps|vendorrisk>, /leaders?leader=<name>, /compliance?tab=standards&q=<label>, /compliance?tab=standards&cert=<id>
 - /threats?id=<threatId>, /learn/<module-id>, /learn?mode=<mypath|browse>, /assess?step=<n> (0-based: 0=industry, 1=country, ...)
 - /playground/<toolId>, /playground/hsm, /openssl?cmd=<category>
