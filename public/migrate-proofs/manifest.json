@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
   "generated": "2026-07-09",
-  "count": 808,
+  "count": 811,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -6913,6 +6913,27 @@
       "url": "https://docs.pingidentity.com/pingam/release-notes/requirements.html",
       "file": "forgerock-access-management-2d466b98.html",
       "bytes": 39936,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "btq-bitcoin-quantum",
+      "url": "https://www.prnewswire.com/news-releases/btq-technologies-announces-first-deployment-of-bip-360-on-bitcoin-quantum-testnet-v0-3-0--302718592.html",
+      "file": "btq-bitcoin-quantum-46a6efc1.html",
+      "bytes": 229736,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "hitachi-domobile",
+      "url": "https://www.newsfilecorp.com/release/280462/01-Quantum-Inc.-and-Hitachi-Solutions-Create-Ltd.-Announce-Availability-of-DoMobile-Ver.5-a-Remote-Access-System-Enhanced-with-PostQuantum-Cryptography",
+      "file": "hitachi-domobile-4bc76a69.html",
+      "bytes": 42424,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "project-eleven-solana-pqc",
+      "url": "https://www.prnewswire.com/news-releases/project-eleven-to-advance-post-quantum-security-for-the-solana-network-302642847.html",
+      "file": "project-eleven-solana-pqc-de12059d.html",
+      "bytes": 213030,
       "tier": "curl_cffi:chrome124"
     }
   ]
