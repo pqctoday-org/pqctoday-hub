@@ -72,6 +72,30 @@ export class KmipPlayground {
         }
     }
     /**
+     * WP-3 showcase — read back a Certificate object's REAL engine-side
+     * PKCS#11 attributes (not the KMIP store record) by its KMIP uid:
+     * `CKA_ID`, `CKA_VALUE` length, `CKA_SUBJECT`/`CKA_ISSUER` DER
+     * lengths, `CKA_SERIAL_NUMBER`, and a human-readable Subject CN
+     * (re-derived from `CKA_VALUE` — the same DER the engine actually
+     * holds, not the request that created it).
+     * @param {string} certificate_uid
+     * @returns {string}
+     */
+    engine_certificate_attributes(certificate_uid) {
+        let deferred2_0;
+        let deferred2_1;
+        try {
+            const ptr0 = passStringToWasm0(certificate_uid, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            const len0 = WASM_VECTOR_LEN;
+            const ret = wasm.kmipplayground_engine_certificate_attributes(this.__wbg_ptr, ptr0, len0);
+            deferred2_0 = ret[0];
+            deferred2_1 = ret[1];
+            return getStringFromWasm0(ret[0], ret[1]);
+        } finally {
+            wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
+        }
+    }
+    /**
      * Every object in the KMIP store (Plane 2 keystore view) as a JSON array.
      * @returns {string}
      */
@@ -191,6 +215,37 @@ export class KmipPlayground {
             return getStringFromWasm0(ret[0], ret[1]);
         } finally {
             wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
+        }
+    }
+    /**
+     * WP-3 showcase — register a caller-supplied X.509 certificate (DER,
+     * hex-encoded) linked to an existing KMIP public key, and project it
+     * onto the engine as a real `CKO_CERTIFICATE` object sharing that
+     * key's `CKA_ID` (the strongSwan cert-to-key matching pattern).
+     * Native CA issuance (`Certify`) isn't reachable in wasm (its
+     * rcgen/aws_lc_rs backend doesn't cross-compile to wasm32 — see this
+     * crate's doc comment), so this exercises `Register`'s
+     * wasm-reachable certificate projection instead, on a certificate
+     * the caller already holds — exactly how a raw PKCS#11 client like
+     * strongSwan would present one, not a full in-browser CA workflow.
+     * @param {string} linked_public_key_uid
+     * @param {string} cert_der_hex
+     * @returns {string}
+     */
+    register_certificate_demo(linked_public_key_uid, cert_der_hex) {
+        let deferred3_0;
+        let deferred3_1;
+        try {
+            const ptr0 = passStringToWasm0(linked_public_key_uid, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            const len0 = WASM_VECTOR_LEN;
+            const ptr1 = passStringToWasm0(cert_der_hex, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            const len1 = WASM_VECTOR_LEN;
+            const ret = wasm.kmipplayground_register_certificate_demo(this.__wbg_ptr, ptr0, len0, ptr1, len1);
+            deferred3_0 = ret[0];
+            deferred3_1 = ret[1];
+            return getStringFromWasm0(ret[0], ret[1]);
+        } finally {
+            wasm.__wbindgen_free(deferred3_0, deferred3_1, 1);
         }
     }
     /**
