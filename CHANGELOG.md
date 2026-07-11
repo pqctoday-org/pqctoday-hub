@@ -28,6 +28,32 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.21.0] - 2026-07-11
+
+Share buttons across every hands-on tool, a single-phase completion screen
+for the Simulation, deep-linkable Algorithms protocol-matrix views, and a
+broad data-quality pass that repairs document revision chains and tightens
+the data-integrity gates.
+
+### Added
+
+- **Share buttons on every hands-on tool** [view:/playground] [view:/business] [persona:developer] [persona:executive]: every Playground tool surface and Business Center tool now has a share button, so you can link someone straight to the exact tool.
+- **A completion screen for a single Simulation phase** [view:/simulation] [persona:executive] [persona:curious]: after playing one phase with "Play This Phase", you get an honest end screen scoped to just that phase — no whole-program or maturity claims.
+
+### Changed
+
+- **The Algorithms Protocol Matrix is now deep-linkable** [view:/algorithms] [persona:developer] [persona:architect]: the Protocol Matrix view and its filters are captured in the URL (and a dead sub-tab parameter was fixed), so you can share a link to a specific filtered matrix and the PQC Assistant can point you to it.
+- **The PQC Assistant can now link to all 63 Playground tools** [view:/playground] [persona:developer] [persona:curious]: the assistant's knowledge base now carries one entry per tool, so it can deep-link you to any of them.
+
+### Fixed
+
+- **Repaired the Migrate workbench guided tour** [view:/migrate] [persona:architect] [persona:developer]: the guided-tour steps pointed at click targets that had moved; they now land correctly.
+
+### Data
+
+- **Repaired document revision chains and marked superseded editions** [view:/library] [persona:researcher] [persona:architect]: fixed broken revision-roll-in chains across the Library (including the PKCS#11 v3.1 and v3.2 draft editions, now shown as previous revisions of the final v3.2 OASIS Standard) plus 22 others; deprecated a vendor whose site is now a parked domain; refreshed vendor, migrate-catalog, and library enrichment.
+- **Tightened the data-integrity gates**: added a revision-chain validator (DS21) and corrected the enrichment-heading and algorithm-transition validators so they match the real data.
+
 ## [4.20.0] - 2026-07-10
 
 A consolidation release: a hands-on KMIP Command Lab for certificate
