@@ -1783,27 +1783,27 @@
             {
               "tMs": 1500,
               "kind": "caption",
-              "text": "/migrate — operational vendor catalog. Filter by layer to find replacement candidates."
+              "text": "/migrate — operational vendor catalog. Filter by category to find replacement candidates."
             },
             {
               "tMs": 30000,
               "kind": "click",
-              "selector": "[data-workshop-target=\"migrate-layer-Hardware\"]"
+              "selector": "[data-workshop-target=\"migrate-domain-hardware\"]"
             },
             {
               "tMs": 31500,
               "kind": "caption",
-              "text": "Hardware layer — HSMs and secure elements with PQC support. Entrust nShield is the verified leader."
+              "text": "Cryptographic hardware — HSMs and secure elements with PQC support. Entrust nShield is the verified leader."
             },
             {
               "tMs": 90000,
               "kind": "click",
-              "selector": "[data-workshop-target=\"migrate-layer-Network\"]"
+              "selector": "[data-workshop-target=\"migrate-domain-network\"]"
             },
             {
               "tMs": 91500,
               "kind": "caption",
-              "text": "Network layer — gateways, firewalls, load balancers with PQC TLS support."
+              "text": "Network security & encryptors — gateways, firewalls, load balancers with PQC TLS support."
             },
             {
               "tMs": 180000,

@@ -1853,22 +1853,22 @@
             {
               "tMs": 30000,
               "kind": "click",
-              "selector": "[data-workshop-target=\"migrate-layer-Libraries\"]"
+              "selector": "[data-workshop-target=\"migrate-domain-foundations\"]"
             },
             {
               "tMs": 31500,
               "kind": "caption",
-              "text": "Libraries layer — filter to crypto SDKs you can drop into your codebase today."
+              "text": "Crypto libraries & frameworks — filter to crypto SDKs you can drop into your codebase today."
             },
             {
               "tMs": 90000,
               "kind": "click",
-              "selector": "[data-workshop-target=\"migrate-layer-AppServers\"]"
+              "selector": "[data-workshop-target=\"migrate-domain-tls\"]"
             },
             {
               "tMs": 91500,
               "kind": "caption",
-              "text": "AppServers layer — TLS-terminating products with PQC support."
+              "text": "TLS key exchange — TLS-terminating products with PQC support."
             },
             {
               "tMs": 180000,
