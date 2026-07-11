@@ -12,10 +12,24 @@ import {
   hsm_decapsulate,
   hsm_extractKeyValue,
 } from '../../../wasm/softhsm'
+import {
+  hsm_generateFrodoKEMKeyPair,
+  hsm_encapsulateFrodoKEM,
+  hsm_decapsulateFrodoKEM,
+  hsm_generateClassicMcElieceKeyPair,
+  hsm_encapsulateClassicMcEliece,
+  hsm_decapsulateClassicMcEliece,
+} from '../../../wasm/softhsm/pqc'
 import { useEffect } from 'react'
+
+/** ML-KEM has 3 parameter-set variants of ONE algorithm; the vendor KEMs
+ * (BSI TR-02102-1) are each a single fixed preset — Rust engine only, not
+ * implemented in the C++ engine at all. */
+type KemFamily = 'ml-kem' | 'frodo-kem' | 'classic-mceliece'
 
 export const HsmKemPanel = () => {
   const { moduleRef, hSessionRef, addHsmKey, engineMode } = useHsmContext()
+  const [family, setFamily] = useState<KemFamily>('ml-kem')
   const [variant, setVariant] = useState<512 | 768 | 1024>(768)
   const [pubHandle, setPubHandle] = useState<number | null>(null)
   const [privHandle, setPrivHandle] = useState<number | null>(null)
@@ -26,6 +40,15 @@ export const HsmKemPanel = () => {
   const [error, setError] = useState<string | null>(null)
 
   const checkLoading = loadingOp !== null
+  const vendorKemUnavailable = family !== 'ml-kem' && engineMode !== 'rust'
+
+  const resetResults = () => {
+    setPubHandle(null)
+    setPrivHandle(null)
+    setCiphertext(null)
+    setEncapSecret(null)
+    setDecapSecret(null)
+  }
 
   const withLoading = async (op: string, fn: () => Promise<void> | void) => {
     setLoadingOp(op)
@@ -39,11 +62,23 @@ export const HsmKemPanel = () => {
     }
   }
 
+  const familyLabel =
+    family === 'ml-kem'
+      ? `ML-KEM-${variant}`
+      : family === 'frodo-kem'
+        ? 'FrodoKEM-1344-AES'
+        : 'Classic-McEliece-6688128'
+
   const doGenKey = () =>
     withLoading('gen', () => {
       const M = moduleRef.current!
       const hSession = hSessionRef.current
-      const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(M, hSession, variant)
+      const { pubHandle, privHandle } =
+        family === 'ml-kem'
+          ? hsm_generateMLKEMKeyPair(M, hSession, variant)
+          : family === 'frodo-kem'
+            ? hsm_generateFrodoKEMKeyPair(M, hSession)
+            : hsm_generateClassicMcElieceKeyPair(M, hSession)
 
       setPubHandle(pubHandle)
       setPrivHandle(privHandle)
@@ -55,19 +90,19 @@ export const HsmKemPanel = () => {
       const engineLabel = engineMode === 'rust' ? 'rust' : 'cpp'
       addHsmKey({
         handle: pubHandle,
-        family: 'ml-kem',
+        family,
         role: 'public',
-        label: `ML-KEM-${variant} Public`,
-        variant: String(variant),
+        label: `${familyLabel} Public`,
+        variant: family === 'ml-kem' ? String(variant) : familyLabel,
         engine: engineLabel,
         generatedAt: ts,
       })
       addHsmKey({
         handle: privHandle,
-        family: 'ml-kem',
+        family,
         role: 'private',
-        label: `ML-KEM-${variant} Private`,
-        variant: String(variant),
+        label: `${familyLabel} Private`,
+        variant: family === 'ml-kem' ? String(variant) : familyLabel,
         engine: engineLabel,
         generatedAt: ts,
       })
@@ -76,7 +111,12 @@ export const HsmKemPanel = () => {
   const doEncap = () =>
     withLoading('encap', () => {
       const M = moduleRef.current!
-      const result = hsm_encapsulate(M, hSessionRef.current, pubHandle!, variant)
+      const result =
+        family === 'ml-kem'
+          ? hsm_encapsulate(M, hSessionRef.current, pubHandle!, variant)
+          : family === 'frodo-kem'
+            ? hsm_encapsulateFrodoKEM(M, hSessionRef.current, pubHandle!)
+            : hsm_encapsulateClassicMcEliece(M, hSessionRef.current, pubHandle!)
       const rawSecret = hsm_extractKeyValue(M, hSessionRef.current, result.secretHandle)
       setCiphertext(result.ciphertextBytes)
       setEncapSecret(rawSecret)
@@ -86,7 +126,12 @@ export const HsmKemPanel = () => {
   const doDecap = () =>
     withLoading('decap', () => {
       const M = moduleRef.current!
-      const secHandle = hsm_decapsulate(M, hSessionRef.current, privHandle!, ciphertext!, variant)
+      const secHandle =
+        family === 'ml-kem'
+          ? hsm_decapsulate(M, hSessionRef.current, privHandle!, ciphertext!, variant)
+          : family === 'frodo-kem'
+            ? hsm_decapsulateFrodoKEM(M, hSessionRef.current, privHandle!, ciphertext!)
+            : hsm_decapsulateClassicMcEliece(M, hSessionRef.current, privHandle!, ciphertext!)
       const rawSecret = hsm_extractKeyValue(M, hSessionRef.current, secHandle)
       setDecapSecret(rawSecret)
     })
@@ -134,48 +179,97 @@ export const HsmKemPanel = () => {
 
   return (
     <div className="space-y-4">
-      {/* Parameter Set */}
+      {/* KEM family */}
       <div className="glass-panel p-4 space-y-3">
         <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-          ML-KEM Parameters
+          KEM Algorithm
         </p>
         <div className="flex flex-wrap gap-2 items-center">
-          {([512, 768, 1024] as const).map((v) => (
+          {(
+            [
+              { id: 'ml-kem' as const, label: 'ML-KEM' },
+              { id: 'frodo-kem' as const, label: 'FrodoKEM-1344' },
+              { id: 'classic-mceliece' as const, label: 'Classic-McEliece-6688128' },
+            ] as const
+          ).map((f) => (
             <Button
-              key={v}
+              key={f.id}
               variant="ghost"
               size="sm"
               disabled={checkLoading}
               onClick={() => {
-                setVariant(v)
-                setPubHandle(null)
-                setPrivHandle(null)
-                setCiphertext(null)
-                setEncapSecret(null)
-                setDecapSecret(null)
+                setFamily(f.id)
+                resetResults()
               }}
+              title={f.id !== 'ml-kem' ? 'BSI TR-02102-1 — Rust engine only' : undefined}
               className={
-                variant === v
+                family === f.id
                   ? 'bg-primary/20 text-primary text-xs h-7 px-3'
                   : 'text-muted-foreground text-xs h-7 px-3'
               }
             >
-              ML-KEM-{v}
+              {f.label}
+              {f.id !== 'ml-kem' && (
+                <span className="ml-1.5 text-[9px] font-semibold uppercase tracking-wide text-status-warning">
+                  rust only
+                </span>
+              )}
             </Button>
           ))}
+        </div>
+        {vendorKemUnavailable && (
+          <p className="text-xs text-status-warning">
+            {familyLabel} isn't implemented in the C++ engine (BSI TR-02102-1 §2.4 — Rust engine
+            only). Switch Engine Mode to Rust above to try it.
+          </p>
+        )}
+      </div>
+
+      {/* Parameter Set (ML-KEM variants only) */}
+      {family === 'ml-kem' && (
+        <div className="glass-panel p-4 space-y-3">
+          <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+            ML-KEM Parameters
+          </p>
+          <div className="flex flex-wrap gap-2 items-center">
+            {([512, 768, 1024] as const).map((v) => (
+              <Button
+                key={v}
+                variant="ghost"
+                size="sm"
+                disabled={checkLoading}
+                onClick={() => {
+                  setVariant(v)
+                  resetResults()
+                }}
+                className={
+                  variant === v
+                    ? 'bg-primary/20 text-primary text-xs h-7 px-3'
+                    : 'text-muted-foreground text-xs h-7 px-3'
+                }
+              >
+                ML-KEM-{v}
+              </Button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="glass-panel p-4 space-y-3">
+        <div className="flex flex-wrap gap-2 items-center">
           <Button
             variant="outline"
             size="sm"
-            disabled={checkLoading}
+            disabled={checkLoading || vendorKemUnavailable}
             onClick={doGenKey}
-            className="ml-auto h-7 text-xs"
+            className="h-7 text-xs"
           >
             {loadingOp === 'gen' && <Loader2 size={12} className="mr-1.5 animate-spin" />}
             {pubHandle !== null ? `✓ pub=${pubHandle}, prv=${privHandle}` : 'Generate Key Pair'}
           </Button>
         </div>
         <p className="text-xs text-muted-foreground font-mono">
-          {`C_GenerateKeyPair(CKM_ML_KEM, ML-KEM-${variant}) → { pub: ${pubHandle ?? '?'}, prv: ${privHandle ?? '?'} }`}
+          {`C_GenerateKeyPair(${familyLabel}) → { pub: ${pubHandle ?? '?'}, prv: ${privHandle ?? '?'} }`}
         </p>
       </div>
 
@@ -184,7 +278,7 @@ export const HsmKemPanel = () => {
         <Button
           variant="ghost"
           onClick={doEncap}
-          disabled={pubHandle === null || checkLoading}
+          disabled={pubHandle === null || checkLoading || vendorKemUnavailable}
           className="flex-1"
         >
           {loadingOp === 'encap' && <Loader2 size={14} className="mr-2 animate-spin" />}
@@ -193,7 +287,9 @@ export const HsmKemPanel = () => {
         <Button
           variant="outline"
           onClick={doDecap}
-          disabled={ciphertext === null || privHandle === null || checkLoading}
+          disabled={
+            ciphertext === null || privHandle === null || checkLoading || vendorKemUnavailable
+          }
           className="flex-1"
         >
           {loadingOp === 'decap' && <Loader2 size={14} className="mr-2 animate-spin" />}

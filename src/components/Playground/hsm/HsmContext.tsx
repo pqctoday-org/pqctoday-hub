@@ -26,6 +26,8 @@ import {
 export type HsmPhase = 'idle' | 'initialized' | 'session_open'
 export type HsmFamily =
   | 'ml-kem'
+  | 'frodo-kem'
+  | 'classic-mceliece'
   | 'ml-dsa'
   | 'slh-dsa'
   | 'hss'

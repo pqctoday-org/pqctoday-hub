@@ -59,6 +59,8 @@ export const HsmResultRow = ({
 export const makeHsmKeyLabel = (family: HsmFamily, role: HsmKeyRole, variant?: string): string => {
   const familyLabel: Record<HsmFamily, string> = {
     'ml-kem': 'ML-KEM',
+    'frodo-kem': 'FrodoKEM',
+    'classic-mceliece': 'Classic-McEliece',
     'ml-dsa': 'ML-DSA',
     'slh-dsa': 'SLH-DSA',
     hss: 'HSS/LMS',
