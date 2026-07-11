@@ -193,6 +193,12 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     will resolve to 0 on the next refresh-index run.
   migrate: 1,
   timeline: 0,
+  //     2026-07-11: bumped 0 → 2 — the rag-index revision-chain repair correctly
+  //     deprecated the two superseded PKCS#11 revisions (PKCS11-V3-OASIS = v3.1,
+  //     PKCS11-V32-OASIS = v3.2 CSD01 draft), both superseded_by the final v3.2
+  //     OASIS Standard. Deprecated rows aren't tier-scored, so they surface as
+  //     gaps here (DS19 confirms both carry proper deprecation metadata). Expected.
+  library: 2,
   //     2026-07-08: bumped 0 → 2 — NGCC-BC and NGCC-CH (China's NGCC program
   //     block-cipher and hash track placeholders) exist as rows in
   //     pqc_complete_algorithm_reference_07062026.csv but have no matching
@@ -222,7 +228,10 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     AERO-* doc-enrichment ids). Same chunkToResource routing gap as every
   //     entry above; unrelated to this pass's threats/library/timeline content
   //     fixes. Drive back down via the same trustScoreData.ts extension.
-  'document-enrichment': 127,
+  //     2026-07-11: bumped 127 → 129 — the two deprecated PKCS#11 revisions (see
+  //     the library:2 note above) each carry a doc-enrichment chunk that is now
+  //     unscored for the same deprecation reason. Expected, not a routing gap.
+  'document-enrichment': 129,
 }
 
 /**
