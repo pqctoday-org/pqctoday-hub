@@ -72,6 +72,30 @@ export class KmipPlayground {
         }
     }
     /**
+     * WP-3 showcase — read back a Certificate object's REAL engine-side
+     * PKCS#11 attributes (not the KMIP store record) by its KMIP uid:
+     * `CKA_ID`, `CKA_VALUE` length, `CKA_SUBJECT`/`CKA_ISSUER` DER
+     * lengths, `CKA_SERIAL_NUMBER`, and a human-readable Subject CN
+     * (re-derived from `CKA_VALUE` — the same DER the engine actually
+     * holds, not the request that created it).
+     * @param {string} certificate_uid
+     * @returns {string}
+     */
+    engine_certificate_attributes(certificate_uid) {
+        let deferred2_0;
+        let deferred2_1;
+        try {
+            const ptr0 = passStringToWasm0(certificate_uid, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            const len0 = WASM_VECTOR_LEN;
+            const ret = wasm.kmipplayground_engine_certificate_attributes(this.__wbg_ptr, ptr0, len0);
+            deferred2_0 = ret[0];
+            deferred2_1 = ret[1];
+            return getStringFromWasm0(ret[0], ret[1]);
+        } finally {
+            wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
+        }
+    }
+    /**
      * Every object in the KMIP store (Plane 2 keystore view) as a JSON array.
      * @returns {string}
      */
@@ -126,10 +150,20 @@ export class KmipPlayground {
      * (its own doc comment) that brings a new slot online before
      * `C_InitToken` will accept it; skipping this for a non-zero slot
      * fails with `CKR_SLOT_ID_INVALID` (confirmed empirically).
+     * `rng_seed_mode` — the server's §6.1.55 RNG Seed policy choice
+     * (`RngSeedMode`): `"full-consume"` (default) / `"partial-consume"` /
+     * `"ignore"` / `"deny"`. Server-chosen and mutually exclusive per the
+     * spec, so it's a CONSTRUCTOR parameter, not per-request — exposed so
+     * the in-browser OASIS corpus replay can boot each CS-RNG-O variant
+     * test on an engine pinned to that test's mode, exactly as the native
+     * harness constructs per-test `Deps`.
      * @param {number | null} [slot]
+     * @param {string | null} [rng_seed_mode]
      */
-    constructor(slot) {
-        const ret = wasm.kmipplayground_new(isLikeNone(slot) ? 0x100000001 : (slot) >>> 0);
+    constructor(slot, rng_seed_mode) {
+        var ptr0 = isLikeNone(rng_seed_mode) ? 0 : passStringToWasm0(rng_seed_mode, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        const ret = wasm.kmipplayground_new(isLikeNone(slot) ? 0x100000001 : (slot) >>> 0, ptr0, len0);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
@@ -152,6 +186,66 @@ export class KmipPlayground {
             return getStringFromWasm0(ret[0], ret[1]);
         } finally {
             wasm.__wbindgen_free(deferred1_0, deferred1_1, 1);
+        }
+    }
+    /**
+     * WP-4 showcase — bypass the KMIP dispatcher and CACP policy plane
+     * entirely, calling straight into the engine's native PKCS#11 Encrypt
+     * path against a KMIP object's own engine handle. Demonstrates that
+     * PKCS#11 v3.2 §4.8 Table 13 (`CKA_ALLOWED_MECHANISMS`) — derived from
+     * the key's `CryptographicUsageMask` at `CreateKeyPair` time — is
+     * enforced by the engine ITSELF, not just by KMIP/CACP's policy layer,
+     * which this call never touches. RSA public keys default to
+     * `CKA_ENCRYPT=true` in PKCS#11 regardless of KMIP usage (§4.8's own
+     * key-generation defaults), so a boolean-flag check alone would NOT
+     * catch a Sign/Verify-only key being used to encrypt — only the
+     * mechanism whitelist does, which is exactly what this probes.
+     * @param {string} public_key_uid
+     * @returns {string}
+     */
+    raw_pkcs11_encrypt_probe(public_key_uid) {
+        let deferred2_0;
+        let deferred2_1;
+        try {
+            const ptr0 = passStringToWasm0(public_key_uid, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            const len0 = WASM_VECTOR_LEN;
+            const ret = wasm.kmipplayground_raw_pkcs11_encrypt_probe(this.__wbg_ptr, ptr0, len0);
+            deferred2_0 = ret[0];
+            deferred2_1 = ret[1];
+            return getStringFromWasm0(ret[0], ret[1]);
+        } finally {
+            wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
+        }
+    }
+    /**
+     * WP-3 showcase — register a caller-supplied X.509 certificate (DER,
+     * hex-encoded) linked to an existing KMIP public key, and project it
+     * onto the engine as a real `CKO_CERTIFICATE` object sharing that
+     * key's `CKA_ID` (the strongSwan cert-to-key matching pattern).
+     * Native CA issuance (`Certify`) isn't reachable in wasm (its
+     * rcgen/aws_lc_rs backend doesn't cross-compile to wasm32 — see this
+     * crate's doc comment), so this exercises `Register`'s
+     * wasm-reachable certificate projection instead, on a certificate
+     * the caller already holds — exactly how a raw PKCS#11 client like
+     * strongSwan would present one, not a full in-browser CA workflow.
+     * @param {string} linked_public_key_uid
+     * @param {string} cert_der_hex
+     * @returns {string}
+     */
+    register_certificate_demo(linked_public_key_uid, cert_der_hex) {
+        let deferred3_0;
+        let deferred3_1;
+        try {
+            const ptr0 = passStringToWasm0(linked_public_key_uid, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            const len0 = WASM_VECTOR_LEN;
+            const ptr1 = passStringToWasm0(cert_der_hex, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            const len1 = WASM_VECTOR_LEN;
+            const ret = wasm.kmipplayground_register_certificate_demo(this.__wbg_ptr, ptr0, len0, ptr1, len1);
+            deferred3_0 = ret[0];
+            deferred3_1 = ret[1];
+            return getStringFromWasm0(ret[0], ret[1]);
+        } finally {
+            wasm.__wbindgen_free(deferred3_0, deferred3_1, 1);
         }
     }
     /**
