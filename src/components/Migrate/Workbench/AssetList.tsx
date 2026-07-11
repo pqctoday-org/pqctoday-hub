@@ -123,6 +123,7 @@ export function AssetList({ persona, selectedDomain, onSelect }: AssetListProps)
                 role="button"
                 tabIndex={0}
                 aria-label={`Select ${asset.label}`}
+                data-workshop-target={`migrate-domain-${asset.id}`}
                 onClick={() => onSelect(asset.id)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
@@ -219,6 +220,7 @@ export function AssetList({ persona, selectedDomain, onSelect }: AssetListProps)
                 key={id}
                 role="button"
                 tabIndex={0}
+                data-workshop-target={`migrate-domain-${id}`}
                 onClick={() => onSelect(id)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
