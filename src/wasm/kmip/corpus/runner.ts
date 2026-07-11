@@ -19,6 +19,7 @@
 // bootstrap — confirmed empirically, `CK_RV=0x000000b6` — which is why
 // `KmipPlayground::new`/`KmipEngine.boot` took an optional `slot` param.)
 import { KmipEngine, type TtlvNode } from '../kmipEngine'
+import { RNG_SEED_MODE_TESTS } from './classify'
 import { toWireTree } from '../ttlv/encode'
 import { annotateNames } from '../ttlv/decode'
 import type { CodepointTable } from '../ttlv/codepointTable'

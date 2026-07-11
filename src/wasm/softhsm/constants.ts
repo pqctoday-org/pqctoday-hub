@@ -15,6 +15,18 @@ export const CKM_ML_KEM = 0x00000017
 export const CKM_ML_DSA_KEY_PAIR_GEN = 0x0000001c
 export const CKM_ML_DSA = 0x0000001d
 
+// Vendor-defined (BSI TR-02102-1 §2.4.1/§2.4.2) — Rust engine only, not
+// supported by the C++ engine. Values from pqctoday-hsm/rust/src/constants.rs
+// — that file is the source of truth; keep these in sync with it.
+export const CKK_PQCTODAY_FRODOKEM = 0x8000_0001
+export const CKK_PQCTODAY_CLASSIC_MCELIECE = 0x8000_0002
+export const CKM_PQCTODAY_FRODOKEM_KEY_PAIR_GEN = 0x8000_0001
+export const CKM_PQCTODAY_FRODOKEM_ENCAPSULATE = 0x8000_0002
+export const CKM_PQCTODAY_CLASSIC_MCELIECE_KEY_PAIR_GEN = 0x8000_0003
+export const CKM_PQCTODAY_CLASSIC_MCELIECE_ENCAPSULATE = 0x8000_0004
+export const CKP_FRODOKEM_1344_AES = 0x5
+export const CKP_CLASSIC_MCELIECE_6688128 = 0x1
+
 // Attributes
 export const CKA_CLASS = 0x00000000
 export const CKA_TOKEN = 0x00000001

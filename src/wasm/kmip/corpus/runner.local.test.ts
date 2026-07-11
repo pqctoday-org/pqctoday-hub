@@ -68,10 +68,10 @@ describe('OASIS corpus replay (real wasm engine)', () => {
     expect(result.status).not.toBe('PASS')
   })
 
-  it('a policy-variant test is SKIP_POLICY_VARIANT', async () => {
+  it('an RNG-seed variant test PASSES on an engine pinned to its mode (partial-consume)', async () => {
     const xml = readCorpusFile('oasis/optional/CS-RNG-O-2-30.xml')
     const result = await runCorpusTest('CS-RNG-O-2-30.xml', xml, table, freshSlot())
-    expect(result.status).toBe('SKIP_POLICY_VARIANT')
+    expect(result.status, result.detail).toBe('PASS')
   })
 
   // Full-corpus sweep: 102 hermetic engine boots + 2 chained prerequisite

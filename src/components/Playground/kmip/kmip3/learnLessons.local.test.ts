@@ -93,6 +93,22 @@ describe('Learn walkthrough step specs (real wasm engine)', () => {
     )
   }
 
+  it('every lesson has a quiz bank, every quiz maps to a lesson, every answer is in range', async () => {
+    const { QUIZZES } = await import('./quiz')
+    const lessonIds = new Set(LESSONS.map((l) => l.id))
+    for (const [id, questions] of Object.entries(QUIZZES)) {
+      expect(lessonIds.has(id), `quiz bank "${id}" has no matching lesson`).toBe(true)
+      for (const q of questions) {
+        expect(q.options.length, `${id}: "${q.q}" needs ≥2 options`).toBeGreaterThanOrEqual(2)
+        expect(q.answer, `${id}: "${q.q}" answer index out of range`).toBeLessThan(q.options.length)
+        expect(q.why.length, `${id}: "${q.q}" needs a why`).toBeGreaterThan(0)
+      }
+    }
+    for (const l of LESSONS) {
+      expect(QUIZZES[l.id]?.length ?? 0, `lesson "${l.id}" has no quiz bank`).toBeGreaterThan(0)
+    }
+  })
+
   it('every lesson has exactly one builder per step and unique ids', () => {
     const ids = new Set(LESSONS.map((l) => l.id))
     expect(ids.size).toBe(LESSONS.length)
