@@ -56,6 +56,7 @@ registries and refreshes the algorithm and learning-module data.
 ### Data
 
 - **New canonical algorithm reference snapshot (July 2026)** replaces the older implementation-attacks table; timeline snapshot refreshed with fresh enrichment.
+- **Expanded the patents dataset** [view:/patents] [persona:researcher] [persona:executive]: added newly-enriched PQC-relevant patents from the 2016–2022 backlog and widened the harvest beyond the US to include European (EP) and international (WO) filings, with a patent detail-drawer UI fix.
 
 ## [4.19.0] - 2026-07-09
 
