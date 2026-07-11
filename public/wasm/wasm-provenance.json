@@ -9,9 +9,9 @@
       "sourceDirs": ["kmip", "wasm"],
       "track": "tip",
       "status": "built",
-      "hsmCommit": "cf0e2ec3191a9ca066f37e4ea551241b0aa0029f",
+      "hsmCommit": "2be3d2e5b910ec1e4db70045c5090692730f8788",
       "builtAt": "2026-07-11",
-      "_buildNote": "Prior rebuild (2026-07-10, hsmCommit 1c637d3, merged via hub #410): corrected a stale manifest entry, picked up CKA_ALLOWED_MECHANISMS/CKO_CERTIFICATE engine-side support, and fixed a wasm32 compile break in Register/Import's certificate projection (hsm #139, merged). This rebuild (2026-07-11) adds `KmipPlayground::raw_pkcs11_encrypt_probe` — a wasm export for the WP-4 showcase (`Pkcs11BypassDemo.tsx`) that bypasses KMIP/CACP entirely and calls the engine's native PKCS#11 Encrypt path directly, proving CKA_ALLOWED_MECHANISMS is enforced by the engine itself. PENDING: hsm branch `feat/wp4-raw-pkcs11-bypass-probe` (PR pqctoday-hsm#140) is not yet merged to hsm main as of this hub commit — update this note once it lands. Verified: native `cargo test -p pqctoday-kmip` (592 passed), wasm32 build + smoke test, and a standalone node script confirming a real CKR_MECHANISM_INVALID refusal (not simulated)."
+      "_buildNote": "Prior rebuild (2026-07-10, hsmCommit 1c637d3, merged via hub #410): corrected a stale manifest entry, picked up CKA_ALLOWED_MECHANISMS/CKO_CERTIFICATE engine-side support, and fixed a wasm32 compile break in Register/Import's certificate projection (hsm #139, merged). This rebuild (2026-07-11, hub #411, merged) adds `KmipPlayground::raw_pkcs11_encrypt_probe` — a wasm export for the WP-4 showcase (`Pkcs11BypassDemo.tsx`) that bypasses KMIP/CACP entirely and calls the engine's native PKCS#11 Encrypt path directly, proving CKA_ALLOWED_MECHANISMS is enforced by the engine itself (hsm #140, merged; `hsmCommit` above is that PR's squash-merge commit on hsm main). Verified: native `cargo test -p pqctoday-kmip` (592 passed), wasm32 build + smoke test, and a standalone node script confirming a real CKR_MECHANISM_INVALID refusal (not simulated)."
     },
     {
       "name": "softhsmrustv3-engine",
