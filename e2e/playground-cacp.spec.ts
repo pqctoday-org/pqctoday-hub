@@ -167,7 +167,7 @@ test('switching policy resolves a decision on the agility plane', async ({ page 
 test.describe('Certificate Services (Commands tab)', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/playground/cacp')
-    await expect(page.getByRole('heading', { name: /Crypto-Agility Control Plane/i })).toBeVisible({
+    await expect(page.getByRole('heading', { name: /KMIP Control Plane/i }).first()).toBeVisible({
       timeout: 30000,
     })
     await page.getByRole('tab', { name: 'KMIP3.0', exact: true }).click()

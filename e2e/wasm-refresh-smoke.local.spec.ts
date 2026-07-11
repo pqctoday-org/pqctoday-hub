@@ -39,7 +39,7 @@ test('KMIP3.0 Command Lab + Policy plane render cleanly on the refreshed bundle'
   page.on('pageerror', (err) => consoleErrors.push(err.message))
 
   await page.goto('/playground/cacp')
-  await expect(page.getByRole('heading', { name: /Crypto-Agility Control Plane/i })).toBeVisible({
+  await expect(page.getByRole('heading', { name: /KMIP Control Plane/i })).toBeVisible({
     timeout: 30000,
   })
 
