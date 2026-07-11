@@ -27,6 +27,7 @@ import { LogsTab } from './tabs/LogsTab'
 import { logEvent } from '../../utils/analytics'
 import { Button } from '../ui/button'
 import { Card } from '../ui/card'
+import { ShareButton } from '../ui/ShareButton'
 import { ExecutiveRedirectBanner } from '../common/ExecutiveRedirectBanner'
 import { usePersonaStore } from '@/store/usePersonaStore'
 
@@ -109,6 +110,11 @@ export const InteractivePlayground = () => {
           <Play className="text-secondary" aria-hidden="true" />
           Interactive Playground
         </h3>
+        <ShareButton
+          title="Interactive Playground — PQC Today"
+          text="Run real PQC crypto operations in your browser"
+          variant="icon"
+        />
       </div>
 
       {/* Last log entry strip */}
