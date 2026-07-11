@@ -73,6 +73,25 @@ export interface RawPkcs11EncryptProbeResult {
   error?: string
 }
 
+/** Result of {@link KmipEngine.registerCertificateDemo}. */
+export interface RegisterCertificateResult {
+  ok: boolean
+  uid?: string
+  error?: string
+}
+
+/** Result of {@link KmipEngine.engineCertificateAttributes} — the REAL engine-side
+ * PKCS#11 attributes of a projected `CKO_CERTIFICATE` object (not the KMIP store record). */
+export interface EngineCertificateAttributes {
+  ckaId?: string
+  ckaValueLen?: number
+  ckaSubjectDerLen?: number
+  ckaIssuerDerLen?: number
+  ckaSerialNumberHex?: string
+  subjectCn?: string | null
+  error?: string
+}
+
 export interface KmipObject {
   uid: string
   objectType: string
@@ -283,6 +302,8 @@ interface WasmKmipPlayground {
   audit_snapshot(limit: number): string
   clear_audit(): void
   raw_pkcs11_encrypt_probe(publicKeyUid: string): string
+  register_certificate_demo(linkedPublicKeyUid: string, certDerHex: string): string
+  engine_certificate_attributes(certificateUid: string): string
 }
 
 /** The server's §6.1.55 RNG Seed policy choice — server-chosen and mutually
@@ -376,6 +397,31 @@ export class KmipEngine {
    * key; other algorithms/object types return an `error`. */
   rawPkcs11EncryptProbe(publicKeyUid: string): RawPkcs11EncryptProbeResult {
     return JSON.parse(this.pg.raw_pkcs11_encrypt_probe(publicKeyUid)) as RawPkcs11EncryptProbeResult
+  }
+
+  /** WP-3 showcase — register a caller-supplied X.509 certificate (DER,
+   * hex-encoded) linked to an existing KMIP public key, projecting it onto
+   * the engine as a real `CKO_CERTIFICATE` object sharing that key's
+   * `CKA_ID`. Native CA issuance (`Certify`) isn't reachable in wasm, so
+   * this exercises `Register`'s wasm-reachable certificate projection on a
+   * certificate the caller already holds — the strongSwan cert-to-key
+   * pattern, not a full in-browser CA workflow. */
+  registerCertificateDemo(
+    linkedPublicKeyUid: string,
+    certDerHex: string
+  ): RegisterCertificateResult {
+    return JSON.parse(
+      this.pg.register_certificate_demo(linkedPublicKeyUid, certDerHex)
+    ) as RegisterCertificateResult
+  }
+
+  /** WP-3 showcase — read back a Certificate object's real engine-side
+   * PKCS#11 attributes (CKA_ID, CKA_VALUE, CKA_SUBJECT, CKA_ISSUER,
+   * CKA_SERIAL_NUMBER) by its KMIP uid. */
+  engineCertificateAttributes(certificateUid: string): EngineCertificateAttributes {
+    return JSON.parse(
+      this.pg.engine_certificate_attributes(certificateUid)
+    ) as EngineCertificateAttributes
   }
 
   /** Decode any KMIP TTLV frame (request or response) to a wire-view tree. */

@@ -43,6 +43,7 @@ import {
   type Disposition,
 } from './policyModel'
 import { Pkcs11BypassDemo } from './Pkcs11BypassDemo'
+import { Pkcs11CertificateDemo } from './Pkcs11CertificateDemo'
 import { PolicyRulesDisplay, PolicyRulesLegend } from './PolicyRulesDisplay'
 import { PolicyTimeline } from './PolicyTimeline'
 import { PolicyGraphView } from './visual/PolicyGraphView'
@@ -754,6 +755,7 @@ export function PolicyView({
             </section>
 
             <Pkcs11BypassDemo engine={engine} />
+            <Pkcs11CertificateDemo engine={engine} />
           </>
         )}
 

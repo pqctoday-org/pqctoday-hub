@@ -37,6 +37,15 @@ export class KmipPlayground {
      */
     dry_run(spec_json: string): string;
     /**
+     * WP-3 showcase — read back a Certificate object's REAL engine-side
+     * PKCS#11 attributes (not the KMIP store record) by its KMIP uid:
+     * `CKA_ID`, `CKA_VALUE` length, `CKA_SUBJECT`/`CKA_ISSUER` DER
+     * lengths, `CKA_SERIAL_NUMBER`, and a human-readable Subject CN
+     * (re-derived from `CKA_VALUE` — the same DER the engine actually
+     * holds, not the request that created it).
+     */
+    engine_certificate_attributes(certificate_uid: string): string;
+    /**
      * Every object in the KMIP store (Plane 2 keystore view) as a JSON array.
      */
     list_objects(): string;
@@ -92,6 +101,19 @@ export class KmipPlayground {
      * mechanism whitelist does, which is exactly what this probes.
      */
     raw_pkcs11_encrypt_probe(public_key_uid: string): string;
+    /**
+     * WP-3 showcase — register a caller-supplied X.509 certificate (DER,
+     * hex-encoded) linked to an existing KMIP public key, and project it
+     * onto the engine as a real `CKO_CERTIFICATE` object sharing that
+     * key's `CKA_ID` (the strongSwan cert-to-key matching pattern).
+     * Native CA issuance (`Certify`) isn't reachable in wasm (its
+     * rcgen/aws_lc_rs backend doesn't cross-compile to wasm32 — see this
+     * crate's doc comment), so this exercises `Register`'s
+     * wasm-reachable certificate projection instead, on a certificate
+     * the caller already holds — exactly how a raw PKCS#11 client like
+     * strongSwan would present one, not a full in-browser CA workflow.
+     */
+    register_certificate_demo(linked_public_key_uid: string, cert_der_hex: string): string;
     /**
      * High-level **batch** driver: build ONE KMIP 3.0 `Request Message` carrying
      * many operations and dispatch it through the identical decode → dispatch →
