@@ -37,7 +37,7 @@ export function Pkcs11BypassDemo({ engine }: { engine: KmipEngine }) {
         setError(
           created.message
             ? `Couldn't create the RSA key: ${created.message}. This demo needs an RSA key — switch the active policy to one that permits RSA (e.g. Classical or the built-in permissive policy).`
-            : 'CreateKeyPair failed',
+            : 'CreateKeyPair failed'
         )
         setStep('error')
         return

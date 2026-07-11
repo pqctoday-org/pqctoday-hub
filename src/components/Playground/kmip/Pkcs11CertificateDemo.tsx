@@ -35,7 +35,7 @@ export function Pkcs11CertificateDemo({ engine }: { engine: KmipEngine }) {
         setError(
           created.message
             ? `Couldn't create the key pair: ${created.message}`
-            : 'CreateKeyPair failed',
+            : 'CreateKeyPair failed'
         )
         setStep('error')
         return
