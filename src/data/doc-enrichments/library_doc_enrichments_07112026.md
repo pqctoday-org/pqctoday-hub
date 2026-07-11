@@ -1,7 +1,7 @@
 ---
 generated: 2026-07-11
 collection: library
-documents_processed: 2
+documents_processed: 1
 enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 ---
 
