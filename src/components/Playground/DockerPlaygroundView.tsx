@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useEffect, useRef, useState } from 'react'
-import { Server, Container } from 'lucide-react'
+import { Server, Container, ServerCrash, ExternalLink } from 'lucide-react'
 import { EmptyState } from '../ui/empty-state'
 import { Card } from '../ui/card'
+import { useSandboxAvailable } from './useSandboxAvailable'
+import { SANDBOX_ACCESS_URL } from './cryptoLabMeta'
 
 const DEFAULT_BASE_URL = 'http://localhost:4000'
 const MIN_HEIGHT = 600
@@ -20,6 +22,7 @@ interface EmbedConfigPayload {
 export const DockerPlaygroundView = () => {
   const raw = import.meta.env.VITE_SANDBOX_BASE_URL as string | undefined
   const baseUrl = (raw ?? DEFAULT_BASE_URL).trim().replace(/\/$/, '') || null
+  const availability = useSandboxAvailable()
 
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const [height, setHeight] = useState<number>(720)
@@ -35,7 +38,7 @@ export const DockerPlaygroundView = () => {
     : null
 
   useEffect(() => {
-    if (!targetOrigin) return
+    if (!targetOrigin || availability !== 'available') return
 
     const configPayload: EmbedConfigPayload = {
       vendorId: 'pqctoday-hub',
@@ -62,16 +65,39 @@ export const DockerPlaygroundView = () => {
     }
     window.addEventListener('message', handler)
     return () => window.removeEventListener('message', handler)
-  }, [targetOrigin])
+  }, [targetOrigin, availability])
 
-  if (!baseUrl) {
+  if (availability !== 'available' || !baseUrl) {
     return (
-      <Card className="p-6 min-h-[60vh] flex items-center justify-center">
+      <Card className="p-6 min-h-[60vh] flex flex-col items-center justify-center gap-4 text-center">
         <EmptyState
-          icon={<Container className="w-6 h-6" />}
-          title="Sandbox URL not configured"
-          description="Set VITE_SANDBOX_BASE_URL in your .env file (default http://localhost:4000) and restart the dev server."
+          icon={
+            availability === 'checking' ? (
+              <Container className="w-6 h-6" />
+            ) : (
+              <ServerCrash className="w-6 h-6" />
+            )
+          }
+          title={
+            availability === 'checking' ? 'Checking sandbox…' : 'pqctoday-sandbox is not reachable'
+          }
+          description={
+            availability === 'checking'
+              ? 'Probing the local Docker sandbox on VITE_SANDBOX_BASE_URL…'
+              : 'Start the Docker stack: cd ~/antigravity/pqctoday-sandbox && docker compose up -d. Then reload this page — or request access to a hosted container below.'
+          }
         />
+        {availability === 'unavailable' && (
+          <a
+            href={SANDBOX_ACCESS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-medium text-foreground hover:bg-primary/20"
+          >
+            <ExternalLink className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+            Request sandbox access
+          </a>
+        )}
       </Card>
     )
   }

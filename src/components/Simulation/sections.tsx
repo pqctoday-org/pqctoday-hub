@@ -281,6 +281,13 @@ export function DecisionSection({
           </span>
         )}
       </div>
+      {/* 07082026 audit remediation: the framework's own "what you do" text for this
+          activity, previously shown only once in the auto-run phase-intro modal —
+          surfaced here so every player sees it, not just those who trigger the
+          scripted walkthrough. */}
+      {nextMove.act.do && (
+        <p className="mb-2 text-[11px] leading-snug text-muted-foreground">{nextMove.act.do}</p>
+      )}
       <div className="grid gap-2 sm:grid-cols-3">
         {cards.map((c, i) => {
           const picked = chosen === i

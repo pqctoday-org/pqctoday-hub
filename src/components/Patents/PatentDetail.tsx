@@ -16,6 +16,7 @@ import type { PatentItem, NistStatus } from '@/types/PatentTypes'
 import { logExternalLink } from '@/utils/analytics'
 import { EndorseButton } from '@/components/ui/EndorseButton'
 import { FlagButton } from '@/components/ui/FlagButton'
+import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 
 interface Props {
@@ -198,40 +199,61 @@ export function PatentDetail({
   onToggleExpand,
 }: Props) {
   const googlePatentsUrl = `https://patents.google.com/patent/${patent.patentNumber}/en`
+  const dateParts = [
+    patent.priorityDate && { label: 'Priority', term: 'Priority Date', value: patent.priorityDate },
+    patent.filingDate && { label: 'Filed', term: 'Filing Date', value: patent.filingDate },
+    patent.issueDate && { label: 'Issued', term: 'Issue Date', value: patent.issueDate },
+  ].filter((d): d is { label: string; term: string; value: string } => Boolean(d))
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
       {/* Header */}
       <div className="flex items-start justify-between gap-3 border-b border-border px-5 py-4">
         <div className="min-w-0">
-          <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-            <span className="font-mono">{patent.patentNumber}</span>
-            <span>·</span>
-            <span>{patent.issueDate || patent.priorityDate}</span>
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground mb-1">
+            <span className="font-mono whitespace-nowrap">{patent.patentNumber}</span>
+            {dateParts.length > 0 && (
+              <>
+                <span>·</span>
+                <span className="inline-flex flex-wrap items-center gap-1.5">
+                  {dateParts.map(({ label, term, value }, i) => (
+                    <span key={term} className="inline-flex items-center gap-1 whitespace-nowrap">
+                      {i > 0 && <span className="text-muted-foreground/50">/</span>}
+                      <InlineTooltip term={term}>{label}</InlineTooltip> {value}
+                    </span>
+                  ))}
+                </span>
+              </>
+            )}
             <a
               href={googlePatentsUrl}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => logExternalLink('Patents', googlePatentsUrl)}
-              className="inline-flex items-center gap-0.5 text-primary hover:underline"
+              className="inline-flex items-center gap-0.5 whitespace-nowrap text-primary hover:underline"
             >
               <ExternalLink className="h-3 w-3" />
-              USPTO
+              Google Patents
             </a>
           </div>
           <h2 className="text-sm font-semibold text-foreground leading-snug">{patent.title}</h2>
-          <p className="mt-0.5 text-xs text-muted-foreground">{patent.assignee}</p>
+          {patent.assignee ? (
+            <p className="mt-0.5 text-xs text-muted-foreground">{patent.assignee}</p>
+          ) : (
+            <p className="mt-0.5 text-xs italic text-muted-foreground/70">Assignee not available</p>
+          )}
           {patent.inventors && (
-            <p
-              className="mt-0.5 text-xs text-muted-foreground/70 truncate"
-              title={patent.inventors}
-            >
+            <p className="mt-0.5 text-xs text-muted-foreground truncate" title={patent.inventors}>
+              <span className="text-muted-foreground/70">Inventor(s): </span>
               {patent.inventors}
             </p>
           )}
           {patent.cpcCodes && (
-            <p className="mt-1 text-[10px] font-mono text-muted-foreground/60 leading-relaxed break-all">
-              {patent.cpcCodes}
+            <p className="mt-1 text-[10px] text-muted-foreground/60 leading-relaxed break-all">
+              <span className="font-sans">
+                <InlineTooltip term="CPC Code">CPC</InlineTooltip>:{' '}
+              </span>
+              <span className="font-mono">{patent.cpcCodes}</span>
             </p>
           )}
         </div>
@@ -339,7 +361,7 @@ export function PatentDetail({
         {patent.primaryInventiveClaim && (
           <div className="space-y-1">
             <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-              Primary Inventive Claim
+              <InlineTooltip term="Independent Claim">Primary Inventive Claim</InlineTooltip>
             </div>
             <p className="text-sm text-foreground leading-relaxed">
               {patent.primaryInventiveClaim}

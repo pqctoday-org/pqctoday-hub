@@ -50,7 +50,8 @@ export interface LibraryItem {
   children?: LibraryItem[]
   categories: string[]
   /** Coarse intent bucket (Education / Reference / Planning) used by the
-   *  top-level "purpose doors" pre-filter. Heuristic — see `detectPurpose`. */
+   *  top-level "purpose doors" pre-filter. From the CSV `purpose` column when
+   *  present, else heuristic — see `resolvePurpose` / `detectPurpose`. */
   purpose: LibraryPurpose
   peerReviewed?: 'yes' | 'no' | 'partial'
   vettingBody?: string[]
@@ -96,8 +97,10 @@ export type LibraryCategory = (typeof LIBRARY_CATEGORIES)[number]
 // ── Purpose: a coarse "why are you here" axis layered OVER the 10 topical
 // categories. Three doors let a visitor enter the library by intent — learn,
 // look something up, or plan a migration — before drilling into a category.
-// Heuristic over manual_category (no CSV column backs this yet); measured split
-// across the active catalog is ~Reference 73% / Education 18% / Planning 10%.
+// A dedicated `purpose` CSV column overrides the heuristic where a row has
+// been manually reviewed (see `resolvePurpose`); most rows still fall back to
+// the manual_category heuristic. Measured split across the active catalog is
+// ~Reference 76% / Education 13% / Planning 10%.
 export const LIBRARY_PURPOSES = ['education', 'reference', 'planning'] as const
 export type LibraryPurpose = (typeof LIBRARY_PURPOSES)[number]
 
@@ -147,6 +150,24 @@ export function detectPurpose(
   if (PURPOSE_PLANNING_KEYWORDS.some((k) => hay.includes(k))) return 'planning'
   if (PURPOSE_EDUCATION_KEYWORDS.some((k) => hay.includes(k))) return 'education'
   return 'reference'
+}
+
+/**
+ * Resolve a row's purpose door: prefer the dedicated `purpose` CSV column
+ * (a manually-assigned, non-heuristic signal) when it's a recognized value;
+ * otherwise fall back to the `detectPurpose` heuristic. The CSV column is
+ * sparse by design — only rows manually reviewed for door placement carry it.
+ */
+export function resolvePurpose(
+  csvPurpose: string | undefined,
+  manualCategory: string | undefined,
+  documentType: string | undefined
+): LibraryPurpose {
+  const trimmed = csvPurpose?.trim().toLowerCase()
+  if (trimmed && (LIBRARY_PURPOSES as readonly string[]).includes(trimmed)) {
+    return trimmed as LibraryPurpose
+  }
+  return detectPurpose(manualCategory, documentType)
 }
 
 // C-002/C-003: Map CSV manual_category values to UI categories
@@ -264,6 +285,10 @@ interface RawLibraryRow {
   deprecated_at?: string
   deprecated_reason?: string
   superseded_by?: string
+  /** Optional dedicated purpose-door assignment, overriding the manual_category
+   *  heuristic when present. Sparse — most rows still fall back to the
+   *  heuristic. See `resolvePurpose` for the resolution logic. */
+  purpose?: string
 }
 
 /**
@@ -364,7 +389,7 @@ function transformLibraryRow(row: RawLibraryRow): LibraryItem | null {
     miscInfo: row.misc_info?.trim() || undefined,
     children: [],
     categories: [], // Will be populated below
-    purpose: detectPurpose(row.manual_category || undefined, row.document_type),
+    purpose: resolvePurpose(row.purpose, row.manual_category || undefined, row.document_type),
     peerReviewed: (row.peer_reviewed?.toLowerCase() as LibraryItem['peerReviewed']) || undefined,
     vettingBody: row.vetting_body ? splitSemicolon(row.vetting_body) : undefined,
     githubContributionUrl: row.github_contribution_url?.trim() || undefined,
@@ -569,4 +594,20 @@ export function getLibraryItemsForModule(moduleId: string): LibraryItem[] {
 import { conceptIdForStoreKey } from './conceptRegistry'
 export function conceptIdForLibraryItem(item: { referenceId: string }): string | undefined {
   return conceptIdForStoreKey('library', item.referenceId)
+}
+
+// ── Renamed reference_id aliases ──────────────────────────────────────────
+// CSV snapshots occasionally rename a reference_id (e.g. a draft's id gains a
+// revision suffix). Stale deep links elsewhere in the app — the FAQ, chat
+// citations, external bookmarks — may still use the old id. Add an entry here
+// whenever a rename happens so `findLibraryItemByRef` keeps resolving old
+// links instead of silently opening to nothing.
+export const REFERENCE_ID_ALIASES: Record<string, string> = {
+  'NIST-IR-8547': 'NIST-IR-8547-IPD2',
+}
+
+/** Resolve a `?ref=` value to a live library item, tolerating known reference_id renames. */
+export function findLibraryItemByRef(ref: string): LibraryItem | undefined {
+  const resolved = REFERENCE_ID_ALIASES[ref] ?? ref
+  return libraryData.find((item) => item.referenceId === resolved)
 }

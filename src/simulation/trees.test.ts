@@ -14,6 +14,8 @@ import { FRAMEWORK_VERSION, PHASE_ORDER } from '@/data/frameworkPhases'
 import { resolveDeepLink } from './deepLinks'
 import { REFERENCE_PHASES } from '@/data/phaseResourceMap'
 import { resLinks } from '@/components/Simulation/sections'
+import { FRAMEWORK_PHASES, type PhaseId } from '@/data/frameworkPhases'
+import { VERTICAL_BY_SECTOR } from '@/data/simRelevance'
 
 const PHASES = ['p0', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7'] as const
 // Foundations (spanning band) and verify-close (terminal Verification & Closure
@@ -178,14 +180,22 @@ describe('SIM_TREES — coverage & shape', () => {
     const p6 = SIM_TREES.p6!
     const withDeepDive = p6.levels.flatMap((b) => b.activities).filter((a) => a.deepDive?.length)
     expect(withDeepDive.length, 'expected every P6 activity to carry deep-dive content').toBe(5)
-    // no deepDive step id duplicates a required step already in `steps` for that activity
+    // No deepDive step duplicates a required step already in `steps` for that
+    // activity — keyed by (kind, id), NOT bare id. A learn moduleId and a
+    // workshop workshopId can legitimately share the same string (e.g.
+    // 'pki-workshop' names both the Learn module and the separate Playground
+    // tool) without being the same real resource: completion is tracked in
+    // entirely different state (moduleProgress vs visitedWorkshops), so doing
+    // one is never redundant with doing the other. Only a genuine same-kind
+    // repeat (e.g. two workshop steps both 'pki-enrollment') should be caught.
+    const stepKey = (s: TreeStep) => `${s.kind}:${s.moduleId ?? s.workshopId ?? s.refId}`
     for (const a of withDeepDive) {
-      const requiredIds = new Set(a.steps.map((s) => s.moduleId ?? s.workshopId ?? s.refId))
+      const requiredKeys = new Set(a.steps.map(stepKey))
       for (const s of a.deepDive!) {
-        const id = s.moduleId ?? s.workshopId ?? s.refId
-        expect(requiredIds.has(id), `${a.id}: deepDive id ${id} duplicates a required step`).toBe(
-          false
-        )
+        expect(
+          requiredKeys.has(stepKey(s)),
+          `${a.id}: deepDive ${stepKey(s)} duplicates a required step`
+        ).toBe(false)
       }
     }
     // deepDive never widens what's needed to reach L2/L3 — achievedTreeLevel with
@@ -337,6 +347,105 @@ describe('SIM_TREES — coverage & shape', () => {
         ).toBe(0)
       }
     }
+  })
+
+  // 07082026 audit finding: frameworkPhases.ts's `produce` lists had drifted
+  // from what the shipped trees actually gate on — P0 was missing 3 tools, P6
+  // had a stale ref name. This is the general guard: every 'activity' step a
+  // phase's tree actually gates on must have a matching produce entry for that
+  // phase. Tree-grounded (not registry-tag-grounded — see the note in
+  // frameworkPhaseTags.test.ts for why the tag-based version false-positived).
+  //
+  // Some tools are legitimately gated on by MORE THAN ONE phase's tree (e.g. the
+  // board KPI pack is touched at P0 0.4, Foundations F.2, P4 4.4 and P7 7.5) —
+  // frameworkPhaseTags.test.ts's spine-consistency check means a produce ref can
+  // only be "owned" by one phase, so the others gate on it without listing it.
+  // Each entry here is a verified, intentional instance of that — a NEW,
+  // undocumented gap for any other tool still fails the guard.
+  const SHARED_TOOL_OWNER: Record<string, PhaseId> = {
+    'kpi-dashboard': 'foundations', // also gated by p0 (0.4), p4 (4.4), p7 (7.5)
+    'raci-builder': 'p0', // also gated by p4 (4.4)
+    'crypto-vulnerability-watch': 'p1', // also gated by p2 (2.3)
+    'deployment-playbook': 'p5', // also gated by p7 (7.4)
+    'risk-register': 'p3', // also gated by p7 (7.4)
+    'stakeholder-comms': 'p4', // also gated by p7 (7.6)
+  }
+  it("every tree artifact-step has a matching produce entry in that phase's frameworkPhases.ts", () => {
+    const missing: string[] = []
+    for (const phase of PHASES) {
+      const toolIds = new Set(
+        flattenTree(SIM_TREES[phase]!)
+          .filter((s) => s.kind === 'activity' && s.artifactType)
+          .map((s) => ARTIFACT_TYPE_TO_TOOL_ID[s.artifactType!])
+          .filter((id): id is string => !!id)
+      )
+      const produceRefs = new Set((FRAMEWORK_PHASES[phase].produce ?? []).map((s) => s.ref))
+      for (const id of toolIds) {
+        if (produceRefs.has(id)) continue
+        if (SHARED_TOOL_OWNER[id] && SHARED_TOOL_OWNER[id] !== phase) continue // known shared tool
+        missing.push(`${phase}: tree gates on '${id}', not in produce`)
+      }
+    }
+    expect(missing, `tree → produce drift:\n${missing.join('\n')}`).toEqual([])
+  })
+  it('SHARED_TOOL_OWNER only lists tools genuinely gated on by more than one phase', () => {
+    // Guards the exceptions list itself: an entry that stops being shared (or
+    // was never accurate) should be caught, not silently keep masking phases.
+    for (const [toolId, owner] of Object.entries(SHARED_TOOL_OWNER)) {
+      const gatingPhases = ALL_TREE_PHASES.filter((phase) =>
+        flattenTree(SIM_TREES[phase]!).some(
+          (s) => s.kind === 'activity' && ARTIFACT_TYPE_TO_TOOL_ID[s.artifactType!] === toolId
+        )
+      )
+      expect(
+        gatingPhases.length,
+        `'${toolId}': expected >1 gating phase, got [${gatingPhases}]`
+      ).toBeGreaterThan(1)
+      expect(gatingPhases, `'${toolId}': owner '${owner}' does not actually gate on it`).toContain(
+        owner
+      )
+    }
+  })
+
+  // 07082026 audit finding (fixed in this same change — P5's automotive-pqc
+  // deep-dive removed): any tree step whose id is a VERTICAL_BY_SECTOR key with
+  // an empty sector list can never be shown to a player (relevantToScenario
+  // always returns false), so it must never be tree content — the deep-dive
+  // render path doesn't apply the relevance filter the main resource columns do.
+  it('no tree step references a module permanently excluded by simRelevance (empty sector list)', () => {
+    const neverRelevant = new Set(
+      Object.entries(VERTICAL_BY_SECTOR)
+        .filter(([, sectors]) => sectors.length === 0)
+        .map(([id]) => id)
+    )
+    const bad: string[] = []
+    for (const phase of ALL_TREE_PHASES) {
+      for (const s of flattenTree(SIM_TREES[phase]!)) {
+        const id = s.moduleId ?? s.workshopId
+        if (id && neverRelevant.has(id)) bad.push(`${phase}: step "${s.label}" uses "${id}"`)
+      }
+    }
+    expect(
+      bad,
+      `tree steps referencing permanently-irrelevant modules:\n${bad.join('\n')}`
+    ).toEqual([])
+  })
+
+  // 07082026 audit finding (fixed in this same change — Foundations F.5 and
+  // its two closure-duplicate pitfalls replaced with genuine cross-cutting
+  // content): Foundations is meant to be distinct material, not a pointer back
+  // into a phase that already exists. Guards the specific failure mode (a
+  // whole pitfall duplicated verbatim), not incidental short-phrase overlap.
+  it('foundations does not duplicate verify-close pitfall content', () => {
+    const normalize = (s: string) => s.toLowerCase().replace(/\s+/g, ' ').trim()
+    const vcWhy = new Set((SIM_TREES['verify-close']?.pitfalls ?? []).map((p) => normalize(p.why)))
+    const dupes = (SIM_TREES.foundations?.pitfalls ?? [])
+      .filter((p) => vcWhy.has(normalize(p.why)))
+      .map((p) => p.title)
+    expect(
+      dupes,
+      `foundations pitfalls duplicate verify-close verbatim:\n${dupes.join('\n')}`
+    ).toEqual([])
   })
 
   it('achievedTreeLevel climbs as steps complete (none → all)', () => {

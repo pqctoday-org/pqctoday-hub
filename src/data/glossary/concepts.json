@@ -312,15 +312,6 @@
     "category": "concept"
   },
   {
-    "term": "CBOM",
-    "acronym": "CBOM",
-    "definition": "Cryptographic Bill of Materials, a comprehensive inventory of all cryptographic algorithms, keys, and certificates used in an organization or product.",
-    "technicalNote": "Essential first step in PQC migration. Enables organizations to identify quantum-vulnerable crypto and prioritize replacements.",
-    "relatedModule": "/migrate",
-    "complexity": "intermediate",
-    "category": "concept"
-  },
-  {
     "term": "DRM",
     "acronym": "DRM",
     "definition": "Digital Rights Management, technology protecting copyrighted content through encryption. Systems like Widevine, PlayReady, and FairPlay face quantum threats to their key hierarchies.",
@@ -404,14 +395,6 @@
     "category": "concept"
   },
   {
-    "term": "UEFI",
-    "acronym": "UEFI",
-    "definition": "Unified Extensible Firmware Interface — the modern firmware interface between hardware and OS. UEFI Secure Boot enforces signature verification on bootloaders and drivers before execution.",
-    "relatedModule": "/learn/code-signing",
-    "complexity": "intermediate",
-    "category": "concept"
-  },
-  {
     "term": "QKD",
     "acronym": "QKD",
     "definition": "Quantum Key Distribution, a method of distributing encryption keys using quantum physics rather than mathematical hardness. Distinct from PQC and requires specialized hardware.",
@@ -485,17 +468,9 @@
   {
     "term": "SBOM",
     "acronym": "SBOM",
-    "definition": "Software Bill of Materials, a formal inventory of all components in a software product. Increasingly required alongside CBOM for security compliance.",
+    "definition": "Software Bill of Materials, a formal record of the components in a software product and their supply-chain relationships. Increasingly required alongside CBOM for security compliance.",
     "relatedModule": "/learn/vendor-risk",
     "complexity": "intermediate",
-    "category": "concept"
-  },
-  {
-    "term": "ADS-B",
-    "acronym": "ADS-B",
-    "definition": "Automatic Dependent Surveillance-Broadcast, the primary aircraft surveillance technology. Currently lacks cryptographic authentication, making it a quantum-era concern.",
-    "relatedModule": "/threats",
-    "complexity": "advanced",
     "category": "concept"
   },
   {
@@ -731,6 +706,15 @@
     "definition": "Distinguished Encoding Rules, a binary encoding format for ASN.1 data structures. The standard encoding for X.509 certificates, keys, and ECDSA signatures.",
     "relatedModule": "/learn/pki-workshop",
     "complexity": "advanced",
+    "category": "concept"
+  },
+  {
+    "term": "DER (Distributed Energy Resource)",
+    "acronym": "DER",
+    "definition": "Distributed Energy Resource. Solar inverters, battery storage systems, and EV chargers connected to the distribution grid. Not to be confused with DER the ASN.1 encoding (Distinguished Encoding Rules).",
+    "technicalNote": "DERs authenticate via IEEE 2030.5 certificates (ECDSA P-256). PQC migration requires fleet-wide certificate reissuance to ML-DSA-65.",
+    "relatedModule": "/learn/energy-utilities-pqc",
+    "complexity": "beginner",
     "category": "concept"
   },
   {
@@ -1371,29 +1355,6 @@
     "category": "concept"
   },
   {
-    "term": "Sigstore",
-    "definition": "An open-source project and Linux Foundation initiative providing free, transparent software signing infrastructure. Components include cosign (signing), Rekor (transparency log), and Fulcio (certificate authority). All components are being migrated to ML-DSA for quantum safety.",
-    "relatedModule": "/learn/platform-eng-pqc",
-    "complexity": "intermediate",
-    "category": "concept"
-  },
-  {
-    "term": "SLSA",
-    "acronym": "Supply chain Levels for Software Artifacts",
-    "definition": "A NIST-aligned security framework for software supply chain integrity. Four levels of build provenance requirements. SLSA Level 3+ requires ML-DSA or SLH-DSA signatures for build provenance attestations in the post-quantum era.",
-    "relatedModule": "/learn/platform-eng-pqc",
-    "complexity": "intermediate",
-    "category": "concept"
-  },
-  {
-    "term": "SBOM",
-    "acronym": "Software Bill of Materials",
-    "definition": "A machine-readable inventory of all software components in an artifact. SBOMs are attested with cryptographic signatures using DSSE format. SLH-DSA is preferred for SBOM signatures due to its stateless nature and suitability for 20+ year validity periods.",
-    "relatedModule": "/learn/platform-eng-pqc",
-    "complexity": "intermediate",
-    "category": "concept"
-  },
-  {
     "term": "OPA (Open Policy Agent)",
     "definition": "A general-purpose policy engine that evaluates decisions against a defined policy (written in Rego). In Kubernetes, OPA Gatekeeper uses ConstraintTemplates to block admission of resources with quantum-vulnerable algorithm identifiers in cert-manager Certificate or Deployment resources.",
     "relatedModule": "/learn/platform-eng-pqc",
@@ -1494,15 +1455,6 @@
     "technicalNote": "IEDs deployed in 2026 will operate until 2046-2051. Any cryptographic algorithms selected today must survive CRQC arrival. Firmware updates often require physical site visits.",
     "relatedModule": "/learn/energy-utilities-pqc",
     "complexity": "intermediate",
-    "category": "concept"
-  },
-  {
-    "term": "DER",
-    "acronym": "DER",
-    "definition": "Distributed Energy Resource. Solar inverters, battery storage systems, and EV chargers connected to the distribution grid.",
-    "technicalNote": "DERs authenticate via IEEE 2030.5 certificates (ECDSA P-256). PQC migration requires fleet-wide certificate reissuance to ML-DSA-65.",
-    "relatedModule": "/learn/energy-utilities-pqc",
-    "complexity": "beginner",
     "category": "concept"
   },
   {
@@ -2165,15 +2117,6 @@
     "category": "concept"
   },
   {
-    "term": "CNG",
-    "acronym": "CNG",
-    "definition": "Cryptography API: Next Generation — Microsoft's cryptographic framework that replaced the older CryptoAPI (CAPI). CNG provides a plugin architecture where algorithm implementations are supplied by CNG providers (KSPs), allowing hardware HSMs and software implementations to be swapped transparently.",
-    "technicalNote": "CNG PQC migration: ML-DSA algorithms require a new CNG provider — Microsoft ML-DSA KSP (planned for Windows 12 / Server 2028) or a third-party provider from Thales, Entrust, or nCipher. CNG is used by .NET, PowerShell, CertUtil, IIS, and most Windows cryptographic operations. The certificate template in ADCS must also support ML-DSA key type.",
-    "relatedModule": "/learn/os-pqc",
-    "complexity": "intermediate",
-    "category": "concept"
-  },
-  {
     "term": "Compliance Gap Analysis",
     "definition": "A systematic comparison of an organization's current cryptographic posture against regulatory requirements, identifying where PQC migration is needed to meet compliance deadlines. Evaluates frameworks like CNSA 2.0, DORA, NIS2, and sector-specific mandates across multiple jurisdictions.",
     "technicalNote": "A PQC compliance gap analysis typically covers: (1) algorithm inventory vs. approved algorithms, (2) certificate lifecycle vs. regulatory deadlines, (3) vendor PQC readiness vs. contractual obligations, (4) data retention periods vs. HNDL exposure windows. Multi-jurisdiction organizations must reconcile overlapping requirements.",
@@ -2291,15 +2234,6 @@
     "technicalNote": "Classical fixed-vs-random TVLA fails for lattice-based PQC (ML-KEM/ML-DSA) because the public key and ciphertext are structurally coupled, making fixed test vectors trivially distinguishable from random ones regardless of implementation quality. Instead, target specific algorithmic stages: NTT/INTT transform, polynomial multiplication, and modular reduction. |t| > 4.5 (NIST standard threshold) indicates statistically significant leakage requiring countermeasures.",
     "relatedModule": "/learn/pqc-testing-validation",
     "complexity": "advanced",
-    "category": "concept"
-  },
-  {
-    "term": "CBOM",
-    "acronym": "Cryptography Bill of Materials",
-    "definition": "A structured inventory of all cryptographic assets in a software system or codebase, including algorithms, key sizes, library versions, and usage contexts. Extends the SBOM (Software Bill of Materials) concept to specifically track cryptographic dependencies.",
-    "technicalNote": "Standardized in CycloneDX 1.6 (contributed by IBM). CBOM records: algorithm identifiers (e.g., ML-KEM-768, RSA-2048), key lengths, certificate types, library sources, and usage locations. Tools: CBOMkit (IBM, open source) generates CBOM from git repositories. CBOM generation is the first step in PQC migration — you cannot migrate what you have not inventoried.",
-    "relatedModule": "/learn/pqc-testing-validation",
-    "complexity": "intermediate",
     "category": "concept"
   },
   {
@@ -2488,6 +2422,39 @@
     "definition": "PKCS#11 mechanism for AES Key Wrap (RFC 3394) — deterministic, authenticated wrapping of key material under an AES key-encryption key, with an integrity check value.",
     "technicalNote": "CKM_AES_KWP (RFC 5649) is the padded variant for wrapping keys whose length is not a multiple of 8 bytes.",
     "complexity": "intermediate",
+    "category": "concept"
+  },
+  {
+    "term": "CPC Code",
+    "acronym": "CPC",
+    "definition": "A Cooperative Patent Classification symbol (e.g. H04L9/0852) that categorizes a patent by subject matter. Jointly developed and maintained by the USPTO and the European Patent Office, CPC codes are hierarchical — sections (letters) subdivide into classes, subclasses, groups, and subgroups, with longer codes indicating more specific technology.",
+    "technicalNote": "The USPTO replaced its own classification system (USPC) with CPC on January 1, 2013. A single patent typically carries several CPC codes.",
+    "complexity": "beginner",
+    "category": "concept"
+  },
+  {
+    "term": "Priority Date",
+    "definition": "The earliest date an inventor can claim to have disclosed an invention, typically from an earlier-filed provisional or foreign application. It is the date patent examiners use to judge whether the claimed invention is novel against prior art.",
+    "technicalNote": "The priority date often equals the filing date, but not always — a later non-provisional filing can claim priority back to an earlier provisional.",
+    "complexity": "beginner",
+    "category": "concept"
+  },
+  {
+    "term": "Filing Date",
+    "definition": "The date a complete patent application was formally submitted to the patent office. It anchors the start of prosecution and (for the earliest non-provisional filing in a family) the patent term calculation.",
+    "complexity": "beginner",
+    "category": "concept"
+  },
+  {
+    "term": "Issue Date",
+    "definition": "The date a patent is formally granted and becomes enforceable — sometimes called the grant date. It marks the end of examination, when the patentee gains the legal right to exclude others from the claimed invention.",
+    "complexity": "beginner",
+    "category": "concept"
+  },
+  {
+    "term": "Independent Claim",
+    "definition": "A patent claim that stands alone and defines the invention completely without referring to any other claim. Every patent has at least one. Independent claims set the broadest scope of protection; dependent claims narrow an independent claim by adding further limitations and must be read together with it.",
+    "complexity": "beginner",
     "category": "concept"
   }
 ]

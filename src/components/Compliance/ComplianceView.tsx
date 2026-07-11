@@ -332,12 +332,37 @@ export const ComplianceView = ({
 
   const [exportError, setExportError] = useState<string | null>(null)
 
+  // Returning-visitor signal — true once this browser has loaded /compliance
+  // before. Drives auto-collapse of the first-visit onboarding stack (intro
+  // banner, full deadline timeline) so repeat visits reach the tab bar in
+  // roughly one screen instead of re-showing first-visit chrome every time.
+  const VISITED_KEY = 'compliance-visited-v1'
+  const isReturningVisitor = useMemo(() => {
+    if (typeof window === 'undefined') return false
+    try {
+      return window.localStorage.getItem(VISITED_KEY) === '1'
+    } catch {
+      return false
+    }
+  }, [])
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(VISITED_KEY, '1')
+    } catch {
+      /* private browsing / quota */
+    }
+  }, [])
+
   // Intro banner dismissal.
   const INTRO_DISMISS_KEY = 'compliance-intro-dismissed-v1'
   const [introDismissed, setIntroDismissed] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false
     try {
-      return window.localStorage.getItem(INTRO_DISMISS_KEY) === '1'
+      if (window.localStorage.getItem(INTRO_DISMISS_KEY) === '1') return true
+      // A returning visitor implicitly counts as having seen the intro, even
+      // if they never explicitly dismissed it — first-time visitors are the
+      // only ones who should see the full onboarding stack.
+      return window.localStorage.getItem(VISITED_KEY) === '1'
     } catch {
       return false
     }
@@ -791,6 +816,7 @@ export const ComplianceView = ({
         persona={selectedPersona}
         frameworks={deadlineTimelineFrameworks}
         label={deadlineTimelineLabel}
+        returningVisitor={isReturningVisitor}
       />
 
       {/* Jump-back banner after a CSWP.39 cross-walk navigation. */}

@@ -15,8 +15,10 @@ first time (don't ship dev-speak and reformat later):
 - **Lead with the outcome.** Start each entry with what changed for the user —
   what they can now do, see, or trust — not the mechanism. Bold the entry with a
   plain-language title: `- **What changed, in plain words** [view:/page]: …`.
-- **Keep the `[view:/page]` and `[persona:role]` tags** — they drive the page's
-  filters and "For me" view. Tag every entry with the surface(s) it affects.
+- **Keep the `[view:/page]` and `[persona:id]` tags** — they drive the page's
+  filters and "For me" view. Valid persona ids: `executive`, `developer`,
+  `architect`, `researcher`, `ops`, `curious`. Tag every entry with the
+  surface(s) it affects.
 - **Put the human-readable detail in the sentence; leave deep internals out.**
   Filenames, function names, commit hashes, byte offsets, and spec section
   numbers belong in the PR/commit, not here. Keep concrete specifics a user
@@ -26,15 +28,206 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.20.0] - 2026-07-10
+
+A consolidation release: a hands-on KMIP Command Lab for certificate
+operations in the playground, a fix to the Report page's CBOM Builder link,
+and a broad data-quality sweep that rebuilds the site's trust-spine
+registries and refreshes the algorithm and learning-module data.
+
+### Added
+
+- **A Command Lab for KMIP certificate operations** [view:/playground] [persona:developer] [persona:architect]: the KMIP 3.0 tab now runs certificate operations — Certify, Validate, and public-key verification — in the browser against a rebuilt engine, with per-operation forms, an expanded glossary, extra lessons, and knowledge checks so you can learn each command hands-on.
+- **Composite (hybrid classical+PQC) certificates end-to-end** [view:/playground] [persona:developer] [persona:architect]: the Commands tab surfaces the LAMPS composite-signature algorithms, and the in-browser engine now issues and validates composite ML-DSA+ECDSA certificate chains for real — each component signature independently verified.
+- **Cross-plane certificate showcases** [view:/playground] [persona:developer] [persona:architect]: WP-3/4/6 demos — observe a KMIP-issued certificate as a raw PKCS#11 object, watch `CKA_ALLOWED_MECHANISMS` enforcement across planes, and run FrodoKEM/Classic McEliece through the PKCS#11 side.
+
+### Changed
+
+- **Refreshed the algorithm reference data** [view:/algorithms] [persona:researcher] [persona:developer]: the algorithm properties, status tiers, and candidate-family data were rebuilt from a fresh, canonical July 2026 reference snapshot so the tables and pickers reflect the current standardization state.
+- **Rebuilt the site's data trust-spine** [view:/library] [persona:architect] [persona:researcher]: the registries the site trusts (glossary, sources, migrate proofs, timeline evidence) were rebuilt to be complete, canonical, and consistency-guarded, and the data validators can now actually fail on defects instead of passing silently.
+- **Added PKCS#11 v3.2 as a finalized OASIS Standard to the Library** [view:/library] [persona:developer] [persona:architect]: the June 2026 OASIS Standard is now the active reference, with the earlier Committee Specification Draft kept as a previous revision rather than deleted.
+
+### Fixed
+
+- **The Report page's CBOM Builder link now lands in the right place** [view:/report] [persona:architect] [persona:developer]: corrected the CBOM Builder deep link so it opens the builder directly, backed by new real-browser test coverage.
+- **Corrected content across several PKI learning modules** [view:/learn] [persona:developer] [persona:curious]: the EMV payment, IoT/OT, PQC candidates, governance, skills/team-structure, and standards-bodies modules picked up data and copy corrections from the trust-spine sweep.
+- **Fixed a compliance KPI and cleaned up certification data** [view:/compliance] [persona:executive] [persona:architect]: corrected a fine-lookup key mismatch that affected an executive KPI, fixed PQC-coverage on several certification records against their published NIST security policies, and populated product links across certification cross-reference rows.
+- **Tidied the Migrate catalog** [view:/migrate] [persona:architect] [persona:developer]: deprecated three duplicate product entries, corrected an inaccurate PQC-support claim, fixed a status label that showed non-PQC products as fully verified, and remapped catalog rows to the current category taxonomy.
+- **Recovered broken Library sources and cross-references** [view:/library] [persona:researcher] [persona:architect]: restored missing or broken source documents (including two corrected ETSI version numbers) and repointed internal cross-references, and fixed leader resource links.
+- **Re-enriched and recovered more Library documents** [view:/library] [persona:researcher] [persona:architect]: refreshed enrichment on several long documents with an improved pre-filter (e.g. ANSSI PQC SSH/IPsec guidance, APRA CPS 234, OpenSSL 3.x docs) and recovered two more cached sources with stale URLs.
+
+### Data
+
+- **New canonical algorithm reference snapshot (July 2026)** replaces the older implementation-attacks table; timeline snapshot refreshed with fresh enrichment.
+- **Expanded the patents dataset** [view:/patents] [persona:researcher] [persona:executive]: added newly-enriched PQC-relevant patents from the 2016–2022 backlog and widened the harvest beyond the US to include European (EP) and international (WO) filings, with a patent detail-drawer UI fix.
+
+## [4.19.0] - 2026-07-09
+
+A hands-on release for the KMIP playground, the Report page, the Business
+Center, and the Simulation board: the in-browser KMIP engine is rebuilt from
+the real 0.13.1 engine with eight more operations now genuinely executed
+instead of simulated, the report gains a Cryptographic Bill of Materials
+section built on the new CycloneDX 1.7 standard, the Simulation board's
+framework references were audited line by line against what actually ships,
+and a sourcing sweep across the Business Center tools corrected several
+citation and data errors.
+
+### Added
+
+- **Three new KMIP lessons with a guided tour, glossary, and knowledge checks** [view:/playground] [persona:developer] [persona:architect]: the CACP Learn track now continues past the basics with three new walkthroughs (lessons 7–9), a guided tour of the KMIP 3.0 tab, an in-context glossary, and knowledge checks so you can confirm what you learned.
+- **A rollback recipe for batch key migrations** [view:/playground] [persona:ops] [persona:architect]: the KMIP workbench now ships a batch-Undo rollback recipe plus validated pass/fail scenarios for each migration policy, so you can see what a safe abort looks like before trying one for real.
+- **The Report page now includes a Cryptographic Bill of Materials (CBOM) section** [view:/report] [persona:architect] [persona:executive]: your report can now show the site's machine-readable inventory of cryptographic assets alongside the existing risk and compliance sections.
+
+### Changed
+
+- **The site's CBOM now follows CycloneDX 1.7** [view:/report] [persona:architect] [persona:developer]: upgraded from 1.6, adopting the new Cryptography Registry identifiers and adding classical (non-PQC) crypto assets, so the inventory names algorithms the same way scanning tools do.
+- **Eight KMIP operations promoted from simulated to real** [view:/playground] [persona:developer]: the in-browser KMIP engine was rebuilt from engine release 0.13.1; operation labels are now honest about which commands execute for real versus which are simulated, and the OASIS test-corpus replay is aligned to the exact engine baseline it runs against.
+- **Reorganized the Report page's internal code for easier maintenance** [view:/report] [persona:developer] [persona:architect]: the report's sections (risk breakdown, compliance impact, recommended actions, threat landscape, and others) now each live in their own file instead of one large file. This is an internal, behind-the-scenes change — the report itself looks and behaves exactly the same, including sharing a report link and viewing a sample report.
+
+### Fixed
+
+- **Corrected several sourcing and citation errors across Business Center tools** [view:/business] [persona:executive] [persona:architect]: the Cost Model Explorer's breach-probability default now uses the same sourced, size-tiered figure as the ROI Calculator and Breach Cost Model instead of an older unsourced flat estimate; the CRQC Scenario Planner's "Software/Firmware Signing" compliance deadline was corrected from 2025 to 2030 to match the actual exclusive-use date (2025 was NSA's earlier "prefer by" milestone, not the deadline); the Policy Template Generator no longer cites NIST SP 800-88 (a media-sanitization standard) as if it were a key-destruction standard; the Supply Chain Risk Matrix no longer claims NIST's crypto-agility guidance defines a specific "six asset class" taxonomy (it doesn't — this is the tool's own simplified classification); the Audit Readiness Checklist's citation for CMVP/CAVP validation evidence was corrected to the right section; and several tools' references to NIST's crypto-agility guidance were updated to the current, non-withdrawn version of that document.
+- **Simulation framework references now match what actually ships** [view:/simulation]: corrected gate approval authorities, stale live/gap labels on linked tools and reports, and drift in each phase's list of produced artifacts.
+- **Simulation jargon is now explained where it appears** [view:/simulation] [persona:curious] [persona:executive]: terms like TNFL and the governance vocabulary get plain-language glosses, activities surface their teaching text, and the board now shows which phases run in parallel instead of implying a strict sequence.
+- **Closed topical gaps in Simulation phase content** [view:/simulation]: fixed Phase 5 wave content, filled Phase 1 and 2 topical gaps, corrected the Phase 3 risk-scoring label, and added the missing Foundations F.5 coverage.
+
+## [4.18.0] - 2026-07-09
+
+A cross-page accuracy release covering Editorial Independence, Simulation, Explore, the Landing page, and the Sponsor page: the Editorial Independence page's promises about sponsor badges and the anonymous tipline now match what's actually built, the Simulation board acknowledges when Researcher and Curious visitors are shown the Executive seat by default, the Explore launcher's "recommended for you" badges are now driven by a single source of truth instead of a hand-maintained list, the Landing page's headline facts and role-adaptation summary are now derived from live data instead of hardcoded text, and the Sponsor page's tier benefits now match what's actually delivered today.
+
+### Fixed
+
+- **The Editorial Independence page's "Sponsor" badge claim is now real** [view:/editorial-independence] [view:/migrate] [persona:executive]: the badge is now genuinely wired to the sponsor list and appears on a product's Migrate listing only when that vendor is an actual sponsor. It shows for zero products today (there are no sponsors yet), but the mechanism is live and will work the moment a sponsor is added.
+- **The anonymous tip line promise is now honest about its status** [view:/editorial-independence]: it's labeled as planned rather than implying it already exists, with a working pseudonymous GitHub Discussions link as an interim way to reach us.
+- **Funding-source language on the Editorial Independence page now matches the real Sponsor page** [view:/editorial-independence] [view:/sponsor]: removed a reference to a "Consultant tier" that doesn't exist; the real tiers (Supporter, Sponsor, Patron) are now named consistently in both places.
+- **Added a table of contents with jump-links to the Editorial Independence page** [view:/editorial-independence], matching the pattern already used on the Terms and About pages.
+- **The Simulation board now explains why Researcher and Curious visitors start in the Executive seat** [view:/simulation] [persona:researcher] [persona:curious]: previously this happened silently with no explanation; a dismissible banner and a hint on the seat switcher now point these visitors to the tour best suited to them.
+- **Fixed mismatched phase recommendations in the Simulation board's "keep learning" prompts** [view:/simulation] [persona:architect] [persona:ops]: the architect and operations personas were being pointed to Learn content for phases that aren't actually part of their role, and were missing content for phases that are.
+- **Corrected stale "coming soon" labels on several Simulation framework references** [view:/simulation] [persona:researcher]: a few report and business-tool destinations referenced as not-yet-built were actually already live; those references now point to the real, working pages.
+- **Added a cross-reference between the Simulation board's "TNFL" label and the Report page's "HNFL" label** [view:/simulation] [view:/report]: these refer to the same "harvest-now" risk concept under two different names; each page now links to the other so the terminology isn't confusing.
+- **Explore page's "recommended for you" badges no longer drift out of sync with the rest of the site** [view:/explore]: badges are now computed from the same persona-recommendation data used elsewhere, instead of a separately hand-maintained list that could disagree with it.
+- **Added a Migrate tile to the Explore launcher** [view:/explore] [persona:ops], and Playground and Library tiles for developers and researchers.
+- **Fixed the Explore page's Command Center tile for the Curious persona** [view:/explore] [persona:curious]: clicking it previously sent Curious visitors to a page they don't have access to; it now sends them to the relevant learning module instead.
+- **Corrected a stale "2-minute questionnaire" claim on the Explore page's Assess tile** [view:/explore]: the fast-track assessment now takes about 6 questions; the copy no longer cites an outdated time estimate.
+- **The Landing page's headline facts are now pulled from live data** [view:/] [persona:executive] [persona:researcher]: the executive tagline's compliance-deadline reference and the researcher tagline's "just landed" standards reference previously were hand-typed and could go stale; both now recompute from the same Timeline and Library data shown elsewhere on the site.
+- **The Landing page's persona welcome modal now lists your recommended pages from a single source** [view:/]: previously each persona's "featured surfaces" text was written by hand and could disagree with the site's actual navigation and recommendations; it's now generated from the same data.
+- **Renamed the misleading "Standards Tracked" stat on the Landing page to "Library Documents"** [view:/]: the number was always a count of Library entries, not standards specifically.
+- **Replaced browser popup alerts with the site's normal notification style** [view:/] in the backup/restore settings panel.
+- **Removed a non-functional Google Drive sync option** [view:/] from the backup/restore settings panel that was permanently disabled and had no way to turn on.
+- **Fixed the Landing page's `?picker=open` link** [view:/]: following this link from other pages now actually opens the persona picker instead of doing nothing.
+- **Sponsor page benefits now match what's actually delivered** [view:/sponsor] [persona:executive]: perks that aren't built yet (listing-traffic reports, a full-time standards analyst, a monthly compliance digest) are now honestly labeled as planned rather than implied to be active today; the "thank-you note in the changelog" perk is now real and appears on the Changelog page.
+- **Sample-report link on the Sponsor page now opens a real example report** [view:/sponsor] [view:/report]: previously it pointed at an empty report page; it now opens a working sample that doesn't affect your own saved progress.
+- **Replaced a personal email address with the official contact address** [view:/sponsor].
+- **Funding-goal line items on the Sponsor page now link to where you can verify them** [view:/sponsor] [view:/revisions] [view:/editorial-independence]: for example, the "monthly vendor-mapping refresh" goal links to the page showing that refresh history.
+
+## [4.17.0] - 2026-07-09
+
+A cross-page accuracy release covering Timeline, Compliance, Threats, Patents, Leaders, Learn, and the Library: deadline mandates on the Timeline are now individually sourced and labeled instead of guessed, the Compliance page covers the actual federal executive order behind the 2030/2031 deadlines, the Threats page's quantum-computer arrival estimate is now the same number everywhere it appears, Patents share links no longer lose your filters, Leaders profiles are split into a curated set and the full contributor list, several Learn modules got corrected facts and real quiz coverage, and dozens of Library references were re-verified, fixed, or retired.
+
+### Fixed
+
+- **Every deadline on the Timeline now shows whether it's a binding legal mandate, informal guidance, or still-draft language** [view:/timeline] [persona:executive] [persona:architect]: most rows previously had no label at all. All deadline and CNSA 2.0 migration rows are now individually labeled from their own primary source, and the popover and the headline deadline banner now agree with each other instead of computing "binding" two different ways.
+- **The Timeline's chart no longer clips future or historical entries to a fixed 2024–2035 window** [view:/timeline]: the year axis now scales to whatever data is actually in view.
+- **Malformed dates in the Timeline's underlying data no longer silently render as blank bars** [view:/timeline]: bad values are now excluded with a logged warning instead of failing invisibly.
+- **The Compliance page now covers the actual U.S. executive order behind the post-quantum migration deadlines** [view:/compliance] [persona:executive]: the operative order (with its 2030 key-establishment and 2031 digital-signature deadlines) previously only appeared on the Timeline page, not in the Compliance framework list.
+- **Several "plain-English summary" blurbs on the Compliance page were overstating what their underlying framework actually requires** [view:/compliance] (including DORA, CNSA 2.0, ANSSI, and BSI guidance): rewritten to match what's actually in the framework record, including the difference between a binding deadline and a staged recommendation.
+- **The Compliance Records tab no longer shows a live-sounding "Refresh Data" button that does nothing on the deployed site** [view:/compliance]: it's now disabled with an explanation, and the freshness date reflects the actual data snapshot instead of the moment you loaded the page.
+- **The Compliance page's "New to PQC compliance?" intro banner no longer reappears every visit** [view:/compliance] once you've already seen it.
+- **Threat-horizon (Q-Day) estimates now agree across the whole Threats page** [view:/threats]: the hero summary, the trajectory chart, the economics calculator, and the capability strip previously each computed their own version of "when could a quantum computer break today's encryption," and could disagree with each other. All four now derive from one shared calculation.
+- **Fixed a false-positive bug in the Threats page's "harvest-now" vs. "forge-now" risk classification** [view:/threats]: threats whose description merely mentioned a post-quantum replacement algorithm's name (like ML-KEM or ML-DSA) were sometimes being misclassified based on that mention alone. Threats that genuinely can't be classified from available data now say so honestly instead of defaulting to a guess.
+- **The Threats page now shows why each threat was vetted the way it was** [view:/threats] [persona:researcher]: peer-review status, confidence level, the body that vetted it, and any data-quality notes are now visible in the threat detail view, and CRQC arrival-estimate citations are now clickable links to their sources.
+- **Merged two near-duplicate industry categories on the Threats page** [view:/threats] ("Critical Infrastructure" and "Energy / Critical Infrastructure") that were splitting the same sector's threats across two filter buckets.
+- **Threat classification definitions are now readable on touchscreens** [view:/threats]: they previously only appeared on hover, which doesn't work on mobile; tapping now opens the same explanation.
+- **Fixed a data-loading bug that could conflate "this patent has no post-quantum relevance score" with "this patent scored zero"** [view:/patents].
+- **Sharing a filtered Patents view now preserves what you were actually looking at** [view:/patents]: the corpus scope (post-quantum only vs. everything) and your chosen columns weren't part of the shareable link, so recipients could land on a different view than the one you sent. Also added a Share button to the page, which it didn't previously have.
+- **Corrected the classification of Classic McEliece across the Patents catalog** [view:/patents]: it was mislabeled as a classical (pre-quantum) algorithm; it's actually a NIST post-quantum Round 4 candidate, recommended by Germany's BSI. Fixed on all 13 affected records.
+- **Patent search now finds algorithms by either their original filing-era name or their finalized NIST name** [view:/patents] (e.g. "Kyber" and "ML-KEM," or "Dilithium" and "ML-DSA," now both work).
+- **Added a small glossary for patent-specific terms** [view:/patents] [persona:developer] (CPC classification codes, priority/filing/issue dates, independent claims), available as inline tooltips.
+- **The Leaders page now separates the curated, individually-vetted profile set from the larger auto-imported contributor list** [view:/leaders]: it previously showed all 332 profiles mixed together with no way to tell which had been individually reviewed. The default view now shows the 208 curated profiles, with a toggle to see everyone.
+- **Refreshed and spot-checked Leaders profile data** [view:/leaders], fixing two out-of-date entries and adding a visible "verified as of" date to each profile.
+- **Fixed a bug where an executive's explicit "sort by name" choice on the Leaders page was silently overridden back to a relevance-based order** [view:/leaders] [persona:executive].
+- **Added a Skeptic/Critic filter category to the Leaders page** [view:/leaders] and a couple of previously-missing sourced entries to that category and to Industry Adopter.
+- **Fixed two overstated claims in Learn module content** [view:/learn] [persona:executive]: a national security algorithm mandate was described as a blanket 2030 government-wide requirement (it's staged and scoped to national security systems), and a post-quantum certificate size comparison significantly overstated the size difference versus real measured figures (it said certificates are 10–50x larger; they're actually roughly 4–7x larger).
+- **Learn checkpoints now only count as "passed" once you've actually scored well enough on them** [view:/learn]: previously, simply opening every module in a section marked its checkpoint as passed regardless of quiz performance. Existing progress isn't reset; you'll see a one-time notice explaining the change.
+- **Fixed a Learn progress-tracking bug where browsing a "curious mode" module's workshop steps counted as completing them** [view:/learn]: viewing now only marks a module as viewed; workshop credit requires actually doing the workshop.
+- **Three previously-orphaned Learn modules (governance/risk, team staffing, and SOC incident response) now have quiz coverage and are properly routed into the relevant role-based learning path** [view:/learn], instead of being reachable only by direct link with no way to test your understanding.
+- **Retired a redundant Learn module that duplicated a newer, fuller one on team staffing** [view:/learn], and retired the old five-mode Learn dashboard (old links now redirect to the current Learn experience).
+- **Learn module reference panels now show when each module's content was last reviewed** [view:/learn] [persona:researcher].
+- **Filled in missing descriptions for 29 Library entries** [view:/library] that previously just repeated the document's title with no summary of what it actually covers.
+- **Re-checked every Library link that was flagged as broken or unverified** [view:/library]: of the 100+ flagged links, the large majority were confirmed live and corrected (including a wrong ETSI document version), and the remainder that are genuinely unreachable (or fabricated document numbers that don't exist in the issuing standards body's catalog) are now retired instead of sitting in the catalog unresolved.
+- **Fixed a Library entry that incorrectly implied FN-DSA (FIPS 206) has already been published** [view:/library]; it remains in draft.
+- **Corrected a mismatched document title on a Library reference** [view:/library] that had been carrying an unrelated draft's title instead of its own.
+- **Normalized a handful of Library confidence scores that were on the wrong 0–1 scale** [view:/library] instead of the 0–100 scale used everywhere else, and surfaced the confidence score in the document detail view.
+- **The Library can now be filtered by why you're looking something up** [view:/library] (reference material vs. general education), corrected for about 40 entries that a keyword-based guess had filed under the wrong purpose.
+
+### Data
+
+- Refreshed the Timeline, Compliance, Patents, Leaders, and Library datasets with new dated snapshots and re-verified sourcing; added quiz question coverage for previously-untested Learn topics (software bill of materials, cryptography bill of materials, crypto-algorithm registry naming, and post-quantum verification/closure).
+
+## [4.16.0] - 2026-07-09
+
+A cross-page accuracy and trust release touching Report, Business tools, Revisions, Changelog, FAQ, Playground, OpenSSL Studio, Terms, About, and Migrate: shared report links now show the sender's real score, breach-cost defaults finally agree across three business tools, the revisions feed surfaces corrections that were previously invisible, the Playground and OpenSSL Studio get clearer status indicators and fewer dead ends, the Migrate workbench now shows which products are still awaiting verification proof, and several dead links and stale numbers are fixed across the site.
+
+### Fixed
+
+- **Shared and example report links now show the exact score the sender saw** [view:/report]: previously, opening a shared link recomputed the score from scratch, so a scoring-logic update after a link was shared could silently show the recipient a different result than the sender intended. Older links already in circulation still open, now with a note that they're an approximate view.
+- **Viewing someone else's shared report can no longer overwrite your own saved assessment** [view:/report]: a partial safeguard only covered visitors who already had a saved assessment; first-time visitors opening a shared link were having their own (not-yet-started) assessment silently populated with the sender's data. Every input a shared report displays — industry, country, current cryptography, persona, and more — is now drawn strictly from the sender's snapshot.
+- **ROI and vendor-risk figures now flag when they're using default estimates** [view:/report] [persona:executive]: the fast-track assessment path skips some inputs (like vendor dependency), so those sections were quietly falling back to neutral assumptions with no indication. They now show a "uses default estimates" note.
+- **Breach-probability defaults now agree across the ROI Calculator, Breach Cost Model, and Cost of Inaction tools** [view:/business] [persona:executive]: two of the three tools were using an unsourced flat 15% instead of the sourced, size-tiered default (from Cyentia's 2025 breach research) the site had already adopted elsewhere, so the same organization could get three different breach-cost estimates depending which tool they used. All three now share one sourced default, with a simple small/average/large organization picker to adjust it.
+- **Fixed a stale year in the ROI Calculator's source citation** [view:/business]: it cited a 2024 report; the figures themselves were already the 2025 update.
+- **The Roadmap Builder now cites the actual federal order and deadlines behind the PQC transition mandate** [view:/business] [persona:executive]: added a sourced callout with the order number and both key-establishment and signature deadlines, verified against the official published text.
+- **The "data" category on the Revisions feed was invisible** [view:/revisions]: a filtering bug hid every entry logged under the data-corrections category (28 entries) from the page entirely; it's now visible like every other category, and empty categories now auto-hide instead of sitting there as a dead click.
+- **The Revisions feed was missing about seven weeks of real corrections** [view:/revisions]: several dataset updates had shipped without being logged. Backfilled with accurate before/after summaries tied to the actual changes, and the feed's signature was re-verified.
+- **Freshness date labels on the Changelog page were showing the wrong file's date** [view:/changelog]: a pattern-matching bug meant some "last updated" chips (Compliance, Timeline) skipped past the newest snapshot to an older one. Also fixed the Software freshness chip, which had been pointing at a renamed file and so never appeared at all.
+- **Cleaned up mislabeled role tags on several changelog entries** [view:/changelog] so each one now correctly routes to the researcher, developer, ops, or architect "For me" filter instead of a generic catch-all.
+- **Fixed a dead reference link on the FAQ page** [view:/faq]: a NIST document link had gone stale after the underlying reference was renamed; FAQ links to renamed references now resolve automatically instead of opening an empty page.
+- **Merged two near-duplicate FAQ questions about the Cryptography Bill of Materials** [view:/faq] into one clearer answer.
+- **Fixed an inconsistent step count on the FAQ page** [view:/faq]: the risk assessment wizard's step count was quoted as both 13 and 14 in different places; confirmed the real count (13) and made every mention match.
+- **Fixed the project's GitHub repository name** [view:/faq] where it had been quoted incorrectly.
+- **Replaced a few exact module/document/product counts on the FAQ page with wording that won't go stale** [view:/faq] (e.g. "dozens of modules" instead of a fixed number that was already out of date).
+- **The Docker-based playground tool no longer shows a dead, unresponsive embedded window when the sandbox isn't reachable** [view:/playground] [persona:developer]: it now checks whether the sandbox is actually reachable and shows a clear "request access" link instead of a blank iframe pointed at a local address that only works for the sandbox's own operators.
+- **Renamed the KMIP control-plane tool consistently across the Playground** [view:/playground] so its name, banner, and page heading all match instead of showing three different names for the same tool.
+- **Replaced a personal email link for sandbox-access requests with a trackable request form** [view:/playground].
+- **Fixed OpenSSL Studio's documentation links** [view:/openssl] [persona:developer]: every "view docs" link across all OpenSSL commands pointed at a broken or outdated page (wrong version, malformed URL); all now go to the correct, current OpenSSL documentation.
+- **Removed a non-functional option from OpenSSL Studio's configuration-file helper command** [view:/openssl] that produced an "unknown option" error when used, and clarified that the command itself requires OpenSSL 3.6 or newer.
+- **OpenSSL Studio's post-quantum key/signature tools now note the OpenSSL version they require** [view:/openssl] [persona:developer] (3.5 or newer for ML-KEM, ML-DSA, and SLH-DSA), so it's clear up front rather than discovered via an error.
+- **Fixed OpenSSL Studio's key-decapsulation example, which was using the wrong output flag** [view:/openssl] and silently producing empty results in some cases.
+- **OpenSSL Studio now shows a clear error and retry option if the underlying engine fails to load** [view:/openssl], instead of leaving the page stuck on "Initializing..." indefinitely.
+- **Marked two OpenSSL Studio example commands as reference-only** [view:/openssl] since they use shell piping the in-browser tool can't run directly, and running them now shows a clear message instead of a confusing partial result.
+- **Fixed the Terms page's binding-acceptance clause, which pointed to a retired mirror site that no longer resolves** [view:/terms]: it now correctly references the live production site.
+- **Added a table of contents with jump-to-section links to the Terms page** [view:/terms], plus a note on when the terms were last substantively updated.
+- **Added plain-language summaries above the Terms page's export-control section and its "don't use generated keys in production" guidance** [view:/terms], so the legal text now has a plain-English preview.
+- **The About page's platform statistics (module counts, dataset sizes, and similar figures) are now computed from the live data** [view:/about] instead of hand-typed numbers that could silently drift out of date as datasets grew.
+- **Fixed an overstated "refreshed weekly" claim about compliance data on the About page** [view:/about]; it now shows the actual last-updated date.
+- **Fixed the About page's "last security audit" date, which no longer matched the actual audit report it was describing** [view:/about].
+- **The About page's changelog link now navigates within the app instead of triggering a full page reload** [view:/about].
+- **The Migrate workbench now labels NIST IR 8547 as a draft** [view:/migrate] everywhere it's cited, rather than implying it's a finished standard.
+- **Vendor roadmap entries in Migrate now show when they were last verified, plus a "new" or "updated" marker** [view:/migrate], so it's clear how current each vendor's stated plans are.
+- **Fixed a duplicate Migrate workbench address** [view:/migrate] that could show two different URLs for the same page; both now lead to the same place.
+- **Each migration wave in the Migrate planner now explains why it's sequenced where it is** [view:/migrate] [persona:architect], and the "harvest now, decrypt later" risk term is explained in plain language the first time it appears.
+- **Fixed a handful of product records in the migration catalog with inconsistent verification labels** [view:/migrate] so their status now displays correctly.
+
+### Added
+
+- **Search on the Changelog page** [view:/changelog]: a free-text box now filters entries by title and body, on top of the existing category and role filters.
+- **Explanatory tooltips on the Changelog page's freshness indicators** [view:/changelog] clarifying what each date measures and what a stale marker means.
+- **Filters by zone, phase, and audience on the Business tools grid** [view:/business] [persona:executive], in addition to the existing category and text search.
+- **FAQ questions aimed at your role now float to the top of their section** [view:/faq] with a small "For you" marker, when you've selected a persona (executive, developer, architect, ops, or researcher).
+- **The Business Center's learning module list now collapses by default for advanced users** [view:/business] [persona:developer], keeping its header visible so it's a one-click expand rather than taking up space unasked.
+- **The Playground's algorithm picker now shows a "Draft" badge with an explanatory tooltip for algorithms that aren't yet finalized standards** [view:/playground] [persona:developer], so it's clear at a glance which selections are backup candidates rather than production-ready standards.
+- **Executive-persona guidance banners added to three more Playground tools** [view:/playground] [persona:executive] (the interactive, HSM, and KMIP control-plane tools), pointing toward the business-focused Command Center and Compliance views instead of leaving executives on a developer-oriented tool.
+- **Products in the Migrate workbench now show a verification badge and last-verified date** [view:/migrate], and the page now tells you how many catalog entries are hidden because they're still awaiting verification proof, instead of leaving that count invisible.
+- **The Migrate workbench's asset guidance is now tailored for executive and developer views** [view:/migrate] [persona:executive] [persona:developer], highlighting the systems (cloud key management, TLS, code signing, databases) most relevant to each role instead of showing the same generic list to everyone.
+
 ## [4.15.0] - 2026-07-08
 
 A Learn modules and Patents refresh release: two new modules close a cross-reference gap that's existed since earlier modules started pointing at them, the Patents page now highlights what's new since your last visit, and Algorithms defaults to only showing FIPS-validated results.
 
 ### Added
 
-- **A "recently added" view for Patents, and click-to-drill on the filing-year chart** [view:/patents] [persona:technical]: newly published or updated patents are now marked so you don't have to compare snapshots yourself to spot what's new, and clicking a bar in the filing-year chart now filters straight to that year.
-- **A CycloneDX Cryptography Registry learning module** [view:/learn/crypto-registry] [persona:technical]: covers CycloneDX's standardized naming registry for cryptographic algorithms and curves, with hands-on algorithm-normalizer and curve-lookup workshops.
-- **A Software Bill of Materials (SBOM) learning module** [view:/learn/sbom] [persona:technical]: covers SBOM formats and generation tooling and how an SBOM feeds into a CBOM — closing a gap where SBOM was referenced by several other modules but had no dedicated module of its own.
+- **A "recently added" view for Patents, and click-to-drill on the filing-year chart** [view:/patents] [persona:researcher]: newly published or updated patents are now marked so you don't have to compare snapshots yourself to spot what's new, and clicking a bar in the filing-year chart now filters straight to that year.
+- **A CycloneDX Cryptography Registry learning module** [view:/learn/crypto-registry] [persona:developer]: covers CycloneDX's standardized naming registry for cryptographic algorithms and curves, with hands-on algorithm-normalizer and curve-lookup workshops.
+- **A Software Bill of Materials (SBOM) learning module** [view:/learn/sbom] [persona:developer]: covers SBOM formats and generation tooling and how an SBOM feeds into a CBOM — closing a gap where SBOM was referenced by several other modules but had no dedicated module of its own.
 
 ### Fixed
 
@@ -50,7 +243,7 @@ A Migrate data accuracy release: a broad, evidence-based cleanup of the product 
 
 ### Fixed
 
-- **Two product listings had quietly reverted to disproven claims** [view:/migrate] [persona:technical]: a Futurex HSM and a Renesas/Veridify chip were both re-showing post-quantum support that an earlier correction had already disproven, with nothing catching the regression. Both are corrected again, this time with an automated check in place so it can't silently happen a third time.
+- **Two product listings had quietly reverted to disproven claims** [view:/migrate] [persona:ops]: a Futurex HSM and a Renesas/Veridify chip were both re-showing post-quantum support that an earlier correction had already disproven, with nothing catching the regression. Both are corrected again, this time with an automated check in place so it can't silently happen a third time.
 - **429 product and vendor entries cited a source that didn't actually exist** [view:/migrate]: some had no citation at all; others cited one that had never been registered anywhere, which is worse, because nothing was flagging it. Nearly all now point at a real, checkable source.
 - **~175 product listings said "yes, it supports this" with no specifics** [view:/migrate]: several were a literal unfilled placeholder. Each now names the actual technology involved, sourced from the product's own saved evidence or fresh research — not guessed.
 - **A dozen products were tagged to the wrong company**, including two duplicated vendor records and one of pqctoday's own project listings misattributed to an unrelated company. All retagged to the correct vendor.
@@ -130,7 +323,7 @@ A crypto-agility and simulation release: the CACP playground gains a new **Migra
 
 ### Added
 
-- **A new "Migration" tab in the crypto-agility playground** [view:/playground/cacp] [persona:technical]: build a seven-key estate (encryption, key-agreement, and signing keys) by _business name only_ — the active policy decides every algorithm — then switch Classical → Hybrid → Full PQC and watch each vulnerable key rekey to its post-quantum successor the first time you use it. Every key keeps its business handle across the migration; old and new versions are shown side by side with their state and lineage.
+- **A new "Migration" tab in the crypto-agility playground** [view:/playground/cacp] [persona:architect]: build a seven-key estate (encryption, key-agreement, and signing keys) by _business name only_ — the active policy decides every algorithm — then switch Classical → Hybrid → Full PQC and watch each vulnerable key rekey to its post-quantum successor the first time you use it. Every key keeps its business handle across the migration; old and new versions are shown side by side with their state and lineage.
 - **A migration map** [view:/playground/cacp]: a table showing which key label serves which operation and what each policy resolves it to under Classical, Hybrid, and Full PQC, with the active mode highlighted.
 - **A live key-object inspector in the Migration tab** [view:/playground/cacp]: the real KMIP objects on the tab's engine — label, unique ID, type, algorithm, state, quantum-safety, and the rekey link from a retired key to its successor.
 - **A KMIP log inside each key tile** [view:/playground/cacp]: every operation you run on a key is logged in place, tagged with the mode (Classical / Hybrid / Full PQC) it ran under and expandable to the underlying policy/KMIP/PKCS#11 events.

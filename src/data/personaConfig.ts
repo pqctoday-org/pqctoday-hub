@@ -10,16 +10,28 @@ import type { PhaseId } from './frameworkPhases'
  * active persona practices that module's `frameworkPhase` (the sim climbs the
  * same phases p0–p7 + verify-close, and every module carries one).
  *
- * Relevance is profile-dependent, not lesson-track-dependent: an exec practices
- * the governance/program phases; an architect/ops/dev practices the technical
- * execution & infrastructure phases (p5/p6) where TLS, HSM, 5G, etc. live.
+ * Linked to `ROLE_CROSSWALK`/`personaToRoles` (`roleCrosswalk.ts`), which is the
+ * source of truth for which phases a seat actually *owns* in-sim (spec §7).
+ * Every set below is the union of that persona's owned phases, so the CTA can
+ * never point a player at a phase their seat doesn't own — the exact drift the
+ * two-vocabulary split used to allow (07082026 remediation, simulation.md item
+ * 2). `executive` carries three phases (p1/p2/p3) beyond its owned set as a
+ * documented, deliberate exception: the Executive Overview tour
+ * (`execTourConfig.ts` `EXEC_TOUR_STAGES`) genuinely walks the exec persona
+ * through those phases' content (data-asset-sensitivity, CBOM, risk-register)
+ * for board-oversight framing, even though `crypto-architect` — not any
+ * executive-mapped role — drives them programmatically. The drift guard in
+ * `personaConfig.test.ts` pins this relationship (owned ⊆ set, extras ⊆
+ * allowlist) so it can't silently drift further.
+ *
  * Personas with no entry here (researcher / curious / none) see the CTA on
- * every phase — a deliberate broad fallback. Tune the per-persona sets below.
+ * every phase — a deliberate broad fallback (neither holds a program role in
+ * `ROLE_CROSSWALK`, so there is no "owned" set to link to; see item 1).
  */
 export const PERSONA_SIM_PRACTICE_PHASES: Partial<Record<PersonaId, PhaseId[]>> = {
-  executive: ['p0', 'p1', 'p2', 'p3', 'p4', 'p7', 'verify-close'],
-  architect: ['p2', 'p5', 'p6'],
-  ops: ['p5', 'p6', 'verify-close'],
+  executive: ['p0', 'p1', 'p2', 'p3', 'p4', 'p7', 'verify-close', 'foundations'],
+  architect: ['p1', 'p2', 'p3', 'p5'],
+  ops: ['p5', 'p6'],
   developer: ['p5', 'p6'],
   // researcher / curious / (no persona) → undefined ⇒ broad (see helper)
 }
@@ -126,20 +138,21 @@ export type AlgorithmTabId = 'transition' | 'detailed' | 'support' | 'validation
 
 export type AlgorithmFilterKey = 'family' | 'fn' | 'level' | 'region' | 'status'
 
-export type AlgorithmSectionId =
-  | 'performance'
-  | 'security'
-  | 'sizes'
-  | 'usecases'
-  | 'attacks'
-  | 'kat'
+// Was 6 values ('performance' | 'security' | 'sizes' | 'usecases' | 'attacks'
+// | 'kat') seeded from a since-removed accordion layout on the Detailed
+// Comparison view (see ca994b18); that view is now a flat sortable table
+// with no per-section open/closed state, so those 4 ids had zero consumers.
+// Narrowed to the two ids that still map to real UI — the Validation tab's
+// two collapsible sections (AlgorithmValidationView.tsx) — and wired below
+// instead of left as dead config.
+export type AlgorithmSectionId = 'attacks' | 'kat'
 
 export interface AlgorithmDefaults {
   /** First-paint tab. */
   tab: AlgorithmTabId
   /** Filter preset; keys map to the URL params used by AlgorithmsView. */
   filters: Partial<Record<AlgorithmFilterKey, string>>
-  /** Sections open by default in the Detailed Comparison view. */
+  /** Validation-tab sections open by default (see AlgorithmValidationView.tsx). */
   openSections: AlgorithmSectionId[]
   /** Algorithm names to pre-highlight in the Detailed table. */
   highlight?: string[]
@@ -151,33 +164,34 @@ export const ALGORITHM_PERSONA_DEFAULTS: Record<PersonaId, AlgorithmDefaults> = 
     // not the developer parameter comparison. Specialist tabs are one click away.
     tab: 'transition',
     filters: { status: 'Certified' },
-    openSections: ['sizes'],
-    highlight: ['ML-KEM-768', 'ML-DSA-65', 'SLH-DSA-SHA2-128s', 'Falcon-512'],
+    openSections: [],
+    highlight: ['ML-KEM-768', 'ML-DSA-65', 'SLH-DSA-SHA2-128s', 'FN-DSA-512'],
   },
   ops: {
     tab: 'transition',
     filters: { status: 'Certified' },
-    openSections: ['sizes'],
+    openSections: [],
   },
   developer: {
     tab: 'transition',
     filters: { status: 'Certified' },
-    openSections: ['sizes', 'performance'],
+    openSections: [],
   },
   architect: {
     tab: 'transition',
     filters: { status: 'Certified' },
-    openSections: ['sizes', 'performance'],
+    openSections: [],
   },
   researcher: {
+    // "All sections open" — both Validation-tab sections, not just KAT.
     tab: 'detailed',
     filters: { status: 'Certified' },
-    openSections: ['performance', 'security', 'sizes', 'attacks', 'kat'],
+    openSections: ['attacks', 'kat'],
   },
   curious: {
     tab: 'transition',
     filters: { status: 'Certified', fn: 'KEM' },
-    openSections: ['sizes'],
+    openSections: [],
     highlight: ['ML-KEM-768', 'ML-DSA-65', 'SLH-DSA-SHA2-128s'],
   },
 }
@@ -185,7 +199,7 @@ export const ALGORITHM_PERSONA_DEFAULTS: Record<PersonaId, AlgorithmDefaults> = 
 const ALGORITHM_FALLBACK_DEFAULTS: AlgorithmDefaults = {
   tab: 'transition',
   filters: { status: 'Certified' },
-  openSections: ['performance', 'security', 'sizes'],
+  openSections: [],
 }
 
 /** Resolve the algorithms-page defaults for the active persona, or a
@@ -193,6 +207,34 @@ const ALGORITHM_FALLBACK_DEFAULTS: AlgorithmDefaults = {
 export function getAlgorithmDefaults(persona: PersonaId | null): AlgorithmDefaults {
   if (!persona) return ALGORITHM_FALLBACK_DEFAULTS
   return ALGORITHM_PERSONA_DEFAULTS[persona] ?? ALGORITHM_FALLBACK_DEFAULTS
+}
+
+/**
+ * Canonical path → human label for every path referenced by PERSONA_NAV_PATHS /
+ * PERSONA_RECOMMENDED_PATHS. MainLayout's nav items source their labels from
+ * this same map, so a rename here propagates to every consumer that lists
+ * paths by label (e.g. Landing's "How does this adapt content?" modal).
+ */
+export const NAV_PATH_LABELS: Record<string, string> = {
+  '/': 'Home',
+  '/simulation': 'Simulation',
+  '/explore': 'Explore',
+  '/learn': 'Learn',
+  '/timeline': 'Timeline',
+  '/algorithms': 'Algorithms',
+  '/migrate': 'Migrate',
+  '/compliance': 'Compliance',
+  '/assess': 'Assess',
+  '/report': 'Report',
+  '/business': 'Command Center',
+  '/playground': 'Playground',
+  '/threats': 'Threats',
+  '/library': 'Library',
+  '/leaders': 'Community',
+  '/patents': 'Patents',
+  '/openssl': 'OpenSSL Studio',
+  '/revisions': 'Revisions',
+  '/about': 'About',
 }
 
 /**
@@ -532,9 +574,11 @@ export const INDUSTRY_TO_THREATS_MAP: Record<string, string[]> = {
     'Hardware Security Modules',
   ],
   'Energy & Utilities': [
-    'Energy / Critical Infrastructure',
+    // "Critical Infrastructure" and "Energy / Critical Infrastructure" are
+    // canonicalized to one sector in threatsData.ts (Threats #5) — reference
+    // the single post-canonicalization label here.
+    'Critical Infrastructure / Energy',
     'Water / Wastewater',
-    'Critical Infrastructure',
   ],
   Automotive: ['Automotive / Connected Vehicles', 'Rail / Transit'],
   Aerospace: ['Aerospace / Aviation'],
@@ -558,6 +602,7 @@ export type ReportSectionId =
   | 'assessmentProfile'
   | 'hndlHnfl'
   | 'discovery'
+  | 'cbom'
   | 'algorithmMigration'
   | 'complianceImpact'
   | 'recommendedActions'
@@ -582,6 +627,7 @@ const REPORT_SECTION_DEFAULTS: Record<ReportSectionId, ReportSectionConfig> = {
   assessmentProfile: { state: 'collapsed' },
   hndlHnfl: { state: 'open' },
   discovery: { state: 'collapsed' },
+  cbom: { state: 'collapsed' },
   algorithmMigration: { state: 'open' },
   complianceImpact: { state: 'open' },
   recommendedActions: { state: 'open' },
@@ -1005,70 +1051,6 @@ export const PERSONA_EXCLUDED_ACHIEVEMENTS: Record<PersonaId, string[]> = {
     'business-strategist',
     'business-complete',
   ],
-}
-
-/**
- * Persona-aware primary-tab order for /compliance (P11-P1-01).
- *
- * Compliance has 6 logical tabs — `foryou`, `landscape`, `records`, `cswp39`,
- * `standards`, `certification`. Researcher sees all six inline. Every other
- * persona collapses to 3 primary tabs + a "More" overflow dropdown carrying
- * the rest. Primary tabs render in the listed order.
- *
- * `foryou` is always first so the persona-tailored body is the default entry.
- *
- * Resolution: when no persona is selected, the default order `['foryou',
- * 'landscape', 'records']` ships and the three remaining tabs collapse into
- * "More" (matching the executive surface, which is the highest-traffic case).
- */
-export type ComplianceTabId =
-  | 'foryou'
-  | 'landscape'
-  | 'records'
-  | 'cswp39'
-  | 'standards'
-  | 'certification'
-
-const ALL_COMPLIANCE_TABS: readonly ComplianceTabId[] = [
-  'foryou',
-  'landscape',
-  'records',
-  'cswp39',
-  'standards',
-  'certification',
-]
-
-export const PERSONA_COMPLIANCE_TABS: Record<PersonaId, readonly ComplianceTabId[]> = {
-  executive: ['foryou', 'landscape', 'records'],
-  architect: ['foryou', 'cswp39', 'landscape'],
-  developer: ['foryou', 'landscape', 'cswp39'],
-  ops: ['foryou', 'records', 'cswp39'],
-  researcher: ALL_COMPLIANCE_TABS,
-  curious: ['foryou', 'records', 'landscape'],
-}
-
-const DEFAULT_PRIMARY_COMPLIANCE_TABS: readonly ComplianceTabId[] = [
-  'foryou',
-  'landscape',
-  'records',
-]
-
-/**
- * Returns the primary tab order for the active persona, falling back to a
- * sensible 3-tab default for the no-persona case.
- */
-export function getComplianceTabOrder(persona: PersonaId | null): readonly ComplianceTabId[] {
-  if (!persona) return DEFAULT_PRIMARY_COMPLIANCE_TABS
-  return PERSONA_COMPLIANCE_TABS[persona]
-}
-
-/**
- * Returns the tabs that should be hidden behind the "More" menu for the
- * active persona — i.e. every tab NOT in the persona's primary order.
- */
-export function getComplianceOverflowTabs(persona: PersonaId | null): readonly ComplianceTabId[] {
-  const primary = new Set(getComplianceTabOrder(persona))
-  return ALL_COMPLIANCE_TABS.filter((t) => !primary.has(t))
 }
 
 /**

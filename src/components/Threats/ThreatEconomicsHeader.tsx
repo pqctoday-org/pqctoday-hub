@@ -3,6 +3,7 @@ import React, { useMemo, useState } from 'react'
 import { ChevronDown, Calculator, Clock, ShieldAlert } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FRAMEWORK_PHASES, type PhaseId } from '@/data/frameworkPhases'
+import { getCrqcConsensus } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
 
 /**
  * Threat-Economics header for the Threats page (PER-PAGE-CHANGES Threats #1).
@@ -24,6 +25,11 @@ const THREAT_ECONOMICS_PHASE: PhaseId = 'p0'
 const THREAT_ECONOMICS_PHASE_DEF = FRAMEWORK_PHASES[THREAT_ECONOMICS_PHASE]
 
 const CURRENT_YEAR = 2026
+
+// Default Z — single-sourced from CRQC_ESTIMATES via getCrqcConsensus() (Threats #1),
+// the same median-of-midpoints figure the hero and capability strip show, rather than
+// an independently-set year. The slider remains fully user-adjustable from this default.
+const DEFAULT_CRQC_YEAR = getCrqcConsensus().zEstimate
 
 type Urgency = 'overdue' | 'critical' | 'urgent' | 'planning'
 
@@ -86,7 +92,7 @@ export const ThreatEconomicsHeader: React.FC<{ defaultExpanded?: boolean }> = ({
   const [dataLifetime, setDataLifetime] = useState(10) // HNDL X
   const [credentialValidity, setCredentialValidity] = useState(10) // HNFL X
   const [migrationTime, setMigrationTime] = useState(5) // Y
-  const [crqcYear, setCrqcYear] = useState(2035) // Z
+  const [crqcYear, setCrqcYear] = useState(DEFAULT_CRQC_YEAR) // Z
 
   // One deadline per model: Z − X − Y. They differ only by which X applies.
   const rows = useMemo(

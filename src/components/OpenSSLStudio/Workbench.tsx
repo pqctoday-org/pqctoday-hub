@@ -380,10 +380,14 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
         cmd = ``
       }
     } else if (category === 'configutl') {
+      // openssl-configutl is a real OpenSSL 3.6+ subcommand (introduced in 3.6,
+      // absent from 3.5 and earlier — verified against docs.openssl.org/3.6).
+      // Its only flags are -help, -config, -out and -noheader; there is no
+      // -dump flag. -out alone dumps the effective parsed config to a file.
       const inFile = configUtlInFile || 'openssl.cnf'
       cmd += ` configutl -config ${inFile}`
       if (configUtlOutFile) {
-        cmd += ` -dump -out ${configUtlOutFile}`
+        cmd += ` -out ${configUtlOutFile}`
       }
     } else if (category === 'kdf') {
       cmd += ` kdf -keylen ${kdfKeyLen}`

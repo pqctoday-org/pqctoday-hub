@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
 import { LeadersGrid } from './LeadersGrid'
 import type { Leader } from '../../data/leadersData'
 import '@testing-library/jest-dom'
 import { Button } from '@/components/ui/button'
 import * as useSemanticSearchModule from '@/services/search/useSemanticSearch'
+import { usePersonaStore } from '@/store/usePersonaStore'
 
 vi.mock('@/services/search/useSemanticSearch', async () => {
   const actual = await vi.importActual<typeof useSemanticSearchModule>(
@@ -40,6 +41,7 @@ vi.mock('../../data/leadersData', () => ({
       imageUrl: 'alice.jpg',
       websiteUrl: 'https://alice.com',
       linkedinUrl: 'https://linkedin.com/alice',
+      sourceKind: 'curated',
     },
     {
       id: 'bob-2',
@@ -51,6 +53,7 @@ vi.mock('../../data/leadersData', () => ({
       category: 'Government',
       bio: 'Securing national infrastructure.',
       imageUrl: '', // Test fallback icon
+      sourceKind: 'curated',
     },
     {
       id: 'charlie-3',
@@ -61,6 +64,18 @@ vi.mock('../../data/leadersData', () => ({
       type: 'Academic',
       category: 'Education',
       bio: 'Teaching crypto.',
+      sourceKind: 'curated',
+    },
+    {
+      id: 'dana-4',
+      name: 'Dana Stub',
+      country: 'France',
+      title: 'Author / Contributor',
+      organizations: [],
+      type: 'Private',
+      category: 'Standards',
+      bio: 'Author or contributor on 1 PQC reference in the Library: RFC 0000.',
+      sourceKind: 'auto-imported',
     },
   ] as Leader[],
   leadersMetadata: {
@@ -301,6 +316,44 @@ describe('LeadersGrid', () => {
       const searchInput = screen.getByPlaceholderText(/Search/i)
       fireEvent.change(searchInput, { target: { value: 'paraphrase-only' } })
       expect(screen.getByText('Alice Quant')).toBeInTheDocument()
+    })
+  })
+
+  describe('curated / auto-imported tiering', () => {
+    it('leads with curated profiles by default, hiding auto-imported stubs', () => {
+      render(<LeadersGrid />)
+      expect(screen.getAllByRole('article')).toHaveLength(3)
+      expect(screen.queryByText('Dana Stub')).not.toBeInTheDocument()
+      expect(screen.getByText(/Show all contributors \(4\)/)).toBeInTheDocument()
+    })
+
+    it('reveals the full corpus, including stubs, once the toggle is used', () => {
+      render(<LeadersGrid />)
+      fireEvent.click(screen.getByText(/Show all contributors \(4\)/))
+      expect(screen.getAllByRole('article')).toHaveLength(4)
+      expect(screen.getByText('Dana Stub')).toBeInTheDocument()
+      expect(screen.getByText(/Curated profiles only \(3\)/)).toBeInTheDocument()
+    })
+  })
+
+  describe('executive sort choice', () => {
+    beforeEach(() => {
+      usePersonaStore.getState().clearPersona()
+    })
+    afterEach(() => {
+      usePersonaStore.getState().clearPersona()
+    })
+
+    it('respects an explicit alphabetical sort instead of re-applying the category float', () => {
+      usePersonaStore.getState().setPersona('executive')
+      render(<LeadersGrid />)
+
+      // Open the sort control and explicitly choose "Name A-Z".
+      fireEvent.click(screen.getByText(/By relevance to you|Name A-Z/))
+      fireEvent.click(screen.getByText('Name A-Z'))
+
+      const names = screen.getAllByRole('heading', { level: 3 }).map((el) => el.textContent)
+      expect(names).toEqual(['Alice Quant', 'Bob Cyber', 'Charlie Prof'])
     })
   })
 })

@@ -141,20 +141,6 @@ export const FrameworkDetailPopover = ({
                   {framework.deadline && (
                     <span className="text-[10px] text-status-error">{framework.deadline}</span>
                   )}
-                  {framework.confidenceScore !== undefined && (
-                    <span
-                      className={`text-[10px] font-mono px-1.5 py-0.5 rounded border ${
-                        framework.confidenceScore >= 70
-                          ? 'bg-status-success/10 text-status-success border-status-success/30'
-                          : framework.confidenceScore >= 40
-                            ? 'bg-status-warning/10 text-status-warning border-status-warning/30'
-                            : 'bg-status-error/10 text-status-error border-status-error/30'
-                      }`}
-                      title={`Data confidence: ${framework.confidenceScore}/100`}
-                    >
-                      {framework.confidenceScore}% confidence
-                    </span>
-                  )}
                 </div>
                 <h3
                   id="framework-popover-title"

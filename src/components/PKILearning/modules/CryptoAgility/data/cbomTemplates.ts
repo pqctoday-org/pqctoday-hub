@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import type { InfrastructureLayerType } from '@/components/Migrate/InfrastructureStack'
+import type { InfrastructureLayerType } from '@/data/infrastructureLayers'
 
 export interface CBOMEntry {
   id: string
@@ -250,7 +250,7 @@ export const SAMPLE_CBOM: CBOMEntry[] = [
 
 export const CBOM_CYCLONEDX_SAMPLE = {
   bomFormat: 'CycloneDX',
-  specVersion: '1.6',
+  specVersion: '1.7',
   serialNumber: 'urn:uuid:3e671687-395b-41f5-a30f-a58921a69b79',
   version: 1,
   metadata: {

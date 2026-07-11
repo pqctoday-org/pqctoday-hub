@@ -4,6 +4,9 @@ import {
   computeCitationCounts,
   attachPriorRevisions,
   detectPurpose,
+  resolvePurpose,
+  findLibraryItemByRef,
+  REFERENCE_ID_ALIASES,
   LIBRARY_PURPOSES,
   type LibraryItem,
   type PriorRevision,
@@ -50,6 +53,29 @@ describe('libraryData', () => {
   })
 })
 
+describe('findLibraryItemByRef', () => {
+  it('resolves a live item by its current reference_id', () => {
+    const anyLive = libraryData[0]
+    expect(findLibraryItemByRef(anyLive.referenceId)).toBe(anyLive)
+  })
+
+  it('resolves an unknown ref to undefined rather than throwing', () => {
+    expect(findLibraryItemByRef('DOES-NOT-EXIST')).toBeUndefined()
+  })
+
+  it('every alias target that is currently active resolves to a live item', () => {
+    // Aliases whose target has itself been deprecated/orphaned in the current
+    // CSV snapshot are a separate data-integrity issue (see revisions.jsonl /
+    // library remediation), not a bug in the alias mechanism itself — so this
+    // only asserts on aliases whose target actually appears in libraryData.
+    for (const [oldRef, newRef] of Object.entries(REFERENCE_ID_ALIASES)) {
+      const targetIsLive = libraryData.some((item) => item.referenceId === newRef)
+      if (!targetIsLive) continue
+      expect(findLibraryItemByRef(oldRef)?.referenceId).toBe(newRef)
+    }
+  })
+})
+
 describe('detectPurpose', () => {
   it('routes migration-planning categories to planning (checked first)', () => {
     expect(detectPurpose('Migration Guidance', '')).toBe('planning')
@@ -74,6 +100,26 @@ describe('detectPurpose', () => {
     expect(detectPurpose('', 'Migration Playbook')).toBe('planning')
     expect(detectPurpose(undefined, 'Research Paper')).toBe('education')
     expect(detectPurpose('   ', 'Technical Specification')).toBe('reference')
+  })
+})
+
+describe('resolvePurpose', () => {
+  it('prefers a recognized CSV purpose column over the heuristic', () => {
+    // manual_category alone would heuristically land 'planning' (contains
+    // "Migration"), but a dedicated override should win.
+    expect(resolvePurpose('reference', 'Migration Guidance', 'Technical Standard')).toBe(
+      'reference'
+    )
+  })
+
+  it('is case/whitespace-tolerant on the CSV value', () => {
+    expect(resolvePurpose(' Education ', 'Industry & Research', '')).toBe('education')
+  })
+
+  it('falls back to the heuristic when the CSV value is blank or unrecognized', () => {
+    expect(resolvePurpose('', 'Migration Guidance', '')).toBe('planning')
+    expect(resolvePurpose(undefined, 'Protocols', '')).toBe('reference')
+    expect(resolvePurpose('not-a-real-purpose', 'Protocols', '')).toBe('reference')
   })
 })
 

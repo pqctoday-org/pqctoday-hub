@@ -46,7 +46,7 @@ export type OpCategory =
   | 'Cryptographic Services'
   | 'RNG & PKCS#11 Passthrough'
   | 'Asynchronous Processing'
-  | 'Certificate Services (not in this build)'
+  | 'Certificate Services'
   | 'Not Implemented (out of scope)'
 
 export type ParamKind = 'uid' | 'algorithm' | 'text' | 'hex' | 'number' | 'select' | 'bool'
@@ -443,16 +443,63 @@ export const pkcs11 = (fn = 'CGetInfo', inputParametersHex?: string): KmipNode[]
   return payload
 }
 
-// ── 6. Certificate Services (not in this build — wasm32 crypto-backend gap) ─
-// Validate/Certify/ReCertify are real, spec'd ops with real native handlers;
-// this WASM build's dispatcher answers OperationNotSupported for all three
-// because `ring`/`rcgen`/`aws_lc_rs` don't cross-compile to wasm32 (see
-// `wasm/src/lib.rs`'s crate doc comment). A minimal-but-well-formed payload
-// still proves the real rejection, not a simulated one.
+// ── 6. Certificate Services — pure-Rust since the cert-ops port ─────────────
+// Validate/Certify/ReCertify used to be native-only: Validate's chain check
+// went through `x509-parser`'s `ring`-backed `verify_signature`, and
+// Certify's CSR check through rcgen — neither cross-compiles to wasm32. Both
+// now verify/issue via `ops::spki_verify::verify_with_spki` (pure-Rust
+// `spki`/`der` decode + the SAME engine every other op uses), so they
+// dispatch identically here and in the native server. Field shapes mirror
+// `pqctoday-hsm/kmip/src/kmip30/wire.rs`'s `decode_validate_req` /
+// `decode_certify_req` / `decode_recertify_req` exactly.
 
-export const validate = (): KmipNode[] => []
-export const certify = (): KmipNode[] => []
-export const reCertify = (): KmipNode[] => []
+/** §6.1.62 Validate. `certificateHex` are inline DER blobs (each wrapped in
+ * its own `Certificate { CertificateValue }` structure per the wire
+ * decoder); `uids` are stored Certificate objects; both lists combine into
+ * one candidate chain. `validityDate` (unix seconds) is optional — omitted
+ * means "now" server-side. */
+export const validate = (
+  certificateHex: string[] = [],
+  uids: string[] = [],
+  validityDate?: number
+): KmipNode[] => {
+  const payload: KmipNode[] = []
+  for (const hex of certificateHex) {
+    payload.push(struct('Certificate', leaf('CertificateValue', 'ByteString', hex)))
+  }
+  for (const uid of uids) payload.push(uidLeaf(uid))
+  if (validityDate !== undefined) payload.push(leaf('ValidityDate', 'DateTime', validityDate))
+  return payload
+}
+
+/** §6.1.6 Certify. Either `uid` (certify a stored PublicKey by UID) or
+ * `csrHex` (a PKCS#10 CSR — the only `CertificateRequestType` Certify
+ * accepts) should be supplied; supplying neither reproduces the real
+ * `neither a Certificate Request nor a Unique Identifier supplied` error,
+ * not a client-side guess at one. */
+export const certify = (uid = '', csrHex = ''): KmipNode[] => {
+  const payload: KmipNode[] = []
+  if (uid) payload.push(uidLeaf(uid))
+  if (csrHex) {
+    payload.push(leaf('CertificateRequestType', 'Enumeration', 'PKCS10'))
+    payload.push(leaf('CertificateRequest', 'ByteString', csrHex))
+  }
+  return payload
+}
+
+/** §6.1.50 Re-certify. `uid` (the existing Certificate to renew) is
+ * REQUIRED; an optional `csrHex` re-keys with a fresh subject key instead
+ * of reusing the existing one; `offsetSeconds` shifts the new Activation
+ * Date relative to Initial Date (omitted → renews the existing window). */
+export const reCertify = (uid: string, csrHex = '', offsetSeconds?: number): KmipNode[] => {
+  const payload: KmipNode[] = [uidLeaf(uid)]
+  if (csrHex) {
+    payload.push(leaf('CertificateRequestType', 'Enumeration', 'PKCS10'))
+    payload.push(leaf('CertificateRequest', 'ByteString', csrHex))
+  }
+  if (offsetSeconds !== undefined) payload.push(leaf('Offset', 'Interval', offsetSeconds))
+  return payload
+}
 
 // ── 7. Split keys, leases, async (engine 0.12.0 "honest maximum") ───────────
 // Real since engine 0.12.0 — request shapes mirror the wire decoders in
@@ -1240,35 +1287,71 @@ export const OP_TEMPLATES: OpTemplate[] = [
     build: (v) => pkcs11(v.fn || 'CGetInfo', orUndef(v.inputParametersHex)),
   },
 
-  // 6. Certificate Services (not in this build)
+  // 6. Certificate Services — real since the pure-Rust cert-ops port. Use
+  // the "Set up demo CA" button above the category (KmipEngine.setupDemoCa)
+  // first — Certify/Re-certify need a designated CA to sign with, same as
+  // the native server's `--ca-key`.
   {
     op: 'Validate',
-    category: 'Certificate Services (not in this build)',
+    category: 'Certificate Services',
     spec: '§6.1.62 Validate',
-    supported: false,
+    supported: true,
     blurb:
-      "Check a certificate chain's validity. Needs a full X.509 path-validation stack — not present in this WASM build.",
-    params: [],
-    build: () => validate(),
+      "Check a certificate chain's validity — Valid / Invalid / Unknown, never a false Valid. Try validating a Certify result's UID, then corrupt one hex nibble of an inline DER to see Invalid.",
+    params: [
+      {
+        key: 'certificateHex',
+        label: 'Inline cert DER (hex, comma-sep)',
+        kind: 'hex',
+        default: '',
+      },
+      { key: 'uids', label: 'Stored Certificate UIDs (comma-sep)', kind: 'text', default: '' },
+      {
+        key: 'validityDate',
+        label: 'Validity date (unix seconds, blank = now)',
+        kind: 'number',
+        default: '',
+      },
+    ],
+    build: (v) =>
+      validate(splitList(v.certificateHex), splitList(v.uids), orUndefNum(v.validityDate)),
   },
   {
     op: 'Certify',
-    category: 'Certificate Services (not in this build)',
+    category: 'Certificate Services',
     spec: '§6.1.6 Certify',
-    supported: false,
+    supported: true,
     blurb:
-      'Issue a certificate over a managed public key. Same wasm32 crypto-backend gap as Validate.',
-    params: [],
-    build: () => certify(),
+      "Issue a certificate over a PKCS#10 CSR (any algorithm the engine verifies, ML-DSA included) — or, for an existing PublicKey UID, certify that key directly. Works for a bare CreateKeyPair output (its SubjectPublicKeyInfo is looked up live from the engine) as well as a Register'd key. Needs a designated CA first (the 'Set up demo CA' button).",
+    params: [
+      {
+        key: 'uid',
+        label: 'PublicKey UID (from CreateKeyPair or Register), or leave blank + supply a CSR',
+        kind: 'uid',
+        default: '',
+      },
+      { key: 'csrHex', label: 'PKCS#10 CSR (hex)', kind: 'hex', default: '' },
+    ],
+    build: (v) => certify(v.uid ?? '', v.csrHex ?? ''),
   },
   {
     op: 'ReCertify',
-    category: 'Certificate Services (not in this build)',
+    category: 'Certificate Services',
     spec: '§6.1.50 Re-certify',
-    supported: false,
-    blurb: 'Renew/replace an existing certificate. Same gap.',
-    params: [],
-    build: () => reCertify(),
+    supported: true,
+    blurb:
+      'Renew an existing certificate with a fresh validity window (Offset seconds from now), or re-key it with a new CSR. Links Replaced/Replacement back to the original.',
+    params: [
+      { key: 'uid', label: 'Existing Certificate UID', kind: 'uid', default: '' },
+      { key: 'csrHex', label: 'New CSR (hex, optional re-key)', kind: 'hex', default: '' },
+      {
+        key: 'offsetSeconds',
+        label: 'Offset (seconds, blank = keep window)',
+        kind: 'number',
+        default: '',
+      },
+    ],
+    build: (v) => reCertify(v.uid ?? '', v.csrHex ?? '', orUndefNum(v.offsetSeconds)),
   },
 
   // 7. Split keys, leases, constraints, async — real since engine 0.12.0

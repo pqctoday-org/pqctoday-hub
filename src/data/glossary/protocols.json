@@ -627,13 +627,6 @@
     "category": "protocol"
   },
   {
-    "term": "Key Exchange",
-    "acronym": "KE",
-    "definition": "The public key material or key share transmitted between parties to derive a shared secret. In Hybrid PQC, this includes both classical elliptic curves and post-quantum lattices.",
-    "complexity": "intermediate",
-    "category": "protocol"
-  },
-  {
     "term": "Encrypted Payload",
     "acronym": "SK",
     "definition": "The secure container wrapping IKEv2 payloads like Identifiers (IDi/IDr), Certificates (CERT), and Authentication (AUTH) data.",

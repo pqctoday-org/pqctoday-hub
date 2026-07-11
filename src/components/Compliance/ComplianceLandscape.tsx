@@ -63,6 +63,17 @@ import {
   type DeadlineUrgency,
 } from '@/utils/deadlineUrgency'
 
+// FIPS 203/204/205 landscape rows → the ACVP algorithm-family token used in
+// the Records tab's `pqc` filter (Records.pqcCoverage substring match).
+// Deep-links these rows into the pre-filtered Records tab (rtab=acvp) so a
+// visitor reading "FIPS 203 (ML-KEM)" can jump straight to certified
+// products implementing that algorithm instead of manually re-filtering.
+const FIPS_ROW_TO_PQC_ALGORITHM: Record<string, string> = {
+  'FIPS-203': 'ML-KEM',
+  'FIPS-204': 'ML-DSA',
+  'FIPS-205': 'SLH-DSA',
+}
+
 function urgencyBgColor(urgency: DeadlineUrgency) {
   switch (urgency) {
     case 'overdue':
@@ -496,20 +507,6 @@ function FrameworkCard({
                 onOpenDrilldown={() => setDrilldownOpen(true)}
               />
             </span>
-            {fw.confidenceScore !== undefined && (
-              <span
-                className={`text-[10px] font-mono px-1.5 py-0.5 rounded border ${
-                  fw.confidenceScore >= 70
-                    ? 'bg-status-success/10 text-status-success border-status-success/30'
-                    : fw.confidenceScore >= 40
-                      ? 'bg-status-warning/10 text-status-warning border-status-warning/30'
-                      : 'bg-status-error/10 text-status-error border-status-error/30'
-                }`}
-                title={`Data confidence: ${fw.confidenceScore}/100`}
-              >
-                {fw.confidenceScore}%
-              </span>
-            )}
             {fw.bodyType === 'industry_alliance' && (
               <span
                 className="text-[10px] px-1.5 py-0.5 rounded bg-secondary/10 text-secondary font-semibold"
@@ -726,6 +723,17 @@ function FrameworkCard({
             >
               <Award size={8} />
               Certs
+            </Link>
+          )}
+          {FIPS_ROW_TO_PQC_ALGORITHM[fw.id] && (
+            <Link
+              to={`/compliance?tab=records&rtab=acvp&pqc=${encodeURIComponent(FIPS_ROW_TO_PQC_ALGORITHM[fw.id])}`}
+              onClick={(e) => e.stopPropagation()}
+              className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-medium hover:bg-muted/80 hover:text-foreground transition-colors"
+              title={`Certified products implementing ${FIPS_ROW_TO_PQC_ALGORITHM[fw.id]}`}
+            >
+              <ShieldCheck size={8} />
+              Certified products
             </Link>
           )}
           {fw.notes && (

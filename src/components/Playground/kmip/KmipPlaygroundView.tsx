@@ -38,6 +38,8 @@ import {
 import { MarkdownView } from '@/components/ui/MarkdownView'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { ExecutiveRedirectBanner } from '@/components/common/ExecutiveRedirectBanner'
+import { usePersonaStore } from '@/store/usePersonaStore'
 import { cn } from '@/lib/utils'
 import {
   getKmipEngine,
@@ -228,6 +230,7 @@ function whatThisMeans(r: OpResult): string | null {
 }
 
 export function KmipPlaygroundView() {
+  const role = usePersonaStore((s) => s.selectedPersona)
   const [engine, setEngine] = useState<KmipEngine | null>(null)
   const [bootError, setBootError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
@@ -781,12 +784,23 @@ export function KmipPlaygroundView() {
 
   return (
     <div className="h-full overflow-auto animate-fade-in p-1">
+      {role === 'executive' && (
+        <ExecutiveRedirectBanner
+          className="mb-4"
+          title="KMIP Control Plane is a hands-on engineering workbench."
+          subtitle="Crypto-agility — being able to swap algorithms on demand — is a board-level cost and risk decision, not just an implementation detail. You can explore freely below, but for executive-level PQC context you may prefer:"
+          ctas={[
+            { label: 'Command Center →', to: '/business' },
+            { label: 'Compliance landscape →', to: '/compliance' },
+            { label: 'Migration framework →', to: '/migrate' },
+          ]}
+        />
+      )}
       {/* Header */}
       <div className="mb-4 flex flex-wrap items-start justify-between gap-4">
         <div>
           <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-            <Cpu size={20} className="text-primary" /> Crypto-Agility Control Plane{' '}
-            <span className="text-muted-foreground font-normal text-base">(CACP)</span>
+            <Cpu size={20} className="text-primary" /> KMIP Control Plane
           </h2>
           <p className="text-sm text-muted-foreground mt-1">
             A real <Term t="KMIP" /> 3.0 control plane + <Term t="PKCS#11" /> <Term t="HSM" />,
@@ -889,7 +903,7 @@ export function KmipPlaygroundView() {
       <div className="overflow-x-auto no-scrollbar mb-4">
         <div
           role="tablist"
-          aria-label="CACP surface"
+          aria-label="KMIP Control Plane surface"
           className="flex items-center gap-1 rounded-lg border border-border bg-muted/30 p-1 w-max min-w-full"
         >
           {(
@@ -1329,7 +1343,7 @@ export function KmipPlaygroundView() {
             className="relative flex h-[85vh] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-border bg-card shadow-xl"
             role="dialog"
             aria-modal="true"
-            aria-label="CACP guide"
+            aria-label="KMIP Control Plane guide"
           >
             <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
               <span className="flex items-center gap-1.5 text-sm font-semibold text-foreground">

@@ -93,9 +93,15 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
     // Wait for the table to populate with pass/fail
     // No explicit wait needed since we already know `isNotRunning` is false which means results appeared!
 
-    // The Execution Log should conclude
+    // The Execution Log should conclude.
+    // 2026-07-08: measured 21.6s locally to reach this point (6 real WASM
+    // liboqs calls, vector count unchanged since 2025-11-27, no code-level
+    // delay) -- only ~8s of headroom under the old 30s cap, which reliably
+    // tipped over on GitHub's shared CI runners. Widened to match this file's
+    // other WASM checkpoints rather than re-guessing; investigate for a real
+    // hang only if this is still red at 90s.
     const logSection = page.locator('div', { hasText: 'Validation Suite Completed' }).last()
-    await expect(logSection).toBeVisible({ timeout: 30000 })
+    await expect(logSection).toBeVisible({ timeout: 90000 })
 
     // Validate that at least one ML-KEM and ML-DSA passed
     const mlkemRow = page.locator('tr', { hasText: 'ML-KEM-512' }).first()

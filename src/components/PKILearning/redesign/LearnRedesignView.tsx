@@ -26,7 +26,7 @@ type Mode = 'path' | 'browse'
  *  - Browse all → "where's that one module?" (full catalog + Advanced tray)
  *
  * Everything is computed from the persona path + the module manifest. Replaces
- * the old five-mode Dashboard (kept at /learn/legacy).
+ * the old five-mode Dashboard, retired at /learn/legacy (now redirects here).
  */
 export const LearnRedesignView = () => {
   const navigate = useNavigate()

@@ -1,7 +1,7 @@
 {
   "name": "pqctoday-hub",
   "private": true,
-  "version": "4.15.0",
+  "version": "4.20.0",
   "license": "GPL-3.0-only",
   "type": "module",
   "engines": {
@@ -47,6 +47,10 @@
     "refresh-index": "bash scripts/refresh-index.sh",
     "check-index-freshness": "tsx scripts/ci/check-index-freshness.ts",
     "check:compliance-fresh": "tsx scripts/ci/check-compliance-freshness.ts",
+    "validate:data": "tsx scripts/validate-data-integrity.ts",
+    "validate:data:json": "tsx scripts/validate-data-integrity.ts --json",
+    "gate:data": "npm run audit:matrix-refs && npm run sync:sandbox:check && npm run audit:vendor-refs && npm run audit:module-infographics && npm run audit:timeline-aliases && npm run audit:migration-phases && npm run audit:timeline-evidence && npm run audit:compliance-countries && npm run check:compliance-fresh -- --max-days 30 && npm run audit:data-regressions && npm run gen:timeline-facts:check && npm run validate:data",
+    "gate:local": "npm run format:check && npm run lint && npm run gate:data && npm run test",
     "validate:workshop": "tsx scripts/validate-workshop.ts",
     "audit:jurisdiction-refs": "tsx scripts/audit-jurisdiction-refs.ts",
     "audit:matrix-refs": "tsx scripts/audit-matrix-refs.ts",

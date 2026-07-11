@@ -489,7 +489,10 @@ describe('regulatory-exposure-index (E2)', () => {
   })
 
   it('saturates to a low score when many high-fine frameworks are stacked', () => {
-    const frameworks = ['GDPR', 'NIS2', 'CNSA-2.0', 'DORA', 'HIPAA'].map((id) => ({
+    // CNSA-2 (not CNSA-2.0) -- the real compliance CSV id, and the correct
+    // frameworkFines.ts key as of the 2026-07-10 CNSA-2.0->CNSA-2 fix. This
+    // fixture used to accidentally pass by matching the stale buggy key.
+    const frameworks = ['GDPR', 'NIS2', 'CNSA-2', 'DORA', 'HIPAA'].map((id) => ({
       id,
       label: id,
       description: '',

@@ -27,8 +27,11 @@ import { LogsTab } from './tabs/LogsTab'
 import { logEvent } from '../../utils/analytics'
 import { Button } from '../ui/button'
 import { Card } from '../ui/card'
+import { ExecutiveRedirectBanner } from '../common/ExecutiveRedirectBanner'
+import { usePersonaStore } from '@/store/usePersonaStore'
 
 export const InteractivePlayground = () => {
+  const role = usePersonaStore((s) => s.selectedPersona)
   const { activeTab, setActiveTab, algorithm, error, lastLogEntry } = useSettingsContext()
   const { keyStore } = useKeyStoreContext()
   const [, setSearchParams] = useSearchParams()
@@ -88,6 +91,18 @@ export const InteractivePlayground = () => {
 
   return (
     <Card className="p-3 md:p-6 min-h-[60vh] md:min-h-[85vh] flex flex-col">
+      {role === 'executive' && (
+        <ExecutiveRedirectBanner
+          className="mb-4 shrink-0"
+          title="Interactive Playground is a hands-on engineering workbench."
+          subtitle="This surface runs real key generation, encryption and signing operations in your browser — useful for your engineering team, not for board-level PQC decisions. For executive context:"
+          ctas={[
+            { label: 'Command Center →', to: '/business' },
+            { label: 'Compliance landscape →', to: '/compliance' },
+            { label: 'Migration framework →', to: '/migrate' },
+          ]}
+        />
+      )}
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 shrink-0 gap-2">
         <h3 className="text-xl md:text-2xl font-bold flex items-center gap-2">

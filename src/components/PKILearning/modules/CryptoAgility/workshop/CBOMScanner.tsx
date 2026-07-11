@@ -3,8 +3,8 @@ import React, { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { Shield, AlertTriangle, CheckCircle, Code, X, ArrowRight } from 'lucide-react'
 import { SAMPLE_CBOM, CBOM_CYCLONEDX_SAMPLE, type CBOMEntry } from '../data/cbomTemplates'
-import { LAYERS } from '@/components/Migrate/InfrastructureStack'
-import type { InfrastructureLayerType } from '@/components/Migrate/InfrastructureStack'
+import { LAYERS } from '@/data/infrastructureLayers'
+import type { InfrastructureLayerType } from '@/data/infrastructureLayers'
 import { softwareData } from '@/data/migrateData'
 import { Button } from '@/components/ui/button'
 
@@ -276,7 +276,7 @@ export const CBOMScanner: React.FC = () => {
       {/* CycloneDX JSON view */}
       {showJson && (
         <div className="glass-panel p-4">
-          <h4 className="text-xs font-bold text-secondary mb-2">CycloneDX 1.6 CBOM Format</h4>
+          <h4 className="text-xs font-bold text-secondary mb-2">CycloneDX 1.7 CBOM Format</h4>
           <pre className="text-[10px] bg-background p-3 rounded border border-border overflow-x-auto max-h-64 overflow-y-auto font-mono">
             {JSON.stringify(CBOM_CYCLONEDX_SAMPLE, null, 2)}
           </pre>
@@ -346,7 +346,7 @@ export const CBOMScanner: React.FC = () => {
       {/* Educational note */}
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <p className="text-xs text-muted-foreground">
-          <strong>About CBOM:</strong> The CycloneDX 1.6 standard includes a cryptographic extension
+          <strong>About CBOM:</strong> The CycloneDX 1.7 standard includes a cryptographic extension
           for tracking cryptographic assets. A CBOM enables organizations to identify
           quantum-vulnerable algorithms, plan migration priorities, and verify compliance with
           frameworks like NIST IR 8547. Tools like IBM&apos;s Quantum Safe Explorer and

@@ -234,17 +234,35 @@ docs/pqctoday-investor*
 scripts/*
 # CI scripts are public — they run in GitHub Actions and must be tracked
 !scripts/ci/
+# Unified data-integrity validator — runs in the local gate (npm run
+# validate:data / gate:data, see TESTING.md); its check modules and their
+# tests must be tracked or new files silently can't be added (existing
+# validator files stayed tracked only because they predated this ignore
+# rule — a real gap, found 2026-07-10 adding a new test file here).
+!scripts/validators/
+!scripts/validate-data-integrity.ts
 
 # NVD CVE scraper — runs weekly in .github/workflows/update-cve.yml (public
 # CI), must be tracked or that workflow fails with "No such file or directory"
 # (as it silently did for weeks — see git history). Reads public CPE xref CSV,
 # calls the public NVD API, writes public cve-snapshot.json: nothing private.
 !scripts/scrape-nvd.py
+# Weekly-cron CI scripts — invoked on GitHub runners by
+# .github/workflows/trusted-source-freshness.yml and update-protocol-matrix.yml;
+# must be tracked or those workflows fail file-not-found (the scrape-nvd.py
+# failure mode above). Sanitized ports: public inputs (trusted_sources CSV,
+# pqcProtocolMatrix.ts, IETF datatracker), public outputs. No LLM phase.
+!scripts/audit-trusted-source-freshness.ts
+!scripts/enrich-protocol-matrix.py
+!scripts/apply-protocol-matrix-updates.ts
 # Build-pipeline generators are public — `npm run build` invokes them to
 # produce OSCAL + CBOM JSON from committed CSV data. Reading public input,
 # emitting public output: nothing private to protect.
 !scripts/generate-oscal.ts
 !scripts/generate-cbom.ts
+# Derives algorithmProperties.ts from the committed algorithm reference CSV;
+# CI-relevant --check mode. Public input, public output.
+!scripts/generate-algorithm-properties.ts
 # SEO build steps — `npm run build` invokes both: generate-sitemap emits
 # public/sitemap.xml, and prerender writes per-route static HTML into dist/.
 # Read public routeMeta, emit public output: nothing private to protect.

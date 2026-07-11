@@ -18,7 +18,24 @@ const ENRICHMENT_SOURCES: EnrichmentSource[] = [
   { collection: 'threats', csvPrefix: 'quantum_threats_hsm_industries_', idField: 'threat_id' },
 ]
 
-const APPROVED_MODELS = ['qwen3.6:27b', 'ollama-qwen3.6:27b', 'qwen3.5:27b', 'ollama-qwen3.5:27b', 'manual-extraction', 'manual']
+// Substring-matched (see .includes() below), so a prefix here approves every
+// specific model/version under it -- e.g. 'mlx-' covers
+// 'mlx-mlx-community/Qwen3.6-27B-8bit' without hardcoding one HF path, and
+// survives the next model version bump without going stale again (found
+// 2026-07-10: the literal-string list had already gone stale for 14 real
+// enrichment files across library/timeline/threats before this fix, none of
+// them a real quality problem -- just an allowlist that couldn't recognize
+// its own pipeline's MLX backend).
+const APPROVED_MODELS = [
+  'qwen3.6:27b',
+  'ollama-qwen3.6:27b',
+  'qwen3.5:27b',
+  'ollama-qwen3.5:27b',
+  'mlx-', // MLX backend (M5 Max local inference), any model/version
+  'claude-', // Claude-assisted extraction (e.g. PDF reads MLX can't parse)
+  'manual-extraction',
+  'manual',
+]
 
 export function runEnrichmentChecks(): {
   results: CheckResult[]
@@ -107,7 +124,7 @@ export function runEnrichmentChecks(): {
             row: null,
             field: 'enrichment_method',
             value: f.model,
-            message: `Enrichment file "${f.file}" used model "${f.model}" — must be qwen3.5:27b`,
+            message: `Enrichment file "${f.file}" used unapproved model "${f.model}" — see APPROVED_MODELS`,
           })
         }
         // Historical pre-mandate files are noted in the check description but not flagged

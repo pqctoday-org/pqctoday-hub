@@ -200,7 +200,7 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     title: 'PGP Code Signing (Sequoia)',
     emoji: '🦅',
     useCase:
-      'Produce a real RFC 9580 v6 OpenPGP signature with an ML-DSA-65 + Ed25519 composite key (public-key-algorithm 30, draft-ietf-openpgp-pqc) generated and held inside SoftHSMv3 — signing software artifacts via the opgpkcs11 bridge, with the private key never leaving the HSM.',
+      'Produce a real RFC 9580 v6 OpenPGP signature with an ML-DSA-65 + Ed25519 composite key (public-key-algorithm 30, RFC 9980) generated and held inside SoftHSMv3 — signing software artifacts via the opgpkcs11 bridge, with the private key never leaving the HSM.',
     algorithms: ['ML-DSA-65', 'OpenPGP v6', 'HSM-backed'],
     difficulty: 'intermediate',
     trackId: 'supply-chain',

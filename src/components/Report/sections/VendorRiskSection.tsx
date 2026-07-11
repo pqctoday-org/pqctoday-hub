@@ -19,7 +19,8 @@
 import clsx from 'clsx'
 import { Building2, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { CollapsibleSection } from '../ReportContent'
+import { CollapsibleSection } from './reportContentShared'
+import { DefaultsUsedChip } from '../DefaultsUsedChip'
 import { vendorMap } from '@/data/migrateData'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 
@@ -65,6 +66,9 @@ interface VendorRiskSectionProps {
   vendorUnknown?: boolean
   relevantSoftware: SoftwareItem[]
   defaultOpen?: boolean
+  /** Quick-track assessments never collect vendor dependency or
+   *  infrastructure — surface that this section's figures use defaults. */
+  quickTrack?: boolean
 }
 
 export function VendorRiskSection({
@@ -72,6 +76,7 @@ export function VendorRiskSection({
   vendorUnknown,
   relevantSoftware,
   defaultOpen = false,
+  quickTrack = false,
 }: VendorRiskSectionProps) {
   const modelCopy =
     !vendorUnknown && isVendorModel(vendorDependency) ? VENDOR_MODEL_COPY[vendorDependency] : null
@@ -83,6 +88,7 @@ export function VendorRiskSection({
       icon={<Building2 className="text-primary" size={20} />}
       defaultOpen={defaultOpen}
       infoTip="vendorRisk"
+      headerExtra={quickTrack ? <DefaultsUsedChip /> : undefined}
     >
       <div className="space-y-4">
         {modelCopy ? (

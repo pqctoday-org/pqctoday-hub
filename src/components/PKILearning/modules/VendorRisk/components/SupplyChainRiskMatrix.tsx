@@ -7,7 +7,7 @@ import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { useSelectedProductIds } from '@/store/useMigrateSelectionStore'
 import { softwareData } from '@/data/migrateData'
 import { vendorMap } from '@/data/vendorData'
-import { LAYERS } from '@/components/Migrate/InfrastructureStack'
+import { LAYERS } from '@/data/infrastructureLayers'
 import { softwareItemToCbomInput } from '@/components/Migrate/cbomExport'
 import { buildCbomDocument, downloadCbomJson } from '@/services/cbom/cycloneDx'
 import { isPqcReady, isFips1403Validated } from '@/data/kpiCatalog'
@@ -32,7 +32,12 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ExportableArtifact } from '../../../common/executive'
 
-// CSWP.39 6 asset classes
+// This tool's own simplified asset-class taxonomy for grouping the catalog's
+// SoftwareItem categories into a CBOM view — NOT a taxonomy CSWP.39 itself
+// defines. CSWP.39 §5.3 discusses an asset-centric inventory approach and
+// names example asset types (application codes, libraries, software,
+// hardware, firmware, user-generated content, communication protocols,
+// enterprise services, systems), but not this six-class grouping.
 type CSWP39AssetClass = 'Code' | 'Library' | 'Application' | 'File' | 'Protocol' | 'System'
 
 function mapToAssetClass(item: SoftwareItem): CSWP39AssetClass {
@@ -510,8 +515,9 @@ export const SupplyChainRiskMatrix: React.FC<{
       md += '\n'
     }
 
-    // CSWP.39 §5.3 — CBOM grouped by 6 asset classes.
-    md += '## CBOM (CSWP.39 §5.3 — 6 asset classes)\n\n'
+    // This tool's own 6-class CBOM grouping, informed by CSWP.39 §5.3's
+    // asset-centric approach (not a taxonomy CSWP.39 itself defines).
+    md += '## CBOM (6 asset classes, informed by CSWP.39 §5.3)\n\n'
     const classOrder: CSWP39AssetClass[] = [
       'Code',
       'Library',
@@ -566,9 +572,10 @@ export const SupplyChainRiskMatrix: React.FC<{
     cmdbMapping,
   ])
 
-  // A real, schema-valid CycloneDX 1.6 CBOM (shared emitter). Each product maps
+  // A real, schema-valid CycloneDX 1.7 CBOM (shared emitter). Each product maps
   // through the same SoftwareItem adapter the Migrate export uses, tagged with its
-  // CSWP.39 asset class; PQC algorithms surface as `cryptographic-asset` children
+  // CSWP.39 asset class; PQC and classical algorithms both surface as
+  // `cryptographic-asset` children
   // carrying `cryptoProperties` (the part the old inline JSON was missing).
   const cbomResult = useMemo(() => {
     const inputs = (Object.keys(cbomBuckets) as CSWP39AssetClass[]).flatMap((cls) =>
@@ -904,16 +911,16 @@ export const SupplyChainRiskMatrix: React.FC<{
         </div>
       </div>
 
-      {/* CSWP.39 §5.3 — CBOM by 6 asset classes */}
+      {/* CBOM by this tool's 6 asset classes, informed by CSWP.39 §5.3 */}
       <div className={cardClass('p-4')}>
         <h3 className="text-base font-semibold text-foreground mb-1">
-          CBOM — CSWP.39 §5.3 (6 asset classes)
+          CBOM — 6 asset classes (informed by CSWP.39 §5.3)
         </h3>
         <p className="text-xs text-muted-foreground mb-3">
           Auto-derived from{' '}
           {selectedItems.length > 0 ? 'your selected products' : 'the full catalog'}. Each product
-          is bucketed into one of the six CSWP.39 asset classes (Code / Library / Application / File
-          / Protocol / System) using its catalog category.
+          is bucketed into one of this tool's six simplified asset classes (Code / Library /
+          Application / File / Protocol / System) using its catalog category.
         </p>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {(['Code', 'Library', 'Application', 'File', 'Protocol', 'System'] as const).map(
@@ -933,7 +940,7 @@ export const SupplyChainRiskMatrix: React.FC<{
         <div className="mt-3">
           <Button variant="outline" size="sm" onClick={handleDownloadCbomJson}>
             <Download size={14} className="mr-1" />
-            Download CBOM JSON (CycloneDX 1.6)
+            Download CBOM JSON (CycloneDX 1.7)
           </Button>
         </div>
       </div>

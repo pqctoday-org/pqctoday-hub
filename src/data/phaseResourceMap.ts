@@ -57,7 +57,9 @@ export const LEARN_PHASES: Record<string, PhaseResource> = {
   'digital-assets': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
   '5g-security': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
   'digital-id': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
-  'entropy-randomness': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
+  // Added 'p1' 07082026 — required by P1 Activity 1.6 (continuous discovery)
+  // but tagged 'foundations'-only, so it was invisible in P1's own Learn column.
+  'entropy-randomness': { phasesServed: ['foundations', 'p1'], legs: ['learn', 'reference'] },
   'merkle-tree-certs': { phasesServed: ['p6'], legs: ['learn', 'reference'] },
   qkd: { phasesServed: ['p6'], legs: ['learn', 'reference'] },
   'code-signing': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
@@ -68,7 +70,6 @@ export const LEARN_PHASES: Record<string, PhaseResource> = {
   'pqc-risk-management': { phasesServed: ['p3'], legs: ['learn', 'reference'] },
   'pqc-business-case': { phasesServed: ['p0'], legs: ['learn', 'reference'] },
   'pqc-governance': { phasesServed: ['p0'], legs: ['learn', 'reference'] },
-  'pqc-team': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
   'vendor-risk': { phasesServed: ['p7'], legs: ['learn', 'reference'] },
   'migration-program': { phasesServed: ['p3', 'p4'], legs: ['learn', 'reference'] },
   'compliance-strategy': { phasesServed: ['foundations', 'p0'], legs: ['learn', 'reference'] },
@@ -177,7 +178,10 @@ export const PLAYGROUND_PHASES: Record<string, PhaseResource> = {
   'slh-dsa': { phasesServed: ['foundations', 'p5'], legs: ['practice', 'output'] },
   'lms-hss': { phasesServed: ['foundations', 'p5'], legs: ['practice', 'output'] },
   'openssl-studio': { phasesServed: ['foundations', 'p5'], legs: ['practice', 'output'] },
-  'cacp-kmip': { phasesServed: ['p5', 'p6', 'p7'], legs: ['practice', 'output'] },
+  // 'p5' removed 07082026 — no P5 tree (current or prior) embeds this; only P6
+  // (Activity 6.2 deepDive) does. 'p7' left as-is (Vendor & Supply Chain's own
+  // governance content, not tree-gated but not verified wrong either).
+  'cacp-kmip': { phasesServed: ['p6', 'p7'], legs: ['practice', 'output'] },
 }
 
 /**

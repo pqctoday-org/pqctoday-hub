@@ -61,12 +61,12 @@ describe('extractPqcAlgorithms', () => {
 })
 
 describe('buildCycloneDxCbom', () => {
-  it('produces a valid CycloneDX 1.6 envelope with product + crypto-asset components', () => {
+  it('produces a valid CycloneDX 1.7 envelope with product + crypto-asset components', () => {
     const { json, componentCount, cryptoAssetCount } = buildCycloneDxCbom([baseItem])
     const doc = JSON.parse(json)
 
     expect(doc.bomFormat).toBe('CycloneDX')
-    expect(doc.specVersion).toBe('1.6')
+    expect(doc.specVersion).toBe('1.7')
     expect(doc.serialNumber).toMatch(/^urn:uuid:/)
     expect(componentCount).toBe(1)
     // ML-KEM + ML-DSA → 2 crypto-asset components

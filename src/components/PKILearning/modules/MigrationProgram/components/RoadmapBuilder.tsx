@@ -504,6 +504,23 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
       {/* Regulatory deadline selector */}
       {externalDeadlines.length > 0 && (
         <div className="glass-panel p-4 space-y-3">
+          <div className="bg-muted/50 rounded-lg p-3">
+            <p className="text-xs text-muted-foreground">
+              US federal deadlines below derive from{' '}
+              <a
+                href="https://www.federalregister.gov/documents/2026/06/25/2026-12909/securing-the-nation-against-advanced-cryptographic-attacks"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                Executive Order 14412, &ldquo;Securing the Nation Against Advanced Cryptographic
+                Attacks&rdquo;
+              </a>{' '}
+              (June 22, 2026): High Value Assets and high-impact federal systems transition to PQC
+              for key establishment by December 31, 2030, and digital signatures by December 31,
+              2031.
+            </p>
+          </div>
           <div className="flex items-center justify-between flex-wrap gap-2">
             <p className="text-sm font-medium text-foreground">
               Regulatory deadlines ({selectedDeadlines.length}/{externalDeadlines.length} selected)

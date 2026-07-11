@@ -137,7 +137,7 @@ export const TAG_GLOSSARY: Record<string, TagGlossaryEntry> = {
   },
   ValidityIndicator: {
     hex: '0x42009B',
-    def: "SignatureVerify's answer: Valid, Invalid, or Unknown — the one field your verification code should actually branch on.",
+    def: "SignatureVerify's or Validate's answer: Valid, Invalid, or Unknown — the one field your verification code should actually branch on. For Validate specifically, Unknown means \"couldn't be affirmed\" (e.g. the chain's issuer wasn't supplied) — never a false Valid.",
   },
   VendorIdentification: {
     hex: '0x42009D',
@@ -203,7 +203,36 @@ export const TAG_GLOSSARY: Record<string, TagGlossaryEntry> = {
   DerivationParameters: { def: "Wraps the KDF's inputs for DeriveKey." },
   DerivationData: { def: 'The KDF’s label/context bytes mixed into the derivation.' },
   Offset: {
-    def: "For ReKey/ReKeyKeyPair: seconds after now to set the new key's activation date — lets you pre-provision a successor key.",
+    def: "For ReKey/ReKeyKeyPair: seconds after now to set the new key's activation date — lets you pre-provision a successor key. Re-certify reuses the same tag the same way, for the renewed certificate's activation date.",
+  },
+  Certificate: {
+    hex: '0x420013',
+    def: 'One candidate in the chain Validate checks — an outer wrapper around the raw CertificateValue DER.',
+  },
+  CertificateValue: {
+    hex: '0x42001E',
+    def: 'The actual X.509 certificate, DER-encoded — what a browser or `openssl x509` would parse.',
+  },
+  CertificateRequest: {
+    hex: '0x420018',
+    def: 'The inbound PKCS#10 CSR (Certificate Signing Request), DER-encoded — see CSR below.',
+  },
+  CertificateRequestType: {
+    hex: '0x420019',
+    def: 'Which CSR format follows — this server only accepts PKCS10; CRMF and PEM are recognized codepoints but not implemented.',
+  },
+  ValidityDate: {
+    hex: '0x42009A',
+    def: 'The instant Validate checks each certificate\'s not-before/not-after window against — omit it to mean "now".',
+  },
+  CSR: {
+    def: "Certificate Signing Request (PKCS#10, RFC 2986) — a subject's public key plus a self-signature proving they hold the matching private key, submitted to a CA for issuance. Certify verifies that self-signature before issuing.",
+  },
+  'trust anchor': {
+    def: "A self-signed (root) certificate a validator is willing to trust without further checking — Validate's chain must terminate in one PRESENT IN THE SUPPLIED SET (this server holds no separate trust-anchor store) to return Valid.",
+  },
+  'chain validation': {
+    def: "Confirming a certificate chain both parses and cryptographically checks out: every non-root certificate's signature verifies against its issuer's public key, every certificate is within its validity window, and the chain reaches a trust anchor.",
   },
   DataLength: { def: 'How many random bytes to return from RNGRetrieve.' },
   PKCS11Function: {

@@ -30,9 +30,13 @@ export function Pkcs11CertificateDemo({ engine }: { engine: KmipEngine }) {
     setAttrs(null)
     try {
       const created = engine.runOp({ op: 'CreateKeyPair', algorithm: 'ECDSA' })
-      const pubUid = str(created.summary.publicKeyUid)
+      const pubUid = str(created.summary?.publicKeyUid)
       if (!created.ok || !pubUid) {
-        setError(created.message || 'CreateKeyPair failed')
+        setError(
+          created.message
+            ? `Couldn't create the key pair: ${created.message}`
+            : 'CreateKeyPair failed'
+        )
         setStep('error')
         return
       }

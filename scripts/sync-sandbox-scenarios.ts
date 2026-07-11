@@ -49,7 +49,9 @@ try {
   ;({ LEARNING_TRACKS, SCENARIOS } = src)
 } catch {
   console.log(
-    '⏭  sandbox source (../../pqctoday-sandbox/ui/src/data/scenarios) not found — skipping sandbox sync.'
+    '⏭  SKIPPED (no sandbox checkout): ../../pqctoday-sandbox/ui/src/data/scenarios not found.\n' +
+      '   Drift was NOT checked — this pass is vacuous. The real drift gate is the local\n' +
+      '   pre-push checklist, run where the sibling sandbox checkout exists.'
   )
   process.exit(0)
 }
@@ -79,17 +81,20 @@ const visible: Array<{
   tool: { name: string; url: string }
 }> = []
 const usedTrackIds = new Set<string>()
+// Source-data defects (dangling track refs, missing difficulty) fail the run
+// instead of silently shrinking the projection.
+const dataErrors: string[] = []
 
 for (const track of LEARNING_TRACKS) {
   for (const id of track.scenarioIds) {
     const s = scenarioById.get(id)
     if (!s) {
-      console.warn(`⚠️  track '${track.id}' references unknown scenario '${id}' — skipped`)
+      dataErrors.push(`track '${track.id}' references unknown scenario '${id}'`)
       continue
     }
     if (s.deprecated || s.wip) continue
     if (!s.difficulty) {
-      console.warn(`⚠️  scenario '${id}' has no difficulty — skipped`)
+      dataErrors.push(`scenario '${id}' has no difficulty`)
       continue
     }
     usedTrackIds.add(track.id)
@@ -181,6 +186,14 @@ const output = await prettier.format(lines.join('\n'), {
 })
 
 const check = process.argv.includes('--check')
+if (dataErrors.length > 0) {
+  console.error(`✗ sandbox source data errors (${dataErrors.length}):`)
+  for (const e of dataErrors) console.error(`  - ${e}`)
+  console.error(
+    '  Fix the sandbox source (ui/src/data/scenarios.ts) — refusing to project bad data.'
+  )
+  process.exit(1)
+}
 if (check) {
   let current = ''
   try {

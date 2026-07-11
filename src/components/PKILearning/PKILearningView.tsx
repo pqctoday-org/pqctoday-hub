@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { Suspense, useRef, type ComponentType } from 'react'
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
-import { Dashboard } from './Dashboard'
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import { LearnRedesignView } from './redesign/LearnRedesignView'
 import { ArrowLeft } from 'lucide-react'
 import { GlossaryButton } from '../ui/GlossaryButton'
@@ -48,14 +47,12 @@ export const PKILearningView: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const contentRef = useRef<HTMLDivElement>(null)
-  const isDashboard =
-    location.pathname === '/learn' ||
-    location.pathname === '/learn/' ||
-    location.pathname === '/learn/legacy'
-  // The redesigned dashboard (not legacy) owns its header via the shared
-  // PageHeader, which already carries Glossary + Guide. Suppress this top
-  // utility bar there so those buttons don't render twice.
-  const isRedesignDashboard = location.pathname === '/learn' || location.pathname === '/learn/'
+  // The redesigned dashboard owns its header via the shared PageHeader, which
+  // already carries Glossary + Guide. Suppress this top utility bar there so
+  // those buttons don't render twice. (Formerly also covered the legacy
+  // five-mode dashboard at /learn/legacy, now retired and redirected to /learn.)
+  const isDashboard = location.pathname === '/learn' || location.pathname === '/learn/'
+  const isRedesignDashboard = isDashboard
 
   const isEmbed = useIsEmbedded()
 
@@ -182,8 +179,12 @@ export const PKILearningView: React.FC = () => {
             >
               <Routes>
                 <Route index element={<LearnRedesignView />} />
-                {/* Legacy five-mode dashboard, kept reachable during the redesign rollout. */}
-                <Route path="legacy" element={<Dashboard />} />
+                {/* The legacy five-mode dashboard is retired (learn.md remediation item 8):
+                    no in-app links point to it, it was already excluded from SEO indexing
+                    as a legacy duplicate (routeMeta.ts), and the redesign restores its
+                    useful deep-link params (?track=, ?persona=, ?mode=) on /learn itself.
+                    Redirect rather than 404 in case an old bookmark/external link remains. */}
+                <Route path="legacy" element={<Navigate to="/learn" replace />} />
                 {/* Module routes — derived from the manifests (single source). */}
                 {[...MODULE_COMPONENTS].map(([path, Component]) => (
                   <Route key={path} path={path} element={<Component />} />

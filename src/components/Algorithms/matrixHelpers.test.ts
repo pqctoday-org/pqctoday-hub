@@ -49,8 +49,8 @@ describe('shortRefLabel — draft prefix stripping', () => {
 describe('DRAFT_STAGE_LEVEL — IETF stage → 0–7 KAT', () => {
   // Per the saved schema rationale in pqcProtocolMatrix.ts:
   //   0 = none / na, 1 = problem identified, 2 = experimental,
-  //   3 = individual I-D, 4 = WG (doc or LC), 5 = IESG submitted,
-  //   6 = IETF LC / RFC Editor queue, 7 = RFC published.
+  //   3 = individual I-D, 4 = WG (doc or LC), 5 = IETF LC,
+  //   6 = IESG submitted / RFC Editor queue, 7 = RFC published.
   const KAT: Array<[DraftStage, number]> = [
     ['none', 0],
     ['na', 0],

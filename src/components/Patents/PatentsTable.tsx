@@ -13,6 +13,7 @@ import {
 import { EmptyState } from '@/components/ui/empty-state'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { PatentDetail } from './PatentDetail'
 import { ColumnPicker } from './ColumnPicker'
 import type { ColumnId, PresetKey } from './patentColumns'
@@ -181,7 +182,7 @@ function SortIcon({ col, active, dir }: { col: string; active: string; dir: Sort
 }
 
 interface ThColProps {
-  label: string
+  label: React.ReactNode
   sortable?: SortKey
   className?: string
   sortKey: SortKey
@@ -613,7 +614,12 @@ export function PatentsTable({
                   )}
                   {show('issueDate') && (
                     <ThCol
-                      label="Issued"
+                      label={
+                        // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events -- stops the tooltip trigger's click from also toggling column sort
+                        <span onClick={(e) => e.stopPropagation()}>
+                          <InlineTooltip term="Issue Date">Issued</InlineTooltip>
+                        </span>
+                      }
                       sortable="issueDate"
                       className="hidden sm:table-cell"
                       {...thProps}
@@ -621,7 +627,12 @@ export function PatentsTable({
                   )}
                   {show('priorityDate') && (
                     <ThCol
-                      label="Priority"
+                      label={
+                        // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events -- stops the tooltip trigger's click from also toggling column sort
+                        <span onClick={(e) => e.stopPropagation()}>
+                          <InlineTooltip term="Priority Date">Priority</InlineTooltip>
+                        </span>
+                      }
                       sortable="priorityDate"
                       className="hidden sm:table-cell"
                       {...thProps}

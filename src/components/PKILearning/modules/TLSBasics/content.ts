@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * Structured content for the TLSBasics module.
- * AUTO-GENERATED SKELETON — review and refine manually.
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { getAlgorithm } from '@/data/algorithmProperties'
@@ -10,7 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'tls-basics',
   version: '1.1.0',
-  lastReviewed: '2026-05-30',
+  lastReviewed: '2026-07-08',
 
   standards: [
     getStandard('FIPS 203'),
@@ -39,7 +38,7 @@ export const content: ModuleContent = {
     mtuSize: '1,500 bytes',
     mlDsa65Size: '3,309 bytes',
     ecdsaSigSize: '72 bytes',
-    mtcProofSize: '300 bytes',
+    mtcProofSize: '~736 bytes (typical; scales 384B-1024B with subtree size)',
     ctStandard: 'RFC 9162',
   },
 }

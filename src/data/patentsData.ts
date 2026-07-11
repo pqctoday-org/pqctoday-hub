@@ -140,12 +140,55 @@ function transformRow(row: RawPatentRow): PatentItem | null {
     nistRoundStatus: parseJsonField<NistStatus[]>(row.nist_round_status, []),
     priorityYear: parseInt(row.priority_date?.slice(0, 4) ?? '0', 10) || 0,
     filingYear: parseInt(row.filing_date?.slice(0, 4) ?? '0', 10) || 0,
-    pqcMigrationScore: parseInt(row.pqc_migration_score ?? '0', 10) || 0,
+    // Preserve null for missing/unparseable scores rather than coercing to 0 — an
+    // unscored patent is not the same as one genuinely scored at the bottom.
+    // parseFloat (not parseInt) because pqc_migration_score is a decimal string ("8.0").
+    pqcMigrationScore: (() => {
+      const raw = row.pqc_migration_score?.trim()
+      if (!raw) return null
+      const n = parseFloat(raw)
+      return Number.isFinite(n) ? n : null
+    })(),
     pqcMigrationReason: row.pqc_migration_reason?.trim() ?? '',
   }
 
   const impactScore = computeImpactScore(partial)
   return { ...partial, impactScore, impactLevel: toImpactLevel(impactScore) }
+}
+
+// Source records mix casing and punctuation conventions across pulls (e.g.
+// "Intel Corporation" vs "INTEL CORPORATION", "Thales Dis Cpl Usa, Inc." vs
+// "THALES DIS CPL USA, INC" with no trailing period), which fragments the same
+// company into separate rows in filters and Top Assignees. Collapse each
+// normalized-key group onto whichever exact spelling is most common, so
+// duplicates merge without hand-maintained rules. Punctuation is stripped only
+// for the grouping key, not the displayed name — and only trivial noise
+// (periods/commas/whitespace), not corporate-suffix letters (e.g. "SA" vs
+// "SAS" stay distinct, since that can reflect a genuinely different legal
+// entity rather than a typo).
+function normalizeAssigneeKey(name: string): string {
+  return name.toLowerCase().replace(/[.,]/g, '').replace(/\s+/g, ' ').trim()
+}
+
+function canonicalizeAssignees(items: PatentItem[]): PatentItem[] {
+  const variantCounts = new Map<string, Map<string, number>>()
+  for (const item of items) {
+    if (!item.assignee) continue
+    const key = normalizeAssigneeKey(item.assignee)
+    const variants = variantCounts.get(key) ?? new Map<string, number>()
+    variants.set(item.assignee, (variants.get(item.assignee) ?? 0) + 1)
+    variantCounts.set(key, variants)
+  }
+  const canonical = new Map<string, string>()
+  for (const [key, variants] of variantCounts) {
+    const best = [...variants.entries()].sort((a, b) => b[1] - a[1])[0][0]
+    canonical.set(key, best)
+  }
+  return items.map((item) =>
+    item.assignee
+      ? { ...item, assignee: canonical.get(normalizeAssigneeKey(item.assignee))! }
+      : item
+  )
 }
 
 const modules = import.meta.glob('./patents_*.csv', {
@@ -161,12 +204,14 @@ const result = loadLatestCSV<RawPatentRow, PatentItem>(
   true // withPrevious for New/Updated status badges
 )
 
+const canonicalizedData = canonicalizeAssignees(result.data)
+
 // Compute status map if previous data exists
 const statusMap = result.previousData
-  ? compareDatasets(result.data, result.previousData, 'patentNumber')
+  ? compareDatasets(canonicalizedData, result.previousData, 'patentNumber')
   : new Map<string, ItemStatus>()
 
-export const patentsData: PatentItem[] = result.data.map((item) => ({
+export const patentsData: PatentItem[] = canonicalizedData.map((item) => ({
   ...item,
   status: statusMap.get(item.patentNumber) as 'New' | 'Updated' | undefined,
 }))

@@ -78,7 +78,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
               name: 'What is post-quantum cryptography (PQC)?',
               acceptedAnswer: {
                 '@type': 'Answer',
-                text: 'Post-quantum cryptography (PQC) refers to cryptographic algorithms designed to resist attacks from both classical and quantum computers. NIST finalized the first PQC standards in August 2024: FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), and FIPS 205 (SLH-DSA), with FIPS 206 (FN-DSA) still in draft.',
+                text: 'Post-quantum cryptography (PQC) refers to cryptographic algorithms designed to resist attacks from both classical and quantum computers. NIST finalized the first PQC standards in August 2024: FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), and FIPS 205 (SLH-DSA), with FIPS 206 (FN-DSA) still in development.',
               },
             },
             {
@@ -94,7 +94,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
               name: 'What are the NIST PQC standards?',
               acceptedAnswer: {
                 '@type': 'Answer',
-                text: 'NIST published three PQC standards in August 2024: FIPS 203 (ML-KEM for key encapsulation), FIPS 204 (ML-DSA for digital signatures), and FIPS 205 (SLH-DSA for hash-based signatures). FIPS 206 (FN-DSA for compact signatures) is still in draft. The draft NIST IR 8547 proposes the transition timeline: deprecate classical algorithms by 2030, disallow by 2035.',
+                text: 'NIST published three PQC standards in August 2024: FIPS 203 (ML-KEM for key encapsulation), FIPS 204 (ML-DSA for digital signatures), and FIPS 205 (SLH-DSA for hash-based signatures). FIPS 206 (FN-DSA for compact signatures) is still in development — no public draft yet. The draft NIST IR 8547 proposes the transition timeline: deprecate classical algorithms by 2030, disallow by 2035.',
               },
             },
           ],
@@ -404,6 +404,13 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Track new features, improvements, and bug fixes in PQC Today. Detailed version history of the post-quantum cryptography education platform.',
     canonical: `${BASE_URL}/changelog`,
+  },
+
+  '/revisions': {
+    title: 'Content Revisions — PQC Today Data Trust Log',
+    description:
+      'Every correction to our compliance, vendor, and migration data, reviewed and logged: what changed, who reviewed it, and why — the audit trail behind the data you rely on.',
+    canonical: `${BASE_URL}/revisions`,
   },
 
   // --- Learning modules ---

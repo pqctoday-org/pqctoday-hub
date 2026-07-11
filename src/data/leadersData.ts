@@ -20,6 +20,14 @@ export interface Leader {
   peerReviewed?: 'yes' | 'no' | 'partial'
   vettingBody?: string[]
   status?: 'New' | 'Updated'
+  /** 'auto-imported' rows are single-sentence stubs generated from a library
+   *  authorship join ("Author or contributor on N PQC reference(s)..."); 'curated'
+   *  rows have hand-written bios/roles. Drives the tiered browsing default. */
+  sourceKind: 'curated' | 'auto-imported'
+  /** ISO date the row's affiliation/role was last confirmed against a public
+   *  source, parsed from `data_quality_notes`. Absent means never explicitly
+   *  re-verified since import. */
+  verifiedDate?: string
 }
 
 interface RawLeaderRow {
@@ -40,10 +48,16 @@ interface RawLeaderRow {
   peer_reviewed: string
   vetting_body: string
   data_quality_notes: string
+  verified_date?: string
   status?: string
   deprecated_at?: string
   deprecated_reason?: string
 }
+
+// Distinguishes the 124 single-sentence, library-authorship-derived stub rows
+// from the 208 hand-curated profiles (see `data_quality_notes` convention set
+// 2026-05-10 by the library-authors auto-import script).
+const isAutoImportedRow = (note: string): boolean => note.includes('auto-imported from library')
 
 const modules = import.meta.glob('./leaders_*.csv', {
   query: '?raw',
@@ -81,6 +95,8 @@ const {
       keyResourceRefs: row.KeyResourceRefs ? splitSemicolon(row.KeyResourceRefs) : undefined,
       peerReviewed: (row.peer_reviewed?.toLowerCase() as Leader['peerReviewed']) || undefined,
       vettingBody: row.vetting_body ? splitSemicolon(row.vetting_body) : undefined,
+      sourceKind: isAutoImportedRow(row.data_quality_notes ?? '') ? 'auto-imported' : 'curated',
+      verifiedDate: row.verified_date || undefined,
     }
   },
   true // withPrevious for status badges

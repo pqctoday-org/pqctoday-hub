@@ -116,6 +116,9 @@ interface RawTimelineRow {
   // Tags the ONE row per country that is its canonical PQC migration deadline for
   // the sim. Consumed by scripts/gen-timeline-facts.mjs (the single-source codegen).
   is_sim_deadline?: string
+  // Curated binding-vs-guidance label for this row (HARD/SOFT/DRAFT, or blank if
+  // not yet reviewed). Event-level counterpart to the generated facts' per-country map.
+  mandate_type?: string
 }
 
 // ─── Graded confidence score ─────────────────────────────────────────────────
@@ -127,9 +130,18 @@ interface RawTimelineRow {
 //   Source recency        20 (≤12 mo 20 / ≤36 mo 10 / older|missing 0)
 //   Cached local evidence 15 (local_file present 15 / else 0)
 //   Date specificity      10 (point event 10 / dated range 5 / else 0)
-const SCORING_NOW = new Date()
-
-export function computeTimelineConfidence(row: RawTimelineRow): number {
+//
+// Recency is scored against a `referenceDate` supplied by the caller — the wired
+// CSV's own snapshot date (parsed from its `timeline_MMDDYYYY[_rN].csv` filename),
+// not `new Date()` at module load. Anchoring to real wall-clock time made every
+// row's recency score silently drift downward as calendar time passed, with no
+// underlying data change — the same CSV could score differently in CI depending on
+// what day it ran. `referenceDate` defaults to `new Date()` only so this function
+// stays directly testable without a snapshot date in hand.
+export function computeTimelineConfidence(
+  row: RawTimelineRow,
+  referenceDate: Date = new Date()
+): number {
   let score = 0
 
   // Source-URL quality (30)
@@ -143,11 +155,11 @@ export function computeTimelineConfidence(row: RawTimelineRow): number {
   else if (pr === 'partial') score += 10
   if ((row.vetting_body || '').trim()) score += 5
 
-  // Source recency (20) — relative to load time
+  // Source recency (20) — relative to the CSV's own snapshot date
   const sd = (row.SourceDate || '').trim()
   const parsed = /^\d{4}-\d{2}-\d{2}$/.test(sd) ? new Date(sd) : null
   if (parsed && !Number.isNaN(parsed.getTime())) {
-    const months = (SCORING_NOW.getTime() - parsed.getTime()) / (1000 * 60 * 60 * 24 * 30.44)
+    const months = (referenceDate.getTime() - parsed.getTime()) / (1000 * 60 * 60 * 24 * 30.44)
     if (months >= 0 && months <= 12) score += 20
     else if (months > 12 && months <= 36) score += 10
   }
@@ -163,7 +175,31 @@ export function computeTimelineConfidence(row: RawTimelineRow): number {
   return Math.min(100, score)
 }
 
-export function parseTimelineCSV(csvContent: string): CountryData[] {
+// A malformed StartYear/EndYear cell (e.g. "Q1 2030", a blank, or an obviously
+// out-of-range value) would otherwise flow straight into the Gantt's pixel-position
+// math as NaN and silently corrupt the chart's geometry. Reject anything that isn't
+// a clean 4-digit year in a sane range, with a loud console warning identifying the
+// offending row — fail loudly at load time instead of rendering broken bars.
+const MIN_SANE_YEAR = 1990
+const MAX_SANE_YEAR = 2100
+
+function parseSaneYear(raw: string | undefined, context: string): number | null {
+  const trimmed = (raw ?? '').trim()
+  const year = /^\d{4}$/.test(trimmed) ? parseInt(trimmed, 10) : NaN
+  if (!Number.isFinite(year) || year < MIN_SANE_YEAR || year > MAX_SANE_YEAR) {
+    console.error(
+      `[timelineData] Malformed year value ${JSON.stringify(raw)} for ${context} — ` +
+        `excluding this row from the Gantt rather than corrupting the chart geometry.`
+    )
+    return null
+  }
+  return year
+}
+
+export function parseTimelineCSV(
+  csvContent: string,
+  referenceDate: Date = new Date()
+): CountryData[] {
   const { data: allRows } = Papa.parse<RawTimelineRow>(csvContent.trim(), {
     header: true,
     skipEmptyLines: true,
@@ -177,6 +213,10 @@ export function parseTimelineCSV(csvContent: string): CountryData[] {
 
   for (const row of rows) {
     if (!row.Country) continue
+
+    const startYear = parseSaneYear(row.StartYear, `${row.Country} / "${row.Title}" (StartYear)`)
+    const endYear = parseSaneYear(row.EndYear, `${row.Country} / "${row.Title}" (EndYear)`)
+    if (startYear === null || endYear === null) continue
 
     const countryName = row.Country
     const flagCode = row.FlagCode || ''
@@ -214,8 +254,8 @@ export function parseTimelineCSV(csvContent: string): CountryData[] {
 
     // Create event — PapaParse auto-strips quotes
     const event: TimelineEvent = {
-      startYear: parseInt(row.StartYear, 10),
-      endYear: parseInt(row.EndYear, 10),
+      startYear,
+      endYear,
       phase: row.Category as Phase,
       type: (row.Type as EventType) || 'Phase',
       title: row.Title || '',
@@ -234,9 +274,10 @@ export function parseTimelineCSV(csvContent: string): CountryData[] {
       sourceUrlQuality: row.source_url_quality || undefined,
       trustedSourceIdStatus: row.trusted_source_id_status || undefined,
       dataQualityNotes: row.data_quality_notes || undefined,
-      confidenceScore: computeTimelineConfidence(row),
+      confidenceScore: computeTimelineConfidence(row, referenceDate),
       trustedSourceId: row.trusted_source_id || undefined,
       localFile: row.local_file || undefined,
+      mandateType: (row.mandate_type?.trim() as TimelineEvent['mandateType']) || undefined,
       entityType: (row.entity_type?.trim() as TimelineEvent['entityType']) || 'government',
       complianceRefs: [],
       xwalkEdgeIds: [],
@@ -334,8 +375,10 @@ try {
   const { current, previous } = getLatestTimelineFiles()
 
   if (current) {
-    const currentCountries = parseTimelineCSV(current.content)
-    const previousCountries = previous ? parseTimelineCSV(previous.content) : []
+    // Score confidence recency against the CSV's own snapshot date (from its
+    // filename), not real wall-clock time — see computeTimelineConfidence.
+    const currentCountries = parseTimelineCSV(current.content, current.date)
+    const previousCountries = previous ? parseTimelineCSV(previous.content, previous.date) : []
 
     // Flatten events to compare them
     // Unique ID for event: Country + Org + Phase + Title

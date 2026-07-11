@@ -215,10 +215,10 @@ export const IoTOTIntroduction: React.FC<IoTOTIntroductionProps> = ({ onNavigate
               })}
             </div>
             <p className="text-[10px] text-muted-foreground mt-2">
-              <InlineTooltip term="FN-DSA">FN-DSA-512</InlineTooltip> (FIPS 206, draft) produces the
-              most compact PQC signature (~666 bytes average, 690 max) &mdash; ideal for
-              bandwidth-constrained IoT. <InlineTooltip term="LMS/HSS">LMS</InlineTooltip> has the
-              smallest verifier (0.5 KB RAM, 56-byte public key) but requires stateful key
+              <InlineTooltip term="FN-DSA">FN-DSA-512</InlineTooltip> (FIPS 206, in development)
+              produces the most compact PQC signature (~666 bytes average, 690 max) &mdash; ideal
+              for bandwidth-constrained IoT. <InlineTooltip term="LMS/HSS">LMS</InlineTooltip> has
+              the smallest verifier (0.5 KB RAM, 56-byte public key) but requires stateful key
               management.
             </p>
           </div>

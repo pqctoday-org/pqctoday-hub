@@ -12,7 +12,7 @@ export const content: ModuleContent = {
   lastReviewed: '2026-05-16',
 
   standards: [
-    getStandard('RFC 7030'),
+    getStandard('IETF-RFC-7030-EST'),
     getStandard('RFC 4210'),
     getStandard('RFC 9810'),
     getStandard('FIPS 203'),

@@ -67,7 +67,10 @@ function citedIds(row: Record<string, string>): Set<string> {
   for (const col of CITATION_COLUMNS) {
     const v = row[col]
     if (!v) continue
-    for (const tok of v.split(/[;,|]/).map((t) => t.trim()).filter(Boolean)) {
+    for (const tok of v
+      .split(/[;,|]/)
+      .map((t) => t.trim())
+      .filter(Boolean)) {
       cited.add(canonical(tok))
     }
   }
@@ -96,13 +99,32 @@ interface Target {
 function loadTargets(): Target[] {
   const targets: Target[] = []
   const lib = findLatest('src/data/library_*.csv')
-  if (lib) targets.push({ domain: 'library', csvPath: lib, textCols: ['description'], idCol: 'reference_id' })
+  if (lib)
+    targets.push({
+      domain: 'library',
+      csvPath: lib,
+      textCols: ['description'],
+      idCol: 'reference_id',
+    })
   const cmp = findLatest('src/data/compliance_*.csv')
-  if (cmp) targets.push({ domain: 'compliance', csvPath: cmp, textCols: ['description'], idCol: 'id' })
+  if (cmp)
+    targets.push({ domain: 'compliance', csvPath: cmp, textCols: ['description'], idCol: 'id' })
   const tl = findLatest('src/data/timeline_*.csv')
-  if (tl) targets.push({ domain: 'timeline', csvPath: tl, textCols: ['Description', 'description'], idCol: 'Title' })
+  if (tl)
+    targets.push({
+      domain: 'timeline',
+      csvPath: tl,
+      textCols: ['Description', 'description'],
+      idCol: 'Title',
+    })
   const thr = findLatest('src/data/quantum_threats_hsm_industries_*.csv')
-  if (thr) targets.push({ domain: 'threats', csvPath: thr, textCols: ['threat_description', 'description'], idCol: 'threat_id' })
+  if (thr)
+    targets.push({
+      domain: 'threats',
+      csvPath: thr,
+      textCols: ['threat_description', 'description'],
+      idCol: 'threat_id',
+    })
   return targets
 }
 
@@ -209,7 +231,8 @@ export async function runMissingReferenceChecks(opts: MRRunOptions = {}): Promis
     return {
       id: 'MR-1',
       category: 'cross-reference',
-      description: 'Missing-reference detector — standard IDs in description must appear in citation columns',
+      description:
+        'Missing-reference detector — standard IDs in description must appear in citation columns',
       sourceA: 'src/data/{library,compliance,timeline,threats}_*.csv',
       sourceB: null,
       severity: 'WARNING',
@@ -220,7 +243,8 @@ export async function runMissingReferenceChecks(opts: MRRunOptions = {}): Promis
   return {
     id: 'MR-1',
     category: 'cross-reference',
-    description: 'Missing-reference detector — standard IDs in description must appear in citation columns',
+    description:
+      'Missing-reference detector — standard IDs in description must appear in citation columns',
     sourceA: 'src/data/{library,compliance,timeline,threats}_*.csv',
     sourceB: null,
     severity: 'WARNING',

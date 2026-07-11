@@ -13,17 +13,29 @@ import {
   Stamp,
 } from 'lucide-react'
 
-export const MISSION_TAGS = [
-  '62 learning modules',
-  '34 business planning tools',
-  '13-step risk assessment',
-  '800+ migration catalog',
-  '1,600+ PQC patents',
-  'PKCS#11 v3.2 simulator',
-  'FIPS 203 / 204 / 205',
-  'AI assistant — local or cloud',
-  'Zero data collected',
-]
+/**
+ * Mission tags shown on the vision panel. Three entries embed live counts
+ * (learning modules, assessment steps, patents) that previously drifted from
+ * the real data — the caller supplies the current computed values (same
+ * loaders Landing already uses) so this list can never silently go stale.
+ */
+export function buildMissionTags(counts: {
+  moduleCount: number
+  stepCount: number
+  patentCount: number
+}): string[] {
+  return [
+    `${counts.moduleCount} learning modules`,
+    '34 business planning tools',
+    `${counts.stepCount}-step risk assessment`,
+    '800+ migration catalog',
+    `${counts.patentCount.toLocaleString()} PQC patents`,
+    'PKCS#11 v3.2 simulator',
+    'FIPS 203 / 204 / 205',
+    'AI assistant — local or cloud',
+    'Zero data collected',
+  ]
+}
 
 export const PRINCIPLES = [
   {
@@ -71,19 +83,68 @@ export const NOT_ITEMS = [
   },
 ]
 
-export const DATA_FOUNDATION = [
-  { dataset: 'Timeline Events', records: 249, sources: '80+ orgs, 37 countries' },
-  { dataset: 'Library Resources', records: 688, sources: '30+ standards bodies' },
-  { dataset: 'Algorithm Reference', records: 98, sources: 'FIPS 203/204/205 (+206 draft)' },
-  { dataset: 'Compliance Frameworks', records: 170, sources: 'NIST, ACVP, CC, ANSSI' },
-  { dataset: 'Migrate Products', records: 838, sources: '9 infrastructure layers' },
-  { dataset: 'Threat Landscape', records: 110, sources: '8+ industry sectors' },
-  { dataset: 'Industry Leaders', records: 332, sources: 'Public, Private, Academic' },
-  { dataset: 'Quiz Questions', records: 909, sources: 'All PQC topic areas' },
-  { dataset: 'Authoritative Sources', records: 187, sources: 'Gov, Academic, Industry' },
-  { dataset: 'Learning Modules', records: 62, sources: '2,800+ min of content' },
-  { dataset: 'PQC Patents', records: 1647, sources: 'USPTO, EPO, WIPO' },
+export type DataFoundationKey =
+  | 'timeline'
+  | 'library'
+  | 'algorithms'
+  | 'compliance'
+  | 'migrate'
+  | 'threats'
+  | 'leaders'
+  | 'quiz'
+  | 'sources'
+  | 'modules'
+  | 'patents'
+
+export interface DataFoundationRow {
+  dataset: string
+  records: number | string
+  sources: string
+}
+
+const DATA_FOUNDATION_META: Record<DataFoundationKey, Omit<DataFoundationRow, 'records'>> = {
+  timeline: { dataset: 'Timeline Events', sources: '80+ orgs, 37 countries' },
+  library: { dataset: 'Library Resources', sources: '30+ standards bodies' },
+  algorithms: { dataset: 'Algorithm Reference', sources: 'FIPS 203/204/205 (+206 draft)' },
+  compliance: { dataset: 'Compliance Frameworks', sources: 'NIST, ACVP, CC, ANSSI' },
+  migrate: { dataset: 'Migrate Products', sources: '9 infrastructure layers' },
+  threats: { dataset: 'Threat Landscape', sources: '8+ industry sectors' },
+  leaders: { dataset: 'Industry Leaders', sources: 'Public, Private, Academic' },
+  quiz: { dataset: 'Quiz Questions', sources: 'All PQC topic areas' },
+  sources: { dataset: 'Authoritative Sources', sources: 'Gov, Academic, Industry' },
+  modules: { dataset: 'Learning Modules', sources: '2,800+ min of content' },
+  patents: { dataset: 'PQC Patents', sources: 'USPTO, EPO, WIPO' },
+}
+
+const DATA_FOUNDATION_ORDER: DataFoundationKey[] = [
+  'timeline',
+  'library',
+  'algorithms',
+  'compliance',
+  'migrate',
+  'threats',
+  'leaders',
+  'quiz',
+  'sources',
+  'modules',
+  'patents',
 ]
+
+/**
+ * Zips the fixed dataset labels/sources copy with live-computed record
+ * counts, mirroring the pattern Landing already uses for its stats bar.
+ * Keeping the labels here and the counts caller-supplied avoids this data
+ * file importing from src/components (loaders for module/step counts live
+ * there); the wiring decisions live in DataFoundationSection.tsx.
+ */
+export function buildDataFoundation(
+  records: Record<DataFoundationKey, number | string>
+): DataFoundationRow[] {
+  return DATA_FOUNDATION_ORDER.map((key) => ({
+    ...DATA_FOUNDATION_META[key],
+    records: records[key],
+  }))
+}
 
 export const DISCUSSIONS_BASE = 'https://github.com/pqctoday-org/pqctoday-hub/discussions/'
 

@@ -286,6 +286,7 @@ function LessonPanel({
    * attribute ops). Both come back as an [`OpResult`] so narration and the
    * wire view work identically. */
   const runStep = async (step: LessonStep, results: (OpResult | null)[]): Promise<OpResult> => {
+    step.preRun?.(engine)
     if (step.buildRaw) {
       const raw = step.buildRaw(results)
       try {

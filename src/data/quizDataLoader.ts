@@ -467,6 +467,48 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
         'NIST Round 4 and on-ramp candidates — Falcon, HQC, FrodoKEM, Classic McEliece, and other post-quantum contenders.',
       icon: 'FlaskConical',
     },
+    sbom: {
+      label: 'Software Bill of Materials',
+      description:
+        'SPDX vs CycloneDX, NTIA minimum elements, VEX vulnerability triage, and the EO 14028 / EU CRA regulatory drivers.',
+      icon: 'Package',
+    },
+    cbom: {
+      label: 'Cryptography Bill of Materials',
+      description:
+        'Cryptographic asset inventory, ghost crypto, layered discovery, key identity & provenance, and machine-verifiable CBOMs.',
+      icon: 'KeyRound',
+    },
+    'crypto-registry': {
+      label: 'CycloneDX Cryptography Registry',
+      description:
+        'The canonical algorithm and elliptic-curve naming catalog that resolves the same mechanism across HSMs, certificates, protocols, and libraries.',
+      icon: 'BookMarked',
+    },
+    'verification-closure': {
+      label: 'Decommissioning & Program Closure',
+      description:
+        'Retiring classical cryptography on a defensible schedule, proving migration from observed behaviour, and closing the program to business-as-usual.',
+      icon: 'CheckCircle2',
+    },
+    'pqc-grc': {
+      label: 'PQC GRC',
+      description:
+        'The KRI cascade, risk-appetite statement, regulatory horizon reporting, and GRC-SOC handoff that make a PQC migration governable and auditable.',
+      icon: 'Scale',
+    },
+    'skills-team-structure': {
+      label: 'Skills & Team Structure',
+      description:
+        'Staffing a PQC migration program — core roles, team-sizing heuristics, build/borrow/buy decisions, and the federated Crypto Champion network.',
+      icon: 'Users',
+    },
+    'soc-implementation-pqc': {
+      label: 'SOC Implementation for PQC',
+      description:
+        'Detection use cases, quantum threat intelligence, incident-response playbooks, and tabletop exercises for operationalizing PQC defense in the SOC.',
+      icon: 'ScanSearch',
+    },
   }
 
 // Compute question counts dynamically from loaded data

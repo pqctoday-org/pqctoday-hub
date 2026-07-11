@@ -310,4 +310,46 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
       why: 'A budget you can silently re-set is not a budget. Once an allocation is granted, the engine refuses to overwrite the UsageLimits attribute out from under it.',
     },
   ],
+  'certificate-services': [
+    {
+      q: 'Before the 0.14 pure-Rust cert-ops port, why did this wasm build answer Validate/Certify/Re-certify with OperationNotSupported?',
+      options: [
+        'The operations were never implemented at all',
+        "Their crypto backends (ring for Validate, rcgen for Certify) don't cross-compile to wasm32",
+        'They were disabled for licensing reasons',
+      ],
+      answer: 1,
+      why: "Both were real, spec'd operations with real NATIVE handlers — the gap was specifically that ring/rcgen are C-backed and can't target wasm32. The port replaced both with pure-Rust spki/der decoding through the same engine, so the identical code now runs on both targets.",
+    },
+    {
+      q: 'A certificate chain fails Validate with ValidityIndicator = Invalid. What does the ResultStatus say?',
+      options: [
+        'OperationFailed — Invalid is a protocol-level error',
+        'Success — Invalid is an honest ANSWER, not an error',
+        'It depends on which certificate in the chain failed',
+      ],
+      answer: 1,
+      why: 'KMIP 3.0 §6.1.62: a negative validity result is not a KMIP error. ResultStatus=OperationFailed is reserved for protocol failures (a missing UID, an unrecognized object type) — Invalid and Unknown are both legitimate ValidityIndicator values on a Success response.',
+    },
+    {
+      q: "Why couldn't rcgen ever have accepted a genuinely valid, self-signed ML-DSA CSR — even in the native (non-wasm) server, before this port?",
+      options: [
+        'rcgen requires a network connection to verify PQC signatures',
+        "rcgen's SignatureAlgorithm table has no ML-DSA entry at all — it can't evaluate the signature, valid or not",
+        'ML-DSA CSRs use a different wire format rcgen cannot parse',
+      ],
+      answer: 1,
+      why: 'This is a coverage gap, not a validity check: rcgen simply has no algorithm entry to evaluate the signature against, so it rejected the CSR regardless of whether the self-signature was genuinely correct. The engine-backed verify_with_spki has no such gap.',
+    },
+    {
+      q: "Certify's stored-PublicKey-UID path failed with KeyValueNotPresent for a key fresh out of CreateKeyPair. Why?",
+      options: [
+        'CreateKeyPair-generated keys are always Sensitive and cannot be certified',
+        "A freshly generated key's SubjectPublicKeyInfo lives only in the engine — the KMIP-level object record has no key_material until the key is Register'd (or read via a path that copies it in, like the CA bootstrap)",
+        'This is a wasm-only limitation — the native server can certify any CreateKeyPair output directly',
+      ],
+      answer: 1,
+      why: "It's the same limitation natively, not a wasm gap: CreateKeyPair's ObjectRecord stores key_material only for a handful of cases (e.g. hybrid KEM public shares); a plain classical/PQC key's real material stays engine-side. \"Set up demo CA\" works around this by reading the SPKI straight off the engine, the same way the native --ca-key bootstrap does.",
+    },
+  ],
 }

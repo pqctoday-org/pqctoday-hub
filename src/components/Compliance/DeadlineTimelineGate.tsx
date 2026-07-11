@@ -11,6 +11,15 @@ interface DeadlineTimelineGateProps {
   persona: PersonaId | null
   frameworks: ComplianceFramework[]
   label?: string
+  /**
+   * True once the visitor has loaded `/compliance` before (per the same
+   * "seen it already" signal that collapses the onboarding banner stack).
+   * On a first visit the executive/ops/null full timeline still renders
+   * open by default; on a return visit it starts as a closed disclosure
+   * like the developer/architect/researcher treatment, so repeat visitors
+   * aren't forced to scroll past it to reach the tab bar every time.
+   */
+  returningVisitor?: boolean
 }
 
 interface NarrativeData {
@@ -39,15 +48,21 @@ function buildNarrative(frameworks: ComplianceFramework[]): NarrativeData | null
 
 /**
  * Persona-aware wrapper around DeadlineTimeline:
- *   executive | ops | null              → full timeline (current behaviour)
- *   curious                              → one-line narrative summary
- *   developer | architect | researcher  → closed disclosure (mounts on click)
+ *   executive | ops | null (first visit)   → full timeline (current behaviour)
+ *   executive | ops | null (return visit)  → closed disclosure (mounts on click)
+ *   curious                                 → one-line narrative summary
+ *   developer | architect | researcher     → closed disclosure (mounts on click)
  */
-export function DeadlineTimelineGate({ persona, frameworks, label }: DeadlineTimelineGateProps) {
+export function DeadlineTimelineGate({
+  persona,
+  frameworks,
+  label,
+  returningVisitor = false,
+}: DeadlineTimelineGateProps) {
   const [open, setOpen] = useState(false)
   const narrative = useMemo(() => buildNarrative(frameworks), [frameworks])
 
-  if (persona === 'executive' || persona === 'ops' || persona === null) {
+  if ((persona === 'executive' || persona === 'ops' || persona === null) && !returningVisitor) {
     return <DeadlineTimeline frameworks={frameworks} label={label} />
   }
 

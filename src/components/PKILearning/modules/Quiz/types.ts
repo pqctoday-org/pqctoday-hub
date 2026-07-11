@@ -1,68 +1,88 @@
 // SPDX-License-Identifier: GPL-3.0-only
 export type QuestionType = 'multiple-choice' | 'true-false' | 'multi-select'
 
-export type QuizCategory =
-  | 'pqc-fundamentals'
-  | 'algorithm-families'
-  | 'nist-standards'
-  | 'migration-planning'
-  | 'compliance'
-  | 'protocol-integration'
-  | 'industry-threats'
-  | 'crypto-operations'
-  | 'digital-assets'
-  | 'tls-basics'
-  | 'pki-infrastructure'
-  | 'digital-id'
-  | '5g-security'
-  | 'quantum-threats'
-  | 'hybrid-crypto'
-  | 'crypto-agility'
-  | 'vpn-ssh-pqc'
-  | 'stateful-signatures'
-  | 'email-signing'
-  | 'kms-pqc'
-  | 'hsm-pqc'
-  | 'entropy-randomness'
-  | 'merkle-tree-certs'
-  | 'qkd'
-  | 'code-signing'
-  | 'api-security-jwt'
-  | 'iot-ot-pqc'
-  | 'pqc-risk-management'
-  | 'pqc-business-case'
-  | 'pqc-governance'
-  | 'compliance-strategy'
-  | 'migration-program'
-  | 'vendor-risk'
-  | 'data-asset-sensitivity'
-  | 'standards-bodies'
-  | 'web-gateway-pqc'
-  | 'emv-payment-pqc'
-  | 'ai-security-pqc'
-  | 'energy-utilities-pqc'
-  | 'healthcare-pqc'
-  | 'aerospace-pqc'
-  | 'automotive-pqc'
-  | 'crypto-dev-apis'
-  | 'confidential-computing'
-  | 'platform-eng-pqc'
-  | 'secrets-management-pqc'
-  | 'network-security-pqc'
-  | 'database-encryption-pqc'
-  | 'iam-pqc'
-  | 'secure-boot-pqc'
-  | 'os-pqc'
-  | 'exec-quantum-impact'
-  | 'dev-quantum-impact'
-  | 'arch-quantum-impact'
-  | 'ops-quantum-impact'
-  | 'research-quantum-impact'
-  | 'pqc-testing-validation'
-  | 'crypto-mgmt-modernization'
-  | 'slh-dsa'
-  | 'mls-group-messaging'
-  | 'pqc-candidates'
+/**
+ * Canonical quiz category vocabulary (runtime value).
+ *
+ * Single source of truth for quiz categories: the `QuizCategory` type is
+ * derived from this array, and the data-integrity validator
+ * (scripts/validators/cross-ref-checks.ts, check C8) imports it so the
+ * validator can never drift from the app vocabulary.
+ * Add new categories HERE (and give them metadata in
+ * src/data/quizDataLoader.ts CATEGORY_CONFIG, which is exhaustively typed).
+ */
+export const QUIZ_CATEGORIES = [
+  'pqc-fundamentals',
+  'algorithm-families',
+  'nist-standards',
+  'migration-planning',
+  'compliance',
+  'protocol-integration',
+  'industry-threats',
+  'crypto-operations',
+  'digital-assets',
+  'tls-basics',
+  'pki-infrastructure',
+  'digital-id',
+  '5g-security',
+  'quantum-threats',
+  'hybrid-crypto',
+  'crypto-agility',
+  'vpn-ssh-pqc',
+  'stateful-signatures',
+  'email-signing',
+  'kms-pqc',
+  'hsm-pqc',
+  'entropy-randomness',
+  'merkle-tree-certs',
+  'qkd',
+  'code-signing',
+  'api-security-jwt',
+  'iot-ot-pqc',
+  'pqc-risk-management',
+  'pqc-business-case',
+  'pqc-governance',
+  'compliance-strategy',
+  'migration-program',
+  'vendor-risk',
+  'data-asset-sensitivity',
+  'standards-bodies',
+  'web-gateway-pqc',
+  'emv-payment-pqc',
+  'ai-security-pqc',
+  'energy-utilities-pqc',
+  'healthcare-pqc',
+  'aerospace-pqc',
+  'automotive-pqc',
+  'crypto-dev-apis',
+  'confidential-computing',
+  'platform-eng-pqc',
+  'secrets-management-pqc',
+  'network-security-pqc',
+  'database-encryption-pqc',
+  'iam-pqc',
+  'secure-boot-pqc',
+  'os-pqc',
+  'exec-quantum-impact',
+  'dev-quantum-impact',
+  'arch-quantum-impact',
+  'ops-quantum-impact',
+  'research-quantum-impact',
+  'pqc-testing-validation',
+  'crypto-mgmt-modernization',
+  'slh-dsa',
+  'mls-group-messaging',
+  'pqc-candidates',
+  'sbom',
+  'cbom',
+  'crypto-registry',
+  'verification-closure',
+  'pqc-grc',
+  'skills-team-structure',
+  'soc-implementation-pqc',
+] as const
+
+export type QuizCategory = (typeof QUIZ_CATEGORIES)[number]
 
 export interface QuizOption {
   id: string

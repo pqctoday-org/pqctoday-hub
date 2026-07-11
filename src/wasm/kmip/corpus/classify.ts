@@ -74,22 +74,17 @@ const TRANSPORT_TESTS: Record<string, string> = {
     'MaximumResponseSize (§9.10) enforcement lives in the native TLS listener, not dispatch() — no seam to implement it on in this wasm build',
 }
 
-/** The 3 native-gated (Validate/Certify/ReCertify — wasm32 crypto-backend
- * gap) + 4 zero-handler (Notify/Put server-to-client scope boundary;
- * DelegatedLogin/Re-Provision no handler) ops. Engine 0.12.0's honest
- * maximum made the other 8 formerly-listed ops real (split keys, async
- * quartet, ObtainLease, SetConstraints) — everything else in the 66-op
- * enum genuinely works IN THIS WASM BUILD, so a test is only unreplayable
- * if it needs one of these 7. */
-const PERMANENTLY_UNSUPPORTED_OPS = new Set([
-  'Validate',
-  'Certify',
-  'ReCertify',
-  'Notify',
-  'Put',
-  'DelegatedLogin',
-  'Re-Provision',
-])
+/** The 4 zero-handler ops: Notify/Put are a server-to-client scope
+ * boundary (this playground has no "client" to notify/push to);
+ * DelegatedLogin/Re-Provision have no handler at all. Everything else in
+ * the 66-op enum genuinely works IN THIS WASM BUILD — including, since the
+ * pure-Rust cert-ops port (WP4) now in this unified engine,
+ * Validate/Certify/ReCertify, previously listed here as a real wasm32
+ * crypto-backend gap (`ring`/`rcgen` couldn't cross-compile). Engine
+ * 0.12.0's honest maximum made 8 more formerly-listed ops real before that
+ * (split keys, async quartet, ObtainLease, SetConstraints) — a test is
+ * only unreplayable if it needs one of these 4. */
+const PERMANENTLY_UNSUPPORTED_OPS = new Set(['Notify', 'Put', 'DelegatedLogin', 'Re-Provision'])
 
 /** Collect every Operation enum value a transcript's request side
  * invokes. */

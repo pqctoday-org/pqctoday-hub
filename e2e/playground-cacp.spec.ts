@@ -36,7 +36,7 @@ test('boots the in-browser engine and runs a real Create → Activate → Sign �
 
   // Engine boot: the "Booting…" loader is replaced by the control-plane header.
   // wasm instantiate + engine init can take a moment, so allow generous time.
-  await expect(page.getByRole('heading', { name: /Crypto-Agility Control Plane/i })).toBeVisible({
+  await expect(page.getByRole('heading', { name: /KMIP Control Plane/i })).toBeVisible({
     timeout: 30000,
   })
 
@@ -91,7 +91,7 @@ test('rekey-on-use policy migrates a classical key to PQC on first Sign, and the
   // DIFFERENT, more permissive policy (Classical) first, then carried over —
   // that hand-off, not a same-policy flip, is the actual "no flag day" story.
   await page.goto('/playground/cacp')
-  await expect(page.getByRole('heading', { name: /Crypto-Agility Control Plane/i })).toBeVisible({
+  await expect(page.getByRole('heading', { name: /KMIP Control Plane/i })).toBeVisible({
     timeout: 30000,
   })
 
@@ -129,7 +129,7 @@ test('rekey-on-use policy migrates a classical key to PQC on first Sign, and the
 
 test('switching policy resolves a decision on the agility plane', async ({ page }) => {
   await page.goto('/playground/cacp')
-  await expect(page.getByRole('heading', { name: /Crypto-Agility Control Plane/i })).toBeVisible({
+  await expect(page.getByRole('heading', { name: /KMIP Control Plane/i })).toBeVisible({
     timeout: 30000,
   })
 
@@ -139,4 +139,60 @@ test('switching policy resolves a decision on the agility plane', async ({ page 
   const pqcChip = page.getByRole('button', { name: /PQC \(the "after"\)/i })
   await pqcChip.click()
   await expect(pqcChip.getByText('active', { exact: true })).toBeVisible({ timeout: 15000 })
+})
+
+// WP7-b/e (cert-ops plan revision) — the two existing specs above predate
+// the pure-Rust Certificate Services port; neither touches the Commands
+// tab or the "Set up demo CA" affordance. This closes the core of that
+// gap: a real browser (Playwright/Chromium, headless — genuinely
+// available in this session, contrary to an earlier assumption; verified
+// by running it, not by re-asserting the standing caveat) driving the
+// actual Commands tab UI end to end (Set up demo CA → Validate → a real
+// "(Valid)" answer rendered on screen), not just the vitest-against-real-
+// wasm-engine harness the rest of this session's coverage uses (Node, not
+// a browser DOM).
+//
+// A second test attempting the CreateKeyPair → Certify-by-UID path (the
+// WP-R/R1 fix specifically) was attempted and dropped: the Commands tab's
+// per-operation response tree — unlike Validate's, which renders inline
+// under the expanded op panel — didn't surface via the same selector
+// pattern after several targeted DOM probes (not in the panel, not in a
+// separate "Execution Log" entry with content visible before its one
+// button turned out to be "Clear", which discarded it). WP-R/R1 itself is
+// still solidly proven — natively (certify.rs's per-algorithm tests) and
+// in-browser-equivalent (the wasm/vitest tests in opTemplates.local.test.
+// ts, which drive the identical wasm engine this e2e spec's browser
+// loads, just from Node instead of a browser DOM) — this is specifically
+// about the raw UI-click path, not about whether the fix works.
+test.describe('Certificate Services (Commands tab)', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/playground/cacp')
+    await expect(page.getByRole('heading', { name: /KMIP Control Plane/i }).first()).toBeVisible({
+      timeout: 30000,
+    })
+    await page.getByRole('tab', { name: 'KMIP3.0', exact: true }).click()
+    await page.locator('[data-tour="kmip3-subtabs"] button', { hasText: 'Commands' }).click()
+  })
+
+  test('Set up demo CA mints a real self-signed cert that Validates Valid', async ({ page }) => {
+    await page.getByRole('button', { name: 'Set up demo CA', exact: true }).click()
+    const caReady = page.getByText(/CA ready: /)
+    await expect(caReady).toBeVisible({ timeout: 15000 })
+    const caUid = ((await caReady.textContent()) ?? '').replace('CA ready: ', '').trim()
+    expect(caUid).toMatch(/^urn:/)
+
+    await page
+      .getByRole('button', { name: /Validate\s*§/ })
+      .first()
+      .click()
+    const uidInput = page
+      .locator('label', { hasText: 'Stored Certificate UIDs' })
+      .locator('..')
+      .locator('input')
+    await uidInput.fill(caUid)
+    await page.getByRole('button', { name: 'Run', exact: true }).first().click()
+
+    const indicatorRow = page.locator('span', { hasText: 'ValidityIndicator' }).locator('../..')
+    await expect(indicatorRow.getByText('(Valid)')).toBeVisible({ timeout: 15000 })
+  })
 })

@@ -40,6 +40,7 @@ export const REPORT_SECTION_ORDER: readonly ReportSectionId[] = [
   'assessmentProfile',
   'hndlHnfl',
   'discovery',
+  'cbom',
   'algorithmMigration',
   'complianceImpact',
   'recommendedActions',
@@ -60,6 +61,9 @@ export const REPORT_SECTION_TO_CSWP39: Record<ReportSectionId, ReportSectionCswp
   complianceImpact: { cswp39Step: 'govern', frameworkPhase: 'p7' },
   assessmentProfile: { cswp39Step: 'inventory', frameworkPhase: 'p1' },
   discovery: { cswp39Step: 'inventory', frameworkPhase: 'p1' },
+  // p2 (CBOM) runs parallel with p1 in the phase model (frameworkPhases.ts
+  // p2.cadence/parallelWith) — its own cswp39Steps is ['inventory'], matched here.
+  cbom: { cswp39Step: 'inventory', frameworkPhase: 'p2' },
   algorithmMigration: { cswp39Step: 'inventory', frameworkPhase: 'p1' },
   hndlHnfl: { cswp39Step: 'identify-gaps', frameworkPhase: 'p3' },
   riskBreakdown: { cswp39Step: 'identify-gaps', frameworkPhase: 'p3' },
@@ -90,6 +94,7 @@ export const REPORT_SECTION_LABELS: Record<ReportSectionId, string> = {
   assessmentProfile: 'Assessment Profile',
   hndlHnfl: 'HNDL / HNFL Risk Windows',
   discovery: 'Cryptographic Discovery',
+  cbom: 'Cryptographic Bill of Materials (CBOM)',
   algorithmMigration: 'Algorithm Migration Priority',
   complianceImpact: 'Compliance Impact',
   recommendedActions: 'Recommended Actions',

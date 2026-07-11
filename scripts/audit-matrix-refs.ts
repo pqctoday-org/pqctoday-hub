@@ -45,8 +45,12 @@ import {
 const RFC_RE = /\bRFC[\s-]?(\d{4,5})\b/gi
 const DRAFT_RE = /\b(draft-[a-z]+(?:-[a-z0-9]+)+(?:-\d+)?)/gi
 
+// NOTE: "OS" (OASIS Standard) has no trailing digit — unlike CS/CSD/WD
+// (Committee Specification / Draft, Working Draft), there is only ever one
+// canonical OS per spec version, so its digit group is optional (fixed
+// 2026-07-09 when PKCS#11 v3.2 reached OASIS Standard).
 const REF_ID_RE =
-  /^(RFC \d{4,5}|draft-[a-z0-9]+(?:-[a-z0-9]+)+|TCG [A-Za-z0-9. -]+|3GPP T[RS] \d+\.\d+|UEFI \d+\.\d+|IEEE [A-Z0-9.]+(?:-\d+)?|PKCS#11 v\d+\.\d+ (?:CSD|CS|OS|WD)\d+|KMIP \d+\.\d+ (?:CSD|CS|OS|WD)\d+|Signal [A-Za-z0-9 -]+|sigstore\/[a-z-]+)$/
+  /^(RFC \d{4,5}|draft-[a-z0-9]+(?:-[a-z0-9]+)+|TCG [A-Za-z0-9. -]+|3GPP T[RS] \d+\.\d+|UEFI \d+\.\d+|IEEE [A-Z0-9.]+(?:-\d+)?|PKCS#11 v\d+\.\d+ (?:CSD\d+|CS\d+|OS\d*|WD\d+)|KMIP \d+\.\d+ (?:CSD\d+|CS\d+|OS\d*|WD\d+)|Signal [A-Za-z0-9 -]+|sigstore\/[a-z-]+)$/
 
 export interface Finding {
   rowId: string
@@ -113,8 +117,12 @@ function structuredRefIds(row: ProtocolMatrixRow): Set<string> {
 /** Match prose-extracted ids (e.g. "RFC 9370", "draft-foo") with structured ids
  *  (e.g. "RFC-9370", "draft-foo-12"). */
 function normalizeRefId(id: string): string {
-  // Drop version suffix on drafts (e.g. -07) and collapse dashes/spaces between "RFC" and the number.
-  const draftNoVer = id.replace(/-\d+$/, '')
+  // Drop version suffix on DRAFTS ONLY (e.g. -07). Bug fixed 2026-07-09: this
+  // used to strip trailing "-\d+" unconditionally, which also ate the RFC
+  // number itself off hyphenated ids like "RFC-9420" (→ "RFC" with no number),
+  // silently breaking prose-hygiene matching for any RFC cited only via a
+  // hyphenated latestRelease/latestDraft id (not a space-form dimension ref).
+  const draftNoVer = id.startsWith('draft-') ? id.replace(/-\d+$/, '') : id
   return draftNoVer.replace(/^RFC[-\s]?/, 'RFC ')
 }
 

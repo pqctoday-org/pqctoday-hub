@@ -36,6 +36,8 @@ import { HsmSignCombinedPanel } from './tabs/SignVerifyTab'
 import { Button } from '../ui/button'
 import { Card } from '../ui/card'
 import { InlineTooltip } from '../ui/InlineTooltip'
+import { ExecutiveRedirectBanner } from '../common/ExecutiveRedirectBanner'
+import { usePersonaStore } from '@/store/usePersonaStore'
 import { logEvent } from '../../utils/analytics'
 import {
   hsm_generateMLDSAKeyPair,
@@ -57,6 +59,7 @@ type HsmTab =
   | 'logs'
 
 export const HsmPlayground = () => {
+  const role = usePersonaStore((s) => s.selectedPersona)
   const { error } = useSettingsContext()
   const {
     engineMode,
@@ -260,6 +263,18 @@ export const HsmPlayground = () => {
 
   return (
     <Card className="p-3 md:p-6 min-h-[60vh] md:min-h-[85vh] flex flex-col">
+      {role === 'executive' && (
+        <ExecutiveRedirectBanner
+          className="mb-4 shrink-0"
+          title="PKCS#11 HSM Playground is a hands-on engineering workbench."
+          subtitle="This surface runs real cryptographic operations against a simulated hardware security module — useful for your engineering team, not for board-level PQC decisions. For executive context:"
+          ctas={[
+            { label: 'Command Center →', to: '/business' },
+            { label: 'Compliance landscape →', to: '/compliance' },
+            { label: 'Migration framework →', to: '/migrate' },
+          ]}
+        />
+      )}
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 shrink-0 gap-2">
         <h3 className="text-xl md:text-2xl font-bold flex items-center gap-2">

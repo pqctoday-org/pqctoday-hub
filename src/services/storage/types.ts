@@ -177,4 +177,12 @@ export interface LearningProgress {
   kpiHistory?: {
     riskScore: { ts: number; score: number }[]
   }
+
+  /**
+   * One-time notice flag (v15): checkpoints now require a passing checkpoint-quiz
+   * score, not just finishing the phase's modules. `false` for stores migrated
+   * from an earlier version (so the notice is shown once); `true` for brand-new
+   * stores, which never had a different rule to be notified about.
+   */
+  checkpointScoringNoticeSeen?: boolean
 }

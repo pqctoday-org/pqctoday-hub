@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { loadLatestCSVAsync, parseIntOrNull } from './csvUtils'
+import type { AlgorithmStatusTier } from './algorithmStatusTier'
 
 export const RESEARCH_NEEDED = 'Research needed'
 
@@ -23,6 +24,8 @@ export interface AlgorithmDetail {
   region: string
   status: string
   statusUrl?: string
+  /** Normalized status-maturity tier — see WORKSTREAMS.md §WS-A / algorithmStatusTier.ts. */
+  statusTier: AlgorithmStatusTier
   type:
     | 'KEM'
     | 'Signature'
@@ -78,6 +81,88 @@ interface RawAlgorithmRow {
   confidence_score?: string
 }
 
+/**
+ * Reference-CSV status/fips_standard → tier lookup (WORKSTREAMS.md §WS-A).
+ *
+ * A raw `status` value alone is ambiguous — e.g. `'Candidate'` alone covers
+ * HQC (fips-draft), BIKE (round4-not-selected), FN-DSA (fips-draft), the
+ * hybrid-TLS IETF groups (ietf-draft), the KpqC winners (regional), and the
+ * NIST Additional-Sig Round 2 candidates all at once — so the key here is
+ * the exact (status, fips_standard) pair as it literally appears in the CSV,
+ * enumerated by hand against `pqc_complete_algorithm_reference_07062026.csv`.
+ * Reconfirm this table against the actual wired filename if it changes.
+ *
+ * SMAUG-T/NTRU+/HAETAE/AIMer (KpqC) are tiered 'regional' — verified via
+ * PQShield's 2025 report that these four were the final KpqC competition
+ * winners (announced Jan 2025) — even though this CSV's own fips_standard
+ * text still says "KR-PQC Round 1", which is stale. See PR description.
+ */
+const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
+  'FIPS 203|||FIPS 203': 'final',
+  'FIPS 204|||FIPS 204': 'final',
+  'FIPS 205|||FIPS 205': 'final',
+  'FIPS 186-5|||SP 800-56A': 'final',
+  'FIPS 186-5|||RFC 7748': 'final',
+  'FIPS 186-5|||FIPS 186': 'final',
+  'FIPS 186-5|||RFC 8032': 'final',
+  'SP 800-208|||NIST SP 800-208': 'final',
+  'SP 800-56B|||SP 800-56B': 'final',
+  'RFC 7919|||RFC 7919': 'final',
+  'SEC 2|||SEC 2': 'final',
+  'ISO 18033-2 Amd2|||NIST Round 3 alternate (not advanced); BSI/ANSSI & ISO 18033-2 recommended':
+    'final',
+  'Standardised (ETSI TS 104 015)|||ETSI TS 104 015 (published Feb 2025)': 'final',
+  'Candidate|||Draft (Selected 2025)': 'fips-draft', // HQC
+  // FN-DSA: FIPS 206 is announced/in development — NO public draft exists yet
+  // (csrc.nist.gov is the source of truth; the ipd URL 404s). Tier stays
+  // 'fips-draft' (the NIST-FIPS-pipeline tier HQC also uses) — see
+  // algorithmStatusTier.ts for the honest tier description.
+  'Candidate|||FIPS 206 (in development)': 'fips-draft', // FN-DSA (07092026 snapshot)
+  'Candidate|||FIPS 206 (Draft)': 'fips-draft', // FN-DSA (legacy ≤07082026 snapshots)
+  'Draft|||NIST SP 800-230 (Draft)': 'sp-draft', // SLH-DSA-*-24
+  'Candidate|||draft-ietf-tls-hybrid-design': 'ietf-draft', // X25519MLKEM768 etc.
+  'IETF Internet-Draft|||IETF Internet-Draft — DRAFT (not yet RFC)': 'ietf-draft',
+  'IETF Internet-Draft (alias for HPKE with PQ KEM)|||IETF Internet-Draft — DRAFT (not yet RFC)':
+    'ietf-draft', // HPKE-PQ
+  'Candidate|||NIST Additional Signatures Round 2': 'round2-candidate', // MAYO, HAWK
+  'NIST Additional Sig Round 2 — Candidate|||NIST Additional Sig — Round 2 candidate (NOT standardised)':
+    'round2-candidate', // UOV, CROSS, LESS, FAEST, SNOVA
+  'NIST Additional Sig Round 2 — Candidate (SQIsign-I)|||NIST Additional Sig — Round 2 candidate (NOT standardised)':
+    'round2-candidate', // SQIsign
+  'Candidate|||NIST PQC Round 4 (concluded 2025; not selected)': 'round4-not-selected', // BIKE
+  'BSI TR-02102-1|||NIST PQC Round 4 (Alternate)': 'regional', // Classic-McEliece
+  'Standardised (BSI TR-02102-1)|||BSI TR-02102-1 (recommended Level 5); NOT in NIST FIPS':
+    'regional',
+  'Standardised (BSI TR-02102-1)|||BSI/conservative national security recs; NOT in NIST FIPS':
+    'regional',
+  'Candidate|||KR-PQC Round 1 (KPQC)': 'regional', // SMAUG-T/NTRU+/HAETAE/AIMer — verified KpqC winners
+  'To Be Checked|||KR-PQC Round 1 (KPQC)': 'unverified', // Aigis-enc/sig
+  'CACR competition winner (2020); ELIMINATED from NIST Round 2 (not advanced); NOT an adopted national standard — do not treat as deployable|||CACR national competition winner (as LAC.KEX, ~2018-2020) — NOT an issued OSCCA/GB national standard':
+    'eliminated', // LAC
+  'CONFIRMED PLACEHOLDER — official ICCS program track name (Block Cipher category); no winning algorithm selected yet|||NGCC TBD — submission window open, candidates not yet selected':
+    'placeholder', // NGCC-BC
+  'CONFIRMED PLACEHOLDER — official ICCS program track name (Cryptographic Hash category); no winning algorithm selected yet|||NGCC TBD — submission window open, candidates not yet selected':
+    'placeholder', // NGCC-CH
+}
+
+/** Throws on any (status, fips_standard) pair not in the lookup table above —
+ *  fail closed instead of silently defaulting a new/unrecognised CSV status
+ *  to "Certified" (the exact bug this enum replaces). */
+export function mapReferenceStatusToTier(
+  status: string,
+  fipsStandard: string
+): AlgorithmStatusTier {
+  const key = `${status}|||${fipsStandard}`
+  const tier = REFERENCE_STATUS_TIER_LOOKUP[key]
+  if (!tier) {
+    throw new Error(
+      `[pqcAlgorithmsData] Unrecognized (status, fips_standard) pair: ${JSON.stringify(status)} / ${JSON.stringify(fipsStandard)}. ` +
+        'Add it to REFERENCE_STATUS_TIER_LOOKUP in pqcAlgorithmsData.ts.'
+    )
+  }
+  return tier
+}
+
 // Import CSV data dynamically (lazy glob)
 const csvModule = import.meta.glob('./pqc_complete_algorithm_reference_*.csv', {
   query: '?raw',
@@ -117,6 +202,13 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
     csvModule,
     /pqc_complete_algorithm_reference_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
     (row) => {
+      const statusTier = mapReferenceStatusToTier(row.status || '', row.fips_standard || '')
+      // NGCC-BC/NGCC-CH are a program track name with no algorithm selected
+      // yet (confirmed by the CSV's own data-quality note) — not a real
+      // algorithm to show in a user-facing comparison. Drop the row rather
+      // than badge it, per WORKSTREAMS.md §WS-A step 4.
+      if (statusTier === 'placeholder') return null
+
       const sizesUnknown =
         isResearchNeeded(row.public_key_bytes) ||
         isResearchNeeded(row.private_key_bytes) ||
@@ -161,6 +253,7 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
         region: row.region || '',
         status: row.status || '',
         statusUrl: row.status_url || undefined,
+        statusTier,
         type: row.algorithm_family as AlgorithmDetail['type'],
         hasResearchGap,
         sizesUnknown,

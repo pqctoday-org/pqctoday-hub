@@ -5,6 +5,8 @@
  * Ports C1-C10, D1-D6 from validate-csv-xrefs.cjs.
  * Adds N1-N15 new checks from the unified validator plan.
  */
+import fs from 'fs'
+import path from 'path'
 import type { CheckResult, CsvRow, Finding, Severity } from './types.js'
 import {
   loadCSV,
@@ -15,139 +17,49 @@ import {
   splitSemicolon,
   splitComma,
 } from './data-loader.js'
+import { QUIZ_CATEGORIES as APP_QUIZ_CATEGORIES } from '../../src/components/PKILearning/modules/Quiz/types.js'
 
 // ── Reference constants ─────────────────────────────────────────────────────
 
-const MODULE_IDS = new Set([
-  'pqc-101',
-  'quantum-threats',
-  'hybrid-crypto',
-  'crypto-agility',
-  'tls-basics',
-  'vpn-ssh-pqc',
-  'email-signing',
-  'pki-workshop',
-  'kms-pqc',
-  'hsm-pqc',
-  'stateful-signatures',
-  'digital-assets',
-  '5g-security',
-  'digital-id',
-  'entropy-randomness',
-  'merkle-tree-certs',
-  'qkd',
-  'code-signing',
-  'api-security-jwt',
-  'crypto-dev-apis',
-  'web-gateway-pqc',
-  'iot-ot-pqc',
-  'pqc-risk-management',
-  'pqc-business-case',
-  'pqc-governance',
-  'vendor-risk',
-  'migration-program',
-  'compliance-strategy',
-  'data-asset-sensitivity',
-  'standards-bodies',
-  'confidential-computing',
-  'database-encryption-pqc',
-  'energy-utilities-pqc',
-  'emv-payment-pqc',
-  'ai-security-pqc',
-  'platform-eng-pqc',
-  'healthcare-pqc',
-  'aerospace-pqc',
-  'automotive-pqc',
-  'exec-quantum-impact',
-  'dev-quantum-impact',
-  'arch-quantum-impact',
-  'ops-quantum-impact',
-  'research-quantum-impact',
-  'secrets-management-pqc',
-  'network-security-pqc',
-  'pqc-testing-validation',
-  'iam-pqc',
-  'secure-boot-pqc',
-  'os-pqc',
-  'quiz',
-  'assess',
-  // Added 2026-07-07: modules that ship in the Simulation feature
-  // (src/simulation/trees/*.ts) but were never added here, so N14/C4/GC-6
-  // falsely flagged real, actively-referenced migrate/library/Q&A rows as
-  // broken. Confirmed each is genuinely used in non-validator source before
-  // adding (not guessed) -- see migrate-data-remediation-plan-07072026.md.
-  'slh-dsa',
-  'cbom',
-  'crypto-registry',
-  'verification-closure',
-  'crypto-mgmt-modernization',
-  'pqc-candidates',
-  'pki-enrollment-protocols',
-  'mls-group-messaging',
-  'cbom-compliance',
-  'crypto-discovery',
-])
+/**
+ * Learn-module ids, derived from the real module tree
+ * (src/components/PKILearning/modules/<Dir>/manifest.ts top-level `id`) --
+ * same enumeration audit-module-infographics.ts and
+ * graph-consistency-checks.ts use. Replaces a hand-copied list that had
+ * drifted twice (once fixed 2026-07-07 for the Simulation-feature modules,
+ * again 2026-07-10 -- still missing pqc-grc, sbom, skills-team-structure,
+ * soc-implementation-pqc, all real LM-057..063 modules shipped in 4.15.0).
+ * A dropped module_id token on a real, accurate library/leader row is a
+ * worse failure mode than a stale allowlist -- this can't drift again.
+ */
+function loadManifestModuleIds(): Set<string> {
+  const modulesDir = path.resolve(process.cwd(), 'src/components/PKILearning/modules')
+  const ids = new Set<string>()
+  if (!fs.existsSync(modulesDir)) return ids
+  for (const entry of fs.readdirSync(modulesDir, { withFileTypes: true })) {
+    if (!entry.isDirectory()) continue
+    const manifest = path.join(modulesDir, entry.name, 'manifest.ts')
+    if (!fs.existsSync(manifest)) continue
+    const m = fs.readFileSync(manifest, 'utf-8').match(/^ {2}id:\s*'([a-z0-9-]+)',?\s*$/m)
+    if (m) ids.add(m[1])
+  }
+  // Non-module learn-destination ids referenced by migrate/library/leaders
+  // rows that are NOT module manifests: the quiz + assessment routes.
+  ids.add('quiz')
+  ids.add('assess')
+  return ids
+}
 
-const QUIZ_CATEGORIES = new Set([
-  'pqc-fundamentals',
-  'algorithm-families',
-  'nist-standards',
-  'migration-planning',
-  'compliance',
-  'protocol-integration',
-  'industry-threats',
-  'crypto-operations',
-  'digital-assets',
-  'tls-basics',
-  'pki-infrastructure',
-  'digital-id',
-  '5g-security',
-  'quantum-threats',
-  'hybrid-crypto',
-  'crypto-agility',
-  'vpn-ssh-pqc',
-  'stateful-signatures',
-  'email-signing',
-  'key-management',
-  'kms-pqc',
-  'hsm-pqc',
-  'entropy-randomness',
-  'merkle-tree-certs',
-  'qkd',
-  'code-signing',
-  'api-security-jwt',
-  'iot-ot-pqc',
-  'pqc-risk-management',
-  'pqc-business-case',
-  'pqc-governance',
-  'compliance-strategy',
-  'migration-program',
-  'vendor-risk',
-  'data-asset-sensitivity',
-  'standards-bodies',
-  'web-gateway-pqc',
-  'emv-payment-pqc',
-  'ai-security-pqc',
-  'energy-utilities-pqc',
-  'healthcare-pqc',
-  'aerospace-pqc',
-  'automotive-pqc',
-  'crypto-dev-apis',
-  'confidential-computing',
-  'platform-eng-pqc',
-  'secrets-management-pqc',
-  'network-security-pqc',
-  'database-encryption-pqc',
-  'iam-pqc',
-  'secure-boot-pqc',
-  'os-pqc',
-  'exec-quantum-impact',
-  'dev-quantum-impact',
-  'arch-quantum-impact',
-  'ops-quantum-impact',
-  'research-quantum-impact',
-  'pqc-testing-validation',
-])
+const MODULE_IDS = loadManifestModuleIds()
+
+// Quiz category vocabulary is derived from the app's own QuizCategory type
+// (src/components/PKILearning/modules/Quiz/types.ts exports the runtime
+// QUIZ_CATEGORIES array the type is derived from). Importing it means check C8
+// validates the CSV against the exact vocabulary the app compiles with and can
+// never drift from it. Before 2026-07-10 this was a stale hand-copied list
+// (missing 11 real categories, plus one — 'key-management' — that the app
+// never had), which produced 128 false C8 errors.
+const QUIZ_CATEGORIES = new Set<string>(APP_QUIZ_CATEGORIES)
 
 const VALID_ROUTE_PREFIXES = [
   '/',
@@ -223,6 +135,32 @@ function isValidRoute(p: string): boolean {
 
 export function runCrossRefChecks(): CheckResult[] {
   const results: CheckResult[] = []
+
+  // A 0-module enumeration would make C4/N14 pass vacuously (every row's
+  // module_ids "resolves" against an empty exclusion, i.e. nothing gets
+  // flagged) -- the exact silent-0/0 failure mode this validator suite
+  // exists to prevent elsewhere. Fail loudly instead.
+  if (MODULE_IDS.size === 0) {
+    results.push(
+      makeCheck(
+        'C4-N14-module-enumeration',
+        'cross-reference',
+        'PKILearning module manifest enumeration',
+        'modules',
+        null,
+        'ERROR',
+        [
+          finding(
+            'src/components/PKILearning/modules',
+            null,
+            'enumeration',
+            '0',
+            'Enumerated 0 module manifests -- module_ids checks (C4, N14) would pass vacuously. Fix the module tree or the enumeration path.'
+          ),
+        ]
+      )
+    )
+  }
 
   // ── Load all data sources ──────────────────────────────────────────────
   const library = loadCSV('library_')
@@ -1100,7 +1038,9 @@ export function runCrossRefChecks(): CheckResult[] {
     ])
     const f: Finding[] = []
     transitions.rows.forEach((row, i) => {
-      const replacement = row['PQC Replacement']
+      // Header renamed to snake_case in the 06252026 snapshot; keep the old
+      // name as fallback so the check still works on archived files.
+      const replacement = row.pqc_replacement ?? row['PQC Replacement']
       if (!replacement) return
       // Extract base algorithm name: "ML-KEM-512 (NIST Level 1)" → "ML-KEM-512"
       const baseName = replacement.split('(')[0].trim()

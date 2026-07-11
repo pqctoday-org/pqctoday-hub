@@ -1,10 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 // Export the user's migration plan as a CycloneDX-flavoured JSON document.
-// Reuses the CycloneDX 1.6 CBOM shape used elsewhere in the app
-// (modules/CryptoAgility) rather than inventing a new schema. This is a plan
-// export, not a full scan — each planned asset becomes a component carrying its
-// classical→PQC target, decision, wave, and chosen product (if any).
+// 07092026: this builds its OWN inline object shape (below) — it does NOT
+// call the shared, schema-validated emitter at services/cbom/cycloneDx.ts
+// (that emitter now targets CycloneDX 1.7; this file was never independently
+// validated against either version). Informally mirrors the shape used
+// elsewhere in the app (modules/CryptoAgility) rather than inventing a new
+// one, but "CycloneDX-flavoured" is the honest description, not a schema
+// conformance claim. This is a plan export, not a full scan — each planned
+// asset becomes a component carrying its classical→PQC target, decision,
+// wave, and chosen product (if any).
 
 import { REPLACE_ASSETS, DECISIONS, type ReplaceAsset } from '@/data/migrationAssets'
 
@@ -50,7 +55,7 @@ export function buildPlanCbom(input: PlanExportInput): Record<string, unknown> {
       timestamp: input.timestamp,
       component: { type: 'application', name: 'PQC Migration Plan' },
       properties: [
-        { name: 'pqc:standard', value: 'NIST IR 8547 / CNSA 2.0' },
+        { name: 'pqc:standard', value: 'NIST IR 8547 (Initial Public Draft) / CNSA 2.0' },
         { name: 'pqc:assetCount', value: String(assets.length) },
       ],
     },

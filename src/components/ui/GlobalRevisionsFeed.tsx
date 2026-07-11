@@ -25,7 +25,16 @@ function getEntityLabels(): Map<string, string> {
   return m
 }
 
-const ALL_DOMAINS = ['module', 'tool', 'library', 'compliance', 'migrate', 'threats', 'algorithms']
+const ALL_DOMAINS = [
+  'module',
+  'tool',
+  'library',
+  'compliance',
+  'migrate',
+  'threats',
+  'algorithms',
+  'data',
+]
 
 interface GlobalRevisionsFeedProps {
   /** Limit to specific domains; omit for all */
@@ -206,6 +215,21 @@ export function GlobalRevisionsFeed({
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const [personaSortActive, setPersonaSortActive] = useState(true)
 
+  // A domain chip that can never surface a result is a dead end, not a filter —
+  // hide it until at least one entry in that domain has actually been logged.
+  const domainCounts = useMemo(() => {
+    const counts = new Map<string, number>()
+    for (const r of revisions) {
+      if (r.merge_sha === 'baseline') continue
+      counts.set(r.domain, (counts.get(r.domain) ?? 0) + 1)
+    }
+    return counts
+  }, [revisions])
+  const chipDomains = useMemo(
+    () => availableDomains.filter((d) => (domainCounts.get(d) ?? 0) > 0),
+    [availableDomains, domainCounts]
+  )
+
   // Domains the active persona cares about. Empty when no persona is selected,
   // when the user has dismissed the persona pill, or when the persona's
   // priority list is intentionally empty (researcher).
@@ -277,11 +301,11 @@ export function GlobalRevisionsFeed({
           )}
         </div>
       ) : (
-        availableDomains.length > 1 && (
+        chipDomains.length > 1 && (
           <>
             <div className="flex items-center gap-1.5 flex-wrap">
               <Filter className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-              {availableDomains.map((d) => (
+              {chipDomains.map((d) => (
                 <DomainChip
                   key={d}
                   domain={d}

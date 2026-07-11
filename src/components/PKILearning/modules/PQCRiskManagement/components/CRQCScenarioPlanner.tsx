@@ -95,7 +95,11 @@ const ALGORITHMS: AlgorithmImpact[] = [
 ]
 
 const COMPLIANCE_DEADLINES = [
-  { framework: 'CNSA 2.0 \u2014 Software/Firmware Signing', year: 2025, advisory: false },
+  {
+    framework: 'CNSA 2.0 \u2014 Software/Firmware Signing (exclusive use)',
+    year: 2030,
+    advisory: false,
+  },
   { framework: 'CNSA 2.0 \u2014 Traditional networking (TLS/IPsec)', year: 2030, advisory: false },
   {
     framework: 'CNSA 2.0 \u2014 Web / cloud / servers / OS exclusive',

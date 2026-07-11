@@ -301,9 +301,22 @@ interface WasmKmipPlayground {
   list_objects(): string
   audit_snapshot(limit: number): string
   clear_audit(): void
-  raw_pkcs11_encrypt_probe(publicKeyUid: string): string
-  register_certificate_demo(linkedPublicKeyUid: string, certDerHex: string): string
-  engine_certificate_attributes(certificateUid: string): string
+  setup_demo_ca(algorithm: string, subjectCn: string): string
+  raw_pkcs11_encrypt_probe(public_key_uid: string): string
+  register_certificate_demo(linked_public_key_uid: string, cert_der_hex: string): string
+  engine_certificate_attributes(certificate_uid: string): string
+}
+
+/** `KmipEngine.setupDemoCa`'s result. Mirrors the wasm binding's
+ * `{ ok: true, privateKeyUid, certificateUid, certificateDerHex, algorithm }`
+ * / `{ ok: false, error }` shape exactly — no reshaping in this layer. */
+export interface SetupDemoCaResult {
+  ok: boolean
+  privateKeyUid?: string
+  certificateUid?: string
+  certificateDerHex?: string
+  algorithm?: string
+  error?: string
 }
 
 /** The server's §6.1.55 RNG Seed policy choice — server-chosen and mutually
@@ -359,6 +372,18 @@ export class KmipEngine {
   /** Raw wire entry: TTLV bytes in → TTLV bytes out. */
   submit(ttlv: Uint8Array): Uint8Array {
     return this.pg.submit(ttlv)
+  }
+
+  /** Certificate Services "Set up demo CA": generate a fresh keypair,
+   * self-sign it into a CA certificate via the SAME production
+   * `certify::bootstrap_ca_certificate` path the native server's
+   * `--ca-key` bootstrap uses, and designate it so subsequent Certify /
+   * Re-certify calls have a signer. `algorithm` ∈ `RSA-2048 | ECDSA-P256 |
+   * ML-DSA-65 | SLH-DSA-SHA2-128f`. Safe to call more than once (e.g. to
+   * try a different algorithm) — each call mints a fresh, independently
+   * UID'd CA and re-designates it as the active one. */
+  setupDemoCa(algorithm: string, subjectCn = ''): SetupDemoCaResult {
+    return JSON.parse(this.pg.setup_demo_ca(algorithm, subjectCn)) as SetupDemoCaResult
   }
 
   /** Activate a crypto-agility policy from YAML (Plane 1). */

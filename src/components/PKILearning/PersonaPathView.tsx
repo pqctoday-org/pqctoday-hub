@@ -7,6 +7,7 @@ import { useLearnStore } from '../../store/useLearnStore'
 import type { PersonaId } from '@/data/learningPersonas'
 import { usePersonaPathItems } from './usePersonaPathItems'
 import { PersonaPathPhase } from './PersonaPathPhase'
+import { isCheckpointPassed } from './redesign/learnRedesign.helpers'
 
 interface PersonaPathViewProps {
   personaId: PersonaId
@@ -78,6 +79,7 @@ export const PersonaPathView = ({
 
   if (!summary) return null
 
+  const quizScores = modules['quiz']?.quizScores
   const showCommonGroundContext = personaId === 'executive' || personaId === 'curious'
   // P2-2: sticky breadcrumb for ops + curious — their paths are the longest and
   // benefit most from a global sense-of-progress overview.
@@ -135,7 +137,9 @@ export const PersonaPathView = ({
         const expandedOverride =
           // eslint-disable-next-line security/detect-object-injection
           key in phaseExpansion ? phaseExpansion[key] : undefined
-        const isComplete = totalCount > 0 && completedCount === totalCount
+        const statusMap: Record<string, string | undefined> = {}
+        for (const id of phase.moduleIds) statusMap[id] = modules[id]?.status
+        const isPassed = isCheckpointPassed(phase, statusMap, quizScores)
         return (
           <Fragment key={key}>
             <PersonaPathPhase
@@ -158,7 +162,7 @@ export const PersonaPathView = ({
                 <div className="flex items-center gap-2 min-w-0">
                   <CheckSquare
                     size={15}
-                    className={`shrink-0 ${isComplete ? 'text-status-success' : 'text-accent'}`}
+                    className={`shrink-0 ${isPassed ? 'text-status-success' : 'text-accent'}`}
                     aria-hidden="true"
                   />
                   <div className="min-w-0">
@@ -172,12 +176,12 @@ export const PersonaPathView = ({
                   </div>
                 </div>
                 <Button
-                  variant={isComplete ? 'outline' : 'gradient'}
+                  variant={isPassed ? 'outline' : 'gradient'}
                   size="sm"
                   className="shrink-0 text-xs"
                   onClick={() => onTakeCheckpointQuiz(phase.categories, phase.title)}
                 >
-                  {isComplete ? 'Review quiz' : 'Take quiz'}
+                  {isPassed ? 'Review quiz' : 'Take quiz'}
                 </Button>
               </div>
             )}

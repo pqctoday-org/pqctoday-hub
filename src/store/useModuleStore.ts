@@ -13,7 +13,7 @@ import {
 import { LEARN_SECTIONS, WORKSHOP_STEPS } from '../components/PKILearning/moduleData'
 import { applyModuleRenames } from '../components/PKILearning/manifest/contentVersion'
 
-const MODULE_STORE_VERSION = 14
+const MODULE_STORE_VERSION = 15
 const KPI_HISTORY_CAP = 30
 
 // Ephemeral session tracker — NOT in Zustand state, intentionally non-persisted.
@@ -43,6 +43,7 @@ interface ModuleState extends LearningProgress {
   mergeCorrectQuestionIds: (ids: string[]) => void
   pushRiskScoreSnapshot: (score: number) => void
   trackDailyVisit: () => void
+  dismissCheckpointScoringNotice: () => void
 }
 
 const INITIAL_STATE: LearningProgress = {
@@ -71,6 +72,9 @@ const INITIAL_STATE: LearningProgress = {
   notes: {},
   sessionTracking: undefined,
   quizMastery: { correctQuestionIds: [] },
+  // New stores start under the current (score-aware) checkpoint rule — there is no
+  // prior rule to notify them about, unlike stores migrated from an earlier version.
+  checkpointScoringNoticeSeen: true,
 }
 
 /**
@@ -521,6 +525,8 @@ export const useModuleStore = create<ModuleState>()(
             },
           }
         }),
+
+      dismissCheckpointScoringNotice: () => set({ checkpointScoringNoticeSeen: true }),
     }),
     {
       name: 'pki-module-storage',
@@ -733,6 +739,17 @@ export const useModuleStore = create<ModuleState>()(
             )
           }
           state.version = '14.0.0'
+          state.timestamp = Date.now()
+        }
+
+        // Version 14 → Version 15: checkpoints now require a passing checkpoint-quiz
+        // score, not just finishing the phase's modules (learn remediation item 3).
+        // No module/quiz data is touched or reset — this only flags that a one-time
+        // "checkpoints are now scored" notice should be shown, since a store this old
+        // may have displayed checkpoints as passed under the old, completion-only rule.
+        if (version <= 14) {
+          state.checkpointScoringNoticeSeen = false
+          state.version = '15.0.0'
           state.timestamp = Date.now()
         }
 

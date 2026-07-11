@@ -18,6 +18,7 @@ import { Button } from '../../../ui/button'
 import { ShareButton } from '../../../ui/ShareButton'
 import { ErrorAlert } from '../../../ui/error-alert'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { useHsmContext } from '../HsmContext'
 import {
   CKM_AES_KEY_WRAP,
   CKM_AES_KEY_WRAP_KWP,
@@ -52,11 +53,9 @@ import {
   type SoftHSMModule,
   type Pkcs11LogEntry,
 } from '../../../../wasm/softhsm'
-import { useHSM } from '@/hooks/useHSM'
-import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
-import { HsmResultRow, toHex, hexSnippet } from '../shared'
+import { HsmReadyGuard, HsmResultRow, toHex, hexSnippet } from '../shared'
 import { downloadCsv } from '@/utils/csvExport'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -417,8 +416,17 @@ export const KeyWrapPanel = ({
   initialAlgo,
   onAlgoChange,
 }: { initialAlgo?: string; onAlgoChange?: (algo: string) => void } = {}) => {
-  const hsm = useHSM('rust')
-  const { moduleRef, hSessionRef, isReady } = hsm
+  const {
+    moduleRef,
+    hSessionRef,
+    isReady,
+    hsmKeys,
+    addHsmKey,
+    addHsmLog,
+    hsmLog,
+    clearHsmLog,
+    removeHsmKey,
+  } = useHsmContext()
 
   const [showInfo, setShowInfo] = useState(false)
 
@@ -484,22 +492,22 @@ export const KeyWrapPanel = ({
   const [error, setError] = useState<string | null>(null)
 
   // Derived
-  const aesKeys = hsm.keys.filter((k) => k.family === 'aes' && k.role === 'secret')
+  const aesKeys = hsmKeys.filter((k) => k.family === 'aes' && k.role === 'secret')
   const anyLoading = loadingOp !== null
 
   // All wrappable keys: AES + any extractable private key (ML-KEM, ML-DSA, RSA, ECDSA, EdDSA)
   const wrappableKeys = [
     ...aesKeys,
-    ...hsm.keys.filter((k) => k.role === 'private' && k.label.includes('(extractable)')),
+    ...hsmKeys.filter((k) => k.role === 'private' && k.label.includes('(extractable)')),
   ]
 
   const targetKeyInfo =
-    targetKeyHandle !== null ? hsm.keys.find((k) => k.handle === targetKeyHandle) : null
+    targetKeyHandle !== null ? hsmKeys.find((k) => k.handle === targetKeyHandle) : null
   const isPqcTarget = targetKeyInfo?.family === 'ml-kem' || targetKeyInfo?.family === 'ml-dsa'
 
   const keyLabel = (handle: number | null): string => {
     if (handle === null) return 'unknown'
-    const k = hsm.keys.find((k) => k.handle === handle)
+    const k = hsmKeys.find((k) => k.handle === handle)
     return k ? `${k.label} (h=${handle})` : `h=${handle}`
   }
 
@@ -516,7 +524,7 @@ export const KeyWrapPanel = ({
       ok: entry.status === 'ok',
       engineName: 'cpp',
     }
-    hsm.addLog(synthetic)
+    addHsmLog(synthetic)
   }
 
   const emitAlgo = (
@@ -797,7 +805,7 @@ export const KeyWrapPanel = ({
       }
 
       setUnwrappedHandle(newHandle)
-      hsm.addKey({
+      addHsmKey({
         handle: newHandle,
         family: 'aes',
         role: 'secret',
@@ -845,7 +853,7 @@ export const KeyWrapPanel = ({
       )
 
       setUnwrappedHandle(newHandle)
-      hsm.addKey({
+      addHsmKey({
         handle: newHandle,
         family: 'aes',
         role: 'secret',
@@ -915,7 +923,7 @@ export const KeyWrapPanel = ({
       )
 
       setUnwrappedHandle(newHandle)
-      hsm.addKey({
+      addHsmKey({
         handle: newHandle,
         family: 'aes',
         role: 'secret',
@@ -1051,7 +1059,7 @@ export const KeyWrapPanel = ({
       setRsaPubHandle(pubHandle)
       setRsaPrivHandle(privHandle)
       const ts = new Date().toLocaleTimeString([], { hour12: false })
-      hsm.addKey({
+      addHsmKey({
         handle: pubHandle,
         family: 'rsa',
         role: 'public',
@@ -1059,7 +1067,7 @@ export const KeyWrapPanel = ({
         variant: String(rsaKeyBits),
         generatedAt: ts,
       })
-      hsm.addKey({
+      addHsmKey({
         handle: privHandle,
         family: 'rsa',
         role: 'private',
@@ -1083,7 +1091,7 @@ export const KeyWrapPanel = ({
       )
       setMlkemPubHandle(mkPub)
       setMlkemPrivHandle(mkPriv)
-      hsm.addKey({
+      addHsmKey({
         handle: mkPub,
         family: 'ml-kem',
         role: 'public',
@@ -1091,7 +1099,7 @@ export const KeyWrapPanel = ({
         variant: String(mlkemVariant),
         generatedAt: ts,
       })
-      hsm.addKey({
+      addHsmKey({
         handle: mkPriv,
         family: 'ml-kem',
         role: 'private',
@@ -1111,7 +1119,7 @@ export const KeyWrapPanel = ({
         )
         setEcPubHandle(ecPub)
         setEcPrivHandle(ecPriv)
-        hsm.addKey({
+        addHsmKey({
           handle: ecPub,
           family: 'ecdh',
           role: 'public',
@@ -1119,7 +1127,7 @@ export const KeyWrapPanel = ({
           variant: 'P-256',
           generatedAt: ts,
         })
-        hsm.addKey({
+        addHsmKey({
           handle: ecPriv,
           family: 'ecdh',
           role: 'private',
@@ -1146,7 +1154,7 @@ export const KeyWrapPanel = ({
         true
       )
       const ts = new Date().toLocaleTimeString([], { hour12: false })
-      hsm.addKey({
+      addHsmKey({
         handle: pubHandle,
         family: 'ml-kem',
         role: 'public',
@@ -1154,7 +1162,7 @@ export const KeyWrapPanel = ({
         variant: String(mlkemVariant),
         generatedAt: ts,
       })
-      hsm.addKey({
+      addHsmKey({
         handle: privHandle,
         family: 'ml-kem',
         role: 'private',
@@ -1175,7 +1183,7 @@ export const KeyWrapPanel = ({
         true
       )
       const ts = new Date().toLocaleTimeString([], { hour12: false })
-      hsm.addKey({
+      addHsmKey({
         handle: pubHandle,
         family: 'ml-dsa',
         role: 'public',
@@ -1183,7 +1191,7 @@ export const KeyWrapPanel = ({
         variant: String(variant),
         generatedAt: ts,
       })
-      hsm.addKey({
+      addHsmKey({
         handle: privHandle,
         family: 'ml-dsa',
         role: 'private',
@@ -1197,20 +1205,9 @@ export const KeyWrapPanel = ({
 
   return (
     <div className="flex flex-col gap-4">
-      <LiveHSMToggle
-        hsm={hsm}
-        operations={[
-          'C_GenerateKey',
-          'C_GenerateKeyPair',
-          'C_WrapKey',
-          'C_UnwrapKey',
-          'C_EncapsulateKey',
-        ]}
-      />
-
       {showInfo && <WrapInfoModal onClose={() => setShowInfo(false)} />}
 
-      {isReady && (
+      <HsmReadyGuard isReady={isReady}>
         <div className="space-y-4">
           {/* ── Mode selector ─────────────────────────────────────────────────── */}
           <div className="glass-panel p-4 space-y-3">
@@ -2100,25 +2097,21 @@ export const KeyWrapPanel = ({
             </div>
           </div>
         </div>
-      )}
 
-      {isReady && (
         <Pkcs11LogPanel
-          log={hsm.log}
-          onClear={hsm.clearLog}
+          log={hsmLog}
+          onClear={clearHsmLog}
           title="PKCS#11 Call Log — Key Wrap"
           defaultOpen
         />
-      )}
 
-      {isReady && (
         <HsmKeyInspector
-          keys={hsm.keys}
-          moduleRef={hsm.moduleRef}
-          hSessionRef={hsm.hSessionRef}
-          onRemoveKey={hsm.removeKey}
+          keys={hsmKeys}
+          moduleRef={moduleRef}
+          hSessionRef={hSessionRef}
+          onRemoveKey={removeHsmKey}
         />
-      )}
+      </HsmReadyGuard>
     </div>
   )
 }

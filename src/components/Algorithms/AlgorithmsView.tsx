@@ -407,7 +407,7 @@ export function AlgorithmsView() {
                 title={
                   supportLocked
                     ? 'Explore Transition or Detailed first'
-                    : 'Tracks 14 IETF protocols across pure-KEM, hybrid-KEM, pure-Sig, hybrid-Sig dimensions. Updated weekly from datatracker.'
+                    : 'Tracks 28 protocols across IETF, TCG, OASIS, 3GPP, IEEE, UEFI, and vendor specs — pure-KEM, hybrid-KEM, pure-Sig, hybrid-Sig dimensions. IETF stages refresh weekly from datatracker; other standards bodies are refreshed manually.'
                 }
               >
                 {supportLocked ? <Lock size={16} /> : <Network size={18} />}
@@ -479,7 +479,7 @@ export function AlgorithmsView() {
                 transition={{ duration: 0.3 }}
                 data-workshop-target="section-algorithm-validation"
               >
-                <AlgorithmValidationView />
+                <AlgorithmValidationView sectionParam={searchParams.get('section')} />
               </motion.div>
             </TabsContent>
           </Tabs>

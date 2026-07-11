@@ -9,6 +9,8 @@ export interface FilterDropdownItem {
   id: string
   label: string
   icon?: React.ReactNode
+  /** Optional content rendered after the label (e.g. a status badge) — shown in the option row only. */
+  trailing?: React.ReactNode
 }
 
 interface FilterDropdownProps {
@@ -329,6 +331,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
                     {item.icon}
                   </span>
                   {item.label}
+                  {item.trailing}
                   {isMulti && isSelected && (
                     <Check size={12} className="ml-auto text-primary" aria-hidden="true" />
                   )}

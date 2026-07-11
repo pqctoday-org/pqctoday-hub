@@ -131,5 +131,10 @@ export const FEATURE_PLAYGROUNDS: readonly FeaturePlayground[] = [
 /** Route target for the featured KMIP banner (the crypto-agile KMIP playground). */
 export const KMIP_PLAYGROUND_ROUTE = '/playground/cacp'
 
-/** Sandbox container access request (mirrors SandboxStatusToggle). */
-export const SANDBOX_ACCESS_MAILTO = 'mailto:pqctoday@gmail.com?subject=Sandbox%20Access%20Request'
+/**
+ * Sandbox container access request — a trackable GitHub issue instead of a personal
+ * inbox (playground.md item 6). Referenced by DockerPlaygroundView, PlaygroundWorkshop
+ * and SandboxStatusToggle so every "request access" surface points to the same place.
+ */
+export const SANDBOX_ACCESS_URL =
+  'https://github.com/pqctoday-org/pqctoday-hub/issues/new?template=sandbox_access.yml'

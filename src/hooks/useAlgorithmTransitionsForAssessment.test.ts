@@ -14,6 +14,7 @@ const fixture: AlgorithmTransition[] = [
     region: 'NIST',
     status: 'FIPS 203',
     statusUrl: 'https://example.test/fips203',
+    statusTier: 'final',
   },
   {
     classical: 'RSA',
@@ -24,6 +25,7 @@ const fixture: AlgorithmTransition[] = [
     standardizationDate: '2024',
     region: 'NIST',
     status: 'FIPS 203',
+    statusTier: 'final',
   },
   {
     classical: 'ECDH (P-256)',
@@ -33,6 +35,7 @@ const fixture: AlgorithmTransition[] = [
     standardizationDate: '2024',
     region: 'NIST',
     status: 'FIPS 203',
+    statusTier: 'final',
   },
   {
     classical: 'Any (Stateless)',
@@ -42,6 +45,7 @@ const fixture: AlgorithmTransition[] = [
     standardizationDate: '2024',
     region: 'NIST',
     status: 'FIPS 205',
+    statusTier: 'final',
   },
 ]
 

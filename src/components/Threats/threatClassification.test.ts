@@ -43,14 +43,38 @@ describe('getThreatClass (Threats #2)', () => {
     ).toBe('both')
   })
 
-  it('defaults to HNDL when no signal fires', () => {
-    expect(getThreatClass(threat({ cryptoAtRisk: 'something unrecognised' }))).toBe('hndl')
+  it('renders as unclassified — not silently HNDL — when no signal fires', () => {
+    expect(getThreatClass(threat({ cryptoAtRisk: 'something unrecognised' }))).toBe('unclassified')
   })
 
   it('a "both" threat matches either class filter', () => {
     const t = threat({ cryptoAtRisk: 'RSA key management and ECDSA signing' })
     expect(threatMatchesClass(t, 'hndl')).toBe(true)
     expect(threatMatchesClass(t, 'hnfl')).toBe(true)
+  })
+
+  it('does not match "dsa"/"kem" substrings inside the pqcReplacement algorithm name', () => {
+    // cryptoAtRisk has no signature/encryption signal of its own; pqcReplacement
+    // names ML-DSA / ML-KEM, which used to leak into the match via the old
+    // combined-corpus lookup ("dsa" inside "ML-DSA", "kem" inside "ML-KEM").
+    const t = threat({
+      cryptoAtRisk: 'something unrecognised',
+      pqcReplacement: 'ML-DSA-65, ML-KEM-768',
+      description: 'Recommend migrating to ML-KEM and ML-DSA per FIPS 203/204.',
+    })
+    expect(getThreatClass(t)).toBe('unclassified')
+  })
+
+  it('still classifies correctly when cryptoAtRisk genuinely contains PQC algorithm names', () => {
+    // A threat ABOUT the PQC replacement itself (e.g. an implementation attack)
+    // legitimately has ML-KEM/ML-DSA in cryptoAtRisk — that is real signal, not
+    // pollution, since cryptoAtRisk is the one field the classifier reads.
+    expect(getThreatClass(threat({ cryptoAtRisk: 'ML-KEM private key generation in HSMs' }))).toBe(
+      'hndl'
+    )
+    expect(getThreatClass(threat({ cryptoAtRisk: 'ML-DSA private key during signing' }))).toBe(
+      'hnfl'
+    )
   })
 })
 

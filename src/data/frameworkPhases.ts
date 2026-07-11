@@ -81,6 +81,14 @@ export interface SurfaceRef {
   route: Route
   ref: string
   status: 'live' | 'gap' | 'partial'
+  /**
+   * Deliberate-resolution note for a `gap`/`partial` ref (simulation.md item 3,
+   * 07082026 remediation): what already exists nearby and/or why this specific
+   * surface isn't built yet. Required reading before ever wiring this table to
+   * render real "produce this artifact" links — a ref with no note is not a
+   * ref anyone has actually decided what to do with.
+   */
+  note?: string
 }
 
 /**
@@ -161,6 +169,9 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
       { route: '/business', ref: 'policy-generator', status: 'live' },
       { route: '/business', ref: 'program-charter', status: 'live' },
       { route: '/business', ref: 'initial-scoping', status: 'live' },
+      { route: '/business', ref: 'cost-of-inaction', status: 'live' },
+      { route: '/business', ref: 'cost-model-explorer', status: 'live' },
+      { route: '/business', ref: 'breach-simulator', status: 'live' },
     ],
     surfaces: ['/assess', '/business', '/report'],
     crosswalk: {
@@ -191,6 +202,8 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
       { route: '/migrate', ref: 'migrate-stack', status: 'live' },
       { route: '/migrate', ref: 'cbom-scanner', status: 'live' },
       { route: '/business', ref: 'management-tools-audit', status: 'partial' },
+      { route: '/business', ref: 'crypto-architecture-diagram', status: 'live' },
+      { route: '/business', ref: 'crypto-vulnerability-watch', status: 'live' },
     ],
     surfaces: ['/assess', '/migrate', '/business', '/report'],
     crosswalk: {
@@ -242,7 +255,10 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     cswp39Zones: ['risk-management'],
     cswp39Steps: ['identify-gaps', 'prioritise'],
     diagnose: { route: '/assess', ref: 'assess-engine', status: 'live' },
-    communicate: { route: '/report', ref: 'qra', status: 'gap' },
+    // Corrected 07082026 (simulation.md item 3): stale — QRASection.tsx has
+    // rendered this on /report since it was built, verified wired in
+    // ReportContent.tsx and covered by QRASection.test.tsx.
+    communicate: { route: '/report', ref: 'qra', status: 'live' },
     produce: [
       { route: '/assess', ref: 'two-track-output', status: 'gap' },
       { route: '/business', ref: 'risk-register', status: 'live' },
@@ -265,7 +281,7 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     gate: {
       id: 'G4',
       criterion: 'Multi-year roadmap approved; Year 1 plan resourced',
-      authority: 'SteerCo',
+      authority: 'Executive Sponsor',
     },
     cswp39Zones: ['migration', 'governance'],
     cswp39Steps: ['implement'],
@@ -273,6 +289,8 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
       { route: '/business', ref: 'roadmap-builder', status: 'live' },
       { route: '/timeline', ref: 'compliance-timeline', status: 'live' },
       { route: '/business', ref: 'stakeholder-comms', status: 'live' },
+      { route: '/business', ref: 'refresh-cycle-alignment', status: 'live' },
+      { route: '/business', ref: 'accelerated-execution-profile', status: 'live' },
     ],
     communicate: { route: '/report', ref: 'migration-roadmap', status: 'live' },
     surfaces: ['/business', '/timeline', '/report'],
@@ -304,8 +322,14 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
       { route: '/business', ref: 'crypto-api-refactor-audit', status: 'live' },
       { route: '/migrate', ref: 'migrate', status: 'live' },
       { route: '/migrate', ref: 'wave-data-at-rest-ai', status: 'gap' },
+      { route: '/business', ref: 'data-at-rest-strategy', status: 'live' },
     ],
-    communicate: { route: '/report', ref: 'pilot-results', status: 'gap' },
+    communicate: {
+      route: '/report',
+      ref: 'pilot-results',
+      status: 'gap',
+      note: 'No dedicated pilot-results/outcomes section on /report yet — the closest existing coverage is the migrationRoadmap report section plus the deployment-playbook and hybrid-transition-planner business tools, which are planning artifacts, not results tracking. Scoped down for now (simulation.md item 3, 07082026).',
+    },
     surfaces: ['/business', '/migrate', '/report'],
     crosswalk: {
       nistCsf: ['PR.PS-01', 'ID.IM-02', 'PR.PS-02'],
@@ -330,8 +354,18 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     cswp39Steps: ['implement'],
     produce: [
       { route: '/learn', ref: 'learn-hsm-kms-network-testing', status: 'live' },
-      { route: '/business', ref: 'cc-infra-plan', status: 'gap' },
-      { route: '/migrate', ref: 'algorithms-perf', status: 'gap' },
+      // Corrected 07082026 (simulation.md item 3): stale ref — the
+      // 'infra-modernization-planner' business tool (frameworkPhase p6) already
+      // consolidates the PKI modernization plan, HSM/KMS upgrade schedule,
+      // network/middlebox compatibility report, and PQC capacity plan this
+      // entry described. Renamed to the real tool id.
+      { route: '/business', ref: 'infra-modernization-planner', status: 'live' },
+      {
+        route: '/migrate',
+        ref: 'algorithms-perf',
+        status: 'gap',
+        note: 'No per-product performance-benchmark surface on /migrate. Closest existing destination: /algorithms → Detailed Comparison tab, which already renders cycle-count/PerfBar performance data per algorithm (AlgorithmDetailedComparison.tsx) — just not scoped to /migrate product selections. Scoped down for now (simulation.md item 3, 07082026).',
+      },
     ],
     surfaces: ['/learn', '/business', '/migrate'],
     crosswalk: {
@@ -410,7 +444,17 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     },
     cswp39Zones: ['governance'],
     cswp39Steps: ['implement', 'govern'],
-    communicate: { route: '/report', ref: 'closure-record', status: 'gap' },
+    // Corrected 07082026 (simulation.md item 3): was 'gap' (implying nothing
+    // produces this), but the 'migration-verification' business tool below is
+    // real, live, and already reveals this content in the exec-tour walkthrough
+    // — 'partial' is the honest status: the producing tool exists, /report just
+    // has no dedicated closure-record section summarizing it yet.
+    communicate: {
+      route: '/report',
+      ref: 'closure-record',
+      status: 'partial',
+      note: "The 'migration-verification' business tool (produce entry below) already generates the closure record; /report has no section surfacing it yet.",
+    },
     produce: [{ route: '/business', ref: 'migration-verification', status: 'live' }],
     surfaces: ['/business', '/report'],
     crosswalk: {
