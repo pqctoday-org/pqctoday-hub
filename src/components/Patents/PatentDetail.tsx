@@ -210,14 +210,14 @@ export function PatentDetail({
       {/* Header */}
       <div className="flex items-start justify-between gap-3 border-b border-border px-5 py-4">
         <div className="min-w-0">
-          <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-            <span className="font-mono">{patent.patentNumber}</span>
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground mb-1">
+            <span className="font-mono whitespace-nowrap">{patent.patentNumber}</span>
             {dateParts.length > 0 && (
               <>
                 <span>·</span>
-                <span className="inline-flex items-center gap-1.5">
+                <span className="inline-flex flex-wrap items-center gap-1.5">
                   {dateParts.map(({ label, term, value }, i) => (
-                    <span key={term} className="inline-flex items-center gap-1">
+                    <span key={term} className="inline-flex items-center gap-1 whitespace-nowrap">
                       {i > 0 && <span className="text-muted-foreground/50">/</span>}
                       <InlineTooltip term={term}>{label}</InlineTooltip> {value}
                     </span>
@@ -230,10 +230,10 @@ export function PatentDetail({
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => logExternalLink('Patents', googlePatentsUrl)}
-              className="inline-flex items-center gap-0.5 text-primary hover:underline"
+              className="inline-flex items-center gap-0.5 whitespace-nowrap text-primary hover:underline"
             >
               <ExternalLink className="h-3 w-3" />
-              USPTO
+              Google Patents
             </a>
           </div>
           <h2 className="text-sm font-semibold text-foreground leading-snug">{patent.title}</h2>
@@ -244,6 +244,7 @@ export function PatentDetail({
           )}
           {patent.inventors && (
             <p className="mt-0.5 text-xs text-muted-foreground truncate" title={patent.inventors}>
+              <span className="text-muted-foreground/70">Inventor(s): </span>
               {patent.inventors}
             </p>
           )}

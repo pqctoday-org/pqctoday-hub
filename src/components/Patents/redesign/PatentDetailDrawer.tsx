@@ -72,7 +72,7 @@ function DrawerPanel({
         className="absolute inset-0 h-full w-full cursor-default rounded-none bg-black/60 hover:bg-black/60"
       />
       <div
-        className="absolute right-0 top-0 flex h-full w-[560px] max-w-[94vw] flex-col border-l border-border bg-card shadow-2xl transition-transform duration-200 ease-out"
+        className="absolute right-0 top-0 flex h-full w-[680px] max-w-[94vw] flex-col border-l border-border bg-card shadow-2xl transition-transform duration-200 ease-out"
         style={{ transform: entered ? 'translateX(0)' : 'translateX(26px)' }}
       >
         {/* prev/next bar */}
