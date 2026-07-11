@@ -179,6 +179,24 @@ export function runCrossRefChecks(): CheckResult[] {
 
   // Build ID sets
   const libraryIds = new Set(library.rows.map((r) => r.reference_id).filter(Boolean))
+  // Canonical form for N1's enrichment-heading fallback (added 2026-07-11):
+  // enrichment .md files are append-only historical snapshots — a heading
+  // written when a reference_id used a bare RFC number ("RFC 7296") or an
+  // IETF draft's revision suffix ("draft-...-01") stays that way forever
+  // even after the CSV's own reference_id later canonicalizes to "IETF RFC
+  // 7296" or drops the "-01" (both confirmed real, e.g. PKCS11's own
+  // supersedes-chain rename this same session). This is heading drift, not
+  // a missing document — verified for all 5 real N1 findings on 2026-07-11:
+  // every one already has a live, active CSV row under the canonical form.
+  const canonicalizeLibraryHeading = (id: string): string => {
+    const rfcMatch = id.match(/RFC[\s-]?(\d+)/i)
+    if (rfcMatch) return `RFC-${rfcMatch[1]}`
+    if (id.startsWith('draft-')) return id.replace(/-\d+$/, '')
+    return id
+  }
+  const canonicalLibraryIds = new Set(
+    [...libraryIds].map((id) => canonicalizeLibraryHeading(id))
+  )
   const migrateNames = new Set(migrate.rows.map((r) => r.software_name).filter(Boolean))
   const migrateCategoryIds = new Set(migrate.rows.map((r) => r.category_id).filter(Boolean))
   const threatIds = new Set(threats.rows.map((r) => r.threat_id).filter(Boolean))
@@ -596,7 +614,7 @@ export function runCrossRefChecks(): CheckResult[] {
     const { allIds } = loadEnrichments('library')
     const f: Finding[] = []
     for (const id of allIds) {
-      if (!libraryIds.has(id))
+      if (!libraryIds.has(id) && !canonicalLibraryIds.has(canonicalizeLibraryHeading(id)))
         f.push(
           finding(
             'library_doc_enrichments',
@@ -786,12 +804,24 @@ export function runCrossRefChecks(): CheckResult[] {
         })
         .filter((s): s is string => s !== null)
     )
+    // Last-resort fallback (added 2026-07-11): Title alone, for headings
+    // where Country and/or OrgName drifted from the CSV's current canonical
+    // form but the event is the same (e.g. an abbreviated country "US" vs
+    // "United States", or an org typo \u2014 "China:CAC" vs the real "ICCS",
+    // confirmed by the enrichment's own body text naming "Institute of
+    // Commercial Cryptography Standards (ICCS)" for that exact heading).
+    // Titles alone are specific enough in this catalog not to collide.
+    const timelineTitles = new Set(
+      timeline.rows.map((r) => r.Title?.trim()).filter((s): s is string => Boolean(s))
+    )
 
     const f: Finding[] = []
     for (const id of allIds) {
+      const idTitle = id.includes(' \u2014 ') ? id.split(' \u2014 ').slice(1).join(' \u2014 ') : null
       const found =
         timelineEnrichmentKeys.has(id) ||
         timelineEnrichmentKeysFallback.has(id) ||
+        (idTitle !== null && timelineTitles.has(idTitle)) ||
         // Fuzzy: check if Country:OrgName portion matches any timeline pair
         [...timelinePairs].some((pair) => id.startsWith(pair))
       if (!found)
@@ -1080,6 +1110,10 @@ export function runCrossRefChecks(): CheckResult[] {
       'Encryption/KEM',
       'Signature',
       'Hybrid KEM',
+      'Hybrid KEM (HPKE)',
+      'Hybrid KEM with Access Control',
+      'Composite KEM',
+      'Composite Signature',
       'Hash',
       'Symmetric',
       'Key Agreement',
