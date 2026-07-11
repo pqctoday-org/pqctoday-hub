@@ -749,6 +749,12 @@ export function useSimAutoRunPlayer({
     setAutoRunFill(false)
     setRunning(false)
     setPaused(false)
+    // Also clear `done` — the transport band renders while `running || done`, so
+    // after a run FINISHES (done=true) the band stays up showing "Close". That
+    // Close button calls stop(); without resetting done here the band never
+    // unmounts. Clearing done also resets the phase-run-complete "celebrated"
+    // guard (SimulationView effect on `done`), so the next phase run re-opens it.
+    setDone(false)
     setScenarioIntro(null)
     setPhaseIntro(null)
   }, [clearTimer])
