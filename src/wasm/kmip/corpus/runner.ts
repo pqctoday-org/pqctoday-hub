@@ -36,7 +36,6 @@ export type TestStatus =
   | 'SKIP_OP'
   | 'SKIP_PARSE'
   | 'SKIP_DEPRECATED'
-  | 'SKIP_POLICY_VARIANT'
   | 'SKIP_TRANSPORT'
 
 export interface TestResult {
@@ -107,7 +106,11 @@ export async function runCorpusTest(
     }
   }
 
-  const engine = await KmipEngine.boot(slot)
+  // CS-RNG-O variant tests get an engine PINNED to the RNG-seed mode the
+  // transcript expects (classify.ts RNG_SEED_MODE_TESTS) — same per-test
+  // configuration the native harness applies; everything else boots the
+  // default (full-consume).
+  const engine = await KmipEngine.boot(slot, RNG_SEED_MODE_TESTS[name])
 
   // Chained prerequisites — full replay (placeholders, comparison and all,
   // via each prerequisite's own Bindings) so the shared state is EXACTLY
