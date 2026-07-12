@@ -84,6 +84,7 @@ test.describe('Assess redesign — happy path', () => {
     // list in reportContract.ts instead.)
     await expect(page.getByText('Key findings & threat landscape')).toBeVisible()
     await expect(page.getByText('Risk score & verdict')).toBeVisible()
+    await expect(page.getByText('Per-domain risk breakdown')).toBeVisible()
 
     await page.getByRole('button', { name: /start full track/i }).click()
 

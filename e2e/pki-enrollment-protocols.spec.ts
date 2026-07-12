@@ -110,6 +110,7 @@ test('Step 2: CMP IR issues a real X.509 cert with ML-DSA-65 CA signature (opens
   const decodedCertBox = page.locator('details', { hasText: 'Decoded certificate' })
   const decodedCert = decodedCertBox.locator('textarea')
   await expect(decodedCert).toBeVisible()
+  await expect(decodedCert).toHaveValue(/Certificate:/)
 
   // Subject DN contains "Workshop EE" (the default Subject input value).
   const certText = await decodedCert.inputValue()
