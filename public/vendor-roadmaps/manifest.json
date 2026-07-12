@@ -1,62 +1,174 @@
 {
-  "generated": "2026-07-08T01:23:43.532Z",
-  "source": "src/data/migrate_vendor_roadmap_07072026.csv",
+  "generated": "2026-07-12T12:51:08.877Z",
+  "source": "src/data/migrate_vendor_roadmap_07122026.csv",
   "summary": {
-    "downloaded": 4,
+    "downloaded": 16,
     "skipped": 0,
-    "failed": 1,
+    "failed": 0,
     "persisted_skip": 0,
     "no_url": 8
   },
   "entries": [
     {
-      "vendorId": "VND-026",
-      "vendorName": "Marvell Technology Inc.",
-      "title": "Marvell Fibre Channel StorCryption Post-Quantum Technology Brief",
-      "url": "https://www.marvell.com/content/dam/marvell/en/public-collateral/fibre-channel/marvell-fibre-channel-storcryption-post-quantum-technology-brief.pdf",
-      "status": "failed",
-      "reason": "forbidden",
-      "persistent": true
+      "vendorId": "VND-020",
+      "vendorName": "IDEMIA Group",
+      "title": "Post-Quantum Security Consulting",
+      "url": "https://www.idemia.com/post-quantum-security-consulting",
+      "status": "downloaded",
+      "filename": "VND-020_IDEMIA_Group.html",
+      "sizeBytes": 109402,
+      "contentType": "text/html; charset=UTF-8"
     },
     {
-      "vendorId": "VND-308",
-      "vendorName": "Fastly, Inc.",
-      "title": "Future-proofing TLS encryption against quantum threats",
-      "url": "https://www.fastly.com/blog/future-proofing-tls-encryption-against-quantum-threats",
+      "vendorId": "VND-036",
+      "vendorName": "SandboxAQ Inc.",
+      "title": "Q-Day Moved Closer: PQC Migration Timelines Just Shifted Left",
+      "url": "https://www.sandboxaq.com/post/q-day-moved-closer-pqc-migration-timelines-just-shifted-left",
       "status": "downloaded",
-      "filename": "VND-308_Fastly_Inc..html",
-      "sizeBytes": 256895,
+      "filename": "VND-036_SandboxAQ_Inc..html",
+      "sizeBytes": 35280,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "vendorId": "VND-048",
+      "vendorName": "Open Quantum Safe Project",
+      "title": "Post-quantum cryptography",
+      "url": "https://openquantumsafe.org/post-quantum-crypto.html",
+      "status": "downloaded",
+      "filename": "VND-048_Open_Quantum_Safe_Project.html",
+      "sizeBytes": 18943,
       "contentType": "text/html"
     },
     {
-      "vendorId": "VND-238",
-      "vendorName": "Toshiba Research Europe Ltd.",
-      "title": "Toshiba Cambridge Research Laboratory satellite QKD milestones",
-      "url": "https://www.toshiba-clip.com/en/detail/p=5165",
+      "vendorId": "VND-053",
+      "vendorName": "ISARA Corporation",
+      "title": "ISARA Radiate\u2122 Quantum-safe Library",
+      "url": "https://isara.com/products/isara-radiate-quantum-safe-library.html",
       "status": "downloaded",
-      "filename": "VND-238_Toshiba_Research_Europe_Ltd..html",
-      "sizeBytes": 63310,
+      "filename": "VND-053_ISARA_Corporation.html",
+      "sizeBytes": 50872,
       "contentType": "text/html; charset=UTF-8"
     },
     {
-      "vendorId": "VND-234",
-      "vendorName": "NTT Corporation",
-      "title": "NTT quantum-safe secure transport system",
-      "url": "https://group.ntt/en/newsrelease/2024/10/30/241030a.html",
+      "vendorId": "VND-139",
+      "vendorName": "Qrypt Inc.",
+      "title": "Post-Quantum Secure VPN (Qrypt BLAST)",
+      "url": "https://www.qrypt.com/resources/post-quantum-secure-vpn/",
       "status": "downloaded",
-      "filename": "VND-234_NTT_Corporation.html",
-      "sizeBytes": 125805,
+      "filename": "VND-139_Qrypt_Inc..html",
+      "sizeBytes": 262095,
       "contentType": "text/html; charset=UTF-8"
     },
     {
-      "vendorId": "VND-244",
-      "vendorName": "HP Inc.",
-      "title": "HP business PCs with quantum-resistant firmware protection",
-      "url": "https://www.hp.com/us-en/newsroom/blogs/2024/hp-launches-business-pc-to-protect-against-quantum-computer-hacks.html",
+      "vendorId": "VND-159",
+      "vendorName": "Giesecke+Devrient GmbH",
+      "title": "Post-quantum cryptography",
+      "url": "https://gi-de.com/en/digital-security/digital-infrastructures/post-quantum-cryptography",
       "status": "downloaded",
-      "filename": "VND-244_HP_Inc..html",
-      "sizeBytes": 273075,
-      "contentType": "text/html;charset=utf-8"
+      "filename": "VND-159_Giesecke_Devrient_GmbH.html",
+      "sizeBytes": 121903,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "vendorId": "VND-180",
+      "vendorName": "QuintessenceLabs Pty Ltd.",
+      "title": "qConnect Quantum Safe Key Distributor",
+      "url": "https://www.quintessencelabs.com/products#qconnect",
+      "status": "downloaded",
+      "filename": "VND-180_QuintessenceLabs_Pty_Ltd..html",
+      "sizeBytes": 164447,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "vendorId": "VND-229",
+      "vendorName": "CyberZero",
+      "title": "Post-Quantum Cryptography Readiness",
+      "url": "https://cyberzero.io/services/post-quantum-cryptography-readiness/",
+      "status": "downloaded",
+      "filename": "VND-229_CyberZero.html",
+      "sizeBytes": 98966,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "vendorId": "VND-247",
+      "vendorName": "Agence nationale de la s\u00e9curit\u00e9 des syst\u00e8mes d'information (ANSSI)",
+      "title": "Cryptographie post-quantique (PQC)",
+      "url": "https://cyber.gouv.fr/enjeux-technologiques/cryptographie-post-quantique/",
+      "status": "downloaded",
+      "filename": "VND-247_Agence_nationale_de_la_s_curit_des_syst_mes_d_information_ANSSI_.html",
+      "sizeBytes": 50352,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "vendorId": "VND-253",
+      "vendorName": "pQCee Inc.",
+      "title": "Post Quantum Cryptography FAQ",
+      "url": "https://www.pqcee.com/pages/post-quantum-cryptography-faq",
+      "status": "downloaded",
+      "filename": "VND-253_pQCee_Inc..html",
+      "sizeBytes": 175573,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "vendorId": "VND-254",
+      "vendorName": "Quantum Xchange Inc.",
+      "title": "PQC Migration",
+      "url": "https://quantumxc.com/pqc-migration",
+      "status": "downloaded",
+      "filename": "VND-254_Quantum_Xchange_Inc..html",
+      "sizeBytes": 308173,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "vendorId": "VND-256",
+      "vendorName": "KiviCore Oy",
+      "title": "Post-Quantum-Cryptography (PQC) IP Cores",
+      "url": "https://kivicore.com/kivipqc-pqc-ip-cores",
+      "status": "downloaded",
+      "filename": "VND-256_KiviCore_Oy.html",
+      "sizeBytes": 117873,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "vendorId": "VND-262",
+      "vendorName": "Technology Innovation Institute (TII)",
+      "title": "TII Founding Partner of a New Global Standard for Verifiable, Quantum-Safe Artificial Intelligence",
+      "url": "https://www.tii.ae/news/tii-founding-partner-new-global-standard-verifiable-quantum-safe-artificial-intelligence",
+      "status": "downloaded",
+      "filename": "VND-262_Technology_Innovation_Institute_TII_.html",
+      "sizeBytes": 68686,
+      "contentType": "text/html",
+      "note": "Manually downloaded 2026-07-12 with a browser user-agent after the script's bot UA was blocked (403) -- confirmed genuine content, not a real access restriction."
+    },
+    {
+      "vendorId": "VND-286",
+      "vendorName": "Chelpis Quantum Corp.",
+      "title": "PQC Communication System \u2014 PQTunnel",
+      "url": "https://www.chelpis.com/products-service",
+      "status": "downloaded",
+      "filename": "VND-286_Chelpis_Quantum_Corp..html",
+      "sizeBytes": 1065354,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "vendorId": "VND-288",
+      "vendorName": "Taiwan QSMC Migration Center",
+      "title": "2024 PQC Elite Program",
+      "url": "https://www.qsmc.org/2024-pqc-elite-program",
+      "status": "downloaded",
+      "filename": "VND-288_Taiwan_QSMC_Migration_Center.html",
+      "sizeBytes": 788313,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "vendorId": "VND-306",
+      "vendorName": "Fraunhofer Institute for Secure Information Technology (Dyber Project)",
+      "title": "Post-Quantum-Kryptografie",
+      "url": "https://www.sit.fraunhofer.de/de/postquantum/",
+      "status": "downloaded",
+      "filename": "VND-306_Fraunhofer_Institute_for_Secure_Information_Technology_Dyber_Project_.html",
+      "sizeBytes": 65846,
+      "contentType": "text/html; charset=utf-8"
     }
   ]
 }
