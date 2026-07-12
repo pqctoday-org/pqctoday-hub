@@ -3,6 +3,7 @@ import React, { useCallback, useMemo } from 'react'
 import { Rocket } from 'lucide-react'
 import { OpsChecklist, type ChecklistSection } from '@/components/PKILearning/common/OpsChecklist'
 import { useModuleStore } from '@/store/useModuleStore'
+import { useSavedArtifactOutput } from '@/hooks/useSavedArtifactInputs'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import type { RoadmapOutput } from '../types'
 
@@ -214,17 +215,25 @@ interface DeploymentPlaybookProps {
 export const DeploymentPlaybook: React.FC<DeploymentPlaybookProps> = ({ roadmapOutput }) => {
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
 
+  // roadmapOutput only arrives as a live prop inside the linear
+  // `/learn/migration-program` wizard. Reached any other way — the
+  // Simulation embed or the standalone Business Center route — fall back to
+  // the Roadmap Builder's last saved output so this banner isn't silently
+  // dropped just because of how the tool was opened.
+  const savedRoadmapOutput = useSavedArtifactOutput<RoadmapOutput>('migration-roadmap')
+  const effectiveRoadmapOutput = roadmapOutput ?? savedRoadmapOutput ?? null
+
   // Group roadmap milestones by phaseId to show which phases have planned milestones.
   const phaseGroups = useMemo(() => {
-    if (!roadmapOutput || roadmapOutput.milestones.length === 0) return null
+    if (!effectiveRoadmapOutput || effectiveRoadmapOutput.milestones.length === 0) return null
     const grouped = new Map<string, Array<{ label: string; year: number }>>()
-    for (const m of roadmapOutput.milestones) {
+    for (const m of effectiveRoadmapOutput.milestones) {
       const group = grouped.get(m.phaseId) ?? []
       group.push({ label: m.label, year: m.year })
       grouped.set(m.phaseId, group)
     }
     return grouped
-  }, [roadmapOutput])
+  }, [effectiveRoadmapOutput])
 
   const roadmapSummary = useMemo(() => {
     if (!phaseGroups) return null
@@ -268,9 +277,9 @@ export const DeploymentPlaybook: React.FC<DeploymentPlaybookProps> = ({ roadmapO
           </p>
         </div>
       </div>
-      {roadmapOutput && roadmapOutput.milestones.length > 0 && roadmapSummary && (
+      {effectiveRoadmapOutput && effectiveRoadmapOutput.milestones.length > 0 && roadmapSummary && (
         <PreFilledBanner
-          summary={`${roadmapOutput.milestones.length} roadmap milestone${roadmapOutput.milestones.length !== 1 ? 's' : ''} from Step 1 are available for reference. Phases covered: ${roadmapSummary}.`}
+          summary={`${effectiveRoadmapOutput.milestones.length} roadmap milestone${effectiveRoadmapOutput.milestones.length !== 1 ? 's' : ''} ${roadmapOutput ? 'from Step 1' : 'from your last Roadmap Builder export'} are available for reference. Phases covered: ${roadmapSummary}.`}
         />
       )}
       <OpsChecklist
