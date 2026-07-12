@@ -3,6 +3,7 @@ import React, { useMemo, useCallback, useState, useEffect, useRef } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
+import { useSavedArtifactOutput } from '@/hooks/useSavedArtifactInputs'
 import type { RoadmapOutput } from '../types'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import {
@@ -69,9 +70,16 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
   const [personaOverride, setPersonaOverride] = useState<KpiPersonaId | null>(null)
   const activePersona: KpiPersonaId = personaOverride ?? coercePersona(globalPersona)
 
+  // roadmapOutput only arrives as a live prop inside the linear
+  // `/learn/migration-program` wizard. Reached any other way — the
+  // Simulation embed or the standalone Business Center route — fall back to
+  // the Roadmap Builder's last saved output so the start year still pre-fills.
+  const savedRoadmapOutput = useSavedArtifactOutput<RoadmapOutput>('migration-roadmap')
+  const effectiveRoadmapOutput = roadmapOutput ?? savedRoadmapOutput ?? null
+
   // Program start year — user override; falls back to roadmap's earliest milestone year.
   const [startYear, setStartYear] = useState<number | null>(null)
-  const effectiveStartYear = startYear ?? roadmapOutput?.earliestYear ?? null
+  const effectiveStartYear = startYear ?? effectiveRoadmapOutput?.earliestYear ?? null
 
   // Record a risk-score snapshot whenever the assessment yields a new value
   useEffect(() => {
@@ -233,9 +241,9 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
       {seedSources.length > 0 && (
         <PreFilledBanner summary={`Tracker auto-scored from ${seedSources.join(' + ')}.`} />
       )}
-      {roadmapOutput?.earliestYear != null && (
+      {effectiveRoadmapOutput?.earliestYear != null && (
         <PreFilledBanner
-          summary={`Start year set to ${roadmapOutput.earliestYear} from your roadmap (earliest milestone). Adjust below if needed.`}
+          summary={`Start year set to ${effectiveRoadmapOutput.earliestYear} from your roadmap (earliest milestone, ${roadmapOutput ? 'Step 1' : 'last Roadmap Builder export'}). Adjust below if needed.`}
         />
       )}
       <div className="glass-panel p-4">

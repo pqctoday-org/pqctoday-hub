@@ -267,19 +267,26 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
     seedSource
   )
 
-  // Emit structured output whenever milestones change so downstream steps can pre-fill.
-  useEffect(() => {
-    if (!onOutput || currentMilestones.length === 0) return
+  // Structured output, shared by the live onOutput prop (linear wizard) and
+  // the export below (`output:`, read back via useSavedArtifactOutput by
+  // Stakeholder Comms Planner / KPI Tracker / Deployment Playbook when
+  // they're reached outside that wizard — Simulation, Business Center).
+  const roadmapOutputPayload: RoadmapOutput | null = useMemo(() => {
+    if (currentMilestones.length === 0) return null
     const earliest = currentMilestones.reduce((min, m) => (m.year < min ? m.year : min), Infinity)
-    onOutput({
+    return {
       milestones: currentMilestones.map((m) => ({
         label: m.label,
         year: m.year,
         phaseId: m.phaseId,
       })),
       earliestYear: isFinite(earliest) ? earliest : null,
-    })
-  }, [onOutput, currentMilestones])
+    }
+  }, [currentMilestones])
+
+  useEffect(() => {
+    if (onOutput && roadmapOutputPayload) onOutput(roadmapOutputPayload)
+  }, [onOutput, roadmapOutputPayload])
 
   // Deadlines: restore from a saved roadmap, else pre-select from bookmarked countries.
   const initialSelectedDeadlines = useMemo<ExternalDeadline[]>(() => {
@@ -436,9 +443,17 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
       data: exportMarkdown,
       // Persist the structured plan so the roadmap is restorable (C1 read-back).
       inputs: { milestones: currentMilestones, selectedDeadlines, mitigations },
+      output: roadmapOutputPayload ?? undefined,
       createdAt: Date.now(),
     })
-  }, [addExecutiveDocument, exportMarkdown, currentMilestones, selectedDeadlines, mitigations])
+  }, [
+    addExecutiveDocument,
+    exportMarkdown,
+    currentMilestones,
+    selectedDeadlines,
+    mitigations,
+    roadmapOutputPayload,
+  ])
 
   return (
     <div className="space-y-6">

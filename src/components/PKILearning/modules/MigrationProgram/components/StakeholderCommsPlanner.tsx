@@ -5,6 +5,7 @@ import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { ArtifactBuilder } from '../../../common/executive'
 import type { ArtifactSection } from '../../../common/executive'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
+import { useSavedArtifactOutput } from '@/hooks/useSavedArtifactInputs'
 import type { RoadmapOutput } from '../types'
 
 const MODULE_ID = 'migration-program'
@@ -275,6 +276,14 @@ export const StakeholderCommsPlanner: React.FC<StakeholderCommsPlannerProps> = (
     useExecutiveModuleData()
   const [seedCleared, setSeedCleared] = useState(false)
 
+  // roadmapOutput only arrives as a live prop inside the linear
+  // `/learn/migration-program` wizard. Reached any other way — the
+  // Simulation embed or the standalone Business Center route — fall back to
+  // the Roadmap Builder's last saved output so milestones still seed the
+  // Escalation Criteria section.
+  const savedRoadmapOutput = useSavedArtifactOutput<RoadmapOutput>('migration-roadmap')
+  const effectiveRoadmapOutput = roadmapOutput ?? savedRoadmapOutput ?? null
+
   const myFrameworksLabels = useMemo(
     () =>
       myFrameworks
@@ -306,7 +315,7 @@ export const StakeholderCommsPlanner: React.FC<StakeholderCommsPlannerProps> = (
         myFrameworksLabels: seedCleared ? [] : myFrameworksLabels,
         myProductsCount: seedCleared ? 0 : myProducts.length,
         deadlineYear: seedCleared ? null : migrationDeadlineYear,
-        roadmapMilestones: seedCleared ? null : (roadmapOutput?.milestones ?? null),
+        roadmapMilestones: seedCleared ? null : (effectiveRoadmapOutput?.milestones ?? null),
       }),
     [
       industry,
@@ -315,7 +324,7 @@ export const StakeholderCommsPlanner: React.FC<StakeholderCommsPlannerProps> = (
       myProducts.length,
       migrationDeadlineYear,
       seedCleared,
-      roadmapOutput,
+      effectiveRoadmapOutput,
     ]
   )
 
@@ -333,7 +342,7 @@ export const StakeholderCommsPlanner: React.FC<StakeholderCommsPlannerProps> = (
       )
     if (migrationDeadlineYear) seedSources.push(`deadline ${migrationDeadlineYear} from /timeline`)
   }
-  const roadmapMilestoneCount = roadmapOutput?.milestones?.length ?? 0
+  const roadmapMilestoneCount = effectiveRoadmapOutput?.milestones?.length ?? 0
   const builderKey = seedCleared
     ? 'cleared'
     : `${myFrameworksLabels.length}-${myProducts.length}-${migrationDeadlineYear ?? 'no'}-${roadmapMilestoneCount}`
@@ -346,9 +355,9 @@ export const StakeholderCommsPlanner: React.FC<StakeholderCommsPlannerProps> = (
           onClear={() => setSeedCleared(true)}
         />
       )}
-      {!seedCleared && roadmapOutput && roadmapOutput.milestones.length > 0 && (
+      {!seedCleared && effectiveRoadmapOutput && effectiveRoadmapOutput.milestones.length > 0 && (
         <PreFilledBanner
-          summary={`${roadmapOutput.milestones.length} roadmap milestone${roadmapOutput.milestones.length !== 1 ? 's' : ''} from Step 1 added as communication trigger points in the Escalation Criteria section.`}
+          summary={`${effectiveRoadmapOutput.milestones.length} roadmap milestone${effectiveRoadmapOutput.milestones.length !== 1 ? 's' : ''} ${roadmapOutput ? 'from Step 1' : 'from your last Roadmap Builder export'} added as communication trigger points in the Escalation Criteria section.`}
         />
       )}
       <div className="glass-panel p-4">
