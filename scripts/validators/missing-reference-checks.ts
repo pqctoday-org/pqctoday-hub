@@ -37,7 +37,7 @@ const ID_PATTERNS: RegExp[] = [
 ]
 
 /** Normalise a matched ID to a canonical form for comparison. */
-function canonical(s: string): string {
+export function canonical(s: string): string {
   return s.replace(/[-\s]+/g, '').toUpperCase()
 }
 
@@ -62,7 +62,7 @@ const CITATION_COLUMNS = [
   'standards',
 ]
 
-function citedIds(row: Record<string, string>): Set<string> {
+export function citedIds(row: Record<string, string>): Set<string> {
   const cited = new Set<string>()
   for (const col of CITATION_COLUMNS) {
     const v = row[col]
@@ -75,6 +75,28 @@ function citedIds(row: Record<string, string>): Set<string> {
     }
   }
   return cited
+}
+
+/** A citation column entry is often prefixed with the issuing org's name
+ * ("NIST IR 8547", "IETF RFC 9370", "NSA CNSA 2.0") while the ID pattern
+ * extracted from free-text description never carries that prefix ("IR8547",
+ * "RFC9370", "CNSA2.0") — canonical() only strips whitespace/hyphens, so an
+ * exact Set.has() comparison false-positives on every prefixed citation
+ * (confirmed live 2026-07-12: "NIST IR 8547" flagged as "missing" against a
+ * description mentioning "IR 8547", even though the row already cites the
+ * same document). Substring containment fixes it without needing to
+ * enumerate every possible org-name prefix. */
+export function isCited(mentionedCanonical: string, cited: Set<string>): boolean {
+  for (const c of cited) {
+    if (
+      c === mentionedCanonical ||
+      c.includes(mentionedCanonical) ||
+      mentionedCanonical.includes(c)
+    ) {
+      return true
+    }
+  }
+  return false
 }
 
 /** Strict dated-CSV pattern — excludes non-canonical adjuncts like
@@ -199,7 +221,7 @@ export async function runMissingReferenceChecks(opts: MRRunOptions = {}): Promis
       const cited = citedIds(row)
 
       for (const m of mentioned) {
-        if (!cited.has(m)) {
+        if (!isCited(m, cited)) {
           findings.push({
             csv: t.csvPath,
             row: null,
