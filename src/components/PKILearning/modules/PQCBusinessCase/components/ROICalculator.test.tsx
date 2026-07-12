@@ -243,6 +243,38 @@ describe('ROICalculator', () => {
     expect(screen.getByText(/Aligned\.|Divergent\./)).toBeInTheDocument()
   })
 
+  it('shows the selected-scope cost in the cross-check panel once Products to Migrate is below the full estate', () => {
+    mockData = {
+      ...baseMockData,
+      isAssessmentComplete: true,
+      assessmentResult: {
+        riskScore: 60,
+        riskLevel: 'medium',
+        algorithmMigrations: [],
+        complianceImpacts: [],
+        recommendedActions: [],
+        narrative: '',
+        generatedAt: '',
+        assessmentProfile: {
+          infrastructure: ['Hardware', 'Cloud'],
+          systemScale: '51-200',
+        } as unknown as AssessmentProfile,
+      },
+    }
+    renderCalc()
+    // Default productsToMigrate = min(totalProducts, 50) = totalProducts here (10),
+    // so the selected-scope line shouldn't render — it would just repeat the
+    // full-estate number.
+    expect(screen.queryByText(/At your selected scope/i)).not.toBeInTheDocument()
+
+    const productsSlider = screen.getByLabelText(/Products to Migrate/i) as HTMLInputElement
+    fireEvent.change(productsSlider, { target: { value: '5' } })
+
+    expect(
+      screen.getByText(/At your selected scope \(5 of 10 products above\)/i)
+    ).toBeInTheDocument()
+  })
+
   it('prompts to run the assessment when none is complete (cross-check empty state)', () => {
     // baseMockData has isAssessmentComplete=false and assessmentResult=null.
     renderCalc()
