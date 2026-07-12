@@ -1,0 +1,5434 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <title>
+      
+        Post Quantum Cryptography (PQC)
+      
+    </title>
+    
+  
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+
+    
+      <meta name="description" content="FAQ on PQC" />
+      
+      <meta name="robots" content="index, follow" />
+      <link rel="canonical" href="https://www.pqcee.com/pages/post-quantum-cryptography-faq" />
+      
+        <link rel="alternate" hreflang="en" href="https://www.pqcee.com/pages/post-quantum-cryptography-faq" />
+      
+      
+        <link rel="alternate"
+              hreflang="x-default"
+              href="https://www.pqcee.com/pages/post-quantum-cryptography-faq" />
+      
+      <meta http-equiv="content-language" content="en" />
+      
+      <meta property="og:title" content="Post Quantum Cryptography (PQC)" />
+      <meta property="og:description" content="FAQ on PQC" />
+      <meta property="og:url" content="https://www.pqcee.com/pages/post-quantum-cryptography-faq" />
+      <meta property="og:type" content="website" />
+      <meta property="og:locale" content="en" />
+      
+      <meta property="og:site_name" content="pQCee Pte Ltd" />
+      
+      
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content="Post Quantum Cryptography (PQC)" />
+      <meta name="twitter:description" content="FAQ on PQC" />
+      
+    
+    
+    
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+
+    <link href="https://fonts.googleapis.com/css2?family=Anek%20Tamil&display=swap"
+          rel="stylesheet">
+
+
+    
+    
+    
+      
+      
+    
+    
+    
+      
+
+
+    
+        
+            <link rel="stylesheet" type="text/css" href="https://dtuewuojrf.koniglecdn.com/css/root-styles-41809999.css">
+        
+    
+
+    
+        
+            <link rel="stylesheet" type="text/css" href="https://dtuewuojrf.koniglecdn.com/css/ds-stylesheet.css">
+        
+    
+
+
+    
+    
+    
+    
+    
+  
+  
+
+    
+  
+    
+  <script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "WebPage",
+        
+        "name": "Post Quantum Cryptography (PQC)",
+        
+        "description": "FAQ on PQC",
+        
+        "publisher": {
+            "@type": "Organization",
+            "name": "pQCee Pte Ltd",
+            
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://storage.googleapis.com/cdn.konigle.net/assets/images/1723221579/webp/202408/4e9503743a914f13b2d72ac044dfb5bb.webp"
+            },
+            
+            "url": "https://www.pqcee.com"
+        }
+    }
+</script>
+    
+  
+
+    
+    
+  
+
+    
+
+<script id="layout-context" type="application/json">""</script>
+<script id="site-settings" type="application/json">{"brand": {"font": {"kind": "webfonts#webfont", "menu": "https://fonts.gstatic.com/s/anektamil/v17/XLYJIZH2bYJHGYtPGSbUB8JKTp-_9n55SsLHW0WZez6TjtkDu3uNQidKqoH8.ttf", "files": {"100": "https://fonts.gstatic.com/s/anektamil/v17/XLYJIZH2bYJHGYtPGSbUB8JKTp-_9n55SsLHW0WZez6TjtkDu3uNQiZ6q4v4oegjOQ.ttf", "200": "https://fonts.gstatic.com/s/anektamil/v17/XLYJIZH2bYJHGYtPGSbUB8JKTp-_9n55SsLHW0WZez6TjtkDu3uNwid6q4v4oegjOQ.ttf", "300": "https://fonts.gstatic.com/s/anektamil/v17/XLYJIZH2bYJHGYtPGSbUB8JKTp-_9n55SsLHW0WZez6TjtkDu3uNHCd6q4v4oegjOQ.ttf", "500": "https://fonts.gstatic.com/s/anektamil/v17/XLYJIZH2bYJHGYtPGSbUB8JKTp-_9n55SsLHW0WZez6TjtkDu3uNcCd6q4v4oegjOQ.ttf", "600": "https://fonts.gstatic.com/s/anektamil/v17/XLYJIZH2bYJHGYtPGSbUB8JKTp-_9n55SsLHW0WZez6TjtkDu3uNnCB6q4v4oegjOQ.ttf", "700": "https://fonts.gstatic.com/s/anektamil/v17/XLYJIZH2bYJHGYtPGSbUB8JKTp-_9n55SsLHW0WZez6TjtkDu3uNpSB6q4v4oegjOQ.ttf", "800": "https://fonts.gstatic.com/s/anektamil/v17/XLYJIZH2bYJHGYtPGSbUB8JKTp-_9n55SsLHW0WZez6TjtkDu3uNwiB6q4v4oegjOQ.ttf", "regular": "https://fonts.gstatic.com/s/anektamil/v17/XLYJIZH2bYJHGYtPGSbUB8JKTp-_9n55SsLHW0WZez6TjtkDu3uNQid6q4v4oegjOQ.ttf"}, "family": "Anek Tamil", "subsets": ["latin", "latin-ext", "tamil"], "version": "v17", "category": "sans-serif", "variants": ["100", "200", "300", "regular", "500", "600", "700", "800"], "lastModified": "2024-12-04"}, "logo_url": "https://storage.googleapis.com/cdn.konigle.net/assets/images/1723221579/webp/202408/4e9503743a914f13b2d72ac044dfb5bb.webp", "font_size": 18, "info_color": "#2563eb", "logo_width": 200, "radius_box": "0.5rem", "text_color": "#000000", "font_family": "Anek Tamil", "logo_height": 200, "accent_color": "#18f293", "danger_color": "#ef4444", "radius_input": "0.375rem", "base_color_50": "#ffffff", "font_provider": "google", "neutral_color": "#f3f4f6", "primary_color": "#969b7f", "radius_button": "0.375rem", "success_color": "#10b981", "warning_color": "#f59e0b", "base_color_100": "#f3f4f6", "base_color_200": "#e5e7eb", "base_color_300": "#d1d5db", "secondary_color": "#969b7f", "background_color": "#ffffff", "primary_color_50": "#fef2f2", "primary_color_100": "#fee2e2", "primary_color_200": "#fecaca", "primary_color_300": "#fca5a5", "primary_color_400": "#f87171", "primary_color_500": "#ef4444", "primary_color_600": "#dc2626", "primary_color_700": "#b91c1c", "primary_color_800": "#991b1b", "primary_color_900": "#7f1d1d", "primary_color_950": "#450a0a", "base_content_color": "#000000", "info_content_color": "#ffffff", "secondary_color_50": "#f0fdf5", "secondary_color_100": "#dcfce8", "secondary_color_200": "#bbf7d1", "secondary_color_300": "#86efad", "secondary_color_400": "#4ade81", "secondary_color_500": "#22c55e", "secondary_color_600": "#16a34a", "secondary_color_700": "#15803c", "secondary_color_800": "#166533", "secondary_color_900": "#14532b", "secondary_color_950": "#052e14", "accent_content_color": "#ffffff", "danger_content_color": "#ffffff", "neutral_content_color": "#000000", "primary_content_color": "#ffffff", "success_content_color": "#ffffff", "warning_content_color": "#ffffff", "secondary_content_color": "#ffffff", "primary_content_color_50": "#f3f4f6", "primary_content_color_100": "#e5e7eb", "primary_content_color_200": "#d1d5db", "primary_content_color_300": "#b0b8c1", "primary_content_color_400": "#8b95a1", "primary_content_color_500": "#6b7280", "primary_content_color_600": "#4b5563", "primary_content_color_700": "#374151", "primary_content_color_800": "#1f2937", "primary_content_color_900": "#111827", "primary_content_color_950": "#292929", "secondary_content_color_50": "#ffffff", "secondary_content_color_100": "#efefef", "secondary_content_color_200": "#dcdcdc", "secondary_content_color_300": "#bdbdbd", "secondary_content_color_400": "#989898", "secondary_content_color_500": "#7c7c7c", "secondary_content_color_600": "#656565", "secondary_content_color_700": "#525252", "secondary_content_color_800": "#464646", "secondary_content_color_900": "#3d3d3d", "secondary_content_color_950": "#292929"}, "product_listing": {"disable_checkout": true, "disable_wishlist": false, "product_cta_text": "Add to cart", "wishlist_button_text": "Add to wishlist"}, "tracking": {"gtm_id": "csm-konigle", "fb_pixel_id": null, "fathom_site_id": null, "ga_tracking_id": null}, "watchtower": {"token": "03130fbf33c44df8ac14fa3bcd3779a3"}, "commerce": {}}</script>
+<script id="root-layout-context" type="application/json">{"style": {}, "version": "1", "header": {"style": {"color": "", "background-color": ""}, "blocks": {"top_navbar": {"classes": "", "style": {"color": "", "background-color": ""}, "type": "component", "component_id": "7228111472411283456", "name": "Navbar - Default", "disabled": false, "attrs_": {}, "config_": {}, "class_": "", "component": {"classes": "", "style": {}, "attrs": {}, "config": {}, "version": "1", "type": "top-navbar", "name": "1.0 Navbar - Default", "design": "thin", "tiles": {"logo": {"style": {}, "attrs": {}, "config": {}, "type": "image", "disabled": false, "content": {"style": {}, "attrs": {"src": "https://dtuewuojrf.koniglecdn.com/images/pqcee-logo-crop.webp", "alt": "pQCee logo", "width": 1795, "height": 798}, "config": {"url": "/", "overlay_text": null}, "tag": "img", "text": ""}, "items": null, "order": []}, "cta_link": {"style": {}, "attrs": {}, "config": {}, "type": "link", "disabled": false, "content": {"style": {}, "attrs": {"href": "/pages/contact", "target": "_blank", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "Contact us"}, "items": null, "order": []}, "cart_link": {"style": {}, "attrs": {}, "config": {}, "type": "link", "disabled": true, "content": {"style": {}, "attrs": {"href": "/cart", "target": "_self", "rel": null}, "config": {"type": null}, "tag": "a", "text": "Cart"}, "items": null, "order": []}, "login_link": {"style": {}, "attrs": {}, "config": {}, "type": "link", "disabled": true, "content": {"style": {}, "attrs": {"href": "/login", "target": "_self", "rel": null}, "config": {"type": null}, "tag": "a", "text": "Login"}, "items": null, "order": []}, "search_button": {"style": {}, "attrs": {}, "config": {}, "type": "button", "disabled": false, "content": {"style": {}, "attrs": {"type": "button"}, "config": {}, "tag": "button", "text": "Search"}, "items": null, "order": []}, "link_group_1": {"style": {}, "attrs": {}, "config": {"flatten": false}, "type": "dropdown", "disabled": false, "content": {"style": {}, "attrs": {"type": "button"}, "config": {}, "tag": "button", "text": "Post Quantum"}, "items": {"detailed_link_888d07": {"style": {}, "attrs": {}, "config": {}, "type": "detailed-link", "name": "Detailed Link 1", "tags": {"link": {"style": {}, "attrs": {"href": "/what-is/quantum-computing", "target": "_self", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "What is Quantum Computing ?"}, "subtext": {"style": {}, "attrs": {}, "config": {}, "tag": "p", "text": ""}, "icon": null}, "design": "default"}, "detailed_link_db9a9f": {"style": {}, "attrs": {}, "config": {}, "type": "detailed-link", "name": "Detailed Link 3", "tags": {"link": {"style": {}, "attrs": {"href": "/blog/quantum-comics", "target": "_self", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "Quantum Comics"}, "subtext": {"style": {}, "attrs": {}, "config": {}, "tag": "p", "text": ""}, "icon": null}, "design": "default"}, "detailed_link_fed370": {"style": {}, "attrs": {}, "config": {}, "type": "detailed-link", "name": "Detailed Link 2", "tags": {"link": {"style": {}, "attrs": {"href": "/pages/post-quantum-cryptography-faq", "target": "_self", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "Post Quantum Cryptography FAQ"}, "subtext": {"style": {}, "attrs": {}, "config": {}, "tag": "p", "text": ""}, "icon": null}, "design": "default"}}, "order": ["detailed_link_888d07", "detailed_link_fed370", "detailed_link_db9a9f"]}, "link_group_2": {"style": {}, "attrs": {}, "config": {"flatten": false}, "type": "dropdown", "disabled": false, "content": {"style": {}, "attrs": {"type": "button"}, "config": {}, "tag": "button", "text": "Products"}, "items": {"link_1": {"style": {}, "attrs": {}, "config": {}, "type": "detailed-link", "name": "Link 1", "tags": {"link": {"style": {}, "attrs": {"href": "/product/packetqc", "target": "_self", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "PacketQC"}, "subtext": null, "icon": null}, "design": "default"}, "link_2": {"style": {}, "attrs": {}, "config": {}, "type": "detailed-link", "name": "Link 2", "tags": {"link": {"style": {}, "attrs": {"href": "/product/inoqulate", "target": "_self", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "inoQulate"}, "subtext": {"style": {}, "attrs": {}, "config": {}, "tag": "p", "text": ""}, "icon": null}, "design": "default"}, "detailed_link_10f5e7": {"style": {}, "attrs": {}, "config": {}, "type": "detailed-link", "name": "Detailed Link 5", "tags": {"link": {"style": {}, "attrs": {"href": "/product/safequard", "target": "_self", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "SafeQuard"}, "subtext": {"style": {}, "attrs": {}, "config": {}, "tag": "p", "text": ""}, "icon": null}, "design": "default"}, "detailed_link_cffbc3": {"style": {}, "attrs": {}, "config": {}, "type": "detailed-link", "name": "Detailed Link 3", "tags": {"link": {"style": {}, "attrs": {"href": "/product/qkdlite", "target": "_self", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "QKDLite"}, "subtext": {"style": {}, "attrs": {}, "config": {}, "tag": "p", "text": ""}, "icon": null}, "design": "default"}, "detailed_link_dc5b8e": {"style": {}, "attrs": {}, "config": {}, "type": "detailed-link", "name": "Detailed Link 4", "tags": {"link": {"style": {}, "attrs": {"href": "/product/quicscript", "target": "_self", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "QuICScript"}, "subtext": {"style": {}, "attrs": {}, "config": {}, "tag": "p", "text": ""}, "icon": null}, "design": "default"}}, "order": ["link_1", "link_2", "detailed_link_cffbc3", "detailed_link_dc5b8e", "detailed_link_10f5e7"]}, "link_group_3": {"style": {}, "attrs": {}, "config": {"flatten": false}, "type": "dropdown", "disabled": false, "content": {"style": {}, "attrs": {"type": "button"}, "config": {}, "tag": "button", "text": "Readings"}, "items": {"link_1": {"style": {}, "attrs": {}, "config": {}, "type": "detailed-link", "name": "Link 1", "tags": {"link": {"style": {}, "attrs": {"href": "/blog/research", "target": "_self", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "Research"}, "subtext": null, "icon": null}, "design": "default"}, "detailed_link_6f96ad": {"style": {}, "attrs": {}, "config": {}, "type": "detailed-link", "name": "Detailed Link 3", "tags": {"link": {"style": {}, "attrs": {"href": "https://qcve.org/blog", "target": "_self", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "Writings"}, "subtext": {"style": {}, "attrs": {}, "config": {}, "tag": "p", "text": ""}, "icon": null}, "design": "default"}, "detailed_link_a2d148": {"style": {}, "attrs": {}, "config": {}, "type": "detailed-link", "name": "Detailed Link 2", "tags": {"link": {"style": {}, "attrs": {"href": "/blog/awareness", "target": "_self", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "Awareness"}, "subtext": {"style": {}, "attrs": {}, "config": {}, "tag": "p", "text": ""}, "icon": null}, "design": "default"}}, "order": ["link_1", "detailed_link_a2d148", "detailed_link_6f96ad"]}, "link_group_4": {"style": {}, "attrs": {}, "config": {"flatten": false}, "type": "dropdown", "disabled": false, "content": {"style": {}, "attrs": {"type": "button"}, "config": {}, "tag": "button", "text": "Community"}, "items": {"detailed_link_61b26b": {"style": {}, "attrs": {}, "config": {}, "type": "detailed-link", "name": "Detailed Link 2", "tags": {"link": {"style": {}, "attrs": {"href": "https://quantumnft.xyz/", "target": "_blank", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "quantumnft.xyz"}, "subtext": {"style": {}, "attrs": {}, "config": {}, "tag": "p", "text": ""}, "icon": null}, "design": "default"}, "detailed_link_9c5e33": {"style": {}, "attrs": {}, "config": {}, "type": "detailed-link", "name": "Detailed Link 3", "tags": {"link": {"style": {}, "attrs": {"href": "https://www.pqevm.org", "target": "_blank", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "pqEVM"}, "subtext": {"style": {}, "attrs": {}, "config": {}, "tag": "p", "text": ""}, "icon": null}, "design": "default"}, "detailed_link_cba735": {"style": {}, "attrs": {}, "config": {}, "type": "detailed-link", "name": "Detailed Link 1", "tags": {"link": {"style": {}, "attrs": {"href": "https://qcve.org/", "target": "_blank", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "qcve.org"}, "subtext": {"style": {}, "attrs": {}, "config": {}, "tag": "p", "text": ""}, "icon": null}, "design": "default"}}, "order": ["detailed_link_cba735", "detailed_link_61b26b", "detailed_link_9c5e33"]}, "link_group_5": {"style": {}, "attrs": {}, "config": {"flatten": false}, "type": "dropdown", "disabled": false, "content": {"style": {}, "attrs": {"type": "button"}, "config": {}, "tag": "button", "text": "Company"}, "items": {"detailed_link_0bbf35": {"style": {}, "attrs": {}, "config": {}, "type": "detailed-link", "name": "Detailed Link 1", "tags": {"link": {"style": {}, "attrs": {"href": "/about", "target": "_self", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "About"}, "subtext": {"style": {}, "attrs": {}, "config": {}, "tag": "p", "text": ""}, "icon": null}, "design": "default"}, "detailed_link_95adb1": {"style": {}, "attrs": {}, "config": {}, "type": "detailed-link", "name": "Detailed Link 2", "tags": {"link": {"style": {}, "attrs": {"href": "/about/sales", "target": "_self", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "Sales"}, "subtext": {"style": {}, "attrs": {}, "config": {}, "tag": "p", "text": ""}, "icon": null}, "design": "default"}, "detailed_link_dbfa85": {"style": {}, "attrs": {}, "config": {}, "type": "detailed-link", "name": "Detailed Link 3", "tags": {"link": {"style": {}, "attrs": {"href": "/about/media", "target": "_self", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "Media"}, "subtext": {"style": {}, "attrs": {}, "config": {}, "tag": "p", "text": ""}, "icon": null}, "design": "default"}}, "order": ["detailed_link_0bbf35", "detailed_link_95adb1", "detailed_link_dbfa85"]}}}}}, "order": ["top_navbar"], "attrs_": {}, "config_": {}, "class_": ""}, "footer": {"style": {"color": "#000000", "background-color": "#eae7dc"}, "blocks": {"footer": {"classes": "", "style": {"color": "#000000", "background-color": "#eae7dc"}, "type": "component", "component_id": "7228105885694824448", "name": "Footer - Default", "disabled": false, "attrs_": {}, "config_": {}, "class_": "", "component": {"classes": "", "style": {"background-color": "#eae7dc"}, "attrs": {}, "config": {}, "version": "1", "type": "footer", "name": "1.5 Footer - Default", "design": "minimal-split", "tiles": {"logo": {"style": {}, "attrs": {}, "config": {}, "type": "image", "disabled": false, "content": {"style": {}, "attrs": {"src": "https://dtuewuojrf.koniglecdn.com/images/pqcee-logo-crop.webp", "alt": "pQCee logo", "width": 1795, "height": 798}, "config": {"url": "/", "overlay_text": null}, "tag": "img", "text": ""}, "items": null, "order": []}, "description": {"style": {}, "attrs": {}, "config": {}, "type": "paragraph", "disabled": false, "content": {"style": {}, "attrs": {}, "config": {}, "tag": "p", "text": "From eco-friendly practices in our operations to philanthropic initiatives that support education and healthcare, we believe in using our platform to drive positive change. Join us in our journey to create a brighter future, where every action we take contributes to a world that is more sustainable, equitable, and filled with opportunities for all."}, "items": null, "order": []}, "trust_badges": {"style": {}, "attrs": {}, "config": {}, "type": "image-list", "disabled": false, "content": null, "items": {"image_0": {"style": {}, "attrs": {}, "config": {}, "type": "image", "name": "image", "tags": {"image": {"style": {}, "attrs": {"src": "https://app-konigle-com.koniglecdn.com/images/bizsafe.webp", "alt": "bizsafe", "width": null, "height": null}, "config": {"url": null, "overlay_text": null}, "tag": "img", "text": ""}}, "design": "default"}, "image_1": {"style": {}, "attrs": {}, "config": {}, "type": "image", "name": "image", "tags": {"image": {"style": {}, "attrs": {"src": "https://app-konigle-com.koniglecdn.com/images/halal-singapore.webp", "alt": "halal", "width": null, "height": null}, "config": {"url": null, "overlay_text": null}, "tag": "img", "text": ""}}, "design": "default"}, "image_2": {"style": {}, "attrs": {}, "config": {}, "type": "image", "name": "image", "tags": {"image": {"style": {}, "attrs": {"src": "https://app-konigle-com.koniglecdn.com/images/iso-9001.webp", "alt": "iso9001", "width": null, "height": null}, "config": {"url": null, "overlay_text": null}, "tag": "img", "text": ""}}, "design": "default"}, "image_3": {"style": {}, "attrs": {}, "config": {}, "type": "image", "name": "image", "tags": {"image": {"style": {}, "attrs": {"src": "https://app-konigle-com.koniglecdn.com/images/paynow.webp", "alt": "paynow", "width": null, "height": null}, "config": {"url": null, "overlay_text": null}, "tag": "img", "text": ""}}, "design": "default"}, "image_4": {"style": {}, "attrs": {}, "config": {}, "type": "image", "name": "image", "tags": {"image": {"style": {}, "attrs": {"src": "https://app-konigle-com.koniglecdn.com/images/apple-pay.webp", "alt": "apple pay", "width": null, "height": null}, "config": {"url": null, "overlay_text": null}, "tag": "img", "text": ""}}, "design": "default"}}, "order": ["image_0", "image_1", "image_2", "image_3", "image_4"]}, "social_links": {"style": {}, "attrs": {}, "config": {}, "type": "social-link-list", "disabled": false, "content": null, "items": {"link_4": {"style": {}, "attrs": {}, "config": {"platform": "x"}, "type": "social-link", "name": "Link 4", "tags": {"link": {"style": {}, "attrs": {"href": "https://twitter.com/pqcee_com", "target": "_blank", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": ""}, "handle": {"style": {}, "attrs": {}, "config": {}, "tag": "p", "text": "@pqcee_com"}}, "design": "default"}, "link_5": {"style": {}, "attrs": {}, "config": {"platform": "youtube"}, "type": "social-link", "name": "Link 5", "tags": {"link": {"style": {}, "attrs": {"href": "https://www.youtube.com/@pQCee", "target": "_blank", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": ""}, "handle": {"style": {}, "attrs": {}, "config": {}, "tag": "p", "text": "@pQCee"}}, "design": "default"}, "link_6": {"style": {}, "attrs": {}, "config": {"platform": "linkedin"}, "type": "social-link", "name": "Link 5", "tags": {"link": {"style": {}, "attrs": {"href": "https://sg.linkedin.com/company/pqcee", "target": "_blank", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": ""}, "handle": {"style": {}, "attrs": {}, "config": {}, "tag": "p", "text": "pqcee"}}, "design": "default"}}, "order": ["link_4", "link_5", "link_6"]}, "link_group_1": {"style": {}, "attrs": {}, "config": {}, "type": "links", "disabled": false, "content": {"style": {}, "attrs": {}, "config": {"level": 3}, "tag": "h", "text": "Quantum Computing"}, "items": {"link_1": {"style": {}, "attrs": {}, "config": {}, "type": "link", "name": "Link 1", "tags": {"link": {"style": {}, "attrs": {"href": "/what-is/quantum-computing", "target": "_blank", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "What is Quantum Computing ?"}}, "design": "default"}, "link_2": {"style": {}, "attrs": {}, "config": {}, "type": "link", "name": "Link 2", "tags": {"link": {"style": {}, "attrs": {"href": "/pages/post-quantum-cryptography-faq", "target": "_self", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "Post Quantum Cryptography FAQ"}}, "design": "default"}, "link_32edd1": {"style": {}, "attrs": {}, "config": {}, "type": "link", "name": "Link 3", "tags": {"link": {"style": {}, "attrs": {"href": "/blog/quantum-comics", "target": "_self", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "Quantum Comics"}}, "design": "default"}}, "order": ["link_1", "link_2", "link_32edd1"]}, "link_group_2": {"style": {}, "attrs": {}, "config": {}, "type": "links", "disabled": false, "content": {"style": {}, "attrs": {}, "config": {"level": 3}, "tag": "h", "text": "Solutions"}, "items": {"link_1": {"style": {}, "attrs": {}, "config": {}, "type": "link", "name": "Link 1", "tags": {"link": {"style": {}, "attrs": {"href": "/product/qkdlite", "target": "_self", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "Key Management"}}, "design": "default"}, "link_2": {"style": {}, "attrs": {}, "config": {}, "type": "link", "name": "Link 2", "tags": {"link": {"style": {}, "attrs": {"href": "/product/safequard", "target": "_self", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "Encryption"}}, "design": "default"}, "link_f688bd": {"style": {}, "attrs": {}, "config": {}, "type": "link", "name": "Link 3", "tags": {"link": {"style": {}, "attrs": {"href": "/product/inoqulate", "target": "_self", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "Digital Signing"}}, "design": "default"}}, "order": ["link_1", "link_2", "link_f688bd"]}, "link_group_3": {"style": {}, "attrs": {}, "config": {}, "type": "links", "disabled": false, "content": {"style": {}, "attrs": {}, "config": {"level": 3}, "tag": "h", "text": "Resources"}, "items": {"link_1": {"style": {}, "attrs": {}, "config": {}, "type": "link", "name": "Link 1", "tags": {"link": {"style": {}, "attrs": {"href": "https://github.com/pqcee", "target": "_blank", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "Github"}}, "design": "default"}, "link_270785": {"style": {}, "attrs": {}, "config": {}, "type": "link", "name": "Link 3", "tags": {"link": {"style": {}, "attrs": {"href": "https://pqcee.github.io/", "target": "_blank", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "Product Manuals"}}, "design": "default"}, "link_dfc762": {"style": {}, "attrs": {}, "config": {}, "type": "link", "name": "Link 2", "tags": {"link": {"style": {}, "attrs": {"href": "https://qcve.org", "target": "_blank", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "QCVE"}}, "design": "default"}}, "order": ["link_1", "link_dfc762", "link_270785"]}, "link_group_4": {"style": {}, "attrs": {}, "config": {}, "type": "links", "disabled": false, "content": {"style": {}, "attrs": {}, "config": {"level": 3}, "tag": "h", "text": "Company"}, "items": {"link_1962bb": {"style": {}, "attrs": {}, "config": {}, "type": "link", "name": "Link 3", "tags": {"link": {"style": {}, "attrs": {"href": "/about/sales", "target": "_self", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "Sales contact"}}, "design": "default"}, "link_e5f310": {"style": {}, "attrs": {}, "config": {}, "type": "link", "name": "Link 1", "tags": {"link": {"style": {}, "attrs": {"href": "/about", "target": "_blank", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "About pQCee"}}, "design": "default"}}, "order": ["link_e5f310", "link_1962bb"]}, "link_group_5": {"style": {}, "attrs": {}, "config": {}, "type": "links", "disabled": false, "content": {"style": {}, "attrs": {}, "config": {"level": 3}, "tag": "h", "text": "Links"}, "items": {"link_1": {"style": {}, "attrs": {}, "config": {}, "type": "link", "name": "Link 1", "tags": {"link": {"style": {}, "attrs": {"href": "/pages/contact", "target": "_blank", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "Contact us"}}, "design": "default"}, "link_3": {"style": {}, "attrs": {}, "config": {}, "type": "link", "name": "Link 1", "tags": {"link": {"style": {}, "attrs": {"href": "/pages/privacy", "target": "_blank", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "Privacy"}}, "design": "default"}, "link_4": {"style": {}, "attrs": {}, "config": {}, "type": "link", "name": "Link 1", "tags": {"link": {"style": {}, "attrs": {"href": "/pages/terms", "target": "_blank", "rel": "noopener noreferrer"}, "config": {"type": null}, "tag": "a", "text": "Terms of service"}}, "design": "default"}}, "order": ["link_1", "link_3", "link_4"]}, "cta_button": {"style": {}, "attrs": {}, "config": {}, "type": "link", "disabled": false, "content": {"style": {}, "attrs": {"href": "#", "target": "_blank", "rel": null}, "config": {"type": null}, "tag": "a", "text": "Find out more"}, "items": null, "order": []}}}}}, "order": ["footer"], "attrs_": {}, "config_": {}, "class_": ""}, "main": null, "right_sidebar": null, "left_sidebar": null, "css_assets": [{"type": "css", "attrs": {}, "code": "__root", "name": "Root stylesheet", "version": null, "asset_id": "d214cb91-758d-48c4-900a-b620860f0f2e", "asset_src": null}, {"type": "css", "attrs": {}, "code": "__custom", "name": "Design System Stylesheet", "version": null, "asset_id": "168302e7-1db2-47c2-ada1-d7522fda999e", "asset_src": null}], "js_assets": [], "template_id": "7220642255646756864"}</script>
+<script>
+    window.konigle = {
+        apiServer: "https://tim.konigle.com",
+        csrfToken: "o73upFs2bqv1WUrZljBcsVA2OfYlXEmGzoEkXlreQnHqC5QAISp3BpZlXYG3WiuP",
+        userAuthenticated: false,
+        isPreview: false,
+        pageVersion: "A",
+        profitjs: {
+            pageType: "page",
+            resourceId: "7292636196924080128",
+            accessToken: "f6bad713f5244795b1ea8749ae6c4069",
+            server: "https://tim.konigle.com"
+        },
+        watchtower: {
+            token: "03130fbf33c44df8ac14fa3bcd3779a3",
+            pageType: "2",
+            pageId: "7292636196924080128",
+            pageVersion: "A",
+            server: "https://tim.konigle.com",
+            disable: false
+        }
+    };
+
+    
+    (function() {
+        const siteSettings = document.querySelector('script[id="site-settings"][type="application/json"]');
+        if (siteSettings) {
+            try {
+                const data = JSON.parse(siteSettings.textContent || "{}");
+                window.konigle.settings = data;
+                siteSettings.remove();
+            } catch (e) {
+                console.error("Failed to parse site settings:", e);
+            }
+        }
+    })();
+
+    
+
+    
+    window.addEventListener('auth:login-widget:authenticated', function () {
+        window.konigle.userAuthenticated = true;
+    });
+
+    class ComponentContextManager {
+        constructor() {
+            this.components = new Map();
+        }
+
+        init(){
+            this.parseLayoutContext();
+        }
+
+        handleLayout(layout){
+            const segments = ['main', 'header', 'footer'];
+            segments.forEach((segment) => {
+                if (layout[segment] && layout[segment].blocks) {
+                    for(const [blockKey, block] of Object.entries(layout[segment].blocks)){
+                        if(block.component && block.component_id){
+                            this.components.set(block.component_id, block.component);
+                        }
+                    }
+                }
+            });
+            
+        }
+
+        parseLayoutContext(){
+            ['layout-context', 'root-layout-context'].forEach((id) => {
+                const layoutJson = document.querySelector(`script[id='${id}'][type='application/json']`);
+                if (layoutJson) {
+                    try {
+                        const data = JSON.parse(layoutJson.textContent || "{}");
+                        this.handleLayout(data);
+                        // remve the dom element after parsing
+                        layoutJson.remove();
+                    } catch (e) {
+                        console.error(`Failed to parse JSON for ${id}:`, e);
+                    }
+                }
+            });
+        }
+
+        getComponent(componentId) {
+            return this.components.get(componentId) || {};
+        }
+
+        getComponentConfig(componentId){
+            const component = this.getComponent(componentId);
+            return component.config_ || {};
+        }
+    }
+    if (!window.konigle.componentContextManager) {
+        window.konigle.componentContextManager = new ComponentContextManager();
+        window.konigle.componentContextManager.init();
+    }
+    window.konigle.getComponentConfig = function(componentId) {
+        if (!window.konigle.componentContextManager) {
+            console.error("ComponentContextManager is not initialized.");
+            return {};
+        }
+        return window.konigle.componentContextManager.getComponentConfig(componentId);
+    };
+    window.konigle.getComponentContext = function(componentId) {
+        if (!window.konigle.componentContextManager) {
+            console.error("ComponentContextManager is not initialized.");
+            return {}
+        }
+        return window.konigle.componentContextManager.getComponent(componentId);
+    };
+
+</script>
+
+
+    
+        <script src="/static/sitekit/js/vendor/jquery-3.7.1.min.js"></script>
+    
+    
+
+
+    
+      
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','csm-konigle');
+    </script>
+    <!-- End Google Tag Manager -->
+
+
+
+
+    
+    
+      
+      <style>
+        .bg-header {
+          background-color: ;
+        }
+        .border-header {
+          border-color: ;
+        }
+        .text-header {
+          display: inline-block;
+          color: ;
+          border-color: transparent;
+          border-radius: 0.375rem;
+          transition: transform 0.3s ease-out;
+        }
+        .text-header:hover {
+          transform: scale(1.1);
+          color: ;
+          border-color: ;
+        }
+    </style>
+    
+      
+    
+    <style>
+      [x-cloak] {
+        display: none !important;
+      }
+    </style>
+    
+    
+  
+  
+
+    
+    
+      
+    
+    <!-- Built with Hostbento — https://hostbento.com -->
+    <meta name="generator" content="Hostbento">
+  </head>
+  
+  
+  
+    
+    <body class="flex min-h-screen flex-col justify-between"
+          >
+      
+        
+          
+
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=csm-konigle"
+                height="0"
+                width="0"
+                style="display:none;
+                       visibility:hidden">
+        </iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+
+
+        
+        
+        
+          
+            
+<div data-node-type="segment"
+     data-template-id="7220642255646756864"
+     data-node-key="header"
+     
+     style="">
+    
+        
+            
+                
+                    <!-- component could be deleted but still the ID maybe present in the template. -->
+                    
+                        <div class="w-full" style=""  data-node-type="block" data-node-key="top_navbar" data-component-id="7228111472411283456" >
+                            
+
+    
+    
+<div class="relative w-full bg-header">
+    
+
+
+    
+    <div  style="" data-select-type="component" data-select-key="1.0 Navbar - Default" class="w-full">
+        
+    <!-- Large screen -->
+    <div class="relative hidden h-12 lg:flex flex-row justify-start items-center w-full px-4 max-w-7xl mx-auto">
+        
+        <div class="flex w-auto pr-8 h-8 lg:h-11 border-base-content/60 border-header/60">
+        
+        
+
+
+    
+        
+        <div  style="" data-select-type="tile" data-select-key="" class="h-full">
+            
+    
+
+
+    <div data-select-type="tag" class="h-full">
+        
+    
+        <figure class="relative w-full h-full group"
+                x-data="{ imageOpen: false, imgWidth: 0, imgHeight: 0 }">
+            <!-- rich text image -->
+            
+                <a href="/">
+                    
+                <img src="https://dtuewuojrf.koniglecdn.com/images/pqcee-logo-crop.webp" alt="pQCee logo" width="1795" height="798" 
+                    style=""
+                    class="object-center object-scale-down w-full h-full"
+                    >
+                    
+                </a>
+                <!-- gallery image -->
+            
+        </figure>
+    
+
+    </div>
+
+
+
+        </div>
+    
+
+
+    </div>
+    <div x-data="{ curr_id: null }"
+         class="h-12 flex flex-row flex-1 justify-start items-center before:content-[''] before:block before:text-base-content before:absolute before:bg-base-content/60 before:[block-size:1.5rem] before:[inline-size:1px]">
+        
+            
+
+
+    
+        
+        <div  style="" data-select-type="tile" data-select-key="" class="">
+            
+    
+        
+            <div class="relative block h-12 btn-sm cursor-pointer flex items-center btn-sm ml-4 "
+                 x-data="{ is_open: false, tile_id: 'link_group_1', curr_id: null }"
+                 @click.away="is_open = false; curr_id = null;">
+                <div @click="typeof(curr_id) === 'undefined' ? (is_open = !is_open) : (curr_id = curr_id === tile_id ? null : tile_id)"
+                     class="flex items-center btn-simple">
+                    
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        <button type="button" style="" class="text-base-content mr-1" data-clickbit-target="">
+            Post Quantum
+        </button>
+    
+
+    </div>
+
+
+                    
+                        
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="24"
+                             height="24"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.75"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             class="text-base-content h-5 w-5"
+                             style="color:None"
+                             :class=" {'hidden': curr_id === tile_id }">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M6 9l6 6l6 -6" />
+                        </svg>
+                        
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="24"
+                             height="24"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.75"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             class="text-base-content h-5 w-5"
+                             style="color:None"
+                             x-cloak
+                             :class=" {'hidden': curr_id !== tile_id }">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M6 15l6 -6l6 6" />
+                        </svg>
+                    
+                </div>
+                <!-- TODO: customise colours based on page template -->
+                <div x-cloak
+                     x-show="typeof(curr_id) === 'undefined' ? is_open : curr_id === tile_id"
+                     x-transition:enter="transition ease-in duration-200"
+                     x-transition:enter-start="opacity-0 -translate-y-3"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     x-transition:leave="transition ease-in duration-200"
+                     x-transition:leave-start="opacity-100 translate-y-0"
+                     x-transition:leave-end="opacity-0 -translate-y-3"
+                     @click.stop
+                     class="block min-w-[12rem] absolute left-0 top-12 z-10">
+                    <div class="flex flex-col shadow-lg bg-base-50 py-2">
+                        
+                            
+                                
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="detailed_link_888d07" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="h-full py-2 px-4 flex flex-row space-x-2 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/what-is/quantum-computing" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm font-bold" aria-label="What is Quantum Computing ?"  data-clickbit-target="">
+                What is Quantum Computing ?
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                            
+                        
+                            
+                                
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="detailed_link_fed370" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="h-full py-2 px-4 flex flex-row space-x-2 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/pages/post-quantum-cryptography-faq" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm font-bold" aria-label="Post Quantum Cryptography FAQ"  data-clickbit-target="">
+                Post Quantum Cryptography FAQ
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                            
+                        
+                            
+                                
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="detailed_link_db9a9f" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="h-full py-2 px-4 flex flex-row space-x-2 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/blog/quantum-comics" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm font-bold" aria-label="Quantum Comics"  data-clickbit-target="">
+                Quantum Comics
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                            
+                        
+                    </div>
+                </div>
+            </div>
+        
+    
+
+        </div>
+    
+
+
+        
+        
+            
+
+
+    
+        
+        <div  style="" data-select-type="tile" data-select-key="" class="">
+            
+    
+        
+            <div class="relative block h-12 btn-sm cursor-pointer flex items-center btn-sm "
+                 x-data="{ is_open: false, tile_id: 'link_group_2', curr_id: null }"
+                 @click.away="is_open = false; curr_id = null;">
+                <div @click="typeof(curr_id) === 'undefined' ? (is_open = !is_open) : (curr_id = curr_id === tile_id ? null : tile_id)"
+                     class="flex items-center btn-simple">
+                    
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        <button type="button" style="" class="text-base-content mr-1" data-clickbit-target="">
+            Products
+        </button>
+    
+
+    </div>
+
+
+                    
+                        
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="24"
+                             height="24"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.75"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             class="text-base-content h-5 w-5"
+                             style="color:None"
+                             :class=" {'hidden': curr_id === tile_id }">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M6 9l6 6l6 -6" />
+                        </svg>
+                        
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="24"
+                             height="24"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.75"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             class="text-base-content h-5 w-5"
+                             style="color:None"
+                             x-cloak
+                             :class=" {'hidden': curr_id !== tile_id }">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M6 15l6 -6l6 6" />
+                        </svg>
+                    
+                </div>
+                <!-- TODO: customise colours based on page template -->
+                <div x-cloak
+                     x-show="typeof(curr_id) === 'undefined' ? is_open : curr_id === tile_id"
+                     x-transition:enter="transition ease-in duration-200"
+                     x-transition:enter-start="opacity-0 -translate-y-3"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     x-transition:leave="transition ease-in duration-200"
+                     x-transition:leave-start="opacity-100 translate-y-0"
+                     x-transition:leave-end="opacity-0 -translate-y-3"
+                     @click.stop
+                     class="block min-w-[12rem] absolute left-0 top-12 z-10">
+                    <div class="flex flex-col shadow-lg bg-base-50 py-2">
+                        
+                            
+                                
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="link_1" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="h-full py-2 px-4 flex flex-row space-x-2 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/product/packetqc" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm font-bold" aria-label="PacketQC"  data-clickbit-target="">
+                PacketQC
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                            
+                        
+                            
+                                
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="link_2" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="h-full py-2 px-4 flex flex-row space-x-2 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/product/inoqulate" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm font-bold" aria-label="inoQulate"  data-clickbit-target="">
+                inoQulate
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                            
+                        
+                            
+                                
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="detailed_link_cffbc3" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="h-full py-2 px-4 flex flex-row space-x-2 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/product/qkdlite" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm font-bold" aria-label="QKDLite"  data-clickbit-target="">
+                QKDLite
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                            
+                        
+                            
+                                
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="detailed_link_dc5b8e" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="h-full py-2 px-4 flex flex-row space-x-2 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/product/quicscript" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm font-bold" aria-label="QuICScript"  data-clickbit-target="">
+                QuICScript
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                            
+                        
+                            
+                                
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="detailed_link_10f5e7" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="h-full py-2 px-4 flex flex-row space-x-2 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/product/safequard" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm font-bold" aria-label="SafeQuard"  data-clickbit-target="">
+                SafeQuard
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                            
+                        
+                    </div>
+                </div>
+            </div>
+        
+    
+
+        </div>
+    
+
+
+        
+        
+            
+
+
+    
+        
+        <div  style="" data-select-type="tile" data-select-key="" class="">
+            
+    
+        
+            <div class="relative block h-12 btn-sm cursor-pointer flex items-center btn-sm "
+                 x-data="{ is_open: false, tile_id: 'link_group_3', curr_id: null }"
+                 @click.away="is_open = false; curr_id = null;">
+                <div @click="typeof(curr_id) === 'undefined' ? (is_open = !is_open) : (curr_id = curr_id === tile_id ? null : tile_id)"
+                     class="flex items-center btn-simple">
+                    
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        <button type="button" style="" class="text-base-content mr-1" data-clickbit-target="">
+            Readings
+        </button>
+    
+
+    </div>
+
+
+                    
+                        
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="24"
+                             height="24"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.75"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             class="text-base-content h-5 w-5"
+                             style="color:None"
+                             :class=" {'hidden': curr_id === tile_id }">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M6 9l6 6l6 -6" />
+                        </svg>
+                        
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="24"
+                             height="24"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.75"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             class="text-base-content h-5 w-5"
+                             style="color:None"
+                             x-cloak
+                             :class=" {'hidden': curr_id !== tile_id }">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M6 15l6 -6l6 6" />
+                        </svg>
+                    
+                </div>
+                <!-- TODO: customise colours based on page template -->
+                <div x-cloak
+                     x-show="typeof(curr_id) === 'undefined' ? is_open : curr_id === tile_id"
+                     x-transition:enter="transition ease-in duration-200"
+                     x-transition:enter-start="opacity-0 -translate-y-3"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     x-transition:leave="transition ease-in duration-200"
+                     x-transition:leave-start="opacity-100 translate-y-0"
+                     x-transition:leave-end="opacity-0 -translate-y-3"
+                     @click.stop
+                     class="block min-w-[12rem] absolute left-0 top-12 z-10">
+                    <div class="flex flex-col shadow-lg bg-base-50 py-2">
+                        
+                            
+                                
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="link_1" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="h-full py-2 px-4 flex flex-row space-x-2 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/blog/research" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm font-bold" aria-label="Research"  data-clickbit-target="">
+                Research
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                            
+                        
+                            
+                                
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="detailed_link_a2d148" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="h-full py-2 px-4 flex flex-row space-x-2 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/blog/awareness" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm font-bold" aria-label="Awareness"  data-clickbit-target="">
+                Awareness
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                            
+                        
+                            
+                                
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="detailed_link_6f96ad" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="h-full py-2 px-4 flex flex-row space-x-2 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="https://qcve.org/blog" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm font-bold" aria-label="Writings"  data-clickbit-target="">
+                Writings
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                            
+                        
+                    </div>
+                </div>
+            </div>
+        
+    
+
+        </div>
+    
+
+
+        
+        
+            
+
+
+    
+        
+        <div  style="" data-select-type="tile" data-select-key="" class="">
+            
+    
+        
+            <div class="relative block h-12 btn-sm cursor-pointer flex items-center btn-sm "
+                 x-data="{ is_open: false, tile_id: 'link_group_4', curr_id: null }"
+                 @click.away="is_open = false; curr_id = null;">
+                <div @click="typeof(curr_id) === 'undefined' ? (is_open = !is_open) : (curr_id = curr_id === tile_id ? null : tile_id)"
+                     class="flex items-center btn-simple">
+                    
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        <button type="button" style="" class="text-base-content mr-1" data-clickbit-target="">
+            Community
+        </button>
+    
+
+    </div>
+
+
+                    
+                        
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="24"
+                             height="24"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.75"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             class="text-base-content h-5 w-5"
+                             style="color:None"
+                             :class=" {'hidden': curr_id === tile_id }">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M6 9l6 6l6 -6" />
+                        </svg>
+                        
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="24"
+                             height="24"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.75"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             class="text-base-content h-5 w-5"
+                             style="color:None"
+                             x-cloak
+                             :class=" {'hidden': curr_id !== tile_id }">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M6 15l6 -6l6 6" />
+                        </svg>
+                    
+                </div>
+                <!-- TODO: customise colours based on page template -->
+                <div x-cloak
+                     x-show="typeof(curr_id) === 'undefined' ? is_open : curr_id === tile_id"
+                     x-transition:enter="transition ease-in duration-200"
+                     x-transition:enter-start="opacity-0 -translate-y-3"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     x-transition:leave="transition ease-in duration-200"
+                     x-transition:leave-start="opacity-100 translate-y-0"
+                     x-transition:leave-end="opacity-0 -translate-y-3"
+                     @click.stop
+                     class="block min-w-[12rem] absolute left-0 top-12 z-10">
+                    <div class="flex flex-col shadow-lg bg-base-50 py-2">
+                        
+                            
+                                
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="detailed_link_cba735" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="h-full py-2 px-4 flex flex-row space-x-2 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="https://qcve.org/" target="_blank" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm font-bold" aria-label="qcve.org"  data-clickbit-target="">
+                qcve.org
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                            
+                        
+                            
+                                
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="detailed_link_61b26b" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="h-full py-2 px-4 flex flex-row space-x-2 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="https://quantumnft.xyz/" target="_blank" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm font-bold" aria-label="quantumnft.xyz"  data-clickbit-target="">
+                quantumnft.xyz
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                            
+                        
+                            
+                                
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="detailed_link_9c5e33" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="h-full py-2 px-4 flex flex-row space-x-2 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="https://www.pqevm.org" target="_blank" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm font-bold" aria-label="pqEVM"  data-clickbit-target="">
+                pqEVM
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                            
+                        
+                    </div>
+                </div>
+            </div>
+        
+    
+
+        </div>
+    
+
+
+        
+        
+            
+
+
+    
+        
+        <div  style="" data-select-type="tile" data-select-key="" class="">
+            
+    
+        
+            <div class="relative block h-12 btn-sm cursor-pointer flex items-center btn-sm "
+                 x-data="{ is_open: false, tile_id: 'link_group_5', curr_id: null }"
+                 @click.away="is_open = false; curr_id = null;">
+                <div @click="typeof(curr_id) === 'undefined' ? (is_open = !is_open) : (curr_id = curr_id === tile_id ? null : tile_id)"
+                     class="flex items-center btn-simple">
+                    
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        <button type="button" style="" class="text-base-content mr-1" data-clickbit-target="">
+            Company
+        </button>
+    
+
+    </div>
+
+
+                    
+                        
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="24"
+                             height="24"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.75"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             class="text-base-content h-5 w-5"
+                             style="color:None"
+                             :class=" {'hidden': curr_id === tile_id }">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M6 9l6 6l6 -6" />
+                        </svg>
+                        
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="24"
+                             height="24"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.75"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             class="text-base-content h-5 w-5"
+                             style="color:None"
+                             x-cloak
+                             :class=" {'hidden': curr_id !== tile_id }">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M6 15l6 -6l6 6" />
+                        </svg>
+                    
+                </div>
+                <!-- TODO: customise colours based on page template -->
+                <div x-cloak
+                     x-show="typeof(curr_id) === 'undefined' ? is_open : curr_id === tile_id"
+                     x-transition:enter="transition ease-in duration-200"
+                     x-transition:enter-start="opacity-0 -translate-y-3"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     x-transition:leave="transition ease-in duration-200"
+                     x-transition:leave-start="opacity-100 translate-y-0"
+                     x-transition:leave-end="opacity-0 -translate-y-3"
+                     @click.stop
+                     class="block min-w-[12rem] absolute left-0 top-12 z-10">
+                    <div class="flex flex-col shadow-lg bg-base-50 py-2">
+                        
+                            
+                                
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="detailed_link_0bbf35" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="h-full py-2 px-4 flex flex-row space-x-2 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/about" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm font-bold" aria-label="About"  data-clickbit-target="">
+                About
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                            
+                        
+                            
+                                
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="detailed_link_95adb1" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="h-full py-2 px-4 flex flex-row space-x-2 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/about/sales" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm font-bold" aria-label="Sales"  data-clickbit-target="">
+                Sales
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                            
+                        
+                            
+                                
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="detailed_link_dbfa85" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="h-full py-2 px-4 flex flex-row space-x-2 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/about/media" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm font-bold" aria-label="Media"  data-clickbit-target="">
+                Media
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                            
+                        
+                    </div>
+                </div>
+            </div>
+        
+    
+
+        </div>
+    
+
+
+        
+    </div>
+    <div class="flex flex-row justify-end items-center space-x-2">
+        
+            
+
+
+
+        
+        
+
+
+    
+        
+        <div  style="" data-select-type="tile" data-select-key="" class="">
+            
+    
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/pages/contact" target="_blank" rel="noopener noreferrer" style=" " class="whitespace-nowrap btn-simple btn-sm text-base-content text-header" aria-label="Contact us"  data-clickbit-target="">
+                Contact us
+            </a>
+        
+    
+
+    </div>
+
+
+
+        </div>
+    
+
+
+        
+
+
+
+        
+
+
+    
+        
+        <div  style="" data-select-type="tile" data-select-key="" class="">
+            
+    
+
+
+    <div data-select-type="tag" class="">
+        
+    <button type="button" style="" x-data @click="$dispatch('search-open', '')" class="btn-icon text-base-content text-header">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke-width="1.5"
+             stroke="currentColor"
+             class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+        </svg>
+    </button>
+
+    </div>
+
+
+
+        </div>
+    
+
+
+    </div>
+</div>
+
+    </div>
+
+
+    
+
+
+    
+    <div  style="" data-select-type="component" data-select-key="1.0 Navbar - Default" class="w-full">
+        
+    <div  style="" x-data="{ isOpen: false }" class="relative lg:hidden h-12 w-full flex flex-row justify-start items-center max-w-7xl mx-auto px-4">
+        <div class="flex flex-row md:flex-1 items-center">
+            <button type="button"
+                    class="text-base-content rounded-none text-header h-12 w-12 flex justify-center items-center"
+                    @click="isOpen = !isOpen">
+                <span class="sr-only">open menu</span>
+                
+                <svg class="h-5 w-5"
+                     x-show="!isOpen"
+                     fill="none"
+                     viewBox="0 0 24 24"
+                     stroke-width="1.5"
+                     stroke="currentColor"
+                     aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                </svg>
+                
+                <svg class="h-5 w-5"
+                     x-show="isOpen"
+                     x-cloak
+                     fill="none"
+                     viewBox="0 0 24 24"
+                     stroke-width="1.5"
+                     stroke="currentColor"
+                     aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="flex w-auto me-4 h-9 lg:h-12">
+            
+
+
+    
+        
+        <div  style="" data-select-type="tile" data-select-key="" class="h-full">
+            
+    
+
+
+    <div data-select-type="tag" class="h-full">
+        
+    
+        <figure class="relative w-full h-full group"
+                x-data="{ imageOpen: false, imgWidth: 0, imgHeight: 0 }">
+            <!-- rich text image -->
+            
+                <a href="/">
+                    
+                <img src="https://dtuewuojrf.koniglecdn.com/images/pqcee-logo-crop.webp" alt="pQCee logo" width="1795" height="798" 
+                    style=""
+                    class="object-center object-scale-down w-full h-full"
+                    >
+                    
+                </a>
+                <!-- gallery image -->
+            
+        </figure>
+    
+
+    </div>
+
+
+
+        </div>
+    
+
+
+        </div>
+        <div class="h-12 flex flex-1 flex-row justify-end items-center space-x-2">
+            
+
+
+    
+        
+        <div  style="" data-select-type="tile" data-select-key="" class="">
+            
+    
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/pages/contact" target="_blank" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-base-content text-header" aria-label="Contact us"  data-clickbit-target="">
+                Contact us
+            </a>
+        
+    
+
+    </div>
+
+
+
+        </div>
+    
+
+
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 width="24"
+                 height="24"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="1.5"
+                 stroke-linecap="round"
+                 stroke-linejoin="round"
+                 class="text-base-content text-header">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M17 7l-10 10" />
+                <path d="M8 7l9 0l0 9" />
+            </svg>
+        </div>
+        
+
+<div role="dialog"
+     class="absolute left-0 bottom-0 z-40"
+     aria-modal="true"
+     x-cloak
+     x-show="isOpen">
+    <!-- Background fade -->
+    <div class="absolute top-0 bottom-0 h-[calc(100vh-3rem)] w-screen bg-black bg-opacity-25"
+         @click="isOpen = false"
+         x-show="isOpen"
+         x-transition:enter="transition-opacity ease-linear duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition-opacity ease-linear duration-300"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"></div>
+    <!-- Slideover panel -->
+    <div class="absolute left-0 bottom-0 h-[calc(100vh-3rem)] w-[70vw] inset-0 p-4 flex flex-col overflow-y-auto bg-white bg-header"
+         x-show="isOpen"
+         x-transition:enter="transition ease-in-out duration-300 transform"
+         x-transition:enter-start="-translate-x-full"
+         x-transition:enter-end="translate-x-0"
+         x-transition:leave="transition ease-in-out duration-300 transform"
+         x-transition:leave-start="translate-x-0"
+         x-transition:leave-end="-translate-x-full">
+        <!-- Links -->
+        <div x-data="{ curr_id: null }" class="flex flex-col items-start gap-y-2">
+            
+                
+
+
+    
+        
+        <div  style="" data-select-type="tile" data-select-key="" class="w-full">
+            
+    
+        
+            <div class=""
+                 x-data="{ is_open: false, tile_id: 'link_group_1' }"
+                 @click="typeof(curr_id) === 'undefined' ? (is_open = !is_open) : (curr_id = curr_id === tile_id ? null : tile_id)"
+                 :class="{ 'bg-base-100/30': curr_id === tile_id }">
+                <div class="w-full flex flex-row items-center justify-between">
+                    
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        <button type="button" style="" class="block btn-simple btn-sm text-base-content text-base" data-clickbit-target="">
+            Post Quantum
+        </button>
+    
+
+    </div>
+
+
+                    
+                        <div>
+                            
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 width="24"
+                                 height="24"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 style="color:None"
+                                 class="hover:bg-base-200 rounded-full h-5 w-5 m-1 text-base-content"
+                                 x-show="curr_id !== tile_id">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M6 9l6 6l6 -6" />
+                            </svg>
+                            
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 width="24"
+                                 height="24"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 style="color:None"
+                                 class="hover:bg-base-100 rounded-full h-5 w-5 m-1 text-base-content"
+                                 x-show="curr_id === tile_id">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M6 15l6 -6l6 6" />
+                            </svg>
+                        </div>
+                    
+                </div>
+                <!-- TODO: customise colours based on page template -->
+                <div x-cloak
+                     x-show="typeof(curr_id) === 'undefined' ? is_open : curr_id === tile_id"
+                     x-transition:enter="transition ease-in duration-200"
+                     x-transition:enter-start="opacity-0 -translate-y-3"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     x-transition:leave="transition ease-in duration-200"
+                     x-transition:leave-start="opacity-100 translate-y-0"
+                     x-transition:leave-end="opacity-0 -translate-y-3"
+                     class="flex flex-col w-full pl-4">
+                    
+                        
+                            
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="detailed_link_888d07" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="block pb-4 pl-3 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/what-is/quantum-computing" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm !whitespace-normal" aria-label="What is Quantum Computing ?"  data-clickbit-target="">
+                What is Quantum Computing ?
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                        
+                    
+                        
+                            
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="detailed_link_fed370" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="block pb-4 pl-3 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/pages/post-quantum-cryptography-faq" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm !whitespace-normal" aria-label="Post Quantum Cryptography FAQ"  data-clickbit-target="">
+                Post Quantum Cryptography FAQ
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                        
+                    
+                        
+                            
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="detailed_link_db9a9f" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="block pb-4 pl-3 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/blog/quantum-comics" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm !whitespace-normal" aria-label="Quantum Comics"  data-clickbit-target="">
+                Quantum Comics
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                        
+                    
+                </div>
+            </div>
+        
+    
+
+        </div>
+    
+
+
+            
+            
+                
+
+
+    
+        
+        <div  style="" data-select-type="tile" data-select-key="" class="w-full">
+            
+    
+        
+            <div class=""
+                 x-data="{ is_open: false, tile_id: 'link_group_2' }"
+                 @click="typeof(curr_id) === 'undefined' ? (is_open = !is_open) : (curr_id = curr_id === tile_id ? null : tile_id)"
+                 :class="{ 'bg-base-100/30': curr_id === tile_id }">
+                <div class="w-full flex flex-row items-center justify-between">
+                    
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        <button type="button" style="" class="block btn-simple btn-sm text-base-content text-base" data-clickbit-target="">
+            Products
+        </button>
+    
+
+    </div>
+
+
+                    
+                        <div>
+                            
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 width="24"
+                                 height="24"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 style="color:None"
+                                 class="hover:bg-base-200 rounded-full h-5 w-5 m-1 text-base-content"
+                                 x-show="curr_id !== tile_id">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M6 9l6 6l6 -6" />
+                            </svg>
+                            
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 width="24"
+                                 height="24"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 style="color:None"
+                                 class="hover:bg-base-100 rounded-full h-5 w-5 m-1 text-base-content"
+                                 x-show="curr_id === tile_id">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M6 15l6 -6l6 6" />
+                            </svg>
+                        </div>
+                    
+                </div>
+                <!-- TODO: customise colours based on page template -->
+                <div x-cloak
+                     x-show="typeof(curr_id) === 'undefined' ? is_open : curr_id === tile_id"
+                     x-transition:enter="transition ease-in duration-200"
+                     x-transition:enter-start="opacity-0 -translate-y-3"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     x-transition:leave="transition ease-in duration-200"
+                     x-transition:leave-start="opacity-100 translate-y-0"
+                     x-transition:leave-end="opacity-0 -translate-y-3"
+                     class="flex flex-col w-full pl-4">
+                    
+                        
+                            
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="link_1" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="block pb-4 pl-3 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/product/packetqc" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm !whitespace-normal" aria-label="PacketQC"  data-clickbit-target="">
+                PacketQC
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                        
+                    
+                        
+                            
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="link_2" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="block pb-4 pl-3 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/product/inoqulate" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm !whitespace-normal" aria-label="inoQulate"  data-clickbit-target="">
+                inoQulate
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                        
+                    
+                        
+                            
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="detailed_link_cffbc3" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="block pb-4 pl-3 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/product/qkdlite" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm !whitespace-normal" aria-label="QKDLite"  data-clickbit-target="">
+                QKDLite
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                        
+                    
+                        
+                            
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="detailed_link_dc5b8e" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="block pb-4 pl-3 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/product/quicscript" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm !whitespace-normal" aria-label="QuICScript"  data-clickbit-target="">
+                QuICScript
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                        
+                    
+                        
+                            
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="detailed_link_10f5e7" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="block pb-4 pl-3 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/product/safequard" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm !whitespace-normal" aria-label="SafeQuard"  data-clickbit-target="">
+                SafeQuard
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                        
+                    
+                </div>
+            </div>
+        
+    
+
+        </div>
+    
+
+
+            
+            
+                
+
+
+    
+        
+        <div  style="" data-select-type="tile" data-select-key="" class="w-full">
+            
+    
+        
+            <div class=""
+                 x-data="{ is_open: false, tile_id: 'link_group_3' }"
+                 @click="typeof(curr_id) === 'undefined' ? (is_open = !is_open) : (curr_id = curr_id === tile_id ? null : tile_id)"
+                 :class="{ 'bg-base-100/30': curr_id === tile_id }">
+                <div class="w-full flex flex-row items-center justify-between">
+                    
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        <button type="button" style="" class="block btn-simple btn-sm text-base-content text-base" data-clickbit-target="">
+            Readings
+        </button>
+    
+
+    </div>
+
+
+                    
+                        <div>
+                            
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 width="24"
+                                 height="24"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 style="color:None"
+                                 class="hover:bg-base-200 rounded-full h-5 w-5 m-1 text-base-content"
+                                 x-show="curr_id !== tile_id">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M6 9l6 6l6 -6" />
+                            </svg>
+                            
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 width="24"
+                                 height="24"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 style="color:None"
+                                 class="hover:bg-base-100 rounded-full h-5 w-5 m-1 text-base-content"
+                                 x-show="curr_id === tile_id">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M6 15l6 -6l6 6" />
+                            </svg>
+                        </div>
+                    
+                </div>
+                <!-- TODO: customise colours based on page template -->
+                <div x-cloak
+                     x-show="typeof(curr_id) === 'undefined' ? is_open : curr_id === tile_id"
+                     x-transition:enter="transition ease-in duration-200"
+                     x-transition:enter-start="opacity-0 -translate-y-3"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     x-transition:leave="transition ease-in duration-200"
+                     x-transition:leave-start="opacity-100 translate-y-0"
+                     x-transition:leave-end="opacity-0 -translate-y-3"
+                     class="flex flex-col w-full pl-4">
+                    
+                        
+                            
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="link_1" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="block pb-4 pl-3 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/blog/research" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm !whitespace-normal" aria-label="Research"  data-clickbit-target="">
+                Research
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                        
+                    
+                        
+                            
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="detailed_link_a2d148" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="block pb-4 pl-3 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/blog/awareness" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm !whitespace-normal" aria-label="Awareness"  data-clickbit-target="">
+                Awareness
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                        
+                    
+                        
+                            
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="detailed_link_6f96ad" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="block pb-4 pl-3 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="https://qcve.org/blog" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm !whitespace-normal" aria-label="Writings"  data-clickbit-target="">
+                Writings
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                        
+                    
+                </div>
+            </div>
+        
+    
+
+        </div>
+    
+
+
+            
+            
+                
+
+
+    
+        
+        <div  style="" data-select-type="tile" data-select-key="" class="w-full">
+            
+    
+        
+            <div class=""
+                 x-data="{ is_open: false, tile_id: 'link_group_4' }"
+                 @click="typeof(curr_id) === 'undefined' ? (is_open = !is_open) : (curr_id = curr_id === tile_id ? null : tile_id)"
+                 :class="{ 'bg-base-100/30': curr_id === tile_id }">
+                <div class="w-full flex flex-row items-center justify-between">
+                    
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        <button type="button" style="" class="block btn-simple btn-sm text-base-content text-base" data-clickbit-target="">
+            Community
+        </button>
+    
+
+    </div>
+
+
+                    
+                        <div>
+                            
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 width="24"
+                                 height="24"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 style="color:None"
+                                 class="hover:bg-base-200 rounded-full h-5 w-5 m-1 text-base-content"
+                                 x-show="curr_id !== tile_id">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M6 9l6 6l6 -6" />
+                            </svg>
+                            
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 width="24"
+                                 height="24"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 style="color:None"
+                                 class="hover:bg-base-100 rounded-full h-5 w-5 m-1 text-base-content"
+                                 x-show="curr_id === tile_id">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M6 15l6 -6l6 6" />
+                            </svg>
+                        </div>
+                    
+                </div>
+                <!-- TODO: customise colours based on page template -->
+                <div x-cloak
+                     x-show="typeof(curr_id) === 'undefined' ? is_open : curr_id === tile_id"
+                     x-transition:enter="transition ease-in duration-200"
+                     x-transition:enter-start="opacity-0 -translate-y-3"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     x-transition:leave="transition ease-in duration-200"
+                     x-transition:leave-start="opacity-100 translate-y-0"
+                     x-transition:leave-end="opacity-0 -translate-y-3"
+                     class="flex flex-col w-full pl-4">
+                    
+                        
+                            
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="detailed_link_cba735" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="block pb-4 pl-3 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="https://qcve.org/" target="_blank" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm !whitespace-normal" aria-label="qcve.org"  data-clickbit-target="">
+                qcve.org
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                        
+                    
+                        
+                            
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="detailed_link_61b26b" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="block pb-4 pl-3 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="https://quantumnft.xyz/" target="_blank" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm !whitespace-normal" aria-label="quantumnft.xyz"  data-clickbit-target="">
+                quantumnft.xyz
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                        
+                    
+                        
+                            
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="detailed_link_9c5e33" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="block pb-4 pl-3 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="https://www.pqevm.org" target="_blank" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm !whitespace-normal" aria-label="pqEVM"  data-clickbit-target="">
+                pqEVM
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                        
+                    
+                </div>
+            </div>
+        
+    
+
+        </div>
+    
+
+
+            
+            
+                
+
+
+    
+        
+        <div  style="" data-select-type="tile" data-select-key="" class="w-full">
+            
+    
+        
+            <div class=""
+                 x-data="{ is_open: false, tile_id: 'link_group_5' }"
+                 @click="typeof(curr_id) === 'undefined' ? (is_open = !is_open) : (curr_id = curr_id === tile_id ? null : tile_id)"
+                 :class="{ 'bg-base-100/30': curr_id === tile_id }">
+                <div class="w-full flex flex-row items-center justify-between">
+                    
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        <button type="button" style="" class="block btn-simple btn-sm text-base-content text-base" data-clickbit-target="">
+            Company
+        </button>
+    
+
+    </div>
+
+
+                    
+                        <div>
+                            
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 width="24"
+                                 height="24"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 style="color:None"
+                                 class="hover:bg-base-200 rounded-full h-5 w-5 m-1 text-base-content"
+                                 x-show="curr_id !== tile_id">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M6 9l6 6l6 -6" />
+                            </svg>
+                            
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 width="24"
+                                 height="24"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 style="color:None"
+                                 class="hover:bg-base-100 rounded-full h-5 w-5 m-1 text-base-content"
+                                 x-show="curr_id === tile_id">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M6 15l6 -6l6 6" />
+                            </svg>
+                        </div>
+                    
+                </div>
+                <!-- TODO: customise colours based on page template -->
+                <div x-cloak
+                     x-show="typeof(curr_id) === 'undefined' ? is_open : curr_id === tile_id"
+                     x-transition:enter="transition ease-in duration-200"
+                     x-transition:enter-start="opacity-0 -translate-y-3"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     x-transition:leave="transition ease-in duration-200"
+                     x-transition:leave-start="opacity-100 translate-y-0"
+                     x-transition:leave-end="opacity-0 -translate-y-3"
+                     class="flex flex-col w-full pl-4">
+                    
+                        
+                            
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="detailed_link_0bbf35" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="block pb-4 pl-3 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/about" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm !whitespace-normal" aria-label="About"  data-clickbit-target="">
+                About
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                        
+                    
+                        
+                            
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="detailed_link_95adb1" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="block pb-4 pl-3 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/about/sales" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm !whitespace-normal" aria-label="Sales"  data-clickbit-target="">
+                Sales
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                        
+                    
+                        
+                            
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="detailed_link_dbfa85" class="">
+        
+    <div @click="$el.querySelector('a').click()"
+         class="block pb-4 pl-3 text-base-content">
+        
+            
+        
+        <div class="relative flex flex-col ">
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/about/media" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap text-sm !whitespace-normal" aria-label="Media"  data-clickbit-target="">
+                Media
+            </a>
+        
+    
+
+    </div>
+
+
+            
+            
+                
+
+
+    <div data-select-type="tag" class="">
+        
+    
+
+    </div>
+
+
+            
+        </div>
+    </div>
+
+    </div>
+
+
+                        
+                    
+                </div>
+            </div>
+        
+    
+
+        </div>
+    
+
+
+            
+            <div class="flex flex-row justify-between items-center gap-x-2 w-full pt-4 border-t">
+                
+                    
+
+
+
+                
+                <div class="flex gap-2 items-center">
+                    
+
+
+
+                    
+
+
+    
+        
+        <div  style="" data-select-type="tile" data-select-key="" class="">
+            
+    
+
+
+    <div data-select-type="tag" class="">
+        
+    <button type="button" style="" x-data @click="$dispatch('search-open', '')" class="text-base-content">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke-width="1.5"
+             stroke="currentColor"
+             class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+        </svg>
+    </button>
+
+    </div>
+
+
+
+        </div>
+    
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    </div>
+
+    </div>
+
+
+</div>
+
+
+
+                        </div>
+                        
+                        
+<div x-data="searchModal" @search-open.window="handleOpen($event.detail)">
+    
+    <div x-show="isOpen"
+         x-cloak
+         x-on:keydown.window.escape="handleClose()"
+         class="fixed inset-0 z-50"
+         aria-labelledby="search-modal"
+         role="dialog"
+         aria-modal="true">
+        <!-- Background backdrop, show/hide based on modal state. -->
+        <div x-show="isOpen"
+             x-transition.opacity.duration.500ms
+             class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+        <div x-show="isOpen"
+             x-transition:enter="transition ease-in-out duration-500"
+             x-transition:enter-start="translate-y-full"
+             x-transition:enter-end="translate-y-0"
+             x-transition:leave="transition ease-in-out duration-500"
+             x-transition:leave-start="translate-y-0"
+             x-transition:leave-end="translate-y-full"
+             class="fixed inset-0 z-10 w-screen">
+            <div class="flex flex-col h-full justify-end items-center">
+                <!-- Modal panel, show/hide based on modal state. -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 grow bg-white w-full max-h-full shadow-xl">
+                    <div class="col-span-1 lg:col-span-2 px-4 sm:p-8">
+                        <div class="h-24 sm:h-32 mb-8 flex flex-col justify-end items-start">
+                            <h2 class="text-4xl sm:text-6xl font-bold text-gray-900">Search</h2>
+                        </div>
+                        <!-- Search bar and button. -->
+                        
+<form class="flex flex-row justify-between items-center w-full"
+      x-on:submit="query($event, searchValue)">
+    <label for="" class="sr-only">Search</label>
+    <div class="relative flex-grow rounded-lg transition focus-within:drop-shadow-md">
+        <!-- Search icon adornment. -->
+        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
+             aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 viewBox="0 0 20 20"
+                 fill="currentColor"
+                 class="w-5 h-5 text-gray-400">
+                <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
+            </svg>
+        </div>
+        <input id="search"
+               type="text"
+               name="search"
+               class="block transition w-full rounded-t-lg py-1.5 px-10 text-gray-900 bg-gray-100 placeholder:text-gray-400 sm:text-sm sm:leading-6 border-t-0 border-x-0 border-b-2 border-b-gray-200 focus:border-b-primary focus:ring-0"
+               placeholder="Search anything"
+               x-model="searchValue"
+               x-on:input.debounce.500ms="query($event, searchValue)">
+        <!-- Invisible button to capture Enter key. -->
+        <button type="submit" hidden aria-hidden="true"></button>
+        <!-- Clear input button. -->
+        <button type="button"
+                x-on:click="handleClear()"
+                x-show="searchValue"
+                class="absolute inset-y-0 right-0 flex items-center pr-3 transition hover:opacity-50"
+                aria-label="clear-search">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 viewBox="0 0 20 20"
+                 fill="currentColor"
+                 class="w-5 h-5 text-gray-400"
+                 aria-hidden="true">
+                <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+            </svg>
+        </button>
+    </div>
+    <!-- Search arrow icon button. -->
+    <button type="submit"
+            class="btn-icon ml-2 text-gray-500"
+            x-bind:disabled="isLoading"
+            aria-label="query-search">
+        <!-- Loading indicator. -->
+        <svg xmlns="http://www.w3.org/2000/svg"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke-width="1.5"
+             stroke="currentColor"
+             class="w-6 h-6 animate-pulse"
+             x-show="isLoading"
+             aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+        </svg>
+        <!-- Arrow when not loading. -->
+        <svg xmlns="http://www.w3.org/2000/svg"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke-width="1.5"
+             stroke="currentColor"
+             class="w-6 h-6"
+             x-show="!isLoading"
+             aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+        </svg>
+    </button>
+</form>
+
+                        <!-- "Nothing found" indicator. -->
+                        <div class="relative my-2 prose prose-a:text-primary"
+                             x-show="resultGroups?.length === 0 && searchValue && hasSearched"
+                             x-transition.opacity>
+                            
+                                <p class="text-sm">Can't find what you're looking for!</p>
+                            
+                        </div>
+                    </div>
+                    <div class="col-span-1 lg:col-span-3 overflow-auto grow px-4 sm:p-8 bg-gray-50 rounded-t-2xl sm:rounded-tr-none sm:rounded-bl-2xl"
+                         x-show="resultGroups?.length"
+                         x-transition.opacity>
+                        <!-- Displaces list to same level as search bar. -->
+                        <div class="h-16 sm:h-32 mb-8 flex flex-col justify-end items-start">
+                            <!-- Results count. -->
+                            <h3 class="text-2xl sm:text-3xl font-semibold text-gray-900"
+                                x-text="`${searchCount} result${searchCount > 1 ? 's' : ''}`"></h3>
+                        </div>
+                        <!-- Search results list. -->
+                        
+<ul role="list">
+    <template x-for="group in resultGroups">
+        <li class="mb-4">
+            <!-- Result group title. -->
+            <div class="pb-2">
+                <h3 class="text-base font-semibold leading-6 text-gray-900"
+                    x-text="group.title"></h3>
+            </div>
+            <!-- Results list. -->
+            <ul role="list">
+                <template x-for="result in group.results">
+                    <a x-bind:href="result?.url">
+                        <li class="relative flex justify-between gap-x-6 px-4 py-5 rounded-lg transition hover:bg-white hover:shadow-md sm:px-6 lg:px-8">
+                            <div class="flex min-w-0 gap-x-4">
+                                <div class="min-w-0 flex-auto">
+                                    <p class="text-sm font-semibold leading-6 text-gray-900"
+                                       x-text="result?.title"></p>
+                                    <p class="mt-1 flex text-xs leading-5 text-gray-500"
+                                       x-text="result?.subtitle"></p>
+                                </div>
+                            </div>
+                            <!-- Right caret. -->
+                            <div class="flex shrink-0 items-center gap-x-4" aria-hidden="true">
+                                <svg class="h-5 w-5 flex-none text-gray-400"
+                                     viewBox="0 0 20 20"
+                                     fill="currentColor">
+                                    <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </li>
+                    </a>
+                </template>
+            </ul>
+        </li>
+    </template>
+</ul>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Top right button group. -->
+        <div class="absolute top-4 right-4 z-10"
+             x-on:click="handleClose()"
+             x-show="isOpen"
+             x-transition.duration.300ms.delay.500ms>
+            <!-- Close button. -->
+            <button class="flex flex-row items-center group bg-white text-gray-700 rounded-full p-2 transition drop-shadow-md hover:drop-shadow-lg"
+                    type="button">
+                <!-- Expanding text on hover. -->
+                <span class="text-sm text-left font-normal transition-all w-0 group-hover:w-12 ps-0 group-hover:ps-1 opacity-0 group-hover:opacity-100 -translate-x-12 group-hover:translate-x-0">Close</span>
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     fill="none"
+                     viewBox="0 0 24 24"
+                     stroke-width="1.5"
+                     stroke="currentColor"
+                     class="w-6 h-6"
+                     aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+                    
+                
+            
+        
+    
+</div>
+
+          
+        
+        
+        <main class="flex-grow flex flex-col relative "
+              data-node-type="segment"
+              data-template-id=""
+              data-node-key="main"
+              style="">
+          
+  <div class="relative">
+    
+      
+      
+        
+        <nav class="sticky top-0  xl:top-1/2 xl:-translate-y-1/2  h-0 overflow-visible z-50 w-full xl:w-[14rem] xl:ml-4 opacity-0 transition-[opacity,transform,filter] ease-out-cubic duration-400 duration-300"
+             id="content-nav">
+          <div>
+            <div class="relative overflow-hidden xl:mt-1  px-6 xl:px-0 flex items-start border-y xl:border-0 bg-base-50 xl:bg-transparent">
+              <div class="bg-base/80 hidden xl:block absolute inset-0 z-0 backdrop-blur-xl"></div>
+              <ul class="relative z-10 xl:px-4 xl:py-6 flex flex-col w-full self-center flex-1">
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+              </ul>
+              <button class="xl:hidden text-base-content/70 shrink-0 py-3 pl-4"
+                      type="button"
+                      title="Toggle Table of Contents">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     width="24"
+                     height="24"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                     class="ease-curve-d transition duration-200 h-6 w-6">
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M6 9l6 6l6 -6" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </nav>
+      
+      <article class="mt-27 px-4 md:px-6 mb-36 max-w-[108rem] mx-auto">
+        
+        <div class="mb-20">
+          <div class="lg:max-w-[68rem] mx-auto">
+            <div class="relative flex flex-col items-center text-center">
+              <p class="text-caption mb-1.5">February 23, 2025</p>
+              <h1 class="max-w-[62.5rem] text-h1">Post Quantum Cryptography (PQC)</h1>
+              <div class="mt-6 text-subtitle">
+                <p>FAQ on PQC</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 xl:grid-cols-9 gap-13 xl:gap-6">
+          
+          <div class="col-span-1 xl:col-span-5 xl:col-start-3">
+            
+            
+            
+            <div class="lg:max-w-[68rem] mx-auto">
+              <div class="rich-text mx-auto max-w-[46rem]">
+                
+<style>
+  .scroll-offset-blog-template::before {
+      /* 
+        pseudo-element to ensure that the top nav bar doesnt cover
+        the start of the heading when link is clicked  
+      */
+      content: "";
+      display: block;
+      height: 4rem;
+
+      margin-top: -4rem;
+      visibility: hidden;
+  }
+</style>
+<div data-rich-text>
+  
+    
+      <div data-block="heading"
+           data-block-index="0">
+        
+          
+            <h3 
+              class="scroll-offset-blog-template"
+              id="q-what-is-post-quantum">
+              Q: What is post-quantum?
+            </h3>
+          
+        
+      </div>
+    
+  
+    
+      <div data-block="paragraph"
+           data-block-index="1">
+        
+          <p>A: The post-quantum era represents the period when quantum computers are commercially available and widely used. All cybersecurity used in the post-quantum era must therefore be secure against threats from both classical and quantum computers.</p>
+        
+      </div>
+    
+  
+    
+      <div data-block="heading"
+           data-block-index="2">
+        
+          
+            <h3 
+              class="scroll-offset-blog-template"
+              id="q-when-will-quantum-computers-be-powerful-enough-to-break-cybersecurity">
+              Q: When will quantum computers be powerful enough to break cybersecurity?
+            </h3>
+          
+        
+      </div>
+    
+  
+    
+      <div data-block="paragraph"
+           data-block-index="3">
+        
+          <p>A: Estimates vary from as early as 2028 to as late as 2045. Most governments and large security organizations are using 2030 as the date they expect the emergence of Cryptographic-Relevant Quantum Computers (CRQC).</p>
+        
+      </div>
+    
+  
+    
+      <div data-block="heading"
+           data-block-index="4">
+        
+          
+            <h3 
+              class="scroll-offset-blog-template"
+              id="q-is-it-true-that-quantum-computers-can-break-cybersecurity-because-they-run-faster">
+              Q: Is it true that quantum computers can break cybersecurity because they run faster?
+            </h3>
+          
+        
+      </div>
+    
+  
+    
+      <div data-block="paragraph"
+           data-block-index="5">
+        
+          <p>A: Not exactly. Quantum computers can speed up the solution for certain classes of problems, e.g. period-finding, data-searching. We have since discovered that existing public key cryptographic algorithms are vulnerable to such quantum speedups and hence needs to be upgraded/replaced with quantum-safe algorithms and implementations.</p>
+        
+      </div>
+    
+  
+    
+      <div data-block="heading"
+           data-block-index="6">
+        
+          
+            <h3 
+              class="scroll-offset-blog-template"
+              id="q-since-quantum-computers-are-still-not-here-yet-are-we-vulnerable">
+              Q: Since quantum computers are still not here yet, are we vulnerable?
+            </h3>
+          
+        
+      </div>
+    
+  
+    
+      <div data-block="paragraph"
+           data-block-index="7">
+        
+          <p>A: While a hacker cannot rely on quantum computers to attack the system, your sensitive data which has long-term value may be susceptible to harvesting attacks. This is the situation where hackers may "harvest" and store these data, only to decipher them in the future when quantum computers become available. You therefore need to do something to protect such data today.</p>
+        
+      </div>
+    
+  
+    
+      <div data-block="heading"
+           data-block-index="8">
+        
+          
+            <h3 
+              class="scroll-offset-blog-template"
+              id="q-if-we-start-on-a-post-quantum-migration-project-how-do-we-know-we-are-quantum-safe">
+              Q: If we start on a post-quantum migration project, how do we know we are quantum-safe?
+            </h3>
+          
+        
+      </div>
+    
+  
+    
+      <div data-block="paragraph"
+           data-block-index="9">
+        
+          <p>A: At present, new quantum-safe algorithms rely on mathematical and theoretical proofs to show that they are not vulnerable to quantum attacks. To be more sure that your post-quantum migration project is successful, you should consider hybrid approaches (instead of a post-quantum-only implementation) where you incorporate layers of security to defend against known-classical and unknown-quantum attacks. In this way, your system is at least as secure as every other system.</p>
+        
+      </div>
+    
+  
+    
+      <div data-block="heading"
+           data-block-index="10">
+        
+          
+            <h3 
+              class="scroll-offset-blog-template"
+              id="q-can-you-describe-the-post-quantum-vulnerability-in-1-sentence">
+              Q: Can you describe the post-quantum vulnerability in 1 sentence?
+            </h3>
+          
+        
+      </div>
+    
+  
+    
+      <div data-block="paragraph"
+           data-block-index="11">
+        
+          <p>A: If your application is using a public key algorithm such as RSA, ECC or DH, a hacker can use a quantum computer to calculate your private (or secret) key from your public key, and use this information to impersonate your identity or look at your sensitive data.</p>
+        
+      </div>
+    
+  
+    
+      <div data-block="heading"
+           data-block-index="12">
+        
+          
+            <h3 
+              class="scroll-offset-blog-template"
+              id="q-are-post-quantum-solutions-very-costlynbsp">
+              Q: Are post-quantum solutions very costly?&nbsp;
+            </h3>
+          
+        
+      </div>
+    
+  
+    
+      <div data-block="paragraph"
+           data-block-index="13">
+        
+          <p>A: At the heart of the solution, we are looking to augment the existing public key algorithm with new quantum-safe algorithms which have been proven to be secure against quantum attacks. These new quantum-safe algorithms can run in software with a slight increase in computation and bandwidth overhead.</p>
+        
+      </div>
+    
+  
+    
+      <div data-block="paragraph"
+           data-block-index="14">
+        
+          <p>Your current laptops and mobile phones are already suitably powered to run the quantum-safe algorithms without any noticeable change in end-user experience. Note that a number of these quantum-safe algorithms are already available in open-source.&nbsp;</p>
+        
+      </div>
+    
+  
+    
+      <div data-block="heading"
+           data-block-index="15">
+        
+          
+            <h3 
+              class="scroll-offset-blog-template"
+              id="q-what-is-the-difference-between-qkd-and-pqc">
+              Q: What is the difference between QKD and PQC?
+            </h3>
+          
+        
+      </div>
+    
+  
+    
+      <div data-block="paragraph"
+           data-block-index="16">
+        
+          <p>A: QKD or Quantum Key Distribution refers to the use of quantum photonics to share a secret key between two communicating parties. QKD relies on the tamper-evident properties of quantum photonics to detect if there is an attacker present.</p>
+        
+      </div>
+    
+  
+    
+      <div data-block="paragraph"
+           data-block-index="17">
+        
+          <p>PQC or Post-Quantum Cryptography refers to the use of new quantum-safe algorithms that can be used to achieve confidentiality, integrity and authenticity of data and communications.</p>
+        
+      </div>
+    
+  
+    
+      <div data-block="paragraph"
+           data-block-index="18">
+        
+          <p>Implementation-wise, QKD projects rely on quantum hardware to achieve quantum-safe data communications, while PQC projects replace the underlying algorithm and can be done in software.</p>
+        
+      </div>
+    
+  
+    
+      <div data-block="heading"
+           data-block-index="19">
+        
+          
+            <h3 
+              class="scroll-offset-blog-template"
+              id="q-how-shouldnbspi-choosenbspqkd-or-pqc">
+              Q: How should&nbsp;I choose&nbsp;QKD or PQC?
+            </h3>
+          
+        
+      </div>
+    
+  
+    
+      <div data-block="paragraph"
+           data-block-index="20">
+        
+          <p>A: QKD use-cases are typically limited to point-to-point communication to secure data-in-motion, while PQC use-cases are more versatile and can be used to secure both data-in-motion as well as data-at-rest.</p>
+        
+      </div>
+    
+  
+    
+      <div data-block="paragraph"
+           data-block-index="21">
+        
+          <p>QKD projects involve large infrastructural changes including laying dark fiber over long-distances to facilitate the quantum communication, while PQC projects can be implemented on a per-application/per-user level with less cost overheads.</p>
+        
+      </div>
+    
+  
+    
+      <div data-block="paragraph"
+           data-block-index="22">
+        
+          <p>On the other hand, PQC is much more complex to understand on a application design level and hence susceptible to errors in implementation.</p>
+        
+      </div>
+    
+  
+    
+      <div data-block="heading"
+           data-block-index="23">
+        
+          
+            <h3 
+              class="scroll-offset-blog-template"
+              id="q-what-if-i-upgrade-to-post-quantum-security-but-quantum-computers-never-come">
+              Q: What if I upgrade to post-quantum security but quantum computers never come?
+            </h3>
+          
+        
+      </div>
+    
+  
+    
+      <div data-block="paragraph"
+           data-block-index="24">
+        
+          <p>A: Take graduated steps in your post-quantum migration journey, starting with discovery of your assets under protection, as well as improving the post-quantum literacy and capability of your in-house team.&nbsp; Be familiar with prevailing practices and guidelines which will serve as good indicators on the state of progress in quantum computing.</p>
+        
+      </div>
+    
+  
+    
+      <div data-block="paragraph"
+           data-block-index="25">
+        
+          <p>It is unlikely that your systems can be upgraded to post-quantum security in isolation, and so engaging with your counter-parties will also provide a sense of the timeline.</p>
+        
+      </div>
+    
+  
+    
+      <div data-block="paragraph"
+           data-block-index="26">
+        
+          <p>If you want to start a post-quantum project, start a trial or proof-of-concept as an exploratory journey to let your team gain implementation experience and make sure it is non-disruptive to your day-to-day operations and infrastructure.</p>
+        
+      </div>
+    
+  
+</div>
+
+              </div>
+            </div>
+          </div>
+          
+          <aside class="col-span-1 xl:col-span-2 2xl:min-w-[300px] w-full xl:w-auto max-w-[68rem] mx-auto overflow-ellipsis self-start pb-6 md:pb-9 lg:pb-0"
+                 id="authors-and-meta">
+            <div class="text-sm max-w-[46rem] mx-auto">
+              <dl class="space-y-2 divide-y">
+                
+                  
+                    <div class="grid grid-cols-1 lg:grid-cols-4 pt-2">
+                      <dt class="text-base-content/50">Author</dt>
+                      <dd class="lg:col-span-3 lg:ml-1.5">
+                        <a href="/author/tan-teik-guan"
+                           class="text-base-content/70 font-medium underline">Tan Teik Guan</a>
+                      </dd>
+                    </div>
+                  
+                  
+                  
+                
+                
+                  <div class="grid grid-cols-1 lg:grid-cols-4 pt-2">
+                    <dt class="text-base-content/50">Published</dt>
+                    <dd class="lg:col-span-3 text-base-content/70 font-medium lg:ml-1.5">
+                      February 23, 2025
+                    </dd>
+                  </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-4 pt-2">
+                  <dt class="text-base-content/50">Updated</dt>
+                  <dd class="lg:col-span-3 text-base-content/70 font-medium lg:ml-1.5">
+                    February 25, 2025
+                  </dd>
+                </div>
+              </dl>
+            </div>
+          </aside>
+        </div>
+        
+        
+        
+        
+          <div class="lg:max-w-[68rem] mx-auto scroll-reveal opacity-0 translate-y-10 transition-all duration-1000 ease-out"
+               id="related-content">
+            <div class="py-6 md:py-9 lg:py-13 max-w-[46rem] mx-auto">
+              <h4 class="text-h4 text-center xl:text-left">Keep Reading</h4>
+              <div class="mt-4 lg:mt-6 divide-y space-y-4">
+                
+                  <div class="pt-xs">
+                    <article class="flex flex-col">
+                      <a href="/what-is/quantum-computing"
+                         class="inline-flex gap-x-1.5 text-caption text-base-content hover:underline group">
+                        <span>Quantum Computing</span>
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="24"
+                             height="24"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="2"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             class="w-5 h-5 group-hover:scale-110 ">
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <path d="M5 12l14 0" />
+                          <path d="M13 18l6 -6" />
+                          <path d="M13 6l6 6" />
+                        </svg>
+                      </a>
+                    </article>
+                  </div>
+                
+                  <div class="pt-xs">
+                    <article class="flex flex-col">
+                      <a href="/post-quantum-cryptography"
+                         class="inline-flex gap-x-1.5 text-caption text-base-content hover:underline group">
+                        <span>Post Quantum Cryptography</span>
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="24"
+                             height="24"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="2"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             class="w-5 h-5 group-hover:scale-110 ">
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <path d="M5 12l14 0" />
+                          <path d="M13 18l6 -6" />
+                          <path d="M13 6l6 6" />
+                        </svg>
+                      </a>
+                    </article>
+                  </div>
+                
+                  <div class="pt-xs">
+                    <article class="flex flex-col">
+                      <a href="/quantum-computing"
+                         class="inline-flex gap-x-1.5 text-caption text-base-content hover:underline group">
+                        <span>Quantum Computing</span>
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="24"
+                             height="24"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="2"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             class="w-5 h-5 group-hover:scale-110 ">
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <path d="M5 12l14 0" />
+                          <path d="M13 18l6 -6" />
+                          <path d="M13 6l6 6" />
+                        </svg>
+                      </a>
+                    </article>
+                  </div>
+                
+              </div>
+            </div>
+          </div>
+        
+        
+      </article>
+    
+  </div>
+
+        </main>
+        <h3 class="z-50 bg-green-500 px-4 py-2 text-md rounded-md text-white drop-shadow-md fixed top-4 right-4  hidden -translate-y-32 transition ease-in-out duration-500 max-w-md"
+            id="message-success"></h3>
+        <h3 class="z-50 bg-red-600 px-4 py-2 text-md rounded-md text-white drop-shadow-md fixed top-4 right-4  hidden -translate-y-32 transition ease-in-out duration-500 max-w-md"
+            id="message-error"></h3>
+        <div id="profitjs"></div>
+        <div>
+          
+            
+              
+<div id="page-footer"
+     
+     style="color: #000000; background-color: #eae7dc"
+     data-node-type="segment"
+     data-template-id="7220642255646756864"
+     data-node-key="footer">
+    
+        
+            
+                
+                    <!-- component could be deleted but still the ID maybe present in the template. -->
+                    
+                        
+                        
+                            <div class="w-full" style="color: #000000; background-color: #eae7dc">
+                                <div class="mx-auto max-w-7xl overflow-hidden px-6 py-2 sm:py-4 lg:px-8">
+                                    <div class="w-full" style="color: #000000; background-color: #eae7dc" data-node-type="block" data-node-key="footer" data-component-id="7228105885694824448" >
+                                        
+
+    
+    
+
+
+
+    
+    <div  style="background-color: #eae7dc" data-select-type="component" data-select-key="1.5 Footer - Default" class="w-full">
+        
+    <div  style="background-color: #eae7dc" class="flex flex-col items-center">
+        <div class="w-full py-16">
+            <div class="w-full flex justify-start mb-10">
+                <div class="relative w-36 max-h-36">
+
+
+    
+        
+        <div  style="" data-select-type="tile" data-select-key="" class="">
+            
+    
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        <figure class="relative w-full h-full group"
+                x-data="{ imageOpen: false, imgWidth: 0, imgHeight: 0 }">
+            <!-- rich text image -->
+            
+                <a href="/">
+                    
+                <img src="https://dtuewuojrf.koniglecdn.com/images/pqcee-logo-crop.webp" alt="pQCee logo" width="1795" height="798" 
+                    style=""
+                    class="object-cover object-center w-full h-full"
+                    >
+                    
+                </a>
+                <!-- gallery image -->
+            
+        </figure>
+    
+
+    </div>
+
+
+
+        </div>
+    
+
+</div>
+            </div>
+            <div class="w-full grid grid-cols-1 md:grid-cols-4"
+                 x-data="{ curr_id: null }">
+                
+                    
+
+
+    
+        
+        <div  style="" data-select-type="tile" data-select-key="" class="mb-8">
+            
+    
+        <div class="flex flex-col items-start gap-1.5">
+            
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+        <h3  style="" class="mb-0.5 text-sm text-primary font-semibold">
+            Quantum Computing
+        </h3>
+        
+    
+
+    </div>
+
+
+            
+                
+                    
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="link_1" class="">
+        
+    
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/what-is/quantum-computing" target="_blank" rel="noopener noreferrer" style=" " class="whitespace-nowrap btn btn-simple text-primary text-sm text-footer" aria-label="What is Quantum Computing ?"  data-clickbit-target="">
+                What is Quantum Computing ?
+            </a>
+        
+    
+
+    </div>
+
+
+
+    </div>
+
+
+                
+            
+                
+                    
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="link_2" class="">
+        
+    
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/pages/post-quantum-cryptography-faq" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap btn btn-simple text-primary text-sm text-footer" aria-label="Post Quantum Cryptography FAQ"  data-clickbit-target="">
+                Post Quantum Cryptography FAQ
+            </a>
+        
+    
+
+    </div>
+
+
+
+    </div>
+
+
+                
+            
+                
+                    
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="link_32edd1" class="">
+        
+    
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/blog/quantum-comics" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap btn btn-simple text-primary text-sm text-footer" aria-label="Quantum Comics"  data-clickbit-target="">
+                Quantum Comics
+            </a>
+        
+    
+
+    </div>
+
+
+
+    </div>
+
+
+                
+            
+        </div>
+    
+
+        </div>
+    
+
+
+                
+                
+                    
+
+
+    
+        
+        <div  style="" data-select-type="tile" data-select-key="" class="mb-8">
+            
+    
+        <div class="flex flex-col items-start gap-2">
+            
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+        <h3  style="" class="mb-0.5 text-sm text-primary font-semibold">
+            Solutions
+        </h3>
+        
+    
+
+    </div>
+
+
+            
+                
+                    
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="link_1" class="">
+        
+    
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/product/qkdlite" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap btn btn-simple text-primary text-sm text-footer" aria-label="Key Management"  data-clickbit-target="">
+                Key Management
+            </a>
+        
+    
+
+    </div>
+
+
+
+    </div>
+
+
+                
+            
+                
+                    
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="link_2" class="">
+        
+    
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/product/safequard" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap btn btn-simple text-primary text-sm text-footer" aria-label="Encryption"  data-clickbit-target="">
+                Encryption
+            </a>
+        
+    
+
+    </div>
+
+
+
+    </div>
+
+
+                
+            
+                
+                    
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="link_f688bd" class="">
+        
+    
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/product/inoqulate" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap btn btn-simple text-primary text-sm text-footer" aria-label="Digital Signing"  data-clickbit-target="">
+                Digital Signing
+            </a>
+        
+    
+
+    </div>
+
+
+
+    </div>
+
+
+                
+            
+        </div>
+    
+
+        </div>
+    
+
+
+                
+                
+                    
+
+
+    
+        
+        <div  style="" data-select-type="tile" data-select-key="" class="mb-8">
+            
+    
+        <div class="flex flex-col items-start gap-2">
+            
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+        <h3  style="" class="mb-0.5 text-sm text-primary font-semibold">
+            Resources
+        </h3>
+        
+    
+
+    </div>
+
+
+            
+                
+                    
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="link_1" class="">
+        
+    
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="https://github.com/pqcee" target="_blank" rel="noopener noreferrer" style=" " class="whitespace-nowrap btn btn-simple text-primary text-sm text-footer" aria-label="Github"  data-clickbit-target="">
+                Github
+            </a>
+        
+    
+
+    </div>
+
+
+
+    </div>
+
+
+                
+            
+                
+                    
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="link_dfc762" class="">
+        
+    
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="https://qcve.org" target="_blank" rel="noopener noreferrer" style=" " class="whitespace-nowrap btn btn-simple text-primary text-sm text-footer" aria-label="QCVE"  data-clickbit-target="">
+                QCVE
+            </a>
+        
+    
+
+    </div>
+
+
+
+    </div>
+
+
+                
+            
+                
+                    
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="link_270785" class="">
+        
+    
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="https://pqcee.github.io/" target="_blank" rel="noopener noreferrer" style=" " class="whitespace-nowrap btn btn-simple text-primary text-sm text-footer" aria-label="Product Manuals"  data-clickbit-target="">
+                Product Manuals
+            </a>
+        
+    
+
+    </div>
+
+
+
+    </div>
+
+
+                
+            
+        </div>
+    
+
+        </div>
+    
+
+
+                
+                
+                    
+
+
+    
+        
+        <div  style="" data-select-type="tile" data-select-key="" class="mb-8">
+            
+    
+        <div class="flex flex-col items-start gap-2">
+            
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+        <h3  style="" class="mb-0.5 text-sm text-primary font-semibold">
+            Company
+        </h3>
+        
+    
+
+    </div>
+
+
+            
+                
+                    
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="link_e5f310" class="">
+        
+    
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/about" target="_blank" rel="noopener noreferrer" style=" " class="whitespace-nowrap btn btn-simple text-primary text-sm text-footer" aria-label="About pQCee"  data-clickbit-target="">
+                About pQCee
+            </a>
+        
+    
+
+    </div>
+
+
+
+    </div>
+
+
+                
+            
+                
+                    
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="link_1962bb" class="">
+        
+    
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/about/sales" target="_self" rel="noopener noreferrer" style=" " class="whitespace-nowrap btn btn-simple text-primary text-sm text-footer" aria-label="Sales contact"  data-clickbit-target="">
+                Sales contact
+            </a>
+        
+    
+
+    </div>
+
+
+
+    </div>
+
+
+                
+            
+        </div>
+    
+
+        </div>
+    
+
+
+                
+            </div>
+        </div>
+        <div class="w-screen border border-base-content/20"></div>
+        <div class="w-full py-6 flex flex-col md:flex-row md:justify-between md:items-center">
+            
+                
+
+
+    
+        
+        <div  style="" data-select-type="tile" data-select-key="" class="">
+            
+    
+        <div class="flex flex-row flex-wrap">
+            
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+        <h3  style="" class="hidden">
+            Links
+        </h3>
+        
+    
+
+    </div>
+
+
+            
+                
+                    
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="link_1" class="">
+        
+    
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/pages/contact" target="_blank" rel="noopener noreferrer" style=" " class="whitespace-nowrap btn btn-simple text-primary text-xs mr-8 mb-2" aria-label="Contact us"  data-clickbit-target="">
+                Contact us
+            </a>
+        
+    
+
+    </div>
+
+
+
+    </div>
+
+
+                
+            
+                
+                    
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="link_3" class="">
+        
+    
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/pages/privacy" target="_blank" rel="noopener noreferrer" style=" " class="whitespace-nowrap btn btn-simple text-primary text-xs mr-8 mb-2" aria-label="Privacy"  data-clickbit-target="">
+                Privacy
+            </a>
+        
+    
+
+    </div>
+
+
+
+    </div>
+
+
+                
+            
+                
+                    
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="link_4" class="">
+        
+    
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        
+            <a href="/pages/terms" target="_blank" rel="noopener noreferrer" style=" " class="whitespace-nowrap btn btn-simple text-primary text-xs mr-8 mb-2" aria-label="Terms of service"  data-clickbit-target="">
+                Terms of service
+            </a>
+        
+    
+
+    </div>
+
+
+
+    </div>
+
+
+                
+            
+        </div>
+    
+
+        </div>
+    
+
+
+            
+            
+                
+
+
+    
+        
+        <div  style="" data-select-type="tile" data-select-key="" class="">
+            
+    
+        <div class="relative -ml-2 md:ml-0 mt-6 md:mt-0 flex flex-wrap flex-row justify-start items-center gap-x-2 md:gap-x-4">
+            
+                
+                    
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="link_4" class="">
+        
+    <div class="relative group flex">
+        <div class="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-full transition opacity-0 group-hover:opacity-100">
+            
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        <p  style="" class="text-xs text-site-content/60 line-clamp-1">
+            @pqcee_com
+        </p>
+    
+
+    </div>
+
+
+        </div>
+        <div class="flex items-center"
+             aria-label="Visit x profile">
+            
+
+
+    <div data-select-type="tag" class="inline-flex">
+        
+    <a href="https://twitter.com/pqcee_com" target="_blank" rel="noopener noreferrer" style="" class="btn-icon">
+        
+    <span class="sr-only">x</span>
+    <svg xmlns="http://www.w3.org/2000/svg"
+         height="16"
+         width="16"
+         class="h-5 w-5 text-primary text-footer"
+         viewBox="0 0 512 512"
+         fill="currentColor">
+        <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.-->
+        <path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z" />
+    </svg>
+
+    </a>
+
+    </div>
+
+
+        </div>
+    </div>
+
+    </div>
+
+
+                
+            
+                
+                    
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="link_5" class="">
+        
+    <div class="relative group flex">
+        <div class="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-full transition opacity-0 group-hover:opacity-100">
+            
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        <p  style="" class="text-xs text-site-content/60 line-clamp-1">
+            @pQCee
+        </p>
+    
+
+    </div>
+
+
+        </div>
+        <div class="flex items-center"
+             aria-label="Visit youtube profile">
+            
+
+
+    <div data-select-type="tag" class="inline-flex">
+        
+    <a href="https://www.youtube.com/@pQCee" target="_blank" rel="noopener noreferrer" style="" class="btn-icon">
+        
+    <span class="sr-only">youtube</span>
+    <svg xmlns="http://www.w3.org/2000/svg"
+         height="16"
+         width="18"
+         class="h-5 w-5 text-primary text-footer"
+         viewBox="0 0 576 512"
+         fill="currentColor">
+        <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.-->
+        <path d="M549.7 124.1c-6.3-23.7-24.8-42.3-48.3-48.6C458.8 64 288 64 288 64S117.2 64 74.6 75.5c-23.5 6.3-42 24.9-48.3 48.6-11.4 42.9-11.4 132.3-11.4 132.3s0 89.4 11.4 132.3c6.3 23.7 24.8 41.5 48.3 47.8C117.2 448 288 448 288 448s170.8 0 213.4-11.5c23.5-6.3 42-24.2 48.3-47.8 11.4-42.9 11.4-132.3 11.4-132.3s0-89.4-11.4-132.3zm-317.5 213.5V175.2l142.7 81.2-142.7 81.2z" />
+    </svg>
+
+    </a>
+
+    </div>
+
+
+        </div>
+    </div>
+
+    </div>
+
+
+                
+            
+                
+                    
+
+
+    
+    <div  style="" data-select-type="item" data-select-key="link_6" class="">
+        
+    <div class="relative group flex">
+        <div class="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-full transition opacity-0 group-hover:opacity-100">
+            
+
+
+    <div data-select-type="tag" class="">
+        
+    
+        <p  style="" class="text-xs text-site-content/60 line-clamp-1">
+            pqcee
+        </p>
+    
+
+    </div>
+
+
+        </div>
+        <div class="flex items-center"
+             aria-label="Visit linkedin profile">
+            
+
+
+    <div data-select-type="tag" class="inline-flex">
+        
+    <a href="https://sg.linkedin.com/company/pqcee" target="_blank" rel="noopener noreferrer" style="" class="btn-icon">
+        
+    <span class="sr-only">linkedin</span>
+    <svg xmlns="http://www.w3.org/2000/svg"
+         width="24"
+         height="24"
+         viewBox="0 0 24 24"
+         fill="none"
+         stroke="currentColor"
+         stroke-width="2"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         class="h-5 w-5 text-primary text-footer">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+        <path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z" />
+        <path d="M8 11l0 5" />
+        <path d="M8 8l0 .01" />
+        <path d="M12 16l0 -5" />
+        <path d="M16 16v-3a2 2 0 0 0 -4 0" />
+    </svg>
+
+    </a>
+
+    </div>
+
+
+        </div>
+    </div>
+
+    </div>
+
+
+                
+            
+        </div>
+    
+
+        </div>
+    
+
+
+            
+        </div>
+        
+    </div>
+
+    </div>
+
+
+
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        
+                    
+                
+            
+        
+    
+</div>
+
+            
+          
+        </div>
+        
+          <div x-data="loginWidget"
+     @auth:login-widget:open.window="open($event.detail?.formTitle || 'Login')">
+    <div class="relative z-50"
+         x-show="show"
+         aria-labelledby="login-widget-title"
+         role="dialog"
+         aria-modal="true"
+         x-cloak>
+        <div x-show="show"
+             class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+             x-transition.opacity.duration.300ms></div>
+        <div class="fixed inset-0 z-50 w-screen overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div x-show="show"
+                     x-transition:enter="ease-out duration-300"
+                     x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                     x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                     x-transition:leave="ease-in duration-200"
+                     x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                     x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                     class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 w-full sm:max-w-lg sm:p-6">
+                    <div>
+                        <div class="mt-3 text-center sm:mt-5">
+                            <template x-if="currentTab === 'Login'">
+                                <div>
+                                    <h3 class="text-lg sm:text-xl font-semibold leading-6 text-gray-900"
+                                        id="login-widget-title"
+                                        x-text="formTitle"></h3>
+                                    <p class="mt-2 text-sm text-gray-500">Don't have an account? We will create one for you.</p>
+                                    <div class="mt-6">
+                                        <input :type="form.identityType"
+                                               class="border px-3 py-2 w-full rounded-input border-border focus:border-primary focus:ring-primary sm:text-sm"
+                                               x-model="form.identity"
+                                               autocomplete="email"
+                                               placeholder="Enter email to login">
+                                    </div>
+                                </div>
+                            </template>
+                            <template x-if="currentTab === 'Password'">
+                                <div>
+                                    <h3 class="text-lg sm:text-xl font-semibold leading-6 text-gray-900"
+                                        id="login-widget-title">Enter OTP</h3>
+                                    <p class="text-sm text-gray-500 mt-2">
+                                        Enter the OTP send to
+                                        <strong x-text="form.identity"></strong>
+                                    </p>
+                                    <div class="mt-6">
+                                        <input type="password"
+                                               class="border px-3 py-2 w-full rounded-input border-border focus:border-primary focus:ring-primary sm:text-sm"
+                                               x-model="form.password"
+                                               placeholder="Enter OTP">
+                                        <p class="text-sm text-gray-500 mt-1 text-left">
+                                            <button class="text-primary"
+                                                    @click.prevent="resendOTP"
+                                                    :disabled="!enableResendOTP">Resend OTP</button>
+                                            in <span x-text="form.countDown"></span>
+                                            seconds. Check your spam folder if you can't find email from us.
+                                        </p>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                    <template x-if="form.error">
+                        <p x-text="form.error" class="text-red-500 text-sm mt-3"></p>
+                    </template>
+                    <div class="mt-5 sm:mt-6 flex flex-col gap-3 sm:flex-row">
+                        <button type="button"
+                                @click="show = false"
+                                class="btn btn-sm border border-gray-300 flex-1">Cancel</button>
+                        <button type="button"
+                                class="btn btn-sm btn-primary flex-1"
+                                :disabled="!enableSubmit"
+                                x-text="submitText"
+                                @click="submit"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+          
+          
+<div x-data="guestLoginWidget"
+     @auth:guest-login-widget:open.window="open($event.detail?.formTitle, $event.detail?.formSubtitle)">
+    <div class="relative z-50"
+         x-show="show"
+         aria-labelledby="guest-login-widget-title"
+         role="dialog"
+         aria-modal="true"
+         x-cloak>
+        <div x-show="show"
+             class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+             x-transition.opacity.duration.300ms></div>
+        <div class="fixed inset-0 z-50 w-screen overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div x-show="show"
+                     x-transition:enter="ease-out duration-300"
+                     x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                     x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                     x-transition:leave="ease-in duration-200"
+                     x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                     x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                     class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 w-full sm:max-w-lg sm:p-6">
+                    <div>
+                        <div class="mt-3 text-center sm:mt-5">
+                            <div>
+                                <h3 class="text-lg sm:text-xl font-semibold leading-6 text-gray-900"
+                                    id="guest-login-widget-title"
+                                    x-text="formTitle"></h3>
+                                <p class="mt-2 text-sm text-gray-500" x-text="formSubtitle"></p>
+                                <div class="mt-6 space-y-4">
+                                    <div>
+                                        <input type="text"
+                                               class="border px-3 py-2 w-full rounded-input border-border focus:border-primary focus:ring-primary sm:text-sm"
+                                               x-model="form.name"
+                                               autocomplete="name"
+                                               placeholder="Enter your name">
+                                    </div>
+                                    <div>
+                                        <input type="email"
+                                               class="border px-3 py-2 w-full rounded-input border-border focus:border-primary focus:ring-primary sm:text-sm"
+                                               x-model="form.email"
+                                               autocomplete="email"
+                                               placeholder="Enter your email address">
+                                        <p class="text-xs text-gray-400 mt-1 text-left">Valid email is required for further communications</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <template x-if="form.error">
+                        <p x-text="form.error" class="text-red-500 text-sm mt-3"></p>
+                    </template>
+                    <div class="mt-5 sm:mt-6 flex flex-col gap-3 sm:flex-row">
+                        <button type="button"
+                                @click="show = false"
+                                class="btn btn-sm  border border-gray-300 flex-1">Cancel</button>
+                        <button type="button"
+                                class="btn btn-sm  btn-primary flex-1"
+                                :disabled="!enableSubmit"
+                                x-text="submitText"
+                                @click="submit"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        
+        
+          
+<style>
+  #hb-badge,
+  #hb-badge *,
+  #hb-badge *::before,
+  #hb-badge *::after {
+    all: unset;
+    box-sizing: border-box;
+  }
+
+  #hb-badge {
+    position: fixed !important;
+    bottom: 10px !important;
+    left: 10px !important;
+    z-index: 2147483647 !important;
+    display: block !important;
+  }
+
+  #hb-badge a {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 8px 14px 8px 10px !important;
+    background: #0a0a0a !important;
+    border-radius: 8px !important;
+    text-decoration: none !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18) !important;
+    cursor: pointer !important;
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease !important;
+    line-height: 1 !important;
+    letter-spacing: 0.01em !important;
+  }
+
+  #hb-badge a:hover {
+    background: #222222 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25) !important;
+  }
+
+  #hb-badge .hb-dot {
+    display: inline-block !important;
+    width: 5px !important;
+    height: 5px !important;
+    border-radius: 999px !important;
+    background: rgba(255,255,255,0.3) !important;
+    flex-shrink: 0 !important;
+  }
+
+  #hb-badge .hb-muted {
+    color: rgba(255,255,255,0.45) !important;
+    font-weight: 400 !important;
+    font-size: 13px !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+  }
+
+  #hb-badge .hb-brand {
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+  }
+</style>
+
+<div id="hb-badge">
+    
+        <a href="https://konigle.com?referrer=www.pqcee.com" target="_blank">
+            <span class="hb-muted">Built with</span>
+            <span class="hb-dot"></span>
+            <span class="hb-brand">Konigle</span>
+        </a>
+    
+</div>
+        
+      
+      
+        
+          
+            <script src="/static/sitekit/js/sitekit.js" defer></script>
+            <script src="/static/sitekit/js/widgets.js" defer></script>
+            <script src="/static/sitekit/js/vendor/alpinejs-3.x.x.js" defer></script>
+            
+<script>
+    function initProfitJS(){
+        if (window.hasOwnProperty('profitjs')) {
+          window.profitjs({
+            widgets:[]
+          }).mount('#profitjs');
+        }
+      }
+    
+</script>
+<script src="/static/sitekit/js/profitjs.umd.cjs"
+        defer
+        onload="initProfitJS()"></script>
+
+          
+        
+        
+      
+      
+      
+      
+      
+  
+    <script src="/static/sitekit/js/content-page.js" defer></script>
+  
+
+      
+        
+          
+<style>
+    :root {
+      --color-primary: #969b7f;
+      --color-primary-50: #fef2f2;
+      --color-primary-100: #fee2e2;
+      --color-primary-200: #fecaca;
+      --color-primary-300: #fca5a5;
+      --color-primary-400: #f87171;
+      --color-primary-500: #ef4444;
+      --color-primary-600: #dc2626;
+      --color-primary-700: #b91c1c;
+      --color-primary-800: #991b1b;
+      --color-primary-900: #7f1d1d;
+      --color-primary-950: #450a0a;
+
+      --color-primary-content: #ffffff;
+      --color-primary-content-50: #f3f4f6;
+      --color-primary-content-100: #e5e7eb;
+      --color-primary-content-200: #d1d5db;
+      --color-primary-content-300: #b0b8c1;
+      --color-primary-content-400: #8b95a1;
+      --color-primary-content-500: #6b7280;
+      --color-primary-content-600: #4b5563;
+      --color-primary-content-700: #374151;
+      --color-primary-content-800: #1f2937;
+      --color-primary-content-900: #111827;
+      --color-primary-content-950: #292929;
+      
+      --color-secondary: #969b7f;
+      --color-secondary-50: #f0fdf5;
+      --color-secondary-100: #dcfce8;
+      --color-secondary-200: #bbf7d1;
+      --color-secondary-300: #86efad;
+      --color-secondary-400: #4ade81;
+      --color-secondary-500: #22c55e;
+      --color-secondary-600: #16a34a;
+      --color-secondary-700: #15803c;
+      --color-secondary-800: #166533;
+      --color-secondary-900: #14532b;
+      --color-secondary-950: #052e14;
+
+      --color-secondary-content: #ffffff;
+      --color-secondary-content-50: #ffffff;
+      --color-secondary-content-100: #efefef;
+      --color-secondary-content-200: #dcdcdc;
+      --color-secondary-content-300: #bdbdbd;
+      --color-secondary-content-400: #989898;
+      --color-secondary-content-500: #7c7c7c;
+      --color-secondary-content-600: #656565;
+      --color-secondary-content-700: #525252;
+      --color-secondary-content-800: #464646;
+      --color-secondary-content-900: #3d3d3d;
+      --color-secondary-content-950: #292929;
+
+      --color-base: #ffffff;
+      --color-base-50: #ffffff;
+      --color-base-100: #f3f4f6;
+      --color-base-200: #e5e7eb;
+      --color-base-300: #d1d5db;
+
+      --color-base-content: #000000;
+
+      --color-heading: #101828;
+      --color-body: #101828;
+      --color-subtle: #4a5565;
+      --color-light: #99a1af;
+      --color-link: #2563eb;
+      --color-border: #e5e7eb;
+
+      --color-accent: #18f293;
+      --color-accent-content: #ffffff;
+      --color-neutral: #f3f4f6;
+      --color-neutral-content: #000000;
+      --color-info: #2563eb;
+      --color-info-content: #ffffff;
+      --color-success: #10b981;
+      --color-success-content: #ffffff;
+      --color-warning: #f59e0b;
+      --color-warning-content: #ffffff;
+      --color-danger: #ef4444;
+      --color-danger-content: #ffffff;
+
+      
+      --radius-btn: 0.375rem;
+      --radius-box: 0.5rem;
+      --radius-input: 0.375rem;
+
+      
+      --spacing: 0.25rem;
+
+    }
+    html {
+      font-family: "Anek Tamil", sans-serif;
+      
+        font-size: 18px;
+      
+      background-color: #ffffff;
+      color: #000000;
+      scroll-behavior: smooth;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+    .iti {
+      width: 100%;
+      display: block;
+    }
+    [x-cloak] {
+      display: none !important;
+    }
+
+    
+      .bg-header {
+        background-color: ;
+      }
+      .border-header {
+        border-color: ;
+      }
+      .text-header {
+        display: inline-block;
+        
+        border-color: transparent;
+        border-radius: 0.375rem;
+        transition: transform 0.3s ease-out;
+      }
+      .text-header:hover {
+        transform: scale(1.1);
+        
+      }
+    
+
+    
+      footer#page-footer a {
+        color: #000000;
+      }
+      footer#page-footer {
+        background-color: #eae7dc;
+        color: #000000;
+      }
+      footer p#copyright-notice {
+        color: #000000;
+      }
+      footer#page-footer h3 {
+        color: #000000;
+      }
+      footer#page-footer p {
+        color: #000000;
+      }
+      footer#page-footer button {
+        color: #000000;
+      }
+      .text-footer {
+        color: #000000;
+        border-color: #000000;
+      }
+    
+</style>
+
+        
+      
+      
+      
+        
+      
+    </body>
+  
+  
+
+</html>
