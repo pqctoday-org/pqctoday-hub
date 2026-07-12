@@ -1,62 +1,23 @@
 {
-  "generated": "2026-07-08T01:23:43.532Z",
-  "source": "src/data/migrate_vendor_roadmap_07072026.csv",
+  "generated": "2026-07-12T15:23:19.401Z",
+  "source": "src/data/migrate_vendor_roadmap_07122026.csv",
   "summary": {
-    "downloaded": 4,
+    "downloaded": 1,
     "skipped": 0,
-    "failed": 1,
+    "failed": 0,
     "persisted_skip": 0,
     "no_url": 8
   },
   "entries": [
     {
-      "vendorId": "VND-026",
-      "vendorName": "Marvell Technology Inc.",
-      "title": "Marvell Fibre Channel StorCryption Post-Quantum Technology Brief",
-      "url": "https://www.marvell.com/content/dam/marvell/en/public-collateral/fibre-channel/marvell-fibre-channel-storcryption-post-quantum-technology-brief.pdf",
-      "status": "failed",
-      "reason": "forbidden",
-      "persistent": true
-    },
-    {
-      "vendorId": "VND-308",
-      "vendorName": "Fastly, Inc.",
-      "title": "Future-proofing TLS encryption against quantum threats",
-      "url": "https://www.fastly.com/blog/future-proofing-tls-encryption-against-quantum-threats",
+      "vendorId": "VND-085",
+      "vendorName": "Cosmian SAS",
+      "title": "Cosmian CoverCrypt",
+      "url": "https://cosmian.com/data-protection-suite/cosmian-covercrypt/",
       "status": "downloaded",
-      "filename": "VND-308_Fastly_Inc..html",
-      "sizeBytes": 256895,
-      "contentType": "text/html"
-    },
-    {
-      "vendorId": "VND-238",
-      "vendorName": "Toshiba Research Europe Ltd.",
-      "title": "Toshiba Cambridge Research Laboratory satellite QKD milestones",
-      "url": "https://www.toshiba-clip.com/en/detail/p=5165",
-      "status": "downloaded",
-      "filename": "VND-238_Toshiba_Research_Europe_Ltd..html",
-      "sizeBytes": 63310,
+      "filename": "VND-085_Cosmian_SAS.html",
+      "sizeBytes": 272243,
       "contentType": "text/html; charset=UTF-8"
-    },
-    {
-      "vendorId": "VND-234",
-      "vendorName": "NTT Corporation",
-      "title": "NTT quantum-safe secure transport system",
-      "url": "https://group.ntt/en/newsrelease/2024/10/30/241030a.html",
-      "status": "downloaded",
-      "filename": "VND-234_NTT_Corporation.html",
-      "sizeBytes": 125805,
-      "contentType": "text/html; charset=UTF-8"
-    },
-    {
-      "vendorId": "VND-244",
-      "vendorName": "HP Inc.",
-      "title": "HP business PCs with quantum-resistant firmware protection",
-      "url": "https://www.hp.com/us-en/newsroom/blogs/2024/hp-launches-business-pc-to-protect-against-quantum-computer-hacks.html",
-      "status": "downloaded",
-      "filename": "VND-244_HP_Inc..html",
-      "sizeBytes": 273075,
-      "contentType": "text/html;charset=utf-8"
     }
   ]
 }
