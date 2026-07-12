@@ -1,86 +1,31 @@
 ---
 generated: 2026-07-12
 collection: library
-documents_processed: 2
+documents_processed: 1
 enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 ---
 
-## OMB-M-26-15
+## NIST-IR-8547-Initial-Public-Draft-Transition-to-Post-Quantum
 
-- **Reference ID**: OMB-M-26-15
-- **Title**: OMB Memorandum M-26-15 — Execution of the Migration to Post-Quantum Cryptography
-- **Authors**: OMB; White House
-- **Publication Date**: 2026-06-24
-- **Last Updated**: 2026-06-24
-- **Document Status**: Final
-- **Main Topic**: OMB Memorandum M-26-15 directs federal agencies to execute a prioritized migration to post-quantum cryptography by December 31, 2030, and submit migration plans within 120 days.
-- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA; FALCON; HQC
-- **Quantum Threats Addressed**: Cryptographically relevant quantum computer (CRQC); Harvest Now Decrypt Later (implied by "decrypt data protected by many forms of cryptography that are commonly used today")
-- **Migration Timeline Info**: Milestones: 2026-2027 Discovery; 2027-2028 Pilots; 2028-2030 Key-Establishment Migration; 2031 Signature Migration; 2035 Full Migration; Plan submission within 120 days of June 24, 2026
-- **Applicable Regions / Bodies**: Regions: United States; Bodies: Office of Management and Budget (OMB); Office of the National Cyber Director (ONCD); National Institute of Standards and Technology (NIST); Cybersecurity and Infrastructure Security Agency (CISA); General Services Administration (GSA); Department of War (DOW)
-- **Leaders Contributions Mentioned**: Russell T. Vought (Director, Office of Management and Budget)
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: Public Key Infrastructure (PKI); Cloud migrations; FedRAMP-authorized cloud service providers; Federal Identity, Credential, and Access Management (FICAM)
-- **Standardization Bodies**: National Institute of Standards and Technology (NIST)
-- **Compliance Frameworks Referenced**: FIPS 203; FIPS 204; FIPS 205; FIPS 186-5; NIST SP 800-56A/B/C; OMB Circular No. A-130; FedRAMP
-- **Classical Algorithms Referenced**: Elliptic Curve Diffie-Hellman (ECDH); Menezes-Qu-Vanstone (MQV); Elliptic Curve Digital Signature Algorithm (ECDSA); Diffie-Hellman (DH); Rivest-Shamir-Adleman (RSA); Digital Signature Algorithm (DSA); Elliptical Curve Technology (ECC)
-- **Key Takeaways**: Federal agencies must submit PQC Migration Plans to OMB and ONCD within 120 days of the memorandum; Prioritized migration of key establishment for high-impact systems must be completed by December 31, 2030; Signature migration is scheduled for 2031 with full migration by 2035; Agencies must use hybrid architectures combining classical and PQC algorithms to manage risk during transition; Legacy systems incapable of supporting PQC must be identified for replacement or decommissioning
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: Hybrid architecture combining traditional cryptographic algorithm with PQC algorithm; Cryptographic agility; Phased migration approach
-- **Pure PQC KEM Support**: No
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Yes
-- **Hybrid PQC KEM Evidence**: "A hybrid architecture... combines a traditional cryptographic algorithm... with a PQC algorithm" (Appendix A.3)
-- **Pure PQC Signature Support**: No
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: Yes
-- **Hybrid PQC Signature Evidence**: "A hybrid architecture... combines a traditional cryptographic algorithm... with a PQC algorithm" (Appendix A.3)
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
-- **Performance & Size Considerations**: ML-DSA signatures ~1–2 KB; SLH-DSA signatures tens of KB; ML-KEM larger overhead than classical ECC
-- **Target Audience**: CISO; Compliance Officer; Security Architect; Policy Maker
-- **Implementation Prerequisites**: PQC Migration Plan submission; Internal governance structure establishment; Cryptographic inventory; Asset management; Supply chain risk management
-- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Migrate; Assess; Algorithms; hybrid-crypto; crypto-agility; pqc-governance; migration-program; pqc-risk-management
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: Inventory of cryptographic systems; Identification of legacy systems; Automation for inventory management
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: Managed supply chain risk; Vendor and third-party software requirements; FedRAMP-authorized cloud service provider engagement
-- **Deployment & Migration Complexity**: 5-phase migration schedule; Integration into cloud migrations and software development lifecycles; Replacement of legacy systems
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: Establishment of internal governance structure; Accountability for leadership teams; Designation of accountable officials
-- **Math Family**: Lattice; Hash-based
-- **PQC Round**: Standardised
-- **Source Document**: OMB-M-26-15.pdf (283,167 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-07-12T11:23:31
-
----
-
-## EO-14413
-
-- **Reference ID**: EO-14413
-- **Title**: Executive Order 14413 — Ushering in the Next Frontier of Quantum Innovation
-- **Authors**: White House
-- **Publication Date**: 2026-06-22
-- **Last Updated**: 2026-06-22
-- **Document Status**: Final
-- **Main Topic**: Executive Order 14413 establishes the QC-ADDS initiative for quantum computing development and directs a National Quantum Strategy update, focusing on innovation and national security rather than specific cryptography compliance.
+- **Reference ID**: NIST-IR-8547-Initial-Public-Draft-Transition-to-Post-Quantum
+- **Title**: NIST IR 8547 (Initial Public Draft): Transition to Post-Quantum Cryptography Standards
+- **Authors**: See document
+- **Publication Date**: 2026-07-12
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: NIST's expected approach to transitioning from quantum-vulnerable cryptographic algorithms to post-quantum digital signature algorithms and key-establishment schemes.
 - **PQC Algorithms Covered**: None detected
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: United States; Bodies: Department of Energy, Department of War, Department of Commerce, National Science Foundation, National Security Agency, National Aeronautics and Space Administration, Federal Bureau of Investigation, Department of Homeland Security, Office of Management and Budget, Office of Personnel Management, Defense Advanced Research Projects Agency
-- **Leaders Contributions Mentioned**: President Donald J. Trump (signed order); Assistant to the President for Science and Technology (coordinate QC-ADDS, update strategy); Secretary of War (identify sensor projects, support QC-ADDS); Secretary of Commerce (develop commercial readiness plans, supply chain plans); Secretary of Energy (identify technical specs, establish assessment center); Director of National Intelligence (identify national security implications); Director of NSF (develop basic science plans); Administrator of NASA (develop space application plans); Director of FBI (propose staffing for QCPT)
+- **Applicable Regions / Bodies**: United States; NIST
+- **Leaders Contributions Mentioned**: Dustin Moody (NIST); Ray Perlner (NIST); Andrew Regenscheid (NIST); Angela Robinson (NIST); David Cooper (NIST)
 - **PQC Products Mentioned**: None detected
 - **Protocols Covered**: None detected
 - **Infrastructure Layers**: None detected
-- **Standardization Bodies**: None detected
+- **Standardization Bodies**: NIST
 - **Compliance Frameworks Referenced**: None detected
 - **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Establish QC-ADDS initiative to deliver a scientifically useful quantum computer to a Department of Energy facility by 2028; Update the National Quantum Strategy within 180 days to support QIST ecosystem maturation; Identify national security implications of commercial quantum computers, including migration to post-quantum cryptography; Strengthen domestic QIST supply chains and manufacturing infrastructure through private sector partnerships
+- **Key Takeaways**: NIST is defining a transition plan from quantum-vulnerable to post-quantum standards; The report identifies existing vulnerable standards and target quantum-resistant standards; The document aims to inform federal agencies, industry, and standards organizations on migration efforts; Public comments are being used to revise the transition plan and feed into specific guidance.
 - **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: None detected
 - **Pure PQC KEM Support**: Not Applicable
@@ -93,25 +38,25 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Hybrid PQC Signature Evidence**: None detected
 - **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
+- **Lifecycle State**: Draft
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: Policy Maker; CISO; Security Architect
+- **Target Audience**: Policy Maker; Compliance Officer; Security Architect
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: pqc-governance; migration-program; pqc-risk-management; quantum-threats
+- **Relevant PQC Today Features**: Timeline; Migrate; Governance; pqc-governance; migration-program
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
 - **QKD Protocols & Quantum Networking**: None detected
 - **QRNG & Entropy Sources**: None detected
 - **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: Analyze QIST supply chains; encourage private sector adoption of QIST-related standards; eliminate QIST manufacturing barriers; share information regarding quantum computing supply chains
+- **Supply Chain & Vendor Risk**: None detected
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
-- **Source Document**: EO-14413.html (294,489 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-07-12T11:23:31
+- **Source Document**: NIST-IR-8547-Initial-Public-Draft-Transition-to-Post-Quantum.html (45,146 bytes, 5,317 extracted chars)
+- **Extraction Timestamp**: 2026-07-12T13:28:13
 
 ---
 
@@ -8263,6 +8208,60 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Deployment & Migration Complexity**: Phased rollout with specific deadlines for key establishment (2030) and signatures (2031); NIST pilot project completion by 2027
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Designation of PQC migration lead; submission of migration plans to OMB
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## EO-14413
+
+- **Reference ID**: EO-14413
+- **Title**: Executive Order 14413 — Ushering in the Next Frontier of Quantum Innovation
+- **Authors**: White House
+- **Publication Date**: 2026-06-22
+- **Last Updated**: 2026-06-22
+- **Document Status**: Final
+- **Main Topic**: Executive Order 14413 establishes the QC-ADDS initiative for quantum computing development and directs a National Quantum Strategy update, focusing on innovation and national security rather than specific cryptography compliance.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: Department of Energy, Department of War, Department of Commerce, National Science Foundation, National Security Agency, National Aeronautics and Space Administration, Federal Bureau of Investigation, Department of Homeland Security, Office of Management and Budget, Office of Personnel Management, Defense Advanced Research Projects Agency
+- **Leaders Contributions Mentioned**: President Donald J. Trump (signed order); Assistant to the President for Science and Technology (coordinate QC-ADDS, update strategy); Secretary of War (identify sensor projects, support QC-ADDS); Secretary of Commerce (develop commercial readiness plans, supply chain plans); Secretary of Energy (identify technical specs, establish assessment center); Director of National Intelligence (identify national security implications); Director of NSF (develop basic science plans); Administrator of NASA (develop space application plans); Director of FBI (propose staffing for QCPT)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Establish QC-ADDS initiative to deliver a scientifically useful quantum computer to a Department of Energy facility by 2028; Update the National Quantum Strategy within 180 days to support QIST ecosystem maturation; Identify national security implications of commercial quantum computers, including migration to post-quantum cryptography; Strengthen domestic QIST supply chains and manufacturing infrastructure through private sector partnerships
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Policy Maker; CISO; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: pqc-governance; migration-program; pqc-risk-management; quantum-threats
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Analyze QIST supply chains; encourage private sector adoption of QIST-related standards; eliminate QIST manufacturing barriers; share information regarding quantum computing supply chains
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
@@ -24465,6 +24464,60 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Organizational Readiness**: designate a lead to OMB; Government-wide coordination; engagement on planning and implementation efforts; cryptographic migration working group chaired by the Federal Chief Information Security Officer
 - **Math Family**: None detected
 - **PQC Round**: None detected
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## OMB-M-26-15
+
+- **Reference ID**: OMB-M-26-15
+- **Title**: OMB Memorandum M-26-15 — Execution of the Migration to Post-Quantum Cryptography
+- **Authors**: OMB; White House
+- **Publication Date**: 2026-06-24
+- **Last Updated**: 2026-06-24
+- **Document Status**: Final
+- **Main Topic**: OMB Memorandum M-26-15 directs federal agencies to execute a prioritized migration to post-quantum cryptography by December 31, 2030, and submit migration plans within 120 days.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA; FALCON; HQC
+- **Quantum Threats Addressed**: Cryptographically relevant quantum computer (CRQC); Harvest Now Decrypt Later (implied by "decrypt data protected by many forms of cryptography that are commonly used today")
+- **Migration Timeline Info**: Milestones: 2026-2027 Discovery; 2027-2028 Pilots; 2028-2030 Key-Establishment Migration; 2031 Signature Migration; 2035 Full Migration; Plan submission within 120 days of June 24, 2026
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: Office of Management and Budget (OMB); Office of the National Cyber Director (ONCD); National Institute of Standards and Technology (NIST); Cybersecurity and Infrastructure Security Agency (CISA); General Services Administration (GSA); Department of War (DOW)
+- **Leaders Contributions Mentioned**: Russell T. Vought (Director, Office of Management and Budget)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Public Key Infrastructure (PKI); Cloud migrations; FedRAMP-authorized cloud service providers; Federal Identity, Credential, and Access Management (FICAM)
+- **Standardization Bodies**: National Institute of Standards and Technology (NIST)
+- **Compliance Frameworks Referenced**: FIPS 203; FIPS 204; FIPS 205; FIPS 186-5; NIST SP 800-56A/B/C; OMB Circular No. A-130; FedRAMP
+- **Classical Algorithms Referenced**: Elliptic Curve Diffie-Hellman (ECDH); Menezes-Qu-Vanstone (MQV); Elliptic Curve Digital Signature Algorithm (ECDSA); Diffie-Hellman (DH); Rivest-Shamir-Adleman (RSA); Digital Signature Algorithm (DSA); Elliptical Curve Technology (ECC)
+- **Key Takeaways**: Federal agencies must submit PQC Migration Plans to OMB and ONCD within 120 days of the memorandum; Prioritized migration of key establishment for high-impact systems must be completed by December 31, 2030; Signature migration is scheduled for 2031 with full migration by 2035; Agencies must use hybrid architectures combining classical and PQC algorithms to manage risk during transition; Legacy systems incapable of supporting PQC must be identified for replacement or decommissioning
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Hybrid architecture combining traditional cryptographic algorithm with PQC algorithm; Cryptographic agility; Phased migration approach
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: "A hybrid architecture... combines a traditional cryptographic algorithm... with a PQC algorithm" (Appendix A.3)
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Yes
+- **Hybrid PQC Signature Evidence**: "A hybrid architecture... combines a traditional cryptographic algorithm... with a PQC algorithm" (Appendix A.3)
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: ML-DSA signatures ~1–2 KB; SLH-DSA signatures tens of KB; ML-KEM larger overhead than classical ECC
+- **Target Audience**: CISO; Compliance Officer; Security Architect; Policy Maker
+- **Implementation Prerequisites**: PQC Migration Plan submission; Internal governance structure establishment; Cryptographic inventory; Asset management; Supply chain risk management
+- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Migrate; Assess; Algorithms; hybrid-crypto; crypto-agility; pqc-governance; migration-program; pqc-risk-management
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: Inventory of cryptographic systems; Identification of legacy systems; Automation for inventory management
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Managed supply chain risk; Vendor and third-party software requirements; FedRAMP-authorized cloud service provider engagement
+- **Deployment & Migration Complexity**: 5-phase migration schedule; Integration into cloud migrations and software development lifecycles; Replacement of legacy systems
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Establishment of internal governance structure; Accountability for leadership teams; Designation of accountable officials
+- **Math Family**: Lattice; Hash-based
+- **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
