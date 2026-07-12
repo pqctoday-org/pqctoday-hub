@@ -28,6 +28,16 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.21.1] - 2026-07-11
+
+### Fixed
+
+- **The Simulation's playback bar now closes when you dismiss it** [view:/simulation] [persona:executive] [persona:curious]: after an auto-run finished, the bottom transport bar stayed on screen and its Close button did nothing — it now dismisses correctly (and the next phase run re-opens its completion screen as expected).
+
+### Data
+
+- **Recovered Library source documents and reconciled catalog data** [view:/library] [view:/migrate] [persona:researcher] [persona:architect]: restored 2 real Library documents flagged as low-quality and fixed a `<noscript>` false-positive in the source-quality check; reconciled a forked same-day vendor/migrate catalog lineage, removed a duplicate vendors file, and refreshed vendor and migrate-catalog enrichment.
+
 ## [4.21.0] - 2026-07-11
 
 Share buttons across every hands-on tool, a single-phase completion screen
