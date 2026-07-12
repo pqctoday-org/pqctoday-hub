@@ -8,6 +8,28 @@ source: public/vendor-roadmaps/
 # Vendor PQC Roadmap Enrichments
 
 
+## VND-308 — Fastly, Inc.
+
+- **Vendor ID**: VND-308
+- **Vendor Name**: Fastly, Inc.
+- **Roadmap Title**: Future-proofing TLS encryption against quantum threats
+- **Roadmap URL**: https://www.fastly.com/blog/future-proofing-tls-encryption-against-quantum-threats
+- **Publish Date**: 2025-04-02
+- **Local File**: public/vendor-roadmaps/VND-308_Fastly_Inc..html
+- **CSV Coverage Notes**: Rollout of ML-KEM across Fastly's global CDN fleet starting April 2025, automatic for TLS 1.3 customers, with measured early adoption data (~5% of TLS 1.3 clients at time of writing). Added 2026-07-07 via migrate-data remediation; independently re-fetched before adding.
+- **PQC Algorithms Announced**: ML-KEM; Kyber
+- **Target Migration Dates**: Starting April 2025
+- **Products / Services Covered**: global CDN fleet
+- **Compliance Frameworks**: NIST
+- **Hybrid Mode Support**: None detected
+- **Current GA Status**: Planned
+- **Customer Action Required**: None detected
+- **Key Commitments & Quotes**: "Starting April 2025 , we will be rolling out ML-KEM support across our global CDN fleet"
+- **Coverage Verification**: PARTIAL - The document confirms the April 2025 rollout of ML-KEM across the global CDN fleet, but does not mention automatic application for TLS 1.3 customers or the ~5% early adoption data.
+- **Extraction Quality**: MEDIUM
+- **Source Document**: VND-308_Fastly_Inc..html (250.9 KB)
+- **Extraction Timestamp**: 2026-07-12T14:07:23
+
 ## VND-001 — Amazon Web Services Inc.
 
 - **Vendor ID**: VND-001
@@ -17,18 +39,19 @@ source: public/vendor-roadmaps/
 - **Publish Date**: 2026-04-23
 - **Local File**: public/vendor-roadmaps/VND-001_Amazon_Web_Services_Inc..html
 - **CSV Coverage Notes**: AWS PQC migration plan: ML-KEM (FIPS 203) key exchange enabled across KMS, ACM, Secrets Manager, S3, CloudFront, API Gateway, ALB/NLB, Transfer Family, Payment Cryptography; ML-DSA (FIPS 204) signatures in AWS Private CA and KMS, CloudHSM ML-DSA in preview. Built on AWS-LC and s2n-tls. Some features transparently enabled, others customer-opt-in under shared responsibility model. | Milestone: ML-KEM hybrid key exchange live across KMS, ACM, Secrets Manager, S3, CloudFront (default client-to-edge), API Gateway, ALB/NLB, Transfer Family, Payment Cryptography; ML-DSA signing in Private CA and KMS,
+- **Roadmap Scope**: Multi-product
 - **PQC Algorithms Announced**: ML-KEM; ML-DSA; SLH-DSA
 - **Target Migration Dates**: None detected
-- **Products / Services Covered**: Elastic Load Balancers (ALB, NLB); API Gateway; CloudFront; Transfer Family; AWS Key Management Service (KMS); AWS Certificate Manager (ACM); AWS Secrets Manager; AWS Payment Cryptography; Amazon Simple Storage Service (S3); AWS Private Certificate Authority (Private CA); AWS CloudHSM; IAM Roles Anywhere
-- **Compliance Frameworks**: NIST FIPS 203; NIST FIPS 204; NIST FIPS 205; NIST IR 8547; European Commission Recommendation on a Coordinated Implementation Roadmap; UK NCSC whitepaper; BSI Technical Guideline TR-02102; ANSSI position paper; ASD guidance; Canadian Centre for Cyber Security ITSM.40.001; UAE National Encryption Policy v1.0; G7 Cyber Expert Group roadmap; ASC X9 Post Quantum Cryptography Financial Readiness Needs Assessment; GSMA Post-Quantum Telco Network Taskforce guidelines
-- **Hybrid Mode Support**: Yes, the document states that services offer "hybrid PQ-key exchange using ML-KEM" and references BSI recommendations for "hybrid post-quantum cryptography... combining traditional and quantum-resistant algorithms".
-- **Current GA Status**: GA (General Availability), with CloudHSM ML-DSA support noted as "in preview".
-- **Customer Action Required**: Update client-side components/SDKs to versions supporting ML-KEM; apply PQ-TLS policies to customer-owned resources; ensure applications use TLS 1.3; explicitly specify desired TLS policies in infrastructure-as-code; use IAM condition keys to restrict policies; update PKI infrastructure to use ML-DSA.
-- **Key Commitments & Quotes**: "AWS is migrating to post-quantum cryptography (PQC), and helping our customers do the same under a shared responsibility model."; "For client-to-edge connections, PQC support is available on all existing security policies by default, requiring no re-configuration by customers."; "AWS CloudHSM support for ML-DSA key pair generation and ML-DSA signatures is in preview."
-- **Coverage Verification**: PARTIAL, the document confirms the listed services and ML-KEM/ML-DSA support but does not explicitly mention the underlying libraries "AWS-LC and s2n-tls" found in the CSV notes.
+- **Products / Services Covered**: KMS; ACM; Secrets Manager; S3; CloudFront; API Gateway; ALB; NLB; Transfer Family; Payment Cryptography; Private CA; CloudHSM; IAM Roles Anywhere
+- **Compliance Frameworks**: NIST FIPS 203; NIST FIPS 204; NIST FIPS 205; NIST IR 8547
+- **Hybrid Mode Support**: Yes; hybrid PQ-key exchange using ML-KEM
+- **Current GA Status**: GA
+- **Customer Action Required**: Update client-side components to versions that support ML-KEM; apply PQ-TLS policies to resources; ensure applications use TLS 1.3
+- **Key Commitments & Quotes**: "AWS is migrating to post-quantum cryptography (PQC), and helping our customers do the same under a shared responsibility model."
+- **Coverage Verification**: PARTIAL; Document confirms ML-KEM/ML-DSA services and preview status but does not mention AWS-LC or s2n-tls.
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-001_Amazon_Web_Services_Inc..html (311.1 KB)
-- **Extraction Timestamp**: 2026-07-12T14:05:09
+- **Extraction Timestamp**: 2026-07-07T20:20:19
 
 ## VND-002 — Apple Inc.
 
