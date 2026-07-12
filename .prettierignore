@@ -45,6 +45,7 @@ pqc-references/**
 public/vendor-roadmaps/**
 public/library/**
 public/compliance-docs/**
+public/compliance/**
 
 # Trust-engine attested artefacts — byte content is ML-DSA-65 signed.
 # Reformatting changes sha256 and breaks every signature, including the
