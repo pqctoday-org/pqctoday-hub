@@ -8,6 +8,7 @@ on:
 permissions:
   contents: write
   issues: write
+  pull-requests: write
 
 jobs:
   scrape-and-update:
@@ -59,12 +60,32 @@ jobs:
               labels: ['cve-snapshot:failure'],
             })
 
-      - name: Commit and Push Changes
+      # Was a direct push to main via stefanzweifel/git-auto-commit-action —
+      # failed on EVERY run since main's branch protection went live
+      # (confirmed: 5 straight failures 2026-06-25 through 2026-07-06, all
+      # "GH006: Protected branch update failed... Changes must be made
+      # through a pull request"). The scraper itself was working fine the
+      # whole time; only the push mechanism was broken. Fixed 2026-07-11 to
+      # match update-protocol-matrix.yml's existing PR-based pattern — that
+      # workflow already handles this correctly. create-pull-request is a
+      # no-op when there's no diff, so this doesn't open empty weekly PRs.
+      - name: Open PR if snapshot changed
         if: steps.scrape.outcome == 'success'
-        uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7
+        uses: peter-evans/create-pull-request@v8
         with:
-          commit_message: 'chore(data): update cve-snapshot.json [skip ci]'
-          file_pattern: 'public/data/cve-snapshot.json'
+          commit-message: 'chore(data): update cve-snapshot.json'
+          title: 'chore(data): weekly CVE snapshot refresh'
+          body: |
+            Automated weekly refresh of the CVE snapshot (`public/data/cve-snapshot.json`)
+            from NVD.
+
+            - Source: NVD API (deterministic — no LLM)
+            - No manual review content beyond the diff itself; this is a
+              scheduled data pull, not enrichment.
+          branch: chore/cve-snapshot-refresh
+          delete-branch: true
+          add-paths: |
+            public/data/cve-snapshot.json
 
       - name: Fail the job if the scrape failed
         if: steps.scrape.outcome == 'failure'
