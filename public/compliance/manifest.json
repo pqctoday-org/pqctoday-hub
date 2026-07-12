@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-12T19:54:25.235223+00:00",
+  "generated": "2026-07-12T19:57:12.530770+00:00",
   "entries": [
     {
       "refId": "NIST",
@@ -72,6 +72,24 @@
       "sizeBytes": 96585,
       "contentType": "text/html",
       "sha256": "af990886be0a954d243a1fb1e85cc0ad3f525dcad4149f85a803d5c1ade7f6e2"
+    },
+    {
+      "refId": "EIDAS",
+      "url": "https://digital-strategy.ec.europa.eu/en/policies/eidas-regulation",
+      "status": "downloaded",
+      "filename": "EIDAS.html",
+      "sizeBytes": 57368,
+      "contentType": "text/html",
+      "sha256": "d353acac6f22769e400f365257b1b249be8e75020d11e53ff9bca94c93a0d5a8"
+    },
+    {
+      "refId": "PCI-DSS",
+      "url": "https://www.pcisecuritystandards.org",
+      "status": "downloaded",
+      "filename": "PCI-DSS.html",
+      "sizeBytes": 796271,
+      "contentType": "text/html",
+      "sha256": "ca8ae89132d033bfbabe206f8ec701c28b2eba369e25e8e7eded76d20bc31fd7"
     }
   ]
 }
