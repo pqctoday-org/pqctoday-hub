@@ -1,0 +1,77 @@
+{
+  "generated": "2026-07-12T19:54:25.235223+00:00",
+  "entries": [
+    {
+      "refId": "NIST",
+      "url": "https://csrc.nist.gov/projects/post-quantum-cryptography",
+      "status": "downloaded",
+      "filename": "NIST.html",
+      "sizeBytes": 61179,
+      "contentType": "text/html",
+      "sha256": "3d2711145429970e7f5af501d2c0dfb2bdea2b794496a71515bac4b78f2163ea"
+    },
+    {
+      "refId": "ENISA",
+      "url": "https://www.enisa.europa.eu/",
+      "status": "downloaded",
+      "filename": "ENISA.html",
+      "sizeBytes": 63767,
+      "contentType": "text/html",
+      "sha256": "9bb3cc60fd3097319726734bc698d20a8762deebd5f737a570e89525fee91b7a"
+    },
+    {
+      "refId": "ISO-IEC",
+      "url": "https://www.iso.org/committee/45306.html",
+      "status": "downloaded",
+      "filename": "ISO-IEC.html",
+      "sizeBytes": 138237,
+      "contentType": "text/html",
+      "sha256": "b9cd760b6e4a72f2ecb24b88643cc0921b782053a0f0bf792e9c58ec4f478d41"
+    },
+    {
+      "refId": "IETF",
+      "url": "https://datatracker.ietf.org/wg/pquip/about/",
+      "status": "downloaded",
+      "filename": "IETF.html",
+      "sizeBytes": 38979,
+      "contentType": "text/html",
+      "sha256": "5f6a65f48a520e3b20f767d067a32cb57b979eb0b510bab00ee6db00a5f8d1de"
+    },
+    {
+      "refId": "FIPS-140-3",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program",
+      "status": "downloaded",
+      "filename": "FIPS-140-3.html",
+      "sizeBytes": 66175,
+      "contentType": "text/html",
+      "sha256": "87cabed5c2826fd676778f0cfc6c7a0e3d8cf850091081c5b41808719ef108c4"
+    },
+    {
+      "refId": "COMMON-CRITERIA",
+      "url": "https://www.commoncriteriaportal.org",
+      "status": "downloaded",
+      "filename": "COMMON-CRITERIA.html",
+      "sizeBytes": 13590,
+      "contentType": "text/html",
+      "sha256": "dbeb35feaa72bc05400edb27c6e6f20d06fbb2e17addfe84a6c767219202a62f"
+    },
+    {
+      "refId": "ANSSI",
+      "url": "https://www.ssi.gouv.fr",
+      "status": "downloaded",
+      "filename": "ANSSI.html",
+      "sizeBytes": 36334,
+      "contentType": "text/html",
+      "sha256": "1c4e65c7a9cb0dc8b1aab00b0fe5728d8d2517c26b3443c0edb4d3b03ebea859"
+    },
+    {
+      "refId": "CNSA-2",
+      "url": "https://www.nsa.gov/Cybersecurity/CNSA-2-0/",
+      "status": "downloaded",
+      "filename": "CNSA-2.html",
+      "sizeBytes": 96585,
+      "contentType": "text/html",
+      "sha256": "af990886be0a954d243a1fb1e85cc0ad3f525dcad4149f85a803d5c1ade7f6e2"
+    }
+  ]
+}
