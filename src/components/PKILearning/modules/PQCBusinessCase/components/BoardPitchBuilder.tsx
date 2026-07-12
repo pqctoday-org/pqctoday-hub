@@ -8,7 +8,7 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { PersonaPitchBanner } from './PersonaPitchBanner'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
-import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
+import { useSavedArtifactInputs, useSavedArtifactOutput } from '@/hooks/useSavedArtifactInputs'
 import { getPitchVariant } from './pitchVariants'
 import type { FormData } from './pitchVariants'
 import type { ROIOutput, BreachOutput, InactionOutput } from '../types'
@@ -44,6 +44,21 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
   // Roadmap Builder's saved-plan restore.
   const savedFormData = useSavedArtifactInputs<FormData>('board-deck')
 
+  // roiOutput/breachOutput/inactionOutput only arrive as live props inside the
+  // linear `/learn/pqc-business-case` wizard (see PQCBusinessCaseModule),
+  // which holds them in local state across its steps. Opened any other way —
+  // the Simulation embed or the standalone Business Center route — those
+  // props are always undefined, even if the user just ran the upstream tools
+  // and exported them. Fall back to each tool's last saved output so the
+  // cost-benefit/budget/urgency figures aren't silently generic placeholder
+  // text outside that one wizard session.
+  const savedRoiOutput = useSavedArtifactOutput<ROIOutput>('roi-model')
+  const savedBreachOutput = useSavedArtifactOutput<BreachOutput>('breach-scenario')
+  const savedInactionOutput = useSavedArtifactOutput<InactionOutput>('cost-of-inaction')
+  const effectiveRoiOutput = roiOutput ?? savedRoiOutput ?? null
+  const effectiveBreachOutput = breachOutput ?? savedBreachOutput ?? null
+  const effectiveInactionOutput = inactionOutput ?? savedInactionOutput ?? null
+
   // Key the variant (and therefore the whole ArtifactBuilder below) on persona
   // so switching roles resets the form state to the new persona's defaults.
   const variant = useMemo(() => getPitchVariant(selectedPersona, data), [selectedPersona, data])
@@ -52,36 +67,40 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
     return variant.sections.map((s) => ({
       ...s,
       fields: s.fields.map((f) => {
-        if ((roiOutput || inactionOutput) && s.id === 'cost-benefit' && f.id === 'analysis') {
+        if (
+          (effectiveRoiOutput || effectiveInactionOutput) &&
+          s.id === 'cost-benefit' &&
+          f.id === 'analysis'
+        ) {
           const parts: string[] = []
-          if (roiOutput) {
+          if (effectiveRoiOutput) {
             parts.push(
-              `Migration investment: ${formatCurrency(roiOutput.totalCostUSD)} | 3-year ROI: ${roiOutput.roiPercent.toFixed(0)}% | Payback: ${Math.round(roiOutput.paybackMonths)} months | Annual breach cost savings: ${formatCurrency(roiOutput.breachCostSavingsUSD)}`
+              `Migration investment: ${formatCurrency(effectiveRoiOutput.totalCostUSD)} | 3-year ROI: ${effectiveRoiOutput.roiPercent.toFixed(0)}% | Payback: ${Math.round(effectiveRoiOutput.paybackMonths)} months | Annual breach cost savings: ${formatCurrency(effectiveRoiOutput.breachCostSavingsUSD)}`
             )
           }
-          if (inactionOutput) {
+          if (effectiveInactionOutput) {
             parts.push(
-              `Cost of inaction (delaying ${inactionOutput.delayYears}yr): ${formatCurrency(inactionOutput.costOfInactionUSD)}`
+              `Cost of inaction (delaying ${effectiveInactionOutput.delayYears}yr): ${formatCurrency(effectiveInactionOutput.costOfInactionUSD)}`
             )
           }
           return { ...f, defaultValue: parts.join('\n') }
         }
-        if (breachOutput && s.id === 'quantum-urgency' && f.id === 'urgency') {
+        if (effectiveBreachOutput && s.id === 'quantum-urgency' && f.id === 'urgency') {
           return {
             ...f,
-            defaultValue: `Classical breach cost: ${formatCurrency(breachOutput.classicalCostUSD)} | Quantum-enabled breach cost: ${formatCurrency(breachOutput.quantumCostUSD)} | Delta: ${formatCurrency(breachOutput.deltaUSD)}\n\n${f.defaultValue}`,
+            defaultValue: `Classical breach cost: ${formatCurrency(effectiveBreachOutput.classicalCostUSD)} | Quantum-enabled breach cost: ${formatCurrency(effectiveBreachOutput.quantumCostUSD)} | Delta: ${formatCurrency(effectiveBreachOutput.deltaUSD)}\n\n${f.defaultValue}`,
           }
         }
-        if (roiOutput && s.id === 'budget' && f.id === 'amount') {
+        if (effectiveRoiOutput && s.id === 'budget' && f.id === 'amount') {
           return {
             ...f,
-            defaultValue: formatCurrency(roiOutput.totalCostUSD),
+            defaultValue: formatCurrency(effectiveRoiOutput.totalCostUSD),
           }
         }
         return f
       }),
     }))
-  }, [variant.sections, roiOutput, breachOutput, inactionOutput])
+  }, [variant.sections, effectiveRoiOutput, effectiveBreachOutput, effectiveInactionOutput])
 
   const sources: string[] = []
   if (!seedCleared) {
@@ -142,15 +161,15 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
         />
       )}
 
-      {(roiOutput || breachOutput || inactionOutput) && (
+      {(effectiveRoiOutput || effectiveBreachOutput || effectiveInactionOutput) && (
         <PreFilledBanner
           summary={[
-            roiOutput &&
-              `ROI data from Step 2 (investment: ${formatCurrency(roiOutput.totalCostUSD)}, ROI: ${roiOutput.roiPercent.toFixed(0)}%)`,
-            breachOutput &&
-              `Breach scenario data from Step 3 (delta: ${formatCurrency(breachOutput.deltaUSD)})`,
-            inactionOutput &&
-              `Cost of inaction from Step 4 (${formatCurrency(inactionOutput.costOfInactionUSD)} over ${inactionOutput.delayYears}yr)`,
+            effectiveRoiOutput &&
+              `ROI data ${roiOutput ? 'from Step 2' : 'from your last ROI Calculator export'} (investment: ${formatCurrency(effectiveRoiOutput.totalCostUSD)}, ROI: ${effectiveRoiOutput.roiPercent.toFixed(0)}%)`,
+            effectiveBreachOutput &&
+              `Breach scenario data ${breachOutput ? 'from Step 3' : 'from your last Breach Scenario Simulator export'} (delta: ${formatCurrency(effectiveBreachOutput.deltaUSD)})`,
+            effectiveInactionOutput &&
+              `Cost of inaction ${inactionOutput ? 'from Step 4' : 'from your last Cost of Inaction Analyzer export'} (${formatCurrency(effectiveInactionOutput.costOfInactionUSD)} over ${effectiveInactionOutput.delayYears}yr)`,
           ]
             .filter(Boolean)
             .join(' + ')}
