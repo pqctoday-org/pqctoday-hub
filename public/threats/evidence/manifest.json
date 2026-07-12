@@ -1349,5 +1349,17 @@
     "http_status": 200,
     "error_message": null,
     "downloaded_at": "2026-05-19T04:24:24.092Z"
+  },
+  {
+    "threat_id": "AERO-008",
+    "source_url": "https://www.iata.org/en/programs/security/cybersecurity/",
+    "main_source": "IATA Aviation Cybersecurity Programme",
+    "download_status": "ok",
+    "evidence_file": "public/threats/evidence/AERO-008.html",
+    "content_type": "text/html",
+    "size_bytes": 258205,
+    "http_status": 200,
+    "error_message": null,
+    "downloaded_at": "2026-07-12T18:32:08.534607+00:00"
   }
 ]
