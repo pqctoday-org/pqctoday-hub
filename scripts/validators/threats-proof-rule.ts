@@ -35,6 +35,12 @@ import type { CheckResult, Finding } from './types.js'
 const MIN_PROOF_BYTES = 5_000
 // Resolved lazily so callers (and unit tests) can change cwd before invoking.
 const dataDir = (): string => path.join(process.cwd(), 'src/data')
+// RELOCATED 2026-07-12 (see maintenance/LOCAL-FILES-REMEDIATION-PLAN-07122026.md
+// in the private repo) — raw proof documents now live in
+// pqctoday-priv/local-evidence-cache/threats/, not public/threats/, and
+// local_file values are stored as "threats/X.pdf" (no "public/" prefix).
+const localCacheRoot = (): string =>
+  path.resolve(process.cwd(), '..', 'pqctoday-priv', 'local-evidence-cache')
 
 interface ThreatRow {
   threat_id?: string
@@ -107,7 +113,7 @@ export function runThreatsProofRule(): CheckResult[] {
         category: 'local-resource',
         description: 'Every active threat row carries a downloadable, ≥5 KB proof file',
         sourceA: 'quantum_threats_hsm_industries_*.csv',
-        sourceB: 'public/threats/',
+        sourceB: 'pqctoday-priv/local-evidence-cache/threats/',
         severity: 'ERROR',
         status: 'SKIP',
         findings: [
@@ -142,6 +148,7 @@ export function runThreatsProofRule(): CheckResult[] {
     const lf = (r.local_file || '').trim()
 
     // TP-1: validated downloadable proof
+    const proofPath = lf ? path.join(localCacheRoot(), lf.replace(/^public\//, '')) : ''
     if (!lf) {
       tp1Findings.push({
         csv: csvName,
@@ -150,16 +157,16 @@ export function runThreatsProofRule(): CheckResult[] {
         value: '',
         message: `Active threat ${id} has no local_file — re-source or mark status='deprecated'`,
       })
-    } else if (!fs.existsSync(lf)) {
+    } else if (!fs.existsSync(proofPath)) {
       tp1Findings.push({
         csv: csvName,
         row: idx + 2,
         field: 'local_file',
         value: lf,
-        message: `Active threat ${id} references missing file ${lf}`,
+        message: `Active threat ${id} references missing file ${lf} (looked in pqctoday-priv/local-evidence-cache/threats/)`,
       })
     } else {
-      const size = fs.statSync(lf).size
+      const size = fs.statSync(proofPath).size
       if (size < MIN_PROOF_BYTES) {
         tp1Findings.push({
           csv: csvName,
@@ -171,14 +178,16 @@ export function runThreatsProofRule(): CheckResult[] {
       }
     }
 
-    // TP-2: proof must live under public/threats/
-    if (lf && !lf.replace(/^\.\//, '').startsWith('public/threats/')) {
+    // TP-2: proof must live under the threats/ subtree of the local evidence
+    // cache (RELOCATED 2026-07-12 — was "public/threats/", no more "public/"
+    // prefix since raw documents moved to pqctoday-priv/local-evidence-cache/).
+    if (lf && !lf.replace(/^\.\//, '').startsWith('threats/')) {
       tp2Findings.push({
         csv: csvName,
         row: idx + 2,
         field: 'local_file',
         value: lf,
-        message: `Active threat ${id} local_file is outside public/threats/`,
+        message: `Active threat ${id} local_file is outside the threats/ evidence-cache subtree`,
       })
     }
 
@@ -204,7 +213,7 @@ export function runThreatsProofRule(): CheckResult[] {
       category: 'local-resource',
       description: `Every active threat carries a downloadable proof ≥ ${MIN_PROOF_BYTES} bytes`,
       sourceA: csvName,
-      sourceB: 'public/threats/',
+      sourceB: 'pqctoday-priv/local-evidence-cache/threats/',
       severity: 'ERROR',
       status: tp1Findings.length === 0 ? 'PASS' : 'FAIL',
       findings: tp1Findings,
@@ -214,7 +223,7 @@ export function runThreatsProofRule(): CheckResult[] {
       category: 'local-resource',
       description: 'Threat local_file paths must live under public/threats/',
       sourceA: csvName,
-      sourceB: 'public/threats/',
+      sourceB: 'pqctoday-priv/local-evidence-cache/threats/',
       severity: 'ERROR',
       status: tp2Findings.length === 0 ? 'PASS' : 'FAIL',
       findings: tp2Findings,

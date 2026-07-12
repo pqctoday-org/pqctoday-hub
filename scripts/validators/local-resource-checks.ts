@@ -6,7 +6,14 @@
 import fs from 'fs'
 import path from 'path'
 import type { CheckResult, Finding, LocalResourceEntry } from './types.js'
-import { loadCSV, listFiles, readCSV, findLatestCSV, ROOT, isCustomDataDir } from './data-loader.js'
+import {
+  loadCSV,
+  readCSV,
+  findLatestCSV,
+  ROOT,
+  LOCAL_CACHE_ROOT,
+  isCustomDataDir,
+} from './data-loader.js'
 
 export function runLocalResourceChecks(): {
   results: CheckResult[]
@@ -34,7 +41,13 @@ export function runLocalResourceChecks(): {
   {
     const library = loadCSV('library_')
     const findings: Finding[] = []
-    const libDir = path.join(ROOT, 'public', 'library')
+    // RELOCATED 2026-07-12: raw documents now live in
+    // pqctoday-priv/local-evidence-cache/library/, not public/library/ (see
+    // LOCAL-FILES-REMEDIATION-PLAN-07122026.md). local_file values are now
+    // stored as "library/X.html" (no "public/" prefix) — match on the full
+    // relative value, not just the basename, so a file that moved between
+    // subdirectories would still be caught as missing.
+    const libDir = path.join(LOCAL_CACHE_ROOT, 'library')
     const filesOnDisk = new Set(
       fs.existsSync(libDir)
         ? fs
@@ -51,7 +64,6 @@ export function runLocalResourceChecks(): {
       const downloadable = (row.downloadable || '').toLowerCase()
 
       if (localFileRaw) {
-        // local_file stores relative paths like "public/library/FIPS_203.pdf" — extract filename
         const localFile = localFileRaw.split('/').pop() || localFileRaw
         referencedFiles.add(localFile)
         if (!filesOnDisk.has(localFile)) {
@@ -63,7 +75,7 @@ export function runLocalResourceChecks(): {
               row: i + 2,
               field: 'local_file',
               value: localFile,
-              message: `Library "${row.reference_id}" local_file "${localFile}" not found in public/library/ (downloadable=yes)`,
+              message: `Library "${row.reference_id}" local_file "${localFile}" not found in pqctoday-priv/local-evidence-cache/library/ (downloadable=yes)`,
             })
           }
         } else {
@@ -76,7 +88,7 @@ export function runLocalResourceChecks(): {
     const present = [...referencedFiles].filter((f) => filesOnDisk.has(f)).length
 
     resources.push({
-      directory: 'public/library/',
+      directory: 'pqctoday-priv/local-evidence-cache/library/',
       expectedFiles: expectedCount,
       presentFiles: present,
       missingFiles: findings.map((f) => f.value),
@@ -87,9 +99,9 @@ export function runLocalResourceChecks(): {
     results.push({
       id: 'N18-library-local-files',
       category: 'local-resource',
-      description: 'library.local_file → public/library/ files',
+      description: 'library.local_file → pqctoday-priv/local-evidence-cache/library/ files',
       sourceA: 'library',
-      sourceB: 'public/library/',
+      sourceB: 'pqctoday-priv/local-evidence-cache/library/',
       severity: 'WARNING',
       status: findings.length === 0 ? 'PASS' : 'FAIL',
       findings,
@@ -167,10 +179,19 @@ export function runLocalResourceChecks(): {
   }
 
   // ── timeline + threats local files ──────────────────────────────────────
-  for (const dir of ['public/timeline/', 'public/threats/'] as const) {
-    const filesOnDisk = listFiles(dir)
+  // RELOCATED 2026-07-12 — raw documents now live in
+  // pqctoday-priv/local-evidence-cache/{timeline,threats}/, not public/.
+  for (const dir of ['timeline', 'threats'] as const) {
+    const fullDir = path.join(LOCAL_CACHE_ROOT, dir)
+    const filesOnDisk = fs.existsSync(fullDir)
+      ? fs
+          .readdirSync(fullDir, { recursive: true } as { recursive: true })
+          .filter(
+            (f): f is string => typeof f === 'string' && !f.startsWith('.') && f !== 'manifest.json'
+          )
+      : []
     resources.push({
-      directory: dir,
+      directory: `pqctoday-priv/local-evidence-cache/${dir}/`,
       expectedFiles: filesOnDisk.length, // no CSV linkage to check, just report counts
       presentFiles: filesOnDisk.length,
       missingFiles: [],

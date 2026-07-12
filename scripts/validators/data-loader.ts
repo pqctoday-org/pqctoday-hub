@@ -11,6 +11,14 @@ import type { CsvDataset, CsvRow } from './types.js'
 const ROOT = path.resolve(process.cwd())
 let _dataDir = path.join(ROOT, 'src', 'data')
 const PUBLIC_DIR = path.join(ROOT, 'public')
+// Raw evidence documents relocated 2026-07-12 (see
+// maintenance/LOCAL-FILES-REMEDIATION-PLAN-07122026.md in the private
+// repo) — local_file CSV values (e.g. "library/FIPS_203.html", no more
+// "public/" prefix) now resolve against pqctoday-priv's own
+// local-evidence-cache/, a sibling of this repo, never against
+// ROOT/PUBLIC_DIR (which is THIS checkout — could be any hub worktree —
+// the cache itself is never worktree-dependent).
+const LOCAL_CACHE_ROOT = path.resolve(ROOT, '..', 'pqctoday-priv', 'local-evidence-cache')
 
 /** Override the data directory (e.g., for cowork validation via --data-dir). */
 export function setDataDir(dir: string) {
@@ -566,4 +574,4 @@ export function fileMtime(relativePath: string): string | null {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
-export { PUBLIC_DIR, ROOT }
+export { PUBLIC_DIR, ROOT, LOCAL_CACHE_ROOT }
