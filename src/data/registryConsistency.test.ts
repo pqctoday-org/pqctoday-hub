@@ -27,6 +27,16 @@ const CANONICAL_SOURCE_TYPES = new Set([
 
 const KNOWN_TIERS = new Set(['1_Authoritative', '2_Core', '3_Supporting', '4_Contextual'])
 
+// add_row.py --source trusted-sources (maintenance/add_row.py) deliberately
+// stubs source_type/trust_tier as "PENDING — needs human ... assignment"
+// rather than guessing — trust-tier assignment is documented as a required
+// human decision, not something the drafting tool infers. That's an
+// intentional, temporary "awaiting review" state, not vocabulary drift —
+// exclude it here rather than either (a) adding it to the canonical sets
+// (which would make it look like a permanent category) or (b) leaving these
+// tests permanently red every time the intended stub workflow is used.
+const PENDING_PLACEHOLDER_RE = /^PENDING — needs human/
+
 /** Resolve the latest dated CSV (MMDDYYYY, optional _rN) for a prefix. */
 function latestCsvPath(prefix: string): string {
   const re = new RegExp(`^${prefix}_(\\d{2})(\\d{2})(\\d{4})(?:_r(\\d+))?\\.csv$`)
@@ -121,12 +131,12 @@ describe('tiered registry (trusted_sources) completeness', () => {
     )
   })
 
-  it('uses only the canonical source_type vocabulary', () => {
+  it('uses only the canonical source_type vocabulary (or the documented PENDING placeholder)', () => {
     const offenders = [
       ...new Set(
         trustedRows
           .map((r) => r.source_type?.trim() ?? '')
-          .filter((t) => !CANONICAL_SOURCE_TYPES.has(t))
+          .filter((t) => !CANONICAL_SOURCE_TYPES.has(t) && !PENDING_PLACEHOLDER_RE.test(t))
       ),
     ]
     expect(
@@ -136,10 +146,12 @@ describe('tiered registry (trusted_sources) completeness', () => {
     ).toEqual([])
   })
 
-  it('uses only the four known trust tiers', () => {
+  it('uses only the four known trust tiers (or the documented PENDING placeholder)', () => {
     const offenders = [
       ...new Set(
-        trustedRows.map((r) => r.trust_tier?.trim() ?? '').filter((t) => !KNOWN_TIERS.has(t))
+        trustedRows
+          .map((r) => r.trust_tier?.trim() ?? '')
+          .filter((t) => !KNOWN_TIERS.has(t) && !PENDING_PLACEHOLDER_RE.test(t))
       ),
     ]
     expect(offenders, `Unknown trust_tier value(s): ${JSON.stringify(offenders)}`).toEqual([])

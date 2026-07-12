@@ -2,7 +2,7 @@
 /**
  * Tests for the generic EvidenceBadge — verifies the conditional
  * rendering surface: tier chip, freshness pill, confidence score, and
- * cached-doc link each appear only when their respective prop is set.
+ * source link each appear only when their respective prop is set.
  */
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
@@ -42,18 +42,12 @@ describe('EvidenceBadge', () => {
     expect(screen.getByText('82/100')).toBeInTheDocument()
   })
 
-  it('renders a cached-doc link when localFile is provided', () => {
-    render(<EvidenceBadge localFile="public/library/FIPS_203.pdf" />)
-    const link = screen.getByRole('link')
-    expect(link.getAttribute('href')).toBe('/library/FIPS_203.pdf')
-    expect(link.getAttribute('target')).toBe('_blank')
-    expect(link.getAttribute('rel')).toBe('noopener noreferrer')
-  })
-
-  it('falls back to sourceUrl when localFile is absent', () => {
+  it('renders a source link when sourceUrl is provided', () => {
     render(<EvidenceBadge sourceUrl="https://example.org/spec" />)
     const link = screen.getByRole('link')
     expect(link.getAttribute('href')).toBe('https://example.org/spec')
+    expect(link.getAttribute('target')).toBe('_blank')
+    expect(link.getAttribute('rel')).toBe('noopener noreferrer')
   })
 
   it('renders all four chips when every prop is supplied', () => {
@@ -62,12 +56,12 @@ describe('EvidenceBadge', () => {
         tier="High"
         lastVerifiedDate={isoDaysAgo(100)}
         confidenceScore={75}
-        localFile="public/threats/AERO-001.html"
+        sourceUrl="https://example.org/threat-report"
       />
     )
     expect(screen.getByText('High')).toBeInTheDocument()
     expect(screen.getByTestId('evidence-freshness-badge').textContent).toBe('Current')
     expect(screen.getByText('75/100')).toBeInTheDocument()
-    expect(screen.getByRole('link').getAttribute('href')).toBe('/threats/AERO-001.html')
+    expect(screen.getByRole('link').getAttribute('href')).toBe('https://example.org/threat-report')
   })
 })

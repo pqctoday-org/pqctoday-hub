@@ -127,7 +127,7 @@ export const TimelineDocumentCard = ({
           <TimelineEvidenceBadge
             confidenceScore={row.confidenceScore}
             trustedSourceIdStatus={row.trustedSourceIdStatus}
-            localFile={row.localFile}
+            sourceUrl={row.sourceUrl}
             lastVerifiedDate={row.sourceDate}
             compact
           />

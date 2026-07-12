@@ -77,10 +77,20 @@ function scoreForTier(tier: string): number {
   return scoreSourceCredibility('res', ctx).rawScore
 }
 
+// add_row.py --source trusted-sources (maintenance/add_row.py) deliberately
+// stubs trust_tier as "PENDING — needs human tier assignment" rather than
+// guessing — tier assignment is a documented required human decision, not
+// something the drafting tool infers. That's an intentional, temporary
+// "awaiting review" state, not vocabulary drift; excluded here for the same
+// reason src/data/registryConsistency.test.ts excludes it.
+const PENDING_PLACEHOLDER_RE = /^PENDING — needs human/
+
 describe('TIER_SCORES ↔ trusted-sources registry drift guard', () => {
-  it('every distinct trust_tier in the registry CSV is a key of TIER_SCORES', () => {
+  it('every distinct trust_tier in the registry CSV is a key of TIER_SCORES (or the documented PENDING placeholder)', () => {
     const registryTiers = distinctColumnValues(latestCsvPath('trusted_sources'), 'trust_tier')
-    const missing = registryTiers.filter((t) => !(t in TIER_SCORES))
+    const missing = registryTiers.filter(
+      (t) => !(t in TIER_SCORES) && !PENDING_PLACEHOLDER_RE.test(t)
+    )
     expect(
       missing,
       `Registry trust_tier value(s) ${JSON.stringify(missing)} are not keyed in TIER_SCORES ` +
