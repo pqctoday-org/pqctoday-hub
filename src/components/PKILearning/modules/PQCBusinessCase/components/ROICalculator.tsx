@@ -1155,6 +1155,16 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
             title: `PQC ROI Analysis — ${new Date().toLocaleDateString()}`,
             data: exportMarkdown,
             inputs: assumptions,
+            // Computed totals, distinct from `inputs` (the assumptions) — lets
+            // Board Pitch Builder show real numbers when reached outside the
+            // linear Business Case wizard (Simulation, Business Center), not
+            // just when roiOutput is passed as a live prop.
+            output: {
+              totalCostUSD: financials.totalCost,
+              roiPercent: financials.roiPercent,
+              paybackMonths: financials.paybackMonths,
+              breachCostSavingsUSD: financials.breachCostSavings,
+            },
             createdAt: Date.now(),
           })
         }}

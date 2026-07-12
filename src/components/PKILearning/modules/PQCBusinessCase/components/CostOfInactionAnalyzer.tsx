@@ -167,15 +167,23 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
     [nowResult, delayedResult]
   )
 
-  useEffect(() => {
-    onOutput?.({
+  // Shared with the export below (`output:`) so Board Pitch Builder can read
+  // the same numbers whether it's chained live via props (in the linear
+  // wizard) or reads the last saved artifact (Simulation, Business Center).
+  const outputPayload: InactionOutput = useMemo(
+    () => ({
       costOfInactionUSD: costOfInaction,
       delayYears,
       crossoverYear: crossover,
       latestSafeStartYear: moscaVerdict.latestSafeStartYear,
       alreadyLate: moscaVerdict.alreadyLate,
-    })
-  }, [onOutput, costOfInaction, delayYears, crossover, moscaVerdict])
+    }),
+    [costOfInaction, delayYears, crossover, moscaVerdict]
+  )
+
+  useEffect(() => {
+    onOutput?.(outputPayload)
+  }, [onOutput, outputPayload])
 
   const mandateLabel =
     mandate.mandateType === 'HARD'
@@ -607,6 +615,7 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
             title: `Cost of Inaction — ${selectedIndustry} (${new Date().toLocaleDateString()})`,
             data: exportMarkdown,
             inputs: { selectedIndustry, delayYears, annualBreachProbPct, migrationDurationYears },
+            output: outputPayload,
             createdAt: Date.now(),
           })
         }

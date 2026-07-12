@@ -116,24 +116,33 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
     return md
   }, [breachCosts, selectedIndustry, findings])
 
+  // Shared with the export below (`output:`) so Board Pitch Builder can read
+  // the same numbers whether it's chained live via props (in the linear
+  // wizard) or reads the last saved artifact (Simulation, Business Center).
+  const outputPayload: BreachOutput | null = useMemo(
+    () =>
+      breachCosts
+        ? {
+            industry: selectedIndustry,
+            classicalCostUSD: breachCosts.classicalCost,
+            quantumCostUSD: breachCosts.quantumCost,
+            deltaUSD: breachCosts.delta,
+            pCrqc: breachCosts.pCrqc,
+            quantumALEUSD: breachCosts.quantumALE,
+            latestSafeStartYear: breachCosts.latestSafeStartYear,
+            alreadyLate: breachCosts.alreadyLate,
+            dataSensitivityClass: breachCosts.dataSensitivityClass,
+            yearsOfData: breachCosts.yearsOfData,
+            hndlFactorPct: breachCosts.hndlFactorPct,
+            annualBreachProbPct: breachCosts.annualBreachProbPct,
+          }
+        : null,
+    [breachCosts, selectedIndustry]
+  )
+
   useEffect(() => {
-    if (onOutput && breachCosts) {
-      onOutput({
-        industry: selectedIndustry,
-        classicalCostUSD: breachCosts.classicalCost,
-        quantumCostUSD: breachCosts.quantumCost,
-        deltaUSD: breachCosts.delta,
-        pCrqc: breachCosts.pCrqc,
-        quantumALEUSD: breachCosts.quantumALE,
-        latestSafeStartYear: breachCosts.latestSafeStartYear,
-        alreadyLate: breachCosts.alreadyLate,
-        dataSensitivityClass: breachCosts.dataSensitivityClass,
-        yearsOfData: breachCosts.yearsOfData,
-        hndlFactorPct: breachCosts.hndlFactorPct,
-        annualBreachProbPct: breachCosts.annualBreachProbPct,
-      })
-    }
-  }, [onOutput, breachCosts, selectedIndustry])
+    if (onOutput && outputPayload) onOutput(outputPayload)
+  }, [onOutput, outputPayload])
 
   return (
     <div className="space-y-8">
@@ -243,6 +252,7 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
               title: `Breach Scenario — ${selectedIndustry} (${new Date().toLocaleDateString()})`,
               data: exportMarkdown,
               inputs: { selectedIndustry },
+              output: outputPayload ?? undefined,
               createdAt: Date.now(),
             })
           }
