@@ -6,6 +6,7 @@ import { AlertCircle, CheckCircle2, Info } from 'lucide-react'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 
 type CoverageLevel = 0 | 1 | 2 | 3
@@ -168,8 +169,19 @@ export const ManagementToolsAudit: React.FC = () => {
     return base
   }
 
-  const [levels, setLevels] = useState<Record<string, CoverageLevel>>(initLevels)
-  const [sysPct, setSysPct] = useState<Record<string, number>>(initPct)
+  // Restore the last-saved audit so it round-trips instead of resetting to
+  // the /migrate-derived seed on every visit.
+  const savedInputs = useSavedArtifactInputs<{
+    levels: Record<string, CoverageLevel>
+    sysPct: Record<string, number>
+  }>('management-tools-audit')
+
+  const [levels, setLevels] = useState<Record<string, CoverageLevel>>(
+    () => savedInputs?.levels ?? initLevels()
+  )
+  const [sysPct, setSysPct] = useState<Record<string, number>>(
+    () => savedInputs?.sysPct ?? initPct()
+  )
   const [seedCleared, setSeedCleared] = useState(false)
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
 
@@ -227,7 +239,7 @@ export const ManagementToolsAudit: React.FC = () => {
   }, [levels, sysPct, completeness, gaps])
 
   const seedSources: string[] = []
-  if (!seedCleared) {
+  if (!seedCleared && !savedInputs) {
     if (myProducts.length > 0)
       seedSources.push(
         `${myProducts.length} product${myProducts.length !== 1 ? 's' : ''} from /migrate`
@@ -237,6 +249,9 @@ export const ManagementToolsAudit: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {savedInputs && (
+        <PreFilledBanner summary="Restored your last saved audit — adjust the controls below to update it." />
+      )}
       {seedSources.length > 0 && (
         <PreFilledBanner
           summary={`Coverage seeded from ${seedSources.join(' + ')}.`}

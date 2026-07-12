@@ -4,6 +4,8 @@ import { Info, Play, Sliders } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useModuleStore } from '@/store/useModuleStore'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
+import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import {
   SIM_CONSTANTS,
   type CostModelInputs,
@@ -38,12 +40,17 @@ interface MethodRow {
 
 export const CostModelExplorer: React.FC = () => {
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
-  const [inputs, setInputs] = useState<CostModelInputs>({
-    systems: 250,
-    itBudgetAnnual: 50_000_000,
-    complexity: 1.0,
-    horizonYears: 5,
-  })
+  // Restore the last-saved scenario so the tool round-trips instead of
+  // resetting to defaults on every visit.
+  const savedInputs = useSavedArtifactInputs<CostModelInputs>('cost-model-comparison')
+  const [inputs, setInputs] = useState<CostModelInputs>(
+    savedInputs ?? {
+      systems: 250,
+      itBudgetAnnual: 50_000_000,
+      complexity: 1.0,
+      horizonYears: 5,
+    }
+  )
 
   const update = <K extends keyof CostModelInputs>(key: K, value: CostModelInputs[K]) =>
     setInputs((prev) => ({ ...prev, [key]: value }))
@@ -197,6 +204,9 @@ export const CostModelExplorer: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {savedInputs && (
+        <PreFilledBanner summary="Restored your last saved scenario — adjust the sliders below to update it." />
+      )}
       {/* Framing */}
       <div className="bg-primary/5 rounded-lg p-3 border border-primary/30 flex items-start gap-2">
         <Info size={16} className="text-primary shrink-0 mt-0.5" />

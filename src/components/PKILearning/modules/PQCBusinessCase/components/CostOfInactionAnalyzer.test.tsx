@@ -25,8 +25,12 @@ vi.mock('@/components/PKILearning/common/executive/ExportableArtifact', () => ({
 }))
 
 vi.mock('@/store/useModuleStore', () => ({
-  useModuleStore: (selector: (s: { addExecutiveDocument: () => void }) => unknown) =>
-    selector({ addExecutiveDocument: vi.fn() }),
+  useModuleStore: (
+    selector: (s: {
+      addExecutiveDocument: () => void
+      artifacts: { executiveDocuments: never[] }
+    }) => unknown
+  ) => selector({ addExecutiveDocument: vi.fn(), artifacts: { executiveDocuments: [] } }),
 }))
 
 const baseMockData: ExecutiveModuleData = {

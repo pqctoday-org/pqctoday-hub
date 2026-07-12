@@ -3,7 +3,7 @@ import React, { useMemo, useCallback, useState, useEffect, useRef } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
-import { useSavedArtifactOutput } from '@/hooks/useSavedArtifactInputs'
+import { useSavedArtifactInputs, useSavedArtifactOutput } from '@/hooks/useSavedArtifactInputs'
 import type { RoadmapOutput } from '../types'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import {
@@ -60,6 +60,14 @@ interface KPITrackerTemplateProps {
   roadmapOutput?: RoadmapOutput | null
 }
 
+interface SavedKpiTrackerInputs {
+  personaOverride: KpiPersonaId | null
+  startYear: number | null
+  userScores: Record<string, number>
+  userWeights: Record<string, number>
+  touchedIds: string[]
+}
+
 export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapOutput }) => {
   const execData = useExecutiveModuleData()
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
@@ -67,7 +75,13 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
   const riskHistory = useModuleStore((s) => s.kpiHistory?.riskScore) ?? EMPTY_HISTORY
   const globalPersona = usePersonaStore((s) => s.selectedPersona)
 
-  const [personaOverride, setPersonaOverride] = useState<KpiPersonaId | null>(null)
+  // Restore the last-saved tracker state so it round-trips instead of
+  // resetting on every visit.
+  const savedInputs = useSavedArtifactInputs<SavedKpiTrackerInputs>('kpi-tracker')
+
+  const [personaOverride, setPersonaOverride] = useState<KpiPersonaId | null>(
+    savedInputs?.personaOverride ?? null
+  )
   const activePersona: KpiPersonaId = personaOverride ?? coercePersona(globalPersona)
 
   // roadmapOutput only arrives as a live prop inside the linear
@@ -78,7 +92,7 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
   const effectiveRoadmapOutput = roadmapOutput ?? savedRoadmapOutput ?? null
 
   // Program start year — user override; falls back to roadmap's earliest milestone year.
-  const [startYear, setStartYear] = useState<number | null>(null)
+  const [startYear, setStartYear] = useState<number | null>(savedInputs?.startYear ?? null)
   const effectiveStartYear = startYear ?? effectiveRoadmapOutput?.earliestYear ?? null
 
   // Record a risk-score snapshot whenever the assessment yields a new value
@@ -102,7 +116,9 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
   // The scorecard manages its own internal scores. We mirror them into local
   // state ONLY when they actually differ — blindly forwarding every sync feeds
   // back into the scorecard's auto-sync effect and causes an update storm.
-  const [userScores, setUserScores] = useState<Record<string, number>>({})
+  const [userScores, setUserScores] = useState<Record<string, number>>(
+    savedInputs?.userScores ?? {}
+  )
   const lastSyncedRef = useRef<string>('')
   const handleScoreSnapshot = useCallback((scores: Record<string, number>) => {
     const signature = JSON.stringify(scores)
@@ -114,14 +130,18 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
   // The scorecard's own touched-set is the authoritative "has the user really
   // set this" signal — a manual KPI dragged to a deliberate 0 is touched, so
   // it must not read as "not yet scored" here just because its value is 0.
-  const [touchedIds, setTouchedIds] = useState<Set<string>>(new Set())
+  const [touchedIds, setTouchedIds] = useState<Set<string>>(
+    () => new Set(savedInputs?.touchedIds ?? [])
+  )
   const handleTouchedChange = useCallback((ids: Set<string>) => {
     setTouchedIds(ids)
   }, [])
 
   // Mirror the scorecard's weight edits so the exported/saved artifact reflects
   // the user's weights, not just the per-persona defaults (saved == on-screen).
-  const [userWeights, setUserWeights] = useState<Record<string, number>>({})
+  const [userWeights, setUserWeights] = useState<Record<string, number>>(
+    savedInputs?.userWeights ?? {}
+  )
   const handleWeightSnapshot = useCallback((weights: Record<string, number>) => {
     setUserWeights(weights)
   }, [])
@@ -218,9 +238,26 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
       type: 'kpi-tracker',
       title: `PQC Migration KPI Tracker — ${activePersona}`,
       data: exportMarkdown,
+      // Persist so the tracker is restorable (see savedInputs above).
+      inputs: {
+        personaOverride,
+        startYear,
+        userScores,
+        userWeights,
+        touchedIds: Array.from(touchedIds),
+      } satisfies SavedKpiTrackerInputs,
       createdAt: Date.now(),
     })
-  }, [addExecutiveDocument, exportMarkdown, activePersona])
+  }, [
+    addExecutiveDocument,
+    exportMarkdown,
+    activePersona,
+    personaOverride,
+    startYear,
+    userScores,
+    userWeights,
+    touchedIds,
+  ])
 
   const seedSources: string[] = []
   if (execData.riskScore !== null) seedSources.push('assessment risk score')
@@ -238,6 +275,9 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
 
   return (
     <div className="space-y-6">
+      {savedInputs && (
+        <PreFilledBanner summary="Restored your last saved scores, weights, and start year." />
+      )}
       {seedSources.length > 0 && (
         <PreFilledBanner summary={`Tracker auto-scored from ${seedSources.join(' + ')}.`} />
       )}

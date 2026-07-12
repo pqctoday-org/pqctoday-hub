@@ -27,6 +27,7 @@ import {
 import { useAssessmentSnapshot } from '@/hooks/assessment/useAssessmentSnapshot'
 import { useAlgorithmTransitionsForAssessment } from '@/hooks/useAlgorithmTransitionsForAssessment'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { MermaidDiagram } from '@/components/Simulation/MermaidDiagram'
 import { renderMermaidToPngDataUrl } from '@/components/Simulation/mermaidRender'
@@ -283,11 +284,17 @@ export const CryptoArchitectureDiagram: React.FC = () => {
     [useCases, transitions, myProducts]
   )
   const hasAssessmentSeed = assessmentSeed.length > 0
+  // Restore the last-saved diagram so it round-trips instead of resetting to
+  // the assessment seed (or hardcoded default) on every visit.
+  const savedComponents = useSavedArtifactInputs<ArchComponent[]>('crypto-architecture')
+  const hasSavedComponents = !!savedComponents && savedComponents.length > 0
 
   const [components, setComponents] = useState<ArchComponent[]>(() =>
-    hasAssessmentSeed ? assessmentSeed : seedComponents()
+    hasSavedComponents ? savedComponents : hasAssessmentSeed ? assessmentSeed : seedComponents()
   )
-  const [seededFromAssessment, setSeededFromAssessment] = useState<boolean>(hasAssessmentSeed)
+  const [seededFromAssessment, setSeededFromAssessment] = useState<boolean>(
+    !hasSavedComponents && hasAssessmentSeed
+  )
   const [savedAt, setSavedAt] = useState<number | null>(null)
   const [lastSavedMarkdown, setLastSavedMarkdown] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
@@ -320,12 +327,14 @@ export const CryptoArchitectureDiagram: React.FC = () => {
       type: 'crypto-architecture',
       title: 'Crypto Architecture (CSWP.39 §5.4)',
       data: markdown,
+      // Persist so the diagram is restorable (see savedComponents above).
+      inputs: components,
       createdAt: Date.now(),
       moduleId: 'crypto-mgmt-modernization',
     })
     setSavedAt(Date.now())
     setLastSavedMarkdown(markdown)
-  }, [markdown, addExecutiveDocument])
+  }, [markdown, addExecutiveDocument, components])
 
   const editedSinceSave =
     savedAt !== null && lastSavedMarkdown !== null && markdown !== lastSavedMarkdown
@@ -376,6 +385,10 @@ export const CryptoArchitectureDiagram: React.FC = () => {
           </p>
         </div>
       </div>
+
+      {hasSavedComponents && (
+        <PreFilledBanner summary="Restored your last saved architecture — edit any row and save again to update it." />
+      )}
 
       {seededFromAssessment && (
         <PreFilledBanner

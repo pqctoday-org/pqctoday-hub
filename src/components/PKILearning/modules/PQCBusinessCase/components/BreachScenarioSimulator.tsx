@@ -5,6 +5,7 @@ import { BreachCostModel } from '@/components/PKILearning/common/executive'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useModuleStore } from '@/store/useModuleStore'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { ForgeryRiskPanel } from './ForgeryRiskPanel'
 import type { BreachOutput } from '../types'
@@ -38,7 +39,12 @@ interface BreachScenarioSimulatorProps {
 export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = ({ onOutput }) => {
   const data = useExecutiveModuleData()
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
-  const [selectedIndustry, setSelectedIndustry] = useState(data.industry || 'Other')
+  // Restore the last-saved scenario's industry so the tool round-trips
+  // instead of resetting to the assessment default on every visit.
+  const savedInputs = useSavedArtifactInputs<{ selectedIndustry: string }>('breach-scenario')
+  const [selectedIndustry, setSelectedIndustry] = useState(
+    savedInputs?.selectedIndustry ?? data.industry ?? 'Other'
+  )
   const [breachCosts, setBreachCosts] = useState<{
     classicalCost: number
     quantumCost: number
@@ -156,11 +162,19 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
             onSelect={(id) => setSelectedIndustry(id)}
             items={AVAILABLE_INDUSTRIES.map((ind) => ({ id: ind, label: ind }))}
           />
-          {data.isAssessmentComplete && data.industry && (
+          {savedInputs ? (
             <span className="flex items-center gap-1 text-xs text-muted-foreground">
               <Info size={12} />
-              Pre-selected from your assessment
+              Restored from your last saved scenario
             </span>
+          ) : (
+            data.isAssessmentComplete &&
+            data.industry && (
+              <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                <Info size={12} />
+                Pre-selected from your assessment
+              </span>
+            )
           )}
         </div>
       </div>

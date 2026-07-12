@@ -5,8 +5,10 @@ import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { ArtifactBuilder } from '../../../common/executive'
 import type { ArtifactSection } from '../../../common/executive'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
-import { useSavedArtifactOutput } from '@/hooks/useSavedArtifactInputs'
+import { useSavedArtifactInputs, useSavedArtifactOutput } from '@/hooks/useSavedArtifactInputs'
 import type { RoadmapOutput } from '../types'
+
+type CommsFormData = Record<string, Record<string, string | string[]>>
 
 const MODULE_ID = 'migration-program'
 
@@ -276,6 +278,10 @@ export const StakeholderCommsPlanner: React.FC<StakeholderCommsPlannerProps> = (
     useExecutiveModuleData()
   const [seedCleared, setSeedCleared] = useState(false)
 
+  // Restore the last-saved plan so edits survive navigation, same pattern as
+  // Board Pitch Builder / Roadmap Builder.
+  const savedFormData = useSavedArtifactInputs<CommsFormData>('stakeholder-comms')
+
   // roadmapOutput only arrives as a live prop inside the linear
   // `/learn/migration-program` wizard. Reached any other way — the
   // Simulation embed or the standalone Business Center route — fall back to
@@ -293,7 +299,7 @@ export const StakeholderCommsPlanner: React.FC<StakeholderCommsPlannerProps> = (
   )
 
   const handleExport = useCallback(
-    (data: Record<string, Record<string, string | string[]>>) => {
+    (data: CommsFormData) => {
       const markdown = renderCommsPreview(data)
       addExecutiveDocument({
         id: `stakeholder-comms-${Date.now()}`,
@@ -301,6 +307,8 @@ export const StakeholderCommsPlanner: React.FC<StakeholderCommsPlannerProps> = (
         type: 'stakeholder-comms',
         title: 'Stakeholder Communications Plan',
         data: markdown,
+        // Persist the edited fields so the plan is restorable (see savedFormData above).
+        inputs: data,
         createdAt: Date.now(),
       })
     },
@@ -349,11 +357,15 @@ export const StakeholderCommsPlanner: React.FC<StakeholderCommsPlannerProps> = (
 
   return (
     <div className="space-y-6">
-      {seedSources.length > 0 && (
-        <PreFilledBanner
-          summary={`Stakeholders, concerns, board message, and escalation triggers seeded from ${seedSources.join(' + ')}.`}
-          onClear={() => setSeedCleared(true)}
-        />
+      {savedFormData ? (
+        <PreFilledBanner summary="Restored your last saved plan — edit any field and re-export to update it." />
+      ) : (
+        seedSources.length > 0 && (
+          <PreFilledBanner
+            summary={`Stakeholders, concerns, board message, and escalation triggers seeded from ${seedSources.join(' + ')}.`}
+            onClear={() => setSeedCleared(true)}
+          />
+        )
       )}
       {!seedCleared && effectiveRoadmapOutput && effectiveRoadmapOutput.milestones.length > 0 && (
         <PreFilledBanner
@@ -381,6 +393,7 @@ export const StakeholderCommsPlanner: React.FC<StakeholderCommsPlannerProps> = (
         onExport={handleExport}
         exportFilename="pqc-stakeholder-comms"
         exportFormats={['markdown', 'pdf']}
+        initialData={savedFormData}
         renderPreview={renderCommsPreview}
       />
     </div>
