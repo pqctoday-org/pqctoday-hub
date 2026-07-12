@@ -12,9 +12,11 @@ import {
 } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Button } from '@/components/ui/button'
+import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useModuleStore } from '@/store/useModuleStore'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { DELAY_COST_PROFILES } from '../data/businessCaseScenarios'
 import {
   resolveIndustryBreachBaseline,
@@ -60,15 +62,23 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
 }) => {
   const data = useExecutiveModuleData()
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
+  // Restore the last-saved scenario so the tool round-trips instead of
+  // resetting to defaults on every visit.
+  const savedInputs = useSavedArtifactInputs<{
+    selectedIndustry: string
+    delayYears: number
+    annualBreachProbPct: number
+    migrationDurationYears: number
+  }>('cost-of-inaction')
   const [selectedIndustry, setSelectedIndustry] = useState<string>(
-    data.industry || 'Finance & Banking'
+    savedInputs?.selectedIndustry ?? data.industry ?? 'Finance & Banking'
   )
-  const [delayYears, setDelayYears] = useState<number>(2)
+  const [delayYears, setDelayYears] = useState<number>(savedInputs?.delayYears ?? 2)
   const [annualBreachProbPct, setAnnualBreachProbPct] = useState<number>(
-    DELAY_MODEL_DEFAULTS.annualBreachProbPct
+    savedInputs?.annualBreachProbPct ?? DELAY_MODEL_DEFAULTS.annualBreachProbPct
   )
   const [migrationDurationYears, setMigrationDurationYears] = useState<number>(
-    DELAY_MODEL_DEFAULTS.migrationDurationYears
+    savedInputs?.migrationDurationYears ?? DELAY_MODEL_DEFAULTS.migrationDurationYears
   )
 
   const profile = useMemo(
@@ -240,6 +250,9 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
 
   return (
     <div className="space-y-6">
+      {savedInputs && (
+        <PreFilledBanner summary="Restored your last saved cost-of-inaction scenario — adjust the controls below to update it." />
+      )}
       {/* Controls */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="space-y-2">
