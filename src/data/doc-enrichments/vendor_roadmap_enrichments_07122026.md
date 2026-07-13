@@ -7,29 +7,6 @@ source: public/vendor-roadmaps/
 
 # Vendor PQC Roadmap Enrichments
 
-
-## VND-308 — Fastly, Inc.
-
-- **Vendor ID**: VND-308
-- **Vendor Name**: Fastly, Inc.
-- **Roadmap Title**: Future-proofing TLS encryption against quantum threats
-- **Roadmap URL**: https://www.fastly.com/blog/future-proofing-tls-encryption-against-quantum-threats
-- **Publish Date**: 2025-04-02
-- **Local File**: public/vendor-roadmaps/VND-308_Fastly_Inc..html
-- **CSV Coverage Notes**: Rollout of ML-KEM across Fastly's global CDN fleet starting April 2025, automatic for TLS 1.3 customers, with measured early adoption data (~5% of TLS 1.3 clients at time of writing). Added 2026-07-07 via migrate-data remediation; independently re-fetched before adding.
-- **PQC Algorithms Announced**: ML-KEM; Kyber
-- **Target Migration Dates**: Starting April 2025
-- **Products / Services Covered**: global CDN fleet
-- **Compliance Frameworks**: NIST
-- **Hybrid Mode Support**: None detected
-- **Current GA Status**: Planned
-- **Customer Action Required**: None detected
-- **Key Commitments & Quotes**: "Starting April 2025 , we will be rolling out ML-KEM support across our global CDN fleet"
-- **Coverage Verification**: PARTIAL - The document confirms the April 2025 rollout of ML-KEM across the global CDN fleet, but does not mention automatic application for TLS 1.3 customers or the ~5% early adoption data.
-- **Extraction Quality**: MEDIUM
-- **Source Document**: VND-308_Fastly_Inc..html (250.9 KB)
-- **Extraction Timestamp**: 2026-07-12T14:07:23
-
 ## VND-001 — Amazon Web Services Inc.
 
 - **Vendor ID**: VND-001
