@@ -538,29 +538,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-019_IBM_Corporation.html (84.2 KB)
 - **Extraction Timestamp**: 2026-07-07T20:21:48
 
-## VND-021 — Infineon Technologies AG
-
-- **Vendor ID**: VND-021
-- **Vendor Name**: Infineon Technologies AG
-- **Roadmap Title**: Infineon Post-Quantum Cryptography
-- **Roadmap URL**: https://www.infineon.com/promo/postquantumcryptography
-- **Publish Date**: 2025-10-15
-- **Local File**: public/vendor-roadmaps/VND-021_Infineon_Technologies_AG.html
-- **CSV Coverage Notes**: Infineon PQC hub: SLC27 security controller (TEGRION family, Integrity Guard 32) launched Oct 2025 with Common Criteria-certified PQC library (ML-KEM, ML-DSA), crypto-agility and in-field updates, hardened against fault/side-channel. PSOC Control C3 Performance Line samples by end-2025, production 2026 adding ML-DSA on-device key gen/signing and ML-KEM for TLS. Automotive MCUs upgraded for PQC; LMS support. | Milestone: SLC27 PQC-certified contactless/dual-interface security controller launched Oct 2025 with CC-certified ML-KEM + ML-DSA crypto library (TEGRION family, Integrity Guard 32); PSOC
-- **Roadmap Scope**: No PQC content
-- **PQC Algorithms Announced**: None detected
-- **Target Migration Dates**: None detected
-- **Products / Services Covered**: None detected
-- **Compliance Frameworks**: None detected
-- **Hybrid Mode Support**: No
-- **Current GA Status**: No PQC
-- **Customer Action Required**: None detected
-- **Key Commitments & Quotes**: None detected
-- **Coverage Verification**: MISMATCH; The document text is a generic product navigation menu and contains no PQC-specific information, failing to confirm the SLC27 or PSOC details in the CSV notes.
-- **Extraction Quality**: LOW
-- **Source Document**: VND-021_Infineon_Technologies_AG.html (1682.4 KB)
-- **Extraction Timestamp**: 2026-07-07T20:21:48
-
 ## VND-022 — Intel Corporation
 
 - **Vendor ID**: VND-022
@@ -2731,4 +2708,27 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: LOW
 - **Source Document**: VND-229_CyberZero.html (96.6 KB)
 - **Extraction Timestamp**: 2026-07-12T21:32:43
+
+
+## VND-021 — Infineon Technologies AG
+
+- **Vendor ID**: VND-021
+- **Vendor Name**: Infineon Technologies AG
+- **Roadmap Title**: Infineon Post-Quantum Cryptography
+- **Roadmap URL**: https://www.infineon.com/promo/postquantumcryptography
+- **Publish Date**: 2025-10-15
+- **Local File**: vendor-roadmaps/VND-021_Infineon_Technologies_AG.html
+- **CSV Coverage Notes**: Infineon PQC hub: SLC27 security controller (TEGRION family, Integrity Guard 32) launched Oct 2025 with Common Criteria-certified PQC library (ML-KEM, ML-DSA), crypto-agility and in-field updates, hardened against fault/side-channel. PSOC Control C3 Performance Line samples by end-2025, production 2026 adding ML-DSA on-device key gen/signing and ML-KEM for TLS. Automotive MCUs upgraded for PQC; LMS support. | Milestone: SLC27 PQC-certified contactless/dual-interface security controller launched Oct 2025 with CC-certified ML-KEM + ML-DSA crypto library (TEGRION family, Integrity Guard 32); PSOC
+- **PQC Algorithms Announced**: ML-KEM; ML-DSA; SLH-DSA; XMSS; LMS
+- **Target Migration Dates**: 2025 (PSOC MCUs compliant with CNSA 2.0; TEGRION CC certification); 2030-2035 (potential availability of powerful quantum computers)
+- **Products / Services Covered**: TEGRION security controller (Integrity Guard 32); PSOC™ Control C3 Performance Line Family; OPTIGA™ TPM SLB 9673 FW26; OPTIGA™ TPM SLB 9672 FW15; OPTIGA™ TPM SLB 9672 FW16; PSOC™ Edge; SECORA™ Pay; SECORA™ Blockchain
+- **Compliance Frameworks**: Common Criteria EAL6+; CNSA Suite 2.0; NIST
+- **Hybrid Mode Support**: Yes; "Changes in protocols and a transition period with e.g. hybrid schemes (combining classical cryptography and PQC...)"
+- **Current GA Status**: GA; "In 2024, Infineon made a huge step... We received the world’s first Common Criteria EAL6+ certification"
+- **Customer Action Required**: None detected
+- **Key Commitments & Quotes**: "In 2024, Infineon made a huge step toward a quantum resistant world. We received the world’s first Common Criteria EAL6+ certification for a security controller comprising the secured implementation of a post-quantum cryptography (PQC) algorithm."; "from 2025 on, Infineon PSOC™ microcontrollers (MCUs) are compliant with PQC requirements for firmware verification outlined in the Commercial National Security Algorithm (CNSA) Suite 2.0"; "In 2025, we become world‘s first company to receive Common Criteria EAL6... for the secured implementation of a post-quantum cryptography algorithm on our TEGRION security controller."
+- **Coverage Verification**: PARTIAL; The document confirms TEGRION/Integrity Guard 32 CC certification and PSOC CNSA 2.0 compliance, but does not explicitly mention the SLC27 product name, the Oct 2025 launch date, or specific ML-DSA/ML-KEM library details for those products.
+- **Extraction Quality**: MEDIUM
+- **Source Document**: VND-021_Infineon_Technologies_AG.html (1682.4 KB)
+- **Extraction Timestamp**: 2026-07-12T22:10:18
 
