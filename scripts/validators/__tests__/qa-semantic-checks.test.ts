@@ -5,24 +5,21 @@
  *
  * Layered strategy:
  *  - Synthetic-fixture unit tests for F8/F9/F11/F12 (no embedding needed).
- *  - Real-artifact integration tests for F7 and F10 — self-skip when the
- *    embedding artifact or corpus is absent.
+ *  - Real-artifact integration tests for F7 and F10 live in
+ *    qa-semantic-checks.local.test.ts instead — they need the live
+ *    embedding model (network fetch from HuggingFace), and CI must never
+ *    depend on a live third-party fetch. See vite.config.ts's
+ *    `*.local.test.*` exclude.
  */
-import { describe, it, expect, beforeAll, afterEach, afterAll } from 'vitest'
+import { describe, it, expect, afterEach } from 'vitest'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { runQASemanticChecks, _resetCacheForTesting } from '../qa-semantic-checks.js'
-import { loadEmbeddingsFromDisk } from '../../lib/load-embeddings-from-disk.js'
 import {
   injectTestRuntime,
   resetEmbeddingRuntime,
 } from '../../../src/services/search/embeddingRetrieval.js'
-
-const REPO_ROOT = process.cwd()
-const LIVE_CORPUS_PATH = path.join(REPO_ROOT, 'public/data/rag-corpus.json')
-const META_PATH = path.join(REPO_ROOT, 'public/data/embeddings-meta.json')
-const BIN_PATH = path.join(REPO_ROOT, 'public/data/embeddings.bin')
 
 // Per-worker tmp corpus. The validator reads `process.env.RAG_CORPUS_PATH`
 // lazily, so synthetic-corpus tests never touch the live file. The original
@@ -34,19 +31,6 @@ const TMP_CORPUS_PATH = path.join(
   `pqctoday-qa-semantic-corpus-${process.pid}-${Date.now()}.json`
 )
 process.env.RAG_CORPUS_PATH = TMP_CORPUS_PATH
-
-const hasCorpus = fs.existsSync(LIVE_CORPUS_PATH)
-function isCorpusParseable(): boolean {
-  if (!hasCorpus) return false
-  try {
-    JSON.parse(fs.readFileSync(LIVE_CORPUS_PATH, 'utf8'))
-    return true
-  } catch {
-    return false
-  }
-}
-const hasArtifact =
-  hasCorpus && fs.existsSync(META_PATH) && fs.existsSync(BIN_PATH) && isCorpusParseable()
 
 function writeSyntheticCorpus(chunks: object[]) {
   fs.writeFileSync(TMP_CORPUS_PATH, JSON.stringify({ chunks }))
@@ -196,48 +180,6 @@ describe('QA-F semantic validators — synthetic corpus', () => {
       'QA-F9',
     ])
   })
-})
-
-// ── Real-artifact integration tests ────────────────────────────────────────
-
-describe.skipIf(!hasArtifact)('QA-F semantic validators — real corpus', () => {
-  beforeAll(async () => {
-    // Point the validator at the live corpus for this block only.
-    process.env.RAG_CORPUS_PATH = LIVE_CORPUS_PATH
-    _resetCacheForTesting()
-    resetEmbeddingRuntime()
-    await loadEmbeddingsFromDisk()
-  }, 120_000)
-  afterAll(() => {
-    // Restore the synthetic tmp path so any later test in this worker
-    // doesn't accidentally read the live corpus.
-    process.env.RAG_CORPUS_PATH = TMP_CORPUS_PATH
-    _resetCacheForTesting()
-  })
-
-  it('full run completes in < 60s on the real corpus', async () => {
-    const t0 = Date.now()
-    const results = await runQASemanticChecks()
-    const elapsed = (Date.now() - t0) / 1000
-    expect(results).toHaveLength(6)
-    expect(elapsed).toBeLessThan(60)
-  }, 90_000)
-
-  it('produces at least one WARNING-severity finding (T20 catches enrichment drift)', async () => {
-    const results = await runQASemanticChecks()
-    const warnFindings = results
-      .filter((r) => r.severity === 'WARNING')
-      .reduce((n, r) => n + r.findings.length, 0)
-    // Plan acceptance: ≥ 15 WARNING findings across F7-F12.
-    expect(warnFindings).toBeGreaterThanOrEqual(15)
-  }, 90_000)
-
-  it('no check returns ERROR severity (calibration not yet complete)', async () => {
-    const results = await runQASemanticChecks()
-    for (const r of results) {
-      expect(r.severity).not.toBe('ERROR')
-    }
-  }, 90_000)
 })
 
 // ── Embedding-runtime synthetic test ──────────────────────────────────────
