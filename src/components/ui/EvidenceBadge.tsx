@@ -13,9 +13,11 @@ interface EvidenceBadgeProps {
   lastVerifiedDate?: string
   /** Composite confidence score 0–100 */
   confidenceScore?: number
-  /** Local cached document path (e.g. `public/library/FIPS_203.pdf` or `library/FIPS_203.pdf`) */
-  localFile?: string
-  /** Fallback external authoritative URL when no local cache exists */
+  /** External authoritative source URL — the only link this badge renders.
+   * (Previously also linked to a local cached-document path, but that file
+   * was never actually published/deployed — see
+   * LOCAL-FILES-REMEDIATION-PLAN-07122026.md in the private repo. Removed
+   * 2026-07-12 rather than left silently 404ing.) */
   sourceUrl?: string
   /** Compact inline layout (10px chips) vs. default stacked (12px) */
   compact?: boolean
@@ -47,22 +49,16 @@ function scoreColor(score: number): string {
   return 'text-status-error'
 }
 
-function cachedHref(localFile?: string, sourceUrl?: string): string | undefined {
-  if (localFile) return `/${localFile.replace(/^public\//, '')}`
-  return sourceUrl
-}
-
 export function EvidenceBadge({
   tier,
   lastVerifiedDate,
   confidenceScore,
-  localFile,
   sourceUrl,
   compact = false,
   className = '',
 }: EvidenceBadgeProps) {
   const freshness = computeFreshnessState(lastVerifiedDate)
-  const docHref = cachedHref(localFile, sourceUrl)
+  const docHref = sourceUrl
 
   if (!tier && !freshness && confidenceScore === undefined && !docHref) return null
 
@@ -103,7 +99,7 @@ export function EvidenceBadge({
           target="_blank"
           rel="noopener noreferrer"
           className={`inline-flex items-center text-primary hover:underline ${scoreSize}`}
-          title={localFile ? 'View cached document' : 'View source'}
+          title="View source"
           onClick={(e) => e.stopPropagation()}
         >
           <ExternalLink className={compact ? 'w-2.5 h-2.5' : 'w-3 h-3'} />

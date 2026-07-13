@@ -13,7 +13,6 @@ vi.mock('react-dom', async () => {
 })
 
 interface BuildPhaseOptions {
-  localFile?: string
   confidenceScore?: number
   trustedSourceIdStatus?: string
   sourceDate?: string
@@ -41,7 +40,6 @@ function buildPhase(opts: BuildPhaseOptions): TimelinePhase {
         flagCode: 'tc',
         sourceUrl: 'https://example.com/source',
         sourceDate: opts.sourceDate,
-        localFile: opts.localFile,
         confidenceScore: opts.confidenceScore,
         trustedSourceIdStatus: opts.trustedSourceIdStatus,
         entityType: 'government',
@@ -53,9 +51,8 @@ function buildPhase(opts: BuildPhaseOptions): TimelinePhase {
 describe('GanttDetailPopover — electronic evidence', () => {
   const onClose = vi.fn()
 
-  it('renders the evidence section with a cached-document link when localFile is set', () => {
+  it('renders the evidence section with a source link when the primary event has a sourceUrl', () => {
     const phase = buildPhase({
-      localFile: 'public/timeline/Foo.html',
       confidenceScore: 80,
       trustedSourceIdStatus: 'registered',
       sourceDate: '2025-06-01',
@@ -64,14 +61,14 @@ describe('GanttDetailPopover — electronic evidence', () => {
     render(<GanttDetailPopover isOpen={true} onClose={onClose} phase={phase} />)
 
     expect(screen.getByText('Electronic evidence')).toBeInTheDocument()
-    const link = screen.getByRole('link', { name: /view cached document/i })
+    const link = screen.getByRole('link', { name: /view source/i })
     expect(link).toBeInTheDocument()
-    expect(link).toHaveAttribute('href', '/timeline/Foo.html')
+    expect(link).toHaveAttribute('href', 'https://example.com/source')
     expect(link).toHaveAttribute('rel', 'noopener noreferrer')
     expect(link).toHaveAttribute('target', '_blank')
   })
 
-  it('omits the cached-document link when localFile is empty but still shows badges', () => {
+  it('renders badges even with a low-confidence/proposed tier', () => {
     const phase = buildPhase({
       confidenceScore: 55,
       trustedSourceIdStatus: 'proposed',
@@ -80,7 +77,6 @@ describe('GanttDetailPopover — electronic evidence', () => {
     render(<GanttDetailPopover isOpen={true} onClose={onClose} phase={phase} />)
 
     expect(screen.getByText('Electronic evidence')).toBeInTheDocument()
-    expect(screen.queryByRole('link', { name: /view cached document/i })).not.toBeInTheDocument()
     // Tier badge for "proposed" → Tier 2 label
     expect(screen.getByText('Tier 2')).toBeInTheDocument()
   })

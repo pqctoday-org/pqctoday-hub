@@ -16,7 +16,7 @@
 import fs from 'fs'
 import path from 'path'
 import type { CheckResult, Finding } from './types.js'
-import { loadCSV, ROOT, isCustomDataDir } from './data-loader.js'
+import { loadCSV, LOCAL_CACHE_ROOT, isCustomDataDir } from './data-loader.js'
 
 // ── Sentinel strings (case-insensitive, matched in first 500 chars of extracted text)
 const SENTINEL_STRINGS = [
@@ -158,14 +158,16 @@ function makeCheck(
 
 /** Check library files — cross-referenced against CSV for downloadable=yes severity. */
 function checkLibraryQuality(): CheckResult {
-  const libDir = path.join(ROOT, 'public', 'library')
+  // RELOCATED 2026-07-12 — raw documents now live in
+  // pqctoday-priv/local-evidence-cache/library/, not public/library/.
+  const libDir = path.join(LOCAL_CACHE_ROOT, 'library')
   const f: Finding[] = []
 
   if (!fs.existsSync(libDir)) {
     return makeCheck(
       'N22-library',
-      'Source document quality: public/library/',
-      'public/library/',
+      'Source document quality: pqctoday-priv/local-evidence-cache/library/',
+      'pqctoday-priv/local-evidence-cache/library/',
       'WARNING',
       []
     )
@@ -221,8 +223,8 @@ function checkLibraryQuality(): CheckResult {
   const severity: 'ERROR' | 'WARNING' = errors > 0 ? 'ERROR' : 'WARNING'
   return makeCheck(
     'N22-library',
-    `Source document quality: public/library/ (${checked} files, ${issues} issues)`,
-    'public/library/',
+    `Source document quality: pqctoday-priv/local-evidence-cache/library/ (${checked} files, ${issues} issues)`,
+    'pqctoday-priv/local-evidence-cache/library/',
     severity,
     f
   )
@@ -230,14 +232,16 @@ function checkLibraryQuality(): CheckResult {
 
 /** Check timeline/threats files — no CSV mapping, all issues are WARNING. */
 function checkDirectoryQuality(dirName: 'timeline' | 'threats'): CheckResult {
-  const dir = path.join(ROOT, 'public', dirName)
+  // RELOCATED 2026-07-12 — raw documents now live in
+  // pqctoday-priv/local-evidence-cache/{timeline,threats}/.
+  const dir = path.join(LOCAL_CACHE_ROOT, dirName)
   const f: Finding[] = []
 
   if (!fs.existsSync(dir)) {
     return makeCheck(
       `N22-${dirName}`,
-      `Source document quality: public/${dirName}/`,
-      `public/${dirName}/`,
+      `Source document quality: pqctoday-priv/local-evidence-cache/${dirName}/`,
+      `pqctoday-priv/local-evidence-cache/${dirName}/`,
       'WARNING',
       []
     )
@@ -260,7 +264,7 @@ function checkDirectoryQuality(dirName: 'timeline' | 'threats'): CheckResult {
     checked++
     if (issue) {
       f.push({
-        csv: `public/${dirName}/`,
+        csv: `pqctoday-priv/local-evidence-cache/${dirName}/`,
         row: null,
         field: 'filename',
         value: filename,
@@ -271,8 +275,8 @@ function checkDirectoryQuality(dirName: 'timeline' | 'threats'): CheckResult {
 
   return makeCheck(
     `N22-${dirName}`,
-    `Source document quality: public/${dirName}/ (${checked} files, ${f.length} issues)`,
-    `public/${dirName}/`,
+    `Source document quality: pqctoday-priv/local-evidence-cache/${dirName}/ (${checked} files, ${f.length} issues)`,
+    `pqctoday-priv/local-evidence-cache/${dirName}/`,
     'WARNING',
     f
   )

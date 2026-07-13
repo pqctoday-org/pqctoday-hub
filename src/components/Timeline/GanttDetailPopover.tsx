@@ -294,13 +294,14 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
                 </div>
               </div>
 
-              {/* Electronic evidence — file/badge surface proves the
-                  primary event has on-disk evidence backing the source URL.
-                  Driven by the timeline evidence manifest pipeline
-                  (`npm run download:timeline-evidence`). */}
+              {/* Electronic evidence — trust/freshness badge with a link to
+                  the real external source. (Used to also surface a link to
+                  a locally-cached document copy, but that file was never
+                  actually published/deployed — see
+                  LOCAL-FILES-REMEDIATION-PLAN-07122026.md in the private
+                  repo. Removed 2026-07-12 rather than left silently 404ing.) */}
               {primaryEvent &&
-                (primaryEvent.localFile ||
-                  primaryEvent.confidenceScore !== undefined ||
+                (primaryEvent.confidenceScore !== undefined ||
                   primaryEvent.trustedSourceIdStatus) && (
                   <div className="pt-3 border-t border-border">
                     <span className="block text-muted-foreground uppercase tracking-wider font-medium text-xs mb-1.5">
@@ -309,7 +310,7 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
                     <TimelineEvidenceBadge
                       confidenceScore={primaryEvent.confidenceScore}
                       trustedSourceIdStatus={primaryEvent.trustedSourceIdStatus}
-                      localFile={primaryEvent.localFile}
+                      sourceUrl={primaryEvent.sourceUrl}
                       lastVerifiedDate={primaryEvent.sourceDate}
                     />
                   </div>

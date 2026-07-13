@@ -17,7 +17,13 @@ import {
   resetEmbeddingRuntime,
   type EmbeddingMeta,
 } from '../../../src/services/search/embeddingRetrieval'
-import { proposeReferenceCandidates, runMissingReferenceChecks } from '../missing-reference-checks'
+import {
+  proposeReferenceCandidates,
+  runMissingReferenceChecks,
+  canonical,
+  citedIds,
+  isCited,
+} from '../missing-reference-checks'
 
 const REPO_ROOT = process.cwd()
 const META_PATH = path.join(REPO_ROOT, 'public/data/embeddings-meta.json')
@@ -72,6 +78,38 @@ function makeMeta(ids: string[], dims: number): EmbeddingMeta {
     byteOffsets,
   }
 }
+
+describe('isCited — org-name-prefixed citation matching (2026-07-12 fix)', () => {
+  // Real bug found live: MR-1 flagged "Agency PQC Migration Plans..." as
+  // missing a citation for IR 8547 even though its related_standards
+  // column already held 'NIST IR 8547' — canonical() only strips
+  // whitespace/hyphens, so exact Set.has() comparison never matched a
+  // prefixed citation against an unprefixed extracted ID.
+  it('matches an unprefixed extracted ID against a prefixed citation', () => {
+    const cited = citedIds({ related_standards: 'NIST IR 8547' })
+    expect(isCited(canonical('IR 8547'), cited)).toBe(true)
+  })
+
+  it('matches "IETF RFC 9370" style citations the same way', () => {
+    const cited = citedIds({ related_standards: 'IETF RFC 9370' })
+    expect(isCited(canonical('RFC 9370'), cited)).toBe(true)
+  })
+
+  it('matches "NSA CNSA 2.0" style citations the same way', () => {
+    const cited = citedIds({ related_standards: 'NSA CNSA 2.0' })
+    expect(isCited(canonical('CNSA 2.0'), cited)).toBe(true)
+  })
+
+  it('still returns false for a genuinely uncited ID', () => {
+    const cited = citedIds({ related_standards: 'FIPS 203;FIPS 204' })
+    expect(isCited(canonical('FIPS 207'), cited)).toBe(false)
+  })
+
+  it('still matches a plain exact citation with no prefix', () => {
+    const cited = citedIds({ related_standards: 'IR-8547' })
+    expect(isCited(canonical('IR 8547'), cited)).toBe(true)
+  })
+})
 
 describe('proposeReferenceCandidates — Phase 2.1', () => {
   beforeEach(() => {
