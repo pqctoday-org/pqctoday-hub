@@ -13,6 +13,15 @@
  *   npx tsx scripts/validate-data-integrity.ts --staleness 60  # custom staleness threshold (days)
  *   npx tsx scripts/validate-data-integrity.ts --report-only   # always exit 0 (CI dry run)
  *   npx tsx scripts/validate-data-integrity.ts --data-dir PATH # validate alternate data dir (e.g., cowork)
+ *   npx tsx scripts/validate-data-integrity.ts --exclude-checks TP-1,MP-2
+ *                                                               # drop specific check IDs from the
+ *                                                               # report/exit-code entirely — for checks
+ *                                                               # that verify genuine on-disk presence of
+ *                                                               # gitignored pqctoday-priv/local-evidence-
+ *                                                               # cache/ files and can never pass in an
+ *                                                               # environment without that sibling repo
+ *                                                               # (e.g. CI). Real, useful checks locally;
+ *                                                               # structurally unrunnable elsewhere.
  *
  * Exit codes:
  *   0 — all checks pass (or --report-only mode)
@@ -63,6 +72,22 @@ const withCandidates = args.includes('--with-candidates')
 
 const stalenessIdx = args.indexOf('--staleness')
 const staleThreshold = stalenessIdx >= 0 ? parseInt(args[stalenessIdx + 1], 10) || 90 : 90
+
+// ADDED 2026-07-13 — for the exact same reason the standalone TP-2/TP-3 CI
+// step already excludes TP-1 (scripts/validators/threats-proof-rule.ts):
+// a small number of checks verify genuine on-disk presence of files under
+// pqctoday-priv/local-evidence-cache/ (raw evidence, gitignored by design,
+// never checked out in CI). Those checks are real and useful for local dev
+// after a manual download run, but structurally cannot pass in an
+// environment that never has priv — excluding them here (rather than
+// weakening their logic) keeps their full local-dev value while letting
+// this whole suite run as a real CI gate for the first time.
+const excludeChecksIdx = args.indexOf('--exclude-checks')
+const excludedCheckIds = new Set(
+  excludeChecksIdx >= 0 && args[excludeChecksIdx + 1]
+    ? args[excludeChecksIdx + 1].split(',').map((s) => s.trim())
+    : []
+)
 
 const dataDirIdx = args.indexOf('--data-dir')
 if (dataDirIdx >= 0 && args[dataDirIdx + 1]) {
@@ -188,7 +213,15 @@ try {
 
   // ── Build report ────────────────────────────────────────────────────────
 
-  const report = buildReport(allResults, dataSources, urlCoverage, localResources, enrichCoverage)
+  const filteredResults =
+    excludedCheckIds.size > 0 ? allResults.filter((r) => !excludedCheckIds.has(r.id)) : allResults
+  const report = buildReport(
+    filteredResults,
+    dataSources,
+    urlCoverage,
+    localResources,
+    enrichCoverage
+  )
 
   // ── Output ──────────────────────────────────────────────────────────────
 
