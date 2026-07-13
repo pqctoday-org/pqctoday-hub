@@ -7,6 +7,29 @@ source: public/vendor-roadmaps/
 
 # Vendor PQC Roadmap Enrichments
 
+
+## VND-048 — Open Quantum Safe Project
+
+- **Vendor ID**: VND-048
+- **Vendor Name**: Open Quantum Safe Project
+- **Roadmap Title**: Open Quantum Safe: Post-Quantum Cryptography
+- **Roadmap URL**: https://openquantumsafe.org/post-quantum-crypto.html
+- **Publish Date**: 2026-07-13
+- **Local File**: vendor-roadmaps/VND-048_Open_Quantum_Safe_Project.html
+- **CSV Coverage Notes**: None
+- **PQC Algorithms Announced**: ML-KEM; ML-DSA; SLH-DSA; BIKE; Classic McEliece; CROSS; Falcon; FrodoKEM; HQC; Kyber; LMS; MAYO; NTRU; NTRU-Prime; SNOVA; UOV; XMSS
+- **Target Migration Dates**: None detected
+- **Products / Services Covered**: None detected
+- **Compliance Frameworks**: NIST FIPS 202; NIST FIPS 203; NIST FIPS 204; IETF Crypto Forum Research Group
+- **Hybrid Mode Support**: None detected
+- **Current GA Status**: No PQC
+- **Customer Action Required**: None detected
+- **Key Commitments & Quotes**: "Thus, it is important to start developing and deploying quantum-safe cryptography now, even before quantum computers are built."
+- **Coverage Verification**: CONSISTENT — The document is a general project overview and FAQ, not a specific product roadmap, so the lack of specific coverage notes is consistent.
+- **Extraction Quality**: LOW
+- **Source Document**: VND-048_Open_Quantum_Safe_Project.html (18.5 KB)
+- **Extraction Timestamp**: 2026-07-12T20:21:55
+
 ## VND-001 — Amazon Web Services Inc.
 
 - **Vendor ID**: VND-001
