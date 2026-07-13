@@ -110,6 +110,12 @@ export interface ExecutiveDocument {
   // Serialized builder form state so Edit can restore prior inputs.
   // Shape is builder-specific and opaque to the store.
   inputs?: unknown
+  // Serialized computed result (e.g. ROIOutput/BreachOutput/InactionOutput),
+  // distinct from `inputs` — lets a downstream tool (Board Pitch Builder) read
+  // another tool's latest output when it wasn't opened via a linear wizard
+  // that threads the value through props. Shape is builder-specific and
+  // opaque to the store, same contract as `inputs`.
+  output?: unknown
 }
 
 export interface LearningProgress {

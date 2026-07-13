@@ -36,3 +36,16 @@ export function useSavedArtifactInputs<T>(type: ExecutiveDocumentType | undefine
   const docs = useSavedArtifactDocuments(type)
   return docs[0]?.inputs as T | undefined
 }
+
+/**
+ * Restore the most recently saved `output` blob (the computed result, not the
+ * form inputs) for a given executive artifact type. Lets a downstream tool
+ * read another tool's latest computed number when it wasn't reached through a
+ * linear wizard that threads the value through props directly — e.g. Board
+ * Pitch Builder reading the ROI Calculator's last exported totals when opened
+ * from the Simulation or Business Center instead of the Business Case wizard.
+ */
+export function useSavedArtifactOutput<T>(type: ExecutiveDocumentType | undefined): T | undefined {
+  const docs = useSavedArtifactDocuments(type)
+  return docs[0]?.output as T | undefined
+}

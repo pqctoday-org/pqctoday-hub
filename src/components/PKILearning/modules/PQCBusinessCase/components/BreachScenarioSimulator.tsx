@@ -5,6 +5,7 @@ import { BreachCostModel } from '@/components/PKILearning/common/executive'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useModuleStore } from '@/store/useModuleStore'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { ForgeryRiskPanel } from './ForgeryRiskPanel'
 import type { BreachOutput } from '../types'
@@ -38,7 +39,12 @@ interface BreachScenarioSimulatorProps {
 export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = ({ onOutput }) => {
   const data = useExecutiveModuleData()
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
-  const [selectedIndustry, setSelectedIndustry] = useState(data.industry || 'Other')
+  // Restore the last-saved scenario's industry so the tool round-trips
+  // instead of resetting to the assessment default on every visit.
+  const savedInputs = useSavedArtifactInputs<{ selectedIndustry: string }>('breach-scenario')
+  const [selectedIndustry, setSelectedIndustry] = useState(
+    savedInputs?.selectedIndustry ?? data.industry ?? 'Other'
+  )
   const [breachCosts, setBreachCosts] = useState<{
     classicalCost: number
     quantumCost: number
@@ -116,24 +122,33 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
     return md
   }, [breachCosts, selectedIndustry, findings])
 
+  // Shared with the export below (`output:`) so Board Pitch Builder can read
+  // the same numbers whether it's chained live via props (in the linear
+  // wizard) or reads the last saved artifact (Simulation, Business Center).
+  const outputPayload: BreachOutput | null = useMemo(
+    () =>
+      breachCosts
+        ? {
+            industry: selectedIndustry,
+            classicalCostUSD: breachCosts.classicalCost,
+            quantumCostUSD: breachCosts.quantumCost,
+            deltaUSD: breachCosts.delta,
+            pCrqc: breachCosts.pCrqc,
+            quantumALEUSD: breachCosts.quantumALE,
+            latestSafeStartYear: breachCosts.latestSafeStartYear,
+            alreadyLate: breachCosts.alreadyLate,
+            dataSensitivityClass: breachCosts.dataSensitivityClass,
+            yearsOfData: breachCosts.yearsOfData,
+            hndlFactorPct: breachCosts.hndlFactorPct,
+            annualBreachProbPct: breachCosts.annualBreachProbPct,
+          }
+        : null,
+    [breachCosts, selectedIndustry]
+  )
+
   useEffect(() => {
-    if (onOutput && breachCosts) {
-      onOutput({
-        industry: selectedIndustry,
-        classicalCostUSD: breachCosts.classicalCost,
-        quantumCostUSD: breachCosts.quantumCost,
-        deltaUSD: breachCosts.delta,
-        pCrqc: breachCosts.pCrqc,
-        quantumALEUSD: breachCosts.quantumALE,
-        latestSafeStartYear: breachCosts.latestSafeStartYear,
-        alreadyLate: breachCosts.alreadyLate,
-        dataSensitivityClass: breachCosts.dataSensitivityClass,
-        yearsOfData: breachCosts.yearsOfData,
-        hndlFactorPct: breachCosts.hndlFactorPct,
-        annualBreachProbPct: breachCosts.annualBreachProbPct,
-      })
-    }
-  }, [onOutput, breachCosts, selectedIndustry])
+    if (onOutput && outputPayload) onOutput(outputPayload)
+  }, [onOutput, outputPayload])
 
   return (
     <div className="space-y-8">
@@ -147,11 +162,19 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
             onSelect={(id) => setSelectedIndustry(id)}
             items={AVAILABLE_INDUSTRIES.map((ind) => ({ id: ind, label: ind }))}
           />
-          {data.isAssessmentComplete && data.industry && (
+          {savedInputs ? (
             <span className="flex items-center gap-1 text-xs text-muted-foreground">
               <Info size={12} />
-              Pre-selected from your assessment
+              Restored from your last saved scenario
             </span>
+          ) : (
+            data.isAssessmentComplete &&
+            data.industry && (
+              <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                <Info size={12} />
+                Pre-selected from your assessment
+              </span>
+            )
           )}
         </div>
       </div>
@@ -243,6 +266,7 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
               title: `Breach Scenario — ${selectedIndustry} (${new Date().toLocaleDateString()})`,
               data: exportMarkdown,
               inputs: { selectedIndustry },
+              output: outputPayload ?? undefined,
               createdAt: Date.now(),
             })
           }

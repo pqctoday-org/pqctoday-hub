@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { KPITrackerTemplate } from './KPITrackerTemplate'
 import type { ExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+import type { ExecutiveDocument } from '@/services/storage/types'
 
 const addExecutiveDocument = vi.fn()
 const pushRiskScoreSnapshot = vi.fn()
@@ -11,12 +12,14 @@ interface ModuleStoreShape {
   addExecutiveDocument: typeof addExecutiveDocument
   pushRiskScoreSnapshot: typeof pushRiskScoreSnapshot
   kpiHistory?: { riskScore: { ts: number; score: number }[] }
+  artifacts: { executiveDocuments: ExecutiveDocument[] }
 }
 
 let mockStoreState: ModuleStoreShape = {
   addExecutiveDocument,
   pushRiskScoreSnapshot,
   kpiHistory: { riskScore: [] },
+  artifacts: { executiveDocuments: [] },
 }
 
 vi.mock('@/store/useModuleStore', () => ({
@@ -87,6 +90,7 @@ describe('KPITrackerTemplate', () => {
       addExecutiveDocument,
       pushRiskScoreSnapshot,
       kpiHistory: { riskScore: [] },
+      artifacts: { executiveDocuments: [] },
     }
     mockData = baseData(null)
     mockPersona = 'ops'
@@ -122,5 +126,34 @@ describe('KPITrackerTemplate', () => {
     expect(screen.getByTestId('kpi-dim-standards-coverage')).toBeInTheDocument()
     // Ops-only should vanish
     expect(screen.queryByTestId('kpi-dim-change-failure-rate')).toBeNull()
+  })
+
+  it('shows the start-year banner from a live roadmapOutput prop', () => {
+    render(<KPITrackerTemplate roadmapOutput={{ milestones: [], earliestYear: 2027 }} />)
+    expect(screen.getByText(/Start year set to 2027.*Step 1/i)).toBeInTheDocument()
+  })
+
+  it('falls back to the last saved Roadmap Builder artifact when no prop is passed', () => {
+    mockStoreState = {
+      ...mockStoreState,
+      artifacts: {
+        executiveDocuments: [
+          {
+            id: 'migration-roadmap-1',
+            moduleId: 'migration-program',
+            type: 'migration-roadmap',
+            title: 'PQC Migration Roadmap',
+            data: '',
+            createdAt: Date.now(),
+            inputs: {},
+            output: { milestones: [], earliestYear: 2028 },
+          },
+        ],
+      },
+    }
+    render(<KPITrackerTemplate />)
+    expect(
+      screen.getByText(/Start year set to 2028.*last Roadmap Builder export/i)
+    ).toBeInTheDocument()
   })
 })

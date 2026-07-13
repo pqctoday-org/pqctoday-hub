@@ -5,7 +5,10 @@ import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { ArtifactBuilder } from '../../../common/executive'
 import type { ArtifactSection } from '../../../common/executive'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
+import { useSavedArtifactInputs, useSavedArtifactOutput } from '@/hooks/useSavedArtifactInputs'
 import type { RoadmapOutput } from '../types'
+
+type CommsFormData = Record<string, Record<string, string | string[]>>
 
 const MODULE_ID = 'migration-program'
 
@@ -275,6 +278,18 @@ export const StakeholderCommsPlanner: React.FC<StakeholderCommsPlannerProps> = (
     useExecutiveModuleData()
   const [seedCleared, setSeedCleared] = useState(false)
 
+  // Restore the last-saved plan so edits survive navigation, same pattern as
+  // Board Pitch Builder / Roadmap Builder.
+  const savedFormData = useSavedArtifactInputs<CommsFormData>('stakeholder-comms')
+
+  // roadmapOutput only arrives as a live prop inside the linear
+  // `/learn/migration-program` wizard. Reached any other way — the
+  // Simulation embed or the standalone Business Center route — fall back to
+  // the Roadmap Builder's last saved output so milestones still seed the
+  // Escalation Criteria section.
+  const savedRoadmapOutput = useSavedArtifactOutput<RoadmapOutput>('migration-roadmap')
+  const effectiveRoadmapOutput = roadmapOutput ?? savedRoadmapOutput ?? null
+
   const myFrameworksLabels = useMemo(
     () =>
       myFrameworks
@@ -284,7 +299,7 @@ export const StakeholderCommsPlanner: React.FC<StakeholderCommsPlannerProps> = (
   )
 
   const handleExport = useCallback(
-    (data: Record<string, Record<string, string | string[]>>) => {
+    (data: CommsFormData) => {
       const markdown = renderCommsPreview(data)
       addExecutiveDocument({
         id: `stakeholder-comms-${Date.now()}`,
@@ -292,6 +307,8 @@ export const StakeholderCommsPlanner: React.FC<StakeholderCommsPlannerProps> = (
         type: 'stakeholder-comms',
         title: 'Stakeholder Communications Plan',
         data: markdown,
+        // Persist the edited fields so the plan is restorable (see savedFormData above).
+        inputs: data,
         createdAt: Date.now(),
       })
     },
@@ -306,7 +323,7 @@ export const StakeholderCommsPlanner: React.FC<StakeholderCommsPlannerProps> = (
         myFrameworksLabels: seedCleared ? [] : myFrameworksLabels,
         myProductsCount: seedCleared ? 0 : myProducts.length,
         deadlineYear: seedCleared ? null : migrationDeadlineYear,
-        roadmapMilestones: seedCleared ? null : (roadmapOutput?.milestones ?? null),
+        roadmapMilestones: seedCleared ? null : (effectiveRoadmapOutput?.milestones ?? null),
       }),
     [
       industry,
@@ -315,7 +332,7 @@ export const StakeholderCommsPlanner: React.FC<StakeholderCommsPlannerProps> = (
       myProducts.length,
       migrationDeadlineYear,
       seedCleared,
-      roadmapOutput,
+      effectiveRoadmapOutput,
     ]
   )
 
@@ -333,22 +350,26 @@ export const StakeholderCommsPlanner: React.FC<StakeholderCommsPlannerProps> = (
       )
     if (migrationDeadlineYear) seedSources.push(`deadline ${migrationDeadlineYear} from /timeline`)
   }
-  const roadmapMilestoneCount = roadmapOutput?.milestones?.length ?? 0
+  const roadmapMilestoneCount = effectiveRoadmapOutput?.milestones?.length ?? 0
   const builderKey = seedCleared
     ? 'cleared'
     : `${myFrameworksLabels.length}-${myProducts.length}-${migrationDeadlineYear ?? 'no'}-${roadmapMilestoneCount}`
 
   return (
     <div className="space-y-6">
-      {seedSources.length > 0 && (
-        <PreFilledBanner
-          summary={`Stakeholders, concerns, board message, and escalation triggers seeded from ${seedSources.join(' + ')}.`}
-          onClear={() => setSeedCleared(true)}
-        />
+      {savedFormData ? (
+        <PreFilledBanner summary="Restored your last saved plan — edit any field and re-export to update it." />
+      ) : (
+        seedSources.length > 0 && (
+          <PreFilledBanner
+            summary={`Stakeholders, concerns, board message, and escalation triggers seeded from ${seedSources.join(' + ')}.`}
+            onClear={() => setSeedCleared(true)}
+          />
+        )
       )}
-      {!seedCleared && roadmapOutput && roadmapOutput.milestones.length > 0 && (
+      {!seedCleared && effectiveRoadmapOutput && effectiveRoadmapOutput.milestones.length > 0 && (
         <PreFilledBanner
-          summary={`${roadmapOutput.milestones.length} roadmap milestone${roadmapOutput.milestones.length !== 1 ? 's' : ''} from Step 1 added as communication trigger points in the Escalation Criteria section.`}
+          summary={`${effectiveRoadmapOutput.milestones.length} roadmap milestone${effectiveRoadmapOutput.milestones.length !== 1 ? 's' : ''} ${roadmapOutput ? 'from Step 1' : 'from your last Roadmap Builder export'} added as communication trigger points in the Escalation Criteria section.`}
         />
       )}
       <div className="glass-panel p-4">
@@ -372,6 +393,7 @@ export const StakeholderCommsPlanner: React.FC<StakeholderCommsPlannerProps> = (
         onExport={handleExport}
         exportFilename="pqc-stakeholder-comms"
         exportFormats={['markdown', 'pdf']}
+        initialData={savedFormData}
         renderPreview={renderCommsPreview}
       />
     </div>

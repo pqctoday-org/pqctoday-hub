@@ -249,9 +249,27 @@ export const MigrationVerification: React.FC = () => {
     return isVerifyState(latest?.inputs) ? (latest.inputs as VerifyState) : null
   }, [executiveDocuments])
 
-  const [state, setState] = useState<VerifyState>(
-    () => restored ?? { ...SEED_STATE, records: SEED_STATE.records.map((r) => ({ ...r })) }
-  )
+  // Merge over fresh SEED_STATE (not just `restored ?? SEED_STATE`) so a
+  // record saved before a field was added (e.g. a new BAU capability) still
+  // round-trips without an undefined value reaching the UI — same pattern as
+  // ROICalculator / Vendor Scorecard / Infra Modernization Planner.
+  const [state, setState] = useState<VerifyState>(() => {
+    const seed = {
+      records: SEED_STATE.records.map((r) => ({ ...r })),
+      decommissions: SEED_STATE.decommissions.map((d) => ({ ...d })),
+      closure: { ...SEED_STATE.closure, bauOwners: { ...SEED_STATE.closure.bauOwners } },
+    }
+    if (!restored) return seed
+    return {
+      records: restored.records ?? seed.records,
+      decommissions: restored.decommissions ?? seed.decommissions,
+      closure: {
+        ...seed.closure,
+        ...restored.closure,
+        bauOwners: { ...seed.closure.bauOwners, ...restored.closure?.bauOwners },
+      },
+    }
+  })
 
   const setEvidence = (id: string, key: EvidenceField, value: string) =>
     setState((prev) => ({

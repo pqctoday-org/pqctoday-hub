@@ -630,9 +630,11 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
             <>
               <p className="text-xs text-muted-foreground">
                 A single number is easy to challenge. Below, your per-product model (scaled to your
-                full estate) sits next to the cost your assessment implies from your infrastructure,
-                vendors, and crypto-agility. These are two <em>independent</em> methods &mdash;
-                expect a ballpark match, not an exact one.
+                full estate, so it&apos;s comparable to the assessment side) sits next to the cost
+                your assessment implies from your infrastructure, vendors, and crypto-agility. These
+                are two <em>independent</em> methods &mdash; expect a ballpark match, not an exact
+                one. The full-estate number intentionally doesn&apos;t move with the Products to
+                Migrate slider above &mdash; your current slider scope is shown separately below it.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -645,6 +647,15 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
                   <div className="text-[11px] text-muted-foreground mt-1 font-mono">
                     {formatCurrency(assumptions.costPerProduct)} × {data.totalProducts} products
                   </div>
+                  {assumptions.productsToMigrate !== data.totalProducts && (
+                    <div className="text-[11px] text-muted-foreground mt-2 pt-2 border-t border-border font-mono">
+                      At your selected scope ({assumptions.productsToMigrate} of{' '}
+                      {data.totalProducts} products above):{' '}
+                      <span className="text-foreground font-semibold">
+                        {formatCurrency(financials.totalMigrationCost)}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div className="bg-muted/50 rounded-lg p-3 border border-border">
                   <div className="text-xs text-muted-foreground mb-1">
@@ -1144,6 +1155,16 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
             title: `PQC ROI Analysis — ${new Date().toLocaleDateString()}`,
             data: exportMarkdown,
             inputs: assumptions,
+            // Computed totals, distinct from `inputs` (the assumptions) — lets
+            // Board Pitch Builder show real numbers when reached outside the
+            // linear Business Case wizard (Simulation, Business Center), not
+            // just when roiOutput is passed as a live prop.
+            output: {
+              totalCostUSD: financials.totalCost,
+              roiPercent: financials.roiPercent,
+              paybackMonths: financials.paybackMonths,
+              breachCostSavingsUSD: financials.breachCostSavings,
+            },
             createdAt: Date.now(),
           })
         }}
