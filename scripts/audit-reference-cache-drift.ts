@@ -204,6 +204,25 @@ const CHALLENGE_RE =
 // is the stronger, evidence-based signal and doesn't depend on this number.
 const BLOCKED_SCAN_MAX_BYTES = 100_000
 
+// Real bug found the SAME day this was added (2026-07-12): scanning the
+// whole body for keywords up to 100KB false-positived on legitimate IETF
+// datatracker pages (40-97KB) whose generic <noscript>Please enable
+// Javascript...</noscript> fallback matched "enable javascript" — a phrase
+// that's common on ANY modern site's noscript tag and has nothing to do
+// with bot-blocking. Real block pages reliably announce themselves in the
+// <title> (confirmed: ecfr.gov's is literally "Federal Register :: Request
+// Access"); legitimate pages essentially never do. Below 8000 bytes (a
+// real interstitial's actual size, matching fetch_resilient.py's own
+// threshold) a body-wide keyword match is still trustworthy — a
+// legitimately short page containing one of these phrases AND being that
+// short is implausible. Above it, only trust a title match.
+const TITLE_ONLY_MIN_BYTES = 8_000
+
+function extractTitle(text: string): string {
+  const m = /<title[^>]*>([^<]*)<\/title>/i.exec(text)
+  return m ? m[1] : ''
+}
+
 /**
  * True if `bytes` looks like a bot-block/consent/interstitial page rather
  * than genuine document content — a hash/size mismatch against a blocked
@@ -215,11 +234,12 @@ const BLOCKED_SCAN_MAX_BYTES = 100_000
  */
 export function looksBlocked(bytes: Uint8Array): boolean {
   if (bytes.byteLength < 1500) return true
-  if (bytes.byteLength < BLOCKED_SCAN_MAX_BYTES) {
-    const text = Buffer.from(bytes.slice(0, 20_000)).toString('utf-8')
-    if (CHALLENGE_RE.test(text)) return true
+  if (bytes.byteLength >= BLOCKED_SCAN_MAX_BYTES) return false
+  const text = Buffer.from(bytes.slice(0, 20_000)).toString('utf-8')
+  if (bytes.byteLength < TITLE_ONLY_MIN_BYTES) {
+    return CHALLENGE_RE.test(text)
   }
-  return false
+  return CHALLENGE_RE.test(extractTitle(text))
 }
 
 /**

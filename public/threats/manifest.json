@@ -117,7 +117,7 @@
     {
       "threatId": "CROSS-001",
       "refId": "CROSS-001",
-      "title": "IBM Institute for Business Value — Secure the Post-Quantum Future 2025",
+      "title": "IBM Institute for Business Value \u2014 Secure the Post-Quantum Future 2025",
       "url": "https://www.ibm.com/think/insights/post-quantum-cryptography",
       "status": "missing",
       "file": "public/threats/evidence/CROSS-001.html",
@@ -138,7 +138,7 @@
     {
       "threatId": "CROSS-003",
       "refId": "CROSS-003",
-      "title": "IBM Institute for Business Value — Secure the Post-Quantum Future 2025",
+      "title": "IBM Institute for Business Value \u2014 Secure the Post-Quantum Future 2025",
       "url": "https://www.ibm.com/think/insights/post-quantum-cryptography",
       "status": "missing",
       "file": "public/threats/evidence/CROSS-003.html",
@@ -164,9 +164,9 @@
       "status": "downloaded",
       "file": "public/threats/CROSS-005.html",
       "filename": "CROSS-005.html",
-      "sizeBytes": 43938,
+      "sizeBytes": 45146,
       "contentType": "text/html",
-      "sha256": "c17979c151cfc062811680268ce5d1e0742e27777918e77a730fd58ee4c8bf6f"
+      "sha256": "6fc4844c3ac579384f9ca67c897d9fddf0f681c16abedbde1dbefea86749b5e4"
     },
     {
       "threatId": "CROSS-006",
@@ -183,7 +183,7 @@
     {
       "threatId": "CROSS-007",
       "refId": "CROSS-007",
-      "title": "European Commission Digital Strategy — PQC Roadmap",
+      "title": "European Commission Digital Strategy \u2014 PQC Roadmap",
       "url": "https://digital-strategy.ec.europa.eu/en/news/eu-reinforces-its-cybersecurity-post-quantum-cryptography",
       "status": "missing",
       "file": "public/threats/evidence/CROSS-007.html",
@@ -260,9 +260,9 @@
       "status": "downloaded",
       "file": "public/threats/ENERGY-002.html",
       "filename": "ENERGY-002.html",
-      "sizeBytes": 80945,
+      "sizeBytes": 81505,
       "contentType": "text/html",
-      "sha256": "c0be79fc161affebeff64e1fdcb8b9332eeca87ac67a0eeff3bd23586af193c3"
+      "sha256": "bf7872b9fb421f1649ba08cfc5d29041ece4e4d73ab48b3082d19c88f137e478"
     },
     {
       "threatId": "ENERGY-003",
@@ -284,9 +284,9 @@
       "status": "downloaded",
       "file": "public/threats/ENERGY-004.html",
       "filename": "ENERGY-004.html",
-      "sizeBytes": 363521,
+      "sizeBytes": 93027,
       "contentType": "text/html",
-      "sha256": "bbc73aa55bdd86a7abb440920fa44ffb7a6e67e3b24355f0dbc4864d97773563"
+      "sha256": "68d9a0ff7ca6520d5ea8c6bf7b8b9d051814ca3e44e68d9d5a05fcb4475f52c3"
     },
     {
       "threatId": "FIN-001",
@@ -333,7 +333,7 @@
     {
       "threatId": "FIN-005",
       "refId": "FIN-005",
-      "title": "FS-ISAC — The Timeline for Post Quantum Cryptographic Migration",
+      "title": "FS-ISAC \u2014 The Timeline for Post Quantum Cryptographic Migration",
       "url": "https://www.fsisac.com/newsroom/fs-isac-urges-global-coordination-for-migration-to-post-quantum-cryptography-in-financial-services",
       "status": "downloaded",
       "file": "public/threats/FIN-005.html",
@@ -426,7 +426,7 @@
     {
       "threatId": "AUS-GOV-001",
       "refId": "AUS-GOV-001",
-      "title": "ASD ACSC Annual Cyber Threat Report 2024–25",
+      "title": "ASD ACSC Annual Cyber Threat Report 2024\u201325",
       "url": "https://www.cyber.gov.au/about-us/view-all-content/reports-and-statistics/annual-cyber-threat-report-2024-2025",
       "status": "missing",
       "file": "public/threats/evidence/AUS-GOV-001.html",
@@ -435,7 +435,7 @@
     {
       "threatId": "AUS-GOV-002",
       "refId": "AUS-GOV-002",
-      "title": "ASD Information Security Manual — ISM-1917",
+      "title": "ASD Information Security Manual \u2014 ISM-1917",
       "url": "https://webarchive.nla.gov.au/awa/20240101000000*/https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/ism/cyber-security-guidelines/guidelines-for-cryptography",
       "status": "missing",
       "file": "public/threats/evidence/AUS-GOV-002.html",
@@ -449,9 +449,9 @@
       "status": "downloaded",
       "file": "public/threats/HLTH-001.html",
       "filename": "HLTH-001.html",
-      "sizeBytes": 150032,
+      "sizeBytes": 145863,
       "contentType": "text/html",
-      "sha256": "19e1775171e1f3d870a5adfe5ca5acdd9fe7d475b7693dbd35d0f26d48780eb9"
+      "sha256": "becea40ff5f549651acc7b43738c011c50c48d7680e55259f054d51462ac72f4"
     },
     {
       "threatId": "HLTH-002",
@@ -542,9 +542,9 @@
       "status": "downloaded",
       "file": "public/threats/IOT-002.html",
       "filename": "IOT-002.html",
-      "sizeBytes": 363521,
+      "sizeBytes": 93027,
       "contentType": "text/html",
-      "sha256": "2cd9253884427de48b5915f03d5a92ae07f0fe45c660d11230fb59cd842fd7b6"
+      "sha256": "68d9a0ff7ca6520d5ea8c6bf7b8b9d051814ca3e44e68d9d5a05fcb4475f52c3"
     },
     {
       "threatId": "IOT-003",
@@ -662,9 +662,9 @@
       "status": "downloaded",
       "file": "public/threats/MEDIA-001.html",
       "filename": "MEDIA-001.html",
-      "sizeBytes": 33517,
+      "sizeBytes": 33944,
       "contentType": "text/html",
-      "sha256": "ba5c00cc430998fa098ac54a302944ad9670fce16bd77ab5698166f481189566"
+      "sha256": "c01f19eea5c39ae157ac25f2c02dec876bb54b7628e176c2086bc542620d863b"
     },
     {
       "threatId": "MEDIA-002",
@@ -674,14 +674,14 @@
       "status": "downloaded",
       "file": "public/threats/MEDIA-002.html",
       "filename": "MEDIA-002.html",
-      "sizeBytes": 33517,
+      "sizeBytes": 33944,
       "contentType": "text/html",
-      "sha256": "ba5c00cc430998fa098ac54a302944ad9670fce16bd77ab5698166f481189566"
+      "sha256": "c01f19eea5c39ae157ac25f2c02dec876bb54b7628e176c2086bc542620d863b"
     },
     {
       "threatId": "MEDIA-003",
       "refId": "MEDIA-003",
-      "title": "DVB Project — Conditional Access System Standards",
+      "title": "DVB Project \u2014 Conditional Access System Standards",
       "url": "https://dvb.org/solutions/security/",
       "status": "downloaded",
       "file": "public/threats/MEDIA-003.html",
@@ -710,9 +710,9 @@
       "status": "downloaded",
       "file": "public/threats/PCI-002.html",
       "filename": "PCI-002.html",
-      "sizeBytes": 637735,
+      "sizeBytes": 664762,
       "contentType": "text/html",
-      "sha256": "ab293691befc6ccfbdd3e2300e52598861fc5742612428cefe1bea9ef69529c8"
+      "sha256": "0d2a0ad3932366f32996d6d39b7c1cae8823dcd66917f8816f04d4660629d527"
     },
     {
       "threatId": "PCI-003",
@@ -722,9 +722,9 @@
       "status": "downloaded",
       "file": "public/threats/PCI-003.html",
       "filename": "PCI-003.html",
-      "sizeBytes": 637735,
+      "sizeBytes": 664762,
       "contentType": "text/html",
-      "sha256": "ab293691befc6ccfbdd3e2300e52598861fc5742612428cefe1bea9ef69529c8"
+      "sha256": "0d2a0ad3932366f32996d6d39b7c1cae8823dcd66917f8816f04d4660629d527"
     },
     {
       "threatId": "RAIL-001",
@@ -752,9 +752,9 @@
       "status": "downloaded",
       "file": "public/threats/RETAIL-001.html",
       "filename": "RETAIL-001.html",
-      "sizeBytes": 637735,
+      "sizeBytes": 664762,
       "contentType": "text/html",
-      "sha256": "ab293691befc6ccfbdd3e2300e52598861fc5742612428cefe1bea9ef69529c8"
+      "sha256": "0d2a0ad3932366f32996d6d39b7c1cae8823dcd66917f8816f04d4660629d527"
     },
     {
       "threatId": "RETAIL-002",
