@@ -1176,9 +1176,9 @@
       "url": "https://ethresear.ch/t/tasklist-for-post-quantum-eth/21296",
       "status": "downloaded",
       "filename": "Ethereum-PQC-Tasklist-Ethresearch.html",
-      "sizeBytes": 260343,
+      "sizeBytes": 467873,
       "contentType": "text/html",
-      "sha256": "3b5b4f246b0312420746775362b80cf4c6bbf7c8e6ac49bc2831cf6de6377019"
+      "sha256": "9ff997ba4f0c2fad6ee15136821442f2a062122a8ab3c41d3a2beae27ce11835"
     },
     {
       "refId": "IETF-MTC-Draft-09",
