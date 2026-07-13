@@ -54,6 +54,18 @@ const OUTPUT_DIR = join(ROOT, 'public/timeline')
 const MANIFEST_DIR = join(OUTPUT_DIR, 'evidence')
 const MANIFEST_PATH = join(MANIFEST_DIR, 'manifest.json')
 const SKIP_LIST_PATH = join(OUTPUT_DIR, 'skip-list.json')
+// RELOCATED 2026-07-13 — raw evidence docs live in pqctoday-priv/local-
+// evidence-cache/ (see pqctoday-priv/maintenance/LOCAL-FILES-REMEDIATION-
+// PLAN-07122026.md), not hub's public/timeline/. This script never got that
+// fix (audit-timeline-evidence.ts did, back on 2026-07-12) — found via a real
+// PR CI run: --audit-only reported 241/254 rows "missing" against a CI
+// runner that legitimately has no priv checkout, but the SAME rows show 0
+// problem rows when audited locally (with priv present), proving this
+// script's own disk-check was resolving the wrong path entirely, not that
+// evidence was actually absent. The manifest this script emits is what CI
+// falls back to when it can't see priv directly, so a stale/wrong-path
+// manifest here breaks that fallback for everyone, not just this run.
+const LOCAL_CACHE_ROOT = join(ROOT, '..', 'pqctoday-priv', 'local-evidence-cache')
 
 // ─── Skip-list ────────────────────────────────────────────────────────────────
 // Mirrors the threats-side pattern: URLs that are known-real-but-uncollectable
@@ -305,7 +317,10 @@ async function processRow(p: ProcessedRow): Promise<TimelineManifestEntry> {
   let onDiskCt: string | null = null
 
   if (csvLocalFile) {
-    const abs = join(ROOT, csvLocalFile)
+    const abs = join(
+      LOCAL_CACHE_ROOT,
+      csvLocalFile.startsWith('public/') ? csvLocalFile.slice('public/'.length) : csvLocalFile
+    )
     if (existsSync(abs)) {
       try {
         const st = statSync(abs)
@@ -328,10 +343,10 @@ async function processRow(p: ProcessedRow): Promise<TimelineManifestEntry> {
   // eslint-disable-next-line security/detect-object-injection
   const skipEntry = sourceUrl ? SKIP_LIST[sourceUrl] : undefined
   if (skipEntry) {
-    // Manual-download case: the operator put a file under public/timeline/.
+    // Manual-download case: the operator put a file under LOCAL_CACHE_ROOT/timeline/.
     if (skipEntry.localFile) {
-      const candidateRel = `public/timeline/${skipEntry.localFile}`
-      const candidateAbs = join(ROOT, candidateRel)
+      const candidateRel = `timeline/${skipEntry.localFile}`
+      const candidateAbs = join(LOCAL_CACHE_ROOT, candidateRel)
       if (existsSync(candidateAbs)) {
         try {
           const st = statSync(candidateAbs)
@@ -449,9 +464,10 @@ async function processRow(p: ProcessedRow): Promise<TimelineManifestEntry> {
     const ext = extFromContentType(result.contentType)
     const base = safeBase(country, org, title)
     const filename = `${base}${ext}`
-    const outRel = `public/timeline/${filename}`
-    const outAbs = join(ROOT, outRel)
+    const outRel = `timeline/${filename}`
+    const outAbs = join(LOCAL_CACHE_ROOT, outRel)
     try {
+      mkdirSync(dirname(outAbs), { recursive: true })
       writeFileSync(outAbs, result.buffer)
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err)
