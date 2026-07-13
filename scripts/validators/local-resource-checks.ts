@@ -48,64 +48,84 @@ export function runLocalResourceChecks(): {
     // relative value, not just the basename, so a file that moved between
     // subdirectories would still be caught as missing.
     const libDir = path.join(LOCAL_CACHE_ROOT, 'library')
-    const filesOnDisk = new Set(
-      fs.existsSync(libDir)
-        ? fs
-            .readdirSync(libDir)
-            .filter((f) => !f.startsWith('.') && f !== 'manifest.json' && f !== 'skip-list.json')
-        : []
-    )
+    // FIXED 2026-07-13 — this check used to treat a missing libDir (e.g. in
+    // GitHub Actions CI, which never checks out the sibling pqctoday-priv
+    // repo) as "zero files on disk", flooding every downloadable=yes row
+    // with a false "not found" finding purely because the environment can't
+    // see priv — not because anything is actually missing. The sibling N22
+    // check (source-document-quality.ts) already skips cleanly in this case;
+    // this one never got the same guard. Found via the same real CI run that
+    // surfaced the download-timeline-evidence.ts manifest bug.
+    if (!fs.existsSync(libDir)) {
+      results.push({
+        id: 'N18-library-local-files',
+        category: 'local-resource',
+        description:
+          'library.local_file → pqctoday-priv/local-evidence-cache/library/ files (skipped — priv checkout not present)',
+        sourceA: 'library',
+        sourceB: 'pqctoday-priv/local-evidence-cache/library/',
+        severity: 'INFO',
+        status: 'SKIP',
+        findings: [],
+      })
+    } else {
+      const filesOnDisk = new Set(
+        fs
+          .readdirSync(libDir)
+          .filter((f) => !f.startsWith('.') && f !== 'manifest.json' && f !== 'skip-list.json')
+      )
 
-    const referencedFiles = new Set<string>()
-    let expectedCount = 0
+      const referencedFiles = new Set<string>()
+      let expectedCount = 0
 
-    library.rows.forEach((row, i) => {
-      const localFileRaw = row.local_file?.trim()
-      const downloadable = (row.downloadable || '').toLowerCase()
+      library.rows.forEach((row, i) => {
+        const localFileRaw = row.local_file?.trim()
+        const downloadable = (row.downloadable || '').toLowerCase()
 
-      if (localFileRaw) {
-        const localFile = localFileRaw.split('/').pop() || localFileRaw
-        referencedFiles.add(localFile)
-        if (!filesOnDisk.has(localFile)) {
-          // Only flag if downloadable=yes
-          if (downloadable === 'yes') {
+        if (localFileRaw) {
+          const localFile = localFileRaw.split('/').pop() || localFileRaw
+          referencedFiles.add(localFile)
+          if (!filesOnDisk.has(localFile)) {
+            // Only flag if downloadable=yes
+            if (downloadable === 'yes') {
+              expectedCount++
+              findings.push({
+                csv: library.file,
+                row: i + 2,
+                field: 'local_file',
+                value: localFile,
+                message: `Library "${row.reference_id}" local_file "${localFile}" not found in pqctoday-priv/local-evidence-cache/library/ (downloadable=yes)`,
+              })
+            }
+          } else {
             expectedCount++
-            findings.push({
-              csv: library.file,
-              row: i + 2,
-              field: 'local_file',
-              value: localFile,
-              message: `Library "${row.reference_id}" local_file "${localFile}" not found in pqctoday-priv/local-evidence-cache/library/ (downloadable=yes)`,
-            })
           }
-        } else {
-          expectedCount++
         }
-      }
-    })
+      })
 
-    const orphaned = [...filesOnDisk].filter((f) => !referencedFiles.has(f))
-    const present = [...referencedFiles].filter((f) => filesOnDisk.has(f)).length
+      const orphaned = [...filesOnDisk].filter((f) => !referencedFiles.has(f))
+      const present = [...referencedFiles].filter((f) => filesOnDisk.has(f)).length
 
-    resources.push({
-      directory: 'pqctoday-priv/local-evidence-cache/library/',
-      expectedFiles: expectedCount,
-      presentFiles: present,
-      missingFiles: findings.map((f) => f.value),
-      orphanedFiles: orphaned.slice(0, 20), // cap at 20
-      coverage: expectedCount > 0 ? `${((present / expectedCount) * 100).toFixed(1)}%` : 'N/A',
-    })
+      resources.push({
+        directory: 'pqctoday-priv/local-evidence-cache/library/',
+        expectedFiles: expectedCount,
+        presentFiles: present,
+        missingFiles: findings.map((f) => f.value),
+        orphanedFiles: orphaned.slice(0, 20), // cap at 20
+        coverage: expectedCount > 0 ? `${((present / expectedCount) * 100).toFixed(1)}%` : 'N/A',
+      })
 
-    results.push({
-      id: 'N18-library-local-files',
-      category: 'local-resource',
-      description: 'library.local_file → pqctoday-priv/local-evidence-cache/library/ files',
-      sourceA: 'library',
-      sourceB: 'pqctoday-priv/local-evidence-cache/library/',
-      severity: 'WARNING',
-      status: findings.length === 0 ? 'PASS' : 'FAIL',
-      findings,
-    })
+      results.push({
+        id: 'N18-library-local-files',
+        category: 'local-resource',
+        description: 'library.local_file → pqctoday-priv/local-evidence-cache/library/ files',
+        sourceA: 'library',
+        sourceB: 'pqctoday-priv/local-evidence-cache/library/',
+        severity: 'WARNING',
+        status: findings.length === 0 ? 'PASS' : 'FAIL',
+        findings,
+      })
+    }
   }
 
   // ── products evidence coverage ──────────────────────────────────────────
@@ -122,10 +142,22 @@ export function runLocalResourceChecks(): {
     const manifestPath = path.join(ROOT, 'public', 'products', 'manifest.json')
     const downloadedNames = new Set<string>()
     if (fs.existsSync(manifestPath)) {
-      const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8')) as {
-        entries?: Array<{ softwareName?: string; status?: string }>
-      }
-      for (const e of manifest.entries || []) {
+      const parsed = JSON.parse(fs.readFileSync(manifestPath, 'utf-8')) as
+        | Array<{ softwareName?: string; status?: string }>
+        | { entries?: Array<{ softwareName?: string; status?: string }> }
+      // FIXED 2026-07-13 — real crash found locally: this manifest's actual
+      // shape is a plain top-level array (594 entries, e.g.
+      // {softwareName, filename, url, status, priority}), not {entries: [...]}
+      // like every other manifest.json in this pipeline. Assuming the wrapper
+      // shape meant `manifest.entries` resolved to Array.prototype.entries
+      // (a real method, since `manifest` IS an array) — truthy, so
+      // `manifest.entries || []` picked the function itself, and `for...of`
+      // threw "function is not iterable". This file is gitignore-excepted
+      // but has never actually been committed (git log shows zero history),
+      // so CI never hits this path today — but it will the moment someone
+      // commits it, since the .gitignore rule clearly means to track it.
+      const entries = Array.isArray(parsed) ? parsed : parsed.entries || []
+      for (const e of entries) {
         if (e.softwareName && e.status === 'downloaded') downloadedNames.add(e.softwareName)
       }
     }
