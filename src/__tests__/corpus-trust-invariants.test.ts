@@ -273,9 +273,19 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
  *               missing/broken local_file rows and the trust-registry rebuild
  *               added source rows; several landed without enrichment
  *               passages yet. Enrich to drive down).
+ *   2026-07-13: 695 (bumped +2 after a main-merge reconciliation refresh-index
+ *               — corrected library.local_file for 868 rows (removed a stale
+ *               public/ prefix left over from the local-evidence-cache
+ *               relocation) and added 3 new library rows (EO-14413,
+ *               NIST-IR-8547-Initial-Public-Draft-Transition-to-Post-Quantum,
+ *               OMB-M-26-15). The fresh regeneration re-surfaced already-
+ *               unenriched docs first flagged back in the 2026-06-19 bump
+ *               (KpqC, NIST-FIPS140-3-IG-PQC, 3GPP-PQC-Study-2025,
+ *               liboqs-v0.15.0, TCG-TPM-V185-Part0 — never actually enriched
+ *               since). Enrich to drive down).
  * Only DECREASE — every reduction is enrichment improving.
  */
-const MAX_DOC_WITHOUT_PASSAGES = 693
+const MAX_DOC_WITHOUT_PASSAGES = 695
 
 /** Pinned count of CSV files referenced in prov.was_derived_from but missing on disk. */
 const MAX_MISSING_CSVS = 0
