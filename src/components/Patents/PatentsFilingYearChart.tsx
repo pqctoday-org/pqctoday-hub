@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useMemo } from 'react'
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts'
+import { ResponsiveContainer, BarChart, Bar, Cell, XAxis, YAxis, Tooltip } from 'recharts'
 import type { PatentItem } from '@/types/PatentTypes'
 
 // Same definition the view's "PQC only" toggle uses.
@@ -30,12 +30,20 @@ interface YearRow {
  */
 interface PatentsFilingYearChartProps {
   patents: PatentItem[]
+  /** The year currently applied as a filter, if any — highlights that bar and
+   * lets a click on it toggle the filter back off. */
+  selectedYear?: number | null
   /** Bar click → filter Explore to that filing year (drill-down, matches the
-   * other Insights charts' onClick* convention). */
-  onYearClick?: (year: number) => void
+   * other Insights charts' onClick* convention). Passing `null` clears the
+   * filter (re-clicking the already-selected year). */
+  onYearClick?: (year: number | null) => void
 }
 
-export function PatentsFilingYearChart({ patents, onYearClick }: PatentsFilingYearChartProps) {
+export function PatentsFilingYearChart({
+  patents,
+  selectedYear = null,
+  onYearClick,
+}: PatentsFilingYearChartProps) {
   const { data, total } = useMemo(() => {
     const pqcByYear = new Map<number, number>()
     const classicalByYear = new Map<number, number>()
@@ -115,7 +123,9 @@ export function PatentsFilingYearChart({ patents, onYearClick }: PatentsFilingYe
             labelFormatter={(year) => `Filed ${year}`}
             formatter={(value, name) => [`${value}`, name === 'pqc' ? 'PQC' : 'Classical']}
           />
-          {/* Classical on the bottom, PQC stacked on top (rounded cap). */}
+          {/* Classical on the bottom, PQC stacked on top (rounded cap). Cells
+              dim every bar except the selected year so the active filter is
+              visible at a glance; clicking the selected year again clears it. */}
           <Bar
             dataKey="classical"
             stackId="a"
@@ -123,12 +133,20 @@ export function PatentsFilingYearChart({ patents, onYearClick }: PatentsFilingYe
             onClick={
               onYearClick
                 ? (data: { payload?: YearRow }) => {
-                    if (data.payload) onYearClick(data.payload.year)
+                    if (data.payload)
+                      onYearClick(data.payload.year === selectedYear ? null : data.payload.year)
                   }
                 : undefined
             }
             cursor={onYearClick ? 'pointer' : undefined}
-          />
+          >
+            {data.map((entry) => (
+              <Cell
+                key={entry.year}
+                fillOpacity={selectedYear != null && entry.year !== selectedYear ? 0.35 : 1}
+              />
+            ))}
+          </Bar>
           <Bar
             dataKey="pqc"
             stackId="a"
@@ -137,12 +155,22 @@ export function PatentsFilingYearChart({ patents, onYearClick }: PatentsFilingYe
             onClick={
               onYearClick
                 ? (data: { payload?: YearRow }) => {
-                    if (data.payload) onYearClick(data.payload.year)
+                    if (data.payload)
+                      onYearClick(data.payload.year === selectedYear ? null : data.payload.year)
                   }
                 : undefined
             }
             cursor={onYearClick ? 'pointer' : undefined}
-          />
+          >
+            {data.map((entry) => (
+              <Cell
+                key={entry.year}
+                fillOpacity={selectedYear != null && entry.year !== selectedYear ? 0.35 : 1}
+                stroke={entry.year === selectedYear ? 'var(--color-foreground)' : undefined}
+                strokeWidth={entry.year === selectedYear ? 1 : 0}
+              />
+            ))}
+          </Bar>
         </BarChart>
       </ResponsiveContainer>
     </div>
