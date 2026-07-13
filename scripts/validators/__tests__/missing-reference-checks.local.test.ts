@@ -68,6 +68,8 @@ describe.skipIf(!hasRealArtifact)(
       resetEmbeddingRuntime()
     })
 
+    // Timeout: loads the on-disk embedding artifact + cosine candidate
+    // search over the full corpus — well under 5s locally but slower on CI.
     it('findings have populated candidates when withCandidates=true and runtime loaded', async () => {
       await loadEmbeddingsFromDisk()
       const result = await runMissingReferenceChecks({ withCandidates: true })
@@ -80,8 +82,6 @@ describe.skipIf(!hasRealArtifact)(
         expect(f.candidates, `finding ${f.value} should have candidates`).toBeDefined()
         expect(f.candidates).toHaveLength(3)
       }
-    }, // Loads the on-disk embedding artifact + cosine candidate search over the
-    // full corpus — well under 5s locally but slower on CI runners.
-    30000)
+    }, 30000)
   }
 )
