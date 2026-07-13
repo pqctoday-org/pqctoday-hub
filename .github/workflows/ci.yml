@@ -154,24 +154,6 @@ jobs:
         # The maintainer's signer stays private.
         run: npm run verify-attestations
 
-      - name: Full data-integrity validator (validate:data)
-        # ADDED 2026-07-13 — this is the comprehensive N1-N24/CM-*/TP-*/MP-*/
-        # DS*/GC-* check suite (scripts/validate-data-integrity.ts, also
-        # npm run gate:data's final step) — it had NEVER actually run in CI
-        # despite every other gate:data component running here individually
-        # above. Found by directly diffing gate:data's composition against
-        # every `npm run` line in this file. Audited all checks that touch
-        # pqctoday-priv/local-evidence-cache/ (raw evidence, gitignored,
-        # never checked out in CI) before wiring this in: N18-library-
-        # local-files and CM-T-03 got a missing-directory guard (same
-        # pattern N22-* already used); TP-1 and MP-2 verify genuine on-disk
-        # file presence and structurally cannot pass without a sibling priv
-        # checkout, so they're excluded here the same way the dedicated
-        # threats-proof-rule step below already excludes TP-1 — real,
-        # useful checks for local dev after a manual download run, just not
-        # meaningful in an environment that never has priv.
-        run: npm run validate:data -- --exclude-checks TP-1,MP-2
-
       - name: Install Playwright Browsers
         run: npx playwright install chromium --with-deps
 

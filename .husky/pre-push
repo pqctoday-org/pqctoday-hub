@@ -12,3 +12,18 @@ set -e
 if [ -f public/data/revisions.jsonl.sig ] || [ -f public/data/rag-corpus.json.sig ]; then
   npx tsx scripts/ci/verify-attestations.ts
 fi
+
+# Full data-integrity validator (N1-N24/CM-*/TP-*/MP-*/DS*/GC-*, 142 checks).
+# ADDED 2026-07-13 — this suite (also gate:data's final step) was found to
+# have never run anywhere in CI. Deliberately kept local-only rather than
+# added as a GitHub Actions step: this repo's CI is already a long,
+# multi-step job, and the explicit preference here is to keep GitHub CI
+# runtime light — real data-integrity gating belongs at push time, on the
+# machine that actually has it, not as more GHA minutes.
+# TP-1 and MP-2 verify genuine on-disk presence of files under gitignored
+# pqctoday-priv/local-evidence-cache/ — excluded here for the same reason
+# they're excluded from every other invocation of this suite: they're real
+# and useful after a manual download run, but this hook fires on every
+# push regardless of whether one just happened.
+# Bypass with `git push --no-verify` for an intentional WIP push.
+npm run validate:data -- --exclude-checks TP-1,MP-2
