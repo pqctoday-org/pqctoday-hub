@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en-us" xml:lang="en-us">
+<head>
+    <meta charset="utf-8" />
+    <title>Cryptographic Module Validation Program | CSRC</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="content-style-type" content="text/css" />
+    <meta http-equiv="content-script-type" content="text/javascript" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="msapplication-config" content="/CSRC/Media/images/favicons/browserconfig.xml" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="google-site-verification" content="xbrnrVYDgLD-Bd64xHLCt4XsPXzUhQ-4lGMj4TdUUTA" />
+    
+
+        <meta name="description" content="Welcome to the&#160;CMVP  The Cryptographic Module Validation Program (CMVP) is a joint effort between the National Institute of Standards and Technology under the Department of Commerce&#160;and the&#160;Canadian Centre for Cyber Security, a branch of the Communications..." />
+
+    <!-- dcterms meta information -->
+    <meta name="dcterms.title" content="Cryptographic Module Validation Program | CSRC | CSRC" />
+    <meta name="dcterms.description" content="Welcome to the&#160;CMVP  The Cryptographic Module Validation Program (CMVP) is a joint effort between the National Institute of Standards and Technology under the Department of Commerce&#160;and the&#160;Canadian Centre for Cyber Security, a branch of the Communications..." />
+    <meta name="dcterms.creator" content="Computer Security Division, Information Technology Laboratory, National Institute of Standards and Technology, U.S. Department of Commerce" />
+    <meta name="dcterms.date.created" scheme="ISO8601" content="2016-10-11" />
+    <meta name="dcterms.date.reviewed" scheme="ISO8601" content="2026-06-29" />
+    <meta name="dcterms.language" scheme="DCTERMS.RFC1766" content="EN-US" />
+
+    <!-- Facebook OpenGraph Tags -->
+    <meta name="og:site_name" content="CSRC | NIST" />
+    <meta name="og:type" content="article" />
+    <meta name="og:url" content="https://csrc.nist.gov/projects/cryptographic-module-validation-program" />
+    <meta name="og:title" content="Cryptographic Module Validation Program | CSRC | CSRC" />
+    <meta name="og:description" content="Welcome to the&#160;CMVP  The Cryptographic Module Validation Program (CMVP) is a joint effort between the National Institute of Standards and Technology under the Department of Commerce&#160;and the&#160;Canadian Centre for Cyber Security, a branch of the Communications Security Establishment. The goal of the CMVP is to promote the use of validated&#160;cryptographic modules and provide Federal agencies with a security metric to use in procuring&#160;equipment containing validated cryptographic modules. CMVP has over 1,000 validated modules that are currently active, with over 5,000 modules validated since the beginning of the program.&#160;  Cryptographic and Security Testing Laboratories (CSTLs) verify each module&#160;meets a set of testable cryptographic and security requirements. Each CSTL submission reviewed and validated by CMVP. Each CSTL is an independent laboratory accredited by NVLAP.&#160;  As of September 22, 2020, CMVP began validating&#160;cryptographic modules to&#160;Federal Information Processing Standard (FIPS) 140-3, Security..." />
+
+    <meta name="article:tag" content="cryptography; testing &amp; validation; hardware; software &amp; firmware" />
+    <meta name="article:published_time" content="2016-10-11" />
+        <meta name="article:modified_time" content="2026-06-29" />
+
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/icons/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" href="/images/icons/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/images/icons/favicon-16x16.png" sizes="16x16" />
+    <link rel="manifest" href="/images/icons/manifest.json" />
+    <link rel="mask-icon" href="/images/icons/safari-pinned-tab.svg" color="#000000" />
+    <link href="/CSRC/Media/images/favicons/favicon.ico" type="image/x-icon" rel="shortcut icon" />
+    <link href="/CSRC/Media/images/favicons/favicon.ico" type="image/x-icon" rel="icon" />
+    <link href="/dist/app.css" rel="stylesheet" />
+    
+    <!-- Highlight.js -->
+    <link href="/dist/highlight-js/github.css" rel="stylesheet" />
+    
+    <!-- USWDS Top -->
+    <link href="/dist/uswds/css/uswds.css" type="text/css" rel="stylesheet" />
+    <script type="text/javascript" src="/dist/uswds/js/uswds-init.min.js"></script>
+
+    <!-- reCAPTCHA v3 -->
+    <style>
+    .grecaptcha-badge {
+        visibility: hidden;
+    }
+    </style>
+
+    
+
+
+    <script async type="text/javascript" id="_fed_an_ua_tag" src="https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=nist&subagency=csrc&pua=UA-66610693-15&yt=true&exts=xsd,xml,wav,mpg,mpeg,avi,rtf,webm,ogg,ogv,oga,map,otf,eot,svg,ttf,woff"></script>
+    <style id="antiClickjackCss">
+        body > * {
+            display: none !important;
+        }
+        #antiClickjack {
+            display: block !important;
+        }
+    </style>
+    <noscript>
+        <style id="antiClickjackNoScript">
+            body > * { display: block !important; }
+            #antiClickjack {
+                display: none !important;
+            }
+        </style>
+    </noscript>
+    <script type="text/javascript" id="antiClickjackScript">
+        if (self === top) {
+            // no clickjacking
+            var antiClickjack = document.getElementById("antiClickjackCss"); antiClickjack.parentNode.removeChild(antiClickjack);
+        } else {
+            setTimeout(tryForward(), 5000);
+        }
+        function tryForward() {
+            top.location = self.location;
+        }
+    </script>
+    <!-- Google tag (gtag.js) --> 
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TSQ0PLGJZP"></script> 
+    <script>   window.dataLayer = window.dataLayer || [];   function gtag(){dataLayer.push(arguments);}   gtag('js', new Date());   gtag('config', 'G-TSQ0PLGJZP'); </script>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-MZQC4NCJ');</script>
+    <!-- End Google Tag Manager -->
+</head>
+<body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MZQC4NCJ" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    <div id="antiClickjack" style="display: none;">
+        <strong style="font-size: 1.6rem;">You are viewing this page in an unauthorized frame window.</strong>
+        <p>This is a potential security issue, you are being redirected to <a href="https://csrc.nist.gov">https://csrc.nist.gov</a>.</p>
+    </div>
+
+    <section
+    class="usa-banner"
+    aria-label="Official website of the United States government">
+    <div class="usa-accordion">
+        <header class="usa-banner__header">
+            <noscript>
+                <p style="font-size: 0.85rem; font-weight: bold;">You have JavaScript disabled. This site requires JavaScript to be enabled for complete site functionality.</p>
+            </noscript>
+            <div class="usa-banner__inner">
+                <div class="grid-col-auto">
+                    <img
+                        aria-hidden="true"
+                        class="usa-banner__header-flag"
+                        src="/dist/uswds/img/us_flag_small.png"
+                        alt=""/>
+                </div>
+                <div class="grid-col-fill tablet:grid-col-auto" aria-hidden="true">
+                    <p class="usa-banner__header-text">
+                        An official website of the United States government
+                    </p>
+                    <p class="usa-banner__header-action">Here’s how you know</p>
+                </div>
+                <button
+                    type="button"
+                    class="usa-accordion__button usa-banner__button"
+                    aria-expanded="false"
+                    aria-controls="gov-banner-default">
+                    <span class="usa-banner__button-text">Here’s how you know</span>
+                </button>
+            </div>
+        </header>
+        <div
+            class="usa-banner__content usa-accordion__content"
+            id="gov-banner-default">
+            <div class="grid-row grid-gap-lg">
+                <div class="usa-banner__guidance tablet:grid-col-6">
+                    <img
+                        class="usa-banner__icon usa-media-block__img"
+                        src="/dist/uswds/img/icon-dot-gov.svg"
+                        role="img"
+                        alt=""
+                        aria-hidden="true"/>
+                    <div class="usa-media-block__body">
+                        <p>
+                            <strong>Official websites use .gov</strong><br/>A
+                            <strong>.gov</strong> website belongs to an official government
+                            organization in the United States.
+                        </p>
+                    </div>
+                </div>
+                <div class="usa-banner__guidance tablet:grid-col-6">
+                    <img
+                        class="usa-banner__icon usa-media-block__img"
+                        src="/dist/uswds/img/icon-https.svg"
+                        role="img"
+                        alt=""
+                        aria-hidden="true"/>
+                    <div class="usa-media-block__body">
+                        <p>
+                            <strong>Secure .gov websites use HTTPS</strong><br/>A
+                            <strong>lock</strong> (
+                            <span class="icon-lock">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="52"
+                                    height="64"
+                                    viewBox="0 0 52 64"
+                                    class="usa-banner__lock-image"
+                                    role="img"
+                                    aria-labelledby="banner-lock-description-default"
+                                    focusable="false">
+                                    <title id="banner-lock-title-default">Lock</title>
+                                    <desc id="banner-lock-description-default">Locked padlock icon</desc>
+                                    <path
+                                        fill="#000000"
+                                        fill-rule="evenodd"
+                                        d="M26 0c10.493 0 19 8.507 19 19v9h3a4 4 0 0 1 4 4v28a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V32a4 4 0 0 1 4-4h3v-9C7 8.507 15.507 0 26 0zm0 8c-5.979 0-10.843 4.77-10.996 10.712L15 19v9h22v-9c0-6.075-4.925-11-11-11z"/>
+                                </svg>
+                            </span
+                            >) or <strong>https://</strong> means you’ve safely connected to
+                            the .gov website. Share sensitive information only on official,
+                            secure websites.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <nav id="navbar" class="navbar">
+    <div id="nist-menu-container" class="container">
+        <div class="row">
+            <!-- Brand -->
+            <div class="col-xs-6 col-md-4 navbar-header">
+                <a class="navbar-brand" href="https://www.nist.gov" target='_blank' rel="noopener noreferrer" id="navbar-brand-image">
+                    <img src="/CSRC/media/images/svg/nist-logo.svg" alt="National Institute of Standards and Technology" width="110" height="30">
+                </a>
+            </div>
+            <div class="col-xs-6 col-md-8 navbar-nist-logo">
+                <div class="form-inline hidden-sm hidden-xs">
+                    <form name="site-search" id="site-search-form" action="/search" method="GET">
+                        <label for="search-csrc-query" class="element-invisible">Search</label>
+                        <input autocomplete="off" class="form-control" id="search-csrc-query" name="keywords" type="text" size="15" maxlength="128" placeholder="Search CSRC" />
+                        <input type="hidden" name="ipp" value="25" />
+                        <input type="hidden" name="sortBy" value="relevance" />
+                        <input type="hidden" name="showOnly" value="publications,projects,news,events,presentations,glossary,topics" />
+                        <input type="hidden" name="topicsMatch" value="ANY" />
+                        <input type="hidden" name="status" value="Final,Draft" />
+                        <button type="submit" id="search-csrc-submit-btn" class="form-submit">
+                            <span class="element-invisible">Search</span>
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </form>
+                </div>
+                <span id="nvd-menu-button" class="pull-right">
+                    <a href="#" id="nvd-menu-button-link">
+                        <span class="fa fa-bars"></span>
+                        <span id="nvd-menu-full-text">CSRC MENU</span>
+                    </a>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-inline hidden-md hidden-lg">
+        <form name="site-search-mobile" id="site-search-form-mobile" action="/search" method="GET">
+            <label for="search-csrc-query-mobile" class="element-invisible">Search</label>
+            <input autocomplete="off" class="form-control" id="search-csrc-query-mobile" name="keywords" type="text" size="15" maxlength="128" placeholder="Search CSRC" />
+            <button type="submit" id="search-csrc-submit-btn-mobile" class="form-submit">
+                <span class="element-invisible">Search</span>
+                <i class="fa fa-search"></i>
+            </button>
+        </form>
+    </div>
+    <div class="main-menu-row container">
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div id="main-menu-drop" class="col-lg-12" style="display: none;">
+            <ul>
+                <li><a href="/projects">Projects</a></li>
+                <li>
+                    <a href="/publications">
+                        Publications
+                        <span class="expander fa fa-plus" id="main-menu-pubs-expander" data-expander-name="publications" data-expanded="false">
+                            <span class="element-invisible">Expand or Collapse</span>
+                        </span>
+                    </a>
+                    <div style="display: none;" class="sub-menu" data-expander-trigger="publications" id="main-menu-pubs-expanded">
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <p><a href="/publications/drafts-open-for-comment">Drafts for Public Comment</a></p>
+                                <p><a href="/publications/draft-pubs">All Public Drafts</a></p>
+                                <p><a href="/publications/final-pubs">Final Pubs</a></p>
+                                <p><a href="/publications/fips">FIPS <small>(standards)</small></a></p>
+                            </div>
+                            <div class="col-lg-4">
+                                <p><a href="/publications/sp">Special Publications (SP<small>s</small>)</a></p>
+                                <p><a href="/publications/ir">IR <small>(interagency/internal reports)</small></a></p>
+                                <p><a href="/publications/cswp">CSWP <small>(cybersecurity white papers)</small></a></p>
+                                <p><a href="/publications/itl-bulletin">ITL Bulletins</a></p>
+                            </div>
+                            <div class="col-lg-4">
+                                <p><a href="/publications/project-description">Project Descriptions</a></p>
+                                <p><a href="/publications/journal-article">Journal Articles</a></p>
+                                <p><a href="/publications/conference-paper">Conference Papers</a></p>
+                                <p><a href="/publications/book">Books</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <a href="/topics">
+                        Topics
+                        <span class="expander fa fa-plus" id="main-menu-topics-expander" data-expander-name="topics" data-expanded="false">
+                            <span class="element-invisible">Expand or Collapse</span>
+                        </span>
+                    </a>
+                    <div style="display: none;" class="sub-menu" data-expander-trigger="topics" id="main-menu-topics-expanded">
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <p><a href="/Topics/Security-and-Privacy">Security & Privacy</a></p>
+                                <p><a href="/Topics/Applications">Applications</a></p>
+                            </div>
+                            <div class="col-lg-4">
+                                <p><a href="/Topics/Technologies">Technologies</a></p>
+                                <p><a href="/Topics/Sectors">Sectors</a></p>
+                            </div>
+                            <div class="col-lg-4">
+                                <p><a href="/Topics/Laws-and-Regulations">Laws & Regulations</a></p>
+                                <p><a href="/Topics/Activities-and-Products">Activities & Products</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li><a href="/news">News & Updates</a></li>
+                <li><a href="/events">Events</a></li>
+                <li><a href="/glossary">Glossary</a></li>
+                <li>
+                    <a href="/about">
+                        About CSRC
+                        <span class="expander fa fa-plus" id="main-menu-about-expander" data-expander-name="about" data-expanded="false">
+                            <span class="element-invisible">Expand or Collapse</span>
+                        </span>
+                    </a>
+                    <div style="display: none;" class="sub-menu" data-expander-trigger="about" id="main-menu-about-expanded">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <p>
+                                    <strong><a href="/Groups/Computer-Security-Division">Computer Security Division</a></strong><br />
+                                    <ul>
+                                        <li><a href="/Groups/Computer-Security-Division/Cryptographic-Technology">Cryptographic Technology</a></li>
+                                        <li><a href="/Groups/Computer-Security-Division/software-security-group">Software Security Group</a></li>
+                                        <li><a href="/Groups/Computer-Security-Division/hardware-security-group">Hardware Security Group</a></li>
+                                        <li><a href="/Groups/Computer-Security-Division/Security-Engineering-and-Risk-Management">Security Engineering and Risk Management</a></li>
+                                    </ul>
+                                </p>
+                            </div>
+                            <div class="col-lg-6">
+                                <p>
+                                    <strong><a href="/Groups/Applied-Cybersecurity-Division">Applied Cybersecurity Division</a></strong><br />
+                                    <ul>
+                                        <li><a href="/Groups/Applied-Cybersecurity-Division/Cybersecurity-and-Privacy-Applications">Cybersecurity and Privacy Applications</a></li>
+                                        <li><a href="/Groups/Applied-Cybersecurity-Division/National-Cybersecurity-Center-of-Excellence">National Cybersecurity Center of Excellence (NCCoE)</a></li>
+                                        <li><a href="https://www.nist.gov/nice/">National Initiative for Cybersecurity Education (NICE)</a></li>
+                                    </ul>
+                                </p>
+                                <p>
+                                    <a href="/contact">
+                                        Contact Us
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div><!-- /#mobile-nav-container -->
+    </div>
+
+</nav>
+
+    <section id="itl-header" class="has-menu">
+        <div class="itl-background"></div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12 col-md-8">
+                        <div class="hidden-xs hidden-sm" id="itl-header-lg">
+                            <a href="https://www.nist.gov/itl" target='_blank' rel="noopener noreferrer" id="itl-header-link">Information Technology Laboratory</a>
+                        </div>
+                        <div class="hidden-xs hidden-sm" id="csrc-header-lg">
+                            <a href="/" id="csrc-header-link-lg">Computer Security Resource Center</a>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <div class="hidden-xs hidden-sm hidden-md">
+                            <a id="logo-csrc-lg" href="/"><img id="img-logo-csrc-lg" src="/CSRC/Media/images/nist-logo-csrc-white.svg" alt="CSRC Logo" class="csrc-header-logo"></a>
+                        </div>
+                        <div class="hidden-lg">
+                            <a id="logo-csrc-sm" href="/"><img id="img-logo-csrc-sm" src="/CSRC/Media/images/nist-logo-csrc-white.svg" alt="CSRC Logo" class="csrc-header-logo"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </section>
+
+    <div id="body-section" class="container">
+        
+        
+
+
+
+
+<div class="breadcrumb">
+        <a href="/projects" class="breadcrumb-link">Projects</a>
+</div>
+
+
+    <h1 id="projectName">Cryptographic Module Validation Program <small id="project-acronym">CMVP</small></h1>
+
+
+<div class="page-social-buttons" id=&quot;news-social-buttons&quot;>
+    <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fcsrc.nist.gov%2Fprojects%2Fcryptographic-module-validation-program" class="social-facebook"><i class="fa fa-facebook fa-fw" aria-hidden="true"></i><span class="sr-only">Share to Facebook</span></a>
+    <a href="https://x.com/share?url=https%3A%2F%2Fcsrc.nist.gov%2Fprojects%2Fcryptographic-module-validation-program" class="social-twitter"><i class="fa-brands fa-x-twitter"></i><span class="sr-only">Share to X</span></a>
+    <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3A%2F%2Fcsrc.nist.gov%2Fprojects%2Fcryptographic-module-validation-program&amp;source=csrc.nist.gov" class="social-linked-in"><i class="fa fa-linkedin fa-fw" aria-hidden="true"></i><span class="sr-only">Share to LinkedIn</span></a>
+    <a href="/cdn-cgi/l/email-protection#9ea1edebfcf4fbfdeaa3fdedecfdb0f0f7edeab0f9f1e8b8fff3eea5fcf1fae7a3ddf6fbfdf5bef1ebeabeeaf6f7edbeedf7eafbbef6eaeaeeeda4b1b1fdedecfdb0f0f7edeab0f9f1e8b1eeecf1f4fbfdeaedb1fdece7eeeaf1f9ecffeef6f7fdb3f3f1faebf2fbb3e8fff2f7faffeaf7f1f0b3eeecf1f9ecfff3" class="social-email"><i class="fa fa-envelope fa-fw" aria-hidden="true"></i><span class="sr-only">Share ia Email</span></a>
+</div>
+
+<div class="row visible-sm visible-xs visible-md">
+	<div class="col-sm-12">
+        <div class="bs-callout bs-callout-subnav" id="projectLinksContainer-sm">
+            <h4><i class="fa fa-link"></i> Project Links</h4>
+            <div class="project-icons-container">
+                <span>
+                    <a href="/projects/cryptographic-module-validation-program" id="NavOverviewLink-sm">
+                        <i class="fa fa-info-circle"></i> Overview
+                    </a>
+                </span>
+                <span>
+                    <a href="/Projects/cryptographic-module-validation-program/faqs" id="NavFaqsLink-sm">
+                        <i class="fa fa-question-circle"></i> FAQs
+                    </a>
+                </span>
+                                <span>
+                    <a href="/Projects/cryptographic-module-validation-program/news" id="NavNewsLink-sm" data-count="2">
+                        <i class="fa fa-newspaper-o"></i> News &amp; Updates
+                    </a>
+                </span>
+                                                <span>
+                    <a href="/Projects/cryptographic-module-validation-program/publications" id="NavPubsLink-sm" data-count="10">
+                        <i class="fa fa-file-text"></i> Publications
+                    </a>
+                </span>
+                            </div>
+        </div>
+	</div>
+</div>
+<div class="row">
+
+
+        <div class="col-lg-8 col-sm-12">
+<h3>Overview</h3>
+
+<div id="overview">
+
+
+    <h3><a id="Top" name="Top"></a>Welcome to the&nbsp;CMVP</h3>
+
+<p>The Cryptographic Module Validation Program (CMVP) is a joint effort between the National Institute of Standards and Technology under the Department of Commerce&nbsp;and the&nbsp;Canadian Centre for Cyber Security, a branch of the Communications Security Establishment. The goal of the CMVP is to promote the use of validated&nbsp;cryptographic modules and provide Federal agencies with a security metric to use in procuring&nbsp;equipment containing validated cryptographic modules. CMVP has over 1,000 validated modules that are currently active, with over 5,000 modules validated since the beginning of the program.&nbsp;</p>
+
+<p>Cryptographic and Security Testing Laboratories (CSTLs) verify each module&nbsp;meets a set of testable cryptographic and security requirements. Each CSTL submission reviewed and validated by CMVP. Each CSTL is an independent laboratory accredited by NVLAP.&nbsp;</p>
+
+<p>As of September 22, 2020, CMVP began validating&nbsp;cryptographic modules to&nbsp;Federal Information Processing Standard (FIPS) 140-3, <em>Security Requirements for Cryptographic Modules.&nbsp;</em>CMVP accepted cryptographic module submissions to&nbsp;Federal Information Processing Standard (FIPS) 140-2, <em>Security Requirements for Cryptographic Modules&nbsp;</em>until March 31, 2022<strong>. </strong>As of April 1, 2022, the CMVP no longer accepted FIPS 140-2 submissions for new validation certificates except as indicated in the table below.</p>
+
+<h3><a id="applicability" name="applicability"></a>Applicability of Validated Modules</h3>
+
+<p>FIPS 140-3 validations&nbsp;are currently being accepted. Upon validation, modules will be placed on the Active list for 5 years (or 2 years for Interim Validations) and may be used for new and existing systems.</p>
+
+<p>Modules validated as conforming to FIPS 140-2&nbsp;can continue to be accepted&nbsp;by the Federal agencies of both countries for the protection of controlled unclassified information (United States)&nbsp;or Designated Information (Canada) through September 21, 2026. After that time CMVP will place the FIPS 140-2 validated modules on the Historical list, allowing agencies to continue using&nbsp;these modules for existing systems only. Agencies should continue to make use of FIPS 140-2 modules until replacement FIPS 140-3 modules become available.</p>
+
+<h3><a id="status" name="status"></a>Status of CMVP validation effort</h3>
+
+<p>&nbsp;The two-year interim submission option for validations has greatly ramped up processing of validation submissions, and the automated processing of SP 800-140Br1 formatted submissions will reduce the backlog in the validation process. The table below highlights important changes in the CMVP.&nbsp;</p>
+
+<table border="1" cellpadding="4" cellspacing="3" class="table table-condensed table-striped" style="width:90%">
+	<caption>&nbsp;</caption>
+	<thead>
+		<tr>
+			<th style="width:150px">
+			<p><strong>Date</strong></p>
+			</th>
+			<th>
+			<p><strong>Activity</strong></p>
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td style="height:40px; vertical-align:top; width:150px">
+			<p>September 22, 2020</p>
+			</td>
+			<td style="height:40px; vertical-align:top">
+			<p>CMVP accepts FIPS 140-3 submissions.</p>
+			</td>
+		</tr>
+		<tr>
+			<td style="height:40px; vertical-align:top; width:150px">June 14, 2021</td>
+			<td style="height:40px; vertical-align:top">Last date CSTLs accepted contracts for FIPS 140-2 Scenario 5 and Scenario 3.</td>
+		</tr>
+		<tr>
+			<td style="height:40px; vertical-align:top; width:150px">
+			<p>September 22, 2021</p>
+			</td>
+			<td style="height:40px; vertical-align:top">
+			<p>CMVP no longer accepts FIPS 140-2 submissions for new validation certificates.</p>
+			</td>
+		</tr>
+		<tr>
+			<td style="height:40px; vertical-align:top; width:150px">April 1, 2022</td>
+			<td style="height:40px; vertical-align:top">CMVP only accepts FIPS 140-2 reports that do not change the validation sunset date.</td>
+		</tr>
+		<tr>
+			<td style="height:40px; vertical-align:top; width:150px">June 6, 2024</td>
+			<td style="height:40px; vertical-align:top">CMVP initiates two-year <a data-csrc-link="true" data-node-guid="44830cb8-58ff-46d4-bbc4-5521eeba2104" href="/projects/cryptographic-module-validation-program/programmatic-transitions">interim validations</a> for modules submitted before Jan 1, 2024.&nbsp;</td>
+		</tr>
+		<tr>
+			<td style="height:40px; vertical-align:top; width:150px">
+			<p><em>September 21, 2026</em></p>
+			</td>
+			<td style="height:40px; vertical-align:top">
+			<p><em>FIPS 140-2 active modules can be used until this date for new systems. After this date, FIPS 140-2 validation certificates will be moved to the Historical List.</em></p>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<h3><a id="non-validated-modules" name="non-validated-modules"></a>Use of Cryptographic Modules by Federal Agencies and Departments</h3>
+
+<p>FIPS 140-2 and FIPS 140-3 requirements are applicable to all U.S. Federal agencies. Agencies must use cryptographic-based security systems to provide adequate information security for all operations and assets as defined in 15 U.S.C. § 278g-3.&nbsp;</p>
+
+<p>Non-validated cryptography is viewed as providing&nbsp;<em><strong>no protection</strong></em>&nbsp;to the information or data—in effect the data would be considered unprotected plaintext.&nbsp;<em><strong>If the agency specifies that the information or data be cryptographically protected</strong></em>, then FIPS 140-2 or FIPS 140-3 is applicable. In essence, if cryptography is required, then it must be validated. Should the cryptographic module be revoked, use of that module is no longer permitted.</p>
+
+<p>&nbsp;</p>
+
+<p style="text-align:right"><sup><a href="#Top">Back to Top</a></sup></p>
+
+<hr>
+</div>
+
+        </div>
+
+
+        <div class="col-lg-4 hidden-xs hidden-sm hidden-md">
+
+            <div class="project-nav-container">
+                <div class="bs-callout bs-callout-subnav" id="projectLinksContainer-lg">
+<h4><i class="fa fa-link"></i> Project Links</h4>
+<div class="project-icons-container">
+    <span>
+        <a href="/projects/cryptographic-module-validation-program" id="SideNavOverviewLink">
+            <i class="fa fa-info-circle"></i> Overview
+        </a>
+    </span>
+    <span>
+        <a href="/Projects/cryptographic-module-validation-program/faqs" id="SideNavFaqsLink">
+            <i class="fa fa-question-circle"></i> FAQs
+        </a>
+    </span>
+        <span>
+        <a href="/Projects/cryptographic-module-validation-program/news" id="SideNavNewsLink" data-count="2">
+            <i class="fa fa-newspaper-o"></i> News &amp; Updates
+        </a>
+    </span>
+            <span>
+        <a href="/Projects/cryptographic-module-validation-program/publications" id="SideNavPubsLink" data-count="10">
+            <i class="fa fa-file-text"></i> Publications
+        </a>
+    </span>
+    </div>
+
+    <h4>Additional Pages</h4>
+    <div id="projectPagesCallout-lg">
+
+<a class="csrc-add-page" data-node-level="0" data-node-order="1" href="/Projects/cryptographic-module-validation-program/validated-modules" id="projPage0" style="border-left: solid 0rem transparent;">Validated Modules</a>
+<a class="csrc-add-page" data-node-level="1" data-node-order="1" href="/Projects/cryptographic-module-validation-program/validated-modules/search" id="projPage1" style="border-left: solid 1rem transparent;">Search</a>
+<a class="csrc-add-page" data-node-level="1" data-node-order="2" href="/Projects/cryptographic-module-validation-program/validated-modules/caveats" id="projPage2" style="border-left: solid 1rem transparent;">Caveats</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="3" href="/Projects/cryptographic-module-validation-program/modules-in-process" id="projPage3" style="border-left: solid 0rem transparent;">Modules In Process</a>
+<a class="csrc-add-page" data-node-level="1" data-node-order="1" href="/Projects/cryptographic-module-validation-program/modules-in-process/modules-in-process-list" id="projPage4" style="border-left: solid 1rem transparent;">Modules In Process List</a>
+<a class="csrc-add-page" data-node-level="1" data-node-order="2" href="/Projects/cryptographic-module-validation-program/modules-in-process/iut-list" id="projPage5" style="border-left: solid 1rem transparent;">Implementation Under Test List</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="4" href="/Projects/cryptographic-module-validation-program/entropy-validations" id="projPage6" style="border-left: solid 0rem transparent;">Entropy Validations</a>
+<a class="csrc-add-page" data-node-level="1" data-node-order="1" href="/Projects/cryptographic-module-validation-program/entropy-validations/search" id="projPage7" style="border-left: solid 1rem transparent;">Entropy Source Validation Search</a>
+<a class="csrc-add-page" data-node-level="1" data-node-order="2" href="/Projects/cryptographic-module-validation-program/entropy-validations/announcements-1" id="projPage8" style="border-left: solid 1rem transparent;">Entropy Validation Announcements</a>
+<a class="csrc-add-page" data-node-level="1" data-node-order="4" href="/Projects/cryptographic-module-validation-program/entropy-validations/esv" id="projPage9" style="border-left: solid 1rem transparent;">ESV</a>
+<a class="csrc-add-page" data-node-level="1" data-node-order="5" href="/Projects/cryptographic-module-validation-program/entropy-validations/entropy-source-validation-workshop" id="projPage10" style="border-left: solid 1rem transparent;">Entropy Source Validation Workshop</a>
+<a class="csrc-add-page" data-node-level="1" data-node-order="6" href="/Projects/cryptographic-module-validation-program/entropy-validations/documents" id="projPage11" style="border-left: solid 1rem transparent;">Entropy Validation Documents</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="5" href="/Projects/cryptographic-module-validation-program/programmatic-transitions" id="projPage12" style="border-left: solid 0rem transparent;">Programmatic Transitions</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="7" href="/Projects/cryptographic-module-validation-program/cmvp-management-manual-and-faqs" id="projPage13" style="border-left: solid 0rem transparent;">CMVP FIPS 140-2 Management Manual</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="8" href="/Projects/cryptographic-module-validation-program/fips-140-2" id="projPage14" style="border-left: solid 0rem transparent;">CMVP FIPS 140-2 Related References</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="9" href="/Projects/cryptographic-module-validation-program/cmvp-fips-140-3-management-manual" id="projPage15" style="border-left: solid 0rem transparent;">CMVP FIPS 140-3 Management Manual</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="10" href="/Projects/cryptographic-module-validation-program/fips-140-3-standards" id="projPage16" style="border-left: solid 0rem transparent;">CMVP FIPS 140-3 Related References</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="11" href="/Projects/cryptographic-module-validation-program/announcements" id="projPage17" style="border-left: solid 0rem transparent;">FIPS 140-2 IG Announcements</a>
+<a class="csrc-add-page" data-node-level="1" data-node-order="1" href="/Projects/cryptographic-module-validation-program/announcements/announcements-archive" id="projPage18" style="border-left: solid 1rem transparent;">FIPS 140-2 Announcements Archive</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="12" href="/Projects/cryptographic-module-validation-program/fips-140-3-ig-announcements" id="projPage19" style="border-left: solid 0rem transparent;">FIPS 140-3 IG and RFG Announcements</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="13" href="/Projects/cryptographic-module-validation-program/sp-800-140-series-supplemental-information" id="projPage20" style="border-left: solid 0rem transparent;">SP 800-140 Series Supplemental Information</a>
+<a class="csrc-add-page" data-node-level="1" data-node-order="1" href="/Projects/cryptographic-module-validation-program/sp-800-140-series-supplemental-information/sp800-140b" id="projPage21" style="border-left: solid 1rem transparent;">SP 800-140B: CMVP Security Policy Requirements</a>
+<a class="csrc-add-page" data-node-level="1" data-node-order="2" href="/Projects/cryptographic-module-validation-program/sp-800-140-series-supplemental-information/sp800-140c" id="projPage22" style="border-left: solid 1rem transparent;">SP 800-140C: Approved Security Functions</a>
+<a class="csrc-add-page" data-node-level="1" data-node-order="3" href="/Projects/cryptographic-module-validation-program/sp-800-140-series-supplemental-information/sp800-140d" id="projPage23" style="border-left: solid 1rem transparent;">SP 800-140D: Approved SSP Generation and Establishment Methods</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="14" href="/Projects/cryptographic-module-validation-program/resources" id="projPage24" style="border-left: solid 0rem transparent;">FIPS 140-2 Resources</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="15" href="/Projects/cryptographic-module-validation-program/140-3-resources" id="projPage25" style="border-left: solid 0rem transparent;">FIPS 140-3 Resources</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="16" href="/Projects/cryptographic-module-validation-program/use-of-fips-140-2-logo-and-phrases" id="projPage26" style="border-left: solid 0rem transparent;">Use of FIPS 140-3 or FIPS 140-2 Logo and Phrases</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="17" href="/Projects/cryptographic-module-validation-program/cvp-certification-exam-information" id="projPage27" style="border-left: solid 0rem transparent;">CVP Certification Exam Information</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="18" href="/Projects/cryptographic-module-validation-program/nist-cost-recovery-fees" id="projPage28" style="border-left: solid 0rem transparent;">NIST Cost Recovery Fees</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="19" href="/Projects/cryptographic-module-validation-program/cst-lab-accreditation-and-fees" id="projPage29" style="border-left: solid 0rem transparent;">CST Lab Accreditation and Fees</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="21" href="/Projects/cryptographic-module-validation-program/notices" id="projPage30" style="border-left: solid 0rem transparent;">Archived Notices</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="22" href="/Projects/cryptographic-module-validation-program/cmvp-flow" id="projPage31" style="border-left: solid 0rem transparent;">Updates, Patches, and CVEs</a>
+
+
+    </div>
+
+                </div>
+            </div>
+
+    <div class="bs-callout bs-callout-success" id="contactsCallout-lg">
+        <h4><i class="fa fa-user"></i> Contacts</h4>
+            <p id="projContact0"><span class='contact-display'><strong data-field='full-name'> <span data-field='firstname'>David</span>   <span data-field='lastname'>Hawes</span> </strong> - <strong data-field='position'><span data-field='position'>NIST CMVP Program Manager</span></strong><br/><a href="/cdn-cgi/l/email-protection#dcbfb1aaac9cb2b5afa8f2bbb3aa" data-field='email'><span class="__cf_email__" data-cfemail="2546485355654b4c56510b424a53">[email&#160;protected]</span></a><br/></span></p>
+            <p id="projContact1"><span class='contact-display'><strong data-field='full-name'> <span data-field='firstname'>Kailai</span>   <span data-field='lastname'>Chen</span> </strong> - <strong data-field='position'><span data-field='position'>CCCS CMVP Program Manager</span></strong><br/><a href="/cdn-cgi/l/email-protection#fab9b7acaaba9983989f88d49d99d4999b" data-field='email'><span class="__cf_email__" data-cfemail="3b78766d6b7b5842595e49155c5815585a">[email&#160;protected]</span></a><br/></span></p>
+    </div>
+
+
+    <div class="bs-callout bs-callout-danger" id="owningGroupCallout-lg">
+        <h4><i class="fa fa-sitemap"></i> Group</h4>
+        <a href="/Groups/Computer-Security-Division/Cryptographic-Technology">Cryptographic Technology</a>
+    </div>
+
+
+    <div class="bs-callout bs-callout-danger" id="topicsCallout-lg">
+        <h4><i class="fa fa-tag"></i> Topics</h4>
+
+            <p>
+                <strong id="catName0-lg">Security and Privacy:</strong>
+                    <a id="catTopLink0-0-lg" href="/Topics/Security-and-Privacy/cryptography">cryptography</a>,                     <a id="catTopLink0-1-lg" href="/Topics/Security-and-Privacy/security-measurement/testing-and-validation">testing &amp; validation</a>            </p>
+            <p>
+                <strong id="catName1-lg">Technologies:</strong>
+                    <a id="catTopLink1-0-lg" href="/Topics/technologies/hardware">hardware</a>,                     <a id="catTopLink1-1-lg" href="/Topics/technologies/software-firmware">software &amp; firmware</a>            </p>
+    </div>
+
+
+    <div class="bs-callout bs-callout-warning" id="relatedProjectsCallout-lg">
+        <h4>Related Projects</h4>
+            <a href="/Projects/automated-cryptographic-validation-testing" id="relProjLink0">Automated Cryptographic Validation Testing | NCCoE</a><br/>
+            <a href="/Projects/cryptographic-algorithm-validation-program" id="relProjLink1">Cryptographic Algorithm Validation Program</a><br/>
+            <a href="/Projects/cryptographic-standards-and-guidelines" id="relProjLink2">Cryptographic Standards and Guidelines</a><br/>
+            <a href="/Projects/fips-140-3-transition-effort" id="relProjLink3">FIPS 140-3 Transition Effort</a><br/>
+            <a href="/Projects/threshold-cryptography" id="relProjLink4">Multi-Party Threshold Cryptography</a><br/>
+            <a href="/Projects/random-bit-generation" id="relProjLink5">Random Bit Generation</a><br/>
+            <a href="/Projects/testing-laboratories" id="relProjLink6">Testing Laboratories</a><br/>
+    </div>
+
+
+        </div>
+
+</div>
+    <div class="row visible-sm visible-xs visible-md">
+
+        <div class="col-sm-12">
+
+<div class="bs-callout bs-callout-subnav" id="projectPagesCallout-sm">
+    <h4>Additional Pages</h4>
+    <p>
+
+<a class="csrc-add-page" data-node-level="0" data-node-order="1" href="/Projects/cryptographic-module-validation-program/validated-modules" id="projPage0-sm" style="border-left: solid 0rem transparent;">Validated Modules</a>
+<a class="csrc-add-page" data-node-level="1" data-node-order="1" href="/Projects/cryptographic-module-validation-program/validated-modules/search" id="projPage1-sm" style="border-left: solid 1rem transparent;">Search</a>
+<a class="csrc-add-page" data-node-level="1" data-node-order="2" href="/Projects/cryptographic-module-validation-program/validated-modules/caveats" id="projPage2-sm" style="border-left: solid 1rem transparent;">Caveats</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="3" href="/Projects/cryptographic-module-validation-program/modules-in-process" id="projPage3-sm" style="border-left: solid 0rem transparent;">Modules In Process</a>
+<a class="csrc-add-page" data-node-level="1" data-node-order="1" href="/Projects/cryptographic-module-validation-program/modules-in-process/modules-in-process-list" id="projPage4-sm" style="border-left: solid 1rem transparent;">Modules In Process List</a>
+<a class="csrc-add-page" data-node-level="1" data-node-order="2" href="/Projects/cryptographic-module-validation-program/modules-in-process/iut-list" id="projPage5-sm" style="border-left: solid 1rem transparent;">Implementation Under Test List</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="4" href="/Projects/cryptographic-module-validation-program/entropy-validations" id="projPage6-sm" style="border-left: solid 0rem transparent;">Entropy Validations</a>
+<a class="csrc-add-page" data-node-level="1" data-node-order="1" href="/Projects/cryptographic-module-validation-program/entropy-validations/search" id="projPage7-sm" style="border-left: solid 1rem transparent;">Entropy Source Validation Search</a>
+<a class="csrc-add-page" data-node-level="1" data-node-order="2" href="/Projects/cryptographic-module-validation-program/entropy-validations/announcements-1" id="projPage8-sm" style="border-left: solid 1rem transparent;">Entropy Validation Announcements</a>
+<a class="csrc-add-page" data-node-level="1" data-node-order="4" href="/Projects/cryptographic-module-validation-program/entropy-validations/esv" id="projPage9-sm" style="border-left: solid 1rem transparent;">ESV</a>
+<a class="csrc-add-page" data-node-level="1" data-node-order="5" href="/Projects/cryptographic-module-validation-program/entropy-validations/entropy-source-validation-workshop" id="projPage10-sm" style="border-left: solid 1rem transparent;">Entropy Source Validation Workshop</a>
+<a class="csrc-add-page" data-node-level="1" data-node-order="6" href="/Projects/cryptographic-module-validation-program/entropy-validations/documents" id="projPage11-sm" style="border-left: solid 1rem transparent;">Entropy Validation Documents</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="5" href="/Projects/cryptographic-module-validation-program/programmatic-transitions" id="projPage12-sm" style="border-left: solid 0rem transparent;">Programmatic Transitions</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="7" href="/Projects/cryptographic-module-validation-program/cmvp-management-manual-and-faqs" id="projPage13-sm" style="border-left: solid 0rem transparent;">CMVP FIPS 140-2 Management Manual</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="8" href="/Projects/cryptographic-module-validation-program/fips-140-2" id="projPage14-sm" style="border-left: solid 0rem transparent;">CMVP FIPS 140-2 Related References</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="9" href="/Projects/cryptographic-module-validation-program/cmvp-fips-140-3-management-manual" id="projPage15-sm" style="border-left: solid 0rem transparent;">CMVP FIPS 140-3 Management Manual</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="10" href="/Projects/cryptographic-module-validation-program/fips-140-3-standards" id="projPage16-sm" style="border-left: solid 0rem transparent;">CMVP FIPS 140-3 Related References</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="11" href="/Projects/cryptographic-module-validation-program/announcements" id="projPage17-sm" style="border-left: solid 0rem transparent;">FIPS 140-2 IG Announcements</a>
+<a class="csrc-add-page" data-node-level="1" data-node-order="1" href="/Projects/cryptographic-module-validation-program/announcements/announcements-archive" id="projPage18-sm" style="border-left: solid 1rem transparent;">FIPS 140-2 Announcements Archive</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="12" href="/Projects/cryptographic-module-validation-program/fips-140-3-ig-announcements" id="projPage19-sm" style="border-left: solid 0rem transparent;">FIPS 140-3 IG and RFG Announcements</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="13" href="/Projects/cryptographic-module-validation-program/sp-800-140-series-supplemental-information" id="projPage20-sm" style="border-left: solid 0rem transparent;">SP 800-140 Series Supplemental Information</a>
+<a class="csrc-add-page" data-node-level="1" data-node-order="1" href="/Projects/cryptographic-module-validation-program/sp-800-140-series-supplemental-information/sp800-140b" id="projPage21-sm" style="border-left: solid 1rem transparent;">SP 800-140B: CMVP Security Policy Requirements</a>
+<a class="csrc-add-page" data-node-level="1" data-node-order="2" href="/Projects/cryptographic-module-validation-program/sp-800-140-series-supplemental-information/sp800-140c" id="projPage22-sm" style="border-left: solid 1rem transparent;">SP 800-140C: Approved Security Functions</a>
+<a class="csrc-add-page" data-node-level="1" data-node-order="3" href="/Projects/cryptographic-module-validation-program/sp-800-140-series-supplemental-information/sp800-140d" id="projPage23-sm" style="border-left: solid 1rem transparent;">SP 800-140D: Approved SSP Generation and Establishment Methods</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="14" href="/Projects/cryptographic-module-validation-program/resources" id="projPage24-sm" style="border-left: solid 0rem transparent;">FIPS 140-2 Resources</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="15" href="/Projects/cryptographic-module-validation-program/140-3-resources" id="projPage25-sm" style="border-left: solid 0rem transparent;">FIPS 140-3 Resources</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="16" href="/Projects/cryptographic-module-validation-program/use-of-fips-140-2-logo-and-phrases" id="projPage26-sm" style="border-left: solid 0rem transparent;">Use of FIPS 140-3 or FIPS 140-2 Logo and Phrases</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="17" href="/Projects/cryptographic-module-validation-program/cvp-certification-exam-information" id="projPage27-sm" style="border-left: solid 0rem transparent;">CVP Certification Exam Information</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="18" href="/Projects/cryptographic-module-validation-program/nist-cost-recovery-fees" id="projPage28-sm" style="border-left: solid 0rem transparent;">NIST Cost Recovery Fees</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="19" href="/Projects/cryptographic-module-validation-program/cst-lab-accreditation-and-fees" id="projPage29-sm" style="border-left: solid 0rem transparent;">CST Lab Accreditation and Fees</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="21" href="/Projects/cryptographic-module-validation-program/notices" id="projPage30-sm" style="border-left: solid 0rem transparent;">Archived Notices</a>
+<a class="csrc-add-page" data-node-level="0" data-node-order="22" href="/Projects/cryptographic-module-validation-program/cmvp-flow" id="projPage31-sm" style="border-left: solid 0rem transparent;">Updates, Patches, and CVEs</a>
+
+
+    </p>
+</div>
+
+
+    <div class="bs-callout bs-callout-subnav" id="contactsCallout-sm">
+        <h4><i class="fa fa-user"></i> Contacts</h4>
+        <p style="padding-left: 15px;">
+            <span id="projContact0-sm"><span class='contact-display'><strong data-field='full-name'> <span data-field='firstname'>David</span>   <span data-field='lastname'>Hawes</span> </strong> - <strong data-field='position'><span data-field='position'>NIST CMVP Program Manager</span></strong><br/><a href="/cdn-cgi/l/email-protection#c5a6a8b3b585abacb6b1eba2aab3" data-field='email'><span class="__cf_email__" data-cfemail="1b78766d6b5b7572686f357c746d">[email&#160;protected]</span></a><br/></span></span><br/>
+            <span id="projContact1-sm"><span class='contact-display'><strong data-field='full-name'> <span data-field='firstname'>Kailai</span>   <span data-field='lastname'>Chen</span> </strong> - <strong data-field='position'><span data-field='position'>CCCS CMVP Program Manager</span></strong><br/><a href="/cdn-cgi/l/email-protection#9bd8d6cdcbdbf8e2f9fee9b5fcf8b5f8fa" data-field='email'><span class="__cf_email__" data-cfemail="145759424454776d7671663a73773a7775">[email&#160;protected]</span></a><br/></span></span><br/>
+        </p>
+    </div>
+
+
+    <div class="bs-callout bs-callout-danger" id="owningGroupCallout-sm">
+        <h4><i class="fa fa-sitemap"></i> Group</h4>
+        <a href="/Groups/Computer-Security-Division/Cryptographic-Technology">Cryptographic Technology</a>
+    </div>
+
+
+    <div class="bs-callout bs-callout-danger" id="topicsCallout-sm">
+        <h4><i class="fa fa-tag"></i> Topics</h4>
+
+            <p>
+                <strong id="catName0-sm">Security and Privacy:</strong>
+                    <a id="catTopLink0-0-sm" href="/Topics/Security-and-Privacy/cryptography">cryptography</a>,                     <a id="catTopLink0-1-sm" href="/Topics/Security-and-Privacy/security-measurement/testing-and-validation">testing &amp; validation</a>            </p>
+            <p>
+                <strong id="catName1-sm">Technologies:</strong>
+                    <a id="catTopLink1-0-sm" href="/Topics/technologies/hardware">hardware</a>,                     <a id="catTopLink1-1-sm" href="/Topics/technologies/software-firmware">software &amp; firmware</a>            </p>
+    </div>
+
+
+    <div class="bs-callout bs-callout-warning" id="relatedProjectsCallout-sm">
+        <h4>Related Projects</h4>
+        <p>
+            <a href="/Projects/automated-cryptographic-validation-testing" id="relProjLink0-sm">Automated Cryptographic Validation Testing | NCCoE</a><br/>
+            <a href="/Projects/cryptographic-algorithm-validation-program" id="relProjLink1-sm">Cryptographic Algorithm Validation Program</a><br/>
+            <a href="/Projects/cryptographic-standards-and-guidelines" id="relProjLink2-sm">Cryptographic Standards and Guidelines</a><br/>
+            <a href="/Projects/fips-140-3-transition-effort" id="relProjLink3-sm">FIPS 140-3 Transition Effort</a><br/>
+            <a href="/Projects/threshold-cryptography" id="relProjLink4-sm">Multi-Party Threshold Cryptography</a><br/>
+            <a href="/Projects/random-bit-generation" id="relProjLink5-sm">Random Bit Generation</a><br/>
+            <a href="/Projects/testing-laboratories" id="relProjLink6-sm">Testing Laboratories</a><br/>
+        </p>
+    </div>
+
+
+        </div>
+
+    </div>
+
+<div class="row">
+    <div class="col-md-12 historical-data-area" id="historical-data-area">
+
+            <span>Created <span id="page-created-date">October 11, 2016</span>, Updated <span id="page-updated-date">June 29, 2026</span></span>
+    </div>
+</div>
+
+
+
+
+
+
+        <div id="footer-pusher"></div>
+
+    </div>
+
+    
+
+    <footer id="footer">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-sm-6">
+                <span class="hidden-xs">
+                    <a href="https://www.nist.gov" title="National Institute of Standards and Technology" rel="home" target='_blank' rel="noopener noreferrer" class="footer-nist-logo" id="footer-nist-logo-link">
+                        <img src="/CSRC/Media/images/nist-logo-brand-white.svg" alt="National Institute of Standards and Technology logo" id="footer-nist-logo" />
+                    </a>
+                </span>
+
+                <div class="row footer-contact-container">
+                    <div class="col-sm-12" id="footer-address">
+                        <strong>HEADQUARTERS</strong><br>
+                        100 Bureau Drive<br>
+                        Gaithersburg, MD 20899
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <ul class="social-list text-right" style="display: block;">
+                    <li class="field-item service-twitter list-horiz">
+                        <a href="https://x.com/NISTCyber" class="social-btn social-btn--large extlink ext" id="footer-social-twitter-link">
+                            <i class="fa-brands fa-x-twitter fa-fw"><span class="element-invisible">X</span></i><span class="ext"><span class="element-invisible"> (link is external)</span></span>
+                        </a>
+                    </li>
+                    <li class="field-item service-facebook list-horiz">
+                        <a href="https://www.facebook.com/NIST" class="social-btn social-btn--large extlink ext" id="footer-social-facebook-link">
+                            <i class="fa fa-facebook fa-fw"><span class="element-invisible">facebook</span></i><span class="ext"><span class="element-invisible"> (link is external)</span></span>
+                        </a>
+
+                    </li>
+                    <li class="field-item service-linkedin list-horiz">
+                        <a href="https://www.linkedin.com/company/nist" class="social-btn social-btn--large extlink ext" id="footer-social-linkedin-link">
+                            <i class="fa fa-linkedin fa-fw"><span class="element-invisible">linkedin</span></i><span class="ext"><span class="element-invisible"> (link is external)</span></span>
+                        </a>
+
+                    </li>
+                    <li class="field-item service-instagram list-horiz">
+                        <a href="https://www.instagram.com/usnistgov/" class="social-btn social-btn--large extlink ext" id="footer-social-instagram-link">
+                            <i class="fa fa-instagram fa-fw"><span class="element-invisible">instagram</span></i>
+                            <span class="ext"><span class="element-invisible"> (link is external)</span></span>
+                        </a>
+
+                    </li>
+                    <li class="field-item service-youtube list-horiz">
+                        <a href="https://www.youtube.com/user/USNISTGOV" class="social-btn social-btn--large extlink ext" id="footer-social-youtube-link">
+                            <i class="fa fa-youtube fa-fw"><span class="element-invisible">youtube</span></i><span class="ext"><span class="element-invisible"> (link is external)</span></span>
+                        </a>
+
+                    </li>
+                    <li class="field-item service-rss list-horiz">
+                        <a href="https://www.nist.gov/news-events/nist-rss-feeds" class="social-btn social-btn--large extlink" id="footer-social-rss-link">
+                            <i class="fa fa-rss fa-fw"><span class="element-invisible">rss</span></i>
+                        </a>
+
+                    </li>
+                    <li class="field-item service-govdelivery list-horiz last">
+                        <a href="https://public.govdelivery.com/accounts/USNIST/subscriber/new?qsp=USNIST_3" class="social-btn social-btn--large extlink ext" title="Subscribe to CSRC and publication updates, and other NIST cybersecurity news" id="footer-social-govdelivery-link">
+                            <i class="fa fa-envelope fa-fw"><span class="element-invisible">govdelivery</span></i><span class="ext"><span class="element-invisible"> (link is external)</span></span>
+                        </a>
+                    </li>
+                </ul>
+                <p class="text-right">
+                    Want updates about CSRC and our publications?
+                    <a href="https://public.govdelivery.com/accounts/USNIST/subscriber/new?qsp=USNIST_3" class="btn btn-lg btn-primary" style="background-color: #12659c!important; border-color: #12659c!important;" id="footer-subscribe-link">Subscribe</a>
+                </p>
+            </div>
+        </div>
+        <div class="row hidden-sm hidden-md hidden-lg">
+            <div class="col-sm-12">
+                <a href="https://www.nist.gov" title="National Institute of Standards and Technology" rel="home" target='_blank' rel="noopener noreferrer" class="footer-nist-logo" id="footer-bottom-nist-logo-link">
+                    <img src="/CSRC/Media/images/logo_rev.png" alt="National Institute of Standards and Technology logo" id="footer-bottom-nist-logo" />
+                </a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <p>
+                    <a href="/about/contact" id="footer-contact-us-link">Contact Us</a> |
+                    <a href="https://www.nist.gov/about-nist/visit" style="display: inline-block;" id="footer-org-link">Our Other Offices</a>
+                </p>
+            </div>
+            <div class="col-sm-6">
+                <span class="pull-right text-right">
+                    Send inquiries to <a href="/cdn-cgi/l/email-protection#6b081819084602051a1e0219122b0502181f450c041d54181e09010e081f56283839284b22051a1e021912" style="display: inline-block;" id="footer-inquiries-link"><span class="__cf_email__" data-cfemail="95f6e6e7f6b8fcfbe4e0fce7ecd5fbfce6e1bbf2fae3">[email&#160;protected]</span></a>
+                </span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="footer-bottom-links-container" id="footer-bottom-links-container">
+                <ul>
+                  <li><a href="https://www.nist.gov/privacy-policy">Site Privacy</a></li>
+                  <li><a href="https://www.nist.gov/oism/accessibility">Accessibility</a></li>
+                  <li><a href="https://www.nist.gov/privacy">Privacy Program</a></li>
+                  <li><a href="https://www.nist.gov/oism/copyrights">Copyrights</a></li>
+                  <li><a href="https://www.commerce.gov/vulnerability-disclosure-policy">Vulnerability Disclosure</a></li>
+                  <li><a href="https://www.nist.gov/no-fear-act-policy">No Fear Act Policy</a></li>
+                  <li><a href="https://www.nist.gov/foia">FOIA</a></li>
+                  <li><a href="https://www.nist.gov/environmental-policy-statement">Environmental Policy</a></li>
+                  <li><a href="https://www.nist.gov/summary-report-scientific-integrity">Scientific Integrity</a></li>
+                  <li><a href="https://www.nist.gov/nist-information-quality-standards">Information Quality Standards</a></li>
+                  <li><a href="https://www.commerce.gov/">Commerce.gov</a></li>
+                  <li><a href="https://www.science.gov/">Science.gov</a></li>
+                  <li><a href="https://www.usa.gov/">USA.gov</a></li>
+                  <li><a href="https://vote.gov/">Vote.gov</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="text/javascript" src="/dist/js/quick-collapse.js"></script>
+<script type="text/javascript" src="/dist/app.bundle.js"></script>
+<!-- USWDS Bottom -->
+<script type="text/javascript" src="/dist/uswds/js/uswds.min.js"></script>
+
+    
+    <script type="text/javascript" src="/dist/projects.bundle.js"></script>
+
+    
+
+
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"9ef5b487afff42a68917b2d63593a474","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a1a29588ddd3accd',t:'MTc4Mzg4NTkwMg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

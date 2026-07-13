@@ -4,7 +4,11 @@ import { ExternalLink } from 'lucide-react'
 interface TimelineEvidenceBadgeProps {
   confidenceScore?: number
   trustedSourceIdStatus?: string
-  localFile?: string
+  /** External authoritative source URL — the only link this badge renders.
+   * (Previously linked to a local cached-document path, but that file was
+   * never actually published/deployed — see LOCAL-FILES-REMEDIATION-PLAN-07122026.md
+   * in the private repo. Removed 2026-07-12 rather than left silently 404ing.) */
+  sourceUrl?: string
   /**
    * ISO date used to compute freshness state (C9). When set, renders a
    * `current` (≤365d), `stale` (≤730d), or `critical` (>730d) pill alongside
@@ -67,7 +71,7 @@ function scoreColor(score: number): string {
 export function TimelineEvidenceBadge({
   confidenceScore,
   trustedSourceIdStatus,
-  localFile,
+  sourceUrl,
   lastVerifiedDate,
   compact = false,
 }: TimelineEvidenceBadgeProps) {
@@ -75,7 +79,7 @@ export function TimelineEvidenceBadge({
   if (!trustedSourceIdStatus && confidenceScore === undefined && !freshness) return null
 
   const tier = tierLabel(trustedSourceIdStatus)
-  const docHref = localFile ? `/${localFile.replace(/^public\//, '')}` : undefined
+  const docHref = sourceUrl
 
   if (compact) {
     return (
@@ -106,7 +110,7 @@ export function TimelineEvidenceBadge({
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center text-[10px] text-primary hover:underline"
-            title="View cached document"
+            title="View source"
             onClick={(e) => e.stopPropagation()}
           >
             <ExternalLink className="w-2.5 h-2.5" />
@@ -148,7 +152,7 @@ export function TimelineEvidenceBadge({
           className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
         >
           <ExternalLink className="w-3 h-3" />
-          View cached document
+          View source
         </a>
       )}
     </div>

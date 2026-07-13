@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:d139309d-1c2f-4642-9cdb-42160eaf0438",
+  "serialNumber": "urn:uuid:363dfd4d-5bec-4722-ab5b-88cb153910c2",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-07-09T00:00:00.000Z",
+    "timestamp": "2026-07-12T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -24320,6 +24320,10 @@
       "description": "Payment HSM with PQC on roadmap. Utimaco SecurityServer general-purpose HSM has announced PQC roadmap for NIST algorithms. Athos payment-specific HSM firmware does not yet publicly list ML-KEM or ML-DSA support. German vendor positioning for European PCI DSS and EMV compliance.",
       "externalReferences": [
         {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
+        {
           "type": "website",
           "url": "https://utimaco.com/products/categories/payment-hsms"
         }
@@ -24408,6 +24412,10 @@
       "description": "No PQC firmware signature verification in current Secure Boot. CNG supports ML-KEM/ML-DSA for applications but Secure Boot chain still uses RSA-2048.",
       "externalReferences": [
         {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
+        {
           "type": "website",
           "url": "https://learn.microsoft.com/en-us/windows/security/operating-system-security/system-security/secure-boot-and-device-encryption/secure-boot"
         }
@@ -24449,6 +24457,10 @@
       },
       "description": "Oracle Database 26ai introduces quantum-resistant encryption for Transparent Data Encryption. Includes support for post-quantum cryptographic algorithms for data-at-rest protection. Key management via Oracle Key Vault (OKV) with classical key wrapping pending PQC upgrade. Significant milestone as first major RDBMS to ship PQC-capable TDE. Note: ML-KEM/ML-DSA are for TLS in-transit encryption (Oracle 26ai). TDE data-at-rest uses AES-256 (quantum-resistant symmetric).",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://blogs.oracle.com/database/oracle-ai-database-26ai-pqc"
@@ -24535,6 +24547,10 @@
       "description": "Windows CNG has ML-KEM/ML-DSA but Outlook S/MIME has not shipped PQC certificate support. Dependent on CA ecosystem issuing PQC X.509 certificates.",
       "externalReferences": [
         {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
+        {
           "type": "website",
           "url": "https://www.microsoft.com/en-us/microsoft-365"
         }
@@ -24577,6 +24593,10 @@
       "description": "PQC capabilities in nShield HSMs. ML-DSA and SLH-DSA integration expected through HSM backend upgrades. No confirmed production PQC signing deployment.",
       "externalReferences": [
         {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
+        {
           "type": "website",
           "url": "https://www.entrust.com/digital-security/digital-signing"
         }
@@ -24614,6 +24634,10 @@
       },
       "description": "Enterprise CIAM platform (now part of Ping Identity / Thales group). PQC roadmap includes quantum-safe TLS for authentication endpoints and hybrid PQC signatures for OAuth/OIDC tokens. Merger with Ping Identity accelerates access to enterprise PQC cryptography resources.",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.pingidentity.com/en/platform/forgerock.html"
@@ -24658,6 +24682,10 @@
       "description": "QKD-as-a-service platform targeting subsea and long-distance fiber deployments. Uses Trusted Node architecture to extend QKD beyond single fiber spans. Provides quantum-safe key exchange integrated with PQC (ML-KEM) in hybrid mode for government and critical infrastructure. Focused on satellite-ground and metro QKD networks. Participation in European Quantum Internet Alliance (QIA) projects.",
       "externalReferences": [
         {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
+        {
           "type": "website",
           "url": "https://qubridge.io/nist-quantum-bridge-cavp-certification-quantum-safe-security/"
         }
@@ -24700,6 +24728,10 @@
       "description": "QNX Neutrino is a safety-certified microkernel RTOS used in automotive (50M+ vehicles), medical devices, and industrial systems. BlackBerry QNX has announced PQC integration aligned with NIST standards and ISO 21434 automotive cybersecurity requirements. Targets ML-KEM and ML-DSA for over-the-air update signing and secure communications.",
       "externalReferences": [
         {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
+        {
           "type": "website",
           "url": "https://blackberry.com/us/en/products/blackberry-qnx"
         }
@@ -24729,13 +24761,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "8d18161e22cbc3ce",
+      "bom-ref": "dd4155c88babcfec",
       "name": "BeyondTrust Privilege Management",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "BeyondTrust Privilege Management provides endpoint PAM, privileged remote access, and password management. Cryptographic operations rely on TLS 1.3 for transport and AES-256 for credential storage. PQC roadmap tied to underlying platform TLS library upgrades. No dedicated PQC timeline published.",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.beyondtrust.com/products/privilege-management"
@@ -24766,8 +24803,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "207e50cdc287dcea",
+      "bom-ref": "d864cc8227c53be6",
       "name": "Google Workspace Identity",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -24777,6 +24815,10 @@
       },
       "description": "Google Workspace Identity includes SSO, SAML, OAuth 2.0, and LDAP services for enterprise users. Google's infrastructure already uses ML-KEM hybrid TLS on all Google services (enabled 2024). Authentication tokens and SAML assertions still use classical RSA/ECC signing. Google has not announced a specific ML-DSA migration timeline for identity tokens.",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://workspace.google.com/products/gmail/enterprise-security/"
@@ -24821,6 +24863,10 @@
       "description": "AnyDesk provides remote desktop software using its proprietary DeskRT codec with TLS 1.2/1.3 transport. AnyDesk is incorporated in Germany and subject to BSI (Federal Office for Information Security) PQC guidance. No public PQC roadmap announced as of Q1 2026. Transport upgrade to ML-KEM hybrid TLS expected to follow BSI TR-02102 updates.",
       "externalReferences": [
         {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
+        {
           "type": "website",
           "url": "https://anydesk.com/en/features/security"
         }
@@ -24864,6 +24910,10 @@
       "description": "AI model firewall providing runtime monitoring, adversarial input detection, and model integrity enforcement. Robust Intelligence (acquired by Cisco) is developing quantum-safe model signing using ML-DSA for continuous model integrity verification and PQC-protected telemetry pipelines to defend AI infrastructure against quantum-capable adversaries.",
       "externalReferences": [
         {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
+        {
           "type": "website",
           "url": "https://www.robustintelligence.com"
         }
@@ -24901,6 +24951,10 @@
       },
       "description": "Enterprise data discovery and classification platform with cryptographic asset inventory capabilities. Discovers sensitive data and cryptographic material across structured and unstructured data stores. Generates Cryptographic Bill of Materials (CBOM) for PQC migration planning. Identifies quantum-vulnerable cryptographic algorithms in data at rest and data flows. Part of the Thales CipherTrust Data Security Platform. Integrates with CipherTrust Manager for unified key and crypto policy management.",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://cpl.thalesgroup.com/encryption/ciphertrust-data-discovery-and-classification"
@@ -24944,6 +24998,10 @@
       "description": "Production-grade hybrid post-quantum VPN using IKEv2 with RFC 9370 extensions (the IETF-ratified standard for multiple key exchanges in IKEv2, co-authored by Post-Quantum Ltd). Supports ML-KEM-1024 + Classic McEliece hybrid KEM for defense-in-depth key establishment. Fully backward compatible with existing IPsec/IKEv2 infrastructure — no rip-and-replace required. Crypto-agile architecture allows algorithm updates without redeployment. Deployed protecting NATO communications and active conflict zone drone operations. FIPS 140-3 validation in progress.",
       "externalReferences": [
         {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
+        {
           "type": "website",
           "url": "https://www.post-quantum.com/products/vpn/"
         }
@@ -24973,13 +25031,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "b5590417746598b1",
+      "bom-ref": "c87a49da98a8f180",
       "name": "Ping Identity / ForgeRock",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "Ping Identity: Preparing for Post-Quantum Cryptography",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.pingidentity.com/en/resources/blog/post/preparing-for-post-quantum-cryptography.html"
@@ -25000,7 +25063,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -25010,13 +25073,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "0b1d3b6eef1820d2",
+      "bom-ref": "d359403672b9c899",
       "name": "Kudelski IoT Security IP",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "Kudelski KSE: Quantum-Resistant IoT IP",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.kudelski-iot.com/solutions/secure-ip-design"
@@ -25037,7 +25105,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -25047,13 +25115,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "7a0c071815e5fdb1",
+      "bom-ref": "fdf892ee18c68a85",
       "name": "Nokia NetGuard",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "Nokia: Defense-in-Depth for PQC Networks",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.nokia.com/cybersecurity/post-quantum-cryptography/"
@@ -25074,7 +25147,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -25084,13 +25157,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "0cd60d060802a66a",
+      "bom-ref": "f1ecd4851e877e06",
       "name": "Okta Entra ID Integration",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "Okta: Identity Federation PQC Roadmap",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.okta.com/resources/whitepaper/okta-and-post-quantum-cryptography/"
@@ -25111,7 +25189,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -25121,13 +25199,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "76aaff90ee9353b7",
+      "bom-ref": "e59e88ec4971b72f",
       "name": "Palo Alto Orion",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "Palo Alto: Orion 12.1 Post-Quantum Hybrid VPN Release",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.paloaltonetworks.com/blog/2026/01/pan-os-12-1-orion-pqc-security/"
@@ -25148,7 +25231,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -25158,13 +25241,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "54f2fc644cd4c069",
+      "bom-ref": "56a4caf9bf2e58cf",
       "name": "ArgoCD / FluxCD 2026",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "ArgoCD vs FluxCD: Production GitOps Security in 2026",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://oneuptime.com/blog/post/2026-02-26-argocd-vs-fluxcd-2026/view"
@@ -25185,7 +25273,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -25195,13 +25283,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "64bfbd542a41d9c0",
+      "bom-ref": "7a85ec16e8144590",
       "name": "Bamboo CI (Roadmap)",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "Gov Canada: PQC Migration Roadmap for Federal IT Infrastructure",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.cyber.gc.ca/en/guidance/roadmap-migration-post-quantum-cryptography-government-canada-itsm40001"
@@ -25222,7 +25315,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -25232,13 +25325,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "a21ef71092a17b07",
+      "bom-ref": "76dfb47591667b51",
       "name": "HashiCorp Terraform / HCP",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "HashiCorp: HCP Migration and Platform Security Alignment",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.reddit.com/r/Terraform/comments/1pngkr4/hcp_terraform_free_is_ending_choose_a_new_plan/"
@@ -25259,7 +25357,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -25269,13 +25367,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "542870e8f5f77856",
+      "bom-ref": "0735db215da90444",
       "name": "Ansible / PQC App Recs",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "IETF: PQC Recommendations for TLS-based Applications (v01)",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://datatracker.ietf.org/doc/draft-ietf-uta-pqc-app/"
@@ -25296,7 +25399,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -25306,13 +25409,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "e508d72464d5f4a8",
+      "bom-ref": "d4d7885da8c1d9a0",
       "name": "Pulumi / Talan 2026",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "Talan: Post-quantum cryptography in 2026 Infrastructure Planning",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.talan.com/uk/en/post-quantum-cryptography-2026"
@@ -25333,7 +25441,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -25343,13 +25451,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "b9bb0d8b9a0227b6",
+      "bom-ref": "28a01ede90a961ec",
       "name": "DigiCert Code-Signing (v2026)",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "DigiCert: New Code-Signing Certificate Validity & Automation Standards",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.digicert.com/blog/understanding-the-new-code-signing-certificate-validity-change"
@@ -25370,7 +25483,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -25380,13 +25493,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "0f77c3c3b4e0dba0",
+      "bom-ref": "b7ccc471f5509c05",
       "name": "GlobalSign Support (Atlas)",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "GlobalSign: Upcoming Changes to TLS Roots and PQC Certificate Profiles",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://support.globalsign.com/ssl/upcoming-changes-tls-roots-and-certificate-profiles"
@@ -25407,7 +25525,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -25417,13 +25535,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "a772153f5572ec31",
+      "bom-ref": "8a28c16f6f611e4f",
       "name": "Kudelski KSE IP",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "Kudelski: Quantum-Resistant IoT Security Platform",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.kudelski-iot.com/solutions/secure-ip-design"
@@ -25444,7 +25567,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -25504,13 +25627,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "e6e56a58a9561a3f",
+      "bom-ref": "0ece9f8dcbe01e40",
       "name": "Intel Stratix 10 (Secure)",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "Intel FPGA: Cryptographic Agility and PQC Soft IP",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.intel.com/content/www/us/en/products/details/fpga/stratix/10.html"
@@ -25531,7 +25659,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -25541,13 +25669,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "c57eb4d6cc3d2858",
+      "bom-ref": "89fd893266ebc5f8",
       "name": "Cloudian HyperStore 8.0",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "Cloudian: Roadmap for Quantum-Safe S3 Object Storage",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://cloudian.com/products/hyperstore/"
@@ -25568,7 +25701,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -25578,13 +25711,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "58ce2c79a6bde1f4",
+      "bom-ref": "c684f9fefbab9ad0",
       "name": "Oracle Cloud Infrastructure (OCI)",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "NIST CAVP \\#19412: Oracle Cloud PQC TLS Implementation",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19412"
@@ -25605,7 +25743,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -25615,13 +25753,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "bf1cc98b1a828218",
+      "bom-ref": "7d0b6ee3566e2d6c",
       "name": "Snyk Container",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "Snyk: Detecting Quantum-Vulnerable Libraries in Containers",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://snyk.io/product/container-security/"
@@ -25642,7 +25785,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -25652,8 +25795,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "5599dc727d5e153b",
+      "bom-ref": "e64796bd68d4f8b0",
       "name": "Microsoft IIS 11",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -25664,6 +25808,10 @@
       },
       "description": "IIS 11: Native ML-KEM Support via Windows HTTP.sys",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://learn.microsoft.com/en-us/iis/get-started/whats-new-in-iis-11/announcing-iis-11"
@@ -25684,7 +25832,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -25694,13 +25842,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "5c2a9e9ef835b871",
+      "bom-ref": "2c8f4eae8b7030f9",
       "name": "Microsoft Teams / Premium",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "Microsoft: Roadmap for Quantum-Safe Meetings and Collaboration",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.microsoft.com/en-us/security/blog/2025/08/20/quantum-safe-security-progress-towards-next-generation-cryptography/"
@@ -25721,7 +25874,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -25731,13 +25884,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "4eb1db06725acb33",
+      "bom-ref": "ab635373758f237c",
       "name": "Slack Enterprise Grid",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "Salesforce: Protecting the Customer 360 Ecosystem from Quantum Threats",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.salesforce.com/news/stories/salesforce-quantum-safe-strategy/"
@@ -25758,7 +25916,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -25768,13 +25926,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "e71fb170b9f5ad55",
+      "bom-ref": "865a3565d5c47ece",
       "name": "Zix / AppRiver",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "Zix: Enhancing Email Encryption for the Post-Quantum Era",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.zix.com/products/email-encryption"
@@ -25795,7 +25958,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -25805,13 +25968,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "ec6d93373900d4e5",
+      "bom-ref": "bfb79febf06c6365",
       "name": "Box Shield",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "Box: Integrating PQC into Enterprise Content Governance",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.box.com/security-compliance/shield"
@@ -25832,7 +26000,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -25842,13 +26010,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "84b1c18c5baf291b",
+      "bom-ref": "223a1177c6731b5c",
       "name": "Egnyte Governance",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "Egnyte: Managing Data Privacy in a Post-Quantum World",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.egnyte.com/platform/governance"
@@ -25869,7 +26042,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -25879,13 +26052,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "a4a8837477a38f12",
+      "bom-ref": "f8cc46900c7732ce",
       "name": "SentinelOne Singularity",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "SentinelOne: Preparing for the Quantum Frontier in XDR",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.sentinelone.com/blog/quantum-computing-is-the-next-frontier-in-cybersecurity/"
@@ -25906,7 +26084,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -25916,13 +26094,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "52f425aa3ecd33e4",
+      "bom-ref": "d50b8b6cbb8c604a",
       "name": "Trend Micro Vision One",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "Trend Micro: Navigating the Quantum Threat to Encryption",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.trendmicro.com/vinfo/us/security/news/cybersecurity-operations/quantum-computing-threat-to-encryption"
@@ -25943,7 +26126,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -26002,13 +26185,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "9adf833697b1b341",
+      "bom-ref": "fd0dd773be02f30e",
       "name": "Vivaldi Browser",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "Vivaldi: Implementing Quantum-Resistant Protections",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://vivaldi.com/blog/vivaldi-and-the-post-quantum-future/"
@@ -26029,7 +26217,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -26039,13 +26227,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "5f229379589bfbb3",
+      "bom-ref": "34c951d6293062f9",
       "name": "SWIFT (Post-Quantum Strategy)",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "SWIFT: Exploring Post-Quantum Cryptography for Secure Financial Messaging",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.swift.com/news-events/news/swift-explores-post-quantum-cryptography-secure-financial-messaging"
@@ -26066,7 +26259,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -26076,13 +26269,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "25f8f3f75025fc95",
+      "bom-ref": "296cea15cbfd4f4b",
       "name": "JPMorgan Chase (PQC Framework)",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "JPMorgan: Demonstrating Quantum Key Distribution for Financial Data",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.jpmorganchase.com/news-stories/jpmc-and-toshiba-demonstrate-first-quantum-key-distribution-network"
@@ -26103,7 +26301,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -26113,13 +26311,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "15c1b9fa410fa86d",
+      "bom-ref": "873d8a8a96b55f6e",
       "name": "Mastercard (PQC for Payments)",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "Mastercard: Developing Quantum-Resistant Contactless Payment Standards",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.mastercard.com/news/perspectives/2024/protecting-the-future-of-payments-from-quantum-threats/"
@@ -26140,7 +26343,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -26150,13 +26353,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "ca9b27617c0306a7",
+      "bom-ref": "16f2e3f98242e220",
       "name": "Visa (Quantum Readiness)",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "Visa: Cryptographic Agility and the Transition to Post-Quantum",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://usa.visa.com/visa-everywhere/blog/visa-blog.entry.html/2024/05/15/preparing-for-a-post-quantum-world.html"
@@ -26177,7 +26385,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -26187,13 +26395,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "45f314b62f14298e",
+      "bom-ref": "2aa62d220829df86",
       "name": "HSBC (Quantum Protection)",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "HSBC: Trialling Quantum Protection for Foreign Exchange Trading",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.hsbc.com/news-and-media/hsbc-news/hsbc-trials-quantum-protection-for-foreign-exchange-trading"
@@ -26214,7 +26427,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -26224,13 +26437,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "edbeec1449403f29",
+      "bom-ref": "57f62e693818b928",
       "name": "Barclays (PQC Research)",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "Barclays: Collaborating with IBM on Quantum-Safe Financial Services",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.barclays.com/news/2023/06/barclays-and-ibm-collaborate-on-quantum-computing/"
@@ -26251,7 +26469,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -26261,13 +26479,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "808f25cc474e06f2",
+      "bom-ref": "25ad47b4b927cac4",
       "name": "Temenos Core Banking",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "Temenos: Delivering Quantum-Safe Banking Solutions on Azure",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.temenos.com/news/2024/03/12/temenos-delivers-quantum-safe-banking-on-azure/"
@@ -26288,7 +26511,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -26298,13 +26521,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "32c9a1ae1fde44c8",
+      "bom-ref": "c51c12eda566c65d",
       "name": "Thought Machine Vault",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "Thought Machine: Cloud-Native Banking and Quantum Readiness",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://thoughtmachine.net/blog/preparing-for-the-quantum-era"
@@ -26325,7 +26553,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -26335,13 +26563,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "bc9d2522739fab88",
+      "bom-ref": "8429ceb759d80afc",
       "name": "Stripe (v2026)",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "Stripe: Implementing Post-Quantum Hybrid TLS for API Traffic",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://stripe.com/blog/post-quantum-cryptography-readiness"
@@ -26362,7 +26595,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -26372,13 +26605,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "b0a1c9529fc58ef7",
+      "bom-ref": "b52673936ac15164",
       "name": "PayPal / Braintree",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "PayPal: Enhancing Payment Security for the Quantum Era",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.paypal.com/us/brc/article/quantum-computing-security"
@@ -26399,7 +26637,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -26409,13 +26647,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "3aed11ba8236cf88",
+      "bom-ref": "c17bf66c8c6a6b5a",
       "name": "Boeing (Quantum-Safe Sky)",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "Boeing: Securing Aviation Data in the Quantum Era",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.boeing.com/features/2024/05/quantum-safe-sky.page"
@@ -26436,7 +26679,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -26446,13 +26689,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "e159e9355eaeea20",
+      "bom-ref": "b601dd51ee1fed68",
       "name": "Airbus (Quantum Program)",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "Airbus: Post-Quantum Cryptography for Aircraft Communications",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.airbus.com/en/innovation/zero-emission/quantum-technologies"
@@ -26473,7 +26721,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -26483,13 +26731,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "9ef90c34c35156ab",
+      "bom-ref": "f3388acb47457a2e",
       "name": "Lockheed Martin (PQC)",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "Lockheed Martin: Quantum-Resistant Security for Defense Platforms",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.lockheedmartin.com/en-us/capabilities/quantum-technologies.html"
@@ -26510,7 +26763,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -26520,13 +26773,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "d8521b55d6d1ccf6",
+      "bom-ref": "c955c2b7216456f4",
       "name": "Northrop Grumman",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "Northrop Grumman: Quantum Information Sciences & PQC",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.northropgrumman.com/cyber/quantum-information-sciences/"
@@ -26547,7 +26805,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -26557,13 +26815,18 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "f712e507978ec336",
+      "bom-ref": "6b3013696bb4d62a",
       "name": "PCI DSS v4.0.1 (PQC Guidance)",
+      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
       "description": "PCI SSC: Information Supplement on Post-Quantum Cryptography",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://blog.pcisecuritystandards.org/resource-post-quantum-cryptography-report"
@@ -26584,7 +26847,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -26606,6 +26869,10 @@
       },
       "description": "Full PQC key management with ML-KEM ML-DSA and SLH-DSA key types. Supports encapsulation decapsulation sign and verify operations. PQ-TLS for KMIP connections. nShield 5 HSM v13.8.0 natively supports PQC with CAVP validation.",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.entrust.com/digital-security/key-management/keycontrol"
@@ -26648,6 +26915,10 @@
       },
       "description": "General availability of PQC algorithms in November 2025 update. Supports ML-KEM and ML-DSA via CNG and Certificate functions.",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://www.microsoft.com/en-us/windows-server"
@@ -26846,6 +27117,10 @@
       "description": "Venafi TLS Protect and CodeSign Protect support experimental ML-DSA and SLH-DSA algorithms for issuing PQC certificates.",
       "externalReferences": [
         {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
+        {
           "type": "website",
           "url": "https://venafi.com"
         }
@@ -26887,6 +27162,10 @@
       },
       "description": "Microsoft Azure Dedicated HSM powered by Thales Luna 7 hardware (FIPS 140-2 L3). Thales Luna firmware 7.9+ adds ML-KEM and ML-DSA support; Azure Dedicated HSM customers can request firmware updates for PQC capabilities. Microsoft Azure Managed HSM (Marvell LiquidSecurity) adding PQC key types per 2029 roadmap.",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://azure.microsoft.com/en-us/products/azure-dedicated-hsm"
@@ -26974,6 +27253,10 @@
       },
       "description": "System-wide PQC support including PQ3 for iMessage and HPKE with ML-KEM/ML-DSA. APIs for third-party apps via CryptoKit.",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/signalapp/libsignal"
+        },
         {
           "type": "website",
           "url": "https://developer.apple.com/"

@@ -16,6 +16,11 @@ import Papa from 'papaparse'
 import type { CheckResult, Finding } from './types.js'
 
 const REPO_ROOT = path.resolve(process.cwd())
+// RELOCATED 2026-07-12 (see maintenance/LOCAL-FILES-REMEDIATION-PLAN-07122026.md
+// in the private repo) — raw evidence documents now live in
+// pqctoday-priv/local-evidence-cache/, a sibling of this repo, not under
+// public/ here.
+const LOCAL_CACHE_ROOT = path.resolve(REPO_ROOT, '..', 'pqctoday-priv', 'local-evidence-cache')
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -743,7 +748,9 @@ async function runCmT(): Promise<CheckResult[]> {
     }
 
     if (localFile) {
-      const absPath = path.join(REPO_ROOT, localFile.replace(/^public\//, 'public/'))
+      // RELOCATED 2026-07-12 — local_file now stores "timeline/X.html" (no
+      // "public/" prefix) and resolves against LOCAL_CACHE_ROOT, not REPO_ROOT.
+      const absPath = path.join(LOCAL_CACHE_ROOT, localFile.replace(/^public\//, ''))
       if (!fs.existsSync(absPath)) {
         f03.push({
           csv: latestTimeline,

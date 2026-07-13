@@ -771,7 +771,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'rfc-editor-queue',
         stageNote: 'LAMPS composite-sigs in RFC Ed Queue (EDIT); TLS dual-cert draft at I-D stage',
-        note: 'Two work streams: dual-certificate negotiation in TLS WG (Internet-Draft) and composite signatures from LAMPS that TLS will profile after publication. TLS profiling pending LAMPS RFC publication.',
+        note: 'Three approaches to composite/hybrid signatures for TLS 1.3: dual-certificate negotiation in TLS WG (Internet-Draft), composite signatures from LAMPS that TLS will profile after publication, and an individual draft proposing composite ML-DSA directly in the TLS handshake. TLS profiling pending LAMPS RFC publication.',
         refs: [
           {
             kind: 'draft',
@@ -787,6 +787,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
               'Composite ML-DSA signatures (cross-WG; X.509-layer composite to be profiled into TLS)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/',
             publishedOn: '2026-04-21',
+          },
+          {
+            kind: 'draft',
+            id: 'draft-reddy-tls-composite-mldsa',
+            title:
+              'Composite ML-DSA authentication for TLS 1.3 (individual draft; not yet TLS WG-adopted)',
+            url: 'https://datatracker.ietf.org/doc/draft-reddy-tls-composite-mldsa/',
+            publishedOn: '2026-05-14',
           },
         ],
       },

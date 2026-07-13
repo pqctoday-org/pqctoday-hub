@@ -51,7 +51,16 @@ import crypto from 'crypto'
 import type { CheckResult, Finding } from './types.js'
 
 const dataDir = (): string => path.join(process.cwd(), 'src/data')
-const proofsDir = (): string => path.join(process.cwd(), 'public/migrate-proofs')
+// manifestDir: where manifest.json (+ skip-list.json) live — stays in hub,
+// tracked, unchanged by the 2026-07-12 relocation.
+const manifestDir = (): string => path.join(process.cwd(), 'public/migrate-proofs')
+// proofsDir: where the raw proof documents THEMSELVES live — RELOCATED
+// 2026-07-12 (see maintenance/LOCAL-FILES-REMEDIATION-PLAN-07122026.md in
+// the private repo) to pqctoday-priv/local-evidence-cache/migrate-proofs/.
+// Deliberately a separate function from manifestDir — the manifest and the
+// files it describes no longer live in the same directory.
+const proofsDir = (): string =>
+  path.resolve(process.cwd(), '..', 'pqctoday-priv', 'local-evidence-cache', 'migrate-proofs')
 
 interface CatalogRow {
   product_id?: string
@@ -136,7 +145,7 @@ function findLatestCatalogCsv(): string | null {
 }
 
 function loadManifest(): { byProductId: Map<string, ManifestEntry>; name: string } {
-  const p = path.join(proofsDir(), 'manifest.json')
+  const p = path.join(manifestDir(), 'manifest.json')
   if (!fs.existsSync(p)) return { byProductId: new Map(), name: 'manifest.json (missing)' }
   const parsed = JSON.parse(fs.readFileSync(p, 'utf-8')) as { downloads: ManifestEntry[] }
   const byProductId = new Map<string, ManifestEntry>()
@@ -217,7 +226,7 @@ export function runMigrateProofRule(): CheckResult[] {
             row: rowNum,
             field: 'proof_url',
             value: entry.url,
-            message: `Active product ${pid} manifest entry points at ${fname}, which does not exist on disk under public/migrate-proofs/`,
+            message: `Active product ${pid} manifest entry points at ${fname}, which does not exist on disk under pqctoday-priv/local-evidence-cache/migrate-proofs/`,
           })
         }
       }
@@ -307,9 +316,9 @@ export function runMigrateProofRule(): CheckResult[] {
       id: 'MP-2',
       category: 'local-resource',
       description:
-        'Every manifest-recorded proof file actually exists on disk under public/migrate-proofs/',
+        'Every manifest-recorded proof file actually exists on disk under pqctoday-priv/local-evidence-cache/migrate-proofs/',
       sourceA: manifestName,
-      sourceB: 'public/migrate-proofs/',
+      sourceB: 'pqctoday-priv/local-evidence-cache/migrate-proofs/',
       severity: 'ERROR',
       status: mp2.length === 0 ? 'PASS' : 'FAIL',
       findings: mp2,
