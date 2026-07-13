@@ -7,6 +7,71 @@ source: public/vendor-roadmaps/
 
 # Vendor PQC Roadmap Enrichments
 
+
+## VND-010 — Crypto4A Technologies Inc.
+
+- **Vendor ID**: VND-010
+- **Vendor Name**: Crypto4A Technologies Inc.
+- **Roadmap Title**: Crypto4A News: QxHSM/QxOS 5 Post-Quantum HSM Platform Updates
+- **Roadmap URL**: https://crypto4a.com/news/
+- **Publish Date**: 2026-07-12
+- **Local File**: vendor-roadmaps/VND-010_Crypto4A_Technologies_Inc.html
+- **CSV Coverage Notes**: None
+- **Extraction Error**: Bot-protection/error page detected: "404"
+- **Extraction Timestamp**: 2026-07-12T20:18:30
+
+
+## VND-036 — SandboxAQ Inc.
+
+- **Vendor ID**: VND-036
+- **Vendor Name**: SandboxAQ Inc.
+- **Roadmap Title**: SandboxAQ: Q-Day Moved Closer - PQC Migration Timelines Just Shifted Left
+- **Roadmap URL**: https://www.sandboxaq.com/post/q-day-moved-closer-pqc-migration-timelines-just-shifted-left
+- **Publish Date**: 2026-07-13
+- **Local File**: vendor-roadmaps/VND-036_SandboxAQ_Inc.html
+- **CSV Coverage Notes**: None
+- **Extraction Error**: Ollama returned no fields
+- **Extraction Timestamp**: 2026-07-12T20:18:30
+
+
+## VND-020 — IDEMIA Group
+
+- **Vendor ID**: VND-020
+- **Vendor Name**: IDEMIA Group
+- **Roadmap Title**: IDEMIA Post-Quantum Security Consulting
+- **Roadmap URL**: https://www.idemia.com/post-quantum-security-consulting
+- **Publish Date**: 2026-07-13
+- **Local File**: vendor-roadmaps/VND-020_IDEMIA_Group.html
+- **CSV Coverage Notes**: None
+- **Extraction Error**: Ollama returned no fields
+- **Extraction Timestamp**: 2026-07-12T20:18:30
+
+
+## VND-048 — Open Quantum Safe Project
+
+- **Vendor ID**: VND-048
+- **Vendor Name**: Open Quantum Safe Project
+- **Roadmap Title**: Open Quantum Safe: Post-Quantum Cryptography
+- **Roadmap URL**: https://openquantumsafe.org/post-quantum-crypto.html
+- **Publish Date**: 2026-07-13
+- **Local File**: vendor-roadmaps/VND-048_Open_Quantum_Safe_Project.html
+- **CSV Coverage Notes**: None
+- **Extraction Error**: Ollama returned no fields
+- **Extraction Timestamp**: 2026-07-12T20:18:30
+
+
+## VND-308 — Fastly, Inc.
+
+- **Vendor ID**: VND-308
+- **Vendor Name**: Fastly, Inc.
+- **Roadmap Title**: Future-proofing TLS encryption against quantum threats
+- **Roadmap URL**: https://www.fastly.com/blog/future-proofing-tls-encryption-against-quantum-threats
+- **Publish Date**: 2025-04-02
+- **Local File**: vendor-roadmaps/VND-308_Fastly_Inc..html
+- **CSV Coverage Notes**: Rollout of ML-KEM across Fastly's global CDN fleet starting April 2025, automatic for TLS 1.3 customers, with measured early adoption data (~5% of TLS 1.3 clients at time of writing). Added 2026-07-07 via migrate-data remediation; independently re-fetched before adding.
+- **Extraction Error**: Ollama returned no fields
+- **Extraction Timestamp**: 2026-07-12T20:18:30
+
 ## VND-001 — Amazon Web Services Inc.
 
 - **Vendor ID**: VND-001
