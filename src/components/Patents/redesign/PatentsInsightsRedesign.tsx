@@ -25,6 +25,9 @@ import type { PatentItem, InsightsFilter } from '@/types/PatentTypes'
 interface Props {
   patents: PatentItem[]
   onFilter: (filter: InsightsFilter) => void
+  /** Currently active filing-year drill (from the URL), so the chart can
+   * highlight the selected bar and clicking it again can clear it. */
+  selectedYear?: number | null
 }
 
 const AGILITY_LABEL_TO_ID: Record<string, string> = {
@@ -145,7 +148,7 @@ function Leaderboard({
   )
 }
 
-export function PatentsInsightsRedesign({ patents, onFilter }: Props) {
+export function PatentsInsightsRedesign({ patents, onFilter, selectedYear = null }: Props) {
   const [moreOpen, setMoreOpen] = useState(false)
 
   const agility = useMemo(
@@ -249,7 +252,8 @@ export function PatentsInsightsRedesign({ patents, onFilter }: Props) {
         </h3>
         <PatentsFilingYearChart
           patents={patents}
-          onYearClick={(year) => onFilter({ filingYear: String(year) })}
+          selectedYear={selectedYear}
+          onYearClick={(year) => onFilter({ filingYear: year != null ? String(year) : undefined })}
         />
       </div>
 
