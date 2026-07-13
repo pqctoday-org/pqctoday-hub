@@ -30,22 +30,22 @@
     "download_status": "ok",
     "evidence_file": "threats/evidence/AERO-003.html",
     "content_type": "text/html; charset=UTF-8",
-    "size_bytes": 82028,
+    "size_bytes": 82031,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:44:51.256Z"
+    "downloaded_at": "2026-07-13T00:43:17.303Z"
   },
   {
     "threat_id": "AUTO-001",
-    "source_url": "https://unece.org/transport/documents/2021/03/standards/un-regulation-no-155-cyber-security-and-cyber-security",
+    "source_url": "https://www.iso.org/standard/70918.html",
     "main_source": "ISO/SAE 21434 Road Vehicle Cybersecurity",
     "download_status": "ok",
     "evidence_file": "threats/evidence/AUTO-001.html",
-    "content_type": "text/html;charset=UTF-8",
-    "size_bytes": 32127,
+    "content_type": "text/html; charset=UTF-8",
+    "size_bytes": 90867,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-06-07",
+    "downloaded_at": "2026-07-13T00:43:18.075Z",
     "fetch_tier": "playwright-stealth"
   },
   {
@@ -75,40 +75,40 @@
   },
   {
     "threat_id": "AUTO-004",
-    "source_url": "https://unece.org/transport/documents/2021/03/standards/un-regulation-no-155-cyber-security-and-cyber-security",
+    "source_url": "https://www.iso.org/standard/70918.html",
     "main_source": "ISO/SAE 21434 Road Vehicle Cybersecurity",
     "download_status": "ok",
     "evidence_file": "threats/evidence/AUTO-004.html",
-    "content_type": "text/html;charset=UTF-8",
-    "size_bytes": 32127,
+    "content_type": "text/html; charset=UTF-8",
+    "size_bytes": 90867,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-06-07",
+    "downloaded_at": "2026-07-13T00:43:18.669Z",
     "fetch_tier": "playwright-stealth"
   },
   {
     "threat_id": "CLOUD-001",
-    "source_url": "https://cloudsecurityalliance.org/research/working-groups/quantum-safe-security",
+    "source_url": "https://cloudsecurityalliance.org/research/topics/quantum-safe-security/",
     "main_source": "Cloud Security Alliance Quantum-Safe Guidelines",
     "download_status": "ok",
     "evidence_file": "threats/evidence/CLOUD-001.html",
-    "content_type": "text/html; charset=utf-8",
-    "size_bytes": 88491,
+    "content_type": "text/html; charset=UTF-8",
+    "size_bytes": 86559,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:44:51.834Z"
+    "downloaded_at": "2026-07-13T00:43:19.774Z"
   },
   {
     "threat_id": "CLOUD-002",
-    "source_url": "https://cloudsecurityalliance.org/research/working-groups/quantum-safe-security",
+    "source_url": "https://cloudsecurityalliance.org/research/topics/quantum-safe-security/",
     "main_source": "Cloud Security Alliance Quantum-Safe Security",
     "download_status": "ok",
     "evidence_file": "threats/evidence/CLOUD-002.html",
-    "content_type": "text/html; charset=utf-8",
-    "size_bytes": 88491,
+    "content_type": "text/html; charset=UTF-8",
+    "size_bytes": 86559,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:44:51.847Z"
+    "downloaded_at": "2026-07-13T00:43:20.673Z"
   },
   {
     "threat_id": "CLOUD-003",
@@ -136,15 +136,15 @@
   },
   {
     "threat_id": "CROSS-001",
-    "source_url": "https://www.ibm.com/thought-leadership/institute-business-value/en-us/report/2025-quantum-safe-readiness",
+    "source_url": "https://www.ibm.com/think/insights/post-quantum-cryptography",
     "main_source": "IBM Institute for Business Value \u2014 Secure the Post-Quantum Future 2025",
     "download_status": "ok",
     "evidence_file": "threats/evidence/CROSS-001.html",
-    "content_type": "text/html; charset=utf-8",
-    "size_bytes": 551283,
+    "content_type": "text/html; charset=UTF-8",
+    "size_bytes": 689420,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:44:52.243Z"
+    "downloaded_at": "2026-07-13T00:43:21.850Z"
   },
   {
     "threat_id": "CROSS-002",
@@ -160,15 +160,15 @@
   },
   {
     "threat_id": "CROSS-003",
-    "source_url": "https://www.ibm.com/thought-leadership/institute-business-value/en-us/report/2025-quantum-safe-readiness",
+    "source_url": "https://www.ibm.com/think/insights/post-quantum-cryptography",
     "main_source": "IBM Institute for Business Value \u2014 Secure the Post-Quantum Future 2025",
     "download_status": "ok",
     "evidence_file": "threats/evidence/CROSS-003.html",
-    "content_type": "text/html; charset=utf-8",
-    "size_bytes": 551283,
+    "content_type": "text/html; charset=UTF-8",
+    "size_bytes": 689420,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:44:52.372Z"
+    "downloaded_at": "2026-07-13T00:43:22.615Z"
   },
   {
     "threat_id": "CROSS-004",
@@ -213,10 +213,10 @@
     "download_status": "ok",
     "evidence_file": "threats/evidence/CROSS-007.html",
     "content_type": "text/html; charset=UTF-8",
-    "size_bytes": 47704,
+    "size_bytes": 48836,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:44:52.981Z"
+    "downloaded_at": "2026-07-13T00:43:24.096Z"
   },
   {
     "threat_id": "CROSS-008",
@@ -224,11 +224,11 @@
     "main_source": "NIST SP 800-227 Recommendations for KEMs",
     "download_status": "ok",
     "evidence_file": "threats/evidence/CROSS-008.html",
-    "content_type": "text/html; charset=utf-8",
-    "size_bytes": 44298,
+    "content_type": "text/html; charset=UTF-8",
+    "size_bytes": 44071,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:44:53.028Z"
+    "downloaded_at": "2026-07-13T00:43:25.096Z"
   },
   {
     "threat_id": "CRYPTO-001",
@@ -236,11 +236,11 @@
     "main_source": "Federal Reserve HNDL Paper",
     "download_status": "ok",
     "evidence_file": "threats/evidence/CRYPTO-001.html",
-    "content_type": "text/html",
-    "size_bytes": 88759,
+    "content_type": "text/html; charset=UTF-8",
+    "size_bytes": 88833,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:44:53.112Z"
+    "downloaded_at": "2026-07-13T00:43:25.834Z"
   },
   {
     "threat_id": "CRYPTO-002",
@@ -260,11 +260,11 @@
     "main_source": "Federal Reserve Board FEDS Paper September 2025",
     "download_status": "ok",
     "evidence_file": "threats/evidence/CRYPTO-003.html",
-    "content_type": "text/html",
-    "size_bytes": 88759,
+    "content_type": "text/html; charset=UTF-8",
+    "size_bytes": 88833,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:44:53.488Z"
+    "downloaded_at": "2026-07-13T00:43:26.519Z"
   },
   {
     "threat_id": "CRYPTO-004",
@@ -336,7 +336,7 @@
     "size_bytes": 26352,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:44:54.173Z"
+    "downloaded_at": "2026-07-13T00:43:28.444Z"
   },
   {
     "threat_id": "FIN-002",
@@ -344,11 +344,11 @@
     "main_source": "Federal Reserve Board FEDS Paper September 2025",
     "download_status": "ok",
     "evidence_file": "threats/evidence/FIN-002.html",
-    "content_type": "text/html",
-    "size_bytes": 88759,
+    "content_type": "text/html; charset=UTF-8",
+    "size_bytes": 88833,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:44:54.561Z"
+    "downloaded_at": "2026-07-13T00:43:29.099Z"
   },
   {
     "threat_id": "FIN-003",
@@ -441,10 +441,10 @@
     "download_status": "ok",
     "evidence_file": "threats/evidence/GOV-003.html",
     "content_type": "text/html; charset=UTF-8",
-    "size_bytes": 72424,
+    "size_bytes": 72793,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:44:55.369Z"
+    "downloaded_at": "2026-07-13T00:43:29.991Z"
   },
   {
     "threat_id": "GOV-004",
@@ -472,27 +472,27 @@
   },
   {
     "threat_id": "AUS-GOV-001",
-    "source_url": "https://www.cyber.gov.au/about-us/view-all-content/reports-and-statistics/annual-cyber-threat-report-2023-2024",
+    "source_url": "https://www.cyber.gov.au/about-us/view-all-content/reports-and-statistics/annual-cyber-threat-report-2024-2025",
     "main_source": "ASD ACSC Annual Cyber Threat Report 2024\u201325",
     "download_status": "ok",
     "evidence_file": "threats/evidence/AUS-GOV-001.html",
-    "content_type": null,
-    "size_bytes": 499058,
+    "content_type": "text/html; charset=UTF-8",
+    "size_bytes": 482288,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T04:24:24.092Z"
+    "downloaded_at": "2026-07-13T00:43:30.965Z"
   },
   {
     "threat_id": "AUS-GOV-002",
-    "source_url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/ism",
+    "source_url": "https://webarchive.nla.gov.au/awa/20240101000000*/https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/ism/cyber-security-guidelines/guidelines-for-cryptography",
     "main_source": "ASD Information Security Manual \u2014 ISM-1917",
     "download_status": "ok",
     "evidence_file": "threats/evidence/AUS-GOV-002.html",
-    "content_type": null,
-    "size_bytes": 337671,
+    "content_type": "text/html; charset=UTF-8",
+    "size_bytes": 7690,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T04:24:24.092Z"
+    "downloaded_at": "2026-07-13T00:43:40.783Z"
   },
   {
     "threat_id": "HLTH-001",
@@ -525,10 +525,10 @@
     "download_status": "ok",
     "evidence_file": "threats/evidence/HLTH-003.html",
     "content_type": "text/html; charset=UTF-8",
-    "size_bytes": 36123,
+    "size_bytes": 36115,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:44:58.148Z"
+    "downloaded_at": "2026-07-13T00:43:41.549Z"
   },
   {
     "threat_id": "HLTH-004",
@@ -537,10 +537,10 @@
     "download_status": "ok",
     "evidence_file": "threats/evidence/HLTH-004.html",
     "content_type": "text/html; charset=UTF-8",
-    "size_bytes": 97453,
+    "size_bytes": 97582,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:44:58.628Z"
+    "downloaded_at": "2026-07-13T00:43:42.186Z"
   },
   {
     "threat_id": "HLTH-005",
@@ -549,10 +549,10 @@
     "download_status": "ok",
     "evidence_file": "threats/evidence/HLTH-005.html",
     "content_type": "text/html; charset=UTF-8",
-    "size_bytes": 46797,
+    "size_bytes": 46789,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:44:58.713Z"
+    "downloaded_at": "2026-07-13T00:43:42.832Z"
   },
   {
     "threat_id": "INS-001",
@@ -569,14 +569,14 @@
   {
     "threat_id": "INS-002",
     "source_url": "https://www.dfs.ny.gov/industry_guidance/cybersecurity",
-    "main_source": "NY DFS Cybersecurity Regulation (23 NYCRR 500)",
+    "main_source": "NAIC Model Law #668 + IAIS Insurance Core Principles",
     "download_status": "ok",
     "evidence_file": "threats/evidence/INS-002.html",
     "content_type": "text/html; charset=UTF-8",
-    "size_bytes": 206489,
+    "size_bytes": 205519,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:44:59.072Z"
+    "downloaded_at": "2026-07-13T00:43:43.612Z"
   },
   {
     "threat_id": "INS-003",
@@ -597,10 +597,10 @@
     "download_status": "ok",
     "evidence_file": "threats/evidence/IOT-001.html",
     "content_type": "text/html; charset=UTF-8",
-    "size_bytes": 211897,
+    "size_bytes": 333254,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:45:00.763Z"
+    "downloaded_at": "2026-07-13T00:43:44.746Z"
   },
   {
     "threat_id": "IOT-002",
@@ -628,15 +628,15 @@
   },
   {
     "threat_id": "IOT-004",
-    "source_url": "https://www.nist.gov/itl/applied-cybersecurity/nist-cybersecurity-iot-program/consumer-iot-cybersecurity",
+    "source_url": "https://www.iso.org/standard/53302.html",
     "main_source": "ISO/IEC 30182 Smart City Concept Model",
     "download_status": "ok",
     "evidence_file": "threats/evidence/IOT-004.html",
-    "content_type": "text/html;charset=UTF-8",
-    "size_bytes": 91215,
+    "content_type": "text/html; charset=UTF-8",
+    "size_bytes": 79901,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T04:24:24.092Z"
+    "downloaded_at": "2026-07-13T00:43:46.587Z"
   },
   {
     "threat_id": "IT-001",
@@ -668,11 +668,11 @@
     "main_source": "NIST FIPS 203/204/205 Post-Quantum Cryptography Standards",
     "download_status": "ok",
     "evidence_file": "threats/evidence/IT-003.html",
-    "content_type": "text/html; charset=utf-8",
-    "size_bytes": 61411,
+    "content_type": "text/html; charset=UTF-8",
+    "size_bytes": 61179,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:45:03.380Z"
+    "downloaded_at": "2026-07-13T00:43:47.422Z"
   },
   {
     "threat_id": "IT-004",
@@ -717,10 +717,10 @@
     "download_status": "ok",
     "evidence_file": "threats/evidence/LEG-002.html",
     "content_type": "text/html; charset=UTF-8",
-    "size_bytes": 835958,
+    "size_bytes": 835959,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:45:05.053Z"
+    "downloaded_at": "2026-07-13T00:43:49.168Z"
   },
   {
     "threat_id": "LEG-003",
@@ -732,7 +732,7 @@
     "size_bytes": 70119,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:45:05.305Z"
+    "downloaded_at": "2026-07-13T00:43:50.329Z"
   },
   {
     "threat_id": "LEG-004",
@@ -821,26 +821,26 @@
   {
     "threat_id": "RAIL-001",
     "source_url": "https://www.era.europa.eu/domains/infrastructure/european-rail-traffic-management-system-ertms_en",
-    "main_source": "EN 50159 Railway Communication Security / ERA",
+    "main_source": "UNISIG Subset-037 / Subset-038 (ETCS Baseline 3)",
     "download_status": "ok",
     "evidence_file": "threats/evidence/RAIL-001.html",
     "content_type": "text/html; charset=UTF-8",
-    "size_bytes": 61177,
+    "size_bytes": 60870,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:45:10.902Z"
+    "downloaded_at": "2026-07-13T00:43:52.017Z"
   },
   {
     "threat_id": "RAIL-002",
-    "source_url": "https://shieldworkz.com/blogs/a-deep-dive-into-cenelec-ts-50701-for-railway-cybersecurity",
+    "source_url": "https://www.iso.org/standard/73598.html",
     "main_source": "ISO/IEC 14443 Contactless Card Standards",
     "download_status": "ok",
     "evidence_file": "threats/evidence/RAIL-002.html",
-    "content_type": "text/html;charset=UTF-8",
-    "size_bytes": 506002,
+    "content_type": "text/html; charset=UTF-8",
+    "size_bytes": 91444,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T04:24:24.092Z"
+    "downloaded_at": "2026-07-13T00:43:52.638Z"
   },
   {
     "threat_id": "RETAIL-001",
@@ -934,10 +934,10 @@
     "download_status": "ok",
     "evidence_file": "threats/evidence/TELCO-002.html",
     "content_type": "text/html; charset=UTF-8",
-    "size_bytes": 110719,
+    "size_bytes": 111457,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:45:14.450Z"
+    "downloaded_at": "2026-07-13T00:43:54.906Z"
   },
   {
     "threat_id": "TELCO-003",
@@ -953,15 +953,15 @@
   },
   {
     "threat_id": "TELCO-004",
-    "source_url": "https://www.gsma.com/solutions-and-impact/technologies/esim/esim-specification/",
+    "source_url": "https://www.gsma.com/esim/",
     "main_source": "GSMA eSIM Specification (SGP.22)",
     "download_status": "ok",
     "evidence_file": "threats/evidence/TELCO-004.html",
     "content_type": "text/html; charset=UTF-8",
-    "size_bytes": 204216,
+    "size_bytes": 129814,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-06-07",
+    "downloaded_at": "2026-07-13T00:43:55.748Z",
     "fetch_tier": "curl_cffi:chrome124"
   },
   {
@@ -1007,10 +1007,10 @@
     "download_status": "ok",
     "evidence_file": "threats/evidence/EDU-001.html",
     "content_type": "text/html; charset=UTF-8",
-    "size_bytes": 134956,
+    "size_bytes": 133108,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:45:17.031Z"
+    "downloaded_at": "2026-07-13T00:43:56.987Z"
   },
   {
     "threat_id": "EDU-002",
@@ -1030,23 +1030,23 @@
     "main_source": "W3C Verifiable Credentials Data Model 2.0",
     "download_status": "ok",
     "evidence_file": "threats/evidence/EDU-003.html",
-    "content_type": "text/html; charset=utf-8",
+    "content_type": "text/html; charset=UTF-8",
     "size_bytes": 1023165,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:45:17.368Z"
+    "downloaded_at": "2026-07-13T00:43:57.792Z"
   },
   {
     "threat_id": "EDU-004",
-    "source_url": "https://dodcio.defense.gov/cmmc/About/",
+    "source_url": "https://dodcio.defense.gov/CMMC/",
     "main_source": "CMMC 2.0 / NIST SP 800-171",
     "download_status": "ok",
     "evidence_file": "threats/evidence/EDU-004.html",
-    "content_type": "text/html",
-    "size_bytes": 51802,
+    "content_type": "text/html; charset=UTF-8",
+    "size_bytes": 38980,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-06-07",
+    "downloaded_at": "2026-07-13T00:43:58.509Z",
     "fetch_tier": "curl_cffi:chrome124"
   },
   {
@@ -1067,11 +1067,11 @@
     "main_source": "IETF DNSSEC PQC Strategy / Verisign Research",
     "download_status": "ok",
     "evidence_file": "threats/evidence/CROSS-009.html",
-    "content_type": "text/html; charset=utf-8",
-    "size_bytes": 56326,
+    "content_type": "text/html; charset=UTF-8",
+    "size_bytes": 56705,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:45:17.749Z"
+    "downloaded_at": "2026-07-13T00:43:59.328Z"
   },
   {
     "threat_id": "CROSS-010",
@@ -1139,11 +1139,11 @@
     "main_source": "FRA Positive Train Control Regulations (49 CFR 236)",
     "download_status": "ok",
     "evidence_file": "threats/evidence/RAIL-004.html",
-    "content_type": "text/html",
-    "size_bytes": 94482,
+    "content_type": "text/html; charset=UTF-8",
+    "size_bytes": 94619,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T04:24:24.092Z"
+    "downloaded_at": "2026-07-13T00:44:01.100Z"
   },
   {
     "threat_id": "RAIL-005",
@@ -1177,10 +1177,10 @@
     "download_status": "ok",
     "evidence_file": "threats/evidence/WATER-003.html",
     "content_type": "text/html; charset=UTF-8",
-    "size_bytes": 58737,
+    "size_bytes": 58728,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:45:18.825Z"
+    "downloaded_at": "2026-07-13T00:44:01.905Z"
   },
   {
     "threat_id": "WATER-004",
@@ -1192,7 +1192,7 @@
     "size_bytes": 1178202,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:45:18.843Z"
+    "downloaded_at": "2026-07-13T00:44:02.925Z"
   },
   {
     "threat_id": "CI-001",
@@ -1201,46 +1201,46 @@
     "download_status": "ok",
     "evidence_file": "threats/evidence/CI-001.html",
     "content_type": "text/html; charset=UTF-8",
-    "size_bytes": 69392,
+    "size_bytes": 71066,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:45:18.900Z"
+    "downloaded_at": "2026-07-13T00:44:03.736Z"
   },
   {
     "threat_id": "CI-002",
     "source_url": "https://www.enisa.europa.eu/publications/post-quantum-cryptography-current-state-and-quantum-mitigation",
-    "main_source": "EU NIS2 Directive / ENISA PQC Guidance",
+    "main_source": "IEC 62351 series (Power Systems Security)",
     "download_status": "ok",
     "evidence_file": "threats/evidence/CI-002.html",
     "content_type": "text/html; charset=UTF-8",
-    "size_bytes": 53992,
+    "size_bytes": 53760,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:45:19.241Z"
+    "downloaded_at": "2026-07-13T00:44:04.988Z"
   },
   {
     "threat_id": "CI-003",
     "source_url": "https://www.nist.gov/publications/guide-operational-technology-ot-security",
-    "main_source": "NIST SP 800-82 / IEC 62351 / ISA/IEC 62443",
+    "main_source": "TSA Security Directive SD-02C + PHMSA 49 CFR 192/195",
     "download_status": "ok",
     "evidence_file": "threats/evidence/CI-003.html",
     "content_type": "text/html; charset=UTF-8",
-    "size_bytes": 82073,
+    "size_bytes": 82604,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:45:19.277Z"
+    "downloaded_at": "2026-07-13T00:44:05.811Z"
   },
   {
     "threat_id": "CROSS-014",
     "source_url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-57pt1r6.ipd.pdf",
-    "main_source": "NIST SP 800-57 Part 1 Rev 6 / Grover's algorithm (1996)",
+    "main_source": "NIST IR 8547 (IPD Nov 2024) + SP 800-131A Rev 2",
     "download_status": "ok",
     "evidence_file": "threats/evidence/CROSS-014.pdf",
     "content_type": "application/pdf",
     "size_bytes": 2637856,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:45:19.485Z"
+    "downloaded_at": "2026-07-13T00:44:06.972Z"
   },
   {
     "threat_id": "CROSS-015",
@@ -1248,11 +1248,11 @@
     "main_source": "NIST SP 800-57 Part 1 Rev 6 / NIST IR 8545",
     "download_status": "ok",
     "evidence_file": "threats/evidence/CROSS-015.html",
-    "content_type": "text/html; charset=utf-8",
-    "size_bytes": 49925,
+    "content_type": "text/html; charset=UTF-8",
+    "size_bytes": 49698,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:45:19.989Z"
+    "downloaded_at": "2026-07-13T00:44:08.108Z"
   },
   {
     "threat_id": "CROSS-016",
@@ -1276,7 +1276,7 @@
     "size_bytes": 2588488,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:45:20.059Z"
+    "downloaded_at": "2026-07-13T00:44:08.866Z"
   },
   {
     "threat_id": "CROSS-018",
@@ -1305,14 +1305,14 @@
   {
     "threat_id": "IOT-005",
     "source_url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-232.pdf",
-    "main_source": "NIST SP 800-232 / ETSI EN 303 645 IoT Security / IETF SUIT WG",
+    "main_source": "NIST SP 800-213 + NISTIR 8259A",
     "download_status": "ok",
     "evidence_file": "threats/evidence/IOT-005.pdf",
     "content_type": "application/pdf",
     "size_bytes": 1194488,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T03:45:20.390Z"
+    "downloaded_at": "2026-07-13T00:44:09.960Z"
   },
   {
     "threat_id": "AUS-TEL-001",
