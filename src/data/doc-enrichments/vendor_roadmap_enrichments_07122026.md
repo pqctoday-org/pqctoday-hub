@@ -8,27 +8,178 @@ source: public/vendor-roadmaps/
 # Vendor PQC Roadmap Enrichments
 
 
-## VND-048 — Open Quantum Safe Project
+## VND-010 — Crypto4A Technologies Inc.
 
-- **Vendor ID**: VND-048
-- **Vendor Name**: Open Quantum Safe Project
-- **Roadmap Title**: Open Quantum Safe: Post-Quantum Cryptography
-- **Roadmap URL**: https://openquantumsafe.org/post-quantum-crypto.html
-- **Publish Date**: 2026-07-13
-- **Local File**: vendor-roadmaps/VND-048_Open_Quantum_Safe_Project.html
+- **Vendor ID**: VND-010
+- **Vendor Name**: Crypto4A Technologies Inc.
+- **Roadmap Title**: Crypto4A News: QxHSM/QxOS 5 Post-Quantum HSM Platform Updates
+- **Roadmap URL**: https://crypto4a.com/news/
+- **Publish Date**: 2026-07-12
+- **Local File**: vendor-roadmaps/VND-010_Crypto4A_Technologies_Inc.html
 - **CSV Coverage Notes**: None
-- **PQC Algorithms Announced**: ML-KEM; ML-DSA; SLH-DSA; BIKE; Classic McEliece; CROSS; Falcon; FrodoKEM; HQC; Kyber; LMS; MAYO; NTRU; NTRU-Prime; SNOVA; UOV; XMSS
+- **Extraction Error**: Bot-protection/error page detected: "404"
+- **Extraction Timestamp**: 2026-07-12T21:04:44
+
+
+## VND-053 — ISARA Corporation
+
+- **Vendor ID**: VND-053
+- **Vendor Name**: ISARA Corporation
+- **Roadmap Title**: ISARA Radiate: Quantum-Safe Library
+- **Roadmap URL**: https://isara.com/products/isara-radiate-quantum-safe-library.html
+- **Publish Date**: 2026-07-13
+- **Local File**: vendor-roadmaps/VND-053_ISARA_Corporation.html
+- **CSV Coverage Notes**: None
+- **PQC Algorithms Announced**: ML-KEM; ML-DSA
 - **Target Migration Dates**: None detected
-- **Products / Services Covered**: None detected
-- **Compliance Frameworks**: NIST FIPS 202; NIST FIPS 203; NIST FIPS 204; IETF Crypto Forum Research Group
+- **Products / Services Covered**: ISARA Radiate™ Quantum-safe Library; ISARA Advance® Cryptographic Inventory and Risk Assessment Tool
+- **Compliance Frameworks**: NIST PQC Security Level 5; MISRA-C; DORA; GDPR; PCI DSS; CNSA 2.0; CISA
+- **Hybrid Mode Support**: Yes; "test optional hybrid certificates for PQC migration"; "Seamlessly transition internal PKIs to a hybrid then fully quantum-safe state"
+- **Current GA Status**: GA
+- **Customer Action Required**: Connect with ISARA; Book Your Meeting; Integrate; Verify; Migrate
+- **Key Commitments & Quotes**: "Radiate is a high-performance quantum-safe software development kit"; "Achieve NIST PQC Security Level 5, even on the most resource-limited devices"; "Radiate promotes crypto agility using interoperable certificates"
+- **Coverage Verification**: CONSISTENT; The document is a general product overview and does not specify the detailed roadmap timelines or CSV coverage notes mentioned in the prompt.
+- **Extraction Quality**: MEDIUM
+- **Source Document**: VND-053_ISARA_Corporation.html (49.7 KB)
+- **Extraction Timestamp**: 2026-07-12T21:04:44
+
+
+## VND-036 — SandboxAQ Inc.
+
+- **Vendor ID**: VND-036
+- **Vendor Name**: SandboxAQ Inc.
+- **Roadmap Title**: SandboxAQ: Q-Day Moved Closer - PQC Migration Timelines Just Shifted Left
+- **Roadmap URL**: https://www.sandboxaq.com/post/q-day-moved-closer-pqc-migration-timelines-just-shifted-left
+- **Publish Date**: 2026-07-13
+- **Local File**: vendor-roadmaps/VND-036_SandboxAQ_Inc.html
+- **CSV Coverage Notes**: None
+- **PQC Algorithms Announced**: None detected
+- **Target Migration Dates**: 2029
+- **Products / Services Covered**: AQtive Guard
+- **Compliance Frameworks**: None detected
 - **Hybrid Mode Support**: None detected
 - **Current GA Status**: No PQC
-- **Customer Action Required**: None detected
-- **Key Commitments & Quotes**: "Thus, it is important to start developing and deploying quantum-safe cryptography now, even before quantum computers are built."
-- **Coverage Verification**: CONSISTENT — The document is a general project overview and FAQ, not a specific product roadmap, so the lack of specific coverage notes is consistent.
+- **Customer Action Required**: Move our Public Key Infrastructures (PKIs) now
+- **Key Commitments & Quotes**: "The window for migration to Post-Quantum Cryptography (PQC) has potentially been moved from 2035 to 2029"
+- **Coverage Verification**: CONSISTENT — The document is a general threat analysis blog post and does not specify product-level roadmap details, consistent with "Not specified".
 - **Extraction Quality**: LOW
-- **Source Document**: VND-048_Open_Quantum_Safe_Project.html (18.5 KB)
-- **Extraction Timestamp**: 2026-07-12T20:21:55
+- **Source Document**: VND-036_SandboxAQ_Inc.html (34.5 KB)
+- **Extraction Timestamp**: 2026-07-12T21:04:44
+
+
+## VND-020 — IDEMIA Group
+
+- **Vendor ID**: VND-020
+- **Vendor Name**: IDEMIA Group
+- **Roadmap Title**: IDEMIA Post-Quantum Security Consulting
+- **Roadmap URL**: https://www.idemia.com/post-quantum-security-consulting
+- **Publish Date**: 2026-07-13
+- **Local File**: vendor-roadmaps/VND-020_IDEMIA_Group.html
+- **CSV Coverage Notes**: None
+- **PQC Algorithms Announced**: None detected
+- **Target Migration Dates**: None detected
+- **Products / Services Covered**: IDEMIA Sphere CryptoLib; IDEMIA Sphere HSM
+- **Compliance Frameworks**: NIST
+- **Hybrid Mode Support**: Yes; "introducing post‑quantum and hybrid modes into existing systems"
+- **Current GA Status**: GA
+- **Customer Action Required**: Ask for a quote
+- **Key Commitments & Quotes**: "Expert guidance to help leaders assess their exposure and plan their PQC migration."
+- **Coverage Verification**: CONSISTENT; The document describes consulting services and libraries, which aligns with the "Not specified" note regarding specific product roadmap details.
+- **Extraction Quality**: MEDIUM
+- **Source Document**: VND-020_IDEMIA_Group.html (106.8 KB)
+- **Extraction Timestamp**: 2026-07-12T21:04:44
+
+
+## VND-308 — Fastly, Inc.
+
+- **Vendor ID**: VND-308
+- **Vendor Name**: Fastly, Inc.
+- **Roadmap Title**: Future-proofing TLS encryption against quantum threats
+- **Roadmap URL**: https://www.fastly.com/blog/future-proofing-tls-encryption-against-quantum-threats
+- **Publish Date**: 2025-04-02
+- **Local File**: vendor-roadmaps/VND-308_Fastly_Inc..html
+- **CSV Coverage Notes**: Rollout of ML-KEM across Fastly's global CDN fleet starting April 2025, automatic for TLS 1.3 customers, with measured early adoption data (~5% of TLS 1.3 clients at time of writing). Added 2026-07-07 via migrate-data remediation; independently re-fetched before adding.
+- **PQC Algorithms Announced**: ML-KEM; Kyber
+- **Target Migration Dates**: Starting April 2025
+- **Products / Services Covered**: global CDN fleet
+- **Compliance Frameworks**: NIST
+- **Hybrid Mode Support**: None detected
+- **Current GA Status**: Planned
+- **Customer Action Required**: None detected
+- **Key Commitments & Quotes**: "Starting April 2025 , we will be rolling out ML-KEM support across our global CDN fleet"
+- **Coverage Verification**: PARTIAL — The document confirms the April 2025 rollout of ML-KEM across the global CDN fleet, but does not mention that it is automatic for TLS 1.3 customers or provide the ~5% early adoption data.
+- **Extraction Quality**: MEDIUM
+- **Source Document**: VND-308_Fastly_Inc..html (250.9 KB)
+- **Extraction Timestamp**: 2026-07-12T21:04:44
+
+
+## VND-055 — evolutionQ Inc.
+
+- **Vendor ID**: VND-055
+- **Vendor Name**: evolutionQ Inc.
+- **Roadmap Title**: evolutionQ: Quantum Risk Assessment
+- **Roadmap URL**: https://evolutionq.com/services/quantum-risk-assessment
+- **Publish Date**: 2026-07-13
+- **Local File**: vendor-roadmaps/VND-055_evolutionQ_Inc.html
+- **CSV Coverage Notes**: None
+- **PQC Algorithms Announced**: None detected
+- **Target Migration Dates**: None detected
+- **Products / Services Covered**: BasejumpSKI; BasejumpQDN
+- **Compliance Frameworks**: NIST Risk Management Framework
+- **Hybrid Mode Support**: None detected
+- **Current GA Status**: No PQC
+- **Customer Action Required**: Get Price
+- **Key Commitments & Quotes**: None detected
+- **Coverage Verification**: CONSISTENT — The document describes risk assessment services and general product names without specific PQC algorithm implementation details, consistent with "Not specified" coverage notes.
+- **Extraction Quality**: LOW
+- **Source Document**: VND-055_evolutionQ_Inc.html (38.4 KB)
+- **Extraction Timestamp**: 2026-07-12T21:05:16
+
+
+## VND-085 — Cosmian SAS
+
+- **Vendor ID**: VND-085
+- **Vendor Name**: Cosmian SAS
+- **Roadmap Title**: Cosmian: Post-Quantum Encryption Libraries
+- **Roadmap URL**: https://cosmian.com
+- **Publish Date**: 2026-07-13
+- **Local File**: vendor-roadmaps/VND-085_Cosmian_SAS.html
+- **CSV Coverage Notes**: None
+- **PQC Algorithms Announced**: None detected
+- **Target Migration Dates**: None detected
+- **Products / Services Covered**: Cosmian findex; Cosmian covercrypt
+- **Compliance Frameworks**: ETSI
+- **Hybrid Mode Support**: None detected
+- **Current GA Status**: GA
+- **Customer Action Required**: Book a Demo with our team today
+- **Key Commitments & Quotes**: "Advanced, post-quantum encryption librairies"; "Cosmian covercrypt achieves ETSI standardization for data protection in the post-quantum era"
+- **Coverage Verification**: CONSISTENT — The document is a general marketing overview rather than a technical roadmap, so the lack of specific coverage details in the notes is consistent with the text.
+- **Extraction Quality**: LOW
+- **Source Document**: VND-085_Cosmian_SAS.html (335.3 KB)
+- **Extraction Timestamp**: 2026-07-12T21:05:37
+
+
+## VND-139 — Qrypt Inc.
+
+- **Vendor ID**: VND-139
+- **Vendor Name**: Qrypt Inc.
+- **Roadmap Title**: Qrypt: Post-Quantum Secure VPN for NVIDIA Jetson
+- **Roadmap URL**: https://www.qrypt.com/resources/post-quantum-secure-vpn/
+- **Publish Date**: 2026-07-13
+- **Local File**: vendor-roadmaps/VND-139_Qrypt_Inc.html
+- **CSV Coverage Notes**: None
+- **PQC Algorithms Announced**: ML-KEM; Kyber
+- **Target Migration Dates**: February 2026 (Jetson Thor support)
+- **Products / Services Covered**: Qrypt BLAST; Quantum-Secure IPsec Gateway; Qrypt SDK
+- **Compliance Frameworks**: NIST
+- **Hybrid Mode Support**: Yes; Hybrid PQC IPsec setup using ML-KEM + DH + BLAST
+- **Current GA Status**: GA
+- **Customer Action Required**: Register for a free Qrypt API token; Clone GitHub repository; Follow Quick Start instructions; Contact team for enterprise features
+- **Key Commitments & Quotes**: "Implementing Hybrid PQC IPsec with Qrypt BLAST on Jetson Orin"; "Works on Jetson Orin today, Jetson Thor in February 2026"; "926 Mbps VPN throughput with hybrid PQC key exchange"
+- **Coverage Verification**: CONSISTENT; The document details the specific roadmap item (PQC VPN for Jetson) without contradicting the unspecified CSV notes.
+- **Extraction Quality**: HIGH
+- **Source Document**: VND-139_Qrypt_Inc.html (258.6 KB)
+- **Extraction Timestamp**: 2026-07-12T21:06:01
 
 ## VND-001 — Amazon Web Services Inc.
 
