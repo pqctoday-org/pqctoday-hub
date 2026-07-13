@@ -4,7 +4,14 @@ import { createHash } from 'crypto'
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
-import { classifyEntry, mapPool, run, type FetchImpl } from './audit-reference-cache-drift'
+import {
+  classifyEntry,
+  dedupeBlockedByHash,
+  looksBlocked,
+  mapPool,
+  run,
+  type FetchImpl,
+} from './audit-reference-cache-drift'
 
 function sha256Of(s: string): string {
   return createHash('sha256').update(Buffer.from(s, 'utf-8')).digest('hex')
@@ -41,10 +48,19 @@ describe('classifyEntry', () => {
     expect(finding.observedSha256).toBe(finding.storedSha256)
   })
 
+  // Bodies below are padded well past looksBlocked()'s 1500-byte "too tiny
+  // to be a real document" floor (added 2026-07-12) — a handful of bytes
+  // was fine when only hash/size comparison was under test, but now reads
+  // as a plausible bot-block response and would get reclassified 'blocked'
+  // before ever reaching the drift/size-mismatch split these tests exercise.
+  const PAD = 'x'.repeat(1600)
+
   it('returns drift when content differs and size differs', async () => {
+    const newBody = `NEW content ${PAD}`
+    const oldBody = `OLD content ${PAD}`
     const fetcher: FetchImpl = async () => ({
-      bytes: Buffer.from('NEW content', 'utf-8'),
-      sha256: sha256Of('NEW content'),
+      bytes: Buffer.from(newBody, 'utf-8'),
+      sha256: sha256Of(newBody),
     })
     const finding = await classifyEntry(
       'library',
@@ -52,20 +68,21 @@ describe('classifyEntry', () => {
         refId: 'X',
         url: 'https://example/x.pdf',
         status: 'downloaded',
-        sha256: sha256Of('OLD content'),
-        sizeBytes: 11, // matches actually... let's use different lengths
+        sha256: sha256Of(oldBody),
+        sizeBytes: newBody.length, // matches actually... let's use different lengths
       },
       fetcher,
       5000,
       NOW
     )
-    expect(finding.classification).toBe('size-mismatch') // both have len 11
+    expect(finding.classification).toBe('size-mismatch') // both have the same length
   })
 
   it('classifies as drift when content differs AND size differs', async () => {
+    const newBody = `much longer new content here ${PAD}`
     const fetcher: FetchImpl = async () => ({
-      bytes: Buffer.from('much longer new content here', 'utf-8'),
-      sha256: sha256Of('much longer new content here'),
+      bytes: Buffer.from(newBody, 'utf-8'),
+      sha256: sha256Of(newBody),
     })
     const finding = await classifyEntry(
       'library',
@@ -73,8 +90,8 @@ describe('classifyEntry', () => {
         refId: 'X',
         url: 'https://example/x.pdf',
         status: 'downloaded',
-        sha256: sha256Of('short'),
-        sizeBytes: 5,
+        sha256: sha256Of(`short ${PAD}`),
+        sizeBytes: `short ${PAD}`.length,
       },
       fetcher,
       5000,
@@ -85,9 +102,11 @@ describe('classifyEntry', () => {
   })
 
   it('classifies as size-mismatch when hash differs but size is identical', async () => {
+    const bodyA = `AAAAA ${PAD}`
+    const bodyB = `BBBBB ${PAD}`
     const fetcher: FetchImpl = async () => ({
-      bytes: Buffer.from('AAAAA', 'utf-8'),
-      sha256: sha256Of('AAAAA'),
+      bytes: Buffer.from(bodyA, 'utf-8'),
+      sha256: sha256Of(bodyA),
     })
     const finding = await classifyEntry(
       'library',
@@ -95,14 +114,61 @@ describe('classifyEntry', () => {
         refId: 'X',
         url: 'https://example/x.pdf',
         status: 'downloaded',
-        sha256: sha256Of('BBBBB'),
-        sizeBytes: 5,
+        sha256: sha256Of(bodyB),
+        sizeBytes: bodyA.length, // same length as bodyA (both are 5 chars + PAD)
       },
       fetcher,
       5000,
       NOW
     )
     expect(finding.classification).toBe('size-mismatch')
+  })
+
+  it('classifies as blocked when the response is too small to be a real document', async () => {
+    const fetcher: FetchImpl = async () => ({
+      bytes: Buffer.from('tiny', 'utf-8'),
+      sha256: sha256Of('tiny'),
+    })
+    const finding = await classifyEntry(
+      'library',
+      {
+        refId: 'X',
+        url: 'https://example/x.pdf',
+        status: 'downloaded',
+        sha256: sha256Of('a real cached document'),
+        sizeBytes: 23,
+      },
+      fetcher,
+      5000,
+      NOW
+    )
+    expect(finding.classification).toBe('blocked')
+  })
+
+  it('classifies as blocked when the response contains a bot-gate keyword', async () => {
+    // Real shape (2026-07-12 finding): ecfr.gov serves a styled ~10KB
+    // "Federal Register :: Request Access" page instead of the real
+    // document — well above a tiny-interstitial size, but well under a
+    // real cached document, and it says "captcha"/"request access".
+    const blockPage = `<html><title>Request Access</title><body>Please solve this captcha to continue. ${PAD}</body></html>`
+    const fetcher: FetchImpl = async () => ({
+      bytes: Buffer.from(blockPage, 'utf-8'),
+      sha256: sha256Of(blockPage),
+    })
+    const finding = await classifyEntry(
+      'library',
+      {
+        refId: 'X',
+        url: 'https://example/x.pdf',
+        status: 'downloaded',
+        sha256: sha256Of('a real cached document, quite different from the block page'),
+        sizeBytes: 60,
+      },
+      fetcher,
+      5000,
+      NOW
+    )
+    expect(finding.classification).toBe('blocked')
   })
 
   it('classifies as fetch-error when the fetcher throws', async () => {
@@ -142,6 +208,120 @@ describe('classifyEntry', () => {
     expect(finding.classification).toBe('no-stored-hash')
     // Should NOT have called the network — no point hashing if there's no baseline
     expect(calls).toBe(0)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// looksBlocked
+// ---------------------------------------------------------------------------
+
+describe('looksBlocked', () => {
+  it('flags content under 1500 bytes as too small to be a real document', () => {
+    expect(looksBlocked(Buffer.from('short'))).toBe(true)
+  })
+
+  it('flags mid-size content containing a bot-gate keyword', () => {
+    // Real shape: ecfr.gov's "Federal Register :: Request Access" page,
+    // 10,596 bytes observed in a real 2026-07-12 run — well above a tiny
+    // interstitial, well below a real cached document.
+    const body = `<html><title>Request Access</title><body>${'x'.repeat(9000)}captcha</body></html>`
+    expect(body.length).toBeGreaterThan(1500)
+    expect(body.length).toBeLessThan(100_000)
+    expect(looksBlocked(Buffer.from(body))).toBe(true)
+  })
+
+  it('does not flag mid-size content with no bot-gate keyword', () => {
+    const body = `real document text with plenty of content ${'x'.repeat(9000)}`
+    expect(looksBlocked(Buffer.from(body))).toBe(false)
+  })
+
+  it('does not flag large content even if it happens to contain a bot-gate word', () => {
+    // A genuine large page that merely mentions "captcha" (e.g. a login
+    // widget) in passing shouldn't be flagged — only small/mid-size
+    // responses get the keyword scan (see BLOCKED_SCAN_MAX_BYTES).
+    const body = `real large document ${'x'.repeat(150_000)} mentions captcha once`
+    expect(looksBlocked(Buffer.from(body))).toBe(false)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// dedupeBlockedByHash
+// ---------------------------------------------------------------------------
+
+describe('dedupeBlockedByHash', () => {
+  const base = {
+    title: '',
+    checkedAt: '2026-07-12T00:00:00Z',
+    storedSizeBytes: null,
+    observedSizeBytes: 100,
+  }
+
+  it('reclassifies drift findings that share an observed hash as blocked', () => {
+    const sharedHash = sha256Of('shared block page')
+    const findings = [
+      {
+        ...base,
+        collection: 'library',
+        refId: 'A',
+        url: 'https://a',
+        classification: 'drift' as const,
+        storedSha256: 'old-a',
+        observedSha256: sharedHash,
+      },
+      {
+        ...base,
+        collection: 'threats',
+        refId: 'B',
+        url: 'https://b',
+        classification: 'drift' as const,
+        storedSha256: 'old-b',
+        observedSha256: sharedHash,
+      },
+    ]
+    const result = dedupeBlockedByHash(findings)
+    expect(result.map((f) => f.classification)).toEqual(['blocked', 'blocked'])
+  })
+
+  it('leaves a drift finding with a unique hash unchanged', () => {
+    const findings = [
+      {
+        ...base,
+        collection: 'library',
+        refId: 'A',
+        url: 'https://a',
+        classification: 'drift' as const,
+        storedSha256: 'old-a',
+        observedSha256: sha256Of('unique content'),
+      },
+    ]
+    const result = dedupeBlockedByHash(findings)
+    expect(result[0].classification).toBe('drift')
+  })
+
+  it('does not touch ok findings that happen to share a hash', () => {
+    const sharedHash = sha256Of('coincidentally identical real content')
+    const findings = [
+      {
+        ...base,
+        collection: 'library',
+        refId: 'A',
+        url: 'https://a',
+        classification: 'ok' as const,
+        storedSha256: sharedHash,
+        observedSha256: sharedHash,
+      },
+      {
+        ...base,
+        collection: 'library',
+        refId: 'B',
+        url: 'https://b',
+        classification: 'ok' as const,
+        storedSha256: sharedHash,
+        observedSha256: sharedHash,
+      },
+    ]
+    const result = dedupeBlockedByHash(findings)
+    expect(result.map((f) => f.classification)).toEqual(['ok', 'ok'])
   })
 })
 
@@ -356,11 +536,12 @@ describe('run', () => {
       },
     })
     try {
-      // Library: drift (different bytes, different size)
+      // Library: drift (different bytes, different size, well past the
+      // 1500-byte looksBlocked() floor so it isn't reclassified 'blocked')
       // Timeline: ok
       const fetcher: FetchImpl = async (url) => {
         if (url.endsWith('/l1')) {
-          const body = 'completely new library content with different length'
+          const body = `completely new library content with different length ${'x'.repeat(1600)}`
           return { bytes: Buffer.from(body, 'utf-8'), sha256: sha256Of(body) }
         }
         return { bytes: Buffer.from('old timeline', 'utf-8'), sha256: sha256Of('old timeline') }

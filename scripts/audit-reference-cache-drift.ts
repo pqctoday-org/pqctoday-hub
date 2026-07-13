@@ -19,11 +19,23 @@
  *   1. Fetches the `url` with a short timeout
  *   2. Computes SHA-256 over the response body
  *   3. Compares against the stored `sha256`
- *   4. Classifies as: ok / drift / fetch-error / size-mismatch
+ *   4. Classifies as: ok / drift / fetch-error / size-mismatch / blocked
  *
- * The report is written to `public/data/reference-cache-drift.json` for the
- * companion CI workflow to surface as a build artefact. The script ALWAYS
- * exits 0 when it completes (drift is a finding, not an error); exits 2 on
+ * `blocked` (added 2026-07-12): a hash/size mismatch where the fetched
+ * content itself looks like a bot-gate/consent/interstitial page (keyword
+ * scan, see looksBlocked()) or byte-identically matches another finding's
+ * observed content (see dedupeBlockedByHash()) — a false "drift", since the
+ * real document was never actually re-fetched. Found via a real run:
+ * ecfr.gov's "Request Access" bot-gate page was being served (and
+ * misclassified as drift) for several unrelated CFR citations.
+ *
+ * The report is written to `public/data/reference-cache-drift.json`.
+ * RELOCATED 2026-07-12: previously surfaced by the public hub's
+ * reference-cache-drift.yml GitHub Actions workflow (removed — GitHub
+ * Actions on this repo is release-safety only; scheduled data/drift
+ * checks run from the private pipeline, see pqctoday-priv/maintenance/
+ * sources.yaml's `reference-cache` source). The script ALWAYS exits 0 when
+ * it completes (drift is a finding, not an error); exits 2 on
  * configuration / IO problems that prevent the audit from running at all.
  *
  * Usage:
@@ -55,7 +67,13 @@ interface Manifest {
   entries: ManifestEntry[]
 }
 
-type DriftClassification = 'ok' | 'drift' | 'fetch-error' | 'size-mismatch' | 'no-stored-hash'
+type DriftClassification =
+  | 'ok'
+  | 'drift'
+  | 'fetch-error'
+  | 'size-mismatch'
+  | 'no-stored-hash'
+  | 'blocked'
 
 interface DriftFinding {
   collection: string
@@ -163,6 +181,47 @@ const realFetch: FetchImpl = async (url, timeoutMs) => {
   }
 }
 
+// Same keyword list as pqctoday-priv/scripts/fetch_resilient.py's _CHALLENGE
+// (plus "request access", evidenced below) — don't hand-roll a second
+// heuristic, per that module's own cross-reference comments in sources.yaml.
+// "request access" added 2026-07-12: a real run found ecfr.gov's bot-gate
+// page ("Federal Register :: Request Access", served from
+// unblock.federalregister.gov) was NOT caught by the plain keyword list
+// alone in this corpus's testing until this phrase was added.
+const CHALLENGE_RE =
+  /just a moment|attention required|cf-browser-verification|access denied|request blocked|enable javascript|verify you are human|captcha|cf-challenge|unusual traffic|are you a robot|request access/i
+
+// Content-based classification threshold. fetch_resilient.py's Python
+// equivalent gates its keyword scan at 8000 bytes on the assumption a real
+// challenge/interstitial page is tiny — but the actual block pages found in
+// THIS corpus (ecfr.gov's Request Access page, 2026-07-12) are modern,
+// styled pages with web fonts and bundled JS: a real spot-check found
+// observed (collapsed) sizes from 314B up to 65,724B. 100KB gives a wide
+// margin above that observed range while staying well under real documents
+// (this corpus's stored sizes run from the tens of KB into the megabytes)
+// — a boundary set from an actual measured cluster, not a guess, but not a
+// mathematically airtight one either; the cross-entry hash-dedup pass below
+// is the stronger, evidence-based signal and doesn't depend on this number.
+const BLOCKED_SCAN_MAX_BYTES = 100_000
+
+/**
+ * True if `bytes` looks like a bot-block/consent/interstitial page rather
+ * than genuine document content — a hash/size mismatch against a blocked
+ * response is a false "drift", not a real content change. Content-only
+ * signal; classifyEntry additionally cross-checks observed hashes across
+ * ALL entries in a run (see dedupeBlockedByHash below) since a shared exact
+ * hash across unrelated documents is even stronger evidence than a keyword
+ * match and catches block-page templates this list doesn't know about yet.
+ */
+export function looksBlocked(bytes: Uint8Array): boolean {
+  if (bytes.byteLength < 1500) return true
+  if (bytes.byteLength < BLOCKED_SCAN_MAX_BYTES) {
+    const text = Buffer.from(bytes.slice(0, 20_000)).toString('utf-8')
+    if (CHALLENGE_RE.test(text)) return true
+  }
+  return false
+}
+
 /**
  * Classifies a single entry. Pure: only depends on inputs + an injected
  * fetcher. Exported so the unit tests can pass deterministic fakes.
@@ -218,9 +277,26 @@ export async function classifyEntry(
       observedSizeBytes: observedSize,
     }
   }
-  // Hash mismatch: distinguish full drift (different content) from a size-
-  // only mismatch (rare but informative — same byte count yet different
-  // bytes is a meaningful subset of drift).
+  // Hash mismatch: a bot-block/consent page returned instead of the real
+  // document is a FALSE "drift" — checked before the size-mismatch/drift
+  // split below, since a block page can coincidentally match the stored
+  // size (rare but not impossible) and would otherwise misreport as the
+  // more alarming 'size-mismatch' class. Real bug found 2026-07-12: byte-
+  // identical block-page responses across unrelated documents (different
+  // domains) were being classified as 'drift' — see the cross-entry
+  // dedupeBlockedByHash() pass in run() for the second, hash-based signal
+  // this single-entry content check can't provide on its own.
+  if (looksBlocked(result.bytes)) {
+    return {
+      ...base,
+      classification: 'blocked',
+      observedSha256: result.sha256,
+      observedSizeBytes: observedSize,
+    }
+  }
+  // Hash mismatch, not a detected block: distinguish full drift (different
+  // content) from a size-only mismatch (rare but informative — same byte
+  // count yet different bytes is a meaningful subset of drift).
   const sizeMatched = base.storedSizeBytes !== null && base.storedSizeBytes === observedSize
   return {
     ...base,
@@ -272,6 +348,38 @@ export interface RunOptions {
   log?: (msg: string) => void
 }
 
+/**
+ * Second, independent block-detection signal: if the SAME observed hash
+ * shows up on 2+ different findings still classified 'drift'/'size-
+ * mismatch', that's byte-identical content served for unrelated documents —
+ * strictly stronger evidence than looksBlocked()'s keyword scan (which can
+ * only catch block-page templates already in CHALLENGE_RE) and catches
+ * anything that heuristic misses. Real evidence this was needed: a
+ * 2026-07-12 run found ecfr.gov's "Request Access" page served byte-
+ * identical (same sha256) for COPPA-16-CFR-312, FDA-21-CFR-11, and the
+ * unrelated threats entry ENERGY-002 — three different domains/topics
+ * returning IDENTICAL bytes is not a coincidence a size/keyword heuristic
+ * alone would necessarily catch for every future block-page variant.
+ */
+export function dedupeBlockedByHash(findings: DriftFinding[]): DriftFinding[] {
+  const hashCounts = new Map<string, number>()
+  for (const f of findings) {
+    if (
+      f.observedSha256 &&
+      (f.classification === 'drift' || f.classification === 'size-mismatch')
+    ) {
+      hashCounts.set(f.observedSha256, (hashCounts.get(f.observedSha256) ?? 0) + 1)
+    }
+  }
+  return findings.map((f) => {
+    const isDriftLike = f.classification === 'drift' || f.classification === 'size-mismatch'
+    if (isDriftLike && f.observedSha256 && (hashCounts.get(f.observedSha256) ?? 0) > 1) {
+      return { ...f, classification: 'blocked' }
+    }
+    return f
+  })
+}
+
 export async function run(opts: RunOptions): Promise<DriftReport> {
   const log = opts.log ?? ((m: string) => console.log(m))
 
@@ -298,21 +406,38 @@ export async function run(opts: RunOptions): Promise<DriftReport> {
     findings.push(...collectionFindings)
   }
 
+  // Cross-entry pass — needs every collection's findings gathered first, so
+  // it runs once here rather than per-collection above. See
+  // dedupeBlockedByHash's docstring: this reclassifies 'drift'/'size-
+  // mismatch' findings that share an observed hash with another finding as
+  // 'blocked' — evidence a shared response was served, not a coincidence.
+  const dedupedFindings = dedupeBlockedByHash(findings)
+  const reclassified = dedupedFindings.filter(
+    (f, i) => f.classification !== findings[i].classification
+  )
+  if (reclassified.length > 0) {
+    log(
+      `[drift] ${reclassified.length} finding(s) reclassified drift/size-mismatch -> blocked ` +
+        `(shared observed hash with another entry): ${reclassified.map((f) => f.refId).join(', ')}`
+    )
+  }
+
   const classifications: Record<DriftClassification, number> = {
     ok: 0,
     drift: 0,
     'fetch-error': 0,
     'size-mismatch': 0,
     'no-stored-hash': 0,
+    blocked: 0,
   }
-  for (const f of findings) classifications[f.classification]++
+  for (const f of dedupedFindings) classifications[f.classification]++
 
   const report: DriftReport = {
     generatedAt: new Date().toISOString(),
-    totalEntries: findings.length,
+    totalEntries: dedupedFindings.length,
     fetched: classifications.ok + classifications.drift + classifications['size-mismatch'],
     classifications,
-    findings,
+    findings: dedupedFindings,
   }
 
   if (!opts.dryRun) {
@@ -324,6 +449,7 @@ export async function run(opts: RunOptions): Promise<DriftReport> {
   log(
     `[drift] Summary: ${classifications.ok} ok, ${classifications.drift} drift, ` +
       `${classifications['size-mismatch']} size-mismatch, ` +
+      `${classifications.blocked} blocked (bot-gate/consent page, not real drift), ` +
       `${classifications['fetch-error']} fetch-error, ` +
       `${classifications['no-stored-hash']} no-stored-hash`
   )
