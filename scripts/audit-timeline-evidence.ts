@@ -33,6 +33,14 @@ import Papa from 'papaparse'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
+// RELOCATED 2026-07-12 (see pqctoday-priv/maintenance/LOCAL-FILES-
+// REMEDIATION-PLAN-07122026.md) — raw evidence docs live in
+// pqctoday-priv/local-evidence-cache/, not hub's public/. Missed in the
+// original migration sweep — this script's own localFilePath() still
+// resolved against public/timeline/ until found via a real audit run
+// misreporting 15 rows as dead links that all had real, live sources
+// (confirmed by re-fetching each one via fetch_resilient.py).
+const LOCAL_CACHE_ROOT = join(ROOT, '..', 'pqctoday-priv', 'local-evidence-cache')
 
 function findLatestTimelineCsv(): string {
   const dir = join(ROOT, 'src/data')
@@ -149,9 +157,10 @@ function fail(message: string): never {
   process.exit(1)
 }
 
-/** Resolve a CSV local_file value to an absolute path under the repo. */
+/** Resolve a CSV local_file value to an absolute path in the local evidence cache. */
 function localFilePath(lf: string): string {
-  return lf.startsWith('public/') ? join(ROOT, lf) : join(ROOT, 'public/timeline', lf)
+  const rel = lf.startsWith('public/') ? lf.slice('public/'.length) : lf
+  return join(LOCAL_CACHE_ROOT, rel)
 }
 
 function main(): void {
