@@ -106,9 +106,9 @@
       "url": "https://csrc.nist.gov/projects/post-quantum-cryptography",
       "status": "downloaded",
       "filename": "FIPS_206.html",
-      "sizeBytes": 61853,
+      "sizeBytes": 61179,
       "contentType": "text/html",
-      "sha256": "7d2cac470b81e4f874893770e1d124bf8f14a60c10415a5a2ee9665d3209ed83"
+      "sha256": "163cf1b19f933e1097705ae130cc871131dc27e8d85c0e79f95da8d4868c7936"
     },
     {
       "refId": "FIPS 186-5",
@@ -276,9 +276,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-tls-mlkem/",
       "status": "downloaded",
       "filename": "draft-ietf-tls-mlkem-07.html",
-      "sizeBytes": 62134,
+      "sizeBytes": 62528,
       "contentType": "text/html",
-      "sha256": "135c68c57f5542f5b840ef5cc5338bcec3809b3bc3f777ce2d97eb527a07850f"
+      "sha256": "a7561d782f2adae7314b2fdfb307cdfa17965b050ce37ad9c1339ef4648910ec"
     },
     {
       "refId": "draft-ietf-ipsecme-ikev2-mlkem",
@@ -286,9 +286,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-ipsecme-ikev2-mlkem/",
       "status": "downloaded",
       "filename": "draft-ietf-ipsecme-ikev2-mlkem-03.html",
-      "sizeBytes": 74174,
+      "sizeBytes": 80838,
       "contentType": "text/html",
-      "sha256": "59c75bb9dcce4d1ee78e0b4a18351f5dad01d68e5406dcd7286894735e69f42f"
+      "sha256": "5b4bd22fdac6d4218828b37021350c03c082aada04ea961c49765c2d64e9e245"
     },
     {
       "refId": "draft-yang-tls-hybrid-sm2-mlkem-03",
@@ -296,9 +296,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-yang-tls-hybrid-sm2-mlkem/",
       "status": "downloaded",
       "filename": "draft-yang-tls-hybrid-sm2-mlkem-02.html",
-      "sizeBytes": 15151,
+      "sizeBytes": 43618,
       "contentType": "text/html",
-      "sha256": "53d101d00b8ce5c23613ead2c1292205b8fff349ecff908eabd19d156f3b41d4"
+      "sha256": "3f43eacec18c69861e89930e714488e65cc2ae699e5eb1e92ef340e3654e1d11"
     },
     {
       "refId": "RFC 9881",
@@ -376,9 +376,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-uta-pqc-app/01/",
       "status": "downloaded",
       "filename": "draft-ietf-uta-pqc-app-01.html",
-      "sizeBytes": 96490,
+      "sizeBytes": 97320,
       "contentType": "text/html",
-      "sha256": "766e6872200c2627775dc48b5a80d9746ecf503c83615c9d19bc5c90d13901cd"
+      "sha256": "5e44d739e163b8ba5b8b4d9338f13a7eff4089ce8544aaf05bf97b130f9952fb"
     },
     {
       "refId": "draft-kwiatkowski-pquip-pqc-migration-00",
@@ -386,9 +386,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-kwiatkowski-pquip-pqc-migration/",
       "status": "downloaded",
       "filename": "draft-kwiatkowski-pquip-pqc-migration-00.html",
-      "sizeBytes": 39669,
+      "sizeBytes": 40063,
       "contentType": "text/html",
-      "sha256": "d817d18699c1f54b82239670296d81ba52a483ea1df40b090f6a2e065efb5868"
+      "sha256": "8261a5d58e90d3c4409a78a39ebcc3010781111bccc773bfe5d04aee94413787"
     },
     {
       "refId": "draft-wang-ipsecme-kem-auth-ikev2-03",
@@ -396,9 +396,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-wang-ipsecme-kem-auth-ikev2/03/",
       "status": "downloaded",
       "filename": "draft-wang-ipsecme-kem-auth-ikev2-03.html",
-      "sizeBytes": 96761,
+      "sizeBytes": 97312,
       "contentType": "text/html",
-      "sha256": "64261161d43d3220c4eeb6d6059667944d29828bb28deb2eae44dc3da1d5e916"
+      "sha256": "8aca7ba2c9d875845e1e9bc1870f0fb100f1dd93963947ca96eba19fb93b41fa"
     },
     {
       "refId": "ETSI TS 103 744",
@@ -656,9 +656,9 @@
       "url": "https://www.cisa.gov/resources-tools/resources/product-categories-technologies-use-post-quantum-cryptography-standards",
       "status": "downloaded",
       "filename": "CISA-PQC-CATEGORY-LIST-2026.html",
-      "sizeBytes": 73169,
+      "sizeBytes": 72793,
       "contentType": "text/html",
-      "sha256": "c1bbece3b9123787cb22db0f8b74c203b2e280a0b2dfc595b5f152ca8e70cbcd"
+      "sha256": "e434120154a18a5ca48c7b19da9ad8e6a2f11e1674faf07422e106c7864856bd"
     },
     {
       "refId": "ETSI-TS-104-015",
@@ -696,9 +696,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-cose-falcon/04/",
       "status": "downloaded",
       "filename": "draft-ietf-cose-falcon-04.html",
-      "sizeBytes": 92251,
+      "sizeBytes": 92630,
       "contentType": "text/html",
-      "sha256": "52d7098e5b4478f56209e3b4433bfedff2cef2f462a14b93c6b8bd8a8cb73427"
+      "sha256": "a12aa7e56a58dd42336cad3338a9da298458fc3c77f5f21bd5c76e07d682f5bf"
     },
     {
       "refId": "EO-14306",
@@ -726,9 +726,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-kampanakis-curdle-ssh-pq-ke/",
       "status": "downloaded",
       "filename": "draft-kampanakis-curdle-ssh-pq-ke.html",
-      "sizeBytes": 45768,
+      "sizeBytes": 46158,
       "contentType": "text/html",
-      "sha256": "4e89aa0d01232e0417468c3a87aceb7d6a1b2f4e8174ae0a7078bb0ade180cc1"
+      "sha256": "7d80090bcb9a296e6d615efe5747fa9d3ea54a8f5c8032db76d4ddcfbcf90103"
     },
     {
       "refId": "draft-ietf-pquip-hbs-state",
@@ -746,9 +746,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-sfluhrer-ipsecme-ikev2-mldsa/01/",
       "status": "downloaded",
       "filename": "draft-sfluhrer-ipsecme-ikev2-mldsa-01.html",
-      "sizeBytes": 39608,
+      "sizeBytes": 39999,
       "contentType": "text/html",
-      "sha256": "c2b92751340050733ef79b623a566ccdf2178d848d5a030b6d14e6a5148e978d"
+      "sha256": "34ebb1d6f00c0f98b4a0ed15f6159929bebe4d7a2218382f5af91c42ae482500"
     },
     {
       "refId": "draft-ietf-tls-mldsa-02",
@@ -756,9 +756,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-tls-mldsa/02/",
       "status": "downloaded",
       "filename": "draft-ietf-tls-mldsa-02.html",
-      "sizeBytes": 50731,
+      "sizeBytes": 53325,
       "contentType": "text/html",
-      "sha256": "457a0f62b551e781902c5081df6c37e31503ba93e7a423e447979a28b9b70df8"
+      "sha256": "d71e08f15956308031026e32f623dc199725160f7266f79d0f4aee5a56db9517"
     },
     {
       "refId": "RFC 9690",
@@ -786,9 +786,9 @@
       "url": "https://csrc.nist.gov/pubs/sp/800/90/a/r1/final",
       "status": "downloaded",
       "filename": "NIST-SP-800-90A-R1.html",
-      "sizeBytes": 41344,
+      "sizeBytes": 41117,
       "contentType": "text/html",
-      "sha256": "6760f7849421937a526104486fde435a95a2ac2870f469576660d264658e1eca"
+      "sha256": "e9ee2b70063ff3e845468c082903dddc59f7b764797dcc9993aa90661b1b303e"
     },
     {
       "refId": "NIST-SP-800-90B",
@@ -806,9 +806,9 @@
       "url": "https://csrc.nist.gov/pubs/sp/800/90/c/final",
       "status": "downloaded",
       "filename": "NIST-SP-800-90C.html",
-      "sizeBytes": 46668,
+      "sizeBytes": 46441,
       "contentType": "text/html",
-      "sha256": "119e866672f5b7fbc796a9647147570920df091bd274e5df854d42cf0bad8929"
+      "sha256": "dec5960a00994d2c79cfba07b6878fc62a339dfe5c341abcc4ba43b239496fb0"
     },
     {
       "refId": "ETSI-GS-QKD-002",
@@ -1096,9 +1096,9 @@
       "url": "https://www.openssl.org/docs/master/",
       "status": "downloaded",
       "filename": "OpenSSL-3x-Docs.html",
-      "sizeBytes": 17183,
+      "sizeBytes": 21365,
       "contentType": "text/html",
-      "sha256": "0f4ad57583d54d3a9eef5af7a94eb87d1ec3413e930a100a895b18f29d4bc092"
+      "sha256": "5f643dbd4b48db9e6710cc2cf2fd9a1a80cc4dcb3df03e59fa5c5673012a5dfe"
     },
     {
       "refId": "BIP-141",
@@ -1196,9 +1196,9 @@
       "url": "https://www.rfc-editor.org/rfc/rfc9162",
       "status": "downloaded",
       "filename": "RFC-9162.html",
-      "sizeBytes": 1233551,
+      "sizeBytes": 1214554,
       "contentType": "text/html",
-      "sha256": "433e44704b6c1e71035fe87d3f512b22b0a5135058a60367ae10ab1888482dd0"
+      "sha256": "812b49fd3059bbaa58ee06a93ca505bffca84c8c0324f40e974f813f69c30e36"
     },
     {
       "refId": "Cloudflare-MTC-Blog",
@@ -1346,9 +1346,9 @@
       "url": "https://csrc.nist.gov/pubs/sp/800/131/a/r3/ipd",
       "status": "downloaded",
       "filename": "NIST-SP-800-131A-Rev3.html",
-      "sizeBytes": 46851,
+      "sizeBytes": 46624,
       "contentType": "text/html",
-      "sha256": "c5eb52d11d128a51f21f868dff520a6892cd2a379bd23052513da5ad2f14c5eb"
+      "sha256": "cf953891bd43510bf5390dd18402a01721edf6b0f779fc6f6fa98408a8c57ab2"
     },
     {
       "refId": "India-DST-Quantum-Safe-Roadmap-2026",
@@ -1366,9 +1366,9 @@
       "url": "https://csrc.nist.gov/publications/detail/sp/800-22/rev-1a/final",
       "status": "downloaded",
       "filename": "NIST-SP-800-22-R1A.html",
-      "sizeBytes": 49561,
+      "sizeBytes": 49334,
       "contentType": "text/html",
-      "sha256": "fd983c7017a7982ddbac71511c1b3d4994e4489eb90c12432fc730fe1f7043d5"
+      "sha256": "f8aa5548bcb47a562637a9bee8a6dc8e3e7624e97deb0eb242e1647b3e1b13ad"
     },
     {
       "refId": "BSI-AIS-20-31",
@@ -1446,9 +1446,9 @@
       "url": "https://standards.ieee.org/ieee/802.1AE/6095/",
       "status": "downloaded",
       "filename": "IEEE-802-1AE-2018.html",
-      "sizeBytes": 91573,
+      "sizeBytes": 94833,
       "contentType": "text/html",
-      "sha256": "0fa118983fcddaefa0e1bfb0801332deb0b80134d3994170bffc52c51ceaf304"
+      "sha256": "3a00a64767c6009bc60ace6a442405cb6fd91456de9cd43993b3dceec7ae0b9d"
     },
     {
       "refId": "draft-ietf-jose-pqc-kem",
@@ -1666,9 +1666,9 @@
       "url": "https://www.federalregister.gov/documents/2025/01/17/2025-01470/strengthening-and-promoting-innovation-in-the-nations-cybersecurity",
       "status": "downloaded",
       "filename": "EO-14144.html",
-      "sizeBytes": 10596,
+      "sizeBytes": 146090,
       "contentType": "text/html",
-      "sha256": "eb119525e9e27efad485083a5b83537a6452b8ab3d45e1ccd27e18447412c912"
+      "sha256": "6360a5f96c0c28db102934954ff13c8ddc86078a981556f53efe19ab1e755b0a"
     },
     {
       "refId": "BIS-Paper-158",
@@ -1946,9 +1946,9 @@
       "url": "https://www.enisa.europa.eu/publications/post-quantum-cryptography-integration-study",
       "status": "downloaded",
       "filename": "ENISA-PQC-Integration-Study-2022.html",
-      "sizeBytes": 52717,
+      "sizeBytes": 52518,
       "contentType": "text/html",
-      "sha256": "e73b66ef9a8a73d110d3d3d254e81d9e573724971cdd4c7105ff5de6a7548d15"
+      "sha256": "00d050fd5c0949db027ba4ad816f8b6232efe556d77eb9d3166bc0a79f577cd5"
     },
     {
       "refId": "Europol-QSFF-Call-to-Action-2025",
@@ -2136,9 +2136,9 @@
       "url": "https://www.rfc-editor.org/rfc/rfc4253.html",
       "status": "downloaded",
       "filename": "IETF_RFC_4253.html",
-      "sizeBytes": 148192,
+      "sizeBytes": 86134,
       "contentType": "text/html",
-      "sha256": "3f35ae01aa69af6d434c24cd86753a657d84ecbbb867f3d93e4824de313143fc"
+      "sha256": "3499e9194fd10f3f14c706d7d58cacb1d6038e268bf5fe3dcab5487f3c7f31ee"
     },
     {
       "refId": "RFC 4301",
@@ -2276,9 +2276,9 @@
       "url": "https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.39.pdf",
       "status": "downloaded",
       "filename": "NIST_CSWP_39.pdf",
-      "sizeBytes": 1079965,
+      "sizeBytes": 1277231,
       "contentType": "application/pdf",
-      "sha256": "73830feb19cea6829310beaeb9dcf41cac3c711cc82a05a2083cf1f93159b650"
+      "sha256": "11c7c012423a8612a7bc42a1a7b5458437180dc47404bafc79f52ef97372c821"
     },
     {
       "refId": "NIST NCCoE SP 1800-38A",
@@ -2556,9 +2556,9 @@
       "url": "https://csrc.nist.gov/publications/detail/sp/800-90a/rev-1/final",
       "status": "downloaded",
       "filename": "NIST_SP_800-90A.html",
-      "sizeBytes": 41344,
+      "sizeBytes": 41117,
       "contentType": "text/html",
-      "sha256": "f123eef7947f92a48c47b95283e5a5254aa6d1b3d792e74322a83f93ff7bd9e5"
+      "sha256": "4976df5a00fd62fbaa6754f873c5c100acb701b4f1fb0f9564bad7f6b712315c"
     },
     {
       "refId": "NIST SP 800-108",
@@ -3146,9 +3146,9 @@
       "url": "https://datatracker.ietf.org/doc/rfc9242/",
       "status": "downloaded",
       "filename": "IETF_RFC_9242.html",
-      "sizeBytes": 69564,
+      "sizeBytes": 69849,
       "contentType": "text/html",
-      "sha256": "1c9ea52058908c261642528858c0f44d96dc8959d7d518b145acbd9f3595ccef"
+      "sha256": "17624e44871645ebe90143c818f8ad0beefc7970e7070cc96074ca204ee6cded"
     },
     {
       "refId": "IEEE-P1931-1-ROSA",
@@ -3156,9 +3156,9 @@
       "url": "https://standards.ieee.org/ieee/1931.1/7556/",
       "status": "downloaded",
       "filename": "IEEE_P1931.1.html",
-      "sizeBytes": 91573,
+      "sizeBytes": 94833,
       "contentType": "text/html",
-      "sha256": "0fa118983fcddaefa0e1bfb0801332deb0b80134d3994170bffc52c51ceaf304"
+      "sha256": "3a00a64767c6009bc60ace6a442405cb6fd91456de9cd43993b3dceec7ae0b9d"
     },
     {
       "refId": "ITU-T-X1811",
@@ -3526,9 +3526,9 @@
       "url": "https://csrc.nist.gov/pubs/fips/198-1/final",
       "status": "downloaded",
       "filename": "FIPS-198-1.html",
-      "sizeBytes": 41917,
+      "sizeBytes": 41690,
       "contentType": "text/html",
-      "sha256": "659faa63b821aeaaf0bcfced6ad601cb0c58e962220c2f42164481f637d28c38"
+      "sha256": "4ee3226707f8f03cf36ab0a32cc9689e3edcac96d632293d93c664a71a600951"
     },
     {
       "refId": "NIST-SP-800-132",
@@ -3536,9 +3536,9 @@
       "url": "https://csrc.nist.gov/pubs/sp/800/132/final",
       "status": "downloaded",
       "filename": "NIST-SP-800-132.html",
-      "sizeBytes": 41017,
+      "sizeBytes": 40790,
       "contentType": "text/html",
-      "sha256": "99d2832516fbec34bb79c5b8fed917d49c2d0dc5fef91b02658c3369ca247d19"
+      "sha256": "d2166d2ab12c8c47de6c55d09ae53b17b7cc0a0979d7627cde794699acd0143c"
     },
     {
       "refId": "NIST-SP-800-230-ipd",
@@ -3546,9 +3546,9 @@
       "url": "https://csrc.nist.gov/pubs/sp/800/230/ipd",
       "status": "downloaded",
       "filename": "NIST-SP-800-230-ipd.html",
-      "sizeBytes": 47918,
+      "sizeBytes": 48655,
       "contentType": "text/html",
-      "sha256": "f2d72be2540bd754840116316de0429785e829fac4e8639152f54527abf4a6fb"
+      "sha256": "aac2b0db0f98d7a774b86ac8fd9bc8af382953ce6c67b879fc58cb601b2d11a0"
     },
     {
       "refId": "AQ-PQC-Migration-Framework-v1.1-2026",
@@ -3986,9 +3986,9 @@
       "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/validated-modules/search",
       "status": "downloaded",
       "filename": "NIST-CMVP-Validated-Modules.html",
-      "sizeBytes": 51636,
+      "sizeBytes": 51410,
       "contentType": "text/html",
-      "sha256": "04740ae49fd151a6b703c4de4376378cabf65f1fd6322719c48226ff54dd084d"
+      "sha256": "e5e5993cedd8e6b97471134b3562bd8c49ba21cc4ee7c6b153a8e084bf59dc05"
     },
     {
       "refId": "NIST-ACVP",
@@ -3996,9 +3996,9 @@
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program",
       "status": "downloaded",
       "filename": "NIST-ACVP.html",
-      "sizeBytes": 64629,
+      "sizeBytes": 64417,
       "contentType": "text/html",
-      "sha256": "36c72d6d2707d52e8a84a95c11a189e426a946c519d13707e510e2f79cd59664"
+      "sha256": "3b8204c6dde22f2fdf6cc0a029a47062830d4573053f8421f2a103002854e970"
     },
     {
       "refId": "IETF-RFC-7030-EST",
@@ -4076,9 +4076,9 @@
       "url": "https://www.rfc-editor.org/rfc/rfc7465",
       "status": "downloaded",
       "filename": "IETF-RFC-7465.html",
-      "sizeBytes": 102423,
+      "sizeBytes": 117570,
       "contentType": "text/html",
-      "sha256": "479b2d1f95a4377ff7dcc7e9c3a02077ec320baefd80c8f7322827c7c823a53d"
+      "sha256": "090ef20e38e7254a5a1b75db838cc8086ea83a888adfd9456cd1eeba08c4f70c"
     },
     {
       "refId": "ETSI-TS-119-312",
@@ -4106,9 +4106,9 @@
       "url": "https://www.rfc-editor.org/rfc/rfc8555",
       "status": "downloaded",
       "filename": "IETF-RFC-8555.html",
-      "sizeBytes": 818261,
+      "sizeBytes": 851937,
       "contentType": "text/html",
-      "sha256": "b31a862be9e38aded262bb3008647c0741487496b8248a3f965e7309b4823d80"
+      "sha256": "98fad8cbe0c07491cf96747b33beb0d8c9cc585102fd5930488d6981c71e5273"
     },
     {
       "refId": "FIPS-140-3-STANDARD",
@@ -4508,7 +4508,7 @@
       "filename": "NZISM-V3-9.html",
       "sizeBytes": 23387,
       "contentType": "text/html",
-      "sha256": "d5b3773b79fd9305edd83ca4f2284d4901eb3a81c4062178584163db8581f785"
+      "sha256": "206ff42c9a4e423a223f33ad0b1e639cb627e8c860bb72457938e1253d4c424b"
     },
     {
       "refId": "draft-vitap-ml-dsa-webauthn",
@@ -4566,9 +4566,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-sshm-mlkem-hybrid-kex/",
       "status": "downloaded",
       "filename": "draft-ietf-sshm-mlkem-hybrid-kex.html",
-      "sizeBytes": 87078,
+      "sizeBytes": 87449,
       "contentType": "text/html",
-      "sha256": "17bec07aa94a455e5f44866cb8de15ca26e38e8eed2c8d0fbba4765834ea4b47"
+      "sha256": "5c0c12529f8ee51ea40a9242d850affef9fea6c15f441501549f2c1c89bd9621"
     },
     {
       "refId": "draft-becker-cnsa2-ssh-profile",
@@ -4576,9 +4576,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-becker-cnsa2-ssh-profile/",
       "status": "downloaded",
       "filename": "draft-becker-cnsa2-ssh-profile.html",
-      "sizeBytes": 71127,
+      "sizeBytes": 71857,
       "contentType": "text/html",
-      "sha256": "f66c042ff47ff8f6c1621e237eb3331a6ac5b0f76b006299f25fe95031945929"
+      "sha256": "d2984365be3cba4b24765ee51446ed6d56b0478faa64f5cc6e7793b5bf679f06"
     },
     {
       "refId": "draft-spm-lake-pqsuites",
@@ -4596,9 +4596,9 @@
       "url": "https://cloudsecurityalliance.org/artifacts/a-practitioners-guide-to-post-quantum-cryptography",
       "status": "downloaded",
       "filename": "CSA-Practitioners-Guide-PQC-2025.html",
-      "sizeBytes": 76651,
+      "sizeBytes": 97948,
       "contentType": "text/html",
-      "sha256": "05b97b22b9539b1b6b2f4338af208e618aa79b380c1a43f019d901e08486319c"
+      "sha256": "82f8462d019eea610d7b43f4a95648c5f66e8c5e4cb52407c6816165887d22d7"
     },
     {
       "refId": "draft-ietf-tls-key-share-prediction",
@@ -4676,9 +4676,9 @@
       "url": "https://csrc.nist.gov/pubs/ir/8547/ipd",
       "status": "downloaded",
       "filename": "NIST-IR-8547-IPD2.html",
-      "sizeBytes": 45373,
+      "sizeBytes": 45146,
       "contentType": "text/html",
-      "sha256": "da0c971d6ad082cab05f495e32cefbb5aed5445470d139efe7501050feffe7f9"
+      "sha256": "bc6e6e961cdabfca6d03e8a46c55f67e61a72e207f271e1fef9127766a7df41d"
     },
     {
       "refId": "ProjectEleven-Quantum-Threat-Blockchains-2026",
@@ -4866,9 +4866,9 @@
       "url": "https://ia.acs.org.au/article/2026/google--cloudflare-want-post-quantum-cryptography-by-2029.html",
       "status": "downloaded",
       "filename": "ACS-Google-Cloudflare-PQC-2029.html",
-      "sizeBytes": 32394,
+      "sizeBytes": 32534,
       "contentType": "text/html",
-      "sha256": "44e8e3324ebdef0951c32be880e7c3ca6bb173c0609f2a0c24261a6a17da0960"
+      "sha256": "c398a44e202fcc4f587268414e5c2380f10ba6356e54558aa111d3b1db9d0d79"
     },
     {
       "refId": "QuantumInsider-QuantumXChange-PhioTX-2026",
@@ -4946,9 +4946,9 @@
       "url": "https://www.enisa.europa.eu/publications/post-quantum-cryptography-integration-study",
       "status": "downloaded",
       "filename": "ENISA-EUDI-Wallet-Security.html",
-      "sizeBytes": 52717,
+      "sizeBytes": 52518,
       "contentType": "text/html",
-      "sha256": "a6aae142cd766672366423d80d2a7500319a0b70e1ece19065cf5c4e5384ef64"
+      "sha256": "00d050fd5c0949db027ba4ad816f8b6232efe556d77eb9d3166bc0a79f577cd5"
     },
     {
       "refId": "IEEE 1609.2 Amendment",
@@ -4956,9 +4956,9 @@
       "url": "https://standards.ieee.org/ieee/1609.2/7389/",
       "status": "downloaded",
       "filename": "IEEE_1609.2_Amendment.html",
-      "sizeBytes": 91941,
+      "sizeBytes": 94833,
       "contentType": "text/html",
-      "sha256": "87fad6b6b445afbf37470d0f90ca7f1682173c28b47da1c89099fb0ec5bdfb91"
+      "sha256": "3a00a64767c6009bc60ace6a442405cb6fd91456de9cd43993b3dceec7ae0b9d"
     },
     {
       "refId": "IEC 62443",
@@ -4986,9 +4986,9 @@
       "url": "https://www.ttbz.org.cn/StandardManage/Detail/53484/",
       "status": "downloaded",
       "filename": "China_YD_T_3834.1-2021.html",
-      "sizeBytes": 87353,
+      "sizeBytes": 86981,
       "contentType": "text/html",
-      "sha256": "3671c7fac7390bf8c5057bc19d7b9d4d6a1b0d70a536ceff73b29d04a5c4cd81"
+      "sha256": "9c8695c03f3c69b991f987fdc123116d034a41a38abb0c9debe0bcb9d735dbd7"
     },
     {
       "refId": "draft-ietf-jose-pqc-algorithms",
@@ -5146,9 +5146,9 @@
       "url": "https://csrc.nist.gov/pubs/sp/800/175/b/r1/final",
       "status": "downloaded",
       "filename": "NIST-SP-800-175B.html",
-      "sizeBytes": 41974,
+      "sizeBytes": 41747,
       "contentType": "text/html",
-      "sha256": "f7f65cd11f1722401871d1ff2deb72da095033d907fc512011f30cab4353cb68"
+      "sha256": "4004446c3535c13cc71a83cd545a19c498102a11ae4ca4523ce5ee80f134e8c9"
     },
     {
       "refId": "NIST-SP-800-152",
@@ -5156,9 +5156,9 @@
       "url": "https://csrc.nist.gov/publications/detail/sp/800-152/final",
       "status": "downloaded",
       "filename": "NIST-SP-800-152.html",
-      "sizeBytes": 43730,
+      "sizeBytes": 43503,
       "contentType": "text/html",
-      "sha256": "831d506adf2a843b97fa206c91f0562c38d9accdf83e6e10207ca6ad5c035c0d"
+      "sha256": "39ab52471a84a32ba57634c33985a5ddc139ef6152fdde72e8970762bcc890db"
     },
     {
       "refId": "NIST-SP-800-56A",
@@ -5196,9 +5196,9 @@
       "url": "https://www.federalregister.gov/documents/2021/05/17/2021-10460/improving-the-nations-cybersecurity",
       "status": "downloaded",
       "filename": "EO-14028.html",
-      "sizeBytes": 10596,
+      "sizeBytes": 133598,
       "contentType": "text/html",
-      "sha256": "4e7b8a8e549c93a885c80c2fcb63c4f1409a1e3f3caa70c7327443327c8713ef"
+      "sha256": "c7c1a42be8b4fb2b224da646b58ce97396cebca912456c0575f0c1ea0a4a3277"
     },
     {
       "refId": "ANSI X9.62",
@@ -5246,9 +5246,9 @@
       "url": "https://standards.ieee.org/ieee/1363a/2004/",
       "status": "downloaded",
       "filename": "IEEE_1363a.html",
-      "sizeBytes": 91941,
+      "sizeBytes": 94833,
       "contentType": "text/html",
-      "sha256": "52272806662880e3df2cfcb3b1d2eaf91cdb4aa0936c6d0873989b41e4d7af02"
+      "sha256": "cd8216cd79591b0627f9f03ff196962263cd9fdf00e4454441fcef81996173e1"
     },
     {
       "refId": "ISO/IEC 18033-2:2006",
@@ -5266,9 +5266,9 @@
       "url": "https://www.niap-ccevs.org/",
       "status": "downloaded",
       "filename": "NIAP.html",
-      "sizeBytes": 29734,
+      "sizeBytes": 29709,
       "contentType": "text/html",
-      "sha256": "76654272ff668e5f0c61d2b1b5ebc0d31c19bc1fd6e975412a02d5860463c935"
+      "sha256": "15548f9078ea133606306a000afbb5c43b700604f13a982cb0a985ae74467f57"
     },
     {
       "refId": "RFC 1847",
@@ -5668,7 +5668,7 @@
       "filename": "draft-celi-wiggers-tls-authkem.html",
       "sizeBytes": 99101,
       "contentType": "text/html",
-      "sha256": "734d3872517958f61a7f607be903cfdb8441d3cf3ae70760fab5e1229c1ed2b9"
+      "sha256": "e433ccdfea7be325031133da6204b75e0f0a3ec8780bdbb5de97b0e1a008fc25"
     },
     {
       "refId": "draft-wiggers-tls-authkem-psk",
@@ -5696,9 +5696,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-tls-rfc8447bis/",
       "status": "downloaded",
       "filename": "draft-ietf-tls-rfc8447bis-15.html",
-      "sizeBytes": 141342,
+      "sizeBytes": 68654,
       "contentType": "text/html",
-      "sha256": "25c6186976e39ab7f990629b790cb72eec4a187140241adfaf600ea62d4cecfa"
+      "sha256": "08eb7574b1e504560021f7c84918a5cbb682918cefce1dc4b40317923664bca6"
     },
     {
       "refId": "BIP-43",
@@ -5846,9 +5846,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-celi-wiggers-tls-authkem/",
       "status": "downloaded",
       "filename": "draft-ietf-tls-authkem.html",
-      "sizeBytes": 98723,
+      "sizeBytes": 99101,
       "contentType": "text/html",
-      "sha256": "a3a007a3cf3a02414a60d0ab9e67dfbd743056aa3f62a8b9cfb83a84cd1c8588"
+      "sha256": "cbacf22933335409a58dab0d842a523d61b5172d15d7e5e8096babaea16a5b36"
     },
     {
       "refId": "draft-ietf-tls-subcerts",
@@ -5856,9 +5856,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-tls-subcerts/",
       "status": "downloaded",
       "filename": "draft-ietf-tls-subcerts.html",
-      "sizeBytes": 39062,
+      "sizeBytes": 74424,
       "contentType": "text/html",
-      "sha256": "42817f99b19f29ebe8cf1c4b3976d3d908cd3605d2846a763fba04aa09f73b1f"
+      "sha256": "a771d9c422b2f0c54e64826108e2c5fa9c26b6aa51b171fb23a4ef33a8738397"
     },
     {
       "refId": "RFC-3647",
@@ -5876,9 +5876,9 @@
       "url": "https://csrc.nist.gov/pubs/fips/197/final",
       "status": "downloaded",
       "filename": "FIPS-197.html",
-      "sizeBytes": 43754,
+      "sizeBytes": 43527,
       "contentType": "text/html",
-      "sha256": "1091cca88a2ca1d30699a76a4ad10a6a0d107dbbb441a3e38bb3562e060aace5"
+      "sha256": "66108f0d84b8d94d82504c17ccb0b424e9bd152e4acaaca2e2e7999acbef4c61"
     },
     {
       "refId": "RFC-8705",
@@ -6096,9 +6096,9 @@
       "url": "https://www.rfc-editor.org/rfc/rfc7465",
       "status": "downloaded",
       "filename": "RFC-7465.html",
-      "sizeBytes": 111438,
+      "sizeBytes": 117570,
       "contentType": "text/html",
-      "sha256": "61fc5c939f37ae907264febb3e09db6257f33b1df8e50d86a3ce2f35b6b44e67"
+      "sha256": "090ef20e38e7254a5a1b75db838cc8086ea83a888adfd9456cd1eeba08c4f70c"
     },
     {
       "refId": "RFC-5469",
@@ -6326,9 +6326,9 @@
       "url": "https://csrc.nist.gov/pubs/fips/140-3/final",
       "status": "downloaded",
       "filename": "FIPS-140-3.html",
-      "sizeBytes": 49443,
+      "sizeBytes": 49216,
       "contentType": "text/html",
-      "sha256": "9222d0f01f48b25e436721ab08ed0d16aa162140365ed6d63931c70da8a0281d"
+      "sha256": "43a466f8e4927115092146e8d65be3c2a16156c6d3cc3a0926d51dbbd9e956c7"
     },
     {
       "refId": "COMMON-CRITERIA",
@@ -6346,9 +6346,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-josefsson-ntruprime-ssh/",
       "status": "downloaded",
       "filename": "draft-josefsson-ntruprime-ssh.html",
-      "sizeBytes": 48325,
+      "sizeBytes": 48711,
       "contentType": "text/html",
-      "sha256": "62e8c0831012329613003f9818d71b0f39f3a129d6da4e8aaaa78a53b643a80a"
+      "sha256": "c0c461fe73a3ac5cadb953be64d974b5baa0d580602315d41b0b4604dc041a7a"
     },
     {
       "refId": "China CACR PQC Competition Results",
@@ -6466,9 +6466,9 @@
       "url": "https://www.rfc-editor.org/rfc/rfc4253.html",
       "status": "downloaded",
       "filename": "IETF_RFC_4253.html",
-      "sizeBytes": 148192,
+      "sizeBytes": 86134,
       "contentType": "text/html",
-      "sha256": "3f35ae01aa69af6d434c24cd86753a657d84ecbbb867f3d93e4824de313143fc"
+      "sha256": "3499e9194fd10f3f14c706d7d58cacb1d6038e268bf5fe3dcab5487f3c7f31ee"
     },
     {
       "refId": "India-TEC-910018-2025",
@@ -6506,9 +6506,9 @@
       "url": "https://www.rfc-editor.org/rfc/rfc9162",
       "status": "downloaded",
       "filename": "IETF_RFC_9162.html",
-      "sizeBytes": 1233551,
+      "sizeBytes": 1214554,
       "contentType": "text/html",
-      "sha256": "433e44704b6c1e71035fe87d3f512b22b0a5135058a60367ae10ab1888482dd0"
+      "sha256": "812b49fd3059bbaa58ee06a93ca505bffca84c8c0324f40e974f813f69c30e36"
     },
     {
       "refId": "IETF RFC 8555",
@@ -6516,9 +6516,9 @@
       "url": "https://www.rfc-editor.org/rfc/rfc8555",
       "status": "downloaded",
       "filename": "IETF_RFC_8555.html",
-      "sizeBytes": 314538,
+      "sizeBytes": 851937,
       "contentType": "text/html",
-      "sha256": "d505ed418c5bed119b5bf75255ef5f47e1a650ca0d0d21119f93f72da7657bfd"
+      "sha256": "98fad8cbe0c07491cf96747b33beb0d8c9cc585102fd5930488d6981c71e5273"
     },
     {
       "refId": "ETSI-GS-QKD-016-V2",
@@ -6676,9 +6676,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-sfluhrer-ipsecme-ikev2-mldsa/",
       "status": "downloaded",
       "filename": "draft-sfluhrer-ipsecme-ikev2-mldsa-00.html",
-      "sizeBytes": 39605,
+      "sizeBytes": 39987,
       "contentType": "text/html",
-      "sha256": "92c70e1ca1ce31a69d9362c51d299e84f3a7b33fd0770ae729225b360642d905"
+      "sha256": "60e17b610be7f70fd112da03823fecb83f9fc54656c276f2e280bc0d66e126cd"
     },
     {
       "refId": "draft-ietf-tls-mldsa-01",
@@ -6686,9 +6686,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-tls-mldsa/",
       "status": "downloaded",
       "filename": "draft-ietf-tls-mldsa-01.html",
-      "sizeBytes": 56527,
+      "sizeBytes": 59202,
       "contentType": "text/html",
-      "sha256": "553271a8a78341970542ff4124e4beca6bdca63f4d3deb79080c1980b8017efc"
+      "sha256": "4ecbc782330d5f7474e69f18805a5fa016934e20cdcc8ba553a53e136fad7079"
     },
     {
       "refId": "draft-ietf-lamps-pq-composite-sigs-14",
@@ -6746,9 +6746,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-tls-mldsa/",
       "status": "downloaded",
       "filename": "draft-ietf-tls-mldsa.html",
-      "sizeBytes": 56527,
+      "sizeBytes": 59202,
       "contentType": "text/html",
-      "sha256": "41685e3eee710935a4b895de6e49413ecbc9d7f6e3ea599170aedf11aff60941"
+      "sha256": "31bf816cd6c1198c0f6169c239941c776107f8bd32c18c8070e09dc3832cfade"
     },
     {
       "refId": "draft-ietf-ipsecme-ikev2-mlkem-03",
@@ -6756,9 +6756,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-ipsecme-ikev2-mlkem/",
       "status": "downloaded",
       "filename": "draft-ietf-ipsecme-ikev2-mlkem-03.html",
-      "sizeBytes": 74174,
+      "sizeBytes": 80838,
       "contentType": "text/html",
-      "sha256": "59c75bb9dcce4d1ee78e0b4a18351f5dad01d68e5406dcd7286894735e69f42f"
+      "sha256": "d58829f83b65d3c5a0ce8e3a36efc6064cd2bec9b42157382b33ddd10840f2ed"
     },
     {
       "refId": "Singapore IMDA Cyber Security Guide",
@@ -6796,9 +6796,9 @@
       "url": "https://cloudsecurityalliance.org/artifacts/a-practitioners-guide-to-post-quantum-cryptography",
       "status": "downloaded",
       "filename": "CSA-PQC-Guide-2025.html",
-      "sizeBytes": 75470,
+      "sizeBytes": 97948,
       "contentType": "text/html",
-      "sha256": "6efd51ec58baa6abba903ca006514875f72894e62f77e414370032378239974b"
+      "sha256": "ccb201b6e0988716732d4053231f2f5eb133c103df279e8dfac8fde11f8284be"
     },
     {
       "refId": "ITU-T-X.1819-2024",
@@ -6846,9 +6846,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-tls-ecdhe-mlkem/",
       "status": "downloaded",
       "filename": "draft-ietf-tls-ecdhe-mlkem-03.html",
-      "sizeBytes": 74035,
+      "sizeBytes": 73957,
       "contentType": "text/html",
-      "sha256": "1a667ffb855ba2e27f6c8a441dedc32b45fb45d85d011437ef32396ae85eabd6"
+      "sha256": "b93d1d022f5bccd7f08bd175fcbbcb306f371cc17f60ca3aac84fba6291486d5"
     },
     {
       "refId": "draft-ietf-tls-mlkem-05",
@@ -6856,9 +6856,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-tls-mlkem/",
       "status": "downloaded",
       "filename": "draft-ietf-tls-mlkem-05.html",
-      "sizeBytes": 62143,
+      "sizeBytes": 62528,
       "contentType": "text/html",
-      "sha256": "90e664e2b97a293b0f145180018b5ebbb9331a071ec0171cb7daf779eef33094"
+      "sha256": "8854aa53cfa1bd6efcfde08763491b98f5678ec38a97f0adad826390c5d6ce78"
     },
     {
       "refId": "draft-ietf-lamps-pq-composite-kem-11",
@@ -6886,9 +6886,9 @@
       "url": "https://www.cisa.gov/resources-tools/resources/product-categories-technologies-use-post-quantum-cryptography-standards",
       "status": "downloaded",
       "filename": "CISA-PQC-CATEGORY-LIST-2025.html",
-      "sizeBytes": 72327,
+      "sizeBytes": 72793,
       "contentType": "text/html",
-      "sha256": "1adf909f8a3ef8394e7cd6df7c8b543f8082b924e09e046ed68e26f5b231fbc1"
+      "sha256": "e434120154a18a5ca48c7b19da9ad8e6a2f11e1674faf07422e106c7864856bd"
     },
     {
       "refId": "draft-ietf-lamps-pq-composite-kem-10",
@@ -6926,9 +6926,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-tls-ecdhe-mlkem/",
       "status": "downloaded",
       "filename": "IETF-TLS-ECDHE-MLKEM-03.html",
-      "sizeBytes": 74035,
+      "sizeBytes": 73957,
       "contentType": "text/html",
-      "sha256": "ab0a2ddb4d09d986a9503a06578de77150eabacb4512afe1f9d6b1092dd1910b"
+      "sha256": "606ce2c65167ae39e364b842f808a5057dac0174ec1339ea34450037e3461a41"
     },
     {
       "refId": "IETF-LAMPS-COMPOSITE-KEM-11",
@@ -6996,9 +6996,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-tls-mlkem/",
       "status": "downloaded",
       "filename": "draft-ietf-tls-mlkem-04.html",
-      "sizeBytes": 62143,
+      "sizeBytes": 62528,
       "contentType": "text/html",
-      "sha256": "af07e859627ccefe515c6d89e58f091d1257fd2aabaf22a8daf7228fe10fbb2d"
+      "sha256": "0f3008ab31d9f7a89cd7fd6a24e1493eb3ea43a784bd44a95e51fb3c163c4e1b"
     },
     {
       "refId": "draft-ietf-sshm-mlkem-hybrid-kex-04",
@@ -7006,9 +7006,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-sshm-mlkem-hybrid-kex/",
       "status": "downloaded",
       "filename": "draft-ietf-sshm-mlkem-hybrid-kex-04.html",
-      "sizeBytes": 87078,
+      "sizeBytes": 87449,
       "contentType": "text/html",
-      "sha256": "a4ff7e790a194549abf368a83a5f128825c68d55aa95f7e7ddacd365bd1d3f15"
+      "sha256": "adca94c989931beec333c233abb9b0bfd8479b5c22b2ac332544b62415b25501"
     },
     {
       "refId": "draft-ietf-pquip-pqt-hybrid-terminology",
@@ -7016,9 +7016,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-pquip-pqt-hybrid-terminology/",
       "status": "downloaded",
       "filename": "draft-ietf-pquip-pqt-hybrid-terminology.html",
-      "sizeBytes": 76504,
+      "sizeBytes": 76517,
       "contentType": "text/html",
-      "sha256": "705710ce2773c119419bb4141b3bbce2487edc464c0d300786b6a22d3b2416ae"
+      "sha256": "f3b893ddcdc687e343f0ab708b20a394747bc519e6a6cf889bbdc657a8d83455"
     },
     {
       "refId": "draft-ietf-tls-semistatic-dh",
@@ -7126,9 +7126,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-sshm-ntruprime-ssh/",
       "status": "downloaded",
       "filename": "draft-ietf-sshm-ntruprime-ssh.html",
-      "sizeBytes": 56951,
+      "sizeBytes": 56964,
       "contentType": "text/html",
-      "sha256": "0d25c7081c8f87e6bc385eb751b9c7a5718ecdd16b91619ce5aba19a68d9a42c"
+      "sha256": "760e645d7476a675e1a9e95ab22bf6de76ae2f17d4dddfb44602b5d45d6613f4"
     },
     {
       "refId": "draft-ietf-opsawg-rfc5706bis",
@@ -7156,9 +7156,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-tls-mldsa/",
       "status": "downloaded",
       "filename": "draft-ietf-tls-mldsa-03.html",
-      "sizeBytes": 56527,
+      "sizeBytes": 59202,
       "contentType": "text/html",
-      "sha256": "b9f530b577ec5dc2c8b94d55e635e6ba33b47cbda48318af5ad10dc2c855d47e"
+      "sha256": "df2ee0487d10ddd64a090a5ab6c289c4f1a9c2644248f0ec08c45c563cd9f148"
     },
     {
       "refId": "draft-celi-wiggers-tls-authkem-07",
@@ -7166,9 +7166,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-celi-wiggers-tls-authkem/",
       "status": "downloaded",
       "filename": "draft-celi-wiggers-tls-authkem-07.html",
-      "sizeBytes": 98723,
+      "sizeBytes": 99101,
       "contentType": "text/html",
-      "sha256": "8dc27a2f02f4ead9e5a4291b3e598ad18c4ec705b42ecfb0897ab6d0ac503221"
+      "sha256": "43daebae14e1d6bdc6d61c895ee936705c55cd810e1b8a04c325dbb110d716d2"
     },
     {
       "refId": "draft-ietf-lamps-pq-composite-sigs-19",
@@ -7206,9 +7206,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-ipsecme-ikev2-mlkem/",
       "status": "downloaded",
       "filename": "draft-ietf-ipsecme-ikev2-mlkem-05.html",
-      "sizeBytes": 76000,
+      "sizeBytes": 80838,
       "contentType": "text/html",
-      "sha256": "cb63140697bbd639ac328bcff59811a8dcd29f30e74ced0dbfa56544e4113a25"
+      "sha256": "4c66d3a0a4d404b561ab869337a36083ed2670769d7235ae4fb5630809a86718"
     },
     {
       "refId": "draft-ietf-ipsecme-ikev2-pqc-auth-08",
@@ -7246,9 +7246,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-sshm-mlkem-hybrid-kex/",
       "status": "downloaded",
       "filename": "draft-ietf-sshm-mlkem-hybrid-kex-10.html",
-      "sizeBytes": 87078,
+      "sizeBytes": 87449,
       "contentType": "text/html",
-      "sha256": "90b4eee1e9f93550b5f0266be3978f4cf0aaa4e0094f54a830eb5a9b20a17908"
+      "sha256": "505fd42a8b8a65a5662921ec711ae6516390402d35d419fe7f1a9f77dcd0c4ad"
     },
     {
       "refId": "draft-becker-cnsa2-ssh-profile-03",
@@ -7256,9 +7256,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-becker-cnsa2-ssh-profile/",
       "status": "downloaded",
       "filename": "draft-becker-cnsa2-ssh-profile-03.html",
-      "sizeBytes": 71127,
+      "sizeBytes": 71857,
       "contentType": "text/html",
-      "sha256": "cf8ee3886f1ee2b005681579517821637c3d334db23b37603bd0eff6e7183372"
+      "sha256": "02861b63834c6c0988b7dee78acc46669adf22c5d1ed2bf0a53e6d061483b418"
     },
     {
       "refId": "RFC 9325",
@@ -7296,9 +7296,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-mls-pq-ciphersuites/",
       "status": "downloaded",
       "filename": "draft-ietf-mls-pq-ciphersuites-04.html",
-      "sizeBytes": 58403,
+      "sizeBytes": 61357,
       "contentType": "text/html",
-      "sha256": "d8d8989e59a187e141ea3744dd982af27f034937b9b92906da22b5cc4f35bd9c"
+      "sha256": "b7bba5655f51693f958654dbe66a2360c4979f4ae0c83f0ce6ef77148a6ed4d9"
     },
     {
       "refId": "draft-ietf-mls-combiner-02",
@@ -7346,9 +7346,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-fregly-dnsop-slh-dsa-mtl-dnssec/",
       "status": "downloaded",
       "filename": "draft-fregly-dnsop-slh-dsa-mtl-dnssec-06.html",
-      "sizeBytes": 67314,
+      "sizeBytes": 67699,
       "contentType": "text/html",
-      "sha256": "0c26650967f215d52e3af813c1afadc445effa2c40f585b214690f50f79ce868"
+      "sha256": "7024b89fd7e5c8c3ce18f62830cbf4cf518b84e2072e14e7972d872de49b51f2"
     },
     {
       "refId": "draft-sheth-pqc-dnssec-strategy-01",
@@ -7356,9 +7356,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-sheth-pqc-dnssec-strategy/",
       "status": "downloaded",
       "filename": "draft-sheth-pqc-dnssec-strategy-01.html",
-      "sizeBytes": 56326,
+      "sizeBytes": 56705,
       "contentType": "text/html",
-      "sha256": "d6418df41a5f87aa43a3158101e9bab5da24d76ded43c595028c7a124dc41860"
+      "sha256": "ca789d3ce4e19ae5bc0f97648e42acabb9e96cfd32ad8bc8f98c9f285ddcab10"
     },
     {
       "refId": "TCG-PC-Client-Platform-TPM-Profile-v1.07",
@@ -7396,9 +7396,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-lamps-cms-composite-kem/",
       "status": "downloaded",
       "filename": "draft-ietf-lamps-cms-composite-kem.html",
-      "sizeBytes": 90860,
+      "sizeBytes": 91383,
       "contentType": "text/html",
-      "sha256": "b6949ad6d5f92a5233ad0d3db915a7ff6a8496c1f33366b6356b894f242916d2"
+      "sha256": "6fa11f9651c75d5fc6a5e8da5dbf605275cd5be7e20bb9bba8fdae1933024396"
     },
     {
       "refId": "draft-ietf-lamps-cms-composite-sigs",
@@ -7416,9 +7416,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-tls-cert-abridge/",
       "status": "downloaded",
       "filename": "draft-ietf-tls-cert-abridge.html",
-      "sizeBytes": 42646,
+      "sizeBytes": 43021,
       "contentType": "text/html",
-      "sha256": "c075d7b0e584eb09450ed58b613184bc796c8d96e6a735fa57362af24865c200"
+      "sha256": "8e6796fb8cc87e4ac814042e3b8f0694f076e20f425b31e17a43fa3c5914c24e"
     },
     {
       "refId": "FAEST-Round2-Spec",
@@ -7536,9 +7536,9 @@
       "url": "https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.39.pdf",
       "status": "downloaded",
       "filename": "NIST-CSWP-39.pdf",
-      "sizeBytes": 1079965,
+      "sizeBytes": 1277231,
       "contentType": "application/pdf",
-      "sha256": "73830feb19cea6829310beaeb9dcf41cac3c711cc82a05a2083cf1f93159b650"
+      "sha256": "11c7c012423a8612a7bc42a1a7b5458437180dc47404bafc79f52ef97372c821"
     },
     {
       "refId": "G7-CB-QT-Financial-2026",
@@ -7646,9 +7646,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-reddy-lamps-x509-pq-commit/",
       "status": "downloaded",
       "filename": "draft-reddy-lamps-x509-pq-commit.html",
-      "sizeBytes": 65581,
+      "sizeBytes": 65961,
       "contentType": "text/html",
-      "sha256": "abb3056c2ed6298c3233fb337fdf587ff36db909bb894589bca4868fdbab67e6"
+      "sha256": "0badebae0a7fe9f59172058a86fb1bec2eea3c08a64f20435aaa030b63be5adf"
     },
     {
       "refId": "Circle-PQC-Roadmap-2026",
@@ -7716,9 +7716,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-harrison-sshm-mlkem/",
       "status": "downloaded",
       "filename": "draft-harrison-sshm-mlkem.html",
-      "sizeBytes": 52312,
+      "sizeBytes": 52685,
       "contentType": "text/html",
-      "sha256": "20bc300f1aba360c904154be2b74451ed12c3222ba585577aab67baeb4ca9034"
+      "sha256": "338a23e3f80af8d6b3e042ecb66417c3a7a4e0469976370180244c2acbba6fd6"
     },
     {
       "refId": "draft-josefsson-ssh-sphincs",
@@ -7746,9 +7746,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-yusef-tls-pqt-dual-certs/",
       "status": "downloaded",
       "filename": "draft-yusef-tls-pqt-dual-certs.html",
-      "sizeBytes": 97587,
+      "sizeBytes": 85152,
       "contentType": "text/html",
-      "sha256": "a0d0aed8670dd18d4aa8ff920401e25eb52fb94f4e31d82401b11da69b48b2e6"
+      "sha256": "ff6ed59ee04f899c60f2427ee7261664589412797be3345aee1f57ef986883b9"
     },
     {
       "refId": "draft-reddy-cose-jose-pqc-hybrid-hpke",
@@ -7756,9 +7756,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-reddy-cose-jose-pqc-hybrid-hpke/",
       "status": "downloaded",
       "filename": "draft-reddy-cose-jose-pqc-hybrid-hpke.html",
-      "sizeBytes": 81712,
+      "sizeBytes": 44830,
       "contentType": "text/html",
-      "sha256": "74c6a01712be29138383c73406a9131ad8863283fc7a2ee1cded498eb00805e3"
+      "sha256": "14e92cb57502ba6e5e41d642a020eb56903a25d5a7867514814241646f3e2441"
     },
     {
       "refId": "RFC-9941",
@@ -7928,7 +7928,7 @@
       "filename": "NIST-IR-8610.html",
       "sizeBytes": 49228,
       "contentType": "text/html",
-      "sha256": "858194843edb9692a1ca68f0230b19247955bcd6edf393e68ad8d860c74f946c"
+      "sha256": "9bda9746135161976da9b66a3d5dd9c6c13ab3c48a724437cb37207679352f7a"
     },
     {
       "refId": "EO-14409-Securing-the-Nation",
@@ -7936,9 +7936,9 @@
       "url": "https://www.whitehouse.gov/presidential-actions/2026/06/securing-the-nation-against-advanced-cryptographic-attacks/",
       "status": "downloaded",
       "filename": "EO-14409-Securing-the-Nation.html",
-      "sizeBytes": 2691,
+      "sizeBytes": 287448,
       "contentType": "text/html",
-      "sha256": "a05f56deb2664a033a19435fe6bb3ad2cc2c27145e8c82883a5b1c80419b3991"
+      "sha256": "45071b2416638edc8048c6dd4b9d966ccba99d5a57f37298622aa4f8072baffd"
     },
     {
       "refId": "EO-2026-06-22-Securing-the-Nation",
@@ -7946,9 +7946,9 @@
       "url": "https://www.whitehouse.gov/presidential-actions/2026/06/securing-the-nation-against-advanced-cryptographic-attacks/",
       "status": "downloaded",
       "filename": "EO-2026-06-22-Securing-the-Nation.html",
-      "sizeBytes": 285236,
+      "sizeBytes": 287448,
       "contentType": "text/html",
-      "sha256": "f45d49aa9e2dc6fd22da6fb1d6df7e176de9faf5151664704714a4bdd8f2180f"
+      "sha256": "45071b2416638edc8048c6dd4b9d966ccba99d5a57f37298622aa4f8072baffd"
     },
     {
       "refId": "ref-quantinuum-helios",
@@ -8168,7 +8168,7 @@
       "filename": "NIST-IR-8547-Initial-Public-Draft-Transition-to-Post-Quantum.html",
       "sizeBytes": 45146,
       "contentType": "text/html",
-      "sha256": "5855ece1da81888d43386a296c942bf6c1e89c577f17483bee490cec45b85140"
+      "sha256": "9b95210c03915abb4deab6e7e6b30f5fd09d7e2b482369391266f66314d4087b"
     }
   ]
 }

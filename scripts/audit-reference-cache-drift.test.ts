@@ -235,6 +235,33 @@ describe('looksBlocked', () => {
     expect(looksBlocked(Buffer.from(body))).toBe(false)
   })
 
+  it('does not flag a legitimate mid-size page whose noscript fallback happens to say "enable javascript"', () => {
+    // Real false positive found 2026-07-13: IETF datatracker pages (40-97KB)
+    // carry a generic <noscript>Please enable Javascript...</noscript>
+    // fallback — present on countless legitimate sites, unrelated to bot-
+    // blocking. Confirmed live: datatracker.ietf.org/doc/draft-ietf-tls-
+    // mlkem/07/ contains "enable Javascript" and is a real, working page.
+    // Only a TITLE match should count once content is past the tiny-
+    // interstitial size (see TITLE_ONLY_MIN_BYTES) — this page's title is
+    // the real document title, not a block-page phrase.
+    const body =
+      `<html><head><title>draft-ietf-tls-mlkem-07</title></head>` +
+      `<body>real IETF draft content ${'x'.repeat(9000)}` +
+      `<noscript>Please enable Javascript to use the datatracker.</noscript></body></html>`
+    expect(body.length).toBeGreaterThan(8_000)
+    expect(body.length).toBeLessThan(100_000)
+    expect(looksBlocked(Buffer.from(body))).toBe(false)
+  })
+
+  it('still flags a SMALL page (under the title-only threshold) with a keyword anywhere in the body', () => {
+    // Below 8000 bytes, fetch_resilient.py's original assumption holds: a
+    // real page containing one of these exact phrases AND being that short
+    // is implausible, so a body-wide match (not just title) is trusted.
+    const body = `<html><title>Document</title><body>${'y'.repeat(2000)} please verify you are human</body></html>`
+    expect(body.length).toBeLessThan(8_000)
+    expect(looksBlocked(Buffer.from(body))).toBe(true)
+  })
+
   it('does not flag large content even if it happens to contain a bot-gate word', () => {
     // A genuine large page that merely mentions "captcha" (e.g. a login
     // widget) in passing shouldn't be flagged — only small/mid-size
