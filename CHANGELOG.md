@@ -28,6 +28,13 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.21.2] - 2026-07-13
+
+### Data
+
+- **Cleaned up vendor PQC-roadmap entries and verified trusted-source links** [view:/migrate] [view:/library] [persona:researcher] [persona:architect]: every vendor roadmap entry was checked against a real standard — is it a genuine company-wide PQC strategy, or just a single product's page that had been miscategorized? 57 entries that didn't qualify were removed or corrected, with the underlying evidence moved to the right product listing where it belonged. Also live-verified 83 previously-unconfirmed trusted source links and recovered 6 Timeline source documents that had gone missing.
+- **Reconciled a forked same-day data lineage across 7 datasets** [view:/migrate] [view:/library] [view:/compliance] [persona:researcher] [persona:architect]: two parallel work branches had independently updated the same vendor, certification, product-catalog, library, and trusted-source data on the same day; merged them row-by-row rather than picking one side, so no independent corrections or additions from either branch were lost.
+
 ## [4.21.1] - 2026-07-11
 
 ### Fixed
