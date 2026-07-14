@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "Nokia Quantum-Safe Railways",
+    "category": "Industrial Control System & OT Security",
+    "product_name": "Nokia Quantum-Safe Railways",
+    "product_brief": "End-to-end quantum-safe IP and optical networking solutions for railway mission-critical communications.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "The solution offers quantum-safe IP and optical networking that protects data from intrusion and theft through quantum-safe encryption, key management, and intrusion detection. It is described as an end-to-end, multi-layer solution for greenfield and brownfield deployments.",
+    "pqc_migration_priority": "Critical",
+    "crypto_primitives": "Unknown",
+    "key_management_model": "Quantum-safe key management is mentioned as part of the solution, but specific architectural details (e.g., HSM, MPC, QKD integration) are not stated.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Network security solutions including IP and optical networking, XDR platform, and security orchestration.",
+    "infrastructure_layer": "Network",
+    "license_type": "Commercial",
+    "license": "Unknown",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "Unknown",
+    "primary_platforms": "Railway communications networks, IP-based networks, optical networks, IoT devices.",
+    "target_industries": "Railways, Mission-critical Enterprises",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Unknown",
+    "authoritative_source_url": "nokia-quantum-safe-railways-adc8fd6f.html",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "The solution protects IoT sensors and devices, but specific embedded constraints or lightweight PQC variants are not stated.",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Supports greenfield and brownfield deployments.",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-07-14"
+    }
+  }
+]
