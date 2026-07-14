@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:363dfd4d-5bec-4722-ab5b-88cb153910c2",
+  "serialNumber": "urn:uuid:f0cb0ac3-3bf9-47d6-bb90-ee51333bd54a",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-07-12T00:00:00.000Z",
+    "timestamp": "2026-07-14T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -447,7 +447,6 @@
       "name": "Bouncy Castle Java",
       "version": "1.83",
       "purl": "pkg:maven/org.bouncycastle/bcprov-jdk18on",
-      "cpe": "cpe:2.3:a:bouncycastle:legion-of-the-bouncy-castle-java-crytography-api:1.36:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -551,7 +550,6 @@
       "name": "OpenSSL",
       "version": "4.0.0",
       "purl": "pkg:github/openssl/openssl",
-      "cpe": "cpe:2.3:a:openssl:openssl:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -607,7 +605,6 @@
       "name": "Google Tink",
       "version": "1.21.0",
       "purl": "pkg:github/tink-crypto/tink-java",
-      "cpe": "cpe:2.3:a:google:tink:1.0.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -659,7 +656,6 @@
       "name": "Botan",
       "version": "3.12.0",
       "purl": "pkg:github/randombit/botan",
-      "cpe": "cpe:2.3:a:botan_project:botan:1.10.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -1518,7 +1514,6 @@
       "name": "AWS-LC",
       "version": "v5.0.0 (FIPS branch decoupled; also v1.73.0 in legacy scheme)",
       "purl": "pkg:github/aws/aws-lc",
-      "cpe": "cpe:2.3:a:amazon:aws-lc-sys:-:*:*:*:*:rust:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -1759,7 +1754,6 @@
       "bom-ref": "aaf8aedcc0406201",
       "name": "Entrust nShield",
       "version": "13.9.5 (Security World; nShield 5s firmware 13.8.4, Solo XC firmware 13.8.3)",
-      "cpe": "cpe:2.3:h:entrust:nshield_5c:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -1853,7 +1847,6 @@
       "name": "HashiCorp Vault",
       "version": "2.0.2",
       "purl": "pkg:github/hashicorp/vault",
-      "cpe": "cpe:2.3:a:hashicorp:vault:0.1.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -2043,7 +2036,6 @@
       "name": "Keyfactor EJBCA",
       "version": "Enterprise 9.6.1",
       "purl": "pkg:github/Keyfactor/ejbca-ce",
-      "cpe": "cpe:2.3:a:keyfactor:ejbca:8.0.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -2193,7 +2185,6 @@
       "name": "BoringSSL",
       "version": "Rolling",
       "purl": "pkg:github/google/boringssl",
-      "cpe": "cpe:2.3:a:google:chrome:0.2.149.29:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -2249,7 +2240,6 @@
       "name": "GnuTLS",
       "version": "3.8.13",
       "purl": "pkg:github/gnutls/gnutls",
-      "cpe": "cpe:2.3:a:gnu:gnutls:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -2354,7 +2344,6 @@
       "name": "rustls",
       "version": "0.23.36",
       "purl": "pkg:github/rustls/rustls",
-      "cpe": "cpe:2.3:a:rustls_project:rustls:0.1.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -2508,7 +2497,6 @@
       "name": "strongSwan",
       "version": "6.0.7",
       "purl": "pkg:github/strongswan/strongswan",
-      "cpe": "cpe:2.3:a:strongswan:strongswan:2.1.2:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -2664,7 +2652,6 @@
       "name": "wolfSSH",
       "version": "1.5.0",
       "purl": "pkg:github/wolfSSL/wolfssh",
-      "cpe": "cpe:2.3:a:wolfssh:wolfssh:1.4.7:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {

@@ -12,6 +12,17 @@ import '@testing-library/jest-dom'
 import type { Sponsor } from '@/data/sponsors'
 
 describe('ChangelogView sponsor acknowledgment', () => {
+  // ChangelogView renders the ENTIRE unpaginated release history (200+
+  // versions) on every mount. That's fast in isolation but, under the CPU
+  // contention of the full ~4600-test suite running concurrently, the render
+  // can be slow enough that React's time-slicing gets interrupted mid-commit
+  // — confirmed real: this file passes 2/2 standalone, but running the full
+  // suite (or even just this test alone via `-t`, with every other file still
+  // imported) deterministically reproduces either a transient duplicate-node
+  // render or an outright timeout at the default 5000ms. Bumping the timeout
+  // gives the expensive render enough headroom without touching component
+  // behavior — same rationale as this repo's E2E suite's 60s WASM-load
+  // timeout override for another known-expensive operation.
   it('renders nothing when there are no active sponsors', async () => {
     vi.resetModules()
     vi.doMock('@/data/sponsors', () => ({ SPONSORS: [] as Sponsor[] }))
@@ -23,7 +34,7 @@ describe('ChangelogView sponsor acknowledgment', () => {
     )
     expect(screen.queryByText(/Thank you to our sponsors/i)).not.toBeInTheDocument()
     vi.doUnmock('@/data/sponsors')
-  })
+  }, 15000)
 
   it('thanks each active sponsor by name, linked to their real website', async () => {
     vi.resetModules()
@@ -47,5 +58,5 @@ describe('ChangelogView sponsor acknowledgment', () => {
     const link = screen.getByRole('link', { name: 'Acme HSM Corp' })
     expect(link).toHaveAttribute('href', 'https://acme-hsm.example.com')
     vi.doUnmock('@/data/sponsors')
-  })
+  }, 15000)
 })
