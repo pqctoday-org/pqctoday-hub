@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
   "generated": "2026-07-09",
-  "count": 1043,
+  "count": 1045,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -6361,13 +6361,6 @@
       "tier": "curl_cffi:chrome120"
     },
     {
-      "product_id": "entrust-cryptographic-platform",
-      "url": "https://www.entrust.com/solutions/post-quantum-cryptography",
-      "file": "entrust-cryptographic-platform-c357c543.html",
-      "bytes": 32088,
-      "tier": "playwright-stealth"
-    },
-    {
       "product_id": "entrust-cryptographic-security-platform",
       "url": "https://www.entrust.com/products/cryptographic-security-platform",
       "file": "entrust-cryptographic-security-platform-2cfa9072.html",
@@ -6993,13 +6986,6 @@
       "tier": "curl_cffi:chrome124"
     },
     {
-      "product_id": "debian-13-trixie",
-      "url": "https://packages.debian.org/trixie/openssl",
-      "file": "debian-13-trixie-0b351c13.html",
-      "bytes": 2776,
-      "tier": "curl_cffi:chrome124"
-    },
-    {
       "product_id": "wire",
       "url": "https://wire.com/en/security",
       "file": "wire-800ccc02.html",
@@ -7565,13 +7551,6 @@
       "file": "microsoft-rds-dc1b0c01.html",
       "bytes": 36339,
       "tier": "curl_cffi:chrome124"
-    },
-    {
-      "product_id": "entrust-cryptographic-platform",
-      "url": "https://www.entrust.com/solutions/post-quantum-cryptography",
-      "file": "entrust-cryptographic-platform-c357c543.html",
-      "bytes": 27621,
-      "tier": "playwright-stealth"
     },
     {
       "product_id": "dogtag-certificate-system",
@@ -8559,6 +8538,45 @@
       "file": "python-ssl-module-479ab647.html",
       "bytes": 426124,
       "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "siemens-sinema-remote-connect",
+      "url": "https://cache.industry.siemens.com/dl/files/326/109996326/att_1346172/v1/BA_SINEMA-RC-Server_76_en-US.pdf",
+      "file": "siemens-sinema-remote-connect-9aa62d3c.pdf",
+      "bytes": 2637709,
+      "tier": "stealth"
+    },
+    {
+      "product_id": "strongswan",
+      "url": "https://downloads.strongswan.org/blog/2026/04/22/strongswan-6.0.6-released.html",
+      "file": "strongswan-e9d4c0f8.html",
+      "bytes": 12520,
+      "tier": "crawl4ai",
+      "recovered": true
+    },
+    {
+      "product_id": "keysight-cyperf",
+      "url": "https://www.keysight.com/blogs/en/tech/nwvs/2025/08/05/post-quantum-handshakes",
+      "file": "keysight-cyperf-51e9daac.html",
+      "bytes": 21030,
+      "tier": "curl_cffi:chrome124",
+      "recovered": true
+    },
+    {
+      "product_id": "entrust-cryptographic-platform",
+      "url": "https://www.entrust.com/company/newsroom/entrust-nshield-hsms-achieve-validation-from-nist-cryptographic-algorithm-validation-program",
+      "file": "entrust-cryptographic-platform-b51d51cd.html",
+      "bytes": 104386,
+      "tier": "curl_cffi:chrome120",
+      "recovered": true
+    },
+    {
+      "product_id": "azure-dedicated-hsm-marvell-liquidsecurity",
+      "url": "https://www.marvell.com/company/newsroom/marvell-liquidSecurity2-hardware-security-multi-cloud-era.html",
+      "file": "azure-dedicated-hsm-marvell-liquidsecurity-1e6d8d10.html",
+      "bytes": 119617,
+      "tier": "curl_cffi:chrome124",
+      "recovered": true
     }
   ]
 }
