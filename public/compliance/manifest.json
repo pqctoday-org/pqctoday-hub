@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-14T02:30:47.897110+00:00",
+  "generated": "2026-07-14T02:33:20.355580+00:00",
   "entries": [
     {
       "refId": "NIST",
@@ -990,6 +990,69 @@
       "sizeBytes": 92813,
       "contentType": "text/html",
       "sha256": "e560f35a6d31911c5e22ad689e17550a588b93ea41a738d07eae205969dfb44a"
+    },
+    {
+      "refId": "BSI-PQC-ADVISORY",
+      "url": "https://www.bsi.bund.de/EN/Themen/Unternehmen-und-Organisationen/Informationen-und-Empfehlungen/Quantentechnologien-und-Post-Quanten-Kryptografie/quantentechnologien-und-post-quanten-kryptografie_node.html",
+      "status": "downloaded",
+      "filename": "BSI-PQC-ADVISORY.html",
+      "sizeBytes": 60988,
+      "contentType": "text/html",
+      "sha256": "94dba659ea627f07b4641dc7eb03de43d18f00cd959db1a2f3fa51ac67f1a7b2"
+    },
+    {
+      "refId": "PRA-SS2-21",
+      "url": "https://www.bankofengland.co.uk/prudential-regulation",
+      "status": "downloaded",
+      "filename": "PRA-SS2-21.html",
+      "sizeBytes": 97476,
+      "contentType": "text/html",
+      "sha256": "21889d970747bc2a55982b84c4aed053a7469622675306bc7a197fa707e5b950"
+    },
+    {
+      "refId": "ICO-UK-ENC",
+      "url": "https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/security/encryption/",
+      "status": "downloaded",
+      "filename": "ICO-UK-ENC.html",
+      "sizeBytes": 56678,
+      "contentType": "text/html",
+      "sha256": "d69fca84043f6be8bca28afd85ae88af6214dc656389781c6183cb0022286ca3"
+    },
+    {
+      "refId": "NSM-NO-GP",
+      "url": "https://nsm.no/regelverk-og-hjelp/rad-og-anbefalinger/grunnprinsipper-for-ikt-sikkerhet/",
+      "status": "downloaded",
+      "filename": "NSM-NO-GP.html",
+      "sizeBytes": 69426,
+      "contentType": "text/html",
+      "sha256": "c6450c484b233e09e07fbdb297314a2bc0bdcc78c60f342bc93feef5e3c937cb"
+    },
+    {
+      "refId": "MSB-SE-CYB",
+      "url": "https://www.msb.se/en",
+      "status": "downloaded",
+      "filename": "MSB-SE-CYB.html",
+      "sizeBytes": 98415,
+      "contentType": "text/html",
+      "sha256": "eaf2140421071e4efe112c6da93d4771b9246b2fbaf4150bc50aef11d5a0cb1a"
+    },
+    {
+      "refId": "NCSC-FI-PQC",
+      "url": "https://www.kyberturvallisuuskeskus.fi/en",
+      "status": "downloaded",
+      "filename": "NCSC-FI-PQC.html",
+      "sizeBytes": 176809,
+      "contentType": "text/html",
+      "sha256": "189d88e8f9249cf1505f499dcccfb9306c1ff99f9d45b270c4cc524621b0f4e4"
+    },
+    {
+      "refId": "ARGENTINA-ONTI",
+      "url": "https://www.argentina.gob.ar/jefatura/innovacion-publica",
+      "status": "downloaded",
+      "filename": "ARGENTINA-ONTI.html",
+      "sizeBytes": 46130,
+      "contentType": "text/html",
+      "sha256": "40091f57ed53e58c3d16b9119bb23b16a3fb981b8098e94c2ea7c34776a22384"
     }
   ],
   "blocked": {
@@ -1056,6 +1119,21 @@
     "KE-DPA": {
       "reason": "status=err, tier=crawl4ai",
       "blocked_at": "2026-07-14T02:27:15.404264+00:00",
+      "attempts": 1
+    },
+    "CHILE-ANCI": {
+      "reason": "status=err, tier=crawl4ai",
+      "blocked_at": "2026-07-14T02:31:41.619107+00:00",
+      "attempts": 1
+    },
+    "MEXICO-CNBV-CUB": {
+      "reason": "bot challenge page (Radware-style Challenge Validation)",
+      "blocked_at": "2026-07-14T02:33:20.355580+00:00",
+      "attempts": 1
+    },
+    "BRAZIL-BACEN-4893": {
+      "reason": "Angular JS-shell, empty <app-root>, noscript warning present",
+      "blocked_at": "2026-07-14T02:33:20.355580+00:00",
       "attempts": 1
     }
   }
