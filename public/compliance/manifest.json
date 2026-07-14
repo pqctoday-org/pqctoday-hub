@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-14T02:22:56.281417+00:00",
+  "generated": "2026-07-14T02:23:36.360045+00:00",
   "entries": [
     {
       "refId": "NIST",
@@ -657,6 +657,96 @@
       "sizeBytes": 31873,
       "contentType": "text/html",
       "sha256": "41f5a63970d37bfb2bad70e0387f6c4951f9818c70ad11928c3ffad6af2048a3"
+    },
+    {
+      "refId": "UK-CMORG-PQC",
+      "url": "https://www.cmorg.org.uk/",
+      "status": "downloaded",
+      "filename": "UK-CMORG-PQC.html",
+      "sizeBytes": 34765,
+      "contentType": "text/html",
+      "sha256": "4d7a334a92b46fa61965bc981f1fc2069bacc15992b7e1843000648024c54643"
+    },
+    {
+      "refId": "EUROPOL-QSFF",
+      "url": "https://www.europol.europa.eu/",
+      "status": "downloaded",
+      "filename": "EUROPOL-QSFF.html",
+      "sizeBytes": 189371,
+      "contentType": "text/html",
+      "sha256": "fbae399c75a87bb80f1bd418da7d686e49c2a88f59a68f64f8c4ba913c6fa9f8"
+    },
+    {
+      "refId": "PQCC-ROADMAP",
+      "url": "https://pqcc.org/",
+      "status": "downloaded",
+      "filename": "PQCC-ROADMAP.html",
+      "sizeBytes": 227763,
+      "contentType": "text/html",
+      "sha256": "5e81e1befff28698e210f5e8e6a0aa97a4d68f1dbb171eb3a198fea15ffd42af"
+    },
+    {
+      "refId": "IEEE-1609-PQC",
+      "url": "https://standards.ieee.org/",
+      "status": "downloaded",
+      "filename": "IEEE-1609-PQC.html",
+      "sizeBytes": 116047,
+      "contentType": "text/html",
+      "sha256": "2294382b352e00d04705e9d4bf378391754e5019d7ebd528e06da9ce82af420e"
+    },
+    {
+      "refId": "OASIS-PKCS11",
+      "url": "https://www.oasis-open.org/committees/pkcs11/",
+      "status": "downloaded",
+      "filename": "OASIS-PKCS11.html",
+      "sizeBytes": 44418,
+      "contentType": "text/html",
+      "sha256": "e51a4097a92f0b44958c6726d2513c02aeca46789481cb9ac96d9ee6bcb99d27"
+    },
+    {
+      "refId": "3GPP-SA3",
+      "url": "https://www.3gpp.org/specifications-groups/sa-plenary/sa3-security",
+      "status": "downloaded",
+      "filename": "3GPP-SA3.html",
+      "sizeBytes": 136856,
+      "contentType": "text/html",
+      "sha256": "e79c23c24d6109a4212fe6bc506ae1800d0e79aecbb534c3001f523a6f4010e0"
+    },
+    {
+      "refId": "FSISAC-PQC",
+      "url": "https://www.fsisac.com/",
+      "status": "downloaded",
+      "filename": "FSISAC-PQC.html",
+      "sizeBytes": 45573,
+      "contentType": "text/html",
+      "sha256": "02fa8b52a517b968d18e6d2884cb2a5ab37729797202218d200885f9dfb600f8"
+    },
+    {
+      "refId": "ASC-X9",
+      "url": "https://x9.org/pki-home/",
+      "status": "downloaded",
+      "filename": "ASC-X9.html",
+      "sizeBytes": 200837,
+      "contentType": "text/html",
+      "sha256": "d4c9c67369c46247f3c7e66edb1a382418ebd58e310c548ede65d3b5d111634c"
+    },
+    {
+      "refId": "PKI-CONSORTIUM",
+      "url": "https://pkic.org/",
+      "status": "downloaded",
+      "filename": "PKI-CONSORTIUM.html",
+      "sizeBytes": 97139,
+      "contentType": "text/html",
+      "sha256": "b38db2251f99e1ec7a1acf1fb96dc822a8f50519f3ea52192e5f115607c09f66"
+    },
+    {
+      "refId": "CSA-QSC",
+      "url": "https://cloudsecurityalliance.org/",
+      "status": "downloaded",
+      "filename": "CSA-QSC.html",
+      "sizeBytes": 117749,
+      "contentType": "text/html",
+      "sha256": "1a0d8cc60f6a15a8d1717cc9c498df93ad0a73dd7446aee282320225d0781a36"
     }
   ],
   "blocked": {
