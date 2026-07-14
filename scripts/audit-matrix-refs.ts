@@ -50,7 +50,7 @@ const DRAFT_RE = /\b(draft-[a-z]+(?:-[a-z0-9]+)+(?:-\d+)?)/gi
 // canonical OS per spec version, so its digit group is optional (fixed
 // 2026-07-09 when PKCS#11 v3.2 reached OASIS Standard).
 const REF_ID_RE =
-  /^(RFC \d{4,5}|draft-[a-z0-9]+(?:-[a-z0-9]+)+|TCG [A-Za-z0-9. -]+|3GPP T[RS] \d+\.\d+|UEFI \d+\.\d+|IEEE [A-Z0-9.]+(?:-\d+)?|PKCS#11 v\d+\.\d+ (?:CSD\d+|CS\d+|OS\d*|WD\d+)|KMIP \d+\.\d+ (?:CSD\d+|CS\d+|OS\d*|WD\d+)|Signal [A-Za-z0-9 -]+|sigstore\/[a-z-]+)$/
+  /^(RFC \d{4,5}|draft-[a-z0-9]+(?:-[a-z0-9]+)+|TCG [A-Za-z0-9. -]+|3GPP T[RS] \d+\.\d+|UEFI \d+\.\d+|IEEE [A-Z0-9.]+(?:-\d+)?|INCITS \d+(?:-\d{4})?|PKCS#11 v\d+\.\d+ (?:CSD\d+|CS\d+|OS\d*|WD\d+)|KMIP \d+\.\d+ (?:CSD\d+|CS\d+|OS\d*|WD\d+)|Signal [A-Za-z0-9 -]+|sigstore\/[a-z-]+)$/
 
 export interface Finding {
   rowId: string
@@ -174,7 +174,7 @@ export function auditRefIdShape(
         rowId,
         field: `${dim}.refs[${r.id}]`,
         ref: r.id,
-        detail: `ref id "${r.id}" does not match the canonical pattern (RFC NNNN / draft-* / TCG * / 3GPP TR|TS NN.NN / UEFI N.N / IEEE 802.*)`,
+        detail: `ref id "${r.id}" does not match the canonical pattern (RFC NNNN / draft-* / TCG * / 3GPP TR|TS NN.NN / UEFI N.N / IEEE 802.* / INCITS NNN[-YYYY])`,
         severity: 'error',
       })
     }
