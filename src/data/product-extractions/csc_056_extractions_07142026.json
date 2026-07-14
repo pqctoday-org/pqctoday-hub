@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "BlackBerry QNX Hypervisor 8.0 for Safety",
+    "category": "Real-Time Operating Systems",
+    "product_name": "QNX Hypervisor 8.0 for Safety",
+    "product_brief": "Safety-certified embedded virtualization platform for mixed-criticality Physical AI systems.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Type-1 hypervisor with Type-2 flexibility; embedded virtualization platform",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Commercial",
+    "license": "Not stated",
+    "latest_version": "8.0",
+    "release_date": "2026-03-10",
+    "fips_validated": "Not stated",
+    "primary_platforms": "QNX, Linux, Android",
+    "target_industries": "Automotive, Healthcare, Robotics, Industrial",
+    "regulatory_status": "ISO 26262 ASIL D, IEC 61508 SIL 4, IEC 62304 Class C",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "qnx.com",
+    "implementation_attack_surface": "Not stated",
+    "cryptographic_discovery_&_inventory": "Not stated",
+    "testing_&_validation_methods": "Not stated",
+    "qkd_protocols_&_quantum_networking": "Not stated",
+    "qrng_&_entropy_sources": "Not stated",
+    "constrained_device_&_iot_suitability": "Embedded virtualization platform for safety-critical systems",
+    "supply_chain_&_vendor_risk": "Not stated",
+    "deployment_&_migration_complexity": "Not stated",
+    "financial_&_business_impact": "Not stated",
+    "organizational_readiness": "Not stated",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-07-14"
+    }
+  }
+]
