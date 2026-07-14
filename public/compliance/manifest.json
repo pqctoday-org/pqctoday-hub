@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-14T02:18:00.351637+00:00",
+  "generated": "2026-07-14T02:18:56.865781+00:00",
   "entries": [
     {
       "refId": "NIST",
@@ -513,6 +513,87 @@
       "sizeBytes": 80262,
       "contentType": "text/html",
       "sha256": "fe496475783e10148b18c0ec27b3884d26008a2c4ee67f3216dfeead289104df"
+    },
+    {
+      "refId": "HKMA-PQC",
+      "url": "https://www.hkma.gov.hk/",
+      "status": "downloaded",
+      "filename": "HKMA-PQC.html",
+      "sizeBytes": 97560,
+      "contentType": "text/html",
+      "sha256": "c53dfbd49241b841a5e6897fc1496ed5b7619fa441fa1ee0f42f905a7f208b6e"
+    },
+    {
+      "refId": "CISA-PQC-PROCUREMENT",
+      "url": "https://www.cisa.gov/quantum",
+      "status": "downloaded",
+      "filename": "CISA-PQC-PROCUREMENT.html",
+      "sizeBytes": 71066,
+      "contentType": "text/html",
+      "sha256": "1b3a1c4349442f76954347ce09a0b5c4a4388808ccbfa95037014fdebc8bdfee"
+    },
+    {
+      "refId": "G7-CEG-PQC",
+      "url": "https://home.treasury.gov/system/files/136/G7-CYBER-EXPERT-GROUP-STATEMENT-PLANNING-OPPORTUNITIES-RISKS-QUANTUM-COMPUTING.pdf",
+      "status": "downloaded",
+      "filename": "G7-CEG-PQC.pdf",
+      "sizeBytes": 283430,
+      "contentType": "application/pdf",
+      "sha256": "f58565d3ec8bd55ea23aa067b2373f783eb3421808d1f8827993857de1b91575"
+    },
+    {
+      "refId": "PKCS11-V32",
+      "url": "https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/",
+      "status": "downloaded",
+      "filename": "PKCS11-V32.html",
+      "sizeBytes": 1556,
+      "contentType": "text/html",
+      "sha256": "9084d4bafee6e592be87596056527631da01bbc715c7ecd1367979ad38865062"
+    },
+    {
+      "refId": "CAB-FORUM-SMC013",
+      "url": "https://cabforum.org/",
+      "status": "downloaded",
+      "filename": "CAB-FORUM-SMC013.html",
+      "sizeBytes": 20006,
+      "contentType": "text/html",
+      "sha256": "b122e2fd62eae06c058277d81f77803a75620024dd7d36a267c01aa19059a3ca"
+    },
+    {
+      "refId": "ACVP",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program",
+      "status": "downloaded",
+      "filename": "ACVP.html",
+      "sizeBytes": 64417,
+      "contentType": "text/html",
+      "sha256": "4e0d23a9120ae00f52d44810767f8871866d8d6760829c4f77b6c090444ea944"
+    },
+    {
+      "refId": "TAIWAN-MODA-PQC",
+      "url": "https://moda.gov.tw/en/",
+      "status": "downloaded",
+      "filename": "TAIWAN-MODA-PQC.html",
+      "sizeBytes": 100430,
+      "contentType": "text/html",
+      "sha256": "f07f5c530ecdcde09ac1fc6bfcfcd990308f08c76a003a17f967dbda01854294"
+    },
+    {
+      "refId": "MALAYSIA-NACSA-PQC",
+      "url": "https://www.nacsa.gov.my/",
+      "status": "downloaded",
+      "filename": "MALAYSIA-NACSA-PQC.html",
+      "sizeBytes": 31865,
+      "contentType": "text/html",
+      "sha256": "3bb61b903c81b617df5c231c84d72e2522cc88eb3fad3b346a0f46e537495b54"
+    },
+    {
+      "refId": "SAUDI-NCA-PQC",
+      "url": "https://nca.gov.sa/en/",
+      "status": "downloaded",
+      "filename": "SAUDI-NCA-PQC.html",
+      "sizeBytes": 615083,
+      "contentType": "text/html",
+      "sha256": "3a2bd64738593cde6d4a2520d9a7b06ed4b5dd9f5747b76d650916d3d50831b9"
     }
   ],
   "blocked": {
@@ -545,6 +626,11 @@
       "reason": "hard-blocked: crawl4ai timeout/err",
       "blocked_at": "2026-07-14T02:16:08.133645+00:00",
       "attempts": 5
+    },
+    "UAE-CSC-PQC": {
+      "reason": "status=err, tier=crawl4ai",
+      "blocked_at": "2026-07-14T02:18:36.654597+00:00",
+      "attempts": 1
     }
   }
 }
