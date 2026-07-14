@@ -50,7 +50,7 @@
 import type { Freshness } from './contentFreshness'
 
 /** ISO date of the last manual update to PROTOCOL_MATRIX below. */
-export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-07-09'
+export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-07-13'
 
 /**
  * Structured freshness for the content-freshness manifest — pairs the snapshot
@@ -769,8 +769,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridSig: {
         value: 'draft',
-        stage: 'rfc-editor-queue',
-        stageNote: 'LAMPS composite-sigs in RFC Ed Queue (EDIT); TLS dual-cert draft at I-D stage',
+        stage: 'individual-draft',
+        stageNote:
+          'TLS-specific dual-cert draft at Individual-Draft stage; LAMPS composite-sigs (cross-WG, not TLS-specific) is in RFC Ed Queue but awaits TLS profiling',
         note: 'Three approaches to composite/hybrid signatures for TLS 1.3: dual-certificate negotiation in TLS WG (Internet-Draft), composite signatures from LAMPS that TLS will profile after publication, and an individual draft proposing composite ML-DSA directly in the TLS handshake. TLS profiling pending LAMPS RFC publication.',
         refs: [
           {
