@@ -720,6 +720,17 @@ async function runCmT(): Promise<CheckResult[]> {
   const f01: Finding[] = []
   const f02: Finding[] = []
   const f03: Finding[] = []
+  // FIXED 2026-07-13 — this is the exact check that broke PR #420's CI: no
+  // guard for a missing pqctoday-priv/local-evidence-cache/timeline/
+  // directory (e.g. any environment without a sibling priv checkout) meant
+  // every active row's local_file would read as "missing", flagged as
+  // ERROR/FAIL for the whole timeline dataset. The sibling
+  // audit-timeline-evidence.ts script already tolerates this via a
+  // manifest.json fallback; this check has no such fallback, so the only
+  // safe move here is to skip CM-T-03 entirely (not evaluate it as
+  // false-failing) when the cache directory isn't present — CM-T-01/CM-T-02
+  // don't touch priv at all and still run normally either way.
+  const timelineCacheDirExists = fs.existsSync(path.join(LOCAL_CACHE_ROOT, 'timeline'))
 
   for (const row of timelineRows) {
     const title = row['Title'] ?? ''
@@ -747,7 +758,7 @@ async function runCmT(): Promise<CheckResult[]> {
       })
     }
 
-    if (localFile) {
+    if (localFile && timelineCacheDirExists) {
       // RELOCATED 2026-07-12 — local_file now stores "timeline/X.html" (no
       // "public/" prefix) and resolves against LOCAL_CACHE_ROOT, not REPO_ROOT.
       const absPath = path.join(LOCAL_CACHE_ROOT, localFile.replace(/^public\//, ''))
@@ -789,9 +800,21 @@ async function runCmT(): Promise<CheckResult[]> {
           'Timeline trusted_source_id resolves in trusted_sources CSV',
           latestTimeline
         ),
-    f03.length > 0
-      ? fail('CM-T-03', 'Timeline local_file exists in public/timeline/', latestTimeline, f03)
-      : pass('CM-T-03', 'Timeline local_file exists in public/timeline/', latestTimeline),
+    !timelineCacheDirExists
+      ? {
+          id: 'CM-T-03',
+          category: 'structure',
+          description:
+            'Timeline local_file exists in pqctoday-priv/local-evidence-cache/timeline/ (skipped — priv checkout not present)',
+          sourceA: latestTimeline,
+          sourceB: null,
+          severity: 'INFO',
+          status: 'SKIP',
+          findings: [],
+        }
+      : f03.length > 0
+        ? fail('CM-T-03', 'Timeline local_file exists in public/timeline/', latestTimeline, f03)
+        : pass('CM-T-03', 'Timeline local_file exists in public/timeline/', latestTimeline),
   ]
 }
 

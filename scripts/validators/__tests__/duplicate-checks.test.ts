@@ -2,22 +2,21 @@
 // @vitest-environment node
 /**
  * Tests for Phase 2.3 DUP-1 semantic-duplicate validator.
+ *
+ * Real-corpus integration tests (need the live embedding model, which
+ * needs network access) live in duplicate-checks.local.test.ts instead --
+ * CI must never depend on a live third-party fetch. See vite.config.ts's
+ * `*.local.test.*` exclude.
  */
-import { describe, it, expect, beforeAll, afterEach, afterAll } from 'vitest'
+import { describe, it, expect, afterEach, afterAll } from 'vitest'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { runDuplicateChecks } from '../duplicate-checks.js'
-import { loadEmbeddingsFromDisk } from '../../lib/load-embeddings-from-disk.js'
 import {
   injectTestRuntime,
   resetEmbeddingRuntime,
 } from '../../../src/services/search/embeddingRetrieval.js'
-
-const REPO_ROOT = process.cwd()
-const LIVE_CORPUS_PATH = path.join(REPO_ROOT, 'public/data/rag-corpus.json')
-const META_PATH = path.join(REPO_ROOT, 'public/data/embeddings-meta.json')
-const BIN_PATH = path.join(REPO_ROOT, 'public/data/embeddings.bin')
 
 // Synthetic-vector tests write a fake corpus to a per-worker tmp file and
 // point `duplicate-checks.ts` at it via env var. The live
@@ -30,20 +29,6 @@ const TMP_CORPUS_PATH = path.join(
 )
 process.env.RAG_CORPUS_PATH = TMP_CORPUS_PATH
 
-const hasCorpus = fs.existsSync(LIVE_CORPUS_PATH)
-/** Live corpus may be mid-write from the enrichment pipeline — self-skip rather than fail. */
-function isCorpusParseable(): boolean {
-  if (!hasCorpus) return false
-  try {
-    JSON.parse(fs.readFileSync(LIVE_CORPUS_PATH, 'utf8'))
-    return true
-  } catch {
-    return false
-  }
-}
-const hasArtifact =
-  hasCorpus && fs.existsSync(META_PATH) && fs.existsSync(BIN_PATH) && isCorpusParseable()
-
 function writeCorpus(chunks: object[]) {
   fs.writeFileSync(TMP_CORPUS_PATH, JSON.stringify({ chunks }))
 }
@@ -55,10 +40,6 @@ function cleanupTmpCorpus() {
     // best-effort
   }
 }
-
-// Real-corpus integration tests need the live path. Swap back via env var
-// inside the relevant describe block (see below).
-const REAL_CORPUS_ENV = LIVE_CORPUS_PATH
 
 // Failsafe: even if the worker is force-killed, leave no stale tmp files.
 for (const sig of ['exit', 'SIGTERM', 'SIGINT', 'uncaughtException'] as const) {
@@ -173,49 +154,4 @@ describe('DUP-1 — synthetic vectors', () => {
       'DUP-1:timeline',
     ])
   })
-})
-
-describe.skipIf(!hasArtifact)('DUP-1 — real corpus integration', () => {
-  beforeAll(async () => {
-    // Point the validator at the live corpus for this block only.
-    process.env.RAG_CORPUS_PATH = REAL_CORPUS_ENV
-    resetEmbeddingRuntime()
-    await loadEmbeddingsFromDisk()
-  }, 120_000)
-  afterAll(() => {
-    // Restore the synthetic tmp path so any later test file that imports
-    // this validator doesn't accidentally read the live corpus.
-    process.env.RAG_CORPUS_PATH = TMP_CORPUS_PATH
-  })
-
-  it('full run completes in < 30s', async () => {
-    const t0 = Date.now()
-    const results = await runDuplicateChecks()
-    const elapsed = (Date.now() - t0) / 1000
-    expect(results).toHaveLength(3)
-    expect(elapsed).toBeLessThan(30)
-  }, 60_000)
-
-  it('all checks are WARNING severity (no ERROR)', async () => {
-    const results = await runDuplicateChecks()
-    for (const r of results) expect(r.severity).toBe('WARNING')
-  }, 60_000)
-
-  it('produces at least one duplicate pair somewhere across the three pools', async () => {
-    const results = await runDuplicateChecks()
-    const total = results.reduce((n, r) => n + r.findings.length, 0)
-    expect(total).toBeGreaterThan(0)
-  }, 60_000)
-
-  it('all reported pair cosines are at or above the per-source threshold', async () => {
-    const results = await runDuplicateChecks()
-    for (const r of results) {
-      const source = r.id.replace('DUP-1:', '') as 'library' | 'migrate' | 'timeline'
-      const threshold = { library: 0.92, migrate: 0.9, timeline: 0.88 }[source]
-      for (const f of r.findings) {
-        const cosine = Number(f.message.match(/cosine ([\d.]+)/)?.[1] ?? 0)
-        expect(cosine).toBeGreaterThanOrEqual(threshold)
-      }
-    }
-  }, 60_000)
 })

@@ -336,6 +336,7 @@ export function PatentsViewRedesign() {
   )
   const clearDrill = useCallback(() => {
     const next = new URLSearchParams(params)
+    FILTER_PARAMS.forEach((k) => next.delete(k))
     next.delete('from')
     setParams(next, { replace: true })
   }, [params, setParams])
@@ -413,7 +414,11 @@ export function PatentsViewRedesign() {
         </TabsList>
 
         <TabsContent value="insights" className="mt-4">
-          <PatentsInsightsRedesign patents={displayPatents} onFilter={applyDrill} />
+          <PatentsInsightsRedesign
+            patents={displayPatents}
+            onFilter={applyDrill}
+            selectedYear={params.get('filingYear') ? Number(params.get('filingYear')) : null}
+          />
         </TabsContent>
 
         <TabsContent value="explore" className="mt-4 space-y-3">
