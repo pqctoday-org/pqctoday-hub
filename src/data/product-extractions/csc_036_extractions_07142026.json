@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "AnyDesk Remote Desktop",
+    "category": "Remote Access and VDI Software",
+    "product_name": "AnyDesk Remote Desktop",
+    "product_brief": "Remote desktop software with military-grade encryption, TLS 1.3, and customizable security features for secure remote access.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention Post-Quantum Cryptography (PQC). It explicitly states the use of RSA 2048 for asymmetric key exchange and AES 256-bit for transport encryption, which are classical cryptographic algorithms.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "RSA 2048, AES 256-bit, TLS 1.3, Salted Password Hashing",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Cloud solution or On-Premises option",
+    "infrastructure_layer": "Security Stack",
+    "license_type": "Commercial",
+    "license": "Not stated",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Windows (MSI packages), Cloud, On-Premises",
+    "target_industries": "Enterprise, Educational institutions, IT support",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "RSA 2048 (used for asymmetric key exchange)",
+    "authoritative_source_url": "anydesk-remote-desktop-084c1844.html",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-07-14"
+    }
+  }
+]
