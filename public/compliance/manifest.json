@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-14T02:36:00.425657+00:00",
+  "generated": "2026-07-14T02:37:00.178544+00:00",
   "entries": [
     {
       "refId": "NIST",
@@ -1206,6 +1206,87 @@
       "sizeBytes": 257923,
       "contentType": "application/pdf",
       "sha256": "7abc27e6ce7c9db3bf3595db2d9aae42655b0eef2193e7c5956d955fd8467288"
+    },
+    {
+      "refId": "fca-operational-resilience-uk",
+      "url": "https://www.fca.org.uk/firms/operational-resilience",
+      "status": "downloaded",
+      "filename": "fca-operational-resilience-uk.html",
+      "sizeBytes": 198901,
+      "contentType": "text/html",
+      "sha256": "da67befaee2ceb529dd64b373cf635b999d8762e1ab252897046d7a95e6f8994"
+    },
+    {
+      "refId": "cert-in-directions-70b-2022",
+      "url": "https://www.cert-in.org.in/PDF/CERT-In_Directions_70B_28.04.2022.pdf",
+      "status": "downloaded",
+      "filename": "cert-in-directions-70b-2022.pdf",
+      "sizeBytes": 434961,
+      "contentType": "application/pdf",
+      "sha256": "202c2f3953d792dcfb3ecb3634fc82ab75437ee596de89b8d59a211e8e42431f"
+    },
+    {
+      "refId": "mas-technology-risk-management-guidelines",
+      "url": "https://www.mas.gov.sg/regulation/guidelines/technology-risk-management-guidelines",
+      "status": "downloaded",
+      "filename": "mas-technology-risk-management-guidelines.html",
+      "sizeBytes": 330607,
+      "contentType": "text/html",
+      "sha256": "c1d0f1453de633ec91648eef7c8b6ec7d6e4f0ad44e9668b77a6df28d7b7493b"
+    },
+    {
+      "refId": "rbi-cyber-security-framework-2016",
+      "url": "https://www.rbi.org.in/scripts/NotificationUser.aspx?Id=10435",
+      "status": "downloaded",
+      "filename": "rbi-cyber-security-framework-2016.html",
+      "sizeBytes": 117956,
+      "contentType": "text/html",
+      "sha256": "54fd39586938a4672c3e1b0243954086b06a040dee7fc3cb46e510de3100feb6"
+    },
+    {
+      "refId": "gsma-pq-01",
+      "url": "https://www.gsma.com/solutions-and-impact/technologies/security/gsma_resources/post-quantum-telco-network-impact-assessment-whitepaper-pq-01/",
+      "status": "downloaded",
+      "filename": "gsma-pq-01.html",
+      "sizeBytes": 84732,
+      "contentType": "text/html",
+      "sha256": "16a9e39f035605d330b6ec865a8aa42a8c493dd4da7220c9d935b71a6b8326b7"
+    },
+    {
+      "refId": "gsma-pq-02",
+      "url": "https://www.gsma.com/solutions-and-impact/technologies/security/gsma_resources/guidelines-for-quantum-risk-management-for-telco-pq-02/",
+      "status": "downloaded",
+      "filename": "gsma-pq-02.html",
+      "sizeBytes": 84929,
+      "contentType": "text/html",
+      "sha256": "3893e59000677f4eb1bf2ed2351a2f445ac4ab56453105280d6285af8a5a83d8"
+    },
+    {
+      "refId": "gsma-pq-03",
+      "url": "https://www.gsma.com/newsroom/gsma_resources/pq-03-post-quantum-cryptography-guidelines-for-telecom-use-cases/",
+      "status": "downloaded",
+      "filename": "gsma-pq-03.html",
+      "sizeBytes": 97797,
+      "contentType": "text/html",
+      "sha256": "56458af9a4028245d52b1dee0d593c1d69ebd4cc295a60b5d9050b6ce669087d"
+    },
+    {
+      "refId": "3gpp-rel19-pqc-study",
+      "url": "https://www.3gpp.org/specifications-technologies/releases/release-19",
+      "status": "downloaded",
+      "filename": "3gpp-rel19-pqc-study.html",
+      "sizeBytes": 112903,
+      "contentType": "text/html",
+      "sha256": "ea53835571eadb16c62a1241df76458b2954c27095eefeaba9a404d62ab5e5e3"
+    },
+    {
+      "refId": "3gpp-rel20-pqc",
+      "url": "https://www.3gpp.org/specifications-technologies/releases/release-20",
+      "status": "downloaded",
+      "filename": "3gpp-rel20-pqc.html",
+      "sizeBytes": 117687,
+      "contentType": "text/html",
+      "sha256": "b3d3c3d35e1e341aa5d8440658738a34028f76a08c1206e18c5aaaaa07343dfc"
     }
   ],
   "blocked": {
@@ -1302,6 +1383,11 @@
     "ID-PDP": {
       "reason": "Indonesian-language error page (Layanan Tidak Tersedia = Service Unavailable), not caught by English-only title patterns",
       "blocked_at": "2026-07-14T02:35:17.460738+00:00",
+      "attempts": 1
+    },
+    "occ-bulletin-2024-23-pqc": {
+      "reason": "status=200, tier=crawl4ai",
+      "blocked_at": "2026-07-14T02:36:37.949884+00:00",
       "attempts": 1
     }
   }
