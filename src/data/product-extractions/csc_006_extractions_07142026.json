@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "age-plugin-pqkem",
+    "category": "Disk and File Encryption Software",
+    "product_name": "age-plugin-pqkem",
+    "product_brief": "An optional plugin providing out-of-the-box support for encryption to hybrid post-quantum recipients for older age clients.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Provides support for hybrid post-quantum recipients based on HPKE with a hybrid ML-KEM-768 KEM. Recipients start with age1pq1... and identities with AGE-SECRET-KEY-PQ-1...",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "ML-KEM-768, HPKE, Ed25519 (implied by hybrid recipient type \"mlkem768x25519\")",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Plugin-based CLI extension",
+    "infrastructure_layer": "Security Stack",
+    "license_type": "Open Source",
+    "license": "Unknown",
+    "latest_version": "v1.3.1 (for age core; plugin version not explicitly stated, but context implies compatibility with v1.3.0+ features)",
+    "release_date": "2025-12-28",
+    "fips_validated": "No",
+    "primary_platforms": "macOS (darwin), Linux, FreeBSD",
+    "target_industries": "Unknown",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Native PQC support added in age v1.3.0; plugin available for older clients.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Unknown",
+    "authoritative_source_url": "https://github.com/FiloSottile/age",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "C2SP has the specification, and CCTV has test vectors for the new hybrid recipient types.",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-07-14"
+    }
+  }
+]

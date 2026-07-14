@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "Alibaba Cloud GVSM",
+    "category": "Cloud Hardware Security Module (HSM)",
+    "product_name": "Post-Quantum Cryptography General Virtual Security Module (GVSM)",
+    "product_brief": "Alibaba Cloud's beta Post-Quantum Cryptography GVSM, a cloud HSM integrating NIST PQC algorithms to protect data against quantum threats.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Beta product integrating NIST PQC standardization project algorithms: FIPS-203 ML-KEM (CRYSTALS-Kyber), FIPS-204 ML-DSA (CRYSTALS-Dilithium), FIPS-205 SLH-DSA (SPHINCS+), LMS, and XMSS. Inherits existing HSM security features.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "RSA, ECC, ML-KEM (CRYSTALS-Kyber), ML-DSA (CRYSTALS-Dilithium), SLH-DSA (SPHINCS+), LMS, XMSS",
+    "key_management_model": "Cloud Hardware Security Module (HSM) service; customer-managed keys via GVSM; supports PKCS#11, JCE, CNG interfaces.",
+    "supported_blockchains": "Not stated (mentions blockchain scenarios generally, but no specific networks)",
+    "architecture_type": "Cloud Hardware Security Module (HSM) / Virtual Security Module (VSM)",
+    "infrastructure_layer": "Cloud",
+    "license_type": "Commercial",
+    "license": "Commercial",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No (References FIPS-203, FIPS-204, FIPS-205 standards, but does not state FIPS 140 validation status)",
+    "primary_platforms": "Alibaba Cloud (Chinese mainland version)",
+    "target_industries": "Enterprise, IoT, Blockchain, Digital Assets, PKI, Government (implied by NIST compliance)",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Beta product currently available; advises stress testing before migration.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ML-DSA (CRYSTALS-Dilithium), SLH-DSA (SPHINCS+), LMS, XMSS",
+    "authoritative_source_url": "alibaba-cloud-gvsm-56863a78.html",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Mentioned for IoT device security (identity authentication, firmware updates), but specific constraints/variants not detailed.",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Requires stress testing before migration; gradual migration recommended to ensure stability.",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-07-14"
+    }
+  }
+]

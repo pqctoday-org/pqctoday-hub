@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
   "generated": "2026-07-09",
-  "count": 811,
+  "count": 1043,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -6934,6 +6934,1630 @@
       "url": "https://www.prnewswire.com/news-releases/project-eleven-to-advance-post-quantum-security-for-the-solana-network-302642847.html",
       "file": "project-eleven-solana-pqc-de12059d.html",
       "bytes": 213030,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "sophos-xgs",
+      "url": "https://docs.sophos.com/releasenotes/output/en-us/nsg/sf_215_rn.html",
+      "file": "sophos-xgs-cf5e1c4c.html",
+      "bytes": 120002,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "sonicwall-sonicos",
+      "url": "https://www.sonicwall.com/support/technical-documentation/docs/sonicos-7-0-0-0-ipsec_vpn/Content/ipsec-vpn-types-vpn-security-about-suite-b.htm/",
+      "file": "sonicwall-sonicos-223c99da.html",
+      "bytes": 353258,
+      "tier": "playwright-stealth"
+    },
+    {
+      "product_id": "sql-server-tde-always-encrypted",
+      "url": "https://learn.microsoft.com/en-us/sql/relational-databases/security/encryption/always-encrypted-cryptography?view=sql-server-ver17",
+      "file": "sql-server-tde-always-encrypted-67ae1b49.html",
+      "bytes": 62992,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "forgerock-access-management",
+      "url": "https://docs.pingidentity.com/pingam/release-notes/requirements.html",
+      "file": "forgerock-access-management-2d466b98.html",
+      "bytes": 39936,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "sailpoint-identity-security-cloud",
+      "url": "https://www.sailpoint.com/why-us/trust/cybersecurity",
+      "file": "sailpoint-identity-security-cloud-8ac0fcdb.html",
+      "bytes": 253252,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "ibm-security-guardium-data-protection",
+      "url": "https://quantumcomputingreport.com/ibm-introduces-guardium-cryptography-manager-to-address-pqc-migration/",
+      "file": "ibm-security-guardium-data-protection-d55c5b34.html",
+      "bytes": 135253,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "quintessencelabs-qstream",
+      "url": "https://www.quintessencelabs.com/products",
+      "file": "quintessencelabs-qstream-19c86571.html",
+      "bytes": 164386,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "ubuntu-24-04-lts",
+      "url": "https://documentation.ubuntu.com/release-notes/24.04/",
+      "file": "ubuntu-24-04-lts-7e93fdc7.html",
+      "bytes": 175981,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "debian-13-trixie",
+      "url": "https://packages.debian.org/trixie/openssl",
+      "file": "debian-13-trixie-0b351c13.html",
+      "bytes": 2776,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "wire",
+      "url": "https://wire.com/en/security",
+      "file": "wire-800ccc02.html",
+      "bytes": 140607,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "nxp-jcop-4-5-p71d600",
+      "url": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4679.pdf",
+      "file": "nxp-jcop-4-5-p71d600-b1a3510e.pdf",
+      "bytes": 1107429,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "ibm-hyper-protect-crypto",
+      "url": "https://cloud.ibm.com/docs/hs-crypto",
+      "file": "ibm-hyper-protect-crypto-e5316057.html",
+      "bytes": 2133656,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "intel-platform-trust-technology-ptt",
+      "url": "https://edc.intel.com/content/www/us/en/design/products/platforms/details/arrow-lake-s/core-ultra-200s-series-processors-datasheet-volume-1-of-2/intel-platform-trust-technology/",
+      "file": "intel-platform-trust-technology-ptt-5df97c26.html",
+      "bytes": 935913,
+      "tier": "playwright-stealth"
+    },
+    {
+      "product_id": "microchip-atecc608b",
+      "url": "https://ww1.microchip.com/downloads/en/DeviceDoc/ATECC608B-CryptoAuthentication-Device-Summary-Data-Sheet-DS40002239A.pdf",
+      "file": "microchip-atecc608b-96951536.pdf",
+      "bytes": 822921,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "qualcomm-snapdragon-trusted-execution-environment",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4896",
+      "file": "qualcomm-snapdragon-trusted-execution-environment-b68a3886.html",
+      "bytes": 55057,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "azure-managed-hsm",
+      "url": "https://github.com/MicrosoftDocs/azure-security-docs/blob/main/articles/key-vault/managed-hsm/about-keys.md",
+      "file": "azure-managed-hsm-35099ec4.html",
+      "bytes": 281958,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "gcp-secret-manager",
+      "url": "https://docs.cloud.google.com/secret-manager/docs/cmek",
+      "file": "gcp-secret-manager-ff6e1d40.html",
+      "bytes": 210059,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "hashicorp-consul-connect-service-mesh",
+      "url": "https://support.hashicorp.com/hc/en-us/articles/45071208887187-Understanding-TLS-Cipher-Suites-negotiation-in-Consul-Service-Mesh-with-Envoy",
+      "file": "hashicorp-consul-connect-service-mesh-774acd76.html",
+      "bytes": 52838,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "cisco-secure-client-anyconnect",
+      "url": "https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap",
+      "file": "cisco-secure-client-anyconnect-9bec261f.html",
+      "bytes": 82901,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "palo-alto-globalprotect",
+      "url": "https://docs.paloaltonetworks.com/network-security/quantum-security/administration/quantum-security-concepts/support-for-quantum-features",
+      "file": "palo-alto-globalprotect-4fab63c8.html",
+      "bytes": 295759,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "samsung-networks-5g-core",
+      "url": "https://www.samsung.com/global/business/networks/products/core/cloud-core/",
+      "file": "samsung-networks-5g-core-de77b67b.html",
+      "bytes": 331822,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "mavenir-cloud-ran",
+      "url": "https://www.mavenir.com/wp-content/uploads/2022/11/Mavenir_WP_OpenRAN_Security.pdf",
+      "file": "mavenir-cloud-ran-e5f8da16.pdf",
+      "bytes": 926803,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "oauth-2-0-openid-connect-oidc",
+      "url": "https://openid.net/specs/openid-igov-oauth2-1_0.html",
+      "file": "oauth-2-0-openid-connect-oidc-505532b2.html",
+      "bytes": 187460,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "hyperledger-fabric",
+      "url": "https://github.com/hyperledger/fabric/issues/3763",
+      "file": "hyperledger-fabric-5458175a.html",
+      "bytes": 272761,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "hiddenlayer-model-scanner",
+      "url": "https://hiddenlayer.com/model-scanner/",
+      "file": "hiddenlayer-model-scanner-7e759357.html",
+      "bytes": 254268,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "globalsign-atlas-clm",
+      "url": "https://www.globalsign.com/en/post-quantum-computing",
+      "file": "globalsign-atlas-clm-1108281d.html",
+      "bytes": 112202,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "nxp-se051-secure-element",
+      "url": "https://download.mikroe.com/documents/datasheets/SE051_datasheet.pdf",
+      "file": "nxp-se051-secure-element-b81cf8df.pdf",
+      "bytes": 420876,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "qualcomm-snapdragon-spu",
+      "url": "https://www.qualcomm.com/smartphones/products/8-series/snapdragon-8-elite-mobile-platform",
+      "file": "qualcomm-snapdragon-spu-2a8542fa.html",
+      "bytes": 8760,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "ibm-z-vse",
+      "url": "https://www.slideshare.net/ibm/titlenews-on-zvse-security-crypto-support-and-openssl",
+      "file": "ibm-z-vse-2541f92f.html",
+      "bytes": 1537038,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "sap-cryptographic-library",
+      "url": "https://community.sap.com/t5/technology-blog-posts-by-sap/new-version-8-6-of-the-sap-cryptographic-library-with-quantum-safe/ba-p/14280039",
+      "file": "sap-cryptographic-library-35d52de1.html",
+      "bytes": 234076,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "strongswan",
+      "url": "https://kivicore.com/en/embedded-security-blog/integrating-pqc-into-strongswan",
+      "file": "strongswan-a04af414.html",
+      "bytes": 298889,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "thales-payshield-10k",
+      "url": "https://cpl.thalesgroup.com/encryption/hardware-security-modules/payment-hsms/payshield-10k",
+      "file": "thales-payshield-10k-7c982957.html",
+      "bytes": 1015592,
+      "tier": "playwright-stealth"
+    },
+    {
+      "product_id": "cryptomathic-ckms",
+      "url": "https://www.cryptomathic.com/pqc-readiness-and-crypto-agility-crystalkey-360",
+      "file": "cryptomathic-ckms-e073a71e.html",
+      "bytes": 282929,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "digicert-signinghub",
+      "url": "https://docs.digicert.com/en/platform-overview/digicert-solutions-for-post-quantum-computing.html",
+      "file": "digicert-signinghub-7f01375b.html",
+      "bytes": 754508,
+      "tier": "playwright-stealth"
+    },
+    {
+      "product_id": "okta-integration-network",
+      "url": "https://www.okta.com/integrations/",
+      "file": "okta-integration-network-33c38eb1.html",
+      "bytes": 433755,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "jfrog-artifactory",
+      "url": "https://jfrog.com/artifactory/",
+      "file": "jfrog-artifactory-17bcf211.html",
+      "bytes": 468006,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "sonatype-nexus",
+      "url": "https://www.sonatype.com/products/sonatype-nexus-repository",
+      "file": "sonatype-nexus-df5ac685.html",
+      "bytes": 262307,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "okta-workforce-identity",
+      "url": "https://www.okta.com/workforce-identity/",
+      "file": "okta-workforce-identity-4181d554.html",
+      "bytes": 394337,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "auth0-okta-customer-identity",
+      "url": "https://auth0.com/",
+      "file": "auth0-okta-customer-identity-bfddb4bf.html",
+      "bytes": 398224,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "intel-tdx-trust-domain-extensions",
+      "url": "https://www.intel.com/content/www/us/en/customer-spotlight/stories/arqit-customer-story.html",
+      "file": "intel-tdx-trust-domain-extensions-9aa9838f.html",
+      "bytes": 799927,
+      "tier": "playwright-stealth"
+    },
+    {
+      "product_id": "arm-confidential-compute-architecture-cca",
+      "url": "https://www.arm.com/architecture/security-features/arm-confidential-compute-architecture",
+      "file": "arm-confidential-compute-architecture-cca-2e9bc3d0.html",
+      "bytes": 449547,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "ciena-wavelogic-6-extreme",
+      "url": "https://www.ciena.com/insights/blog/2026/1.6t-quantum-safe-encryption-protecting-critical-data-at-scale",
+      "file": "ciena-wavelogic-6-extreme-44db668e.html",
+      "bytes": 132591,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "ibm-guardium-quantum-safe",
+      "url": "https://www.ibm.com/products/guardium-quantum-safe",
+      "file": "ibm-guardium-quantum-safe-3558761f.html",
+      "bytes": 219754,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "garantir-garatrust",
+      "url": "https://garantir.io/navigating-the-transition-to-post-quantum-code-signing/",
+      "file": "garantir-garatrust-bd84a7df.html",
+      "bytes": 449171,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "debian-12-bookworm",
+      "url": "https://www.debian.org/releases/bookworm/",
+      "file": "debian-12-bookworm-a3e0daad.html",
+      "bytes": 9154,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "ericsson-quantum-safe-5g",
+      "url": "https://www.ericsson.com/en/security/quantum-safe-networks",
+      "file": "ericsson-quantum-safe-5g-3ca0c857.html",
+      "bytes": 302465,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "walt-id",
+      "url": "https://walt.id/",
+      "file": "walt-id-68a24a8a.html",
+      "bytes": 355645,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "spruceid",
+      "url": "https://spruceid.com/",
+      "file": "spruceid-2f977b77.html",
+      "bytes": 470364,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "element-matrix-protocol",
+      "url": "https://matrix.org/blog/2024/10/29/matrix-2.0-is-here/",
+      "file": "element-matrix-protocol-a096f96d.html",
+      "bytes": 42354,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "eudi-reference-wallet",
+      "url": "https://github.com/eu-digital-identity-wallet",
+      "file": "eudi-reference-wallet-a72a2513.html",
+      "bytes": 301308,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "sphereon-ssi-sdk",
+      "url": "https://sphereon.com/",
+      "file": "sphereon-ssi-sdk-11a95f23.html",
+      "bytes": 71238,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "credebl",
+      "url": "https://github.com/credebl",
+      "file": "credebl-fb698032.html",
+      "bytes": 305117,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "paradym-animo-solutions",
+      "url": "https://paradym.id/",
+      "file": "paradym-animo-solutions-1a04bd00.html",
+      "bytes": 141637,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "azure-dedicated-hsm-marvell-liquidsecurity",
+      "url": "https://www.marvell.com/products/security-solutions/liquidsecurity2.html",
+      "file": "azure-dedicated-hsm-marvell-liquidsecurity-5916c168.html",
+      "bytes": 160945,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "arm-trustzone",
+      "url": "https://www.arm.com/technologies/trustzone-for-cortex-m",
+      "file": "arm-trustzone-16543c76.html",
+      "bytes": 449174,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "wind-river-vxworks",
+      "url": "https://www.windriver.com/products/vxworks",
+      "file": "wind-river-vxworks-918781b8.html",
+      "bytes": 152895,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "jumpcloud-directory-platform",
+      "url": "https://jumpcloud.com/",
+      "file": "jumpcloud-directory-platform-7b8c5046.html",
+      "bytes": 336088,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "rapid7-insightvm",
+      "url": "https://www.rapid7.com/products/insightvm/",
+      "file": "rapid7-insightvm-1943a762.html",
+      "bytes": 344752,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "crowdstrike-falcon",
+      "url": "https://www.crowdstrike.com/platform/",
+      "file": "crowdstrike-falcon-8d57429a.html",
+      "bytes": 266912,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "palo-alto-cortex-xdr",
+      "url": "https://www.paloaltonetworks.com/cortex/cortex-xdr",
+      "file": "palo-alto-cortex-xdr-59507690.html",
+      "bytes": 573206,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "paramiko-python-ssh",
+      "url": "https://github.com/paramiko/paramiko",
+      "file": "paramiko-python-ssh-bc6d08b9.html",
+      "bytes": 304246,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "microsoft-remote-desktop-services-rds",
+      "url": "https://learn.microsoft.com/en-us/windows-server/remote/remote-desktop-services/",
+      "file": "microsoft-remote-desktop-services-rds-dc1b0c01.html",
+      "bytes": 36339,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "pfsense-community-edition",
+      "url": "https://www.strongswan.org/blog/2024/12/03/strongswan-6.0.0-released.html",
+      "file": "pfsense-community-edition-4daba946.html",
+      "bytes": 19233,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "opnsense",
+      "url": "https://docs.opnsense.org/releases/CE_25.1.html",
+      "file": "opnsense-41bae963.html",
+      "bytes": 96159,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "wireguard",
+      "url": "https://rosenpass.eu/",
+      "file": "wireguard-89a3923d.html",
+      "bytes": 91193,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "apache-traffic-server",
+      "url": "https://github.com/apache/trafficserver/issues/12441",
+      "file": "apache-traffic-server-abda4b2f.html",
+      "bytes": 247782,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "gitlab-ci-cd",
+      "url": "https://gitlab.com/gitlab-org/gitlab/-/issues/568265",
+      "file": "gitlab-ci-cd-d8297ecd.html",
+      "bytes": 45410,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "azure-devops",
+      "url": "https://azure.microsoft.com/en-us/products/devops/",
+      "file": "azure-devops-c68a643f.html",
+      "bytes": 309517,
+      "tier": "curl_cffi:chrome120"
+    },
+    {
+      "product_id": "circleci",
+      "url": "https://circleci.com/",
+      "file": "circleci-367e1b91.html",
+      "bytes": 617095,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "saml-2-0",
+      "url": "https://www.oasis-open.org/standard/saml/",
+      "file": "saml-2-0-bdd1ea8b.html",
+      "bytes": 134293,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "anchorage-digital",
+      "url": "https://www.anchorage.com/",
+      "file": "anchorage-digital-60d752d5.html",
+      "bytes": 427086,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "copper-co",
+      "url": "https://copper.co/",
+      "file": "copper-co-bae3376f.html",
+      "bytes": 105321,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "ledger-enterprise",
+      "url": "https://enterprise.ledger.com/",
+      "file": "ledger-enterprise-6e6e3ed2.html",
+      "bytes": 121650,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "zodia-custody",
+      "url": "https://www.zodia.io/",
+      "file": "zodia-custody-834637f0.html",
+      "bytes": 345978,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "hyperledger-besu",
+      "url": "https://eprint.iacr.org/2024/1206",
+      "file": "hyperledger-besu-a7ea9867.html",
+      "bytes": 19795,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "r3-corda",
+      "url": "https://r3.com/products/corda/",
+      "file": "r3-corda-280818e9.html",
+      "bytes": 154861,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "claroty-platform",
+      "url": "https://claroty.com/",
+      "file": "claroty-platform-45fed648.html",
+      "bytes": 325159,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "protect-ai-guardian",
+      "url": "https://protectai.com/",
+      "file": "protect-ai-guardian-6fe2bc73.html",
+      "bytes": 124375,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "cranium-ai-security-platform",
+      "url": "https://www.cranium.ai/",
+      "file": "cranium-ai-security-platform-8dd2552d.html",
+      "bytes": 177077,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "lakera-guard",
+      "url": "https://www.lakera.ai/",
+      "file": "lakera-guard-2fc952e4.html",
+      "bytes": 109323,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "keysight-cyperf",
+      "url": "https://www.keysight.com/us/en/about/newsroom/news-releases/2024/3004-PR24-062-Keysight-Introduces-New-Testing-Capabilities-to-Strengthen-Post-Quantum-Cryptography.html",
+      "file": "keysight-cyperf-80b073c2.html",
+      "bytes": 560403,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "q-core-q-scanner",
+      "url": "https://qcore.systems/",
+      "file": "q-core-q-scanner-a4b01dea.html",
+      "bytes": 131081,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "amazon-cognito",
+      "url": "https://aws.amazon.com/cognito/",
+      "file": "amazon-cognito-ab62a9e2.html",
+      "bytes": 249872,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "microsoft-entra-external-id",
+      "url": "https://learn.microsoft.com/en-us/entra/external-id/",
+      "file": "microsoft-entra-external-id-44ac37ac.html",
+      "bytes": 31846,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "cisco-catalyst-center",
+      "url": "https://www.cisco.com/c/dam/en_us/about/doing_business/trust-center/docs/configuring-post-quantum-macsec-in-cisco-switches.pdf",
+      "file": "cisco-catalyst-center-b274cbba.pdf",
+      "bytes": 1390778,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "cisco-identity-services-engine-ise",
+      "url": "https://www.cisco.com/site/us/en/products/security/identity-services-engine/index.html",
+      "file": "cisco-identity-services-engine-ise-608d6364.html",
+      "bytes": 114361,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "digicert-certcentral",
+      "url": "https://www.digicert.com/tls-ssl/post-quantum-cryptography",
+      "file": "digicert-certcentral-8a5bc054.html",
+      "bytes": 205193,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "entrust-identity-as-a-service-idaas",
+      "url": "https://www.entrust.com/products/iam/identity-as-a-service",
+      "file": "entrust-identity-as-a-service-idaas-b46f84a2.html",
+      "bytes": 27618,
+      "tier": "playwright-stealth"
+    },
+    {
+      "product_id": "ibm-mq",
+      "url": "https://public.dhe.ibm.com/s390/zos/racf/pdf/nyrug_2026_05_13_Post_Quantum_Cryptography_Smorgasbord.pdf",
+      "file": "ibm-mq-7ed294f0.pdf",
+      "bytes": 4367214,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "microsoft-rds",
+      "url": "https://learn.microsoft.com/en-us/windows-server/remote/remote-desktop-services/",
+      "file": "microsoft-rds-dc1b0c01.html",
+      "bytes": 36339,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "entrust-cryptographic-platform",
+      "url": "https://www.entrust.com/solutions/post-quantum-cryptography",
+      "file": "entrust-cryptographic-platform-c357c543.html",
+      "bytes": 27621,
+      "tier": "playwright-stealth"
+    },
+    {
+      "product_id": "dogtag-certificate-system",
+      "url": "https://www.dogtagpki.org/",
+      "file": "dogtag-certificate-system-ed7e2659.html",
+      "bytes": 20401,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "unisys-clearpath-forward",
+      "url": "https://www.unisys.com/offerings/clearpath-forward/",
+      "file": "unisys-clearpath-forward-42d90747.html",
+      "bytes": 176692,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "microsoft-hyper-v",
+      "url": "https://learn.microsoft.com/en-us/windows-server/virtualization/hyper-v/hyper-v-technology-overview",
+      "file": "microsoft-hyper-v-810f059d.html",
+      "bytes": 66545,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "nutanix-ahv",
+      "url": "https://www.nutanix.com/products/ahv",
+      "file": "nutanix-ahv-63df6aa1.html",
+      "bytes": 246439,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "azure-aks",
+      "url": "https://techcommunity.microsoft.com/blog/azurenetworkingblog/announcing-public-preview-cilium-mtls-encryption-for-azure-kubernetes-service/4504423",
+      "file": "azure-aks-9a906a48.html",
+      "bytes": 458920,
+      "tier": "curl_cffi:chrome"
+    },
+    {
+      "product_id": "vultr-cloud-gpu",
+      "url": "https://www.vultr.com/products/cloud-gpu/",
+      "file": "vultr-cloud-gpu-f3990bfc.html",
+      "bytes": 2397080,
+      "tier": "playwright-stealth"
+    },
+    {
+      "product_id": "cisco-webex",
+      "url": "https://blog.webex.com/",
+      "file": "cisco-webex-df502c04.html",
+      "bytes": 125098,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "barracuda-email-protection",
+      "url": "https://www.barracuda.com/products/email-protection",
+      "file": "barracuda-email-protection-98017567.html",
+      "bytes": 253075,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "hyland-onbase",
+      "url": "https://www.hyland.com/en/platform/product-suite/onbase",
+      "file": "hyland-onbase-26fa29ef.html",
+      "bytes": 307860,
+      "tier": "playwright-stealth"
+    },
+    {
+      "product_id": "forcepoint-dlp",
+      "url": "https://www.forcepoint.com/product/dlp-data-loss-prevention",
+      "file": "forcepoint-dlp-9e2a0dc5.html",
+      "bytes": 798447,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "ibm-aspera",
+      "url": "https://www.ibm.com/products/aspera",
+      "file": "ibm-aspera-9586b545.html",
+      "bytes": 239422,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "signiant-media-shuttle",
+      "url": "https://www.signiant.com/products/media-shuttle/",
+      "file": "signiant-media-shuttle-b77f6c67.html",
+      "bytes": 266084,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "microsoft-intune",
+      "url": "https://learn.microsoft.com/en-us/mem/intune/",
+      "file": "microsoft-intune-1acbf120.html",
+      "bytes": 49135,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "jamf-pro",
+      "url": "https://www.jamf.com/products/jamf-pro/",
+      "file": "jamf-pro-849f99f6.html",
+      "bytes": 121104,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "soti-mobicontrol",
+      "url": "https://www.soti.net/products/soti-mobicontrol/",
+      "file": "soti-mobicontrol-62737f3e.html",
+      "bytes": 123913,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "recorded-future",
+      "url": "https://www.recordedfuture.com/",
+      "file": "recorded-future-070da2e4.html",
+      "bytes": 26159,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "mandiant-google-cloud",
+      "url": "https://www.mandiant.com/",
+      "file": "mandiant-google-cloud-bdbc1fbf.html",
+      "bytes": 2147511,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "cyberint-check-point",
+      "url": "https://www.cyberint.com/",
+      "file": "cyberint-check-point-5ece08ef.html",
+      "bytes": 256467,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "github-copilot-security",
+      "url": "https://github.com/features/copilot",
+      "file": "github-copilot-security-ec57d26d.html",
+      "bytes": 863671,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "veracode-platform",
+      "url": "https://www.veracode.com/",
+      "file": "veracode-platform-f6396d45.html",
+      "bytes": 472432,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "checkmarx-one",
+      "url": "https://checkmarx.com/product/checkmarx-one/",
+      "file": "checkmarx-one-5fd20d0b.html",
+      "bytes": 182714,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "duckduckgo-browser",
+      "url": "https://duckduckgo.com/app",
+      "file": "duckduckgo-browser-309d070e.html",
+      "bytes": 314551,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "general-dynamics-mission",
+      "url": "https://gdmissionsystems.com/",
+      "file": "general-dynamics-mission-4c133983.html",
+      "bytes": 164880,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "futurex-vectera-plus",
+      "url": "https://www.futurex.com/solutions/quantum-safe-cryptography",
+      "file": "futurex-vectera-plus-837b94f9.html",
+      "bytes": 768325,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "czertainly",
+      "url": "https://www.czertainly.com/transition-to-pqc-with-czertainly/",
+      "file": "czertainly-df6a9139.html",
+      "bytes": 124820,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "eviden-trustway-proteccio-nethsm",
+      "url": "https://eviden.com/insights/press-releases/eviden-supports-post-quantum-algorithms-with-its-trustway-proteccio-hsm/",
+      "file": "eviden-trustway-proteccio-nethsm-9f8f8c86.html",
+      "bytes": 86342,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "resquant-crypto-accelerator",
+      "url": "https://www.resquant.com/",
+      "file": "resquant-crypto-accelerator-08a07156.html",
+      "bytes": 31243,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "cato-networks-sase",
+      "url": "https://www.catonetworks.com/blog/the-post-quantum-journey-begins/",
+      "file": "cato-networks-sase-b6f74c05.html",
+      "bytes": 648265,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "entrust-cryptographic-security-platform",
+      "url": "https://www.entrust.com/products/cryptographic-security-platform",
+      "file": "entrust-cryptographic-security-platform-2cfa9072.html",
+      "bytes": 27636,
+      "tier": "playwright-stealth"
+    },
+    {
+      "product_id": "ironcore-labs-saas-shield",
+      "url": "https://ironcorelabs.com/crypto-agility-post-quantum/",
+      "file": "ironcore-labs-saas-shield-24a83140.html",
+      "bytes": 87490,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "thunderbird-pqc-openpgp",
+      "url": "https://datatracker.ietf.org/doc/draft-ietf-openpgp-pqc/",
+      "file": "thunderbird-pqc-openpgp-9c6dafdc.html",
+      "bytes": 825160,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "netskope-one-pqc",
+      "url": "https://www.netskope.com/blog/planning-for-a-post-quantum-world-now",
+      "file": "netskope-one-pqc-d024248e.html",
+      "bytes": 1159260,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "quantropi-qispace-stm32",
+      "url": "https://www.quantropi.com/implement-post-quantum-security-with-stm32cubemx-and-quantropis-qispace/",
+      "file": "quantropi-qispace-stm32-f8bf4d1b.html",
+      "bytes": 251259,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "ibm-linuxone-pqc",
+      "url": "https://public.dhe.ibm.com/s390/zos/racf/pdf/nyrug_2026_05_13_Post_Quantum_Cryptography_Smorgasbord.pdf",
+      "file": "ibm-linuxone-pqc-7ed294f0.pdf",
+      "bytes": 4367214,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "spherity-caro-pharma-pqc",
+      "url": "https://medium.com/spherity/countdown-to-quantum-threat-upgrade-your-digital-identity-with-a-pqc-ready-european-business-c64f16dbde52",
+      "file": "spherity-caro-pharma-pqc-3c352403.html",
+      "bytes": 494552,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "sap-cryptographic-library-8-6-pqc",
+      "url": "https://community.sap.com/t5/technology-blog-posts-by-sap/new-version-8-6-of-the-sap-cryptographic-library-with-quantum-safe/ba-p/14280039",
+      "file": "sap-cryptographic-library-8-6-pqc-35d52de1.html",
+      "bytes": 234076,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "coredns-pqc-dnssec",
+      "url": "https://arxiv.org/html/2507.09301v1",
+      "file": "coredns-pqc-dnssec-0c249f5a.html",
+      "bytes": 93662,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "stmicroelectronics-x-cube-pqc",
+      "url": "https://www.st.com/en/embedded-software/x-cube-pqc.html",
+      "file": "stmicroelectronics-x-cube-pqc-4e9bf19a.html",
+      "bytes": 257305,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "renesas-veridify-pqc-for-ra-mcus",
+      "url": "https://www.veridify.com/press-release/veridify-security-partners-with-renesas-on-semiconductor-and-stmicroelectronics-at-the-consumer-electronics-show/",
+      "file": "renesas-veridify-pqc-for-ra-mcus-c85cee72.html",
+      "bytes": 142671,
+      "tier": "playwright-stealth"
+    },
+    {
+      "product_id": "veritas-netbackup-11-pqc",
+      "url": "https://www.veritas.com/support/en_US/doc/103228346-168289021-0/v168660144-168289021",
+      "file": "veritas-netbackup-11-pqc-fe8a848a.html",
+      "bytes": 220453,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "microchip-cryptoautomotive-ta100",
+      "url": "https://www.microchip.com/en-us/solutions/technologies/embedded-security/post-quantum-cryptography",
+      "file": "microchip-cryptoautomotive-ta100-4561cbec.html",
+      "bytes": 694139,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "nokia-quantum-safe-railways",
+      "url": "https://www.nokia.com/industries/railways/cyber-security/",
+      "file": "nokia-quantum-safe-railways-adc8fd6f.html",
+      "bytes": 231635,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "pqshield-pqe2e-messaging-sdk",
+      "url": "https://pqshield.com/products/",
+      "file": "pqshield-pqe2e-messaging-sdk-d11c494d.html",
+      "bytes": 76525,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "kiteworks-pqc-file-sharing",
+      "url": "https://www.kiteworks.com/cybersecurity-risk-management/google-quantum-computing-encryption-threat-post-quantum-cryptography/",
+      "file": "kiteworks-pqc-file-sharing-3a3fb555.html",
+      "bytes": 316818,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "gsma-pq-telco-task-force",
+      "url": "https://www.gsma.com/newsroom/post-quantum-government-initiatives-by-country-and-region/",
+      "file": "gsma-pq-telco-task-force-c0594248.html",
+      "bytes": 147285,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "vox-messenger-pqc",
+      "url": "https://vox-messenger.app/encryption/",
+      "file": "vox-messenger-pqc-896024ab.html",
+      "bytes": 39536,
+      "tier": "playwright-stealth"
+    },
+    {
+      "product_id": "kryptus-knet-hsm-pqc",
+      "url": "https://kryptus.com/practical-guide-to-quantum-safe-transition/",
+      "file": "kryptus-knet-hsm-pqc-fc21e9c3.html",
+      "bytes": 81688,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "tubitak-bilgem-pqc-turkey",
+      "url": "https://bilgem.tubitak.gov.tr/en/quantum-technologies/",
+      "file": "tubitak-bilgem-pqc-turkey-b2cb2c13.html",
+      "bytes": 886283,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "fujitsu-pqc-networks",
+      "url": "https://corporate-blog.global.fujitsu.com/fgb/2025-09-16/01/",
+      "file": "fujitsu-pqc-networks-c04ae823.html",
+      "bytes": 108316,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "rustcrypto-ml-kem-2",
+      "url": "https://raw.githubusercontent.com/RustCrypto/KEMs/master/ml-kem/README.md",
+      "file": "rustcrypto-ml-kem-2-0f23a042.html",
+      "bytes": 3914,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "ssh-com-tectia",
+      "url": "https://www.globenewswire.com/en/news-release/2022/08/04/2492432/0/en/PRESS-RELEASE-SSH-s-Tectia-Quantum-Safe-Edition-uses-a-NIST-selected-algorithm.html",
+      "file": "ssh-com-tectia-3b5693fe.html",
+      "bytes": 61950,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "openpgp-js",
+      "url": "https://openpgp.foo/posts/2025-05-pqc/",
+      "file": "openpgp-js-2558a5e0.html",
+      "bytes": 32384,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "mls-rs",
+      "url": "https://github.com/awslabs/mls-rs",
+      "file": "mls-rs-ffb7830d.html",
+      "bytes": 324895,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "mlspp",
+      "url": "https://www.cisco.com/c/dam/en_us/about/doing_business/trust-center/docs/cisco-cryptography-in-a-post-quantum-world-overview.pdf",
+      "file": "mlspp-891a252e.pdf",
+      "bytes": 3714081,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "openqkdnetwork-qkd-net",
+      "url": "https://github.com/Open-QKD-Network/qkd-net",
+      "file": "openqkdnetwork-qkd-net-ef32a27b.html",
+      "bytes": 396133,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "angela-cryptomodule-cryptographic-algorithm-library",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19805",
+      "file": "angela-cryptomodule-cryptographic-algorithm-library-298b79f2.html",
+      "bytes": 78016,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "archtis-cryptographic-library",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5251",
+      "file": "archtis-cryptographic-library-ffd1164b.html",
+      "bytes": 76090,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "arctera-cryptographic-module-for-java",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5082",
+      "file": "arctera-cryptographic-module-for-java-bc746283.html",
+      "bytes": 76229,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "asus-post-quantum-cryptography-module",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19565",
+      "file": "asus-post-quantum-cryptography-module-644ed8c1.html",
+      "bytes": 42611,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "asustor-post-quantum-cryptography-module",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19625",
+      "file": "asustor-post-quantum-cryptography-module-79afb8be.html",
+      "bytes": 42517,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "best-pqc-mlkem",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20590",
+      "file": "best-pqc-mlkem-618d52a4.html",
+      "bytes": 41569,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "blackberry-certicom-security-builder-fips-module",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19667",
+      "file": "blackberry-certicom-security-builder-fips-module-5df35a14.html",
+      "bytes": 296214,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "c-dot-ml-kem-cryptographic-algorithms",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20638",
+      "file": "c-dot-ml-kem-cryptographic-algorithms-02f7c91b.html",
+      "bytes": 54700,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "cgi-momentum-java-cryptographic-module",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5083",
+      "file": "cgi-momentum-java-cryptographic-module-149cda4f.html",
+      "bytes": 77099,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "cipherplus-pqc-cryptographic-module",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20785",
+      "file": "cipherplus-pqc-cryptographic-module-9159b9dc.html",
+      "bytes": 48482,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "cloudera-cryptographic-module-for-java",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5084",
+      "file": "cloudera-cryptographic-module-for-java-bb9b8fc6.html",
+      "bytes": 76765,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "code-siren-post-quantum-cryptographic-pqc-library",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20592",
+      "file": "code-siren-post-quantum-cryptographic-pqc-library-9123499f.html",
+      "bytes": 144658,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "codebat-ml-dsa-cryptographic-engine",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=21089",
+      "file": "codebat-ml-dsa-cryptographic-engine-d6c71b39.html",
+      "bytes": 46256,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "cryptonext-quantum-safe-library-c-qsl",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19368",
+      "file": "cryptonext-quantum-safe-library-c-qsl-649e587b.html",
+      "bytes": 53455,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "ctera-crypto-module-java",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5121",
+      "file": "ctera-crypto-module-java-5a20d585.html",
+      "bytes": 76484,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "eigenq-quantum-encryption-module-qem",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19528",
+      "file": "eigenq-quantum-encryption-module-qem-6e17ad9e.html",
+      "bytes": 48223,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "fortipqc-software-library",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20849",
+      "file": "fortipqc-software-library-9a1e8fe6.html",
+      "bytes": 48380,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "futurex-gsp4000-hardware-security-module",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20805",
+      "file": "futurex-gsp4000-hardware-security-module-7d124393.html",
+      "bytes": 100639,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "boringcrypto",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20486",
+      "file": "boringcrypto-e4ffbfa2.html",
+      "bytes": 199949,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "trusty-tee",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=21185",
+      "file": "trusty-tee-28b9141c.html",
+      "bytes": 81103,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "hid-global-cryptographic-module",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5123",
+      "file": "hid-global-cryptographic-module-644c8772.html",
+      "bytes": 76640,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "blocare-pqc-module",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20500",
+      "file": "blocare-pqc-module-c203d471.html",
+      "bytes": 41397,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "hp-endpoint-security-controller-cryptographic-library",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5198",
+      "file": "hp-endpoint-security-controller-cryptographic-library-cf0c5f02.html",
+      "bytes": 42267,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "novachips-nv7x-controller-p2-series-ssd",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20097",
+      "file": "novachips-nv7x-controller-p2-series-ssd-a4225708.html",
+      "bytes": 61200,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "nuvoton-nct6694b-cryptographic-engine",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=21093",
+      "file": "nuvoton-nct6694b-cryptographic-engine-0f43d544.html",
+      "bytes": 76659,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "osr-pqc-solutions",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=21135",
+      "file": "osr-pqc-solutions-bbfa4553.html",
+      "bytes": 57487,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "libpqsecure",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20431",
+      "file": "libpqsecure-2401bdaf.html",
+      "bytes": 57599,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "pqperform-lattice",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19632",
+      "file": "pqperform-lattice-50c9f79f.html",
+      "bytes": 44507,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "pufpqc",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19771",
+      "file": "pufpqc-606a6c8e.html",
+      "bytes": 49817,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "qinvicta-twinstar",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20101",
+      "file": "qinvicta-twinstar-d3056be6.html",
+      "bytes": 44197,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "clear-cryptosystem",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5126",
+      "file": "clear-cryptosystem-8d85a8f9.html",
+      "bytes": 77329,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "radiant-logic-cryptographic-module-for-java",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5127",
+      "file": "radiant-logic-cryptographic-module-for-java-43b7be1c.html",
+      "bytes": 76654,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "realtek-rts5916",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19572",
+      "file": "realtek-rts5916-387a5a67.html",
+      "bytes": 44321,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "sansec-csmsc1-cryptographic-module",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19364",
+      "file": "sansec-csmsc1-cryptographic-module-4fd255f8.html",
+      "bytes": 146104,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "saviynt-cryptographic-module",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5128",
+      "file": "saviynt-cryptographic-module-2c150cb0.html",
+      "bytes": 76478,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "unisentry-secic-hsm-pqc-crypto-module",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=21184",
+      "file": "unisentry-secic-hsm-pqc-crypto-module-58245a4c.html",
+      "bytes": 88547,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "shinewave-post-quantum-cryptography-module-for-iot-gateways",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20684",
+      "file": "shinewave-post-quantum-cryptography-module-for-iot-gateways-5779541c.html",
+      "bytes": 44669,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "silvus-crypto-module",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20543",
+      "file": "silvus-crypto-module-cf6f2bd0.html",
+      "bytes": 101234,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "solarwinds-java-cryptographic-library",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5038",
+      "file": "solarwinds-java-cryptographic-library-142921c4.html",
+      "bytes": 76501,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "x-cube-pqc-stm32-post-quantum-cryptographic-library",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19884",
+      "file": "x-cube-pqc-stm32-post-quantum-cryptographic-library-73d91e91.html",
+      "bytes": 44531,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "neslib-cryptographic-library-incl-neslib-pqml",
+      "url": "https://commoncriteriaportal.org/files/epfiles/EUCC-3090-2026-25-cible.pdf",
+      "file": "neslib-cryptographic-library-incl-neslib-pqml-333232cc.pdf",
+      "bytes": 1997633,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "st33ktpm2x-stsafe-tpm",
+      "url": "https://commoncriteriaportal.org/files/epfiles/Cible-ANSSI-CC-2025_10en.pdf",
+      "file": "st33ktpm2x-stsafe-tpm-7319d19b.pdf",
+      "bytes": 752992,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "stsafe-v100-tpm",
+      "url": "https://commoncriteriaportal.org/files/epfiles/ANSSI-cible-CC-2024_38en.pdf",
+      "file": "stsafe-v100-tpm-9ea15b75.pdf",
+      "bytes": 763950,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "synopsys-agile-pqc-public-key-accelerator-pka",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20446",
+      "file": "synopsys-agile-pqc-public-key-accelerator-pka-927353c4.html",
+      "bytes": 54641,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "tellabs-panorama-pon-manager-cryptographic-module",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5130",
+      "file": "tellabs-panorama-pon-manager-cryptographic-module-998366a9.html",
+      "bytes": 77194,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "tq42-cryptography",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=18351",
+      "file": "tq42-cryptography-cd12ff0d.html",
+      "bytes": 86662,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "trend-micro-java-crypto-module",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5131",
+      "file": "trend-micro-java-crypto-module-1387b9eb.html",
+      "bytes": 76768,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "tutus-farist-ieg",
+      "url": "https://commoncriteriaportal.org/files/epfiles/FaristIEG-ST_v1.0.pdf",
+      "file": "tutus-farist-ieg-93b23cb2.pdf",
+      "bytes": 1328108,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "utimaco-quantum-protect-stateful-hash-based-signature-module",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20182",
+      "file": "utimaco-quantum-protect-stateful-hash-based-signature-module-08c716fd.html",
+      "bytes": 43544,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "wisecure-crystal-library-ml-kem-and-ml-dsa",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20095",
+      "file": "wisecure-crystal-library-ml-kem-and-ml-dsa-161119bc.html",
+      "bytes": 44152,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "wolfcrypt-post-quantum",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=21279",
+      "file": "wolfcrypt-post-quantum-c93d4ba1.html",
+      "bytes": 73305,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "nxp-edgelock-se051h",
+      "url": "https://www.nxp.com/docs/en/data-sheet/SE051.pdf",
+      "file": "nxp-edgelock-se051h-ba9c51a6.pdf",
+      "bytes": 398266,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "ibm-storage-scale-5-2",
+      "url": "https://www.ibm.com/docs/en/storage-scale/5.2.0?topic=introduction-whats-new-in-storage-scale",
+      "file": "ibm-storage-scale-5-2-38616738.html",
+      "bytes": 77457,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "pure-storage-purity-fa-6-6",
+      "url": "https://www.storagereview.com/review/q-day-is-coming-is-your-storage-quantum-safe",
+      "file": "pure-storage-purity-fa-6-6-55f4dd45.html",
+      "bytes": 223866,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "dell-powerstore-os-4-0",
+      "url": "https://www.dell.com/en-us/blog/securing-storage-dell-s-layered-approach-to-pqc-readiness-is-the-pqc-blog2-one/",
+      "file": "dell-powerstore-os-4-0-9e4076ce.html",
+      "bytes": 296424,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "hpe-alletra-mp",
+      "url": "https://www.hpe.com/psnow/doc/a00138815enw",
+      "file": "hpe-alletra-mp-35748917.html",
+      "bytes": 36160,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "rubrik-security-cloud",
+      "url": "https://www.rubrik.com/content/dam/rubrik/en/resources/white-paper/wp-rubrik-security-cloud-architecture-and-security-implementation.pdf",
+      "file": "rubrik-security-cloud-72ce0dce.pdf",
+      "bytes": 367897,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "zerto-11-0",
+      "url": "https://help.zerto.com/bundle/RN.HTML.10.9/page/release_notes_for_zerto_10_9.html",
+      "file": "zerto-11-0-c2d907e1.html",
+      "bytes": 203735,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "scality-ring9",
+      "url": "https://www.scality.com/ring/",
+      "file": "scality-ring9-37280587.html",
+      "bytes": 351785,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "mimecast-cloud-integrated",
+      "url": "https://www.data3.com/wp-content/uploads/2024/01/CS-05590-DS_Cloud-Integrated.pdf",
+      "file": "mimecast-cloud-integrated-2774513f.pdf",
+      "bytes": 350855,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "proofpoint-aegis",
+      "url": "https://www.proofpoint.com/us/resources/data-sheets/email-encryption",
+      "file": "proofpoint-aegis-b0c2d039.html",
+      "bytes": 88388,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "opentext-content-cloud",
+      "url": "https://blogs.opentext.com/preparing-for-post-quantum-cryptography-with-opentext-sast-and-dast/",
+      "file": "opentext-content-cloud-f99ed63e.html",
+      "bytes": 102776,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "netskope-intelligent-dlp",
+      "url": "https://www.netskope.com/products/data-loss-prevention",
+      "file": "netskope-intelligent-dlp-c1a08253.html",
+      "bytes": 1656659,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "vmware-workspace-one",
+      "url": "https://blogs.vmware.com/cloud-foundation/2026/04/28/post-quantum-readiness-on-vcf/",
+      "file": "vmware-workspace-one-0f3e273d.html",
+      "bytes": 99495,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "ivanti-neurons-for-mdm",
+      "url": "https://www.ivanti.com/products/ivanti-neurons-for-mdm",
+      "file": "ivanti-neurons-for-mdm-2cf37cc0.html",
+      "bytes": 40353,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "fis-modern-banking",
+      "url": "https://www.fisglobal.com/products/fis-modern-banking-platform",
+      "file": "fis-modern-banking-552c9e3f.html",
+      "bytes": 402669,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "soc-2-quantum-trust-criteria",
+      "url": "https://www.aicpa-cima.com/topic/audit-assurance/audit-and-assurance-quantum-readiness",
+      "file": "soc-2-quantum-trust-criteria-36051952.html",
+      "bytes": 242800,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "hyperledger-fabric-3-0-pqc",
+      "url": "https://hyperledger-fabric.readthedocs.io/en/latest/whatsnew.html",
+      "file": "hyperledger-fabric-3-0-pqc-5b595aba.html",
+      "bytes": 18813,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "quantum-leap-africa-aims",
+      "url": "https://qla.aimsric.org/?page_id=31",
+      "file": "quantum-leap-africa-aims-e0416ecd.html",
+      "bytes": 116900,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "hex-trust-custody",
+      "url": "https://www.hextrust.com/trust-center",
+      "file": "hex-trust-custody-d833ef01.html",
+      "bytes": 81447,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "komainu-custody",
+      "url": "https://komainu.com/expertise/custody-technology/",
+      "file": "komainu-custody-a3c7d085.html",
+      "bytes": 146264,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "metaco-harmonize",
+      "url": "https://ripple.com/insights/post-quantum-readiness-on-the-xrp-ledger/",
+      "file": "metaco-harmonize-db647fda.html",
+      "bytes": 165378,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "descope-platform",
+      "url": "https://www.descope.com/security-compliance",
+      "file": "descope-platform-736d739c.html",
+      "bytes": 903121,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "stytch-platform",
+      "url": "https://www.twilio.com/en-us/legal/security-overview",
+      "file": "stytch-platform-7fbf6371.html",
+      "bytes": 609949,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "robust-intelligence-cisco-ai-defense",
+      "url": "https://www.cisco.com/c/en/us/td/docs/unified_computing/ucs/UCS_CVDs/AI_defense_on_Cisco_AI_PODs_reference_architecture.html",
+      "file": "robust-intelligence-cisco-ai-defense-781f73b7.html",
+      "bytes": 154746,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "galileo-ai-platform",
+      "url": "https://docs.galileo.ai/deployments/data-privacy-and-compliance",
+      "file": "galileo-ai-platform-427cb2ba.html",
+      "bytes": 318081,
+      "tier": "crawl4ai"
+    },
+    {
+      "product_id": "beyondtrust-pathfinder-platform",
+      "url": "https://docs.beyondtrust.com/rs/docs/fips",
+      "file": "beyondtrust-pathfinder-platform-1d686f97.html",
+      "bytes": 1777404,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "docusign-iam",
+      "url": "https://www.docusign.com/trust/security/esignature",
+      "file": "docusign-iam-f3d1819f.html",
+      "bytes": 423249,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "anydesk-remote-desktop",
+      "url": "https://anydesk.com/en/security",
+      "file": "anydesk-remote-desktop-084c1844.html",
+      "bytes": 97097,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "nlnetlabs-ldnsutils",
+      "url": "https://raw.githubusercontent.com/NLnetLabs/ldns/develop/Changelog",
+      "file": "nlnetlabs-ldnsutils-ead62dd2.html",
+      "bytes": 55655,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "anchore-syft",
+      "url": "https://github.com/anchore/syft/releases/tag/v1.45.0",
+      "file": "anchore-syft-eb9c378b.html",
+      "bytes": 232854,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "thalesgroup-kmip-go",
+      "url": "https://github.com/ThalesGroup/kmip-go/blob/master/kmip20/kmip_2_0_additions_generated.go",
+      "file": "thalesgroup-kmip-go-0d970172.html",
+      "bytes": 1220963,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "tcpdump",
+      "url": "https://www.tcpdump.org/release/",
+      "file": "tcpdump-305c7f64.html",
+      "bytes": 39596,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "wireshark-tshark",
+      "url": "https://www.wireshark.org/download.html",
+      "file": "wireshark-tshark-aead8898.html",
+      "bytes": 162561,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "microsoft-365",
+      "url": "https://www.microsoft.com/en-us/security/blog/2025/08/20/quantum-safe-security-progress-towards-next-generation-cryptography/",
+      "file": "microsoft-365-429e3ba8.html",
+      "bytes": 291348,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "python-ssl-module",
+      "url": "https://docs.python.org/3.15/whatsnew/3.15.html",
+      "file": "python-ssl-module-479ab647.html",
+      "bytes": 426124,
       "tier": "curl_cffi:chrome124"
     }
   ]
