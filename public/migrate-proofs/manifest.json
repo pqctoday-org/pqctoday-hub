@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
   "generated": "2026-07-09",
-  "count": 811,
+  "count": 840,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -6934,6 +6934,209 @@
       "url": "https://www.prnewswire.com/news-releases/project-eleven-to-advance-post-quantum-security-for-the-solana-network-302642847.html",
       "file": "project-eleven-solana-pqc-de12059d.html",
       "bytes": 213030,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "sophos-xgs",
+      "url": "https://docs.sophos.com/releasenotes/output/en-us/nsg/sf_215_rn.html",
+      "file": "sophos-xgs-cf5e1c4c.html",
+      "bytes": 120002,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "sonicwall-sonicos",
+      "url": "https://www.sonicwall.com/support/technical-documentation/docs/sonicos-7-0-0-0-ipsec_vpn/Content/ipsec-vpn-types-vpn-security-about-suite-b.htm/",
+      "file": "sonicwall-sonicos-223c99da.html",
+      "bytes": 353258,
+      "tier": "playwright-stealth"
+    },
+    {
+      "product_id": "sql-server-tde-always-encrypted",
+      "url": "https://learn.microsoft.com/en-us/sql/relational-databases/security/encryption/always-encrypted-cryptography?view=sql-server-ver17",
+      "file": "sql-server-tde-always-encrypted-67ae1b49.html",
+      "bytes": 62992,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "forgerock-access-management",
+      "url": "https://docs.pingidentity.com/pingam/release-notes/requirements.html",
+      "file": "forgerock-access-management-2d466b98.html",
+      "bytes": 39936,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "sailpoint-identity-security-cloud",
+      "url": "https://www.sailpoint.com/why-us/trust/cybersecurity",
+      "file": "sailpoint-identity-security-cloud-8ac0fcdb.html",
+      "bytes": 253252,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "ibm-security-guardium-data-protection",
+      "url": "https://quantumcomputingreport.com/ibm-introduces-guardium-cryptography-manager-to-address-pqc-migration/",
+      "file": "ibm-security-guardium-data-protection-d55c5b34.html",
+      "bytes": 135253,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "quintessencelabs-qstream",
+      "url": "https://www.quintessencelabs.com/products",
+      "file": "quintessencelabs-qstream-19c86571.html",
+      "bytes": 164386,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "ubuntu-24-04-lts",
+      "url": "https://documentation.ubuntu.com/release-notes/24.04/",
+      "file": "ubuntu-24-04-lts-7e93fdc7.html",
+      "bytes": 175981,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "debian-13-trixie",
+      "url": "https://packages.debian.org/trixie/openssl",
+      "file": "debian-13-trixie-0b351c13.html",
+      "bytes": 2776,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "wire",
+      "url": "https://wire.com/en/security",
+      "file": "wire-800ccc02.html",
+      "bytes": 140607,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "nxp-jcop-4-5-p71d600",
+      "url": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4679.pdf",
+      "file": "nxp-jcop-4-5-p71d600-b1a3510e.pdf",
+      "bytes": 1107429,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "ibm-hyper-protect-crypto",
+      "url": "https://cloud.ibm.com/docs/hs-crypto",
+      "file": "ibm-hyper-protect-crypto-e5316057.html",
+      "bytes": 2133656,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "intel-platform-trust-technology-ptt",
+      "url": "https://edc.intel.com/content/www/us/en/design/products/platforms/details/arrow-lake-s/core-ultra-200s-series-processors-datasheet-volume-1-of-2/intel-platform-trust-technology/",
+      "file": "intel-platform-trust-technology-ptt-5df97c26.html",
+      "bytes": 935913,
+      "tier": "playwright-stealth"
+    },
+    {
+      "product_id": "microchip-atecc608b",
+      "url": "https://ww1.microchip.com/downloads/en/DeviceDoc/ATECC608B-CryptoAuthentication-Device-Summary-Data-Sheet-DS40002239A.pdf",
+      "file": "microchip-atecc608b-96951536.pdf",
+      "bytes": 822921,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "qualcomm-snapdragon-trusted-execution-environment",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4896",
+      "file": "qualcomm-snapdragon-trusted-execution-environment-b68a3886.html",
+      "bytes": 55057,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "azure-managed-hsm",
+      "url": "https://github.com/MicrosoftDocs/azure-security-docs/blob/main/articles/key-vault/managed-hsm/about-keys.md",
+      "file": "azure-managed-hsm-35099ec4.html",
+      "bytes": 281958,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "gcp-secret-manager",
+      "url": "https://docs.cloud.google.com/secret-manager/docs/cmek",
+      "file": "gcp-secret-manager-ff6e1d40.html",
+      "bytes": 210059,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "hashicorp-consul-connect-service-mesh",
+      "url": "https://support.hashicorp.com/hc/en-us/articles/45071208887187-Understanding-TLS-Cipher-Suites-negotiation-in-Consul-Service-Mesh-with-Envoy",
+      "file": "hashicorp-consul-connect-service-mesh-774acd76.html",
+      "bytes": 52838,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "cisco-secure-client-anyconnect",
+      "url": "https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap",
+      "file": "cisco-secure-client-anyconnect-9bec261f.html",
+      "bytes": 82901,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "palo-alto-globalprotect",
+      "url": "https://docs.paloaltonetworks.com/network-security/quantum-security/administration/quantum-security-concepts/support-for-quantum-features",
+      "file": "palo-alto-globalprotect-4fab63c8.html",
+      "bytes": 295759,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "samsung-networks-5g-core",
+      "url": "https://www.samsung.com/global/business/networks/products/core/cloud-core/",
+      "file": "samsung-networks-5g-core-de77b67b.html",
+      "bytes": 331822,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "mavenir-cloud-ran",
+      "url": "https://www.mavenir.com/wp-content/uploads/2022/11/Mavenir_WP_OpenRAN_Security.pdf",
+      "file": "mavenir-cloud-ran-e5f8da16.pdf",
+      "bytes": 926803,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "oauth-2-0-openid-connect-oidc",
+      "url": "https://openid.net/specs/openid-igov-oauth2-1_0.html",
+      "file": "oauth-2-0-openid-connect-oidc-505532b2.html",
+      "bytes": 187460,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "hyperledger-fabric",
+      "url": "https://github.com/hyperledger/fabric/issues/3763",
+      "file": "hyperledger-fabric-5458175a.html",
+      "bytes": 272761,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "hiddenlayer-model-scanner",
+      "url": "https://hiddenlayer.com/model-scanner/",
+      "file": "hiddenlayer-model-scanner-7e759357.html",
+      "bytes": 254268,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "globalsign-atlas-clm",
+      "url": "https://www.globalsign.com/en/post-quantum-computing",
+      "file": "globalsign-atlas-clm-1108281d.html",
+      "bytes": 112202,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "nxp-se051-secure-element",
+      "url": "https://download.mikroe.com/documents/datasheets/SE051_datasheet.pdf",
+      "file": "nxp-se051-secure-element-b81cf8df.pdf",
+      "bytes": 420876,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "qualcomm-snapdragon-spu",
+      "url": "https://www.qualcomm.com/smartphones/products/8-series/snapdragon-8-elite-mobile-platform",
+      "file": "qualcomm-snapdragon-spu-2a8542fa.html",
+      "bytes": 8760,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "ibm-z-vse",
+      "url": "https://www.slideshare.net/ibm/titlenews-on-zvse-security-crypto-support-and-openssl",
+      "file": "ibm-z-vse-2541f92f.html",
+      "bytes": 1537038,
       "tier": "curl_cffi:chrome124"
     }
   ]
