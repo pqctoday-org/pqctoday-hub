@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-14T02:25:38.269499+00:00",
+  "generated": "2026-07-14T02:26:41.331798+00:00",
   "entries": [
     {
       "refId": "NIST",
@@ -837,6 +837,78 @@
       "sizeBytes": 205519,
       "contentType": "text/html",
       "sha256": "0e58d866f970849edb153dfc389bc8f2645341e52d9910541435ad099638ae50"
+    },
+    {
+      "refId": "PQCA",
+      "url": "https://pqca.org",
+      "status": "downloaded",
+      "filename": "PQCA.html",
+      "sizeBytes": 164226,
+      "contentType": "text/html",
+      "sha256": "d05e1fb23e09f91f89e698c28da619ac19b116b1c7a734f513ba5998c8391bff"
+    },
+    {
+      "refId": "PQC-COALITION",
+      "url": "https://pqc-coalition.org",
+      "status": "downloaded",
+      "filename": "PQC-COALITION.html",
+      "sizeBytes": 227763,
+      "contentType": "text/html",
+      "sha256": "800cb160597c35b058463228be4ea21fba4d849ba991df3dd517823c95e9c68b"
+    },
+    {
+      "refId": "QED-C",
+      "url": "https://quantumconsortium.org",
+      "status": "downloaded",
+      "filename": "QED-C.html",
+      "sizeBytes": 106712,
+      "contentType": "text/html",
+      "sha256": "96ab4a3bf7d5dc0e43dfad9cddaae83a06846201274e01f9129a6e7f062aa2d5"
+    },
+    {
+      "refId": "ACSC-ESSENTIAL-EIGHT",
+      "url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model",
+      "status": "downloaded",
+      "filename": "ACSC-ESSENTIAL-EIGHT.html",
+      "sizeBytes": 435584,
+      "contentType": "text/html",
+      "sha256": "aa03f4809c88029be96dae66c6f63363cdb290069404374e9294c4df9a15b9e5"
+    },
+    {
+      "refId": "AU-PRIVACY-ACT",
+      "url": "https://www.oaic.gov.au/privacy/australian-privacy-principles",
+      "status": "downloaded",
+      "filename": "AU-PRIVACY-ACT.html",
+      "sizeBytes": 59936,
+      "contentType": "text/html",
+      "sha256": "1be55d7e47dc1b5a87ef34c6b9c9fb5ae53ad7862767fd7d9d6ebd3f4c4b3d37"
+    },
+    {
+      "refId": "AUSTRAC-AML-CTF",
+      "url": "https://www.austrac.gov.au/amlctf-reform",
+      "status": "downloaded",
+      "filename": "AUSTRAC-AML-CTF.html",
+      "sizeBytes": 137131,
+      "contentType": "text/html",
+      "sha256": "7b39cbaccfc86c30f89ac4bc00871262efebb7ad94368a372034df97893fd514"
+    },
+    {
+      "refId": "OSFI-B13-PQC",
+      "url": "https://www.osfi-bsif.gc.ca/en/risks/technology-cyber-risk-management",
+      "status": "downloaded",
+      "filename": "OSFI-B13-PQC.html",
+      "sizeBytes": 163390,
+      "contentType": "text/html",
+      "sha256": "cdc5da1ddfe5e25ed867261c6f76ec8af284d8046b27834d09065aa0e5db6564"
+    },
+    {
+      "refId": "CFDIR-QR-2023",
+      "url": "https://ised-isde.canada.ca",
+      "status": "downloaded",
+      "filename": "CFDIR-QR-2023.html",
+      "sizeBytes": 10623,
+      "contentType": "text/html",
+      "sha256": "7ce3ab2f385247fc2b77e713280eccf5d520013f85a2715bfedd8ff1a2cef760"
     }
   ],
   "blocked": {
@@ -888,6 +960,16 @@
     "JORDAN-CBJ-PQC": {
       "reason": "JS-shell page, empty <body> in curl_cffi/stealth snapshot",
       "blocked_at": "2026-07-14T02:22:56.281304+00:00",
+      "attempts": 1
+    },
+    "ETSI-EN-303645": {
+      "reason": "status=200, tier=crawl4ai",
+      "blocked_at": "2026-07-14T02:26:04.869521+00:00",
+      "attempts": 1
+    },
+    "APRA-CPS-234": {
+      "reason": "status=200, tier=crawl4ai",
+      "blocked_at": "2026-07-14T02:26:04.869521+00:00",
       "attempts": 1
     }
   }
