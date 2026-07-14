@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-14T02:18:56.865781+00:00",
+  "generated": "2026-07-14T02:22:56.281417+00:00",
   "entries": [
     {
       "refId": "NIST",
@@ -594,6 +594,69 @@
       "sizeBytes": 615083,
       "contentType": "text/html",
       "sha256": "3a2bd64738593cde6d4a2520d9a7b06ed4b5dd9f5747b76d650916d3d50831b9"
+    },
+    {
+      "refId": "BIS-158-PQC",
+      "url": "https://www.bis.org/publ/bppdf/bispap158.htm",
+      "status": "downloaded",
+      "filename": "BIS-158-PQC.html",
+      "sizeBytes": 26170,
+      "contentType": "text/html",
+      "sha256": "9c42de65bb1ff28e4c7d2b8186d2e9ef203036fd39c51a69e8467ad47294f324"
+    },
+    {
+      "refId": "3GPP-PQC",
+      "url": "https://www.3gpp.org/",
+      "status": "downloaded",
+      "filename": "3GPP-PQC.html",
+      "sizeBytes": 410394,
+      "contentType": "text/html",
+      "sha256": "b229691fc9785f7425b11a1c2f89121f694b648bbad23d4dc639b89d3610e1a2"
+    },
+    {
+      "refId": "TCG-TPM-PQC",
+      "url": "https://trustedcomputinggroup.org/",
+      "status": "downloaded",
+      "filename": "TCG-TPM-PQC.html",
+      "sizeBytes": 162561,
+      "contentType": "text/html",
+      "sha256": "e9de5f26e1362a25aa5457aaaf8d9af6a796bafbd88c78e5e1cb07793e621c14"
+    },
+    {
+      "refId": "NIST-NCCOE-PQC",
+      "url": "https://www.nccoe.nist.gov/applied-cryptography/migration-to-pqc",
+      "status": "downloaded",
+      "filename": "NIST-NCCOE-PQC.html",
+      "sizeBytes": 114095,
+      "contentType": "text/html",
+      "sha256": "2a575345d0b1aca54327cd564f482a0820d89f38e9718446a07156e998563699"
+    },
+    {
+      "refId": "NIST-SP800-131A",
+      "url": "https://csrc.nist.gov/pubs/sp/800/131/a/r3/ipd",
+      "status": "downloaded",
+      "filename": "NIST-SP800-131A.html",
+      "sizeBytes": 46624,
+      "contentType": "text/html",
+      "sha256": "a18e43e605ebdf95d8729290929776d3bb8164f8de6cad7673285ae8f742b10c"
+    },
+    {
+      "refId": "ITALY-ACN-PQC",
+      "url": "https://www.acn.gov.it/",
+      "status": "downloaded",
+      "filename": "ITALY-ACN-PQC.html",
+      "sizeBytes": 218028,
+      "contentType": "text/html",
+      "sha256": "9e206fd081291c4a5033ca6a411dbab3e2f2974c39a1b968a08bef5957e56666"
+    },
+    {
+      "refId": "BAHRAIN-NCSC-PQC",
+      "url": "https://www.ncsc.gov.bh/en/index.html",
+      "status": "downloaded",
+      "filename": "BAHRAIN-NCSC-PQC.html",
+      "sizeBytes": 31873,
+      "contentType": "text/html",
+      "sha256": "41f5a63970d37bfb2bad70e0387f6c4951f9818c70ad11928c3ffad6af2048a3"
     }
   ],
   "blocked": {
@@ -630,6 +693,21 @@
     "UAE-CSC-PQC": {
       "reason": "status=err, tier=crawl4ai",
       "blocked_at": "2026-07-14T02:18:36.654597+00:00",
+      "attempts": 1
+    },
+    "INDIA-CERTIN-CBOM": {
+      "reason": "status=err, tier=crawl4ai",
+      "blocked_at": "2026-07-14T02:19:47.181064+00:00",
+      "attempts": 1
+    },
+    "SPAIN-CCN-PQC": {
+      "reason": "status=err, tier=crawl4ai",
+      "blocked_at": "2026-07-14T02:19:47.181064+00:00",
+      "attempts": 1
+    },
+    "JORDAN-CBJ-PQC": {
+      "reason": "JS-shell page, empty <body> in curl_cffi/stealth snapshot",
+      "blocked_at": "2026-07-14T02:22:56.281304+00:00",
       "attempts": 1
     }
   }
