@@ -617,8 +617,16 @@ export const ChangelogView = () => {
             .map((v) => v.summary)
             .filter((s) => s && s.length > 0)
             .join(' · ')
+          // Keyed by date+first-version, not just date: groupVersionsByDate only
+          // merges ADJACENT same-date entries (by design — a different-dated
+          // release sandwiched between two same-date releases, e.g.
+          // 3.17.2/3.17.1/3.17.0, correctly stays 3 separate visual groups).
+          // Two non-adjacent groups can therefore share a date, which made
+          // `key={group.date}` alone a real duplicate-key collision (confirmed:
+          // 2026-05-30 and 2026-03-13 each hit this) — found via a
+          // full-suite-only test failure in ChangelogView.sponsors.test.tsx.
           return (
-            <div key={group.date} className="relative">
+            <div key={`${group.date}-${group.versions[0].version}`} className="relative">
               {/* Date milestone dot */}
               <div
                 className={clsx(

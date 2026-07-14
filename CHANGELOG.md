@@ -28,6 +28,20 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.21.3] - 2026-07-14
+
+A large data-quality pass: hundreds of Migrate products got a real
+PQC-support assessment, Compliance framework tags now come from the
+actual regulation text instead of a one-line summary, and Library
+reference coverage is complete.
+
+### Data
+
+- **Hundreds of products on /migrate now have a real, evidence-backed PQC assessment instead of "Unknown"** [view:/migrate] [persona:researcher] [persona:architect]: worked through the full backlog — 318 products assessed from their actual product documentation or vendor announcement, and 44 previously-missing proof documents recovered and matched back to their product.
+- **Compliance framework tags now reflect the actual regulation text, not a one-line summary** [view:/compliance] [persona:researcher] [persona:architect]: the crypto-posture-management tags (governance, inventory, observability, assurance, lifecycle) shown for each framework had been silently computed from a short hand-written description since a document-reading bug went unnoticed for weeks; re-tagged all 152 frameworks that have a downloaded source document, correcting 70 of them to match what the regulation actually says.
+- **Every Library reference document is now fully enriched** [view:/library] [persona:researcher]: the last 11 documents lacking a topic summary and metadata are filled in, closing out full coverage.
+- **In-app search now covers all of the above** [persona:developer] [persona:curious]: the search index was rebuilt to include the newly added and corrected records.
+
 ## [4.21.2] - 2026-07-13
 
 ### Data
