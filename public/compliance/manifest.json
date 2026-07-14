@@ -1,105 +1,6 @@
 {
-  "generated": "2026-07-14T01:53:39.362121+00:00",
+  "generated": "2026-07-14T02:04:32.954047+00:00",
   "entries": [
-    {
-      "refId": "FEDRAMP",
-      "url": "https://www.fedramp.gov",
-      "status": "downloaded",
-      "filename": "FEDRAMP.html",
-      "sizeBytes": 4338020,
-      "contentType": "text/html",
-      "sha256": "f4d5cf8ecb56dce88166b1c0dc2ad04ef6f3b07e1330fe58273583a95a3ef76e"
-    },
-    {
-      "refId": "DISA-STIG",
-      "url": "https://public.cyber.mil/stigs/",
-      "status": "downloaded",
-      "filename": "DISA-STIG.html",
-      "sizeBytes": 143368,
-      "contentType": "text/html",
-      "sha256": "48e5175cec93af5d9138e433ae5064daa4c92742ca9eb97105de832033f87bf1"
-    },
-    {
-      "refId": "NATO-4774",
-      "url": "https://www.nato.int/cps/en/natohq/topics_78170.htm",
-      "status": "downloaded",
-      "filename": "NATO-4774.html",
-      "sizeBytes": 384406,
-      "contentType": "text/html",
-      "sha256": "f761e0d6f3782f0e5d4d1449e3f600967f8664c65ae212101d6835a2b19583ba"
-    },
-    {
-      "refId": "ISO-SAE-21434",
-      "url": "https://www.iso.org/standard/70918.html",
-      "status": "downloaded",
-      "filename": "ISO-SAE-21434.html",
-      "sizeBytes": 90867,
-      "contentType": "text/html",
-      "sha256": "d45359cf51639fe3b053edf6a1f2f8c6d722a577d6b347def0a0302a5498726c"
-    },
-    {
-      "refId": "UN-ECE-WP29",
-      "url": "https://unece.org/transport/vehicle-regulations",
-      "status": "downloaded",
-      "filename": "UN-ECE-WP29.html",
-      "sizeBytes": 27379,
-      "contentType": "text/html",
-      "sha256": "bfe88e7eec1a84c9873059eab30c4104cdba9331253327eaf497c639f49e79b6"
-    },
-    {
-      "refId": "NERC-CIP",
-      "url": "https://www.nerc.com/pa/Stand/Pages/ReliabilityStandards.aspx",
-      "status": "downloaded",
-      "filename": "NERC-CIP.html",
-      "sizeBytes": 52868,
-      "contentType": "text/html",
-      "sha256": "8c5f32bf7150f339acc3fb019b6ab3a1f625f9137d6e86d873b31d05ddd504db"
-    },
-    {
-      "refId": "IEC-62443",
-      "url": "https://www.iec.ch/iecnorex/",
-      "status": "downloaded",
-      "filename": "IEC-62443.html",
-      "sizeBytes": 160855,
-      "contentType": "text/html",
-      "sha256": "6324c9a9777720b82334874358296431b53c9aa6ec2b7d4c530d8749a1b86ab0"
-    },
-    {
-      "refId": "DO-326A",
-      "url": "https://www.rtca.org",
-      "status": "downloaded",
-      "filename": "DO-326A.html",
-      "sizeBytes": 130502,
-      "contentType": "text/html",
-      "sha256": "f0ddecfcd38b2da840b6b2cbb60d10a01588100fa8a89765015a1706c0c51171"
-    },
-    {
-      "refId": "RTCA-DO-355A",
-      "url": "https://www.rtca.org",
-      "status": "downloaded",
-      "filename": "RTCA-DO-355A.html",
-      "sizeBytes": 130500,
-      "contentType": "text/html",
-      "sha256": "8d6184e6fdb6828f46c958aa9a7ff0205d777f3e589720c4e009af4f8b0acb92"
-    },
-    {
-      "refId": "FERPA",
-      "url": "https://studentprivacy.ed.gov/ferpa",
-      "status": "downloaded",
-      "filename": "FERPA.html",
-      "sizeBytes": 133108,
-      "contentType": "text/html",
-      "sha256": "8218616e2e7bd4e92f1f7ad9ddd9f0f2b26e6cae1691f20239e5e9ff33792df5"
-    },
-    {
-      "refId": "NIS2",
-      "url": "https://www.enisa.europa.eu/topics/cybersecurity-policy/nis2-directive",
-      "status": "downloaded",
-      "filename": "NIS2.html",
-      "sizeBytes": 41746,
-      "contentType": "text/html",
-      "sha256": "afca37192b92ec27f55dd36bcd66887d7d7e86c2d076e0a12e98ae6b1d56c52a"
-    },
     {
       "refId": "COPPA",
       "url": "https://www.ftc.gov/legal-library/browse/rules/childrens-online-privacy-protection-rule-coppa",
@@ -315,6 +216,69 @@
       "sizeBytes": 74732,
       "contentType": "text/html",
       "sha256": "ea0398969b47eb281b07ff8fa353c8a2227937138fe24f45a4be4779fe25f7b9"
+    },
+    {
+      "refId": "FEDRAMP",
+      "url": "https://www.fedramp.gov",
+      "status": "downloaded",
+      "filename": "FEDRAMP.html",
+      "sizeBytes": 4338020,
+      "contentType": "text/html",
+      "sha256": "08259f62a6aaff888214eea9bb7a00c5b21cb3ea8200f39ae5338173c4f5715c"
+    },
+    {
+      "refId": "NATO-4774",
+      "url": "https://www.nato.int/cps/en/natohq/topics_78170.htm",
+      "status": "downloaded",
+      "filename": "NATO-4774.html",
+      "sizeBytes": 384504,
+      "contentType": "text/html",
+      "sha256": "5299f2ad011fa77f273f3516d19d39c4370a5358408a25df46e5832492ed1137"
+    },
+    {
+      "refId": "ISO-SAE-21434",
+      "url": "https://www.iso.org/standard/70918.html",
+      "status": "downloaded",
+      "filename": "ISO-SAE-21434.html",
+      "sizeBytes": 90868,
+      "contentType": "text/html",
+      "sha256": "56401ea6a9f8fd5b012096e9ab8e90765ba9f66d6cb9d0ff91c9feaa1d24a503"
+    },
+    {
+      "refId": "NERC-CIP",
+      "url": "https://www.nerc.com/pa/Stand/Pages/ReliabilityStandards.aspx",
+      "status": "downloaded",
+      "filename": "NERC-CIP.html",
+      "sizeBytes": 52868,
+      "contentType": "text/html",
+      "sha256": "03764df87559fb7adfd099b6d87ed867cabbebcccd3b1dfd629c86030f522985"
+    },
+    {
+      "refId": "DO-326A",
+      "url": "https://www.rtca.org",
+      "status": "downloaded",
+      "filename": "DO-326A.html",
+      "sizeBytes": 130503,
+      "contentType": "text/html",
+      "sha256": "4d5db27d4276455490712cb2682d38c24dfe7fc5ae97f85386a251980c923b7d"
+    },
+    {
+      "refId": "RTCA-DO-355A",
+      "url": "https://www.rtca.org",
+      "status": "downloaded",
+      "filename": "RTCA-DO-355A.html",
+      "sizeBytes": 130504,
+      "contentType": "text/html",
+      "sha256": "2c4374eddb349b8401c1bc036f1b289be32f7baff3d7a79a17bd9818c9e88c19"
+    },
+    {
+      "refId": "FERPA",
+      "url": "https://studentprivacy.ed.gov/ferpa",
+      "status": "downloaded",
+      "filename": "FERPA.html",
+      "sizeBytes": 133108,
+      "contentType": "text/html",
+      "sha256": "8218616e2e7bd4e92f1f7ad9ddd9f0f2b26e6cae1691f20239e5e9ff33792df5"
     }
   ]
 }
