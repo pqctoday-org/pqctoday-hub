@@ -1,96 +1,6 @@
 {
-  "generated": "2026-07-14T01:05:17.416711+00:00",
+  "generated": "2026-07-14T01:53:39.362121+00:00",
   "entries": [
-    {
-      "refId": "HIPAA",
-      "url": "https://www.hhs.gov/hipaa",
-      "status": "downloaded",
-      "filename": "HIPAA.html",
-      "sizeBytes": 177033,
-      "contentType": "text/html",
-      "sha256": "ca50a3c9c59f4517e80d8e985ba95511ea60ec3f55517f490aec3b34357a080d"
-    },
-    {
-      "refId": "GSMA-NG116",
-      "url": "https://www.gsma.com/solutions-and-impact/technologies/networks/ng116/",
-      "status": "downloaded",
-      "filename": "GSMA-NG116.html",
-      "sizeBytes": 76217,
-      "contentType": "text/html",
-      "sha256": "f753eb1cfde94cc4e585b2d437a35a15db9d70fb9ce77fc8028f1c1753037a0b"
-    },
-    {
-      "refId": "ETSI-TS103744",
-      "url": "https://www.etsi.org/committee/cyber",
-      "status": "downloaded",
-      "filename": "ETSI-TS103744.html",
-      "sizeBytes": 165306,
-      "contentType": "text/html",
-      "sha256": "99c61e47b2d18283743de61b1e14926a8003a775e7fbfb724e3a39fc7aceda80"
-    },
-    {
-      "refId": "DORA",
-      "url": "https://www.eiopa.europa.eu/digital-operational-resilience-act-dora_en",
-      "status": "downloaded",
-      "filename": "DORA.html",
-      "sizeBytes": 105542,
-      "contentType": "text/html",
-      "sha256": "6fbf320f1c15b5974e038d8b7847879c4688cc6b7107004d1e0cddc4f7bbdd59"
-    },
-    {
-      "refId": "SWIFT-CSP",
-      "url": "https://www.swift.com/myswift/customer-security-programme",
-      "status": "downloaded",
-      "filename": "SWIFT-CSP.html",
-      "sizeBytes": 191147,
-      "contentType": "text/html",
-      "sha256": "a7c83373c49f316015b8e66f08e21494302675e3b809b4b57bbee11557b1aded"
-    },
-    {
-      "refId": "ISO-27001",
-      "url": "https://www.iso.org/standard/27001",
-      "status": "downloaded",
-      "filename": "ISO-27001.html",
-      "sizeBytes": 130275,
-      "contentType": "text/html",
-      "sha256": "e7a26bb7e52137665afd15728de9252b60bebdab1cd74e0e33b134d4515fd3d6"
-    },
-    {
-      "refId": "SOC-2",
-      "url": "https://www.aicpa-cima.com/resources/landing/system-and-organization-controls-soc-suite-of-services",
-      "status": "downloaded",
-      "filename": "SOC-2.html",
-      "sizeBytes": 407811,
-      "contentType": "text/html",
-      "sha256": "cfc15d9ab190898cb8fcc876dff7e91ce5442effa70f70fbad41bb70777ded19"
-    },
-    {
-      "refId": "GDPR",
-      "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj",
-      "status": "downloaded",
-      "filename": "GDPR.html",
-      "sizeBytes": 1069867,
-      "contentType": "text/html",
-      "sha256": "6101dab191cb370b5df1a49fc80cc9599b6012472012e353f33f2590314c3425"
-    },
-    {
-      "refId": "HITECH",
-      "url": "https://www.hhs.gov/hipaa/for-professionals/special-topics/hitech-act-enforcement-interim-final-rule/index.html",
-      "status": "downloaded",
-      "filename": "HITECH.html",
-      "sizeBytes": 201470,
-      "contentType": "text/html",
-      "sha256": "dc600338153b6173e044ee400b59914e6d493bfc37659a18fe31b1987486e945"
-    },
-    {
-      "refId": "FDA-21CFR11",
-      "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/part-11-electronic-records-electronic-signatures-scope-and-application",
-      "status": "downloaded",
-      "filename": "FDA-21CFR11.html",
-      "sizeBytes": 74727,
-      "contentType": "text/html",
-      "sha256": "7c04b9d4f265403f2a41af656d3d66df198109c1e12625f5a656f0908a63743a"
-    },
     {
       "refId": "FEDRAMP",
       "url": "https://www.fedramp.gov",
@@ -315,6 +225,96 @@
       "sizeBytes": 795809,
       "contentType": "text/html",
       "sha256": "1cfe795fafc4a6723201334f630dec0bac375c941f8c595f7d11534431523a7c"
+    },
+    {
+      "refId": "HIPAA",
+      "url": "https://www.hhs.gov/hipaa",
+      "status": "downloaded",
+      "filename": "HIPAA.html",
+      "sizeBytes": 177033,
+      "contentType": "text/html",
+      "sha256": "ecdaf6d78716ef1c913cfa8688de16fddab6e45cf1e34f9cba1fbbaebddcf8f5"
+    },
+    {
+      "refId": "GSMA-NG116",
+      "url": "https://www.gsma.com/solutions-and-impact/technologies/networks/ng116/",
+      "status": "downloaded",
+      "filename": "GSMA-NG116.html",
+      "sizeBytes": 76217,
+      "contentType": "text/html",
+      "sha256": "6f2958fcfd1914a2c86dd9aacbb5258c57c22f42171f280c3b6a0ef592d300f8"
+    },
+    {
+      "refId": "ETSI-TS103744",
+      "url": "https://www.etsi.org/committee/cyber",
+      "status": "downloaded",
+      "filename": "ETSI-TS103744.html",
+      "sizeBytes": 165306,
+      "contentType": "text/html",
+      "sha256": "c20dac6644cca0733c61bbd30e6da907acbfb7854edb14eac4f73f016a28e8d4"
+    },
+    {
+      "refId": "DORA",
+      "url": "https://www.eiopa.europa.eu/digital-operational-resilience-act-dora_en",
+      "status": "downloaded",
+      "filename": "DORA.html",
+      "sizeBytes": 105542,
+      "contentType": "text/html",
+      "sha256": "483e1f7c7f361b1f4865b3554e3b277200b5b7b5af42af37325e951334918660"
+    },
+    {
+      "refId": "SWIFT-CSP",
+      "url": "https://www.swift.com/myswift/customer-security-programme",
+      "status": "downloaded",
+      "filename": "SWIFT-CSP.html",
+      "sizeBytes": 191147,
+      "contentType": "text/html",
+      "sha256": "277302ccbec261d478129e99013935fe360c671d9a23cedf9683318557ace524"
+    },
+    {
+      "refId": "ISO-27001",
+      "url": "https://www.iso.org/standard/27001",
+      "status": "downloaded",
+      "filename": "ISO-27001.html",
+      "sizeBytes": 129733,
+      "contentType": "text/html",
+      "sha256": "437b4b20dbe09292d198b3c2b3987a0d96ee0510a69b6005a859c5e4492f3904"
+    },
+    {
+      "refId": "SOC-2",
+      "url": "https://www.aicpa-cima.com/resources/landing/system-and-organization-controls-soc-suite-of-services",
+      "status": "downloaded",
+      "filename": "SOC-2.html",
+      "sizeBytes": 407811,
+      "contentType": "text/html",
+      "sha256": "bef2b1c18aea9a02b0f41f25eb2c2545ec9e3c6040fd227df5e470d8cf725ab8"
+    },
+    {
+      "refId": "GDPR",
+      "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj",
+      "status": "downloaded",
+      "filename": "GDPR.html",
+      "sizeBytes": 1069868,
+      "contentType": "text/html",
+      "sha256": "de39fdb58fce093351178c22529c285b2f2a0c0ac3cec17f2d65afa243e6f33f"
+    },
+    {
+      "refId": "HITECH",
+      "url": "https://www.hhs.gov/hipaa/for-professionals/special-topics/hitech-act-enforcement-interim-final-rule/index.html",
+      "status": "downloaded",
+      "filename": "HITECH.html",
+      "sizeBytes": 201468,
+      "contentType": "text/html",
+      "sha256": "3ee47f11832f3fbb2d53aaaa6927bff7516883f7e65d02584705de9067629e68"
+    },
+    {
+      "refId": "FDA-21CFR11",
+      "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/part-11-electronic-records-electronic-signatures-scope-and-application",
+      "status": "downloaded",
+      "filename": "FDA-21CFR11.html",
+      "sizeBytes": 74732,
+      "contentType": "text/html",
+      "sha256": "ea0398969b47eb281b07ff8fa353c8a2227937138fe24f45a4be4779fe25f7b9"
     }
   ]
 }
