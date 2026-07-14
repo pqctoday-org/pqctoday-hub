@@ -1,42 +1,6 @@
 {
-  "generated": "2026-07-14T02:04:32.954047+00:00",
+  "generated": "2026-07-14T02:07:07.793345+00:00",
   "entries": [
-    {
-      "refId": "COPPA",
-      "url": "https://www.ftc.gov/legal-library/browse/rules/childrens-online-privacy-protection-rule-coppa",
-      "status": "downloaded",
-      "filename": "COPPA.html",
-      "sizeBytes": 1011434,
-      "contentType": "text/html",
-      "sha256": "4c6a1d3fdca80ab3988d08ac41ca1acf14a3908ef9709285e9d2013adb593e4f"
-    },
-    {
-      "refId": "TISAX",
-      "url": "https://portal.enx.com/en-US/TISAX/",
-      "status": "downloaded",
-      "filename": "TISAX.html",
-      "sizeBytes": 38916,
-      "contentType": "text/html",
-      "sha256": "ab1c8d18ea9cd71ca7715e54acae9b0a96e83d6e154f301aeb6f3bf91c6b5261"
-    },
-    {
-      "refId": "MICA",
-      "url": "https://www.esma.europa.eu/esmas-activities/digital-finance-and-innovation/markets-crypto-assets-regulation-mica",
-      "status": "downloaded",
-      "filename": "MICA.html",
-      "sizeBytes": 87900,
-      "contentType": "text/html",
-      "sha256": "5cd7ac91c5e2b6c571acb0c94090e856e711ad4f54b79f6ee479efde99a1a583"
-    },
-    {
-      "refId": "TSA-PIPELINE",
-      "url": "https://www.tsa.gov/sd-and-ea",
-      "status": "downloaded",
-      "filename": "TSA-PIPELINE.html",
-      "sizeBytes": 72040,
-      "contentType": "text/html",
-      "sha256": "464c8e4477fd7187c92df09a3195802e054638f52342cf33aecabae2408901c9"
-    },
     {
       "refId": "NIST",
       "url": "https://csrc.nist.gov/projects/post-quantum-cryptography",
@@ -279,6 +243,60 @@
       "sizeBytes": 133108,
       "contentType": "text/html",
       "sha256": "8218616e2e7bd4e92f1f7ad9ddd9f0f2b26e6cae1691f20239e5e9ff33792df5"
+    },
+    {
+      "refId": "COPPA",
+      "url": "https://www.ftc.gov/legal-library/browse/rules/childrens-online-privacy-protection-rule-coppa",
+      "status": "downloaded",
+      "filename": "COPPA.html",
+      "sizeBytes": 1011796,
+      "contentType": "text/html",
+      "sha256": "7e63a881e2914f4fbd67d0b590b33eb1c19132013ee22c6ca43676232af9bf7e"
+    },
+    {
+      "refId": "TISAX",
+      "url": "https://portal.enx.com/en-US/TISAX/",
+      "status": "downloaded",
+      "filename": "TISAX.html",
+      "sizeBytes": 38915,
+      "contentType": "text/html",
+      "sha256": "75a961b27923214b35a21cadaba4eae07875e47892eeae4a440d70517fe4a5aa"
+    },
+    {
+      "refId": "MICA",
+      "url": "https://www.esma.europa.eu/esmas-activities/digital-finance-and-innovation/markets-crypto-assets-regulation-mica",
+      "status": "downloaded",
+      "filename": "MICA.html",
+      "sizeBytes": 87897,
+      "contentType": "text/html",
+      "sha256": "7276605f14565e4cf326a9f25f8da5786d8ae1b5cee6d2554df921d40e48b131"
+    },
+    {
+      "refId": "TSA-PIPELINE",
+      "url": "https://www.tsa.gov/sd-and-ea",
+      "status": "downloaded",
+      "filename": "TSA-PIPELINE.html",
+      "sizeBytes": 72043,
+      "contentType": "text/html",
+      "sha256": "8c50f71650dfec2dde006157a64c607c5bd4c7ccd98a73ca855760e2bb65ad0d"
+    },
+    {
+      "refId": "NIST-IR-8547",
+      "url": "https://csrc.nist.gov/pubs/ir/8547/ipd",
+      "status": "downloaded",
+      "filename": "NIST-IR-8547.html",
+      "sizeBytes": 45146,
+      "contentType": "text/html",
+      "sha256": "6a485a33f4ffa3809b2faa955d002382570090d77e740ea034372e628ca3b3f2"
+    },
+    {
+      "refId": "ASD-ISM",
+      "url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/ism",
+      "status": "downloaded",
+      "filename": "ASD-ISM.html",
+      "sizeBytes": 339413,
+      "contentType": "text/html",
+      "sha256": "23fb299e48e79c5226dba92d7d2a5f48686bb1abfdca0e31535fef26860f4096"
     }
   ]
 }
