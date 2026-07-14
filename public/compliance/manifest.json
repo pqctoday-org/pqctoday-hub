@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-14T02:07:07.793345+00:00",
+  "generated": "2026-07-14T02:08:33.901371+00:00",
   "entries": [
     {
       "refId": "NIST",
@@ -297,6 +297,60 @@
       "sizeBytes": 339413,
       "contentType": "text/html",
       "sha256": "23fb299e48e79c5226dba92d7d2a5f48686bb1abfdca0e31535fef26860f4096"
+    },
+    {
+      "refId": "CCCS-ITSM",
+      "url": "https://www.cyber.gc.ca/en/guidance/preparing-your-organization-quantum-threat-cryptography-itsap00017",
+      "status": "downloaded",
+      "filename": "CCCS-ITSM.html",
+      "sizeBytes": 72584,
+      "contentType": "text/html",
+      "sha256": "6c5cfe4a529697add44c00beb8005a8bd67cd36bbce806211b6e1117e8969ea0"
+    },
+    {
+      "refId": "EU-REC-2024-1101",
+      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32024H1101",
+      "status": "downloaded",
+      "filename": "EU-REC-2024-1101.html",
+      "sizeBytes": 280322,
+      "contentType": "text/html",
+      "sha256": "2f729e3e354002c44b2e0c85aded90bd5701b86313670e9856dc1b6fb8683c9d"
+    },
+    {
+      "refId": "BSI-TR-02102",
+      "url": "https://www.bsi.bund.de/EN/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Technische-Richtlinien/TR-nach-Thema-sortiert/tr02102/tr02102_node.html",
+      "status": "downloaded",
+      "filename": "BSI-TR-02102.html",
+      "sizeBytes": 58509,
+      "contentType": "text/html",
+      "sha256": "ade25b413fb81a367ee12e76ebcf081370efac9036931438d65dc6cafa11a79f"
+    },
+    {
+      "refId": "UK-NCSC",
+      "url": "https://www.ncsc.gov.uk/guidance/pqc-migration-timelines",
+      "status": "downloaded",
+      "filename": "UK-NCSC.html",
+      "sizeBytes": 173339,
+      "contentType": "text/html",
+      "sha256": "018ae9f0044d2d10d6dbd8b999136d9695a114b5a28896012a38bcefd7720754"
+    },
+    {
+      "refId": "CRYPTREC",
+      "url": "https://www.cryptrec.go.jp/en/",
+      "status": "downloaded",
+      "filename": "CRYPTREC.html",
+      "sizeBytes": 7857,
+      "contentType": "text/html",
+      "sha256": "4d6c01d1a97f0a260c8fe46a3acac15d90d4cf6bf2c62002e511ca8301c963a6"
+    },
+    {
+      "refId": "MAS-CIRCULAR",
+      "url": "https://www.mas.gov.sg/regulation/circulars",
+      "status": "downloaded",
+      "filename": "MAS-CIRCULAR.html",
+      "sizeBytes": 244949,
+      "contentType": "text/html",
+      "sha256": "1e4eed6caa5615d766316a58dc099a57fcf36697abf8fa948943cded2ed295b4"
     }
   ]
 }
