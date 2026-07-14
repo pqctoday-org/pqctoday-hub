@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-14T02:13:14.252075+00:00",
+  "generated": "2026-07-14T02:16:56.365528+00:00",
   "entries": [
     {
       "refId": "NIST",
@@ -387,6 +387,74 @@
       "sizeBytes": 41773,
       "contentType": "text/html",
       "sha256": "06e9eb085c91308ea0db5eb4929315c7004ef473d3dd07db8f4d2ce853813c36"
+    },
+    {
+      "refId": "NCSC-CH",
+      "url": "https://www.ncsc.admin.ch",
+      "status": "downloaded",
+      "filename": "NCSC-CH.html",
+      "sizeBytes": 90415,
+      "contentType": "text/html",
+      "sha256": "27571847d3b92f3b5eba8bf543f8c95e4d7755c0fe3745c10a3be62f50263a77"
+    },
+    {
+      "refId": "NCSC-NL",
+      "url": "https://www.ncsc.nl/en",
+      "status": "downloaded",
+      "filename": "NCSC-NL.html",
+      "sizeBytes": 148733,
+      "contentType": "text/html",
+      "sha256": "3f0d29b7ea72efac6e32ba952cedb1bb003bb26ac6a53358de677c96619543b8"
+    },
+    {
+      "refId": "EUCC",
+      "url": "https://certification.enisa.europa.eu",
+      "status": "downloaded",
+      "filename": "EUCC.html",
+      "sizeBytes": 17654,
+      "contentType": "text/html",
+      "sha256": "991da71888aeebc84f704fda68cd8e4e37058947a82b4ccba8c871c77c6b0f02"
+    },
+    {
+      "refId": "ANSSI-BODY",
+      "url": "https://www.ssi.gouv.fr",
+      "status": "downloaded",
+      "filename": "ANSSI-BODY.html",
+      "sizeBytes": 36320,
+      "contentType": "text/html",
+      "sha256": "99b0141f9e0b7eb9ba9cbde416228148e677e92234e1f44871195e92aedfc08e"
     }
-  ]
+  ],
+  "blocked": {
+    "DISA-STIG": {
+      "reason": "wrong-redirect: public.cyber.mil + www.cyber.mil both redirect to generic LWC Communities portal page for unauthenticated fetches",
+      "blocked_at": "2026-07-14T02:16:08.133645+00:00",
+      "attempts": 5
+    },
+    "UN-ECE-WP29": {
+      "reason": "hard-blocked: crawl4ai timeout/err on retry",
+      "blocked_at": "2026-07-14T02:16:08.133645+00:00",
+      "attempts": 5
+    },
+    "IEC-62443": {
+      "reason": "hard-blocked: rejected at all 3 fetch_resilient tiers",
+      "blocked_at": "2026-07-14T02:16:08.133645+00:00",
+      "attempts": 5
+    },
+    "NIS2": {
+      "reason": "hard-blocked: crawl4ai timeout/err on retry",
+      "blocked_at": "2026-07-14T02:16:08.133645+00:00",
+      "attempts": 5
+    },
+    "KCMVP": {
+      "reason": "client-side-only redirect stub (window.location.href, no server-rendered content)",
+      "blocked_at": "2026-07-14T02:16:08.133645+00:00",
+      "attempts": 5
+    },
+    "NZISM": {
+      "reason": "hard-blocked: crawl4ai timeout/err",
+      "blocked_at": "2026-07-14T02:16:08.133645+00:00",
+      "attempts": 5
+    }
+  }
 }
