@@ -1,96 +1,6 @@
 {
-  "generated": "2026-07-13T00:56:44.911760+00:00",
+  "generated": "2026-07-14T01:05:17.416711+00:00",
   "entries": [
-    {
-      "refId": "NIST",
-      "url": "https://csrc.nist.gov/projects/post-quantum-cryptography",
-      "status": "downloaded",
-      "filename": "NIST.html",
-      "sizeBytes": 61179,
-      "contentType": "text/html",
-      "sha256": "3d2711145429970e7f5af501d2c0dfb2bdea2b794496a71515bac4b78f2163ea"
-    },
-    {
-      "refId": "ENISA",
-      "url": "https://www.enisa.europa.eu/",
-      "status": "downloaded",
-      "filename": "ENISA.html",
-      "sizeBytes": 63767,
-      "contentType": "text/html",
-      "sha256": "9bb3cc60fd3097319726734bc698d20a8762deebd5f737a570e89525fee91b7a"
-    },
-    {
-      "refId": "ISO-IEC",
-      "url": "https://www.iso.org/committee/45306.html",
-      "status": "downloaded",
-      "filename": "ISO-IEC.html",
-      "sizeBytes": 138237,
-      "contentType": "text/html",
-      "sha256": "b9cd760b6e4a72f2ecb24b88643cc0921b782053a0f0bf792e9c58ec4f478d41"
-    },
-    {
-      "refId": "IETF",
-      "url": "https://datatracker.ietf.org/wg/pquip/about/",
-      "status": "downloaded",
-      "filename": "IETF.html",
-      "sizeBytes": 38979,
-      "contentType": "text/html",
-      "sha256": "5f6a65f48a520e3b20f767d067a32cb57b979eb0b510bab00ee6db00a5f8d1de"
-    },
-    {
-      "refId": "FIPS-140-3",
-      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program",
-      "status": "downloaded",
-      "filename": "FIPS-140-3.html",
-      "sizeBytes": 66175,
-      "contentType": "text/html",
-      "sha256": "87cabed5c2826fd676778f0cfc6c7a0e3d8cf850091081c5b41808719ef108c4"
-    },
-    {
-      "refId": "COMMON-CRITERIA",
-      "url": "https://www.commoncriteriaportal.org",
-      "status": "downloaded",
-      "filename": "COMMON-CRITERIA.html",
-      "sizeBytes": 13590,
-      "contentType": "text/html",
-      "sha256": "dbeb35feaa72bc05400edb27c6e6f20d06fbb2e17addfe84a6c767219202a62f"
-    },
-    {
-      "refId": "ANSSI",
-      "url": "https://www.ssi.gouv.fr",
-      "status": "downloaded",
-      "filename": "ANSSI.html",
-      "sizeBytes": 36334,
-      "contentType": "text/html",
-      "sha256": "1c4e65c7a9cb0dc8b1aab00b0fe5728d8d2517c26b3443c0edb4d3b03ebea859"
-    },
-    {
-      "refId": "CNSA-2",
-      "url": "https://www.nsa.gov/Cybersecurity/CNSA-2-0/",
-      "status": "downloaded",
-      "filename": "CNSA-2.html",
-      "sizeBytes": 96585,
-      "contentType": "text/html",
-      "sha256": "af990886be0a954d243a1fb1e85cc0ad3f525dcad4149f85a803d5c1ade7f6e2"
-    },
-    {
-      "refId": "EIDAS",
-      "url": "https://digital-strategy.ec.europa.eu/en/policies/eidas-regulation",
-      "status": "downloaded",
-      "filename": "EIDAS.html",
-      "sizeBytes": 57368,
-      "contentType": "text/html",
-      "sha256": "d353acac6f22769e400f365257b1b249be8e75020d11e53ff9bca94c93a0d5a8"
-    },
-    {
-      "refId": "PCI-DSS",
-      "url": "https://www.pcisecuritystandards.org",
-      "status": "downloaded",
-      "filename": "PCI-DSS.html",
-      "sizeBytes": 796271,
-      "contentType": "text/html",
-      "sha256": "ca8ae89132d033bfbabe206f8ec701c28b2eba369e25e8e7eded76d20bc31fd7"
-    },
     {
       "refId": "HIPAA",
       "url": "https://www.hhs.gov/hipaa",
@@ -315,6 +225,96 @@
       "sizeBytes": 72040,
       "contentType": "text/html",
       "sha256": "464c8e4477fd7187c92df09a3195802e054638f52342cf33aecabae2408901c9"
+    },
+    {
+      "refId": "NIST",
+      "url": "https://csrc.nist.gov/projects/post-quantum-cryptography",
+      "status": "downloaded",
+      "filename": "NIST.html",
+      "sizeBytes": 62101,
+      "contentType": "text/html",
+      "sha256": "dc1bbdd0bc4a034f93f25de72a01b806b1bf2d5b9bb4304a724dc31edc235693"
+    },
+    {
+      "refId": "ENISA",
+      "url": "https://www.enisa.europa.eu/",
+      "status": "downloaded",
+      "filename": "ENISA.html",
+      "sizeBytes": 63843,
+      "contentType": "text/html",
+      "sha256": "45a923201ab68a883c88058326b00d23c3e44f7569bccde6c9e7260eee91a042"
+    },
+    {
+      "refId": "ISO-IEC",
+      "url": "https://www.iso.org/committee/45306.html",
+      "status": "downloaded",
+      "filename": "ISO-IEC.html",
+      "sizeBytes": 138193,
+      "contentType": "text/html",
+      "sha256": "6d9e07d0bb79aa9e81d43516f0381fedfc8a362450232e11b98f51ac2f3b6de0"
+    },
+    {
+      "refId": "IETF",
+      "url": "https://datatracker.ietf.org/wg/pquip/about/",
+      "status": "downloaded",
+      "filename": "IETF.html",
+      "sizeBytes": 38979,
+      "contentType": "text/html",
+      "sha256": "6a616f09c3dd5f231dfe8039a7a5df34545eb7e2ae5445c534b16601ad1d807b"
+    },
+    {
+      "refId": "FIPS-140-3",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program",
+      "status": "downloaded",
+      "filename": "FIPS-140-3.html",
+      "sizeBytes": 66175,
+      "contentType": "text/html",
+      "sha256": "74a9e62a69b816df5c0fb9a16fe310161e3e3ff1b57597bb8a7719c7681bd346"
+    },
+    {
+      "refId": "COMMON-CRITERIA",
+      "url": "https://www.commoncriteriaportal.org",
+      "status": "downloaded",
+      "filename": "COMMON-CRITERIA.html",
+      "sizeBytes": 13516,
+      "contentType": "text/html",
+      "sha256": "015b2c064a1ce30aa71d902ac17159f0b10b12e5d2bc2768af3cda116bc1c865"
+    },
+    {
+      "refId": "ANSSI",
+      "url": "https://www.ssi.gouv.fr",
+      "status": "downloaded",
+      "filename": "ANSSI.html",
+      "sizeBytes": 36320,
+      "contentType": "text/html",
+      "sha256": "37b05ba62d491f5817c909b4ae972075da7b6076a419202b206dfe873ad17ff9"
+    },
+    {
+      "refId": "CNSA-2",
+      "url": "https://www.nsa.gov/Cybersecurity/CNSA-2-0/",
+      "status": "downloaded",
+      "filename": "CNSA-2.html",
+      "sizeBytes": 96585,
+      "contentType": "text/html",
+      "sha256": "96c808b36fce5dec8a3a667e0943d05592a529e9c9a1706dcd75424a33f6e1de"
+    },
+    {
+      "refId": "EIDAS",
+      "url": "https://digital-strategy.ec.europa.eu/en/policies/eidas-regulation",
+      "status": "downloaded",
+      "filename": "EIDAS.html",
+      "sizeBytes": 57368,
+      "contentType": "text/html",
+      "sha256": "e2eecdf9d56a38d9239b4954069edb3208986a3449764906df582d4f7f69d9a5"
+    },
+    {
+      "refId": "PCI-DSS",
+      "url": "https://www.pcisecuritystandards.org",
+      "status": "downloaded",
+      "filename": "PCI-DSS.html",
+      "sizeBytes": 795809,
+      "contentType": "text/html",
+      "sha256": "1cfe795fafc4a6723201334f630dec0bac375c941f8c595f7d11534431523a7c"
     }
   ]
 }
