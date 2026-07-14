@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-14T02:23:36.360045+00:00",
+  "generated": "2026-07-14T02:25:38.269499+00:00",
   "entries": [
     {
       "refId": "NIST",
@@ -747,6 +747,96 @@
       "sizeBytes": 117749,
       "contentType": "text/html",
       "sha256": "1a0d8cc60f6a15a8d1717cc9c498df93ad0a73dd7446aee282320225d0781a36"
+    },
+    {
+      "refId": "ITU-T-SG17",
+      "url": "https://www.itu.int/en/ITU-T/studygroups/2022-2024/17/Pages/default.aspx",
+      "status": "downloaded",
+      "filename": "ITU-T-SG17.html",
+      "sizeBytes": 97936,
+      "contentType": "text/html",
+      "sha256": "700e446145d65c5ed67cf4c4082bb02cc100678428926dead08a4a2ab2133490"
+    },
+    {
+      "refId": "NIST-SP800-208",
+      "url": "https://csrc.nist.gov/pubs/sp/800/208/final",
+      "status": "downloaded",
+      "filename": "NIST-SP800-208.html",
+      "sizeBytes": 42483,
+      "contentType": "text/html",
+      "sha256": "c9bd95b4d0e2779247a4f040f09fd2c93fd40cd73b2d499ee48416dd3dcc7c97"
+    },
+    {
+      "refId": "ISO-19790",
+      "url": "https://www.iso.org/standard/82423.html",
+      "status": "downloaded",
+      "filename": "ISO-19790.html",
+      "sizeBytes": 83963,
+      "contentType": "text/html",
+      "sha256": "3c7470af9642cc11b9b4d7d460e3a8010df4897cdbb86ac6b1b9b9155041a517"
+    },
+    {
+      "refId": "ETSI-QKD-SERIES",
+      "url": "https://www.etsi.org/committee/1430-qkd",
+      "status": "downloaded",
+      "filename": "ETSI-QKD-SERIES.html",
+      "sizeBytes": 154833,
+      "contentType": "text/html",
+      "sha256": "18b18b12963b795708a2417fb69fc1a571157df0278cc07ea398d095976b06bf"
+    },
+    {
+      "refId": "ANSSI-CERT",
+      "url": "https://cyber.gouv.fr/offre-de-service/solutions-certifiees-et-qualifiees/",
+      "status": "downloaded",
+      "filename": "ANSSI-CERT.html",
+      "sizeBytes": 25497,
+      "contentType": "text/html",
+      "sha256": "c9f981ac4fc1d1c3877eab72842c08c6368f27df9c8b3976bb5f11dd2a311b3d"
+    },
+    {
+      "refId": "JCMVP",
+      "url": "https://www.ipa.go.jp/en/security/jcmvp/index.html",
+      "status": "downloaded",
+      "filename": "JCMVP.html",
+      "sizeBytes": 61208,
+      "contentType": "text/html",
+      "sha256": "e83e2235942f418a0b84a1deefa79a1b6af6c3c60c9813bacac66f95e39bd686"
+    },
+    {
+      "refId": "SG-CSA-QUANTUM",
+      "url": "https://www.csa.gov.sg/",
+      "status": "downloaded",
+      "filename": "SG-CSA-QUANTUM.html",
+      "sizeBytes": 462280,
+      "contentType": "text/html",
+      "sha256": "31d2240c45000ca4debba52537514fb4fa11cf757019b2213cd946913c9f1e25"
+    },
+    {
+      "refId": "BRAZIL-ANPD-PQC",
+      "url": "https://www.gov.br/anpd/pt-br",
+      "status": "downloaded",
+      "filename": "BRAZIL-ANPD-PQC.html",
+      "sizeBytes": 406981,
+      "contentType": "text/html",
+      "sha256": "5fb284d929e048e78e74d9fdaa2ae3bb0d94fb7c4d19d2a8a45e20f82e8868d0"
+    },
+    {
+      "refId": "DENMARK-CFCS-PQC",
+      "url": "https://cfcs.dk/",
+      "status": "downloaded",
+      "filename": "DENMARK-CFCS-PQC.html",
+      "sizeBytes": 69368,
+      "contentType": "text/html",
+      "sha256": "2202423c2479969fa9f86cd817905825ec0d221ca6df215596414f83afe8906a"
+    },
+    {
+      "refId": "DFS-NYCRR-500",
+      "url": "https://www.dfs.ny.gov/industry_guidance/cybersecurity",
+      "status": "downloaded",
+      "filename": "DFS-NYCRR-500.html",
+      "sizeBytes": 205519,
+      "contentType": "text/html",
+      "sha256": "0e58d866f970849edb153dfc389bc8f2645341e52d9910541435ad099638ae50"
     }
   ],
   "blocked": {
