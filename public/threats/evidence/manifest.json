@@ -10,33 +10,33 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "AERO-003",
     "source_url": "https://www.icao.int/events/a41/resolutions",
     "main_source": "ICAO Assembly Resolution A41-19",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/AERO-003.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/AERO-003.html",
+    "content_type": "text/html",
+    "size_bytes": 82031,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "AUTO-001",
     "source_url": "https://www.iso.org/standard/70918.html",
     "main_source": "ISO/SAE 21434 Road Vehicle Cybersecurity",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/AUTO-001.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/AUTO-001.html",
+    "content_type": "text/html",
+    "size_bytes": 90867,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "AUTO-002",
@@ -49,7 +49,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "AUTO-003",
@@ -62,46 +62,46 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "AUTO-004",
     "source_url": "https://www.iso.org/standard/70918.html",
     "main_source": "ISO/SAE 21434 Road Vehicle Cybersecurity",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/AUTO-004.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/AUTO-004.html",
+    "content_type": "text/html",
+    "size_bytes": 90867,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "CLOUD-001",
     "source_url": "https://cloudsecurityalliance.org/research/topics/quantum-safe-security/",
     "main_source": "Cloud Security Alliance Quantum-Safe Guidelines",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/CLOUD-001.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/CLOUD-001.html",
+    "content_type": "text/html",
+    "size_bytes": 86559,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "CLOUD-002",
     "source_url": "https://cloudsecurityalliance.org/research/topics/quantum-safe-security/",
     "main_source": "Cloud Security Alliance Quantum-Safe Security",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/CLOUD-002.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/CLOUD-002.html",
+    "content_type": "text/html",
+    "size_bytes": 86559,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "CLOUD-003",
@@ -114,7 +114,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "CLOUD-004",
@@ -127,20 +127,20 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "CROSS-001",
     "source_url": "https://www.ibm.com/think/insights/post-quantum-cryptography",
     "main_source": "IBM Institute for Business Value \u2014 Secure the Post-Quantum Future 2025",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/CROSS-001.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/CROSS-001.html",
+    "content_type": "text/html",
+    "size_bytes": 689420,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "CROSS-002",
@@ -153,20 +153,20 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "CROSS-003",
     "source_url": "https://www.ibm.com/think/insights/post-quantum-cryptography",
     "main_source": "IBM Institute for Business Value \u2014 Secure the Post-Quantum Future 2025",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/CROSS-003.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/CROSS-003.html",
+    "content_type": "text/html",
+    "size_bytes": 689420,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "CROSS-004",
@@ -179,7 +179,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "CROSS-005",
@@ -192,7 +192,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "CROSS-006",
@@ -205,46 +205,46 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "CROSS-007",
     "source_url": "https://digital-strategy.ec.europa.eu/en/news/eu-reinforces-its-cybersecurity-post-quantum-cryptography",
     "main_source": "European Commission Digital Strategy \u2014 PQC Roadmap",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/CROSS-007.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/CROSS-007.html",
+    "content_type": "text/html",
+    "size_bytes": 48836,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "CROSS-008",
     "source_url": "https://csrc.nist.gov/pubs/sp/800/227/final",
     "main_source": "NIST SP 800-227 Recommendations for KEMs",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/CROSS-008.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/CROSS-008.html",
+    "content_type": "text/html",
+    "size_bytes": 44071,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "CRYPTO-001",
     "source_url": "https://www.federalreserve.gov/econres/feds/harvest-now-decrypt-later-examining-post-quantum-cryptography-and-the-data-privacy-risks-for-distributed-ledger-networks.htm",
     "main_source": "Federal Reserve HNDL Paper",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/CRYPTO-001.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/CRYPTO-001.html",
+    "content_type": "text/html",
+    "size_bytes": 88833,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "CRYPTO-002",
@@ -257,20 +257,20 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "CRYPTO-003",
     "source_url": "https://www.federalreserve.gov/econres/feds/harvest-now-decrypt-later-examining-post-quantum-cryptography-and-the-data-privacy-risks-for-distributed-ledger-networks.htm",
     "main_source": "Federal Reserve Board FEDS Paper September 2025",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/CRYPTO-003.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/CRYPTO-003.html",
+    "content_type": "text/html",
+    "size_bytes": 88833,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "CRYPTO-004",
@@ -283,7 +283,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "ENERGY-001",
@@ -296,7 +296,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "ENERGY-002",
@@ -309,7 +309,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "ENERGY-003",
@@ -322,7 +322,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "ENERGY-004",
@@ -335,33 +335,33 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "FIN-001",
     "source_url": "https://www.bis.org/publ/othp107.htm",
     "main_source": "Bank for International Settlements Project Leap Phase 2",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/FIN-001.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/FIN-001.html",
+    "content_type": "text/html",
+    "size_bytes": 26352,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "FIN-002",
     "source_url": "https://www.federalreserve.gov/econres/feds/harvest-now-decrypt-later-examining-post-quantum-cryptography-and-the-data-privacy-risks-for-distributed-ledger-networks.htm",
     "main_source": "Federal Reserve Board FEDS Paper September 2025",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/FIN-002.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/FIN-002.html",
+    "content_type": "text/html",
+    "size_bytes": 88833,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "FIN-003",
@@ -374,7 +374,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "FIN-004",
@@ -387,7 +387,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "FIN-005",
@@ -400,7 +400,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "AUS-FIN-001",
@@ -413,7 +413,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "AUS-FIN-002",
@@ -426,7 +426,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "GOV-001",
@@ -439,7 +439,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "GOV-002",
@@ -452,20 +452,20 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "GOV-003",
     "source_url": "https://www.cisa.gov/resources-tools/resources/product-categories-technologies-use-post-quantum-cryptography-standards",
     "main_source": "CISA Product Categories for PQC Technologies",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/GOV-003.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/GOV-003.html",
+    "content_type": "text/html",
+    "size_bytes": 72793,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "GOV-004",
@@ -478,7 +478,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "GOV-005",
@@ -491,33 +491,33 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "AUS-GOV-001",
     "source_url": "https://www.cyber.gov.au/about-us/view-all-content/reports-and-statistics/annual-cyber-threat-report-2024-2025",
     "main_source": "ASD ACSC Annual Cyber Threat Report 2024\u201325",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/AUS-GOV-001.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/AUS-GOV-001.html",
+    "content_type": "text/html",
+    "size_bytes": 482288,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "AUS-GOV-002",
     "source_url": "https://webarchive.nla.gov.au/awa/20240101000000*/https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/ism/cyber-security-guidelines/guidelines-for-cryptography",
     "main_source": "ASD Information Security Manual \u2014 ISM-1917",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/AUS-GOV-002.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/AUS-GOV-002.html",
+    "content_type": "text/html",
+    "size_bytes": 7690,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "HLTH-001",
@@ -530,7 +530,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "HLTH-002",
@@ -543,46 +543,46 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "HLTH-003",
     "source_url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/cybersecurity-medical-devices-quality-system-considerations-and-content-premarket-submissions",
     "main_source": "FDA Premarket Cybersecurity Guidance 2023",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/HLTH-003.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/HLTH-003.html",
+    "content_type": "text/html",
+    "size_bytes": 36115,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "HLTH-004",
     "source_url": "https://www.fda.gov/medical-devices/digital-health-center-excellence/cybersecurity",
     "main_source": "FDA Cybersecurity for Medical Devices",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/HLTH-004.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/HLTH-004.html",
+    "content_type": "text/html",
+    "size_bytes": 97582,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "HLTH-005",
     "source_url": "https://www.fda.gov/drugs/drug-supply-chain-integrity/drug-supply-chain-security-act-dscsa",
     "main_source": "FDA Drug Supply Chain Security Act (DSCSA)",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/HLTH-005.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/HLTH-005.html",
+    "content_type": "text/html",
+    "size_bytes": 46789,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "INS-001",
@@ -595,20 +595,20 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "INS-002",
     "source_url": "https://www.dfs.ny.gov/industry_guidance/cybersecurity",
     "main_source": "NAIC Model Law #668 + IAIS Insurance Core Principles",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/INS-002.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/INS-002.html",
+    "content_type": "text/html",
+    "size_bytes": 205519,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "INS-003",
@@ -621,20 +621,20 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "IOT-001",
     "source_url": "https://www.forescout.com/research-labs/",
     "main_source": "Forescout Device Risk Research",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/IOT-001.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/IOT-001.html",
+    "content_type": "text/html",
+    "size_bytes": 333254,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "IOT-002",
@@ -647,7 +647,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "IOT-003",
@@ -660,20 +660,20 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "IOT-004",
     "source_url": "https://www.iso.org/standard/53302.html",
     "main_source": "ISO/IEC 30182 Smart City Concept Model",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/IOT-004.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/IOT-004.html",
+    "content_type": "text/html",
+    "size_bytes": 79901,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "IT-001",
@@ -686,7 +686,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "IT-002",
@@ -699,20 +699,20 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "IT-003",
     "source_url": "https://csrc.nist.gov/projects/post-quantum-cryptography",
     "main_source": "NIST FIPS 203/204/205 Post-Quantum Cryptography Standards",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/IT-003.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/IT-003.html",
+    "content_type": "text/html",
+    "size_bytes": 61179,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "IT-004",
@@ -725,7 +725,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "LEG-001",
@@ -738,33 +738,33 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "LEG-002",
     "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1183",
     "main_source": "EU Regulation 2024/1183 (eIDAS 2.0)",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/LEG-002.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/LEG-002.html",
+    "content_type": "text/html",
+    "size_bytes": 835959,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "LEG-003",
     "source_url": "https://www.etsi.org/deliver/etsi_en/319400_319499/319422/01.01.01_60/en_319422v010101p.pdf",
     "main_source": "ETSI EN 319 422 Qualified Timestamp Policy",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/LEG-003.pdf' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/LEG-003.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 70119,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "LEG-004",
@@ -777,7 +777,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "MEDIA-001",
@@ -790,7 +790,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "MEDIA-002",
@@ -803,7 +803,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "MEDIA-003",
@@ -816,7 +816,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "PCI-001",
@@ -829,7 +829,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "PCI-002",
@@ -842,7 +842,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "PCI-003",
@@ -855,33 +855,33 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "RAIL-001",
     "source_url": "https://www.era.europa.eu/domains/infrastructure/european-rail-traffic-management-system-ertms_en",
     "main_source": "UNISIG Subset-037 / Subset-038 (ETCS Baseline 3)",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/RAIL-001.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/RAIL-001.html",
+    "content_type": "text/html",
+    "size_bytes": 60870,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "RAIL-002",
     "source_url": "https://www.iso.org/standard/73598.html",
     "main_source": "ISO/IEC 14443 Contactless Card Standards",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/RAIL-002.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/RAIL-002.html",
+    "content_type": "text/html",
+    "size_bytes": 91444,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "RETAIL-001",
@@ -894,7 +894,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "RETAIL-002",
@@ -907,7 +907,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "RETAIL-003",
@@ -920,7 +920,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "SUPPLY-001",
@@ -933,7 +933,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "SUPPLY-002",
@@ -946,7 +946,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "SUPPLY-003",
@@ -959,7 +959,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "TELCO-001",
@@ -972,20 +972,20 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "TELCO-002",
     "source_url": "https://www.gsma.com/solutions-and-impact/technologies/security/post-quantum-telco-network-task-force/",
     "main_source": "GSMA Post-Quantum Telco Network Taskforce",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/TELCO-002.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/TELCO-002.html",
+    "content_type": "text/html",
+    "size_bytes": 111457,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "TELCO-003",
@@ -998,20 +998,20 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "TELCO-004",
     "source_url": "https://www.gsma.com/esim/",
     "main_source": "GSMA eSIM Specification (SGP.22)",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/TELCO-004.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/TELCO-004.html",
+    "content_type": "text/html",
+    "size_bytes": 129814,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "TELCO-005",
@@ -1024,7 +1024,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "WATER-001",
@@ -1037,7 +1037,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "WATER-002",
@@ -1050,20 +1050,20 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "EDU-001",
     "source_url": "https://studentprivacy.ed.gov/ferpa",
     "main_source": "FERPA / US Department of Education",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/EDU-001.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/EDU-001.html",
+    "content_type": "text/html",
+    "size_bytes": 133108,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "EDU-002",
@@ -1076,33 +1076,33 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "EDU-003",
     "source_url": "https://www.w3.org/TR/vc-data-model-2.0/",
     "main_source": "W3C Verifiable Credentials Data Model 2.0",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/EDU-003.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/EDU-003.html",
+    "content_type": "text/html",
+    "size_bytes": 1023165,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "EDU-004",
     "source_url": "https://dodcio.defense.gov/CMMC/",
     "main_source": "CMMC 2.0 / NIST SP 800-171",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/EDU-004.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/EDU-004.html",
+    "content_type": "text/html",
+    "size_bytes": 38980,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "EDU-005",
@@ -1115,20 +1115,20 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "CROSS-009",
     "source_url": "https://datatracker.ietf.org/doc/draft-sheth-pqc-dnssec-strategy/",
     "main_source": "IETF DNSSEC PQC Strategy / Verisign Research",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/CROSS-009.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/CROSS-009.html",
+    "content_type": "text/html",
+    "size_bytes": 56705,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "CROSS-010",
@@ -1141,7 +1141,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "CROSS-011",
@@ -1154,7 +1154,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "CROSS-012",
@@ -1167,7 +1167,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "CROSS-013",
@@ -1180,7 +1180,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "RAIL-003",
@@ -1193,20 +1193,20 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "RAIL-004",
     "source_url": "https://railroads.dot.gov/elibrary/ptc-communications-cybersecurity-technology-review-and-concept-operations",
     "main_source": "FRA Positive Train Control Regulations (49 CFR 236)",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/RAIL-004.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/RAIL-004.html",
+    "content_type": "text/html",
+    "size_bytes": 94619,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "RAIL-005",
@@ -1219,7 +1219,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "WATER-005",
@@ -1232,98 +1232,98 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "WATER-003",
     "source_url": "https://www.epa.gov/cyberwater/epa-cybersecurity-water-sector",
     "main_source": "EPA Cybersecurity for Water Sector (August 2024)",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/WATER-003.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/WATER-003.html",
+    "content_type": "text/html",
+    "size_bytes": 58728,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "WATER-004",
     "source_url": "https://www.nccoe.nist.gov/sites/default/files/2023-06/securing-water-and-wastewater-utilities-project-description-final.pdf",
     "main_source": "NIST NCCoE Water/Wastewater Cybersecurity Project",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/WATER-004.pdf' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/WATER-004.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 1178202,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "CI-001",
     "source_url": "https://www.cisa.gov/quantum",
     "main_source": "CISA Post-Quantum Cryptography Initiative / PPD-21",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/CI-001.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/CI-001.html",
+    "content_type": "text/html",
+    "size_bytes": 71066,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "CI-002",
     "source_url": "https://www.enisa.europa.eu/publications/post-quantum-cryptography-current-state-and-quantum-mitigation",
     "main_source": "IEC 62351 series (Power Systems Security)",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/CI-002.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/CI-002.html",
+    "content_type": "text/html",
+    "size_bytes": 53760,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "CI-003",
     "source_url": "https://www.nist.gov/publications/guide-operational-technology-ot-security",
     "main_source": "TSA Security Directive SD-02C + PHMSA 49 CFR 192/195",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/CI-003.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/CI-003.html",
+    "content_type": "text/html",
+    "size_bytes": 82604,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "CROSS-014",
     "source_url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-57pt1r6.ipd.pdf",
     "main_source": "NIST IR 8547 (IPD Nov 2024) + SP 800-131A Rev 2",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/CROSS-014.pdf' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/CROSS-014.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 2637856,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "CROSS-015",
     "source_url": "https://csrc.nist.gov/pubs/ir/8545/final",
     "main_source": "NIST SP 800-57 Part 1 Rev 6 / NIST IR 8545",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/CROSS-015.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/CROSS-015.html",
+    "content_type": "text/html",
+    "size_bytes": 49698,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "CROSS-016",
@@ -1336,20 +1336,20 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "CROSS-017",
     "source_url": "https://csrc.nist.gov/csrc/media/Projects/cryptographic-module-validation-program/documents/fips%20140-3/FIPS%20140-3%20IG.pdf",
     "main_source": "NIST FIPS 140-3 Implementation Guidance / TCHES 2024",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/CROSS-017.pdf' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/CROSS-017.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 2588488,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "CROSS-018",
@@ -1362,7 +1362,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "HSM-001",
@@ -1375,20 +1375,20 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "IOT-005",
     "source_url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-232.pdf",
     "main_source": "NIST SP 800-213 + NISTIR 8259A",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/IOT-005.pdf' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/IOT-005.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 1194488,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "AUS-TEL-001",
@@ -1401,7 +1401,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "IT-006",
@@ -1414,7 +1414,7 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "HSM-002",
@@ -1427,19 +1427,19 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   },
   {
     "threat_id": "AERO-008",
     "source_url": "https://www.iata.org/en/programs/security/cybersecurity/",
     "main_source": "IATA Aviation Cybersecurity Programme",
-    "download_status": "missing",
-    "evidence_file": null,
-    "content_type": null,
-    "size_bytes": null,
-    "http_status": null,
-    "error_message": "local_file 'threats/evidence/AERO-008.html' not found under local-evidence-cache/threats/",
+    "download_status": "ok",
+    "evidence_file": "threats/AERO-008.html",
+    "content_type": "text/html",
+    "size_bytes": 258205,
+    "http_status": 200,
+    "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-13T22:50:20.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z"
   }
 ]
