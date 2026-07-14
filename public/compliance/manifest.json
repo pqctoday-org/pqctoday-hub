@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-14T02:35:17.460861+00:00",
+  "generated": "2026-07-14T02:36:00.425657+00:00",
   "entries": [
     {
       "refId": "NIST",
@@ -1116,6 +1116,96 @@
       "sizeBytes": 144704,
       "contentType": "text/html",
       "sha256": "011e560a33fc888bbba92923447d70ad17413228b94d1a9b74d300f41f26ce3f"
+    },
+    {
+      "refId": "PE-LDP",
+      "url": "https://www.gob.pe/anpd",
+      "status": "downloaded",
+      "filename": "PE-LDP.html",
+      "sizeBytes": 219543,
+      "contentType": "text/html",
+      "sha256": "b452786b2cc6aab5f30bf75bb8ae36562bc6cc87b3b4f9563b207b7a7a3d72ab"
+    },
+    {
+      "refId": "UY-LPDP",
+      "url": "https://www.gub.uy/unidad-reguladora-control-datos-personales",
+      "status": "downloaded",
+      "filename": "UY-LPDP.html",
+      "sizeBytes": 56294,
+      "contentType": "text/html",
+      "sha256": "4c7ea3210a8db902d61b423779db60faa35acc679eac97a25c993e3eb1971372"
+    },
+    {
+      "refId": "RU-TC26",
+      "url": "https://tc26.ru",
+      "status": "downloaded",
+      "filename": "RU-TC26.html",
+      "sizeBytes": 54344,
+      "contentType": "text/html",
+      "sha256": "ebd204b119f0049db852e20b3a783f5662fc222bbcebf300631088011c906224"
+    },
+    {
+      "refId": "TR-KVKK",
+      "url": "https://www.kvkk.gov.tr",
+      "status": "downloaded",
+      "filename": "TR-KVKK.html",
+      "sizeBytes": 114029,
+      "contentType": "text/html",
+      "sha256": "068ddf8431174485e61070defa5b984cc6735ab89a36a223880781a9a7a55348"
+    },
+    {
+      "refId": "faa-ac-119-1-ansp",
+      "url": "https://www.faa.gov/documentLibrary/media/Advisory_Circular/AC_119-1.pdf",
+      "status": "downloaded",
+      "filename": "faa-ac-119-1-ansp.pdf",
+      "sizeBytes": 293414,
+      "contentType": "application/pdf",
+      "sha256": "c6ce3251354759af954b9074f07e42d88c8bcdcda348c5f718142c21fd14fa14"
+    },
+    {
+      "refId": "common-criteria-v3.1r5-part1",
+      "url": "https://www.commoncriteriaportal.org/files/ccfiles/CCPART1V3.1R5.pdf",
+      "status": "downloaded",
+      "filename": "common-criteria-v3.1r5-part1.pdf",
+      "sizeBytes": 1327388,
+      "contentType": "application/pdf",
+      "sha256": "82312911be320fa10df4a487a1a94882c660606448761a5c0c104ea2abb6e326"
+    },
+    {
+      "refId": "cisa-pqc-initiative",
+      "url": "https://www.cisa.gov/quantum",
+      "status": "downloaded",
+      "filename": "cisa-pqc-initiative.html",
+      "sizeBytes": 71066,
+      "contentType": "text/html",
+      "sha256": "1b3a1c4349442f76954347ce09a0b5c4a4388808ccbfa95037014fdebc8bdfee"
+    },
+    {
+      "refId": "oscca-cryptographic-regulations-cn",
+      "url": "http://www.oscca.gov.cn/",
+      "status": "downloaded",
+      "filename": "oscca-cryptographic-regulations-cn.html",
+      "sizeBytes": 41773,
+      "contentType": "text/html",
+      "sha256": "06e9eb085c91308ea0db5eb4929315c7004ef473d3dd07db8f4d2ce853813c36"
+    },
+    {
+      "refId": "bsi-cc-certification",
+      "url": "https://www.bsi.bund.de/EN/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Zertifizierung-und-Anerkennung/Zertifizierung-von-Produkten/Zertifizierung-nach-CC/zertifizierung-nach-cc_node.html",
+      "status": "downloaded",
+      "filename": "bsi-cc-certification.html",
+      "sizeBytes": 63437,
+      "contentType": "text/html",
+      "sha256": "f19b4cf9480c1fc27b6af7da9f792b8e35002d0f98eec6eb906a3843b90052cd"
+    },
+    {
+      "refId": "etsi-ts-104-015-qsc-hybrid-key-exchange",
+      "url": "https://www.etsi.org/deliver/etsi_ts/104000_104099/104015/01.01.01_60/ts_104015v010101p.pdf",
+      "status": "downloaded",
+      "filename": "etsi-ts-104-015-qsc-hybrid-key-exchange.pdf",
+      "sizeBytes": 257923,
+      "contentType": "application/pdf",
+      "sha256": "7abc27e6ce7c9db3bf3595db2d9aae42655b0eef2193e7c5956d955fd8467288"
     }
   ],
   "blocked": {
