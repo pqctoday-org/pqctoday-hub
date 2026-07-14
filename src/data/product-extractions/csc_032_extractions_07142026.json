@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "HPE Aruba ArubaOS-CX",
+    "category": "Network Operating Systems",
+    "product_name": "HPE Aruba ArubaOS-CX",
+    "product_brief": "Network operating system platform for HPE Aruba Networking infrastructure.",
+    "pqc_support": "Planned",
+    "pqc_capability_description": "The document outlines a proposed amendment to IEEE 802.1AR-2018 to add support for Post-Quantum Cryptography, specifically recommending the addition of ML-DSA (Dilithium) OIDs in ITU-T X.509 certificate formats. It explicitly recommends against adding SPHINCS+ or LMS/XMSS.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "RSA, ECC, ML-DSA (Dilithium)",
+    "key_management_model": "DevID module key generation using RNG with sufficient entropy; TPM1.2 and TPM2.0 provisioning referenced.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Network Operating System",
+    "infrastructure_layer": "Network",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "Unknown",
+    "release_date": "2025-06-23",
+    "fips_validated": "References NIST FIPS 180-4 and FIPS-204; no specific FIPS 140 validation status stated for the product itself.",
+    "primary_platforms": "HPE Aruba Networking",
+    "target_industries": "Unknown",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Proposal to add ML-DSA-44, ML-DSA-65, and ML-DSA-87 to 802.1AR-2018; recommends ML-DSA-87 for government agencies; excludes SPHINCS+ and LMS/XMSS.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "RSASSA-PKCS1-v1.5, ML-DSA (ML-DSA-44, ML-DSA-65, ML-DSA-87)",
+    "authoritative_source_url": "Unknown",
+    "implementation_attack_surface": "Mentions consideration of mitigation against algorithm downgrade attacks.",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Not stated",
+    "qrng_&_entropy_sources": "RNG used by DevID module must have sufficient entropy for at least 128-bit (RSA) or 256-bit (ML-DSA) security strength.",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-07-14"
+    }
+  }
+]
