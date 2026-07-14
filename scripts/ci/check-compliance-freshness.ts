@@ -122,7 +122,7 @@ function main() {
           '    ./build-data.sh\n' +
           '\nor just the scrape + cert-match (faster):\n\n' +
           '    npx tsx scripts/scrape-compliance.ts --force\n' +
-          '    python3 scripts/match_certifications.py\n'
+          '    python3 ../pqctoday-priv/scripts/match_certifications.py --root .\n'
       )
     }
   }

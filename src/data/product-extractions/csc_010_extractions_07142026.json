@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "Rosenpass",
+    "category": "VPN and IPsec Software",
+    "product_name": "Rosenpass",
+    "product_brief": "Free, open-source software adding post-quantum secure key exchange to WireGuard VPN using Classic McEliece and Kyber.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Rosenpass implements a post-quantum-secure authenticated key exchange using Classic McEliece and Kyber. It generates keys supplied to WireGuard as pre-shared symmetric keys (PSK) for hybrid post-quantum security. It is a reference implementation written in Rust, using libsodium and liboqs. It provides security against state disruption attacks via a stateless responder.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Classic McEliece, Kyber, libsodium, liboqs",
+    "key_management_model": "Post-quantum-secure authenticated key exchange; generates shared secrets supplied as pre-shared symmetric keys (PSK) to WireGuard; stateless responder using encrypted cookies.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Add-on software running alongside WireGuard; stand-alone tool for key exchange; reference implementation.",
+    "infrastructure_layer": "Network",
+    "license_type": "Open Source",
+    "license": "Apache 2.0 and MIT License",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "No",
+    "primary_platforms": "Unknown",
+    "target_industries": "Unknown",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Uses Classic McEliece and Kyber; cryptographic proof of security is in the works; symbolic analysis provided using ProVerif.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "https://github.com/rosenpass/rosenpass",
+    "implementation_attack_surface": "Uses variable colouring (gating use of a secret value through a `.secret()` method); code zeroises all key material; written in Rust.",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Symbolic analysis of the protocol using ProVerif; reference implementation in Rust.",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Uses C libraries libsodium and liboqs; open-source with public GitHub repository; Apache 2.0 and MIT licensed.",
+    "deployment_&_migration_complexity": "Easy to install and maintain alongside WireGuard; runs on the side supplying keys; executes new handshake every two minutes.",
+    "financial_&_business_impact": "Free and open-source software.",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-07-14"
+    }
+  }
+]
