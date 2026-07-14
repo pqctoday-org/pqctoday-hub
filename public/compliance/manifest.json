@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-14T02:16:56.365528+00:00",
+  "generated": "2026-07-14T02:18:00.351637+00:00",
   "entries": [
     {
       "refId": "NIST",
@@ -423,6 +423,96 @@
       "sizeBytes": 36320,
       "contentType": "text/html",
       "sha256": "99b0141f9e0b7eb9ba9cbde416228148e677e92234e1f44871195e92aedfc08e"
+    },
+    {
+      "refId": "CRYPTREC-BODY",
+      "url": "https://www.cryptrec.go.jp/en/",
+      "status": "downloaded",
+      "filename": "CRYPTREC-BODY.html",
+      "sizeBytes": 7857,
+      "contentType": "text/html",
+      "sha256": "4d6c01d1a97f0a260c8fe46a3acac15d90d4cf6bf2c62002e511ca8301c963a6"
+    },
+    {
+      "refId": "KISA-BODY",
+      "url": "https://www.kisa.or.kr/EN",
+      "status": "downloaded",
+      "filename": "KISA-BODY.html",
+      "sizeBytes": 44877,
+      "contentType": "text/html",
+      "sha256": "14f1538cc900a7a68882c556d216cf75cb71ab1332d25a299da60c4a0f3e1d7b"
+    },
+    {
+      "refId": "OSCCA-BODY",
+      "url": "https://www.sca.gov.cn",
+      "status": "downloaded",
+      "filename": "OSCCA-BODY.html",
+      "sizeBytes": 41773,
+      "contentType": "text/html",
+      "sha256": "06e9eb085c91308ea0db5eb4929315c7004ef473d3dd07db8f4d2ce853813c36"
+    },
+    {
+      "refId": "ETSI",
+      "url": "https://www.etsi.org/technologies/quantum-safe-cryptography",
+      "status": "downloaded",
+      "filename": "ETSI.html",
+      "sizeBytes": 170253,
+      "contentType": "text/html",
+      "sha256": "fc8a5d360f9c642917a0c1d0aa4973647a57a5d671b05c2c0a791b7599d37b2c"
+    },
+    {
+      "refId": "BSI",
+      "url": "https://www.bsi.bund.de/EN/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Technische-Richtlinien/TR-nach-Thema-sortiert/tr02102/tr02102_node.html",
+      "status": "downloaded",
+      "filename": "BSI.html",
+      "sizeBytes": 58509,
+      "contentType": "text/html",
+      "sha256": "ade25b413fb81a367ee12e76ebcf081370efac9036931438d65dc6cafa11a79f"
+    },
+    {
+      "refId": "NSA",
+      "url": "https://www.nsa.gov/Cybersecurity/CNSA-2-0/",
+      "status": "downloaded",
+      "filename": "NSA.html",
+      "sizeBytes": 96585,
+      "contentType": "text/html",
+      "sha256": "21604479b8f0b8fa7f6bf422c3e1c3fe099bb657e58060fd433af6a59055bf44"
+    },
+    {
+      "refId": "CMMC",
+      "url": "https://dodcio.defense.gov/CMMC/",
+      "status": "downloaded",
+      "filename": "CMMC.html",
+      "sizeBytes": 40609,
+      "contentType": "text/html",
+      "sha256": "522a8d802123366cd069a02d6750b90fd80c430d3a911fc4857ddeb0f0d831f3"
+    },
+    {
+      "refId": "FISMA",
+      "url": "https://www.cisa.gov/topics/cyber-threats-and-advisories/federal-information-security-modernization-act",
+      "status": "downloaded",
+      "filename": "FISMA.html",
+      "sizeBytes": 68850,
+      "contentType": "text/html",
+      "sha256": "a377b38d05cdff0547a3c94a85c6a16b03a21d9612738c3bfb4d432699ff6395"
+    },
+    {
+      "refId": "EU-CRA",
+      "url": "https://digital-strategy.ec.europa.eu/en/policies/cyber-resilience-act",
+      "status": "downloaded",
+      "filename": "EU-CRA.html",
+      "sizeBytes": 59376,
+      "contentType": "text/html",
+      "sha256": "e7701ead8ee69dc6de0ab0cfbcac64334138210992d02d2cc4198cfc9f2910e6"
+    },
+    {
+      "refId": "INDIA-DST-PQC",
+      "url": "https://dst.gov.in/",
+      "status": "downloaded",
+      "filename": "INDIA-DST-PQC.html",
+      "sizeBytes": 80262,
+      "contentType": "text/html",
+      "sha256": "fe496475783e10148b18c0ec27b3884d26008a2c4ee67f3216dfeead289104df"
     }
   ],
   "blocked": {
