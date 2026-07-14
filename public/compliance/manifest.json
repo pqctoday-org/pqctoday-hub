@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-14T02:33:20.355580+00:00",
+  "generated": "2026-07-14T02:35:17.460861+00:00",
   "entries": [
     {
       "refId": "NIST",
@@ -1053,6 +1053,69 @@
       "sizeBytes": 46130,
       "contentType": "text/html",
       "sha256": "40091f57ed53e58c3d16b9119bb23b16a3fb981b8098e94c2ea7c34776a22384"
+    },
+    {
+      "refId": "PH-DPA",
+      "url": "https://www.privacy.gov.ph",
+      "status": "downloaded",
+      "filename": "PH-DPA.html",
+      "sizeBytes": 271566,
+      "contentType": "text/html",
+      "sha256": "b083682fd2d75425f998483fd2942df0bbd598c1eb65180357318439399b1521"
+    },
+    {
+      "refId": "EE-CSA",
+      "url": "https://www.ria.ee",
+      "status": "downloaded",
+      "filename": "EE-CSA.html",
+      "sizeBytes": 137984,
+      "contentType": "text/html",
+      "sha256": "502c3cb1e2f457808372e5c3481a1c065106b5e54057f18e7ef3744ff053dd10"
+    },
+    {
+      "refId": "IE-NCSC",
+      "url": "https://www.ncsc.gov.ie",
+      "status": "downloaded",
+      "filename": "IE-NCSC.html",
+      "sizeBytes": 6974,
+      "contentType": "text/html",
+      "sha256": "38dd04fd3f48118b38e1bc8314b5a948b5432b1f1ce9245b976526c0092761eb"
+    },
+    {
+      "refId": "BE-NIS2",
+      "url": "https://ccb.belgium.be",
+      "status": "downloaded",
+      "filename": "BE-NIS2.html",
+      "sizeBytes": 104749,
+      "contentType": "text/html",
+      "sha256": "c413c264d57fcb425765d37d94fd942419fc699f3dc41db3d031f56669c661a7"
+    },
+    {
+      "refId": "AT-NIS2",
+      "url": "https://www.a-sit.at",
+      "status": "downloaded",
+      "filename": "AT-NIS2.html",
+      "sizeBytes": 47669,
+      "contentType": "text/html",
+      "sha256": "da52affeea23b28c2f82a61c08a090128d9163f412a00051e0ebff2acdafb6a8"
+    },
+    {
+      "refId": "PL-NCSC",
+      "url": "https://www.nask.pl",
+      "status": "downloaded",
+      "filename": "PL-NCSC.html",
+      "sizeBytes": 738188,
+      "contentType": "text/html",
+      "sha256": "26ed8abd2e38f21181456d9886bc4c746395b76d4a467d58b904ac4fb0fd807b"
+    },
+    {
+      "refId": "CO-LEY1581",
+      "url": "https://www.sic.gov.co",
+      "status": "downloaded",
+      "filename": "CO-LEY1581.html",
+      "sizeBytes": 144704,
+      "contentType": "text/html",
+      "sha256": "011e560a33fc888bbba92923447d70ad17413228b94d1a9b74d300f41f26ce3f"
     }
   ],
   "blocked": {
@@ -1134,6 +1197,21 @@
     "BRAZIL-BACEN-4893": {
       "reason": "Angular JS-shell, empty <app-root>, noscript warning present",
       "blocked_at": "2026-07-14T02:33:20.355580+00:00",
+      "attempts": 1
+    },
+    "TH-PDPA": {
+      "reason": "status=err, tier=crawl4ai",
+      "blocked_at": "2026-07-14T02:34:00.743901+00:00",
+      "attempts": 1
+    },
+    "VN-CYBER": {
+      "reason": "status=err, tier=crawl4ai",
+      "blocked_at": "2026-07-14T02:34:00.743901+00:00",
+      "attempts": 1
+    },
+    "ID-PDP": {
+      "reason": "Indonesian-language error page (Layanan Tidak Tersedia = Service Unavailable), not caught by English-only title patterns",
+      "blocked_at": "2026-07-14T02:35:17.460738+00:00",
       "attempts": 1
     }
   }
