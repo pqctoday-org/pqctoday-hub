@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "Cisco AI Defense (formerly Robust Intelligence Platform)",
+    "category": "AI/ML Security Platforms",
+    "product_name": "Cisco AI Defense",
+    "product_brief": "AI security platform for discovery, detection, and runtime protection of AI workloads and models.",
+    "pqc_support": "Unknown",
+    "pqc_capability_description": "Not stated",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "TLS",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Hybrid (SaaS control plane, on-prem/private cloud data plane)",
+    "infrastructure_layer": "Security Stack",
+    "license_type": "Commercial",
+    "license": "Commercial",
+    "latest_version": "Unknown",
+    "release_date": "2026-03-06",
+    "fips_validated": "Unknown",
+    "primary_platforms": "Red Hat OpenShift Container Platform (OCP), VMware vSphere",
+    "target_industries": "Enterprise",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Unknown",
+    "authoritative_source_url": "robust-intelligence-cisco-ai-defense-781f73b7.html",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Discovery of all AI workloads, applications, models, data and user access across distributed cloud environments.",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-07-14"
+    }
+  }
+]
