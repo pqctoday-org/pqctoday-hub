@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-14T02:08:33.901371+00:00",
+  "generated": "2026-07-14T02:13:14.252075+00:00",
   "entries": [
     {
       "refId": "NIST",
@@ -351,6 +351,42 @@
       "sizeBytes": 244949,
       "contentType": "text/html",
       "sha256": "1e4eed6caa5615d766316a58dc099a57fcf36697abf8fa948943cded2ed295b4"
+    },
+    {
+      "refId": "KPQC-STD",
+      "url": "https://kpqc.or.kr",
+      "status": "downloaded",
+      "filename": "KPQC-STD.html",
+      "sizeBytes": 15839,
+      "contentType": "text/html",
+      "sha256": "97ac6ffbadd6efeeb58acde1d98a703136702d02277d4af4b83bbbd6c7ab543d"
+    },
+    {
+      "refId": "INCD-PQC",
+      "url": "https://www.gov.il/en/departments/incd",
+      "status": "downloaded",
+      "filename": "INCD-PQC.html",
+      "sizeBytes": 156740,
+      "contentType": "text/html",
+      "sha256": "e6d44ac56ca2dee60b1e25bda802be24c80f7c0d53f9ed683a876e11c74a0b89"
+    },
+    {
+      "refId": "BOI-PQC",
+      "url": "https://boi.org.il/media/sm4f1ssu/202501en.pdf",
+      "status": "downloaded",
+      "filename": "BOI-PQC.pdf",
+      "sizeBytes": 586324,
+      "contentType": "application/pdf",
+      "sha256": "e52faba1037e27256dcf60a59400e695d14038ae73f6f82b4c063c9b32d5801c"
+    },
+    {
+      "refId": "OSCCA-NGCC",
+      "url": "https://www.sca.gov.cn",
+      "status": "downloaded",
+      "filename": "OSCCA-NGCC.html",
+      "sizeBytes": 41773,
+      "contentType": "text/html",
+      "sha256": "06e9eb085c91308ea0db5eb4929315c7004ef473d3dd07db8f4d2ce853813c36"
     }
   ]
 }
