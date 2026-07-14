@@ -5,9 +5,11 @@
  * extension to MR-1.
  *
  * Strategy: inject a synthetic embedding runtime via injectTestRuntime to
- * exercise the candidate-ranking path deterministically. The real model is
- * driven by the integration tests in
- * src/services/search/__tests__/embeddingRetrieval.integration.test.ts.
+ * exercise the candidate-ranking path deterministically. Real-artifact
+ * integration tests (need the live embedding model, which needs network
+ * access) live in missing-reference-checks.local.test.ts instead — CI
+ * must never depend on a live third-party fetch. See vite.config.ts's
+ * `*.local.test.*` exclude.
  */
 import { describe, it, expect, beforeEach } from 'vitest'
 import fs from 'node:fs'
@@ -28,20 +30,7 @@ import {
 const REPO_ROOT = process.cwd()
 const META_PATH = path.join(REPO_ROOT, 'public/data/embeddings-meta.json')
 const BIN_PATH = path.join(REPO_ROOT, 'public/data/embeddings.bin')
-const CORPUS_PATH = path.join(REPO_ROOT, 'public/data/rag-corpus.json')
-
-/** Corpus may be mid-write from the enrichment pipeline — self-skip rather than fail. */
-function isCorpusParseable(): boolean {
-  if (!fs.existsSync(CORPUS_PATH)) return false
-  try {
-    JSON.parse(fs.readFileSync(CORPUS_PATH, 'utf8'))
-    return true
-  } catch {
-    return false
-  }
-}
 const hasEmbeddingArtifact = fs.existsSync(META_PATH) && fs.existsSync(BIN_PATH)
-const hasRealArtifact = hasEmbeddingArtifact && isCorpusParseable()
 
 /** Normalized fixture vector helper. */
 function vec(values: number[]): Float32Array {
@@ -144,33 +133,6 @@ describe('proposeReferenceCandidates — Phase 2.1', () => {
     expect(Array.isArray(result)).toBe(true)
     expect(result.length).toBeLessThanOrEqual(3)
   })
-
-  it.skipIf(!hasRealArtifact)(
-    'returns 3 ranked candidates with descending scores against real artifact',
-    async () => {
-      // Use the real on-disk embedding runtime via the Node loader. This is
-      // the same path runMissingReferenceChecks uses when --with-candidates
-      // is enabled.
-      const { loadEmbeddingsFromDisk } = await import('../../lib/load-embeddings-from-disk')
-      await loadEmbeddingsFromDisk()
-
-      const candidates = await proposeReferenceCandidates(
-        'FIPS 140-3 cryptographic module validation programme',
-        3
-      )
-      expect(candidates).toHaveLength(3)
-      // Scores in [0, 1] and descending
-      for (const c of candidates) {
-        expect(c.score).toBeGreaterThan(0)
-        expect(c.score).toBeLessThanOrEqual(1.0001)
-        expect(c.id).toMatch(/^trusted-source-/)
-        expect(c.label).toBeTruthy()
-      }
-      for (let i = 1; i < candidates.length; i++) {
-        expect(candidates[i].score).toBeLessThanOrEqual(candidates[i - 1].score)
-      }
-    }
-  )
 })
 
 describe('runMissingReferenceChecks — Phase 2.1 candidates wiring', () => {
@@ -191,27 +153,6 @@ describe('runMissingReferenceChecks — Phase 2.1 candidates wiring', () => {
       expect(f.candidates).toBeUndefined()
     }
   })
-
-  it.skipIf(!hasRealArtifact)(
-    'findings have populated candidates when withCandidates=true and runtime loaded',
-    async () => {
-      const { loadEmbeddingsFromDisk } = await import('../../lib/load-embeddings-from-disk')
-      await loadEmbeddingsFromDisk()
-      const result = await runMissingReferenceChecks({ withCandidates: true })
-      if (result.findings.length === 0) {
-        // No findings to enrich; not a failure of the candidate path.
-        return
-      }
-      const sampled = result.findings.slice(0, 5)
-      for (const f of sampled) {
-        expect(f.candidates, `finding ${f.value} should have candidates`).toBeDefined()
-        expect(f.candidates).toHaveLength(3)
-      }
-    },
-    // Loads the on-disk embedding artifact + cosine candidate search over the
-    // full corpus — well under 5s locally but slower on CI runners.
-    30000
-  )
 
   it('falls back gracefully when withCandidates=true but artifact missing', async () => {
     // Force the embedding loader to never resolve a real artifact by

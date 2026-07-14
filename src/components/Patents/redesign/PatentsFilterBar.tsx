@@ -28,6 +28,7 @@ const SECONDARY = [
   'nistStatus',
   'pqc',
   'fips',
+  'filingYear',
 ] as const
 
 const AGILITY_LABELS: Record<string, string> = {
@@ -47,6 +48,7 @@ const SECONDARY_LABEL: Record<string, string> = {
   nistStatus: 'NIST',
   pqc: 'PQC algo',
   fips: 'FIPS',
+  filingYear: 'Filed',
 }
 
 interface PatentsFilterBarProps {
