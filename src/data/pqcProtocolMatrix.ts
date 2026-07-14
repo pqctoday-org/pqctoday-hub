@@ -1,7 +1,7 @@
 /**
- * PQC Protocol Support Matrix — 28 protocol rows (IETF, TCG, OASIS, 3GPP, IEEE,
- * UEFI, and vendor-published specs) × release / draft / 4 PQC dimensions / OSS
- * libs / playground.
+ * PQC Protocol Support Matrix — 30 protocol rows (IETF, TCG, OASIS, 3GPP, IEEE,
+ * ANSI/INCITS, UEFI, and vendor-published specs) × release / draft / 4 PQC
+ * dimensions / OSS libs / playground.
  *
  * Snapshot date: see PROTOCOL_MATRIX_LAST_UPDATED below — this header comment
  * is not kept in sync automatically; treat the constant as authoritative.
@@ -50,7 +50,7 @@
 import type { Freshness } from './contentFreshness'
 
 /** ISO date of the last manual update to PROTOCOL_MATRIX below. */
-export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-07-13'
+export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-07-14'
 
 /**
  * Structured freshness for the content-freshness manifest — pairs the snapshot
@@ -674,11 +674,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       'Modern transport-layer security with hybrid + pure PQC key exchange and PQ signatures.',
     latestRelease: [
       {
-        id: 'RFC-8446',
-        title: 'RFC 8446 — TLS 1.3',
-        url: 'https://datatracker.ietf.org/doc/html/rfc8446',
-        date: '2018-08',
-        localFile: '/library/RFC_8446.html',
+        id: 'RFC-9846',
+        title: 'RFC 9846 — TLS 1.3 (obsoletes RFC 8446)',
+        url: 'https://datatracker.ietf.org/doc/html/rfc9846',
+        date: '2026-07',
+        localFile: '/library/RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1.html',
       },
     ],
     latestDraft: [
@@ -3739,5 +3739,166 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     liveDeployments: [],
     noDeploymentReason:
       'The public Sigstore (Fulcio CA + Rekor log) issues and logs classical (ECDSA) signatures only. PQC ML-DSA signing exists in experimental cosign forks but there is no production PQC Sigstore deployment yet.',
+  },
+  {
+    id: 'ieee-802-11bt',
+    name: 'IEEE 802.11bt (Wi-Fi PQC)',
+    description:
+      'IEEE 802.11 amendment adding post-quantum AKM suites, PQC key-establishment/signature algorithms, and a PQC password-authenticated key exchange (PAKE) to the WLAN MAC layer (SAE, OWE, FILS, PASN). PAR approved Sep 2025 — pre-draft study-group stage, no technical draft text published yet.',
+    latestRelease: [],
+    latestDraft: [
+      {
+        id: 'IEEE-P802.11bt-PAR',
+        title:
+          'IEEE P802.11bt — PAR: Amendment to IEEE Std 802.11-2024 (Enhancements for Post-Quantum Cryptography)',
+        url: 'https://standards.ieee.org/ieee/802.11bt/12187/',
+        date: '2025-09',
+      },
+    ],
+    dimensions: {
+      pureKem: {
+        value: 'draft',
+        stageNote: 'IEEE P802.11bt PAR approved Sep 10, 2025 — pre-draft study-group stage',
+        note: 'PAR scope covers PQC AKM suites and PQC key-establishment algorithms across SAE/OWE/FILS/PASN; no draft text published as of Jul 2026, so no specific KEM (pure vs. hybrid) has been named.',
+        refs: [
+          {
+            kind: 'spec',
+            id: 'IEEE P802.11BT',
+            title: 'PAR — Enhancements for Post-Quantum Cryptography',
+            url: 'https://standards.ieee.org/ieee/802.11bt/12187/',
+            publishedOn: '2025-09',
+          },
+        ],
+      },
+      hybridKem: {
+        value: 'draft',
+        stageNote: 'IEEE P802.11bt PAR approved Sep 10, 2025 — pre-draft study-group stage',
+        note: 'Same PAR scope as pure KEM — AKM suites and key-establishment algorithms are not yet differentiated into pure vs. hybrid constructs.',
+        refs: [
+          {
+            kind: 'spec',
+            id: 'IEEE P802.11BT',
+            title: 'PAR — Enhancements for Post-Quantum Cryptography',
+            url: 'https://standards.ieee.org/ieee/802.11bt/12187/',
+            publishedOn: '2025-09',
+          },
+        ],
+      },
+      pureSig: {
+        value: 'draft',
+        stageNote: 'IEEE P802.11bt PAR approved Sep 10, 2025 — pre-draft study-group stage',
+        note: 'PAR scope covers PQC digital signature algorithms and a PQC password-authenticated key exchange (PAKE); no draft text published as of Jul 2026, so no specific signature scheme (pure vs. hybrid/composite) has been named.',
+        refs: [
+          {
+            kind: 'spec',
+            id: 'IEEE P802.11BT',
+            title: 'PAR — Enhancements for Post-Quantum Cryptography',
+            url: 'https://standards.ieee.org/ieee/802.11bt/12187/',
+            publishedOn: '2025-09',
+          },
+        ],
+      },
+      hybridSig: {
+        value: 'draft',
+        stageNote: 'IEEE P802.11bt PAR approved Sep 10, 2025 — pre-draft study-group stage',
+        note: 'Same PAR scope as pure signature — digital signature algorithms are not yet differentiated into pure vs. hybrid/composite constructs.',
+        refs: [
+          {
+            kind: 'spec',
+            id: 'IEEE P802.11BT',
+            title: 'PAR — Enhancements for Post-Quantum Cryptography',
+            url: 'https://standards.ieee.org/ieee/802.11bt/12187/',
+            publishedOn: '2025-09',
+          },
+        ],
+      },
+    },
+    ossLibraries: [],
+    commercialLibraries: [],
+    playgrounds: [],
+    liveDeployments: [],
+    noDeploymentReason:
+      'Standard is still at the pre-draft study-group stage (PAR approved Sep 2025, IEEE 802.11 Working Group) — no chipset or AP vendor can implement PQC support before draft technical text exists.',
+  },
+  {
+    id: 'fc-sp-3',
+    name: 'Fibre Channel FC-SP-3',
+    description:
+      'ANSI/INCITS Fibre Channel — Security Protocols, Third Edition. Adds CNSA 2.0 algorithm definitions (ML-KEM, ML-DSA) alongside existing CNSA 1.0 support, plus an automatic in-flight FC encryption profile for SAN fabrics. Completed by the Fibre Channel Industry Association Feb 2026.',
+    latestRelease: [
+      {
+        id: 'FC-SP-3',
+        title: 'Fibre Channel — Security Protocols, Third Edition (FC-SP-3)',
+        url: 'https://fibrechannel.org/fibre-channel-industry-association-announces-completion-of-fc-sp-3-specification-advancing-enterprise-storage-security-for-a-post-quantum-era/',
+        date: '2026-02',
+      },
+    ],
+    latestDraft: [],
+    dimensions: {
+      pureKem: {
+        value: 'rfc',
+        stageNote: 'FC-SP-3 completed Feb 2026 — CNSA 2.0 algorithm definitions added',
+        note: 'FC-SP-3 adds CNSA 2.0 algorithm support (ML-KEM) for FC-SP key exchange. Broadcom Emulex SecureHBA already negotiates ML-KEM-1024 automatically as part of the standard Fibre Channel login process.',
+        deploymentPosture: 'production',
+        deploymentNote:
+          'Broadcom Emulex SecureHBA (SAN Manager 3.0) — 120,000+ units shipped on OEM server platforms as of Mar 2026.',
+        refs: [
+          {
+            kind: 'spec',
+            id: 'INCITS 577',
+            title: 'FC-SP-3 — CNSA 2.0 algorithm support (ML-KEM)',
+            url: 'https://fibrechannel.org/fibre-channel-industry-association-announces-completion-of-fc-sp-3-specification-advancing-enterprise-storage-security-for-a-post-quantum-era/',
+            publishedOn: '2026-02',
+          },
+        ],
+      },
+      hybridKem: {
+        value: 'na',
+        note: 'FC-SP-3 adopts CNSA 2.0 algorithms directly (pure ML-KEM); no composite/hybrid KEM construct is defined.',
+      },
+      pureSig: {
+        value: 'rfc',
+        stageNote: 'FC-SP-3 completed Feb 2026 — CNSA 2.0 algorithm definitions added',
+        note: 'FC-SP-3 adds CNSA 2.0 algorithm support (ML-DSA) for FC-SP key/entity authentication. Broadcom Emulex SecureHBA already negotiates ML-DSA-87 automatically as part of the standard Fibre Channel login process.',
+        deploymentPosture: 'production',
+        deploymentNote:
+          'Broadcom Emulex SecureHBA (SAN Manager 3.0) — 120,000+ units shipped on OEM server platforms as of Mar 2026.',
+        refs: [
+          {
+            kind: 'spec',
+            id: 'INCITS 577',
+            title: 'FC-SP-3 — CNSA 2.0 algorithm support (ML-DSA)',
+            url: 'https://fibrechannel.org/fibre-channel-industry-association-announces-completion-of-fc-sp-3-specification-advancing-enterprise-storage-security-for-a-post-quantum-era/',
+            publishedOn: '2026-02',
+          },
+        ],
+      },
+      hybridSig: {
+        value: 'na',
+        note: 'FC-SP-3 adopts CNSA 2.0 algorithms directly (pure ML-DSA); no composite/hybrid signature construct is defined.',
+      },
+    },
+    ossLibraries: [],
+    commercialLibraries: [
+      {
+        productId: 'broadcom-emulex-securehba',
+        name: 'Broadcom Emulex SecureHBA',
+        versionNote:
+          'SAN Manager 3.0 — ML-KEM-1024 + ML-DSA-87 automatic in-flight FC encryption, AES-GCM-256 data path',
+      },
+    ],
+    playgrounds: [],
+    liveDeployments: [
+      {
+        provider: 'Broadcom Emulex SecureHBA + Everpure FlashArray//XL130 R5',
+        what: 'End-to-end PQC-safe in-flight Fibre Channel encryption — ML-KEM-1024 + ML-DSA-87 key negotiation, AES-GCM-256 data encryption, no measurable performance penalty or CPU overhead',
+        since: '2026-03',
+        referenceUrl:
+          'https://www.globenewswire.com/news-release/2026/03/19/3259050/19933/en/Broadcom-Delivers-the-World-s-First-End-to-End-PQC-safe-In-flight-Network-Encryption-Solution.html',
+      },
+    ],
+    recommended: true,
+    recommendedReason:
+      'FC-SP-3 has published CNSA 2.0 (ML-KEM + ML-DSA) algorithm support and a shipping production deployment (Broadcom Emulex SecureHBA, 120,000+ units) with no measured performance cost.',
   },
 ]
