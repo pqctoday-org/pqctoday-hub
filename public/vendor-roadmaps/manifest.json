@@ -19,5 +19,9 @@
       "sizeBytes": 272243,
       "contentType": "text/html; charset=UTF-8"
     }
-  ]
+  ],
+  "recovered_via_fetch_resilient": {
+    "date": "2026-07-14",
+    "count": 0
+  }
 }
