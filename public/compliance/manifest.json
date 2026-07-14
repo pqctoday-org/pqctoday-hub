@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-14T02:26:41.331798+00:00",
+  "generated": "2026-07-14T02:30:47.897110+00:00",
   "entries": [
     {
       "refId": "NIST",
@@ -909,6 +909,87 @@
       "sizeBytes": 10623,
       "contentType": "text/html",
       "sha256": "7ce3ab2f385247fc2b77e713280eccf5d520013f85a2715bfedd8ff1a2cef760"
+    },
+    {
+      "refId": "UK-DSIT-CNI-PQC",
+      "url": "https://www.gov.uk/government/organisations/department-for-science-innovation-and-technology",
+      "status": "downloaded",
+      "filename": "UK-DSIT-CNI-PQC.html",
+      "sizeBytes": 136863,
+      "contentType": "text/html",
+      "sha256": "8a2b616823a1471e85cb08ad7b5d388cd1975a8da8639033b64a10c906a664e6"
+    },
+    {
+      "refId": "ACPR",
+      "url": "https://acpr.banque-france.fr",
+      "status": "downloaded",
+      "filename": "ACPR.html",
+      "sizeBytes": 222657,
+      "contentType": "text/html",
+      "sha256": "cb7cfaa9c970195948e1f90219873b421b867767182c4d189b2fc3b5514d1f92"
+    },
+    {
+      "refId": "AMF-FR",
+      "url": "https://www.amf-france.org",
+      "status": "downloaded",
+      "filename": "AMF-FR.html",
+      "sizeBytes": 72104,
+      "contentType": "text/html",
+      "sha256": "2a9dee436aababbc79c26a83ce7eb8c01ca8a058aa62b7ed8d0039ecc89ef7a6"
+    },
+    {
+      "refId": "DSPF-PQC",
+      "url": "https://www.defence.gov.au/business-industry/industry-governance/defence-security-principles-framework",
+      "status": "downloaded",
+      "filename": "DSPF-PQC.html",
+      "sizeBytes": 17251,
+      "contentType": "text/html",
+      "sha256": "4db7c334ecdcd827c038160d563fe7ec598379f4c8be6177f53627dbdbabb43c"
+    },
+    {
+      "refId": "ZA-POPIA",
+      "url": "https://inforegulator.org.za",
+      "status": "downloaded",
+      "filename": "ZA-POPIA.html",
+      "sizeBytes": 241771,
+      "contentType": "text/html",
+      "sha256": "7c0a354917998d6c11ec0b94e1cdd49b722677bea4810e5ff25d6720bf6af27d"
+    },
+    {
+      "refId": "NG-NDPR",
+      "url": "https://ndpc.gov.ng",
+      "status": "downloaded",
+      "filename": "NG-NDPR.html",
+      "sizeBytes": 712778,
+      "contentType": "text/html",
+      "sha256": "21d7da2082ccea9b4fd8d84d3b5ddfd25ab211d7aff41bdd06d8d1b92263ba1b"
+    },
+    {
+      "refId": "EG-PDPL",
+      "url": "https://mcit.gov.eg",
+      "status": "downloaded",
+      "filename": "EG-PDPL.html",
+      "sizeBytes": 62829,
+      "contentType": "text/html",
+      "sha256": "ee590d26ca103e1faaed9f850408049db82ac39aa16f502717868c3a76606ecf"
+    },
+    {
+      "refId": "AU-MALABO",
+      "url": "https://au.int/en/treaties/african-union-convention-cyber-security-and-personal-data-protection",
+      "status": "downloaded",
+      "filename": "AU-MALABO.html",
+      "sizeBytes": 81282,
+      "contentType": "text/html",
+      "sha256": "525fb468a76906192e11230500a9eb2859981ed7dd39a8079f45c4513ef4282d"
+    },
+    {
+      "refId": "EUCC-V2",
+      "url": "https://certification.enisa.europa.eu/certification-library/eucc-certification-scheme_en",
+      "status": "downloaded",
+      "filename": "EUCC-V2.html",
+      "sizeBytes": 92813,
+      "contentType": "text/html",
+      "sha256": "e560f35a6d31911c5e22ad689e17550a588b93ea41a738d07eae205969dfb44a"
     }
   ],
   "blocked": {
@@ -970,6 +1051,11 @@
     "APRA-CPS-234": {
       "reason": "status=200, tier=crawl4ai",
       "blocked_at": "2026-07-14T02:26:04.869521+00:00",
+      "attempts": 1
+    },
+    "KE-DPA": {
+      "reason": "status=err, tier=crawl4ai",
+      "blocked_at": "2026-07-14T02:27:15.404264+00:00",
       "attempts": 1
     }
   }
