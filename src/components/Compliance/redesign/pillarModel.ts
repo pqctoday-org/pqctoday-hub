@@ -8,6 +8,7 @@
 
 import type { BodyType, ComplianceFramework } from '@/data/complianceData'
 import { regionForCountry } from '@/data/complianceData'
+import { conceptXwalkData, type ConceptXwalkRecord } from '@/data/conceptXwalkData'
 import type { Tone } from './tones'
 
 export type PillarId = 'standardize' | 'certify' | 'comply'
@@ -161,17 +162,6 @@ export interface DrawerDetail {
   crosswalk: CrosswalkItem[]
 }
 
-interface MarqueeDef {
-  pqcLabel: string
-  pqcTone: Tone
-  juris: string
-  chain: ChainNode[]
-  phases: PhaseStep[]
-  dossierFocus: string
-  dossierItems: string[]
-  crosswalk: CrosswalkItem[]
-}
-
 const n = (kind: string, value: string, sub: string, tone: Tone): ChainNode => ({
   kind,
   value,
@@ -185,135 +175,91 @@ const p = (year: string, label: string, state: PhaseStep['state']): PhaseStep =>
 })
 const xw = (name: string, note: string, tone: Tone): CrosswalkItem => ({ name, note, tone })
 
-// Hand-authored chains for marquee entries so the page's premise reads cleanly
-// for its highest-traffic rows. Keyed by a substring match on label / id.
-const MARQUEE: { match: RegExp; def: MarqueeDef }[] = [
-  {
-    match: /CNSA\s*2/i,
-    def: {
-      pqcLabel: 'PQC mandated',
-      pqcTone: 'success',
-      juris: 'United States · National Security Systems',
-      chain: [
-        n('Mandate', 'CNSA 2.0 (NSM-8)', 'NSA directive — binding', 'error'),
-        n('Requires', 'FIPS 140-3 validated', 'CMVP module certificate', 'secondary'),
-        n('Covers algorithms', 'ML-KEM-1024 · ML-DSA-87', 'FIPS 203 / 204', 'primary'),
-        n('Live evidence', 'CMVP modules', 'in Product Records →', 'success'),
-      ],
-      phases: [
-        p('2022', 'Suite published', 'done'),
-        p('2025', 'Support & prefer', 'active'),
-        p('2030', 'Exclusive (sw/fw, networking)', 'future'),
-        p('2033', 'Exclusive: web/cloud, OS, large PKI', 'future'),
-      ],
-      dossierFocus: 'Multi-year transition plan for NSS to PQC (NSM-10 targets all NSS by 2035).',
-      dossierItems: [
-        'Signed multi-year migration roadmap with gate dates',
-        'Per-system migration status tracker',
-        'Pilot evidence using ML-KEM-1024 / ML-DSA-87',
-      ],
-      crosswalk: [
-        xw('NIST IR 8547', 'shares the 2030/2035 deprecation clock', 'warning'),
-        xw('OMB M-23-02', 'federal-civilian sibling mandate', 'info'),
-        xw('DORA', 'overlapping scope for US-EU financials', 'secondary'),
-      ],
-    },
-  },
-  {
-    match: /FIPS\s*140-3/i,
-    def: {
-      pqcLabel: 'Validation scheme',
-      pqcTone: 'info',
-      juris: 'NIST CMVP · US + Canada (CCCS)',
-      chain: [
-        n('Scheme', 'FIPS 140-3 (CMVP)', 'module-level certificate', 'secondary'),
-        n('Tests algorithms via', 'ACVP (CAVP)', 'primitive prerequisite', 'info'),
-        n('Validates', 'Whole crypto module', 'SW · FW · HW boundary', 'primary'),
-        n('Required by', 'CNSA 2.0 · FedRAMP', '+ DORA "state of the art"', 'error'),
-      ],
-      phases: [
-        p('2019', 'Standard published', 'done'),
-        p('2021', 'CMVP accepts 140-3', 'done'),
-        p('2026', 'FIPS 140-2 sunset', 'active'),
-        p('2030+', 'PQC modules grow', 'future'),
-      ],
-      dossierFocus: 'Use of validated modules; performance fitness.',
-      dossierItems: [
-        'CMVP certificate numbers for deployed modules',
-        'Dual-stack CA modernisation schedule',
-        'Performance-test results for PQC handshakes under load',
-      ],
-      crosswalk: [
-        xw('ACVP', 'algorithm-level prerequisite', 'info'),
-        xw('Common Criteria', 'parallel product evaluation', 'warning'),
-        xw('EUCC', 'EU equivalent under Cybersecurity Act', 'success'),
-      ],
-    },
-  },
-  {
-    match: /^NIST$/i,
-    def: {
-      pqcLabel: 'Standards source',
-      pqcTone: 'primary',
-      juris: 'United States · global reference',
-      chain: [
-        n('Body', 'NIST CSD', 'Computer Security Division', 'primary'),
-        n('Publishes', 'FIPS 203 / 204 / 205', 'ML-KEM · ML-DSA · SLH-DSA', 'success'),
-        n('Tested by', 'ACVP → FIPS 140-3', 'validation pipeline', 'info'),
-        n('Mandated by', 'CNSA 2.0 · OMB M-23-02', 'downstream regulations', 'error'),
-      ],
-      phases: [
-        p('2022', 'Algorithms selected', 'done'),
-        p('2024', 'FIPS 203/204/205 final', 'done'),
-        p('2025', 'IR 8547 transition', 'active'),
-        p('2030', 'RSA/ECC deprecated', 'future'),
-      ],
-      dossierFocus: 'Key publications referenced downstream.',
-      dossierItems: [
-        'FIPS 203 — ML-KEM (key encapsulation)',
-        'FIPS 204 — ML-DSA (signatures)',
-        'FIPS 205 — SLH-DSA (hash-based signatures)',
-        'SP 1800-38 — migration practice guide',
-      ],
-      crosswalk: [
-        xw('ISO/IEC JTC 1', 'parallel international standardization', 'info'),
-        xw('ETSI', 'EU quantum-safe profiles', 'success'),
-        xw('IETF', 'protocol bindings (TLS, X.509)', 'warning'),
-      ],
-    },
-  },
-  {
-    match: /^DORA$|EU\s*DORA/i,
-    def: {
-      pqcLabel: 'PQC expected',
-      pqcTone: 'warning',
-      juris: 'European Union · Financial sector',
-      chain: [
-        n('Mandate', 'EU DORA 2022/2554', 'ICT risk framework', 'success'),
-        n('Requires', '"State of the art" crypto', 'ENISA reads as PQC-ready', 'secondary'),
-        n('Satisfied via', 'FIPS 140-3 / EUCC', 'validated modules', 'info'),
-        n('Live evidence', '4 EUCC products', 'in Product Records →', 'success'),
-      ],
-      phases: [
-        p('2023', 'Regulation adopted', 'done'),
-        p('2025', 'In force (Jan)', 'done'),
-        p('2026', 'First exams', 'active'),
-        p('2030', 'PQC readiness expected', 'future'),
-      ],
-      dossierFocus: 'Board-approved governance & resilience testing.',
-      dossierItems: [
-        'Program Charter with executive sponsor sign-off',
-        'Governance structure (SteerCo / QRPM cadence)',
-        'Tabletop / resilience-test records referencing PQC scenarios',
-      ],
-      crosswalk: [
-        xw('NIS2', 'shared EU cyber baseline', 'success'),
-        xw('CNSA 2.0', 'overlapping US-EU financial scope', 'secondary'),
-        xw('PCI DSS 4.0', 'crypto inventory obligation', 'warning'),
-      ],
-    },
-  },
-]
+// ── Real relationship data (NIST IR 8477 crosswalk) ─────────────────────────
+//
+// Replaces the old hand-authored MARQUEE overrides (4 rows) and the generic-
+// template fallback (everyone else) alike: every row — marquee or not — now
+// gets the same treatment, built from actual extracted relationships in
+// concept_xwalks_*.csv where they exist, real CSV fields otherwise, and an
+// honestly-short chain when neither is available. No row gets a claim
+// (\"tested by ACVP/FIPS 140-3\", \"cited by compliance frameworks\") that
+// isn't backed by something on the record for THAT row.
+
+const RATIONALE_LABEL: Record<string, string> = {
+  syntactic: 'naming match',
+  semantic: 'semantic relationship',
+  functional: 'functional relationship',
+  technical_dependency: 'technical dependency',
+  policy_reference: 'policy reference',
+  implementation_guidance: 'implementation guidance',
+  timeline_anchor: 'timeline anchor',
+}
+
+function rationaleLabel(rationaleType: string): string {
+  // eslint-disable-next-line security/detect-object-injection
+  return RATIONALE_LABEL[rationaleType] ?? rationaleType.replace(/_/g, ' ')
+}
+
+/** Verb from `framework`'s perspective — subset/superset flip when framework is the `to` side. */
+function relationshipVerb(edge: ConceptXwalkRecord, frameworkIsFromSide: boolean): string {
+  switch (edge.relationshipType) {
+    case 'subset_of':
+      return frameworkIsFromSide ? 'Subset of' : 'Superset of'
+    case 'superset_of':
+      return frameworkIsFromSide ? 'Superset of' : 'Subset of'
+    case 'equivalent':
+      return 'Equivalent to'
+    case 'intersects_with':
+    default:
+      return 'Relates to'
+  }
+}
+
+/** Real extracted relationships involving this framework, highest-confidence first. */
+function xwalkEdgesForFramework(framework: ComplianceFramework): ConceptXwalkRecord[] {
+  const idsToMatch = new Set([framework.id, framework.label])
+  return conceptXwalkData
+    .filter((e) => idsToMatch.has(e.fromConcept) || idsToMatch.has(e.toConcept))
+    .sort((a, b) => b.confidenceScore - a.confidenceScore)
+}
+
+function otherSide(edge: ConceptXwalkRecord, framework: ComplianceFramework): string {
+  const idsToMatch = new Set([framework.id, framework.label])
+  return idsToMatch.has(edge.fromConcept) ? edge.toConcept : edge.fromConcept
+}
+
+function xwalkChainNodes(
+  framework: ComplianceFramework,
+  edges: ConceptXwalkRecord[],
+  max: number
+): ChainNode[] {
+  const idsToMatch = new Set([framework.id, framework.label])
+  return edges.slice(0, max).map((edge) => {
+    const frameworkIsFromSide = idsToMatch.has(edge.fromConcept)
+    return n(
+      relationshipVerb(edge, frameworkIsFromSide),
+      otherSide(edge, framework),
+      rationaleLabel(edge.rationaleType),
+      'info'
+    )
+  })
+}
+
+function xwalkCrosswalkItems(
+  framework: ComplianceFramework,
+  edges: ConceptXwalkRecord[],
+  max: number
+): CrosswalkItem[] {
+  const idsToMatch = new Set([framework.id, framework.label])
+  return edges.slice(0, max).map((edge) => {
+    const frameworkIsFromSide = idsToMatch.has(edge.fromConcept)
+    return xw(
+      otherSide(edge, framework),
+      `${relationshipVerb(edge, frameworkIsFromSide).toLowerCase()} · ${rationaleLabel(edge.rationaleType)}`,
+      'info'
+    )
+  })
+}
 
 function pqcStanceForFramework(
   framework: ComplianceFramework,
@@ -352,27 +298,28 @@ function generatedPhases(framework: ComplianceFramework): PhaseStep[] {
 }
 
 /**
- * Build the drawer payload for a row. Marquee rows get a hand-authored chain;
- * every other row gets a pillar-appropriate generated chain from live fields so
- * nothing dead-ends.
+ * Build the drawer payload for a row. Every row — including the 4 highest-
+ * traffic ones that used to get a hand-authored MARQUEE override — gets the
+ * same pillar-appropriate chain, built from real extracted relationships
+ * (concept_xwalks_*.csv) first, real CSV fields second, and an honestly-short
+ * chain when neither is available. See ACCURACY-0705 / the 2026-07-14
+ * traceability-chain remediation for why: a generic per-pillar template used
+ * to fabricate identical claims for every row regardless of what was true.
  */
 export function buildDrawerDetail(framework: ComplianceFramework, pillar: PillarId): DrawerDetail {
-  const marquee = MARQUEE.find(
-    (m) => m.match.test(framework.label) || m.match.test(framework.id)
-  )?.def
-
-  if (marquee) {
-    return {
-      name: framework.label,
-      pillarLabel: pillarLabel(pillar),
-      ...marquee,
-    }
-  }
-
   const region = regionLabel(framework)
-  const keyRef = framework.relatedStandards?.[0] ?? bodyTypeLabel(framework.bodyType)
+  // Prefer real per-row citation data over the tautological fallback
+  // (bodyTypeLabel just repeats the row's own category, e.g. "Technical
+  // standard" naming nothing) — relatedStandards is usually the most
+  // specific when populated, libraryRefs/timelineRefs otherwise.
+  const keyRef =
+    framework.relatedStandards?.[0] ??
+    framework.libraryRefs?.[0] ??
+    framework.timelineRefs?.[0] ??
+    null
   const issuer = framework.enforcementBody || framework.label
   const stance = pqcStanceForFramework(framework, pillar)
+  const edges = xwalkEdgesForFramework(framework)
 
   let chain: ChainNode[]
   let juris: string
@@ -382,40 +329,45 @@ export function buildDrawerDetail(framework: ComplianceFramework, pillar: Pillar
 
   if (pillar === 'standardize') {
     juris = `${region} · ${bodyTypeLabel(framework.bodyType)}`
-    chain = [
-      n('Body', framework.label, framework.enforcementBody || 'standards organisation', 'primary'),
-      n('Publishes', keyRef, 'technical standard', 'success'),
-      n('Tested by', 'ACVP / FIPS 140-3', 'validation pipeline', 'info'),
-      n('Cited by', 'compliance frameworks', 'downstream mandates', 'error'),
-    ]
+    const bodyNode = n(
+      'Body',
+      framework.label,
+      framework.enforcementBody || 'standards organisation',
+      'primary'
+    )
+    chain =
+      edges.length > 0
+        ? [bodyNode, ...xwalkChainNodes(framework, edges, 3)]
+        : keyRef
+          ? [bodyNode, n('Publishes', keyRef, 'primary specification', 'success')]
+          : [bodyNode]
     dossierFocus = 'Authoritative reference for downstream schemes.'
-    dossierItems = [
-      `${keyRef} — primary specification`,
-      'Public review / comment record',
-      'Errata & version history',
-    ]
-    crosswalk = [
-      xw('NIST', 'primary algorithm source', 'primary'),
-      xw('IETF', 'protocol bindings', 'warning'),
-    ]
+    dossierItems = keyRef
+      ? [
+          `${keyRef} — primary specification`,
+          'Public review / comment record',
+          'Errata & version history',
+        ]
+      : ['Public review / comment record', 'Errata & version history']
+    crosswalk = xwalkCrosswalkItems(framework, edges, 3)
   } else if (pillar === 'certify') {
     juris = `${issuer} · ${region}`
-    chain = [
-      n('Scheme', framework.label, 'evaluation scheme', 'secondary'),
-      n('Validates', keyRef, 'evaluation target', 'primary'),
-      n('Issued by', issuer, region, 'info'),
-      n('Required by', 'compliance frameworks', 'procurement gate', 'error'),
-    ]
+    const schemeNode = n('Scheme', framework.label, 'evaluation scheme', 'secondary')
+    chain =
+      edges.length > 0
+        ? [
+            schemeNode,
+            ...xwalkChainNodes(framework, edges, 2),
+            n('Issued by', issuer, region, 'info'),
+          ]
+        : [schemeNode, n('Issued by', issuer, region, 'info')]
     dossierFocus = 'Independent proof of correct implementation.'
     dossierItems = [
       'Certificate / evaluation report numbers',
       'Scope statement (modules in evaluation)',
       'Algorithm coverage list',
     ]
-    crosswalk = [
-      xw('FIPS 140-3', 'US module validation', 'secondary'),
-      xw('Common Criteria', 'product evaluation', 'warning'),
-    ]
+    crosswalk = xwalkCrosswalkItems(framework, edges, 3)
   } else {
     juris = `${region} · ${framework.industries[0] ?? 'All sectors'}`
     // ACCURACY-0705: this used to render an IDENTICAL, hardcoded 4-node chain
@@ -425,11 +377,12 @@ export function buildDrawerDetail(framework: ComplianceFramework, pillar: Pillar
     // specific mandate actually requires -- ComplianceFramework has no field
     // confirming a FIPS-140-3 dependency or that ML-KEM/ML-DSA are named.
     // Now built only from real per-row fields: `stance` (already derived from
-    // `pqcRequirement`, the one genuine per-row PQC signal) and `deadline`
+    // `pqcRequirement`, the one genuine per-row PQC signal), `deadline`
     // (curated per-row text, e.g. "Ongoing" or "2030 (NIST IR 8547
-    // deprecation target)"). A mandate with no PQC requirement gets an
-    // honest 2-node chain instead of a fabricated migration path.
-    chain =
+    // deprecation target)"), and now real extracted relationships when they
+    // exist. A mandate with no PQC requirement gets an honest 2-node chain
+    // instead of a fabricated migration path.
+    const baseChain =
       framework.pqcRequirement === 'no'
         ? [
             n('Mandate', framework.label, framework.enforcementBody || 'regulation', stance.tone),
@@ -450,16 +403,14 @@ export function buildDrawerDetail(framework: ComplianceFramework, pillar: Pillar
               'success'
             ),
           ]
+    chain = [...baseChain, ...xwalkChainNodes(framework, edges, 2)]
     dossierFocus = 'Risk-based crypto exposure assessment & treatment.'
     dossierItems = [
       'Quantum Risk Assessment (QRA) document',
       'Risk register entries with owners & status',
       'Migration roadmap referencing this mandate',
     ]
-    crosswalk = [
-      xw('CNSA 2.0', 'reference PQC suite', 'secondary'),
-      xw('NIST IR 8547', 'transition clock', 'warning'),
-    ]
+    crosswalk = xwalkCrosswalkItems(framework, edges, 3)
   }
 
   return {
