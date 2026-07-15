@@ -28,6 +28,24 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.21.5] - 2026-07-15
+
+The Compliance page's traceability drawer now shows only real, data-backed
+relationships instead of fabricated boilerplate, and the Library, Timeline,
+Threats, and Migrate catalogs pick up a large batch of newly verified content
+following a full review of the maintainer agent's pending proposals.
+
+### Fixed
+
+- **Compliance traceability chains no longer show fabricated claims** [view:/compliance] [persona:researcher] [persona:architect]: every framework row's "Tested by," "Cited by," and "Related & overlapping" details used to fall back to hardcoded, generic text (e.g. "Tested by: ACVP / FIPS 140-3" on rows that were never actually tested that way) whenever real data was missing. All three pillars now build these chains only from real extracted relationships and CSV citations, or show an honestly short chain when no data exists yet — never a made-up claim.
+
+### Data
+
+- **17 new PQC-certified products added to Migrate**, verified directly against their real NIST ACVP certificates [view:/migrate] [persona:researcher] [persona:architect]: includes Chainguard's FIPS OpenSSL provider (6 build variants), Alibaba Cloud Crypto, TASS Crypto Engine, Citrix and Crypto4A's FIPS modules, DINAMO's HSM library, and two open-source PQC implementations (noble-post-quantum, KU Leuven's ML-DSA-OSH).
+- **18 new vendors registered with verified GLEIF legal-entity records** [view:/migrate] [persona:researcher]: including Chainguard, Thales Trusted Cyber Technologies, Dell Technologies (for the BSAFE product line), Analog Devices, AT&T Enterprises, and STMicroelectronics — each checked against the real GLEIF registry, not just a name guess.
+- **20+ new documents added to Library and Timeline** [view:/library] [view:/timeline] [persona:researcher]: new IETF drafts covering post-quantum TLS, IKEv2, EAP, GSS-API, and JOSE/COSE, plus NIST's proposed post-quantum update to the PIV (Personal Identity Verification) standards, and government milestone updates.
+- **Fixed a duplicate timeline entry**: a Federal Register notice for Executive Order 14412 was being tracked as a separate event from the White House's own six-milestone entry for the same order; consolidated into the existing entry.
+
 ## [4.21.4] - 2026-07-14
 
 Vendor Risk and certificate details get clearer in-place drill-downs on
