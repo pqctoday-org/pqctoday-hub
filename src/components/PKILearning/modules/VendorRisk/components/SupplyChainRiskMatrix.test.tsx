@@ -234,8 +234,10 @@ describe('SupplyChainRiskMatrix', () => {
     expect(within(osCard).getByTitle(/Migration Gap 0\/5 × Impact 0\/5/)).toHaveTextContent(
       'No risk'
     )
-    // Named in the "not plotted" summary, not silently dropped.
-    expect(screen.getByText(/not plotted above/i)).toHaveTextContent('Operating System')
+    // Named as its own chip in the "not plotted" strip, not silently dropped.
+    const noRiskStrip = screen.getByTestId('no-risk-strip')
+    expect(within(noRiskStrip).getByText(/not plotted above/i)).toBeInTheDocument()
+    expect(within(noRiskStrip).getByText('Operating System')).toBeInTheDocument()
   })
 
   it('shows an explicit not-personalized state instead of silently reusing pqcMigrationPriority when no industry is selected', () => {
