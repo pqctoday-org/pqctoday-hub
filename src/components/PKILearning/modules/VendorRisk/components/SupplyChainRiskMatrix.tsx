@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useMemo, useCallback, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { useModuleStore } from '@/store/useModuleStore'
@@ -11,6 +11,8 @@ import { LAYERS } from '@/data/infrastructureLayers'
 import { softwareItemToCbomInput } from '@/components/Migrate/cbomExport'
 import { buildCbomDocument, downloadCbomJson } from '@/services/cbom/cycloneDx'
 import { isPqcReady, isFips1403Validated } from '@/data/kpiCatalog'
+import { ProductRow } from '@/components/Migrate/Workbench/ProductRow'
+import { ProductDetail } from '@/components/Migrate/Workbench/ProductDetail'
 import {
   HeatmapGrid,
   type HeatmapCell,
@@ -22,7 +24,6 @@ import {
   CheckSquare,
   Package,
   CheckCircle,
-  ShieldAlert,
   GitMerge,
   Download,
   Link2,
@@ -113,31 +114,6 @@ function renderPqcBadge(support: string) {
   )
 }
 
-function renderFipsBadge(status: string) {
-  const lower = (status || '').toLowerCase()
-  const isFipsCertified =
-    lower.startsWith('yes') ||
-    lower === 'validated' ||
-    (lower.includes('fips 140') && !lower.startsWith('no'))
-  const isPartial = !isFipsCertified && lower.includes('partial')
-
-  if (isFipsCertified) {
-    return (
-      <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full bg-status-success text-status-success">
-        <CheckCircle size={9} /> FIPS
-      </span>
-    )
-  }
-  if (isPartial) {
-    return (
-      <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full bg-status-warning text-status-warning">
-        <ShieldAlert size={9} /> Partial
-      </span>
-    )
-  }
-  return null
-}
-
 function isHybridProduct(item: SoftwareItem): boolean {
   const desc = (item.pqcCapabilityDescription || '').toLowerCase()
   const support = (item.pqcSupport || '').toLowerCase()
@@ -208,14 +184,34 @@ interface SavedSupplyChainInputs {
   cmdbMapping?: string
 }
 
-// --- Likelihood × Impact matrix (mirrors RiskHeatmapGenerator's grid pattern) ---
+// --- Migration Gap × Impact matrix (mirrors RiskHeatmapGenerator's grid pattern) ---
+//
+// The vertical axis was originally labeled "Likelihood" with FAIR/ISO-31000
+// probability language ("Almost Certain"..."Rare"), but the underlying number
+// is the share of a layer not yet PQC-ready — a migration-progress ratio, not
+// a threat-probability estimate. Renamed to "Migration Gap" so the label
+// doesn't claim more rigor than the calculation provides. This is a label
+// fix, not a framing fix: the grid still visually reads as a risk matrix
+// producing a single score — see the methodology note rendered above the
+// grid for the honest limitation.
 
-const MATRIX_LIKELIHOOD_LABELS = ['Almost Certain', 'Likely', 'Possible', 'Unlikely', 'Rare']
+const MATRIX_LIKELIHOOD_LABELS = [
+  '81–100% Gap',
+  '61–80% Gap',
+  '41–60% Gap',
+  '21–40% Gap',
+  '1–20% Gap',
+]
 const MATRIX_IMPACT_LABELS = ['Negligible', 'Minor', 'Moderate', 'Major', 'Critical']
 
-/** Bucket a 0..1 fraction into a 1 (lowest) – 5 (highest) matrix level. */
+/** Bucket a 0..1 fraction into a 1 (lowest) – 5 (highest) matrix level, or
+ *  exactly 0 when the fraction is 0 (previously floored to 1, so even a
+ *  fully-ready / zero-impact layer always showed a nonzero risk score). The
+ *  5×5 grid below has no row/column for level 0 — callers must exclude
+ *  level-0 layers from the plotted grid and surface them separately (see the
+ *  "no risk" strip in the render). */
 function toMatrixLevel(fraction: number): number {
-  if (fraction <= 0) return 1
+  if (fraction <= 0) return 0
   return Math.min(5, Math.max(1, Math.ceil(fraction * 5)))
 }
 
@@ -244,6 +240,20 @@ interface LayerMatrixEntry {
   likelihood: number
   impact: number
   score: number
+}
+
+/**
+ * Small keyword regex per infrastructure layer, derived from its own `label`
+ * plus the comma-separated terms already in its `description` (no new
+ * taxonomy — reuses metadata the layer already carries in LAYERS).
+ */
+function layerKeywordRegex(layer: { label: string; description: string }): RegExp {
+  const terms = [layer.label, ...layer.description.split(/,\s*/)]
+    .map((t) => t.trim())
+    .filter((t) => t.length >= 4)
+    .map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+  if (terms.length === 0) return /(?!)/ // matches nothing
+  return new RegExp(`(${terms.join('|')})`, 'i')
 }
 
 /** Minimum name length before a provider's product name is used as a text-match
@@ -300,7 +310,13 @@ function buildLayerEntriesMap(entries: LayerMatrixEntry[]): Map<string, LayerMat
  *  individual risks, on top of the shared `HeatmapGrid` component (the same
  *  one `RiskHeatmapGenerator` is grounded in conceptually) rather than a
  *  hand-rolled table. */
-function SupplyChainRiskGrid({ entriesMap }: { entriesMap: Map<string, LayerMatrixEntry[]> }) {
+function SupplyChainRiskGrid({
+  entriesMap,
+  onCellClick,
+}: {
+  entriesMap: Map<string, LayerMatrixEntry[]>
+  onCellClick?: (rowIdx: number, colIdx: number) => void
+}) {
   const rows = MATRIX_LIKELIHOOD_LABELS.map((label, rowIdx) => `${5 - rowIdx} · ${label}`)
   const columns = MATRIX_IMPACT_LABELS.map((label, colIdx) => `${colIdx + 1} · ${label}`)
   const cells: HeatmapCell[][] = MATRIX_LIKELIHOOD_LABELS.map((_, rowIdx) => {
@@ -316,7 +332,73 @@ function SupplyChainRiskGrid({ entriesMap }: { entriesMap: Map<string, LayerMatr
       }
     })
   })
-  return <HeatmapGrid rows={rows} columns={columns} cells={cells} colorScale="risk" />
+  return (
+    <HeatmapGrid
+      rows={rows}
+      columns={columns}
+      cells={cells}
+      colorScale="risk"
+      onCellClick={onCellClick}
+    />
+  )
+}
+
+/** One provider + its dependents. Click the provider name or a dependent
+ *  chip to expand that product's full ProductDetail below the card — only
+ *  one entity's detail open per card at a time. Self-contained (its own
+ *  local state) rather than reusing PLAN-CERT-01's cert popover: chips here
+ *  are too narrow to host a floating panel, and this keeps the two plans
+ *  independent of each other. */
+const DependencyRelationCard: React.FC<{ rel: DependencyRelation }> = ({ rel }) => {
+  const [expanded, setExpanded] = useState<SoftwareItem | null>(null)
+  const toggle = (item: SoftwareItem) =>
+    setExpanded((cur) => (cur?.productId === item.productId ? null : item))
+
+  return (
+    <div className="rounded-md border border-border bg-muted/30 p-2">
+      <div className="flex items-center gap-2 flex-wrap">
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          className="h-auto p-0 text-sm font-medium text-foreground hover:text-primary hover:underline"
+          aria-expanded={expanded?.productId === rel.provider.productId}
+          onClick={() => toggle(rel.provider)}
+        >
+          {rel.provider.softwareName}
+        </Button>
+        {renderPqcBadge(rel.provider.pqcSupport)}
+        <span className="text-xs text-muted-foreground">
+          depended on by {rel.dependents.length}{' '}
+          {rel.dependents.length === 1 ? 'product' : 'products'}
+        </span>
+      </div>
+      <div className="flex flex-wrap gap-1.5 mt-1.5">
+        {rel.dependents.map((d) => (
+          <Button
+            type="button"
+            variant="ghost"
+            key={d.productId}
+            size="sm"
+            aria-expanded={expanded?.productId === d.productId}
+            className={`h-auto rounded-full px-2 py-0.5 text-xs font-normal ${
+              expanded?.productId === d.productId
+                ? 'border-primary text-primary bg-background'
+                : 'border-border text-muted-foreground bg-background'
+            } border hover:border-primary hover:text-primary`}
+            onClick={() => toggle(d)}
+          >
+            {d.softwareName}
+          </Button>
+        ))}
+      </div>
+      {expanded && (
+        <div className="mt-2 border-t border-border/50 pt-2">
+          <ProductDetail product={expanded} />
+        </div>
+      )}
+    </div>
+  )
 }
 
 export const SupplyChainRiskMatrix: React.FC<{
@@ -372,25 +454,33 @@ export const SupplyChainRiskMatrix: React.FC<{
     return buckets
   }, [selectedItems, vendorsByLayer])
 
-  const layerStats = useMemo(() => {
-    const stats: {
-      layerId: string
-      products: SoftwareItem[]
-      total: number
-      pqcReady: number
-      fipsValidated: number
-      hybridSupport: number
-      criticalHigh: number
-      /** 1 (lowest) – 5 (highest) chance the layer's un-migrated products are
-       *  exploited before migration completes, from the share of the layer
-       *  that isn't PQC-ready yet (the existing gap-count calc). */
-      likelihood: number
-      /** 1 (lowest) – 5 (highest) blast radius if that happens, from the share
-       *  of the layer's products flagged Critical/High migration priority. */
-      impact: number
-      riskScore: number
-    }[] = []
+  // Impact used to be derived from `pqcMigrationPriority` — a hand-curated
+  // catalog field that may already have been set considering impact, which
+  // risked circular reasoning (using a priority judgment to justify the same
+  // priority judgment). `industryThreats` is a genuinely separate data
+  // source (the threats/compliance-framework catalog), so a per-layer count
+  // of matching threats is used instead. This breaks the circularity but is
+  // still a heuristic (keyword matching), not a validated measurement — it's
+  // not more *accurate* than the old field, just no longer the same field
+  // reused to justify itself.
+  const hasIndustryContext = industry.trim().length > 0
 
+  const layerThreatMatchCounts = useMemo(() => {
+    const counts = new Map<string, number>()
+    for (const layer of LAYERS) {
+      const regex = layerKeywordRegex(layer)
+      const count = industryThreats.filter(
+        (t) =>
+          regex.test(t.description || '') ||
+          regex.test(t.cryptoAtRisk || '') ||
+          regex.test(t.threatId || '')
+      ).length
+      counts.set(layer.id, count)
+    }
+    return counts
+  }, [industryThreats])
+
+  const layerStats = useMemo(() => {
     // Ordered layers from LAYERS constant first
     const orderedIds = LAYERS.map((l) => l.id)
     // Add any extra layer IDs not in LAYERS
@@ -398,6 +488,24 @@ export const SupplyChainRiskMatrix: React.FC<{
       .filter((id) => !LAYER_MAP.has(id))
       .sort()
     const allIds = [...orderedIds, ...extraIds]
+
+    const base: {
+      layerId: string
+      products: SoftwareItem[]
+      total: number
+      pqcReady: number
+      fipsValidated: number
+      hybridSupport: number
+      /** Count of products flagged Critical/High `pqcMigrationPriority` by
+       *  the catalog curator. Real data, surfaced as its own "Priority"
+       *  badge — no longer used as the Impact axis input (see above). */
+      criticalHigh: number
+      /** 1–5, or 0 when the layer is fully PQC-ready: share of the layer not
+       *  yet PQC-ready. Labeled "Migration Gap" in the UI, not "Likelihood"
+       *  — see the comment above MATRIX_LIKELIHOOD_LABELS. */
+      likelihood: number
+      threatMatches: number
+    }[] = []
 
     for (const layerId of allIds) {
       const products = vendorsByLayer.get(layerId)
@@ -417,9 +525,8 @@ export const SupplyChainRiskMatrix: React.FC<{
 
       const gapCount = total - pqcReady
       const likelihood = toMatrixLevel(total > 0 ? gapCount / total : 0)
-      const impact = toMatrixLevel(total > 0 ? criticalHigh / total : 0)
 
-      stats.push({
+      base.push({
         layerId,
         products,
         total,
@@ -428,26 +535,65 @@ export const SupplyChainRiskMatrix: React.FC<{
         hybridSupport: hybrid,
         criticalHigh,
         likelihood,
-        impact,
-        riskScore: likelihood * impact,
+        threatMatches: layerThreatMatchCounts.get(layerId) ?? 0,
       })
     }
 
-    return stats
-  }, [vendorsByLayer])
+    // Total threat matches across the layers actually shown, NOT all of
+    // LAYERS — a layer with zero products shouldn't dilute the denominator
+    // for the layers that are actually on screen.
+    const totalThreatMatches = base.reduce((sum, s) => sum + s.threatMatches, 0)
 
+    return base.map((s) => {
+      if (!hasIndustryContext) {
+        // Explicit "not personalized" state — do NOT silently fall back to
+        // criticalHigh/pqcMigrationPriority here, that would reintroduce the
+        // exact circularity this item exists to remove.
+        return { ...s, impact: null as number | null, riskScore: null as number | null }
+      }
+      const impact = toMatrixLevel(
+        totalThreatMatches > 0 ? s.threatMatches / totalThreatMatches : 0
+      )
+      const riskScore = s.likelihood > 0 && impact > 0 ? s.likelihood * impact : 0
+      return { ...s, impact, riskScore }
+    })
+  }, [vendorsByLayer, layerThreatMatchCounts, hasIndustryContext])
+
+  /** Layers with a real, non-null score placed on the 5×5 grid. The grid's
+   *  row/col math (`5 - likelihood`, `impact - 1`) has no slot for level 0
+   *  on either axis, so a layer with a zero Migration Gap or zero Impact
+   *  can't be plotted — those are listed separately below instead of being
+   *  silently dropped or floored back up to a fake nonzero score. */
   const matrixEntries = useMemo<LayerMatrixEntry[]>(
     () =>
-      layerStats.map((stat) => ({
-        layerId: stat.layerId,
-        label: LAYER_MAP.get(stat.layerId)?.label ?? stat.layerId,
-        likelihood: stat.likelihood,
-        impact: stat.impact,
-        score: stat.riskScore,
-      })),
+      layerStats
+        .filter(
+          (stat): stat is typeof stat & { impact: number; riskScore: number } =>
+            stat.impact !== null && stat.likelihood > 0 && stat.impact > 0
+        )
+        .map((stat) => ({
+          layerId: stat.layerId,
+          label: LAYER_MAP.get(stat.layerId)?.label ?? stat.layerId,
+          likelihood: stat.likelihood,
+          impact: stat.impact,
+          score: stat.riskScore,
+        })),
     [layerStats]
   )
   const matrixEntriesMap = useMemo(() => buildLayerEntriesMap(matrixEntries), [matrixEntries])
+
+  /** Layers with a real, computed (non-null) score of exactly 0 on either
+   *  axis — fully PQC-ready and/or matching no industry threats. Not a bug
+   *  to hide: shown as its own "no risk" list, attached directly to the
+   *  grid, with layers named (not just counted) so it reads as "the rest of
+   *  the picture," not "these dropped out." */
+  const noRiskLayers = useMemo(
+    () =>
+      layerStats.filter(
+        (stat) => stat.impact !== null && (stat.likelihood === 0 || stat.impact === 0)
+      ),
+    [layerStats]
+  )
 
   // Real product-to-product dependencies: Library/Hardware-layer products
   // ("providers") that other catalog products ("consumers") reference by name
@@ -489,17 +635,30 @@ export const SupplyChainRiskMatrix: React.FC<{
       md += `| PQC Ready | ${stat.pqcReady} | ${stat.total > 0 ? Math.round((stat.pqcReady / stat.total) * 100) : 0}% |\n`
       md += `| FIPS Validated | ${stat.fipsValidated} | ${stat.total > 0 ? Math.round((stat.fipsValidated / stat.total) * 100) : 0}% |\n`
       md += `| Hybrid Support | ${stat.hybridSupport} | ${stat.total > 0 ? Math.round((stat.hybridSupport / stat.total) * 100) : 0}% |\n`
-      md += `| PQC Gap | ${gapCount} | ${stat.total > 0 ? Math.round((gapCount / stat.total) * 100) : 0}% |\n`
-      md += `| Critical/High Priority | ${stat.criticalHigh} | ${stat.total > 0 ? Math.round((stat.criticalHigh / stat.total) * 100) : 0}% |\n`
-      md += `| Likelihood × Impact | ${stat.likelihood} × ${stat.impact} | Score ${stat.riskScore} (${matrixRiskLevel(stat.riskScore)}) |\n\n`
+      md += `| Migration Gap | ${gapCount} | ${stat.total > 0 ? Math.round((gapCount / stat.total) * 100) : 0}% |\n`
+      md += `| Priority (Critical/High, catalog-curated) | ${stat.criticalHigh} | ${stat.total > 0 ? Math.round((stat.criticalHigh / stat.total) * 100) : 0}% |\n`
+      if (stat.impact === null) {
+        md += `| Migration Gap × Impact | ${stat.likelihood} × not personalized | — (select an industry to compute Impact) |\n\n`
+      } else {
+        md += `| Migration Gap × Impact | ${stat.likelihood} × ${stat.impact} | Score ${stat.riskScore} (${stat.likelihood === 0 || stat.impact === 0 ? 'No risk — not plotted on grid' : matrixRiskLevel(stat.riskScore ?? 0)}) |\n\n`
+      }
     }
 
-    md += '## Likelihood × Impact Risk Matrix\n\n'
-    md +=
-      '_Likelihood derives from the share of each layer not yet PQC-ready; impact derives from the share flagged Critical/High migration priority._\n\n'
-    md += '| Layer | Likelihood (1-5) | Impact (1-5) | Score | Level |\n|---|---|---|---|---|\n'
-    for (const entry of [...matrixEntries].sort((a, b) => b.score - a.score)) {
-      md += `| ${entry.label} | ${entry.likelihood} | ${entry.impact} | ${entry.score} | ${matrixRiskLevel(entry.score)} |\n`
+    md += '## Migration Gap × Impact Risk Matrix\n\n'
+    if (!hasIndustryContext) {
+      md +=
+        '_Not personalized: select an industry/country in Step 1 to compute Impact from real threat data. Migration Gap alone is shown per layer above._\n\n'
+    } else {
+      md +=
+        '_Migration Gap derives from the share of each layer not yet PQC-ready. Impact derives from the share of this industry\'s supply-chain-relevant threats that name each layer — an independent signal from the separately-authored threats catalog, not the catalog\'s own `pqcMigrationPriority` field (shown separately above as "Priority"). Both are heuristics, not validated risk measurements — see the methodology note above the grid._\n\n'
+      md +=
+        '| Layer | Migration Gap (1-5) | Impact (1-5) | Score | Level |\n|---|---|---|---|---|\n'
+      for (const entry of [...matrixEntries].sort((a, b) => b.score - a.score)) {
+        md += `| ${entry.label} | ${entry.likelihood} | ${entry.impact} | ${entry.score} | ${matrixRiskLevel(entry.score)} |\n`
+      }
+      if (noRiskLayers.length > 0) {
+        md += `\n_No risk — not plotted (0 on at least one axis):_ ${noRiskLayers.map((s) => LAYER_MAP.get(s.layerId)?.label ?? s.layerId).join(', ')}\n`
+      }
     }
     md += '\n'
 
@@ -565,6 +724,8 @@ export const SupplyChainRiskMatrix: React.FC<{
     fipsValidatedCount,
     layerStats,
     matrixEntries,
+    noRiskLayers,
+    hasIndustryContext,
     dependencyRelations,
     cbomBuckets,
     pipelineSources,
@@ -642,6 +803,24 @@ export const SupplyChainRiskMatrix: React.FC<{
     seedSources.push(
       `${supplyChainThreats.length} supply-chain threat${supplyChainThreats.length !== 1 ? 's' : ''} from your industry`
     )
+
+  // Drill-down: HeatmapGrid already supports onCellClick, just unused here
+  // before now. Resolves the layer(s) in the clicked cell and scrolls to +
+  // briefly highlights their existing layer card(s) below, instead of
+  // building a new UI surface for what the layer cards already show.
+  const layerCardRefs = useRef<Record<string, HTMLDivElement | null>>({})
+  const [highlightedLayerId, setHighlightedLayerId] = useState<string | null>(null)
+  const handleMatrixCellClick = useCallback(
+    (rowIdx: number, colIdx: number) => {
+      const entries = matrixEntriesMap.get(`${rowIdx}-${colIdx}`)
+      if (!entries || entries.length === 0) return
+      const target = layerCardRefs.current[entries[0].layerId]
+      target?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      setHighlightedLayerId(entries[0].layerId)
+      window.setTimeout(() => setHighlightedLayerId(null), 1600)
+    },
+    [matrixEntriesMap]
+  )
 
   return (
     <div className="space-y-6">
@@ -748,31 +927,79 @@ export const SupplyChainRiskMatrix: React.FC<{
       {/* Likelihood × Impact Risk Matrix */}
       <div className={cardClass('p-4')}>
         <h3 className="text-base font-semibold text-foreground mb-1">
-          Supply Chain Risk Matrix (Likelihood × Impact)
+          Supply Chain Risk Matrix (Migration Gap × Impact)
         </h3>
         <p className="text-xs text-muted-foreground mb-3">
-          Each infrastructure layer plotted by <strong>likelihood</strong> (share of the layer not
-          yet PQC-ready) × <strong>impact</strong> (share flagged Critical/High migration priority).
-          Top-right is worst.
+          Each infrastructure layer plotted by <strong>migration gap</strong> (share of the layer
+          not yet PQC-ready) × <strong>impact</strong> (share of this industry&apos;s
+          supply-chain-relevant threats that name this layer). Both axes are heuristics derived from
+          real catalog/threat data, not a validated risk-probability estimate — click a cell to jump
+          to the layer(s) it represents below.
         </p>
-        <div className="flex items-start gap-2">
-          <div className="flex items-center justify-center w-5 shrink-0 self-center">
-            <span
-              className="text-[10px] font-bold text-muted-foreground whitespace-nowrap tracking-widest"
-              style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
-            >
-              LIKELIHOOD
-            </span>
-          </div>
-          <div className="flex-1 space-y-1">
-            <SupplyChainRiskGrid entriesMap={matrixEntriesMap} />
-            <div className="text-center">
-              <span className="text-[10px] font-bold text-muted-foreground tracking-widest">
-                IMPACT
-              </span>
+        {!hasIndustryContext ? (
+          <div className="flex items-start gap-2 rounded-lg border border-border bg-muted/30 p-3 text-xs text-muted-foreground">
+            <Info size={14} className="mt-0.5 shrink-0" />
+            <div>
+              <p>
+                Impact requires an industry/country context to compute from real threat data —
+                select yours in Step 1. Showing Migration Gap only, worst first:
+              </p>
+              <ul className="mt-2 space-y-1">
+                {[...layerStats]
+                  .sort((a, b) => b.likelihood - a.likelihood)
+                  .map((stat) => (
+                    <li key={stat.layerId} className="flex items-center justify-between gap-2">
+                      <span className="text-foreground">
+                        {LAYER_MAP.get(stat.layerId)?.label ?? stat.layerId}
+                      </span>
+                      <span className="tabular-nums">
+                        {stat.likelihood === 0
+                          ? 'Fully ready'
+                          : `${MATRIX_LIKELIHOOD_LABELS[5 - stat.likelihood]}`}
+                      </span>
+                    </li>
+                  ))}
+              </ul>
             </div>
           </div>
-        </div>
+        ) : (
+          <>
+            <div className="flex items-start gap-2">
+              <div className="flex items-center justify-center w-5 shrink-0 self-center">
+                <span
+                  className="text-[10px] font-bold text-muted-foreground whitespace-nowrap tracking-widest"
+                  style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
+                >
+                  MIGRATION GAP
+                </span>
+              </div>
+              <div className="flex-1 space-y-1">
+                <SupplyChainRiskGrid
+                  entriesMap={matrixEntriesMap}
+                  onCellClick={handleMatrixCellClick}
+                />
+                <div className="text-center">
+                  <span className="text-[10px] font-bold text-muted-foreground tracking-widest">
+                    IMPACT
+                  </span>
+                </div>
+              </div>
+            </div>
+            {noRiskLayers.length > 0 && (
+              <div className="mt-2 flex items-start gap-2 rounded-lg border border-status-success/30 bg-status-success/5 p-2 text-xs text-muted-foreground">
+                <CheckCircle size={13} className="mt-0.5 shrink-0 text-status-success" />
+                <span>
+                  <strong className="text-foreground">
+                    {noRiskLayers.length} layer{noRiskLayers.length !== 1 ? 's' : ''}
+                  </strong>{' '}
+                  not plotted above — zero on at least one axis, not enough matrix room for a true
+                  &quot;no risk&quot; cell:{' '}
+                  {noRiskLayers.map((s) => LAYER_MAP.get(s.layerId)?.label ?? s.layerId).join(', ')}
+                </span>
+              </div>
+            )}
+          </>
+        )}
       </div>
 
       {/* Product Dependencies */}
@@ -784,36 +1011,14 @@ export const SupplyChainRiskMatrix: React.FC<{
           </div>
           <p className="text-xs text-muted-foreground mb-3">
             Library/HSM products referenced by name in another product&apos;s own catalog
-            description — a real (if partial) dependency signal, not an asset-class grouping. A
-            vulnerable library or HSM here is a single point of failure for every product listed.
+            description — detected by matching product names as a substring in free text. This is a
+            real (if partial) signal, not verified dependency data: it may miss real dependencies
+            never named in prose, and may false-positive on names that appear in an unrelated
+            sentence. Click a name to view its full detail.
           </p>
           <div className="space-y-2">
             {dependencyRelations.map((rel) => (
-              <div
-                key={rel.provider.productId}
-                className="rounded-md border border-border bg-muted/30 p-2"
-              >
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-sm font-medium text-foreground">
-                    {rel.provider.softwareName}
-                  </span>
-                  {renderPqcBadge(rel.provider.pqcSupport)}
-                  <span className="text-xs text-muted-foreground">
-                    depended on by {rel.dependents.length}{' '}
-                    {rel.dependents.length === 1 ? 'product' : 'products'}
-                  </span>
-                </div>
-                <div className="flex flex-wrap gap-1.5 mt-1.5">
-                  {rel.dependents.map((d) => (
-                    <span
-                      key={d.productId}
-                      className="text-xs px-2 py-0.5 rounded-full bg-background border border-border text-muted-foreground"
-                    >
-                      {d.softwareName}
-                    </span>
-                  ))}
-                </div>
-              </div>
+              <DependencyRelationCard key={rel.provider.productId} rel={rel} />
             ))}
           </div>
         </div>
@@ -828,8 +1033,41 @@ export const SupplyChainRiskMatrix: React.FC<{
           const iconColor = layerDef?.iconColor ?? 'text-muted-foreground'
           const label = layerDef?.label ?? stat.layerId
 
+          const riskBadge =
+            stat.impact === null ? (
+              <span
+                className="text-xs px-2 py-0.5 rounded-full border font-medium shrink-0 bg-muted/50 text-muted-foreground border-border"
+                title="Select an industry/country in Step 1 to compute Impact"
+              >
+                Gap-only (no Impact yet)
+              </span>
+            ) : stat.likelihood === 0 || stat.impact === 0 ? (
+              <span
+                className="text-xs px-2 py-0.5 rounded-full border font-medium shrink-0 bg-status-success/10 text-status-success border-status-success/20"
+                title={`Migration Gap ${stat.likelihood}/5 × Impact ${stat.impact}/5 — not plotted on the grid above`}
+              >
+                No risk
+              </span>
+            ) : (
+              <span
+                className={`text-xs px-2 py-0.5 rounded-full border font-medium shrink-0 ${matrixBadgeClasses(stat.riskScore ?? 0)}`}
+                title={`Migration Gap ${stat.likelihood}/5 × Impact ${stat.impact}/5`}
+              >
+                {matrixRiskLevel(stat.riskScore ?? 0)} risk ({stat.riskScore})
+              </span>
+            )
+
           return (
-            <div key={stat.layerId} className={cardClass('p-4')}>
+            <div
+              key={stat.layerId}
+              data-testid={`layer-card-${stat.layerId}`}
+              ref={(el) => {
+                layerCardRefs.current[stat.layerId] = el
+              }}
+              className={`${cardClass('p-4')} transition-colors ${
+                highlightedLayerId === stat.layerId ? 'ring-2 ring-primary' : ''
+              }`}
+            >
               {/* Layer header — matches InfrastructureSelector pattern */}
               <div className="flex items-center gap-3 mb-4">
                 <div className={`p-2 rounded-lg bg-muted/20 border ${borderColor} ${iconColor}`}>
@@ -841,12 +1079,15 @@ export const SupplyChainRiskMatrix: React.FC<{
                     {stat.total} product{stat.total !== 1 ? 's' : ''}
                   </span>
                 </div>
-                <span
-                  className={`text-xs px-2 py-0.5 rounded-full border font-medium shrink-0 ${matrixBadgeClasses(stat.riskScore)}`}
-                  title={`Likelihood ${stat.likelihood}/5 × Impact ${stat.impact}/5`}
-                >
-                  {matrixRiskLevel(stat.riskScore)} risk ({stat.riskScore})
-                </span>
+                {stat.criticalHigh > 0 && (
+                  <span
+                    className="text-xs px-2 py-0.5 rounded-full border font-medium shrink-0 bg-status-warning/10 text-status-warning border-status-warning/20"
+                    title="Products flagged Critical/High pqcMigrationPriority by the catalog curator — informational, no longer used as the Impact axis input"
+                  >
+                    {stat.criticalHigh} priority
+                  </span>
+                )}
+                {riskBadge}
               </div>
 
               {/* Readiness stats */}
@@ -856,21 +1097,22 @@ export const SupplyChainRiskMatrix: React.FC<{
                 <StatBadge label="Hybrid Support" count={stat.hybridSupport} total={stat.total} />
               </div>
 
-              {/* Per-product detail */}
-              <div className="space-y-1 mt-3 pt-3 border-t border-border/50">
+              {/* Per-product detail — click a product to expand its full
+                  detail (vendor, certs, roadmap, proof) in place. */}
+              <div className="mt-3 pt-3 border-t border-border/50">
                 {stat.products.map((item) => (
-                  <div key={item.productId} className="flex items-center gap-2 py-1.5 px-2 rounded">
-                    <span className="text-sm text-foreground truncate min-w-0">
-                      {item.softwareName}
-                    </span>
-                    {renderPqcBadge(item.pqcSupport)}
-                    {renderFipsBadge(item.fipsValidated)}
-                    {isHybridProduct(item) && (
-                      <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-                        <GitMerge size={9} /> Hybrid
-                      </span>
-                    )}
-                  </div>
+                  <ProductRow
+                    key={item.productId}
+                    product={item}
+                    compact
+                    extraBadges={
+                      isHybridProduct(item) ? (
+                        <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                          <GitMerge size={9} /> Hybrid
+                        </span>
+                      ) : undefined
+                    }
+                  />
                 ))}
               </div>
             </div>
@@ -922,6 +1164,14 @@ export const SupplyChainRiskMatrix: React.FC<{
           is bucketed into one of this tool's six simplified asset classes (Code / Library /
           Application / File / Protocol / System) using its catalog category.
         </p>
+        <div className="mb-3 flex items-start gap-2 rounded-lg border border-border bg-muted/30 p-2 text-xs text-muted-foreground">
+          <Info size={13} className="mt-0.5 shrink-0" />
+          <span>
+            This is PQC Today&apos;s own simplified grouping, not a taxonomy CSWP.39 itself defines
+            — CSWP.39 §5.3 discusses an asset-centric inventory approach but doesn&apos;t prescribe
+            these six classes.
+          </span>
+        </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {(['Code', 'Library', 'Application', 'File', 'Protocol', 'System'] as const).map(
             (cls) => (
