@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
   "generated": "2026-07-09",
-  "count": 1046,
+  "count": 1048,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -8584,6 +8584,20 @@
       "file": "debian-13-trixie-0b351c13.html",
       "bytes": 14837,
       "tier": "playwright-stealth"
+    },
+    {
+      "product_id": "noble-post-quantum-Auditable-minimal-JS",
+      "url": "https://github.com/paulmillr/noble-post-quantum",
+      "file": "noble-post-quantum-Auditable-minimal-JS-1cb20b15.html",
+      "bytes": 415433,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "ML-DSA-OSH-open-source-hardware-implemen",
+      "url": "https://github.com/KULeuven-COSIC/ML-DSA-OSH/releases",
+      "file": "ML-DSA-OSH-open-source-hardware-implemen-111fa92d.html",
+      "bytes": 190049,
+      "tier": "curl_cffi:chrome124"
     }
   ]
 }
