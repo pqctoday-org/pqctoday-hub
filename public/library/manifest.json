@@ -8359,6 +8359,26 @@
       "sizeBytes": 58863,
       "contentType": "text/html",
       "sha256": "48f6154eba94d28835bb83cddad9c2298b4f1fa58c4810782050bc51cbf5a99d"
+    },
+    {
+      "refId": "Post-Quantum-Traditional-PQ-T-Hybrid-PKI-Authentication-in-t",
+      "title": "Post-Quantum Traditional (PQ/T) Hybrid PKI Authentication in the Internet Key Exchange Version 2 (IKEv2)",
+      "url": "https://datatracker.ietf.org/doc/draft-hu-ipsecme-pqt-hybrid-auth/",
+      "status": "downloaded",
+      "filename": "Post-Quantum-Traditional-PQ-T-Hybrid-PKI-Authentication-in-t.html",
+      "sizeBytes": 73120,
+      "contentType": "text/html",
+      "sha256": "fce36497b630830771224358f59b4cdcdabf32b0a14771fe458e636502f895e6"
+    },
+    {
+      "refId": "Post-Quantum-Key-Encapsulation-Mechanisms-PQ-KEMs-for-COSE",
+      "title": "Post-Quantum Key Encapsulation Mechanisms (PQ KEMs) for COSE",
+      "url": "https://datatracker.ietf.org/doc/draft-ietf-jose-pqc-kem/",
+      "status": "downloaded",
+      "filename": "Post-Quantum-Key-Encapsulation-Mechanisms-PQ-KEMs-for-COSE.html",
+      "sizeBytes": 79044,
+      "contentType": "text/html",
+      "sha256": "ac5a89db429256275a90bc908115260f62876c7f8ca048a509f96284b0b559ac"
     }
   ]
 }
