@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
   "generated": "2026-07-09",
-  "count": 1048,
+  "count": 1051,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -8597,6 +8597,27 @@
       "url": "https://github.com/KULeuven-COSIC/ML-DSA-OSH/releases",
       "file": "ML-DSA-OSH-open-source-hardware-implemen-111fa92d.html",
       "bytes": 190049,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Preparing-for-The-Quantum-Era-AT-T-Busin",
+      "url": "https://about.att.com/story/2026/cisco-post-quantum-cryptography.html",
+      "file": "Preparing-for-The-Quantum-Era-AT-T-Busin-6b94ace9.html",
+      "bytes": 37904,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "STMicroelectronics-ST54M-Post-Quantum-Se",
+      "url": "https://thequantuminsider.com/2026/06/24/stmicroelectronics-unveils-worlds-first-st54m-secure-mobile-chip-with-post-quantum-cryptography-for-next-generation-connected-services/",
+      "file": "STMicroelectronics-ST54M-Post-Quantum-Se-41d06b8e.html",
+      "bytes": 270152,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Arqit-Encryption-Intelligence",
+      "url": "https://thequantuminsider.com/2026/01/23/arqit-encryption-intelligence-pqc-migration/",
+      "file": "Arqit-Encryption-Intelligence-a600539a.html",
+      "bytes": 267325,
       "tier": "curl_cffi:chrome124"
     }
   ]
