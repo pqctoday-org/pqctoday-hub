@@ -28,6 +28,23 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.21.4] - 2026-07-14
+
+Vendor Risk and certificate details get clearer in-place drill-downs on
+/migrate, the Protocol Support matrix picks up TLS 1.3's new RFC plus two
+new tracked protocols, and a data-quality pass recovers, verifies, and
+corrects more of the Migrate catalog's supporting evidence.
+
+### Changed
+
+- **Vendor Risk matrix rows and dependencies now expand in place** [view:/migrate] [persona:architect] [persona:executive]: clicking a product or one of its dependency chips in the risk matrix now opens full product details right there, instead of leaving you to look it up elsewhere. The "Migration Gap" axis (previously "Likelihood," which was really measuring migration progress, not risk) now shows plain labels like "Severe Gap" or "Minimal Gap" instead of raw percentages, and layers with no risk now show as individual badges instead of one long sentence.
+- **Products with multiple certifications of the same type now show all of them** [view:/migrate] [persona:architect]: a product with, say, two FIPS validations used to only surface the newest one. A popover now lists every certification with its date and link.
+
+### Data
+
+- **Protocol Support matrix updated for TLS 1.3, Wi-Fi, and Fibre Channel** [view:/algorithms] [persona:developer] [persona:architect]: TLS 1.3 now points at RFC 9846, which formally obsoletes the original RFC 8446 (also updated on /library). Added two new tracked protocols: IEEE 802.11bt (Wi-Fi PQC, still pre-draft) and Fibre Channel FC-SP-3, which already has a real production deployment (Broadcom Emulex SecureHBA, 120,000+ units shipped) using ML-KEM-1024/ML-DSA-87.
+- **More Migrate products verified against their real supporting documents** [view:/migrate] [persona:researcher] [persona:architect]: recovered evidence for several products whose proof documents were previously unreachable, and corrected two rows whose cited source didn't actually discuss the specific PQC claim being made (their assessment is now flagged for review rather than silently trusted).
+
 ## [4.21.3] - 2026-07-14
 
 A large data-quality pass: hundreds of Migrate products got a real
