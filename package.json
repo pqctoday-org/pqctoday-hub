@@ -162,7 +162,7 @@
     "papaparse": "^5.5.3",
     "pptxgenjs": "^4.0.1",
     "react": "^19.2.4",
-    "react-dom": "^19.2.4",
+    "react-dom": "^19.2.7",
     "react-focus-lock": "^2.13.7",
     "react-ga4": "^2.1.0",
     "react-hot-toast": "^2.6.0",
