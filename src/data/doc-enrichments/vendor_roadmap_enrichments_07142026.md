@@ -8,74 +8,27 @@ source: public/vendor-roadmaps/
 # Vendor PQC Roadmap Enrichments
 
 
-## VND-017 — Futurex Inc.
+## VND-057 — Cloudflare Inc.
 
-- **Vendor ID**: VND-017
-- **Vendor Name**: Futurex Inc.
-- **Roadmap Title**: Futurex Post-Quantum Hybrid Certificate Authority Solution
-- **Roadmap URL**: https://www.futurex.com/news/futurex-announces-post-quantum-hybrid-certificate-authority-solution
-- **Publish Date**: 2020-02-20
-- **Local File**: vendor-roadmaps/VND-017_Futurex_Inc..html
-- **CSV Coverage Notes**: (2026-07-01: verified publish date is 2020-02-20 (KMES Series 3 announcement), not 2026-06-05 as previously recorded; page shows a 2024-09-20 republish stamp but no new content. No more-current Futurex PQC announcement found.)
-- **PQC Algorithms Announced**: None detected
-- **Target Migration Dates**: None detected
-- **Products / Services Covered**: KMES Series 3
-- **Compliance Frameworks**: FIPS 140-2 Level 3; NIST
-- **Hybrid Mode Support**: Yes; embeds both conventional and quantum-safe certificates in a single container
+- **Vendor ID**: VND-057
+- **Vendor Name**: Cloudflare Inc.
+- **Roadmap Title**: The White House's post-quantum executive order is an important milestone. It's time to get to work
+- **Roadmap URL**: https://blog.cloudflare.com/post-quantum-eo-2026/
+- **Publish Date**: 2026-07-15
+- **Local File**: vendor-roadmaps/VND-057_Cloudflare_Inc.html
+- **CSV Coverage Notes**: None
+- **PQC Algorithms Announced**: ML-KEM; ML-DSA
+- **Target Migration Dates**: Cloudflare full post-quantum security by 2029; Federal agencies PQC key establishment by December 31, 2030; Federal agencies PQC digital signatures by December 31, 2031; Federal contractors PQC FIPS compliance by December 31, 2030
+- **Products / Services Covered**: Cloudflare One; TLS; MASQUE; IPsec
+- **Compliance Frameworks**: NIST FIPS; FIPS 199
+- **Hybrid Mode Support**: No
 - **Current GA Status**: GA
 - **Customer Action Required**: None detected
-- **Key Commitments & Quotes**: "Futurex is the first company to deliver a post-quantum hybrid certificate authority offering that integrates certificate lifecycle management within a FIPS 140-2 Level 3-validated hardware security module (HSM)."
-- **Coverage Verification**: CONSISTENT; The document text confirms the February 20, 2020 announcement date for KMES Series 3 and matches the republish context.
-- **Extraction Quality**: LOW
-- **Source Document**: VND-017_Futurex_Inc..html (596.5 KB)
-- **Extraction Timestamp**: 2026-07-14T19:49:55
-
-
-## VND-018 — Google LLC
-
-- **Vendor ID**: VND-018
-- **Vendor Name**: Google LLC
-- **Roadmap Title**: Google Cloud Post-Quantum Cryptography
-- **Roadmap URL**: https://cloud.google.com/security/resources/post-quantum-cryptography
-- **Publish Date**: 2025-10-01
-- **Local File**: vendor-roadmaps/VND-018_Google_LLC.html
-- **CSV Coverage Notes**: Google Cloud PQC: ML-KEM migrated for internal/network traffic and default Cloud network encryption; Cloud KMS quantum-safe digital signatures (ML-DSA-65, SLH-DSA-SHA2-128S) preview Feb 2025 and KEM support preview Oct 2025, committing to FIPS 203/204/205 in both Cloud KMS (software) and Cloud HSM (hardware). Implementations open-sourced via BoringCrypto/BoringSSL and Tink (HPKE for Java/C++/Go/Python). Chrome and Android PQC support. Infra connection rollout targeted 2026. | Milestone: Quantum-safe KEMs in Cloud KMS in preview (Oct 2025); quantum-safe digital signatures (ML-DSA-65, SLH-DSA-SH
-- **PQC Algorithms Announced**: ML-KEM; Kyber
-- **Target Migration Dates**: 2029
-- **Products / Services Covered**: Google Cloud; Cloud KMS; Chrome; Android; BoringSSL; Tink; OpenSK
-- **Compliance Frameworks**: NIST
-- **Hybrid Mode Support**: Yes; "hybrid deployments of PQC and classic cryptography"
-- **Current GA Status**: GA
-- **Customer Action Required**: None detected
-- **Key Commitments & Quotes**: "Google has set 2029 as the deadline for Google’s PQC migration to secure the quantum era."
-- **Coverage Verification**: PARTIAL; The document confirms the 2029 deadline, ML-KEM/Kyber usage, and hybrid strategy, but does not explicitly state the specific preview dates (Feb/Oct 2025), specific algorithm variants (ML-DSA-65, SLH-DSA-SHA2-128S), or FIPS 203/204/205 commitments found in the CSV notes.
+- **Key Commitments & Quotes**: "Cloudflare moved our own target for full post-quantum security to 2029"; "we've already shipped post-quantum encryption across most of our products at no extra cost"; "every post-quantum upgrade we build is available to all customers, on every plan, at no additional cost"
+- **Coverage Verification**: CONSISTENT — The document discusses general strategy and timelines rather than specific product version roadmaps, consistent with "Not specified" coverage notes.
 - **Extraction Quality**: MEDIUM
-- **Source Document**: VND-018_Google_LLC.html (2124.2 KB)
-- **Extraction Timestamp**: 2026-07-14T19:49:55
-
-
-## VND-019 — IBM Corporation
-
-- **Vendor ID**: VND-019
-- **Vendor Name**: IBM Corporation
-- **Roadmap Title**: IBM Quantum-Safe Roadmap
-- **Roadmap URL**: https://research.ibm.com/blog/quantum-safe-roadmap
-- **Publish Date**: 2023-05-10
-- **Local File**: vendor-roadmaps/VND-019_IBM_Corporation.html
-- **CSV Coverage Notes**: IBM Quantum-Safe Roadmap (page dated 2023-05-10, unchanged) outlines crypto-agility via the IBM Quantum Safe portfolio: Explorer (code scanning / cryptographic artifact discovery), Advisor (posture & compliance analysis, CBOM), and Remediator (test/implement hybrid quantum-safe remediation). Phased path: inventory (2023), adopt NIST standards (2024), CNSA 2.0 preference (2025). Also Guardium, z/OS, OpenSSL integrations. | Milestone: IBM Quantum Safe Explorer/Advisor/Remediator for crypto inventory (CBOM), risk analysis, and hybrid quantum-safe remediation; aligned to NIST 2024 standards and 20
-- **PQC Algorithms Announced**: CRYSTALS-Kyber; CRYSTALS-Dilithium; Falcon
-- **Target Migration Dates**: 2023 (complete cryptography inventory and create CBOM); 2024 (NIST publish post-quantum cryptography standards); 2025 (NSA require preference for quantum-safe algorithms)
-- **Products / Services Covered**: IBM Quantum Safe Explorer; IBM Quantum Safe Advisor; IBM Quantum Safe Remediator; IBM z16; IBM Tape
-- **Compliance Frameworks**: NIST; FIPS; CNSA 2.0
-- **Hybrid Mode Support**: Yes; Remediator supports a hybrid implementation approach using classical and quantum-safe cryptography
-- **Current GA Status**: GA
-- **Customer Action Required**: Complete cryptography inventory; create CBOM; begin quantum-safe transition
-- **Key Commitments & Quotes**: "This roadmap serves as a commitment to transparency, predictability, and confidence as we guide industries along their journey to post-quantum cryptography."
-- **Coverage Verification**: PARTIAL; The document confirms the roadmap date, portfolio names, and phased timeline, but does not explicitly mention Guardium, z/OS, or OpenSSL integrations in the provided text.
-- **Extraction Quality**: HIGH
-- **Source Document**: VND-019_IBM_Corporation.html (84.2 KB)
-- **Extraction Timestamp**: 2026-07-14T19:49:55
-
+- **Source Document**: VND-057_Cloudflare_Inc.html (426.7 KB)
+- **Extraction Timestamp**: 2026-07-14T19:57:12
 
 ## VND-001 — Amazon Web Services Inc.
 
@@ -84,43 +37,21 @@ source: public/vendor-roadmaps/
 - **Roadmap Title**: AWS Post-Quantum Cryptography Migration Plan
 - **Roadmap URL**: https://aws.amazon.com/security/post-quantum-cryptography/migrating-to-post-quantum-cryptography/
 - **Publish Date**: 2026-04-23
-- **Local File**: vendor-roadmaps/VND-001_Amazon_Web_Services_Inc..html
+- **Local File**: public/vendor-roadmaps/VND-001_Amazon_Web_Services_Inc..html
 - **CSV Coverage Notes**: AWS PQC migration plan: ML-KEM (FIPS 203) key exchange enabled across KMS, ACM, Secrets Manager, S3, CloudFront, API Gateway, ALB/NLB, Transfer Family, Payment Cryptography; ML-DSA (FIPS 204) signatures in AWS Private CA and KMS, CloudHSM ML-DSA in preview. Built on AWS-LC and s2n-tls. Some features transparently enabled, others customer-opt-in under shared responsibility model. | Milestone: ML-KEM hybrid key exchange live across KMS, ACM, Secrets Manager, S3, CloudFront (default client-to-edge), API Gateway, ALB/NLB, Transfer Family, Payment Cryptography; ML-DSA signing in Private CA and KMS,
+- **Roadmap Scope**: Multi-product
 - **PQC Algorithms Announced**: ML-KEM; ML-DSA; SLH-DSA
 - **Target Migration Dates**: None detected
-- **Products / Services Covered**: Elastic Load Balancers (ALB, NLB); API Gateway; CloudFront; Transfer Family; AWS Key Management Service (KMS); AWS Certificate Manager (ACM); AWS Secrets Manager; AWS Payment Cryptography; Amazon Simple Storage Service (S3); AWS Private Certificate Authority (Private CA); AWS CloudHSM; IAM Roles Anywhere
-- **Compliance Frameworks**: NIST FIPS 203; NIST FIPS 204; NIST FIPS 205; NIST IR 8547; European Commission Recommendation on a Coordinated Implementation Roadmap; NCSC whitepaper; BSI Technical Guideline TR-02102; ANSSI position paper; ASD guidance; Canadian Centre for Cyber Security ITSM.40.001; UAE Cyber Security Council National Encryption Policy v1.0; G7 Cyber Expert Group coordinated roadmap; ASC X9 Post Quantum Cryptography Financial Readiness Needs Assessment; GSMA Post-Quantum Telco Network Taskforce guidelines
-- **Hybrid Mode Support**: Yes, the document states that services offer "hybrid PQ-key exchange using ML-KEM" and references BSI recommendations for "hybrid post-quantum cryptography... combining traditional and quantum-resistant algorithms".
-- **Current GA Status**: GA (General Availability), with CloudHSM ML-DSA support in preview.
-- **Customer Action Required**: Update client-side components/SDKs to versions supporting ML-KEM; apply PQ-TLS policies to customer-owned resources; ensure applications use TLS 1.3; explicitly specify desired TLS policies in infrastructure-as-code; use IAM condition keys to restrict TLS policies; update PKI infrastructure to use ML-DSA.
+- **Products / Services Covered**: KMS; ACM; Secrets Manager; S3; CloudFront; API Gateway; ALB; NLB; Transfer Family; Payment Cryptography; Private CA; CloudHSM; IAM Roles Anywhere
+- **Compliance Frameworks**: NIST FIPS 203; NIST FIPS 204; NIST FIPS 205; NIST IR 8547
+- **Hybrid Mode Support**: Yes; hybrid PQ-key exchange using ML-KEM
+- **Current GA Status**: GA
+- **Customer Action Required**: Update client-side components to versions that support ML-KEM; apply PQ-TLS policies to resources; ensure applications use TLS 1.3
 - **Key Commitments & Quotes**: "AWS is migrating to post-quantum cryptography (PQC), and helping our customers do the same under a shared responsibility model."
-- **Coverage Verification**: PARTIAL, the document confirms the listed services and ML-KEM/ML-DSA support but does not explicitly mention the underlying libraries "AWS-LC and s2n-tls" in the provided text.
+- **Coverage Verification**: PARTIAL; Document confirms ML-KEM/ML-DSA services and preview status but does not mention AWS-LC or s2n-tls.
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-001_Amazon_Web_Services_Inc..html (311.1 KB)
-- **Extraction Timestamp**: 2026-07-14T19:49:55
-
-
-## VND-021 — Infineon Technologies AG
-
-- **Vendor ID**: VND-021
-- **Vendor Name**: Infineon Technologies AG
-- **Roadmap Title**: Infineon Post-Quantum Cryptography
-- **Roadmap URL**: https://www.infineon.com/promo/postquantumcryptography
-- **Publish Date**: 2025-10-15
-- **Local File**: vendor-roadmaps/VND-021_Infineon_Technologies_AG.html
-- **CSV Coverage Notes**: Infineon PQC hub: SLC27 security controller (TEGRION family, Integrity Guard 32) launched Oct 2025 with Common Criteria-certified PQC library (ML-KEM, ML-DSA), crypto-agility and in-field updates, hardened against fault/side-channel. PSOC Control C3 Performance Line samples by end-2025, production 2026 adding ML-DSA on-device key gen/signing and ML-KEM for TLS. Automotive MCUs upgraded for PQC; LMS support. | Milestone: SLC27 PQC-certified contactless/dual-interface security controller launched Oct 2025 with CC-certified ML-KEM + ML-DSA crypto library (TEGRION family, Integrity Guard 32); PSOC
-- **PQC Algorithms Announced**: ML-KEM; ML-DSA; SLH-DSA; XMSS; LMS
-- **Target Migration Dates**: 2025 (PSOC MCUs compliant with CNSA 2.0; TEGRION CC certification); 2030-2035 (potential availability of powerful quantum computers)
-- **Products / Services Covered**: TEGRION security controller (Integrity Guard 32); PSOC™ Control C3 Performance Line Family; OPTIGA™ TPM SLB 9673 FW26; OPTIGA™ TPM SLB 9672 FW15; OPTIGA™ TPM SLB 9672 FW16; PSOC™ Edge; SECORA™ Pay; SECORA™ Blockchain
-- **Compliance Frameworks**: Common Criteria EAL6+; CNSA Suite 2.0; NIST
-- **Hybrid Mode Support**: Yes; "Changes in protocols and a transition period with e.g. hybrid schemes (combining classical cryptography and PQC...)"
-- **Current GA Status**: GA; "In 2024, Infineon made a huge step... We received the world’s first Common Criteria EAL6+ certification"
-- **Customer Action Required**: None detected
-- **Key Commitments & Quotes**: "In 2024, Infineon made a huge step toward a quantum resistant world. We received the world’s first Common Criteria EAL6+ certification for a security controller comprising the secured implementation of a post-quantum cryptography (PQC) algorithm."; "from 2025 on, Infineon PSOC™ microcontrollers (MCUs) are compliant with PQC requirements for firmware verification outlined in the Commercial National Security Algorithm (CNSA) Suite 2.0"; "In 2025, we become world‘s first company to receive Common Criteria EAL6... for the secured implementation of a post-quantum cryptography algorithm on our TEGRION security controller."
-- **Coverage Verification**: PARTIAL; The document confirms TEGRION/Integrity Guard 32 CC certification and PSOC CNSA 2.0 compliance, but does not explicitly mention the SLC27 product name, the Oct 2025 launch date, or specific ML-DSA/ML-KEM library details for those products.
-- **Extraction Quality**: MEDIUM
-- **Source Document**: VND-021_Infineon_Technologies_AG.html (1682.4 KB)
-- **Extraction Timestamp**: 2026-07-14T19:50:24
+- **Extraction Timestamp**: 2026-07-07T20:20:19
 
 ## VND-002 — Apple Inc.
 
@@ -399,6 +330,75 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-016_Fortinet_Inc..html (329.4 KB)
 - **Extraction Timestamp**: 2026-07-07T20:21:10
 
+## VND-017 — Futurex Inc.
+
+- **Vendor ID**: VND-017
+- **Vendor Name**: Futurex Inc.
+- **Roadmap Title**: Futurex Post-Quantum Hybrid Certificate Authority Solution
+- **Roadmap URL**: https://www.futurex.com/news/futurex-announces-post-quantum-hybrid-certificate-authority-solution
+- **Publish Date**: 2020-02-20
+- **Local File**: public/vendor-roadmaps/VND-017_Futurex_Inc..html
+- **CSV Coverage Notes**: (2026-07-01: verified publish date is 2020-02-20 (KMES Series 3 announcement), not 2026-06-05 as previously recorded; page shows a 2024-09-20 republish stamp but no new content. No more-current Futurex PQC announcement found.)
+- **Roadmap Scope**: Portfolio-wide strategy
+- **PQC Algorithms Announced**: None detected
+- **Target Migration Dates**: None detected
+- **Products / Services Covered**: CryptoHub; VirtuCrypt; Excrypt HSM
+- **Compliance Frameworks**: None detected
+- **Hybrid Mode Support**: Yes; Post-Quantum Hybrid Certificate Authority Solution
+- **Current GA Status**: Planned
+- **Customer Action Required**: None detected
+- **Key Commitments & Quotes**: "The only PQC-ready, all-in-one encryption solution for HSMs, key management, PKI and CA, and data protection via cloud, on-premises, and hybrid."
+- **Coverage Verification**: CONSISTENT; The document confirms PQC readiness for multiple products without new specific announcements, aligning with the note that no more-current PQC announcement was found.
+- **Extraction Quality**: LOW
+- **Source Document**: VND-017_Futurex_Inc..html (596.5 KB)
+- **Extraction Timestamp**: 2026-07-07T20:21:48
+
+## VND-018 — Google LLC
+
+- **Vendor ID**: VND-018
+- **Vendor Name**: Google LLC
+- **Roadmap Title**: Google Cloud Post-Quantum Cryptography
+- **Roadmap URL**: https://cloud.google.com/security/resources/post-quantum-cryptography
+- **Publish Date**: 2025-10-01
+- **Local File**: public/vendor-roadmaps/VND-018_Google_LLC.html
+- **CSV Coverage Notes**: Google Cloud PQC: ML-KEM migrated for internal/network traffic and default Cloud network encryption; Cloud KMS quantum-safe digital signatures (ML-DSA-65, SLH-DSA-SHA2-128S) preview Feb 2025 and KEM support preview Oct 2025, committing to FIPS 203/204/205 in both Cloud KMS (software) and Cloud HSM (hardware). Implementations open-sourced via BoringCrypto/BoringSSL and Tink (HPKE for Java/C++/Go/Python). Chrome and Android PQC support. Infra connection rollout targeted 2026. | Milestone: Quantum-safe KEMs in Cloud KMS in preview (Oct 2025); quantum-safe digital signatures (ML-DSA-65, SLH-DSA-SH
+- **Roadmap Scope**: Multi-product
+- **PQC Algorithms Announced**: ML-KEM; Kyber
+- **Target Migration Dates**: 2029
+- **Products / Services Covered**: Google Cloud; Chrome; Android; Cloud KMS; BoringSSL; Tink; OpenSK
+- **Compliance Frameworks**: NIST
+- **Hybrid Mode Support**: Yes; hybrid deployments of PQC and classic cryptography
+- **Current GA Status**: GA
+- **Customer Action Required**: None detected
+- **Key Commitments & Quotes**: "Google has set 2029 as the deadline for Google’s PQC migration to secure the quantum era."
+- **Coverage Verification**: PARTIAL; The document confirms the 2029 deadline and mentions ML-KEM/Chrome/Android/Cloud KMS, but does not contain the specific preview dates (Feb/Oct 2025), FIPS 203/204/205 commitments, or ML-DSA/SLH-DSA details found in the CSV notes.
+- **Extraction Quality**: MEDIUM
+- **Source Document**: VND-018_Google_LLC.html (2124.2 KB)
+- **Extraction Timestamp**: 2026-07-07T20:21:48
+
+## VND-019 — IBM Corporation
+
+- **Vendor ID**: VND-019
+- **Vendor Name**: IBM Corporation
+- **Roadmap Title**: IBM Quantum-Safe Roadmap
+- **Roadmap URL**: https://research.ibm.com/blog/quantum-safe-roadmap
+- **Publish Date**: 2023-05-10
+- **Local File**: public/vendor-roadmaps/VND-019_IBM_Corporation.html
+- **CSV Coverage Notes**: IBM Quantum-Safe Roadmap (page dated 2023-05-10, unchanged) outlines crypto-agility via the IBM Quantum Safe portfolio: Explorer (code scanning / cryptographic artifact discovery), Advisor (posture & compliance analysis, CBOM), and Remediator (test/implement hybrid quantum-safe remediation). Phased path: inventory (2023), adopt NIST standards (2024), CNSA 2.0 preference (2025). Also Guardium, z/OS, OpenSSL integrations. | Milestone: IBM Quantum Safe Explorer/Advisor/Remediator for crypto inventory (CBOM), risk analysis, and hybrid quantum-safe remediation; aligned to NIST 2024 standards and 20
+- **Roadmap Scope**: Multi-product
+- **PQC Algorithms Announced**: CRYSTALS-Kyber; CRYSTALS-Dilithium; Falcon
+- **Target Migration Dates**: 2023 (inventory); 2024 (NIST standards); 2025 (NSA preference)
+- **Products / Services Covered**: IBM Quantum Safe Explorer; IBM Quantum Safe Advisor; IBM Quantum Safe Remediator; IBM z16; IBM Tape
+- **Compliance Frameworks**: NIST; CNSA 2.0; FIPS
+- **Hybrid Mode Support**: Yes; hybrid implementation approach using classical and quantum-safe cryptography
+- **Current GA Status**: GA
+- **Customer Action Required**: Complete cryptography inventory; create CBOM; begin quantum-safe transition
+- **Key Commitments & Quotes**: "This roadmap serves as a commitment to transparency, predictability, and confidence as we guide industries along their journey to post-quantum cryptography."
+- **Coverage Verification**: PARTIAL; Document confirms Explorer, Advisor, Remediator, and timeline, but does not mention Guardium, z/OS, or OpenSSL integrations.
+- **Extraction Quality**: HIGH
+- **Source Document**: VND-019_IBM_Corporation.html (84.2 KB)
+- **Extraction Timestamp**: 2026-07-07T20:21:48
+
 ## VND-020 — IDEMIA Group
 
 - **Vendor ID**: VND-020
@@ -420,6 +420,28 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: MEDIUM
 - **Source Document**: VND-020_IDEMIA_Group.html (106.8 KB)
 - **Extraction Timestamp**: 2026-07-12T21:04:44
+
+## VND-021 — Infineon Technologies AG
+
+- **Vendor ID**: VND-021
+- **Vendor Name**: Infineon Technologies AG
+- **Roadmap Title**: Infineon Post-Quantum Cryptography
+- **Roadmap URL**: https://www.infineon.com/promo/postquantumcryptography
+- **Publish Date**: 2025-10-15
+- **Local File**: vendor-roadmaps/VND-021_Infineon_Technologies_AG.html
+- **CSV Coverage Notes**: Infineon PQC hub: SLC27 security controller (TEGRION family, Integrity Guard 32) launched Oct 2025 with Common Criteria-certified PQC library (ML-KEM, ML-DSA), crypto-agility and in-field updates, hardened against fault/side-channel. PSOC Control C3 Performance Line samples by end-2025, production 2026 adding ML-DSA on-device key gen/signing and ML-KEM for TLS. Automotive MCUs upgraded for PQC; LMS support. | Milestone: SLC27 PQC-certified contactless/dual-interface security controller launched Oct 2025 with CC-certified ML-KEM + ML-DSA crypto library (TEGRION family, Integrity Guard 32); PSOC
+- **PQC Algorithms Announced**: ML-KEM; ML-DSA; SLH-DSA; XMSS; LMS
+- **Target Migration Dates**: 2025 (PSOC MCUs compliant with CNSA 2.0; TEGRION CC certification); 2030-2035 (potential availability of powerful quantum computers)
+- **Products / Services Covered**: TEGRION security controller (Integrity Guard 32); PSOC™ Control C3 Performance Line Family; OPTIGA™ TPM SLB 9673 FW26; OPTIGA™ TPM SLB 9672 FW15; OPTIGA™ TPM SLB 9672 FW16; PSOC™ Edge; SECORA™ Pay; SECORA™ Blockchain
+- **Compliance Frameworks**: Common Criteria EAL6+; CNSA Suite 2.0; NIST
+- **Hybrid Mode Support**: Yes; "Changes in protocols and a transition period with e.g. hybrid schemes (combining classical cryptography and PQC...)"
+- **Current GA Status**: GA; "In 2024, Infineon made a huge step... We received the world’s first Common Criteria EAL6+ certification"
+- **Customer Action Required**: None detected
+- **Key Commitments & Quotes**: "In 2024, Infineon made a huge step toward a quantum resistant world. We received the world’s first Common Criteria EAL6+ certification for a security controller comprising the secured implementation of a post-quantum cryptography (PQC) algorithm."; "from 2025 on, Infineon PSOC™ microcontrollers (MCUs) are compliant with PQC requirements for firmware verification outlined in the Commercial National Security Algorithm (CNSA) Suite 2.0"; "In 2025, we become world‘s first company to receive Common Criteria EAL6... for the secured implementation of a post-quantum cryptography algorithm on our TEGRION security controller."
+- **Coverage Verification**: PARTIAL; The document confirms TEGRION/Integrity Guard 32 CC certification and PSOC CNSA 2.0 compliance, but does not explicitly mention the SLC27 product name, the Oct 2025 launch date, or specific ML-DSA/ML-KEM library details for those products.
+- **Extraction Quality**: MEDIUM
+- **Source Document**: VND-021_Infineon_Technologies_AG.html (1682.4 KB)
+- **Extraction Timestamp**: 2026-07-12T22:10:18
 
 ## VND-022 — Intel Corporation
 
@@ -968,29 +990,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-056_SEALSQ_Corp..html (64.0 KB)
 - **Extraction Timestamp**: 2026-07-07T20:29:27
-
-## VND-057 — Cloudflare Inc.
-
-- **Vendor ID**: VND-057
-- **Vendor Name**: Cloudflare Inc.
-- **Roadmap Title**: Cloudflare Post-Quantum Roadmap
-- **Roadmap URL**: https://blog.cloudflare.com/post-quantum-roadmap/
-- **Publish Date**: 2026-04-07
-- **Local File**: public/vendor-roadmaps/VND-057_Cloudflare_Inc..html
-- **CSV Coverage Notes**: Cloudflare's PQC roadmap (refreshed Apr 7, 2026) now targets full post-quantum security including PQ authentication by 2029, accelerated from prior timelines due to advances in attacks on elliptic-curve crypto. Focus shifting from encryption (harvest-now-decrypt-later) to PQ authentication across CDN, Zero Trust, Workers, Gateway and WARP. Intermediate milestones noted but not dated in this post. | Milestone: Target to be fully post-quantum secure (including post-quantum authentication) by 2029
-- **Roadmap Scope**: Portfolio-wide strategy
-- **PQC Algorithms Announced**: ML-KEM
-- **Target Migration Dates**: 2029
-- **Products / Services Covered**: Portfolio-wide commitment (no individual products named)
-- **Compliance Frameworks**: None detected
-- **Hybrid Mode Support**: Yes; hybrid ML-KEM
-- **Current GA Status**: GA
-- **Customer Action Required**: None detected
-- **Key Commitments & Quotes**: "We now target 2029 to be fully post-quantum (PQ) secure including, crucially, post-quantum authentication."
-- **Coverage Verification**: CONSISTENT; The document confirms the 2029 target for full PQ security including authentication, the acceleration due to recent crypto advances, and the shift in focus to authentication, though it does not explicitly list the specific product names (CDN, Zero Trust, etc.) mentioned in the notes.
-- **Extraction Quality**: HIGH
-- **Source Document**: VND-057_Cloudflare_Inc..html (302.3 KB)
-- **Extraction Timestamp**: 2026-07-07T20:25:33
 
 ## VND-058 — HashiCorp Inc.
 
