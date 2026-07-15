@@ -1781,6 +1781,15 @@
       "status": "ok",
       "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.pdf?__blob=publicationFile",
       "file": "timeline/Germany_BSI_TR-02102-1_Cryptographic_Mechanisms.pdf"
+    },
+    {
+      "label": "Ushering-in-the-Next-Frontier-of-Quantum-Innovation",
+      "url": "https://www.federalregister.gov/documents/2026/06/25/2026-12910/ushering-in-the-next-frontier-of-quantum-innovation",
+      "status": "downloaded",
+      "file": "timeline/Ushering-in-the-Next-Frontier-of-Quantum-Innovation.html",
+      "sizeBytes": 83420,
+      "contentType": "text/html",
+      "sha256": "462071f64f975b8a4ba8f440135a5269a5d086c344e016f960349328d2cea841"
     }
   ]
 }

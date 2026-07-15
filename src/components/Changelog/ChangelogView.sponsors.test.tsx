@@ -5,13 +5,20 @@
  * Wired to the same src/data/sponsors.ts registry that drives the /migrate
  * "Sponsor" badge, not a hardcoded name.
  */
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import '@testing-library/jest-dom'
 import type { Sponsor } from '@/data/sponsors'
 
 describe('ChangelogView sponsor acknowledgment', () => {
+  // FIXED 2026-07-14 (second-pass audit, P2-3.6): vi.doUnmock() used to be
+  // the last line of each test body, so a failed assertion above it (or any
+  // other throw mid-test) skipped the unmock, leaking the mocked
+  // @/data/sponsors into whichever test ran next in this file. afterEach
+  // runs regardless of pass/fail.
+  afterEach(() => vi.doUnmock('@/data/sponsors'))
+
   // ChangelogView renders the ENTIRE unpaginated release history (200+
   // versions) on every mount. That's fast in isolation but, under the CPU
   // contention of the full ~4600-test suite running concurrently, the render
@@ -33,7 +40,6 @@ describe('ChangelogView sponsor acknowledgment', () => {
       </MemoryRouter>
     )
     expect(screen.queryByText(/Thank you to our sponsors/i)).not.toBeInTheDocument()
-    vi.doUnmock('@/data/sponsors')
   }, 15000)
 
   it('thanks each active sponsor by name, linked to their real website', async () => {
@@ -57,6 +63,5 @@ describe('ChangelogView sponsor acknowledgment', () => {
     expect(screen.getByText(/Thank you to our sponsors/i)).toBeInTheDocument()
     const link = screen.getByRole('link', { name: 'Acme HSM Corp' })
     expect(link).toHaveAttribute('href', 'https://acme-hsm.example.com')
-    vi.doUnmock('@/data/sponsors')
   }, 15000)
 })
