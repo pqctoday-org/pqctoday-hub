@@ -196,11 +196,11 @@ interface SavedSupplyChainInputs {
 // grid for the honest limitation.
 
 const MATRIX_LIKELIHOOD_LABELS = [
-  '81–100% Gap',
-  '61–80% Gap',
-  '41–60% Gap',
-  '21–40% Gap',
-  '1–20% Gap',
+  'Severe Gap',
+  'Large Gap',
+  'Moderate Gap',
+  'Small Gap',
+  'Minimal Gap',
 ]
 const MATRIX_IMPACT_LABELS = ['Negligible', 'Minor', 'Moderate', 'Major', 'Critical']
 
@@ -986,16 +986,30 @@ export const SupplyChainRiskMatrix: React.FC<{
               </div>
             </div>
             {noRiskLayers.length > 0 && (
-              <div className="mt-2 flex items-start gap-2 rounded-lg border border-status-success/30 bg-status-success/5 p-2 text-xs text-muted-foreground">
+              <div
+                data-testid="no-risk-strip"
+                className="mt-2 flex items-start gap-2 rounded-lg border border-status-success/30 bg-status-success/5 p-2 text-xs text-muted-foreground"
+              >
                 <CheckCircle size={13} className="mt-0.5 shrink-0 text-status-success" />
-                <span>
-                  <strong className="text-foreground">
-                    {noRiskLayers.length} layer{noRiskLayers.length !== 1 ? 's' : ''}
-                  </strong>{' '}
-                  not plotted above — zero on at least one axis, not enough matrix room for a true
-                  &quot;no risk&quot; cell:{' '}
-                  {noRiskLayers.map((s) => LAYER_MAP.get(s.layerId)?.label ?? s.layerId).join(', ')}
-                </span>
+                <div className="min-w-0 flex-1">
+                  <p>
+                    <strong className="text-foreground">
+                      {noRiskLayers.length} layer{noRiskLayers.length !== 1 ? 's' : ''}
+                    </strong>{' '}
+                    not plotted above — zero on at least one axis, not enough matrix room for a true
+                    &quot;no risk&quot; cell:
+                  </p>
+                  <div className="mt-1.5 flex flex-wrap gap-1.5">
+                    {noRiskLayers.map((s) => (
+                      <span
+                        key={s.layerId}
+                        className="rounded-full border border-status-success/20 bg-background px-2 py-0.5 font-medium text-status-success"
+                      >
+                        {LAYER_MAP.get(s.layerId)?.label ?? s.layerId}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
           </>
