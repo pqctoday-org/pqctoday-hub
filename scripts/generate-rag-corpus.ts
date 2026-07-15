@@ -4458,6 +4458,7 @@ function processVendorRoadmap(): RAGChunk[] {
 
   for (const r of records) {
     rowIdx++
+    if (sanitize(r.status) === 'deprecated') continue
     const vendorId = sanitize(r.vendor_id)
     const vendorName = sanitize(r.vendor_name)
     const roadmapUrl = sanitize(r.roadmap_url)
