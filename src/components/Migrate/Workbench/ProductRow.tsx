@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Plus, Check, ChevronDown, ShieldCheck } from 'lucide-react'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import { vendorMap } from '@/data/migrateData'
@@ -14,11 +14,28 @@ interface ProductRowProps {
   /** When omitted (e.g. vendor-roadmap context) the Choose button is hidden. */
   chosen?: boolean
   onChoose?: () => void
+  /** Skip the outer border/background/padding and render just the row content
+   *  + expand chevron, so the caller's own container supplies the chrome —
+   *  for nesting inside an already-bordered/backgrounded card (e.g. a Supply
+   *  Chain Risk Matrix layer card) without two card borders nesting inside
+   *  each other. Default false: zero behavior change for existing callers
+   *  (Replace/Plan/Roadmaps tabs). */
+  compact?: boolean
+  /** Extra badges rendered after the built-in PQC/FIPS/verification/sponsor
+   *  set, for context-specific badges (e.g. a Hybrid-support badge in the
+   *  Vendor risk tab) that don't belong in every ProductRow caller. */
+  extraBadges?: ReactNode
 }
 
 /** A candidate replacement product. Expands to the full detail (roadmap, certs,
  *  proof, evidence) — same data as the existing /migrate table. */
-export function ProductRow({ product, chosen, onChoose }: ProductRowProps) {
+export function ProductRow({
+  product,
+  chosen,
+  onChoose,
+  compact = false,
+  extraBadges,
+}: ProductRowProps) {
   const [expanded, setExpanded] = useState(false)
   const pqc = productPqcStatus(product)
   const fips = productFipsBadge(product)
@@ -28,11 +45,15 @@ export function ProductRow({ product, chosen, onChoose }: ProductRowProps) {
 
   return (
     <div
-      className={`overflow-hidden rounded-xl border transition-colors ${
-        chosen ? 'border-status-success/40 bg-status-success/5' : 'border-border bg-card'
-      }`}
+      className={
+        compact
+          ? ''
+          : `overflow-hidden rounded-xl border transition-colors ${
+              chosen ? 'border-status-success/40 bg-status-success/5' : 'border-border bg-card'
+            }`
+      }
     >
-      <div className="flex items-start justify-between gap-3 p-3">
+      <div className={`flex items-start justify-between gap-3 ${compact ? 'py-1.5' : 'p-3'}`}>
         <div
           role="button"
           tabIndex={0}
@@ -68,6 +89,7 @@ export function ProductRow({ product, chosen, onChoose }: ProductRowProps) {
                 Sponsor
               </Pill>
             )}
+            {extraBadges}
           </div>
           <p className="mt-1 pl-6 font-mono text-[11px] text-muted-foreground">
             {product.categoryName}
