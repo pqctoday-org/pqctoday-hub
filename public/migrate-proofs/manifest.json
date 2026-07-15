@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
   "generated": "2026-07-09",
-  "count": 1045,
+  "count": 1046,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -8577,6 +8577,13 @@
       "bytes": 119617,
       "tier": "curl_cffi:chrome124",
       "recovered": true
+    },
+    {
+      "product_id": "debian-13-trixie",
+      "url": "https://packages.debian.org/trixie/openssl",
+      "file": "debian-13-trixie-0b351c13.html",
+      "bytes": 14837,
+      "tier": "playwright-stealth"
     }
   ]
 }
