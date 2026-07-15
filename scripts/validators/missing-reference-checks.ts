@@ -128,7 +128,10 @@ function loadTargets(): Target[] {
       textCols: ['description'],
       idCol: 'reference_id',
     })
-  const cmp = findLatest('src/data/compliance_*.csv')
+  // NOT `compliance_*.csv` — that also matches `compliance_xwalk_candidates_*.csv`,
+  // which sorts after real dated compliance files alphabetically and would be
+  // picked as "latest", reading candidate rows as if they were compliance data.
+  const cmp = findLatest('src/data/compliance_[0-9]*.csv')
   if (cmp)
     targets.push({ domain: 'compliance', csvPath: cmp, textCols: ['description'], idCol: 'id' })
   const tl = findLatest('src/data/timeline_*.csv')
