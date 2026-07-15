@@ -455,90 +455,18 @@ async function runCm3(): Promise<CheckResult> {
     : pass('CM-3', 'Xwalk evidence non-empty', relPath)
 }
 
-// ── CM-4: Xwalk from/to concept must resolve to library IDs ─────────────────
-
-async function runCm4(): Promise<CheckResult> {
-  const xwalkFiles = await glob('src/data/concept_xwalks_*.csv', { cwd: REPO_ROOT })
-  xwalkFiles.sort()
-  const xwalkLatest = xwalkFiles.at(-1)
-  const sourceDesc = 'src/data/concept_xwalks_*.csv'
-  if (!xwalkLatest) return pass('CM-4', 'Xwalk concept resolution', sourceDesc)
-
-  const libFiles = await glob('src/data/library_*.csv', { cwd: REPO_ROOT })
-  libFiles.sort()
-  const libLatest = libFiles.at(-1)
-  if (!libLatest) return pass('CM-4', 'Xwalk concept resolution', sourceDesc)
-
-  const libSrc = fs.readFileSync(libLatest, 'utf-8')
-  const libParsed = Papa.parse<Record<string, string>>(libSrc, {
-    header: true,
-    skipEmptyLines: true,
-  })
-  const knownLibIds = new Set(libParsed.data.map((r) => r['reference_id']?.trim()).filter(Boolean))
-
-  // For timeline_anchor rows: to_concept resolves against timeline event titles
-  const timelineFiles = await glob('src/data/timeline_*.csv', { cwd: REPO_ROOT })
-  timelineFiles.sort()
-  const timelineLatest = timelineFiles.at(-1)
-  const knownTimelineTitles = new Set<string>()
-  if (timelineLatest) {
-    const tlSrc = fs.readFileSync(timelineLatest, 'utf-8')
-    const tlParsed = Papa.parse<Record<string, string>>(tlSrc, {
-      header: true,
-      skipEmptyLines: true,
-    })
-    for (const r of tlParsed.data) {
-      const title = r['title']?.trim() ?? r['Title']?.trim() ?? r['event_title']?.trim()
-      if (title) knownTimelineTitles.add(title)
-    }
-  }
-
-  const xwalkSrc = fs.readFileSync(xwalkLatest, 'utf-8')
-  const xwalkParsed = Papa.parse<Record<string, string>>(xwalkSrc, {
-    header: true,
-    skipEmptyLines: true,
-  })
-  const relPath = path.relative(REPO_ROOT, xwalkLatest)
-  const findings: Finding[] = []
-
-  for (const row of xwalkParsed.data) {
-    const isTimelineAnchor = (row['rationale_type'] ?? '').trim() === 'timeline_anchor'
-    for (const field of ['from_concept', 'to_concept'] as const) {
-      const concept = (row[field] ?? '').trim()
-      if (!concept) continue
-      // timeline_anchor: to_concept resolves against timeline titles; from_concept against library
-      if (isTimelineAnchor && field === 'to_concept') {
-        if (!knownTimelineTitles.has(concept)) {
-          findings.push({
-            csv: relPath,
-            row: null,
-            field,
-            value: row['xwalk_id'] ?? '',
-            message: `xwalk '${row['xwalk_id']}' ${field} '${concept}' does not match any timeline event title`,
-          })
-        }
-      } else {
-        if (!knownLibIds.has(concept)) {
-          findings.push({
-            csv: relPath,
-            row: null,
-            field,
-            value: row['xwalk_id'] ?? '',
-            message: `xwalk '${row['xwalk_id']}' ${field} '${concept}' does not match any library reference_id`,
-          })
-        }
-      }
-    }
-  }
-  return findings.length > 0
-    ? fail('CM-4', 'Xwalk concept resolution', relPath, findings)
-    : pass('CM-4', 'Xwalk concept resolution', relPath)
-}
+// CM-4 (retired 2026-07-14): checked the same thing as CM-Xwalk-FROM/
+// CM-Xwalk-TO below — from/to concept resolution on concept_xwalks_*.csv —
+// but only ever knew about library reference_ids, so it hard-ERRORed on
+// every correctly-extracted compliance-to-library edge once
+// enrich-compliance-xwalk.py started producing real data, and had no
+// normalised fuzzy-match fallback for format variants. CM-Xwalk-FROM/TO do
+// both. Removed as pure duplication rather than patched to parity.
 
 // ── CM-E: Compliance countries ISO 3166 validation (warning/grace period) ────
 
 async function runCmE(): Promise<CheckResult> {
-  const files = await glob('src/data/compliance_*.csv', { cwd: REPO_ROOT })
+  const files = await glob('src/data/compliance_[0-9]*.csv', { cwd: REPO_ROOT })
   files.sort()
   const latest = files.at(-1)
   const sourceDesc = 'src/data/compliance_*.csv'
@@ -596,7 +524,7 @@ const VALID_CSWP39_TAGS = new Set([
 ])
 
 async function runCmCswp(): Promise<CheckResult> {
-  const files = await glob('src/data/compliance_*.csv', { cwd: REPO_ROOT })
+  const files = await glob('src/data/compliance_[0-9]*.csv', { cwd: REPO_ROOT })
   files.sort()
   const latest = files.at(-1)
   const sourceDesc = 'src/data/compliance_*.csv'
@@ -1046,7 +974,7 @@ async function runCmRegistry(): Promise<CheckResult[]> {
 
   const [libIds, compIds, tlIds, algoIds] = await Promise.all([
     loadIds('src/data/library_*.csv', ['reference_id', 'document_title']),
-    loadIds('src/data/compliance_*.csv', ['id', 'label']),
+    loadIds('src/data/compliance_[0-9]*.csv', ['id', 'label']),
     loadIds('src/data/timeline_*.csv', ['Title']),
     loadIds('src/data/standard_implements_algo_xref_*.csv', ['param_set']),
   ])
@@ -1612,7 +1540,12 @@ async function buildKnownConceptIds(): Promise<Set<string>> {
   const known = new Set<string>()
   for (const [pattern, idCol, titleCol] of [
     ['src/data/library_*.csv', 'reference_id', 'document_title'],
-    ['src/data/compliance_*.csv', 'id', 'label'],
+    // `compliance_*.csv`, NOT `compliance_[0-9]*.csv`, would also match
+    // `compliance_xwalk_candidates_*.csv` — which sorts AFTER real dated
+    // compliance files alphabetically ('x' > digits) and gets picked as
+    // "latest", silently emptying this known-ids set. Same bug already
+    // fixed in scripts/merge-xwalk-candidates.ts's buildKnownIds().
+    ['src/data/compliance_[0-9]*.csv', 'id', 'label'],
     ['src/data/timeline_*.csv', 'Title', undefined],
   ] as const) {
     const all = await glob(pattern, { cwd: REPO_ROOT })
@@ -1858,12 +1791,11 @@ async function runCmXwalk(): Promise<CheckResult[]> {
 // ── Entry point ──────────────────────────────────────────────────────────────
 
 export async function runTrustEngineChecks(): Promise<CheckResult[]> {
-  const [cm1, cm2, cm3, cm4, cmE, cmCswp, cmG, cmT, cmTs, cmAt, cmF, cmXw, cmAx, cmRg, cmCn] =
+  const [cm1, cm2, cm3, cmE, cmCswp, cmG, cmT, cmTs, cmAt, cmF, cmXw, cmAx, cmRg, cmCn] =
     await Promise.all([
       runCm1(),
       runCm2(),
       runCm3(),
-      runCm4(),
       runCmE(),
       runCmCswp(),
       runCmG(),
@@ -1884,7 +1816,6 @@ export async function runTrustEngineChecks(): Promise<CheckResult[]> {
     cm1,
     cm2,
     cm3,
-    cm4,
     cmE,
     cmCswp,
     cmG,
