@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { ProductRow } from './ProductRow'
 import { vendorMap } from '@/data/migrateData'
@@ -65,5 +65,42 @@ describe('ProductRow sponsor badge', () => {
   it('renders no Sponsor badge when the product has no vendor', () => {
     render(<ProductRow product={makeItem({})} />)
     expect(screen.queryByText('Sponsor')).not.toBeInTheDocument()
+  })
+})
+
+describe('ProductRow compact + extraBadges', () => {
+  it('keeps the default card chrome when compact is omitted (no regression)', () => {
+    const { container } = render(<ProductRow product={makeItem({})} />)
+    const outer = container.firstElementChild as HTMLElement
+    expect(outer.className).toMatch(/rounded-xl/)
+    expect(outer.className).toMatch(/border/)
+  })
+
+  it('drops the outer border/background when compact is true', () => {
+    const { container } = render(<ProductRow product={makeItem({})} compact />)
+    const outer = container.firstElementChild as HTMLElement
+    expect(outer.className).not.toMatch(/rounded-xl/)
+    expect(outer.className).not.toMatch(/border-border/)
+  })
+
+  it('renders extraBadges after the built-in badges when provided', () => {
+    render(
+      <ProductRow
+        product={makeItem({})}
+        extraBadges={<span data-testid="hybrid-badge">Hybrid</span>}
+      />
+    )
+    expect(screen.getByTestId('hybrid-badge')).toBeInTheDocument()
+  })
+
+  it('renders no extra badge markup when extraBadges is omitted', () => {
+    render(<ProductRow product={makeItem({})} />)
+    expect(screen.queryByTestId('hybrid-badge')).not.toBeInTheDocument()
+  })
+
+  it('still expands to ProductDetail when compact', () => {
+    render(<ProductRow product={makeItem({ vendorId: undefined })} compact />)
+    fireEvent.click(screen.getByRole('button', { name: /expand details/i }))
+    expect(screen.getByRole('button', { name: /collapse details/i })).toBeInTheDocument()
   })
 })
