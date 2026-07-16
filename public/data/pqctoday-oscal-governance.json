@@ -2957,7 +2957,7 @@
             "description": "North American Electric Reliability Corporation Critical Infrastructure Protection",
             "relevant-evidence": [
               {
-                "href": "https://www.nerc.com/pa/Stand/Pages/ReliabilityStandards.aspx",
+                "href": "https://www.nerc.com/globalassets/standards/reliability-standards/cip/cip-005-7.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -2974,7 +2974,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "cswp39:governance",
+                "value": "cswp39:assurance;cswp39:governance",
                 "class": "trust-engine"
               }
             ]
@@ -3254,7 +3254,7 @@
             "description": "Monetary Authority of Singapore financial services PQC advisory",
             "relevant-evidence": [
               {
-                "href": "https://www.mas.gov.sg/regulation/circulars",
+                "href": "https://www.mas.gov.sg/regulation/circulars/advisory-on-addressing-the-cybersecurity-risks-associated-with-quantum",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -3362,7 +3362,7 @@
             "description": "Israel National Cyber Directorate post-quantum readiness guidance",
             "relevant-evidence": [
               {
-                "href": "https://www.gov.il/en/departments/incd",
+                "href": "https://www.gov.il/BlobFolder/generalpage/quantum_computing/he/Best%20Practices%20-%20Organizational%20Cyber%20Readiness%20to%20the%20Post-Quantum%20Age%20v.1.85.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -3379,7 +3379,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "cswp39:governance",
+                "value": "cswp39:governance;cswp39:inventory;cswp39:lifecycle",
                 "class": "trust-engine"
               }
             ]
@@ -3406,7 +3406,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "cswp39:governance",
+                "value": "cswp39:governance;cswp39:inventory;cswp39:lifecycle",
                 "class": "trust-engine"
               }
             ]
@@ -3524,7 +3524,7 @@
             "description": "Agence nationale de la sécurité des systèmes d'information — France's national cybersecurity authority",
             "relevant-evidence": [
               {
-                "href": "https://www.ssi.gouv.fr",
+                "href": "https://cyber.gouv.fr/en/technological-and-cybersecurity-challenges/post-quantum-cryptography/",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -3541,7 +3541,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:governance",
                 "class": "trust-engine"
               }
             ]
@@ -5279,7 +5279,7 @@
             "description": "Swedish Civil Contingencies Agency cyber-resilience guidance. MSB is the civil-contingency umbrella; for algorithm-level guidance, cross-reference MSB Metodstöd documents and NCSC-SE bulletins (which sit across SÄPO/MSB depending on topic).",
             "relevant-evidence": [
               {
-                "href": "https://www.msb.se/en",
+                "href": "https://www.ncsc.se/sv/aktuellt/kvantsaker-kryptografi/",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -5296,7 +5296,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:governance;cswp39:inventory;cswp39:lifecycle",
                 "class": "trust-engine"
               }
             ]
@@ -5306,7 +5306,7 @@
             "description": "Finnish National Cyber Security Centre (under Traficom). 'Kyberturvallisuuden tilannekuva' situational picture and technical bulletins drive PQC awareness and timing across Finnish public and critical-infrastructure sectors.",
             "relevant-evidence": [
               {
-                "href": "https://www.kyberturvallisuuskeskus.fi/en",
+                "href": "https://www.kyberturvallisuuskeskus.fi/fi/kvanttiturvalliset-algoritmit-ja-niihin-siirtyminen",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -5323,7 +5323,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:governance;cswp39:inventory;cswp39:lifecycle",
                 "class": "trust-engine"
               }
             ]
