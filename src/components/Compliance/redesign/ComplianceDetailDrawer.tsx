@@ -11,6 +11,7 @@ import FocusLock from 'react-focus-lock'
 import { ArrowDown, Globe, ListChecks, Workflow, X, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { ComplianceFramework } from '@/data/complianceData'
+import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { buildDrawerDetail, type PillarId } from './pillarModel'
 import { pillClasses, TONES } from './tones'
 import { EndorseButton } from '@/components/ui/EndorseButton'
@@ -31,6 +32,32 @@ interface ComplianceDetailDrawerProps {
   isTracked?: boolean
   /** Related & overlapping row click — navigate to another framework drawer by display name. */
   onSelectRelated?: (name: string) => void
+}
+
+/**
+ * The CSWP.39 maturity-evidence grid (MaturityEvidenceGrid) is keyed by
+ * LIBRARY document ref_ids/titles, extracted independently of
+ * compliance-landscape rows (enrich-compliance-fwks.py et al. read
+ * library_*.csv, not compliance_*.csv) — a framework's own `id` (e.g.
+ * "CRYPTREC") almost never matches an actual maturityByRefId key, so passing
+ * it straight through produced a guaranteed-empty "No requirements match"
+ * dead end for nearly every framework. Resolve to a ref_id that's actually
+ * covered: the framework's own library citations first (libraryRefs, which
+ * match maturity ref_ids formatted as a reference_id), then the crosswalk's
+ * "other side" names (which match ref_ids formatted as a document title,
+ * e.g. "Japan CRYPTREC Report 2024").
+ */
+function resolveMaturityRefId(
+  framework: ComplianceFramework,
+  crosswalkNames: string[]
+): string | null {
+  for (const ref of framework.libraryRefs) {
+    if (maturityByRefId.has(ref)) return ref
+  }
+  for (const name of crosswalkNames) {
+    if (maturityByRefId.has(name)) return name
+  }
+  return null
 }
 
 export function ComplianceDetailDrawer({
@@ -56,6 +83,10 @@ export function ComplianceDetailDrawer({
 
   if (!framework) return null
   const d = buildDrawerDetail(framework, pillar)
+  const maturityRefId = resolveMaturityRefId(
+    framework,
+    d.crosswalk.map((c) => c.name)
+  )
 
   return createPortal(
     <FocusLock returnFocus>
@@ -240,7 +271,13 @@ export function ComplianceDetailDrawer({
               variant="gradient"
               size="sm"
               className="basis-full sm:basis-auto gap-1.5"
-              onClick={() => onOpenCswp39?.(framework.id)}
+              disabled={!maturityRefId}
+              title={
+                maturityRefId
+                  ? undefined
+                  : "No CSWP.39 maturity requirements have been extracted for this framework's linked source(s) yet"
+              }
+              onClick={() => maturityRefId && onOpenCswp39?.(maturityRefId)}
             >
               <Workflow size={14} />
               Open CSWP.39 crosswalk
