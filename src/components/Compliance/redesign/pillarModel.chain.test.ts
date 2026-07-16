@@ -205,4 +205,47 @@ describe('buildDrawerDetail — real xwalk data integration (live data)', () => 
     // Real relationship merged 2026-07-14 from enrich-compliance-xwalk.py.
     expect(d.chain.some((n) => n.value === 'NIST NCCoE SP 1800-38C')).toBe(true)
   })
+
+  // 2026-07-16: ISO/IEC 19790:2024's chain claimed "Publishes FIPS-140" —
+  // ISO/IEC JTC 1/SC 27 does not publish a US federal FIPS document (NIST
+  // does; ISO/IEC 19790 is the international equivalent of FIPS 140-3). Real
+  // xwalk edges for this exact standard already existed
+  // (NIST-SP-800-140A/C/D, FIPS-140-3-STANDARD) but were invisible because
+  // the compliance row's registry id (`guidance:iso-19790`, source_row_id
+  // `ISO-19790`) and the library-extracted registry id
+  // (`standard:iso-iec-19790`, source_row_id `ISO-IEC-19790`) never resolved
+  // as the same concept. Fixed via an explicit registry alias +
+  // equivalentCanonicals().
+  it('ISO/IEC 19790:2024 no longer asserts "Publishes FIPS-140", and surfaces its real merged relationships', () => {
+    const row = complianceFrameworks.find((f) => f.id === 'ISO-19790')
+    expect(row).toBeDefined()
+    if (!row) return
+    const d = buildDrawerDetail(row, 'standardize')
+    const chainText = d.chain.map((n) => `${n.kind} ${n.value} ${n.sub}`).join(' | ')
+    expect(chainText).not.toMatch(/Publishes.*FIPS-140/)
+    // Real relationships from concept_xwalks_*.csv, reachable once the
+    // ISO-19790 / ISO-IEC-19790 registry ids are linked as equivalent.
+    expect(
+      d.chain.some((n) =>
+        ['NIST-SP-800-140A', 'NIST-SP-800-140C', 'NIST-SP-800-140D'].includes(n.value)
+      )
+    ).toBe(true)
+  })
+
+  it('a standardize-pillar row with a related-standard citation but no SME-verified xwalk edge gets an honest "Related standard" label, not "Publishes"', () => {
+    const d = buildDrawerDetail(
+      framework({
+        label: 'Unlinked Standard',
+        bodyType: 'standardization_body',
+        relatedStandards: ['Some Uncrosswalked Standard'],
+      }),
+      'standardize'
+    )
+    expect(d.chain.some((n) => n.kind === 'Publishes')).toBe(false)
+    expect(
+      d.chain.some(
+        (n) => n.kind === 'Related standard' && n.value === 'Some Uncrosswalked Standard'
+      )
+    ).toBe(true)
+  })
 })
