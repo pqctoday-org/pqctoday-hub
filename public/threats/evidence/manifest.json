@@ -1447,12 +1447,13 @@
     "source_url": "https://www.epw.senate.gov/public/_cache/files/5/3/53d93dfe-ed8c-4e48-b705-0b16cb92c90a/FA38A32EE48D7F3D4B0C069FDC08A69E6327376EB85838A03310B2E91C8582C1.02-04-2026-dr.-simonton-testimony.pdf",
     "main_source": "US Senate EPW Committee Testimony on Water Sector Cybersecurity",
     "download_status": "ok",
-    "evidence_file": "threats/WATE-001.html",
-    "content_type": "text/html",
-    "size_bytes": 420224,
+    "evidence_file": "threats/WATE-001.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 235296,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-07-15T00:45:33.859111+00:00"
+    "downloaded_at": "2026-07-15T00:45:33.859111+00:00",
+    "fetch_tier": null
   },
   {
     "threat_id": "FINA-001",
