@@ -5,58 +5,58 @@ documents_processed: 1
 enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 ---
 
-## FINA-001
+## WATE-001
 
-- **Reference ID**: FINA-001
-- **Title**: Financial Services / Banking
-- **Authors**: HKMA Fintech Promotion Blueprint — Quantum Preparedness Index
+- **Reference ID**: WATE-001
+- **Title**: Water / Wastewater
+- **Authors**: US Senate EPW Committee Testimony on Water Sector Cybersecurity
 - **Publication Date**: Not specified
 - **Last Updated**: Not specified
 - **Document Status**: active
-- **Main Topic**: The HKMA Fintech Promotion Blueprint outlines strategic measures for advancing fintech maturity in Hong Kong, including a Quantum Preparedness Index to assess and support PQC adoption in the banking sector.
+- **Main Topic**: US Senate testimony on the cybersecurity state of the water sector, highlighting vulnerabilities, threats, and the need for post-quantum cryptography transition.
 - **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: Quantum computing capabilities breaking current encryption standards; potential security threats associated with quantum capabilities
+- **Quantum Threats Addressed**: Quantum computers breaking traditional encryption methods
 - **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: Hong Kong; Bodies: Hong Kong Monetary Authority (HKMA)
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: US Senate EPW Committee, NIST, EPA, CISA, GAO, Marshall University
 - **Leaders Contributions Mentioned**: None detected
 - **PQC Products Mentioned**: None detected
 - **Protocols Covered**: None detected
 - **Infrastructure Layers**: None detected
-- **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: None detected
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: Zero Trust; America’s Water Infrastructure Act (AWIA); Safe Drinking Water Act (SDWA)
 - **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: HKMA is developing a Quantum Preparedness Index to assess banking sector readiness for PQC adoption; Financial institutions must integrate PQC within cybersecurity frameworks to mitigate quantum-related risks; Small and medium-sized banks require practical support and shared infrastructure to overcome barriers to PQC and HPC adoption; A transition roadmap will be developed following the assessment to outline PQC projects and pilot initiatives
+- **Key Takeaways**: Water sector is highly vulnerable due to under-resourcing and legacy OT systems; Adversaries exploit common architectures across thousands of facilities; Sector must shift to preemptive cybersecurity and autonomous cyber-immune systems; Utilities must develop PQC transition plans in accordance with NIST standards; Internet-exposed HMIs and weak remote access are critical risks requiring immediate hardening
 - **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Support**: No
 - **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Support**: No
 - **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Support**: No
 - **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Support**: No
 - **Hybrid PQC Signature Evidence**: None detected
 - **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
 - **Lifecycle State**: Released
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: CISO; Policy Maker; Security Architect
+- **Target Audience**: Policy Maker; CISO; Security Architect
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Assess; Threats; Compliance; pqc-governance; migration-program
+- **Relevant PQC Today Features**: Threats; Compliance; iot-ot-pqc; pqc-risk-management; migration-program
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
 - **QKD Protocols & Quantum Networking**: None detected
 - **QRNG & Entropy Sources**: None detected
 - **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: Third-party risks from complex ecosystems of cloud providers and fintech vendors; single upstream vulnerabilities affecting banking services
-- **Deployment & Migration Complexity**: High costs of deployment; lack of compatible supporting infrastructure; shortage of skilled personnel
+- **Supply Chain & Vendor Risk**: Vendor-controlled access arrangements; Single-vendor cloud platforms; Common vendor ecosystems
+- **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
-- **Organizational Readiness**: Quantum Preparedness Index to track adoption and measure readiness; focus on strengthening preparedness for small and medium-sized banks
+- **Organizational Readiness**: Minimal or no dedicated IT staff; Limited ability to patch or securely configure PLCs; Fragmented maturity and budgets
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
-- **Source Document**: FINA-001.pdf (4,451,297 bytes, 17,926 extracted chars)
-- **Extraction Timestamp**: 2026-07-15T23:22:33
+- **Source Document**: WATE-001.pdf (235,296 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-07-15T23:30:05
 - **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
@@ -5097,6 +5097,64 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Deployment & Migration Complexity**: Coordinated transition planning
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Coordinated transition planning across G7 financial systems
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Attack Classification**: None detected
+- **Exploitation Timeline Window**: None detected
+- **Financial Impact Quantification**: None detected
+- **Countermeasure Effectiveness**: None detected
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## FINA-001
+
+- **Reference ID**: FINA-001
+- **Title**: Financial Services / Banking
+- **Authors**: HKMA Fintech Promotion Blueprint — Quantum Preparedness Index
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: active
+- **Main Topic**: The HKMA Fintech Promotion Blueprint outlines strategic measures for advancing fintech maturity in Hong Kong, including a Quantum Preparedness Index to assess and support PQC adoption in the banking sector.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Quantum computing capabilities breaking current encryption standards; potential security threats associated with quantum capabilities
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Hong Kong; Bodies: Hong Kong Monetary Authority (HKMA)
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: HKMA is developing a Quantum Preparedness Index to assess banking sector readiness for PQC adoption; Financial institutions must integrate PQC within cybersecurity frameworks to mitigate quantum-related risks; Small and medium-sized banks require practical support and shared infrastructure to overcome barriers to PQC and HPC adoption; A transition roadmap will be developed following the assessment to outline PQC projects and pilot initiatives
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Policy Maker; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Assess; Threats; Compliance; pqc-governance; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Third-party risks from complex ecosystems of cloud providers and fintech vendors; single upstream vulnerabilities affecting banking services
+- **Deployment & Migration Complexity**: High costs of deployment; lack of compatible supporting infrastructure; shortage of skilled personnel
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Quantum Preparedness Index to track adoption and measure readiness; focus on strengthening preparedness for small and medium-sized banks
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Attack Classification**: None detected
@@ -11069,64 +11127,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Constrained Device & IoT Suitability**: None detected
 - **Supply Chain & Vendor Risk**: Average 2+ year certification lag creates window of vulnerability
 - **Deployment & Migration Complexity**: PQC-ready HSMs expected 2026-2027
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: Not Applicable
-- **Attack Classification**: None detected
-- **Exploitation Timeline Window**: None detected
-- **Financial Impact Quantification**: None detected
-- **Countermeasure Effectiveness**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## WATE-001
-
-- **Reference ID**: WATE-001
-- **Title**: Water / Wastewater
-- **Authors**: US Senate EPW Committee Testimony on Water Sector Cybersecurity
-- **Publication Date**: Not specified
-- **Last Updated**: Not specified
-- **Document Status**: active
-- **Main Topic**: None detected
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: None detected
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: None detected
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: Not Applicable
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Not Applicable
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: Not Applicable
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: Not Applicable
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: None detected
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: None detected
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Math Family**: None detected
