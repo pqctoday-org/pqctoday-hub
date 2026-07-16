@@ -7,8 +7,10 @@
 // the live `complianceData` layer; no placeholder data.
 
 import type { BodyType, ComplianceFramework } from '@/data/complianceData'
-import { regionForCountry } from '@/data/complianceData'
+import { conceptIdForFramework, regionForCountry } from '@/data/complianceData'
 import { conceptXwalkData, type ConceptXwalkRecord } from '@/data/conceptXwalkData'
+import { conceptByCanonicalId } from '@/data/conceptRegistry'
+import { equivalentCanonicals } from '@/utils/conceptXwalkGraph'
 import type { Tone } from './tones'
 
 export type PillarId = 'standardize' | 'certify' | 'comply'
@@ -215,16 +217,45 @@ function relationshipVerb(edge: ConceptXwalkRecord, frameworkIsFromSide: boolean
   }
 }
 
+/**
+ * Registry-equivalent display labels for `framework` — e.g. a compliance
+ * row `ISO-19790` ("ISO/IEC 19790:2024") and the separately-registered
+ * library concept `ISO-IEC-19790` describe the same real-world standard but
+ * were extracted from different source tables under different registry ids
+ * (see `equivalentCanonicals` in conceptXwalkGraph.ts). Real xwalk edges
+ * often land on whichever form the extraction pipeline happened to author
+ * against, so matching must consider both.
+ */
+function equivalentMatchLabels(framework: ComplianceFramework): string[] {
+  const canonicalId = conceptIdForFramework(framework)
+  if (!canonicalId) return []
+  const center = conceptByCanonicalId.get(canonicalId)
+  if (!center) return []
+  const labels: string[] = []
+  for (const equivId of equivalentCanonicals(center)) {
+    const r = conceptByCanonicalId.get(equivId)
+    if (!r) continue
+    labels.push(r.displayLabel)
+    if (r.sourceRowId) labels.push(r.sourceRowId)
+  }
+  return labels
+}
+
+/** Every raw xwalk-endpoint string that identifies this framework, including registry-equivalent forms. */
+function frameworkMatchIds(framework: ComplianceFramework): Set<string> {
+  return new Set([framework.id, framework.label, ...equivalentMatchLabels(framework)])
+}
+
 /** Real extracted relationships involving this framework, highest-confidence first. */
 function xwalkEdgesForFramework(framework: ComplianceFramework): ConceptXwalkRecord[] {
-  const idsToMatch = new Set([framework.id, framework.label])
+  const idsToMatch = frameworkMatchIds(framework)
   return conceptXwalkData
     .filter((e) => idsToMatch.has(e.fromConcept) || idsToMatch.has(e.toConcept))
     .sort((a, b) => b.confidenceScore - a.confidenceScore)
 }
 
 function otherSide(edge: ConceptXwalkRecord, framework: ComplianceFramework): string {
-  const idsToMatch = new Set([framework.id, framework.label])
+  const idsToMatch = frameworkMatchIds(framework)
   return idsToMatch.has(edge.fromConcept) ? edge.toConcept : edge.fromConcept
 }
 
@@ -233,7 +264,7 @@ function xwalkChainNodes(
   edges: ConceptXwalkRecord[],
   max: number
 ): ChainNode[] {
-  const idsToMatch = new Set([framework.id, framework.label])
+  const idsToMatch = frameworkMatchIds(framework)
   return edges.slice(0, max).map((edge) => {
     const frameworkIsFromSide = idsToMatch.has(edge.fromConcept)
     return n(
@@ -250,7 +281,7 @@ function xwalkCrosswalkItems(
   edges: ConceptXwalkRecord[],
   max: number
 ): CrosswalkItem[] {
-  const idsToMatch = new Set([framework.id, framework.label])
+  const idsToMatch = frameworkMatchIds(framework)
   return edges.slice(0, max).map((edge) => {
     const frameworkIsFromSide = idsToMatch.has(edge.fromConcept)
     return xw(
@@ -339,7 +370,12 @@ export function buildDrawerDetail(framework: ComplianceFramework, pillar: Pillar
       edges.length > 0
         ? [bodyNode, ...xwalkChainNodes(framework, edges, 3)]
         : keyRef
-          ? [bodyNode, n('Publishes', keyRef, 'primary specification', 'success')]
+          ? // No SME-verified relationship exists yet — `keyRef` is only the
+            // row's own most-specific citation field, not a confirmed
+            // authorship claim, so this must not assert a directional verb
+            // like "Publishes" (wrong, e.g. for ISO/IEC 19790:2024 →
+            // FIPS-140, which ISO/IEC does not publish — NIST does).
+            [bodyNode, n('Related standard', keyRef, 'primary specification', 'success')]
           : [bodyNode]
     dossierFocus = 'Authoritative reference for downstream schemes.'
     dossierItems = keyRef
