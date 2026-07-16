@@ -8379,6 +8379,16 @@
       "sizeBytes": 79044,
       "contentType": "text/html",
       "sha256": "ac5a89db429256275a90bc908115260f62876c7f8ca048a509f96284b0b559ac"
+    },
+    {
+      "refId": "An-Assessment-Framework-for-Application-Level-Cryptographic",
+      "title": "An Assessment Framework for Application-Level Cryptographic Agility",
+      "url": "https://arxiv.org/abs/2606.13425",
+      "status": "downloaded",
+      "filename": "An-Assessment-Framework-for-Application-Level-Cryptographic.html",
+      "sizeBytes": 43372,
+      "contentType": "text/html",
+      "sha256": "a091b71e1d03dce1399c8a700a1d94dad6e7ad54bd618a31700533d0fa74f0fb"
     }
   ]
 }
