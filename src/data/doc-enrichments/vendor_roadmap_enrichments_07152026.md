@@ -8,27 +8,27 @@ source: public/vendor-roadmaps/
 # Vendor PQC Roadmap Enrichments
 
 
-## VND-008 — Cisco Systems Inc.
+## VND-027 — Microsoft Corporation
 
-- **Vendor ID**: VND-008
-- **Vendor Name**: Cisco Systems Inc.
-- **Roadmap Title**: Cisco Secure Firewall: Post Quantum Cryptography Roadmap
-- **Roadmap URL**: https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap
+- **Vendor ID**: VND-027
+- **Vendor Name**: Microsoft Corporation
+- **Roadmap Title**: Accelerating the quantum-safe timeline | Microsoft Security Blog
+- **Roadmap URL**: https://www.microsoft.com/en-us/security/blog/2026/06/30/microsoft-advances-quantum-safe-security-as-the-risk-timeline-shifts/
 - **Publish Date**: 2026-07-15
-- **Local File**: vendor-roadmaps/VND-008_Cisco_Systems_Inc.html
+- **Local File**: vendor-roadmaps/VND-027_Microsoft_Corporation.html
 - **CSV Coverage Notes**: None
-- **PQC Algorithms Announced**: ML-KEM; ML-DSA; SLH-DSA
-- **Target Migration Dates**: ML-KEM GA late 2026; ML-DSA and SLH-DSA support in second half of 2027
-- **Products / Services Covered**: Secure Firewall Threat Defense (FTD) 10.5; ASA 9.25; FTD/ASA 11.0; Secure Firewall 1200 series; Secure Firewall 6100 series
-- **Compliance Frameworks**: NIST FIPS 203; NIST FIPS 204; NIST FIPS 205; RFC 8784; RFC 9242; RFC 9370; NSA; BSI; ANSSI
-- **Hybrid Mode Support**: Yes, via RFC 9242 and RFC 9370 enabling hybrid key exchange with classical and post-quantum key agreement simultaneously
+- **PQC Algorithms Announced**: None detected
+- **Target Migration Dates**: transition products and services to PQC by 2029
+- **Products / Services Covered**: None detected
+- **Compliance Frameworks**: None detected
+- **Hybrid Mode Support**: Yes; "enables hybrid and post-quantum key exchange as standards mature"
 - **Current GA Status**: Planned
-- **Customer Action Required**: Know where encryption lives; build upgrade paths into planning cycles; plan upgrade windows; think about hardware now for PQC Secure Boot support
-- **Key Commitments & Quotes**: "Support arrives in Secure Firewall Threat Defense (FTD) 10.5 and ASA 9.25 , targeted for General Availability in late 2026."
-- **Coverage Verification**: CONSISTENT, the document provides specific roadmap details for Cisco Secure Firewall products, aligning with the vendor context.
-- **Extraction Quality**: HIGH
-- **Source Document**: VND-008_Cisco_Systems_Inc.html (81.1 KB)
-- **Extraction Timestamp**: 2026-07-15T07:16:48
+- **Customer Action Required**: Align on strategy; Design for change; Begin with inventory; Modernize protocols
+- **Key Commitments & Quotes**: "transition products and services to PQC by 2029"; "incorporating PQC requirements into our Secure Future Initiative (SFI)"; "Critical endpoints negotiate TLS 1.3 by default"
+- **Coverage Verification**: CONSISTENT; The document is a high-level roadmap announcement and does not specify product-level coverage details.
+- **Extraction Quality**: MEDIUM
+- **Source Document**: VND-027_Microsoft_Corporation.html (276.2 KB)
+- **Extraction Timestamp**: 2026-07-15T23:33:21
 
 ## VND-001 — Amazon Web Services Inc.
 
@@ -144,6 +144,29 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-007_Check_Point_Software_Technologies_Ltd..html (113.4 KB)
 - **Extraction Timestamp**: 2026-07-07T20:31:25
+
+## VND-008 — Cisco Systems Inc.
+
+- **Vendor ID**: VND-008
+- **Vendor Name**: Cisco Systems Inc.
+- **Roadmap Title**: Cisco Secure Firewall: Post-Quantum Cryptography Roadmap
+- **Roadmap URL**: https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap
+- **Publish Date**: 2026-04-13
+- **Local File**: public/vendor-roadmaps/VND-008_Cisco_Systems_Inc..html
+- **CSV Coverage Notes**: Cisco Secure Firewall PQC roadmap: ML-KEM arrives in FTD 10.5 / ASA 9.25 (GA late 2026) for IPsec VPN and SKIP key management; ML-DSA and SLH-DSA planned for FTD/ASA 11.0 in H2 2027 with broader TLS decryption, Remote Access VPN and management access. Driven by NSA NSS Jan 2027 purchase requirements and CNSA 2.0 deadlines through 2035. Broader Cisco PQC spans IOS XE/XR, Meraki, Webex, AnyConnect. | Milestone: ML-KEM in Secure Firewall Threat Defense (FTD) 10.5 and ASA 9.25 targeted GA late 2026 (IPsec VPN + SKIP key management); ML-DSA/SLH-DSA planned for FTD/ASA 11.0 in H2 CY2027 with broader
+- **Roadmap Scope**: Multi-product
+- **PQC Algorithms Announced**: ML-KEM; ML-DSA; SLH-DSA
+- **Target Migration Dates**: ML-KEM GA late 2026; ML-DSA/SLH-DSA H2 2027
+- **Products / Services Covered**: Secure Firewall Threat Defense (FTD); ASA; Secure Firewall 1200; Secure Firewall 6100
+- **Compliance Frameworks**: NIST FIPS 203; NIST FIPS 204; NIST FIPS 205; NSA National Security Systems; CNSA 2.0
+- **Hybrid Mode Support**: Yes; hybrid key exchange via RFC 9242 and RFC 9370
+- **Current GA Status**: Planned
+- **Customer Action Required**: Know where encryption lives; build upgrade paths into planning cycles; think about hardware now
+- **Key Commitments & Quotes**: "Support arrives in Secure Firewall Threat Defense (FTD) 10.5 and ASA 9.25 , targeted for General Availability in late 2026."
+- **Coverage Verification**: PARTIAL; Document confirms firewall milestones but does not mention broader Cisco PQC spans (IOS XE/XR, Meraki, Webex, AnyConnect) or CNSA 2.0 deadlines through 2035.
+- **Extraction Quality**: HIGH
+- **Source Document**: VND-008_Cisco_Systems_Inc..html (82.4 KB)
+- **Extraction Timestamp**: 2026-07-07T20:20:19
 
 ## VND-009 — Citrix Systems Inc.
 
@@ -487,29 +510,6 @@ source: public/vendor-roadmaps/
 - **Coverage Verification**: CONSISTENT; The document confirms the release date, algorithms, RFC 9269 support, and draft standards mentioned in the notes.
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-025_The_Legion_of_the_Bouncy_Castle_Inc..html (268.3 KB)
-- **Extraction Timestamp**: 2026-07-07T20:22:39
-
-## VND-027 — Microsoft Corporation
-
-- **Vendor ID**: VND-027
-- **Vendor Name**: Microsoft Corporation
-- **Roadmap Title**: Microsoft Quantum-Safe Security: Progress Towards Next-Generation Cryptography
-- **Roadmap URL**: https://www.microsoft.com/en-us/security/blog/2025/08/20/quantum-safe-security-progress-towards-next-generation-cryptography/
-- **Publish Date**: 2025-08-20
-- **Local File**: public/vendor-roadmaps/VND-027_Microsoft_Corporation.html
-- **CSV Coverage Notes**: Microsoft quantum-safe roadmap: SymCrypt foundation with ML-KEM/ML-DSA exposed through Windows CNG and certificate APIs; SymCrypt 1.9.0 adds TLS hybrid key exchange (coming to Windows TLS stack). PQC previewing for Windows Insiders and Linux. Three-phase strategy (foundational libs -> core infra/Entra/key mgmt/signing -> all services Windows/Azure/M365). Early adoption by 2029, full transition by 2033. | Milestone: ML-KEM and ML-DSA available via Windows APIs (CNG/Certificate funcs); SymCrypt 1.9.0 supports TLS hybrid key exchange; early adoption by 2029, full transition by 2033 (ahead of 2035
-- **Roadmap Scope**: Portfolio-wide strategy
-- **PQC Algorithms Announced**: ML-KEM; ML-DSA
-- **Target Migration Dates**: Early adoption by 2029; full transition by 2033
-- **Products / Services Covered**: SymCrypt; Windows; Linux; Microsoft Entra; Azure; Microsoft 365
-- **Compliance Frameworks**: NIST; CNSA 2.0; CNSSP-15; ISO; IETF; OMB; CISA; NSA
-- **Hybrid Mode Support**: Yes; TLS hybrid key exchange and hybrid approach combining classical and quantum-resistant algorithms
-- **Current GA Status**: Preview
-- **Customer Action Required**: Start developing their strategy now
-- **Key Commitments & Quotes**: "Microsoft’s roadmap aims to complete transition of its services and products by 2033"; "aiming to enable early adoption of quantum-safe capabilities by 2029"; "previewed PQC capabilities for Windows Insiders and Linux"
-- **Coverage Verification**: CONSISTENT; The document explicitly confirms the SymCrypt foundation, ML-KEM/ML-DSA via CNG, TLS hybrid support in SymCrypt 1.9.0, preview status for Windows Insiders/Linux, the three-phase strategy, and the 2029/2033 timelines.
-- **Extraction Quality**: HIGH
-- **Source Document**: VND-027_Microsoft_Corporation.html (313.6 KB)
 - **Extraction Timestamp**: 2026-07-07T20:22:39
 
 ## VND-028 — NXP Semiconductors N.V.
@@ -2719,4 +2719,27 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-433_OpenBao_LF_Edge_.html (338.4 KB)
 - **Extraction Timestamp**: 2026-07-07T20:41:12
+
+
+## VND-057 — Cloudflare Inc.
+
+- **Vendor ID**: VND-057
+- **Vendor Name**: Cloudflare Inc.
+- **Roadmap Title**: The White House's post-quantum executive order is an important milestone. It's time to get to work
+- **Roadmap URL**: https://blog.cloudflare.com/post-quantum-eo-2026/
+- **Publish Date**: 2026-07-15
+- **Local File**: vendor-roadmaps/VND-057_Cloudflare_Inc.html
+- **CSV Coverage Notes**: None
+- **PQC Algorithms Announced**: ML-KEM; ML-DSA
+- **Target Migration Dates**: Cloudflare full post-quantum security by 2029; Federal agencies PQC key establishment by December 31, 2030; Federal agencies PQC digital signatures by December 31, 2031; Federal contractors PQC FIPS compliance by December 31, 2030
+- **Products / Services Covered**: Cloudflare One; TLS; MASQUE; IPsec
+- **Compliance Frameworks**: NIST FIPS; FIPS 199
+- **Hybrid Mode Support**: No
+- **Current GA Status**: GA
+- **Customer Action Required**: None detected
+- **Key Commitments & Quotes**: "Cloudflare moved our own target for full post-quantum security to 2029"; "we've already shipped post-quantum encryption across most of our products at no extra cost"; "every post-quantum upgrade we build is available to all customers, on every plan, at no additional cost"
+- **Coverage Verification**: CONSISTENT — The document discusses general strategy and timelines rather than specific product version roadmaps, consistent with "Not specified" coverage notes.
+- **Extraction Quality**: MEDIUM
+- **Source Document**: VND-057_Cloudflare_Inc.html (426.7 KB)
+- **Extraction Timestamp**: 2026-07-15T23:33:56
 
