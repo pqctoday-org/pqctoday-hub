@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:f0cb0ac3-3bf9-47d6-bb90-ee51333bd54a",
+  "serialNumber": "urn:uuid:c537b4ca-7a51-4e19-8259-809fa6aa6d49",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-07-14T00:00:00.000Z",
+    "timestamp": "2026-07-15T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -32345,6 +32345,730 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "80"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "f87f91e3c5005869",
+      "name": "CipherPlus Cryptographic Module",
+      "manufacturer": {
+        "name": "CipherPlus Pte. Ltd."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "CipherPlus-Cryptographic-Module"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "61579bd088617a48",
+      "name": "QASM Cryptographic Module",
+      "version": "1.1",
+      "manufacturer": {
+        "name": "Crypto4A Technologies Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "ACVP-validated (cert A5631, 2024-08-14) 'quantum-ready, tamper-resistant' HSM version 1.1: ML-DSA, ML-KEM, SLH-DSA, plus stateful hash-based LMS signatures, and classical AES/SHA/HMAC/ECDSA/RSA/EdDSA/KAS-ECC/KDF/KTS-IFC.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "QASM-Cryptographic-Module"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Hardware Security Module (HSM) Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Hardware Security Module (HSM)"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No (ACVP algorithm validation, not a CMVP module validation)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "70"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "85bad1af55b3ed71",
+      "name": "EigenQ Quantum Encryption Module",
+      "manufacturer": {
+        "name": "EigenQ, Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "EigenQ-Quantum-Encryption-Module"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Post-Quantum Cryptography Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "61c8555ec9259f36",
+      "name": "FortiPQC software library",
+      "manufacturer": {
+        "name": "FortifyIQ, Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "FortiPQC-software-library"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Post-Quantum Cryptography Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "18b706bb3d2d5271",
+      "name": "ML-DSA-OSH: Open-Source Hardware Implementation of ML-DSA",
+      "manufacturer": {
+        "name": "KU Leuven COSIC"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-DSA",
+          "primitive": "signature",
+          "algorithmFamily": "ML-DSA"
+        }
+      },
+      "description": "Open-source RTL (Verilog 80.9% / VHDL 19.1%) hardware implementation of ML-DSA (FIPS 204) from KU Leuven's COSIC research group, supporting all 3 NIST security levels (ML-DSA-44/67/87) at runtime; FPGA/ASIC-capable, builds on prior work by Beckwith et al. Includes testbenches and NIST KAT test vectors for all security levels.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "ML-DSA-OSH-open-source-hardware-implemen"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Hardware Security & Semiconductors"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Hardware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No formal CMVP/ACVP certification (academic reference implementation)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "55"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "a200572d03a9a696",
+      "name": "Alibaba Cloud Crypto",
+      "version": "2.8.0",
+      "manufacturer": {
+        "name": "Alibaba Cloud"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "ACVP-validated (cert A7533, 2025-10-15) software crypto implementation version 2.8.0: ML-KEM (KeyGen, EncapDecap), ML-DSA (KeyGen, SigGen, SigVer), SLH-DSA (KeyGen, SigGen, SigVer, multiple parameter sets), plus classical AES/ECDSA/RSA/SHA-2/SHA-3/HMAC/KDF.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Alibaba-Cloud-Crypto"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No (ACVP algorithm validation, not a CMVP module validation)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "70"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "1c7ce7c937f13f72",
+      "name": "TASS Crypto Engine (PQC)",
+      "version": "H2.00.00",
+      "manufacturer": {
+        "name": "Beijing JN TASS Technology Co., Ltd."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "ACVP-validated (cert A6959, 2025-05-27) firmware version H2.00.00: ML-DSA (KeyGen, SigGen, SigVer), ML-KEM (KeyGen, EncapDecap), SLH-DSA (KeyGen, SigGen/SigVer, multiple parameter variants).",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "TASS-Crypto-Engine-PQC"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Firmware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No (ACVP algorithm validation, not a CMVP module validation)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "65"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "30160a280c6da4a7",
+      "name": "Chainguard FIPS Provider for OpenSSL (NEON)",
+      "version": "3.6.0-r2",
+      "manufacturer": {
+        "name": "Chainguard, Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "ACVP-validated (cert A7584, 2025-10-27) FIPS OpenSSL provider version 3.6.0-r2, ARMv7 NEON SHA implementation: ML-KEM (KeyGen, EncapDecap), ML-DSA (KeyGen, SigGen, SigVer), SLH-DSA (KeyGen, SigGen, SigVer), plus AES-GCM/GMAC, SHA-2/3, ECDSA, RSA, EdDSA, HMAC, KDF.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Chainguard-FIPS-Provider-for-OpenSSL-NEO"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No (ACVP algorithm validation, not a CMVP module validation)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "70"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "bdc3ce19c965d89b",
+      "name": "Chainguard FIPS Provider for OpenSSL (SHA3_ASM)",
+      "version": "3.6.0-r2",
+      "manufacturer": {
+        "name": "Chainguard, Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "ACVP-validated (cert A7593, 2025-10-27) FIPS OpenSSL provider version 3.6.0-r2, SHA3 assembly-optimized build: ML-KEM (KeyGen, EncapDecap), ML-DSA (KeyGen, SigGen, SigVer), SLH-DSA (KeyGen, SigGen, SigVer), plus AES-GCM/GMAC, SHA-2/3, ECDSA, RSA, EdDSA, HMAC, KDF.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Chainguard-FIPS-Provider-for-OpenSSL-SHA"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No (ACVP algorithm validation, not a CMVP module validation)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "55"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "da3169bb95985276",
+      "name": "Chainguard FIPS Provider for OpenSSL (SHA3_AVX2)",
+      "version": "3.6.0-r2",
+      "manufacturer": {
+        "name": "Chainguard, Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "ACVP-validated (cert A7612, 2025-10-27) FIPS OpenSSL provider version 3.6.0-r2, SHA3 AVX2-optimized build (x86): ML-KEM (KeyGen, EncapDecap), ML-DSA (KeyGen, SigGen, SigVer), SLH-DSA (KeyGen, SigGen, SigVer), plus AES-GCM/GMAC, SHA-2/3, ECDSA, RSA, EdDSA, HMAC, KDF.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-2"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No (ACVP algorithm validation, not a CMVP module validation)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "55"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "ec4d25d8d829967b",
+      "name": "Chainguard FIPS Provider for OpenSSL (SHA3_AVX512)",
+      "version": "3.6.0-r2",
+      "manufacturer": {
+        "name": "Chainguard, Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "ACVP-validated (cert A7611, 2025-10-27) FIPS OpenSSL provider version 3.6.0-r2, SHA3 AVX-512-optimized build (x86): ML-KEM (KeyGen, EncapDecap), ML-DSA (KeyGen, SigGen, SigVer), SLH-DSA (KeyGen, SigGen, SigVer), plus AES-GCM/GMAC, SHA-2/3, ECDSA, RSA, EdDSA, HMAC, KDF.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-3"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No (ACVP algorithm validation, not a CMVP module validation)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "55"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "376ac78d0959966a",
+      "name": "Chainguard FIPS Provider for OpenSSL (SHA3_AVX512VL)",
+      "version": "3.6.0-r2",
+      "manufacturer": {
+        "name": "Chainguard, Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "ACVP-validated (cert A7610, 2025-10-27) FIPS OpenSSL provider version 3.6.0-r2, SHA3 AVX-512VL-optimized build (x86): ML-KEM (KeyGen, EncapDecap), ML-DSA (KeyGen, SigGen, SigVer), SLH-DSA (KeyGen, SigGen, SigVer), plus AES-GCM/GMAC, SHA-2/3, ECDSA, RSA, EdDSA, HMAC, KDF.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-4"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No (ACVP algorithm validation, not a CMVP module validation)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "55"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "9be19025f17db11f",
+      "name": "Chainguard FIPS Provider for OpenSSL (SHA3_CE)",
+      "version": "3.6.0-r2",
+      "manufacturer": {
+        "name": "Chainguard, Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "ACVP-validated (cert A7585, 2025-10-27) FIPS OpenSSL provider version 3.6.0-r2, SHA3 ARM Crypto Extensions build: ML-KEM (KeyGen, EncapDecap), ML-DSA (KeyGen, SigGen, SigVer), SLH-DSA (KeyGen, SigGen, SigVer), plus AES-GCM/GMAC, SHA-2/3, ECDSA, RSA, EdDSA, HMAC, KDF.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-5"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No (ACVP algorithm validation, not a CMVP module validation)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "55"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "c67ca17eef57ee31",
+      "name": "HiPKI SafGuard 2000 PQC Library",
+      "version": "1.0",
+      "manufacturer": {
+        "name": "Chunghwa Telecom Co., Ltd. Telecommunication Laboratories"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "ACVP-validated (cert A7735, 2025-12-05) HSM-integrated library version 1.0: ML-DSA (KeyGen, SigGen, SigVer), ML-KEM (KeyGen, EncapDecap), SLH-DSA (KeyGen, SigGen, SigVer). Provides identity-based challenge-response authentication and key storage for PKI applications.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "HiPKI-SafGuard-2000-PQC-Library"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Post-Quantum Cryptography Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries,Hardware Security Module (HSM)"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No (ACVP algorithm validation, not a CMVP module validation)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "65"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "b5d02fa29134de46",
+      "name": "DINAMO Hardware Security Module Cryptographic Library",
+      "version": "6.7.0.0",
+      "manufacturer": {
+        "name": "DINAMO Cyber Security Company"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "ACVP-validated (cert A8232, 2026-04-08) HSM firmware version 6.7.0.0: ML-KEM (KeyGen, EncapDecap), ML-DSA (KeyGen, SigGen, SigVer), SLH-DSA (KeyGen, SigGen, SigVer), plus classical AES/SHA/HMAC/ECDSA/RSA/TDES and TLS 1.3 KDF.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "DINAMO-Hardware-Security-Module-Cryptogr"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Hardware Security Module (HSM) Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Hardware Security Module (HSM)"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No (ACVP algorithm validation, not a CMVP module validation)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "65"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "df5ee40883f48f65",
+      "name": "AT&T Business Quantum-Resilient SD-WAN (Cisco 8000 Series Secure Router)",
+      "manufacturer": {
+        "name": "AT&T Enterprises, LLC"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "AT&T Business's Quantum Resilient SD-WAN, delivered via the Cisco 8000 Series Secure Router — first major North American service provider to offer PQC-enabled SD-WAN. Part of a broader Security Service Edge (SSE) expansion; announcement states alignment with NIST PQC standards without naming specific algorithms.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Preparing-for-The-Quantum-Era-AT-T-Busin"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Network Security"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Network,Managed Service"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Not specified in announcement"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "45"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "e4d01a4d19ed0e93",
+      "name": "STMicroelectronics ST54M Post-Quantum Security Chip",
+      "manufacturer": {
+        "name": "STMicroelectronics N.V."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "Secure mobile chip combining NFC, secure element, eSIM, and a hardware accelerator for PQC. Supports ML-KEM and ML-DSA; targets payments, digital identity, and digital car keys. Sampling available as of announcement (2026-06-24); production targeted July 2026.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "STMicroelectronics-ST54M-Post-Quantum-Se"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Hardware Security Chips"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Hardware,Secure Element"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Not yet validated (product announcement; ACVP/CMVP certification not yet published)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "55"
         }
       ]
     }
