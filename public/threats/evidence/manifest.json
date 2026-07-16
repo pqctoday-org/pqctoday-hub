@@ -1453,5 +1453,18 @@
     "http_status": 200,
     "error_message": null,
     "downloaded_at": "2026-07-15T00:45:33.859111+00:00"
+  },
+  {
+    "threat_id": "FINA-001",
+    "source_url": "https://www.hkma.gov.hk/media/eng/doc/key-information/press-release/2026/20260203e3a1.pdf",
+    "main_source": "HKMA Fintech Promotion Blueprint \u2014 Quantum Preparedness Index",
+    "download_status": "ok",
+    "evidence_file": "threats/FINA-001.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 4451297,
+    "http_status": 200,
+    "error_message": null,
+    "downloaded_at": "2026-07-16T04:19:50.883302+00:00",
+    "fetch_tier": null
   }
 ]
