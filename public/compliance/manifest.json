@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-16T03:40:00.091482+00:00",
+  "generated": "2026-07-16T03:49:21.842118+00:00",
   "entries": [
     {
       "refId": "NIST",
@@ -540,15 +540,6 @@
       "sizeBytes": 283430,
       "contentType": "application/pdf",
       "sha256": "f58565d3ec8bd55ea23aa067b2373f783eb3421808d1f8827993857de1b91575"
-    },
-    {
-      "refId": "PKCS11-V32",
-      "url": "https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/",
-      "status": "downloaded",
-      "filename": "PKCS11-V32.html",
-      "sizeBytes": 1556,
-      "contentType": "text/html",
-      "sha256": "9084d4bafee6e592be87596056527631da01bbc715c7ecd1367979ad38865062"
     },
     {
       "refId": "CAB-FORUM-SMC013",
@@ -1368,6 +1359,15 @@
       "sizeBytes": 283167,
       "contentType": "application/pdf",
       "sha256": "515af70472d3a4a2107c61a1bc5f8014523d99feab9b2cf92a95e4bcc790da2c"
+    },
+    {
+      "refId": "PKCS11-V32",
+      "url": "https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/os/pkcs11-spec-v3.2-os.html",
+      "status": "downloaded",
+      "filename": "PKCS11-V32.html",
+      "sizeBytes": 5478477,
+      "contentType": "text/html",
+      "sha256": "924c2d8d397387cf91639d9a6c71c20a4c5e24e20a7b04cc1feedfbc2e48c0cb"
     }
   ],
   "blocked": {

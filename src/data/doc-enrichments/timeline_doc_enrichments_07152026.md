@@ -5,10 +5,10 @@ documents_processed: 2
 enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 ---
 
-## NSPM-12-Published
+## United States:Executive Office of the President — NSPM-12 Published
 
-- **Reference ID**: NSPM-12-Published
-- **Title**: NSPM-12-Published
+- **Reference ID**: United States:Executive Office of the President — NSPM-12 Published
+- **Title**: NSPM-12 Published
 - **Authors**: See document
 - **Publication Date**: Not specified
 - **Last Updated**: Not specified
@@ -73,10 +73,10 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
-## Ushering-in-the-Next-Frontier-of-Quantum-Innovation
+## United States:Executive Office of the President — Executive Order 14413 Issued — Quantum Innovation / QC-ADDS
 
-- **Reference ID**: Ushering-in-the-Next-Frontier-of-Quantum-Innovation
-- **Title**: Ushering-in-the-Next-Frontier-of-Quantum-Innovation
+- **Reference ID**: United States:Executive Office of the President — Executive Order 14413 Issued — Quantum Innovation / QC-ADDS
+- **Title**: Executive Order 14413 Issued — Quantum Innovation / QC-ADDS
 - **Authors**: See document
 - **Publication Date**: Not specified
 - **Last Updated**: Not specified
