@@ -1790,6 +1790,15 @@
       "sizeBytes": 83420,
       "contentType": "text/html",
       "sha256": "462071f64f975b8a4ba8f440135a5269a5d086c344e016f960349328d2cea841"
+    },
+    {
+      "label": "NSPM-12-Published",
+      "url": "https://www.whitehouse.gov/presidential-actions/2026/06/national-security-presidential-memorandum-nspm-12/",
+      "status": "downloaded",
+      "file": "timeline/NSPM-12-Published.html",
+      "sizeBytes": 301212,
+      "contentType": "text/html",
+      "sha256": "1ac3ebc69ea993e07ee0b8781fab9ad62e15ff2620c31a292656f20976ca3be3"
     }
   ]
 }

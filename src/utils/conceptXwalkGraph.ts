@@ -163,32 +163,62 @@ function kebab(s: string): string {
  * `NSA CNSA 2.0`). Used by buildConceptGraph so a click on either form
  * yields the same neighbourhood.
  *
- * The match is token-substring of kebab(source_row_id). For example:
- *   center.kebab = "cnsa-2"
- *   library "NSA CNSA 2.0".kebab = "nsa-cnsa-2-0"
- *     → contains "-cnsa-2-" → equivalent ✓
+ * Two independent signals feed this, unioned:
  *
- * Minimum needle length 4 avoids generic tokens like "nsa", "iso" gobbling
- * the entire registry.
+ * 1. Fuzzy token-substring match on kebab(source_row_id). For example:
+ *      center.kebab = "cnsa-2"
+ *      library "NSA CNSA 2.0".kebab = "nsa-cnsa-2-0"
+ *        → contains "-cnsa-2-" → equivalent ✓
+ *    Minimum needle length 4 avoids generic tokens like "nsa", "iso"
+ *    gobbling the entire registry. This signal misses pairs where one side
+ *    inserts an extra token the other doesn't have — e.g. compliance's
+ *    "ISO-19790" vs library's "ISO-IEC-19790" (the "iec" infix breaks the
+ *    substring match), which is exactly what the explicit alias below
+ *    covers.
+ *
+ * 2. Explicit `aliases` declarations on either row, in the
+ *    `<source_table>:<source_row_id>` form (e.g. compliance row
+ *    `guidance:iso-19790` carrying alias `library:ISO-IEC-19790`). Checked
+ *    as a direct row-to-row comparison rather than via the shared
+ *    `conceptIdByStoreKey` map, because that map is last-write-wins by CSV
+ *    row order — a row's own natural self-registration can silently shadow
+ *    an earlier row's alias pointing at the same key.
  */
-function equivalentCanonicals(center: ConceptRegistryRow): string[] {
-  if (!center.sourceRowId) return []
-  const needle = kebab(center.sourceRowId)
-  if (needle.length < 4) return []
-  // Token match: needle bounded by start/end, hyphens, OR a single trailing
-  // alpha letter that itself sits at end-of-string or before a hyphen. The
-  // alpha-letter branch is what lets `nist-nccoe-sp-1800-38` match
-  // `nist-nccoe-sp-1800-38a/b/c` (the doc-suffix convention NIST uses).
-  // Digit suffixes still don't match, so `fips-2` doesn't gobble `fips-203`.
-  const re = new RegExp(`(^|-)${needle}([a-z](?=-|$)|-|$)`)
-  const out: string[] = []
+export function equivalentCanonicals(center: ConceptRegistryRow): string[] {
+  const out = new Set<string>()
+
+  if (center.sourceRowId) {
+    const needle = kebab(center.sourceRowId)
+    if (needle.length >= 4) {
+      // Token match: needle bounded by start/end, hyphens, OR a single
+      // trailing alpha letter that itself sits at end-of-string or before a
+      // hyphen. The alpha-letter branch is what lets `nist-nccoe-sp-1800-38`
+      // match `nist-nccoe-sp-1800-38a/b/c` (the doc-suffix convention NIST
+      // uses). Digit suffixes still don't match, so `fips-2` doesn't gobble
+      // `fips-203`.
+      const re = new RegExp(`(^|-)${needle}([a-z](?=-|$)|-|$)`)
+      for (const r of conceptRegistry) {
+        if (r.conceptId === center.conceptId) continue
+        if (!r.sourceRowId) continue
+        const hay = kebab(r.sourceRowId)
+        if (hay === needle || re.test(hay)) out.add(r.conceptId)
+      }
+    }
+  }
+
+  const centerKey = storeKey(center)
   for (const r of conceptRegistry) {
     if (r.conceptId === center.conceptId) continue
-    if (!r.sourceRowId) continue
-    const hay = kebab(r.sourceRowId)
-    if (hay === needle || re.test(hay)) out.push(r.conceptId)
+    const rKey = storeKey(r)
+    if (centerKey && r.aliases.includes(centerKey)) out.add(r.conceptId)
+    if (rKey && center.aliases.includes(rKey)) out.add(r.conceptId)
   }
-  return out
+
+  return Array.from(out)
+}
+
+function storeKey(row: ConceptRegistryRow): string | null {
+  return row.sourceTable && row.sourceRowId ? `${row.sourceTable}:${row.sourceRowId}` : null
 }
 
 /**

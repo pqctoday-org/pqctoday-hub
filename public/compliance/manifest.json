@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-14T02:37:41.065833+00:00",
+  "generated": "2026-07-16T04:24:45.459688+00:00",
   "entries": [
     {
       "refId": "NIST",
@@ -209,33 +209,6 @@
       "sha256": "56401ea6a9f8fd5b012096e9ab8e90765ba9f66d6cb9d0ff91c9feaa1d24a503"
     },
     {
-      "refId": "NERC-CIP",
-      "url": "https://www.nerc.com/pa/Stand/Pages/ReliabilityStandards.aspx",
-      "status": "downloaded",
-      "filename": "NERC-CIP.html",
-      "sizeBytes": 52868,
-      "contentType": "text/html",
-      "sha256": "03764df87559fb7adfd099b6d87ed867cabbebcccd3b1dfd629c86030f522985"
-    },
-    {
-      "refId": "DO-326A",
-      "url": "https://www.rtca.org",
-      "status": "downloaded",
-      "filename": "DO-326A.html",
-      "sizeBytes": 130503,
-      "contentType": "text/html",
-      "sha256": "4d5db27d4276455490712cb2682d38c24dfe7fc5ae97f85386a251980c923b7d"
-    },
-    {
-      "refId": "RTCA-DO-355A",
-      "url": "https://www.rtca.org",
-      "status": "downloaded",
-      "filename": "RTCA-DO-355A.html",
-      "sizeBytes": 130504,
-      "contentType": "text/html",
-      "sha256": "2c4374eddb349b8401c1bc036f1b289be32f7baff3d7a79a17bd9818c9e88c19"
-    },
-    {
       "refId": "FERPA",
       "url": "https://studentprivacy.ed.gov/ferpa",
       "status": "downloaded",
@@ -344,15 +317,6 @@
       "sha256": "4d6c01d1a97f0a260c8fe46a3acac15d90d4cf6bf2c62002e511ca8301c963a6"
     },
     {
-      "refId": "MAS-CIRCULAR",
-      "url": "https://www.mas.gov.sg/regulation/circulars",
-      "status": "downloaded",
-      "filename": "MAS-CIRCULAR.html",
-      "sizeBytes": 244949,
-      "contentType": "text/html",
-      "sha256": "1e4eed6caa5615d766316a58dc099a57fcf36697abf8fa948943cded2ed295b4"
-    },
-    {
       "refId": "KPQC-STD",
       "url": "https://kpqc.or.kr",
       "status": "downloaded",
@@ -360,24 +324,6 @@
       "sizeBytes": 15839,
       "contentType": "text/html",
       "sha256": "97ac6ffbadd6efeeb58acde1d98a703136702d02277d4af4b83bbbd6c7ab543d"
-    },
-    {
-      "refId": "INCD-PQC",
-      "url": "https://www.gov.il/en/departments/incd",
-      "status": "downloaded",
-      "filename": "INCD-PQC.html",
-      "sizeBytes": 156740,
-      "contentType": "text/html",
-      "sha256": "e6d44ac56ca2dee60b1e25bda802be24c80f7c0d53f9ed683a876e11c74a0b89"
-    },
-    {
-      "refId": "BOI-PQC",
-      "url": "https://boi.org.il/media/sm4f1ssu/202501en.pdf",
-      "status": "downloaded",
-      "filename": "BOI-PQC.pdf",
-      "sizeBytes": 586324,
-      "contentType": "application/pdf",
-      "sha256": "e52faba1037e27256dcf60a59400e695d14038ae73f6f82b4c063c9b32d5801c"
     },
     {
       "refId": "OSCCA-NGCC",
@@ -414,15 +360,6 @@
       "sizeBytes": 17654,
       "contentType": "text/html",
       "sha256": "991da71888aeebc84f704fda68cd8e4e37058947a82b4ccba8c871c77c6b0f02"
-    },
-    {
-      "refId": "ANSSI-BODY",
-      "url": "https://www.ssi.gouv.fr",
-      "status": "downloaded",
-      "filename": "ANSSI-BODY.html",
-      "sizeBytes": 36320,
-      "contentType": "text/html",
-      "sha256": "99b0141f9e0b7eb9ba9cbde416228148e677e92234e1f44871195e92aedfc08e"
     },
     {
       "refId": "CRYPTREC-BODY",
@@ -542,15 +479,6 @@
       "sha256": "f58565d3ec8bd55ea23aa067b2373f783eb3421808d1f8827993857de1b91575"
     },
     {
-      "refId": "PKCS11-V32",
-      "url": "https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/",
-      "status": "downloaded",
-      "filename": "PKCS11-V32.html",
-      "sizeBytes": 1556,
-      "contentType": "text/html",
-      "sha256": "9084d4bafee6e592be87596056527631da01bbc715c7ecd1367979ad38865062"
-    },
-    {
       "refId": "CAB-FORUM-SMC013",
       "url": "https://cabforum.org/",
       "status": "downloaded",
@@ -666,15 +594,6 @@
       "sizeBytes": 34765,
       "contentType": "text/html",
       "sha256": "4d7a334a92b46fa61965bc981f1fc2069bacc15992b7e1843000648024c54643"
-    },
-    {
-      "refId": "EUROPOL-QSFF",
-      "url": "https://www.europol.europa.eu/",
-      "status": "downloaded",
-      "filename": "EUROPOL-QSFF.html",
-      "sizeBytes": 189371,
-      "contentType": "text/html",
-      "sha256": "fbae399c75a87bb80f1bd418da7d686e49c2a88f59a68f64f8c4ba913c6fa9f8"
     },
     {
       "refId": "PQCC-ROADMAP",
@@ -857,15 +776,6 @@
       "sha256": "800cb160597c35b058463228be4ea21fba4d849ba991df3dd517823c95e9c68b"
     },
     {
-      "refId": "QED-C",
-      "url": "https://quantumconsortium.org",
-      "status": "downloaded",
-      "filename": "QED-C.html",
-      "sizeBytes": 106712,
-      "contentType": "text/html",
-      "sha256": "96ab4a3bf7d5dc0e43dfad9cddaae83a06846201274e01f9129a6e7f062aa2d5"
-    },
-    {
       "refId": "ACSC-ESSENTIAL-EIGHT",
       "url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model",
       "status": "downloaded",
@@ -1028,24 +938,6 @@
       "sha256": "c6450c484b233e09e07fbdb297314a2bc0bdcc78c60f342bc93feef5e3c937cb"
     },
     {
-      "refId": "MSB-SE-CYB",
-      "url": "https://www.msb.se/en",
-      "status": "downloaded",
-      "filename": "MSB-SE-CYB.html",
-      "sizeBytes": 98415,
-      "contentType": "text/html",
-      "sha256": "eaf2140421071e4efe112c6da93d4771b9246b2fbaf4150bc50aef11d5a0cb1a"
-    },
-    {
-      "refId": "NCSC-FI-PQC",
-      "url": "https://www.kyberturvallisuuskeskus.fi/en",
-      "status": "downloaded",
-      "filename": "NCSC-FI-PQC.html",
-      "sizeBytes": 176809,
-      "contentType": "text/html",
-      "sha256": "189d88e8f9249cf1505f499dcccfb9306c1ff99f9d45b270c4cc524621b0f4e4"
-    },
-    {
       "refId": "ARGENTINA-ONTI",
       "url": "https://www.argentina.gob.ar/jefatura/innovacion-publica",
       "status": "downloaded",
@@ -1134,15 +1026,6 @@
       "sizeBytes": 56294,
       "contentType": "text/html",
       "sha256": "4c7ea3210a8db902d61b423779db60faa35acc679eac97a25c993e3eb1971372"
-    },
-    {
-      "refId": "RU-TC26",
-      "url": "https://tc26.ru",
-      "status": "downloaded",
-      "filename": "RU-TC26.html",
-      "sizeBytes": 54344,
-      "contentType": "text/html",
-      "sha256": "ebd204b119f0049db852e20b3a783f5662fc222bbcebf300631088011c906224"
     },
     {
       "refId": "TR-KVKK",
@@ -1368,6 +1251,123 @@
       "sizeBytes": 283167,
       "contentType": "application/pdf",
       "sha256": "515af70472d3a4a2107c61a1bc5f8014523d99feab9b2cf92a95e4bcc790da2c"
+    },
+    {
+      "refId": "PKCS11-V32",
+      "url": "https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/os/pkcs11-spec-v3.2-os.html",
+      "status": "downloaded",
+      "filename": "PKCS11-V32.html",
+      "sizeBytes": 5478477,
+      "contentType": "text/html",
+      "sha256": "924c2d8d397387cf91639d9a6c71c20a4c5e24e20a7b04cc1feedfbc2e48c0cb"
+    },
+    {
+      "refId": "NERC-CIP",
+      "url": "https://www.nerc.com/globalassets/standards/reliability-standards/cip/cip-005-7.pdf",
+      "status": "downloaded",
+      "filename": "NERC-CIP.pdf",
+      "sizeBytes": 325620,
+      "contentType": "application/pdf",
+      "sha256": "7c2ff0092259d76717bf720b64f0cd38f123e55967ffa0e0560bf033f1452425"
+    },
+    {
+      "refId": "DO-326A",
+      "url": "https://www.rtca.org/products/do-326a-electronic/",
+      "status": "downloaded",
+      "filename": "DO-326A.html",
+      "sizeBytes": 116253,
+      "contentType": "text/html",
+      "sha256": "dd22f2e34f05d4bedba48d78e17a3c16fcf34092e993f19dc317d0c09a36c88b"
+    },
+    {
+      "refId": "RTCA-DO-355A",
+      "url": "https://www.rtca.org/products/do-355a-electronic/",
+      "status": "downloaded",
+      "filename": "RTCA-DO-355A.html",
+      "sizeBytes": 116254,
+      "contentType": "text/html",
+      "sha256": "93078509a41b989e2d7eb4226a4c7f23d9f913e0ece96090c8eea4c300f0660a"
+    },
+    {
+      "refId": "MAS-CIRCULAR",
+      "url": "https://www.mas.gov.sg/regulation/circulars/advisory-on-addressing-the-cybersecurity-risks-associated-with-quantum",
+      "status": "downloaded",
+      "filename": "MAS-CIRCULAR.html",
+      "sizeBytes": 246728,
+      "contentType": "text/html",
+      "sha256": "c5dd43bc62d440f7bfc83d520c3284b5d326560abf83e05028bfd69a04576382"
+    },
+    {
+      "refId": "INCD-PQC",
+      "url": "https://www.gov.il/BlobFolder/generalpage/quantum_computing/he/Best%20Practices%20-%20Organizational%20Cyber%20Readiness%20to%20the%20Post-Quantum%20Age%20v.1.85.pdf",
+      "status": "downloaded",
+      "filename": "INCD-PQC.pdf",
+      "sizeBytes": 985301,
+      "contentType": "application/pdf",
+      "sha256": "ff42111be495c7c8bab64b80ceaeb78db4881033bc42abd375554a4828f7a853"
+    },
+    {
+      "refId": "BOI-PQC",
+      "url": "https://boi.org.il/media/sm4f1ssu/202501en.pdf",
+      "status": "downloaded",
+      "filename": "BOI-PQC.pdf",
+      "sizeBytes": 325353,
+      "contentType": "application/pdf",
+      "sha256": "8f388d10f06ffb1e90020ed4b1990013ccd8b9df77aef4a5f400e659e93554f5"
+    },
+    {
+      "refId": "ANSSI-BODY",
+      "url": "https://cyber.gouv.fr/en/technological-and-cybersecurity-challenges/post-quantum-cryptography/",
+      "status": "downloaded",
+      "filename": "ANSSI-BODY.html",
+      "sizeBytes": 26524,
+      "contentType": "text/html",
+      "sha256": "ee545d893e166d32848c41dcc962dab3dae96b8e60a74b057b93c66b25f68b0b"
+    },
+    {
+      "refId": "EUROPOL-QSFF",
+      "url": "https://www.europol.europa.eu/publications-events/publications/prioritising-post-quantum-cryptography-migration-activities-in-financial-services",
+      "status": "downloaded",
+      "filename": "EUROPOL-QSFF.html",
+      "sizeBytes": 37509,
+      "contentType": "text/html",
+      "sha256": "46d44f453ac7adfb65bff4ae86bef05ffc998a45d253fdef989d8da5f3602e7b"
+    },
+    {
+      "refId": "QED-C",
+      "url": "https://quantumconsortium.org/publication/a-guide-to-a-quantum-safe-organization/",
+      "status": "downloaded",
+      "filename": "QED-C.html",
+      "sizeBytes": 96775,
+      "contentType": "text/html",
+      "sha256": "2cbec5b920239af4af24e119f7be815e8426c9833791dd2bac85af444bd70892"
+    },
+    {
+      "refId": "MSB-SE-CYB",
+      "url": "https://www.ncsc.se/sv/aktuellt/kvantsaker-kryptografi/",
+      "status": "downloaded",
+      "filename": "MSB-SE-CYB.html",
+      "sizeBytes": 41911,
+      "contentType": "text/html",
+      "sha256": "6d36e573c16aaaaeff01251e02da2605753a38e80c81ed4573eb7824752a2e5e"
+    },
+    {
+      "refId": "NCSC-FI-PQC",
+      "url": "https://www.kyberturvallisuuskeskus.fi/fi/kvanttiturvalliset-algoritmit-ja-niihin-siirtyminen",
+      "status": "downloaded",
+      "filename": "NCSC-FI-PQC.html",
+      "sizeBytes": 176987,
+      "contentType": "text/html",
+      "sha256": "7812c4ecb879b2ab3f8a2fa180a95adf726958b72ba257b19abed0eaf4591a61"
+    },
+    {
+      "refId": "RU-TC26",
+      "url": "https://tc26.ru/standarts/",
+      "status": "downloaded",
+      "filename": "RU-TC26.html",
+      "sizeBytes": 44455,
+      "contentType": "text/html",
+      "sha256": "38b257c87074c3f613b714c643d7c79e595af216a3faf04fca2c45ae7256c8cd"
     }
   ],
   "blocked": {

@@ -28,6 +28,27 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.21.6] - 2026-07-16
+
+The Compliance page's CSWP.39 governance tags (the badges showing which
+frameworks touch crypto governance, inventory, observability, assurance, or
+lifecycle) now come from real, full document text instead of a truncated,
+noisy extraction — plus new content across Timeline, Threats, Library, and
+Migrate from a maintainer review pass.
+
+### Fixed
+
+- **Compliance framework governance tags are now genuinely reflective of each document, not just partially filled** [view:/compliance] [persona:researcher] [persona:architect]: the tagger used to read only the first 8,000 characters of each source with no cleanup, so for most .gov/.org pages that budget was entirely cookie banners and navigation menus before any real regulation text — and PDF sources were misread as garbage text entirely, with no error. Both are fixed; every active framework was re-tagged, with several (e.g. UK NCSC, NERC CIP, MAS's cybersecurity advisory) gaining tags they'd been missing, and one incorrect tag removed (MiCA, which its own source confirms isn't a cryptography standard).
+- **5 Compliance entries that were never really about post-quantum cryptography are now hidden** [view:/compliance] [persona:researcher]: IEC 62443 (evidence permanently inaccessible), the FCA's and MAS's general risk-management guidance, MiCA, and an Argentina cyber-agency reference — all confirmed, by their own document text, to not be PQC-specific. They're marked inactive rather than deleted, so the record stays auditable.
+
+### Data
+
+- **New Timeline entry**: NSPM-12, the presidential memorandum setting the National Security Systems post-quantum migration track (target: full migration by 2035), re-establishing CNSS authority under NSA's Director.
+- **New Threats entry**: the Hong Kong Monetary Authority's Fintech Promotion Blueprint, introducing a Quantum Preparedness Index for Hong Kong's banking sector.
+- **22 new Library documents** [view:/library] [persona:researcher]: NIST's draft post-quantum updates to the PIV (federal employee ID card) standards, plus new IETF drafts.
+- **Vendor roadmaps refreshed for Microsoft and Cloudflare** [view:/migrate] [persona:architect]; a duplicate Cisco entry was removed.
+- **13 more Migrate catalog products verified** [view:/migrate] [persona:researcher]: AT&T and STMicroelectronics products classified, 11 more ACVP-certified products added; 3 duplicate submissions and 1 unsupported PQC claim were rejected rather than added.
+
 ## [4.21.5] - 2026-07-15
 
 The Compliance page's traceability drawer now shows only real, data-backed

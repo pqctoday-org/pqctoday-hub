@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
   "generated": "2026-07-09",
-  "count": 1051,
+  "count": 1066,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -8618,6 +8618,111 @@
       "url": "https://thequantuminsider.com/2026/01/23/arqit-encryption-intelligence-pqc-migration/",
       "file": "Arqit-Encryption-Intelligence-a600539a.html",
       "bytes": 267325,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "CipherPlus-Cryptographic-Module",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20785",
+      "file": "CipherPlus-Cryptographic-Module-9159b9dc.html",
+      "bytes": 48482,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Citrix-FIPS-Cryptographic-Module",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20273",
+      "file": "Citrix-FIPS-Cryptographic-Module-94a7d652.html",
+      "bytes": 2630256,
+      "tier": "curl_cffi:chrome120"
+    },
+    {
+      "product_id": "QASM-Cryptographic-Module",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=18297",
+      "file": "QASM-Cryptographic-Module-7c781642.html",
+      "bytes": 123164,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "EigenQ-Quantum-Encryption-Module",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19528",
+      "file": "EigenQ-Quantum-Encryption-Module-6e17ad9e.html",
+      "bytes": 48223,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "FortiPQC-software-library",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20849",
+      "file": "FortiPQC-software-library-9a1e8fe6.html",
+      "bytes": 48380,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Alibaba-Cloud-Crypto",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20308",
+      "file": "Alibaba-Cloud-Crypto-14a6c5cf.html",
+      "bytes": 248848,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "TASS-Crypto-Engine-PQC",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19709",
+      "file": "TASS-Crypto-Engine-PQC-941de72e.html",
+      "bytes": 49279,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Chainguard-FIPS-Provider-for-OpenSSL-NEO",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20427",
+      "file": "Chainguard-FIPS-Provider-for-OpenSSL-NEO-edec9d8e.html",
+      "bytes": 132386,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Chainguard-FIPS-Provider-for-OpenSSL-SHA",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20415",
+      "file": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-31ae5d97.html",
+      "bytes": 125172,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-2",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20414",
+      "file": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-2-55d814cd.html",
+      "bytes": 82513,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-3",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20413",
+      "file": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-3-18644a40.html",
+      "bytes": 82518,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-4",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20412",
+      "file": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-4-2c9e3135.html",
+      "bytes": 82522,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-5",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20428",
+      "file": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-5-113f4f65.html",
+      "bytes": 81757,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "HiPKI-SafGuard-2000-PQC-Library",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20507",
+      "file": "HiPKI-SafGuard-2000-PQC-Library-e87e6256.html",
+      "bytes": 47426,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "DINAMO-Hardware-Security-Module-Cryptogr",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=21039",
+      "file": "DINAMO-Hardware-Security-Module-Cryptogr-4bc5e06b.html",
+      "bytes": 93913,
       "tier": "curl_cffi:chrome124"
     }
   ]
