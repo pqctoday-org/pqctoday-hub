@@ -11,7 +11,13 @@
 // asset becomes a component carrying its classical→PQC target, decision,
 // wave, and chosen product (if any).
 
-import { REPLACE_ASSETS, DECISIONS, type ReplaceAsset } from '@/data/migrationAssets'
+import {
+  REPLACE_ASSETS,
+  DECISIONS,
+  DOMAINS,
+  type ReplaceAsset,
+  type DomainId,
+} from '@/data/migrationAssets'
 
 interface PlanExportInput {
   planIds: string[]
@@ -48,6 +54,32 @@ export function buildPlanCbom(input: PlanExportInput): Record<string, unknown> {
     }
   })
 
+  // FIXED 2026-07-16 (migrate-process remediation Phase 5, U7): planIds mixes
+  // real ReplaceAsset ids with foundation/infrastructure DOMAIN ids (crypto
+  // libraries etc. have no ReplaceAsset — computePosture in
+  // useMigrationPlan.ts already handles this split; this export never did,
+  // so any product chosen for a foundation domain silently never appeared
+  // in the downloaded CBOM at all).
+  const knownAssetIds = new Set<string>(assets.map((a) => a.id))
+  const foundationComponents = input.planIds
+    .filter((id) => !knownAssetIds.has(id))
+    .map((id) => DOMAINS[id as DomainId])
+    .filter((d): d is NonNullable<typeof d> => !!d && d.kind === 'foundation')
+    .map((domain) => {
+      const chosen = input.choice[domain.id] ?? []
+      return {
+        type: 'cryptographic-asset',
+        name: domain.label,
+        description: `Foundation/infrastructure domain (no wave/CNSA-deadline model — see pqc:chosenProduct)`,
+        properties: [
+          { name: 'pqc:domainKind', value: 'foundation' },
+          ...chosen.map((product) => ({ name: 'pqc:chosenProduct', value: product })),
+        ],
+      }
+    })
+
+  const allComponents = [...components, ...foundationComponents]
+
   return {
     bomFormat: 'CycloneDX',
     specVersion: '1.6',
@@ -56,10 +88,10 @@ export function buildPlanCbom(input: PlanExportInput): Record<string, unknown> {
       component: { type: 'application', name: 'PQC Migration Plan' },
       properties: [
         { name: 'pqc:standard', value: 'NIST IR 8547 (Initial Public Draft) / CNSA 2.0' },
-        { name: 'pqc:assetCount', value: String(assets.length) },
+        { name: 'pqc:assetCount', value: String(allComponents.length) },
       ],
     },
-    components,
+    components: allComponents,
   }
 }
 

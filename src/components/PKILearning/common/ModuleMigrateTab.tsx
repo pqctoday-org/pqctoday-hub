@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { getMigrateItemsForModule } from '@/data/migrateData'
 import { LAYERS } from '@/data/infrastructureLayers'
 import { CertBadges } from '@/components/Migrate/migrateHelpers'
-import { certsByProduct } from '@/data/certificationXrefData'
+import { getCertsForProduct } from '@/data/certificationXrefData'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import { EmptyState } from '@/components/ui/empty-state'
 
@@ -150,7 +150,9 @@ export function ModuleMigrateTab({ moduleId }: ModuleMigrateTabProps) {
                   <div className="flex items-center gap-1 shrink-0 flex-wrap justify-end">
                     {renderPqcBadge(product.pqcSupport)}
                     {renderFipsBadge(product.fipsValidated)}
-                    <CertBadges certs={certsByProduct.get(product.softwareName) || []} />
+                    <CertBadges
+                      certs={getCertsForProduct(product.productId, product.softwareName)}
+                    />
                   </div>
                 </div>
 

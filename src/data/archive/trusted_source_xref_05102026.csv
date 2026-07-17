@@ -1,0 +1,2164 @@
+resource_type,resource_id,source_id,match_method
+library,KpqC-Competition-Results,kisa,direct
+library,NIST-FIPS140-3-IG-PQC,nist-csrc,direct
+library,3GPP-PQC-Study-2025,gsma,direct
+library,liboqs-v0.15.0,oqs-project,direct
+library,TCG-TPM-V185-Part0,tcg,direct
+library,TCG-TPM-V185-Part1,tcg,direct
+library,TCG-TPM-V185-Part2,tcg,direct
+library,TCG-TPM-V185-Part3,tcg,direct
+library,FIPS 203,nist-csrc,direct
+library,FIPS 204,nist-csrc,direct
+library,FIPS 205,nist-csrc,direct
+library,FIPS 206,nist-csrc,direct
+library,FIPS 186-5,nist-csrc,direct
+library,NIST SP 800-208,nist-csrc,direct
+library,NIST SP 800-227,nist-csrc,direct
+library,NIST IR 8547,nist-csrc,direct
+library,NIST IR 8545,nist-csrc,direct
+library,HQC Specification,nist-csrc,direct
+library,RFC 9629,ietf,direct
+library,RFC 9708,ietf,direct
+library,RFC 9794,ietf,direct
+library,RFC 9802,ietf,direct
+library,RFC 9810,ietf,direct
+library,RFC 9814,ietf,direct
+library,RFC 9858,ietf,direct
+library,RFC 9882,ietf,direct
+library,draft-ietf-tls-hybrid-design-16,ietf,direct
+library,draft-ietf-tls-ecdhe-mlkem-04,ietf,direct
+library,draft-ietf-tls-mlkem-07,ietf,direct
+library,draft-ietf-ipsecme-ikev2-mlkem,ietf,direct
+library,draft-yang-tls-hybrid-sm2-mlkem-03,ietf,direct
+library,RFC 9881,ietf,direct
+library,draft-ietf-lamps-pq-composite-kem-12,ietf,direct
+library,draft-ietf-lamps-pq-composite-sigs-15,ietf,direct
+library,draft-ietf-lamps-cms-kyber-13,ietf,direct
+library,draft-ietf-openpgp-pqc-17,ietf,direct
+library,draft-ietf-pquip-pqc-engineers-14,ietf,direct
+library,draft-ietf-pquip-hybrid-signature-spectrums-07,ietf,direct
+library,draft-ietf-uta-pqc-app-01,ietf,direct
+library,draft-kwiatkowski-pquip-pqc-migration-00,ietf,direct
+library,draft-wang-ipsecme-kem-auth-ikev2-03,ietf,direct
+library,ETSI TS 103 744,etsi-cyber,direct
+library,ETSI TR 103 619,etsi-cyber,direct
+library,NSA CNSA 2.0,nsa-media,direct
+library,NSA CNSA 2.0 FAQ,nsa-media,direct
+library,BSI TR-02102-1,bsi,direct
+library,BSI TR-02102-2,bsi,direct
+library,BSI TR-02102-3,bsi,direct
+library,BSI TR-02102-4,bsi,direct
+library,ANSSI PQC Position Paper,anssi,direct
+library,ANSSI PQC Follow-up Paper,anssi,direct
+library,EU PQC Recommendation,ec,direct
+library,ENISA PQC Guidelines,enisa,direct
+library,EUCC v2.0 ACM,enisa,direct
+library,UK NCSC PQC Guidance,ncsc-uk,direct
+library,NIST NCCoE SP 1800-38C,nist-csrc,direct
+library,ISO/IEC 14888-4:2024,iso-iec-sc27,direct
+library,Japan CRYPTREC Report 2024,cryptrec,direct
+library,Singapore-CSA-Quantum-Safe-Handbook,csa-singapore,direct
+library,Canada CSE PQC Guidance,cccs,direct
+library,GSMA PQ.03 PQC Guidelines,gsma,direct
+library,3GPP TS 33.501,gsma,direct
+library,IETF RFC 8391,ietf,direct
+library,IETF RFC 8554,ietf,direct
+library,IETF RFC 9370,ietf,direct
+library,IETF RFC 8784,ietf,direct
+library,CISA-PQC-CATEGORY-LIST-2026,cisa,direct
+library,ETSI-TS-104-015,etsi-cyber,direct
+library,draft-wang-ipsecme-hybrid-kem-ikev2-frodo-03,ietf,direct
+library,draft-turner-lamps-cms-fn-dsa-00,ietf,direct
+library,draft-ietf-cose-falcon-04,ietf,direct
+library,EO-14306,omb,direct
+library,CA-B-Forum-Ballot-SMC013,pki-consortium,direct
+library,draft-kampanakis-curdle-ssh-pq-ke,ietf,direct
+library,draft-ietf-pquip-hbs-state,ietf,direct
+library,draft-sfluhrer-ipsecme-ikev2-mldsa-01,ietf,direct
+library,draft-ietf-tls-mldsa-02,ietf,direct
+library,RFC 9690,ietf,direct
+library,RFC 8551,ietf,direct
+library,NIST-SP-800-90A-R1,nist-csrc,direct
+library,NIST-SP-800-90B,nist-csrc,direct
+library,NIST-SP-800-90C,nist-csrc,direct
+library,ETSI-GS-QKD-002,etsi-cyber,direct
+library,ETSI-GS-QKD-003,etsi-cyber,direct
+library,ETSI-GS-QKD-004,etsi-cyber,direct
+library,ETSI-GS-QKD-005,etsi-cyber,direct
+library,ETSI-GS-QKD-008,etsi-cyber,direct
+library,ETSI-GS-QKD-011,etsi-cyber,direct
+library,ETSI-GS-QKD-012,etsi-cyber,direct
+library,ETSI-GS-QKD-014,etsi-cyber,direct
+library,ETSI-GS-QKD-015,etsi-cyber,direct
+library,ETSI-GS-QKD-016,etsi-cyber,direct
+library,ETSI-GS-QKD-018,etsi-cyber,direct
+library,RFC-9258,ietf,direct
+library,NIST-SP-800-108-R1,nist-csrc,direct
+library,NIST-SP-800-56C-R2,nist-csrc,direct
+library,PKCS11-V3-OASIS,oasis,direct
+library,PKCS11-V31-OASIS,oasis,direct
+library,PKCS11-V32-OASIS,oasis,direct
+library,BIP-32,bitcoin-core,direct
+library,BIP-39,satoshilabs,direct
+library,BIP-44,satoshilabs,direct
+library,SLIP-0010,satoshilabs,direct
+library,EIP-55,eth-foundation,direct
+library,EIP-155,eth-foundation,direct
+library,SEC2-v2,secg,direct
+library,RFC-8032,ietf,direct
+library,Bitcoin-Whitepaper,bitcoin-core,direct
+library,Ethereum-Yellow-Paper,eth-foundation,direct
+library,OpenSSL-3x-Docs,openssl-project,direct
+library,BIP-141,bitcoin-core,direct
+library,BIP-340,bitcoin-core,direct
+library,BIP-341,bitcoin-core,direct
+library,Bitcoin-BIP360-P2QRH,bitcoin-core,direct
+library,Ethereum-EIP4337-AA,eth-foundation,direct
+library,Ethereum-EIP7702,eth-foundation,direct
+library,FRB-FEDS-2025093-Blockchain-PQC,federal-reserve,direct
+library,Ethereum-PQC-Tasklist-Ethresearch,eth-foundation,direct
+library,IETF-MTC-Draft-09,ietf,direct
+library,RFC-9162,ietf,direct
+library,Cloudflare-MTC-Blog,cloudflare,direct
+library,Radboud-MTC-Thesis-2025,radboud-university,direct
+library,Cloudflare-PQ-Internet-2025,cloudflare,direct
+library,eIDAS-2-Regulation,enisa,direct
+library,EUDI-Wallet-ARF,ec,direct
+library,ISO-18013-5-mDL,iso-iec-sc27,direct
+library,RFC-9901-SD-JWT-VC,ietf,direct
+library,IETF-SD-JWT-Draft,ietf,direct
+library,OpenID4VCI-Spec,openid-foundation,direct
+library,OpenID4VP-Spec,openid-foundation,direct
+library,IETF-Token-Status-List,ietf,direct
+library,CSC-API-v2-Spec,csc-cloudsig,direct
+library,ETSI-EN-319-411,etsi-cyber,direct
+library,NIST-SP-800-63-3,nist-csrc,direct
+library,NIST-SP-800-131A-Rev3,nist-csrc,direct
+library,India-DST-Quantum-Safe-Roadmap-2026,nist-csrc,direct
+library,NIST-SP-800-22-R1A,nist-csrc,direct
+library,BSI-AIS-20-31,bsi,direct
+library,GRI-Quantum-Threat-Timeline-2024,gri,direct
+library,RFC 5652,ietf,direct
+library,RFC 5083,ietf,direct
+library,IETF RFC 7296,ietf,direct
+library,IETF RFC 8731,ietf,direct
+library,Rosenpass-Protocol,rosenpass,direct
+library,IEEE-802-1AE-2018,ieee-sa,direct
+library,draft-ietf-jose-pqc-kem,ietf,direct
+library,RFC 8725,ietf,direct
+library,RFC 7519,ietf,direct
+library,RFC 7515,ietf,direct
+library,RFC 7516,ietf,direct
+library,RFC 7517,ietf,direct
+library,RFC 7518,ietf,direct
+library,RFC 6749,ietf,direct
+library,RFC 9449,ietf,direct
+library,NIST-SP-800-57-Pt1-R6,nist-csrc,direct
+library,KMIP-V2-1-OASIS,oasis,direct
+library,RFC 7228,ietf,direct
+library,RFC 9019,ietf,direct
+library,RFC 9147,ietf,direct
+library,RFC 8879,ietf,direct
+library,RFC 7250,ietf,direct
+library,NIST SP 800-82 Rev. 3,nist-csrc,direct
+library,NSM-10,omb,direct
+library,OMB-M-23-02,omb,direct
+library,QCCPA-2022,us-congress,direct
+library,WH-PQC-Report-2024,omb,direct
+library,EO-14144,omb,direct
+library,BIS-Paper-158,bis,direct
+library,EU-NIS-CG-Roadmap-v1.1,ec,direct
+library,G7-CEG-Financial-PQC-2026,us-treasury,direct
+library,PKI-Consortium-PQC-2025,pki-consortium,direct
+library,HKMA-Fintech-Blueprint-2026,hkma,direct
+library,Malaysia-NACSA-PQC-2025,nacsa-malaysia,direct
+library,HK-CI-Ordinance-2025,hkma,direct
+library,UAE-DESC-PQC-Guideline,desc-dubai,direct
+library,Saudi-NCA-ECC2-2024,saudi-nca,direct
+library,Microsoft-QSP-Roadmap-2025,microsoft,direct
+library,PQCC-Migration-Roadmap-2025,pqca,direct
+library,PQCC-Inventory-Workbook-2025,pqca,direct
+library,Singapore-NQSN-Plus,imda-singapore,direct
+library,ANSSI-PQC-FAQ-2025,anssi,direct
+library,EC-Recommendation-2024-1101,enisa,direct
+library,G7-Financial-PQC-Roadmap-2026,us-treasury,direct
+library,CA-CFDIR-Quantum-Readiness-2023,ec,direct
+library,SG-Quantum-Safe-Handbook-2025,csa-singapore,direct
+library,CZ-NUKIB-Crypto-Requirements-2023,ec,direct
+library,EU-BSI-PQC-Joint-Statement-2024,bsi,direct
+library,BSI-ANSSI-QKD-Position-2024,bsi,direct
+library,CA-TBS-SPIN-PQC-2025,ec,direct
+library,IN-CERTIN-QBOM-Guidelines-2025,cert-in,direct
+library,US-CISA-ACDI-Strategy-2024,cisa,direct
+library,US-CISA-PQC-OT-2024,cisa,direct
+library,UK-CMORG-PQC-Guidance-2025,cmorg,direct
+library,AU-ASD-ISM-Crypto-2024,acsc,direct
+library,ENISA-PQC-Integration-Study-2022,enisa,direct
+library,Europol-QSFF-Call-to-Action-2025,enisa,direct
+library,IL-INCD-Cybersecurity-Strategy-2025,incd-israel,direct
+library,UK-DSIT-CNI-PQC-Perspectives-2025,ncsc-uk,direct
+library,US-QCCPA-2022,us-congress,direct
+library,GSMA-PQ03-v2-2024,gsma,direct
+library,GSMA-PQC-Country-Survey-2025,gsma,direct
+library,SG-MAS-Quantum-Advisory-2024,csa-singapore,direct
+library,SG-MAS-QKD-Sandbox-Report-2025,csa-singapore,direct
+library,NATO-Quantum-Strategy-2024,nato,direct
+library,UK-NCSC-PQC-Whitepaper-2024,ncsc-uk,direct
+library,UK-NCSC-Migration-Timelines-2025,ncsc-uk,direct
+library,US-NSA-CNSA-2.0-2022,nsa-media,direct
+library,IN-TEC-PQC-Migration-Report-2025,ec,direct
+library,BIS-OTHP107,bis,direct
+library,RFC-9763,ietf,direct
+library,draft-bonnell-lamps-chameleon-certs-07,ietf,direct
+library,RFC-9909,ietf,direct
+library,RFC 4251,ietf,direct
+library,RFC 4253,ietf,direct
+library,RFC 4301,ietf,direct
+library,RFC 4303,ietf,direct
+library,RFC 5280,ietf,direct
+library,RFC 6962,ietf,direct
+library,RFC 8017,ietf,direct
+library,RFC 8446,ietf,direct
+library,RFC 9052,ietf,direct
+library,RFC 9580,ietf,direct
+library,RFC 9593,ietf,direct
+library,RFC 9847,ietf,direct
+library,NIST IR 8105,nist-csrc,direct
+library,NIST IR 8309,nist-csrc,direct
+library,NIST IR 8413,nist-csrc,direct
+library,NIST CSWP 39,nist-csrc,direct
+library,NIST NCCoE SP 1800-38A,nist-csrc,direct
+library,NIST NCCoE SP 1800-38B,nist-csrc,direct
+library,NIST CSWP 48,nist-csrc,direct
+library,RFC 9420,ietf,direct
+library,Europol-FS-ISAC-PQC-Financial-2026,enisa,direct
+library,HSBC-InfoSecGlobal-Thales-CryptographicInventory-2025,ec,direct
+library,NIST-IR-8528,nist-csrc,direct
+library,NIST-SP-800-232,nist-csrc,direct
+library,DoD-CIO-PQC-Memo-2025,nsa-media,direct
+library,GSA-PQC-Buyers-Guide-2025,gsa-us,direct
+library,CISA-Bad-Practices-PQC-2025,cisa,direct
+library,NIST SP 800-90,nist-csrc,direct
+library,IETF RFC 9763,ietf,direct
+library,IETF RFC 7662,ietf,direct
+library,draft-ietf-jose-pq-composite-sigs,ietf,direct
+library,NIST SP 800-88,nist-csrc,direct
+library,NIST SP 800-56A,nist-csrc,direct
+library,FIPS 199,nist-csrc,direct
+library,NIST SP 800-37,nist-csrc,direct
+library,NIST SP 800-66,nist-csrc,direct
+library,NIST SP 800-218,nist-csrc,direct
+library,NIST SP 800-111,nist-csrc,direct
+library,draft-ietf-cose-dilithium,ietf,direct
+library,IETF RFC 9701,ietf,direct
+library,IETF RFC 6979,ietf,direct
+library,NIST SP 800-90B,nist-csrc,direct
+library,NIST SP 800-90A,nist-csrc,direct
+library,NIST SP 800-108,nist-csrc,direct
+library,IETF RFC 9909,ietf,direct
+library,draft-ietf-lamps-cert-binding-for-multi-auth,ietf,direct
+library,IETF RFC 5480,ietf,direct
+library,IETF RFC 4556,ietf,direct
+library,draft-ietf-tls-merkle-tree-certs,ietf,direct
+library,IETF RFC 3394,ietf,direct
+library,draft-ietf-plants-merkle-tree-certs-00,ietf,direct
+library,draft-ietf-plants-merkle-tree-certs-01,ietf,direct
+library,NIST SP 800-207,nist-csrc,direct
+library,draft-sfluhrer-ssh-mldsa,ietf,direct
+library,IETF RFC 5656,ietf,direct
+library,IETF RFC 8709,ietf,direct
+library,IETF RFC 4880,ietf,direct
+library,IETF RFC 9258,ietf,direct
+library,IETF RFC 9180,ietf,direct
+library,IETF RFC 9700,ietf,direct
+library,draft-sfluhrer-ipsecme-ikev2-mldsa,ietf,direct
+library,GRI-Quantum-Threat-Timeline-2025,gri,direct
+library,ASC-X9-TR-50-2019,ascx9,direct
+library,ASC-X9-IR-F01-2022,ascx9,direct
+library,ASC-X9-PQC-Readiness-2025,ascx9,direct
+library,ASC-X9-Financial-PKI,ascx9,direct
+library,ETSI-GR-QSC-001,etsi-cyber,direct
+library,ETSI-GR-QSC-003,etsi-cyber,direct
+library,ETSI-GR-QSC-004,etsi-cyber,direct
+library,ETSI-GR-QSC-006,etsi-cyber,direct
+library,ETSI-TR-103-570,etsi-cyber,direct
+library,ETSI-TR-103-949,etsi-cyber,direct
+library,ETSI-TR-103-965,etsi-cyber,direct
+library,ETSI-TR-103-966,etsi-cyber,direct
+library,ETSI-TR-103-967,etsi-cyber,direct
+library,ETSI-TR-104-016,etsi-cyber,direct
+library,ETSI-EG-203-310,etsi-cyber,direct
+library,ETSI-GR-QKD-007,etsi-cyber,direct
+library,ENISA-Crypto-Market-Analysis-2024,enisa,direct
+library,ENISA-State-of-Cybersecurity-2024,enisa,direct
+library,ENISA-Threat-Landscape-2025,enisa,direct
+library,ECCG-ACM-v2,enisa,direct
+library,draft-ietf-pquip-pqc-hsm-constrained-03,ietf,direct
+library,WEF-2026-QuantumSafe-Migration-CryptoDepth,wef,direct
+library,CRYSTALS-Kyber-Spec-v302,ku-leuven-cosic,direct
+library,CRYSTALS-Dilithium-Spec-v31,ku-leuven-cosic,direct
+library,SPHINCS-Plus-Spec-v31,tue-coding,direct
+library,Falcon-Spec-v12,inria-crypto,direct
+library,Classic-McEliece-Spec,tue-coding,direct
+library,IACR-2022-1031,iacr-eprint,direct
+library,IACR-2018-952,iacr-eprint,direct
+library,IACR-2019-1086,iacr-eprint,direct
+library,Bernstein-Lange-PQC-Survey,tue-coding,direct
+library,CIRCL-Cloudflare,cloudflare,direct
+library,PQClean,github,direct
+library,Liboqs-python,oqs-project,direct
+library,Liboqs-go,oqs-project,direct
+library,Liboqs-cpp,oqs-project,direct
+library,Lattice-Estimator,github,direct
+library,FPLLL,github,direct
+library,ETSI-TS-103-673,etsi-cyber,direct
+library,RFC-9242,ietf,direct
+library,IEEE-P1931-1-ROSA,ieee-sa,direct
+library,ITU-T-X1811,itu,direct
+library,IBM-Quantum-Safe-Research,ibm-research,direct
+library,Microsoft-PQC-Research,microsoft,direct
+library,Intel-PQC-Research,intel,direct
+library,SandboxAQ-PQC-Readiness-2025,sandboxaq,direct
+library,TNO-PQC-Migration-WP-2025,tno-nl,direct
+library,NIST-PQC-Workshop-Yassir-2020,nist-csrc,direct
+library,JPMorgan-RWPQC-2025,jpmorganchase,direct
+library,arXiv-2403-11741,arxiv-crypto,direct
+library,NTNU-PQC-Challenges-Silde,ntnu-crypto,direct
+library,EPC-342-08-Crypto-Guidelines-v16,epc-eu,direct
+library,FIPS-180-4,nist-csrc,direct
+library,UEFI-SPEC-2.10-SecureBoot,uefi-forum,direct
+library,RFC-9935,ietf,direct
+library,draft-reddy-tls-composite-mldsa,ietf,direct
+library,draft-ietf-hpke-pq,ietf,direct
+library,draft-ietf-ipsecme-ikev2-downgrade-prevention,ietf,direct
+library,Signal-PQXDH-Spec,signal,direct
+library,Apple-PQ3-Security-Blog,apple,direct
+library,KpqC-NTRU-Plus,kisa,direct
+library,KpqC-SMAUG-T,kisa,direct
+library,KpqC-AIMer,kisa,direct
+library,KpqC-HAETAE,kisa,direct
+library,Peikert-Lattice-Survey-2016,iacr-eprint,direct
+library,Weger-Code-Based-Survey-2022,arxiv-crypto,direct
+library,Regev-LWE-Survey,arxiv-crypto,direct
+library,Bernstein-Lange-Fallout-2017,iacr-eprint,direct
+library,ANSSI-BSI-QKD-Position-Paper,anssi,direct
+library,Algorand-PQC-Technical-Brief,algorand,direct
+library,Algorand-PQC-Technology,algorand,direct
+library,Anchorage-Custody-Platform,anchorage-digital,direct
+library,Anchorage-Porto-Self-Custody,anchorage-digital,direct
+library,Aptos-AIP137-SLH-DSA,aptos-foundation,direct
+library,Avalanche-AIP-QR-001,avax-foundation,direct
+library,BitGo-Multisig-vs-MPC,bitgo,direct
+library,BitGo-TSS,bitgo,direct
+library,Cardano-PQC-Research,cardano-iohk,direct
+library,Coinbase-Institutional,coinbase,direct
+library,Coinbase-Prime-Custody,coinbase,direct
+library,Copper-Digital-Asset-Custody,copper-crypto,direct
+library,Cosmos-PQC-DoraFactory,cosmos-interchain,direct
+library,DFNS-HSM-Integration,dfns,direct
+library,DFNS-Key-Orchestration,dfns,direct
+library,Draft-for-Public-Consultation-Quantum-Readiness-Index-Oct-2025,arxiv-crypto,direct
+library,Ethereum-PQC-Roadmap-2026,eth-foundation,direct
+library,Final-technical-report-on-migration-to-PQC-28-03-25,ec,direct
+library,Fireblocks-MPC-CMP,fireblocks,direct
+library,Fireblocks-MPC-CMP-Whitepaper,fireblocks,direct
+library,Fireblocks-Open-Source-MPC,fireblocks,direct
+library,Galileo-FT-Platform,arxiv-crypto,direct
+library,HKMA-Fintech-Adoption-Report-2025,hkma,direct
+library,Hex-Trust-Custody,arxiv-crypto,direct
+library,Hyperledger-Besu-Overview,hyperledger,direct
+library,Hyperledger-Fabric-Crypto,hyperledger,direct
+library,IETF-ML-KEM-for-TLS-1.3,ietf,direct
+library,IOTA-Tangle-Signatures,iota-foundation,direct
+library,Komainu-Custody,komainu,direct
+library,Ledger-Enterprise-MPC-Readiness,ledger-wallet,direct
+library,P2025062700238,arxiv-crypto,direct
+library,Polkadot-Substrate-Crypto,polkadot,direct
+library,QRL-Quantum-Resistant-Ledger,ledger-wallet,direct
+library,Quantum-Economy-Landscape-in-Saudi-Arabia-23,ec,direct
+library,Quantum-Ready-FN-DSA-FIPS-206-Nears-Draft-Approval-from-NIST-DigiCert,nist-csrc,direct
+library,REF-PQC-Report-FINAL-Send,arxiv-crypto,direct
+library,Report-TaskForce-PQMigration-4Feb26-v1,arxiv-crypto,direct
+library,Solana-PQC-Helius,solana-foundation,direct
+library,Sui-PQC-Blog,sui-foundation,direct
+library,Taurus-SA-Product,taurus-group,direct
+library,TechnicalGuidelines-on-SBOMQBOMCBOMAIBOM-and-HBOM-ver2.0,ec,direct
+library,VIAVI-PQC-Migration-WP-2026,viavi,direct
+library,Zodia-Custody,zodia,direct
+library,catalogue-produits-services-profils-de-protection-sites-certifies-qualifies-agrees-anssi,nist-csrc,direct
+library,ITU-T-X509-2019,itu,direct
+library,FS-ISAC-PQC-Timeline-2026,fs-isac,direct
+library,arXiv-2603-28728,arxiv-crypto,direct
+library,Google-QuantumAI-EC-Crypto-Quantum-2026,google-quantum-ai,direct
+library,NIST-CSWP-36A,nist-csrc,direct
+library,ENISA-Report-Security-in-5G-Specifications,enisa,direct
+library,Parkin-Julian-5g-suci,arxiv-crypto,direct
+library,eccpqcthreatsandmitigation04062026,ec,direct
+library,arXiv-2603-01091-HNDL-Rekeying,arxiv-crypto,direct
+library,NIST-SP-800-38D,nist-csrc,direct
+library,IETF RFC 5649,ietf,direct
+library,RFC 5869,ietf,direct
+library,OASIS-SAML-2-0-Core,oasis-open,direct
+library,FIPS-198-1,nist-csrc,direct
+library,NIST-SP-800-132,nist-csrc,direct
+library,NIST-SP-800-230-ipd,nist-csrc,direct
+library,AQ-PQC-Migration-Framework-v1.1-2026,applied-quantum,direct
+library,CoT-Decrypting-Future-PQC-Timelines-2026,charter-of-trust,direct
+library,ANSSI-PG-083-v3-2026,anssi,direct
+library,Cambridge-JBS-Quantum-Blockchain-2025,cambridge-jbs,direct
+library,PROACT-2025-SCA-Lattice-PQC,radboud-university,direct
+library,NIST-PQC-Seminar-FaultInjection-Lattice,nist-csrc,direct
+library,USENIX-2024-HQC-Division-Timing,ec,direct
+library,IACR-2024-1828-McEliece-SCA-Fault,iacr-eprint,direct
+library,FrodoKEM-SCA-Countermeasures-2024,arxiv-crypto,direct
+library,IACR-2022-952-FrodoKEM-Rowhammer,iacr-eprint,direct
+library,ArXiv-2025-SLH-DSA-Rowhammer,arxiv-crypto,direct
+library,EmergentMind-Nonce-Reuse-Crypto,arxiv-crypto,direct
+library,Invicti-OWASP-CryptoFailures-2025,ec,direct
+library,Springer-MathFoundations-PQC-2026,itu,direct
+library,NIST-SP-800-133r3-ipd,nist-csrc,direct
+library,ref-obrien-chrome-hybrid,arxiv-crypto,direct
+library,ref-bindel-hybrid-sigs,arxiv-crypto,direct
+library,ref-defeo-sqisign,inria-crypto,direct
+library,ref-aardal-falcon-labrador,arxiv-crypto,direct
+library,ref-bravyi-quantum-memory,ibm-research,direct
+library,ref-gidney-factor-rsa,google-quantum-ai,direct
+library,ref-gidney-factor-rsa-8h,google-quantum-ai,direct
+library,ref-webster-pinnacle,arxiv-crypto,direct
+library,ref-litinski-toffoli,arxiv-crypto,direct
+library,ref-kim-ecdlp,arxiv-crypto,direct
+library,ref-pont-downtime,arxiv-crypto,direct
+library,ref-fukuda-grand-challenge,arxiv-crypto,direct
+library,ref-habovstiak-hashed-keys,arxiv-crypto,direct
+library,ref-stutz-reuse-pubkeys,arxiv-crypto,direct
+library,ref-drake-hash-multisig,arxiv-crypto,direct
+library,ref-amy-sha2-preimage,arxiv-crypto,direct
+library,Microsoft-Crypto-Inventory-CPM-2026,microsoft-security,direct
+library,EJBCA-Understanding-CPM,keyfactor,direct
+library,EJBCA-Beyond-CBOM,keyfactor,direct
+library,IBM-CBOM-Harishankar,ibm-research,direct
+library,Keyfactor-Introducing-CBOM,keyfactor,direct
+library,Deloitte-TechTrends-2025-Quantum,deloitte,direct
+library,IBM-IBV-Secure-PostQuantum-2025,ibm-ibv,direct
+library,Sectigo-State-Crypto-Agility-2025,sectigo,direct
+library,Meta-PQC-Migration-2026,meta-engineering,direct
+library,InfoSec-Global-Hype-Cycles,infosec-global,direct
+library,NIST-CMVP-MIP-List,nist-csrc,direct
+library,NIST-CMVP-Validated-Modules,nist-csrc,direct
+library,NIST-ACVP,nist-csrc,direct
+library,IETF-RFC-7030-EST,ietf,direct
+library,IETF-RFC-4210-CMP,ietf,direct
+library,SecBoulevard-Carielli-CryptoAgility-2025,forrester,direct
+library,NIST-FIPS-140-3-IG-Sep-2025-PQC,nist-csrc,direct
+library,eprint-2025-2059,iacr-eprint,direct
+library,NIST-SP-800-140B,nist-csrc,direct
+library,IETF-RFC-8996,ietf,direct
+library,IETF-RFC-7465,ietf,direct
+library,ETSI-TS-119-312,etsi,direct
+library,OWASP-CycloneDX-CBOM-Guide,owasp,direct
+library,IETF-RFC-8555,ietf,direct
+library,FIPS-140-3-STANDARD,nist-csrc,direct
+library,CMVP-MGMT-MANUAL,nist-csrc,direct
+library,NIST-SP-800-140A,nist-csrc,direct
+library,NIST-SP-800-140C,nist-csrc,direct
+library,NIST-SP-800-140D,nist-csrc,direct
+library,NIST-SP-800-140E,nist-csrc,direct
+library,NIST-SP-800-140F,nist-csrc,direct
+library,NIAP-CCEVS-POLICY,niap,direct
+library,NIAP-CCEVS-MANUAL,niap,direct
+library,CC-2022-PART1,ec,direct
+library,CC-2022-PART2,ec,direct
+library,CC-2022-PART3,ec,direct
+library,CC-2022-CEM,ec,direct
+library,BSI-BSZ-METHOD,bsi,direct
+library,HIPAA-45-CFR-164,hhs,direct
+library,FERPA-34-CFR-99,us-doe-ed,direct
+library,COPPA-16-CFR-312,ftc,direct
+library,FDA-21-CFR-11,fda,direct
+library,FISMA-NIST-SP-800-53r5,nist-csrc,direct
+library,HITECH-PL-111-5,us-congress,direct
+library,NERC-CIP-REQS,nerc,direct
+library,MAS-CIRCULAR-IT-RISK,mas-singapore,direct
+library,GSMA-NG116,gsma,direct
+library,ETSI-EN-303645,etsi-cyber,direct
+library,ZA-POPIA-TEXT,arxiv-crypto,direct
+library,KE-DPA-TEXT,odpc-kenya,direct
+library,PCI-DSS-QRG,ec,direct
+library,TSA-SD-PIPELINE-2021-02F,us-tsa,direct
+library,HKMA-FINTECH-BLUEPRINT-2026,hkma,direct
+library,NY-DFS-23-NYCRR-500-A2,nydfs,direct
+library,NIS2-DIRECTIVE-2022-2555,enisa,direct
+library,DORA-REG-2022-2554,enisa,direct
+library,GDPR-REG-2016-679,enisa,direct
+library,EIDAS-REG-910-2014,enisa,direct
+library,EU-CRA-REG-2024-2847,enisa,direct
+library,MICA-REG-2023-1114,enisa,direct
+library,EU-REC-2024-1101,enisa,direct
+library,Saudi-NCA-NCS1-2020,saudi-nca,direct
+library,US-TREASURY-FSRMP-2025,us-treasury,direct
+library,CMMC-2.0-MODEL,dod-cio,direct
+library,UNECE-WP29-R155,unece,direct
+library,NZISM-V3-9,nzism,direct
+library,draft-vitap-ml-dsa-webauthn,ietf,direct
+library,draft-ietf-openpgp-nist-bp-comp,ietf,direct
+library,arXiv-2603-28627,arxiv-crypto,direct
+library,draft-ietf-lamps-kyber-certificates,ietf,direct
+library,5G-Americas-PQCS-2025,5g-americas,direct
+library,draft-ietf-sshm-mlkem-hybrid-kex,ietf,direct
+library,draft-becker-cnsa2-ssh-profile,ietf,direct
+library,draft-spm-lake-pqsuites,ietf,direct
+library,CSA-Practitioners-Guide-PQC-2025,csa-cloud,direct
+library,draft-ietf-tls-key-share-prediction,ietf,direct
+library,arXiv-2508-01694,arxiv-crypto,direct
+library,ref-joseph-transitioning,arxiv-crypto,direct
+library,RFC 9142,ietf,direct
+library,RFC 9528,ietf,direct
+library,W3C WebAuthn,w3c,direct
+library,OpenSSL-3.5.0-Release,openssl-project,direct
+library,NIST-IR-8547-IPD2,nist-csrc,direct
+library,CSA-CryptoNews-May2026,csa-cloud,direct
+library,ACSC-Essential-Eight,acsc,direct
+library,Cisco-Quantum-Safe-Architecture-2026,cisco-systems,inferred
+library,PQShield-4-Quantum-Threats-Enterprises-2026,pqshield,direct
+library,ITPro-Monetizing-Quantum-Shift-PQC-2026,csa-cloud,direct
+library,QCReport-QDay-Accelerated-Timeline-2026,qc-report,mapped
+library,Cloudflare-PostQuantum-Roadmap-2026,cloudflare,direct
+library,ISO/IEC 18033-2:2006/AMD1:2017,iso-iec-sc27,direct
+library,NSA CSfC PQC Guidance Addendum,nsa-advisory,direct
+library,ENISA-EUDI-Wallet-Security,enisa,direct
+library,IEEE 1609.2 Amendment,ieee-sa,direct
+library,IEC 62443,iec,direct
+library,Australia ASD PQC Guidance,acsc,direct
+library,TCG-TPM-PQC-Spec-2025,tcg,direct
+library,draft-ietf-jose-pqc-algorithms,ietf,direct
+library,WEF-2026-Quantum-Security-Leaders,wef,direct
+library,ISO/IEC NP 29192-8,iso-iec-sc27,direct
+library,CAB-Forum-SC-081v3,pki-consortium,mapped
+library,RFC 2119,ietf,direct
+library,RFC 8174,ietf,direct
+library,RFC 5912,ietf,direct
+library,RFC 5754,ietf,direct
+library,RFC 5911,ietf,direct
+library,CNSSP 15,nsa-advisory,mapped
+library,CNSSP 11,nsa-advisory,mapped
+library,RFC 8708,ietf,direct
+library,RFC 6234,ietf,direct
+library,FIPS 180,nist-csrc,direct
+library,FIPS 202,nist-csrc,direct
+library,NIST IR 8477,nist-csrc,direct
+library,NIST-SP-800-152,nist-csrc,direct
+library,NIST-SP-800-56A,nist-csrc,direct
+library,NIST-SP-800-56B,nist-csrc,direct
+library,NIST PQC FAQ,nist-csrc,direct
+library,EO-14028,cisa,mapped
+library,NSM-8,nsa-advisory,mapped
+library,NSM-8,cisa,mapped
+library,SEC 1,secg,exact
+library,IEEE 1363,ieee-sa,mapped
+library,IEEE 1363a,ieee-sa,mapped
+library,ETSI TS 103 774,etsi-cyber,mapped
+library,ISO/IEC 18033-2:2006,iso-iec-sc27,mapped
+library,NIAP,nsa-advisory,mapped
+library,NIAP,nist-csrc,mapped
+library,RFC 1847,ietf,direct
+library,RFC 3370,ietf,direct
+library,RFC 3394,ietf,direct
+library,RFC 3560,ietf,direct
+library,RFC 4056,ietf,direct
+library,RFC 4210,ietf,direct
+library,RFC 4250,ietf,direct
+library,RFC 4252,ietf,direct
+library,RFC 4254,ietf,direct
+library,RFC 4302,ietf,direct
+library,RFC 4306,ietf,direct
+library,RFC 4419,ietf,direct
+library,RFC 4718,ietf,direct
+library,RFC 5056,ietf,direct
+library,RFC 5246,ietf,direct
+library,RFC 5751,ietf,direct
+library,RFC 5958,ietf,direct
+library,RFC 5990,ietf,direct
+library,RFC 5996,ietf,direct
+library,RFC 6176,ietf,direct
+library,RFC 7468,ietf,direct
+library,RFC 7568,ietf,direct
+library,RFC 7693,ietf,direct
+library,RFC 7748,ietf,direct
+library,RFC 8268,ietf,direct
+library,RFC 8603,ietf,direct
+library,RFC 8702,ietf,direct
+library,RFC 8755,ietf,direct
+library,RFC 8756,ietf,direct
+library,RFC 8996,ietf,direct
+library,RFC 8998,ietf,direct
+library,RFC 9001,ietf,direct
+library,RFC 9053,ietf,direct
+library,RFC 9180,ietf,direct
+library,RFC 9480,ietf,direct
+library,RFC 9811,ietf,direct
+library,draft-ietf-lamps-dilithium-certificates-13,ietf,direct
+library,draft-ietf-ipsecme-ikev2-pqc-auth,ietf,direct
+library,draft-ietf-pquip-hybrid-signature-spectrums,ietf,direct
+library,draft-celi-wiggers-tls-authkem,ietf,direct
+library,draft-wiggers-tls-authkem-psk,ietf,direct
+library,draft-hu-ipsecme-pqt-hybrid-auth,ietf,direct
+library,draft-ietf-tls-rfc8447bis-15,ietf,direct
+library,BIP-43,bitcoin-core,mapped
+library,EIP-2,eth-foundation,mapped
+library,EIP-2718,eth-foundation,mapped
+library,EIP-2929,eth-foundation,mapped
+library,EIP-2930,eth-foundation,mapped
+library,EIP-3541,eth-foundation,mapped
+library,EIP-3607,eth-foundation,mapped
+library,EIP-4844,eth-foundation,mapped
+library,RFC 6090,ietf,direct
+library,RFC 8037,ietf,direct
+library,RFC-8420,ietf,mapped
+library,RFC-7427,ietf,mapped
+library,RFC-8410,ietf,mapped
+library,RFC-6960,ietf,mapped
+library,draft-ietf-tls-authkem,ietf,mapped
+library,draft-ietf-tls-subcerts,ietf,mapped
+library,RFC-3647,ietf,mapped
+library,FIPS-197,nist-csrc,direct
+library,RFC-8705,ietf,mapped
+library,RFC-8707,ietf,mapped
+library,RFC-9110,ietf,mapped
+library,RFC-5234,ietf,mapped
+library,RFC-7841,ietf,mapped
+library,RFC-8792,ietf,mapped
+library,RFC-6763,ietf,mapped
+library,RFC-6024,ietf,mapped
+library,RFC-8240,ietf,mapped
+library,RFC-6347,ietf,mapped
+library,RFC-7525,ietf,mapped
+library,RFC-5763,ietf,mapped
+library,RFC-0793,ietf,mapped
+library,RFC-1950,ietf,mapped
+library,RFC-7932,ietf,mapped
+library,RFC-6019,ietf,mapped
+library,RFC-2397,ietf,mapped
+library,RFC-8152,ietf,mapped
+library,RFC-8230,ietf,mapped
+library,RFC-8610,ietf,mapped
+library,RFC-7383,ietf,mapped
+library,RFC-7465,ietf,mapped
+library,RFC-5469,ietf,mapped
+library,RFC-9155,ietf,mapped
+library,RFC-4346,ietf,mapped
+library,NIST-SP-800-53,nist-csrc,direct
+library,RFC-9000,ietf,mapped
+library,RFC-7009,ietf,mapped
+library,RFC-6750,ietf,mapped
+library,RFC-7231,ietf,mapped
+library,RFC-5741,ietf,mapped
+library,RFC-7638,ietf,mapped
+library,RFC-9679,ietf,mapped
+library,RFC-7479,ietf,mapped
+library,RFC-4255,ietf,mapped
+library,RFC-6594,ietf,mapped
+library,RFC-7301,ietf,mapped
+library,RFC-9380,ietf,mapped
+library,RFC-8229,ietf,mapped
+library,RFC-6928,ietf,mapped
+library,RFC-9936,ietf,mapped
+library,FIPS-198,nist-csrc,direct
+library,NIST-SP-1800-38B,nist-csrc,direct
+library,ISO-IEC-19790,iso-iec-sc27,mapped
+library,ISO-IEC-24759,iso-iec-sc27,mapped
+library,NIST-SP-800-140Cr1,nist-csrc,direct
+library,NIST-SP-800-140Dr1,nist-csrc,direct
+library,FIPS-140-3,nist-csrc,direct
+library,draft-josefsson-ntruprime-ssh,ietf,direct
+library,China CACR PQC Competition Results,iccs-china,direct
+library,China ICCS PQC Call for Proposals,iccs-china,direct
+library,Samsung-Thales-ML-KEM-eSE-2026,thales-research,mapped
+library,ISO-IEC-23837-1,iso-iec-sc27,direct
+library,ISO-IEC-23837-2,iso-iec-sc27,direct
+library,NSA-QKD-Advisory-2023,nsa-media,direct
+library,Czech-NUKIB-Crypto-Rec-2023,nukib,mapped
+library,UAE-CSC-Encryption-Policy,uae-csc,direct
+library,FIPS-207-HQC,nist-csrc,mapped
+library,AU-ACSC-Quantum-Tech-Primer-Communications-2026,acsc,direct
+library,BIKE-Round4-Spec-2022,nist-csrc,direct
+library,ETSI-GS-QKD-014-V2.1.1,etsi,direct
+library,India-DST-NQM-Roadmap,cert-in,mapped
+library,India-DST-NQM-Roadmap,ncsc-uk,mapped
+library,ANSSI-PQC-Position-2022,anssi,direct
+library,NIST SP 800-53,nist-csrc,direct
+library,IETF RFC 4253,ietf,direct
+library,India-TEC-910018-2025,cert-in,mapped
+library,BSI TR-02102,bsi,direct
+library,draft-ietf-plants-merkle-tree-certs,ietf,direct
+library,IETF RFC 9162,ietf,direct
+library,IETF RFC 8555,ietf,direct
+library,ETSI-GS-QKD-016-V2,etsi-cyber,direct
+library,Avis-de-lANSSI-sur-la-migration-vers-la-cryptographie,anssi,mapped
+library,Gartner-CryptoCOE-Mahdi,entrust,direct
+library,Ponemon-Global-PKI-Trends-2026,entrust,inferred
+library,Forrester-TEI-CLM-Automation,forrester,direct
+library,DigiCert-PQC-Maturity-Model,digicert,direct
+library,RFC-5869,ietf,direct
+library,5gsuci-NIST.CSWP.36A.ipd,nist-csrc,mapped
+library,draft-ietf-lamps-kyber-certificates-11,ietf,direct
+library,draft-ietf-pquip-hybrid-signature-spectrums-06,ietf,mapped
+library,draft-ietf-uta-pqc-app-00,ietf,mapped
+library,draft-wang-ipsecme-kem-auth-ikev2-01,ietf,mapped
+library,draft-ietf-cose-falcon-03,ietf,mapped
+library,draft-sfluhrer-ipsecme-ikev2-mldsa-00,ietf,mapped
+library,draft-ietf-tls-mldsa-01,ietf,mapped
+library,draft-ietf-lamps-pq-composite-sigs-14,ietf,mapped
+library,NIST-SP-800-57-Pt1-R5,nist-csrc,mapped
+library,GSMA FS.50 PQC Guidelines,gsma,mapped
+library,3GPP TS 33.501 Rel-19,gsma,mapped
+library,draft-yang-tls-hybrid-sm2-mlkem-02,ietf,mapped
+library,draft-ietf-tls-mldsa,ietf,mapped
+library,draft-ietf-ipsecme-ikev2-mlkem-03,ietf,mapped
+library,Singapore IMDA Cyber Security Guide,imda-singapore,mapped
+library,CA/Browser Forum Ballot SC-PQC,pki-consortium,mapped
+library,draft-ietf-ipsecme-ikev2-mldsa,ietf,mapped
+library,CSA-PQC-Guide-2025,csa-cloud,mapped
+library,ETSI TS 103 744 v1.3.1,etsi-cyber,mapped
+library,ETSI GR QSC 020,etsi-cyber,mapped
+library,draft-ietf-tls-ecdhe-mlkem-03,ietf,mapped
+library,draft-ietf-tls-mlkem-05,ietf,mapped
+library,draft-ietf-lamps-pq-composite-kem-11,ietf,mapped
+library,draft-ietf-openpgp-pqc-16,ietf,mapped
+library,CISA-PQC-CATEGORY-LIST-2025,cisa,inferred
+library,draft-ietf-lamps-pq-composite-kem-10,ietf,mapped
+library,draft-ietf-lamps-pq-composite-sigs-13,ietf,mapped
+library,draft-ietf-openpgp-pqc-14,ietf,mapped
+library,IETF-TLS-ECDHE-MLKEM-03,ietf,inferred
+library,IETF-LAMPS-COMPOSITE-KEM-11,ietf,inferred
+library,RFC 9370,ietf,mapped
+library,RFC 8784,ietf,mapped
+library,RFC 8778,ietf,inferred
+library,RFC 8554,ietf,mapped
+library,RFC 8391,ietf,mapped
+library,draft-ietf-tls-mlkem-04,ietf,mapped
+library,draft-ietf-sshm-mlkem-hybrid-kex-04,ietf,inferred
+library,draft-ietf-pquip-pqt-hybrid-terminology,ietf,mapped
+library,draft-ietf-tls-semistatic-dh,ietf,mapped
+library,RFC-9146,ietf,mapped
+library,RFC-7924,ietf,mapped
+library,RFC-8478,ietf,mapped
+library,RFC-8447,ietf,mapped
+library,RFC-8126,ietf,mapped
+library,RFC-7159,ietf,mapped
+library,draft-ietf-lamps-dilithium-certificates,ietf,mapped
+library,RFC-9496,ietf,mapped
+library,draft-ietf-cose-dilithium-05,ietf,mapped
+library,draft-ietf-sshm-ntruprime-ssh,ietf,mapped
+library,draft-ietf-opsawg-rfc5706bis,ietf,mapped
+library,draft-ietf-lake-edhoc-psk,ietf,mapped
+threats,AERO-001,rtca,direct
+threats,AERO-002,iso-iec-sc27,direct
+threats,AERO-003,icao,direct
+threats,AUTO-001,iso-iec-sc27,direct
+threats,AUTO-002,iso-iec-sc27,direct
+threats,AUTO-003,unece,direct
+threats,AUTO-004,iso-iec-sc27,direct
+threats,CLOUD-001,csa-cloud,direct
+threats,CLOUD-002,csa-cloud,direct
+threats,CLOUD-003,nist-csrc,direct
+threats,CLOUD-004,nist-csrc,direct
+threats,CROSS-001,ibm-research,direct
+threats,CROSS-002,nist-csrc,direct
+threats,CROSS-003,ibm-research,direct
+threats,CROSS-004,itu,direct
+threats,CROSS-005,nist-csrc,direct
+threats,CROSS-006,nist-csrc,direct
+threats,CROSS-007,ec,direct
+threats,CROSS-008,nist-csrc,direct
+threats,CRYPTO-001,federal-reserve,direct
+threats,CRYPTO-002,eth-foundation,direct
+threats,CRYPTO-003,federal-reserve,direct
+threats,CRYPTO-004,ccss,direct
+threats,ENERGY-001,iec,direct
+threats,ENERGY-002,nrc,direct
+threats,ENERGY-003,gri,direct
+threats,ENERGY-004,iec,direct
+threats,FIN-001,bis,direct
+threats,FIN-002,federal-reserve,direct
+threats,FIN-003,bis,direct
+threats,FIN-004,nist-csrc,direct
+threats,FIN-005,fs-isac,direct
+threats,AUS-FIN-001,acsc,direct
+threats,AUS-FIN-002,bis,direct
+threats,GOV-001,iso-iec-sc27,direct
+threats,GOV-002,nsa-media,direct
+threats,GOV-003,cisa,direct
+threats,GOV-004,fpki,direct
+threats,GOV-005,iso-iec-sc27,direct
+threats,AUS-GOV-001,acsc,direct
+threats,AUS-GOV-002,acsc,direct
+threats,HLTH-001,hhs,direct
+threats,HLTH-002,thales-research,direct
+threats,HLTH-003,fda,direct
+threats,HLTH-004,fda,direct
+threats,HLTH-005,csa-cloud,direct
+threats,INS-001,cisa,direct
+threats,INS-002,nydfs,direct
+threats,INS-003,geneva-association,direct
+threats,IOT-001,forescout,direct
+threats,IOT-002,iec,direct
+threats,IOT-003,ietf,direct
+threats,IOT-004,iso-iec-sc27,direct
+threats,IT-001,openssl-project,direct
+threats,IT-002,cabf,direct
+threats,IT-003,nist-csrc,direct
+threats,IT-004,openssf,direct
+threats,IT-005,fido-alliance,direct
+threats,LEG-001,ec,direct
+threats,LEG-002,ec,direct
+threats,LEG-003,etsi-cyber,direct
+threats,LEG-004,nist-csrc,direct
+threats,MEDIA-001,nist-csrc,direct
+threats,MEDIA-002,aacs,direct
+threats,MEDIA-003,dvb-project,direct
+threats,PCI-001,emvco,direct
+threats,PCI-002,pci-ssc,direct
+threats,PCI-003,pci-ssc,direct
+threats,RAIL-001,era-rail,direct
+threats,RAIL-002,iso-iec-sc27,direct
+threats,RETAIL-001,pci-ssc,direct
+threats,RETAIL-002,nist-csrc,direct
+threats,RETAIL-003,gs1,direct
+threats,SUPPLY-001,imo,direct
+threats,SUPPLY-002,csa-cloud,direct
+threats,SUPPLY-003,wco,direct
+threats,TELCO-001,gsma,direct
+threats,TELCO-002,gsma,direct
+threats,TELCO-003,etsi,direct
+threats,TELCO-004,gsma,direct
+threats,TELCO-005,etsi,direct
+threats,WATER-001,cisa,direct
+threats,WATER-002,awwa,direct
+threats,EDU-001,us-doe-ed,direct
+threats,EDU-002,internet2,direct
+threats,EDU-003,w3c,direct
+threats,EDU-004,nist-csrc,direct
+threats,EDU-005,arxiv-crypto,direct
+threats,CROSS-009,ietf,direct
+threats,CROSS-010,apnic,direct
+threats,CROSS-011,openssh,direct
+threats,CROSS-012,openssf,direct
+threats,CROSS-013,nist-csrc,direct
+threats,RAIL-003,etsi-cyber,direct
+threats,RAIL-004,fra-us,direct
+threats,RAIL-005,iso-iec-sc27,direct
+threats,WATER-005,ferc,direct
+threats,WATER-003,epa-us,direct
+threats,WATER-004,nist-csrc,direct
+threats,CI-001,cisa,direct
+threats,CI-002,enisa,direct
+threats,CI-003,nist-csrc,direct
+threats,CROSS-014,nist-csrc,direct
+threats,CROSS-015,nist-csrc,direct
+threats,CROSS-016,nist-csrc,direct
+threats,CROSS-017,nist-csrc,direct
+threats,CROSS-018,nist-csrc,direct
+threats,HSM-001,nist-csrc,direct
+threats,IOT-005,nist-csrc,direct
+threats,AUS-TEL-001,acsc,direct
+threats,IT-006,iacr-eprint,direct
+threats,HSM-002,oasis,direct
+threats,FIN-013,bis,mapped
+threats,FIN-014,g7-ceg,mapped
+threats,GOV-011,nsa-advisory,mapped
+threats,HLTH-014,fda,mapped
+threats,IT-008,nist-csrc,mapped
+threats,THREAT-FIN-126,federal-reserve,mapped
+threats,THREAT-HC-126,thales-research,mapped
+timeline,QARC Project Execution,ec,direct
+timeline,Quantum Safe Explorer Launched,ibm-research,direct
+timeline,IBM Heron R2 Processor Available,ibm-research,direct
+timeline,IBM Next-Gen Processor Development,ibm-research,direct
+timeline,IBM Kookaburra Processor Released,ibm-research,direct
+timeline,IBM Quantum Advantage Target,ibm-research,direct
+timeline,Quantum Safe Program Launch,microsoft,direct
+timeline,Majorana 1 Quantum Chip,microsoft,direct
+timeline,Microsoft QSP Roadmap Published,microsoft,direct
+timeline,Core Infrastructure Transition,microsoft,direct
+timeline,Early Quantum-Safe Adoption,microsoft,direct
+timeline,Microsoft Full PQC Transition,microsoft,direct
+timeline,UltraPQ-Suite Launched,pqshield,direct
+timeline,100th Research Paper Milestone,pqshield,direct
+timeline,Carahsoft Government Partnership,pqshield,direct
+timeline,Post-Quantum VPN Research Initiated,pqshield,direct
+timeline,AQtive Guard Pentagon 5-Year Agreement,sandboxaq,direct
+timeline,AQtive Guard FedRAMP Ready,sandboxaq,direct
+timeline,RWPQC 2025 Conference,sandboxaq,direct
+timeline,Initial PQC Planning Guide,acsc,direct
+timeline,ISM December 2024 Update,acsc,direct
+timeline,Migration Planning Phase,acsc,direct
+timeline,PQC Planning Guide Updated,acsc,direct
+timeline,Critical Systems Migration Start,acsc,direct
+timeline,ASD Full Migration Phase,acsc,direct
+timeline,Traditional Crypto Prohibited,acsc,direct
+timeline,ISM June 2025 Cryptography Guidelines Update,acsc,direct
+timeline,ACSC Annual Cyber Threat Report 2024–25 — PQC as a National Priority,acsc,direct
+timeline,Commonwealth Cyber Security Posture in 2025,acsc,direct
+timeline,Paper 158 Quantum Roadmap,bis,direct
+timeline,National Quantum Strategy,disr-australia,direct
+timeline,PQC Best Practices Published,ised-canada,direct
+timeline,CCCS PQC Migration Roadmap Published,cccs,direct
+timeline,SPIN Notice Published,tbs-canada,direct
+timeline,Departmental Planning Phase,cccs,direct
+timeline,Departmental PQC Migration Plans Due,cccs,direct
+timeline,High Priority Migration Phase,cccs,direct
+timeline,High Priority Systems Complete,cccs,direct
+timeline,Remaining Systems Migration,cccs,direct
+timeline,Full GC Migration Complete,cccs,direct
+timeline,CACR PQC Competition Results,cacr-china,direct
+timeline,NGCC Program Launched,iccs-china,direct
+timeline,Hybrid Quantum-Safe System Launched,china-telecom,direct
+timeline,NGCC Algorithm Evaluation,cac-china,direct
+timeline,Cryptographic Recommendations,nukib,direct
+timeline,Key Establishment Migration,nukib,direct
+timeline,Encryption Migration Complete,nukib,direct
+timeline,PQC Integration Study,enisa,direct
+timeline,EU PQC Recommendation Published,ec,direct
+timeline,Critical Infrastructure Migration,ec,direct
+timeline,Coordinated Roadmap v1.1,cryptrec,direct
+timeline,QSFF Call to Action,europol,direct
+timeline,EU PQC Survey Launched,cryptrec,direct
+timeline,Agreed Cryptographic Algorithms v2,ec,direct
+timeline,Member State Strategy Initiation,ec,direct
+timeline,High-Risk Systems Secured,ec,direct
+timeline,Full EU PQC Transition,ec,direct
+timeline,Initial PQC Position Paper,anssi,direct
+timeline,PQC Position Paper Follow-up,anssi,direct
+timeline,Joint QKD Position Paper,anssi,direct
+timeline,PQC Market Studies Published,anssi,direct
+timeline,Phase 1 - Pre-Quantum Security,anssi,direct
+timeline,Cryptographic Accreditation Doctrine Updated,anssi,direct
+timeline,CEA-Leti CESTI PQC Accreditation,anssi,direct
+timeline,First PQC Security Visas Issued,anssi,direct
+timeline,PQC FAQ Published,anssi,direct
+timeline,PG-083 Cryptographic Guide Update (Planned),anssi,direct
+timeline,Phase 2 - Hybridization Required,anssi,direct
+timeline,IPsec DR Referential Update (Planned),anssi,direct
+timeline,PQC Qualification Requirement,anssi,direct
+timeline,Phase 3 - Standalone PQC Optional,anssi,direct
+timeline,G7 Statement on Quantum Computing,bis,direct
+timeline,PQ.03 v2.0 Guidelines,gsma,direct
+timeline,EU Joint Statement on PQC,bsi,direct
+timeline,TR-02102-1 PQC Update,bsi,direct
+timeline,Quantum-Secure ID Card Demonstrator,bsi,direct
+timeline,QUANTITY Initiative Launched,bsi,direct
+timeline,Critical Applications PQC — Hybrid No Longer Required,bsi,direct
+timeline,TEC Technical Report Published,ec,direct
+timeline,BOM Guidelines Expanded,cert-in,direct
+timeline,PQCC PQC Migration Roadmap Published,pqca,direct
+timeline,PQC Readiness Guide Published,incd-israel,direct
+timeline,National Cybersecurity Strategy 2025-2028,incd-israel,direct
+timeline,Banking PQC Directive,boi-israel,direct
+timeline,Government Threat Assessment,incd-israel,direct
+timeline,Inventory & Planning Phase,incd-israel,direct
+timeline,PQC Guidance Published,acsc,direct
+timeline,PQC Guideline GL-2004-2022,cryptrec,direct
+timeline,K Program PQC Research,nedo-japan,direct
+timeline,PQC Migration Planning,cryptrec,direct
+timeline,Cybersecurity Industry Policy Package,cryptrec,direct
+timeline,QKD High-Speed Data Integration Demo,ec,direct
+timeline,Critical Systems Migration,cryptrec,direct
+timeline,Quantum Technologies Strategy,nato,direct
+timeline,NZISM v3.8 Updated,nzism,direct
+timeline,Planning Phase,nzism,direct
+timeline,NZISM v3.9 Published,nzism,direct
+timeline,Transition Phase,nzism,direct
+timeline,Financial Sector Planning,csa-singapore,direct
+timeline,Quantum-Safe Handbook and Quantum Readiness Index Released,csa-singapore,direct
+timeline,Financial Sector QKD Sandbox Completed,mas-singapore,direct
+timeline,KpqC Competition Results,cryptrec,direct
+timeline,Pilot Transition Phase,msit-korea,direct
+timeline,Full PQC Roadmap Complete,msit-korea,direct
+timeline,Four-Phase PQC Approach,ccn-spain,direct
+timeline,PQC Transition Period,ccn-spain,direct
+timeline,Five-Year PQC Plan,moda-uae,direct
+timeline,Interim Quantum-Safe Milestone,moda-uae,direct
+timeline,PQC White Paper Updated,ncsc-uk,direct
+timeline,NCSC PQC Migration Roadmap Published,ncsc-uk,direct
+timeline,Financial Sector PQC Guidance,cmorg,direct
+timeline,CNI Perspectives Report,dsit-uk,direct
+timeline,Discovery & Planning Phase,ncsc-uk,direct
+timeline,Priority Migration Phase,ncsc-uk,direct
+timeline,NCSC Full Migration Phase,ncsc-uk,direct
+timeline,Full PQC Compliance,ncsc-uk,direct
+timeline,NSM-10 Published,omb,direct
+timeline,M-23-02 Cryptographic Inventory,omb,direct
+timeline,Quantum Computing Cybersecurity Preparedness Act,us-congress,direct
+timeline,CNSA 2.0 Published,nsa-media,direct
+timeline,Software/Firmware Signing Transition,nsa-media,direct
+timeline,Cryptographic Inventory,nist-csrc,direct
+timeline,"FIPS 203, 204, 205 Published",nist-csrc,direct
+timeline,NIST IR 8547 Transition Guidance (Draft),nist-csrc,direct
+timeline,PQC Report to Congress,omb,direct
+timeline,CNSA 2.0 Algorithms Revised,nsa-media,direct
+timeline,Automated PQC Discovery Strategy,cisa,direct
+timeline,PQC Considerations for OT,cisa,direct
+timeline,Web/Cloud Services Transition,nsa-media,direct
+timeline,Traditional Networking Transition,nsa-media,direct
+timeline,HQC Selected as Fifth Algorithm,nist-csrc,direct
+timeline,Executive Order 14144,omb,direct
+timeline,Executive Order 14306 Issued,omb,direct
+timeline,IR 8547 Public Comments Published,nist-csrc,direct
+timeline,FIPS 206 (FN-DSA) Draft Submitted,nist-csrc,direct
+timeline,Sixth PQC Standardization Conference,nist-csrc,direct
+timeline,CSWP 48 PQC Migration Mappings Draft,nist-csrc,direct
+timeline,Operating Systems Transition,nsa-media,direct
+timeline,ACDI Deployment Phase,cisa,direct
+timeline,PQC Interoperability Testing,nist-csrc,direct
+timeline,Large PKI Systems Migration,nsa-media,direct
+timeline,HQC Standard Finalized (Expected),nist-csrc,direct
+timeline,NSS Acquisitions CNSA 2.0 Required,nsa-media,direct
+timeline,112-bit Security Deprecated,nist-csrc,direct
+timeline,CNSA 2.0 Exclusive - Network/Signing,nsa-media,direct
+timeline,NSS Quantum Resistant Majority,nsa-media,direct
+timeline,CNSA 2.0 Exclusive - OS/Web/Cloud,nsa-media,direct
+timeline,Full CNSA 2.0 Transition Complete,nsa-media,direct
+timeline,CISA PQC Product Category List Publication,cisa,direct
+timeline,CNSA 1.0 Compliance Deadline for NSS,nsa-media,direct
+timeline,PKI Consortium PQC Conference 2025 Conclusions,pki-consortium,direct
+timeline,NIST PQC Algorithms in Windows Platform,microsoft,direct
+timeline,US Post-Quantum Root of Trust Service Launch,sealsq,direct
+timeline,ML-KEM Embedded Secure Element Breakthrough,thales-research,direct
+timeline,RFC 9794 PQC Hybrid Terminology,ietf,direct
+timeline,Quantum Threat Timeline Report 2025,gri,direct
+timeline,DoD PQC Migration Memorandum,dod-cio,direct
+timeline,Helios Quantum Computer Commercial Launch,quantinuum,direct
+timeline,National Quantum Initiative Reauthorization Act,us-congress,direct
+timeline,G7 Financial Sector PQC Roadmap,bis,direct
+timeline,Federal PQC Procurement Guidance,cisa,direct
+timeline,Post-Quantum Security Top Priority,eth-foundation,direct
+timeline,Helios Quantum Computer Singapore Deployment,quantinuum,direct
+timeline,ETSI/IQC QSC Conference 2026,etsi,direct
+timeline,Critical Infrastructure Cybersecurity Ordinance,hk-legco,direct
+timeline,HKMA Fintech Adoption Report: PQC Commitment,hkma,direct
+timeline,Fintech 2030 Strategy: PQC Resilience Pillar,hkma,direct
+timeline,Fintech Promotion Blueprint: Quantum Preparedness Index,hkma,direct
+timeline,Financial Sector PQC Planning,hkma,direct
+timeline,Fintech Promotion Blueprint Published,hkma,direct
+timeline,NQSN+ Launched,imda-singapore,direct
+timeline,Cross-Border PQC Experiment,bdf,direct
+timeline,National Quantum-Safe Roadmap Published,acsc,direct
+timeline,CII PQC Foundations Deadline,acsc,direct
+timeline,India National PQC Migration,acsc,direct
+timeline,Full Nationwide PQC Adoption,acsc,direct
+timeline,Government PQC Transition Deadline,omb,direct
+timeline,National PQC Migration Plan Published,nacsa-malaysia,direct
+timeline,Malaysia National PQC Migration,nacsa-malaysia,direct
+timeline,NIST Additional Signatures Round 2 Contributions,tii-uae,direct
+timeline,Dubai PQC Guideline Launched,desc-dubai,direct
+timeline,Quantum-Secure Communications Testbed,tii-uae,direct
+timeline,National Encryption Policy Approved,uae-csc,direct
+timeline,National PQC Migration Program,uae-csc,direct
+timeline,ECC-2:2024 Cybersecurity Controls,saudi-nca,direct
+timeline,Quantum Economy Landscape Report,c4ir-saudi,direct
+timeline,First Quantum Computer in KSA,pasqal,direct
+timeline,National Quantum-Safe Deployment,ncsc-uk,direct
+timeline,Jordan Financial Sector PQC Roadmap,cbj-jordan,direct
+timeline,Vitalik Buterin Publishes PQ Defense Roadmap,eth-foundation,direct
+timeline,Google Cloud ML-KEM Default and Chrome MTC Program,google,direct
+timeline,Hybrid TLS Required for Classified Communications,bsi,direct
+timeline,Hybrid IPsec and SSH Required,bsi,direct
+timeline,Full PQC Transition — Standalone Algorithms Required,bsi,direct
+timeline,Cryptographic Inventory Mandate,ec,direct
+timeline,High-Priority System Migration Begins,ec,direct
+timeline,Financial Sector PQC Migration Plans Due,mas-singapore,direct
+timeline,PQC Readiness Assessment Required,hkma,direct
+timeline,Financial Sector PQC Migration Complete,hkma,direct
+timeline,112-bit Security Algorithms Fully Disallowed,nist-csrc,direct
+timeline,PQC Whitepaper Published,ncsc-uk,direct
+timeline,NIST SP 800-208 Published (LMS/XMSS),nist-csrc,direct
+timeline,PKCS#11 v3.2 PQC Mechanisms Draft Published,oasis-open,direct
+timeline,Ballot SMC013 ML-DSA for S/MIME Adopted,cabf,direct
+timeline,TPM 2.0 PQC Library Specification Draft,tcg,direct
+timeline,Google PQC Migration 2029 Timeline,google,direct
+timeline,Bitcoin Quantum Testnet Launch,btq,direct
+timeline,First Post-Quantum Mainnet Transaction,algorand,direct
+timeline,BIP-360 Pay-to-Merkle-Root Proposal,bitcoin-core,direct
+timeline,Strawmap PQC Roadmap Published,eth-foundation,direct
+timeline,First PQC Hardware Accelerator Announced,idemia,direct
+timeline,First CC EAL6 PQC Security Controller,infineon,direct
+timeline,1.6T Quantum-Safe Optical Encryption,ciena,direct
+timeline,BSI-Approved 400G PQC Encryptor,adva,direct
+timeline,OpenSSL 3.6.1 PQC Release,openssl-project,direct
+timeline,FS-ISAC PQC Migration Timeline Position Paper Published,fs-isac,direct
+timeline,ICP-Brasil Mandates ML-DSA and ML-KEM Certificate Standards,iti-dc,direct
+timeline,ITU-T X.1811 Quantum-Safe Security Guidelines for 5G Published,itu,direct
+timeline,Malabo Convention Enters Into Force,auc-africa,direct
+timeline,Mobile Network Operator PQC Transition Window,gsma,direct
+timeline,NGCC Financial-Sector PQC Migration Phase,iccs-china,direct
+timeline,G7 Financial Sector Critical Systems PQC Transition,bis,direct
+timeline,3GPP TR 33.841 PQC Study,3gpp,direct
+timeline,TPM 2.0 v1.85 PQC Library Specification Draft,tcg,direct
+timeline,POPIA Enforcement Begins,incd-israel,direct
+timeline,Nigeria Data Protection Act 2023 Enacted,ndpc-nigeria,direct
+timeline,ODPC Guidance on Data Protection by Design,odpc-kenya,direct
+timeline,Law 151/2020 Executive Regulations Issued,mcit,direct
+timeline,OpenSSL 3.5.0 Native PQC Release,openssl-project,direct
+timeline,NIST IR 8547 IPD2 Published,nist-csrc,direct
+timeline,Paper 158 Quantum Roadmap,bis,mapped
+timeline,PQ.03 v2.0 Guidelines,gsma,mapped
+timeline,CISA PQC Product Category List Publication,cisa-pqc-products,direct
+timeline,PKI Consortium PQC Conference 2025 Conclusions,pki-consortium,direct
+timeline,Germany Quantum-Secure ID Card Demonstrator,bsi,mapped
+leaders,Dr. Jérôme Notin,gip-acyma,direct
+leaders,Andrei Gurtov,ncsc-nl,mapped
+leaders,Dr. Martin Albrecht,nist-csrc,direct
+leaders,Dr. Scott Aaronson,nist-news,direct
+leaders,Dr. Nadia Heninger,nist-news,direct
+leaders,Dr. Emmanuelle Encrenaz,inria-crypto,mapped
+leaders,Prof. Edoardo Persichetti,nist-news,direct
+leaders,Dr. Dustin Moody,nist-news,direct
+leaders,Dr. Lily Chen,nist-csrc,direct
+leaders,Ollie Whitehouse,ncsc-uk,direct
+leaders,Vincent Strubel,anssi,mapped
+leaders,Claudia Plattner,bsi,direct
+leaders,Dr. Stephan Ehlen,bsi,direct
+leaders,Juhan Lepassaar,enisa,direct
+leaders,Dr. Vadim Lyubashevsky,nist-csrc,direct
+leaders,Prof. Dr. Léo Ducas,nist-csrc,direct
+leaders,Prof. Dr. Eike Kiltz,nist-csrc,direct
+leaders,Prof. Dr. Andreas Hülsing,nist-csrc,direct
+leaders,Prof. Dr. Gilles Zémor,inria-crypto,mapped
+leaders,Todd Moore,thales-research,direct
+leaders,Dr. Douglas Stebila,ietf,direct
+leaders,Prof. Dr. Heung Youl Youm,kisa,direct
+leaders,Prof. Dr. Michele Mosca,gri,direct
+leaders,Rachel Noble,acsc,mapped
+leaders,Sami Khoury,cccs,direct
+leaders,Dr. Jintai Ding,nist-news,direct
+leaders,Dr. Gorjan Alagic,nist-news,direct
+leaders,Bruce Schneier,nist-news,direct
+leaders,Dr. Johannes Buchmann,nist-csrc,direct
+leaders,Dr. Rainer Steinwandt,nist-news,direct
+leaders,Dr. Nikita Borisov,ietf,direct
+leaders,Jaime Gomez Garcia,g7-ceg,mapped
+leaders,Bill Newhouse,nist-csrc,direct
+leaders,Blair Canavan,thales-research,direct
+leaders,Fabiana Da Pieve,ec,direct
+leaders,Prof Bill Buchanan OBE,nist-csrc,direct
+leaders,Éric Brier,nist-csrc,direct
+leaders,Damien Stehlé,nist-csrc,direct
+leaders,Pierre-Alain Fouque,nist-csrc,direct
+leaders,Adeline Roux-Langlois,nist-csrc,direct
+leaders,Daniel J. Bernstein,nist-csrc,direct
+leaders,Prof. Oded Regev,nist-csrc,direct
+leaders,Prof. Tanja Lange,nist-news,direct
+leaders,Paul van Brouwershaven,pki-consortium,direct
+leaders,Albert de Ruiter,pki-consortium,direct
+leaders,Sven Rajala,thales-research,direct
+leaders,Chris Bailey,pki-consortium,direct
+leaders,Tomas Gustavsson,thales-research,direct
+leaders,David Hook,ietf,direct
+leaders,Corey Bonnell,ietf,direct
+leaders,John Gray,ietf,direct
+leaders,Sudha E. Iyer,g7-ceg,mapped
+leaders,Tadahiko Ito,cryptrec,direct
+leaders,Alison Becker,nsa-advisory,direct
+leaders,Michael Jenkins,nsa-advisory,direct
+leaders,Rebecca Guthrie,nsa-advisory,direct
+leaders,Allen Roginsky,nist-csrc,direct
+leaders,Elaine Barker,nist-csrc,direct
+leaders,Suzanne Lightman,nist-csrc,direct
+leaders,Hannes Tschofenig,ietf,direct
+leaders,Carsten Bormann,rub-crypto,mapped
+leaders,Katie Arrington,dod-cio,direct
+leaders,Yilei Chen,cloudflare,direct
+leaders,Samuel Jaques,cloudflare,direct
+leaders,Meltem Sönmez Turan,nist-csrc,direct
+leaders,John Kelsey,nist-news,direct
+leaders,Quynh Dang,nist-news,direct
+leaders,Romain Alléaume,etsi-cyber,direct
+leaders,Aditya Koranga,openssl-project,direct
+leaders,Krzysztof (Kris) Kwiatkowski,ietf,direct
+leaders,Dr. Vladimir Soukharev,thales-research,direct
+leaders,Dr. Ludovic Perret,cryptonext,mapped
+leaders,Dr. Ludovic Perret,inria-crypto,mapped
+leaders,Skip Sanzeri,qusecure,mapped
+leaders,Duncan Jones,quantinuum,mapped
+leaders,Prof. Florian Mendel,infineon,mapped
+leaders,Dr. Gregor Seiler,ibm-research,mapped
+leaders,Dr. Carlos Aguilar Melchor,sandboxaq,mapped
+leaders,Mark Hughes,ibm-research,mapped
+leaders,Jack Hidary,sandboxaq,mapped
+leaders,Dr. Ali El Kaafarani,pqshield,mapped
+leaders,Dr. Amit Sinha,digicert,mapped
+leaders,Dr. Shahram Mossayebi,crypto-quantique,mapped
+leaders,Rebecca Krauthamer,qusecure,mapped
+leaders,Greg Wetmore,entrust,mapped
+leaders,Sophie Schmieg,google,mapped
+leaders,Bas Westerbaan,cloudflare,mapped
+leaders,Ehren Kret,signal,exact
+leaders,Rolfe Schmidt,signal,exact
+leaders,Tim Hollebeek,digicert,mapped
+leaders,Mike Ounsworth,entrust,mapped
+leaders,Kris Kwiatkowski,pqshield,mapped
+leaders,Dr. Thom Wiggers,pqshield,mapped
+leaders,Scott Fluhrer,cisco-systems,mapped
+leaders,Dr. James Howe,sandboxaq,mapped
+leaders,Dr. Ward Beullens,ibm-research,mapped
+leaders,Royal Hansen,google,mapped
+leaders,Dr. Yehuda Lindell,coinbase,exact
+leaders,Prof. Dr. Thomas Pöppelmann,infineon,mapped
+leaders,Tim Callan,sectigo,mapped
+leaders,Thomas Coratger,eth-foundation,mapped
+leaders,Mike Osborne,ibm-research,mapped
+leaders,Dr. Colin Soutar,deloitte,mapped
+leaders,Denis Mandich,qrypt,mapped
+leaders,Philip Intallura,boe,mapped
+leaders,Tomofumi Okubo,digicert,mapped
+leaders,Michael Thompson,mitre,exact
+leaders,Eric Rescorla,mozilla,exact
+leaders,David Benjamin,google,mapped
+leaders,Jake Massimo,amazon-aws,mapped
+leaders,Pieter Wuille,bitcoin-core,mapped
+leaders,Anthony Towns,bitcoin-core,mapped
+leaders,Gavin Wood,eth-foundation,mapped
+leaders,Kristina Yasuda,microsoft,mapped
+leaders,Mark D. Baushke,juniper-networks,mapped
+leaders,Emilia Kasper,google,mapped
+leaders,Chris M. Lonvick,cisco-systems,mapped
+leaders,Ben Laurie,google,mapped
+leaders,Charlie Kaufman,microsoft,mapped
+leaders,Rob Stradling,sectigo,mapped
+leaders,Stephen Davidson,digicert,mapped
+leaders,Martijn Katerbarg,sectigo,mapped
+leaders,Clint Wilson,apple,exact
+leaders,Valerie Fenwick,oracle,exact
+leaders,Luke Valenta,cloudflare,mapped
+leaders,Christopher Patton,cloudflare,mapped
+leaders,Vânia Gonçalves,cloudflare,mapped
+leaders,Craig Gidney,google-quantum-ai,mapped
+leaders,Shuichi Katsumata,pqshield,mapped
+leaders,Dr. Ludovic Barman,cryptonext,mapped
+leaders,Patrick Brun,kudelski-iot,mapped
+leaders,Stephen Johnson,xiphera,mapped
+leaders,Prof. Carlos Hernández-Gómez,cmu-cylab,mapped
+leaders,Prof. Birgitta Whaley,uc-berkeley-bqic,mapped
+leaders,Jérôme Plût,anssi,mapped
+leaders,David Koh,csa-singapore,mapped
+leaders,Prof. Dr. Peter Schwabe,mpi-sp,exact
+leaders,Prof. Dr. Peter Schwabe,radboud-university,mapped
+leaders,Prof. Dr. Damien Stehlé,inria-crypto,mapped
+leaders,Prof. Dr. Tanja Lange,tue-coding,mapped
+leaders,Stavros Kousidis,bsi,mapped
+leaders,Paul Pang,csa-singapore,mapped
+leaders,Adam Langley,google,mapped
+leaders,Dr. Tara Ulseth,google,mapped
+leaders,Dr. Charles H. Bennett,ibm-research,mapped
+leaders,Dr. Jan Camenisch,ibm-research,mapped
+leaders,Adam Zalcman,google-quantum-ai,mapped
+leaders,Andrew Regenscheid,nist-csrc,mapped
+leaders,Ansgar Dietrichs,eth-foundation,mapped
+leaders,Charles Teague,mitre,exact
+leaders,David Cooper,nist-csrc,mapped
+leaders,Devon O'Brien,google,mapped
+leaders,David Mahdi,entrust,mapped
+leaders,Deirdre Connolly,sandboxaq,mapped
+leaders,Dustin Moody,nist-csrc,mapped
+leaders,Emilia Käsper,google,mapped
+leaders,Tim Güneysu,rub-crypto,mapped
+leaders,Hugo Krawczyk,amazon-aws,mapped
+leaders,Hamilton Silberg,nist-csrc,mapped
+leaders,Hartmut Neven,google-quantum-ai,mapped
+leaders,Justin Drake,eth-foundation,mapped
+leaders,Jaime Gómez García,g7-ceg,mapped
+leaders,Jeffrey Cichonski,nist-csrc,mapped
+leaders,Johnson Lau,bitcoin-core,mapped
+leaders,Julien Devevey,anssi,mapped
+leaders,Klaussner,bundesdruckerei,mapped
+leaders,Luca De Feo,ibm-research,mapped
+leaders,M. Pohl,radboud-university,mapped
+leaders,Marek Palatinus,satoshilabs,mapped
+leaders,Marin Ivezic,applied-quantum,mapped
+leaders,Martin Albrecht,ncsc-uk,mapped
+leaders,John Preuß Mattsson,ericsson,mapped
+leaders,Maxime Roméas,anssi,mapped
+leaders,Michael Bartock,nist-csrc,mapped
+leaders,Michael Broughton,google-quantum-ai,mapped
+leaders,Rafael Misoczki,intel,exact
+leaders,Morgane Guerreau,anssi,mapped
+leaders,Murugiah Souppaya,nist-csrc,mapped
+leaders,Nina Bindel,sandboxaq,mapped
+leaders,Francesca Palombini,ericsson,mapped
+leaders,Parisa Grayeli,nist-csrc,mapped
+leaders,Pavol Rusnak,satoshilabs,mapped
+leaders,Edoardo Persichetti,uc-cincinnati,mapped
+leaders,Ray Harishankar,ibm-research,mapped
+leaders,Ryan Babbush,google-quantum-ai,mapped
+leaders,Sharon Boeyen,entrust,mapped
+leaders,Sergey Bravyi,ibm-research,mapped
+leaders,Sam Wilson,eth-foundation,mapped
+leaders,Sandy Carielli,forrester,exact
+leaders,Sanjeev Sharma,nist-csrc,mapped
+leaders,Nicolas Sendrier,inria-crypto,mapped
+leaders,Douglas Stebila,uwaterloo-iqc,mapped
+leaders,Tirumaleswar Reddy,nokia,mapped
+leaders,Tanja Lange,tue-coding,mapped
+leaders,Tanuj Khattar,google-quantum-ai,mapped
+leaders,Thiago Bergamaschi,google-quantum-ai,mapped
+leaders,Jean-Pierre Tillich,inria-crypto,mapped
+leaders,Valentin Vasseur,inria-crypto,mapped
+leaders,Vitalik Buterin,eth-foundation,mapped
+leaders,Tim Polk,nist-csrc,mapped
+leaders,Yoav Weiss,eth-foundation,mapped
+compliance,NIST,nist-csrc,direct
+compliance,ENISA,enisa,direct
+compliance,ISO-IEC,iso-iec-sc27,direct
+compliance,IETF,ietf,direct
+compliance,FIPS-140-3,nist-csrc,direct
+compliance,COMMON-CRITERIA,iso-iec-sc27,direct
+compliance,ANSSI,anssi,direct
+compliance,CNSA-2,nsa-advisory,direct
+compliance,EIDAS,ec,direct
+compliance,PCI-DSS,pci-ssc,direct
+compliance,HIPAA,hhs,direct
+compliance,GSMA-NG116,gsma,direct
+compliance,ETSI-TS103744,etsi-cyber,direct
+compliance,DORA,bis,direct
+compliance,SWIFT-CSP,swift,direct
+compliance,ISO-27001,iso-iec-sc27,direct
+compliance,SOC-2,aicpa,direct
+compliance,GDPR,enisa,direct
+compliance,HITECH,hhs,direct
+compliance,FDA-21CFR11,fda,direct
+compliance,FEDRAMP,cisa,direct
+compliance,DISA-STIG,disa,direct
+compliance,NATO-4774,nato,direct
+compliance,ISO-SAE-21434,iso-iec-sc27,direct
+compliance,UN-ECE-WP29,unece,direct
+compliance,NERC-CIP,nerc,direct
+compliance,IEC-62443,iec,direct
+compliance,DO-326A,rtca,direct
+compliance,RTCA-DO-355A,rtca,direct
+compliance,FERPA,omb,direct
+compliance,NIS2,enisa,direct
+compliance,COPPA,ftc,direct
+compliance,TISAX,iso-iec-sc27,direct
+compliance,MICA,bis,direct
+compliance,TSA-PIPELINE,cisa,direct
+compliance,NIST-IR-8547,nist-csrc,direct
+compliance,ASD-ISM,acsc,direct
+compliance,CCCS-ITSM,cccs,direct
+compliance,EU-REC-2024-1101,ec,direct
+compliance,BSI-TR-02102,bsi,direct
+compliance,UK-NCSC,ncsc-uk,direct
+compliance,CRYPTREC,cryptrec,direct
+compliance,MAS-CIRCULAR,csa-singapore,direct
+compliance,KPQC-STD,kisa,direct
+compliance,KCMVP,nist-csrc,direct
+compliance,NZISM,ncsc-uk,direct
+compliance,INCD-PQC,incd-israel,direct
+compliance,BOI-PQC,incd-israel,direct
+compliance,OSCCA-NGCC,iccs-china,direct
+compliance,NCSC-CH,ncsc-uk,direct
+compliance,NCSC-NL,ncsc-nl,direct
+compliance,EUCC,enisa,direct
+compliance,ANSSI-BODY,anssi,direct
+compliance,CRYPTREC-BODY,cryptrec,direct
+compliance,KISA-BODY,kisa,direct
+compliance,OSCCA-BODY,iccs-china,direct
+compliance,ETSI,etsi-cyber,direct
+compliance,BSI,bsi,direct
+compliance,NSA,nsa-advisory,direct
+compliance,CMMC,dod-cio,direct
+compliance,FISMA,cisa,direct
+compliance,EU-CRA,enisa,direct
+compliance,INDIA-DST-PQC,cisa,direct
+compliance,HKMA-PQC,hkma,direct
+compliance,UAE-CSC-PQC,uae-csc,direct
+compliance,CISA-PQC-PROCUREMENT,nsa-advisory,direct
+compliance,G7-CEG-PQC,g7-ceg,direct
+compliance,PKCS11-V32,oasis,direct
+compliance,CAB-FORUM-SMC013,pki-consortium,direct
+compliance,ACVP,nist-csrc,direct
+compliance,TAIWAN-MODA-PQC,dod-cio,direct
+compliance,MALAYSIA-NACSA-PQC,nacsa-malaysia,direct
+compliance,SAUDI-NCA-PQC,saudi-nca,direct
+compliance,BIS-158-PQC,bis,direct
+compliance,3GPP-PQC,etsi-cyber,direct
+compliance,TCG-TPM-PQC,tcg,direct
+compliance,NIST-NCCOE-PQC,nist-csrc,direct
+compliance,NIST-SP800-131A,nist-csrc,direct
+compliance,INDIA-CERTIN-CBOM,cert-in,direct
+compliance,ITALY-ACN-PQC,acsc,direct
+compliance,SPAIN-CCN-PQC,ncsc-uk,direct
+compliance,BAHRAIN-NCSC-PQC,ncsc-uk,direct
+compliance,JORDAN-CBJ-PQC,bdf,direct
+compliance,UK-CMORG-PQC,boe,direct
+compliance,EUROPOL-QSFF,fs-isac,direct
+compliance,PQCC-ROADMAP,pqca,direct
+compliance,IEEE-1609-PQC,ieee-sa,direct
+compliance,OASIS-PKCS11,oasis,direct
+compliance,3GPP-SA3,etsi-cyber,direct
+compliance,FSISAC-PQC,fs-isac,direct
+compliance,ASC-X9,ascx9,direct
+compliance,PKI-CONSORTIUM,pki-consortium,direct
+compliance,CSA-QSC,csa-cloud,direct
+compliance,ITU-T-SG17,itu,direct
+compliance,NIST-SP800-208,nist-csrc,direct
+compliance,ISO-19790,iso-iec-sc27,direct
+compliance,ETSI-QKD-SERIES,etsi-cyber,direct
+compliance,ANSSI-CERT,anssi,direct
+compliance,JCMVP,cryptrec,direct
+compliance,SG-CSA-QUANTUM,csa-singapore,direct
+compliance,BRAZIL-ANPD-PQC,enisa,direct
+compliance,DENMARK-CFCS-PQC,ncsc-uk,direct
+compliance,DFS-NYCRR-500,nydfs,direct
+compliance,ETSI-EN-303645,etsi-cyber,direct
+compliance,PQCA,pqca,direct
+compliance,PQC-COALITION,mitre,direct
+compliance,QED-C,nist-csrc,direct
+compliance,ACSC-ESSENTIAL-EIGHT,acsc,direct
+compliance,CFDIR-QR-2023,ised-canada,direct
+compliance,EUCC-V2,enisa,mapped
+migrate,BTQ Bitcoin Quantum,ietf,direct
+migrate,Hitachi DoMobile,secom,direct
+migrate,Project Eleven Solana PQC,ietf,direct
+migrate,SEALSQ Quantum Shield,ietf,direct
+migrate,Forward Edge-AI Isidore Quantum,nist-csrc,direct
+migrate,QuSecure QuProtect R3,qusecure,direct
+migrate,SandboxAQ AQtive Guard,sandboxaq,direct
+migrate,01 Quantum IronCAP,cmvp,direct
+migrate,Bouncy Castle C# .NET,bouncy-castle,direct
+migrate,Bouncy Castle Java,bouncy-castle,direct
+migrate,Bouncy Castle Java LTS,bouncy-castle,direct
+migrate,OpenSSL,openssl-project,direct
+migrate,Google Tink,google,direct
+migrate,Botan,oqs-project,direct
+migrate,SafeLogic CryptoComply,nist-csrc,direct
+migrate,SAP Cryptographic Library,sap,direct
+migrate,PQShield PQSDK,pqshield,direct
+migrate,Go stdlib crypto/mlkem,nist-csrc,direct
+migrate,RustCrypto ml-kem,nist-csrc,direct
+migrate,RustCrypto ml-dsa,nist-csrc,direct
+migrate,RustCrypto slh-dsa,nist-csrc,direct
+migrate,pqcrypto,oqs-project,direct
+migrate,liboqs-rust (oqs crate),oqs-project,direct
+migrate,mlkem-native,pqca,direct
+migrate,leancrypto,oqs-project,direct
+migrate,Cosmian covercrypt,microsoft,direct
+migrate,pqm4,oqs-project,direct
+migrate,HQC Algorithm,nist-csrc,direct
+migrate,citadel_pqcrypto,microsoft,direct
+migrate,Microsoft SymCrypt,microsoft,direct
+migrate,AWS-LC,amazon-aws,direct
+migrate,Nvidia cuPQC,cmvp,direct
+migrate,Cisco IOS XE PQC,cisco-systems,direct
+migrate,Google ALTS,google,direct
+migrate,Apple PQ3 / CoreCrypto,apple,direct
+migrate,Entrust nShield,entrust,direct
+migrate,Thales Luna HSM,thales-research,direct
+migrate,HashiCorp Vault,microsoft,direct
+migrate,Entrust KeyControl,entrust,direct
+migrate,IBM Guardium Key Lifecycle Manager,q360-alliance,direct
+migrate,Oracle Key Vault,oracle,direct
+migrate,Utimaco ESKM,cmvp,direct
+migrate,Keyfactor EJBCA,keyfactor,direct
+migrate,Venafi Trust Protection Platform,pki-consortium,direct
+migrate,AWS s2n-tls,amazon-aws,direct
+migrate,BoringSSL,google,direct
+migrate,GnuTLS,ietf,direct
+migrate,LibreSSL,oqs-project,direct
+migrate,rustls,pqca,direct
+migrate,wolfSSL,wolfssl,direct
+migrate,SignServer,keyfactor,direct
+migrate,strongSwan,strongswan,direct
+migrate,Signal,microsoft,direct
+migrate,OpenSSH,openssh,direct
+migrate,wolfSSH,wolfssl,direct
+migrate,liboqs,oqs-project,direct
+migrate,oqs-provider,oqs-project,direct
+migrate,SSLyze,oqs-project,direct
+migrate,testssl.sh,oqs-project,direct
+migrate,Cryptosense Analyzer,cmvp,direct
+migrate,ISARA Radiate,cmvp,direct
+migrate,wolfBoot,wolfssl,direct
+migrate,Windows Server 2025,microsoft,direct
+migrate,Android 16,cmvp,direct
+migrate,iOS 26 / macOS 26,apple,direct
+migrate,Juniper Junos OS,juniper-networks,direct
+migrate,Palo Alto PAN-OS,palo-alto,direct
+migrate,Fortinet FortiOS,fortinet,direct
+migrate,Check Point Quantum,cmvp,direct
+migrate,SandboxAQ Sandwich,sandboxaq,direct
+migrate,Cloudflare CIRCL,cloudflare,direct
+migrate,Mullvad VPN App,ietf,direct
+migrate,ExpressVPN Lightway,ietf,direct
+migrate,Tuta Mail,ietf,direct
+migrate,Keyfactor AgileSec Analytics,keyfactor,direct
+migrate,Futurex CryptoHub,nist-csrc,direct
+migrate,Arqit Encryption Intelligence,cmvp,direct
+migrate,Samsung S3SSE2A eSE,nist-csrc,direct
+migrate,Thales payShield 10K,thales-research,direct
+migrate,Cryptomathic CKMS,pki-consortium,direct
+migrate,Securosys Primus HSM,cmvp,direct
+migrate,Marvell LiquidSecurity 2,nist-csrc,direct
+migrate,Google Cloud HSM,google,direct
+migrate,Entrust PKI,entrust,direct
+migrate,Microsoft AD CS,microsoft,direct
+migrate,smallstep Certificate Authority,pki-consortium,direct
+migrate,PQClean,oqs-project,direct
+migrate,CRYSTALS Reference Implementations,ku-leuven-cosic,direct
+migrate,IBM Quantum Safe Toolkit,q360-alliance,direct
+migrate,jose4j,ietf,direct
+migrate,Nimbus JOSE+JWT,ietf,direct
+migrate,jsonwebtoken (auth0),microsoft,direct
+migrate,go-jose v4,microsoft,direct
+migrate,Spring Security OAuth2,microsoft,direct
+migrate,coreboot,microsoft,direct
+migrate,U-Boot,microsoft,direct
+migrate,Linux IMA/EVM,nist-csrc,direct
+migrate,ARM Trusted Firmware (TF-A),microsoft,direct
+migrate,VeraCrypt,microsoft,direct
+migrate,BitLocker (Windows),microsoft,direct
+migrate,FileVault (macOS),apple,direct
+migrate,MongoDB Queryable Encryption,microsoft,direct
+migrate,SQL Server TDE/Always Encrypted,microsoft,direct
+migrate,PostgreSQL pgcrypto,ietf,direct
+migrate,MySQL Enterprise Encryption,ietf,direct
+migrate,CockroachDB Encryption,microsoft,direct
+migrate,Proton Mail,microsoft,direct
+migrate,GnuPG,ietf,direct
+migrate,Adobe Acrobat Sign,ietf,direct
+migrate,DigiCert SigningHub,digicert,direct
+migrate,GlobalSign Digital Signing Service,ietf,direct
+migrate,sigstore/cosign,pqca,direct
+migrate,Microsoft SignTool,microsoft,direct
+migrate,Apple codesign,apple,direct
+migrate,Notary Project,pqca,direct
+migrate,GPG Code Signing,ietf,direct
+migrate,DigiCert Software Trust Manager,digicert,direct
+migrate,AWS KMS (Cloud Gateway),amazon-aws,direct
+migrate,Google Cloud KMS (Cloud Gateway),google,direct
+migrate,Fortanix Data Security Manager,cmvp,direct
+migrate,Thales CipherTrust Manager,thales-research,direct
+migrate,Nginx,microsoft,direct
+migrate,Apache HTTP Server,microsoft,direct
+migrate,Envoy Proxy,microsoft,direct
+migrate,Node.js,ietf,direct
+migrate,F5 BIG-IP,cmvp,direct
+migrate,HAProxy,microsoft,direct
+migrate,Okta Integration Network,ietf,direct
+migrate,Kong API Gateway,microsoft,direct
+migrate,AWS Application Load Balancer (ALB),amazon-aws,direct
+migrate,Cloudflare Edge Network,cloudflare,direct
+migrate,JFrog Artifactory,ietf,direct
+migrate,Sonatype Nexus,ietf,direct
+migrate,CyberArk Conjur,nist-csrc,direct
+migrate,Keyfactor Command,keyfactor,direct
+migrate,Venafi TLS Protect,iec,direct
+migrate,AppViewX CERT+,iec,direct
+migrate,Okta Workforce Identity,iec,direct
+migrate,Keycloak,microsoft,direct
+migrate,Ping Identity PingFederate,iec,direct
+migrate,Thales CipherTrust Data Security Platform,thales-research,direct
+migrate,IBM Security Guardium Data Protection,q360-alliance,direct
+migrate,Virtru Data Protection,ietf,direct
+migrate,Auth0 (Okta Customer Identity),microsoft,direct
+migrate,Intel TDX (Trust Domain Extensions),cmvp,direct
+migrate,AMD SEV-SNP (Secure Encrypted Virtualization),microsoft,direct
+migrate,ARM Confidential Compute Architecture (CCA),microsoft,direct
+migrate,Google Cloud KMS,google,direct
+migrate,AWS KMS,amazon-aws,direct
+migrate,Azure Key Vault,microsoft,direct
+migrate,Thales Luna Cloud HSM (DPoD),thales-research,direct
+migrate,AWS CloudHSM,amazon-aws,direct
+migrate,ID Quantique Quantis QRNG,etsi-cyber,direct
+migrate,Quantinuum Quantum Origin,quantinuum,direct
+migrate,QuintessenceLabs qStream,etsi-cyber,direct
+migrate,ID Quantique Cerberis XGR QKD,etsi-cyber,direct
+migrate,Toshiba QKD System,etsi-cyber,direct
+migrate,Thales High Speed Encryptor (HSE),thales-research,direct
+migrate,Senetas CN7000 Series,cmvp,direct
+migrate,Adva Network Security FSP 3000 S-Flex,gsma,direct
+migrate,Ciena WaveLogic 6 Extreme,gsma,direct
+migrate,EJBCA,pki-consortium,direct
+migrate,DigiCert Trust Lifecycle Manager,digicert,direct
+migrate,IBM Guardium Quantum Safe,q360-alliance,direct
+migrate,Google Chrome,cmvp,direct
+migrate,Microsoft Edge,microsoft,direct
+migrate,Mozilla Firefox,mozilla,direct
+migrate,Apple Safari,apple,direct
+migrate,Crypto4A QxHSM,cmvp,direct
+migrate,Securosys CloudHSM,cmvp,direct
+migrate,Imperva WAF,nist-csrc,direct
+migrate,Venafi CodeSign Protect,pki-consortium,direct
+migrate,RPM Signing (rpm-sign),red-hat,direct
+migrate,Garantir GaraTrust,pki-consortium,direct
+migrate,Java jarsigner (JDK),nist-csrc,direct
+migrate,Mbed TLS,microsoft,direct
+migrate,NSS (Mozilla),mozilla,direct
+migrate,.NET System.Security.Cryptography,microsoft,direct
+migrate,Thales Luna T-Series HSM,cmvp,direct
+migrate,Thales MISTRAL Encryptor,resque,direct
+migrate,Thales CipherTrust Cloud Key Manager,thales-research,direct
+migrate,HashiCorp Vault Transit,microsoft,direct
+migrate,Windows 11,microsoft,direct
+migrate,Ubuntu 24.04 LTS,cmvp,direct
+migrate,Red Hat Enterprise Linux 9,red-hat,direct
+migrate,Fedora Linux,red-hat,direct
+migrate,Debian 12 (Bookworm),oqs-project,direct
+migrate,Ericsson Quantum-Safe 5G,ericsson,direct
+migrate,Nokia Quantum-Safe Networks,nokia,direct
+migrate,Thales 5G Quantum-Safe SIM,resque,direct
+migrate,G+D Quantum-Safe SIM Platform,ietf,direct
+migrate,Samsung Knox Quantum-Safe,cmvp,direct
+migrate,IDEMIA PQC Secure Element,cmvp,direct
+migrate,IDEMIA Digital Identity Platform,cmvp,direct
+migrate,Procivis One,microsoft,direct
+migrate,walt.id,microsoft,direct
+migrate,Microsoft Entra Verified ID,microsoft,direct
+migrate,SpruceID,microsoft,direct
+migrate,Wire,microsoft,direct
+migrate,Element (Matrix Protocol),microsoft,direct
+migrate,Oracle AI Database 26ai,nist-csrc,direct
+migrate,Microsoft Entra ID,microsoft,direct
+migrate,Thales MultiApp 5.2 Premium PQC,anssi,direct
+migrate,Infineon TEGRION SLC27 PQC,ietf,direct
+migrate,NXP JCOP 4.5 P71D600,nist-csrc,direct
+migrate,PyJWT,microsoft,direct
+migrate,Libreswan,ietf,direct
+migrate,SoftHSM2,oqs-project,direct
+migrate,hash-sigs,cisco-systems,direct
+migrate,xmss-reference,oqs-project,direct
+migrate,EUDI Reference Wallet,ec,direct
+migrate,Sphereon SSI SDK,microsoft,direct
+migrate,Hyperledger Aries (ACA-Py),microsoft,direct
+migrate,CREDEBL,microsoft,direct
+migrate,Paradym (Animo Solutions),microsoft,direct
+migrate,Azure Dedicated HSM (Marvell LiquidSecurity),microsoft,direct
+migrate,IBM Cloud HSM (Utimaco),q360-alliance,direct
+migrate,Infineon OPTIGA TPM SLB 9672,ietf,direct
+migrate,Intel Platform Trust Technology (PTT),cmvp,direct
+migrate,Yubico YubiHSM 2,cmvp,direct
+migrate,Google OpenTitan,cmvp,direct
+migrate,TianoCore EDK2 (UEFI Firmware),microsoft,direct
+migrate,ARM TrustZone,ietf,direct
+migrate,Microchip ATECC608B,microsoft,direct
+migrate,Qualcomm Snapdragon Trusted Execution Environment,ietf,direct
+migrate,Linux LUKS / dm-crypt,pki-consortium,direct
+migrate,Wind River VxWorks,cmvp,direct
+migrate,FreeRTOS,microsoft,direct
+migrate,Alpine Linux,oqs-project,direct
+migrate,FreeBSD,microsoft,direct
+migrate,openSUSE Leap,microsoft,direct
+migrate,Rocky Linux,microsoft,direct
+migrate,CentOS Stream,oqs-project,direct
+migrate,ChromeOS,google,direct
+migrate,NixOS,microsoft,direct
+migrate,SUSE Linux Enterprise Server (SLES),cmvp,direct
+migrate,Arch Linux,microsoft,direct
+migrate,Delinea Secret Server,nist-csrc,direct
+migrate,JumpCloud Directory Platform,iec,direct
+migrate,Teleport Access Platform,microsoft,direct
+migrate,HashiCorp Boundary,microsoft,direct
+migrate,Cloudflare Zero Trust,cloudflare,direct
+migrate,Zscaler Zero Trust Exchange,nist-csrc,direct
+migrate,Splunk Enterprise,nist-csrc,direct
+migrate,Elastic Stack (ELK),microsoft,direct
+migrate,Suricata IDS/IPS,microsoft,direct
+migrate,Zeek Network Analysis Framework,microsoft,direct
+migrate,Tenable Nessus Professional,cmvp,direct
+migrate,Rapid7 InsightVM,cmvp,direct
+migrate,Qualys Cloud Platform,cmvp,direct
+migrate,AWS Identity and Access Management (IAM),amazon-aws,direct
+migrate,CrowdStrike Falcon,nist-csrc,direct
+migrate,Palo Alto Cortex XDR,palo-alto,direct
+migrate,Citrix Virtual Apps and Desktops,cmvp,direct
+migrate,VMware Horizon,ietf,direct
+migrate,Apache Guacamole,microsoft,direct
+migrate,PuTTY,ietf,direct
+migrate,Paramiko (Python SSH),microsoft,direct
+migrate,AsyncSSH,microsoft,direct
+migrate,Microsoft Remote Desktop Services (RDS),microsoft,direct
+migrate,Snort IDS/IPS,microsoft,direct
+migrate,Cisco ASA (Adaptive Security Appliance),cisco-systems,direct
+migrate,Cisco Meraki MX (Cloud-Managed Firewall),cisco-systems,direct
+migrate,Fortinet FortiGate (FortiOS),fortinet,direct
+migrate,Arista EOS (Extensible Operating System),cmvp,direct
+migrate,MikroTik RouterOS,nist-csrc,direct
+migrate,OpenWrt,microsoft,direct
+migrate,pfSense Community Edition,microsoft,direct
+migrate,OPNsense,microsoft,direct
+migrate,NGINX Plus,fido-alliance,direct
+migrate,Traefik,microsoft,direct
+migrate,Kubernetes,pqca,direct
+migrate,Istio Service Mesh,google,direct
+migrate,Linkerd,microsoft,direct
+migrate,HashiCorp Consul Connect (Service Mesh),microsoft,direct
+migrate,OpenVPN,ietf,direct
+migrate,WireGuard,ietf,direct
+migrate,Cisco Secure Client (AnyConnect),cisco-systems,direct
+migrate,Palo Alto GlobalProtect,palo-alto,direct
+migrate,Samsung Networks 5G Core,cmvp,direct
+migrate,Mavenir Cloud RAN,ietf,direct
+migrate,NEC 5G Core,ietf,direct
+migrate,Rakuten Symphony (Symworld),ietf,direct
+migrate,Apache Traffic Server,microsoft,direct
+migrate,PyCryptodome,microsoft,direct
+migrate,Crypto++ (cryptopp),microsoft,direct
+migrate,libssh,ietf,direct
+migrate,Apache Tomcat,microsoft,direct
+migrate,Eclipse Jetty,microsoft,direct
+migrate,WildFly (JBoss),microsoft,direct
+migrate,Payara Server,microsoft,direct
+migrate,GitHub Actions,microsoft,direct
+migrate,GitLab CI/CD,ietf,direct
+migrate,Jenkins,microsoft,direct
+migrate,Azure DevOps,microsoft,direct
+migrate,CircleCI,ietf,direct
+migrate,OAuth 2.0 / OpenID Connect (OIDC),ietf,direct
+migrate,SAML 2.0,oasis,direct
+migrate,PostgreSQL,microsoft,direct
+migrate,MySQL Community Server,microsoft,direct
+migrate,Redis,microsoft,direct
+migrate,MariaDB Server,microsoft,direct
+migrate,Fireblocks,microsoft,direct
+migrate,DFNS,cmvp,direct
+migrate,Taurus SA,cmvp,direct
+migrate,BitGo,cmvp,direct
+migrate,Anchorage Digital,cmvp,direct
+migrate,Coinbase Custody,cmvp,direct
+migrate,Copper.co,cmvp,direct
+migrate,Ledger Enterprise,cmvp,direct
+migrate,Zodia Custody,cmvp,direct
+migrate,Bitcoin Core,microsoft,direct
+migrate,Ethereum (Geth),eth-foundation,direct
+migrate,Solana,microsoft,direct
+migrate,Hyperledger Fabric,microsoft,direct
+migrate,Hyperledger Besu,microsoft,direct
+migrate,R3 Corda,microsoft,direct
+migrate,QRL,microsoft,direct
+migrate,Algorand,microsoft,direct
+migrate,Cardano,microsoft,direct
+migrate,IOTA,microsoft,direct
+migrate,Polkadot/Substrate,microsoft,direct
+migrate,Cosmos/Tendermint,microsoft,direct
+migrate,Aptos,microsoft,direct
+migrate,Avalanche,microsoft,direct
+migrate,Sui,microsoft,direct
+migrate,Broadcom Avi (NSX ALB),nist-csrc,direct
+migrate,Claroty Platform,csa-cloud,direct
+migrate,Dragos Platform,csa-cloud,direct
+migrate,Nozomi Networks Guardian,csa-cloud,direct
+migrate,Fortinet FortiGate-Rugged,fortinet,direct
+migrate,Siemens SINEMA Remote Connect,csa-cloud,direct
+migrate,Protect AI Guardian,nist-csrc,direct
+migrate,HiddenLayer Model Scanner,nist-csrc,direct
+migrate,Cranium AI Security Platform,nist-csrc,direct
+migrate,Lakera Guard,nist-csrc,direct
+migrate,evolutionQ BasejumpQDN,cccs,direct
+migrate,evolutionQ BasejumpSKI,cccs,direct
+migrate,Qrypt BLAST SDK,qrypt,direct
+migrate,ISARA Advance,nist-csrc,direct
+migrate,Let's Encrypt,pki-consortium,direct
+migrate,1Password,nist-csrc,direct
+migrate,Bitwarden,microsoft,direct
+migrate,Gmail / Google Workspace,google,direct
+migrate,Telegram,ietf,direct
+migrate,WhatsApp,ietf,direct
+migrate,VIAVI TeraVM Security Test,nist-csrc,direct
+migrate,VIAVI Observer Analyzer,nist-csrc,direct
+migrate,Keysight CyPerf,nist-csrc,direct
+migrate,Keysight Inspector,nist-csrc,direct
+migrate,CryptoNext COMPASS Network Probe,cryptonext,direct
+migrate,pqcscan,pqca,direct
+migrate,pqc-flow,microsoft,direct
+migrate,PQC-LEO,pqca,direct
+migrate,Q-CORE Q-Scanner,nist-csrc,direct
+migrate,PQCryptoLib-Core,pqshield,direct
+migrate,PQMicroLib-Core,pqshield,direct
+migrate,Crucible,oqs-project,direct
+migrate,Amazon Cognito,amazon-aws,direct
+migrate,Microsoft Entra External ID,microsoft,direct
+migrate,FusionAuth,microsoft,direct
+migrate,Xiphera PQC IP Cores,xiphera,direct
+migrate,Crypto Quantique QDID Platform,crypto-quantique,direct
+migrate,Kudelski IoT Security Platform,kudelski-iot,direct
+migrate,ISC BIND 9.21,nist-csrc,direct
+migrate,Cisco IOS XR,cisco-systems,direct
+migrate,Cisco Catalyst Center,cisco-systems,direct
+migrate,Cisco Identity Services Engine (ISE),cisco-systems,direct
+migrate,Red Hat OpenShift,red-hat,direct
+migrate,DigiCert CertCentral,digicert,direct
+migrate,DigiCert ONE,digicert,direct
+migrate,Entrust Identity as a Service (IDaaS),entrust,direct
+migrate,Crypto4A QxEDGE,cmvp,direct
+migrate,Fortinet FortiManager,fortinet,direct
+migrate,Fortinet FortiAuthenticator,fortinet,direct
+migrate,IBM z/OS Cryptographic Services (ICSF),q360-alliance,direct
+migrate,IBM Db2,q360-alliance,direct
+migrate,IBM MQ,q360-alliance,direct
+migrate,Palo Alto Prisma SASE,palo-alto,direct
+migrate,GlobalSign Atlas CLM,iec,direct
+migrate,Sectigo Certificate Manager (SCM),iec,direct
+migrate,Fortinet FortiWeb,fortinet,direct
+migrate,SEALSQ QS7001,ietf,category-inferred
+migrate,Microchip PolarFire,ietf,category-inferred
+migrate,PQShield Core,pqshield,direct
+migrate,IBM Guardium Safe,ibm-research,direct
+migrate,NXP SE051 Secure Element,ietf,category-inferred
+migrate,STMicroelectronics ST33KTPM,ietf,category-inferred
+migrate,IDEMIA PQC Accelerator,idemia,direct
+migrate,Adva FSP 3000 S-Flex,ietf,category-inferred
+migrate,Qualcomm Snapdragon SPU,nist-csrc,direct
+migrate,CryptoNext COMPASS Probe,cryptonext,direct
+migrate,Citrix CVAD,ietf,category-inferred
+migrate,Microsoft RDS,microsoft,direct
+migrate,Zscaler ZTE,ietf,category-inferred
+migrate,Akamai Edge,ietf,category-inferred
+migrate,JetBrains TeamCity 2026.1,ietf,category-inferred
+migrate,Keyfactor 2026 Trends,keyfactor,direct
+migrate,Sectigo 2026 Predictions,sectigo,direct
+migrate,Entrust Cryptographic Platform,entrust,direct
+migrate,Venafi TLS PQC Continuity,ietf,direct
+migrate,Sectigo Cert Manager 2026,sectigo,direct
+migrate,Xiphera XIP6110B,nist-csrc,direct
+migrate,A10 Networks Thunder ADC,pki-consortium,category-inferred
+migrate,Citrix ADC (NetScaler),pki-consortium,category-inferred
+migrate,VanDyke SecureCRT 10.x,ietf,category-inferred
+migrate,IBM z/VSE,ibm-research,direct
+migrate,NXP EdgeLock SE051H,ietf,category-inferred
+migrate,Lattice MachXO5-NX,ietf,category-inferred
+migrate,AMD Versal Adaptive SoC,ietf,category-inferred
+migrate,IBM Storage Scale 5.2,ibm-research,direct
+migrate,NetApp ONTAP 9.16,ietf,category-inferred
+migrate,Pure Storage Purity//FA 6.6,ietf,category-inferred
+migrate,Dell PowerStore OS 4.0,ietf,category-inferred
+migrate,HPE Alletra MP,ietf,category-inferred
+migrate,Veeam Data Platform v13,ietf,category-inferred
+migrate,Commvault Cloud,ietf,category-inferred
+migrate,Veritas NetBackup 10.5,ietf,category-inferred
+migrate,Rubrik Security Cloud,ietf,category-inferred
+migrate,Cohesity DataCloud,ietf,category-inferred
+migrate,QuintessenceLabs qSOC,etsi-cyber,inferred
+migrate,Zerto 11.0,ietf,category-inferred
+migrate,Druva Data Resiliency Cloud,ietf,category-inferred
+migrate,Scality RING9,ietf,category-inferred
+migrate,Amazon Web Services (AWS),amazon-aws,direct
+migrate,Microsoft Azure,microsoft,direct
+migrate,Microsoft Hyper-V,microsoft,direct
+migrate,Amazon EKS,amazon-aws,direct
+migrate,Google GKE,google,direct
+migrate,Azure AKS,microsoft,direct
+migrate,Fastly Edge Cloud,ietf,category-inferred
+migrate,Amazon CloudFront,amazon-aws,direct
+migrate,Google Cloud CDN,google,direct
+migrate,Vultr Cloud GPU,ietf,category-inferred
+migrate,Zoom Compliance 2026,ietf,category-inferred
+migrate,Cisco Webex,cisco-systems,direct
+migrate,Mimecast Cloud Integrated,ietf,category-inferred
+migrate,Proofpoint Aegis,ietf,category-inferred
+migrate,Barracuda Email Protection,ietf,category-inferred
+migrate,OpenText Content Cloud,nist-csrc,category-inferred
+migrate,Hyland OnBase,nist-csrc,category-inferred
+migrate,Forcepoint DLP,nist-csrc,category-inferred
+migrate,Netskope Intelligent DLP,nist-csrc,category-inferred
+migrate,Broadcom Symantec DLP,nist-csrc,category-inferred
+migrate,IBM Aspera,ibm-research,direct
+migrate,Signiant Media Shuttle,ietf,category-inferred
+migrate,Microsoft Defender for Endpoint,microsoft,direct
+migrate,Broadcom Symantec SES,pki-consortium,category-inferred
+migrate,Microsoft Intune,microsoft,direct
+migrate,Recorded Future,nist-csrc,category-inferred
+migrate,Mandiant (Google Cloud),google,direct
+migrate,Cyberint (Check Point),nist-csrc,category-inferred
+migrate,GitHub Copilot Security,github,direct
+migrate,Veracode Platform,ietf,category-inferred
+migrate,Checkmarx One,ietf,category-inferred
+migrate,Windscribe,ietf,category-inferred
+migrate,NordVPN,ietf,category-inferred
+migrate,Surfshark,ietf,category-inferred
+migrate,Brave Browser,cloudflare,direct
+migrate,Tor Browser,ietf,category-inferred
+migrate,DuckDuckGo Browser,ietf,category-inferred
+migrate,FIS Modern Banking,ietf,category-inferred
+migrate,General Dynamics Mission,ietf,category-inferred
+migrate,SOC 2 (Quantum Trust Criteria),aicpa,direct
+migrate,HIPAA (Quantum Security Rule),hhs,direct
+migrate,Proton VPN,ietf,category-inferred
+migrate,MinIO Enterprise,ietf,category-inferred
+migrate,Futurex Vectera Plus,cmvp,direct
+migrate,Google Cloud Platform (GCP),google,direct
+migrate,Futurex Cloud,cmvp,direct
+migrate,Sectigo Certificate Manager,iec,direct
+migrate,Bouncy Castle C\# / Java,bouncy-castle,direct
+migrate,Akamai Connected Cloud,ietf,category-inferred
+migrate,Juniper SRX Series Firewalls,juniper-networks,direct
+migrate,Utimaco SecurityServer,nist-csrc,direct
+migrate,Ascertia ADSS PKI Server,pki-consortium,direct
+migrate,Codegic Khatim PKI Server,pki-consortium,direct
+migrate,CZERTAINLY,pki-consortium,direct
+migrate,EVERTRUST STREAM,pki-consortium,direct
+migrate,EVERTRUST HORIZON,pki-consortium,direct
+migrate,Eviden IDnomic PKI,pki-consortium,direct
+migrate,MTG AG CARA,pki-consortium,direct
+migrate,MTG AG CLM,pki-consortium,direct
+migrate,MTG AG KMS,pki-consortium,direct
+migrate,Nexus Group Certificate Manager,pki-consortium,direct
+migrate,XiPKI,pki-consortium,direct
+migrate,Eviden Trustway Proteccio NetHSM,pki-consortium,direct
+migrate,I4P Trident HSM,pki-consortium,direct
+migrate,Utimaco uTrust HSM,pki-consortium,direct
+migrate,BERTEN MLDS-B235,pki-consortium,direct
+migrate,BERTEN MLKE-B135,pki-consortium,direct
+migrate,CAST KiviPQC-KEM,pki-consortium,direct
+migrate,IP Cores PQC1,pki-consortium,direct
+migrate,Resquant Crypto Accelerator,pki-consortium,direct
+migrate,Secure-IC Securyzr,pki-consortium,direct
+migrate,CryptoNext Quantum-Safe Library,pki-consortium,direct
+migrate,Dell BSAFE Crypto Module for C,pki-consortium,direct
+migrate,Dell BSAFE Crypto-J,pki-consortium,direct
+migrate,DigiCert TrustCore SDK,pki-consortium,direct
+migrate,PQ Code Package,pki-consortium,direct
+migrate,Cryptomathic CrystalKey 360,pki-consortium,direct
+migrate,ANKATech ANKASecure,pki-consortium,direct
+migrate,Ascertia ADSS Signing Server,pki-consortium,direct
+migrate,Ascertia ADSS Server/SAM,pki-consortium,direct
+migrate,Codegic Khatim Sign Server,pki-consortium,direct
+migrate,DigiCert Device Trust Manager,pki-consortium,direct
+migrate,ExeQuantum,pki-consortium,direct
+migrate,essendi xc,pki-consortium,direct
+migrate,noble-post-quantum,github,direct
+migrate,SUPERCOP,pki-consortium,category-inferred
+migrate,AWS Transfer Family,amazon-aws,direct
+migrate,AWS API Gateway PQC,amazon-aws,direct
+migrate,wolfTPM PQC,wolfssl,direct
+migrate,Crypto4A QxVault,cmvp,mapped
+migrate,Utimaco Quantum Protect Suite,cmvp,mapped
+migrate,Xiphera xQlave,xiphera,direct
+migrate,Cisco Catalyst 9500 PQC,cisco-systems,direct
+migrate,AWS Private CA PQC,amazon-aws,direct
+migrate,Entrust Cryptographic Security Platform,entrust,direct
+migrate,Oracle Linux 9.7,oracle,direct
+migrate,.NET 10 PQC,microsoft,direct
+migrate,SK Telecom 5G PQC SIM,thales-research,direct
+migrate,QuSecure QuProtect Tactical,qusecure,direct
+migrate,SWIFT Quantum-Safe Messaging,swift,direct
+migrate,AWS Payments Cryptography PQC,amazon-aws,direct
+migrate,Infineon PSOC Control C3 PQC,infineon,direct
+migrate,Palo Alto Quantum-Safe Security,palo-alto,direct
+migrate,Red Hat OpenShift Service Mesh PQC,red-hat,direct
+migrate,NIST SP 800-227 PQC Guidance,nist-csrc,direct
+migrate,CISA PQC Migration Framework,cisa,direct
+migrate,Java 24 PQC Runtime,oracle,direct
+migrate,Algorand FALCON Mainnet,algorand,direct
+migrate,IBM z17 Quantum Safe,ibm-research,direct
+migrate,IBM LinuxONE PQC,ibm-research,direct
+migrate,Qrypt VPN for NVIDIA Jetson,qrypt,direct
+migrate,BTQ Bitcoin Quantum Testnet,btq,direct
+migrate,SAP Cryptographic Library 8.6 PQC,sap,direct
+migrate,CoreDNS PQC DNSSEC,arxiv-crypto,direct
+migrate,Red Hat Enterprise Linux 10 PQC,red-hat,direct
+migrate,curl PQC,wolfssl,direct
+migrate,Android 17 PQC,google,inferred
+migrate,Open Quantum Safe liboqs,oqs-project,direct
+migrate,OQS-OpenSSL Provider,oqs-project,direct
+migrate,ETSI TS 104 105 Hybrid PQC Standard,etsi-cyber,direct
+migrate,BSI PQC Recommendations,bsi,direct
+migrate,NCSC UK PQC Migration Timelines,ncsc-uk,direct
+migrate,Infineon AURIX TC49 PQC,infineon,direct
+migrate,Nokia Quantum-Safe Railways,nokia,direct
+migrate,BIS Project Leap PQC,bis,direct
+migrate,Securosys Primus CyberVault PQC,cmvp,mapped
+migrate,PQShield PQE2E Messaging SDK,pqshield,direct
+migrate,GSMA PQ Telco Task Force,gsma,direct
+migrate,Chile National Quantum Strategy,qc-report,direct
+migrate,China Telecom Quantum Group,qc-report,direct
+migrate,NEDO PQShield Japan PQC Program,pqshield,direct
+migrate,ASD Australia PQC Transition,acsc,direct
+migrate,NZISM New Zealand PQC Guidance,nzism,direct
+migrate,EU PQC Implementation Roadmap,ec,direct
+migrate,CyberZero Quantanaut,nist-csrc,category-inferred
+migrate,SMAUG-T Reference Implementation,github,direct
+migrate,HAETAE Reference Implementation,github,direct
+migrate,AIMer Reference Implementation,github,direct
+migrate,NTRU+ Reference Implementation,github,direct
+migrate,Aigis Reference Implementation,github,direct
+migrate,MAYO Reference Implementation,nist-csrc,direct
+migrate,Bouncy Castle,bouncy-castle,direct
+migrate,Mozilla NSS,mozilla,direct
+migrate,mbedTLS,github,direct
+migrate,RustCrypto ML-KEM,github,direct
+migrate,RustCrypto ML-DSA,github,direct
+migrate,RustCrypto SLH-DSA,github,direct
+migrate,hbs-lms,github,direct
+migrate,@noble/curves,github,direct
+migrate,@noble/hashes,github,direct
+migrate,CIRCL,github,direct
+migrate,HNDL Simulator (hndl-dev),github,direct
+migrate,IBM z16 Crypto Express 8S,q360-alliance,direct
+migrate,AWS Certificate Manager,amazon-aws,direct
+migrate,Cosmian KMS,nist-csrc,direct
+migrate,SOPS (Secrets OPerationS),mozilla,direct
+migrate,Certicom Code Signing and Key Management Server,pki-consortium,category-inferred
+migrate,BlackBerry QNX Hypervisor 8.0 for Safety,ietf,category-inferred
+migrate,Hex Trust Institutional Custody,cmvp,category-inferred
+migrate,Komainu Custody,cmvp,category-inferred
+migrate,Metaco Harmonize,cmvp,category-inferred
+migrate,Descope Customer & Agentic Identity Platform,ietf,category-inferred
+migrate,Stytch Authentication Platform,ietf,category-inferred
+migrate,Cisco AI Defense (formerly Robust Intelligence Platform),cisco-systems,direct
+migrate,Galileo AI Observability and Eval Platform,nist-csrc,category-inferred
+migrate,BeyondTrust Pathfinder Platform,iec,category-inferred
+migrate,DocuSign Intelligent Agreement Management (eSignature + CLM),ietf,category-inferred
+migrate,AnyDesk Remote Desktop,ietf,category-inferred
+migrate,OpenSSL 3.5.0,openssl-project,direct
+migrate,Utimaco Athos,cmvp,direct
+migrate,Atalla AT1000e,cmvp,direct
+migrate,UEFI Forum Secure Boot,nist-csrc,direct
+migrate,Windows Secure Boot,microsoft,direct
+migrate,Oracle TDE,oracle,direct
+migrate,Thunderbird + OpenPGP,microsoft,direct
+migrate,Microsoft Outlook S/MIME,microsoft,direct
+migrate,DocuSign,ietf,direct
+migrate,Entrust Signing Automation,entrust,direct
+migrate,ForgeRock Identity Cloud,ietf,direct
+migrate,Quantum Bridge Subsea QKD,etsi-cyber,direct
+migrate,STMicroelectronics ST33G1M2 TPM,cmvp,direct
+migrate,NXP SE050 Secure Element,cmvp,direct
+migrate,BlackBerry QNX Neutrino RTOS,cmvp,direct
+migrate,BeyondTrust Privilege Management,iec,direct
+migrate,Google Workspace Identity,google,direct
+migrate,AnyDesk,ietf,direct
+migrate,Galileo FT,cmvp,direct
+migrate,Metaco (Ripple),cmvp,direct
+migrate,Hex Trust,cmvp,direct
+migrate,Komainu,cmvp,direct
+migrate,Robust Intelligence AI Firewall,nist-csrc,direct
+migrate,Thales CipherTrust Data Discovery and Classification,thales-research,direct
+migrate,Post-Quantum Hybrid PQ VPN,ietf,direct
+migrate,Descope,ietf,direct
+migrate,Stytch,ietf,direct
+migrate,IntellectEU Catalyst,intellect-eu,direct
+migrate,Kudelski IoT Security IP,kudelski-iot,inferred
+migrate,Nokia NetGuard,nokia,inferred
+migrate,Palo Alto Orion,palo-alto,inferred
+migrate,ArgoCD / FluxCD 2026,ietf,category-inferred
+migrate,Bamboo CI (Roadmap),cccs,inferred
+migrate,HashiCorp Terraform / HCP,ietf,category-inferred
+migrate,Ansible / PQC App Recs,ietf,inferred
+migrate,Pulumi / Talan 2026,ietf,category-inferred
+migrate,DigiCert Code-Signing (v2026),digicert,inferred
+migrate,Kudelski KSE IP,kudelski-iot,inferred
+migrate,Tectia SSH (SSH.COM),ietf,category-inferred
+migrate,Intel Stratix 10 (Secure),ietf,category-inferred
+migrate,Cloudian HyperStore 8.0,ietf,category-inferred
+migrate,Oracle Cloud Infrastructure (OCI),nist-csrc,inferred
+migrate,Microsoft IIS 11,microsoft,inferred
+migrate,Microsoft Teams / Premium,microsoft,inferred
+migrate,Slack Enterprise Grid,ietf,category-inferred
+migrate,Zix / AppRiver,ietf,category-inferred
+migrate,Box Shield,nist-csrc,category-inferred
+migrate,Egnyte Governance,nist-csrc,category-inferred
+migrate,SentinelOne Singularity,pki-consortium,category-inferred
+migrate,Trend Micro Vision One,pki-consortium,category-inferred
+migrate,IVPN,ietf,category-inferred
+migrate,Vivaldi Browser,ietf,category-inferred
+migrate,SWIFT (Post-Quantum Strategy),ietf,category-inferred
+migrate,JPMorgan Chase (PQC Framework),ietf,category-inferred
+migrate,Mastercard (PQC for Payments),ietf,category-inferred
+migrate,Visa (Quantum Readiness),ietf,category-inferred
+migrate,HSBC (Quantum Protection),ietf,category-inferred
+migrate,Barclays (PQC Research),ietf,category-inferred
+migrate,Temenos Core Banking,ietf,category-inferred
+migrate,Thought Machine Vault,ietf,category-inferred
+migrate,Stripe (v2026),ietf,category-inferred
+migrate,PayPal / Braintree,ietf,category-inferred
+migrate,Boeing (Quantum-Safe Sky),ietf,category-inferred
+migrate,Airbus (Quantum Program),ietf,category-inferred
+migrate,Lockheed Martin (PQC),ietf,category-inferred
+migrate,Northrop Grumman,ietf,category-inferred
+migrate,PCI DSS v4.0.1 (PQC Guidance),nist-csrc,category-inferred
+migrate,WEntrust KeyControl,entrust,direct
+migrate,indows Server 2025,microsoft,direct
+migrate,OQS-OpenSSL Provider (liboqs-provider),oqs-project,direct
+migrate,LUKS/dm-crypt,pki-consortium,category-inferred
+migrate,libcrux,cmvp,category-inferred
+migrate,Trail of Bits ml-dsa,cmvp,category-inferred
+migrate,Venafi,pki-consortium,category-inferred
+migrate,Azure Dedicated HSM,microsoft,inferred
+migrate,InfoSec Global AgileSec,cmvp,category-inferred
+migrate,iOS 26 / macOS 16,apple,inferred
+migrate,Signal Protocol,ietf,category-inferred
+algorithm,ML-KEM-512,nist-csrc,mapped
+algorithm,ML-KEM-768,nist-csrc,mapped
+algorithm,ML-KEM-1024,nist-csrc,mapped
+algorithm,FrodoKEM-640,ietf,direct
+algorithm,FrodoKEM-976,ietf,direct
+algorithm,FrodoKEM-1344,ietf,direct
+algorithm,HQC-128,nist-csrc,mapped
+algorithm,HQC-192,nist-csrc,mapped
+algorithm,HQC-256,nist-csrc,mapped
+algorithm,Classic-McEliece-348864,nist-csrc,direct
+algorithm,Classic-McEliece-460896,nist-csrc,direct
+algorithm,Classic-McEliece-8192128,nist-csrc,direct
+algorithm,BIKE-1,nist-csrc,direct
+algorithm,BIKE-3,nist-csrc,direct
+algorithm,BIKE-5,nist-csrc,direct
+algorithm,ML-DSA-44,nist-csrc,mapped
+algorithm,ML-DSA-65,nist-csrc,mapped
+algorithm,ML-DSA-87,nist-csrc,mapped
+algorithm,FN-DSA-512,nist-csrc,mapped
+algorithm,FN-DSA-1024,nist-csrc,mapped
+algorithm,SLH-DSA-SHA2-128s,nist-csrc,mapped
+algorithm,SLH-DSA-SHAKE-128s,nist-csrc,mapped
+algorithm,SLH-DSA-SHA2-128f,nist-csrc,mapped
+algorithm,SLH-DSA-SHAKE-128f,nist-csrc,mapped
+algorithm,SLH-DSA-SHA2-192s,nist-csrc,mapped
+algorithm,SLH-DSA-SHAKE-192s,nist-csrc,mapped
+algorithm,SLH-DSA-SHA2-192f,nist-csrc,mapped
+algorithm,SLH-DSA-SHAKE-192f,nist-csrc,mapped
+algorithm,SLH-DSA-SHA2-256s,nist-csrc,mapped
+algorithm,SLH-DSA-SHAKE-256s,nist-csrc,mapped
+algorithm,SLH-DSA-SHA2-256f,nist-csrc,mapped
+algorithm,SLH-DSA-SHAKE-256f,nist-csrc,mapped
+algorithm,LMS-SHA256 (H20/W8),nist-csrc,mapped
+algorithm,XMSS-SHA2_20,nist-csrc,mapped
+algorithm,RSA-2048,nist-csrc,mapped
+algorithm,RSA-3072,nist-csrc,mapped
+algorithm,RSA-4096,nist-csrc,mapped
+algorithm,ECDH P-256,nist-csrc,mapped
+algorithm,ECDH P-384,nist-csrc,mapped
+algorithm,ECDH P-521,nist-csrc,mapped
+algorithm,X25519,ietf,mapped
+algorithm,X448,ietf,mapped
+algorithm,ECDSA P-256,nist-csrc,mapped
+algorithm,ECDSA P-384,nist-csrc,mapped
+algorithm,ECDSA P-521,nist-csrc,mapped
+algorithm,Ed25519,ietf,mapped
+algorithm,Ed448,ietf,mapped
+algorithm,DH (Diffie-Hellman),ietf,mapped
+algorithm,secp256k1,secg,direct
+algorithm,X25519MLKEM768,ietf,direct
+algorithm,SecP256r1MLKEM768,ietf,direct
+algorithm,SecP384r1MLKEM1024,ietf,direct
+algorithm,SLH-DSA-SHA2-128-24,nist-csrc,direct
+algorithm,SLH-DSA-SHAKE-128-24,nist-csrc,direct
+algorithm,SLH-DSA-SHA2-192-24,nist-csrc,direct
+algorithm,SLH-DSA-SHAKE-192-24,nist-csrc,direct
+algorithm,SLH-DSA-SHA2-256-24,nist-csrc,direct
+algorithm,SLH-DSA-SHAKE-256-24,nist-csrc,direct
+algorithm,LMS,nist-csrc,direct
+algorithm,XMSS,nist-csrc,direct
+algorithm,Classic-McEliece,nist-csrc,direct
+algorithm,HQC,nist-csrc,direct
+algorithm,UOV,nist-csrc,direct
+algorithm,SQIsign,nist-csrc,direct
+algorithm,CROSS,nist-csrc,direct
+algorithm,LESS,nist-csrc,direct
+algorithm,FAEST,nist-csrc,direct
+algorithm,SNOVA,nist-csrc,direct
+algorithm,id-MLDSA44-ECDSA-P256-SHA256,ietf,direct
+algorithm,id-MLDSA44-Ed25519-SHA512,ietf,direct
+algorithm,id-MLDSA44-RSA2048-PSS-SHA256,ietf,direct
+algorithm,ML-KEM-768-ECDH-P256,ietf,direct
+algorithm,ML-KEM-768-RSA-OAEP-2048,ietf,direct
+algorithm,Classic-McEliece-6688128,bsi,direct
+algorithm,HPKE-PQ,ietf,direct
+algorithm,Classic-McEliece-6960119,bsi,direct

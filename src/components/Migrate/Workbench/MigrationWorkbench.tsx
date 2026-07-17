@@ -19,9 +19,10 @@ import { PageHeader } from '../../common/PageHeader'
 import { Button } from '../../ui/button'
 import { ShareButton } from '../../ui/ShareButton'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { softwareMetadata, softwareData } from '@/data/migrateData'
 import { useMigrateSelectionStore, type MigrateTab } from '@/store/useMigrateSelectionStore'
 import { encodeMigrateShareToken, decodeMigrateShareToken } from '@/utils/migrateShareToken'
-import type { DomainId } from '@/data/migrationAssets'
+import { classifyProductDomain, type DomainId } from '@/data/migrationAssets'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../ui/tabs'
 import { useMigrationPlan } from './useMigrationPlan'
 import { PostureCommandCenter } from './PostureCommandCenter'
@@ -84,6 +85,36 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
     setPriorSelection(null)
   }, [priorSelection, applySharedSelection])
 
+  // ── Product feedback deep link (?product=<softwareName>) ─────────────────
+  // FIXED 2026-07-16 (migrate-process remediation Phase 5, U8): ProductDetail's
+  // Endorse/Flag buttons emit /migrate?product=<name>, but until now nothing
+  // here read that param — the trust-feedback loop landed on whatever tab was
+  // last active with nothing highlighted. Switches to Replace, resolves the
+  // product's domain, and pre-fills the domain filter with its name.
+  const [productDeepLink, setProductDeepLink] = useState<{
+    domain: DomainId
+    filter: string
+  } | null>(null)
+  const productHydratedRef = useRef(false)
+  useEffect(() => {
+    if (embedded || productHydratedRef.current) return
+    const name = searchParams.get('product')
+    if (!name) return
+    productHydratedRef.current = true
+    const sp = new URLSearchParams(searchParams)
+    sp.delete('product')
+    sp.set('tab', 'replace')
+    setSearchParams(sp, { replace: true })
+    const product = softwareData.find((p) => p.softwareName === name)
+    const domain = product
+      ? classifyProductDomain(product.categoryName, product.infrastructureLayer)
+      : null
+    /* eslint-disable react-hooks/set-state-in-effect -- one-time hydrate from the ?product= link, same as the ?share= effect above */
+    setTabStore('replace')
+    if (domain) setProductDeepLink({ domain, filter: name })
+    /* eslint-enable react-hooks/set-state-in-effect */
+  }, [embedded, searchParams, setSearchParams, setTabStore])
+
   const shareUrl = useMemo(
     () =>
       `${window.location.origin}${window.location.pathname}?share=${encodeMigrateShareToken(plan, choice)}`,
@@ -124,6 +155,16 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
             icon={TrendingUp}
             title="PQC Migration Workbench"
             description="Start from what you run — get a sequenced, quantum-safe plan aligned to NIST IR 8547 (Initial Public Draft) & CNSA 2.0."
+            // ADDED 2026-07-16 (migrate-process remediation Phase 5, U1): the
+            // catalog snapshot date was loaded (softwareMetadata) but never
+            // surfaced anywhere on this page — a reviewer had no way to tell
+            // how current the whole product list is, only individual rows'
+            // own verified-pill tooltips (which needed expanding to see).
+            dataSource={
+              softwareMetadata
+                ? `${softwareMetadata.filename} • Catalog as of ${softwareMetadata.lastUpdate.toLocaleDateString()}`
+                : undefined
+            }
           />
           {hasSelection && (
             <ShareButton
@@ -181,7 +222,8 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
         <TabsContent value="replace" className="mt-4">
           <ReplaceTab
             persona={persona}
-            initialDomain={focus?.domain}
+            initialDomain={productDeepLink?.domain ?? focus?.domain}
+            initialFilter={productDeepLink?.filter}
             onGoToRoadmaps={() => setTab('roadmaps')}
           />
         </TabsContent>

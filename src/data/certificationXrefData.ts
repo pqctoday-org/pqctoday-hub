@@ -46,13 +46,31 @@ const activeXrefs = allXrefs.filter((x) => x.status === 'Active')
 /** All certification cross-references (active only). */
 export const certificationXrefs: CertificationXref[] = activeXrefs
 
-/** Lookup map: software_name → CertificationXref[] (active only) */
+// FIXED 2026-07-16 (migrate-process remediation Phase 5, U3): this map used
+// to be keyed by software_name ONLY — a rename in either the catalog or
+// this xref CSV silently dropped the Certifications section for that
+// product, with no error (a join that only ever "soft-fails"). The
+// maintainer-agent's match_certifications.py now writes product_id on every
+// row it generates (2026-07-16 fix), so key by that first — the stable
+// identity that survives a rename — and keep the software_name key too so a
+// legacy row lacking product_id (a carried-forward historical entry
+// pre-dating the fix) is still findable. Callers should look up by
+// productId first, falling back to softwareName.
 export const certsByProduct: Map<string, CertificationXref[]> = activeXrefs.reduce((map, xref) => {
-  const existing = map.get(xref.softwareName) || []
-  existing.push(xref)
-  map.set(xref.softwareName, existing)
+  for (const key of [xref.productId, xref.softwareName]) {
+    if (!key) continue
+    const existing = map.get(key) || []
+    existing.push(xref)
+    map.set(key, existing)
+  }
   return map
 }, new Map<string, CertificationXref[]>())
+
+/** Look up certifications for a product by productId first, falling back to
+ *  softwareName for legacy rows that predate the product_id fix. */
+export function getCertsForProduct(productId: string, softwareName: string): CertificationXref[] {
+  return certsByProduct.get(productId) ?? certsByProduct.get(softwareName) ?? []
+}
 
 /** CSV file metadata. */
 export const xrefMetadata = metadata
