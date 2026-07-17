@@ -93,6 +93,23 @@ describe('MigrationWorkbench (integration)', () => {
     )
   })
 
+  // Regression: migrate-process remediation Phase 5 (U4, scoped) — a chosen
+  // product whose name no longer matches the catalog (renamed/deprecated
+  // since it was chosen) used to render with no explanation at all, just a
+  // missing expander. Simulates the orphan by planting a name that was
+  // never real, same effect as a rename.
+  it('an orphaned plan entry (name no longer in the catalog) shows an honest notice', () => {
+    useMigrateSelectionStore.setState({
+      plan: ['foundations'],
+      choice: { foundations: ['A Product That No Longer Exists'] },
+      tab: 'plan',
+    })
+    renderWorkbench()
+    fireEvent.click(screen.getByRole('button', { name: /Plan & sequence/i }))
+    expect(screen.getByText('A Product That No Longer Exists')).toBeInTheDocument()
+    expect(screen.getByText('No longer in catalog')).toBeInTheDocument()
+  })
+
   it('keeps multiple chosen products in a category, each as its own plan row', () => {
     renderWorkbench()
     fireEvent.click(screen.getByText('Crypto libraries & frameworks'))
