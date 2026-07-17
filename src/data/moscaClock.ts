@@ -43,7 +43,12 @@ export interface SimSector {
 }
 
 /** Sectors set X — the data shelf-life that drives Harvest-Now-Decrypt-Later risk.
- *  Every shelf-life is an illustrative planning anchor (`provenance: 'planning'`). */
+ *  Every shelf-life is an illustrative planning anchor (`provenance: 'planning'`).
+ *  Deliberately NOT numerically identical to the Threats page's SectorExposureHero
+ *  (a live per-threat-row inference over real CSV data) or HNDLTimeline's preset
+ *  menu (a teaching widget) — this sim intentionally uses its own anchors; see
+ *  each file's own comment before "fixing" one to match another (2026-07-16
+ *  accuracy audit). */
 export const SECTORS: SimSector[] = [
   {
     id: 'general',

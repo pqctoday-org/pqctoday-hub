@@ -3,19 +3,23 @@ import React, { useState, useMemo } from 'react'
 import { CRQC_ESTIMATES } from '../data/quantumConstants'
 import { Button } from '@/components/ui/button'
 
+const CURRENT_YEAR = new Date().getFullYear()
+
 export const HNFLTimeline: React.FC = () => {
   const [credentialValidity, setCredentialValidity] = useState(20)
   const [reissuanceTime, setReissuanceTime] = useState(5)
   const [crqcYear, setCrqcYear] = useState(2035)
-  const currentYear = 2026
 
   // Re-issuance must complete before CRQC arrives
   const reissuanceDeadline = useMemo(() => crqcYear - reissuanceTime, [crqcYear, reissuanceTime])
 
-  const yearsRemaining = useMemo(() => reissuanceDeadline - currentYear, [reissuanceDeadline])
+  const yearsRemaining = useMemo(() => reissuanceDeadline - CURRENT_YEAR, [reissuanceDeadline])
 
   // Credential issued today expires at:
-  const credentialExpiryYear = useMemo(() => currentYear + credentialValidity, [credentialValidity])
+  const credentialExpiryYear = useMemo(
+    () => CURRENT_YEAR + credentialValidity,
+    [credentialValidity]
+  )
 
   // Is this credential still valid when CRQC arrives? If so, it's forgeable.
   const credentialAtRisk = useMemo(
@@ -61,7 +65,7 @@ export const HNFLTimeline: React.FC = () => {
   const urgency = urgencyConfig[urgencyLevel]
 
   // Timeline visualization
-  const timelineStart = Math.min(currentYear - 3, reissuanceDeadline - 2)
+  const timelineStart = Math.min(CURRENT_YEAR - 3, reissuanceDeadline - 2)
   const timelineEnd = Math.max(crqcYear + 5, credentialExpiryYear + 2)
   const timelineRange = timelineEnd - timelineStart
 
@@ -282,13 +286,15 @@ export const HNFLTimeline: React.FC = () => {
           {/* Current year marker */}
           <div
             className="absolute top-0 bottom-0 flex flex-col items-center"
-            style={{ left: `${getPosition(currentYear)}%` }}
+            style={{ left: `${getPosition(CURRENT_YEAR)}%` }}
           >
             <div className="text-[10px] font-bold text-primary whitespace-nowrap -translate-x-1/2">
               Today
             </div>
             <div className="w-0.5 flex-1 bg-primary" />
-            <div className="text-[10px] font-bold text-primary -translate-x-1/2">{currentYear}</div>
+            <div className="text-[10px] font-bold text-primary -translate-x-1/2">
+              {CURRENT_YEAR}
+            </div>
           </div>
 
           {/* Credential expiry marker */}

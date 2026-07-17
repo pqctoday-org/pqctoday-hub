@@ -23,7 +23,7 @@ import {
  * it is not expanded.
  */
 
-const CURRENT_YEAR = 2026
+const CURRENT_YEAR = new Date().getFullYear()
 
 export const CrqcCapabilityStrip: React.FC<{ defaultExpanded?: boolean }> = ({
   defaultExpanded = false,
@@ -80,8 +80,8 @@ export const CrqcCapabilityStrip: React.FC<{ defaultExpanded?: boolean }> = ({
               </span>
             </h2>
             <p className="text-xs text-muted-foreground mt-0.5">
-              When the clock stops: consensus CRQC arrival window and how far today&apos;s hardware
-              has come.
+              When the clock stops: a blended CRQC planning window (genuine arrival estimates plus
+              migration-mandate dates) and how far today&apos;s hardware has come.
             </p>
           </div>
         </div>
@@ -107,7 +107,7 @@ export const CrqcCapabilityStrip: React.FC<{ defaultExpanded?: boolean }> = ({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
         <div className="rounded-lg border border-border bg-muted/30 p-3">
           <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
-            Z — consensus estimate
+            Z — blended planning estimate
           </div>
           <div className="text-2xl font-bold text-warning">~{consensus.zEstimate}</div>
           <div className="text-xs text-muted-foreground mt-0.5">
