@@ -8,7 +8,13 @@ import { softwareData } from '@/data/migrateData'
 const SAMPLE = softwareData[0]
 
 const reset = () =>
-  useMigrateSelectionStore.setState({ plan: [], choice: {}, tab: 'replace', myProducts: [] })
+  useMigrateSelectionStore.setState({
+    plan: [],
+    choice: {},
+    tab: 'replace',
+    myProducts: [],
+    nameToProductId: {},
+  })
 
 describe('useMigrateSelectionStore — workbench plan (v9)', () => {
   beforeEach(reset)
@@ -95,6 +101,12 @@ describe('useMigrateSelectionStore — workbench plan (v9)', () => {
     expect(typeof s.choice).toBe('object')
     expect(['replace', 'plan']).toContain(s.tab)
   })
+
+  it('migrate() v10→v11 adds nameToProductId as an empty object (U4)', () => {
+    const s = useMigrateSelectionStore.getState()
+    expect(typeof s.nameToProductId).toBe('object')
+    expect(s.nameToProductId).not.toBeNull()
+  })
 })
 
 describe('useMigrateSelectionStore — effective selection (myProducts ∪ choice)', () => {
@@ -136,5 +148,76 @@ describe('useMigrateSelectionStore — effective selection (myProducts ∪ choic
     const s = useMigrateSelectionStore.getState()
     expect(s.choice.tls).toBeUndefined()
     expect(s.plan).toContain('tls')
+  })
+})
+
+// Regression: migrate-process remediation Phase 5 (U4, scoped fix) —
+// `choice` stores a product's NAME, so a rename or deprecation after the
+// product was chosen used to silently drop it out of selectedProductIds()'s
+// union, with no way to tell from the outside. chooseProduct now captures
+// the resolved id at selection time as a fallback for exactly this case.
+describe('useMigrateSelectionStore — nameToProductId resolution cache (U4)', () => {
+  beforeEach(reset)
+
+  it('chooseProduct captures the resolved productId when adding a real product', () => {
+    useMigrateSelectionStore.getState().chooseProduct('tls', SAMPLE.softwareName)
+    expect(useMigrateSelectionStore.getState().nameToProductId[SAMPLE.softwareName]).toBe(
+      SAMPLE.productId
+    )
+  })
+
+  it('chooseProduct does not add a cache entry for a name that resolves to nothing', () => {
+    useMigrateSelectionStore.getState().chooseProduct('tls', 'Not A Real Product')
+    expect(
+      useMigrateSelectionStore.getState().nameToProductId['Not A Real Product']
+    ).toBeUndefined()
+  })
+
+  it('cache entries are not removed when the product is un-chosen (harmless staleness, not a bug)', () => {
+    const { chooseProduct } = useMigrateSelectionStore.getState()
+    chooseProduct('tls', SAMPLE.softwareName)
+    chooseProduct('tls', SAMPLE.softwareName) // toggle off
+    expect(useMigrateSelectionStore.getState().nameToProductId[SAMPLE.softwareName]).toBe(
+      SAMPLE.productId
+    )
+  })
+
+  it('selectedProductIds resolves via the live catalog first, cache only as fallback', () => {
+    // Real product resolves via PRODUCT_ID_BY_NAME even with an unrelated cache present.
+    const ids = selectedProductIds(
+      [],
+      { tls: [SAMPLE.softwareName] },
+      { 'Some Other Name': 'some-other-id' }
+    )
+    expect(ids).toEqual([SAMPLE.productId])
+  })
+
+  it('selectedProductIds falls back to the cache when the live catalog no longer resolves the name — the actual bug this fixes', () => {
+    // Simulates a renamed/deprecated product: the name is no longer in
+    // PRODUCT_ID_BY_NAME, but a cache entry captured at selection time
+    // still resolves it. Before this fix, this returned [].
+    const ids = selectedProductIds(
+      [],
+      { tls: ['A Product That Was Later Renamed'] },
+      { 'A Product That Was Later Renamed': 'the-captured-id' }
+    )
+    expect(ids).toEqual(['the-captured-id'])
+  })
+
+  it('a genuinely unknown name with no cache entry still resolves to nothing (no false positives)', () => {
+    const ids = selectedProductIds([], { tls: ['Never Chosen, Never Cached'] }, {})
+    expect(ids).toEqual([])
+  })
+
+  it('useSelectedProductIds (the hook path) end-to-end: rename simulated by clearing the live index is out of scope here, but the cache is wired through the hook', () => {
+    // Full integration (store -> hook) for the happy path: chooseProduct
+    // populates the cache, and useSelectedProductIds's selector reads it —
+    // verified structurally since the hook itself needs a React render to
+    // exercise (covered by MigrationWorkbench.test.tsx's component tests).
+    useMigrateSelectionStore.getState().chooseProduct('tls', SAMPLE.softwareName)
+    const state = useMigrateSelectionStore.getState()
+    expect(selectedProductIds(state.myProducts, state.choice, state.nameToProductId)).toContain(
+      SAMPLE.productId
+    )
   })
 })

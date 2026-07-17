@@ -4,6 +4,7 @@ import { FileText, AlertTriangle, RotateCcw, X, ChevronDown } from 'lucide-react
 import { WAVES_FALLBACK } from './waves'
 import { DECISIONS, type DomainId } from '@/data/migrationAssets'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
+import { softwareData } from '@/data/migrateData'
 import { Button } from '../../ui/button'
 import { InlineTooltip } from '../../ui/InlineTooltip'
 import { Pill, DECISION_ICON, TONE_DOT, ConfirmButton } from './workbenchUi'
@@ -33,10 +34,20 @@ function PlanProductRow({
   onRemove: () => void
 }) {
   const [open, setOpen] = useState(false)
-  const product = useMemo(
-    () => productsForDomain(domainId as DomainId).find((p) => p.softwareName === productName),
-    [domainId, productName]
-  )
+  const cachedId = useMigrateSelectionStore((s) => s.nameToProductId[productName])
+  const product = useMemo(() => {
+    const byName = productsForDomain(domainId as DomainId).find(
+      (p) => p.softwareName === productName
+    )
+    if (byName) return byName
+    // FIXED 2026-07-16 (migrate-process remediation Phase 5, U4, extended):
+    // the product's name no longer matches the catalog (renamed since it
+    // was chosen) — fall back to the id captured at selection time
+    // (nameToProductId) against the FULL catalog, not just this domain's
+    // slice, so a rename that also moved category still resolves. Restores
+    // real detail instead of just the "No longer in catalog" notice below.
+    return cachedId ? softwareData.find((p) => p.productId === cachedId) : undefined
+  }, [domainId, productName, cachedId])
   return (
     <div>
       <div className="flex items-center gap-2 py-2 pl-6 pr-3">
