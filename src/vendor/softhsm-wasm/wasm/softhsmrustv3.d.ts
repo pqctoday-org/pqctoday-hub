@@ -27,14 +27,25 @@ export function _C_AsyncJoin(
   _ul_data_len: number
 ): number
 
+/**
+ * §5.21 (legacy) — always CKR_FUNCTION_NOT_PARALLEL per spec.
+ */
+export function _C_CancelFunction(_h_session: number): number
+
+/**
+ * PKCS#11 v3.2 §5.6 — close every session on the slot (op-state cleanup +
+ * session-object destruction per C_CloseSession semantics).
+ */
+export function _C_CloseAllSessions(slot_id: number): number
+
 export function _C_CloseSession(h_session: number): number
 
 export function _C_CopyObject(
-  _h_session: number,
-  _h_object: number,
-  _p_template: number,
-  _ul_count: number,
-  _ph_new_object: number
+  h_session: number,
+  h_object: number,
+  p_template: number,
+  ul_count: number,
+  ph_new_object: number
 ): number
 
 export function _C_CreateObject(
@@ -63,10 +74,18 @@ export function _C_Decrypt(
   pul_data_len: number
 ): number
 
+export function _C_DecryptDigestUpdate(
+  h_session: number,
+  p_encrypted_part: number,
+  ul_encrypted_part_len: number,
+  p_part: number,
+  pul_part_len: number
+): number
+
 export function _C_DecryptFinal(
-  _h_session: number,
-  _p_last_part: number,
-  _pul_last_part_len: number
+  h_session: number,
+  p_last_part: number,
+  pul_last_part_len: number
 ): number
 
 export function _C_DecryptInit(h_session: number, p_mechanism: number, h_key: number): number
@@ -103,11 +122,19 @@ export function _C_DecryptMessageNext(
 ): number
 
 export function _C_DecryptUpdate(
-  _h_session: number,
-  _p_encrypted_part: number,
-  _ul_encrypted_part_len: number,
-  _p_part: number,
-  _pul_part_len: number
+  h_session: number,
+  p_encrypted_part: number,
+  ul_encrypted_part_len: number,
+  p_part: number,
+  pul_part_len: number
+): number
+
+export function _C_DecryptVerifyUpdate(
+  h_session: number,
+  p_encrypted_part: number,
+  ul_encrypted_part_len: number,
+  p_part: number,
+  pul_part_len: number
 ): number
 
 export function _C_DeriveKey(
@@ -119,7 +146,7 @@ export function _C_DeriveKey(
   ph_key: number
 ): number
 
-export function _C_DestroyObject(_h_session: number, h_object: number): number
+export function _C_DestroyObject(h_session: number, h_object: number): number
 
 export function _C_Digest(
   h_session: number,
@@ -127,6 +154,14 @@ export function _C_Digest(
   ul_data_len: number,
   p_digest: number,
   pul_digest_len: number
+): number
+
+export function _C_DigestEncryptUpdate(
+  h_session: number,
+  p_part: number,
+  ul_part_len: number,
+  p_encrypted_part: number,
+  pul_encrypted_part_len: number
 ): number
 
 export function _C_DigestFinal(h_session: number, p_digest: number, pul_digest_len: number): number
@@ -157,9 +192,9 @@ export function _C_Encrypt(
 ): number
 
 export function _C_EncryptFinal(
-  _h_session: number,
-  _p_last_encrypted_part: number,
-  _pul_last_encrypted_part_len: number
+  h_session: number,
+  p_last_encrypted_part: number,
+  pul_last_encrypted_part_len: number
 ): number
 
 export function _C_EncryptInit(h_session: number, p_mechanism: number, h_key: number): number
@@ -196,14 +231,14 @@ export function _C_EncryptMessageNext(
 ): number
 
 export function _C_EncryptUpdate(
-  _h_session: number,
-  _p_part: number,
-  _ul_part_len: number,
-  _p_encrypted_part: number,
-  _pul_encrypted_part_len: number
+  h_session: number,
+  p_part: number,
+  ul_part_len: number,
+  p_encrypted_part: number,
+  pul_encrypted_part_len: number
 ): number
 
-export function _C_Finalize(_p_reserved: number): number
+export function _C_Finalize(p_reserved: number): number
 
 export function _C_FindObjects(
   h_session: number,
@@ -242,26 +277,72 @@ export function _C_GenerateRandom(
 ): number
 
 export function _C_GetAttributeValue(
-  _h_session: number,
+  h_session: number,
   h_object: number,
   p_template: number,
   count: number
 ): number
 
 /**
+ * §5.21 (legacy) — always CKR_FUNCTION_NOT_PARALLEL per spec.
+ */
+export function _C_GetFunctionStatus(_h_session: number): number
+
+/**
  * CK_INFO: cryptokiVersion(2) + manufacturerID(32) + flags(4) + libraryDescription(32) + libraryVersion(2) = 72 bytes
  */
 export function _C_GetInfo(p_info: number): number
 
+/**
+ * §5.5 — C_GetInterface. NULL name/version match the default interface.
+ * Callable BEFORE C_Initialize (§5.4 — same pre-init surface as
+ * C_GetFunctionList / C_GetInterfaceList).
+ */
+export function _C_GetInterface(
+  p_interface_name: number,
+  p_version: number,
+  pp_interface: number,
+  _flags: number
+): number
+
+/**
+ * C_GetSlotInfo: returns basic slot info for slot 0.
+ * CK_SLOT_INFO: slotDescription(64) + manufacturerID(32) + flags(4) + hardwareVersion(2) + firmwareVersion(2) = 104 bytes
+ * PKCS#11 v3.2 §5.5 — C_GetInterfaceList. Reports one interface,
+ * "PKCS 11" version 3.2. Callable BEFORE C_Initialize (§5.4: the
+ * function-list/interface getters are exempt from the init gate;
+ * CKR_CRYPTOKI_NOT_INITIALIZED is not in this function's return list).
+ * wasm constraint: exported functions are not
+ * addressable as C function pointers in linear memory, so pFunctionList
+ * points to a CK_VERSION{3,2} header only; symbol binding happens in the
+ * JS shim (each `_C_*` export), which is the function table for every
+ * real consumer of this engine. CK_INTERFACE (wasm32, 12 B):
+ * pInterfaceName, pFunctionList, flags.
+ */
+export function _C_GetInterfaceList(p_interfaces_list: number, pul_count: number): number
+
 export function _C_GetMechanismInfo(_slot_id: number, mech_type: number, p_info: number): number
 
+/**
+ * PKCS#11 v3.2 §5.5 — C_GetMechanismList. Gated on library initialization
+ * (§5.4), validates the slot (CKR_SLOT_ID_INVALID, mirroring
+ * C_GetTokenInfo) and the required `pulCount` out-param
+ * (CKR_ARGUMENTS_BAD). NULL `pMechanismList` is the §5.2 size query.
+ */
 export function _C_GetMechanismList(
-  _slot_id: number,
+  slot_id: number,
   p_mechanism_list: number,
   pul_count: number
 ): number
 
-export function _C_GetObjectSize(_h_session: number, _h_object: number, _pul_size: number): number
+/**
+ * PKCS#11 v3.2 §5.7.4 — "an estimate of the amount of storage the object
+ * occupies". Honest estimate: Σ(stored attribute value lengths) + a fixed
+ * 12-byte per-attribute header ([`OBJECT_SIZE_ATTR_OVERHEAD`]). The
+ * engine-internal CKA_PRIV_* bookkeeping attrs (≥0xFFFF_0000) are excluded —
+ * they are implementation plumbing, not object storage the client created.
+ */
+export function _C_GetObjectSize(h_session: number, h_object: number, pul_size: number): number
 
 export function _C_GetOperationState(
   _h_session: number,
@@ -272,15 +353,11 @@ export function _C_GetOperationState(
 export function _C_GetSessionInfo(h_session: number, p_info: number): number
 
 export function _C_GetSessionValidationFlags(
-  _h_session: number,
-  _type: number,
-  _p_flags: number
+  h_session: number,
+  type_: number,
+  p_flags: number
 ): number
 
-/**
- * C_GetSlotInfo: returns basic slot info for slot 0.
- * CK_SLOT_INFO: slotDescription(64) + manufacturerID(32) + flags(4) + hardwareVersion(2) + firmwareVersion(2) = 104 bytes
- */
 export function _C_GetSlotInfo(_slot_id: number, p_info: number): number
 
 export function _C_GetSlotList(
@@ -289,7 +366,7 @@ export function _C_GetSlotList(
   pul_count: number
 ): number
 
-export function _C_GetTokenInfo(_slot_id: number, p_info: number): number
+export function _C_GetTokenInfo(slot_id: number, p_info: number): number
 
 export function _C_InitPIN(h_session: number, p_pin: number, ul_pin_len: number): number
 
@@ -309,6 +386,21 @@ export function _C_Login(
   ul_pin_len: number
 ): number
 
+/**
+ * PKCS#11 v3.0+ §5.6 — C_Login with a username. This single-user token
+ * accepts only an empty username (delegates to C_Login); anything else is
+ * CKR_OPERATION_NOT_SUPPORTED... which v3.2 spells CKR_FUNCTION_NOT_SUPPORTED
+ * for an unsupported variant.
+ */
+export function _C_LoginUser(
+  h_session: number,
+  user_type: number,
+  p_pin: number,
+  ul_pin_len: number,
+  _p_username: number,
+  _ul_username_len: number
+): number
+
 export function _C_Logout(h_session: number): number
 
 export function _C_MessageDecryptFinal(h_session: number): number
@@ -319,13 +411,7 @@ export function _C_MessageEncryptFinal(h_session: number): number
 
 export function _C_MessageEncryptInit(h_session: number, p_mechanism: number, h_key: number): number
 
-export function _C_MessageSignFinal(
-  h_session: number,
-  _p_param: number,
-  _ul_param_len: number,
-  _p_signature: number,
-  _pul_signature_len: number
-): number
+export function _C_MessageSignFinal(h_session: number): number
 
 export function _C_MessageSignInit(h_session: number, p_mechanism: number, h_key: number): number
 
@@ -343,11 +429,20 @@ export function _C_OpenSession(
 
 export function _C_SeedRandom(_h_session: number, _p_seed: number, _ul_seed_len: number): number
 
+/**
+ * PKCS#11 v3.0+ §5.6 — cancel active operations selected by `flags`
+ * (CKF_ENCRYPT 0x100, CKF_DECRYPT 0x200, CKF_DIGEST 0x400, CKF_SIGN 0x800,
+ * CKF_VERIFY 0x2000, CKF_FIND_OBJECTS 0x40, CKF_MESSAGE_ENCRYPT 0x2,
+ * CKF_MESSAGE_DECRYPT 0x4, CKF_MESSAGE_SIGN 0x8, CKF_MESSAGE_VERIFY 0x10).
+ * flags == 0 cancels nothing.
+ */
+export function _C_SessionCancel(h_session: number, flags: number): number
+
 export function _C_SetAttributeValue(
-  _h_session: number,
-  _h_object: number,
-  _p_template: number,
-  _ul_count: number
+  h_session: number,
+  h_object: number,
+  p_template: number,
+  ul_count: number
 ): number
 
 export function _C_SetOperationState(
@@ -358,12 +453,19 @@ export function _C_SetOperationState(
   _h_authentication_key: number
 ): number
 
+/**
+ * PKCS#11 v3.2 §5.6.7 — C_SetPIN rotates the PIN of the user that is
+ * currently logged in (SO session → SO PIN; user session OR public session →
+ * the normal user PIN, per the spec's session-state table). Works only from
+ * a R/W session; the old PIN is verified against the stored PBKDF2 hash and
+ * the new PIN is re-salted and re-hashed (`state::hash_pin`).
+ */
 export function _C_SetPIN(
-  _h_session: number,
-  _p_old_pin: number,
-  _ul_old_len: number,
-  _p_new_pin: number,
-  _ul_new_len: number
+  h_session: number,
+  p_old_pin: number,
+  ul_old_len: number,
+  p_new_pin: number,
+  ul_new_len: number
 ): number
 
 export function _C_Sign(
@@ -374,10 +476,18 @@ export function _C_Sign(
   pul_signature_len: number
 ): number
 
+export function _C_SignEncryptUpdate(
+  h_session: number,
+  p_part: number,
+  ul_part_len: number,
+  p_encrypted_part: number,
+  pul_encrypted_part_len: number
+): number
+
 export function _C_SignFinal(
-  _h_session: number,
-  _p_signature: number,
-  _pul_signature_len: number
+  h_session: number,
+  p_signature: number,
+  pul_signature_len: number
 ): number
 
 export function _C_SignInit(h_session: number, p_mechanism: number, h_key: number): number
@@ -392,7 +502,41 @@ export function _C_SignMessage(
   pul_signature_len: number
 ): number
 
-export function _C_SignUpdate(_h_session: number, _p_part: number, _ul_part_len: number): number
+/**
+ * §5.14 — start one multipart message inside an active message-sign op.
+ */
+export function _C_SignMessageBegin(
+  h_session: number,
+  _p_param: number,
+  _ul_param_len: number
+): number
+
+/**
+ * §5.14 — feed a message part. `pulSignatureLen == NULL` marks a non-final
+ * part; non-NULL marks the final part (then NULL `pSignature` is the §5.2
+ * length query, which does not consume the accumulated message).
+ */
+export function _C_SignMessageNext(
+  h_session: number,
+  _p_param: number,
+  _ul_param_len: number,
+  p_part: number,
+  ul_part_len: number,
+  p_signature: number,
+  pul_signature_len: number
+): number
+
+export function _C_SignRecover(
+  _h_session: number,
+  _p_data: number,
+  _ul_data_len: number,
+  _p_signature: number,
+  _pul_signature_len: number
+): number
+
+export function _C_SignRecoverInit(_h_session: number, _p_mechanism: number, _h_key: number): number
+
+export function _C_SignUpdate(h_session: number, p_part: number, ul_part_len: number): number
 
 export function _C_UnwrapKey(
   _h_session: number,
@@ -413,8 +557,8 @@ export function _C_UnwrapKeyAuthenticated(
   ul_wrapped_key_len: number,
   p_template: number,
   ul_attribute_count: number,
-  _p_associated_data: number,
-  _ul_associated_data_len: number,
+  p_associated_data: number,
+  ul_associated_data_len: number,
   ph_key: number
 ): number
 
@@ -427,9 +571,9 @@ export function _C_Verify(
 ): number
 
 export function _C_VerifyFinal(
-  _h_session: number,
-  _p_signature: number,
-  _ul_signature_len: number
+  h_session: number,
+  p_signature: number,
+  ul_signature_len: number
 ): number
 
 export function _C_VerifyInit(h_session: number, p_mechanism: number, h_key: number): number
@@ -442,6 +586,43 @@ export function _C_VerifyMessage(
   ul_data_len: number,
   p_signature: number,
   ul_signature_len: number
+): number
+
+/**
+ * §5.15 — start one multipart message inside an active message-verify op.
+ */
+export function _C_VerifyMessageBegin(
+  h_session: number,
+  _p_param: number,
+  _ul_param_len: number
+): number
+
+/**
+ * §5.15 — feed a message part. NULL `pSignature` marks a non-final part;
+ * non-NULL carries the signature and finalizes the message.
+ */
+export function _C_VerifyMessageNext(
+  h_session: number,
+  _p_param: number,
+  _ul_param_len: number,
+  p_part: number,
+  ul_part_len: number,
+  p_signature: number,
+  ul_signature_len: number
+): number
+
+export function _C_VerifyRecover(
+  _h_session: number,
+  _p_signature: number,
+  _ul_signature_len: number,
+  _p_data: number,
+  _pul_data_len: number
+): number
+
+export function _C_VerifyRecoverInit(
+  _h_session: number,
+  _p_mechanism: number,
+  _h_key: number
 ): number
 
 export function _C_VerifySignature(h_session: number, p_data: number, ul_data_len: number): number
@@ -462,7 +643,13 @@ export function _C_VerifySignatureUpdate(
   ul_part_len: number
 ): number
 
-export function _C_VerifyUpdate(_h_session: number, _p_part: number, _ul_part_len: number): number
+export function _C_VerifyUpdate(h_session: number, p_part: number, ul_part_len: number): number
+
+/**
+ * §5.5 — no slot events exist on this soft token. Non-blocking poll gets
+ * CKR_NO_EVENT; a blocking wait would never return, so refuse it.
+ */
+export function _C_WaitForSlotEvent(flags: number, _p_slot: number, _p_reserved: number): number
 
 export function _C_WrapKey(
   _h_session: number,
@@ -478,8 +665,8 @@ export function _C_WrapKeyAuthenticated(
   p_mechanism: number,
   h_wrapping_key: number,
   h_key: number,
-  _p_associated_data: number,
-  _ul_associated_data_len: number,
+  p_associated_data: number,
+  ul_associated_data_len: number,
   p_wrapped_key: number,
   pul_wrapped_key_len: number
 ): number
