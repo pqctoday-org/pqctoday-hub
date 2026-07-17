@@ -8389,6 +8389,86 @@
       "sizeBytes": 43372,
       "contentType": "text/html",
       "sha256": "a091b71e1d03dce1399c8a700a1d94dad6e7ad54bd618a31700533d0fa74f0fb"
+    },
+    {
+      "refId": "ISO-26262-Road-vehicles-Functional-safety",
+      "title": "ISO 26262 (Road vehicles - Functional safety)",
+      "url": "https://www.iso.org/publication/PUB200262.html",
+      "status": "downloaded",
+      "filename": "ISO-26262-Road-vehicles-Functional-safety.html",
+      "sizeBytes": 70976,
+      "contentType": "text/html",
+      "sha256": "761acc972a0fe8a38198b4a1a8d262e5aedcb59f749c94508a18e609b1e8f17e"
+    },
+    {
+      "refId": "NIST-SP-800-186",
+      "title": "NIST SP 800-186",
+      "url": "https://csrc.nist.gov/pubs/sp/800/186/final",
+      "status": "downloaded",
+      "filename": "NIST-SP-800-186.html",
+      "sizeBytes": 45116,
+      "contentType": "text/html",
+      "sha256": "e172f9b055a7b786b2a832a817403ef131019531127f93be90f5a1def946ca08"
+    },
+    {
+      "refId": "NIST-SP-800-185",
+      "title": "NIST SP 800-185",
+      "url": "https://csrc.nist.gov/pubs/sp/800/185/final",
+      "status": "downloaded",
+      "filename": "NIST-SP-800-185.html",
+      "sizeBytes": 45547,
+      "contentType": "text/html",
+      "sha256": "a0baf1a7d2e07e8520db2a9232034ec4dc179235210ba8d351cd20d3a81454b5"
+    },
+    {
+      "refId": "ARINC-Standard-811",
+      "title": "ARINC Standard 811",
+      "url": "https://saemobilus.sae.org/standards/arinc811-811-commercial-aircraft-information-security-concepts-operation-process-framework",
+      "status": "downloaded",
+      "filename": "ARINC-Standard-811.html",
+      "sizeBytes": 142304,
+      "contentType": "text/html",
+      "sha256": "003771629b8c50c6377e060c1e4ae50a32110bd7557fa7201002dff47c43a335"
+    },
+    {
+      "refId": "ARINC-Standard-827",
+      "title": "ARINC Standard 827",
+      "url": "https://saemobilus.sae.org/standards/arinc827-2-827-2-electronic-distribution-software-crate-eds-crate",
+      "status": "downloaded",
+      "filename": "ARINC-Standard-827.html",
+      "sizeBytes": 138144,
+      "contentType": "text/html",
+      "sha256": "3568bc17a28cf47ab5be409e884f57beb2c15d33614e42f39fdd89273b74a43e"
+    },
+    {
+      "refId": "ISO-IEC-17799-2000",
+      "title": "ISO/IEC 17799:2000",
+      "url": "https://www.iso.org/standard/33441.html",
+      "status": "downloaded",
+      "filename": "ISO-IEC-17799-2000.html",
+      "sizeBytes": 76341,
+      "contentType": "text/html",
+      "sha256": "3b7585bcd1f2514226cbeb1c81189d796ab18bd242308bae2bde274d90246133"
+    },
+    {
+      "refId": "ISO-14971-2000",
+      "title": "ISO 14971:2000",
+      "url": "https://www.iso.org/standard/31550.html",
+      "status": "downloaded",
+      "filename": "ISO-14971-2000.html",
+      "sizeBytes": 78295,
+      "contentType": "text/html",
+      "sha256": "d419d910b17938c4aed2c83da6501bce782cc53aab2629e6fc7b7052d92b18ab"
+    },
+    {
+      "refId": "RFC-9958",
+      "title": "RFC 9958",
+      "url": "https://datatracker.ietf.org/doc/rfc9958/",
+      "status": "downloaded",
+      "filename": "RFC-9958.html",
+      "sizeBytes": 160365,
+      "contentType": "text/html",
+      "sha256": "bf961b8ab345b045f659717371b03c1a830c620f5cddfe1b8f2a4f69943c5416"
     }
   ]
 }
