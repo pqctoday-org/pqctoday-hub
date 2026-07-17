@@ -2720,3 +2720,26 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-433_OpenBao_LF_Edge_.html (338.4 KB)
 - **Extraction Timestamp**: 2026-07-07T20:41:12
 
+
+## VND-255 — Quantum eMotion Inc.
+
+- **Vendor ID**: VND-255
+- **Vendor Name**: Quantum eMotion Inc.
+- **Roadmap Title**: Quantum eMotion Deploys Its Quantum-Safe Security Platform
+- **Roadmap URL**: https://www.quantumemotion.com/press-release/53/quantum-emotion-deploys-its-quantum-safe-security-platform-for-digital-therapeutics-in-landmark-comm
+- **Publish Date**: 2026-07-17
+- **Local File**: vendor-roadmaps/VND-255_Quantum_eMotion_Inc.html
+- **CSV Coverage Notes**: None
+- **PQC Algorithms Announced**: None detected
+- **Target Migration Dates**: None detected
+- **Products / Services Covered**: Sentry-Q platform
+- **Compliance Frameworks**: NIST IUT; FIPS
+- **Hybrid Mode Support**: None detected
+- **Current GA Status**: No PQC
+- **Customer Action Required**: None detected
+- **Key Commitments & Quotes**: None detected
+- **Coverage Verification**: CONSISTENT — The document is a press release about a commercial alliance and does not contain specific PQC roadmap details, consistent with "Not specified" coverage notes.
+- **Extraction Quality**: LOW
+- **Source Document**: VND-255_Quantum_eMotion_Inc.html (72.7 KB)
+- **Extraction Timestamp**: 2026-07-17T11:46:05
+
