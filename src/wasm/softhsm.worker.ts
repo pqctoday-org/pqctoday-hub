@@ -109,7 +109,7 @@ var CKU_SO = 0
 var CKU_USER = 1
 var CKR_CRYPTOKI_ALREADY_INITIALIZED = 0x191
 
-// Named SLH-DSA parameter sets → CKP_SLH_DSA_* constants (PKCS#11 v3.2 §6.68)
+// Named SLH-DSA parameter sets → CKP_SLH_DSA_* constants (PKCS#11 v3.2 §6.69)
 var SLH_DSA_PARAMS: Record<string, number> = {
   'sha2-128s': 0x01,
   'shake-128s': 0x02,
