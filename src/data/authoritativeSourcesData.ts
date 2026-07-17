@@ -2,6 +2,13 @@
 import { loadLatestCSV, parseBoolYesNo } from './csvUtils'
 
 export interface AuthoritativeSource {
+  /** Raw CSV `id` column — was never captured before 2026-07-16, so nothing
+   * in the app could resolve a compliance row's trustedSourceId against this
+   * registry by id (only by sourceName, which doesn't match the id format).
+   * Optional because loadLatestCSV / this file's own age predates the fix in
+   * lockstep with the CSV always having had the column; kept optional to
+   * match every other field's defensive style here. */
+  id?: string
   sourceName: string
   sourceType: 'Government' | 'Academic' | 'Industry Workgroup' | 'Vendor'
   region: 'Americas' | 'EMEA' | 'APAC' | 'Global'
@@ -27,6 +34,7 @@ export type ViewType =
   | 'Migrate'
 
 interface RawSourceRow {
+  id: string
   Source_Name: string
   Source_Type: string
   Region: string
@@ -52,6 +60,7 @@ const { data, metadata } = loadLatestCSV<RawSourceRow, AuthoritativeSource>(
   modules,
   /pqc_authoritative_sources_reference_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
   (row) => ({
+    id: row.id,
     sourceName: row.Source_Name,
     sourceType: row.Source_Type as AuthoritativeSource['sourceType'],
     region: row.Region as AuthoritativeSource['region'],
@@ -87,4 +96,9 @@ export function getSourcesForView(viewType: ViewType): AuthoritativeSource[] {
   const filterKey = filterMap[viewType]
 
   return authoritativeSources.filter((source) => source[filterKey] === true)
+}
+
+/** Looks up a source by its raw CSV `id` (e.g. a compliance row's trustedSourceId). */
+export function getAuthoritativeSource(id: string): AuthoritativeSource | undefined {
+  return authoritativeSources.find((source) => source.id === id)
 }
