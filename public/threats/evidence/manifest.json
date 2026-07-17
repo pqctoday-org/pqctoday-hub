@@ -6,12 +6,12 @@
     "download_status": "ok",
     "evidence_file": "threats/AERO-002.pdf",
     "content_type": "application/pdf",
-    "size_bytes": 1020401,
+    "size_bytes": 586858,
     "http_status": 200,
     "error_message": null,
     "fetch_tier": "curl_cffi:chrome124",
     "downloaded_at": "2026-07-17T15:03:31Z",
-    "sha256": "7b074cfafa4b48754acbe96de915bc3196f20efe3148e415bf83558dda482bc7"
+    "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55"
   },
   {
     "threat_id": "AERO-003",
@@ -408,12 +408,12 @@
     "download_status": "ok",
     "evidence_file": "threats/FIN-004.pdf",
     "content_type": "application/pdf",
-    "size_bytes": 1586005,
+    "size_bytes": 902987,
     "http_status": 200,
     "error_message": null,
     "fetch_tier": "curl_cffi:chrome124",
     "downloaded_at": "2026-07-17T15:03:31Z",
-    "sha256": "22b4a77f21cf780a04d33ab48c6f811511209cc57120fe3cff490ae9b7be2252"
+    "sha256": "41e427a461c1ae0ceed2a68dc29507400983d1d495c35631306d0f4803ca4614"
   },
   {
     "threat_id": "FIN-005",
@@ -462,12 +462,12 @@
     "download_status": "ok",
     "evidence_file": "threats/GOV-001.pdf",
     "content_type": "application/pdf",
-    "size_bytes": 1020401,
+    "size_bytes": 586858,
     "http_status": 200,
     "error_message": null,
     "fetch_tier": "curl_cffi:chrome124",
     "downloaded_at": "2026-07-17T15:03:31Z",
-    "sha256": "7b074cfafa4b48754acbe96de915bc3196f20efe3148e415bf83558dda482bc7"
+    "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55"
   },
   {
     "threat_id": "GOV-002",
@@ -476,12 +476,12 @@
     "download_status": "ok",
     "evidence_file": "threats/GOV-002.pdf",
     "content_type": "application/pdf",
-    "size_bytes": 1020401,
+    "size_bytes": 586858,
     "http_status": 200,
     "error_message": null,
     "fetch_tier": "curl_cffi:chrome124",
     "downloaded_at": "2026-07-17T15:03:31Z",
-    "sha256": "7b074cfafa4b48754acbe96de915bc3196f20efe3148e415bf83558dda482bc7"
+    "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55"
   },
   {
     "threat_id": "GOV-003",
@@ -518,12 +518,12 @@
     "download_status": "ok",
     "evidence_file": "threats/GOV-005.pdf",
     "content_type": "application/pdf",
-    "size_bytes": 1020401,
+    "size_bytes": 586858,
     "http_status": 200,
     "error_message": null,
     "fetch_tier": "curl_cffi:chrome124",
     "downloaded_at": "2026-07-17T15:03:31Z",
-    "sha256": "7b074cfafa4b48754acbe96de915bc3196f20efe3148e415bf83558dda482bc7"
+    "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55"
   },
   {
     "threat_id": "AUS-GOV-001",
@@ -1082,12 +1082,12 @@
     "download_status": "ok",
     "evidence_file": "threats/TELCO-005.pdf",
     "content_type": "application/pdf",
-    "size_bytes": 245865,
+    "size_bytes": 142762,
     "http_status": 200,
     "error_message": null,
     "fetch_tier": "curl_cffi:chrome124",
     "downloaded_at": "2026-07-17T15:03:31Z",
-    "sha256": "5051a3f16a93075de5add823f36ab56e2fe7b19c946752f0397b1cae7b267525"
+    "sha256": "0d088f1d5235566b47cc66f03df61526f32655e08e426b9a84d3a4c2c8555eaf"
   },
   {
     "threat_id": "WATER-001",
@@ -1443,12 +1443,12 @@
     "download_status": "ok",
     "evidence_file": "threats/CROSS-018.pdf",
     "content_type": "application/pdf",
-    "size_bytes": 1427010,
+    "size_bytes": 884808,
     "http_status": 200,
     "error_message": null,
     "fetch_tier": "curl_cffi:chrome124",
     "downloaded_at": "2026-07-17T15:03:31Z",
-    "sha256": "8308b5670f1e7051f248b015c12c5ff4fefbc6941fd831c53b6fc4f33d7c9c72"
+    "sha256": "ba91afac81e3bccb0fabdb5cf94d49a6deba5fbcdbcaff75fdbf0dea282205ac"
   },
   {
     "threat_id": "HSM-001",
