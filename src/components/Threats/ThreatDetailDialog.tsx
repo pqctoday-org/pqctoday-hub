@@ -195,12 +195,13 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
               threat.confidenceScore !== undefined ||
               threat.accuracyPct !== undefined ||
               (threat.vettingBody && threat.vettingBody.length > 0) ||
+              threat.lastVerified ||
               threat.dataQualityNotes) && (
               <div className="pt-4 border-t border-border">
                 <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-2">
                   <ShieldCheck size={14} className="text-primary" /> Data Provenance
                 </h3>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs">
                   <div>
                     <span className="block text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
                       Peer reviewed
@@ -246,6 +247,12 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
                         ? threat.vettingBody.join(', ')
                         : '—'}
                     </span>
+                  </div>
+                  <div>
+                    <span className="block text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                      Last verified
+                    </span>
+                    <span className="text-foreground font-mono">{threat.lastVerified || '—'}</span>
                   </div>
                 </div>
                 {threat.dataQualityNotes && (

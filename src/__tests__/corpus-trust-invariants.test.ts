@@ -231,7 +231,22 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     2026-07-11: bumped 127 → 129 — the two deprecated PKCS#11 revisions (see
   //     the library:2 note above) each carry a doc-enrichment chunk that is now
   //     unscored for the same deprecation reason. Expected, not a routing gap.
-  'document-enrichment': 129,
+  //     2026-07-16: bumped 129 → 165 — the threats accuracy audit found only
+  //     14/113 active rows were fully supported by their own cached evidence
+  //     (61 PARTIAL, 35 UNSUPPORTED, 3 UNREADABLE — one was an AWS-WAF CAPTCHA
+  //     page, another a dead-link 404 stub) and deprecated the 38 UNSUPPORTED/
+  //     UNREADABLE rows per the standing proof-gate rule. Each carries a
+  //     doc-enrichment chunk that is now unscored for the same deprecation
+  //     reason as the PKCS#11 entry above. Expected, not a routing gap; drops
+  //     to 0 on the next refresh-index run per the data-PR-lag convention.
+  'document-enrichment': 165,
+  // 2026-07-16: threats accuracy audit (THREATS-PROCESS-AUDIT-07162026.md)
+  // deprecated 38 of 113 active rows whose cached evidence document was
+  // UNSUPPORTED (wrong/generic document) or UNREADABLE (CAPTCHA page, dead
+  // 404 link) — same proof-gate deprecation pattern as the timeline/library
+  // entries above. Deprecated rows aren't tier-scored, so they surface here.
+  // Expected; corpus lags until the next refresh-index run.
+  threats: 38,
 }
 
 /**

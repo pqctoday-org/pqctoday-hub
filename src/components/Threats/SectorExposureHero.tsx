@@ -22,7 +22,14 @@ const NOW_YEAR = new Date().getFullYear()
 const MIGRATION_YEARS = 5 // Y — typical migration runway
 
 /** Per-sector data lifetime (X in Mosca's inequality), inferred from the industry
- *  label. Longer-lived data ⇒ earlier safe-start deadline. */
+ *  label. Longer-lived data ⇒ earlier safe-start deadline.
+ *  Deliberately NOT numerically identical to HNDLTimeline's illustrative preset
+ *  menu (a teaching widget showing the realistic RANGE across sectors) or
+ *  moscaClock's SECTORS table (the simulation's own separate planning anchors,
+ *  provenance:'planning') — this is a live per-threat-row inference, those are
+ *  a preset picker and a sim model respectively. No single authoritative source
+ *  publishes one canonical lifetime per sector; these are informed planning
+ *  estimates, not cited facts (2026-07-16 accuracy audit). */
 function sectorDataLifetime(industry: string): number {
   const s = industry.toLowerCase()
   if (/gov|defen|military|national|intelligence/.test(s)) return 25

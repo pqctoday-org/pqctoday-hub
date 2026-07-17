@@ -20,9 +20,10 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     classicalBits: 112,
     quantumBits: 0,
     quantumAttack: 'shor',
-    estimatedQubits: 4098,
+    estimatedQubits: 1700,
     status: 'broken',
-    notes: "Shor's algorithm factors N in polynomial time. ~4,098 logical qubits needed.",
+    notes:
+      "Shor's algorithm factors N in polynomial time. Revised per Chevignard–Fouque–Schrottenloher (CRYPTO 2025): ~1,700 logical qubits (~1,730 + 2^36 Toffoli gates), down from the older 2016-era ~4,098 (2n+2) estimate — matches CRQC_QUBIT_THRESHOLDS.rsa2048.",
   },
   {
     name: 'RSA-3072',
@@ -33,7 +34,8 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     quantumAttack: 'shor',
     estimatedQubits: 6146,
     status: 'broken',
-    notes: "Larger key does not help — Shor's scales polynomially with key size.",
+    notes:
+      "Larger key does not help — Shor's scales polynomially with key size. Still the older 2016-era (2n+2) estimate; no CFS-style revised resource estimate has been published for this key size yet (unlike RSA-2048).",
   },
   {
     name: 'RSA-4096',
@@ -44,7 +46,8 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     quantumAttack: 'shor',
     estimatedQubits: 8194,
     status: 'broken',
-    notes: 'Even 4096-bit RSA provides zero post-quantum security.',
+    notes:
+      'Even 4096-bit RSA provides zero post-quantum security. Still the older 2016-era (2n+2) estimate; no CFS-style revised resource estimate has been published for this key size yet (unlike RSA-2048).',
   },
   {
     name: 'ECDSA P-256',
@@ -336,9 +339,10 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     source: 'Google Quantum AI & Ethereum Foundation (2026)',
     yearLow: 2029,
     yearHigh: 2036,
-    confidence: 'Architecture-dependent',
+    confidence:
+      'Architecture-dependent \u2014 year range is THIS dataset\u2019s derived estimate, not asserted by the source',
     notes:
-      'Mar 2026: secp256k1 ECDLP breakable with \u22641,200 logical qubits. Introduces fast-clock (superconducting/photonic) vs slow-clock (trapped ion/neutral atom) CRQC distinction. Fast-clock CRQCs enable on-spend attacks on public mempools; slow-clock enable at-rest attacks on dormant wallets. 2.3M BTC identified as at-risk.',
+      'Mar 2026: secp256k1 ECDLP breakable with \u22641,200 logical qubits. The whitepaper itself makes NO CRQC-arrival-date claim (confirmed 2026-07-16) \u2014 yearLow/yearHigh here are derived by combining its 1,200-qubit threshold with published hardware roadmaps (e.g. IonQ), not read off the paper. Introduces fast-clock (superconducting/photonic) vs slow-clock (trapped ion/neutral atom) CRQC distinction. Fast-clock CRQCs enable on-spend attacks on public mempools; slow-clock enable at-rest attacks on dormant wallets. 2.3M BTC identified as at-risk.',
     url: 'https://quantumai.google/static/site-assets/downloads/cryptocurrency-whitepaper.pdf',
   },
   {
@@ -454,10 +458,10 @@ export const CURRENT_QUANTUM_COMPUTERS: QuantumComputerRecord[] = [
     vendor: 'IBM',
     year: 2023,
     physicalQubits: 1121,
-    estimatedLogicalQubits: 5,
+    estimatedLogicalQubits: 0,
     qubitType: 'Superconducting',
     notes:
-      'Largest superconducting qubit count to date. NISQ era — no fault-tolerant logical qubits.',
+      'Largest superconducting qubit count to date. NISQ era — no fault-tolerant logical qubits demonstrated (corrected 2026-07-16: a prior value of 5 here was unsupported and contradicted this row’s own note).',
   },
   {
     name: 'Heron r2',
@@ -473,10 +477,20 @@ export const CURRENT_QUANTUM_COMPUTERS: QuantumComputerRecord[] = [
     vendor: 'Google',
     year: 2024,
     physicalQubits: 105,
-    estimatedLogicalQubits: 2,
+    estimatedLogicalQubits: 1,
     qubitType: 'Superconducting',
     notes:
-      'First below-threshold surface code (Nature, Dec 2024): distance-7 logical qubit at 0.143% error/cycle, error suppression Λ=2.14 per +2 distance, 2.4× beyond break-even. Oct 2025 fidelities: 99.97% 1-qubit, 99.88% 2-qubit, 99.5% readout; "Quantum Echoes" verifiable advantage (~13,000× on an OTOC task).',
+      'First below-threshold surface code (Nature, Dec 2024): ONE distance-7 logical qubit at 0.143% error/cycle, error suppression Λ=2.14 per +2 distance, 2.4× beyond break-even. Oct 2025 fidelities: 99.97% 1-qubit, 99.88% 2-qubit, 99.5% readout; "Quantum Echoes" verifiable advantage (~13,000× on an OTOC task).',
+  },
+  {
+    name: 'Atom Computing / Microsoft array',
+    vendor: 'Microsoft + Atom Computing',
+    year: 2024,
+    physicalQubits: 1180,
+    estimatedLogicalQubits: 24,
+    qubitType: 'Neutral atom',
+    notes:
+      'Nov 2024: created and entangled 24 logical qubits (ran computations on 28) using Microsoft’s error-correction protocols on Atom Computing’s neutral-atom array — the actual 2024 state of the art (a prior trajectory-chart value of ~10 for 2024 undercounted this). Follow-on "Magne" system targets 50 logical qubits from ~1,200 atoms in late 2026.',
   },
   {
     name: 'H2-1',
@@ -516,7 +530,27 @@ export const CURRENT_QUANTUM_COMPUTERS: QuantumComputerRecord[] = [
     estimatedLogicalQubits: 96,
     qubitType: 'Neutral atom',
     notes:
-      'Nov 2025 (Nature): ran algorithms with up to 96 logical qubits on 448 atoms with below-threshold error suppression (Λ=2.14) — the most verified logical qubits of any platform — plus the first logical magic-state distillation. A separate 3,000-atom array was run continuously for over 2 hours. Demonstrated logical qubits are lower-distance than the ~1,200 fault-tolerant qubits a Shor attack needs.',
+      'Nov 2025 (Nature): ran algorithms with up to 96 logical qubits on 448 atoms with below-threshold error suppression (Λ=2.14) — the most verified logical qubits of any platform — plus the first logical magic-state distillation. A separate array was run continuously for over 2 hours; Caltech separately demonstrated a 6,100-atom tweezer array (Sep 2025, 99.98% single-qubit accuracy). Demonstrated logical qubits are lower-distance than the ~1,200 fault-tolerant qubits a Shor attack needs.',
+  },
+  {
+    name: 'Helios (Iceberg codes)',
+    vendor: 'Quantinuum',
+    year: 2026,
+    physicalQubits: 98,
+    estimatedLogicalQubits: 94,
+    qubitType: 'Trapped ion',
+    notes:
+      'Mar 2026: same Helios hardware ran a separate demonstration using Iceberg error-DETECTION codes (a different, weaker fault-tolerance class than the Nov 2025 48 error-CORRECTED logical qubits above) to reach 94 logical qubits. A Jun 2026 Nature paper independently validated an 800× logical-error-rate improvement on this hardware.',
+  },
+  {
+    name: 'Helium',
+    vendor: 'Alice & Bob',
+    year: 2026,
+    physicalQubits: 18,
+    estimatedLogicalQubits: 1,
+    qubitType: 'Cat qubit (bosonic)',
+    notes:
+      'Jun 2026: first cat-qubit system to encode a working logical qubit, using 18 physical cat qubits — a fifth modality (bosonic/cat-code encoding) pursuing intrinsic bit-flip suppression rather than surface-code-style error correction.',
   },
 ]
 
@@ -623,7 +657,8 @@ export interface CrqcTrajectoryPoint {
 /**
  * Logical-qubit trajectory: 5 years of demonstrated progress + a 10-year forecast
  * band. Demonstrated points track the best per-year result from
- * `CURRENT_QUANTUM_COMPUTERS` (2023 ~5 → 2024 ~10 → 2025 96). The forecast band is
+ * `CURRENT_QUANTUM_COMPUTERS` (2023 ~5 → 2024 ~24 → 2025 96; 2026 unchanged at 96 as
+ * of 2026-07-16, no verified record beyond QuEra's 96 yet). The forecast band is
  * deliberately wide because vendor roadmaps diverge by orders of magnitude. Read
  * against `CRQC_QUBIT_THRESHOLDS`, the chart shows how close Q-Day is: the band
  * crosses the Bitcoin/ECC line around 2028–2032.
@@ -633,9 +668,9 @@ export const CRQC_TRAJECTORY: CrqcTrajectoryPoint[] = [
   { year: 2021, demonstrated: 1 },
   { year: 2022, demonstrated: 2 },
   { year: 2023, demonstrated: 5 },
-  { year: 2024, demonstrated: 10 },
+  { year: 2024, demonstrated: 24 },
   { year: 2025, demonstrated: 96 },
-  { year: 2026, demonstrated: 100, forecast: [100, 100] },
+  { year: 2026, demonstrated: 96, forecast: [96, 96] },
   { year: 2027, forecast: [130, 800] },
   { year: 2028, forecast: [170, 4000] },
   { year: 2029, forecast: [220, 20000] },
@@ -783,10 +818,10 @@ export const CRQC_MODALITY_TRACKS: CrqcModalityTrack[] = [
     technology: 'Neutral atom',
     vendors: 'QuEra, Atom Computing, Pasqal',
     bestLogical: 96,
-    bestPhysical: 3000,
-    note: 'Optical-tweezer arrays with reconfigurable any-to-any connectivity; most demonstrated logical qubits to date and arrays past 3,000 atoms; atoms operate near room temperature. Slower gate clock than superconducting.',
+    bestPhysical: 6100,
+    note: 'Optical-tweezer arrays with reconfigurable any-to-any connectivity; most demonstrated logical qubits to date, and Caltech has run an array past 6,100 atoms (Sep 2025); atoms operate near room temperature. Slower gate clock than superconducting. QuEra’s Jun 2026 "gigaquop" roadmap targets over 1,000 logical qubits.',
     recentProgress:
-      'Just ran the most error-corrected qubits of any machine yet (96 “logical” qubits) and kept a 3,000-atom system running for hours instead of seconds.',
+      'Just ran the most error-corrected qubits of any machine yet (96 “logical” qubits) and separately packed over 6,000 atoms into one array — not yet the same machine, but both records on the same technology.',
     scaleChallenge:
       'Operations are slow and atoms keep drifting out of their laser traps — both have to improve a lot to reach the millions of qubits an attack needs.',
   },
@@ -795,18 +830,18 @@ export const CRQC_MODALITY_TRACKS: CrqcModalityTrack[] = [
     vendors: 'Quantinuum, IonQ',
     bestLogical: 48,
     bestPhysical: 98,
-    note: 'Highest gate fidelities (>99.9%) and all-to-all connectivity via ion shuttling (QCCD). Fewer physical qubits and slower clock speeds, but very clean operations — Quantinuum Helios reached 48 logical qubits.',
+    note: 'Highest gate fidelities (>99.9%) and all-to-all connectivity via ion shuttling (QCCD). Fewer physical qubits and slower clock speeds, but very clean operations — Quantinuum Helios reached 48 error-corrected logical qubits (Nov 2025), then 94 error-detected logical qubits using Iceberg codes (Mar 2026) — a different, weaker fault-tolerance class, not a straight replacement of the 48 figure. A Jun 2026 Nature paper independently validated an 800x logical-error-rate improvement on the same hardware.',
     recentProgress:
-      'Quantinuum’s new Helios machine hit record accuracy and turned its 98 atoms into 48 dependable “logical” qubits.',
+      'Quantinuum’s new Helios machine hit record accuracy and turned its 98 atoms into 48 dependable “logical” qubits, then months later ran a separate 94-qubit error-detected demonstration.',
     scaleChallenge:
       'Growing far beyond ~100 ions — and speeding each step up — is the open problem; today’s machines are small and slow.',
   },
   {
     technology: 'Superconducting',
     vendors: 'IBM, Google',
-    bestLogical: 5,
+    bestLogical: 1,
     bestPhysical: 1121,
-    note: 'Fastest gates and the largest physical-qubit chips; Google Willow showed the first below-threshold error correction; IBM’s modular + qLDPC roadmap targets 200 logical qubits (Starling) by 2029. Requires deep cryogenics.',
+    note: 'Fastest gates and the largest physical-qubit chips (IBM Condor, 1,121 physical qubits — but Condor demonstrated zero logical qubits); Google Willow showed the first below-threshold error correction, a single distance-7 logical qubit; IBM’s modular + qLDPC roadmap targets 200 logical qubits (Starling) by 2029, with 1,080 connected qubits via l-couplers planned for 2027. Requires deep cryogenics.',
     recentProgress:
       'Google proved that making the chip bigger actually lowers errors; IBM shipped new 120-qubit processors and a test chip with the parts for error correction.',
     scaleChallenge:
@@ -815,12 +850,23 @@ export const CRQC_MODALITY_TRACKS: CrqcModalityTrack[] = [
   {
     technology: 'Photonic',
     vendors: 'PsiQuantum, Xanadu',
-    bestLogical: 0,
-    bestPhysical: 0,
-    note: 'Room-temperature operation and chips manufacturable in a standard fab (PsiQuantum at GlobalFoundries); fusion-based measurement architecture. Furthest from a demonstrated logical qubit, but a strong manufacturability story.',
+    bestLogical: 12,
+    bestPhysical: 12,
+    note: 'Room-temperature operation and chips manufacturable in a standard fab (PsiQuantum at GlobalFoundries); fusion-based measurement architecture. Xanadu’s Aurora (Jan 2025) demonstrated 12 real-time error-corrected GKP logical qubits on a 12-qubit modular/networkable chip (roadmap: up to 500 logical qubits by 2029-30) — PsiQuantum specifically has not yet shown a working logical qubit on its own architecture.',
     recentProgress:
-      'PsiQuantum started making its light-based chips in an ordinary semiconductor factory, betting on mass production.',
+      'Xanadu ran 12 error-corrected “logical” qubits on a small modular chip designed to be networked into bigger machines; PsiQuantum, on a different architecture, is still making its light-based chips in an ordinary semiconductor factory, betting on mass production.',
     scaleChallenge:
-      'Particles of light are easily lost, and they still have to show even one working error-corrected qubit.',
+      'Particles of light are easily lost; Xanadu has to scale its module count by orders of magnitude, and PsiQuantum still has to show its first working error-corrected qubit at all.',
+  },
+  {
+    technology: 'Topological',
+    vendors: 'Microsoft, Alice & Bob',
+    bestLogical: 0,
+    bestPhysical: 8,
+    note: 'Majorana-based qubits are designed to be intrinsically error-resistant, needing far fewer physical qubits per logical qubit than other modalities if the physics holds up. Microsoft’s Majorana 2 (Build, Jun 2026) claims an accelerated path to fault tolerance by 2029 — a contested claim following a disputed 2025 topological-qubit announcement from the same team; treat the 2029 date skeptically pending independent replication. Alice & Bob’s Helium (Jun 2026) took a different cat-qubit approach to the same error-resistance goal, encoding one logical qubit across 18 cat qubits.',
+    recentProgress:
+      'Microsoft says its second-generation Majorana chip is progressing toward fault tolerance faster than expected; a French startup, Alice & Bob, separately built a small working logical qubit from a different “naturally error-resistant” qubit design.',
+    scaleChallenge:
+      'The core physics claim (that Majorana quasiparticles behave as predicted) is still disputed by parts of the research community — this modality has to first settle that debate before its qubit-efficiency advantage can be trusted at scale.',
   },
 ]
