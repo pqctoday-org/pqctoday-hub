@@ -62,6 +62,14 @@ export interface ComplianceFramework {
   deprecatedReason?: string
   /** Sister-standards / cross-walk tokens (free text; not yet resolved). */
   relatedStandards?: string[]
+  /**
+   * ISO date this row's fields were last checked against its primary source
+   * — added 2026-07-16 (compliance-maintenance audit). Sparse by design:
+   * only rows actually re-verified carry a real date; blank means "not yet
+   * tracked", not "verified a long time ago" — never treat an empty value
+   * as evidence of staleness on its own.
+   */
+  lastVerified?: string
 }
 
 // ── CSV loading (versioned filename pattern) ────────────────────────────
@@ -91,6 +99,7 @@ interface RawComplianceRow {
   deprecated_at?: string
   deprecated_reason?: string
   related_standards?: string
+  last_verified?: string
 }
 
 // '[0-9]' not a bare '*' — the broad pattern also matched
@@ -244,6 +253,7 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
     deprecatedAt: row.deprecated_at?.trim() || undefined,
     deprecatedReason: row.deprecated_reason?.trim() || undefined,
     relatedStandards: row.related_standards ? splitSemicolon(row.related_standards) : undefined,
+    lastVerified: row.last_verified?.trim() || undefined,
   }
 })
 

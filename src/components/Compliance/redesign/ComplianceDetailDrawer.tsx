@@ -235,6 +235,14 @@ export function ComplianceDetailDrawer({
                       </dd>
                     </div>
                   )}
+                  {framework.lastVerified && (
+                    <div className="flex items-start justify-between gap-3">
+                      <dt className="shrink-0 text-muted-foreground">Last verified</dt>
+                      <dd className="min-w-0 text-right font-medium text-foreground">
+                        {framework.lastVerified}
+                      </dd>
+                    </div>
+                  )}
                 </dl>
               </section>
             )}
