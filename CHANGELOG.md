@@ -28,6 +28,25 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.21.7] - 2026-07-17
+
+Compliance's trust panel and crosswalk registry now cover every active
+framework, Timeline's citations and trust links are fully verified across all
+255 active milestones, and Migrate's vendor-risk cards now factor in real CVE
+exposure.
+
+### Fixed
+
+- **Compliance now shows a real Source & trust panel, with full traceability coverage** [view:/compliance] [persona:researcher] [persona:architect]: every framework row now shows when its data was last verified, and all 167 active rows are registered in the concept crosswalk registry so "Tested by / Cited by / Related" chains resolve everywhere, not just for some rows. DORA's trusted-source link was corrected and EIOPA added as a recognized source; the last 14 rows without CSWP.39 governance tags (including FIPS-203/204/205) are now tagged.
+- **Timeline citations and trust links fully verified across all 255 active milestones** [view:/timeline] [persona:researcher]: replaced dead or wrong-page citation links (Israel, NIST, Malaysia, BSI, Spain, PIONIER-Q and others), corrected several factual dates and details (Estonia, PIONIER-Q, the US Executive Order, NSA, BSI), and closed every remaining gap linking a milestone to its trusted source. Every event now carries a stable ID that survives future title corrections.
+- **Migrate vendor-risk cards now reflect real CVE exposure** [view:/migrate] [persona:architect] [persona:ops]: vendor-risk cards previously didn't factor in known CVEs at all; they now surface real exposure data, alongside 3 corrected data errors and honesty fixes across all 4 migration workbench tabs (Plan, Replace, Roadmaps, product detail) that were showing misleading status text.
+
+### Data
+
+- **27 Timeline-to-Compliance citation links backfilled** [view:/compliance] [view:/timeline] [persona:researcher], raising Timeline's related-standards coverage from 32.5% to 43.1%.
+- **420 missing entries backfilled into the trusted-sources registry** [persona:researcher]: also fixes a duplicate-key bug that had been silently dropping cross-reference rows.
+- **Migrate's certification and CPE cross-reference data fully regenerated** [view:/migrate] [persona:architect] against the latest product catalog.
+
 ## [4.21.6] - 2026-07-16
 
 The Compliance page's CSWP.39 governance tags (the badges showing which
