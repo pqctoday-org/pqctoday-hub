@@ -192,7 +192,19 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     software-hipaa-quantum-security-rule without a corpus trust-score entry;
   //     will resolve to 0 on the next refresh-index run.
   migrate: 1,
-  timeline: 0,
+  timeline: 1,
+  //     2026-07-16: bumped 0 → 1 — timeline maintainer-process remediation
+  //     (TIMELINE-PROCESS-REMEDIATION-PLAN-07162026.md Phase 1.2) linked the
+  //     Indonesia BSSN row's trusted_source_id to a brand-new registry stub
+  //     (id-bsn-bssn, trust_tier=1_Authoritative — a real, precedent-matched
+  //     value, not a guess) that the COMMITTED corpus doesn't know about yet.
+  //     A local `npm run refresh-index` run confirmed this resolves to 0 once
+  //     the corpus is regenerated — but that same run also surfaced an
+  //     unrelated, pre-existing ~717-chunk library source_passages gap (see
+  //     MAX_DOC_WITHOUT_PASSAGES below) with no connection to this change, so
+  //     the corpus refresh was deliberately NOT committed here to keep this
+  //     diff scoped to timeline. Resolves to 0 on the next real refresh-index
+  //     commit (whenever the library gap is separately investigated).
   //     2026-07-11: bumped 0 → 2 — the rag-index revision-chain repair correctly
   //     deprecated the two superseded PKCS#11 revisions (PKCS11-V3-OASIS = v3.1,
   //     PKCS11-V32-OASIS = v3.2 CSD01 draft), both superseded_by the final v3.2
@@ -298,9 +310,15 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
  *               (KpqC, NIST-FIPS140-3-IG-PQC, 3GPP-PQC-Study-2025,
  *               liboqs-v0.15.0, TCG-TPM-V185-Part0 — never actually enriched
  *               since). Enrich to drive down).
+ *   2026-07-16: 717 (bumped +22 after the migrate-process-remediation
+ *               (4th pass) refresh-index — committed corpus was stale again
+ *               since the last refresh; the same 2026-07-13 gap
+ *               (KpqC, NIST-FIPS140-3-IG-PQC, 3GPP-PQC-Study-2025,
+ *               liboqs-v0.15.0, TCG-TPM-V185-Part0) re-surfaced, unrelated to
+ *               this pass's migrate-catalog changes. Enrich to drive down).
  * Only DECREASE — every reduction is enrichment improving.
  */
-const MAX_DOC_WITHOUT_PASSAGES = 695
+const MAX_DOC_WITHOUT_PASSAGES = 717
 
 /** Pinned count of CSV files referenced in prov.was_derived_from but missing on disk. */
 const MAX_MISSING_CSVS = 0

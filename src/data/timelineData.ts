@@ -119,6 +119,16 @@ interface RawTimelineRow {
   // Curated binding-vs-guidance label for this row (HARD/SOFT/DRAFT, or blank if
   // not yet reviewed). Event-level counterpart to the generated facts' per-country map.
   mandate_type?: string
+  // Stable row identity (added 2026-07-16, timeline maintainer-process remediation
+  // Phase 3) — sacred once minted, never reused/renamed. Unlocks update_run.py's
+  // per-row verify stage and deprecation_sweep.py's rotating checkpoint, both of
+  // which previously had no ID column to key on for this source.
+  event_id?: string
+  // Date this specific row was last human-verified against its primary source
+  // (added 2026-07-16, same remediation) — distinct from `SourceDate` (the
+  // source document's own publication date). Blank means "never row-verified",
+  // which IS the staleness signal; enrichment never sets this field.
+  last_verified?: string
 }
 
 // ─── Graded confidence score ─────────────────────────────────────────────────
@@ -279,6 +289,8 @@ export function parseTimelineCSV(
       localFile: row.local_file || undefined,
       mandateType: (row.mandate_type?.trim() as TimelineEvent['mandateType']) || undefined,
       entityType: (row.entity_type?.trim() as TimelineEvent['entityType']) || 'government',
+      eventId: row.event_id || undefined,
+      lastVerified: row.last_verified || undefined,
       complianceRefs: [],
       xwalkEdgeIds: [],
       // Populate denormalized fields

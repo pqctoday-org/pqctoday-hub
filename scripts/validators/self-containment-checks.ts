@@ -66,8 +66,20 @@ const FAMILIES: Family[] = [
   { prefix: 'compliance_', key: ['id'], proofColumns: ['url'] },
   { prefix: 'quantum_threats_hsm_industries_', key: ['threat_id'], proofColumns: ['local_file'] },
   {
+    // Keyed on the composite Country+OrgName+Title until 2026-07-16 (timeline
+    // maintainer-process remediation Phase 3) — meaning a Title correction (or
+    // a jurisdiction-encoding fix, e.g. "MY"→"Malaysia") tripped DS03 as if the
+    // row had been silently dropped, even though nothing was lost. `event_id`
+    // (added the same remediation, sacred from mint) is a real stable ID
+    // independent of Title/Country/OrgName edits — the same problem class
+    // DS21's superseded_by chain already solves for library. One-time gap:
+    // the 07152026 generation predates event_id, so this generation's DS03
+    // diff trivially passes (empty key on both sides is skipped by the
+    // `k.replaceAll('|','') === ''` guard below) rather than comparing
+    // anything meaningful — self-resolves on the next dated snapshot, since
+    // every generation from 07162026 onward carries event_id.
     prefix: 'timeline_',
-    key: ['Country', 'OrgName', 'Title'],
+    key: ['event_id'],
     proofColumns: ['local_file', 'SourceUrl'],
   },
   { prefix: 'pqc_product_catalog_', key: ['product_id'], proofColumns: ['proof_url'] },

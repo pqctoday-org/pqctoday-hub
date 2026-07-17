@@ -9,10 +9,16 @@ import type { RegionBloc, DeadlinePhase } from '@/data/complianceData'
 import type { FrameworkSortOption } from './ComplianceLandscape'
 import type { SortColumn, SortDirection } from './ComplianceTable'
 import type { ViewMode } from '@/components/Library/ViewToggle'
-import type { LandscapeType } from './LandscapeTypeFacet'
 
 // ── Section type ────────────────────────────────────────────────────────
 
+// 'technical' is a legacy value from the pre-redesign 5-tab model — no
+// current UI control ever sets it (confirmed 2026-07-16, compliance-
+// maintenance audit Phase 4.4), but it stays in the union and in
+// isLandscapeTab/parseTabFromHash below so an old shared `?tab=technical`
+// link still resolves to the Landscape tab instead of 404ing/defaulting
+// oddly. Removing it would be a silent breaking change to whatever old
+// links are already out in the wild.
 export type MobileSection =
   | 'foryou'
   | 'standards'
@@ -97,15 +103,6 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string) {
     if (hashTab) return hashTab
     if (!certParam && !complianceHint && selectedPersona === 'developer') return 'records'
     return (certParam ? 'records' : (complianceHint?.section ?? 'standards')) as MobileSection
-  })
-
-  const [landscapeType, setLandscapeType] = useState<LandscapeType>(() => {
-    const tab = searchParams.get('tab')
-    if (tab === 'standards') return 'bodies'
-    if (tab === 'technical') return 'standards'
-    if (tab === 'certification') return 'certifications'
-    if (tab === 'compliance') return 'regulations'
-    return 'regulations'
   })
 
   const [highlightFrameworkId, setHighlightFrameworkId] = useState<string | null>(
@@ -554,8 +551,6 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string) {
     // Tab state
     activeTab,
     setActiveTab,
-    landscapeType,
-    setLandscapeType,
     highlightFrameworkId,
     // Landscape filter state
     lsOrg,

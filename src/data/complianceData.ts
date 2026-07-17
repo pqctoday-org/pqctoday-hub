@@ -62,6 +62,14 @@ export interface ComplianceFramework {
   deprecatedReason?: string
   /** Sister-standards / cross-walk tokens (free text; not yet resolved). */
   relatedStandards?: string[]
+  /**
+   * ISO date this row's fields were last checked against its primary source
+   * — added 2026-07-16 (compliance-maintenance audit). Sparse by design:
+   * only rows actually re-verified carry a real date; blank means "not yet
+   * tracked", not "verified a long time ago" — never treat an empty value
+   * as evidence of staleness on its own.
+   */
+  lastVerified?: string
 }
 
 // ── CSV loading (versioned filename pattern) ────────────────────────────
@@ -91,9 +99,16 @@ interface RawComplianceRow {
   deprecated_at?: string
   deprecated_reason?: string
   related_standards?: string
+  last_verified?: string
 }
 
-const modules = import.meta.glob('./compliance_*.csv', {
+// '[0-9]' not a bare '*' — the broad pattern also matched
+// compliance_xwalk_candidates_*.csv (a maintenance-pipeline artifact, not
+// app data), which was being bundled into the build for nothing even though
+// loadLatestCSV's own regex below always picked the right file at runtime
+// (fixed 2026-07-16 — same collision already fixed on the Python/maintenance
+// side in source_status.py, deprecation_sweep.py, and merge-xwalk-candidates.ts).
+const modules = import.meta.glob('./compliance_[0-9]*.csv', {
   query: '?raw',
   import: 'default',
   eager: true,
@@ -238,6 +253,7 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
     deprecatedAt: row.deprecated_at?.trim() || undefined,
     deprecatedReason: row.deprecated_reason?.trim() || undefined,
     relatedStandards: row.related_standards ? splitSemicolon(row.related_standards) : undefined,
+    lastVerified: row.last_verified?.trim() || undefined,
   }
 })
 

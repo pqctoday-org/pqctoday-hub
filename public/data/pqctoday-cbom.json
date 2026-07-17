@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:c537b4ca-7a51-4e19-8259-809fa6aa6d49",
+  "serialNumber": "urn:uuid:abb52648-ca3d-413e-9b55-25b1335c2b61",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-07-15T00:00:00.000Z",
+    "timestamp": "2026-07-16T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -165,8 +165,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "a07a44684c9a3022",
-      "name": "SEALSQ Quantum Shield",
+      "bom-ref": "8de4ce32ff862b8d",
+      "name": "SEALSQ Quantum Shield QS7001",
       "version": "QS7001 V1 (production samples Mar 2026)",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -3189,7 +3189,6 @@
       "bom-ref": "2bdd651dcf514ee6",
       "name": "Palo Alto PAN-OS",
       "version": "12.1 Orion",
-      "cpe": "cpe:2.3:o:paloaltonetworks:pan-os:5.1.10:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -3232,7 +3231,6 @@
       "bom-ref": "fe96a32025ce7d20",
       "name": "Fortinet FortiOS",
       "version": "7.6.6",
-      "cpe": "cpe:2.3:o:fortinet:fortios:4.3.10:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -3279,7 +3277,6 @@
       "bom-ref": "8ff01b1beece6027",
       "name": "Check Point Quantum",
       "version": "R82",
-      "cpe": "cpe:2.3:h:checkpoint:quantum_security_management:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -3368,7 +3365,6 @@
       "bom-ref": "d3878a228ffe347b",
       "name": "Cloudflare CIRCL",
       "version": "1.6.3",
-      "cpe": "cpe:2.3:a:cloudflare:circl:1.3.3:*:*:*:*:go:*:*",
       "manufacturer": {
         "name": "Cloudflare Inc."
       },
@@ -4051,7 +4047,6 @@
       "name": "PQClean",
       "version": "Current",
       "purl": "pkg:github/PQClean/PQClean",
-      "cpe": "cpe:2.3:a:pqclean_project:pqclean:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -4868,7 +4863,6 @@
       "name": "Apache HTTP Server",
       "version": "2.4.67",
       "purl": "pkg:github/apache/httpd",
-      "cpe": "cpe:2.3:a:apache:http_server:1.2:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -4966,7 +4960,6 @@
       "bom-ref": "2bf4d5c57279bf08",
       "name": "F5 BIG-IP",
       "version": "21.1 (GA 2026-05-06); PQC minor 17.5.1",
-      "cpe": "cpe:2.3:h:f5:big-ip:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -5294,7 +5287,6 @@
       "name": "Keycloak",
       "version": "26.x",
       "purl": "pkg:github/keycloak/keycloak",
-      "cpe": "cpe:2.3:a:keycloak:keycloak-nodejs-auth-utils:2.5.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -6017,7 +6009,6 @@
       "bom-ref": "dac5d78e5e31b1bd",
       "name": "Google Chrome",
       "version": "131+",
-      "cpe": "cpe:2.3:a:google:chrome:0.2.149.29:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -6065,7 +6056,6 @@
       "bom-ref": "834022648658414f",
       "name": "Microsoft Edge",
       "version": "131+",
-      "cpe": "cpe:2.3:a:microsoft:edge:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -6113,7 +6103,6 @@
       "bom-ref": "eea7583d35d6fcf5",
       "name": "Mozilla Firefox",
       "version": "132+",
-      "cpe": "cpe:2.3:a:mozilla:firefox:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -6161,7 +6150,6 @@
       "bom-ref": "0c5f133584911c9a",
       "name": "Apple Safari",
       "version": "26+",
-      "cpe": "cpe:2.3:a:apple:safari:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -6914,7 +6902,6 @@
       "bom-ref": "c9d4ca59ddb3f37c",
       "name": "Red Hat Enterprise Linux 9",
       "version": "9.7",
-      "cpe": "cpe:2.3:o:redhat:enterprise_linux:9.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -8081,7 +8068,6 @@
       "bom-ref": "479cb76e56f3e284",
       "name": "Alpine Linux",
       "version": "3.22",
-      "cpe": "cpe:2.3:o:alpinelinux:alpine_linux:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -8183,7 +8169,6 @@
       "bom-ref": "4499ffb9673ebaf9",
       "name": "openSUSE Leap",
       "version": "16.0",
-      "cpe": "cpe:2.3:o:opensuse_project:leap:42.2:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -8276,7 +8261,6 @@
       "bom-ref": "c0f17e637a146cd8",
       "name": "CentOS Stream",
       "version": "Stream 10",
-      "cpe": "cpe:2.3:o:centos:stream:8:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -8374,7 +8358,6 @@
       "name": "NixOS",
       "version": "24.11",
       "purl": "pkg:github/NixOS/nixpkgs",
-      "cpe": "cpe:2.3:o:nixos:nix:0.5:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -8421,7 +8404,6 @@
       "bom-ref": "df6cf2c4d9b2d462",
       "name": "SUSE Linux Enterprise Server (SLES)",
       "version": "16.0",
-      "cpe": "cpe:2.3:o:suse:linux_enterprise_server:12:*:*:*:ltss:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -8509,7 +8491,6 @@
       "type": "cryptographic-asset",
       "bom-ref": "db6ffa139d8c8dff",
       "name": "Delinea Secret Server",
-      "cpe": "cpe:2.3:a:delinea:secret_server:10.9.000002:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -8652,7 +8633,6 @@
       "name": "HashiCorp Boundary",
       "version": "0.21.3",
       "purl": "pkg:github/hashicorp/boundary",
-      "cpe": "cpe:2.3:a:hashicorp:boundary:0.1.8:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -8786,7 +8766,6 @@
       "bom-ref": "2b2f27d6785074e6",
       "name": "Splunk Enterprise",
       "version": "10.4",
-      "cpe": "cpe:2.3:a:splunk:splunk:6.1.3:*:*:*:enterprise:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -8832,7 +8811,6 @@
       "type": "cryptographic-asset",
       "bom-ref": "28619e1fbf3dcc26",
       "name": "Qualys Cloud Platform",
-      "cpe": "cpe:2.3:a:qualys:private_cloud_platform:10.24.0.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -8920,7 +8898,6 @@
       "bom-ref": "b6f05edc0f510f61",
       "name": "Citrix Virtual Apps and Desktops",
       "version": "2507 LTSR",
-      "cpe": "cpe:2.3:a:citrix:virtual_apps_and_desktops:1903:*:*:*:ltsr:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -9206,7 +9183,6 @@
       "name": "OpenWrt",
       "version": "24.10.7",
       "purl": "pkg:github/openwrt/openwrt",
-      "cpe": "cpe:2.3:o:openwrt:lede:17.01:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -9254,7 +9230,6 @@
       "name": "OPNsense",
       "version": "24.7",
       "purl": "pkg:github/opnsense/core",
-      "cpe": "cpe:2.3:a:opnsense:opnsense:16.1.16:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -9396,7 +9371,6 @@
       "name": "Kubernetes",
       "version": "1.33",
       "purl": "pkg:github/kubernetes/kubernetes",
-      "cpe": "cpe:2.3:a:kubernetes:kubernetes:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -9491,7 +9465,6 @@
       "name": "Linkerd",
       "version": "2.19",
       "purl": "pkg:github/linkerd/linkerd2",
-      "cpe": "cpe:2.3:a:linkerd:linkerd:2.13.0:*:*:*:stable:kubernetes:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -9544,7 +9517,6 @@
       "name": "OpenVPN",
       "version": "2.7.0",
       "purl": "pkg:github/OpenVPN/openvpn",
-      "cpe": "cpe:2.3:a:openvpn:openvpn:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -9642,7 +9614,6 @@
       "name": "Apache Traffic Server",
       "version": "10.0",
       "purl": "pkg:github/apache/trafficserver",
-      "cpe": "cpe:2.3:a:apache:traffic_server:2.0.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -9736,7 +9707,6 @@
       "name": "Apache Tomcat",
       "version": "11.0.22",
       "purl": "pkg:github/apache/tomcat",
-      "cpe": "cpe:2.3:a:apache:tomcat:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -9927,7 +9897,6 @@
       "name": "MySQL Community Server",
       "version": "8.4.8",
       "purl": "pkg:github/mysql/mysql-server",
-      "cpe": "cpe:2.3:a:mysql:mysql_community_server:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -10245,7 +10214,6 @@
       "name": "Bitcoin Core",
       "version": "29.0",
       "purl": "pkg:github/bitcoin/bitcoin",
-      "cpe": "cpe:2.3:a:bitcoincore:bitcoin_core:0.16.2:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -10636,7 +10604,6 @@
       "bom-ref": "7856dbd7ea70bb0d",
       "name": "Aptos",
       "purl": "pkg:github/aptos-labs/aptos-core",
-      "cpe": "cpe:2.3:a:aptosfoundation:aptos:1.4.3:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -11150,7 +11117,6 @@
       "bom-ref": "246ead0ed4bd27c8",
       "name": "WhatsApp",
       "version": "Current",
-      "cpe": "cpe:2.3:a:whatsapp:whatsapp:2.2.5:*:*:*:*:iphone_os:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -11794,7 +11760,6 @@
       "bom-ref": "e7e12ee1f0a21a26",
       "name": "Cisco IOS XR",
       "version": "25.4.2",
-      "cpe": "cpe:2.3:o:cisco:ios_xr_for_crs-1:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -11888,7 +11853,6 @@
       "bom-ref": "31373d0306d1ed1a",
       "name": "Red Hat OpenShift",
       "version": "4.21",
-      "cpe": "cpe:2.3:a:redhat:openshift:2.0.5:*:enterprise:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -12119,7 +12083,6 @@
       "bom-ref": "4a4641085ed88f0e",
       "name": "IBM MQ",
       "version": "9.3.5",
-      "cpe": "cpe:2.3:a:ibm:websphere_mq:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -13398,7 +13361,6 @@
       "bom-ref": "c95446935b95a500",
       "name": "Pure Storage Purity//FA 6.6",
       "version": "FA-1.5 (Module version); Purity OS 6.4 (Tested OS version); Platform context: Purity//FA 6.6",
-      "cpe": "cpe:2.3:a:purestorage:purity\\/\\/fa:6.6.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -13609,7 +13571,6 @@
       "type": "cryptographic-asset",
       "bom-ref": "6cd7a39390b75998",
       "name": "Microsoft Azure",
-      "cpe": "cpe:2.3:a:microsoft:azure_active_directory_connect:1.1.524.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -14007,7 +13968,6 @@
       "type": "cryptographic-asset",
       "bom-ref": "ce41961da8dfde34",
       "name": "Microsoft Defender for Endpoint",
-      "cpe": "cpe:2.3:a:microsoft:defender_for_endpoint:-:*:*:*:*:-:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -14053,7 +14013,6 @@
       "type": "cryptographic-asset",
       "bom-ref": "ac350c6ae52318ca",
       "name": "Windscribe",
-      "cpe": "cpe:2.3:a:windscribe:windscribe:1.81:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -14095,7 +14054,6 @@
       "type": "cryptographic-asset",
       "bom-ref": "2e728f83c823c979",
       "name": "NordVPN",
-      "cpe": "cpe:2.3:a:nordvpn:nordvpn:6.14.28.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -14183,7 +14141,6 @@
       "type": "cryptographic-asset",
       "bom-ref": "b8c2d244d4ec233e",
       "name": "Brave Browser",
-      "cpe": "cpe:2.3:a:brave:browser:1.9.56:*:*:*:*:android:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -14231,7 +14188,6 @@
       "bom-ref": "09233cb4247a208e",
       "name": "Tor Browser",
       "version": "0.3.2.1-alpha (mentioned in context of Onion Services cryptography improvements); Version 3 (for Onion Services protocol).",
-      "cpe": "cpe:2.3:a:tor_browser_the_short_guide_project:tor_browser_the_short_guide:0.1:*:*:*:*:android:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -14274,7 +14230,6 @@
       "bom-ref": "83e3e8bdbe3014bf",
       "name": "MinIO Enterprise",
       "version": "RELEASE.2025-10-15T17-29-55Z (latest tagged release; minio/minio repo archived/read-only as of 2026-04-25)",
-      "cpe": "cpe:2.3:a:miniorange:oauth_single_sign_on:48.4.9:*:*:*:enterprise:wordpress:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -15621,7 +15576,6 @@
       "type": "cryptographic-asset",
       "bom-ref": "0a166d8571e8e20e",
       "name": "Dell BSAFE Crypto-J",
-      "cpe": "cpe:2.3:a:dell:bsafe_crypto-j:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -16437,7 +16391,6 @@
       "bom-ref": "86edbd05ee52a64a",
       "name": "Keeper Security",
       "version": "2026",
-      "cpe": "cpe:2.3:a:keepersecurity:keeper:16.10.2:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -16485,7 +16438,6 @@
       "bom-ref": "ede0f4fd874ac93a",
       "name": "Dashlane",
       "version": "2025+",
-      "cpe": "cpe:2.3:a:dashlane:dashlane:-:*:*:*:*:windows:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -20704,48 +20656,6 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "b85116cd1ff5825e",
-      "name": "Huawei PQC Network Security",
-      "version": "2026 (MWC Barcelona 2026)",
-      "cryptoProperties": {
-        "assetType": "related-crypto-material"
-      },
-      "description": "Xinghe Intelligent Traffic-Encryption Integration Solution (launched MWC Barcelona 2026, 2026-03-03): quantum-resistant WAN via PQC (software upgrade, no hardware change), external QKD, and industry-first built-in QKD board for NetEngine 8000E routers.",
-      "externalReferences": [
-        {
-          "type": "website",
-          "url": "https://www.huawei.com/"
-        }
-      ],
-      "properties": [
-        {
-          "name": "pqctoday:product_id",
-          "value": "huawei-pqc-network-security"
-        },
-        {
-          "name": "pqctoday:category",
-          "value": "Network Security Appliances"
-        },
-        {
-          "name": "pqctoday:layer",
-          "value": "Network"
-        },
-        {
-          "name": "pqctoday:fips_validated",
-          "value": "false"
-        },
-        {
-          "name": "pqctoday:algorithm_source",
-          "value": "capability_description"
-        },
-        {
-          "name": "pqctoday:confidence_score",
-          "value": "75"
-        }
-      ]
-    },
-    {
-      "type": "cryptographic-asset",
       "bom-ref": "e692628c7e8b4b43",
       "name": "NTT PQC Secure Transport",
       "version": "2024",
@@ -21399,7 +21309,6 @@
       "bom-ref": "f5e36ea3b38937cb",
       "name": "Open Quantum Safe liboqs",
       "version": "0.15.0",
-      "cpe": "cpe:2.3:a:openquantumsafe:liboqs:0.10.1:-:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -23851,7 +23760,7 @@
         },
         {
           "type": "website",
-          "url": "https://github.com/world-of-crytek/hbs-lms"
+          "url": "https://github.com/Fraunhofer-AISEC/hbs-lms-rust"
         }
       ],
       "properties": [
@@ -26844,8 +26753,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "ead135fa823c78d9",
-      "name": "WEntrust KeyControl",
+      "bom-ref": "a64f9ec52158aad9",
+      "name": "Entrust KeyControl",
       "version": "10.4.3",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -26890,8 +26799,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "ba8fb85cfa300526",
-      "name": "indows Server 2025",
+      "bom-ref": "77c757244d3ef4a0",
+      "name": "Windows Server 2025",
       "version": "Nov 2025 Update",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -29016,7 +28925,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.7"
+          "value": "70"
         }
       ]
     },
@@ -29060,7 +28969,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.7"
+          "value": "70"
         }
       ]
     },
@@ -29104,7 +29013,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.7"
+          "value": "70"
         }
       ]
     },
@@ -29153,7 +29062,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.7"
+          "value": "70"
         }
       ]
     },
@@ -29201,7 +29110,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.7"
+          "value": "70"
         }
       ]
     },
@@ -29251,7 +29160,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -29299,7 +29208,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -29348,7 +29257,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.7"
+          "value": "70"
         }
       ]
     },
@@ -29392,7 +29301,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -29440,7 +29349,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -29484,7 +29393,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -29524,7 +29433,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "No (ACVP algorithm validation, not a CMVP module validation)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -29532,7 +29441,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -29581,7 +29490,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.7"
+          "value": "70"
         }
       ]
     },
@@ -29629,7 +29538,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -29678,7 +29587,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.7"
+          "value": "70"
         }
       ]
     },
@@ -29726,7 +29635,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -29774,7 +29683,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -29823,7 +29732,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -29875,7 +29784,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -29928,7 +29837,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -29972,7 +29881,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.7"
+          "value": "70"
         }
       ]
     },
@@ -30022,7 +29931,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.7"
+          "value": "70"
         }
       ]
     },
@@ -30066,7 +29975,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -30114,7 +30023,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -30162,7 +30071,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.7"
+          "value": "70"
         }
       ]
     },
@@ -30210,7 +30119,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.7"
+          "value": "70"
         }
       ]
     },
@@ -30258,7 +30167,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -30306,7 +30215,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -30354,7 +30263,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -30402,7 +30311,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.7"
+          "value": "70"
         }
       ]
     },
@@ -30447,7 +30356,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -30491,7 +30400,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -30539,7 +30448,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.7"
+          "value": "70"
         }
       ]
     },
@@ -30587,7 +30496,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -30631,7 +30540,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -30679,7 +30588,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.7"
+          "value": "70"
         }
       ]
     },
@@ -30729,7 +30638,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.7"
+          "value": "70"
         }
       ]
     },
@@ -30778,7 +30687,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -30823,7 +30732,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -30871,7 +30780,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -30920,7 +30829,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -30969,7 +30878,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -31018,7 +30927,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -31066,7 +30975,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -31110,7 +31019,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -31163,7 +31072,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -31208,7 +31117,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.7"
+          "value": "70"
         }
       ]
     },
@@ -31257,7 +31166,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -31301,7 +31210,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -31349,7 +31258,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
@@ -31401,7 +31310,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0.9"
+          "value": "90"
         }
       ]
     },
