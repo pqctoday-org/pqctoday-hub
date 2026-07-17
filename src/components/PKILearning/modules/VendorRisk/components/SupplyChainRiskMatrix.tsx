@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useCallback, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { useModuleStore } from '@/store/useModuleStore'
@@ -11,6 +11,8 @@ import { LAYERS } from '@/data/infrastructureLayers'
 import { softwareItemToCbomInput } from '@/components/Migrate/cbomExport'
 import { buildCbomDocument, downloadCbomJson } from '@/services/cbom/cycloneDx'
 import { isPqcReady, isFips1403Validated } from '@/data/kpiCatalog'
+import { cpeByProduct } from '@/data/cpeXrefData'
+import { loadCveSnapshot } from '@/data/cveSnapshotData'
 import { ProductRow } from '@/components/Migrate/Workbench/ProductRow'
 import { ProductDetail } from '@/components/Migrate/Workbench/ProductDetail'
 import {
@@ -18,6 +20,7 @@ import {
   type HeatmapCell,
 } from '@/components/PKILearning/common/executive/HeatmapGrid'
 import type { SoftwareItem } from '@/types/MigrateTypes'
+import type { CveSnapshot } from '@/types/CveTypes'
 import type { ScorecardOutput } from './VendorScorecardBuilder'
 import {
   Info,
@@ -220,6 +223,22 @@ function isCriticalOrHighPriority(priority: string): boolean {
   return p === 'critical' || p === 'high'
 }
 
+/** Sum of known NVD CVEs (MEDIUM+, per the static snapshot) across a layer's
+ *  products, joined via the same softwareName-keyed CPE xref
+ *  CryptoVulnerabilityWatch.tsx uses. `null` snapshot (still loading) or a
+ *  product with no CPE match contributes 0, not an error — this is a known-
+ *  exposure count, not a completeness claim. */
+function countLayerCves(products: SoftwareItem[], snapshot: CveSnapshot | null): number {
+  if (!snapshot) return 0
+  let total = 0
+  for (const product of products) {
+    const xref = cpeByProduct.get(product.softwareName)
+    if (!xref || !xref.cpeUri || xref.status === 'not_found') continue
+    total += snapshot.byCpe?.[xref.cpeUri]?.length ?? 0
+  }
+  return total
+}
+
 function matrixRiskLevel(score: number): 'Critical' | 'High' | 'Medium' | 'Low' {
   if (score >= 20) return 'Critical'
   if (score >= 12) return 'High'
@@ -413,6 +432,21 @@ export const SupplyChainRiskMatrix: React.FC<{
       ? `rounded-xl border border-border bg-card ${extra}`.trim()
       : `glass-panel ${extra}`.trim()
   const [docsOpen, setDocsOpen] = useState(false)
+  const [cveSnapshot, setCveSnapshot] = useState<CveSnapshot | null>(null)
+  useEffect(() => {
+    let cancelled = false
+    loadCveSnapshot()
+      .then((s) => {
+        if (!cancelled) setCveSnapshot(s)
+      })
+      .catch(() => {
+        // Educational digest only — a failed/missing snapshot just leaves
+        // the CVE badges at 0, no error surface needed here.
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
   const myProducts = useSelectedProductIds()
   const {
     vendorsByLayer,
@@ -512,6 +546,9 @@ export const SupplyChainRiskMatrix: React.FC<{
        *  — see the comment above MATRIX_LIKELIHOOD_LABELS. */
       likelihood: number
       threatMatches: number
+      /** Known NVD CVEs (MEDIUM+) across the layer's products, per the static
+       *  snapshot — see countLayerCves. */
+      cveCount: number
     }[] = []
 
     for (const layerId of allIds) {
@@ -543,6 +580,7 @@ export const SupplyChainRiskMatrix: React.FC<{
         criticalHigh,
         likelihood,
         threatMatches: layerThreatMatchCounts.get(layerId) ?? 0,
+        cveCount: countLayerCves(products, cveSnapshot),
       })
     }
 
@@ -564,7 +602,7 @@ export const SupplyChainRiskMatrix: React.FC<{
       const riskScore = s.likelihood > 0 && impact > 0 ? s.likelihood * impact : 0
       return { ...s, impact, riskScore }
     })
-  }, [vendorsByLayer, layerThreatMatchCounts, hasIndustryContext])
+  }, [vendorsByLayer, layerThreatMatchCounts, hasIndustryContext, cveSnapshot])
 
   /** Layers with a real, non-null score placed on the 5×5 grid. The grid's
    *  row/col math (`5 - likelihood`, `impact - 1`) has no slot for level 0
@@ -1111,10 +1149,11 @@ export const SupplyChainRiskMatrix: React.FC<{
               </div>
 
               {/* Readiness stats */}
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                 <StatBadge label="PQC Ready" count={stat.pqcReady} total={stat.total} />
                 <StatBadge label="FIPS Validated" count={stat.fipsValidated} total={stat.total} />
                 <StatBadge label="Hybrid Support" count={stat.hybridSupport} total={stat.total} />
+                <StatBadge label="Known CVEs" count={stat.cveCount} total={stat.total} isGap />
               </div>
 
               {/* Per-product detail — click a product to expand its full
