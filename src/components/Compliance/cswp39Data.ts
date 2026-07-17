@@ -140,6 +140,45 @@ export const CSWP39_STEPS: CSWP39Step[] = [
   },
 ]
 
+// ────────────────────────────────────────────────────────────────────────────
+// Per-row cswp39_tags -> step lookup (2026-07-16, compliance-maintenance
+// audit Phase 4.2). Compliance CSV rows carry cswp39_tags in the Crypto
+// Posture Management PillarId vocabulary (cswp39:governance, cswp39:inventory,
+// cswp39:observability, cswp39:assurance, cswp39:lifecycle — see
+// complianceData.test.ts's "cswp39Tags use only valid Crypto Posture
+// Management pillars" guard), a DIFFERENT vocabulary from this file's own
+// 5-step ids above. Until this fix, retagging a compliance row's cswp39_tags
+// had zero effect on this tab — CSWP39_CROSS_WALK is a hand-curated, static
+// list. PILLAR_TO_STEP is the explicit, tested bridge between the two;
+// cswp39Data.test.ts asserts every CSWP39_STEPS.cpmPillar maps back to the
+// step that names it (bijective, so a future step/pillar edit can't silently
+// drift out of sync).
+// ────────────────────────────────────────────────────────────────────────────
+import type { ComplianceFramework } from '@/data/complianceData'
+
+export type Cswp39Pillar = 'governance' | 'inventory' | 'observability' | 'assurance' | 'lifecycle'
+
+export const PILLAR_TO_STEP: Record<Cswp39Pillar, CSWP39Step['id']> = {
+  governance: 'govern',
+  inventory: 'inventory',
+  observability: 'identify-gaps',
+  assurance: 'prioritise',
+  lifecycle: 'implement',
+}
+
+/** Active compliance rows whose cswp39_tags include the pillar this step maps from. */
+export function frameworksForStep(
+  stepId: CSWP39Step['id'],
+  frameworks: ComplianceFramework[]
+): ComplianceFramework[] {
+  const pillar = (Object.keys(PILLAR_TO_STEP) as Cswp39Pillar[]).find(
+    (p) => PILLAR_TO_STEP[p] === stepId
+  )
+  if (!pillar) return []
+  const tag = `cswp39:${pillar}`
+  return frameworks.filter((f) => f.cswp39Tags?.includes(tag))
+}
+
 export interface CSWP39Tier {
   level: 1 | 2 | 3 | 4
   name: string
