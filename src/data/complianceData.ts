@@ -93,7 +93,13 @@ interface RawComplianceRow {
   related_standards?: string
 }
 
-const modules = import.meta.glob('./compliance_*.csv', {
+// '[0-9]' not a bare '*' — the broad pattern also matched
+// compliance_xwalk_candidates_*.csv (a maintenance-pipeline artifact, not
+// app data), which was being bundled into the build for nothing even though
+// loadLatestCSV's own regex below always picked the right file at runtime
+// (fixed 2026-07-16 — same collision already fixed on the Python/maintenance
+// side in source_status.py, deprecation_sweep.py, and merge-xwalk-candidates.ts).
+const modules = import.meta.glob('./compliance_[0-9]*.csv', {
   query: '?raw',
   import: 'default',
   eager: true,
