@@ -43,7 +43,7 @@ describe('ComplianceDetailDrawer', () => {
     expect(container).toBeEmptyDOMElement()
   })
 
-  it('shows the Source & trust panel with website, enforcement body, confidence, and peer-review fields', () => {
+  it('shows the Source & trust panel with website, enforcement body, confidence, peer-review, and last-verified fields', () => {
     render(
       <ComplianceDetailDrawer
         framework={framework({
@@ -52,6 +52,7 @@ describe('ComplianceDetailDrawer', () => {
           enforcementBody: 'Example Regulator',
           confidenceScore: 85,
           peerReviewed: 'yes',
+          lastVerified: '2026-07-16',
         })}
         pillar="comply"
         onClose={() => {}}
@@ -63,6 +64,8 @@ describe('ComplianceDetailDrawer', () => {
     // above the trust panel, so more than one match is expected here.
     expect(screen.getAllByText('Example Regulator').length).toBeGreaterThanOrEqual(1)
     expect(screen.getByText('85/100')).toBeInTheDocument()
+    expect(screen.getByText('Last verified')).toBeInTheDocument()
+    expect(screen.getByText('2026-07-16')).toBeInTheDocument()
     expect(screen.getByText('yes')).toBeInTheDocument()
   })
 
