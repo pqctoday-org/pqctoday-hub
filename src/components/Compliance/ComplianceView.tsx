@@ -396,7 +396,6 @@ export const ComplianceView = ({
     evref,
     activeTab,
     setActiveTab,
-    setLandscapeType,
     highlightFrameworkId,
     lsOrg,
     lsIndustry,
@@ -510,15 +509,12 @@ export const ComplianceView = ({
   const handlePillarChange = useCallback(
     (next: PillarId) => {
       setPillar(next)
-      setLandscapeType(
-        next === 'certify' ? 'certifications' : next === 'comply' ? 'regulations' : 'bodies'
-      )
       const tab = pillarToTab(next)
       setActiveTab(tab)
       syncFiltersToUrl({ tab })
       logComplianceFilter('Pillar', next)
     },
-    [setActiveTab, setLandscapeType, syncFiltersToUrl]
+    [setActiveTab, syncFiltersToUrl]
   )
 
   const handlePersonaHintNavigate = useCallback(
