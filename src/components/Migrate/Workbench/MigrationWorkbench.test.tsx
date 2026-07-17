@@ -5,11 +5,22 @@ import { MemoryRouter } from 'react-router-dom'
 import '@testing-library/jest-dom'
 import { MigrationWorkbench } from './MigrationWorkbench'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
+import { productsForDomain } from './workbenchCatalog'
 
 function renderWorkbench() {
   return render(
     <MemoryRouter>
       <MigrationWorkbench embedded />
+    </MemoryRouter>
+  )
+}
+
+/** Standalone (non-embedded) render at a given path — the ?product= deep
+ *  link only hydrates when standalone (embedded skips it deliberately). */
+function renderStandaloneAt(path: string) {
+  return render(
+    <MemoryRouter initialEntries={[path]}>
+      <MigrationWorkbench />
     </MemoryRouter>
   )
 }
@@ -82,6 +93,45 @@ describe('MigrationWorkbench (integration)', () => {
     )
   })
 
+  // Regression: migrate-process remediation Phase 5 (U4, scoped) — a chosen
+  // product whose name no longer matches the catalog (renamed/deprecated
+  // since it was chosen) used to render with no explanation at all, just a
+  // missing expander. Simulates the orphan by planting a name that was
+  // never real, same effect as a rename.
+  it('an orphaned plan entry (name no longer in the catalog) shows an honest notice', () => {
+    useMigrateSelectionStore.setState({
+      plan: ['foundations'],
+      choice: { foundations: ['A Product That No Longer Exists'] },
+      nameToProductId: {},
+      tab: 'plan',
+    })
+    renderWorkbench()
+    fireEvent.click(screen.getByRole('button', { name: /Plan & sequence/i }))
+    expect(screen.getByText('A Product That No Longer Exists')).toBeInTheDocument()
+    expect(screen.getByText('No longer in catalog')).toBeInTheDocument()
+  })
+
+  // U4, extended further: when the renamed name IS in the resolution cache
+  // (captured back when it was originally chosen), full detail is restored
+  // instead of the bare notice — the row becomes expandable again.
+  it('a renamed plan entry resolves via the nameToProductId cache and stays fully expandable', () => {
+    const [real] = productsForDomain('foundations' as never)
+    expect(real).toBeDefined()
+    useMigrateSelectionStore.setState({
+      plan: ['foundations'],
+      choice: { foundations: ['A Renamed Product'] },
+      nameToProductId: { 'A Renamed Product': real.productId },
+      tab: 'plan',
+    })
+    renderWorkbench()
+    fireEvent.click(screen.getByRole('button', { name: /Plan & sequence/i }))
+    expect(screen.getByText('A Renamed Product')).toBeInTheDocument()
+    expect(screen.queryByText('No longer in catalog')).not.toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: /Show details for A Renamed Product/i })
+    ).toBeInTheDocument()
+  })
+
   it('keeps multiple chosen products in a category, each as its own plan row', () => {
     renderWorkbench()
     fireEvent.click(screen.getByText('Crypto libraries & frameworks'))
@@ -133,5 +183,18 @@ describe('MigrationWorkbench (integration)', () => {
       within(chooseButtons[0].closest('div')!).getByRole('button', { name: /^Choose / })
     )
     expect(useMigrateSelectionStore.getState().plan).toContain('tls')
+  })
+
+  // Regression: migrate-process remediation Phase 5 (U8) — ProductDetail's
+  // Endorse/Flag buttons emit /migrate?product=<name>, which used to land
+  // nowhere (the workbench only read ?share= and ?tab=).
+  it('?product= deep link switches to Replace and pre-fills the domain filter (regression)', () => {
+    const [sample] = productsForDomain('tls')
+    expect(sample).toBeDefined()
+    renderStandaloneAt(`/migrate?product=${encodeURIComponent(sample.softwareName)}`)
+    // The Replace tab's filter input only renders when that tab is active —
+    // finding it with the right value proves both the tab switch and the
+    // filter pre-fill happened.
+    expect(screen.getByLabelText(/Filter products/i)).toHaveValue(sample.softwareName)
   })
 })
