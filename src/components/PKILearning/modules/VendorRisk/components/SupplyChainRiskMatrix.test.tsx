@@ -1,11 +1,42 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, within } from '@testing-library/react'
+import { render, screen, fireEvent, within, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { SupplyChainRiskMatrix } from './SupplyChainRiskMatrix'
 import type { ExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import type { ThreatData } from '@/data/threatsData'
+import type { CveSnapshot } from '@/types/CveTypes'
+
+const mockCpeMap = vi.hoisted(
+  () =>
+    new Map<
+      string,
+      {
+        productId: string
+        softwareName: string
+        cpeUri: string
+        cpeVendor: string
+        cpeProduct: string
+        matchConfidence: 'exact' | 'partial' | 'manual' | ''
+        status: 'matched' | 'partial' | 'not_found'
+        nvdUrl: string
+        lastVerifiedDate: string
+      }
+    >()
+)
+const mockSnapshot = vi.hoisted(() => ({ value: null as CveSnapshot | null }))
+
+vi.mock('@/data/cpeXrefData', () => ({
+  cpeByProduct: mockCpeMap,
+  cpeXrefs: [],
+  cpeXrefMetadata: {},
+}))
+
+vi.mock('@/data/cveSnapshotData', () => ({
+  loadCveSnapshot: () => Promise.resolve(mockSnapshot.value),
+  __setCachedSnapshotForTests: () => {},
+}))
 
 function makeProduct(over: Partial<SoftwareItem>): SoftwareItem {
   return {
@@ -175,6 +206,8 @@ vi.mock('@/store/useModuleStore', () => ({
 describe('SupplyChainRiskMatrix', () => {
   beforeEach(() => {
     mockData = baseData()
+    mockCpeMap.clear()
+    mockSnapshot.value = null
   })
 
   it('renders per-product rows via ProductRow that expand to ProductDetail independently', () => {
@@ -267,5 +300,107 @@ describe('SupplyChainRiskMatrix', () => {
     const table = screen.getByRole('table')
     const cell = within(table).getAllByRole('cell')[0]
     expect(() => fireEvent.click(cell)).not.toThrow()
+  })
+
+  // Regression: migrate-process remediation Phase 5/6 (U6, harder half) — a
+  // layer card's readiness stats had no visibility into known CVE exposure
+  // at all, even though the same CPE xref + NVD snapshot join already powers
+  // CryptoVulnerabilityWatch.tsx elsewhere in the app.
+  describe('CVE exposure badge (U6)', () => {
+    it('shows "None" before the snapshot has loaded and when no product in the layer has a CPE match', async () => {
+      render(<SupplyChainRiskMatrix variant="flat" />)
+      const dbCard = screen.getByTestId('layer-card-Database')
+      await waitFor(() => {
+        expect(within(dbCard).getByText('Known CVEs')).toBeInTheDocument()
+      })
+      expect(within(dbCard).getByText('None')).toBeInTheDocument()
+    })
+
+    it('sums known CVEs across a layer’s matched products once the snapshot resolves', async () => {
+      const cpeUri = 'cpe:2.3:a:acme:gapdb:1.0:*:*:*:*:*:*:*'
+      mockCpeMap.set('GapDB', {
+        productId: 'db-2',
+        softwareName: 'GapDB',
+        cpeUri,
+        cpeVendor: 'acme',
+        cpeProduct: 'gapdb',
+        matchConfidence: 'exact',
+        status: 'matched',
+        nvdUrl: '',
+        lastVerifiedDate: '',
+      })
+      mockSnapshot.value = {
+        generatedAt: '2026-07-16T00:00:00Z',
+        sourceCsv: 'migrate_cpe_xref_07162026.csv',
+        byCpe: {
+          [cpeUri]: [
+            {
+              cveId: 'CVE-2026-0001',
+              summary: 'Test CVE',
+              severity: 'HIGH',
+              cvssScore: 7.5,
+              published: '2026-01-01',
+              lastModified: '2026-01-01',
+              refUrl: '',
+            },
+            {
+              cveId: 'CVE-2026-0002',
+              summary: 'Test CVE 2',
+              severity: 'MEDIUM',
+              cvssScore: 5.5,
+              published: '2026-02-01',
+              lastModified: '2026-02-01',
+              refUrl: '',
+            },
+          ],
+        },
+      }
+      render(<SupplyChainRiskMatrix variant="flat" />)
+      const dbCard = screen.getByTestId('layer-card-Database')
+      await waitFor(() => {
+        expect(within(dbCard).getByText('2')).toBeInTheDocument()
+      })
+      // The ready product in the same layer has no CPE match, so the count
+      // is exactly GapDB's 2 CVEs, not inflated by an unmatched sibling.
+      expect(within(dbCard).queryByText('None')).not.toBeInTheDocument()
+    })
+
+    it('does not count CVEs for a product whose CPE xref status is not_found', async () => {
+      const cpeUri = 'cpe:2.3:a:acme:gapdb:1.0:*:*:*:*:*:*:*'
+      mockCpeMap.set('GapDB', {
+        productId: 'db-2',
+        softwareName: 'GapDB',
+        cpeUri,
+        cpeVendor: 'acme',
+        cpeProduct: 'gapdb',
+        matchConfidence: '',
+        status: 'not_found',
+        nvdUrl: '',
+        lastVerifiedDate: '',
+      })
+      mockSnapshot.value = {
+        generatedAt: '2026-07-16T00:00:00Z',
+        sourceCsv: 'migrate_cpe_xref_07162026.csv',
+        byCpe: {
+          [cpeUri]: [
+            {
+              cveId: 'CVE-2026-0001',
+              summary: 'Test CVE',
+              severity: 'HIGH',
+              cvssScore: 7.5,
+              published: '2026-01-01',
+              lastModified: '2026-01-01',
+              refUrl: '',
+            },
+          ],
+        },
+      }
+      render(<SupplyChainRiskMatrix variant="flat" />)
+      const dbCard = screen.getByTestId('layer-card-Database')
+      await waitFor(() => {
+        expect(within(dbCard).getByText('Known CVEs')).toBeInTheDocument()
+      })
+      expect(within(dbCard).getByText('None')).toBeInTheDocument()
+    })
   })
 })
