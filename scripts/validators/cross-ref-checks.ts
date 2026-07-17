@@ -564,13 +564,24 @@ export function runCrossRefChecks(): CheckResult[] {
     data: { rows: CsvRow[]; file: string },
     idField: string,
     checkId: string,
-    label: string
+    label: string,
+    // ADDED 2026-07-16 (migrate-process remediation Phase 1.5): a deprecated
+    // row is a historical audit-trail entry, not a live catalog entry — the
+    // self-containment convention (rows are never deleted, only deprecated)
+    // means a later revision legitimately re-using a display value a
+    // deprecated row once had is expected, not a data error. D1-D5 check
+    // genuinely sacred, globally-unique ID fields (reference_id/id/
+    // threat_id/Name) where this doesn't apply; D6 checks migrate's
+    // software_name — a display field, not its real ID (product_id) — so
+    // it needs this exemption. Skip when the source has no status concept.
+    skipStatuses?: string[]
   ) {
     const f: Finding[] = []
     const seen = new Map<string, number>()
     data.rows.forEach((row, i) => {
       const id = row[idField]
       if (!id) return
+      if (skipStatuses && skipStatuses.includes((row.status || '').toLowerCase())) return
       if (seen.has(id))
         f.push(
           finding(
@@ -601,7 +612,7 @@ export function runCrossRefChecks(): CheckResult[] {
   dupCheck(threats, 'threat_id', 'D3-threats-dups', 'threats')
   dupCheck(quiz, 'id', 'D4-quiz-dups', 'quiz')
   dupCheck(leaders, 'Name', 'D5-leaders-dups', 'leaders')
-  dupCheck(migrate, 'software_name', 'D6-migrate-dups', 'migrate')
+  dupCheck(migrate, 'software_name', 'D6-migrate-dups', 'migrate', ['deprecated'])
 
   // ══════════════════════════════════════════════════════════════════════════
   // NEW CHECKS (N1-N15)

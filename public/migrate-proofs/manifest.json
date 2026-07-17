@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
   "generated": "2026-07-09",
-  "count": 1066,
+  "count": 1067,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -8724,6 +8724,13 @@
       "file": "DINAMO-Hardware-Security-Module-Cryptogr-4bc5e06b.html",
       "bytes": 93913,
       "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "debian-13-trixie",
+      "url": "https://packages.debian.org/trixie/openssl",
+      "file": "debian-13-trixie-0b351c13.html",
+      "bytes": 14839,
+      "tier": "playwright-stealth"
     }
   ]
 }

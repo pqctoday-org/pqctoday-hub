@@ -20,11 +20,13 @@ import { Button } from '@/components/ui/button'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { MaturityEvidenceGrid } from '../MaturityEvidenceGrid'
 import { maturityRequirements } from '@/data/maturityGovernanceData'
+import { complianceFrameworks } from '@/data/complianceData'
 import {
   CSWP39_STEPS,
   CSWP39_TIERS,
   CSWP39_CROSS_WALK,
   CSWP39_SOURCE_METADATA,
+  frameworksForStep,
   type CSWP39Step,
 } from '../cswp39Data'
 import {
@@ -208,6 +210,9 @@ function CycleView({
   const selTone = STEP_TONE[sel.id]
   const crosswalk = CSWP39_CROSS_WALK.find((c) => c.stepId === sel.id)?.frameworks ?? []
   const owners = STEP_OWNERS[sel.id]
+  // Live, data-driven — reflects each compliance row's own cswp39_tags
+  // (unlike CSWP39_CROSS_WALK above, which is hand-curated and static).
+  const liveFrameworks = useMemo(() => frameworksForStep(sel.id, complianceFrameworks), [sel.id])
 
   return (
     <div className="space-y-4">
@@ -307,6 +312,37 @@ function CycleView({
                   </Button>
                 ))}
               </div>
+            </div>
+            <div>
+              <h4 className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Frameworks tagged for this step
+                <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-bold text-muted-foreground">
+                  {liveFrameworks.length}
+                </span>
+              </h4>
+              {liveFrameworks.length > 0 ? (
+                <div className="space-y-1.5">
+                  {liveFrameworks.map((fw) => (
+                    <Button
+                      key={fw.id}
+                      type="button"
+                      variant="ghost"
+                      onClick={() => onNavigateToFramework?.('compliance', fw.label)}
+                      className="flex h-auto w-full items-center gap-2 whitespace-normal rounded-lg border border-border bg-muted/20 px-3 py-2 text-left hover:border-primary/30"
+                    >
+                      <span className="text-xs font-semibold text-foreground">{fw.label}</span>
+                      <span className="min-w-0 flex-1 truncate text-[10.5px] text-muted-foreground">
+                        {fw.enforcementBody}
+                      </span>
+                      <ExternalLink size={12} className="shrink-0 text-muted-foreground" />
+                    </Button>
+                  ))}
+                </div>
+              ) : (
+                <p className="rounded-lg border border-dashed border-border bg-muted/10 px-3 py-2 text-[11px] text-muted-foreground">
+                  No compliance rows are tagged {sel.cpmPillar.toLowerCase()} yet.
+                </p>
+              )}
             </div>
             <div>
               <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">

@@ -15,7 +15,7 @@
 import type { SoftwareItem, CertificationXref } from '../../types/MigrateTypes'
 import { cpeByProduct } from '../../data/cpeXrefData'
 import { purlByProduct } from '../../data/purlXrefData'
-import { certsByProduct } from '../../data/certificationXrefData'
+import { getCertsForProduct } from '../../data/certificationXrefData'
 import {
   buildCbomDocument,
   cbomBomRef,
@@ -59,7 +59,7 @@ export function softwareItemToCbomInput(
 ): CbomComponentInput {
   const cpe = cpeByProduct.get(item.softwareName)
   const purl = purlByProduct.get(item.softwareName)
-  const certs = certsByProduct.get(item.softwareName) ?? []
+  const certs = getCertsForProduct(item.productId, item.softwareName)
 
   const properties: CbomProperty[] = [
     { name: 'pqctoday:infrastructureLayer', value: item.infrastructureLayer || '' },

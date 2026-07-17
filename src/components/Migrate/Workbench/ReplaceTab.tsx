@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ArrowRight, Clock, Search, AlertTriangle, Check, Plus } from 'lucide-react'
 import type { PersonaId } from '@/data/learningPersonas'
 import {
@@ -26,19 +26,42 @@ interface ReplaceTabProps {
   persona: PersonaId | null
   /** Optional domain to pre-select (e.g. a sim catalog step opening 'discovery'). */
   initialDomain?: DomainId
+  /** Optional text to pre-fill the in-domain filter with — added 2026-07-16
+   *  (migrate-process remediation Phase 5, U8) so the /migrate?product=<name>
+   *  deep link (from ProductDetail's Endorse/Flag buttons) actually lands on
+   *  the right row instead of a default, unfiltered tab. */
+  initialFilter?: string
   /** Empty-domain dead end (fix #6) routes here — MigrationWorkbench wires this
    *  to its own "Vendor roadmaps" tab. */
   onGoToRoadmaps?: () => void
 }
 
-export function ReplaceTab({ persona, initialDomain, onGoToRoadmaps }: ReplaceTabProps) {
+export function ReplaceTab({
+  persona,
+  initialDomain,
+  initialFilter,
+  onGoToRoadmaps,
+}: ReplaceTabProps) {
   const plan = useMigrateSelectionStore((s) => s.plan)
   const choice = useMigrateSelectionStore((s) => s.choice)
   const togglePlanAsset = useMigrateSelectionStore((s) => s.togglePlanAsset)
   const chooseProduct = useMigrateSelectionStore((s) => s.chooseProduct)
 
   const [selectedDomain, setSelectedDomain] = useState<DomainId | null>(initialDomain ?? 'tls')
-  const [filter, setFilter] = useState('')
+  const [filter, setFilter] = useState(initialFilter ?? '')
+
+  // FIXED 2026-07-16 (Phase 5, U8 — caught by a failing regression test):
+  // ReplaceTab is already mounted (tab defaults to 'replace') by the time
+  // MigrationWorkbench's ?product= effect resolves the domain/filter a
+  // render later, so useState's initial value never saw them — a
+  // useState(initialFilter ?? '') initializer only runs on first mount.
+  // Sync explicitly instead, once these actually arrive.
+  useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect -- one-time sync when the deep-link values arrive, not on every parent re-render (same pattern as the ?share=/?product= effects in MigrationWorkbench.tsx) */
+    if (initialDomain) setSelectedDomain(initialDomain)
+    if (initialFilter) setFilter(initialFilter)
+    /* eslint-enable react-hooks/set-state-in-effect */
+  }, [initialDomain, initialFilter])
 
   const onSelect = (d: DomainId) => {
     setSelectedDomain(d)

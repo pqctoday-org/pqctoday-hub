@@ -36,4 +36,43 @@ describe('buildPlanCbom', () => {
     const props = (doc.components as Array<{ properties: Array<{ name: string }> }>)[0].properties
     expect(props.find((p) => p.name === 'pqc:chosenProduct')).toBeUndefined()
   })
+
+  // Regression: migrate-process remediation Phase 5 (U7) — planIds mixes
+  // real ReplaceAsset ids with foundation/infrastructure domain ids (crypto
+  // libraries etc. have no ReplaceAsset). A product chosen for a foundation
+  // domain used to silently never appear in the exported CBOM at all.
+  it('includes a foundation-domain choice as its own component', () => {
+    const doc = buildPlanCbom({
+      planIds: ['tls', 'foundations'],
+      choice: { foundations: ['liboqs'] },
+      timestamp: TS,
+    })
+    const components = doc.components as Array<{
+      name: string
+      properties: Array<{ name: string; value: string }>
+    }>
+    expect(components).toHaveLength(2)
+    const foundation = components.find((c) => c.name === 'Crypto libraries & frameworks')
+    expect(foundation).toBeDefined()
+    expect(foundation!.properties.find((p) => p.name === 'pqc:domainKind')?.value).toBe(
+      'foundation'
+    )
+    expect(foundation!.properties.find((p) => p.name === 'pqc:chosenProduct')?.value).toBe('liboqs')
+    // assetCount in metadata reflects the combined component count, not just replace-assets.
+    expect(
+      (doc.metadata as { properties: Array<{ name: string; value: string }> }).properties.find(
+        (p) => p.name === 'pqc:assetCount'
+      )?.value
+    ).toBe('2')
+  })
+
+  it('a foundation domain with no chosen product still appears with no chosenProduct property', () => {
+    const doc = buildPlanCbom({ planIds: ['foundations'], choice: {}, timestamp: TS })
+    const components = doc.components as Array<{
+      name: string
+      properties: Array<{ name: string }>
+    }>
+    expect(components).toHaveLength(1)
+    expect(components[0].properties.find((p) => p.name === 'pqc:chosenProduct')).toBeUndefined()
+  })
 })

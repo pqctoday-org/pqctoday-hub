@@ -44,6 +44,12 @@ const ROADMAP_ENTRIES: RoadmapEntry[] = (() => {
   return entries
 })()
 
+// Vendors present only via enrichment (no real published roadmap page) —
+// counted separately so the headline doesn't conflate the two (Phase 5, U5).
+const enrichmentOnlyCount = [...enrichmentByVendorId.keys()].filter(
+  (id) => !roadmapByVendorId.has(id)
+).length
+
 export function RoadmapsTab() {
   const [query, setQuery] = useState('')
   const selectedProductIds = useSelectedProductIds()
@@ -57,6 +63,22 @@ export function RoadmapsTab() {
     return ids
   }, [selectedProductIds])
 
+  // FIXED 2026-07-16 (migrate-process remediation Phase 5, U5): a selected
+  // vendor with no roadmap AND no enrichment row simply never appeared
+  // anywhere on this tab — the exact signal a migration planner needs
+  // ("does my vendor even have a public roadmap yet?") was silently
+  // dropped instead of shown as an honest "not yet" state.
+  const myVendorsWithoutRoadmap = useMemo(() => {
+    const covered = new Set<string>([...roadmapByVendorId.keys(), ...enrichmentByVendorId.keys()])
+    return [...myVendorIds]
+      .filter((id) => !covered.has(id))
+      .map((vendorId) => ({
+        vendorId,
+        vendorName: vendorMap.get(vendorId)?.vendorDisplayName || vendorId,
+      }))
+      .sort((a, b) => a.vendorName.localeCompare(b.vendorName))
+  }, [myVendorIds])
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
     if (!q) return ROADMAP_ENTRIES
@@ -64,6 +86,14 @@ export function RoadmapsTab() {
       (e) => e.vendorName.toLowerCase().includes(q) || e.vendorId.toLowerCase().includes(q)
     )
   }, [query])
+
+  const filteredWithoutRoadmap = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    if (!q) return myVendorsWithoutRoadmap
+    return myVendorsWithoutRoadmap.filter(
+      (e) => e.vendorName.toLowerCase().includes(q) || e.vendorId.toLowerCase().includes(q)
+    )
+  }, [query, myVendorsWithoutRoadmap])
 
   const myVendors = useMemo(
     () => filtered.filter((e) => myVendorIds.has(e.vendorId)),
@@ -79,8 +109,19 @@ export function RoadmapsTab() {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <MapIcon size={14} aria-hidden />
-          <span className="text-foreground">{ROADMAP_ENTRIES.length}</span> vendors with a published
+          {/* FIXED 2026-07-16 (Phase 5, U5): this used to count the UNION of
+              roadmap+enrichment vendors as "published roadmap" — an
+              enrichment-only vendor (derived from a doc, not a real
+              published roadmap page) inflated the headline. */}
+          <span className="text-foreground">{roadmapByVendorId.size}</span> vendors with a published
           PQC roadmap
+          {enrichmentOnlyCount > 0 && (
+            <>
+              {' '}
+              · <span className="text-foreground">{enrichmentOnlyCount}</span> more with
+              enrichment-derived info only
+            </>
+          )}
         </p>
         <div className="relative w-full sm:w-64">
           <Search
@@ -97,6 +138,33 @@ export function RoadmapsTab() {
           />
         </div>
       </div>
+
+      {/* FIXED 2026-07-16 (Phase 5, U5): rendered independent of the
+          roadmap-entries search/empty state below — these vendors aren't in
+          ROADMAP_ENTRIES at all, so they'd never surface otherwise. This is
+          exactly the "your vendor has nothing published yet" signal a
+          migration planner needs. */}
+      {filteredWithoutRoadmap.length > 0 && (
+        <div>
+          <p className="mb-2 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+            Your vendors with no published roadmap yet ·{' '}
+            <span className="text-foreground">{filteredWithoutRoadmap.length}</span>
+          </p>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {filteredWithoutRoadmap.map((e) => (
+              <div
+                key={e.vendorId}
+                className="rounded-lg border border-dashed border-border bg-card/50 p-3 text-sm"
+              >
+                <p className="font-semibold text-foreground">{e.vendorName}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  No published roadmap or enrichment data yet.
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {filtered.length === 0 ? (
         <p className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">

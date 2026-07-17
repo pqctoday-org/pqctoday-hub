@@ -8,10 +8,21 @@
 import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import FocusLock from 'react-focus-lock'
-import { ArrowDown, Globe, ListChecks, Workflow, X, ChevronRight } from 'lucide-react'
+import {
+  ArrowDown,
+  ExternalLink,
+  Globe,
+  ListChecks,
+  ShieldCheck,
+  Workflow,
+  X,
+  ChevronRight,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { ComplianceFramework } from '@/data/complianceData'
 import { maturityByRefId } from '@/data/maturityGovernanceData'
+import { getTrustedSource } from '@/data/trustedSourcesData'
+import { getAuthoritativeSource } from '@/data/authoritativeSourcesData'
 import { buildDrawerDetail, type PillarId } from './pillarModel'
 import { pillClasses, TONES } from './tones'
 import { EndorseButton } from '@/components/ui/EndorseButton'
@@ -20,6 +31,33 @@ import {
   buildFrameworkEndorsementUrl,
   buildFrameworkFlagUrl,
 } from '@/components/Compliance/complianceEndorsement'
+
+/**
+ * A compliance row's trustedSourceId resolves against EITHER of two
+ * registries that turn out to be genuinely complementary, not one-subset-
+ * of-the-other (confirmed 2026-07-16: of 167 active rows, 113 resolve in
+ * both, 26 only in trusted_sources_*.csv, 28 only in
+ * pqc_authoritative_sources_reference_*.csv, 0 in neither) — same union
+ * this source's maintainer-agent validator now checks. Never show the raw
+ * id to a user; always resolve to a human-readable name.
+ */
+function resolveTrustedSourceName(trustedSourceId?: string): { name: string; url?: string } | null {
+  if (!trustedSourceId) return null
+  const trusted = getTrustedSource(trustedSourceId)
+  if (trusted) return { name: trusted.sourceName, url: trusted.primaryUrl }
+  const authoritative = getAuthoritativeSource(trustedSourceId)
+  if (authoritative) return { name: authoritative.sourceName, url: authoritative.primaryUrl }
+  return null
+}
+
+/** Never let a malformed URL crash the drawer — falls back to the raw string. */
+function safeHostname(url: string): string {
+  try {
+    return new URL(url).hostname
+  } catch {
+    return url
+  }
+}
 
 interface ComplianceDetailDrawerProps {
   framework: ComplianceFramework | null
@@ -87,6 +125,7 @@ export function ComplianceDetailDrawer({
     framework,
     d.crosswalk.map((c) => c.name)
   )
+  const trustedSource = resolveTrustedSourceName(framework.trustedSourceId)
 
   return createPortal(
     <FocusLock returnFocus>
@@ -138,6 +177,76 @@ export function ComplianceDetailDrawer({
 
           {/* Scroll body */}
           <div className="flex-1 space-y-6 overflow-y-auto px-5 py-5">
+            {/* Source & trust — visible to every user, not just the researcher
+                persona's For You view (see compliance-maintenance-audit-
+                remediation-plan-07162026.md Phase 4.1). */}
+            {(framework.website || trustedSource || framework.enforcementBody) && (
+              <section className="rounded-xl border border-border bg-muted/20 p-3.5">
+                <h3 className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  <ShieldCheck size={13} />
+                  Source &amp; trust
+                </h3>
+                <dl className="space-y-1.5 text-xs">
+                  {framework.website && (
+                    <div className="flex items-start justify-between gap-3">
+                      <dt className="shrink-0 text-muted-foreground">Official source</dt>
+                      <dd className="min-w-0 text-right">
+                        <a
+                          href={framework.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 font-medium text-primary hover:underline"
+                        >
+                          <span className="truncate">{safeHostname(framework.website)}</span>
+                          <ExternalLink size={11} className="shrink-0" />
+                        </a>
+                      </dd>
+                    </div>
+                  )}
+                  {framework.enforcementBody && (
+                    <div className="flex items-start justify-between gap-3">
+                      <dt className="shrink-0 text-muted-foreground">Enforcement body</dt>
+                      <dd className="min-w-0 text-right font-medium text-foreground">
+                        {framework.enforcementBody}
+                      </dd>
+                    </div>
+                  )}
+                  {trustedSource && (
+                    <div className="flex items-start justify-between gap-3">
+                      <dt className="shrink-0 text-muted-foreground">Trusted source</dt>
+                      <dd className="min-w-0 text-right font-medium text-foreground">
+                        {trustedSource.name}
+                      </dd>
+                    </div>
+                  )}
+                  {typeof framework.confidenceScore === 'number' && (
+                    <div className="flex items-start justify-between gap-3">
+                      <dt className="shrink-0 text-muted-foreground">Confidence score</dt>
+                      <dd className="min-w-0 text-right font-medium text-foreground">
+                        {framework.confidenceScore}/100
+                      </dd>
+                    </div>
+                  )}
+                  {framework.peerReviewed && (
+                    <div className="flex items-start justify-between gap-3">
+                      <dt className="shrink-0 text-muted-foreground">Peer reviewed</dt>
+                      <dd className="min-w-0 text-right font-medium text-foreground capitalize">
+                        {framework.peerReviewed}
+                      </dd>
+                    </div>
+                  )}
+                  {framework.lastVerified && (
+                    <div className="flex items-start justify-between gap-3">
+                      <dt className="shrink-0 text-muted-foreground">Last verified</dt>
+                      <dd className="min-w-0 text-right font-medium text-foreground">
+                        {framework.lastVerified}
+                      </dd>
+                    </div>
+                  )}
+                </dl>
+              </section>
+            )}
+
             {/* Traceability chain */}
             <section>
               <h3 className="mb-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
