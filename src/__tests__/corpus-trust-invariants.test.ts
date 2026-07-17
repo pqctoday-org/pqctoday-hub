@@ -316,9 +316,17 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
  *               (KpqC, NIST-FIPS140-3-IG-PQC, 3GPP-PQC-Study-2025,
  *               liboqs-v0.15.0, TCG-TPM-V185-Part0) re-surfaced, unrelated to
  *               this pass's migrate-catalog changes. Enrich to drive down).
+ *   2026-07-17: 725 (bumped +8 after this session's related_standards stub
+ *               drafting pass — 6 of the 8 new library rows added in
+ *               22d59ce7f (ISO-26262, NIST-SP-800-186, NIST-SP-800-185,
+ *               ISO-IEC-17799-2000, ISO-14971-2000, RFC-9958) ran through
+ *               enrich-docs.py (7a5032f91) but landed without extracted
+ *               source_passages — same enrich-docs.py gap class as the
+ *               pre-existing 717 backlog, now also hitting brand-new rows.
+ *               Enrich to drive down).
  * Only DECREASE — every reduction is enrichment improving.
  */
-const MAX_DOC_WITHOUT_PASSAGES = 717
+const MAX_DOC_WITHOUT_PASSAGES = 725
 
 /** Pinned count of CSV files referenced in prov.was_derived_from but missing on disk. */
 const MAX_MISSING_CSVS = 0
