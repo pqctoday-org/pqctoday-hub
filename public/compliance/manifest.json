@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-16T04:24:45.459688+00:00",
+  "generated": "2026-07-17T13:44:24.650970+00:00",
   "entries": [
     {
       "refId": "NIST",
@@ -1368,6 +1368,60 @@
       "sizeBytes": 44455,
       "contentType": "text/html",
       "sha256": "38b257c87074c3f613b714c643d7c79e595af216a3faf04fca2c45ae7256c8cd"
+    },
+    {
+      "refId": "MICA-EU-MARKETS-IN-CRYPTO-ASSE",
+      "url": "https://eur-lex.europa.eu/eli/reg/2023/1114/oj/eng",
+      "status": "downloaded",
+      "filename": "MICA-EU-MARKETS-IN-CRYPTO-ASSE.html",
+      "sizeBytes": 1968471,
+      "contentType": "text/html",
+      "sha256": "39c056ee8cd4be30620cde7c462e668eed30d2bb603316d0f6cc5648e69f1eb4"
+    },
+    {
+      "refId": "E-ITS-ESTONIAN-INFORMATION-SEC",
+      "url": "https://www.ria.ee/en/cyber-security/management-state-information-security-measures",
+      "status": "downloaded",
+      "filename": "E-ITS-ESTONIAN-INFORMATION-SEC.html",
+      "sizeBytes": 108556,
+      "contentType": "text/html",
+      "sha256": "b11ad18287b155925a9893af0feec562473c3269c6867fe21641de7efa1b6319"
+    },
+    {
+      "refId": "CRI-PROFILE-CYBER-RISK-INSTITU",
+      "url": "https://cyberriskinstitute.org/the-profile/",
+      "status": "downloaded",
+      "filename": "CRI-PROFILE-CYBER-RISK-INSTITU.html",
+      "sizeBytes": 82995,
+      "contentType": "text/html",
+      "sha256": "039dcf92f8b9e5544e7c43fceef85b5fd1672fe23edecf64fe2c0124680e40e9"
+    },
+    {
+      "refId": "CYBERSAKERHETSLAG-SWEDEN-CYBER",
+      "url": "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/cybersakerhetslag-20251506_sfs-2025-1506/",
+      "status": "downloaded",
+      "filename": "CYBERSAKERHETSLAG-SWEDEN-CYBER.html",
+      "sizeBytes": 342641,
+      "contentType": "text/html",
+      "sha256": "35e7e2dc7b4337bf02b6f88bf9482b2e45d69828572ea95c15741aee727cdb24"
+    },
+    {
+      "refId": "OMB-MEMORANDUM-M-19-03",
+      "url": "https://www.whitehouse.gov/wp-content/uploads/2018/12/M-19-03.pdf",
+      "status": "downloaded",
+      "filename": "OMB-MEMORANDUM-M-19-03.pdf",
+      "sizeBytes": 355599,
+      "contentType": "application/pdf",
+      "sha256": "0a9a5232558f41c4f772db4b6894bc9d47aea627faccd0bfa428637d6280ca32"
+    },
+    {
+      "refId": "NATIONAL-SECURITY-MEMORANDUM-2",
+      "url": "https://bidenwhitehouse.archives.gov/briefing-room/presidential-actions/2024/04/30/national-security-memorandum-on-critical-infrastructure-security-and-resilience/",
+      "status": "downloaded",
+      "filename": "NATIONAL-SECURITY-MEMORANDUM-2.html",
+      "sizeBytes": 216777,
+      "contentType": "text/html",
+      "sha256": "c6cf5096704d3963157180a1b93e007a0e52a9c1d63e49d87aaa0ece0f1eeb68"
     }
   ],
   "blocked": {

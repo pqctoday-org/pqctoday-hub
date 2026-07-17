@@ -44,10 +44,42 @@
  *                                                  [--timeout-ms 20000]
  *                                                  [--limit N] (audit only the first N entries — for smoke-tests)
  *                                                  [--dry-run] (don't write the report file)
+ *                                                  [--stealth-retry] (see below)
+ *                                                  [--stealth-retry-limit N] (default 50)
+ *                                                  [--stealth-concurrency N] (default 3 — each
+ *                                                    retry may launch a real headless browser)
+ *
+ * --stealth-retry (added 2026-07-17): the first pass above always uses a bare
+ * `fetch()` — no anti-bot handling — so a real bot-gate page reads exactly
+ * like a fetch success (HTTP 200) with different bytes, landing as `blocked`
+ * (content-keyword/hash-dedup detected) or, if the gate itself errors out,
+ * `fetch-error`. Neither classification tells you whether the REAL document
+ * has actually changed — the naive fetcher never got past the gate to look.
+ * When this flag is set, after the normal pass + dedup, findings classified
+ * `blocked` or `fetch-error` (up to `--stealth-retry-limit`, oldest-finding-
+ * first) are re-fetched through `pqctoday-priv/scripts/fetch_resilient.py`'s
+ * curl_cffi -> playwright-stealth -> crawl4ai ladder via a one-shot Python
+ * bridge (`fetch_resilient_bridge.py` — one URL in, one JSON line out;
+ * see its own docstring). The recovered text is re-classified with the SAME
+ * `looksBlocked()` + hash-compare logic as the first pass:
+ *   - still looks blocked even under stealth -> classification unchanged,
+ *     `stealthOutcome: 'still-blocked'` (a confirmed, not assumed, block)
+ *   - stealth tier itself failed (network/browser error) ->
+ *     `stealthOutcome: 'still-failing'`, classification unchanged
+ *   - real content recovered, hash matches storedSha256 -> reclassified `ok`
+ *   - real content recovered, hash differs -> reclassified `drift` (or
+ *     `size-mismatch` if byte length matches) — a genuine content change,
+ *     now actually observed instead of inferred from a blocked non-fetch
+ * Every stealth-retried finding carries `stealthOutcome` + `stealthTier` in
+ * the report so a reader can tell "confirmed via stealth" from "naive fetch
+ * only" — this is strictly additive, the field is absent when the flag isn't
+ * passed. Bounded by `--stealth-retry-limit` because each retry may drive a
+ * real headless browser (playwright-stealth), materially slower than tier 1.
  */
 import fs from 'fs'
 import path from 'path'
 import { createHash } from 'crypto'
+import { execFileSync } from 'child_process'
 
 interface ManifestEntry {
   refId?: string
@@ -91,6 +123,10 @@ interface DriftFinding {
   observedSizeBytes: number | null
   errorMessage?: string
   checkedAt: string
+  /** Present only when --stealth-retry attempted a second-pass fetch on this
+   * finding (see module docstring). Absent entirely when the flag isn't set. */
+  stealthOutcome?: 'recovered-ok' | 'recovered-drift' | 'still-blocked' | 'still-failing'
+  stealthTier?: string
 }
 
 interface DriftReport {
@@ -114,6 +150,9 @@ interface CliOptions {
   timeoutMs: number
   limit: number | null
   dryRun: boolean
+  stealthRetry: boolean
+  stealthRetryLimit: number
+  stealthConcurrency: number
 }
 
 function parseCli(argv: string[]): CliOptions {
@@ -123,6 +162,9 @@ function parseCli(argv: string[]): CliOptions {
   let timeoutMs = 20000
   let limit: number | null = null
   let dryRun = false
+  let stealthRetry = false
+  let stealthRetryLimit = 50
+  let stealthConcurrency = 3
 
   for (let i = 0; i < args.length; i++) {
     // eslint-disable-next-line security/detect-object-injection -- i is a monotonic loop counter into a string[]
@@ -140,9 +182,24 @@ function parseCli(argv: string[]): CliOptions {
       limit = Math.max(1, parseInt(args[++i], 10) || 1)
     } else if (a === '--dry-run') {
       dryRun = true
+    } else if (a === '--stealth-retry') {
+      stealthRetry = true
+    } else if (a === '--stealth-retry-limit') {
+      stealthRetryLimit = Math.max(1, parseInt(args[++i], 10) || 50)
+    } else if (a === '--stealth-concurrency') {
+      stealthConcurrency = Math.max(1, parseInt(args[++i], 10) || 3)
     }
   }
-  return { collections, concurrency, timeoutMs, limit, dryRun }
+  return {
+    collections,
+    concurrency,
+    timeoutMs,
+    limit,
+    dryRun,
+    stealthRetry,
+    stealthRetryLimit,
+    stealthConcurrency,
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -327,6 +384,112 @@ export async function classifyEntry(
 }
 
 // ---------------------------------------------------------------------------
+// Stealth retry — second-pass fetch for blocked/fetch-error findings via the
+// Python fetch_resilient ladder (curl_cffi -> playwright-stealth -> crawl4ai).
+// See module docstring's --stealth-retry section for the full rationale.
+// ---------------------------------------------------------------------------
+
+export interface StealthResult {
+  ok: boolean
+  tier: string
+  text: string
+  error: string | null
+}
+
+/** Not exported as the default path — callers inject this so tests can fake
+ * it without actually shelling out to Python. */
+export function stealthFetchViaBridge(
+  url: string,
+  pythonBin: string,
+  bridgePath: string
+): StealthResult {
+  try {
+    const out = execFileSync(pythonBin, [bridgePath, url], {
+      encoding: 'utf-8',
+      timeout: 60_000,
+      maxBuffer: 64 * 1024 * 1024,
+    })
+    const parsed = JSON.parse(out.trim().split('\n').pop() ?? '{}')
+    return {
+      ok: Boolean(parsed.ok),
+      tier: parsed.tier ?? 'unknown',
+      text: parsed.text ?? '',
+      error: parsed.error ?? null,
+    }
+  } catch (e) {
+    return {
+      ok: false,
+      tier: 'bridge',
+      text: '',
+      error: String((e as Error).message ?? e).slice(0, 200),
+    }
+  }
+}
+
+export type StealthFetchImpl = (url: string) => StealthResult
+
+// Real default: pqctoday-priv lives one level up from this repo (sibling
+// checkout convention used throughout this codebase — see CLAUDE.md's
+// local-evidence-cache note). The venv-enrich Python has curl_cffi +
+// playwright + playwright-stealth installed; the repo's own `python3` on
+// PATH generally does not.
+const DEFAULT_PYTHON_BIN = path.resolve(process.cwd(), '..', '.venv-enrich', 'bin', 'python3')
+const DEFAULT_BRIDGE_PATH = path.resolve(
+  process.cwd(),
+  '..',
+  'pqctoday-priv',
+  'scripts',
+  'fetch_resilient_bridge.py'
+)
+
+function defaultStealthFetch(url: string): StealthResult {
+  return stealthFetchViaBridge(url, DEFAULT_PYTHON_BIN, DEFAULT_BRIDGE_PATH)
+}
+
+/**
+ * Re-checks ONE blocked/fetch-error finding via the stealth ladder. Pure
+ * given an injected stealth fetcher — the same testability pattern as
+ * classifyEntry above. Returns the finding unchanged (but with
+ * stealthOutcome/stealthTier set) if stealth recovery didn't change the
+ * verdict; returns a reclassified finding if it did.
+ */
+export function stealthRecheck(
+  finding: DriftFinding,
+  stealthFetch: StealthFetchImpl
+): DriftFinding {
+  const result = stealthFetch(finding.url)
+  if (!result.ok) {
+    return { ...finding, stealthOutcome: 'still-failing', stealthTier: result.tier }
+  }
+  const bytes = Buffer.from(result.text, 'utf-8')
+  if (looksBlocked(bytes)) {
+    return { ...finding, stealthOutcome: 'still-blocked', stealthTier: result.tier }
+  }
+  const observedSha256 = createHash('sha256').update(bytes).digest('hex')
+  const observedSizeBytes = bytes.byteLength
+  if (finding.storedSha256 && observedSha256 === finding.storedSha256) {
+    return {
+      ...finding,
+      classification: 'ok',
+      observedSha256,
+      observedSizeBytes,
+      stealthOutcome: 'recovered-ok',
+      stealthTier: result.tier,
+    }
+  }
+  const sizeMatched =
+    finding.storedSizeBytes !== null && finding.storedSizeBytes === observedSizeBytes
+  return {
+    ...finding,
+    classification: sizeMatched ? 'size-mismatch' : 'drift',
+    observedSha256,
+    observedSizeBytes,
+    stealthOutcome: 'recovered-drift',
+    stealthTier: result.tier,
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Pool — bounded-concurrency map
 // ---------------------------------------------------------------------------
 
@@ -364,6 +527,10 @@ export interface RunOptions {
   limit: number | null
   dryRun: boolean
   fetcher: FetchImpl
+  stealthRetry?: boolean
+  stealthRetryLimit?: number
+  stealthConcurrency?: number
+  stealthFetch?: StealthFetchImpl
   // eslint-disable-next-line no-unused-vars -- function-type parameter
   log?: (msg: string) => void
 }
@@ -442,6 +609,40 @@ export async function run(opts: RunOptions): Promise<DriftReport> {
     )
   }
 
+  // --stealth-retry: a bounded second pass over blocked/fetch-error findings
+  // only. Runs AFTER dedupeBlockedByHash (so cross-entry-confirmed blocks
+  // aren't wastefully re-fetched) and BEFORE the classification tally, so
+  // reclassified findings count under their real, recovered bucket.
+  let finalFindings = dedupedFindings
+  if (opts.stealthRetry) {
+    const stealthFetch = opts.stealthFetch ?? defaultStealthFetch
+    const retryLimit = opts.stealthRetryLimit ?? 50
+    const candidates = dedupedFindings
+      .map((f, i) => ({ f, i }))
+      .filter(({ f }) => f.classification === 'blocked' || f.classification === 'fetch-error')
+      .slice(0, retryLimit)
+    log(
+      `[drift] --stealth-retry: ${candidates.length} of ` +
+        `${dedupedFindings.filter((f) => f.classification === 'blocked' || f.classification === 'fetch-error').length} ` +
+        `blocked/fetch-error finding(s) selected (limit ${retryLimit})`
+    )
+    // Bounded concurrency (same mapPool pattern as the main fetch pass) —
+    // each retry may drive a real headless browser (curl_cffi -> playwright-
+    // stealth -> crawl4ai), so a plain sequential loop over up to
+    // stealthRetryLimit candidates could take hours. A low concurrency (not
+    // the main pass's 4) keeps this from overwhelming the machine with
+    // several simultaneous Chromium instances.
+    const updates = new Map<number, DriftFinding>()
+    await mapPool(candidates, opts.stealthConcurrency ?? 3, async ({ f, i }) => {
+      const rechecked = stealthRecheck(f, stealthFetch)
+      updates.set(i, rechecked)
+      log(
+        `  stealth-retry  ${rechecked.stealthOutcome?.padEnd(15)} ${rechecked.refId} (was ${f.classification} -> ${rechecked.classification})`
+      )
+    })
+    finalFindings = dedupedFindings.map((f, i) => updates.get(i) ?? f)
+  }
+
   const classifications: Record<DriftClassification, number> = {
     ok: 0,
     drift: 0,
@@ -450,14 +651,14 @@ export async function run(opts: RunOptions): Promise<DriftReport> {
     'no-stored-hash': 0,
     blocked: 0,
   }
-  for (const f of dedupedFindings) classifications[f.classification]++
+  for (const f of finalFindings) classifications[f.classification]++
 
   const report: DriftReport = {
     generatedAt: new Date().toISOString(),
-    totalEntries: dedupedFindings.length,
+    totalEntries: finalFindings.length,
     fetched: classifications.ok + classifications.drift + classifications['size-mismatch'],
     classifications,
-    findings: dedupedFindings,
+    findings: finalFindings,
   }
 
   if (!opts.dryRun) {
@@ -473,6 +674,23 @@ export async function run(opts: RunOptions): Promise<DriftReport> {
       `${classifications['fetch-error']} fetch-error, ` +
       `${classifications['no-stored-hash']} no-stored-hash`
   )
+  if (opts.stealthRetry) {
+    const outcomes = {
+      'recovered-ok': 0,
+      'recovered-drift': 0,
+      'still-blocked': 0,
+      'still-failing': 0,
+    }
+    for (const f of finalFindings) {
+      if (f.stealthOutcome) outcomes[f.stealthOutcome]++
+    }
+    log(
+      `[drift] Stealth-retry outcomes: ${outcomes['recovered-ok']} recovered-ok, ` +
+        `${outcomes['recovered-drift']} recovered-drift (real content change confirmed), ` +
+        `${outcomes['still-blocked']} still-blocked (confirmed, not just naive-fetch failure), ` +
+        `${outcomes['still-failing']} still-failing (stealth tier itself couldn't reach it)`
+    )
+  }
   return report
 }
 
@@ -491,6 +709,9 @@ async function main(): Promise<void> {
     limit: opts.limit,
     dryRun: opts.dryRun,
     fetcher: realFetch,
+    stealthRetry: opts.stealthRetry,
+    stealthRetryLimit: opts.stealthRetryLimit,
+    stealthConcurrency: opts.stealthConcurrency,
   })
 }
 

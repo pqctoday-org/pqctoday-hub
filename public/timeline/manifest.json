@@ -2,7 +2,7 @@
   "generated": "2026-06-06T16:50:47.525Z",
   "source": "src/data/timeline_06062026.csv",
   "summary": {
-    "downloaded": 23,
+    "downloaded": 24,
     "skipped": 152,
     "failed": 0,
     "persisted_skip": 5
@@ -1799,6 +1799,12 @@
       "sizeBytes": 301212,
       "contentType": "text/html",
       "sha256": "1ac3ebc69ea993e07ee0b8781fab9ad62e15ff2620c31a292656f20976ca3be3"
+    },
+    {
+      "label": "International:ETSI \u2014 ETSI TS 104 015 Hybrid PQC Standard Published",
+      "url": "https://www.etsi.org/deliver/etsi_ts/104000_104099/104015/01.01.01_60/ts_104015v010101p.pdf",
+      "status": "downloaded",
+      "file": "timeline/International_ETSI_ETSI_TS_104_015_Hybrid_PQC_Standard_Published.pdf"
     }
   ]
 }
