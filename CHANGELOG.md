@@ -28,6 +28,25 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.21.8] - 2026-07-17
+
+A routine maintainer-review pass adds new Compliance entries, fixes a Timeline
+citation error, and refreshes Library, Vendor Roadmaps, Product Certifications,
+and CVE data.
+
+### Fixed
+
+- **Timeline: corrected an ETSI document-number error and improved date precision on 2 entries** [view:/timeline] [persona:researcher].
+
+### Data
+
+- **5 new Compliance entries added**: Estonia's E-ITS framework, the CRI Profile, Sweden's Cybersäkerhetslag (SFS 2025:1506), OMB Memorandum M-19-03, and National Security Memorandum 22 [view:/compliance] [persona:researcher]. A 6th drafted candidate (MiCA) turned out to duplicate an existing row for the same regulation and was deprecated instead of kept.
+- **`related_standards` confirmed for 43 more Compliance rows** [view:/compliance] [persona:researcher].
+- **8 new Library documents enriched** [view:/library] [persona:researcher].
+- **5 vendor roadmap pages refreshed** [view:/migrate] [persona:architect].
+- **20 product certifications re-verified** [view:/migrate] [persona:researcher].
+- **CVE database refreshed** against the latest NVD data.
+
 ## [4.21.7] - 2026-07-17
 
 Compliance's trust panel and crosswalk registry now cover every active
