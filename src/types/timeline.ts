@@ -49,6 +49,12 @@ export interface TimelineEvent {
   // Org classification for the category filter (FR-T-06)
   entityType: EntityType
 
+  // Stable row identity + last human-verification date (added 2026-07-16,
+  // timeline maintainer-process remediation Phase 3). Maintenance-facing;
+  // not yet consumed by any UI.
+  eventId?: string
+  lastVerified?: string
+
   // Derived fields — populated at load time, not from CSV (FR-T-05)
   complianceRefs?: string[]
   xwalkEdgeIds?: string[]
