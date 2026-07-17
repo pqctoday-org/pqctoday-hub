@@ -186,6 +186,22 @@
             ]
           },
           {
+            "uuid": "050c7da7-8705-45de-3eb0-3d3d3014191d",
+            "title": "HIPAA",
+            "target": {
+              "type": "objective-id",
+              "target-id": "HIPAA",
+              "status": {
+                "state": "not-applicable"
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "007df98b-71bf-46f0-7874-24a8043318a2"
+              }
+            ]
+          },
+          {
             "uuid": "58a16f3c-ad01-4de2-0b59-9c2b51d406b3",
             "title": "GSMA NG.116 / FS.40",
             "target": {
@@ -410,6 +426,22 @@
             ]
           },
           {
+            "uuid": "9e3ac1b3-53cb-4c46-de44-0154b6a2578d",
+            "title": "FERPA",
+            "target": {
+              "type": "objective-id",
+              "target-id": "FERPA",
+              "status": {
+                "state": "not-applicable"
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "d7021152-e15c-4375-acdf-48989a92f08c"
+              }
+            ]
+          },
+          {
             "uuid": "f7a3de79-8f02-4558-f252-7eced156836c",
             "title": "NIS2 Directive",
             "target": {
@@ -422,6 +454,22 @@
             "related-observations": [
               {
                 "observation-uuid": "061abdb9-2d85-4dc5-495d-afee2796f487"
+              }
+            ]
+          },
+          {
+            "uuid": "5d9aad2c-eaf7-4fb7-5830-29b5ee5568be",
+            "title": "COPPA",
+            "target": {
+              "type": "objective-id",
+              "target-id": "COPPA",
+              "status": {
+                "state": "not-applicable"
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "1ca2cac7-5acc-4202-5672-1e0a5406cfa3"
               }
             ]
           },
@@ -1338,6 +1386,22 @@
             ]
           },
           {
+            "uuid": "2b35d03e-9089-4412-8d32-673ec744138c",
+            "title": "NIST SP 800-208",
+            "target": {
+              "type": "objective-id",
+              "target-id": "NIST-SP800-208",
+              "status": {
+                "state": "satisfied"
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "8e853435-1b16-4236-4de7-6e820b79d025"
+              }
+            ]
+          },
+          {
             "uuid": "94435e6f-205b-432b-3616-52b98671e663",
             "title": "ANSSI Security Certification",
             "target": {
@@ -2058,6 +2122,38 @@
             ]
           },
           {
+            "uuid": "180722a5-51ce-4065-68a3-d07590fe544b",
+            "title": "Russia GOST Cryptography (TC 26)",
+            "target": {
+              "type": "objective-id",
+              "target-id": "RU-TC26",
+              "status": {
+                "state": "not-applicable"
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "c379357d-1d50-4261-4ec4-d0739396a06e"
+              }
+            ]
+          },
+          {
+            "uuid": "b4367c4d-96b2-4557-1555-f7cad9ff83c5",
+            "title": "Turkey Personal Data Protection Law (KVKK, Law 6698)",
+            "target": {
+              "type": "objective-id",
+              "target-id": "TR-KVKK",
+              "status": {
+                "state": "not-applicable"
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "3fccb7cd-c34c-44d3-63f8-af2a1f0946cc"
+              }
+            ]
+          },
+          {
             "uuid": "a3517e4c-fb7d-404d-044a-9747d8ece904",
             "title": "FAA AC 119-1: Aircraft Network Security Program",
             "target": {
@@ -2250,6 +2346,54 @@
             ]
           },
           {
+            "uuid": "7655d43b-a907-4803-7c03-52084dfae5b9",
+            "title": "FIPS 203 (ML-KEM)",
+            "target": {
+              "type": "objective-id",
+              "target-id": "FIPS-203",
+              "status": {
+                "state": "satisfied"
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "709bb387-c00f-4363-9b17-2b824acbaaee"
+              }
+            ]
+          },
+          {
+            "uuid": "9f3ad4f0-bc87-4e0b-f7b8-d0f8cbf7e761",
+            "title": "FIPS 204 (ML-DSA)",
+            "target": {
+              "type": "objective-id",
+              "target-id": "FIPS-204",
+              "status": {
+                "state": "satisfied"
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "b0de0d16-eb72-4624-85b1-6fea3e9e52c0"
+              }
+            ]
+          },
+          {
+            "uuid": "de933d62-1d08-4e00-d681-0d005c01305b",
+            "title": "FIPS 205 (SLH-DSA)",
+            "target": {
+              "type": "objective-id",
+              "target-id": "FIPS-205",
+              "status": {
+                "state": "satisfied"
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "5c81e398-5530-4b58-62a9-26c76de7c47c"
+              }
+            ]
+          },
+          {
             "uuid": "009624d0-5cda-4d63-4ef6-f9e40c080673",
             "title": "OMB M-23-02",
             "target": {
@@ -2310,6 +2454,22 @@
             "related-observations": [
               {
                 "observation-uuid": "dc7d2aac-48a3-476d-e188-e3a431326025"
+              }
+            ]
+          },
+          {
+            "uuid": "cf92765d-44fd-45a0-8cc2-4f318702f04b",
+            "title": "IETF Hybrid ML-KEM for TLS 1.3",
+            "target": {
+              "type": "objective-id",
+              "target-id": "IETF-TLS-MLKEM",
+              "status": {
+                "state": "satisfied"
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "a80aa8f5-523f-48be-2e35-9d7bd7abe0c5"
               }
             ]
           },
@@ -2597,6 +2757,33 @@
               {
                 "name": "cswp39-tags",
                 "value": "cswp39:governance;cswp39:inventory",
+                "class": "trust-engine"
+              }
+            ]
+          },
+          {
+            "uuid": "007df98b-71bf-46f0-7874-24a8043318a2",
+            "description": "US health data privacy and security rule",
+            "relevant-evidence": [
+              {
+                "href": "https://www.hhs.gov/hipaa",
+                "description": "Authoritative source (url authoritative)"
+              }
+            ],
+            "props": [
+              {
+                "name": "confidence-score",
+                "value": "85",
+                "class": "trust-engine"
+              },
+              {
+                "name": "reviewer-display",
+                "value": "unreviewed",
+                "class": "trust-engine"
+              },
+              {
+                "name": "cswp39-tags",
+                "value": "cswp39:governance",
                 "class": "trust-engine"
               }
             ]
@@ -2980,11 +3167,65 @@
             ]
           },
           {
+            "uuid": "d7021152-e15c-4375-acdf-48989a92f08c",
+            "description": "Family Educational Rights and Privacy Act",
+            "relevant-evidence": [
+              {
+                "href": "https://studentprivacy.ed.gov/ferpa",
+                "description": "Authoritative source (url authoritative)"
+              }
+            ],
+            "props": [
+              {
+                "name": "confidence-score",
+                "value": "85",
+                "class": "trust-engine"
+              },
+              {
+                "name": "reviewer-display",
+                "value": "unreviewed",
+                "class": "trust-engine"
+              },
+              {
+                "name": "cswp39-tags",
+                "value": "cswp39:governance",
+                "class": "trust-engine"
+              }
+            ]
+          },
+          {
             "uuid": "061abdb9-2d85-4dc5-495d-afee2796f487",
             "description": "EU network and information security directive for essential and important entities",
             "relevant-evidence": [
               {
                 "href": "https://www.enisa.europa.eu/topics/cybersecurity-policy/nis2-directive",
+                "description": "Authoritative source (url authoritative)"
+              }
+            ],
+            "props": [
+              {
+                "name": "confidence-score",
+                "value": "85",
+                "class": "trust-engine"
+              },
+              {
+                "name": "reviewer-display",
+                "value": "unreviewed",
+                "class": "trust-engine"
+              },
+              {
+                "name": "cswp39-tags",
+                "value": "cswp39:governance",
+                "class": "trust-engine"
+              }
+            ]
+          },
+          {
+            "uuid": "1ca2cac7-5acc-4202-5672-1e0a5406cfa3",
+            "description": "US Children's Online Privacy Protection Act",
+            "relevant-evidence": [
+              {
+                "href": "https://www.ftc.gov/legal-library/browse/rules/childrens-online-privacy-protection-rule-coppa",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -4546,6 +4787,33 @@
             ]
           },
           {
+            "uuid": "8e853435-1b16-4236-4de7-6e820b79d025",
+            "description": "NIST recommendation for stateful hash-based signature schemes (LMS and XMSS)",
+            "relevant-evidence": [
+              {
+                "href": "https://csrc.nist.gov/pubs/sp/800/208/final",
+                "description": "Authoritative source (url authoritative)"
+              }
+            ],
+            "props": [
+              {
+                "name": "confidence-score",
+                "value": "85",
+                "class": "trust-engine"
+              },
+              {
+                "name": "reviewer-display",
+                "value": "unreviewed",
+                "class": "trust-engine"
+              },
+              {
+                "name": "cswp39-tags",
+                "value": "cswp39:governance",
+                "class": "trust-engine"
+              }
+            ]
+          },
+          {
             "uuid": "9fd4713f-6aa0-4014-59e7-89fd835e48db",
             "description": "French national cybersecurity certification scheme — issued world first PQC product certifications in 2025",
             "relevant-evidence": [
@@ -5761,6 +6029,60 @@
             ]
           },
           {
+            "uuid": "c379357d-1d50-4261-4ec4-d0739396a06e",
+            "description": "Russian national cryptographic standards maintained by Technical Committee 26 (TC 26) of Rosstandart under FSB oversight — GOST R 34.10-2012 (signatures), GOST R 34.11-2012 (Streebog), GOST R 34.12-2015 (Kuznyechik/Magma).",
+            "relevant-evidence": [
+              {
+                "href": "https://tc26.ru/standarts/",
+                "description": "Authoritative source (url authoritative)"
+              }
+            ],
+            "props": [
+              {
+                "name": "confidence-score",
+                "value": "60",
+                "class": "trust-engine"
+              },
+              {
+                "name": "reviewer-display",
+                "value": "unreviewed",
+                "class": "trust-engine"
+              },
+              {
+                "name": "cswp39-tags",
+                "value": "cswp39:governance",
+                "class": "trust-engine"
+              }
+            ]
+          },
+          {
+            "uuid": "3fccb7cd-c34c-44d3-63f8-af2a1f0946cc",
+            "description": "Turkey Personal Data Protection Law No. 6698 (KVKK, 2016) — enforced by the Personal Data Protection Authority (KVK Kurumu); requires technical security measures including encryption.",
+            "relevant-evidence": [
+              {
+                "href": "https://www.kvkk.gov.tr",
+                "description": "Authoritative source (url authoritative)"
+              }
+            ],
+            "props": [
+              {
+                "name": "confidence-score",
+                "value": "unknown",
+                "class": "trust-engine"
+              },
+              {
+                "name": "reviewer-display",
+                "value": "unreviewed",
+                "class": "trust-engine"
+              },
+              {
+                "name": "cswp39-tags",
+                "value": "cswp39:governance",
+                "class": "trust-engine"
+              }
+            ]
+          },
+          {
             "uuid": "2b3ff483-a073-482d-0825-f7c983aa223a",
             "description": "Advisory Circular describing an acceptable means for obtaining operational authorization for an aircraft certified with a special condition related to the security of the onboard computer network.",
             "relevant-evidence": [
@@ -6085,6 +6407,87 @@
             ]
           },
           {
+            "uuid": "709bb387-c00f-4363-9b17-2b824acbaaee",
+            "description": "NIST standard for the Module-Lattice-Based Key-Encapsulation Mechanism (ML-KEM); the primary quantum-safe key-establishment algorithm",
+            "relevant-evidence": [
+              {
+                "href": "https://csrc.nist.gov/pubs/fips/203/final",
+                "description": "Authoritative source (url authoritative)"
+              }
+            ],
+            "props": [
+              {
+                "name": "confidence-score",
+                "value": "95",
+                "class": "trust-engine"
+              },
+              {
+                "name": "reviewer-display",
+                "value": "unreviewed",
+                "class": "trust-engine"
+              },
+              {
+                "name": "cswp39-tags",
+                "value": "cswp39:governance",
+                "class": "trust-engine"
+              }
+            ]
+          },
+          {
+            "uuid": "b0de0d16-eb72-4624-85b1-6fea3e9e52c0",
+            "description": "NIST standard for the Module-Lattice-Based Digital Signature Algorithm (ML-DSA); the primary quantum-safe digital signature",
+            "relevant-evidence": [
+              {
+                "href": "https://csrc.nist.gov/pubs/fips/204/final",
+                "description": "Authoritative source (url authoritative)"
+              }
+            ],
+            "props": [
+              {
+                "name": "confidence-score",
+                "value": "95",
+                "class": "trust-engine"
+              },
+              {
+                "name": "reviewer-display",
+                "value": "unreviewed",
+                "class": "trust-engine"
+              },
+              {
+                "name": "cswp39-tags",
+                "value": "cswp39:governance",
+                "class": "trust-engine"
+              }
+            ]
+          },
+          {
+            "uuid": "5c81e398-5530-4b58-62a9-26c76de7c47c",
+            "description": "NIST standard for the Stateless Hash-Based Digital Signature Algorithm (SLH-DSA); the conservative quantum-safe signature for firmware/code signing",
+            "relevant-evidence": [
+              {
+                "href": "https://csrc.nist.gov/pubs/fips/205/final",
+                "description": "Authoritative source (url authoritative)"
+              }
+            ],
+            "props": [
+              {
+                "name": "confidence-score",
+                "value": "95",
+                "class": "trust-engine"
+              },
+              {
+                "name": "reviewer-display",
+                "value": "unreviewed",
+                "class": "trust-engine"
+              },
+              {
+                "name": "cswp39-tags",
+                "value": "cswp39:governance",
+                "class": "trust-engine"
+              }
+            ]
+          },
+          {
             "uuid": "1bd11c24-485c-47a9-b766-d8c659625ebb",
             "description": "US OMB memo 'Migrating to Post-Quantum Cryptography' — mandates federal cryptographic inventories and PQC migration planning",
             "relevant-evidence": [
@@ -6188,6 +6591,33 @@
               {
                 "name": "cswp39-tags",
                 "value": "cswp39:governance;cswp39:inventory;cswp39:lifecycle",
+                "class": "trust-engine"
+              }
+            ]
+          },
+          {
+            "uuid": "a80aa8f5-523f-48be-2e35-9d7bd7abe0c5",
+            "description": "IETF specification for hybrid post-quantum key exchange in TLS 1.3 (X25519MLKEM768 / draft-ietf-tls-ecdhe-mlkem); deployed across major browsers and CDNs",
+            "relevant-evidence": [
+              {
+                "href": "https://datatracker.ietf.org/doc/draft-ietf-tls-ecdhe-mlkem/",
+                "description": "Authoritative source (url authoritative)"
+              }
+            ],
+            "props": [
+              {
+                "name": "confidence-score",
+                "value": "90",
+                "class": "trust-engine"
+              },
+              {
+                "name": "reviewer-display",
+                "value": "unreviewed",
+                "class": "trust-engine"
+              },
+              {
+                "name": "cswp39-tags",
+                "value": "cswp39:governance",
                 "class": "trust-engine"
               }
             ]
@@ -9440,7 +9870,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:governance",
                 "class": "trust-engine"
               }
             ]
@@ -9899,7 +10329,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:assurance",
                 "class": "trust-engine"
               }
             ]
@@ -9926,7 +10356,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:assurance",
                 "class": "trust-engine"
               }
             ]
@@ -9953,7 +10383,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:governance",
                 "class": "trust-engine"
               }
             ]
@@ -10007,7 +10437,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:governance",
                 "class": "trust-engine"
               }
             ]
@@ -11708,7 +12138,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:governance",
                 "class": "trust-engine"
               }
             ]
@@ -12005,7 +12435,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:inventory;cswp39:observability",
                 "class": "trust-engine"
               }
             ]
@@ -12032,7 +12462,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:observability",
                 "class": "trust-engine"
               }
             ]
@@ -13085,7 +13515,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:governance",
                 "class": "trust-engine"
               }
             ]
@@ -13112,7 +13542,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:governance",
                 "class": "trust-engine"
               }
             ]
@@ -13841,7 +14271,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:governance",
                 "class": "trust-engine"
               }
             ]
@@ -13868,7 +14298,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:governance",
                 "class": "trust-engine"
               }
             ]
@@ -13895,7 +14325,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:governance",
                 "class": "trust-engine"
               }
             ]
@@ -14030,7 +14460,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:governance",
                 "class": "trust-engine"
               }
             ]

@@ -3231,7 +3231,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:governance",
                 "class": "trust-engine"
               }
             ]
@@ -3690,7 +3690,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:assurance",
                 "class": "trust-engine"
               }
             ]
@@ -3717,7 +3717,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:assurance",
                 "class": "trust-engine"
               }
             ]
@@ -3744,7 +3744,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:governance",
                 "class": "trust-engine"
               }
             ]
@@ -3798,7 +3798,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:governance",
                 "class": "trust-engine"
               }
             ]
@@ -5499,7 +5499,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:governance",
                 "class": "trust-engine"
               }
             ]
@@ -5796,7 +5796,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:inventory;cswp39:observability",
                 "class": "trust-engine"
               }
             ]
@@ -5823,7 +5823,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:observability",
                 "class": "trust-engine"
               }
             ]
@@ -6876,7 +6876,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:governance",
                 "class": "trust-engine"
               }
             ]
@@ -6903,7 +6903,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:governance",
                 "class": "trust-engine"
               }
             ]
@@ -7632,7 +7632,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:governance",
                 "class": "trust-engine"
               }
             ]
@@ -7659,7 +7659,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:governance",
                 "class": "trust-engine"
               }
             ]
@@ -7686,7 +7686,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:governance",
                 "class": "trust-engine"
               }
             ]
@@ -7821,7 +7821,7 @@
               },
               {
                 "name": "cswp39-tags",
-                "value": "",
+                "value": "cswp39:governance",
                 "class": "trust-engine"
               }
             ]
