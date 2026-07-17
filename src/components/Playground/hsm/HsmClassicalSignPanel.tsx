@@ -48,7 +48,11 @@ const CLASSIC_MODES: { id: ClassicMode; label: string; spec: string }[] = [
   { id: 'ecdsa', label: 'ECDSA', spec: 'PKCS#11 v3.2 §2.3.1 — CKM_ECDSA_SHA*' },
   { id: 'eddsa', label: 'EdDSA', spec: 'PKCS#11 v3.2 §2.3.6 — CKM_EDDSA / CKM_EDDSA_PH' },
   { id: 'xmss', label: 'XMSS', spec: 'PKCS#11 v3.2 — CKM_XMSS / CKK_XMSS' },
-  { id: 'lms', label: 'LMS', spec: 'PKCS#11 v3.2 — CKM_LMS / CKK_HSS' },
+  {
+    id: 'lms',
+    label: 'LMS',
+    spec: 'PKCS#11 v3.2 §6.14 — CKM_HSS / CKK_HSS (single-level; the spec has no standalone CKM_LMS codepoint)',
+  },
 ]
 
 const RSA_SIGN_MECHS = [
