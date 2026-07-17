@@ -37,10 +37,12 @@ const SPEC_EXTRACT_TAG_PATCHES: Record<string, number> = {
   ExternalMu: 0x4201c9,
   Random: 0x4201ca,
   // §6.1.62 Validate / §6.1.6 Certify / §6.1.50 Re-certify (Certificate
-  // Services, WP5) — also absent from the spec-extraction JSON. Values
-  // cross-checked against `pqctoday-hsm/kmip/src/kmip30/wire.rs`'s own
-  // `tags::*` constants (the decoder these requests are built to match),
-  // not re-derived independently.
+  // Services, WP5) — these 7 ARE present in the spec-extraction JSON under
+  // their spaced names ("Certificate Value", …), so this patch is redundant
+  // with `norm()`-based lookup; kept as an explicit, independently-verified
+  // cross-check against `pqctoday-hsm/kmip/src/kmip30/wire.rs`'s own
+  // `tags::*` constants (the decoder these requests are built to match).
+  // Values match both sources exactly.
   CertificateValue: 0x42001e,
   CertificateRequestType: 0x420019,
   CertificateRequest: 0x420018,
@@ -97,10 +99,22 @@ const SPEC_EXTRACT_PATCHES: Record<string, Record<string, number>> = {
     'ML-DSA-44-RSA2048-PSS': 0x80000066,
     'ML-DSA-65-ECDSA-P256': 0x80000067,
     'ML-DSA-87-ECDSA-P384': 0x80000068,
+    // WD19 hybrid KEMs — real OASIS codepoints (0x5C/0x5D), just newer than
+    // the vendored spec-extraction JSON's CSD01 baseline (stops at 0x4A).
+    // Matches kmip/src/kmip30/algos.rs's KmipAlgorithm::X25519MlKem768 /
+    // SecP256r1MlKem768 exactly.
+    X25519MLKEM768: 0x0000005c,
+    SecP256r1MLKEM768: 0x0000005d,
+  },
+  RevocationReasonCode: {
+    // Spec member is "Cessation of Operation" (lowercase "of"), which norms
+    // to a different key than this op-template's option string — same
+    // case-sensitive-norm trap as the Operation patch table above.
+    CessationOfOperation: 0x00000006,
   },
   Operation: {
     ReKey: 0x00000004,
-    ReKeyKeyPair: 0x0000001e,
+    ReKeyKeyPair: 0x0000001d,
     ReCertify: 0x00000007,
     Encapsulate: 0x00000041,
     Decapsulate: 0x00000042,

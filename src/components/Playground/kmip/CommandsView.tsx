@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 // CommandsView — "Reference": a category-sorted, individually-parameterized
-// tester for every KMIP 3.0 operation (all 66 the protocol defines), built
-// entirely on the generic op-template pipeline (src/wasm/kmip/ttlv/) rather
-// than a Rust match arm per op. Every Run button fires a REAL request
+// tester for every KMIP 3.0 operation (all 66 the WD19 draft defines — 64 in
+// the published-3.0/CSD01 baseline plus WD19's Encapsulate/Decapsulate),
+// built entirely on the generic op-template pipeline (src/wasm/kmip/ttlv/)
+// rather than a Rust match arm per op. Every Run button fires a REAL request
 // through the same dispatcher path the Agility tab uses — including the 4
 // permanently-unsupported ops (out of scope, not a wasm32 backend gap —
 // since the pure-Rust cert-ops port, Certify/Re-certify/Validate are real
@@ -110,15 +111,24 @@ function OpRow({
   const [running, setRunning] = useState(false)
   const [wireTab, setWireTab] = useState<'request' | 'response'>('response')
   const [showRawHex, setShowRawHex] = useState(false)
+  // A build/encode failure (bad enum value, unknown tag — a template- or
+  // field-authoring bug) throws instead of returning a `RunResult`; before
+  // this catch existed it vanished silently, leaving the Run button looking
+  // like it did nothing. A real KMIP rejection is never a throw (see
+  // `runOp`'s doc comment) so this only ever fires for that class of bug.
+  const [encodeError, setEncodeError] = useState<string | null>(null)
 
   const run = () => {
     if (!table) return
     setRunning(true)
+    setEncodeError(null)
     try {
       onRun(
         template.op,
         runOp(engine, table, template.op, template.build(values), template.headerBuild?.(values))
       )
+    } catch (e) {
+      setEncodeError(e instanceof Error ? e.message : String(e))
     } finally {
       setRunning(false)
     }
@@ -191,6 +201,12 @@ function OpRow({
           >
             {running ? <Loader2 size={12} className="animate-spin" /> : <Play size={12} />} Run
           </Button>
+
+          {encodeError && (
+            <div className="rounded-lg border border-destructive/40 bg-destructive/10 p-2 text-[11px] text-destructive">
+              <span className="font-semibold">Couldn't build this request:</span> {encodeError}
+            </div>
+          )}
 
           {lastResult && (
             <div className="rounded-lg border border-border bg-muted/30 p-2">

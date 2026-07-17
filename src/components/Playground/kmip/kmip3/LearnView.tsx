@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 // LearnView — the KMIP3.0 tab's "Learn" sub-tab (first position, the
-// on-ramp): nine guided walkthroughs, each running real KMIP 3.0
+// on-ramp): ten guided walkthroughs, each running real KMIP 3.0
 // operations against the live WASM engine — six classical→PQC comparisons
 // via `engine.runOp(spec)` (the same call `KmipPlaygroundView.tsx`'s
-// `run()` makes), plus three engine-0.12/0.13 lessons (split custody,
-// async jobs, honesty) whose steps outside `run_op`'s friendly union run
-// through the same raw-TTLV pipeline the Commands tab uses. The
+// `run()` makes), plus four engine-addition lessons (split custody, async
+// jobs, honesty, certificate services) whose steps outside `run_op`'s
+// friendly union run through the same raw-TTLV pipeline the Commands tab
+// uses. The
 // "Modernize" CTA never mutates the classical key in place — it always
 // runs a brand-new CreateKeyPair and shows the result as a parallel
 // comparison; in-place algorithm conversion isn't how KMIP or real crypto

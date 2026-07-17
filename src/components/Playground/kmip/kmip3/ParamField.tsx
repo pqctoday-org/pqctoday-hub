@@ -9,13 +9,13 @@ import { useEffect } from 'react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
-import { ALGORITHMS } from '@/wasm/kmip/kmipMeta'
+import { ALGORITHMS, AUTO_ALGO } from '@/wasm/kmip/kmipMeta'
 import type { OpParam } from '@/wasm/kmip/ttlv/opTemplates'
 import { Term } from './Term'
 
 /** Maps a param's `key` to the KMIP wire tag it carries, so the Reference
  * tab's field labels are glossary-aware (hover/focus → rail pin) same as
- * wire-tree tag names — covers the recurring param keys across the 64 op
+ * wire-tree tag names — covers the recurring param keys across the 66 op
  * forms; a key with no entry just renders an un-hinted label. */
 const PARAM_TAG: Record<string, string> = {
   uid: 'UniqueIdentifier',
@@ -92,7 +92,16 @@ export function ParamField({
       <div>
         <FieldLabel param={param} />
         <FilterDropdown
-          items={ALGORITHMS.map((a) => ({ id: a.value, label: a.label }))}
+          // This is a RAW op form — it encodes straight to a wire
+          // CryptographicAlgorithm enum, unlike the policy-plane pickers
+          // (Migration/Learn) that also use `ALGORITHMS` and can meaningfully
+          // offer "Auto" or a spec-only algorithm to show a policy verdict.
+          // Here there's no policy layer to catch it, so both would just
+          // throw an unencodable-value error — filter to what this form can
+          // actually send.
+          items={ALGORITHMS.filter((a) => a.value !== AUTO_ALGO && a.runnable !== false).map(
+            (a) => ({ id: a.value, label: a.label })
+          )}
           selectedId={value}
           onSelect={onChange}
           size="sm"

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-// learnLessons.ts — the 9 guided lessons driving the Learn tab. Content
+// learnLessons.ts — the 10 guided lessons driving the Learn tab. Content
 // ported from the design handoff's cacp3-lessons-data.js (prose/structure
 // verbatim), re-pointed at real `OpSpec` fields per the handoff's verified
 // engine-wiring mapping: `RSA-3072`→`{algorithm:'RSA',length:3072}`,
@@ -347,7 +347,7 @@ export const LESSONS: Lesson[] = [
         },
       ],
       prose:
-        'That\'s as far as the wire protocol goes for ECDH. There is no KMIP operation that "runs the agreement" — each side Gets the other\'s public key and computes the shared secret with local elliptic-curve math. Nothing resembling Encapsulate/Decapsulate carries the secret over the wire.',
+        "That's as far as this demo's wire flow goes for ECDH: each side Gets the other's public key and computes the shared secret with local elliptic-curve math. KMIP does have an operation that CAN run the agreement server-side — Derive Key with Derivation Method = Asymmetric Key (§6.1.18, and this engine implements it) — but even that carries no ciphertext over the wire; it just references the two already-known key UIDs. Nothing resembling Encapsulate/Decapsulate's wire-carried secret exists for ECDH either way.",
     },
     modernize: {
       algorithm: 'ML-KEM-768',
@@ -387,7 +387,7 @@ export const LESSONS: Lesson[] = [
     },
     compare: [
       {
-        label: 'Wire operations for the actual agreement',
+        label: 'Wire operations in this demo',
         a: '0 (computed locally after Get)',
         b: '2 new ops — Encapsulate, Decapsulate',
         same: false,
@@ -475,7 +475,7 @@ export const LESSONS: Lesson[] = [
         label: 'Security basis',
         a: 'Integer factorization',
         b: 'Module lattice',
-        c: 'Hash collision-resistance only',
+        c: 'Hash-function security only',
       },
       {
         label: 'Typical use',
@@ -485,8 +485,8 @@ export const LESSONS: Lesson[] = [
       },
     ],
     notes: [
-      "SLH-DSA's ENTIRE security argument is \"the hash function resists collisions\" — no lattice assumption, no number theory. That's the most conservative assumption cryptography has; it's also why the signature is huge (~17 KB for the fast/128f parameter set) and signing is slow.",
-      "CNSA 2.0 explicitly allows single-tree LMS/XMSS and SLH-DSA for firmware signing precisely because of this conservative assumption — see the Agility tab's CNSA 2.0 policy.",
+      "SLH-DSA's ENTIRE security argument rests on the hash function's own security (preimage/PRF-type properties — the design is deliberately collision-RESILIENT, not collision-resistant) — no lattice assumption, no number theory. That's the most conservative assumption class cryptography has; it's also why the signature is huge (~17 KB for the fast/128f parameter set) and signing is slow.",
+      "CNSA 2.0 explicitly allows single-tree LMS/XMSS for firmware signing precisely because of this conservative assumption class (and denies multi-tree HSS/XMSS-MT) — but SLH-DSA itself isn't CNSA-approved: NSA's CNSA 2.0 FAQ excludes it from any NSS use. It's FIPS 205-standardized and shares the same hash-only assumption, just not on NSA's approved list. See the Agility tab's CNSA 2.0 policy.",
     ],
     whyItMatters:
       'Keep both in your portfolio: ML-DSA for everyday signing (smaller, faster), SLH-DSA where you sign rarely, verify often, and want the most conservative assumption possible — or simply want a second, mathematically-unrelated scheme as a hedge against a future ML-DSA break.',
@@ -576,7 +576,7 @@ export const LESSONS: Lesson[] = [
     title: 'Hedging your bets: hybrid key establishment',
     blurb: 'X25519MLKEM768 — one op, two algorithms, secure if either survives.',
     setup:
-      "PQC math is new — decades newer than RSA/ECC's battle-testing. During the transition, several regulators (BSI, and NSA's own CNSA 2.0 transition guidance) want BOTH a classical and a PQC algorithm protecting the same secret, so a break in either alone isn't enough.",
+      "PQC math is new — decades newer than RSA/ECC's battle-testing. During the transition, some regulators (Germany's BSI, notably) want BOTH a classical and a PQC algorithm protecting the same secret, so a break in either alone isn't enough — NSA's CNSA 2.0 guidance actually takes the opposite stance: it has enough confidence in the PQC algorithms alone that it discourages hybrid except where a protocol standard already mandates it, citing the extra complexity and a second future transition.",
     classical: {
       algorithm: 'ML-KEM-768',
       algoLabel: "ML-KEM-768 alone (Lesson 3's result)",
@@ -820,7 +820,7 @@ export const LESSONS: Lesson[] = [
       { label: 'Digest value', a: 'SHA-256("hello")', b: 'the same bytes', same: true },
     ],
     notes: [
-      'Almost every operation is eligible — the spec says any MAY be processed asynchronously. The exceptions are the async-management ops themselves and the trivial negotiation ops (Query / DiscoverVersions / Ping).',
+      "Almost every operation is eligible — the spec says any MAY be processed asynchronously, at the server's discretion (§9.1). The only two ops the spec explicitly rules out are Poll and Cancel themselves — their own responses can never be asynchronous. Everything else, including Process, QueryAsynchronousRequests, and the negotiation ops, is the server's call.",
       "Cancel is honest about its race: a job that already started executing may finish anyway — the response tells you which way it went, never pretends. Try it from the Commands tab's Asynchronous Processing category.",
     ],
     whyItMatters:
