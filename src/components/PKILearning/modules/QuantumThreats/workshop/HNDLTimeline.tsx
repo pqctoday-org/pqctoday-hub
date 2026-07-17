@@ -3,18 +3,19 @@ import React, { useState, useMemo } from 'react'
 import { CRQC_ESTIMATES } from '../data/quantumConstants'
 import { Button } from '@/components/ui/button'
 
+const CURRENT_YEAR = new Date().getFullYear()
+
 export const HNDLTimeline: React.FC = () => {
   const [dataLifetime, setDataLifetime] = useState(25)
   const [migrationTime, setMigrationTime] = useState(5)
   const [crqcYear, setCrqcYear] = useState(2035)
-  const currentYear = 2026
 
   const migrationDeadline = useMemo(
     () => crqcYear - dataLifetime - migrationTime,
     [crqcYear, dataLifetime, migrationTime]
   )
 
-  const yearsRemaining = useMemo(() => migrationDeadline - currentYear, [migrationDeadline])
+  const yearsRemaining = useMemo(() => migrationDeadline - CURRENT_YEAR, [migrationDeadline])
 
   const urgencyLevel = useMemo(() => {
     if (yearsRemaining < 0) return 'overdue'
@@ -54,8 +55,8 @@ export const HNDLTimeline: React.FC = () => {
   const urgency = urgencyConfig[urgencyLevel]
 
   // Timeline visualization points
-  const timelineStart = Math.min(currentYear - 5, migrationDeadline - 2)
-  const timelineEnd = Math.max(crqcYear + 5, currentYear + 15)
+  const timelineStart = Math.min(CURRENT_YEAR - 5, migrationDeadline - 2)
+  const timelineEnd = Math.max(crqcYear + 5, CURRENT_YEAR + 15)
   const timelineRange = timelineEnd - timelineStart
 
   const getPosition = (year: number) => ((year - timelineStart) / timelineRange) * 100
@@ -98,6 +99,16 @@ export const HNDLTimeline: React.FC = () => {
             <span>1 year</span>
             <span>75 years</span>
           </div>
+          {/* Illustrative quick-pick presets showing the REALISTIC RANGE of data
+              secrecy lifetimes across sectors — deliberately NOT numerically
+              identical to SectorExposureHero's live per-threat X (auto-inferred
+              from the Threats CSV's `industry` field) or moscaClock's SECTORS
+              table (the simulation's own illustrative planning anchors,
+              provenance:'planning'). All three surfaces answer a related but
+              distinct question; see each file's own comment before "fixing"
+              one to match another. No single authoritative source publishes
+              one canonical number per sector — these are informed planning
+              ranges, not cited facts (2026-07-16 accuracy audit). */}
           <div className="mt-3 flex flex-wrap gap-2">
             {[
               { label: 'Email', years: 5 },
@@ -261,13 +272,15 @@ export const HNDLTimeline: React.FC = () => {
           {/* Current year marker */}
           <div
             className="absolute top-0 bottom-0 flex flex-col items-center"
-            style={{ left: `${getPosition(currentYear)}%` }}
+            style={{ left: `${getPosition(CURRENT_YEAR)}%` }}
           >
             <div className="text-[10px] font-bold text-primary whitespace-nowrap -translate-x-1/2">
               Today
             </div>
             <div className="w-0.5 flex-1 bg-primary" />
-            <div className="text-[10px] font-bold text-primary -translate-x-1/2">{currentYear}</div>
+            <div className="text-[10px] font-bold text-primary -translate-x-1/2">
+              {CURRENT_YEAR}
+            </div>
           </div>
 
           {/* CRQC marker */}
