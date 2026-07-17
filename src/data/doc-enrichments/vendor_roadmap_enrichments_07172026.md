@@ -2743,3 +2743,26 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-255_Quantum_eMotion_Inc.html (72.7 KB)
 - **Extraction Timestamp**: 2026-07-17T11:46:05
 
+
+## VND-092 — Algorand Foundation
+
+- **Vendor ID**: VND-092
+- **Vendor Name**: Algorand Foundation
+- **Roadmap Title**: Algorand Post-Quantum Cryptography Roadmap
+- **Roadmap URL**: https://algorand.co/blog/algorand-post-quantum-cryptography-roadmap
+- **Publish Date**: 2026-07-17
+- **Local File**: vendor-roadmaps/VND-092_Algorand_Foundation.html
+- **CSV Coverage Notes**: None
+- **PQC Algorithms Announced**: Falcon-1024; Falcon-512; FN-DSA; ML-DSA
+- **Target Migration Dates**: Native post-quantum accounts in Q3 2026; Native Falcon-512 support by year’s end 2026; Native multisig support for multi-cryptography schemes by end of 2026; Broad quantum resilience by 2027
+- **Products / Services Covered**: Algorand protocol; Algorand Virtual Machine (AVM); Pera Wallet; AlgoKit; Trezor Safe 5
+- **Compliance Frameworks**: NIST; BIP39; BIP32; BIP44
+- **Hybrid Mode Support**: Yes, the document states Algorand will operate under a hybrid model for consensus messages using both Ed25519 and Falcon signatures, and supports hybrid accounts merging ECC-based and lattice-based keys.
+- **Current GA Status**: Planned
+- **Customer Action Required**: None detected
+- **Key Commitments & Quotes**: "Native support for post-quantum accounts will be introduced in the Q3 2026 protocol release."; "Algorand will operate under a hybrid model for a while, where both Ed25519 and Falcon signatures will be used for consensus messages."; "Targets Broad Quantum Resilience by 2027"
+- **Coverage Verification**: CONSISTENT, the document provides a detailed roadmap for PQC implementation on the Algorand protocol, which aligns with the lack of specific CSV coverage notes.
+- **Extraction Quality**: HIGH
+- **Source Document**: VND-092_Algorand_Foundation.html (191.2 KB)
+- **Extraction Timestamp**: 2026-07-17T11:50:23
+
