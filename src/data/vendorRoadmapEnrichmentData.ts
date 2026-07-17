@@ -71,10 +71,29 @@ function parseEnrichmentFile(raw: string): Map<string, VendorRoadmapEnrichment> 
   return result
 }
 
+// FIXED 2026-07-16 (migrate-process remediation Phase 5, U9): this used to
+// merge in Object.values(modules) order — import.meta.glob keys sort
+// lexicographically by path, which is wrong for MMDDYYYY_rN filenames across
+// a year/month boundary ("01152027" < "12312026" as strings, backwards
+// chronologically). A later-dated file could silently lose to an
+// earlier-dated one. Same bug class already fixed across the priv Python
+// tooling 2026-07-11; this TS loader was missed then.
+export function parseFileDate(path: string): { date: number; rev: number } {
+  const m = path.match(/_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.md$/)
+  if (!m) return { date: 0, rev: 0 }
+  const [, mm, dd, yyyy, rev] = m
+  return { date: Date.UTC(Number(yyyy), Number(mm) - 1, Number(dd)), rev: Number(rev ?? 0) }
+}
+
 function buildEnrichmentMap(): Map<string, VendorRoadmapEnrichment> {
   const merged = new Map<string, VendorRoadmapEnrichment>()
-  for (const raw of Object.values(modules)) {
-    for (const [id, enrichment] of parseEnrichmentFile(raw)) {
+  const orderedPaths = Object.keys(modules).sort((a, b) => {
+    const da = parseFileDate(a)
+    const db = parseFileDate(b)
+    return da.date - db.date || da.rev - db.rev
+  })
+  for (const path of orderedPaths) {
+    for (const [id, enrichment] of parseEnrichmentFile(modules[path])) {
       merged.set(id, enrichment)
     }
   }

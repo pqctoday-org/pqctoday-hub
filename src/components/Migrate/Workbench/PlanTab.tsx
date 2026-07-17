@@ -55,6 +55,22 @@ function PlanProductRow({
           <span className="inline-block w-6 shrink-0" aria-hidden />
         )}
         <span className="min-w-0 flex-1 text-sm font-semibold text-foreground">{productName}</span>
+        {/* FIXED 2026-07-16 (migrate-process remediation Phase 5, U4, scoped):
+            `choice` stores the product's NAME, so a rename or deprecation
+            silently orphans this entry — it used to just lose its expander
+            with no explanation, reading as "no detail available" rather
+            than "the catalog moved on". Note: this entry also silently
+            drops out of useSelectedProductIds()'s count (that fix needs
+            storing productId in the store itself — a bigger, deferred
+            change; this is the display-only half). */}
+        {!product && (
+          <span
+            className="shrink-0 text-[10px] font-medium text-status-warning"
+            title="This product's name no longer matches the catalog (renamed or removed) — its detail can't be shown here."
+          >
+            No longer in catalog
+          </span>
+        )}
         <Button
           variant="ghost"
           size="sm"
