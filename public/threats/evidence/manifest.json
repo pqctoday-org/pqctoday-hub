@@ -6,12 +6,12 @@
     "download_status": "ok",
     "evidence_file": "threats/AERO-002.pdf",
     "content_type": "application/pdf",
-    "size_bytes": 586858,
+    "size_bytes": 1020401,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "7b074cfafa4b48754acbe96de915bc3196f20efe3148e415bf83558dda482bc7"
   },
   {
     "threat_id": "AERO-003",
@@ -33,12 +33,12 @@
     "download_status": "ok",
     "evidence_file": "threats/AUTO-001.html",
     "content_type": "text/html",
-    "size_bytes": 90867,
+    "size_bytes": 96409,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "d45359cf51639fe3b053edf6a1f2f8c6d722a577d6b347def0a0302a5498726c"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "8d20455e7a5a370bded2669ad30f0601eb78514f0e70facd0d4b8d44719428a3"
   },
   {
     "threat_id": "AUTO-002",
@@ -47,12 +47,12 @@
     "download_status": "ok",
     "evidence_file": "threats/AUTO-002.html",
     "content_type": "text/html",
-    "size_bytes": 9977,
+    "size_bytes": 15274,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "ec365681e1fb601026af948c1171fdf35b33b5b43a8aeb7f1e0928905e99bc6d"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "2492806ac427d31942db1967714a3bfbe6b1c3d736ddd2d35312d7c0c26c6a21"
   },
   {
     "threat_id": "AUTO-003",
@@ -61,12 +61,12 @@
     "download_status": "ok",
     "evidence_file": "threats/AUTO-003.html",
     "content_type": "text/html",
-    "size_bytes": 561847,
+    "size_bytes": 565911,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "780653c09ba43e826e469154fa1ac2919b3a5dacaf28fa5c6a42c5de16cb38e4"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "e8e31f55705e9596acbcc19eeea6e7026f322a54ffcb0a2116eb7eeed0205770"
   },
   {
     "threat_id": "AUTO-004",
@@ -75,12 +75,12 @@
     "download_status": "ok",
     "evidence_file": "threats/AUTO-004.html",
     "content_type": "text/html",
-    "size_bytes": 90867,
+    "size_bytes": 96409,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "d45359cf51639fe3b053edf6a1f2f8c6d722a577d6b347def0a0302a5498726c"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "8d20455e7a5a370bded2669ad30f0601eb78514f0e70facd0d4b8d44719428a3"
   },
   {
     "threat_id": "CLOUD-001",
@@ -89,12 +89,12 @@
     "download_status": "ok",
     "evidence_file": "threats/CLOUD-001.html",
     "content_type": "text/html",
-    "size_bytes": 98040,
+    "size_bytes": 85668,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "afa4feacfc6b30ff32c7609e442e3db1b8555c13ddc3df831aeeaa5c412bd327"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "bbaec8edf7bc019ed48f8a58e95d4b3a1f86d95d9eb2907ba286f95859141788"
   },
   {
     "threat_id": "CLOUD-002",
@@ -103,12 +103,12 @@
     "download_status": "ok",
     "evidence_file": "threats/CLOUD-002.html",
     "content_type": "text/html",
-    "size_bytes": 98040,
+    "size_bytes": 85668,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "afa4feacfc6b30ff32c7609e442e3db1b8555c13ddc3df831aeeaa5c412bd327"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "34d9cd9e46ec5ac27287d28bead335d1c36e8f4aa9fd4ccc24e69a9a5063d482"
   },
   {
     "threat_id": "CLOUD-003",
@@ -201,9 +201,9 @@
     "size_bytes": 45146,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "6fc4844c3ac579384f9ca67c897d9fddf0f681c16abedbde1dbefea86749b5e4"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "3d701a960c6f0073d9fb8f6649c6c8a12334bae27d686eb2c6bf8f9b99b37dc6"
   },
   {
     "threat_id": "CROSS-006",
@@ -226,12 +226,12 @@
     "download_status": "ok",
     "evidence_file": "threats/CROSS-007.html",
     "content_type": "text/html",
-    "size_bytes": 48836,
+    "size_bytes": 50242,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "63dbfc878ba9a13eb708a078d554a2083efb4366ffc1ac9ecdd0bd8122806cb9"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "50b9f23443182c131381d814bc585c41534e22fed9d80a905961e7dfe09d47fd"
   },
   {
     "threat_id": "CROSS-008",
@@ -243,9 +243,9 @@
     "size_bytes": 44071,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "63e0bf146f4a842bacd93fea28c6c450c7ae12f701b5dd9728d989cf37adeb34"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "0bc5ef35e1c874ae59d6fa456f46b3df9a7c10149a51a27278eb2b432d5f0cb9"
   },
   {
     "threat_id": "CRYPTO-001",
@@ -254,12 +254,12 @@
     "download_status": "ok",
     "evidence_file": "threats/CRYPTO-001.html",
     "content_type": "text/html",
-    "size_bytes": 88833,
+    "size_bytes": 88860,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "331934afddfe7ee3a1aa3e1a2ccad602959862ebdfd3511e14257dbe0d95a6f6"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "aa0d9a13d3514982c455e0b38ca6839d02e78f5a6a71449e264edbd934b9f4bf"
   },
   {
     "threat_id": "CRYPTO-002",
@@ -268,12 +268,12 @@
     "download_status": "ok",
     "evidence_file": "threats/CRYPTO-002.html",
     "content_type": "text/html",
-    "size_bytes": 360726,
+    "size_bytes": 363044,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "0388ad72b6da02e431f587a80c1d24268e26abf494436f0ff302f291ef55c2d5"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "3862f8cbaf027b9e12afa2198071e71bfa39a7491af684495ce6dc8e465c2e79"
   },
   {
     "threat_id": "CRYPTO-003",
@@ -282,12 +282,12 @@
     "download_status": "ok",
     "evidence_file": "threats/CRYPTO-003.html",
     "content_type": "text/html",
-    "size_bytes": 88833,
+    "size_bytes": 88860,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "2cc4680fba66e725a0c5b8e8456ba304b316bdd00b936625cb0729eb2ff722ac"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "bf64015dae84858f9d4039b2bdc013075f5c02c9b038c96fb04c08d8fcfb0863"
   },
   {
     "threat_id": "CRYPTO-004",
@@ -296,12 +296,12 @@
     "download_status": "ok",
     "evidence_file": "threats/CRYPTO-004.html",
     "content_type": "text/html",
-    "size_bytes": 232263,
+    "size_bytes": 230045,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "9c9309558786b25b234b3590c2d0b05bfdfa74a6048480e97a121de1edd3fa7f"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "83847d43f1c99a60144b971173b75d02aadb68b4caacff4bdc061e550a2d47cc"
   },
   {
     "threat_id": "ENERGY-001",
@@ -310,12 +310,12 @@
     "download_status": "ok",
     "evidence_file": "threats/ENERGY-001.html",
     "content_type": "text/html",
-    "size_bytes": 433742,
+    "size_bytes": 427984,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "cff3c721f67108d475f6abfe2396f12ce2e19798ed0a3754688823577a45f3f7"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "3e4982eb1d9b51a5c366fbd8556c87be3a94bff908f217b48765f6338889c25e"
   },
   {
     "threat_id": "ENERGY-002",
@@ -327,9 +327,9 @@
     "size_bytes": 81505,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "bf7872b9fb421f1649ba08cfc5d29041ece4e4d73ab48b3082d19c88f137e478"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "903e6fe5f93860c610c377b68192ead38ac3f12e44bce413ff441c90575b2650"
   },
   {
     "threat_id": "ENERGY-003",
@@ -338,12 +338,12 @@
     "download_status": "ok",
     "evidence_file": "threats/ENERGY-003.html",
     "content_type": "text/html",
-    "size_bytes": 138997,
+    "size_bytes": 139717,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "09f93059630f9a58e1b7d0d5530de96c075f48fe1c7ac1226f5910f613f95e87"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "49bf37648a039746316ea5969447e55b4d19a73240a4180f01db5e7def3e5732"
   },
   {
     "threat_id": "ENERGY-004",
@@ -352,12 +352,12 @@
     "download_status": "ok",
     "evidence_file": "threats/ENERGY-004.html",
     "content_type": "text/html",
-    "size_bytes": 93027,
+    "size_bytes": 93028,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "68d9a0ff7ca6520d5ea8c6bf7b8b9d051814ca3e44e68d9d5a05fcb4475f52c3"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "57c70e249b0ffc754e8bfc0a17c1c2a1586c9f4fbdd172d088382eca351997cc"
   },
   {
     "threat_id": "FIN-001",
@@ -380,12 +380,12 @@
     "download_status": "ok",
     "evidence_file": "threats/FIN-002.html",
     "content_type": "text/html",
-    "size_bytes": 88833,
+    "size_bytes": 88860,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "dd3801864eab751bc03ead881d9bf05e2aab81ce514026ba10a160451217aae6"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "d8054808031e0653b2ee38ba296653d2304504ef03998d99ca507f41746c0e55"
   },
   {
     "threat_id": "FIN-003",
@@ -408,12 +408,12 @@
     "download_status": "ok",
     "evidence_file": "threats/FIN-004.pdf",
     "content_type": "application/pdf",
-    "size_bytes": 4458346,
+    "size_bytes": 1586005,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "5e6b9093b84007b973097d20126a3768ea2f0a1d4200255c849b0fb3bf04ebc7"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "22b4a77f21cf780a04d33ab48c6f811511209cc57120fe3cff490ae9b7be2252"
   },
   {
     "threat_id": "FIN-005",
@@ -422,12 +422,12 @@
     "download_status": "ok",
     "evidence_file": "threats/FIN-005.html",
     "content_type": "text/html",
-    "size_bytes": 72364,
+    "size_bytes": 37763,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "9504a0de26b596c439d81091b8813383e426580c9925b5bd309dcce2f6208c0b"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "27757bbdab5697e7a46e101446225d2c1f61eef7c770cbcc85486689b826d1e7"
   },
   {
     "threat_id": "AUS-FIN-001",
@@ -462,12 +462,12 @@
     "download_status": "ok",
     "evidence_file": "threats/GOV-001.pdf",
     "content_type": "application/pdf",
-    "size_bytes": 586858,
+    "size_bytes": 1020401,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "7b074cfafa4b48754acbe96de915bc3196f20efe3148e415bf83558dda482bc7"
   },
   {
     "threat_id": "GOV-002",
@@ -476,12 +476,12 @@
     "download_status": "ok",
     "evidence_file": "threats/GOV-002.pdf",
     "content_type": "application/pdf",
-    "size_bytes": 586858,
+    "size_bytes": 1020401,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "7b074cfafa4b48754acbe96de915bc3196f20efe3148e415bf83558dda482bc7"
   },
   {
     "threat_id": "GOV-003",
@@ -493,9 +493,9 @@
     "size_bytes": 72793,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "e434120154a18a5ca48c7b19da9ad8e6a2f11e1674faf07422e106c7864856bd"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "8fab848f4ccdce59bca37606ccab7eb975f858ea80098fbd48db0ac6ca04af12"
   },
   {
     "threat_id": "GOV-004",
@@ -504,12 +504,12 @@
     "download_status": "ok",
     "evidence_file": "threats/GOV-004.html",
     "content_type": "text/html",
-    "size_bytes": 156673,
+    "size_bytes": 156739,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "d39f11198c0e2fa07ec1802bf3b08bdf95f86f0859d34d070cb24039727506e3"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "f15c6d85f70ca81ba747bbc0fdc911cbeaeb1468642ee29bf0fd367ef298d3b0"
   },
   {
     "threat_id": "GOV-005",
@@ -518,12 +518,12 @@
     "download_status": "ok",
     "evidence_file": "threats/GOV-005.pdf",
     "content_type": "application/pdf",
-    "size_bytes": 586858,
+    "size_bytes": 1020401,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "7b074cfafa4b48754acbe96de915bc3196f20efe3148e415bf83558dda482bc7"
   },
   {
     "threat_id": "AUS-GOV-001",
@@ -532,12 +532,12 @@
     "download_status": "ok",
     "evidence_file": "threats/AUS-GOV-001.html",
     "content_type": "text/html",
-    "size_bytes": 482288,
+    "size_bytes": 482289,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "0b57fc318de2a57b72acb0902efc1e600f79e6939ec62bcf3554045da9f51d48"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "f7f06f75d7d8f5121e174c756d1f8cb7c3a22b97fb78e1700bfd5aef807be614"
   },
   {
     "threat_id": "AUS-GOV-002",
@@ -563,9 +563,9 @@
     "size_bytes": 145863,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "becea40ff5f549651acc7b43738c011c50c48d7680e55259f054d51462ac72f4"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "0b993db08bbf282f45c92f3d6999d2c1d072ef6738b07e77e4f10ae4817f2362"
   },
   {
     "threat_id": "HLTH-002",
@@ -574,12 +574,12 @@
     "download_status": "ok",
     "evidence_file": "threats/HLTH-002.html",
     "content_type": "text/html",
-    "size_bytes": 234950,
+    "size_bytes": 1060848,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "9e23ec0501f5d48734872fe8cf269666728c6144cc8a4e1355b305f77d035241"
+    "fetch_tier": "playwright-stealth",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "66f4b06b888883902e16a4b31270f86f9db7618f0418aff47b7115c884668c24"
   },
   {
     "threat_id": "HLTH-003",
@@ -588,12 +588,12 @@
     "download_status": "ok",
     "evidence_file": "threats/HLTH-003.html",
     "content_type": "text/html",
-    "size_bytes": 36115,
+    "size_bytes": 36108,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "46e228a8ef455d3fa2525b0552320b7ad181410ec040f97588756087a27f1ccf"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "a85af9ab0733c3e40082627857cfa8ec21f2f4eca42dd2a8f713667f4e4e7ff0"
   },
   {
     "threat_id": "HLTH-004",
@@ -615,12 +615,12 @@
     "download_status": "ok",
     "evidence_file": "threats/HLTH-005.html",
     "content_type": "text/html",
-    "size_bytes": 46789,
+    "size_bytes": 46782,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "c00f8ff1f313398668cdf0d8159b28bfe9c209bb3d30a4d1fc108059b7379875"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "0207e9374175861c60eb7de60b08f975617624e092631ed510f24ec2faf90b99"
   },
   {
     "threat_id": "INS-001",
@@ -646,9 +646,9 @@
     "size_bytes": 205519,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "76c1e4180111f970df20a03447e31e744ba359631576d56acdad0540a89fa3ba"
+    "fetch_tier": "curl_cffi:chrome",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "22e0ad43672e3641366f42af15f8a1b2dda204c170438f50d57987ce6e63f429"
   },
   {
     "threat_id": "INS-003",
@@ -657,12 +657,12 @@
     "download_status": "ok",
     "evidence_file": "threats/INS-003.html",
     "content_type": "text/html",
-    "size_bytes": 106304,
+    "size_bytes": 96444,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "001032b37af2b91ae5a774ec05936dc2008c82436acca69c97e615ced6f2db43"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "f82b8db365bd3fd57dfb447a5eda67a2c82ac9e23fc49111e03a757a8cd450b1"
   },
   {
     "threat_id": "IOT-001",
@@ -671,12 +671,12 @@
     "download_status": "ok",
     "evidence_file": "threats/IOT-001.html",
     "content_type": "text/html",
-    "size_bytes": 333254,
+    "size_bytes": 333368,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "9a794053c73cfb8a7bb7c2d5f1cf48163ce7a41f38953221016c7d88494fe7c2"
+    "fetch_tier": "curl_cffi:chrome",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "9407a251cf575ad7dc1c9d053280eecf2975771af42084d210da0627ccb2d325"
   },
   {
     "threat_id": "IOT-002",
@@ -685,12 +685,12 @@
     "download_status": "ok",
     "evidence_file": "threats/IOT-002.html",
     "content_type": "text/html",
-    "size_bytes": 93027,
+    "size_bytes": 93028,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "68d9a0ff7ca6520d5ea8c6bf7b8b9d051814ca3e44e68d9d5a05fcb4475f52c3"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "57c70e249b0ffc754e8bfc0a17c1c2a1586c9f4fbdd172d088382eca351997cc"
   },
   {
     "threat_id": "IOT-003",
@@ -699,12 +699,12 @@
     "download_status": "ok",
     "evidence_file": "threats/IOT-003.html",
     "content_type": "text/html",
-    "size_bytes": 66687,
+    "size_bytes": 66356,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "bb3ad2d85e5352fbadfa69a4939e6c796dd09a156ed1d52353306504985d3057"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "b29e6c39ff2db10cb4c138c0c45bd47a478386a6b053b02129b3704efa1008e6"
   },
   {
     "threat_id": "IOT-004",
@@ -713,12 +713,12 @@
     "download_status": "ok",
     "evidence_file": "threats/IOT-004.html",
     "content_type": "text/html",
-    "size_bytes": 79901,
+    "size_bytes": 85303,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "55f5f9d02d6b655a0670e72498feab982b6c2ab369002022c2e487ffd6fca9c3"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "25a16c4b8eb71114cdb9968c5fded1c197203cc421e3125f9aa60332e2d38cc1"
   },
   {
     "threat_id": "IT-001",
@@ -727,12 +727,12 @@
     "download_status": "ok",
     "evidence_file": "threats/IT-001.html",
     "content_type": "text/html",
-    "size_bytes": 31826,
+    "size_bytes": 34496,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "409433928bfdf905587afed8ad4e69f7809f57a6c7c72511d2771b349be474ee"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "09bfd7b81332cb83f1b1b8a518491bceff811588abb9a9cc66d436d80d710a91"
   },
   {
     "threat_id": "IT-002",
@@ -741,12 +741,12 @@
     "download_status": "ok",
     "evidence_file": "threats/IT-002.html",
     "content_type": "text/html",
-    "size_bytes": 45496,
+    "size_bytes": 44365,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "b52e7305178558286167c24ac38a7faba15e59e93e603f2116074a191c5493d5"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "06912fdb80160b95429fc8ae08006a3ba10770c12586352e3c00b35c66665d71"
   },
   {
     "threat_id": "IT-003",
@@ -758,9 +758,9 @@
     "size_bytes": 61179,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "7d6c2067939884d553373b9244f6a22f195d25e4d97613e886e914876def8dcf"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "3e28a4c82f7413c88f800fc551dbc559527761641e3debd08185196fffb91b3f"
   },
   {
     "threat_id": "IT-004",
@@ -769,12 +769,12 @@
     "download_status": "ok",
     "evidence_file": "threats/IT-004.html",
     "content_type": "text/html",
-    "size_bytes": 25770,
+    "size_bytes": 25607,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "706663e55fbddb4820878ca55d976d35518a4f519452888d8e7bd586bdea2843"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "0534af68137bb9aa8709b1bd19e8acbd86de7236887a0d332cbe7d11fb08464a"
   },
   {
     "threat_id": "LEG-001",
@@ -797,12 +797,12 @@
     "download_status": "ok",
     "evidence_file": "threats/LEG-002.html",
     "content_type": "text/html",
-    "size_bytes": 835959,
+    "size_bytes": 835957,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "4ef8a1ec2a150bae887d77bcee53d6f4a0654508015501c92abae00577d5b7d3"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "6d44840401b444571fed85fb55c3e49317cbe358693139b6e1406fda263f5eaa"
   },
   {
     "threat_id": "LEG-003",
@@ -865,12 +865,12 @@
     "download_status": "ok",
     "evidence_file": "threats/MEDIA-003.html",
     "content_type": "text/html",
-    "size_bytes": 95719,
+    "size_bytes": 93369,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "85254c64187015ee83162cb48076c34355d13783d27b2c73f230c761e09bea98"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "bd07963bd4856af0ed0cc46d3ce0b1026d528bf324661ef3ca9a358fc9176ed6"
   },
   {
     "threat_id": "PCI-001",
@@ -879,12 +879,12 @@
     "download_status": "ok",
     "evidence_file": "threats/PCI-001.html",
     "content_type": "text/html",
-    "size_bytes": 208784,
+    "size_bytes": 163141,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "97e0a0b843be85b12064ef734662188456be1f647179488f4ead8f9c3595e471"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "fd3e34217c3839bfc37fc484a2e29ee66a71c9180d20723552b3b927ad556894"
   },
   {
     "threat_id": "PCI-002",
@@ -932,12 +932,12 @@
     "download_status": "ok",
     "evidence_file": "threats/RAIL-002.html",
     "content_type": "text/html",
-    "size_bytes": 91444,
+    "size_bytes": 96898,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "96400101bf5582222bbf57b97ebac9b7d70199f83e52a89464da91c35f43811b"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "03f4e45eba7c25cf9c1257dd527ba5abc68955f46345d2692947c0d55e29bfe1"
   },
   {
     "threat_id": "RETAIL-001",
@@ -973,12 +973,12 @@
     "download_status": "ok",
     "evidence_file": "threats/RETAIL-003.html",
     "content_type": "text/html",
-    "size_bytes": 221119,
+    "size_bytes": 100213,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "4bee9adf7cb92ef3f866973c871e70f60c6f23402624402274de2220ae8c151f"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "49e6979adc76b5bdd2e859c4621ee0d0126042bdaed3502e139d669546c7da8f"
   },
   {
     "threat_id": "SUPPLY-001",
@@ -987,12 +987,12 @@
     "download_status": "ok",
     "evidence_file": "threats/SUPPLY-001.html",
     "content_type": "text/html",
-    "size_bytes": 68535,
+    "size_bytes": 57115,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "f7fa0d8bb14a8333e7389e3635f338fe78bce000962f820804b572b21444d4fd"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "4a91d38942e5e625a33153d4b4aadc2fd4e4a93432209e6e91bbe7d2fabbf977"
   },
   {
     "threat_id": "SUPPLY-002",
@@ -1001,12 +1001,12 @@
     "download_status": "ok",
     "evidence_file": "threats/SUPPLY-002.html",
     "content_type": "text/html",
-    "size_bytes": 335418,
+    "size_bytes": 327674,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "9db3f096d0eadce8350df7fc24deb2bb6521d0cc824398c0c4706a72f57c7ace"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "75e3d6d4e2d6342781a99163acff39e8abf1a45a2fcdcd353830849a54a96dd7"
   },
   {
     "threat_id": "SUPPLY-003",
@@ -1015,12 +1015,12 @@
     "download_status": "ok",
     "evidence_file": "threats/SUPPLY-003.html",
     "content_type": "text/html",
-    "size_bytes": 68775,
+    "size_bytes": 67968,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "69a62771b95f09a0172d6fe89f9e451d5b161a91596de22d3dc18523bf9660b6"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "fcdcae36c08e4cfe8c543b4df0c3a7a487b59213f47e391a25e7869ba8744bfd"
   },
   {
     "threat_id": "TELCO-001",
@@ -1068,12 +1068,12 @@
     "download_status": "ok",
     "evidence_file": "threats/TELCO-004.html",
     "content_type": "text/html",
-    "size_bytes": 129814,
+    "size_bytes": 129816,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "7d408238c28ccaaf6a0441face50b332b1e47c827c21b0beb7f3883751e7472a"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "036c7a37869ad6df7c29762aa5ab3a7dcf415cbf38ca4b61c72c5b51debdf93f"
   },
   {
     "threat_id": "TELCO-005",
@@ -1082,12 +1082,12 @@
     "download_status": "ok",
     "evidence_file": "threats/TELCO-005.pdf",
     "content_type": "application/pdf",
-    "size_bytes": 546730,
+    "size_bytes": 245865,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "87543ef079c822f132caff42c4b7ad8b717ff4c56d86f705fa9238d02dfadfbe"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "5051a3f16a93075de5add823f36ab56e2fe7b19c946752f0397b1cae7b267525"
   },
   {
     "threat_id": "WATER-001",
@@ -1096,12 +1096,12 @@
     "download_status": "ok",
     "evidence_file": "threats/WATER-001.html",
     "content_type": "text/html",
-    "size_bytes": 359881,
+    "size_bytes": 75363,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "6b04834dabb4c9ae50e85d46b9c5c38d9d492f39c4fdb81c259f430124283788"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "ce27fbd6cc61baa794bfdec7202b3c8c7b9ced9c1888fec5a3610d5fc71bcfab"
   },
   {
     "threat_id": "WATER-002",
@@ -1110,12 +1110,12 @@
     "download_status": "ok",
     "evidence_file": "threats/WATER-002.html",
     "content_type": "text/html",
-    "size_bytes": 95174,
+    "size_bytes": 75062,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "173ade20c8f465c007a122fe8b72edf5da4f4a2de82d97324529194acb2ef2e9"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "203dd99381a22406ee1255657c763fa8e3ecc67f409a987742e1cda89664f40c"
   },
   {
     "threat_id": "EDU-001",
@@ -1127,9 +1127,9 @@
     "size_bytes": 133108,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "8218616e2e7bd4e92f1f7ad9ddd9f0f2b26e6cae1691f20239e5e9ff33792df5"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "58ca9ed839b97c6ea079a4bbc5da42421d66e4ef8745ae0b49c7353eb39b6a64"
   },
   {
     "threat_id": "EDU-002",
@@ -1138,12 +1138,12 @@
     "download_status": "ok",
     "evidence_file": "threats/EDU-002.html",
     "content_type": "text/html",
-    "size_bytes": 119473,
+    "size_bytes": 110628,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "8e6fb08a17332d8db17bfa7fd17d8137798d326e96bc966dfda7396511abd915"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "0429ff3d9429c65a6e7820a26bc00211face90ce6c48ad1840d281298e6fa10d"
   },
   {
     "threat_id": "EDU-003",
@@ -1179,12 +1179,12 @@
     "download_status": "ok",
     "evidence_file": "threats/EDU-005.html",
     "content_type": "text/html",
-    "size_bytes": 329049,
+    "size_bytes": 327480,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "24428b544a50ab9ead456b49e0a4827bbabd1393c6577f0537751098698e1596"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "298ab3a9d69fb726d1109b26c0bc5b04164cdfd118f5235ba0ba40437197039a"
   },
   {
     "threat_id": "CROSS-009",
@@ -1196,9 +1196,9 @@
     "size_bytes": 56705,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "c36a16afa3203069c08d715a94c3ab501e205f7386ed05aa41d3012fa5ce63f4"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "69eb172971aa2a263692928f7456f17d5976f8043e8302ae398df8551028ea65"
   },
   {
     "threat_id": "CROSS-010",
@@ -1207,12 +1207,12 @@
     "download_status": "ok",
     "evidence_file": "threats/CROSS-010.html",
     "content_type": "text/html",
-    "size_bytes": 326507,
+    "size_bytes": 347248,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "b4117f04a12dec76d5e60a7df1be60ef8fae8b687ddb4b6d4e6c147970ca61ef"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "cabd1948a98c3c3c253c85135fceb74898e1dd4a6fb5d90dde82304c5ff143ad"
   },
   {
     "threat_id": "CROSS-011",
@@ -1221,12 +1221,12 @@
     "download_status": "ok",
     "evidence_file": "threats/CROSS-011.html",
     "content_type": "text/html",
-    "size_bytes": 11489,
+    "size_bytes": 11334,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "1b3507cb36fcae533d1b8868e27cbdea07ec1cd27e9abcbe6d80882c4a050275"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "483c8097e5f0760d6d41bcf7e0f2dbf1942ab8eb136ea715623658d07ffde872"
   },
   {
     "threat_id": "CROSS-012",
@@ -1235,12 +1235,12 @@
     "download_status": "ok",
     "evidence_file": "threats/CROSS-012.html",
     "content_type": "text/html",
-    "size_bytes": 69142,
+    "size_bytes": 66677,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "9bcb38034447cfa5aec09253f7eafa1b9be0b4124b99f61ee4e98dfae527f553"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "3a060b675e7294bef0d103a5580e9849987f0121ac4bf5146cabde62ceb0fee5"
   },
   {
     "threat_id": "CROSS-013",
@@ -1249,12 +1249,12 @@
     "download_status": "ok",
     "evidence_file": "threats/CROSS-013.html",
     "content_type": "text/html",
-    "size_bytes": 175651,
+    "size_bytes": 173685,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "5aa0afbe30cec73d01ee6138579e9b1788c887692b3d52d2b00c354f10e6d9bc"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "3d7fe55c7f07a888c85589eb2fa9068ef0fe4b16f2a2dac7d285384d9072b943"
   },
   {
     "threat_id": "RAIL-003",
@@ -1263,12 +1263,12 @@
     "download_status": "ok",
     "evidence_file": "threats/RAIL-003.html",
     "content_type": "text/html",
-    "size_bytes": 269577,
+    "size_bytes": 169840,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "f7b3a1ea2c3adceca5c2dc0846450ce62530cdf291ac45fc095dc98946615a6e"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "fd14e124ee0ba2d877c5929961df8a02f1f7dc823d530710f21fc3ab29efe059"
   },
   {
     "threat_id": "RAIL-004",
@@ -1277,12 +1277,12 @@
     "download_status": "ok",
     "evidence_file": "threats/RAIL-004.html",
     "content_type": "text/html",
-    "size_bytes": 353605,
+    "size_bytes": 94619,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "7c66512032d4d5f6ad8201ef7dec79a2aea4e5486638f8803a6b479a41bf0e69"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "1870d04edf937b8b5d3e84fe20e6d7f70198b496e0d2cdf0ecfccc681c68d64d"
   },
   {
     "threat_id": "RAIL-005",
@@ -1291,12 +1291,12 @@
     "download_status": "ok",
     "evidence_file": "threats/RAIL-005.html",
     "content_type": "text/html",
-    "size_bytes": 178541,
+    "size_bytes": 179485,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "59d9ad01110393d0db8376bfaaf98cb2901fb6a12f9f82829cfb620bf752bde5"
+    "fetch_tier": "playwright-stealth",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "0634f86e6c200ca17ebc8175387eff7b76bb727913fdf8e709db11dfd0b335aa"
   },
   {
     "threat_id": "WATER-005",
@@ -1305,12 +1305,12 @@
     "download_status": "ok",
     "evidence_file": "threats/WATER-005.html",
     "content_type": "text/html",
-    "size_bytes": 278997,
+    "size_bytes": 273250,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "17bf17e82fc70d8441e254efa77e0c167d8951ac08808403c95b6bf55f8e7464"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "1acef7da5ca4b3ba475507c2eeeb8d8e3d315b55355f1cabd2c6869996ba8496"
   },
   {
     "threat_id": "WATER-003",
@@ -1322,9 +1322,9 @@
     "size_bytes": 58728,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "94f7669707345896b8629d288716b4d56675ca9c33ce22ff81e21c59b8ba6946"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "71245cef147987312a53a7e45ec54a955ea142c2f9bcb20c9dbbd30007f75655"
   },
   {
     "threat_id": "WATER-004",
@@ -1350,9 +1350,9 @@
     "size_bytes": 71066,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "636802134b207645cf5228acfcfba0f473bcc01f8eb5d44365f9e0b20d95f205"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "6074af52142d79cebac8daa441dcfc79b9252cc209275e004847aa36624b5bad"
   },
   {
     "threat_id": "CI-002",
@@ -1364,9 +1364,9 @@
     "size_bytes": 53760,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "71ffc52a1062a755dd014b72ece1812b85856e546bb7fa02ee969e66eed08164"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "bf0ce0739c653a70ec19bcf9e236a994dfe3e61b55572af3f7864bed1c0d5ed8"
   },
   {
     "threat_id": "CI-003",
@@ -1443,12 +1443,12 @@
     "download_status": "ok",
     "evidence_file": "threats/CROSS-018.pdf",
     "content_type": "application/pdf",
-    "size_bytes": 872986,
+    "size_bytes": 1427010,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "9ac6bee3da878e883874847b40f80d2265d6268385d8201f866581437533465f"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "8308b5670f1e7051f248b015c12c5ff4fefbc6941fd831c53b6fc4f33d7c9c72"
   },
   {
     "threat_id": "HSM-001",
@@ -1485,12 +1485,12 @@
     "download_status": "ok",
     "evidence_file": "threats/AUS-TEL-001.html",
     "content_type": "text/html",
-    "size_bytes": 79191,
+    "size_bytes": 79783,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "38149807682315321301fbef98b5151b500f3edc576ae61b8299a8797b7509d3"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "889ac41e8125dfe5a95a60c5af1d7f4ed4e53bc5007fd2e3ee3ba712057c43dc"
   },
   {
     "threat_id": "IT-006",
@@ -1512,12 +1512,12 @@
     "download_status": "ok",
     "evidence_file": "threats/HSM-002.html",
     "content_type": "text/html",
-    "size_bytes": 18934608,
+    "size_bytes": 18963192,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "8cc5cb372f9323e5867c16ba43349139c5cddc1912ce45cef1181786dffbd378"
+    "fetch_tier": "curl_cffi:chrome124",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "e8acc91c76b49eee25f692719381094273aa94f9353a92c5e2d0921ebb5bce9d"
   },
   {
     "threat_id": "AERO-008",
@@ -1529,9 +1529,9 @@
     "size_bytes": 258205,
     "http_status": 200,
     "error_message": null,
-    "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z",
-    "sha256": "920c1fbbe60cabc1ad4b5392bee4b5a6671704c3875e691b615e9946fc772817"
+    "fetch_tier": "playwright-stealth",
+    "downloaded_at": "2026-07-17T15:03:31Z",
+    "sha256": "efe79a7a03630bddec110840e68ef41f6a25126edf62c5cdbda462c22602d23b"
   },
   {
     "threat_id": "WATE-001",
