@@ -1,0 +1,27 @@
+{
+  "generated": "2026-07-17",
+  "collection": "threats",
+  "skipped_count": 4,
+  "entries": [
+    {
+      "ref_id": "AERO-002",
+      "file": "AERO-002.pdf",
+      "reason": "Extracted text too short (10 chars) \u2014 likely empty or corrupt source"
+    },
+    {
+      "ref_id": "GOV-001",
+      "file": "GOV-001.pdf",
+      "reason": "Extracted text too short (10 chars) \u2014 likely empty or corrupt source"
+    },
+    {
+      "ref_id": "GOV-002",
+      "file": "GOV-002.pdf",
+      "reason": "Extracted text too short (10 chars) \u2014 likely empty or corrupt source"
+    },
+    {
+      "ref_id": "GOV-005",
+      "file": "GOV-005.pdf",
+      "reason": "Extracted text too short (10 chars) \u2014 likely empty or corrupt source"
+    }
+  ]
+}
