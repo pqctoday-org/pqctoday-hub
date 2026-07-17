@@ -72,6 +72,11 @@ interface MigrateSelectionState {
   /** Chosen replacement products per asset/domain: id → product names.
    *  Multi-valued so several products can be planned per category. */
   choice: Record<string, string[]>
+  /** productName → productId captured at the moment a product was chosen —
+   *  added 2026-07-16 (U4 scoped fix) so a later rename/deprecation doesn't
+   *  silently drop the selection out of {@link selectedProductIds}'s union.
+   *  Read-only resolution cache; only `chooseProduct` writes to it. */
+  nameToProductId: Record<string, string>
   /** Toggle a chosen product for an asset/domain. Adds it (and ensures the
    *  asset is in the plan) or, if already chosen, removes just that product.
    *  Removing the last product drops the asset/domain from the plan. */
@@ -101,15 +106,28 @@ const PRODUCT_ID_BY_NAME = new Map<string, string>(
  *  workbench `choice` selections (stored as product names, resolved here). The
  *  asset-first /migrate redesign writes only `choice`/`plan`, so any surface that
  *  still reads `myProducts` alone would miss every workbench pick — this union is
- *  the single join both selection paths flow through. */
+ *  the single join both selection paths flow through.
+ *
+ * `nameToProductId` (added 2026-07-16, migrate-process remediation Phase 5,
+ * U4 — scoped fix) is an optional resolution-cache fallback: `choice` stores
+ * a product's NAME, so a rename or deprecation after the product was chosen
+ * makes `PRODUCT_ID_BY_NAME.get(name)` fail, silently dropping that
+ * selection out of this union (and every KPI/count downstream reads).
+ * `chooseProduct` captures the resolved id at the moment a product is
+ * chosen; when the live catalog lookup fails, this cache is tried next
+ * before giving up. Forward-looking only — a selection made before this
+ * fix shipped has no cache entry, same limitation as the display-only fix
+ * in PlanTab.tsx. Optional + defaults to `{}` so every existing call site
+ * (and the pure-function tests) keeps working unchanged. */
 export function selectedProductIds(
   myProducts: string[],
-  choice: Record<string, string[]>
+  choice: Record<string, string[]>,
+  nameToProductId: Record<string, string> = {}
 ): string[] {
   const out = new Set<string>(myProducts)
   for (const names of Object.values(choice)) {
     for (const name of names) {
-      const id = PRODUCT_ID_BY_NAME.get(name)
+      const id = PRODUCT_ID_BY_NAME.get(name) ?? nameToProductId[name]
       if (id) out.add(id)
     }
   }
@@ -128,6 +146,7 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
       workflowCollapsed: true,
       plan: [],
       choice: {},
+      nameToProductId: {},
       tab: 'replace' as MigrateTab,
 
       hideProduct: (key) =>
@@ -186,7 +205,8 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
         set((state) => {
           // eslint-disable-next-line security/detect-object-injection
           const current = state.choice[assetId] ?? []
-          const nextList = current.includes(productName)
+          const isRemoving = current.includes(productName)
+          const nextList = isRemoving
             ? current.filter((p) => p !== productName) // remove just this product
             : [...current, productName] // add — keeps any already-chosen products
           if (nextList.length === 0) {
@@ -200,7 +220,14 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
           }
           // choosing ensures the asset is in the plan
           const plan = state.plan.includes(assetId) ? state.plan : [...state.plan, assetId]
-          return { plan, choice: { ...state.choice, [assetId]: nextList } }
+          // ADDED 2026-07-16 (U4 scoped fix): capture the resolved id at the
+          // moment of selection, so a later rename/deprecation can't silently
+          // drop this selection out of selectedProductIds()'s union.
+          const resolvedId = !isRemoving ? PRODUCT_ID_BY_NAME.get(productName) : undefined
+          const nameToProductId = resolvedId
+            ? { ...state.nameToProductId, [productName]: resolvedId }
+            : state.nameToProductId
+          return { plan, choice: { ...state.choice, [assetId]: nextList }, nameToProductId }
         }),
 
       removeSelectedProduct: (productId) =>
@@ -237,7 +264,7 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
     {
       name: 'pqc-migrate-selection',
       storage: createJSONStorage(() => localStorage),
-      version: 10,
+      version: 11,
       migrate: (persistedState: unknown, version: number) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const state = (persistedState ?? {}) as any
@@ -310,6 +337,17 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
             state.choice = {}
           }
         }
+        if (version < 11) {
+          // v10 → v11: add nameToProductId (U4 scoped fix — resolution
+          // cache, see its field docstring). Existing choice entries have
+          // no cache entry yet; that's fine, they fall back to the same
+          // live-catalog resolution as before. Only chooseProduct writes
+          // new entries going forward.
+          state.nameToProductId =
+            state.nameToProductId && typeof state.nameToProductId === 'object'
+              ? state.nameToProductId
+              : {}
+        }
         return state
       },
       onRehydrateStorage: () => (_state, error) => {
@@ -331,5 +369,9 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
 export function useSelectedProductIds(): string[] {
   const myProducts = useMigrateSelectionStore((s) => s.myProducts)
   const choice = useMigrateSelectionStore((s) => s.choice)
-  return useMemo(() => selectedProductIds(myProducts, choice), [myProducts, choice])
+  const nameToProductId = useMigrateSelectionStore((s) => s.nameToProductId)
+  return useMemo(
+    () => selectedProductIds(myProducts, choice, nameToProductId),
+    [myProducts, choice, nameToProductId]
+  )
 }

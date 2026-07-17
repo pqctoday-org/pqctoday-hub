@@ -102,12 +102,34 @@ describe('MigrationWorkbench (integration)', () => {
     useMigrateSelectionStore.setState({
       plan: ['foundations'],
       choice: { foundations: ['A Product That No Longer Exists'] },
+      nameToProductId: {},
       tab: 'plan',
     })
     renderWorkbench()
     fireEvent.click(screen.getByRole('button', { name: /Plan & sequence/i }))
     expect(screen.getByText('A Product That No Longer Exists')).toBeInTheDocument()
     expect(screen.getByText('No longer in catalog')).toBeInTheDocument()
+  })
+
+  // U4, extended further: when the renamed name IS in the resolution cache
+  // (captured back when it was originally chosen), full detail is restored
+  // instead of the bare notice — the row becomes expandable again.
+  it('a renamed plan entry resolves via the nameToProductId cache and stays fully expandable', () => {
+    const [real] = productsForDomain('foundations' as never)
+    expect(real).toBeDefined()
+    useMigrateSelectionStore.setState({
+      plan: ['foundations'],
+      choice: { foundations: ['A Renamed Product'] },
+      nameToProductId: { 'A Renamed Product': real.productId },
+      tab: 'plan',
+    })
+    renderWorkbench()
+    fireEvent.click(screen.getByRole('button', { name: /Plan & sequence/i }))
+    expect(screen.getByText('A Renamed Product')).toBeInTheDocument()
+    expect(screen.queryByText('No longer in catalog')).not.toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: /Show details for A Renamed Product/i })
+    ).toBeInTheDocument()
   })
 
   it('keeps multiple chosen products in a category, each as its own plan row', () => {
