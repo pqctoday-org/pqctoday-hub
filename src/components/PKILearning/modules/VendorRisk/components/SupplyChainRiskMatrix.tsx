@@ -5,7 +5,7 @@ import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBa
 import { useModuleStore } from '@/store/useModuleStore'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { useSelectedProductIds } from '@/store/useMigrateSelectionStore'
-import { softwareData } from '@/data/migrateData'
+import { softwareData, softwareMetadata } from '@/data/migrateData'
 import { vendorMap } from '@/data/vendorData'
 import { LAYERS } from '@/data/infrastructureLayers'
 import { softwareItemToCbomInput } from '@/components/Migrate/cbomExport'
@@ -430,6 +430,13 @@ export const SupplyChainRiskMatrix: React.FC<{
     [myProducts]
   )
 
+  // FIXED 2026-07-16 (migrate-process remediation Phase 5, U6): this
+  // component's "personalize with an industry/country" empty states said
+  // "Step 1" unconditionally — correct in its home (the Learn-module vendor-
+  // risk wizard, which has one), a dead-end reference on /migrate (variant
+  // 'flat'), where there is no "Step 1" at all.
+  const industryContextHint = variant === 'flat' ? 'the Assess page' : 'Step 1'
+
   // CSWP.39 §5.3 educational extensions: CBOM by asset class + pipeline metadata.
   const savedInputs = useSavedArtifactInputs<SavedSupplyChainInputs>('supply-chain-matrix')
   const [pipelineSources, setPipelineSources] = useState(savedInputs?.pipelineSources ?? '')
@@ -646,8 +653,7 @@ export const SupplyChainRiskMatrix: React.FC<{
 
     md += '## Migration Gap × Impact Risk Matrix\n\n'
     if (!hasIndustryContext) {
-      md +=
-        '_Not personalized: select an industry/country in Step 1 to compute Impact from real threat data. Migration Gap alone is shown per layer above._\n\n'
+      md += `_Not personalized: select an industry/country in ${industryContextHint} to compute Impact from real threat data. Migration Gap alone is shown per layer above._\n\n`
     } else {
       md +=
         '_Migration Gap derives from the share of each layer not yet PQC-ready. Impact derives from the share of this industry\'s supply-chain-relevant threats that name each layer — an independent signal from the separately-authored threats catalog, not the catalog\'s own `pqcMigrationPriority` field (shown separately above as "Priority"). Both are heuristics, not validated risk measurements — see the methodology note above the grid._\n\n'
@@ -860,8 +866,8 @@ export const SupplyChainRiskMatrix: React.FC<{
         <div className="flex items-start gap-2 text-xs text-muted-foreground bg-muted/30 rounded-lg p-3 border border-border">
           <Info size={14} className="mt-0.5 shrink-0" />
           <span>
-            Showing all catalog products. Select your infrastructure in Step 1 for personalized
-            results.
+            Showing all catalog products. Select your infrastructure in{' '}
+            {variant === 'flat' ? 'the Replace tab' : 'Step 1'} for personalized results.
           </span>
         </div>
       )}
@@ -942,7 +948,7 @@ export const SupplyChainRiskMatrix: React.FC<{
             <div>
               <p>
                 Impact requires an industry/country context to compute from real threat data —
-                select yours in Step 1. Showing Migration Gap only, worst first:
+                select yours in {industryContextHint}. Showing Migration Gap only, worst first:
               </p>
               <ul className="mt-2 space-y-1">
                 {[...layerStats]
@@ -1051,7 +1057,7 @@ export const SupplyChainRiskMatrix: React.FC<{
             stat.impact === null ? (
               <span
                 className="text-xs px-2 py-0.5 rounded-full border font-medium shrink-0 bg-muted/50 text-muted-foreground border-border"
-                title="Select an industry/country in Step 1 to compute Impact"
+                title={`Select an industry/country in ${industryContextHint} to compute Impact`}
               >
                 Gap-only (no Impact yet)
               </span>
@@ -1166,6 +1172,16 @@ export const SupplyChainRiskMatrix: React.FC<{
           </p>
         </div>
       </div>
+      {/* ADDED 2026-07-16 (migrate-process remediation Phase 5, U6): these
+          KPI tiles derive from keyword heuristics over the catalog's
+          free-text pqcSupport/fipsValidated fields with no data date shown
+          anywhere in this tab — a stale catalog silently shifted every
+          number with no visible caveat. */}
+      {softwareMetadata && (
+        <p className="text-center text-[11px] text-muted-foreground">
+          Catalog data as of {softwareMetadata.lastUpdate.toLocaleDateString()}
+        </p>
+      )}
 
       {/* CBOM by this tool's 6 asset classes, informed by CSWP.39 §5.3 */}
       <div className={cardClass('p-4')}>

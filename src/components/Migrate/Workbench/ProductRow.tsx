@@ -82,7 +82,9 @@ export function ProductRow({
             )}
             <Pill tone={pqc.tone}>{pqc.label}</Pill>
             {fips && <Pill tone={fips.tone}>{fips.label}</Pill>}
-            <Pill tone={verification.tone}>{verification.label}</Pill>
+            <Pill tone={verification.tone} title={verification.title}>
+              {verification.label}
+            </Pill>
             {product.wip && <Pill tone="warning">WIP</Pill>}
             {sponsored && (
               <Pill tone="primary" icon={ShieldCheck}>

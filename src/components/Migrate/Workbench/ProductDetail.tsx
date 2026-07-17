@@ -7,7 +7,7 @@
 
 import { ExternalLink, FileText } from 'lucide-react'
 import type { SoftwareItem } from '@/types/MigrateTypes'
-import { certsByProduct } from '@/data/certificationXrefData'
+import { getCertsForProduct } from '@/data/certificationXrefData'
 import { roadmapByVendorId } from '@/data/vendorRoadmapData'
 import { enrichmentByVendorId } from '@/data/vendorRoadmapEnrichmentData'
 import { vendorMap } from '@/data/migrateData'
@@ -20,7 +20,7 @@ import { Pill } from './workbenchUi'
 import { productVerificationBadge } from './productStatus'
 
 export function ProductDetail({ product }: { product: SoftwareItem }) {
-  const certs = certsByProduct.get(product.softwareName) ?? []
+  const certs = getCertsForProduct(product.productId, product.softwareName)
   const roadmap = product.vendorId ? roadmapByVendorId.get(product.vendorId) : undefined
   const enrichment = product.vendorId ? enrichmentByVendorId.get(product.vendorId) : undefined
   const vendor = product.vendorId ? vendorMap.get(product.vendorId) : undefined

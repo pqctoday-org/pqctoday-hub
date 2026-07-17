@@ -40,14 +40,18 @@ export function Pill({
   icon: Icon,
   children,
   className = '',
+  title,
 }: {
   tone: Tone
   icon?: LucideIcon
   children: ReactNode
   className?: string
+  /** Native tooltip text — e.g. the exact date behind a "Verified" badge. */
+  title?: string
 }) {
   return (
     <span
+      title={title}
       className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[11px] font-medium ${TONE_CLASS[tone]} ${className}`}
     >
       {Icon && <Icon size={11} aria-hidden />}
