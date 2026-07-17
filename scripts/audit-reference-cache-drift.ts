@@ -735,6 +735,20 @@ export async function run(opts: RunOptions): Promise<DriftReport> {
     finalFindings = dedupedFindings.map((f, i) => updates.get(i) ?? f)
   }
 
+  // A scoped run (--collection library, say) only fetches that collection's
+  // entries. Without this, writing finalFindings straight to opts.outPath
+  // would silently drop every other collection's findings from the shared
+  // report (bit us in practice 2026-07-17: a threats-only run wiped out
+  // library/timeline until manually restored via `git show`). Carry forward
+  // any existing on-disk findings for collections this run didn't touch.
+  let mergedFindings = finalFindings
+  if (opts.collections.length < COLLECTIONS.length && fs.existsSync(opts.outPath)) {
+    const touched = new Set(opts.collections)
+    const existing = JSON.parse(fs.readFileSync(opts.outPath, 'utf-8')) as DriftReport
+    const carriedOver = existing.findings.filter((f) => !touched.has(f.collection as Collection))
+    mergedFindings = [...carriedOver, ...finalFindings]
+  }
+
   const classifications: Record<DriftClassification, number> = {
     ok: 0,
     drift: 0,
@@ -743,14 +757,14 @@ export async function run(opts: RunOptions): Promise<DriftReport> {
     'no-stored-hash': 0,
     blocked: 0,
   }
-  for (const f of finalFindings) classifications[f.classification]++
+  for (const f of mergedFindings) classifications[f.classification]++
 
   const report: DriftReport = {
     generatedAt: new Date().toISOString(),
-    totalEntries: finalFindings.length,
+    totalEntries: mergedFindings.length,
     fetched: classifications.ok + classifications.drift + classifications['size-mismatch'],
     classifications,
-    findings: finalFindings,
+    findings: mergedFindings,
   }
 
   if (!opts.dryRun) {
