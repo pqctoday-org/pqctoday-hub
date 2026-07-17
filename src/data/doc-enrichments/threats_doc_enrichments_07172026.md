@@ -11324,3 +11324,395 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
+## AERO-002
+
+- **Reference ID**: AERO-002
+- **Title**: Aerospace / Aviation
+- **Authors**: NSA CNSA 2.0 Cybersecurity Advisory
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: active
+- **Main Topic**: NSA announces the Commercial National Security Algorithm Suite 2.0, mandating post-quantum algorithms for National Security Systems with specific transition timelines.
+- **PQC Algorithms Covered**: CRYSTALS-Kyber; CRYSTALS-Dilithium; Leighton-Micali Signature (LMS); Xtended Merkle Signature Scheme (XMSS)
+- **Quantum Threats Addressed**: Cryptanalytically relevant quantum computer (CRQC)
+- **Migration Timeline Info**: Software/firmware signing transition begins immediately; new software/firmware use CNSA 2.0 by 2025; all deployed software/firmware transitioned by 2030; web browsers/servers and cloud services exclusively use CNSA 2.0 by 2033; operating systems exclusively use CNSA 2.0 by 2033; custom applications and legacy equipment update or replace by 2033; overall NSS transition complete by 2035.
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: National Security Agency (NSA); National Institute of Standards and Technology (NIST); National Information Assurance Partnership (NIAP)
+- **Leaders Contributions Mentioned**: Peter Shor (discovered CRQC would break public-key systems)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS; DTLS; IPsec; SSH; S/MIME; CMS
+- **Infrastructure Layers**: PKI; Firmware signing; Software signing
+- **Standardization Bodies**: NIST; IETF
+- **Compliance Frameworks Referenced**: CNSA 2.0; CNSA 1.0; CNSSP 15; CNSSP 11; NSM-8; NSM-10; NSD-42; NIAP; FIPS PUB 197; FIPS PUB 180-4; NIST SP 800-208
+- **Classical Algorithms Referenced**: RSA; Diffie-Hellman (DH); Elliptic Curve Diffie-Hellman (ECDH); Elliptic Curve Digital Signature Algorithm (ECDSA); Advanced Encryption Standard (AES); Secure Hash Algorithm (SHA); SHA-256; SHA-192; SHA-384; SHA-512
+- **Key Takeaways**: Organizations must transition software and firmware signing to CNSA 2.0 algorithms (LMS/XMSS) immediately with full compliance by 2030; General-use PQC algorithms (Kyber/Dilithium Level V) are mandated for NSS with exclusive use required by 2033 for most systems; Legacy equipment not refreshed regularly will require waivers and compliance plans; NSA validation or NIAP compliance is required for cryptographic services in NSS.
+- **Security Levels & Parameters**: Level V parameters for CRYSTALS-Kyber; Level V parameters for CRYSTALS-Dilithium; AES 256-bit keys; SHA-384 or SHA-512; LMS with SHA-256/192
+- **Hybrid & Transition Approaches**: Hybrid solutions may be allowed or required due to protocol standards, product availability, or interoperability requirements; CNSA 2.0 algorithms become mandatory to select at given dates while CNSA 1.0 alone is no longer approved.
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "Algorithms chosen for software- and firmware-signing are... Leighton-Micali... XMSS" (§Algorithms for software- and firmware-signing)
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: TLS-1.2; TLS-1.3; S/MIME; IKE/IPsec; SSH
+- **PQC Heatmap Protocols Evidence**: TLS-1.2: "RFC 9151... Profile for TLS and DTLS 1.2 and 1.3"; TLS-1.3: "RFC 9151... Profile for TLS and DTLS 1.2 and 1.3"; S/MIME: "RFC 8755... Secure/Multipurpose Internet Mail Extensions"; IKE/IPsec: "RFC 9206... Internet Protocol Security (IPsec)"; SSH: "RFC 9212... Secure Shell (SSH)"
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Security Architect; Compliance Officer; Operations
+- **Implementation Prerequisites**: NIAP validation or NSA validation; Hardware implementation for signing; State management for stateful signatures
+- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Migrate; Algorithms; code-signing; stateful-signatures; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: NIAP validation; NSA validation
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Niche equipment (e.g., constrained devices) support and prefer CNSA 2.0 by 2030, exclusively use by 2033
+- **Supply Chain & Vendor Risk**: Vendors urged to begin adopting NIST SP 800-208 signatures immediately; New equipment must meet protection profile requirements
+- **Deployment & Migration Complexity**: Phased rollout with specific dates for different system types (software/firmware, browsers, networking, OS, niche, legacy); Waivers required for legacy equipment not refreshed regularly
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: NSS owners/operators must report progress under NSM-8 and NSM-10; Approving Officials measure compliance in RMF process
+- **Math Family**: Lattice; Hash-based
+- **PQC Round**: Standardised
+- **Source Document**: AERO-002.pdf (586,858 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-07-17T12:04:24
+- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+
+---
+
+## FIN-004
+
+- **Reference ID**: FIN-004
+- **Title**: Financial Services / Banking
+- **Authors**: PCI DSS v4.0.1
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: active
+- **Main Topic**: NIST SP 800-227 provides recommendations for implementing and using Key-Encapsulation Mechanisms (KEMs), including guidelines for secure implementation, key establishment, and hybrid composite KEM construction.
+- **PQC Algorithms Covered**: ML-KEM
+- **Quantum Threats Addressed**: Cryptanalytically relevant quantum computer attacks
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: NIST, U.S. Department of Commerce, Office of Management and Budget
+- **Leaders Contributions Mentioned**: Gorjan Alagic; Elaine Barker; Lily Chen; Dustin Moody; Angela Robinson; Hamilton Silberg; Noah Waller
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Key Management; FIPS 140-validated cryptographic modules
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: FIPS 140; FISMA; OMB Circular A-130
+- **Classical Algorithms Referenced**: Diffie-Hellman; RSA
+- **Key Takeaways**: Implementers must satisfy all requirements for conforming implementations of approved KEMs; Vendors should use approved key combiners to securely combine post-quantum and classical keying material; KEMs should be used within FIPS 140-validated cryptographic modules; Key confirmation and proof of possession are required for secure key establishment; Composite KEMs provide a transition path by combining quantum-vulnerable and post-quantum methods
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Multi-Algorithm KEMs; PQ/T Hybrids; Composite KEMs; Approved Key Combiners
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: "Multi-Algorithm KEMs and PQ/T Hybrids" (§4.6)
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Developer; Compliance Officer
+- **Implementation Prerequisites**: FIPS 140-validated cryptographic modules; Approved key combiners
+- **Relevant PQC Today Features**: Algorithms; hybrid-crypto; crypto-agility; compliance-strategy; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: FIPS 140 validation; Compliance with NIST standards
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Standardised
+- **Source Document**: FIN-004.pdf (902,987 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-07-17T12:04:25
+- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+
+---
+
+## GOV-001
+
+- **Reference ID**: GOV-001
+- **Title**: Government / Defense
+- **Authors**: NSA CNSA 2.0 Cybersecurity Advisory
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: active
+- **Main Topic**: NSA announces the Commercial National Security Algorithm Suite 2.0, mandating a transition to quantum-resistant algorithms for National Security Systems by 2035.
+- **PQC Algorithms Covered**: CRYSTALS-Kyber; CRYSTALS-Dilithium; Leighton-Micali Signature (LMS); Xtended Merkle Signature Scheme (XMSS)
+- **Quantum Threats Addressed**: cryptanalytically relevant quantum computer (CRQC); Harvest Now Decrypt Later (HNDL)
+- **Migration Timeline Info**: Software/firmware signing transition begins immediately; support/prefer CNSA 2.0 by 2025; exclusively use by 2030; Web browsers/servers exclusively use by 2033; Overall NSS transition complete by 2035
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: National Security Agency (NSA); National Institute of Standards and Technology (NIST); National Information Assurance Partnership (NIAP)
+- **Leaders Contributions Mentioned**: Peter Shor (discovered CRQC would break public-key systems)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS; DTLS; IPsec; SSH; S/MIME; CMS
+- **Infrastructure Layers**: PKI; National Security Systems (NSS); Software and firmware signing
+- **Standardization Bodies**: NIST; IETF
+- **Compliance Frameworks Referenced**: CNSA 2.0; CNSA 1.0; CNSSP 15; CNSSP 11; NSD-42; NSM-8; NSM-10; NIAP; FIPS PUB 197; FIPS PUB 180-4; NIST SP 800-208
+- **Classical Algorithms Referenced**: RSA; Diffie-Hellman (DH); elliptic curve cryptography (ECDH); ECDSA; Advanced Encryption Standard (AES); Secure Hash Algorithm (SHA); SHA-256; SHA-384; SHA-512
+- **Key Takeaways**: Transition to CNSA 2.0 quantum-resistant algorithms must be complete for NSS by 2035; Software and firmware signing should begin transitioning immediately with exclusive use by 2030; Legacy algorithms like RSA and DH will be deprecated for NSS; NIAP validation and NSA approval are required for cryptographic products; Hybrid solutions may be allowed during transition but CNSA 2.0 becomes mandatory at specified dates
+- **Security Levels & Parameters**: Level V parameters for CRYSTALS-Kyber and CRYSTALS-Dilithium; AES 256-bit keys; SHA-384 or SHA-512; LMS with SHA-256/192
+- **Hybrid & Transition Approaches**: Hybrid solutions may be allowed or required due to protocol standards, product availability, or interoperability requirements during transition; CNSA 2.0 algorithms become mandatory to select at given dates
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "Algorithms chosen for software- and firmware-signing are those specified in NIST Special Publication 800-208"
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: TLS-1.2; TLS-1.3; X.509; S/MIME; IKE/IPsec; SSH
+- **PQC Heatmap Protocols Evidence**: TLS-1.2: "RFC 9151 ... Profile for TLS and DTLS 1.2 and 1.3"; TLS-1.3: "RFC 9151 ... Profile for TLS and DTLS 1.2 and 1.3"; X.509: "RFC 8603 ... Certificate and Certificate Revocation List (CRL) Profile"; S/MIME: "RFC 8755 ... Secure/Multipurpose Internet Mail Extensions"; IKE/IPsec: "RFC 9206 ... Internet Protocol Security (IPsec)"; SSH: "RFC 9212 ... Secure Shell (SSH)"
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Security Architect; Compliance Officer; Operations
+- **Implementation Prerequisites**: NIAP or NSA validation; meeting requirements of CNSA; managing state for LMS/XMSS; implementing signing in hardware for LMS/XMSS
+- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Migrate; Algorithms; code-signing; stateful-signatures; migration-program; pqc-governance
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: NIAP validation; NSA validation
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Phased rollout with specific dates for different system types (software/firmware, web, networking, OS, niche, legacy); waiver required for legacy equipment not refreshed regularly
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice; Hash-based
+- **PQC Round**: Standardised
+- **Source Document**: GOV-001.pdf (586,858 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-07-17T12:04:25
+- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+
+---
+
+## GOV-002
+
+- **Reference ID**: GOV-002
+- **Title**: Government / Defense
+- **Authors**: NSA CNSA 2.0 Guidance
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: active
+- **Main Topic**: NSA announces CNSA Suite 2.0 requirements and phased transition timelines for National Security Systems to adopt quantum-resistant algorithms.
+- **PQC Algorithms Covered**: CRYSTALS-Kyber; CRYSTALS-Dilithium; Leighton-Micali Signature (LMS); Xtended Merkle Signature Scheme (XMSS)
+- **Quantum Threats Addressed**: cryptanalytically relevant quantum computer (CRQC)
+- **Migration Timeline Info**: Software/firmware signing supported/preferred by 2025 (exclusive by 2030); Networking equipment supported/preferred by 2026 (exclusive by 2030); Web browsers/servers/cloud supported/preferred by 2025 (exclusive by 2033); Operating systems supported/preferred by 2027 (exclusive by 2033); Full transition by 2035.
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: National Security Agency (NSA); National Institute of Standards and Technology (NIST); National Information Assurance Partnership (NIAP)
+- **Leaders Contributions Mentioned**: Peter Shor (discovered CRQC would break public-key systems)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS; DTLS; IPsec; SSH; S/MIME; CMS
+- **Infrastructure Layers**: National Security Systems (NSS); PKI; Software and firmware signing
+- **Standardization Bodies**: NIST; IETF
+- **Compliance Frameworks Referenced**: CNSA 2.0; CNSA 1.0; CNSSP 15; CNSSP 11; NSD-42; NSM-8; NSM-10; NIAP; FIPS PUB 197; FIPS PUB 180-4; NIST SP 800-208
+- **Classical Algorithms Referenced**: RSA; Diffie-Hellman (DH); elliptic curve cryptography (ECDH); ECDSA; Advanced Encryption Standard (AES); Secure Hash Algorithm (SHA); SHA-256; SHA-384; SHA-512
+- **Key Takeaways**: NSA mandates CNSA 2.0 compliance for NSS with phased deadlines ending in 2035; Software and firmware signing must transition to LMS/XMSS immediately, with exclusive use by 2030; General-use PQC algorithms (Kyber/Dilithium Level V) are required for future NSS, deprecating RSA/DH/ECC; Hybrid solutions may be allowed during transition, but CNSA 1.0 alone will not be approved after specific dates; Vendors must begin adopting NIST SP 800-208 signatures immediately.
+- **Security Levels & Parameters**: Level V parameters for CRYSTALS-Kyber and CRYSTALS-Dilithium; AES 256-bit keys; SHA-384 or SHA-512; LMS with SHA-256/192
+- **Hybrid & Transition Approaches**: Hybrid solutions may be allowed or required due to protocol standards, product availability, or interoperability requirements; CNSA 2.0 algorithms become mandatory to select at given dates while CNSA 1.0 alone is no longer approved.
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "Algorithms chosen for software- and firmware-signing are those specified in NIST Special Publication 800-208"
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: TLS-1.2; TLS-1.3; S/MIME; IKE/IPsec; SSH
+- **PQC Heatmap Protocols Evidence**: TLS-1.2: "RFC 9151 ... Profile for TLS and DTLS 1.2 and 1.3"; TLS-1.3: "RFC 9151 ... Profile for TLS and DTLS 1.2 and 1.3"; S/MIME: "RFC 8755 ... Secure/Multipurpose Internet Mail Extensions"; IKE/IPsec: "RFC 9206 ... Internet Protocol Security (IPsec)"; SSH: "RFC 9212 ... Secure Shell (SSH)"
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Security Architect; Compliance Officer; Operations
+- **Implementation Prerequisites**: NIAP or NSA validation; Hardware implementation for signing; State management for LMS/XMSS; NIST SP 800-208 compliance
+- **Relevant PQC Today Features**: Timeline; Compliance; Migrate; Algorithms; stateful-signatures; code-signing; migration-program; pqc-governance
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: NIAP validation; NSA validation
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Niche equipment (e.g., constrained devices) support and prefer CNSA 2.0 by 2030, exclusively by 2033
+- **Supply Chain & Vendor Risk**: Vendors must begin adopting NIST SP 800-208 signatures immediately; New equipment must meet protection profile requirements
+- **Deployment & Migration Complexity**: Phased transition with "supported and preferred" then "exclusively" deadlines; Legacy equipment requires waiver and plan; Hybrid solutions may be required during transition
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: NSS owners/operators must report progress under NSM-8 and NSM-10; Approving Officials must measure compliance in RMF process
+- **Math Family**: Lattice; Hash-based
+- **PQC Round**: Standardised
+- **Source Document**: GOV-002.pdf (586,858 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-07-17T12:04:26
+- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+
+---
+
+## GOV-005
+
+- **Reference ID**: GOV-005
+- **Title**: Government / Defense
+- **Authors**: NSA CNSA 2.0 Cybersecurity Advisory
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: active
+- **Main Topic**: NSA announces the Commercial National Security Algorithm Suite 2.0 (CNSA 2.0) with migration timelines and algorithm requirements for National Security Systems.
+- **PQC Algorithms Covered**: CRYSTALS-Kyber; CRYSTALS-Dilithium; Leighton-Micali Signature (LMS); Xtended Merkle Signature Scheme (XMSS)
+- **Quantum Threats Addressed**: Cryptanalytically relevant quantum computer (CRQC)
+- **Migration Timeline Info**: Software/firmware signing prefer PQC by 2025, exclusive by 2030; Web/cloud prefer by 2025, exclusive by 2033; Networking prefer by 2026, exclusive by 2030; OS prefer by 2027, exclusive by 2033; Constrained devices prefer by 2030, exclusive by 2033; Custom/legacy update/replace by 2033
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: National Security Agency (NSA); National Institute of Standards and Technology (NIST); National Information Assurance Partnership (NIAP)
+- **Leaders Contributions Mentioned**: Peter Shor (discovered CRQC would break public-key systems)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS; DTLS; IPsec; SSH; S/MIME; CMS
+- **Infrastructure Layers**: PKI; Firmware signing; Software signing
+- **Standardization Bodies**: NIST; IETF
+- **Compliance Frameworks Referenced**: CNSA 2.0; CNSA 1.0; CNSSP 15; CNSSP 11; NSD-42; NSM-8; NSM-10; NIAP; FIPS PUB 197; FIPS PUB 180-4; NIST SP 800-208
+- **Classical Algorithms Referenced**: RSA; Diffie-Hellman (DH); Elliptic Curve Diffie-Hellman (ECDH); ECDSA; Advanced Encryption Standard (AES); Secure Hash Algorithm (SHA); SHA-256; SHA-192; SHA-384; SHA-512
+- **Key Takeaways**: Transition to CNSA 2.0 algorithms must be complete by 2035; Software and firmware signing should begin transitioning immediately with exclusive use by 2030; Web browsers, servers, and cloud services must exclusively use CNSA 2.0 by 2033; Legacy equipment not refreshed regularly will require a waiver and compliance plan; NSA recommends Leighton-Micali with SHA-256/192 for software/firmware signing
+- **Security Levels & Parameters**: Level V parameters for CRYSTALS-Kyber and CRYSTALS-Dilithium; AES 256-bit keys; SHA-384 or SHA-512; LMS SHA-256/192
+- **Hybrid & Transition Approaches**: Hybrid solutions may be allowed or required due to protocol standards, product availability, or interoperability requirements; CNSA 2.0 algorithms become mandatory to select at given dates while CNSA 1.0 alone is no longer approved
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "exclusively use CNSA 2.0 by 2030" for software/firmware signing using LMS/XMSS
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: TLS-1.2; TLS-1.3; S/MIME; IKE/IPsec; SSH
+- **PQC Heatmap Protocols Evidence**: TLS-1.2: "RFC 9151 ... Profile for TLS and DTLS 1.2 and 1.3"; TLS-1.3: "RFC 9151 ... Profile for TLS and DTLS 1.2 and 1.3"; S/MIME: "RFC 8755 ... Secure/Multipurpose Internet Mail Extensions"; IKE/IPsec: "RFC 9206 ... Internet Protocol Security (IPsec)"; SSH: "RFC 9212 ... Secure Shell (SSH)"
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Security Architect; Compliance Officer; Operations
+- **Implementation Prerequisites**: NIAP validation or NSA validation; Hardware implementation for signing; State management for stateful signatures
+- **Relevant PQC Today Features**: Timeline; Compliance; Migrate; Algorithms; stateful-signatures; code-signing; migration-program; pqc-governance
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: NIAP validation; NSA validation
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Constrained devices support and prefer CNSA 2.0 by 2030, exclusively use by 2033
+- **Supply Chain & Vendor Risk**: Vendors urged to begin adopting NIST SP 800-208 signatures immediately; New equipment must meet protection profile requirements
+- **Deployment & Migration Complexity**: Phased transition by technology category; Legacy equipment requires waiver and plan; Hybrid solutions may be required for interoperability
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: NSS owners/operators must report progress under NSM-8 and NSM-10; Approving Officials measure compliance in RMF process
+- **Math Family**: Lattice; Hash-based
+- **PQC Round**: Standardised
+- **Source Document**: GOV-005.pdf (586,858 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-07-17T12:04:26
+- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+
+---
+
+## TELCO-005
+
+- **Reference ID**: TELCO-005
+- **Title**: Telecommunications
+- **Authors**: GSMA — PQ.05 Post-Quantum Cryptography for 5G Roaming Use Case
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: active
+- **Main Topic**: Migration strategies and recommendations for transitioning to a Fully Quantum Safe Cryptographic State.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Attacks against cryptographic elements by a quantum computer; immediate availability of a viable quantum computer used to attack RSA or ECC entities
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Bodies: ETSI
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Key management; Trust management; Hardware based security environment
+- **Standardization Bodies**: ETSI; ISO; IEC; ITU-T
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA; ECC
+- **Key Takeaways**: Organizations should adopt a staged approach to QSC migration involving inventory, planning, and execution; Migration plans must address hardware security environments and key management; Trust management and isolation approaches are critical during the transition phase; Emergency migration scenarios require distinct considerations from orderly planned migrations
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Staged approach to QSC migration; Orderly transition planning; Disorderly transition planning
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Compliance Officer; CISO
+- **Implementation Prerequisites**: Cryptographic inventory; Supplier inventory; Risk assessment; Data assessment
+- **Relevant PQC Today Features**: Migrate; Assess; Threats; migration-program; pqc-risk-management
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: Inventory compilation; Cryptographic assessment; Infrastructure inventory; Supplier inventory
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Supplier inventory
+- **Deployment & Migration Complexity**: Staged approach (Inventory, Preparation, Execution); Orderly transition planning; Disorderly transition planning; Migration management; Mitigation management
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Business process requirements for each migration stage; Migration plan creation
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: TELCO-005.pdf (142,762 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-07-17T12:04:27
+- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+
+---
+
+## CROSS-018
+
+- **Reference ID**: CROSS-018
+- **Title**: Cross-Industry
+- **Authors**: NIST SP 800-208
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: active
+- **Main Topic**: Status report on the third round of the NIST Post-Quantum Cryptography Standardization Process, detailing the selection of algorithms for standardization and those advancing to the fourth round.
+- **PQC Algorithms Covered**: CRYSTALS-Kyber; CRYSTALS-Dilithium; FALCON; SPHINCS+; BIKE; Classic McEliece; HQC; SIKE; FrodoKEM; NTRU; NTRU Prime; Saber; GeMSS; Picnic; Rainbow
+- **Quantum Threats Addressed**: Quantum computers breaking public-key cryptosystems based on factoring, discrete logarithms, and elliptic curve cryptography
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: National Institute of Standards and Technology (NIST); U.S. Department of Commerce
+- **Leaders Contributions Mentioned**: Gorjan Alagic; Daniel Apon; David Cooper; Quynh Dang; Thinh Dang; John Kelsey; Jacob Lichtinger; Yi-Kai Liu; Carl Miller; Dustin Moody; Rene Peralta; Ray Perlner; Angela Robinson; Daniel Smith-Tone; Zuzana Bajcsy; Larry Bassham; Lily Chen; Morris Dworkin; Sara Kerman; Andrew Regenscheid
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: National Institute of Standards and Technology (NIST)
+- **Compliance Frameworks Referenced**: Federal Information Processing Standard (FIPS) 186-4; NIST Special Publication (SP) 800-56A Revision 3; SP 800-56B Revision 2
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: CRYSTALS-Kyber is selected for standardization as the primary KEM; CRYSTALS-Dilithium, FALCON, and SPHINCS+ are selected for standardization as digital signatures; NIST recommends CRYSTALS-Dilithium as the primary signature algorithm to implement; BIKE, Classic McEliece, HQC, and SIKE advance to the fourth round of evaluation; NIST will issue a new Call for Proposals for public-key digital signature algorithms
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: Benchmarks on x86-64 processors with AVX2 extensions; Benchmarks on ARM Cortex-M4 processor; Key and ciphertext sizes for KEM finalists and alternates; Key and signature sizes for signature finalists and alternates
+- **Target Audience**: Researcher; Security Architect; Developer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: pqc-candidates; Algorithms; Leaders; Timeline
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Benchmarking using optimized implementations on software and hardware platforms; Security, implementation, and performance analyses
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Benchmarks on ARM Cortex-M4 processor
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice; Code-based; Hash-based; Multivariate; Isogeny
+- **PQC Round**: Round 3
+- **Source Document**: CROSS-018.pdf (884,808 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-07-17T12:04:28
+- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+
+---
+
