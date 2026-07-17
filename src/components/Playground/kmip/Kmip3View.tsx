@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-// Kmip3View — the "KMIP3.0" top-level tab: nine guided walkthroughs
+// Kmip3View — the "KMIP3.0" top-level tab: ten guided walkthroughs
 // (Learn, the on-ramp — first position; six classical→PQC comparisons plus
-// three engine-0.12/0.13 lessons), a category-sorted tester for every KMIP
+// four engine-addition lessons), a category-sorted tester for every KMIP
 // 3.0 operation (Commands/Reference), a live in-browser replay of the real
 // OASIS conformance corpus (Corpus Replay), and the batch/macro builder
 // (Batch & Macros).

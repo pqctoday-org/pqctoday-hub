@@ -131,4 +131,31 @@ describe('runBatch — policy enforcement + Undo (real wasm engine)', () => {
     // genuinely gone — the keystore is byte-for-byte back where it started.
     expect(engine.listObjects().length).toBe(before)
   })
+
+  it('a multi-match Locate empties the placeholder — a chained $IDPlaceholder item fails, not resolves to an arbitrary match', () => {
+    // 2026-07-17 audit (M3) — §6.1.32: a Locate matching more than one
+    // object SHALL empty the ID Placeholder, "ensuring that these batched
+    // operations SHALL proceed only if a single object is returned by
+    // Locate." Two same-algorithm keys make the filter genuinely
+    // ambiguous; the engine dispatcher fix under test lives in
+    // `pqctoday-hsm/kmip/src/dispatcher/mod.rs`'s `update_id_placeholder`.
+    engine.loadPolicy(PERMISSIVE_YAML)
+    expect(engine.runOp({ op: 'Create', algorithm: 'AES', length: 256 }).ok).toBe(true)
+    expect(engine.runOp({ op: 'Create', algorithm: 'AES', length: 256 }).ok).toBe(true)
+
+    const batch = engine.runBatch({
+      errorContinuation: 'Continue',
+      items: [
+        { op: 'Locate', algorithm: 'AES' },
+        { op: 'Get', uid: '$IDPlaceholder' },
+      ],
+    })
+
+    expect(batch.items).toHaveLength(2)
+    expect(batch.items[0].status).toBe('Success')
+    expect(
+      batch.items[1].status,
+      'the placeholder must be empty after a multi-match Locate, failing the chained Get'
+    ).toBe('OperationFailed')
+  })
 })

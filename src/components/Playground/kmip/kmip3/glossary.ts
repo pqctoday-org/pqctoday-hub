@@ -326,13 +326,13 @@ export const TERMS: GlossaryTerm[] = [
     id: 'hash-based',
     label: 'Hash-based signature',
     cat: 'pqc',
-    def: "Security rests on nothing but the hash function's collision resistance — the most conservative assumption available. SLH-DSA is hash-based: tiny keys, large signatures.",
+    def: "Security rests on nothing but the hash function's own security (preimage/PRF-type properties, deliberately NOT collision resistance — the design is collision-resilient by construction) — the most conservative assumption class available. SLH-DSA is hash-based: tiny keys, large signatures.",
   },
   {
     id: 'hybrid',
     label: 'Hybrid / composite',
     cat: 'pqc',
-    def: 'Running a classical and a PQC algorithm together so the construction stays secure even if one of the two is broken. KMIP 3.0 has one first-class hybrid KEM (X25519MLKEM768); hybrid signatures have no native KMIP algorithm yet.',
+    def: 'Running a classical and a PQC algorithm together so the construction stays secure even if one of the two is broken. KMIP 3.0 (WD19) has two first-class hybrid KEMs (X25519MLKEM768, SecP256r1MLKEM768); hybrid signatures have no native KMIP algorithm yet.',
   },
   {
     id: 'shor',

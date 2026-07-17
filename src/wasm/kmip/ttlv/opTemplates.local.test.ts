@@ -17,6 +17,9 @@ import { KmipEngine, hexToBytes } from '../kmipEngine'
 import { CodepointTable } from './codepointTable'
 import { runOp } from './runner'
 import { find, findAll, leaf } from './nodes'
+import { toWireTree } from './encode'
+import { buildRequestWithHeader } from './request'
+import { ALGORITHMS, AUTO_ALGO } from '../kmipMeta'
 import * as ops from './opTemplates'
 import { OP_TEMPLATES } from './opTemplates'
 // WP6-a/WP6-b (cert-ops plan revision) — the workshop's OWN, independent
@@ -67,6 +70,126 @@ describe('op-template pipeline (real wasm engine)', () => {
     expect(new Set(OP_TEMPLATES.map((t) => t.op)).size).toBe(66)
   })
 
+  // Ground truth transcribed from pqctoday-hsm/kmip/src/kmip30/ops.rs's
+  // `Operation` enum — the value the real dispatcher matches on, and
+  // independently unit-asserted there against the spec. This is the guard
+  // the 2026-07-17 KMIP 3.0 audit found missing: a case-sensitive `norm()`
+  // collision made the `ReKeyKeyPair` card's own patch-table entry encode
+  // op 0x1e (Discover Versions) instead of 0x1d (Re-key Key Pair), so every
+  // "Run" silently executed the wrong operation and reported Success. This
+  // test would have failed on that bug; it now guards every op's wire
+  // codepoint, and every future codepointTable.ts edit, the same way.
+  const OPERATION_CODEPOINTS: Record<string, number> = {
+    Create: 0x01,
+    CreateKeyPair: 0x02,
+    Register: 0x03,
+    ReKey: 0x04,
+    DeriveKey: 0x05,
+    Certify: 0x06,
+    ReCertify: 0x07,
+    Locate: 0x08,
+    Check: 0x09,
+    Get: 0x0a,
+    GetAttributes: 0x0b,
+    GetAttributeList: 0x0c,
+    AddAttribute: 0x0d,
+    ModifyAttribute: 0x0e,
+    DeleteAttribute: 0x0f,
+    ObtainLease: 0x10,
+    GetUsageAllocation: 0x11,
+    Activate: 0x12,
+    Revoke: 0x13,
+    Destroy: 0x14,
+    Archive: 0x15,
+    Recover: 0x16,
+    Validate: 0x17,
+    Query: 0x18,
+    Cancel: 0x19,
+    Poll: 0x1a,
+    Notify: 0x1b,
+    Put: 0x1c,
+    ReKeyKeyPair: 0x1d,
+    DiscoverVersions: 0x1e,
+    Encrypt: 0x1f,
+    Decrypt: 0x20,
+    Sign: 0x21,
+    SignatureVerify: 0x22,
+    MAC: 0x23,
+    MACVerify: 0x24,
+    RNGRetrieve: 0x25,
+    RNGSeed: 0x26,
+    Hash: 0x27,
+    CreateSplitKey: 0x28,
+    JoinSplitKey: 0x29,
+    Import: 0x2a,
+    Export: 0x2b,
+    Log: 0x2c,
+    Login: 0x2d,
+    Logout: 0x2e,
+    DelegatedLogin: 0x2f,
+    AdjustAttribute: 0x30,
+    SetAttribute: 0x31,
+    SetEndpointRole: 0x32,
+    PKCS_11: 0x33,
+    Interop: 0x34,
+    'Re-Provision': 0x35,
+    SetDefaults: 0x36,
+    SetConstraints: 0x37,
+    GetConstraints: 0x38,
+    QueryAsynchronousRequests: 0x39,
+    Process: 0x3a,
+    Ping: 0x3b,
+    CreateGroup: 0x3c,
+    Obliterate: 0x3d,
+    CreateUser: 0x3e,
+    CreateCredential: 0x3f,
+    Deactivate: 0x40,
+    Encapsulate: 0x41,
+    Decapsulate: 0x42,
+  }
+
+  it('every op template encodes to its spec-correct Operation codepoint', () => {
+    expect(Object.keys(OPERATION_CODEPOINTS)).toHaveLength(66)
+    for (const t of OP_TEMPLATES) {
+      const expected = OPERATION_CODEPOINTS[t.op]
+      expect(expected, `no ground-truth codepoint for op template '${t.op}'`).toBeDefined()
+      const wire = toWireTree(leaf('Operation', 'Enumeration', t.op), table)
+      const expectedHex = `0x${expected.toString(16).toUpperCase().padStart(8, '0')}`
+      expect(wire.value, `${t.op} encoded to the wrong Operation codepoint`).toBe(expectedHex)
+    }
+  })
+
+  // The 2026-07-17 audit also found three `select`/`algorithm` option values
+  // across the Commands tab (a Revoke reason, a Get key format, several
+  // algorithm-picker entries) that threw `EncodeError` with zero UI
+  // feedback — CommandsView's `OpRow.run()` had no catch. Both are now
+  // fixed; this sweeps every option of every param the Commands tab
+  // actually offers so the next one fails a test instead of a silent click.
+  it('every select/algorithm param option encodes without throwing', () => {
+    const runnableAlgorithms = ALGORITHMS.filter(
+      (a) => a.value !== AUTO_ALGO && a.runnable !== false
+    ).map((a) => a.value)
+    expect(runnableAlgorithms.length).toBeGreaterThan(0)
+
+    for (const t of OP_TEMPLATES) {
+      const defaults: Record<string, string> = {}
+      for (const p of t.params) defaults[p.key] = p.default ?? ''
+
+      for (const p of t.params) {
+        const optionsToTry =
+          p.kind === 'select' ? (p.options ?? []) : p.kind === 'algorithm' ? runnableAlgorithms : []
+        for (const opt of optionsToTry) {
+          const values = { ...defaults, [p.key]: opt }
+          expect(() => {
+            const payload = t.build(values)
+            const header = t.headerBuild?.(values) ?? []
+            toWireTree(buildRequestWithHeader(t.op, header, payload), table)
+          }, `${t.op}.${p.key} = '${opt}' failed to encode`).not.toThrow()
+        }
+      }
+    }
+  })
+
   it('Query succeeds and reports the server info', () => {
     const { ok, namedResponseTree } = run('Query', ops.query())
     expect(ok).toBe(true)
@@ -89,6 +212,32 @@ describe('op-template pipeline (real wasm engine)', () => {
     expect(run('GetAttributes', ops.getAttributes(uid)).ok).toBe(true)
     expect(run('Revoke', ops.revoke(uid)).ok).toBe(true)
     expect(run('Destroy', ops.destroy(uid)).ok).toBe(true)
+  })
+
+  it('ReKeyKeyPair mints a fresh key pair and retires the original (not Discover Versions)', () => {
+    const created = run('CreateKeyPair', ops.createKeyPair('ML-DSA-65', 'Sign Verify'))
+    expect(created.ok).toBe(true)
+    const oldPriv = find(created.namedResponseTree, 'PrivateKeyUniqueIdentifier')?.value as string
+    const oldPub = find(created.namedResponseTree, 'PublicKeyUniqueIdentifier')?.value as string
+    expect(run('Activate', ops.activate(oldPriv)).ok).toBe(true)
+
+    const rekeyed = run('ReKeyKeyPair', ops.rekeyKeyPair(oldPriv))
+    expect(rekeyed.ok).toBe(true)
+    const newPriv = find(rekeyed.namedResponseTree, 'PrivateKeyUniqueIdentifier')?.value as string
+    const newPub = find(rekeyed.namedResponseTree, 'PublicKeyUniqueIdentifier')?.value as string
+    expect(typeof newPriv).toBe('string')
+    expect(typeof newPub).toBe('string')
+    expect(newPriv).not.toBe(oldPriv)
+    expect(newPub).not.toBe(oldPub)
+
+    // No Offset ⇒ the new pair inherits the old (already-past) Activation
+    // Date and is born Active, same as the old pair it replaces — so it's
+    // immediately usable, proof this was a real re-key and not (as the
+    // pre-fix codepoint bug caused) a Discover Versions response that
+    // happens to carry no Result Status failure either.
+    const signed = run('Sign', ops.sign(newPriv, '68656c6c6f'))
+    expect(signed.ok).toBe(true)
+    expect(find(signed.namedResponseTree, 'SignatureData')).toBeDefined()
   })
 
   it('DeriveKey (NIST 800-108-C) derives a real key from a base secret', () => {
