@@ -24,7 +24,7 @@ const THREAT_ECONOMICS_PHASE: PhaseId = 'p0'
 // eslint-disable-next-line security/detect-object-injection
 const THREAT_ECONOMICS_PHASE_DEF = FRAMEWORK_PHASES[THREAT_ECONOMICS_PHASE]
 
-const CURRENT_YEAR = 2026
+const CURRENT_YEAR = new Date().getFullYear()
 
 // Default Z — single-sourced from CRQC_ESTIMATES via getCrqcConsensus() (Threats #1),
 // the same median-of-midpoints figure the hero and capability strip show, rather than
@@ -112,6 +112,14 @@ export const ThreatEconomicsHeader: React.FC<{ defaultExpanded?: boolean }> = ({
         xLabel: 'credential validity',
         deadline: crqcYear - credentialValidity - migrationTime,
         atRiskPhrase: 'Credentials signed today can be forged retroactively.',
+        // This clock answers "when must I stop issuing NEW classical-signed
+        // credentials" (Z − validity − migration-time). It is a distinct,
+        // earlier-or-later question from the HNFL workshop's re-issuance clock
+        // (Z − migration-time only), which answers "when must I start
+        // re-issuing EXISTING outstanding credentials" and does not depend on
+        // their validity period. Both are real, correct answers to different
+        // sub-questions — do not conflate the two numbers across surfaces.
+        note: 'New-issuance cutoff. The full workshop’s existing-credential re-issuance clock (Z − Y only) can land on a different year — see /learn Quantum Threats → HNFL workshop.',
       },
     ],
     [dataLifetime, credentialValidity, migrationTime, crqcYear]
@@ -169,6 +177,14 @@ export const ThreatEconomicsHeader: React.FC<{ defaultExpanded?: boolean }> = ({
             <strong className="text-foreground">confidentiality</strong>; the clock is your
             data&apos;s secrecy lifetime.
           </p>
+          <a
+            href="https://www.federalreserve.gov/econres/feds/harvest-now-decrypt-later-examining-post-quantum-cryptography-and-the-data-privacy-risks-for-distributed-ledger-networks.htm"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[10px] text-muted-foreground hover:text-primary hover:underline mt-1 inline-block"
+          >
+            Source: Federal Reserve FEDS 2025-093 (Mascelli &amp; Rodden)
+          </a>
         </div>
         <div className="rounded-lg border border-border bg-muted/30 p-3">
           <div className="text-xs font-bold text-foreground">HNFL — Harvest Now, Forge Later</div>
@@ -300,6 +316,11 @@ export const ThreatEconomicsHeader: React.FC<{ defaultExpanded?: boolean }> = ({
                       Z &minus; X &minus; Y = deadline ({row.xLabel}). If X + Y &gt; (Z &minus;
                       today), you are already exposed.
                     </div>
+                    {row.note && (
+                      <div className="text-[10px] text-muted-foreground/80 mt-1 italic">
+                        {row.note}
+                      </div>
+                    )}
                   </div>
                 </div>
               )

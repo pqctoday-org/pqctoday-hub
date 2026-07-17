@@ -21,6 +21,7 @@ export interface ThreatData {
   dataQualityNotes?: string
   confidenceScore?: number
   applicableIndustriesNormalized?: string[]
+  lastVerified?: string
   status?: 'New' | 'Updated'
 }
 
@@ -45,6 +46,7 @@ interface RawThreatRow {
   trusted_source_id_status: string
   data_quality_notes: string
   confidence_score?: string
+  last_verified?: string
   applicable_industries_normalized?: string
   status?: string
   deprecated_at?: string
@@ -101,6 +103,7 @@ function transformThreat(row: RawThreatRow): ThreatData | null {
     trustedSourceIdStatus: row.trusted_source_id_status || undefined,
     dataQualityNotes: row.data_quality_notes || undefined,
     confidenceScore: row.confidence_score ? Number(row.confidence_score) : undefined,
+    lastVerified: row.last_verified || undefined,
     applicableIndustriesNormalized: row.applicable_industries_normalized
       ? row.applicable_industries_normalized
           .split(';')
