@@ -5,11 +5,22 @@ import { MemoryRouter } from 'react-router-dom'
 import '@testing-library/jest-dom'
 import { MigrationWorkbench } from './MigrationWorkbench'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
+import { productsForDomain } from './workbenchCatalog'
 
 function renderWorkbench() {
   return render(
     <MemoryRouter>
       <MigrationWorkbench embedded />
+    </MemoryRouter>
+  )
+}
+
+/** Standalone (non-embedded) render at a given path — the ?product= deep
+ *  link only hydrates when standalone (embedded skips it deliberately). */
+function renderStandaloneAt(path: string) {
+  return render(
+    <MemoryRouter initialEntries={[path]}>
+      <MigrationWorkbench />
     </MemoryRouter>
   )
 }
@@ -133,5 +144,18 @@ describe('MigrationWorkbench (integration)', () => {
       within(chooseButtons[0].closest('div')!).getByRole('button', { name: /^Choose / })
     )
     expect(useMigrateSelectionStore.getState().plan).toContain('tls')
+  })
+
+  // Regression: migrate-process remediation Phase 5 (U8) — ProductDetail's
+  // Endorse/Flag buttons emit /migrate?product=<name>, which used to land
+  // nowhere (the workbench only read ?share= and ?tab=).
+  it('?product= deep link switches to Replace and pre-fills the domain filter (regression)', () => {
+    const [sample] = productsForDomain('tls')
+    expect(sample).toBeDefined()
+    renderStandaloneAt(`/migrate?product=${encodeURIComponent(sample.softwareName)}`)
+    // The Replace tab's filter input only renders when that tab is active —
+    // finding it with the right value proves both the tab switch and the
+    // filter pre-fill happened.
+    expect(screen.getByLabelText(/Filter products/i)).toHaveValue(sample.softwareName)
   })
 })

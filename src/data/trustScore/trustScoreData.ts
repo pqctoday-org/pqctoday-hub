@@ -16,7 +16,7 @@ import { complianceFrameworks } from '../complianceData'
 import { threatsData } from '../threatsData'
 import { leadersData } from '../leadersData'
 import { softwareData } from '../migrateData'
-import { certsByProduct } from '../certificationXrefData'
+import { getCertsForProduct } from '../certificationXrefData'
 import { algorithmTrustByName } from '../algorithmTrustData'
 import { algorithmsData } from '../algorithmsData'
 import { timelineData } from '../timelineData'
@@ -325,7 +325,7 @@ function computeAllScores(): Map<string, TrustScore> {
     // Government cryptographic validation (FIPS CMVP, ACVP, Common Criteria) is a
     // formal peer-review process, so a product with any such certificate counts as
     // peer-reviewed and inherits the certifying body as a vetting org.
-    const certs = certsByProduct.get(item.softwareName) ?? []
+    const certs = getCertsForProduct(item.productId, item.softwareName)
     const derivedVetting = new Set<string>(item.vettingBody ?? [])
     if (item.fipsValidated === 'yes') derivedVetting.add('NIST')
     for (const cert of certs) {
