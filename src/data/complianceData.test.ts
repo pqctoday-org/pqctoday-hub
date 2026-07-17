@@ -1,10 +1,32 @@
 import { describe, it, expect } from 'vitest'
-import { complianceFrameworks, allComplianceFrameworks, complianceDB } from './complianceData'
+import {
+  complianceFrameworks,
+  allComplianceFrameworks,
+  complianceDB,
+  conceptIdForFramework,
+} from './complianceData'
 import { COMPLIANCE_CURIOUS_PREFACES } from './complianceCuriousPrefaces'
 
 describe('complianceData', () => {
   it('loads without error', () => {
     expect(complianceFrameworks.length).toBeGreaterThan(0)
+  })
+
+  // 2026-07-16 (compliance-maintenance audit): 46/167 active rows had no
+  // concept_registry entry at all, so conceptIdForFramework returned
+  // undefined and they could never participate in cross-table "equivalent
+  // form" xwalk matching (pillarModel.ts's equivalentMatchLabels). Fixed to
+  // 167/167 (100%): 41 rows got a new compliance-table registry entry; the
+  // other 5 (FIPS-203/204/205, NSM-10, OMB-M-23-02) were already registered
+  // under `library` — those got a `compliance:<id>` alias added instead of a
+  // duplicate row, same cross-table pattern already used by ISO-19790. A
+  // floor below the current 100%, not an exact-match assertion, so a future
+  // new row doesn't fail this test just for arriving unregistered — it
+  // should trend up, not down.
+  it('at least 95% of active compliance rows have a concept_registry entry', () => {
+    const withConceptId = complianceFrameworks.filter((f) => conceptIdForFramework(f))
+    const pct = withConceptId.length / complianceFrameworks.length
+    expect(pct).toBeGreaterThanOrEqual(0.95)
   })
 
   it('produces expected typescript shape', () => {
