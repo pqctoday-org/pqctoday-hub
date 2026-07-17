@@ -399,6 +399,14 @@ export interface StealthResult {
   tier: string
   text: string
   error: string | null
+  /** True when the bridge fetched raw bytes (PDF URLs) instead of decoded
+   * text — see fetch_resilient_bridge.py's 2026-07-17 docstring: re-encoding
+   * decoded text back to bytes silently corrupts binary content and was
+   * producing false-positive drift on unchanged PDFs. When true, `dataB64`
+   * holds the real bytes and `text` is empty; decode via Buffer.from(...,
+   * 'base64'), never Buffer.from(text, 'utf-8'). */
+  binary?: boolean
+  dataB64?: string
 }
 
 /** Not exported as the default path — callers inject this so tests can fake
@@ -420,6 +428,8 @@ export function stealthFetchViaBridge(
       tier: parsed.tier ?? 'unknown',
       text: parsed.text ?? '',
       error: parsed.error ?? null,
+      binary: Boolean(parsed.binary),
+      dataB64: parsed.dataB64,
     }
   } catch (e) {
     return {
@@ -494,7 +504,10 @@ export function stealthRecheck(
   if (!result.ok) {
     return { ...finding, stealthOutcome: 'still-failing', stealthTier: result.tier }
   }
-  const bytes = Buffer.from(result.text, 'utf-8')
+  const bytes =
+    result.binary && result.dataB64
+      ? Buffer.from(result.dataB64, 'base64')
+      : Buffer.from(result.text, 'utf-8')
   if (looksBlocked(bytes)) {
     return { ...finding, stealthOutcome: 'still-blocked', stealthTier: result.tier }
   }
