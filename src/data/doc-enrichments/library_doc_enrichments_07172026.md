@@ -73233,3 +73233,59 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
+## Ethereum-PQC-Tasklist-Ethresearch
+
+- **Reference ID**: Ethereum-PQC-Tasklist-Ethresearch
+- **Title**: Tasklist for Post-Quantum Ethereum
+- **Authors**: Ethereum Foundation PQC Research Team
+- **Publication Date**: 2024-01-01
+- **Last Updated**: 2025-06-01
+- **Document Status**: Active Research
+- **Main Topic**: A research tasklist outlining the roadmap and technical requirements for upgrading Ethereum to post-quantum cryptography, including signature replacements and emergency fork strategies.
+- **PQC Algorithms Covered**: FN-DSA (FALCON); SLH-DSA (Sphincs-plus)
+- **Quantum Threats Addressed**: Cryptographically relevant quantum computer; Shor’s algorithm; Grover’s algorithm
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Vitalik (proposed trick to hard-fork to save funds in a quantum emergency)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: Ethereum; EVM; ZK-rollups
+- **Infrastructure Layers**: Key Management; Consensus layer; Wallets
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: FIPS-206; FIPS-205
+- **Classical Algorithms Referenced**: ECDSA; ECDH; BLS12-381; SHA-512; PBKDF2; HKDF; HKDF-SHA256; Blake3; AES-128; AES-256; ChaCha20; HMAC-SHA256; HMAC-SHA512; KMAC; Keccak256; Keccak512; SHA3-512; SHA512; Groth16; PLONK; Marlin; BulletProof
+- **Key Takeaways**: Replace ECDSA transaction signing with lattice-based FN-DSA or hash-based SLH-DSA; Upgrade encrypted wallets from AES-128 to AES-256 or ChaCha20; Implement an emergency quantum fork path to freeze accounts and recover funds using BIP39 and ZK-proofs; Replace Keccak256 address derivation with stronger hashes like Keccak512 or Blake3-512 to mitigate Grover's algorithm
+- **Security Levels & Parameters**: Falcon-1024 keys 1.75KB; Falcon-1024 signatures 1.25KB; SLH-DSA-256 keys 48-128B; SLH-DSA-256 signatures 17-51KB
+- **Hybrid & Transition Approaches**: Emergency quantum fork; freeze all accounts and leverage BIP39 with ZK-proofs to recover funds
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "Transaction signing Should be replaced by lattice-based Falcon (FN-DSA / FIPS-206), or hash-based Sphincs-plus (SLH-DSA / FIPS-205)"
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: Falcon-1024 has 1.75KB keys and 1.25KB sigs; SLH-DSA-256 has 48-128B keys and 17-51KB sigs
+- **Target Audience**: Developer; Researcher; Security Architect
+- **Implementation Prerequisites**: Replace bip32 hdkey derivation; Upgrade EVM opcodes; Replace KZG verification scheme
+- **Relevant PQC Today Features**: Threats; Algorithms; Migrate; digital-assets
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Emergency quantum fork; freeze all accounts; recover funds into new pq scheme
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice; Hash-based
+- **PQC Round**: Standardised
+- **Source Document**: Ethereum-PQC-Tasklist-Ethresearch.html (467,873 bytes, 3,331 extracted chars)
+- **Extraction Timestamp**: 2026-07-17T21:17:58
+- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+
+---
+
