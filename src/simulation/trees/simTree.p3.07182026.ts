@@ -23,7 +23,7 @@ const TREE: PhaseTree = {
           title: 'Define Risk Scoring Model',
           decision:
             'Score risk across all four dimensions — HNDL exposure, trust criticality, feasibility, regulatory pressure — not just severity.',
-          do: 'Establish the four-dimension model: (1) HNDL exposure, (2) TNFL/trust-infrastructure criticality, (3) migration feasibility, (4) regulatory & compliance pressure.',
+          do: 'Establish the four-dimension model: (1) HNDL exposure, (2) TNFL/trust-infrastructure criticality, (3) migration feasibility, (4) regulatory & compliance pressure. (Practice note, not a framework requirement: some programs calibrate a fifth dimension — business impact/consequence of a breach — on top of these four; the framework itself defines exactly four.)',
           output: 'Risk scoring model',
           steps: [
             {

@@ -142,11 +142,11 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
   ],
   p3: [
     {
-      label: 'Score Tier-1 by HNDL exposure × data shelf-life',
-      desc: 'Risk-rank entries, then produce an approved QRA.',
+      label: 'Score every entry across all four risk dimensions',
+      desc: 'HNDL exposure, TNFL criticality, feasibility, regulatory pressure — then produce an approved QRA.',
       evaluate: (ctx) => ({
         kind: 'sound',
-        outcome: `Sound. Risk-driven scoring produces the QRA (Gate G3) and a prioritized backlog. With ${ctx.sector.label.toLowerCase()} data living ${ctx.sector.x}y, this is what stops the bleeding first.`,
+        outcome: `Sound. Scoring across all four dimensions — (1) HNDL exposure, (2) TNFL/trust-infrastructure criticality, (3) migration feasibility, (4) regulatory & compliance pressure — produces the QRA (Gate G3) and a defensible priority backlog, not just a severity-sorted list. With ${ctx.sector.label.toLowerCase()} data living ${ctx.sector.x}y, HNDL alone already justifies moving first — the other three dimensions are what keep signature-heavy and feasibility-constrained systems from falling off the plan.`,
       }),
     },
     {
@@ -163,6 +163,14 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
       evaluate: (ctx) => ({
         kind: 'trap',
         outcome: `Fails. Analysis paralysis. The Mosca clock keeps running — you're already ${ctx.over}y over the line. Score with what you have and refine the QRA quarterly.`,
+      }),
+    },
+    {
+      label: 'Score by CVSS severity, like the vuln backlog',
+      desc: 'Reuse the classical vulnerability-management scoring you already run.',
+      evaluate: (ctx) => ({
+        kind: 'trap',
+        outcome: `Fails. CVSS scores exploitability today, against classical attackers — it has no time-to-decrypt axis and no notion of "safe now, broken once a CRQC exists." A CVSS-low system holding ${ctx.sector.label.toLowerCase()} data with a ${ctx.sector.x}-year confidentiality horizon can be a Tier-1 quantum risk with a near-zero classical CVSS score. Quantum risk isn't classical vulnerability severity — it needs its own four-dimension model.`,
       }),
     },
   ],
