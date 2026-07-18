@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { SimulationView } from './SimulationView'
@@ -69,6 +69,7 @@ beforeEach(() => {
   seedAssessment()
   // suppress the first-run tour (WS-12) for the gameplay tests
   useSimulationStore.setState({ tourSeen: true })
+  Object.assign(navigator, { clipboard: { writeText: vi.fn().mockResolvedValue(undefined) } })
 })
 
 describe('SimulationView (Mission Control)', () => {
@@ -275,6 +276,35 @@ describe('SimulationView (Mission Control)', () => {
     // inherited Object.prototype keys (e.g. "toString") as a "valid" phase.
     renderPage(['/simulation?phase=toString'])
     expect(useSimulationStore.getState().sel).toBe('p0')
+  })
+
+  // Wave 4 (WP4.6) — /simulation?seed=<n> ("Challenge a colleague").
+  it('applies ?seed= on a genuinely fresh run, then strips the param', () => {
+    renderPage(['/simulation?seed=424242'])
+    expect(useSimulationStore.getState().seed).toBe(424242)
+  })
+
+  it('ignores a non-integer / non-positive ?seed= instead of corrupting the run seed', () => {
+    const before = useSimulationStore.getState().seed
+    renderPage(['/simulation?seed=not-a-number'])
+    expect(useSimulationStore.getState().seed).toBe(before)
+  })
+
+  it('never applies ?seed= to a run already in progress (a quarter has elapsed)', () => {
+    useSimulationStore.setState({ q: 2 }) // one End Quarter already happened
+    const before = useSimulationStore.getState().seed
+    renderPage(['/simulation?seed=424242'])
+    expect(useSimulationStore.getState().seed).toBe(before)
+  })
+
+  it('"Challenge a colleague" copies a ?seed= link for THIS run\'s seed', async () => {
+    useSimulationStore.setState({ seed: 999888 })
+    renderPage()
+    fireEvent.click(screen.getByRole('button', { name: /⋯ MORE/i }))
+    fireEvent.click(screen.getByRole('menuitem', { name: /challenge a colleague/i }))
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+      expect.stringContaining('/simulation?seed=999888')
+    )
   })
 })
 

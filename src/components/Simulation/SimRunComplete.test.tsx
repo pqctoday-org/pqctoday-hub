@@ -96,6 +96,20 @@ describe('SimRunComplete (run-end ceremony)', () => {
     )
   })
 
+  // WP4.6 — the challenge affordance is opt-in via onCopyChallenge; omitting it
+  // (older callers) hides the button entirely, same pattern as `score`.
+  it('shows no challenge button when onCopyChallenge is omitted', () => {
+    renderCeremony()
+    expect(screen.queryByRole('button', { name: /challenge a colleague/i })).not.toBeInTheDocument()
+  })
+
+  it('calls onCopyChallenge when the challenge button is clicked', () => {
+    const onCopyChallenge = vi.fn()
+    renderCeremony({ onCopyChallenge })
+    fireEvent.click(screen.getByRole('button', { name: /challenge a colleague/i }))
+    expect(onCopyChallenge).toHaveBeenCalledTimes(1)
+  })
+
   // WP4.2 — the grade card is opt-in via the `score` prop; omitting it (older
   // callers, or a scenario with no meaningful quarter count) hides it entirely.
   it('shows no grade card when score is omitted', () => {

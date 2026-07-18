@@ -16,7 +16,7 @@
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { Trophy, ShieldCheck, LayoutDashboard, CalendarClock } from 'lucide-react'
+import { Trophy, ShieldCheck, LayoutDashboard, CalendarClock, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { readTrapTally, remediation, phaseName } from './simTrapTally'
 import type { RunScoreBreakdown } from '@/simulation/runScore'
@@ -40,6 +40,9 @@ export interface SimRunCompleteProps {
   /** WP4.2 — the run's graded breakdown, visible not a black box. Omit to hide
    *  the grade card entirely (e.g. a scenario with no meaningful quarter count). */
   score?: RunScoreBreakdown
+  /** WP4.6 — copies a `?seed=` challenge link (the view owns clipboard + toast;
+   *  this component stays presentational). Omit to hide the affordance. */
+  onCopyChallenge?: () => void
   onClose: () => void
 }
 
@@ -55,6 +58,7 @@ export function SimRunComplete({
   maturity,
   programEndYear,
   score,
+  onCopyChallenge,
   onClose,
 }: SimRunCompleteProps) {
   const reduce = useReducedMotion()
@@ -217,6 +221,18 @@ export function SimRunComplete({
                 See your deadlines
               </Button>
             </Link>
+            {onCopyChallenge && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="gap-1.5"
+                onClick={onCopyChallenge}
+              >
+                <Users size={14} aria-hidden="true" />
+                Challenge a colleague
+              </Button>
+            )}
           </div>
 
           <Button

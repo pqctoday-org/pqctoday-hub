@@ -346,6 +346,7 @@ export function SimulationView() {
     trapsThisRun,
     incrementTrapsThisRun,
     recordSimRunCompletion,
+    setSeed,
   } = useSimulationStore()
   // WS-14: the active difficulty balance the engine + scoring read (config swap).
   const balance = getBalance(difficulty)
@@ -570,6 +571,25 @@ export function SimulationView() {
     next.delete('phase')
     setSearchParams(next, { replace: true })
   }, [searchParams, setSearchParams, setSel])
+
+  // Deep link: /simulation?seed=<n> — WP4.6 "Challenge a colleague": same world
+  // (deterministic quarter events/AI progress), different choices. Validated as a
+  // positive integer; applies ONLY to a genuinely fresh run (no quarter elapsed
+  // yet) — never mutates a run already in progress, matching the ?run/?phase
+  // deep-links' own "consumed once, then stripped" contract.
+  const ranSeedDeepLink = useRef(false)
+  useEffect(() => {
+    if (ranSeedDeepLink.current) return
+    const seedParam = searchParams.get('seed')
+    if (!seedParam) return
+    ranSeedDeepLink.current = true
+    const n = Number(seedParam)
+    const isFreshRun = year === RUN_START.year && q === RUN_START.q
+    if (Number.isInteger(n) && n > 0 && isFreshRun) setSeed(n)
+    const next = new URLSearchParams(searchParams)
+    next.delete('seed')
+    setSearchParams(next, { replace: true })
+  }, [searchParams, setSearchParams, setSeed, year, q])
 
   // While the Executive Overview walkthrough is playing (or on its end screen), the
   // maturity/objective scoreboard and the "did you beat Q-Day?" win ceremony are
@@ -872,6 +892,16 @@ export function SimulationView() {
     a.download = `pqc-simulation-${year}-Q${q}.json`
     a.click()
     URL.revokeObjectURL(url)
+  }
+  // Wave 4 (WP4.6) — "Challenge a colleague": copies a link that starts a FRESH
+  // run on the same deterministic seed (same quarter events, same AI progress) —
+  // only the player's own choices differ. Read-only: never mutates this run.
+  const copyChallenge = () => {
+    const url = `${window.location.origin}/simulation?seed=${seed}`
+    navigator.clipboard
+      .writeText(url)
+      .then(() => toast.success('Challenge link copied — same world, different choices.'))
+      .catch(() => toast.error('Could not copy the link — copy it from the address bar instead.'))
   }
   const onImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -1677,6 +1707,12 @@ export function SimulationView() {
             <RunActionsMenu
               items={
                 [
+                  {
+                    key: 'challenge',
+                    label: 'Challenge a colleague',
+                    description: 'Copy a link — same world, different choices.',
+                    onSelect: copyChallenge,
+                  },
                   {
                     key: 'export',
                     label: 'Export',
@@ -3508,6 +3544,7 @@ export function SimulationView() {
               objectivesOnTime,
               objectivesTotal: scoreboard.objectives.length,
             })}
+            onCopyChallenge={copyChallenge}
             onClose={() => setRunCompleteOpen(false)}
           />
         )}
