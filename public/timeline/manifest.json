@@ -678,9 +678,9 @@
       "url": "https://csrc.nist.gov/projects/pqc-dig-sig/round-2-additional-signatures",
       "status": "downloaded",
       "file": "timeline/United_Arab_Emirates_TII_NIST_Additional_Signatures_Round_2_Contributions.html",
-      "sizeBytes": 67208,
+      "sizeBytes": 66981,
       "contentType": "text/html; charset=utf-8",
-      "sha256": "adf64b9f1e1839e70e8f8830ff1d8b4831734b6f34505aa84097ae5dc83210ea"
+      "sha256": "7ad965ba1b0bbbbda1c0d00ed9611f28447cf0592ba4c308c36534bf82697873"
     },
     {
       "label": "United Arab Emirates:DESC \u2014 Dubai PQC Guideline Launched",
@@ -950,7 +950,7 @@
       "status": "downloaded",
       "reason": "manual-add: 3GPP SA3 PQC transition study (corrects TR 33.841 mislabel)",
       "file": "timeline/Global_3GPP_SA3_3GPP_TR_33.938_PQC_Transition_Study.html",
-      "sha256": "02184a625a7b9318e33308182557f82e9aa0b2c873063c48197b49d4e3644db8",
+      "sha256": "8132afad0e616e31dbdbb206d3236bf97844998658c47888c4c273b709c2c86e",
       "sizeBytes": 194770
     },
     {
@@ -1013,8 +1013,8 @@
       "status": "downloaded",
       "reason": "completeness-audit add",
       "file": "timeline/European_Union_ENISA_ENISA_PQC_Anticipating_Threats.html",
-      "sha256": "f95bcf08fa9b7449c7b15b7d73b4fb3150459950b7e13c3c390dc912e29b4976",
-      "sizeBytes": 57376
+      "sha256": "958a7812d3c6e0bd40b5f50fafee9f227ee0f4a6cb7e0420720318d1c65f817a",
+      "sizeBytes": 57285
     },
     {
       "label": "Japan:CRYPTREC \u2014 CRYPTREC Adds ML-KEM to Ciphers List",
@@ -1085,8 +1085,8 @@
       "status": "downloaded",
       "reason": "completeness-audit add",
       "file": "timeline/International_ISO_IEC_ISO_IEC_SC27_PQC_Standardization.html",
-      "sha256": "340608ef3aa8d39310c473b2799c4ce1a01bd34e7bb7dcb6ef25eb7dd7cf0e08",
-      "sizeBytes": 137899
+      "sha256": "30a74569a7c1fd3d5a779977a119d05493d5a871c661a93112169ec223764bea",
+      "sizeBytes": 138287
     },
     {
       "label": "International:IETF \u2014 draft-ietf-lamps-kyber-certificates",
@@ -1103,8 +1103,8 @@
       "status": "downloaded",
       "reason": "completeness add; reused library cache (BSI scraper-blocked)",
       "file": "timeline/Germany_BSI_BSI_TR-02102-1_2026_Edition.pdf",
-      "sha256": "12f04ee22b64f4dd517f72d40924d53e1efd5731099d446bac7ef6cc8d63b6e8",
-      "sizeBytes": 56314
+      "sha256": "f601cdf25c000b431573a307a3c125f3c51d301897089e7e63dde0449367a62a",
+      "sizeBytes": 568388
     },
     {
       "label": "Canada:CCCS \u2014 ITSP.40.111 v4 PQC Algorithms Approved",
