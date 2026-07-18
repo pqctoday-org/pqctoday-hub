@@ -62,6 +62,10 @@ type HsmTab =
   | 'acvp'
   | 'logs'
 
+/** First-time visitors land on the guided Learn tab (matching the KMIP
+ * playground's own Learn-first default), not the bare workbench. */
+const DEFAULT_TAB: HsmTab = 'learn'
+
 export const HsmPlayground = () => {
   const role = usePersonaStore((s) => s.selectedPersona)
   const { error } = useSettingsContext()
@@ -77,7 +81,7 @@ export const HsmPlayground = () => {
     hsmLog,
     clearHsmLog,
   } = useHsmContext()
-  const [activeTab, setActiveTab] = useState<HsmTab>('keystore')
+  const [activeTab, setActiveTab] = useState<HsmTab>(DEFAULT_TAB)
   const [showMethodologyModal, setShowMethodologyModal] = useState(false)
   const errorRef = useRef<HTMLDivElement>(null)
   const tabListRef = useRef<HTMLDivElement>(null)
@@ -181,16 +185,20 @@ export const HsmPlayground = () => {
     const engine = initialEngine.current
     const algo = initialAlgo.current
     if (engine) setEngineMode(engine)
-    if (tab && tab !== 'keystore') {
-      if (phase === 'idle') {
-        autoInit(engine ?? undefined).then((ok) => {
-          if (!ok) return
-          setActiveTab(tab)
-          generateDefaultKeyForTab(tab, algo, engine ?? undefined)
-        })
-      } else if (isReady) {
+    if (!tab || tab === DEFAULT_TAB) {
+      // No explicit tab, or it matches the default — nothing extra to do.
+    } else if (tab === 'keystore') {
+      // Manual 3-step walkthrough tab, on purpose — switch to it without
+      // eagerly auto-initing the engine in the background.
+      setActiveTab(tab)
+    } else if (phase === 'idle') {
+      autoInit(engine ?? undefined).then((ok) => {
+        if (!ok) return
         setActiveTab(tab)
-      }
+        generateDefaultKeyForTab(tab, algo, engine ?? undefined)
+      })
+    } else if (isReady) {
+      setActiveTab(tab)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -204,7 +212,7 @@ export const HsmPlayground = () => {
     setSearchParams(
       (prev) => {
         const next = new URLSearchParams(prev)
-        if (activeTab !== 'keystore') next.set('tab', activeTab)
+        if (activeTab !== DEFAULT_TAB) next.set('tab', activeTab)
         else next.delete('tab')
         if (engineMode !== 'rust') next.set('engine', engineMode)
         else next.delete('engine')
