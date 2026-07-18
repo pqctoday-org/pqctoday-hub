@@ -62,6 +62,12 @@ const TREE: PhaseTree = {
             },
             {
               kind: 'activity',
+              label: 'Cost the multi-year ask before the board sees the roadmap',
+              to: '/business/tools/cost-model-explorer',
+              artifactType: 'cost-model-comparison',
+            },
+            {
+              kind: 'activity',
               label: 'Plan the roadmap stakeholder communications',
               to: '/business/tools/stakeholder-comms',
               artifactType: 'stakeholder-comms',
@@ -148,7 +154,7 @@ const TREE: PhaseTree = {
           title: 'Pre-Draft the Accelerated Execution Profile',
           decision:
             'Pre-approve an accelerated execution plan now, before you need it — a CRQC-timeline surprise is the wrong moment to start drafting one.',
-          do: 'Pre-approve a contingency package with triggers, compressed sequence and activation authority.',
+          do: 'Pre-approve a contingency package with triggers, compressed sequence and activation authority. By Year 4–5, plan the roadmap\'s own transition from a project (with an end date) to ongoing posture management (with no end date) — disbanding the program at "done" orphans the capability the moment the next algorithm break or deadline shift hits.',
           output: 'Accelerated Execution Profile',
           steps: [
             {
