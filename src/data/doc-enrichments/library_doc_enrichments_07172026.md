@@ -73513,3 +73513,59 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
+## ITU-T-X509-2019
+
+- **Reference ID**: ITU-T-X509-2019
+- **Title**: ITU-T X.509 (2019): Public-key and attribute certificate frameworks (ISO/IEC 9594-8)
+- **Authors**: ITU-T Study Group 17
+- **Publication Date**: 2019-10-14
+- **Last Updated**: 2019-10-14
+- **Document Status**: International Standard
+- **Main Topic**: ITU-T X.509 (2019) defines frameworks for public-key and attribute certificates, including extensions for alternative cryptographic algorithms.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: X.509
+- **Infrastructure Layers**: PKI; PMI
+- **Standardization Bodies**: ITU-T; ISO; IEC
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: The standard defines frameworks for public-key infrastructure (PKI) and privilege management infrastructure (PMI); Section 9.8 introduces Alternative Cryptographic Algorithms extensions enabling hybrid certificate support; The standard specifies data types including public-key certificates, attribute certificates, and revocation lists; It defines entity types such as certification authority, attribute authority, and trust anchor; Compliance with the recommendation is voluntary but may contain mandatory provisions for interoperability.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Hybrid certificate support via Alternative Cryptographic Algorithms extensions
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Yes
+- **Hybrid PQC Signature Evidence**: Section 9.8 introduces Alternative Cryptographic Algorithms extensions... enabling hybrid certificate support
+- **PQC Heatmap Protocols Covered**: X.509
+- **PQC Heatmap Protocols Evidence**: X.509: "Recommendation ITU-T X.509... Public-key and attribute certificate frameworks"
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Compliance Officer; Developer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: pki-workshop; hybrid-crypto; crypto-agility
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: ITU-T-X509-2019.pdf (3,581,573 bytes, 12,136 extracted chars)
+- **Extraction Timestamp**: 2026-07-17T21:39:38
+- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+
+---
+
