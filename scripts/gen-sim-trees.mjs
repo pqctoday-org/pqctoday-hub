@@ -533,8 +533,11 @@ const FRAMEWORK = {
         // (Migrate workbench) was previously reachable only via a non-gating
         // reference row — a player could clear Gate G2 without ever touching
         // the export surface frameworkPhases.ts advertises as this phase's
-        // deliverable. Now required.
-        R('migrate', 'Export your CBOM as CycloneDX from the Migrate workbench'),
+        // deliverable. Now required. Upgraded 07182026 (Wave 5, WP5.2) from a
+        // bare reference to a catalog embed focused on the Plan tab's real
+        // "Export plan + CBOM" button (PlanTab.tsx) — landing on the generic
+        // /migrate entry point left the player to find the export themselves.
+        C('Export your CBOM as CycloneDX from the Migrate workbench', 'cyclonedx-export'),
       ],
       // Added 07082026 — P2 was the only phase with zero deep-dive content.
       deepDive: [

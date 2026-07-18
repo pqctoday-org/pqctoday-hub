@@ -14,13 +14,21 @@ import { MigrationWorkbench } from '@/components/Migrate/Workbench/MigrationWork
 import type { MigrateTab } from '@/store/useMigrateSelectionStore'
 import type { DomainId } from '@/data/migrationAssets'
 
-// Which real workbench view each sim catalog step opens on. Only the two catalog
-// ids with a genuine matching surface are wired (the CBOM ones were dropped):
-//   discovery → the "Discovery & validation tooling" domain in the Replace tab
-//   pilots    → the Replace tab (browse & pick Tier-1 assets to pilot)
+// Which real workbench view each sim catalog step opens on.
+//   discovery       → the "Discovery & validation tooling" domain in the Replace tab
+//   pilots          → the Replace tab (browse & pick Tier-1 assets to pilot)
+//   cyclonedx-export → the Plan tab's real "Export plan + CBOM" button
+//                      (PlanTab.tsx's downloadPlanCbom — CycloneDX-flavoured JSON
+//                      keyed to the player's own migration plan). Wave 5 (WP5.2):
+//                      re-added after being dropped for lacking a matching surface
+//                      — this one has a genuine, real button, unlike a hypothetical
+//                      standalone "cbom-scanner" catalog view, which still doesn't
+//                      exist anywhere in the workbench (discovery already covers
+//                      that ground) and stays deliberately unmapped.
 const CATALOG_FOCUS: Record<string, { tab: MigrateTab; domain?: DomainId }> = {
   discovery: { tab: 'replace', domain: 'discovery' },
   pilots: { tab: 'replace' },
+  'cyclonedx-export': { tab: 'plan' },
 }
 
 export function MigrateWorkbenchEmbed({ catalogId }: { catalogId?: string }) {
