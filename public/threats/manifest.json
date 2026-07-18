@@ -160,9 +160,9 @@
       "status": "downloaded",
       "file": "public/threats/CROSS-004.html",
       "filename": "CROSS-004.html",
-      "sizeBytes": 215585,
+      "sizeBytes": 253191,
       "contentType": "text/html",
-      "sha256": "46c4c3752bf025054d13e9d24db572f775ee982ee1957a9323983fa2de32e6b8"
+      "sha256": "f8b76d62049c6266de94e877d2cae11cd5e55d56921b8b081fa672be89061c18"
     },
     {
       "threatId": "CROSS-005",
@@ -227,9 +227,9 @@
       "status": "downloaded",
       "file": "public/threats/CRYPTO-002.html",
       "filename": "CRYPTO-002.html",
-      "sizeBytes": 360726,
+      "sizeBytes": 363044,
       "contentType": "text/html",
-      "sha256": "0388ad72b6da02e431f587a80c1d24268e26abf494436f0ff302f291ef55c2d5"
+      "sha256": "3862f8cbaf027b9e12afa2198071e71bfa39a7491af684495ce6dc8e465c2e79"
     },
     {
       "threatId": "CRYPTO-003",
@@ -298,9 +298,9 @@
       "status": "downloaded",
       "file": "public/threats/ENERGY-004.html",
       "filename": "ENERGY-004.html",
-      "sizeBytes": 93027,
+      "sizeBytes": 93028,
       "contentType": "text/html",
-      "sha256": "68d9a0ff7ca6520d5ea8c6bf7b8b9d051814ca3e44e68d9d5a05fcb4475f52c3"
+      "sha256": "57c70e249b0ffc754e8bfc0a17c1c2a1586c9f4fbdd172d088382eca351997cc"
     },
     {
       "threatId": "FIN-001",
@@ -425,9 +425,9 @@
       "status": "downloaded",
       "file": "public/threats/GOV-004.html",
       "filename": "GOV-004.html",
-      "sizeBytes": 156673,
+      "sizeBytes": 156739,
       "contentType": "text/html",
-      "sha256": "d39f11198c0e2fa07ec1802bf3b08bdf95f86f0859d34d070cb24039727506e3"
+      "sha256": "f15c6d85f70ca81ba747bbc0fdc911cbeaeb1468642ee29bf0fd367ef298d3b0"
     },
     {
       "threatId": "GOV-005",
@@ -572,9 +572,9 @@
       "status": "downloaded",
       "file": "public/threats/IOT-002.html",
       "filename": "IOT-002.html",
-      "sizeBytes": 93027,
+      "sizeBytes": 93028,
       "contentType": "text/html",
-      "sha256": "68d9a0ff7ca6520d5ea8c6bf7b8b9d051814ca3e44e68d9d5a05fcb4475f52c3"
+      "sha256": "57c70e249b0ffc754e8bfc0a17c1c2a1586c9f4fbdd172d088382eca351997cc"
     },
     {
       "threatId": "IOT-003",
@@ -584,9 +584,9 @@
       "status": "downloaded",
       "file": "public/threats/IOT-003.html",
       "filename": "IOT-003.html",
-      "sizeBytes": 66687,
+      "sizeBytes": 66356,
       "contentType": "text/html",
-      "sha256": "bb3ad2d85e5352fbadfa69a4939e6c796dd09a156ed1d52353306504985d3057"
+      "sha256": "b29e6c39ff2db10cb4c138c0c45bd47a478386a6b053b02129b3704efa1008e6"
     },
     {
       "threatId": "IOT-004",
@@ -607,9 +607,9 @@
       "status": "downloaded",
       "file": "public/threats/IT-001.html",
       "filename": "IT-001.html",
-      "sizeBytes": 31826,
+      "sizeBytes": 34496,
       "contentType": "text/html",
-      "sha256": "409433928bfdf905587afed8ad4e69f7809f57a6c7c72511d2771b349be474ee"
+      "sha256": "09bfd7b81332cb83f1b1b8a518491bceff811588abb9a9cc66d436d80d710a91"
     },
     {
       "threatId": "IT-002",
@@ -619,9 +619,9 @@
       "status": "downloaded",
       "file": "public/threats/IT-002.html",
       "filename": "IT-002.html",
-      "sizeBytes": 45496,
+      "sizeBytes": 44365,
       "contentType": "text/html",
-      "sha256": "b52e7305178558286167c24ac38a7faba15e59e93e603f2116074a191c5493d5"
+      "sha256": "06912fdb80160b95429fc8ae08006a3ba10770c12586352e3c00b35c66665d71"
     },
     {
       "threatId": "IT-003",
@@ -642,9 +642,9 @@
       "status": "downloaded",
       "file": "public/threats/IT-004.html",
       "filename": "IT-004.html",
-      "sizeBytes": 25770,
+      "sizeBytes": 25607,
       "contentType": "text/html",
-      "sha256": "706663e55fbddb4820878ca55d976d35518a4f519452888d8e7bd586bdea2843"
+      "sha256": "0534af68137bb9aa8709b1bd19e8acbd86de7236887a0d332cbe7d11fb08464a"
     },
     {
       "threatId": "LEG-001",
@@ -746,9 +746,9 @@
       "status": "downloaded",
       "file": "public/threats/PCI-002.html",
       "filename": "PCI-002.html",
-      "sizeBytes": 664762,
+      "sizeBytes": 666809,
       "contentType": "text/html",
-      "sha256": "0d2a0ad3932366f32996d6d39b7c1cae8823dcd66917f8816f04d4660629d527"
+      "sha256": "8df68c86f85355eb2ba462f1cf4720d989ece927b4161560dc001269e4bc9715"
     },
     {
       "threatId": "PCI-003",
@@ -758,9 +758,9 @@
       "status": "downloaded",
       "file": "public/threats/PCI-003.html",
       "filename": "PCI-003.html",
-      "sizeBytes": 664762,
+      "sizeBytes": 666809,
       "contentType": "text/html",
-      "sha256": "0d2a0ad3932366f32996d6d39b7c1cae8823dcd66917f8816f04d4660629d527"
+      "sha256": "8df68c86f85355eb2ba462f1cf4720d989ece927b4161560dc001269e4bc9715"
     },
     {
       "threatId": "RAIL-001",
@@ -788,9 +788,9 @@
       "status": "downloaded",
       "file": "public/threats/RETAIL-001.html",
       "filename": "RETAIL-001.html",
-      "sizeBytes": 664762,
+      "sizeBytes": 666809,
       "contentType": "text/html",
-      "sha256": "0d2a0ad3932366f32996d6d39b7c1cae8823dcd66917f8816f04d4660629d527"
+      "sha256": "8df68c86f85355eb2ba462f1cf4720d989ece927b4161560dc001269e4bc9715"
     },
     {
       "threatId": "RETAIL-002",
@@ -812,9 +812,9 @@
       "status": "downloaded",
       "file": "public/threats/RETAIL-003.html",
       "filename": "RETAIL-003.html",
-      "sizeBytes": 221119,
+      "sizeBytes": 100213,
       "contentType": "text/html",
-      "sha256": "4bee9adf7cb92ef3f866973c871e70f60c6f23402624402274de2220ae8c151f"
+      "sha256": "49e6979adc76b5bdd2e859c4621ee0d0126042bdaed3502e139d669546c7da8f"
     },
     {
       "threatId": "SUPPLY-001",
@@ -824,9 +824,9 @@
       "status": "downloaded",
       "file": "public/threats/SUPPLY-001.html",
       "filename": "SUPPLY-001.html",
-      "sizeBytes": 68535,
+      "sizeBytes": 57115,
       "contentType": "text/html",
-      "sha256": "f7fa0d8bb14a8333e7389e3635f338fe78bce000962f820804b572b21444d4fd"
+      "sha256": "4a91d38942e5e625a33153d4b4aadc2fd4e4a93432209e6e91bbe7d2fabbf977"
     },
     {
       "threatId": "SUPPLY-002",
@@ -848,9 +848,9 @@
       "status": "downloaded",
       "file": "public/threats/SUPPLY-003.html",
       "filename": "SUPPLY-003.html",
-      "sizeBytes": 68775,
+      "sizeBytes": 67968,
       "contentType": "text/html",
-      "sha256": "69a62771b95f09a0172d6fe89f9e451d5b161a91596de22d3dc18523bf9660b6"
+      "sha256": "fcdcae36c08e4cfe8c543b4df0c3a7a487b59213f47e391a25e7869ba8744bfd"
     },
     {
       "threatId": "TELCO-001",
@@ -860,9 +860,9 @@
       "status": "downloaded",
       "file": "public/threats/TELCO-001.html",
       "filename": "TELCO-001.html",
-      "sizeBytes": 213127,
+      "sizeBytes": 202353,
       "contentType": "text/html",
-      "sha256": "fecb23584382d8a59d37a6d402bf2b0cef618a85be6c42cfda44c2edf7698937"
+      "sha256": "e8d3a53dbbefb721f389262b9432b453bb3f79dbc4ce1f30595a1fc487eec7b0"
     },
     {
       "threatId": "TELCO-002",
@@ -881,9 +881,9 @@
       "status": "downloaded",
       "file": "public/threats/TELCO-003.html",
       "filename": "TELCO-003.html",
-      "sizeBytes": 213132,
+      "sizeBytes": 202353,
       "contentType": "text/html",
-      "sha256": "9c50e472535c0cb749aa0a37ca460a3df57715f8fbb6ed1b4643446e5186f18c"
+      "sha256": "800b94eda9b0f8c83b557e5dcbf0d81dcd6545af6541f33a50d8bc0321172167"
     },
     {
       "threatId": "TELCO-004",
@@ -979,9 +979,9 @@
       "status": "downloaded",
       "file": "public/threats/EDU-005.html",
       "filename": "EDU-005.html",
-      "sizeBytes": 329049,
+      "sizeBytes": 327480,
       "contentType": "text/html",
-      "sha256": "24428b544a50ab9ead456b49e0a4827bbabd1393c6577f0537751098698e1596"
+      "sha256": "298ab3a9d69fb726d1109b26c0bc5b04164cdfd118f5235ba0ba40437197039a"
     },
     {
       "threatId": "CROSS-009",
@@ -1014,9 +1014,9 @@
       "status": "downloaded",
       "file": "public/threats/CROSS-011.html",
       "filename": "CROSS-011.html",
-      "sizeBytes": 11489,
+      "sizeBytes": 11334,
       "contentType": "text/html",
-      "sha256": "1b3507cb36fcae533d1b8868e27cbdea07ec1cd27e9abcbe6d80882c4a050275"
+      "sha256": "483c8097e5f0760d6d41bcf7e0f2dbf1942ab8eb136ea715623658d07ffde872"
     },
     {
       "threatId": "CROSS-012",
@@ -1026,9 +1026,9 @@
       "status": "downloaded",
       "file": "public/threats/CROSS-012.html",
       "filename": "CROSS-012.html",
-      "sizeBytes": 69142,
+      "sizeBytes": 66677,
       "contentType": "text/html",
-      "sha256": "9bcb38034447cfa5aec09253f7eafa1b9be0b4124b99f61ee4e98dfae527f553"
+      "sha256": "3a060b675e7294bef0d103a5580e9849987f0121ac4bf5146cabde62ceb0fee5"
     },
     {
       "threatId": "CROSS-013",
@@ -1038,9 +1038,9 @@
       "status": "downloaded",
       "file": "public/threats/CROSS-013.html",
       "filename": "CROSS-013.html",
-      "sizeBytes": 175651,
+      "sizeBytes": 173685,
       "contentType": "text/html",
-      "sha256": "5aa0afbe30cec73d01ee6138579e9b1788c887692b3d52d2b00c354f10e6d9bc"
+      "sha256": "3d7fe55c7f07a888c85589eb2fa9068ef0fe4b16f2a2dac7d285384d9072b943"
     },
     {
       "threatId": "RAIL-003",
@@ -1216,9 +1216,9 @@
       "status": "downloaded",
       "file": "public/threats/AUS-TEL-001.html",
       "filename": "AUS-TEL-001.html",
-      "sizeBytes": 79191,
+      "sizeBytes": 79783,
       "contentType": "text/html",
-      "sha256": "38149807682315321301fbef98b5151b500f3edc576ae61b8299a8797b7509d3"
+      "sha256": "f4877bb68a91b36fae4a4c5dba76b14f392c70c030f2241426323fc5167da524"
     },
     {
       "threatId": "IT-006",
@@ -1228,9 +1228,9 @@
       "status": "downloaded",
       "file": "public/threats/IT-006.html",
       "filename": "IT-006.html",
-      "sizeBytes": 14063,
+      "sizeBytes": 14147,
       "contentType": "text/html",
-      "sha256": "03892ff37b470faa3e601bbd286d5adbf40d5e491b9a9fc9db2c6e41daad45be"
+      "sha256": "f42b1681de124b26779bcc3987f5db0ae54aa40095e76d28963a4a4637f2bae8"
     },
     {
       "threatId": "HSM-002",
@@ -1240,9 +1240,9 @@
       "status": "downloaded",
       "file": "public/threats/HSM-002.html",
       "filename": "HSM-002.html",
-      "sizeBytes": 18934608,
+      "sizeBytes": 18963192,
       "contentType": "text/html",
-      "sha256": "8cc5cb372f9323e5867c16ba43349139c5cddc1912ce45cef1181786dffbd378"
+      "sha256": "0ef7e14bc9b8c915ae63623b83de724b654dcc82fc7f89cfd4e72743457f3681"
     }
   ]
 }
