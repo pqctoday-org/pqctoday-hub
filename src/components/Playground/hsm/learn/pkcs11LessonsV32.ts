@@ -26,7 +26,6 @@ import {
   hsm_aesGcmUnwrapKey,
   hsm_generateAESKeyPinnedTo,
   hsm_aesEncrypt,
-  hsm_getKeyAttributes,
   hsm_findAllObjects,
   hsm_destroyObject,
   buildTemplate,
@@ -605,8 +604,10 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
           const M = requireModule(hsm)
           const d = results[1]?.detail ?? ''
           const legacyPriv = Number((d.match(/legacyPriv=(\d+)/) ?? [])[1])
-          hsm_getKeyAttributes(M, hsm.hSessionRef.current, legacyPriv)
-          return { detail: 'Unexpectedly still readable — the key was not actually destroyed.' }
+          // hsm_getKeyAttributes silently returns nulls for a missing handle rather
+          // than throwing — signing is what actually proves the key is gone.
+          hsm_rsaSign(M, hsm.hSessionRef.current, legacyPriv, 'attempted use after destroy')
+          return { detail: 'Unexpectedly still usable — the key was not actually destroyed.' }
         },
       },
     ],
