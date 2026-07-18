@@ -28,6 +28,9 @@ import { V32_LESSONS } from './pkcs11LessonsV32'
 import { QUIZZES } from './pkcs11Quiz'
 import { PKCS11_GLOSSARY_DATA } from './pkcs11Glossary'
 import type { LinearLessonBase } from '@/components/Playground/learnkit/lessonTypes'
+import { MiniPkcsLog } from '@/components/Playground/components/MiniPkcsLog'
+import { HsmKeyTable } from '@/components/Playground/keystore/HsmKeyTable'
+import { discoverHsmObjects } from '@/components/Playground/keystore/discoverHsmObjects'
 
 type Track = 'foundations' | 'v32'
 
@@ -142,6 +145,14 @@ function LessonRunner({
       setStepStates((prev) =>
         prev.map((s, j) => (j === i ? { status: 'ok', detail: result.detail } : s))
       )
+      // Lesson steps call hsm_generate*/hsm_derive* directly rather than
+      // through addHsmKey — sync the key registry so the call log and key
+      // table below stay live as the user works through a lesson.
+      try {
+        discoverHsmObjects(hsm)
+      } catch {
+        // best-effort — never fail a step over registry bookkeeping
+      }
     } catch (e) {
       const message = e instanceof Error ? e.message : String(e)
       const expectedRefusal = lesson.steps[i].expect === 'refusal'
@@ -177,17 +188,17 @@ function LessonRunner({
             variant="ghost"
             onClick={() => selectLesson(i)}
             className={cn(
-              'flex h-auto w-full items-center justify-start gap-1.5 rounded-md px-2 py-1.5 text-left text-[12px] font-normal',
+              'flex h-auto w-full items-start justify-start gap-1.5 whitespace-normal break-words rounded-md px-2 py-1.5 text-left text-[12px] font-normal',
               i === lessonIdx
                 ? 'bg-primary/15 font-semibold text-primary'
                 : 'text-muted-foreground hover:bg-muted/50'
             )}
           >
-            <span className="font-mono text-[10px] opacity-70">
+            <span className="mt-0.5 shrink-0 font-mono text-[10px] opacity-70">
               {navPrefix}
               {l.n}
             </span>
-            {l.title}
+            <span>{l.title}</span>
           </Button>
         ))}
       </nav>
@@ -234,6 +245,14 @@ function LessonRunner({
             />
           ))}
         </ol>
+
+        {/* Same call log + key registry every workbench tab surfaces — lets a
+            lesson's C_* calls and the key objects they create be inspected
+            here instead of switching to the Logs/Keys tabs mid-lesson. */}
+        <div className="space-y-3">
+          <MiniPkcsLog />
+          <HsmKeyTable />
+        </div>
 
         {allDone && lesson.compare && lesson.compareHeaders && (
           <div className="overflow-x-auto rounded-xl border border-border bg-card p-4">
