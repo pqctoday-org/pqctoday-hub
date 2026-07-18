@@ -85,7 +85,9 @@ describe('SimulationView (Mission Control)', () => {
     // SEAT stays switchable — it keeps the ⟳ glyph on a button.
     expect(screen.getByText('SEAT ⟳')).toBeInTheDocument()
     expect(screen.getByText(/Transformation/)).toBeInTheDocument()
-    expect(screen.getByText('Phases cleared')).toBeInTheDocument()
+    // WP2.2: relabeled from "Phases cleared" — the L2 count is a milestone,
+    // not the win condition (see scoreboard.ts).
+    expect(screen.getByText('Governance floor (L2)')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /End Quarter/ })).toBeInTheDocument()
     // exit affordance back to the hub is a visible button on the console
     expect(screen.getByRole('button', { name: /Exit to hub/i })).toBeInTheDocument()
