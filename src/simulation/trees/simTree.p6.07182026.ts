@@ -119,12 +119,6 @@ const TREE: PhaseTree = {
               workshopId: 'tpm-playground',
             },
             {
-              kind: 'learn',
-              label: 'Deep dive — Learn: Secrets Management & PQC',
-              to: '/learn/secrets-management-pqc',
-              moduleId: 'secrets-management-pqc',
-            },
-            {
               kind: 'workshop',
               label: 'Deep dive — Practice: Crypto-Agility Control Plane (KMIP)',
               to: '/playground/cacp-kmip',
