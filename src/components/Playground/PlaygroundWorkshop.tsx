@@ -103,11 +103,13 @@ const FEATURE_TILE: Record<FeatureAccent, string> = {
   primary: 'bg-primary/15 text-primary',
   secondary: 'bg-secondary/15 text-secondary',
   success: 'bg-status-success/15 text-status-success',
+  warning: 'bg-status-warning/15 text-status-warning',
 }
 const FEATURE_TAG: Record<FeatureAccent, string> = {
   primary: 'text-primary',
   secondary: 'text-secondary',
   success: 'text-status-success',
+  warning: 'text-status-warning',
 }
 
 // `mytools` and `overview` are pseudo-nav targets alongside the real categories.
@@ -1367,7 +1369,7 @@ export const PlaygroundWorkshop = () => {
         <p className="mt-8 mb-3 text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">
           Full playgrounds
         </p>
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {FEATURE_PLAYGROUNDS.map((item) => (
             <FeatureCard key={item.to} item={item} />
           ))}

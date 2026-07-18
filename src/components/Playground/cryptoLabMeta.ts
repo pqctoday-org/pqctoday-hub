@@ -11,6 +11,7 @@ import {
   Bitcoin,
   Network,
   Play,
+  Container,
 } from 'lucide-react'
 import type React from 'react'
 import type { PersonaId } from '@/data/learningPersonas'
@@ -89,7 +90,7 @@ export const PERSONA_CHIP_LABEL: Record<PersonaId, string> = {
 }
 
 /** Accent token used to tint a feature card. */
-export type FeatureAccent = 'primary' | 'secondary' | 'success'
+export type FeatureAccent = 'primary' | 'secondary' | 'success' | 'warning'
 
 export interface FeaturePlayground {
   to: string
@@ -125,6 +126,15 @@ export const FEATURE_PLAYGROUNDS: readonly FeaturePlayground[] = [
     description: 'Flip a crypto-agility policy, watch ops switch to PQC.',
     tag: 'KMIP 3.0 · WASM',
     accent: 'success',
+  },
+  {
+    to: '/playground/docker',
+    icon: Container,
+    title: 'Developer Sandbox',
+    description:
+      'Docker-backed protocol scenarios and a PKCS#11 dev catalog — compare the same op in 5 languages.',
+    tag: 'Docker · 5 languages',
+    accent: 'warning',
   },
 ]
 
