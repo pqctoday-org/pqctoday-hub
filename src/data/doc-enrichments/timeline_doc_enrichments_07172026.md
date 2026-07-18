@@ -1780,7 +1780,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
-## Ushering-in-the-Next-Frontier-of-Quantum-Innovation
+## United States — Ushering in the Next Frontier of Quantum Innovation
 
 - **Reference ID**: Ushering-in-the-Next-Frontier-of-Quantum-Innovation
 - **Title**: Ushering-in-the-Next-Frontier-of-Quantum-Innovation
@@ -1848,7 +1848,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
-## NSPM-12-Published
+## United States:White House — NSPM-12 Published
 
 - **Reference ID**: NSPM-12-Published
 - **Title**: NSPM-12-Published
