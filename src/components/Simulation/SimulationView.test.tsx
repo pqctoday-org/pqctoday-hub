@@ -67,8 +67,10 @@ beforeEach(() => {
   // console renders (gameplay tests assume it). Tests that need the gate reset it.
   useAssessmentResultStore.setState({ lastResult: null, completedAt: null })
   seedAssessment()
-  // suppress the first-run tour (WS-12) for the gameplay tests
-  useSimulationStore.setState({ tourSeen: true })
+  // suppress the first-run tour (WS-12) for the gameplay tests; guided defaults
+  // to false (Expert console) — reset() preserves it like tourSeen, so a test
+  // that flips it must not leak into the next one.
+  useSimulationStore.setState({ tourSeen: true, guided: false })
   Object.assign(navigator, { clipboard: { writeText: vi.fn().mockResolvedValue(undefined) } })
 })
 
@@ -92,6 +94,28 @@ describe('SimulationView (Mission Control)', () => {
     expect(screen.getByRole('button', { name: /End Quarter/ })).toBeInTheDocument()
     // exit affordance back to the hub is a visible button on the console
     expect(screen.getByRole('button', { name: /Exit to hub/i })).toBeInTheDocument()
+  })
+
+  // WP4.7 — ribbon slimming: the KPI ribbon keeps only scoreboard + clock +
+  // budget; HNDL/TNFL risk and readiness moved to the Expert rail's pinned
+  // "Threat & readiness" panel (Guided mode never sees the rail at all).
+  it('slims the ribbon to scoreboard + clock + budget, moving threat/readiness to the Expert rail', () => {
+    renderPage()
+    expect(screen.queryByText('Est. readiness')).not.toBeInTheDocument()
+    expect(screen.getByText('Threat & readiness')).toBeInTheDocument()
+    expect(screen.getAllByText('HNDL risk').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('TNFL risk').length).toBeGreaterThan(0)
+    // scoreboard + clock + budget still present on the ribbon (Budget secured
+    // also appears in the mobile fallback summary, hence getAllByText)
+    expect(screen.getByText('Governance floor (L2)')).toBeInTheDocument()
+    expect(screen.getByText('Years to Q-Day')).toBeInTheDocument()
+    expect(screen.getAllByText('Budget secured').length).toBeGreaterThan(0)
+  })
+
+  it('hides the Expert rail (and its Threat & readiness panel) in Guided mode', () => {
+    useSimulationStore.setState({ guided: true })
+    renderPage()
+    expect(screen.queryByText('Threat & readiness')).not.toBeInTheDocument()
   })
 
   // The sim runs on the user's assessed org (single source of truth): with no

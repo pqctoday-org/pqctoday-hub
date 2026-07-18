@@ -294,8 +294,9 @@ function SimModuleCompletionWatcher({ moduleId, title }: { moduleId: string; tit
 // ---- main ----------------------------------------------------------------
 export function SimulationView() {
   const navigate = useNavigate()
-  // PR3 — the Expert intel rail pins 2 panels (Critical assets + Artifacts) and
-  // collapses the rest behind a "Show N more" disclosure. Default collapsed.
+  // PR3 — the Expert intel rail pins 3 panels (Threat & readiness [WP4.7] +
+  // Critical assets + Artifacts) and collapses the rest behind a "Show N more"
+  // disclosure. Default collapsed.
   const [railExpanded, setRailExpanded] = useState(false)
   const {
     size,
@@ -1763,7 +1764,10 @@ export function SimulationView() {
           and wired to the hub timeline (QC_FIRST_YEAR / regulatoryTimelines / …)
           when we invest in doing it properly. */}
 
-        {/* KPI ribbon */}
+        {/* KPI ribbon — WP4.7 (Wave 4 ribbon slimming): scoreboard + clock + budget
+          only. HNDL/TNFL risk and readiness moved to the Expert rail's pinned
+          "Threat & readiness" panel below — they're real signals, but a novice
+          had no action to take on them here, just more numbers to chase. */}
         <div className="flex shrink-0 flex-wrap items-stretch gap-3 border-b border-border bg-card px-4 py-3">
           {!suppressWinUI && <TransformationStatusPanel status={txStatus} />}
           <Stat
@@ -1788,28 +1792,6 @@ export function SimulationView() {
                 tip={`The Q-Day horizon (Z ≈ ${horizonYear}) is one of the illustrative planning anchors — a modelled year the CRQC could arrive, not a published date. Re-check the live source.`}
               />
             }
-          />
-          <Stat
-            label="Est. readiness"
-            value={`${readiness.pct}%`}
-            sub={
-              readiness.migrated > 0
-                ? `${readiness.migrated}/${readiness.vulnerable} edges · ${readiness.compliancePct}% compliant`
-                : `${readiness.migrated}/${readiness.vulnerable} vulnerable edges`
-            }
-            tone="text-primary"
-          />
-          <Stat
-            label="HNDL risk"
-            value={threat.hndl.label}
-            sub={threat.hndl.note}
-            tone={threat.hndl.tone}
-          />
-          <Stat
-            label="TNFL risk"
-            value={threat.tnfl.label}
-            sub={threat.tnfl.note}
-            tone={threat.tnfl.tone}
           />
           <Stat
             label="Budget secured"
@@ -2972,9 +2954,9 @@ export function SimulationView() {
             the board at lg. */}
               {!guided && (
                 <div className="grid min-h-0 grid-cols-1 gap-3.5 overflow-auto sm:grid-cols-2 lg:grid-cols-1">
-                  {/* PR3 — rail disclosure. Critical assets + Artifacts stay pinned
-                (always rendered below); the rest collapse here to calm the Expert
-                rail. Count + named list are phase-aware. */}
+                  {/* PR3 — rail disclosure. Threat & readiness + Critical assets +
+                Artifacts stay pinned (always rendered below); the rest collapse
+                here to calm the Expert rail. Count + named list are phase-aware. */}
                   {railMoreShown.length > 0 && (
                     <Button
                       type="button"
@@ -3094,6 +3076,45 @@ export function SimulationView() {
                       </p>
                     </div>
                   )}
+
+                  {/* WP4.7 — ribbon slimming: HNDL/TNFL risk + readiness were three of
+                      six ribbon stats novices had no action to take on. Pinned here
+                      (Expert rail, not behind "show more") since they're live risk
+                      signals, not assessment-context — same visibility tier as
+                      Critical assets below, just no longer competing for header space. */}
+                  <div className="rounded-xl border border-border bg-card p-4">
+                    <Eyebrow className="mb-2 block">Threat &amp; readiness</Eyebrow>
+                    <div className="grid grid-cols-3 gap-1.5">
+                      <div className="rounded-lg border border-border bg-muted/40 px-2 py-1.5">
+                        <span className="block text-sim-micro leading-tight text-muted-foreground">
+                          HNDL risk
+                        </span>
+                        <span
+                          className={`block font-mono text-[13px] font-extrabold ${threat.hndl.tone}`}
+                        >
+                          {threat.hndl.label}
+                        </span>
+                      </div>
+                      <div className="rounded-lg border border-border bg-muted/40 px-2 py-1.5">
+                        <span className="block text-sim-micro leading-tight text-muted-foreground">
+                          TNFL risk
+                        </span>
+                        <span
+                          className={`block font-mono text-[13px] font-extrabold ${threat.tnfl.tone}`}
+                        >
+                          {threat.tnfl.label}
+                        </span>
+                      </div>
+                      <div className="rounded-lg border border-border bg-muted/40 px-2 py-1.5">
+                        <span className="block text-sim-micro leading-tight text-muted-foreground">
+                          Readiness
+                        </span>
+                        <span className="block font-mono text-[13px] font-extrabold text-primary">
+                          {readiness.pct}%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
 
                   {/* Critical assets — discovered in P0; value + date-driven quantum exposure */}
                   <div className="rounded-xl border border-border bg-card p-4">
