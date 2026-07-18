@@ -3,18 +3,18 @@
  * HsmKeyTable — displays PKCS#11 key handles registered via HsmContext.
  * All keys are session objects (non-persistent) — no export/download.
  */
-import { useState, useMemo, useRef } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 import { Eye, Key as KeyIcon, Lock, RefreshCw, Trash2, X } from 'lucide-react'
 import { Button } from '../../ui/button'
-import { useHsmContext, type HsmKey, type HsmFamily, type HsmKeyRole } from '../hsm/HsmContext'
+import { useHsmContext, type HsmKey } from '../hsm/HsmContext'
 import {
   hsm_getKeyAttributes,
   hsm_destroyObject,
-  hsm_findAllObjects,
   SLH_DSA_PUB_BYTES,
   type KeyAttributeSet,
 } from '../../../wasm/softhsm'
 import { formatBytes } from './keySizeUtils'
+import { discoverHsmObjects, CKK_NAMES } from './discoverHsmObjects'
 
 // ── Attribute display helpers ─────────────────────────────────────────────────
 
@@ -26,17 +26,6 @@ const CKO_NAMES: Record<number, string> = {
   0x04: 'CKO_SECRET_KEY',
 }
 
-const CKK_NAMES: Record<number, string> = {
-  0x00: 'CKK_RSA',
-  0x03: 'CKK_EC',
-  0x10: 'CKK_GENERIC_SECRET',
-  0x1f: 'CKK_AES',
-  0x40: 'CKK_EC_EDWARDS',
-  0x49: 'CKK_ML_KEM',
-  0x4a: 'CKK_ML_DSA',
-  0x4b: 'CKK_SLH_DSA',
-}
-
 const CKM_KEYGEN_NAMES: Record<number, string> = {
   0x00000000: 'CKM_RSA_PKCS_KEY_PAIR_GEN',
   0x0000000f: 'CKM_ML_KEM_KEY_PAIR_GEN',
@@ -46,28 +35,6 @@ const CKM_KEYGEN_NAMES: Record<number, string> = {
   0x00001055: 'CKM_EC_EDWARDS_KEY_PAIR_GEN',
   0x00001080: 'CKM_AES_KEY_GEN',
   0x00000350: 'CKM_GENERIC_SECRET_KEY_GEN',
-}
-
-// ── Auto-detect family/role from PKCS#11 attributes ──────────────────────────
-
-const CKK_TO_FAMILY: Record<number, HsmFamily> = {
-  0x00: 'rsa',
-  0x03: 'ecdsa',
-  0x10: 'hmac',
-  0x1f: 'aes',
-  0x40: 'eddsa',
-  0x49: 'ml-kem',
-  0x4a: 'ml-dsa',
-  0x4b: 'slh-dsa',
-  0x46: 'hss',
-  0x47: 'xmss',
-  0x48: 'xmss',
-}
-
-const CKO_TO_ROLE: Record<number, HsmKeyRole> = {
-  0x02: 'public',
-  0x03: 'private',
-  0x04: 'secret',
 }
 
 // ── PQC key material sizes (bytes) by CKA_KEY_TYPE + CKA_PARAMETER_SET ──────
@@ -274,8 +241,8 @@ const ROLE_COLORS: Record<string, string> = {
 // ── Main component ────────────────────────────────────────────────────────────
 
 export const HsmKeyTable = () => {
-  const { hsmKeys, moduleRef, crossCheckModuleRef, hSessionRef, addHsmKey, removeHsmKey } =
-    useHsmContext()
+  const hsmCtx = useHsmContext()
+  const { hsmKeys, moduleRef, crossCheckModuleRef, hSessionRef, removeHsmKey } = hsmCtx
   const [inspectedKey, setInspectedKey] = useState<HsmKey | null>(null)
   const [attrs, setAttrs] = useState<KeyAttributeSet | null>(null)
   const [confirmHandle, setConfirmHandle] = useState<number | null>(null)
@@ -286,8 +253,14 @@ export const HsmKeyTable = () => {
   // Only new handles (not yet in cache) trigger C_GetAttributeValue calls.
   const attrCache = useRef(new Map<number, KeyAttributeSet | null>())
 
-  // Batch-query key sizes from PKCS#11 attributes (synchronous WASM calls)
-  const keySizeMap = useMemo(() => {
+  // Batch-query key sizes from PKCS#11 attributes (synchronous WASM calls
+  // that log through the shared HsmContext call log — done in an effect,
+  // not render, since a logging module call synchronously updates
+  // HsmProvider's log state, which React disallows during another
+  // component's render).
+  const [keySizeMap, setKeySizeMap] = useState<Map<number, number | null>>(new Map())
+
+  useEffect(() => {
     const map = new Map<number, number | null>()
     for (const k of hsmKeys) {
       if (!attrCache.current.has(k.handle)) {
@@ -309,7 +282,7 @@ export const HsmKeyTable = () => {
       const a = attrCache.current.get(k.handle) ?? null
       map.set(k.handle, a ? estimateKeySize(a) : null)
     }
-    return map
+    setKeySizeMap(map)
   }, [hsmKeys, moduleRef, crossCheckModuleRef, hSessionRef])
 
   const totalBytes = useMemo(() => {
@@ -350,35 +323,9 @@ export const HsmKeyTable = () => {
   }
 
   const discoverObjects = () => {
-    const M = moduleRef.current
-    const hSession = hSessionRef.current
-    if (!M || !hSession) return
     setDiscovering(true)
     try {
-      const handles = hsm_findAllObjects(M, hSession, [])
-      const knownHandles = new Set(hsmKeys.map((k) => k.handle))
-      let added = 0
-      for (const h of handles) {
-        if (knownHandles.has(h)) continue
-        try {
-          const a = hsm_getKeyAttributes(M, hSession, h)
-          const family: HsmFamily =
-            a.ckKeyType !== null ? (CKK_TO_FAMILY[a.ckKeyType] ?? 'aes') : 'aes'
-          const role: HsmKeyRole =
-            a.ckClass !== null ? (CKO_TO_ROLE[a.ckClass] ?? 'secret') : 'secret'
-          const typeName = a.ckKeyType !== null ? (CKK_NAMES[a.ckKeyType] ?? 'Unknown') : 'Unknown'
-          addHsmKey({
-            handle: h,
-            family,
-            role,
-            label: `${typeName} (discovered)`,
-            generatedAt: new Date().toLocaleTimeString(),
-          })
-          added++
-        } catch {
-          // skip objects that can't be queried
-        }
-      }
+      const added = discoverHsmObjects(hsmCtx)
       setDiscoverCount(added)
       setTimeout(() => setDiscoverCount(null), 3000)
     } finally {
