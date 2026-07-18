@@ -18,7 +18,7 @@ const TREE: PhaseTree = {
           title: 'Establish GRC & Assess Program Maturity',
           decision:
             'Run the seven-domain maturity self-assessment first — your overall score is only as strong as your weakest domain.',
-          do: 'Stand up the risk-appetite statement and KRI cascade; run (or refine) your PQC assessment — program maturity is derived from your progress, overall = weakest domain.',
+          do: 'Stand up the risk-appetite statement and KRI cascade; run (or refine) your PQC assessment across the seven domains — Cryptographic Inventory, Governance & Ownership, Pilots & Deployment, Vendor & Supply Chain, Compliance & Standards, Crypto-Agility, Risk & Prioritization. Program maturity is derived from your progress, overall = weakest domain. (Level 0 "Unaware" — no organizational awareness, nothing planned or underway — is where every domain starts; this activity is how you leave it.)',
           output: 'GRC structure & maturity baseline',
           steps: [
             {
@@ -50,6 +50,12 @@ const TREE: PhaseTree = {
           do: 'Set the board KPI pack (Coverage/Trust/Inventory/Vendors/Agility) and the operational KPIs, and start the audit/litigation evidence dossier.',
           output: 'KPI baseline & evidence dossier',
           steps: [
+            {
+              kind: 'learn',
+              label: 'Learn: why these five KPIs — what the board actually needs to see',
+              to: '/learn/pqc-governance',
+              moduleId: 'pqc-governance',
+            },
             {
               kind: 'activity',
               label: 'Baseline the board KPI pack',
