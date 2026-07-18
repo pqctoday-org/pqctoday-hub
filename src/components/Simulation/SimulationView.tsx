@@ -118,6 +118,7 @@ import {
 import { topBandLevel, normalizeLevel, phaseReadinessFraction } from '@/simulation/maturityScale'
 import { useSandboxAvailable } from '@/components/Playground/useSandboxAvailable'
 import { computeReadiness } from '@/simulation/readiness'
+import { buildScoreboard } from '@/simulation/scoreboard'
 import { runQuarter } from '@/simulation/quarterEngine'
 import { buildSimRoadmapDoc } from '@/simulation/simRoadmap'
 import { sectorStepsForPhase } from '@/simulation/sectorTrack'
@@ -993,6 +994,17 @@ export function SimulationView() {
     allAtTopBand: fullyMature,
     currentYear: year,
   })
+  // WP2.2: the ONE program-progress object every UI surface (ribbon, the
+  // TransformationStatusPanel, the run-complete ceremony) reads from — see
+  // scoreboard.ts. Packages `cleared`/`fullyMature`/`txStatus`, computed
+  // exactly as before, so nothing about the underlying math changes here.
+  const scoreboard = buildScoreboard({
+    lifecyclePhases: LIFECYCLE,
+    levelOf,
+    winLevel: PHASE_WIN_LEVEL,
+    fullyMature,
+    txStatus,
+  })
 
   // W2b: run-end ceremony — fire once when every lifecycle phase is cleared. The
   // store flag (run-slice, cleared by RESET) keeps it from re-firing on reload and
@@ -1350,11 +1362,15 @@ export function SimulationView() {
         </div>
         <dl className="w-full max-w-[320px] space-y-2 text-left">
           {[
-            { label: 'Migration phases', value: `${cleared} of ${LIFECYCLE.length} cleared` },
+            {
+              label: 'Migration phases (L2 floor)',
+              value: `${scoreboard.milestone.cleared} of ${scoreboard.milestone.total} cleared`,
+            },
             {
               label: 'Program maturity',
-              value: `Level ${Math.round(txStatus.maturity)} of ${MAX_LEVEL}`,
+              value: `Level ${Math.round(scoreboard.maturity)} of ${MAX_LEVEL}`,
             },
+            { label: 'Program complete', value: scoreboard.complete ? 'Yes ✓' : 'Not yet' },
             {
               label: 'Quantum-exposed value',
               value: `€${Math.round(exposedValueM)}M (€${Math.round(uninsuredM)}M uninsured)`,
@@ -1629,9 +1645,13 @@ export function SimulationView() {
         <div className="flex shrink-0 flex-wrap items-stretch gap-3 border-b border-border bg-card px-4 py-3">
           {!suppressWinUI && <TransformationStatusPanel status={txStatus} />}
           <Stat
-            label="Phases cleared"
-            value={`${cleared}/${LIFECYCLE.length}`}
-            sub="win bar = Level 2"
+            label="Governance floor (L2)"
+            value={`${scoreboard.milestone.cleared}/${scoreboard.milestone.total}`}
+            sub={
+              scoreboard.complete
+                ? 'Milestone — program complete ✓'
+                : 'Milestone — full win needs each phase at its own top band'
+            }
             tone="text-success"
           />
           <Stat
@@ -3343,7 +3363,7 @@ export function SimulationView() {
         {/* W2b: run-end ceremony — the summative "did you beat Q-Day?" moment */}
         {runCompleteOpen && !suppressWinUI && (
           <SimRunComplete
-            objectives={txStatus.objectives.map((o) => ({
+            objectives={scoreboard.objectives.map((o) => ({
               id: o.id,
               label: o.label,
               byYear: o.byYear,
@@ -3351,7 +3371,7 @@ export function SimulationView() {
 
               achievedYear: objectiveAchievedYears[o.id],
             }))}
-            maturity={txStatus.maturity}
+            maturity={scoreboard.maturity}
             programEndYear={getScenario(country).programEndYear}
             onClose={() => setRunCompleteOpen(false)}
           />
