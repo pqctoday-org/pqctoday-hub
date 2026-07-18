@@ -23,7 +23,7 @@ const TREE: PhaseTree = {
           title: 'Select CBOM Format and Tooling',
           decision:
             'Standardize on CycloneDX rather than a spreadsheet — you need something queryable, diffable and machine-verifiable.',
-          do: 'Adopt CycloneDX and establish the record structure and tooling.',
+          do: 'Adopt CycloneDX (1.6+, the cryptoProperties schema) and establish the record structure — at minimum, algorithm, key size, protocol, library and owner per entry — and tooling.',
           output: 'CycloneDX CBOM format spec',
           steps: [
             {
@@ -40,7 +40,7 @@ const TREE: PhaseTree = {
             },
             {
               kind: 'reference',
-              label: 'Reference: CycloneDX in the Library',
+              label: 'Reference: CycloneDX in the Library (1.6+, cryptoProperties)',
               to: '/library',
               refId: 'library',
             },
@@ -117,7 +117,7 @@ const TREE: PhaseTree = {
           title: 'CBOM Freshness Governance & Securing Program Artifacts',
           decision:
             "Treat the CBOM as sensitive — classify it, restrict access, log queries — it's effectively an attacker's shopping list.",
-          do: 'Enforce refresh triggers and protect the CBOM with classification and access control.',
+          do: 'Enforce refresh triggers and protect the CBOM with classification and access control; sign/attest the CBOM so "machine-verifiable" includes provenance, not just structure.',
           output: 'CBOM governance & protection policy',
           steps: [
             {

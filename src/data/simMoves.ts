@@ -132,6 +132,13 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
         'Fails. The CBOM is a map of exactly which systems use breakable crypto — an HNDL shopping list for an attacker. It needs Restricted classification, RBAC, query logging and SOC exfiltration monitoring, not open access.'
       ),
     },
+    {
+      label: 'Extend the SPDX SBOM — one format for everything',
+      desc: 'Reuse the software bill of materials you already maintain.',
+      evaluate: trap(
+        "Fails. SPDX is built for software/license provenance, not cryptographic assets — it has no dedicated field set for algorithm, key size, protocol context or quantum-vulnerability status the way CycloneDX's cryptoProperties does. Link the CBOM to the SBOM (2.2 already does this for dependency chains); don't try to fold crypto asset data into a format that has no real place to put it."
+      ),
+    },
   ],
   p3: [
     {
