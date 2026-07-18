@@ -65,6 +65,10 @@ export const GUIDED_DEFS: TourStep[] = [
     title: 'Plain English: program governance roles',
     body: 'SteerCo (Steering Committee) = the cross-functional group that signs off at each gate. PMO (Program Management Office) = the team running the day-to-day schedule, budget and risk tracking. RACI = a chart naming who’s Responsible, Accountable, Consulted and Informed for each task, so decisions don’t stall on "I thought someone else owned that." QRPM and Executive Sponsor — the other names you’ll see on gate labels — are specific roles in this same structure: QRPM runs the program day to day, the Executive Sponsor owns it at board level.',
   },
+  {
+    title: 'Plain English: crypto-agility',
+    body: 'The ability to swap a cryptographic algorithm — because it’s broken, deprecated, or a stronger one arrives — without re-running the whole migration. You get there by tracking what you use (the CBOM), keeping it behind clean interfaces instead of hard-coded, and rehearsing the swap on a regular drill, so the next algorithm change is a routine update, not a repeat of this whole program.',
+  },
 ]
 
 export function SimTour({

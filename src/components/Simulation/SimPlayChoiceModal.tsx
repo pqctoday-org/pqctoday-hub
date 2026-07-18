@@ -22,8 +22,9 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { Play } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { LIFECYCLE_PHASES, type PhaseId } from '@/data/frameworkPhases'
+import { PHASE_ORDER, type PhaseId } from '@/data/frameworkPhases'
 import { phaseName } from './simTrapTally'
+import { SIM_TREES } from '@/simulation'
 import type { RunMode } from './autorun/useSimAutoRunPlayer'
 import {
   autoRunQueue,
@@ -152,6 +153,12 @@ export function SimPlayChoiceModal({
   const reduce = useReducedMotion()
   const primaryRef = useRef<HTMLButtonElement>(null)
   const [phase, setPhase] = useState<PhaseId>(defaultPhase)
+  // WP2.4: every phase with a real tree is playable here, including the spanning
+  // Foundations band — previously excluded (LIFECYCLE_PHASES omits it on purpose
+  // for the maturity climb, but "Play This Phase" has no such reason to). The
+  // phase-run machinery (phaseFocusFor, SimPhaseRunComplete) already supports
+  // Foundations fully; only this picker was excluding it.
+  const playablePhases = useMemo(() => PHASE_ORDER.filter((p) => Boolean(SIM_TREES[p])), [])
 
   useEffect(() => {
     primaryRef.current?.focus()
@@ -248,7 +255,7 @@ export function SimPlayChoiceModal({
                   onChange={(e) => setPhase(e.target.value as PhaseId)}
                   className="rounded-md border border-border bg-background px-2 py-1 text-[12px] text-foreground"
                 >
-                  {LIFECYCLE_PHASES.map((p) => (
+                  {playablePhases.map((p) => (
                     <option key={p} value={p}>
                       {phaseName(p)}
                     </option>
