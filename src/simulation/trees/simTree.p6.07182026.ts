@@ -83,7 +83,7 @@ const TREE: PhaseTree = {
           title: 'HSM and KMS Modernization',
           decision:
             "Inventory every HSM's real PQC capability before upgrading — don't assume the vendor spec sheet matches your firmware version.",
-          do: 'Inventory HSMs by PQC capability, upgrade firmware and configure cloud KMS for PQC.',
+          do: "Inventory HSMs by PQC capability, upgrade firmware and configure cloud KMS for PQC. Upgraded firmware re-enters FIPS validation — check the module's certificate status on the live CMVP list, not just the vendor's spec sheet, before treating it as production-ready in a FIPS-required environment.",
           output: 'HSM/KMS upgrade schedule',
           steps: [
             {
@@ -264,6 +264,10 @@ const TREE: PhaseTree = {
     {
       title: 'Neglect capacity planning for high-volume TLS termination',
       why: 'At CDN edge and load-balancer aggregate scale, PQC handshake/bandwidth growth swamps capacity you never modelled — the outage shows up under peak load.',
+    },
+    {
+      title: 'Issue the new PQC root and assume it is usable',
+      why: 'A root distributed today still has to propagate through browser/OS/device trust-store update cycles — commonly a year or more, longer for legacy and embedded devices whose trust stores rarely update at all. Start root-distribution ceremonies early; a root sitting in your CA is not a root anything actually trusts yet.',
     },
   ],
 }
