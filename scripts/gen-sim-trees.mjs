@@ -507,12 +507,12 @@ const FRAMEWORK = {
       title: 'Select CBOM Format and Tooling',
       decision:
         'Standardize on CycloneDX rather than a spreadsheet — you need something queryable, diffable and machine-verifiable.',
-      do: 'Adopt CycloneDX (1.6+, the cryptoProperties schema) and establish the record structure — at minimum, algorithm, key size, protocol, library and owner per entry — and tooling.',
+      do: 'Adopt CycloneDX (1.7, the current spec — cryptoProperties plus the newer Citations/provenance fields) and establish the record structure — at minimum, algorithm, key size, protocol, library and owner per entry — and tooling.',
       output: 'CycloneDX CBOM format spec',
       steps: [
         L('cbom', 'Learn: Cryptography Bill of Materials'),
         L('crypto-mgmt-modernization', 'Learn: CBOM in Cryptographic Management'),
-        R('library', 'Reference: CycloneDX in the Library (1.6+, cryptoProperties)'),
+        R('library', 'Reference: CycloneDX in the Library (1.7, cryptoProperties)'),
       ],
     },
     {
