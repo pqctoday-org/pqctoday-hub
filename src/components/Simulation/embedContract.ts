@@ -142,6 +142,9 @@ export function canEmbedStep(s: TreeStep): boolean {
 
   if (s.kind === 'workshop' && s.workshopId) return !!WORKSHOP_TOOL_COMPONENTS[s.workshopId]
   if (s.kind === 'catalog') return true
+  // architecture: ArchitecturePanel is always mounted (no external tool/module
+  // registry to fail against), same as 'catalog'.
+  if (s.kind === 'architecture') return true
   if (isAssessStep(s)) return true
   if (isTimelineStep(s)) return true
   if (isAlgorithmTabStep(s)) return true
@@ -168,6 +171,13 @@ export interface StepCompletionContext {
   isCatalogStepDone: (catalogId: string) => boolean
   /** scenario: this sandbox lab was marked complete (explicit click in the embed header). */
   isScenarioComplete: (scenarioId: string) => boolean
+  /** architecture: total edge decisions made so far this run (cumulative, not
+   *  per-step — see `TreeStep.minDecisions`). */
+  edgeDecisionCount: () => number
+  /** architecture: the total number of migratable edges in the run's actual
+   *  architecture — caps a step's `minDecisions` so a fixed threshold can
+   *  never exceed what a smaller org size actually has to decide. */
+  edgeDecisionCapacity: () => number
 }
 
 /**
@@ -192,6 +202,11 @@ export function isStepComplete(s: TreeStep, ctx: StepCompletionContext): boolean
       return !!s.catalogId && ctx.isCatalogStepDone(s.catalogId)
     case 'scenario':
       return !!s.scenarioId && ctx.isScenarioComplete(s.scenarioId)
+    case 'architecture':
+      return (
+        !!s.minDecisions &&
+        ctx.edgeDecisionCount() >= Math.min(s.minDecisions, ctx.edgeDecisionCapacity())
+      )
     default:
       return false
   }

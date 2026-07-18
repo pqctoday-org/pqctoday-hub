@@ -170,6 +170,16 @@ const S = (scenarioId, label) => {
   if (!SANDBOX_IDS.has(scenarioId)) throw new Error(`unknown sandbox scenario ${scenarioId}`)
   return { kind: 'scenario', label, to: `/playground/sbx-${scenarioId}`, scenarioId }
 }
+// E() — an architecture step (WS-04): embeds ArchitecturePanel in-place so the
+// player decides real hybrid/pure migration patterns for their unlocked
+// connections. Completion is cumulative across the whole run (capped against
+// the actual migratable-edge count) — see TreeStep.minDecisions.
+const E = (minDecisions, label) => ({
+  kind: 'architecture',
+  label,
+  to: '/simulation',
+  minDecisions,
+})
 
 // ---- per-phase Maturity Indicators (verbatim, Applied Quantum v2.1) ---------
 const INDICATORS = {
@@ -710,6 +720,7 @@ const FRAMEWORK = {
           'Lab: migration impact — classical vs PQC TLS (latency, cert size, bandwidth)'
         ),
         A('deployment-playbook', 'Draft a Deployment Playbook'),
+        E(2, 'Decide the migration pattern (hybrid vs pure) for your first unlocked connections'),
       ],
       // Deep dive (Wave 2, 07062026): 3 tools already used in sector-specific
       // Learn tracks (telecom/retail/generic IAM — see sectorTrack.ts), made
@@ -738,7 +749,10 @@ const FRAMEWORK = {
       // the manual-play card, not just the auto-run intro.
       do: 'Sequence deployment through six controlled waves, each with a defined scope and an explicit prerequisite gate from the one before: Lab/Staging → Internal Non-Critical → Internal Production → External Controlled (partners) → External Broad (public-facing) → Long Tail (legacy, OT, embedded).',
       output: 'Wave deployment plan',
-      steps: [R('library', 'Reference: staged-rollout & wave-sequencing patterns in the Library')],
+      steps: [
+        R('library', 'Reference: staged-rollout & wave-sequencing patterns in the Library'),
+        E(4, 'Extend pattern decisions across the wave — cover more of your unlocked connections'),
+      ],
     },
     {
       id: '5.5–5.6',

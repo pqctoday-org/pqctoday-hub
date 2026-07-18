@@ -139,6 +139,13 @@ const TREE: PhaseTree = {
               to: '/business/tools/deployment-playbook',
               artifactType: 'deployment-playbook',
             },
+            {
+              kind: 'architecture',
+              label:
+                'Decide the migration pattern (hybrid vs pure) for your first unlocked connections',
+              to: '/simulation',
+              minDecisions: 2,
+            },
           ],
           deepDive: [
             {
@@ -197,6 +204,13 @@ const TREE: PhaseTree = {
               label: 'Reference: staged-rollout & wave-sequencing patterns in the Library',
               to: '/library',
               refId: 'library',
+            },
+            {
+              kind: 'architecture',
+              label:
+                'Extend pattern decisions across the wave — cover more of your unlocked connections',
+              to: '/simulation',
+              minDecisions: 4,
             },
           ],
         },
