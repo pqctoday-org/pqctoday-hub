@@ -8,12 +8,13 @@
 // concept terms. Shared by `Term`, `GlossaryRail`, and `WireTreeView`'s
 // `annotated` mode.
 
-export interface TagGlossaryEntry {
-  /** Verified KMIP 3.0 TTLV codepoint (0x42xxxx) — omitted when not
-   * cross-checked against `kmipMeta.ts`'s `TAG_NAMES` table. */
-  hex?: string
-  def: string
-}
+import {
+  makeGlossaryLookup,
+  type GlossaryData,
+  type GlossaryTerm,
+  type TagGlossaryEntry,
+} from '@/components/Playground/learnkit/glossaryTypes'
+export type { TagGlossaryEntry, GlossaryTerm, TermCategory } from '@/components/Playground/learnkit/glossaryTypes'
 
 /** Keyed by the human tag name — the shape `tagName()` in `kmipMeta.ts`
  * returns and `opTemplates.ts`/`nodes.ts` use (e.g. `leaf('UniqueIdentifier', ...)`). */
@@ -263,15 +264,6 @@ export const TAG_GLOSSARY: Record<string, TagGlossaryEntry> = {
   },
 }
 
-export type TermCategory = 'wire' | 'protocol' | 'pqc'
-
-export interface GlossaryTerm {
-  id: string
-  label: string
-  cat: TermCategory
-  def: string
-}
-
 /** Broader protocol/crypto concepts, not tied to one wire tag. */
 export const TERMS: GlossaryTerm[] = [
   {
@@ -406,3 +398,10 @@ export const TERM_BY_ID: Record<string, GlossaryTerm> = Object.fromEntries(
 export const lookupGlossaryDef = (key: string): string | undefined =>
   // eslint-disable-next-line security/detect-object-injection -- read-only lookup against this module's own fixed glossary catalogs, never used to write; `key` is always a wire tag name or TERMS id, never raw user input.
   TAG_GLOSSARY[key]?.def ?? TERM_BY_ID[key]?.def
+
+/** This playground's `GlossaryData`, passed to the shared `GlossaryProvider`. */
+export const KMIP_GLOSSARY_DATA: GlossaryData = {
+  tagGlossary: TAG_GLOSSARY,
+  terms: TERMS,
+  lookupDef: makeGlossaryLookup(TAG_GLOSSARY, TERMS),
+}

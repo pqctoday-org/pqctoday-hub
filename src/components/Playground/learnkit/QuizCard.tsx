@@ -1,23 +1,31 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-// QuizCard — the knowledge-check footer for a Learn walkthrough: the
-// lesson's question bank (quiz.ts), answered one pick per question with an
-// immediate reveal + "why". Completion (= every question answered
-// correctly at least once this attempt) persists per lesson in
-// localStorage, mirroring the lessons' own local-only tracking — no
-// backend, no telemetry beyond the existing analytics event.
+// QuizCard — the knowledge-check footer for a Learn walkthrough: a lesson's
+// question bank, answered one pick per question with an immediate reveal +
+// "why". Completion (= every question answered correctly at least once this
+// attempt) persists per lesson in localStorage under `${namespace}-quiz-
+// ${lessonId}` — no backend, no telemetry beyond the existing analytics
+// event.
 import { useState } from 'react'
 import { Award, CheckCircle2, RotateCcw, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { logEvent } from '@/utils/analytics'
-import { QUIZZES, type QuizQuestion } from './quiz'
 
-const storageKey = (lessonId: string) => `cacp-quiz-${lessonId}`
+export interface QuizQuestion {
+  q: string
+  options: string[]
+  /** Index into `options`. */
+  answer: number
+  /** Shown after answering — WHY the right answer is right. */
+  why: string
+}
 
-const readDone = (lessonId: string): boolean => {
+const storageKey = (namespace: string, lessonId: string) => `${namespace}-quiz-${lessonId}`
+
+const readDone = (namespace: string, lessonId: string): boolean => {
   try {
-    return localStorage.getItem(storageKey(lessonId)) === '1'
+    return localStorage.getItem(storageKey(namespace, lessonId)) === '1'
   } catch {
     return false
   }
@@ -84,12 +92,23 @@ function QuestionBlock({
 
 /** NOTE: render with `key={lessonId}` — switching lessons remounts the
  * card, which is what resets the pick state (no effect needed). */
-export function QuizCard({ lessonId }: { lessonId: string }) {
-  const questions = QUIZZES[lessonId]
+export function QuizCard({
+  lessonId,
+  questions,
+  namespace,
+  analyticsCategory,
+}: {
+  lessonId: string
+  questions: QuizQuestion[] | undefined
+  /** localStorage key prefix, e.g. `'cacp'` or `'hsm-pkcs11'`. */
+  namespace: string
+  /** Analytics event category, e.g. `'KMIP Quiz'` / `'PKCS11 Quiz'`. Defaults to `${namespace} Quiz`. */
+  analyticsCategory?: string
+}) {
   const [picks, setPicks] = useState<(number | null)[]>(() =>
     Array.from({ length: questions?.length ?? 0 }, () => null)
   )
-  const [done, setDone] = useState(() => readDone(lessonId))
+  const [done, setDone] = useState(() => readDone(namespace, lessonId))
 
   if (!questions?.length) return null
 
@@ -104,11 +123,11 @@ export function QuizCard({ lessonId }: { lessonId: string }) {
     const nowAnswered = next.filter((p) => p !== null).length
     if (nowAnswered === questions.length) {
       const nowCorrect = next.filter((p, i) => p === questions[i].answer).length
-      logEvent('Playground', 'KMIP Quiz', `${lessonId}:${nowCorrect}/${questions.length}`)
+      logEvent('Playground', analyticsCategory ?? `${namespace} Quiz`, `${lessonId}:${nowCorrect}/${questions.length}`)
       if (nowCorrect === questions.length) {
         setDone(true)
         try {
-          localStorage.setItem(storageKey(lessonId), '1')
+          localStorage.setItem(storageKey(namespace, lessonId), '1')
         } catch {
           /* ignore */
         }
@@ -119,7 +138,7 @@ export function QuizCard({ lessonId }: { lessonId: string }) {
   const reset = () => setPicks(Array.from({ length: questions.length }, () => null))
 
   return (
-    <section className="rounded-xl border border-border bg-card p-4" data-testid="kmip3-quiz">
+    <section className="rounded-xl border border-border bg-card p-4" data-testid="learn-quiz">
       <div className="flex items-center gap-2">
         <Award size={15} className={done ? 'text-status-success' : 'text-primary'} />
         <p className="text-[11px] font-bold uppercase tracking-wide text-foreground">

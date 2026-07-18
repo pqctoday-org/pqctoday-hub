@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 // algoFacts.ts — real published algorithm size/security facts (FIPS 203/204/
-//205 parameter tables; classical sizes are the standard textbook figures),
-// ported from the design handoff's cacp3-glossary.js `ALGO_INFO`. Drives
-// Learn's classical↔PQC comparison tables. Kept as its own file, keyed by
-// algorithm string — NOT merged into `kmipMeta.ts`'s `AlgoChoice.sizes`,
-// which is a different concept (picker bit-length options, e.g. RSA's
-// 2048/3072/4096 choices) from these byte-size facts. All sizes in bytes
-// unless noted.
+// 205 parameter tables; classical sizes are the standard textbook figures).
+// Protocol-agnostic (keyed by algorithm string, not by any wire format), so
+// both the KMIP and PKCS#11 Learn tabs' classical↔PQC comparison tables
+// share this one table. Originally ported from the KMIP design handoff's
+// cacp3-glossary.js `ALGO_INFO`. All sizes in bytes unless noted.
 export interface AlgoFacts {
   family: 'classical' | 'symmetric' | 'pqc' | 'hybrid'
   kind: 'signature' | 'kem' | 'symmetric'
