@@ -8,6 +8,8 @@
  * Extended for the 14→15 bump (Wave 4 WP4.1-4.3: securedBudgetM/spentBudgetM/
  * trapsThisRun) — run-scoped like edgeDecisions/year/q, reset on a real
  * migration rather than reinterpreted (see migrateSimulationState's comment).
+ * Extended again for 15→16 (WP4.5: the 5 lifetime achievement counters) —
+ * these are preserved like tourSeen/guided, NOT reset.
  */
 import { describe, it, expect } from 'vitest'
 import { migrateSimulationState } from './useSimulationStore'
@@ -36,6 +38,11 @@ describe('migrateSimulationState', () => {
     expect(out.securedBudgetM).toBe(0)
     expect(out.spentBudgetM).toBe(0)
     expect(out.trapsThisRun).toBe(0)
+    expect(out.simRunsCompleted).toBe(0)
+    expect(out.simZeroTrapPhases).toBe(0)
+    expect(out.simHardWin).toBe(false)
+    expect(out.simOnTimeObjectives).toBe(0)
+    expect(out.simJurisdictionsPlayed).toEqual([])
   })
 
   it('handles a null/undefined persisted blob the same as empty', () => {
@@ -98,6 +105,21 @@ describe('migrateSimulationState', () => {
     expect(out.trapsThisRun).toBe(0)
   })
 
+  it('preserves lifetime achievement counters on a real migration, unlike the run-scoped fields above (WP4.5)', () => {
+    const out = migrateSimulationState({
+      simRunsCompleted: 3,
+      simZeroTrapPhases: 1,
+      simHardWin: true,
+      simOnTimeObjectives: 2,
+      simJurisdictionsPlayed: ['US', 'DE'],
+    })
+    expect(out.simRunsCompleted).toBe(3)
+    expect(out.simZeroTrapPhases).toBe(1)
+    expect(out.simHardWin).toBe(true)
+    expect(out.simOnTimeObjectives).toBe(2)
+    expect(out.simJurisdictionsPlayed).toEqual(['US', 'DE'])
+  })
+
   it('falls back to a safe default difficulty for a garbage/unknown value', () => {
     expect(migrateSimulationState({ difficulty: 'nightmare' }).difficulty).toBe('realistic')
     expect(migrateSimulationState({ difficulty: 42 }).difficulty).toBe('realistic')
@@ -108,9 +130,15 @@ describe('migrateSimulationState', () => {
       visitedRefs: 'not-an-array',
       picks: { bad: true },
       seenConceptPeeks: 123,
+      simJurisdictionsPlayed: 'US',
+      simRunsCompleted: 'lots',
+      simHardWin: 'yes',
     })
     expect(out.visitedRefs).toEqual([])
     expect(out.picks).toEqual([])
     expect(out.seenConceptPeeks).toEqual([])
+    expect(out.simJurisdictionsPlayed).toEqual([])
+    expect(out.simRunsCompleted).toBe(0)
+    expect(out.simHardWin).toBe(false)
   })
 })

@@ -96,6 +96,21 @@ export interface SimulationState {
    *  simTrapTally.ts's lifetime localStorage tally: a fresh run's grade must never
    *  be dragged down by a PAST run's mistakes. */
   trapsThisRun: number
+  /** Wave 4 (WP4.5) — lifetime achievement-tracking counters, sourced into
+   *  ActivitySnapshot at snapshot build. Never reset by reset() (same browser-
+   *  level persistence class as tourSeen/guided) — a fresh run must not erase
+   *  what the player has already accomplished across past runs. */
+  simRunsCompleted: number
+  /** Completed runs (full lifecycle clear) that had zero traps picked the whole
+   *  run — a run-level "no common failures fallen for", not per-phase. */
+  simZeroTrapPhases: number
+  /** True once any completed run was played on Hard difficulty. */
+  simHardWin: boolean
+  /** High-water mark: the most on-time transformation objectives landed in any
+   *  single completed run (3 = every objective, in one run). */
+  simOnTimeObjectives: number
+  /** Distinct country jurisdictions played across all completed runs. */
+  simJurisdictionsPlayed: string[]
 
   setSize: (v: string) => void
   setCountry: (v: string) => void
@@ -114,6 +129,15 @@ export interface SimulationState {
   markScenarioVisited: (id: string) => void
   /** Fire the run-end ceremony exactly once for this run (W2b). */
   markRunComplete: () => void
+  /** Wave 4 (WP4.5) — update the lifetime achievement counters at run completion.
+   *  Called once, alongside markRunComplete(), with the values already computed
+   *  for the ceremony's own score card — no re-derivation, no new dependency. */
+  recordSimRunCompletion: (payload: {
+    country: string
+    difficulty: DifficultyId
+    trapsThisRun: number
+    objectivesOnTime: number
+  }) => void
   /** Record the year an objective was first achieved (idempotent). */
   recordObjectiveAchieved: (id: string, year: number) => void
   /** Toggle a product in the game-scoped Migrate catalog selection (C7). */
@@ -214,7 +238,7 @@ const SEED = {
  *  used calculation) don't hardcode a copy of SEED.year/q that could drift. */
 export const RUN_START = { year: SEED.year, q: SEED.q }
 
-const STORE_VERSION = 15
+const STORE_VERSION = 16
 const SAVE_KIND = 'pqc-simulation-save'
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null
@@ -262,6 +286,16 @@ export function migrateSimulationState(persisted: unknown) {
     securedBudgetM: SEED.securedBudgetM,
     spentBudgetM: SEED.spentBudgetM,
     trapsThisRun: SEED.trapsThisRun,
+    // Wave 4 (WP4.5): lifetime like tourSeen/guided above — preserved, not reset.
+    simRunsCompleted: typeof s.simRunsCompleted === 'number' ? (s.simRunsCompleted as number) : 0,
+    simZeroTrapPhases:
+      typeof s.simZeroTrapPhases === 'number' ? (s.simZeroTrapPhases as number) : 0,
+    simHardWin: typeof s.simHardWin === 'boolean' ? (s.simHardWin as boolean) : false,
+    simOnTimeObjectives:
+      typeof s.simOnTimeObjectives === 'number' ? (s.simOnTimeObjectives as number) : 0,
+    simJurisdictionsPlayed: Array.isArray(s.simJurisdictionsPlayed)
+      ? (s.simJurisdictionsPlayed as string[])
+      : [],
   }
 }
 
@@ -334,6 +368,11 @@ export const useSimulationStore = create<SimulationState>()(
       tourSeen: false,
       guided: false,
       seenConceptPeeks: [],
+      simRunsCompleted: 0,
+      simZeroTrapPhases: 0,
+      simHardWin: false,
+      simOnTimeObjectives: 0,
+      simJurisdictionsPlayed: [],
       setSize: (size) => set({ size }),
       setCountry: (country) => set({ country }),
       setSector: (sector) => set({ sector }),
@@ -352,6 +391,16 @@ export const useSimulationStore = create<SimulationState>()(
           s.visitedScenarios.includes(id) ? s : { visitedScenarios: [...s.visitedScenarios, id] }
         ),
       markRunComplete: () => set({ runCompleteSeen: true }),
+      recordSimRunCompletion: ({ country, difficulty, trapsThisRun, objectivesOnTime }) =>
+        set((s) => ({
+          simRunsCompleted: s.simRunsCompleted + 1,
+          simZeroTrapPhases: s.simZeroTrapPhases + (trapsThisRun === 0 ? 1 : 0),
+          simHardWin: s.simHardWin || difficulty === 'hard',
+          simOnTimeObjectives: Math.max(s.simOnTimeObjectives, objectivesOnTime),
+          simJurisdictionsPlayed: s.simJurisdictionsPlayed.includes(country)
+            ? s.simJurisdictionsPlayed
+            : [...s.simJurisdictionsPlayed, country],
+        })),
       recordObjectiveAchieved: (id, year) =>
         set((s) =>
           // eslint-disable-next-line security/detect-object-injection
@@ -433,7 +482,8 @@ export const useSimulationStore = create<SimulationState>()(
         set((s) =>
           s.seenConceptPeeks.includes(id) ? s : { seenConceptPeeks: [...s.seenConceptPeeks, id] }
         ),
-      // RESET clears the run but NOT the onboarding / guidance prefs.
+      // RESET clears the run but NOT the onboarding / guidance prefs, NOR the
+      // lifetime achievement counters (WP4.5) — a fresh run must not erase them.
       reset: () =>
         set((s) => ({
           ...SEED,
@@ -441,6 +491,11 @@ export const useSimulationStore = create<SimulationState>()(
           tourSeen: s.tourSeen,
           guided: s.guided,
           seenConceptPeeks: s.seenConceptPeeks,
+          simRunsCompleted: s.simRunsCompleted,
+          simZeroTrapPhases: s.simZeroTrapPhases,
+          simHardWin: s.simHardWin,
+          simOnTimeObjectives: s.simOnTimeObjectives,
+          simJurisdictionsPlayed: s.simJurisdictionsPlayed,
         })),
       exportSave: () =>
         JSON.stringify(
@@ -467,13 +522,19 @@ export const useSimulationStore = create<SimulationState>()(
       name: 'pqc-simulation',
       storage: createJSONStorage(() => localStorage),
       version: STORE_VERSION,
-      // tourSeen/seenConceptPeeks persist alongside the run slice but are NOT part
-      // of saveSlice, so they never travel in a run export / app snapshot.
+      // tourSeen/seenConceptPeeks/sim achievement counters persist alongside the
+      // run slice but are NOT part of saveSlice, so they never travel in a run
+      // export / app snapshot.
       partialize: (s) => ({
         ...saveSlice(s),
         tourSeen: s.tourSeen,
         guided: s.guided,
         seenConceptPeeks: s.seenConceptPeeks,
+        simRunsCompleted: s.simRunsCompleted,
+        simZeroTrapPhases: s.simZeroTrapPhases,
+        simHardWin: s.simHardWin,
+        simOnTimeObjectives: s.simOnTimeObjectives,
+        simJurisdictionsPlayed: s.simJurisdictionsPlayed,
       }),
       migrate: migrateSimulationState,
       onRehydrateStorage: () => (_state, error) => {

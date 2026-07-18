@@ -154,4 +154,124 @@ describe('useSimulationStore', () => {
     s().importSave('{"kind":"x"}')
     expect(s().sector).toBe(before)
   })
+
+  // Wave 4 (WP4.1/4.3) — budget spend/credit floors at 0, never goes negative.
+  it('spendBudget and creditBudget move spentBudgetM, floored at 0', () => {
+    useSimulationStore.setState({ spentBudgetM: 0 })
+    s().spendBudget(5)
+    expect(s().spentBudgetM).toBe(5)
+    s().creditBudget(2)
+    expect(s().spentBudgetM).toBe(3)
+    s().creditBudget(100)
+    expect(s().spentBudgetM).toBe(0) // floors at 0, never negative
+  })
+
+  // Wave 4 (WP4.2) — trapsThisRun is run-scoped: increments freely, resets on reset().
+  it('incrementTrapsThisRun accumulates and resets with the run', () => {
+    useSimulationStore.setState({ trapsThisRun: 0 })
+    s().incrementTrapsThisRun()
+    s().incrementTrapsThisRun()
+    expect(s().trapsThisRun).toBe(2)
+    s().reset()
+    expect(s().trapsThisRun).toBe(0)
+  })
+
+  // Wave 4 (WP4.5) — lifetime achievement counters survive reset() like tourSeen.
+  describe('recordSimRunCompletion (WP4.5)', () => {
+    it('increments simRunsCompleted every call and survives reset()', () => {
+      useSimulationStore.setState({ simRunsCompleted: 0 })
+      s().recordSimRunCompletion({
+        country: 'US',
+        difficulty: 'realistic',
+        trapsThisRun: 0,
+        objectivesOnTime: 0,
+      })
+      s().recordSimRunCompletion({
+        country: 'US',
+        difficulty: 'realistic',
+        trapsThisRun: 0,
+        objectivesOnTime: 0,
+      })
+      expect(s().simRunsCompleted).toBe(2)
+      s().reset()
+      expect(s().simRunsCompleted).toBe(2) // lifetime, not cleared by reset
+    })
+
+    it('credits simZeroTrapPhases only when trapsThisRun was 0', () => {
+      useSimulationStore.setState({ simZeroTrapPhases: 0 })
+      s().recordSimRunCompletion({
+        country: 'US',
+        difficulty: 'realistic',
+        trapsThisRun: 3,
+        objectivesOnTime: 0,
+      })
+      expect(s().simZeroTrapPhases).toBe(0)
+      s().recordSimRunCompletion({
+        country: 'US',
+        difficulty: 'realistic',
+        trapsThisRun: 0,
+        objectivesOnTime: 0,
+      })
+      expect(s().simZeroTrapPhases).toBe(1)
+    })
+
+    it('simHardWin latches true and never flips back on a non-Hard completion', () => {
+      useSimulationStore.setState({ simHardWin: false })
+      s().recordSimRunCompletion({
+        country: 'US',
+        difficulty: 'hard',
+        trapsThisRun: 0,
+        objectivesOnTime: 0,
+      })
+      expect(s().simHardWin).toBe(true)
+      s().recordSimRunCompletion({
+        country: 'US',
+        difficulty: 'easy',
+        trapsThisRun: 0,
+        objectivesOnTime: 0,
+      })
+      expect(s().simHardWin).toBe(true) // still true — a later easy run doesn't unset it
+    })
+
+    it('simOnTimeObjectives tracks the high-water mark, not the latest run', () => {
+      useSimulationStore.setState({ simOnTimeObjectives: 0 })
+      s().recordSimRunCompletion({
+        country: 'US',
+        difficulty: 'realistic',
+        trapsThisRun: 0,
+        objectivesOnTime: 3,
+      })
+      expect(s().simOnTimeObjectives).toBe(3)
+      s().recordSimRunCompletion({
+        country: 'US',
+        difficulty: 'realistic',
+        trapsThisRun: 0,
+        objectivesOnTime: 1,
+      })
+      expect(s().simOnTimeObjectives).toBe(3) // a worse later run doesn't lower it
+    })
+
+    it('simJurisdictionsPlayed collects distinct countries only', () => {
+      useSimulationStore.setState({ simJurisdictionsPlayed: [] })
+      s().recordSimRunCompletion({
+        country: 'US',
+        difficulty: 'realistic',
+        trapsThisRun: 0,
+        objectivesOnTime: 0,
+      })
+      s().recordSimRunCompletion({
+        country: 'DE',
+        difficulty: 'realistic',
+        trapsThisRun: 0,
+        objectivesOnTime: 0,
+      })
+      s().recordSimRunCompletion({
+        country: 'US',
+        difficulty: 'realistic',
+        trapsThisRun: 0,
+        objectivesOnTime: 0,
+      })
+      expect(s().simJurisdictionsPlayed).toEqual(['US', 'DE'])
+    })
+  })
 })
