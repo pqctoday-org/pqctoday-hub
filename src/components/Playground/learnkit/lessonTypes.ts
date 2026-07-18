@@ -66,3 +66,23 @@ export interface LessonBase<TSide> {
   /** Op/operation names for "Try it yourself in Reference/Workbench" backlink chips. */
   tryRef: string[]
 }
+
+/** A single linear walkthrough — one step sequence, no classical/PQC pairing.
+ * Fits protocol-fundamentals lessons (e.g. PKCS#11 "Foundations" track) where
+ * there's nothing to compare against, unlike `LessonBase`'s always-paired
+ * classical/modernize shape (KMIP's classical→PQC lessons, PKCS#11's
+ * "v3.2 & the PQC transformation" track). */
+export interface LinearLessonBase<TStep> {
+  id: string
+  n: number
+  tag: string
+  tone: LessonTone
+  title: string
+  blurb: string
+  setup: string
+  steps: TStep[]
+  notes: string[]
+  whyItMatters: string
+  /** Op/operation names for "Try it yourself in Workbench" backlink chips. */
+  tryRef: string[]
+}

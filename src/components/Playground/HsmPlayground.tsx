@@ -3,6 +3,7 @@ import { useRef, useEffect, useState } from 'react'
 import React from 'react'
 import { useSearchParams } from 'react-router-dom'
 import {
+  BookOpen,
   Cpu,
   Key as KeyIcon,
   Lock,
@@ -33,6 +34,7 @@ import { TokenSetupPanel } from './components/TokenSetupPanel'
 import { HsmKeyTable } from './keystore/HsmKeyTable'
 import { Pkcs11LogPanel } from '../shared/Pkcs11LogPanel'
 import { HsmSignCombinedPanel } from './tabs/SignVerifyTab'
+import { HsmLearnView } from './hsm/learn/HsmLearnView'
 import { Button } from '../ui/button'
 import { Card } from '../ui/card'
 import { InlineTooltip } from '../ui/InlineTooltip'
@@ -47,6 +49,7 @@ import {
 } from '../../wasm/softhsm'
 
 type HsmTab =
+  | 'learn'
   | 'keystore'
   | 'kem'
   | 'symmetric'
@@ -389,6 +392,13 @@ export const HsmPlayground = () => {
           }}
         >
           {tabBtn(
+            'learn',
+            <>
+              <BookOpen size={16} className="shrink-0" aria-hidden="true" />
+              <span className="text-xs ml-1">Learn</span>
+            </>
+          )}
+          {tabBtn(
             'keystore',
             <>
               <KeyIcon size={16} className="shrink-0" aria-hidden="true" />
@@ -503,6 +513,9 @@ export const HsmPlayground = () => {
         aria-labelledby={`hsm-tab-${activeTab}`}
         className="flex-1 overflow-y-auto custom-scrollbar min-h-0 bg-card rounded-xl border border-border p-3 md:p-6 relative"
       >
+        {activeTab === 'learn' && (
+          <HsmLearnView onTryInWorkbench={(tab) => handleTabChange(tab as HsmTab)} />
+        )}
         {activeTab === 'keystore' && (
           <div className="space-y-4">
             <TokenSetupPanel />
