@@ -616,46 +616,32 @@ export function dedupeBlockedByHash(findings: DriftFinding[]): DriftFinding[] {
 }
 
 /**
- * Resolves a collection's manifest path AND normalizes its entries into the
- * common ManifestEntry shape. FIXED 2026-07-17: this used to be a single
- * hardcoded `path.join(publicDir, collection, 'manifest.json')` assuming
- * every collection shares library/timeline's shape ({entries:[...]},
- * camelCase fields, sha256 present). threats does NOT: its real, currently-
- * maintained manifest lives one level deeper at
- * `public/threats/evidence/manifest.json` (public/threats/manifest.json is
- * a git-tracked relic from 2026-07-10, predating the 2026-07-12 local-
- * evidence-cache relocation — confirmed via its own `generated`/`source`
- * fields, sourced from an already-superseded CSV generation). Even the
- * SHAPE differs: a flat array (not {entries:[...]}), snake_case fields
- * (threat_id/source_url/download_status/evidence_file), and NO sha256 field
- * at all — nothing had ever established a hash baseline for the current
- * evidence store, so every threats finding was really being compared
- * against a stale, unrelated 07-10 snapshot via the wrong path entirely.
- * This normalizer reads the REAL current manifest and maps it onto the
- * same ManifestEntry shape classifyEntry() already expects, so the rest of
- * the pipeline (dedup, stealth-retry, report) needs no threats-specific
- * branching anywhere else.
+ * Resolves a collection's manifest path and returns its entries.
+ *
+ * REVERTED 2026-07-18 (see DATA-INTEGRITY-FINDINGS-07172026.md finding 9):
+ * a 2026-07-17 fix special-cased `threats` to read
+ * `public/threats/evidence/manifest.json` instead, reasoning that
+ * `public/threats/manifest.json` was a stale 07-10 relic missing a sha256
+ * baseline entirely. That was true AT THE TIME, but `trustScoreData.ts`
+ * (the actual app) has only ever read `public/threats/manifest.json` via
+ * its own `import.meta.glob` — never the `evidence/` path — and multiple
+ * sessions since have kept rebuilding `manifest.json` into the real,
+ * ground-truth-tracked file (it now has the same {generated, source,
+ * summary, entries:[...]} shape as library/timeline, sha256 included).
+ * `evidence/manifest.json` was the one that went stale: a ground-truth
+ * sweep against the real cached files on disk found `manifest.json`
+ * matching 55/68 diverged entries vs. `evidence/manifest.json`'s 12/68,
+ * plus 3 threatIds `evidence/manifest.json` had that `manifest.json` was
+ * missing entirely (since reconciled by hand). Two parallel, uncoordinated
+ * "authoritative" threats manifests across different work sessions is the
+ * real problem here, not this function's path choice specifically —
+ * flagged, not fully resolved; `evidence/manifest.json` itself is left in
+ * place for now, just no longer read by this script.
  */
 function resolveManifest(
   publicDir: string,
   collection: string
 ): { path: string; entries: ManifestEntry[] } {
-  if (collection === 'threats') {
-    const manifestPath = path.join(publicDir, 'threats', 'evidence', 'manifest.json')
-    if (!fs.existsSync(manifestPath)) return { path: manifestPath, entries: [] }
-    const raw = JSON.parse(fs.readFileSync(manifestPath, 'utf-8')) as Array<Record<string, unknown>>
-    const entries: ManifestEntry[] = raw.map((e) => ({
-      refId: String(e.threat_id ?? ''),
-      title: String(e.main_source ?? ''),
-      url: String(e.source_url ?? ''),
-      status: e.download_status === 'ok' ? 'downloaded' : String(e.download_status ?? ''),
-      filename: e.evidence_file ? String(e.evidence_file) : undefined,
-      sizeBytes: typeof e.size_bytes === 'number' ? e.size_bytes : undefined,
-      contentType: e.content_type ? String(e.content_type) : undefined,
-      sha256: e.sha256 ? String(e.sha256) : undefined,
-    }))
-    return { path: manifestPath, entries }
-  }
   const manifestPath = path.join(publicDir, collection, 'manifest.json')
   if (!fs.existsSync(manifestPath)) return { path: manifestPath, entries: [] }
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8')) as Manifest
