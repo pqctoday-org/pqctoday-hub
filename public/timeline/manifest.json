@@ -959,8 +959,8 @@
       "status": "downloaded",
       "reason": "completeness-audit add",
       "file": "timeline/United_States_NIST_NIST_SP_800_227_KEM_Recommendations.html",
-      "sha256": "7d46ae24edd0f95bdee6d95597f39ce8322a3a1eb0ed0abd66ce5ba16968dd65",
-      "sizeBytes": 43800
+      "sha256": "962a8d2efdf3a4b97b76bd66344431ff2412966c73e900acc5bf9c6e1a3ae19a",
+      "sizeBytes": 44071
     },
     {
       "label": "United States:DoD \u2014 DoD PQC Migration Memorandum",
@@ -995,8 +995,8 @@
       "status": "downloaded",
       "reason": "completeness-audit add",
       "file": "timeline/United_States_NIST_Additional_Signatures_Round_3_Advances.html",
-      "sha256": "faa2ed8f56a332f0dcf9725941ee3332b9ab99e623fc19d7eaf0514200460ffb",
-      "sizeBytes": 82152
+      "sha256": "442bf79b39463bc10ca6a9751c8b1b8abb5044a7cd4b47dea8eca6f982afb5d3",
+      "sizeBytes": 82886
     },
     {
       "label": "European Union:EC \u2014 EU Cyber Resilience Act In Force",
@@ -1004,8 +1004,8 @@
       "status": "downloaded",
       "reason": "completeness-audit add",
       "file": "timeline/European_Union_EC_EU_Cyber_Resilience_Act_In_Force.html",
-      "sha256": "486d826331aabf4503ecc430982ae45aaafc9d3d19c211818c77a4775ca77a44",
-      "sizeBytes": 973761
+      "sha256": "c454ef08556b7123cd76ee3e5b6eb1383855d2782c332eee80c98f21e05c0541",
+      "sizeBytes": 973765
     },
     {
       "label": "European Union:ENISA \u2014 ENISA PQC Anticipating Threats",
@@ -1031,8 +1031,8 @@
       "status": "downloaded",
       "reason": "completeness-audit add",
       "file": "timeline/Saudi_Arabia_NCA_Saudi_National_Cryptographic_Standards.html",
-      "sha256": "8e1cad8fb062e8c28dd0fe94a4b4c063cf89f7f8faf1cf0d59b991a607626373",
-      "sizeBytes": 452247
+      "sha256": "e0e5e65c63634ec06b0e57e83584dffd3de7d3cedb6328aeeb39b02a18106079",
+      "sizeBytes": 456370
     },
     {
       "label": "United Arab Emirates:UAE CSC \u2014 UAE Crypto Discovery Tool and PQC Index",
@@ -1040,8 +1040,8 @@
       "status": "downloaded",
       "reason": "completeness-audit add",
       "file": "timeline/United_Arab_Emirates_UAE_CSC_UAE_Crypto_Discovery_Tool_and_PQC_Index.html",
-      "sha256": "9786ae58ac72ed2b790a6a0ff9f9fed43a8615ced19750f3877f31c75ce1adea",
-      "sizeBytes": 381684
+      "sha256": "fa72444c37ce64d38294ca08e868fc2c0af4b698614f67d3550c454e26571e64",
+      "sizeBytes": 382616
     },
     {
       "label": "International:IETF \u2014 RFC 9881 ML-DSA in X.509",
@@ -1049,8 +1049,8 @@
       "status": "downloaded",
       "reason": "completeness-audit add",
       "file": "timeline/International_IETF_RFC_9881_ML_DSA_in_X_509.html",
-      "sha256": "fb6a2da444e84beb3d1d6f449846a6555c6d679ef9c4e82f95482af99d4d0817",
-      "sizeBytes": 266012
+      "sha256": "c2b2e3b79df016ffce2ed320f02ee4802f6a5fa4f6bace7a513f12dac0fef87d",
+      "sizeBytes": 266025
     },
     {
       "label": "International:IETF \u2014 RFC 9941 SSH PQ-Hybrid Key Exchange",
@@ -1058,7 +1058,7 @@
       "status": "downloaded",
       "reason": "completeness-audit add",
       "file": "timeline/International_IETF_RFC_9941_SSH_PQ_Hybrid_Key_Exchange.html",
-      "sha256": "4943d689c1a3c05022dfe68320fff693e583e01184b88ee2a061346c00519861",
+      "sha256": "4c7717fdfbcd20f08c6c4e98cb8d7c5650554cf0b0d861f06f52c76ca7942844",
       "sizeBytes": 56964
     },
     {
@@ -1067,8 +1067,8 @@
       "status": "downloaded",
       "reason": "completeness-audit add",
       "file": "timeline/International_IETF_RFC_9370_Multiple_Key_Exchanges_in_IKEv2.html",
-      "sha256": "40b85dea6583c0bd5ed3d04d51138f0e054d3e17051489c881a5706035a26b5c",
-      "sizeBytes": 119451
+      "sha256": "091a9741ee9129f4471f95a14d41b1250aed32f68e393c80989dd5e9ae9f9f85",
+      "sizeBytes": 119753
     },
     {
       "label": "International:IETF \u2014 draft-ietf-tls-ecdhe-mlkem Hybrid KEX",
@@ -1076,7 +1076,7 @@
       "status": "downloaded",
       "reason": "completeness-audit add",
       "file": "timeline/International_IETF_draft_ietf_tls_ecdhe_mlkem_Hybrid_KEX.html",
-      "sha256": "97f0613bb6161340b687189c7d2bcd52da0eb4a9c5014ae340147c049fbf17ee",
+      "sha256": "ee4a5a778ade4d5c27d29a802a00f098278448ea8fe86023b23260f3308c6c83",
       "sizeBytes": 73957
     },
     {
@@ -1094,8 +1094,8 @@
       "status": "downloaded",
       "reason": "completeness-audit add",
       "file": "timeline/International_IETF_draft_ietf_lamps_kyber_certificates.html",
-      "sha256": "1ba8110ddfd2348e6a199282747f86aee59dfc47736cee67b1ae10ece39eca79",
-      "sizeBytes": 204988
+      "sha256": "8859e1c5ae7551d3b7d91d60a61b7f10d4d717bee1b767f15575bd1cbadcc4cc",
+      "sizeBytes": 205290
     },
     {
       "label": "Germany:BSI \u2014 BSI TR-02102-1 2026 Edition",
@@ -1112,8 +1112,8 @@
       "status": "downloaded",
       "reason": "resilient fetch (playwright-stealth)",
       "file": "timeline/Canada_CCCS_ITSP_40_111_v4_PQC_Algorithms_Approved.html",
-      "sha256": "d4809be7b06f3c2219232ae0953d0ed6295f70ee76a8e3721eff88fbf04ec8e9",
-      "sizeBytes": 124854
+      "sha256": "8fcfa55dc50e2baebb6b9d37016e7c4d59f2130e1fbbbbd7d0b2b78754339f69",
+      "sizeBytes": 125333
     },
     {
       "label": "Nigeria:NDPC \u2014 NDPA General Application Directive 2025",
@@ -1139,8 +1139,8 @@
       "status": "downloaded",
       "reason": "resilient fetch (curl_cffi:chrome124)",
       "file": "timeline/South_Korea_MSIT_K_PQC_Master_Plan_to_2035.html",
-      "sha256": "740613e3ebd09f79364918225c7d6c2b9f7e3b7ac5a8a16221f5d2df5e180c05",
-      "sizeBytes": 268494
+      "sha256": "9c29c341220cdabd0c080e48715c222501af12a320b59756ff029b9ccd7adaee",
+      "sizeBytes": 271144
     },
     {
       "label": "Australia:ASD \u2014 ISM December 2024 Update",
@@ -1166,8 +1166,8 @@
       "status": "downloaded",
       "reason": "upgraded Wayback->live (resilient fetch)",
       "file": "timeline/Australia_ASD_ACSC_Annual_Cyber_Threat_Report_2024_25_PQC_as_a_National_Priority.html",
-      "sha256": "b70fdba0f57c4612f12c01abe6129e2c0c044ddcaa26165f47912c5c81dd23c4",
-      "sizeBytes": 480826
+      "sha256": "e22a299ee2e390bfea03d083cc32f4d8b2dfbdc8164d0112e3ba052cce510e45",
+      "sizeBytes": 482289
     },
     {
       "label": "Australia:ASD \u2014 Commonwealth Cyber Security Posture in 2025",
@@ -1175,8 +1175,8 @@
       "status": "downloaded",
       "reason": "upgraded Wayback->live (resilient fetch)",
       "file": "timeline/Australia_ASD_Commonwealth_Cyber_Security_Posture_in_2025.html",
-      "sha256": "f8fabc1bb621be8f832837ad73bb816ea27a701685d1b4353a7b10d1d24f0a3d",
-      "sizeBytes": 372083
+      "sha256": "f21f28355833850fb0f3bea162af3d27424f08d2a0c929fb777322720a69ebe4",
+      "sizeBytes": 373505
     },
     {
       "label": "Australia:DISR \u2014 National Quantum Strategy",
@@ -1184,8 +1184,8 @@
       "status": "downloaded",
       "reason": "upgraded Wayback->live (resilient fetch)",
       "file": "timeline/Australia_DISR_National_Quantum_Strategy.html",
-      "sha256": "8df4f3d7b9e2a942b1a69666586e932c69ada6d268676298fb18f93dfe78daa1",
-      "sizeBytes": 163585
+      "sha256": "e3580830416e02c0b90706bb421566fbfd52d60b5c13b3c66a9543bc8f637d53",
+      "sizeBytes": 164999
     },
     {
       "label": "France:ANSSI \u2014 PQC Position Paper Follow-up",
@@ -1193,8 +1193,8 @@
       "status": "downloaded",
       "reason": "upgraded Wayback->live (resilient fetch)",
       "file": "timeline/France_ANSSI_PQC_Position_Paper_Follow_up.pdf",
-      "sha256": "88875a5b307e58b89cb01b3011152321a65d7fd71b0444b3833e29d6ce4a5be9",
-      "sizeBytes": 7663
+      "sha256": "fcf88eeff93e1d699dc3d05db3a4bb78d76ecaea7a222b58278339f37d2af1bb",
+      "sizeBytes": 172278
     },
     {
       "label": "Germany:BSI \u2014 EU Joint Statement on PQC",
@@ -1202,8 +1202,8 @@
       "status": "downloaded",
       "reason": "upgraded Wayback->live (resilient fetch)",
       "file": "timeline/Germany_BSI_EU_Joint_Statement_on_PQC.pdf",
-      "sha256": "d5c6a14dc078135262242197622f30f38a94220eca2fff612d235d63e96c4d94",
-      "sizeBytes": 56211
+      "sha256": "927db67a876ed51fab8e216db1acbc113195e1fc2caf006121665930cecfee9f",
+      "sizeBytes": 822099
     },
     {
       "label": "Germany:BSI \u2014 Hybrid TLS Required for Classified Communications",
@@ -1211,8 +1211,8 @@
       "status": "downloaded",
       "reason": "upgraded Wayback->live (resilient fetch)",
       "file": "timeline/Germany_BSI_Hybrid_TLS_Required_for_Classified_Communications.pdf",
-      "sha256": "df9ee1f381571bdc39cbee0ced8d7126396af1f10678cd0d53ff8e6c7c534200",
-      "sizeBytes": 56144
+      "sha256": "a7f55c3403d45719287415d2698bf51e629aafe841e2e9867e8afe8749d238e5",
+      "sizeBytes": 758922
     },
     {
       "label": "Germany:BSI \u2014 Hybrid IPsec and SSH Required",
@@ -1220,8 +1220,8 @@
       "status": "downloaded",
       "reason": "upgraded Wayback->live (resilient fetch)",
       "file": "timeline/Germany_BSI_Hybrid_IPsec_and_SSH_Required.pdf",
-      "sha256": "891acc925767479421fac21e1e57c01925ddfeed5640043c68d70a1d528e558d",
-      "sizeBytes": 56515
+      "sha256": "ee6cf28a1b7fbc79b60dd2a913a905e99e3a246b0796cff894a41e22207d6bdc",
+      "sizeBytes": 724281
     },
     {
       "label": "Germany:BSI \u2014 Full PQC Transition \u2014 Standalone Algorithms Required",
@@ -1229,8 +1229,8 @@
       "status": "downloaded",
       "reason": "upgraded Wayback->live (resilient fetch)",
       "file": "timeline/Germany_BSI_Full_PQC_Transition_Standalone_Algorithms_Required.pdf",
-      "sha256": "5a49eaff12a54aaca1a7c8477276e45d6767efa3bc3bcc75eab751cba022bd16",
-      "sizeBytes": 56037
+      "sha256": "f601cdf25c000b431573a307a3c125f3c51d301897089e7e63dde0449367a62a",
+      "sizeBytes": 568388
     },
     {
       "label": "United States:Ciena \u2014 1.6T Quantum-Safe Optical Encryption",
@@ -1238,8 +1238,8 @@
       "status": "downloaded",
       "reason": "upgraded Wayback->live (resilient fetch)",
       "file": "timeline/United_States_Ciena_1_6T_Quantum_Safe_Optical_Encryption.html",
-      "sha256": "b2852d7ba47362094fad9996b46cd371cb24da995e845931b43f3b3978c799e3",
-      "sizeBytes": 131593
+      "sha256": "94cea999e4ceeec2563042d62d7c26c713f4818c39522755451c1a394827ed72",
+      "sizeBytes": 132668
     },
     {
       "label": "International:ITU-T \u2014 ITU-T X.1811 Quantum-Safe Security Guidelines for 5G Published",
@@ -1256,8 +1256,8 @@
       "status": "downloaded",
       "reason": "upgraded secondary->primary (resilient)",
       "file": "timeline/Global_TCG_TPM_2.0_v1.85_primary.html",
-      "sha256": "2df95e03b11a764940f7f9609a9117313fe41f4947576e1249a962b100e32c1c",
-      "sizeBytes": 148520
+      "sha256": "f10fc59f45a0a8689daa67ae935ca0da30b9b01f5aa26381ed050feaf74c8b86",
+      "sizeBytes": 148519
     },
     {
       "label": "United States:NSA \u2014 CNSA 2.0 Algorithms Revised",
@@ -1301,8 +1301,8 @@
       "status": "downloaded",
       "reason": "secondary->primary (resilient)",
       "file": "timeline/United_Arab_Emirates_UAE_CSC_National_PQC_Migration_Program.html",
-      "sha256": "71d6fe54db39fa8f7b1fbd6f2076ded2a87bc6001626dd0f2f0cb53fc6e53c89",
-      "sizeBytes": 36429
+      "sha256": "69232764059c2ef507086c131b4e092be151c62289109ffde1529ec7c0888bbc",
+      "sizeBytes": 36668
     },
     {
       "label": "South Africa:IR \u2014 POPIA Enforcement Begins",
@@ -1347,8 +1347,8 @@
       "label": "United Arab Emirates TII \u2014 NIST Additional Signatures Round 2 Contributions",
       "url": "https://csrc.nist.gov/projects/pqc-dig-sig/round-2-additional-signatures",
       "file": "United_Arab_Emirates_TII_NIST_Additional_Signatures_Round_2_Contributions.html",
-      "sha256": "806243ad617c0cdfe8eb69a9fd707eede10646c2a6259e487d9ce32097e2faca",
-      "sizeBytes": 67208
+      "sha256": "7ad965ba1b0bbbbda1c0d00ed9611f28447cf0592ba4c308c36534bf82697873",
+      "sizeBytes": 66981
     },
     {
       "label": "Global CA/Browser Forum \u2014 Ballot SMC013 ML-DSA for S/MIME Adopted",
@@ -1543,7 +1543,7 @@
       "label": "Global:3GPP SA3 \u2014 3GPP TR 33.938 PQC Transition Study",
       "url": "https://www.3gpp.org/DynaReport/33938.htm",
       "file": "Global_3GPP_SA3_3GPP_TR_33.938_PQC_Transition_Study.html",
-      "sha256": "796f35542a2b9b945f23ae4cb466e49b2aa4ccaae13f237475c8216d44974af7",
+      "sha256": "8132afad0e616e31dbdbb206d3236bf97844998658c47888c4c273b709c2c86e",
       "sizeBytes": 194770
     },
     {
@@ -1564,15 +1564,15 @@
       "label": "European Union:ENISA \u2014 ENISA PQC Anticipating Threats",
       "url": "https://www.enisa.europa.eu/news/post-quantum-cryptography-anticipating-threats-and-preparing-the-future",
       "file": "European_Union_ENISA_ENISA_PQC_Anticipating_Threats.html",
-      "sha256": "f95bcf08fa9b7449c7b15b7d73b4fb3150459950b7e13c3c390dc912e29b4976",
-      "sizeBytes": 57376
+      "sha256": "958a7812d3c6e0bd40b5f50fafee9f227ee0f4a6cb7e0420720318d1c65f817a",
+      "sizeBytes": 57285
     },
     {
       "label": "International:ISO/IEC \u2014 ISO/IEC SC27 PQC Standardization",
       "url": "https://www.iso.org/committee/45306.html",
       "file": "International_ISO_IEC_ISO_IEC_SC27_PQC_Standardization.html",
-      "sha256": "fc76ab5582f3bfec6a8a0f1de7d3381429683659977cc541e0f97b33bda92047",
-      "sizeBytes": 138397
+      "sha256": "30a74569a7c1fd3d5a779977a119d05493d5a871c661a93112169ec223764bea",
+      "sizeBytes": 138287
     },
     {
       "label": "Japan:NEDO \u2014 K Program PQC Research",
@@ -1789,16 +1789,16 @@
       "file": "timeline/Ushering-in-the-Next-Frontier-of-Quantum-Innovation.html",
       "sizeBytes": 83420,
       "contentType": "text/html",
-      "sha256": "462071f64f975b8a4ba8f440135a5269a5d086c344e016f960349328d2cea841"
+      "sha256": "49e61bda77ed5beebf09c5b70c6781c7d7ecdb671049722ad540f0ac95703d1b"
     },
     {
       "label": "NSPM-12-Published",
       "url": "https://www.whitehouse.gov/presidential-actions/2026/06/national-security-presidential-memorandum-nspm-12/",
       "status": "downloaded",
       "file": "timeline/NSPM-12-Published.html",
-      "sizeBytes": 301212,
+      "sizeBytes": 302376,
       "contentType": "text/html",
-      "sha256": "1ac3ebc69ea993e07ee0b8781fab9ad62e15ff2620c31a292656f20976ca3be3"
+      "sha256": "cb257c1a366a6393b3d88c39197e6a1ee94ace087239158e14e2faf567df114e"
     },
     {
       "label": "International:ETSI \u2014 ETSI TS 104 015 Hybrid PQC Standard Published",
