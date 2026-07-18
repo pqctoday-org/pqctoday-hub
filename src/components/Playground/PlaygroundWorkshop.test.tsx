@@ -28,7 +28,7 @@ beforeEach(() => {
 })
 
 describe('Crypto Lab Workbench', () => {
-  it('renders the Overview with the brand, tool count and three full-playground cards', () => {
+  it('renders the Overview with the brand, tool count and four full-playground cards', () => {
     renderWorkbench()
     expect(screen.getByText('Crypto Lab')).toBeInTheDocument()
     expect(screen.getByText(`${GRID_COUNT} tools · runs in-browser`)).toBeInTheDocument()
@@ -37,6 +37,7 @@ describe('Crypto Lab Workbench', () => {
     ).toBeInTheDocument()
     expect(screen.getByText('Interactive Playground')).toBeInTheDocument()
     expect(screen.getByText('PKCS#11 HSM')).toBeInTheDocument()
+    expect(screen.getByText('Developer Sandbox')).toBeInTheDocument()
     // "KMIP Control Plane" is the one consistent name used both on the feature card
     // and on the "Featured" banner further down this same Overview (playground.md
     // item 3) — expect both, not a single unique match.
@@ -53,6 +54,10 @@ describe('Crypto Lab Workbench', () => {
     expect(screen.getAllByText('KMIP Control Plane')[0].closest('a')).toHaveAttribute(
       'href',
       '/playground/cacp'
+    )
+    expect(screen.getByText('Developer Sandbox').closest('a')).toHaveAttribute(
+      'href',
+      '/playground/docker'
     )
   })
 

@@ -26,6 +26,13 @@ import {
   validate,
 } from '@/wasm/kmip/ttlv/opTemplates'
 import { arrayBufferToHex, getRandomBytes } from '@/utils/webCrypto'
+import type { LessonBase, LessonSideBase } from '@/components/Playground/learnkit/lessonTypes'
+export type {
+  LessonTone,
+  CompareRow,
+  CompareRow3,
+  LessonStepExpect,
+} from '@/components/Playground/learnkit/lessonTypes'
 
 const str = (v: unknown): string => (typeof v === 'string' ? v : '')
 
@@ -35,8 +42,6 @@ const str = (v: unknown): string => (typeof v === 'string' ? v : '')
 const field = (results: (OpResult | null)[], step: number, key: string): string =>
   // eslint-disable-next-line security/detect-object-injection -- see doc comment above.
   str(results[step]?.summary[key])
-
-export type LessonTone = 'ok' | 'primary' | 'spec' | 'warn' | 'info'
 
 /** A raw-TTLV step — for the ops the wasm's friendly `run_op` union doesn't
  * carry (split keys, the async quartet, Hash, attribute ops). Runs through
@@ -88,57 +93,17 @@ const harvestCorrelation = (named: TtlvNode): Record<string, unknown> => ({
   cv: str(find(named, 'AsynchronousCorrelationValue')?.value),
 })
 
-export interface LessonSide {
-  /** `null` when this side has no runnable algorithm (Lesson 4's classical
-   * side — SLH-DSA has no classical predecessor). */
-  algorithm: string | null
-  algoLabel: string
-  steps: LessonStep[]
-  /** Extra framing prose shown alongside (or instead of) the step list. */
-  prose?: string
-  /** Modernize CTA button label (only set on `modernize`). */
-  cta?: string
-  /** Lesson 5's modernize side: no new engine calls — the point IS that
-   * nothing changes, so the UI replays the classical side's own results. */
-  skipReplay?: boolean
-}
+/** `algorithm: null` when this side has no runnable predecessor (Lesson 4's
+ * classical side — SLH-DSA has no classical predecessor). `skipReplay`:
+ * Lesson 5's modernize side makes no new engine calls — the point IS that
+ * nothing changes, so the UI replays the classical side's own results. */
+export type LessonSide = LessonSideBase<LessonStep>
 
-export interface CompareRow {
-  label: string
-  a: string
-  b: string
-  same: boolean
-}
-
-export interface CompareRow3 {
-  label: string
-  a: string
-  b: string
-  c: string
-}
-
-export interface Lesson {
-  id: string
-  n: number
-  tag: string
-  tone: LessonTone
-  title: string
-  blurb: string
-  setup: string
-  /** Card headers for the two sides — defaults to
-   * ['Classical', 'Post-quantum']; the 0.12/0.13 lessons reframe them
-   * ('One custodian' / 'Split custody', 'Synchronous' / 'Asynchronous'). */
-  sideHeaders?: [string, string]
-  classical: LessonSide
-  modernize: LessonSide
-  compare?: CompareRow[]
-  compareHeaders?: [string, string, string]
-  compare3?: CompareRow3[]
-  notes: string[]
-  whyItMatters: string
-  /** Op names for "Try it yourself in Reference" backlink chips. */
-  tryRef: string[]
-}
+/** Card headers for the two sides default to ['Classical', 'Post-quantum'];
+ * the 0.12/0.13 lessons reframe them ('One custodian' / 'Split custody',
+ * 'Synchronous' / 'Asynchronous'). `tryRef`: op names for "Try it yourself
+ * in Reference" backlink chips. */
+export type Lesson = LessonBase<LessonSide>
 
 const MESSAGE = 'hello post-quantum world'
 

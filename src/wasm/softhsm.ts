@@ -629,6 +629,97 @@ export const CKA_DECAPSULATE = 0x00000634
 export const CKA_HSS_KEYS_REMAINING = 0x0000061c // PKCS#11 v3.2 §6.14
 export const CKA_XMSS_KEYS_REMAINING = 0x80000106 // vendor extension
 
+// PKCS#11 Profiles v3.2 §3 — a token exposes one CKO_PROFILE object per
+// conformance profile it claims, each with a fixed CKA_PROFILE_ID (e.g.
+// CKP_BASELINE_PROVIDER). Values verified against
+// pqctoday-hsm/rust/src/constants.rs.
+export const CKO_PROFILE = 0x00000009
+export const CKA_PROFILE_ID = 0x00000601
+export const CKP_BASELINE_PROVIDER = 0x00000001
+// PKCS#11 v3.2 §4.8 Table 13 — pins a key to an allow-list of mechanisms;
+// any call naming a mechanism outside the list fails CKR_MECHANISM_INVALID.
+// CKF_ARRAY_ATTRIBUTE (0x40000000) | 0x0600, per constants.rs.
+export const CKA_ALLOWED_MECHANISMS = 0x40000600
+
+/** Find every CKO_PROFILE object on the token, with its CKA_PROFILE_ID
+ * resolved (-1 if unreadable). PKCS#11 Profiles v3.2 §3 — a token exposes
+ * one such object per conformance profile it claims. */
+export const hsm_findProfileObjects = (
+  M: SoftHSMModule,
+  hSession: number
+): { handle: number; profileId: number }[] => {
+  const handles = hsm_findAllObjects(M, hSession, [{ type: CKA_CLASS, ulongVal: CKO_PROFILE }])
+  return handles.map((handle) => {
+    const uPtr = M._malloc(4)
+    const tpl = buildTemplate(M, [{ type: CKA_PROFILE_ID, bytesPtr: uPtr, bytesLen: 4 }])
+    const rv = M._C_GetAttributeValue(hSession, handle, tpl.ptr, 1) >>> 0
+    const profileId = rv === 0 ? M.getValue(uPtr, 'i32') : -1
+    freeTemplate(M, tpl, 1)
+    M._free(uPtr)
+    return { handle, profileId }
+  })
+}
+
+/** Generate an AES key whose CKA_ALLOWED_MECHANISMS pins it to exactly one
+ * mechanism (PKCS#11 v3.2 §4.8 Table 13) — any other mechanism this key is
+ * used with fails CKR_MECHANISM_INVALID, enforced per-key by the token,
+ * independent of what the token otherwise supports. */
+export const hsm_generateAESKeyPinnedTo = (
+  M: SoftHSMModule,
+  hSession: number,
+  keyBits: 128 | 192 | 256,
+  allowedMechanism: number
+): number => {
+  const mech = buildMech(M, CKM_AES_KEY_GEN)
+  const allowedPtr = M._malloc(4)
+  M.setValue(allowedPtr, allowedMechanism, 'i32')
+  const attrs: AttrDef[] = [
+    { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_AES },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: true },
+    { type: CKA_ENCRYPT, boolVal: true },
+    { type: CKA_DECRYPT, boolVal: true },
+    { type: CKA_WRAP, boolVal: false },
+    { type: CKA_UNWRAP, boolVal: false },
+    { type: CKA_DERIVE, boolVal: false },
+    { type: CKA_VALUE_LEN, ulongVal: keyBits / 8 },
+    { type: CKA_ALLOWED_MECHANISMS, bytesPtr: allowedPtr, bytesLen: 4 },
+  ]
+  const tpl = buildTemplate(M, attrs)
+  const hKeyPtr = M._malloc(4)
+  try {
+    checkRV(
+      M._C_GenerateKey(hSession, mech, tpl.ptr, attrs.length, hKeyPtr),
+      'C_GenerateKey(AES, pinned)'
+    )
+    return M.getValue(hKeyPtr, 'i32')
+  } finally {
+    M._free(mech)
+    M._free(allowedPtr)
+    freeTemplate(M, tpl, attrs.length)
+    M._free(hKeyPtr)
+  }
+}
+
+/** Read a session's PKCS#11 v3.2 §5.6.9 validation flags (only defined
+ * `flagsType` is CKS_LAST_VALIDATION_OK = 1). This SoftHSM build performs no
+ * FIPS/validation-authority checks, so the flags returned are always empty —
+ * a real, honest answer, not a placeholder. */
+export const hsm_getSessionValidationFlags = (M: SoftHSMModule, hSession: number): number => {
+  const flagsPtr = M._malloc(4)
+  try {
+    checkRV(
+      M._C_GetSessionValidationFlags(hSession, 1, flagsPtr),
+      'C_GetSessionValidationFlags(CKS_LAST_VALIDATION_OK)'
+    )
+    return M.getValue(flagsPtr, 'i32')
+  } finally {
+    M._free(flagsPtr)
+  }
+}
+
 // ML-DSA pre-hash mechanisms (CKM_HASH_ML_DSA_*, PKCS#11 v3.2, pkcs11t.h:1221-1231)
 const CKM_HASH_ML_DSA_SHA224 = 0x23
 const CKM_HASH_ML_DSA_SHA256 = 0x24
@@ -735,7 +826,7 @@ export const buildTemplate = (
   return { ptr, auxPtrs }
 }
 
-const freeTemplate = (
+export const freeTemplate = (
   M: SoftHSMModule,
   tpl: { ptr: number; auxPtrs: number[] },
   count: number
