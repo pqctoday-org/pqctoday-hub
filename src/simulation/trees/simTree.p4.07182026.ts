@@ -20,6 +20,8 @@ const TREE: PhaseTree = {
         {
           id: '4.1',
           title: 'Define Year-1 Starter Plan (90-Day Governance Sprint)',
+          decision:
+            'Nail down a concrete 90-day starting plan — leadership, a training cohort, two pilots — not just a vision statement.',
           do: 'Confirm leadership, training cohort, CBOM v1, two pilots, updated policy and baseline KPIs.',
           output: 'Year-1 starter plan',
           steps: [
@@ -41,6 +43,8 @@ const TREE: PhaseTree = {
         {
           id: '4.2',
           title: 'Structure the Multi-Year Roadmap',
+          decision:
+            'Build a phased multi-year roadmap with a real critical path — not a wishlist of dates.',
           do: 'Define a phased 5-year plan with annual milestones and a critical path.',
           output: 'Multi-year roadmap',
           steps: [
@@ -67,6 +71,8 @@ const TREE: PhaseTree = {
         {
           id: '4.3',
           title: 'Align to Infrastructure Refresh Cycles',
+          decision:
+            "Piggyback PQC work on refresh cycles that are already funded — don't ask for a separate budget line for everything.",
           do: 'Map PQC tasks onto already-funded refresh programs to embed cost avoidance.',
           output: 'Refresh-cycle alignment table',
           steps: [
@@ -81,6 +87,8 @@ const TREE: PhaseTree = {
         {
           id: '4.4',
           title: 'Establish PMO Structure for Scale',
+          decision:
+            'Stand up a real PMO — WBS, dependency map, risk register — before the program outgrows ad hoc tracking.',
           do: 'Define WBS, dependency map, critical path, resource leveling and risk register.',
           output: 'PMO operating model',
           steps: [
@@ -108,6 +116,8 @@ const TREE: PhaseTree = {
         {
           id: '4.5–4.6',
           title: 'Manage the Roadmap as a Living Instrument & Define Milestone Gates',
+          decision:
+            "Review the roadmap quarterly against leading indicators and formal gate criteria — don't just check it once a year.",
           do: 'Run quarterly reviews with leading indicators and formal G0–G6 gate criteria.',
           output: 'Quarterly review process & gate criteria',
           steps: [
@@ -136,6 +146,8 @@ const TREE: PhaseTree = {
         {
           id: '4.7',
           title: 'Pre-Draft the Accelerated Execution Profile',
+          decision:
+            'Pre-approve an accelerated execution plan now, before you need it — a CRQC-timeline surprise is the wrong moment to start drafting one.',
           do: 'Pre-approve a contingency package with triggers, compressed sequence and activation authority.',
           output: 'Accelerated Execution Profile',
           steps: [

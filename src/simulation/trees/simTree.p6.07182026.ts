@@ -21,6 +21,8 @@ const TREE: PhaseTree = {
         {
           id: '6.1',
           title: 'PKI Modernization',
+          decision:
+            'Shorten cert lifetimes and run a dual-stack CA — test every chain across your actual middleboxes before you rely on it.',
           do: 'Shorten certificate lifetimes, deploy dual-stack CA, and test chains across middleboxes.',
           output: 'PKI modernization plan',
           steps: [
@@ -79,6 +81,8 @@ const TREE: PhaseTree = {
         {
           id: '6.2',
           title: 'HSM and KMS Modernization',
+          decision:
+            "Inventory every HSM's real PQC capability before upgrading — don't assume the vendor spec sheet matches your firmware version.",
           do: 'Inventory HSMs by PQC capability, upgrade firmware and configure cloud KMS for PQC.',
           output: 'HSM/KMS upgrade schedule',
           steps: [
@@ -131,6 +135,8 @@ const TREE: PhaseTree = {
         {
           id: '6.3',
           title: 'Network Infrastructure Assessment',
+          decision:
+            'Test PQC handshake sizes against every production middlebox — a firewall with hardcoded buffer limits will silently drop the larger packets.',
           do: 'Test PQC handshake sizes and protocol impacts across all production middleboxes.',
           output: 'Network compatibility report',
           steps: [
@@ -184,6 +190,8 @@ const TREE: PhaseTree = {
         {
           id: '6.4',
           title: 'Performance Testing Methodology',
+          decision:
+            "Baseline performance and canary at low traffic before a full rollout — don't find out about a latency regression at 100% load.",
           do: 'Baseline metrics, run canary at 1–5% traffic and evaluate against SLOs.',
           output: 'Performance baseline and projections',
           steps: [
@@ -218,6 +226,8 @@ const TREE: PhaseTree = {
         {
           id: '6.5',
           title: 'Capacity Planning for PQC at Scale',
+          decision:
+            "Benchmark PQC's CPU/memory/bandwidth impact on production-class hardware — a laptop benchmark won't catch a capacity cliff at scale.",
           do: 'Estimate CPU, memory, bandwidth and storage impact; benchmark on production hardware.',
           output: 'Capacity plan',
           steps: [

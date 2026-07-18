@@ -236,7 +236,11 @@ export function DecisionSection({
   const wrong = pickWrong(pool, stepsDone, 2)
   const correctCard: DecisionCard = {
     correct: true,
-    label: nextMove.step.label,
+    // WP2.6: a strategy-shaped decision phrasing when the activity has one,
+    // so the correct card doesn't read as an obviously-task-labeled menu item
+    // next to strategy-shaped traps. Falls back to the step's own label for
+    // any activity not yet authored one — never a broken or empty card.
+    label: nextMove.act.decision ?? nextMove.step.label,
     detail: `${nextMove.act.id} · ${nextMove.act.title}`,
     kind: nextMove.step.kind,
   }

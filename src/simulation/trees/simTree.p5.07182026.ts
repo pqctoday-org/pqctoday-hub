@@ -20,6 +20,8 @@ const TREE: PhaseTree = {
         {
           id: '5.1',
           title: 'Select Pilot Targets',
+          decision:
+            'Pilot on Tier-1 systems you fully control and can measure — not the easiest, lowest-stakes systems you can find.',
           do: 'Pick 2–4 Tier-1 pilots with full control, measurable baselines and rollback capability.',
           steps: [
             {
@@ -53,6 +55,8 @@ const TREE: PhaseTree = {
         {
           id: '5.2',
           title: 'Design Hybrid Deployments',
+          decision:
+            "Design the hybrid pattern and confirm your libraries actually support it before you pilot — don't discover a gap mid-rollout.",
           do: 'Design hybrid patterns (e.g. X25519+ML-KEM-768) and verify library readiness.',
           steps: [
             {
@@ -118,6 +122,8 @@ const TREE: PhaseTree = {
         {
           id: '5.3',
           title: 'Execute Pilots with Measurement',
+          decision:
+            "Measure pilots against real SLOs and prove rollback works — a pilot that only checks 'did it not crash' isn't validated.",
           do: 'Run pilots against SLOs (latency, CPU, throughput), test rollback and validate compatibility.',
           output: 'Pilot results reports',
           steps: [
@@ -196,6 +202,8 @@ const TREE: PhaseTree = {
         {
           id: '5.4',
           title: 'Scale from Pilot to Production Through Waves',
+          decision:
+            'Roll out in controlled waves, each gated on the one before — not a single big-bang cutover to production.',
           do: 'Sequence deployment through six controlled waves, each with a defined scope and an explicit prerequisite gate from the one before: Lab/Staging → Internal Non-Critical → Internal Production → External Controlled (partners) → External Broad (public-facing) → Long Tail (legacy, OT, embedded).',
           output: 'Wave deployment plan',
           steps: [
@@ -217,6 +225,8 @@ const TREE: PhaseTree = {
         {
           id: '5.5–5.6',
           title: 'Defense-in-Depth & Data-at-Rest Strategy',
+          decision:
+            'Decide a defense-in-depth strategy per data store — tokenize, wrap or accept-and-monitor — not one blanket policy for everything.',
           do: 'Deploy tokenization, segmentation and AES-256 defaults; decide a per-store data-at-rest strategy.',
           output: 'Defense-in-depth & data-at-rest plan',
           steps: [
@@ -262,6 +272,8 @@ const TREE: PhaseTree = {
         {
           id: '5.7',
           title: 'AI-Assisted Migration: Where It Helps, and the Gate That Stays Closed',
+          decision:
+            'Let AI triage and draft, but keep full human review on any AI-modified cryptographic code — that review gate never closes.',
           do: 'Use AI to triage and enrich, but keep full review rigor on AI-modified cryptographic code.',
           steps: [
             {

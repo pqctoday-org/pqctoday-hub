@@ -76,6 +76,15 @@ export interface TreeStep {
 export interface TreeActivity {
   /** Framework activity id, verbatim — e.g. '1.2', '4.5–4.6'. */
   id: string
+  /** WP2.6: the decision-card face for this activity's correct choice, phrased
+   *  as a strategy statement (e.g. "Make the business case with real cost and
+   *  urgency data before pitching leadership") rather than a task label like
+   *  "Learn: PQC Business Case". Without this, DecisionSection falls back to
+   *  the first required step's own label — which is how every wrong-answer
+   *  trap became guessable by grammatical FORM alone (task-shaped correct vs
+   *  strategy-shaped traps), independent of content. Optional and additive:
+   *  an activity with no `decision` keeps today's fallback behavior. */
+  decision?: string
   /** Framework activity title. */
   title: string
   /** One-line "what you do", paraphrased from the framework prose. */

@@ -153,11 +153,13 @@ describe('SimulationView (Mission Control)', () => {
   it('the tree drives the next move; the right call opens the module embedded in the sim', () => {
     renderPage()
     expect(screen.getByText('Next move — pick the right play')).toBeInTheDocument()
-    // default phase p0, fresh state → first unlocked step is 0.1 Learn: PQC Business Case.
+    // default phase p0, fresh state → first unlocked activity is 0.1, whose
+    // correct decision card shows its WP2.6 `decision` phrasing (not the raw
+    // "Learn: PQC Business Case" step label — see sections.tsx/gen-sim-trees.mjs).
     // Target the DecisionSection's choice card (aria-label "Option <X>: <label>") —
     // the active-band ladder now ALSO offers the same step (any-order completion),
     // so the plain label is no longer unique.
-    fireEvent.click(screen.getByRole('button', { name: /Option [A-C]: Learn: PQC Business Case/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Option [A-C]: Build the business case/ }))
     const rightCall = screen.getByText(/Right call/)
     // CTA opens the module IN the sim (embedded), under a persistent "Simulation
     // mode" bar. Scope to the "Right call" box (the parent of the label div) — the
@@ -186,12 +188,12 @@ describe('SimulationView (Mission Control)', () => {
     // the DecisionSection choice cards are the "Option <X>: ..." buttons; the
     // correct one is the next-move step, the others are framework Common Failures.
     const correctBtn = screen.getByRole('button', {
-      name: /Option [A-C]: Learn: PQC Business Case/,
+      name: /Option [A-C]: Build the business case/,
     })
     const grid = correctBtn.parentElement as HTMLElement
     const wrong = within(grid)
       .getAllByRole('button')
-      .find((b) => !/PQC Business Case/.test(b.textContent ?? ''))
+      .find((b) => !/Build the business case/.test(b.textContent ?? ''))
     fireEvent.click(wrong!)
     expect(screen.getByText('✕ Common failure')).toBeInTheDocument()
   })

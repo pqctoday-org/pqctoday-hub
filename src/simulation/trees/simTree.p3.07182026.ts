@@ -21,6 +21,8 @@ const TREE: PhaseTree = {
         {
           id: '3.1',
           title: 'Define Risk Scoring Model',
+          decision:
+            'Score risk across all four dimensions — HNDL exposure, trust criticality, feasibility, regulatory pressure — not just severity.',
           do: 'Establish the four-dimension model: (1) HNDL exposure, (2) TNFL/trust-infrastructure criticality, (3) migration feasibility, (4) regulatory & compliance pressure.',
           output: 'Risk scoring model',
           steps: [
@@ -67,6 +69,8 @@ const TREE: PhaseTree = {
         {
           id: '3.2',
           title: 'Calculate Priority Scores',
+          decision:
+            "Compute a composite score and tier the whole CBOM — don't sequence by gut feel or alphabetical order.",
           do: 'Compute composite scores and classify systems into migration tiers.',
           output: 'Scored and tiered CBOM',
           steps: [
@@ -81,6 +85,8 @@ const TREE: PhaseTree = {
         {
           id: '3.3',
           title: 'Apply Migration Sequencing Logic',
+          decision:
+            'Sequence key-exchange and signature migrations as two separate tracks — they move on different timelines.',
           do: 'Sequence with the two-track model (key exchange / signatures) by exposure and lead time.',
           output: 'Migration sequencing recommendation',
           steps: [
@@ -113,6 +119,8 @@ const TREE: PhaseTree = {
         {
           id: '3.4',
           title: 'Produce the Quantum Readiness Assessment (QRA)',
+          decision:
+            'Turn the scoring into a living QRA you update as standards and deadlines shift — not a one-time report you freeze.',
           do: 'Consolidate scoring into a defensible QRA: heatmap, backlog, gap analysis, compliance mapping.',
           output: 'Quantum Readiness Assessment (QRA)',
           steps: [

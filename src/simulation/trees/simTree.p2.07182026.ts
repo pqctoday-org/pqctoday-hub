@@ -21,6 +21,8 @@ const TREE: PhaseTree = {
         {
           id: '2.1',
           title: 'Select CBOM Format and Tooling',
+          decision:
+            'Standardize on CycloneDX rather than a spreadsheet — you need something queryable, diffable and machine-verifiable.',
           do: 'Adopt CycloneDX and establish the record structure and tooling.',
           output: 'CycloneDX CBOM format spec',
           steps: [
@@ -54,6 +56,8 @@ const TREE: PhaseTree = {
         {
           id: '2.2',
           title: 'Populate CBOM from Inventory Data',
+          decision:
+            'Turn the raw inventory into real CycloneDX records linked to the SBOM — not a static export nobody re-runs.',
           do: 'Transform Phase 1 inventory into enriched CycloneDX records linked to the SBOM.',
           output: 'Populated CycloneDX CBOM',
           steps: [
@@ -96,6 +100,8 @@ const TREE: PhaseTree = {
         {
           id: '2.3',
           title: 'Integrate CBOM into Operational Processes',
+          decision:
+            'Embed the CBOM into CI/CD and change management so it updates itself — a manually-maintained CBOM decays fast.',
           do: 'Embed CBOM governance into CI/CD, change management, vendor onboarding and audit.',
           steps: [
             {
@@ -109,6 +115,8 @@ const TREE: PhaseTree = {
         {
           id: '2.4–2.5',
           title: 'CBOM Freshness Governance & Securing Program Artifacts',
+          decision:
+            "Treat the CBOM as sensitive — classify it, restrict access, log queries — it's effectively an attacker's shopping list.",
           do: 'Enforce refresh triggers and protect the CBOM with classification and access control.',
           output: 'CBOM governance & protection policy',
           steps: [
