@@ -135,6 +135,9 @@ describe('embed contract (WS-09)', () => {
         } else if (isScenarioStep(s)) {
           // C3: sandbox scenario labs embed when the scenario id resolves.
           expect(isScenarioStep(s), `${phase}: scenario step is recognised`).toBe(true)
+        } else if (s.kind === 'architecture') {
+          // WS-04: ArchitecturePanel always embeds — no external registry to assert.
+          expect(canEmbedStep(s), `${phase}: architecture step is embeddable`).toBe(true)
         } else {
           // the only other embeddable reference is the assess-engine wizard
           expect(isAssessStep(s), `${phase}: embeddable ref ${s.refId} is the assess wizard`).toBe(
@@ -197,6 +200,8 @@ describe('standard completion convention (C0)', () => {
     isWorkshopComplete: () => true,
     isCatalogStepDone: () => true,
     isScenarioComplete: () => true,
+    edgeDecisionCount: () => 999,
+    edgeDecisionCapacity: () => 999,
   }
   const incomplete: StepCompletionContext = {
     isModuleComplete: () => false,
@@ -205,6 +210,8 @@ describe('standard completion convention (C0)', () => {
     isWorkshopComplete: () => false,
     isCatalogStepDone: () => false,
     isScenarioComplete: () => false,
+    edgeDecisionCount: () => 0,
+    edgeDecisionCapacity: () => 999,
   }
 
   // A representative step for EVERY StepKind — typed as a Record<StepKind, …> so
@@ -220,6 +227,7 @@ describe('standard completion convention (C0)', () => {
     workshop: step({ kind: 'workshop', workshopId: aWorkshopId }),
     catalog: step({ kind: 'catalog', to: '/migrate', catalogId: 'discovery' }),
     scenario: step({ kind: 'scenario', scenarioId: A_SCENARIO_ID }),
+    architecture: step({ kind: 'architecture', minDecisions: 1 }),
   }
   // catalog: isStepComplete delegates to isCatalogStepDone(id) — override needed
   const completedWithPicks: StepCompletionContext = { ...completed, isCatalogStepDone: () => true }

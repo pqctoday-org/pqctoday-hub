@@ -30,6 +30,8 @@ import { PHASE_WIN_LEVEL } from '@/data/phaseMaturity'
 import { EXEC_TOUR_STAGES } from './execTourConfig'
 import { demoDocFor, ORG, type DemoSector } from './demoDocs'
 import { REAL_DOC_GENERATORS } from './realToolDocs'
+import { ARCHITECTURES, edgeState, edgeKey } from '@/data/simArchitecture'
+import { jurisdictionFor } from '@/data/jurisdiction'
 
 /** Runtime membership check for `DemoSector` — `ORG` is keyed by every sector
  *  the demo-content system knows about, so this can't drift from the type. */
@@ -76,7 +78,19 @@ export function liveCompletionContext(): StepCompletionContext {
     isWorkshopComplete: (id) => useSimulationStore.getState().visitedWorkshops.includes(id),
     isCatalogStepDone: (id) => useSimulationStore.getState().catalogCompleted.includes(id),
     isScenarioComplete: (id) => useSimulationStore.getState().visitedScenarios.includes(id),
+    edgeDecisionCount: () => Object.keys(useSimulationStore.getState().edgeDecisions).length,
+    edgeDecisionCapacity: () => architectureEdgeCapacity(),
   }
+}
+
+/** WS-04: total migratable edges in the run's current architecture size — the
+ *  same derivation `SimulationView` uses, kept here so the auto-run's live
+ *  completion context and its `completeStepGenuine` driver agree with the
+ *  player's own board on what "capacity" means. */
+function architectureEdgeCapacity(): number {
+  const { size } = useSimulationStore.getState()
+  const arch = ARCHITECTURES[size as 'small' | 'mid' | 'large' | 'global']
+  return arch.edges.filter((e) => e.vulnerable && edgeState(arch, e) === 'migratable').length
 }
 
 /** The ordered, gating (non-scenario) steps of a phase, in unlock order. */
@@ -163,6 +177,31 @@ export function completeStepGenuine(step: TreeStep, sector?: string): boolean {
     case 'scenario':
       // Non-gating sandbox lab — needs a live sandbox; skipped on purpose.
       return false
+    case 'architecture': {
+      // WS-04: decide enough migratable edges (in architecture order, so the
+      // walk is deterministic) to reach this step's threshold, capped at the
+      // run's actual capacity. Choice follows the run's jurisdiction stance —
+      // hybrid unless the jurisdiction discourages it (end state pure) — the
+      // same policy a player is taught to follow, narrated per decision by
+      // the walkthrough (execTourConfig.ts).
+      if (!step.minDecisions) return false
+      const target = Math.min(step.minDecisions, architectureEdgeCapacity())
+      const arch = ARCHITECTURES[sim.size as 'small' | 'mid' | 'large' | 'global']
+      const rule = jurisdictionFor(sim.country)
+      const choice: 'hybrid' | 'pure' = rule?.hybrid === 'discouraged' ? 'pure' : 'hybrid'
+      const migratable = arch.edges.filter(
+        (e) => e.vulnerable && edgeState(arch, e) === 'migratable'
+      )
+      let decided = 0
+      for (const e of migratable) {
+        if (Object.keys(useSimulationStore.getState().edgeDecisions).length >= target) break
+        const key = edgeKey(e)
+        if (useSimulationStore.getState().edgeDecisions[key]) continue
+        sim.setEdgeDecision(key, choice)
+        decided++
+      }
+      return decided > 0
+    }
     default:
       return false
   }

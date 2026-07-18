@@ -88,6 +88,17 @@ describe('SIM_TREES — coverage & shape', () => {
                 s.to === `/playground/sbx-${s.scenarioId}`,
                 `${phase}/${act.id}: scenario link ${s.to} should be /playground/sbx-${s.scenarioId}`
               ).toBe(true)
+            } else if (s.kind === 'architecture') {
+              // WS-04: ArchitecturePanel embeds in-place — no external resource id,
+              // just a positive cumulative-decision threshold.
+              expect(
+                s.minDecisions && s.minDecisions > 0,
+                `${phase}/${act.id}: architecture step needs a positive minDecisions`
+              ).toBeTruthy()
+              expect(
+                s.to === '/simulation',
+                `${phase}/${act.id}: architecture link ${s.to} should be '/simulation'`
+              ).toBe(true)
             } else {
               expect(s.refId, `${phase}/${act.id}: reference missing refId`).toBeTruthy()
             }

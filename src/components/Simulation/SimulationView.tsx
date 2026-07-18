@@ -163,6 +163,7 @@ import {
   type SensitivityTier,
 } from '@/data/simAssets'
 import { ArchitecturePanel } from './ArchitecturePanel'
+import { ARCHITECTURES, edgeState } from '@/data/simArchitecture'
 import { TrapInsightsPanel } from './TrapInsightsPanel'
 import { useSimulationStore } from '@/store/useSimulationStore'
 import { useModuleStore } from '@/store/useModuleStore'
@@ -388,6 +389,11 @@ export function SimulationView() {
     scenarioId: string
     title: string
   } | null>(null)
+  // WS-04: ArchitecturePanel embedded under the sim header — the edge-migration
+  // decision step, reachable from the ladder in every mode (not just the Expert
+  // rail). No id to track beyond the label: completion is the cumulative
+  // edge-decision count against the step's minDecisions (see embedContract.ts).
+  const [architectureEmbed, setArchitectureEmbed] = useState<{ title: string } | null>(null)
   // Is a Docker sandbox actually reachable? Scenario (lab) steps are gated on this:
   // when unavailable they show LOCKED and never open or auto-complete (bonus steps,
   // so they never block a maturity band either — see isGatingStep).
@@ -418,6 +424,7 @@ export function SimulationView() {
     setAlgorithmTabEmbed(null)
     setReferenceEmbed(null)
     setScenarioEmbed(null)
+    setArchitectureEmbed(null)
   }
   const openStep = (s: TreeStep) => {
     // Embedded steps render inline without a URL/route change, so they're
@@ -470,6 +477,9 @@ export function SimulationView() {
       if (sandboxAvail !== 'available') return
       clearAllEmbeds()
       setScenarioEmbed({ scenarioId: s.scenarioId, title: s.label })
+    } else if (s.kind === 'architecture') {
+      clearAllEmbeds()
+      setArchitectureEmbed({ title: s.label })
     }
     // NOTE: opening an embed no longer auto-completes the step. Completion is an
     // explicit "Mark complete" click in the embed header (review steps), the
@@ -852,6 +862,13 @@ export function SimulationView() {
   const artifactDone = (t?: ExecutiveDocumentType) => !!t && docTypes.has(t)
   const refDone = (id?: string) => !!id && visitedRefs.includes(id)
   const autoKey = (phase: string, to: string) => `${phase}::${to}`
+  // WS-04: how many migratable edges this run's architecture actually has — caps
+  // an `architecture` step's minDecisions so a fixed threshold can never exceed
+  // what a smaller org size has to decide (see embedContract.ts).
+  const arch = ARCHITECTURES[size as 'small' | 'mid' | 'large' | 'global']
+  const edgeDecisionCapacity = arch.edges.filter(
+    (e) => e.vulnerable && edgeState(arch, e) === 'migratable'
+  ).length
   // C0: resource-level completion lives in the embed contract's standard
   // convention (isStepComplete); the sim overlays its own rule on top — a step is
   // done if the player did it for real OR it was delegated to the AI team.
@@ -868,6 +885,9 @@ export function SimulationView() {
     // C3: a sandbox lab step is done once it's been completed in-sim (the lab
     // reports done via the postMessage handshake, or the manual Mark-complete).
     isScenarioComplete: (id: string) => visitedScenarios.includes(id),
+    // WS-04: cumulative edge-decision count/capacity for `architecture` steps.
+    edgeDecisionCount: () => Object.keys(edgeDecisions).length,
+    edgeDecisionCapacity: () => edgeDecisionCapacity,
   }
   const stepDone = (s: TreeStep, phase: string) =>
     auto.includes(autoKey(phase, s.to)) || isStepComplete(s, stepCompletionCtx)
@@ -1668,7 +1688,8 @@ export function SimulationView() {
         catalogEmbed ||
         algorithmTabEmbed ||
         referenceEmbed ||
-        scenarioEmbed ? (
+        scenarioEmbed ||
+        architectureEmbed ? (
           <div data-sim-embed-pane className="sim-fade-in flex min-h-0 flex-1 flex-col">
             <div className="flex shrink-0 items-center gap-2 border-b-2 border-primary bg-primary/10 px-4 py-2">
               <span className="shrink-0 rounded bg-primary px-2 py-0.5 font-mono text-sim-chip font-extrabold uppercase tracking-[0.14em] text-primary-foreground">
@@ -1691,7 +1712,9 @@ export function SimulationView() {
                               ? (SIM_REFERENCE_EMBEDS[referenceEmbed.refId]?.label ?? 'Reference')
                               : scenarioEmbed
                                 ? 'Lab'
-                                : 'Assess'}{' '}
+                                : architectureEmbed
+                                  ? 'Architecture'
+                                  : 'Assess'}{' '}
                 ·{' '}
                 {phase.number !== null
                   ? `Phase ${phase.number}`
@@ -1709,6 +1732,7 @@ export function SimulationView() {
                     algorithmTabEmbed?.title ??
                     referenceEmbed?.title ??
                     scenarioEmbed?.title ??
+                    architectureEmbed?.title ??
                     assessEmbed?.title)}
               </span>
               {/* Completion toggle — guarantees a "mark complete" path for every
@@ -1903,6 +1927,16 @@ export function SimulationView() {
                   // C3: live sandbox lab embedded under the header (passes the scenario
                   // id directly — the component falls back to the route param off-sim).
                   <SandboxScenarioEmbed scenarioId={scenarioEmbed.scenarioId} />
+                ) : architectureEmbed ? (
+                  // WS-04: the edge-migration decision step, reachable from the ladder
+                  // in every mode — not just the Expert rail's power-user panel.
+                  <div className="p-4">
+                    <ArchitecturePanel
+                      size={size as 'small' | 'mid' | 'large' | 'global'}
+                      country={country}
+                      p5Frac={p5Frac}
+                    />
+                  </div>
                 ) : null}
               </div>
             </div>
