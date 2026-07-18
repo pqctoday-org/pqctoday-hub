@@ -73289,3 +73289,227 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
+## HIPAA-45-CFR-164
+
+- **Reference ID**: HIPAA-45-CFR-164
+- **Title**: HIPAA Security Rule — 45 CFR Part 164
+- **Authors**: US HHS
+- **Publication Date**: 1996-08-21
+- **Last Updated**: 2024-01-01
+- **Document Status**: Active
+- **Main Topic**: The HIPAA Security Rule (45 CFR Part 164) establishes administrative, physical, and technical safeguards for the protection of electronic protected health information.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: Department of Health and Human Services
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: HIPAA Security Rule
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Covered entities must implement administrative, physical, and technical safeguards for ePHI; Hybrid entities must ensure health care components comply with security standards; Business associates are subject to specific standards and requirements; Breach notification procedures are mandated for unsecured protected health information; Privacy rules govern the use and disclosure of individually identifiable health information
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer; Security Architect; CISO
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Compliance; pqc-governance; pqc-risk-management
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: HIPAA-45-CFR-164.html (686,221 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-07-17T21:31:38
+- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+
+---
+
+## FERPA-34-CFR-99
+
+- **Reference ID**: FERPA-34-CFR-99
+- **Title**: FERPA — 34 CFR Part 99
+- **Authors**: US ED
+- **Publication Date**: 1974-08-21
+- **Last Updated**: 2024-01-01
+- **Document Status**: Active
+- **Main Topic**: US Family Educational Rights and Privacy Act regulations governing the privacy of education records.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: Department of Education, Office of the Secretary of Education
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Educational agencies receiving federal funds must comply with FERPA privacy regulations; Parents and eligible students have rights to inspect and review education records; Prior consent is generally required for disclosing personally identifiable information from education records; Directory information may be disclosed without consent if properly defined and notified; Enforcement procedures include investigations and potential withholding of federal funds for non-compliance
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer; Policy Maker
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Compliance; pqc-governance
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: FERPA-34-CFR-99.html (280,817 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-07-17T21:31:38
+- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+
+---
+
+## COPPA-16-CFR-312
+
+- **Reference ID**: COPPA-16-CFR-312
+- **Title**: COPPA Rule — 16 CFR Part 312
+- **Authors**: US FTC
+- **Publication Date**: 1998-10-21
+- **Last Updated**: 2024-01-01
+- **Document Status**: Active
+- **Main Topic**: US Federal Trade Commission regulations governing the collection, use, and disclosure of personal information from children under 13 online.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: Federal Trade Commission
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: Children's Online Privacy Protection Act of 1998
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Operators must obtain verifiable parental consent before collecting personal information from children under 13; Operators must provide notice of personal information collection, use, and disclosure practices; Operators must maintain the confidentiality, security, and integrity of personal information collected from children; Operators must delete personal information from children when it is no longer needed for the purpose for which it was collected
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer; Policy Maker
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Compliance; pqc-governance
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: COPPA-16-CFR-312.html (159,475 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-07-17T21:31:39
+- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+
+---
+
+## FDA-21-CFR-11
+
+- **Reference ID**: FDA-21-CFR-11
+- **Title**: FDA 21 CFR Part 11 — Electronic Records; Electronic Signatures
+- **Authors**: US FDA
+- **Publication Date**: 1997-03-20
+- **Last Updated**: 2024-01-01
+- **Document Status**: Active
+- **Main Topic**: US FDA regulation establishing criteria for electronic records and signatures to be considered trustworthy and equivalent to paper records.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: Food and Drug Administration, Department of Health and Human Services
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: 21 CFR Part 11
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Electronic records and signatures must meet specific criteria to be considered trustworthy and equivalent to paper; Closed systems require controls to ensure authenticity, integrity, and confidentiality of electronic records; Electronic signatures are legally binding equivalents of handwritten signatures if they meet part requirements; Computer systems and controls must be readily available for FDA inspection; Electronic records may be used in lieu of paper records if implementation requirements are met
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer; Security Architect
+- **Implementation Prerequisites**: Validation of systems to ensure accuracy; Procedures and controls for closed systems; Controls for identification codes/passwords
+- **Relevant PQC Today Features**: Compliance; Migrate; Assess
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Validation of systems to ensure accuracy
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: FDA-21-CFR-11.html (109,338 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-07-17T21:31:39
+- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+
+---
+
