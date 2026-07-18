@@ -8,7 +8,14 @@
 // "try it in the workbench" backlink) via the shared learnkit.
 import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { CheckCircle2, ChevronRight, ExternalLink, Loader2, PlayCircle, XCircle } from 'lucide-react'
+import {
+  CheckCircle2,
+  ChevronRight,
+  ExternalLink,
+  Loader2,
+  PlayCircle,
+  XCircle,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { logEvent } from '@/utils/analytics'
@@ -65,7 +72,9 @@ function StepRow({
               <PlayCircle size={13} /> Run
             </Button>
           )}
-          {state.status === 'running' && <Loader2 size={15} className="animate-spin text-primary" />}
+          {state.status === 'running' && (
+            <Loader2 size={15} className="animate-spin text-primary" />
+          )}
           {state.status === 'ok' && <CheckCircle2 size={15} className="text-status-success" />}
           {state.status === 'refused-ok' && (
             <span className="rounded bg-status-success/15 px-1.5 py-0.5 text-[10px] font-semibold text-status-success">
@@ -130,7 +139,9 @@ function LessonRunner({
     try {
       const result = await lesson.steps[i].run(hsm, resultsRef.current)
       resultsRef.current = resultsRef.current.map((r, j) => (j === i ? result : r))
-      setStepStates((prev) => prev.map((s, j) => (j === i ? { status: 'ok', detail: result.detail } : s)))
+      setStepStates((prev) =>
+        prev.map((s, j) => (j === i ? { status: 'ok', detail: result.detail } : s))
+      )
     } catch (e) {
       const message = e instanceof Error ? e.message : String(e)
       const expectedRefusal = lesson.steps[i].expect === 'refusal'
@@ -189,15 +200,25 @@ function LessonRunner({
             </span>
             <h3 className="text-[15px] font-bold text-foreground">{lesson.title}</h3>
           </div>
-          <p className="mt-1.5 text-[12.5px] leading-relaxed text-muted-foreground">{lesson.blurb}</p>
+          <p className="mt-1.5 text-[12.5px] leading-relaxed text-muted-foreground">
+            {lesson.blurb}
+          </p>
           <p className="mt-2 rounded-lg border border-border bg-muted/20 p-2.5 text-[12px] leading-relaxed text-foreground">
             {lesson.setup}
           </p>
         </div>
 
         <div className="flex items-center justify-between">
-          <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">Steps</p>
-          <Button size="sm" variant="outline" onClick={runAll} disabled={allDone} className="h-7 text-[11px]">
+          <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+            Steps
+          </p>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={runAll}
+            disabled={allDone}
+            className="h-7 text-[11px]"
+          >
             Run all
           </Button>
         </div>
@@ -283,7 +304,9 @@ function LessonRunner({
 
         {allDone && lesson.tryRef.length > 0 && (
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-[11px] text-muted-foreground">Try it yourself in the workbench:</span>
+            <span className="text-[11px] text-muted-foreground">
+              Try it yourself in the workbench:
+            </span>
             {lesson.tryRef.map((tab) => (
               <Button
                 key={tab}
