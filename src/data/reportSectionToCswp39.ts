@@ -48,6 +48,7 @@ export const REPORT_SECTION_ORDER: readonly ReportSectionId[] = [
   'migrationToolkit',
   'vendorRisk',
   'threatLandscape',
+  'simulationOutcomes',
 ]
 
 /**
@@ -75,6 +76,10 @@ export const REPORT_SECTION_TO_CSWP39: Record<ReportSectionId, ReportSectionCswp
   migrationRoadmap: { cswp39Step: 'implement', frameworkPhase: 'p4' },
   migrationToolkit: { cswp39Step: 'implement', frameworkPhase: 'p5' },
   vendorRisk: { cswp39Step: 'implement', frameworkPhase: 'p5' },
+  // Wave 5 (WP5.1) — communicates p5's pilot-results AND verify-close's
+  // closure-record together (frameworkPhases.ts), the two 'gap'/'partial'
+  // communicate refs this section closes.
+  simulationOutcomes: { cswp39Step: 'implement', frameworkPhase: ['p5', 'verify-close'] },
 }
 
 /** Inverse: each CSWP.39 step → list of report section IDs that contribute. */
@@ -102,4 +107,5 @@ export const REPORT_SECTION_LABELS: Record<ReportSectionId, string> = {
   migrationToolkit: 'Migration Toolkit',
   vendorRisk: 'Third-Party & Vendor PQC Risk',
   threatLandscape: 'Industry Threat Landscape',
+  simulationOutcomes: 'Simulation Outcomes',
 }
