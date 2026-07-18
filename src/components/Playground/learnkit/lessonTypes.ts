@@ -91,4 +91,9 @@ export interface LinearLessonBase<TStep> {
   whyItMatters: string
   /** Op/operation names for "Try it yourself in Workbench" backlink chips. */
   tryRef: string[]
+  /** A real, navigable link to a related demo in a SIBLING playground (a
+   * different route entirely, not another lesson) — e.g. pointing from a
+   * PKCS#11 lesson to the KMIP playground's own live demo of the same
+   * concept, rather than just naming it in prose. */
+  crossPlaygroundLink?: { to: string; label: string }
 }

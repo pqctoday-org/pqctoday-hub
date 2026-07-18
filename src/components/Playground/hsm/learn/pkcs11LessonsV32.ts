@@ -531,6 +531,10 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
     whyItMatters:
       'Pinning turns "our policy says this key is GCM-only" from a convention developers might violate by mistake into something the token itself refuses to violate.',
     tryRef: ['mechanisms'],
+    crossPlaygroundLink: {
+      to: '/playground/cacp',
+      label: 'See this same allowed-mechanisms enforcement demoed in the KMIP/CACP playground → Policy tab',
+    },
   },
   {
     id: 'inspecting-policy',
