@@ -272,6 +272,13 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
         'Fails. A lagging library/runtime (pre-OpenSSL 3.5, old Bouncy Castle, libsodium/MbedTLS gaps) silently blocks the deployment you designed. Verify library versions as a hard pilot prerequisite.'
       ),
     },
+    {
+      label: 'Declare the pilot successful once the server metrics look clean',
+      desc: 'Latency and CPU are within SLO — call it done.',
+      evaluate: trap(
+        "Fails. Clean server-side metrics only prove your server behaved — they say nothing about downstream clients. Older TLS stacks, middleboxes with hardcoded buffer limits, and third-party integrations can silently fail or fall back to classical on the larger hybrid handshake. Measure the client population too: fallback rate, negotiation failures, and error rates from the CONSUMING side, not just the server's own dashboard."
+      ),
+    },
   ],
   p6: [
     {
