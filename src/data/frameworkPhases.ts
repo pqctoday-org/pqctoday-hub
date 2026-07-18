@@ -284,7 +284,12 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     // ReportContent.tsx and covered by QRASection.test.tsx.
     communicate: { route: '/report', ref: 'qra', status: 'live' },
     produce: [
-      { route: '/assess', ref: 'two-track-output', status: 'gap' },
+      {
+        route: '/assess',
+        ref: 'two-track-output',
+        status: 'live',
+        note: 'Wave 5 (WP5.6, 07182026): AssessDone renders the assessment’s existing Track A (confidentiality/KEM) / Track B (integrity/signatures) split — assessBridge.ts’s twoTrackFromAssess, read-only — as a collapsed-by-default section below the completion summary.',
+      },
       { route: '/business', ref: 'risk-register', status: 'live' },
       { route: '/business', ref: 'risk-treatment-plan', status: 'live' },
     ],
@@ -440,7 +445,12 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
       'migration',
     ],
     cswp39Steps: ['govern', 'inventory', 'identify-gaps', 'prioritise', 'implement'],
-    diagnose: { route: '/assess', ref: 'maturity-l0-l4', status: 'gap' },
+    diagnose: {
+      route: '/assess',
+      ref: 'maturity-l0-l4',
+      status: 'live',
+      note: 'Wave 5 (WP5.6, 07182026): AssessDone shows an indicative program-maturity band (maturityModel.ts’s deriveMaturity, assessed-only input) labeled "indicative — play the simulation to earn it" — preserves the never-grants-maturity invariant (assessment alone caps at Level 1 Aware; Levels 2+ are only ever earned in-sim).',
+    },
     communicate: { route: '/report', ref: 'kpi-strip', status: 'partial' },
     produce: [
       { route: '/business', ref: 'kpi-dashboard', status: 'live' },
