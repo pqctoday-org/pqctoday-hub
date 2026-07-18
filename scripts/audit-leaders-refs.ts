@@ -133,14 +133,23 @@ export function audit(): Finding[] {
 
     const refs = splitSemicolon(row.KeyResourceRefs ?? '')
     if (refs.length === 0) {
-      const misfiled = (row.KeyResourceUrl ?? '').trim()
-      if (misfiled && !misfiled.startsWith('http') && activeLibraryIds.has(misfiled)) {
+      const rawKeyResourceUrl = (row.KeyResourceUrl ?? '').trim()
+      // KeyResourceUrl is meant to hold a single URL, but some rows have a
+      // semicolon-delimited list of reference_id-shaped strings sitting there
+      // instead (found live 2026-07-17: Kris Kwiatkowski's duplicate row had
+      // "draft-ietf-tls-ecdhe-mlkem-04;draft-kwiatkowski-pquip-pqc-migration-00").
+      // Check each candidate individually, not just the whole field as one string.
+      const misfiledCandidates = rawKeyResourceUrl
+        ? splitSemicolon(rawKeyResourceUrl).filter((c) => !c.startsWith('http'))
+        : []
+      const misfiledMatches = misfiledCandidates.filter((c) => activeLibraryIds.has(c))
+      if (misfiledMatches.length > 0) {
         findings.push({
           severity: 'warn',
           kind: 'MISFILED_REF',
           name: row.Name,
           category: row.Category,
-          detail: `KeyResourceUrl="${misfiled}" is a valid library reference_id sitting in the wrong column — move to KeyResourceRefs`,
+          detail: `KeyResourceUrl="${rawKeyResourceUrl}" contains ${misfiledMatches.length} valid library reference_id(s) [${misfiledMatches.join(';')}] sitting in the wrong column — move to KeyResourceRefs`,
         })
         continue
       }
