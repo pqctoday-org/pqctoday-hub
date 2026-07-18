@@ -398,6 +398,9 @@ public/data/rag-index-freshness.json
 # the product catalog against the vendor roadmap CSV. Catches wrong VND-*
 # assignments (deprecated refs, name mismatches). Pure read-only against public data.
 !scripts/audit-vendor-refs.ts
+# Proof-gate: every curated leader row's KeyResourceRefs must resolve to a
+# real, non-deprecated library reference_id. Pure read-only against public data.
+!scripts/audit-leaders-refs.ts
 
 # Private CI workflows (compliance scraper runs locally, not in public CI)
 .github/workflows/update-compliance.yml
