@@ -22,7 +22,7 @@ const TREE: PhaseTree = {
           title: 'Frame the Business Case',
           decision:
             'Build the business case around HNDL/TNFL exposure and the regulatory clock — not a generic "quantum is coming" pitch.',
-          do: 'Structure the executive argument around the four urgency drivers — regulatory deadlines, HNDL and TNFL exposure, the threat horizon, and client/investor/insurer expectations.',
+          do: 'Structure the executive argument around four concrete, current urgency drivers, not speculative Q-Day predictions: (1) regulatory & compliance deadlines, (2) Harvest-Now-Decrypt-Later (HNDL) exposure, (3) Trust-Now-Forge-Later (TNFL) exposure, (4) client, investor & insurer expectations.',
           output: 'Executive business case',
           steps: [
             {
@@ -54,6 +54,13 @@ const TREE: PhaseTree = {
               label: 'Map the binding regulatory deadlines',
               to: '/compliance',
               refId: 'compliance',
+            },
+            {
+              kind: 'reference',
+              label:
+                'Reference: the deadline classes driving urgency (EO / OMB / CNSA 2.0) — see the live timeline',
+              to: '/timeline',
+              refId: 'timeline',
             },
             {
               kind: 'activity',
