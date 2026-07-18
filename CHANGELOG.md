@@ -28,6 +28,24 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.21.9] - 2026-07-17
+
+Spec-accuracy fixes across the KMIP 3.0 and HSM playgrounds, a batch of
+newly-discovered vendor roadmaps, and re-verified evidence across Timeline
+and Threats.
+
+### Fixed
+
+- **KMIP 3.0 Playground documentation corrected against the actual OASIS draft** [view:/playground] [persona:developer] [persona:architect]: the spec-only-algorithm list was wrong (Ed25519, FrodoKEM, and Classic-McEliece are actually runnable, not spec-only), a section reference was mislabeled, and a claim that no official KMIP 3.0 test vectors exist yet was false — OASIS has published 102 draft-stage test vectors, which this playground already replays.
+- **HSM Playground: 2 spec-label corrections** [view:/playground] [persona:developer]: LMS was cited as if `CKM_LMS` were a real PKCS#11 v3.2 constant (it isn't — LMS routes through `CKM_HSS`), and SLH-DSA parameter sets cited the wrong spec section. Neither changes what the playground actually does.
+- **Timeline: a citation's date precision corrected** [view:/timeline] [persona:researcher] from month-only to the exact, source-confirmed date.
+
+### Data
+
+- **40 vendor roadmaps reviewed, 1 new genuine find added**: Algorand Foundation's real PQC roadmap (Falcon-1024/512, FN-DSA, ML-DSA, hybrid Ed25519+Falcon consensus signing) [view:/migrate] [persona:architect].
+- **Threats: 72 documents with confirmed content drift re-verified and re-enriched** [view:/threats] [persona:researcher], after fixing a bug that had been causing PDFs to falsely register as "drifted."
+- **1 Timeline entry deprecated**: Indonesia's BSSN row, after its source (bsn.go.id) proved unreachable at the network level across every recovery attempt — will be re-activated if the source comes back.
+
 ## [4.21.8] - 2026-07-17
 
 A routine maintainer-review pass adds new Compliance entries, fixes a Timeline
