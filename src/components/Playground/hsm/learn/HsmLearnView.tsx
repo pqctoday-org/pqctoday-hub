@@ -7,7 +7,8 @@
 // the KMIP playground's Learn tab shape (glossary rail, per-lesson quiz,
 // "try it in the workbench" backlink) via the shared learnkit.
 import { useRef, useState } from 'react'
-import { CheckCircle2, ChevronRight, Loader2, PlayCircle, XCircle } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { CheckCircle2, ChevronRight, ExternalLink, Loader2, PlayCircle, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { logEvent } from '@/utils/analytics'
@@ -295,6 +296,15 @@ function LessonRunner({
               </Button>
             ))}
           </div>
+        )}
+
+        {allDone && lesson.crossPlaygroundLink && (
+          <Link
+            to={lesson.crossPlaygroundLink.to}
+            className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline"
+          >
+            {lesson.crossPlaygroundLink.label} <ExternalLink size={11} aria-hidden="true" />
+          </Link>
         )}
       </div>
     </div>

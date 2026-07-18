@@ -21,6 +21,9 @@ import {
   type MechanismFamily,
 } from '../../../wasm/softhsm'
 import { useHsmContext } from './HsmContext'
+import { GlossaryProvider } from '@/components/Playground/learnkit/GlossaryProvider'
+import { Term } from '@/components/Playground/learnkit/Term'
+import { PKCS11_GLOSSARY_DATA } from './learn/pkcs11Glossary'
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -115,7 +118,9 @@ const MechRow = ({ mech }: { mech: MechanismInfo }) => (
   <div className="flex items-start gap-2 py-1.5 border-b border-border/30 last:border-0 text-xs">
     {/* Name + type code */}
     <div className="flex-1 min-w-0">
-      <div className="font-mono text-foreground truncate">{mech.name}</div>
+      <div className="font-mono text-foreground truncate">
+        <Term glossaryKey={mech.name}>{mech.name}</Term>
+      </div>
       <div className="text-muted-foreground font-mono text-[10px]">{mech.typeHex}</div>
     </div>
     {/* Flag badges */}
@@ -237,114 +242,116 @@ export const HsmMechanismPanel = () => {
   void addHsmLog
 
   return (
-    <div className="glass-panel p-4 space-y-4">
-      {/* Header */}
-      <div className="flex items-start justify-between gap-3 flex-wrap">
-        <div>
-          <div className="flex items-center gap-2">
-            <ShieldCheck size={16} className="text-accent" />
-            <h3 className="font-semibold text-foreground text-sm">Mechanism Discovery</h3>
-          </div>
-          <p className="text-xs text-muted-foreground mt-0.5 font-mono">
-            C_GetMechanismList · C_GetMechanismInfo
-          </p>
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleQuery}
-          disabled={!slotReady || loading}
-          className="shrink-0"
-        >
-          {loading ? (
-            <>
-              <span className="animate-spin mr-1.5">⟳</span>
-              Querying…
-            </>
-          ) : (
-            <>
-              <Database size={13} className="mr-1.5" />
-              Query Slot
-            </>
-          )}
-        </Button>
-      </div>
-
-      {/* Not-ready hint */}
-      {!slotReady && (
-        <p className="text-xs text-muted-foreground">
-          Initialize the token above, then click <strong>Query Slot</strong> to enumerate all
-          supported mechanisms via C_GetMechanismList / C_GetMechanismInfo.
-        </p>
-      )}
-
-      {/* Error */}
-      {error && <ErrorAlert message={error} />}
-
-      {/* Results */}
-      {searched && mechanisms.length > 0 && (
-        <>
-          {/* Controls */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <FilterDropdown
-              items={FAMILY_FILTER_ITEMS}
-              selectedId={familyFilter}
-              onSelect={(id: string) => setFamilyFilter(id)}
-              defaultLabel="All families"
-              noContainer
-            />
-            <div className="relative flex-1 min-w-[140px]">
-              <Search
-                size={12}
-                className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
-              />
-              <Input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search mechanisms…"
-                className="pl-7 h-8 text-xs"
-              />
+    <GlossaryProvider data={PKCS11_GLOSSARY_DATA}>
+      <div className="glass-panel p-4 space-y-4">
+        {/* Header */}
+        <div className="flex items-start justify-between gap-3 flex-wrap">
+          <div>
+            <div className="flex items-center gap-2">
+              <ShieldCheck size={16} className="text-accent" />
+              <h3 className="font-semibold text-foreground text-sm">Mechanism Discovery</h3>
             </div>
-            <span className="text-xs text-muted-foreground font-mono shrink-0">
-              {filtered.length}/{mechanisms.length} mechanisms
-            </span>
+            <p className="text-xs text-muted-foreground mt-0.5 font-mono">
+              C_GetMechanismList · C_GetMechanismInfo
+            </p>
           </div>
-
-          {/* Table header */}
-          <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground px-0.5">
-            <span className="flex-1">Mechanism</span>
-            <span className="w-[200px] text-right">Operations</span>
-            <span className="w-20 text-right">Key Size</span>
-          </div>
-
-          {/* Groups */}
-          <div className="space-y-2">
-            {groups.length === 0 ? (
-              <p className="text-xs text-muted-foreground text-center py-4">
-                No mechanisms match your filter.
-              </p>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleQuery}
+            disabled={!slotReady || loading}
+            className="shrink-0"
+          >
+            {loading ? (
+              <>
+                <span className="animate-spin mr-1.5">⟳</span>
+                Querying…
+              </>
             ) : (
-              groups.map(({ family, mechs }) => (
-                <FamilyGroup
-                  key={family}
-                  family={family}
-                  mechs={mechs}
-                  expanded={expanded.has(family)}
-                  onToggle={() => toggleFamily(family)}
-                />
-              ))
+              <>
+                <Database size={13} className="mr-1.5" />
+                Query Slot
+              </>
             )}
-          </div>
-        </>
-      )}
+          </Button>
+        </div>
 
-      {/* Empty state after query with no results */}
-      {searched && mechanisms.length === 0 && !loading && !error && (
-        <p className="text-xs text-muted-foreground text-center py-4">
-          No mechanisms returned by C_GetMechanismList.
-        </p>
-      )}
-    </div>
+        {/* Not-ready hint */}
+        {!slotReady && (
+          <p className="text-xs text-muted-foreground">
+            Initialize the token above, then click <strong>Query Slot</strong> to enumerate all
+            supported mechanisms via C_GetMechanismList / C_GetMechanismInfo.
+          </p>
+        )}
+
+        {/* Error */}
+        {error && <ErrorAlert message={error} />}
+
+        {/* Results */}
+        {searched && mechanisms.length > 0 && (
+          <>
+            {/* Controls */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <FilterDropdown
+                items={FAMILY_FILTER_ITEMS}
+                selectedId={familyFilter}
+                onSelect={(id: string) => setFamilyFilter(id)}
+                defaultLabel="All families"
+                noContainer
+              />
+              <div className="relative flex-1 min-w-[140px]">
+                <Search
+                  size={12}
+                  className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+                />
+                <Input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search mechanisms…"
+                  className="pl-7 h-8 text-xs"
+                />
+              </div>
+              <span className="text-xs text-muted-foreground font-mono shrink-0">
+                {filtered.length}/{mechanisms.length} mechanisms
+              </span>
+            </div>
+
+            {/* Table header */}
+            <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground px-0.5">
+              <span className="flex-1">Mechanism</span>
+              <span className="w-[200px] text-right">Operations</span>
+              <span className="w-20 text-right">Key Size</span>
+            </div>
+
+            {/* Groups */}
+            <div className="space-y-2">
+              {groups.length === 0 ? (
+                <p className="text-xs text-muted-foreground text-center py-4">
+                  No mechanisms match your filter.
+                </p>
+              ) : (
+                groups.map(({ family, mechs }) => (
+                  <FamilyGroup
+                    key={family}
+                    family={family}
+                    mechs={mechs}
+                    expanded={expanded.has(family)}
+                    onToggle={() => toggleFamily(family)}
+                  />
+                ))
+              )}
+            </div>
+          </>
+        )}
+
+        {/* Empty state after query with no results */}
+        {searched && mechanisms.length === 0 && !loading && !error && (
+          <p className="text-xs text-muted-foreground text-center py-4">
+            No mechanisms returned by C_GetMechanismList.
+          </p>
+        )}
+      </div>
+    </GlossaryProvider>
   )
 }
 
