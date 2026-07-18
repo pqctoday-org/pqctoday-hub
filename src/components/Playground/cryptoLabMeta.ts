@@ -101,7 +101,7 @@ export interface FeaturePlayground {
   accent: FeatureAccent
 }
 
-/** The three "Full playgrounds" gradient cards on the Overview. */
+/** The "Full playgrounds" gradient cards on the Overview. */
 export const FEATURE_PLAYGROUNDS: readonly FeaturePlayground[] = [
   {
     to: '/playground/interactive',
