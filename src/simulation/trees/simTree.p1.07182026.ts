@@ -54,6 +54,8 @@ const TREE: PhaseTree = {
           decision:
             'Run crypto-usage, data-classification and systems/assets discovery as three parallel tracks, not one sequential sweep.',
           do: 'Stand up Track A (crypto usage), Track B (data classification), Track C (systems/assets — CMDB, ITAM, BIA cross-reference; detailed methodology in 1.4–1.5).',
+          output:
+            'Sensitive-data classification map (Track B) — deliverable named, no capture tool yet',
           steps: [
             {
               kind: 'learn',
@@ -111,6 +113,13 @@ const TREE: PhaseTree = {
               to: '/business/tools/crypto-architecture-diagram',
               artifactType: 'crypto-architecture',
             },
+            {
+              kind: 'learn',
+              label:
+                'Learn: keys, secrets & HSM inventory — crypto you hold, not just crypto you run',
+              to: '/learn/secrets-management-pqc',
+              moduleId: 'secrets-management-pqc',
+            },
           ],
         },
         {
@@ -118,7 +127,7 @@ const TREE: PhaseTree = {
           title: 'Address Asset Discovery & Integrate Existing Data Sources',
           decision:
             'Cross-reference CMDB, ITAM, cloud and certificate data sources — a single system of record always undercounts the real estate.',
-          do: 'Cross-reference CMDB, ITAM, cloud APIs, CT logs, BIA and certificate data for coverage.',
+          do: 'Cross-reference CMDB, ITAM, cloud APIs, CT logs, BIA and certificate data for coverage — including OT and embedded systems, which none of those systems of record fully see.',
           output: 'Cross-referenced asset coverage',
           steps: [
             {
@@ -132,6 +141,12 @@ const TREE: PhaseTree = {
               label: 'Reference: data-source & SBOM / CT-log standards in the Library',
               to: '/library',
               refId: 'library',
+            },
+            {
+              kind: 'learn',
+              label: 'Learn: OT & embedded systems — the hardest assets to discover',
+              to: '/learn/iot-ot-pqc',
+              moduleId: 'iot-ot-pqc',
             },
           ],
         },

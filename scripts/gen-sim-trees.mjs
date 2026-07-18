@@ -399,7 +399,14 @@ const FRAMEWORK = {
       decision:
         'Run crypto-usage, data-classification and systems/assets discovery as three parallel tracks, not one sequential sweep.',
       do: 'Stand up Track A (crypto usage), Track B (data classification), Track C (systems/assets — CMDB, ITAM, BIA cross-reference; detailed methodology in 1.4–1.5).',
-      output: null,
+      // Track B's own deliverable is a sensitive-data classification map (confidentiality
+      // horizons per data category — the input Phase 3 Dimension 1/HNDL scoring consumes).
+      // No hub tool currently emits that as a captured artifact (Track A has 1.3's crypto
+      // architecture diagram, Track C has 1.4–1.5's coverage map) — naming the deliverable
+      // here rather than force-mapping it to an unrelated tool; a dedicated Track B artifact
+      // tool is an explicit open item (Wave 3 plan), not built in this pass.
+      output:
+        'Sensitive-data classification map (Track B) — deliverable named, no capture tool yet',
       steps: [
         L('crypto-mgmt-modernization', 'Learn: Track A — cryptographic management modernization'),
         L(
@@ -430,7 +437,13 @@ const FRAMEWORK = {
         'Record the full field set — algorithm, key size, protocol, owner — for every instance, not just a name and a checkbox.',
       do: 'Document algorithm, key size, protocol, library, cert, owner and vulnerability for each instance.',
       output: 'Cryptographic asset inventory',
-      steps: [A('crypto-architecture', 'Draw the crypto architecture diagram')],
+      steps: [
+        A('crypto-architecture', 'Draw the crypto architecture diagram'),
+        L(
+          'secrets-management-pqc',
+          'Learn: keys, secrets & HSM inventory — crypto you hold, not just crypto you run'
+        ),
+      ],
     },
     {
       id: '1.4–1.5',
@@ -438,7 +451,7 @@ const FRAMEWORK = {
       title: 'Address Asset Discovery & Integrate Existing Data Sources',
       decision:
         'Cross-reference CMDB, ITAM, cloud and certificate data sources — a single system of record always undercounts the real estate.',
-      do: 'Cross-reference CMDB, ITAM, cloud APIs, CT logs, BIA and certificate data for coverage.',
+      do: 'Cross-reference CMDB, ITAM, cloud APIs, CT logs, BIA and certificate data for coverage — including OT and embedded systems, which none of those systems of record fully see.',
       output: 'Cross-referenced asset coverage',
       steps: [
         L(
@@ -446,6 +459,7 @@ const FRAMEWORK = {
           'Learn: cross-reference CMDB / ITAM / cloud & certificate data sources'
         ),
         R('library', 'Reference: data-source & SBOM / CT-log standards in the Library'),
+        L('iot-ot-pqc', 'Learn: OT & embedded systems — the hardest assets to discover'),
       ],
     },
     {
@@ -908,9 +922,10 @@ const FRAMEWORK = {
         W('hsm-capacity', 'Practice: HSM capacity calculator'),
         W('envelope-encrypt', 'Practice: PQC key-wrapping — bridge for HSMs not yet upgradeable'),
       ],
+      // secrets-management-pqc moved to 1.3 (Wave 3, P1) — inventorying keys/secrets/HSMs
+      // is a discovery-phase concern, not a 6.2 deployment one; kept as one home, not two.
       deepDive: [
         W('tpm-playground', 'Deep dive — Practice: hardware root-of-trust (TPM)'),
-        L('secrets-management-pqc', 'Deep dive — Learn: Secrets Management & PQC'),
         W('cacp-kmip', 'Deep dive — Practice: Crypto-Agility Control Plane (KMIP)'),
       ],
     },
