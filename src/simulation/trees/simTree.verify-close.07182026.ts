@@ -64,7 +64,7 @@ const TREE: PhaseTree = {
           title: 'Assemble the Migration Evidence Dossier',
           decision:
             'Assemble real evidence — observed negotiation, negative testing, attestation — for every migrated system, not a checklist of milestones hit.',
-          do: 'Prove each migrated system against the evidence standard (observed PQC negotiation, negative testing, configuration attestation) and log classical key-material decommissioning per org key-destruction standard.',
+          do: 'Prove each migrated system against the evidence standard (observed PQC negotiation, negative testing, configuration attestation) and log classical key-material decommissioning per org key-destruction standard — destruction certificates for HSM-held keys, not a verbal confirmation. Re-encrypt long-lived archives under PQC BEFORE destroying the classical keys that protect them — the sequencing matters, not just the two actions.',
           output: 'Migration-verification evidence dossier',
           steps: [
             {
@@ -84,6 +84,13 @@ const TREE: PhaseTree = {
               label: 'Run the closure audit-readiness checklist',
               to: '/business/tools/audit-checklist',
               artifactType: 'audit-checklist',
+            },
+            {
+              kind: 'activity',
+              label:
+                'Confirm long-lived archives are re-encrypted under PQC before this system’s classical keys are destroyed',
+              to: '/business/tools/data-at-rest-strategy',
+              artifactType: 'data-at-rest-strategy',
             },
           ],
         },

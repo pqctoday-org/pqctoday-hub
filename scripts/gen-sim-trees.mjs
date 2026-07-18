@@ -1207,12 +1207,16 @@ const FRAMEWORK = {
       title: 'Assemble the Migration Evidence Dossier',
       decision:
         'Assemble real evidence — observed negotiation, negative testing, attestation — for every migrated system, not a checklist of milestones hit.',
-      do: 'Prove each migrated system against the evidence standard (observed PQC negotiation, negative testing, configuration attestation) and log classical key-material decommissioning per org key-destruction standard.',
+      do: 'Prove each migrated system against the evidence standard (observed PQC negotiation, negative testing, configuration attestation) and log classical key-material decommissioning per org key-destruction standard — destruction certificates for HSM-held keys, not a verbal confirmation. Re-encrypt long-lived archives under PQC BEFORE destroying the classical keys that protect them — the sequencing matters, not just the two actions.',
       output: 'Migration-verification evidence dossier',
       steps: [
         L('verification-closure', 'Learn: decommission classical crypto & assemble evidence'),
         A('migration-verification', 'Assemble the evidence dossier & log decommissioning'),
         A('audit-checklist', 'Run the closure audit-readiness checklist'),
+        A(
+          'data-at-rest-strategy',
+          'Confirm long-lived archives are re-encrypted under PQC before this system’s classical keys are destroyed'
+        ),
       ],
     },
     {

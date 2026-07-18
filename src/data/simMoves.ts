@@ -374,5 +374,12 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
         'Fails. Common failure: orphaned capabilities. CBOM, discovery and vendor governance decay within quarters without funded BAU owners — closure is a handover, not an end-of-funding.'
       ),
     },
+    {
+      label: 'Destroy the classical keys the moment PQC is live',
+      desc: 'Decommission immediately — the migration is done, why keep the old keys around.',
+      evaluate: trap(
+        "Fails, and catastrophically for anything the old keys still protect. Long-lived archives encrypted under the classical key become permanently unreadable the instant that key is destroyed — there is no migration path for data whose only decryption key no longer exists. Re-encrypt every long-lived archive under PQC FIRST, verify it, then destroy the classical key. Getting this order backwards doesn't create a security gap; it destroys data."
+      ),
+    },
   ],
 }
