@@ -8,6 +8,8 @@
  * useModuleStore.addExecutiveDocument. Nothing here touches the assessment.
  */
 import type { ExecutiveDocument } from '@/services/storage/types'
+import type { SimRunCompleteObjective } from '@/components/Simulation/SimRunComplete'
+import type { RunScoreBreakdown } from './runScore'
 
 export interface SimRoadmapInput {
   sector: string
@@ -20,6 +22,16 @@ export interface SimRoadmapInput {
   readinessPct: number
   yearsToHorizon: number
   over: number
+  /**
+   * Wave 5 (WP5.1) — additive, all optional so a pre-Wave-5 committed doc still
+   * renders (SimulationOutcomesSection degrades each field independently rather
+   * than requiring a re-commit). Sourced from the same live state the ceremony
+   * and ribbon already compute — no new derivation.
+   */
+  compliancePct?: number
+  objectives?: SimRunCompleteObjective[]
+  score?: RunScoreBreakdown
+  verifyCloseCleared?: boolean
 }
 
 /** Markdown body for the committed roadmap. */

@@ -1325,6 +1325,25 @@ export function SimulationView() {
           readinessPct: readiness.pct,
           yearsToHorizon: clock.yearsToHorizon,
           over: clock.over,
+          // Wave 5 (WP5.1) — additive: the same live values the ribbon/ceremony
+          // already compute, captured at commit time for the /report section.
+          compliancePct: readiness.compliancePct,
+          objectives: scoreboard.objectives.map((o) => ({
+            id: o.id,
+            label: o.label,
+            byYear: o.byYear,
+            done: o.done,
+            achievedYear: objectiveAchievedYears[o.id],
+          })),
+          score: computeRunScore({
+            quartersUsed: (year - RUN_START.year) * 4 + (q - RUN_START.q),
+            difficulty,
+            trapsThisRun,
+            compliancePct: readiness.compliancePct,
+            objectivesOnTime,
+            objectivesTotal: scoreboard.objectives.length,
+          }),
+          verifyCloseCleared: levelOf('verify-close') >= PHASE_WIN_LEVEL,
         },
         nowMs()
       )

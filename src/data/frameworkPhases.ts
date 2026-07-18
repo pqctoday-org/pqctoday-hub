@@ -351,8 +351,8 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     communicate: {
       route: '/report',
       ref: 'pilot-results',
-      status: 'gap',
-      note: 'No dedicated pilot-results/outcomes section on /report yet — the closest existing coverage is the migrationRoadmap report section plus the deployment-playbook and hybrid-transition-planner business tools, which are planning artifacts, not results tracking. Scoped down for now (simulation.md item 3, 07082026).',
+      status: 'live',
+      note: 'Wave 5 (WP5.1, 07182026): SimulationOutcomesSection on /report reads the committed sim-roadmap doc — readiness, compliance, phase maturity, transformation objectives with dates, and the run grade.',
     },
     surfaces: ['/business', '/migrate', '/report'],
     crosswalk: {
@@ -470,16 +470,15 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     },
     cswp39Zones: ['governance'],
     cswp39Steps: ['implement', 'govern'],
-    // Corrected 07082026 (simulation.md item 3): was 'gap' (implying nothing
-    // produces this), but the 'migration-verification' business tool below is
-    // real, live, and already reveals this content in the exec-tour walkthrough
-    // — 'partial' is the honest status: the producing tool exists, /report just
-    // has no dedicated closure-record section summarizing it yet.
+    // Wave 5 (WP5.1, 07182026): SimulationOutcomesSection now surfaces a
+    // closure-record block on /report when verify-close was cleared in the
+    // committed sim run — the summary points to the full evidence dossier in
+    // the 'migration-verification' business tool (produce entry below).
     communicate: {
       route: '/report',
       ref: 'closure-record',
-      status: 'partial',
-      note: "The 'migration-verification' business tool (produce entry below) already generates the closure record; /report has no section surfacing it yet.",
+      status: 'live',
+      note: "SimulationOutcomesSection shows a closure-record summary when the sim run cleared verify-close; the full evidence dossier stays in the 'migration-verification' business tool.",
     },
     produce: [{ route: '/business', ref: 'migration-verification', status: 'live' }],
     surfaces: ['/business', '/report'],

@@ -87,6 +87,7 @@ import { AlgorithmMigrationSection } from './sections/AlgorithmMigrationSection'
 import { ComplianceImpactSection } from './sections/ComplianceImpactSection'
 import { RecommendedActionsSection } from './sections/RecommendedActionsSection'
 import { ThreatLandscapeSection } from './sections/ThreatLandscapeSection'
+import { SimulationOutcomesSection } from './sections/SimulationOutcomesSection'
 import {
   printReport,
   shareReport,
@@ -735,6 +736,16 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                           restoreAllThreats={restoreAllThreats}
                           hiddenForIndustryCount={hiddenForIndustryCount}
                           defaultOpen={cfg('threatLandscape').state === 'open'}
+                        />
+                      )}
+
+                    {/* Simulation Outcomes — Wave 5 (WP5.1). Reads its own saved
+                        artifact (the sim-roadmap doc), same independent-fetch
+                        pattern as CbomSection above. */}
+                    {phaseVisible('simulationOutcomes') &&
+                      cfg('simulationOutcomes').state !== 'hidden' && (
+                        <SimulationOutcomesSection
+                          defaultOpen={cfg('simulationOutcomes').state === 'open'}
                         />
                       )}
 

@@ -612,6 +612,7 @@ export type ReportSectionId =
   | 'migrationToolkit'
   | 'vendorRisk'
   | 'threatLandscape'
+  | 'simulationOutcomes'
 
 export interface ReportSectionConfig {
   state: SectionState
@@ -637,6 +638,7 @@ const REPORT_SECTION_DEFAULTS: Record<ReportSectionId, ReportSectionConfig> = {
   migrationToolkit: { state: 'open' },
   vendorRisk: { state: 'collapsed' },
   threatLandscape: { state: 'collapsed' },
+  simulationOutcomes: { state: 'collapsed' },
 }
 
 /** Per-persona overrides — only differences from defaults. */
