@@ -203,6 +203,13 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
         'Fails. With no acceleration/deceleration triggers, one slipped vendor or failed pilot derails the plan. The framework requires contingency triggers and a pre-drafted accelerated profile.'
       ),
     },
+    {
+      label: 'Stand up full governance and gates before migrating anything',
+      desc: 'Perfect the PMO, RACI and gate criteria first, then start Phase 5.',
+      evaluate: trap(
+        'Fails — the opposite failure from an unfunded mandate. All process, no migration: a roadmap, PMO and gate criteria that never actually move a system off vulnerable crypto still leaves every HNDL/TNFL clock running. Structure enough to sequence correctly (Gate G4), then start Phase 5 pilots in parallel — governance and migration mature together, not one before the other.'
+      ),
+    },
   ],
   p5: [
     {
