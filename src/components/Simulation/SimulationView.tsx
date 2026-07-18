@@ -2115,7 +2115,7 @@ export function SimulationView() {
                         </span>
                       </div>
                       <div className="mt-0.5 font-mono text-sim-micro text-muted-foreground">
-                        agility · KPIs · skills · verification
+                        maturity · KPIs · agility · reg-mapping · skills
                       </div>
                     </Button>
                   </div>

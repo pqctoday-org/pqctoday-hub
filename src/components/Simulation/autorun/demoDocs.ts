@@ -57,7 +57,7 @@ export const REG: Record<DemoSector, string> = {
   government: 'FISMA / OMB M-23-02 / NSM-10',
   energy: 'NCSC / NIS2-UK / NERC CIP',
   telecom: 'FCC / CISA / 3GPP',
-  retail: 'ASD ISM / PCI DSS / Privacy Act 2020',
+  retail: 'ASD ISM / PCI DSS / Privacy Act 1988',
   general: 'CISA / NIST CSF 2.0',
 }
 
@@ -191,7 +191,7 @@ const crqcScenario: Record<DemoSector, DemoDoc> = {
       '- Software release signing keys (ECDSA P-256) have an effective lifecycle matching the product support window (8–12 years).',
       '',
       '## Mosca inequality',
-      '- X (secrecy) ≈ 10y, Y (migration) ≈ 4y, Z (CRQC) ≈ 5–9y → X + Y > Z. CISA roadmap recommends migration start by 2025.',
+      '- X (secrecy) ≈ 10y, Y (migration) ≈ 4y, Z (CRQC) ≈ 5–9y → X + Y > Z. CISA/NSA/NIST quantum-readiness guidance: begin migration planning now.',
       MOSCA_PLANNING_NOTE
     ),
   },
@@ -294,7 +294,7 @@ const roiModel: Record<DemoSector, DemoDoc> = {
       '| Driver | 3-yr cost avoided |',
       '| --- | --- |',
       '| Payment card breach (PCI DSS 4.0 liability) | A$14.2M |',
-      '| Privacy Act 2020 non-compliance penalty | A$4.1M |',
+      '| Privacy Act 1988 non-compliance penalty | A$4.1M |',
       '| Emergency migration premium (peak-season blackout) | A$5.8M |',
       '',
       'Planned program cost (phased, checkout refresh cycle): A$6.4M over 3 years → net positive in year 2.',

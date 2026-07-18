@@ -25,7 +25,7 @@ export const SIM_EVENT_POOL: Record<EventSeverity, string[]> = {
     'RSA-2048 code-signing certificates flagged for sunset by your CA',
   ],
   success: [
-    'OpenSSL 3.6 ships ML-DSA hardware acceleration — perf headroom recovered',
+    'Your TLS stack ships hardware-accelerated ML-DSA — perf headroom recovered',
     'Pilot cutover clean: zero rollbacks on Tier-1 internet-facing service',
     'Vendor confirms dated ML-KEM commitment in renewed contract',
   ],

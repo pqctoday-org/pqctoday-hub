@@ -55,7 +55,7 @@ export const GUIDED_DEFS: TourStep[] = [
   },
   {
     title: 'Plain English: hybrid vs pure',
-    body: 'Hybrid = classical + post-quantum together, so you stay safe even if one is broken (reversible — what most regulators want now). Pure = post-quantum only, the eventual end state. Which is correct depends on your jurisdiction’s stance.',
+    body: 'Hybrid = classical + post-quantum together, so you stay safe even if one is broken (reversible — required during the transition by regulators like ANSSI and BSI). Pure = post-quantum only, the eventual end state some jurisdictions already prefer. Which is correct depends on your jurisdiction’s stance.',
   },
   {
     title: 'Plain English: TNFL',

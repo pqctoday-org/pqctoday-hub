@@ -309,7 +309,7 @@ export function deriveBoardDeck(sector: DemoSector): DemoDoc {
     data: joinMd(
       `# Board Pitch — Securing ${ORG[sector]} Against the Quantum Threat`,
       '',
-      `1. **The threat is dated:** adversaries harvest encrypted data today; a cryptographically relevant quantum computer (CRQC) — expert estimates cluster around 2029–2033 — would decrypt it retroactively. Quantum-enabled breach exposure is ${fmt(cur, breach.quantumSLE)} per event.`,
+      `1. **The threat is dated:** adversaries harvest encrypted data today; a cryptographically relevant quantum computer (CRQC) would decrypt it retroactively. This deck models an aggressive planning estimate of 2029–2033 to stress-test urgency — the Applied Quantum Framework 2.1 range is 10–20 years; treat either as a planning anchor, not a forecast. Quantum-enabled breach exposure is ${fmt(cur, breach.quantumSLE)} per event.`,
       `2. **The deadlines are real:** the June 2026 US Executive Order sets binding PQC deadlines (key establishment 2030, signatures 2031; CNSA 2.0 for national-security systems), and regulators behind ${reg} increasingly expect demonstrable migration progress.`,
       `3. **The ask:** a phased mandate of ${fmt(cur, roi.totalCost)} over ${HORIZON_YEARS} years aligned to existing refresh cycles — NPV ${fmt(cur, roi.npv ?? 0)} at ${Math.round(DISCOUNT_RATE * 100)}%, payback ${isFinite(roi.paybackMonths) ? `${Math.round(roi.paybackMonths)} months` : 'n/a'}.`,
       `4. **The cost of waiting:** delaying ${DELAY_YEARS} years costs an extra ${fmt(cur, costOfInaction)} (${delayRatio.toFixed(1)}× migrate-now) — accumulated breach exposure, a delay premium, and regulatory penalty once past the mandate deadline.`,

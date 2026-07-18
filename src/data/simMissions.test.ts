@@ -3,8 +3,12 @@ import { describe, it, expect } from 'vitest'
 import { SIM_MISSIONS } from './simMissions'
 
 describe('simMissions (CSV-backed)', () => {
-  it('loads all eight phases p0–p7', () => {
+  it('loads all ten phases p0–p7, foundations and verify-close', () => {
+    // 07182026: foundations and verify-close previously had no mission rows —
+    // the terminal, ceremony-gating phase rendered an empty mission line. See
+    // simulation-mode-review-07182026.md finding I6.
     expect(Object.keys(SIM_MISSIONS).sort()).toEqual([
+      'foundations',
       'p0',
       'p1',
       'p2',
@@ -13,6 +17,7 @@ describe('simMissions (CSV-backed)', () => {
       'p5',
       'p6',
       'p7',
+      'verify-close',
     ])
   })
 

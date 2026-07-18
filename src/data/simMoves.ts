@@ -270,7 +270,7 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
       label: 'Plan the X.509-vs-MTC fork per deployment',
       desc: 'Route public web PKI to Merkle Tree Certs, internal PKI to X.509+PQC.',
       evaluate: sound(
-        'Sound. The framework splits PKI: public-facing web PKI heads toward Merkle Tree Certificates + ACME automation, while internal/private PKI moves to X.509+PQC now. Deciding the fork per deployment avoids a dead-end PKI investment.'
+        'Sound. The framework splits PKI: public-facing web PKI is watching Merkle Tree Certificates (an IETF PLANTS working-group draft, one leading candidate alongside X.509+ML-DSA) + ACME automation, while internal/private PKI moves to X.509+PQC now. Deciding the fork per deployment avoids a dead-end PKI investment.'
       ),
     },
   ],
@@ -279,7 +279,7 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
       label: 'Engage top-10 vendors; score & contract',
       desc: 'Questionnaires, criticality tiers, dated clauses.',
       evaluate: sound(
-        'Sound. Formally engaged, scored vendors with dated PQC commitments is the Level-2 bar (Gate G7) and unblocks vendor-gated systems.'
+        'Sound. Formally engaged, scored vendors with dated PQC commitments is the Level-2 bar for this continuous phase (no gate — vendor governance never closes) and unblocks vendor-gated systems.'
       ),
     },
     {
@@ -319,9 +319,9 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
   'verify-close': [
     {
       label: 'Prove each migration against the evidence standard & log decommissioning',
-      desc: 'Assemble the dossier (observed PQC negotiation, negative testing, attestation) and record SP 800-88 decommissioning.',
+      desc: 'Assemble the dossier (observed PQC negotiation, negative testing, attestation), re-encrypt long-lived archives under PQC, then record SP 800-88 (Rev. 2) decommissioning of the classical keys.',
       evaluate: sound(
-        'Sound. "Done" now means proven: the 5-point evidence dossier plus a logged classical-key decommissioning turn a declared migration into a verifiable, audit-ready one — and close the harvest-now-decrypt-later exposure.'
+        'Sound. "Done" now means proven: the 5-point evidence dossier plus a logged classical-key decommissioning turn a declared migration into a verifiable, audit-ready one — and close the *forward* harvest-now-decrypt-later exposure. Traffic already harvested before migration is permanently gone; that is why archives get re-encrypted under PQC before the classical keys protecting them are destroyed, not after.'
       ),
     },
     {
