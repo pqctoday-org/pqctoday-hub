@@ -25,7 +25,7 @@ import { Button } from '@/components/ui/button'
 
 const MODULE_ID = 'vendor-risk'
 
-interface Dimension {
+export interface Dimension {
   id: string
   label: string
   description: string
@@ -34,7 +34,7 @@ interface Dimension {
   autoDetect?: (item: SoftwareItem) => boolean
 }
 
-const DIMENSIONS: Dimension[] = [
+export const DIMENSIONS: Dimension[] = [
   {
     id: 'pqc-algorithm-support',
     label: 'PQC Algorithm Support',
@@ -80,7 +80,7 @@ const DIMENSIONS: Dimension[] = [
   },
 ]
 
-function resolveProductNames(keys: string[]): SoftwareItem[] {
+export function resolveProductNames(keys: string[]): SoftwareItem[] {
   const keySet = new Set(keys)
   return softwareData.filter((s) => keySet.has(s.productId))
 }
@@ -173,6 +173,68 @@ export function computeVendorScorecards(
 export interface ScorecardOutput {
   rows: VendorScorecardRow[]
   lowReadinessVendors: string[]
+}
+
+export interface ScorecardDimensionRow {
+  id: string
+  label: string
+  score: number
+  weightPct: number
+  method: string
+}
+
+export interface ScorecardNotes {
+  scannerNotes: string
+  cveNotes: string
+  siemNotes: string
+  ztNotes: string
+}
+
+/**
+ * Pure markdown builder — extracted (Wave 5, WP5.3) so the sim's exec-tour
+ * fast-forward (REAL_DOC_GENERATORS['vendor-scorecard'], realToolDocs.ts) can
+ * call the SAME formatting logic the live tool uses, instead of a hand-typed
+ * lookalike that could silently drift. The live component below calls this
+ * with its own live state; the sim calls it with a sample scorecard.
+ */
+export function buildScorecardMarkdown(
+  portfolioAverage: number,
+  productCount: number | null,
+  dimensionRows: ScorecardDimensionRow[],
+  vendorRows: VendorScorecardRow[],
+  notes: ScorecardNotes
+): string {
+  let md = '# Vendor PQC Readiness Scorecard\n\n'
+  md += `**Portfolio average (all products): ${portfolioAverage}/100**\n\n`
+  md += `Generated: ${new Date().toLocaleDateString()}\n`
+  if (productCount != null) {
+    md += `Products assessed: ${productCount}\n`
+  }
+  md += '\n'
+  md += '| Dimension | Score | Weight | Method |\n'
+  md += '|-----------|-------|--------|--------|\n'
+  for (const d of dimensionRows) {
+    md += `| ${d.label} | ${d.score}/100 | ${d.weightPct}% | ${d.method} |\n`
+  }
+
+  if (vendorRows.length > 0) {
+    md += '\n## Per-Vendor Readiness\n\n'
+    md += `| Vendor | Products | Overall | ${dimensionRows.map((d) => d.label).join(' | ')} |\n`
+    md += `|${'---|'.repeat(3 + dimensionRows.length)}\n`
+    for (const v of vendorRows) {
+      const scores = dimensionRows.map((d) => v.dimScores[d.id] ?? 0)
+      md += `| ${v.vendor} | ${v.productCount} | ${v.overall}/100 | ${scores.join(' | ')} |\n`
+    }
+  }
+
+  md += '\n## Observability Tooling Notes (CSWP.39 §5.3)\n\n'
+  md += `**Crypto scanner:** ${notes.scannerNotes.trim() || '_Not specified_'}\n\n`
+  md += `**CVE / vuln-mgmt feed:** ${notes.cveNotes.trim() || '_Not specified_'}\n\n`
+  md += `**SIEM crypto-drift rules:** ${notes.siemNotes.trim() || '_Not specified_'}\n\n`
+  md += `**Zero-Trust enforcement:** ${notes.ztNotes.trim() || '_Not specified_'}\n\n`
+
+  md = md.replace(/—/g, '-').replace(/–/g, '-').replace(/[‘’]/g, "'").replace(/[“”]/g, '"')
+  return md
 }
 
 export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOutput) => void }> = ({
@@ -350,46 +412,23 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
   const [ztNotes, setZtNotes] = useState(savedInputs?.ztNotes ?? '')
 
   const exportMarkdown = useMemo(() => {
-    let md = '# Vendor PQC Readiness Scorecard\n\n'
-    md += `**Portfolio average (all products): ${weightedTotal}/100**\n\n`
-    md += `Generated: ${new Date().toLocaleDateString()}\n`
-    if (hasProducts) {
-      md += `Products assessed: ${selectedItems.length}\n`
-    }
-    md += '\n'
-    md += '| Dimension | Score | Weight | Method |\n'
-    md += '|-----------|-------|--------|--------|\n'
-    for (const d of DIMENSIONS) {
-      const score = getScore(d.id)
-      const method =
+    const dimensionRows: ScorecardDimensionRow[] = DIMENSIONS.map((d) => ({
+      id: d.id,
+      label: d.label,
+      score: getScore(d.id),
+      weightPct: Math.round(effectiveWeight(d.id) * 100),
+      method:
         useSlider[d.id] || !hasProducts
           ? 'Manual'
-          : `${checkedProducts[d.id]?.size ?? 0}/${selectedItems.length} products`
-      md += `| ${d.label} | ${score}/100 | ${Math.round(effectiveWeight(d.id) * 100)}% | ${method} |\n`
-    }
-
-    if (hasProducts && vendorScorecards.length > 0) {
-      md += '\n## Per-Vendor Readiness\n\n'
-      md += `| Vendor | Products | Overall | ${DIMENSIONS.map((d) => d.label).join(' | ')} |\n`
-      md += `|${'---|'.repeat(3 + DIMENSIONS.length)}\n`
-      for (const v of vendorScorecards) {
-        md += `| ${v.vendor} | ${v.productCount} | ${v.overall}/100 | ${DIMENSIONS.map(
-          (d) => v.dimScores[d.id] ?? 0
-        ).join(' | ')} |\n`
-      }
-    }
-
-    // CSWP.39 §5.3 - Observability Tooling Notes
-    md += '\n## Observability Tooling Notes (CSWP.39 §5.3)\n\n'
-    md += `**Crypto scanner:** ${scannerNotes.trim() || '_Not specified_'}\n\n`
-    md += `**CVE / vuln-mgmt feed:** ${cveNotes.trim() || '_Not specified_'}\n\n`
-    md += `**SIEM crypto-drift rules:** ${siemNotes.trim() || '_Not specified_'}\n\n`
-    md += `**Zero-Trust enforcement:** ${ztNotes.trim() || '_Not specified_'}\n\n`
-
-    // N5: sanitise non-ASCII punctuation in the exported markdown string only.
-    md = md.replace(/—/g, '-').replace(/–/g, '-').replace(/[‘’]/g, "'").replace(/[“”]/g, '"')
-
-    return md
+          : `${checkedProducts[d.id]?.size ?? 0}/${selectedItems.length} products`,
+    }))
+    return buildScorecardMarkdown(
+      weightedTotal,
+      hasProducts ? selectedItems.length : null,
+      dimensionRows,
+      hasProducts ? vendorScorecards : [],
+      { scannerNotes, cveNotes, siemNotes, ztNotes }
+    )
   }, [
     weightedTotal,
     getScore,

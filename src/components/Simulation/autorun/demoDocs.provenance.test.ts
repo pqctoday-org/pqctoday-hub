@@ -73,14 +73,18 @@ describe('demoDocs narration provenance guard', () => {
   })
 
   it('never attaches an invented CSWP 39 section or figure number', () => {
-    // Verified 07182026 against the cached NIST CSWP 39 PDF (Dec 19 2025 ToC):
-    // §3.2.1 = "Preserving Protocol Interoperability" (under 3.2 Algorithm
-    // Transitions); §5 = "Crypto Agility Strategic Plan for Managing
-    // Organizations' Crypto Risks". Both citations below (in the real
-    // ProgramCharter/InfraModernizationPlanner tool output, reached via
-    // REAL_DOC_GENERATORS) match the document exactly — allowlisted as
+    // Verified 07182026 against the cached NIST CSWP 39 PDF (Dec 19 2025 body
+    // text, not just the ToC): §3.2.1 = "Preserving Protocol Interoperability"
+    // (under 3.2 Algorithm Transitions); §5 = "Crypto Agility Strategic Plan
+    // for Managing Organizations' Crypto Risks"; §5.3 = "Technology Supply
+    // Chains" (p.25) — its body text covers exactly the vendor/supply-chain
+    // observability content (visibility into products/services, "a
+    // comprehensive list of cryptographic components") cited by the
+    // VendorScorecardBuilder/ContractClauseGenerator "Observability Tooling
+    // Notes" heading, reached via REAL_DOC_GENERATORS in Wave 5 WP5.3. All
+    // three citations match the document exactly — allowlisted as
     // verified-accurate, not invented. Any OTHER §/Fig. citation still fails.
-    const VERIFIED_CSWP39_SECTIONS = ['3.2.1', '5']
+    const VERIFIED_CSWP39_SECTIONS = ['3.2.1', '5', '5.3']
     const citationPattern = /CSWP\.?\s?39[^.]{0,20}(§|Fig\.)\s?([0-9.]+)/g
     for (const { sector, type, data } of ALL_DOC_BODIES) {
       const invented: string[] = []
