@@ -75,10 +75,10 @@ const TREE: PhaseTree = {
               artifactType: 'crypto-cbom',
             },
             {
-              kind: 'reference',
+              kind: 'catalog',
               label: 'Export your CBOM as CycloneDX from the Migrate workbench',
               to: '/migrate',
-              refId: 'migrate',
+              catalogId: 'cyclonedx-export',
             },
           ],
           deepDive: [
