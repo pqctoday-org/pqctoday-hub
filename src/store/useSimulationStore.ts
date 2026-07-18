@@ -189,6 +189,44 @@ const asDifficulty = (v: unknown): DifficultyId =>
   DIFFICULTIES.includes(v as DifficultyId) ? (v as DifficultyId) : SEED.difficulty
 
 /**
+ * The persisted store's version-upgrade path. Defensive by construction: every
+ * field gets a safe default rather than trusting the shape of old localStorage
+ * data. v3 introduced strict maturity gating, so any real migration (persisted
+ * version < STORE_VERSION) intentionally RESETS leveled progress (edgeDecisions)
+ * rather than trying to reinterpret it — org setup + visited refs still carry
+ * forward. Exported standalone (not inline in persist()) so it has a direct
+ * unit test instead of only being exercised indirectly through rehydration.
+ */
+export function migrateSimulationState(persisted: unknown) {
+  const s = (persisted ?? {}) as Record<string, unknown>
+  return {
+    size: (s.size as string) ?? SEED.size,
+    country: (s.country as string) ?? SEED.country,
+    sector: (s.sector as string) ?? SEED.sector,
+    seat: (s.seat as string) ?? SEED.seat,
+    sel: SEED.sel,
+    edgeDecisions: {},
+    year: SEED.year,
+    q: SEED.q,
+    crqcShift: SEED.crqcShift,
+    events: [...SEED.events],
+    visitedRefs: Array.isArray(s.visitedRefs) ? (s.visitedRefs as string[]) : [],
+    visitedWorkshops: Array.isArray(s.visitedWorkshops) ? (s.visitedWorkshops as string[]) : [],
+    visitedScenarios: Array.isArray(s.visitedScenarios) ? (s.visitedScenarios as string[]) : [],
+    runCompleteSeen:
+      typeof s.runCompleteSeen === 'boolean' ? (s.runCompleteSeen as boolean) : false,
+    picks: Array.isArray(s.picks) ? (s.picks as string[]) : [],
+    catalogCompleted: Array.isArray(s.catalogCompleted) ? (s.catalogCompleted as string[]) : [],
+    auto: Array.isArray(s.auto) ? (s.auto as string[]) : [],
+    seed: typeof s.seed === 'number' ? (s.seed as number) : newSeed(),
+    difficulty: asDifficulty(s.difficulty),
+    tourSeen: typeof s.tourSeen === 'boolean' ? s.tourSeen : false,
+    guided: typeof s.guided === 'boolean' ? s.guided : false,
+    seenConceptPeeks: Array.isArray(s.seenConceptPeeks) ? (s.seenConceptPeeks as string[]) : [],
+  }
+}
+
+/**
  * Build a full persisted state from a save blob (WS-08 import). Unlike migrate(),
  * this PRESERVES the saved run (checks/turn/events/auto) — it restores progress,
  * it doesn't reset it — filling any missing field with a safe default.
@@ -373,45 +411,7 @@ export const useSimulationStore = create<SimulationState>()(
         guided: s.guided,
         seenConceptPeeks: s.seenConceptPeeks,
       }),
-      migrate: (persisted: unknown) => {
-        // Defensive: ensure every field exists with a safe default. v3 introduced
-        // strict maturity gating, so legacy pre-leveled progress (checks / turn) is
-        // RESET to a clean gated start; the org setup + visited refs are preserved.
-        const s = (persisted ?? {}) as Record<string, unknown>
-        return {
-          size: (s.size as string) ?? SEED.size,
-          country: (s.country as string) ?? SEED.country,
-          sector: (s.sector as string) ?? SEED.sector,
-          seat: (s.seat as string) ?? SEED.seat,
-          sel: SEED.sel,
-          edgeDecisions: {},
-          year: SEED.year,
-          q: SEED.q,
-          crqcShift: SEED.crqcShift,
-          events: [...SEED.events],
-          visitedRefs: Array.isArray(s.visitedRefs) ? (s.visitedRefs as string[]) : [],
-          visitedWorkshops: Array.isArray(s.visitedWorkshops)
-            ? (s.visitedWorkshops as string[])
-            : [],
-          visitedScenarios: Array.isArray(s.visitedScenarios)
-            ? (s.visitedScenarios as string[])
-            : [],
-          runCompleteSeen:
-            typeof s.runCompleteSeen === 'boolean' ? (s.runCompleteSeen as boolean) : false,
-          picks: Array.isArray(s.picks) ? (s.picks as string[]) : [],
-          catalogCompleted: Array.isArray(s.catalogCompleted)
-            ? (s.catalogCompleted as string[])
-            : [],
-          auto: Array.isArray(s.auto) ? (s.auto as string[]) : [],
-          seed: typeof s.seed === 'number' ? (s.seed as number) : newSeed(),
-          difficulty: asDifficulty(s.difficulty),
-          tourSeen: typeof s.tourSeen === 'boolean' ? s.tourSeen : false,
-          guided: typeof s.guided === 'boolean' ? s.guided : false,
-          seenConceptPeeks: Array.isArray(s.seenConceptPeeks)
-            ? (s.seenConceptPeeks as string[])
-            : [],
-        }
-      },
+      migrate: migrateSimulationState,
       onRehydrateStorage: () => (_state, error) => {
         if (error) console.error('useSimulationStore rehydrate error', error)
       },
