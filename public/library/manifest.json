@@ -4255,9 +4255,9 @@
       "title": "HIPAA Security Rule \u2014 45 CFR Part 164",
       "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164",
       "status": "downloaded",
-      "filename": "HIPAA-45-CFR-164.pdf",
+      "filename": "HIPAA-45-CFR-164.html",
       "sizeBytes": 364759,
-      "contentType": "application/pdf",
+      "contentType": "text/html",
       "sha256": "35b7aea074c18d2e5d14494e5dad850960ca476fe6392974a5f8417c05429e93"
     },
     {
@@ -4265,9 +4265,9 @@
       "title": "FERPA \u2014 34 CFR Part 99",
       "url": "https://www.ecfr.gov/current/title-34/subtitle-A/part-99",
       "status": "downloaded",
-      "filename": "FERPA-34-CFR-99.pdf",
+      "filename": "FERPA-34-CFR-99.html",
       "sizeBytes": 245220,
-      "contentType": "application/pdf",
+      "contentType": "text/html",
       "sha256": "fed9f79ac8a52681638bf4eef7ff57d9de5d69637851d8f460d8ca8f974f14bb"
     },
     {
@@ -4275,9 +4275,9 @@
       "title": "COPPA Rule \u2014 16 CFR Part 312",
       "url": "https://www.ecfr.gov/current/title-16/chapter-I/subchapter-C/part-312",
       "status": "downloaded",
-      "filename": "COPPA-16-CFR-312.pdf",
+      "filename": "COPPA-16-CFR-312.html",
       "sizeBytes": 182224,
-      "contentType": "application/pdf",
+      "contentType": "text/html",
       "sha256": "73f5f1f894b74ce69eed80a80d45fe5f418fcf5da886a50ce0402a4a48367420"
     },
     {
@@ -4285,9 +4285,9 @@
       "title": "FDA 21 CFR Part 11 \u2014 Electronic Records; Electronic Signatures",
       "url": "https://www.ecfr.gov/current/title-21/chapter-I/subchapter-A/part-11",
       "status": "downloaded",
-      "filename": "FDA-21-CFR-11.pdf",
+      "filename": "FDA-21-CFR-11.html",
       "sizeBytes": 197541,
-      "contentType": "application/pdf",
+      "contentType": "text/html",
       "sha256": "affcbdd7e4af03fa1598f8d53ba39e0a29a50ae951b1b5d92272b42b8a6a0393"
     },
     {
