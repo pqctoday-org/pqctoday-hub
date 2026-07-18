@@ -82,7 +82,7 @@ const TREE: PhaseTree = {
           title: 'Insert PQC Requirements into Procurement',
           decision:
             "Put dated PQC commitments and remedies into the contract language itself — a vendor's roadmap slide isn't binding.",
-          do: 'Add PQC clauses to RFP and contract templates with dated commitments and remedies.',
+          do: 'Add PQC clauses to RFP and contract templates with dated commitments and remedies; require a product CBOM (CycloneDX format) plus a dated PQC attestation with every contract, not just a support statement.',
           output: 'Updated procurement templates',
           steps: [
             {
@@ -183,7 +183,7 @@ const TREE: PhaseTree = {
   pitfalls: [
     {
       title: 'Start vendor engagement too late',
-      why: 'Vendor dependency is the longest critical path; waiting for a complete CBOM loses 12–24 months.',
+      why: 'Vendor dependency is the longest critical path; waiting for a complete CBOM loses a year or more.',
     },
     {
       title: 'Accept verbal commitments',
@@ -204,6 +204,10 @@ const TREE: PhaseTree = {
     {
       title: 'Delegate the risk, not just the implementation',
       why: 'The vendor owns the product, but you still own the risk to your data, operations and compliance — "the vendor will sort it out" leaves you accountable with no control.',
+    },
+    {
+      title: 'Your top blocked vendors share one upstream crypto library',
+      why: 'Vendor-diversity scorecards check for a single VENDOR failure point, not a shared fourth-party one — if five "independent" blocked vendors all depend on the same unpatched crypto library, that\'s one concentration risk wearing five faces, not five separate ones. Map upstream dependencies, not just first-party vendor names.',
     },
   ],
 }
