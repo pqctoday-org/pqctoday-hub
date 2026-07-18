@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { ALGO_FACTS } from '@/components/Playground/kmip/kmip3/algoFacts'
+import { ALGO_FACTS } from '@/components/Playground/learnkit/algoFacts'
 import {
   computeKeyStorage,
   CAPACITY_OPTIONS,

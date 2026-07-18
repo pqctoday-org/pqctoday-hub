@@ -6,7 +6,7 @@
 // hsmCapacityDefaults.ts for the ops/sec model. Byte sizes are drawn from
 // algoFacts.ts (FIPS 203/204/205 tables + textbook classical sizes) so all PQC
 // calculators in this app share one source of truth for key/signature sizes.
-import { ALGO_FACTS } from '@/components/Playground/kmip/kmip3/algoFacts'
+import { ALGO_FACTS } from '@/components/Playground/learnkit/algoFacts'
 
 export type KeyStorageMode = 'classical' | 'hybrid' | 'pure-pqc'
 export type PqcFamily = 'ML-DSA' | 'ML-KEM' | 'SLH-DSA'
