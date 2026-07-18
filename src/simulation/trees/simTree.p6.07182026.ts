@@ -198,7 +198,7 @@ const TREE: PhaseTree = {
             {
               kind: 'reference',
               label: 'Reference: algorithm sizes & FIPS/CC certs',
-              to: '/compliance?cert=',
+              to: '/compliance?cert=A7285',
               refId: 'compliance-cert-check',
             },
           ],

@@ -73,13 +73,19 @@ vi.mock('./services', () => ({
 vi.mock('./ComplianceTable', () => ({
   ComplianceTable: ({
     data,
+    selectedRecordId,
   }: {
     data: { id: string }[]
     onRefresh: () => void
     isRefreshing: boolean
     lastUpdated: Date | null
     onEnrich?: (id: string) => void
-  }) => <div data-testid="compliance-table">Table ({data.length} records)</div>,
+    selectedRecordId?: string
+  }) => (
+    <div data-testid="compliance-table">
+      Table ({data.length} records){selectedRecordId ? ` · selected: ${selectedRecordId}` : ''}
+    </div>
+  ),
 }))
 
 vi.mock('./MobileComplianceView', () => ({
@@ -142,6 +148,19 @@ describe('ComplianceView', () => {
     fireEvent.click(recordsTabs[0])
     expect(recordsTabs[0]).toBeInTheDocument()
     expect(screen.getByTestId('compliance-table')).toBeInTheDocument()
+  }, 15000)
+
+  // WP5.5 — the sim's compliance-cert-check embed can't read the page URL, so
+  // initialCert seeds the same local-state param the standalone route's real
+  // ?cert= reads. Regression guard for the "prop already exists on the view;
+  // dropped at the seam" bug the plan called out.
+  it('simEmbed + initialCert opens directly on the records tab, cert pre-selected', () => {
+    render(
+      <MemoryRouter>
+        <ComplianceView simEmbed initialTab="records" initialCert="A7285" />
+      </MemoryRouter>
+    )
+    expect(screen.getByTestId('compliance-table')).toHaveTextContent('selected: A7285')
   }, 15000)
 
   it('renders persona-hint CTA for Finance industry and logs analytics on click', () => {

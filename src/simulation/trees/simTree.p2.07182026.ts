@@ -41,7 +41,7 @@ const TREE: PhaseTree = {
             {
               kind: 'reference',
               label: 'Reference: CycloneDX in the Library (1.7, cryptoProperties)',
-              to: '/library',
+              to: '/library?topic=CycloneDX',
               refId: 'library',
             },
           ],

@@ -139,7 +139,7 @@ const TREE: PhaseTree = {
             {
               kind: 'reference',
               label: 'Reference: data-source & SBOM / CT-log standards in the Library',
-              to: '/library',
+              to: '/library?topic=SBOM',
               refId: 'library',
             },
             {

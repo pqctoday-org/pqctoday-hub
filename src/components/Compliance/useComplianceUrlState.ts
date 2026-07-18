@@ -54,17 +54,21 @@ function parseTabFromHash(hash: string): MobileSection | null {
 
 // ── Hook ────────────────────────────────────────────────────────────────
 
-export function useComplianceUrlState(simEmbed = false, initialTab?: string) {
+export function useComplianceUrlState(simEmbed = false, initialTab?: string, initialCert?: string) {
   // When embedded in the sim, the compliance view must NOT read/write the page URL
   // (it would corrupt /simulation's route) and can't nest its own <Router>. So the
   // whole filter/tab URL state is backed by local state here, kept API-compatible
   // with useSearchParams. (Same pattern as MigrateView / LibraryView.)
   // `initialTab` seeds the starting tab so a sim step can open e.g. the "For You"
-  // (scenario-scoped) tab instead of the default landscape view.
+  // (scenario-scoped) tab instead of the default landscape view. `initialCert`
+  // does the same for a specific cert record (WP5.5) — without it, the standalone
+  // route's `?cert=` deep-link (which reads `realSearchParams` directly) has no
+  // embed-mode equivalent, so a sim step's cert focus was silently dropped.
   const [realSearchParams, realSetSearchParams] = useSearchParams()
   const [embedSearchParams, setEmbedSearchParamsState] = useState(() => {
     const p = new URLSearchParams()
     if (initialTab) p.set('tab', initialTab)
+    if (initialCert) p.set('cert', initialCert)
     return p
   })
   const searchParams = simEmbed ? embedSearchParams : realSearchParams

@@ -33,7 +33,8 @@ export const SIM_REFERENCE_EMBEDS: Record<string, ReferenceEmbedSpec> = {
   library: { label: 'Library', Component: LibraryEmbed },
   compliance: { label: 'Compliance', Component: ComplianceEmbed },
   // compliance-cert-check deep-links a specific cert (?cert=) on the standalone page;
-  // embedded it shows the same Compliance view (the cert param is dropped in-sim).
+  // embedded it shows the same Compliance view, opened on that same record (WP5.5 —
+  // SimulationView parses the step's `?cert=` and passes it through as a prop).
   'compliance-cert-check': { label: 'Compliance', Component: ComplianceEmbed },
   threats: { label: 'Threats', Component: ThreatsEmbed },
   report: { label: 'Executive Report', Component: ReportEmbed },

@@ -79,6 +79,14 @@ function checkParams(path: string, params: URLSearchParams): DeepLinkResolution 
     if (bad) return { ok: false, reason: `/compliance: unknown param "${bad}"` }
     return { ok: true }
   }
+  if (path === '/library') {
+    // ?topic= scopes the embedded library search to a sim step's subject (WP5.5)
+    // — a sim-only param (no standalone-route equivalent), generator-emitted so a
+    // step can no longer be silently un-scoped by a label rewording.
+    const bad = keys.find((k) => k !== 'topic')
+    if (bad) return { ok: false, reason: `/library: unknown param "${bad}"` }
+    return { ok: true }
+  }
   if (path === '/threats') {
     // ?view= selects the tab (ThreatsDashboard): 'horizon' opens the CRQC Threat
     // Horizon tab, 'list' (or absent) the default Threat Catalog. Mirrors the
