@@ -21,6 +21,8 @@ const TREE: PhaseTree = {
         {
           id: 'VC.1',
           title: 'Set the Verification Standard & Closure Plan',
+          decision:
+            "Adopt the evidence standard and closure record up front — decide what 'proven' means before you start declaring things done.",
           do: 'Adopt the 5-point migration-verification evidence standard and the program-closure record up front, so "done" means proven, not declared.',
           output: 'Verification standard & closure plan',
           steps: [
@@ -60,6 +62,8 @@ const TREE: PhaseTree = {
         {
           id: 'VC.2',
           title: 'Assemble the Migration Evidence Dossier',
+          decision:
+            'Assemble real evidence — observed negotiation, negative testing, attestation — for every migrated system, not a checklist of milestones hit.',
           do: 'Prove each migrated system against the evidence standard (observed PQC negotiation, negative testing, configuration attestation) and log classical key-material decommissioning per org key-destruction standard.',
           output: 'Migration-verification evidence dossier',
           steps: [
@@ -93,6 +97,8 @@ const TREE: PhaseTree = {
         {
           id: 'VC.3',
           title: 'Independent Verification & Sign-off',
+          decision:
+            'Get independent verification and a funded BAU handover signed off — closure needs proof and a receiving team, not just a milestone check.',
           do: 'Independently verify Tier-1 systems, evidence the crypto-agility / rollback drill, and obtain executive-sponsor closure sign-off with a funded BAU handover.',
           output: 'Independent verification & signed closure',
           steps: [
@@ -120,6 +126,8 @@ const TREE: PhaseTree = {
         {
           id: 'VC.4',
           title: 'Run Verification & Closure as BAU',
+          decision:
+            'Fold verification and decommissioning into continuous posture monitoring — closure is a permanent operating discipline, not a one-time event.',
           do: 'Fold verification, decommissioning and attestations into the continuous posture-monitoring loop so algorithm changes and re-verification are routine.',
           output: 'BAU verification & posture monitoring',
           steps: [

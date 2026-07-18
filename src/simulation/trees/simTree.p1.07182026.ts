@@ -22,6 +22,8 @@ const TREE: PhaseTree = {
         {
           id: '1.0',
           title: 'Risk-Driven Scoping — Decide What to Inventory First',
+          decision:
+            'Prioritize discovery by risk — the Tier-1 systems first — instead of scanning everything with equal priority.',
           do: 'Apply 80/20 prioritization to pick the Tier-1 systems and assign discovery priority tiers.',
           output: 'Risk-driven scoping document',
           steps: [
@@ -49,6 +51,8 @@ const TREE: PhaseTree = {
         {
           id: '1.1',
           title: 'Establish Three Parallel Inventory Tracks',
+          decision:
+            'Run crypto-usage, data-classification and systems/assets discovery as three parallel tracks, not one sequential sweep.',
           do: 'Stand up Track A (crypto usage), Track B (data classification), Track C (systems/assets — CMDB, ITAM, BIA cross-reference; detailed methodology in 1.4–1.5).',
           steps: [
             {
@@ -68,6 +72,8 @@ const TREE: PhaseTree = {
         {
           id: '1.2',
           title: 'Deploy Cryptographic Discovery — Layered Approach',
+          decision:
+            'Layer discovery across network, code, config and runtime — a single scan type always misses real crypto usage.',
           do: 'Deploy discovery across network, code, config, runtime, and manual layers.',
           output: 'Layered discovery deployment',
           steps: [
@@ -94,6 +100,8 @@ const TREE: PhaseTree = {
         {
           id: '1.3',
           title: 'Map the Cryptographic Estate',
+          decision:
+            'Record the full field set — algorithm, key size, protocol, owner — for every instance, not just a name and a checkbox.',
           do: 'Document algorithm, key size, protocol, library, cert, owner and vulnerability for each instance.',
           output: 'Cryptographic asset inventory',
           steps: [
@@ -108,6 +116,8 @@ const TREE: PhaseTree = {
         {
           id: '1.4–1.5',
           title: 'Address Asset Discovery & Integrate Existing Data Sources',
+          decision:
+            'Cross-reference CMDB, ITAM, cloud and certificate data sources — a single system of record always undercounts the real estate.',
           do: 'Cross-reference CMDB, ITAM, cloud APIs, CT logs, BIA and certificate data for coverage.',
           output: 'Cross-referenced asset coverage',
           steps: [
@@ -135,6 +145,8 @@ const TREE: PhaseTree = {
         {
           id: '1.6',
           title: 'Establish Continuous Discovery',
+          decision:
+            'Wire discovery into CI/CD and passive monitoring so it runs continuously — a one-time inventory goes stale within months.',
           do: 'Wire discovery into CI/CD and passive monitoring with quarterly rescans and tiered alerting.',
           output: 'Continuous discovery operating model',
           steps: [

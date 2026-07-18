@@ -20,6 +20,8 @@ const TREE: PhaseTree = {
         {
           id: '0.1',
           title: 'Frame the Business Case',
+          decision:
+            'Build the business case around HNDL/TNFL exposure and the regulatory clock — not a generic "quantum is coming" pitch.',
           do: 'Structure the executive argument around the four urgency drivers — regulatory deadlines, HNDL and TNFL exposure, the threat horizon, and client/investor/insurer expectations.',
           output: 'Executive business case',
           steps: [
@@ -70,6 +72,8 @@ const TREE: PhaseTree = {
         {
           id: '0.2',
           title: 'Build the Budget Structure',
+          decision:
+            'Ask for a phased multi-year budget backed by real cost models — not a single-year, back-of-envelope number.',
           do: 'Structure funding as a phased multi-year program aligned to existing infrastructure refresh cycles, sized from migration cost estimates and ROI.',
           output: 'Multi-year budget commitment',
           steps: [
@@ -102,6 +106,8 @@ const TREE: PhaseTree = {
         {
           id: '0.3',
           title: 'Establish Governance Structure',
+          decision:
+            'Stand up real governance — Sponsor, SteerCo, QRPM and a RACI — before work starts, not after.',
           do: 'Stand up the roles (Sponsor, SteerCo, QRPM) and workstreams, the RACI, the decision cadence, and the cryptography policy / risk-appetite framing.',
           output: 'Governance structure',
           steps: [
@@ -128,6 +134,8 @@ const TREE: PhaseTree = {
         {
           id: '0.4',
           title: 'Draft the Program Charter',
+          decision:
+            'Get the charter and board mandate signed with a KPI pack attached, so the board can track progress — not just approve a headline.',
           do: 'Produce the one-page charter (purpose, scope, success criteria, cadence, escalation) and secure the board mandate with the KPI pack.',
           output: 'Approved program charter & board mandate',
           steps: [
@@ -160,6 +168,8 @@ const TREE: PhaseTree = {
         {
           id: '0.5',
           title: 'Conduct Initial Scoping Assessment',
+          decision:
+            'Scope fast and narrow — the top ~20 critical systems and the vendors that constrain your timeline — rather than wait for a complete inventory.',
           do: 'Run a rapid 2–4 week scoping of the top ~20 critical systems — their cryptography, data sensitivity and confidentiality horizon, and the 5–10 timeline-constraining vendors.',
           output: 'Initial scoping assessment',
           steps: [

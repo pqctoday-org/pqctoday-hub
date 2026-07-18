@@ -16,6 +16,8 @@ const TREE: PhaseTree = {
         {
           id: '7.1',
           title: 'Classify Vendor Portfolio by PQC Impact',
+          decision:
+            "Classify every vendor as Blocking, Enabling or Non-Critical — treating them all the same wastes effort on vendors that don't matter.",
           do: 'Categorize vendors as Strategic Blocking, Strategic Enabling or Non-Critical.',
           output: 'Vendor classification matrix',
           steps: [
@@ -43,6 +45,8 @@ const TREE: PhaseTree = {
         {
           id: '7.2',
           title: 'Execute Vendor Engagement',
+          decision:
+            "Formally engage and score strategic vendors with a real questionnaire — a verbal 'they're working on it' isn't a tracked commitment.",
           do: 'Send PQC readiness questionnaires to strategic vendors and track responses.',
           output: 'Vendor questionnaire responses',
           steps: [
@@ -76,6 +80,8 @@ const TREE: PhaseTree = {
         {
           id: '7.3',
           title: 'Insert PQC Requirements into Procurement',
+          decision:
+            "Put dated PQC commitments and remedies into the contract language itself — a vendor's roadmap slide isn't binding.",
           do: 'Add PQC clauses to RFP and contract templates with dated commitments and remedies.',
           output: 'Updated procurement templates',
           steps: [
@@ -90,6 +96,8 @@ const TREE: PhaseTree = {
         {
           id: '7.4',
           title: 'Manage Vendor-as-Blocker Scenarios',
+          decision:
+            "Deploy a bridging pattern or formally accept the residual risk when a vendor blocks you — don't just wait and hope they catch up.",
           do: 'When a critical vendor cannot deliver PQC in time, deploy bridging patterns (gateway, overlay, key-wrap), run champion-challenger, escalate contractually, or accept-and-document the residual risk.',
           output: 'Bridging pattern deployments',
           steps: [
@@ -111,6 +119,8 @@ const TREE: PhaseTree = {
         {
           id: '7.5',
           title: 'Establish Ongoing Vendor Governance',
+          decision:
+            "Run vendor governance as a recurring cadence — this phase never closes, so a one-time review isn't enough.",
           do: 'Run the recurring vendor-governance cadence — track roadmaps, verify GA commitments, update the vendor scorecard, and report to SteerCo.',
           output: 'Vendor governance cadence',
           steps: [
@@ -125,6 +135,8 @@ const TREE: PhaseTree = {
         {
           id: '7.6',
           title: 'Coordinate Counterparties You Cannot Contractually Compel',
+          decision:
+            "Coordinate dual-stack windows and deprecation timing with counterparties you can't compel — silently flipping a protocol breaks their integration.",
           do: 'For partners, customers and API consumers with no contractual leverage, run the coordination pattern — readiness discovery, dual-stack windows, deprecation protocol, interop test events, and API versioning.',
           output: 'Counterparty coordination plan',
           steps: [
@@ -152,6 +164,8 @@ const TREE: PhaseTree = {
         {
           id: '7.7',
           title: 'Cloud Shared Responsibility and the SaaS Class',
+          decision:
+            "Map exactly where your responsibility ends and the provider's begins — don't assume PQC migration is automatically their problem.",
           do: 'Define the provider/customer migration boundary and govern SaaS by sensitivity.',
           output: 'Cloud responsibility & SaaS governance',
           steps: [

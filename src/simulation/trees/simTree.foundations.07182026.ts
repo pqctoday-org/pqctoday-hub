@@ -16,6 +16,8 @@ const TREE: PhaseTree = {
         {
           id: 'F.1',
           title: 'Establish GRC & Assess Program Maturity',
+          decision:
+            'Run the seven-domain maturity self-assessment first — your overall score is only as strong as your weakest domain.',
           do: 'Stand up the risk-appetite statement and KRI cascade; run (or refine) your PQC assessment — program maturity is derived from your progress, overall = weakest domain.',
           output: 'GRC structure & maturity baseline',
           steps: [
@@ -43,6 +45,8 @@ const TREE: PhaseTree = {
         {
           id: 'F.2',
           title: 'Baseline Metrics & the Evidence Dossier',
+          decision:
+            'Baseline the five board KPIs and start the evidence dossier now — reconstructing history for an auditor later is much harder.',
           do: 'Set the board KPI pack (Coverage/Trust/Inventory/Vendors/Agility) and the operational KPIs, and start the audit/litigation evidence dossier.',
           output: 'KPI baseline & evidence dossier',
           steps: [
@@ -63,6 +67,8 @@ const TREE: PhaseTree = {
         {
           id: 'F.3',
           title: 'Build Crypto-Agility & the Team',
+          decision:
+            'Design for crypto-agility as the end state and staff the core roles now — retrofitting agility after the migration costs far more.',
           do: 'Adopt crypto-agility as the end-state architecture and staff the program with the framework core roles (≈1 FTE per 500 CBOM instances for the first two years, tapering to ≈1 per 1,000 once rollout stabilizes).',
           output: 'Crypto-agility roadmap & skills plan',
           steps: [
@@ -134,6 +140,8 @@ const TREE: PhaseTree = {
         {
           id: 'F.4',
           title: 'Maintain Regulatory & Standards Alignment',
+          decision:
+            'Keep your regulation map current as deadlines and standards shift — a map built once in year one goes stale fast.',
           do: 'Keep the phase-to-regulation map current across the 2026–2035 deadline squeeze and the standards bodies that bind you.',
           output: 'Regulatory & standards alignment map',
           steps: [
@@ -169,6 +177,8 @@ const TREE: PhaseTree = {
         {
           id: 'F.5',
           title: 'Run Crypto-Agility as BAU',
+          decision:
+            'Fold crypto-agility into standing operations — an annual swap drill and continuous drift monitoring — so the next algorithm change is routine, not a re-run of the whole migration.',
           do: 'Fold the crypto-agility OKRs into standing operations — an annual algorithm-swap drill, continuous drift monitoring, and the Agility KPI tracked alongside Coverage/Trust/Inventory/Vendors — so a new algorithm recommendation becomes a routine change, not a re-run of the whole migration.',
           output: 'Crypto-agility OKR evidence, tracked as BAU',
           steps: [
