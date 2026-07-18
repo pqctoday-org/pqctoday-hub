@@ -2385,24 +2385,22 @@ export function SimulationView() {
                     onOpenStep={openStep}
                     assessRec={nextMoveRec}
                     onTrapPicked={incrementTrapsThisRun}
-                    onWrongPick={
-                      // I1 pilot: a wrong pick on Inventory (p1) or Pilots (p5) costs the
-                      // player 2 quarters of rework — their clock slips toward the fixed Q-Day.
-                      sel === 'p1' || sel === 'p5'
-                        ? (label) => {
-                            // On Pilots (p5) a wrong call also rolls back a migrated estate link,
-                            // so readiness visibly drops on a specific edge (re-doable). p1 = clock only.
-                            const revertId =
-                              sel === 'p5' ? Object.keys(edgeDecisions)[0] : undefined
-                            const extra = revertId ? ` — rolled back link ${revertId}` : ''
-                            applyDecisionSetback(
-                              2,
-                              `Lost 2 quarters to rework — wrong call: ${label}${extra}`,
-                              revertId
-                            )
-                          }
-                        : undefined
-                    }
+                    guided={guided}
+                    onWrongPick={(label) => {
+                      // WP4.4 — uniform stakes: 1 quarter of rework everywhere, 2 on
+                      // Inventory (p1) / Pilots (p5), where the I1 pilot found the
+                      // sharpest real-world cost (re-discovery, re-piloting).
+                      const quarters = sel === 'p1' || sel === 'p5' ? 2 : 1
+                      // On Pilots (p5) a wrong call also rolls back a migrated estate link,
+                      // so readiness visibly drops on a specific edge (re-doable).
+                      const revertId = sel === 'p5' ? Object.keys(edgeDecisions)[0] : undefined
+                      const extra = revertId ? ` — rolled back link ${revertId}` : ''
+                      applyDecisionSetback(
+                        quarters,
+                        `Lost ${quarters} quarter${quarters > 1 ? 's' : ''} to rework — wrong call: ${label}${extra}`,
+                        revertId
+                      )
+                    }}
                   />
 
                   {/* C1 #3 + W2c — phase debrief: study what the run skipped. Opens each
