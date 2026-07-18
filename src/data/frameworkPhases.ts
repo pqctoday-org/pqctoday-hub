@@ -109,11 +109,34 @@ export interface PhaseGate {
 export interface PhaseCrosswalk {
   /** NIST CSF 2.0 subcategory codes (e.g. 'GV.OC-01'). */
   nistCsf: string[]
-  /** PQCC (Post-Quantum Cryptography Coalition) roadmap step. */
+  /**
+   * PQCC (Post-Quantum Cryptography Coalition) migration roadmap category.
+   * Web-verified 2026-07-18: the real roadmap (pqcc.org, May 2025) has
+   * exactly FOUR categories — Preparation, Baseline Understanding, Planning
+   * and Execution, Monitoring and Evaluation. Do not invent finer-grained
+   * step names; a sim phase maps to one of these four, honestly, even when
+   * several phases share a category.
+   */
   pqcc: string
-  /** ETSI TR 103 619 migration phase reference. */
+  /**
+   * ETSI TR 103 619 stage reference.
+   * Web-verified 2026-07-18: the TR ("Migration strategies and
+   * recommendations to Quantum Safe schemes", V1.1.1, 2020) has exactly
+   * THREE stages — (1) Inventory compilation, (2) Migration-plan
+   * preparation, (3) Migration execution. There is no "Phase 4/5" and no
+   * "Identification" or "Preparation (organisational readiness)" stage —
+   * that mislabeling shipped for months before this correction. Where a sim
+   * phase (e.g. p0, p7) has no honest single-stage home, say so explicitly
+   * rather than force-fitting a stage name.
+   */
   etsiTr103619: string
-  /** Dutch PQC Migration Handbook step reference. */
+  /**
+   * Dutch PQC Migration Handbook (TNO/CWI/AIVD) step reference.
+   * Web-verified 2026-07-18: the handbook has exactly THREE top-level steps
+   * — Diagnosis, Planning, Execution. Inventory and risk analysis are
+   * activities *inside* Diagnosis, not separate steps — there is no 5-step
+   * structure.
+   */
   dutchHandbook: string
 }
 
@@ -176,9 +199,10 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     surfaces: ['/assess', '/business', '/report'],
     crosswalk: {
       nistCsf: ['GV.OC-01', 'GV.RM-01', 'GV.RR-01'],
-      pqcc: 'Prepare — establish governance & executive sponsorship',
-      etsiTr103619: 'Phase 1 — Preparation (organisational readiness)',
-      dutchHandbook: 'Step 1 — Diagnosis (management mandate & scope)',
+      pqcc: 'Preparation (governance & executive sponsorship)',
+      etsiTr103619:
+        'Not a discrete TR stage — nearest is Stage 2, migration-plan preparation (an org mandate feeds the plan)',
+      dutchHandbook: 'Diagnosis (management mandate & scope)',
     },
   },
   p1: {
@@ -208,9 +232,9 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     surfaces: ['/assess', '/migrate', '/business', '/report'],
     crosswalk: {
       nistCsf: ['ID.AM-01', 'ID.AM-02', 'ID.AM-07'],
-      pqcc: 'Discover — build the cryptographic inventory',
-      etsiTr103619: 'Phase 2 — Identification (cryptographic inventory)',
-      dutchHandbook: 'Step 2 — Inventory (locate cryptography in the estate)',
+      pqcc: 'Baseline Understanding (build the cryptographic inventory)',
+      etsiTr103619: 'Stage 1 — Inventory compilation',
+      dutchHandbook: 'Diagnosis (cryptography inventory is compiled within this step)',
     },
   },
   p2: {
@@ -236,9 +260,9 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     surfaces: ['/business', '/migrate', '/report'],
     crosswalk: {
       nistCsf: ['ID.AM-08', 'ID.AM-02'],
-      pqcc: 'Discover — codify the inventory as a CBOM',
-      etsiTr103619: 'Phase 2 — Identification (structured inventory records)',
-      dutchHandbook: 'Step 2 — Inventory (machine-readable CBOM)',
+      pqcc: 'Baseline Understanding (codify the inventory as a CBOM)',
+      etsiTr103619: 'Stage 1 — Inventory compilation (structured, machine-readable output)',
+      dutchHandbook: 'Diagnosis (CBOM is the inventory step’s structured output)',
     },
   },
   p3: {
@@ -267,9 +291,9 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     surfaces: ['/assess', '/business', '/report'],
     crosswalk: {
       nistCsf: ['ID.RA-01', 'ID.RA-04', 'ID.RA-05', 'GV.RM-02'],
-      pqcc: 'Assess — prioritise by risk (HNDL / HNFL)',
-      etsiTr103619: 'Phase 3 — Risk assessment & prioritisation',
-      dutchHandbook: 'Step 3 — Risk analysis (prioritised migration backlog)',
+      pqcc: 'Planning and Execution (prioritise the backlog by risk — HNDL / HNFL)',
+      etsiTr103619: 'Stage 2 — Migration-plan preparation (risk assessment feeds the plan)',
+      dutchHandbook: 'Diagnosis (risk analysis closes this step, per the handbook’s own structure)',
     },
   },
   p4: {
@@ -296,9 +320,9 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     surfaces: ['/business', '/timeline', '/report'],
     crosswalk: {
       nistCsf: ['GV.RM-03', 'ID.IM-01', 'GV.RR-02'],
-      pqcc: 'Plan — multi-year migration roadmap & governance',
-      etsiTr103619: 'Phase 4 — Migration planning (roadmap & governance)',
-      dutchHandbook: 'Step 4 — Migration plan (roadmap, PMO, gates)',
+      pqcc: 'Planning and Execution (multi-year roadmap & governance)',
+      etsiTr103619: 'Stage 2 — Migration-plan preparation (roadmap & governance)',
+      dutchHandbook: 'Planning (roadmap, PMO, gates)',
     },
   },
   p5: {
@@ -333,9 +357,9 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     surfaces: ['/business', '/migrate', '/report'],
     crosswalk: {
       nistCsf: ['PR.PS-01', 'ID.IM-02', 'PR.PS-02'],
-      pqcc: 'Execute — pilots, waves & cutover',
-      etsiTr103619: 'Phase 5 — Migration execution',
-      dutchHandbook: 'Step 5 — Execution (pilots & phased migration)',
+      pqcc: 'Planning and Execution (pilots, waves & cutover)',
+      etsiTr103619: 'Stage 3 — Migration execution',
+      dutchHandbook: 'Execution (pilots & phased migration)',
     },
   },
   p6: {
@@ -370,9 +394,9 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     surfaces: ['/learn', '/business', '/migrate'],
     crosswalk: {
       nistCsf: ['PR.IR-01', 'PR.PS-02', 'PR.IR-04'],
-      pqcc: 'Execute — modernise infrastructure & validate performance',
-      etsiTr103619: 'Phase 5 — Migration execution (infrastructure)',
-      dutchHandbook: 'Step 5 — Execution (infrastructure readiness)',
+      pqcc: 'Planning and Execution (modernise infrastructure & validate performance)',
+      etsiTr103619: 'Stage 3 — Migration execution (infrastructure)',
+      dutchHandbook: 'Execution (infrastructure readiness)',
     },
   },
   p7: {
@@ -394,9 +418,11 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     surfaces: ['/business', '/compliance', '/report'],
     crosswalk: {
       nistCsf: ['GV.SC-01', 'GV.SC-04', 'GV.SC-06', 'ID.RA-10'],
-      pqcc: 'Govern — continuous supply-chain assurance',
-      etsiTr103619: 'Phase 1 — Preparation (supply-chain dependencies, ongoing)',
-      dutchHandbook: 'Cross-cutting — supply-chain & vendor management',
+      pqcc: 'Monitoring and Evaluation (continuous vendor & supply-chain governance)',
+      etsiTr103619:
+        'Not a discrete TR stage — dependency identification recurs across all three stages',
+      dutchHandbook:
+        'Cross-cutting — spans Planning and Execution (supply-chain & vendor management)',
     },
   },
   foundations: {
@@ -426,9 +452,9 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     surfaces: ['/assess', '/business', '/learn', '/compliance', '/report'],
     crosswalk: {
       nistCsf: ['GV.OC-03', 'PR.AT-01', 'PR.AT-02', 'ID.IM-03'],
-      pqcc: 'Cross-cutting — maturity, agility, skills & metrics',
-      etsiTr103619: 'Cross-cutting — crypto-agility & competence',
-      dutchHandbook: 'Cross-cutting — crypto-agility, KPIs & skills',
+      pqcc: 'Cross-cutting — maturity/agility/skills span every PQCC category from Preparation through Monitoring and Evaluation',
+      etsiTr103619: 'Cross-cutting — not a discrete TR stage',
+      dutchHandbook: 'Cross-cutting — not a discrete handbook step',
     },
   },
   'verify-close': {
@@ -459,9 +485,11 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     surfaces: ['/business', '/report'],
     crosswalk: {
       nistCsf: ['GV.OV-03', 'ID.IM-03', 'PR.PS-06'],
-      pqcc: 'Monitoring — verify, decommission classical material, sustain',
-      etsiTr103619: 'Stage 3 — Migration (verification & decommissioning)',
-      dutchHandbook: 'Execution — verify migration & decommission classical material',
+      pqcc: 'Monitoring and Evaluation (verify, decommission classical material, sustain)',
+      etsiTr103619:
+        'Stage 3 — Migration execution (verification & decommissioning close this stage)',
+      dutchHandbook:
+        'Execution (verify migration & decommission classical material — the handbook has no distinct closure step)',
     },
   },
 }

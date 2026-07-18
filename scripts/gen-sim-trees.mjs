@@ -213,7 +213,7 @@ const INDICATORS = {
     1: 'Awareness of PKI/HSM/network challenges; no concrete plans',
     2: 'HSMs inventoried with PQC status; PKI modernization plan drafted; initial middlebox testing underway',
     3: 'HSM upgrades in progress; PKI dual-stack operational; all production middleboxes tested; performance baselines established for Tier-1 systems',
-    4: 'Infrastructure fully PQC-capable across IT estate; capacity planning validated at production scale; PKI automated with shortened lifetimes',
+    4: 'Infrastructure fully PQC-capable across IT estate; capacity planning validated at production scale; PKI automated with shortened lifetimes; middlebox monitoring integrated into continuous discovery',
   },
   p7: {
     1: 'Ad-hoc inquiries to a few vendors; no structured tracking',
@@ -529,7 +529,7 @@ const FRAMEWORK = {
       id: '3.1',
       level: 1,
       title: 'Define Risk Scoring Model',
-      do: 'Establish the four-dimension model: HNDL, TNFL, Regulatory, Feasibility.',
+      do: 'Establish the four-dimension model: (1) HNDL exposure, (2) TNFL/trust-infrastructure criticality, (3) migration feasibility, (4) regulatory & compliance pressure.',
       output: 'Risk scoring model',
       steps: [
         L('pqc-risk-management', 'Learn: PQC Risk Management'),
@@ -541,7 +541,7 @@ const FRAMEWORK = {
         R('algorithms-protocol-matrix', 'Reference: PQC Protocol Matrix'),
         R(
           'timeline',
-          'Reference: regulatory deadline clock — calibrate Dimension 4 (within 2 years = Critical)'
+          'Reference: regulatory deadline clock — calibrate Dimension 4, Regulatory & Compliance Pressure (within 2 years = Critical)'
         ),
       ],
     },
@@ -867,6 +867,23 @@ const FRAMEWORK = {
       output: 'Capacity plan',
       steps: [R('algorithms-detailed', 'Reference: detailed algorithm size comparison')],
       deepDive: [L('os-pqc', 'Deep dive — Learn: Operating Systems & PQC')],
+      // NOTE 07182026: the framework's own p6 Level-4 maturity indicator
+      // ("Infrastructure fully PQC-capable...PKI automated with shortened
+      // lifetimes; middlebox monitoring integrated into continuous
+      // discovery") has NO corresponding framework activity id (verified
+      // against pqc-references/framework-2.1.json — Phase 6 defines only
+      // 6.1-6.5, all of which deliver L2/L3). A candidate 6.6 activity was
+      // drafted here to close the ladder/mission mismatch the 07182026
+      // review flagged, but frameworkFidelity.test.ts correctly rejected it
+      // as an invented, non-framework-sourced activity and it was reverted.
+      // P6 topping out at L3 in the shipped tree is therefore INTENTIONAL,
+      // matching the framework's own structure (same pattern as P3 capping
+      // at L2 — see maturityScale.test.ts). The mission CSV's L4 row is left
+      // in place (its text is framework-verbatim) as an aspirational/BAU
+      // state the framework describes but does not gate via a discrete
+      // activity; whether/how a player should be able to reach it in-sim is
+      // an open design question for a properly scoped follow-up, not a
+      // Wave-0 string fix.
     },
   ],
   p7: [
@@ -970,7 +987,7 @@ const FRAMEWORK = {
       id: 'F.3',
       level: 2,
       title: 'Build Crypto-Agility & the Team',
-      do: 'Adopt crypto-agility as the end-state architecture and staff the program with the framework core roles (≈1 FTE per 500 CBOM instances).',
+      do: 'Adopt crypto-agility as the end-state architecture and staff the program with the framework core roles (≈1 FTE per 500 CBOM instances for the first two years, tapering to ≈1 per 1,000 once rollout stabilizes).',
       output: 'Crypto-agility roadmap & skills plan',
       steps: [
         L('crypto-agility', 'Learn: Crypto-Agility as end-state'),
@@ -1124,7 +1141,7 @@ const PITFALLS = {
     },
     {
       title: 'Rely on the CMDB alone for asset discovery',
-      why: 'The CMDB is rarely complete; it systematically undercounts cloud resources, shadow IT, OT devices, and vendor-managed systems. Integrate the eleven asset-discovery sources in Activity 1.4 or the CMDB gap becomes a migration gap.',
+      why: 'The CMDB is rarely complete; it systematically undercounts cloud resources, shadow IT, OT devices, and vendor-managed systems. Cross-reference the CMDB, ITAM, cloud API, CT-log, BIA and certificate data sources from Activity 1.4–1.5 or the CMDB gap becomes a migration gap.',
     },
     {
       title: 'Treat discovery as one-time',
