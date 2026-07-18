@@ -7836,9 +7836,9 @@
       "url": "https://www.enisa.europa.eu/publications/sbom-adoption-state-of-play-2026",
       "status": "downloaded",
       "filename": "ENISA-SBOM-Adoption-2026.pdf",
-      "sizeBytes": 2885675,
+      "sizeBytes": 2897417,
       "contentType": "application/pdf",
-      "sha256": "63395c45013cdf1d0519bd32cf82e0cfe783a46c890ef35f6ce8709378704e27"
+      "sha256": "2e2130f0f7f433362f1b67b6b42377135a2980c4a17a6afa7fa54b113f3c9cdd"
     },
     {
       "refId": "EU-NIS-CG-Security-Measures-2026",
