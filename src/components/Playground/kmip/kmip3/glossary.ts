@@ -14,7 +14,11 @@ import {
   type GlossaryTerm,
   type TagGlossaryEntry,
 } from '@/components/Playground/learnkit/glossaryTypes'
-export type { TagGlossaryEntry, GlossaryTerm, TermCategory } from '@/components/Playground/learnkit/glossaryTypes'
+export type {
+  TagGlossaryEntry,
+  GlossaryTerm,
+  TermCategory,
+} from '@/components/Playground/learnkit/glossaryTypes'
 
 /** Keyed by the human tag name — the shape `tagName()` in `kmipMeta.ts`
  * returns and `opTemplates.ts`/`nodes.ts` use (e.g. `leaf('UniqueIdentifier', ...)`). */

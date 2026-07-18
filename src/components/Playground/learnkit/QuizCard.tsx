@@ -123,7 +123,11 @@ export function QuizCard({
     const nowAnswered = next.filter((p) => p !== null).length
     if (nowAnswered === questions.length) {
       const nowCorrect = next.filter((p, i) => p === questions[i].answer).length
-      logEvent('Playground', analyticsCategory ?? `${namespace} Quiz`, `${lessonId}:${nowCorrect}/${questions.length}`)
+      logEvent(
+        'Playground',
+        analyticsCategory ?? `${namespace} Quiz`,
+        `${lessonId}:${nowCorrect}/${questions.length}`
+      )
       if (nowCorrect === questions.length) {
         setDone(true)
         try {

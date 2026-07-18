@@ -41,7 +41,10 @@ import {
   type AttrDef,
 } from '@/wasm/softhsm'
 import { toHex } from '../shared'
-import type { LessonStepExpect, LinearLessonBase } from '@/components/Playground/learnkit/lessonTypes'
+import type {
+  LessonStepExpect,
+  LinearLessonBase,
+} from '@/components/Playground/learnkit/lessonTypes'
 
 const bytesEqual = (a: Uint8Array, b: Uint8Array): boolean =>
   a.length === b.length && a.every((v, i) => v === b[i])
@@ -154,7 +157,17 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
         label: 'Generate a non-extractable AES-256 key',
         run: (hsm) => {
           const M = requireModule(hsm)
-          const handle = hsm_generateAESKey(M, hsm.hSessionRef.current, 256, true, true, false, false, false, false)
+          const handle = hsm_generateAESKey(
+            M,
+            hsm.hSessionRef.current,
+            256,
+            true,
+            true,
+            false,
+            false,
+            false,
+            false
+          )
           return { detail: `Key handle ${handle} — CKA_EXTRACTABLE=false requested at generation.` }
         },
       },
@@ -207,7 +220,10 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
         run: (hsm) => {
           const M = requireModule(hsm)
           const mechs = hsm_getAllMechanisms(M, hsm.slotRef.current)
-          const sample = mechs.slice(0, 5).map((m) => m.name).join(', ')
+          const sample = mechs
+            .slice(0, 5)
+            .map((m) => m.name)
+            .join(', ')
           return { detail: `${mechs.length} mechanisms supported — sample: ${sample}, …` }
         },
       },
@@ -262,7 +278,13 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
           const M = requireModule(hsm)
           const handle = Number((results[0]?.detail.match(/handle (\d+)/) ?? [])[1])
           const plaintext = new TextEncoder().encode('hello post-quantum world')
-          const { ciphertext, iv } = hsm_aesEncrypt(M, hsm.hSessionRef.current, handle, plaintext, 'gcm')
+          const { ciphertext, iv } = hsm_aesEncrypt(
+            M,
+            hsm.hSessionRef.current,
+            handle,
+            plaintext,
+            'gcm'
+          )
           return {
             detail: `${ciphertext.length}-byte ciphertext, ${iv.length}-byte IV, handle=${handle}, ct=${toHex(ciphertext).slice(0, 24)}…`,
           }
@@ -277,8 +299,21 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
           // A fresh encrypt (rather than reusing step 2's ciphertext/IV, which
           // this UI only surfaces as a truncated hex snippet) for a full round trip.
           const plaintext = new TextEncoder().encode('hello post-quantum world')
-          const { ciphertext, iv } = hsm_aesEncrypt(M, hsm.hSessionRef.current, handle, plaintext, 'gcm')
-          const decrypted = hsm_aesDecrypt(M, hsm.hSessionRef.current, handle, ciphertext, iv, 'gcm')
+          const { ciphertext, iv } = hsm_aesEncrypt(
+            M,
+            hsm.hSessionRef.current,
+            handle,
+            plaintext,
+            'gcm'
+          )
+          const decrypted = hsm_aesDecrypt(
+            M,
+            hsm.hSessionRef.current,
+            handle,
+            ciphertext,
+            iv,
+            'gcm'
+          )
           const ok = new TextDecoder().decode(decrypted) === 'hello post-quantum world'
           if (!ok) throw new Error('Round trip produced the wrong plaintext.')
           return { detail: `Decrypted correctly: "${new TextDecoder().decode(decrypted)}"` }
@@ -292,10 +327,18 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
           const M = requireModule(hsm)
           const handle = Number((results[0]?.detail.match(/handle (\d+)/) ?? [])[1])
           const plaintext = new TextEncoder().encode('hello post-quantum world')
-          const { ciphertext, iv } = hsm_aesEncrypt(M, hsm.hSessionRef.current, handle, plaintext, 'gcm')
+          const { ciphertext, iv } = hsm_aesEncrypt(
+            M,
+            hsm.hSessionRef.current,
+            handle,
+            plaintext,
+            'gcm'
+          )
           ciphertext[0] ^= 0xff // flip the first byte
           hsm_aesDecrypt(M, hsm.hSessionRef.current, handle, ciphertext, iv, 'gcm')
-          return { detail: 'Unexpectedly decrypted a tampered ciphertext — this should not happen.' }
+          return {
+            detail: 'Unexpectedly decrypted a tampered ciphertext — this should not happen.',
+          }
         },
       },
     ],
@@ -313,7 +356,8 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
     tag: 'Core',
     tone: 'ok',
     title: 'Digests & randomness',
-    blurb: 'Two stateless building blocks used everywhere else in this curriculum: hashing and true randomness.',
+    blurb:
+      'Two stateless building blocks used everywhere else in this curriculum: hashing and true randomness.',
     setup:
       'C_Digest computes a hash with no key involved. C_GenerateRandom asks the token for cryptographically strong random bytes — the same source the token uses internally to generate keys and IVs.',
     steps: [
@@ -334,8 +378,11 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
           const M = requireModule(hsm)
           const r1 = hsm_generateRandom(M, hsm.hSessionRef.current, 32)
           const r2 = hsm_generateRandom(M, hsm.hSessionRef.current, 32)
-          if (bytesEqual(r1, r2)) throw new Error('Two consecutive draws were identical — that would be a real problem.')
-          return { detail: `Two independent 32-byte draws, confirmed different: ${toHex(r1).slice(0, 16)}… vs ${toHex(r2).slice(0, 16)}…` }
+          if (bytesEqual(r1, r2))
+            throw new Error('Two consecutive draws were identical — that would be a real problem.')
+          return {
+            detail: `Two independent 32-byte draws, confirmed different: ${toHex(r1).slice(0, 16)}… vs ${toHex(r2).slice(0, 16)}…`,
+          }
         },
       },
     ],
@@ -353,7 +400,8 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
     tag: 'Core',
     tone: 'ok',
     title: 'Asymmetric sign & verify',
-    blurb: 'The private key signs, the public key verifies — and verification is a real cryptographic check, not a formality.',
+    blurb:
+      'The private key signs, the public key verifies — and verification is a real cryptographic check, not a formality.',
     setup:
       'C_Sign never reveals the private key; C_Verify never needs it. This walkthrough signs a real message with RSA, verifies it, then corrupts one byte of the signature and watches verification correctly say no.',
     steps: [
@@ -372,7 +420,12 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const privHandle = Number((results[0]?.detail.match(/priv=(\d+)/) ?? [])[1])
-          const sig = hsm_rsaSign(M, hsm.hSessionRef.current, privHandle, 'hello post-quantum world')
+          const sig = hsm_rsaSign(
+            M,
+            hsm.hSessionRef.current,
+            privHandle,
+            'hello post-quantum world'
+          )
           return { detail: `${sig.length}-byte RSA-2048 signature: ${toHex(sig).slice(0, 32)}…` }
         },
       },
@@ -383,9 +436,21 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
           const M = requireModule(hsm)
           const pubHandle = Number((results[0]?.detail.match(/pub=(\d+)/) ?? [])[1])
           const privHandle = Number((results[0]?.detail.match(/priv=(\d+)/) ?? [])[1])
-          const sig = hsm_rsaSign(M, hsm.hSessionRef.current, privHandle, 'hello post-quantum world')
-          const ok = hsm_rsaVerify(M, hsm.hSessionRef.current, pubHandle, 'hello post-quantum world', sig)
-          if (!ok) throw new Error('A genuine signature failed to verify — that would be a real problem.')
+          const sig = hsm_rsaSign(
+            M,
+            hsm.hSessionRef.current,
+            privHandle,
+            'hello post-quantum world'
+          )
+          const ok = hsm_rsaVerify(
+            M,
+            hsm.hSessionRef.current,
+            pubHandle,
+            'hello post-quantum world',
+            sig
+          )
+          if (!ok)
+            throw new Error('A genuine signature failed to verify — that would be a real problem.')
           return { detail: 'Verified: Valid.' }
         },
       },
@@ -396,10 +461,24 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
           const M = requireModule(hsm)
           const pubHandle = Number((results[0]?.detail.match(/pub=(\d+)/) ?? [])[1])
           const privHandle = Number((results[0]?.detail.match(/priv=(\d+)/) ?? [])[1])
-          const sig = hsm_rsaSign(M, hsm.hSessionRef.current, privHandle, 'hello post-quantum world')
+          const sig = hsm_rsaSign(
+            M,
+            hsm.hSessionRef.current,
+            privHandle,
+            'hello post-quantum world'
+          )
           sig[0] ^= 0xff
-          const ok = hsm_rsaVerify(M, hsm.hSessionRef.current, pubHandle, 'hello post-quantum world', sig)
-          if (ok) throw new Error('A corrupted signature verified as valid — that would be a real problem.')
+          const ok = hsm_rsaVerify(
+            M,
+            hsm.hSessionRef.current,
+            pubHandle,
+            'hello post-quantum world',
+            sig
+          )
+          if (ok)
+            throw new Error(
+              'A corrupted signature verified as valid — that would be a real problem.'
+            )
           return { detail: 'Verified: Invalid — correctly rejected the corrupted signature.' }
         },
       },
@@ -462,7 +541,12 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
           const M = requireModule(hsm)
           const wrapHandle = Number((results[0]?.detail.match(/wrap=(\d+)/) ?? [])[1])
           const extractableHandle = hsm_generateAESKey(M, hsm.hSessionRef.current, 256) // extractable=true default
-          const wrapped = hsm_aesWrapKeyKwp(M, hsm.hSessionRef.current, wrapHandle, extractableHandle)
+          const wrapped = hsm_aesWrapKeyKwp(
+            M,
+            hsm.hSessionRef.current,
+            wrapHandle,
+            extractableHandle
+          )
           const template: AttrDef[] = [
             { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
             { type: CKA_KEY_TYPE, ulongVal: CKK_AES },
@@ -496,7 +580,7 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
     blurb:
       "ECDH lets two parties who've never met agree on a shared secret over a public channel. HKDF then turns that raw shared secret into a well-formed key.",
     setup:
-      "Diffie-Hellman-family agreement (C_DeriveKey with an ECDH mechanism) is a fundamentally different shape from a KEM: both sides run the SAME operation and land on the SAME secret, rather than one side encapsulating and the other decapsulating.",
+      'Diffie-Hellman-family agreement (C_DeriveKey with an ECDH mechanism) is a fundamentally different shape from a KEM: both sides run the SAME operation and land on the SAME secret, rather than one side encapsulating and the other decapsulating.',
     steps: [
       {
         op: 'C_GenerateKeyPair (P-256) ×2',
@@ -547,11 +631,18 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
       },
       {
         op: 'C_DeriveKey (HKDF)',
-        label: "Run the shared secret through HKDF to get a well-formed key",
+        label: 'Run the shared secret through HKDF to get a well-formed key',
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const secretHandle = Number((results[1]?.detail.match(/aliceSecret=(\d+)/) ?? [])[1])
-          const derived = hsm_hkdf(M, hsm.hSessionRef.current, secretHandle, CKM_SHA256_HMAC, true, true)
+          const derived = hsm_hkdf(
+            M,
+            hsm.hSessionRef.current,
+            secretHandle,
+            CKM_SHA256_HMAC,
+            true,
+            true
+          )
           return { detail: `HKDF output: ${derived.length} bytes — ready to use as an AES key.` }
         },
       },
@@ -559,7 +650,7 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
     notes: [
       'C_DeriveKey never exposes the raw shared secret to the caller by default — both derivations above produced key HANDLES, not bytes, exactly like C_GenerateKey does.',
       "Alice's and Bob's derivations used each other's PUBLIC point plus their OWN private key — that asymmetry, converging on the same secret, is the entire mathematical point of Diffie-Hellman.",
-      'The ECDH-derived secret needed its own CKA_DERIVE=true to be usable as HKDF\'s input — chaining one derive into another is itself a capability that must be explicitly granted, not assumed.',
+      "The ECDH-derived secret needed its own CKA_DERIVE=true to be usable as HKDF's input — chaining one derive into another is itself a capability that must be explicitly granted, not assumed.",
     ],
     whyItMatters:
       'This is the classical baseline the next track modernizes: ECDH → ML-KEM. Understanding why agreement and encapsulation are different shapes — not just different algorithms — is the key insight for that migration.',

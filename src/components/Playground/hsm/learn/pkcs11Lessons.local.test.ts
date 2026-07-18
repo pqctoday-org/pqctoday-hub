@@ -21,11 +21,7 @@ import {
   hsm_openUserSession,
   type SoftHSMModule,
 } from '@/wasm/softhsm'
-import {
-  FOUNDATIONS_LESSONS,
-  type Pkcs11LessonStep,
-  type Pkcs11StepResult,
-} from './pkcs11Lessons'
+import { FOUNDATIONS_LESSONS, type Pkcs11LessonStep, type Pkcs11StepResult } from './pkcs11Lessons'
 import { V32_LESSONS } from './pkcs11LessonsV32'
 import { QUIZZES } from './pkcs11Quiz'
 import { PKCS11_GLOSSARY_DATA } from './pkcs11Glossary'

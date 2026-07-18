@@ -59,10 +59,16 @@ const requireModule = (hsm: HsmContextValue) => {
 /** One comparison row, values read straight from the shared ALGO_FACTS table
  * (FIPS 203/204/205 published sizes) — the single source of truth both this
  * playground and the KMIP playground's own compare tables draw from. */
-const sizeRow = (label: string, field: keyof AlgoFacts, algoA: string, algoB: string): CompareRow => {
+const sizeRow = (
+  label: string,
+  field: keyof AlgoFacts,
+  algoA: string,
+  algoB: string
+): CompareRow => {
   const a = ALGO_FACTS[algoA]?.[field] as number | undefined
   const b = ALGO_FACTS[algoB]?.[field] as number | undefined
-  const factor = typeof a === 'number' && typeof b === 'number' && a > 0 ? ` (${(b! / a).toFixed(1)}×)` : ''
+  const factor =
+    typeof a === 'number' && typeof b === 'number' && a > 0 ? ` (${(b! / a).toFixed(1)}×)` : ''
   return { label, a: fmtBytes(a), b: `${fmtBytes(b)}${factor}`, same: a === b }
 }
 
@@ -78,7 +84,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
     blurb:
       'PKCS#11 v3.2 adds 12 new functions and a self-describing Profiles mechanism — a token can now tell you what it conforms to without vendor documentation.',
     setup:
-      'The Baseline Provider profile (Profiles v3.2 §3) is discoverable as a real object on the token: CKO_PROFILE with a CKA_PROFILE_ID. This walkthrough finds it, then checks what v3.2\'s new session validation-flags call honestly reports for this build.',
+      "The Baseline Provider profile (Profiles v3.2 §3) is discoverable as a real object on the token: CKO_PROFILE with a CKA_PROFILE_ID. This walkthrough finds it, then checks what v3.2's new session validation-flags call honestly reports for this build.",
     steps: [
       {
         op: 'C_Initialize / C_InitToken / C_OpenSession',
@@ -105,7 +111,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
       },
       {
         op: 'C_GetSessionValidationFlags',
-        label: "Ask what FIPS/validation state this session reports",
+        label: 'Ask what FIPS/validation state this session reports',
         run: (hsm) => {
           const M = requireModule(hsm)
           const flags = hsm_getSessionValidationFlags(M, hsm.hSessionRef.current)
@@ -129,7 +135,8 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
     tag: 'Classical → PQC',
     tone: 'ok',
     title: 'Signing goes lattice',
-    blurb: 'RSA-3072 and ML-DSA-65 both sign and verify. Only the sizes tell you which one just quietly stopped being safe against a quantum adversary.',
+    blurb:
+      'RSA-3072 and ML-DSA-65 both sign and verify. Only the sizes tell you which one just quietly stopped being safe against a quantum adversary.',
     setup:
       'ML-DSA (FIPS 204) is a lattice-based signature scheme — different mathematics, different (larger) signatures, but the same C_Sign/C_Verify call shape as RSA.',
     steps: [
@@ -139,7 +146,12 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
         run: (hsm) => {
           const M = requireModule(hsm)
           const { privHandle } = hsm_generateRSAKeyPair(M, hsm.hSessionRef.current, 3072)
-          const sig = hsm_rsaSign(M, hsm.hSessionRef.current, privHandle, 'hello post-quantum world')
+          const sig = hsm_rsaSign(
+            M,
+            hsm.hSessionRef.current,
+            privHandle,
+            'hello post-quantum world'
+          )
           return { detail: `RSA-3072 signature: ${sig.length} bytes.` }
         },
       },
@@ -200,17 +212,26 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
         label: 'Generate an ML-KEM-768 key pair',
         run: (hsm) => {
           const M = requireModule(hsm)
-          const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(M, hsm.hSessionRef.current, 768)
+          const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(
+            M,
+            hsm.hSessionRef.current,
+            768
+          )
           return { detail: `pub=${pubHandle} priv=${privHandle}` }
         },
       },
       {
         op: 'C_EncapsulateKey',
-        label: "Encapsulate against the PUBLIC key — get a ciphertext AND a secret handle",
+        label: 'Encapsulate against the PUBLIC key — get a ciphertext AND a secret handle',
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const pubHandle = Number((results[0]?.detail.match(/pub=(\d+)/) ?? [])[1])
-          const { ciphertextBytes, secretHandle } = hsm_encapsulate(M, hsm.hSessionRef.current, pubHandle, 768)
+          const { ciphertextBytes, secretHandle } = hsm_encapsulate(
+            M,
+            hsm.hSessionRef.current,
+            pubHandle,
+            768
+          )
           // Extracted here only so THIS LESSON can prove both sides land on the
           // identical secret — production code has no reason to ever do this.
           const secretBytes = hsm_extractKeyValue(M, hsm.hSessionRef.current, secretHandle)
@@ -230,12 +251,22 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
           const secret1 = (d1.match(/secret=([0-9a-f]+)/) ?? [])[1]
           if (!ctHex || !secret1) throw new Error('No ciphertext captured from the previous step.')
           const ciphertext = new Uint8Array(ctHex.match(/.{2}/g)!.map((b) => parseInt(b, 16)))
-          const secretHandle2 = hsm_decapsulate(M, hsm.hSessionRef.current, privHandle, ciphertext, 768)
+          const secretHandle2 = hsm_decapsulate(
+            M,
+            hsm.hSessionRef.current,
+            privHandle,
+            ciphertext,
+            768
+          )
           const secret2 = toHex(hsm_extractKeyValue(M, hsm.hSessionRef.current, secretHandle2))
           if (secret2 !== secret1) {
-            throw new Error(`Secrets differ (${secret1} vs ${secret2}) — decapsulation produced the WRONG secret.`)
+            throw new Error(
+              `Secrets differ (${secret1} vs ${secret2}) — decapsulation produced the WRONG secret.`
+            )
           }
-          return { detail: `Decapsulated secret handle ${secretHandle2} — matches the encapsulated secret exactly, byte for byte.` }
+          return {
+            detail: `Decapsulated secret handle ${secretHandle2} — matches the encapsulated secret exactly, byte for byte.`,
+          }
         },
       },
     ],
@@ -279,7 +310,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
     blurb:
       'SLH-DSA has no classical predecessor to compare against — its whole point is resting on nothing but hash-function security, the most conservative assumption available.',
     setup:
-      "SLH-DSA (FIPS 205) trades tiny keys for large signatures — the opposite trade-off from ML-DSA. This walkthrough signs, verifies, then corrupts the signature to confirm the same honest-refusal shape as every other signature scheme in this curriculum.",
+      'SLH-DSA (FIPS 205) trades tiny keys for large signatures — the opposite trade-off from ML-DSA. This walkthrough signs, verifies, then corrupts the signature to confirm the same honest-refusal shape as every other signature scheme in this curriculum.',
     steps: [
       {
         op: 'C_GenerateKeyPair (SLH-DSA-SHA2-128s)',
@@ -296,8 +327,15 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const privHandle = Number((results[0]?.detail.match(/priv=(\d+)/) ?? [])[1])
-          const sig = hsm_slhdsaSign(M, hsm.hSessionRef.current, privHandle, 'hello post-quantum world')
-          return { detail: `${sig.length}-byte signature — tiny 32-byte public key, large signature: the hash-based trade-off.` }
+          const sig = hsm_slhdsaSign(
+            M,
+            hsm.hSessionRef.current,
+            privHandle,
+            'hello post-quantum world'
+          )
+          return {
+            detail: `${sig.length}-byte signature — tiny 32-byte public key, large signature: the hash-based trade-off.`,
+          }
         },
       },
       {
@@ -307,12 +345,32 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
           const M = requireModule(hsm)
           const pubHandle = Number((results[0]?.detail.match(/pub=(\d+)/) ?? [])[1])
           const privHandle = Number((results[0]?.detail.match(/priv=(\d+)/) ?? [])[1])
-          const sig = hsm_slhdsaSign(M, hsm.hSessionRef.current, privHandle, 'hello post-quantum world')
-          const ok = hsm_slhdsaVerify(M, hsm.hSessionRef.current, pubHandle, 'hello post-quantum world', sig)
+          const sig = hsm_slhdsaSign(
+            M,
+            hsm.hSessionRef.current,
+            privHandle,
+            'hello post-quantum world'
+          )
+          const ok = hsm_slhdsaVerify(
+            M,
+            hsm.hSessionRef.current,
+            pubHandle,
+            'hello post-quantum world',
+            sig
+          )
           if (!ok) throw new Error('A genuine signature failed to verify.')
           sig[0] ^= 0xff
-          const okCorrupted = hsm_slhdsaVerify(M, hsm.hSessionRef.current, pubHandle, 'hello post-quantum world', sig)
-          if (okCorrupted) throw new Error('A corrupted signature verified as valid — that would be a real problem.')
+          const okCorrupted = hsm_slhdsaVerify(
+            M,
+            hsm.hSessionRef.current,
+            pubHandle,
+            'hello post-quantum world',
+            sig
+          )
+          if (okCorrupted)
+            throw new Error(
+              'A corrupted signature verified as valid — that would be a real problem.'
+            )
           return { detail: 'Genuine signature: Valid. Corrupted signature: correctly rejected.' }
         },
       },
@@ -351,11 +409,19 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const privHandle = Number((results[0]?.detail.match(/priv=(\d+)/) ?? [])[1])
-          const s1 = hsm_sign(M, hsm.hSessionRef.current, privHandle, 'hello post-quantum world', { hedging: 'preferred' })
-          const s2 = hsm_sign(M, hsm.hSessionRef.current, privHandle, 'hello post-quantum world', { hedging: 'preferred' })
+          const s1 = hsm_sign(M, hsm.hSessionRef.current, privHandle, 'hello post-quantum world', {
+            hedging: 'preferred',
+          })
+          const s2 = hsm_sign(M, hsm.hSessionRef.current, privHandle, 'hello post-quantum world', {
+            hedging: 'preferred',
+          })
           const identical = toHex(s1) === toHex(s2)
-          if (identical) throw new Error('Two hedged signatures were byte-identical — that would be unexpected.')
-          return { detail: 'Two hedged signatures of the SAME message: different bytes each time, as expected.' }
+          if (identical)
+            throw new Error('Two hedged signatures were byte-identical — that would be unexpected.')
+          return {
+            detail:
+              'Two hedged signatures of the SAME message: different bytes each time, as expected.',
+          }
         },
       },
       {
@@ -364,11 +430,19 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const privHandle = Number((results[0]?.detail.match(/priv=(\d+)/) ?? [])[1])
-          const s1 = hsm_sign(M, hsm.hSessionRef.current, privHandle, 'hello post-quantum world', { hedging: 'deterministic' })
-          const s2 = hsm_sign(M, hsm.hSessionRef.current, privHandle, 'hello post-quantum world', { hedging: 'deterministic' })
+          const s1 = hsm_sign(M, hsm.hSessionRef.current, privHandle, 'hello post-quantum world', {
+            hedging: 'deterministic',
+          })
+          const s2 = hsm_sign(M, hsm.hSessionRef.current, privHandle, 'hello post-quantum world', {
+            hedging: 'deterministic',
+          })
           const identical = toHex(s1) === toHex(s2)
-          if (!identical) throw new Error('Two deterministic signatures differed — that would be a real problem.')
-          return { detail: 'Two deterministic signatures of the SAME message: byte-identical, as expected.' }
+          if (!identical)
+            throw new Error('Two deterministic signatures differed — that would be a real problem.')
+          return {
+            detail:
+              'Two deterministic signatures of the SAME message: byte-identical, as expected.',
+          }
         },
       },
     ],
@@ -408,8 +482,16 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
           const M = requireModule(hsm)
           const wrapHandle = Number((results[0]?.detail.match(/wrap=(\d+)/) ?? [])[1])
           const targetHandle = Number((results[0]?.detail.match(/target=(\d+)/) ?? [])[1])
-          const { wrapped, iv } = hsm_aesGcmWrapKey(M, hsm.hSessionRef.current, wrapHandle, targetHandle, new Uint8Array(0))
-          return { detail: `wrapped=${wrapped.length} bytes iv=${toHex(iv)} wrappedHex=${toHex(wrapped)}` }
+          const { wrapped, iv } = hsm_aesGcmWrapKey(
+            M,
+            hsm.hSessionRef.current,
+            wrapHandle,
+            targetHandle,
+            new Uint8Array(0)
+          )
+          return {
+            detail: `wrapped=${wrapped.length} bytes iv=${toHex(iv)} wrappedHex=${toHex(wrapped)}`,
+          }
         },
       },
       {
@@ -421,7 +503,8 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
           const d = results[1]?.detail ?? ''
           const ivHex = (d.match(/iv=([0-9a-f]+)/) ?? [])[1]
           const wrappedHex = (d.match(/wrappedHex=([0-9a-f]+)/) ?? [])[1]
-          if (!ivHex || !wrappedHex) throw new Error('No wrapped blob captured from the previous step.')
+          if (!ivHex || !wrappedHex)
+            throw new Error('No wrapped blob captured from the previous step.')
           const iv = new Uint8Array(ivHex.match(/.{2}/g)!.map((b) => parseInt(b, 16)))
           const wrapped = new Uint8Array(wrappedHex.match(/.{2}/g)!.map((b) => parseInt(b, 16)))
           const template: AttrDef[] = [
@@ -433,8 +516,17 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
             { type: CKA_EXTRACTABLE, boolVal: true },
             { type: CKA_VALUE_LEN, ulongVal: 32 },
           ]
-          const unwrapped = hsm_aesGcmUnwrapKey(M, hsm.hSessionRef.current, wrapHandle, wrapped, iv, template)
-          return { detail: `Unwrapped to a fresh handle ${unwrapped} — a complete authenticated round trip.` }
+          const unwrapped = hsm_aesGcmUnwrapKey(
+            M,
+            hsm.hSessionRef.current,
+            wrapHandle,
+            wrapped,
+            iv,
+            template
+          )
+          return {
+            detail: `Unwrapped to a fresh handle ${unwrapped} — a complete authenticated round trip.`,
+          }
         },
       },
       {
@@ -479,7 +571,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
     blurb:
       'CKA_ALLOWED_MECHANISMS pins a key to an explicit allow-list at creation time — the token enforces it on every later call, independent of what it otherwise supports.',
     setup:
-      "This is per-KEY policy, not per-token: two identical AES keys can be pinned to different mechanism allow-lists, and the token will happily allow one operation on one key while refusing the identical operation on the other.",
+      'This is per-KEY policy, not per-token: two identical AES keys can be pinned to different mechanism allow-lists, and the token will happily allow one operation on one key while refusing the identical operation on the other.',
     steps: [
       {
         op: 'C_GenerateKey (CKA_ALLOWED_MECHANISMS=[CKM_AES_GCM])',
@@ -487,7 +579,9 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
         run: (hsm) => {
           const M = requireModule(hsm)
           const handle = hsm_generateAESKeyPinnedTo(M, hsm.hSessionRef.current, 256, CKM_AES_GCM)
-          return { detail: `handle=${handle} — CKA_ALLOWED_MECHANISMS=[CKM_AES_GCM] (0x${CKM_AES_GCM.toString(16)})` }
+          return {
+            detail: `handle=${handle} — CKA_ALLOWED_MECHANISMS=[CKM_AES_GCM] (0x${CKM_AES_GCM.toString(16)})`,
+          }
         },
       },
       {
@@ -497,7 +591,13 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
           const M = requireModule(hsm)
           const handle = Number((results[0]?.detail.match(/handle=(\d+)/) ?? [])[1])
           const plaintext = new TextEncoder().encode('hello post-quantum world')
-          const { ciphertext } = hsm_aesEncrypt(M, hsm.hSessionRef.current, handle, plaintext, 'gcm')
+          const { ciphertext } = hsm_aesEncrypt(
+            M,
+            hsm.hSessionRef.current,
+            handle,
+            plaintext,
+            'gcm'
+          )
           return { detail: `Encrypted successfully with CKM_AES_GCM: ${ciphertext.length} bytes.` }
         },
       },
@@ -515,7 +615,9 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
           try {
             const rv = M._C_EncryptInit(hsm.hSessionRef.current, mech, handle) >>> 0
             if (rv !== 0) {
-              throw new Error(`C_EncryptInit(CKM_AES_ECB) → refused (0x${rv.toString(16)}) — this key is pinned to CKM_AES_GCM only.`)
+              throw new Error(
+                `C_EncryptInit(CKM_AES_ECB) → refused (0x${rv.toString(16)}) — this key is pinned to CKM_AES_GCM only.`
+              )
             }
             return { detail: 'Unexpectedly succeeded — this should not happen.' }
           } finally {
@@ -533,7 +635,8 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
     tryRef: ['mechanisms'],
     crossPlaygroundLink: {
       to: '/playground/cacp',
-      label: 'See this same allowed-mechanisms enforcement demoed in the KMIP/CACP playground → Policy tab',
+      label:
+        'See this same allowed-mechanisms enforcement demoed in the KMIP/CACP playground → Policy tab',
     },
   },
   {
@@ -568,26 +671,38 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
           const len = M.getValue(lenTpl.ptr + 8, 'i32')
           freeTemplate(M, lenTpl, 1)
           const valPtr = M._malloc(len)
-          const valTpl = buildTemplate(M, [{ type: CKA_ALLOWED_MECHANISMS, bytesPtr: valPtr, bytesLen: len }])
+          const valTpl = buildTemplate(M, [
+            { type: CKA_ALLOWED_MECHANISMS, bytesPtr: valPtr, bytesLen: len },
+          ])
           const rv = M._C_GetAttributeValue(hSession, handle, valTpl.ptr, 1) >>> 0
           freeTemplate(M, valTpl, 1)
-          if (rv !== 0) throw new Error(`C_GetAttributeValue(CKA_ALLOWED_MECHANISMS) failed: 0x${rv.toString(16)}`)
+          if (rv !== 0)
+            throw new Error(
+              `C_GetAttributeValue(CKA_ALLOWED_MECHANISMS) failed: 0x${rv.toString(16)}`
+            )
           const count = len / 4
           const mechs: number[] = []
           for (let i = 0; i < count; i++) mechs.push(M.getValue(valPtr + i * 4, 'i32'))
           M._free(valPtr)
           const match = mechs.length === 1 && mechs[0] === CKM_AES_GCM
-          if (!match) throw new Error(`Read back ${mechs.length} mechanism(s), expected exactly [CKM_AES_GCM].`)
-          return { detail: `Read back ${count} mechanism(s): [0x${mechs[0].toString(16)}] — exactly what was set at creation. Real round trip, not a cached value.` }
+          if (!match)
+            throw new Error(
+              `Read back ${mechs.length} mechanism(s), expected exactly [CKM_AES_GCM].`
+            )
+          return {
+            detail: `Read back ${count} mechanism(s): [0x${mechs[0].toString(16)}] — exactly what was set at creation. Real round trip, not a cached value.`,
+          }
         },
       },
       {
         op: 'C_GetSessionValidationFlags',
-        label: 'Also check this session\'s validation state (v3.2 §5.6.9)',
+        label: "Also check this session's validation state (v3.2 §5.6.9)",
         run: (hsm) => {
           const M = requireModule(hsm)
           const flags = hsm_getSessionValidationFlags(M, hsm.hSessionRef.current)
-          return { detail: `flags=0x${flags.toString(16)} — same honest-empty answer as lesson B1, confirmed again from a fresh key context.` }
+          return {
+            detail: `flags=0x${flags.toString(16)} — same honest-empty answer as lesson B1, confirmed again from a fresh key context.`,
+          }
         },
       },
     ],
@@ -616,7 +731,9 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
         run: (hsm) => {
           const M = requireModule(hsm)
           const all = hsm_findAllObjects(M, hsm.hSessionRef.current, [])
-          return { detail: `${all.length} object(s) found on the token from earlier lessons in this session.` }
+          return {
+            detail: `${all.length} object(s) found on the token from earlier lessons in this session.`,
+          }
         },
       },
       {
@@ -626,7 +743,9 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
           const M = requireModule(hsm)
           const { pubHandle, privHandle } = hsm_generateRSAKeyPair(M, hsm.hSessionRef.current, 2048)
           const sig = hsm_rsaSign(M, hsm.hSessionRef.current, privHandle, 'firmware-release-v1')
-          return { detail: `legacyPub=${pubHandle} legacyPriv=${privHandle} — signed a real release artifact, ${sig.length}-byte signature.` }
+          return {
+            detail: `legacyPub=${pubHandle} legacyPriv=${privHandle} — signed a real release artifact, ${sig.length}-byte signature.`,
+          }
         },
       },
       {
@@ -636,7 +755,9 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
           const M = requireModule(hsm)
           const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hsm.hSessionRef.current, 65)
           const sig = hsm_sign(M, hsm.hSessionRef.current, privHandle, 'firmware-release-v1')
-          return { detail: `successorPub=${pubHandle} successorPriv=${privHandle} — same artifact, ${sig.length}-byte ML-DSA signature. Both keys valid right now.` }
+          return {
+            detail: `successorPub=${pubHandle} successorPriv=${privHandle} — same artifact, ${sig.length}-byte ML-DSA signature. Both keys valid right now.`,
+          }
         },
       },
       {
@@ -668,9 +789,9 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
       },
     ],
     notes: [
-      'The successor key has its own identity (its own handle) — this is never an in-place conversion. That is true in PKCS#11 exactly as it was true in the KMIP playground\'s own migration lessons.',
+      "The successor key has its own identity (its own handle) — this is never an in-place conversion. That is true in PKCS#11 exactly as it was true in the KMIP playground's own migration lessons.",
       'Destroy is not reversible and not "soft" — the final refusal step proves the handle is genuinely gone, not just hidden from a listing.',
-      "harvest-now-decrypt-later is the reason NOT to wait for a forced migration deadline: data protected by the legacy key today is exposed the moment a large enough quantum computer exists, retroactively.",
+      'harvest-now-decrypt-later is the reason NOT to wait for a forced migration deadline: data protected by the legacy key today is exposed the moment a large enough quantum computer exists, retroactively.',
     ],
     whyItMatters:
       'This is the whole curriculum in one sequence — foundations (object lifecycle), the PQC primitives (ML-DSA), and the discipline (provision successor, cut over, destroy predecessor) that makes a migration real rather than aspirational.',

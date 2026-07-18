@@ -49,7 +49,7 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
         'Mechanism types must be under 0x100',
       ],
       answer: 1,
-      why: "C_GetMechanismInfo returning failure for an unrecognized type is normal, expected behavior — exactly why production code should query capabilities with C_GetMechanismList/C_GetMechanismInfo rather than assuming them.",
+      why: 'C_GetMechanismInfo returning failure for an unrecognized type is normal, expected behavior — exactly why production code should query capabilities with C_GetMechanismList/C_GetMechanismInfo rather than assuming them.',
     },
   ],
   'symmetric-encryption': [
@@ -73,15 +73,15 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
         'C_GenerateRandom is actually also deterministic internally',
       ],
       answer: 1,
-      why: "Confusing these two properties is a real source of cryptographic bugs — e.g. reusing a value from a hash where fresh randomness was required.",
+      why: 'Confusing these two properties is a real source of cryptographic bugs — e.g. reusing a value from a hash where fresh randomness was required.',
     },
   ],
   'sign-verify': [
     {
-      q: "hsm_rsaVerify returned false for the corrupted signature instead of throwing an error. What does that distinction mean?",
+      q: 'hsm_rsaVerify returned false for the corrupted signature instead of throwing an error. What does that distinction mean?',
       options: [
         'It is a bug — it should have thrown',
-        "Verification is a real pass/fail ANSWER (CKR_OK vs CKR_SIGNATURE_INVALID), not an exceptional condition — code must check the boolean, not just catch exceptions",
+        'Verification is a real pass/fail ANSWER (CKR_OK vs CKR_SIGNATURE_INVALID), not an exceptional condition — code must check the boolean, not just catch exceptions',
         'RSA signatures cannot actually be verified this way',
       ],
       answer: 1,
@@ -129,7 +129,7 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
       q: 'The ML-DSA-65 signature came out several times larger than the RSA-3072 signature of the identical message. What does that cost actually come from?',
       options: [
         'A bug in this specific implementation',
-        "The lattice-hardness assumption ML-DSA rests on — it is an inherent, permanent property of the algorithm, not an engineering shortfall to be optimized away",
+        'The lattice-hardness assumption ML-DSA rests on — it is an inherent, permanent property of the algorithm, not an engineering shortfall to be optimized away',
         'ML-DSA signs the message twice internally',
       ],
       answer: 1,
@@ -141,11 +141,11 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
       q: 'C_EncapsulateKey only needs the PUBLIC key, yet produces a secret only the matching PRIVATE key can recover via C_DecapsulateKey. How is that different from ECDH?',
       options: [
         "It isn't different — it's the same operation with a new name",
-        "ECDH has both sides run the SAME derive operation; a KEM is asymmetric — one side encapsulates (needs only the public key), the other decapsulates (needs the ciphertext plus the private key)",
+        'ECDH has both sides run the SAME derive operation; a KEM is asymmetric — one side encapsulates (needs only the public key), the other decapsulates (needs the ciphertext plus the private key)',
         'C_EncapsulateKey secretly performs ECDH internally',
       ],
       answer: 1,
-      why: "This is exactly why porting ECDH-shaped code to a KEM requires restructuring the call sequence, not just swapping an algorithm name — the two primitives have genuinely different call shapes.",
+      why: 'This is exactly why porting ECDH-shaped code to a KEM requires restructuring the call sequence, not just swapping an algorithm name — the two primitives have genuinely different call shapes.',
     },
   ],
   'hash-based-signatures': [
@@ -193,12 +193,12 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
         'ECB mode was deprecated in v3.2',
       ],
       answer: 1,
-      why: "This is what makes allowed-mechanisms genuinely useful as a policy control: it restricts what a SPECIFIC key may be used for, enforced by the token itself rather than trusted-but-bypassable application logic.",
+      why: 'This is what makes allowed-mechanisms genuinely useful as a policy control: it restricts what a SPECIFIC key may be used for, enforced by the token itself rather than trusted-but-bypassable application logic.',
     },
   ],
   'inspecting-policy': [
     {
-      q: "Reading CKA_ALLOWED_MECHANISMS back off the key returned exactly [CKM_AES_GCM] — the same value set at creation. Why does that round trip matter?",
+      q: 'Reading CKA_ALLOWED_MECHANISMS back off the key returned exactly [CKM_AES_GCM] — the same value set at creation. Why does that round trip matter?',
       options: [
         "It doesn't — the value could just be assumed",
         'It proves the enforcement in lesson B7 is backed by a real, auditable, readable policy on the token — not an opaque internal rule nobody can verify after the fact',
@@ -210,7 +210,7 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
   ],
   'migration-capstone': [
     {
-      q: "After generating the ML-DSA successor key, was the legacy RSA key immediately destroyed?",
+      q: 'After generating the ML-DSA successor key, was the legacy RSA key immediately destroyed?',
       options: [
         'Yes — generating a successor automatically retires the predecessor',
         'No — both keys remained valid simultaneously until the explicit C_DestroyObject step; the successor gets its own identity, the predecessor is retired as a deliberate, separate decision',

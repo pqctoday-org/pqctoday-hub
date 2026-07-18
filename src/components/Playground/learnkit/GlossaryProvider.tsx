@@ -7,13 +7,7 @@ import type { GlossaryData } from './glossaryTypes'
  * instance and one "now viewing" pin, regardless of which sub-tab the
  * hover/focus happened in. `data` is that playground's own glossary content
  * (e.g. KMIP wire tags vs. PKCS#11 attributes/mechanisms). */
-export function GlossaryProvider({
-  data,
-  children,
-}: {
-  data: GlossaryData
-  children: ReactNode
-}) {
+export function GlossaryProvider({ data, children }: { data: GlossaryData; children: ReactNode }) {
   const [activeKey, setActiveKey] = useState<string | null>(null)
   const [collapsed, setCollapsed] = useState(false)
 
