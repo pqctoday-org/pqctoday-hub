@@ -123,6 +123,17 @@ describe('useSimulationStore', () => {
     expect(s().sector).toBe('financial')
   })
 
+  // Wave 4 (WP4.6) — seeded challenge replays set the seed directly.
+  it('setSeed sets the run seed and round-trips through a save', () => {
+    s().setSeed(424242)
+    expect(s().seed).toBe(424242)
+    const saved = s().exportSave()
+    s().reset()
+    expect(s().seed).not.toBe(424242) // reset() replaces it with a fresh seed
+    s().importSave(saved)
+    expect(s().seed).toBe(424242)
+  })
+
   // WS-12 — the onboarding flag is remembered and survives a run reset.
   it('markTourSeen persists and reset does not re-show the tour', () => {
     useSimulationStore.setState({ tourSeen: false })

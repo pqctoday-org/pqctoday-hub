@@ -175,6 +175,9 @@ export interface SimulationState {
   clearAuto: (phase: string) => void
   /** Select a difficulty preset (WS-14). */
   setDifficulty: (d: DifficultyId) => void
+  /** Wave 4 (WP4.6) — set the run's deterministic seed. Callers gate this to a
+   *  fresh run (never mutates a run in progress) — the store applies it as given. */
+  setSeed: (n: number) => void
   /** Mark the first-run guided tour as seen (WS-12). */
   markTourSeen: () => void
   /** Toggle novice Guided mode (PR-4); independent of difficulty. */
@@ -476,6 +479,7 @@ export const useSimulationStore = create<SimulationState>()(
       creditBudget: (m) => set((s) => ({ spentBudgetM: Math.max(0, s.spentBudgetM - m) })),
       incrementTrapsThisRun: () => set((s) => ({ trapsThisRun: s.trapsThisRun + 1 })),
       setDifficulty: (difficulty) => set({ difficulty }),
+      setSeed: (seed) => set({ seed }),
       markTourSeen: () => set({ tourSeen: true }),
       setGuided: (guided) => set({ guided }),
       markConceptPeekSeen: (id) =>
