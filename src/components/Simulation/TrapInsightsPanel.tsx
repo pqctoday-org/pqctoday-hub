@@ -84,7 +84,7 @@ export function TrapInsightsPanel() {
             <>
               <ol className="space-y-1.5" data-testid="trap-insights-list">
                 {tally.map((e, i) => {
-                  const rem = remediation(e.phaseId)
+                  const rem = remediation(e.phaseId, e.label)
                   return (
                     <li
                       key={`${e.phaseId} ${e.label}`}

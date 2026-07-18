@@ -40,6 +40,13 @@ const TREE: PhaseTree = {
             },
             {
               kind: 'reference',
+              label:
+                "Reference: Mosca's inequality — shelf-life + migration time > time to Q-Day means you're already late",
+              to: '/threats?view=horizon',
+              refId: 'threats',
+            },
+            {
+              kind: 'reference',
               label: 'Reference: why 256-bit ECC ≈ RSA-2048 under quantum (security levels)',
               to: '/algorithms?tab=detailed',
               refId: 'algorithms-detailed',
