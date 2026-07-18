@@ -46,7 +46,8 @@ const TREE: PhaseTree = {
             },
             {
               kind: 'workshop',
-              label: 'Deep dive — Practice: hybrid signature spectrums',
+              label:
+                'Deep dive — Practice: hybrid signature spectrums (composite signatures are far less standardized than hybrid KEMs — IETF LAMPS composites are still drafts)',
               to: '/playground/hybrid-sigs',
               workshopId: 'hybrid-sigs',
             },
@@ -124,7 +125,7 @@ const TREE: PhaseTree = {
           title: 'Execute Pilots with Measurement',
           decision:
             "Measure pilots against real SLOs and prove rollback works — a pilot that only checks 'did it not crash' isn't validated.",
-          do: 'Run pilots against SLOs (latency, CPU, throughput), test rollback and validate compatibility.',
+          do: 'Run pilots against SLOs (latency p50/p95/p99, CPU, throughput, error/fallback rate), budget for client-compatibility testing alongside server metrics, test rollback and validate compatibility. Canary the rollout at low traffic first — 6.4 covers the baseline/canary methodology in more depth for the phases running in parallel.',
           output: 'Pilot results reports',
           steps: [
             {
@@ -144,6 +145,13 @@ const TREE: PhaseTree = {
               label: 'Draft a Deployment Playbook',
               to: '/business/tools/deployment-playbook',
               artifactType: 'deployment-playbook',
+            },
+            {
+              kind: 'reference',
+              label:
+                'Define pilot exit criteria — what threshold means go — before the rollout decision',
+              to: '/report',
+              refId: 'report',
             },
             {
               kind: 'architecture',
