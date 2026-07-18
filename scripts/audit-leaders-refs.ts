@@ -32,6 +32,13 @@
  *     its semicolon-separated ids resolve to an active (non-deprecated)
  *     `reference_id` in the latest library CSV. This is worse than NO_REF:
  *     it's a claim pointing at something that doesn't exist or was retracted.
+ *  C) MISFILED_REF (warn) — `KeyResourceRefs` is empty (so this row also
+ *     raises NO_REF) but `KeyResourceUrl` holds a value that isn't a URL and
+ *     exactly matches a real, active library `reference_id`. Found live
+ *     2026-07-17: 58 rows had a genuine hub reference sitting in the wrong
+ *     column, inert (the field is documented as URL-only and excluded from
+ *     the trust-score lookup) — these are NOT part of the real NO_REF
+ *     backlog, they're a one-line column fix each.
  *
  * Usage:
  *   npx tsx scripts/audit-leaders-refs.ts             # human report
@@ -99,7 +106,7 @@ function splitSemicolon(value: string): string[] {
 
 export interface Finding {
   severity: 'error' | 'warn'
-  kind: 'NO_REF' | 'UNRESOLVED_REF'
+  kind: 'NO_REF' | 'UNRESOLVED_REF' | 'MISFILED_REF'
   name: string
   category: string
   detail: string
@@ -126,6 +133,17 @@ export function audit(): Finding[] {
 
     const refs = splitSemicolon(row.KeyResourceRefs ?? '')
     if (refs.length === 0) {
+      const misfiled = (row.KeyResourceUrl ?? '').trim()
+      if (misfiled && !misfiled.startsWith('http') && activeLibraryIds.has(misfiled)) {
+        findings.push({
+          severity: 'warn',
+          kind: 'MISFILED_REF',
+          name: row.Name,
+          category: row.Category,
+          detail: `KeyResourceUrl="${misfiled}" is a valid library reference_id sitting in the wrong column — move to KeyResourceRefs`,
+        })
+        continue
+      }
       findings.push({
         severity: 'warn',
         kind: 'NO_REF',
@@ -160,6 +178,8 @@ function main(): void {
   const findings = audit()
 
   const errors = findings.filter((f) => f.severity === 'error')
+  const misfiled = findings.filter((f) => f.kind === 'MISFILED_REF')
+  const noRef = findings.filter((f) => f.kind === 'NO_REF')
   const warns = findings.filter((f) => f.severity === 'warn')
   const failStrict = strict && warns.length > 0
 
@@ -183,11 +203,21 @@ function main(): void {
     console.log()
   }
 
-  if (warns.length > 0) {
+  if (misfiled.length > 0) {
     console.log(
-      `${strict ? 'FAIL' : 'WARN'} ${warns.length} NO_REF finding(s) — no tie to a hub-validated resource${strict ? '' : ' (not failing CI — see --strict)'}:\n`
+      `${strict ? 'FAIL' : 'WARN'} ${misfiled.length} MISFILED_REF finding(s) — real ref, wrong column, mechanical fix:\n`
     )
-    for (const f of warns) {
+    for (const f of misfiled) {
+      console.log(`  [${f.category}] ${f.name}: ${f.detail}`)
+    }
+    console.log()
+  }
+
+  if (noRef.length > 0) {
+    console.log(
+      `${strict ? 'FAIL' : 'WARN'} ${noRef.length} NO_REF finding(s) — no tie to a hub-validated resource${strict ? '' : ' (not failing CI — see --strict)'}:\n`
+    )
+    for (const f of noRef) {
       console.log(`  [${f.category}] ${f.name}: ${f.detail}`)
     }
     console.log()
