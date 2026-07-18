@@ -166,7 +166,8 @@ import {
 import { ArchitecturePanel } from './ArchitecturePanel'
 import { ARCHITECTURES, edgeState } from '@/data/simArchitecture'
 import { TrapInsightsPanel } from './TrapInsightsPanel'
-import { useSimulationStore } from '@/store/useSimulationStore'
+import { useSimulationStore, RUN_START } from '@/store/useSimulationStore'
+import { computeRunScore } from '@/simulation/runScore'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useAssessmentResultStore } from '@/store/useAssessmentResultStore'
@@ -338,6 +339,12 @@ export function SimulationView() {
     objectiveAchievedYears,
     seenConceptPeeks,
     markConceptPeekSeen,
+    securedBudgetM,
+    spentBudgetM,
+    setSecuredBudget,
+    spendBudget,
+    trapsThisRun,
+    incrementTrapsThisRun,
   } = useSimulationStore()
   // WS-14: the active difficulty balance the engine + scoring read (config swap).
   const balance = getBalance(difficulty)
@@ -1116,6 +1123,15 @@ export function SimulationView() {
     programBudgetTarget(sector, sizeKey) * balance.estate.budgetMultiplier
   )
   const budgetSecured = Math.round(budgetTarget * p0Frac * 10) / 10
+  // WP4.3 — materialize the derived figure into the store (captured in save/export,
+  // read by achievements) whenever it changes; display keeps reading the fresh
+  // derived value directly, so there's no one-render lag waiting on the effect.
+  useEffect(() => {
+    if (securedBudgetM !== budgetSecured) setSecuredBudget(budgetSecured)
+  }, [budgetSecured, securedBudgetM, setSecuredBudget])
+  // Available budget floors at 0 — incidents can draw the spent side past secured
+  // without blocking anything; only the displayed/spendable figure floors.
+  const availableBudgetM = Math.max(0, Math.round((budgetSecured - spentBudgetM) * 10) / 10)
 
   // active phase
   const phase = FRAMEWORK_PHASES[sel]
@@ -1130,6 +1146,12 @@ export function SimulationView() {
     autoKey(sel, s.to)
   )
   const phaseAutoActive = phaseAutoKeys.some((k) => auto.includes(k))
+  // WP4.3 — delegation costs budget (per undone step, scaled by difficulty). The
+  // button disables with an explanation rather than a dead click when it can't
+  // be afforded; the incomplete steps are what the AI team would still need to run.
+  const phaseUndoneCount = phaseAutoKeys.filter((k) => !auto.includes(k)).length
+  const delegationCostM = Math.round(phaseUndoneCount * balance.ai.delegationCostPerStepM * 10) / 10
+  const canAffordDelegation = availableBudgetM >= delegationCostM
   const delegateToAI = () => setPendingConfirm('delegate')
   // Framework activity tree for this phase, banded by maturity level. LEVELS
   // unlock sequentially — a level is EARNED only when all its steps are done, and
@@ -1225,6 +1247,11 @@ export function SimulationView() {
       levelOf,
       evidenceLevel,
       stepDone,
+      // WP4.1 — readiness.pct is 0-100 migrated; hndlExposure is the inverse
+      // fraction (0-1) still unmigrated, the same grounded estate signal the
+      // ribbon and objectives panel already read.
+      hndlExposure: 1 - readiness.pct / 100,
+      securedBudget: availableBudgetM,
     })
     if (newAutoKeys.length) autoCompleteSteps(newAutoKeys)
     applyQuarter(quarter)
@@ -2330,9 +2357,15 @@ export function SimulationView() {
                         <Button
                           type="button"
                           onClick={delegateToAI}
-                          className="h-auto shrink-0 rounded-md bg-secondary px-2.5 py-1 text-[10.5px] font-bold text-secondary-foreground"
+                          disabled={!canAffordDelegation}
+                          title={
+                            canAffordDelegation
+                              ? undefined
+                              : `Needs €${delegationCostM}M — only €${availableBudgetM}M available. Do it yourself, or free up budget first.`
+                          }
+                          className="h-auto shrink-0 rounded-md bg-secondary px-2.5 py-1 text-[10.5px] font-bold text-secondary-foreground disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                          Auto-complete ▸
+                          Auto-complete ▸ €{delegationCostM}M
                         </Button>
                       )}
                     </div>
@@ -2351,6 +2384,7 @@ export function SimulationView() {
                     canEmbed={canEmbedStep}
                     onOpenStep={openStep}
                     assessRec={nextMoveRec}
+                    onTrapPicked={incrementTrapsThisRun}
                     onWrongPick={
                       // I1 pilot: a wrong pick on Inventory (p1) or Pilots (p5) costs the
                       // player 2 quarters of rework — their clock slips toward the fixed Q-Day.
@@ -3454,6 +3488,14 @@ export function SimulationView() {
             }))}
             maturity={scoreboard.maturity}
             programEndYear={getScenario(country).programEndYear}
+            score={computeRunScore({
+              quartersUsed: (year - RUN_START.year) * 4 + (q - RUN_START.q),
+              difficulty,
+              trapsThisRun,
+              compliancePct: readiness.compliancePct,
+              objectivesOnTime: scoreboard.objectives.filter((o) => o.onTime === 'done').length,
+              objectivesTotal: scoreboard.objectives.length,
+            })}
             onClose={() => setRunCompleteOpen(false)}
           />
         )}
@@ -3504,11 +3546,12 @@ export function SimulationView() {
         {pendingConfirm === 'delegate' && (
           <SimConfirmDialog
             title={`Delegate ${phase.name} to your AI team?`}
-            description={`${phase.name} is run by your AI team, not your ${seatOpt.label} role. Its tasks complete automatically, flagged "RUN BY AI · UNVERIFIED" until you study what was done. Cancel to do them yourself instead.`}
+            description={`${phase.name} is run by your AI team, not your ${seatOpt.label} role. Its tasks complete automatically, flagged "RUN BY AI · UNVERIFIED" until you study what was done — for €${delegationCostM}M, drawn from your secured budget. Cancel to do them yourself instead.`}
             confirmLabel="Auto-complete"
             onCancel={() => setPendingConfirm(null)}
             onConfirm={() => {
               autoCompleteSteps(phaseAutoKeys)
+              if (delegationCostM > 0) spendBudget(delegationCostM)
               setPendingConfirm(null)
             }}
           />

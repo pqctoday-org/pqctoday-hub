@@ -5,6 +5,9 @@
  * ran inline inside persist()'s config and was exercised indirectly, if at
  * all, through rehydration — a real upgrade bug (e.g. the STORE_VERSION
  * 13→14 seenConceptPeeks addition, WP2.3) could have shipped unnoticed.
+ * Extended for the 14→15 bump (Wave 4 WP4.1-4.3: securedBudgetM/spentBudgetM/
+ * trapsThisRun) — run-scoped like edgeDecisions/year/q, reset on a real
+ * migration rather than reinterpreted (see migrateSimulationState's comment).
  */
 import { describe, it, expect } from 'vitest'
 import { migrateSimulationState } from './useSimulationStore'
@@ -30,6 +33,9 @@ describe('migrateSimulationState', () => {
     expect(out.tourSeen).toBe(false)
     expect(out.guided).toBe(false)
     expect(out.seenConceptPeeks).toEqual([])
+    expect(out.securedBudgetM).toBe(0)
+    expect(out.spentBudgetM).toBe(0)
+    expect(out.trapsThisRun).toBe(0)
   })
 
   it('handles a null/undefined persisted blob the same as empty', () => {
@@ -79,6 +85,17 @@ describe('migrateSimulationState', () => {
   it('always resets edgeDecisions on a real migration, even if the old blob had some (v3 gating reset, by design)', () => {
     const out = migrateSimulationState({ edgeDecisions: { 'lb-app1-mTLS': 'hybrid' } })
     expect(out.edgeDecisions).toEqual({})
+  })
+
+  it('always resets securedBudgetM/spentBudgetM/trapsThisRun on a real migration, even if the old blob had some (same run-reset rule as edgeDecisions)', () => {
+    const out = migrateSimulationState({
+      securedBudgetM: 42,
+      spentBudgetM: 30,
+      trapsThisRun: 5,
+    })
+    expect(out.securedBudgetM).toBe(0)
+    expect(out.spentBudgetM).toBe(0)
+    expect(out.trapsThisRun).toBe(0)
   })
 
   it('falls back to a safe default difficulty for a garbage/unknown value', () => {
