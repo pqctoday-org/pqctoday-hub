@@ -177,6 +177,9 @@ import { useAwarenessScore } from '@/hooks/useAwarenessScore'
 import { ModuleCompletionCard } from '@/components/PKILearning/ModuleCompletionCard'
 import { SimRunComplete } from './SimRunComplete'
 import { SimConfirmDialog } from './SimConfirmDialog'
+import { QuizGateModal } from './QuizGateModal'
+import { pickQuizQuestion, questionsForModule } from '@/simulation/quizSelection'
+import type { QuizQuestion } from '@/components/PKILearning/modules/Quiz/types'
 import pqctodayLogo from '@/assets/pqctoday-logo.png'
 
 // ---- option lists (from real hub data) ----------------------------------
@@ -397,6 +400,14 @@ export function SimulationView() {
   // rail). No id to track beyond the label: completion is the cumulative
   // edge-decision count against the step's minDecisions (see embedContract.ts).
   const [architectureEmbed, setArchitectureEmbed] = useState<{ title: string } | null>(null)
+  // WP2.5: the comprehension check gating a Learn module's "Mark complete" —
+  // null when no gate is currently open. Un-marking an already-complete module
+  // (the toggle's "undo" path) never opens this; only the FIRST completion does.
+  const [quizGate, setQuizGate] = useState<{
+    moduleId: string
+    title: string
+    question: QuizQuestion
+  } | null>(null)
   // Is a Docker sandbox actually reachable? Scenario (lab) steps are gated on this:
   // when unavailable they show LOCKED and never open or auto-complete (bonus steps,
   // so they never block a maturity band either — see isGatingStep).
@@ -1787,28 +1798,56 @@ export function SimulationView() {
               </span>
               {/* Completion toggle — guarantees a "mark complete" path for every
                 embedded Learn module (some have no in-module Complete button when
-                the workshop/exercises chrome is hidden in the sim). Toggleable. */}
+                the workshop/exercises chrome is hidden in the sim). WP2.5: the
+                FIRST completion is quiz-gated (a real question from the module's
+                own quiz-bank category — questionsForModule/pickQuizQuestion) when
+                one exists; un-marking never re-opens the gate. A module with no
+                quiz coverage completes on the click as before, but is labeled
+                self-attested (same honesty pattern as AI-delegation) rather than
+                silently passing as a verified check. */}
               {learnEmbed &&
                 (() => {
                   const done = moduleDone(learnEmbed.moduleId)
+                  const hasGate = questionsForModule(learnEmbed.moduleId).length > 0
                   return (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      onClick={() =>
-                        updateModuleProgress(learnEmbed.moduleId, {
-                          status: done ? 'in-progress' : 'completed',
-                        })
-                      }
-                      aria-pressed={done}
-                      className={`h-auto shrink-0 rounded-md px-3 py-1 text-[11px] font-bold ${
-                        done
-                          ? 'bg-success text-success-foreground hover:opacity-90'
-                          : 'border border-success/50 bg-success/10 text-success hover:bg-success/20'
-                      }`}
-                    >
-                      {done ? '✓ Completed' : 'Mark complete'}
-                    </Button>
+                    <span className="flex shrink-0 items-center gap-1.5">
+                      {done && !hasGate && (
+                        <span
+                          className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground"
+                          title="No quiz question exists yet for this module — completion is self-reported, not comprehension-checked."
+                        >
+                          self-attested
+                        </span>
+                      )}
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => {
+                          if (done) {
+                            updateModuleProgress(learnEmbed.moduleId, { status: 'in-progress' })
+                            return
+                          }
+                          const q = pickQuizQuestion(learnEmbed.moduleId, seed)
+                          if (q) {
+                            setQuizGate({
+                              moduleId: learnEmbed.moduleId,
+                              title: learnEmbed.title,
+                              question: q,
+                            })
+                          } else {
+                            updateModuleProgress(learnEmbed.moduleId, { status: 'completed' })
+                          }
+                        }}
+                        aria-pressed={done}
+                        className={`h-auto shrink-0 rounded-md px-3 py-1 text-[11px] font-bold ${
+                          done
+                            ? 'bg-success text-success-foreground hover:opacity-90'
+                            : 'border border-success/50 bg-success/10 text-success hover:bg-success/20'
+                        }`}
+                      >
+                        {done ? '✓ Completed' : 'Mark complete'}
+                      </Button>
+                    </span>
                   )
                 })()}
               {/* Explicit "Mark complete" for REVIEW embeds (D-b) — opening no longer
@@ -3404,6 +3443,17 @@ export function SimulationView() {
             maturity={scoreboard.maturity}
             programEndYear={getScenario(country).programEndYear}
             onClose={() => setRunCompleteOpen(false)}
+          />
+        )}
+        {quizGate && (
+          <QuizGateModal
+            question={quizGate.question}
+            moduleTitle={quizGate.title}
+            onCancel={() => setQuizGate(null)}
+            onPass={() => {
+              updateModuleProgress(quizGate.moduleId, { status: 'completed' })
+              setQuizGate(null)
+            }}
           />
         )}
         {walkthroughDoneOpen && (
