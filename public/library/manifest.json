@@ -1176,9 +1176,9 @@
       "url": "https://ethresear.ch/t/tasklist-for-post-quantum-eth/21296",
       "status": "downloaded",
       "filename": "Ethereum-PQC-Tasklist-Ethresearch.html",
-      "sizeBytes": 260346,
+      "sizeBytes": 467873,
       "contentType": "text/html",
-      "sha256": "d3d7cf6d3d0046c75e5228694a2a215a73fb96ea28dd60c060c9528a886fce80"
+      "sha256": "5a0aa5773647088c4dc30016daca6e584b20cad7effa37f26113bec475c96765"
     },
     {
       "refId": "IETF-MTC-Draft-09",
@@ -6608,7 +6608,7 @@
       "filename": "Venafi-Ponemon-Outage-Cost.html",
       "sizeBytes": 6603,
       "contentType": "text/html",
-      "sha256": "671254728e1d95fcd5a23c5beef65d5bdd0f31b2b325b19476af53a2809d14b0"
+      "sha256": "3e5077d8616bb1f07775fbe0ac4f84822678b3954bc6bc824e45b5a8de9455d5"
     },
     {
       "refId": "RFC-5869",
