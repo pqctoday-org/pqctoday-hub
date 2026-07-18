@@ -29,6 +29,12 @@ describe('resolveDeepLink (WS-06 drift guard)', () => {
     expect(resolveDeepLink('/algorithms?tab=bogus').ok).toBe(false) // unknown tab
     expect(resolveDeepLink('/algorithms?foo=1').ok).toBe(false) // unknown param
     expect(canResolveDeepLink('/compliance?cert=')).toBe(true)
+    expect(canResolveDeepLink('/compliance?cert=A7285')).toBe(true)
+    expect(resolveDeepLink('/compliance?foo=1').ok).toBe(false) // unknown param
+    // WP5.5 — generator-emitted library topic scope, replacing the old title-regex.
+    expect(canResolveDeepLink('/library?topic=CycloneDX')).toBe(true)
+    expect(canResolveDeepLink('/library')).toBe(true) // still valid with no topic
+    expect(resolveDeepLink('/library?foo=1').ok).toBe(false) // unknown param
     expect(canResolveDeepLink('/threats?view=horizon')).toBe(true) // CRQC Threat Horizon tab
     expect(canResolveDeepLink('/threats?view=list')).toBe(true) // default Threat Catalog tab
     expect(resolveDeepLink('/threats?view=bogus').ok).toBe(false) // unknown view

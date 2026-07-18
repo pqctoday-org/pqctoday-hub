@@ -66,15 +66,6 @@ import { TransformationStatusPanel } from './autorun/TransformationStatusPanel'
 import { RunActionsMenu, type RunActionItem } from './RunActionsMenu'
 import { EmbedLoading } from './EmbedLoading'
 
-/** Per-step Library scope: the search term to open the embedded library on, derived
- *  from the reference step's title, so each library step shows its topic (CycloneDX,
- *  SP 800-88, SBOM standards) instead of the full list. */
-function libraryQueryForStep(title: string): string | undefined {
-  if (/CycloneDX/i.test(title)) return 'CycloneDX'
-  if (/800-88|decommission/i.test(title)) return '800-88'
-  if (/SBOM|CT-log|data-source/i.test(title)) return 'SBOM'
-  return undefined
-}
 import { TimelineEmbed } from '@/components/shared/widgets/TimelineEmbed'
 import { LibraryEmbed } from '@/components/shared/widgets/LibraryEmbed'
 import { ComplianceEmbed } from '@/components/shared/widgets/ComplianceEmbed'
@@ -400,6 +391,12 @@ export function SimulationView() {
   const [referenceEmbed, setReferenceEmbed] = useState<{
     refId: string
     title: string
+    // WP5.5 — a compliance-cert-check step's `?cert=` (parsed from its `to`) so
+    // the embed can open on that specific record, matching the standalone route.
+    cert?: string
+    // WP5.5 — a library step's `?topic=` (parsed from its `to`) — replaces the
+    // old title-regex, which silently un-scoped a step on any label rewording.
+    topic?: string
   } | null>(null)
   // C3: a live sandbox lab embedded under the sim header (SandboxScenarioEmbed).
   const [scenarioEmbed, setScenarioEmbed] = useState<{
@@ -493,7 +490,18 @@ export function SimulationView() {
     } else if (isReferenceEmbedStep(s) && s.refId) {
       // Full-page reference (Migrate, …) embedded under the header.
       clearAllEmbeds()
-      setReferenceEmbed({ refId: s.refId, title: s.label })
+      // WP5.5 — carry a compliance-cert-check step's `?cert=` / a library step's
+      // `?topic=` into the embed (same query-string-parse pattern as the
+      // Learn/workshop branches above); cert was previously dropped at this exact
+      // seam, and topic was derived from the label via a regex instead of `to`.
+      const rqIdx = s.to.indexOf('?')
+      const rp = rqIdx >= 0 ? new URLSearchParams(s.to.slice(rqIdx + 1)) : null
+      setReferenceEmbed({
+        refId: s.refId,
+        title: s.label,
+        cert: rp?.get('cert') ?? undefined,
+        topic: rp?.get('topic') ?? undefined,
+      })
     } else if (isScenarioStep(s) && s.scenarioId) {
       // C3: live sandbox lab embedded under the header — only when a sandbox is
       // actually reachable. Otherwise it stays a LOCKED bonus step (see the ladder
@@ -2089,11 +2097,11 @@ export function SimulationView() {
                   // of navigating the player out to its own route.
                   <Suspense fallback={<EmbedLoading />}>
                     {referenceEmbed?.refId === 'library' ? (
-                      <LibraryEmbed query={libraryQueryForStep(referenceEmbed.title)} />
+                      <LibraryEmbed query={referenceEmbed.topic} />
                     ) : referenceEmbed?.refId === 'compliance' ? (
                       <ComplianceEmbed initialTab="foryou" />
                     ) : referenceEmbed?.refId === 'compliance-cert-check' ? (
-                      <ComplianceEmbed initialTab="records" />
+                      <ComplianceEmbed initialTab="records" cert={referenceEmbed.cert} />
                     ) : referenceEmbed?.refId === 'threats' ? (
                       // The CRQC threat-horizon step opens the Horizon tab directly,
                       // not the default Threat Catalog list (mirrors ComplianceEmbed).

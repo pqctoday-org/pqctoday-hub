@@ -458,7 +458,14 @@ const FRAMEWORK = {
           'crypto-mgmt-modernization',
           'Learn: cross-reference CMDB / ITAM / cloud & certificate data sources'
         ),
-        R('library', 'Reference: data-source & SBOM / CT-log standards in the Library'),
+        // toOverride: explicit ?topic= scopes the embed to this step's subject
+        // (WP5.5) — was previously inferred from the label text via a regex that
+        // silently un-scoped the embed on any rewording.
+        R(
+          'library',
+          'Reference: data-source & SBOM / CT-log standards in the Library',
+          '/library?topic=SBOM'
+        ),
         L('iot-ot-pqc', 'Learn: OT & embedded systems — the hardest assets to discover'),
       ],
     },
@@ -512,7 +519,11 @@ const FRAMEWORK = {
       steps: [
         L('cbom', 'Learn: Cryptography Bill of Materials'),
         L('crypto-mgmt-modernization', 'Learn: CBOM in Cryptographic Management'),
-        R('library', 'Reference: CycloneDX in the Library (1.7, cryptoProperties)'),
+        R(
+          'library',
+          'Reference: CycloneDX in the Library (1.7, cryptoProperties)',
+          '/library?topic=CycloneDX'
+        ),
       ],
     },
     {
@@ -842,6 +853,10 @@ const FRAMEWORK = {
       do: 'Sequence deployment through six controlled waves, each with a defined scope and an explicit prerequisite gate from the one before: Lab/Staging → Internal Non-Critical → Internal Production → External Controlled (partners) → External Broad (public-facing) → Long Tail (legacy, OT, embedded).',
       output: 'Wave deployment plan',
       steps: [
+        // No toOverride: no dedicated staged-rollout/wave-sequencing library topic
+        // exists yet, so this intentionally opens the unscoped library (matches
+        // its pre-WP5.5 behavior — the old title-regex never matched this label
+        // either).
         R('library', 'Reference: staged-rollout & wave-sequencing patterns in the Library'),
         E(4, 'Extend pattern decisions across the wave — cover more of your unlocked connections'),
       ],
@@ -971,7 +986,14 @@ const FRAMEWORK = {
       output: 'Performance baseline and projections',
       steps: [
         L('pqc-testing-validation', 'Learn: PQC Testing & Validation'),
-        R('compliance-cert-check', 'Reference: algorithm sizes & FIPS/CC certs'),
+        // toOverride: a real ACVP cert (Entrust nShield 5, ML-DSA/ML-KEM/SLH-DSA —
+        // matches simArchitecture.ts's mid-size 'Entrust nShield' node) so the step
+        // opens on real algorithm/size data, not an empty ?cert= (WP5.5).
+        R(
+          'compliance-cert-check',
+          'Reference: algorithm sizes & FIPS/CC certs',
+          '/compliance?cert=A7285'
+        ),
       ],
       deepDive: [
         W('tee-channel', 'Deep dive — Practice: TEE↔HSM trusted channel'),
@@ -1030,7 +1052,14 @@ const FRAMEWORK = {
       do: 'Send PQC readiness questionnaires to strategic vendors and track responses.',
       output: 'Vendor questionnaire responses',
       steps: [
-        R('compliance-cert-check', 'Reference: vendor FIPS/CC cert status'),
+        // toOverride: a real ACVP cert (Thales Luna G7, ML-DSA/ML-KEM — matches
+        // simArchitecture.ts's large-size 'Thales Luna HSM' node) so the step opens
+        // on a real vendor's actual cert status, not an empty ?cert= (WP5.5).
+        R(
+          'compliance-cert-check',
+          'Reference: vendor FIPS/CC cert status',
+          '/compliance?cert=A8273'
+        ),
         R('algorithms-protocol-matrix', 'Reference: which vendor protocols have a PQC path'),
         A('vendor-scorecard', 'Score vendors (Vendor Scorecard)'),
       ],
@@ -1233,7 +1262,11 @@ const FRAMEWORK = {
       output: 'Independent verification & signed closure',
       steps: [
         A('crypto-cbom', 'Export the final CBOM as durable closure evidence'),
-        R('library', 'Reference: decommissioning guidance & evidence standards'),
+        R(
+          'library',
+          'Reference: decommissioning guidance & evidence standards',
+          '/library?topic=800-88'
+        ),
       ],
     },
     {

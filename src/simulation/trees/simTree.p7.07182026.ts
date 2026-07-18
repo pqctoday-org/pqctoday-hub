@@ -53,7 +53,7 @@ const TREE: PhaseTree = {
             {
               kind: 'reference',
               label: 'Reference: vendor FIPS/CC cert status',
-              to: '/compliance?cert=',
+              to: '/compliance?cert=A8273',
               refId: 'compliance-cert-check',
             },
             {
