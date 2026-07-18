@@ -28,6 +28,30 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.21.10] - 2026-07-18
+
+A major integrity pass on the Leaders / PQC Community page, more KMIP 3.0
+playground fixes, a new collapsible layout for Threats, and large-scale
+re-verification across Library, Timeline, and Threats data.
+
+### Added
+
+- **Threats: top-level sections are now collapsible** [view:/threats] [persona:researcher] [persona:executive] — Your Exposure, CRQC Threat Horizon, and the Threat Catalog can each be tucked away independently. All default open.
+
+### Fixed
+
+- **Leaders / PQC Community: every profile independently re-verified against live sources** [view:/leaders] [persona:researcher]: a new automated proof-gate audit was added, and ~155 curated rows across the community pool were individually checked or corrected — the entire previously-unverified backlog. 73 misfiled reference links were repaired (citations that pointed at nothing, sitting in the wrong field). A duplicate profile (two entries for the same person) was merged.
+- **KMIP 3.0 Playground: further compliance-audit gaps closed** [view:/playground] [persona:developer]: async batch indicator now wired through instead of hardcoded off, a corrected tooltip, and the browser-based conformance replay now matches native results exactly.
+- **Trusted-sources registry: a 420-row divergence between two conflicting files reconciled** — traced to a URL-quality classifier bug; all 42 conflicting rows resolved, the correct 420 rows restored.
+- **A duplicate vendor registration removed**: the same organization (Centre for Development of Telematics) had two separate, active entries.
+
+### Data
+
+- **Library: large-scale re-verification** [view:/library] [persona:researcher] — 404 documents flagged as changed were re-checked and re-enriched, 171 more re-cached after a cache bug fix, and 28 of the 33 PDFs found corrupted yesterday were resolved with real, verified content.
+- **Timeline and Threats: re-verification of documents flagged as changed** [view:/timeline] [view:/threats] [persona:researcher] — 29 timeline and 42 threats reference documents re-cached and re-enriched after fixing the underlying cache-drift bugs; several wrong-content and duplicate-row issues corrected along the way.
+- **Compliance-landscape: related standards backfilled** for the EU Cybersecurity Certification scheme (EUCC) and Brazil's ANPD PQC framework.
+- **5 more product certifications verified** [view:/migrate] [persona:researcher].
+
 ## [4.21.9] - 2026-07-17
 
 Spec-accuracy fixes across the KMIP 3.0 and HSM playgrounds, a batch of
