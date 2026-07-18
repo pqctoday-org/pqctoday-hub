@@ -189,6 +189,7 @@ export function DecisionSection({
   assessRec,
   onWrongPick,
   onTrapPicked,
+  guided = false,
 }: {
   phaseId: PhaseId
   ctx: MoveCtx
@@ -202,12 +203,16 @@ export function DecisionSection({
   canEmbed: (s: TreeStep) => boolean
   onOpenStep: (s: TreeStep) => void
   assessRec?: AssessRec
-  /** I1: called with the wrong move's label when the player picks a trap (pilot phases only). */
+  /** I1 / WP4.4: called with the wrong move's label when the player picks a trap —
+   *  every phase now wires this (uniform stakes), not just p1/p5. */
   onWrongPick?: (label: string) => void
   /** WP4.2: called on every wrong pick in every phase — feeds trapsThisRun (the
-   *  run-scoped score input), independent of whether this phase also wires
-   *  onWrongPick's time-cost consequence. */
+   *  run-scoped score input), independent of onWrongPick's time-cost consequence. */
   onTrapPicked?: () => void
+  /** WP4.4: the free instant "↺ try again" only appears in Guided mode — outside
+   *  it, a wrong pick sticks (you see why it failed, but don't get a costless
+   *  do-over) so the setback stays a real consequence, not an inconvenience. */
+  guided?: boolean
 }) {
   const [chosen, setChosen] = useState<number | null>(null)
   // reset the choice whenever the move changes (new phase or a step completed)
@@ -423,14 +428,20 @@ export function DecisionSection({
               {correctCard.detail}
             </div>
           </div>
-          <Button
-            variant="ghost"
-            type="button"
-            onClick={() => setChosen(null)}
-            className="mt-1 h-auto p-0 font-mono text-sim-micro font-bold text-primary hover:bg-transparent"
-          >
-            ↺ try again
-          </Button>
+          {guided ? (
+            <Button
+              variant="ghost"
+              type="button"
+              onClick={() => setChosen(null)}
+              className="mt-1 h-auto p-0 font-mono text-sim-micro font-bold text-primary hover:bg-transparent"
+            >
+              ↺ try again
+            </Button>
+          ) : (
+            <div className="mt-1 text-sim-micro text-muted-foreground">
+              The pick stands — study the sound move above, then continue.
+            </div>
+          )}
         </div>
       )}
     </div>
