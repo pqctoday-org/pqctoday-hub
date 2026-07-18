@@ -323,13 +323,13 @@ export const ACHIEVEMENT_CATALOG: AchievementDefinition[] = [
   {
     id: 'full-journey',
     title: 'Full Journey',
-    description: 'Used Learn, Assess, Migrate, Playground, and Chat',
+    description: 'Used Learn, Assess, Migrate, Playground, Simulation, and Chat',
     category: 'cross-feature',
     rarity: 'epic',
     icon: 'Sparkles',
     secret: true,
     condition: (s) => {
-      const required = ['learn', 'assess', 'migrate', 'playground']
+      const required = ['learn', 'assess', 'migrate', 'playground', 'simulation']
       return required.every((r) => s.sectionsVisited.includes(r)) && s.chatMessageCount >= 1
     },
   },
@@ -350,6 +350,56 @@ export const ACHIEVEMENT_CATALOG: AchievementDefinition[] = [
     rarity: 'common',
     icon: 'ThumbsUp',
     condition: (s: ActivitySnapshot) => s.endorsementCount >= 1,
+  },
+
+  // ═══════════════════════════════════════════════════════════════
+  // SIMULATION (Wave 4, WP4.5) — condition fields sourced from
+  // useSimulationStore's lifetime counters (useAchievementChecker.ts).
+  // ═══════════════════════════════════════════════════════════════
+  {
+    id: 'sim-run-complete',
+    title: 'Migration Complete',
+    description: 'Completed a full Simulation run — every phase cleared',
+    category: 'cross-feature',
+    rarity: 'uncommon',
+    icon: 'Rocket',
+    condition: (s) => s.simRunsCompleted >= 1,
+  },
+  {
+    id: 'sim-clean-run',
+    title: 'Clean Run',
+    description: 'Completed a Simulation run without falling for a single common failure',
+    category: 'cross-feature',
+    rarity: 'rare',
+    icon: 'ShieldCheck',
+    condition: (s) => s.simZeroTrapPhases >= 1,
+  },
+  {
+    id: 'sim-hard-win',
+    title: 'Under Pressure',
+    description: 'Completed a Simulation run on Hard difficulty',
+    category: 'cross-feature',
+    rarity: 'rare',
+    icon: 'Crown',
+    condition: (s) => s.simHardWin,
+  },
+  {
+    id: 'sim-on-time',
+    title: 'Perfect Timing',
+    description: 'Landed every transformation objective on schedule in one run',
+    category: 'cross-feature',
+    rarity: 'epic',
+    icon: 'Timer',
+    condition: (s) => s.simOnTimeObjectives >= 3,
+  },
+  {
+    id: 'sim-jurisdictions',
+    title: 'Globe-Trotter',
+    description: 'Played the Simulation across 3+ country jurisdictions',
+    category: 'cross-feature',
+    rarity: 'uncommon',
+    icon: 'Globe',
+    condition: (s) => s.simJurisdictionsPlayed.length >= 3,
   },
 
   // ═══════════════════════════════════════════════════════════════

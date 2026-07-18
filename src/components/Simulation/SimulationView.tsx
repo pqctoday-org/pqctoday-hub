@@ -345,6 +345,7 @@ export function SimulationView() {
     spendBudget,
     trapsThisRun,
     incrementTrapsThisRun,
+    recordSimRunCompletion,
   } = useSimulationStore()
   // WS-14: the active difficulty balance the engine + scoring read (config swap).
   const balance = getBalance(difficulty)
@@ -1063,14 +1064,27 @@ export function SimulationView() {
   // Re-openable guide: shows on first run (!tourSeen) or when the player turns on
   // Guided mode (the novice walkthrough), independent of the one-time tourSeen flag.
   const [tourOpen, setTourOpen] = useState(false)
+  // Shared by the completion effect (WP4.5 lifetime counters) and the ceremony's
+  // own score card — computed once so both read the same number.
+  const objectivesOnTime = scoreboard.objectives.filter((o) => o.onTime === 'done').length
   useEffect(() => {
     if (!fullyMature || runCompleteSeen) return
     const id = setTimeout(() => {
       setRunCompleteOpen(true)
       markRunComplete()
+      recordSimRunCompletion({ country, difficulty, trapsThisRun, objectivesOnTime })
     }, 0)
     return () => clearTimeout(id)
-  }, [fullyMature, runCompleteSeen, markRunComplete])
+  }, [
+    fullyMature,
+    runCompleteSeen,
+    markRunComplete,
+    recordSimRunCompletion,
+    country,
+    difficulty,
+    trapsThisRun,
+    objectivesOnTime,
+  ])
 
   // First-visit default: start non-technical roles (executive / curious) in the
   // low-density Guided view instead of the dense Expert console. Gated on
@@ -3491,7 +3505,7 @@ export function SimulationView() {
               difficulty,
               trapsThisRun,
               compliancePct: readiness.compliancePct,
-              objectivesOnTime: scoreboard.objectives.filter((o) => o.onTime === 'done').length,
+              objectivesOnTime,
               objectivesTotal: scoreboard.objectives.length,
             })}
             onClose={() => setRunCompleteOpen(false)}
