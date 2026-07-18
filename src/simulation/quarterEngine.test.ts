@@ -20,6 +20,8 @@ const baseInput = (over: Partial<QuarterEngineInput> = {}): QuarterEngineInput =
   levelOf: () => 0,
   evidenceLevel: () => 0,
   stepDone: () => false,
+  hndlExposure: 0.5,
+  securedBudget: 0,
   ...over,
 })
 
@@ -64,6 +66,65 @@ describe('runQuarter (pure quarter engine, WS-05)', () => {
     expect(r.report.totalPhases).toBe(9)
   })
 
+  // WP4.1 — event consequences. Pinned seeds (found via a scratch brute-force
+  // search over seeds 1-300 against realistic balance) so each assertion
+  // exercises a real, reproducible roll rather than a mocked RNG.
+  describe('WP4.1 — event consequences', () => {
+    it('a danger event above the exposure threshold applies a setback + incident cost', () => {
+      const r = runQuarter(baseInput({ seed: 4, hndlExposure: 0.9 }))
+      expect(r.quarter.effects).toMatchObject({ setbackQuarters: 1, budgetCostM: 5 })
+      expect(r.report.effects).toEqual(r.quarter.effects)
+    })
+
+    it('a danger event below the exposure threshold has no teeth (no effect at all for that seed)', () => {
+      const above = runQuarter(baseInput({ seed: 4, hndlExposure: 0.9 })).quarter.effects
+      const below = runQuarter(baseInput({ seed: 4, hndlExposure: 0.05 })).quarter.effects
+      expect(above?.setbackQuarters).toBe(1)
+      expect(below?.setbackQuarters).toBeUndefined()
+    })
+
+    it('a good-news event always grants a credit, independent of exposure', () => {
+      const r = runQuarter(baseInput({ seed: 1, hndlExposure: 0.05 }))
+      expect(r.quarter.effects).toMatchObject({ budgetCreditM: 1.5 })
+      expect(r.quarter.effects?.setbackQuarters).toBeUndefined()
+    })
+
+    it('both a setback and a credit can land in the same quarter (independent rolls)', () => {
+      const r = runQuarter(baseInput({ seed: 2, hndlExposure: 0.9 }))
+      expect(r.quarter.effects).toMatchObject({
+        setbackQuarters: 1,
+        budgetCostM: 5,
+        budgetCreditM: 1.5,
+      })
+    })
+
+    it('a quiet seed with no qualifying event has no effects object at all', () => {
+      const r = runQuarter(baseInput({ seed: 6, hndlExposure: 0.9 }))
+      expect(r.quarter.effects).toBeUndefined()
+      expect(r.report.effects).toBeUndefined()
+    })
+
+    it('difficulty scales consequence severity (Hard costs more per incident than Easy)', () => {
+      expect(SIM_PRESETS.hard.consequences.incidentCostM).toBeGreaterThan(
+        SIM_PRESETS.easy.consequences.incidentCostM
+      )
+      expect(SIM_PRESETS.hard.consequences.hndlExposureThreshold).toBeLessThan(
+        SIM_PRESETS.easy.consequences.hndlExposureThreshold
+      )
+    })
+
+    it('a critically-low budget with P0 still open outranks every other recommendation', () => {
+      const r = runQuarter(baseInput({ securedBudget: 0, levelOf: () => 0 }))
+      expect(r.report.recommend).toMatch(/Phase 0 budget case/)
+    })
+
+    it('is still byte-identical for the same seed + hndlExposure/securedBudget (WS-02 preserved)', () => {
+      const a = runQuarter(baseInput({ seed: 2, hndlExposure: 0.9, securedBudget: 3 }))
+      const b = runQuarter(baseInput({ seed: 2, hndlExposure: 0.9, securedBudget: 3 }))
+      expect(a).toEqual(b)
+    })
+  })
+
   // WS-14 — difficulty is a pure config swap: the balance changes outcomes.
   it('difficulty balance changes outcomes deterministically (config swap)', () => {
     const easy = runQuarter(baseInput({ balance: SIM_PRESETS.easy }))
@@ -71,7 +132,12 @@ describe('runQuarter (pure quarter engine, WS-05)', () => {
     expect(JSON.stringify(easy.report)).not.toEqual(JSON.stringify(hard.report))
     // a balance with no AI help → the AI completes nothing, regardless of seed
     const noAi = runQuarter(
-      baseInput({ balance: { ...SIM_PRESETS.realistic, ai: { advanceChance: 0 } } })
+      baseInput({
+        balance: {
+          ...SIM_PRESETS.realistic,
+          ai: { advanceChance: 0, delegationCostPerStepM: 1 },
+        },
+      })
     )
     expect(noAi.newAutoKeys).toEqual([])
   })

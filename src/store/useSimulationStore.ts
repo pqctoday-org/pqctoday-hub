@@ -13,6 +13,7 @@ import type { SimEvent } from '@/data/simEvents'
 import type { SimulationData } from '@/services/storage/snapshotTypes'
 import type { DifficultyId } from '@/data/simBalance'
 import { newSeed } from '@/simulation/rng'
+import type { QuarterEffects } from '@/simulation/quarterEngine'
 
 const DIFFICULTIES: DifficultyId[] = ['easy', 'realistic', 'hard']
 
@@ -81,6 +82,20 @@ export interface SimulationState {
    *  never repeats. Browser/tutorial state like tourSeen/guided: preserved across
    *  reset(), never part of a portable run save/snapshot. */
   seenConceptPeeks: string[]
+  /** Wave 4 (WP4.3) — the program budget (€M) earned so far, MATERIALIZED: written
+   *  by the view when the P0-completion formula changes, rather than only ever
+   *  derived fresh at render. Lets spending (delegation, incidents) draw down a
+   *  real pool instead of a number that resets itself every render. */
+  securedBudgetM: number
+  /** Wave 4 (WP4.3) — cumulative budget spent (AI delegation costs, incident
+   *  costs from quarter effects), offset by good-news credits. Available budget
+   *  = max(0, securedBudgetM − spentBudgetM) — the pool floors at 0, it never
+   *  goes negative or blocks an incident from being reported. */
+  spentBudgetM: number
+  /** Wave 4 (WP4.2) — traps picked THIS run only, reset by reset(). Distinct from
+   *  simTrapTally.ts's lifetime localStorage tally: a fresh run's grade must never
+   *  be dragged down by a PAST run's mistakes. */
+  trapsThisRun: number
 
   setSize: (v: string) => void
   setCountry: (v: string) => void
@@ -107,13 +122,25 @@ export interface SimulationState {
   markCatalogStepDone: (catalogId: string) => void
   /** Record (or clear, with null) a per-edge migration decision (WS-04). */
   setEdgeDecision: (edgeKey: string, choice: 'hybrid' | 'pure' | null) => void
-  /** Commit an End-Quarter result (shock, new turn, events). */
+  /** Commit an End-Quarter result (shock, new turn, events, WP4.1 consequences). */
   applyQuarter: (payload: {
     crqcShift: number
     year: number
     q: number
     newEvents: SimEvent[]
+    effects?: QuarterEffects
   }) => void
+  /** Write the materialized secured-budget figure (WP4.3) — called when the
+   *  P0-completion formula's output changes, not on every render. */
+  setSecuredBudget: (m: number) => void
+  /** Debit the budget pool (AI delegation cost, incident cost). Unconditional —
+   *  the caller (view) gates whether the action that triggers this is even
+   *  allowed; the pool itself never blocks a debit, it just floors at 0 on display. */
+  spendBudget: (m: number) => void
+  /** Credit the budget pool (good-news effect); floors spentBudgetM at 0. */
+  creditBudget: (m: number) => void
+  /** Record a trap picked this run (WP4.2) — reset by reset(). */
+  incrementTrapsThisRun: () => void
   /** Sticky time penalty (I1): a wrong in-sim decision costs the player N quarters
    *  of rework — advancing their OWN clock toward the FIXED Q-Day, which shrinks the
    *  Mosca runway. Deterministic (no RNG); Q-Day (crqcShift) is untouched. */
@@ -178,9 +205,16 @@ const SEED = {
   auto: [] as string[],
   seed: 0, // replaced with a fresh seed on create / reset / migrate
   difficulty: 'realistic' as DifficultyId,
+  securedBudgetM: 0,
+  spentBudgetM: 0,
+  trapsThisRun: 0,
 }
 
-const STORE_VERSION = 14
+/** WP4.2 — the run's start turn, exported so callers (the ceremony's quarters-
+ *  used calculation) don't hardcode a copy of SEED.year/q that could drift. */
+export const RUN_START = { year: SEED.year, q: SEED.q }
+
+const STORE_VERSION = 15
 const SAVE_KIND = 'pqc-simulation-save'
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null
@@ -223,6 +257,11 @@ export function migrateSimulationState(persisted: unknown) {
     tourSeen: typeof s.tourSeen === 'boolean' ? s.tourSeen : false,
     guided: typeof s.guided === 'boolean' ? s.guided : false,
     seenConceptPeeks: Array.isArray(s.seenConceptPeeks) ? (s.seenConceptPeeks as string[]) : [],
+    // Wave 4 (WP4.1-4.3): run-scoped like edgeDecisions/year/q above — a real
+    // migration resets the run, it doesn't try to reinterpret old numbers.
+    securedBudgetM: SEED.securedBudgetM,
+    spentBudgetM: SEED.spentBudgetM,
+    trapsThisRun: SEED.trapsThisRun,
   }
 }
 
@@ -252,6 +291,9 @@ const saveSlice = (s: SimulationState): SimulationData => ({
   auto: s.auto,
   seed: s.seed,
   difficulty: s.difficulty,
+  securedBudgetM: s.securedBudgetM,
+  spentBudgetM: s.spentBudgetM,
+  trapsThisRun: s.trapsThisRun,
 })
 
 function fromSave(s: Record<string, unknown>) {
@@ -278,6 +320,9 @@ function fromSave(s: Record<string, unknown>) {
     auto: Array.isArray(s.auto) ? (s.auto as string[]) : [],
     seed: typeof s.seed === 'number' ? (s.seed as number) : newSeed(),
     difficulty: asDifficulty(s.difficulty),
+    securedBudgetM: typeof s.securedBudgetM === 'number' ? (s.securedBudgetM as number) : 0,
+    spentBudgetM: typeof s.spentBudgetM === 'number' ? (s.spentBudgetM as number) : 0,
+    trapsThisRun: typeof s.trapsThisRun === 'number' ? (s.trapsThisRun as number) : 0,
   }
 }
 
@@ -333,13 +378,28 @@ export const useSimulationStore = create<SimulationState>()(
           else next[edgeKey] = choice
           return { edgeDecisions: next }
         }),
-      applyQuarter: ({ crqcShift, year, q, newEvents }) =>
-        set((s) => ({
-          crqcShift,
-          year,
-          q,
-          events: [...newEvents, ...s.events].slice(0, 30),
-        })),
+      applyQuarter: ({ crqcShift, year, q, newEvents, effects }) =>
+        set((s) => {
+          // WP4.1 — a setback effect advances the turn FURTHER, same wrap-the-year
+          // math as applyDecisionSetback, stacked on top of the quarter that just elapsed.
+          let ny = year
+          let nq = q
+          if (effects?.setbackQuarters) {
+            nq += effects.setbackQuarters
+            while (nq > 4) {
+              nq -= 4
+              ny += 1
+            }
+          }
+          const budgetDelta = (effects?.budgetCostM ?? 0) - (effects?.budgetCreditM ?? 0)
+          return {
+            crqcShift,
+            year: ny,
+            q: nq,
+            events: [...newEvents, ...s.events].slice(0, 30),
+            spentBudgetM: Math.max(0, s.spentBudgetM + budgetDelta),
+          }
+        }),
       applyDecisionSetback: (quarters, txt, revertEdgeId) =>
         set((s) => {
           let year = s.year
@@ -362,6 +422,10 @@ export const useSimulationStore = create<SimulationState>()(
         set((s) => ({ auto: Array.from(new Set([...s.auto, ...keys])) })),
       clearAuto: (phase) =>
         set((s) => ({ auto: s.auto.filter((k) => !k.startsWith(`${phase}::`)) })),
+      setSecuredBudget: (m) => set({ securedBudgetM: m }),
+      spendBudget: (m) => set((s) => ({ spentBudgetM: Math.max(0, s.spentBudgetM + m) })),
+      creditBudget: (m) => set((s) => ({ spentBudgetM: Math.max(0, s.spentBudgetM - m) })),
+      incrementTrapsThisRun: () => set((s) => ({ trapsThisRun: s.trapsThisRun + 1 })),
       setDifficulty: (difficulty) => set({ difficulty }),
       markTourSeen: () => set({ tourSeen: true }),
       setGuided: (guided) => set({ guided }),

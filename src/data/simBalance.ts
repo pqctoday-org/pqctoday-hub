@@ -30,6 +30,10 @@ export interface SimBalance {
   ai: {
     /** Per-phase chance the AI completes the next unlocked tree step this quarter. */
     advanceChance: number
+    /** Wave 4 (WP4.3) — €M charged per step when the player delegates a whole
+     *  phase to the AI team. Scales with difficulty: Hard makes delegation a
+     *  real trade-off against a tighter budget, not a free lunch. */
+    delegationCostPerStepM: number
   }
   /**
    * P0 budget fraction (WS-04): budget fraction = doneWeight·(P0 steps done / total).
@@ -45,6 +49,26 @@ export interface SimBalance {
    * until the grounded-readiness model settles; see SIMULATION-REMEDIATION-PLAN.)
    */
   estate: { budgetMultiplier: number }
+  /**
+   * Wave 4 (WP4.1) — event consequences. Previously every event was flavor text
+   * with no mechanical effect regardless of difficulty; this is what makes
+   * difficulty a real stake, not just a probability dial on cosmetic text.
+   * A rolled `dangerWhenClassical` event applies a setback + incident cost ONLY
+   * when `hndlExposure` (the fraction of the estate still unmigrated) is above
+   * `hndlExposureThreshold` — residual classical crypto has to actually be
+   * exposing something for the danger event to bite. A rolled good-news event
+   * always grants `goodNewsCreditM` regardless of exposure.
+   */
+  consequences: {
+    /** Quarters of rework lost when a danger event bites (see threshold above). */
+    setbackQuarters: number
+    /** Illustrative incident cost (€M) drawn from the budget pool when it bites. */
+    incidentCostM: number
+    /** Illustrative credit (€M) granted to the budget pool on a good-news event. */
+    goodNewsCreditM: number
+    /** hndlExposure (0–1) must exceed this for a danger event to have teeth. */
+    hndlExposureThreshold: number
+  }
 }
 
 /** Difficulty presets (WS-14) — each is a complete SimBalance variant. Pure
@@ -56,25 +80,43 @@ export const SIM_PRESETS: Record<DifficultyId, SimBalance> = {
   easy: {
     events: { dangerWhenClassical: 0.4, warning: 0.4, goodNews: 0.65, successVsInfo: 0.65 },
     crqc: { pullForwardPerQuarter: 0.1 },
-    ai: { advanceChance: 0.55 },
+    ai: { advanceChance: 0.55, delegationCostPerStepM: 0.5 },
     budget: { doneWeight: 1 },
     estate: { budgetMultiplier: 1.2 },
+    consequences: {
+      setbackQuarters: 1,
+      incidentCostM: 2,
+      goodNewsCreditM: 2,
+      hndlExposureThreshold: 0.5,
+    },
   },
   // The grounded baseline (the original WS-03 values).
   realistic: {
     events: { dangerWhenClassical: 0.6, warning: 0.55, goodNews: 0.5, successVsInfo: 0.5 },
     crqc: { pullForwardPerQuarter: 0.22 },
-    ai: { advanceChance: 0.35 },
+    ai: { advanceChance: 0.35, delegationCostPerStepM: 1 },
     budget: { doneWeight: 1 },
     estate: { budgetMultiplier: 1 },
+    consequences: {
+      setbackQuarters: 1,
+      incidentCostM: 5,
+      goodNewsCreditM: 1.5,
+      hndlExposureThreshold: 0.35,
+    },
   },
   // Punishing: more shocks, faster Q-Day creep, sparse AI help.
   hard: {
     events: { dangerWhenClassical: 0.75, warning: 0.65, goodNews: 0.4, successVsInfo: 0.4 },
     crqc: { pullForwardPerQuarter: 0.35 },
-    ai: { advanceChance: 0.2 },
+    ai: { advanceChance: 0.2, delegationCostPerStepM: 2 },
     budget: { doneWeight: 1 },
     estate: { budgetMultiplier: 0.8 },
+    consequences: {
+      setbackQuarters: 2,
+      incidentCostM: 10,
+      goodNewsCreditM: 1,
+      hndlExposureThreshold: 0.2,
+    },
   },
 }
 
@@ -83,3 +125,15 @@ export const SIM_BALANCE: SimBalance = SIM_PRESETS.realistic
 
 /** Resolve the active balance for a difficulty (falls back to Realistic). */
 export const getBalance = (id: DifficultyId): SimBalance => SIM_PRESETS[id] ?? SIM_PRESETS.realistic
+
+/**
+ * Wave 4 (WP4.2) — par quarters per difficulty: the quarter count runScore.ts
+ * grades "on pace" against. Hard's par is deliberately more generous (fewer AI
+ * assists, harsher setbacks mean the SAME diligence takes longer) — par adjusts
+ * for difficulty so the grade rewards playing Hard well, not just playing fast.
+ */
+export const PAR_QUARTERS: Record<DifficultyId, number> = {
+  easy: 16,
+  realistic: 20,
+  hard: 24,
+}
