@@ -26,6 +26,9 @@ import { checkChoice } from '@/data/jurisdiction'
 import type { SimSize } from '@/data/moscaClock'
 import { useSimulationStore } from '@/store/useSimulationStore'
 import { useThemeStore } from '@/store/useThemeStore'
+import { useSelectedProductIds } from '@/store/useMigrateSelectionStore'
+import { softwareData } from '@/data/migrateData'
+import { getCatalogStatus } from '@/data/catalogStatus'
 import { MermaidDiagram } from './MermaidDiagram'
 
 const STATUS_CHIP: Record<PqcStatus, string> = {
@@ -58,6 +61,18 @@ export function ArchitecturePanel({
   const [view, setView] = useState<'list' | 'diagram'>('list')
   const edgeDecisions = useSimulationStore((s) => s.edgeDecisions)
   const setEdgeDecision = useSimulationStore((s) => s.setEdgeDecision)
+  // WP5.4 — when the player has a real /migrate selection, show it alongside the
+  // illustrative architecture (same catalog-status derivation simArchitecture.ts
+  // uses for its own nodes). Display-only: doesn't feed edgeState/completion.
+  const selectedProductIds = useSelectedProductIds()
+  const selectedProducts = selectedProductIds.length
+    ? softwareData
+        .filter((s) => selectedProductIds.includes(s.productId))
+        .map((s) => ({
+          name: s.softwareName,
+          status: getCatalogStatus(s.softwareName)?.availability ?? 'unverified',
+        }))
+    : []
   // Mirrors useTheme.ts's effective-theme rule: light until the user has
   // explicitly chosen a theme. Read directly from the store rather than
   // useTheme() itself, which also applies the DOM class — that's App.tsx's job.
@@ -114,6 +129,26 @@ export function ArchitecturePanel({
           style={{ width: `${readinessPct}%` }}
         />
       </div>
+
+      {selectedProducts.length > 0 && (
+        <div className="mb-3">
+          <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Your selection{' '}
+            <span className="normal-case text-muted-foreground/60">· from /migrate</span>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {selectedProducts.map((p) => (
+              <span
+                key={p.name}
+                className={`rounded px-2 py-0.5 text-xs ${STATUS_CHIP[p.status]}`}
+                title={`PQC ${p.status}`}
+              >
+                {p.name}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* View toggle: interactive list vs Mermaid diagram */}
       <div className="mb-3 flex gap-1.5">
