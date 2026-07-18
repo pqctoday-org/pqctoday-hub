@@ -178,6 +178,7 @@ import { ModuleCompletionCard } from '@/components/PKILearning/ModuleCompletionC
 import { SimRunComplete } from './SimRunComplete'
 import { SimConfirmDialog } from './SimConfirmDialog'
 import { QuizGateModal } from './QuizGateModal'
+import toast from 'react-hot-toast'
 import { pickQuizQuestion, questionsForModule } from '@/simulation/quizSelection'
 import type { QuizQuestion } from '@/components/PKILearning/modules/Quiz/types'
 import pqctodayLogo from '@/assets/pqctoday-logo.png'
@@ -716,20 +717,12 @@ export function SimulationView() {
   }, [autoRunPlayer.mode, autoRunPlayer.done, setExecOverviewSeen])
   // Play-This-Phase end screen: same one-shot-per-run pattern as the walkthrough
   // above, but its own guard/state — a distinct mode family that must reset
-  // independently of the walkthrough's.
+  // independently of the walkthrough's. The triggering effect lives further
+  // down (after `fullyMature` is computed) — see the WP2.7 ceremony-stacking
+  // guard there: it deliberately does NOT fire when the run ceremony is ALSO
+  // due, so the two completion modals can never stack.
   const [phaseRunDoneOpen, setPhaseRunDoneOpen] = useState(false)
   const phaseRunCelebratedRef = useRef(false)
-  useEffect(() => {
-    if (isPhaseMode(autoRunPlayer.mode) && autoRunPlayer.done) {
-      if (!phaseRunCelebratedRef.current) {
-        phaseRunCelebratedRef.current = true
-        setPhaseRunDoneOpen(true)
-      }
-    } else if (!autoRunPlayer.done) {
-      phaseRunCelebratedRef.current = false
-      setPhaseRunDoneOpen(false)
-    }
-  }, [autoRunPlayer.mode, autoRunPlayer.done])
   const assessFrameworkRisk = useMemo(
     () => (assessSnap ? frameworkRiskFromAssess(assessSnap.result) : null),
     [assessSnap]
@@ -806,7 +799,9 @@ export function SimulationView() {
   // RESET clears the sim turn-state plus ONLY the sim-tracked hub progress the
   // gating reads from (the Learn modules + artifacts referenced by the trees) —
   // the player's other hub progress is left untouched.
-  const [pendingConfirm, setPendingConfirm] = useState<'reset' | 'start-over' | null>(null)
+  const [pendingConfirm, setPendingConfirm] = useState<'reset' | 'start-over' | 'delegate' | null>(
+    null
+  )
   const resetAll = () => setPendingConfirm('reset')
   const runResetAll = () => {
     for (const id of SIM_TRACKED.modules) resetModuleProgress(id)
@@ -876,8 +871,8 @@ export function SimulationView() {
     if (!file) return
     file.text().then((txt) => {
       const ok = importSave(txt)
-      if (typeof window !== 'undefined')
-        window.alert(ok ? 'Simulation save imported.' : 'That file is not a valid simulation save.')
+      if (ok) toast.success('Simulation save imported.')
+      else toast.error('That file is not a valid simulation save.')
     })
   }
   const docTypes = useMemo(() => new Set((docs ?? []).map((d) => d.type)), [docs])
@@ -1011,6 +1006,24 @@ export function SimulationView() {
   // merely the L2 win bar. In the breadth-first climb, all-cleared-to-L2 happens at pass 2, so
   // the run-end ceremony must wait for the top-band pass (pass 4 ≈ 2035), not fire at pass 2.
   const fullyMature = LIFECYCLE.every((p) => levelOf(p) >= topBandOf(p))
+  // WP2.7 — ceremony-stacking guard: a "Play This Phase" run that happens to
+  // clear the LAST phase needed for full maturity would otherwise open BOTH
+  // this phase's end screen AND the run-complete ceremony at once (two
+  // stacked modals, z-70 over z-60). The run ceremony is the more important
+  // claim (whole-program, not one-phase) and already has its own guard below
+  // — so the phase-run screen simply doesn't fire when fullyMature is ALSO
+  // true this render; the player sees the run ceremony instead.
+  useEffect(() => {
+    if (isPhaseMode(autoRunPlayer.mode) && autoRunPlayer.done) {
+      if (!phaseRunCelebratedRef.current && !fullyMature) {
+        phaseRunCelebratedRef.current = true
+        setPhaseRunDoneOpen(true)
+      }
+    } else if (!autoRunPlayer.done) {
+      phaseRunCelebratedRef.current = false
+      setPhaseRunDoneOpen(false)
+    }
+  }, [autoRunPlayer.mode, autoRunPlayer.done, fullyMature])
   // Transformation status — the board headline (3 objectives + 4 tracks + dynamic HNDL
   // exposure), scenario-driven. Replaces the static, unwinnable Mosca "over by N years" gauge.
   const txStatus = transformationStatus({
@@ -1117,15 +1130,7 @@ export function SimulationView() {
     autoKey(sel, s.to)
   )
   const phaseAutoActive = phaseAutoKeys.some((k) => auto.includes(k))
-  const delegateToAI = () => {
-    if (
-      typeof window === 'undefined' ||
-      window.confirm(
-        `${phase.name} is run by your AI team, not your ${seatOpt.label} role. Complete its tasks automatically? Press Cancel to do them yourself.`
-      )
-    )
-      autoCompleteSteps(phaseAutoKeys)
-  }
+  const delegateToAI = () => setPendingConfirm('delegate')
   // Framework activity tree for this phase, banded by maturity level. LEVELS
   // unlock sequentially — a level is EARNED only when all its steps are done, and
   // lower levels are required first (achievedTreeLevel). But WITHIN the active
@@ -1252,8 +1257,7 @@ export function SimulationView() {
         nowMs()
       )
     )
-    if (typeof window !== 'undefined')
-      window.alert('Draft roadmap committed to the Command Center.')
+    toast.success('Draft roadmap committed to the Command Center.')
   }
 
   // REQUIRE-ASSESSMENT GATE — the simulation runs on the user's assessed
@@ -1907,7 +1911,15 @@ export function SimulationView() {
               onClickCapture={(e) => {
                 const a = (e.target as HTMLElement).closest?.('a[href]')
                 const href = a?.getAttribute('href')
-                if (href && href.startsWith('/')) e.preventDefault()
+                if (href && href.startsWith('/')) {
+                  e.preventDefault()
+                  // WP2.7: a blocked link used to fail silently — the player
+                  // clicked and nothing visibly happened. Say why.
+                  toast('This link opens after the run — for now it stays inside the simulation.', {
+                    icon: '🔗',
+                    duration: 2500,
+                  })
+                }
               }}
             >
               {/* Inner content frame. Two jobs:
@@ -3485,6 +3497,18 @@ export function SimulationView() {
             onCancel={() => setPendingConfirm(null)}
             onConfirm={() => {
               runStartOver()
+              setPendingConfirm(null)
+            }}
+          />
+        )}
+        {pendingConfirm === 'delegate' && (
+          <SimConfirmDialog
+            title={`Delegate ${phase.name} to your AI team?`}
+            description={`${phase.name} is run by your AI team, not your ${seatOpt.label} role. Its tasks complete automatically, flagged "RUN BY AI · UNVERIFIED" until you study what was done. Cancel to do them yourself instead.`}
+            confirmLabel="Auto-complete"
+            onCancel={() => setPendingConfirm(null)}
+            onConfirm={() => {
+              autoCompleteSteps(phaseAutoKeys)
               setPendingConfirm(null)
             }}
           />

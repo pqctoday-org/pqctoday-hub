@@ -135,7 +135,7 @@ export function SimRunComplete({
               </div>
               <ol className="space-y-1">
                 {topTraps.map((t, i) => {
-                  const rem = remediation(t.phaseId)
+                  const rem = remediation(t.phaseId, t.label)
                   return (
                     <li key={`${t.phaseId} ${t.label}`} className="text-[12px] leading-snug">
                       <span className="font-semibold text-foreground">

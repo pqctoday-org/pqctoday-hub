@@ -577,6 +577,11 @@ const FRAMEWORK = {
         L('pqc-risk-management', 'Learn: PQC Risk Management'),
         L('data-asset-sensitivity', 'Learn: data sensitivity & legal/data-retention horizon'),
         R(
+          'threats',
+          "Reference: Mosca's inequality — shelf-life + migration time > time to Q-Day means you're already late",
+          '/threats?view=horizon'
+        ),
+        R(
           'algorithms-detailed',
           'Reference: why 256-bit ECC ≈ RSA-2048 under quantum (security levels)'
         ),
