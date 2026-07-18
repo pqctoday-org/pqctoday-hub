@@ -3,6 +3,7 @@ import { useRef, useEffect, useState } from 'react'
 import React from 'react'
 import { useSearchParams } from 'react-router-dom'
 import {
+  BookOpen,
   Cpu,
   Key as KeyIcon,
   Lock,
@@ -33,6 +34,7 @@ import { TokenSetupPanel } from './components/TokenSetupPanel'
 import { HsmKeyTable } from './keystore/HsmKeyTable'
 import { Pkcs11LogPanel } from '../shared/Pkcs11LogPanel'
 import { HsmSignCombinedPanel } from './tabs/SignVerifyTab'
+import { HsmLearnView } from './hsm/learn/HsmLearnView'
 import { Button } from '../ui/button'
 import { Card } from '../ui/card'
 import { InlineTooltip } from '../ui/InlineTooltip'
@@ -47,6 +49,7 @@ import {
 } from '../../wasm/softhsm'
 
 type HsmTab =
+  | 'learn'
   | 'keystore'
   | 'kem'
   | 'symmetric'
@@ -58,6 +61,10 @@ type HsmTab =
   | 'mechanisms'
   | 'acvp'
   | 'logs'
+
+/** First-time visitors land on the guided Learn tab (matching the KMIP
+ * playground's own Learn-first default), not the bare workbench. */
+const DEFAULT_TAB: HsmTab = 'learn'
 
 export const HsmPlayground = () => {
   const role = usePersonaStore((s) => s.selectedPersona)
@@ -74,7 +81,7 @@ export const HsmPlayground = () => {
     hsmLog,
     clearHsmLog,
   } = useHsmContext()
-  const [activeTab, setActiveTab] = useState<HsmTab>('keystore')
+  const [activeTab, setActiveTab] = useState<HsmTab>(DEFAULT_TAB)
   const [showMethodologyModal, setShowMethodologyModal] = useState(false)
   const errorRef = useRef<HTMLDivElement>(null)
   const tabListRef = useRef<HTMLDivElement>(null)
@@ -178,16 +185,20 @@ export const HsmPlayground = () => {
     const engine = initialEngine.current
     const algo = initialAlgo.current
     if (engine) setEngineMode(engine)
-    if (tab && tab !== 'keystore') {
-      if (phase === 'idle') {
-        autoInit(engine ?? undefined).then((ok) => {
-          if (!ok) return
-          setActiveTab(tab)
-          generateDefaultKeyForTab(tab, algo, engine ?? undefined)
-        })
-      } else if (isReady) {
+    if (!tab || tab === DEFAULT_TAB) {
+      // No explicit tab, or it matches the default — nothing extra to do.
+    } else if (tab === 'keystore') {
+      // Manual 3-step walkthrough tab, on purpose — switch to it without
+      // eagerly auto-initing the engine in the background.
+      setActiveTab(tab)
+    } else if (phase === 'idle') {
+      autoInit(engine ?? undefined).then((ok) => {
+        if (!ok) return
         setActiveTab(tab)
-      }
+        generateDefaultKeyForTab(tab, algo, engine ?? undefined)
+      })
+    } else if (isReady) {
+      setActiveTab(tab)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -201,7 +212,7 @@ export const HsmPlayground = () => {
     setSearchParams(
       (prev) => {
         const next = new URLSearchParams(prev)
-        if (activeTab !== 'keystore') next.set('tab', activeTab)
+        if (activeTab !== DEFAULT_TAB) next.set('tab', activeTab)
         else next.delete('tab')
         if (engineMode !== 'rust') next.set('engine', engineMode)
         else next.delete('engine')
@@ -389,6 +400,13 @@ export const HsmPlayground = () => {
           }}
         >
           {tabBtn(
+            'learn',
+            <>
+              <BookOpen size={16} className="shrink-0" aria-hidden="true" />
+              <span className="text-xs ml-1">Learn</span>
+            </>
+          )}
+          {tabBtn(
             'keystore',
             <>
               <KeyIcon size={16} className="shrink-0" aria-hidden="true" />
@@ -503,6 +521,9 @@ export const HsmPlayground = () => {
         aria-labelledby={`hsm-tab-${activeTab}`}
         className="flex-1 overflow-y-auto custom-scrollbar min-h-0 bg-card rounded-xl border border-border p-3 md:p-6 relative"
       >
+        {activeTab === 'learn' && (
+          <HsmLearnView onTryInWorkbench={(tab) => handleTabChange(tab as HsmTab)} />
+        )}
         {activeTab === 'keystore' && (
           <div className="space-y-4">
             <TokenSetupPanel />
