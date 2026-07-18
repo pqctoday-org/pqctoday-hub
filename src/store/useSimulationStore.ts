@@ -76,6 +76,11 @@ export interface SimulationState {
    *  the Mosca dials in plain language. Independent of difficulty (a beginner can
    *  play Realistic with guidance on). */
   guided: boolean
+  /** Concept-peek ids (WP2.3) the player has already seen in interactive play —
+   *  each concept surfaces once, on first entry to the phase it's keyed to, then
+   *  never repeats. Browser/tutorial state like tourSeen/guided: preserved across
+   *  reset(), never part of a portable run save/snapshot. */
+  seenConceptPeeks: string[]
 
   setSize: (v: string) => void
   setCountry: (v: string) => void
@@ -123,6 +128,8 @@ export interface SimulationState {
   markTourSeen: () => void
   /** Toggle novice Guided mode (PR-4); independent of difficulty. */
   setGuided: (v: boolean) => void
+  /** Mark a concept peek (WP2.3) as seen — idempotent, never shows it again. */
+  markConceptPeekSeen: (id: string) => void
   reset: () => void
   /** Serialize the current run to a portable JSON save string (WS-08). */
   exportSave: () => string
@@ -157,7 +164,7 @@ const SEED = {
       t: 'Q2 2026',
       txt: 'CycloneDX CBOM published for Layers 1–2 — Phase 2 cleared',
     },
-    { sev: 'info', t: 'Q2 2026', txt: 'OpenSSL 3.6 ships ML-DSA hardware acceleration' },
+    { sev: 'info', t: 'Q2 2026', txt: 'Your TLS stack ships hardware-accelerated ML-DSA' },
   ] as SimEvent[],
   autoRunResumeIndex: 0,
   autoRunLastMode: null as string | null,
@@ -173,7 +180,7 @@ const SEED = {
   difficulty: 'realistic' as DifficultyId,
 }
 
-const STORE_VERSION = 13
+const STORE_VERSION = 14
 const SAVE_KIND = 'pqc-simulation-save'
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null
@@ -243,6 +250,7 @@ export const useSimulationStore = create<SimulationState>()(
       seed: newSeed(),
       tourSeen: false,
       guided: false,
+      seenConceptPeeks: [],
       setSize: (size) => set({ size }),
       setCountry: (country) => set({ country }),
       setSector: (sector) => set({ sector }),
@@ -319,9 +327,19 @@ export const useSimulationStore = create<SimulationState>()(
       setDifficulty: (difficulty) => set({ difficulty }),
       markTourSeen: () => set({ tourSeen: true }),
       setGuided: (guided) => set({ guided }),
+      markConceptPeekSeen: (id) =>
+        set((s) =>
+          s.seenConceptPeeks.includes(id) ? s : { seenConceptPeeks: [...s.seenConceptPeeks, id] }
+        ),
       // RESET clears the run but NOT the onboarding / guidance prefs.
       reset: () =>
-        set((s) => ({ ...SEED, seed: newSeed(), tourSeen: s.tourSeen, guided: s.guided })),
+        set((s) => ({
+          ...SEED,
+          seed: newSeed(),
+          tourSeen: s.tourSeen,
+          guided: s.guided,
+          seenConceptPeeks: s.seenConceptPeeks,
+        })),
       exportSave: () =>
         JSON.stringify(
           { app: 'pqc-today', kind: SAVE_KIND, version: STORE_VERSION, state: saveSlice(get()) },
@@ -347,9 +365,14 @@ export const useSimulationStore = create<SimulationState>()(
       name: 'pqc-simulation',
       storage: createJSONStorage(() => localStorage),
       version: STORE_VERSION,
-      // tourSeen persists alongside the run slice but is NOT part of saveSlice,
-      // so it never travels in a run export / app snapshot.
-      partialize: (s) => ({ ...saveSlice(s), tourSeen: s.tourSeen, guided: s.guided }),
+      // tourSeen/seenConceptPeeks persist alongside the run slice but are NOT part
+      // of saveSlice, so they never travel in a run export / app snapshot.
+      partialize: (s) => ({
+        ...saveSlice(s),
+        tourSeen: s.tourSeen,
+        guided: s.guided,
+        seenConceptPeeks: s.seenConceptPeeks,
+      }),
       migrate: (persisted: unknown) => {
         // Defensive: ensure every field exists with a safe default. v3 introduced
         // strict maturity gating, so legacy pre-leveled progress (checks / turn) is
@@ -384,6 +407,9 @@ export const useSimulationStore = create<SimulationState>()(
           difficulty: asDifficulty(s.difficulty),
           tourSeen: typeof s.tourSeen === 'boolean' ? s.tourSeen : false,
           guided: typeof s.guided === 'boolean' ? s.guided : false,
+          seenConceptPeeks: Array.isArray(s.seenConceptPeeks)
+            ? (s.seenConceptPeeks as string[])
+            : [],
         }
       },
       onRehydrateStorage: () => (_state, error) => {

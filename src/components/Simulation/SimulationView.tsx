@@ -332,6 +332,8 @@ export function SimulationView() {
     markRunComplete,
     recordObjectiveAchieved,
     objectiveAchievedYears,
+    seenConceptPeeks,
+    markConceptPeekSeen,
   } = useSimulationStore()
   // WS-14: the active difficulty balance the engine + scoring read (config swap).
   const balance = getBalance(difficulty)
@@ -569,6 +571,23 @@ export function SimulationView() {
     if (stage?.conceptCard) ids.push(stage.conceptCard)
     return ids.map((id) => EXEC_TOUR_CONCEPTS[id])
   }, [autoRunPlayer.mode, autoRunPlayer.running, autoRunPlayer.phaseFocus?.phase])
+
+  // WP2.3: the same concept peeks, brought to INTERACTIVE play — first entry to the
+  // phase they're keyed to, then never again (seenConceptPeeks). Suppressed while a
+  // walkthrough is actually running so the two systems never compete for the same
+  // fixed-position slot (walkthroughConcepts owns it then).
+  const interactiveConceptPeeks = useMemo<TourConcept[]>(() => {
+    if (isWalkthroughMode(autoRunPlayer.mode) && autoRunPlayer.running) return []
+    const ids: TourConcept['id'][] = []
+    if (sel === EXEC_TOUR_STAGES[0]?.phase) ids.push(...EXEC_TOUR_OPENING_CONCEPTS)
+    const stage = EXEC_TOUR_STAGES.find((s) => s.phase === sel)
+    if (stage?.conceptCard) ids.push(stage.conceptCard)
+    return ids.filter((id) => !seenConceptPeeks.includes(id)).map((id) => EXEC_TOUR_CONCEPTS[id])
+  }, [sel, autoRunPlayer.mode, autoRunPlayer.running, seenConceptPeeks])
+  // The two sets are mutually exclusive by construction (each requires the other's
+  // running/not-running gate), so a single combined list is always unambiguous.
+  const conceptPeeks =
+    walkthroughConcepts.length > 0 ? walkthroughConcepts : interactiveConceptPeeks
 
   // real hub completion state: generated artifacts + Learn-module progress
   const docs = useModuleStore((s) => s.artifacts.executiveDocuments)
@@ -1533,7 +1552,18 @@ export function SimulationView() {
               </Button>
             )}
             <SimAutoRunOverlay player={autoRunPlayer} />
-            <SimConceptPeek concepts={walkthroughConcepts} />
+            <SimConceptPeek
+              concepts={conceptPeeks}
+              onDismiss={markConceptPeekSeen}
+              onLearnMore={(moduleId) =>
+                openStep({
+                  kind: 'learn',
+                  label: `Learn: ${moduleId}`,
+                  to: `/learn/${moduleId}`,
+                  moduleId,
+                })
+              }
+            />
             <SimArtifactReveal type={autoRunPlayer.reveal} />
             {autoRunPlayer.scenarioIntro && (
               <SimScenarioIntroCard

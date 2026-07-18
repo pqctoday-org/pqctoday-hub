@@ -132,6 +132,19 @@ describe('useSimulationStore', () => {
     expect(s().tourSeen).toBe(true) // reset clears the run, not the onboarding flag
   })
 
+  // WP2.3 — each concept peek shows once, is idempotent, and survives reset like tourSeen.
+  it('markConceptPeekSeen is idempotent and survives a run reset', () => {
+    useSimulationStore.setState({ seenConceptPeeks: [] })
+    s().markConceptPeekSeen('hndl')
+    expect(s().seenConceptPeeks).toEqual(['hndl'])
+    s().markConceptPeekSeen('hndl') // idempotent — no duplicate
+    expect(s().seenConceptPeeks).toEqual(['hndl'])
+    s().markConceptPeekSeen('mosca')
+    expect(s().seenConceptPeeks).toEqual(['hndl', 'mosca'])
+    s().reset()
+    expect(s().seenConceptPeeks).toEqual(['hndl', 'mosca']) // reset clears the run, not this
+  })
+
   it('importSave rejects malformed / foreign input without throwing', () => {
     expect(s().importSave('not json')).toBe(false)
     expect(s().importSave('{}')).toBe(false)
