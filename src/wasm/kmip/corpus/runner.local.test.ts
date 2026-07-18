@@ -109,12 +109,26 @@ describe('OASIS corpus replay (real wasm engine)', () => {
       }
       // The engine-0.13.x native baseline (conformance/REPLAY_REPORT.md,
       // 2026-07-09) is an exact 97 PASS / 5 SKIP_DEPRECATED / 0 everything
-      // else on the 102-file OASIS corpus. This in-browser replay matches it
-      // except for the ONE remaining wasm-vs-native seam gap, honestly
-      // labelled rather than approximated: 3 SKIP_TRANSPORT —
-      // MaximumResponseSize (§9.10) enforcement lives in the native TLS
-      // listener; `KmipPlayground::submit` calls `dispatch()` directly, so
-      // there is no seam to implement it on.
+      // else on the 102-file OASIS corpus. This in-browser replay now
+      // matches it exactly — full parity, 0 SKIP_TRANSPORT. Until
+      // 2026-07-17 the 3 MSGENC-* (Message-Encoding profile) tests were
+      // SKIP_TRANSPORT: `MaximumResponseSize` (§9.10) enforcement lived
+      // inline in the native TLS listener, wrapping `dispatch()` rather
+      // than living inside it, so `KmipPlayground::submit` had no seam to
+      // reach it through. That was an implementation-layer accident, not a
+      // real transport dependency — the check only needs the parsed
+      // request header and the encoded response length. Moved into
+      // `dispatch()` itself (`enforce_max_response_size`,
+      // `dispatcher/mod.rs`) so both the native listener and wasm
+      // `submit()` share one code path. Getting these 3 to genuinely
+      // replay also required porting a second, previously-masked gap: the
+      // Python harness's MSGENC-* carve-out from the Query
+      // Operation/ObjectType superset check (`_compare_query_response_
+      // payload`'s `is_msgenc` branch, Phase 6.1) — those fixtures list
+      // Notify/Put, which this engine honestly declines to advertise
+      // (§6.2.2/§6.2.3's transport is undefined) — was never ported to
+      // this TS comparator because the tests never reached it while
+      // skipped. See `compareQueryResponsePayload` in `compare.ts`.
       // The former 2 SKIP_PRECONDITION tests (TL-M-3 / SASED-M-3) PASS via
       // chained prerequisite replay (_CHAINED_TEST_GROUPS), and the former
       // 3 SKIP_POLICY_VARIANT tests (CS-RNG-O-2/3/4) PASS by booting each
@@ -122,9 +136,9 @@ describe('OASIS corpus replay (real wasm engine)', () => {
       // 0 FAIL / 0 ERROR is enforced strictly; that is the one thing that
       // must never regress.
       expect(failures, failures.join('\n')).toEqual([])
-      expect(counts.PASS ?? 0).toBe(94)
+      expect(counts.PASS ?? 0).toBe(97)
       expect(counts.SKIP_DEPRECATED ?? 0).toBe(5)
-      expect(counts.SKIP_TRANSPORT ?? 0).toBe(3)
+      expect(counts.SKIP_TRANSPORT ?? 0).toBe(0)
       expect(counts.SKIP_OP ?? 0).toBe(0)
       expect(counts.FAIL ?? 0).toBe(0)
       expect(counts.ERROR ?? 0).toBe(0)

@@ -176,13 +176,26 @@ export const create = (algorithm = 'AES', length = 256, usage = 'Encrypt Decrypt
   ),
 ]
 
-export const createKeyPair = (algorithm = 'ML-DSA-65', usage = 'Sign Verify'): KmipNode[] => [
-  struct(
-    'CommonAttributes',
-    leaf('CryptographicAlgorithm', 'Enumeration', algorithm),
-    leaf('CryptographicUsageMask', 'Integer', usage)
-  ),
-]
+export const createKeyPair = (
+  algorithm = 'ML-DSA-65',
+  usage = 'Sign Verify',
+  seedHex?: string
+): KmipNode[] => {
+  const payload: KmipNode[] = [
+    struct(
+      'CommonAttributes',
+      leaf('CryptographicAlgorithm', 'Enumeration', algorithm),
+      leaf('CryptographicUsageMask', 'Integer', usage)
+    ),
+  ]
+  // WD19 §3.4 `Seed` — deterministic keygen from FIPS 204 ξ / FIPS 203
+  // d‖z / FIPS 205 SK.seed‖SK.prf‖PK.seed (create_key_pair.rs forwards it
+  // to `generate_*_keypair_from_seed_extractable`), for KAT reproducibility
+  // instead of the RNG. A seeded key is born Extractable so its material
+  // can be Got byte-exact.
+  if (seedHex) payload.push(leaf('Seed', 'ByteString', seedHex))
+  return payload
+}
 
 export const register = (algorithm = 'AES', length = 256, keyMaterialHex = ''): KmipNode[] => [
   leaf('ObjectType', 'Enumeration', 'SymmetricKey'),
@@ -232,18 +245,64 @@ export const importObject = (
   ),
 ]
 
-export const exportObject = (uid: string): KmipNode[] => [uidLeaf(uid)]
+/** §11 Key Wrapping Specification — AES-KW (RFC 3394) wrap the returned
+ * key material under `wrapKeyUid` (which must be Active with WrapKey
+ * usage) instead of returning it in the clear. Shared by Get (§6.1.23)
+ * and Export (§6.1.22) — `helpers::wrap_key_value` backs both identically
+ * (K16). This is also the ONLY way to Get/Export a `Sensitive=true`
+ * object at all (get.rs / register_import_export.rs's Export both refuse
+ * a plaintext read of one). */
+const keyWrappingSpecification = (wrapKeyUid: string): KmipNode =>
+  struct(
+    'KeyWrappingSpecification',
+    leaf('WrappingMethod', 'Enumeration', 'Encrypt'),
+    struct(
+      'EncryptionKeyInformation',
+      uidLeaf(wrapKeyUid),
+      struct('CryptographicParameters', leaf('BlockCipherMode', 'Enumeration', 'NISTKeyWrap'))
+    )
+  )
 
-export const get = (uid: string, keyFormatType?: string): KmipNode[] =>
-  keyFormatType
-    ? [uidLeaf(uid), leaf('KeyFormatType', 'Enumeration', keyFormatType)]
-    : [uidLeaf(uid)]
+export const exportObject = (
+  uid: string,
+  keyFormatType?: string,
+  wrapKeyUid?: string
+): KmipNode[] => {
+  const payload = [uidLeaf(uid)]
+  if (keyFormatType) payload.push(leaf('KeyFormatType', 'Enumeration', keyFormatType))
+  if (wrapKeyUid) payload.push(keyWrappingSpecification(wrapKeyUid))
+  return payload
+}
+
+export const get = (uid: string, keyFormatType?: string, wrapKeyUid?: string): KmipNode[] => {
+  const payload = [uidLeaf(uid)]
+  if (keyFormatType) payload.push(leaf('KeyFormatType', 'Enumeration', keyFormatType))
+  if (wrapKeyUid) payload.push(keyWrappingSpecification(wrapKeyUid))
+  return payload
+}
 
 /** Locate filters ride in an `Attributes` structure (§6.1.32). Length /
  * usage-mask / UID filtering became REAL in engine 0.13.0 — previously the
  * server accepted these as valid syntax and silently ignored them,
  * returning every object instead of narrowing. */
-export const locate = (algorithm?: string, length?: number, uid?: string): KmipNode[] => {
+export interface LocatePagingParams {
+  /** §6.1.32 Maximum Items — cap the number of UIDs returned. */
+  maxItems?: number
+  /** §6.1.32 Offset Items — skip this many matches before applying
+   * Maximum Items (paging: offset selects the page start). */
+  offsetItems?: number
+  /** §12.3 Table 608 Storage Status Mask bitmask — On-line 0x01, Archival
+   * 0x02, Destroyed 0x04 (OR together for more than one class). Omitted
+   * defaults to On-line only, per §6.1.32. */
+  storageStatusMask?: number
+}
+
+export const locate = (
+  algorithm?: string,
+  length?: number,
+  uid?: string,
+  paging?: LocatePagingParams
+): KmipNode[] => {
   const filters: KmipNode[] = []
   if (algorithm) filters.push(leaf('CryptographicAlgorithm', 'Enumeration', algorithm))
   if (length !== undefined) filters.push(leaf('CryptographicLength', 'Integer', length))
@@ -251,7 +310,13 @@ export const locate = (algorithm?: string, length?: number, uid?: string): KmipN
   // §6.1.32 — Attributes is REQUIRED, even with no filters: "the Attributes
   // structure MAY be empty indicating all objects should match." Omitting
   // it outright (the pre-2026-07-17 behavior) was non-conformant.
-  return [struct('Attributes', ...filters)]
+  const payload: KmipNode[] = [struct('Attributes', ...filters)]
+  if (paging?.maxItems !== undefined) payload.push(leaf('MaximumItems', 'Integer', paging.maxItems))
+  if (paging?.offsetItems !== undefined)
+    payload.push(leaf('OffsetItems', 'Integer', paging.offsetItems))
+  if (paging?.storageStatusMask !== undefined)
+    payload.push(leaf('StorageStatusMask', 'Integer', paging.storageStatusMask))
+  return payload
 }
 
 export const activate = (uid: string): KmipNode[] => [uidLeaf(uid)]
@@ -263,9 +328,42 @@ export const revoke = (uid: string, reason = 'Unspecified'): KmipNode[] => [
 
 export const destroy = (uid: string): KmipNode[] => [uidLeaf(uid)]
 
-export const deactivate = (uid: string): KmipNode[] => [uidLeaf(uid)]
+export const deactivate = (uid: string, reason?: string): KmipNode[] => {
+  const payload = [uidLeaf(uid)]
+  // §6.1.14 — Deactivation Reason Code is genuinely stored
+  // (`obj.deactivation_reason_code`); Deactivation Date is NOT — the
+  // handler always stamps "now" regardless of any client-supplied value
+  // (deactivate.rs), so there is no matching date field to expose here.
+  if (reason)
+    payload.push(
+      struct('DeactivationReason', leaf('DeactivationReasonCode', 'Enumeration', reason))
+    )
+  return payload
+}
 
-export const check = (uid: string): KmipNode[] => [uidLeaf(uid)]
+export interface CheckParams {
+  /** §6.1.7 — must fit within the object's remaining Usage Limits budget. */
+  usageLimitsCount?: number
+  /** §6.1.7 — must be a subset of the object's own Cryptographic Usage
+   * Mask (same mask-string convention as Create's `usage`). */
+  cryptographicUsageMask?: string
+  /** §6.1.7 — must not exceed the object's own Lease Time cap. */
+  leaseTimeSeconds?: number
+}
+
+/** §6.1.7 Check — validates policy permits the client's intended use
+ * WITHOUT performing a crypto operation: all three fields are real
+ * (Phase 3.1), not a v0.1 always-allow stub. */
+export const check = (uid: string, params?: CheckParams): KmipNode[] => {
+  const payload = [uidLeaf(uid)]
+  if (params?.usageLimitsCount !== undefined)
+    payload.push(leaf('UsageLimitsCount', 'LongInteger', params.usageLimitsCount))
+  if (params?.cryptographicUsageMask)
+    payload.push(leaf('CryptographicUsageMask', 'Integer', params.cryptographicUsageMask))
+  if (params?.leaseTimeSeconds !== undefined)
+    payload.push(leaf('LeaseTime', 'Interval', params.leaseTimeSeconds))
+  return payload
+}
 
 export const archive = (uid: string): KmipNode[] => [uidLeaf(uid)]
 
@@ -296,11 +394,32 @@ export const addAttribute = (
 export const modifyAttribute = (
   uid: string,
   name = 'Comment',
-  value = 'kmip3-commands'
-): KmipNode[] => [uidLeaf(uid), struct('NewAttribute', leaf(name, 'TextString', value))]
+  value = 'kmip3-commands',
+  currentValue?: string
+): KmipNode[] => {
+  const payload = [uidLeaf(uid)]
+  // §6.1.38 `CurrentAttribute` — disambiguates WHICH existing instance to
+  // change when an attribute could carry more than one value; omitted
+  // auto-selects the sole instance. attribute_mutate.rs's `modify_attribute`
+  // rejects a CurrentAttribute that doesn't match any existing value.
+  if (currentValue) payload.push(struct('CurrentAttribute', leaf(name, 'TextString', currentValue)))
+  payload.push(struct('NewAttribute', leaf(name, 'TextString', value)))
+  return payload
+}
 
-export const deleteAttribute = (uid: string, attributeReference = 'Comment'): KmipNode[] => [
+export const deleteAttribute = (
+  uid: string,
+  attributeReference = 'Comment',
+  currentValue?: string
+): KmipNode[] => [
   uidLeaf(uid),
+  // §6.1.17 — a `CurrentAttribute` deletes that ONE value; a bare
+  // `AttributeReference` deletes every instance of the named attribute.
+  // delete_attribute.rs checks CurrentAttribute FIRST, so sending both is
+  // safe: the value-specific delete wins when currentValue is supplied.
+  ...(currentValue
+    ? [struct('CurrentAttribute', leaf(attributeReference, 'TextString', currentValue))]
+    : []),
   leaf('AttributeReference', 'Enumeration', attributeReference),
 ]
 
@@ -343,41 +462,143 @@ export const setDefaults = (objectType = 'SymmetricKey', name?: string): KmipNod
 
 // ── 4. Cryptographic Services ───────────────────────────────────────────────
 
-export const encrypt = (uid: string, dataHex: string, ivHex?: string): KmipNode[] => {
+export interface EncryptAeadParams {
+  /** §11 Authenticated Encryption Additional Data — AAD for AES-GCM /
+   * ChaCha20-Poly1305, bound into the auth tag but never encrypted
+   * (encrypt.rs reads `req.aad`, forwarded to the engine unconditionally). */
+  aadHex?: string
+  /** §11 Tag Length (bytes) — requested AEAD tag length (NIST SP 800-38D
+   * §5.2.1.2: 12-16 for GCM; ChaCha20-Poly1305 requires exactly 16).
+   * `CryptographicParameters.TagLength`, validated in encrypt_classical. */
+  tagLengthBytes?: number
+}
+
+export const encrypt = (
+  uid: string,
+  dataHex: string,
+  ivHex?: string,
+  aead?: EncryptAeadParams
+): KmipNode[] => {
+  const cpChildren: KmipNode[] = []
+  if (aead?.tagLengthBytes !== undefined)
+    cpChildren.push(leaf('TagLength', 'Integer', aead.tagLengthBytes))
   const payload = [
     uidLeaf(uid),
-    struct('CryptographicParameters'),
+    struct('CryptographicParameters', ...cpChildren),
     leaf('Data', 'ByteString', dataHex),
   ]
   if (ivHex) payload.push(leaf('IVCounterNonce', 'ByteString', ivHex))
+  if (aead?.aadHex)
+    payload.push(leaf('AuthenticatedEncryptionAdditionalData', 'ByteString', aead.aadHex))
   return payload
 }
 
-export const decrypt = (uid: string, dataHex: string, ivHex?: string): KmipNode[] => {
+export interface DecryptAeadParams {
+  /** §11 Authenticated Encryption Additional Data — MUST byte-match the
+   * value supplied at Encrypt time or the AEAD tag check fails. */
+  aadHex?: string
+  /** §11 Authenticated Encryption Tag — the AEAD tag, carried as its own
+   * field (NOT appended to Data); decrypt.rs recombines
+   * `ciphertext||tag` server-side before calling the engine, since the
+   * shim's AEAD primitives expect them concatenated. */
+  tagHex?: string
+  /** §11 Tag Length (bytes) — see EncryptAeadParams. */
+  tagLengthBytes?: number
+}
+
+export const decrypt = (
+  uid: string,
+  dataHex: string,
+  ivHex?: string,
+  aead?: DecryptAeadParams
+): KmipNode[] => {
+  const cpChildren: KmipNode[] = []
+  if (aead?.tagLengthBytes !== undefined)
+    cpChildren.push(leaf('TagLength', 'Integer', aead.tagLengthBytes))
   const payload = [
     uidLeaf(uid),
-    struct('CryptographicParameters'),
+    struct('CryptographicParameters', ...cpChildren),
     leaf('Data', 'ByteString', dataHex),
   ]
   if (ivHex) payload.push(leaf('IVCounterNonce', 'ByteString', ivHex))
+  if (aead?.tagHex) payload.push(leaf('AuthenticatedEncryptionTag', 'ByteString', aead.tagHex))
+  if (aead?.aadHex)
+    payload.push(leaf('AuthenticatedEncryptionAdditionalData', 'ByteString', aead.aadHex))
   return payload
 }
 
-export const sign = (uid: string, dataHex: string, algorithm?: string): KmipNode[] => {
+export interface SignPqcParams {
+  /** §11 Deterministic — force the non-hedged variant on a per-call basis. */
+  deterministic?: boolean
+  /** §11 Internal — use the `*.Sign_internal` interface (no external domain framing). */
+  internal?: boolean
+  /** §11 External Mu — `data` below is the 64-byte message representative µ
+   * (FIPS 204's ExternalMu-ML-DSA.Sign), not the message itself. */
+  externalMu?: boolean
+  /** §11 Context String (hex) — FIPS 204/205 signing context; the mechanism
+   * a HashML-DSA/HashSLH-DSA-style prehash binds which hash function was
+   * used to produce `data`. */
+  contextStringHex?: string
+  /** §11 Random (hex) — explicit signing randomizer for the hedged variant,
+   * making an otherwise-random signature reproducible. */
+  randomHex?: string
+}
+
+export const sign = (
+  uid: string,
+  dataHex: string,
+  algorithm?: string,
+  pqc?: SignPqcParams
+): KmipNode[] => {
   const payload = [uidLeaf(uid)]
-  if (algorithm)
-    payload.push(
-      struct('CryptographicParameters', leaf('CryptographicAlgorithm', 'Enumeration', algorithm))
-    )
+  const cpChildren: KmipNode[] = []
+  if (algorithm) cpChildren.push(leaf('CryptographicAlgorithm', 'Enumeration', algorithm))
+  if (pqc?.deterministic) cpChildren.push(leaf('Deterministic', 'Boolean', true))
+  if (pqc?.internal) cpChildren.push(leaf('Internal', 'Boolean', true))
+  if (pqc?.externalMu) cpChildren.push(leaf('ExternalMu', 'Boolean', true))
+  if (pqc?.contextStringHex)
+    cpChildren.push(leaf('ContextString', 'ByteString', pqc.contextStringHex))
+  if (pqc?.randomHex) cpChildren.push(leaf('Random', 'ByteString', pqc.randomHex))
+  if (cpChildren.length > 0) payload.push(struct('CryptographicParameters', ...cpChildren))
   payload.push(leaf('Data', 'ByteString', dataHex))
   return payload
 }
 
-export const signatureVerify = (uid: string, dataHex: string, signatureHex: string): KmipNode[] => [
-  uidLeaf(uid),
-  leaf('Data', 'ByteString', dataHex),
-  leaf('SignatureData', 'ByteString', signatureHex),
-]
+export interface SignatureVerifyPqcParams {
+  /** §11 Internal — verify via the `*.Verify_internal` interface (no
+   * external domain framing), mirrors Sign's `internal`. */
+  internal?: boolean
+  /** §11 External Mu — `data` is the 64-byte message representative µ. */
+  externalMu?: boolean
+  /** §11 Context String (hex) — FIPS 204/205 verification context; MUST
+   * match the value used at signing time. */
+  contextStringHex?: string
+  /** §11 Salt Length (bytes) — pins RSA-PSS EMSA-PSS-VERIFY to exactly
+   * this salt length; absent keeps the engine's two-candidate default
+   * (hash length / maximal). signature_verify.rs's `pss_salt_from_cp`
+   * reads this the same way sign.rs's PSS path does. */
+  saltLengthBytes?: number
+}
+
+export const signatureVerify = (
+  uid: string,
+  dataHex: string,
+  signatureHex: string,
+  pqc?: SignatureVerifyPqcParams
+): KmipNode[] => {
+  const payload = [uidLeaf(uid)]
+  const cpChildren: KmipNode[] = []
+  if (pqc?.internal) cpChildren.push(leaf('Internal', 'Boolean', true))
+  if (pqc?.externalMu) cpChildren.push(leaf('ExternalMu', 'Boolean', true))
+  if (pqc?.contextStringHex)
+    cpChildren.push(leaf('ContextString', 'ByteString', pqc.contextStringHex))
+  if (pqc?.saltLengthBytes !== undefined)
+    cpChildren.push(leaf('SaltLength', 'Integer', pqc.saltLengthBytes))
+  if (cpChildren.length > 0) payload.push(struct('CryptographicParameters', ...cpChildren))
+  payload.push(leaf('Data', 'ByteString', dataHex))
+  payload.push(leaf('SignatureData', 'ByteString', signatureHex))
+  return payload
+}
 
 export const encapsulate = (uid: string): KmipNode[] => [uidLeaf(uid)]
 
@@ -402,27 +623,57 @@ export const hash = (dataHex: string, algorithm = 'SHA256'): KmipNode[] => [
   leaf('Data', 'ByteString', dataHex),
 ]
 
+export interface DeriveKeyParams {
+  /** §7.13 — REQUIRED for HASH (which hash to run) and for PBKDF2 (which
+   * PRF hash; defaults server-side to SHA-256 if omitted); OPTIONAL for
+   * HMAC/NIST800-108-C (falls back to the base key's own HMAC algorithm,
+   * then SHA-256). Feeds `DerivationParameters.CryptographicParameters
+   * .HashingAlgorithm` — derive_key.rs's `request_hash`. */
+  hashAlgorithm?: string
+  /** §7.13 Table 465 — REQUIRED for PBKDF2. */
+  saltHex?: string
+  /** §7.13 Table 465 — REQUIRED for PBKDF2 (must be a positive integer). */
+  iterationCount?: number
+}
+
 /** Defaults match `op_coverage_e2e.rs`'s `dk-derive` case: NIST SP 800-108
- * Counter-Mode, deriving a 256-bit AES key. */
+ * Counter-Mode, deriving a 256-bit AES key. PBKDF2/HASH/HMAC/AsymmetricKey
+ * (ECDH agreement) are also real (derive_key.rs) — `params` carries the
+ * extra fields those methods consume. */
 export const deriveKey = (
   baseUid: string,
   derivationDataHex = textHex('label\x00context'),
   objectType = 'SymmetricKey',
   method = 'NIST800-108-C',
   algorithm = 'AES',
-  length = 256
-): KmipNode[] => [
-  leaf('ObjectType', 'Enumeration', objectType),
-  uidLeaf(baseUid),
-  leaf('DerivationMethod', 'Enumeration', method),
-  struct('DerivationParameters', leaf('DerivationData', 'ByteString', derivationDataHex)),
-  struct(
-    'Attributes',
-    leaf('CryptographicAlgorithm', 'Enumeration', algorithm),
-    leaf('CryptographicLength', 'Integer', length),
-    leaf('CryptographicUsageMask', 'Integer', 'Encrypt Decrypt')
-  ),
-]
+  length = 256,
+  params?: DeriveKeyParams
+): KmipNode[] => {
+  const dpChildren: KmipNode[] = []
+  if (params?.hashAlgorithm)
+    dpChildren.push(
+      struct(
+        'CryptographicParameters',
+        leaf('HashingAlgorithm', 'Enumeration', params.hashAlgorithm)
+      )
+    )
+  if (derivationDataHex) dpChildren.push(leaf('DerivationData', 'ByteString', derivationDataHex))
+  if (params?.saltHex) dpChildren.push(leaf('Salt', 'ByteString', params.saltHex))
+  if (params?.iterationCount !== undefined)
+    dpChildren.push(leaf('IterationCount', 'Integer', params.iterationCount))
+  return [
+    leaf('ObjectType', 'Enumeration', objectType),
+    uidLeaf(baseUid),
+    leaf('DerivationMethod', 'Enumeration', method),
+    struct('DerivationParameters', ...dpChildren),
+    struct(
+      'Attributes',
+      leaf('CryptographicAlgorithm', 'Enumeration', algorithm),
+      leaf('CryptographicLength', 'Integer', length),
+      leaf('CryptographicUsageMask', 'Integer', 'Encrypt Decrypt')
+    ),
+  ]
+}
 
 export const rekey = (uid: string, offset?: number): KmipNode[] => {
   const payload = [uidLeaf(uid)]
@@ -444,8 +695,18 @@ export const rngRetrieve = (dataLength = 32): KmipNode[] => [
 
 export const rngSeed = (dataHex: string): KmipNode[] => [leaf('Data', 'ByteString', dataHex)]
 
-export const pkcs11 = (fn = 'CGetInfo', inputParametersHex?: string): KmipNode[] => {
-  const payload = [leaf('PKCS11Function', 'Enumeration', fn)]
+export const pkcs11 = (
+  fn = 'CGetInfo',
+  inputParametersHex?: string,
+  iface?: string
+): KmipNode[] => {
+  const payload: KmipNode[] = []
+  // §6.1.42 `PKCS#11 Interface` — names which Cryptoki version's
+  // semantics the passthrough call should honor (e.g. "3.0" vs "3.2");
+  // decoded into `Pkcs11Request.interface` and echoed back verbatim on
+  // the response (rng_and_pkcs11.rs).
+  if (iface) payload.push(leaf('PKCS11Interface', 'TextString', iface))
+  payload.push(leaf('PKCS11Function', 'Enumeration', fn))
   if (inputParametersHex)
     payload.push(leaf('PKCS11InputParameters', 'ByteString', inputParametersHex))
   return payload
@@ -485,13 +746,34 @@ export const validate = (
  * accepts) should be supplied; supplying neither reproduces the real
  * `neither a Certificate Request nor a Unique Identifier supplied` error,
  * not a client-side guess at one. */
-export const certify = (uid = '', csrHex = ''): KmipNode[] => {
+export interface CertifyValidityParams {
+  /** §6.1.6 — Activation Date attribute inside the request's Attributes
+   * bag (unix seconds); `dates_from_attributes` reads it as the issued
+   * cert's Not-Before. Omitted defaults to now (or Offset, on Re-certify). */
+  activationDate?: number
+  /** §6.1.6 — Deactivation Date attribute (unix seconds); read as the
+   * issued cert's Not-After. Omitted defaults to Not-Before + 1 year. */
+  deactivationDate?: number
+}
+
+const certifyValidityAttrs = (validity?: CertifyValidityParams): KmipNode[] => {
+  const attrs: KmipNode[] = []
+  if (validity?.activationDate !== undefined)
+    attrs.push(leaf('ActivationDate', 'DateTime', validity.activationDate))
+  if (validity?.deactivationDate !== undefined)
+    attrs.push(leaf('DeactivationDate', 'DateTime', validity.deactivationDate))
+  return attrs
+}
+
+export const certify = (uid = '', csrHex = '', validity?: CertifyValidityParams): KmipNode[] => {
   const payload: KmipNode[] = []
   if (uid) payload.push(uidLeaf(uid))
   if (csrHex) {
     payload.push(leaf('CertificateRequestType', 'Enumeration', 'PKCS10'))
     payload.push(leaf('CertificateRequest', 'ByteString', csrHex))
   }
+  const attrs = certifyValidityAttrs(validity)
+  if (attrs.length > 0) payload.push(struct('Attributes', ...attrs))
   return payload
 }
 
@@ -499,13 +781,22 @@ export const certify = (uid = '', csrHex = ''): KmipNode[] => {
  * REQUIRED; an optional `csrHex` re-keys with a fresh subject key instead
  * of reusing the existing one; `offsetSeconds` shifts the new Activation
  * Date relative to Initial Date (omitted → renews the existing window). */
-export const reCertify = (uid: string, csrHex = '', offsetSeconds?: number): KmipNode[] => {
+export const reCertify = (
+  uid: string,
+  csrHex = '',
+  offsetSeconds?: number,
+  validity?: CertifyValidityParams
+): KmipNode[] => {
   const payload: KmipNode[] = [uidLeaf(uid)]
   if (csrHex) {
     payload.push(leaf('CertificateRequestType', 'Enumeration', 'PKCS10'))
     payload.push(leaf('CertificateRequest', 'ByteString', csrHex))
   }
   if (offsetSeconds !== undefined) payload.push(leaf('Offset', 'Interval', offsetSeconds))
+  // Offset (above) takes precedence over ActivationDate when both are
+  // supplied — validity_window() resolves Not-Before that way.
+  const attrs = certifyValidityAttrs(validity)
+  if (attrs.length > 0) payload.push(struct('Attributes', ...attrs))
   return payload
 }
 
@@ -560,16 +851,28 @@ export const process = (correlationValueHex: string): KmipNode[] => [
 ]
 
 /** §6.1.46 Query Asynchronous Requests — both filters optional; an empty
- * payload lists every outstanding job. */
-export const queryAsynchronousRequests = (correlationValueHex?: string): KmipNode[] =>
-  correlationValueHex
-    ? [
-        struct(
-          'AsynchronousCorrelationValues',
-          leaf('AsynchronousCorrelationValue', 'ByteString', correlationValueHex)
-        ),
-      ]
-    : []
+ * payload lists every outstanding job. `operations` narrows by KMIP
+ * Operation name (e.g. `['Hash', 'Sign']`) — async_ops.rs ANDs it with
+ * the correlation-value filter (a job matches when its correlation value
+ * is absent-or-listed AND its operation is absent-or-listed). */
+export const queryAsynchronousRequests = (
+  correlationValueHex?: string,
+  operations?: string[]
+): KmipNode[] => {
+  const payload: KmipNode[] = []
+  if (correlationValueHex)
+    payload.push(
+      struct(
+        'AsynchronousCorrelationValues',
+        leaf('AsynchronousCorrelationValue', 'ByteString', correlationValueHex)
+      )
+    )
+  if (operations && operations.length > 0)
+    payload.push(
+      struct('Operations', ...operations.map((op) => leaf('Operation', 'Enumeration', op)))
+    )
+  return payload
+}
 
 // ── 8. Not implemented (out of scope) ────────────────────────────────────────
 // The last 4 truly-unimplemented ops. Since engine 0.12.0's honest-Query
@@ -742,8 +1045,15 @@ export const OP_TEMPLATES: OpTemplate[] = [
     params: [
       { key: 'algorithm', label: 'Algorithm', kind: 'algorithm', default: 'ML-DSA-65' },
       { key: 'usage', label: 'Usage mask', kind: 'text', default: 'Sign Verify' },
+      {
+        key: 'seedHex',
+        label: 'Seed (hex, deterministic keygen — FIPS 204/203/205)',
+        kind: 'hex',
+        default: '',
+      },
     ],
-    build: (v) => createKeyPair(v.algorithm || 'ML-DSA-65', v.usage || 'Sign Verify'),
+    build: (v) =>
+      createKeyPair(v.algorithm || 'ML-DSA-65', v.usage || 'Sign Verify', orUndef(v.seedHex)),
   },
   {
     op: 'Register',
@@ -788,8 +1098,18 @@ export const OP_TEMPLATES: OpTemplate[] = [
     spec: '§6.1.22 Export',
     supported: true,
     blurb: "Pull a managed object's full key material back out — the inverse of Import.",
-    params: [{ key: 'uid', label: 'Object UID', kind: 'uid', default: '' }],
-    build: (v) => exportObject(v.uid ?? ''),
+    params: [
+      { key: 'uid', label: 'Object UID', kind: 'uid', default: '' },
+      {
+        key: 'keyFormatType',
+        label: 'Key format',
+        kind: 'select',
+        options: ['', 'Raw', 'PKCS#1', 'PKCS#8'],
+        default: '',
+      },
+      { key: 'wrapKeyUid', label: 'Wrap under key (UID, AES-KW)', kind: 'uid', default: '' },
+    ],
+    build: (v) => exportObject(v.uid ?? '', orUndef(v.keyFormatType), orUndef(v.wrapKeyUid)),
   },
   {
     op: 'Get',
@@ -810,8 +1130,14 @@ export const OP_TEMPLATES: OpTemplate[] = [
         options: ['', 'Raw', 'PKCS#1', 'PKCS#8'],
         default: '',
       },
+      {
+        key: 'wrapKeyUid',
+        label: 'Wrap under key (UID, AES-KW) — also the only way to Get a Sensitive key',
+        kind: 'uid',
+        default: '',
+      },
     ],
-    build: (v) => get(v.uid ?? '', orUndef(v.keyFormatType)),
+    build: (v) => get(v.uid ?? '', orUndef(v.keyFormatType), orUndef(v.wrapKeyUid)),
   },
   {
     op: 'Locate',
@@ -824,8 +1150,21 @@ export const OP_TEMPLATES: OpTemplate[] = [
       { key: 'algorithm', label: 'Filter: algorithm', kind: 'algorithm', default: '' },
       { key: 'length', label: 'Filter: length (bits)', kind: 'number', default: '' },
       { key: 'uid', label: 'Filter: UID', kind: 'uid', default: '' },
+      { key: 'maxItems', label: 'Max results', kind: 'number', default: '' },
+      { key: 'offsetItems', label: 'Skip first N results', kind: 'number', default: '' },
+      {
+        key: 'storageStatusMask',
+        label: 'Storage status bitmask (1=on-line 2=archival 4=destroyed; blank=on-line only)',
+        kind: 'number',
+        default: '',
+      },
     ],
-    build: (v) => locate(orUndef(v.algorithm), orUndefNum(v.length), orUndef(v.uid)),
+    build: (v) =>
+      locate(orUndef(v.algorithm), orUndefNum(v.length), orUndef(v.uid), {
+        maxItems: orUndefNum(v.maxItems),
+        offsetItems: orUndefNum(v.offsetItems),
+        storageStatusMask: orUndefNum(v.storageStatusMask),
+      }),
   },
   {
     op: 'Activate',
@@ -877,9 +1216,33 @@ export const OP_TEMPLATES: OpTemplate[] = [
     category: 'Object Lifecycle',
     spec: '§6.1.14 Deactivate',
     supported: true,
-    blurb: 'A softer Revoke — no reason code, just ends the Active state.',
-    params: [{ key: 'uid', label: 'Object UID', kind: 'uid', default: '' }],
-    build: (v) => deactivate(v.uid ?? ''),
+    blurb:
+      "A softer Revoke — an optional reason code, just ends the Active state. (Deactivation Date is always server-set to 'now'; there's no field to override it.)",
+    params: [
+      { key: 'uid', label: 'Object UID', kind: 'uid', default: '' },
+      {
+        // DeactivationReasonCode (§6.1.14) mirrors RevocationReasonCode's
+        // 7-member set exactly (`ops.rs`'s `DeactivationReason` enum) — the
+        // spec-extraction JSON's own "Deactivation Reason Code" table is a
+        // PDF-extraction mismatch (wrong table); patched in
+        // `codepointTable.ts`'s `SPEC_EXTRACT_PATCHES`.
+        key: 'reason',
+        label: 'Reason',
+        kind: 'select',
+        options: [
+          '',
+          'Unspecified',
+          'KeyCompromise',
+          'CACompromise',
+          'AffiliationChanged',
+          'Superseded',
+          'CessationOfOperation',
+          'PrivilegeWithdrawn',
+        ],
+        default: '',
+      },
+    ],
+    build: (v) => deactivate(v.uid ?? '', orUndef(v.reason)),
   },
   {
     op: 'Check',
@@ -887,9 +1250,19 @@ export const OP_TEMPLATES: OpTemplate[] = [
     spec: '§6.1.7 Check',
     supported: true,
     blurb:
-      'Ask the server to confirm an object still satisfies a set of usage constraints, without performing a crypto operation.',
-    params: [{ key: 'uid', label: 'Object UID', kind: 'uid', default: '' }],
-    build: (v) => check(v.uid ?? ''),
+      'Ask the server to confirm an object still satisfies a set of usage constraints, without performing a crypto operation. All three filters are real (Phase 3.1): usage limits budget, usage-mask subset, and lease-time cap.',
+    params: [
+      { key: 'uid', label: 'Object UID', kind: 'uid', default: '' },
+      { key: 'usageLimitsCount', label: 'Usage limits count', kind: 'number', default: '' },
+      { key: 'cryptographicUsageMask', label: 'Usage mask', kind: 'text', default: '' },
+      { key: 'leaseTimeSeconds', label: 'Lease time (s)', kind: 'number', default: '' },
+    ],
+    build: (v) =>
+      check(v.uid ?? '', {
+        usageLimitsCount: orUndefNum(v.usageLimitsCount),
+        cryptographicUsageMask: orUndef(v.cryptographicUsageMask),
+        leaseTimeSeconds: orUndefNum(v.leaseTimeSeconds),
+      }),
   },
   {
     op: 'Archive',
@@ -982,21 +1355,41 @@ export const OP_TEMPLATES: OpTemplate[] = [
     params: [
       { key: 'uid', label: 'Object UID', kind: 'uid', default: '' },
       { key: 'name', label: 'Attribute name', kind: 'text', default: 'Comment' },
-      { key: 'value', label: 'Value', kind: 'text', default: 'kmip3-commands' },
+      { key: 'value', label: 'New value', kind: 'text', default: 'kmip3-commands' },
+      {
+        key: 'currentValue',
+        label: 'Current value (disambiguates a multi-instance attribute)',
+        kind: 'text',
+        default: '',
+      },
     ],
-    build: (v) => modifyAttribute(v.uid ?? '', v.name || 'Comment', v.value || 'kmip3-commands'),
+    build: (v) =>
+      modifyAttribute(
+        v.uid ?? '',
+        v.name || 'Comment',
+        v.value || 'kmip3-commands',
+        orUndef(v.currentValue)
+      ),
   },
   {
     op: 'DeleteAttribute',
     category: 'Attributes',
     spec: '§6.1.17 Delete Attribute',
     supported: true,
-    blurb: 'Remove a named attribute from an object.',
+    blurb:
+      'Remove a named attribute from an object — every instance, unless a current value narrows it to just one.',
     params: [
       { key: 'uid', label: 'Object UID', kind: 'uid', default: '' },
       { key: 'attributeReference', label: 'Attribute name', kind: 'text', default: 'Comment' },
+      {
+        key: 'currentValue',
+        label: 'Current value (deletes just this instance, not every one)',
+        kind: 'text',
+        default: '',
+      },
     ],
-    build: (v) => deleteAttribute(v.uid ?? '', v.attributeReference || 'Comment'),
+    build: (v) =>
+      deleteAttribute(v.uid ?? '', v.attributeReference || 'Comment', orUndef(v.currentValue)),
   },
   {
     op: 'SetAttribute',
@@ -1085,9 +1478,14 @@ export const OP_TEMPLATES: OpTemplate[] = [
       { key: 'uid', label: 'Object UID', kind: 'uid', default: '' },
       { key: 'data', label: 'Plaintext', kind: 'text', default: 'hello post-quantum world' },
       { key: 'ivHex', label: 'IV (hex)', kind: 'hex', default: '', randomBytes: 12 },
+      { key: 'aadHex', label: 'AAD (hex, AEAD associated data)', kind: 'hex', default: '' },
+      { key: 'tagLengthBytes', label: 'Tag length (bytes, AEAD)', kind: 'number', default: '' },
     ],
     build: (v) =>
-      encrypt(v.uid ?? '', textHex(v.data || 'hello post-quantum world'), orUndef(v.ivHex)),
+      encrypt(v.uid ?? '', textHex(v.data || 'hello post-quantum world'), orUndef(v.ivHex), {
+        aadHex: orUndef(v.aadHex),
+        tagLengthBytes: orUndefNum(v.tagLengthBytes),
+      }),
   },
   {
     op: 'Decrypt',
@@ -1095,13 +1493,26 @@ export const OP_TEMPLATES: OpTemplate[] = [
     spec: '§6.1.15 Decrypt',
     supported: true,
     blurb:
-      'The inverse of Encrypt — recovers plaintext given the ciphertext and (for symmetric AEAD) the IV.',
+      'The inverse of Encrypt — recovers plaintext given the ciphertext and (for symmetric AEAD) the IV. For AEAD, the auth tag is its own field — paste it separately, not appended to the ciphertext.',
     params: [
       { key: 'uid', label: 'Object UID', kind: 'uid', default: '' },
       { key: 'data', label: 'Ciphertext (hex)', kind: 'hex', default: '' },
       { key: 'ivHex', label: 'IV (hex)', kind: 'hex', default: '' },
+      { key: 'aadHex', label: 'AAD (hex, AEAD associated data)', kind: 'hex', default: '' },
+      {
+        key: 'tagHex',
+        label: 'Auth tag (hex, AEAD — separate from ciphertext)',
+        kind: 'hex',
+        default: '',
+      },
+      { key: 'tagLengthBytes', label: 'Tag length (bytes, AEAD)', kind: 'number', default: '' },
     ],
-    build: (v) => decrypt(v.uid ?? '', v.data ?? '', orUndef(v.ivHex)),
+    build: (v) =>
+      decrypt(v.uid ?? '', v.data ?? '', orUndef(v.ivHex), {
+        aadHex: orUndef(v.aadHex),
+        tagHex: orUndef(v.tagHex),
+        tagLengthBytes: orUndefNum(v.tagLengthBytes),
+      }),
   },
   {
     op: 'Sign',
@@ -1112,8 +1523,45 @@ export const OP_TEMPLATES: OpTemplate[] = [
     params: [
       { key: 'uid', label: 'Object UID', kind: 'uid', default: '' },
       { key: 'data', label: 'Message', kind: 'text', default: 'hello post-quantum world' },
+      {
+        key: 'deterministic',
+        label: 'Deterministic (force non-hedged)',
+        kind: 'bool',
+        default: 'false',
+      },
+      {
+        key: 'internal',
+        label: 'Internal (Sign_internal interface)',
+        kind: 'bool',
+        default: 'false',
+      },
+      {
+        key: 'externalMu',
+        label: 'External Mu (Message = 64-byte µ, prehash mode)',
+        kind: 'bool',
+        default: 'false',
+      },
+      {
+        key: 'contextStringHex',
+        label: 'Context string (hex, ML-DSA/SLH-DSA)',
+        kind: 'hex',
+        default: '',
+      },
+      {
+        key: 'randomHex',
+        label: 'Explicit randomizer (hex, hedged variant)',
+        kind: 'hex',
+        default: '',
+      },
     ],
-    build: (v) => sign(v.uid ?? '', textHex(v.data || 'hello post-quantum world')),
+    build: (v) =>
+      sign(v.uid ?? '', textHex(v.data || 'hello post-quantum world'), undefined, {
+        deterministic: v.deterministic === 'true',
+        internal: v.internal === 'true',
+        externalMu: v.externalMu === 'true',
+        contextStringHex: orUndef(v.contextStringHex),
+        randomHex: orUndef(v.randomHex),
+      }),
   },
   {
     op: 'SignatureVerify',
@@ -1126,12 +1574,37 @@ export const OP_TEMPLATES: OpTemplate[] = [
       { key: 'uid', label: 'Object UID', kind: 'uid', default: '' },
       { key: 'data', label: 'Message', kind: 'text', default: 'hello post-quantum world' },
       { key: 'signature', label: 'Signature (hex)', kind: 'hex', default: '' },
+      {
+        key: 'internal',
+        label: 'Internal (Verify_internal interface)',
+        kind: 'bool',
+        default: 'false',
+      },
+      {
+        key: 'externalMu',
+        label: 'External Mu (Message = 64-byte µ, prehash mode)',
+        kind: 'bool',
+        default: 'false',
+      },
+      {
+        key: 'contextStringHex',
+        label: 'Context string (hex, ML-DSA/SLH-DSA — must match Sign)',
+        kind: 'hex',
+        default: '',
+      },
+      { key: 'saltLengthBytes', label: 'RSA-PSS salt length (bytes)', kind: 'number', default: '' },
     ],
     build: (v) =>
       signatureVerify(
         v.uid ?? '',
         textHex(v.data || 'hello post-quantum world'),
-        v.signature ?? ''
+        v.signature ?? '',
+        {
+          internal: v.internal === 'true',
+          externalMu: v.externalMu === 'true',
+          contextStringHex: orUndef(v.contextStringHex),
+          saltLengthBytes: orUndefNum(v.saltLengthBytes),
+        }
       ),
   },
   {
@@ -1218,17 +1691,31 @@ export const OP_TEMPLATES: OpTemplate[] = [
     spec: '§6.1.18 Derive Key',
     supported: true,
     blurb:
-      'Turn one managed key into a new one via a KDF (NIST SP 800-108), instead of generating fresh random material.',
+      'Turn one managed key into a new one via a KDF, instead of generating fresh random material. NIST SP 800-108 Counter Mode, PBKDF2, HASH, and HMAC are all real (K20) — pick the method to see which extra fields it needs.',
     params: [
       { key: 'baseUid', label: 'Base key UID', kind: 'uid', default: '' },
       {
         key: 'method',
         label: 'Method',
         kind: 'select',
-        options: ['NIST800-108-C'],
+        options: ['NIST800-108-C', 'PBKDF2', 'HASH', 'HMAC', 'AsymmetricKey'],
         default: 'NIST800-108-C',
       },
       { key: 'length', label: 'Output length (bits)', kind: 'number', default: '256' },
+      {
+        key: 'hashAlgorithm',
+        label: 'PRF/hash (required for HASH + PBKDF2; optional otherwise)',
+        kind: 'select',
+        options: ['', 'SHA256', 'SHA384', 'SHA512'],
+        default: '',
+      },
+      { key: 'saltHex', label: 'Salt (hex, required for PBKDF2)', kind: 'hex', default: '' },
+      {
+        key: 'iterationCount',
+        label: 'Iteration count (required for PBKDF2)',
+        kind: 'number',
+        default: '',
+      },
     ],
     build: (v) =>
       deriveKey(
@@ -1237,7 +1724,12 @@ export const OP_TEMPLATES: OpTemplate[] = [
         undefined,
         v.method || 'NIST800-108-C',
         undefined,
-        numOr(v.length, 256)
+        numOr(v.length, 256),
+        {
+          hashAlgorithm: orUndef(v.hashAlgorithm),
+          saltHex: orUndef(v.saltHex),
+          iterationCount: orUndefNum(v.iterationCount),
+        }
       ),
   },
   {
@@ -1295,8 +1787,9 @@ export const OP_TEMPLATES: OpTemplate[] = [
     params: [
       { key: 'fn', label: 'Function', kind: 'text', default: 'CGetInfo' },
       { key: 'inputParametersHex', label: 'Input params (hex)', kind: 'hex', default: '' },
+      { key: 'iface', label: 'Interface version (e.g. 3.2)', kind: 'text', default: '' },
     ],
-    build: (v) => pkcs11(v.fn || 'CGetInfo', orUndef(v.inputParametersHex)),
+    build: (v) => pkcs11(v.fn || 'CGetInfo', orUndef(v.inputParametersHex), orUndef(v.iface)),
   },
 
   // 6. Certificate Services — real since the pure-Rust cert-ops port. Use
@@ -1343,8 +1836,24 @@ export const OP_TEMPLATES: OpTemplate[] = [
         default: '',
       },
       { key: 'csrHex', label: 'PKCS#10 CSR (hex)', kind: 'hex', default: '' },
+      {
+        key: 'activationDate',
+        label: 'Not-before (unix seconds, blank = now)',
+        kind: 'number',
+        default: '',
+      },
+      {
+        key: 'deactivationDate',
+        label: 'Not-after (unix seconds, blank = not-before + 1y)',
+        kind: 'number',
+        default: '',
+      },
     ],
-    build: (v) => certify(v.uid ?? '', v.csrHex ?? ''),
+    build: (v) =>
+      certify(v.uid ?? '', v.csrHex ?? '', {
+        activationDate: orUndefNum(v.activationDate),
+        deactivationDate: orUndefNum(v.deactivationDate),
+      }),
   },
   {
     op: 'ReCertify',
@@ -1358,12 +1867,28 @@ export const OP_TEMPLATES: OpTemplate[] = [
       { key: 'csrHex', label: 'New CSR (hex, optional re-key)', kind: 'hex', default: '' },
       {
         key: 'offsetSeconds',
-        label: 'Offset (seconds, blank = keep window)',
+        label: 'Offset (seconds, blank = keep window) — wins over Not-before if both set',
+        kind: 'number',
+        default: '',
+      },
+      {
+        key: 'activationDate',
+        label: 'Not-before (unix seconds, ignored if Offset is set)',
+        kind: 'number',
+        default: '',
+      },
+      {
+        key: 'deactivationDate',
+        label: 'Not-after (unix seconds, blank = not-before + 1y)',
         kind: 'number',
         default: '',
       },
     ],
-    build: (v) => reCertify(v.uid ?? '', v.csrHex ?? '', orUndefNum(v.offsetSeconds)),
+    build: (v) =>
+      reCertify(v.uid ?? '', v.csrHex ?? '', orUndefNum(v.offsetSeconds), {
+        activationDate: orUndefNum(v.activationDate),
+        deactivationDate: orUndefNum(v.deactivationDate),
+      }),
   },
 
   // 7. Split keys, leases, constraints, async — real since engine 0.12.0
@@ -1478,9 +2003,17 @@ export const OP_TEMPLATES: OpTemplate[] = [
     spec: '§6.1.46 Query Asynchronous Requests',
     supported: true,
     blurb:
-      "List this client's outstanding asynchronous jobs — optionally filtered to one correlation value. Empty when every job has completed and been polled.",
-    params: [{ key: 'cv', label: 'Filter: correlation value (hex)', kind: 'hex', default: '' }],
-    build: (v) => queryAsynchronousRequests(orUndef(v.cv)),
+      "List this client's outstanding asynchronous jobs — optionally filtered to one correlation value and/or one or more operation names. Empty when every job has completed and been polled.",
+    params: [
+      { key: 'cv', label: 'Filter: correlation value (hex)', kind: 'hex', default: '' },
+      {
+        key: 'operations',
+        label: 'Filter: operations (comma-sep, e.g. Hash,Sign)',
+        kind: 'text',
+        default: '',
+      },
+    ],
+    build: (v) => queryAsynchronousRequests(orUndef(v.cv), splitList(v.operations)),
   },
 
   // The 4 genuinely-unimplemented ops — no longer advertised by Query either

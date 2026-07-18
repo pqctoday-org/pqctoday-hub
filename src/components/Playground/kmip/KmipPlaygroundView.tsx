@@ -749,7 +749,7 @@ export function KmipPlaygroundView() {
           target: '[data-tour="kmip3-subtabs"] button',
           targetText: 'Corpus Replay',
           act: () => clickByText('[data-tour="kmip3-subtabs"] button', 'Corpus Replay'),
-          body: "Replay the official conformance corpus right in this tab. The engine's CI pins an exact 97-pass baseline on the 102 OASIS tests; the in-browser run labels its few wasm-seam skips honestly and tolerates zero failures.",
+          body: "Replay the official conformance corpus right in this tab. The engine's CI pins an exact 97-pass baseline on the 102 OASIS tests, and the in-browser run matches it exactly — zero skips, zero failures tolerated.",
         },
         {
           title: 'Rollback that reaches everything',

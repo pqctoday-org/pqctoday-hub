@@ -266,7 +266,7 @@ export class KmipPlayground {
      * ```
      *
      * `$IDPlaceholder` in any `uid` resolves to the UID the previous
-     * UID-producing item created (KMIP §6.4 ID Placeholder) — so Create →
+     * UID-producing item created (KMIP §6.1 preamble ID Placeholder) — so Create →
      * Activate → Sign chains in a single round trip. `errorContinuation`
      * controls failure handling (§9.5): `Continue` runs every item, `Stop`
      * halts after the first failure, `Undo` halts AND rolls earlier successes
