@@ -742,14 +742,14 @@ export function KmipPlaygroundView() {
           target: '[data-tour="kmip3-subtabs"] button',
           targetText: 'Commands',
           act: () => clickByText('[data-tour="kmip3-subtabs"] button', 'Commands'),
-          body: '62 of the 66 KMIP 3.0 operations genuinely run here — split keys and the async quartet included, with real parameter forms. The 7 that cannot run say exactly why (native-only crypto backend, or a documented scope boundary) instead of pretending.',
+          body: '62 of the 66 KMIP 3.0 operations genuinely run here — split keys and the async quartet included, with real parameter forms. The 4 that cannot run say exactly why (Notify and Put are server-to-client by definition; Delegated Login and Re-Provision have no handler) instead of pretending.',
         },
         {
           title: 'Prove it against the OASIS suite',
           target: '[data-tour="kmip3-subtabs"] button',
           targetText: 'Corpus Replay',
           act: () => clickByText('[data-tour="kmip3-subtabs"] button', 'Corpus Replay'),
-          body: "Replay the official conformance corpus right in this tab. The engine's CI pins an exact 97-pass baseline; the in-browser run labels its few wasm-seam skips honestly and tolerates zero failures.",
+          body: "Replay the official conformance corpus right in this tab. The engine's CI pins an exact 97-pass baseline on the 102 OASIS tests; the in-browser run labels its few wasm-seam skips honestly and tolerates zero failures.",
         },
         {
           title: 'Rollback that reaches everything',

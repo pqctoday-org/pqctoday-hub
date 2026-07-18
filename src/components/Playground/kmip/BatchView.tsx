@@ -306,8 +306,16 @@ export function BatchView({
               </span>
               <span className="text-xs font-medium text-foreground">{itemLabel(spec)}</span>
               {spec.uid === ID_PLACEHOLDER && (
-                <span className="inline-flex items-center gap-0.5 rounded bg-status-warning/15 px-1.5 py-0.5 text-[9px] font-semibold text-status-warning">
+                <span
+                  className="inline-flex items-center gap-0.5 rounded bg-status-warning/15 px-1.5 py-0.5 text-[9px] font-semibold text-status-warning"
+                  title={
+                    items[i - 1]?.op === 'Locate'
+                      ? '§6.1.32: the placeholder only resolves if Locate matched EXACTLY one object — 0 or >1 matches empties it, and this item fails.'
+                      : undefined
+                  }
+                >
                   <CornerDownRight size={9} /> prev key
+                  {items[i - 1]?.op === 'Locate' && ' (needs 1 match)'}
                 </span>
               )}
               <div className="ml-auto flex items-center gap-0.5">

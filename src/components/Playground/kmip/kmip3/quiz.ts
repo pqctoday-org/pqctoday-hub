@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-// quiz.ts — knowledge-check question banks for all nine Learn walkthroughs.
+// quiz.ts — knowledge-check question banks for all ten Learn walkthroughs.
 // Every question is answerable from the lesson the learner just ran — no
 // outside trivia — and every `why` cites the behavior the walkthrough
 // demonstrated live.
@@ -117,7 +117,7 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
       q: "What does SLH-DSA's security rest on?",
       options: [
         'Lattice problems, like ML-DSA',
-        "Nothing but the hash function's collision resistance — the most conservative assumption available",
+        "Nothing but the hash function's own security — the most conservative assumption class available",
         'The difficulty of factoring large integers',
       ],
       answer: 1,
@@ -265,7 +265,7 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
       q: 'Which of these is NOT eligible for asynchronous processing?',
       options: ['Hash', 'CreateKeyPair', 'Poll itself'],
       answer: 2,
-      why: 'The async-management ops (Poll/Cancel/Process/QueryAsynchronousRequests) are explicitly never asynchronous — otherwise you would need a ticket to redeem your ticket. Nearly every other handled op is eligible.',
+      why: "Poll's own response is explicitly barred from being asynchronous (§6.1.43) — otherwise you'd need a ticket to redeem your ticket. Cancel is barred the same way (§6.1.5); everything else, including CreateKeyPair and Hash, is eligible at the server's discretion.",
     },
   ],
   honesty: [
