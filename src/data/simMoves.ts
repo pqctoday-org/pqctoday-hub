@@ -79,6 +79,13 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
         'Fails. Common failure: business units absent from the SteerCo. Workstream leads hit constant political resistance and the program stalls on cross-functional decisions.'
       ),
     },
+    {
+      label: 'Formally accept the quantum risk and close the program',
+      desc: 'Sign off that this risk is acceptable and stand the effort down.',
+      evaluate: trap(
+        "Fails as a Phase 0 opening move. Formal risk acceptance is a legitimate outcome elsewhere in GRC — but only AFTER the risk is quantified (HNDL/TNFL exposure, regulatory exposure) and an accountable owner signs off against that number. Accepting an unquantified, un-scoped risk isn't governance, it's skipping the work — and it still leaves the board exposed the moment a regulator or auditor asks what was actually assessed."
+      ),
+    },
   ],
   p1: [
     {

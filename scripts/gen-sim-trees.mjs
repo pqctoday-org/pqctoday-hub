@@ -297,7 +297,7 @@ const FRAMEWORK = {
       title: 'Frame the Business Case',
       decision:
         'Build the business case around HNDL/TNFL exposure and the regulatory clock — not a generic "quantum is coming" pitch.',
-      do: 'Structure the executive argument around the four urgency drivers — regulatory deadlines, HNDL and TNFL exposure, the threat horizon, and client/investor/insurer expectations.',
+      do: 'Structure the executive argument around four concrete, current urgency drivers, not speculative Q-Day predictions: (1) regulatory & compliance deadlines, (2) Harvest-Now-Decrypt-Later (HNDL) exposure, (3) Trust-Now-Forge-Later (TNFL) exposure, (4) client, investor & insurer expectations.',
       output: 'Executive business case',
       steps: [
         L('pqc-business-case', 'Learn: PQC Business Case'),
@@ -305,6 +305,10 @@ const FRAMEWORK = {
         L('compliance-strategy', 'Learn: Compliance & Regulatory Strategy'),
         R('threats', 'Check the CRQC threat horizon', '/threats?view=horizon'),
         R('compliance', 'Map the binding regulatory deadlines'),
+        R(
+          'timeline',
+          'Reference: the deadline classes driving urgency (EO / OMB / CNSA 2.0) — see the live timeline'
+        ),
         // 07082026: was 'Quantify HNDL/TNFL exposure' — the tool this links to
         // (CRQCScenarioPlanner) only builds an HNDL exposure table, no TNFL/
         // signature-forgery content. Reworded rather than promise what it
