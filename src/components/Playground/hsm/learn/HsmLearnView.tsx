@@ -6,7 +6,7 @@
 // session — the same session the rest of the playground's tabs use. Mirrors
 // the KMIP playground's Learn tab shape (glossary rail, per-lesson quiz,
 // "try it in the workbench" backlink) via the shared learnkit.
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { CheckCircle2, ChevronRight, Loader2, PlayCircle, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -16,8 +16,10 @@ import { GlossaryRail } from '@/components/Playground/learnkit/GlossaryRail'
 import { QuizCard } from '@/components/Playground/learnkit/QuizCard'
 import { useHsmContext } from '../HsmContext'
 import { FOUNDATIONS_LESSONS, type Pkcs11LessonStep, type Pkcs11StepResult } from './pkcs11Lessons'
+import { V32_LESSONS } from './pkcs11LessonsV32'
 import { QUIZZES } from './pkcs11Quiz'
 import { PKCS11_GLOSSARY_DATA } from './pkcs11Glossary'
+import type { LinearLessonBase } from '@/components/Playground/learnkit/lessonTypes'
 
 type Track = 'foundations' | 'v32'
 
@@ -88,33 +90,54 @@ function StepRow({
   )
 }
 
-function FoundationsLesson({ onTryInWorkbench }: { onTryInWorkbench: (tab: string) => void }) {
+function LessonRunner({
+  lessons,
+  navPrefix,
+  namespace,
+  analyticsCategory,
+  onTryInWorkbench,
+}: {
+  lessons: LinearLessonBase<Pkcs11LessonStep>[]
+  /** Nav badge prefix, e.g. "A" for A1/A2/… or "B" for B1/B2/… */
+  navPrefix: string
+  /** Quiz localStorage key prefix — must stay stable per track. */
+  namespace: string
+  analyticsCategory: string
+  onTryInWorkbench: (tab: string) => void
+}) {
   const hsm = useHsmContext()
   const [lessonIdx, setLessonIdx] = useState(0)
-  const lesson = FOUNDATIONS_LESSONS[lessonIdx]
+  const lesson = lessons[lessonIdx]
   const [stepStates, setStepStates] = useState<StepRunState[]>(() =>
     lesson.steps.map(() => ({ status: 'pending' }))
   )
-  const [results, setResults] = useState<(Pkcs11StepResult | null)[]>(() =>
-    lesson.steps.map(() => null)
-  )
+  // A ref, not state: `runAll`'s for-loop calls `runStep` many times within
+  // one closure, and a `useState` value captured at that closure's creation
+  // would stay frozen at its initial value for the WHOLE loop (each step
+  // would see every prior step's result as null). A ref's `.current` is
+  // always current, so each step genuinely sees what the previous one wrote.
+  const resultsRef = useRef<(Pkcs11StepResult | null)[]>(lesson.steps.map(() => null))
 
   const selectLesson = (idx: number) => {
     setLessonIdx(idx)
-    setStepStates(FOUNDATIONS_LESSONS[idx].steps.map(() => ({ status: 'pending' })))
-    setResults(FOUNDATIONS_LESSONS[idx].steps.map(() => null))
+    setStepStates(lessons[idx].steps.map(() => ({ status: 'pending' })))
+    resultsRef.current = lessons[idx].steps.map(() => null)
   }
 
   const runStep = async (i: number) => {
     setStepStates((prev) => prev.map((s, j) => (j === i ? { status: 'running' } : s)))
     try {
-      const result = await lesson.steps[i].run(hsm, results)
-      setResults((prev) => prev.map((r, j) => (j === i ? result : r)))
+      const result = await lesson.steps[i].run(hsm, resultsRef.current)
+      resultsRef.current = resultsRef.current.map((r, j) => (j === i ? result : r))
       setStepStates((prev) => prev.map((s, j) => (j === i ? { status: 'ok', detail: result.detail } : s)))
     } catch (e) {
       const message = e instanceof Error ? e.message : String(e)
       const expectedRefusal = lesson.steps[i].expect === 'refusal'
-      logEvent('Playground', 'PKCS11 Learn Step', `${lesson.id}:${lesson.steps[i].op}:${expectedRefusal ? 'refused-ok' : 'failed'}`)
+      logEvent(
+        'Playground',
+        `${analyticsCategory} Step`,
+        `${lesson.id}:${lesson.steps[i].op}:${expectedRefusal ? 'refused-ok' : 'failed'}`
+      )
       setStepStates((prev) =>
         prev.map((s, j) =>
           j === i ? { status: expectedRefusal ? 'refused-ok' : 'failed', detail: message } : s
@@ -136,7 +159,7 @@ function FoundationsLesson({ onTryInWorkbench }: { onTryInWorkbench: (tab: strin
   return (
     <div className="flex gap-4">
       <nav className="w-48 shrink-0 space-y-1">
-        {FOUNDATIONS_LESSONS.map((l, i) => (
+        {lessons.map((l, i) => (
           <Button
             key={l.id}
             variant="ghost"
@@ -148,7 +171,10 @@ function FoundationsLesson({ onTryInWorkbench }: { onTryInWorkbench: (tab: strin
                 : 'text-muted-foreground hover:bg-muted/50'
             )}
           >
-            <span className="font-mono text-[10px] opacity-70">A{l.n}</span>
+            <span className="font-mono text-[10px] opacity-70">
+              {navPrefix}
+              {l.n}
+            </span>
             {l.title}
           </Button>
         ))}
@@ -207,8 +233,8 @@ function FoundationsLesson({ onTryInWorkbench }: { onTryInWorkbench: (tab: strin
             key={lesson.id}
             lessonId={lesson.id}
             questions={QUIZZES[lesson.id]}
-            namespace="hsm-pkcs11"
-            analyticsCategory="PKCS11 Quiz"
+            namespace={namespace}
+            analyticsCategory={`${analyticsCategory} Quiz`}
           />
         )}
 
@@ -265,17 +291,23 @@ export function HsmLearnView({ onTryInWorkbench }: { onTryInWorkbench: (tab: str
             ))}
           </div>
 
-          {track === 'foundations' && <FoundationsLesson onTryInWorkbench={onTryInWorkbench} />}
+          {track === 'foundations' && (
+            <LessonRunner
+              lessons={FOUNDATIONS_LESSONS}
+              navPrefix="A"
+              namespace="hsm-pkcs11"
+              analyticsCategory="PKCS11 Foundations"
+              onTryInWorkbench={onTryInWorkbench}
+            />
+          )}
           {track === 'v32' && (
-            <div className="rounded-xl border border-dashed border-border bg-muted/20 p-6 text-center">
-              <p className="text-[13px] font-semibold text-foreground">Coming soon</p>
-              <p className="mt-1 text-[12px] text-muted-foreground">
-                The v3.2 & PQC transformation track (ML-KEM/ML-DSA/SLH-DSA, hedged signing,
-                authenticated wrap, allowed-mechanisms policy pinning, profile objects, and a
-                migration capstone) is still being authored. The Foundations track above is real
-                and ready to try.
-              </p>
-            </div>
+            <LessonRunner
+              lessons={V32_LESSONS}
+              navPrefix="B"
+              namespace="hsm-pkcs11-v32"
+              analyticsCategory="PKCS11 v3.2"
+              onTryInWorkbench={onTryInWorkbench}
+            />
           )}
         </div>
         <GlossaryRail />
