@@ -34,7 +34,7 @@ describe('DockerPlaygroundView (playground.md item 2 — reuses useSandboxAvaila
     await waitFor(() => {
       const iframe = document.querySelector('iframe')
       expect(iframe).not.toBeNull()
-      expect(iframe?.getAttribute('src')).toBe(`${BASE_URL}/embed`)
+      expect(iframe?.getAttribute('src')).toBe(`${BASE_URL}/embed/dev`)
     })
   })
 })
