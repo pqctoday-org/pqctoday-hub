@@ -179,11 +179,15 @@ Three tabs; a **Guided/Expert** toggle gates the advanced controls.
   (`x-` prefix optional): e.g. `pqctoday-cnsa-classification=Secret` under
   CNSA 2.0, `pqctoday-hybrid-partner=ECDH-P384` for a standalone PQC KEM
   under BSI. Tag-gated policies are untestable without this.
-- **Spec-only algorithms** (LMS, HSS, XMSS, XMSS-MT, Ed25519, X25519,
-  FrodoKEM, Classic-McEliece): the policy verdict is real, the keygen is
-  not — the in-browser engine can't instantiate them; picking one shows the
-  policy decision without running crypto. Use them to prove e.g. "CNSA
-  allows LMS but denies HSS".
+- **Spec-only algorithms** (LMS, HSS, XMSS, XMSS-MT, X25519): the policy
+  verdict is real, the keygen is not — the in-browser engine can't
+  instantiate them; picking one shows the policy decision without running
+  crypto. Use them to prove e.g. "CNSA allows LMS but denies HSS". Of these,
+  only XMSS is an actual KMIP 3.0 `CryptographicAlgorithm` value — LMS, HSS,
+  and XMSS-MT exist only as CACP policy vocabulary (no KMIP codepoint in
+  either draft); X25519 is a WD19-only addition, absent from CSD01. Ed25519,
+  FrodoKEM, and Classic-McEliece are NOT in this list — they're genuinely
+  runnable (keygen/sign/encapsulate wired through the engine).
 
 ### 3.2 Policy tab
 
@@ -210,7 +214,7 @@ A batch is **one** KMIP Request Message carrying N operations:
 
 - **Recipes** (macros): provision-and-sign, provision-KEM, atomic-undo,
   inventory. Load one, then edit the sequence.
-- **`$IDPlaceholder`** (KMIP §6.4): an item's `uid` referencing the object
+- **`$IDPlaceholder`** (KMIP §6.1 preamble): an item's `uid` referencing the object
   the previous item created — `CreateKeyPair → Activate($IDPlaceholder) →
   Sign($IDPlaceholder)` with no copy-pasted UIDs.
 - **Error continuation** (KMIP §9.5): `Continue` (run everything), `Stop`
@@ -249,16 +253,27 @@ file encodes each fixed gap as a regression test.
 KMIP 3.0 is in committee: CSD01/WD16 (Aug 2024) → public review → **WD19
 (Feb 2025)**, the draft vendored in `kmip/spec/oasis-kmip-3.0/` and
 implemented here. **KMIP Test Cases 3.0 / Profiles 3.0 are work-in-progress —
-there are no official 3.0 test vectors yet**; this repo's KATs and
-conformance evidence are vendored-draft-based by necessity.
+neither is an OASIS Standard yet** — but OASIS HAS published draft-stage
+test vectors alongside Profiles CSD01 (102 XMLs, 95 mandatory + 7 optional):
+the exact set vendored here and replayed by "the 102 OASIS tests" in §5.
+"Draft, not yet Standard" is the accurate caveat, not "no official vectors".
 
 **PQC.** The 3.0 line adds ML-KEM, ML-DSA, SLH-DSA (all 12 sets) plus the
 `Encapsulate`/`Decapsulate` operations. The public-review snapshot's
 algorithm enum ends at `SLH-DSA-SHAKE-256f` (0x4A); **WD19 extends it to
 0x5D**, adding among others the pre-hash `HASH-SLH-DSA-…` variants and the
-hybrid KEMs. (Note: `kmip-spec-3.0-tags-enums.json` in this repo was
-extracted from the older snapshot and stops at 0x4A while the code
-implements WD19 values — regenerate it from WD19.)
+hybrid KEMs. (Note: `kmip-spec-3.0-tags-enums.json` in this repo is
+extracted from the CSD01 snapshot and stops at 0x4A; the code implements
+WD19 values. This is a durable gap, not a quick regen — OASIS never
+published a WD19 HTML export, only PDF/DOCX, and the extractor
+(`tools/extract_kmip_spec.rs`) only parses HTML. Every WD19-only value the
+code needs is hand-patched into `codepointTable.ts`'s
+`SPEC_EXTRACT_PATCHES`/`SPEC_EXTRACT_TAG_PATCHES` and `_ttlv.py`'s Python
+mirror, each individually cross-checked against `kmip/src/kmip30/
+{algos,ops}.rs` — that's the actual source of truth for anything past 0x4A,
+not this JSON file. **§-section citations throughout this guide and the
+Commands tab follow CSD01 numbering** (the HTML's own TOC) except where
+explicitly marked `WD19 §…` for the two WD19-only operations.)
 
 **Hybrid KEM — a pure hybrid key type; batches are NOT involved.**
 `X25519MLKEM768` (0x5C) and `SecP256r1MLKEM768` (0x5D) are first-class
@@ -403,9 +418,11 @@ longer gates either module.
   sits past a cutoff.
 - **"An algorithm is allowed by policy but Create fails at Plane 2."**
   Spec-only: the policy plane can reference algorithms the engine can't
-  instantiate (LMS/XMSS/HSS/XMSS-MT, Ed25519 standalone, composites,
-  FrodoKEM, McEliece). The picker marks these; the deny/allow verdict is
-  still meaningful.
+  instantiate (LMS/HSS/XMSS/XMSS-MT, X25519 standalone — see §3.1). Ed25519,
+  the LAMPS composites, FrodoKEM, and Classic-McEliece are NOT in this list
+  — all four are genuinely runnable now (keygen/sign/encapsulate wired
+  through the engine). The picker marks the still-spec-only ones; the
+  deny/allow verdict is still meaningful either way.
 - **A rule you wrote "doesn't fire."** Run strict validation. If it names an
   algorithm the vocabulary doesn't know, strict lint flags it; if it names a
   hash/padding as an algorithm (§2.4), rewrite it as a mechanism rule.

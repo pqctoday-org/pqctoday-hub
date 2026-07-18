@@ -187,8 +187,12 @@ export const ALGO_FACTS: Record<string, AlgoFacts> = {
   X25519MLKEM768: {
     family: 'hybrid',
     kind: 'kem',
-    standard: 'KMIP 3.0 WD19 draft codepoint 0x5C, per draft-ietf-tls-ecdhe-mlkem',
-    basis: 'Hybrid: X25519 + ML-KEM-768, secrets combined via KDF',
+    standard:
+      'KMIP 3.0 WD19 draft codepoint 0x5C; public-key/ciphertext sizes per draft-ietf-tls-ecdhe-mlkem',
+    // The IETF draft itself specifies a 64 B raw concatenation (32 B ML-KEM
+    // || 32 B X25519), no KDF — the 32 B combined secret below is this
+    // engine's own construction, not the draft's.
+    basis: 'Hybrid: X25519 + ML-KEM-768; this engine combines both secrets via a KDF into 32 B',
     pub: 1216,
     ct: 1120,
     secret: 32,

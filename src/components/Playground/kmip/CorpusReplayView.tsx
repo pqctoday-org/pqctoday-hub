@@ -8,6 +8,15 @@
 // pqctoday-hsm/kmip/conformance/REPLAY_REPORT.md, the report the real
 // Python/TLS harness produces — this is the same test suite, running
 // entirely in the tab instead of against a server.
+//
+// The "97-pass / 5-deprecated-skip" baseline text below is re-verified
+// current (2026-07-17) against origin/main: an earlier pass of the
+// 2026-07-17 audit measured 92-pass against a local hsm checkout that
+// turned out to be 43 commits behind origin/main — the 2 precondition and
+// 3 RNG-policy-variant tests that stale baseline showed as skipped pass
+// outright on current origin/main via harness-side chaining and per-test
+// `--rng-seed-mode` flags. Re-run `dispatcher_replay.py` before trusting
+// this number if it's been a while.
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   ChevronDown,
@@ -116,6 +125,19 @@ export function CorpusReplayView() {
     return m
   }, [manifest])
 
+  // `manifest.count` is every vendored test (144 = 102 OASIS + 42 PQC) — the
+  // header text below needs the OASIS-only figure, so count tiers directly
+  // rather than reusing that aggregate.
+  const tierCounts = useMemo(() => {
+    let oasis = 0
+    let pqc = 0
+    for (const t of manifest?.tests ?? []) {
+      if (t.tier === 'pqc') pqc += 1
+      else oasis += 1
+    }
+    return { oasis, pqc }
+  }, [manifest])
+
   async function fetchXml(entry: ManifestEntry): Promise<string> {
     const cached = xmlCache.get(entry.file)
     if (cached) return cached
@@ -192,8 +214,8 @@ export function CorpusReplayView() {
               <FlaskConical size={16} className="text-primary" /> OASIS KMIP 3.0 conformance corpus
             </h3>
             <p className="mt-1 max-w-xl text-xs text-muted-foreground">
-              {manifest?.count ?? '…'} real OASIS test transcripts (mandatory + optional) plus
-              vendored PQC interop tests — the same suite behind{' '}
+              {tierCounts.oasis || '…'} real OASIS test transcripts (mandatory + optional) plus{' '}
+              {tierCounts.pqc || '…'} vendored PQC interop tests — the same suite behind{' '}
               <code className="text-foreground">conformance/REPLAY_REPORT.md</code>, replayed live
               against this tab's engine instead of over a network. The engine's native CI pins an
               exact 97-pass / 5-deprecated-skip baseline on the 102 OASIS tests; in-browser, 94 pass

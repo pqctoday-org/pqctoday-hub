@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 // opTemplates.ts — one request-building function per KMIP 3.0 operation (all
-// 66 the protocol defines), organized into the same 7 functional categories
-// the Commands tab groups them by. Each template returns the RequestPayload
-// children `request.ts`'s `buildRequest()` wraps in a full Request Message.
+// 66 the WD19 draft defines — 64 in the published-3.0/CSD01 baseline plus
+// WD19's Encapsulate/Decapsulate), organized into the same 7 functional
+// categories the Commands tab groups them by. Each template returns the
+// RequestPayload children `request.ts`'s `buildRequest()` wraps in a full
+// Request Message.
 //
 // Field shapes are grounded in real, tested sources — not guessed from the
 // spec alone:
@@ -18,10 +20,11 @@
 //     SUBSTANTIVE outcome for (not just "didn't crash") — e.g. `deriveKey`'s
 //     default `method: 'NIST800-108-C'` matches that file's `dk-derive` case
 //     exactly, not a guess at "the obvious KDF".
-//   - The 15 permanently-unsupported ops (3 native-gated + 12 zero-handler)
-//     need no payload at all — the dispatcher rejects them before payload
-//     semantics matter (KMIP 3.0 §9.2 `OperationNotSupported`), so an empty
-//     payload is the correct, real request, not a stand-in.
+//   - The 4 permanently-unsupported ops (Notify/Put — server-to-client by
+//     definition; Delegated Login/Re-Provision — no handler) need no payload
+//     at all — the dispatcher rejects them before payload semantics matter
+//     (KMIP 3.0 §9.2 `OperationNotSupported`), so an empty payload is the
+//     correct, real request, not a stand-in.
 //
 // `build(values)` — every op's field editor (the Commands/Reference tab)
 // supplies a `values` object keyed by each of its `params[]`' `key`, always
@@ -71,9 +74,11 @@ export interface OpTemplate {
   category: OpCategory
   /** One-line KMIP 3.0 spec citation, e.g. "§6.1.18 Derive Key". */
   spec: string
-  /** `false` for the 3 native-gated + 4 zero-handler ops — the Run button
-   * still fires a REAL request and shows the real `OperationNotSupported`
-   * response; this only flags the Commands tab to label the card. */
+  /** `false` for the 4 permanently-unsupported ops (Notify/Put —
+   * server-to-client by definition; Delegated Login/Re-Provision — no
+   * handler) — the Run button still fires a REAL request and shows the real
+   * `OperationNotSupported` response; this only flags the Commands tab to
+   * label the card. */
   supported: boolean
   /** One-line plain-English description shown in the op row. */
   blurb: string
@@ -243,7 +248,10 @@ export const locate = (algorithm?: string, length?: number, uid?: string): KmipN
   if (algorithm) filters.push(leaf('CryptographicAlgorithm', 'Enumeration', algorithm))
   if (length !== undefined) filters.push(leaf('CryptographicLength', 'Integer', length))
   if (uid) filters.push(leaf('UniqueIdentifier', 'TextString', uid))
-  return filters.length ? [struct('Attributes', ...filters)] : []
+  // §6.1.32 — Attributes is REQUIRED, even with no filters: "the Attributes
+  // structure MAY be empty indicating all objects should match." Omitting
+  // it outright (the pre-2026-07-17 behavior) was non-conformant.
+  return [struct('Attributes', ...filters)]
 }
 
 export const activate = (uid: string): KmipNode[] => [uidLeaf(uid)]
@@ -589,7 +597,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Query',
     category: 'Discovery & Session',
-    spec: '§6.1.24 Query',
+    spec: '§6.1.45 Query',
     supported: true,
     blurb:
       'Ask the server what it supports — operations, object types, vendor info. The first call any client makes. Since engine 0.12.0 the answer is audited-honest: every one of the 62 operations it advertises is genuinely implemented.',
@@ -599,7 +607,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'DiscoverVersions',
     category: 'Discovery & Session',
-    spec: '§6.1.30 Discover Versions',
+    spec: '§6.1.20 Discover Versions',
     supported: true,
     blurb: 'Negotiate which KMIP protocol versions client and server both speak.',
     params: [],
@@ -608,7 +616,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Ping',
     category: 'Discovery & Session',
-    spec: '§6.1.59 Ping',
+    spec: '§6.1.41 Ping',
     supported: true,
     blurb: 'The simplest possible request — an empty round trip to confirm the server is alive.',
     params: [],
@@ -617,7 +625,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Interop',
     category: 'Discovery & Session',
-    spec: '§6.1.31 Interop (test-suite framework marker)',
+    spec: '§6.1.30 Interop (test-suite framework marker)',
     supported: true,
     blurb:
       'A conformance-tooling marker that brackets a sequence of operations as one interoperability test.',
@@ -630,7 +638,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Login',
     category: 'Discovery & Session',
-    spec: '§6.1.45 Login',
+    spec: '§6.1.34 Login',
     supported: true,
     blurb: 'Start a leased, ticket-based session instead of authenticating every request.',
     params: [
@@ -642,7 +650,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Logout',
     category: 'Discovery & Session',
-    spec: '§6.1.46 Logout',
+    spec: '§6.1.35 Logout',
     supported: true,
     blurb: 'End a Login session, invalidating its ticket.',
     params: [{ key: 'ticket', label: 'Ticket (hex)', kind: 'hex', default: '' }],
@@ -651,7 +659,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Log',
     category: 'Discovery & Session',
-    spec: '§6.1.44 Log',
+    spec: '§6.1.33 Log',
     supported: true,
     blurb:
       "Forward a free-text diagnostic message to the server's log — not policy-relevant, purely operational.",
@@ -663,7 +671,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'CreateCredential',
     category: 'Discovery & Session',
-    spec: '§6.1.11 Create Credential',
+    spec: '§6.1.9 Create Credential',
     supported: true,
     blurb:
       'Register a username/password credential the server can authenticate future requests against.',
@@ -676,7 +684,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'CreateUser',
     category: 'Discovery & Session',
-    spec: '§6.1.65 Create User',
+    spec: '§6.1.13 Create User',
     supported: true,
     blurb: 'Provision a new user principal on the server.',
     params: [{ key: 'name', label: 'Name', kind: 'text', default: 'kmip3-user' }],
@@ -714,7 +722,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Create',
     category: 'Object Lifecycle',
-    spec: '§6.1.1 Create',
+    spec: '§6.1.8 Create',
     supported: true,
     blurb:
       'Make a single-key object — almost always a symmetric key (AES). Starts life Pre-Active.',
@@ -728,7 +736,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'CreateKeyPair',
     category: 'Object Lifecycle',
-    spec: '§6.1.2 Create Key Pair',
+    spec: '§6.1.11 Create Key Pair',
     supported: true,
     blurb: 'Make an asymmetric key pair in one call — returns TWO UniqueIdentifiers, one per half.',
     params: [
@@ -740,7 +748,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Register',
     category: 'Object Lifecycle',
-    spec: '§6.1.3 Register',
+    spec: '§6.1.48 Register',
     supported: true,
     blurb:
       'Hand the server key material you already generated elsewhere, so it can manage (not generate) it. Since engine 0.13.0 a malformed or unsupported key is refused HERE, at registration — not silently accepted to fail on first use.',
@@ -754,7 +762,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Import',
     category: 'Object Lifecycle',
-    spec: '§7.x Import',
+    spec: '§6.1.29 Import',
     supported: true,
     blurb:
       'Like Register, but lets you choose the UID and optionally overwrite an existing object.',
@@ -777,7 +785,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Export',
     category: 'Object Lifecycle',
-    spec: '§7.x Export',
+    spec: '§6.1.22 Export',
     supported: true,
     blurb: "Pull a managed object's full key material back out — the inverse of Import.",
     params: [{ key: 'uid', label: 'Object UID', kind: 'uid', default: '' }],
@@ -786,7 +794,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Get',
     category: 'Object Lifecycle',
-    spec: '§6.1.4 Get',
+    spec: '§6.1.23 Get',
     supported: true,
     blurb: "Fetch a managed object's key material in a specific KeyFormatType.",
     params: [
@@ -795,7 +803,11 @@ export const OP_TEMPLATES: OpTemplate[] = [
         key: 'keyFormatType',
         label: 'Key format',
         kind: 'select',
-        options: ['', 'Raw', 'PKCS#1', 'PKCS#8', 'TransparentPublicKey'],
+        // No generic "Transparent Public Key" exists in the KMIP 3.0 Key
+        // Format Type enum — only per-algorithm variants (Transparent RSA/EC/
+        // DSA/DH Public Key) — so this list sticks to the algorithm-agnostic
+        // formats every object accepts.
+        options: ['', 'Raw', 'PKCS#1', 'PKCS#8'],
         default: '',
       },
     ],
@@ -804,7 +816,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Locate',
     category: 'Object Lifecycle',
-    spec: '§6.1.8 Locate',
+    spec: '§6.1.32 Locate',
     supported: true,
     blurb:
       'Search for objects matching attribute filters — algorithm, key length, or UID. Leave all filters empty to list everything in scope. (Length/UID filtering became real in engine 0.13.0; before that it was accepted and silently ignored.)',
@@ -818,7 +830,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Activate',
     category: 'Object Lifecycle',
-    spec: '§6.1.12 Activate',
+    spec: '§6.1.1 Activate',
     supported: true,
     blurb:
       'Flip a key from Pre-Active to Active — the lifecycle gate every crypto op checks before it will run.',
@@ -828,7 +840,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Revoke',
     category: 'Object Lifecycle',
-    spec: '§6.1.13 Revoke',
+    spec: '§6.1.49 Revoke',
     supported: true,
     blurb:
       'Flip a key to Deactivated/Compromised with a recorded reason — stops it being used for new operations.',
@@ -853,7 +865,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Destroy',
     category: 'Object Lifecycle',
-    spec: '§6.1.14 Destroy',
+    spec: '§6.1.19 Destroy',
     supported: true,
     blurb:
       "Irrevocably remove a key's material — genuinely: since engine 0.13.0 the raw bytes are zeroized in memory and securely deleted from storage, not just flagged. The object's UID and history remain.",
@@ -863,7 +875,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Deactivate',
     category: 'Object Lifecycle',
-    spec: '§6.1.64 Deactivate',
+    spec: '§6.1.14 Deactivate',
     supported: true,
     blurb: 'A softer Revoke — no reason code, just ends the Active state.',
     params: [{ key: 'uid', label: 'Object UID', kind: 'uid', default: '' }],
@@ -872,7 +884,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Check',
     category: 'Object Lifecycle',
-    spec: '§6.1.9 Check',
+    spec: '§6.1.7 Check',
     supported: true,
     blurb:
       'Ask the server to confirm an object still satisfies a set of usage constraints, without performing a crypto operation.',
@@ -882,7 +894,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Archive',
     category: 'Object Lifecycle',
-    spec: '§6.1.15 Archive',
+    spec: '§6.1.4 Archive',
     supported: true,
     blurb: 'Move an object to cold/offline storage, out of active service.',
     params: [{ key: 'uid', label: 'Object UID', kind: 'uid', default: '' }],
@@ -891,7 +903,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Recover',
     category: 'Object Lifecycle',
-    spec: '§6.1.16 Recover',
+    spec: '§6.1.47 Recover',
     supported: true,
     blurb: 'Bring an Archived object back into active service.',
     params: [{ key: 'uid', label: 'Object UID', kind: 'uid', default: '' }],
@@ -900,7 +912,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Obliterate',
     category: 'Object Lifecycle',
-    spec: '§6.1.61 Obliterate',
+    spec: '§6.1.39 Obliterate',
     supported: true,
     blurb:
       'The most destructive op in the protocol — erase an object so thoroughly even its metadata/history is gone.',
@@ -925,7 +937,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'GetAttributes',
     category: 'Attributes',
-    spec: '§6.1.5 Get Attributes',
+    spec: '§6.1.24 Get Attributes',
     supported: true,
     blurb: 'Read one or more named attributes off a managed object.',
     params: [
@@ -942,7 +954,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'GetAttributeList',
     category: 'Attributes',
-    spec: '§6.1.6 Get Attribute List',
+    spec: '§6.1.25 Get Attribute List',
     supported: true,
     blurb: 'List which attribute NAMES exist on an object, without fetching their values.',
     params: [{ key: 'uid', label: 'Object UID', kind: 'uid', default: '' }],
@@ -951,7 +963,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'AddAttribute',
     category: 'Attributes',
-    spec: '§6.1.7 Add Attribute',
+    spec: '§6.1.2 Add Attribute',
     supported: true,
     blurb: 'Attach a new (multi-instance-capable) attribute to an object — e.g. an extra Name.',
     params: [
@@ -964,7 +976,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'ModifyAttribute',
     category: 'Attributes',
-    spec: '§6.1.7 Modify Attribute',
+    spec: '§6.1.38 Modify Attribute',
     supported: true,
     blurb: 'Change the value of an attribute that already exists.',
     params: [
@@ -977,7 +989,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'DeleteAttribute',
     category: 'Attributes',
-    spec: '§6.1.7 Delete Attribute',
+    spec: '§6.1.17 Delete Attribute',
     supported: true,
     blurb: 'Remove a named attribute from an object.',
     params: [
@@ -989,7 +1001,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'SetAttribute',
     category: 'Attributes',
-    spec: '§6.1.7 Set Attribute',
+    spec: '§6.1.56 Set Attribute',
     supported: true,
     blurb:
       'Add-or-replace in one call, for single-instance attributes. Honest since engine 0.13.0: a writable attribute genuinely persists, and a read-only one (e.g. ProtectionStorageMask) is refused — never a Success that saved nothing.',
@@ -1003,7 +1015,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'AdjustAttribute',
     category: 'Attributes',
-    spec: '§6.1.7 Adjust Attribute',
+    spec: '§6.1.3 Adjust Attribute',
     supported: true,
     blurb:
       'Do arithmetic on a numeric attribute server-side (increment/decrement/negate) instead of read-modify-write.',
@@ -1065,7 +1077,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Encrypt',
     category: 'Cryptographic Services',
-    spec: '§6.1.19 Encrypt',
+    spec: '§6.1.21 Encrypt',
     supported: true,
     blurb:
       'Symmetric or asymmetric encryption using a managed key — returns ciphertext (and, for AEAD modes, an authentication tag).',
@@ -1080,7 +1092,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Decrypt',
     category: 'Cryptographic Services',
-    spec: '§6.1.20 Decrypt',
+    spec: '§6.1.15 Decrypt',
     supported: true,
     blurb:
       'The inverse of Encrypt — recovers plaintext given the ciphertext and (for symmetric AEAD) the IV.',
@@ -1094,7 +1106,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Sign',
     category: 'Cryptographic Services',
-    spec: '§6.1.21 Sign',
+    spec: '§6.1.60 Sign',
     supported: true,
     blurb: 'Produce a signature over Data using a managed private key.',
     params: [
@@ -1106,7 +1118,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'SignatureVerify',
     category: 'Cryptographic Services',
-    spec: '§6.1.22 Signature Verify',
+    spec: '§6.1.61 Signature Verify',
     supported: true,
     blurb:
       'Check a signature against Data using a managed public key — answers with a ValidityIndicator.',
@@ -1125,7 +1137,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Encapsulate',
     category: 'Cryptographic Services',
-    spec: 'WD19 §6.1.60 Encapsulate (PQC KEM)',
+    spec: 'WD19 §6.1.22 Encapsulate (PQC KEM)',
     supported: true,
     blurb:
       'PQC KEM operation: turn a public key into a ciphertext + shared secret. New in KMIP 3.0 — classical Diffie-Hellman has no equivalent operation.',
@@ -1135,7 +1147,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Decapsulate',
     category: 'Cryptographic Services',
-    spec: 'WD19 §6.1.61 Decapsulate (PQC KEM)',
+    spec: 'WD19 §6.1.15 Decapsulate (PQC KEM)',
     supported: true,
     blurb:
       'PQC KEM operation: recover the same shared secret from a ciphertext using the matching private key.',
@@ -1148,7 +1160,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'MAC',
     category: 'Cryptographic Services',
-    spec: '§6.1.23 MAC',
+    spec: '§6.1.36 MAC',
     supported: true,
     blurb: 'Compute a symmetric message authentication code over Data.',
     params: [
@@ -1160,7 +1172,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'MACVerify',
     category: 'Cryptographic Services',
-    spec: '§6.1.23 MAC Verify',
+    spec: '§6.1.37 MAC Verify',
     supported: true,
     blurb: 'Check a MAC against a freshly-recomputed one.',
     params: [
@@ -1181,7 +1193,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
     // the async-management/negotiation ops is eligible.
     op: 'Hash',
     category: 'Cryptographic Services',
-    spec: '§6.1.53 Hash',
+    spec: '§6.1.28 Hash',
     supported: true,
     blurb:
       "Compute a cryptographic hash over Data — doesn't touch a managed key at all. Turn on 'Run asynchronously' to enqueue it as a real background job instead: the response is OperationPending + a correlation value for the Asynchronous Processing ops.",
@@ -1258,7 +1270,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'RNGRetrieve',
     category: 'RNG & PKCS#11 Passthrough',
-    spec: '§6.1.56 RNG Retrieve',
+    spec: '§6.1.54 RNG Retrieve',
     supported: true,
     blurb: "Ask the server's RNG for N bytes of randomness directly — no key involved.",
     params: [{ key: 'dataLength', label: 'Bytes', kind: 'number', default: '32' }],
@@ -1267,7 +1279,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'RNGSeed',
     category: 'RNG & PKCS#11 Passthrough',
-    spec: '§6.1.57 RNG Seed',
+    spec: '§6.1.55 RNG Seed',
     supported: true,
     blurb: "Feed additional entropy into the server's RNG.",
     params: [{ key: 'data', label: 'Seed (hex)', kind: 'hex', default: '00112233' }],
@@ -1276,7 +1288,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'PKCS_11',
     category: 'RNG & PKCS#11 Passthrough',
-    spec: '§6.1.63 PKCS#11 passthrough',
+    spec: '§6.1.42 PKCS#11 passthrough',
     supported: true,
     blurb:
       "Invoke a specific PKCS#11 (Cryptoki) mechanism directly, for capabilities KMIP doesn't model natively.",
@@ -1476,7 +1488,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Notify',
     category: 'Not Implemented (out of scope)',
-    spec: '§6.1.36 Notify (server-to-client; out of scope)',
+    spec: '§6.2.2 Notify (server-to-client; out of scope)',
     supported: false,
     blurb:
       'Server-to-client push notification of an object change. A deliberate, documented scope boundary — the spec leaves the server-initiated transport unspecified — and since the honest-Query audit the server no longer advertises it.',
@@ -1486,7 +1498,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Put',
     category: 'Not Implemented (out of scope)',
-    spec: '§6.1.45 Put (server-to-client; out of scope)',
+    spec: '§6.2.3 Put (server-to-client; out of scope)',
     supported: false,
     blurb:
       'Server-to-client push of a full object — the inverse direction of Get. Same deliberate scope boundary as Notify; not advertised.',
@@ -1506,7 +1518,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Re-Provision',
     category: 'Not Implemented (out of scope)',
-    spec: '§6.1.49 Re-Provision (unimplemented)',
+    spec: '§6.1.53 Re-Provision (unimplemented)',
     supported: false,
     blurb:
       "Re-provision an object's material in place under a new mechanism. No handler in this build — and honestly not advertised.",

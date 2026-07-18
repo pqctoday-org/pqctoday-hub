@@ -125,7 +125,12 @@ interface DriftFinding {
   checkedAt: string
   /** Present only when --stealth-retry attempted a second-pass fetch on this
    * finding (see module docstring). Absent entirely when the flag isn't set. */
-  stealthOutcome?: 'recovered-ok' | 'recovered-drift' | 'still-blocked' | 'still-failing'
+  stealthOutcome?:
+    | 'recovered-ok'
+    | 'recovered-drift'
+    | 'confirmed-drift'
+    | 'still-blocked'
+    | 'still-failing'
   stealthTier?: string
 }
 
@@ -394,6 +399,14 @@ export interface StealthResult {
   tier: string
   text: string
   error: string | null
+  /** True when the bridge fetched raw bytes (PDF URLs) instead of decoded
+   * text — see fetch_resilient_bridge.py's 2026-07-17 docstring: re-encoding
+   * decoded text back to bytes silently corrupts binary content and was
+   * producing false-positive drift on unchanged PDFs. When true, `dataB64`
+   * holds the real bytes and `text` is empty; decode via Buffer.from(...,
+   * 'base64'), never Buffer.from(text, 'utf-8'). */
+  binary?: boolean
+  dataB64?: string
 }
 
 /** Not exported as the default path — callers inject this so tests can fake
@@ -415,6 +428,8 @@ export function stealthFetchViaBridge(
       tier: parsed.tier ?? 'unknown',
       text: parsed.text ?? '',
       error: parsed.error ?? null,
+      binary: Boolean(parsed.binary),
+      dataB64: parsed.dataB64,
     }
   } catch (e) {
     return {
@@ -453,6 +468,34 @@ function defaultStealthFetch(url: string): StealthResult {
  * stealthOutcome/stealthTier set) if stealth recovery didn't change the
  * verdict; returns a reclassified finding if it did.
  */
+/**
+ * EXTENDED 2026-07-17: originally only re-checked 'blocked'/'fetch-error'
+ * findings. A real threats-collection run exposed why 'drift'/'size-
+ * mismatch' need the SAME stealth verification, not just blocked/fetch-
+ * error: a bare fetch() on a JS-heavy page can retrieve a wildly different
+ * (usually much smaller, shell-only) document than whatever ORIGINALLY got
+ * cached via a JS-rendering tier — e.g. epa.gov/waterresilience/awia-
+ * section-2013 returned 16,510 chars of stripped text via curl_cffi vs
+ * 271,052 chars in the cached copy, a spurious 'drift' with near-zero text
+ * similarity that had nothing to do with the real page changing. A second
+ * spot-check (dcsa.org/standards/bill-of-lading) showed the OPPOSITE: byte-
+ * level 'drift' from tracker/cookie-consent noise around near-identical
+ * substantive text — also not real content drift. Both cases mean a bare-
+ * fetch 'drift'/'size-mismatch' verdict is not trustworthy on its own for
+ * JS-rendered pages; it needs the same curl_cffi -> playwright-stealth ->
+ * crawl4ai ladder before being reported as confirmed.
+ *
+ * `stealthOutcome` now distinguishes:
+ *   - 'recovered-ok'      — stealth fetch matches the stored hash (the
+ *     naive first pass was wrong, regardless of what it originally said)
+ *   - 'confirmed-drift'   — original classification was ALREADY drift/
+ *     size-mismatch, and the stealth fetch (a real, JS-capable fetch)
+ *     STILL doesn't match — genuine content change, verified twice
+ *   - 'recovered-drift'   — original classification was blocked/fetch-
+ *     error (no real content ever seen before), and stealth reveals real
+ *     content that doesn't match the baseline — first time this is known
+ *   - 'still-blocked' / 'still-failing' — unchanged from before
+ */
 export function stealthRecheck(
   finding: DriftFinding,
   stealthFetch: StealthFetchImpl
@@ -461,12 +504,17 @@ export function stealthRecheck(
   if (!result.ok) {
     return { ...finding, stealthOutcome: 'still-failing', stealthTier: result.tier }
   }
-  const bytes = Buffer.from(result.text, 'utf-8')
+  const bytes =
+    result.binary && result.dataB64
+      ? Buffer.from(result.dataB64, 'base64')
+      : Buffer.from(result.text, 'utf-8')
   if (looksBlocked(bytes)) {
     return { ...finding, stealthOutcome: 'still-blocked', stealthTier: result.tier }
   }
   const observedSha256 = createHash('sha256').update(bytes).digest('hex')
   const observedSizeBytes = bytes.byteLength
+  const wasAlreadyDriftLike =
+    finding.classification === 'drift' || finding.classification === 'size-mismatch'
   if (finding.storedSha256 && observedSha256 === finding.storedSha256) {
     return {
       ...finding,
@@ -484,7 +532,7 @@ export function stealthRecheck(
     classification: sizeMatched ? 'size-mismatch' : 'drift',
     observedSha256,
     observedSizeBytes,
-    stealthOutcome: 'recovered-drift',
+    stealthOutcome: wasAlreadyDriftLike ? 'confirmed-drift' : 'recovered-drift',
     stealthTier: result.tier,
   }
 }
@@ -567,18 +615,67 @@ export function dedupeBlockedByHash(findings: DriftFinding[]): DriftFinding[] {
   })
 }
 
+/**
+ * Resolves a collection's manifest path AND normalizes its entries into the
+ * common ManifestEntry shape. FIXED 2026-07-17: this used to be a single
+ * hardcoded `path.join(publicDir, collection, 'manifest.json')` assuming
+ * every collection shares library/timeline's shape ({entries:[...]},
+ * camelCase fields, sha256 present). threats does NOT: its real, currently-
+ * maintained manifest lives one level deeper at
+ * `public/threats/evidence/manifest.json` (public/threats/manifest.json is
+ * a git-tracked relic from 2026-07-10, predating the 2026-07-12 local-
+ * evidence-cache relocation — confirmed via its own `generated`/`source`
+ * fields, sourced from an already-superseded CSV generation). Even the
+ * SHAPE differs: a flat array (not {entries:[...]}), snake_case fields
+ * (threat_id/source_url/download_status/evidence_file), and NO sha256 field
+ * at all — nothing had ever established a hash baseline for the current
+ * evidence store, so every threats finding was really being compared
+ * against a stale, unrelated 07-10 snapshot via the wrong path entirely.
+ * This normalizer reads the REAL current manifest and maps it onto the
+ * same ManifestEntry shape classifyEntry() already expects, so the rest of
+ * the pipeline (dedup, stealth-retry, report) needs no threats-specific
+ * branching anywhere else.
+ */
+function resolveManifest(
+  publicDir: string,
+  collection: string
+): { path: string; entries: ManifestEntry[] } {
+  if (collection === 'threats') {
+    const manifestPath = path.join(publicDir, 'threats', 'evidence', 'manifest.json')
+    if (!fs.existsSync(manifestPath)) return { path: manifestPath, entries: [] }
+    const raw = JSON.parse(fs.readFileSync(manifestPath, 'utf-8')) as Array<Record<string, unknown>>
+    const entries: ManifestEntry[] = raw.map((e) => ({
+      refId: String(e.threat_id ?? ''),
+      title: String(e.main_source ?? ''),
+      url: String(e.source_url ?? ''),
+      status: e.download_status === 'ok' ? 'downloaded' : String(e.download_status ?? ''),
+      filename: e.evidence_file ? String(e.evidence_file) : undefined,
+      sizeBytes: typeof e.size_bytes === 'number' ? e.size_bytes : undefined,
+      contentType: e.content_type ? String(e.content_type) : undefined,
+      sha256: e.sha256 ? String(e.sha256) : undefined,
+    }))
+    return { path: manifestPath, entries }
+  }
+  const manifestPath = path.join(publicDir, collection, 'manifest.json')
+  if (!fs.existsSync(manifestPath)) return { path: manifestPath, entries: [] }
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8')) as Manifest
+  return { path: manifestPath, entries: manifest.entries }
+}
+
 export async function run(opts: RunOptions): Promise<DriftReport> {
   const log = opts.log ?? ((m: string) => console.log(m))
 
   const findings: DriftFinding[] = []
   for (const collection of opts.collections) {
-    const manifestPath = path.join(opts.publicDir, collection, 'manifest.json')
+    const { path: manifestPath, entries: manifestEntries } = resolveManifest(
+      opts.publicDir,
+      collection
+    )
     if (!fs.existsSync(manifestPath)) {
       log(`[drift] ${collection}: manifest.json missing at ${manifestPath} — skipping`)
       continue
     }
-    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8')) as Manifest
-    const downloaded = manifest.entries.filter((e) => e.status === 'downloaded')
+    const downloaded = manifestEntries.filter((e) => e.status === 'downloaded')
     const subset = opts.limit !== null ? downloaded.slice(0, opts.limit) : downloaded
     log(
       `[drift] ${collection}: ${downloaded.length} downloaded entries (auditing ${subset.length})`
@@ -609,22 +706,30 @@ export async function run(opts: RunOptions): Promise<DriftReport> {
     )
   }
 
-  // --stealth-retry: a bounded second pass over blocked/fetch-error findings
-  // only. Runs AFTER dedupeBlockedByHash (so cross-entry-confirmed blocks
-  // aren't wastefully re-fetched) and BEFORE the classification tally, so
-  // reclassified findings count under their real, recovered bucket.
+  // --stealth-retry: a bounded second pass over any non-'ok' finding.
+  // EXTENDED 2026-07-17 to cover 'drift'/'size-mismatch' too, not just
+  // 'blocked'/'fetch-error' — see stealthRecheck()'s docstring for why a
+  // bare-fetch 'drift' verdict on a JS-rendered page isn't trustworthy on
+  // its own. Runs AFTER dedupeBlockedByHash (so cross-entry-confirmed
+  // blocks aren't wastefully re-fetched) and BEFORE the classification
+  // tally, so reclassified findings count under their real bucket.
+  const isRetryable = (f: DriftFinding) =>
+    f.classification === 'blocked' ||
+    f.classification === 'fetch-error' ||
+    f.classification === 'drift' ||
+    f.classification === 'size-mismatch'
   let finalFindings = dedupedFindings
   if (opts.stealthRetry) {
     const stealthFetch = opts.stealthFetch ?? defaultStealthFetch
     const retryLimit = opts.stealthRetryLimit ?? 50
     const candidates = dedupedFindings
       .map((f, i) => ({ f, i }))
-      .filter(({ f }) => f.classification === 'blocked' || f.classification === 'fetch-error')
+      .filter(({ f }) => isRetryable(f))
       .slice(0, retryLimit)
     log(
       `[drift] --stealth-retry: ${candidates.length} of ` +
-        `${dedupedFindings.filter((f) => f.classification === 'blocked' || f.classification === 'fetch-error').length} ` +
-        `blocked/fetch-error finding(s) selected (limit ${retryLimit})`
+        `${dedupedFindings.filter(isRetryable).length} ` +
+        `blocked/fetch-error/drift/size-mismatch finding(s) selected (limit ${retryLimit})`
     )
     // Bounded concurrency (same mapPool pattern as the main fetch pass) —
     // each retry may drive a real headless browser (curl_cffi -> playwright-
@@ -643,6 +748,20 @@ export async function run(opts: RunOptions): Promise<DriftReport> {
     finalFindings = dedupedFindings.map((f, i) => updates.get(i) ?? f)
   }
 
+  // A scoped run (--collection library, say) only fetches that collection's
+  // entries. Without this, writing finalFindings straight to opts.outPath
+  // would silently drop every other collection's findings from the shared
+  // report (bit us in practice 2026-07-17: a threats-only run wiped out
+  // library/timeline until manually restored via `git show`). Carry forward
+  // any existing on-disk findings for collections this run didn't touch.
+  let mergedFindings = finalFindings
+  if (opts.collections.length < COLLECTIONS.length && fs.existsSync(opts.outPath)) {
+    const touched = new Set(opts.collections)
+    const existing = JSON.parse(fs.readFileSync(opts.outPath, 'utf-8')) as DriftReport
+    const carriedOver = existing.findings.filter((f) => !touched.has(f.collection as Collection))
+    mergedFindings = [...carriedOver, ...finalFindings]
+  }
+
   const classifications: Record<DriftClassification, number> = {
     ok: 0,
     drift: 0,
@@ -651,14 +770,14 @@ export async function run(opts: RunOptions): Promise<DriftReport> {
     'no-stored-hash': 0,
     blocked: 0,
   }
-  for (const f of finalFindings) classifications[f.classification]++
+  for (const f of mergedFindings) classifications[f.classification]++
 
   const report: DriftReport = {
     generatedAt: new Date().toISOString(),
-    totalEntries: finalFindings.length,
+    totalEntries: mergedFindings.length,
     fetched: classifications.ok + classifications.drift + classifications['size-mismatch'],
     classifications,
-    findings: finalFindings,
+    findings: mergedFindings,
   }
 
   if (!opts.dryRun) {
@@ -678,6 +797,7 @@ export async function run(opts: RunOptions): Promise<DriftReport> {
     const outcomes = {
       'recovered-ok': 0,
       'recovered-drift': 0,
+      'confirmed-drift': 0,
       'still-blocked': 0,
       'still-failing': 0,
     }
@@ -685,8 +805,12 @@ export async function run(opts: RunOptions): Promise<DriftReport> {
       if (f.stealthOutcome) outcomes[f.stealthOutcome]++
     }
     log(
-      `[drift] Stealth-retry outcomes: ${outcomes['recovered-ok']} recovered-ok, ` +
-        `${outcomes['recovered-drift']} recovered-drift (real content change confirmed), ` +
+      `[drift] Stealth-retry outcomes: ${outcomes['recovered-ok']} recovered-ok (naive fetch was ` +
+        `wrong, real content matches baseline), ` +
+        `${outcomes['confirmed-drift']} confirmed-drift (already drift/size-mismatch, STILL doesn't ` +
+        `match even via a real fetch -- genuine content change), ` +
+        `${outcomes['recovered-drift']} recovered-drift (was blocked/fetch-error, stealth reveals real ` +
+        `content that doesn't match baseline), ` +
         `${outcomes['still-blocked']} still-blocked (confirmed, not just naive-fetch failure), ` +
         `${outcomes['still-failing']} still-failing (stealth tier itself couldn't reach it)`
     )
