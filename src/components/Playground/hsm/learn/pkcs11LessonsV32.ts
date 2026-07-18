@@ -44,7 +44,8 @@ import {
   type AttrDef,
 } from '@/wasm/softhsm'
 import { toHex } from '../shared'
-import type { LinearLessonBase } from '@/components/Playground/learnkit/lessonTypes'
+import type { CompareRow, LinearLessonBase } from '@/components/Playground/learnkit/lessonTypes'
+import { ALGO_FACTS, fmtBytes, type AlgoFacts } from '@/components/Playground/learnkit/algoFacts'
 import type { Pkcs11LessonStep } from './pkcs11Lessons'
 
 export type Pkcs11LessonV32 = LinearLessonBase<Pkcs11LessonStep>
@@ -53,6 +54,16 @@ const requireModule = (hsm: HsmContextValue) => {
   const M = hsm.moduleRef.current
   if (!M) throw new Error('HSM module not loaded — run the first step of this lesson first.')
   return M
+}
+
+/** One comparison row, values read straight from the shared ALGO_FACTS table
+ * (FIPS 203/204/205 published sizes) — the single source of truth both this
+ * playground and the KMIP playground's own compare tables draw from. */
+const sizeRow = (label: string, field: keyof AlgoFacts, algoA: string, algoB: string): CompareRow => {
+  const a = ALGO_FACTS[algoA]?.[field] as number | undefined
+  const b = ALGO_FACTS[algoB]?.[field] as number | undefined
+  const factor = typeof a === 'number' && typeof b === 'number' && a > 0 ? ` (${(b! / a).toFixed(1)}×)` : ''
+  return { label, a: fmtBytes(a), b: `${fmtBytes(b)}${factor}`, same: a === b }
 }
 
 const CKM_AES_ECB = 0x1081
@@ -147,6 +158,24 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
         },
       },
     ],
+    compare: [
+      {
+        label: 'Operation',
+        a: 'C_GenerateKeyPair + C_Sign + C_Verify',
+        b: 'C_GenerateKeyPair + C_Sign + C_Verify',
+        same: true,
+      },
+      sizeRow('Public key size', 'pub', 'RSA-3072', 'ML-DSA-65'),
+      sizeRow('Private key size', 'priv', 'RSA-3072', 'ML-DSA-65'),
+      sizeRow('Signature size', 'sig', 'RSA-3072', 'ML-DSA-65'),
+      {
+        label: 'Hardness assumption',
+        a: 'Integer factorization (Shor-broken)',
+        b: 'Module lattice / Learning With Errors',
+        same: false,
+      },
+    ],
+    compareHeaders: ['', 'RSA-3072', 'ML-DSA-65'],
     notes: [
       'This is a fresh CreateKeyPair, not an in-place conversion — the RSA key keeps working (e.g. to verify old signatures) until deliberately retired. See lesson B9.',
       'The size increase is the real, permanent cost of the lattice-hardness assumption — there is no way to make ML-DSA signatures RSA-sized.',
@@ -210,6 +239,29 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
         },
       },
     ],
+    compare: [
+      {
+        label: 'Call shape',
+        a: 'C_DeriveKey — both sides call the SAME operation',
+        b: 'C_EncapsulateKey (public key) / C_DecapsulateKey (private key + ciphertext) — asymmetric',
+        same: false,
+      },
+      sizeRow('Public key size', 'pub', 'ECDH-P256', 'ML-KEM-768'),
+      {
+        label: 'Ciphertext on the wire',
+        a: 'none — ECDH has no ciphertext at all',
+        b: `${fmtBytes(ALGO_FACTS['ML-KEM-768'].ct)}`,
+        same: false,
+      },
+      sizeRow('Resulting shared secret size', 'secret', 'ECDH-P256', 'ML-KEM-768'),
+      {
+        label: 'Hardness assumption',
+        a: 'Elliptic-curve discrete log (Shor-broken)',
+        b: 'Module lattice / Learning With Errors',
+        same: false,
+      },
+    ],
+    compareHeaders: ['', 'ECDH-P256', 'ML-KEM-768'],
     notes: [
       'Both sides ended up with independent HANDLES to the same secret bytes — this lesson extracted the raw value only to prove that on screen; a real integration never needs to.',
       'This is a real key-establishment primitive: encapsulate needs only the PUBLIC key, so anyone can send you a shared secret only YOUR private key can recover.',

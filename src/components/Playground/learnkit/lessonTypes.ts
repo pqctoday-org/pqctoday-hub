@@ -67,11 +67,15 @@ export interface LessonBase<TSide> {
   tryRef: string[]
 }
 
-/** A single linear walkthrough — one step sequence, no classical/PQC pairing.
- * Fits protocol-fundamentals lessons (e.g. PKCS#11 "Foundations" track) where
- * there's nothing to compare against, unlike `LessonBase`'s always-paired
- * classical/modernize shape (KMIP's classical→PQC lessons, PKCS#11's
- * "v3.2 & the PQC transformation" track). */
+/** A single linear walkthrough — one step sequence, no classical/PQC pairing
+ * of the WHOLE lesson into two sides. Fits protocol-fundamentals lessons
+ * (e.g. PKCS#11 "Foundations" track) where there's nothing to compare
+ * against, unlike `LessonBase`'s always-paired classical/modernize shape
+ * (KMIP's classical→PQC lessons). A linear lesson MAY still end with an
+ * optional comparison table (e.g. PKCS#11's "v3.2 & the PQC transformation"
+ * track runs classical-then-PQC steps in one sequence, then compares the
+ * real numbers each step produced) — that's `compare`/`compareHeaders`,
+ * distinct from `LessonBase`'s two-column classical/modernize split. */
 export interface LinearLessonBase<TStep> {
   id: string
   n: number
@@ -81,6 +85,8 @@ export interface LinearLessonBase<TStep> {
   blurb: string
   setup: string
   steps: TStep[]
+  compare?: CompareRow[]
+  compareHeaders?: [string, string, string]
   notes: string[]
   whyItMatters: string
   /** Op/operation names for "Try it yourself in Workbench" backlink chips. */

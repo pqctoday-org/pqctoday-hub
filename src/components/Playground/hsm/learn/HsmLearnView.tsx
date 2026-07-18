@@ -213,6 +213,48 @@ function LessonRunner({
           ))}
         </ol>
 
+        {allDone && lesson.compare && lesson.compareHeaders && (
+          <div className="overflow-x-auto rounded-xl border border-border bg-card p-4">
+            <p className="mb-2 text-[11px] font-bold uppercase tracking-wide text-foreground">
+              Compare
+            </p>
+            <table className="w-full text-[12px]">
+              <thead>
+                <tr className="text-left text-muted-foreground">
+                  {lesson.compareHeaders.map((h, i) => (
+                    <th key={i} className="pb-1.5 pr-3 font-semibold">
+                      {h || ' '}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {lesson.compare.map((row) => (
+                  <tr key={row.label} className="border-t border-border">
+                    <td className="py-1.5 pr-3 font-medium text-foreground">{row.label}</td>
+                    <td
+                      className={cn(
+                        'py-1.5 pr-3',
+                        row.same ? 'text-muted-foreground' : 'text-status-warning'
+                      )}
+                    >
+                      {row.a}
+                    </td>
+                    <td
+                      className={cn(
+                        'py-1.5 pr-3',
+                        row.same ? 'text-muted-foreground' : 'text-status-warning'
+                      )}
+                    >
+                      {row.b}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
         {allDone && (
           <div className="rounded-xl border border-border bg-card p-4">
             <p className="text-[11px] font-bold uppercase tracking-wide text-foreground">Notes</p>
