@@ -158,4 +158,25 @@ describe('runBatch — policy enforcement + Undo (real wasm engine)', () => {
       'the placeholder must be empty after a multi-match Locate, failing the chained Get'
     ).toBe('OperationFailed')
   })
+
+  it('§8.1.2 Asynchronous Indicator = Mandatory queues an eligible item and fails an ineligible one, in the same batch', () => {
+    // 2026-07-17 — Batch's `asynchronous` field was newly wired through
+    // (previously only the single-op `run_op` path could go async; a
+    // batch's header always encoded `asynchronous_indicator: None`). One
+    // header setting applies to every item — Create is eligible
+    // (`dispatcher::is_async_eligible`), Query never is (introspection op,
+    // answered instantly either way).
+    engine.loadPolicy(PERMISSIVE_YAML)
+    const batch = engine.runBatch({
+      errorContinuation: 'Continue',
+      asynchronous: 'Mandatory',
+      items: [{ op: 'Create', algorithm: 'AES', length: 256 }, { op: 'Query' }],
+    })
+
+    expect(batch.items).toHaveLength(2)
+    expect(batch.items[0].status).toBe('OperationPending')
+    expect(batch.items[0].asynchronousCorrelationValueHex).toBeTruthy()
+    expect(batch.items[1].status, 'Query is never async-eligible').toBe('OperationFailed')
+    expect(batch.items[1].asynchronousCorrelationValueHex).toBeNull()
+  })
 })

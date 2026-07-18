@@ -317,6 +317,7 @@ export const LESSONS: Lesson[] = [
     notes: [
       "A quantum computer running Shor's algorithm breaks RSA's factoring assumption outright — not weakens it, breaks it. ML-DSA's lattice assumption isn't known to fall to any quantum algorithm.",
       'ML-DSA is randomized (hedged) by default; a policy can force the deterministic variant on every Sign — see the Agility tab\'s "Deterministic signing" policy.',
+      "FIPS 204/205's prehash variants (HashML-DSA / HashSLH-DSA — sign a hash of the message instead of the message itself, useful when the message is huge or hashing happens in a separate step) aren't separate KMIP algorithm names; they're CryptographicParameters on the SAME Sign call — Context String (binds which hash was used) and External Mu (the caller supplies the 64-byte message representative directly). Both are real, wired to the engine, just not exposed as their own Learn walkthrough; try them via the Commands tab's Sign form, which now exposes both fields alongside Deterministic/Internal/explicit Random.",
     ],
     whyItMatters:
       'Verification code that only branches on ValidityIndicator never changes. The #1 thing to check in existing client code is hardcoded signature buffer sizes or fixed-width DB columns — they need to grow roughly 8–9×.',
@@ -409,6 +410,7 @@ export const LESSONS: Lesson[] = [
     ],
     notes: [
       "The shared secret comes out the same shape either way — 32 bytes, ready to feed an AES-256 key. That's deliberate: KEMs are designed to be a drop-in secret source for whatever symmetric layer already expects one.",
+      "KMIP 3.0's KEMAlgorithm enumeration (§11.26, Table 572) also names two classical members alongside MLKEM: DHKEM (ephemeral-static ECDH run through Encapsulate/Decapsulate) and RSASVE (RSA Secret-Value Encapsulation). DHKEM genuinely works here — Encapsulate against an ordinary ECDH key runs the real classical construction, no PQC involved — while RSASVE is honestly rejected (RSA keys aren't KEM-shaped in this design). Either way it's the target key's own algorithm that decides, not a client-supplied KemAlgorithm hint — that field round-trips on the wire but isn't behavior-determining here.",
     ],
     whyItMatters:
       'If your code today does "ECDH → derive an AES key," the PQC replacement isn\'t a drop-in math substitution — it\'s a different SHAPE, with two new operations to wire up. Budget engineering time for this, not just a config flip.',
@@ -653,7 +655,8 @@ export const LESSONS: Lesson[] = [
       { label: 'CryptographicAlgorithm value', a: 'ML-KEM-768', b: 'X25519MLKEM768', same: false },
     ],
     notes: [
-      "X25519MLKEM768 is a single first-class KMIP 3.0 WD19 CryptographicAlgorithm value (draft codepoint 0x5C) — one managed object, ordinary Encapsulate/Decapsulate. Your client code doesn't know two algorithms are running underneath; the engine combines both secrets via a KDF.",
+      "X25519MLKEM768 is a single first-class KMIP 3.0 WD19 CryptographicAlgorithm value (draft codepoint 0x5C) — one managed object, ordinary Encapsulate/Decapsulate. Your client code doesn't know two algorithms are running underneath; the engine combines both secrets by pure concatenation (ss_mlkem ‖ ss_x25519, 64 B total) — no KDF, matching draft-ietf-tls-ecdhe-mlkem exactly.",
+      "A second hybrid variant exists for shops standardized on NIST curves instead of X25519: SecP256r1MLKEM768 (draft codepoint 0x5D, IANA TLS group 0x11EB) — same idea, ECDH P-256 in place of X25519, same pure-concatenation combiner (ss_p256 ‖ ss_mlkem). Not run as its own step here since the wire flow is identical to X25519MLKEM768 above; try it directly in the Commands tab's algorithm picker.",
       '⚠ What about hybrid SIGNATURES — e.g. "need both ECDSA and ML-DSA to verify"? KMIP has no native composite-signature algorithm or dual-sign operation yet; no committee draft defines one. Two spec-compliant workarounds exist today: (1) an extension codepoint (KMIP reserves 8XXXXXXX) registering a single composite name, planned but not yet standard, or (2) two independently-linked keys signed together inside ONE Batch request — which you actually can run: see the Batch & Macros tab\'s "Provision & sign" recipe pattern.',
     ],
     whyItMatters:
@@ -820,7 +823,7 @@ export const LESSONS: Lesson[] = [
       { label: 'Digest value', a: 'SHA-256("hello")', b: 'the same bytes', same: true },
     ],
     notes: [
-      "Almost every operation is eligible — the spec says any MAY be processed asynchronously, at the server's discretion (§9.1). The only two ops the spec explicitly rules out are Poll and Cancel themselves — their own responses can never be asynchronous. Everything else, including Process, QueryAsynchronousRequests, and the negotiation ops, is the server's call.",
+      'The spec itself explicitly rules out only Poll and Cancel — their own responses can never be asynchronous (§9.1); everything else is the server\'s discretion to allow or refuse. This engine\'s own discretion is narrower than "almost everything": besides Poll/Cancel it also keeps Process, QueryAsynchronousRequests, Query, DiscoverVersions, and Ping synchronous-only — each is either a negotiation/introspection op answered instantly anyway, or (Process) already blocks-until-done by definition, so queuing it would be pointless.',
       "Cancel is honest about its race: a job that already started executing may finish anyway — the response tells you which way it went, never pretends. Try it from the Commands tab's Asynchronous Processing category.",
     ],
     whyItMatters:
@@ -905,6 +908,7 @@ export const LESSONS: Lesson[] = [
     notes: [
       "The Corpus Replay tab is the systematic version of this lesson: 97 of the 102 OASIS conformance tests pass against the engine's native baseline, and the in-browser replay pins its own exact breakdown — a new silent skip fails the suite rather than shrinking the pass count.",
       "The same audit fixed usage-budget honesty: once Get Usage Allocation grants part of a key's operation budget, re-setting the UsageLimits attribute is refused (§4.69) — a budget you can silently reset is not a budget.",
+      'Not every real operation gets its own walkthrough here. Identity/access (CreateUser, CreateGroup, CreateCredential, Login/Logout), lifecycle (Deactivate — a reversible state change, distinct from Destroy\'s irreversible key-material scrub; Obliterate — Destroy plus wiping the managed-object METADATA too, for when even "a key with this UID once existed" must not be provable), and policy-shaping (Set/Get Constraints, Set Defaults) are all genuinely implemented — try them directly in the Commands tab\'s Reference sub-tab. What\'s honestly NOT implemented, and never pretends to be: Notify and Put (§6.2 server-to-client push — this playground has no "client" to push to; the spec itself says delivery is by unspecified out-of-band means) and Delegated Login / Re-Provision (no handler, never corpus-required).',
     ],
     whyItMatters:
       'Compliance evidence is only as good as the server\'s honesty — "the key material SHALL be destroyed" is an auditable claim, not a status code. An engine that refuses what it cannot do, and does what it says, is the difference between a conformance REPORT and conformance.',

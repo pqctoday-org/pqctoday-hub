@@ -188,15 +188,29 @@ export const ALGO_FACTS: Record<string, AlgoFacts> = {
     family: 'hybrid',
     kind: 'kem',
     standard:
-      'KMIP 3.0 WD19 draft codepoint 0x5C; public-key/ciphertext sizes per draft-ietf-tls-ecdhe-mlkem',
-    // The IETF draft itself specifies a 64 B raw concatenation (32 B ML-KEM
-    // || 32 B X25519), no KDF — the 32 B combined secret below is this
-    // engine's own construction, not the draft's.
-    basis: 'Hybrid: X25519 + ML-KEM-768; this engine combines both secrets via a KDF into 32 B',
+      'KMIP 3.0 WD19 draft codepoint 0x5C; public-key/ciphertext sizes and combiner per draft-ietf-tls-ecdhe-mlkem (IANA TLS group 0x11EC)',
+    // Verified against this engine's own hybrid_kem.rs / native::hybrid: the
+    // combiner is pure concatenation (`Concat { finalize: [] }`, no KDF),
+    // order ss_mlkem‖ss_x25519 — matches the draft exactly, 64 B total.
+    basis: 'Hybrid: X25519 + ML-KEM-768; pure concatenation (ss_mlkem ‖ ss_x25519), no KDF',
     pub: 1216,
     ct: 1120,
-    secret: 32,
+    secret: 64,
     composedOf: ['X25519', 'ML-KEM-768'],
+  },
+  SecP256r1MLKEM768: {
+    family: 'hybrid',
+    kind: 'kem',
+    standard:
+      'KMIP 3.0 WD19 draft codepoint 0x5D; public-key/ciphertext sizes and combiner per draft-ietf-tls-ecdhe-mlkem (IANA TLS group 0x11EB)',
+    // Same combiner family as X25519MLKEM768 above (pure concatenation, no
+    // KDF), order ss_p256‖ss_mlkem; share/ct order is classical-first
+    // (p_pub‖ek_mlkem, eph_p‖ct_mlkem) per native::hybrid::keygen/decapsulate.
+    basis: 'Hybrid: ECDH P-256 + ML-KEM-768; pure concatenation (ss_p256 ‖ ss_mlkem), no KDF',
+    pub: 1249,
+    ct: 1153,
+    secret: 64,
+    composedOf: ['ECDH-P256', 'ML-KEM-768'],
   },
 }
 

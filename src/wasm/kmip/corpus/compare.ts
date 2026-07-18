@@ -28,6 +28,21 @@ export interface CompareResult {
   detail: string
 }
 
+/** Mirrors the Python harness's module-level `_CURRENT_TEST_NAME` (see
+ * `dispatcher_replay.py`'s `_compare_query_response_payload` docstring) —
+ * set once per test by `runCorpusTest` before replay, read by
+ * `compareQueryResponsePayload`'s MSGENC-* carve-out below. A module-level
+ * variable rather than a threaded parameter because only that one leaf
+ * function needs it, and every call in the chain between `runCorpusTest`
+ * and it (compareBatchItem → compareResponses → compareQueryResponsePayload)
+ * would otherwise need a mechanical extra argument. Corpus tests always run
+ * one at a time within a single `runCorpusTest` call (no concurrent replay
+ * within one JS realm), so this is safe. */
+let currentTestName = ''
+export function setCurrentTestName(name: string): void {
+  currentTestName = name
+}
+
 const ok = (detail = 'ok'): CompareResult => ({ ok: true, detail })
 const fail = (detail: string): CompareResult => ({ ok: false, detail })
 
@@ -191,13 +206,26 @@ function compareAttributeReferenceList(
 }
 
 /** §4.1.1 items 15-16 — Query's Operation/ObjectType lists MAY be a
- * superset of what the test enumerates. */
+ * superset of what the test enumerates.
+ *
+ * MSGENC-* is exempt from items 15-16 entirely (ported from
+ * `dispatcher_replay.py`'s `_compare_query_response_payload`, Phase 6.1):
+ * those transcripts test the Message-Encoding profile — that a Query
+ * round-trips correctly across TTLV/XML/JSON/HTTPS, not that this server's
+ * capability set is a superset of whatever reference server produced the
+ * fixture. That reference server also implements Notify/Put, which this
+ * engine correctly declines to advertise (§6.2.2/§6.2.3's transport is
+ * genuinely undefined — see `query.rs`'s `ADVERTISED_UNIMPLEMENTED_OPERATIONS`
+ * doc comment). Requiring superset membership here would force pretending
+ * to support things that aren't real just to keep an unrelated
+ * encoding-fidelity test green. */
 function compareQueryResponsePayload(
   expected: KmipNode,
   actual: TtlvNode,
   bindings: Bindings,
   table: CodepointTable
 ): CompareResult {
+  const isMsgenc = currentTestName.toUpperCase().startsWith('MSGENC')
   const supersetTags = new Set([norm('Operation'), norm('ObjectType')])
   const byName = <T extends { tag: string; children?: T[] }>(node: T) => {
     const m = new Map<string, T[]>()
@@ -212,15 +240,17 @@ function compareQueryResponsePayload(
   const actualByName = byName(actual)
   const expectedByName = byName(expected)
 
-  for (const listTag of supersetTags) {
-    const expItems = expectedByName.get(listTag) ?? []
-    if (expItems.length === 0) continue
-    const actValues = (actualByName.get(listTag) ?? []).map((a) => a.value)
-    const missing = expItems.filter((e) => !actValues.some((av) => enumMatch(e.value, av, table)))
-    if (missing.length > 0) {
-      return fail(
-        `Query ResponsePayload ${listTag}: actual lacks expected ${JSON.stringify(missing.map((m) => m.value))} (§4.1.1 items 15-16 permit *supersets* — not subsets)`
-      )
+  if (!isMsgenc) {
+    for (const listTag of supersetTags) {
+      const expItems = expectedByName.get(listTag) ?? []
+      if (expItems.length === 0) continue
+      const actValues = (actualByName.get(listTag) ?? []).map((a) => a.value)
+      const missing = expItems.filter((e) => !actValues.some((av) => enumMatch(e.value, av, table)))
+      if (missing.length > 0) {
+        return fail(
+          `Query ResponsePayload ${listTag}: actual lacks expected ${JSON.stringify(missing.map((m) => m.value))} (§4.1.1 items 15-16 permit *supersets* — not subsets)`
+        )
+      }
     }
   }
 

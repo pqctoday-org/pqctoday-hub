@@ -160,9 +160,18 @@ export const ID_PLACEHOLDER = '$IDPlaceholder'
  * (reported as `OperationUndone`). Absent ≡ `Stop`. */
 export type BatchErrorContinuation = 'Stop' | 'Continue' | 'Undo'
 
+/** KMIP 3.0 §8.1.2 Asynchronous Indicator — one header-level setting for the
+ * WHOLE batch (no per-item async flag exists on the wire). `Mandatory` queues
+ * every async-eligible item as a real background job (`OperationPending` + a
+ * correlation value each); an ineligible item (Poll/Cancel/Process/
+ * QueryAsynchronousRequests/Query/DiscoverVersions/Ping) fails just that item
+ * with `OperationNotSupported`. */
+export type BatchAsynchronousIndicator = 'Mandatory' | 'Optional' | 'Prohibited'
+
 /** A batch request: an ordered list of op specs run as ONE KMIP request. */
 export interface BatchSpec {
   errorContinuation?: BatchErrorContinuation
+  asynchronous?: BatchAsynchronousIndicator
   items: OpSpec[]
 }
 
@@ -175,6 +184,9 @@ export interface BatchItemResult {
   resultReason: number | null
   message: string | null
   summary: Record<string, unknown>
+  /** §9.1 claim ticket — set only when `status === 'OperationPending'`. Feed
+   * it to a follow-up Poll/Cancel/Process request to redeem the job. */
+  asynchronousCorrelationValueHex: string | null
 }
 
 /** The result of a `runBatch` call: per-item results + the one shared wire. */

@@ -26,7 +26,7 @@ import type { CodepointTable } from '../ttlv/codepointTable'
 import { norm, type KmipNode } from '../ttlv/nodes'
 import { parseTranscriptXml } from './xmlAst'
 import { Bindings } from './bindings'
-import { compareResponses } from './compare'
+import { compareResponses, setCurrentTestName } from './compare'
 import { classifyByName, classifyByOps, operationsUsed } from './classify'
 
 export type TestStatus =
@@ -130,6 +130,7 @@ export async function runCorpusTest(
   const opsUsed = Array.from(ops).sort()
   const pairs: TestResult['pairs'] = []
 
+  setCurrentTestName(name)
   const failure = replayPairs(engine, transcript, table, pairs)
   if (failure) return { name, status: failure.status, detail: failure.detail, opsUsed, pairs }
 
