@@ -65,6 +65,23 @@ const SPEC_EXTRACT_PATCHES: Record<string, Record<string, number>> = {
   // §6.1.62 Validate's three-way answer — matches
   // `kmip30::ops::SignatureValidity`.
   ValidityIndicator: { Valid: 0x00000001, Invalid: 0x00000002, Unknown: 0x00000003 },
+  // §6.1.14 Deactivate's `Deactivation Reason Code` — the spec-extraction
+  // JSON's "Deactivation Reason Code" enum entries are a PDF-extraction
+  // mismatch (`Unspecified`/"Deactivation\n  Date"/"Protect Stop
+  // Date"/"Usage Limit" — clearly the wrong table), not the 7-member set
+  // `kmip30::ops::DeactivationReason` actually implements. Patched with
+  // the real values, verified 1:1 against `Revocation Reason Code`
+  // (`ops.rs`'s `DeactivationReason` enum mirrors `RevocationReason`'s
+  // codepoints exactly, both derived from the same §10.2-style table).
+  DeactivationReasonCode: {
+    Unspecified: 0x00000001,
+    KeyCompromise: 0x00000002,
+    CACompromise: 0x00000003,
+    AffiliationChanged: 0x00000004,
+    Superseded: 0x00000005,
+    CessationOfOperation: 0x00000006,
+    PrivilegeWithdrawn: 0x00000007,
+  },
   CredentialType: {
     UsernameAndPassword: 0x00000001,
     Device: 0x00000002,

@@ -17,6 +17,13 @@
 // outright on current origin/main via harness-side chaining and per-test
 // `--rng-seed-mode` flags. Re-run `dispatcher_replay.py` before trusting
 // this number if it's been a while.
+//
+// 2026-07-17 (later same day): the in-browser replay reached full parity
+// with the native baseline (97/97, 0 skip-transport) — `dispatch()` itself
+// now enforces §9.10 `MaximumResponseSize` (`enforce_max_response_size` in
+// `dispatcher/mod.rs`), so `KmipPlayground::submit` no longer needs the
+// native TLS listener for it. See `src/wasm/kmip/corpus/classify.ts`'s
+// `TRANSPORT_TESTS` comment for the full history.
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   ChevronDown,
@@ -218,9 +225,10 @@ export function CorpusReplayView() {
               {tierCounts.pqc || '…'} vendored PQC interop tests — the same suite behind{' '}
               <code className="text-foreground">conformance/REPLAY_REPORT.md</code>, replayed live
               against this tab's engine instead of over a network. The engine's native CI pins an
-              exact 97-pass / 5-deprecated-skip baseline on the 102 OASIS tests; in-browser, 94 pass
-              — the RNG-seed variant tests each boot an engine pinned to their expected mode — and
-              only the 3 tests needing the native TLS listener are honestly skipped. Zero failures
+              exact 97-pass / 5-deprecated-skip baseline on the 102 OASIS tests, and this in-browser
+              replay now matches it exactly — the RNG-seed variant tests each boot an engine pinned
+              to their expected mode, and the 3 message-encoding tests exercise the same
+              `MaximumResponseSize` (§9.10) check the native listener runs. Zero failures or skips
               tolerated.
             </p>
           </div>

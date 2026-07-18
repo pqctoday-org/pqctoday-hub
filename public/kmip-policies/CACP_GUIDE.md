@@ -223,6 +223,13 @@ A batch is **one** KMIP Request Message carrying N operations:
 - Builder ops now cover the full round trip: Create/CreateKeyPair, Activate,
   Sign, **SignatureVerify**, Encapsulate, **Decapsulate**, **Encrypt**,
   **Decrypt**, Query, Locate, Get, Revoke, Destroy.
+- **§8.1.2 Asynchronous** (2026-07-17): one header toggle for the whole
+  batch — every eligible item queues as a background job
+  (`OperationPending` + a correlation value) instead of running inline;
+  redeem it with Poll in the Commands tab's Asynchronous Processing
+  category. Poll/Cancel/Process/Query and the negotiation ops aren't
+  eligible and fail instead; a queued item hasn't produced a UID yet, so
+  a `$IDPlaceholder`-chained recipe fails its later steps honestly.
 - Expert shows the shared request/response TTLV wire hex.
 
 ### 3.4 Testing recipes
@@ -343,12 +350,13 @@ and each has a hands-on surface:
   recipe.
 - **Conformance baseline.** The native CI gate pins an exact 97 PASS /
   5 deprecated-skip on the 102 OASIS tests. The playground's Corpus Replay
-  matches it except three honestly-labelled wasm-seam skips — the native
-  TLS listener's MaximumResponseSize enforcement, which `KmipPlayground::
-  submit`'s direct `dispatch()` call has no seam for (94 PASS / 5 deprecated
-  / 3 transport-skip, still summing to the same 97 the native gate pins).
-  The RNG-seed-mode gap this used to also list is closed: the three
-  per-test-RngSeedMode corpus tests now pass by booting the wasm engine
+  now matches it exactly (2026-07-17) — the three tests that used to skip
+  as wasm-seam gaps (the native TLS listener's §9.10 MaximumResponseSize
+  enforcement) now pass too, since `dispatch()` itself enforces
+  MaximumResponseSize directly, so `KmipPlayground::submit` no longer
+  needs the native listener for it. The RNG-seed-mode gap this used to
+  also list is closed the same way it always was: the three
+  per-test-RngSeedMode corpus tests pass by booting the wasm engine
   pinned to each test's mode via its constructor. Re-verified 2026-07-10
   against the cert-ops port's Certify/Re-certify/Validate change to
   `classify.ts` (`runner.local.test.ts`'s full-corpus breakdown test) —

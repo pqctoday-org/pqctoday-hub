@@ -27,8 +27,11 @@
       "title": "ICAO Assembly Resolution A41-19",
       "url": "https://www.icao.int/events/a41/resolutions",
       "status": "missing",
-      "file": "public/threats/evidence/AERO-003.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "file": "public/threats/AERO-003.pdf",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "96f4ae2e305299e02f4b13bdf56e0db749bb8b987ed83a68f4f9efb65b7e9f28",
+      "sizeBytes": 124245,
+      "filename": "AERO-003.pdf"
     },
     {
       "threatId": "AUTO-001",
@@ -37,7 +40,9 @@
       "url": "https://www.iso.org/standard/70918.html",
       "status": "missing",
       "file": "public/threats/evidence/AUTO-001.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "72343d38c9b874974d166b73bbd8f89428d0cd6739b9f73a733afaf355458a3a",
+      "sizeBytes": 96359
     },
     {
       "threatId": "AUTO-002",
@@ -59,9 +64,9 @@
       "status": "downloaded",
       "file": "public/threats/AUTO-003.html",
       "filename": "AUTO-003.html",
-      "sizeBytes": 561847,
+      "sizeBytes": 565909,
       "contentType": "text/html",
-      "sha256": "780653c09ba43e826e469154fa1ac2919b3a5dacaf28fa5c6a42c5de16cb38e4"
+      "sha256": "7706e00dabda13027ccc6912afd11eede2d6049a4ac23bb93106133a5bf6bd4b"
     },
     {
       "threatId": "AUTO-004",
@@ -70,7 +75,9 @@
       "url": "https://www.iso.org/standard/70918.html",
       "status": "missing",
       "file": "public/threats/evidence/AUTO-004.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "72343d38c9b874974d166b73bbd8f89428d0cd6739b9f73a733afaf355458a3a",
+      "sizeBytes": 96359
     },
     {
       "threatId": "CLOUD-001",
@@ -79,7 +86,9 @@
       "url": "https://cloudsecurityalliance.org/research/topics/quantum-safe-security/",
       "status": "missing",
       "file": "public/threats/evidence/CLOUD-001.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "33fb18f20b763e5a958c49460819504ab415585776beb6770d9dc0900b5aac7b",
+      "sizeBytes": 84461
     },
     {
       "threatId": "CLOUD-002",
@@ -88,7 +97,9 @@
       "url": "https://cloudsecurityalliance.org/research/topics/quantum-safe-security/",
       "status": "missing",
       "file": "public/threats/evidence/CLOUD-002.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "445043f2de009558cefdc05c46ff41df62d28059ac35ea2edaedfc403bdbd127",
+      "sizeBytes": 84461
     },
     {
       "threatId": "CLOUD-003",
@@ -120,8 +131,11 @@
       "title": "IBM Institute for Business Value \u2014 Secure the Post-Quantum Future 2025",
       "url": "https://www.ibm.com/think/insights/post-quantum-cryptography",
       "status": "missing",
-      "file": "public/threats/evidence/CROSS-001.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "file": "public/threats/CROSS-001.pdf",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "2dc8fb921775d3c6a15b6ae531bd0d3b0bc8f735856d23f7052c073a1b77e4b5",
+      "sizeBytes": 2573722,
+      "filename": "CROSS-001.pdf"
     },
     {
       "threatId": "CROSS-002",
@@ -141,8 +155,11 @@
       "title": "IBM Institute for Business Value \u2014 Secure the Post-Quantum Future 2025",
       "url": "https://www.ibm.com/think/insights/post-quantum-cryptography",
       "status": "missing",
-      "file": "public/threats/evidence/CROSS-003.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "file": "public/threats/CROSS-003.pdf",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "2dc8fb921775d3c6a15b6ae531bd0d3b0bc8f735856d23f7052c073a1b77e4b5",
+      "sizeBytes": 2573722,
+      "filename": "CROSS-003.pdf"
     },
     {
       "threatId": "CROSS-004",
@@ -152,9 +169,9 @@
       "status": "downloaded",
       "file": "public/threats/CROSS-004.html",
       "filename": "CROSS-004.html",
-      "sizeBytes": 215585,
+      "sizeBytes": 253191,
       "contentType": "text/html",
-      "sha256": "46c4c3752bf025054d13e9d24db572f775ee982ee1957a9323983fa2de32e6b8"
+      "sha256": "f8b76d62049c6266de94e877d2cae11cd5e55d56921b8b081fa672be89061c18"
     },
     {
       "threatId": "CROSS-005",
@@ -166,7 +183,7 @@
       "filename": "CROSS-005.html",
       "sizeBytes": 45146,
       "contentType": "text/html",
-      "sha256": "6fc4844c3ac579384f9ca67c897d9fddf0f681c16abedbde1dbefea86749b5e4"
+      "sha256": "2969100196f6ff1db8751531ac0c382449877838e0713fb33d2fb1bb349cebe6"
     },
     {
       "threatId": "CROSS-006",
@@ -186,8 +203,11 @@
       "title": "European Commission Digital Strategy \u2014 PQC Roadmap",
       "url": "https://digital-strategy.ec.europa.eu/en/news/eu-reinforces-its-cybersecurity-post-quantum-cryptography",
       "status": "missing",
-      "file": "public/threats/evidence/CROSS-007.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "file": "public/threats/CROSS-007.html",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "50b9f23443182c131381d814bc585c41534e22fed9d80a905961e7dfe09d47fd",
+      "sizeBytes": 50242,
+      "filename": "CROSS-007.html"
     },
     {
       "threatId": "CROSS-008",
@@ -196,7 +216,9 @@
       "url": "https://csrc.nist.gov/pubs/sp/800/227/final",
       "status": "missing",
       "file": "public/threats/evidence/CROSS-008.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "5bae2d62fd014338fa90bf6d06e3bd85b61f15ce9cb7e76e46555a0d21eaaec6",
+      "sizeBytes": 44071
     },
     {
       "threatId": "CRYPTO-001",
@@ -205,7 +227,9 @@
       "url": "https://www.federalreserve.gov/econres/feds/harvest-now-decrypt-later-examining-post-quantum-cryptography-and-the-data-privacy-risks-for-distributed-ledger-networks.htm",
       "status": "missing",
       "file": "public/threats/evidence/CRYPTO-001.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "36d31a0f79a6947040ed74f1b55199ccedb4b6033259624708854f035e22504a",
+      "sizeBytes": 88860
     },
     {
       "threatId": "CRYPTO-002",
@@ -215,9 +239,9 @@
       "status": "downloaded",
       "file": "public/threats/CRYPTO-002.html",
       "filename": "CRYPTO-002.html",
-      "sizeBytes": 360726,
+      "sizeBytes": 363044,
       "contentType": "text/html",
-      "sha256": "0388ad72b6da02e431f587a80c1d24268e26abf494436f0ff302f291ef55c2d5"
+      "sha256": "3862f8cbaf027b9e12afa2198071e71bfa39a7491af684495ce6dc8e465c2e79"
     },
     {
       "threatId": "CRYPTO-003",
@@ -226,7 +250,9 @@
       "url": "https://www.federalreserve.gov/econres/feds/harvest-now-decrypt-later-examining-post-quantum-cryptography-and-the-data-privacy-risks-for-distributed-ledger-networks.htm",
       "status": "missing",
       "file": "public/threats/evidence/CRYPTO-003.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "69b63ab35746edf4184f4d0ef5deec14093254f1e5b7b4ac967679f46fa950a0",
+      "sizeBytes": 88860
     },
     {
       "threatId": "CRYPTO-004",
@@ -236,9 +262,9 @@
       "status": "downloaded",
       "file": "public/threats/CRYPTO-004.html",
       "filename": "CRYPTO-004.html",
-      "sizeBytes": 232263,
+      "sizeBytes": 229995,
       "contentType": "text/html",
-      "sha256": "9c9309558786b25b234b3590c2d0b05bfdfa74a6048480e97a121de1edd3fa7f"
+      "sha256": "b3c4d8a69d53eca6350dd44fb4ab29c86bb1602288382333f32c46e9507b307d"
     },
     {
       "threatId": "ENERGY-001",
@@ -248,9 +274,9 @@
       "status": "downloaded",
       "file": "public/threats/ENERGY-001.html",
       "filename": "ENERGY-001.html",
-      "sizeBytes": 433742,
+      "sizeBytes": 427984,
       "contentType": "text/html",
-      "sha256": "cff3c721f67108d475f6abfe2396f12ce2e19798ed0a3754688823577a45f3f7"
+      "sha256": "eaab790540be1dc79f9876410c2967ef383d5a8e508273651388db3725560ff4"
     },
     {
       "threatId": "ENERGY-002",
@@ -262,7 +288,7 @@
       "filename": "ENERGY-002.html",
       "sizeBytes": 81505,
       "contentType": "text/html",
-      "sha256": "bf7872b9fb421f1649ba08cfc5d29041ece4e4d73ab48b3082d19c88f137e478"
+      "sha256": "072c67670f4e93d7734c5a614c47f6a4e155a249997053a5cc10528dc7f1ed4d"
     },
     {
       "threatId": "ENERGY-003",
@@ -272,9 +298,9 @@
       "status": "downloaded",
       "file": "public/threats/ENERGY-003.html",
       "filename": "ENERGY-003.html",
-      "sizeBytes": 138997,
+      "sizeBytes": 139717,
       "contentType": "text/html",
-      "sha256": "09f93059630f9a58e1b7d0d5530de96c075f48fe1c7ac1226f5910f613f95e87"
+      "sha256": "35d483ec07fe6c65e8110684dd55d42052bf473c271223658cc85c9074befab0"
     },
     {
       "threatId": "ENERGY-004",
@@ -284,9 +310,9 @@
       "status": "downloaded",
       "file": "public/threats/ENERGY-004.html",
       "filename": "ENERGY-004.html",
-      "sizeBytes": 93027,
+      "sizeBytes": 93028,
       "contentType": "text/html",
-      "sha256": "68d9a0ff7ca6520d5ea8c6bf7b8b9d051814ca3e44e68d9d5a05fcb4475f52c3"
+      "sha256": "57c70e249b0ffc754e8bfc0a17c1c2a1586c9f4fbdd172d088382eca351997cc"
     },
     {
       "threatId": "FIN-001",
@@ -294,8 +320,11 @@
       "title": "Bank for International Settlements Project Leap Phase 2",
       "url": "https://www.bis.org/publ/othp107.htm",
       "status": "missing",
-      "file": "public/threats/evidence/FIN-001.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "file": "public/threats/FIN-001.html",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "ff2f69d36ec0fac2cdb30f2fbd7e0eaed71153c14e9f447dc5fc8a574361d2ba",
+      "sizeBytes": 26352,
+      "filename": "FIN-001.html"
     },
     {
       "threatId": "FIN-002",
@@ -304,7 +333,9 @@
       "url": "https://www.federalreserve.gov/econres/feds/harvest-now-decrypt-later-examining-post-quantum-cryptography-and-the-data-privacy-risks-for-distributed-ledger-networks.htm",
       "status": "missing",
       "file": "public/threats/evidence/FIN-002.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "ef6199149cc5f27a292f400e8097f35db17d9a50938d9afd72e78357884320cc",
+      "sizeBytes": 88860
     },
     {
       "threatId": "FIN-003",
@@ -338,9 +369,9 @@
       "status": "downloaded",
       "file": "public/threats/FIN-005.html",
       "filename": "FIN-005.html",
-      "sizeBytes": 72364,
+      "sizeBytes": 37763,
       "contentType": "text/html",
-      "sha256": "9504a0de26b596c439d81091b8813383e426580c9925b5bd309dcce2f6208c0b"
+      "sha256": "065fa8bcb99f647311399265b0b7c3ce45b9fee47594acfcd3ed0869598da0d3"
     },
     {
       "threatId": "AUS-FIN-001",
@@ -348,11 +379,11 @@
       "title": "APRA CPS 234 + ASD ISM",
       "url": "https://www.apra.gov.au/information-security",
       "status": "downloaded",
-      "file": "public/threats/AUS-FIN-001.html",
-      "filename": "AUS-FIN-001.html",
-      "sizeBytes": 97745,
+      "file": "public/threats/AUS-FIN-001.pdf",
+      "filename": "AUS-FIN-001.pdf",
+      "sizeBytes": 274706,
       "contentType": "text/html",
-      "sha256": "0b83667cb16ba12857ec48c35147ceda405d5a7b823ef6a78ddac0588c20ef69"
+      "sha256": "ddcef7b1f5780c26a7e79ecfb35ce41bee8b65f78a8cdb605c7508c2f604bee5"
     },
     {
       "threatId": "AUS-FIN-002",
@@ -397,7 +428,9 @@
       "url": "https://www.cisa.gov/resources-tools/resources/product-categories-technologies-use-post-quantum-cryptography-standards",
       "status": "missing",
       "file": "public/threats/evidence/GOV-003.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "ac32e0816da4e2d8cd6476106cf0f892f4be8fc4f954e9ef9cd09a06aee831b0",
+      "sizeBytes": 72805
     },
     {
       "threatId": "GOV-004",
@@ -407,9 +440,9 @@
       "status": "downloaded",
       "file": "public/threats/GOV-004.html",
       "filename": "GOV-004.html",
-      "sizeBytes": 156673,
+      "sizeBytes": 156739,
       "contentType": "text/html",
-      "sha256": "d39f11198c0e2fa07ec1802bf3b08bdf95f86f0859d34d070cb24039727506e3"
+      "sha256": "f15c6d85f70ca81ba747bbc0fdc911cbeaeb1468642ee29bf0fd367ef298d3b0"
     },
     {
       "threatId": "GOV-005",
@@ -430,7 +463,9 @@
       "url": "https://www.cyber.gov.au/about-us/view-all-content/reports-and-statistics/annual-cyber-threat-report-2024-2025",
       "status": "missing",
       "file": "public/threats/evidence/AUS-GOV-001.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "0dae19e352eb7f04bb537ab2d32545bd94256071e832fcbc7773598094b6f81b",
+      "sizeBytes": 482289
     },
     {
       "threatId": "AUS-GOV-002",
@@ -439,7 +474,9 @@
       "url": "https://webarchive.nla.gov.au/awa/20240101000000*/https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/ism/cyber-security-guidelines/guidelines-for-cryptography",
       "status": "missing",
       "file": "public/threats/evidence/AUS-GOV-002.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "edfd79e38229373cf3ecfb599f7a86aed2332079fab6527b1d97e35c98befe9d",
+      "sizeBytes": 48958
     },
     {
       "threatId": "HLTH-001",
@@ -451,7 +488,7 @@
       "filename": "HLTH-001.html",
       "sizeBytes": 145863,
       "contentType": "text/html",
-      "sha256": "becea40ff5f549651acc7b43738c011c50c48d7680e55259f054d51462ac72f4"
+      "sha256": "b997385afc728e37059371a0d560b0ba4f6b0760db180756c45edf5ee335ba9a"
     },
     {
       "threatId": "HLTH-002",
@@ -461,9 +498,9 @@
       "status": "downloaded",
       "file": "public/threats/HLTH-002.html",
       "filename": "HLTH-002.html",
-      "sizeBytes": 1054593,
+      "sizeBytes": 1060917,
       "contentType": "text/html",
-      "sha256": "d9ef00faef8050f25853c85c915c13e824cf4439fded86c61edb79ab91681fd0"
+      "sha256": "cde395c43adf7f792fdac6330dc594e47dbf2ea63003b0edc9d832546b4ac421"
     },
     {
       "threatId": "HLTH-003",
@@ -472,7 +509,9 @@
       "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/cybersecurity-medical-devices-quality-system-considerations-and-content-premarket-submissions",
       "status": "missing",
       "file": "public/threats/evidence/HLTH-003.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "b0b1105fde37352f4979fce54e39f1ea106f0f18cdbf7890abe5dfe79f76ea8d",
+      "sizeBytes": 36120
     },
     {
       "threatId": "HLTH-004",
@@ -480,8 +519,11 @@
       "title": "FDA Cybersecurity for Medical Devices",
       "url": "https://www.fda.gov/medical-devices/digital-health-center-excellence/cybersecurity",
       "status": "missing",
-      "file": "public/threats/evidence/HLTH-004.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "file": "public/threats/HLTH-004.pdf",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "fe5c46a6121758e17badc0b82d9dd452489e62941b8068d797ee06d5f082d6b5",
+      "sizeBytes": 242831,
+      "filename": "HLTH-004.pdf"
     },
     {
       "threatId": "HLTH-005",
@@ -490,7 +532,9 @@
       "url": "https://www.fda.gov/drugs/drug-supply-chain-integrity/drug-supply-chain-security-act-dscsa",
       "status": "missing",
       "file": "public/threats/evidence/HLTH-005.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "d8b757bc4652b856cff7bf463eef6f176a0464c1a5213e57698c8166796ac630",
+      "sizeBytes": 46794
     },
     {
       "threatId": "INS-001",
@@ -511,7 +555,9 @@
       "url": "https://www.dfs.ny.gov/industry_guidance/cybersecurity",
       "status": "missing",
       "file": "public/threats/evidence/INS-002.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "c39f19800dbb5636c59b1546a12606ade59a514f0a95ca8b3e69863ff4526b64",
+      "sizeBytes": 205519
     },
     {
       "threatId": "INS-003",
@@ -521,9 +567,9 @@
       "status": "downloaded",
       "file": "public/threats/INS-003.html",
       "filename": "INS-003.html",
-      "sizeBytes": 106304,
+      "sizeBytes": 96444,
       "contentType": "text/html",
-      "sha256": "001032b37af2b91ae5a774ec05936dc2008c82436acca69c97e615ced6f2db43"
+      "sha256": "1271500e666efb48befd99a5d974c950b6001a00e185b6c644a42fe46387e101"
     },
     {
       "threatId": "IOT-001",
@@ -532,7 +578,9 @@
       "url": "https://www.forescout.com/research-labs/",
       "status": "missing",
       "file": "public/threats/evidence/IOT-001.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "7e0b806f9819511bb65a3cb9525e2bd4bd9bccdf60728d6895ac5c39ad646adf",
+      "sizeBytes": 333346
     },
     {
       "threatId": "IOT-002",
@@ -542,9 +590,9 @@
       "status": "downloaded",
       "file": "public/threats/IOT-002.html",
       "filename": "IOT-002.html",
-      "sizeBytes": 93027,
+      "sizeBytes": 93028,
       "contentType": "text/html",
-      "sha256": "68d9a0ff7ca6520d5ea8c6bf7b8b9d051814ca3e44e68d9d5a05fcb4475f52c3"
+      "sha256": "57c70e249b0ffc754e8bfc0a17c1c2a1586c9f4fbdd172d088382eca351997cc"
     },
     {
       "threatId": "IOT-003",
@@ -554,9 +602,9 @@
       "status": "downloaded",
       "file": "public/threats/IOT-003.html",
       "filename": "IOT-003.html",
-      "sizeBytes": 66687,
+      "sizeBytes": 66356,
       "contentType": "text/html",
-      "sha256": "bb3ad2d85e5352fbadfa69a4939e6c796dd09a156ed1d52353306504985d3057"
+      "sha256": "b29e6c39ff2db10cb4c138c0c45bd47a478386a6b053b02129b3704efa1008e6"
     },
     {
       "threatId": "IOT-004",
@@ -565,7 +613,9 @@
       "url": "https://www.iso.org/standard/53302.html",
       "status": "missing",
       "file": "public/threats/evidence/IOT-004.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "28aa9d6ecbfb6067b1d170b4754bc6cd2257415e33b45ee09d9b480539d54c41",
+      "sizeBytes": 85353
     },
     {
       "threatId": "IT-001",
@@ -575,9 +625,9 @@
       "status": "downloaded",
       "file": "public/threats/IT-001.html",
       "filename": "IT-001.html",
-      "sizeBytes": 31826,
+      "sizeBytes": 34496,
       "contentType": "text/html",
-      "sha256": "409433928bfdf905587afed8ad4e69f7809f57a6c7c72511d2771b349be474ee"
+      "sha256": "09bfd7b81332cb83f1b1b8a518491bceff811588abb9a9cc66d436d80d710a91"
     },
     {
       "threatId": "IT-002",
@@ -587,9 +637,9 @@
       "status": "downloaded",
       "file": "public/threats/IT-002.html",
       "filename": "IT-002.html",
-      "sizeBytes": 45496,
+      "sizeBytes": 44365,
       "contentType": "text/html",
-      "sha256": "b52e7305178558286167c24ac38a7faba15e59e93e603f2116074a191c5493d5"
+      "sha256": "06912fdb80160b95429fc8ae08006a3ba10770c12586352e3c00b35c66665d71"
     },
     {
       "threatId": "IT-003",
@@ -598,7 +648,9 @@
       "url": "https://csrc.nist.gov/projects/post-quantum-cryptography",
       "status": "missing",
       "file": "public/threats/evidence/IT-003.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "583c2e2f31d3f2219a8602c041517c13db0d857c1f5c4d19f6c1e5415c489027",
+      "sizeBytes": 61179
     },
     {
       "threatId": "IT-004",
@@ -608,9 +660,9 @@
       "status": "downloaded",
       "file": "public/threats/IT-004.html",
       "filename": "IT-004.html",
-      "sizeBytes": 25770,
+      "sizeBytes": 25607,
       "contentType": "text/html",
-      "sha256": "706663e55fbddb4820878ca55d976d35518a4f519452888d8e7bd586bdea2843"
+      "sha256": "0534af68137bb9aa8709b1bd19e8acbd86de7236887a0d332cbe7d11fb08464a"
     },
     {
       "threatId": "LEG-001",
@@ -631,7 +683,9 @@
       "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1183",
       "status": "missing",
       "file": "public/threats/evidence/LEG-002.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "b5bea7bfe0a69f57a548c6936cb663972b9c51f7eb16482367648f8fd7035ccf",
+      "sizeBytes": 835958
     },
     {
       "threatId": "LEG-003",
@@ -639,8 +693,11 @@
       "title": "ETSI EN 319 422 Qualified Timestamp Policy",
       "url": "https://www.etsi.org/deliver/etsi_en/319400_319499/319422/01.01.01_60/en_319422v010101p.pdf",
       "status": "missing",
-      "file": "public/threats/evidence/LEG-003.pdf",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "file": "public/threats/LEG-003.pdf",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "b8dce6e415c906877ce36fd3d91b41e0543eda332f400cb444116ec760b5a4bf",
+      "sizeBytes": 70119,
+      "filename": "LEG-003.pdf"
     },
     {
       "threatId": "LEG-004",
@@ -686,9 +743,9 @@
       "status": "downloaded",
       "file": "public/threats/MEDIA-003.html",
       "filename": "MEDIA-003.html",
-      "sizeBytes": 95719,
+      "sizeBytes": 93369,
       "contentType": "text/html",
-      "sha256": "85254c64187015ee83162cb48076c34355d13783d27b2c73f230c761e09bea98"
+      "sha256": "84d8d4802418591344029d5e905775b9aa4f82f29c438ef89ea7d0043abbef08"
     },
     {
       "threatId": "PCI-001",
@@ -698,9 +755,9 @@
       "status": "downloaded",
       "file": "public/threats/PCI-001.html",
       "filename": "PCI-001.html",
-      "sizeBytes": 208784,
+      "sizeBytes": 163141,
       "contentType": "text/html",
-      "sha256": "97e0a0b843be85b12064ef734662188456be1f647179488f4ead8f9c3595e471"
+      "sha256": "4e1df3226efc594e06702049b544850130eb19b4c58d39cda3bc35c1e92afefb"
     },
     {
       "threatId": "PCI-002",
@@ -710,9 +767,9 @@
       "status": "downloaded",
       "file": "public/threats/PCI-002.html",
       "filename": "PCI-002.html",
-      "sizeBytes": 664762,
+      "sizeBytes": 666809,
       "contentType": "text/html",
-      "sha256": "0d2a0ad3932366f32996d6d39b7c1cae8823dcd66917f8816f04d4660629d527"
+      "sha256": "8df68c86f85355eb2ba462f1cf4720d989ece927b4161560dc001269e4bc9715"
     },
     {
       "threatId": "PCI-003",
@@ -722,9 +779,9 @@
       "status": "downloaded",
       "file": "public/threats/PCI-003.html",
       "filename": "PCI-003.html",
-      "sizeBytes": 664762,
+      "sizeBytes": 666809,
       "contentType": "text/html",
-      "sha256": "0d2a0ad3932366f32996d6d39b7c1cae8823dcd66917f8816f04d4660629d527"
+      "sha256": "8df68c86f85355eb2ba462f1cf4720d989ece927b4161560dc001269e4bc9715"
     },
     {
       "threatId": "RAIL-001",
@@ -732,8 +789,11 @@
       "title": "UNISIG Subset-037 / Subset-038 (ETCS Baseline 3)",
       "url": "https://www.era.europa.eu/domains/infrastructure/european-rail-traffic-management-system-ertms_en",
       "status": "missing",
-      "file": "public/threats/evidence/RAIL-001.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "file": "public/threats/RAIL-001.pdf",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "aa8871417f3b8ee4620abeff2dc27e3e54e340209928e8c0fafe1e53001f0ed6",
+      "sizeBytes": 447147,
+      "filename": "RAIL-001.pdf"
     },
     {
       "threatId": "RAIL-002",
@@ -741,8 +801,11 @@
       "title": "ISO/IEC 14443 Contactless Card Standards",
       "url": "https://www.iso.org/standard/73598.html",
       "status": "missing",
-      "file": "public/threats/evidence/RAIL-002.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "file": "public/threats/RAIL-002.html",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "03f4e45eba7c25cf9c1257dd527ba5abc68955f46345d2692947c0d55e29bfe1",
+      "sizeBytes": 96898,
+      "filename": "RAIL-002.html"
     },
     {
       "threatId": "RETAIL-001",
@@ -752,9 +815,9 @@
       "status": "downloaded",
       "file": "public/threats/RETAIL-001.html",
       "filename": "RETAIL-001.html",
-      "sizeBytes": 664762,
+      "sizeBytes": 666809,
       "contentType": "text/html",
-      "sha256": "0d2a0ad3932366f32996d6d39b7c1cae8823dcd66917f8816f04d4660629d527"
+      "sha256": "8df68c86f85355eb2ba462f1cf4720d989ece927b4161560dc001269e4bc9715"
     },
     {
       "threatId": "RETAIL-002",
@@ -776,9 +839,9 @@
       "status": "downloaded",
       "file": "public/threats/RETAIL-003.html",
       "filename": "RETAIL-003.html",
-      "sizeBytes": 221119,
+      "sizeBytes": 100213,
       "contentType": "text/html",
-      "sha256": "4bee9adf7cb92ef3f866973c871e70f60c6f23402624402274de2220ae8c151f"
+      "sha256": "49e6979adc76b5bdd2e859c4621ee0d0126042bdaed3502e139d669546c7da8f"
     },
     {
       "threatId": "SUPPLY-001",
@@ -788,9 +851,9 @@
       "status": "downloaded",
       "file": "public/threats/SUPPLY-001.html",
       "filename": "SUPPLY-001.html",
-      "sizeBytes": 68535,
+      "sizeBytes": 57115,
       "contentType": "text/html",
-      "sha256": "f7fa0d8bb14a8333e7389e3635f338fe78bce000962f820804b572b21444d4fd"
+      "sha256": "4a91d38942e5e625a33153d4b4aadc2fd4e4a93432209e6e91bbe7d2fabbf977"
     },
     {
       "threatId": "SUPPLY-002",
@@ -800,9 +863,9 @@
       "status": "downloaded",
       "file": "public/threats/SUPPLY-002.html",
       "filename": "SUPPLY-002.html",
-      "sizeBytes": 335418,
+      "sizeBytes": 327717,
       "contentType": "text/html",
-      "sha256": "9db3f096d0eadce8350df7fc24deb2bb6521d0cc824398c0c4706a72f57c7ace"
+      "sha256": "f3195b67bc88c0d2bbf1fb2055d87810f63b637467b91093845d863dd2ba80e5"
     },
     {
       "threatId": "SUPPLY-003",
@@ -812,9 +875,9 @@
       "status": "downloaded",
       "file": "public/threats/SUPPLY-003.html",
       "filename": "SUPPLY-003.html",
-      "sizeBytes": 68775,
+      "sizeBytes": 67968,
       "contentType": "text/html",
-      "sha256": "69a62771b95f09a0172d6fe89f9e451d5b161a91596de22d3dc18523bf9660b6"
+      "sha256": "fcdcae36c08e4cfe8c543b4df0c3a7a487b59213f47e391a25e7869ba8744bfd"
     },
     {
       "threatId": "TELCO-001",
@@ -824,9 +887,9 @@
       "status": "downloaded",
       "file": "public/threats/TELCO-001.html",
       "filename": "TELCO-001.html",
-      "sizeBytes": 213127,
+      "sizeBytes": 202353,
       "contentType": "text/html",
-      "sha256": "fecb23584382d8a59d37a6d402bf2b0cef618a85be6c42cfda44c2edf7698937"
+      "sha256": "e8d3a53dbbefb721f389262b9432b453bb3f79dbc4ce1f30595a1fc487eec7b0"
     },
     {
       "threatId": "TELCO-002",
@@ -834,8 +897,11 @@
       "title": "GSMA Post-Quantum Telco Network Taskforce",
       "url": "https://www.gsma.com/solutions-and-impact/technologies/security/post-quantum-telco-network-task-force/",
       "status": "missing",
-      "file": "public/threats/evidence/TELCO-002.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "file": "public/threats/TELCO-002.pdf",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "13b67e85fa816ac65036290a57de6327a008056c73210e1e03b078038e69118a",
+      "sizeBytes": 1756788,
+      "filename": "TELCO-002.pdf"
     },
     {
       "threatId": "TELCO-003",
@@ -845,9 +911,9 @@
       "status": "downloaded",
       "file": "public/threats/TELCO-003.html",
       "filename": "TELCO-003.html",
-      "sizeBytes": 213132,
+      "sizeBytes": 202353,
       "contentType": "text/html",
-      "sha256": "9c50e472535c0cb749aa0a37ca460a3df57715f8fbb6ed1b4643446e5186f18c"
+      "sha256": "800b94eda9b0f8c83b557e5dcbf0d81dcd6545af6541f33a50d8bc0321172167"
     },
     {
       "threatId": "TELCO-004",
@@ -856,7 +922,9 @@
       "url": "https://www.gsma.com/esim/",
       "status": "missing",
       "file": "public/threats/evidence/TELCO-004.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "33a50d6d2a9510ed67ce0195fb2929e5c96c2f7da727a2d8b28f0c72211ad590",
+      "sizeBytes": 129816
     },
     {
       "threatId": "TELCO-005",
@@ -878,9 +946,9 @@
       "status": "downloaded",
       "file": "public/threats/WATER-001.html",
       "filename": "WATER-001.html",
-      "sizeBytes": 359881,
+      "sizeBytes": 75363,
       "contentType": "text/html",
-      "sha256": "6b04834dabb4c9ae50e85d46b9c5c38d9d492f39c4fdb81c259f430124283788"
+      "sha256": "7f14acd9b18e1f733420f96dc3d04106871621e9a030a730cc02c6d15a963499"
     },
     {
       "threatId": "WATER-002",
@@ -890,9 +958,9 @@
       "status": "downloaded",
       "file": "public/threats/WATER-002.html",
       "filename": "WATER-002.html",
-      "sizeBytes": 95174,
+      "sizeBytes": 75074,
       "contentType": "text/html",
-      "sha256": "173ade20c8f465c007a122fe8b72edf5da4f4a2de82d97324529194acb2ef2e9"
+      "sha256": "9019f864e36470513a088284961f2e6515a3a7d4a39e182b52c6f1aa34f830c2"
     },
     {
       "threatId": "EDU-001",
@@ -900,8 +968,11 @@
       "title": "FERPA / US Department of Education",
       "url": "https://studentprivacy.ed.gov/ferpa",
       "status": "missing",
-      "file": "public/threats/evidence/EDU-001.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "file": "public/threats/EDU-001.html",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "58ca9ed839b97c6ea079a4bbc5da42421d66e4ef8745ae0b49c7353eb39b6a64",
+      "sizeBytes": 133108,
+      "filename": "EDU-001.html"
     },
     {
       "threatId": "EDU-002",
@@ -911,9 +982,9 @@
       "status": "downloaded",
       "file": "public/threats/EDU-002.html",
       "filename": "EDU-002.html",
-      "sizeBytes": 119473,
+      "sizeBytes": 110628,
       "contentType": "text/html",
-      "sha256": "8e6fb08a17332d8db17bfa7fd17d8137798d326e96bc966dfda7396511abd915"
+      "sha256": "a75957df3030f532c382edc8d1aa0fdc541ca477294aa7f463a54b01eade0247"
     },
     {
       "threatId": "EDU-003",
@@ -921,8 +992,11 @@
       "title": "W3C Verifiable Credentials Data Model 2.0",
       "url": "https://www.w3.org/TR/vc-data-model-2.0/",
       "status": "missing",
-      "file": "public/threats/evidence/EDU-003.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "file": "public/threats/EDU-003.html",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "a9196a3d0b6601356c4e127bad24f8c7f2c17f6ed22e41b35755a910104156f8",
+      "sizeBytes": 1023165,
+      "filename": "EDU-003.html"
     },
     {
       "threatId": "EDU-004",
@@ -930,8 +1004,11 @@
       "title": "CMMC 2.0 / NIST SP 800-171",
       "url": "https://dodcio.defense.gov/CMMC/",
       "status": "missing",
-      "file": "public/threats/evidence/EDU-004.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "file": "public/threats/EDU-004.pdf",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "3e4631df8b5d61f40a6e542b52779ef30ddbbfff31e09214fa94ad6e6f5e6d08",
+      "sizeBytes": 1593213,
+      "filename": "EDU-004.pdf"
     },
     {
       "threatId": "EDU-005",
@@ -941,9 +1018,9 @@
       "status": "downloaded",
       "file": "public/threats/EDU-005.html",
       "filename": "EDU-005.html",
-      "sizeBytes": 329049,
+      "sizeBytes": 327480,
       "contentType": "text/html",
-      "sha256": "24428b544a50ab9ead456b49e0a4827bbabd1393c6577f0537751098698e1596"
+      "sha256": "298ab3a9d69fb726d1109b26c0bc5b04164cdfd118f5235ba0ba40437197039a"
     },
     {
       "threatId": "CROSS-009",
@@ -952,7 +1029,9 @@
       "url": "https://datatracker.ietf.org/doc/draft-sheth-pqc-dnssec-strategy/",
       "status": "missing",
       "file": "public/threats/evidence/CROSS-009.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "f9241b193d4c75cd6df5ed5c01609230568e2c4afbe7d8d9bf890e93f541df58",
+      "sizeBytes": 56705
     },
     {
       "threatId": "CROSS-010",
@@ -962,9 +1041,9 @@
       "status": "downloaded",
       "file": "public/threats/CROSS-010.html",
       "filename": "CROSS-010.html",
-      "sizeBytes": 326507,
+      "sizeBytes": 347248,
       "contentType": "text/html",
-      "sha256": "b4117f04a12dec76d5e60a7df1be60ef8fae8b687ddb4b6d4e6c147970ca61ef"
+      "sha256": "aa65dd036e1753ebea81041232fc6d0f0317fb5b58836a94a3fd519a3310a173"
     },
     {
       "threatId": "CROSS-011",
@@ -974,9 +1053,9 @@
       "status": "downloaded",
       "file": "public/threats/CROSS-011.html",
       "filename": "CROSS-011.html",
-      "sizeBytes": 11489,
+      "sizeBytes": 11334,
       "contentType": "text/html",
-      "sha256": "1b3507cb36fcae533d1b8868e27cbdea07ec1cd27e9abcbe6d80882c4a050275"
+      "sha256": "483c8097e5f0760d6d41bcf7e0f2dbf1942ab8eb136ea715623658d07ffde872"
     },
     {
       "threatId": "CROSS-012",
@@ -986,9 +1065,9 @@
       "status": "downloaded",
       "file": "public/threats/CROSS-012.html",
       "filename": "CROSS-012.html",
-      "sizeBytes": 69142,
+      "sizeBytes": 66677,
       "contentType": "text/html",
-      "sha256": "9bcb38034447cfa5aec09253f7eafa1b9be0b4124b99f61ee4e98dfae527f553"
+      "sha256": "3a060b675e7294bef0d103a5580e9849987f0121ac4bf5146cabde62ceb0fee5"
     },
     {
       "threatId": "CROSS-013",
@@ -998,9 +1077,9 @@
       "status": "downloaded",
       "file": "public/threats/CROSS-013.html",
       "filename": "CROSS-013.html",
-      "sizeBytes": 175651,
+      "sizeBytes": 173685,
       "contentType": "text/html",
-      "sha256": "5aa0afbe30cec73d01ee6138579e9b1788c887692b3d52d2b00c354f10e6d9bc"
+      "sha256": "3d7fe55c7f07a888c85589eb2fa9068ef0fe4b16f2a2dac7d285384d9072b943"
     },
     {
       "threatId": "RAIL-003",
@@ -1010,9 +1089,9 @@
       "status": "downloaded",
       "file": "public/threats/RAIL-003.html",
       "filename": "RAIL-003.html",
-      "sizeBytes": 269577,
+      "sizeBytes": 169459,
       "contentType": "text/html",
-      "sha256": "f7b3a1ea2c3adceca5c2dc0846450ce62530cdf291ac45fc095dc98946615a6e"
+      "sha256": "4743f46ca46c845a11f5fec52237e3fca078834f9fcfb92e6e5d82e5f576dd3b"
     },
     {
       "threatId": "RAIL-004",
@@ -1021,7 +1100,9 @@
       "url": "https://railroads.dot.gov/elibrary/ptc-communications-cybersecurity-technology-review-and-concept-operations",
       "status": "missing",
       "file": "public/threats/evidence/RAIL-004.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "ecd38cd07194808df25d96a1967c890666bb4d7e669442bc28d8b83dfa96969a",
+      "sizeBytes": 94619
     },
     {
       "threatId": "RAIL-005",
@@ -1031,9 +1112,9 @@
       "status": "downloaded",
       "file": "public/threats/RAIL-005.html",
       "filename": "RAIL-005.html",
-      "sizeBytes": 178541,
+      "sizeBytes": 179499,
       "contentType": "text/html",
-      "sha256": "59d9ad01110393d0db8376bfaaf98cb2901fb6a12f9f82829cfb620bf752bde5"
+      "sha256": "b6bb1cc029166dd0931d285efdf7bc0cfe64b8b019dde0e7648f9920ed98837c"
     },
     {
       "threatId": "WATER-005",
@@ -1043,9 +1124,9 @@
       "status": "downloaded",
       "file": "public/threats/WATER-005.html",
       "filename": "WATER-005.html",
-      "sizeBytes": 278997,
+      "sizeBytes": 273250,
       "contentType": "text/html",
-      "sha256": "17bf17e82fc70d8441e254efa77e0c167d8951ac08808403c95b6bf55f8e7464"
+      "sha256": "ae5a3a8f85dc297668492df6dfb997b4e0de75cb190d2e7db8417dfadc8fe49c"
     },
     {
       "threatId": "WATER-003",
@@ -1053,8 +1134,11 @@
       "title": "EPA Cybersecurity for Water Sector (August 2024)",
       "url": "https://www.epa.gov/cyberwater/epa-cybersecurity-water-sector",
       "status": "missing",
-      "file": "public/threats/evidence/WATER-003.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "file": "public/threats/WATER-003.html",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "71245cef147987312a53a7e45ec54a955ea142c2f9bcb20c9dbbd30007f75655",
+      "sizeBytes": 58728,
+      "filename": "WATER-003.html"
     },
     {
       "threatId": "WATER-004",
@@ -1062,8 +1146,11 @@
       "title": "NIST NCCoE Water/Wastewater Cybersecurity Project",
       "url": "https://www.nccoe.nist.gov/sites/default/files/2023-06/securing-water-and-wastewater-utilities-project-description-final.pdf",
       "status": "missing",
-      "file": "public/threats/evidence/WATER-004.pdf",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "file": "public/threats/WATER-004.pdf",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "87538d72ba40a0283c094c4a8fd09c39bfcc440df524f8d32f5eade0a0b081dc",
+      "sizeBytes": 1178202,
+      "filename": "WATER-004.pdf"
     },
     {
       "threatId": "CI-001",
@@ -1072,7 +1159,9 @@
       "url": "https://www.cisa.gov/quantum",
       "status": "missing",
       "file": "public/threats/evidence/CI-001.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "c22e0a1dbff3b28fa6014aeeb235a7f693e338271fc7740e5959188221a66fad",
+      "sizeBytes": 71078
     },
     {
       "threatId": "CI-002",
@@ -1080,8 +1169,11 @@
       "title": "IEC 62351 series (Power Systems Security)",
       "url": "https://www.enisa.europa.eu/publications/post-quantum-cryptography-current-state-and-quantum-mitigation",
       "status": "missing",
-      "file": "public/threats/evidence/CI-002.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "file": "public/threats/CI-002.html",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "bf0ce0739c653a70ec19bcf9e236a994dfe3e61b55572af3f7864bed1c0d5ed8",
+      "sizeBytes": 53760,
+      "filename": "CI-002.html"
     },
     {
       "threatId": "CI-003",
@@ -1089,8 +1181,11 @@
       "title": "TSA Security Directive SD-02C + PHMSA 49 CFR 192/195",
       "url": "https://www.nist.gov/publications/guide-operational-technology-ot-security",
       "status": "missing",
-      "file": "public/threats/evidence/CI-003.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "file": "public/threats/CI-003.pdf",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "611a70018a677d95dbe668dfa9f23177db624dfba8a5c1d0e159908a865de99e",
+      "sizeBytes": 1004392,
+      "filename": "CI-003.pdf"
     },
     {
       "threatId": "CROSS-014",
@@ -1098,8 +1193,11 @@
       "title": "NIST IR 8547 (IPD Nov 2024) + SP 800-131A Rev 2",
       "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-57pt1r6.ipd.pdf",
       "status": "missing",
-      "file": "public/threats/evidence/CROSS-014.pdf",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "file": "public/threats/CROSS-014.pdf",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "e0160e649c1f6ee817e88fa1b95df168a12060e4eff7dd7cba8e16df9d1183bc",
+      "sizeBytes": 2637856,
+      "filename": "CROSS-014.pdf"
     },
     {
       "threatId": "CROSS-015",
@@ -1107,8 +1205,11 @@
       "title": "NIST SP 800-57 Part 1 Rev 6 / NIST IR 8545",
       "url": "https://csrc.nist.gov/pubs/ir/8545/final",
       "status": "missing",
-      "file": "public/threats/evidence/CROSS-015.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "file": "public/threats/CROSS-015.pdf",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "cc32391022c1382ac7c91490f6bcc8838e0f889925270da23ef4e800e2ecb7ad",
+      "sizeBytes": 1688080,
+      "filename": "CROSS-015.pdf"
     },
     {
       "threatId": "CROSS-016",
@@ -1128,8 +1229,11 @@
       "title": "NIST FIPS 140-3 Implementation Guidance / TCHES 2024",
       "url": "https://csrc.nist.gov/csrc/media/Projects/cryptographic-module-validation-program/documents/fips%20140-3/FIPS%20140-3%20IG.pdf",
       "status": "missing",
-      "file": "public/threats/evidence/CROSS-017.pdf",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "file": "public/threats/CROSS-017.pdf",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "32de23bcde7b2582a06c38a38f8bf5bc7e1388334868fdf3855d98da2f4437ee",
+      "sizeBytes": 2588488,
+      "filename": "CROSS-017.pdf"
     },
     {
       "threatId": "CROSS-018",
@@ -1161,8 +1265,11 @@
       "title": "NIST SP 800-213 + NISTIR 8259A",
       "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-232.pdf",
       "status": "missing",
-      "file": "public/threats/evidence/IOT-005.pdf",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)"
+      "file": "public/threats/IOT-005.pdf",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "sha256": "1be9bb9a5fef3665ee8b258babe54b8e500d667fcfbbcc99710fe6077c6bad27",
+      "sizeBytes": 1194488,
+      "filename": "IOT-005.pdf"
     },
     {
       "threatId": "AUS-TEL-001",
@@ -1172,9 +1279,9 @@
       "status": "downloaded",
       "file": "public/threats/AUS-TEL-001.html",
       "filename": "AUS-TEL-001.html",
-      "sizeBytes": 79191,
+      "sizeBytes": 79783,
       "contentType": "text/html",
-      "sha256": "38149807682315321301fbef98b5151b500f3edc576ae61b8299a8797b7509d3"
+      "sha256": "f4877bb68a91b36fae4a4c5dba76b14f392c70c030f2241426323fc5167da524"
     },
     {
       "threatId": "IT-006",
@@ -1184,9 +1291,9 @@
       "status": "downloaded",
       "file": "public/threats/IT-006.html",
       "filename": "IT-006.html",
-      "sizeBytes": 14063,
+      "sizeBytes": 14147,
       "contentType": "text/html",
-      "sha256": "03892ff37b470faa3e601bbd286d5adbf40d5e491b9a9fc9db2c6e41daad45be"
+      "sha256": "f42b1681de124b26779bcc3987f5db0ae54aa40095e76d28963a4a4637f2bae8"
     },
     {
       "threatId": "HSM-002",
@@ -1196,9 +1303,42 @@
       "status": "downloaded",
       "file": "public/threats/HSM-002.html",
       "filename": "HSM-002.html",
-      "sizeBytes": 18934608,
+      "sizeBytes": 18963192,
       "contentType": "text/html",
-      "sha256": "8cc5cb372f9323e5867c16ba43349139c5cddc1912ce45cef1181786dffbd378"
+      "sha256": "0ef7e14bc9b8c915ae63623b83de724b654dcc82fc7f89cfd4e72743457f3681"
+    },
+    {
+      "threatId": "FINA-001",
+      "title": "HKMA Fintech Promotion Blueprint \u2014 Quantum Preparedness Index",
+      "url": "https://www.hkma.gov.hk/media/eng/doc/key-information/press-release/2026/20260203e3a1.pdf",
+      "status": "downloaded",
+      "file": "public/threats/FINA-001.pdf",
+      "filename": "FINA-001.pdf",
+      "sizeBytes": 4451297,
+      "contentType": "application/pdf",
+      "sha256": "3a4c18893d54c21557ec4ef3e5c9bb6079cf505e5b0475b7046c858ea61ff807"
+    },
+    {
+      "threatId": "WATE-001",
+      "title": "US Senate EPW Committee Testimony on Water Sector Cybersecurity",
+      "url": "https://www.epw.senate.gov/public/_cache/files/5/3/53d93dfe-ed8c-4e48-b705-0b16cb92c90a/FA38A32EE48D7F3D4B0C069FDC08A69E6327376EB85838A03310B2E91C8582C1.02-04-2026-dr.-simonton-testimony.pdf",
+      "status": "downloaded",
+      "file": "public/threats/WATE-001.pdf",
+      "filename": "WATE-001.pdf",
+      "sizeBytes": 235296,
+      "contentType": "application/pdf",
+      "sha256": "f01c037047d7baaf5cfc7275803d9b82256c561d9c8d0fb411806095cb48004d"
+    },
+    {
+      "threatId": "AERO-008",
+      "title": "IATA Aviation Cybersecurity Programme",
+      "url": "https://www.iata.org/en/programs/security/cyber-security/",
+      "status": "downloaded",
+      "file": "public/threats/AERO-008.html",
+      "filename": "AERO-008.html",
+      "sizeBytes": 115591,
+      "contentType": "text/html",
+      "sha256": "735ec4ebbaad1fa8835848fe4cda4b3ff6fb4f3e324ea63486e613eed788dee8"
     }
   ]
 }

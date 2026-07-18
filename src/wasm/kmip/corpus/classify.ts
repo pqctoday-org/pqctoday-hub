@@ -51,28 +51,24 @@ export const RNG_SEED_MODE_TESTS: Record<string, RngSeedMode> = {
   'CS-RNG-O-4-30.xml': 'deny',
 }
 
-/** OASIS tests whose expected outcome depends on `MaximumResponseSize`
- * (KMIP 3.0 §9.10) enforcement — the client declares a byte-size cap on
- * the RequestHeader; a too-big response must be replaced with
- * `OperationFailed / ResponseTooLarge`. Confirmed (by reading
- * `pqctoday-hsm/kmip/src/server/listener.rs` lines ~176-236) that this
- * check lives ENTIRELY in the native TLS listener — it inspects the
- * already-`dispatch()`-produced response's encoded byte length, which
- * `dispatch()` itself never sees or enforces. `KmipPlayground::submit`
- * calls `dispatch()` directly, with no listener wrapping it, so this
- * wasm build has no seam to implement this check on — a real,
- * WASM-vs-native architectural gap (matching Validate/Certify/ReCertify's
- * crypto-backend gap in kind, just for a different reason), not a bug in
- * this replay port. The native/Python harness (which runs the real TLS
- * listener) correctly passes all three of these. */
-const TRANSPORT_TESTS: Record<string, string> = {
-  'MSGENC-HTTPS-M-1-30.xml':
-    'MaximumResponseSize (§9.10) enforcement lives in the native TLS listener, not dispatch() — no seam to implement it on in this wasm build',
-  'MSGENC-JSON-M-1-30.xml':
-    'MaximumResponseSize (§9.10) enforcement lives in the native TLS listener, not dispatch() — no seam to implement it on in this wasm build',
-  'MSGENC-XML-M-1-30.xml':
-    'MaximumResponseSize (§9.10) enforcement lives in the native TLS listener, not dispatch() — no seam to implement it on in this wasm build',
-}
+/** OASIS tests exercising `MaximumResponseSize` (KMIP 3.0 §9.10) enforcement
+ * — the client declares a byte-size cap on the RequestHeader; a too-big
+ * response must be replaced with `OperationFailed / ResponseTooLarge`.
+ * Previously listed here as a native-TLS-only gap (the check lived inline
+ * in `listener.rs`, wrapping `dispatch()` rather than inside it — no seam
+ * for `KmipPlayground::submit` to reach). 2026-07-17: that reasoning turned
+ * out to be an implementation-layer accident, not a real architectural
+ * constraint — the check needs only the parsed request header and the
+ * encoded response length, neither of which is TLS-specific. Moved into
+ * `dispatch()` itself (`enforce_max_response_size`, `dispatcher/mod.rs`),
+ * so `MSGENC-HTTPS-M-1-30.xml` / `MSGENC-JSON-M-1-30.xml` /
+ * `MSGENC-XML-M-1-30.xml` now replay for real in this wasm build too —
+ * `TRANSPORT_TESTS` is kept as an (empty) named export since
+ * `classifyByName`/`SkipReason['status']` still reference the
+ * `SKIP_TRANSPORT` category as a documented-but-currently-unused
+ * classification, in case a genuinely transport-bound test is ever added
+ * to the corpus. */
+const TRANSPORT_TESTS: Record<string, string> = {}
 
 /** The 4 zero-handler ops: Notify/Put are a server-to-client scope
  * boundary (this playground has no "client" to notify/push to);
