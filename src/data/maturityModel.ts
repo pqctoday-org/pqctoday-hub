@@ -230,3 +230,17 @@ export function deriveMaturity(
   const gating = MATURITY_DOMAINS.filter((d) => scores[d.id] === minScore).map((d) => d.id)
   return { scores, overall, gating }
 }
+
+/**
+ * Indicative maturity for a page that has no sim-run context to read (WP5.6,
+ * /assess) — the same weakest-domain model as `deriveMaturity`, but with every
+ * phase's earned level pinned at 0. An assessed player therefore always lands
+ * exactly on Level 1 'Aware', never higher: this is the SAME never-grants-
+ * maturity invariant `deriveMaturity` already enforces (completing Assess alone
+ * cannot exceed Level 1), just applied without a live simulation to consult.
+ * Callers should label this "indicative" and point players at the simulation to
+ * actually earn Levels 2–5.
+ */
+export function indicativeMaturity(assessed: boolean): DerivedMaturity {
+  return deriveMaturity(assessed, () => 0)
+}

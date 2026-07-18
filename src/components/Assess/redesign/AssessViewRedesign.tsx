@@ -484,6 +484,7 @@ export const AssessViewRedesign: React.FC<{
           onViewReport={() => navigate('/report')}
           onRetake={retake}
           onContinueToFull={continueToFull}
+          onPlaySimulation={() => navigate('/simulation')}
         />
       ) : (
         <AssessWizardScreen
