@@ -20,9 +20,10 @@ import type { KmipEngine, OpResult } from '@/wasm/kmip/kmipEngine'
 import { getCodepointTable } from '@/wasm/kmip/ttlv/codepointTable'
 import { runOp as runRawOp } from '@/wasm/kmip/ttlv/runner'
 import { find } from '@/wasm/kmip/ttlv/nodes'
+import { QuizCard } from '@/components/Playground/learnkit/QuizCard'
+import { ALGO_FACTS, fmtBytes } from '@/components/Playground/learnkit/algoFacts'
 import { WireTreeView } from '../WireTreeView'
-import { QuizCard } from './QuizCard'
-import { ALGO_FACTS, fmtBytes } from './algoFacts'
+import { QUIZZES } from './quiz'
 import {
   LESSONS,
   type CompareRow,
@@ -531,7 +532,13 @@ function LessonPanel({
       </div>
 
       {/* Knowledge check (only for lessons with a question bank) */}
-      <QuizCard key={lesson.id} lessonId={lesson.id} />
+      <QuizCard
+        key={lesson.id}
+        lessonId={lesson.id}
+        questions={QUIZZES[lesson.id]}
+        namespace="cacp"
+        analyticsCategory="KMIP Quiz"
+      />
 
       {/* Try it in Reference */}
       <div className="flex flex-wrap items-center gap-1.5">

@@ -1,17 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-// GlossaryRail — persistent, collapsible right column shared by all 4 KMIP3.0
-// sub-tabs (mounted once at the Kmip3View level via GlossaryContext). Search
-// + a "now viewing" pinned card (set by any `Term` hover/focus anywhere on
-// the page) + three alphabetical sections: Wire format, Protocol concepts,
-// Post-quantum concepts.
+// GlossaryRail — persistent, collapsible right column shared by every sub-tab
+// of a playground's learn hub (mounted once via GlossaryContext). Search + a
+// "now viewing" pinned card (set by any `Term` hover/focus anywhere on the
+// page) + three alphabetical sections: Wire/API format, Protocol concepts,
+// Post-quantum concepts. Content comes from the active `GlossaryData`.
 import { useMemo, useState } from 'react'
 import { ChevronDown, PanelRight, PanelRightClose, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { useGlossary } from './GlossaryContext'
-import { TAG_GLOSSARY, TERMS, lookupGlossaryDef } from './glossary'
 
 interface RailEntry {
   key: string
@@ -21,24 +20,6 @@ interface RailEntry {
 }
 
 const byLabel = (a: RailEntry, b: RailEntry) => a.label.localeCompare(b.label)
-
-const WIRE_ENTRIES: RailEntry[] = [
-  ...Object.entries(TAG_GLOSSARY).map(([name, e]) => ({
-    key: name,
-    label: name,
-    def: e.def,
-    hex: e.hex,
-  })),
-  ...TERMS.filter((t) => t.cat === 'wire').map((t) => ({ key: t.id, label: t.label, def: t.def })),
-].sort(byLabel)
-
-const PROTOCOL_ENTRIES: RailEntry[] = TERMS.filter((t) => t.cat === 'protocol')
-  .map((t) => ({ key: t.id, label: t.label, def: t.def }))
-  .sort(byLabel)
-
-const PQC_ENTRIES: RailEntry[] = TERMS.filter((t) => t.cat === 'pqc')
-  .map((t) => ({ key: t.id, label: t.label, def: t.def }))
-  .sort(byLabel)
 
 function GlossarySection({ title, entries }: { title: string; entries: RailEntry[] }) {
   const [open, setOpen] = useState(true)
@@ -77,8 +58,40 @@ function GlossarySection({ title, entries }: { title: string; entries: RailEntry
 }
 
 export function GlossaryRail() {
-  const { activeKey, collapsed, setCollapsed } = useGlossary()
+  const { activeKey, collapsed, setCollapsed, data } = useGlossary()
   const [query, setQuery] = useState('')
+
+  const wireEntries: RailEntry[] = useMemo(
+    () =>
+      [
+        ...Object.entries(data.tagGlossary).map(([name, e]) => ({
+          key: name,
+          label: name,
+          def: e.def,
+          hex: e.hex,
+        })),
+        ...data.terms
+          .filter((t) => t.cat === 'wire')
+          .map((t) => ({ key: t.id, label: t.label, def: t.def })),
+      ].sort(byLabel),
+    [data]
+  )
+  const protocolEntries: RailEntry[] = useMemo(
+    () =>
+      data.terms
+        .filter((t) => t.cat === 'protocol')
+        .map((t) => ({ key: t.id, label: t.label, def: t.def }))
+        .sort(byLabel),
+    [data]
+  )
+  const pqcEntries: RailEntry[] = useMemo(
+    () =>
+      data.terms
+        .filter((t) => t.cat === 'pqc')
+        .map((t) => ({ key: t.id, label: t.label, def: t.def }))
+        .sort(byLabel),
+    [data]
+  )
 
   const q = query.trim().toLowerCase()
   const filter = (entries: RailEntry[]) =>
@@ -86,14 +99,14 @@ export function GlossaryRail() {
       ? entries.filter((e) => e.label.toLowerCase().includes(q) || e.def.toLowerCase().includes(q))
       : entries
 
-  const pinnedDef = activeKey ? lookupGlossaryDef(activeKey) : undefined
+  const pinnedDef = activeKey ? data.lookupDef(activeKey) : undefined
   const pinnedEntry = useMemo(() => {
     if (!activeKey || !pinnedDef) return undefined
-    // eslint-disable-next-line security/detect-object-injection -- read-only lookup against this module's own fixed glossary catalog, never used to write; `activeKey` is always a wire tag name or TERMS id, never raw user input.
-    const hex = TAG_GLOSSARY[activeKey]?.hex
-    const label = TERM_LABEL(activeKey)
+    // eslint-disable-next-line security/detect-object-injection -- read-only lookup against this module's own fixed glossary catalog, never used to write; `activeKey` is always a wire tag name or terms id, never raw user input.
+    const hex = data.tagGlossary[activeKey]?.hex
+    const label = data.terms.find((t) => t.id === activeKey)?.label ?? activeKey
     return { label, hex, def: pinnedDef }
-  }, [activeKey, pinnedDef])
+  }, [activeKey, pinnedDef, data])
 
   if (collapsed) {
     return (
@@ -154,16 +167,18 @@ export function GlossaryRail() {
         </div>
       )}
 
-      <GlossarySection title="Wire format" entries={filter(WIRE_ENTRIES)} />
-      <GlossarySection title="Protocol concepts" entries={filter(PROTOCOL_ENTRIES)} />
-      <GlossarySection title="Post-quantum concepts" entries={filter(PQC_ENTRIES)} />
+      <GlossarySection
+        title={data.sectionTitles?.wire ?? 'Wire format'}
+        entries={filter(wireEntries)}
+      />
+      <GlossarySection
+        title={data.sectionTitles?.protocol ?? 'Protocol concepts'}
+        entries={filter(protocolEntries)}
+      />
+      <GlossarySection
+        title={data.sectionTitles?.pqc ?? 'Post-quantum concepts'}
+        entries={filter(pqcEntries)}
+      />
     </aside>
   )
-}
-
-/** A glossary key is either a tag name (label === key) or a TERMS id (label
- * is the term's human-readable label, e.g. `kem` → "KEM (Key Encapsulation
- * Mechanism)"). */
-function TERM_LABEL(key: string): string {
-  return TERMS.find((t) => t.id === key)?.label ?? key
 }

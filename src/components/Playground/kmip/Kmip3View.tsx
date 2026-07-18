@@ -11,13 +11,14 @@ import { BookOpen, Terminal, FlaskConical, Layers } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import type { KmipEngine } from '@/wasm/kmip/kmipEngine'
+import { GlossaryProvider } from '@/components/Playground/learnkit/GlossaryProvider'
+import { GlossaryRail } from '@/components/Playground/learnkit/GlossaryRail'
 import { BatchView } from './BatchView'
 import { CommandsView } from './CommandsView'
 import { CorpusReplayView } from './CorpusReplayView'
-import { GlossaryProvider } from './kmip3/GlossaryProvider'
-import { GlossaryRail } from './kmip3/GlossaryRail'
 import { KeystoreStrip } from './kmip3/KeystoreStrip'
 import { LearnView } from './kmip3/LearnView'
+import { KMIP_GLOSSARY_DATA } from './kmip3/glossary'
 
 type Kmip3Tab = 'learn' | 'commands' | 'corpus' | 'batch'
 
@@ -45,7 +46,7 @@ export function Kmip3View({
   const [pendingOp, setPendingOp] = useState<string | null>(null)
 
   return (
-    <GlossaryProvider>
+    <GlossaryProvider data={KMIP_GLOSSARY_DATA}>
       <KeystoreStrip engine={engine} />
       <div className="flex items-start gap-4">
         <div className="min-w-0 flex-1">

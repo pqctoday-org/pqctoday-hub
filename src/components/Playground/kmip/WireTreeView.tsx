@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { ChevronRight, ChevronDown } from 'lucide-react'
 import type { TtlvNode } from '@/wasm/kmip/kmipEngine'
 import { tagName, ENUM_NAMES, normalizeHexKey } from '@/wasm/kmip/kmipMeta'
-import { Term } from './kmip3/Term'
+import { Term } from '@/components/Playground/learnkit/Term'
 import { lookupGlossaryDef } from './kmip3/glossary'
 
 /** Render one decoded TTLV value (leaf) compactly, truncating long blobs. */
