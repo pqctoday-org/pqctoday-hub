@@ -16,6 +16,7 @@ import {
   CheckCircle2,
   XCircle,
   RotateCcw,
+  Clock,
   Trash2,
   ArrowUp,
   ArrowDown,
@@ -121,6 +122,18 @@ const ADDABLE: OpSpec['op'][] = [
   'Destroy',
 ]
 
+/** The nearest earlier item that actually sets/empties the ID Placeholder for
+ * item `i` — i.e. the last preceding item whose op isn't 'Query', the only
+ * ADDABLE op `update_id_placeholder` (dispatcher/mod.rs) leaves untouched.
+ * Checking `items[i-1]` directly missed `Locate → Query → $IDPlaceholder`:
+ * the placeholder is still Locate's, but the immediate predecessor is Query. */
+function placeholderProducer(items: OpSpec[], i: number): OpSpec | undefined {
+  for (let j = i - 1; j >= 0; j--) {
+    if (items[j].op !== 'Query') return items[j]
+  }
+  return undefined
+}
+
 /** One-line label for an item in the sequence. */
 function itemLabel(spec: OpSpec): string {
   const bits: string[] = [spec.op]
@@ -134,6 +147,7 @@ function itemLabel(spec: OpSpec): string {
 const statusIcon = (status: string) => {
   if (status === 'Success') return <CheckCircle2 size={14} className="text-status-success" />
   if (status === 'OperationUndone') return <RotateCcw size={14} className="text-status-warning" />
+  if (status === 'OperationPending') return <Clock size={14} className="text-status-info" />
   return <XCircle size={14} className="text-destructive" />
 }
 
@@ -152,6 +166,7 @@ export function BatchView({
 }) {
   const [items, setItems] = useState<OpSpec[]>(RECIPES[0].items)
   const [cont, setCont] = useState<BatchErrorContinuation>('Continue')
+  const [asyncMandatory, setAsyncMandatory] = useState(false)
   const [activeRecipe, setActiveRecipe] = useState<string | null>(RECIPES[0].id)
   const [result, setResult] = useState<BatchResult | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -210,7 +225,11 @@ export function BatchView({
     setError(null)
     await new Promise((r) => setTimeout(r, 0))
     try {
-      const res = engine.runBatch({ errorContinuation: cont, items })
+      const res = engine.runBatch({
+        errorContinuation: cont,
+        asynchronous: asyncMandatory ? 'Mandatory' : undefined,
+        items,
+      })
       setResult(res)
       onChanged()
     } catch (e) {
@@ -309,13 +328,13 @@ export function BatchView({
                 <span
                   className="inline-flex items-center gap-0.5 rounded bg-status-warning/15 px-1.5 py-0.5 text-[9px] font-semibold text-status-warning"
                   title={
-                    items[i - 1]?.op === 'Locate'
+                    placeholderProducer(items, i)?.op === 'Locate'
                       ? '§6.1.32: the placeholder only resolves if Locate matched EXACTLY one object — 0 or >1 matches empties it, and this item fails.'
                       : undefined
                   }
                 >
                   <CornerDownRight size={9} /> prev key
-                  {items[i - 1]?.op === 'Locate' && ' (needs 1 match)'}
+                  {placeholderProducer(items, i)?.op === 'Locate' && ' (needs 1 match)'}
                 </span>
               )}
               <div className="ml-auto flex items-center gap-0.5">
@@ -384,6 +403,36 @@ export function BatchView({
             </div>
           </div>
           <p className="text-[11px] text-muted-foreground max-w-xs">{CONT_INFO[cont]}</p>
+          <div>
+            <p className="text-[9.5px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">
+              §8.1.2 Asynchronous
+            </p>
+            <Button
+              size="sm"
+              variant="ghost"
+              aria-pressed={asyncMandatory}
+              disabled={busy}
+              onClick={() => setAsyncMandatory((v) => !v)}
+              className={cn(
+                'h-7 rounded-md border border-border px-2.5 text-xs',
+                asyncMandatory
+                  ? 'bg-status-info/15 text-status-info border-status-info/40'
+                  : 'text-muted-foreground'
+              )}
+            >
+              {asyncMandatory ? 'Mandatory' : 'off'}
+            </Button>
+          </div>
+          {asyncMandatory && (
+            <p className="text-[11px] text-muted-foreground max-w-xs">
+              One header setting for the whole batch — every eligible item queues as a background
+              job (OperationPending + a correlation value) instead of running inline. Poll/Cancel/
+              Process/Query and the negotiation ops aren't eligible and fail instead. A queued item
+              hasn't produced a UID yet, so a $IDPlaceholder-chained recipe (like this one) fails
+              its later steps honestly — items that don't reference an earlier item's UID queue
+              cleanly instead.
+            </p>
+          )}
           <Button disabled={busy || items.length === 0} onClick={run} className="ml-auto gap-1.5">
             {running ? <Loader2 size={14} className="animate-spin" /> : <Play size={14} />} Run
             batch
@@ -451,7 +500,9 @@ export function BatchView({
                           ? 'text-status-success'
                           : it.status === 'OperationUndone'
                             ? 'text-status-warning'
-                            : 'text-destructive'
+                            : it.status === 'OperationPending'
+                              ? 'text-status-info'
+                              : 'text-destructive'
                       )}
                     >
                       {it.status}
@@ -463,6 +514,15 @@ export function BatchView({
                   {it.ok && summarize(it.summary) && (
                     <p className="text-[10.5px] text-muted-foreground break-all">
                       {summarize(it.summary)}
+                    </p>
+                  )}
+                  {it.status === 'OperationPending' && it.asynchronousCorrelationValueHex && (
+                    <p className="text-[10.5px] text-muted-foreground break-all">
+                      Correlation value:{' '}
+                      <span className="font-mono text-foreground">
+                        {it.asynchronousCorrelationValueHex}
+                      </span>{' '}
+                      — redeem it with Poll in the Commands tab's Asynchronous Processing category.
                     </p>
                   )}
                 </div>
