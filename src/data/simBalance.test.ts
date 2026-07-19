@@ -1,15 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { SIM_BALANCE, SIM_PRESETS, getBalance, type DifficultyId } from './simBalance'
+import { SIM_BALANCE, SIM_PRESETS, PAR_QUARTERS, getBalance, type DifficultyId } from './simBalance'
 
 describe('SIM_BALANCE', () => {
   it('matches the documented baseline (snapshot of tunable balance)', () => {
     expect(SIM_BALANCE).toEqual({
       events: { dangerWhenClassical: 0.6, warning: 0.55, goodNews: 0.5, successVsInfo: 0.5 },
       crqc: { pullForwardPerQuarter: 0.22 },
-      ai: { advanceChance: 0.35 },
+      ai: { advanceChance: 0.35, delegationCostPerStepM: 1 },
       budget: { doneWeight: 1 },
       estate: { budgetMultiplier: 1 },
+      consequences: {
+        setbackQuarters: 1,
+        incidentCostM: 5,
+        goodNewsCreditM: 1.5,
+        hndlExposureThreshold: 0.35,
+      },
     })
   })
 
@@ -79,5 +85,53 @@ describe('difficulty presets + scenarios (WS-14)', () => {
     expect(getBalance('hard')).toBe(SIM_PRESETS.hard)
     expect(getBalance('nope' as DifficultyId)).toBe(SIM_PRESETS.realistic)
     expect(SIM_BALANCE).toBe(SIM_PRESETS.realistic)
+  })
+
+  // WP4.1 — consequences make difficulty a real mechanical stake, not just a
+  // probability dial on cosmetic event text.
+  it('consequences scale with difficulty: Hard costs more and triggers more easily than Easy', () => {
+    expect(SIM_PRESETS.hard.consequences.incidentCostM).toBeGreaterThan(
+      SIM_PRESETS.easy.consequences.incidentCostM
+    )
+    expect(SIM_PRESETS.hard.consequences.setbackQuarters).toBeGreaterThanOrEqual(
+      SIM_PRESETS.easy.consequences.setbackQuarters
+    )
+    // A lower threshold means a danger event has teeth at a LOWER exposure level.
+    expect(SIM_PRESETS.hard.consequences.hndlExposureThreshold).toBeLessThan(
+      SIM_PRESETS.easy.consequences.hndlExposureThreshold
+    )
+    expect(SIM_PRESETS.hard.consequences.goodNewsCreditM).toBeLessThanOrEqual(
+      SIM_PRESETS.easy.consequences.goodNewsCreditM
+    )
+  })
+
+  it('every consequence figure is non-negative and every threshold stays in [0, 1]', () => {
+    for (const id of IDS) {
+      const c = SIM_PRESETS[id].consequences
+      expect(c.setbackQuarters, id).toBeGreaterThanOrEqual(0)
+      expect(c.incidentCostM, id).toBeGreaterThanOrEqual(0)
+      expect(c.goodNewsCreditM, id).toBeGreaterThanOrEqual(0)
+      expect(c.hndlExposureThreshold, id).toBeGreaterThanOrEqual(0)
+      expect(c.hndlExposureThreshold, id).toBeLessThanOrEqual(1)
+      expect(SIM_PRESETS[id].ai.delegationCostPerStepM, id).toBeGreaterThanOrEqual(0)
+    }
+  })
+
+  // WP4.3 — delegation cost scales with difficulty (Hard makes AI help a real
+  // budget trade-off, not a free lunch).
+  it('delegation cost scales with difficulty: easy ≤ realistic ≤ hard', () => {
+    expect(SIM_PRESETS.easy.ai.delegationCostPerStepM).toBeLessThanOrEqual(
+      SIM_PRESETS.realistic.ai.delegationCostPerStepM
+    )
+    expect(SIM_PRESETS.realistic.ai.delegationCostPerStepM).toBeLessThanOrEqual(
+      SIM_PRESETS.hard.ai.delegationCostPerStepM
+    )
+  })
+
+  // WP4.2 — par is difficulty-adjusted, not one fixed number for every preset.
+  it('PAR_QUARTERS has a positive entry for every difficulty, non-decreasing with difficulty', () => {
+    for (const id of IDS) expect(PAR_QUARTERS[id]).toBeGreaterThan(0)
+    expect(PAR_QUARTERS.easy).toBeLessThanOrEqual(PAR_QUARTERS.realistic)
+    expect(PAR_QUARTERS.realistic).toBeLessThanOrEqual(PAR_QUARTERS.hard)
   })
 })

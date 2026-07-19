@@ -46,6 +46,22 @@ export interface QuarterEngineInput {
   levelOf: (p: string) => number
   evidenceLevel: (p: string) => number
   stepDone: (s: TreeStep, p: string) => boolean
+  /** WP4.1 — fraction (0–1) of the estate still unmigrated (transformationStatus's
+   *  same hndlExposure), read-only context the engine uses to decide whether a
+   *  rolled danger event has teeth. The engine never mutates the estate itself. */
+  hndlExposure: number
+  /** WP4.1 — current available budget (€M), read-only context for the report;
+   *  the engine reports a cost/credit, the store (not the engine) applies it. */
+  securedBudget: number
+}
+
+/** WP4.1 — mechanical consequences of this quarter's events, applied by the
+ *  store. Optional fields: absent means that consequence didn't fire. */
+export interface QuarterEffects {
+  setbackQuarters?: number
+  budgetCostM?: number
+  budgetCreditM?: number
+  cause: string
 }
 
 export interface QuarterEngineResult {
@@ -57,6 +73,8 @@ export interface QuarterEngineResult {
     year: number
     q: number
     newEvents: SimEvent[]
+    /** WP4.1 — mechanical consequences the store applies (setback, budget cost/credit). */
+    effects?: QuarterEffects
   }
   report: QuarterReportData
 }
@@ -78,6 +96,8 @@ export function runQuarter(input: QuarterEngineInput): QuarterEngineResult {
     levelOf,
     evidenceLevel,
     stepDone,
+    hndlExposure,
+    securedBudget,
   } = input
 
   const [ny, nq] = q === 4 ? [year + 1, 1] : [year, q + 1]
@@ -88,16 +108,44 @@ export function runQuarter(input: QuarterEngineInput): QuarterEngineResult {
     fillEvent(sampleWith(rng, SIM_EVENT_POOL[sev]), sectorLabel, country)
   const newEvents: SimEvent[] = []
 
+  // WP4.1 — mechanical consequences. A rolled danger event only bites (setback +
+  // incident cost) when the estate's unmigrated exposure clears the difficulty's
+  // threshold; a rolled good-news event always grants a small credit. Both can
+  // fire the same quarter (independent rolls) — accumulated into one report.
+  const cons = balance.consequences
+  let effectSetback = 0
+  let effectCost = 0
+  let effectCredit = 0
+  const effectCauses: string[] = []
+
   const ev = balance.events
   const hasClassical = levelOf('p1') < PHASE_WIN_LEVEL || levelOf('p5') < PHASE_WIN_LEVEL
-  if (hasClassical && chanceWith(rng, ev.dangerWhenClassical))
-    newEvents.push({ sev: 'danger', t: label, txt: pick('danger') })
+  if (hasClassical && chanceWith(rng, ev.dangerWhenClassical)) {
+    const txt = pick('danger')
+    newEvents.push({ sev: 'danger', t: label, txt })
+    if (hndlExposure > cons.hndlExposureThreshold) {
+      effectSetback += cons.setbackQuarters
+      effectCost += cons.incidentCostM
+      effectCauses.push(txt)
+    }
+  }
   if (chanceWith(rng, ev.warning))
     newEvents.push({ sev: 'warning', t: label, txt: pick('warning') })
   if (chanceWith(rng, ev.goodNews)) {
     const sev: EventSeverity = chanceWith(rng, ev.successVsInfo) ? 'success' : 'info'
-    newEvents.push({ sev, t: label, txt: pick(sev) })
+    const txt = pick(sev)
+    newEvents.push({ sev, t: label, txt })
+    effectCredit += cons.goodNewsCreditM
+    effectCauses.push(txt)
   }
+  const effects: QuarterEffects | undefined = effectCauses.length
+    ? {
+        ...(effectSetback > 0 ? { setbackQuarters: effectSetback } : {}),
+        ...(effectCost > 0 ? { budgetCostM: effectCost } : {}),
+        ...(effectCredit > 0 ? { budgetCreditM: effectCredit } : {}),
+        cause: effectCauses.join(' · '),
+      }
+    : undefined
 
   let newCrqc = crqcShift
   if (chanceWith(rng, balance.crqc.pullForwardPerQuarter)) {
@@ -161,7 +209,7 @@ export function runQuarter(input: QuarterEngineInput): QuarterEngineResult {
 
   return {
     newAutoKeys,
-    quarter: { crqcShift: newCrqc, year: ny, q: nq, newEvents },
+    quarter: { crqcShift: newCrqc, year: ny, q: nq, newEvents, effects },
     report: {
       from: `Q${q} ${year}`,
       to: label,
@@ -173,14 +221,19 @@ export function runQuarter(input: QuarterEngineInput): QuarterEngineResult {
       totalPhases: LIFECYCLE.length,
       events: newEvents,
       aiProgress,
+      effects,
       recommend:
-        afterCleared < 2
-          ? "Push Phase 0–2 to Level 2 — you can't plan what you haven't inventoried."
-          : levelOfWith('p3') < PHASE_WIN_LEVEL
-            ? 'Approve the QRA (Phase 3) — it sequences every migration wave that follows.'
-            : levelOfWith('p5') < PHASE_WIN_LEVEL
-              ? 'Stand up 2 production pilots in Phase 5 before the audit window closes.'
-              : 'Maintain momentum — drive Tier-2 waves and lock vendor commitments (Phase 7).',
+        // WP4.1 — a critically-low budget with P0 still open outranks every other
+        // recommendation: nothing downstream is fundable without it.
+        securedBudget < cons.incidentCostM && levelOf('p0') < PHASE_WIN_LEVEL
+          ? 'Secure the Phase 0 budget case first — an incident-sized shock would wipe out what little is funded.'
+          : afterCleared < 2
+            ? "Push Phase 0–2 to Level 2 — you can't plan what you haven't inventoried."
+            : levelOfWith('p3') < PHASE_WIN_LEVEL
+              ? 'Approve the QRA (Phase 3) — it sequences every migration wave that follows.'
+              : levelOfWith('p5') < PHASE_WIN_LEVEL
+                ? 'Stand up 2 production pilots in Phase 5 before the audit window closes.'
+                : 'Maintain momentum — drive Tier-2 waves and lock vendor commitments (Phase 7).',
     },
   }
 }

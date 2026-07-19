@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { deriveMaturity, MATURITY_DOMAINS, DOMAIN_TO_PHASES } from './maturityModel'
+import {
+  deriveMaturity,
+  indicativeMaturity,
+  MATURITY_DOMAINS,
+  DOMAIN_TO_PHASES,
+} from './maturityModel'
 import type { PhaseId } from './frameworkPhases'
 
 // All phases referenced by any domain — used to build a "raise everything" map.
@@ -79,5 +84,18 @@ describe('deriveMaturity', () => {
     const notAll = deriveMaturity(true, lookup(levels))
     expect(notAll.scores.pilots).toBe(3)
     expect(notAll.overall).toBe(3)
+  })
+})
+
+// WP5.6 — /assess has no simulation run to consult, so its indicative band must
+// never exceed what `deriveMaturity` would grant with zero sim progress.
+describe('indicativeMaturity', () => {
+  it('no assessment → Level 0 (Unaware)', () => {
+    expect(indicativeMaturity(false).overall).toBe(0)
+  })
+
+  it('assessed → exactly Level 1 (Aware), matching deriveMaturity with zero earned progress', () => {
+    expect(indicativeMaturity(true)).toEqual(deriveMaturity(true, () => 0))
+    expect(indicativeMaturity(true).overall).toBe(1)
   })
 })

@@ -14,7 +14,7 @@ describe('walkthrough concept peeks', () => {
   it('every referenced concept id exists in EXEC_TOUR_CONCEPTS', () => {
     const referenced = [
       ...EXEC_TOUR_OPENING_CONCEPTS,
-      ...EXEC_TOUR_STAGES.map((s) => s.conceptCard).filter((x): x is NonNullable<typeof x> => !!x),
+      ...EXEC_TOUR_STAGES.flatMap((s) => s.conceptCards ?? []),
     ]
     for (const id of referenced) {
       expect(EXEC_TOUR_CONCEPTS[id], `concept '${id}' missing from EXEC_TOUR_CONCEPTS`).toBeTruthy()

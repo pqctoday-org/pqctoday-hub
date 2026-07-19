@@ -474,7 +474,11 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
             <div className="inline-flex items-center justify-center p-4 rounded-full bg-muted mb-4">
               <FileBarChart className="text-primary" size={28} />
             </div>
-            <h1 className="text-xl font-bold text-foreground mb-2">Generating your report…</h1>
+            {/* h2, not h1: this loading message isn't the page's primary
+                heading (PageHeader owns that) — matters when simEmbed
+                (WP5.7) since this branch renders regardless of simEmbed and
+                an embedded pane must stay headless. */}
+            <h2 className="text-xl font-bold text-foreground mb-2">Generating your report…</h2>
             <p className="text-sm text-muted-foreground">
               Running the 10-stage scoring pipeline. This takes 0.5–2 seconds on most machines.
             </p>
@@ -496,7 +500,8 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
           <div className="inline-flex items-center justify-center p-4 rounded-full bg-muted mb-6">
             <FileBarChart className="text-muted-foreground" size={32} />
           </div>
-          <h1 className="text-2xl font-bold text-foreground mb-3">No Report Yet</h1>
+          {/* h2, not h1 — same reasoning as the loading state above (WP5.7). */}
+          <h2 className="text-2xl font-bold text-foreground mb-3">No Report Yet</h2>
           <p className="text-muted-foreground mb-6">
             {isCurious
               ? 'Curious what a finished report looks like? Browse an example before committing to the assessment — or jump straight in.'

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { Lightbulb } from 'lucide-react'
+import { Lightbulb, X } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { GUIDED_DEFS } from '../SimTour'
+import { CONCEPT_LEARN_MODULE } from './conceptPeekLinks'
 import type { TourConcept } from './execTourConfig'
 
 /**
@@ -17,17 +19,33 @@ export function conceptBody(c: TourConcept): string {
 
 /**
  * SimConceptPeek — lightweight, non-blocking definition cards surfaced during the
- * Executive Overview walkthrough when a concept is relevant to the current phase
- * (HNDL + Mosca at the open, the two-track model at the roadmap, hybrid at pilots).
- * Reuses the tour's plain-English definitions; renders nothing outside the tour.
+ * Executive Overview walkthrough (auto-dismissed by the tour's own pacing) AND, since
+ * WP2.3, on first entry to a phase in interactive play (dismissed explicitly, since
+ * nothing else advances them for a manual player). HNDL + Mosca at the open, the
+ * two-track model at the roadmap, hybrid at pilots. Reuses the tour's plain-English
+ * definitions; each card links to the module that teaches it in depth.
  */
-export function SimConceptPeek({ concepts }: { concepts: TourConcept[] }) {
+export function SimConceptPeek({
+  concepts,
+  onDismiss,
+  onLearnMore,
+}: {
+  concepts: TourConcept[]
+  /** Explicit dismiss (WP2.3) — interactive-play cards have no timer, so a manual
+   *  close is the only way they leave. Optional: the walkthrough's own cards are
+   *  transient (the tour advances past them) and don't need one. */
+  onDismiss?: (id: TourConcept['id']) => void
+  /** Opens the concept's Learn module embedded in the sim (never navigates away).
+   *  Optional for the same reason as onDismiss. */
+  onLearnMore?: (moduleId: string) => void
+}) {
   if (concepts.length === 0) return null
   return (
     <div className="pointer-events-none fixed bottom-24 left-4 z-[55] flex max-w-xs flex-col gap-2">
       {concepts.map((c) => {
         const body = conceptBody(c)
         if (!body) return null
+        const moduleId = CONCEPT_LEARN_MODULE[c.id]
         return (
           <div
             key={c.id}
@@ -36,11 +54,32 @@ export function SimConceptPeek({ concepts }: { concepts: TourConcept[] }) {
           >
             <div className="mb-1 flex items-center gap-1.5">
               <Lightbulb size={13} className="shrink-0 text-primary" aria-hidden="true" />
-              <span className="text-[11px] font-bold uppercase tracking-wide text-primary">
+              <span className="min-w-0 flex-1 text-[11px] font-bold uppercase tracking-wide text-primary">
                 {c.title}
               </span>
+              {onDismiss && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => onDismiss(c.id)}
+                  aria-label={`Dismiss ${c.title} tip`}
+                  className="h-auto shrink-0 rounded p-0.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+                >
+                  <X size={12} aria-hidden="true" />
+                </Button>
+              )}
             </div>
             <p className="text-xs leading-relaxed text-muted-foreground">{body}</p>
+            {onLearnMore && moduleId && (
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => onLearnMore(moduleId)}
+                className="mt-1.5 h-auto rounded-none p-0 text-[11px] font-semibold text-primary hover:underline"
+              >
+                Learn more →
+              </Button>
+            )}
           </div>
         )
       })}

@@ -53,6 +53,29 @@ import {
 } from '@/components/BusinessCenter/tools/DataAtRestStrategy'
 import type { FrameworkRoleId } from '@/data/roleCrosswalk'
 import { HSM_VENDORS } from '@/components/PKILearning/modules/HsmPqc/data/hsmVendorData'
+import {
+  renderContractPreview,
+  CONTRACT_DEMO_FILL,
+} from '@/components/PKILearning/modules/VendorRisk/components/ContractClauseGenerator'
+import {
+  DIMENSIONS as SCORECARD_DIMENSIONS,
+  resolveProductNames,
+  computeVendorScorecards,
+  buildScorecardMarkdown,
+  type ScorecardDimensionRow,
+} from '@/components/PKILearning/modules/VendorRisk/components/VendorScorecardBuilder'
+import {
+  computeLayerStats,
+  computeMatrixEntries,
+  computeNoRiskLayers,
+  buildDependencyRelations,
+  buildSupplyChainMarkdown,
+  mapToAssetClass,
+  type CSWP39AssetClass,
+} from '@/components/PKILearning/modules/VendorRisk/components/SupplyChainRiskMatrix'
+import type { SoftwareItem } from '@/types/MigrateTypes'
+import { threatsData } from '@/data/threatsData'
+import { isPqcReady, isFips1403Validated } from '@/data/kpiCatalog'
 
 /**
  * Thales Luna is the fleet vendor for this demo org. Derived from `HSM_VENDORS`
@@ -295,6 +318,132 @@ function dataAtRestStrategyState(sector: DemoSector): DataAtRestState {
   }
 }
 
+/**
+ * Sample vendor scorecard (Wave 5, WP5.3) — two REAL, verified catalog
+ * products from distinct vendors (AWS-LC / Amazon Web Services, Bouncy Castle
+ * Java / Legion of the Bouncy Castle Inc.), both real "Yes... FIPS 140-3"
+ * rows in pqc_product_catalog — not fabricated vendor names. Auto-detected
+ * dimensions run the SAME `Dimension.autoDetect` predicates the live tool
+ * uses; the three dimensions with no auto-detect (roadmap/agility/SBOM-CBOM)
+ * get a plausible manual read since no catalog field encodes them.
+ */
+function vendorScorecardSample() {
+  const items = resolveProductNames(['aws-lc', 'bouncy-castle-java'])
+  const checkedProducts: Record<string, Set<string>> = {}
+  for (const d of SCORECARD_DIMENSIONS) {
+    if (d.autoDetect) {
+      checkedProducts[d.id] = new Set(items.filter((i) => d.autoDetect!(i)).map((i) => i.productId))
+    } else {
+      // Manual dimensions: both vendors have public roadmaps and SBOM/CBOM delivery;
+      // only one (AWS-LC) is documented as supporting runtime algorithm swapping.
+      checkedProducts[d.id] =
+        d.id === 'crypto-agility' ? new Set(['aws-lc']) : new Set(items.map((i) => i.productId))
+    }
+  }
+  const weightOf = (dimId: string) => SCORECARD_DIMENSIONS.find((d) => d.id === dimId)?.weight ?? 0
+  const rows = computeVendorScorecards(items, checkedProducts, weightOf, {
+    useSlider: {},
+    sliderScores: {},
+  })
+  const totalProducts = rows.reduce((sum, r) => sum + r.productCount, 0)
+  const portfolioAverage =
+    totalProducts > 0
+      ? Math.round(rows.reduce((sum, r) => sum + r.overall * r.productCount, 0) / totalProducts)
+      : 0
+  const dimensionRows: ScorecardDimensionRow[] = SCORECARD_DIMENSIONS.map((d) => {
+    const checked = checkedProducts[d.id]?.size ?? 0
+    return {
+      id: d.id,
+      label: d.label,
+      score: items.length > 0 ? Math.round((checked / items.length) * 100) : 0,
+      weightPct: Math.round(d.weight * 100),
+      method: `${checked}/${items.length} products`,
+    }
+  })
+  return { rows, portfolioAverage, dimensionRows, productCount: items.length }
+}
+
+/**
+ * Sample supply-chain risk matrix (Wave 5, WP5.3) — 3 real, verified catalog
+ * products spanning 3 distinct infrastructure layers with mixed PQC status
+ * (aws-lc/Libraries: available; Entrust nShield/Hardware: available —
+ * also the ArchitecturePanel mid-size node and compliance-cert-check's A7285
+ * cert, for continuity across the tour; Microsoft Entra ID/Cloud: roadmap —
+ * so the matrix shows a real migration gap, not an all-green demo). Industry
+ * uses threatsData's OWN taxonomy string, 'Financial Services / Banking' —
+ * verified directly against the data, not assumed: the assessment-side label
+ * seedDemoOrg uses ('Finance & Banking') doesn't match threatsData's
+ * industry field at all, which would have silently produced zero threat
+ * matches and an empty Impact column. So Impact is computed from real
+ * threatsData, not left "not personalized".
+ *
+ * `vendorsByLayer` is built here with the same split-comma-layers logic
+ * useExecutiveModuleData uses — that hook itself is a wide, cross-page
+ * aggregator (assessment + compliance + timeline + more) not worth pulling
+ * into a synchronous sample-doc generator; this reproduces only the ~8 lines
+ * of layer-grouping it shares with the matrix, not the rest of the hook.
+ */
+function supplyChainMatrixSample() {
+  const industry = 'Financial Services / Banking'
+  const items = resolveProductNames(['aws-lc', 'entrust-nshield', 'microsoft-entra-id'])
+
+  const vendorsByLayer = new Map<string, SoftwareItem[]>()
+  for (const item of items) {
+    for (const layer of (item.infrastructureLayer || 'Other').split(',').map((l) => l.trim())) {
+      const existing = vendorsByLayer.get(layer)
+      if (existing) existing.push(item)
+      else vendorsByLayer.set(layer, [item])
+    }
+  }
+
+  const industryThreats = threatsData.filter((t) =>
+    t.industry.toLowerCase().includes(industry.toLowerCase())
+  )
+
+  const layerStats = computeLayerStats(vendorsByLayer, industryThreats, true, null)
+  const matrixEntries = computeMatrixEntries(layerStats)
+  const noRiskLayers = computeNoRiskLayers(layerStats)
+
+  const dependencyRelations = buildDependencyRelations(
+    [...(vendorsByLayer.get('Libraries') ?? []), ...(vendorsByLayer.get('Hardware') ?? [])],
+    items
+  )
+
+  const cbomBuckets: Record<CSWP39AssetClass, SoftwareItem[]> = {
+    Code: [],
+    Library: [],
+    Application: [],
+    File: [],
+    Protocol: [],
+    System: [],
+  }
+  for (const item of items) cbomBuckets[mapToAssetClass(item)].push(item)
+
+  const totalProducts = items.length
+  const pqcReadyCount = items.filter((i) => isPqcReady(i.pqcSupport)).length
+  const fipsValidatedCount = items.filter((i) => isFips1403Validated(i.fipsValidated)).length
+
+  return buildSupplyChainMarkdown({
+    industry,
+    country: 'United States',
+    totalProducts,
+    overallPqcPct: totalProducts > 0 ? Math.round((pqcReadyCount / totalProducts) * 100) : 0,
+    pqcReadyCount,
+    overallFipsPct: totalProducts > 0 ? Math.round((fipsValidatedCount / totalProducts) * 100) : 0,
+    fipsValidatedCount,
+    layerStats,
+    matrixEntries,
+    noRiskLayers,
+    hasIndustryContext: true,
+    industryContextHint: 'Step 1',
+    dependencyRelations,
+    cbomBuckets,
+    pipelineSources: '',
+    refreshCadence: '',
+    cmdbMapping: '',
+  })
+}
+
 /** Real-tool generators for the Command Center tools that have no other
  *  presence in Learn/Simulation (no shared component to reuse), keyed by
  *  the `ExecutiveDocumentType` the tool saves as. Checked first by
@@ -340,4 +489,37 @@ export const REAL_DOC_GENERATORS: Partial<
     title: 'Data-at-Rest Strategy',
     data: buildDataAtRestStrategy(dataAtRestStrategyState(sector)),
   }),
+  // Wave 5 (WP5.3) — same sample fill the real tool's own auto-run demo uses
+  // (CONTRACT_DEMO_FILL), rendered through the real renderContractPreview().
+  // Sector-independent by design: contract clause language doesn't meaningfully
+  // vary by industry the way cost/roadmap numbers do.
+  'contract-clause': () => ({
+    title: 'PQC Vendor Contract Requirements',
+    data: renderContractPreview(CONTRACT_DEMO_FILL),
+  }),
+  // Wave 5 (WP5.3) — sector-independent: the sample is 2 real, verified
+  // catalog vendors, not sector-flavored narrative.
+  'vendor-scorecard': () => {
+    const { rows, portfolioAverage, dimensionRows, productCount } = vendorScorecardSample()
+    return {
+      title: `Vendor PQC Readiness Scorecard (${portfolioAverage}/100)`,
+      data: buildScorecardMarkdown(portfolioAverage, productCount, dimensionRows, rows, {
+        scannerNotes: 'Keyfactor AgileSec — code + traffic scanning across the vendor fleet',
+        cveNotes: 'NVD subscription + CISA KEV alerts; library-EoL tracker via Snyk',
+        siemNotes: 'Splunk rule alerting on TLS handshakes negotiating non-CNSA suites',
+        ztNotes: 'Cloudflare Zero Trust policy denying RSA-PKCS#1 v1.5 inbound',
+      }),
+    }
+  },
+  // Wave 5 (WP5.3, completed 07182026) — sector-independent: 3 real catalog
+  // products across 3 layers with a genuine migration gap (see
+  // supplyChainMatrixSample's own comment). Was deliberately deferred when
+  // contract-clause/vendor-scorecard shipped, given SupplyChainRiskMatrix's
+  // materially larger derived-state surface; closed out once that surface was
+  // cleanly extractable into computeLayerStats/buildSupplyChainMarkdown
+  // without touching the wide, cross-page useExecutiveModuleData hook.
+  'supply-chain-matrix': () => {
+    const md = supplyChainMatrixSample()
+    return { title: 'Supply Chain PQC Risk Matrix', data: md }
+  },
 }

@@ -13,6 +13,7 @@ import { buildCbomDocument, downloadCbomJson } from '@/services/cbom/cycloneDx'
 import { isPqcReady, isFips1403Validated } from '@/data/kpiCatalog'
 import { cpeByProduct } from '@/data/cpeXrefData'
 import { loadCveSnapshot } from '@/data/cveSnapshotData'
+import type { ThreatData } from '@/data/threatsData'
 import { ProductRow } from '@/components/Migrate/Workbench/ProductRow'
 import { ProductDetail } from '@/components/Migrate/Workbench/ProductDetail'
 import {
@@ -42,12 +43,18 @@ import { ExportableArtifact } from '../../../common/executive'
 // names example asset types (application codes, libraries, software,
 // hardware, firmware, user-generated content, communication protocols,
 // enterprise services, systems), but not this six-class grouping.
-type CSWP39AssetClass = 'Code' | 'Library' | 'Application' | 'File' | 'Protocol' | 'System'
+export type CSWP39AssetClass = 'Code' | 'Library' | 'Application' | 'File' | 'Protocol' | 'System'
 
-function mapToAssetClass(item: SoftwareItem): CSWP39AssetClass {
+export function mapToAssetClass(item: SoftwareItem): CSWP39AssetClass {
   const cat = (item.categoryName || '').toLowerCase()
   if (
-    cat.includes('cryptographic library') ||
+    // 'librar' (not 'library') stems both singular and plural — found while
+    // building the exec-tour sample doc (WP5.3): 141 real catalog products
+    // (81 "Cryptographic Libraries" + 60 "Post-Quantum Cryptography
+    // Libraries") were silently falling through to the generic 'System'
+    // bucket because the previous checks only matched the singular form.
+    cat.includes('cryptographic librar') ||
+    cat.includes('cryptography librar') ||
     cat.includes('cryptographic sdk') ||
     cat.includes('jwt librar') ||
     cat.includes('cryptographic software/librar')
@@ -91,7 +98,7 @@ function mapToAssetClass(item: SoftwareItem): CSWP39AssetClass {
   return 'System'
 }
 
-function resolveProductNames(keys: string[]): SoftwareItem[] {
+export function resolveProductNames(keys: string[]): SoftwareItem[] {
   const keySet = new Set(keys)
   return softwareData.filter((s) => keySet.has(s.productId))
 }
@@ -213,12 +220,12 @@ const MATRIX_IMPACT_LABELS = ['Negligible', 'Minor', 'Moderate', 'Major', 'Criti
  *  5×5 grid below has no row/column for level 0 — callers must exclude
  *  level-0 layers from the plotted grid and surface them separately (see the
  *  "no risk" strip in the render). */
-function toMatrixLevel(fraction: number): number {
+export function toMatrixLevel(fraction: number): number {
   if (fraction <= 0) return 0
   return Math.min(5, Math.max(1, Math.ceil(fraction * 5)))
 }
 
-function isCriticalOrHighPriority(priority: string): boolean {
+export function isCriticalOrHighPriority(priority: string): boolean {
   const p = (priority || '').toLowerCase()
   return p === 'critical' || p === 'high'
 }
@@ -239,7 +246,119 @@ function countLayerCves(products: SoftwareItem[], snapshot: CveSnapshot | null):
   return total
 }
 
-function matrixRiskLevel(score: number): 'Critical' | 'High' | 'Medium' | 'Low' {
+export interface LayerStat {
+  layerId: string
+  products: SoftwareItem[]
+  total: number
+  pqcReady: number
+  fipsValidated: number
+  hybridSupport: number
+  /** Count of products flagged Critical/High `pqcMigrationPriority` by
+   *  the catalog curator. Real data, surfaced as its own "Priority"
+   *  badge — no longer used as the Impact axis input (see below). */
+  criticalHigh: number
+  /** 1–5, or 0 when the layer is fully PQC-ready: share of the layer not
+   *  yet PQC-ready. Labeled "Migration Gap" in the UI, not "Likelihood"
+   *  — see the comment above MATRIX_LIKELIHOOD_LABELS. */
+  likelihood: number
+  threatMatches: number
+  /** Known NVD CVEs (MEDIUM+) across the layer's products, per the static
+   *  snapshot — see countLayerCves. */
+  cveCount: number
+  /** null when hasIndustryContext is false ("not personalized" — Impact
+   *  can't be computed from real threat data without an industry). */
+  impact: number | null
+  riskScore: number | null
+}
+
+/**
+ * Per-layer Migration-Gap × Impact statistics — the shared computation behind
+ * both the live SupplyChainRiskMatrix component and its exec-tour sample doc
+ * (realToolDocs.ts). Impact is derived from the share of the given industry's
+ * threats that name each layer (via layerKeywordRegex) — a genuinely separate
+ * signal from the catalog's own `pqcMigrationPriority` field, to avoid the
+ * circular reasoning of using a priority judgment to justify itself (see the
+ * `criticalHigh` field above). `hasIndustryContext=false` leaves impact/
+ * riskScore null rather than silently falling back to criticalHigh, which
+ * would reintroduce that exact circularity.
+ */
+export function computeLayerStats(
+  vendorsByLayer: Map<string, SoftwareItem[]>,
+  industryThreats: ThreatData[],
+  hasIndustryContext: boolean,
+  cveSnapshot: CveSnapshot | null
+): LayerStat[] {
+  const layerThreatMatchCounts = new Map<string, number>()
+  for (const layer of LAYERS) {
+    const regex = layerKeywordRegex(layer)
+    const count = industryThreats.filter(
+      (t) =>
+        regex.test(t.description || '') ||
+        regex.test(t.cryptoAtRisk || '') ||
+        regex.test(t.threatId || '')
+    ).length
+    layerThreatMatchCounts.set(layer.id, count)
+  }
+
+  // Ordered layers from LAYERS constant first
+  const orderedIds = LAYERS.map((l) => l.id)
+  // Add any extra layer IDs not in LAYERS
+  const extraIds = Array.from(vendorsByLayer.keys())
+    .filter((id) => !LAYER_MAP.has(id))
+    .sort()
+  const allIds = [...orderedIds, ...extraIds]
+
+  const base: Omit<LayerStat, 'impact' | 'riskScore'>[] = []
+
+  for (const layerId of allIds) {
+    const products = vendorsByLayer.get(layerId)
+    if (!products || products.length === 0) continue
+
+    const total = products.length
+    const pqcReady = products.filter((p) => isPqcReady(p.pqcSupport)).length
+    const fipsValid = products.filter((p) => isFips1403Validated(p.fipsValidated)).length
+    const hybrid = products.filter((p) => {
+      const desc = (p.pqcCapabilityDescription || '').toLowerCase()
+      const support = (p.pqcSupport || '').toLowerCase()
+      return desc.includes('hybrid') || support.includes('hybrid')
+    }).length
+    const criticalHigh = products.filter((p) =>
+      isCriticalOrHighPriority(p.pqcMigrationPriority)
+    ).length
+
+    const gapCount = total - pqcReady
+    const likelihood = toMatrixLevel(total > 0 ? gapCount / total : 0)
+
+    base.push({
+      layerId,
+      products,
+      total,
+      pqcReady,
+      fipsValidated: fipsValid,
+      hybridSupport: hybrid,
+      criticalHigh,
+      likelihood,
+      threatMatches: layerThreatMatchCounts.get(layerId) ?? 0,
+      cveCount: countLayerCves(products, cveSnapshot),
+    })
+  }
+
+  // Total threat matches across the layers actually shown, NOT all of
+  // LAYERS — a layer with zero products shouldn't dilute the denominator
+  // for the layers that are actually on screen.
+  const totalThreatMatches = base.reduce((sum, s) => sum + s.threatMatches, 0)
+
+  return base.map((s) => {
+    if (!hasIndustryContext) {
+      return { ...s, impact: null, riskScore: null }
+    }
+    const impact = toMatrixLevel(totalThreatMatches > 0 ? s.threatMatches / totalThreatMatches : 0)
+    const riskScore = s.likelihood > 0 && impact > 0 ? s.likelihood * impact : 0
+    return { ...s, impact, riskScore }
+  })
+}
+
+export function matrixRiskLevel(score: number): 'Critical' | 'High' | 'Medium' | 'Low' {
   if (score >= 20) return 'Critical'
   if (score >= 12) return 'High'
   if (score >= 6) return 'Medium'
@@ -253,7 +372,7 @@ function matrixBadgeClasses(score: number): string {
   return 'bg-status-success/10 text-status-success border-status-success/20'
 }
 
-interface LayerMatrixEntry {
+export interface LayerMatrixEntry {
   layerId: string
   label: string
   likelihood: number
@@ -266,7 +385,7 @@ interface LayerMatrixEntry {
  * plus the comma-separated terms already in its `description` (no new
  * taxonomy — reuses metadata the layer already carries in LAYERS).
  */
-function layerKeywordRegex(layer: { label: string; description: string }): RegExp {
+export function layerKeywordRegex(layer: { label: string; description: string }): RegExp {
   const terms = [layer.label, ...layer.description.split(/,\s*/)]
     .map((t) => t.trim())
     .filter((t) => t.length >= 4)
@@ -279,7 +398,7 @@ function layerKeywordRegex(layer: { label: string; description: string }): RegEx
  *  signal — short names (e.g. "AES") would otherwise false-positive constantly. */
 const DEPENDENCY_NAME_MIN_LENGTH = 5
 
-interface DependencyRelation {
+export interface DependencyRelation {
   provider: SoftwareItem
   dependents: SoftwareItem[]
 }
@@ -288,7 +407,7 @@ interface DependencyRelation {
  *  own catalog description/brief mentioning a Library- or Hardware-layer product by
  *  name (e.g. "BoringSSL" mentioning "OpenSSL", "Thales payShield 10K" mentioning
  *  "Thales Luna HSM"). Grounded entirely in existing SoftwareItem text fields. */
-function buildDependencyRelations(
+export function buildDependencyRelations(
   providers: SoftwareItem[],
   consumers: SoftwareItem[]
 ): DependencyRelation[] {
@@ -310,6 +429,190 @@ function buildDependencyRelations(
     if (dependents.length > 0) relations.push({ provider, dependents })
   }
   return relations.sort((a, b) => b.dependents.length - a.dependents.length)
+}
+
+/** Layers with a real, non-null score placed on the 5×5 grid. The grid's
+ *  row/col math (`5 - likelihood`, `impact - 1`) has no slot for level 0 on
+ *  either axis, so a layer with a zero Migration Gap or zero Impact can't be
+ *  plotted — those belong in {@link computeNoRiskLayers} instead of being
+ *  silently dropped or floored back up to a fake nonzero score. */
+export function computeMatrixEntries(layerStats: LayerStat[]): LayerMatrixEntry[] {
+  return layerStats
+    .filter(
+      (stat): stat is LayerStat & { impact: number; riskScore: number } =>
+        stat.impact !== null && stat.likelihood > 0 && stat.impact > 0
+    )
+    .map((stat) => ({
+      layerId: stat.layerId,
+      label: LAYER_MAP.get(stat.layerId)?.label ?? stat.layerId,
+      likelihood: stat.likelihood,
+      impact: stat.impact,
+      score: stat.riskScore,
+    }))
+}
+
+/** Layers with a real, computed (non-null) score of exactly 0 on either
+ *  axis — fully PQC-ready and/or matching no industry threats. Not a bug to
+ *  hide: shown as its own "no risk" list, attached directly to the grid,
+ *  with layers named (not just counted) so it reads as "the rest of the
+ *  picture," not "these dropped out." */
+export function computeNoRiskLayers(layerStats: LayerStat[]): LayerStat[] {
+  return layerStats.filter(
+    (stat) => stat.impact !== null && (stat.likelihood === 0 || stat.impact === 0)
+  )
+}
+
+export interface SupplyChainMarkdownInput {
+  industry: string
+  country: string
+  totalProducts: number
+  overallPqcPct: number
+  pqcReadyCount: number
+  overallFipsPct: number
+  fipsValidatedCount: number
+  layerStats: LayerStat[]
+  matrixEntries: LayerMatrixEntry[]
+  noRiskLayers: LayerStat[]
+  hasIndustryContext: boolean
+  /** Where to tell the reader to go personalize (differs by the live tool's
+   *  mount point — 'Step 1' in the Learn-module wizard, 'the Assess page' on
+   *  /migrate). Unused when hasIndustryContext is true. */
+  industryContextHint: string
+  dependencyRelations: DependencyRelation[]
+  cbomBuckets: Record<CSWP39AssetClass, SoftwareItem[]>
+  pipelineSources: string
+  refreshCadence: string
+  cmdbMapping: string
+}
+
+/**
+ * Renders the Supply Chain PQC Risk Matrix export — the shared markdown
+ * builder behind both the live tool's "Export" button and its exec-tour
+ * sample doc (realToolDocs.ts). Pure formatting only: every number/list here
+ * is already computed by the caller (computeLayerStats, computeMatrixEntries,
+ * computeNoRiskLayers, buildDependencyRelations, mapToAssetClass) — a fix to
+ * any of those shows up here automatically.
+ */
+export function buildSupplyChainMarkdown(input: SupplyChainMarkdownInput): string {
+  const {
+    industry,
+    country,
+    totalProducts,
+    overallPqcPct,
+    pqcReadyCount,
+    overallFipsPct,
+    fipsValidatedCount,
+    layerStats,
+    matrixEntries,
+    noRiskLayers,
+    hasIndustryContext,
+    industryContextHint,
+    dependencyRelations,
+    cbomBuckets,
+    pipelineSources,
+    refreshCadence,
+    cmdbMapping,
+  } = input
+
+  let md = '# Supply Chain PQC Risk Matrix\n\n'
+  md += `**Generated:** ${new Date().toLocaleDateString()}\n`
+  if (industry) md += `**Industry:** ${industry}\n`
+  if (country) md += `**Country:** ${country}\n`
+  md += `**Products Analyzed:** ${totalProducts}\n\n`
+
+  md += '## Summary\n\n'
+  md += `| Metric | Value |\n|--------|-------|\n`
+  md += `| PQC Ready | ${overallPqcPct}% (${pqcReadyCount}/${totalProducts}) |\n`
+  md += `| FIPS Validated | ${overallFipsPct}% (${fipsValidatedCount}/${totalProducts}) |\n`
+  md += `| Infrastructure Layers | ${layerStats.length} |\n\n`
+
+  md += '## Layer Breakdown\n\n'
+  for (const stat of layerStats) {
+    const layerDef = LAYER_MAP.get(stat.layerId)
+    const label = layerDef?.label ?? stat.layerId
+    const gapCount = stat.total - stat.pqcReady
+    md += `### ${label} (${stat.total} products)\n\n`
+    md += `| Metric | Count | % |\n|--------|-------|---|\n`
+    md += `| PQC Ready | ${stat.pqcReady} | ${stat.total > 0 ? Math.round((stat.pqcReady / stat.total) * 100) : 0}% |\n`
+    md += `| FIPS Validated | ${stat.fipsValidated} | ${stat.total > 0 ? Math.round((stat.fipsValidated / stat.total) * 100) : 0}% |\n`
+    md += `| Hybrid Support | ${stat.hybridSupport} | ${stat.total > 0 ? Math.round((stat.hybridSupport / stat.total) * 100) : 0}% |\n`
+    md += `| Migration Gap | ${gapCount} | ${stat.total > 0 ? Math.round((gapCount / stat.total) * 100) : 0}% |\n`
+    md += `| Priority (Critical/High, catalog-curated) | ${stat.criticalHigh} | ${stat.total > 0 ? Math.round((stat.criticalHigh / stat.total) * 100) : 0}% |\n`
+    if (stat.impact === null) {
+      md += `| Migration Gap × Impact | ${stat.likelihood} × not personalized | — (select an industry to compute Impact) |\n\n`
+    } else {
+      md += `| Migration Gap × Impact | ${stat.likelihood} × ${stat.impact} | Score ${stat.riskScore} (${stat.likelihood === 0 || stat.impact === 0 ? 'No risk — not plotted on grid' : matrixRiskLevel(stat.riskScore ?? 0)}) |\n\n`
+    }
+  }
+
+  md += '## Migration Gap × Impact Risk Matrix\n\n'
+  if (!hasIndustryContext) {
+    md += `_Not personalized: select an industry/country in ${industryContextHint} to compute Impact from real threat data. Migration Gap alone is shown per layer above._\n\n`
+  } else {
+    md +=
+      '_Migration Gap derives from the share of each layer not yet PQC-ready. Impact derives from the share of this industry\'s supply-chain-relevant threats that name each layer — an independent signal from the separately-authored threats catalog, not the catalog\'s own `pqcMigrationPriority` field (shown separately above as "Priority"). Both are heuristics, not validated risk measurements — see the methodology note above the grid._\n\n'
+    md += '| Layer | Migration Gap (1-5) | Impact (1-5) | Score | Level |\n|---|---|---|---|---|\n'
+    for (const entry of [...matrixEntries].sort((a, b) => b.score - a.score)) {
+      md += `| ${entry.label} | ${entry.likelihood} | ${entry.impact} | ${entry.score} | ${matrixRiskLevel(entry.score)} |\n`
+    }
+    if (noRiskLayers.length > 0) {
+      md += `\n_No risk — not plotted (0 on at least one axis):_ ${noRiskLayers.map((s) => LAYER_MAP.get(s.layerId)?.label ?? s.layerId).join(', ')}\n`
+    }
+  }
+  md += '\n'
+
+  md += '## Product Dependencies\n\n'
+  if (dependencyRelations.length === 0) {
+    md +=
+      '_No text-detected dependencies between catalog products in this view (a consumer product must reference a Library/Hardware-layer product by name in its own description)._\n\n'
+  } else {
+    md += '| Library / HSM | Depended on by |\n|---|---|\n'
+    for (const rel of dependencyRelations) {
+      md += `| ${rel.provider.softwareName} | ${rel.dependents.map((d) => d.softwareName).join(', ')} |\n`
+    }
+    md += '\n'
+  }
+
+  // This tool's own 6-class CBOM grouping, informed by CSWP.39 §5.3's
+  // asset-centric approach (not a taxonomy CSWP.39 itself defines).
+  md += '## CBOM (6 asset classes, informed by CSWP.39 §5.3)\n\n'
+  const classOrder: CSWP39AssetClass[] = [
+    'Code',
+    'Library',
+    'Application',
+    'File',
+    'Protocol',
+    'System',
+  ]
+  for (const cls of classOrder) {
+    const items = cbomBuckets[cls]
+    md += `### ${cls} (${items.length})\n\n`
+    if (items.length === 0) {
+      md += '_No products mapped to this asset class._\n\n'
+      continue
+    }
+    md += `| Product | Vendor | PQC Support | FIPS |\n|---|---|---|---|\n`
+    for (const item of items) {
+      const vendorName =
+        (item.vendorId && vendorMap.get(item.vendorId)?.vendorName) || item.vendorId || '—'
+      md += `| ${item.softwareName} | ${vendorName} | ${item.pqcSupport || 'Unknown'} | ${item.fipsValidated || '—'} |\n`
+    }
+    md += '\n'
+  }
+
+  // CSWP.39 §5.3 — Pipeline + Refresh + CMDB metadata.
+  md += '## Pipeline Sources (CSWP.39 §5.3)\n\n'
+  md += pipelineSources.trim() || '_No upstream SBOM/CMDB sources documented yet._'
+  md += '\n\n'
+
+  md += '## Refresh Cadence\n\n'
+  md += `**Target cadence:** ${refreshCadence || 'Not specified'}\n\n`
+
+  md += '## CMDB → CBOM Mapping\n\n'
+  md += cmdbMapping.trim() || '_No CMDB-to-CBOM mapping documented yet._'
+  md += '\n\n'
+
+  return md
 }
 
 function buildLayerEntriesMap(entries: LayerMatrixEntry[]): Map<string, LayerMatrixEntry[]> {
@@ -506,139 +809,19 @@ export const SupplyChainRiskMatrix: React.FC<{
   // reused to justify itself.
   const hasIndustryContext = industry.trim().length > 0
 
-  const layerThreatMatchCounts = useMemo(() => {
-    const counts = new Map<string, number>()
-    for (const layer of LAYERS) {
-      const regex = layerKeywordRegex(layer)
-      const count = industryThreats.filter(
-        (t) =>
-          regex.test(t.description || '') ||
-          regex.test(t.cryptoAtRisk || '') ||
-          regex.test(t.threatId || '')
-      ).length
-      counts.set(layer.id, count)
-    }
-    return counts
-  }, [industryThreats])
-
-  const layerStats = useMemo(() => {
-    // Ordered layers from LAYERS constant first
-    const orderedIds = LAYERS.map((l) => l.id)
-    // Add any extra layer IDs not in LAYERS
-    const extraIds = Array.from(vendorsByLayer.keys())
-      .filter((id) => !LAYER_MAP.has(id))
-      .sort()
-    const allIds = [...orderedIds, ...extraIds]
-
-    const base: {
-      layerId: string
-      products: SoftwareItem[]
-      total: number
-      pqcReady: number
-      fipsValidated: number
-      hybridSupport: number
-      /** Count of products flagged Critical/High `pqcMigrationPriority` by
-       *  the catalog curator. Real data, surfaced as its own "Priority"
-       *  badge — no longer used as the Impact axis input (see above). */
-      criticalHigh: number
-      /** 1–5, or 0 when the layer is fully PQC-ready: share of the layer not
-       *  yet PQC-ready. Labeled "Migration Gap" in the UI, not "Likelihood"
-       *  — see the comment above MATRIX_LIKELIHOOD_LABELS. */
-      likelihood: number
-      threatMatches: number
-      /** Known NVD CVEs (MEDIUM+) across the layer's products, per the static
-       *  snapshot — see countLayerCves. */
-      cveCount: number
-    }[] = []
-
-    for (const layerId of allIds) {
-      const products = vendorsByLayer.get(layerId)
-      if (!products || products.length === 0) continue
-
-      const total = products.length
-      const pqcReady = products.filter((p) => isPqcReady(p.pqcSupport)).length
-      const fipsValid = products.filter((p) => isFips1403Validated(p.fipsValidated)).length
-      const hybrid = products.filter((p) => {
-        const desc = (p.pqcCapabilityDescription || '').toLowerCase()
-        const support = (p.pqcSupport || '').toLowerCase()
-        return desc.includes('hybrid') || support.includes('hybrid')
-      }).length
-      const criticalHigh = products.filter((p) =>
-        isCriticalOrHighPriority(p.pqcMigrationPriority)
-      ).length
-
-      const gapCount = total - pqcReady
-      const likelihood = toMatrixLevel(total > 0 ? gapCount / total : 0)
-
-      base.push({
-        layerId,
-        products,
-        total,
-        pqcReady,
-        fipsValidated: fipsValid,
-        hybridSupport: hybrid,
-        criticalHigh,
-        likelihood,
-        threatMatches: layerThreatMatchCounts.get(layerId) ?? 0,
-        cveCount: countLayerCves(products, cveSnapshot),
-      })
-    }
-
-    // Total threat matches across the layers actually shown, NOT all of
-    // LAYERS — a layer with zero products shouldn't dilute the denominator
-    // for the layers that are actually on screen.
-    const totalThreatMatches = base.reduce((sum, s) => sum + s.threatMatches, 0)
-
-    return base.map((s) => {
-      if (!hasIndustryContext) {
-        // Explicit "not personalized" state — do NOT silently fall back to
-        // criticalHigh/pqcMigrationPriority here, that would reintroduce the
-        // exact circularity this item exists to remove.
-        return { ...s, impact: null as number | null, riskScore: null as number | null }
-      }
-      const impact = toMatrixLevel(
-        totalThreatMatches > 0 ? s.threatMatches / totalThreatMatches : 0
-      )
-      const riskScore = s.likelihood > 0 && impact > 0 ? s.likelihood * impact : 0
-      return { ...s, impact, riskScore }
-    })
-  }, [vendorsByLayer, layerThreatMatchCounts, hasIndustryContext, cveSnapshot])
+  const layerStats = useMemo(
+    () => computeLayerStats(vendorsByLayer, industryThreats, hasIndustryContext, cveSnapshot),
+    [vendorsByLayer, industryThreats, hasIndustryContext, cveSnapshot]
+  )
 
   /** Layers with a real, non-null score placed on the 5×5 grid. The grid's
    *  row/col math (`5 - likelihood`, `impact - 1`) has no slot for level 0
    *  on either axis, so a layer with a zero Migration Gap or zero Impact
    *  can't be plotted — those are listed separately below instead of being
    *  silently dropped or floored back up to a fake nonzero score. */
-  const matrixEntries = useMemo<LayerMatrixEntry[]>(
-    () =>
-      layerStats
-        .filter(
-          (stat): stat is typeof stat & { impact: number; riskScore: number } =>
-            stat.impact !== null && stat.likelihood > 0 && stat.impact > 0
-        )
-        .map((stat) => ({
-          layerId: stat.layerId,
-          label: LAYER_MAP.get(stat.layerId)?.label ?? stat.layerId,
-          likelihood: stat.likelihood,
-          impact: stat.impact,
-          score: stat.riskScore,
-        })),
-    [layerStats]
-  )
+  const matrixEntries = useMemo(() => computeMatrixEntries(layerStats), [layerStats])
   const matrixEntriesMap = useMemo(() => buildLayerEntriesMap(matrixEntries), [matrixEntries])
-
-  /** Layers with a real, computed (non-null) score of exactly 0 on either
-   *  axis — fully PQC-ready and/or matching no industry threats. Not a bug
-   *  to hide: shown as its own "no risk" list, attached directly to the
-   *  grid, with layers named (not just counted) so it reads as "the rest of
-   *  the picture," not "these dropped out." */
-  const noRiskLayers = useMemo(
-    () =>
-      layerStats.filter(
-        (stat) => stat.impact !== null && (stat.likelihood === 0 || stat.impact === 0)
-      ),
-    [layerStats]
-  )
+  const noRiskLayers = useMemo(() => computeNoRiskLayers(layerStats), [layerStats])
 
   // Real product-to-product dependencies: Library/Hardware-layer products
   // ("providers") that other catalog products ("consumers") reference by name
@@ -657,125 +840,47 @@ export const SupplyChainRiskMatrix: React.FC<{
   const overallFipsPct =
     totalProducts > 0 ? Math.round((fipsValidatedCount / totalProducts) * 100) : 0
 
-  const exportMarkdown = useMemo(() => {
-    let md = '# Supply Chain PQC Risk Matrix\n\n'
-    md += `**Generated:** ${new Date().toLocaleDateString()}\n`
-    if (industry) md += `**Industry:** ${industry}\n`
-    if (country) md += `**Country:** ${country}\n`
-    md += `**Products Analyzed:** ${totalProducts}\n\n`
-
-    md += '## Summary\n\n'
-    md += `| Metric | Value |\n|--------|-------|\n`
-    md += `| PQC Ready | ${overallPqcPct}% (${pqcReadyCount}/${totalProducts}) |\n`
-    md += `| FIPS Validated | ${overallFipsPct}% (${fipsValidatedCount}/${totalProducts}) |\n`
-    md += `| Infrastructure Layers | ${layerStats.length} |\n\n`
-
-    md += '## Layer Breakdown\n\n'
-    for (const stat of layerStats) {
-      const layerDef = LAYER_MAP.get(stat.layerId)
-      const label = layerDef?.label ?? stat.layerId
-      const gapCount = stat.total - stat.pqcReady
-      md += `### ${label} (${stat.total} products)\n\n`
-      md += `| Metric | Count | % |\n|--------|-------|---|\n`
-      md += `| PQC Ready | ${stat.pqcReady} | ${stat.total > 0 ? Math.round((stat.pqcReady / stat.total) * 100) : 0}% |\n`
-      md += `| FIPS Validated | ${stat.fipsValidated} | ${stat.total > 0 ? Math.round((stat.fipsValidated / stat.total) * 100) : 0}% |\n`
-      md += `| Hybrid Support | ${stat.hybridSupport} | ${stat.total > 0 ? Math.round((stat.hybridSupport / stat.total) * 100) : 0}% |\n`
-      md += `| Migration Gap | ${gapCount} | ${stat.total > 0 ? Math.round((gapCount / stat.total) * 100) : 0}% |\n`
-      md += `| Priority (Critical/High, catalog-curated) | ${stat.criticalHigh} | ${stat.total > 0 ? Math.round((stat.criticalHigh / stat.total) * 100) : 0}% |\n`
-      if (stat.impact === null) {
-        md += `| Migration Gap × Impact | ${stat.likelihood} × not personalized | — (select an industry to compute Impact) |\n\n`
-      } else {
-        md += `| Migration Gap × Impact | ${stat.likelihood} × ${stat.impact} | Score ${stat.riskScore} (${stat.likelihood === 0 || stat.impact === 0 ? 'No risk — not plotted on grid' : matrixRiskLevel(stat.riskScore ?? 0)}) |\n\n`
-      }
-    }
-
-    md += '## Migration Gap × Impact Risk Matrix\n\n'
-    if (!hasIndustryContext) {
-      md += `_Not personalized: select an industry/country in ${industryContextHint} to compute Impact from real threat data. Migration Gap alone is shown per layer above._\n\n`
-    } else {
-      md +=
-        '_Migration Gap derives from the share of each layer not yet PQC-ready. Impact derives from the share of this industry\'s supply-chain-relevant threats that name each layer — an independent signal from the separately-authored threats catalog, not the catalog\'s own `pqcMigrationPriority` field (shown separately above as "Priority"). Both are heuristics, not validated risk measurements — see the methodology note above the grid._\n\n'
-      md +=
-        '| Layer | Migration Gap (1-5) | Impact (1-5) | Score | Level |\n|---|---|---|---|---|\n'
-      for (const entry of [...matrixEntries].sort((a, b) => b.score - a.score)) {
-        md += `| ${entry.label} | ${entry.likelihood} | ${entry.impact} | ${entry.score} | ${matrixRiskLevel(entry.score)} |\n`
-      }
-      if (noRiskLayers.length > 0) {
-        md += `\n_No risk — not plotted (0 on at least one axis):_ ${noRiskLayers.map((s) => LAYER_MAP.get(s.layerId)?.label ?? s.layerId).join(', ')}\n`
-      }
-    }
-    md += '\n'
-
-    md += '## Product Dependencies\n\n'
-    if (dependencyRelations.length === 0) {
-      md +=
-        '_No text-detected dependencies between catalog products in this view (a consumer product must reference a Library/Hardware-layer product by name in its own description)._\n\n'
-    } else {
-      md += '| Library / HSM | Depended on by |\n|---|---|\n'
-      for (const rel of dependencyRelations) {
-        md += `| ${rel.provider.softwareName} | ${rel.dependents.map((d) => d.softwareName).join(', ')} |\n`
-      }
-      md += '\n'
-    }
-
-    // This tool's own 6-class CBOM grouping, informed by CSWP.39 §5.3's
-    // asset-centric approach (not a taxonomy CSWP.39 itself defines).
-    md += '## CBOM (6 asset classes, informed by CSWP.39 §5.3)\n\n'
-    const classOrder: CSWP39AssetClass[] = [
-      'Code',
-      'Library',
-      'Application',
-      'File',
-      'Protocol',
-      'System',
+  const exportMarkdown = useMemo(
+    () =>
+      buildSupplyChainMarkdown({
+        industry,
+        country,
+        totalProducts,
+        overallPqcPct,
+        pqcReadyCount,
+        overallFipsPct,
+        fipsValidatedCount,
+        layerStats,
+        matrixEntries,
+        noRiskLayers,
+        hasIndustryContext,
+        industryContextHint,
+        dependencyRelations,
+        cbomBuckets,
+        pipelineSources,
+        refreshCadence,
+        cmdbMapping,
+      }),
+    [
+      industry,
+      country,
+      totalProducts,
+      overallPqcPct,
+      pqcReadyCount,
+      overallFipsPct,
+      fipsValidatedCount,
+      layerStats,
+      matrixEntries,
+      noRiskLayers,
+      hasIndustryContext,
+      industryContextHint,
+      dependencyRelations,
+      cbomBuckets,
+      pipelineSources,
+      refreshCadence,
+      cmdbMapping,
     ]
-    for (const cls of classOrder) {
-      const items = cbomBuckets[cls]
-      md += `### ${cls} (${items.length})\n\n`
-      if (items.length === 0) {
-        md += '_No products mapped to this asset class._\n\n'
-        continue
-      }
-      md += `| Product | Vendor | PQC Support | FIPS |\n|---|---|---|---|\n`
-      for (const item of items) {
-        const vendorName =
-          (item.vendorId && vendorMap.get(item.vendorId)?.vendorName) || item.vendorId || '—'
-        md += `| ${item.softwareName} | ${vendorName} | ${item.pqcSupport || 'Unknown'} | ${item.fipsValidated || '—'} |\n`
-      }
-      md += '\n'
-    }
-
-    // CSWP.39 §5.3 — Pipeline + Refresh + CMDB metadata.
-    md += '## Pipeline Sources (CSWP.39 §5.3)\n\n'
-    md += pipelineSources.trim() || '_No upstream SBOM/CMDB sources documented yet._'
-    md += '\n\n'
-
-    md += '## Refresh Cadence\n\n'
-    md += `**Target cadence:** ${refreshCadence || 'Not specified'}\n\n`
-
-    md += '## CMDB → CBOM Mapping\n\n'
-    md += cmdbMapping.trim() || '_No CMDB-to-CBOM mapping documented yet._'
-    md += '\n\n'
-
-    return md
-  }, [
-    industry,
-    country,
-    totalProducts,
-    overallPqcPct,
-    pqcReadyCount,
-    overallFipsPct,
-    fipsValidatedCount,
-    layerStats,
-    matrixEntries,
-    noRiskLayers,
-    hasIndustryContext,
-    dependencyRelations,
-    cbomBuckets,
-    pipelineSources,
-    refreshCadence,
-    cmdbMapping,
-  ])
+  )
 
   // A real, schema-valid CycloneDX 1.7 CBOM (shared emitter). Each product maps
   // through the same SoftwareItem adapter the Migrate export uses, tagged with its

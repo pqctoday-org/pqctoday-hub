@@ -129,8 +129,11 @@ const CONTRACT_SECTIONS: ArtifactSection[] = [
         type: 'select',
         placeholder: 'Select format',
         options: [
-          { value: 'cyclonedx-1.6', label: 'CycloneDX 1.6+ (with crypto extension)' },
-          { value: 'cyclonedx-1.5', label: 'CycloneDX 1.5' },
+          {
+            value: 'cyclonedx-1.7',
+            label: 'CycloneDX 1.7 (current — cryptoProperties + Citations)',
+          },
+          { value: 'cyclonedx-1.6', label: 'CycloneDX 1.6 (cryptoProperties, no Citations)' },
           { value: 'spdx-3.0', label: 'SPDX 3.0' },
           { value: 'custom', label: 'Vendor-specific (with mapping)' },
         ],
@@ -228,7 +231,9 @@ const CONTRACT_SECTIONS: ArtifactSection[] = [
   },
 ]
 
-function renderContractPreview(data: Record<string, Record<string, string | string[]>>): string {
+export function renderContractPreview(
+  data: Record<string, Record<string, string | string[]>>
+): string {
   let md = '# PQC VENDOR CONTRACT REQUIREMENTS\n\n'
   md += `**Document Generated:** ${new Date().toLocaleDateString()}\n`
   md += '**Classification:** Draft — For Legal Review\n\n---\n\n'
@@ -377,7 +382,10 @@ function renderContractPreview(data: Record<string, Record<string, string | stri
 
 // Auto-run demo fill — scenario: Finance & Banking · US · regulated vendor.
 // Values from the framework (Phase 7 vendor governance) + each field's option set.
-const CONTRACT_DEMO_FILL: Record<string, Record<string, string | string[]>> = {
+// Exported (Wave 5, WP5.3): also the sample input for REAL_DOC_GENERATORS['contract-clause']
+// (realToolDocs.ts) — the sim's exec-tour fast-forward calls THIS same data through
+// renderContractPreview, so it can never drift from what this tool actually produces.
+export const CONTRACT_DEMO_FILL: Record<string, Record<string, string | string[]>> = {
   'pqc-timeline': {
     'deadline-year': '2030',
     'algorithm-requirements': ['ml-kem', 'ml-dsa'],
@@ -391,7 +399,7 @@ const CONTRACT_DEMO_FILL: Record<string, Record<string, string | string[]>> = {
   },
   'cbom-delivery': {
     'delivery-frequency': 'per-release',
-    format: 'cyclonedx-1.6',
+    format: 'cyclonedx-1.7',
     scope: ['algorithms', 'protocols', 'certificates', 'quantum-status'],
   },
   'change-notification': {

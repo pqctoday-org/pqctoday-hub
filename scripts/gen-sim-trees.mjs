@@ -170,6 +170,16 @@ const S = (scenarioId, label) => {
   if (!SANDBOX_IDS.has(scenarioId)) throw new Error(`unknown sandbox scenario ${scenarioId}`)
   return { kind: 'scenario', label, to: `/playground/sbx-${scenarioId}`, scenarioId }
 }
+// E() — an architecture step (WS-04): embeds ArchitecturePanel in-place so the
+// player decides real hybrid/pure migration patterns for their unlocked
+// connections. Completion is cumulative across the whole run (capped against
+// the actual migratable-edge count) — see TreeStep.minDecisions.
+const E = (minDecisions, label) => ({
+  kind: 'architecture',
+  label,
+  to: '/simulation',
+  minDecisions,
+})
 
 // ---- per-phase Maturity Indicators (verbatim, Applied Quantum v2.1) ---------
 const INDICATORS = {
@@ -213,7 +223,7 @@ const INDICATORS = {
     1: 'Awareness of PKI/HSM/network challenges; no concrete plans',
     2: 'HSMs inventoried with PQC status; PKI modernization plan drafted; initial middlebox testing underway',
     3: 'HSM upgrades in progress; PKI dual-stack operational; all production middleboxes tested; performance baselines established for Tier-1 systems',
-    4: 'Infrastructure fully PQC-capable across IT estate; capacity planning validated at production scale; PKI automated with shortened lifetimes',
+    4: 'Infrastructure fully PQC-capable across IT estate; capacity planning validated at production scale; PKI automated with shortened lifetimes; middlebox monitoring integrated into continuous discovery',
   },
   p7: {
     1: 'Ad-hoc inquiries to a few vendors; no structured tracking',
@@ -285,7 +295,9 @@ const FRAMEWORK = {
       id: '0.1',
       level: 1,
       title: 'Frame the Business Case',
-      do: 'Structure the executive argument around the four urgency drivers — regulatory deadlines, HNDL and TNFL exposure, the threat horizon, and client/investor/insurer expectations.',
+      decision:
+        'Build the business case around HNDL/TNFL exposure and the regulatory clock — not a generic "quantum is coming" pitch.',
+      do: 'Structure the executive argument around four concrete, current urgency drivers, not speculative Q-Day predictions: (1) regulatory & compliance deadlines, (2) Harvest-Now-Decrypt-Later (HNDL) exposure, (3) Trust-Now-Forge-Later (TNFL) exposure, (4) client, investor & insurer expectations.',
       output: 'Executive business case',
       steps: [
         L('pqc-business-case', 'Learn: PQC Business Case'),
@@ -293,6 +305,10 @@ const FRAMEWORK = {
         L('compliance-strategy', 'Learn: Compliance & Regulatory Strategy'),
         R('threats', 'Check the CRQC threat horizon', '/threats?view=horizon'),
         R('compliance', 'Map the binding regulatory deadlines'),
+        R(
+          'timeline',
+          'Reference: the deadline classes driving urgency (EO / OMB / CNSA 2.0) — see the live timeline'
+        ),
         // 07082026: was 'Quantify HNDL/TNFL exposure' — the tool this links to
         // (CRQCScenarioPlanner) only builds an HNDL exposure table, no TNFL/
         // signature-forgery content. Reworded rather than promise what it
@@ -304,6 +320,8 @@ const FRAMEWORK = {
       id: '0.2',
       level: 2,
       title: 'Build the Budget Structure',
+      decision:
+        'Ask for a phased multi-year budget backed by real cost models — not a single-year, back-of-envelope number.',
       do: 'Structure funding as a phased multi-year program aligned to existing infrastructure refresh cycles, sized from migration cost estimates and ROI.',
       output: 'Multi-year budget commitment',
       // Restored 07062026 — the shipped 06302026 snapshot carries 4 steps here
@@ -321,6 +339,8 @@ const FRAMEWORK = {
       id: '0.3',
       level: 2,
       title: 'Establish Governance Structure',
+      decision:
+        'Stand up real governance — Sponsor, SteerCo, QRPM and a RACI — before work starts, not after.',
       do: 'Stand up the roles (Sponsor, SteerCo, QRPM) and workstreams, the RACI, the decision cadence, and the cryptography policy / risk-appetite framing.',
       output: 'Governance structure',
       steps: [
@@ -333,6 +353,8 @@ const FRAMEWORK = {
       id: '0.4',
       level: 2,
       title: 'Draft the Program Charter',
+      decision:
+        'Get the charter and board mandate signed with a KPI pack attached, so the board can track progress — not just approve a headline.',
       do: 'Produce the one-page charter (purpose, scope, success criteria, cadence, escalation) and secure the board mandate with the KPI pack.',
       output: 'Approved program charter & board mandate',
       steps: [
@@ -345,6 +367,8 @@ const FRAMEWORK = {
       id: '0.5',
       level: 3,
       title: 'Conduct Initial Scoping Assessment',
+      decision:
+        'Scope fast and narrow — the top ~20 critical systems and the vendors that constrain your timeline — rather than wait for a complete inventory.',
       do: 'Run a rapid 2–4 week scoping of the top ~20 critical systems — their cryptography, data sensitivity and confidentiality horizon, and the 5–10 timeline-constraining vendors.',
       output: 'Initial scoping assessment',
       steps: [
@@ -359,31 +383,57 @@ const FRAMEWORK = {
       id: '1.0',
       level: 1,
       title: 'Risk-Driven Scoping — Decide What to Inventory First',
+      decision:
+        'Prioritize discovery by risk — the Tier-1 systems first — instead of scanning everything with equal priority.',
       do: 'Apply 80/20 prioritization to pick the Tier-1 systems and assign discovery priority tiers.',
       output: 'Risk-driven scoping document',
+      // A() added (07192026, completeness gap-closing): this band had no
+      // artifact-producing step at all, only a reference to the same
+      // assess-engine tool 0.5 already produces 'initial-scoping' from. Since
+      // this activity is explicitly about REFINING that same scoping with
+      // risk-driven prioritization (not a fresh assessment), reusing the
+      // artifact — not inventing a second scoping-document tool — is the
+      // honest fit; multi-phase reuse of one real artifact is the
+      // established pattern here (kpi-dashboard/kpi-tracker/crypto-cbom).
       steps: [
         L('data-asset-sensitivity', 'Learn: Data & Asset Sensitivity'),
         R('assess-engine', 'Run the scoping assessment engine'),
+        A('initial-scoping', 'Refine the scoping document with risk-driven prioritization'),
       ],
     },
     {
       id: '1.1',
       level: 2,
       title: 'Establish Three Parallel Inventory Tracks',
+      decision:
+        'Run crypto-usage, data-classification and systems/assets discovery as three parallel tracks, not one sequential sweep.',
       do: 'Stand up Track A (crypto usage), Track B (data classification), Track C (systems/assets — CMDB, ITAM, BIA cross-reference; detailed methodology in 1.4–1.5).',
-      output: null,
+      // Track B's own deliverable is a sensitive-data classification map (confidentiality
+      // horizons per data category — the input Phase 3 Dimension 1/HNDL scoring consumes).
+      // Re-checked (completeness gap-closing pass, 07182026): DataAtRestStrategy.tsx already
+      // captures exactly this — a per-data-store table of name/confidentiality-sensitivity/
+      // strategy — real, artifact-producing (BusinessCenter tool, ExecutiveDocumentType
+      // 'data-at-rest-strategy'). Reusing the same artifactType across phases is an
+      // established pattern here (kpi-dashboard/kpi-tracker/crypto-cbom all do this) — P4
+      // revisits the SAME map later to decide remediation strategy per store, which is the
+      // natural real-world sequence (classify during discovery, act on it during execution),
+      // not a duplicate ask.
+      output: 'Sensitive-data classification map (Track B)',
       steps: [
         L('crypto-mgmt-modernization', 'Learn: Track A — cryptographic management modernization'),
         L(
           'data-asset-sensitivity',
           'Learn: Track B — data classification & confidentiality horizons'
         ),
+        A('data-at-rest-strategy', 'Build the sensitive-data classification map (Track B)'),
       ],
     },
     {
       id: '1.2',
       level: 2,
       title: 'Deploy Cryptographic Discovery — Layered Approach',
+      decision:
+        'Layer discovery across network, code, config and runtime — a single scan type always misses real crypto usage.',
       do: 'Deploy discovery across network, code, config, runtime, and manual layers.',
       output: 'Layered discovery deployment',
       steps: [
@@ -396,28 +446,48 @@ const FRAMEWORK = {
       id: '1.3',
       level: 2,
       title: 'Map the Cryptographic Estate',
+      decision:
+        'Record the full field set — algorithm, key size, protocol, owner — for every instance, not just a name and a checkbox.',
       do: 'Document algorithm, key size, protocol, library, cert, owner and vulnerability for each instance.',
       output: 'Cryptographic asset inventory',
-      steps: [A('crypto-architecture', 'Draw the crypto architecture diagram')],
+      steps: [
+        A('crypto-architecture', 'Draw the crypto architecture diagram'),
+        L(
+          'secrets-management-pqc',
+          'Learn: keys, secrets & HSM inventory — crypto you hold, not just crypto you run'
+        ),
+      ],
     },
     {
       id: '1.4–1.5',
       level: 2,
       title: 'Address Asset Discovery & Integrate Existing Data Sources',
-      do: 'Cross-reference CMDB, ITAM, cloud APIs, CT logs, BIA and certificate data for coverage.',
+      decision:
+        'Cross-reference CMDB, ITAM, cloud and certificate data sources — a single system of record always undercounts the real estate.',
+      do: 'Cross-reference CMDB, ITAM, cloud APIs, CT logs, BIA and certificate data for coverage — including OT and embedded systems, which none of those systems of record fully see.',
       output: 'Cross-referenced asset coverage',
       steps: [
         L(
           'crypto-mgmt-modernization',
           'Learn: cross-reference CMDB / ITAM / cloud & certificate data sources'
         ),
-        R('library', 'Reference: data-source & SBOM / CT-log standards in the Library'),
+        // toOverride: explicit ?topic= scopes the embed to this step's subject
+        // (WP5.5) — was previously inferred from the label text via a regex that
+        // silently un-scoped the embed on any rewording.
+        R(
+          'library',
+          'Reference: data-source & SBOM / CT-log standards in the Library',
+          '/library?topic=SBOM'
+        ),
+        L('iot-ot-pqc', 'Learn: OT & embedded systems — the hardest assets to discover'),
       ],
     },
     {
       id: '1.6',
       level: 3,
       title: 'Establish Continuous Discovery',
+      decision:
+        'Wire discovery into CI/CD and passive monitoring so it runs continuously — a one-time inventory goes stale within months.',
       do: 'Wire discovery into CI/CD and passive monitoring with quarterly rescans and tiered alerting.',
       output: 'Continuous discovery operating model',
       steps: [
@@ -452,21 +522,34 @@ const FRAMEWORK = {
   ],
   p2: [
     {
+      // Investigated for an A() step (07192026, completeness gap-closing) —
+      // deliberately left artifact-free: this band is a FORMAT DECISION
+      // ("which spec do we standardize on"), not a scan/export. 2.2's
+      // A('crypto-cbom', ...) is the real scanner; stretching it to cover
+      // both would conflate "decide the format" with "run the scan."
       id: '2.1',
       level: 1,
       title: 'Select CBOM Format and Tooling',
-      do: 'Adopt CycloneDX and establish the record structure and tooling.',
+      decision:
+        'Standardize on CycloneDX rather than a spreadsheet — you need something queryable, diffable and machine-verifiable.',
+      do: 'Adopt CycloneDX (1.7, the current spec — cryptoProperties plus the newer Citations/provenance fields) and establish the record structure — at minimum, algorithm, key size, protocol, library and owner per entry — and tooling.',
       output: 'CycloneDX CBOM format spec',
       steps: [
         L('cbom', 'Learn: Cryptography Bill of Materials'),
         L('crypto-mgmt-modernization', 'Learn: CBOM in Cryptographic Management'),
-        R('library', 'Reference: CycloneDX in the Library'),
+        R(
+          'library',
+          'Reference: CycloneDX in the Library (1.7, cryptoProperties)',
+          '/library?topic=CycloneDX'
+        ),
       ],
     },
     {
       id: '2.2',
       level: 2,
       title: 'Populate CBOM from Inventory Data',
+      decision:
+        'Turn the raw inventory into real CycloneDX records linked to the SBOM — not a static export nobody re-runs.',
       do: 'Transform Phase 1 inventory into enriched CycloneDX records linked to the SBOM.',
       output: 'Populated CycloneDX CBOM',
       steps: [
@@ -479,8 +562,11 @@ const FRAMEWORK = {
         // (Migrate workbench) was previously reachable only via a non-gating
         // reference row — a player could clear Gate G2 without ever touching
         // the export surface frameworkPhases.ts advertises as this phase's
-        // deliverable. Now required.
-        R('migrate', 'Export your CBOM as CycloneDX from the Migrate workbench'),
+        // deliverable. Now required. Upgraded 07182026 (Wave 5, WP5.2) from a
+        // bare reference to a catalog embed focused on the Plan tab's real
+        // "Export plan + CBOM" button (PlanTab.tsx) — landing on the generic
+        // /migrate entry point left the player to find the export themselves.
+        C('Export your CBOM as CycloneDX from the Migrate workbench', 'cyclonedx-export'),
       ],
       // Added 07082026 — P2 was the only phase with zero deep-dive content.
       deepDive: [
@@ -494,6 +580,8 @@ const FRAMEWORK = {
       id: '2.3',
       level: 3,
       title: 'Integrate CBOM into Operational Processes',
+      decision:
+        'Embed the CBOM into CI/CD and change management so it updates itself — a manually-maintained CBOM decays fast.',
       do: 'Embed CBOM governance into CI/CD, change management, vendor onboarding and audit.',
       output: null,
       steps: [A('crypto-vulnerability-watch', 'Wire CBOM freshness into CI/CD drift checks')],
@@ -502,7 +590,9 @@ const FRAMEWORK = {
       id: '2.4–2.5',
       level: 3,
       title: 'CBOM Freshness Governance & Securing Program Artifacts',
-      do: 'Enforce refresh triggers and protect the CBOM with classification and access control.',
+      decision:
+        "Treat the CBOM as sensitive — classify it, restrict access, log queries — it's effectively an attacker's shopping list.",
+      do: 'Enforce refresh triggers and protect the CBOM with classification and access control; sign/attest the CBOM so "machine-verifiable" includes provenance, not just structure.',
       output: 'CBOM governance & protection policy',
       steps: [
         L('cbom', 'Learn: secure the CBOM & make it machine-verifiable'),
@@ -526,14 +616,27 @@ const FRAMEWORK = {
   // not invented here. See simulation-mode-improvement-plan-07042026.md, W3-3.
   p3: [
     {
+      // Investigated for an A() step (07192026, completeness gap-closing) —
+      // deliberately left artifact-free: this band DEFINES the scoring
+      // model (a decision, taught via Learn + reference); 3.2's real
+      // A('risk-register', ...) is where the model actually gets applied
+      // and produces a saved artifact. No separate "model definition" tool
+      // exists, and shouldn't — it would just be prose in a different shape.
       id: '3.1',
       level: 1,
       title: 'Define Risk Scoring Model',
-      do: 'Establish the four-dimension model: HNDL, TNFL, Regulatory, Feasibility.',
+      decision:
+        'Score risk across all four dimensions — HNDL exposure, trust criticality, feasibility, regulatory pressure — not just severity.',
+      do: 'Establish the four-dimension model: (1) HNDL exposure, (2) TNFL/trust-infrastructure criticality, (3) migration feasibility, (4) regulatory & compliance pressure. (Practice note, not a framework requirement: some programs calibrate a fifth dimension — business impact/consequence of a breach — on top of these four; the framework itself defines exactly four.)',
       output: 'Risk scoring model',
       steps: [
         L('pqc-risk-management', 'Learn: PQC Risk Management'),
         L('data-asset-sensitivity', 'Learn: data sensitivity & legal/data-retention horizon'),
+        R(
+          'threats',
+          "Reference: Mosca's inequality — shelf-life + migration time > time to Q-Day means you're already late",
+          '/threats?view=horizon'
+        ),
         R(
           'algorithms-detailed',
           'Reference: why 256-bit ECC ≈ RSA-2048 under quantum (security levels)'
@@ -541,7 +644,7 @@ const FRAMEWORK = {
         R('algorithms-protocol-matrix', 'Reference: PQC Protocol Matrix'),
         R(
           'timeline',
-          'Reference: regulatory deadline clock — calibrate Dimension 4 (within 2 years = Critical)'
+          'Reference: regulatory deadline clock — calibrate Dimension 4, Regulatory & Compliance Pressure (within 2 years = Critical)'
         ),
       ],
     },
@@ -549,6 +652,8 @@ const FRAMEWORK = {
       id: '3.2',
       level: 2,
       title: 'Calculate Priority Scores',
+      decision:
+        "Compute a composite score and tier the whole CBOM — don't sequence by gut feel or alphabetical order.",
       do: 'Compute composite scores and classify systems into migration tiers.',
       output: 'Scored and tiered CBOM',
       steps: [A('risk-register', 'Produce a Risk Register')],
@@ -557,6 +662,8 @@ const FRAMEWORK = {
       id: '3.3',
       level: 2,
       title: 'Apply Migration Sequencing Logic',
+      decision:
+        'Sequence key-exchange and signature migrations as two separate tracks — they move on different timelines.',
       do: 'Sequence with the two-track model (key exchange / signatures) by exposure and lead time.',
       output: 'Migration sequencing recommendation',
       steps: [
@@ -570,6 +677,8 @@ const FRAMEWORK = {
       id: '3.4',
       level: 2,
       title: 'Produce the Quantum Readiness Assessment (QRA)',
+      decision:
+        'Turn the scoring into a living QRA you update as standards and deadlines shift — not a one-time report you freeze.',
       do: 'Consolidate scoring into a defensible QRA: heatmap, backlog, gap analysis, compliance mapping.',
       output: 'Quantum Readiness Assessment (QRA)',
       steps: [
@@ -587,9 +696,16 @@ const FRAMEWORK = {
   ],
   p4: [
     {
+      // Investigated for an A() step (07192026, completeness gap-closing) —
+      // deliberately left artifact-free: no tool exists for a "90-day
+      // starter plan" distinct from 4.2's real A('migration-roadmap', ...)
+      // (the multi-YEAR roadmap). Reusing that tool here would conflate two
+      // different planning horizons under one artifact.
       id: '4.1',
       level: 1,
       title: 'Define Year-1 Starter Plan (90-Day Governance Sprint)',
+      decision:
+        'Nail down a concrete 90-day starting plan — leadership, a training cohort, two pilots — not just a vision statement.',
       do: 'Confirm leadership, training cohort, CBOM v1, two pilots, updated policy and baseline KPIs.',
       output: 'Year-1 starter plan',
       steps: [L('migration-program', 'Learn: Migration Program Management')],
@@ -598,11 +714,14 @@ const FRAMEWORK = {
       id: '4.2',
       level: 2,
       title: 'Structure the Multi-Year Roadmap',
+      decision:
+        'Build a phased multi-year roadmap with a real critical path — not a wishlist of dates.',
       do: 'Define a phased 5-year plan with annual milestones and a critical path.',
       output: 'Multi-year roadmap',
       steps: [
         R('timeline', 'See your country on the global PQC roadmap (2026–2030 deadline squeeze)'),
         A('migration-roadmap', 'Build a multi-year Roadmap'),
+        A('cost-model-comparison', 'Cost the multi-year ask before the board sees the roadmap'),
         A('stakeholder-comms', 'Plan the roadmap stakeholder communications'),
       ],
     },
@@ -610,6 +729,8 @@ const FRAMEWORK = {
       id: '4.3',
       level: 2,
       title: 'Align to Infrastructure Refresh Cycles',
+      decision:
+        "Piggyback PQC work on refresh cycles that are already funded — don't ask for a separate budget line for everything.",
       do: 'Map PQC tasks onto already-funded refresh programs to embed cost avoidance.',
       output: 'Refresh-cycle alignment table',
       steps: [A('refresh-cycle-alignment', 'Map PQC tasks onto funded refresh cycles')],
@@ -618,6 +739,8 @@ const FRAMEWORK = {
       id: '4.4',
       level: 2,
       title: 'Establish PMO Structure for Scale',
+      decision:
+        'Stand up a real PMO — WBS, dependency map, risk register — before the program outgrows ad hoc tracking.',
       do: 'Define WBS, dependency map, critical path, resource leveling and risk register.',
       output: 'PMO operating model',
       steps: [
@@ -629,21 +752,33 @@ const FRAMEWORK = {
       id: '4.5–4.6',
       level: 3,
       title: 'Manage the Roadmap as a Living Instrument & Define Milestone Gates',
+      decision:
+        "Review the roadmap quarterly against leading indicators and formal gate criteria — don't just check it once a year.",
       do: 'Run quarterly reviews with leading indicators and formal G0–G6 gate criteria.',
       output: 'Quarterly review process & gate criteria',
+      // A() added (07192026, completeness gap-closing): this L3 band had no
+      // artifact-producing step, only references. kpi-tracker ("Track
+      // migration KPIs with configurable metrics and reporting templates")
+      // is a genuinely strong fit for "run this on a quarterly cadence
+      // against criteria" — already reused across Foundations/P6/Verify-Close
+      // for exactly this kind of recurring, cross-phase tracking, not
+      // invented here.
       steps: [
         R(
           'threats',
           'Monitor the threat horizon — CRQC timeline signals that trigger accelerated execution'
         ),
         R('report', 'Track gates on the Report page'),
+        A('kpi-tracker', 'Track the roadmap on a quarterly cadence against gate criteria'),
       ],
     },
     {
       id: '4.7',
       level: 4,
       title: 'Pre-Draft the Accelerated Execution Profile',
-      do: 'Pre-approve a contingency package with triggers, compressed sequence and activation authority.',
+      decision:
+        'Pre-approve an accelerated execution plan now, before you need it — a CRQC-timeline surprise is the wrong moment to start drafting one.',
+      do: 'Pre-approve a contingency package with triggers, compressed sequence and activation authority. By Year 4–5, plan the roadmap\'s own transition from a project (with an end date) to ongoing posture management (with no end date) — disbanding the program at "done" orphans the capability the moment the next algorithm break or deadline shift hits.',
       output: 'Accelerated Execution Profile',
       steps: [A('accelerated-execution-profile', 'Pre-draft the accelerated execution profile')],
     },
@@ -653,6 +788,8 @@ const FRAMEWORK = {
       id: '5.1',
       level: 1,
       title: 'Select Pilot Targets',
+      decision:
+        'Pilot on Tier-1 systems you fully control and can measure — not the easiest, lowest-stakes systems you can find.',
       do: 'Pick 2–4 Tier-1 pilots with full control, measurable baselines and rollback capability.',
       output: null,
       steps: [
@@ -663,13 +800,18 @@ const FRAMEWORK = {
       // Hybrid Cryptography lesson above — encryption then signatures.
       deepDive: [
         W('hybrid-encrypt', 'Deep dive — Practice: hybrid KEM + ECDH encryption'),
-        W('hybrid-sigs', 'Deep dive — Practice: hybrid signature spectrums'),
+        W(
+          'hybrid-sigs',
+          'Deep dive — Practice: hybrid signature spectrums (composite signatures are far less standardized than hybrid KEMs — IETF LAMPS composites are still drafts)'
+        ),
       ],
     },
     {
       id: '5.2',
       level: 1,
       title: 'Design Hybrid Deployments',
+      decision:
+        "Design the hybrid pattern and confirm your libraries actually support it before you pilot — don't discover a gap mid-rollout.",
       do: 'Design hybrid patterns (e.g. X25519+ML-KEM-768) and verify library readiness.',
       output: null,
       steps: [
@@ -701,7 +843,9 @@ const FRAMEWORK = {
       id: '5.3',
       level: 2,
       title: 'Execute Pilots with Measurement',
-      do: 'Run pilots against SLOs (latency, CPU, throughput), test rollback and validate compatibility.',
+      decision:
+        "Measure pilots against real SLOs and prove rollback works — a pilot that only checks 'did it not crash' isn't validated.",
+      do: 'Run pilots against SLOs (latency p50/p95/p99, CPU, throughput, error/fallback rate), budget for client-compatibility testing alongside server metrics, test rollback and validate compatibility. Canary the rollout at low traffic first — 6.4 covers the baseline/canary methodology in more depth for the phases running in parallel.',
       output: 'Pilot results reports',
       steps: [
         W('tls-simulator', 'Practice: measure the TLS 1.3 hybrid handshake'),
@@ -710,6 +854,11 @@ const FRAMEWORK = {
           'Lab: migration impact — classical vs PQC TLS (latency, cert size, bandwidth)'
         ),
         A('deployment-playbook', 'Draft a Deployment Playbook'),
+        R(
+          'report',
+          'Define pilot exit criteria — what threshold means go — before the rollout decision'
+        ),
+        E(2, 'Decide the migration pattern (hybrid vs pure) for your first unlocked connections'),
       ],
       // Deep dive (Wave 2, 07062026): 3 tools already used in sector-specific
       // Learn tracks (telecom/retail/generic IAM — see sectorTrack.ts), made
@@ -736,14 +885,25 @@ const FRAMEWORK = {
       // the hub yet (a real gap — see the remediation plan's Wave 4 items), so
       // the six stages are taught directly here, now that this text renders in
       // the manual-play card, not just the auto-run intro.
+      decision:
+        'Roll out in controlled waves, each gated on the one before — not a single big-bang cutover to production.',
       do: 'Sequence deployment through six controlled waves, each with a defined scope and an explicit prerequisite gate from the one before: Lab/Staging → Internal Non-Critical → Internal Production → External Controlled (partners) → External Broad (public-facing) → Long Tail (legacy, OT, embedded).',
       output: 'Wave deployment plan',
-      steps: [R('library', 'Reference: staged-rollout & wave-sequencing patterns in the Library')],
+      steps: [
+        // No toOverride: no dedicated staged-rollout/wave-sequencing library topic
+        // exists yet, so this intentionally opens the unscoped library (matches
+        // its pre-WP5.5 behavior — the old title-regex never matched this label
+        // either).
+        R('library', 'Reference: staged-rollout & wave-sequencing patterns in the Library'),
+        E(4, 'Extend pattern decisions across the wave — cover more of your unlocked connections'),
+      ],
     },
     {
       id: '5.5–5.6',
       level: 3,
       title: 'Defense-in-Depth & Data-at-Rest Strategy',
+      decision:
+        'Decide a defense-in-depth strategy per data store — tokenize, wrap or accept-and-monitor — not one blanket policy for everything.',
       do: 'Deploy tokenization, segmentation and AES-256 defaults; decide a per-store data-at-rest strategy.',
       output: 'Defense-in-depth & data-at-rest plan',
       steps: [
@@ -758,6 +918,8 @@ const FRAMEWORK = {
       id: '5.7',
       level: 4,
       title: 'AI-Assisted Migration: Where It Helps, and the Gate That Stays Closed',
+      decision:
+        'Let AI triage and draft, but keep full human review on any AI-modified cryptographic code — that review gate never closes.',
       do: 'Use AI to triage and enrich, but keep full review rigor on AI-modified cryptographic code.',
       output: null,
       steps: [A('crypto-api-refactor', 'Audit AI-assisted crypto refactors')],
@@ -782,6 +944,8 @@ const FRAMEWORK = {
       id: '6.1',
       level: 2,
       title: 'PKI Modernization',
+      decision:
+        'Shorten cert lifetimes and run a dual-stack CA — test every chain across your actual middleboxes before you rely on it.',
       do: 'Shorten certificate lifetimes, deploy dual-stack CA, and test chains across middleboxes.',
       output: 'PKI modernization plan',
       steps: [
@@ -811,7 +975,9 @@ const FRAMEWORK = {
       id: '6.2',
       level: 2,
       title: 'HSM and KMS Modernization',
-      do: 'Inventory HSMs by PQC capability, upgrade firmware and configure cloud KMS for PQC.',
+      decision:
+        "Inventory every HSM's real PQC capability before upgrading — don't assume the vendor spec sheet matches your firmware version.",
+      do: "Inventory HSMs by PQC capability, upgrade firmware and configure cloud KMS for PQC. Upgraded firmware re-enters FIPS validation — check the module's certificate status on the live CMVP list, not just the vendor's spec sheet, before treating it as production-ready in a FIPS-required environment.",
       output: 'HSM/KMS upgrade schedule',
       steps: [
         L('hsm-pqc', 'Learn: HSM & PQC Operations'),
@@ -819,9 +985,10 @@ const FRAMEWORK = {
         W('hsm-capacity', 'Practice: HSM capacity calculator'),
         W('envelope-encrypt', 'Practice: PQC key-wrapping — bridge for HSMs not yet upgradeable'),
       ],
+      // secrets-management-pqc moved to 1.3 (Wave 3, P1) — inventorying keys/secrets/HSMs
+      // is a discovery-phase concern, not a 6.2 deployment one; kept as one home, not two.
       deepDive: [
         W('tpm-playground', 'Deep dive — Practice: hardware root-of-trust (TPM)'),
-        L('secrets-management-pqc', 'Deep dive — Learn: Secrets Management & PQC'),
         W('cacp-kmip', 'Deep dive — Practice: Crypto-Agility Control Plane (KMIP)'),
       ],
     },
@@ -829,6 +996,8 @@ const FRAMEWORK = {
       id: '6.3',
       level: 2,
       title: 'Network Infrastructure Assessment',
+      decision:
+        'Test PQC handshake sizes against every production middlebox — a firewall with hardcoded buffer limits will silently drop the larger packets.',
       do: 'Test PQC handshake sizes and protocol impacts across all production middleboxes.',
       output: 'Network compatibility report',
       steps: [
@@ -848,11 +1017,25 @@ const FRAMEWORK = {
       id: '6.4',
       level: 3,
       title: 'Performance Testing Methodology',
+      decision:
+        "Baseline performance and canary at low traffic before a full rollout — don't find out about a latency regression at 100% load.",
       do: 'Baseline metrics, run canary at 1–5% traffic and evaluate against SLOs.',
       output: 'Performance baseline and projections',
+      // Investigated for an A() step (07192026, completeness gap-closing) —
+      // deliberately left artifact-free: the only real tools here are
+      // Playground WORKSHOP calculators (cert-capacity, tee-channel — kind
+      // 'workshop', interactive/ephemeral, not artifact-producing). No hub
+      // tool saves a performance-baseline document.
       steps: [
         L('pqc-testing-validation', 'Learn: PQC Testing & Validation'),
-        R('compliance-cert-check', 'Reference: algorithm sizes & FIPS/CC certs'),
+        // toOverride: a real ACVP cert (Entrust nShield 5, ML-DSA/ML-KEM/SLH-DSA —
+        // matches simArchitecture.ts's mid-size 'Entrust nShield' node) so the step
+        // opens on real algorithm/size data, not an empty ?cert= (WP5.5).
+        R(
+          'compliance-cert-check',
+          'Reference: algorithm sizes & FIPS/CC certs',
+          '/compliance?cert=A7285'
+        ),
       ],
       deepDive: [
         W('tee-channel', 'Deep dive — Practice: TEE↔HSM trusted channel'),
@@ -863,10 +1046,34 @@ const FRAMEWORK = {
       id: '6.5',
       level: 3,
       title: 'Capacity Planning for PQC at Scale',
+      decision:
+        "Benchmark PQC's CPU/memory/bandwidth impact on production-class hardware — a laptop benchmark won't catch a capacity cliff at scale.",
       do: 'Estimate CPU, memory, bandwidth and storage impact; benchmark on production hardware.',
       output: 'Capacity plan',
+      // Investigated for an A() step (07192026, completeness gap-closing) —
+      // deliberately left artifact-free, same reasoning as 6.4: the only
+      // real tool (hsm-capacity, a Playground WORKSHOP calculator) is
+      // interactive/ephemeral, not artifact-producing; no hub tool saves a
+      // capacity-plan document.
       steps: [R('algorithms-detailed', 'Reference: detailed algorithm size comparison')],
       deepDive: [L('os-pqc', 'Deep dive — Learn: Operating Systems & PQC')],
+      // NOTE 07182026: the framework's own p6 Level-4 maturity indicator
+      // ("Infrastructure fully PQC-capable...PKI automated with shortened
+      // lifetimes; middlebox monitoring integrated into continuous
+      // discovery") has NO corresponding framework activity id (verified
+      // against pqc-references/framework-2.1.json — Phase 6 defines only
+      // 6.1-6.5, all of which deliver L2/L3). A candidate 6.6 activity was
+      // drafted here to close the ladder/mission mismatch the 07182026
+      // review flagged, but frameworkFidelity.test.ts correctly rejected it
+      // as an invented, non-framework-sourced activity and it was reverted.
+      // P6 topping out at L3 in the shipped tree is therefore INTENTIONAL,
+      // matching the framework's own structure (same pattern as P3 capping
+      // at L2 — see maturityScale.test.ts). The mission CSV's L4 row is left
+      // in place (its text is framework-verbatim) as an aspirational/BAU
+      // state the framework describes but does not gate via a discrete
+      // activity; whether/how a player should be able to reach it in-sim is
+      // an open design question for a properly scoped follow-up, not a
+      // Wave-0 string fix.
     },
   ],
   p7: [
@@ -874,6 +1081,8 @@ const FRAMEWORK = {
       id: '7.1',
       level: 1,
       title: 'Classify Vendor Portfolio by PQC Impact',
+      decision:
+        "Classify every vendor as Blocking, Enabling or Non-Critical — treating them all the same wastes effort on vendors that don't matter.",
       do: 'Categorize vendors as Strategic Blocking, Strategic Enabling or Non-Critical.',
       output: 'Vendor classification matrix',
       steps: [
@@ -885,10 +1094,19 @@ const FRAMEWORK = {
       id: '7.2',
       level: 2,
       title: 'Execute Vendor Engagement',
+      decision:
+        "Formally engage and score strategic vendors with a real questionnaire — a verbal 'they're working on it' isn't a tracked commitment.",
       do: 'Send PQC readiness questionnaires to strategic vendors and track responses.',
       output: 'Vendor questionnaire responses',
       steps: [
-        R('compliance-cert-check', 'Reference: vendor FIPS/CC cert status'),
+        // toOverride: a real ACVP cert (Thales Luna G7, ML-DSA/ML-KEM — matches
+        // simArchitecture.ts's large-size 'Thales Luna HSM' node) so the step opens
+        // on a real vendor's actual cert status, not an empty ?cert= (WP5.5).
+        R(
+          'compliance-cert-check',
+          'Reference: vendor FIPS/CC cert status',
+          '/compliance?cert=A8273'
+        ),
         R('algorithms-protocol-matrix', 'Reference: which vendor protocols have a PQC path'),
         A('vendor-scorecard', 'Score vendors (Vendor Scorecard)'),
       ],
@@ -897,7 +1115,9 @@ const FRAMEWORK = {
       id: '7.3',
       level: 3,
       title: 'Insert PQC Requirements into Procurement',
-      do: 'Add PQC clauses to RFP and contract templates with dated commitments and remedies.',
+      decision:
+        "Put dated PQC commitments and remedies into the contract language itself — a vendor's roadmap slide isn't binding.",
+      do: 'Add PQC clauses to RFP and contract templates with dated commitments and remedies; require a product CBOM (CycloneDX format) plus a dated PQC attestation with every contract, not just a support statement.',
       output: 'Updated procurement templates',
       steps: [A('contract-clause', 'Draft a PQC contract clause')],
     },
@@ -905,6 +1125,8 @@ const FRAMEWORK = {
       id: '7.4',
       level: 3,
       title: 'Manage Vendor-as-Blocker Scenarios',
+      decision:
+        "Deploy a bridging pattern or formally accept the residual risk when a vendor blocks you — don't just wait and hope they catch up.",
       do: 'When a critical vendor cannot deliver PQC in time, deploy bridging patterns (gateway, overlay, key-wrap), run champion-challenger, escalate contractually, or accept-and-document the residual risk.',
       output: 'Bridging pattern deployments',
       steps: [
@@ -919,6 +1141,8 @@ const FRAMEWORK = {
       id: '7.5',
       level: 3,
       title: 'Establish Ongoing Vendor Governance',
+      decision:
+        "Run vendor governance as a recurring cadence — this phase never closes, so a one-time review isn't enough.",
       do: 'Run the recurring vendor-governance cadence — track roadmaps, verify GA commitments, update the vendor scorecard, and report to SteerCo.',
       output: 'Vendor governance cadence',
       steps: [A('kpi-dashboard', 'Run the vendor-KPI / SteerCo governance cadence')],
@@ -927,6 +1151,8 @@ const FRAMEWORK = {
       id: '7.6',
       level: 3,
       title: 'Coordinate Counterparties You Cannot Contractually Compel',
+      decision:
+        "Coordinate dual-stack windows and deprecation timing with counterparties you can't compel — silently flipping a protocol breaks their integration.",
       do: 'For partners, customers and API consumers with no contractual leverage, run the coordination pattern — readiness discovery, dual-stack windows, deprecation protocol, interop test events, and API versioning.',
       output: 'Counterparty coordination plan',
       steps: [
@@ -938,6 +1164,8 @@ const FRAMEWORK = {
       id: '7.7',
       level: 4,
       title: 'Cloud Shared Responsibility and the SaaS Class',
+      decision:
+        "Map exactly where your responsibility ends and the provider's begins — don't assume PQC migration is automatically their problem.",
       do: 'Define the provider/customer migration boundary and govern SaaS by sensitivity.',
       output: 'Cloud responsibility & SaaS governance',
       steps: [A('cloud-responsibility-matrix', 'Map the cloud responsibility split')],
@@ -948,8 +1176,17 @@ const FRAMEWORK = {
       id: 'F.1',
       level: 1,
       title: 'Establish GRC & Assess Program Maturity',
-      do: 'Stand up the risk-appetite statement and KRI cascade; run (or refine) your PQC assessment — program maturity is derived from your progress, overall = weakest domain.',
+      decision:
+        'Run the seven-domain maturity self-assessment first — your overall score is only as strong as your weakest domain.',
+      do: 'Stand up the risk-appetite statement and KRI cascade; run (or refine) your PQC assessment across the seven domains — Cryptographic Inventory, Governance & Ownership, Pilots & Deployment, Vendor & Supply Chain, Compliance & Standards, Crypto-Agility, Risk & Prioritization. Program maturity is derived from your progress, overall = weakest domain. (Level 0 "Unaware" — no organizational awareness, nothing planned or underway — is where every domain starts; this activity is how you leave it.)',
       output: 'GRC structure & maturity baseline',
+      // Investigated for an A() step (07192026, completeness gap-closing) —
+      // deliberately left artifact-free: unlike P1's scoping document (a
+      // saved artifact 1.1 later "refines"), the maturity baseline itself is
+      // LIVE-derived via deriveMaturity() from the assess engine's answers,
+      // not a document this band produces — R('assess-engine', ...) above is
+      // already the real tool. Force-adding an unrelated A() here would be a
+      // weaker fit than 1.0's, not a clearly-strong one.
       steps: [
         L('pqc-grc', 'Learn: PQC GRC (risk appetite & KRIs)'),
         R('assess-engine', 'Run / refine your PQC assessment'),
@@ -959,9 +1196,12 @@ const FRAMEWORK = {
       id: 'F.2',
       level: 2,
       title: 'Baseline Metrics & the Evidence Dossier',
+      decision:
+        'Baseline the five board KPIs and start the evidence dossier now — reconstructing history for an auditor later is much harder.',
       do: 'Set the board KPI pack (Coverage/Trust/Inventory/Vendors/Agility) and the operational KPIs, and start the audit/litigation evidence dossier.',
       output: 'KPI baseline & evidence dossier',
       steps: [
+        L('pqc-governance', 'Learn: why these five KPIs — what the board actually needs to see'),
         A('kpi-dashboard', 'Baseline the board KPI pack'),
         A('kpi-tracker', 'Track operational KPIs & the evidence dossier'),
       ],
@@ -970,7 +1210,9 @@ const FRAMEWORK = {
       id: 'F.3',
       level: 2,
       title: 'Build Crypto-Agility & the Team',
-      do: 'Adopt crypto-agility as the end-state architecture and staff the program with the framework core roles (≈1 FTE per 500 CBOM instances).',
+      decision:
+        'Design for crypto-agility as the end state and staff the core roles now — retrofitting agility after the migration costs far more.',
+      do: 'Adopt crypto-agility as the end-state architecture and staff the program with the framework core roles (≈1 FTE per 500 CBOM instances for the first two years, tapering to ≈1 per 1,000 once rollout stabilizes).',
       output: 'Crypto-agility roadmap & skills plan',
       steps: [
         L('crypto-agility', 'Learn: Crypto-Agility as end-state'),
@@ -991,6 +1233,8 @@ const FRAMEWORK = {
       id: 'F.4',
       level: 3,
       title: 'Maintain Regulatory & Standards Alignment',
+      decision:
+        'Keep your regulation map current as deadlines and standards shift — a map built once in year one goes stale fast.',
       do: 'Keep the phase-to-regulation map current across the 2026–2035 deadline squeeze and the standards bodies that bind you.',
       output: 'Regulatory & standards alignment map',
       steps: [
@@ -1013,6 +1257,8 @@ const FRAMEWORK = {
       // (Year 3 Verification: production algorithm-swap drill; OKRs tracked
       // as BAU).
       title: 'Run Crypto-Agility as BAU',
+      decision:
+        'Fold crypto-agility into standing operations — an annual swap drill and continuous drift monitoring — so the next algorithm change is routine, not a re-run of the whole migration.',
       do: 'Fold the crypto-agility OKRs into standing operations — an annual algorithm-swap drill, continuous drift monitoring, and the Agility KPI tracked alongside Coverage/Trust/Inventory/Vendors — so a new algorithm recommendation becomes a routine change, not a re-run of the whole migration.',
       output: 'Crypto-agility OKR evidence, tracked as BAU',
       steps: [A('kpi-tracker', 'Track the Agility KPI as a standing, recurring metric')],
@@ -1023,8 +1269,18 @@ const FRAMEWORK = {
       id: 'VC.1',
       level: 1,
       title: 'Set the Verification Standard & Closure Plan',
+      decision:
+        "Adopt the evidence standard and closure record up front — decide what 'proven' means before you start declaring things done.",
       do: 'Adopt the 5-point migration-verification evidence standard and the program-closure record up front, so "done" means proven, not declared.',
       output: 'Verification standard & closure plan',
+      // Investigated for an A() step (07192026, completeness gap-closing) —
+      // deliberately left artifact-free: the obvious candidate is the SAME
+      // A('migration-verification', ...) that VC.2 already requires below.
+      // Completion checks satisfy on the tool's global hasArtifact flag, so
+      // adding it here would let players satisfy BOTH bands from one click —
+      // collapsing the deliberate "adopt the standard, then execute" arc
+      // between VC.1 and VC.2 into a single step. Left as a reference-only
+      // decision band.
       steps: [
         L('verification-closure', 'Learn: Decommissioning & Program Closure'),
         R(
@@ -1044,29 +1300,56 @@ const FRAMEWORK = {
       id: 'VC.2',
       level: 2,
       title: 'Assemble the Migration Evidence Dossier',
-      do: 'Prove each migrated system against the evidence standard (observed PQC negotiation, negative testing, configuration attestation) and log classical key-material decommissioning per org key-destruction standard.',
+      decision:
+        'Assemble real evidence — observed negotiation, negative testing, attestation — for every migrated system, not a checklist of milestones hit.',
+      do: 'Prove each migrated system against the evidence standard (observed PQC negotiation, negative testing, configuration attestation) and log classical key-material decommissioning per org key-destruction standard — destruction certificates for HSM-held keys, not a verbal confirmation. Re-encrypt long-lived archives under PQC BEFORE destroying the classical keys that protect them — the sequencing matters, not just the two actions.',
       output: 'Migration-verification evidence dossier',
       steps: [
         L('verification-closure', 'Learn: decommission classical crypto & assemble evidence'),
-        A('migration-verification', 'Assemble the evidence dossier & log decommissioning'),
+        A('migration-verification', 'Assemble the migration evidence dossier'),
+        // Split out from the step above (completeness gap-closing, 07182026): the
+        // real migration-verification tool already has its own decommissions
+        // section (signing-key/certificate/kek/other, per-item destruction
+        // method) — this was previously bundled into one generic "assemble +
+        // log" step; giving destruction-certificate logging its own explicit
+        // step makes it a discrete, checkable action rather than prose folded
+        // into the dossier step's do-text. Same artifactType, same tool —
+        // reusing one artifact across steps is an established pattern here
+        // (kpi-dashboard/kpi-tracker/crypto-cbom all do it).
+        A(
+          'migration-verification',
+          'Log classical key-material decommissioning — destruction certificates, not a verbal confirmation'
+        ),
         A('audit-checklist', 'Run the closure audit-readiness checklist'),
+        A(
+          'data-at-rest-strategy',
+          'Confirm long-lived archives are re-encrypted under PQC before this system’s classical keys are destroyed'
+        ),
       ],
     },
     {
       id: 'VC.3',
       level: 3,
       title: 'Independent Verification & Sign-off',
+      decision:
+        'Get independent verification and a funded BAU handover signed off — closure needs proof and a receiving team, not just a milestone check.',
       do: 'Independently verify Tier-1 systems, evidence the crypto-agility / rollback drill, and obtain executive-sponsor closure sign-off with a funded BAU handover.',
       output: 'Independent verification & signed closure',
       steps: [
         A('crypto-cbom', 'Export the final CBOM as durable closure evidence'),
-        R('library', 'Reference: decommissioning guidance & evidence standards'),
+        R(
+          'library',
+          'Reference: decommissioning guidance & evidence standards',
+          '/library?topic=800-88'
+        ),
       ],
     },
     {
       id: 'VC.4',
       level: 4,
       title: 'Run Verification & Closure as BAU',
+      decision:
+        'Fold verification and decommissioning into continuous posture monitoring — closure is a permanent operating discipline, not a one-time event.',
       do: 'Fold verification, decommissioning and attestations into the continuous posture-monitoring loop so algorithm changes and re-verification are routine.',
       output: 'BAU verification & posture monitoring',
       steps: [
@@ -1124,7 +1407,7 @@ const PITFALLS = {
     },
     {
       title: 'Rely on the CMDB alone for asset discovery',
-      why: 'The CMDB is rarely complete; it systematically undercounts cloud resources, shadow IT, OT devices, and vendor-managed systems. Integrate the eleven asset-discovery sources in Activity 1.4 or the CMDB gap becomes a migration gap.',
+      why: 'The CMDB is rarely complete; it systematically undercounts cloud resources, shadow IT, OT devices, and vendor-managed systems. Cross-reference the CMDB, ITAM, cloud API, CT-log, BIA and certificate data sources from Activity 1.4–1.5 or the CMDB gap becomes a migration gap.',
     },
     {
       title: 'Treat discovery as one-time',
@@ -1240,11 +1523,15 @@ const PITFALLS = {
       title: 'Neglect capacity planning for high-volume TLS termination',
       why: 'At CDN edge and load-balancer aggregate scale, PQC handshake/bandwidth growth swamps capacity you never modelled — the outage shows up under peak load.',
     },
+    {
+      title: 'Issue the new PQC root and assume it is usable',
+      why: 'A root distributed today still has to propagate through browser/OS/device trust-store update cycles — commonly a year or more, longer for legacy and embedded devices whose trust stores rarely update at all. Start root-distribution ceremonies early; a root sitting in your CA is not a root anything actually trusts yet.',
+    },
   ],
   p7: [
     {
       title: 'Start vendor engagement too late',
-      why: 'Vendor dependency is the longest critical path; waiting for a complete CBOM loses 12–24 months.',
+      why: 'Vendor dependency is the longest critical path; waiting for a complete CBOM loses a year or more.',
     },
     {
       title: 'Accept verbal commitments',
@@ -1265,6 +1552,10 @@ const PITFALLS = {
     {
       title: 'Delegate the risk, not just the implementation',
       why: 'The vendor owns the product, but you still own the risk to your data, operations and compliance — "the vendor will sort it out" leaves you accountable with no control.',
+    },
+    {
+      title: 'Your top blocked vendors share one upstream crypto library',
+      why: 'Vendor-diversity scorecards check for a single VENDOR failure point, not a shared fourth-party one — if five "independent" blocked vendors all depend on the same unpatched crypto library, that\'s one concentration risk wearing five faces, not five separate ones. Map upstream dependencies, not just first-party vendor names.',
     },
   ],
   foundations: [
@@ -1312,6 +1603,7 @@ for (const phase of Object.keys(FRAMEWORK)) {
       .map((a) => ({
         id: a.id,
         title: a.title,
+        decision: a.decision ?? undefined,
         do: a.do,
         output: a.output ?? undefined,
         steps: a.steps,

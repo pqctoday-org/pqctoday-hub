@@ -20,7 +20,7 @@ describe('autoRunDeepQueue — Extended Migration Journey', () => {
   const climb = autoRunQueue()
   const deep = autoRunDeepQueue()
 
-  it('is a strict superset of autoRunQueue (p6 alone contributes 9 deep-dive steps today)', () => {
+  it('is a strict superset of autoRunQueue (p6 alone contributes several deep-dive steps today)', () => {
     expect(deep.length).toBeGreaterThan(climb.length)
     const climbKeys = new Set(climb.map((it) => `${it.phase}:${it.level}:${it.step.to}`))
     for (const key of climbKeys) {

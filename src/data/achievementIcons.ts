@@ -33,6 +33,9 @@ import {
   BookOpen,
   GraduationCap,
   Award,
+  Rocket,
+  Globe,
+  ShieldAlert,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -70,4 +73,7 @@ export const achievementIconMap: Record<string, LucideIcon> = {
   BookOpen,
   GraduationCap,
   Award,
+  Rocket,
+  Globe,
+  ShieldAlert,
 }
