@@ -28,6 +28,35 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.22.0] - 2026-07-19
+
+A major Simulation release: a six-wave accuracy and gameplay overhaul, real hub data flowing through the sim's documents and events, and a refreshed NIST library entry.
+
+### Added
+
+- **Simulation results now appear on the Executive Report** [view:/report] [view:/simulation] [persona:executive]: a run's readiness, compliance posture, phase maturity, transformation objectives and overall grade are pulled straight from your committed sim roadmap instead of staying siloed inside the Simulation.
+- **One unified scoreboard for the Simulation** [view:/simulation]: readiness, compliance, and phase maturity used to be three separate, inconsistently-scored systems — they're now one scoreboard so your progress reads the same way everywhere.
+- **Hover/tap definitions for Simulation terms** [view:/simulation] [persona:curious] [persona:executive]: threat-readiness labels (HNDL, TNFL) and other jargon on the rail and ribbon now show a plain-language definition on hover or tap.
+- **Simulation achievements and shareable challenge replays** [view:/simulation] [persona:executive] [persona:curious]: earn achievements as you play (they count in the site-wide achievement tracker), and share a run's seed so someone else can replay the exact same event sequence.
+- **Edge migration is now a first-class Simulation step, reachable by everyone** [view:/simulation]: the core scoring mechanic was previously buried in an Expert-mode side rail; Guided players and the auto-run can now drive it too.
+- **Events with real stakes** [view:/simulation]: world events now carry mechanical consequences, traps cost the same everywhere, and each run is scored (quarters-vs-par, traps hit, on-time objectives).
+
+### Changed
+
+- **The Simulation's demo documents are now the real tools' own output** [view:/simulation] [persona:executive] [persona:architect]: 15 more of the documents the sim shows during tours and fast-forward — the risk register, KPI dashboard and tracker, migration roadmap, RACI matrix, policy draft, audit checklist, deployment playbook, CRQC scenario, and more — are rendered by the same logic the real Command Center tools use, so a tool fix shows up in the sim automatically. 31 of 35 document types now work this way; three showed literal placeholder text before.
+- **The Simulation's event pool now partly reflects real, current data** [view:/simulation]: some world events cite actual NIST library publications and the real per-country regulator name, instead of being 100% hand-authored fiction.
+- **Several Simulation surfaces read your real data** [view:/simulation] [view:/migrate]: the architecture panel reflects your actual product selection, the pilot-picking step opens on your own migration plan when you have one, Phase 7's vendor artifacts derive from real vendor records, and the assessment preview shows your two-track split.
+
+### Fixed
+
+- **Corrected a wrong standards citation in the Audit Readiness Checklist** [view:/business] [persona:researcher]: the Exceptions section cited NIST CSWP 39 §5.1 for exception-process guidance the document doesn't contain; seven other CSWP 39 citations across the tools were individually verified against the current document and confirmed accurate.
+- **Fixed a text-overflow bug in the PKCS#11 HSM Learn tab** [view:/playground] [persona:developer]: long lesson titles were overlapping the lesson content; lesson steps now also show the live PKCS#11 call log and generated-key list without switching tabs.
+- **Removed a false product claim from the Simulation's event pool** [view:/simulation]: an event asserted a hardware-acceleration feature that doesn't exist in the named product; the event is now version-free.
+
+### Data
+
+- **NIST CSWP 39 refreshed to Update 1** [view:/library] [persona:researcher]: the December 2025 original was withdrawn and superseded by NIST on June 29, 2026 — the library entry, cached document, and extracted summary now reflect the current version, including its added citation of SP 800-131Ar3.
+
 ## [4.21.11] - 2026-07-18
 
 A guided Learn tab for the PKCS#11 HSM Playground, and a new Developer Sandbox
