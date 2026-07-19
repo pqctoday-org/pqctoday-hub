@@ -1023,7 +1023,8 @@ export const REAL_DOC_GENERATORS: Partial<
   }),
   // DOCUMENTED EXCEPTIONS (Batch 4, 07192026) — deliberately NOT converted,
   // per the plan's no-force-fit rule; the authored demoDocs content stays as
-  // the honest fallback for these four:
+  // the honest fallback for these five (30 of the 35 tree-gated types now
+  // render via a real tool):
   // - crypto-vulnerability-watch: the tool's whole value is the LIVE async
   //   CVE snapshot (public/data/cve-snapshot.json); a synchronous sample
   //   would render an empty per-product "no CVEs in snapshot" shell — worse
