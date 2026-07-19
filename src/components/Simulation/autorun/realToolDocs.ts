@@ -80,6 +80,19 @@ import {
   buildMarkdown as buildMigrationVerification,
   type VerifyState,
 } from '@/components/BusinessCenter/tools/MigrationVerification'
+import {
+  buildKpiTrackerMarkdown,
+  type KpiTrackerMarkdownInput,
+} from '@/components/PKILearning/modules/MigrationProgram/components/KPITrackerTemplate'
+import { buildDimensions } from '@/data/kpiCatalog'
+import type { ExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+import {
+  ALL_ITEMS as AUDIT_CHECKLIST_ITEMS,
+  renderAuditPreview,
+  renderExceptionsAndEvidenceMd,
+} from '@/components/PKILearning/modules/ComplianceStrategy/components/AuditReadinessChecklist'
+import { renderCryptoApiMarkdown } from '@/components/PKILearning/modules/CryptoMgmtModernization/components/CryptoApiRefactorAudit'
+import { softwareData } from '@/data/migrateData'
 
 /**
  * Thales Luna is the fleet vendor for this demo org. Derived from `HSM_VENDORS`
@@ -518,6 +531,156 @@ function migrationVerificationState(sector: DemoSector): VerifyState {
   }
 }
 
+/** Demo ExecutiveModuleData for the KPI tracker sample (Batch 1, 07192026).
+ *  Aggregates derived from REAL data (full catalog + real threats), exactly
+ *  the way useExecutiveModuleData computes them — so the auto-scored KPI rows
+ *  in the sample carry live numbers that move when the catalog moves.
+ *  Assessment-dependent fields are honestly empty (no fake assessment): the
+ *  rows they gate render as the tool's real "locked — no data" state, and the
+ *  sample supplies manual scores for the rest, an exemplary mid-flight fill. */
+function demoKpiExecData(sector: DemoSector): ExecutiveModuleData {
+  const industry = sector === 'financial' ? 'Financial Services / Banking' : 'Healthcare'
+  const industryThreats = threatsData.filter((t) => t.industry === industry)
+  const pqcReadyCount = softwareData.filter((i) => isPqcReady(i.pqcSupport)).length
+  const fipsValidatedCount = softwareData.filter((i) => isFips1403Validated(i.fipsValidated)).length
+  return {
+    threatsByIndustry: new Map(),
+    criticalThreatCount: threatsData.filter((t) => t.criticality === 'Critical').length,
+    totalThreatCount: threatsData.length,
+    industryThreats,
+    vendorsByLayer: new Map(),
+    fipsValidatedCount,
+    pqcReadyCount,
+    vendorReadinessWeighted: softwareData.length > 0 ? pqcReadyCount / softwareData.length : 0,
+    vendorReadinessByLayer: new Map(),
+    totalProducts: softwareData.length,
+    frameworks: [],
+    frameworksByIndustry: [],
+    countryDeadlines: [],
+    userCountryData: null,
+    assessmentResult: null,
+    riskScore: null,
+    industry,
+    country: '',
+    complianceSelections: [],
+    preBoostScore: null,
+    boosts: [],
+    hndlRiskWindow: null,
+    tnflRiskWindow: null,
+    categoryScores: null,
+    categoryDrivers: null,
+    migrationEffort: [],
+    algorithmMigrations: [],
+    keyFindings: [],
+    assessmentProfile: null,
+    myFrameworks: [],
+    myProductIds: [],
+    myProducts: [],
+    myThreatIds: [],
+    myThreats: [],
+    myTimelineCountries: [],
+    myTimelineCountryData: [],
+    isAssessmentComplete: false,
+    migrationDeadlineYear: null,
+    migrationStartYear: 2026,
+  }
+}
+
+function kpiTrackerSample(sector: DemoSector): KpiTrackerMarkdownInput {
+  const dimensions = buildDimensions('executive', 'migration', demoKpiExecData(sector), null)
+  // Manual scores for the non-auto dimensions — a believable mid-flight fill,
+  // touched so the tool's own "not yet scored" logic treats them as real input.
+  const userScores: Record<string, number> = {}
+  const touchedIds = new Set<string>()
+  const MANUAL_FILL: Record<string, number> = {}
+  let seed = 0
+  for (const d of dimensions) {
+    if (d.disabled) continue
+    if (d.autoScore === null || d.autoScore === undefined || d.notYetScored) {
+      // Deterministic spread (55/65/75 cycling) — varied but reproducible.
+      MANUAL_FILL[d.id] = 55 + (seed++ % 3) * 10
+    }
+  }
+  for (const [id, score] of Object.entries(MANUAL_FILL)) {
+    userScores[id] = score
+    touchedIds.add(id)
+  }
+  return {
+    dimensions,
+    activePersona: 'executive',
+    riskHistory: [],
+    userScores,
+    userWeights: {},
+    touchedIds,
+  }
+}
+
+/** Audit-readiness sample: checked items derived from the REAL checklist item
+ *  lists (an item rename/addition upstream propagates here), filled to an
+ *  "Established"-tier mid-flight state — strong on inventory/policy (the
+ *  early-phase work), partial on technical/vendor, thin on evidence (the
+ *  closing-phase work). */
+function auditChecklistSample(): string {
+  const take = (sectionId: string, n: number): string[] =>
+    (AUDIT_CHECKLIST_ITEMS[sectionId] ?? []).slice(0, n).map((i) => i.value)
+  const data: Record<string, Record<string, string | string[]>> = {
+    'crypto-inventory': { items: take('crypto-inventory', 5) },
+    'policy-governance': { items: take('policy-governance', 4) },
+    'risk-assessment': { items: take('risk-assessment', 3) },
+    'technical-controls': { items: take('technical-controls', 2) },
+    'vendor-management': { items: take('vendor-management', 2) },
+    'evidence-documentation': { items: take('evidence-documentation', 1) },
+  }
+  return (
+    renderAuditPreview(data, 'Healthcare', 'Germany') +
+    renderExceptionsAndEvidenceMd(
+      [
+        {
+          scope: 'Legacy MRI fleet (vendor-locked firmware, RSA-2048)',
+          compensatingControl: 'Network segmentation + monitored TLS gateway in front',
+          owner: 'Clinical Engineering',
+          sunset: '2029 hardware refresh',
+        },
+      ],
+      [
+        {
+          productOrAsset: 'Edge TLS termination',
+          cmvpCertNumber: 'pending — module on the CMVP MIP list',
+          acvpRunId: 'ACVP-demo-2026-Q2',
+          esvStatus: 'n/a',
+          cveScanDate: '2026-06-01',
+        },
+      ]
+    )
+  )
+}
+
+/** Crypto-API refactor sample: a Java/BouncyCastle service — the classic
+ *  enterprise shape — mid-size call-site count, partially hardcoded today,
+ *  target ML-KEM-768 + ML-DSA-65. All field values are the tool's own select
+ *  options; the recommendation/checklist/watch-outs come from the real
+ *  auditCryptoApi logic, not authored text. */
+function cryptoApiRefactorSample(): string {
+  return renderCryptoApiMarkdown({
+    stackInventory: {
+      applicationType: 'server-side service',
+      language: 'Java',
+      currentCryptoApi: ['jce-provider', 'bouncycastle'],
+      provider: ['software', 'hsm'],
+    },
+    refactorScope: {
+      targetAlgorithms: ['ML-KEM-768', 'ML-DSA-65'],
+      callSiteCount: 'medium',
+      cryptoAgilityNow: 'partially-hardcoded',
+      runtimeFallback: 'must-support',
+    },
+    plan: {
+      refactorPlan:
+        'Introduce a signing/KEM facade over the JCE provider seam first; migrate the 30-odd direct BouncyCastle call sites behind it service by service, TLS termination before data-at-rest; wire algorithm selection to configuration so the ML-DSA-87 upgrade is a config change, not a refactor.',
+    },
+  })
+}
+
 /** Real-tool generators for the Command Center tools that have no other
  *  presence in Learn/Simulation (no shared component to reuse), keyed by
  *  the `ExecutiveDocumentType` the tool saves as. Checked first by
@@ -602,5 +765,23 @@ export const REAL_DOC_GENERATORS: Partial<
   'migration-verification': (sector) => ({
     title: 'Migration Verification & Program Closure',
     data: buildMigrationVerification(migrationVerificationState(sector)),
+  }),
+  // Batch 1 (07192026) — the three types that previously fell all the way
+  // through to the typed PLACEHOLDER stub (no authored demo content existed).
+  'kpi-tracker': (sector) => ({
+    title: 'PQC Migration KPI Tracker',
+    data: buildKpiTrackerMarkdown(kpiTrackerSample(sector)),
+  }),
+  // Sector-independent: the checklist items are framework-fixed; sector only
+  // flavors the header (sample pins the demo org's Healthcare/DE profile).
+  'audit-checklist': () => ({
+    title: 'PQC Audit Readiness Checklist',
+    data: auditChecklistSample(),
+  }),
+  // Sector-independent: a Java/JCE enterprise service reads the same in any
+  // industry — the content is language/provider-driven, not sector-driven.
+  'crypto-api-refactor': () => ({
+    title: 'Crypto API Refactor Audit — Java',
+    data: cryptoApiRefactorSample(),
   }),
 }

@@ -84,7 +84,21 @@ describe('demoDocs narration provenance guard', () => {
     // Notes" heading, reached via REAL_DOC_GENERATORS in Wave 5 WP5.3. All
     // three citations match the document exactly — allowlisted as
     // verified-accurate, not invented. Any OTHER §/Fig. citation still fails.
-    const VERIFIED_CSWP39_SECTIONS = ['3.2.1', '5', '5.3']
+    //
+    // §6.5 added 07192026 (Batch 1: kpi-tracker via REAL_DOC_GENERATORS):
+    // verified against the cached CSWP 39-upd1 PDF p.34 — §6.5 is titled
+    // exactly "Maturity Assessment for Crypto Agility", which is verbatim
+    // what the KPI tracker's own footer cites.
+    //
+    // §5.1 added 07192026 (Batch 1: audit-checklist): verified p.29 — §5.1
+    // ("Cryptographic Standards, Regulations, and Mandates") states
+    // "Cryptographic algorithm validation is a prerequisite for cryptographic
+    // module validation" (CAVP/CMVP), which is exactly the Evidence heading's
+    // claim. The tool's OTHER §5.1 cite — on the Exceptions heading — was
+    // checked too, found invented (the document has no exception-process
+    // content anywhere), and removed from the tool itself; this guard is what
+    // caught it.
+    const VERIFIED_CSWP39_SECTIONS = ['3.2.1', '5', '5.3', '6.5', '5.1']
     const citationPattern = /CSWP\.?\s?39[^.]{0,20}(§|Fig\.)\s?([0-9.]+)/g
     for (const { sector, type, data } of ALL_DOC_BODIES) {
       const invented: string[] = []
