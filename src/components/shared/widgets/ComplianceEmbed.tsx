@@ -11,6 +11,6 @@
  */
 import { ComplianceView } from '@/components/Compliance/ComplianceView'
 
-export function ComplianceEmbed({ initialTab }: { initialTab?: string } = {}) {
-  return <ComplianceView simEmbed initialTab={initialTab} />
+export function ComplianceEmbed({ initialTab, cert }: { initialTab?: string; cert?: string } = {}) {
+  return <ComplianceView simEmbed initialTab={initialTab} initialCert={cert} />
 }

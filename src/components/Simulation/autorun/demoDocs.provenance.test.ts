@@ -12,29 +12,91 @@
  *   - a bare CRQC year claim with no accompanying planning-assumption label
  * Extend the allowlist only with a verified, sourced reason — not to silence
  * a real finding.
+ *
+ * Also scans REAL_DOC_GENERATORS output (07182026) — `realToolDocs.ts` /
+ * `derivedFinancialDocs.ts` compute doc bodies from live tool math and
+ * OVERRIDE the hand-authored DEMO_DOCS_BY_SECTOR entries at exec-tour render
+ * time (see `demoDocFor`), so a qualifier present in the hand-authored copy
+ * can silently vanish in what a player actually sees. That exact drift shipped
+ * for months: `deriveBoardDeck`'s CRQC sentence dropped the planning-assumption
+ * label this guard's last rule exists to catch, because only the hand-authored
+ * path was ever scanned. See simulation-mode-review-07182026.md finding A8.
  */
 import { describe, it, expect } from 'vitest'
-import { DEMO_DOCS_BY_SECTOR } from './demoDocs'
+import { DEMO_DOCS_BY_SECTOR, type DemoSector } from './demoDocs'
+import { REAL_DOC_GENERATORS } from './realToolDocs'
 
-const ALL_DOC_BODIES: { sector: string; type: string; data: string }[] = Object.entries(
+const SECTORS: DemoSector[] = [
+  'financial',
+  'healthcare',
+  'government',
+  'energy',
+  'telecom',
+  'retail',
+  'general',
+]
+
+const HAND_AUTHORED_BODIES: { sector: string; type: string; data: string }[] = Object.entries(
   DEMO_DOCS_BY_SECTOR
 ).flatMap(([sector, docsByType]) =>
   Object.entries(docsByType).map(([type, doc]) => ({ sector, type, data: doc.data }))
 )
 
+// Render every derived-doc generator for every sector so the guard covers the
+// path that actually reaches the player during the exec tour (REAL_DOC_GENERATORS
+// is checked first by `demoDocFor`, before the hand-authored fallback).
+const DERIVED_BODIES: { sector: string; type: string; data: string }[] = Object.entries(
+  REAL_DOC_GENERATORS
+).flatMap(([type, generator]) =>
+  SECTORS.map((sector) => ({
+    sector,
+    type: `${type} (derived)`,
+    data: generator!(sector).data,
+  }))
+)
+
+const ALL_DOC_BODIES = [...HAND_AUTHORED_BODIES, ...DERIVED_BODIES]
+
 describe('demoDocs narration provenance guard', () => {
   it('never cites SP 800-88 as a key-destruction standard', () => {
+    // 07182026: the derived data-at-rest-strategy doc (realToolDocs.ts, via
+    // DataAtRestStrategy's real tool) cites "NIST SP 800-88 (Guidelines for
+    // Media Sanitization)" by its correct title, correctly scoped to
+    // verifiable crypto-shred/media destruction — not claimed to retroactively
+    // close HNDL exposure (that overclaim, found in the verify-close phase,
+    // was fixed directly in simMoves.ts; see finding A10). This rule still
+    // catches any OTHER SP 800-88 citation.
     for (const { sector, type, data } of ALL_DOC_BODIES) {
+      if (type === 'data-at-rest-strategy (derived)') continue
       expect(data, `${sector}/${type} cites SP 800-88 for key destruction`).not.toMatch(/SP 800-88/)
     }
   })
 
   it('never attaches an invented CSWP 39 section or figure number', () => {
+    // Verified 07182026 against the cached NIST CSWP 39 PDF (Dec 19 2025 body
+    // text, not just the ToC): §3.2.1 = "Preserving Protocol Interoperability"
+    // (under 3.2 Algorithm Transitions); §5 = "Crypto Agility Strategic Plan
+    // for Managing Organizations' Crypto Risks"; §5.3 = "Technology Supply
+    // Chains" (p.25) — its body text covers exactly the vendor/supply-chain
+    // observability content (visibility into products/services, "a
+    // comprehensive list of cryptographic components") cited by the
+    // VendorScorecardBuilder/ContractClauseGenerator "Observability Tooling
+    // Notes" heading, reached via REAL_DOC_GENERATORS in Wave 5 WP5.3. All
+    // three citations match the document exactly — allowlisted as
+    // verified-accurate, not invented. Any OTHER §/Fig. citation still fails.
+    const VERIFIED_CSWP39_SECTIONS = ['3.2.1', '5', '5.3']
+    const citationPattern = /CSWP\.?\s?39[^.]{0,20}(§|Fig\.)\s?([0-9.]+)/g
     for (const { sector, type, data } of ALL_DOC_BODIES) {
+      const invented: string[] = []
+      for (const m of data.matchAll(citationPattern)) {
+        const [full, marker, num] = m
+        if (marker === '§' && VERIFIED_CSWP39_SECTIONS.includes(num)) continue
+        invented.push(full)
+      }
       expect(
-        data,
+        invented,
         `${sector}/${type} attaches an unverifiable CSWP 39 §/Fig. citation`
-      ).not.toMatch(/CSWP\.?\s?39[^.]{0,20}(§|Fig\.)/)
+      ).toEqual([])
     }
   })
 

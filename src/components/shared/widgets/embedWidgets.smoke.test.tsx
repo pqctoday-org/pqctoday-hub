@@ -69,6 +69,16 @@ describe('embed widgets — render smoke tests (inside an outer router)', () => 
     expect(screen.queryByText(/Enterprise Infrastructure Stack/i)).not.toBeInTheDocument()
   })
 
+  // Wave 5 (WP5.2) — P2's CBOM-export step embeds focused on the Plan tab
+  // (home of the real "Export plan + CBOM" button), not the default Replace
+  // tab. An empty test-store plan shows the Plan tab's own empty state rather
+  // than the export button (which only renders once something is planned) —
+  // that empty state is itself the proof the RIGHT tab is active.
+  it('Migrate: catalogId="cyclonedx-export" focuses the Plan tab, not the default Replace tab', () => {
+    renderEmbedded(<MigrateWorkbenchEmbed catalogId="cyclonedx-export" />)
+    expect(screen.getByText(/Nothing in your plan yet/i)).toBeInTheDocument()
+  })
+
   it('C5-full: AlgorithmTransitionEmbed mounts headless (urlSync:false, no nested router)', () => {
     // Sources its state from useAlgorithmExplorer in urlSync:false mode — no own
     // <Router>, so it must NOT crash inside the outer router.

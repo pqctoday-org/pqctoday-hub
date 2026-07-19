@@ -7,6 +7,7 @@ import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore
 import { useSelectedProductIds } from '@/store/useMigrateSelectionStore'
 import { useAchievementStore } from '@/store/useAchievementStore'
 import { useEndorsementStore } from '@/store/useEndorsementStore'
+import { useSimulationStore } from '@/store/useSimulationStore'
 import { ACHIEVEMENT_CATALOG } from '@/data/achievementCatalog'
 import { MODULE_TRACKS, LEARN_SECTIONS } from '@/components/PKILearning/moduleData'
 import type { ActivitySnapshot } from '@/types/AchievementTypes'
@@ -34,6 +35,12 @@ export function useAchievementChecker() {
   const endorsementRecords = useEndorsementStore((s) => s.records)
   const unlocked = useAchievementStore((s) => s.unlocked)
   const unlock = useAchievementStore((s) => s.unlock)
+
+  const simRunsCompleted = useSimulationStore((s) => s.simRunsCompleted)
+  const simZeroTrapPhases = useSimulationStore((s) => s.simZeroTrapPhases)
+  const simHardWin = useSimulationStore((s) => s.simHardWin)
+  const simOnTimeObjectives = useSimulationStore((s) => s.simOnTimeObjectives)
+  const simJurisdictionsPlayed = useSimulationStore((s) => s.simJurisdictionsPlayed)
 
   const prevUnlockedCount = useRef(unlocked.length)
 
@@ -126,6 +133,11 @@ export function useAchievementChecker() {
       quizQuestionsCorrect: quizMastery?.correctQuestionIds?.length ?? 0,
       endorsementCount,
       businessToolsUsed: businessToolsUsed ?? [],
+      simRunsCompleted,
+      simZeroTrapPhases,
+      simHardWin,
+      simOnTimeObjectives,
+      simJurisdictionsPlayed,
     }
   }, [
     modules,
@@ -141,6 +153,11 @@ export function useAchievementChecker() {
     businessToolsUsed,
     sectionsVisited,
     endorsementRecords,
+    simRunsCompleted,
+    simZeroTrapPhases,
+    simHardWin,
+    simOnTimeObjectives,
+    simJurisdictionsPlayed,
   ])
 
   useEffect(() => {

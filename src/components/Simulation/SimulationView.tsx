@@ -30,6 +30,7 @@ import {
   isReferenceEmbedStep,
   isScenarioStep,
   isStepComplete,
+  isBlockedEmbedHref,
   type StepCompletionContext,
 } from './embedContract'
 import { SIM_ALGORITHM_TABS } from './algorithmTabs'
@@ -66,15 +67,6 @@ import { TransformationStatusPanel } from './autorun/TransformationStatusPanel'
 import { RunActionsMenu, type RunActionItem } from './RunActionsMenu'
 import { EmbedLoading } from './EmbedLoading'
 
-/** Per-step Library scope: the search term to open the embedded library on, derived
- *  from the reference step's title, so each library step shows its topic (CycloneDX,
- *  SP 800-88, SBOM standards) instead of the full list. */
-function libraryQueryForStep(title: string): string | undefined {
-  if (/CycloneDX/i.test(title)) return 'CycloneDX'
-  if (/800-88|decommission/i.test(title)) return '800-88'
-  if (/SBOM|CT-log|data-source/i.test(title)) return 'SBOM'
-  return undefined
-}
 import { TimelineEmbed } from '@/components/shared/widgets/TimelineEmbed'
 import { LibraryEmbed } from '@/components/shared/widgets/LibraryEmbed'
 import { ComplianceEmbed } from '@/components/shared/widgets/ComplianceEmbed'
@@ -118,11 +110,13 @@ import {
 import { topBandLevel, normalizeLevel, phaseReadinessFraction } from '@/simulation/maturityScale'
 import { useSandboxAvailable } from '@/components/Playground/useSandboxAvailable'
 import { computeReadiness } from '@/simulation/readiness'
+import { buildScoreboard } from '@/simulation/scoreboard'
 import { runQuarter } from '@/simulation/quarterEngine'
 import { buildSimRoadmapDoc } from '@/simulation/simRoadmap'
 import { sectorStepsForPhase } from '@/simulation/sectorTrack'
 import { getBalance, type DifficultyId } from '@/data/simBalance'
 import { Eyebrow, Ring, Dial, ReadonlyDial, Stat, PlanningBadge, MandateBadge } from './atoms'
+import { RibbonTermTooltip } from './RibbonTermTooltip'
 import { SimTour } from './SimTour'
 import { KIND_CHIP, markSimResume, markSimExited, clearSimExcursion } from './simChrome'
 import { canResolveDeepLink } from '@/simulation/deepLinks'
@@ -163,8 +157,10 @@ import {
   type SensitivityTier,
 } from '@/data/simAssets'
 import { ArchitecturePanel } from './ArchitecturePanel'
+import { ARCHITECTURES, edgeState } from '@/data/simArchitecture'
 import { TrapInsightsPanel } from './TrapInsightsPanel'
-import { useSimulationStore } from '@/store/useSimulationStore'
+import { useSimulationStore, RUN_START } from '@/store/useSimulationStore'
+import { computeRunScore } from '@/simulation/runScore'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useAssessmentResultStore } from '@/store/useAssessmentResultStore'
@@ -175,6 +171,10 @@ import { useAwarenessScore } from '@/hooks/useAwarenessScore'
 import { ModuleCompletionCard } from '@/components/PKILearning/ModuleCompletionCard'
 import { SimRunComplete } from './SimRunComplete'
 import { SimConfirmDialog } from './SimConfirmDialog'
+import { QuizGateModal } from './QuizGateModal'
+import toast from 'react-hot-toast'
+import { pickQuizQuestion, questionsForModule } from '@/simulation/quizSelection'
+import type { QuizQuestion } from '@/components/PKILearning/modules/Quiz/types'
 import pqctodayLogo from '@/assets/pqctoday-logo.png'
 
 // ---- option lists (from real hub data) ----------------------------------
@@ -287,8 +287,9 @@ function SimModuleCompletionWatcher({ moduleId, title }: { moduleId: string; tit
 // ---- main ----------------------------------------------------------------
 export function SimulationView() {
   const navigate = useNavigate()
-  // PR3 — the Expert intel rail pins 2 panels (Critical assets + Artifacts) and
-  // collapses the rest behind a "Show N more" disclosure. Default collapsed.
+  // PR3 — the Expert intel rail pins 3 panels (Threat & readiness [WP4.7] +
+  // Critical assets + Artifacts) and collapses the rest behind a "Show N more"
+  // disclosure. Default collapsed.
   const [railExpanded, setRailExpanded] = useState(false)
   const {
     size,
@@ -330,6 +331,16 @@ export function SimulationView() {
     markRunComplete,
     recordObjectiveAchieved,
     objectiveAchievedYears,
+    seenConceptPeeks,
+    markConceptPeekSeen,
+    securedBudgetM,
+    spentBudgetM,
+    setSecuredBudget,
+    spendBudget,
+    trapsThisRun,
+    incrementTrapsThisRun,
+    recordSimRunCompletion,
+    setSeed,
   } = useSimulationStore()
   // WS-14: the active difficulty balance the engine + scoring read (config swap).
   const balance = getBalance(difficulty)
@@ -382,11 +393,30 @@ export function SimulationView() {
   const [referenceEmbed, setReferenceEmbed] = useState<{
     refId: string
     title: string
+    // WP5.5 — a compliance-cert-check step's `?cert=` (parsed from its `to`) so
+    // the embed can open on that specific record, matching the standalone route.
+    cert?: string
+    // WP5.5 — a library step's `?topic=` (parsed from its `to`) — replaces the
+    // old title-regex, which silently un-scoped a step on any label rewording.
+    topic?: string
   } | null>(null)
   // C3: a live sandbox lab embedded under the sim header (SandboxScenarioEmbed).
   const [scenarioEmbed, setScenarioEmbed] = useState<{
     scenarioId: string
     title: string
+  } | null>(null)
+  // WS-04: ArchitecturePanel embedded under the sim header — the edge-migration
+  // decision step, reachable from the ladder in every mode (not just the Expert
+  // rail). No id to track beyond the label: completion is the cumulative
+  // edge-decision count against the step's minDecisions (see embedContract.ts).
+  const [architectureEmbed, setArchitectureEmbed] = useState<{ title: string } | null>(null)
+  // WP2.5: the comprehension check gating a Learn module's "Mark complete" —
+  // null when no gate is currently open. Un-marking an already-complete module
+  // (the toggle's "undo" path) never opens this; only the FIRST completion does.
+  const [quizGate, setQuizGate] = useState<{
+    moduleId: string
+    title: string
+    question: QuizQuestion
   } | null>(null)
   // Is a Docker sandbox actually reachable? Scenario (lab) steps are gated on this:
   // when unavailable they show LOCKED and never open or auto-complete (bonus steps,
@@ -418,6 +448,7 @@ export function SimulationView() {
     setAlgorithmTabEmbed(null)
     setReferenceEmbed(null)
     setScenarioEmbed(null)
+    setArchitectureEmbed(null)
   }
   const openStep = (s: TreeStep) => {
     // Embedded steps render inline without a URL/route change, so they're
@@ -461,7 +492,18 @@ export function SimulationView() {
     } else if (isReferenceEmbedStep(s) && s.refId) {
       // Full-page reference (Migrate, …) embedded under the header.
       clearAllEmbeds()
-      setReferenceEmbed({ refId: s.refId, title: s.label })
+      // WP5.5 — carry a compliance-cert-check step's `?cert=` / a library step's
+      // `?topic=` into the embed (same query-string-parse pattern as the
+      // Learn/workshop branches above); cert was previously dropped at this exact
+      // seam, and topic was derived from the label via a regex instead of `to`.
+      const rqIdx = s.to.indexOf('?')
+      const rp = rqIdx >= 0 ? new URLSearchParams(s.to.slice(rqIdx + 1)) : null
+      setReferenceEmbed({
+        refId: s.refId,
+        title: s.label,
+        cert: rp?.get('cert') ?? undefined,
+        topic: rp?.get('topic') ?? undefined,
+      })
     } else if (isScenarioStep(s) && s.scenarioId) {
       // C3: live sandbox lab embedded under the header — only when a sandbox is
       // actually reachable. Otherwise it stays a LOCKED bonus step (see the ladder
@@ -470,6 +512,9 @@ export function SimulationView() {
       if (sandboxAvail !== 'available') return
       clearAllEmbeds()
       setScenarioEmbed({ scenarioId: s.scenarioId, title: s.label })
+    } else if (s.kind === 'architecture') {
+      clearAllEmbeds()
+      setArchitectureEmbed({ title: s.label })
     }
     // NOTE: opening an embed no longer auto-completes the step. Completion is an
     // explicit "Mark complete" click in the embed header (review steps), the
@@ -538,6 +583,25 @@ export function SimulationView() {
     setSearchParams(next, { replace: true })
   }, [searchParams, setSearchParams, setSel])
 
+  // Deep link: /simulation?seed=<n> — WP4.6 "Challenge a colleague": same world
+  // (deterministic quarter events/AI progress), different choices. Validated as a
+  // positive integer; applies ONLY to a genuinely fresh run (no quarter elapsed
+  // yet) — never mutates a run already in progress, matching the ?run/?phase
+  // deep-links' own "consumed once, then stripped" contract.
+  const ranSeedDeepLink = useRef(false)
+  useEffect(() => {
+    if (ranSeedDeepLink.current) return
+    const seedParam = searchParams.get('seed')
+    if (!seedParam) return
+    ranSeedDeepLink.current = true
+    const n = Number(seedParam)
+    const isFreshRun = year === RUN_START.year && q === RUN_START.q
+    if (Number.isInteger(n) && n > 0 && isFreshRun) setSeed(n)
+    const next = new URLSearchParams(searchParams)
+    next.delete('seed')
+    setSearchParams(next, { replace: true })
+  }, [searchParams, setSearchParams, setSeed, year, q])
+
   // While the Executive Overview walkthrough is playing (or on its end screen), the
   // maturity/objective scoreboard and the "did you beat Q-Day?" win ceremony are
   // suppressed — it's a tour, not a scored run, and it shows no dates. Climb (Play 0→7)
@@ -555,9 +619,26 @@ export function SimulationView() {
     const ids: TourConcept['id'][] = []
     if (phase === EXEC_TOUR_STAGES[0]?.phase) ids.push(...EXEC_TOUR_OPENING_CONCEPTS)
     const stage = EXEC_TOUR_STAGES.find((s) => s.phase === phase)
-    if (stage?.conceptCard) ids.push(stage.conceptCard)
+    if (stage?.conceptCards) ids.push(...stage.conceptCards)
     return ids.map((id) => EXEC_TOUR_CONCEPTS[id])
   }, [autoRunPlayer.mode, autoRunPlayer.running, autoRunPlayer.phaseFocus?.phase])
+
+  // WP2.3: the same concept peeks, brought to INTERACTIVE play — first entry to the
+  // phase they're keyed to, then never again (seenConceptPeeks). Suppressed while a
+  // walkthrough is actually running so the two systems never compete for the same
+  // fixed-position slot (walkthroughConcepts owns it then).
+  const interactiveConceptPeeks = useMemo<TourConcept[]>(() => {
+    if (isWalkthroughMode(autoRunPlayer.mode) && autoRunPlayer.running) return []
+    const ids: TourConcept['id'][] = []
+    if (sel === EXEC_TOUR_STAGES[0]?.phase) ids.push(...EXEC_TOUR_OPENING_CONCEPTS)
+    const stage = EXEC_TOUR_STAGES.find((s) => s.phase === sel)
+    if (stage?.conceptCards) ids.push(...stage.conceptCards)
+    return ids.filter((id) => !seenConceptPeeks.includes(id)).map((id) => EXEC_TOUR_CONCEPTS[id])
+  }, [sel, autoRunPlayer.mode, autoRunPlayer.running, seenConceptPeeks])
+  // The two sets are mutually exclusive by construction (each requires the other's
+  // running/not-running gate), so a single combined list is always unambiguous.
+  const conceptPeeks =
+    walkthroughConcepts.length > 0 ? walkthroughConcepts : interactiveConceptPeeks
 
   // real hub completion state: generated artifacts + Learn-module progress
   const docs = useModuleStore((s) => s.artifacts.executiveDocuments)
@@ -675,20 +756,12 @@ export function SimulationView() {
   }, [autoRunPlayer.mode, autoRunPlayer.done, setExecOverviewSeen])
   // Play-This-Phase end screen: same one-shot-per-run pattern as the walkthrough
   // above, but its own guard/state — a distinct mode family that must reset
-  // independently of the walkthrough's.
+  // independently of the walkthrough's. The triggering effect lives further
+  // down (after `fullyMature` is computed) — see the WP2.7 ceremony-stacking
+  // guard there: it deliberately does NOT fire when the run ceremony is ALSO
+  // due, so the two completion modals can never stack.
   const [phaseRunDoneOpen, setPhaseRunDoneOpen] = useState(false)
   const phaseRunCelebratedRef = useRef(false)
-  useEffect(() => {
-    if (isPhaseMode(autoRunPlayer.mode) && autoRunPlayer.done) {
-      if (!phaseRunCelebratedRef.current) {
-        phaseRunCelebratedRef.current = true
-        setPhaseRunDoneOpen(true)
-      }
-    } else if (!autoRunPlayer.done) {
-      phaseRunCelebratedRef.current = false
-      setPhaseRunDoneOpen(false)
-    }
-  }, [autoRunPlayer.mode, autoRunPlayer.done])
   const assessFrameworkRisk = useMemo(
     () => (assessSnap ? frameworkRiskFromAssess(assessSnap.result) : null),
     [assessSnap]
@@ -765,7 +838,9 @@ export function SimulationView() {
   // RESET clears the sim turn-state plus ONLY the sim-tracked hub progress the
   // gating reads from (the Learn modules + artifacts referenced by the trees) —
   // the player's other hub progress is left untouched.
-  const [pendingConfirm, setPendingConfirm] = useState<'reset' | 'start-over' | null>(null)
+  const [pendingConfirm, setPendingConfirm] = useState<'reset' | 'start-over' | 'delegate' | null>(
+    null
+  )
   const resetAll = () => setPendingConfirm('reset')
   const runResetAll = () => {
     for (const id of SIM_TRACKED.modules) resetModuleProgress(id)
@@ -829,14 +904,24 @@ export function SimulationView() {
     a.click()
     URL.revokeObjectURL(url)
   }
+  // Wave 4 (WP4.6) — "Challenge a colleague": copies a link that starts a FRESH
+  // run on the same deterministic seed (same quarter events, same AI progress) —
+  // only the player's own choices differ. Read-only: never mutates this run.
+  const copyChallenge = () => {
+    const url = `${window.location.origin}/simulation?seed=${seed}`
+    navigator.clipboard
+      .writeText(url)
+      .then(() => toast.success('Challenge link copied — same world, different choices.'))
+      .catch(() => toast.error('Could not copy the link — copy it from the address bar instead.'))
+  }
   const onImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     e.target.value = '' // allow re-importing the same file
     if (!file) return
     file.text().then((txt) => {
       const ok = importSave(txt)
-      if (typeof window !== 'undefined')
-        window.alert(ok ? 'Simulation save imported.' : 'That file is not a valid simulation save.')
+      if (ok) toast.success('Simulation save imported.')
+      else toast.error('That file is not a valid simulation save.')
     })
   }
   const docTypes = useMemo(() => new Set((docs ?? []).map((d) => d.type)), [docs])
@@ -852,6 +937,13 @@ export function SimulationView() {
   const artifactDone = (t?: ExecutiveDocumentType) => !!t && docTypes.has(t)
   const refDone = (id?: string) => !!id && visitedRefs.includes(id)
   const autoKey = (phase: string, to: string) => `${phase}::${to}`
+  // WS-04: how many migratable edges this run's architecture actually has — caps
+  // an `architecture` step's minDecisions so a fixed threshold can never exceed
+  // what a smaller org size has to decide (see embedContract.ts).
+  const arch = ARCHITECTURES[size as 'small' | 'mid' | 'large' | 'global']
+  const edgeDecisionCapacity = arch.edges.filter(
+    (e) => e.vulnerable && edgeState(arch, e) === 'migratable'
+  ).length
   // C0: resource-level completion lives in the embed contract's standard
   // convention (isStepComplete); the sim overlays its own rule on top — a step is
   // done if the player did it for real OR it was delegated to the AI team.
@@ -868,6 +960,9 @@ export function SimulationView() {
     // C3: a sandbox lab step is done once it's been completed in-sim (the lab
     // reports done via the postMessage handshake, or the manual Mark-complete).
     isScenarioComplete: (id: string) => visitedScenarios.includes(id),
+    // WS-04: cumulative edge-decision count/capacity for `architecture` steps.
+    edgeDecisionCount: () => Object.keys(edgeDecisions).length,
+    edgeDecisionCapacity: () => edgeDecisionCapacity,
   }
   const stepDone = (s: TreeStep, phase: string) =>
     auto.includes(autoKey(phase, s.to)) || isStepComplete(s, stepCompletionCtx)
@@ -960,6 +1055,24 @@ export function SimulationView() {
   // merely the L2 win bar. In the breadth-first climb, all-cleared-to-L2 happens at pass 2, so
   // the run-end ceremony must wait for the top-band pass (pass 4 ≈ 2035), not fire at pass 2.
   const fullyMature = LIFECYCLE.every((p) => levelOf(p) >= topBandOf(p))
+  // WP2.7 — ceremony-stacking guard: a "Play This Phase" run that happens to
+  // clear the LAST phase needed for full maturity would otherwise open BOTH
+  // this phase's end screen AND the run-complete ceremony at once (two
+  // stacked modals, z-70 over z-60). The run ceremony is the more important
+  // claim (whole-program, not one-phase) and already has its own guard below
+  // — so the phase-run screen simply doesn't fire when fullyMature is ALSO
+  // true this render; the player sees the run ceremony instead.
+  useEffect(() => {
+    if (isPhaseMode(autoRunPlayer.mode) && autoRunPlayer.done) {
+      if (!phaseRunCelebratedRef.current && !fullyMature) {
+        phaseRunCelebratedRef.current = true
+        setPhaseRunDoneOpen(true)
+      }
+    } else if (!autoRunPlayer.done) {
+      phaseRunCelebratedRef.current = false
+      setPhaseRunDoneOpen(false)
+    }
+  }, [autoRunPlayer.mode, autoRunPlayer.done, fullyMature])
   // Transformation status — the board headline (3 objectives + 4 tracks + dynamic HNDL
   // exposure), scenario-driven. Replaces the static, unwinnable Mosca "over by N years" gauge.
   const txStatus = transformationStatus({
@@ -973,6 +1086,17 @@ export function SimulationView() {
     allAtTopBand: fullyMature,
     currentYear: year,
   })
+  // WP2.2: the ONE program-progress object every UI surface (ribbon, the
+  // TransformationStatusPanel, the run-complete ceremony) reads from — see
+  // scoreboard.ts. Packages `cleared`/`fullyMature`/`txStatus`, computed
+  // exactly as before, so nothing about the underlying math changes here.
+  const scoreboard = buildScoreboard({
+    lifecyclePhases: LIFECYCLE,
+    levelOf,
+    winLevel: PHASE_WIN_LEVEL,
+    fullyMature,
+    txStatus,
+  })
 
   // W2b: run-end ceremony — fire once when every lifecycle phase is cleared. The
   // store flag (run-slice, cleared by RESET) keeps it from re-firing on reload and
@@ -981,14 +1105,27 @@ export function SimulationView() {
   // Re-openable guide: shows on first run (!tourSeen) or when the player turns on
   // Guided mode (the novice walkthrough), independent of the one-time tourSeen flag.
   const [tourOpen, setTourOpen] = useState(false)
+  // Shared by the completion effect (WP4.5 lifetime counters) and the ceremony's
+  // own score card — computed once so both read the same number.
+  const objectivesOnTime = scoreboard.objectives.filter((o) => o.onTime === 'done').length
   useEffect(() => {
     if (!fullyMature || runCompleteSeen) return
     const id = setTimeout(() => {
       setRunCompleteOpen(true)
       markRunComplete()
+      recordSimRunCompletion({ country, difficulty, trapsThisRun, objectivesOnTime })
     }, 0)
     return () => clearTimeout(id)
-  }, [fullyMature, runCompleteSeen, markRunComplete])
+  }, [
+    fullyMature,
+    runCompleteSeen,
+    markRunComplete,
+    recordSimRunCompletion,
+    country,
+    difficulty,
+    trapsThisRun,
+    objectivesOnTime,
+  ])
 
   // First-visit default: start non-technical roles (executive / curious) in the
   // low-density Guided view instead of the dense Expert console. Gated on
@@ -1041,6 +1178,15 @@ export function SimulationView() {
     programBudgetTarget(sector, sizeKey) * balance.estate.budgetMultiplier
   )
   const budgetSecured = Math.round(budgetTarget * p0Frac * 10) / 10
+  // WP4.3 — materialize the derived figure into the store (captured in save/export,
+  // read by achievements) whenever it changes; display keeps reading the fresh
+  // derived value directly, so there's no one-render lag waiting on the effect.
+  useEffect(() => {
+    if (securedBudgetM !== budgetSecured) setSecuredBudget(budgetSecured)
+  }, [budgetSecured, securedBudgetM, setSecuredBudget])
+  // Available budget floors at 0 — incidents can draw the spent side past secured
+  // without blocking anything; only the displayed/spendable figure floors.
+  const availableBudgetM = Math.max(0, Math.round((budgetSecured - spentBudgetM) * 10) / 10)
 
   // active phase
   const phase = FRAMEWORK_PHASES[sel]
@@ -1055,15 +1201,13 @@ export function SimulationView() {
     autoKey(sel, s.to)
   )
   const phaseAutoActive = phaseAutoKeys.some((k) => auto.includes(k))
-  const delegateToAI = () => {
-    if (
-      typeof window === 'undefined' ||
-      window.confirm(
-        `${phase.name} is run by your AI team, not your ${seatOpt.label} role. Complete its tasks automatically? Press Cancel to do them yourself.`
-      )
-    )
-      autoCompleteSteps(phaseAutoKeys)
-  }
+  // WP4.3 — delegation costs budget (per undone step, scaled by difficulty). The
+  // button disables with an explanation rather than a dead click when it can't
+  // be afforded; the incomplete steps are what the AI team would still need to run.
+  const phaseUndoneCount = phaseAutoKeys.filter((k) => !auto.includes(k)).length
+  const delegationCostM = Math.round(phaseUndoneCount * balance.ai.delegationCostPerStepM * 10) / 10
+  const canAffordDelegation = availableBudgetM >= delegationCostM
+  const delegateToAI = () => setPendingConfirm('delegate')
   // Framework activity tree for this phase, banded by maturity level. LEVELS
   // unlock sequentially — a level is EARNED only when all its steps are done, and
   // lower levels are required first (achievedTreeLevel). But WITHIN the active
@@ -1158,6 +1302,11 @@ export function SimulationView() {
       levelOf,
       evidenceLevel,
       stepDone,
+      // WP4.1 — readiness.pct is 0-100 migrated; hndlExposure is the inverse
+      // fraction (0-1) still unmigrated, the same grounded estate signal the
+      // ribbon and objectives panel already read.
+      hndlExposure: 1 - readiness.pct / 100,
+      securedBudget: availableBudgetM,
     })
     if (newAutoKeys.length) autoCompleteSteps(newAutoKeys)
     applyQuarter(quarter)
@@ -1186,12 +1335,30 @@ export function SimulationView() {
           readinessPct: readiness.pct,
           yearsToHorizon: clock.yearsToHorizon,
           over: clock.over,
+          // Wave 5 (WP5.1) — additive: the same live values the ribbon/ceremony
+          // already compute, captured at commit time for the /report section.
+          compliancePct: readiness.compliancePct,
+          objectives: scoreboard.objectives.map((o) => ({
+            id: o.id,
+            label: o.label,
+            byYear: o.byYear,
+            done: o.done,
+            achievedYear: objectiveAchievedYears[o.id],
+          })),
+          score: computeRunScore({
+            quartersUsed: (year - RUN_START.year) * 4 + (q - RUN_START.q),
+            difficulty,
+            trapsThisRun,
+            compliancePct: readiness.compliancePct,
+            objectivesOnTime,
+            objectivesTotal: scoreboard.objectives.length,
+          }),
+          verifyCloseCleared: levelOf('verify-close') >= PHASE_WIN_LEVEL,
         },
         nowMs()
       )
     )
-    if (typeof window !== 'undefined')
-      window.alert('Draft roadmap committed to the Command Center.')
+    toast.success('Draft roadmap committed to the Command Center.')
   }
 
   // REQUIRE-ASSESSMENT GATE — the simulation runs on the user's assessed
@@ -1330,11 +1497,15 @@ export function SimulationView() {
         </div>
         <dl className="w-full max-w-[320px] space-y-2 text-left">
           {[
-            { label: 'Migration phases', value: `${cleared} of ${LIFECYCLE.length} cleared` },
+            {
+              label: 'Migration phases (L2 floor)',
+              value: `${scoreboard.milestone.cleared} of ${scoreboard.milestone.total} cleared`,
+            },
             {
               label: 'Program maturity',
-              value: `Level ${Math.round(txStatus.maturity)} of ${MAX_LEVEL}`,
+              value: `Level ${Math.round(scoreboard.maturity)} of ${MAX_LEVEL}`,
             },
+            { label: 'Program complete', value: scoreboard.complete ? 'Yes ✓' : 'Not yet' },
             {
               label: 'Quantum-exposed value',
               value: `€${Math.round(exposedValueM)}M (€${Math.round(uninsuredM)}M uninsured)`,
@@ -1497,7 +1668,18 @@ export function SimulationView() {
               </Button>
             )}
             <SimAutoRunOverlay player={autoRunPlayer} />
-            <SimConceptPeek concepts={walkthroughConcepts} />
+            <SimConceptPeek
+              concepts={conceptPeeks}
+              onDismiss={markConceptPeekSeen}
+              onLearnMore={(moduleId) =>
+                openStep({
+                  kind: 'learn',
+                  label: `Learn: ${moduleId}`,
+                  to: `/learn/${moduleId}`,
+                  moduleId,
+                })
+              }
+            />
             <SimArtifactReveal type={autoRunPlayer.reveal} />
             {autoRunPlayer.scenarioIntro && (
               <SimScenarioIntroCard
@@ -1556,6 +1738,12 @@ export function SimulationView() {
               items={
                 [
                   {
+                    key: 'challenge',
+                    label: 'Challenge a colleague',
+                    description: 'Copy a link — same world, different choices.',
+                    onSelect: copyChallenge,
+                  },
+                  {
                     key: 'export',
                     label: 'Export',
                     description: 'Download this run as a JSON save.',
@@ -1605,13 +1793,20 @@ export function SimulationView() {
           and wired to the hub timeline (QC_FIRST_YEAR / regulatoryTimelines / …)
           when we invest in doing it properly. */}
 
-        {/* KPI ribbon */}
+        {/* KPI ribbon — WP4.7 (Wave 4 ribbon slimming): scoreboard + clock + budget
+          only. HNDL/TNFL risk and readiness moved to the Expert rail's pinned
+          "Threat & readiness" panel below — they're real signals, but a novice
+          had no action to take on them here, just more numbers to chase. */}
         <div className="flex shrink-0 flex-wrap items-stretch gap-3 border-b border-border bg-card px-4 py-3">
           {!suppressWinUI && <TransformationStatusPanel status={txStatus} />}
           <Stat
-            label="Phases cleared"
-            value={`${cleared}/${LIFECYCLE.length}`}
-            sub="win bar = Level 2"
+            label="Governance floor (L2)"
+            value={`${scoreboard.milestone.cleared}/${scoreboard.milestone.total}`}
+            sub={
+              scoreboard.complete
+                ? 'Milestone — program complete ✓'
+                : 'Milestone — full win needs each phase at its own top band'
+            }
             tone="text-success"
           />
           <Stat
@@ -1620,34 +1815,13 @@ export function SimulationView() {
             sub={`Q-Day horizon ≈ ${horizonYear} · X+Y>Z`}
             tone={clock.atRisk ? 'text-destructive' : 'text-foreground'}
             className="min-w-[132px]"
+            def="mosca"
             badge={
               <PlanningBadge
                 label="planning"
                 tip={`The Q-Day horizon (Z ≈ ${horizonYear}) is one of the illustrative planning anchors — a modelled year the CRQC could arrive, not a published date. Re-check the live source.`}
               />
             }
-          />
-          <Stat
-            label="Est. readiness"
-            value={`${readiness.pct}%`}
-            sub={
-              readiness.migrated > 0
-                ? `${readiness.migrated}/${readiness.vulnerable} edges · ${readiness.compliancePct}% compliant`
-                : `${readiness.migrated}/${readiness.vulnerable} vulnerable edges`
-            }
-            tone="text-primary"
-          />
-          <Stat
-            label="HNDL risk"
-            value={threat.hndl.label}
-            sub={threat.hndl.note}
-            tone={threat.hndl.tone}
-          />
-          <Stat
-            label="TNFL risk"
-            value={threat.tnfl.label}
-            sub={threat.tnfl.note}
-            tone={threat.tnfl.tone}
           />
           <Stat
             label="Budget secured"
@@ -1668,7 +1842,8 @@ export function SimulationView() {
         catalogEmbed ||
         algorithmTabEmbed ||
         referenceEmbed ||
-        scenarioEmbed ? (
+        scenarioEmbed ||
+        architectureEmbed ? (
           <div data-sim-embed-pane className="sim-fade-in flex min-h-0 flex-1 flex-col">
             <div className="flex shrink-0 items-center gap-2 border-b-2 border-primary bg-primary/10 px-4 py-2">
               <span className="shrink-0 rounded bg-primary px-2 py-0.5 font-mono text-sim-chip font-extrabold uppercase tracking-[0.14em] text-primary-foreground">
@@ -1691,7 +1866,9 @@ export function SimulationView() {
                               ? (SIM_REFERENCE_EMBEDS[referenceEmbed.refId]?.label ?? 'Reference')
                               : scenarioEmbed
                                 ? 'Lab'
-                                : 'Assess'}{' '}
+                                : architectureEmbed
+                                  ? 'Architecture'
+                                  : 'Assess'}{' '}
                 ·{' '}
                 {phase.number !== null
                   ? `Phase ${phase.number}`
@@ -1709,32 +1886,61 @@ export function SimulationView() {
                     algorithmTabEmbed?.title ??
                     referenceEmbed?.title ??
                     scenarioEmbed?.title ??
+                    architectureEmbed?.title ??
                     assessEmbed?.title)}
               </span>
               {/* Completion toggle — guarantees a "mark complete" path for every
                 embedded Learn module (some have no in-module Complete button when
-                the workshop/exercises chrome is hidden in the sim). Toggleable. */}
+                the workshop/exercises chrome is hidden in the sim). WP2.5: the
+                FIRST completion is quiz-gated (a real question from the module's
+                own quiz-bank category — questionsForModule/pickQuizQuestion) when
+                one exists; un-marking never re-opens the gate. A module with no
+                quiz coverage completes on the click as before, but is labeled
+                self-attested (same honesty pattern as AI-delegation) rather than
+                silently passing as a verified check. */}
               {learnEmbed &&
                 (() => {
                   const done = moduleDone(learnEmbed.moduleId)
+                  const hasGate = questionsForModule(learnEmbed.moduleId).length > 0
                   return (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      onClick={() =>
-                        updateModuleProgress(learnEmbed.moduleId, {
-                          status: done ? 'in-progress' : 'completed',
-                        })
-                      }
-                      aria-pressed={done}
-                      className={`h-auto shrink-0 rounded-md px-3 py-1 text-[11px] font-bold ${
-                        done
-                          ? 'bg-success text-success-foreground hover:opacity-90'
-                          : 'border border-success/50 bg-success/10 text-success hover:bg-success/20'
-                      }`}
-                    >
-                      {done ? '✓ Completed' : 'Mark complete'}
-                    </Button>
+                    <span className="flex shrink-0 items-center gap-1.5">
+                      {done && !hasGate && (
+                        <span
+                          className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground"
+                          title="No quiz question exists yet for this module — completion is self-reported, not comprehension-checked."
+                        >
+                          self-attested
+                        </span>
+                      )}
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => {
+                          if (done) {
+                            updateModuleProgress(learnEmbed.moduleId, { status: 'in-progress' })
+                            return
+                          }
+                          const q = pickQuizQuestion(learnEmbed.moduleId, seed)
+                          if (q) {
+                            setQuizGate({
+                              moduleId: learnEmbed.moduleId,
+                              title: learnEmbed.title,
+                              question: q,
+                            })
+                          } else {
+                            updateModuleProgress(learnEmbed.moduleId, { status: 'completed' })
+                          }
+                        }}
+                        aria-pressed={done}
+                        className={`h-auto shrink-0 rounded-md px-3 py-1 text-[11px] font-bold ${
+                          done
+                            ? 'bg-success text-success-foreground hover:opacity-90'
+                            : 'border border-success/50 bg-success/10 text-success hover:bg-success/20'
+                        }`}
+                      >
+                        {done ? '✓ Completed' : 'Mark complete'}
+                      </Button>
+                    </span>
                   )
                 })()}
               {/* Explicit "Mark complete" for REVIEW embeds (D-b) — opening no longer
@@ -1794,7 +2000,15 @@ export function SimulationView() {
               onClickCapture={(e) => {
                 const a = (e.target as HTMLElement).closest?.('a[href]')
                 const href = a?.getAttribute('href')
-                if (href && href.startsWith('/')) e.preventDefault()
+                if (isBlockedEmbedHref(href)) {
+                  e.preventDefault()
+                  // WP2.7: a blocked link used to fail silently — the player
+                  // clicked and nothing visibly happened. Say why.
+                  toast('This link opens after the run — for now it stays inside the simulation.', {
+                    icon: '🔗',
+                    duration: 2500,
+                  })
+                }
               }}
             >
               {/* Inner content frame. Two jobs:
@@ -1886,11 +2100,11 @@ export function SimulationView() {
                   // of navigating the player out to its own route.
                   <Suspense fallback={<EmbedLoading />}>
                     {referenceEmbed?.refId === 'library' ? (
-                      <LibraryEmbed query={libraryQueryForStep(referenceEmbed.title)} />
+                      <LibraryEmbed query={referenceEmbed.topic} />
                     ) : referenceEmbed?.refId === 'compliance' ? (
                       <ComplianceEmbed initialTab="foryou" />
                     ) : referenceEmbed?.refId === 'compliance-cert-check' ? (
-                      <ComplianceEmbed initialTab="records" />
+                      <ComplianceEmbed initialTab="records" cert={referenceEmbed.cert} />
                     ) : referenceEmbed?.refId === 'threats' ? (
                       // The CRQC threat-horizon step opens the Horizon tab directly,
                       // not the default Threat Catalog list (mirrors ComplianceEmbed).
@@ -1903,6 +2117,16 @@ export function SimulationView() {
                   // C3: live sandbox lab embedded under the header (passes the scenario
                   // id directly — the component falls back to the route param off-sim).
                   <SandboxScenarioEmbed scenarioId={scenarioEmbed.scenarioId} />
+                ) : architectureEmbed ? (
+                  // WS-04: the edge-migration decision step, reachable from the ladder
+                  // in every mode — not just the Expert rail's power-user panel.
+                  <div className="p-4">
+                    <ArchitecturePanel
+                      size={size as 'small' | 'mid' | 'large' | 'global'}
+                      country={country}
+                      p5Frac={p5Frac}
+                    />
+                  </div>
                 ) : null}
               </div>
             </div>
@@ -2115,7 +2339,7 @@ export function SimulationView() {
                         </span>
                       </div>
                       <div className="mt-0.5 font-mono text-sim-micro text-muted-foreground">
-                        agility · KPIs · skills · verification
+                        maturity · KPIs · agility · reg-mapping · skills
                       </div>
                     </Button>
                   </div>
@@ -2195,9 +2419,15 @@ export function SimulationView() {
                         <Button
                           type="button"
                           onClick={delegateToAI}
-                          className="h-auto shrink-0 rounded-md bg-secondary px-2.5 py-1 text-[10.5px] font-bold text-secondary-foreground"
+                          disabled={!canAffordDelegation}
+                          title={
+                            canAffordDelegation
+                              ? undefined
+                              : `Needs €${delegationCostM}M — only €${availableBudgetM}M available. Do it yourself, or free up budget first.`
+                          }
+                          className="h-auto shrink-0 rounded-md bg-secondary px-2.5 py-1 text-[10.5px] font-bold text-secondary-foreground disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                          Auto-complete ▸
+                          Auto-complete ▸ €{delegationCostM}M
                         </Button>
                       )}
                     </div>
@@ -2216,24 +2446,23 @@ export function SimulationView() {
                     canEmbed={canEmbedStep}
                     onOpenStep={openStep}
                     assessRec={nextMoveRec}
-                    onWrongPick={
-                      // I1 pilot: a wrong pick on Inventory (p1) or Pilots (p5) costs the
-                      // player 2 quarters of rework — their clock slips toward the fixed Q-Day.
-                      sel === 'p1' || sel === 'p5'
-                        ? (label) => {
-                            // On Pilots (p5) a wrong call also rolls back a migrated estate link,
-                            // so readiness visibly drops on a specific edge (re-doable). p1 = clock only.
-                            const revertId =
-                              sel === 'p5' ? Object.keys(edgeDecisions)[0] : undefined
-                            const extra = revertId ? ` — rolled back link ${revertId}` : ''
-                            applyDecisionSetback(
-                              2,
-                              `Lost 2 quarters to rework — wrong call: ${label}${extra}`,
-                              revertId
-                            )
-                          }
-                        : undefined
-                    }
+                    onTrapPicked={incrementTrapsThisRun}
+                    guided={guided}
+                    onWrongPick={(label) => {
+                      // WP4.4 — uniform stakes: 1 quarter of rework everywhere, 2 on
+                      // Inventory (p1) / Pilots (p5), where the I1 pilot found the
+                      // sharpest real-world cost (re-discovery, re-piloting).
+                      const quarters = sel === 'p1' || sel === 'p5' ? 2 : 1
+                      // On Pilots (p5) a wrong call also rolls back a migrated estate link,
+                      // so readiness visibly drops on a specific edge (re-doable).
+                      const revertId = sel === 'p5' ? Object.keys(edgeDecisions)[0] : undefined
+                      const extra = revertId ? ` — rolled back link ${revertId}` : ''
+                      applyDecisionSetback(
+                        quarters,
+                        `Lost ${quarters} quarter${quarters > 1 ? 's' : ''} to rework — wrong call: ${label}${extra}`,
+                        revertId
+                      )
+                    }}
                   />
 
                   {/* C1 #3 + W2c — phase debrief: study what the run skipped. Opens each
@@ -2755,9 +2984,9 @@ export function SimulationView() {
             the board at lg. */}
               {!guided && (
                 <div className="grid min-h-0 grid-cols-1 gap-3.5 overflow-auto sm:grid-cols-2 lg:grid-cols-1">
-                  {/* PR3 — rail disclosure. Critical assets + Artifacts stay pinned
-                (always rendered below); the rest collapse here to calm the Expert
-                rail. Count + named list are phase-aware. */}
+                  {/* PR3 — rail disclosure. Threat & readiness + Critical assets +
+                Artifacts stay pinned (always rendered below); the rest collapse
+                here to calm the Expert rail. Count + named list are phase-aware. */}
                   {railMoreShown.length > 0 && (
                     <Button
                       type="button"
@@ -2877,6 +3106,51 @@ export function SimulationView() {
                       </p>
                     </div>
                   )}
+
+                  {/* WP4.7 — ribbon slimming: HNDL/TNFL risk + readiness were three of
+                      six ribbon stats novices had no action to take on. Pinned here
+                      (Expert rail, not behind "show more") since they're live risk
+                      signals, not assessment-context — same visibility tier as
+                      Critical assets below, just no longer competing for header space. */}
+                  <div className="rounded-xl border border-border bg-card p-4">
+                    <Eyebrow className="mb-2 block">Threat &amp; readiness</Eyebrow>
+                    <div className="grid grid-cols-3 gap-1.5">
+                      <div className="rounded-lg border border-border bg-muted/40 px-2 py-1.5">
+                        <RibbonTermTooltip concept="hndl">
+                          <span className="block text-sim-micro leading-tight text-muted-foreground">
+                            HNDL risk
+                          </span>
+                        </RibbonTermTooltip>
+                        <span
+                          className={`block font-mono text-[13px] font-extrabold ${threat.hndl.tone}`}
+                        >
+                          {threat.hndl.label}
+                        </span>
+                      </div>
+                      <div className="rounded-lg border border-border bg-muted/40 px-2 py-1.5">
+                        <RibbonTermTooltip concept="tnfl">
+                          <span className="block text-sim-micro leading-tight text-muted-foreground">
+                            TNFL risk
+                          </span>
+                        </RibbonTermTooltip>
+                        <span
+                          className={`block font-mono text-[13px] font-extrabold ${threat.tnfl.tone}`}
+                        >
+                          {threat.tnfl.label}
+                        </span>
+                      </div>
+                      <div className="rounded-lg border border-border bg-muted/40 px-2 py-1.5">
+                        <RibbonTermTooltip concept="readiness">
+                          <span className="block text-sim-micro leading-tight text-muted-foreground">
+                            Readiness
+                          </span>
+                        </RibbonTermTooltip>
+                        <span className="block font-mono text-[13px] font-extrabold text-primary">
+                          {readiness.pct}%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
 
                   {/* Critical assets — discovered in P0; value + date-driven quantum exposure */}
                   <div className="rounded-xl border border-border bg-card p-4">
@@ -3309,7 +3583,7 @@ export function SimulationView() {
         {/* W2b: run-end ceremony — the summative "did you beat Q-Day?" moment */}
         {runCompleteOpen && !suppressWinUI && (
           <SimRunComplete
-            objectives={txStatus.objectives.map((o) => ({
+            objectives={scoreboard.objectives.map((o) => ({
               id: o.id,
               label: o.label,
               byYear: o.byYear,
@@ -3317,9 +3591,29 @@ export function SimulationView() {
 
               achievedYear: objectiveAchievedYears[o.id],
             }))}
-            maturity={txStatus.maturity}
+            maturity={scoreboard.maturity}
             programEndYear={getScenario(country).programEndYear}
+            score={computeRunScore({
+              quartersUsed: (year - RUN_START.year) * 4 + (q - RUN_START.q),
+              difficulty,
+              trapsThisRun,
+              compliancePct: readiness.compliancePct,
+              objectivesOnTime,
+              objectivesTotal: scoreboard.objectives.length,
+            })}
+            onCopyChallenge={copyChallenge}
             onClose={() => setRunCompleteOpen(false)}
+          />
+        )}
+        {quizGate && (
+          <QuizGateModal
+            question={quizGate.question}
+            moduleTitle={quizGate.title}
+            onCancel={() => setQuizGate(null)}
+            onPass={() => {
+              updateModuleProgress(quizGate.moduleId, { status: 'completed' })
+              setQuizGate(null)
+            }}
           />
         )}
         {walkthroughDoneOpen && (
@@ -3351,6 +3645,19 @@ export function SimulationView() {
             onCancel={() => setPendingConfirm(null)}
             onConfirm={() => {
               runStartOver()
+              setPendingConfirm(null)
+            }}
+          />
+        )}
+        {pendingConfirm === 'delegate' && (
+          <SimConfirmDialog
+            title={`Delegate ${phase.name} to your AI team?`}
+            description={`${phase.name} is run by your AI team, not your ${seatOpt.label} role. Its tasks complete automatically, flagged "RUN BY AI · UNVERIFIED" until you study what was done — for €${delegationCostM}M, drawn from your secured budget. Cancel to do them yourself instead.`}
+            confirmLabel="Auto-complete"
+            onCancel={() => setPendingConfirm(null)}
+            onConfirm={() => {
+              autoCompleteSteps(phaseAutoKeys)
+              if (delegationCostM > 0) spendBudget(delegationCostM)
               setPendingConfirm(null)
             }}
           />

@@ -3,6 +3,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { ArchitecturePanel } from './ArchitecturePanel'
 import { useSimulationStore } from '@/store/useSimulationStore'
+import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 
 // MermaidDiagram dynamically imports the real `mermaid` package and renders
 // SVG via an effect — irrelevant to what we're testing here (that the
@@ -17,6 +18,7 @@ vi.mock('./MermaidDiagram', () => ({
 describe('ArchitecturePanel (interactive, two-gate)', () => {
   beforeEach(() => {
     useSimulationStore.setState({ edgeDecisions: {} })
+    useMigrateSelectionStore.setState({ myProducts: [], choice: {} })
   })
 
   it('migrating unlocked links raises readiness; "Migrate eligible" fills the unlocked capacity', () => {
@@ -60,5 +62,29 @@ describe('ArchitecturePanel (interactive, two-gate)', () => {
     fireEvent.click(screen.getByRole('button', { name: /Migrate eligible/i }))
     fireEvent.click(screen.getByRole('button', { name: /^Diagram$/i }))
     expect(screen.getByTestId('mermaid-source').textContent).toContain('✓ migrated')
+  })
+
+  // WP5.4 — "your selection" chips (display-only, no effect on edgeState/gating).
+  describe('real /migrate selection', () => {
+    it('shows nothing when the player has made no real selection', () => {
+      render(<ArchitecturePanel size="small" country="US" p5Frac={0} />)
+      expect(screen.queryByText(/Your selection/i)).not.toBeInTheDocument()
+    })
+
+    it('shows a chip per selected product, with its real catalog PQC status', () => {
+      useMigrateSelectionStore.setState({ myProducts: ['openssl'] })
+      render(<ArchitecturePanel size="small" country="US" p5Frac={0} />)
+      expect(screen.getByText(/Your selection/i)).toBeInTheDocument()
+      const chip = screen.getByText('OpenSSL')
+      expect(chip).toBeInTheDocument()
+      expect(chip).toHaveAttribute('title', 'PQC available')
+    })
+
+    it('does not change unlock/migration gating — display layer only', () => {
+      useMigrateSelectionStore.setState({ myProducts: ['openssl'] })
+      render(<ArchitecturePanel size="small" country="US" p5Frac={0} />)
+      expect(screen.getByText(/0\/6 links migrated · 0\/3 unlocked via P5/)).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /Migrate eligible/i })).toBeDisabled()
+    })
   })
 })

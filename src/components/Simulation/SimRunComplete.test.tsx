@@ -2,7 +2,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
-import { SimRunComplete } from './SimRunComplete'
+import { SimRunComplete, type SimRunCompleteProps } from './SimRunComplete'
 import { clearTrapTally, recordTrapPick } from './simTrapTally'
 
 const objectives = [
@@ -12,7 +12,7 @@ const objectives = [
 ]
 const base = { objectives, maturity: 4, programEndYear: 2035, onClose: () => {} }
 
-function renderCeremony(props: Partial<typeof base> = {}) {
+function renderCeremony(props: Partial<SimRunCompleteProps> = {}) {
   return render(
     <MemoryRouter>
       <SimRunComplete {...base} {...props} />
@@ -94,5 +94,60 @@ describe('SimRunComplete (run-end ceremony)', () => {
       'href',
       '/compliance'
     )
+  })
+
+  // WP4.6 — the challenge affordance is opt-in via onCopyChallenge; omitting it
+  // (older callers) hides the button entirely, same pattern as `score`.
+  it('shows no challenge button when onCopyChallenge is omitted', () => {
+    renderCeremony()
+    expect(screen.queryByRole('button', { name: /challenge a colleague/i })).not.toBeInTheDocument()
+  })
+
+  it('calls onCopyChallenge when the challenge button is clicked', () => {
+    const onCopyChallenge = vi.fn()
+    renderCeremony({ onCopyChallenge })
+    fireEvent.click(screen.getByRole('button', { name: /challenge a colleague/i }))
+    expect(onCopyChallenge).toHaveBeenCalledTimes(1)
+  })
+
+  // WP4.2 — the grade card is opt-in via the `score` prop; omitting it (older
+  // callers, or a scenario with no meaningful quarter count) hides it entirely.
+  it('shows no grade card when score is omitted', () => {
+    renderCeremony()
+    expect(screen.queryByTestId('run-grade-card')).not.toBeInTheDocument()
+  })
+
+  it('shows the grade + full breakdown when score is provided', () => {
+    renderCeremony({
+      score: {
+        grade: 'A',
+        overall: 95,
+        parQuarters: 20,
+        paceScore: 100,
+        trapScore: 90,
+        complianceScore: 100,
+        onTimeScore: 90,
+      },
+    })
+    const card = screen.getByTestId('run-grade-card')
+    expect(card).toHaveTextContent('A')
+    expect(card).toHaveTextContent('par 20q')
+    expect(card).toHaveTextContent('100')
+    expect(card).toHaveTextContent('90')
+  })
+
+  it('renders a D grade with its own tone (not silently coerced to a passing look)', () => {
+    renderCeremony({
+      score: {
+        grade: 'D',
+        overall: 40,
+        parQuarters: 24,
+        paceScore: 20,
+        trapScore: 30,
+        complianceScore: 50,
+        onTimeScore: 60,
+      },
+    })
+    expect(screen.getByTestId('run-grade-card')).toHaveTextContent('D')
   })
 })

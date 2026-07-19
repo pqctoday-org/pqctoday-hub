@@ -8,6 +8,8 @@ import type { ReactNode } from 'react'
 import { Button } from '@/components/ui/button'
 import { PHASE_WIN_LEVEL } from '@/data/phaseMaturity'
 import { TIMELINE_COUNTRY_DEADLINE_MANDATE_BY_NAME } from '@/data/timelineFacts.generated'
+import { RibbonTermTooltip } from './RibbonTermTooltip'
+import type { TourConceptId } from './autorun/execTourConfig'
 
 export const eyebrow =
   'font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-muted-foreground'
@@ -281,6 +283,7 @@ export function Stat({
   tone = 'text-foreground',
   badge,
   className = '',
+  def,
 }: {
   label: string
   value: string
@@ -292,12 +295,16 @@ export function Stat({
   /** Extra classes on the tile — e.g. a min-width so a value+badge pair has
    *  room to sit inline in the otherwise-narrow KPI ribbon. */
   className?: string
+  /** Wraps the label in a hover/tap plain-English definition (educational-value
+   *  gap-closing, 07182026) — see RibbonTermTooltip. */
+  def?: TourConceptId
 }) {
+  const labelEl = <Eyebrow>{label}</Eyebrow>
   return (
     <div
       className={`min-w-0 flex-1 rounded-xl border border-border bg-card px-4 py-2.5 ${className}`}
     >
-      <Eyebrow>{label}</Eyebrow>
+      {def ? <RibbonTermTooltip concept={def}>{labelEl}</RibbonTermTooltip> : labelEl}
       {/* Badge rides next to the value (short, e.g. "3.0y"), not the label —
           the label can wrap in a narrow tile and would clip the badge. */}
       <div className="mt-0.5 flex items-center gap-1.5">

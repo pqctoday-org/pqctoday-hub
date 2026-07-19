@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { SimulationView } from './SimulationView'
@@ -67,8 +67,11 @@ beforeEach(() => {
   // console renders (gameplay tests assume it). Tests that need the gate reset it.
   useAssessmentResultStore.setState({ lastResult: null, completedAt: null })
   seedAssessment()
-  // suppress the first-run tour (WS-12) for the gameplay tests
-  useSimulationStore.setState({ tourSeen: true })
+  // suppress the first-run tour (WS-12) for the gameplay tests; guided defaults
+  // to false (Expert console) — reset() preserves it like tourSeen, so a test
+  // that flips it must not leak into the next one.
+  useSimulationStore.setState({ tourSeen: true, guided: false })
+  Object.assign(navigator, { clipboard: { writeText: vi.fn().mockResolvedValue(undefined) } })
 })
 
 describe('SimulationView (Mission Control)', () => {
@@ -85,10 +88,34 @@ describe('SimulationView (Mission Control)', () => {
     // SEAT stays switchable — it keeps the ⟳ glyph on a button.
     expect(screen.getByText('SEAT ⟳')).toBeInTheDocument()
     expect(screen.getByText(/Transformation/)).toBeInTheDocument()
-    expect(screen.getByText('Phases cleared')).toBeInTheDocument()
+    // WP2.2: relabeled from "Phases cleared" — the L2 count is a milestone,
+    // not the win condition (see scoreboard.ts).
+    expect(screen.getByText('Governance floor (L2)')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /End Quarter/ })).toBeInTheDocument()
     // exit affordance back to the hub is a visible button on the console
     expect(screen.getByRole('button', { name: /Exit to hub/i })).toBeInTheDocument()
+  })
+
+  // WP4.7 — ribbon slimming: the KPI ribbon keeps only scoreboard + clock +
+  // budget; HNDL/TNFL risk and readiness moved to the Expert rail's pinned
+  // "Threat & readiness" panel (Guided mode never sees the rail at all).
+  it('slims the ribbon to scoreboard + clock + budget, moving threat/readiness to the Expert rail', () => {
+    renderPage()
+    expect(screen.queryByText('Est. readiness')).not.toBeInTheDocument()
+    expect(screen.getByText('Threat & readiness')).toBeInTheDocument()
+    expect(screen.getAllByText('HNDL risk').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('TNFL risk').length).toBeGreaterThan(0)
+    // scoreboard + clock + budget still present on the ribbon (Budget secured
+    // also appears in the mobile fallback summary, hence getAllByText)
+    expect(screen.getByText('Governance floor (L2)')).toBeInTheDocument()
+    expect(screen.getByText('Years to Q-Day')).toBeInTheDocument()
+    expect(screen.getAllByText('Budget secured').length).toBeGreaterThan(0)
+  })
+
+  it('hides the Expert rail (and its Threat & readiness panel) in Guided mode', () => {
+    useSimulationStore.setState({ guided: true })
+    renderPage()
+    expect(screen.queryByText('Threat & readiness')).not.toBeInTheDocument()
   })
 
   // The sim runs on the user's assessed org (single source of truth): with no
@@ -151,11 +178,13 @@ describe('SimulationView (Mission Control)', () => {
   it('the tree drives the next move; the right call opens the module embedded in the sim', () => {
     renderPage()
     expect(screen.getByText('Next move — pick the right play')).toBeInTheDocument()
-    // default phase p0, fresh state → first unlocked step is 0.1 Learn: PQC Business Case.
+    // default phase p0, fresh state → first unlocked activity is 0.1, whose
+    // correct decision card shows its WP2.6 `decision` phrasing (not the raw
+    // "Learn: PQC Business Case" step label — see sections.tsx/gen-sim-trees.mjs).
     // Target the DecisionSection's choice card (aria-label "Option <X>: <label>") —
     // the active-band ladder now ALSO offers the same step (any-order completion),
     // so the plain label is no longer unique.
-    fireEvent.click(screen.getByRole('button', { name: /Option [A-C]: Learn: PQC Business Case/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Option [A-C]: Build the business case/ }))
     const rightCall = screen.getByText(/Right call/)
     // CTA opens the module IN the sim (embedded), under a persistent "Simulation
     // mode" bar. Scope to the "Right call" box (the parent of the label div) — the
@@ -184,12 +213,12 @@ describe('SimulationView (Mission Control)', () => {
     // the DecisionSection choice cards are the "Option <X>: ..." buttons; the
     // correct one is the next-move step, the others are framework Common Failures.
     const correctBtn = screen.getByRole('button', {
-      name: /Option [A-C]: Learn: PQC Business Case/,
+      name: /Option [A-C]: Build the business case/,
     })
     const grid = correctBtn.parentElement as HTMLElement
     const wrong = within(grid)
       .getAllByRole('button')
-      .find((b) => !/PQC Business Case/.test(b.textContent ?? ''))
+      .find((b) => !/Build the business case/.test(b.textContent ?? ''))
     fireEvent.click(wrong!)
     expect(screen.getByText('✕ Common failure')).toBeInTheDocument()
   })
@@ -216,26 +245,35 @@ describe('SimulationView (Mission Control)', () => {
   // WS-01 — one tree-gated source of truth: the Quarter Report's cleared count
   // can never disagree with the board, and the AI advances the tree (via `auto`),
   // never the legacy `checks` counter.
-  it('the Quarter Report never contradicts the board; AI advances the tree', () => {
-    renderPage()
-    for (let i = 0; i < 12; i++) {
-      fireEvent.click(screen.getByRole('button', { name: /End Quarter/ }))
-      const dialog = screen.getByRole('dialog')
-      // both board and report render "Phases cleared" as "n/9"; while the report
-      // is open they must show the SAME number.
-      const reportVal = within(dialog).getByText(/^\d+\/9$/).textContent
-      const boardVals = screen
-        .getAllByText(/^\d+\/9$/)
-        .filter((el) => !dialog.contains(el))
-        .map((el) => el.textContent)
-      expect(boardVals).toContain(reportVal)
-      fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
+  // 12 full quarter cycles against the whole view sits right at vitest's 5s
+  // default on a loaded CI runner (5.4s observed on the 07192026 PR run;
+  // passes locally). Explicit timeout rather than a smaller loop — the 12
+  // iterations are the point: a drift appearing late in the year would be
+  // missed by a 2-3 quarter loop.
+  it(
+    'the Quarter Report never contradicts the board; AI advances the tree',
+    { timeout: 20000 },
+    () => {
+      renderPage()
+      for (let i = 0; i < 12; i++) {
+        fireEvent.click(screen.getByRole('button', { name: /End Quarter/ }))
+        const dialog = screen.getByRole('dialog')
+        // both board and report render "Phases cleared" as "n/9"; while the report
+        // is open they must show the SAME number.
+        const reportVal = within(dialog).getByText(/^\d+\/9$/).textContent
+        const boardVals = screen
+          .getAllByText(/^\d+\/9$/)
+          .filter((el) => !dialog.contains(el))
+          .map((el) => el.textContent)
+        expect(boardVals).toContain(reportVal)
+        fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
+      }
+      // Option A: the AI advances progress only via real tree `auto` keys — there is
+      // no separate progression counter to drift out of sync with the board.
+      const { auto } = useSimulationStore.getState()
+      for (const k of auto) expect(k).toMatch(/^[a-z0-9]+::.+/)
     }
-    // Option A: the AI advances progress only via real tree `auto` keys — there is
-    // no separate progression counter to drift out of sync with the board.
-    const { auto } = useSimulationStore.getState()
-    for (const k of auto) expect(k).toMatch(/^[a-z0-9]+::.+/)
-  })
+  )
 
   // WS-12 — the first-run guide shows on a fresh visit, is skippable, and is
   // remembered (does not reappear once dismissed).
@@ -271,6 +309,35 @@ describe('SimulationView (Mission Control)', () => {
     // inherited Object.prototype keys (e.g. "toString") as a "valid" phase.
     renderPage(['/simulation?phase=toString'])
     expect(useSimulationStore.getState().sel).toBe('p0')
+  })
+
+  // Wave 4 (WP4.6) — /simulation?seed=<n> ("Challenge a colleague").
+  it('applies ?seed= on a genuinely fresh run, then strips the param', () => {
+    renderPage(['/simulation?seed=424242'])
+    expect(useSimulationStore.getState().seed).toBe(424242)
+  })
+
+  it('ignores a non-integer / non-positive ?seed= instead of corrupting the run seed', () => {
+    const before = useSimulationStore.getState().seed
+    renderPage(['/simulation?seed=not-a-number'])
+    expect(useSimulationStore.getState().seed).toBe(before)
+  })
+
+  it('never applies ?seed= to a run already in progress (a quarter has elapsed)', () => {
+    useSimulationStore.setState({ q: 2 }) // one End Quarter already happened
+    const before = useSimulationStore.getState().seed
+    renderPage(['/simulation?seed=424242'])
+    expect(useSimulationStore.getState().seed).toBe(before)
+  })
+
+  it('"Challenge a colleague" copies a ?seed= link for THIS run\'s seed', async () => {
+    useSimulationStore.setState({ seed: 999888 })
+    renderPage()
+    fireEvent.click(screen.getByRole('button', { name: /⋯ MORE/i }))
+    fireEvent.click(screen.getByRole('menuitem', { name: /challenge a colleague/i }))
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+      expect.stringContaining('/simulation?seed=999888')
+    )
   })
 })
 

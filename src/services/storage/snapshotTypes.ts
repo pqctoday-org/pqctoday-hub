@@ -165,6 +165,9 @@ export interface SimulationData {
   auto: string[]
   seed: number
   difficulty: string
+  securedBudgetM: number
+  spentBudgetM: number
+  trapsThisRun: number
 }
 
 /**

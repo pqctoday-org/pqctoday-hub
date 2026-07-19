@@ -79,6 +79,13 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
         'Fails. Common failure: business units absent from the SteerCo. Workstream leads hit constant political resistance and the program stalls on cross-functional decisions.'
       ),
     },
+    {
+      label: 'Formally accept the quantum risk and close the program',
+      desc: 'Sign off that this risk is acceptable and stand the effort down.',
+      evaluate: trap(
+        "Fails as a Phase 0 opening move. Formal risk acceptance is a legitimate outcome elsewhere in GRC — but only AFTER the risk is quantified (HNDL/TNFL exposure, regulatory exposure) and an accountable owner signs off against that number. Accepting an unquantified, un-scoped risk isn't governance, it's skipping the work — and it still leaves the board exposed the moment a regulator or auditor asks what was actually assessed."
+      ),
+    },
   ],
   p1: [
     {
@@ -125,14 +132,21 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
         'Fails. The CBOM is a map of exactly which systems use breakable crypto — an HNDL shopping list for an attacker. It needs Restricted classification, RBAC, query logging and SOC exfiltration monitoring, not open access.'
       ),
     },
+    {
+      label: 'Extend the SPDX SBOM — one format for everything',
+      desc: 'Reuse the software bill of materials you already maintain.',
+      evaluate: trap(
+        "Fails. SPDX is built for software/license provenance, not cryptographic assets — it has no dedicated field set for algorithm, key size, protocol context or quantum-vulnerability status the way CycloneDX's cryptoProperties does. Link the CBOM to the SBOM (2.2 already does this for dependency chains); don't try to fold crypto asset data into a format that has no real place to put it."
+      ),
+    },
   ],
   p3: [
     {
-      label: 'Score Tier-1 by HNDL exposure × data shelf-life',
-      desc: 'Risk-rank entries, then produce an approved QRA.',
+      label: 'Score every entry across all four risk dimensions',
+      desc: 'HNDL exposure, TNFL criticality, feasibility, regulatory pressure — then produce an approved QRA.',
       evaluate: (ctx) => ({
         kind: 'sound',
-        outcome: `Sound. Risk-driven scoring produces the QRA (Gate G3) and a prioritized backlog. With ${ctx.sector.label.toLowerCase()} data living ${ctx.sector.x}y, this is what stops the bleeding first.`,
+        outcome: `Sound. Scoring across all four dimensions — (1) HNDL exposure, (2) TNFL/trust-infrastructure criticality, (3) migration feasibility, (4) regulatory & compliance pressure — produces the QRA (Gate G3) and a defensible priority backlog, not just a severity-sorted list. With ${ctx.sector.label.toLowerCase()} data living ${ctx.sector.x}y, HNDL alone already justifies moving first — the other three dimensions are what keep signature-heavy and feasibility-constrained systems from falling off the plan.`,
       }),
     },
     {
@@ -149,6 +163,14 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
       evaluate: (ctx) => ({
         kind: 'trap',
         outcome: `Fails. Analysis paralysis. The Mosca clock keeps running — you're already ${ctx.over}y over the line. Score with what you have and refine the QRA quarterly.`,
+      }),
+    },
+    {
+      label: 'Score by CVSS severity, like the vuln backlog',
+      desc: 'Reuse the classical vulnerability-management scoring you already run.',
+      evaluate: (ctx) => ({
+        kind: 'trap',
+        outcome: `Fails. CVSS scores exploitability today, against classical attackers — it has no time-to-decrypt axis and no notion of "safe now, broken once a CRQC exists." A CVSS-low system holding ${ctx.sector.label.toLowerCase()} data with a ${ctx.sector.x}-year confidentiality horizon can be a Tier-1 quantum risk with a near-zero classical CVSS score. Quantum risk isn't classical vulnerability severity — it needs its own four-dimension model.`,
       }),
     },
   ],
@@ -179,6 +201,13 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
       desc: 'Assume every pilot and vendor lands on schedule.',
       evaluate: trap(
         'Fails. With no acceleration/deceleration triggers, one slipped vendor or failed pilot derails the plan. The framework requires contingency triggers and a pre-drafted accelerated profile.'
+      ),
+    },
+    {
+      label: 'Stand up full governance and gates before migrating anything',
+      desc: 'Perfect the PMO, RACI and gate criteria first, then start Phase 5.',
+      evaluate: trap(
+        'Fails — the opposite failure from an unfunded mandate. All process, no migration: a roadmap, PMO and gate criteria that never actually move a system off vulnerable crypto still leaves every HNDL/TNFL clock running. Structure enough to sequence correctly (Gate G4), then start Phase 5 pilots in parallel — governance and migration mature together, not one before the other.'
       ),
     },
   ],
@@ -243,6 +272,13 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
         'Fails. A lagging library/runtime (pre-OpenSSL 3.5, old Bouncy Castle, libsodium/MbedTLS gaps) silently blocks the deployment you designed. Verify library versions as a hard pilot prerequisite.'
       ),
     },
+    {
+      label: 'Declare the pilot successful once the server metrics look clean',
+      desc: 'Latency and CPU are within SLO — call it done.',
+      evaluate: trap(
+        "Fails. Clean server-side metrics only prove your server behaved — they say nothing about downstream clients. Older TLS stacks, middleboxes with hardcoded buffer limits, and third-party integrations can silently fail or fall back to classical on the larger hybrid handshake. Measure the client population too: fallback rate, negotiation failures, and error rates from the CONSUMING side, not just the server's own dashboard."
+      ),
+    },
   ],
   p6: [
     {
@@ -270,7 +306,7 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
       label: 'Plan the X.509-vs-MTC fork per deployment',
       desc: 'Route public web PKI to Merkle Tree Certs, internal PKI to X.509+PQC.',
       evaluate: sound(
-        'Sound. The framework splits PKI: public-facing web PKI heads toward Merkle Tree Certificates + ACME automation, while internal/private PKI moves to X.509+PQC now. Deciding the fork per deployment avoids a dead-end PKI investment.'
+        'Sound. The framework splits PKI: public-facing web PKI is watching Merkle Tree Certificates (an IETF PLANTS working-group draft, one leading candidate alongside X.509+ML-DSA) + ACME automation, while internal/private PKI moves to X.509+PQC now. Deciding the fork per deployment avoids a dead-end PKI investment.'
       ),
     },
   ],
@@ -279,7 +315,7 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
       label: 'Engage top-10 vendors; score & contract',
       desc: 'Questionnaires, criticality tiers, dated clauses.',
       evaluate: sound(
-        'Sound. Formally engaged, scored vendors with dated PQC commitments is the Level-2 bar (Gate G7) and unblocks vendor-gated systems.'
+        'Sound. Formally engaged, scored vendors with dated PQC commitments is the Level-2 bar for this continuous phase (no gate — vendor governance never closes) and unblocks vendor-gated systems.'
       ),
     },
     {
@@ -319,9 +355,9 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
   'verify-close': [
     {
       label: 'Prove each migration against the evidence standard & log decommissioning',
-      desc: 'Assemble the dossier (observed PQC negotiation, negative testing, attestation) and record SP 800-88 decommissioning.',
+      desc: 'Assemble the dossier (observed PQC negotiation, negative testing, attestation), re-encrypt long-lived archives under PQC, then record SP 800-88 (Rev. 2) decommissioning of the classical keys.',
       evaluate: sound(
-        'Sound. "Done" now means proven: the 5-point evidence dossier plus a logged classical-key decommissioning turn a declared migration into a verifiable, audit-ready one — and close the harvest-now-decrypt-later exposure.'
+        'Sound. "Done" now means proven: the 5-point evidence dossier plus a logged classical-key decommissioning turn a declared migration into a verifiable, audit-ready one — and close the *forward* harvest-now-decrypt-later exposure. Traffic already harvested before migration is permanently gone; that is why archives get re-encrypted under PQC before the classical keys protecting them are destroyed, not after.'
       ),
     },
     {
@@ -336,6 +372,13 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
       desc: 'Free up the people; the hard part is over.',
       evaluate: trap(
         'Fails. Common failure: orphaned capabilities. CBOM, discovery and vendor governance decay within quarters without funded BAU owners — closure is a handover, not an end-of-funding.'
+      ),
+    },
+    {
+      label: 'Destroy the classical keys the moment PQC is live',
+      desc: 'Decommission immediately — the migration is done, why keep the old keys around.',
+      evaluate: trap(
+        "Fails, and catastrophically for anything the old keys still protect. Long-lived archives encrypted under the classical key become permanently unreadable the instant that key is destroyed — there is no migration path for data whose only decryption key no longer exists. Re-encrypt every long-lived archive under PQC FIRST, verify it, then destroy the classical key. Getting this order backwards doesn't create a security gap; it destroys data."
       ),
     },
   ],

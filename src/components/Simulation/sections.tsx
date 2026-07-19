@@ -18,9 +18,10 @@ import { MODULE_CATALOG } from './resourceContract'
 import type { TreeStep, TreeActivity, LevelBand, Pitfall, StepKind } from '@/simulation'
 import type { AssessRec } from '@/simulation/assessBridge'
 import { canResolveDeepLink } from '@/simulation/deepLinks'
+import type { QuarterEffects } from '@/simulation/quarterEngine'
 import { logSimTrapPick } from '@/utils/analytics'
 import { recordTrapPick } from './simTrapTally'
-import { Eyebrow } from './atoms'
+import { Eyebrow, PlanningBadge } from './atoms'
 import {
   SEVERITY_META,
   MOVE_TONE,
@@ -187,6 +188,8 @@ export function DecisionSection({
   onOpenStep,
   assessRec,
   onWrongPick,
+  onTrapPicked,
+  guided = false,
 }: {
   phaseId: PhaseId
   ctx: MoveCtx
@@ -200,8 +203,16 @@ export function DecisionSection({
   canEmbed: (s: TreeStep) => boolean
   onOpenStep: (s: TreeStep) => void
   assessRec?: AssessRec
-  /** I1: called with the wrong move's label when the player picks a trap (pilot phases only). */
+  /** I1 / WP4.4: called with the wrong move's label when the player picks a trap —
+   *  every phase now wires this (uniform stakes), not just p1/p5. */
   onWrongPick?: (label: string) => void
+  /** WP4.2: called on every wrong pick in every phase — feeds trapsThisRun (the
+   *  run-scoped score input), independent of onWrongPick's time-cost consequence. */
+  onTrapPicked?: () => void
+  /** WP4.4: the free instant "↺ try again" only appears in Guided mode — outside
+   *  it, a wrong pick sticks (you see why it failed, but don't get a costless
+   *  do-over) so the setback stays a real consequence, not an inconvenience. */
+  guided?: boolean
 }) {
   const [chosen, setChosen] = useState<number | null>(null)
   // reset the choice whenever the move changes (new phase or a step completed)
@@ -236,7 +247,11 @@ export function DecisionSection({
   const wrong = pickWrong(pool, stepsDone, 2)
   const correctCard: DecisionCard = {
     correct: true,
-    label: nextMove.step.label,
+    // WP2.6: a strategy-shaped decision phrasing when the activity has one,
+    // so the correct card doesn't read as an obviously-task-labeled menu item
+    // next to strategy-shaped traps. Falls back to the step's own label for
+    // any activity not yet authored one — never a broken or empty card.
+    label: nextMove.act.decision ?? nextMove.step.label,
     detail: `${nextMove.act.id} · ${nextMove.act.title}`,
     kind: nextMove.step.kind,
   }
@@ -305,6 +320,7 @@ export function DecisionSection({
                 if (!c.correct) {
                   logSimTrapPick(phaseId, c.label)
                   recordTrapPick(phaseId, c.label)
+                  onTrapPicked?.()
                   // I1: a wrong pick costs the player time (pilot phases wire this).
                   onWrongPick?.(c.label)
                 }
@@ -412,14 +428,20 @@ export function DecisionSection({
               {correctCard.detail}
             </div>
           </div>
-          <Button
-            variant="ghost"
-            type="button"
-            onClick={() => setChosen(null)}
-            className="mt-1 h-auto p-0 font-mono text-sim-micro font-bold text-primary hover:bg-transparent"
-          >
-            ↺ try again
-          </Button>
+          {guided ? (
+            <Button
+              variant="ghost"
+              type="button"
+              onClick={() => setChosen(null)}
+              className="mt-1 h-auto p-0 font-mono text-sim-micro font-bold text-primary hover:bg-transparent"
+            >
+              ↺ try again
+            </Button>
+          ) : (
+            <div className="mt-1 text-sim-micro text-muted-foreground">
+              The pick stands — study the sound move above, then continue.
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -445,6 +467,8 @@ export interface QuarterReportData {
   events: SimEvent[]
   aiProgress: string[]
   recommend: string
+  /** WP4.1 — mechanical consequences this quarter (setback/budget cost/credit). */
+  effects?: QuarterEffects
 }
 
 export function QuarterReport({
@@ -537,6 +561,26 @@ export function QuarterReport({
               )
             })}
           </div>
+
+          {report.effects && (
+            <div className="mb-4 rounded-xl border border-warning/40 bg-warning/5 p-3">
+              <Eyebrow className="mb-1 flex items-center gap-1.5 text-warning">
+                Consequences <PlanningBadge />
+              </Eyebrow>
+              <div className="text-[12.5px] leading-snug text-foreground">
+                {report.effects.setbackQuarters && (
+                  <div>
+                    ⏱ {report.effects.setbackQuarters} quarter
+                    {report.effects.setbackQuarters > 1 ? 's' : ''} of rework lost
+                  </div>
+                )}
+                {report.effects.budgetCostM && <div>💸 −€{report.effects.budgetCostM}M budget</div>}
+                {report.effects.budgetCreditM && (
+                  <div>💰 +€{report.effects.budgetCreditM}M budget</div>
+                )}
+              </div>
+            </div>
+          )}
 
           <div className="mb-4 rounded-xl border border-primary bg-primary/10 p-3">
             <Eyebrow className="mb-1 block text-primary">Recommended next move</Eyebrow>

@@ -65,4 +65,12 @@ export interface ActivitySnapshot {
 
   // Business
   businessToolsUsed: string[]
+
+  // Simulation (Wave 4, WP4.5) — lifetime counters, sourced from
+  // useSimulationStore at snapshot build; never reset by the sim's own reset().
+  simRunsCompleted: number
+  simZeroTrapPhases: number
+  simHardWin: boolean
+  simOnTimeObjectives: number
+  simJurisdictionsPlayed: string[]
 }

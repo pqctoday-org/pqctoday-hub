@@ -16,9 +16,10 @@
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { Trophy, ShieldCheck, LayoutDashboard, CalendarClock } from 'lucide-react'
+import { Trophy, ShieldCheck, LayoutDashboard, CalendarClock, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { readTrapTally, remediation, phaseName } from './simTrapTally'
+import type { RunScoreBreakdown } from '@/simulation/runScore'
 
 export interface SimRunCompleteObjective {
   id: string
@@ -36,13 +37,28 @@ export interface SimRunCompleteProps {
   maturity: number
   /** The program horizon year (operate/govern through here). */
   programEndYear: number
+  /** WP4.2 — the run's graded breakdown, visible not a black box. Omit to hide
+   *  the grade card entirely (e.g. a scenario with no meaningful quarter count). */
+  score?: RunScoreBreakdown
+  /** WP4.6 — copies a `?seed=` challenge link (the view owns clipboard + toast;
+   *  this component stays presentational). Omit to hide the affordance. */
+  onCopyChallenge?: () => void
   onClose: () => void
+}
+
+const GRADE_TONE: Record<RunScoreBreakdown['grade'], string> = {
+  A: 'bg-success/15 text-success border-success/30',
+  B: 'bg-primary/15 text-primary border-primary/30',
+  C: 'bg-warning/15 text-warning border-warning/30',
+  D: 'bg-destructive/15 text-destructive border-destructive/30',
 }
 
 export function SimRunComplete({
   objectives,
   maturity,
   programEndYear,
+  score,
+  onCopyChallenge,
   onClose,
 }: SimRunCompleteProps) {
   const reduce = useReducedMotion()
@@ -98,6 +114,35 @@ export function SimRunComplete({
             Program maturity {Math.round(maturity)} / 4
           </h2>
 
+          {score && (
+            <div
+              className={`mb-4 rounded-xl border p-3 text-left ${GRADE_TONE[score.grade]}`}
+              data-testid="run-grade-card"
+            >
+              <div className="mb-1.5 flex items-center justify-between">
+                <span className="font-mono text-sim-micro font-bold uppercase tracking-wide">
+                  Run grade
+                </span>
+                <span className="text-2xl font-black leading-none">{score.grade}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[11px] text-foreground/80 sm:grid-cols-4">
+                <div>
+                  Pace <b>{score.paceScore}</b>
+                  <div className="text-[10px] opacity-70">par {score.parQuarters}q</div>
+                </div>
+                <div>
+                  Discipline <b>{score.trapScore}</b>
+                </div>
+                <div>
+                  Compliance <b>{score.complianceScore}</b>
+                </div>
+                <div>
+                  On-time <b>{score.onTimeScore}</b>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="mb-4 space-y-1.5 text-left">
             {objectives.map((o) => {
               const onTime = o.done && (o.achievedYear == null || o.achievedYear <= o.byYear)
@@ -135,7 +180,7 @@ export function SimRunComplete({
               </div>
               <ol className="space-y-1">
                 {topTraps.map((t, i) => {
-                  const rem = remediation(t.phaseId)
+                  const rem = remediation(t.phaseId, t.label)
                   return (
                     <li key={`${t.phaseId} ${t.label}`} className="text-[12px] leading-snug">
                       <span className="font-semibold text-foreground">
@@ -176,6 +221,18 @@ export function SimRunComplete({
                 See your deadlines
               </Button>
             </Link>
+            {onCopyChallenge && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="gap-1.5"
+                onClick={onCopyChallenge}
+              >
+                <Users size={14} aria-hidden="true" />
+                Challenge a colleague
+              </Button>
+            )}
           </div>
 
           <Button

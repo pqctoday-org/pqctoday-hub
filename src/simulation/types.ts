@@ -18,7 +18,14 @@ import type { PhaseId } from '@/data/frameworkPhases'
 import type { MaturityLevelId } from '@/data/phaseMaturity'
 import type { ExecutiveDocumentType } from '@/services/storage/types'
 
-export type StepKind = 'learn' | 'reference' | 'activity' | 'workshop' | 'catalog' | 'scenario'
+export type StepKind =
+  | 'learn'
+  | 'reference'
+  | 'activity'
+  | 'workshop'
+  | 'catalog'
+  | 'scenario'
+  | 'architecture'
 
 /** A concrete, real-hub-backed leaf step. Completion is read from hub state. */
 export interface TreeStep {
@@ -46,6 +53,15 @@ export interface TreeStep {
   /** scenario: sandbox scenario id (C3 — embed a live sandbox lab in the sim).
    *  Completion via the visited-scenarios set, set when the lab reports done. */
   scenarioId?: string
+  /** architecture: the ArchitecturePanel embeds in-place (WS-04 edge migration).
+   *  Completion is cumulative — the player's total edge decisions across the
+   *  whole run must reach this threshold (capped against the run's actual
+   *  migratable-edge count, so a fixed number can never make the step
+   *  unreachable for a smaller architecture). Not per-step tracked: a second,
+   *  higher-threshold architecture step later in the same phase is satisfied
+   *  by the same growing decision count, the same way other kinds share one
+   *  underlying resource. */
+  minDecisions?: number
   /** True for a step sourced from an activity's `deepDive` array. Stamped
    *  automatically by `flattenTree` (never hand-authored) so `isGatingStep`
    *  excludes it, same as `scenario` — this is what keeps deep-dive content
@@ -60,6 +76,15 @@ export interface TreeStep {
 export interface TreeActivity {
   /** Framework activity id, verbatim — e.g. '1.2', '4.5–4.6'. */
   id: string
+  /** WP2.6: the decision-card face for this activity's correct choice, phrased
+   *  as a strategy statement (e.g. "Make the business case with real cost and
+   *  urgency data before pitching leadership") rather than a task label like
+   *  "Learn: PQC Business Case". Without this, DecisionSection falls back to
+   *  the first required step's own label — which is how every wrong-answer
+   *  trap became guessable by grammatical FORM alone (task-shaped correct vs
+   *  strategy-shaped traps), independent of content. Optional and additive:
+   *  an activity with no `decision` keeps today's fallback behavior. */
+  decision?: string
   /** Framework activity title. */
   title: string
   /** One-line "what you do", paraphrased from the framework prose. */

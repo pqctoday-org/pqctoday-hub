@@ -244,9 +244,13 @@ function ForYouSection({ onExportCsv }: { onExportCsv?: () => void }) {
 export const ComplianceView = ({
   simEmbed = false,
   initialTab,
+  initialCert,
 }: {
   simEmbed?: boolean
   initialTab?: string
+  /** Seeds the embed's local `cert` param (WP5.5) — the standalone route's
+   *  `?cert=` deep-link, made reachable when simEmbed can't read the page URL. */
+  initialCert?: string
 }) => {
   // simEmbed: rendered headless inside the simulation — PageHeader + the URL-writing
   // tier filters are hidden, and the URL-synced filter/tab state (useComplianceUrlState)
@@ -437,7 +441,7 @@ export const ComplianceView = ({
     handleRecSortColChange,
     handleRecSortDirChange,
     handleRecPageChange,
-  } = useComplianceUrlState(simEmbed, initialTab)
+  } = useComplianceUrlState(simEmbed, initialTab, initialCert)
 
   // Active pillar — derived from the landscape tab, kept in local state so the
   // pipeline can drive it independently.

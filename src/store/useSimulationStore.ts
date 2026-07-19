@@ -13,6 +13,7 @@ import type { SimEvent } from '@/data/simEvents'
 import type { SimulationData } from '@/services/storage/snapshotTypes'
 import type { DifficultyId } from '@/data/simBalance'
 import { newSeed } from '@/simulation/rng'
+import type { QuarterEffects } from '@/simulation/quarterEngine'
 
 const DIFFICULTIES: DifficultyId[] = ['easy', 'realistic', 'hard']
 
@@ -76,6 +77,40 @@ export interface SimulationState {
    *  the Mosca dials in plain language. Independent of difficulty (a beginner can
    *  play Realistic with guidance on). */
   guided: boolean
+  /** Concept-peek ids (WP2.3) the player has already seen in interactive play —
+   *  each concept surfaces once, on first entry to the phase it's keyed to, then
+   *  never repeats. Browser/tutorial state like tourSeen/guided: preserved across
+   *  reset(), never part of a portable run save/snapshot. */
+  seenConceptPeeks: string[]
+  /** Wave 4 (WP4.3) — the program budget (€M) earned so far, MATERIALIZED: written
+   *  by the view when the P0-completion formula changes, rather than only ever
+   *  derived fresh at render. Lets spending (delegation, incidents) draw down a
+   *  real pool instead of a number that resets itself every render. */
+  securedBudgetM: number
+  /** Wave 4 (WP4.3) — cumulative budget spent (AI delegation costs, incident
+   *  costs from quarter effects), offset by good-news credits. Available budget
+   *  = max(0, securedBudgetM − spentBudgetM) — the pool floors at 0, it never
+   *  goes negative or blocks an incident from being reported. */
+  spentBudgetM: number
+  /** Wave 4 (WP4.2) — traps picked THIS run only, reset by reset(). Distinct from
+   *  simTrapTally.ts's lifetime localStorage tally: a fresh run's grade must never
+   *  be dragged down by a PAST run's mistakes. */
+  trapsThisRun: number
+  /** Wave 4 (WP4.5) — lifetime achievement-tracking counters, sourced into
+   *  ActivitySnapshot at snapshot build. Never reset by reset() (same browser-
+   *  level persistence class as tourSeen/guided) — a fresh run must not erase
+   *  what the player has already accomplished across past runs. */
+  simRunsCompleted: number
+  /** Completed runs (full lifecycle clear) that had zero traps picked the whole
+   *  run — a run-level "no common failures fallen for", not per-phase. */
+  simZeroTrapPhases: number
+  /** True once any completed run was played on Hard difficulty. */
+  simHardWin: boolean
+  /** High-water mark: the most on-time transformation objectives landed in any
+   *  single completed run (3 = every objective, in one run). */
+  simOnTimeObjectives: number
+  /** Distinct country jurisdictions played across all completed runs. */
+  simJurisdictionsPlayed: string[]
 
   setSize: (v: string) => void
   setCountry: (v: string) => void
@@ -94,6 +129,15 @@ export interface SimulationState {
   markScenarioVisited: (id: string) => void
   /** Fire the run-end ceremony exactly once for this run (W2b). */
   markRunComplete: () => void
+  /** Wave 4 (WP4.5) — update the lifetime achievement counters at run completion.
+   *  Called once, alongside markRunComplete(), with the values already computed
+   *  for the ceremony's own score card — no re-derivation, no new dependency. */
+  recordSimRunCompletion: (payload: {
+    country: string
+    difficulty: DifficultyId
+    trapsThisRun: number
+    objectivesOnTime: number
+  }) => void
   /** Record the year an objective was first achieved (idempotent). */
   recordObjectiveAchieved: (id: string, year: number) => void
   /** Toggle a product in the game-scoped Migrate catalog selection (C7). */
@@ -102,13 +146,25 @@ export interface SimulationState {
   markCatalogStepDone: (catalogId: string) => void
   /** Record (or clear, with null) a per-edge migration decision (WS-04). */
   setEdgeDecision: (edgeKey: string, choice: 'hybrid' | 'pure' | null) => void
-  /** Commit an End-Quarter result (shock, new turn, events). */
+  /** Commit an End-Quarter result (shock, new turn, events, WP4.1 consequences). */
   applyQuarter: (payload: {
     crqcShift: number
     year: number
     q: number
     newEvents: SimEvent[]
+    effects?: QuarterEffects
   }) => void
+  /** Write the materialized secured-budget figure (WP4.3) — called when the
+   *  P0-completion formula's output changes, not on every render. */
+  setSecuredBudget: (m: number) => void
+  /** Debit the budget pool (AI delegation cost, incident cost). Unconditional —
+   *  the caller (view) gates whether the action that triggers this is even
+   *  allowed; the pool itself never blocks a debit, it just floors at 0 on display. */
+  spendBudget: (m: number) => void
+  /** Credit the budget pool (good-news effect); floors spentBudgetM at 0. */
+  creditBudget: (m: number) => void
+  /** Record a trap picked this run (WP4.2) — reset by reset(). */
+  incrementTrapsThisRun: () => void
   /** Sticky time penalty (I1): a wrong in-sim decision costs the player N quarters
    *  of rework — advancing their OWN clock toward the FIXED Q-Day, which shrinks the
    *  Mosca runway. Deterministic (no RNG); Q-Day (crqcShift) is untouched. */
@@ -119,10 +175,15 @@ export interface SimulationState {
   clearAuto: (phase: string) => void
   /** Select a difficulty preset (WS-14). */
   setDifficulty: (d: DifficultyId) => void
+  /** Wave 4 (WP4.6) — set the run's deterministic seed. Callers gate this to a
+   *  fresh run (never mutates a run in progress) — the store applies it as given. */
+  setSeed: (n: number) => void
   /** Mark the first-run guided tour as seen (WS-12). */
   markTourSeen: () => void
   /** Toggle novice Guided mode (PR-4); independent of difficulty. */
   setGuided: (v: boolean) => void
+  /** Mark a concept peek (WP2.3) as seen — idempotent, never shows it again. */
+  markConceptPeekSeen: (id: string) => void
   reset: () => void
   /** Serialize the current run to a portable JSON save string (WS-08). */
   exportSave: () => string
@@ -157,7 +218,7 @@ const SEED = {
       t: 'Q2 2026',
       txt: 'CycloneDX CBOM published for Layers 1–2 — Phase 2 cleared',
     },
-    { sev: 'info', t: 'Q2 2026', txt: 'OpenSSL 3.6 ships ML-DSA hardware acceleration' },
+    { sev: 'info', t: 'Q2 2026', txt: 'Your TLS stack ships hardware-accelerated ML-DSA' },
   ] as SimEvent[],
   autoRunResumeIndex: 0,
   autoRunLastMode: null as string | null,
@@ -171,15 +232,75 @@ const SEED = {
   auto: [] as string[],
   seed: 0, // replaced with a fresh seed on create / reset / migrate
   difficulty: 'realistic' as DifficultyId,
+  securedBudgetM: 0,
+  spentBudgetM: 0,
+  trapsThisRun: 0,
 }
 
-const STORE_VERSION = 13
+/** WP4.2 — the run's start turn, exported so callers (the ceremony's quarters-
+ *  used calculation) don't hardcode a copy of SEED.year/q that could drift. */
+export const RUN_START = { year: SEED.year, q: SEED.q }
+
+const STORE_VERSION = 16
 const SAVE_KIND = 'pqc-simulation-save'
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null
 
 const asDifficulty = (v: unknown): DifficultyId =>
   DIFFICULTIES.includes(v as DifficultyId) ? (v as DifficultyId) : SEED.difficulty
+
+/**
+ * The persisted store's version-upgrade path. Defensive by construction: every
+ * field gets a safe default rather than trusting the shape of old localStorage
+ * data. v3 introduced strict maturity gating, so any real migration (persisted
+ * version < STORE_VERSION) intentionally RESETS leveled progress (edgeDecisions)
+ * rather than trying to reinterpret it — org setup + visited refs still carry
+ * forward. Exported standalone (not inline in persist()) so it has a direct
+ * unit test instead of only being exercised indirectly through rehydration.
+ */
+export function migrateSimulationState(persisted: unknown) {
+  const s = (persisted ?? {}) as Record<string, unknown>
+  return {
+    size: (s.size as string) ?? SEED.size,
+    country: (s.country as string) ?? SEED.country,
+    sector: (s.sector as string) ?? SEED.sector,
+    seat: (s.seat as string) ?? SEED.seat,
+    sel: SEED.sel,
+    edgeDecisions: {},
+    year: SEED.year,
+    q: SEED.q,
+    crqcShift: SEED.crqcShift,
+    events: [...SEED.events],
+    visitedRefs: Array.isArray(s.visitedRefs) ? (s.visitedRefs as string[]) : [],
+    visitedWorkshops: Array.isArray(s.visitedWorkshops) ? (s.visitedWorkshops as string[]) : [],
+    visitedScenarios: Array.isArray(s.visitedScenarios) ? (s.visitedScenarios as string[]) : [],
+    runCompleteSeen:
+      typeof s.runCompleteSeen === 'boolean' ? (s.runCompleteSeen as boolean) : false,
+    picks: Array.isArray(s.picks) ? (s.picks as string[]) : [],
+    catalogCompleted: Array.isArray(s.catalogCompleted) ? (s.catalogCompleted as string[]) : [],
+    auto: Array.isArray(s.auto) ? (s.auto as string[]) : [],
+    seed: typeof s.seed === 'number' ? (s.seed as number) : newSeed(),
+    difficulty: asDifficulty(s.difficulty),
+    tourSeen: typeof s.tourSeen === 'boolean' ? s.tourSeen : false,
+    guided: typeof s.guided === 'boolean' ? s.guided : false,
+    seenConceptPeeks: Array.isArray(s.seenConceptPeeks) ? (s.seenConceptPeeks as string[]) : [],
+    // Wave 4 (WP4.1-4.3): run-scoped like edgeDecisions/year/q above — a real
+    // migration resets the run, it doesn't try to reinterpret old numbers.
+    securedBudgetM: SEED.securedBudgetM,
+    spentBudgetM: SEED.spentBudgetM,
+    trapsThisRun: SEED.trapsThisRun,
+    // Wave 4 (WP4.5): lifetime like tourSeen/guided above — preserved, not reset.
+    simRunsCompleted: typeof s.simRunsCompleted === 'number' ? (s.simRunsCompleted as number) : 0,
+    simZeroTrapPhases:
+      typeof s.simZeroTrapPhases === 'number' ? (s.simZeroTrapPhases as number) : 0,
+    simHardWin: typeof s.simHardWin === 'boolean' ? (s.simHardWin as boolean) : false,
+    simOnTimeObjectives:
+      typeof s.simOnTimeObjectives === 'number' ? (s.simOnTimeObjectives as number) : 0,
+    simJurisdictionsPlayed: Array.isArray(s.simJurisdictionsPlayed)
+      ? (s.simJurisdictionsPlayed as string[])
+      : [],
+  }
+}
 
 /**
  * Build a full persisted state from a save blob (WS-08 import). Unlike migrate(),
@@ -207,6 +328,9 @@ const saveSlice = (s: SimulationState): SimulationData => ({
   auto: s.auto,
   seed: s.seed,
   difficulty: s.difficulty,
+  securedBudgetM: s.securedBudgetM,
+  spentBudgetM: s.spentBudgetM,
+  trapsThisRun: s.trapsThisRun,
 })
 
 function fromSave(s: Record<string, unknown>) {
@@ -233,6 +357,9 @@ function fromSave(s: Record<string, unknown>) {
     auto: Array.isArray(s.auto) ? (s.auto as string[]) : [],
     seed: typeof s.seed === 'number' ? (s.seed as number) : newSeed(),
     difficulty: asDifficulty(s.difficulty),
+    securedBudgetM: typeof s.securedBudgetM === 'number' ? (s.securedBudgetM as number) : 0,
+    spentBudgetM: typeof s.spentBudgetM === 'number' ? (s.spentBudgetM as number) : 0,
+    trapsThisRun: typeof s.trapsThisRun === 'number' ? (s.trapsThisRun as number) : 0,
   }
 }
 
@@ -243,6 +370,12 @@ export const useSimulationStore = create<SimulationState>()(
       seed: newSeed(),
       tourSeen: false,
       guided: false,
+      seenConceptPeeks: [],
+      simRunsCompleted: 0,
+      simZeroTrapPhases: 0,
+      simHardWin: false,
+      simOnTimeObjectives: 0,
+      simJurisdictionsPlayed: [],
       setSize: (size) => set({ size }),
       setCountry: (country) => set({ country }),
       setSector: (sector) => set({ sector }),
@@ -261,6 +394,16 @@ export const useSimulationStore = create<SimulationState>()(
           s.visitedScenarios.includes(id) ? s : { visitedScenarios: [...s.visitedScenarios, id] }
         ),
       markRunComplete: () => set({ runCompleteSeen: true }),
+      recordSimRunCompletion: ({ country, difficulty, trapsThisRun, objectivesOnTime }) =>
+        set((s) => ({
+          simRunsCompleted: s.simRunsCompleted + 1,
+          simZeroTrapPhases: s.simZeroTrapPhases + (trapsThisRun === 0 ? 1 : 0),
+          simHardWin: s.simHardWin || difficulty === 'hard',
+          simOnTimeObjectives: Math.max(s.simOnTimeObjectives, objectivesOnTime),
+          simJurisdictionsPlayed: s.simJurisdictionsPlayed.includes(country)
+            ? s.simJurisdictionsPlayed
+            : [...s.simJurisdictionsPlayed, country],
+        })),
       recordObjectiveAchieved: (id, year) =>
         set((s) =>
           // eslint-disable-next-line security/detect-object-injection
@@ -287,13 +430,28 @@ export const useSimulationStore = create<SimulationState>()(
           else next[edgeKey] = choice
           return { edgeDecisions: next }
         }),
-      applyQuarter: ({ crqcShift, year, q, newEvents }) =>
-        set((s) => ({
-          crqcShift,
-          year,
-          q,
-          events: [...newEvents, ...s.events].slice(0, 30),
-        })),
+      applyQuarter: ({ crqcShift, year, q, newEvents, effects }) =>
+        set((s) => {
+          // WP4.1 — a setback effect advances the turn FURTHER, same wrap-the-year
+          // math as applyDecisionSetback, stacked on top of the quarter that just elapsed.
+          let ny = year
+          let nq = q
+          if (effects?.setbackQuarters) {
+            nq += effects.setbackQuarters
+            while (nq > 4) {
+              nq -= 4
+              ny += 1
+            }
+          }
+          const budgetDelta = (effects?.budgetCostM ?? 0) - (effects?.budgetCreditM ?? 0)
+          return {
+            crqcShift,
+            year: ny,
+            q: nq,
+            events: [...newEvents, ...s.events].slice(0, 30),
+            spentBudgetM: Math.max(0, s.spentBudgetM + budgetDelta),
+          }
+        }),
       applyDecisionSetback: (quarters, txt, revertEdgeId) =>
         set((s) => {
           let year = s.year
@@ -316,12 +474,33 @@ export const useSimulationStore = create<SimulationState>()(
         set((s) => ({ auto: Array.from(new Set([...s.auto, ...keys])) })),
       clearAuto: (phase) =>
         set((s) => ({ auto: s.auto.filter((k) => !k.startsWith(`${phase}::`)) })),
+      setSecuredBudget: (m) => set({ securedBudgetM: m }),
+      spendBudget: (m) => set((s) => ({ spentBudgetM: Math.max(0, s.spentBudgetM + m) })),
+      creditBudget: (m) => set((s) => ({ spentBudgetM: Math.max(0, s.spentBudgetM - m) })),
+      incrementTrapsThisRun: () => set((s) => ({ trapsThisRun: s.trapsThisRun + 1 })),
       setDifficulty: (difficulty) => set({ difficulty }),
+      setSeed: (seed) => set({ seed }),
       markTourSeen: () => set({ tourSeen: true }),
       setGuided: (guided) => set({ guided }),
-      // RESET clears the run but NOT the onboarding / guidance prefs.
+      markConceptPeekSeen: (id) =>
+        set((s) =>
+          s.seenConceptPeeks.includes(id) ? s : { seenConceptPeeks: [...s.seenConceptPeeks, id] }
+        ),
+      // RESET clears the run but NOT the onboarding / guidance prefs, NOR the
+      // lifetime achievement counters (WP4.5) — a fresh run must not erase them.
       reset: () =>
-        set((s) => ({ ...SEED, seed: newSeed(), tourSeen: s.tourSeen, guided: s.guided })),
+        set((s) => ({
+          ...SEED,
+          seed: newSeed(),
+          tourSeen: s.tourSeen,
+          guided: s.guided,
+          seenConceptPeeks: s.seenConceptPeeks,
+          simRunsCompleted: s.simRunsCompleted,
+          simZeroTrapPhases: s.simZeroTrapPhases,
+          simHardWin: s.simHardWin,
+          simOnTimeObjectives: s.simOnTimeObjectives,
+          simJurisdictionsPlayed: s.simJurisdictionsPlayed,
+        })),
       exportSave: () =>
         JSON.stringify(
           { app: 'pqc-today', kind: SAVE_KIND, version: STORE_VERSION, state: saveSlice(get()) },
@@ -347,45 +526,21 @@ export const useSimulationStore = create<SimulationState>()(
       name: 'pqc-simulation',
       storage: createJSONStorage(() => localStorage),
       version: STORE_VERSION,
-      // tourSeen persists alongside the run slice but is NOT part of saveSlice,
-      // so it never travels in a run export / app snapshot.
-      partialize: (s) => ({ ...saveSlice(s), tourSeen: s.tourSeen, guided: s.guided }),
-      migrate: (persisted: unknown) => {
-        // Defensive: ensure every field exists with a safe default. v3 introduced
-        // strict maturity gating, so legacy pre-leveled progress (checks / turn) is
-        // RESET to a clean gated start; the org setup + visited refs are preserved.
-        const s = (persisted ?? {}) as Record<string, unknown>
-        return {
-          size: (s.size as string) ?? SEED.size,
-          country: (s.country as string) ?? SEED.country,
-          sector: (s.sector as string) ?? SEED.sector,
-          seat: (s.seat as string) ?? SEED.seat,
-          sel: SEED.sel,
-          edgeDecisions: {},
-          year: SEED.year,
-          q: SEED.q,
-          crqcShift: SEED.crqcShift,
-          events: [...SEED.events],
-          visitedRefs: Array.isArray(s.visitedRefs) ? (s.visitedRefs as string[]) : [],
-          visitedWorkshops: Array.isArray(s.visitedWorkshops)
-            ? (s.visitedWorkshops as string[])
-            : [],
-          visitedScenarios: Array.isArray(s.visitedScenarios)
-            ? (s.visitedScenarios as string[])
-            : [],
-          runCompleteSeen:
-            typeof s.runCompleteSeen === 'boolean' ? (s.runCompleteSeen as boolean) : false,
-          picks: Array.isArray(s.picks) ? (s.picks as string[]) : [],
-          catalogCompleted: Array.isArray(s.catalogCompleted)
-            ? (s.catalogCompleted as string[])
-            : [],
-          auto: Array.isArray(s.auto) ? (s.auto as string[]) : [],
-          seed: typeof s.seed === 'number' ? (s.seed as number) : newSeed(),
-          difficulty: asDifficulty(s.difficulty),
-          tourSeen: typeof s.tourSeen === 'boolean' ? s.tourSeen : false,
-          guided: typeof s.guided === 'boolean' ? s.guided : false,
-        }
-      },
+      // tourSeen/seenConceptPeeks/sim achievement counters persist alongside the
+      // run slice but are NOT part of saveSlice, so they never travel in a run
+      // export / app snapshot.
+      partialize: (s) => ({
+        ...saveSlice(s),
+        tourSeen: s.tourSeen,
+        guided: s.guided,
+        seenConceptPeeks: s.seenConceptPeeks,
+        simRunsCompleted: s.simRunsCompleted,
+        simZeroTrapPhases: s.simZeroTrapPhases,
+        simHardWin: s.simHardWin,
+        simOnTimeObjectives: s.simOnTimeObjectives,
+        simJurisdictionsPlayed: s.simJurisdictionsPlayed,
+      }),
+      migrate: migrateSimulationState,
       onRehydrateStorage: () => (_state, error) => {
         if (error) console.error('useSimulationStore rehydrate error', error)
       },
