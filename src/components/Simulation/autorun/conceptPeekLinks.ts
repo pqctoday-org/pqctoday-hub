@@ -13,4 +13,8 @@ export const CONCEPT_LEARN_MODULE: Record<TourConceptId, string> = {
   hybrid: 'hybrid-crypto',
   'two-track': 'pqc-risk-management',
   'crypto-agility': 'crypto-agility',
+  'urgency-drivers': 'pqc-business-case',
+  'cbom-fields': 'cbom',
+  'weakest-domain-maturity': 'pqc-governance',
+  'kpi-pack': 'pqc-governance',
 }

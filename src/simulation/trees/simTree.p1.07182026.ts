@@ -54,8 +54,7 @@ const TREE: PhaseTree = {
           decision:
             'Run crypto-usage, data-classification and systems/assets discovery as three parallel tracks, not one sequential sweep.',
           do: 'Stand up Track A (crypto usage), Track B (data classification), Track C (systems/assets — CMDB, ITAM, BIA cross-reference; detailed methodology in 1.4–1.5).',
-          output:
-            'Sensitive-data classification map (Track B) — deliverable named, no capture tool yet',
+          output: 'Sensitive-data classification map (Track B)',
           steps: [
             {
               kind: 'learn',
@@ -68,6 +67,12 @@ const TREE: PhaseTree = {
               label: 'Learn: Track B — data classification & confidentiality horizons',
               to: '/learn/data-asset-sensitivity',
               moduleId: 'data-asset-sensitivity',
+            },
+            {
+              kind: 'activity',
+              label: 'Build the sensitive-data classification map (Track B)',
+              to: '/business/tools/data-at-rest-strategy',
+              artifactType: 'data-at-rest-strategy',
             },
           ],
         },

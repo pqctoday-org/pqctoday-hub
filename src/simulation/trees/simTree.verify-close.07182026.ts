@@ -75,7 +75,14 @@ const TREE: PhaseTree = {
             },
             {
               kind: 'activity',
-              label: 'Assemble the evidence dossier & log decommissioning',
+              label: 'Assemble the migration evidence dossier',
+              to: '/business/tools/migration-verification',
+              artifactType: 'migration-verification',
+            },
+            {
+              kind: 'activity',
+              label:
+                'Log classical key-material decommissioning — destruction certificates, not a verbal confirmation',
               to: '/business/tools/migration-verification',
               artifactType: 'migration-verification',
             },
