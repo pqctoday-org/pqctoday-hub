@@ -68,6 +68,52 @@ function getRiskLevel(score: number): { label: string; color: string; bgColor: s
   return { label: 'Low', color: 'text-status-success', bgColor: 'bg-status-success/10' }
 }
 
+/** Extracted (07192026, Batch 2) so the simulation's real-tool doc generator
+ *  renders THIS logic — the component's export memo delegates here, so the
+ *  two can never drift. Entries type comes from the shared store. */
+export function buildRiskRegisterMarkdown(
+  riskEntries: Pick<
+    RiskEntry,
+    'assetName' | 'currentAlgorithm' | 'threatVector' | 'likelihood' | 'impact' | 'mitigation'
+  >[]
+): string {
+  let md = '# Quantum Risk Register\n\n'
+  md += `Generated: ${new Date().toLocaleDateString()}\n\n`
+  md += '---\n\n'
+  md += '| # | Asset | Algorithm | Threat Vector | L | I | Score | Level | Mitigation |\n'
+  md += '|---|-------|-----------|---------------|---|---|-------|-------|------------|\n'
+
+  riskEntries.forEach((entry, idx) => {
+    const score = entry.likelihood * entry.impact
+    const level = getRiskLevel(score)
+    const threat =
+      THREAT_VECTORS.find((t) => t.value === entry.threatVector)?.label ?? entry.threatVector
+    md += `| ${idx + 1} | ${entry.assetName || 'Unnamed'} | ${entry.currentAlgorithm} | ${threat} | ${entry.likelihood} | ${entry.impact} | ${score} | ${level.label} | ${entry.mitigation || 'None specified'} |\n`
+  })
+
+  md += '\n\n## Risk Summary\n\n'
+  const critical = riskEntries.filter((e) => e.likelihood * e.impact >= 20).length
+  const high = riskEntries.filter(
+    (e) => e.likelihood * e.impact >= 12 && e.likelihood * e.impact < 20
+  ).length
+  const medium = riskEntries.filter(
+    (e) => e.likelihood * e.impact >= 6 && e.likelihood * e.impact < 12
+  ).length
+  const low = riskEntries.filter((e) => e.likelihood * e.impact < 6).length
+
+  md += `- **Critical:** ${critical}\n`
+  md += `- **High:** ${high}\n`
+  md += `- **Medium:** ${medium}\n`
+  md += `- **Low:** ${low}\n`
+  md += `- **Total Entries:** ${riskEntries.length}\n`
+
+  md += '\n---\n\n'
+  md +=
+    '*Aligned to NIST CSWP 39 §5 (Strategic Plan) and §6.5 (Maturity Assessment for Crypto Agility). https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
+
+  return md
+}
+
 export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
   riskEntries,
   onRiskEntriesChange,
@@ -118,43 +164,7 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
     [riskEntries, onRiskEntriesChange]
   )
 
-  const exportMarkdown = useMemo(() => {
-    let md = '# Quantum Risk Register\n\n'
-    md += `Generated: ${new Date().toLocaleDateString()}\n\n`
-    md += '---\n\n'
-    md += '| # | Asset | Algorithm | Threat Vector | L | I | Score | Level | Mitigation |\n'
-    md += '|---|-------|-----------|---------------|---|---|-------|-------|------------|\n'
-
-    riskEntries.forEach((entry, idx) => {
-      const score = entry.likelihood * entry.impact
-      const level = getRiskLevel(score)
-      const threat =
-        THREAT_VECTORS.find((t) => t.value === entry.threatVector)?.label ?? entry.threatVector
-      md += `| ${idx + 1} | ${entry.assetName || 'Unnamed'} | ${entry.currentAlgorithm} | ${threat} | ${entry.likelihood} | ${entry.impact} | ${score} | ${level.label} | ${entry.mitigation || 'None specified'} |\n`
-    })
-
-    md += '\n\n## Risk Summary\n\n'
-    const critical = riskEntries.filter((e) => e.likelihood * e.impact >= 20).length
-    const high = riskEntries.filter(
-      (e) => e.likelihood * e.impact >= 12 && e.likelihood * e.impact < 20
-    ).length
-    const medium = riskEntries.filter(
-      (e) => e.likelihood * e.impact >= 6 && e.likelihood * e.impact < 12
-    ).length
-    const low = riskEntries.filter((e) => e.likelihood * e.impact < 6).length
-
-    md += `- **Critical:** ${critical}\n`
-    md += `- **High:** ${high}\n`
-    md += `- **Medium:** ${medium}\n`
-    md += `- **Low:** ${low}\n`
-    md += `- **Total Entries:** ${riskEntries.length}\n`
-
-    md += '\n---\n\n'
-    md +=
-      '*Aligned to NIST CSWP 39 §5 (Strategic Plan) and §6.5 (Maturity Assessment for Crypto Agility). https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
-
-    return md
-  }, [riskEntries])
+  const exportMarkdown = useMemo(() => buildRiskRegisterMarkdown(riskEntries), [riskEntries])
 
   const editedSince = wasSaved && lastSavedKey !== null && exportMarkdown !== lastSavedKey
 

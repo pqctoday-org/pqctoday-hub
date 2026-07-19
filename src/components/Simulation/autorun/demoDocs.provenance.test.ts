@@ -84,7 +84,30 @@ describe('demoDocs narration provenance guard', () => {
     // Notes" heading, reached via REAL_DOC_GENERATORS in Wave 5 WP5.3. All
     // three citations match the document exactly — allowlisted as
     // verified-accurate, not invented. Any OTHER §/Fig. citation still fails.
-    const VERIFIED_CSWP39_SECTIONS = ['3.2.1', '5', '5.3']
+    //
+    // §6.5 added 07192026 (Batch 1: kpi-tracker via REAL_DOC_GENERATORS):
+    // verified against the cached CSWP 39-upd1 PDF p.34 — §6.5 is titled
+    // exactly "Maturity Assessment for Crypto Agility", which is verbatim
+    // what the KPI tracker's own footer cites.
+    //
+    // §5.1 added 07192026 (Batch 1: audit-checklist): verified p.29 — §5.1
+    // ("Cryptographic Standards, Regulations, and Mandates") states
+    // "Cryptographic algorithm validation is a prerequisite for cryptographic
+    // module validation" (CAVP/CMVP), which is exactly the Evidence heading's
+    // claim. The tool's OTHER §5.1 cite — on the Exceptions heading — was
+    // checked too, found invented (the document has no exception-process
+    // content anywhere), and removed from the tool itself; this guard is what
+    // caught it.
+    // §4.6 added 07192026 (Batch 2: migration-roadmap): verified p.25 — §4.6
+    // is titled "Using a Crypto Gateway for Legacy Systems" and its body
+    // describes exactly what the roadmap's Mitigation Gateway section claims
+    // (a "bump-in-the-wire" architectural fix for unmodifiable legacy
+    // systems, not a substitute for migrating the algorithm).
+    // §2.3 + §6.1 added 07192026 (Batch 3: crqc-scenario): verified — §2.3 is
+    // "Constant Needs of Transition" (p.10) and §6.1 is "Resource
+    // Considerations" (p.32), exactly what the planner's footer cites.
+    // §1 added 07192026 (Batch 3: stakeholder-comms): "1. Introduction" (p.7).
+    const VERIFIED_CSWP39_SECTIONS = ['3.2.1', '5', '5.3', '6.5', '5.1', '4.6', '2.3', '6.1', '1']
     const citationPattern = /CSWP\.?\s?39[^.]{0,20}(§|Fig\.)\s?([0-9.]+)/g
     for (const { sector, type, data } of ALL_DOC_BODIES) {
       const invented: string[] = []

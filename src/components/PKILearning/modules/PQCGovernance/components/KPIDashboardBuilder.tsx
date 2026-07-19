@@ -45,6 +45,44 @@ interface SavedKpiInputs {
   activePersona?: KpiPersonaId
 }
 
+/** Extracted (07192026, Batch 2) so the simulation's real-tool doc generator
+ *  renders THIS logic — persistScorecard delegates here. */
+export function buildKpiDashboardMarkdown(
+  dimensions: ReturnType<typeof buildDimensions>,
+  activePersona: KpiPersonaId,
+  scores: Record<string, number>,
+  weights: Record<string, number>
+): string {
+  const ew = (d: (typeof dimensions)[number]) => (d.id in weights ? (weights[d.id] ?? 0) : d.weight)
+
+  let weightedSum = 0
+  let totalWeight = 0
+  for (const d of dimensions) {
+    if (d.disabled) continue
+    weightedSum += (scores[d.id] ?? 0) * ew(d)
+    totalWeight += ew(d)
+  }
+  const overall = totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0
+
+  let md = '# PQC Governance KPI Dashboard\n\n'
+  md += `**Persona Lens:** ${activePersona}\n`
+  md += `**Overall Score: ${overall}/100**\n\n`
+  md += `Generated: ${new Date().toLocaleDateString()}\n\n`
+  md += '| KPI | Score | Weight | Target |\n'
+  md += '|-----|-------|--------|--------|\n'
+  for (const d of dimensions) {
+    if (d.disabled) {
+      md += `| ${d.label} | _locked_ | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'} |\n`
+      continue
+    }
+    md += `| ${d.label} | ${scores[d.id] ?? 0}/100 | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'} |\n`
+  }
+
+  // Honest methodology — the weighted-average score the dashboard computes.
+  md += '\n' + METHODOLOGY_MD + '\n'
+  return md
+}
+
 export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policyOutput }) => {
   const { addExecutiveDocument } = useModuleStore()
   const execData = useExecutiveModuleData()
@@ -76,36 +114,12 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
   // user's weight edits, falling back to the per-persona defaults — so the saved
   // artifact always matches what's on screen (not the defaults).
   const persistScorecard = useCallback(() => {
-    const scores = scoresRef.current
-    const weights = weightsRef.current
-    const ew = (d: (typeof dimensions)[number]) =>
-      d.id in weights ? (weights[d.id] ?? 0) : d.weight
-
-    let weightedSum = 0
-    let totalWeight = 0
-    for (const d of dimensions) {
-      if (d.disabled) continue
-      weightedSum += (scores[d.id] ?? 0) * ew(d)
-      totalWeight += ew(d)
-    }
-    const overall = totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0
-
-    let md = '# PQC Governance KPI Dashboard\n\n'
-    md += `**Persona Lens:** ${activePersona}\n`
-    md += `**Overall Score: ${overall}/100**\n\n`
-    md += `Generated: ${new Date().toLocaleDateString()}\n\n`
-    md += '| KPI | Score | Weight | Target |\n'
-    md += '|-----|-------|--------|--------|\n'
-    for (const d of dimensions) {
-      if (d.disabled) {
-        md += `| ${d.label} | _locked_ | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'} |\n`
-        continue
-      }
-      md += `| ${d.label} | ${scores[d.id] ?? 0}/100 | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'} |\n`
-    }
-
-    // Honest methodology — the weighted-average score the dashboard computes.
-    md += '\n' + METHODOLOGY_MD + '\n'
+    const md = buildKpiDashboardMarkdown(
+      dimensions,
+      activePersona,
+      scoresRef.current,
+      weightsRef.current
+    )
 
     addExecutiveDocument({
       id: `kpi-dashboard-${activePersona}-pqc-governance`,

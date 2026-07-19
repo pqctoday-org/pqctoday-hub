@@ -30,6 +30,27 @@ interface OpsChecklistProps {
   onSave?: (payload: { markdown: string; checkedItems: string[] }) => void
 }
 
+/** Extracted (07192026, Batch 3) so the simulation's real-tool doc generator
+ *  renders THIS logic — the component's own buildMarkdown delegates here. */
+export function buildChecklistMarkdown(
+  title: string,
+  description: string,
+  sections: ChecklistSection[],
+  checkedItems: Set<string>
+): string {
+  const lines = [`# ${title}`, '', description, '']
+  for (const section of sections) {
+    lines.push(`## ${section.title}`, '')
+    for (const item of section.items) {
+      const checked = checkedItems.has(item.id) ? 'x' : ' '
+      lines.push(`- [${checked}] ${item.label}`)
+      if (item.detail) lines.push(`  - ${item.detail}`)
+    }
+    lines.push('')
+  }
+  return lines.join('\n')
+}
+
 export const OpsChecklist: React.FC<OpsChecklistProps> = ({
   title,
   description,
@@ -70,19 +91,10 @@ export const OpsChecklist: React.FC<OpsChecklistProps> = ({
     })
   }, [])
 
-  const buildMarkdown = useCallback(() => {
-    const lines = [`# ${title}`, '', description, '']
-    for (const section of sections) {
-      lines.push(`## ${section.title}`, '')
-      for (const item of section.items) {
-        const checked = checkedItems.has(item.id) ? 'x' : ' '
-        lines.push(`- [${checked}] ${item.label}`)
-        if (item.detail) lines.push(`  - ${item.detail}`)
-      }
-      lines.push('')
-    }
-    return lines.join('\n')
-  }, [title, description, sections, checkedItems])
+  const buildMarkdown = useCallback(
+    () => buildChecklistMarkdown(title, description, sections, checkedItems),
+    [title, description, sections, checkedItems]
+  )
 
   const handleCopyMarkdown = useCallback(async () => {
     const ok = await copyToClipboard(buildMarkdown())

@@ -362,7 +362,10 @@ function buildSections(
   ]
 }
 
-const ALL_ITEMS: Record<string, ChecklistItem[]> = {
+// Exported for the simulation's real-tool doc generator (realToolDocs.ts):
+// its sample derives checked items from these real lists, so an item
+// rename/addition here propagates into the sim's demo automatically.
+export const ALL_ITEMS: Record<string, ChecklistItem[]> = {
   'crypto-inventory': INVENTORY_ITEMS,
   'policy-governance': POLICY_ITEMS,
   'risk-assessment': RISK_ITEMS,
@@ -380,7 +383,7 @@ const SECTION_TITLES: Record<string, string> = {
   'evidence-documentation': 'Evidence & Documentation',
 }
 
-function renderAuditPreview(
+export function renderAuditPreview(
   data: Record<string, Record<string, string | string[]>>,
   industry?: string,
   country?: string
@@ -441,14 +444,14 @@ function renderAuditPreview(
   return md
 }
 
-interface ExceptionRow {
+export interface ExceptionRow {
   scope: string
   compensatingControl: string
   owner: string
   sunset: string
 }
 
-interface EvidenceRow {
+export interface EvidenceRow {
   productOrAsset: string
   cmvpCertNumber: string
   acvpRunId: string
@@ -456,11 +459,17 @@ interface EvidenceRow {
   cveScanDate: string
 }
 
-function renderExceptionsAndEvidenceMd(
+export function renderExceptionsAndEvidenceMd(
   exceptions: ExceptionRow[],
   evidence: EvidenceRow[]
 ): string {
-  let md = '\n---\n\n## Exceptions (CSWP.39 §5.1)\n\n'
+  // 07192026 accuracy fix (caught by demoDocs.provenance.test.ts when this
+  // renderer entered REAL_DOC_GENERATORS): the heading previously cited
+  // "CSWP.39 §5.1" — verified against the upd1 PDF, §5.1 is "Cryptographic
+  // Standards, Regulations, and Mandates" and the document contains no
+  // exception/waiver-process content anywhere. Documented exceptions with
+  // compensating controls are standard GRC practice; they need no citation.
+  let md = '\n---\n\n## Exceptions\n\n'
   if (exceptions.length === 0) {
     md += '_No exceptions documented._\n\n'
   } else {
@@ -694,11 +703,12 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
         initialData={savedInputs?.checklistData}
       />
 
-      {/* CSWP.39 §5.1 — Exceptions */}
+      {/* Exceptions — no CSWP citation: §5.1 is standards/mandates, and the
+          document has no exception-process content (07192026 accuracy fix). */}
       <div className="glass-panel p-4 space-y-3">
         <div className="flex items-start justify-between gap-3 flex-wrap">
           <div>
-            <h3 className="text-base font-semibold text-foreground">Exceptions (CSWP.39 §5.1)</h3>
+            <h3 className="text-base font-semibold text-foreground">Exceptions</h3>
             <p className="text-xs text-muted-foreground mt-1">
               Document approved deviations from policy with their compensating controls and sunset
               date. These rows export with the checklist.
