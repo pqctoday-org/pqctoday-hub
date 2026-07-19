@@ -618,7 +618,7 @@ export function SimulationView() {
     const ids: TourConcept['id'][] = []
     if (phase === EXEC_TOUR_STAGES[0]?.phase) ids.push(...EXEC_TOUR_OPENING_CONCEPTS)
     const stage = EXEC_TOUR_STAGES.find((s) => s.phase === phase)
-    if (stage?.conceptCard) ids.push(stage.conceptCard)
+    if (stage?.conceptCards) ids.push(...stage.conceptCards)
     return ids.map((id) => EXEC_TOUR_CONCEPTS[id])
   }, [autoRunPlayer.mode, autoRunPlayer.running, autoRunPlayer.phaseFocus?.phase])
 
@@ -631,7 +631,7 @@ export function SimulationView() {
     const ids: TourConcept['id'][] = []
     if (sel === EXEC_TOUR_STAGES[0]?.phase) ids.push(...EXEC_TOUR_OPENING_CONCEPTS)
     const stage = EXEC_TOUR_STAGES.find((s) => s.phase === sel)
-    if (stage?.conceptCard) ids.push(stage.conceptCard)
+    if (stage?.conceptCards) ids.push(...stage.conceptCards)
     return ids.filter((id) => !seenConceptPeeks.includes(id)).map((id) => EXEC_TOUR_CONCEPTS[id])
   }, [sel, autoRunPlayer.mode, autoRunPlayer.running, seenConceptPeeks])
   // The two sets are mutually exclusive by construction (each requires the other's

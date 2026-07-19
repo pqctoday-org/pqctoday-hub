@@ -401,18 +401,22 @@ const FRAMEWORK = {
       do: 'Stand up Track A (crypto usage), Track B (data classification), Track C (systems/assets — CMDB, ITAM, BIA cross-reference; detailed methodology in 1.4–1.5).',
       // Track B's own deliverable is a sensitive-data classification map (confidentiality
       // horizons per data category — the input Phase 3 Dimension 1/HNDL scoring consumes).
-      // No hub tool currently emits that as a captured artifact (Track A has 1.3's crypto
-      // architecture diagram, Track C has 1.4–1.5's coverage map) — naming the deliverable
-      // here rather than force-mapping it to an unrelated tool; a dedicated Track B artifact
-      // tool is an explicit open item (Wave 3 plan), not built in this pass.
-      output:
-        'Sensitive-data classification map (Track B) — deliverable named, no capture tool yet',
+      // Re-checked (completeness gap-closing pass, 07182026): DataAtRestStrategy.tsx already
+      // captures exactly this — a per-data-store table of name/confidentiality-sensitivity/
+      // strategy — real, artifact-producing (BusinessCenter tool, ExecutiveDocumentType
+      // 'data-at-rest-strategy'). Reusing the same artifactType across phases is an
+      // established pattern here (kpi-dashboard/kpi-tracker/crypto-cbom all do this) — P4
+      // revisits the SAME map later to decide remediation strategy per store, which is the
+      // natural real-world sequence (classify during discovery, act on it during execution),
+      // not a duplicate ask.
+      output: 'Sensitive-data classification map (Track B)',
       steps: [
         L('crypto-mgmt-modernization', 'Learn: Track A — cryptographic management modernization'),
         L(
           'data-asset-sensitivity',
           'Learn: Track B — data classification & confidentiality horizons'
         ),
+        A('data-at-rest-strategy', 'Build the sensitive-data classification map (Track B)'),
       ],
     },
     {
@@ -1244,7 +1248,20 @@ const FRAMEWORK = {
       output: 'Migration-verification evidence dossier',
       steps: [
         L('verification-closure', 'Learn: decommission classical crypto & assemble evidence'),
-        A('migration-verification', 'Assemble the evidence dossier & log decommissioning'),
+        A('migration-verification', 'Assemble the migration evidence dossier'),
+        // Split out from the step above (completeness gap-closing, 07182026): the
+        // real migration-verification tool already has its own decommissions
+        // section (signing-key/certificate/kek/other, per-item destruction
+        // method) — this was previously bundled into one generic "assemble +
+        // log" step; giving destruction-certificate logging its own explicit
+        // step makes it a discrete, checkable action rather than prose folded
+        // into the dossier step's do-text. Same artifactType, same tool —
+        // reusing one artifact across steps is an established pattern here
+        // (kpi-dashboard/kpi-tracker/crypto-cbom all do it).
+        A(
+          'migration-verification',
+          'Log classical key-material decommissioning — destruction certificates, not a verbal confirmation'
+        ),
         A('audit-checklist', 'Run the closure audit-readiness checklist'),
         A(
           'data-at-rest-strategy',
