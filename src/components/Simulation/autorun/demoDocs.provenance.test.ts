@@ -98,7 +98,12 @@ describe('demoDocs narration provenance guard', () => {
     // checked too, found invented (the document has no exception-process
     // content anywhere), and removed from the tool itself; this guard is what
     // caught it.
-    const VERIFIED_CSWP39_SECTIONS = ['3.2.1', '5', '5.3', '6.5', '5.1']
+    // §4.6 added 07192026 (Batch 2: migration-roadmap): verified p.25 — §4.6
+    // is titled "Using a Crypto Gateway for Legacy Systems" and its body
+    // describes exactly what the roadmap's Mitigation Gateway section claims
+    // (a "bump-in-the-wire" architectural fix for unmodifiable legacy
+    // systems, not a substitute for migrating the algorithm).
+    const VERIFIED_CSWP39_SECTIONS = ['3.2.1', '5', '5.3', '6.5', '5.1', '4.6']
     const citationPattern = /CSWP\.?\s?39[^.]{0,20}(§|Fig\.)\s?([0-9.]+)/g
     for (const { sector, type, data } of ALL_DOC_BODIES) {
       const invented: string[] = []

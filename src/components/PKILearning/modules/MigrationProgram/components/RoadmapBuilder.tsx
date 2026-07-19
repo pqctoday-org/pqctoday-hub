@@ -32,11 +32,87 @@ import {
 } from './roadmapTracks'
 import type { RoadmapOutput } from '../types'
 
-interface MitigationGatewayRow {
+export interface MitigationGatewayRow {
   asset: string
   gatewayProductId: string
   reason: string
   sunset: string
+}
+
+/** Extracted (07192026, Batch 2) so the simulation's real-tool doc generator
+ *  renders THIS logic — the component's export memo delegates here. */
+export function buildRoadmapMarkdown(
+  selectedDeadlines: ExternalDeadline[],
+  currentMilestones: RoadmapMilestone[],
+  mitigations: MitigationGatewayRow[]
+): string {
+  const labelById = new Map(currentMilestones.map((m) => [m.id, m.label]))
+  let md = '# PQC Migration Roadmap (Two-Track)\n\n'
+  md += `Generated: ${new Date().toLocaleDateString()}\n\n`
+  md += `_Built on the ${FRAMEWORK_NAME} ${FRAMEWORK_VERSION} — ${FRAMEWORK_AUTHOR} (${FRAMEWORK_LICENSE}). ${FRAMEWORK_URL}_\n\n`
+
+  if (selectedDeadlines.length > 0) {
+    md += '## External Regulatory Deadlines\n\n'
+    md += '| Year | Deadline | Source |\n|------|----------|--------|\n'
+    for (const d of [...selectedDeadlines].sort((a, b) => a.year - b.year)) {
+      md += `| ${d.year} | ${d.label} | ${d.source} |\n`
+    }
+    md += '\n'
+  }
+
+  // Per-track milestones — the framework's parallel-workstream structure.
+  for (const track of TRACK_ORDER) {
+    const laneMs = currentMilestones
+      .filter((m) => m.track === track)
+      .sort((a, b) => a.year - b.year)
+    if (laneMs.length === 0) continue
+    const meta = TRACK_META[track]
+    md += `## ${meta.label}\n\n`
+    md += `_${meta.focus} — ${meta.rationale}_\n\n`
+    md +=
+      '| Year | Phase · Gate | Milestone | Depends on |\n|------|------|-----------|------------|\n'
+    for (const m of laneMs) {
+      const deps = (m.dependsOn ?? []).map((d) => labelById.get(d) ?? d).join('; ') || '—'
+      md += `| ${m.year} | ${phaseGateTag(m.phaseId)} | ${m.label} | ${deps} |\n`
+    }
+    md += '\n'
+  }
+
+  // Gate table for the phases present.
+  const phasesUsed = [...new Set(currentMilestones.map((m) => m.phaseId))].sort(
+    (a, b) => PHASE_ORDER.indexOf(a) - PHASE_ORDER.indexOf(b)
+  )
+  if (phasesUsed.length > 0) {
+    md += '## Milestone Gates\n\n'
+    md += '| Gate | Phase | Criterion | Sign-off |\n|------|-------|-----------|----------|\n'
+    for (const pid of phasesUsed) {
+      const p = FRAMEWORK_PHASES[pid]
+      if (!p.gate) continue
+      md += `| ${p.gate.id} | ${p.name} | ${p.gate.criterion} | ${p.gate.authority} |\n`
+    }
+    md += '\n'
+  }
+
+  md += `**Critical path:** ${criticalPathLength(currentMilestones)} milestones deep (longest dependency chain).\n\n`
+
+  // CSWP.39 §4.6 — Mitigation Gateway specs (with mandatory sunset date).
+  md += '## Mitigation Gateway (CSWP.39 §4.6)\n\n'
+  if (mitigations.length === 0) {
+    md +=
+      '_No mitigation gateways specified. CSWP.39 §4.6 frames a crypto gateway as an architectural fix for legacy systems that cannot be modified directly, not a substitute for migrating the algorithm inside them — every mitigation requires a sunset date._\n\n'
+  } else {
+    md += '| Asset | Gateway product | Reason | Sunset |\n|---|---|---|---|\n'
+    for (const m of mitigations) {
+      const gateway =
+        softwareData.find((p) => p.productId === m.gatewayProductId)?.softwareName ||
+        m.gatewayProductId ||
+        '—'
+      md += `| ${m.asset || '—'} | ${gateway} | ${m.reason || '—'} | ${m.sunset || '⚠ MISSING'} |\n`
+    }
+    md += '\n'
+  }
+
+  return md
 }
 
 const MODULE_ID = 'migration-program'
@@ -45,8 +121,10 @@ const MODULE_ID = 'migration-program'
  * A teaching default that shows the framework's real shape: a governance spine
  * (P0→P3) that both technical tracks depend on, then Track A (confidentiality /
  * KEM) and Track B (integrity / signatures-PKI) running in parallel.
+ * Exported (07192026, Batch 2) for the simulation's real-tool doc generator —
+ * the sim's sample roadmap IS the tool's own teaching default.
  */
-const DEFAULT_MILESTONES: RoadmapMilestone[] = [
+export const DEFAULT_MILESTONES: RoadmapMilestone[] = [
   {
     id: 'def-mandate',
     label: 'Executive mandate & budget approved',
@@ -364,75 +442,10 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
     []
   )
 
-  const exportMarkdown = useMemo(() => {
-    const labelById = new Map(currentMilestones.map((m) => [m.id, m.label]))
-    let md = '# PQC Migration Roadmap (Two-Track)\n\n'
-    md += `Generated: ${new Date().toLocaleDateString()}\n\n`
-    md += `_Built on the ${FRAMEWORK_NAME} ${FRAMEWORK_VERSION} — ${FRAMEWORK_AUTHOR} (${FRAMEWORK_LICENSE}). ${FRAMEWORK_URL}_\n\n`
-
-    if (selectedDeadlines.length > 0) {
-      md += '## External Regulatory Deadlines\n\n'
-      md += '| Year | Deadline | Source |\n|------|----------|--------|\n'
-      for (const d of [...selectedDeadlines].sort((a, b) => a.year - b.year)) {
-        md += `| ${d.year} | ${d.label} | ${d.source} |\n`
-      }
-      md += '\n'
-    }
-
-    // Per-track milestones — the framework's parallel-workstream structure.
-    for (const track of TRACK_ORDER) {
-      const laneMs = currentMilestones
-        .filter((m) => m.track === track)
-        .sort((a, b) => a.year - b.year)
-      if (laneMs.length === 0) continue
-      const meta = TRACK_META[track]
-      md += `## ${meta.label}\n\n`
-      md += `_${meta.focus} — ${meta.rationale}_\n\n`
-      md +=
-        '| Year | Phase · Gate | Milestone | Depends on |\n|------|------|-----------|------------|\n'
-      for (const m of laneMs) {
-        const deps = (m.dependsOn ?? []).map((d) => labelById.get(d) ?? d).join('; ') || '—'
-        md += `| ${m.year} | ${phaseGateTag(m.phaseId)} | ${m.label} | ${deps} |\n`
-      }
-      md += '\n'
-    }
-
-    // Gate table for the phases present.
-    const phasesUsed = [...new Set(currentMilestones.map((m) => m.phaseId))].sort(
-      (a, b) => PHASE_ORDER.indexOf(a) - PHASE_ORDER.indexOf(b)
-    )
-    if (phasesUsed.length > 0) {
-      md += '## Milestone Gates\n\n'
-      md += '| Gate | Phase | Criterion | Sign-off |\n|------|-------|-----------|----------|\n'
-      for (const pid of phasesUsed) {
-        const p = FRAMEWORK_PHASES[pid]
-        if (!p.gate) continue
-        md += `| ${p.gate.id} | ${p.name} | ${p.gate.criterion} | ${p.gate.authority} |\n`
-      }
-      md += '\n'
-    }
-
-    md += `**Critical path:** ${criticalPathLength(currentMilestones)} milestones deep (longest dependency chain).\n\n`
-
-    // CSWP.39 §4.6 — Mitigation Gateway specs (with mandatory sunset date).
-    md += '## Mitigation Gateway (CSWP.39 §4.6)\n\n'
-    if (mitigations.length === 0) {
-      md +=
-        '_No mitigation gateways specified. CSWP.39 §4.6 frames a crypto gateway as an architectural fix for legacy systems that cannot be modified directly, not a substitute for migrating the algorithm inside them — every mitigation requires a sunset date._\n\n'
-    } else {
-      md += '| Asset | Gateway product | Reason | Sunset |\n|---|---|---|---|\n'
-      for (const m of mitigations) {
-        const gateway =
-          softwareData.find((p) => p.productId === m.gatewayProductId)?.softwareName ||
-          m.gatewayProductId ||
-          '—'
-        md += `| ${m.asset || '—'} | ${gateway} | ${m.reason || '—'} | ${m.sunset || '⚠ MISSING'} |\n`
-      }
-      md += '\n'
-    }
-
-    return md
-  }, [selectedDeadlines, currentMilestones, mitigations])
+  const exportMarkdown = useMemo(
+    () => buildRoadmapMarkdown(selectedDeadlines, currentMilestones, mitigations),
+    [selectedDeadlines, currentMilestones, mitigations]
+  )
 
   const handleExport = useCallback(() => {
     addExecutiveDocument({
