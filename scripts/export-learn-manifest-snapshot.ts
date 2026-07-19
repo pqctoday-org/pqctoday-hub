@@ -57,6 +57,18 @@ interface ComponentFileEntry {
   text: string
 }
 
+/**
+ * A hardcoded product reference: a `catalogName: '<string>'` property in a
+ * module source file, naming a `software_name` row in the central migrate
+ * catalog (resolved at runtime by src/data/catalogStatus.ts getCatalogStatus,
+ * which silently returns null for stale names). Resolution against the
+ * catalog CSV happens Python-side — this script only extracts.
+ */
+interface ProductRefEntry {
+  file: string
+  name: string
+}
+
 interface ModuleSnapshot {
   dir: string
   id: string
@@ -86,6 +98,7 @@ interface ModuleSnapshot {
   deadlines: DeadlineEntry[]
   narratives: Record<string, string>
   componentFiles: ComponentFileEntry[]
+  productRefs: ProductRefEntry[]
   infographicStatus: 'present' | 'known-missing' | 'missing'
 }
 
@@ -455,6 +468,61 @@ function listTsxFiles(dir: string): string[] {
   return out.sort()
 }
 
+// ── Product references (catalogName → migrate catalog software_name) ────────
+
+/** All non-test .ts/.tsx files in a module directory (root, data/, components/, workshop/, …). */
+function listModuleSourceFiles(dir: string): string[] {
+  if (!fs.existsSync(dir)) return []
+  const out: string[] = []
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name)
+    if (entry.isDirectory()) out.push(...listModuleSourceFiles(full))
+    else if (
+      entry.isFile() &&
+      /\.tsx?$/.test(entry.name) &&
+      !/\.(test|spec)\.tsx?$/.test(entry.name)
+    ) {
+      out.push(full)
+    }
+  }
+  return out.sort()
+}
+
+/**
+ * `catalogName` property assignments whose value is NOT a plain string
+ * literal — these would be invisible to the extraction, so they are collected
+ * and reported (non-fatally) at the end of the run.
+ */
+const nonLiteralCatalogRefs: string[] = []
+
+function extractProductRefs(moduleDir: string): ProductRefEntry[] {
+  const refs: ProductRefEntry[] = []
+  for (const filePath of listModuleSourceFiles(moduleDir)) {
+    const src = fs.readFileSync(filePath, 'utf-8')
+    if (!src.includes('catalogName')) continue // cheap pre-filter; AST decides
+    const sf = parseFile(filePath)
+    const relPath = path.relative(REPO_ROOT, filePath)
+    const visit = (node: ts.Node): void => {
+      if (
+        (ts.isPropertyAssignment(node) || ts.isShorthandPropertyAssignment(node)) &&
+        (ts.isIdentifier(node.name) || ts.isStringLiteral(node.name)) &&
+        node.name.text === 'catalogName'
+      ) {
+        const init = ts.isPropertyAssignment(node) ? node.initializer : undefined
+        if (init && (ts.isStringLiteral(init) || ts.isNoSubstitutionTemplateLiteral(init))) {
+          refs.push({ file: relPath, name: init.text })
+        } else {
+          const { line } = sf.getLineAndCharacterOfPosition(node.getStart(sf))
+          nonLiteralCatalogRefs.push(`${relPath}:${line + 1} — ${node.getText(sf).slice(0, 80)}`)
+        }
+      }
+      ts.forEachChild(node, visit)
+    }
+    visit(sf)
+  }
+  return refs
+}
+
 // ── Registry loading (execute-import, AST fallback) ─────────────────────────
 
 async function loadAlgorithmRegistryIds(): Promise<string[]> {
@@ -593,6 +661,7 @@ async function buildModuleSnapshot(
     deadlines: facts.deadlines,
     narratives: facts.narratives,
     componentFiles,
+    productRefs: extractProductRefs(moduleDir),
     infographicStatus,
   }
   return { snapshot, contentConforms: facts.conforms }
@@ -678,6 +747,12 @@ function validateSnapshot(snap: Snapshot, conformingDirs: Set<string>): string[]
       if (path.isAbsolute(f.path)) problems.push(`${where}: absolute componentFiles path ${f.path}`)
       if (f.chars !== f.text.length) {
         problems.push(`${where}: chars mismatch for ${f.path} (${f.chars} vs ${f.text.length})`)
+      }
+    }
+    for (const r of m.productRefs) {
+      if (path.isAbsolute(r.file)) problems.push(`${where}: absolute productRefs file ${r.file}`)
+      if (!r.name || typeof r.name !== 'string') {
+        problems.push(`${where}: empty productRefs name in ${r.file}`)
       }
     }
   }
@@ -789,6 +864,15 @@ async function main(): Promise<void> {
 
   if (checkFreshness) {
     reportFreshness(snapshot, ageDays)
+  }
+
+  // Non-fatal: catalogName properties the string-literal extraction can't see.
+  if (nonLiteralCatalogRefs.length > 0) {
+    console.error(
+      `WARN ${nonLiteralCatalogRefs.length} catalogName assignment(s) with non-string-literal ` +
+        'values are invisible to productRefs extraction:'
+    )
+    for (const r of nonLiteralCatalogRefs) console.error(`  - ${r}`)
   }
 }
 
