@@ -382,6 +382,8 @@ describe('SIM_TREES — coverage & shape', () => {
     'stakeholder-comms': 'p4', // also gated by p7 (7.6)
     'cost-model-explorer': 'p0', // also gated by p4 (4.2, Wave 3 — re-cost against the firm roadmap)
     'data-at-rest-strategy': 'p5', // also gated by verify-close (VC.2, Wave 3 — confirm the re-encrypt-first sequencing at closure)
+    'initial-scoping': 'p0', // also gated by p1 (1.0, 07192026 — refine the scoping doc with risk-driven prioritization)
+    'kpi-tracker': 'foundations', // also gated by p4 (4.5-4.6, 07192026 — track the roadmap on a quarterly cadence)
   }
   it("every tree artifact-step has a matching produce entry in that phase's frameworkPhases.ts", () => {
     const missing: string[] = []
