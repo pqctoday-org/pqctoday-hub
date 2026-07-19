@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { ALGORITHMS, AUTO_ALGO } from '@/wasm/kmip/kmipMeta'
 import type { OpParam } from '@/wasm/kmip/ttlv/opTemplates'
-import { Term } from './Term'
+import { Term } from '@/components/Playground/learnkit/Term'
 
 /** Maps a param's `key` to the KMIP wire tag it carries, so the Reference
  * tab's field labels are glossary-aware (hover/focus → rail pin) same as

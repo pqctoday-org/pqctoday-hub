@@ -28,7 +28,19 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
-## [4.21.10] - 2026-07-18
+## [4.21.11] - 2026-07-18
+
+A guided Learn tab for the PKCS#11 HSM Playground, and a new Developer Sandbox
+card on the Playground overview.
+
+### Added
+
+- **PKCS#11 HSM Playground now has a guided Learn tab** [view:/playground] [persona:developer] [persona:architect]: two tracks — PKCS#11 Foundations, and the v3.2 / post-quantum transition — with worked lessons, a searchable glossary rail, knowledge checks, and classical-vs-PQC comparison tables. It's now the tab you land on when you open the playground; the existing hands-on workbench is still there, one tab over, with two-way links between a lesson and the matching live operation.
+- **Developer Sandbox card on the Crypto Lab overview** [view:/playground] [persona:developer]: the Docker-backed sandbox — network protocol scenarios plus a live PKCS#11 dev catalog comparing the same operation in Python, Java, C, C++, and Rust — previously had no link pointing at it anywhere in the Playground and was only reachable if you already knew its URL. It's now a card alongside Interactive Playground, PKCS#11 HSM, and KMIP Control Plane, and opens straight on the developer catalog instead of the generic scenario list.
+
+### Fixed
+
+- **KMIP Control Plane: mechanism panel now cites the spec section for every operation** [view:/playground] [persona:developer], with a working link back to the matching Learn lesson.
 
 A major integrity pass on the Leaders / PQC Community page, more KMIP 3.0
 playground fixes, a new collapsible layout for Threats, and large-scale

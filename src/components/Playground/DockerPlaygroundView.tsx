@@ -103,7 +103,10 @@ export const DockerPlaygroundView = () => {
     )
   }
 
-  const embedUrl = `${baseUrl}/embed`
+  // Land straight on the Developers catalog — this view's only entry point today
+  // is the "Developer Sandbox" card, so opening on Tracks first would just make
+  // people click "Developers" again to get where the card already said they'd land.
+  const embedUrl = `${baseUrl}/embed/dev`
 
   return (
     <Card className="p-3 md:p-6 flex flex-col gap-4">
