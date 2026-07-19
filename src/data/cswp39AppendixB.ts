@@ -26,7 +26,7 @@ export const CSWP39_PRIMARY_DEFINITION: CryptoAgilityDefinition = {
   citation: 'Considerations for Achieving Crypto Agility, Dec 19 2025, Section 1 / Exec Summary',
   definition:
     'Cryptographic (crypto) agility describes the capabilities needed to replace and adapt cryptographic algorithms in protocols, applications, software, hardware, firmware, and infrastructures while preserving security and ongoing operations.',
-  url: 'https://doi.org/10.6028/NIST.CSWP.39',
+  url: 'https://doi.org/10.6028/NIST.CSWP.39-upd1',
 }
 
 export const CSWP39_APPENDIX_B_DEFINITIONS: CryptoAgilityDefinition[] = [

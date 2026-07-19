@@ -36,8 +36,9 @@ export const CSWP39_RESOURCE_MAP: Record<CSWP39StepId, StepResources> = {
     ],
     external: [
       {
-        label: 'NIST CSWP.39 — Considerations for Achieving Crypto Agility (Dec 2025)',
-        href: 'https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.39.pdf',
+        label:
+          'NIST CSWP.39-upd1 — Considerations for Achieving Crypto Agility (Dec 2025, upd. Jun 2026)',
+        href: 'https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.39-upd1.pdf',
         external: true,
       },
       {
