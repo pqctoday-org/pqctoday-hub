@@ -108,6 +108,8 @@ import {
 } from '@/components/PKILearning/modules/MigrationProgram/components/DeploymentPlaybook'
 import { buildChecklistMarkdown } from '@/components/PKILearning/common/OpsChecklist'
 import { renderMTIMarkdown } from '@/components/PKILearning/modules/CryptoMgmtModernization/components/MTINegotiator'
+import { renderHybridTransitionMarkdown } from '@/components/PKILearning/modules/CryptoMgmtModernization/components/HybridTransitionPlanner'
+import { renderCloudMatrixMarkdown } from '@/components/PKILearning/modules/CryptoMgmtModernization/components/CloudResponsibilityMatrix'
 import { DEFAULT_RISK_ENTRIES } from '@/store/useRiskRegisterStore'
 import { buildKpiDashboardMarkdown } from '@/components/PKILearning/modules/PQCGovernance/components/KPIDashboardBuilder'
 import {
@@ -973,4 +975,65 @@ export const REAL_DOC_GENERATORS: Partial<
       },
     }),
   }),
+  // Batch 4 (07192026) — technical docs with clean, already-exported renderers.
+  //
+  // hybrid-transition: production TLS edge with long-lived data and mixed
+  // peers — the pathway recommendation comes from the real
+  // recommendTransitionPathway logic.
+  'hybrid-transition': () => ({
+    title: 'Hybrid Transition Pathway — TLS 1.3',
+    data: renderHybridTransitionMarkdown({
+      inventory: {
+        protocol: 'TLS 1.3',
+        currentAlgorithm: 'X25519',
+        function: 'kem',
+        dataLifetime: '5-15y',
+        deploymentMaturity: 'in-production-with-agility',
+      },
+      constraints: {
+        interoperabilityRequirement: ['classical-peers', 'fips-validated'],
+        bandwidthBudget: 'moderate',
+        cryptoAgility: 'medium',
+        complianceDeadline: '2030',
+      },
+      plan: {},
+    }),
+  }),
+  // cloud-responsibility-matrix: multi-cloud IaaS+SaaS estate with
+  // customer-managed keys — matrix/watch-outs from the real
+  // buildCloudResponsibilityMatrix logic (its §6.4 quote is the tool's own
+  // citation, verified against the upd1 PDF p.33 "Crypto Agility in the
+  // Cloud").
+  'cloud-responsibility-matrix': () => ({
+    title: 'Cloud Shared-Responsibility Crypto Matrix',
+    data: renderCloudMatrixMarkdown({
+      cloudPosture: {
+        cloudProviders: ['aws', 'azure'],
+        serviceModelMix: ['iaas', 'saas'],
+        regulatoryOverlay: [],
+      },
+      cryptoInventory: {
+        assetClasses: [],
+        customerKeyControl: 'customer-managed',
+        dataResidency: 'multi-region',
+        crqcExposureHorizon: '5-15y',
+      },
+      plan: {},
+    }),
+  }),
+  // DOCUMENTED EXCEPTIONS (Batch 4, 07192026) — deliberately NOT converted,
+  // per the plan's no-force-fit rule; the authored demoDocs content stays as
+  // the honest fallback for these four:
+  // - crypto-vulnerability-watch: the tool's whole value is the LIVE async
+  //   CVE snapshot (public/data/cve-snapshot.json); a synchronous sample
+  //   would render an empty per-product "no CVEs in snapshot" shell — worse
+  //   than the authored content.
+  // - crypto-cbom (LibraryCBOMBuilder) + management-tools-audit: export
+  //   memos entangled with multi-step workshop state; extraction deserves
+  //   its own careful pass, not a rushed one.
+  // - crypto-architecture: the markdown derives from an interactive diagram
+  //   component-state graph; same reasoning.
+  // - risk-treatment-plan (RiskHeatmapGenerator): export memo depends on
+  //   three other component memos (residual entries, priority order,
+  //   deltas); same reasoning.
 }
