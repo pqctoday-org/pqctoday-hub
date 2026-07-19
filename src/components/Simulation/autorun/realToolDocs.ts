@@ -93,6 +93,14 @@ import {
 } from '@/components/PKILearning/modules/ComplianceStrategy/components/AuditReadinessChecklist'
 import { renderCryptoApiMarkdown } from '@/components/PKILearning/modules/CryptoMgmtModernization/components/CryptoApiRefactorAudit'
 import { softwareData } from '@/data/migrateData'
+import { buildRiskRegisterMarkdown } from '@/components/PKILearning/modules/PQCRiskManagement/components/RiskRegisterBuilder'
+import { DEFAULT_RISK_ENTRIES } from '@/store/useRiskRegisterStore'
+import { buildKpiDashboardMarkdown } from '@/components/PKILearning/modules/PQCGovernance/components/KPIDashboardBuilder'
+import {
+  buildRoadmapMarkdown,
+  DEFAULT_MILESTONES as ROADMAP_DEFAULT_MILESTONES,
+} from '@/components/PKILearning/modules/MigrationProgram/components/RoadmapBuilder'
+import { TIMELINE_COUNTRY_DEADLINE_YEAR } from '@/data/timelineFacts.generated'
 
 /**
  * Thales Luna is the fleet vendor for this demo org. Derived from `HSM_VENDORS`
@@ -783,5 +791,55 @@ export const REAL_DOC_GENERATORS: Partial<
   'crypto-api-refactor': () => ({
     title: 'Crypto API Refactor Audit — Java',
     data: cryptoApiRefactorSample(),
+  }),
+  // Batch 2 (07192026) — the exec tour's reveal artifacts, the documents the
+  // guided walkthrough opens on screen.
+  //
+  // risk-register: the sample IS the tool's own illustrative default entries
+  // (DEFAULT_RISK_ENTRIES, shared single source with the store) — zero
+  // invented data, rendered by the tool's own builder.
+  'risk-register': () => ({
+    title: 'Quantum Risk Register',
+    data: buildRiskRegisterMarkdown(DEFAULT_RISK_ENTRIES),
+  }),
+  // kpi-dashboard: real buildDimensions pipeline over the same demo exec-data
+  // as kpi-tracker (catalog/threat aggregates live; assessment-gated rows
+  // honestly render locked), governance surface, executive lens.
+  'kpi-dashboard': (sector) => {
+    const dimensions = buildDimensions('executive', 'governance', demoKpiExecData(sector), null)
+    const scores: Record<string, number> = {}
+    let seed = 0
+    for (const d of dimensions) {
+      if (d.disabled) continue
+      scores[d.id] = d.autoScore && d.autoScore > 0 ? d.autoScore : 55 + (seed++ % 3) * 10
+    }
+    return {
+      title: 'PQC Governance KPI Dashboard',
+      data: buildKpiDashboardMarkdown(dimensions, 'executive', scores, {}),
+    }
+  },
+  // migration-roadmap: the tool's own teaching-default milestone set (the
+  // framework's governance-spine + two-track shape), with the external
+  // deadline rows sourced from the timeline-generated facts — the same single
+  // source Assess/Report/Sim already read — so a CSV deadline change
+  // propagates here without a code edit.
+  'migration-roadmap': () => ({
+    title: 'PQC Migration Roadmap (Two-Track)',
+    data: buildRoadmapMarkdown(
+      [
+        {
+          label: 'US key-establishment migration deadline (EO, June 2026)',
+          year: TIMELINE_COUNTRY_DEADLINE_YEAR.US,
+          source: 'United States',
+        },
+        {
+          label: 'EU full PQC transition',
+          year: TIMELINE_COUNTRY_DEADLINE_YEAR.EU,
+          source: 'European Union',
+        },
+      ],
+      ROADMAP_DEFAULT_MILESTONES,
+      []
+    ),
   }),
 }
