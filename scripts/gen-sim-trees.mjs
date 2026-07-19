@@ -950,7 +950,11 @@ const FRAMEWORK = {
       output: 'PKI modernization plan',
       steps: [
         L('pki-workshop', 'Learn: PKI Workshop'),
-        L('merkle-tree-certs', 'Learn: Merkle Tree Certificates (the web-PKI path)'),
+        // A9 residual (07192026): the verdict text was already softened to "one
+        // leading candidate alongside X.509+ML-DSA" — this label had kept the
+        // stronger "the web-PKI path" framing. MTC is an IETF PLANTS WG draft,
+        // one candidate, not the settled answer.
+        L('merkle-tree-certs', 'Learn: Merkle Tree Certificates (a leading web-PKI candidate)'),
         W('merkle-proof', 'Practice: Merkle Tree Certificates workshop'),
         S('pki', 'Lab: enterprise PQC PKI chain (Root SLH-DSA → Int ML-DSA → Leaf)'),
         A('infra-modernization-plan', 'Draft the infrastructure modernization plan'),

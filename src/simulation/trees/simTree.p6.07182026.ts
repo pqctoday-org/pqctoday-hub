@@ -34,7 +34,7 @@ const TREE: PhaseTree = {
             },
             {
               kind: 'learn',
-              label: 'Learn: Merkle Tree Certificates (the web-PKI path)',
+              label: 'Learn: Merkle Tree Certificates (a leading web-PKI candidate)',
               to: '/learn/merkle-tree-certs',
               moduleId: 'merkle-tree-certs',
             },
