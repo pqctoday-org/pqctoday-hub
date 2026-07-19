@@ -31,6 +31,24 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+### Changed
+
+- **Added Algorithms to the IT Ops navigation** [view:/algorithms] [persona:ops]: the Certified-filter view and deployment-relevant status hints are now reachable from the Ops nav, matching every other technical persona.
+- **The mobile Timeline's "All phases" view now stays selected** [view:/timeline] [persona:ops]: switching off the one-phase-at-a-time swipe carousel used to reset on your next visit; your choice is now remembered.
+- **Softened the /patents preview banner for curious visitors** [view:/patents] [persona:curious]: the page was never actually locked for curious users, but the banner said "Preview locked" anyway — it now reads as a suggestion to build background first, not a rejection.
+
+### Fixed
+
+- **Corrected a stale 2024 data-breach citation** [view:/learn] [persona:executive]: the ROI calculator's methodology panel and the Risk Management module's intro both still cited IBM's 2024 report ($4.88M) after the underlying numbers had already moved to 2025's $4.44M global average.
+- **Corrected the "10-50x larger certificates" claim in the last two places it survived** [view:/learn] [persona:architect] [persona:curious]: the real figure is roughly 4-7x (already fixed elsewhere) — the Security Architect module and the Ops plain-language summary still had the old number.
+- **Replaced personal email contact links on the About page** [view:/about]: the sandbox-access and embedding-mode request links pointed at a personal Gmail address; they now go through the same trackable GitHub request form used everywhere else on the site.
+- **Reviewed and corrected 8 Learn modules' internal citation lists** [view:/learn] [persona:developer] [persona:architect] [persona:ops]: PKI Workshop, KMS & PQC Key Management, Web Gateway PQC, VPN/IPsec & SSH, Email & Document Signing, Code Signing, IoT & OT Security, and Merkle Tree Certificates had never had their standards/algorithm references or example figures checked against the lesson content since being scaffolded — several had stale or disconnected numbers (e.g. the VPN/SSH module's handshake-size examples didn't match the sizes its own simulator computes); all are now verified and the "last reviewed" date is honest.
+
+### Data
+
+- **Resolved 7 library entries flagged for URL review** [view:/library] [persona:researcher]: 3 were confirmed live and cleared, 1 was repointed from a generic homepage to its actual report page, and 3 were deprecated after their sources couldn't be confirmed (one was an internal preview link with no matching published article).
+- **Backfilled related-standards links on 3 compliance entries** [view:/compliance] [persona:researcher]: UK ICO encryption guidance, Norway's NSM principles, and Brazil's BACEN Resolution 4.893 now cross-reference the frameworks they parallel or implement.
+
 ## [4.22.0] - 2026-07-19
 
 A major Simulation release: a six-wave accuracy and gameplay overhaul, real hub data flowing through the sim's documents and events, and a refreshed NIST library entry.
