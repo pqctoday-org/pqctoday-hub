@@ -39,6 +39,12 @@ const TREE: PhaseTree = {
               to: '/assess',
               refId: 'assess-engine',
             },
+            {
+              kind: 'activity',
+              label: 'Refine the scoping document with risk-driven prioritization',
+              to: '/business/tools/initial-scoping',
+              artifactType: 'initial-scoping',
+            },
           ],
         },
       ],

@@ -387,9 +387,18 @@ const FRAMEWORK = {
         'Prioritize discovery by risk — the Tier-1 systems first — instead of scanning everything with equal priority.',
       do: 'Apply 80/20 prioritization to pick the Tier-1 systems and assign discovery priority tiers.',
       output: 'Risk-driven scoping document',
+      // A() added (07192026, completeness gap-closing): this band had no
+      // artifact-producing step at all, only a reference to the same
+      // assess-engine tool 0.5 already produces 'initial-scoping' from. Since
+      // this activity is explicitly about REFINING that same scoping with
+      // risk-driven prioritization (not a fresh assessment), reusing the
+      // artifact — not inventing a second scoping-document tool — is the
+      // honest fit; multi-phase reuse of one real artifact is the
+      // established pattern here (kpi-dashboard/kpi-tracker/crypto-cbom).
       steps: [
         L('data-asset-sensitivity', 'Learn: Data & Asset Sensitivity'),
         R('assess-engine', 'Run the scoping assessment engine'),
+        A('initial-scoping', 'Refine the scoping document with risk-driven prioritization'),
       ],
     },
     {
@@ -513,6 +522,11 @@ const FRAMEWORK = {
   ],
   p2: [
     {
+      // Investigated for an A() step (07192026, completeness gap-closing) —
+      // deliberately left artifact-free: this band is a FORMAT DECISION
+      // ("which spec do we standardize on"), not a scan/export. 2.2's
+      // A('crypto-cbom', ...) is the real scanner; stretching it to cover
+      // both would conflate "decide the format" with "run the scan."
       id: '2.1',
       level: 1,
       title: 'Select CBOM Format and Tooling',
@@ -602,6 +616,12 @@ const FRAMEWORK = {
   // not invented here. See simulation-mode-improvement-plan-07042026.md, W3-3.
   p3: [
     {
+      // Investigated for an A() step (07192026, completeness gap-closing) —
+      // deliberately left artifact-free: this band DEFINES the scoring
+      // model (a decision, taught via Learn + reference); 3.2's real
+      // A('risk-register', ...) is where the model actually gets applied
+      // and produces a saved artifact. No separate "model definition" tool
+      // exists, and shouldn't — it would just be prose in a different shape.
       id: '3.1',
       level: 1,
       title: 'Define Risk Scoring Model',
@@ -676,6 +696,11 @@ const FRAMEWORK = {
   ],
   p4: [
     {
+      // Investigated for an A() step (07192026, completeness gap-closing) —
+      // deliberately left artifact-free: no tool exists for a "90-day
+      // starter plan" distinct from 4.2's real A('migration-roadmap', ...)
+      // (the multi-YEAR roadmap). Reusing that tool here would conflate two
+      // different planning horizons under one artifact.
       id: '4.1',
       level: 1,
       title: 'Define Year-1 Starter Plan (90-Day Governance Sprint)',
@@ -731,12 +756,20 @@ const FRAMEWORK = {
         "Review the roadmap quarterly against leading indicators and formal gate criteria — don't just check it once a year.",
       do: 'Run quarterly reviews with leading indicators and formal G0–G6 gate criteria.',
       output: 'Quarterly review process & gate criteria',
+      // A() added (07192026, completeness gap-closing): this L3 band had no
+      // artifact-producing step, only references. kpi-tracker ("Track
+      // migration KPIs with configurable metrics and reporting templates")
+      // is a genuinely strong fit for "run this on a quarterly cadence
+      // against criteria" — already reused across Foundations/P6/Verify-Close
+      // for exactly this kind of recurring, cross-phase tracking, not
+      // invented here.
       steps: [
         R(
           'threats',
           'Monitor the threat horizon — CRQC timeline signals that trigger accelerated execution'
         ),
         R('report', 'Track gates on the Report page'),
+        A('kpi-tracker', 'Track the roadmap on a quarterly cadence against gate criteria'),
       ],
     },
     {
@@ -988,6 +1021,11 @@ const FRAMEWORK = {
         "Baseline performance and canary at low traffic before a full rollout — don't find out about a latency regression at 100% load.",
       do: 'Baseline metrics, run canary at 1–5% traffic and evaluate against SLOs.',
       output: 'Performance baseline and projections',
+      // Investigated for an A() step (07192026, completeness gap-closing) —
+      // deliberately left artifact-free: the only real tools here are
+      // Playground WORKSHOP calculators (cert-capacity, tee-channel — kind
+      // 'workshop', interactive/ephemeral, not artifact-producing). No hub
+      // tool saves a performance-baseline document.
       steps: [
         L('pqc-testing-validation', 'Learn: PQC Testing & Validation'),
         // toOverride: a real ACVP cert (Entrust nShield 5, ML-DSA/ML-KEM/SLH-DSA —
@@ -1012,6 +1050,11 @@ const FRAMEWORK = {
         "Benchmark PQC's CPU/memory/bandwidth impact on production-class hardware — a laptop benchmark won't catch a capacity cliff at scale.",
       do: 'Estimate CPU, memory, bandwidth and storage impact; benchmark on production hardware.',
       output: 'Capacity plan',
+      // Investigated for an A() step (07192026, completeness gap-closing) —
+      // deliberately left artifact-free, same reasoning as 6.4: the only
+      // real tool (hsm-capacity, a Playground WORKSHOP calculator) is
+      // interactive/ephemeral, not artifact-producing; no hub tool saves a
+      // capacity-plan document.
       steps: [R('algorithms-detailed', 'Reference: detailed algorithm size comparison')],
       deepDive: [L('os-pqc', 'Deep dive — Learn: Operating Systems & PQC')],
       // NOTE 07182026: the framework's own p6 Level-4 maturity indicator
@@ -1137,6 +1180,13 @@ const FRAMEWORK = {
         'Run the seven-domain maturity self-assessment first — your overall score is only as strong as your weakest domain.',
       do: 'Stand up the risk-appetite statement and KRI cascade; run (or refine) your PQC assessment across the seven domains — Cryptographic Inventory, Governance & Ownership, Pilots & Deployment, Vendor & Supply Chain, Compliance & Standards, Crypto-Agility, Risk & Prioritization. Program maturity is derived from your progress, overall = weakest domain. (Level 0 "Unaware" — no organizational awareness, nothing planned or underway — is where every domain starts; this activity is how you leave it.)',
       output: 'GRC structure & maturity baseline',
+      // Investigated for an A() step (07192026, completeness gap-closing) —
+      // deliberately left artifact-free: unlike P1's scoping document (a
+      // saved artifact 1.1 later "refines"), the maturity baseline itself is
+      // LIVE-derived via deriveMaturity() from the assess engine's answers,
+      // not a document this band produces — R('assess-engine', ...) above is
+      // already the real tool. Force-adding an unrelated A() here would be a
+      // weaker fit than 1.0's, not a clearly-strong one.
       steps: [
         L('pqc-grc', 'Learn: PQC GRC (risk appetite & KRIs)'),
         R('assess-engine', 'Run / refine your PQC assessment'),
@@ -1223,6 +1273,14 @@ const FRAMEWORK = {
         "Adopt the evidence standard and closure record up front — decide what 'proven' means before you start declaring things done.",
       do: 'Adopt the 5-point migration-verification evidence standard and the program-closure record up front, so "done" means proven, not declared.',
       output: 'Verification standard & closure plan',
+      // Investigated for an A() step (07192026, completeness gap-closing) —
+      // deliberately left artifact-free: the obvious candidate is the SAME
+      // A('migration-verification', ...) that VC.2 already requires below.
+      // Completion checks satisfy on the tool's global hasArtifact flag, so
+      // adding it here would let players satisfy BOTH bands from one click —
+      // collapsing the deliberate "adopt the standard, then execute" arc
+      // between VC.1 and VC.2 into a single step. Left as a reference-only
+      // decision band.
       steps: [
         L('verification-closure', 'Learn: Decommissioning & Program Closure'),
         R(

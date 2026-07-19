@@ -140,6 +140,12 @@ const TREE: PhaseTree = {
               to: '/report',
               refId: 'report',
             },
+            {
+              kind: 'activity',
+              label: 'Track the roadmap on a quarterly cadence against gate criteria',
+              to: '/business/tools/kpi-tracker',
+              artifactType: 'kpi-tracker',
+            },
           ],
         },
       ],
