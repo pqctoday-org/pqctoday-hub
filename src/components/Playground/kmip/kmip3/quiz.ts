@@ -5,14 +5,8 @@
 // outside trivia — and every `why` cites the behavior the walkthrough
 // demonstrated live.
 
-export interface QuizQuestion {
-  q: string
-  options: string[]
-  /** Index into `options`. */
-  answer: number
-  /** Shown after answering — WHY the right answer is right. */
-  why: string
-}
+export type { QuizQuestion } from '@/components/Playground/learnkit/QuizCard'
+import type { QuizQuestion } from '@/components/Playground/learnkit/QuizCard'
 
 /** Keyed by `Lesson.id`. A lesson without an entry simply shows no quiz. */
 export const QUIZZES: Record<string, QuizQuestion[]> = {

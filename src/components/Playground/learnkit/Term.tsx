@@ -1,27 +1,25 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 // Term — glossary-aware label wrapper. Native `<abbr title>` for an
-// immediate, keyboard-accessible tooltip (same idiom already used by
-// `KmipPlaygroundView.tsx`'s local `Term`/`GLOSSARY`, generalized to the full
-// wire-tag + concept glossary and wired to `GlossaryContext` so hover/focus
-// also pins the rail's "now viewing" card.
+// immediate, keyboard-accessible tooltip, wired to `GlossaryContext` so
+// hover/focus also pins the rail's "now viewing" card. Definition comes
+// from whichever `GlossaryData` the enclosing `GlossaryProvider` was given.
 import type { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 import { useGlossary } from './GlossaryContext'
-import { lookupGlossaryDef } from './glossary'
 
 export function Term({
   glossaryKey,
   children,
   className,
 }: {
-  /** A `TAG_GLOSSARY` tag name or `TERMS` id. */
+  /** A key into the active `GlossaryData.tagGlossary` or `terms[].id`. */
   glossaryKey: string
   children: ReactNode
   className?: string
 }) {
-  const { setActive } = useGlossary()
-  const def = lookupGlossaryDef(glossaryKey)
+  const { setActive, data } = useGlossary()
+  const def = data.lookupDef(glossaryKey)
 
   if (!def) return <>{children}</>
 
