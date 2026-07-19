@@ -36,6 +36,9 @@ import path from 'path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import ts from 'typescript'
 import { KNOWN_MISSING } from './audit-module-infographics'
+// Runtime constant (the default tab set); the file's other imports are
+// type-only and erased by tsx, so this execute-imports cleanly.
+import { STANDARD_TABS } from '../src/components/PKILearning/manifest/types'
 
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const MODULES_DIR = path.join(REPO_ROOT, 'src/components/PKILearning/modules')
@@ -99,6 +102,8 @@ interface ModuleSnapshot {
   narratives: Record<string, string>
   componentFiles: ComponentFileEntry[]
   productRefs: ProductRefEntry[]
+  tabs: string[]
+  hasExercises: boolean
   infographicStatus: 'present' | 'known-missing' | 'missing'
 }
 
@@ -129,6 +134,8 @@ interface LoadedManifest {
   practiceInSim?: boolean
   whyThisMatters?: string
   taxonomy?: { algorithms?: string[]; standards?: string[] }
+  tabs?: { value: string; label: string }[]
+  custom?: boolean
   learningObjectives?: string[]
   prerequisites?: string[]
 }
@@ -523,6 +530,50 @@ function extractProductRefs(moduleDir: string): ProductRefEntry[] {
   return refs
 }
 
+// ── Exercises-slot detection ────────────────────────────────────────────────
+
+/**
+ * How hasExercises was decided per module (reported non-fatally at end of run
+ * when the file-existence fallback had to be used):
+ *  - 'ast': at least one <ModuleShell …> JSX element exists in the module's
+ *    source; hasExercises = some such element carries an `exercises` attribute
+ *    (covers inline arrows, elements, and variables — TLSBasics wires it in
+ *    TLSBasicsModule.tsx, not index.tsx, so ALL module files are scanned).
+ *  - 'file-fallback': no ModuleShell JSX anywhere (custom modules like Quiz);
+ *    hasExercises = a non-test components/*Exercises*.tsx file exists.
+ */
+const exercisesFallbackModules: string[] = []
+
+function detectExercises(dirName: string, moduleDir: string): boolean {
+  let sawModuleShell = false
+  let wired = false
+  for (const filePath of listModuleSourceFiles(moduleDir)) {
+    if (!filePath.endsWith('.tsx')) continue
+    const src = fs.readFileSync(filePath, 'utf-8')
+    if (!src.includes('ModuleShell')) continue // cheap pre-filter; AST decides
+    const sf = parseFile(filePath)
+    const visit = (node: ts.Node): void => {
+      if (ts.isJsxOpeningElement(node) || ts.isJsxSelfClosingElement(node)) {
+        const tag = node.tagName.getText(sf)
+        if (tag === 'ModuleShell' || tag.endsWith('.ModuleShell')) {
+          sawModuleShell = true
+          for (const attr of node.attributes.properties) {
+            if (ts.isJsxAttribute(attr) && attr.name.getText(sf) === 'exercises') wired = true
+          }
+        }
+      }
+      ts.forEachChild(node, visit)
+    }
+    visit(sf)
+  }
+  if (sawModuleShell) return wired
+
+  exercisesFallbackModules.push(dirName)
+  return listTsxFiles(path.join(moduleDir, 'components')).some((f) =>
+    /exercises/i.test(path.basename(f))
+  )
+}
+
 // ── Registry loading (execute-import, AST fallback) ─────────────────────────
 
 async function loadAlgorithmRegistryIds(): Promise<string[]> {
@@ -662,6 +713,12 @@ async function buildModuleSnapshot(
     narratives: facts.narratives,
     componentFiles,
     productRefs: extractProductRefs(moduleDir),
+    // Effective tab values: manifest.tabs when declared, else the app's
+    // default set. NOTE: the Quiz module is custom:true (owns its whole body,
+    // no ModuleTabBar) yet declares no tabs — it reports the default set here;
+    // Python-side checks should exempt it (it is already content-exempt).
+    tabs: (m.tabs ?? STANDARD_TABS).map((t) => t.value),
+    hasExercises: detectExercises(dirName, moduleDir),
     infographicStatus,
   }
   return { snapshot, contentConforms: facts.conforms }
@@ -754,6 +811,12 @@ function validateSnapshot(snap: Snapshot, conformingDirs: Set<string>): string[]
       if (!r.name || typeof r.name !== 'string') {
         problems.push(`${where}: empty productRefs name in ${r.file}`)
       }
+    }
+    if (m.tabs.length === 0 || m.tabs.some((t) => typeof t !== 'string' || t.length === 0)) {
+      problems.push(`${where}: tabs must be a non-empty array of non-empty strings`)
+    }
+    if (typeof m.hasExercises !== 'boolean') {
+      problems.push(`${where}: hasExercises is not a boolean`)
     }
   }
   return problems
@@ -864,6 +927,15 @@ async function main(): Promise<void> {
 
   if (checkFreshness) {
     reportFreshness(snapshot, ageDays)
+  }
+
+  // Non-fatal: modules where hasExercises came from the file-existence
+  // fallback (no ModuleShell JSX found) rather than the AST attribute check.
+  if (exercisesFallbackModules.length > 0) {
+    console.error(
+      `INFO hasExercises used file-existence fallback (no ModuleShell JSX) for: ` +
+        exercisesFallbackModules.join(', ')
+    )
   }
 
   // Non-fatal: catalogName properties the string-literal extraction can't see.
