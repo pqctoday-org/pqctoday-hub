@@ -17,4 +17,5 @@ export const CONCEPT_LEARN_MODULE: Record<TourConceptId, string> = {
   'cbom-fields': 'cbom',
   'weakest-domain-maturity': 'pqc-governance',
   'kpi-pack': 'pqc-governance',
+  readiness: 'migration-program',
 }
