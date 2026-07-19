@@ -245,26 +245,35 @@ describe('SimulationView (Mission Control)', () => {
   // WS-01 — one tree-gated source of truth: the Quarter Report's cleared count
   // can never disagree with the board, and the AI advances the tree (via `auto`),
   // never the legacy `checks` counter.
-  it('the Quarter Report never contradicts the board; AI advances the tree', () => {
-    renderPage()
-    for (let i = 0; i < 12; i++) {
-      fireEvent.click(screen.getByRole('button', { name: /End Quarter/ }))
-      const dialog = screen.getByRole('dialog')
-      // both board and report render "Phases cleared" as "n/9"; while the report
-      // is open they must show the SAME number.
-      const reportVal = within(dialog).getByText(/^\d+\/9$/).textContent
-      const boardVals = screen
-        .getAllByText(/^\d+\/9$/)
-        .filter((el) => !dialog.contains(el))
-        .map((el) => el.textContent)
-      expect(boardVals).toContain(reportVal)
-      fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
+  // 12 full quarter cycles against the whole view sits right at vitest's 5s
+  // default on a loaded CI runner (5.4s observed on the 07192026 PR run;
+  // passes locally). Explicit timeout rather than a smaller loop — the 12
+  // iterations are the point: a drift appearing late in the year would be
+  // missed by a 2-3 quarter loop.
+  it(
+    'the Quarter Report never contradicts the board; AI advances the tree',
+    { timeout: 20000 },
+    () => {
+      renderPage()
+      for (let i = 0; i < 12; i++) {
+        fireEvent.click(screen.getByRole('button', { name: /End Quarter/ }))
+        const dialog = screen.getByRole('dialog')
+        // both board and report render "Phases cleared" as "n/9"; while the report
+        // is open they must show the SAME number.
+        const reportVal = within(dialog).getByText(/^\d+\/9$/).textContent
+        const boardVals = screen
+          .getAllByText(/^\d+\/9$/)
+          .filter((el) => !dialog.contains(el))
+          .map((el) => el.textContent)
+        expect(boardVals).toContain(reportVal)
+        fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
+      }
+      // Option A: the AI advances progress only via real tree `auto` keys — there is
+      // no separate progression counter to drift out of sync with the board.
+      const { auto } = useSimulationStore.getState()
+      for (const k of auto) expect(k).toMatch(/^[a-z0-9]+::.+/)
     }
-    // Option A: the AI advances progress only via real tree `auto` keys — there is
-    // no separate progression counter to drift out of sync with the board.
-    const { auto } = useSimulationStore.getState()
-    for (const k of auto) expect(k).toMatch(/^[a-z0-9]+::.+/)
-  })
+  )
 
   // WS-12 — the first-run guide shows on a fresh visit, is skippable, and is
   // remembered (does not reappear once dismissed).
