@@ -211,3 +211,19 @@ export function isStepComplete(s: TreeStep, ctx: StepCompletionContext): boolean
       return false
   }
 }
+
+/**
+ * "No hard navigation" (the third behavioral clause above): is this href one
+ * SimulationView's embed-pane click guard must block? True for any in-app path
+ * (a widget's own cross-reference link — library/timeline/compliance, etc. —
+ * would otherwise yank a player out of the sim); false for external
+ * (http/https/mailto), hash-only, or missing hrefs, which are left alone.
+ * Extracted (WP5.7) so the guard's actual predicate has exactly one definition,
+ * shared by SimulationView's real onClickCapture handler and
+ * referenceEmbeds.behavior.local.test.tsx's verification of it — a widget is
+ * allowed to render internal links (many legitimately do); this is what makes
+ * clicking one safe rather than requiring the link not exist at all.
+ */
+export function isBlockedEmbedHref(href: string | null | undefined): boolean {
+  return !!href && href.startsWith('/')
+}

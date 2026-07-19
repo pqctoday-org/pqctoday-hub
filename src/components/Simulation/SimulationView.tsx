@@ -30,6 +30,7 @@ import {
   isReferenceEmbedStep,
   isScenarioStep,
   isStepComplete,
+  isBlockedEmbedHref,
   type StepCompletionContext,
 } from './embedContract'
 import { SIM_ALGORITHM_TABS } from './algorithmTabs'
@@ -1997,7 +1998,7 @@ export function SimulationView() {
               onClickCapture={(e) => {
                 const a = (e.target as HTMLElement).closest?.('a[href]')
                 const href = a?.getAttribute('href')
-                if (href && href.startsWith('/')) {
+                if (isBlockedEmbedHref(href)) {
                   e.preventDefault()
                   // WP2.7: a blocked link used to fail silently — the player
                   // clicked and nothing visibly happened. Say why.
