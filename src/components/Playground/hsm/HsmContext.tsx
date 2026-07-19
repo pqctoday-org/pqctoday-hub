@@ -104,6 +104,13 @@ export interface HsmContextValue {
   /** All PKCS#11 key handles generated during this session */
   hsmKeys: HsmKey[]
   /**
+   * Always-current mirror of `hsmKeys` — read this instead of `hsmKeys`
+   * when checking "is this handle already registered" inside a loop that
+   * calls `addHsmKey` more than once per tick (a plain state read would be
+   * stale until the next render, causing duplicate registrations).
+   */
+  hsmKeysRef: React.MutableRefObject<HsmKey[]>
+  /**
    * Register a key after generation. Returns the registered key for
    * convenience (same object that was passed in).
    */
@@ -159,19 +166,27 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [tokenCreated, setTokenCreated] = useState(false)
   const [hsmKeys, setHsmKeys] = useState<HsmKey[]>([])
   const [hsmLog, setHsmLog] = useState<Pkcs11LogEntry[]>([])
+  // Mirrors `hsmKeys`, updated synchronously (unlike the batched state
+  // setter) so callers that add several keys in a tight loop within one
+  // tick — e.g. the Learn tab's per-step object discovery — can check
+  // "is this handle already registered" without racing a stale render.
+  const hsmKeysRef = useRef<HsmKey[]>([])
 
   const isReady = phase === 'session_open'
 
   const addHsmKey = useCallback((key: HsmKey): HsmKey => {
-    setHsmKeys((prev) => [key, ...prev])
+    hsmKeysRef.current = [key, ...hsmKeysRef.current]
+    setHsmKeys(hsmKeysRef.current)
     return key
   }, [])
 
   const removeHsmKey = useCallback((handle: number) => {
-    setHsmKeys((prev) => prev.filter((k) => k.handle !== handle))
+    hsmKeysRef.current = hsmKeysRef.current.filter((k) => k.handle !== handle)
+    setHsmKeys(hsmKeysRef.current)
   }, [])
 
   const clearHsmKeys = useCallback(() => {
+    hsmKeysRef.current = []
     setHsmKeys([])
   }, [])
 
@@ -278,6 +293,7 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setTokenCreated,
       isReady,
       hsmKeys,
+      hsmKeysRef,
       addHsmKey,
       removeHsmKey,
       clearHsmKeys,
