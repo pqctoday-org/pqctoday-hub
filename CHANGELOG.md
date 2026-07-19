@@ -18,7 +18,10 @@ first time (don't ship dev-speak and reformat later):
 - **Keep the `[view:/page]` and `[persona:id]` tags** — they drive the page's
   filters and "For me" view. Valid persona ids: `executive`, `developer`,
   `architect`, `researcher`, `ops`, `curious`. Tag every entry with the
-  surface(s) it affects.
+  surface(s) it affects. `persona:ops` in particular is under-used relative to
+  how often ops-relevant work actually ships (07-19 audit finding) — tag it
+  explicitly whenever an entry touches deployment, certificate lifecycle, TLS
+  configuration, or crypto inventory, even if another persona is also tagged.
 - **Put the human-readable detail in the sentence; leave deep internals out.**
   Filenames, function names, commit hashes, byte offsets, and spec section
   numbers belong in the PR/commit, not here. Keep concrete specifics a user
