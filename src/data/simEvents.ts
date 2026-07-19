@@ -73,7 +73,7 @@ const FICTION_WARNING = [
   'RSA-2048 code-signing certificates flagged for sunset by your CA',
 ]
 const FICTION_SUCCESS = [
-  'Your TLS stack ships hardware-accelerated ML-DSA — perf headroom recovered',
+  'Your TLS stack ships an AVX-512-optimized ML-DSA build — perf headroom recovered',
   'Pilot cutover clean: zero rollbacks on Tier-1 internet-facing service',
   'Vendor confirms dated ML-KEM commitment in renewed contract',
 ]
