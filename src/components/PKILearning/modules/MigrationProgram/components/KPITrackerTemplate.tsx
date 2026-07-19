@@ -56,6 +56,75 @@ function formatMappings(m: KpiDefinition['mappings']): string {
   return parts.length > 0 ? parts.join(' · ') : '—'
 }
 
+/** Everything the exported markdown depends on — extracted (07192026) so the
+ *  simulation's real-tool doc generator renders THIS logic instead of a
+ *  hand-typed lookalike. The component's own export memo calls it too, so the
+ *  two can never drift. */
+export interface KpiTrackerMarkdownInput {
+  dimensions: ReturnType<typeof buildDimensions>
+  activePersona: KpiPersonaId
+  riskHistory: { ts: number; score: number }[]
+  userScores: Record<string, number>
+  userWeights: Record<string, number>
+  touchedIds: Set<string>
+}
+
+export function buildKpiTrackerMarkdown({
+  dimensions,
+  activePersona,
+  riskHistory,
+  userScores,
+  userWeights,
+  touchedIds,
+}: KpiTrackerMarkdownInput): string {
+  const scores = userScores
+  let md = `# PQC Migration KPI Tracker — ${activePersona}\n\n`
+  md += `Generated: ${new Date().toLocaleDateString()}\n\n`
+
+  const ew = (d: (typeof dimensions)[number]) =>
+    d.id in userWeights ? (userWeights[d.id] ?? 0) : d.weight
+  // Manual KPIs with no computed baseline and no score yet read as "not yet
+  // scored" rather than a numeric 0 — excluded from the average so it
+  // doesn't read as alarmingly low before the user has entered anything.
+  // Stops applying the instant the user touches the slider (even to 0),
+  // per the scorecard's own touched-set — not a value-based `=== 0` guess.
+  const isPending = (d: (typeof dimensions)[number]) =>
+    d.notYetScored === true && !touchedIds.has(d.id)
+  let totalWeight = 0
+  let weightedSum = 0
+  for (const d of dimensions) {
+    if (d.disabled || isPending(d)) continue
+    const score = scores[d.id] ?? d.autoScore ?? 0
+    weightedSum += score * ew(d)
+    totalWeight += ew(d)
+  }
+  const overall = totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0
+
+  md += `**Persona Lens:** ${activePersona}\n`
+  md += `**Overall Migration Progress: ${overall}/100**\n\n`
+  md += '## KPI Dimensions\n\n'
+  md += '| KPI | Score | Weight | Target | Framework Mappings | Description |\n'
+  md += '|-----|-------|--------|--------|---------------------|-------------|\n'
+  for (const d of dimensions) {
+    if (d.disabled) {
+      md += `| ${d.label} | _locked — ${d.disabledReason ?? 'no data'}_ | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'} | ${formatMappings(mappingsFor(d.id))} | ${d.description} |\n`
+      continue
+    }
+    const scoreCell = isPending(d) ? '_not yet scored_' : `${scores[d.id] ?? d.autoScore ?? 0}/100`
+    md += `| ${d.label} | ${scoreCell} | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'} | ${formatMappings(mappingsFor(d.id))} | ${d.description} |\n`
+  }
+  md += '\n## Data Sources\n\n'
+  md += `- Vendor / FIPS / threat / compliance KPIs auto-scored from your catalog, threats data, and assessment selections.\n`
+  md += `- Risk Posture trend: ${trendSummary(riskHistory)}\n`
+  md += `- All other dimensions accept manual input.\n`
+
+  md += '\n---\n\n'
+  md +=
+    '*Aligned to NIST CSWP 39 §6.5 (Maturity Assessment for Crypto Agility). https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
+
+  return md
+}
+
 interface KPITrackerTemplateProps {
   roadmapOutput?: RoadmapOutput | null
 }
@@ -146,56 +215,18 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
     setUserWeights(weights)
   }, [])
 
-  const exportMarkdown = useMemo(() => {
-    const scores = userScores
-    let md = `# PQC Migration KPI Tracker — ${activePersona}\n\n`
-    md += `Generated: ${new Date().toLocaleDateString()}\n\n`
-
-    const ew = (d: (typeof dimensions)[number]) =>
-      d.id in userWeights ? (userWeights[d.id] ?? 0) : d.weight
-    // Manual KPIs with no computed baseline and no score yet read as "not yet
-    // scored" rather than a numeric 0 — excluded from the average so it
-    // doesn't read as alarmingly low before the user has entered anything.
-    // Stops applying the instant the user touches the slider (even to 0),
-    // per the scorecard's own touched-set — not a value-based `=== 0` guess.
-    const isPending = (d: (typeof dimensions)[number]) =>
-      d.notYetScored === true && !touchedIds.has(d.id)
-    let totalWeight = 0
-    let weightedSum = 0
-    for (const d of dimensions) {
-      if (d.disabled || isPending(d)) continue
-      const score = scores[d.id] ?? d.autoScore ?? 0
-      weightedSum += score * ew(d)
-      totalWeight += ew(d)
-    }
-    const overall = totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0
-
-    md += `**Persona Lens:** ${activePersona}\n`
-    md += `**Overall Migration Progress: ${overall}/100**\n\n`
-    md += '## KPI Dimensions\n\n'
-    md += '| KPI | Score | Weight | Target | Framework Mappings | Description |\n'
-    md += '|-----|-------|--------|--------|---------------------|-------------|\n'
-    for (const d of dimensions) {
-      if (d.disabled) {
-        md += `| ${d.label} | _locked — ${d.disabledReason ?? 'no data'}_ | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'} | ${formatMappings(mappingsFor(d.id))} | ${d.description} |\n`
-        continue
-      }
-      const scoreCell = isPending(d)
-        ? '_not yet scored_'
-        : `${scores[d.id] ?? d.autoScore ?? 0}/100`
-      md += `| ${d.label} | ${scoreCell} | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'} | ${formatMappings(mappingsFor(d.id))} | ${d.description} |\n`
-    }
-    md += '\n## Data Sources\n\n'
-    md += `- Vendor / FIPS / threat / compliance KPIs auto-scored from your catalog, threats data, and assessment selections.\n`
-    md += `- Risk Posture trend: ${trendSummary(riskHistory)}\n`
-    md += `- All other dimensions accept manual input.\n`
-
-    md += '\n---\n\n'
-    md +=
-      '*Aligned to NIST CSWP 39 §6.5 (Maturity Assessment for Crypto Agility). https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
-
-    return md
-  }, [dimensions, activePersona, riskHistory, userScores, userWeights, touchedIds])
+  const exportMarkdown = useMemo(
+    () =>
+      buildKpiTrackerMarkdown({
+        dimensions,
+        activePersona,
+        riskHistory,
+        userScores,
+        userWeights,
+        touchedIds,
+      }),
+    [dimensions, activePersona, riskHistory, userScores, userWeights, touchedIds]
+  )
 
   // Structured CSV (one row per KPI) built from the live dimensions — not the
   // markdown body, so `.csv` opens as real columns in a spreadsheet. Audit C5.
