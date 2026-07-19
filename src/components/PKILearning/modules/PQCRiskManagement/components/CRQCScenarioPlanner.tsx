@@ -123,6 +123,93 @@ interface CRQCScenarioPlannerProps {
   onCrqcYearChange?: (year: number) => void
 }
 
+/** Extracted (07192026, Batch 3) so the simulation's real-tool doc generator
+ *  renders THIS logic — the component's export memo delegates here. */
+export interface CrqcScenarioInput {
+  crqcYear: number
+  currentYear: number
+  urgencyLevel: string
+  industry?: string
+  country?: string
+  migrationDeadlineYear?: number | null
+}
+
+export function buildCrqcScenarioMarkdown({
+  crqcYear,
+  currentYear,
+  urgencyLevel,
+  industry,
+  country,
+  migrationDeadlineYear,
+}: CrqcScenarioInput): string {
+  const yearsRemaining = crqcYear - currentYear
+  const affectedAlgorithms = ALGORITHMS.filter((algo) => algo.breakYear !== null)
+  const safeAlgorithms = ALGORITHMS.filter((algo) => algo.breakYear === null)
+
+  let md = '# CRQC Scenario Analysis\n\n'
+  md += `**CRQC Arrival Year:** ${crqcYear}\n`
+  md += `**Years Remaining:** ${yearsRemaining}\n`
+  md += `**Urgency Level:** ${urgencyLevel.toUpperCase()}\n`
+  md += `**Generated:** ${new Date().toLocaleDateString()}\n\n`
+
+  md += '## Algorithms Broken\n\n'
+  md += '| Algorithm | Replacement | Notes |\n'
+  md += '|-----------|-------------|-------|\n'
+  for (const algo of affectedAlgorithms) {
+    md += `| ${algo.name} | ${algo.replacement} | ${algo.notes} |\n`
+  }
+  md += '\n'
+
+  md += '## Quantum-Safe Algorithms\n\n'
+  for (const algo of safeAlgorithms) {
+    md += `- **${algo.name}**: ${algo.notes}\n`
+  }
+  md += '\n'
+
+  md += '## Compliance Deadlines\n\n'
+  md += '| Framework | Year | Status |\n'
+  md += '|-----------|------|--------|\n'
+  for (const d of COMPLIANCE_DEADLINES) {
+    const isPast = d.year <= currentYear
+    const isBefore = d.year <= crqcYear
+    const status = d.advisory
+      ? 'Advisory'
+      : isPast
+        ? 'Already in effect'
+        : isBefore
+          ? `Before CRQC (${crqcYear - d.year}yr before)`
+          : `After CRQC (${d.year - crqcYear}yr after)`
+    md += `| ${d.framework} | ${d.year} | ${status} |\n`
+  }
+  md += '\n'
+
+  md += '## HNDL Exposure Window\n\n'
+  md += '| Retention | Valid Until | At Risk? |\n'
+  md += '|-----------|------------|----------|\n'
+  for (const years of [1, 3, 5, 7, 10, 15, 25]) {
+    const validUntil = currentYear + years
+    md += `| ${years} years | ${validUntil} | ${validUntil >= crqcYear ? 'AT RISK' : 'Safe'} |\n`
+  }
+  md += '\n'
+
+  if (industry || country) {
+    md += '## Assessment Context\n\n'
+    if (industry) md += `- **Industry:** ${industry}\n`
+    if (country) md += `- **Country:** ${country}\n`
+    if (migrationDeadlineYear) md += `- **Migration Deadline:** ${migrationDeadlineYear}\n`
+  }
+
+  md += '\n---\n\n'
+  md +=
+    '*Aligned to NIST CSWP 39 §2.3 (Constant Needs of Transition) and §6.1 (Resource Considerations). https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
+
+  // N5: sanitise non-ASCII punctuation in the exported markdown string only
+  // (em-dash, en-dash, smart single/double quotes).
+  md = md.replace(/—/g, '-').replace(/–/g, '-').replace(/[‘’]/g, "'").replace(/[“”]/g, '"')
+
+  return md
+}
+
 export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqcYearChange }) => {
   const { migrationDeadlineYear, industry, country, hndlRiskWindow } = useExecutiveModuleData()
   // Derive a default CRQC year from the user's nearest framework deadline
@@ -191,80 +278,18 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
           ? 'text-primary'
           : 'text-status-success'
 
-  const exportMarkdown = useMemo(() => {
-    let md = '# CRQC Scenario Analysis\n\n'
-    md += `**CRQC Arrival Year:** ${crqcYear}\n`
-    md += `**Years Remaining:** ${yearsRemaining}\n`
-    md += `**Urgency Level:** ${urgencyLevel.toUpperCase()}\n`
-    md += `**Generated:** ${new Date().toLocaleDateString()}\n\n`
-
-    md += '## Algorithms Broken\n\n'
-    md += '| Algorithm | Replacement | Notes |\n'
-    md += '|-----------|-------------|-------|\n'
-    for (const algo of affectedAlgorithms) {
-      md += `| ${algo.name} | ${algo.replacement} | ${algo.notes} |\n`
-    }
-    md += '\n'
-
-    md += '## Quantum-Safe Algorithms\n\n'
-    for (const algo of safeAlgorithms) {
-      md += `- **${algo.name}**: ${algo.notes}\n`
-    }
-    md += '\n'
-
-    md += '## Compliance Deadlines\n\n'
-    md += '| Framework | Year | Status |\n'
-    md += '|-----------|------|--------|\n'
-    for (const d of COMPLIANCE_DEADLINES) {
-      const isPast = d.year <= currentYear
-      const isBefore = d.year <= crqcYear
-      const status = d.advisory
-        ? 'Advisory'
-        : isPast
-          ? 'Already in effect'
-          : isBefore
-            ? `Before CRQC (${crqcYear - d.year}yr before)`
-            : `After CRQC (${d.year - crqcYear}yr after)`
-      md += `| ${d.framework} | ${d.year} | ${status} |\n`
-    }
-    md += '\n'
-
-    md += '## HNDL Exposure Window\n\n'
-    md += '| Retention | Valid Until | At Risk? |\n'
-    md += '|-----------|------------|----------|\n'
-    for (const years of [1, 3, 5, 7, 10, 15, 25]) {
-      const validUntil = currentYear + years
-      md += `| ${years} years | ${validUntil} | ${validUntil >= crqcYear ? 'AT RISK' : 'Safe'} |\n`
-    }
-    md += '\n'
-
-    if (industry || country) {
-      md += '## Assessment Context\n\n'
-      if (industry) md += `- **Industry:** ${industry}\n`
-      if (country) md += `- **Country:** ${country}\n`
-      if (migrationDeadlineYear) md += `- **Migration Deadline:** ${migrationDeadlineYear}\n`
-    }
-
-    md += '\n---\n\n'
-    md +=
-      '*Aligned to NIST CSWP 39 §2.3 (Constant Needs of Transition) and §6.1 (Resource Considerations). https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
-
-    // N5: sanitise non-ASCII punctuation in the exported markdown string only
-    // (em-dash, en-dash, smart single/double quotes).
-    md = md.replace(/—/g, '-').replace(/–/g, '-').replace(/[‘’]/g, "'").replace(/[“”]/g, '"')
-
-    return md
-  }, [
-    crqcYear,
-    yearsRemaining,
-    urgencyLevel,
-    affectedAlgorithms,
-    safeAlgorithms,
-    currentYear,
-    industry,
-    country,
-    migrationDeadlineYear,
-  ])
+  const exportMarkdown = useMemo(
+    () =>
+      buildCrqcScenarioMarkdown({
+        crqcYear,
+        currentYear,
+        urgencyLevel,
+        industry,
+        country,
+        migrationDeadlineYear,
+      }),
+    [crqcYear, currentYear, urgencyLevel, industry, country, migrationDeadlineYear]
+  )
 
   const handleExport = useCallback(() => {
     addExecutiveDocument({

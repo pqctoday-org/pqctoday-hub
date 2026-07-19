@@ -94,6 +94,20 @@ import {
 import { renderCryptoApiMarkdown } from '@/components/PKILearning/modules/CryptoMgmtModernization/components/CryptoApiRefactorAudit'
 import { softwareData } from '@/data/migrateData'
 import { buildRiskRegisterMarkdown } from '@/components/PKILearning/modules/PQCRiskManagement/components/RiskRegisterBuilder'
+import { buildCrqcScenarioMarkdown } from '@/components/PKILearning/modules/PQCRiskManagement/components/CRQCScenarioPlanner'
+import {
+  buildRaciMarkdown,
+  buildSeededMatrix,
+} from '@/components/PKILearning/modules/PQCGovernance/components/RACIBuilder'
+import { renderPolicyPreview } from '@/components/PKILearning/modules/PQCGovernance/components/PolicyTemplateGenerator'
+import { renderCommsPreview } from '@/components/PKILearning/modules/MigrationProgram/components/StakeholderCommsPlanner'
+import {
+  DEPLOYMENT_PLAYBOOK_TITLE,
+  DEPLOYMENT_PLAYBOOK_DESCRIPTION,
+  DEPLOYMENT_PLAYBOOK_SECTIONS,
+} from '@/components/PKILearning/modules/MigrationProgram/components/DeploymentPlaybook'
+import { buildChecklistMarkdown } from '@/components/PKILearning/common/OpsChecklist'
+import { renderMTIMarkdown } from '@/components/PKILearning/modules/CryptoMgmtModernization/components/MTINegotiator'
 import { DEFAULT_RISK_ENTRIES } from '@/store/useRiskRegisterStore'
 import { buildKpiDashboardMarkdown } from '@/components/PKILearning/modules/PQCGovernance/components/KPIDashboardBuilder'
 import {
@@ -841,5 +855,122 @@ export const REAL_DOC_GENERATORS: Partial<
       ROADMAP_DEFAULT_MILESTONES,
       []
     ),
+  }),
+  // Batch 3 (07192026) — remaining risk/vendor/strategy docs.
+  //
+  // crqc-scenario: the tool's own algorithm tables and compliance-deadline
+  // rows (module constants) via its real builder. crqcYear 2031 sits inside
+  // the sim's own 2029–2033 aggressive planning band; the urgency label
+  // mirrors the tool's own thresholds for that horizon.
+  'crqc-scenario': (sector) => {
+    const currentYear = new Date().getFullYear()
+    const crqcYear = 2031
+    const yearsRemaining = crqcYear - currentYear
+    const urgencyLevel = yearsRemaining <= 3 ? 'critical' : yearsRemaining <= 6 ? 'high' : 'medium'
+    return {
+      title: 'CRQC Scenario Analysis',
+      data: buildCrqcScenarioMarkdown({
+        crqcYear,
+        currentYear,
+        urgencyLevel,
+        industry: sector === 'financial' ? 'Financial Services / Banking' : 'Healthcare',
+      }),
+    }
+  },
+  // raci-matrix: the sample IS the tool's own seeded default matrix — zero
+  // invented data.
+  'raci-matrix': () => ({
+    title: 'PQC Migration RACI Matrix',
+    data: buildRaciMarkdown(buildSeededMatrix()),
+  }),
+  // policy-draft: the crypto-algorithm policy type through the tool's own
+  // renderer; the body text is the tool's template, only the org fields are
+  // sample inputs.
+  'policy-draft': (sector) => ({
+    title: 'Cryptographic Algorithm Policy',
+    data: renderPolicyPreview('crypto-algorithm', {
+      general: {
+        'org-name': ORG[sector],
+        jurisdiction: sector === 'healthcare' ? 'Germany / EU' : 'United States',
+        industry: sector,
+        'policy-owner': 'Head of Cryptographic Engineering',
+        'policy-version': '1.0',
+        'effective-date': '2026-07-01',
+        'review-cadence': 'Annually',
+        approver: 'CISO',
+        frameworks: [],
+      },
+    }),
+  }),
+  // stakeholder-comms: sample fill through the tool's own renderer.
+  'stakeholder-comms': () => ({
+    title: 'Stakeholder Communications Plan',
+    data: renderCommsPreview({
+      'stakeholder-map': {
+        'key-stakeholders':
+          'Board risk committee; CIO/CTO; platform engineering; procurement; external auditors',
+        'stakeholder-concerns':
+          'Cost and timing of migration; service stability during cutover; audit evidence',
+        'influence-level':
+          'Board: high influence, low detail. Engineering: high detail, execution-critical.',
+      },
+      'message-framework': {
+        'board-message':
+          'Quantum risk is a dated, budgetable program — here is the roadmap, the gates, and the quarterly KPI pack.',
+        'technical-leadership-message':
+          'Two-track migration: confidentiality (KEM) first for HNDL exposure, signatures on the PKI refresh cycle.',
+        'dev-teams-message':
+          'Crypto goes behind the facade — algorithm choice becomes configuration, not code change.',
+        'external-partners-message':
+          'Dated PQC commitments enter contracts at renewal; interop testing windows published per wave.',
+      },
+      'communication-cadence': {
+        'reporting-frequency': 'monthly',
+        'status-report-format': 'KPI pack + exceptions',
+      },
+      'escalation-criteria': {
+        'escalation-triggers':
+          'Slip > 1 quarter against a regulatory buffer; a Tier-1 vendor dropping PQC support; a deployed-algorithm vulnerability.',
+      },
+    }),
+  }),
+  // deployment-playbook: the tool's own real checklist content through the
+  // shared OpsChecklist builder — first section complete, second mid-flight
+  // (checked ids derive from the real section items, so a rename propagates).
+  'deployment-playbook': () => {
+    const checked = new Set<string>()
+    DEPLOYMENT_PLAYBOOK_SECTIONS[0]?.items.forEach((i) => checked.add(i.id))
+    DEPLOYMENT_PLAYBOOK_SECTIONS[1]?.items.slice(0, 2).forEach((i) => checked.add(i.id))
+    return {
+      title: DEPLOYMENT_PLAYBOOK_TITLE,
+      data: buildChecklistMarkdown(
+        DEPLOYMENT_PLAYBOOK_TITLE,
+        DEPLOYMENT_PLAYBOOK_DESCRIPTION,
+        DEPLOYMENT_PLAYBOOK_SECTIONS,
+        checked
+      ),
+    }
+  },
+  // mti-negotiator: TLS 1.3 for a global-commercial audience with non-PQC and
+  // hybrid peers — the recommendation comes from the real recommendMTI logic.
+  'mti-negotiator': () => ({
+    title: 'Mandatory-to-Implement Negotiation — TLS 1.3',
+    data: renderMTIMarkdown({
+      protocolAudience: {
+        protocol: 'TLS 1.3',
+        audience: 'global-commercial',
+        interopProfile: ['non-pqc-peers', 'hybrid-peers'],
+        complianceDeadline: '2030',
+      },
+      standardsConstraints: {
+        standardsPosture: 'nist-pqc-only',
+        hardwareConstraints: [],
+        signatureSizePreference: 'no-preference',
+      },
+      plan: {
+        summary:
+          'Hybrid KEM now, classical fallback until the long tail clears, revisit MTI at the 2028 interop checkpoint.',
+      },
+    }),
   }),
 }
