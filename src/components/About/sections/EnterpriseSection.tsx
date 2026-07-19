@@ -4,6 +4,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
 import { Building2, ChevronDown, Mail, Container, AppWindow } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { SANDBOX_ACCESS_URL } from '@/components/Playground/cryptoLabMeta'
+
+const EMBEDDING_MODE_REQUEST_URL = `${SANDBOX_ACCESS_URL}&title=%5BEmbedding+Mode%5D+`
 
 export function EnterpriseSection() {
   const [isOpen, setIsOpen] = useState(false)
@@ -76,11 +79,13 @@ export function EnterpriseSection() {
                   environment:
                   <div className="mt-3">
                     <a
-                      href="mailto:pqctoday@gmail.com?subject=Sandbox%20Access%20Request"
+                      href={SANDBOX_ACCESS_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-foreground text-sm font-medium rounded-lg transition-colors border border-primary/20"
                     >
                       <Mail size={15} />
-                      pqctoday@gmail.com
+                      Request sandbox access
                     </a>
                   </div>
                 </div>
@@ -126,11 +131,13 @@ export function EnterpriseSection() {
                   onboarding process. To get started:
                   <div className="mt-3">
                     <a
-                      href="mailto:pqctoday@gmail.com?subject=Embedding%20Mode%20Request"
+                      href={EMBEDDING_MODE_REQUEST_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-foreground text-sm font-medium rounded-lg transition-colors border border-primary/20"
                     >
                       <Mail size={15} />
-                      pqctoday@gmail.com
+                      Request embedding access
                     </a>
                   </div>
                 </div>

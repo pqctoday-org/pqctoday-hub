@@ -18,14 +18,29 @@ interface MobileTimelineListProps {
 // Alongside the existing one-phase-at-a-time swipe carousel, "compact" shows every
 // phase for a country at once (condensed rows) — a whole-country overview option
 // for users who want to scan a country's full timeline without swiping through it
-// phase by phase. Doesn't replace the carousel; it's a toggle.
+// phase by phase. Doesn't replace the carousel; it's a toggle. The choice is
+// remembered across visits (07-19 follow-up remediation, O2) so a user who picks
+// "All phases" — the field-use case ops flagged — isn't dropped back into the
+// swipe default every time they return.
 type MobileViewMode = 'swipe' | 'compact'
+
+const VIEW_MODE_STORAGE_KEY = 'timeline-mobile-view-mode'
+
+function readStoredViewMode(): MobileViewMode {
+  const stored = localStorage.getItem(VIEW_MODE_STORAGE_KEY)
+  return stored === 'compact' ? 'compact' : 'swipe'
+}
 
 export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
   const [selectedPhase, setSelectedPhase] = useState<TimelinePhase | null>(null)
   // Track current phase index for each country
   const [phaseIndices, setPhaseIndices] = useState<Record<string, number>>({})
-  const [viewMode, setViewMode] = useState<MobileViewMode>('swipe')
+  const [viewMode, setViewModeState] = useState<MobileViewMode>(readStoredViewMode)
+
+  const setViewMode = (mode: MobileViewMode) => {
+    setViewModeState(mode)
+    localStorage.setItem(VIEW_MODE_STORAGE_KEY, mode)
+  }
 
   // Track swipe hint visibility
   const [showSwipeHint, setShowSwipeHint] = useState(false)

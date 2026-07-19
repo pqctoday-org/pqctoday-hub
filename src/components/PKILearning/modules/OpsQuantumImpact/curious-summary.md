@@ -4,7 +4,7 @@ IT Operations and DevOps teams deploy, monitor, and maintain the cryptography th
 
 ### Why It Matters
 
-Because PQC certificates are 10-50x larger, automated lifecycle management tools (like cert-manager or ACME) configured for tiny ECDSA certificates often exceed their size limits and fail silently. Furthermore, the different performance profiles of PQC algorithms will trigger thousands of false-positive latency alerts if monitoring baselines and SLAs are not properly recalibrated.
+Because PQC certificates typically run several times larger than today's certificates (and can be much larger still for some algorithm choices), automated lifecycle management tools (like cert-manager or ACME) configured for tiny ECDSA certificates often exceed their size limits and fail silently. Furthermore, the different performance profiles of PQC algorithms will trigger thousands of false-positive latency alerts if monitoring baselines and SLAs are not properly recalibrated.
 
 ### The Key Takeaway
 

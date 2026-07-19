@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * Structured content for the EmailSigning module.
- * AUTO-GENERATED SKELETON — review and refine manually.
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { getAlgorithm } from '@/data/algorithmProperties'
@@ -10,7 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'email-signing',
   version: '1.0.0',
-  lastReviewed: '2026-03-28',
+  lastReviewed: '2026-07-19',
 
   standards: [
     getStandard('FIPS 203'),
@@ -22,11 +21,12 @@ export const content: ModuleContent = {
     getStandard('RFC 9690'),
     getStandard('RFC 9708'),
     getStandard('RFC 9882'),
+    getStandard('RFC-9935'),
+    getStandard('RFC-9936'),
   ],
 
   algorithms: [
     getAlgorithm('ECDSA P-256'),
-    getAlgorithm('Ed25519'),
     getAlgorithm('ML-DSA-44'),
     getAlgorithm('ML-DSA-65'),
     getAlgorithm('ML-DSA-87'),
@@ -34,6 +34,8 @@ export const content: ModuleContent = {
     getAlgorithm('ML-KEM-512'),
     getAlgorithm('ML-KEM-768'),
     getAlgorithm('RSA-2048'),
+    getAlgorithm('SLH-DSA-SHA2-128s'),
+    getAlgorithm('X25519'),
   ],
 
   deadlines: [
@@ -41,8 +43,6 @@ export const content: ModuleContent = {
   ],
 
   narratives: {
-    pdfStandard: 'ISO 32000',
-    timestampStandard: 'RFC 3161',
     classicalSigAlg: 'ECDSA-P256',
     kemCtSize: '1,088 bytes',
   },
