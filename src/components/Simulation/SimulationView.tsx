@@ -116,6 +116,7 @@ import { buildSimRoadmapDoc } from '@/simulation/simRoadmap'
 import { sectorStepsForPhase } from '@/simulation/sectorTrack'
 import { getBalance, type DifficultyId } from '@/data/simBalance'
 import { Eyebrow, Ring, Dial, ReadonlyDial, Stat, PlanningBadge, MandateBadge } from './atoms'
+import { RibbonTermTooltip } from './RibbonTermTooltip'
 import { SimTour } from './SimTour'
 import { KIND_CHIP, markSimResume, markSimExited, clearSimExcursion } from './simChrome'
 import { canResolveDeepLink } from '@/simulation/deepLinks'
@@ -1814,6 +1815,7 @@ export function SimulationView() {
             sub={`Q-Day horizon ≈ ${horizonYear} · X+Y>Z`}
             tone={clock.atRisk ? 'text-destructive' : 'text-foreground'}
             className="min-w-[132px]"
+            def="mosca"
             badge={
               <PlanningBadge
                 label="planning"
@@ -3114,9 +3116,11 @@ export function SimulationView() {
                     <Eyebrow className="mb-2 block">Threat &amp; readiness</Eyebrow>
                     <div className="grid grid-cols-3 gap-1.5">
                       <div className="rounded-lg border border-border bg-muted/40 px-2 py-1.5">
-                        <span className="block text-sim-micro leading-tight text-muted-foreground">
-                          HNDL risk
-                        </span>
+                        <RibbonTermTooltip concept="hndl">
+                          <span className="block text-sim-micro leading-tight text-muted-foreground">
+                            HNDL risk
+                          </span>
+                        </RibbonTermTooltip>
                         <span
                           className={`block font-mono text-[13px] font-extrabold ${threat.hndl.tone}`}
                         >
@@ -3124,9 +3128,11 @@ export function SimulationView() {
                         </span>
                       </div>
                       <div className="rounded-lg border border-border bg-muted/40 px-2 py-1.5">
-                        <span className="block text-sim-micro leading-tight text-muted-foreground">
-                          TNFL risk
-                        </span>
+                        <RibbonTermTooltip concept="tnfl">
+                          <span className="block text-sim-micro leading-tight text-muted-foreground">
+                            TNFL risk
+                          </span>
+                        </RibbonTermTooltip>
                         <span
                           className={`block font-mono text-[13px] font-extrabold ${threat.tnfl.tone}`}
                         >
@@ -3134,9 +3140,11 @@ export function SimulationView() {
                         </span>
                       </div>
                       <div className="rounded-lg border border-border bg-muted/40 px-2 py-1.5">
-                        <span className="block text-sim-micro leading-tight text-muted-foreground">
-                          Readiness
-                        </span>
+                        <RibbonTermTooltip concept="readiness">
+                          <span className="block text-sim-micro leading-tight text-muted-foreground">
+                            Readiness
+                          </span>
+                        </RibbonTermTooltip>
                         <span className="block font-mono text-[13px] font-extrabold text-primary">
                           {readiness.pct}%
                         </span>

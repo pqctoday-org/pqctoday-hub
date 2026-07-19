@@ -30,6 +30,7 @@ export type TourConceptId =
   | 'cbom-fields'
   | 'weakest-domain-maturity'
   | 'kpi-pack'
+  | 'readiness'
 
 /**
  * A hand-picked representative step for a LIGHT stage, matched in the phase tree by
@@ -196,6 +197,13 @@ export const EXEC_TOUR_CONCEPTS: Record<TourConceptId, TourConcept> = {
     source: 'inline',
     inline:
       'A small, standing set of numbers a board can track quarter over quarter — coverage, pace against plan, vendor commitments — backed by an evidence dossier so each number has a receipt behind it, not just a self-reported status.',
+  },
+  readiness: {
+    id: 'readiness',
+    title: 'Grounded readiness',
+    source: 'inline',
+    inline:
+      'A connection only counts as migrated when BOTH gates pass: you’ve done enough execution work to unlock it, AND you’ve chosen a real strategy (hybrid or pure) for it. A choice with no work, or work with no choice, counts for nothing — and the denominator is every vulnerable connection, so links with no PQC path yet hold this below 100% on purpose.',
   },
 }
 
