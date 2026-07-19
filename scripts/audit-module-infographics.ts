@@ -68,7 +68,9 @@ function extractModuleIds(): string[] {
 // pane for these (CuriousSummaryBanner imgFailed guard) so nothing renders
 // broken. Any module NOT in this list still fails the audit.
 // Listed 2026-07-09 (data-pipelines remediation).
-const KNOWN_MISSING = new Set([
+// Exported (2026-07-19) so export-learn-manifest-snapshot.ts can reuse the
+// single allowlist instead of duplicating it.
+export const KNOWN_MISSING = new Set([
   'cbom',
   'crypto-registry',
   'pqc-grc',
@@ -135,4 +137,9 @@ function main() {
   process.exit(1)
 }
 
-main()
+// Run only when invoked directly (`npx tsx scripts/audit-module-infographics.ts`),
+// not when imported for its KNOWN_MISSING export — importing must never
+// trigger the audit's process.exit.
+const invokedDirectly =
+  process.argv[1] !== undefined && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)
+if (invokedDirectly) main()
