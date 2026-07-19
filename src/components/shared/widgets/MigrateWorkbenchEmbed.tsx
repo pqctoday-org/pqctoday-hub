@@ -11,12 +11,24 @@
  * embed is a thin wrapper — same pattern as the other reference embeds.
  */
 import { MigrationWorkbench } from '@/components/Migrate/Workbench/MigrationWorkbench'
+import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import type { MigrateTab } from '@/store/useMigrateSelectionStore'
 import type { DomainId } from '@/data/migrationAssets'
 
 // Which real workbench view each sim catalog step opens on.
-//   discovery       → the "Discovery & validation tooling" domain in the Replace tab
-//   pilots          → the Replace tab (browse & pick Tier-1 assets to pilot)
+//   discovery       → the "Discovery & validation tooling" domain in the Replace tab.
+//                     Deliberately NOT scoped to the player's product selection
+//                     (07192026, H1): this catalog step is about discovery TOOLING
+//                     (scanners, CT-log tooling), which the player's own estate
+//                     doesn't meaningfully filter — and P1 already consumes the
+//                     real selection through crypto-vulnerability-watch. Forcing
+//                     the selection in here would be a weak fit, not a strong one.
+//   pilots          → plan-aware (07192026, H1 — closes the WP5.4 "cosmetic-only"
+//                     partial): when the player has committed real assets to
+//                     their migration plan on /migrate, the pilot-picking step
+//                     opens on the Plan tab — their own selection IS the pilot
+//                     candidate list. With no plan yet, it opens on Replace to
+//                     browse and pick, as before.
 //   cyclonedx-export → the Plan tab's real "Export plan + CBOM" button
 //                      (PlanTab.tsx's downloadPlanCbom — CycloneDX-flavoured JSON
 //                      keyed to the player's own migration plan). Wave 5 (WP5.2):
@@ -32,6 +44,8 @@ const CATALOG_FOCUS: Record<string, { tab: MigrateTab; domain?: DomainId }> = {
 }
 
 export function MigrateWorkbenchEmbed({ catalogId }: { catalogId?: string }) {
-  const focus = catalogId ? CATALOG_FOCUS[catalogId] : undefined
+  const hasPlan = useMigrateSelectionStore((s) => s.plan.length > 0)
+  let focus = catalogId ? CATALOG_FOCUS[catalogId] : undefined
+  if (catalogId === 'pilots' && hasPlan) focus = { tab: 'plan' }
   return <MigrationWorkbench embedded focus={focus} />
 }
