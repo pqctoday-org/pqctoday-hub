@@ -70,6 +70,40 @@ function buildInitialMatrix(): MatrixState {
   return matrix
 }
 
+/** Extracted (07192026, Batch 3) so the simulation's real-tool doc generator
+ *  renders THIS logic — the component's export memo delegates here. */
+export function buildRaciMarkdown(matrix: MatrixState): string {
+  let md = '# PQC Migration RACI Matrix\n\n'
+  md += `Generated: ${new Date().toLocaleDateString()}\n\n`
+
+  // Header row
+  md += '| Activity |'
+  for (const role of ROLES) {
+    md += ` ${role} |`
+  }
+  md += '\n'
+
+  // Separator
+  md += '|----------|'
+  md += '------|'.repeat(ROLES.length)
+  md += '\n'
+
+  // Data rows
+  for (const activity of ACTIVITIES) {
+    md += `| ${activity} |`
+    for (const role of ROLES) {
+      const val = matrix[activity]?.[role] || '-'
+      md += ` ${val} |`
+    }
+    md += '\n'
+  }
+
+  md += '\n**Legend:** R = Responsible, A = Accountable, C = Consulted, I = Informed\n'
+  md +=
+    '\n*Aligned to NIST CSWP 39 §5 — Strategic Plan (governance roles and responsibilities). https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
+  return md
+}
+
 /** Sensible default Accountable + key Responsible assignments for a §5-governance
  *  PQC program. These are illustrative starting points (CSWP.39 does not prescribe
  *  a specific RACI grid) that the user is expected to refine — surfaced so the
@@ -87,7 +121,8 @@ const DEFAULT_ASSIGNMENTS: Record<string, Partial<Record<(typeof ROLES)[number],
   'Stakeholder Communications': { CISO: 'A', CTO: 'C', 'Compliance Officer': 'I' },
 }
 
-function buildSeededMatrix(): MatrixState {
+// Exported (07192026, Batch 3): the sim's sample RACI IS the tool's own seeded default.
+export function buildSeededMatrix(): MatrixState {
   const matrix = buildInitialMatrix()
   for (const activity of ACTIVITIES) {
     const defaults = DEFAULT_ASSIGNMENTS[activity] ?? {}
@@ -167,37 +202,7 @@ export const RACIBuilder: React.FC<RACIBuilderProps> = ({ onOutput }) => {
     }))
   }, [])
 
-  const exportMarkdown = useMemo(() => {
-    let md = '# PQC Migration RACI Matrix\n\n'
-    md += `Generated: ${new Date().toLocaleDateString()}\n\n`
-
-    // Header row
-    md += '| Activity |'
-    for (const role of ROLES) {
-      md += ` ${role} |`
-    }
-    md += '\n'
-
-    // Separator
-    md += '|----------|'
-    md += '------|'.repeat(ROLES.length)
-    md += '\n'
-
-    // Data rows
-    for (const activity of ACTIVITIES) {
-      md += `| ${activity} |`
-      for (const role of ROLES) {
-        const val = matrix[activity]?.[role] || '-'
-        md += ` ${val} |`
-      }
-      md += '\n'
-    }
-
-    md += '\n**Legend:** R = Responsible, A = Accountable, C = Consulted, I = Informed\n'
-    md +=
-      '\n*Aligned to NIST CSWP 39 §5 — Strategic Plan (governance roles and responsibilities). https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
-    return md
-  }, [matrix])
+  const exportMarkdown = useMemo(() => buildRaciMarkdown(matrix), [matrix])
 
   // Structured CSV so `.csv` opens as real spreadsheet rows, not pipe text.
   const exportCsv = useMemo(() => {

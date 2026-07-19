@@ -80,6 +80,43 @@ import {
   buildMarkdown as buildMigrationVerification,
   type VerifyState,
 } from '@/components/BusinessCenter/tools/MigrationVerification'
+import {
+  buildKpiTrackerMarkdown,
+  type KpiTrackerMarkdownInput,
+} from '@/components/PKILearning/modules/MigrationProgram/components/KPITrackerTemplate'
+import { buildDimensions } from '@/data/kpiCatalog'
+import type { ExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+import {
+  ALL_ITEMS as AUDIT_CHECKLIST_ITEMS,
+  renderAuditPreview,
+  renderExceptionsAndEvidenceMd,
+} from '@/components/PKILearning/modules/ComplianceStrategy/components/AuditReadinessChecklist'
+import { renderCryptoApiMarkdown } from '@/components/PKILearning/modules/CryptoMgmtModernization/components/CryptoApiRefactorAudit'
+import { softwareData } from '@/data/migrateData'
+import { buildRiskRegisterMarkdown } from '@/components/PKILearning/modules/PQCRiskManagement/components/RiskRegisterBuilder'
+import { buildCrqcScenarioMarkdown } from '@/components/PKILearning/modules/PQCRiskManagement/components/CRQCScenarioPlanner'
+import {
+  buildRaciMarkdown,
+  buildSeededMatrix,
+} from '@/components/PKILearning/modules/PQCGovernance/components/RACIBuilder'
+import { renderPolicyPreview } from '@/components/PKILearning/modules/PQCGovernance/components/PolicyTemplateGenerator'
+import { renderCommsPreview } from '@/components/PKILearning/modules/MigrationProgram/components/StakeholderCommsPlanner'
+import {
+  DEPLOYMENT_PLAYBOOK_TITLE,
+  DEPLOYMENT_PLAYBOOK_DESCRIPTION,
+  DEPLOYMENT_PLAYBOOK_SECTIONS,
+} from '@/components/PKILearning/modules/MigrationProgram/components/DeploymentPlaybook'
+import { buildChecklistMarkdown } from '@/components/PKILearning/common/OpsChecklist'
+import { renderMTIMarkdown } from '@/components/PKILearning/modules/CryptoMgmtModernization/components/MTINegotiator'
+import { renderHybridTransitionMarkdown } from '@/components/PKILearning/modules/CryptoMgmtModernization/components/HybridTransitionPlanner'
+import { renderCloudMatrixMarkdown } from '@/components/PKILearning/modules/CryptoMgmtModernization/components/CloudResponsibilityMatrix'
+import { DEFAULT_RISK_ENTRIES } from '@/store/useRiskRegisterStore'
+import { buildKpiDashboardMarkdown } from '@/components/PKILearning/modules/PQCGovernance/components/KPIDashboardBuilder'
+import {
+  buildRoadmapMarkdown,
+  DEFAULT_MILESTONES as ROADMAP_DEFAULT_MILESTONES,
+} from '@/components/PKILearning/modules/MigrationProgram/components/RoadmapBuilder'
+import { TIMELINE_COUNTRY_DEADLINE_YEAR } from '@/data/timelineFacts.generated'
 
 /**
  * Thales Luna is the fleet vendor for this demo org. Derived from `HSM_VENDORS`
@@ -518,6 +555,156 @@ function migrationVerificationState(sector: DemoSector): VerifyState {
   }
 }
 
+/** Demo ExecutiveModuleData for the KPI tracker sample (Batch 1, 07192026).
+ *  Aggregates derived from REAL data (full catalog + real threats), exactly
+ *  the way useExecutiveModuleData computes them — so the auto-scored KPI rows
+ *  in the sample carry live numbers that move when the catalog moves.
+ *  Assessment-dependent fields are honestly empty (no fake assessment): the
+ *  rows they gate render as the tool's real "locked — no data" state, and the
+ *  sample supplies manual scores for the rest, an exemplary mid-flight fill. */
+function demoKpiExecData(sector: DemoSector): ExecutiveModuleData {
+  const industry = sector === 'financial' ? 'Financial Services / Banking' : 'Healthcare'
+  const industryThreats = threatsData.filter((t) => t.industry === industry)
+  const pqcReadyCount = softwareData.filter((i) => isPqcReady(i.pqcSupport)).length
+  const fipsValidatedCount = softwareData.filter((i) => isFips1403Validated(i.fipsValidated)).length
+  return {
+    threatsByIndustry: new Map(),
+    criticalThreatCount: threatsData.filter((t) => t.criticality === 'Critical').length,
+    totalThreatCount: threatsData.length,
+    industryThreats,
+    vendorsByLayer: new Map(),
+    fipsValidatedCount,
+    pqcReadyCount,
+    vendorReadinessWeighted: softwareData.length > 0 ? pqcReadyCount / softwareData.length : 0,
+    vendorReadinessByLayer: new Map(),
+    totalProducts: softwareData.length,
+    frameworks: [],
+    frameworksByIndustry: [],
+    countryDeadlines: [],
+    userCountryData: null,
+    assessmentResult: null,
+    riskScore: null,
+    industry,
+    country: '',
+    complianceSelections: [],
+    preBoostScore: null,
+    boosts: [],
+    hndlRiskWindow: null,
+    tnflRiskWindow: null,
+    categoryScores: null,
+    categoryDrivers: null,
+    migrationEffort: [],
+    algorithmMigrations: [],
+    keyFindings: [],
+    assessmentProfile: null,
+    myFrameworks: [],
+    myProductIds: [],
+    myProducts: [],
+    myThreatIds: [],
+    myThreats: [],
+    myTimelineCountries: [],
+    myTimelineCountryData: [],
+    isAssessmentComplete: false,
+    migrationDeadlineYear: null,
+    migrationStartYear: 2026,
+  }
+}
+
+function kpiTrackerSample(sector: DemoSector): KpiTrackerMarkdownInput {
+  const dimensions = buildDimensions('executive', 'migration', demoKpiExecData(sector), null)
+  // Manual scores for the non-auto dimensions — a believable mid-flight fill,
+  // touched so the tool's own "not yet scored" logic treats them as real input.
+  const userScores: Record<string, number> = {}
+  const touchedIds = new Set<string>()
+  const MANUAL_FILL: Record<string, number> = {}
+  let seed = 0
+  for (const d of dimensions) {
+    if (d.disabled) continue
+    if (d.autoScore === null || d.autoScore === undefined || d.notYetScored) {
+      // Deterministic spread (55/65/75 cycling) — varied but reproducible.
+      MANUAL_FILL[d.id] = 55 + (seed++ % 3) * 10
+    }
+  }
+  for (const [id, score] of Object.entries(MANUAL_FILL)) {
+    userScores[id] = score
+    touchedIds.add(id)
+  }
+  return {
+    dimensions,
+    activePersona: 'executive',
+    riskHistory: [],
+    userScores,
+    userWeights: {},
+    touchedIds,
+  }
+}
+
+/** Audit-readiness sample: checked items derived from the REAL checklist item
+ *  lists (an item rename/addition upstream propagates here), filled to an
+ *  "Established"-tier mid-flight state — strong on inventory/policy (the
+ *  early-phase work), partial on technical/vendor, thin on evidence (the
+ *  closing-phase work). */
+function auditChecklistSample(): string {
+  const take = (sectionId: string, n: number): string[] =>
+    (AUDIT_CHECKLIST_ITEMS[sectionId] ?? []).slice(0, n).map((i) => i.value)
+  const data: Record<string, Record<string, string | string[]>> = {
+    'crypto-inventory': { items: take('crypto-inventory', 5) },
+    'policy-governance': { items: take('policy-governance', 4) },
+    'risk-assessment': { items: take('risk-assessment', 3) },
+    'technical-controls': { items: take('technical-controls', 2) },
+    'vendor-management': { items: take('vendor-management', 2) },
+    'evidence-documentation': { items: take('evidence-documentation', 1) },
+  }
+  return (
+    renderAuditPreview(data, 'Healthcare', 'Germany') +
+    renderExceptionsAndEvidenceMd(
+      [
+        {
+          scope: 'Legacy MRI fleet (vendor-locked firmware, RSA-2048)',
+          compensatingControl: 'Network segmentation + monitored TLS gateway in front',
+          owner: 'Clinical Engineering',
+          sunset: '2029 hardware refresh',
+        },
+      ],
+      [
+        {
+          productOrAsset: 'Edge TLS termination',
+          cmvpCertNumber: 'pending — module on the CMVP MIP list',
+          acvpRunId: 'ACVP-demo-2026-Q2',
+          esvStatus: 'n/a',
+          cveScanDate: '2026-06-01',
+        },
+      ]
+    )
+  )
+}
+
+/** Crypto-API refactor sample: a Java/BouncyCastle service — the classic
+ *  enterprise shape — mid-size call-site count, partially hardcoded today,
+ *  target ML-KEM-768 + ML-DSA-65. All field values are the tool's own select
+ *  options; the recommendation/checklist/watch-outs come from the real
+ *  auditCryptoApi logic, not authored text. */
+function cryptoApiRefactorSample(): string {
+  return renderCryptoApiMarkdown({
+    stackInventory: {
+      applicationType: 'server-side service',
+      language: 'Java',
+      currentCryptoApi: ['jce-provider', 'bouncycastle'],
+      provider: ['software', 'hsm'],
+    },
+    refactorScope: {
+      targetAlgorithms: ['ML-KEM-768', 'ML-DSA-65'],
+      callSiteCount: 'medium',
+      cryptoAgilityNow: 'partially-hardcoded',
+      runtimeFallback: 'must-support',
+    },
+    plan: {
+      refactorPlan:
+        'Introduce a signing/KEM facade over the JCE provider seam first; migrate the 30-odd direct BouncyCastle call sites behind it service by service, TLS termination before data-at-rest; wire algorithm selection to configuration so the ML-DSA-87 upgrade is a config change, not a refactor.',
+    },
+  })
+}
+
 /** Real-tool generators for the Command Center tools that have no other
  *  presence in Learn/Simulation (no shared component to reuse), keyed by
  *  the `ExecutiveDocumentType` the tool saves as. Checked first by
@@ -603,4 +790,250 @@ export const REAL_DOC_GENERATORS: Partial<
     title: 'Migration Verification & Program Closure',
     data: buildMigrationVerification(migrationVerificationState(sector)),
   }),
+  // Batch 1 (07192026) — the three types that previously fell all the way
+  // through to the typed PLACEHOLDER stub (no authored demo content existed).
+  'kpi-tracker': (sector) => ({
+    title: 'PQC Migration KPI Tracker',
+    data: buildKpiTrackerMarkdown(kpiTrackerSample(sector)),
+  }),
+  // Sector-independent: the checklist items are framework-fixed; sector only
+  // flavors the header (sample pins the demo org's Healthcare/DE profile).
+  'audit-checklist': () => ({
+    title: 'PQC Audit Readiness Checklist',
+    data: auditChecklistSample(),
+  }),
+  // Sector-independent: a Java/JCE enterprise service reads the same in any
+  // industry — the content is language/provider-driven, not sector-driven.
+  'crypto-api-refactor': () => ({
+    title: 'Crypto API Refactor Audit — Java',
+    data: cryptoApiRefactorSample(),
+  }),
+  // Batch 2 (07192026) — the exec tour's reveal artifacts, the documents the
+  // guided walkthrough opens on screen.
+  //
+  // risk-register: the sample IS the tool's own illustrative default entries
+  // (DEFAULT_RISK_ENTRIES, shared single source with the store) — zero
+  // invented data, rendered by the tool's own builder.
+  'risk-register': () => ({
+    title: 'Quantum Risk Register',
+    data: buildRiskRegisterMarkdown(DEFAULT_RISK_ENTRIES),
+  }),
+  // kpi-dashboard: real buildDimensions pipeline over the same demo exec-data
+  // as kpi-tracker (catalog/threat aggregates live; assessment-gated rows
+  // honestly render locked), governance surface, executive lens.
+  'kpi-dashboard': (sector) => {
+    const dimensions = buildDimensions('executive', 'governance', demoKpiExecData(sector), null)
+    const scores: Record<string, number> = {}
+    let seed = 0
+    for (const d of dimensions) {
+      if (d.disabled) continue
+      scores[d.id] = d.autoScore && d.autoScore > 0 ? d.autoScore : 55 + (seed++ % 3) * 10
+    }
+    return {
+      title: 'PQC Governance KPI Dashboard',
+      data: buildKpiDashboardMarkdown(dimensions, 'executive', scores, {}),
+    }
+  },
+  // migration-roadmap: the tool's own teaching-default milestone set (the
+  // framework's governance-spine + two-track shape), with the external
+  // deadline rows sourced from the timeline-generated facts — the same single
+  // source Assess/Report/Sim already read — so a CSV deadline change
+  // propagates here without a code edit.
+  'migration-roadmap': () => ({
+    title: 'PQC Migration Roadmap (Two-Track)',
+    data: buildRoadmapMarkdown(
+      [
+        {
+          label: 'US key-establishment migration deadline (EO, June 2026)',
+          year: TIMELINE_COUNTRY_DEADLINE_YEAR.US,
+          source: 'United States',
+        },
+        {
+          label: 'EU full PQC transition',
+          year: TIMELINE_COUNTRY_DEADLINE_YEAR.EU,
+          source: 'European Union',
+        },
+      ],
+      ROADMAP_DEFAULT_MILESTONES,
+      []
+    ),
+  }),
+  // Batch 3 (07192026) — remaining risk/vendor/strategy docs.
+  //
+  // crqc-scenario: the tool's own algorithm tables and compliance-deadline
+  // rows (module constants) via its real builder. crqcYear 2031 sits inside
+  // the sim's own 2029–2033 aggressive planning band; the urgency label
+  // mirrors the tool's own thresholds for that horizon.
+  'crqc-scenario': (sector) => {
+    const currentYear = new Date().getFullYear()
+    const crqcYear = 2031
+    const yearsRemaining = crqcYear - currentYear
+    const urgencyLevel = yearsRemaining <= 3 ? 'critical' : yearsRemaining <= 6 ? 'high' : 'medium'
+    return {
+      title: 'CRQC Scenario Analysis',
+      data: buildCrqcScenarioMarkdown({
+        crqcYear,
+        currentYear,
+        urgencyLevel,
+        industry: sector === 'financial' ? 'Financial Services / Banking' : 'Healthcare',
+      }),
+    }
+  },
+  // raci-matrix: the sample IS the tool's own seeded default matrix — zero
+  // invented data.
+  'raci-matrix': () => ({
+    title: 'PQC Migration RACI Matrix',
+    data: buildRaciMarkdown(buildSeededMatrix()),
+  }),
+  // policy-draft: the crypto-algorithm policy type through the tool's own
+  // renderer; the body text is the tool's template, only the org fields are
+  // sample inputs.
+  'policy-draft': (sector) => ({
+    title: 'Cryptographic Algorithm Policy',
+    data: renderPolicyPreview('crypto-algorithm', {
+      general: {
+        'org-name': ORG[sector],
+        jurisdiction: sector === 'healthcare' ? 'Germany / EU' : 'United States',
+        industry: sector,
+        'policy-owner': 'Head of Cryptographic Engineering',
+        'policy-version': '1.0',
+        'effective-date': '2026-07-01',
+        'review-cadence': 'Annually',
+        approver: 'CISO',
+        frameworks: [],
+      },
+    }),
+  }),
+  // stakeholder-comms: sample fill through the tool's own renderer.
+  'stakeholder-comms': () => ({
+    title: 'Stakeholder Communications Plan',
+    data: renderCommsPreview({
+      'stakeholder-map': {
+        'key-stakeholders':
+          'Board risk committee; CIO/CTO; platform engineering; procurement; external auditors',
+        'stakeholder-concerns':
+          'Cost and timing of migration; service stability during cutover; audit evidence',
+        'influence-level':
+          'Board: high influence, low detail. Engineering: high detail, execution-critical.',
+      },
+      'message-framework': {
+        'board-message':
+          'Quantum risk is a dated, budgetable program — here is the roadmap, the gates, and the quarterly KPI pack.',
+        'technical-leadership-message':
+          'Two-track migration: confidentiality (KEM) first for HNDL exposure, signatures on the PKI refresh cycle.',
+        'dev-teams-message':
+          'Crypto goes behind the facade — algorithm choice becomes configuration, not code change.',
+        'external-partners-message':
+          'Dated PQC commitments enter contracts at renewal; interop testing windows published per wave.',
+      },
+      'communication-cadence': {
+        'reporting-frequency': 'monthly',
+        'status-report-format': 'KPI pack + exceptions',
+      },
+      'escalation-criteria': {
+        'escalation-triggers':
+          'Slip > 1 quarter against a regulatory buffer; a Tier-1 vendor dropping PQC support; a deployed-algorithm vulnerability.',
+      },
+    }),
+  }),
+  // deployment-playbook: the tool's own real checklist content through the
+  // shared OpsChecklist builder — first section complete, second mid-flight
+  // (checked ids derive from the real section items, so a rename propagates).
+  'deployment-playbook': () => {
+    const checked = new Set<string>()
+    DEPLOYMENT_PLAYBOOK_SECTIONS[0]?.items.forEach((i) => checked.add(i.id))
+    DEPLOYMENT_PLAYBOOK_SECTIONS[1]?.items.slice(0, 2).forEach((i) => checked.add(i.id))
+    return {
+      title: DEPLOYMENT_PLAYBOOK_TITLE,
+      data: buildChecklistMarkdown(
+        DEPLOYMENT_PLAYBOOK_TITLE,
+        DEPLOYMENT_PLAYBOOK_DESCRIPTION,
+        DEPLOYMENT_PLAYBOOK_SECTIONS,
+        checked
+      ),
+    }
+  },
+  // mti-negotiator: TLS 1.3 for a global-commercial audience with non-PQC and
+  // hybrid peers — the recommendation comes from the real recommendMTI logic.
+  'mti-negotiator': () => ({
+    title: 'Mandatory-to-Implement Negotiation — TLS 1.3',
+    data: renderMTIMarkdown({
+      protocolAudience: {
+        protocol: 'TLS 1.3',
+        audience: 'global-commercial',
+        interopProfile: ['non-pqc-peers', 'hybrid-peers'],
+        complianceDeadline: '2030',
+      },
+      standardsConstraints: {
+        standardsPosture: 'nist-pqc-only',
+        hardwareConstraints: [],
+        signatureSizePreference: 'no-preference',
+      },
+      plan: {
+        summary:
+          'Hybrid KEM now, classical fallback until the long tail clears, revisit MTI at the 2028 interop checkpoint.',
+      },
+    }),
+  }),
+  // Batch 4 (07192026) — technical docs with clean, already-exported renderers.
+  //
+  // hybrid-transition: production TLS edge with long-lived data and mixed
+  // peers — the pathway recommendation comes from the real
+  // recommendTransitionPathway logic.
+  'hybrid-transition': () => ({
+    title: 'Hybrid Transition Pathway — TLS 1.3',
+    data: renderHybridTransitionMarkdown({
+      inventory: {
+        protocol: 'TLS 1.3',
+        currentAlgorithm: 'X25519',
+        function: 'kem',
+        dataLifetime: '5-15y',
+        deploymentMaturity: 'in-production-with-agility',
+      },
+      constraints: {
+        interoperabilityRequirement: ['classical-peers', 'fips-validated'],
+        bandwidthBudget: 'moderate',
+        cryptoAgility: 'medium',
+        complianceDeadline: '2030',
+      },
+      plan: {},
+    }),
+  }),
+  // cloud-responsibility-matrix: multi-cloud IaaS+SaaS estate with
+  // customer-managed keys — matrix/watch-outs from the real
+  // buildCloudResponsibilityMatrix logic (its §6.4 quote is the tool's own
+  // citation, verified against the upd1 PDF p.33 "Crypto Agility in the
+  // Cloud").
+  'cloud-responsibility-matrix': () => ({
+    title: 'Cloud Shared-Responsibility Crypto Matrix',
+    data: renderCloudMatrixMarkdown({
+      cloudPosture: {
+        cloudProviders: ['aws', 'azure'],
+        serviceModelMix: ['iaas', 'saas'],
+        regulatoryOverlay: [],
+      },
+      cryptoInventory: {
+        assetClasses: [],
+        customerKeyControl: 'customer-managed',
+        dataResidency: 'multi-region',
+        crqcExposureHorizon: '5-15y',
+      },
+      plan: {},
+    }),
+  }),
+  // DOCUMENTED EXCEPTIONS (Batch 4, 07192026) — deliberately NOT converted,
+  // per the plan's no-force-fit rule; the authored demoDocs content stays as
+  // the honest fallback for these four:
+  // - crypto-vulnerability-watch: the tool's whole value is the LIVE async
+  //   CVE snapshot (public/data/cve-snapshot.json); a synchronous sample
+  //   would render an empty per-product "no CVEs in snapshot" shell — worse
+  //   than the authored content.
+  // - crypto-cbom (LibraryCBOMBuilder) + management-tools-audit: export
+  //   memos entangled with multi-step workshop state; extraction deserves
+  //   its own careful pass, not a rushed one.
+  // - crypto-architecture: the markdown derives from an interactive diagram
+  //   component-state graph; same reasoning.
+  // - risk-treatment-plan (RiskHeatmapGenerator): export memo depends on
+  //   three other component memos (residual entries, priority order,
+  //   deltas); same reasoning.
 }
