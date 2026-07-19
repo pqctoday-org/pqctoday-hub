@@ -7,7 +7,12 @@ import { useSavedArtifactOutput } from '@/hooks/useSavedArtifactInputs'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import type { RoadmapOutput } from '../types'
 
-const sections: ChecklistSection[] = [
+// Exported (07192026, Batch 3) for the simulation's real-tool doc generator —
+// the sim's sample playbook is the tool's own real checklist content.
+export const DEPLOYMENT_PLAYBOOK_TITLE = 'PQC Deployment Playbook'
+export const DEPLOYMENT_PLAYBOOK_DESCRIPTION =
+  'Operational procedures for deploying PQC across production infrastructure — covering hybrid mode, canary testing, progressive rollout, validation, and rollback.'
+export const DEPLOYMENT_PLAYBOOK_SECTIONS: ChecklistSection[] = [
   {
     title: 'Pre-Deployment Preparation',
     items: [
@@ -283,9 +288,9 @@ export const DeploymentPlaybook: React.FC<DeploymentPlaybookProps> = ({ roadmapO
         />
       )}
       <OpsChecklist
-        title="PQC Deployment Playbook"
-        description="Operational procedures for deploying PQC across production infrastructure — covering hybrid mode, canary testing, progressive rollout, validation, and rollback."
-        sections={sections}
+        title={DEPLOYMENT_PLAYBOOK_TITLE}
+        description={DEPLOYMENT_PLAYBOOK_DESCRIPTION}
+        sections={DEPLOYMENT_PLAYBOOK_SECTIONS}
         onSave={handleSave}
       />
     </div>

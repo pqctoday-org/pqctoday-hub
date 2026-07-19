@@ -216,7 +216,10 @@ function buildCommsSections(opts: {
 const CSWP39_5_QUOTE =
   "Integrate crypto agility into the organization's existing governance function to establish, communicate, and monitor the cybersecurity risk management strategy, expectations, and policies related to cryptography. This includes understanding cryptographic standards, regulations, and mandates and communicating these requirements to data owners, IT and development teams, business partners, and technology supply chain vendors prioritized by the criticality of the data for the primary use cases."
 
-function renderCommsPreview(data: Record<string, Record<string, string | string[]>>): string {
+// Exported (07192026, Batch 3) for the simulation's real-tool doc generator.
+export function renderCommsPreview(
+  data: Record<string, Record<string, string | string[]>>
+): string {
   let md = '# PQC Migration — Stakeholder Communications Plan\n\n'
   md += `Generated: ${new Date().toLocaleDateString()}\n\n---\n\n`
 

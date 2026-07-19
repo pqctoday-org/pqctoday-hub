@@ -103,7 +103,11 @@ describe('demoDocs narration provenance guard', () => {
     // describes exactly what the roadmap's Mitigation Gateway section claims
     // (a "bump-in-the-wire" architectural fix for unmodifiable legacy
     // systems, not a substitute for migrating the algorithm).
-    const VERIFIED_CSWP39_SECTIONS = ['3.2.1', '5', '5.3', '6.5', '5.1', '4.6']
+    // §2.3 + §6.1 added 07192026 (Batch 3: crqc-scenario): verified — §2.3 is
+    // "Constant Needs of Transition" (p.10) and §6.1 is "Resource
+    // Considerations" (p.32), exactly what the planner's footer cites.
+    // §1 added 07192026 (Batch 3: stakeholder-comms): "1. Introduction" (p.7).
+    const VERIFIED_CSWP39_SECTIONS = ['3.2.1', '5', '5.3', '6.5', '5.1', '4.6', '2.3', '6.1', '1']
     const citationPattern = /CSWP\.?\s?39[^.]{0,20}(§|Fig\.)\s?([0-9.]+)/g
     for (const { sector, type, data } of ALL_DOC_BODIES) {
       const invented: string[] = []

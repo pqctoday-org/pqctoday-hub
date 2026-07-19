@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button'
 import { FileText, KeyRound, Building2, CalendarClock } from 'lucide-react'
 import type { RACIOutput, PolicyOutput } from '../types'
 
-type PolicyType =
+export type PolicyType =
   | 'crypto-algorithm'
   | 'key-management'
   | 'vendor-requirements'
@@ -642,7 +642,8 @@ function buildSections(args: BuildArgs): ArtifactSection[] {
   }
 }
 
-function renderPolicyPreview(
+// Exported (07192026, Batch 3) for the simulation's real-tool doc generator.
+export function renderPolicyPreview(
   policyType: PolicyType,
   data: Record<string, Record<string, string | string[]>>
 ): string {
