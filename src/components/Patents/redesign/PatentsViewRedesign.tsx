@@ -401,7 +401,7 @@ export function PatentsViewRedesign() {
       </div>
 
       {selectedPersona === 'curious' && (
-        <PreviewBanner pageContext="Researcher, Architect, Developer" />
+        <PreviewBanner pageContext="Researcher, Architect, Developer" variant="suggestion" />
       )}
 
       <PatentsRecentlyAdded items={recentlyAdded} onOpen={handleSelect} />
