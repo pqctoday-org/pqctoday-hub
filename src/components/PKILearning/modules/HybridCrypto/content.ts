@@ -20,7 +20,7 @@ export const content: ModuleContent = {
     getStandard('RFC-9909'), // SLH-DSA profile in X.509
     getStandard('RFC 9802'), // LMS/XMSS OIDs
     getStandard('NIST SP 800-227'), // KEM recommendations
-    getStandard('draft-ietf-lamps-pq-composite-sigs-15'), // Composite ML-DSA
+    getStandard('draft-ietf-lamps-pq-composite-sigs-19'), // Composite ML-DSA
     getStandard('RFC-9763'), // Related Certificates
     getStandard('draft-bonnell-lamps-chameleon-certs-07'), // Chameleon Certificates
   ],
