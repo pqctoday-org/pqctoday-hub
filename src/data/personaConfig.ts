@@ -104,6 +104,10 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/business',
     '/assess',
     '/report',
+    // /algorithms fits ops: the Certified filter + deployment-relevant status hints are
+    // directly useful (see ALGORITHM_PERSONA_DEFAULTS.ops below). /patents deliberately
+    // stays excluded — IP research isn't an ops task (07-19 follow-up remediation, O1).
+    '/algorithms',
     '/library',
     '/leaders',
     '/playground',

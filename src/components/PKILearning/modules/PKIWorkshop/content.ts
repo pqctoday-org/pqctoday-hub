@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * Structured content for the PKIWorkshop module.
- * AUTO-GENERATED SKELETON — review and refine manually.
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0 } from '@/data/regulatoryTimelines'
@@ -11,17 +10,16 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'pki-workshop',
   version: '1.1.0',
-  lastReviewed: '2026-04-12',
+  lastReviewed: '2026-07-19',
 
   standards: [
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
     getStandard('RFC 5280'),
+    getStandard('RFC-6960'),
     getStandard('IETF-RFC-8555'),
     getStandard('RFC 9881'),
     getStandard('RFC-9763'),
-    getStandard('RFC 9794'),
-    getStandard('FIPS-140-3-STANDARD'),
   ],
 
   algorithms: [
@@ -47,13 +45,17 @@ export const content: ModuleContent = {
       source: 'CNSA 2.0',
     },
     { label: 'CNSA 2.0 software exclusive', year: CNSA_2_0.softwareExclusive, source: 'CNSA 2.0' },
+    {
+      label: 'CNSA 2.0 large PKI systems exclusive',
+      year: CNSA_2_0.networkingExclusive,
+      source: 'CNSA 2.0',
+    },
   ],
 
   narratives: {
-    rsa2048Size: '1.5 KB',
-    ecdsaP256Size: '400 bytes',
-    mlDsa65Size: '5.7 KB',
-    compositeSize: '7.4 KB',
+    rsa2048Size: '1.0 KB',
+    ecdsaP256Size: '648 bytes',
+    mlDsa65Size: '5.6 KB',
     ecdsaMinSigSize: '72 bytes',
     chainGrowthSize: '4.1 KB',
   },

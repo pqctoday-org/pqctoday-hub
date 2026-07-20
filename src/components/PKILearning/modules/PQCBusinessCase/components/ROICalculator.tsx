@@ -1097,7 +1097,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
           </p>
           <p>
             <strong>Risk reduction:</strong> Industry breach baseline (IBM Cost of a Data Breach
-            Report 2024) × a composed quantum amplification factor × annual breach probability. The
+            Report 2025) × a composed quantum amplification factor × annual breach probability. The
             amplification factor is the sum of three defensible components — HNDL exposure (fraction
             of data at risk of retroactive decryption), post-CRQC attacker uplift (new capability
             ceiling once a CRQC exists), and detection-timeline uplift (mean time to detect will
