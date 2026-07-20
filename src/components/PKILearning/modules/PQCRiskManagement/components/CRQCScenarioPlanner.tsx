@@ -107,12 +107,12 @@ const COMPLIANCE_DEADLINES = [
     advisory: false,
   },
   {
-    framework: 'NIST \u2014 RSA/ECC Deprecation (NIST IR 8547, draft)',
+    framework: 'NIST \u2014 RSA/ECC Deprecation (NIST IR 8547, draft; SP 800-131A Rev.3, draft)',
     year: 2030,
     advisory: false,
   },
   {
-    framework: 'NIST \u2014 RSA/ECC Disallowed (NIST IR 8547, draft)',
+    framework: 'NIST \u2014 RSA/ECC Disallowed (NIST IR 8547, draft; SP 800-131A Rev.3, draft)',
     year: 2035,
     advisory: false,
   },

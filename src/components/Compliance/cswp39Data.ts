@@ -36,14 +36,14 @@ export interface CSWP39SourceMetadata {
 }
 
 export const CSWP39_SOURCE_METADATA: CSWP39SourceMetadata = {
-  documentLabel: 'NIST CSWP.39',
+  documentLabel: 'NIST CSWP.39-upd1',
   documentTitle: 'Considerations for Achieving Cryptographic Agility',
-  documentVersion: 'Final',
+  documentVersion: 'Final (upd1)',
   publicationDate: '2025-12-19',
-  sourceUrl: 'https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.39.pdf',
+  sourceUrl: 'https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.39-upd1.pdf',
   localPdfPath: '/library/NIST_CSWP_39.pdf',
-  dataExtractedAt: '2026-04-25',
-  nextReviewBy: '2026-07-24',
+  dataExtractedAt: '2026-07-19',
+  nextReviewBy: '2026-10-17',
 }
 
 export interface CSWP39Step {
