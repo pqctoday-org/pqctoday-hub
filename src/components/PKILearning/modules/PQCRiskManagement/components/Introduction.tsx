@@ -320,7 +320,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
               <div className="text-xs font-bold text-foreground mb-2">Business Impact</div>
               <ul className="text-xs text-muted-foreground space-y-1">
-                <li>&bull; Data breach costs averaging $4.88M (IBM, 2024)</li>
+                <li>&bull; Data breach costs averaging $4.44M globally (IBM, 2025)</li>
                 <li>&bull; Supply chain trust dependent on digital signatures</li>
                 <li>&bull; Competitive advantage from early PQC adoption</li>
                 <li>&bull; Insurance and audit implications</li>

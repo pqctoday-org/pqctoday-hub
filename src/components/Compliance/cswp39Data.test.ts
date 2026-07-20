@@ -28,7 +28,7 @@ describe('CSWP39_SOURCE_METADATA staleness', () => {
 
   it('sourceUrl points at the canonical NIST CSWP.39 PDF', () => {
     expect(CSWP39_SOURCE_METADATA.sourceUrl).toMatch(
-      /^https:\/\/nvlpubs\.nist\.gov\/.+CSWP\.39\.pdf$/
+      /^https:\/\/nvlpubs\.nist\.gov\/.+CSWP\.39(-upd1)?\.pdf$/
     )
   })
 })

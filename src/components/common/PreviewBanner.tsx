@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { Lock, X } from 'lucide-react'
+import { Lock, BookOpen, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { PersonaSwitchModal } from '@/components/Persona/PersonaSwitchModal'
 import { logPreviewBannerShown, logPreviewBannerDismissed } from '@/utils/analytics'
@@ -14,6 +14,14 @@ interface Props {
    * Override when multiple banners share a route (rare).
    */
   dismissKey?: string
+  /**
+   * 'gated' (default) is for pages that are genuinely feature-limited for this persona —
+   * "Preview locked" is accurate there. 'suggestion' is for pages that render fully but
+   * are just more useful with more background (e.g. /patents, which curious users can
+   * browse freely) — drops the lock framing so the banner reads as an offer, not a
+   * rejection (07-19 follow-up remediation, C2).
+   */
+  variant?: 'gated' | 'suggestion'
 }
 
 const STORAGE_PREFIX = 'preview-banner-dismissed:'
@@ -36,7 +44,7 @@ function markDismissed(key: string) {
   }
 }
 
-export const PreviewBanner: React.FC<Props> = ({ pageContext, dismissKey }) => {
+export const PreviewBanner: React.FC<Props> = ({ pageContext, dismissKey, variant = 'gated' }) => {
   const location = useLocation()
   const navigate = useNavigate()
   const key = dismissKey ?? location.pathname
@@ -65,10 +73,16 @@ export const PreviewBanner: React.FC<Props> = ({ pageContext, dismissKey }) => {
         role="status"
         className="glass-panel border border-primary/20 rounded-xl px-4 py-3 mb-6 flex items-start gap-3 flex-wrap sm:flex-nowrap"
       >
-        <Lock size={15} className="text-primary shrink-0 mt-0.5" aria-hidden="true" />
+        {variant === 'suggestion' ? (
+          <BookOpen size={15} className="text-primary shrink-0 mt-0.5" aria-hidden="true" />
+        ) : (
+          <Lock size={15} className="text-primary shrink-0 mt-0.5" aria-hidden="true" />
+        )}
         <div className="flex-1 min-w-0">
           <p className="text-sm text-foreground font-medium">
-            Preview locked — switch to a technical role for the full feature.
+            {variant === 'suggestion'
+              ? 'New here? A little background makes this page more useful.'
+              : 'Preview locked — switch to a technical role for the full feature.'}
           </p>
           <p className="text-xs text-muted-foreground mt-0.5">
             {pageContext ? (

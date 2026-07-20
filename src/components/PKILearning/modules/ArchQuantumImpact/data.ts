@@ -25,7 +25,7 @@ export const ARCH_GUIDE_DATA: RoleGuideData = {
       id: 'cert-chain-size',
       title: 'Certificate Chain Size Explosion',
       description:
-        'PQC certificates are 10-50x larger than ECC certificates, impacting TLS handshakes, embedded systems, and storage.',
+        'PQC certificates are roughly 4-7x larger than ECC certificates (SLH-DSA-based certificates can run considerably larger still), impacting TLS handshakes, embedded systems, and storage.',
       severity: 'critical',
       timeframe: 'Immediate design impact',
       exampleScenario:

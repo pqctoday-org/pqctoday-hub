@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * Structured content for the IoTOT module.
- * AUTO-GENERATED SKELETON — review and refine manually.
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0 } from '@/data/regulatoryTimelines'
@@ -11,24 +10,30 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'iot-ot-pqc',
   version: '1.0.0',
-  lastReviewed: '2026-03-28',
+  lastReviewed: '2026-07-19',
 
   standards: [
+    getStandard('IEC 62443'),
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
     getStandard('FIPS 206'),
     getStandard('NIST SP 800-208'),
+    getStandard('NIST-SP-800-232'),
     getStandard('RFC 7228'),
     getStandard('RFC 7250'),
+    getStandard('RFC 8391'),
     getStandard('RFC 8446'),
+    getStandard('RFC 8554'),
     getStandard('RFC 8879'),
     getStandard('RFC 9019'),
+    getStandard('RFC 9147'),
   ],
 
   algorithms: [
     getAlgorithm('ECDSA P-256'),
     getAlgorithm('FN-DSA-512'),
     getAlgorithm('FrodoKEM-640'),
+    getAlgorithm('LMS-SHA256 (H20/W8)'),
     getAlgorithm('ML-DSA-44'),
     getAlgorithm('ML-DSA-65'),
     getAlgorithm('ML-DSA-87'),
@@ -36,7 +41,9 @@ export const content: ModuleContent = {
     getAlgorithm('ML-KEM-512'),
     getAlgorithm('ML-KEM-768'),
     getAlgorithm('RSA-2048'),
+    getAlgorithm('RSA-3072'),
     getAlgorithm('X25519'),
+    getAlgorithm('XMSS-SHA2_20'),
   ],
 
   deadlines: [
@@ -49,13 +56,10 @@ export const content: ModuleContent = {
   ],
 
   narratives: {
-    latencyWindow: '150 ms',
     mlDsa44Sig: '2,420 bytes',
-    mlDsa44Chain: '18 KB',
-    mtcProof: '125 bytes',
-    hybridConstraint: '1.7 KB',
+    mlDsa44Chain: '16 KB',
+    mtcProof: '300 bytes',
     ecdsaSigConstraint: '64 bytes',
-    iecStandards: 'IEC 61850, IEC 62351, IEC 62351-8, IEC 61508',
     hybridKem: 'X25519MLKEM768',
   },
 }
