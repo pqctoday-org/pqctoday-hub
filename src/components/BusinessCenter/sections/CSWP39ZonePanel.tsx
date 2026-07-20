@@ -158,7 +158,7 @@ export const CSWP39ZonePanel: React.FC<CSWP39ZonePanelProps> = ({
             {showAdvancedZoneMetadata(density) && (
               <>
                 <a
-                  href="https://doi.org/10.6028/NIST.CSWP.39"
+                  href="https://doi.org/10.6028/NIST.CSWP.39-upd1"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide px-2 py-0.5 rounded bg-muted/60 hover:bg-muted hover:text-primary transition-colors"
