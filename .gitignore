@@ -360,6 +360,13 @@ public/data/rag-index-freshness.json
 # CuriousSummaryBanner has no fallback chain; missing PNG = broken image.
 !scripts/audit-module-infographics.ts
 
+# Learn-module snapshot exporter — emits the JSON snapshot the maintainer
+# agent's Python validators consume (learn-modules maintenance Phase 0).
+# Execute-imports real manifests + AST-extracts content.ts/component text:
+# public inputs, JSON output written outside the repo. Must be tracked so
+# `npm run export:learn-snapshot` works from a fresh checkout.
+!scripts/export-learn-manifest-snapshot.ts
+
 # Timeline country-alias audit — CI gate that validates countryAliases.ts
 # against the latest Timeline CSV. Pure read-only against public data.
 !scripts/audit-timeline-aliases.ts
