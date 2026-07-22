@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'Database Encryption & PQC',
   description:
     'Migrate database encryption to quantum-safe algorithms: TDE re-keying, BYOK/HYOK key ownership, queryable encryption compatibility, and fleet readiness assessment.',
+  whyThisMatters:
+    "Database encryption keys often outlive the application built around them — a TDE re-key done wrong doesn't just risk downtime, it risks re-encrypting data that was never at risk while missing the columns that were.",
   duration: '50 min',
   difficulty: 'intermediate',
   frameworkPhase: 'p6',

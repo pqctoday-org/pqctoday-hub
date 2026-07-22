@@ -1,18 +1,29 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * Structured content for the Decommissioning & Program Closure module.
- * `standards` is back-filled once the relevant entries are tagged in the
- * library CSV (getStandard throws on unknown ids).
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { getAlgorithm } from '@/data/algorithmProperties'
+import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'verification-closure',
   version: '1.1.0',
-  lastReviewed: '2026-06-25',
+  lastReviewed: '2026-07-22',
 
-  standards: [],
+  // NCSC-UK's 2028/2031/2035 targets, the AIVD/CWI/TNO Handbook, and ISO/IEC
+  // 27001 are still practitioner guidance / have no ACTIVE library row to
+  // cite (both current ISO 27001 rows are deprecated with no successor) —
+  // left as prose-only in the narratives below rather than a dangling or
+  // deprecated getStandard() call.
+  standards: [
+    getStandard('NIST IR 8547'),
+    getStandard('ETSI TR 103 619'),
+    getStandard('ETSI-TR-104-016'),
+    getStandard('NIST CSWP 48'),
+    getStandard('NIST SP 800-37'),
+    getStandard('CISA-PQC-CATEGORY-LIST-2026'),
+  ],
 
   algorithms: [
     getAlgorithm('RSA-2048'),

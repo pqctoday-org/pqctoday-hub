@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'Executive Quantum Impact',
   description:
     'Why quantum matters to leadership: fiduciary risk, regulatory deadlines (CNSA 2.0, NIS2, DORA), and building a board-level PQC action plan.',
+  whyThisMatters:
+    "Quantum risk is a fiduciary and regulatory question before it's a technical one — boards that wait for a clean technical answer will miss the 2030/2035 deadlines regulators have already set.",
   duration: '30 min',
   difficulty: 'beginner',
   frameworkPhase: 'p0',

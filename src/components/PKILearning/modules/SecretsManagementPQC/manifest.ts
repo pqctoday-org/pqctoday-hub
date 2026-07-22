@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'Secrets Management & PQC',
   description:
     'Master PQC migration for secrets managers: classify secrets by HNDL risk, simulate Vault transit with ML-KEM, design rotation policies, and integrate PQC-safe secrets into Kubernetes and CI/CD pipelines.',
+  whyThisMatters:
+    "A secret stored in Vault today with a 5-year rotation policy needs a PQC migration plan now, not when the rotation comes due — harvest-now-decrypt-later risk doesn't wait for your rotation schedule.",
   duration: '60 min',
   difficulty: 'advanced',
   frameworkPhase: 'p6',

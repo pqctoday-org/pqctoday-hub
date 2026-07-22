@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'Quantum Key Distribution',
   description:
     'Explore QKD fundamentals: BB84 protocol, classical post-processing, hybrid key derivation, global deployments, protocol integration, and HSM key derivation.',
+  whyThisMatters:
+    "QKD offers information-theoretic security guarantees PQC algorithms can't — but it needs dedicated hardware and has real deployment limits, which is exactly why understanding both, not choosing one, is the realistic path forward.",
   duration: '100 min',
   difficulty: 'advanced',
   frameworkPhase: 'p6',

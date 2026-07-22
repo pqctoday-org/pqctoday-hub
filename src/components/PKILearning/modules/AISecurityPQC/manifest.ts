@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'AI Security & PQC',
   description:
     'Quantum threats to AI systems: pipeline data protection, model weight security, synthetic data contamination, agent authentication, agentic commerce, and encryption at scale.',
+  whyThisMatters:
+    'AI pipelines and model weights are attack surface too — an adversary who steals training data or model IP today can decrypt it the moment a cryptographically-relevant quantum computer arrives, and agentic systems add a new class of authentication risk.',
   duration: '80 min',
   difficulty: 'advanced',
   frameworkPhase: 'p5',

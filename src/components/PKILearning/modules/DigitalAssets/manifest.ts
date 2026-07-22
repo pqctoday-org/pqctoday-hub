@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'Digital Assets',
   description:
     'Learn cryptographic foundations of Bitcoin, Ethereum, and Solana. Explore institutional custody architecture with PQC threat analysis.',
+  whyThisMatters:
+    "Bitcoin, Ethereum, and Solana wallets sign with ECDSA/EdDSA today — a cryptographically-relevant quantum computer doesn't just threaten future transactions, it threatens every public key already exposed on-chain.",
   duration: '50 min',
   difficulty: 'intermediate',
   frameworkPhase: 'p5',

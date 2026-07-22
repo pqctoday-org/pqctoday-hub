@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'Entropy & Randomness',
   description:
     'Master entropy sources, DRBG mechanisms, and quantum randomness — NIST SP 800-90 standards, entropy testing, TRNG vs QRNG, and combining sources for defense-in-depth.',
+  whyThisMatters:
+    "Every key this curriculum generates depends on entropy — a weak DRBG or predictable seed makes even a perfect PQC algorithm choice worthless, since the attack moves from 'break the math' to 'guess the seed'.",
   duration: '40 min',
   difficulty: 'advanced',
   frameworkPhase: 'foundations',

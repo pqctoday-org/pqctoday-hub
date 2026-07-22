@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'PKI',
   description:
     'Learn PKI fundamentals, build certificate chains hands-on, and explore PQC migration.',
+  whyThisMatters:
+    "PKI is the trust infrastructure everything else in this curriculum assumes exists — certificate chains, revocation, and CA hierarchies are what make 'this key belongs to this identity' a claim anyone can verify.",
   duration: '40 min',
   difficulty: 'intermediate',
   frameworkPhase: 'p6',
