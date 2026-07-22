@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'Developer Quantum Impact',
   description:
     'How quantum breaks your code: library transitions, larger keys/signatures, TLS/JWT/signing impacts, and a hands-on migration readiness plan.',
+  whyThisMatters:
+    "Your code doesn't call 'RSA' — it calls a library, and libraries are what quietly change under you when the underlying algorithm gets swapped. Knowing what breaks (key sizes, signature sizes, TLS handshakes) is the difference between a migration and an outage.",
   duration: '20 min',
   difficulty: 'beginner',
   frameworkPhase: 'foundations',

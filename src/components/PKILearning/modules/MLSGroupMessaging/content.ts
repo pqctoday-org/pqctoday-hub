@@ -1,4 +1,37 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import type { ModuleContent } from '@/types/ModuleContentTypes'
+import { getAlgorithm } from '@/data/algorithmProperties'
+import { getStandard } from '@/data/standardsRegistry'
+
+export const content: ModuleContent = {
+  moduleId: 'mls-group-messaging',
+  version: '1.0.0',
+  lastReviewed: '2026-07-22',
+
+  standards: [
+    getStandard('RFC 9420'),
+    getStandard('RFC 9180'),
+    getStandard('draft-ietf-mls-pq-ciphersuites-04'),
+    getStandard('draft-ietf-mls-combiner-02'),
+  ],
+
+  algorithms: [
+    getAlgorithm('X25519'),
+    getAlgorithm('Ed25519'),
+    getAlgorithm('ML-KEM-768'),
+    getAlgorithm('ML-DSA-65'),
+    getAlgorithm('ML-DSA-87'),
+  ],
+
+  deadlines: [],
+
+  narratives: {
+    keyConcepts:
+      "MLS (RFC 9420) replaces Signal-style pairwise ratchets — which hit an O(N²) ceiling around 100 members — with TreeKEM: every member is a leaf of a binary tree, and a Commit refreshes the sender's direct path with fresh HPKE keys, advancing a shared epoch secret that the whole group derives its next application keys from. That gives forward secrecy and post-compromise security at group sizes pairwise ratchets can't reach. `draft-ietf-mls-pq-ciphersuites-04` (WG Last Call) registers ML-KEM-768 + ML-DSA-65/87 ciphersuites that replace the DH-based KEM and signature scheme atomically; `draft-ietf-mls-combiner-02` specifies a hybrid path — run classical and PQ MLS sessions in parallel and XOR the application keys, so breaking the message requires breaking both.",
+    workshopSummary:
+      "TreeKEM Ratchet Tree Visualizer: watch a Commit refresh a sender's direct path and advance the group epoch secret. OpenMLS ↔ PKCS#11 Provider Architecture: see how `openmls_pqctoday_crypto` routes OpenMLS's ~15-function `OpenMlsCrypto` trait through PKCS#11 v3.2 against softhsmv3, with signature keys generated as non-extractable HSM token objects.",
+  },
+}
 
 export interface LearnChapter {
   id: string

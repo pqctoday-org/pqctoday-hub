@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'Ops Quantum Impact',
   description:
     'Operational PQC challenges: certificate scaling, fleet upgrades, VPN/SSH key exchange, monitoring recalibration, and migration playbooks.',
+  whyThisMatters:
+    'Certificate scaling and fleet upgrades are operational problems, not cryptographic ones — the algorithm choice is a one-time decision, but the rollout across thousands of endpoints is where PQC migrations actually succeed or fail.',
   duration: '20 min',
   difficulty: 'beginner',
   frameworkPhase: 'foundations',

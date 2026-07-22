@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'API Security & JWT',
   description:
     'JWT/JWS/JWE with post-quantum algorithms: ML-DSA signing, ML-KEM key agreement, hybrid tokens, and OAuth 2.0 migration.',
+  whyThisMatters:
+    'Every OAuth token and API call your systems sign today could be forged retroactively once ML-DSA-breaking hardware exists — JWT/JWS is one of the most exposed, highest-volume surfaces in any stack.',
   duration: '60 min',
   difficulty: 'intermediate',
   frameworkPhase: 'p5',

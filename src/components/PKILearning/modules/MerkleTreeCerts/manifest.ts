@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'Merkle Tree Certificates',
   description:
     'Build Merkle trees interactively, generate inclusion proofs, and compare MTC vs traditional PKI for post-quantum TLS.',
+  whyThisMatters:
+    "Merkle Tree Certificates could replace X.509's per-certificate PQC signature overhead with one tree and many inclusion proofs — the trade-off against traditional PKI shapes which TLS ecosystem wins post-quantum.",
   duration: '40 min',
   difficulty: 'advanced',
   frameworkPhase: 'p6',
