@@ -54,6 +54,7 @@ describe('PKCS#11 Learn tab lesson step specs (real wasm engine)', () => {
     // way HsmLearnView.tsx's real runner does.
     hsm = {
       moduleRef: { current: proxy },
+      rawModuleRef: { current: raw },
       crossCheckModuleRef: { current: null },
       hSessionRef: { current: session },
       slotRef: { current: initializedSlot },
