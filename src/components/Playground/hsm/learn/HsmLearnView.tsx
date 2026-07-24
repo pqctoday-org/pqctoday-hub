@@ -23,6 +23,8 @@ import { GlossaryProvider } from '@/components/Playground/learnkit/GlossaryProvi
 import { GlossaryRail } from '@/components/Playground/learnkit/GlossaryRail'
 import { QuizCard } from '@/components/Playground/learnkit/QuizCard'
 import { useHsmContext } from '../HsmContext'
+import type { Pkcs11LogEntry } from '@/wasm/softhsm'
+import { lookupCkr } from '@/wasm/pkcs11Inspect'
 import { classifyStepOutcome } from './lessonRunner'
 import { FOUNDATIONS_LESSONS, type Pkcs11LessonStep, type Pkcs11StepResult } from './pkcs11Lessons'
 import { V32_LESSONS } from './pkcs11LessonsV32'
@@ -40,6 +42,41 @@ type StepStatus = 'pending' | 'running' | 'ok' | 'refused-ok' | 'failed'
 interface StepRunState {
   status: StepStatus
   detail?: string
+  /** The real (non-header) PKCS#11 calls THIS step made, chronological. */
+  entries?: Pkcs11LogEntry[]
+}
+
+/** The actual PKCS#11 calls a single step made — inline, right under that
+ * step, instead of only in the shared log panel below the whole lesson. */
+function InlineStepLog({ entries }: { entries: Pkcs11LogEntry[] }) {
+  if (entries.length === 0) return null
+  return (
+    <div className="mt-2 space-y-1 rounded-md border border-border/60 bg-background/60 p-2">
+      {entries.map((e) => {
+        const ckr = !e.ok ? lookupCkr(parseInt(e.rvHex, 16) || 0) : null
+        return (
+          <div key={e.id} className="text-[10.5px] leading-snug">
+            <div className="grid grid-cols-[7.5rem_1fr_6.5rem_3rem] items-baseline gap-x-2 font-mono">
+              <span className="truncate font-semibold text-primary" title={e.fn}>
+                {e.fn}
+              </span>
+              <span className="truncate text-muted-foreground/80" title={e.args}>
+                {e.args || '—'}
+              </span>
+              <span className={e.ok ? 'text-status-success' : 'text-status-error'}>{e.rvName}</span>
+              <span className="text-right text-muted-foreground">{e.ms}ms</span>
+            </div>
+            {ckr && (
+              <p className="mt-0.5 pl-1 text-[10px] text-status-error">
+                {ckr.description}
+                {ckr.hint && <span className="text-muted-foreground"> — {ckr.hint}</span>}
+              </p>
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
 }
 
 function StepRow({
@@ -101,6 +138,7 @@ function StepRow({
           {state.detail}
         </p>
       )}
+      {state.entries && <InlineStepLog entries={state.entries} />}
     </li>
   )
 }
@@ -143,11 +181,22 @@ function LessonRunner({
     setStepStates((prev) => prev.map((s, j) => (j === i ? { status: 'running' } : s)))
     const logCountBefore = hsm.hsmLogRef.current.length
     hsm.addHsmStepLog(`${navPrefix}${lesson.n} · step ${i + 1}: ${lesson.steps[i].op}`)
+    // hsmLogRef, not hsmLog: a plain state read here would be stale until
+    // the next render (the closure-over-stale-state bug this file was
+    // already fixed for once — see resultsRef above). Newest-first, so
+    // reverse for a chronological inline display; drop the header itself —
+    // it's a label, not a call the step made.
+    const stepEntries = (): Pkcs11LogEntry[] =>
+      hsm.hsmLogRef.current
+        .slice(0, hsm.hsmLogRef.current.length - logCountBefore)
+        .filter((e) => !e.isStepHeader)
+        .reverse()
     try {
       const result = await lesson.steps[i].run(hsm, resultsRef.current)
       resultsRef.current = resultsRef.current.map((r, j) => (j === i ? result : r))
+      const entries = stepEntries()
       setStepStates((prev) =>
-        prev.map((s, j) => (j === i ? { status: 'ok', detail: result.detail } : s))
+        prev.map((s, j) => (j === i ? { status: 'ok', detail: result.detail, entries } : s))
       )
       // Lesson steps call hsm_generate*/hsm_derive* directly rather than
       // through addHsmKey — sync the key registry so the call log and key
@@ -159,21 +208,15 @@ function LessonRunner({
       }
     } catch (e) {
       const message = e instanceof Error ? e.message : String(e)
-      // hsmLogRef, not hsmLog: a plain state read here would be stale until
-      // the next render (the closure-over-stale-state bug this file was
-      // already fixed for once — see resultsRef above).
-      const newEntries = hsm.hsmLogRef.current.slice(
-        0,
-        hsm.hsmLogRef.current.length - logCountBefore
-      )
-      const outcome = classifyStepOutcome(lesson.steps[i].expect, newEntries)
+      const entries = stepEntries()
+      const outcome = classifyStepOutcome(lesson.steps[i].expect, entries)
       logEvent(
         'Playground',
         `${analyticsCategory} Step`,
         `${lesson.id}:${lesson.steps[i].op}:${outcome}`
       )
       setStepStates((prev) =>
-        prev.map((s, j) => (j === i ? { status: outcome, detail: message } : s))
+        prev.map((s, j) => (j === i ? { status: outcome, detail: message, entries } : s))
       )
     }
   }
