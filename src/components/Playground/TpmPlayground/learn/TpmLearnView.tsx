@@ -29,7 +29,13 @@ import {
   flushAllTransient,
   nvReadAll,
   getPqcBridgeStatus,
+  setTpmWireListener,
+  type TpmWireLogEntry,
 } from '../../../../wasm/tpmBridge'
+import { getU16, getU32, toHex } from '../../../../wasm/tpmSerializer'
+import { getRcInfo } from '../tpmCommandDefs'
+import { TAG_NAMES, CC_NAMES } from '../tpmWireDecode'
+import { HexPanel } from '../ExecutionLog'
 import {
   TPM_LESSONS,
   type TpmLearnContext,
@@ -47,16 +53,99 @@ interface StepRunState {
 
 const freshChain = (): TpmLearnContext['chain'] => ({ handles: {} })
 
+/** One request/response wire exchange, rendered the same way the Command
+ * Builder's Execution Log decodes a command — header fields + collapsible
+ * raw hex — scoped to a single lesson step instead of a shared/global log. */
+function WireExchange({ entry }: { entry: TpmWireLogEntry }) {
+  const [expanded, setExpanded] = useState(false)
+  const reqTag = entry.request.length >= 2 ? getU16(entry.request, 0) : 0
+  const reqCc = entry.request.length >= 10 ? getU32(entry.request, 6) : 0
+  const reqName = CC_NAMES[reqCc] ?? `cc=0x${reqCc.toString(16).padStart(8, '0')}`
+
+  const rc = entry.response && entry.response.length >= 10 ? getU32(entry.response, 6) : null
+  const rcInfo = rc !== null ? getRcInfo(rc) : null
+  const isSuccess = rc === 0
+
+  const handleCopy = (bytes: Uint8Array | null) => {
+    if (bytes) navigator.clipboard.writeText(toHex(bytes))
+  }
+
+  return (
+    <div className="overflow-hidden rounded-md border border-border/60 bg-background/60">
+      <Button
+        type="button"
+        variant="ghost"
+        onClick={() => setExpanded((v) => !v)}
+        className="h-auto w-full items-center justify-between gap-2 px-2 py-1.5 text-left font-normal hover:bg-muted/30"
+      >
+        <span className="truncate font-mono text-[10.5px] text-muted-foreground">
+          <span className="text-foreground">{reqName}</span>
+          {' · '}
+          {TAG_NAMES[reqTag] ?? `tag 0x${reqTag.toString(16)}`}
+          {' · '}
+          {entry.request.length} B → {entry.response ? `${entry.response.length} B` : '—'}
+        </span>
+        {entry.error ? (
+          <span className="flex shrink-0 items-center gap-1 text-[10px] font-semibold text-destructive">
+            <XCircle size={11} /> ERROR
+          </span>
+        ) : rcInfo ? (
+          <span
+            className={cn(
+              'flex shrink-0 items-center gap-1 font-mono text-[10px] font-semibold',
+              isSuccess ? 'text-status-success' : 'text-status-error'
+            )}
+          >
+            {isSuccess ? <CheckCircle2 size={11} /> : <XCircle size={11} />} {rcInfo.name}
+          </span>
+        ) : null}
+      </Button>
+      {expanded && (
+        <div className="space-y-2 border-t border-border/40 p-2">
+          <HexPanel
+            label="request"
+            bytes={entry.request}
+            onCopy={() => handleCopy(entry.request)}
+          />
+          {entry.error && (
+            <p className="rounded border border-destructive/20 bg-destructive/5 p-2 font-mono text-[10.5px] text-destructive">
+              {entry.error}
+            </p>
+          )}
+          {rcInfo && !isSuccess && !entry.error && (
+            <p className="rounded border border-border bg-muted/20 p-2 text-[10.5px] leading-snug text-muted-foreground">
+              <span className="font-mono font-bold text-status-error">
+                RC = 0x{(rc ?? 0).toString(16).padStart(8, '0')} — {rcInfo.name}
+              </span>
+              <br />
+              {rcInfo.description}
+            </p>
+          )}
+          {entry.response && (
+            <HexPanel
+              label="response"
+              bytes={entry.response}
+              onCopy={() => handleCopy(entry.response)}
+            />
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function StepRow({
   step,
   index,
   state,
+  wireLogs,
   onRun,
   disabled,
 }: {
   step: TpmLessonStep
   index: number
   state: StepRunState
+  wireLogs: TpmWireLogEntry[]
   onRun: () => void
   disabled: boolean
 }) {
@@ -105,6 +194,13 @@ function StepRow({
           {state.detail}
         </p>
       )}
+      {wireLogs.length > 0 && (
+        <div className="mt-2 space-y-1.5">
+          {wireLogs.map((entry, i) => (
+            <WireExchange key={i} entry={entry} />
+          ))}
+        </div>
+      )}
     </li>
   )
 }
@@ -126,6 +222,18 @@ export function TpmLearnView({
   const resultsRef = useRef<(TpmStepResult | null)[]>(lesson.steps.map(() => null))
   const chainRef = useRef<TpmLearnContext['chain']>(freshChain())
 
+  // Every wire exchange (request+response) each step's run() triggers, keyed
+  // by step index. Populated via setTpmWireListener while a step is running —
+  // that hook fires on EVERY executeTpmCommand/executeTpmCommandLarge call,
+  // including ones issued internally by ctx.flushAll/ctx.nvReadAll, so this
+  // captures a step's full wire traffic regardless of which context method
+  // triggered it. Ref for the same reason as resultsRef (read-during-loop);
+  // mirrored into state so it actually renders.
+  const wireLogsRef = useRef<TpmWireLogEntry[][]>(lesson.steps.map(() => []))
+  const [stepWireLogs, setStepWireLogs] = useState<TpmWireLogEntry[][]>(() =>
+    lesson.steps.map(() => [])
+  )
+
   // Built on demand inside handlers (never at render — reading chainRef.current
   // during render is disallowed and it's replaced per-lesson by selectLesson).
   const makeCtx = (): TpmLearnContext => ({
@@ -142,10 +250,17 @@ export function TpmLearnView({
     setStepStates(TPM_LESSONS[idx].steps.map(() => ({ status: 'pending' })))
     resultsRef.current = TPM_LESSONS[idx].steps.map(() => null)
     chainRef.current = freshChain()
+    wireLogsRef.current = TPM_LESSONS[idx].steps.map(() => [])
+    setStepWireLogs(TPM_LESSONS[idx].steps.map(() => []))
   }
 
   const runStep = async (i: number) => {
     setStepStates((prev) => prev.map((s, j) => (j === i ? { status: 'running' } : s)))
+    wireLogsRef.current[i] = []
+    setStepWireLogs((prev) => prev.map((l, j) => (j === i ? [] : l)))
+    setTpmWireListener((entry) => {
+      wireLogsRef.current[i] = [...wireLogsRef.current[i], entry]
+    })
     try {
       const result = await lesson.steps[i].run(makeCtx(), resultsRef.current)
       resultsRef.current = resultsRef.current.map((r, j) => (j === i ? result : r))
@@ -165,6 +280,9 @@ export function TpmLearnView({
           j === i ? { status: expectedRefusal ? 'refused-ok' : 'failed', detail: message } : s
         )
       )
+    } finally {
+      setTpmWireListener(null)
+      setStepWireLogs((prev) => prev.map((l, j) => (j === i ? wireLogsRef.current[i] : l)))
     }
   }
 
@@ -244,6 +362,7 @@ export function TpmLearnView({
                   step={step}
                   index={i}
                   state={stepStates[i]}
+                  wireLogs={stepWireLogs[i]}
                   onRun={() => runStep(i)}
                   disabled={stepStates[i].status === 'running' || !isWasmReady}
                 />

@@ -101,28 +101,107 @@ export const TPM_RC_TABLE: Record<number, { name: string; description: string }>
     name: 'TPM_RC_NO_RESULT',
     description: 'The TPM was unable to marshal a response back for this command.',
   },
-  0x00000185: {
-    name: 'TPM_RC_ATTRIBUTES',
-    description: 'Object attributes are inconsistent or invalid for this operation.',
-  },
-  0x00000184: {
-    name: 'TPM_RC_SCHEME',
-    description: 'The scheme is not acceptable for the key type or usage.',
-  },
-  0x0000018b: {
-    name: 'TPM_RC_KEY',
-    description: 'Key type is not correct for the requested operation.',
-  },
 }
 
+// Format-1 base error codes per TCG TPM2.0 Library Specification Part 2 §6.6
+// Table 30 (values here are the RAW error number in bits 0-5, BEFORE adding
+// the RC_FMT1 flag (0x080) or any parameter/handle/session qualifier).
+// Verified against libtpms/src/tpm2/TpmTypes.h (the actual engine this
+// playground runs), e.g. TPM_RC_SIGNATURE = RC_FMT1 + 0x01B.
+const FMT1_BASE_ERRORS: Record<number, { name: string; description: string }> = {
+  0x01: {
+    name: 'TPM_RC_ASYMMETRIC',
+    description: 'Asymmetric algorithm not supported or not correct.',
+  },
+  0x02: { name: 'TPM_RC_ATTRIBUTES', description: 'Inconsistent attributes.' },
+  0x03: { name: 'TPM_RC_HASH', description: 'Hash algorithm not supported or not appropriate.' },
+  0x04: {
+    name: 'TPM_RC_VALUE',
+    description: 'Value is out of range or is not correct for the context.',
+  },
+  0x05: {
+    name: 'TPM_RC_HIERARCHY',
+    description: 'Hierarchy is not enabled or is not correct for the use.',
+  },
+  0x07: { name: 'TPM_RC_KEY_SIZE', description: 'Key size is not supported.' },
+  0x08: { name: 'TPM_RC_MGF', description: 'Mask generation function not supported.' },
+  0x09: { name: 'TPM_RC_MODE', description: 'Mode of operation not supported.' },
+  0x0a: {
+    name: 'TPM_RC_TYPE',
+    description: 'The type of the value is not appropriate for the use.',
+  },
+  0x0b: { name: 'TPM_RC_HANDLE', description: 'The handle is not correct for the use.' },
+  0x0c: {
+    name: 'TPM_RC_KDF',
+    description: 'Unsupported key derivation function or function not appropriate for use.',
+  },
+  0x0d: { name: 'TPM_RC_RANGE', description: 'Value was out of allowed range.' },
+  0x0e: {
+    name: 'TPM_RC_AUTH_FAIL',
+    description: 'The authorization HMAC check failed and the associated DA counter incremented.',
+  },
+  0x0f: { name: 'TPM_RC_NONCE', description: 'Invalid nonce size or nonce value mismatch.' },
+  0x10: {
+    name: 'TPM_RC_PP',
+    description: 'Authorization requires assertion of Physical Presence.',
+  },
+  0x12: { name: 'TPM_RC_SCHEME', description: 'Unsupported or incompatible scheme.' },
+  0x15: { name: 'TPM_RC_SIZE', description: 'Structure is the wrong size.' },
+  0x16: { name: 'TPM_RC_SYMMETRIC', description: 'Unsupported symmetric algorithm or key size.' },
+  0x17: { name: 'TPM_RC_TAG', description: 'Incorrect structure tag.' },
+  0x18: { name: 'TPM_RC_SELECTOR', description: 'Union selector is incorrect.' },
+  0x1a: {
+    name: 'TPM_RC_INSUFFICIENT',
+    description:
+      'The TPM was unable to unmarshal a value because there were not enough octets in the buffer.',
+  },
+  0x1b: { name: 'TPM_RC_SIGNATURE', description: 'The signature is not valid.' },
+  0x1c: { name: 'TPM_RC_KEY', description: 'Key fields are not compatible with the selected use.' },
+  0x1d: { name: 'TPM_RC_POLICY_FAIL', description: 'A policy check failed.' },
+  0x1f: { name: 'TPM_RC_INTEGRITY', description: 'Integrity check failed.' },
+  0x20: { name: 'TPM_RC_TICKET', description: 'Invalid ticket.' },
+  0x21: { name: 'TPM_RC_RESERVED_BITS', description: 'Reserved bits not set to zero as required.' },
+  0x22: { name: 'TPM_RC_BAD_AUTH', description: 'Authorization failure without DA implications.' },
+  0x23: { name: 'TPM_RC_EXPIRED', description: 'The policy has expired.' },
+  0x24: {
+    name: 'TPM_RC_POLICY_CC',
+    description: 'The command code in the policy does not match the command being executed.',
+  },
+  0x25: {
+    name: 'TPM_RC_BINDING',
+    description: 'Public and sensitive portions of an object are not cryptographically bound.',
+  },
+  0x26: { name: 'TPM_RC_CURVE', description: 'Curve not supported.' },
+  0x27: { name: 'TPM_RC_ECC_POINT', description: 'Point is not on the required curve.' },
+}
+
+const RC_FMT1 = 0x080 // bit 7 — Format-1 (parameter/handle/session-qualified error)
+const RC_P = 0x040 // bit 6 — error is parameter-related
+const RC_S = 0x800 // bit 11 — error is session-related (set together with the N field)
+
 export function getRcInfo(rc: number): { name: string; description: string } {
-  return (
-    TPM_RC_TABLE[rc] ?? {
-      name: `0x${rc.toString(16).padStart(8, '0')}`,
-      description:
-        'Unrecognized return code. Check TCG Part 2 §6.6 for format-specific error encoding (parameter/session/handle qualifiers in bits 6-8).',
+  const hit = TPM_RC_TABLE[rc]
+  if (hit) return hit
+
+  if ((rc & RC_FMT1) !== 0) {
+    const base = FMT1_BASE_ERRORS[rc & 0x3f]
+    if (base) {
+      const n = (rc >> 8) & 0xf
+      const isSession = (rc & RC_S) !== 0
+      const isParameter = (rc & RC_P) !== 0
+      let qualifier = ''
+      if (isSession) qualifier = ` (session ${n & 0x7})`
+      else if (isParameter) qualifier = ` (parameter ${n})`
+      else if (n !== 0) qualifier = ` (handle ${n})`
+      return { name: `${base.name}${qualifier}`, description: base.description }
     }
-  )
+  }
+
+  return {
+    name: `0x${rc.toString(16).padStart(8, '0')}`,
+    description:
+      'Unrecognized return code. Check TCG Part 2 §6.6 — format-specific errors carry a parameter flag (bit 6), a session flag (bit 11), and a qualifier number (bits 8-11).',
+  }
 }
 
 // ── Algorithm helpers ─────────────────────────────────────────────────────────
