@@ -8,7 +8,35 @@ interface PendingRun {
   resolve: (result: { stdout: string }) => void
   reject: (error: Error) => void
   stdout: string[]
+  /** stderr-stream LOG lines only — the real openssl error text (e.g.
+   * "Module initialization failed!"), kept separate from stdout/debug
+   * noise so a rejection can surface it directly. */
+  stderr: string[]
 }
+
+// The worker forwards genuine openssl print()/printErr() output as a plain
+// `message: text` LOG event — but it ALSO narrates its own internal steps
+// ("[Debug] Selecting strategy...", "Executing: openssl ...", etc.) through
+// that exact same LOG message shape, with no separate flag to tell them
+// apart at the source. A lesson step's runCommand() result (and a failed
+// command's surfaced error) should only ever contain what openssl itself
+// printed — not the worker's own narration — or the Learn tab's inline
+// "detail" text reads as a garbled transcript instead of the actual output.
+const WORKER_NARRATION_PREFIXES = [
+  '[Debug]',
+  '[VFS]',
+  'Executing: openssl',
+  '💡',
+  'Failed to',
+  'Warning:',
+  'OpenSSL Execution Error:',
+  'SIMULATION_RESULT:',
+  'CMP_SIMULATION_RESULT:',
+  'CA_ROOT_RESULT:',
+  'SKEY OPERATION',
+]
+const isWorkerNarration = (message: string): boolean =>
+  WORKER_NARRATION_PREFIXES.some((p) => message.trimStart().startsWith(p))
 
 export const useOpenSSL = () => {
   const workerRef = useRef<Worker | null>(null)
@@ -18,7 +46,6 @@ export const useOpenSSL = () => {
     setIsProcessing,
     isProcessing,
     addFile,
-    files,
     command: currentCommand,
     setLastExecutionTime,
     addStructuredLog,
@@ -48,9 +75,13 @@ export const useOpenSSL = () => {
 
       switch (type) {
         case 'LOG':
+          // The Terminal tab wants the FULL verbose trace (debug narration
+          // included) — addLog always gets everything, unfiltered.
           addLog(event.data.stream === 'stderr' ? 'error' : 'info', event.data.message)
-          if (event.data.requestId) {
-            pendingRunsRef.current.get(event.data.requestId)?.stdout.push(event.data.message)
+          if (event.data.requestId && !isWorkerNarration(event.data.message)) {
+            const pending = pendingRunsRef.current.get(event.data.requestId)
+            pending?.stdout.push(event.data.message)
+            if (pending && event.data.stream === 'stderr') pending.stderr.push(event.data.message)
           }
           break
         case 'FILE_CREATED':
@@ -89,7 +120,16 @@ export const useOpenSSL = () => {
           if (event.data.requestId && pendingRunsRef.current.has(event.data.requestId)) {
             const pending = pendingRunsRef.current.get(event.data.requestId)!
             pendingRunsRef.current.delete(event.data.requestId)
-            pending.reject(new Error(event.data.error || 'Command failed'))
+            // The worker's own ERROR text (e.g. "OpenSSL exited with status 1")
+            // is a generic exit-code summary — the REAL stderr (e.g. "Module
+            // initialization failed!") already streamed in as LOG messages
+            // and was captured separately in pending.stderr. Callers relying
+            // on the real error text (the Algorithm Explorer's provider
+            // probe, Learn tab refusal steps) need the actual reason, not
+            // just a status code.
+            const realError = pending.stderr.join('\n').trim()
+            const message = realError || event.data.error || 'Command failed'
+            pending.reject(new Error(message))
           }
           break
         case 'DONE':
@@ -226,9 +266,13 @@ export const useOpenSSL = () => {
         // Generate unique request ID for tracking
         const requestId = `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
 
+        // Read fresh from the store rather than the closed-over `files` —
+        // see runCommand's comment below for why a stale snapshot is a real
+        // bug, not just theoretical, when commands run back-to-back.
+        const currentFiles = useOpenSSLStore.getState().files
         // Send command AND files in one message to ensure they are written to the fresh module
         // Convert all file content to Uint8Array to prevent "Unsupported data type" errors
-        const filesAsUint8Array = files.map((f) => ({
+        const filesAsUint8Array = currentFiles.map((f) => ({
           name: f.name,
           data:
             f.content instanceof Uint8Array
@@ -252,15 +296,7 @@ export const useOpenSSL = () => {
         } as WorkerMessage)
       }
     },
-    [
-      currentCommand,
-      isProcessing,
-      setIsProcessing,
-      clearTerminalLogs,
-      addLog,
-      files,
-      setLastExecutionTime,
-    ]
+    [currentCommand, isProcessing, setIsProcessing, clearTerminalLogs, addLog, setLastExecutionTime]
   )
 
   /**
@@ -289,7 +325,17 @@ export const useOpenSSL = () => {
       setIsProcessing(true)
       startTimeRef.current = performance.now()
 
-      const filesAsUint8Array = files.map((f) => ({
+      // Read the CURRENT store state, not the `files` this callback closed
+      // over — a lesson's runAll() calls this same function reference
+      // repeatedly in a tight sequential loop, each step's FILE_CREATED
+      // landing in the store between calls. Closing over `files` (even
+      // with it in the deps array) captures a snapshot from whenever this
+      // callback was last recreated, which is stale by the second step:
+      // the file the PREVIOUS step in the same run just created would be
+      // missing from the message sent to the worker. getState() always
+      // reflects what's true right now, regardless of render timing.
+      const currentFiles = useOpenSSLStore.getState().files
+      const filesAsUint8Array = currentFiles.map((f) => ({
         name: f.name,
         data:
           f.content instanceof Uint8Array
@@ -300,7 +346,7 @@ export const useOpenSSL = () => {
       }))
 
       return new Promise((resolve, reject) => {
-        pendingRunsRef.current.set(requestId, { resolve, reject, stdout: [] })
+        pendingRunsRef.current.set(requestId, { resolve, reject, stdout: [], stderr: [] })
         workerRef.current!.postMessage({
           type: 'COMMAND',
           command: subcommand,
@@ -311,7 +357,7 @@ export const useOpenSSL = () => {
         } as WorkerMessage)
       })
     },
-    [files, setIsProcessing]
+    [setIsProcessing]
   )
 
   const executeSkey = useCallback(
