@@ -21,7 +21,7 @@ interface ExecutionLogProps {
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
-function HexPanel({
+export function HexPanel({
   label,
   bytes,
   onCopy,

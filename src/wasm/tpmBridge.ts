@@ -35,6 +35,24 @@ export function clearLastTpmErr(): void {
   _lastTpmErr = ''
 }
 
+// Wire-level tap: notified on every executeTpmCommand/executeTpmCommandLarge
+// call, including ones issued internally by helpers (flushAllTransient,
+// nvReadAll, readPublic, ...) that call executeTpmCommand themselves rather
+// than going through a caller-supplied exec function. The TPM Learn view
+// uses this to render a real per-step request/response log instead of only
+// a hand-authored summary sentence — every wire exchange a step triggers,
+// not just the ones it happens to call directly.
+export interface TpmWireLogEntry {
+  request: Uint8Array
+  response: Uint8Array | null
+  error?: string
+}
+export type TpmWireListener = (entry: TpmWireLogEntry) => void
+let _wireListener: TpmWireListener | null = null
+export function setTpmWireListener(listener: TpmWireListener | null): void {
+  _wireListener = listener
+}
+
 // Build stamp used for cache-busting — updated each deploy
 // 20260515-v0p8-rc4-wire: pqctoday-tpm v0.8.0 — V1.85 RC4 SignDigest +
 // VerifyDigestSignature wire-format migration (Tables 126 / 120).
@@ -212,7 +230,15 @@ export async function executeTpmCommand(command: Uint8Array): Promise<Uint8Array
     const response = new Uint8Array(tpmInstance.HEAPU8.buffer, respBufPtr, rc)
     const result = new Uint8Array(response) // Deep copy to prevent memory corruption
 
+    _wireListener?.({ request: command, response: result })
     return result
+  } catch (e) {
+    _wireListener?.({
+      request: command,
+      response: null,
+      error: e instanceof Error ? e.message : String(e),
+    })
+    throw e
   } finally {
     // Cleanup
     tpmInstance._free(cmdPtr)
@@ -243,7 +269,16 @@ export async function executeTpmCommandLarge(
   try {
     const rc = processCmd(cmdPtr, command.length, respPtr, maxResp)
     if (rc === -1) throw new Error('TPMLIB_Process failed inside WASM')
-    return new Uint8Array(new Uint8Array(tpmInstance.HEAPU8.buffer, respPtr, rc))
+    const result = new Uint8Array(new Uint8Array(tpmInstance.HEAPU8.buffer, respPtr, rc))
+    _wireListener?.({ request: command, response: result })
+    return result
+  } catch (e) {
+    _wireListener?.({
+      request: command,
+      response: null,
+      error: e instanceof Error ? e.message : String(e),
+    })
+    throw e
   } finally {
     tpmInstance._free(cmdPtr)
     tpmInstance._free(respPtr)
