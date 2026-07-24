@@ -6,6 +6,8 @@ import {
   getLastTpmErr,
   clearLastTpmErr,
   flushAllTransient,
+  nvDefineSpace,
+  nvWrite,
 } from '../../../wasm/tpmBridge'
 import {
   buildCommand,
@@ -29,6 +31,11 @@ const CC_VERIFY_SEQ_START = 0x000001a9
 const CC_VERIFY_SEQ_COMPLETE = 0x000001a3
 const CC_SEQUENCE_UPDATE = 0x0000015c
 const CC_FLUSH_CONTEXT = 0x00000165
+const CC_NV_CERTIFY = 0x00000184
+
+// Scratch NV index for V185-025 — distinct from the V2.7 EK cert range
+// (0x01c00060-0x01c00074) so this check never collides with provisioning.
+const NV_CERTIFY_TEST_INDEX = 0x01500001
 
 const TPM_ST_MESSAGE_VERIFIED = 0x8026
 const TPM_ST_DIGEST_VERIFIED = 0x8027
@@ -230,6 +237,11 @@ const INITIAL_CHECKS: Omit<CheckEntry, 'status' | 'detail'>[] = [
     id: 'V185-024',
     name: 'TPM2_VerifySequenceComplete → MESSAGE_VERIFIED',
     section: 'Part 3 §20.3 Table 119',
+  },
+  {
+    id: 'V185-025',
+    name: 'TPM2_NV_Certify digest mode (schemeless ML-DSA-65)',
+    section: 'Part 3 §31.9 + Errata v1 §2.7',
   },
 ]
 
@@ -1235,6 +1247,118 @@ export function ComplianceRunner() {
           }
         } catch (e) {
           markError('V185-024', String(e))
+        }
+      }
+
+      // ── V185-025: TPM2_NV_Certify digest mode (schemeless ML-DSA-65) ──
+      // Errata v1 §2.7: NV_Certify's digest-mode branch must fall back to
+      // the signing key's Name algorithm when the scheme carries no hash
+      // (pure ML-DSA/HashML-DSA) — mirrors TPM2_Quote's identical §2.6
+      // fallback. Found missing in this engine during the 2026-07-24
+      // spec-alignment audit; this check is the regression guard for that
+      // fix, verified by independently recomputing the digest and
+      // comparing it to what the TPM returned — not just checking rc=0.
+      updateCheck('V185-025', { status: 'running' })
+      await delay()
+      addLine('divider', '')
+      addLine('phase', '[+] Phase 10 — NV Certify  (schemeless ML-DSA-65, Errata §2.7)')
+      if (akHandle === 0) {
+        markFail('V185-025', 'Skipped — CreatePrimary ML-DSA-65 failed')
+      } else {
+        try {
+          const nvData = new Uint8Array(64)
+          for (let i = 0; i < nvData.length; i++) nvData[i] = i
+          await nvDefineSpace(NV_CERTIFY_TEST_INDEX, nvData.length)
+          await nvWrite(NV_CERTIFY_TEST_INDEX, nvData)
+
+          addLine(
+            'send',
+            '    → TPM2_NV_Certify(signHandle=AK, authHandle=nvIndex, nvIndex, inScheme=NULL, size=0, offset=0)  [Part 3 §31.9]'
+          )
+          const p: number[] = []
+          putU16(p, 0x8002) // TPM_ST_SESSIONS
+          putU32(p, 0)
+          putU32(p, CC_NV_CERTIFY)
+          putU32(p, akHandle) // @signHandle
+          putU32(p, NV_CERTIFY_TEST_INDEX) // @authHandle (= nvIndex; AUTHREAD, empty auth)
+          putU32(p, NV_CERTIFY_TEST_INDEX) // nvIndex
+          // authArea: 18 bytes — two empty-password PW sessions (signHandle, authHandle)
+          putU32(p, 18)
+          putU32(p, RS_PW)
+          putU16(p, 0)
+          p.push(0)
+          putU16(p, 0)
+          putU32(p, RS_PW)
+          putU16(p, 0)
+          p.push(0)
+          putU16(p, 0)
+          // P1: qualifyingData
+          putU16(p, 8)
+          for (let i = 0; i < 8; i++) p.push(0x22)
+          // P2: inScheme = TPM_ALG_NULL (pure ML-DSA has no scheme hash)
+          putU16(p, ALG_NULL)
+          // P3: size = 0, P4: offset = 0 → digest mode
+          putU16(p, 0)
+          putU16(p, 0)
+          const total = p.length
+          p[2] = (total >> 24) & 0xff
+          p[3] = (total >> 16) & 0xff
+          p[4] = (total >> 8) & 0xff
+          p[5] = total & 0xff
+          const resp = await executeTpmCommand(new Uint8Array(p))
+          const h = parseHeader(resp)
+          if (h.rc !== 0) {
+            markFail('V185-025', `rc=0x${h.rc.toString(16).padStart(8, '0')}`)
+            addLine('recv', `    ← rc=0x${h.rc.toString(16).padStart(8, '0')} ✗`, false)
+            if ((h.rc & 0x3f) === 0x12) {
+              addLine(
+                'recv',
+                '    ← TPM_RC_SCHEME — the Errata §2.7 Name-algorithm fallback is missing again',
+                false
+              )
+            }
+          } else {
+            // certifyInfo = TPMS_ATTEST: magic(4) + type(2) + qualifiedSigner(TPM2B_NAME)
+            //   + extraData(TPM2B_DATA) + clockInfo(17) + firmwareVersion(8)
+            //   + attested.nvDigest{ indexName(TPM2B_NAME), nvDigest(TPM2B_DIGEST) }
+            const certifyInfoSize = getU16(resp, 14)
+            const certifyInfo = resp.slice(16, 16 + certifyInfoSize)
+            const qnSize = getU16(certifyInfo, 6)
+            let off = 8 + qnSize
+            const edSize = getU16(certifyInfo, off)
+            off += 2 + edSize
+            off += 17 + 8 // clockInfo + firmwareVersion
+            const indexNameSize = getU16(certifyInfo, off)
+            off += 2 + indexNameSize
+            const nvDigestSize = getU16(certifyInfo, off)
+            const nvDigest = certifyInfo.slice(off + 2, off + 2 + nvDigestSize)
+
+            const expectedDigest = new Uint8Array(await crypto.subtle.digest('SHA-256', nvData))
+            const matches =
+              nvDigest.length === expectedDigest.length &&
+              nvDigest.every((b, i) => b === expectedDigest[i])
+
+            if (matches) {
+              markPass(
+                'V185-025',
+                `nvDigest=${nvDigestSize}B matches independently-computed SHA-256 (key Name algorithm) ✓`
+              )
+              addLine(
+                'recv',
+                `    ← nvDigest (${nvDigestSize} B) = SHA-256(NV contents) via the key's Name algorithm ✓`,
+                true
+              )
+            } else {
+              markFail(
+                'V185-025',
+                `nvDigest=${toHex(nvDigest)} ≠ expected SHA-256=${toHex(expectedDigest)}`
+              )
+              addLine('recv', '    ← nvDigest does not match — wrong hash algorithm used ✗', false)
+            }
+          }
+        } catch (e) {
+          markError('V185-025', String(e))
+          addLine('recv', `    ← ERROR: ${String(e)}`, false)
         }
       }
 

@@ -1922,6 +1922,88 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
   },
 
   {
+    key: 'TPM2_NV_Certify',
+    cc: 0x00000184,
+    name: 'TPM2_NV_Certify',
+    section: 'TCG Part 3 §31.9 (V1.85) + Errata v1 §2.7',
+    phase: 'use',
+    requiresDsa: true,
+    showAlgorithm: false,
+    description:
+      "Signs a TPM-attested digest (or contents) of an NV index using the specified signing key. With size=offset=0 this is digest mode: the TPM hashes the NV contents and signs a TPMS_NV_DIGEST_CERTIFY_INFO. For signing keys with no scheme hash (pure ML-DSA / HashML-DSA), Errata v1 §2.7 requires the TPM to fall back to the key's Name algorithm — the exact fallback TPM2_Quote already applies to pcrDigest (§2.6). Exercised by the Compliance Suite's V185-025 check.",
+    why: 'Proves NV-resident data to a remote verifier without exposing the signing key. The digest-mode fallback matters because pure ML-DSA/HashML-DSA schemes carry no hash algorithm of their own — a TPM that skips the Name-algorithm fallback either refuses honestly (TPM_RC_SCHEME) or, if implemented incorrectly, hashes with an invalid algorithm.',
+    params: () => [
+      {
+        name: '@signHandle',
+        tpmType: 'TPMI_DH_OBJECT+',
+        value: 'ML-DSA-65 AK handle',
+        description: 'Auth Index: 1, Auth Role: USER.',
+      },
+      {
+        name: '@authHandle',
+        tpmType: 'TPMI_RH_NV_AUTH+',
+        value: 'NV index handle (self-auth via AUTHREAD)',
+        description: 'Auth Index: 2, Auth Role: USER.',
+      },
+      {
+        name: 'nvIndex',
+        tpmType: 'TPMI_RH_NV_INDEX',
+        value: 'same NV index handle',
+        description: 'Auth Index: None.',
+      },
+      {
+        name: 'qualifyingData',
+        tpmType: 'TPM2B_DATA',
+        value: 'caller-supplied nonce (any bytes)',
+        description: 'Anti-replay nonce; copied verbatim into the signed TPMS_ATTEST.',
+      },
+      {
+        name: 'inScheme',
+        tpmType: 'TPMT_SIG_SCHEME+',
+        value: 'TPM_ALG_NULL (use key default)',
+        description:
+          'Signing scheme override; NULL → derive from key (schemeless for pure ML-DSA).',
+      },
+      {
+        name: 'size',
+        tpmType: 'UINT16',
+        value: '0',
+        description: '0 with offset=0 selects digest mode (TPMS_ATTEST_NV_DIGEST).',
+      },
+      {
+        name: 'offset',
+        tpmType: 'UINT16',
+        value: '0',
+        description: '0 with size=0 selects digest mode.',
+      },
+    ],
+    respFields: () => [
+      {
+        name: 'tag',
+        tpmType: 'TPM_ST',
+        byteOffset: 0,
+        byteSize: 2,
+        description: '0x8002 = TPM_ST_SESSIONS.',
+      },
+      {
+        name: 'certifyInfo',
+        tpmType: 'TPM2B_ATTEST',
+        byteOffset: 14,
+        byteSize: 0,
+        description:
+          'Signed TPMS_ATTEST blob; type=TPM_ST_ATTEST_NV_DIGEST selects attested.nvDigest = {indexName, nvDigest}.',
+      },
+      {
+        name: 'signature',
+        tpmType: 'TPMT_SIGNATURE',
+        byteOffset: 0,
+        byteSize: 0,
+        description: 'sigAlg(2) + TPM2B_SIGNATURE_MLDSA{size, buf} for ML-DSA AK.',
+      },
+    ],
+  },
+
+  {
     key: 'TPM2_NV_Read',
     cc: 0x0000014e,
     name: 'TPM2_NV_Read',

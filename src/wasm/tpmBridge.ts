@@ -56,7 +56,11 @@ export function setTpmWireListener(listener: TpmWireListener | null): void {
 // Build stamp used for cache-busting — updated each deploy
 // 20260515-v0p8-rc4-wire: pqctoday-tpm v0.8.0 — V1.85 RC4 SignDigest +
 // VerifyDigestSignature wire-format migration (Tables 126 / 120).
-const WASM_BUILD = '20260515-v0p8-rc4-wire'
+// 20260724-v185-errata-fix: pqctoday-tpm fix/v185-errata-remediation-0724 —
+// TPM_PT_REVISION/PS_REVISION corrected to 185/0x107 (were stale at 183/0x106)
+// and TPM2_NV_Certify digest-mode now falls back to the Name algorithm for
+// schemeless ML-DSA/HashML-DSA keys (Errata v1 sections 2.1 + 2.7).
+const WASM_BUILD = '20260724-v185-errata-fix'
 
 // V2.7 RC1 provisioning status, captured after registerPqcBridge runs.
 // Indexes: 0=ML-KEM-512, 1=ML-KEM-768, 2=ML-KEM-1024,
