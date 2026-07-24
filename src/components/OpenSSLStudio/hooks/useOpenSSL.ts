@@ -22,7 +22,6 @@ export const useOpenSSL = () => {
     setIsProcessing,
     isProcessing,
     addFile,
-    files,
     command: currentCommand,
     setLastExecutionTime,
     addStructuredLog,
@@ -241,9 +240,13 @@ export const useOpenSSL = () => {
         // Generate unique request ID for tracking
         const requestId = `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
 
+        // Read fresh from the store rather than the closed-over `files` —
+        // see runCommand's comment below for why a stale snapshot is a real
+        // bug, not just theoretical, when commands run back-to-back.
+        const currentFiles = useOpenSSLStore.getState().files
         // Send command AND files in one message to ensure they are written to the fresh module
         // Convert all file content to Uint8Array to prevent "Unsupported data type" errors
-        const filesAsUint8Array = files.map((f) => ({
+        const filesAsUint8Array = currentFiles.map((f) => ({
           name: f.name,
           data:
             f.content instanceof Uint8Array
@@ -267,15 +270,7 @@ export const useOpenSSL = () => {
         } as WorkerMessage)
       }
     },
-    [
-      currentCommand,
-      isProcessing,
-      setIsProcessing,
-      clearTerminalLogs,
-      addLog,
-      files,
-      setLastExecutionTime,
-    ]
+    [currentCommand, isProcessing, setIsProcessing, clearTerminalLogs, addLog, setLastExecutionTime]
   )
 
   /**
@@ -304,7 +299,17 @@ export const useOpenSSL = () => {
       setIsProcessing(true)
       startTimeRef.current = performance.now()
 
-      const filesAsUint8Array = files.map((f) => ({
+      // Read the CURRENT store state, not the `files` this callback closed
+      // over — a lesson's runAll() calls this same function reference
+      // repeatedly in a tight sequential loop, each step's FILE_CREATED
+      // landing in the store between calls. Closing over `files` (even
+      // with it in the deps array) captures a snapshot from whenever this
+      // callback was last recreated, which is stale by the second step:
+      // the file the PREVIOUS step in the same run just created would be
+      // missing from the message sent to the worker. getState() always
+      // reflects what's true right now, regardless of render timing.
+      const currentFiles = useOpenSSLStore.getState().files
+      const filesAsUint8Array = currentFiles.map((f) => ({
         name: f.name,
         data:
           f.content instanceof Uint8Array
@@ -326,7 +331,7 @@ export const useOpenSSL = () => {
         } as WorkerMessage)
       })
     },
-    [files, setIsProcessing]
+    [setIsProcessing]
   )
 
   const executeSkey = useCallback(
