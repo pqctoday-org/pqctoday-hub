@@ -84,6 +84,14 @@ export interface HsmContextValue {
   // ── WASM handles ──────────────────────────────────────────────────────────
   /** Primary execution engine */
   moduleRef: React.MutableRefObject<SoftHSMModule | null>
+  /**
+   * The SAME module as `moduleRef`, unwrapped (no logging proxy) — for
+   * internal bookkeeping calls that aren't part of any lesson's taught
+   * content and must never appear in the call log (e.g. discoverHsmObjects'
+   * per-step registry sync). Never use this for anything a learner should
+   * see; use `moduleRef` for that.
+   */
+  rawModuleRef: React.MutableRefObject<SoftHSMModule | null>
   /** Secondary execution engine (fallback verification) */
   crossCheckModuleRef: React.MutableRefObject<SoftHSMModule | null>
   hSessionRef: React.MutableRefObject<number>
@@ -167,6 +175,7 @@ export const useHsmContext = (): HsmContextValue => {
 
 export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const moduleRef = useRef<SoftHSMModule | null>(null)
+  const rawModuleRef = useRef<SoftHSMModule | null>(null)
   const crossCheckModuleRef = useRef<SoftHSMModule | null>(null)
   const hSessionRef = useRef<number>(0)
   const slotRef = useRef<number>(0)
@@ -264,18 +273,22 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           throw new Error('Unknown engine mode')
         }
         const engineLabel = mode === 'rust' ? 'rust' : 'cpp'
+        rawModuleRef.current = M
         const proxy = createLoggingProxy(M, addHsmLog, engineLabel)
         moduleRef.current = proxy
         // The WASM modules are singletons, so a prior init (e.g. the user
         // switching engine mode without reloading) leaves C_Initialize already
         // called — re-initializing would throw CKR_CRYPTOKI_ALREADY_INITIALIZED.
         // Finalize first; it's a best-effort no-op when nothing was initialized.
-        hsm_finalize(proxy, hSessionRef.current)
+        // On the raw module, not the proxy — this guard isn't part of any
+        // lesson's taught content and shouldn't ever show up as a confusing
+        // "CKR_CRYPTOKI_NOT_INITIALIZED" pair before a learner's first step.
+        hsm_finalize(M, hSessionRef.current)
         hsm_initialize(proxy)
         if (checkM) {
           const cp = createLoggingProxy(checkM, addHsmLog, 'rust')
           crossCheckModuleRef.current = cp
-          hsm_finalize(cp, hSessionRef.current)
+          hsm_finalize(checkM, hSessionRef.current)
           hsm_initialize(cp)
         }
         setPhase('initialized')
@@ -293,6 +306,7 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         return true
       } catch {
         moduleRef.current = null
+        rawModuleRef.current = null
         crossCheckModuleRef.current = null
         return false
       }
@@ -314,6 +328,7 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const value = useMemo<HsmContextValue>(
     () => ({
       moduleRef,
+      rawModuleRef,
       crossCheckModuleRef,
       hSessionRef,
       slotRef,
