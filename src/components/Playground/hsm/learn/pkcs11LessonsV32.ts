@@ -22,9 +22,14 @@ import {
   hsm_slhdsaSign,
   hsm_slhdsaVerify,
   hsm_generateAESKey,
+  hsm_aesWrapKey,
   hsm_aesGcmWrapKey,
   hsm_aesGcmUnwrapKey,
   hsm_generateAESKeyPinnedTo,
+  hsm_generateAESKeyWrapWithTrusted,
+  hsm_importTrustedWrapKey,
+  hsm_setBoolAttr,
+  hsm_relogin,
   hsm_aesEncrypt,
   hsm_findAllObjects,
   hsm_destroyObject,
@@ -32,6 +37,7 @@ import {
   freeTemplate,
   CKM_AES_GCM,
   CKA_ALLOWED_MECHANISMS,
+  CKA_TRUSTED,
   CKA_CLASS,
   CKA_TOKEN,
   CKA_ENCRYPT,
@@ -798,5 +804,114 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
     whyItMatters:
       'This is the whole curriculum in one sequence — foundations (object lifecycle), the PQC primitives (ML-DSA), and the discipline (provision successor, cut over, destroy predecessor) that makes a migration real rather than aspirational.',
     tryRef: ['keystore', 'sign_verify'],
+  },
+  {
+    id: 'trust-wrapping-policy',
+    n: 10,
+    tag: 'New in v3.2',
+    tone: 'warn',
+    title: 'Trust & wrapping policy',
+    blurb:
+      'CKA_WRAP_WITH_TRUSTED pins a key so only a CKA_TRUSTED wrapping key may ever wrap it out — and CKA_TRUSTED itself is the one attribute you can never set yourself, not even as the token administrator, once a key already exists.',
+    setup:
+      "This lesson runs the real policy chain end to end: an ordinary attempt to bless a key as trusted, an ordinary wrap that the policy blocks, the SO round trip that actually satisfies it, and the closing honesty check — even the SO who granted trust can't revoke it afterward through this call. Every CKR quoted below is what this engine actually returned when this lesson was authored, not an assumed spec value.",
+    steps: [
+      {
+        op: 'C_GenerateKey ×2',
+        label: 'Generate an ordinary wrapping key and a policy-pinned target key',
+        run: (hsm) => {
+          const M = requireModule(hsm)
+          const wrapHandle = hsm_generateAESKey(M, hsm.hSessionRef.current, 256)
+          const targetHandle = hsm_generateAESKeyWrapWithTrusted(M, hsm.hSessionRef.current, 256)
+          return { detail: `wrap=${wrapHandle} target=${targetHandle}` }
+        },
+      },
+      {
+        op: 'C_WrapKey (ordinary wrapping key)',
+        label: 'Try to wrap the pinned key with that ordinary wrapping key',
+        expect: 'refusal',
+        run: (hsm, results) => {
+          const M = requireModule(hsm)
+          const d = results[0]?.detail ?? ''
+          const wrapHandle = Number((d.match(/wrap=(\d+)/) ?? [])[1])
+          const targetHandle = Number((d.match(/target=(\d+)/) ?? [])[1])
+          hsm_aesWrapKey(M, hsm.hSessionRef.current, wrapHandle, targetHandle)
+          return {
+            detail: 'Unexpectedly wrapped — CKA_WRAP_WITH_TRUSTED should have blocked this.',
+          }
+        },
+      },
+      {
+        op: 'C_SetAttributeValue (CKA_TRUSTED)',
+        label: 'Try to bless that same wrapping key as trusted, yourself',
+        expect: 'refusal',
+        run: (hsm, results) => {
+          const M = requireModule(hsm)
+          const wrapHandle = Number((results[0]?.detail.match(/wrap=(\d+)/) ?? [])[1])
+          hsm_setBoolAttr(M, hsm.hSessionRef.current, wrapHandle, CKA_TRUSTED, true)
+          return {
+            detail:
+              'Unexpectedly allowed — CKA_TRUSTED must never be caller-settable after creation.',
+          }
+        },
+      },
+      {
+        op: 'C_Logout + C_Login(SO) + C_CreateObject(CKA_TRUSTED=true) + C_Login(USER)',
+        label: 'Log in as SO and import a genuinely trusted wrapping key',
+        run: (hsm) => {
+          const M = requireModule(hsm)
+          // Same fixed SO PIN HsmContext uses to stand the shared token up
+          // (hsm_initToken('12345678', …)) — this is the one call in the
+          // whole Learn tab that briefly changes the shared session's role.
+          hsm_relogin(M, hsm.hSessionRef.current, 'so', '12345678')
+          try {
+            const trustedHandle = hsm_importTrustedWrapKey(M, hsm.hSessionRef.current, 256)
+            return { detail: `trusted=${trustedHandle}` }
+          } finally {
+            // Always restore the USER session, even if the import above
+            // throws — every other lesson and workbench tab assumes it.
+            hsm_relogin(M, hsm.hSessionRef.current, 'user', 'user1234')
+          }
+        },
+      },
+      {
+        op: 'C_WrapKey (SO-blessed trusted key)',
+        label: 'Wrap the pinned key with the SO-blessed trusted wrapping key',
+        run: (hsm, results) => {
+          const M = requireModule(hsm)
+          const targetHandle = Number((results[0]?.detail.match(/target=(\d+)/) ?? [])[1])
+          const trustedHandle = Number((results[3]?.detail.match(/trusted=(\d+)/) ?? [])[1])
+          const wrapped = hsm_aesWrapKey(M, hsm.hSessionRef.current, trustedHandle, targetHandle)
+          return { detail: `Wrapped ${wrapped.length} bytes — the policy is satisfied now.` }
+        },
+      },
+      {
+        op: 'C_Login(SO) + C_SetAttributeValue(CKA_TRUSTED=false)',
+        label: 'Even as SO, try to revoke trust on an existing key',
+        expect: 'refusal',
+        run: (hsm, results) => {
+          const M = requireModule(hsm)
+          const trustedHandle = Number((results[3]?.detail.match(/trusted=(\d+)/) ?? [])[1])
+          hsm_relogin(M, hsm.hSessionRef.current, 'so', '12345678')
+          try {
+            hsm_setBoolAttr(M, hsm.hSessionRef.current, trustedHandle, CKA_TRUSTED, false)
+            return {
+              detail:
+                'Unexpectedly allowed — even the SO who granted CKA_TRUSTED could revoke it afterward.',
+            }
+          } finally {
+            hsm_relogin(M, hsm.hSessionRef.current, 'user', 'user1234')
+          }
+        },
+      },
+    ],
+    notes: [
+      'CKA_TRUSTED has exactly one live door in this engine: C_CreateObject (raw key import) on an SO session. C_GenerateKey silently drops the attribute instead of erroring — the generated key is created fine, just never actually trusted — and C_SetAttributeValue refuses it unconditionally, for every caller, forever, once an object exists.',
+      "CKA_WRAP_WITH_TRUSTED is the ordinary, symmetric half of this policy — any caller can set it, at generation or afterward. The asymmetry is entirely on CKA_TRUSTED's side.",
+      'PKCS#11 v3.2 §4.7 defines a completely different trust mechanism (CKO_TRUST objects, CKT_TRUST_ANCHOR) for certificate chain validation — unrelated to CKA_TRUSTED/CKA_WRAP_WITH_TRUSTED (§4.2/§4.8) here, and not implemented in this engine at all. Lessons B1 and B8 already cover the session-level validation flags this build honestly reports as empty (§4.15.3.1); the equivalent key-level flags (§4.15.3.2, CKA_OBJECT_VALIDATION_FLAGS) are a separate, also-unimplemented gap.',
+    ],
+    whyItMatters:
+      "Wrap-with-trusted is how a real deployment stops a compromised or rogue wrapping key from ever moving your most sensitive material — and this lesson's closing refusal is the point: a policy that even its own administrator can silently loosen isn't a policy. CKA_TRUSTED's one-way, creation-time-only door is what makes the guarantee real.",
+    tryRef: ['key_wrap', 'keystore'],
   },
 ]

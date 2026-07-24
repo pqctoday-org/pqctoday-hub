@@ -60,16 +60,33 @@ describe('classifyStepOutcome', () => {
     expect(classifyStepOutcome('refusal', [])).toBe('failed')
   })
 
-  it('expect: "refusal" where the last real call actually SUCCEEDED fails (the lesson\'s premise didn\'t hold)', () => {
+  it('expect: "refusal" where the only real call actually SUCCEEDED fails (the lesson\'s premise didn\'t hold)', () => {
     const entries = [call({ fn: 'C_UnwrapKeyAuthenticated', ok: true }), header()]
     expect(classifyStepOutcome('refusal', entries)).toBe('failed')
   })
 
-  it('expect: "refusal" where the last real call TRAP\'d (a WASM-level crash, not a clean CKR refusal) fails', () => {
+  it('expect: "refusal" where the only real call TRAP\'d (a WASM-level crash, not a clean CKR refusal) fails', () => {
     const entries = [
       { ...call({ fn: 'C_UnwrapKeyAuthenticated', ok: false }), rvHex: 'TRAP' },
       header(),
     ]
     expect(classifyStepOutcome('refusal', entries)).toBe('failed')
+  })
+
+  it('expect: "refusal" where a genuine refusal is followed by successful cleanup calls still classifies as refused-ok', () => {
+    // Real scenario from the trust-wrapping-policy lesson: a step logs back
+    // in as SO, tries to revoke CKA_TRUSTED (refused), then a `finally`
+    // block always restores the USER session — two MORE successful calls
+    // logged after the refusal. Newest-first order means those sit at index
+    // 0 and 1, ahead of the actual failing call.
+    const entries = [
+      call({ fn: 'C_Login', ok: true }), // finally: re-login as user (newest)
+      call({ fn: 'C_Logout', ok: true }), // finally: logout
+      call({ fn: 'C_SetAttributeValue', ok: false }), // the actual refusal
+      call({ fn: 'C_Login', ok: true }), // setup: login as SO
+      call({ fn: 'C_Logout', ok: true }), // setup: logout
+      header(),
+    ]
+    expect(classifyStepOutcome('refusal', entries)).toBe('refused-ok')
   })
 })
