@@ -29,6 +29,20 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.23.0] - 2026-07-23
+
+A TPM 2.0 Playground release: a new guided Learn tab teaching classical-vs-post-quantum TPM operations side by side, and a fix to the underlying crypto bridge that had been silently substituting placeholder data for real ML-DSA signatures and ML-KEM key exchanges.
+
+### Added
+
+- **New guided Learn tab for the TPM 2.0 Playground** [view:/playground] [persona:developer] [persona:architect] [persona:researcher]: 8 step-by-step lessons — from booting the emulated chip through attestation — that pair a classical TPM operation (RSA signing, RSA key transport, hash-then-sign) against its post-quantum replacement (ML-DSA signing, ML-KEM key exchange, streaming signatures) and run both for real against the live in-browser TPM. Includes a glossary of TPM commands and terms, and short knowledge checks after each lesson.
+
+### Fixed
+
+- **The TPM Playground's post-quantum cryptography is now genuinely real** [view:/playground] [persona:developer] [persona:researcher]: ML-DSA signatures and ML-KEM key exchanges were silently falling back to placeholder data instead of running through the actual post-quantum crypto engine, even though the playground's status indicator reported everything as active. Both are now real, and the status indicator only reports active when it actually is.
+- **The TPM Playground's Command Builder no longer sends made-up data for multi-step operations** [view:/playground] [persona:developer]: decrypting a key exchange, verifying a signature, or completing a streaming signature used to send synthetic placeholder bytes instead of the real result from the step you just ran — it now chains your actual results through, and tells you when a prerequisite step hasn't been run yet instead of silently guessing.
+- **The TPM Playground's compliance checklist can no longer misreport a passing score** [view:/playground] [persona:developer] [persona:ops]: if the automated 24-point compliance run was interrupted partway through, it could still show a clean "all checks passed" result — it now honestly reports how many checks actually ran.
+
 ## [4.22.1] - 2026-07-24
 
 Small accuracy pass: Ops nav reachability, a persistence fix on mobile Timeline, softer Patents copy, several stale-citation and dead-link corrections across Learn, and a CACP KMIP 3.0 playground accuracy fix.
