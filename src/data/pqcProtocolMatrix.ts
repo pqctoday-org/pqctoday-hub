@@ -208,6 +208,15 @@ export interface DimensionStatus {
   note?: string
   deploymentPosture?: DeploymentPosture
   deploymentNote?: string
+  /**
+   * ISO date this cell was last checked against its `refs`/IETF datatracker
+   * — NOT a cited document's own publish date (see DimensionRef.publishedOn
+   * for that). Missing or older than 180 days flags this cell as
+   * stale-refresh in the maintenance pipeline (deferred-items plan
+   * Finding E). Stamped by a human re-verifying the cell, never
+   * machine-drafted.
+   */
+  lastReviewed?: string
 }
 
 export interface ProtocolDoc {
