@@ -38,6 +38,16 @@ An OpenSSL Studio release: a new guided Learn tab and a live Algorithm Explorer,
 - **New 11-lesson Learn tab for OpenSSL Studio** [view:/playground/openssl] [persona:developer] [persona:architect] [persona:researcher]: pairs each classical operation with its post-quantum replacement — key generation, certificate requests, signing and verification, ML-KEM key exchange, an honesty check on LMS/HSS keygen, an encryption/hashing myths lesson, key derivation, PKCS#12 bundling, random generation, and configuration — plus a TLS Simulator capstone. Every command runs for real against the site's OpenSSL engine, with a glossary rail and a short quiz after each lesson.
 - **New "Explore" tab shows every algorithm this exact OpenSSL build actually supports** [view:/playground/openssl] [persona:developer] [persona:researcher]: a searchable, filterable list grouped by algorithm family, built from live queries against the real engine rather than static documentation. Every non-default provider is functionally tested (not just checked for a self-reported "active" flag) before its algorithms are shown as usable — this caught the bundled `pkcs11` provider correctly listing ML-KEM, ML-DSA, and 3 hybrid composite signatures but not yet actually functional in this environment, and the Explorer reports it as such instead of overclaiming.
 
+## [4.25.2] - 2026-07-24
+
+### Added
+
+- **The PKCS#11 Learn tab now shows each step's own call log inline** [view:/playground/hsm] [view:/learn] [persona:developer]: previously the real HSM calls a step made only appeared in a shared log panel at the bottom of the lesson, so it wasn't obvious which calls belonged to the step you were looking at. Each step now shows its own compact table (function, arguments, return code, duration), with the reason shown inline for any failed call.
+
+### Fixed
+
+- **The PKCS#11 Learn tab's call log no longer shows confusing internal housekeeping as failed calls** [view:/playground/hsm] [view:/learn] [persona:developer]: a defensive startup check and a per-step registry sync — neither of them lesson content — were going through the same logging path as real operations. This showed every lesson's very first step starting with two unexplained "failed" calls, and every successful step in all 17 lessons ending with an empty init/cleanup bracket. Neither was ever meant to be learner-visible, and now isn't.
+
 ## [4.25.1] - 2026-07-24
 
 ### Added
