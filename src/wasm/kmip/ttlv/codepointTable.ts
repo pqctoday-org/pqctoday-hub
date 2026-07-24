@@ -26,8 +26,10 @@ interface SpecJson {
 }
 
 /** WD19 PQC tags absent from the published-3.0 spec JSON — mirrors
- * `_ttlv.py`'s `_SPEC_EXTRACT_TAG_PATCHES`. */
-const SPEC_EXTRACT_TAG_PATCHES: Record<string, number> = {
+ * `_ttlv.py`'s `_SPEC_EXTRACT_TAG_PATCHES`. Exported so `wd19Delta.local.test.ts`
+ * can assert every genuinely-WD19-only entry here is documented in
+ * `public/kmip-corpus/tags-enums-wd19-delta.json` (2026-07-23 re-audit, X1). */
+export const SPEC_EXTRACT_TAG_PATCHES: Record<string, number> = {
   KEMAlgorithm: 0x4201c3,
   Deterministic: 0x4201c4,
   ContextString: 0x4201c5,
@@ -53,8 +55,9 @@ const SPEC_EXTRACT_TAG_PATCHES: Record<string, number> = {
 }
 
 /** Enum members absent/incomplete in the published-3.0 spec JSON — mirrors
- * `_ttlv.py`'s `_SPEC_EXTRACT_PATCHES`. */
-const SPEC_EXTRACT_PATCHES: Record<string, Record<string, number>> = {
+ * `_ttlv.py`'s `_SPEC_EXTRACT_PATCHES`. Exported for the same completeness-test
+ * reason as `SPEC_EXTRACT_TAG_PATCHES` above. */
+export const SPEC_EXTRACT_PATCHES: Record<string, Record<string, number>> = {
   MaskGenerator: { MGF1: 0x00000001 },
   KeyFormatType: { SeedPrivateKey: 0x00000018 },
   // §6.1.6 Certify / §6.1.50 Re-certify's `Certificate Request Type`
@@ -93,7 +96,15 @@ const SPEC_EXTRACT_PATCHES: Record<string, Record<string, number>> = {
   CryptographicAlgorithm: {
     DES: 0x00000001,
     DES3: 0x00000002,
-    RC4: 0x00000005,
+    // Found 2026-07-23 (WD19-delta completeness check): was 0x00000005 —
+    // that's DSA's codepoint, not RC4's. Real RC4 is 0x00000016 per the
+    // spec extraction's own 'RC4' entry; this patch was silently
+    // clobbering the correct base-JSON value with the wrong one. Currently
+    // unreachable (RC4 isn't in kmipMeta.ts's ALGORITHMS list, so no UI
+    // path encodes it), so no user-visible defect today — fixed anyway
+    // since it's the same defect class as H1 (wrong codepoint silently
+    // encoded) and now caught by the completeness test below.
+    RC4: 0x00000016,
     // BSI TR-02102-1 §2.4.1/§2.4.2 vendor KEMs (2026-07-06) — not in the
     // published-3.0 spec JSON since they're vendor extensions, not OASIS
     // codepoints (Classic McEliece's 0x34 is a real OASIS value; FrodoKEM's
