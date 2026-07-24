@@ -14,7 +14,13 @@ import { useCallback, useState } from 'react'
 import { AlertCircle, CheckCircle2, Download, Play, Shield, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { executeTpmCommandLarge, flushAllTransient, readPublic } from '../../../wasm/tpmBridge'
+import {
+  executeTpmCommandLarge,
+  flushAllTransient,
+  readPublic,
+  withTpmLock,
+} from '../../../wasm/tpmBridge'
+import { useTpmBusy } from './useTpmBusy'
 import { verify as mldsaVerify } from '../../../wasm/liboqs_dsa'
 import {
   MLDSA_AK_SPECS,
@@ -232,6 +238,7 @@ export function AttestationPanel({ isWasmReady }: Props) {
   const [busy, setBusy] = useState(false)
   const [result, setResult] = useState<AttestResult | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const tpmBusy = useTpmBusy()
 
   const run = useCallback(async () => {
     if (!isWasmReady) return
@@ -239,123 +246,131 @@ export function AttestationPanel({ isWasmReady }: Props) {
     setError(null)
     setResult(null)
     try {
-      const qData = hexToBytes(nonce)
+      // The whole flush → ReadPublic → Quote/Certify sequence must run as
+      // one exclusive operation against the shared WASM TPM instance, or
+      // another panel's commands can land in an `await` gap between these
+      // calls and corrupt shared transient-object state (see tpmBridge.ts's
+      // withTpmLock and the 2026-07-24 TPM playground concurrency
+      // remediation).
+      await withTpmLock(async () => {
+        const qData = hexToBytes(nonce)
 
-      // Free any transient-object slots left over from previous panels
-      // (Compliance Runner, Command Builder, EK Explorer). Without this,
-      // Quote/Certify can hit TPM_RC_OBJECT_MEMORY (0x902 = RC_WARN + 0x002)
-      // when libtpms tries to allocate its internal signing-context slot
-      // (V1.85 Part 3 §28.4 Tables 228-229).
-      await flushAllTransient()
+        // Free any transient-object slots left over from previous panels
+        // (Compliance Runner, Command Builder, EK Explorer). Without this,
+        // Quote/Certify can hit TPM_RC_OBJECT_MEMORY (0x902 = RC_WARN + 0x002)
+        // when libtpms tries to allocate its internal signing-context slot
+        // (V1.85 Part 3 §28.4 Tables 228-229).
+        await flushAllTransient()
 
-      // Fetch AK pubkey via TPM2_ReadPublic.
-      const tpmtPublic = await readPublic(ak.persistentHandle)
-      const pubkey = extractMlDsaPubkey(tpmtPublic)
-      if (pubkey.length !== ak.fipsPubKeySize) {
-        throw new Error(`AK pubkey ${pubkey.length} B ≠ FIPS expected ${ak.fipsPubKeySize} B`)
-      }
-
-      // Regression guard: bridge's last paramSet-cached pubkey is intended
-      // as a diagnostic for cache-collision symptoms. The per-key handle
-      // pinned in the libtpms sensitive buffer (pqcCryptoBridge.ts MAGIC
-      // 0x42504751) is the authoritative path; this is a belt-and-braces
-      // warning if for any reason it falls back to the per-paramSet cache
-      // and that cache disagrees with the TPM-stored AK pubkey.
-      try {
-        const { getBridgeMlDsaPubBytes } = await import('../../../wasm/pqcCryptoBridge')
-        const paramSet = ak.label === 'ML-DSA-44' ? 1 : ak.label === 'ML-DSA-65' ? 2 : 3
-        const bridgePub = getBridgeMlDsaPubBytes(paramSet)
-        if (bridgePub && bridgePub.length === pubkey.length) {
-          let match = true
-          for (let i = 0; i < pubkey.length; i++) {
-            // eslint-disable-next-line security/detect-object-injection
-            if (bridgePub[i] !== pubkey[i]) {
-              match = false
-              break
-            }
-          }
-          if (!match) {
-            console.warn(
-              `[Attestation] TPM AK_pub differs from bridge paramSet=${paramSet} cached pub — ` +
-                `the per-key handle pinned in sensitive will sign with the right key, ` +
-                `but a regression in that code path would cause a verify rejection here.`
-            )
-          }
+        // Fetch AK pubkey via TPM2_ReadPublic.
+        const tpmtPublic = await readPublic(ak.persistentHandle)
+        const pubkey = extractMlDsaPubkey(tpmtPublic)
+        if (pubkey.length !== ak.fipsPubKeySize) {
+          throw new Error(`AK pubkey ${pubkey.length} B ≠ FIPS expected ${ak.fipsPubKeySize} B`)
         }
-      } catch (diagErr) {
-        console.warn('[Attestation] bridge cross-check failed:', diagErr)
-      }
 
-      let cmd: Uint8Array
-      if (operation === 'quote') {
-        const sel = parsePcrSelection(pcrSel)
-        cmd = buildQuoteCommand(ak.persistentHandle, qData, sel)
-      } else {
-        cmd = buildCertifyCommand(ak.persistentHandle, ak.persistentHandle, qData)
-      }
-
-      // Response must fit: ML-DSA-87 sig = 4627 B + attest 144-174 B + framing.
-      const resp = await executeTpmCommandLarge(cmd, 8192)
-      const { attest, signature } = parseAttestResponse(resp)
-
-      const hasGeneratedMagic =
-        attest.length >= 4 &&
-        attest[0] === TPM_GENERATED_VALUE[0] &&
-        attest[1] === TPM_GENERATED_VALUE[1] &&
-        attest[2] === TPM_GENERATED_VALUE[2] &&
-        attest[3] === TPM_GENERATED_VALUE[3]
-
-      const partial: AttestResult = {
-        operation,
-        ak,
-        attest,
-        signature,
-        pubkey,
-        verifyResult: 'pending',
-        hasGeneratedMagic,
-      }
-      setResult(partial)
-
-      // Independent verification via OpenSSL WASM (drives openssl pkeyutl -verify).
-      try {
-        const pubkeyPem = pemSpkiFromRawMlDsa(pubkey, ak)
-        const ok = await mldsaVerify(signature, attest, pubkeyPem)
-        setResult({ ...partial, verifyResult: ok ? 'pass' : 'fail' })
-
-        // If verify failed, try the bridge's last paramSet-cached pubkey
-        // as a second pass. If THAT verifies, the bug is bridge cache
-        // collision (TPM-stored AK_pub doesn't match the key softhsmv3
-        // actually signed with). If that also fails, the bug is somewhere
-        // in sig generation or message-bytes plumbing.
-        if (!ok) {
-          try {
-            const { getBridgeMlDsaPubBytes } = await import('../../../wasm/pqcCryptoBridge')
-            const paramSet = ak.label === 'ML-DSA-44' ? 1 : ak.label === 'ML-DSA-65' ? 2 : 3
-            const bridgePub = getBridgeMlDsaPubBytes(paramSet)
-            if (bridgePub && bridgePub.length === pubkey.length) {
-              const bridgePem = pemSpkiFromRawMlDsa(bridgePub, ak)
-              const retryOk = await mldsaVerify(signature, attest, bridgePem)
-              if (retryOk) {
-                console.warn(
-                  '[Attestation] verify against TPM-stored AK_pub REJECTED but verify against ' +
-                    'bridge paramSet=' +
-                    paramSet +
-                    ' cached pubkey PASSED — bridge cache collision regressed; ' +
-                    'see pqcCryptoBridge.ts per-key handle path.'
-                )
+        // Regression guard: bridge's last paramSet-cached pubkey is intended
+        // as a diagnostic for cache-collision symptoms. The per-key handle
+        // pinned in the libtpms sensitive buffer (pqcCryptoBridge.ts MAGIC
+        // 0x42504751) is the authoritative path; this is a belt-and-braces
+        // warning if for any reason it falls back to the per-paramSet cache
+        // and that cache disagrees with the TPM-stored AK pubkey.
+        try {
+          const { getBridgeMlDsaPubBytes } = await import('../../../wasm/pqcCryptoBridge')
+          const paramSet = ak.label === 'ML-DSA-44' ? 1 : ak.label === 'ML-DSA-65' ? 2 : 3
+          const bridgePub = getBridgeMlDsaPubBytes(paramSet)
+          if (bridgePub && bridgePub.length === pubkey.length) {
+            let match = true
+            for (let i = 0; i < pubkey.length; i++) {
+              // eslint-disable-next-line security/detect-object-injection
+              if (bridgePub[i] !== pubkey[i]) {
+                match = false
+                break
               }
             }
-          } catch (diagErr) {
-            console.warn('[Attestation] bridge-pub retry failed:', diagErr)
+            if (!match) {
+              console.warn(
+                `[Attestation] TPM AK_pub differs from bridge paramSet=${paramSet} cached pub — ` +
+                  `the per-key handle pinned in sensitive will sign with the right key, ` +
+                  `but a regression in that code path would cause a verify rejection here.`
+              )
+            }
           }
+        } catch (diagErr) {
+          console.warn('[Attestation] bridge cross-check failed:', diagErr)
         }
-      } catch (verifyErr: unknown) {
-        setResult({
-          ...partial,
-          verifyResult: 'fail',
-          verifyError: verifyErr instanceof Error ? verifyErr.message : String(verifyErr),
-        })
-      }
+
+        let cmd: Uint8Array
+        if (operation === 'quote') {
+          const sel = parsePcrSelection(pcrSel)
+          cmd = buildQuoteCommand(ak.persistentHandle, qData, sel)
+        } else {
+          cmd = buildCertifyCommand(ak.persistentHandle, ak.persistentHandle, qData)
+        }
+
+        // Response must fit: ML-DSA-87 sig = 4627 B + attest 144-174 B + framing.
+        const resp = await executeTpmCommandLarge(cmd, 8192)
+        const { attest, signature } = parseAttestResponse(resp)
+
+        const hasGeneratedMagic =
+          attest.length >= 4 &&
+          attest[0] === TPM_GENERATED_VALUE[0] &&
+          attest[1] === TPM_GENERATED_VALUE[1] &&
+          attest[2] === TPM_GENERATED_VALUE[2] &&
+          attest[3] === TPM_GENERATED_VALUE[3]
+
+        const partial: AttestResult = {
+          operation,
+          ak,
+          attest,
+          signature,
+          pubkey,
+          verifyResult: 'pending',
+          hasGeneratedMagic,
+        }
+        setResult(partial)
+
+        // Independent verification via OpenSSL WASM (drives openssl pkeyutl -verify).
+        try {
+          const pubkeyPem = pemSpkiFromRawMlDsa(pubkey, ak)
+          const ok = await mldsaVerify(signature, attest, pubkeyPem)
+          setResult({ ...partial, verifyResult: ok ? 'pass' : 'fail' })
+
+          // If verify failed, try the bridge's last paramSet-cached pubkey
+          // as a second pass. If THAT verifies, the bug is bridge cache
+          // collision (TPM-stored AK_pub doesn't match the key softhsmv3
+          // actually signed with). If that also fails, the bug is somewhere
+          // in sig generation or message-bytes plumbing.
+          if (!ok) {
+            try {
+              const { getBridgeMlDsaPubBytes } = await import('../../../wasm/pqcCryptoBridge')
+              const paramSet = ak.label === 'ML-DSA-44' ? 1 : ak.label === 'ML-DSA-65' ? 2 : 3
+              const bridgePub = getBridgeMlDsaPubBytes(paramSet)
+              if (bridgePub && bridgePub.length === pubkey.length) {
+                const bridgePem = pemSpkiFromRawMlDsa(bridgePub, ak)
+                const retryOk = await mldsaVerify(signature, attest, bridgePem)
+                if (retryOk) {
+                  console.warn(
+                    '[Attestation] verify against TPM-stored AK_pub REJECTED but verify against ' +
+                      'bridge paramSet=' +
+                      paramSet +
+                      ' cached pubkey PASSED — bridge cache collision regressed; ' +
+                      'see pqcCryptoBridge.ts per-key handle path.'
+                  )
+                }
+              }
+            } catch (diagErr) {
+              console.warn('[Attestation] bridge-pub retry failed:', diagErr)
+            }
+          }
+        } catch (verifyErr: unknown) {
+          setResult({
+            ...partial,
+            verifyResult: 'fail',
+            verifyError: verifyErr instanceof Error ? verifyErr.message : String(verifyErr),
+          })
+        }
+      })
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : String(e))
     } finally {
@@ -490,7 +505,7 @@ export function AttestationPanel({ isWasmReady }: Props) {
           />
         </div>
 
-        <Button variant="gradient" onClick={run} disabled={!isWasmReady || busy}>
+        <Button variant="gradient" onClick={run} disabled={!isWasmReady || busy || tpmBusy}>
           <Play className="h-4 w-4 mr-2" />
           {busy ? 'Running…' : `Run ${operation === 'quote' ? 'Quote' : 'Certify'}`}
         </Button>
