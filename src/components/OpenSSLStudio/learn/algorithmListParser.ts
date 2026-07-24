@@ -201,14 +201,33 @@ export function parseFlatProvidedList(raw: string, sourceList: string): Algorith
 //
 // `list -providers` self-reports `status: active` for ANY registered
 // provider — that only means it loaded into the registry, not that it can
-// actually do anything (see the pkcs11 provider discovered 2026-07-24:
-// registered, build info "Built for SoftHSMv3 PQC Parity", but every real
-// operation through it fails with "Module initialization failed!" because
-// the underlying PKCS#11 module/token isn't wired up in this sandbox — a
-// deliberately-linked, not-yet-finished TLS-handshake feature, see
-// openssl-studio-phase3-algorithm-explorer-plan-07242026.md §1/§3).
-// `default` is trivially functional (everything in this Studio already
-// depends on it) and is never re-probed.
+// actually do anything. So every non-default provider gets probed with a
+// real operation before we show its algorithms as usable. `default` is
+// trivially functional (everything in this Studio already depends on it)
+// and is never re-probed.
+//
+// The pkcs11 provider needs a DIFFERENT probe from everyone else, because
+// the generic one asks for something a PKCS#11 token is designed to refuse.
+//
+// Verified against the 2026-07-24 rebuild, in this order:
+//   1. `genpkey -provider pkcs11 ... -out probe.key` used to fail with
+//      "Module initialization failed!". That is FIXED — config.h now
+//      defines DEFAULT_PKCS11_MODULE and apps_startup() registers the
+//      provider in the global lib ctx, so the module loads.
+//   2. With no token yet, it then failed honestly with "The token was not
+//      present in its slot".
+//   3. With a token provisioned, RSA key generation SUCCEEDS and the
+//      command still exits non-zero — at "Error writing key(s)", because
+//      `-out <file>` asks to export a CKA_SENSITIVE token-resident private
+//      key. Refusing that is the whole point of an HSM.
+//
+// So a generic keygen-to-file probe can never pass here, no matter how
+// healthy the provider is. We instead exercise the path this provider is
+// actually for: generate a key INTO the token (via the worker's direct
+// C_GenerateKeyPair — `genpkey -out pkcs11:` would write a PEM to MEMFS
+// rather than the token), then have the CLI read the PUBLIC half back
+// through a `pkcs11:` URI. Reading it back proves the whole chain:
+// CLI → OSSL_STORE → pkcs11-provider → engine → token object.
 
 export interface ProviderProbeResult {
   functional: boolean
@@ -216,6 +235,9 @@ export interface ProviderProbeResult {
   error?: string
   /** Which algorithm name was used for the probe. */
   probedWith?: string
+  /** How the probe reached the provider — shown so the badge is not a bare
+   *  claim. e.g. "pkcs11: URI (global libctx)". */
+  probedVia?: string
 }
 
 /** Picks a reasonable probe target from a provider's own registered
@@ -231,10 +253,58 @@ export function pickProbeTarget(entries: AlgorithmEntry[], provider: string): st
   return pqc?.aliases[0]
 }
 
+/** Object id the pkcs11 probe generates into the token and then reads back.
+ *  Fixed rather than random so repeated probes reuse one object instead of
+ *  littering the token. */
+export const PKCS11_PROBE_KEY_ID = 'explorer-probe'
+/** Algorithm the pkcs11 probe generates. ML-DSA-65 rather than RSA: it is
+ *  what this engine is actually for, and it is fast to generate. */
+export const PKCS11_PROBE_ALGORITHM = 'ML-DSA-65'
+
+/**
+ * Probe for the pkcs11 provider specifically.
+ *
+ * Deliberately passes NO `-provider` flag — see the section comment above:
+ * that flag creates a separate libctx which cannot see the statically
+ * linked provider, so using it would test nothing except our own mistake.
+ * Instead we exercise the real path: generate a token-resident key (via the
+ * worker's direct C_GenerateKeyPair, since `genpkey -out pkcs11:` would
+ * write a PEM to MEMFS rather than the token), then have the OpenSSL CLI
+ * read that key back through a `pkcs11:` URI against the global libctx.
+ * Reading the public half back proves the whole chain works: CLI → OSSL_STORE
+ * → pkcs11-provider → engine → token object.
+ *
+ * `hsmKeygen` is supplied by the Studio (worker-backed). When absent — e.g.
+ * the Node test driver, or a build with no token support — we skip straight
+ * to the URI read, which is still a genuine end-to-end test if a key exists.
+ */
+export async function probePkcs11Functional(
+  run: (cmd: string) => Promise<{ stdout: string }>,
+  hsmKeygen?: (algorithm: string, keyId: string) => Promise<unknown>
+): Promise<ProviderProbeResult> {
+  const probedVia = 'pkcs11: URI (global libctx, no -provider flag)'
+  try {
+    if (hsmKeygen) await hsmKeygen(PKCS11_PROBE_ALGORITHM, PKCS11_PROBE_KEY_ID)
+    // Read the public half back out of the token through the provider.
+    await run(`pkey -in "pkcs11:object=${PKCS11_PROBE_KEY_ID};type=private?pin-value=1234" -pubout`)
+    return { functional: true, probedWith: PKCS11_PROBE_ALGORITHM, probedVia }
+  } catch (e) {
+    return {
+      functional: false,
+      error: e instanceof Error ? e.message : String(e),
+      probedWith: PKCS11_PROBE_ALGORITHM,
+      probedVia,
+    }
+  }
+}
+
 /** Runs one cheap real genpkey through the named provider and reports
  * whether it actually worked — never trusts `list -providers`'s
  * self-reported `status` alone. `run` is the same `OpenSslLearnContext.run`
- * used everywhere else (browser worker or the Node driver in tests). */
+ * used everywhere else (browser worker or the Node driver in tests).
+ *
+ * For `pkcs11`, callers must use probePkcs11Functional instead: the
+ * `-provider` flag this builds is precisely what breaks that provider. */
 export async function probeProviderFunctional(
   run: (cmd: string) => Promise<{ stdout: string }>,
   provider: string,
@@ -244,12 +314,17 @@ export async function probeProviderFunctional(
   const cmd = `genpkey -provider ${provider} -provider default -propquery provider=${provider} -algorithm ${probeAlgorithm}${pkeyopt} -out explorer-probe-${provider}.key`
   try {
     await run(cmd)
-    return { functional: true, probedWith: probeAlgorithm }
+    return {
+      functional: true,
+      probedWith: probeAlgorithm,
+      probedVia: `-provider ${provider}`,
+    }
   } catch (e) {
     return {
       functional: false,
       error: e instanceof Error ? e.message : String(e),
       probedWith: probeAlgorithm,
+      probedVia: `-provider ${provider}`,
     }
   }
 }

@@ -36,6 +36,7 @@ import {
   parseLegacySection,
   pickProbeTarget,
   probeProviderFunctional,
+  probePkcs11Functional,
   type AlgorithmEntry,
   type AlgorithmFamily,
   type ProviderStatus,
@@ -194,6 +195,19 @@ const ProviderRow = ({
         {provider.buildInfo && (
           <p className="mt-1 text-[11px] text-muted-foreground">Build: {provider.buildInfo}</p>
         )}
+        {/* How it was probed — so "Verified functional" is an auditable claim
+            rather than a bare badge. */}
+        {functional === true && probe?.probedVia && (
+          <p className="mt-1 text-[11px] text-muted-foreground">
+            Probed via <span className="font-mono">{probe.probedVia}</span>
+            {probe.probedWith ? (
+              <>
+                {' '}
+                using <span className="font-mono">{probe.probedWith}</span>
+              </>
+            ) : null}
+          </p>
+        )}
         {functional === false && probe?.error && (
           <p className="mt-1 border-l-2 border-status-warning/60 bg-status-warning/5 py-1 pl-2 text-[11px] text-status-warning">
             Real error from probing with{' '}
@@ -210,11 +224,16 @@ export function AlgorithmExplorerPanel({
   loadError,
   retryLoad,
   runCommand,
+  hsmKeygen,
 }: {
   isReady: boolean
   loadError?: string | null
   retryLoad?: () => void
   runCommand: (cmd: string) => Promise<{ stdout: string }>
+  /** Generates a key INTO the PKCS#11 token. Supplied by the Studio (worker
+   *  backed); absent in contexts without token support, where the pkcs11
+   *  probe falls back to reading whatever key already exists. */
+  hsmKeygen?: (algorithm: string, keyId: string) => Promise<unknown>
 }) {
   const [providers, setProviders] = useState<ProviderStatus[]>([])
   const [probes, setProbes] = useState<Record<string, ProviderProbeResult>>({})
@@ -253,6 +272,14 @@ export function AlgorithmExplorerPanel({
             functional: true,
             probedWith: '(trusted — everything else here already depends on it)',
           }
+          continue
+        }
+        if (p.key === 'pkcs11') {
+          // Needs its own probe: the generic one passes `-provider pkcs11`,
+          // which creates a separate libctx that cannot see the statically
+          // linked provider — it would report a failure it caused itself.
+          // See algorithmListParser.ts's provider-honesty section.
+          nextProbes[p.key] = await probePkcs11Functional(runCommand, hsmKeygen)
           continue
         }
         const target = pickProbeTarget(merged, p.key)
