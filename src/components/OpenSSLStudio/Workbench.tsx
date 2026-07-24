@@ -46,9 +46,22 @@ interface WorkbenchProps {
       | 'configutl'
       | 'kdf'
   ) => void
+
+  // Sourced once from useOpenSSL() at the OpenSSLStudioView level — see
+  // WorkbenchPreview.tsx for why this isn't called here directly.
+  executeCommand: (cmdOverride?: string) => Promise<void>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  executeSkey: (opType: 'create' | 'derive', params: Record<string, any>) => Promise<void>
+  retryLoad: () => void
 }
 
-export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
+export const Workbench = ({
+  category,
+  setCategory,
+  executeCommand,
+  executeSkey,
+  retryLoad,
+}: WorkbenchProps) => {
   const { setCommand, files } = useOpenSSLStore()
 
   // Key Gen State
@@ -617,7 +630,12 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
             kdfScryptP={kdfScryptP}
             setKdfScryptP={setKdfScryptP}
           />
-          <WorkbenchPreview category={category} />
+          <WorkbenchPreview
+            category={category}
+            executeCommand={executeCommand}
+            executeSkey={executeSkey}
+            retryLoad={retryLoad}
+          />
         </>
       )}
     </div>

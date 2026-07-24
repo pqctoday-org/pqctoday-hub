@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { render, screen } from '@testing-library/react'
-import { describe, it, expect, vi } from 'vitest'
+import { render, screen, fireEvent } from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
 import { OpenSSLStudioView } from './OpenSSLStudioView'
 
@@ -12,25 +12,40 @@ vi.mock('./components/WorkbenchFileManager', () => ({
 vi.mock('./TerminalOutput', () => ({ TerminalOutput: () => <div>TerminalOutput Component</div> }))
 vi.mock('./LogsTab', () => ({ LogsTab: () => <div>LogsTab Component</div> }))
 vi.mock('./FileEditor', () => ({ FileEditor: () => <div>FileEditor</div> }))
+vi.mock('./learn/OpenSslLearnView', () => ({ OpenSslLearnView: () => <div>OpenSslLearnView</div> }))
+
+/** Minimal Worker stub — OpenSSLStudioView now mounts useOpenSSL() directly
+ * (hoisted from WorkbenchPreview so the Learn tab shares one worker/WASM
+ * instance instead of reloading on tab switch — see WorkbenchPreview.tsx). */
+class FakeWorker {
+  onmessage: ((ev: MessageEvent) => void) | null = null
+  postMessage = vi.fn()
+  terminate = vi.fn()
+  addEventListener = vi.fn()
+  removeEventListener = vi.fn()
+}
 
 describe('OpenSSLStudioView Tabs', () => {
-  it('renders the correct header based on active tab', () => {
+  beforeEach(() => {
+    // @ts-expect-error — jsdom doesn't implement Worker; stub it for this test.
+    global.Worker = FakeWorker
+  })
+
+  it('defaults to the Learn tab, and the Workbench pane (with its own Terminal/Logs header) is reachable via the Workbench tab', () => {
     render(
       <MemoryRouter>
         <OpenSSLStudioView />
       </MemoryRouter>
     )
 
-    // Default is Terminal tab — header is now a tab button, not a heading
+    // Learn is the first-position, default-selected tab (matching the
+    // KMIP/PKCS#11/TPM playgrounds' convention) — the Workbench's own
+    // Terminal/Logs header isn't mounted until that tab is selected.
+    expect(screen.getByText('OpenSslLearnView')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /terminal/i })).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: /workbench/i }))
+
     expect(screen.getByRole('button', { name: /terminal/i })).toBeInTheDocument()
-
-    // Switch to Logs via store (simulating sidebar click)
-    // We need to mock the store or use the real one. Since we are using the real store in the component,
-    // we can manipulate it directly if needed, or just rely on the component rendering.
-    // However, since we can't click the sidebar button here (it's in Workbench which is mocked),
-    // we might need to mock the store hook to return different values or just test the rendering logic.
-
-    // For this test, let's just verify the default state is correct.
-    // To test the switch, we would need to integrate with the real store or mock the hook return value.
   })
 })

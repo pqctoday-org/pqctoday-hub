@@ -2,7 +2,6 @@
 import React from 'react'
 import { Play, Settings, Copy, Terminal, BookOpen, AlertTriangle, RotateCcw } from 'lucide-react'
 import { useOpenSSLStore } from '../store'
-import { useOpenSSL } from '../hooks/useOpenSSL'
 import { logEvent } from '../../../utils/analytics'
 import { getOpenSSLDocUrl, tokenizeCommand } from '../../../utils/opensslDocsData'
 import { Button } from '@/components/ui/button'
@@ -11,11 +10,23 @@ interface WorkbenchPreviewProps {
   category: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   skeyParams?: Record<string, any>
+  // Sourced once from useOpenSSL() at the OpenSSLStudioView level (not
+  // called here) so the Learn tab can share the exact same worker/WASM
+  // instance instead of each tab mounting its own and reloading on switch.
+  executeCommand: (cmdOverride?: string) => Promise<void>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  executeSkey: (opType: 'create' | 'derive', params: Record<string, any>) => Promise<void>
+  retryLoad: () => void
 }
 
-export const WorkbenchPreview: React.FC<WorkbenchPreviewProps> = ({ category, skeyParams }) => {
+export const WorkbenchPreview: React.FC<WorkbenchPreviewProps> = ({
+  category,
+  skeyParams,
+  executeCommand,
+  executeSkey,
+  retryLoad,
+}) => {
   const { isProcessing, command, isReady, loadError } = useOpenSSLStore()
-  const { executeCommand, executeSkey, retryLoad } = useOpenSSL()
 
   const handleRun = () => {
     if (category === 'skey' && skeyParams) {
