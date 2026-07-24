@@ -29,6 +29,12 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.25.4] - 2026-07-24
+
+### Added
+
+- **The TPM 2.0 Playground's Learn tab now shows each step's real wire exchange inline** [view:/playground/tpm-playground] [persona:developer] [persona:architect]: every lesson step displays the actual TPM command and response it sent, in a collapsible hex panel, including ones triggered internally by a step's own helper calls — not just the ones a step calls directly. Any non-success response now also shows a real decoded return-code name and description, not just a raw hex code, covering the full TCG-specified error space instead of a small hardcoded list.
+
 ## [4.25.3] - 2026-07-24
 
 ### Fixed
