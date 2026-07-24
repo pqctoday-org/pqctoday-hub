@@ -16,9 +16,13 @@ import type { LessonStepExpect } from '@/components/Playground/learnkit/lessonTy
  * wrong lesson.
  *
  * Only call this once a step has actually thrown — a genuine refusal means
- * the engine was reached: at least one real (non-header) log entry was
- * produced for this step, and the most recent one failed with a real
- * PKCS#11 return code (not a WASM-level trap).
+ * the engine was reached: at least one real (non-header) log entry for this
+ * step failed with a real PKCS#11 return code (not a WASM-level trap).
+ *
+ * Checks ALL of this step's calls, not just the most recent one — a step
+ * may run cleanup calls in a `finally` block AFTER the refusing call (e.g.
+ * restoring a session's login role), and those succeed, so the newest entry
+ * alone isn't a reliable signal of what actually happened.
  *
  * @param expect              The step's declared expectation.
  * @param newEntriesThisStep  Log entries produced since this step started,
@@ -31,7 +35,6 @@ export function classifyStepOutcome(
 ): 'refused-ok' | 'failed' {
   if (expect !== 'refusal') return 'failed'
   const realCalls = newEntriesThisStep.filter((e) => !e.isStepHeader)
-  const lastCall = realCalls[0] // newest-first: index 0 is the most recent real call
-  const engineRefused = !!lastCall && lastCall.ok === false && lastCall.rvHex !== 'TRAP'
+  const engineRefused = realCalls.some((e) => e.ok === false && e.rvHex !== 'TRAP')
   return engineRefused ? 'refused-ok' : 'failed'
 }
