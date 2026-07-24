@@ -43,7 +43,7 @@ const VARIABLE_ITEM_TAGS = new Set(
 export const isVolatileTag = (tag: string): boolean => VARIABLE_ITEM_TAGS.has(norm(tag))
 
 /** A handful of §4.1.1 Variable Items are ALSO optional-presence per the
- * main KMIP 3.0 §6.4 message-envelope rules — the server MAY emit or omit
+ * KMIP 3.0 §8.2.3 Response Batch Item structure table — the server MAY emit or omit
  * them. Different OASIS fixtures pick one form or the other for the same
  * op, so the comparator drops these from both sides before structural
  * (child-count) comparison, rather than treating presence/absence as a

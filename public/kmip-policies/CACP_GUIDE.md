@@ -278,9 +278,15 @@ code needs is hand-patched into `codepointTable.ts`'s
 `SPEC_EXTRACT_PATCHES`/`SPEC_EXTRACT_TAG_PATCHES` and `_ttlv.py`'s Python
 mirror, each individually cross-checked against `kmip/src/kmip30/
 {algos,ops}.rs` — that's the actual source of truth for anything past 0x4A,
-not this JSON file. **§-section citations throughout this guide and the
-Commands tab follow CSD01 numbering** (the HTML's own TOC) except where
-explicitly marked `WD19 §…` for the two WD19-only operations.)
+not this JSON file. As of 2026-07-23, every genuinely WD19-only value those
+patches inject is also documented, with its WD19 table/section citation, in
+`kmip-spec-3.0-wd19-delta.json` (staged alongside the CSD01 JSON) — and
+`wd19Delta.local.test.ts` fails the build if a future patch isn't accounted
+for by either the CSD01 JSON, the delta file, or an explicit documented
+exception (vendor-extension codepoints, CSD01 extraction typos). **§-section
+citations throughout this guide and the Commands tab follow CSD01 numbering**
+(the HTML's own TOC) except where explicitly marked `WD19 §…` for the
+WD19-only operations and fields.)
 
 **Hybrid KEM — a pure hybrid key type; batches are NOT involved.**
 `X25519MLKEM768` (0x5C) and `SecP256r1MLKEM768` (0x5D) are first-class
