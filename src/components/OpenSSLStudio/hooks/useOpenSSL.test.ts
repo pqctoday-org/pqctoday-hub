@@ -27,7 +27,7 @@ describe('useOpenSSL — shell pipe guard', () => {
     vi.clearAllMocks()
     // @ts-expect-error — jsdom doesn't implement Worker; stub it for this test.
     global.Worker = FakeWorker
-    vi.mocked(useOpenSSLStore).mockReturnValue({
+    const mockStore = {
       addLog: mockAddLog,
       clearTerminalLogs: vi.fn(),
       setIsProcessing: mockSetIsProcessing,
@@ -39,8 +39,14 @@ describe('useOpenSSL — shell pipe guard', () => {
       addStructuredLog: vi.fn(),
       setIsReady: vi.fn(),
       setLoadError: mockSetLoadError,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test mock
-    } as any)
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test mock
+    vi.mocked(useOpenSSLStore).mockReturnValue(mockStore as any)
+    // executeCommand/runCommand read useOpenSSLStore.getState().files fresh
+    // at call time (not the destructured `files` above) — see useOpenSSL.ts's
+    // stale-closure comment — so the static accessor needs the same stub.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test mock
+    ;(useOpenSSLStore as any).getState = vi.fn().mockReturnValue(mockStore)
   })
 
   it('refuses a command containing a shell pipe instead of silently mis-parsing it', async () => {

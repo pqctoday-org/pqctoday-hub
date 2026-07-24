@@ -267,3 +267,28 @@ export const OPENSSL_GLOSSARY_DATA: GlossaryData = {
 }
 
 export { TERMS }
+
+// ── PQC variant-name fallback ───────────────────────────────────────────────
+//
+// TAG_GLOSSARY only defines the algorithm FAMILY names ('ML-KEM', 'ML-DSA',
+// 'SLH-DSA') — but the actual command/list tokens shown via Term are the
+// specific parameter-set variant (e.g. "ML-DSA-65", "ML-KEM-768",
+// "SLH-DSA-SHA2-128s", or a pkcs11-style composite "MLDSA44-RSA2048-PSS-SHA256").
+// Term's lookup is an exact match, so those variant strings would otherwise
+// silently resolve to nothing and render with no hover/pin at all (found via
+// live browser testing 2026-07-24 — the family-only entries were never
+// reachable from any real command token). This resolves a variant name to
+// its family's glossaryKey before handing it to Term.
+const FAMILY_PREFIXES = ['ML-KEM', 'MLKEM', 'ML-DSA', 'MLDSA', 'SLH-DSA']
+
+export function resolveGlossaryKey(token: string): string {
+  // eslint-disable-next-line security/detect-object-injection -- read-only lookup against this module's own fixed glossary catalog, never used to write; token is a rendered command/algorithm name, never raw user input
+  if (TAG_GLOSSARY[token]) return token
+  const prefix = FAMILY_PREFIXES.find((p) => token.startsWith(p) && token !== p)
+  if (!prefix) return token
+  return prefix.startsWith('MLKEM') || prefix === 'MLKEM'
+    ? 'ML-KEM'
+    : prefix.startsWith('MLDSA') || prefix === 'MLDSA'
+      ? 'ML-DSA'
+      : prefix
+}
