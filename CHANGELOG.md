@@ -31,14 +31,22 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
-### Changed
+## [4.23.0] - 2026-07-23
 
+A PKCS#11 Learn tab release: a new lesson on key-trust policy, and a more trustworthy call log across the whole HSM playground.
+
+### Added
+
+- **New "Trust & wrapping policy" lesson in the PKCS#11 Learn tab** [view:/playground/hsm] [persona:developer] [persona:architect]: walks the real policy chain a security officer uses to designate one key as trusted for wrapping others — including the part that surprises people, that a normal user can never grant that trust themselves, not even to a key they just created.
 - **Added Algorithms to the IT Ops navigation** [view:/algorithms] [persona:ops]: the Certified-filter view and deployment-relevant status hints are now reachable from the Ops nav, matching every other technical persona.
 - **The mobile Timeline's "All phases" view now stays selected** [view:/timeline] [persona:ops]: switching off the one-phase-at-a-time swipe carousel used to reset on your next visit; your choice is now remembered.
 - **Softened the /patents preview banner for curious visitors** [view:/patents] [persona:curious]: the page was never actually locked for curious users, but the banner said "Preview locked" anyway — it now reads as a suggestion to build background first, not a rejection.
 
 ### Fixed
 
+- **The PKCS#11 workshop and Learn tab's call log now shows what actually happened, by default** [view:/learn] [view:/playground/hsm] [persona:developer]: a filter meant to hide routine housekeeping was also hiding real operations — logging in, discovering supported algorithms, and reading or writing key policies — so entire early lessons used to show an empty log the whole way through. Also added a plain-English toggle that was silently non-functional in both places.
+- **A skipped lesson step could display as "refused, correctly" when it had actually crashed** [view:/playground/hsm] [persona:developer]: jumping ahead to a later step before finishing earlier ones could trigger an unrelated error that still showed as the intended outcome. Both the workshop and the Learn tab now also block jumping ahead until each step's prerequisites are done.
+- **Refreshed the HSM playground's underlying crypto engines** [view:/playground/hsm] [persona:developer] [persona:ops]: carried over several correctness fixes already made to the engines but not yet reflected on the site, including a login-timing race and an RSA encryption parameter-handling fix.
 - **Corrected a stale 2024 data-breach citation** [view:/learn] [persona:executive]: the ROI calculator's methodology panel and the Risk Management module's intro both still cited IBM's 2024 report ($4.88M) after the underlying numbers had already moved to 2025's $4.44M global average.
 - **Corrected the "10-50x larger certificates" claim in the last two places it survived** [view:/learn] [persona:architect] [persona:curious]: the real figure is roughly 4-7x (already fixed elsewhere) — the Security Architect module and the Ops plain-language summary still had the old number.
 - **Replaced personal email contact links on the About page** [view:/about]: the sandbox-access and embedding-mode request links pointed at a personal Gmail address; they now go through the same trackable GitHub request form used everywhere else on the site.
