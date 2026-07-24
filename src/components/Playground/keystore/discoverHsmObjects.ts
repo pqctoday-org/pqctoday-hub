@@ -50,9 +50,14 @@ const CKO_TO_ROLE: Record<number, HsmKeyRole> = {
  * no render in between — sees keys registered by the previous call instead
  * of a stale pre-loop snapshot, which would otherwise re-discover and
  * duplicate-register the same handle on every iteration.
+ *
+ * Uses `rawModuleRef` (no logging proxy), not `moduleRef` — this is registry
+ * bookkeeping, not a lesson step, and its C_FindObjectsInit/Final bracket
+ * (which would otherwise show up after literally every step, around nothing
+ * visible in between) must never appear in a learner's call log.
  */
 export const discoverHsmObjects = (hsm: HsmContextValue): number => {
-  const M = hsm.moduleRef.current
+  const M = hsm.rawModuleRef.current
   const hSession = hsm.hSessionRef.current
   if (!M || !hSession) return 0
   const handles = hsm_findAllObjects(M, hSession, [])
