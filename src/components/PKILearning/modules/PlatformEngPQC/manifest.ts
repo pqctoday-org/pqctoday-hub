@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'Platform Engineering & PQC',
   description:
     'Inventory, migrate, and monitor every cryptographic primitive in your software delivery pipeline — CI/CD crypto assets, container image signing, IaC quantum-vulnerable defaults, OPA/Kyverno algorithm enforcement, and crypto posture monitoring.',
+  whyThisMatters:
+    'CI/CD pipelines and container images are full of cryptographic defaults nobody chose deliberately — IaC and policy-engine enforcement (OPA/Kyverno) are how you find and fix them before they ship, not after.',
   duration: '80 min',
   difficulty: 'advanced',
   frameworkPhase: ['p1', 'p5'],

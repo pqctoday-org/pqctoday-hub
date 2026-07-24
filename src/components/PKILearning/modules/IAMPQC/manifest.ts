@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'Identity & Access Management with PQC',
   description:
     'Migrate enterprise IAM systems to quantum-safe cryptography. Covers JWT/SAML token signing with ML-DSA, OIDC and OAuth 2.0 PQC migration, Active Directory and LDAP vulnerabilities, vendor roadmaps (Okta, Microsoft Entra, PingFederate, ForgeRock), and PQC-aware zero trust identity architecture.',
+  whyThisMatters:
+    'Identity is the perimeter now — every JWT, SAML assertion, and OIDC token your IAM stack signs is a target, and Okta, Entra, PingFederate, and ForgeRock are all on different PQC timelines you have to track.',
   duration: '60 min',
   difficulty: 'intermediate',
   frameworkPhase: 'p5',

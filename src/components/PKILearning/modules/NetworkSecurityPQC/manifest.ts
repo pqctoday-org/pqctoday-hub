@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'Network Security & PQC Migration',
   description:
     'Prepare NGFWs, IDS/IPS, and network security appliances for post-quantum cryptography. Covers TLS inspection impacts, DPI with larger PQC certs, vendor migration roadmaps (Cisco, Palo Alto, Fortinet, Juniper), and PQC-aware zero trust network architecture.',
+  whyThisMatters:
+    "TLS inspection and DPI already strain under today's certificate sizes — PQC certificates are bigger still, and NGFW/IDS vendors (Cisco, Palo Alto, Fortinet, Juniper) are migrating on different schedules you have to plan around.",
   duration: '90 min',
   difficulty: 'advanced',
   frameworkPhase: 'p6',

@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:36522bca-34db-4e17-b2b4-c927a4213156",
+  "serialNumber": "urn:uuid:c49a80a4-8b6c-4037-a7dd-114f0632e787",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-07-18T00:00:00.000Z",
+    "timestamp": "2026-07-24T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -28623,7 +28623,7 @@
           "primitive": "signature"
         }
       },
-      "description": "Reference C implementation of HAWK, a lattice-based signature scheme over NTRU lattices. NIST PQC Additional Signatures Round 2.",
+      "description": "Reference C implementation of HAWK, a lattice-based signature scheme over NTRU lattices. NIST PQC Additional Signatures Round 3.",
       "externalReferences": [
         {
           "type": "vcs",

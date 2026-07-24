@@ -137,6 +137,7 @@ export const VERB_TAGS: Record<string, VerbId[]> = {
   'sbx-migration-impact': ['benchmark'],
   'sbx-haproxy': ['benchmark', 'simulate'],
   'sbx-ab-handshake-bench': ['benchmark'],
+  'sbx-hsm-perf-bench': ['benchmark'],
   'sbx-pqcflow': ['discover'],
   'sbx-api-security-jwt': ['sign'],
   'sbx-stepca': ['certs'],
@@ -222,6 +223,7 @@ export const SUBGROUPS: Record<string, SubGroup[]> = {
       ids: [
         'sbx-migration-impact',
         'sbx-ab-handshake-bench',
+        'sbx-hsm-perf-bench',
         'sbx-crypto-discovery',
         'sbx-pqcflow',
       ],

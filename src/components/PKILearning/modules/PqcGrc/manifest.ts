@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'PQC GRC',
   description:
     'Wire post-quantum risk into governance, risk, and compliance: cascade Key Risk Indicators from board to operational level, triage a deferral exception register into SOC suppression, and hand off cleanly between GRC and the SOC.',
+  whyThisMatters:
+    'A Key Risk Indicator that never reaches the board is just a spreadsheet — cascading KRIs from operational to governance level is what turns a SOC finding into an organizational decision.',
   duration: '30 min',
   difficulty: 'intermediate',
   frameworkPhase: 'foundations',

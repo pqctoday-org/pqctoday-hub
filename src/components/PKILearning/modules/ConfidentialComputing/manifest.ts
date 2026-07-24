@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'Confidential Computing & TEEs',
   description:
     'Explore TEE architectures (SGX, TDX, CCA, SEV-SNP, Nitro), remote attestation, memory encryption, TEE-HSM integration, and quantum threat analysis.',
+  whyThisMatters:
+    "TEEs and PQC solve different problems — remote attestation, not confidentiality-at-rest — but a compromised TEE root of trust and a broken classical signature fail the same way: silently, until it's too late.",
   duration: '60 min',
   difficulty: 'advanced',
   frameworkPhase: 'p6',

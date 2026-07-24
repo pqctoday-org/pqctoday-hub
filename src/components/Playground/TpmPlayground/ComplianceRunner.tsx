@@ -1,7 +1,12 @@
 import { useState, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Terminal, Copy, CheckCircle, XCircle, Loader2, Shield } from 'lucide-react'
-import { executeTpmCommand, getLastTpmErr, clearLastTpmErr } from '../../../wasm/tpmBridge'
+import {
+  executeTpmCommand,
+  getLastTpmErr,
+  clearLastTpmErr,
+  flushAllTransient,
+} from '../../../wasm/tpmBridge'
 import {
   buildCommand,
   toHex,
@@ -259,8 +264,24 @@ export function ComplianceRunner() {
       { type: 'phase', text: '[+] Phase 1 — TPM Initialization' },
       { type: 'send', text: '    → tpm_wasm_startup()  →  TPM2_Startup(TPM_SU_CLEAR)' },
       { type: 'recv', text: '    ← RC=0x00000000  module ready, NV initialized ✓', ok: true },
-      { type: 'divider', text: '' },
+      { type: 'send', text: '    → flushing transient slots left over from other panels' },
     ])
+
+    // Free any transient-object slots left over from the Learn tab, Command
+    // Builder, or a previous run (the WASM libtpms build is configured with
+    // only 3 transient slots — see flushAllTransient's docstring). Without
+    // this, Phase 6's CreatePrimary(ML-DSA-65 AK) can hit TPM_RC_OBJECT_MEMORY
+    // (0x902 = RC_WARN + 0x002) purely because an earlier panel in the same
+    // session left an object loaded, not because anything here is broken.
+    // Non-fatal: this runs before the main try block, so a failure here must
+    // not leave isRunning stuck true.
+    try {
+      await flushAllTransient()
+      addLine('recv', '    ← transient slots clear ✓', true)
+    } catch (e) {
+      addLine('recv', `    ← WARNING: pre-flush failed (${String(e)}) — continuing`, false)
+    }
+    addLine('divider', '')
 
     let pass = 0
     let fail = 0
