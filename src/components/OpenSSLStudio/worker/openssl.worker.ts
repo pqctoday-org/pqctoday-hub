@@ -630,13 +630,25 @@ var executeCommand = async (
         requestId,
       })
       // @ts-ignore
-      openSSLModule.callMain(fullArgs)
+      const exitCode = openSSLModule.callMain(fullArgs)
       self.postMessage({
         type: 'LOG',
         stream: 'stdout',
-        message: '[Debug] callMain returned',
+        message: `[Debug] callMain returned (exit code ${exitCode})`,
         requestId,
       })
+      // callMain doesn't always throw on a nonzero exit — depending on the
+      // Emscripten build, a failed command (bad args, provider init
+      // failure, refused algorithm, etc.) can come back as a plain nonzero
+      // RETURN VALUE instead of a thrown ExitStatus. Both paths must be
+      // treated as failure, or callers awaiting this command's outcome
+      // (Learn tab's expect:'refusal' steps, the Algorithm Explorer's
+      // provider-functional probe) see a false success. See commandParser
+      // callers / algorithmListParser.ts's provider-honesty section for
+      // why this distinction is load-bearing, not cosmetic.
+      if (typeof exitCode === 'number' && exitCode !== 0) {
+        throw new Error(`OpenSSL exited with status ${exitCode}`)
+      }
     } catch (e: any) {
       if (e.name === 'ExitStatus') {
         if (e.status !== 0) {
