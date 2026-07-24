@@ -29,7 +29,9 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
-## [Unreleased]
+## [4.22.1] - 2026-07-24
+
+Small accuracy pass: Ops nav reachability, a persistence fix on mobile Timeline, softer Patents copy, several stale-citation and dead-link corrections across Learn, and a CACP KMIP 3.0 playground accuracy fix.
 
 ### Changed
 
@@ -43,6 +45,7 @@ first time (don't ship dev-speak and reformat later):
 - **Corrected the "10-50x larger certificates" claim in the last two places it survived** [view:/learn] [persona:architect] [persona:curious]: the real figure is roughly 4-7x (already fixed elsewhere) — the Security Architect module and the Ops plain-language summary still had the old number.
 - **Replaced personal email contact links on the About page** [view:/about]: the sandbox-access and embedding-mode request links pointed at a personal Gmail address; they now go through the same trackable GitHub request form used everywhere else on the site.
 - **Reviewed and corrected 8 Learn modules' internal citation lists** [view:/learn] [persona:developer] [persona:architect] [persona:ops]: PKI Workshop, KMS & PQC Key Management, Web Gateway PQC, VPN/IPsec & SSH, Email & Document Signing, Code Signing, IoT & OT Security, and Merkle Tree Certificates had never had their standards/algorithm references or example figures checked against the lesson content since being scaffolded — several had stale or disconnected numbers (e.g. the VPN/SSH module's handshake-size examples didn't match the sizes its own simulator computes); all are now verified and the "last reviewed" date is honest.
+- **Corrected spec citations and a dormant algorithm-mapping bug in the CACP KMIP 3.0 playground** [view:/playground/cacp] [persona:developer] [persona:architect]: a few Learn and Commands-tab surfaces cited a KMIP protocol section that doesn't exist in either published draft, and one legacy cipher option was silently mapped to the wrong protocol code — never reachable through the playground's UI, but now fixed and covered by an automated check so it can't drift back unnoticed.
 
 ### Data
 
