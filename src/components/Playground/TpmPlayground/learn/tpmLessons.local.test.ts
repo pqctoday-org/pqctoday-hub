@@ -151,39 +151,17 @@ describe('TPM curriculum structure', () => {
 
 // ── Live engine replay of every lesson step ────────────────────────────────
 //
-// Environment note: in THIS Node/vitest harness, softhsm-wasm performs
-// everything classical (RSA sign/verify/encrypt/decrypt, hash sequences),
-// ML-KEM ENCAPSULATION, ML-KEM/ML-DSA KEYGEN, and all wire/NV paths for
-// real — but softhsm PQC PRIVATE-KEY operations (ML-KEM C_DecapsulateKey,
-// ML-DSA C_SignInit) return CKR_KEY_HANDLE_INVALID (0x60). This is a
-// softhsm-wasm-in-Node limitation (an Emscripten heap/handle issue on the
-// private-key path), NOT a lesson or wire defect: in the browser (the
-// product environment) the PQC bridge performs both for real, proven by the
-// shipped ComplianceRunner's V185-014/015/017/018/021 checks and the
-// 2026-07-23 audit. So this replay tolerates ONLY that specific failure, and
-// ONLY on steps that actually invoke a PQC private-key operation; every
-// other path runs for real, and any OTHER failure (wrong offset, malformed
-// command, broken classical op) still fails the test.
-const involvesPqcPrivateKeyOp = (op: string): boolean =>
-  /Decapsulate|SignDigest|VerifyDigest|SignSequence|VerifySequence|SequenceUpdate|Quote|placeholder detector|spec-drift|ML-?DSA/i.test(
-    op
-  )
-// Error signatures of the known softhsm-Node private-key limitation:
-// decap → engine placeholder ss → "round trip broken"; sign → engine 0xEE →
-// verify sees TPM_RC_SIGNATURE. Bare 0x60 / KEY_HANDLE_INVALID included for
-// completeness.
-const isKnownPqcPrivKeyLimitation = (msg: string): boolean =>
-  /TPM_RC_SIGNATURE|0xee|placeholder stub|round trip broken|does not match|0x000001db|0x000003db|KEY_HANDLE_INVALID|0x60/i.test(
-    msg
-  )
-
+// Every step runs for real against the WASM engine — no tolerance, no
+// fallback. (History: this suite originally had to tolerate a
+// CKR_KEY_HANDLE_INVALID failure on ML-KEM decapsulation / ML-DSA signing.
+// That was traced to pqcCryptoBridge.ts's `ensureHSM()` logging into softhsm
+// as CKU_USER with a PIN that was never set — a bug present in the browser
+// too, not a Node-only limitation. Fixed 2026-07-23 by switching to the
+// proven `hsm_initToken`/`hsm_openUserSession` SO→InitPIN→logout→USER
+// sequence; see the fix commit for the full root-cause trace.)
 describe('TPM lessons replay against the real WASM engine', () => {
   let ctx: TpmLearnContext
   let provisionForT6: () => Promise<void>
-  // Discovered inline from the first PQC private-key step: assume live until a
-  // step proves otherwise with the known-limitation signature.
-  let pqcPrivKeyLive = true
-  const toleratedAcrossRun: string[] = []
 
   beforeAll(async () => {
     const factory = loadFactory()
@@ -195,20 +173,15 @@ describe('TPM lessons replay against the real WASM engine', () => {
     expect(mod.cwrap('tpm_wasm_startup', 'number', ['string'])('')).toBe(0)
 
     // Register the REAL PQC bridge (softhsm-wasm — loads in Node, same as the
-    // PKCS#11 lesson test does) so ML-KEM/ML-DSA run for real. Without it,
-    // signing returns 0xEE placeholders and the verify steps correctly reject
-    // them with TPM_RC_SIGNATURE — which is exactly what T8's detectors are
-    // FOR, but would make T3/T4/T5 false-fail. Registered on the test's own
-    // module, mirroring what initTpm() does in the browser.
+    // PKCS#11 lesson test does) so ML-KEM/ML-DSA run for real, including
+    // signing and decapsulation. Registered on the test's own module,
+    // mirroring what initTpm() does in the browser.
     const { registerPqcBridge } = await import('../../../../wasm/pqcCryptoBridge')
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test module shape matches PqcTpmModule at runtime
     await registerPqcBridge(mod as any)
 
-    // Eager C-side EK provisioning. Empirically this ALSO warms up the
-    // softhsm private-key path so the ML-KEM decapsulation in T3 succeeds in
-    // Node; without it, C_DecapsulateKey hits the same softhsm-Node
-    // CKR_KEY_HANDLE_INVALID (0x60) that limits ML-DSA signing. Creates the 6
-    // persistent EK handles 0x810100B0–B6 that T6 enumerates.
+    // C-side EK provisioning: creates the 6 persistent V2.7 EK handles
+    // (0x810100B0–B6) that T6 enumerates.
     mod.cwrap('tpm_wasm_provision_v2p7', 'number', [])()
 
     const proc = mod.cwrap('tpm_wasm_process', 'number', ['number', 'number', 'number', 'number'])
@@ -348,11 +321,6 @@ describe('TPM lessons replay against the real WASM engine', () => {
       bridgeStatus: () => 'active',
       chain: { handles: {} },
     }
-    // Reference the serializer import so its constants stay in the dep graph
-    // (used by the structural describe above); no runtime probe here — ML-DSA
-    // signing capability is discovered inline during the lessons below so
-    // T1–T3 run against an unpolluted softhsm session.
-    void SER.serializeDemoCommand
   }, 120_000)
 
   for (const lesson of TPM_LESSONS) {
@@ -363,7 +331,6 @@ describe('TPM lessons replay against the real WASM engine', () => {
       // Each lesson runs in its own fresh chain, like selectLesson does.
       ctx.chain = { handles: {} }
       const results: (TpmStepResult | null)[] = lesson.steps.map(() => null)
-      const tolerated: string[] = []
       for (let i = 0; i < lesson.steps.length; i++) {
         const step = lesson.steps[i]
         const where = `${lesson.id} step ${i + 1} (${step.op})`
@@ -371,45 +338,10 @@ describe('TPM lessons replay against the real WASM engine', () => {
           await expect(step.run(ctx, results), `${where} must be refused`).rejects.toThrow()
           continue
         }
-        try {
-          const r = await step.run(ctx, results)
-          expect(r.detail.length, where).toBeGreaterThan(0)
-          results[i] = r
-        } catch (e) {
-          const msg = e instanceof Error ? e.message : String(e)
-          // Tolerate ONLY the documented Node ML-DSA-sign limitation, and
-          // ONLY on steps that actually involve ML-DSA signing. Discovering
-          // it here flips mldsaSignLive so later steps/lessons match. Once a
-          // step is tolerated, the rest of the lesson depends on its output,
-          // so stop (downstream steps can't run without a real signature).
-          if (involvesPqcPrivateKeyOp(step.op) && isKnownPqcPrivKeyLimitation(msg)) {
-            pqcPrivKeyLive = false
-            const note = `${where}: ${msg.split('—')[0].trim()}`
-            tolerated.push(note)
-            toleratedAcrossRun.push(note)
-            break
-          }
-          throw new Error(`${where} failed unexpectedly: ${msg}`)
-        }
-      }
-      if (tolerated.length > 0) {
-        // eslint-disable-next-line no-console
-        console.info(
-          `[tpm-lessons] ${lesson.id}: reached the known Node PQC-private-key boundary — ${tolerated.join('; ')} (runs for real in the browser)`
-        )
+        const r = await step.run(ctx, results)
+        expect(r.detail.length, where).toBeGreaterThan(0)
+        results[i] = r
       }
     }, 60_000)
   }
-
-  it('documents the PQC-private-key environment boundary (never silent)', () => {
-    // Passes either way; makes the finding a visible, asserted fact. Under
-    // Node/vitest this lists the tolerated PQC private-key steps (ML-KEM
-    // decap, ML-DSA sign); in an environment where softhsm runs them (the
-    // browser), it's empty and every step above ran for real.
-    // eslint-disable-next-line no-console
-    console.info(
-      `[tpm-lessons] PQC private-key ops live: ${pqcPrivKeyLive}; tolerated ${toleratedAcrossRun.length} step(s) at the known Node boundary.`
-    )
-    expect(pqcPrivKeyLive || toleratedAcrossRun.length > 0).toBe(true)
-  })
 })
