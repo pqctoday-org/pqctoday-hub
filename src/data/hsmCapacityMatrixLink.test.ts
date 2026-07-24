@@ -141,7 +141,7 @@ describe('HSM capacity ↔ protocol matrix — maturity chips', () => {
     expect(tls?.kem?.tone).toBe('success')
 
     const dnssec = getUseCaseMaturity('dnssec')
-    expect(dnssec?.sig?.tone).toBe('error') // stage 'identified'
+    expect(dnssec?.sig?.tone).toBe('muted') // stage 'individual-draft' (advanced from 'identified' 2026-07-23 — real individual drafts exist)
 
     const payment = getUseCaseMaturity('payment')
     expect(payment?.kem).toBeUndefined()
