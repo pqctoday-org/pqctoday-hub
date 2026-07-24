@@ -98,7 +98,7 @@
     "term": "IKEv2",
     "acronym": "IKEv2",
     "definition": "Internet Key Exchange version 2, the protocol used to establish security associations in IPsec VPNs. PQC migration adds ML-KEM key exchange.",
-    "relatedModule": "/library?ref=IETF RFC 9370",
+    "relatedModule": "/library?ref=RFC 9370",
     "complexity": "intermediate",
     "category": "protocol"
   },
