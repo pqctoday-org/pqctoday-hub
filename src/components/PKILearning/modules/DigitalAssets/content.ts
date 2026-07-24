@@ -17,7 +17,6 @@ export const content: ModuleContent = {
     getStandard('BIP-32'),
     getStandard('BIP-39'),
     getStandard('BIP-44'),
-    getStandard('Solana-PQC-Helius'),
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
     getStandard('FIPS 206'),

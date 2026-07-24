@@ -29,6 +29,21 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.24.2] - 2026-07-24
+
+A maintenance-pipeline accuracy pass: several standards, catalog, timeline, glossary, and leaders-profile corrections found and verified during a full end-to-end review of the data maintenance process.
+
+### Data
+
+- **5 protocols advanced in the Standards Support Matrix, reflecting real IETF progress** [view:/algorithms] [persona:developer] [persona:architect]: Kerberos PKINIT's hybrid signature now shows an active individual draft, IKE/IPsec's pure-signature track reached IETF Last Call, DNSSEC's pure and hybrid signature tracks show an active individual draft (previously "no work identified"), and FIDO2's hybrid signature draft is now a formal working-group document. A companion automated drift check was also caught over-applying: 17 of 23 proposed updates would have wrongly shown protocols moving _backward_ (standards don't un-publish) — those were rejected and are being fixed at the source before the next run.
+- **Corrected HAWK's post-quantum signature status in the Migrate catalog** [view:/migrate] [persona:developer] [persona:researcher]: the reference implementation was still listed under NIST's Round 2 evaluation; NIST's own published update confirms it advanced to Round 3.
+- **4 more Migrate catalog products now show a verified certification** [view:/migrate] [persona:researcher]: Quantum Xchange Phio TX (FIPS 140-3 + ACVP), Chelpis's post-quantum library (3 ACVP validations), Securosys's Primus CyberVault (5 ACVP validations), and Pure Storage's Purity encryption module (FIPS 140-3) — each individually verified against NIST's own records, not auto-matched.
+- **Fixed 2 Migrate catalog products linked to the wrong company** [view:/migrate]: Eviden's Trustway Proteccio HSM and Forward Edge-AI's Space Router had each been attributed to an unrelated, similarly-named vendor.
+- **2 more Timeline milestones now show a verified source organization** [view:/timeline] [persona:researcher]: two NUKIB (Czech Republic national cyber agency) entries were missing their country/organization attribution on intake; both are now fully attributed and cross-referenced against the agency's registry entry.
+- **Fixed 3 broken "learn more" links in the Glossary** [view:/library]: IKEv2 and RFC 9370 pointed at a retired duplicate reference id, and SM2 pointed at a since-deprecated standard with no working source — SM2 now links to the active IETF draft covering its actual post-quantum hybrid use.
+- **Cleaned up 37 mislabeled entries in the authoritative sources directory** [view:/library] [persona:researcher]: organization-type labels using inconsistent spelling/spacing (e.g. "Industry Workgroup" vs. the standard "Industry_Workgroup") were normalized; this directory is now actively monitored for freshness and accuracy going forward.
+- **10 more Leaders profiles now show a verified peer-review credential** [view:/leaders] [persona:researcher]: each was independently confirmed against NIST, IETF, or an academic publication record (not inferred from the profile's own bio text) — including catching and correcting one profile that cited the wrong RFC.
+
 ## [4.24.1] - 2026-07-24
 
 ### Fixed

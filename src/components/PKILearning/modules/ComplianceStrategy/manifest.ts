@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'Compliance & Regulatory Strategy',
   description:
     'Map multi-jurisdiction requirements, build audit checklists, and construct compliance timelines from live framework data.',
+  whyThisMatters:
+    "Regulatory deadlines (CNSA 2.0, NIS2, DORA) are already law in some jurisdictions and proposed in others — a strategy built from live framework data, not last year's summary, is the difference between meeting a deadline and discovering it too late.",
   duration: '30 min',
   difficulty: 'beginner',
   frameworkPhase: 'foundations',

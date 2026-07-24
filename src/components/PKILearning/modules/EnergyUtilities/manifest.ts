@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'Energy & Utilities PQC',
   description:
     'PQC migration for power grids and utilities: NERC CIP compliance, IEC 61850/62351 substation security, DNP3/Modbus protocol hardening, smart meter key management at scale, and environmental/safety risk scoring.',
+  whyThisMatters:
+    "A compromised substation isn't a data breach, it's a power outage — NERC CIP and IEC 61850/62351 exist because grid crypto failures have physical, not just informational, consequences.",
   duration: '60 min',
   difficulty: 'intermediate',
   frameworkPhase: 'p5',

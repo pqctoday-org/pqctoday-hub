@@ -293,6 +293,20 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     },
   },
   {
+    id: 'hsm-perf-bench',
+    title: 'HSM Performance Benchmark',
+    emoji: '📊',
+    useCase:
+      "Measure real PKCS#11 v3.2 throughput and latency across 16 signature/key-agreement/KEM algorithms — classical (ECDSA, X25519/ECDH) vs pure post-quantum (ML-DSA, ML-KEM, optionally SLH-DSA) — against a real Rust PKCS#11 engine, through the exact same dlopen'd C ABI a real application would load. Every number comes from a real timed C_Sign/C_DeriveKey/C_EncapsulateKey call; keygen is measured and reported separately, never mixed into the hot-loop numbers.",
+    algorithms: ['ML-DSA', 'ML-KEM', 'Benchmark'],
+    difficulty: 'advanced',
+    trackId: 'web',
+    tool: {
+      name: 'bench-harness (softhsmrustv3)',
+      url: 'https://csrc.nist.gov/pubs/fips/203/final',
+    },
+  },
+  {
     id: 'pqcflow',
     title: 'PQC Network Traffic Analysis',
     emoji: '📡',

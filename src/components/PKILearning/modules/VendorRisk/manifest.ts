@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'Vendor & Supply Chain Risk',
   description:
     'Score vendor PQC readiness from real product data, generate contract requirements, and map supply chain risk.',
+  whyThisMatters:
+    "A vendor's PQC roadmap claim is only as good as the product data behind it — scoring readiness from real data, not marketing pages, is what actually protects a supply chain.",
   duration: '30 min',
   difficulty: 'intermediate',
   frameworkPhase: 'p7',

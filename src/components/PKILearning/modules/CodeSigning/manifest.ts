@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'Code Signing',
   description:
     'Protect software distribution — from classical code signing to post-quantum ML-DSA package integrity, Sigstore keyless signing, and secure boot firmware verification.',
+  whyThisMatters:
+    "A forged signature on a software update is a supply-chain compromise at scale — code signing is one of the few PQC migrations where the attacker doesn't need to break today's crypto, just tomorrow's.",
   duration: '50 min',
   difficulty: 'intermediate',
   frameworkPhase: 'p5',

@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'IoT & OT Security',
   description:
     'PQC challenges for constrained devices: algorithm selection for limited memory/compute, firmware signing, CoAP/DTLS protocol impacts, certificate chain bloat, and SCADA/ICS migration.',
+  whyThisMatters:
+    "A constrained IoT device can't just add more compute for bigger PQC signatures — algorithm selection here is a hard engineering trade-off, and a decade-long deployed device can't easily be patched later.",
   duration: '60 min',
   difficulty: 'advanced',
   frameworkPhase: 'p5',

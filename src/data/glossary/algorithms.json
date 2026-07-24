@@ -316,7 +316,7 @@
     "term": "SM2",
     "definition": "China's national standard elliptic curve public-key algorithm for digital signatures and key exchange, managed by OSCCA. Quantum-vulnerable.",
     "technicalNote": "Combined with ML-KEM-768 in the curveSM2MLKEM768 hybrid key exchange for Chinese PQC migration.",
-    "relatedModule": "/library?ref=China OSCCA GM/T 0108-2021",
+    "relatedModule": "/library?ref=draft-yang-tls-hybrid-sm2-mlkem-03",
     "complexity": "advanced",
     "category": "algorithm"
   },
