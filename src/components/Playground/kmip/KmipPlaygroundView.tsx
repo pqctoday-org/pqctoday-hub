@@ -657,7 +657,7 @@ export function KmipPlaygroundView() {
           title: 'Sign — and watch it migrate',
           target: '[data-tour="sign-btn"]',
           act: () => onSign(),
-          body: 'The moment you Sign, the policy rekeys ECDSA-P256 → ML-DSA-65 and signs with the new key — the same handle, a different algorithm underneath. The keystore entry migrates in place.',
+          body: 'The moment you Sign, the policy rekeys ECDSA-P256 → ML-DSA-65 and signs with the new key — a new key is minted and the old one is deactivated and superseded. The handle keeps working because the engine follows the supersedes link.',
         },
       ],
     },

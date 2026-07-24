@@ -148,7 +148,7 @@ export interface OpSpec {
   attrs?: Record<string, string>
 }
 
-/** The ID-Placeholder sentinel (KMIP 3.0 §6.4). Use it as a batch item's `uid`
+/** The ID-Placeholder sentinel (KMIP 3.0 §6.1 preamble). Use it as a batch item's `uid`
  * to reference the object the previous UID-producing item created — e.g.
  * CreateKeyPair → Activate(`$IDPlaceholder`) → Sign(`$IDPlaceholder`). The engine
  * substitutes the live UID before each item runs. */
