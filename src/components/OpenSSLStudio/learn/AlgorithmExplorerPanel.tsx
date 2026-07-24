@@ -13,7 +13,16 @@
 // are shown as usable — see algorithmListParser.ts's provider-honesty
 // section and openssl-studio-phase3-algorithm-explorer-plan-07242026.md.
 import { useState } from 'react'
-import { Search, ChevronDown, ChevronRight, Database, ShieldCheck, ShieldAlert } from 'lucide-react'
+import {
+  Search,
+  ChevronDown,
+  ChevronRight,
+  Database,
+  ShieldCheck,
+  ShieldAlert,
+  AlertTriangle,
+  RotateCcw,
+} from 'lucide-react'
 import { Button } from '../../ui/button'
 import { Input } from '../../ui/input'
 import { FilterDropdown } from '../../common/FilterDropdown'
@@ -198,9 +207,13 @@ const ProviderRow = ({
 
 export function AlgorithmExplorerPanel({
   isReady,
+  loadError,
+  retryLoad,
   runCommand,
 }: {
   isReady: boolean
+  loadError?: string | null
+  retryLoad?: () => void
   runCommand: (cmd: string) => Promise<{ stdout: string }>
 }) {
   const [providers, setProviders] = useState<ProviderStatus[]>([])
@@ -300,31 +313,56 @@ export function AlgorithmExplorerPanel({
                 openssl list -providers / -public-key-algorithms / -kem-algorithms / …
               </p>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleQuery}
-              disabled={!isReady || loading}
-            >
-              {loading ? (
-                <>
-                  <span className="animate-spin mr-1.5">⟳</span>
-                  Querying…
-                </>
-              ) : (
-                <>
-                  <Database size={13} className="mr-1.5" />
-                  Query this build
-                </>
-              )}
-            </Button>
+            {loadError ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={retryLoad}
+                title={loadError}
+                className="border-destructive/40 bg-destructive/10 text-destructive hover:bg-destructive/20"
+              >
+                <AlertTriangle size={13} className="mr-1.5" />
+                WASM failed to load
+                <RotateCcw size={12} className="ml-1.5" />
+              </Button>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleQuery}
+                disabled={!isReady || loading}
+              >
+                {loading ? (
+                  <>
+                    <span className="animate-spin mr-1.5">⟳</span>
+                    Querying…
+                  </>
+                ) : (
+                  <>
+                    <Database size={13} className="mr-1.5" />
+                    Query this build
+                  </>
+                )}
+              </Button>
+            )}
           </div>
 
-          {!isReady && (
-            <p className="text-xs text-muted-foreground">
-              Waiting for the OpenSSL WASM engine to initialize — click{' '}
-              <strong>Query this build</strong> once it&apos;s ready.
+          {loadError ? (
+            <p className="flex items-start gap-2 rounded-lg border border-destructive/20 bg-destructive/10 px-3 py-2 text-xs text-destructive">
+              <AlertTriangle size={13} className="mt-0.5 shrink-0" aria-hidden="true" />
+              <span>
+                The OpenSSL WASM engine failed to load, so this build can&apos;t be queried.
+                <span className="block text-destructive/70 mt-0.5">{loadError}</span>
+                Click &ldquo;WASM failed to load&rdquo; above to retry, or reload the page.
+              </span>
             </p>
+          ) : (
+            !isReady && (
+              <p className="text-xs text-muted-foreground">
+                Waiting for the OpenSSL WASM engine to initialize — click{' '}
+                <strong>Query this build</strong> once it&apos;s ready.
+              </p>
+            )
           )}
           {error && (
             <p className="rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive">

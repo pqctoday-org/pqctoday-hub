@@ -106,7 +106,8 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
   const [category, setCategory] = useState<OpenSSLCategory>(() =>
     embedded ? 'genpkey' : resolveCmd(searchParams.get('cmd'))
   )
-  const { editingFile, activeTab, structuredLogs, setActiveTab, isReady } = useOpenSSLStore()
+  const { editingFile, activeTab, structuredLogs, setActiveTab, isReady, loadError } =
+    useOpenSSLStore()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   // Hoisted here (not inside WorkbenchPreview) so the Learn tab shares the
   // exact same worker/WASM instance as the Workbench instead of each tab
@@ -239,13 +240,20 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
           <TabsContent value="learn">
             <OpenSslLearnView
               isReady={isReady}
+              loadError={loadError}
+              retryLoad={retryLoad}
               runCommand={runCommand}
               onTryInWorkbench={handleCategoryChange}
             />
           </TabsContent>
 
           <TabsContent value="explore">
-            <AlgorithmExplorerPanel isReady={isReady} runCommand={runCommand} />
+            <AlgorithmExplorerPanel
+              isReady={isReady}
+              loadError={loadError}
+              retryLoad={retryLoad}
+              runCommand={runCommand}
+            />
           </TabsContent>
 
           <TabsContent value="workbench">
