@@ -322,6 +322,7 @@ export const Pkcs11Simulator: React.FC = () => {
     if (hsm.isReady && hsm.moduleRef.current) {
       // Live mode: run real WASM operation
       setStepRunning(currentStep)
+      hsm.addStepLog(`Step ${operations[currentStep].step}: ${operations[currentStep].name}`)
       try {
         const output = await runStep(
           currentStep,
@@ -346,7 +347,7 @@ export const Pkcs11Simulator: React.FC = () => {
       // Simulation mode: mark complete immediately (fake output from data file)
       setCompletedSteps((prev) => new Set([...prev, currentStep]))
     }
-  }, [currentStep, hsm])
+  }, [currentStep, hsm, operations])
 
   const handleNext = useCallback(() => {
     if (currentStep < operations.length - 1) {
@@ -428,35 +429,45 @@ export const Pkcs11Simulator: React.FC = () => {
       <div className="glass-panel p-4">
         <h4 className="text-sm font-bold text-foreground mb-3">Operation Flow</h4>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          {operations.map((op, idx) => (
-            <Button
-              variant="ghost"
-              key={op.id}
-              onClick={() => {
-                setCurrentStep(idx)
-                setExpandedClassical(null)
-                setExpandedVendor(null)
-              }}
-              className={`text-left rounded-lg p-2 border text-xs transition-colors ${
-                idx === currentStep
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : completedSteps.has(idx)
-                    ? 'border-success/30 bg-success/5 text-success'
-                    : 'border-border bg-muted/50 text-muted-foreground hover:border-primary/30'
-              }`}
-            >
-              <div className="flex items-center gap-1 mb-0.5">
-                {completedSteps.has(idx) ? (
-                  <CheckCircle size={10} className="text-success shrink-0" />
-                ) : (
-                  <span className="text-[10px] font-bold">{op.step}.</span>
-                )}
-                <span className="font-medium truncate">
-                  {op.name.split(' ').slice(0, 3).join(' ')}
-                </span>
-              </div>
-            </Button>
-          ))}
+          {operations.map((op, idx) => {
+            // A step can only be reached once every prior step has been run —
+            // jumping ahead used to surface raw thrown errors for steps whose
+            // executor reads state a skipped prerequisite would have set.
+            const locked = idx > completedSteps.size
+            return (
+              <Button
+                variant="ghost"
+                key={op.id}
+                disabled={locked}
+                title={locked ? 'Run the previous steps first' : undefined}
+                onClick={() => {
+                  setCurrentStep(idx)
+                  setExpandedClassical(null)
+                  setExpandedVendor(null)
+                }}
+                className={`text-left rounded-lg p-2 border text-xs transition-colors ${
+                  locked
+                    ? 'border-border/50 bg-muted/20 text-muted-foreground/50 cursor-not-allowed'
+                    : idx === currentStep
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : completedSteps.has(idx)
+                        ? 'border-success/30 bg-success/5 text-success'
+                        : 'border-border bg-muted/50 text-muted-foreground hover:border-primary/30'
+                }`}
+              >
+                <div className="flex items-center gap-1 mb-0.5">
+                  {completedSteps.has(idx) ? (
+                    <CheckCircle size={10} className="text-success shrink-0" />
+                  ) : (
+                    <span className="text-[10px] font-bold">{op.step}.</span>
+                  )}
+                  <span className="font-medium truncate">
+                    {op.name.split(' ').slice(0, 3).join(' ')}
+                  </span>
+                </div>
+              </Button>
+            )
+          })}
         </div>
       </div>
 
@@ -622,7 +633,12 @@ export const Pkcs11Simulator: React.FC = () => {
           &larr; Previous
         </Button>
         {currentStep < operations.length - 1 ? (
-          <Button variant="outline" onClick={handleNext}>
+          <Button
+            variant="outline"
+            onClick={handleNext}
+            disabled={!stepCompleted}
+            title={!stepCompleted ? 'Run this step first' : undefined}
+          >
             Next &rarr;
           </Button>
         ) : (
@@ -639,6 +655,8 @@ export const Pkcs11Simulator: React.FC = () => {
           onClear={hsm.clearLog}
           title="PKCS#11 Call Log — SoftHSM3 WASM"
           defaultOpen={true}
+          showBeginnerMode
+          lessonMode
         />
       )}
 

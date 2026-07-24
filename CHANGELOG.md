@@ -29,7 +29,7 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
-## [4.23.0] - 2026-07-23
+## [4.24.0] - 2026-07-23
 
 A TPM 2.0 Playground release: a new guided Learn tab teaching classical-vs-post-quantum TPM operations side by side, and a fix to the underlying crypto bridge that had been silently substituting placeholder data for real ML-DSA signatures and ML-KEM key exchanges.
 
@@ -42,6 +42,20 @@ A TPM 2.0 Playground release: a new guided Learn tab teaching classical-vs-post-
 - **The TPM Playground's post-quantum cryptography is now genuinely real** [view:/playground] [persona:developer] [persona:researcher]: ML-DSA signatures and ML-KEM key exchanges were silently falling back to placeholder data instead of running through the actual post-quantum crypto engine, even though the playground's status indicator reported everything as active. Both are now real, and the status indicator only reports active when it actually is.
 - **The TPM Playground's Command Builder no longer sends made-up data for multi-step operations** [view:/playground] [persona:developer]: decrypting a key exchange, verifying a signature, or completing a streaming signature used to send synthetic placeholder bytes instead of the real result from the step you just ran — it now chains your actual results through, and tells you when a prerequisite step hasn't been run yet instead of silently guessing.
 - **The TPM Playground's compliance checklist can no longer misreport a passing score** [view:/playground] [persona:developer] [persona:ops]: if the automated 24-point compliance run was interrupted partway through, it could still show a clean "all checks passed" result — it now honestly reports how many checks actually ran.
+
+## [4.23.0] - 2026-07-24
+
+A PKCS#11 Learn tab release: a new lesson on key-trust policy, and a more trustworthy call log across the whole HSM playground.
+
+### Added
+
+- **New "Trust & wrapping policy" lesson in the PKCS#11 Learn tab** [view:/playground/hsm] [persona:developer] [persona:architect]: walks the real policy chain a security officer uses to designate one key as trusted for wrapping others — including the part that surprises people, that a normal user can never grant that trust themselves, not even to a key they just created.
+
+### Fixed
+
+- **The PKCS#11 workshop and Learn tab's call log now shows what actually happened, by default** [view:/learn] [view:/playground/hsm] [persona:developer]: a filter meant to hide routine housekeeping was also hiding real operations — logging in, discovering supported algorithms, and reading or writing key policies — so entire early lessons used to show an empty log the whole way through. Also added a plain-English toggle that was silently non-functional in both places.
+- **A skipped lesson step could display as "refused, correctly" when it had actually crashed** [view:/playground/hsm] [persona:developer]: jumping ahead to a later step before finishing earlier ones could trigger an unrelated error that still showed as the intended outcome. Both the workshop and the Learn tab now also block jumping ahead until each step's prerequisites are done.
+- **Refreshed the HSM playground's underlying crypto engines** [view:/playground/hsm] [persona:developer] [persona:ops]: carried over several correctness fixes already made to the engines but not yet reflected on the site, including a login-timing race and an RSA encryption parameter-handling fix.
 
 ## [4.22.1] - 2026-07-24
 
