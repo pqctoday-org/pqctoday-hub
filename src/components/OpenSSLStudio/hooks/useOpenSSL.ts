@@ -14,6 +14,30 @@ interface PendingRun {
   stderr: string[]
 }
 
+// The worker forwards genuine openssl print()/printErr() output as a plain
+// `message: text` LOG event — but it ALSO narrates its own internal steps
+// ("[Debug] Selecting strategy...", "Executing: openssl ...", etc.) through
+// that exact same LOG message shape, with no separate flag to tell them
+// apart at the source. A lesson step's runCommand() result (and a failed
+// command's surfaced error) should only ever contain what openssl itself
+// printed — not the worker's own narration — or the Learn tab's inline
+// "detail" text reads as a garbled transcript instead of the actual output.
+const WORKER_NARRATION_PREFIXES = [
+  '[Debug]',
+  '[VFS]',
+  'Executing: openssl',
+  '💡',
+  'Failed to',
+  'Warning:',
+  'OpenSSL Execution Error:',
+  'SIMULATION_RESULT:',
+  'CMP_SIMULATION_RESULT:',
+  'CA_ROOT_RESULT:',
+  'SKEY OPERATION',
+]
+const isWorkerNarration = (message: string): boolean =>
+  WORKER_NARRATION_PREFIXES.some((p) => message.trimStart().startsWith(p))
+
 export const useOpenSSL = () => {
   const workerRef = useRef<Worker | null>(null)
   const {
@@ -51,8 +75,10 @@ export const useOpenSSL = () => {
 
       switch (type) {
         case 'LOG':
+          // The Terminal tab wants the FULL verbose trace (debug narration
+          // included) — addLog always gets everything, unfiltered.
           addLog(event.data.stream === 'stderr' ? 'error' : 'info', event.data.message)
-          if (event.data.requestId) {
+          if (event.data.requestId && !isWorkerNarration(event.data.message)) {
             const pending = pendingRunsRef.current.get(event.data.requestId)
             pending?.stdout.push(event.data.message)
             if (pending && event.data.stream === 'stderr') pending.stderr.push(event.data.message)
