@@ -2167,16 +2167,26 @@ function generateEcKeyInHsm(
   writeAttr(pubTplP, 5, CKA_EC_PARAMS_ATTR, ecParamsP, curveOid.length)
   writeAttr(pubTplP, 6, CKA_VERIFY_ATTR, boolTrueP, 1)
 
-  // Private key: CLASS, TOKEN, LABEL, ID, KEY_TYPE, SENSITIVE, SIGN
-  const privAttrCount = 7
+  // Private key: CLASS, TOKEN, LABEL, ID, KEY_TYPE, EC_PARAMS, SENSITIVE, SIGN
+  // CKA_EC_PARAMS is required on the PRIVATE object too, not just the public
+  // one — pkcs11-provider's fetch_ec_key() (objects.c) fetches it with
+  // mandatory=true for both CKO_PUBLIC_KEY and CKO_PRIVATE_KEY (it needs the
+  // curve to reconstruct an EVP_PKEY from a bare private scalar). Omitting
+  // it here made every `pkcs11:object=<ecKeyId>` private-key lookup fail
+  // with CKR_KEY_INDIGESTIBLE -> "Failed to load keys from slot" the moment
+  // a fresh module restored this key from a snapshot and tried to use it
+  // (e.g. DualSignDemo's classical cert step) — the ML-DSA sibling key
+  // never hit this because fetch_mldsa_key doesn't require it.
+  const privAttrCount = 8
   const privTplP = fn_malloc(privAttrCount * 12)
   writeAttr(privTplP, 0, CKA_CLASS_ATTR, privClassP, 4)
   writeAttr(privTplP, 1, CKA_TOKEN_ATTR, boolTrueP, 1)
   writeAttr(privTplP, 2, CKA_LABEL_ATTR, labelP, labelBytes.length)
   writeAttr(privTplP, 3, CKA_ID_ATTR, idP, idBytes.length)
   writeAttr(privTplP, 4, CKA_KEY_TYPE_ATTR, keyTypeP, 4)
-  writeAttr(privTplP, 5, CKA_SENSITIVE_ATTR, boolTrueP, 1)
-  writeAttr(privTplP, 6, CKA_SIGN_ATTR, boolTrueP, 1)
+  writeAttr(privTplP, 5, CKA_EC_PARAMS_ATTR, ecParamsP, curveOid.length)
+  writeAttr(privTplP, 6, CKA_SENSITIVE_ATTR, boolTrueP, 1)
+  writeAttr(privTplP, 7, CKA_SIGN_ATTR, boolTrueP, 1)
 
   const hPubP = fn_malloc(4)
   const hPrivP = fn_malloc(4)

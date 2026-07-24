@@ -907,7 +907,16 @@ var generateKeyInToken = (module: any, algName: string, keyId: string): string |
   if (spec.kind === 'ec') {
     ecParamsP = module._malloc(EC_PARAMS_P256.length)
     module.HEAPU8.set(EC_PARAMS_P256, ecParamsP)
+    // CKA_EC_PARAMS must be on BOTH templates: pkcs11-provider's
+    // fetch_ec_key() (objects.c) fetches it with mandatory=true for
+    // CKO_PRIVATE_KEY as well as CKO_PUBLIC_KEY — it needs the curve to
+    // reconstruct an EVP_PKEY from a bare private scalar. Public-only left
+    // every `pkcs11:object=<ecKeyId>` PRIVATE-key lookup failing with
+    // CKR_KEY_INDIGESTIBLE ("Failed to load keys from slot") on any module
+    // that restored the key from a snapshot rather than the one that
+    // generated it.
     pubAttrs.push([CKA_EC_PARAMS, ecParamsP, EC_PARAMS_P256.length])
+    privAttrs.push([CKA_EC_PARAMS, ecParamsP, EC_PARAMS_P256.length])
   }
   if (spec.kind === 'kem') {
     // PKCS#11 v3.2 §6.68.2 / C_EncapsulateKey: ML-KEM keys encapsulate and
