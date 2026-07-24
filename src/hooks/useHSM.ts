@@ -100,7 +100,7 @@ export function useHSM(moduleEngine: 'cpp' | 'rust' = 'rust'): UseHSMResult {
   const addLog = useCallback((e: Pkcs11LogEntry) => {
     setLog((prev) => {
       const next = [e, ...prev]
-      return next.length > 500 ? next.slice(0, 500) : next
+      return next.length > 1000 ? next.slice(0, 1000) : next
     })
   }, [])
 

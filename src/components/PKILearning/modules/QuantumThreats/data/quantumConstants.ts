@@ -322,6 +322,15 @@ export interface CRQCEstimate {
   /** Link to the primary publication, so the citation on the Threats page can
    *  be hyperlinked instead of standing as unverifiable free text. */
   url: string
+  /**
+   * ISO date this estimate was last checked against its cited source
+   * (`url`) — NOT the source's own publish date. Missing or older than 180
+   * days flags this row as stale-refresh in the maintenance pipeline
+   * (deferred-items plan Finding E). Stamped by a human re-verifying the
+   * claim, never machine-drafted — quantum-capability claims are never
+   * judged or drafted by machine (crqc-watch's existing content-truth rule).
+   */
+  lastReviewed?: string
 }
 
 /**
