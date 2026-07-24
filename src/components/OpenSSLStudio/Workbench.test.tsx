@@ -50,18 +50,42 @@ describe('Workbench', () => {
   })
 
   it('renders correctly for non-files category', () => {
-    render(<Workbench category="genpkey" setCategory={vi.fn()} />)
+    render(
+      <Workbench
+        category="genpkey"
+        setCategory={vi.fn()}
+        executeCommand={vi.fn()}
+        executeSkey={vi.fn()}
+        retryLoad={vi.fn()}
+      />
+    )
     expect(capturedProps).toBeTruthy()
     expect(mockSetCommand).toHaveBeenCalledWith(expect.stringContaining('genpkey'))
   })
 
   it('handles files category without rendering config', () => {
-    render(<Workbench category="files" setCategory={vi.fn()} />)
+    render(
+      <Workbench
+        category="files"
+        setCategory={vi.fn()}
+        executeCommand={vi.fn()}
+        executeSkey={vi.fn()}
+        retryLoad={vi.fn()}
+      />
+    )
     expect(capturedProps).toBeNull()
   })
 
   it('handles genpkey with various algorithms', async () => {
-    render(<Workbench category="genpkey" setCategory={vi.fn()} />)
+    render(
+      <Workbench
+        category="genpkey"
+        setCategory={vi.fn()}
+        executeCommand={vi.fn()}
+        executeSkey={vi.fn()}
+        retryLoad={vi.fn()}
+      />
+    )
     expect(capturedProps).toBeTruthy()
 
     act(() => {
@@ -113,7 +137,15 @@ describe('Workbench', () => {
   })
 
   it('handles req and x509 commands', async () => {
-    const { rerender } = render(<Workbench category="req" setCategory={vi.fn()} />)
+    const { rerender } = render(
+      <Workbench
+        category="req"
+        setCategory={vi.fn()}
+        executeCommand={vi.fn()}
+        executeSkey={vi.fn()}
+        retryLoad={vi.fn()}
+      />
+    )
 
     act(() => {
       capturedProps.setSelectedCsrKeyFile('test-key.key')
@@ -124,14 +156,30 @@ describe('Workbench', () => {
       )
     )
 
-    rerender(<Workbench category="x509" setCategory={vi.fn()} />)
+    rerender(
+      <Workbench
+        category="x509"
+        setCategory={vi.fn()}
+        executeCommand={vi.fn()}
+        executeSkey={vi.fn()}
+        retryLoad={vi.fn()}
+      />
+    )
     await waitFor(() =>
       expect(mockSetCommand).toHaveBeenCalledWith(expect.stringContaining('req -x509 -new'))
     )
   })
 
   it('handles dgst commands for classic and PQC', async () => {
-    render(<Workbench category="dgst" setCategory={vi.fn()} />)
+    render(
+      <Workbench
+        category="dgst"
+        setCategory={vi.fn()}
+        executeCommand={vi.fn()}
+        executeSkey={vi.fn()}
+        retryLoad={vi.fn()}
+      />
+    )
 
     act(() => {
       capturedProps.setSelectedKeyFile('rsa.key')
@@ -197,7 +245,15 @@ describe('Workbench', () => {
   })
 
   it('handles manual hash parsing in dgst raw mode', async () => {
-    render(<Workbench category="dgst" setCategory={vi.fn()} />)
+    render(
+      <Workbench
+        category="dgst"
+        setCategory={vi.fn()}
+        executeCommand={vi.fn()}
+        executeSkey={vi.fn()}
+        retryLoad={vi.fn()}
+      />
+    )
     act(() => {
       capturedProps.setSigHashAlgo('raw')
       capturedProps.setManualHashHex('0x1234')
@@ -210,7 +266,15 @@ describe('Workbench', () => {
   })
 
   it('handles rand command', async () => {
-    render(<Workbench category="rand" setCategory={vi.fn()} />)
+    render(
+      <Workbench
+        category="rand"
+        setCategory={vi.fn()}
+        executeCommand={vi.fn()}
+        executeSkey={vi.fn()}
+        retryLoad={vi.fn()}
+      />
+    )
     act(() => {
       capturedProps.setRandHex(true)
       capturedProps.setRandBytes('64')
@@ -228,12 +292,28 @@ describe('Workbench', () => {
   })
 
   it('handles version and configutl', async () => {
-    const { rerender } = render(<Workbench category="version" setCategory={vi.fn()} />)
+    const { rerender } = render(
+      <Workbench
+        category="version"
+        setCategory={vi.fn()}
+        executeCommand={vi.fn()}
+        executeSkey={vi.fn()}
+        retryLoad={vi.fn()}
+      />
+    )
     await waitFor(() =>
       expect(mockSetCommand).toHaveBeenCalledWith(expect.stringContaining('version -a'))
     )
 
-    rerender(<Workbench category="configutl" setCategory={vi.fn()} />)
+    rerender(
+      <Workbench
+        category="configutl"
+        setCategory={vi.fn()}
+        executeCommand={vi.fn()}
+        executeSkey={vi.fn()}
+        retryLoad={vi.fn()}
+      />
+    )
     act(() => {
       capturedProps.setConfigUtlInFile('my.cnf')
       capturedProps.setConfigUtlOutFile('out.cnf')
@@ -250,7 +330,15 @@ describe('Workbench', () => {
   })
 
   it('handles enc command', async () => {
-    render(<Workbench category="enc" setCategory={vi.fn()} />)
+    render(
+      <Workbench
+        category="enc"
+        setCategory={vi.fn()}
+        executeCommand={vi.fn()}
+        executeSkey={vi.fn()}
+        retryLoad={vi.fn()}
+      />
+    )
     act(() => {
       capturedProps.setEncAction('encrypt')
       capturedProps.setEncShowIV(true)
@@ -274,7 +362,15 @@ describe('Workbench', () => {
   })
 
   it('handles hash command', async () => {
-    render(<Workbench category="hash" setCategory={vi.fn()} />)
+    render(
+      <Workbench
+        category="hash"
+        setCategory={vi.fn()}
+        executeCommand={vi.fn()}
+        executeSkey={vi.fn()}
+        retryLoad={vi.fn()}
+      />
+    )
     act(() => {
       capturedProps.setHashAlgo('sha3-256')
       capturedProps.setHashBinary(true)
@@ -285,7 +381,15 @@ describe('Workbench', () => {
   })
 
   it('handles kem command', async () => {
-    render(<Workbench category="kem" setCategory={vi.fn()} />)
+    render(
+      <Workbench
+        category="kem"
+        setCategory={vi.fn()}
+        executeCommand={vi.fn()}
+        executeSkey={vi.fn()}
+        retryLoad={vi.fn()}
+      />
+    )
     act(() => {
       capturedProps.setKemAction('encap')
     })
@@ -312,7 +416,15 @@ describe('Workbench', () => {
   })
 
   it('handles pkcs12 command', async () => {
-    render(<Workbench category="pkcs12" setCategory={vi.fn()} />)
+    render(
+      <Workbench
+        category="pkcs12"
+        setCategory={vi.fn()}
+        executeCommand={vi.fn()}
+        executeSkey={vi.fn()}
+        retryLoad={vi.fn()}
+      />
+    )
     act(() => {
       capturedProps.setP12Action('export')
     })
@@ -333,7 +445,15 @@ describe('Workbench', () => {
   })
 
   it('handles lms pseudo-commands', async () => {
-    render(<Workbench category="lms" setCategory={vi.fn()} />)
+    render(
+      <Workbench
+        category="lms"
+        setCategory={vi.fn()}
+        executeCommand={vi.fn()}
+        executeSkey={vi.fn()}
+        retryLoad={vi.fn()}
+      />
+    )
     act(() => {
       capturedProps.setLmsMode('verify')
       capturedProps.setLmsSigFile('test.sig')
@@ -360,7 +480,15 @@ describe('Workbench', () => {
   })
 
   it('handles kdf commands', async () => {
-    render(<Workbench category="kdf" setCategory={vi.fn()} />)
+    render(
+      <Workbench
+        category="kdf"
+        setCategory={vi.fn()}
+        executeCommand={vi.fn()}
+        executeSkey={vi.fn()}
+        retryLoad={vi.fn()}
+      />
+    )
 
     act(() => {
       capturedProps.setKdfBinary(true)
