@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import {
   ArrowRight,
   ArrowLeft,
@@ -12,63 +12,11 @@ import { Button } from '@/components/ui/button'
 import type { TpmLogEntry } from './TpmPlayground'
 import { toHex, getU16, getU32 } from '../../../wasm/tpmSerializer'
 import { getCommandDef, getRcInfo } from './tpmCommandDefs'
+import { readField, readVariablePreview, TAG_NAMES, CC_NAMES } from './tpmWireDecode'
+import { Term } from '../learnkit/Term'
 
 interface ExecutionLogProps {
   logs: TpmLogEntry[]
-}
-
-// ── Byte extractors ───────────────────────────────────────────────────────────
-
-function readField(buf: Uint8Array, offset: number, size: number): string {
-  if (buf.length < offset + size) return '—'
-  switch (size) {
-    case 1:
-      return `0x${buf[offset].toString(16).padStart(2, '0')}`
-    case 2:
-      return `0x${getU16(buf, offset).toString(16).padStart(4, '0')}`
-    case 4:
-      return `0x${getU32(buf, offset).toString(16).padStart(8, '0')}`
-    default:
-      return '—'
-  }
-}
-
-function readVariablePreview(buf: Uint8Array, offset: number, maxBytes = 8): string {
-  if (buf.length <= offset) return '—'
-  const available = Math.min(buf.length - offset, maxBytes)
-  const preview = Array.from(buf.slice(offset, offset + available))
-    .map((b) => b.toString(16).padStart(2, '0').toUpperCase())
-    .join(' ')
-  return buf.length - offset > maxBytes ? `${preview} …` : preview
-}
-
-const TAG_NAMES: Record<number, string> = {
-  0x8001: 'TPM_ST_NO_SESSIONS',
-  0x8002: 'TPM_ST_SESSIONS',
-}
-
-const CC_NAMES: Record<number, string> = {
-  0x00000144: 'TPM2_Startup',
-  0x00000143: 'TPM2_SelfTest',
-  0x0000015c: 'TPM2_SequenceUpdate',
-  0x00000165: 'TPM2_FlushContext',
-  0x0000017a: 'TPM2_GetCapability',
-  0x0000017b: 'TPM2_GetRandom',
-  0x00000131: 'TPM2_CreatePrimary',
-  0x00000148: 'TPM2_Certify',
-  0x0000014e: 'TPM2_NV_Read',
-  0x00000157: 'TPM2_Load',
-  0x00000158: 'TPM2_Quote',
-  0x00000169: 'TPM2_NV_ReadPublic',
-  0x00000173: 'TPM2_ReadPublic',
-  0x000001a3: 'TPM2_VerifySequenceComplete',
-  0x000001a4: 'TPM2_SignSequenceComplete',
-  0x000001a5: 'TPM2_VerifyDigestSignature',
-  0x000001a6: 'TPM2_SignDigest',
-  0x000001a7: 'TPM2_Encapsulate',
-  0x000001a8: 'TPM2_Decapsulate',
-  0x000001a9: 'TPM2_VerifySequenceStart',
-  0x000001aa: 'TPM2_SignSequenceStart',
 }
 
 // ── Sub-components ────────────────────────────────────────────────────────────
@@ -129,7 +77,7 @@ function HexPanel({
 function FieldTable({
   rows,
 }: {
-  rows: { name: string; type: string; value: string; description: string }[]
+  rows: { name: string; type: string; value: string; description: React.ReactNode }[]
 }) {
   return (
     <table className="w-full text-xs">
@@ -193,12 +141,14 @@ export function ExecutionLog({ logs }: ExecutionLogProps) {
   const reqSize = getU32(req, 2)
   const reqCc = getU32(req, 6)
 
+  const reqTagName = TAG_NAMES[reqTag]
+  const reqCcName = CC_NAMES[reqCc]
   const reqRows = [
     {
       name: 'tag',
       type: 'TPM_ST',
       value: `0x${reqTag.toString(16).padStart(4, '0')}`,
-      description: TAG_NAMES[reqTag] ?? 'Unknown tag',
+      description: reqTagName ? <Term glossaryKey={reqTagName}>{reqTagName}</Term> : 'Unknown tag',
     },
     {
       name: 'commandSize',
@@ -210,7 +160,11 @@ export function ExecutionLog({ logs }: ExecutionLogProps) {
       name: 'commandCode',
       type: 'TPM_CC',
       value: `0x${reqCc.toString(16).padStart(8, '0')}`,
-      description: CC_NAMES[reqCc] ?? 'Unknown command code',
+      description: reqCcName ? (
+        <Term glossaryKey={reqCcName}>{reqCcName}</Term>
+      ) : (
+        'Unknown command code'
+      ),
     },
   ]
 
@@ -262,7 +216,7 @@ export function ExecutionLog({ logs }: ExecutionLogProps) {
         <div className="bg-muted/30 px-3 py-2 border-b border-border flex items-center gap-2">
           <ArrowRight className="h-3.5 w-3.5 text-primary" />
           <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-            Request — {log.commandType}
+            Request — <Term glossaryKey={log.commandType}>{log.commandType}</Term>
           </span>
         </div>
         <div className="p-3 space-y-3">
@@ -289,7 +243,7 @@ export function ExecutionLog({ logs }: ExecutionLogProps) {
               }`}
             >
               {isSuccess ? <CheckCircle2 className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
-              {rcInfo.name}
+              <Term glossaryKey={rcInfo.name}>{rcInfo.name}</Term>
             </div>
           )}
         </div>
