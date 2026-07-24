@@ -29,14 +29,13 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
-## [4.25.0] - 2026-07-24
+## [4.25.3] - 2026-07-24
 
-An OpenSSL Studio release: a new guided Learn tab and a live Algorithm Explorer, both running the real openssl.wasm engine bundled with the site (not simulated output).
+### Fixed
 
-### Added
-
-- **New 11-lesson Learn tab for OpenSSL Studio** [view:/playground/openssl] [persona:developer] [persona:architect] [persona:researcher]: pairs each classical operation with its post-quantum replacement — key generation, certificate requests, signing and verification, ML-KEM key exchange, an honesty check on LMS/HSS keygen, an encryption/hashing myths lesson, key derivation, PKCS#12 bundling, random generation, and configuration — plus a TLS Simulator capstone. Every command runs for real against the site's OpenSSL engine, with a glossary rail and a short quiz after each lesson.
-- **New "Explore" tab shows every algorithm this exact OpenSSL build actually supports** [view:/playground/openssl] [persona:developer] [persona:researcher]: a searchable, filterable list grouped by algorithm family, built from live queries against the real engine rather than static documentation. Every non-default provider is functionally tested (not just checked for a self-reported "active" flag) before its algorithms are shown as usable — this caught the bundled `pkcs11` provider correctly listing ML-KEM, ML-DSA, and 3 hybrid composite signatures but not yet actually functional in this environment, and the Explorer reports it as such instead of overclaiming.
+- **Corrected 2 wrong spec-section citations in the KMIP 3.0 Playground** [view:/playground/cacp] [persona:developer] [persona:architect]: two places pointed at "§6.4" for content that's actually documented elsewhere in the spec (the real content — a message-envelope rule — lives at §8.2.3, Response Batch Item). Also corrected the Rekey tour step's description, which said a keystore entry "migrates in place"; the engine actually mints a new key and deactivates and supersedes the old one, which the tour now says.
+- **Fixed a silently wrong algorithm codepoint in the KMIP 3.0 patch tables** [view:/playground/cacp] [persona:developer]: RC4 was mapped to DSA's codepoint instead of its own. Found by a new completeness test added as part of this fix; RC4 isn't currently offered anywhere in the Playground's UI, so this had no live impact, but is corrected so it can't surface a wrong value if RC4 is ever exposed.
+- **Added a completeness check for KMIP 3.0's WD19 draft delta** [view:/playground/cacp] [persona:developer] [persona:architect]: documents every codepoint that's genuinely new in the WD19 draft versus the published CSD01 baseline, and a new automated test now fails if a future spec patch isn't accounted for by one of those two sources or an explicit documented exception — closing a gap where a future drift could go unnoticed.
 
 ## [4.25.2] - 2026-07-24
 
@@ -58,6 +57,15 @@ An OpenSSL Studio release: a new guided Learn tab and a live Algorithm Explorer,
 
 - **OpenSSL Studio's Learn tab no longer breaks partway through multi-step lessons** [view:/playground/openssl] [persona:developer] [persona:researcher]: "Run all" reused a stale snapshot of files created by earlier steps in the same run, so any lesson with 3 or more chained steps (certificate signing, PKCS#12 bundling, the TLS Simulator capstone, and others) could fail partway through even though each step worked correctly on its own.
 - **OpenSSL Studio's failure detection and error messages are now accurate** [view:/playground/openssl] [persona:developer] [persona:researcher]: a failed command could silently look like success, because only a thrown exception was checked and this build reports failure as a plain nonzero exit code instead — this was making the Algorithm Explorer wrongly report the non-functional `pkcs11` provider as "Verified functional," and breaking the Learn tab's refusal-check lessons. Both now correctly detect failure, and error messages show the real underlying reason (e.g. "Module initialization failed!") instead of a generic status code.
+
+## [4.25.0] - 2026-07-24
+
+An OpenSSL Studio release: a new guided Learn tab and a live Algorithm Explorer, both running the real openssl.wasm engine bundled with the site (not simulated output).
+
+### Added
+
+- **New 11-lesson Learn tab for OpenSSL Studio** [view:/playground/openssl] [persona:developer] [persona:architect] [persona:researcher]: pairs each classical operation with its post-quantum replacement — key generation, certificate requests, signing and verification, ML-KEM key exchange, an honesty check on LMS/HSS keygen, an encryption/hashing myths lesson, key derivation, PKCS#12 bundling, random generation, and configuration — plus a TLS Simulator capstone. Every command runs for real against the site's OpenSSL engine, with a glossary rail and a short quiz after each lesson.
+- **New "Explore" tab shows every algorithm this exact OpenSSL build actually supports** [view:/playground/openssl] [persona:developer] [persona:researcher]: a searchable, filterable list grouped by algorithm family, built from live queries against the real engine rather than static documentation. Every non-default provider is functionally tested (not just checked for a self-reported "active" flag) before its algorithms are shown as usable — this caught the bundled `pkcs11` provider correctly listing ML-KEM, ML-DSA, and 3 hybrid composite signatures but not yet actually functional in this environment, and the Explorer reports it as such instead of overclaiming.
 
 ## [4.24.2] - 2026-07-24
 
