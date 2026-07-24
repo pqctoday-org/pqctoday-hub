@@ -8,6 +8,10 @@ interface PendingRun {
   resolve: (result: { stdout: string }) => void
   reject: (error: Error) => void
   stdout: string[]
+  /** stderr-stream LOG lines only — the real openssl error text (e.g.
+   * "Module initialization failed!"), kept separate from stdout/debug
+   * noise so a rejection can surface it directly. */
+  stderr: string[]
 }
 
 export const useOpenSSL = () => {
@@ -50,7 +54,9 @@ export const useOpenSSL = () => {
         case 'LOG':
           addLog(event.data.stream === 'stderr' ? 'error' : 'info', event.data.message)
           if (event.data.requestId) {
-            pendingRunsRef.current.get(event.data.requestId)?.stdout.push(event.data.message)
+            const pending = pendingRunsRef.current.get(event.data.requestId)
+            pending?.stdout.push(event.data.message)
+            if (pending && event.data.stream === 'stderr') pending.stderr.push(event.data.message)
           }
           break
         case 'FILE_CREATED':
@@ -89,7 +95,16 @@ export const useOpenSSL = () => {
           if (event.data.requestId && pendingRunsRef.current.has(event.data.requestId)) {
             const pending = pendingRunsRef.current.get(event.data.requestId)!
             pendingRunsRef.current.delete(event.data.requestId)
-            pending.reject(new Error(event.data.error || 'Command failed'))
+            // The worker's own ERROR text (e.g. "OpenSSL exited with status 1")
+            // is a generic exit-code summary — the REAL stderr (e.g. "Module
+            // initialization failed!") already streamed in as LOG messages
+            // and was captured separately in pending.stderr. Callers relying
+            // on the real error text (the Algorithm Explorer's provider
+            // probe, Learn tab refusal steps) need the actual reason, not
+            // just a status code.
+            const realError = pending.stderr.join('\n').trim()
+            const message = realError || event.data.error || 'Command failed'
+            pending.reject(new Error(message))
           }
           break
         case 'DONE':
@@ -300,7 +315,7 @@ export const useOpenSSL = () => {
       }))
 
       return new Promise((resolve, reject) => {
-        pendingRunsRef.current.set(requestId, { resolve, reject, stdout: [] })
+        pendingRunsRef.current.set(requestId, { resolve, reject, stdout: [], stderr: [] })
         workerRef.current!.postMessage({
           type: 'COMMAND',
           command: subcommand,

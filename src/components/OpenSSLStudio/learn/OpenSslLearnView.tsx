@@ -31,6 +31,7 @@ import { useOpenSSLStore } from '../store'
 import type { OpenSSLCategory } from '../categories'
 import { OPENSSL_LESSONS } from './opensslLessons'
 import { OPENSSL_QUIZZES } from './opensslQuiz'
+import { resolveGlossaryKey } from './opensslGlossary'
 import type { OpenSslLearnContext } from './opensslLearnContext'
 import type { OpenSslLessonStep } from './opensslLessons'
 
@@ -45,7 +46,7 @@ function OpTokens({ op }: { op: string }) {
   return (
     <>
       {tokenizeCommand(op).map((tok, i) => (
-        <Term key={i} glossaryKey={tok.text}>
+        <Term key={i} glossaryKey={resolveGlossaryKey(tok.text)}>
           {tok.text}
         </Term>
       ))}
