@@ -10,7 +10,7 @@
 // rail. The GlossaryProvider lives in OpenSSLStudioView so the Workbench's
 // own command preview could (in a later pass) share the same glossary
 // session; for now this view is its own consumer.
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   CheckCircle2,
@@ -31,21 +31,58 @@ import { useOpenSSLStore } from '../store'
 import type { OpenSSLCategory } from '../categories'
 import { OPENSSL_LESSONS } from './opensslLessons'
 import { OPENSSL_QUIZZES } from './opensslQuiz'
+import { resolveGlossaryKey } from './opensslGlossary'
 import type { OpenSslLearnContext } from './opensslLearnContext'
 import type { OpenSslLessonStep } from './opensslLessons'
 
 type StepStatus = 'pending' | 'running' | 'ok' | 'refused-ok' | 'failed'
 
+/** One real `ctx.run()` call a step made — the actual command and the
+ * actual openssl output (or the real error, for a refused/failed call).
+ * Captured automatically by the ctx.run wrapper below, not authored by
+ * lesson content, so every step gets one with no risk of being missed. */
+interface LogEntry {
+  cmd: string
+  output: string
+  failed: boolean
+}
+
 interface StepRunState {
   status: StepStatus
   detail?: string
+  log?: LogEntry[]
+}
+
+function LogBlock({ entries }: { entries: LogEntry[] }) {
+  if (entries.length === 0) return null
+  return (
+    <div className="mt-2 space-y-1.5 rounded-lg border border-border bg-background/60 p-2 font-mono text-[11px] leading-snug">
+      {entries.map((e, i) => (
+        <div key={i}>
+          <div className="text-muted-foreground">
+            <span className="select-none text-primary/70">$ </span>
+            openssl {e.cmd}
+          </div>
+          <div
+            className={
+              e.failed
+                ? 'whitespace-pre-wrap text-destructive'
+                : 'whitespace-pre-wrap text-foreground'
+            }
+          >
+            {e.output.trim() || '(no console output — succeeded silently)'}
+          </div>
+        </div>
+      ))}
+    </div>
+  )
 }
 
 function OpTokens({ op }: { op: string }) {
   return (
     <>
       {tokenizeCommand(op).map((tok, i) => (
-        <Term key={i} glossaryKey={tok.text}>
+        <Term key={i} glossaryKey={resolveGlossaryKey(tok.text)}>
           {tok.text}
         </Term>
       ))}
@@ -113,6 +150,7 @@ function StepRow({
           {state.detail}
         </p>
       )}
+      {state.log && <LogBlock entries={state.log} />}
     </li>
   )
 }
@@ -132,8 +170,35 @@ export function OpenSslLearnView({
     lesson.steps.map(() => ({ status: 'pending' }))
   )
 
+  // Which step index ctx.run() calls should be attributed to, and the real
+  // command+output captured for each — set by runStep before invoking a
+  // step's run(ctx), read back after it settles. This is what gives EVERY
+  // step a real inline log automatically, without lesson content having to
+  // opt in per step (see the stale-closure/garbled-log bugs this Learn tab
+  // shipped with — both came from log capture being ad hoc per step).
+  const currentStepIndexRef = useRef(-1)
+  const stepLogsRef = useRef<Map<number, LogEntry[]>>(new Map())
+
   const ctx: OpenSslLearnContext = {
-    run: runCommand,
+    run: async (cmd: string) => {
+      const idx = currentStepIndexRef.current
+      try {
+        const r = await runCommand(cmd)
+        if (idx >= 0) {
+          const arr = stepLogsRef.current.get(idx) ?? []
+          arr.push({ cmd, output: r.stdout, failed: false })
+          stepLogsRef.current.set(idx, arr)
+        }
+        return r
+      } catch (e) {
+        if (idx >= 0) {
+          const arr = stepLogsRef.current.get(idx) ?? []
+          arr.push({ cmd, output: e instanceof Error ? e.message : String(e), failed: true })
+          stepLogsRef.current.set(idx, arr)
+        }
+        throw e
+      }
+    },
     readFile: (name) => {
       const f = useOpenSSLStore.getState().getFile(name)
       if (!f) return undefined
@@ -154,26 +219,36 @@ export function OpenSslLearnView({
   const selectLesson = (idx: number) => {
     setLessonIdx(idx)
     setStepStates(OPENSSL_LESSONS[idx].steps.map(() => ({ status: 'pending' })))
+    stepLogsRef.current = new Map()
   }
 
   const runStep = async (i: number) => {
     setStepStates((prev) => prev.map((s, j) => (j === i ? { status: 'running' } : s)))
+    stepLogsRef.current.set(i, [])
+    currentStepIndexRef.current = i
     try {
       const result = await lesson.steps[i].run(ctx)
+      currentStepIndexRef.current = -1
       setStepStates((prev) =>
-        prev.map((s, j) => (j === i ? { status: 'ok', detail: result.detail } : s))
+        prev.map((s, j) =>
+          j === i ? { status: 'ok', detail: result.detail, log: stepLogsRef.current.get(i) } : s
+        )
       )
-    } catch (e) {
-      const message = e instanceof Error ? e.message : String(e)
+    } catch {
+      currentStepIndexRef.current = -1
       const expectedRefusal = lesson.steps[i].expect === 'refusal'
       logEvent(
         'Playground',
         'OpenSSL Learn Step',
         `${lesson.id}:${i}:${expectedRefusal ? 'refused-ok' : 'failed'}`
       )
+      // The real error text now lives in the log block below (with the
+      // command that produced it) — no need to repeat it in `detail` too.
       setStepStates((prev) =>
         prev.map((s, j) =>
-          j === i ? { status: expectedRefusal ? 'refused-ok' : 'failed', detail: message } : s
+          j === i
+            ? { status: expectedRefusal ? 'refused-ok' : 'failed', log: stepLogsRef.current.get(i) }
+            : s
         )
       )
     }
