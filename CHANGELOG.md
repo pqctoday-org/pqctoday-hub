@@ -40,6 +40,10 @@ An OpenSSL Studio release: a new guided Learn tab and a live Algorithm Explorer,
 
 ## [4.25.1] - 2026-07-24
 
+### Added
+
+- **OpenSSL Studio's Learn tab now shows the real command output under each step** [view:/playground/openssl] [persona:developer] [persona:researcher]: every step displays the actual OpenSSL output it produced, inline — previously only a few steps showed any output, and what they showed was a garbled mix of the real result and the app's own internal debug narration (which used the same message channel with no way to tell them apart). All 11 lessons now show a clean, real log per step, including the actual error text for lessons that expect a refusal.
+
 ### Fixed
 
 - **OpenSSL Studio's Learn tab no longer breaks partway through multi-step lessons** [view:/playground/openssl] [persona:developer] [persona:researcher]: "Run all" reused a stale snapshot of files created by earlier steps in the same run, so any lesson with 3 or more chained steps (certificate signing, PKCS#12 bundling, the TLS Simulator capstone, and others) could fail partway through even though each step worked correctly on its own.
