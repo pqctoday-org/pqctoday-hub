@@ -2,12 +2,6 @@
 
 <!-- markdownlint-disable MD024 MD052 MD060 -->
 
-## [4.24.1] - 2026-07-24
-
-### Fixed
-
-- **The TPM Playground's compliance check no longer fails after visiting the Learn tab first** [view:/playground] [persona:developer] [persona:researcher]: the emulated chip only has 3 key-object slots, and the compliance check assumed it was always starting with all of them free. Working through Learn tab lessons (or the Command Builder) first could leave a slot occupied, so creating the attestation key — and everything that depends on it — would fail with an out-of-memory error instead of running. The compliance check now clears its own slots before it starts, regardless of what ran before it.
-
 All notable changes to this project are documented here, newest release first.
 
 **Format:** `## [MAJOR.MINOR.PATCH] - YYYY-MM-DD`, then an optional one-sentence
@@ -34,6 +28,12 @@ first time (don't ship dev-speak and reformat later):
   cares about (page names, feature names, what was broken, counts).
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
+
+## [4.24.1] - 2026-07-24
+
+### Fixed
+
+- **The TPM Playground's compliance check no longer fails after visiting the Learn tab first** [view:/playground] [persona:developer] [persona:researcher]: the emulated chip only has 3 key-object slots, and the compliance check assumed it was always starting with all of them free. Working through Learn tab lessons (or the Command Builder) first could leave a slot occupied, so creating the attestation key — and everything that depends on it — would fail with an out-of-memory error instead of running. The compliance check now clears its own slots before it starts, regardless of what ran before it.
 
 ## [4.24.0] - 2026-07-23
 
