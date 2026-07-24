@@ -264,15 +264,24 @@ export const PKCS11_PROBE_ALGORITHM = 'ML-DSA-65'
 /**
  * Probe for the pkcs11 provider specifically.
  *
- * Deliberately passes NO `-provider` flag — see the section comment above:
- * that flag creates a separate libctx which cannot see the statically
- * linked provider, so using it would test nothing except our own mistake.
- * Instead we exercise the real path: generate a token-resident key (via the
- * worker's direct C_GenerateKeyPair, since `genpkey -out pkcs11:` would
- * write a PEM to MEMFS rather than the token), then have the OpenSSL CLI
- * read that key back through a `pkcs11:` URI against the global libctx.
- * Reading the public half back proves the whole chain works: CLI → OSSL_STORE
- * → pkcs11-provider → engine → token object.
+ * `-provider pkcs11` is NOT avoided because it is broken — verified working
+ * (see the section comment above): the CLI has a single default library
+ * context (`apps/lib/app_libctx.c` keeps it NULL unless the undocumented
+ * `OPENSSL_TEST_LIBCTX` test hook is set), so `-provider pkcs11` reaches the
+ * exact same registration `pqctoday_cms_init()` made. A prior version of
+ * this comment claimed the flag builds a separate context that "can't see"
+ * the provider — that claim did not hold up against the OpenSSL 3.6.2
+ * source and has been removed; do not reintroduce it.
+ *
+ * The flag is simply unnecessary here: `pkcs11:` URIs already resolve
+ * against that same default context with no flag at all, and testing
+ * without it means this probe also verifies the URI-only path the
+ * Workbench and CMS workshop actually rely on day to day. We generate a
+ * token-resident key (via the worker's direct C_GenerateKeyPair, since
+ * `genpkey -out pkcs11:` would write a PEM to MEMFS rather than the token),
+ * then have the OpenSSL CLI read it back through a `pkcs11:` URI. Reading
+ * the public half back proves the whole chain: CLI → OSSL_STORE →
+ * pkcs11-provider → engine → token object.
  *
  * `hsmKeygen` is supplied by the Studio (worker-backed). When absent — e.g.
  * the Node test driver, or a build with no token support — we skip straight

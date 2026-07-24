@@ -7319,6 +7319,7 @@ var _C_GenerateKeyPair = Module['_C_GenerateKeyPair'] = makeInvalidEarlyAccess('
 var _C_GetAttributeValue = Module['_C_GetAttributeValue'] = makeInvalidEarlyAccess('_C_GetAttributeValue');
 var _C_Initialize = Module['_C_Initialize'] = makeInvalidEarlyAccess('_C_Initialize');
 var _C_GetSlotList = Module['_C_GetSlotList'] = makeInvalidEarlyAccess('_C_GetSlotList');
+var _C_GetTokenInfo = Module['_C_GetTokenInfo'] = makeInvalidEarlyAccess('_C_GetTokenInfo');
 var _C_InitToken = Module['_C_InitToken'] = makeInvalidEarlyAccess('_C_InitToken');
 var _C_InitPIN = Module['_C_InitPIN'] = makeInvalidEarlyAccess('_C_InitPIN');
 var _C_OpenSession = Module['_C_OpenSession'] = makeInvalidEarlyAccess('_C_OpenSession');
@@ -7386,6 +7387,7 @@ function assignWasmExports(wasmExports) {
   assert(typeof wasmExports['C_GetAttributeValue'] != 'undefined', 'missing Wasm export: C_GetAttributeValue');
   assert(typeof wasmExports['C_Initialize'] != 'undefined', 'missing Wasm export: C_Initialize');
   assert(typeof wasmExports['C_GetSlotList'] != 'undefined', 'missing Wasm export: C_GetSlotList');
+  assert(typeof wasmExports['C_GetTokenInfo'] != 'undefined', 'missing Wasm export: C_GetTokenInfo');
   assert(typeof wasmExports['C_InitToken'] != 'undefined', 'missing Wasm export: C_InitToken');
   assert(typeof wasmExports['C_InitPIN'] != 'undefined', 'missing Wasm export: C_InitPIN');
   assert(typeof wasmExports['C_OpenSession'] != 'undefined', 'missing Wasm export: C_OpenSession');
@@ -7449,6 +7451,7 @@ function assignWasmExports(wasmExports) {
   _C_GetAttributeValue = Module['_C_GetAttributeValue'] = createExportWrapper('C_GetAttributeValue', wasmExports['C_GetAttributeValue'], 4);
   _C_Initialize = Module['_C_Initialize'] = createExportWrapper('C_Initialize', wasmExports['C_Initialize'], 1);
   _C_GetSlotList = Module['_C_GetSlotList'] = createExportWrapper('C_GetSlotList', wasmExports['C_GetSlotList'], 3);
+  _C_GetTokenInfo = Module['_C_GetTokenInfo'] = createExportWrapper('C_GetTokenInfo', wasmExports['C_GetTokenInfo'], 2);
   _C_InitToken = Module['_C_InitToken'] = createExportWrapper('C_InitToken', wasmExports['C_InitToken'], 4);
   _C_InitPIN = Module['_C_InitPIN'] = createExportWrapper('C_InitPIN', wasmExports['C_InitPIN'], 3);
   _C_OpenSession = Module['_C_OpenSession'] = createExportWrapper('C_OpenSession', wasmExports['C_OpenSession'], 5);

@@ -275,10 +275,12 @@ export function AlgorithmExplorerPanel({
           continue
         }
         if (p.key === 'pkcs11') {
-          // Needs its own probe: the generic one passes `-provider pkcs11`,
-          // which creates a separate libctx that cannot see the statically
-          // linked provider — it would report a failure it caused itself.
-          // See algorithmListParser.ts's provider-honesty section.
+          // Needs its own probe: the generic one asks a CKA_SENSITIVE
+          // token key to export itself to a file, which a real HSM must
+          // refuse — see algorithmListParser.ts's provider-honesty section
+          // for what "-provider pkcs11" actually does (it works; a URI
+          // probe is simply the more representative test, not a workaround
+          // for a broken flag).
           nextProbes[p.key] = await probePkcs11Functional(runCommand, hsmKeygen)
           continue
         }
