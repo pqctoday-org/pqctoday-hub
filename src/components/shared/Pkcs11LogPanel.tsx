@@ -128,6 +128,7 @@ const CRYPTO_OPS = new Set([
   'C_GenerateKeyPair',
   'C_GenerateKey',
   'C_CreateObject', // key import (e.g. importing an externally-derived secret) — a real op, not housekeeping
+  'C_SetAttributeValue', // policy changes (e.g. CKA_TRUSTED, CKA_WRAP_WITH_TRUSTED) — a real op, not housekeeping
   'C_DeriveKey',
   'C_WrapKey',
   'C_UnwrapKey',
@@ -189,6 +190,15 @@ interface Pkcs11LogPanelProps {
    * never edited — Beginner mode is purely additive.
    */
   showBeginnerMode?: boolean
+  /**
+   * Lesson context: every call a lesson step makes is the point (including
+   * C_Initialize/C_OpenSession/C_Login when the lesson is about those calls
+   * specifically), so the `CRYPTO_OPS` "hide administrative noise" allowlist
+   * — built for the free-form workbench tabs — doesn't apply here. When
+   * true, skip that filtering entirely and hide the now-meaningless "Crypto
+   * Only" toggle.
+   */
+  lessonMode?: boolean
 }
 
 export const Pkcs11LogPanel = ({
@@ -200,17 +210,19 @@ export const Pkcs11LogPanel = ({
   emptyMessage = 'No PKCS#11 calls yet — run a live operation to see activity.',
   filterFns,
   showBeginnerMode = false,
+  lessonMode = false,
 }: Pkcs11LogPanelProps) => {
   const [open, setOpen] = useState(defaultOpen)
   const [copied, setCopied] = useState(false)
   const [inspectMode, setInspectMode] = useState(false)
   const [beginnerMode, setBeginnerMode] = useState(false)
-  const [hideAdminOps, setHideAdminOps] = useState(true)
+  const [hideAdminOps, setHideAdminOps] = useState(!lessonMode)
 
   const visibleLog = log.filter((e) => {
     if (e.isStepHeader) return true
-    // Crypto-only filter: hide everything that isn't a core crypto operation
-    if (hideAdminOps && !CRYPTO_OPS.has(e.fn)) return false
+    // Crypto-only filter: hide everything that isn't a core crypto operation.
+    // Doesn't apply in lesson context — every call a step makes is the point.
+    if (!lessonMode && hideAdminOps && !CRYPTO_OPS.has(e.fn)) return false
     if (!inspectMode && e.fn === 'C_GetAttributeValue') return false
     if (!inspectMode && e.fn === 'C_FindObjects') return false
     if (CRYPTO_OPS.has(e.fn)) return true
@@ -301,20 +313,22 @@ export const Pkcs11LogPanel = ({
               Beginner
             </Button>
           )}
-          <Button
-            variant={hideAdminOps ? 'secondary' : 'ghost'}
-            size="sm"
-            className="h-6 px-1.5 text-xs mr-1"
-            onClick={() => setHideAdminOps(!hideAdminOps)}
-            title={
-              hideAdminOps
-                ? 'Showing crypto ops only — click to include admin ops'
-                : 'Show crypto operations only (hide C_Initialize, C_OpenSession, etc.)'
-            }
-          >
-            <Filter size={11} className="mr-1" />
-            Crypto Only
-          </Button>
+          {!lessonMode && (
+            <Button
+              variant={hideAdminOps ? 'secondary' : 'ghost'}
+              size="sm"
+              className="h-6 px-1.5 text-xs mr-1"
+              onClick={() => setHideAdminOps(!hideAdminOps)}
+              title={
+                hideAdminOps
+                  ? 'Showing crypto ops only — click to include admin ops'
+                  : 'Show crypto operations only (hide C_Initialize, C_OpenSession, etc.)'
+              }
+            >
+              <Filter size={11} className="mr-1" />
+              Crypto Only
+            </Button>
+          )}
           <Button
             variant={inspectMode ? 'secondary' : 'ghost'}
             size="sm"
