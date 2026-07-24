@@ -1,12 +1,20 @@
 var createSoftHSMModule = (() => {
-  var _scriptName = globalThis.document?.currentScript?.src
+  var _scriptName = typeof document != 'undefined' ? document.currentScript?.src : undefined
   return async function (moduleArg = {}) {
     var moduleRtn
+
     var Module = moduleArg
-    var ENVIRONMENT_IS_WEB = !!globalThis.window
-    var ENVIRONMENT_IS_WORKER = !!globalThis.WorkerGlobalScope
+    var readyPromiseResolve, readyPromiseReject
+    var readyPromise = new Promise((resolve, reject) => {
+      readyPromiseResolve = resolve
+      readyPromiseReject = reject
+    })
+    var ENVIRONMENT_IS_WEB = typeof window == 'object'
+    var ENVIRONMENT_IS_WORKER = typeof WorkerGlobalScope != 'undefined'
     var ENVIRONMENT_IS_NODE =
-      globalThis.process?.versions?.node && globalThis.process?.type != 'renderer'
+      typeof process == 'object' && process.versions?.node && process.type != 'renderer'
+    if (ENVIRONMENT_IS_NODE) {
+    }
     var Module = Module || {}
     Module['preRun'] = Module['preRun'] || []
     Module['preRun'].push(function () {
@@ -50,7 +58,8 @@ var createSoftHSMModule = (() => {
     }
     var readAsync, readBinary
     if (ENVIRONMENT_IS_NODE) {
-      var fs = require('node:fs')
+      var fs = require('fs')
+      var nodePath = require('path')
       scriptDirectory = __dirname + '/'
       readBinary = (filename) => {
         filename = isFileURI(filename) ? new URL(filename) : filename
@@ -88,12 +97,16 @@ var createSoftHSMModule = (() => {
     var out = console.log.bind(console)
     var err = console.error.bind(console)
     var wasmBinary
+    var wasmMemory
     var ABORT = false
-    var isFileURI = (filename) => filename.startsWith('file://')
-    class EmscriptenEH {}
-    class EmscriptenSjLj extends EmscriptenEH {}
-    var readyPromiseResolve, readyPromiseReject
+    function assert(condition, text) {
+      if (!condition) {
+        abort(text)
+      }
+    }
+    var HEAP8, HEAPU8, HEAP16, HEAPU16, HEAP32, HEAPU32, HEAPF32, HEAP64, HEAPU64, HEAPF64
     var runtimeInitialized = false
+    var isFileURI = (filename) => filename.startsWith('file://')
     function updateMemoryViews() {
       var b = wasmMemory.buffer
       HEAP8 = new Int8Array(b)
@@ -133,14 +146,34 @@ var createSoftHSMModule = (() => {
       }
       callRuntimeCallbacks(onPostRuns)
     }
+    var runDependencies = 0
+    var dependenciesFulfilled = null
+    function getUniqueRunDependency(id) {
+      return id
+    }
+    function addRunDependency(id) {
+      runDependencies++
+      Module['monitorRunDependencies']?.(runDependencies)
+    }
+    function removeRunDependency(id) {
+      runDependencies--
+      Module['monitorRunDependencies']?.(runDependencies)
+      if (runDependencies == 0) {
+        if (dependenciesFulfilled) {
+          var callback = dependenciesFulfilled
+          dependenciesFulfilled = null
+          callback()
+        }
+      }
+    }
     function abort(what) {
       Module['onAbort']?.(what)
-      what = `Aborted(${what})`
+      what = 'Aborted(' + what + ')'
       err(what)
       ABORT = true
       what += '. Build with -sASSERTIONS for more info.'
       var e = new WebAssembly.RuntimeError(what)
-      readyPromiseReject?.(e)
+      readyPromiseReject(e)
       throw e
     }
     var wasmBinaryFile
@@ -176,7 +209,11 @@ var createSoftHSMModule = (() => {
       }
     }
     async function instantiateAsync(binary, binaryFile, imports) {
-      if (!binary && !ENVIRONMENT_IS_NODE) {
+      if (
+        !binary &&
+        typeof WebAssembly.instantiateStreaming == 'function' &&
+        !ENVIRONMENT_IS_NODE
+      ) {
         try {
           var response = fetch(binaryFile, { credentials: 'same-origin' })
           var instantiationResult = await WebAssembly.instantiateStreaming(response, imports)
@@ -189,31 +226,37 @@ var createSoftHSMModule = (() => {
       return instantiateArrayBuffer(binaryFile, imports)
     }
     function getWasmImports() {
-      var imports = { a: wasmImports }
-      return imports
+      return { a: wasmImports }
     }
     async function createWasm() {
       function receiveInstance(instance, module) {
         wasmExports = instance.exports
-        assignWasmExports(wasmExports)
+        wasmMemory = wasmExports['D']
         updateMemoryViews()
+        removeRunDependency('wasm-instantiate')
         return wasmExports
       }
+      addRunDependency('wasm-instantiate')
       function receiveInstantiationResult(result) {
         return receiveInstance(result['instance'])
       }
       var info = getWasmImports()
       if (Module['instantiateWasm']) {
         return new Promise((resolve, reject) => {
-          Module['instantiateWasm'](info, (inst, mod) => {
-            resolve(receiveInstance(inst, mod))
+          Module['instantiateWasm'](info, (mod, inst) => {
+            resolve(receiveInstance(mod, inst))
           })
         })
       }
       wasmBinaryFile ??= findWasmBinary()
-      var result = await instantiateAsync(wasmBinary, wasmBinaryFile, info)
-      var exports = receiveInstantiationResult(result)
-      return exports
+      try {
+        var result = await instantiateAsync(wasmBinary, wasmBinaryFile, info)
+        var exports = receiveInstantiationResult(result)
+        return exports
+      } catch (e) {
+        readyPromiseReject(e)
+        return Promise.reject(e)
+      }
     }
     class ExitStatus {
       name = 'ExitStatus'
@@ -222,16 +265,6 @@ var createSoftHSMModule = (() => {
         this.status = status
       }
     }
-    var HEAP16
-    var HEAP32
-    var HEAP64
-    var HEAP8
-    var HEAPF32
-    var HEAPF64
-    var HEAPU16
-    var HEAPU32
-    var HEAPU64
-    var HEAPU8
     var callRuntimeCallbacks = (callbacks) => {
       while (callbacks.length > 0) {
         callbacks.shift()(Module)
@@ -339,21 +372,25 @@ var createSoftHSMModule = (() => {
         return HEAPU32[(this.ptr + 16) >> 2]
       }
     }
+    var exceptionLast = 0
     var uncaughtExceptionCount = 0
     var ___cxa_throw = (ptr, type, destructor) => {
       var info = new ExceptionInfo(ptr)
       info.init(type, destructor)
+      exceptionLast = ptr
       uncaughtExceptionCount++
-      abort()
+      throw exceptionLast
     }
     var initRandomFill = () => {
       if (ENVIRONMENT_IS_NODE) {
-        var nodeCrypto = require('node:crypto')
+        var nodeCrypto = require('crypto')
         return (view) => nodeCrypto.randomFillSync(view)
       }
-      return (view) => (crypto.getRandomValues(view), 0)
+      return (view) => crypto.getRandomValues(view)
     }
-    var randomFill = (view) => (randomFill = initRandomFill())(view)
+    var randomFill = (view) => {
+      ;(randomFill = initRandomFill())(view)
+    }
     var PATH = {
       isAbs: (path) => path.charAt(0) === '/',
       splitPath: (filename) => {
@@ -465,15 +502,11 @@ var createSoftHSMModule = (() => {
         return outputParts.join('/')
       },
     }
-    var UTF8Decoder = globalThis.TextDecoder && new TextDecoder()
-    var findStringEnd = (heapOrArray, idx, maxBytesToRead, ignoreNul) => {
-      var maxIdx = idx + maxBytesToRead
-      if (ignoreNul) return maxIdx
-      while (heapOrArray[idx] && !(idx >= maxIdx)) ++idx
-      return idx
-    }
-    var UTF8ArrayToString = (heapOrArray, idx = 0, maxBytesToRead, ignoreNul) => {
-      var endPtr = findStringEnd(heapOrArray, idx, maxBytesToRead, ignoreNul)
+    var UTF8Decoder = typeof TextDecoder != 'undefined' ? new TextDecoder() : undefined
+    var UTF8ArrayToString = (heapOrArray, idx = 0, maxBytesToRead = NaN) => {
+      var endIdx = idx + maxBytesToRead
+      var endPtr = idx
+      while (heapOrArray[endPtr] && !(endPtr >= endIdx)) ++endPtr
       if (endPtr - idx > 16 && heapOrArray.buffer && UTF8Decoder) {
         return UTF8Decoder.decode(heapOrArray.subarray(idx, endPtr))
       }
@@ -527,7 +560,11 @@ var createSoftHSMModule = (() => {
       var startIdx = outIdx
       var endIdx = outIdx + maxBytesToWrite - 1
       for (var i = 0; i < str.length; ++i) {
-        var u = str.codePointAt(i)
+        var u = str.charCodeAt(i)
+        if (u >= 55296 && u <= 57343) {
+          var u1 = str.charCodeAt(++i)
+          u = (65536 + ((u & 1023) << 10)) | (u1 & 1023)
+        }
         if (u <= 127) {
           if (outIdx >= endIdx) break
           heap[outIdx++] = u
@@ -546,7 +583,6 @@ var createSoftHSMModule = (() => {
           heap[outIdx++] = 128 | ((u >> 12) & 63)
           heap[outIdx++] = 128 | ((u >> 6) & 63)
           heap[outIdx++] = 128 | (u & 63)
-          i++
         }
       }
       heap[outIdx] = 0
@@ -576,7 +612,7 @@ var createSoftHSMModule = (() => {
           if (bytesRead > 0) {
             result = buf.slice(0, bytesRead).toString('utf-8')
           }
-        } else if (globalThis.window?.prompt) {
+        } else if (typeof window != 'undefined' && typeof window.prompt == 'function') {
           result = window.prompt('Input: ')
           if (result !== null) {
             result += '\n'
@@ -767,7 +803,7 @@ var createSoftHSMModule = (() => {
           node.node_ops = MEMFS.ops_table.file.node
           node.stream_ops = MEMFS.ops_table.file.stream
           node.usedBytes = 0
-          node.contents = MEMFS.emptyFileContents ??= new Uint8Array(0)
+          node.contents = null
         } else if (FS.isLink(node.mode)) {
           node.node_ops = MEMFS.ops_table.link.node
           node.stream_ops = MEMFS.ops_table.link.stream
@@ -783,27 +819,36 @@ var createSoftHSMModule = (() => {
         return node
       },
       getFileDataAsTypedArray(node) {
-        return node.contents.subarray(0, node.usedBytes)
+        if (!node.contents) return new Uint8Array(0)
+        if (node.contents.subarray) return node.contents.subarray(0, node.usedBytes)
+        return new Uint8Array(node.contents)
       },
       expandFileStorage(node, newCapacity) {
-        var prevCapacity = node.contents.length
+        var prevCapacity = node.contents ? node.contents.length : 0
         if (prevCapacity >= newCapacity) return
         var CAPACITY_DOUBLING_MAX = 1024 * 1024
         newCapacity = Math.max(
           newCapacity,
           (prevCapacity * (prevCapacity < CAPACITY_DOUBLING_MAX ? 2 : 1.125)) >>> 0
         )
-        if (prevCapacity) newCapacity = Math.max(newCapacity, 256)
-        var oldContents = MEMFS.getFileDataAsTypedArray(node)
+        if (prevCapacity != 0) newCapacity = Math.max(newCapacity, 256)
+        var oldContents = node.contents
         node.contents = new Uint8Array(newCapacity)
-        node.contents.set(oldContents)
+        if (node.usedBytes > 0) node.contents.set(oldContents.subarray(0, node.usedBytes), 0)
       },
       resizeFileStorage(node, newSize) {
         if (node.usedBytes == newSize) return
-        var oldContents = node.contents
-        node.contents = new Uint8Array(newSize)
-        node.contents.set(oldContents.subarray(0, Math.min(newSize, node.usedBytes)))
-        node.usedBytes = newSize
+        if (newSize == 0) {
+          node.contents = null
+          node.usedBytes = 0
+        } else {
+          var oldContents = node.contents
+          node.contents = new Uint8Array(newSize)
+          if (oldContents) {
+            node.contents.set(oldContents.subarray(0, Math.min(newSize, node.usedBytes)))
+          }
+          node.usedBytes = newSize
+        }
       },
       node_ops: {
         getattr(node) {
@@ -842,10 +887,6 @@ var createSoftHSMModule = (() => {
           }
         },
         lookup(parent, name) {
-          if (!MEMFS.doesNotExistError) {
-            MEMFS.doesNotExistError = new FS.ErrnoError(44)
-            MEMFS.doesNotExistError.stack = '<generic error, no stack>'
-          }
           throw MEMFS.doesNotExistError
         },
         mknod(parent, name, mode, dev) {
@@ -901,7 +942,11 @@ var createSoftHSMModule = (() => {
           var contents = stream.node.contents
           if (position >= stream.node.usedBytes) return 0
           var size = Math.min(stream.node.usedBytes - position, length)
-          buffer.set(contents.subarray(position, position + size), offset)
+          if (size > 8 && contents.subarray) {
+            buffer.set(contents.subarray(position, position + size), offset)
+          } else {
+            for (var i = 0; i < size; i++) buffer[offset + i] = contents[position + i]
+          }
           return size
         },
         write(stream, buffer, offset, length, position, canOwn) {
@@ -911,17 +956,29 @@ var createSoftHSMModule = (() => {
           if (!length) return 0
           var node = stream.node
           node.mtime = node.ctime = Date.now()
-          if (canOwn) {
-            node.contents = buffer.subarray(offset, offset + length)
-            node.usedBytes = length
-          } else if (node.usedBytes === 0 && position === 0) {
-            node.contents = buffer.slice(offset, offset + length)
-            node.usedBytes = length
-          } else {
-            MEMFS.expandFileStorage(node, position + length)
-            node.contents.set(buffer.subarray(offset, offset + length), position)
-            node.usedBytes = Math.max(node.usedBytes, position + length)
+          if (buffer.subarray && (!node.contents || node.contents.subarray)) {
+            if (canOwn) {
+              node.contents = buffer.subarray(offset, offset + length)
+              node.usedBytes = length
+              return length
+            } else if (node.usedBytes === 0 && position === 0) {
+              node.contents = buffer.slice(offset, offset + length)
+              node.usedBytes = length
+              return length
+            } else if (position + length <= node.usedBytes) {
+              node.contents.set(buffer.subarray(offset, offset + length), position)
+              return length
+            }
           }
+          MEMFS.expandFileStorage(node, position + length)
+          if (node.contents.subarray && buffer.subarray) {
+            node.contents.set(buffer.subarray(offset, offset + length), position)
+          } else {
+            for (var i = 0; i < length; i++) {
+              node.contents[position + i] = buffer[offset + i]
+            }
+          }
+          node.usedBytes = Math.max(node.usedBytes, position + length)
           return length
         },
         llseek(stream, offset, whence) {
@@ -945,7 +1002,7 @@ var createSoftHSMModule = (() => {
           var ptr
           var allocated
           var contents = stream.node.contents
-          if (!(flags & 2) && contents.buffer === HEAP8.buffer) {
+          if (!(flags & 2) && contents && contents.buffer === HEAP8.buffer) {
             allocated = false
             ptr = contents.byteOffset
           } else {
@@ -973,8 +1030,65 @@ var createSoftHSMModule = (() => {
         },
       },
     }
+    var asyncLoad = async (url) => {
+      var arrayBuffer = await readAsync(url)
+      return new Uint8Array(arrayBuffer)
+    }
+    var FS_createDataFile = (...args) => FS.createDataFile(...args)
+    var preloadPlugins = []
+    var FS_handledByPreloadPlugin = (byteArray, fullname, finish, onerror) => {
+      if (typeof Browser != 'undefined') Browser.init()
+      var handled = false
+      preloadPlugins.forEach((plugin) => {
+        if (handled) return
+        if (plugin['canHandle'](fullname)) {
+          plugin['handle'](byteArray, fullname, finish, onerror)
+          handled = true
+        }
+      })
+      return handled
+    }
+    var FS_createPreloadedFile = (
+      parent,
+      name,
+      url,
+      canRead,
+      canWrite,
+      onload,
+      onerror,
+      dontCreateFile,
+      canOwn,
+      preFinish
+    ) => {
+      var fullname = name ? PATH_FS.resolve(PATH.join2(parent, name)) : parent
+      var dep = getUniqueRunDependency(`cp ${fullname}`)
+      function processData(byteArray) {
+        function finish(byteArray) {
+          preFinish?.()
+          if (!dontCreateFile) {
+            FS_createDataFile(parent, name, byteArray, canRead, canWrite, canOwn)
+          }
+          onload?.()
+          removeRunDependency(dep)
+        }
+        if (
+          FS_handledByPreloadPlugin(byteArray, fullname, finish, () => {
+            onerror?.()
+            removeRunDependency(dep)
+          })
+        ) {
+          return
+        }
+        finish(byteArray)
+      }
+      addRunDependency(dep)
+      if (typeof url == 'string') {
+        asyncLoad(url).then(processData, onerror)
+      } else {
+        processData(url)
+      }
+    }
     var FS_modeStringToFlags = (str) => {
-      if (typeof str != 'string') return str
       var flagModes = {
         r: 0,
         'r+': 2,
@@ -989,96 +1103,11 @@ var createSoftHSMModule = (() => {
       }
       return flags
     }
-    var FS_fileDataToTypedArray = (data) => {
-      if (typeof data == 'string') {
-        data = intArrayFromString(data, true)
-      }
-      if (!data.subarray) {
-        data = new Uint8Array(data)
-      }
-      return data
-    }
     var FS_getMode = (canRead, canWrite) => {
       var mode = 0
       if (canRead) mode |= 292 | 73
       if (canWrite) mode |= 146
       return mode
-    }
-    var asyncLoad = async (url) => {
-      var arrayBuffer = await readAsync(url)
-      return new Uint8Array(arrayBuffer)
-    }
-    var FS_createDataFile = (...args) => FS.createDataFile(...args)
-    var getUniqueRunDependency = (id) => id
-    var runDependencies = 0
-    var dependenciesFulfilled = null
-    var removeRunDependency = (id) => {
-      runDependencies--
-      Module['monitorRunDependencies']?.(runDependencies)
-      if (runDependencies == 0) {
-        if (dependenciesFulfilled) {
-          var callback = dependenciesFulfilled
-          dependenciesFulfilled = null
-          callback()
-        }
-      }
-    }
-    var addRunDependency = (id) => {
-      runDependencies++
-      Module['monitorRunDependencies']?.(runDependencies)
-    }
-    var preloadPlugins = []
-    var FS_handledByPreloadPlugin = async (byteArray, fullname) => {
-      if (typeof Browser != 'undefined') Browser.init()
-      for (var plugin of preloadPlugins) {
-        if (plugin['canHandle'](fullname)) {
-          return plugin['handle'](byteArray, fullname)
-        }
-      }
-      return byteArray
-    }
-    var FS_preloadFile = async (
-      parent,
-      name,
-      url,
-      canRead,
-      canWrite,
-      dontCreateFile,
-      canOwn,
-      preFinish
-    ) => {
-      var fullname = name ? PATH_FS.resolve(PATH.join2(parent, name)) : parent
-      var dep = getUniqueRunDependency(`cp ${fullname}`)
-      addRunDependency(dep)
-      try {
-        var byteArray = url
-        if (typeof url == 'string') {
-          byteArray = await asyncLoad(url)
-        }
-        byteArray = await FS_handledByPreloadPlugin(byteArray, fullname)
-        preFinish?.()
-        if (!dontCreateFile) {
-          FS_createDataFile(parent, name, byteArray, canRead, canWrite, canOwn)
-        }
-      } finally {
-        removeRunDependency(dep)
-      }
-    }
-    var FS_createPreloadedFile = (
-      parent,
-      name,
-      url,
-      canRead,
-      canWrite,
-      onload,
-      onerror,
-      dontCreateFile,
-      canOwn,
-      preFinish
-    ) => {
-      FS_preloadFile(parent, name, url, canRead, canWrite, dontCreateFile, canOwn, preFinish)
-        .then(onload)
-        .catch(onerror)
     }
     var FS = {
       root: null,
@@ -1092,6 +1121,7 @@ var createSoftHSMModule = (() => {
       ignorePermissions: true,
       filesystems: null,
       syncFSRequests: 0,
+      readFiles: {},
       ErrnoError: class {
         name = 'ErrnoError'
         constructor(errno) {
@@ -1189,7 +1219,6 @@ var createSoftHSMModule = (() => {
               current_path = PATH.dirname(current_path)
               if (FS.isRoot(current)) {
                 path = current_path + '/' + parts.slice(i + 1).join('/')
-                nlinks--
                 continue linkloop
               } else {
                 current = current.parent
@@ -1325,11 +1354,9 @@ var createSoftHSMModule = (() => {
         }
         if (perms.includes('r') && !(node.mode & 292)) {
           return 2
-        }
-        if (perms.includes('w') && !(node.mode & 146)) {
+        } else if (perms.includes('w') && !(node.mode & 146)) {
           return 2
-        }
-        if (perms.includes('x') && !(node.mode & 73)) {
+        } else if (perms.includes('x') && !(node.mode & 73)) {
           return 2
         }
         return 0
@@ -1369,8 +1396,10 @@ var createSoftHSMModule = (() => {
           if (FS.isRoot(node) || FS.getPath(node) === FS.cwd()) {
             return 10
           }
-        } else if (FS.isDir(node.mode)) {
-          return 31
+        } else {
+          if (FS.isDir(node.mode)) {
+            return 31
+          }
         }
         return 0
       },
@@ -1380,14 +1409,12 @@ var createSoftHSMModule = (() => {
         }
         if (FS.isLink(node.mode)) {
           return 32
-        }
-        var mode = FS.flagsToPermissionString(flags)
-        if (FS.isDir(node.mode)) {
-          if (mode !== 'r' || flags & (512 | 64)) {
+        } else if (FS.isDir(node.mode)) {
+          if (FS.flagsToPermissionString(flags) !== 'r' || flags & (512 | 64)) {
             return 31
           }
         }
-        return FS.nodePermissions(node, mode)
+        return FS.nodePermissions(node, FS.flagsToPermissionString(flags))
       },
       checkOpExists(op, err) {
         if (!op) {
@@ -1434,14 +1461,7 @@ var createSoftHSMModule = (() => {
         var arg = setattr ? stream : node
         setattr ??= node.node_ops.setattr
         FS.checkOpExists(setattr, 63)
-        try {
-          setattr(arg, attr)
-        } catch (e) {
-          if (e instanceof RangeError) {
-            throw new FS.ErrnoError(22)
-          }
-          throw e
-        }
+        setattr(arg, attr)
       },
       chrdev_stream_ops: {
         open(stream) {
@@ -1499,13 +1519,12 @@ var createSoftHSMModule = (() => {
             doCallback(null)
           }
         }
-        for (var mount of mounts) {
-          if (mount.type.syncfs) {
-            mount.type.syncfs(mount, populate, done)
-          } else {
-            done(null)
+        mounts.forEach((mount) => {
+          if (!mount.type.syncfs) {
+            return done(null)
           }
-        }
+          mount.type.syncfs(mount, populate, done)
+        })
       },
       mount(type, opts, mountpoint) {
         var root = mountpoint === '/'
@@ -1546,7 +1565,8 @@ var createSoftHSMModule = (() => {
         var node = lookup.node
         var mount = node.mounted
         var mounts = FS.getMounts(mount)
-        for (var [hash, current] of Object.entries(FS.nameTable)) {
+        Object.keys(FS.nameTable).forEach((hash) => {
+          var current = FS.nameTable[hash]
           while (current) {
             var next = current.name_next
             if (mounts.includes(current.mount)) {
@@ -1554,7 +1574,7 @@ var createSoftHSMModule = (() => {
             }
             current = next
           }
-        }
+        })
         node.mounted = null
         var idx = node.mount.mounts.indexOf(mount)
         node.mount.mounts.splice(idx, 1)
@@ -1880,7 +1900,7 @@ var createSoftHSMModule = (() => {
         if (path === '') {
           throw new FS.ErrnoError(44)
         }
-        flags = FS_modeStringToFlags(flags)
+        flags = typeof flags == 'string' ? FS_modeStringToFlags(flags) : flags
         if (flags & 64) {
           mode = (mode & 4095) | 32768
         } else {
@@ -1943,6 +1963,11 @@ var createSoftHSMModule = (() => {
         }
         if (created) {
           FS.chmod(node, mode & 511)
+        }
+        if (Module['logReadFiles'] && !(flags & 1)) {
+          if (!(path in FS.readFiles)) {
+            FS.readFiles[path] = 1
+          }
         }
         return stream
       },
@@ -2065,24 +2090,34 @@ var createSoftHSMModule = (() => {
         opts.flags = opts.flags || 0
         opts.encoding = opts.encoding || 'binary'
         if (opts.encoding !== 'utf8' && opts.encoding !== 'binary') {
-          abort(`Invalid encoding type "${opts.encoding}"`)
+          throw new Error(`Invalid encoding type "${opts.encoding}"`)
         }
+        var ret
         var stream = FS.open(path, opts.flags)
         var stat = FS.stat(path)
         var length = stat.size
         var buf = new Uint8Array(length)
         FS.read(stream, buf, 0, length, 0)
         if (opts.encoding === 'utf8') {
-          buf = UTF8ArrayToString(buf)
+          ret = UTF8ArrayToString(buf)
+        } else if (opts.encoding === 'binary') {
+          ret = buf
         }
         FS.close(stream)
-        return buf
+        return ret
       },
       writeFile(path, data, opts = {}) {
         opts.flags = opts.flags || 577
         var stream = FS.open(path, opts.flags, opts.mode)
-        data = FS_fileDataToTypedArray(data)
-        FS.write(stream, data, 0, data.byteLength, undefined, opts.canOwn)
+        if (typeof data == 'string') {
+          var buf = new Uint8Array(lengthBytesUTF8(data) + 1)
+          var actualNumBytes = stringToUTF8Array(data, buf, 0, buf.length)
+          FS.write(stream, buf, 0, actualNumBytes, undefined, opts.canOwn)
+        } else if (ArrayBuffer.isView(data)) {
+          FS.write(stream, data, 0, data.byteLength, undefined, opts.canOwn)
+        } else {
+          throw new Error('Unsupported data type')
+        }
         FS.close(stream)
       },
       cwd: () => FS.currentPath,
@@ -2279,7 +2314,11 @@ var createSoftHSMModule = (() => {
         var mode = FS_getMode(canRead, canWrite)
         var node = FS.create(path, mode)
         if (data) {
-          data = FS_fileDataToTypedArray(data)
+          if (typeof data == 'string') {
+            var arr = new Array(data.length)
+            for (var i = 0, len = data.length; i < len; ++i) arr[i] = data.charCodeAt(i)
+            data = arr
+          }
           FS.chmod(node, mode | 146)
           var stream = FS.open(node, 577)
           FS.write(stream, data, 0, data.length, 0, canOwn)
@@ -2340,13 +2379,14 @@ var createSoftHSMModule = (() => {
       },
       forceLoadFile(obj) {
         if (obj.isDevice || obj.isFolder || obj.link || obj.contents) return true
-        if (globalThis.XMLHttpRequest) {
-          abort(
+        if (typeof XMLHttpRequest != 'undefined') {
+          throw new Error(
             'Lazy loading should have been performed (contents set) in createLazyFile, but it was not. Lazy loading only works in web workers. Use --embed-file or --preload-file in emcc on the main thread.'
           )
         } else {
           try {
             obj.contents = readBinary(obj.url)
+            obj.usedBytes = obj.contents.length
           } catch (e) {
             throw new FS.ErrnoError(29)
           }
@@ -2372,7 +2412,7 @@ var createSoftHSMModule = (() => {
             xhr.open('HEAD', url, false)
             xhr.send(null)
             if (!((xhr.status >= 200 && xhr.status < 300) || xhr.status === 304))
-              abort("Couldn't load " + url + '. Status: ' + xhr.status)
+              throw new Error("Couldn't load " + url + '. Status: ' + xhr.status)
             var datalength = Number(xhr.getResponseHeader('Content-length'))
             var header
             var hasByteServing =
@@ -2382,9 +2422,9 @@ var createSoftHSMModule = (() => {
             if (!hasByteServing) chunkSize = datalength
             var doXHR = (from, to) => {
               if (from > to)
-                abort('invalid range (' + from + ', ' + to + ') or no bytes requested!')
+                throw new Error('invalid range (' + from + ', ' + to + ') or no bytes requested!')
               if (to > datalength - 1)
-                abort('only ' + datalength + ' bytes available! programmer error!')
+                throw new Error('only ' + datalength + ' bytes available! programmer error!')
               var xhr = new XMLHttpRequest()
               xhr.open('GET', url, false)
               if (datalength !== chunkSize)
@@ -2395,7 +2435,7 @@ var createSoftHSMModule = (() => {
               }
               xhr.send(null)
               if (!((xhr.status >= 200 && xhr.status < 300) || xhr.status === 304))
-                abort("Couldn't load " + url + '. Status: ' + xhr.status)
+                throw new Error("Couldn't load " + url + '. Status: ' + xhr.status)
               if (xhr.response !== undefined) {
                 return new Uint8Array(xhr.response || [])
               }
@@ -2409,7 +2449,7 @@ var createSoftHSMModule = (() => {
               if (typeof lazyArray.chunks[chunkNum] == 'undefined') {
                 lazyArray.chunks[chunkNum] = doXHR(start, end)
               }
-              if (typeof lazyArray.chunks[chunkNum] == 'undefined') abort('doXHR failed!')
+              if (typeof lazyArray.chunks[chunkNum] == 'undefined') throw new Error('doXHR failed!')
               return lazyArray.chunks[chunkNum]
             })
             if (usesGzip || !datalength) {
@@ -2435,11 +2475,9 @@ var createSoftHSMModule = (() => {
             return this._chunkSize
           }
         }
-        if (globalThis.XMLHttpRequest) {
+        if (typeof XMLHttpRequest != 'undefined') {
           if (!ENVIRONMENT_IS_WORKER)
-            abort(
-              'Cannot do synchronous binary XHRs outside webworkers in modern browsers. Use --embed-file or --preload-file in emcc'
-            )
+            throw 'Cannot do synchronous binary XHRs outside webworkers in modern browsers. Use --embed-file or --preload-file in emcc'
           var lazyArray = new LazyUint8Array()
           var properties = { isDevice: false, contents: lazyArray }
         } else {
@@ -2460,12 +2498,14 @@ var createSoftHSMModule = (() => {
           },
         })
         var stream_ops = {}
-        for (const [key, fn] of Object.entries(node.stream_ops)) {
+        var keys = Object.keys(node.stream_ops)
+        keys.forEach((key) => {
+          var fn = node.stream_ops[key]
           stream_ops[key] = (...args) => {
             FS.forceLoadFile(node)
             return fn(...args)
           }
-        }
+        })
         function writeChunks(stream, buffer, offset, length, position) {
           var contents = stream.node.contents
           if (position >= contents.length) return 0
@@ -2513,13 +2553,7 @@ var createSoftHSMModule = (() => {
         return FS.createNode(null, '/', 16895, 0)
       },
       createSocket(family, type, protocol) {
-        if (family != 2) {
-          throw new FS.ErrnoError(5)
-        }
         type &= ~526336
-        if (type != 1 && type != 2) {
-          throw new FS.ErrnoError(28)
-        }
         var streaming = type == 1
         if (streaming && protocol && protocol != 6) {
           throw new FS.ErrnoError(66)
@@ -2673,7 +2707,7 @@ var createSoftHSMModule = (() => {
         },
         handlePeerEvents(sock, peer) {
           var first = true
-          function handleOpen() {
+          var handleOpen = function () {
             sock.connecting = false
             SOCKFS.emit('open', sock.stream.fd)
             try {
@@ -2691,6 +2725,7 @@ var createSoftHSMModule = (() => {
               var encoder = new TextEncoder()
               data = encoder.encode(data)
             } else {
+              assert(data.byteLength !== undefined)
               if (data.byteLength == 0) {
                 return
               }
@@ -2721,25 +2756,31 @@ var createSoftHSMModule = (() => {
           }
           if (ENVIRONMENT_IS_NODE) {
             peer.socket.on('open', handleOpen)
-            peer.socket.on('message', (data, isBinary) => {
+            peer.socket.on('message', function (data, isBinary) {
               if (!isBinary) {
                 return
               }
               handleMessage(new Uint8Array(data).buffer)
             })
-            peer.socket.on('close', () => SOCKFS.emit('close', sock.stream.fd))
-            peer.socket.on('error', (error) => {
+            peer.socket.on('close', function () {
+              SOCKFS.emit('close', sock.stream.fd)
+            })
+            peer.socket.on('error', function (error) {
               sock.error = 14
               SOCKFS.emit('error', [sock.stream.fd, sock.error, 'ECONNREFUSED: Connection refused'])
             })
-            return
-          }
-          peer.socket.onopen = handleOpen
-          peer.socket.onclose = () => SOCKFS.emit('close', sock.stream.fd)
-          peer.socket.onmessage = (event) => handleMessage(event.data)
-          peer.socket.onerror = (error) => {
-            sock.error = 14
-            SOCKFS.emit('error', [sock.stream.fd, sock.error, 'ECONNREFUSED: Connection refused'])
+          } else {
+            peer.socket.onopen = handleOpen
+            peer.socket.onclose = function () {
+              SOCKFS.emit('close', sock.stream.fd)
+            }
+            peer.socket.onmessage = function peer_socket_onmessage(event) {
+              handleMessage(event.data)
+            }
+            peer.socket.onerror = function (error) {
+              sock.error = 14
+              SOCKFS.emit('error', [sock.stream.fd, sock.error, 'ECONNREFUSED: Connection refused'])
+            }
           }
         },
         poll(sock) {
@@ -2780,14 +2821,6 @@ var createSoftHSMModule = (() => {
                 bytes = sock.recv_queue[0].data.length
               }
               HEAP32[arg >> 2] = bytes
-              return 0
-            case 21537:
-              var on = HEAP32[arg >> 2]
-              if (on) {
-                sock.stream.flags |= 2048
-              } else {
-                sock.stream.flags &= ~2048
-              }
               return 0
             default:
               return 28
@@ -2857,7 +2890,7 @@ var createSoftHSMModule = (() => {
           var host = sock.saddr
           sock.server = new WebSocketServer({ host, port: sock.sport })
           SOCKFS.emit('listen', sock.stream.fd)
-          sock.server.on('connection', (ws) => {
+          sock.server.on('connection', function (ws) {
             if (sock.type === 1) {
               var newsock = SOCKFS.createSocket(sock.family, sock.type, sock.protocol)
               var peer = SOCKFS.websocket_sock_ops.createPeer(newsock, ws)
@@ -2870,11 +2903,11 @@ var createSoftHSMModule = (() => {
               SOCKFS.emit('connection', sock.stream.fd)
             }
           })
-          sock.server.on('close', () => {
+          sock.server.on('close', function () {
             SOCKFS.emit('close', sock.stream.fd)
             sock.server = null
           })
-          sock.server.on('error', (error) => {
+          sock.server.on('error', function (error) {
             sock.error = 23
             SOCKFS.emit('error', [sock.stream.fd, sock.error, 'EHOSTUNREACH: Host is unreachable'])
           })
@@ -3175,6 +3208,7 @@ var createSoftHSMModule = (() => {
           addr = DNS.address_map.addrs[name]
         } else {
           var id = DNS.address_map.id++
+          assert(id < 65535, 'exceeded max address mappings of 65535')
           addr = '172.29.' + (id & 255) + '.' + (id & 65280)
           DNS.address_map.names[addr] = name
           DNS.address_map.addrs[name] = addr
@@ -3205,10 +3239,10 @@ var createSoftHSMModule = (() => {
         return -e.errno
       }
     }
-    var UTF8ToString = (ptr, maxBytesToRead, ignoreNul) =>
-      ptr ? UTF8ArrayToString(HEAPU8, ptr, maxBytesToRead, ignoreNul) : ''
+    var UTF8ToString = (ptr, maxBytesToRead) =>
+      ptr ? UTF8ArrayToString(HEAPU8, ptr, maxBytesToRead) : ''
     var SYSCALLS = {
-      currentUmask: 18,
+      DEFAULT_POLLMASK: 5,
       calculateAt(dirfd, path, allowEmpty) {
         if (PATH.isAbs(path)) {
           return path
@@ -3229,12 +3263,12 @@ var createSoftHSMModule = (() => {
         return dir + '/' + path
       },
       writeStat(buf, stat) {
-        HEAPU32[buf >> 2] = stat.dev
-        HEAPU32[(buf + 4) >> 2] = stat.mode
+        HEAP32[buf >> 2] = stat.dev
+        HEAP32[(buf + 4) >> 2] = stat.mode
         HEAPU32[(buf + 8) >> 2] = stat.nlink
-        HEAPU32[(buf + 12) >> 2] = stat.uid
-        HEAPU32[(buf + 16) >> 2] = stat.gid
-        HEAPU32[(buf + 20) >> 2] = stat.rdev
+        HEAP32[(buf + 12) >> 2] = stat.uid
+        HEAP32[(buf + 16) >> 2] = stat.gid
+        HEAP32[(buf + 20) >> 2] = stat.rdev
         HEAP64[(buf + 24) >> 3] = BigInt(stat.size)
         HEAP32[(buf + 32) >> 2] = 4096
         HEAP32[(buf + 36) >> 2] = stat.blocks
@@ -3251,16 +3285,16 @@ var createSoftHSMModule = (() => {
         return 0
       },
       writeStatFs(buf, stats) {
-        HEAPU32[(buf + 4) >> 2] = stats.bsize
-        HEAPU32[(buf + 60) >> 2] = stats.bsize
-        HEAP64[(buf + 8) >> 3] = BigInt(stats.blocks)
-        HEAP64[(buf + 16) >> 3] = BigInt(stats.bfree)
-        HEAP64[(buf + 24) >> 3] = BigInt(stats.bavail)
-        HEAP64[(buf + 32) >> 3] = BigInt(stats.files)
-        HEAP64[(buf + 40) >> 3] = BigInt(stats.ffree)
-        HEAPU32[(buf + 48) >> 2] = stats.fsid
-        HEAPU32[(buf + 64) >> 2] = stats.flags
-        HEAPU32[(buf + 56) >> 2] = stats.namelen
+        HEAP32[(buf + 4) >> 2] = stats.bsize
+        HEAP32[(buf + 40) >> 2] = stats.bsize
+        HEAP32[(buf + 8) >> 2] = stats.blocks
+        HEAP32[(buf + 12) >> 2] = stats.bfree
+        HEAP32[(buf + 16) >> 2] = stats.bavail
+        HEAP32[(buf + 20) >> 2] = stats.files
+        HEAP32[(buf + 24) >> 2] = stats.ffree
+        HEAP32[(buf + 28) >> 2] = stats.fsid
+        HEAP32[(buf + 44) >> 2] = stats.flags
+        HEAP32[(buf + 36) >> 2] = stats.namelen
       },
       doMsync(addr, stream, len, flags, offset) {
         if (!FS.isFile(stream.node.mode)) {
@@ -3337,8 +3371,7 @@ var createSoftHSMModule = (() => {
             return stream.flags
           case 4: {
             var arg = syscallGetVarargI()
-            var mask = 289792
-            stream.flags = (stream.flags & ~mask) | (arg & mask)
+            stream.flags |= arg
             return 0
           }
           case 12: {
@@ -3371,7 +3404,7 @@ var createSoftHSMModule = (() => {
     function ___syscall_ftruncate64(fd, length) {
       length = bigintToI53Checked(length)
       try {
-        if (isNaN(length)) return -22
+        if (isNaN(length)) return -61
         FS.ftruncate(fd, length)
         return 0
       } catch (e) {
@@ -3499,7 +3532,6 @@ var createSoftHSMModule = (() => {
             if (!stream.tty) return -59
             return -28
           }
-          case 21537:
           case 21531: {
             var argp = syscallGetVarargP()
             return FS.ioctl(stream, op, argp)
@@ -3543,7 +3575,6 @@ var createSoftHSMModule = (() => {
       try {
         path = SYSCALLS.getStr(path)
         path = SYSCALLS.calculateAt(dirfd, path)
-        mode &= ~SYSCALLS.currentUmask
         FS.mkdir(path, mode, 0)
         return 0
       } catch (e) {
@@ -3570,9 +3601,6 @@ var createSoftHSMModule = (() => {
         path = SYSCALLS.getStr(path)
         path = SYSCALLS.calculateAt(dirfd, path)
         var mode = varargs ? syscallGetVarargI() : 0
-        if (flags & 64) {
-          mode &= ~SYSCALLS.currentUmask
-        }
         return FS.open(path, flags, mode).fd
       } catch (e) {
         if (typeof FS == 'undefined' || !(e.name === 'ErrnoError')) throw e
@@ -3702,8 +3730,8 @@ var createSoftHSMModule = (() => {
     var getHeapMax = () => 536870912
     var alignMemory = (size, alignment) => Math.ceil(size / alignment) * alignment
     var growMemory = (size) => {
-      var oldHeapSize = wasmMemory.buffer.byteLength
-      var pages = ((size - oldHeapSize + 65535) / 65536) | 0
+      var b = wasmMemory.buffer
+      var pages = ((size - b.byteLength + 65535) / 65536) | 0
       try {
         wasmMemory.grow(pages)
         updateMemoryViews()
@@ -3735,7 +3763,11 @@ var createSoftHSMModule = (() => {
     var getExecutableName = () => thisProgram || './this.program'
     var getEnvStrings = () => {
       if (!getEnvStrings.strings) {
-        var lang = (globalThis.navigator?.language ?? 'C').replace('-', '_') + '.UTF-8'
+        var lang =
+          (
+            (typeof navigator == 'object' && navigator.languages && navigator.languages[0]) ||
+            'C'
+          ).replace('-', '_') + '.UTF-8'
         var env = {
           USER: 'web_user',
           LOGNAME: 'web_user',
@@ -3818,7 +3850,7 @@ var createSoftHSMModule = (() => {
     function _fd_seek(fd, offset, whence, newOffset) {
       offset = bigintToI53Checked(offset)
       try {
-        if (isNaN(offset)) return 22
+        if (isNaN(offset)) return 61
         var stream = SYSCALLS.getStreamFromFD(fd)
         FS.llseek(stream, offset, whence)
         HEAP64[newOffset >> 3] = BigInt(stream.position)
@@ -3863,8 +3895,9 @@ var createSoftHSMModule = (() => {
     var FS_createLazyFile = (...args) => FS.createLazyFile(...args)
     var FS_createDevice = (...args) => FS.createDevice(...args)
     FS.createPreloadedFile = FS_createPreloadedFile
-    FS.preloadFile = FS_preloadFile
     FS.staticInit()
+    MEMFS.doesNotExistError = new FS.ErrnoError(44)
+    MEMFS.doesNotExistError.stack = '<generic error, no stack>'
     {
       if (Module['noExitRuntime']) noExitRuntime = Module['noExitRuntime']
       if (Module['preloadPlugins']) preloadPlugins = Module['preloadPlugins']
@@ -3873,12 +3906,6 @@ var createSoftHSMModule = (() => {
       if (Module['wasmBinary']) wasmBinary = Module['wasmBinary']
       if (Module['arguments']) arguments_ = Module['arguments']
       if (Module['thisProgram']) thisProgram = Module['thisProgram']
-      if (Module['preInit']) {
-        if (typeof Module['preInit'] == 'function') Module['preInit'] = [Module['preInit']]
-        while (Module['preInit'].length > 0) {
-          Module['preInit'].shift()()
-        }
-      }
     }
     Module['addRunDependency'] = addRunDependency
     Module['removeRunDependency'] = removeRunDependency
@@ -3887,236 +3914,13 @@ var createSoftHSMModule = (() => {
     Module['UTF8ToString'] = UTF8ToString
     Module['stringToUTF8'] = stringToUTF8
     Module['lengthBytesUTF8'] = lengthBytesUTF8
-    Module['FS_preloadFile'] = FS_preloadFile
+    Module['FS_createPreloadedFile'] = FS_createPreloadedFile
     Module['FS_unlink'] = FS_unlink
     Module['FS_createPath'] = FS_createPath
     Module['FS_createDevice'] = FS_createDevice
     Module['FS'] = FS
     Module['FS_createDataFile'] = FS_createDataFile
     Module['FS_createLazyFile'] = FS_createLazyFile
-    var _C_Initialize,
-      _C_Finalize,
-      _C_GetInfo,
-      _C_GetFunctionList,
-      _C_GetSlotList,
-      _C_GetSlotInfo,
-      _C_GetTokenInfo,
-      _C_GetMechanismList,
-      _C_GetMechanismInfo,
-      _C_InitToken,
-      _C_InitPIN,
-      _C_SetPIN,
-      _C_OpenSession,
-      _C_CloseSession,
-      _C_CloseAllSessions,
-      _C_GetSessionInfo,
-      _C_GetOperationState,
-      _C_SetOperationState,
-      _C_Login,
-      _C_Logout,
-      _C_CreateObject,
-      _C_CopyObject,
-      _C_DestroyObject,
-      _C_GetObjectSize,
-      _C_GetAttributeValue,
-      _C_SetAttributeValue,
-      _C_FindObjectsInit,
-      _C_FindObjects,
-      _C_FindObjectsFinal,
-      _C_EncryptInit,
-      _C_Encrypt,
-      _C_EncryptUpdate,
-      _C_EncryptFinal,
-      _C_DecryptInit,
-      _C_Decrypt,
-      _C_DecryptUpdate,
-      _C_DecryptFinal,
-      _C_DigestInit,
-      _C_Digest,
-      _C_DigestUpdate,
-      _C_DigestKey,
-      _C_DigestFinal,
-      _C_SignInit,
-      _C_Sign,
-      _C_SignUpdate,
-      _C_SignFinal,
-      _C_SignRecoverInit,
-      _C_SignRecover,
-      _C_VerifyInit,
-      _C_Verify,
-      _C_VerifyUpdate,
-      _C_VerifyFinal,
-      _C_VerifyRecoverInit,
-      _C_VerifyRecover,
-      _C_DigestEncryptUpdate,
-      _C_DecryptDigestUpdate,
-      _C_SignEncryptUpdate,
-      _C_DecryptVerifyUpdate,
-      _C_GenerateKey,
-      _C_GenerateKeyPair,
-      _C_WrapKey,
-      _C_UnwrapKey,
-      _C_DeriveKey,
-      _C_SeedRandom,
-      _C_GenerateRandom,
-      _C_GetFunctionStatus,
-      _C_CancelFunction,
-      _C_WaitForSlotEvent,
-      _C_LoginUser,
-      _C_SessionCancel,
-      _C_MessageEncryptInit,
-      _C_EncryptMessage,
-      _C_EncryptMessageBegin,
-      _C_EncryptMessageNext,
-      _C_MessageEncryptFinal,
-      _C_MessageDecryptInit,
-      _C_DecryptMessage,
-      _C_DecryptMessageBegin,
-      _C_DecryptMessageNext,
-      _C_MessageDecryptFinal,
-      _C_MessageSignInit,
-      _C_SignMessage,
-      _C_SignMessageBegin,
-      _C_SignMessageNext,
-      _C_MessageSignFinal,
-      _C_MessageVerifyInit,
-      _C_VerifyMessage,
-      _C_VerifyMessageBegin,
-      _C_VerifyMessageNext,
-      _C_MessageVerifyFinal,
-      _C_EncapsulateKey,
-      _C_DecapsulateKey,
-      _C_VerifySignatureInit,
-      _C_VerifySignature,
-      _C_VerifySignatureUpdate,
-      _C_VerifySignatureFinal,
-      _C_GetSessionValidationFlags,
-      _C_AsyncComplete,
-      _C_AsyncGetID,
-      _C_AsyncJoin,
-      _C_WrapKeyAuthenticated,
-      _C_UnwrapKeyAuthenticated,
-      _C_GetInterfaceList,
-      _C_GetInterface,
-      _malloc,
-      _free,
-      _htons,
-      _ntohs,
-      memory,
-      __indirect_function_table,
-      wasmMemory
-    function assignWasmExports(wasmExports) {
-      _C_Initialize = Module['_C_Initialize'] = wasmExports['F']
-      _C_Finalize = Module['_C_Finalize'] = wasmExports['G']
-      _C_GetInfo = Module['_C_GetInfo'] = wasmExports['H']
-      _C_GetFunctionList = Module['_C_GetFunctionList'] = wasmExports['I']
-      _C_GetSlotList = Module['_C_GetSlotList'] = wasmExports['J']
-      _C_GetSlotInfo = Module['_C_GetSlotInfo'] = wasmExports['K']
-      _C_GetTokenInfo = Module['_C_GetTokenInfo'] = wasmExports['L']
-      _C_GetMechanismList = Module['_C_GetMechanismList'] = wasmExports['M']
-      _C_GetMechanismInfo = Module['_C_GetMechanismInfo'] = wasmExports['N']
-      _C_InitToken = Module['_C_InitToken'] = wasmExports['O']
-      _C_InitPIN = Module['_C_InitPIN'] = wasmExports['P']
-      _C_SetPIN = Module['_C_SetPIN'] = wasmExports['Q']
-      _C_OpenSession = Module['_C_OpenSession'] = wasmExports['R']
-      _C_CloseSession = Module['_C_CloseSession'] = wasmExports['S']
-      _C_CloseAllSessions = Module['_C_CloseAllSessions'] = wasmExports['T']
-      _C_GetSessionInfo = Module['_C_GetSessionInfo'] = wasmExports['U']
-      _C_GetOperationState = Module['_C_GetOperationState'] = wasmExports['V']
-      _C_SetOperationState = Module['_C_SetOperationState'] = wasmExports['W']
-      _C_Login = Module['_C_Login'] = wasmExports['X']
-      _C_Logout = Module['_C_Logout'] = wasmExports['Y']
-      _C_CreateObject = Module['_C_CreateObject'] = wasmExports['Z']
-      _C_CopyObject = Module['_C_CopyObject'] = wasmExports['_']
-      _C_DestroyObject = Module['_C_DestroyObject'] = wasmExports['$']
-      _C_GetObjectSize = Module['_C_GetObjectSize'] = wasmExports['aa']
-      _C_GetAttributeValue = Module['_C_GetAttributeValue'] = wasmExports['ba']
-      _C_SetAttributeValue = Module['_C_SetAttributeValue'] = wasmExports['ca']
-      _C_FindObjectsInit = Module['_C_FindObjectsInit'] = wasmExports['da']
-      _C_FindObjects = Module['_C_FindObjects'] = wasmExports['ea']
-      _C_FindObjectsFinal = Module['_C_FindObjectsFinal'] = wasmExports['fa']
-      _C_EncryptInit = Module['_C_EncryptInit'] = wasmExports['ga']
-      _C_Encrypt = Module['_C_Encrypt'] = wasmExports['ha']
-      _C_EncryptUpdate = Module['_C_EncryptUpdate'] = wasmExports['ia']
-      _C_EncryptFinal = Module['_C_EncryptFinal'] = wasmExports['ja']
-      _C_DecryptInit = Module['_C_DecryptInit'] = wasmExports['ka']
-      _C_Decrypt = Module['_C_Decrypt'] = wasmExports['la']
-      _C_DecryptUpdate = Module['_C_DecryptUpdate'] = wasmExports['ma']
-      _C_DecryptFinal = Module['_C_DecryptFinal'] = wasmExports['na']
-      _C_DigestInit = Module['_C_DigestInit'] = wasmExports['oa']
-      _C_Digest = Module['_C_Digest'] = wasmExports['pa']
-      _C_DigestUpdate = Module['_C_DigestUpdate'] = wasmExports['qa']
-      _C_DigestKey = Module['_C_DigestKey'] = wasmExports['ra']
-      _C_DigestFinal = Module['_C_DigestFinal'] = wasmExports['sa']
-      _C_SignInit = Module['_C_SignInit'] = wasmExports['ta']
-      _C_Sign = Module['_C_Sign'] = wasmExports['ua']
-      _C_SignUpdate = Module['_C_SignUpdate'] = wasmExports['va']
-      _C_SignFinal = Module['_C_SignFinal'] = wasmExports['wa']
-      _C_SignRecoverInit = Module['_C_SignRecoverInit'] = wasmExports['xa']
-      _C_SignRecover = Module['_C_SignRecover'] = wasmExports['ya']
-      _C_VerifyInit = Module['_C_VerifyInit'] = wasmExports['za']
-      _C_Verify = Module['_C_Verify'] = wasmExports['Aa']
-      _C_VerifyUpdate = Module['_C_VerifyUpdate'] = wasmExports['Ba']
-      _C_VerifyFinal = Module['_C_VerifyFinal'] = wasmExports['Ca']
-      _C_VerifyRecoverInit = Module['_C_VerifyRecoverInit'] = wasmExports['Da']
-      _C_VerifyRecover = Module['_C_VerifyRecover'] = wasmExports['Ea']
-      _C_DigestEncryptUpdate = Module['_C_DigestEncryptUpdate'] = wasmExports['Fa']
-      _C_DecryptDigestUpdate = Module['_C_DecryptDigestUpdate'] = wasmExports['Ga']
-      _C_SignEncryptUpdate = Module['_C_SignEncryptUpdate'] = wasmExports['Ha']
-      _C_DecryptVerifyUpdate = Module['_C_DecryptVerifyUpdate'] = wasmExports['Ia']
-      _C_GenerateKey = Module['_C_GenerateKey'] = wasmExports['Ja']
-      _C_GenerateKeyPair = Module['_C_GenerateKeyPair'] = wasmExports['Ka']
-      _C_WrapKey = Module['_C_WrapKey'] = wasmExports['La']
-      _C_UnwrapKey = Module['_C_UnwrapKey'] = wasmExports['Ma']
-      _C_DeriveKey = Module['_C_DeriveKey'] = wasmExports['Na']
-      _C_SeedRandom = Module['_C_SeedRandom'] = wasmExports['Oa']
-      _C_GenerateRandom = Module['_C_GenerateRandom'] = wasmExports['Pa']
-      _C_GetFunctionStatus = Module['_C_GetFunctionStatus'] = wasmExports['Qa']
-      _C_CancelFunction = Module['_C_CancelFunction'] = wasmExports['Ra']
-      _C_WaitForSlotEvent = Module['_C_WaitForSlotEvent'] = wasmExports['Sa']
-      _C_LoginUser = Module['_C_LoginUser'] = wasmExports['Ta']
-      _C_SessionCancel = Module['_C_SessionCancel'] = wasmExports['Ua']
-      _C_MessageEncryptInit = Module['_C_MessageEncryptInit'] = wasmExports['Va']
-      _C_EncryptMessage = Module['_C_EncryptMessage'] = wasmExports['Wa']
-      _C_EncryptMessageBegin = Module['_C_EncryptMessageBegin'] = wasmExports['Xa']
-      _C_EncryptMessageNext = Module['_C_EncryptMessageNext'] = wasmExports['Ya']
-      _C_MessageEncryptFinal = Module['_C_MessageEncryptFinal'] = wasmExports['Za']
-      _C_MessageDecryptInit = Module['_C_MessageDecryptInit'] = wasmExports['_a']
-      _C_DecryptMessage = Module['_C_DecryptMessage'] = wasmExports['$a']
-      _C_DecryptMessageBegin = Module['_C_DecryptMessageBegin'] = wasmExports['ab']
-      _C_DecryptMessageNext = Module['_C_DecryptMessageNext'] = wasmExports['bb']
-      _C_MessageDecryptFinal = Module['_C_MessageDecryptFinal'] = wasmExports['cb']
-      _C_MessageSignInit = Module['_C_MessageSignInit'] = wasmExports['db']
-      _C_SignMessage = Module['_C_SignMessage'] = wasmExports['eb']
-      _C_SignMessageBegin = Module['_C_SignMessageBegin'] = wasmExports['fb']
-      _C_SignMessageNext = Module['_C_SignMessageNext'] = wasmExports['gb']
-      _C_MessageSignFinal = Module['_C_MessageSignFinal'] = wasmExports['hb']
-      _C_MessageVerifyInit = Module['_C_MessageVerifyInit'] = wasmExports['ib']
-      _C_VerifyMessage = Module['_C_VerifyMessage'] = wasmExports['jb']
-      _C_VerifyMessageBegin = Module['_C_VerifyMessageBegin'] = wasmExports['kb']
-      _C_VerifyMessageNext = Module['_C_VerifyMessageNext'] = wasmExports['lb']
-      _C_MessageVerifyFinal = Module['_C_MessageVerifyFinal'] = wasmExports['mb']
-      _C_EncapsulateKey = Module['_C_EncapsulateKey'] = wasmExports['nb']
-      _C_DecapsulateKey = Module['_C_DecapsulateKey'] = wasmExports['ob']
-      _C_VerifySignatureInit = Module['_C_VerifySignatureInit'] = wasmExports['pb']
-      _C_VerifySignature = Module['_C_VerifySignature'] = wasmExports['qb']
-      _C_VerifySignatureUpdate = Module['_C_VerifySignatureUpdate'] = wasmExports['rb']
-      _C_VerifySignatureFinal = Module['_C_VerifySignatureFinal'] = wasmExports['sb']
-      _C_GetSessionValidationFlags = Module['_C_GetSessionValidationFlags'] = wasmExports['tb']
-      _C_AsyncComplete = Module['_C_AsyncComplete'] = wasmExports['ub']
-      _C_AsyncGetID = Module['_C_AsyncGetID'] = wasmExports['vb']
-      _C_AsyncJoin = Module['_C_AsyncJoin'] = wasmExports['wb']
-      _C_WrapKeyAuthenticated = Module['_C_WrapKeyAuthenticated'] = wasmExports['xb']
-      _C_UnwrapKeyAuthenticated = Module['_C_UnwrapKeyAuthenticated'] = wasmExports['yb']
-      _C_GetInterfaceList = Module['_C_GetInterfaceList'] = wasmExports['zb']
-      _C_GetInterface = Module['_C_GetInterface'] = wasmExports['Ab']
-      _malloc = Module['_malloc'] = wasmExports['Bb']
-      _free = Module['_free'] = wasmExports['Cb']
-      _htons = wasmExports['Db']
-      _ntohs = wasmExports['Eb']
-      memory = wasmMemory = wasmExports['D']
-      __indirect_function_table = wasmExports['__indirect_function_table']
-    }
     var wasmImports = {
       c: ___cxa_throw,
       o: ___syscall_connect,
@@ -4148,6 +3952,116 @@ var createSoftHSMModule = (() => {
       v: _fd_seek,
       f: _fd_write,
     }
+    var wasmExports = await createWasm()
+    var ___wasm_call_ctors = wasmExports['E']
+    var _C_Initialize = (Module['_C_Initialize'] = wasmExports['F'])
+    var _C_Finalize = (Module['_C_Finalize'] = wasmExports['G'])
+    var _C_GetInfo = (Module['_C_GetInfo'] = wasmExports['H'])
+    var _C_GetFunctionList = (Module['_C_GetFunctionList'] = wasmExports['I'])
+    var _C_GetSlotList = (Module['_C_GetSlotList'] = wasmExports['J'])
+    var _C_GetSlotInfo = (Module['_C_GetSlotInfo'] = wasmExports['K'])
+    var _C_GetTokenInfo = (Module['_C_GetTokenInfo'] = wasmExports['L'])
+    var _C_GetMechanismList = (Module['_C_GetMechanismList'] = wasmExports['M'])
+    var _C_GetMechanismInfo = (Module['_C_GetMechanismInfo'] = wasmExports['N'])
+    var _C_InitToken = (Module['_C_InitToken'] = wasmExports['O'])
+    var _C_InitPIN = (Module['_C_InitPIN'] = wasmExports['P'])
+    var _C_SetPIN = (Module['_C_SetPIN'] = wasmExports['Q'])
+    var _C_OpenSession = (Module['_C_OpenSession'] = wasmExports['R'])
+    var _C_CloseSession = (Module['_C_CloseSession'] = wasmExports['S'])
+    var _C_CloseAllSessions = (Module['_C_CloseAllSessions'] = wasmExports['T'])
+    var _C_GetSessionInfo = (Module['_C_GetSessionInfo'] = wasmExports['U'])
+    var _C_GetOperationState = (Module['_C_GetOperationState'] = wasmExports['V'])
+    var _C_SetOperationState = (Module['_C_SetOperationState'] = wasmExports['W'])
+    var _C_Login = (Module['_C_Login'] = wasmExports['X'])
+    var _C_Logout = (Module['_C_Logout'] = wasmExports['Y'])
+    var _C_CreateObject = (Module['_C_CreateObject'] = wasmExports['Z'])
+    var _C_CopyObject = (Module['_C_CopyObject'] = wasmExports['_'])
+    var _C_DestroyObject = (Module['_C_DestroyObject'] = wasmExports['$'])
+    var _C_GetObjectSize = (Module['_C_GetObjectSize'] = wasmExports['aa'])
+    var _C_GetAttributeValue = (Module['_C_GetAttributeValue'] = wasmExports['ba'])
+    var _C_SetAttributeValue = (Module['_C_SetAttributeValue'] = wasmExports['ca'])
+    var _C_FindObjectsInit = (Module['_C_FindObjectsInit'] = wasmExports['da'])
+    var _C_FindObjects = (Module['_C_FindObjects'] = wasmExports['ea'])
+    var _C_FindObjectsFinal = (Module['_C_FindObjectsFinal'] = wasmExports['fa'])
+    var _C_EncryptInit = (Module['_C_EncryptInit'] = wasmExports['ga'])
+    var _C_Encrypt = (Module['_C_Encrypt'] = wasmExports['ha'])
+    var _C_EncryptUpdate = (Module['_C_EncryptUpdate'] = wasmExports['ia'])
+    var _C_EncryptFinal = (Module['_C_EncryptFinal'] = wasmExports['ja'])
+    var _C_DecryptInit = (Module['_C_DecryptInit'] = wasmExports['ka'])
+    var _C_Decrypt = (Module['_C_Decrypt'] = wasmExports['la'])
+    var _C_DecryptUpdate = (Module['_C_DecryptUpdate'] = wasmExports['ma'])
+    var _C_DecryptFinal = (Module['_C_DecryptFinal'] = wasmExports['na'])
+    var _C_DigestInit = (Module['_C_DigestInit'] = wasmExports['oa'])
+    var _C_Digest = (Module['_C_Digest'] = wasmExports['pa'])
+    var _C_DigestUpdate = (Module['_C_DigestUpdate'] = wasmExports['qa'])
+    var _C_DigestKey = (Module['_C_DigestKey'] = wasmExports['ra'])
+    var _C_DigestFinal = (Module['_C_DigestFinal'] = wasmExports['sa'])
+    var _C_SignInit = (Module['_C_SignInit'] = wasmExports['ta'])
+    var _C_Sign = (Module['_C_Sign'] = wasmExports['ua'])
+    var _C_SignUpdate = (Module['_C_SignUpdate'] = wasmExports['va'])
+    var _C_SignFinal = (Module['_C_SignFinal'] = wasmExports['wa'])
+    var _C_SignRecoverInit = (Module['_C_SignRecoverInit'] = wasmExports['xa'])
+    var _C_SignRecover = (Module['_C_SignRecover'] = wasmExports['ya'])
+    var _C_VerifyInit = (Module['_C_VerifyInit'] = wasmExports['za'])
+    var _C_Verify = (Module['_C_Verify'] = wasmExports['Aa'])
+    var _C_VerifyUpdate = (Module['_C_VerifyUpdate'] = wasmExports['Ba'])
+    var _C_VerifyFinal = (Module['_C_VerifyFinal'] = wasmExports['Ca'])
+    var _C_VerifyRecoverInit = (Module['_C_VerifyRecoverInit'] = wasmExports['Da'])
+    var _C_VerifyRecover = (Module['_C_VerifyRecover'] = wasmExports['Ea'])
+    var _C_DigestEncryptUpdate = (Module['_C_DigestEncryptUpdate'] = wasmExports['Fa'])
+    var _C_DecryptDigestUpdate = (Module['_C_DecryptDigestUpdate'] = wasmExports['Ga'])
+    var _C_SignEncryptUpdate = (Module['_C_SignEncryptUpdate'] = wasmExports['Ha'])
+    var _C_DecryptVerifyUpdate = (Module['_C_DecryptVerifyUpdate'] = wasmExports['Ia'])
+    var _C_GenerateKey = (Module['_C_GenerateKey'] = wasmExports['Ja'])
+    var _C_GenerateKeyPair = (Module['_C_GenerateKeyPair'] = wasmExports['Ka'])
+    var _C_WrapKey = (Module['_C_WrapKey'] = wasmExports['La'])
+    var _C_UnwrapKey = (Module['_C_UnwrapKey'] = wasmExports['Ma'])
+    var _C_DeriveKey = (Module['_C_DeriveKey'] = wasmExports['Na'])
+    var _C_SeedRandom = (Module['_C_SeedRandom'] = wasmExports['Oa'])
+    var _C_GenerateRandom = (Module['_C_GenerateRandom'] = wasmExports['Pa'])
+    var _C_GetFunctionStatus = (Module['_C_GetFunctionStatus'] = wasmExports['Qa'])
+    var _C_CancelFunction = (Module['_C_CancelFunction'] = wasmExports['Ra'])
+    var _C_WaitForSlotEvent = (Module['_C_WaitForSlotEvent'] = wasmExports['Sa'])
+    var _C_LoginUser = (Module['_C_LoginUser'] = wasmExports['Ta'])
+    var _C_SessionCancel = (Module['_C_SessionCancel'] = wasmExports['Ua'])
+    var _C_MessageEncryptInit = (Module['_C_MessageEncryptInit'] = wasmExports['Va'])
+    var _C_EncryptMessage = (Module['_C_EncryptMessage'] = wasmExports['Wa'])
+    var _C_EncryptMessageBegin = (Module['_C_EncryptMessageBegin'] = wasmExports['Xa'])
+    var _C_EncryptMessageNext = (Module['_C_EncryptMessageNext'] = wasmExports['Ya'])
+    var _C_MessageEncryptFinal = (Module['_C_MessageEncryptFinal'] = wasmExports['Za'])
+    var _C_MessageDecryptInit = (Module['_C_MessageDecryptInit'] = wasmExports['_a'])
+    var _C_DecryptMessage = (Module['_C_DecryptMessage'] = wasmExports['$a'])
+    var _C_DecryptMessageBegin = (Module['_C_DecryptMessageBegin'] = wasmExports['ab'])
+    var _C_DecryptMessageNext = (Module['_C_DecryptMessageNext'] = wasmExports['bb'])
+    var _C_MessageDecryptFinal = (Module['_C_MessageDecryptFinal'] = wasmExports['cb'])
+    var _C_MessageSignInit = (Module['_C_MessageSignInit'] = wasmExports['db'])
+    var _C_SignMessage = (Module['_C_SignMessage'] = wasmExports['eb'])
+    var _C_SignMessageBegin = (Module['_C_SignMessageBegin'] = wasmExports['fb'])
+    var _C_SignMessageNext = (Module['_C_SignMessageNext'] = wasmExports['gb'])
+    var _C_MessageSignFinal = (Module['_C_MessageSignFinal'] = wasmExports['hb'])
+    var _C_MessageVerifyInit = (Module['_C_MessageVerifyInit'] = wasmExports['ib'])
+    var _C_VerifyMessage = (Module['_C_VerifyMessage'] = wasmExports['jb'])
+    var _C_VerifyMessageBegin = (Module['_C_VerifyMessageBegin'] = wasmExports['kb'])
+    var _C_VerifyMessageNext = (Module['_C_VerifyMessageNext'] = wasmExports['lb'])
+    var _C_MessageVerifyFinal = (Module['_C_MessageVerifyFinal'] = wasmExports['mb'])
+    var _C_EncapsulateKey = (Module['_C_EncapsulateKey'] = wasmExports['nb'])
+    var _C_DecapsulateKey = (Module['_C_DecapsulateKey'] = wasmExports['ob'])
+    var _C_VerifySignatureInit = (Module['_C_VerifySignatureInit'] = wasmExports['pb'])
+    var _C_VerifySignature = (Module['_C_VerifySignature'] = wasmExports['qb'])
+    var _C_VerifySignatureUpdate = (Module['_C_VerifySignatureUpdate'] = wasmExports['rb'])
+    var _C_VerifySignatureFinal = (Module['_C_VerifySignatureFinal'] = wasmExports['sb'])
+    var _C_GetSessionValidationFlags = (Module['_C_GetSessionValidationFlags'] = wasmExports['tb'])
+    var _C_AsyncComplete = (Module['_C_AsyncComplete'] = wasmExports['ub'])
+    var _C_AsyncGetID = (Module['_C_AsyncGetID'] = wasmExports['vb'])
+    var _C_AsyncJoin = (Module['_C_AsyncJoin'] = wasmExports['wb'])
+    var _C_WrapKeyAuthenticated = (Module['_C_WrapKeyAuthenticated'] = wasmExports['xb'])
+    var _C_UnwrapKeyAuthenticated = (Module['_C_UnwrapKeyAuthenticated'] = wasmExports['yb'])
+    var _C_GetInterfaceList = (Module['_C_GetInterfaceList'] = wasmExports['zb'])
+    var _C_GetInterface = (Module['_C_GetInterface'] = wasmExports['Ab'])
+    var _malloc = (Module['_malloc'] = wasmExports['Bb'])
+    var _free = (Module['_free'] = wasmExports['Cb'])
+    var _htons = wasmExports['Db']
+    var _ntohs = wasmExports['Eb']
     function run() {
       if (runDependencies > 0) {
         dependenciesFulfilled = run
@@ -4162,7 +4076,7 @@ var createSoftHSMModule = (() => {
         Module['calledRun'] = true
         if (ABORT) return
         initRuntime()
-        readyPromiseResolve?.(Module)
+        readyPromiseResolve(Module)
         Module['onRuntimeInitialized']?.()
         postRun()
       }
@@ -4176,21 +4090,24 @@ var createSoftHSMModule = (() => {
         doRun()
       }
     }
-    var wasmExports
-    wasmExports = await createWasm()
-    run()
-    if (runtimeInitialized) {
-      moduleRtn = Module
-    } else {
-      moduleRtn = new Promise((resolve, reject) => {
-        readyPromiseResolve = resolve
-        readyPromiseReject = reject
-      })
+    function preInit() {
+      if (Module['preInit']) {
+        if (typeof Module['preInit'] == 'function') Module['preInit'] = [Module['preInit']]
+        while (Module['preInit'].length > 0) {
+          Module['preInit'].shift()()
+        }
+      }
     }
+    preInit()
+    run()
+    moduleRtn = readyPromise
+
     return moduleRtn
   }
 })()
 if (typeof exports === 'object' && typeof module === 'object') {
   module.exports = createSoftHSMModule
+  // This default export looks redundant, but it allows TS to import this
+  // commonjs style module.
   module.exports.default = createSoftHSMModule
 } else if (typeof define === 'function' && define['amd']) define([], () => createSoftHSMModule)
