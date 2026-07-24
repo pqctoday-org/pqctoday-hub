@@ -39,7 +39,20 @@ export const TerminalOutput = () => {
   })
 
   return (
-    <div className="h-full flex flex-col bg-card rounded-xl border border-border overflow-hidden font-mono text-sm">
+    // max-h is a deliberate hard backstop, not just h-full: this component's
+    // ancestor chain relies on flex-1/min-h-0 resolving against a bounded
+    // viewport, but OpenSSLStudioView's own root (`h-full`) has no bounded
+    // ancestor in this app's actual layout (the page's real scroll region is
+    // the outer MainLayout shell, which lets MAIN grow to fit content rather
+    // than capping it) -- so that chain never gets a real ceiling. A single
+    // long-running session (e.g. the Explore probe, which fans out into ~8
+    // `list` sub-commands sharing this same log history) can push this past
+    // 700+ rows; without a hard cap, `overflow-y-auto` here never engages
+    // (clientHeight ends up equal to scrollHeight) and the whole page grows
+    // instead of this panel scrolling internally -- dragging every sibling
+    // in the same CSS Grid row down with it. Verified: reproduced at 786
+    // rows / 23000px+ of unbounded growth before this fix.
+    <div className="h-full max-h-[70vh] flex flex-col bg-card rounded-xl border border-border overflow-hidden font-mono text-sm">
       {/* Toolbar */}
       <div className="flex items-center justify-between px-4 py-2 bg-muted/30 border-b border-border shrink-0">
         {/* Toggles */}
