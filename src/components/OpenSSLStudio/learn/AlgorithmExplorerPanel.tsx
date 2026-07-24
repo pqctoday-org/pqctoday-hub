@@ -19,6 +19,7 @@ import { Input } from '../../ui/input'
 import { FilterDropdown } from '../../common/FilterDropdown'
 import { Term } from '../../Playground/learnkit/Term'
 import { GlossaryRail } from '../../Playground/learnkit/GlossaryRail'
+import { resolveGlossaryKey } from './opensslGlossary'
 import {
   parseProviders,
   parseKeyManagersSection,
@@ -80,7 +81,7 @@ const EntryRow = ({ entry }: { entry: AlgorithmEntry }) => (
   <div className="flex items-start gap-2 py-1.5 border-b border-border/30 last:border-0 text-xs">
     <div className="flex-1 min-w-0">
       <div className="font-mono text-foreground truncate">
-        <Term glossaryKey={entry.name}>{entry.name}</Term>
+        <Term glossaryKey={resolveGlossaryKey(entry.name)}>{entry.name}</Term>
         {entry.aliases.length > 1 && (
           <span className="ml-1.5 text-[10px] text-muted-foreground">
             ({entry.aliases.slice(1, 4).join(', ')}
