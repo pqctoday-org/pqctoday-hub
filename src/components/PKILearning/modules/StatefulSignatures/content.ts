@@ -14,8 +14,8 @@ export const content: ModuleContent = {
 
   standards: [
     getStandard('FIPS 205'), // SLH-DSA (Step 4 live demo)
-    getStandard('IETF RFC 8554'), // LMS/HSS
-    getStandard('IETF RFC 8391'), // XMSS/XMSS^MT
+    getStandard('RFC 8554'), // LMS/HSS
+    getStandard('RFC 8391'), // XMSS/XMSS^MT
     getStandard('NIST SP 800-208'), // Stateful HBS Recommendation
   ],
 

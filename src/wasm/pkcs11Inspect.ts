@@ -109,6 +109,19 @@ const CKA_TABLE: Record<number, ConstEntry> = {
     name: 'CKA_HSS_KEYS_REMAINING',
     description: 'Signatures remaining on stateful key',
   },
+  0x00000601: { name: 'CKA_PROFILE_ID', description: 'Conformance profile identifier (v3.2 §3)' },
+  0x00000086: {
+    name: 'CKA_TRUSTED',
+    description: 'SO-only trust flag (v3.2 §4.2 Table 13 footnote 10)',
+  },
+  0x00000210: {
+    name: 'CKA_WRAP_WITH_TRUSTED',
+    description: 'Key may only be wrapped by a CKA_TRUSTED wrapping key (v3.2 §4.8/§4.10)',
+  },
+  0x40000600: {
+    name: 'CKA_ALLOWED_MECHANISMS',
+    description: 'Pins a key to a fixed set of mechanisms (v3.2 §4.8 Table 13)',
+  },
 }
 
 // CKM_ mechanism types
@@ -311,6 +324,7 @@ const CKO_TABLE: Record<number, ConstEntry> = {
   0x02: { name: 'CKO_PUBLIC_KEY', description: 'Public key — encapsulate / verify operations' },
   0x03: { name: 'CKO_PRIVATE_KEY', description: 'Private key — decapsulate / sign operations' },
   0x04: { name: 'CKO_SECRET_KEY', description: 'Symmetric / shared-secret key' },
+  0x09: { name: 'CKO_PROFILE', description: 'Conformance profile the token claims (v3.2 §3)' },
 }
 
 // CKK_ key types
@@ -511,6 +525,11 @@ export const CKR_TABLE: Record<number, { name: string; description: string; hint
     description: 'Key attributes do not permit this operation',
     hint: 'Check CKA_ENCRYPT, CKA_DECRYPT, CKA_SIGN, CKA_VERIFY, CKA_WRAP, CKA_UNWRAP flags on the key',
   },
+  0x69: {
+    name: 'CKR_KEY_NOT_WRAPPABLE',
+    description: 'This key cannot be wrapped by the given wrapping key',
+    hint: 'The target has CKA_WRAP_WITH_TRUSTED=true, but the wrapping key lacks CKA_TRUSTED=true',
+  },
   0x6a: {
     name: 'CKR_KEY_UNEXTRACTABLE',
     description: 'Key has CKA_EXTRACTABLE=false',
@@ -589,6 +608,11 @@ export const CKR_TABLE: Record<number, { name: string; description: string; hint
     name: 'CKR_USER_NOT_LOGGED_IN',
     description: 'Login required before this operation',
     hint: 'Call C_Login with CKU_USER and your PIN',
+  },
+  0x104: {
+    name: 'CKR_USER_ANOTHER_ALREADY_LOGGED_IN',
+    description: 'A different role is already logged in on this token',
+    hint: 'PKCS#11 login is per-token, not per-session — call C_Logout first',
   },
   0x150: {
     name: 'CKR_BUFFER_TOO_SMALL',
@@ -1104,6 +1128,22 @@ const decodeGetAttributeValue = (M: SoftHSMModule, args: number[]): Pkcs11LogIns
   }
 }
 
+/** C_SetAttributeValue(hSession, hObject, pTemplate, ulCount) — §4.1.2 */
+const decodeSetAttributeValue = (M: SoftHSMModule, args: number[]): Pkcs11LogInspect => {
+  const hObject = args[1] ?? 0
+  const tmpl = readTemplate(M, args[2] ?? 0, args[3] ?? 0)
+  return {
+    inputs: [
+      {
+        label: 'Parameters',
+        primitives: [{ name: 'hObject', value: String(hObject) }],
+      },
+      ...(tmpl.length ? [{ label: 'Requested Attribute Values', attributes: tmpl }] : []),
+    ],
+    spec: 'PKCS#11 v3.2 §4.1.2 (Modifying objects)',
+  }
+}
+
 /**
  * C_MessageSignInit(hSession, pMechanism, hKey)
  * C_MessageVerifyInit(hSession, pMechanism, hKey)
@@ -1353,6 +1393,41 @@ const decodeLogout = (_M: SoftHSMModule, args: number[]): Pkcs11LogInspect => ({
   ],
   spec: 'PKCS#11 v3.2 §5.10 (C_Logout)',
 })
+
+/** C_GetSessionValidationFlags(hSession, flagsType, pulFlags) — §5.6.9 (v3.2) */
+const decodeGetSessionValidationFlags = (
+  M: SoftHSMModule,
+  args: number[],
+  rv: number
+): Pkcs11LogInspect => {
+  const flagsType = args[1] ?? 0
+  const pulFlags = args[2] ?? 0
+  const flags = rv === 0 ? safeRead32(M, pulFlags) : null
+  return {
+    inputs: [
+      {
+        label: 'Parameters',
+        primitives: [
+          {
+            name: 'flagsType',
+            value: flagsType === 1 ? 'CKS_LAST_VALIDATION_OK (1)' : String(flagsType),
+          },
+        ],
+      },
+    ],
+    outputs:
+      flags !== null
+        ? [
+            {
+              name: '*pulFlags',
+              value: `0x${flags.toString(16)}`,
+              note: 'Bitmask of validation flags (this build performs no FIPS/validation-authority checks, so this is always empty)',
+            },
+          ]
+        : undefined,
+    spec: 'PKCS#11 v3.2 §5.6.9 (C_GetSessionValidationFlags)',
+  }
+}
 
 /** C_MessageVerifyFinal(hSession) — §5.21 */
 const decodeVerifyFinal = (_M: SoftHSMModule, args: number[]): Pkcs11LogInspect => ({
@@ -2171,6 +2246,8 @@ export const buildInspect = (
         return decodeInitToken(M, args)
       case 'C_InitPIN':
         return decodeInitPIN(M, args)
+      case 'C_GetSessionValidationFlags':
+        return decodeGetSessionValidationFlags(M, args, rv)
       // Key generation
       case 'C_GenerateKeyPair':
         return decodeGenerateKeyPair(M, args, rv)
@@ -2181,9 +2258,11 @@ export const buildInspect = (
         return decodeEncapsulateKey(M, args, rv)
       case 'C_DecapsulateKey':
         return decodeDecapsulateKey(M, args, rv)
-      // Attribute query
+      // Attribute query / mutation
       case 'C_GetAttributeValue':
         return decodeGetAttributeValue(M, args)
+      case 'C_SetAttributeValue':
+        return decodeSetAttributeValue(M, args)
       // Message signing / verification (FIPS 204/205)
       case 'C_MessageSignInit':
         return decodeMessageSignVerifyInit(M, args, false)
