@@ -11,7 +11,7 @@
 // only fires on the embed view).
 import 'reflect-metadata'
 import { useCallback, useEffect, useState } from 'react'
-import { CheckCircle2, XCircle, AlertCircle, RefreshCw, Download } from 'lucide-react'
+import { CheckCircle2, XCircle, AlertCircle, RefreshCw, Download, Info } from 'lucide-react'
 import * as x509 from '@peculiar/x509'
 import { Button } from '@/components/ui/button'
 import { nvReadAll } from '../../../wasm/tpmBridge'
@@ -245,7 +245,7 @@ function CertCard({ r }: { r: CertResult }) {
         </div>
 
         <div className="flex items-start gap-2">
-          <CheckCircle2 className="text-muted-foreground h-3.5 w-3.5 mt-0.5 shrink-0" />
+          <Info className="text-muted-foreground h-3.5 w-3.5 mt-0.5 shrink-0" />
           <div className="flex-1 min-w-0">
             <div className="text-muted-foreground">subject / issuer</div>
             <div className="text-foreground break-all">{cert.subject}</div>
@@ -254,7 +254,7 @@ function CertCard({ r }: { r: CertResult }) {
         </div>
 
         <div className="flex items-start gap-2">
-          <CheckCircle2 className="text-muted-foreground h-3.5 w-3.5 mt-0.5 shrink-0" />
+          <Info className="text-muted-foreground h-3.5 w-3.5 mt-0.5 shrink-0" />
           <div className="flex-1 min-w-0">
             <div className="text-muted-foreground">serial</div>
             <div className="text-foreground font-mono break-all">{cert.serialNumber}</div>

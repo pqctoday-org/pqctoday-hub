@@ -22,6 +22,7 @@ export const TPM_CC_Encapsulate = 0x000001a7
 export const TPM_CC_Decapsulate = 0x000001a8
 export const TPM_CC_VerifySequenceStart = 0x000001a9
 export const TPM_CC_SignSequenceStart = 0x000001aa
+export const TPM_CC_SequenceUpdate = 0x0000015c
 
 // Algorithm IDs (TCG V1.85 RC4)
 export const ALG_SHA256 = 0x000b
@@ -32,6 +33,7 @@ export const ALG_MLKEM = 0x00a0
 export const ALG_MLDSA = 0x00a1
 export const TPM_ST_HASHCHECK = 0x8024
 export const TPM_RH_NULL = 0x40000007
+export const TPM_CAP_HANDLES = 0x00000001
 
 // Hierarchy handles
 export const RH_OWNER = 0x40000001
@@ -223,10 +225,51 @@ const MLDSA_SIG_SIZES: Record<string, number> = {
   'MLDSA-87': 4627,
 }
 
+// V2.7 §5.3.1 EK cert NV slot per algorithm — must stay in sync with
+// V2P7_EK_SPECS.nvCertIndex in TpmPlayground/v2p7-reference.ts (the
+// provisioning-side source of truth). Kept as a local table rather than an
+// import to avoid a wasm/ → components/ layering dependency.
+const NV_CERT_INDEX_BY_ALGO: Record<string, number> = {
+  'MLKEM-512': 0x01c00060,
+  'MLKEM-768': 0x01c00062,
+  'MLKEM-1024': 0x01c00064,
+  'MLDSA-44': 0x01c00070,
+  'MLDSA-65': 0x01c00072,
+  'MLDSA-87': 0x01c00074,
+}
+
+// Fixed 64-byte message chunk used by the streaming ML-DSA demo commands
+// (SignSequenceComplete's final chunk and SequenceUpdate's verify-side feed),
+// matching the constant ComplianceRunner uses for the same flow.
+const SEQUENCE_MESSAGE_BYTES = new Uint8Array(64).fill(0xa5)
+
+/**
+ * Real values captured from a prior command's response in the same Command
+ * Builder session (e.g. the ciphertext TPM2_Encapsulate just returned).
+ * When the relevant field is omitted, the builder falls back to a labeled
+ * synthetic placeholder — callers driving the interactive UI are expected to
+ * gate sending on the prerequisite command having been run first, so the
+ * fallback should only be reachable from direct/programmatic use of this
+ * function (e.g. tests), not from a normal Command Builder click.
+ */
+export interface DemoCommandExtras {
+  /** Real ciphertext from a prior TPM2_Encapsulate, for TPM2_Decapsulate. */
+  ciphertext?: Uint8Array
+  /** Real signature from a prior TPM2_SignDigest, for TPM2_VerifyDigestSignature. */
+  digestSignature?: Uint8Array
+  /** Real sequenceHandle from a prior TPM2_SignSequenceStart, for TPM2_SignSequenceComplete. */
+  signSeqHandle?: number
+  /** Real sequenceHandle from a prior TPM2_VerifySequenceStart, for TPM2_SequenceUpdate / TPM2_VerifySequenceComplete. */
+  verifySeqHandle?: number
+  /** Real signature from a prior TPM2_SignSequenceComplete, for TPM2_VerifySequenceComplete. */
+  seqSignature?: Uint8Array
+}
+
 export function serializeDemoCommand(
   type: string,
   algorithm: string,
-  handle: number = 0x80000000
+  handle: number = 0x80000000,
+  extras: DemoCommandExtras = {}
 ): Uint8Array {
   switch (type) {
     case 'TPM2_Startup':
@@ -275,7 +318,13 @@ export function serializeDemoCommand(
       p.push(0)
       putU16(p, 0)
       putU16(p, ctSize) // inEncapsulation.size — correct size per parameter set
-      for (let i = 0; i < ctSize; i++) p.push(0xcc) // placeholder ciphertext bytes
+      // Real ciphertext from a prior TPM2_Encapsulate if the caller chained
+      // it; otherwise a labeled synthetic placeholder (see DemoCommandExtras).
+      if (extras.ciphertext && extras.ciphertext.length === ctSize) {
+        for (let i = 0; i < ctSize; i++) p.push(extras.ciphertext[i])
+      } else {
+        for (let i = 0; i < ctSize; i++) p.push(0xcc) // placeholder ciphertext bytes
+      }
       return buildCommand(TPM_ST_SESSIONS, TPM_CC_Decapsulate, new Uint8Array(p))
     }
 
@@ -322,7 +371,13 @@ export function serializeDemoCommand(
       // P3: signature TPMT_SIGNATURE = sigAlg + TPM2B_SIGNATURE_MLDSA{size, buf}
       putU16(p, ALG_MLDSA)
       putU16(p, sigSize)
-      for (let i = 0; i < sigSize; i++) p.push(0xee) // placeholder signature
+      // Real signature from a prior TPM2_SignDigest if the caller chained it;
+      // otherwise a labeled synthetic placeholder (see DemoCommandExtras).
+      if (extras.digestSignature && extras.digestSignature.length === sigSize) {
+        for (let i = 0; i < sigSize; i++) p.push(extras.digestSignature[i])
+      } else {
+        for (let i = 0; i < sigSize; i++) p.push(0xee) // placeholder signature
+      }
       return buildCommand(TPM_ST_NO_SESSIONS, TPM_CC_VerifyDigestSignature, new Uint8Array(p))
     }
 
@@ -337,12 +392,12 @@ export function serializeDemoCommand(
 
     case 'TPM2_SignSequenceComplete': {
       // Table 124: {@sequenceHandle, @keyHandle, buffer}. TWO authorizations.
-      // Note: the placeholder sequenceHandle below is illustrative — the user
-      // must first run TPM2_SignSequenceStart and feed the returned handle
-      // back manually. This wire builder uses a static 0x80FF0000 placeholder.
-      const messageLen = 64
+      // Real sequenceHandle from a prior TPM2_SignSequenceStart if the caller
+      // chained it; otherwise a labeled synthetic placeholder (the user must
+      // run TPM2_SignSequenceStart first and this call will fail against a
+      // real TPM — see DemoCommandExtras).
       const p: number[] = []
-      putU32(p, 0x80ff0000) // @sequenceHandle placeholder
+      putU32(p, extras.signSeqHandle ?? 0x80ff0000) // @sequenceHandle
       putU32(p, handle) // @keyHandle
       // Two PW sessions (18 bytes = 9 + 9)
       putU32(p, 18)
@@ -355,8 +410,8 @@ export function serializeDemoCommand(
       p.push(0)
       putU16(p, 0)
       // P1: buffer (TPM2B_MAX_BUFFER) — final chunk
-      putU16(p, messageLen)
-      for (let i = 0; i < messageLen; i++) p.push(0xa5)
+      putU16(p, SEQUENCE_MESSAGE_BYTES.length)
+      for (let i = 0; i < SEQUENCE_MESSAGE_BYTES.length; i++) p.push(SEQUENCE_MESSAGE_BYTES[i])
       return buildCommand(TPM_ST_SESSIONS, TPM_CC_SignSequenceComplete, new Uint8Array(p))
     }
 
@@ -371,12 +426,35 @@ export function serializeDemoCommand(
       return buildCommand(TPM_ST_NO_SESSIONS, TPM_CC_VerifySequenceStart, new Uint8Array(p))
     }
 
+    case 'TPM2_SequenceUpdate': {
+      // Part 3 §17.7 Table 92: {@sequenceHandle, buffer}. Auth Index 1, USER
+      // (session required to authorize the sequence). Real sequenceHandle
+      // from a prior TPM2_VerifySequenceStart if the caller chained it;
+      // otherwise a labeled synthetic placeholder (see DemoCommandExtras).
+      // No `handle`/keyHandle field — SequenceUpdate only ever addresses the
+      // sequence object itself.
+      const p: number[] = []
+      putU32(p, extras.verifySeqHandle ?? 0x80ff0000) // @sequenceHandle
+      putU32(p, 9) // authSize
+      putU32(p, RS_PW)
+      putU16(p, 0)
+      p.push(0)
+      putU16(p, 0)
+      // P1: buffer (TPM2B_MAX_BUFFER) — message chunk fed into the sequence
+      putU16(p, SEQUENCE_MESSAGE_BYTES.length)
+      for (let i = 0; i < SEQUENCE_MESSAGE_BYTES.length; i++) p.push(SEQUENCE_MESSAGE_BYTES[i])
+      return buildCommand(TPM_ST_SESSIONS, TPM_CC_SequenceUpdate, new Uint8Array(p))
+    }
+
     case 'TPM2_VerifySequenceComplete': {
       // Table 118: {@sequenceHandle, keyHandle, signature}. ONE PW session for
-      // sequenceHandle; keyHandle Auth Index: None.
+      // sequenceHandle; keyHandle Auth Index: None. Real sequenceHandle from a
+      // prior TPM2_VerifySequenceStart and real signature from a prior
+      // TPM2_SignSequenceComplete if the caller chained them; otherwise
+      // labeled synthetic placeholders (see DemoCommandExtras).
       const sigSize = MLDSA_SIG_SIZES[algorithm] ?? 3309
       const p: number[] = []
-      putU32(p, 0x80ff0000) // @sequenceHandle placeholder
+      putU32(p, extras.verifySeqHandle ?? 0x80ff0000) // @sequenceHandle
       putU32(p, handle) // keyHandle (Auth Index: None)
       putU32(p, 9) // authSize for sequenceHandle
       putU32(p, RS_PW)
@@ -386,7 +464,11 @@ export function serializeDemoCommand(
       // P1: signature TPMT_SIGNATURE
       putU16(p, ALG_MLDSA)
       putU16(p, sigSize)
-      for (let i = 0; i < sigSize; i++) p.push(0xee)
+      if (extras.seqSignature && extras.seqSignature.length === sigSize) {
+        for (let i = 0; i < sigSize; i++) p.push(extras.seqSignature[i])
+      } else {
+        for (let i = 0; i < sigSize; i++) p.push(0xee)
+      }
       return buildCommand(TPM_ST_SESSIONS, TPM_CC_VerifySequenceComplete, new Uint8Array(p))
     }
 
@@ -445,17 +527,19 @@ export function serializeDemoCommand(
 
     case 'TPM2_NV_ReadPublic': {
       // Table 251: {nvIndex}. Auth Index: None.
-      // Default to ML-DSA-65 EK cert slot (0x01c00072) per V2.7 §5.3.1.
+      // NV slot follows the selected algorithm's V2.7 §5.3.1 EK cert slot;
+      // falls back to the ML-DSA-65 slot if the algorithm isn't recognized.
       const p: number[] = []
-      putU32(p, 0x01c00072)
+      putU32(p, NV_CERT_INDEX_BY_ALGO[algorithm] ?? 0x01c00072)
       return buildCommand(TPM_ST_NO_SESSIONS, TPM_CC_NV_ReadPublic, new Uint8Array(p))
     }
 
     case 'TPM2_NV_Read': {
       // Table 265: {@authHandle, nvIndex, size, offset}.
       // authHandle Auth Index 1 USER; nvIndex Auth Index: None.
-      // Default: read 256 bytes at offset 0 from ML-DSA-65 EK cert slot.
-      const nvIndex = 0x01c00072
+      // NV slot follows the selected algorithm's V2.7 §5.3.1 EK cert slot;
+      // reads 256 bytes at offset 0.
+      const nvIndex = NV_CERT_INDEX_BY_ALGO[algorithm] ?? 0x01c00072
       const p: number[] = []
       putU32(p, nvIndex) // @authHandle = nvIndex itself (AUTHREAD path)
       putU32(p, nvIndex) // nvIndex to read

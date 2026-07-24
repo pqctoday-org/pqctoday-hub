@@ -1379,6 +1379,70 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
   },
 
   {
+    key: 'TPM2_SequenceUpdate',
+    cc: 0x0000015c,
+    name: 'TPM2_SequenceUpdate',
+    section: 'TCG Part 3 §17.7 Table 92 (V1.85 RC4)',
+    phase: 'use',
+    requiresDsa: true,
+    showAlgorithm: false,
+    description:
+      'Feeds a chunk of message bytes into an open sequence object. Used on the verify side of the streaming flow: after TPM2_VerifySequenceStart returns a sequenceHandle, one or more SequenceUpdate calls accumulate the message before TPM2_VerifySequenceComplete tests the signature against it. The sequence handle is consumed by the auth session, not by a separate keyHandle — SequenceUpdate never references the signing/verification key itself.',
+    why: 'Closes the gap between VerifySequenceStart and VerifySequenceComplete for messages too large for a single TPM2B_MAX_BUFFER chunk — the reason the streaming API exists instead of always using SignDigest/VerifyDigestSignature.',
+    params: () => [
+      {
+        name: '@sequenceHandle',
+        tpmType: 'TPMI_DH_OBJECT',
+        value: 'sequenceHandle from VerifySequenceStart',
+        description:
+          'Auth Index: 1, Auth Role: USER (Table 92) — requires authorization session with the auth value set in TPM2_VerifySequenceStart.',
+      },
+      {
+        name: 'buffer.size',
+        tpmType: 'UINT16',
+        value: '0x0000-0x0400',
+        description: 'TPM2B_MAX_BUFFER size. Chunk of message bytes to append to the sequence.',
+      },
+      {
+        name: 'buffer.buffer',
+        tpmType: 'BYTE[]',
+        value: '(message bytes)',
+        description: 'Data appended to the sequence (Table 92).',
+      },
+    ],
+    respFields: () => [
+      {
+        name: 'tag',
+        tpmType: 'TPM_ST',
+        byteOffset: 0,
+        byteSize: 2,
+        description: '0x8002 = TPM_ST_SESSIONS (always — Table 92 mandates SESSIONS).',
+      },
+      {
+        name: 'responseSize',
+        tpmType: 'UINT32',
+        byteOffset: 2,
+        byteSize: 4,
+        description: 'Total response size in bytes.',
+      },
+      {
+        name: 'responseCode',
+        tpmType: 'TPM_RC',
+        byteOffset: 6,
+        byteSize: 4,
+        description: '0x00000000 = chunk accepted.',
+      },
+      {
+        name: 'paramSize',
+        tpmType: 'UINT32',
+        byteOffset: 10,
+        byteSize: 4,
+        description: 'Size of the parameter area (0 — SequenceUpdate has no response parameters).',
+      },
+    ],
+  },
+
+  {
     key: 'TPM2_VerifySequenceComplete',
     cc: 0x000001a3,
     name: 'TPM2_VerifySequenceComplete',

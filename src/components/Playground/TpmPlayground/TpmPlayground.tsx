@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react'
 import { ShieldCheck, Terminal, Cpu } from 'lucide-react'
-import { initTpm, getV2p7Status } from '../../../wasm/tpmBridge'
+import {
+  initTpm,
+  getV2p7Status,
+  getPqcBridgeStatus,
+  type PqcBridgeStatus,
+} from '../../../wasm/tpmBridge'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { CommandBuilder } from './CommandBuilder'
 import { StateInspector } from './StateInspector'
@@ -30,10 +35,14 @@ export default function TpmPlayground() {
   const [initError, setInitError] = useState<string | null>(null)
   const [logs, setLogs] = useState<TpmLogEntry[]>([])
   const [objects, setObjects] = useState<TpmObjectEntry[]>([])
+  const [bridgeStatus, setBridgeStatus] = useState<PqcBridgeStatus>('unknown')
 
   useEffect(() => {
     initTpm()
-      .then(() => setIsWasmReady(true))
+      .then(() => {
+        setIsWasmReady(true)
+        setBridgeStatus(getPqcBridgeStatus())
+      })
       .catch((err) => setInitError(String(err)))
   }, [])
 
@@ -55,6 +64,19 @@ export default function TpmPlayground() {
               >
                 {isWasmReady ? 'WASM TPM INITIALIZED' : 'INITIALIZING WASM...'}
               </span>
+              {isWasmReady && bridgeStatus === 'active' && (
+                <span className="text-xs font-mono uppercase tracking-wider px-2 py-0.5 rounded border bg-success/10 text-success border-success/30">
+                  PQC BRIDGE ACTIVE — REAL ML-KEM/ML-DSA
+                </span>
+              )}
+              {isWasmReady && bridgeStatus === 'unavailable' && (
+                <span
+                  className="text-xs font-mono uppercase tracking-wider px-2 py-0.5 rounded border bg-destructive/10 text-destructive border-destructive/30"
+                  title="registerPqcBridge() failed to load — every PQC command this session returns synthetic placeholder bytes, not real ML-KEM/ML-DSA output."
+                >
+                  PQC BRIDGE UNAVAILABLE — PLACEHOLDER CRYPTO
+                </span>
+              )}
               {initError && (
                 <span className="text-xs font-mono uppercase tracking-wider px-2 py-0.5 rounded border bg-destructive/10 text-destructive border-destructive/30">
                   {initError}
@@ -135,7 +157,7 @@ export default function TpmPlayground() {
             <div className="lg:col-span-3 space-y-8">
               <div className="glass-panel p-6 h-full flex flex-col">
                 <h2 className="text-xl font-bold mb-4">TPM State</h2>
-                <StateInspector objects={objects} />
+                <StateInspector objects={objects} isWasmReady={isWasmReady} />
               </div>
             </div>
           </div>
