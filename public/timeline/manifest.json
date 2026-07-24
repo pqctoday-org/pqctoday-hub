@@ -1805,6 +1805,33 @@
       "url": "https://www.etsi.org/deliver/etsi_ts/104000_104099/104015/01.01.01_60/ts_104015v010101p.pdf",
       "status": "downloaded",
       "file": "timeline/International_ETSI_ETSI_TS_104_015_Hybrid_PQC_Standard_Published.pdf"
+    },
+    {
+      "label": "Going-beyond-encryption-Malaysia-rolls-out-quantum-cryptogra",
+      "url": "https://www.malaymail.com/news/malaysia/2026/07/09/going-beyond-encryption-malaysia-rolls-out-quantum-cryptography-sandbox-to-safeguard-digital-borders/226998",
+      "status": "downloaded",
+      "file": "timeline/Going-beyond-encryption-Malaysia-rolls-out-quantum-cryptogra.html",
+      "sizeBytes": 146122,
+      "contentType": "text/html",
+      "sha256": "4153832b999286addd611cc9defe261a1de9a40de579fae3ae8dedf777f5436c"
+    },
+    {
+      "label": "National-Cyber-and-Information-Security-Agency-EU-Member-Sta",
+      "url": "https://nukib.gov.cz/en/infoservis-en/news/2209-eu-member-states-warn-of-the-quantum-threat-and-call-for-the-transition-to-post-quantum-cryptography/",
+      "status": "downloaded",
+      "file": "timeline/National-Cyber-and-Information-Security-Agency-EU-Member-Sta.html",
+      "sizeBytes": 19900,
+      "contentType": "text/html",
+      "sha256": "50647fa583b39059585ee20ebe5318c7eada97faa99e384839caa76152e39902"
+    },
+    {
+      "label": "National-Cyber-and-Information-Security-Agency-Letter-of-Sup",
+      "url": "https://nukib.gov.cz/en/infoservis-en/news/2163-letter-of-support-to-the-position-paper-on-quantum-key-distribution/",
+      "status": "downloaded",
+      "file": "timeline/National-Cyber-and-Information-Security-Agency-Letter-of-Sup.html",
+      "sizeBytes": 17470,
+      "contentType": "text/html",
+      "sha256": "08910e96a8feb61d89bb084711a7966c19aae7423559a0970080636952fd17a6"
     }
   ]
 }

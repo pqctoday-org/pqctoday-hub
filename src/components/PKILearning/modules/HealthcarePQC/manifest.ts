@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'Healthcare PQC',
   description:
     'Healthcare-specific PQC challenges: biometric data permanence, pharmaceutical IP protection, patient privacy lifecycles, medical device safety, and hospital network migration.',
+  whyThisMatters:
+    "Patient biometric and genomic data doesn't expire — a compromised health record is compromised forever, making healthcare one of the starkest harvest-now-decrypt-later cases in any industry.",
   duration: '60 min',
   difficulty: 'intermediate',
   frameworkPhase: 'p5',

@@ -122,7 +122,7 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
         _C_DestroyObject: rustShim._C_DestroyObject,
         _C_GetObjectSize: () => CKR_NOT_IMPL,
         _C_GetAttributeValue: rustShim._C_GetAttributeValue,
-        _C_SetAttributeValue: () => CKR_NOT_IMPL,
+        _C_SetAttributeValue: rustShim._C_SetAttributeValue,
         _C_FindObjectsInit: rustShim._C_FindObjectsInit,
         _C_FindObjects: rustShim._C_FindObjects,
         _C_FindObjectsFinal: rustShim._C_FindObjectsFinal,
@@ -306,6 +306,7 @@ const RV_NAMES: Record<number, string> = {
   0x00000060: 'CKR_KEY_HANDLE_INVALID',
   0x00000063: 'CKR_KEY_TYPE_INCONSISTENT',
   0x00000068: 'CKR_KEY_FUNCTION_NOT_PERMITTED',
+  0x00000069: 'CKR_KEY_NOT_WRAPPABLE',
   0x00000070: 'CKR_MECHANISM_INVALID',
   0x00000071: 'CKR_MECHANISM_PARAM_INVALID',
   0x00000082: 'CKR_OBJECT_HANDLE_INVALID',
@@ -698,6 +699,127 @@ export const hsm_generateAESKeyPinnedTo = (
   } finally {
     M._free(mech)
     M._free(allowedPtr)
+    freeTemplate(M, tpl, attrs.length)
+    M._free(hKeyPtr)
+  }
+}
+
+// PKCS#11 v3.2 §4.2 Table 13 footnote 10 — "Can only be set to CK_TRUE by the
+// SO user." Verified against the June 2026 OS spec + src/lib/pkcs11/pkcs11t.h
+// (pqctoday-hsm). This engine enforces that rule more strictly than the
+// footnote alone implies: CKA_TRUSTED is silently DROPPED from C_GenerateKey
+// templates (never an error — the key is created, just without the flag),
+// and is permanently read-only via C_SetAttributeValue for every caller,
+// including SO, once an object exists. The only live path to CKA_TRUSTED=
+// TRUE is C_CreateObject (raw key import) on an SO-logged-in session.
+export const CKA_TRUSTED = 0x00000086
+// §4.8/§4.10 (Common Key Attributes) — "CK_TRUE if the key can only be
+// wrapped with a wrapping key that has CKA_TRUSTED set to CK_TRUE." Unlike
+// CKA_TRUSTED, this one is ordinary client-settable (at generation or via
+// C_SetAttributeValue) — no SO gate.
+export const CKA_WRAP_WITH_TRUSTED = 0x00000210
+
+/**
+ * C_Logout + C_Login(CKU_SO or CKU_USER) on the same session. PKCS#11 login
+ * is per-token, not per-session — attempting to log in as SO while a USER
+ * session is active on the same token fails CKR_USER_ANOTHER_ALREADY_LOGGED_IN
+ * (0x104), so the round trip always needs an explicit logout first.
+ */
+export const hsm_relogin = (
+  M: SoftHSMModule,
+  hSession: number,
+  role: 'so' | 'user',
+  pin: string
+): void => {
+  checkRV(M._C_Logout(hSession), 'C_Logout')
+  const pinPtr = writeStr(M, pin)
+  try {
+    checkRV(
+      M._C_Login(hSession, role === 'so' ? CKU_SO : CKU_USER, pinPtr, pin.length),
+      `C_Login(${role.toUpperCase()})`
+    )
+  } finally {
+    M._free(pinPtr)
+  }
+}
+
+/** Set a single boolean attribute via C_SetAttributeValue. Throws on refusal
+ * — e.g. CKA_TRUSTED always throws CKR_ATTRIBUTE_READ_ONLY here, for any
+ * caller, since this engine treats it as fixed at creation time. */
+export const hsm_setBoolAttr = (
+  M: SoftHSMModule,
+  hSession: number,
+  handle: number,
+  attrType: number,
+  value: boolean
+): void => {
+  const tpl = buildTemplate(M, [{ type: attrType, boolVal: value }])
+  try {
+    checkRV(M._C_SetAttributeValue(hSession, handle, tpl.ptr, 1), 'C_SetAttributeValue')
+  } finally {
+    freeTemplate(M, tpl, 1)
+  }
+}
+
+/**
+ * Import (not generate) an AES wrapping key with CKA_TRUSTED=TRUE baked into
+ * the creation template — the ONLY live way to produce a genuinely trusted
+ * key in this engine. Requires an SO-logged-in session (call hsm_relogin
+ * first); a non-SO caller gets CKR_ATTRIBUTE_READ_ONLY.
+ */
+export const hsm_importTrustedWrapKey = (
+  M: SoftHSMModule,
+  hSession: number,
+  keyBits: 128 | 192 | 256 = 256
+): number => {
+  const keyBytes = new Uint8Array(keyBits / 8)
+  globalThis.crypto.getRandomValues(keyBytes)
+  const valuePtr = M._malloc(keyBytes.length)
+  M.HEAPU8.set(keyBytes, valuePtr)
+  try {
+    return hsm_createObject(M, hSession, [
+      { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+      { type: CKA_KEY_TYPE, ulongVal: CKK_AES },
+      { type: CKA_VALUE, bytesPtr: valuePtr, bytesLen: keyBytes.length },
+      { type: CKA_TOKEN, boolVal: false },
+      { type: CKA_WRAP, boolVal: true },
+      { type: CKA_TRUSTED, boolVal: true },
+    ])
+  } finally {
+    M._free(valuePtr)
+  }
+}
+
+/** Generate an AES key whose CKA_WRAP_WITH_TRUSTED pins it so it can only be
+ * wrapped by a wrapping key whose own CKA_TRUSTED=TRUE (§4.8/§4.10) — ordinary
+ * client-settable attribute, no SO gate (unlike CKA_TRUSTED itself). */
+export const hsm_generateAESKeyWrapWithTrusted = (
+  M: SoftHSMModule,
+  hSession: number,
+  keyBits: 128 | 192 | 256 = 256
+): number => {
+  const mech = buildMech(M, CKM_AES_KEY_GEN)
+  const attrs: AttrDef[] = [
+    { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_AES },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: true },
+    { type: CKA_WRAP, boolVal: false },
+    { type: CKA_UNWRAP, boolVal: false },
+    { type: CKA_VALUE_LEN, ulongVal: keyBits / 8 },
+    { type: CKA_WRAP_WITH_TRUSTED, boolVal: true },
+  ]
+  const tpl = buildTemplate(M, attrs)
+  const hKeyPtr = M._malloc(4)
+  try {
+    checkRV(
+      M._C_GenerateKey(hSession, mech, tpl.ptr, attrs.length, hKeyPtr),
+      'C_GenerateKey(AES, wrap-with-trusted)'
+    )
+    return M.getValue(hKeyPtr, 'i32')
+  } finally {
+    M._free(mech)
     freeTemplate(M, tpl, attrs.length)
     M._free(hKeyPtr)
   }

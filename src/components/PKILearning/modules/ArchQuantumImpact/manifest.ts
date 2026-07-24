@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'Architect Quantum Impact',
   description:
     'Architecture decisions that outlast the quantum transition: KMS, HSM, PKI, hybrid deployment patterns, and crypto-agile design.',
+  whyThisMatters:
+    'Architecture decisions made today — KMS, HSM, PKI topology — outlive any single algorithm; get crypto-agility wrong now and every future PQC transition costs far more to retrofit.',
   duration: '20 min',
   difficulty: 'beginner',
   frameworkPhase: 'foundations',

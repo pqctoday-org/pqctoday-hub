@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'VPN/IPsec & SSH',
   description:
     'IKEv2 and SSH key exchange with PQC: hybrid ML-KEM integration, WireGuard Rosenpass, and protocol size comparison.',
+  whyThisMatters:
+    "IKEv2 and SSH key exchange are two of the most widely deployed protocols on earth — hybrid ML-KEM support already exists in production tools like WireGuard's Rosenpass, making this one of the more immediately actionable PQC migrations.",
   duration: '60 min',
   difficulty: 'advanced',
   frameworkPhase: 'p5',

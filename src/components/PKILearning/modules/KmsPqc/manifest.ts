@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'KMS & PQC Key Management',
   description:
     'PQC key management patterns: envelope encryption with ML-KEM, hybrid key wrapping, multi-provider rotation planning.',
+  whyThisMatters:
+    "The KMS is where every other system's keys live — get PQC key management wrong at this layer and you've broken envelope encryption for everything downstream, not just one application.",
   duration: '60 min',
   difficulty: 'intermediate',
   frameworkPhase: 'p6',

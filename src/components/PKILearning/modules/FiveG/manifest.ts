@@ -6,6 +6,8 @@ const manifest: ModuleManifest = {
   lm_id: 'LM-046',
   title: '5G Security',
   description: 'Explore 3GPP security architecture: SUCI Deconcealment, 5G-AKA, & Provisioning.',
+  whyThisMatters:
+    "5G's SUCI concealment and 5G-AKA protect subscriber identity at the protocol level — if that concealment breaks under a quantum attack, every subscriber on the network is de-anonymized retroactively, not just future ones.",
   duration: '60 min',
   difficulty: 'advanced',
   workInProgress: true,

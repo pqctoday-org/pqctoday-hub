@@ -13,7 +13,6 @@ export const content: ModuleContent = {
 
   standards: [
     getStandard('IETF-RFC-7030-EST'),
-    getStandard('RFC 4210'),
     getStandard('RFC 9810'),
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),

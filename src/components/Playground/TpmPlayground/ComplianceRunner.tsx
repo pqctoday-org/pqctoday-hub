@@ -1,7 +1,12 @@
 import { useState, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Terminal, Copy, CheckCircle, XCircle, Loader2, Shield } from 'lucide-react'
-import { executeTpmCommand, getLastTpmErr, clearLastTpmErr } from '../../../wasm/tpmBridge'
+import {
+  executeTpmCommand,
+  getLastTpmErr,
+  clearLastTpmErr,
+  flushAllTransient,
+} from '../../../wasm/tpmBridge'
 import {
   buildCommand,
   toHex,
@@ -172,6 +177,23 @@ interface ScenarioLine {
   ok?: boolean
 }
 
+/**
+ * Pure summary math, exported for testing. `total` is ALWAYS the fixed
+ * expected check count — never derived from however many checks actually
+ * ran — so an aborted run (any uncaught throw mid-suite) can't render a
+ * false "N/N checks passed" just because N is smaller than the real total.
+ * See tpm-playground-audit-pkcs11-cacp-parity-gap-report-07232026.md finding
+ * #4: a truncated run previously computed total as pass+fail, so an early
+ * abort after 18 passes rendered a green "18/18 checks passed" banner.
+ */
+export function buildSuiteSummary(
+  pass: number,
+  fail: number,
+  expectedTotal: number
+): { pass: number; fail: number; total: number; notRun: number } {
+  return { pass, fail, total: expectedTotal, notRun: Math.max(0, expectedTotal - pass - fail) }
+}
+
 const INITIAL_CHECKS: Omit<CheckEntry, 'status' | 'detail'>[] = [
   { id: 'V185-001', name: 'TPM2_SelfTest(fullTest)', section: 'Part 3 §10.2' },
   { id: 'V185-002', name: 'Response Header Structure', section: 'Part 1 §15.2' },
@@ -214,7 +236,12 @@ const INITIAL_CHECKS: Omit<CheckEntry, 'status' | 'detail'>[] = [
 export function ComplianceRunner() {
   const [isRunning, setIsRunning] = useState(false)
   const [checks, setChecks] = useState<CheckEntry[]>([])
-  const [summary, setSummary] = useState<{ pass: number; fail: number; total: number } | null>(null)
+  const [summary, setSummary] = useState<{
+    pass: number
+    fail: number
+    total: number
+    notRun: number
+  } | null>(null)
   const [activeTab, setActiveTab] = useState<'compliance' | 'scenario'>('compliance')
   const [scenarioLines, setScenarioLines] = useState<ScenarioLine[]>([])
   const abortRef = useRef(false)
@@ -237,8 +264,24 @@ export function ComplianceRunner() {
       { type: 'phase', text: '[+] Phase 1 — TPM Initialization' },
       { type: 'send', text: '    → tpm_wasm_startup()  →  TPM2_Startup(TPM_SU_CLEAR)' },
       { type: 'recv', text: '    ← RC=0x00000000  module ready, NV initialized ✓', ok: true },
-      { type: 'divider', text: '' },
+      { type: 'send', text: '    → flushing transient slots left over from other panels' },
     ])
+
+    // Free any transient-object slots left over from the Learn tab, Command
+    // Builder, or a previous run (the WASM libtpms build is configured with
+    // only 3 transient slots — see flushAllTransient's docstring). Without
+    // this, Phase 6's CreatePrimary(ML-DSA-65 AK) can hit TPM_RC_OBJECT_MEMORY
+    // (0x902 = RC_WARN + 0x002) purely because an earlier panel in the same
+    // session left an object loaded, not because anything here is broken.
+    // Non-fatal: this runs before the main try block, so a failure here must
+    // not leave isRunning stuck true.
+    try {
+      await flushAllTransient()
+      addLine('recv', '    ← transient slots clear ✓', true)
+    } catch (e) {
+      addLine('recv', `    ← WARNING: pre-flush failed (${String(e)}) — continuing`, false)
+    }
+    addLine('divider', '')
 
     let pass = 0
     let fail = 0
@@ -879,13 +922,21 @@ export function ComplianceRunner() {
 
       // Free a transient slot for the upcoming sequence handles.
       // EK and unrestricted AK occupy 2 of the 3 transient slots — flush EK.
+      // Non-fatal: if the flush itself throws, Phase 11 still runs (it may
+      // just hit TPM_RC_OBJECT_MEMORY, which each check below reports on its
+      // own) rather than silently dropping the remaining checks (V185-019
+      // through V185-024) out of the pass/fail count.
       if (ekHandle !== 0) {
-        const flushP: number[] = []
-        putU16(flushP, 0x8001) // TPM_ST_NO_SESSIONS
-        putU32(flushP, 14)
-        putU32(flushP, CC_FLUSH_CONTEXT)
-        putU32(flushP, ekHandle)
-        await executeTpmCommand(new Uint8Array(flushP))
+        try {
+          const flushP: number[] = []
+          putU16(flushP, 0x8001) // TPM_ST_NO_SESSIONS
+          putU32(flushP, 14)
+          putU32(flushP, CC_FLUSH_CONTEXT)
+          putU32(flushP, ekHandle)
+          await executeTpmCommand(new Uint8Array(flushP))
+        } catch (e) {
+          addLine('recv', `    ← WARNING: EK flush failed (${String(e)}) — continuing`, false)
+        }
       }
 
       // ── V185-019: TPM2_VerifyDigestSignature → DIGEST_VERIFIED ─────
@@ -1204,9 +1255,24 @@ export function ComplianceRunner() {
       addLine('table-header', '  ═══════════════════════════════════════════════════════════')
     } catch (e) {
       console.error('Compliance suite error:', e)
+      addLine('recv', `    ← Suite aborted early: ${String(e)}`, false)
     }
 
-    setSummary({ pass, fail, total: pass + fail })
+    // Any check still 'pending'/'running' never got a chance to call
+    // markPass/markFail, so it isn't in `pass`/`fail` yet; flag it explicitly
+    // instead of letting it silently vanish from the math (see
+    // buildSuiteSummary above).
+    const finalSummary = buildSuiteSummary(pass, fail, INITIAL_CHECKS.length)
+    if (finalSummary.notRun > 0) {
+      setChecks((prev) =>
+        prev.map((c) =>
+          c.status === 'pending' || c.status === 'running'
+            ? { ...c, status: 'fail' as CheckStatus, detail: 'Not run — suite aborted early' }
+            : c
+        )
+      )
+    }
+    setSummary(finalSummary)
     setIsRunning(false)
   }
 
@@ -1218,7 +1284,10 @@ export function ComplianceRunner() {
       const lines = checks.map(
         (c) => `[${c.status.toUpperCase().padEnd(5)}] ${c.id} ${c.name} (${c.section}): ${c.detail}`
       )
-      if (summary) lines.push('', `Result: ${summary.pass}/${summary.total} passed`)
+      if (summary) {
+        const notRunSuffix = summary.notRun > 0 ? `, ${summary.notRun} not run` : ''
+        lines.push('', `Result: ${summary.pass}/${summary.total} passed${notRunSuffix}`)
+      }
       navigator.clipboard.writeText(lines.join('\n'))
     }
   }
@@ -1293,18 +1362,19 @@ export function ComplianceRunner() {
       {summary && (
         <div
           className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium ${
-            summary.fail === 0
+            summary.fail === 0 && summary.notRun === 0
               ? 'bg-status-success/10 border border-status-success/30 text-status-success'
               : 'bg-destructive/10 border border-destructive/30 text-destructive'
           }`}
         >
-          {summary.fail === 0 ? (
+          {summary.fail === 0 && summary.notRun === 0 ? (
             <CheckCircle className="h-4 w-4" />
           ) : (
             <XCircle className="h-4 w-4" />
           )}
           {summary.pass}/{summary.total} checks passed
           {summary.fail > 0 && ` — ${summary.fail} failed`}
+          {summary.notRun > 0 && ` — ${summary.notRun} not run (suite aborted early)`}
         </div>
       )}
 

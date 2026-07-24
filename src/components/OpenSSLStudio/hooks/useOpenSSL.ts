@@ -2,6 +2,13 @@
 import { useEffect, useRef, useCallback } from 'react'
 import { useOpenSSLStore } from '../store'
 import type { WorkerMessage, WorkerResponse } from '../worker/types'
+import { parseOpensslArgs } from '../worker/commandParser'
+
+interface PendingRun {
+  resolve: (result: { stdout: string }) => void
+  reject: (error: Error) => void
+  stdout: string[]
+}
 
 export const useOpenSSL = () => {
   const workerRef = useRef<Worker | null>(null)
@@ -21,6 +28,9 @@ export const useOpenSSL = () => {
 
   const startTimeRef = useRef<number | null>(null)
   const commandRef = useRef<string>('')
+  // Learn tab's promise-based runner (runCommand below) — keyed by requestId,
+  // separate from the fire-and-forget Workbench flow above it.
+  const pendingRunsRef = useRef<Map<string, PendingRun>>(new Map())
 
   useEffect(() => {
     // Track if this effect instance is active
@@ -39,6 +49,9 @@ export const useOpenSSL = () => {
       switch (type) {
         case 'LOG':
           addLog(event.data.stream === 'stderr' ? 'error' : 'info', event.data.message)
+          if (event.data.requestId) {
+            pendingRunsRef.current.get(event.data.requestId)?.stdout.push(event.data.message)
+          }
           break
         case 'FILE_CREATED':
           addFile({
@@ -73,9 +86,19 @@ export const useOpenSSL = () => {
             setIsReady(false)
             setLoadError(event.data.error || 'Failed to load the OpenSSL WASM module.')
           }
+          if (event.data.requestId && pendingRunsRef.current.has(event.data.requestId)) {
+            const pending = pendingRunsRef.current.get(event.data.requestId)!
+            pendingRunsRef.current.delete(event.data.requestId)
+            pending.reject(new Error(event.data.error || 'Command failed'))
+          }
           break
         case 'DONE':
           setIsProcessing(false)
+          if (event.data.requestId && pendingRunsRef.current.has(event.data.requestId)) {
+            const pending = pendingRunsRef.current.get(event.data.requestId)!
+            pendingRunsRef.current.delete(event.data.requestId)
+            pending.resolve({ stdout: pending.stdout.join('\n') })
+          }
           if (startTimeRef.current) {
             const duration = performance.now() - startTimeRef.current
             setLastExecutionTime(duration)
@@ -196,21 +219,7 @@ export const useOpenSSL = () => {
       clearTerminalLogs() // Auto-clear logs on new run
       addLog('info', `$ ${commandToExecute}`)
 
-      // Parse command string to args, respecting quotes
-      const args: string[] = []
-      let match
-      const regex = /[^\s"]+|"([^"]*)"/g
-
-      // Skip 'openssl' if present
-      const cmdStr = commandToExecute.startsWith('openssl ')
-        ? commandToExecute.slice(8)
-        : commandToExecute
-
-      while ((match = regex.exec(cmdStr)) !== null) {
-        // If it was a quoted string (group 1), use that. Otherwise use the whole match.
-        args.push(match[1] ? match[1] : match[0])
-      }
-
+      const args = parseOpensslArgs(commandToExecute)
       const cmd = args.shift() || ''
 
       if (workerRef.current) {
@@ -254,6 +263,57 @@ export const useOpenSSL = () => {
     ]
   )
 
+  /**
+   * Promise-based command runner for the Learn tab's lesson steps — the
+   * SAME worker + shared VFS as executeCommand (so a key generated in a
+   * lesson is immediately visible in the Workbench's File Manager), but
+   * resolves/rejects on that one command's own DONE/ERROR rather than
+   * updating `currentCommand`/store state for a UI-driven Run button.
+   * Rejects with the real stderr on nonzero exit — lesson steps that
+   * `expect: 'refusal'` rely on this throwing.
+   */
+  const runCommand = useCallback(
+    (cmd: string): Promise<{ stdout: string }> => {
+      if (/\|/.test(cmd.replace(/"[^"]*"/g, ''))) {
+        return Promise.reject(new Error('Learn tab commands may not use shell pipes.'))
+      }
+      if (!workerRef.current) {
+        return Promise.reject(new Error('OpenSSL WASM engine is not ready yet.'))
+      }
+
+      const args = parseOpensslArgs(cmd)
+      const subcommand = args.shift() || ''
+      const requestId = `learn_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
+
+      commandRef.current = cmd
+      setIsProcessing(true)
+      startTimeRef.current = performance.now()
+
+      const filesAsUint8Array = files.map((f) => ({
+        name: f.name,
+        data:
+          f.content instanceof Uint8Array
+            ? f.content
+            : new TextEncoder().encode(
+                typeof f.content === 'string' ? f.content : JSON.stringify(f.content)
+              ),
+      }))
+
+      return new Promise((resolve, reject) => {
+        pendingRunsRef.current.set(requestId, { resolve, reject, stdout: [] })
+        workerRef.current!.postMessage({
+          type: 'COMMAND',
+          command: subcommand,
+          args,
+          files: filesAsUint8Array,
+          replaceVfs: true,
+          requestId,
+        } as WorkerMessage)
+      })
+    },
+    [files, setIsProcessing]
+  )
+
   const executeSkey = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async (opType: 'create' | 'derive', params: Record<string, any>) => {
@@ -277,5 +337,5 @@ export const useOpenSSL = () => {
     [setIsProcessing, clearTerminalLogs, addLog, setLastExecutionTime]
   )
 
-  return { executeCommand, executeSkey, retryLoad }
+  return { executeCommand, executeSkey, runCommand, retryLoad }
 }

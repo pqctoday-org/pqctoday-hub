@@ -144,6 +144,26 @@ export const TAG_GLOSSARY: Record<string, TagGlossaryEntry> = {
   CKA_DECAPSULATE: {
     def: "A private key's KEM capability flag — this key may be used with C_DecapsulateKey to recover the shared secret.",
   },
+  CKA_TRUSTED: {
+    hex: '0x00000086',
+    def: 'v3.2 §4.2 Table 13 footnote 10 — "Can only be set to CK_TRUE by the SO user." This engine enforces that more strictly than the footnote alone implies: silently dropped from C_GenerateKey templates (no error — the key is created, just without the flag), and permanently read-only via C_SetAttributeValue for every caller, SO included, once an object exists. The only live path to CKA_TRUSTED=TRUE is C_CreateObject (raw key import) on an SO session.',
+  },
+  CKA_WRAP_WITH_TRUSTED: {
+    hex: '0x00000210',
+    def: 'v3.2 §4.8/§4.10 — pins a key so it can only be wrapped by a wrapping key whose own CKA_TRUSTED=TRUE. Unlike CKA_TRUSTED itself, this one is ordinary client-settable — no SO gate.',
+  },
+  CKR_ATTRIBUTE_READ_ONLY: {
+    hex: '0x00000010',
+    def: 'Returned when a template tries to change an attribute this token treats as fixed — CKA_TRUSTED, always, for any caller, is the example this curriculum uses.',
+  },
+  CKR_KEY_NOT_WRAPPABLE: {
+    hex: '0x00000069',
+    def: "Returned by C_WrapKey when the target key's CKA_WRAP_WITH_TRUSTED=TRUE policy isn't satisfied — the wrapping key's own CKA_TRUSTED attribute is FALSE.",
+  },
+  CKR_USER_ANOTHER_ALREADY_LOGGED_IN: {
+    hex: '0x00000104',
+    def: 'PKCS#11 login is per-token, not per-session — attempting to log in as SO while a USER session is active on the same token (or vice versa) gets this, not a silent role switch. C_Logout first.',
+  },
 
   // ── Mechanisms & mechanism info ──────────────────────────────────────────
   C_GetMechanismList: {
@@ -272,6 +292,18 @@ export const TERMS: GlossaryTerm[] = [
     label: 'FIPS 203 / 204 / 205',
     cat: 'pqc',
     def: "NIST's finalized PQC standards (Aug 2024): FIPS 203 = ML-KEM (key establishment), FIPS 204 = ML-DSA (signatures), FIPS 205 = SLH-DSA (hash-based signatures) — the three algorithm families PKCS#11 v3.2 adds native mechanisms for.",
+  },
+  {
+    id: 'trust-objects',
+    label: 'Trust objects (CKO_TRUST / CKT_TRUST_ANCHOR)',
+    cat: 'protocol',
+    def: 'v3.2 §4.7 — a separate object class binding trusted usages (server auth, code signing, …) to a specific certificate, used to build certificate trust chains. CKT_TRUST_ANCHOR marks a certificate trusted as a root for chain validation. Not the same mechanism as CKA_TRUSTED/CKA_WRAP_WITH_TRUSTED (§4.2/§4.8, this lesson) — a different §4.7 concept this engine does not implement at all.',
+  },
+  {
+    id: 'validation-objects',
+    label: 'Validation objects (CKO_VALIDATION)',
+    cat: 'protocol',
+    def: 'v3.2 §4.15 — describes which third-party validation (e.g. NIST CMVP) a module conforms to. Session-level validation flags (§4.15.3.1, C_GetSessionValidationFlags) ARE implemented here — honestly, always empty, since this build has no such validation. Key-object-level flags (§4.15.3.2, CKA_OBJECT_VALIDATION_FLAGS) and CKO_VALIDATION objects themselves are not implemented at all — a distinct gap from trust objects above.',
   },
 ]
 

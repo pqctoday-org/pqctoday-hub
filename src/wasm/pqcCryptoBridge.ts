@@ -15,12 +15,15 @@
 
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import type { PqcTpmModule } from './tpmBridge'
-import { getSoftHSMRustModule } from './softhsm'
+import {
+  getSoftHSMRustModule,
+  hsm_initialize,
+  hsm_getFirstSlot,
+  hsm_initToken,
+  hsm_openUserSession,
+} from './softhsm'
 
 // ── PKCS#11 constants (inline to avoid circular imports) ──────────────────────
-const CKF_RW_SESSION = 0x0002
-const CKF_SERIAL_SESSION = 0x0004
-const CKU_USER = 1
 const CKO_PUBLIC_KEY = 0x02
 const CKO_PRIVATE_KEY = 0x03
 const CKA_CLASS = 0x00000000
@@ -178,6 +181,11 @@ function writeMechanism(mechType: number, paramPtr = 0, paramLen = 0): number {
   return ptr
 }
 
+// SO / user PINs for the bridge's private softhsm token. Any values work — the
+// token is self-contained ('TPM-PQC-Bridge') and only the bridge uses it.
+const BRIDGE_SO_PIN = '12345678'
+const BRIDGE_USER_PIN = 'user1234'
+
 // ── HSM initialization ───────────────────────────────────────────────────────
 async function ensureHSM(): Promise<void> {
   if (hsmInitialized) return
@@ -185,64 +193,23 @@ async function ensureHSM(): Promise<void> {
   hsmModule = await getSoftHSMRustModule()
   const M = hsmModule
 
-  // Initialize
-  let rv = M._C_Initialize(0)
-  if (rv >>> 0 !== 0 && rv >>> 0 !== 0x191 /* CKR_CRYPTOKI_ALREADY_INITIALIZED */) {
-    throw new Error(`C_Initialize failed: 0x${(rv >>> 0).toString(16)}`)
-  }
+  // Use the PROVEN token/session helpers rather than a hand-rolled sequence.
+  //
+  // The previous inline init logged in as CKU_USER with a PIN that was never
+  // set (it called C_InitPIN *after* the user login instead of the required
+  // SO-login → C_InitPIN → logout → user-login dance). In this softhsm build
+  // that half-initialized token accepts C_GenerateKeyPair but then rejects
+  // the resulting private-key handle with CKR_KEY_HANDLE_INVALID at
+  // C_SignInit / C_DecapsulateKey — so every ML-DSA sign and ML-KEM decap
+  // silently fell back to the engine's placeholder bytes (0xEE / 0xDD),
+  // browser included. hsm_initToken + hsm_openUserSession perform the correct
+  // sequence (verified against the working PKCS#11 Learn-tab path).
+  hsm_initialize(M)
+  const slot = hsm_getFirstSlot(M)
+  const initSlot = hsm_initToken(M, slot, BRIDGE_SO_PIN, 'TPM-PQC-Bridge')
+  hsmSession = hsm_openUserSession(M, initSlot, BRIDGE_SO_PIN, BRIDGE_USER_PIN)
 
-  // Get first slot
-  const countPtr = hsmAlloc(4)
-  hsmSetValue(countPtr, 0)
-  rv = M._C_GetSlotList(0, 0, countPtr)
-  const slotCount = hsmGetValue(countPtr)
-  if (slotCount === 0) {
-    hsmFree(countPtr)
-    throw new Error('No HSM slots available')
-  }
-  const slotListPtr = hsmAlloc(slotCount * 4)
-  hsmSetValue(countPtr, slotCount)
-  rv = M._C_GetSlotList(0, slotListPtr, countPtr)
-  const slotId = hsmGetValue(slotListPtr)
-  hsmFree(slotListPtr)
-  hsmFree(countPtr)
-
-  // Init token (if not already)
-  const pinStr = '1234'
-  const pinBytes = new TextEncoder().encode(pinStr)
-  const pinPtr = hsmAlloc(pinBytes.length)
-  M.HEAPU8.set(pinBytes, pinPtr)
-  const labelBytes = new Uint8Array(32)
-  labelBytes.set(new TextEncoder().encode('TPM-PQC-Bridge'))
-  const labelPtr = hsmAlloc(32)
-  M.HEAPU8.set(labelBytes, labelPtr)
-
-  rv = M._C_InitToken(slotId, pinPtr, pinBytes.length, labelPtr)
-  // Ignore CKR_TOKEN_WRITE_PROTECTED or similar — might be already initialized
-
-  // Open session
-  const sessionPtr = hsmAlloc(4)
-  rv = M._C_OpenSession(slotId, CKF_RW_SESSION | CKF_SERIAL_SESSION, 0, 0, sessionPtr)
-  if (rv >>> 0 !== 0) {
-    hsmFree(pinPtr)
-    hsmFree(labelPtr)
-    hsmFree(sessionPtr)
-    throw new Error(`C_OpenSession failed: 0x${(rv >>> 0).toString(16)}`)
-  }
-  hsmSession = hsmGetValue(sessionPtr)
-  hsmFree(sessionPtr)
-
-  // Login
-  rv = M._C_Login(hsmSession, CKU_USER, pinPtr, pinBytes.length)
-  // Ignore CKR_USER_ALREADY_LOGGED_IN
-
-  // Init PIN (for freshly initialized tokens)
-  rv = M._C_InitPIN(hsmSession, pinPtr, pinBytes.length)
-
-  hsmFree(pinPtr)
-  hsmFree(labelPtr)
   hsmInitialized = true
-
   console.log('[PQC Bridge] SoftHSMv3 initialized for TPM crypto delegation')
 }
 

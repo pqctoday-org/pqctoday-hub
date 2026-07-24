@@ -33,6 +33,8 @@ interface OpenSSLModule {
     unlink: (path: string) => void
     mkdir: (path: string) => void
     stat: (path: string) => unknown
+    readdir: (path: string) => string[]
+    isFile: (mode: number) => boolean
   }
   ENV?: Record<string, string>
 }
@@ -208,6 +210,50 @@ export function fileExists(M: OpenSSLModule, path: string): boolean {
   } catch {
     return false
   }
+}
+
+// Mirrors worker/openssl.worker.ts's scanOutputFiles: the exact allowed
+// output extensions + excluded system paths the real browser worker uses
+// to decide which post-command files count as "created" (and so get
+// broadcast as FILE_CREATED / persisted to the Studio's file store). Kept
+// in sync deliberately — the Learn tab's Node replay test must see exactly
+// the same files the browser would, or it isn't really testing the same
+// thing.
+const OUTPUT_EXTENSIONS = [
+  '.key',
+  '.pub',
+  '.csr',
+  '.crt',
+  '.sig',
+  '.txt',
+  '.bin',
+  '.p12',
+  '.pem',
+  '.enc',
+  '.der',
+  '.p7b',
+  '.skey',
+  '.crl',
+]
+const EXCLUDED_ROOT_ENTRIES = new Set(['.', '..', 'tmp', 'dev', 'proc', 'ssl'])
+
+/** List root-level files a command could plausibly have written, excluding
+ * known pre-existing input names — same allowed-extension convention the
+ * real Web Worker's scanOutputFiles uses. */
+export function listNewOutputFiles(M: OpenSSLModule, preExisting: Set<string>): string[] {
+  const entries = M.FS.readdir('/')
+  const found: string[] = []
+  for (const name of entries) {
+    if (EXCLUDED_ROOT_ENTRIES.has(name) || preExisting.has(name)) continue
+    if (!OUTPUT_EXTENSIONS.some((ext) => name.endsWith(ext))) continue
+    try {
+      const stat = M.FS.stat(`/${name}`) as { mode: number }
+      if (M.FS.isFile(stat.mode)) found.push(name)
+    } catch {
+      /* stat can race on a just-unlinked temp entry — skip it */
+    }
+  }
+  return found
 }
 
 /** Load the openssl.wasm artifact's bytes — useful for ensuring CI didn't ship

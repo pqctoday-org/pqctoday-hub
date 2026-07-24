@@ -4,14 +4,20 @@
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0 } from '@/data/regulatoryTimelines'
+import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'exec-quantum-impact',
   version: '1.0.1',
-  lastReviewed: '2026-03-28',
+  lastReviewed: '2026-07-22',
 
   standards: [
-    // No standard references detected — add manually if needed
+    getStandard('NSA CNSA 2.0'),
+    getStandard('NIST-IR-8547-Initial-Public-Draft-Transition-to-Post-Quantum'),
+    getStandard('NSM-10'),
+    getStandard('EO-14306'),
+    getStandard('EU-NIS-CG-Roadmap-v1.1'),
+    getStandard('DORA-REG-2022-2554'),
   ],
 
   algorithms: [

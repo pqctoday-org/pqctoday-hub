@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'MLS — Group Messaging',
   description:
     'Messaging Layer Security (RFC 9420) with TreeKEM, HPKE, and a PKCS#11-backed openmls provider. Scales group key agreement to thousands while keeping signature keys in the HSM.',
+  whyThisMatters:
+    "Group messaging at Signal's pairwise-ratchet scale breaks down past roughly 100 members — MLS's TreeKEM is what makes forward secrecy and post-compromise security reach a group of thousands, and PQ MLS ciphersuites are already in IETF Working Group Last Call.",
   duration: '40 min',
   difficulty: 'intermediate',
   frameworkPhase: 'p5',
