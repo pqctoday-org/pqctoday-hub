@@ -29,7 +29,7 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
-## [4.23.1] - 2026-07-24
+## [4.24.1] - 2026-07-24
 
 A maintenance-pipeline accuracy pass: several standards, catalog, timeline, glossary, and leaders-profile corrections found and verified during a full end-to-end review of the data maintenance process.
 
@@ -43,6 +43,20 @@ A maintenance-pipeline accuracy pass: several standards, catalog, timeline, glos
 - **Fixed 3 broken "learn more" links in the Glossary** [view:/library]: IKEv2 and RFC 9370 pointed at a retired duplicate reference id, and SM2 pointed at a since-deprecated standard with no working source — SM2 now links to the active IETF draft covering its actual post-quantum hybrid use.
 - **Cleaned up 37 mislabeled entries in the authoritative sources directory** [view:/library] [persona:researcher]: organization-type labels using inconsistent spelling/spacing (e.g. "Industry Workgroup" vs. the standard "Industry_Workgroup") were normalized; this directory is now actively monitored for freshness and accuracy going forward.
 - **10 more Leaders profiles now show a verified peer-review credential** [view:/leaders] [persona:researcher]: each was independently confirmed against NIST, IETF, or an academic publication record (not inferred from the profile's own bio text) — including catching and correcting one profile that cited the wrong RFC.
+
+## [4.24.0] - 2026-07-23
+
+A TPM 2.0 Playground release: a new guided Learn tab teaching classical-vs-post-quantum TPM operations side by side, and a fix to the underlying crypto bridge that had been silently substituting placeholder data for real ML-DSA signatures and ML-KEM key exchanges.
+
+### Added
+
+- **New guided Learn tab for the TPM 2.0 Playground** [view:/playground] [persona:developer] [persona:architect] [persona:researcher]: 8 step-by-step lessons — from booting the emulated chip through attestation — that pair a classical TPM operation (RSA signing, RSA key transport, hash-then-sign) against its post-quantum replacement (ML-DSA signing, ML-KEM key exchange, streaming signatures) and run both for real against the live in-browser TPM. Includes a glossary of TPM commands and terms, and short knowledge checks after each lesson.
+
+### Fixed
+
+- **The TPM Playground's post-quantum cryptography is now genuinely real** [view:/playground] [persona:developer] [persona:researcher]: ML-DSA signatures and ML-KEM key exchanges were silently falling back to placeholder data instead of running through the actual post-quantum crypto engine, even though the playground's status indicator reported everything as active. Both are now real, and the status indicator only reports active when it actually is.
+- **The TPM Playground's Command Builder no longer sends made-up data for multi-step operations** [view:/playground] [persona:developer]: decrypting a key exchange, verifying a signature, or completing a streaming signature used to send synthetic placeholder bytes instead of the real result from the step you just ran — it now chains your actual results through, and tells you when a prerequisite step hasn't been run yet instead of silently guessing.
+- **The TPM Playground's compliance checklist can no longer misreport a passing score** [view:/playground] [persona:developer] [persona:ops]: if the automated 24-point compliance run was interrupted partway through, it could still show a clean "all checks passed" result — it now honestly reports how many checks actually ran.
 
 ## [4.23.0] - 2026-07-24
 

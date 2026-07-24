@@ -14,6 +14,18 @@ export interface PqcTpmModule extends WebAssembly.Instance {
 let tpmInstance: PqcTpmModule | null = null
 let tpmReadyPromise: Promise<void> | null = null
 
+// Whether the real ML-KEM/ML-DSA PQC crypto bridge actually registered.
+// 'unknown' until initTpm() settles; 'unavailable' means every PQC operation
+// this session is silently running against the 0xCC/0xDD/0xEE placeholder
+// bytes CryptMlKem/CryptMlDsa fall back to — the top-level UI must surface
+// this distinctly from "WASM TPM INITIALIZED", since the WASM module itself
+// can initialize fine even when the bridge registration failed.
+export type PqcBridgeStatus = 'unknown' | 'active' | 'unavailable'
+let _pqcBridgeStatus: PqcBridgeStatus = 'unknown'
+export function getPqcBridgeStatus(): PqcBridgeStatus {
+  return _pqcBridgeStatus
+}
+
 // Capture the last printErr message so failures are visible in the UI
 let _lastTpmErr = ''
 export function getLastTpmErr(): string {
@@ -86,9 +98,14 @@ export async function initTpm(): Promise<void> {
           try {
             const { registerPqcBridge } = await import('./pqcCryptoBridge')
             await registerPqcBridge(module)
+            _pqcBridgeStatus = 'active'
             console.log('PQC Crypto Bridge registered — real ML-KEM/ML-DSA active')
           } catch (bridgeErr) {
-            // Non-fatal: compliance suite will fall back to placeholder bytes
+            // Non-fatal: compliance suite will fall back to placeholder bytes.
+            // Still surfaced at the top level via getPqcBridgeStatus() — a
+            // learner should never see "WASM TPM INITIALIZED" green while
+            // every PQC op is silently running on placeholder bytes.
+            _pqcBridgeStatus = 'unavailable'
             console.warn(
               'PQC Bridge registration failed (falling back to placeholders):',
               bridgeErr

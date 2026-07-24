@@ -769,6 +769,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['tpm', 'pqc', 'wasm', 'ml-kem', 'ml-dsa', 'hardware', 'tcg'],
     difficulty: 'advanced',
     recommendedPersonas: ['developer', 'architect', 'researcher'],
+    hasOutput: true,
+    outputSpec:
+      'Attestation tab produces a downloadable JSON bundle: TPM2_Quote output, PCR digest, and the AK signature — independently verifiable outside the browser session.',
   },
   {
     id: 'pki-enrollment',
