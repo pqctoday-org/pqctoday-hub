@@ -24,13 +24,28 @@ export const TPM_CC_VerifySequenceStart = 0x000001a9
 export const TPM_CC_SignSequenceStart = 0x000001aa
 export const TPM_CC_SequenceUpdate = 0x0000015c
 
-// Algorithm IDs (TCG V1.85 RC4)
+// Classical (pre-quantum) command codes — verified against
+// pqctoday-tpm/libtpms/src/tpm2/TpmTypes.h and live-probed against the
+// shipped pqctpm.wasm (WS0 spike, 2026-07-23). Section refs are the
+// PUBLISHED v1.85 Part 3 (2026-03-12), not RC4.
+export const TPM_CC_Sign = 0x0000015d // Part 3 §20.5
+export const TPM_CC_VerifySignature = 0x00000177 // Part 3 §20.2
+export const TPM_CC_RSA_Encrypt = 0x00000174 // Part 3 §14.2
+export const TPM_CC_RSA_Decrypt = 0x00000159 // Part 3 §14.3
+export const TPM_CC_HashSequenceStart = 0x00000186 // Part 3 §17.4
+export const TPM_CC_SequenceComplete = 0x0000013e // Part 3 §17.8
+
+// Algorithm IDs (TCG V1.85 — values confirmed unchanged at publication)
 export const ALG_SHA256 = 0x000b
 export const ALG_AES = 0x0006
 export const ALG_CFB = 0x0043
 export const ALG_NULL = 0x0010
 export const ALG_MLKEM = 0x00a0
 export const ALG_MLDSA = 0x00a1
+// Classical algorithm IDs — TpmTypes.h-verified (Part 2 §6.3)
+export const ALG_RSA = 0x0001
+export const ALG_RSASSA = 0x0014
+export const ALG_OAEP = 0x0017
 export const TPM_ST_HASHCHECK = 0x8024
 export const TPM_RH_NULL = 0x40000007
 export const TPM_CAP_HANDLES = 0x00000001
@@ -198,6 +213,77 @@ export function buildCreatePrimaryCmd(
   return new Uint8Array(p)
 }
 
+/**
+ * Classical RSA-2048 TPM2_CreatePrimary — Part 3 §24.1 (published v1.85),
+ * TPMS_RSA_PARMS per Part 2. Three variants, each live-probed against the
+ * shipped wasm (WS0 spike):
+ *  - 'sign':    unrestricted signing key (sym NULL, scheme NULL — caller
+ *               picks RSASSA at TPM2_Sign time)
+ *  - 'decrypt': unrestricted decrypt key (sym NULL, scheme NULL — caller
+ *               picks OAEP at RSA_Encrypt/Decrypt time)
+ *  - 'ak':      restricted signing key (sym NULL, scheme PINNED to
+ *               RSASSA/SHA-256 — a restricted signer must fix its scheme,
+ *               and TPM2_Quote then uses inScheme=NULL to inherit it)
+ */
+export function buildCreatePrimaryRsaCmd(variant: 'sign' | 'decrypt' | 'ak'): Uint8Array {
+  const p: number[] = []
+  putU16(p, TPM_ST_SESSIONS)
+  putU32(p, 0) // size placeholder
+  putU32(p, TPM_CC_CreatePrimary)
+  putU32(p, RH_OWNER)
+  // One empty-password session
+  putU32(p, 9)
+  putU32(p, RS_PW)
+  putU16(p, 0)
+  p.push(0)
+  putU16(p, 0)
+  // inSensitive
+  putU16(p, 4)
+  putU16(p, 0)
+  putU16(p, 0)
+  // inPublic
+  const pubSizeIdx = p.length
+  putU16(p, 0)
+  const pubStart = p.length
+  putU16(p, ALG_RSA)
+  putU16(p, ALG_SHA256)
+  const attrs =
+    variant === 'ak'
+      ? OBJ_FIXED_TPM |
+        OBJ_FIXED_PARENT |
+        OBJ_SENSITIVE_DATA |
+        OBJ_USER_WITH_AUTH |
+        OBJ_RESTRICTED |
+        OBJ_SIGN
+      : variant === 'decrypt'
+        ? OBJ_FIXED_TPM | OBJ_FIXED_PARENT | OBJ_SENSITIVE_DATA | OBJ_USER_WITH_AUTH | OBJ_DECRYPT
+        : OBJ_FIXED_TPM | OBJ_FIXED_PARENT | OBJ_SENSITIVE_DATA | OBJ_USER_WITH_AUTH | OBJ_SIGN
+  putU32(p, attrs)
+  putU16(p, 0) // authPolicy empty
+  // TPMS_RSA_PARMS
+  putU16(p, ALG_NULL) // symmetric = NULL (restricted SIGNING keys also use NULL — AES blocks are for restricted DECRYPT/storage keys)
+  if (variant === 'ak') {
+    putU16(p, ALG_RSASSA) // scheme pinned for restricted signer
+    putU16(p, ALG_SHA256)
+  } else {
+    putU16(p, ALG_NULL) // scheme NULL — chosen per-operation
+  }
+  putU16(p, 2048) // keyBits
+  putU32(p, 0) // exponent = 0 (default 65537)
+  putU16(p, 0) // unique.size = 0
+  const pubSize = p.length - pubStart
+  p[pubSizeIdx] = (pubSize >> 8) & 0xff
+  p[pubSizeIdx + 1] = pubSize & 0xff
+  putU16(p, 0) // outsideInfo
+  putU32(p, 0) // creationPCR
+  const total = p.length
+  p[2] = (total >> 24) & 0xff
+  p[3] = (total >> 16) & 0xff
+  p[4] = (total >> 8) & 0xff
+  p[5] = total & 0xff
+  return new Uint8Array(p)
+}
+
 // ── Demo command serializer (used by CommandBuilder) ─────────────────────────
 
 const MLKEM_PARAM_SETS: Record<string, number> = {
@@ -263,6 +349,13 @@ export interface DemoCommandExtras {
   verifySeqHandle?: number
   /** Real signature from a prior TPM2_SignSequenceComplete, for TPM2_VerifySequenceComplete. */
   seqSignature?: Uint8Array
+  // ── Classical chaining ──
+  /** Real RSA signature from a prior TPM2_Sign, for TPM2_VerifySignature. */
+  rsaSignature?: Uint8Array
+  /** Real OAEP ciphertext from a prior TPM2_RSA_Encrypt, for TPM2_RSA_Decrypt. */
+  rsaCiphertext?: Uint8Array
+  /** Real sequenceHandle from a prior TPM2_HashSequenceStart, for TPM2_SequenceUpdate / TPM2_SequenceComplete. */
+  hashSeqHandle?: number
 }
 
 export function serializeDemoCommand(
@@ -285,6 +378,10 @@ export function serializeDemoCommand(
       return buildGetRandomCmd(32)
 
     case 'TPM2_CreatePrimary': {
+      // Classical RSA variants (Part 3 §24.1 published; see buildCreatePrimaryRsaCmd)
+      if (algorithm === 'RSA-2048') return buildCreatePrimaryRsaCmd('sign')
+      if (algorithm === 'RSA-2048-DEC') return buildCreatePrimaryRsaCmd('decrypt')
+      if (algorithm === 'RSA-2048-AK') return buildCreatePrimaryRsaCmd('ak')
       const isKem = algorithm.startsWith('MLKEM')
       const paramSet = isKem
         ? (MLKEM_PARAM_SETS[algorithm] ?? 0x0002)
@@ -427,14 +524,15 @@ export function serializeDemoCommand(
     }
 
     case 'TPM2_SequenceUpdate': {
-      // Part 3 §17.7 Table 92: {@sequenceHandle, buffer}. Auth Index 1, USER
-      // (session required to authorize the sequence). Real sequenceHandle
-      // from a prior TPM2_VerifySequenceStart if the caller chained it;
-      // otherwise a labeled synthetic placeholder (see DemoCommandExtras).
-      // No `handle`/keyHandle field — SequenceUpdate only ever addresses the
-      // sequence object itself.
+      // Part 3 §17.7 (published): {@sequenceHandle, buffer}. Auth Index 1,
+      // USER (session required to authorize the sequence). Works on ANY open
+      // sequence — a PQC verify sequence (VerifySequenceStart) or a classical
+      // hash sequence (HashSequenceStart); real handle chained from whichever
+      // the caller ran, otherwise a labeled synthetic placeholder (see
+      // DemoCommandExtras). No keyHandle field — SequenceUpdate only ever
+      // addresses the sequence object itself.
       const p: number[] = []
-      putU32(p, extras.verifySeqHandle ?? 0x80ff0000) // @sequenceHandle
+      putU32(p, extras.verifySeqHandle ?? extras.hashSeqHandle ?? 0x80ff0000) // @sequenceHandle
       putU32(p, 9) // authSize
       putU32(p, RS_PW)
       putU16(p, 0)
@@ -444,6 +542,138 @@ export function serializeDemoCommand(
       putU16(p, SEQUENCE_MESSAGE_BYTES.length)
       for (let i = 0; i < SEQUENCE_MESSAGE_BYTES.length; i++) p.push(SEQUENCE_MESSAGE_BYTES[i])
       return buildCommand(TPM_ST_SESSIONS, TPM_CC_SequenceUpdate, new Uint8Array(p))
+    }
+
+    case 'TPM2_Sign': {
+      // Part 3 §20.5 (published): {@keyHandle; digest, inScheme, validation}.
+      // Classical one-shot signing over a caller-supplied digest — the
+      // command ML-DSA's TPM2_SignDigest (§20.7) modernizes. Uses
+      // RSASSA/SHA-256 against an unrestricted RSA key (scheme NULL on the
+      // key, so the caller picks it here) and a NULL hashcheck ticket
+      // (acceptable for unrestricted signing keys). Live-probed (WS0).
+      const p: number[] = []
+      putU32(p, handle) // @keyHandle (Auth Index 1, USER)
+      putU32(p, 9)
+      putU32(p, RS_PW)
+      putU16(p, 0)
+      p.push(0)
+      putU16(p, 0)
+      // P1: digest (TPM2B_DIGEST) — 32 B SHA-256-sized
+      putU16(p, 32)
+      for (let i = 0; i < 32; i++) p.push(0xbb)
+      // P2: inScheme (TPMT_SIG_SCHEME) = RSASSA + hashAlg
+      putU16(p, ALG_RSASSA)
+      putU16(p, ALG_SHA256)
+      // P3: validation (TPMT_TK_HASHCHECK) = NULL ticket
+      putU16(p, TPM_ST_HASHCHECK)
+      putU32(p, TPM_RH_NULL)
+      putU16(p, 0)
+      return buildCommand(TPM_ST_SESSIONS, TPM_CC_Sign, new Uint8Array(p))
+    }
+
+    case 'TPM2_VerifySignature': {
+      // Part 3 §20.2 (published): {keyHandle; digest, signature}. keyHandle
+      // Auth Index: None (public-key op) → NO_SESSIONS. TPMT_SIGNATURE for
+      // RSASSA = sigAlg + TPMS_SIGNATURE_RSA{hashAlg, TPM2B sig} — note the
+      // embedded hashAlg, unlike the ML-DSA layout (sigAlg + TPM2B only);
+      // offsets live-verified from the TPM2_Sign response (WS0). Real
+      // signature chained from a prior TPM2_Sign; otherwise a labeled
+      // synthetic placeholder (see DemoCommandExtras).
+      const p: number[] = []
+      putU32(p, handle) // keyHandle (Auth Index: None)
+      // P1: digest — must match what TPM2_Sign signed
+      putU16(p, 32)
+      for (let i = 0; i < 32; i++) p.push(0xbb)
+      // P2: signature (TPMT_SIGNATURE, RSASSA/SHA-256, 256 B for RSA-2048)
+      putU16(p, ALG_RSASSA)
+      putU16(p, ALG_SHA256)
+      putU16(p, 256)
+      if (extras.rsaSignature && extras.rsaSignature.length === 256) {
+        for (let i = 0; i < 256; i++) p.push(extras.rsaSignature[i])
+      } else {
+        for (let i = 0; i < 256; i++) p.push(0xee)
+      }
+      return buildCommand(TPM_ST_NO_SESSIONS, TPM_CC_VerifySignature, new Uint8Array(p))
+    }
+
+    case 'TPM2_RSA_Encrypt': {
+      // Part 3 §14.2 (published): {keyHandle; message, inScheme, label}.
+      // keyHandle Auth Index: None (public-key op). OAEP/SHA-256 — the
+      // classical key-transport primitive that ML-KEM's TPM2_Encapsulate
+      // (§14.10) replaces (e.g. EK credential activation). Live-probed (WS0).
+      const p: number[] = []
+      putU32(p, handle)
+      // P1: message (TPM2B_PUBLIC_KEY_RSA) — 32 B demo secret
+      putU16(p, 32)
+      for (let i = 0; i < 32; i++) p.push(i)
+      // P2: inScheme (TPMT_RSA_DECRYPT) = OAEP + hashAlg
+      putU16(p, ALG_OAEP)
+      putU16(p, ALG_SHA256)
+      // P3: label (TPM2B_DATA) — empty
+      putU16(p, 0)
+      return buildCommand(TPM_ST_NO_SESSIONS, TPM_CC_RSA_Encrypt, new Uint8Array(p))
+    }
+
+    case 'TPM2_RSA_Decrypt': {
+      // Part 3 §14.3 (published): {@keyHandle; cipherText, inScheme, label}.
+      // Auth Index 1, USER — the private-key half. Real ciphertext chained
+      // from a prior TPM2_RSA_Encrypt; otherwise a labeled synthetic
+      // placeholder that a real TPM will reject (RSA-OAEP has no implicit
+      // rejection — unlike ML-KEM, garbage ciphertext FAILS loudly, itself a
+      // teaching point). Live-probed round trip (WS0).
+      const p: number[] = []
+      putU32(p, handle)
+      putU32(p, 9)
+      putU32(p, RS_PW)
+      putU16(p, 0)
+      p.push(0)
+      putU16(p, 0)
+      // P1: cipherText (TPM2B_PUBLIC_KEY_RSA) — 256 B for RSA-2048
+      putU16(p, 256)
+      if (extras.rsaCiphertext && extras.rsaCiphertext.length === 256) {
+        for (let i = 0; i < 256; i++) p.push(extras.rsaCiphertext[i])
+      } else {
+        for (let i = 0; i < 256; i++) p.push(0xcc)
+      }
+      // P2: inScheme = OAEP + SHA-256 (must match the Encrypt call)
+      putU16(p, ALG_OAEP)
+      putU16(p, ALG_SHA256)
+      // P3: label — empty (must match)
+      putU16(p, 0)
+      return buildCommand(TPM_ST_SESSIONS, TPM_CC_RSA_Decrypt, new Uint8Array(p))
+    }
+
+    case 'TPM2_HashSequenceStart': {
+      // Part 3 §17.4 (published): NO handles; params {auth(TPM2B_AUTH),
+      // hashAlg}. The classical streaming primitive: hash a message in
+      // chunks inside the TPM, then SequenceComplete returns digest +
+      // hashcheck ticket. Pairs against the PQC SignSequenceStart flow
+      // (§17.5) where the SIGNATURE itself streams. Live-probed (WS0) —
+      // note NO auth session (no handles to authorize).
+      const p: number[] = []
+      putU16(p, 0) // auth.size = 0 (empty sequence auth)
+      putU16(p, ALG_SHA256) // hashAlg
+      return buildCommand(TPM_ST_NO_SESSIONS, TPM_CC_HashSequenceStart, new Uint8Array(p))
+    }
+
+    case 'TPM2_SequenceComplete': {
+      // Part 3 §17.8 (published): {@sequenceHandle; buffer, hierarchy}.
+      // Closes a HASH sequence: returns the accumulated digest plus a
+      // TPMT_TK_HASHCHECK ticket. Real handle chained from a prior
+      // TPM2_HashSequenceStart; otherwise a labeled synthetic placeholder
+      // (see DemoCommandExtras). Live-probed (WS0).
+      const p: number[] = []
+      putU32(p, extras.hashSeqHandle ?? 0x80ff0000) // @sequenceHandle
+      putU32(p, 9)
+      putU32(p, RS_PW)
+      putU16(p, 0)
+      p.push(0)
+      putU16(p, 0)
+      // P1: buffer — final chunk (empty; all data via SequenceUpdate)
+      putU16(p, 0)
+      // P2: hierarchy for the hashcheck ticket
+      putU32(p, TPM_RH_NULL)
+      return buildCommand(TPM_ST_SESSIONS, TPM_CC_SequenceComplete, new Uint8Array(p))
     }
 
     case 'TPM2_VerifySequenceComplete': {

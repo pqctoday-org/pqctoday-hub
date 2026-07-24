@@ -26,6 +26,10 @@ export interface TpmCommandDef {
   showAlgorithm: boolean
   requiresKem?: boolean
   requiresDsa?: boolean
+  /** Requires a classical RSA-2048 unrestricted signing key (algorithm 'RSA-2048'). */
+  requiresRsaSign?: boolean
+  /** Requires a classical RSA-2048 unrestricted decrypt key (algorithm 'RSA-2048-DEC'). */
+  requiresRsaDecrypt?: boolean
   params: (algorithm: string) => TpmParamDef[]
   respFields: (algorithm: string) => TpmRespFieldDef[]
 }
@@ -433,6 +437,53 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     why: 'Establishes the root of trust for PQC operations. An ML-KEM-768 primary key forms the Endorsement Key (EK) for key encapsulation. An ML-DSA-65 primary key forms the Attestation Key (AK) for platform identity signing.',
     showAlgorithm: true,
     params: (algorithm: string) => {
+      // Classical RSA variants (published Part 3 §24.1; live-probed WS0 2026-07-23)
+      if (algorithm.startsWith('RSA')) {
+        const variant =
+          algorithm === 'RSA-2048-AK'
+            ? 'restricted signing (AK)'
+            : algorithm === 'RSA-2048-DEC'
+              ? 'unrestricted decrypt'
+              : 'unrestricted signing'
+        return [
+          {
+            name: 'primaryHandle',
+            tpmType: 'TPMI_RH_HIERARCHY',
+            value: '0x40000001 (TPM_RH_OWNER)',
+            description: 'Owner/Storage hierarchy — classical baseline keys for comparison.',
+          },
+          {
+            name: 'inPublic.type',
+            tpmType: 'TPM_ALG_ID',
+            value: '0x0001 (TPM_ALG_RSA) — RSA-2048',
+            description:
+              'RSA: the pre-quantum workhorse. Shor’s algorithm on a CRQC breaks it — this is the key type the PQC options in this dropdown replace.',
+          },
+          {
+            name: 'inPublic.parameters (TPMS_RSA_PARMS)',
+            tpmType: 'TPMS_RSA_PARMS',
+            value:
+              algorithm === 'RSA-2048-AK'
+                ? 'sym=NULL, scheme=RSASSA/SHA-256 (pinned), keyBits=2048, exponent=default'
+                : 'sym=NULL, scheme=NULL (per-operation), keyBits=2048, exponent=default',
+            description:
+              algorithm === 'RSA-2048-AK'
+                ? 'A restricted signing key MUST pin its scheme at creation (and keep symmetric=NULL — AES blocks are for restricted DECRYPT/storage keys). TPM2_Quote then inherits it via inScheme=NULL.'
+                : 'Unrestricted keys leave scheme=NULL so the caller picks it per operation (RSASSA at Sign time, OAEP at RSA_Encrypt/Decrypt time).',
+          },
+          {
+            name: 'inPublic.objectAttributes',
+            tpmType: 'TPMA_OBJECT',
+            value:
+              algorithm === 'RSA-2048-AK'
+                ? 'fixedTPM | fixedParent | sensitiveDataOrigin | userWithAuth | restricted | sign'
+                : algorithm === 'RSA-2048-DEC'
+                  ? 'fixedTPM | fixedParent | sensitiveDataOrigin | userWithAuth | decrypt'
+                  : 'fixedTPM | fixedParent | sensitiveDataOrigin | userWithAuth | sign',
+            description: `Template for a classical ${variant} key.`,
+          },
+        ]
+      }
       const { algId, isKem } = getAlgParams(algorithm)
       const pkSize = getPkSize(algorithm)
       const isHashMldsa = algId === 0x00a2
@@ -482,13 +533,16 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
       ]
     },
     respFields: (algorithm: string) => {
-      const { isKem } = getAlgParams(algorithm)
-      const pkSize = getPkSize(algorithm)
+      const isRsa = algorithm.startsWith('RSA')
+      const { isKem } = isRsa ? { isKem: false } : getAlgParams(algorithm)
+      const pkSize = isRsa ? 256 : getPkSize(algorithm)
       // TPMT_PUBLIC starts at byte 20 (after: header[10] + handle[4] + paramSize[4] + TPM2B_PUBLIC.size[2])
       // ML-KEM restricted: type[2]+nameAlg[2]+attrs[4]+policy.size[2]+sym.alg[2]+sym.bits[2]+sym.mode[2]+paramSet[2] = 18 bytes of fields before unique
       // ML-DSA: type[2]+nameAlg[2]+attrs[4]+policy.size[2]+paramSet[2]+allowExternalMu[1] = 13 bytes before unique
-      const uniqSizeOffset = isKem ? 38 : 33
-      const uniqBufOffset = isKem ? 40 : 35
+      // RSA unrestricted: type[2]+nameAlg[2]+attrs[4]+policy.size[2]+sym[2]+scheme[2]+keyBits[2]+exponent[4] = 20 before unique
+      //   (RSA-2048-AK adds scheme hashAlg[2] → 22)
+      const uniqSizeOffset = isRsa ? (algorithm === 'RSA-2048-AK' ? 42 : 40) : isKem ? 38 : 33
+      const uniqBufOffset = uniqSizeOffset + 2
       return [
         {
           name: 'tag',
@@ -539,7 +593,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
           tpmType: 'TPM_ALG_ID',
           byteOffset: 20,
           byteSize: 2,
-          description: isKem ? '0x00A0 = ML-KEM' : '0x00A1 = ML-DSA',
+          description: isRsa ? '0x0001 = RSA' : isKem ? '0x00A0 = ML-KEM' : '0x00A1 = ML-DSA',
         },
         {
           name: 'outPublic.nameAlg',
@@ -1382,12 +1436,16 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     key: 'TPM2_SequenceUpdate',
     cc: 0x0000015c,
     name: 'TPM2_SequenceUpdate',
-    section: 'TCG Part 3 §17.7 Table 92 (V1.85 RC4)',
+    section: 'TCG Part 3 §17.7 (v1.85 published 2026-03-12)',
     phase: 'use',
-    requiresDsa: true,
+    // Deliberately NOT gated on any key: SequenceUpdate only addresses the
+    // sequence object itself, so it serves BOTH the PQC verify-sequence flow
+    // (after TPM2_VerifySequenceStart) and the classical hash-sequence flow
+    // (after TPM2_HashSequenceStart). The chain-prerequisite notice gates
+    // sending until one of those has produced a real handle.
     showAlgorithm: false,
     description:
-      'Feeds a chunk of message bytes into an open sequence object. Used on the verify side of the streaming flow: after TPM2_VerifySequenceStart returns a sequenceHandle, one or more SequenceUpdate calls accumulate the message before TPM2_VerifySequenceComplete tests the signature against it. The sequence handle is consumed by the auth session, not by a separate keyHandle — SequenceUpdate never references the signing/verification key itself.',
+      'Feeds a chunk of message bytes into an open sequence object — a PQC verify sequence (from TPM2_VerifySequenceStart) or a classical hash sequence (from TPM2_HashSequenceStart). One or more SequenceUpdate calls accumulate the message before the matching Complete command closes the flow. The sequence handle is consumed by the auth session, not by a separate keyHandle — SequenceUpdate never references the signing/verification key itself.',
     why: 'Closes the gap between VerifySequenceStart and VerifySequenceComplete for messages too large for a single TPM2B_MAX_BUFFER chunk — the reason the streaming API exists instead of always using SignDigest/VerifyDigestSignature.',
     params: () => [
       {
@@ -1835,6 +1893,347 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
         byteOffset: 14,
         byteSize: 0,
         description: '{size(2), buffer[size]} — the requested bytes.',
+      },
+    ],
+  },
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // Classical baseline commands — the pre-quantum operations the V1.85 PQC
+  // commands modernize. Section refs are the PUBLISHED v1.85 Part 3
+  // (2026-03-12); wire layouts live-probed against the shipped wasm (WS0
+  // spike 2026-07-23); constants verified against pqctoday-tpm TpmTypes.h.
+  // ──────────────────────────────────────────────────────────────────────────
+
+  {
+    key: 'TPM2_Sign',
+    cc: 0x0000015d,
+    name: 'TPM2_Sign',
+    section: 'TCG Part 3 §20.5 (v1.85 published 2026-03-12)',
+    phase: 'use',
+    requiresRsaSign: true,
+    showAlgorithm: false,
+    description:
+      'Classical one-shot signing over a caller-supplied digest. The key here is unrestricted with scheme=NULL, so the caller picks RSASSA/SHA-256 in inScheme. This is the command TPM2_SignDigest (§20.7) modernizes for ML-DSA — note V1.85 gave PQC signing a NEW command rather than extending this one.',
+    why: 'The classical half of the sign/verify comparison: RSA-2048 signatures are 256 B; ML-DSA-65 signatures are 3309 B. Same trust model, ~13× the bytes.',
+    params: () => [
+      {
+        name: '@keyHandle',
+        tpmType: 'TPMI_DH_OBJECT',
+        value: 'RSA-2048 signing handle (see TPM State)',
+        description: 'Auth Index 1, USER — requires an authorization session.',
+      },
+      {
+        name: 'digest',
+        tpmType: 'TPM2B_DIGEST',
+        value: '32 B (SHA-256-sized demo digest)',
+        description: 'The digest to sign. Must be the size of the scheme hash — 32 B for SHA-256.',
+      },
+      {
+        name: 'inScheme',
+        tpmType: 'TPMT_SIG_SCHEME',
+        value: '0x0014 (TPM_ALG_RSASSA) + 0x000B (SHA-256)',
+        description:
+          'Signing scheme. Allowed because the key was created with scheme=NULL; a restricted key would require TPM_ALG_NULL here to inherit its pinned scheme.',
+      },
+      {
+        name: 'validation',
+        tpmType: 'TPMT_TK_HASHCHECK',
+        value: 'NULL ticket (TPM_ST_HASHCHECK + TPM_RH_NULL)',
+        description:
+          'Proof the digest was not produced from restricted TPM data. A NULL ticket is acceptable for unrestricted signing keys.',
+      },
+    ],
+    respFields: () => [
+      {
+        name: 'responseCode',
+        tpmType: 'TPM_RC',
+        byteOffset: 6,
+        byteSize: 4,
+        description: '0x00000000 = signature produced.',
+      },
+      {
+        name: 'signature.sigAlg',
+        tpmType: 'TPM_ALG_ID',
+        byteOffset: 14,
+        byteSize: 2,
+        description: '0x0014 = TPM_ALG_RSASSA.',
+      },
+      {
+        name: 'signature.signature.hash',
+        tpmType: 'TPM_ALG_ID',
+        byteOffset: 16,
+        byteSize: 2,
+        description:
+          '0x000B = SHA-256. Note: TPMS_SIGNATURE_RSA embeds the hash algorithm — the ML-DSA signature layout does NOT (its union case is just a TPM2B).',
+      },
+      {
+        name: 'signature.signature.sig',
+        tpmType: 'TPM2B_PUBLIC_KEY_RSA',
+        byteOffset: 18,
+        byteSize: 0,
+        description: '{size(2)=256, bytes} — the RSA-2048 signature (256 B vs ML-DSA-65’s 3309 B).',
+      },
+    ],
+  },
+
+  {
+    key: 'TPM2_VerifySignature',
+    cc: 0x00000177,
+    name: 'TPM2_VerifySignature',
+    section: 'TCG Part 3 §20.2 (v1.85 published 2026-03-12)',
+    phase: 'use',
+    requiresRsaSign: true,
+    showAlgorithm: false,
+    description:
+      'Classical signature verification — public-key only, no authorization. On success returns a TPMT_TK_VERIFIED ticket with tag TPM_ST_VERIFIED (0x8022). Compare the PQC verifies: TPM2_VerifyDigestSignature returns TPM_ST_DIGEST_VERIFIED (0x8027), TPM2_VerifySequenceComplete returns TPM_ST_MESSAGE_VERIFIED (0x8026) — V1.85 added distinguishable ticket types for the new verification modes.',
+    why: 'Closes the classical sign→verify round trip against the real signature captured from TPM2_Sign.',
+    params: () => [
+      {
+        name: 'keyHandle',
+        tpmType: 'TPMI_DH_OBJECT',
+        value: 'Same RSA-2048 key used in TPM2_Sign',
+        description: 'Auth Index: None — verification uses the public key only.',
+      },
+      {
+        name: 'digest',
+        tpmType: 'TPM2B_DIGEST',
+        value: '32 B (must match what TPM2_Sign signed)',
+        description: 'The digest the signature is tested against.',
+      },
+      {
+        name: 'signature',
+        tpmType: 'TPMT_SIGNATURE',
+        value: 'RSASSA/SHA-256, 256 B (chained from TPM2_Sign)',
+        description:
+          'The signature to verify. This playground chains the REAL signature from your prior TPM2_Sign run.',
+      },
+    ],
+    respFields: () => [
+      {
+        name: 'responseCode',
+        tpmType: 'TPM_RC',
+        byteOffset: 6,
+        byteSize: 4,
+        description: '0x00000000 = valid; TPM_RC_SIGNATURE on a bad signature.',
+      },
+      {
+        name: 'validation.tag',
+        tpmType: 'TPM_ST',
+        byteOffset: 10,
+        byteSize: 2,
+        description: '0x8022 = TPM_ST_VERIFIED (the classical verified-ticket tag).',
+      },
+      {
+        name: 'validation.hierarchy',
+        tpmType: 'TPMI_RH_HIERARCHY',
+        byteOffset: 12,
+        byteSize: 4,
+        description: 'Hierarchy of the verifying key.',
+      },
+    ],
+  },
+
+  {
+    key: 'TPM2_RSA_Encrypt',
+    cc: 0x00000174,
+    name: 'TPM2_RSA_Encrypt',
+    section: 'TCG Part 3 §14.2 (v1.85 published 2026-03-12)',
+    phase: 'use',
+    requiresRsaDecrypt: true,
+    showAlgorithm: false,
+    description:
+      'Classical key transport: OAEP-encrypt a small secret to an RSA public key. This is the primitive TPM2_Encapsulate (§14.10) replaces — e.g. classical EK credential activation wraps a secret with RSA-OAEP where the PQC flow encapsulates with ML-KEM. Public-key op, no authorization.',
+    why: 'The classical half of the key-establishment comparison. Note the shape difference: here the CALLER chooses the secret and encrypts it; ML-KEM Encapsulate GENERATES the shared secret inside the operation — a KEM is not drop-in RSA.',
+    params: () => [
+      {
+        name: 'keyHandle',
+        tpmType: 'TPMI_DH_OBJECT',
+        value: 'RSA-2048 decrypt handle (see TPM State)',
+        description: 'Auth Index: None — encryption uses the public key only.',
+      },
+      {
+        name: 'message',
+        tpmType: 'TPM2B_PUBLIC_KEY_RSA',
+        value: '32 B demo secret',
+        description:
+          'The plaintext secret to wrap. Must fit the OAEP payload limit for the key size.',
+      },
+      {
+        name: 'inScheme',
+        tpmType: 'TPMT_RSA_DECRYPT',
+        value: '0x0017 (TPM_ALG_OAEP) + 0x000B (SHA-256)',
+        description: 'Padding scheme. OAEP is the modern choice; raw RSAES-PKCS1v1.5 is legacy.',
+      },
+      {
+        name: 'label',
+        tpmType: 'TPM2B_DATA',
+        value: '(empty)',
+        description: 'Optional OAEP label — must match on decrypt.',
+      },
+    ],
+    respFields: () => [
+      {
+        name: 'responseCode',
+        tpmType: 'TPM_RC',
+        byteOffset: 6,
+        byteSize: 4,
+        description: '0x00000000 = encrypted.',
+      },
+      {
+        name: 'outData',
+        tpmType: 'TPM2B_PUBLIC_KEY_RSA',
+        byteOffset: 10,
+        byteSize: 0,
+        description: '{size(2)=256, bytes} — the OAEP ciphertext (256 B for RSA-2048).',
+      },
+    ],
+  },
+
+  {
+    key: 'TPM2_RSA_Decrypt',
+    cc: 0x00000159,
+    name: 'TPM2_RSA_Decrypt',
+    section: 'TCG Part 3 §14.3 (v1.85 published 2026-03-12)',
+    phase: 'use',
+    requiresRsaDecrypt: true,
+    showAlgorithm: false,
+    description:
+      'Classical private-key decryption of an OAEP ciphertext — requires authorization (the private half). This playground chains the REAL ciphertext from your prior TPM2_RSA_Encrypt. Note: unlike ML-KEM Decapsulate (which implicitly rejects bad ciphertext by returning a random-looking secret with rc=SUCCESS), a corrupted OAEP ciphertext FAILS LOUDLY here — a genuine behavioral difference between the two eras.',
+    why: 'Completes the classical key-transport round trip; the decrypted bytes must equal the 32 B secret TPM2_RSA_Encrypt wrapped.',
+    params: () => [
+      {
+        name: '@keyHandle',
+        tpmType: 'TPMI_DH_OBJECT',
+        value: 'Same RSA-2048 decrypt key used in RSA_Encrypt',
+        description: 'Auth Index 1, USER — the private-key operation needs authorization.',
+      },
+      {
+        name: 'cipherText',
+        tpmType: 'TPM2B_PUBLIC_KEY_RSA',
+        value: '256 B (chained from TPM2_RSA_Encrypt)',
+        description: 'The OAEP ciphertext to unwrap.',
+      },
+      {
+        name: 'inScheme',
+        tpmType: 'TPMT_RSA_DECRYPT',
+        value: '0x0017 (TPM_ALG_OAEP) + 0x000B (SHA-256)',
+        description: 'Must match the scheme used at encrypt time.',
+      },
+      {
+        name: 'label',
+        tpmType: 'TPM2B_DATA',
+        value: '(empty — must match)',
+        description: 'OAEP label from encrypt time.',
+      },
+    ],
+    respFields: () => [
+      {
+        name: 'responseCode',
+        tpmType: 'TPM_RC',
+        byteOffset: 6,
+        byteSize: 4,
+        description:
+          '0x00000000 = decrypted. A corrupted ciphertext fails here — no implicit rejection in OAEP.',
+      },
+      {
+        name: 'message',
+        tpmType: 'TPM2B_PUBLIC_KEY_RSA',
+        byteOffset: 14,
+        byteSize: 0,
+        description:
+          '{size(2)=32, bytes} — the recovered secret (compare with what you encrypted).',
+      },
+    ],
+  },
+
+  {
+    key: 'TPM2_HashSequenceStart',
+    cc: 0x00000186,
+    name: 'TPM2_HashSequenceStart',
+    section: 'TCG Part 3 §17.4 (v1.85 published 2026-03-12)',
+    phase: 'use',
+    showAlgorithm: false,
+    description:
+      'Starts a classical HASH sequence: the TPM accumulates message chunks (via TPM2_SequenceUpdate) and SequenceComplete returns the digest plus a hashcheck ticket. Compare the PQC streaming flow: SignSequenceStart (§17.5) streams the message into the SIGNING operation itself, because ML-DSA cannot sign a pre-hashed digest the way RSA can (pure ML-DSA signs the message; hashing first changes the security claim).',
+    why: 'The classical half of the streaming comparison — and the reason V1.85 needed new sequence commands at all: classical TPMs hash-then-sign; pure ML-DSA must see the message.',
+    params: () => [
+      {
+        name: 'auth',
+        tpmType: 'TPM2B_AUTH',
+        value: '(empty)',
+        description:
+          'Authorization value for the new sequence object. NOTE: this command has NO handles — sending a password session with it is refused (the WS0 probe hit exactly that).',
+      },
+      {
+        name: 'hashAlg',
+        tpmType: 'TPMI_ALG_HASH',
+        value: '0x000B (SHA-256)',
+        description: 'The hash the sequence accumulates.',
+      },
+    ],
+    respFields: () => [
+      {
+        name: 'responseCode',
+        tpmType: 'TPM_RC',
+        byteOffset: 6,
+        byteSize: 4,
+        description: '0x00000000 = sequence started.',
+      },
+      {
+        name: 'sequenceHandle',
+        tpmType: 'TPMI_DH_OBJECT',
+        byteOffset: 10,
+        byteSize: 4,
+        description:
+          'Handle for the sequence — feed it to TPM2_SequenceUpdate, then TPM2_SequenceComplete.',
+      },
+    ],
+  },
+
+  {
+    key: 'TPM2_SequenceComplete',
+    cc: 0x0000013e,
+    name: 'TPM2_SequenceComplete',
+    section: 'TCG Part 3 §17.8 (v1.85 published 2026-03-12)',
+    phase: 'use',
+    showAlgorithm: false,
+    description:
+      'Closes a classical hash sequence: appends an optional final chunk, returns the accumulated digest and a TPMT_TK_HASHCHECK ticket proving the TPM computed it. That ticket is what a follow-up TPM2_Sign presents as validation. The sequence handle is released.',
+    why: 'Completes the classical streaming flow: HashSequenceStart → SequenceUpdate → here. The digest+ticket output is the input contract for classical signing of large messages.',
+    params: () => [
+      {
+        name: '@sequenceHandle',
+        tpmType: 'TPMI_DH_OBJECT',
+        value: 'sequenceHandle from TPM2_HashSequenceStart (chained)',
+        description: 'Auth Index 1, USER — authorized with the (empty) auth set at Start.',
+      },
+      {
+        name: 'buffer',
+        tpmType: 'TPM2B_MAX_BUFFER',
+        value: '(empty — all data was fed via SequenceUpdate)',
+        description: 'Optional final chunk.',
+      },
+      {
+        name: 'hierarchy',
+        tpmType: 'TPMI_RH_HIERARCHY',
+        value: '0x40000007 (TPM_RH_NULL)',
+        description: 'Hierarchy for the hashcheck ticket.',
+      },
+    ],
+    respFields: () => [
+      {
+        name: 'responseCode',
+        tpmType: 'TPM_RC',
+        byteOffset: 6,
+        byteSize: 4,
+        description: '0x00000000 = digest produced.',
+      },
+      {
+        name: 'result',
+        tpmType: 'TPM2B_DIGEST',
+        byteOffset: 14,
+        byteSize: 0,
+        description: '{size(2)=32, bytes} — the SHA-256 of everything fed into the sequence.',
       },
     ],
   },
