@@ -29,6 +29,15 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.25.0] - 2026-07-24
+
+An OpenSSL Studio release: a new guided Learn tab and a live Algorithm Explorer, both running the real openssl.wasm engine bundled with the site (not simulated output).
+
+### Added
+
+- **New 11-lesson Learn tab for OpenSSL Studio** [view:/playground/openssl] [persona:developer] [persona:architect] [persona:researcher]: pairs each classical operation with its post-quantum replacement — key generation, certificate requests, signing and verification, ML-KEM key exchange, an honesty check on LMS/HSS keygen, an encryption/hashing myths lesson, key derivation, PKCS#12 bundling, random generation, and configuration — plus a TLS Simulator capstone. Every command runs for real against the site's OpenSSL engine, with a glossary rail and a short quiz after each lesson.
+- **New "Explore" tab shows every algorithm this exact OpenSSL build actually supports** [view:/playground/openssl] [persona:developer] [persona:researcher]: a searchable, filterable list grouped by algorithm family, built from live queries against the real engine rather than static documentation. Every non-default provider is functionally tested (not just checked for a self-reported "active" flag) before its algorithms are shown as usable — this caught the bundled `pkcs11` provider correctly listing ML-KEM, ML-DSA, and 3 hybrid composite signatures but not yet actually functional in this environment, and the Explorer reports it as such instead of overclaiming.
+
 ## [4.24.2] - 2026-07-24
 
 A maintenance-pipeline accuracy pass: several standards, catalog, timeline, glossary, and leaders-profile corrections found and verified during a full end-to-end review of the data maintenance process.
