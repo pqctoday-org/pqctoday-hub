@@ -8,10 +8,18 @@ type Translator = (args: string) => string
 const byFn: Record<string, Translator> = {
   C_Initialize: () => 'initialize PKCS#11 library',
   C_Finalize: () => 'shut down PKCS#11 library',
+  C_GetSlotList: () => 'list available token slots',
+  C_InitToken: () => 'initialize a fresh token on this slot',
+  C_InitPIN: () => 'set the user PIN',
   C_OpenSession: () => 'open a session with the token',
   C_CloseSession: () => 'close the session',
   C_Login: () => 'authenticate to the token',
   C_Logout: () => 'log out of the token',
+  C_GetTokenInfo: () => 'read token capabilities and status',
+  C_GetSessionInfo: () => 'read this session’s state',
+  C_GetSessionValidationFlags: () => 'check the session’s FIPS/validation status',
+  C_GetMechanismList: () => 'list mechanisms this token supports',
+  C_GetMechanismInfo: () => 'read details for one mechanism',
 
   C_GenerateKeyPair: (args) => {
     if (/ML[-_]KEM/i.test(args)) return 'generate ML-KEM keypair (PQC)'
@@ -105,6 +113,7 @@ const byFn: Record<string, Translator> = {
   },
   C_VerifyMessage: () => 'verify the message signature',
   C_WrapKeyAuthenticated: () => 'wrap a key with authenticated encryption (AES-GCM)',
+  C_UnwrapKeyAuthenticated: () => 'unwrap a key with authenticated encryption (AES-GCM)',
 
   C_FindObjectsInit: () => 'start an object search',
   C_FindObjects: () => 'list matching objects',

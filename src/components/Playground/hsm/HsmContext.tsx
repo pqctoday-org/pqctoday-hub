@@ -129,8 +129,18 @@ export interface HsmContextValue {
 
   // ── PKCS#11 call log ─────────────────────────────────────────────────────
   hsmLog: Pkcs11LogEntry[]
+  /**
+   * Always-current mirror of `hsmLog` — read this instead of `hsmLog` when
+   * you need a synchronous snapshot inside one tick (e.g. "how many log
+   * entries existed right before this step started"). A plain state read
+   * would be stale until the next render, exactly the closure-over-stale-
+   * state bug class this file's `hsmKeysRef` was already introduced to avoid.
+   */
+  hsmLogRef: React.MutableRefObject<Pkcs11LogEntry[]>
   addHsmLog: (e: Pkcs11LogEntry) => void
   clearHsmLog: () => void
+  /** Inject a visual step-separator entry into the log (isStepHeader: true). Call BEFORE the step's ops. */
+  addHsmStepLog: (label: string) => void
 
   // ── Auto-init (deep-link / programmatic) ─────────────────────────────────
   /**
@@ -166,6 +176,7 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [tokenCreated, setTokenCreated] = useState(false)
   const [hsmKeys, setHsmKeys] = useState<HsmKey[]>([])
   const [hsmLog, setHsmLog] = useState<Pkcs11LogEntry[]>([])
+  const hsmLogRef = useRef<Pkcs11LogEntry[]>([])
   // Mirrors `hsmKeys`, updated synchronously (unlike the batched state
   // setter) so callers that add several keys in a tight loop within one
   // tick — e.g. the Learn tab's per-step object discovery — can check
@@ -203,15 +214,36 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   )
 
   const addHsmLog = useCallback((e: Pkcs11LogEntry) => {
-    setHsmLog((prev) => {
-      const next = [e, ...prev]
-      return next.length > 500 ? next.slice(0, 500) : next
-    })
+    const next = [e, ...hsmLogRef.current]
+    // 1000, not 500: a full run through both Learn-tab tracks in one
+    // sitting (17 lessons) plus workbench-tab use in the same session
+    // can approach the old cap, silently dropping early lessons' rows.
+    const capped = next.length > 1000 ? next.slice(0, 1000) : next
+    hsmLogRef.current = capped
+    setHsmLog(capped)
   }, [])
 
   const clearHsmLog = useCallback(() => {
+    hsmLogRef.current = []
     setHsmLog([])
   }, [])
+
+  const addHsmStepLog = useCallback(
+    (label: string) => {
+      addHsmLog({
+        id: Math.random(),
+        timestamp: new Date().toLocaleTimeString('en-US', { hour12: false }),
+        fn: label,
+        args: '',
+        rvHex: '',
+        rvName: '',
+        ms: 0,
+        ok: true,
+        isStepHeader: true,
+      })
+    },
+    [addHsmLog]
+  )
 
   const autoInit = useCallback(
     async (engine?: EngineMode): Promise<boolean> => {
@@ -300,8 +332,10 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       latestKey,
       keysForFamily,
       hsmLog,
+      hsmLogRef,
       addHsmLog,
       clearHsmLog,
+      addHsmStepLog,
       autoInit,
     }),
     [
@@ -318,6 +352,7 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       hsmLog,
       addHsmLog,
       clearHsmLog,
+      addHsmStepLog,
       autoInit,
     ]
   )

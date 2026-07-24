@@ -109,6 +109,11 @@ const CKA_TABLE: Record<number, ConstEntry> = {
     name: 'CKA_HSS_KEYS_REMAINING',
     description: 'Signatures remaining on stateful key',
   },
+  0x00000601: { name: 'CKA_PROFILE_ID', description: 'Conformance profile identifier (v3.2 §3)' },
+  0x40000600: {
+    name: 'CKA_ALLOWED_MECHANISMS',
+    description: 'Pins a key to a fixed set of mechanisms (v3.2 §4.8 Table 13)',
+  },
 }
 
 // CKM_ mechanism types
@@ -311,6 +316,7 @@ const CKO_TABLE: Record<number, ConstEntry> = {
   0x02: { name: 'CKO_PUBLIC_KEY', description: 'Public key — encapsulate / verify operations' },
   0x03: { name: 'CKO_PRIVATE_KEY', description: 'Private key — decapsulate / sign operations' },
   0x04: { name: 'CKO_SECRET_KEY', description: 'Symmetric / shared-secret key' },
+  0x09: { name: 'CKO_PROFILE', description: 'Conformance profile the token claims (v3.2 §3)' },
 }
 
 // CKK_ key types
@@ -1354,6 +1360,41 @@ const decodeLogout = (_M: SoftHSMModule, args: number[]): Pkcs11LogInspect => ({
   spec: 'PKCS#11 v3.2 §5.10 (C_Logout)',
 })
 
+/** C_GetSessionValidationFlags(hSession, flagsType, pulFlags) — §5.6.9 (v3.2) */
+const decodeGetSessionValidationFlags = (
+  M: SoftHSMModule,
+  args: number[],
+  rv: number
+): Pkcs11LogInspect => {
+  const flagsType = args[1] ?? 0
+  const pulFlags = args[2] ?? 0
+  const flags = rv === 0 ? safeRead32(M, pulFlags) : null
+  return {
+    inputs: [
+      {
+        label: 'Parameters',
+        primitives: [
+          {
+            name: 'flagsType',
+            value: flagsType === 1 ? 'CKS_LAST_VALIDATION_OK (1)' : String(flagsType),
+          },
+        ],
+      },
+    ],
+    outputs:
+      flags !== null
+        ? [
+            {
+              name: '*pulFlags',
+              value: `0x${flags.toString(16)}`,
+              note: 'Bitmask of validation flags (this build performs no FIPS/validation-authority checks, so this is always empty)',
+            },
+          ]
+        : undefined,
+    spec: 'PKCS#11 v3.2 §5.6.9 (C_GetSessionValidationFlags)',
+  }
+}
+
 /** C_MessageVerifyFinal(hSession) — §5.21 */
 const decodeVerifyFinal = (_M: SoftHSMModule, args: number[]): Pkcs11LogInspect => ({
   inputs: [
@@ -2171,6 +2212,8 @@ export const buildInspect = (
         return decodeInitToken(M, args)
       case 'C_InitPIN':
         return decodeInitPIN(M, args)
+      case 'C_GetSessionValidationFlags':
+        return decodeGetSessionValidationFlags(M, args, rv)
       // Key generation
       case 'C_GenerateKeyPair':
         return decodeGenerateKeyPair(M, args, rv)

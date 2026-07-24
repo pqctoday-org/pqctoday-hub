@@ -539,6 +539,8 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
           const d = results[1]?.detail ?? ''
           const ivHex = (d.match(/iv=([0-9a-f]+)/) ?? [])[1]
           const wrappedHex = (d.match(/wrappedHex=([0-9a-f]+)/) ?? [])[1]
+          if (!ivHex || !wrappedHex)
+            throw new Error('No wrapped blob captured from the previous step.')
           const iv = new Uint8Array(ivHex.match(/.{2}/g)!.map((b) => parseInt(b, 16)))
           const wrapped = new Uint8Array(wrappedHex.match(/.{2}/g)!.map((b) => parseInt(b, 16)))
           wrapped[0] ^= 0xff
@@ -774,7 +776,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
         },
       },
       {
-        op: 'C_GetAttributeValue (destroyed handle)',
+        op: 'C_Sign (destroyed key handle)',
         label: 'Confirm the legacy key is really gone, not just unused',
         expect: 'refusal',
         run: (hsm, results) => {

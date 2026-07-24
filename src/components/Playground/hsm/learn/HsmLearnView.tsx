@@ -23,6 +23,7 @@ import { GlossaryProvider } from '@/components/Playground/learnkit/GlossaryProvi
 import { GlossaryRail } from '@/components/Playground/learnkit/GlossaryRail'
 import { QuizCard } from '@/components/Playground/learnkit/QuizCard'
 import { useHsmContext } from '../HsmContext'
+import { classifyStepOutcome } from './lessonRunner'
 import { FOUNDATIONS_LESSONS, type Pkcs11LessonStep, type Pkcs11StepResult } from './pkcs11Lessons'
 import { V32_LESSONS } from './pkcs11LessonsV32'
 import { QUIZZES } from './pkcs11Quiz'
@@ -70,6 +71,7 @@ function StepRow({
               variant="ghost"
               onClick={onRun}
               disabled={disabled}
+              title={disabled ? 'Run the previous step first' : undefined}
               className="h-7 gap-1 px-2 text-[11px]"
             >
               <PlayCircle size={13} /> Run
@@ -139,6 +141,8 @@ function LessonRunner({
 
   const runStep = async (i: number) => {
     setStepStates((prev) => prev.map((s, j) => (j === i ? { status: 'running' } : s)))
+    const logCountBefore = hsm.hsmLogRef.current.length
+    hsm.addHsmStepLog(`${navPrefix}${lesson.n} · step ${i + 1}: ${lesson.steps[i].op}`)
     try {
       const result = await lesson.steps[i].run(hsm, resultsRef.current)
       resultsRef.current = resultsRef.current.map((r, j) => (j === i ? result : r))
@@ -155,16 +159,21 @@ function LessonRunner({
       }
     } catch (e) {
       const message = e instanceof Error ? e.message : String(e)
-      const expectedRefusal = lesson.steps[i].expect === 'refusal'
+      // hsmLogRef, not hsmLog: a plain state read here would be stale until
+      // the next render (the closure-over-stale-state bug this file was
+      // already fixed for once — see resultsRef above).
+      const newEntries = hsm.hsmLogRef.current.slice(
+        0,
+        hsm.hsmLogRef.current.length - logCountBefore
+      )
+      const outcome = classifyStepOutcome(lesson.steps[i].expect, newEntries)
       logEvent(
         'Playground',
         `${analyticsCategory} Step`,
-        `${lesson.id}:${lesson.steps[i].op}:${expectedRefusal ? 'refused-ok' : 'failed'}`
+        `${lesson.id}:${lesson.steps[i].op}:${outcome}`
       )
       setStepStates((prev) =>
-        prev.map((s, j) =>
-          j === i ? { status: expectedRefusal ? 'refused-ok' : 'failed', detail: message } : s
-        )
+        prev.map((s, j) => (j === i ? { status: outcome, detail: message } : s))
       )
     }
   }
@@ -234,23 +243,27 @@ function LessonRunner({
           </Button>
         </div>
         <ol className="space-y-2">
-          {lesson.steps.map((step, i) => (
-            <StepRow
-              key={i}
-              step={step}
-              index={i}
-              state={stepStates[i]}
-              onRun={() => runStep(i)}
-              disabled={stepStates[i].status === 'running'}
-            />
-          ))}
+          {lesson.steps.map((step, i) => {
+            const prev = i > 0 ? stepStates[i - 1].status : null
+            const prevDone = prev === null || prev === 'ok' || prev === 'refused-ok'
+            return (
+              <StepRow
+                key={i}
+                step={step}
+                index={i}
+                state={stepStates[i]}
+                onRun={() => runStep(i)}
+                disabled={stepStates[i].status === 'running' || !prevDone}
+              />
+            )
+          })}
         </ol>
 
         {/* Same call log + key registry every workbench tab surfaces — lets a
             lesson's C_* calls and the key objects they create be inspected
             here instead of switching to the Logs/Keys tabs mid-lesson. */}
         <div className="space-y-3">
-          <MiniPkcsLog />
+          <MiniPkcsLog showBeginnerMode lessonMode />
           <HsmKeyTable />
         </div>
 
