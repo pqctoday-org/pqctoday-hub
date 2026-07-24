@@ -31,6 +31,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { GlossaryProvider } from '../Playground/learnkit/GlossaryProvider'
 import { OPENSSL_GLOSSARY_DATA } from './learn/opensslGlossary'
 import { OpenSslLearnView } from './learn/OpenSslLearnView'
+import { AlgorithmExplorerPanel } from './learn/AlgorithmExplorerPanel'
 
 import { useOpenSSLStore } from './store'
 import { useOpenSSL } from './hooks/useOpenSSL'
@@ -101,7 +102,7 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
   const [showTerminal, setShowTerminal] = useState(true)
   const [workbenchCollapsed, setWorkbenchCollapsed] = useState(false)
   const [historyCollapsed, setHistoryCollapsed] = useState(true)
-  const [studioTab, setStudioTab] = useState<'learn' | 'workbench'>('learn')
+  const [studioTab, setStudioTab] = useState<'learn' | 'explore' | 'workbench'>('learn')
   const [category, setCategory] = useState<OpenSSLCategory>(() =>
     embedded ? 'genpkey' : resolveCmd(searchParams.get('cmd'))
   )
@@ -225,9 +226,13 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
           </div>
         )}
 
-        <Tabs value={studioTab} onValueChange={(v) => setStudioTab(v as 'learn' | 'workbench')}>
+        <Tabs
+          value={studioTab}
+          onValueChange={(v) => setStudioTab(v as 'learn' | 'explore' | 'workbench')}
+        >
           <TabsList className="mb-4">
             <TabsTrigger value="learn">Learn</TabsTrigger>
+            <TabsTrigger value="explore">Explore</TabsTrigger>
             <TabsTrigger value="workbench">Workbench</TabsTrigger>
           </TabsList>
 
@@ -237,6 +242,10 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
               runCommand={runCommand}
               onTryInWorkbench={handleCategoryChange}
             />
+          </TabsContent>
+
+          <TabsContent value="explore">
+            <AlgorithmExplorerPanel isReady={isReady} runCommand={runCommand} />
           </TabsContent>
 
           <TabsContent value="workbench">

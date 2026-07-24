@@ -84,6 +84,56 @@ const COMMAND_ENTRIES: Record<string, TagGlossaryEntry> = {
   HSS: {
     def: "RFC 8554 — Hierarchical Signature System, LMS's multi-tree extension. Same OpenSSL 3.6 verify-only scope as LMS.",
   },
+  // ── Classical algorithm names surfaced by the Algorithm Explorer's live
+  // `openssl list` query (Phase 3) — Term-wrapped on each result row. ──────
+  RSA: {
+    def: 'Rivest-Shamir-Adleman — security rests on integer factorization being hard, which is exactly what Shor\'s algorithm breaks on a quantum computer (see the "Shor\'s algorithm" term).',
+  },
+  EC: {
+    def: "Elliptic Curve — the OpenSSL algorithm family name for elliptic-curve keys (paired with a named curve like P-256/P-384 via -pkeyopt ec_paramgen_curve). Security rests on the elliptic-curve discrete log problem, also broken by Shor's algorithm.",
+  },
+  X25519: {
+    def: 'RFC 7748 — a specific Curve25519-based key-exchange algorithm. Appears alone in genpkey (a classical KEX key) and combined with ML-KEM in the hybrid group X25519MLKEM768.',
+  },
+  X448: {
+    def: 'RFC 7748 — a specific Curve448-based key-exchange algorithm, the higher-security sibling of X25519. Combined with ML-KEM-1024 in the hybrid group X448MLKEM1024.',
+  },
+  ED25519: {
+    def: 'RFC 8032 — EdDSA signatures over Curve25519. A classical signature algorithm, distinct from X25519 (key exchange) despite the shared curve.',
+  },
+  ED448: {
+    def: 'RFC 8032 — EdDSA signatures over Curve448, the higher-security sibling of Ed25519.',
+  },
+  DSA: {
+    def: 'Digital Signature Algorithm (FIPS 186) — an older classical signature scheme based on the discrete-log problem, largely superseded by ECDSA/EdDSA in new deployments but still listed by openssl list.',
+  },
+  SM2: {
+    def: 'A Chinese national-standard elliptic-curve signature/encryption algorithm (GB/T 32918), registered as an alias of the generic EC key manager in this OpenSSL build.',
+  },
+  HKDF: {
+    def: 'RFC 5869 — HMAC-based Extract-and-Expand KDF. Assumes the input is ALREADY a high-entropy secret (unlike PBKDF2/SCRYPT, which assume a human password) — see the KDF concept term.',
+  },
+  SCRYPT: {
+    def: 'RFC 7914 — a memory-hard password-based KDF, more resistant to hardware (ASIC/GPU) brute-forcing than PBKDF2 because it deliberately costs memory as well as CPU time.',
+  },
+  PBKDF2: {
+    def: 'RFC 2898 / PKCS#5 — Password-Based KDF 2. Stretches a human password via repeated HMAC iterations (-kdfopt iter:) — what pkcs12 and enc use internally via -pbkdf2.',
+  },
+  HMAC: {
+    def: 'RFC 2104 — a keyed-hash message authentication code, built from any underlying digest (e.g. HMAC-SHA256). Also usable as a KDF building block (HKDF is HMAC-based).',
+  },
+  X25519MLKEM768: {
+    def: 'A hybrid TLS key-share group combining classical X25519 with ML-KEM-768 — secure as long as EITHER component holds. OpenSSL 3.5+ defaults new TLS 1.3 connections to this group.',
+  },
+  SecP256r1MLKEM768: {
+    def: 'A hybrid TLS key-share group combining classical P-256 (secp256r1) with ML-KEM-768.',
+  },
+  SecP384r1MLKEM1024: {
+    def: 'A hybrid TLS key-share group combining classical P-384 (secp384r1) with the higher-security ML-KEM-1024.',
+  },
+  X448MLKEM1024: {
+    def: 'A hybrid TLS key-share group combining classical X448 with ML-KEM-1024.',
+  },
 }
 
 export const TAG_GLOSSARY: Record<string, TagGlossaryEntry> = {
@@ -189,6 +239,18 @@ const TERMS: GlossaryTerm[] = [
     label: 'FIPS 205',
     cat: 'pqc',
     def: "NIST's Stateless Hash-Based Digital Signature Standard — specifies SLH-DSA's 12 parameter sets (SHA2/SHAKE × 128/192/256 × s/f).",
+  },
+  {
+    id: 'provider',
+    label: 'Provider',
+    cat: 'protocol',
+    def: 'OpenSSL 3.x\'s unit of pluggable algorithm implementations (docs.openssl.org/3.6/man7/openssl-glossary). `openssl list -providers` reporting a provider "active" only means it loaded into the registry — NOT that every algorithm it claims to register actually works (see the Algorithm Explorer\'s live functional check).',
+  },
+  {
+    id: 'composite-signature',
+    label: 'Composite signature',
+    cat: 'pqc',
+    def: 'A single signature combining a classical algorithm (e.g. RSA, ECDSA) with ML-DSA — a hedging strategy like hybrid KEM, but for signatures, from the IETF LAMPS working group\'s composite-signatures draft work. This build\'s pkcs11 provider registers 3 such composites (named after "draft-lamps-19" in its own algorithm labels — the revision it was built against), though that provider is not currently functional here.',
   },
 ]
 
