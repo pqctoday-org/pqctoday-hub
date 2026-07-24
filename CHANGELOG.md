@@ -29,7 +29,7 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
-## [4.24.1] - 2026-07-24
+## [4.24.2] - 2026-07-24
 
 A maintenance-pipeline accuracy pass: several standards, catalog, timeline, glossary, and leaders-profile corrections found and verified during a full end-to-end review of the data maintenance process.
 
@@ -43,6 +43,12 @@ A maintenance-pipeline accuracy pass: several standards, catalog, timeline, glos
 - **Fixed 3 broken "learn more" links in the Glossary** [view:/library]: IKEv2 and RFC 9370 pointed at a retired duplicate reference id, and SM2 pointed at a since-deprecated standard with no working source — SM2 now links to the active IETF draft covering its actual post-quantum hybrid use.
 - **Cleaned up 37 mislabeled entries in the authoritative sources directory** [view:/library] [persona:researcher]: organization-type labels using inconsistent spelling/spacing (e.g. "Industry Workgroup" vs. the standard "Industry_Workgroup") were normalized; this directory is now actively monitored for freshness and accuracy going forward.
 - **10 more Leaders profiles now show a verified peer-review credential** [view:/leaders] [persona:researcher]: each was independently confirmed against NIST, IETF, or an academic publication record (not inferred from the profile's own bio text) — including catching and correcting one profile that cited the wrong RFC.
+
+## [4.24.1] - 2026-07-24
+
+### Fixed
+
+- **The TPM Playground's compliance check no longer fails after visiting the Learn tab first** [view:/playground] [persona:developer] [persona:researcher]: the emulated chip only has 3 key-object slots, and the compliance check assumed it was always starting with all of them free. Working through Learn tab lessons (or the Command Builder) first could leave a slot occupied, so creating the attestation key — and everything that depends on it — would fail with an out-of-memory error instead of running. The compliance check now clears its own slots before it starts, regardless of what ran before it.
 
 ## [4.24.0] - 2026-07-23
 
