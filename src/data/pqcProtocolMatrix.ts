@@ -50,7 +50,7 @@
 import type { Freshness } from './contentFreshness'
 
 /** ISO date of the last manual update to PROTOCOL_MATRIX below. */
-export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-07-14'
+export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-07-23'
 
 /**
  * Structured freshness for the content-freshness manifest — pairs the snapshot
@@ -1819,7 +1819,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'individual-draft',
         stageNote:
-          'Same individual draft as Pure KEM — optionally allows composite ML-KEM per the (also unadopted) LAMPS composite-KEM draft',
+          'Same individual draft as Pure KEM — optionally allows composite ML-KEM per the LAMPS composite-KEM draft (now in IETF Last Call)',
         note: 'Same draft as Pure KEM; hybrid mode composes with draft-ietf-lamps-pq-composite-kem, itself still in IETF Last Call at the X.509 layer (see X.509 row).',
         refs: [
           {
@@ -1860,6 +1860,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridSig: {
         value: 'experimental',
+        stage: 'individual-draft',
+        stageNote:
+          'Individual draft active (draft-bokovoy-kitten-pkinit-pqc, datatracker 2026-07-18)',
         note: 'Same agility-based path as Pure Signature; draft-bokovoy-kitten-pkinit-pqc optionally mentions composite ML-DSA per the LAMPS composite-sigs draft, but this is unadopted and unimplemented.',
         refs: [
           {
@@ -2206,8 +2209,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'draft',
-        stage: 'iesg-submitted',
-        stageNote: 'Submitted to IESG (Apr 2026)',
+        stage: 'ietf-last-call',
+        stageNote: 'IETF Last Call (datatracker 2026-07-22; was IESG-submitted Apr 2026)',
         refs: [
           {
             kind: 'draft',
@@ -2708,8 +2711,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'experimental',
-        stage: 'identified',
-        stageNote: 'Problem flagged — no WG draft chartered',
+        stage: 'individual-draft',
+        stageNote:
+          'Individual drafts active (draft-fregly-dnsop-slh-dsa-mtl-dnssec, draft-sheth-pqc-dnssec-strategy) — still no WG-chartered work',
         note: 'No IANA DNSKEY code point assigned yet. Constraint: ML-DSA (2.4–4.6 KB) and SLH-DSA (7.8–49.8 KB) signatures exceed the ~1232-byte DNS UDP limit — forces TCP fallback. No IETF WG currently addresses the IP fragmentation issue.',
         refs: [
           {
@@ -2730,8 +2734,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridSig: {
         value: 'experimental',
-        stage: 'identified',
-        stageNote: 'Problem flagged — no WG draft chartered',
+        stage: 'individual-draft',
+        stageNote:
+          'Individual draft active (draft-sheth-pqc-dnssec-strategy) — still no WG-chartered work',
         note: 'Strategy draft enumerates candidates; no concrete hybrid mode. Same UDP fragmentation barrier as pure sig.',
         refs: [
           {
@@ -3072,8 +3077,10 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         ],
       },
       hybridSig: {
-        value: 'experimental',
-        stage: 'experimental',
+        value: 'draft',
+        stage: 'wg-document',
+        stageNote:
+          'Inherited JOSE composite path is now a WG document (draft-ietf-jose-pq-composite-sigs, datatracker 2026-07-20)',
         note: 'Composite path inherits from the JOSE row; no FIDO Alliance profile yet.',
         refs: [
           {

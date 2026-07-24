@@ -29,7 +29,67 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
-## [Unreleased]
+## [4.25.0] - 2026-07-24
+
+An OpenSSL Studio release: a new guided Learn tab and a live Algorithm Explorer, both running the real openssl.wasm engine bundled with the site (not simulated output).
+
+### Added
+
+- **New 11-lesson Learn tab for OpenSSL Studio** [view:/playground/openssl] [persona:developer] [persona:architect] [persona:researcher]: pairs each classical operation with its post-quantum replacement — key generation, certificate requests, signing and verification, ML-KEM key exchange, an honesty check on LMS/HSS keygen, an encryption/hashing myths lesson, key derivation, PKCS#12 bundling, random generation, and configuration — plus a TLS Simulator capstone. Every command runs for real against the site's OpenSSL engine, with a glossary rail and a short quiz after each lesson.
+- **New "Explore" tab shows every algorithm this exact OpenSSL build actually supports** [view:/playground/openssl] [persona:developer] [persona:researcher]: a searchable, filterable list grouped by algorithm family, built from live queries against the real engine rather than static documentation. Every non-default provider is functionally tested (not just checked for a self-reported "active" flag) before its algorithms are shown as usable — this caught the bundled `pkcs11` provider correctly listing ML-KEM, ML-DSA, and 3 hybrid composite signatures but not yet actually functional in this environment, and the Explorer reports it as such instead of overclaiming.
+
+## [4.24.2] - 2026-07-24
+
+A maintenance-pipeline accuracy pass: several standards, catalog, timeline, glossary, and leaders-profile corrections found and verified during a full end-to-end review of the data maintenance process.
+
+### Data
+
+- **5 protocols advanced in the Standards Support Matrix, reflecting real IETF progress** [view:/algorithms] [persona:developer] [persona:architect]: Kerberos PKINIT's hybrid signature now shows an active individual draft, IKE/IPsec's pure-signature track reached IETF Last Call, DNSSEC's pure and hybrid signature tracks show an active individual draft (previously "no work identified"), and FIDO2's hybrid signature draft is now a formal working-group document. A companion automated drift check was also caught over-applying: 17 of 23 proposed updates would have wrongly shown protocols moving _backward_ (standards don't un-publish) — those were rejected and are being fixed at the source before the next run.
+- **Corrected HAWK's post-quantum signature status in the Migrate catalog** [view:/migrate] [persona:developer] [persona:researcher]: the reference implementation was still listed under NIST's Round 2 evaluation; NIST's own published update confirms it advanced to Round 3.
+- **4 more Migrate catalog products now show a verified certification** [view:/migrate] [persona:researcher]: Quantum Xchange Phio TX (FIPS 140-3 + ACVP), Chelpis's post-quantum library (3 ACVP validations), Securosys's Primus CyberVault (5 ACVP validations), and Pure Storage's Purity encryption module (FIPS 140-3) — each individually verified against NIST's own records, not auto-matched.
+- **Fixed 2 Migrate catalog products linked to the wrong company** [view:/migrate]: Eviden's Trustway Proteccio HSM and Forward Edge-AI's Space Router had each been attributed to an unrelated, similarly-named vendor.
+- **2 more Timeline milestones now show a verified source organization** [view:/timeline] [persona:researcher]: two NUKIB (Czech Republic national cyber agency) entries were missing their country/organization attribution on intake; both are now fully attributed and cross-referenced against the agency's registry entry.
+- **Fixed 3 broken "learn more" links in the Glossary** [view:/library]: IKEv2 and RFC 9370 pointed at a retired duplicate reference id, and SM2 pointed at a since-deprecated standard with no working source — SM2 now links to the active IETF draft covering its actual post-quantum hybrid use.
+- **Cleaned up 37 mislabeled entries in the authoritative sources directory** [view:/library] [persona:researcher]: organization-type labels using inconsistent spelling/spacing (e.g. "Industry Workgroup" vs. the standard "Industry_Workgroup") were normalized; this directory is now actively monitored for freshness and accuracy going forward.
+- **10 more Leaders profiles now show a verified peer-review credential** [view:/leaders] [persona:researcher]: each was independently confirmed against NIST, IETF, or an academic publication record (not inferred from the profile's own bio text) — including catching and correcting one profile that cited the wrong RFC.
+
+## [4.24.1] - 2026-07-24
+
+### Fixed
+
+- **The TPM Playground's compliance check no longer fails after visiting the Learn tab first** [view:/playground] [persona:developer] [persona:researcher]: the emulated chip only has 3 key-object slots, and the compliance check assumed it was always starting with all of them free. Working through Learn tab lessons (or the Command Builder) first could leave a slot occupied, so creating the attestation key — and everything that depends on it — would fail with an out-of-memory error instead of running. The compliance check now clears its own slots before it starts, regardless of what ran before it.
+
+## [4.24.0] - 2026-07-23
+
+A TPM 2.0 Playground release: a new guided Learn tab teaching classical-vs-post-quantum TPM operations side by side, and a fix to the underlying crypto bridge that had been silently substituting placeholder data for real ML-DSA signatures and ML-KEM key exchanges.
+
+### Added
+
+- **New guided Learn tab for the TPM 2.0 Playground** [view:/playground] [persona:developer] [persona:architect] [persona:researcher]: 8 step-by-step lessons — from booting the emulated chip through attestation — that pair a classical TPM operation (RSA signing, RSA key transport, hash-then-sign) against its post-quantum replacement (ML-DSA signing, ML-KEM key exchange, streaming signatures) and run both for real against the live in-browser TPM. Includes a glossary of TPM commands and terms, and short knowledge checks after each lesson.
+
+### Fixed
+
+- **The TPM Playground's post-quantum cryptography is now genuinely real** [view:/playground] [persona:developer] [persona:researcher]: ML-DSA signatures and ML-KEM key exchanges were silently falling back to placeholder data instead of running through the actual post-quantum crypto engine, even though the playground's status indicator reported everything as active. Both are now real, and the status indicator only reports active when it actually is.
+- **The TPM Playground's Command Builder no longer sends made-up data for multi-step operations** [view:/playground] [persona:developer]: decrypting a key exchange, verifying a signature, or completing a streaming signature used to send synthetic placeholder bytes instead of the real result from the step you just ran — it now chains your actual results through, and tells you when a prerequisite step hasn't been run yet instead of silently guessing.
+- **The TPM Playground's compliance checklist can no longer misreport a passing score** [view:/playground] [persona:developer] [persona:ops]: if the automated 24-point compliance run was interrupted partway through, it could still show a clean "all checks passed" result — it now honestly reports how many checks actually ran.
+
+## [4.23.0] - 2026-07-24
+
+A PKCS#11 Learn tab release: a new lesson on key-trust policy, and a more trustworthy call log across the whole HSM playground.
+
+### Added
+
+- **New "Trust & wrapping policy" lesson in the PKCS#11 Learn tab** [view:/playground/hsm] [persona:developer] [persona:architect]: walks the real policy chain a security officer uses to designate one key as trusted for wrapping others — including the part that surprises people, that a normal user can never grant that trust themselves, not even to a key they just created.
+
+### Fixed
+
+- **The PKCS#11 workshop and Learn tab's call log now shows what actually happened, by default** [view:/learn] [view:/playground/hsm] [persona:developer]: a filter meant to hide routine housekeeping was also hiding real operations — logging in, discovering supported algorithms, and reading or writing key policies — so entire early lessons used to show an empty log the whole way through. Also added a plain-English toggle that was silently non-functional in both places.
+- **A skipped lesson step could display as "refused, correctly" when it had actually crashed** [view:/playground/hsm] [persona:developer]: jumping ahead to a later step before finishing earlier ones could trigger an unrelated error that still showed as the intended outcome. Both the workshop and the Learn tab now also block jumping ahead until each step's prerequisites are done.
+- **Refreshed the HSM playground's underlying crypto engines** [view:/playground/hsm] [persona:developer] [persona:ops]: carried over several correctness fixes already made to the engines but not yet reflected on the site, including a login-timing race and an RSA encryption parameter-handling fix.
+
+## [4.22.1] - 2026-07-24
+
+Small accuracy pass: Ops nav reachability, a persistence fix on mobile Timeline, softer Patents copy, several stale-citation and dead-link corrections across Learn, and a CACP KMIP 3.0 playground accuracy fix.
 
 ### Changed
 
@@ -43,6 +103,7 @@ first time (don't ship dev-speak and reformat later):
 - **Corrected the "10-50x larger certificates" claim in the last two places it survived** [view:/learn] [persona:architect] [persona:curious]: the real figure is roughly 4-7x (already fixed elsewhere) — the Security Architect module and the Ops plain-language summary still had the old number.
 - **Replaced personal email contact links on the About page** [view:/about]: the sandbox-access and embedding-mode request links pointed at a personal Gmail address; they now go through the same trackable GitHub request form used everywhere else on the site.
 - **Reviewed and corrected 8 Learn modules' internal citation lists** [view:/learn] [persona:developer] [persona:architect] [persona:ops]: PKI Workshop, KMS & PQC Key Management, Web Gateway PQC, VPN/IPsec & SSH, Email & Document Signing, Code Signing, IoT & OT Security, and Merkle Tree Certificates had never had their standards/algorithm references or example figures checked against the lesson content since being scaffolded — several had stale or disconnected numbers (e.g. the VPN/SSH module's handshake-size examples didn't match the sizes its own simulator computes); all are now verified and the "last reviewed" date is honest.
+- **Corrected spec citations and a dormant algorithm-mapping bug in the CACP KMIP 3.0 playground** [view:/playground/cacp] [persona:developer] [persona:architect]: a few Learn and Commands-tab surfaces cited a KMIP protocol section that doesn't exist in either published draft, and one legacy cipher option was silently mapped to the wrong protocol code — never reachable through the playground's UI, but now fixed and covered by an automated check so it can't drift back unnoticed.
 
 ### Data
 

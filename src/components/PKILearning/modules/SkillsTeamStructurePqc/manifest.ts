@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'Skills & Team Structure',
   description:
     'Size and staff the PQC migration program: convert your cryptographic estate into an FTE estimate with the 1-FTE-per-500-instances heuristic, build a federated Crypto Champion roster, and track each champion’s readiness commitments.',
+  whyThisMatters:
+    "A PQC migration plan without a staffing plan is a document, not a program — the FTE math and Crypto Champion network turn 'we should migrate' into 'here's who does it, by when'.",
   duration: '30 min',
   difficulty: 'intermediate',
   frameworkPhase: 'foundations',

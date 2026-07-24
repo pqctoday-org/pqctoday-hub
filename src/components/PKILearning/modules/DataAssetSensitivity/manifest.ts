@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'Data & Asset Sensitivity',
   description:
     'Classify organizational data assets, map compliance obligations (GDPR, HIPAA, DORA, NIS2), apply NIST RMF/ISO 27005/FAIR risk methodologies, and generate a PQC migration priority map.',
+  whyThisMatters:
+    "Not every dataset needs to move to PQC on the same timeline — data with a 20-year confidentiality requirement is already vulnerable to harvest-now-decrypt-later, data that expires next year isn't. Classifying by sensitivity turns 'migrate everything' into an actual prioritized plan.",
   duration: '50 min',
   difficulty: 'intermediate',
   frameworkPhase: ['p1', 'p3'],

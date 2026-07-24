@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'Standards, Certification & Compliance Bodies',
   description:
     'Identify who creates PQC standards, who certifies products, and who mandates compliance — worldwide and by region.',
+  whyThisMatters:
+    'PQC has no single global standard — NIST, ETSI, and regional bodies move at different speeds with different mandates, and knowing who requires what, where, is what keeps a global rollout from missing a jurisdiction.',
   duration: '40 min',
   difficulty: 'intermediate',
   frameworkPhase: 'foundations',

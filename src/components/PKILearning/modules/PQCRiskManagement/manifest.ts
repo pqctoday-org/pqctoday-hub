@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'PQC Risk Management',
   description:
     'Quantify quantum risk, build risk registers, model CRQC timeline scenarios, and generate risk heatmaps from real threat data.',
+  whyThisMatters:
+    'A CRQC timeline estimate is inherently uncertain — risk registers and heatmaps built from real threat data let an organization set migration priority without waiting for a certainty that will never come.',
   duration: '30 min',
   difficulty: 'beginner',
   frameworkPhase: 'p3',

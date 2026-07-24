@@ -220,4 +220,46 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
       why: "This mirrors the KMIP playground's own migration lessons: provisioning a successor and retiring a predecessor are two distinct, deliberate steps, never an automatic or implicit conversion.",
     },
   ],
+  'trust-wrapping-policy': [
+    {
+      q: 'Setting CKA_TRUSTED=true in a C_GenerateKey template returned CKR_OK. Was the key actually trusted?',
+      options: [
+        'Yes — a success return code means every requested attribute was applied',
+        'No — this engine silently drops CKA_TRUSTED from generate templates instead of erroring; the key is created fine, just never actually trusted, and reading it back proves that',
+        'Only if CKA_EXTRACTABLE was also true',
+      ],
+      answer: 1,
+      why: "A CKR_OK return only means the operation as a whole succeeded — it doesn't guarantee every attribute in the template was honored exactly as written. This is why the lesson reads CKA_TRUSTED back rather than trusting the generate call's success code alone.",
+    },
+    {
+      q: 'Why did wrapping the pinned key with an ordinary wrapping key fail with CKR_KEY_NOT_WRAPPABLE rather than a generic permission error?',
+      options: [
+        "PKCS#11 has a dedicated return code for exactly this policy violation — the wrapping key lacks CKA_TRUSTED=true, which the target's CKA_WRAP_WITH_TRUSTED requires",
+        'It was a random transient failure',
+        'The wrapping key was the wrong algorithm',
+      ],
+      answer: 0,
+      why: 'CKR_KEY_NOT_WRAPPABLE is the spec-defined answer specifically for a wrap-with-trusted policy mismatch — distinct from CKR_KEY_FUNCTION_NOT_PERMITTED (missing CKA_WRAP) or CKR_MECHANISM_INVALID (wrong algorithm).',
+    },
+    {
+      q: 'The SO successfully imported a trusted wrapping key. Could that same SO later revoke it (set CKA_TRUSTED back to false)?',
+      options: [
+        'Yes — the SO can always change any attribute',
+        'No — this engine treats CKA_TRUSTED as fixed at creation for every caller, SO included; C_SetAttributeValue refuses it unconditionally',
+        'Only after logging out and back in as SO again',
+      ],
+      answer: 1,
+      why: "This is the lesson's closing point: SO-only-to-grant and permanently-fixed-once-granted are two separate guarantees. A policy the granter can quietly loosen later isn't the same guarantee as one nobody can ever change.",
+    },
+    {
+      q: 'Why did the lesson need to log out before logging in as SO, instead of just calling C_Login(SO) directly on the already-logged-in-as-USER session?',
+      options: [
+        "PKCS#11 login is per-token, not per-session — a second login attempt on a token that's already authenticated a different role fails CKR_USER_ANOTHER_ALREADY_LOGGED_IN",
+        "It was just this codebase's convention, not a spec requirement",
+        'C_Login always requires a fresh session handle',
+      ],
+      answer: 0,
+      why: 'This trips up nearly everyone building their first multi-role PKCS#11 integration: login state lives at the token level, so switching roles on a live session always means C_Logout first.',
+    },
+  ],
 }
