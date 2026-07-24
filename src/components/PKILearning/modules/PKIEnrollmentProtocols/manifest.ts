@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'PKI Enrollment Protocols (EST & CMP)',
   description:
     'RFC 7030 EST and RFC 9810 CMP (KEM update) — hands-on PQC certificate enrollment with real OpenSSL 3.6 WASM crypto and an in-browser mock CA.',
+  whyThisMatters:
+    'EST and CMP are how certificates actually get issued at scale in the real world — a PQC algorithm with no working enrollment protocol is a lab demo, not a deployable migration.',
   duration: '50 min',
   difficulty: 'advanced',
   frameworkPhase: 'p5',

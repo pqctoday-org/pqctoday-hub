@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'Decommissioning & Program Closure',
   description:
     'Retire classical cryptography on a defensible schedule, prove the migration actually happened from observed behaviour, and hand the program to business-as-usual.',
+  whyThisMatters:
+    "A migration isn't done when the ticket closes — it's done when the system's observed behavior proves it, and closing the program without that evidence just defers the risk instead of retiring it.",
   duration: '40 min',
   difficulty: 'intermediate',
   frameworkPhase: 'verify-close',

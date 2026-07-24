@@ -6,6 +6,8 @@ const manifest: ModuleManifest = {
   title: 'PQC Quiz',
   description:
     'Test your knowledge across all PQC topics — algorithms, standards, compliance, migration, and more.',
+  whyThisMatters:
+    "The fastest way to find out what you don't actually understand about PQC is to be tested on it across every topic at once, not module by module.",
   duration: '10 min',
   frameworkPhase: 'foundations',
   custom: true,

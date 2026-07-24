@@ -192,7 +192,18 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     software-hipaa-quantum-security-rule without a corpus trust-score entry;
   //     will resolve to 0 on the next refresh-index run.
   migrate: 1,
-  timeline: 1,
+  timeline: 3,
+  //     2026-07-24: bumped 1 → 3 — 2 NUKIB (Czech Republic) Phase-2 intake
+  //     rows landed with Country/OrgName blank (S5 of the E2E remediation
+  //     plan only backfilled trusted_source_id, not the rest); the just-run
+  //     refresh-index corpus predates the same-day follow-up fix that
+  //     backfilled Country=Czech Republic/OrgName=NUKIB (evidenced by 3
+  //     sibling rows in this exact file + the row's own Title, not a guess).
+  //     Same precedent as the 2026-07-16 entry below — confirmed via direct
+  //     re-test that the CSV fix is real, but a second ~30-min refresh-index
+  //     regen wasn't re-run just for these 2 rows. Resolves to 1 (only the
+  //     pre-existing, unrelated Malaysia gap below) on the next real
+  //     refresh-index commit.
   //     2026-07-16: bumped 0 → 1 — timeline maintainer-process remediation
   //     (TIMELINE-PROCESS-REMEDIATION-PLAN-07162026.md Phase 1.2) linked the
   //     Indonesia BSSN row's trusted_source_id to a brand-new registry stub

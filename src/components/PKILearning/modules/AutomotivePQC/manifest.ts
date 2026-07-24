@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'Automotive PQC',
   description:
     'Post-quantum cryptography for connected and autonomous vehicles: V2X PKI, sensor data integrity, ISO 26262 safety-crypto intersection, HSM lifecycle management, OTA orchestration, digital car keys, in-vehicle payments, and 15-20 year lifecycle crypto-agility.',
+  whyThisMatters:
+    'A car sold today is expected to stay on the road, and stay securely updatable, for 15-20 years — its V2X and OTA crypto has to already assume a post-quantum adversary.',
   duration: '80 min',
   difficulty: 'advanced',
   frameworkPhase: 'p5',

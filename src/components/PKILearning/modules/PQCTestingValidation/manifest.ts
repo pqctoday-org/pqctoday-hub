@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'PQC Network Testing & Validation',
   description:
     'Design and execute testing strategies for post-quantum cryptography deployments. Covers passive crypto discovery, active endpoint scanning, performance benchmarking, interoperability testing, TVLA side-channel assessment, and building a comprehensive PQC test program.',
+  whyThisMatters:
+    "An algorithm that passes NIST's test vectors can still fail in your actual deployment — passive discovery, endpoint scanning, and interoperability testing catch the gap between 'PQC-capable' and 'PQC-working'.",
   duration: '120 min',
   difficulty: 'advanced',
   frameworkPhase: 'p6',
