@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'SOC Implementation for PQC',
   description:
     'Operationalize PQC defense in the SOC: five detection use cases (hybrid downgrade, crypto drift, certificate-lifecycle anomalies, signature integrity, HNDL indicators), the posture registry they depend on, detection-engineering and CTI skills, and a phased SOC implementation plan with four quantum playbooks.',
+  whyThisMatters:
+    "Detection engineering hasn't caught up to PQC yet — a SOC that can't detect hybrid downgrade or crypto drift will miss a PQC-relevant incident even with a perfect migration on paper.",
   duration: '60 min',
   difficulty: 'advanced',
   frameworkPhase: 'p6',

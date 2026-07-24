@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'Aerospace PQC',
   description:
     'PQC challenges unique to aerospace: rad-hardened avionics, satellite link budgets, DO-326A airborne cybersecurity, ITAR/EAR export controls, and multi-decade fleet crypto interoperability.',
+  whyThisMatters:
+    "A satellite or airframe fielded today will still be flying in the 2050s — its crypto has to survive a threat model that doesn't exist yet, under rad-hardening and export-control constraints no other industry faces.",
   duration: '80 min',
   difficulty: 'advanced',
   frameworkPhase: 'p5',

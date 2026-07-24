@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'Web Gateway PQC',
   description:
     'PQC deployment at the infrastructure edge: TLS termination patterns, certificate lifecycle at scale, CDN/WAF/load balancer vendor migration paths.',
+  whyThisMatters:
+    'The edge — CDN, WAF, load balancer — is where TLS actually terminates for most traffic; if PQC certificate handling breaks at the gateway, every application behind it inherits the outage regardless of its own readiness.',
   duration: '60 min',
   difficulty: 'intermediate',
   frameworkPhase: 'p6',

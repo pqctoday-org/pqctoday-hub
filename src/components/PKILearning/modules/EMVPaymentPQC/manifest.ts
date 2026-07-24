@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'EMV Payment Systems & PQC',
   description:
     'Explore the EMV payment ecosystem — card authentication, tokenization, authorization networks, POS terminals, and e-commerce — and plan quantum-safe migration across Visa, Mastercard, Amex, UnionPay, and Discover.',
+  whyThisMatters:
+    'Payment card infrastructure processes trillions of dollars a year through a chain of vendors (Visa, Mastercard, Amex, UnionPay, Discover) who all have to move together — one un-migrated link in that chain is a fraud vector at scale.',
   duration: '80 min',
   difficulty: 'advanced',
   frameworkPhase: 'p5',
