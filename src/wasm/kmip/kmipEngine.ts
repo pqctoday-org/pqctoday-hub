@@ -331,7 +331,7 @@ export interface SetupDemoCaResult {
   error?: string
 }
 
-/** The server's §6.1.55 RNG Seed policy choice — server-chosen and mutually
+/** The server's §6.1.57 RNG Seed policy choice — server-chosen and mutually
  * exclusive per the spec (a constructor-time config, not per-request). The
  * OASIS CS-RNG-O-1..4 optional-profile tests each pin one of these. */
 export type RngSeedMode = 'full-consume' | 'partial-consume' | 'ignore' | 'deny'
@@ -359,7 +359,7 @@ export class KmipEngine {
    * storage is keyed by slot, and reusing one with a still-open session
    * from an earlier instance fails bootstrap.
    *
-   * `rngSeedMode` — pin the server's §6.1.55 RNG Seed behavior for this
+   * `rngSeedMode` — pin the server's §6.1.57 RNG Seed behavior for this
    * engine (default full-consume). The corpus replay uses it to boot each
    * CS-RNG-O variant test on an engine configured the way that test
    * expects, mirroring the native harness's per-test Deps. */

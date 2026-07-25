@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 // CommandsView — "Reference": a category-sorted, individually-parameterized
-// tester for every KMIP 3.0 operation (all 66 the WD19 draft defines — 64 in
-// the published-3.0/CSD01 baseline plus WD19's Encapsulate/Decapsulate),
+// tester for every KMIP 3.0 operation (all 66 CSD02 defines — 64 carried
+// over from CSD01 plus CSD02's Encapsulate/Decapsulate),
 // built entirely on the generic op-template pipeline (src/wasm/kmip/ttlv/)
 // rather than a Rust match arm per op. Every Run button fires a REAL request
 // through the same dispatcher path the Agility tab uses — including the 4

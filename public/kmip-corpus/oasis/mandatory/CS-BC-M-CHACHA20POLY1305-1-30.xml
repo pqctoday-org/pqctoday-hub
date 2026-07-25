@@ -291,7 +291,7 @@
     <Operation type="Enumeration" value="Encrypt"/>
     <ResultStatus type="Enumeration" value="OperationFailed"/>
     <ResultReason type="Enumeration" value="GeneralFailure"/>
-    <ResultMessage type="TextString" value="L_KMIPCRYPTO_random:invalid-tag-length"/>
+    <ResultMessage type="TextString" value="invalid-tag-length"/>
   </BatchItem>
 </ResponseMessage>
 
@@ -330,7 +330,7 @@
     <Operation type="Enumeration" value="Encrypt"/>
     <ResultStatus type="Enumeration" value="OperationFailed"/>
     <ResultReason type="Enumeration" value="GeneralFailure"/>
-    <ResultMessage type="TextString" value="L_KMIPCRYPTO_random:invalid-tag-length"/>
+    <ResultMessage type="TextString" value="invalid-tag-length"/>
   </BatchItem>
 </ResponseMessage>
 

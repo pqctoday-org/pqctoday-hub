@@ -150,7 +150,7 @@ export class KmipPlayground {
      * (its own doc comment) that brings a new slot online before
      * `C_InitToken` will accept it; skipping this for a non-zero slot
      * fails with `CKR_SLOT_ID_INVALID` (confirmed empirically).
-     * `rng_seed_mode` — the server's §6.1.55 RNG Seed policy choice
+     * `rng_seed_mode` — the server's §6.1.57 RNG Seed policy choice
      * (`RngSeedMode`): `"full-consume"` (default) / `"partial-consume"` /
      * `"ignore"` / `"deny"`. Server-chosen and mutually exclusive per the
      * spec, so it's a CONSTRUCTOR parameter, not per-request — exposed so

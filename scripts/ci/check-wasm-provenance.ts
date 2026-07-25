@@ -9,8 +9,14 @@
  * Mirrors the sync:sandbox pattern: it is a no-op (passes) when the sibling repo
  * is not present (e.g. in hub-only CI), and a hard gate locally / where hsm is checked out.
  *
- *   npx tsx scripts/check-wasm-provenance.ts          # report
- *   npx tsx scripts/check-wasm-provenance.ts --check  # exit 1 on drift/pending
+ *   npx tsx scripts/check-wasm-provenance.ts             # report
+ *   npx tsx scripts/check-wasm-provenance.ts --check     # exit 1 on drift/pending
+ *   npx tsx scripts/check-wasm-provenance.ts --only=name # limit to one bundle (repeatable)
+ *
+ * `--only` exists so a feature-scoped gate (e.g. gate:cacp checking only the
+ * `cacp-kmip` bundle) doesn't fail on drift in an unrelated bundle it has no
+ * way to fix — added 2026-07-24 rather than making gate:cacp responsible for
+ * bundles (softhsmrustv3-engine, softhsm-cpp-engine) it doesn't touch.
  *
  * Override the hsm location with HSM_REPO_PATH=/path/to/pqctoday-hsm.
  */
@@ -19,6 +25,9 @@ import { existsSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 
 const CHECK = process.argv.includes('--check')
+const ONLY = new Set(
+  process.argv.filter((a) => a.startsWith('--only=')).map((a) => a.slice('--only='.length))
+)
 const manifestPath = resolve(process.cwd(), 'public/wasm/wasm-provenance.json')
 
 type Bundle = {
@@ -49,6 +58,9 @@ const head = git('rev-parse', 'HEAD')
 console.log(`wasm provenance vs pqctoday-hsm @ ${head.slice(0, 9)} (${hsmPath})\n`)
 
 for (const b of manifest.bundles) {
+  if (ONLY.size > 0 && !ONLY.has(b.name)) {
+    continue
+  }
   if (b.track !== 'tip') {
     console.log(`  •  ${b.name}: pinned — skipped`)
     continue

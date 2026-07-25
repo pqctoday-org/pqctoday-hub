@@ -189,7 +189,7 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
         'Via a dedicated HybridEncapsulate operation',
       ],
       answer: 1,
-      why: 'X25519MLKEM768 is a single first-class CryptographicAlgorithm value (KMIP 3.0 WD19). Your code sees one key and one Encapsulate — that opacity is what makes the hybrid deployable with no code change.',
+      why: 'X25519MLKEM768 is a single first-class CryptographicAlgorithm value (KMIP 3.0 CSD02). Your code sees one key and one Encapsulate — that opacity is what makes the hybrid deployable with no code change.',
     },
     {
       q: 'What is the state of hybrid (composite) SIGNATURES in KMIP?',
@@ -253,13 +253,13 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
         'It is identical — same payload the synchronous op would have returned',
       ],
       answer: 2,
-      why: '§6.1.43: Poll\'s successful response "SHALL be identical to the response that would have been sent if the operation had completed synchronously" — the walkthrough\'s digest bytes proved it.',
+      why: '§6.1.45: Poll\'s successful response "SHALL be identical to the response that would have been sent if the operation had completed synchronously" — the walkthrough\'s digest bytes proved it.',
     },
     {
       q: 'Which of these is NOT eligible for asynchronous processing?',
       options: ['Hash', 'CreateKeyPair', 'Poll itself'],
       answer: 2,
-      why: "Poll's own response is explicitly barred from being asynchronous (§6.1.43) — otherwise you'd need a ticket to redeem your ticket. Cancel is barred the same way (§6.1.5); everything else, including CreateKeyPair and Hash, is eligible at the server's discretion.",
+      why: "Poll's own response is explicitly barred from being asynchronous (§6.1.45) — otherwise you'd need a ticket to redeem your ticket. Cancel is barred the same way (§6.1.5); everything else, including CreateKeyPair and Hash, is eligible at the server's discretion.",
     },
   ],
   honesty: [

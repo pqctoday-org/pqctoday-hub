@@ -84,7 +84,7 @@ export const TAG_GLOSSARY: Record<string, TagGlossaryEntry> = {
     def: 'The KMIP protocol version client and server negotiate.',
   },
   ProtocolVersionMajor: { hex: '0x42006A', def: 'Major version — 3 here.' },
-  ProtocolVersionMinor: { hex: '0x42006B', def: 'Minor version — 0 here (draft WD19).' },
+  ProtocolVersionMinor: { hex: '0x42006B', def: 'Minor version — 0 here (draft CSD02).' },
   QueryFunction: {
     hex: '0x420074',
     def: "Which category of server capability you're asking about — QueryOperations, QueryObjects, QueryServerInformation, …",
@@ -328,7 +328,7 @@ export const TERMS: GlossaryTerm[] = [
     id: 'hybrid',
     label: 'Hybrid / composite',
     cat: 'pqc',
-    def: 'Running a classical and a PQC algorithm together so the construction stays secure even if one of the two is broken. KMIP 3.0 (WD19) has two first-class hybrid KEMs (X25519MLKEM768, SecP256r1MLKEM768); hybrid signatures have no native KMIP algorithm yet.',
+    def: 'Running a classical and a PQC algorithm together so the construction stays secure even if one of the two is broken. KMIP 3.0 (CSD02) has two first-class hybrid KEMs (X25519MLKEM768, SecP256r1MLKEM768); hybrid signatures have no native KMIP algorithm yet.',
   },
   {
     id: 'shor',
@@ -352,7 +352,7 @@ export const TERMS: GlossaryTerm[] = [
     id: 'split-key',
     label: 'Split key (M-of-N shares)',
     cat: 'protocol',
-    def: 'A key divided into N share objects where any M — the threshold — reconstruct it and fewer genuinely cannot (Create Split Key / Join Split Key, §6.1.12/§6.1.31). The polynomial methods are Shamir secret sharing; the XOR method needs every share.',
+    def: 'A key divided into N share objects where any M — the threshold — reconstruct it and fewer genuinely cannot (Create Split Key / Join Split Key, §6.1.12/§6.1.33). The polynomial methods are Shamir secret sharing; the XOR method needs every share.',
   },
   {
     id: 'threshold',

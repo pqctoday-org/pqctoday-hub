@@ -133,7 +133,7 @@ describe('runBatch — policy enforcement + Undo (real wasm engine)', () => {
   })
 
   it('a multi-match Locate empties the placeholder — a chained $IDPlaceholder item fails, not resolves to an arbitrary match', () => {
-    // 2026-07-17 audit (M3) — §6.1.32: a Locate matching more than one
+    // 2026-07-17 audit (M3) — §6.1.34: a Locate matching more than one
     // object SHALL empty the ID Placeholder, "ensuring that these batched
     // operations SHALL proceed only if a single object is returned by
     // Locate." Two same-algorithm keys make the filter genuinely

@@ -186,7 +186,7 @@ export const ALGO_FACTS: Record<string, AlgoFacts> = {
     family: 'hybrid',
     kind: 'kem',
     standard:
-      'KMIP 3.0 WD19 draft codepoint 0x5C; public-key/ciphertext sizes and combiner per draft-ietf-tls-ecdhe-mlkem (IANA TLS group 0x11EC)',
+      'KMIP 3.0 CSD02 published codepoint 0x5C; public-key/ciphertext sizes and combiner per draft-ietf-tls-ecdhe-mlkem (IANA TLS group 0x11EC)',
     // Verified against this engine's own hybrid_kem.rs / native::hybrid: the
     // combiner is pure concatenation (`Concat { finalize: [] }`, no KDF),
     // order ss_mlkem‖ss_x25519 — matches the draft exactly, 64 B total.
@@ -200,7 +200,7 @@ export const ALGO_FACTS: Record<string, AlgoFacts> = {
     family: 'hybrid',
     kind: 'kem',
     standard:
-      'KMIP 3.0 WD19 draft codepoint 0x5D; public-key/ciphertext sizes and combiner per draft-ietf-tls-ecdhe-mlkem (IANA TLS group 0x11EB)',
+      'KMIP 3.0 CSD02 published codepoint 0x5D; public-key/ciphertext sizes and combiner per draft-ietf-tls-ecdhe-mlkem (IANA TLS group 0x11EB)',
     // Same combiner family as X25519MLKEM768 above (pure concatenation, no
     // KDF), order ss_p256‖ss_mlkem; share/ct order is classical-first
     // (p_pub‖ek_mlkem, eph_p‖ct_mlkem) per native::hybrid::keygen/decapsulate.
