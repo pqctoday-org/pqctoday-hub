@@ -18,6 +18,13 @@ export type WorkerMessage =
   | { type: 'LOAD'; url: string; requestId?: string }
   | { type: 'FILE_UPLOAD'; name: string; data: Uint8Array; requestId?: string }
   | { type: 'DELETE_FILE'; name: string; requestId?: string }
+  /**
+   * Generate a token-resident keypair via direct C_GenerateKeyPair.
+   * NOT `genpkey -out pkcs11:...` — that writes a PEM into MEMFS through a
+   * BIO and the key never reaches the token, so later `pkcs11:object=<id>`
+   * lookups fail. See openssl.worker.ts's in-token keygen section.
+   */
+  | { type: 'HSM_KEYGEN'; algorithm: string; keyId: string; requestId?: string }
   | {
       type: 'TLS_SIMULATE'
       clientConfig: string
@@ -48,3 +55,11 @@ export type WorkerResponse =
   | { type: 'READY'; requestId?: string }
   | { type: 'ERROR'; error: string; requestId?: string }
   | { type: 'DONE'; requestId?: string }
+  | {
+      type: 'HSM_KEY_CREATED'
+      keyId: string
+      algorithm: string
+      /** `pkcs11:` URI addressing the new token-resident private key. */
+      uri: string
+      requestId?: string
+    }

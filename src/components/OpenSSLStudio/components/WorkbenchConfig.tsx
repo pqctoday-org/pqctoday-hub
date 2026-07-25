@@ -12,6 +12,7 @@ import { DgstConfig } from './configs/DgstConfig'
 import { LmsConfig } from './configs/LmsConfig'
 import { ConfigUtlConfig } from './configs/ConfigUtlConfig'
 import { KdfConfig } from './configs/KdfConfig'
+import { Pkcs11Config, type Pkcs11Key, type Pkcs11Operation } from './configs/Pkcs11Config'
 
 interface WorkbenchConfigProps {
   category: string
@@ -139,6 +140,14 @@ interface WorkbenchConfigProps {
   setKdfScryptR: (value: string) => void
   kdfScryptP: string
   setKdfScryptP: (value: string) => void
+  // PKCS#11 Options
+  hsmKeygen: (algorithm: string, keyId: string) => Promise<{ uri: string }>
+  pkcs11Keys: Pkcs11Key[]
+  addPkcs11Key: (key: Pkcs11Key) => void
+  pkcs11SelectedKeyId: string
+  setPkcs11SelectedKeyId: (id: string) => void
+  pkcs11Operation: Pkcs11Operation
+  setPkcs11Operation: (op: Pkcs11Operation) => void
 }
 
 export const WorkbenchConfig: React.FC<WorkbenchConfigProps> = (props) => {
@@ -333,6 +342,40 @@ export const WorkbenchConfig: React.FC<WorkbenchConfigProps> = (props) => {
           setKdfScryptR={props.setKdfScryptR}
           kdfScryptP={props.kdfScryptP}
           setKdfScryptP={props.setKdfScryptP}
+        />
+      )
+    case 'pkcs11':
+      return (
+        <Pkcs11Config
+          hsmKeygen={props.hsmKeygen}
+          pkcs11Keys={props.pkcs11Keys}
+          addPkcs11Key={props.addPkcs11Key}
+          pkcs11SelectedKeyId={props.pkcs11SelectedKeyId}
+          setPkcs11SelectedKeyId={props.setPkcs11SelectedKeyId}
+          pkcs11Operation={props.pkcs11Operation}
+          setPkcs11Operation={props.setPkcs11Operation}
+          certDays={props.certDays}
+          setCertDays={props.setCertDays}
+          digestAlgo={props.digestAlgo}
+          setDigestAlgo={props.setDigestAlgo}
+          commonName={props.commonName}
+          setCommonName={props.setCommonName}
+          org={props.org}
+          setOrg={props.setOrg}
+          country={props.country}
+          setCountry={props.setCountry}
+          sigHashAlgo={props.sigHashAlgo}
+          setSigHashAlgo={props.setSigHashAlgo}
+          selectedDataFile={props.selectedDataFile}
+          setSelectedDataFile={props.setSelectedDataFile}
+          selectedSigFile={props.selectedSigFile}
+          setSelectedSigFile={props.setSelectedSigFile}
+          kemInFile={props.kemInFile}
+          setKemInFile={props.setKemInFile}
+          kemOutFile={props.kemOutFile}
+          setKemOutFile={props.setKemOutFile}
+          kemSecretFile={props.kemSecretFile}
+          setKemSecretFile={props.setKemSecretFile}
         />
       )
     case 'version':

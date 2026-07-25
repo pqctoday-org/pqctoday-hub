@@ -57,6 +57,7 @@ describe('Workbench', () => {
         executeCommand={vi.fn()}
         executeSkey={vi.fn()}
         retryLoad={vi.fn()}
+        hsmKeygen={vi.fn()}
       />
     )
     expect(capturedProps).toBeTruthy()
@@ -71,6 +72,7 @@ describe('Workbench', () => {
         executeCommand={vi.fn()}
         executeSkey={vi.fn()}
         retryLoad={vi.fn()}
+        hsmKeygen={vi.fn()}
       />
     )
     expect(capturedProps).toBeNull()
@@ -84,6 +86,7 @@ describe('Workbench', () => {
         executeCommand={vi.fn()}
         executeSkey={vi.fn()}
         retryLoad={vi.fn()}
+        hsmKeygen={vi.fn()}
       />
     )
     expect(capturedProps).toBeTruthy()
@@ -144,6 +147,7 @@ describe('Workbench', () => {
         executeCommand={vi.fn()}
         executeSkey={vi.fn()}
         retryLoad={vi.fn()}
+        hsmKeygen={vi.fn()}
       />
     )
 
@@ -163,6 +167,7 @@ describe('Workbench', () => {
         executeCommand={vi.fn()}
         executeSkey={vi.fn()}
         retryLoad={vi.fn()}
+        hsmKeygen={vi.fn()}
       />
     )
     await waitFor(() =>
@@ -178,6 +183,7 @@ describe('Workbench', () => {
         executeCommand={vi.fn()}
         executeSkey={vi.fn()}
         retryLoad={vi.fn()}
+        hsmKeygen={vi.fn()}
       />
     )
 
@@ -252,6 +258,7 @@ describe('Workbench', () => {
         executeCommand={vi.fn()}
         executeSkey={vi.fn()}
         retryLoad={vi.fn()}
+        hsmKeygen={vi.fn()}
       />
     )
     act(() => {
@@ -273,6 +280,7 @@ describe('Workbench', () => {
         executeCommand={vi.fn()}
         executeSkey={vi.fn()}
         retryLoad={vi.fn()}
+        hsmKeygen={vi.fn()}
       />
     )
     act(() => {
@@ -299,6 +307,7 @@ describe('Workbench', () => {
         executeCommand={vi.fn()}
         executeSkey={vi.fn()}
         retryLoad={vi.fn()}
+        hsmKeygen={vi.fn()}
       />
     )
     await waitFor(() =>
@@ -312,6 +321,7 @@ describe('Workbench', () => {
         executeCommand={vi.fn()}
         executeSkey={vi.fn()}
         retryLoad={vi.fn()}
+        hsmKeygen={vi.fn()}
       />
     )
     act(() => {
@@ -337,6 +347,7 @@ describe('Workbench', () => {
         executeCommand={vi.fn()}
         executeSkey={vi.fn()}
         retryLoad={vi.fn()}
+        hsmKeygen={vi.fn()}
       />
     )
     act(() => {
@@ -369,6 +380,7 @@ describe('Workbench', () => {
         executeCommand={vi.fn()}
         executeSkey={vi.fn()}
         retryLoad={vi.fn()}
+        hsmKeygen={vi.fn()}
       />
     )
     act(() => {
@@ -388,6 +400,7 @@ describe('Workbench', () => {
         executeCommand={vi.fn()}
         executeSkey={vi.fn()}
         retryLoad={vi.fn()}
+        hsmKeygen={vi.fn()}
       />
     )
     act(() => {
@@ -423,6 +436,7 @@ describe('Workbench', () => {
         executeCommand={vi.fn()}
         executeSkey={vi.fn()}
         retryLoad={vi.fn()}
+        hsmKeygen={vi.fn()}
       />
     )
     act(() => {
@@ -452,6 +466,7 @@ describe('Workbench', () => {
         executeCommand={vi.fn()}
         executeSkey={vi.fn()}
         retryLoad={vi.fn()}
+        hsmKeygen={vi.fn()}
       />
     )
     act(() => {
@@ -487,6 +502,7 @@ describe('Workbench', () => {
         executeCommand={vi.fn()}
         executeSkey={vi.fn()}
         retryLoad={vi.fn()}
+        hsmKeygen={vi.fn()}
       />
     )
 
