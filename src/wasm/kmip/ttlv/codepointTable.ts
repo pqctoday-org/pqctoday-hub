@@ -40,8 +40,8 @@ interface SpecJson {
  * (2026-07-24 CSD02 migration: the 8 WD19-only KEM/PQC tags this block used
  * to carry — KEMAlgorithm, Deterministic, ContextString, Seed,
  * InputKeyMaterial, Internal, ExternalMu, Random — are now supplied natively
- * by the regenerated spec JSON and were removed. §6.1.62 Validate /
- * §6.1.6 Certify / §6.1.50 Re-certify's tags below predate that migration
+ * by the regenerated spec JSON and were removed. §6.1.64 Validate /
+ * §6.1.6 Certify / §6.1.52 Re-certify's tags below predate that migration
  * and stay for the cross-check reason above, not a spec gap.) */
 export const SPEC_EXTRACT_TAG_PATCHES: Record<string, number> = {
   CertificateValue: 0x42001e,
@@ -73,7 +73,7 @@ export const SPEC_EXTRACT_PATCHES: Record<string, Record<string, number>> = {
   // Spec's own table has a typo — "MFG1", not "MGF1" — so this is a real
   // alias, not a redundant safety net.
   MaskGenerator: { MGF1: 0x00000001 },
-  // §6.1.6 Certify / §6.1.50 Re-certify's `Certificate Request Type` —
+  // §6.1.6 Certify / §6.1.52 Re-certify's `Certificate Request Type` —
   // matches `kmip30::ops::CertificateRequestType`. Spec's own member is
   // "CRMF" (all-caps); our request-builder's option string is "Crmf". Only
   // this one is a genuine alias — PKCS10/PEM already match natively.

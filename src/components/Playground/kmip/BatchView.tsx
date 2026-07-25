@@ -329,7 +329,7 @@ export function BatchView({
                   className="inline-flex items-center gap-0.5 rounded bg-status-warning/15 px-1.5 py-0.5 text-[9px] font-semibold text-status-warning"
                   title={
                     placeholderProducer(items, i)?.op === 'Locate'
-                      ? '§6.1.32: the placeholder only resolves if Locate matched EXACTLY one object — 0 or >1 matches empties it, and this item fails.'
+                      ? '§6.1.34: the placeholder only resolves if Locate matched EXACTLY one object — 0 or >1 matches empties it, and this item fails.'
                       : undefined
                   }
                 >
