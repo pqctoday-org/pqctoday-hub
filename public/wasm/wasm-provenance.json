@@ -9,9 +9,9 @@
       "sourceDirs": ["kmip", "wasm"],
       "track": "tip",
       "status": "built",
-      "hsmCommit": "5e08aa980bc7f495ba54890feeda129cd22e795f",
-      "builtAt": "2026-07-11",
-      "_buildNote": "Prior rebuilds (2026-07-10/11, merged via hub #410/#411/#412, hsm #139/#140): corrected a stale manifest entry, picked up CKA_ALLOWED_MECHANISMS/CKO_CERTIFICATE engine-side support, fixed the wasm32 compile break in Register/Import's certificate projection, and added the WP-4 raw_pkcs11_encrypt_probe showcase export. This rebuild (hub #413, merged) adds the WP-3 showcase (`Pkcs11CertificateDemo.tsx`): a real fix (Register(Certificate) with a PublicKeyLink now reuses that key's own CKA_ID instead of minting a fresh one, matching the native Certify path — hsm #141, merged; `hsmCommit` above is that PR's squash-merge commit on hsm main) plus two wasm exports, `register_certificate_demo` and `engine_certificate_attributes`. Verified: native `cargo test -p pqctoday-kmip` (593 passed), wasm32 build + smoke test, and a standalone node script + a real-browser Playwright pass confirming a genuine Register → engine-projection → real CKA_SUBJECT/CKA_ISSUER/CKA_SERIAL_NUMBER/CKA_VALUE readback (not simulated)."
+      "hsmCommit": "cfd71fc0a0d6bd763a958a9884e24b748dd008c8",
+      "builtAt": "2026-07-25",
+      "_buildNote": "Follow-up rebuild closing a 1-commit drift the CSD02 migration's own last hsm commit (cfd71fc, KAT provenance metadata) introduced against the prior entry (8e7b09c/2026-07-24) — found by running the provenance check with an explicit HSM_REPO_PATH override before shipping this release, since the default sibling-path check is a no-op without one. cfd71fc only touches kmip/kat/*.json documentation (no wasm-exported function signatures, no engine behavior), so this rebuild is a formality for the release record, not a functional change — confirmed via another real `cargo build --target wasm32-unknown-unknown` + `wasm-bindgen` + live node smoke test (Query, Create, malformed-frame handling, ML-DSA-65 CreateKeyPair/Sign/SignatureVerify round-trip, an unimplemented-algorithm rejection, and a full X25519MLKEM768 hybrid-KEM CreateKeyPair→Activate→Encapsulate→Decapsulate round-trip — not simulated), from a clean worktree exactly matching `hsmCommit`. `sync:wasm:check:cacp-kmip --check` is clean after."
     },
     {
       "name": "softhsmrustv3-engine",

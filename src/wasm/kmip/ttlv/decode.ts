@@ -15,7 +15,7 @@ import type { CodepointTable } from './codepointTable'
 
 /** Recursively replace each node's raw hex `tag` with its friendly name
  * (falling back to the hex string itself for a codepoint the table doesn't
- * know — a real client extension or a WD19 tag not yet patched in). */
+ * know — a real client extension or a spec tag not yet patched in). */
 export function annotateNames(node: TtlvNode, table: CodepointTable): TtlvNode {
   const code = parseInt(node.tag, 16)
   const tag = table.tagCodeToName.get(code) ?? node.tag

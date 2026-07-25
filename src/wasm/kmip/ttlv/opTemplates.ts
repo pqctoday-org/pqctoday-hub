@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 // opTemplates.ts — one request-building function per KMIP 3.0 operation (all
-// 66 the WD19 draft defines — 64 in the published-3.0/CSD01 baseline plus
-// WD19's Encapsulate/Decapsulate), organized into the same 7 functional
+// 66 CSD02 defines — 64 carried over from CSD01 plus CSD02's
+// Encapsulate/Decapsulate), organized into the same 7 functional
 // categories the Commands tab groups them by. Each template returns the
 // RequestPayload children `request.ts`'s `buildRequest()` wraps in a full
 // Request Message.
@@ -72,7 +72,7 @@ export interface OpParam {
 export interface OpTemplate {
   op: string
   category: OpCategory
-  /** One-line KMIP 3.0 spec citation, e.g. "§6.1.18 Derive Key". */
+  /** One-line KMIP 3.0 spec citation, e.g. "§6.1.19 Derive Key". */
   spec: string
   /** `false` for the 4 permanently-unsupported ops (Notify/Put —
    * server-to-client by definition; Delegated Login/Re-Provision — no
@@ -188,7 +188,7 @@ export const createKeyPair = (
       leaf('CryptographicUsageMask', 'Integer', usage)
     ),
   ]
-  // WD19 §3.4 `Seed` — deterministic keygen from FIPS 204 ξ / FIPS 203
+  // CSD02 §3.4 `Seed` — deterministic keygen from FIPS 204 ξ / FIPS 203
   // d‖z / FIPS 205 SK.seed‖SK.prf‖PK.seed (create_key_pair.rs forwards it
   // to `generate_*_keypair_from_seed_extractable`), for KAT reproducibility
   // instead of the RNG. A seeded key is born Extractable so its material
@@ -247,8 +247,8 @@ export const importObject = (
 
 /** §11 Key Wrapping Specification — AES-KW (RFC 3394) wrap the returned
  * key material under `wrapKeyUid` (which must be Active with WrapKey
- * usage) instead of returning it in the clear. Shared by Get (§6.1.23)
- * and Export (§6.1.22) — `helpers::wrap_key_value` backs both identically
+ * usage) instead of returning it in the clear. Shared by Get (§6.1.25)
+ * and Export (§6.1.24) — `helpers::wrap_key_value` backs both identically
  * (K16). This is also the ONLY way to Get/Export a `Sensitive=true`
  * object at all (get.rs / register_import_export.rs's Export both refuse
  * a plaintext read of one). */
@@ -281,7 +281,7 @@ export const get = (uid: string, keyFormatType?: string, wrapKeyUid?: string): K
   return payload
 }
 
-/** Locate filters ride in an `Attributes` structure (§6.1.32). Length /
+/** Locate filters ride in an `Attributes` structure (§6.1.34). Length /
  * usage-mask / UID filtering became REAL in engine 0.13.0 — previously the
  * server accepted these as valid syntax and silently ignored them,
  * returning every object instead of narrowing. */
@@ -701,7 +701,7 @@ export const pkcs11 = (
   iface?: string
 ): KmipNode[] => {
   const payload: KmipNode[] = []
-  // §6.1.42 `PKCS#11 Interface` — names which Cryptoki version's
+  // §6.1.44 `PKCS#11 Interface` — names which Cryptoki version's
   // semantics the passthrough call should honor (e.g. "3.0" vs "3.2");
   // decoded into `Pkcs11Request.interface` and echoed back verbatim on
   // the response (rng_and_pkcs11.rs).
@@ -722,7 +722,7 @@ export const pkcs11 = (
 // `pqctoday-hsm/kmip/src/kmip30/wire.rs`'s `decode_validate_req` /
 // `decode_certify_req` / `decode_recertify_req` exactly.
 
-/** §6.1.62 Validate. `certificateHex` are inline DER blobs (each wrapped in
+/** §6.1.64 Validate. `certificateHex` are inline DER blobs (each wrapped in
  * its own `Certificate { CertificateValue }` structure per the wire
  * decoder); `uids` are stored Certificate objects; both lists combine into
  * one candidate chain. `validityDate` (unix seconds) is optional — omitted
@@ -777,7 +777,7 @@ export const certify = (uid = '', csrHex = '', validity?: CertifyValidityParams)
   return payload
 }
 
-/** §6.1.50 Re-certify. `uid` (the existing Certificate to renew) is
+/** §6.1.52 Re-certify. `uid` (the existing Certificate to renew) is
  * REQUIRED; an optional `csrHex` re-keys with a fresh subject key instead
  * of reusing the existing one; `offsetSeconds` shifts the new Activation
  * Date relative to Initial Date (omitted → renews the existing window). */
@@ -824,7 +824,7 @@ export const createSplitKey = (
   leaf('SplitKeyMethod', 'Enumeration', method),
 ]
 
-/** §6.1.31 Join Split Key — reconstruct from a threshold-sized subset of
+/** §6.1.33 Join Split Key — reconstruct from a threshold-sized subset of
  * share UIDs (repeated UniqueIdentifier leaves). Below-threshold subsets are
  * refused with the exact shortfall named, never garbage. */
 export const joinSplitKey = (uids: string[]): KmipNode[] => [
@@ -832,10 +832,10 @@ export const joinSplitKey = (uids: string[]): KmipNode[] => [
   ...uids.map((u) => leaf('UniqueIdentifier', 'TextString', u)),
 ]
 
-/** §6.1.40 Obtain Lease — grant/renew a lease on a managed object. */
+/** §6.1.42 Obtain Lease — grant/renew a lease on a managed object. */
 export const obtainLease = (uid: string): KmipNode[] => [uidLeaf(uid)]
 
-/** §6.1.57 Set Constraints — replace the server's constraint table. */
+/** §6.1.59 Set Constraints — replace the server's constraint table. */
 export const setConstraints = (): KmipNode[] => [struct('Constraints')]
 
 /** §6.1.43/§6.1.5/§6.1.44 — the async-management trio all address a job by
@@ -850,7 +850,7 @@ export const process = (correlationValueHex: string): KmipNode[] => [
   leaf('AsynchronousCorrelationValue', 'ByteString', correlationValueHex),
 ]
 
-/** §6.1.46 Query Asynchronous Requests — both filters optional; an empty
+/** §6.1.48 Query Asynchronous Requests — both filters optional; an empty
  * payload lists every outstanding job. `operations` narrows by KMIP
  * Operation name (e.g. `['Hash', 'Sign']`) — async_ops.rs ANDs it with
  * the correlation-value filter (a job matches when its correlation value
@@ -900,7 +900,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Query',
     category: 'Discovery & Session',
-    spec: '§6.1.45 Query',
+    spec: '§6.1.47 Query',
     supported: true,
     blurb:
       'Ask the server what it supports — operations, object types, vendor info. The first call any client makes. Since engine 0.12.0 the answer is audited-honest: every one of the 62 operations it advertises is genuinely implemented.',
@@ -910,7 +910,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'DiscoverVersions',
     category: 'Discovery & Session',
-    spec: '§6.1.20 Discover Versions',
+    spec: '§6.1.21 Discover Versions',
     supported: true,
     blurb: 'Negotiate which KMIP protocol versions client and server both speak.',
     params: [],
@@ -919,7 +919,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Ping',
     category: 'Discovery & Session',
-    spec: '§6.1.41 Ping',
+    spec: '§6.1.43 Ping',
     supported: true,
     blurb: 'The simplest possible request — an empty round trip to confirm the server is alive.',
     params: [],
@@ -928,7 +928,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Interop',
     category: 'Discovery & Session',
-    spec: '§6.1.30 Interop (test-suite framework marker)',
+    spec: '§6.1.32 Interop (test-suite framework marker)',
     supported: true,
     blurb:
       'A conformance-tooling marker that brackets a sequence of operations as one interoperability test.',
@@ -941,7 +941,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Login',
     category: 'Discovery & Session',
-    spec: '§6.1.34 Login',
+    spec: '§6.1.36 Login',
     supported: true,
     blurb: 'Start a leased, ticket-based session instead of authenticating every request.',
     params: [
@@ -953,7 +953,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Logout',
     category: 'Discovery & Session',
-    spec: '§6.1.35 Logout',
+    spec: '§6.1.37 Logout',
     supported: true,
     blurb: 'End a Login session, invalidating its ticket.',
     params: [{ key: 'ticket', label: 'Ticket (hex)', kind: 'hex', default: '' }],
@@ -962,7 +962,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Log',
     category: 'Discovery & Session',
-    spec: '§6.1.33 Log',
+    spec: '§6.1.35 Log',
     supported: true,
     blurb:
       "Forward a free-text diagnostic message to the server's log — not policy-relevant, purely operational.",
@@ -1005,7 +1005,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'SetEndpointRole',
     category: 'Discovery & Session',
-    spec: '§6.1.59 Set Endpoint Role',
+    spec: '§6.1.61 Set Endpoint Role',
     supported: true,
     blurb:
       'Declare this endpoint as acting as a Server or Client — relevant when two KMIP nodes peer with each other.',
@@ -1058,7 +1058,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Register',
     category: 'Object Lifecycle',
-    spec: '§6.1.48 Register',
+    spec: '§6.1.50 Register',
     supported: true,
     blurb:
       'Hand the server key material you already generated elsewhere, so it can manage (not generate) it. Since engine 0.13.0 a malformed or unsupported key is refused HERE, at registration — not silently accepted to fail on first use.',
@@ -1072,7 +1072,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Import',
     category: 'Object Lifecycle',
-    spec: '§6.1.29 Import',
+    spec: '§6.1.31 Import',
     supported: true,
     blurb:
       'Like Register, but lets you choose the UID and optionally overwrite an existing object.',
@@ -1095,7 +1095,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Export',
     category: 'Object Lifecycle',
-    spec: '§6.1.22 Export',
+    spec: '§6.1.24 Export',
     supported: true,
     blurb: "Pull a managed object's full key material back out — the inverse of Import.",
     params: [
@@ -1114,7 +1114,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Get',
     category: 'Object Lifecycle',
-    spec: '§6.1.23 Get',
+    spec: '§6.1.25 Get',
     supported: true,
     blurb: "Fetch a managed object's key material in a specific KeyFormatType.",
     params: [
@@ -1142,7 +1142,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Locate',
     category: 'Object Lifecycle',
-    spec: '§6.1.32 Locate',
+    spec: '§6.1.34 Locate',
     supported: true,
     blurb:
       'Search for objects matching attribute filters — algorithm, key length, or UID. Leave all filters empty to list everything in scope. (Length/UID filtering became real in engine 0.13.0; before that it was accepted and silently ignored.)',
@@ -1179,13 +1179,17 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Revoke',
     category: 'Object Lifecycle',
-    spec: '§6.1.49 Revoke',
+    spec: '§6.1.51 Revoke',
     supported: true,
     blurb:
       'Flip a key to Deactivated/Compromised with a recorded reason — stops it being used for new operations.',
     params: [
       { key: 'uid', label: 'Object UID', kind: 'uid', default: '' },
       {
+        // Full 10-member CSD02 Revocation Reason Code set (Table 598) — was
+        // missing AffiliationChanged/PrivilegeWithdrawn even under CSD01
+        // (found 2026-07-24 fixing the CSD02 gap below; CertificateHold/
+        // RemoveFromCrl/AaCompromise are the genuinely CSD02-new members).
         key: 'reason',
         label: 'Reason',
         kind: 'select',
@@ -1193,8 +1197,13 @@ export const OP_TEMPLATES: OpTemplate[] = [
           'Unspecified',
           'KeyCompromise',
           'CACompromise',
+          'AffiliationChanged',
           'Superseded',
           'CessationOfOperation',
+          'PrivilegeWithdrawn',
+          'CertificateHold',
+          'RemoveFromCRL',
+          'AACompromise',
         ],
         default: 'Unspecified',
       },
@@ -1204,7 +1213,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Destroy',
     category: 'Object Lifecycle',
-    spec: '§6.1.19 Destroy',
+    spec: '§6.1.20 Destroy',
     supported: true,
     blurb:
       "Irrevocably remove a key's material — genuinely: since engine 0.13.0 the raw bytes are zeroized in memory and securely deleted from storage, not just flagged. The object's UID and history remain.",
@@ -1276,7 +1285,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Recover',
     category: 'Object Lifecycle',
-    spec: '§6.1.47 Recover',
+    spec: '§6.1.49 Recover',
     supported: true,
     blurb: 'Bring an Archived object back into active service.',
     params: [{ key: 'uid', label: 'Object UID', kind: 'uid', default: '' }],
@@ -1285,7 +1294,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Obliterate',
     category: 'Object Lifecycle',
-    spec: '§6.1.39 Obliterate',
+    spec: '§6.1.41 Obliterate',
     supported: true,
     blurb:
       'The most destructive op in the protocol — erase an object so thoroughly even its metadata/history is gone.',
@@ -1295,7 +1304,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'GetUsageAllocation',
     category: 'Object Lifecycle',
-    spec: '§6.1.27 Get Usage Allocation',
+    spec: '§6.1.29 Get Usage Allocation',
     supported: true,
     blurb:
       "Reserve a slice of a key's remaining usage budget (operation count) for a specific client.",
@@ -1310,7 +1319,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'GetAttributes',
     category: 'Attributes',
-    spec: '§6.1.24 Get Attributes',
+    spec: '§6.1.26 Get Attributes',
     supported: true,
     blurb: 'Read one or more named attributes off a managed object.',
     params: [
@@ -1327,7 +1336,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'GetAttributeList',
     category: 'Attributes',
-    spec: '§6.1.25 Get Attribute List',
+    spec: '§6.1.27 Get Attribute List',
     supported: true,
     blurb: 'List which attribute NAMES exist on an object, without fetching their values.',
     params: [{ key: 'uid', label: 'Object UID', kind: 'uid', default: '' }],
@@ -1349,7 +1358,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'ModifyAttribute',
     category: 'Attributes',
-    spec: '§6.1.38 Modify Attribute',
+    spec: '§6.1.40 Modify Attribute',
     supported: true,
     blurb: 'Change the value of an attribute that already exists.',
     params: [
@@ -1374,7 +1383,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'DeleteAttribute',
     category: 'Attributes',
-    spec: '§6.1.17 Delete Attribute',
+    spec: '§6.1.18 Delete Attribute',
     supported: true,
     blurb:
       'Remove a named attribute from an object — every instance, unless a current value narrows it to just one.',
@@ -1394,7 +1403,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'SetAttribute',
     category: 'Attributes',
-    spec: '§6.1.56 Set Attribute',
+    spec: '§6.1.58 Set Attribute',
     supported: true,
     blurb:
       'Add-or-replace in one call, for single-instance attributes. Honest since engine 0.13.0: a writable attribute genuinely persists, and a read-only one (e.g. ProtectionStorageMask) is refused — never a Success that saved nothing.',
@@ -1440,7 +1449,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'GetConstraints',
     category: 'Attributes',
-    spec: '§6.1.26 Get Constraints',
+    spec: '§6.1.28 Get Constraints',
     supported: true,
     blurb:
       'Ask the server what usage constraints it would enforce, without naming a specific object.',
@@ -1450,7 +1459,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'SetDefaults',
     category: 'Attributes',
-    spec: '§6.1.58 Set Defaults',
+    spec: '§6.1.60 Set Defaults',
     supported: true,
     blurb: 'Configure the attribute defaults the server applies to future objects of a given type.',
     params: [
@@ -1470,7 +1479,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Encrypt',
     category: 'Cryptographic Services',
-    spec: '§6.1.21 Encrypt',
+    spec: '§6.1.23 Encrypt',
     supported: true,
     blurb:
       'Symmetric or asymmetric encryption using a managed key — returns ciphertext (and, for AEAD modes, an authentication tag).',
@@ -1490,7 +1499,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Decrypt',
     category: 'Cryptographic Services',
-    spec: '§6.1.15 Decrypt',
+    spec: '§6.1.16 Decrypt',
     supported: true,
     blurb:
       'The inverse of Encrypt — recovers plaintext given the ciphertext and (for symmetric AEAD) the IV. For AEAD, the auth tag is its own field — paste it separately, not appended to the ciphertext.',
@@ -1517,7 +1526,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Sign',
     category: 'Cryptographic Services',
-    spec: '§6.1.60 Sign',
+    spec: '§6.1.62 Sign',
     supported: true,
     blurb: 'Produce a signature over Data using a managed private key.',
     params: [
@@ -1566,7 +1575,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'SignatureVerify',
     category: 'Cryptographic Services',
-    spec: '§6.1.61 Signature Verify',
+    spec: '§6.1.63 Signature Verify',
     supported: true,
     blurb:
       'Check a signature against Data using a managed public key — answers with a ValidityIndicator.',
@@ -1610,7 +1619,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Encapsulate',
     category: 'Cryptographic Services',
-    spec: 'WD19 §6.1.22 Encapsulate (PQC KEM)',
+    spec: '§6.1.22 Encapsulate (PQC KEM)',
     supported: true,
     blurb:
       'PQC KEM operation: turn a public key into a ciphertext + shared secret. New in KMIP 3.0 — classical Diffie-Hellman has no equivalent operation.',
@@ -1620,7 +1629,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Decapsulate',
     category: 'Cryptographic Services',
-    spec: 'WD19 §6.1.15 Decapsulate (PQC KEM)',
+    spec: '§6.1.15 Decapsulate (PQC KEM)',
     supported: true,
     blurb:
       'PQC KEM operation: recover the same shared secret from a ciphertext using the matching private key.',
@@ -1633,7 +1642,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'MAC',
     category: 'Cryptographic Services',
-    spec: '§6.1.36 MAC',
+    spec: '§6.1.38 MAC',
     supported: true,
     blurb: 'Compute a symmetric message authentication code over Data.',
     params: [
@@ -1645,7 +1654,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'MACVerify',
     category: 'Cryptographic Services',
-    spec: '§6.1.37 MAC Verify',
+    spec: '§6.1.39 MAC Verify',
     supported: true,
     blurb: 'Check a MAC against a freshly-recomputed one.',
     params: [
@@ -1666,7 +1675,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
     // the async-management/negotiation ops is eligible.
     op: 'Hash',
     category: 'Cryptographic Services',
-    spec: '§6.1.28 Hash',
+    spec: '§6.1.30 Hash',
     supported: true,
     blurb:
       "Compute a cryptographic hash over Data — doesn't touch a managed key at all. Turn on 'Run asynchronously' to enqueue it as a real background job instead: the response is OperationPending + a correlation value for the Asynchronous Processing ops.",
@@ -1688,7 +1697,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'DeriveKey',
     category: 'Cryptographic Services',
-    spec: '§6.1.18 Derive Key',
+    spec: '§6.1.19 Derive Key',
     supported: true,
     blurb:
       'Turn one managed key into a new one via a KDF, instead of generating fresh random material. NIST SP 800-108 Counter Mode, PBKDF2, HASH, and HMAC are all real (K20) — pick the method to see which extra fields it needs.',
@@ -1735,7 +1744,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'ReKey',
     category: 'Cryptographic Services',
-    spec: '§6.1.51 Re-key',
+    spec: '§6.1.53 Re-key',
     supported: true,
     blurb:
       'Provision a successor to a symmetric key, optionally with a future activation offset — for planned rotation.',
@@ -1748,7 +1757,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'ReKeyKeyPair',
     category: 'Cryptographic Services',
-    spec: '§6.1.52 Re-key Key Pair',
+    spec: '§6.1.54 Re-key Key Pair',
     supported: true,
     blurb: 'The asymmetric equivalent of ReKey — provisions a successor key PAIR.',
     params: [
@@ -1762,7 +1771,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'RNGRetrieve',
     category: 'RNG & PKCS#11 Passthrough',
-    spec: '§6.1.54 RNG Retrieve',
+    spec: '§6.1.56 RNG Retrieve',
     supported: true,
     blurb: "Ask the server's RNG for N bytes of randomness directly — no key involved.",
     params: [{ key: 'dataLength', label: 'Bytes', kind: 'number', default: '32' }],
@@ -1771,7 +1780,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'RNGSeed',
     category: 'RNG & PKCS#11 Passthrough',
-    spec: '§6.1.55 RNG Seed',
+    spec: '§6.1.57 RNG Seed',
     supported: true,
     blurb: "Feed additional entropy into the server's RNG.",
     params: [{ key: 'data', label: 'Seed (hex)', kind: 'hex', default: '00112233' }],
@@ -1780,7 +1789,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'PKCS_11',
     category: 'RNG & PKCS#11 Passthrough',
-    spec: '§6.1.42 PKCS#11 passthrough',
+    spec: '§6.1.44 PKCS#11 passthrough',
     supported: true,
     blurb:
       "Invoke a specific PKCS#11 (Cryptoki) mechanism directly, for capabilities KMIP doesn't model natively.",
@@ -1799,7 +1808,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Validate',
     category: 'Certificate Services',
-    spec: '§6.1.62 Validate',
+    spec: '§6.1.64 Validate',
     supported: true,
     blurb:
       "Check a certificate chain's validity — Valid / Invalid / Unknown, never a false Valid. Try validating a Certify result's UID, then corrupt one hex nibble of an inline DER to see Invalid.",
@@ -1858,7 +1867,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'ReCertify',
     category: 'Certificate Services',
-    spec: '§6.1.50 Re-certify',
+    spec: '§6.1.52 Re-certify',
     supported: true,
     blurb:
       'Renew an existing certificate with a fresh validity window (Offset seconds from now), or re-key it with a new CSR. Links Replaced/Replacement back to the original.',
@@ -1929,7 +1938,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'JoinSplitKey',
     category: 'Object Lifecycle',
-    spec: '§6.1.31 Join Split Key',
+    spec: '§6.1.33 Join Split Key',
     supported: true,
     blurb:
       'Reconstruct the original key from any threshold-sized subset of share UIDs. Fewer than the threshold is honestly refused with the exact shortfall named — never silently-wrong key material.',
@@ -1946,7 +1955,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'ObtainLease',
     category: 'Object Lifecycle',
-    spec: '§6.1.40 Obtain Lease',
+    spec: '§6.1.42 Obtain Lease',
     supported: true,
     blurb:
       "Grant or renew a time-boxed lease on a managed object — the response carries the lease time and the object's last-change date.",
@@ -1956,7 +1965,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'SetConstraints',
     category: 'Attributes',
-    spec: '§6.1.57 Set Constraints',
+    spec: '§6.1.59 Set Constraints',
     supported: true,
     blurb:
       "Replace the server's usage-constraint table — the write-side counterpart of Get Constraints. An empty Constraints structure clears it.",
@@ -1970,7 +1979,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Poll',
     category: 'Asynchronous Processing',
-    spec: '§6.1.43 Poll',
+    spec: '§6.1.45 Poll',
     supported: true,
     blurb:
       "Fetch an asynchronous job's outcome by its correlation value. Once complete, the response is identical to what the synchronous op would have returned. Enqueue a job first: run Hash with 'Run asynchronously' on, then paste the correlation value here.",
@@ -1990,7 +1999,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Process',
     category: 'Asynchronous Processing',
-    spec: '§6.1.44 Process',
+    spec: '§6.1.46 Process',
     supported: true,
     blurb:
       'Block until a deferred asynchronous job completes — the "wait for it now after all" alternative to repeated polling.',
@@ -2000,7 +2009,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'QueryAsynchronousRequests',
     category: 'Asynchronous Processing',
-    spec: '§6.1.46 Query Asynchronous Requests',
+    spec: '§6.1.48 Query Asynchronous Requests',
     supported: true,
     blurb:
       "List this client's outstanding asynchronous jobs — optionally filtered to one correlation value and/or one or more operation names. Empty when every job has completed and been polled.",
@@ -2041,7 +2050,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'DelegatedLogin',
     category: 'Not Implemented (out of scope)',
-    spec: '§6.1.16 Delegated Login (unimplemented)',
+    spec: '§6.1.17 Delegated Login (unimplemented)',
     supported: false,
     blurb:
       'Federated/delegated authentication via an external IdP. No handler in this build — and honestly not advertised.',
@@ -2051,7 +2060,7 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Re-Provision',
     category: 'Not Implemented (out of scope)',
-    spec: '§6.1.53 Re-Provision (unimplemented)',
+    spec: '§6.1.55 Re-Provision (unimplemented)',
     supported: false,
     blurb:
       "Re-provision an object's material in place under a new mechanism. No handler in this build — and honestly not advertised.",

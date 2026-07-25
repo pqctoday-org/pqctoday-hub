@@ -29,6 +29,17 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.25.5] - 2026-07-25
+
+OASIS published the next revision of the KMIP 3.0 spec since our last update; this release moves the Protocol Matrix and the KMIP 3.0 Playground onto it.
+
+### Changed
+
+- **The Algorithms page's Protocol Matrix now cites the published KMIP 3.0 spec, not the earlier draft** [view:/algorithms] [persona:developer] [persona:architect] [persona:researcher]: the hybrid key-exchange row previously described ML-KEM/X25519 support as "ahead of the published draft"; the spec now defines that support natively, so the row was corrected to reflect standard-compliant behavior rather than an extension, and hybrid key exchange is now shown as fully testable in the Playground rather than not applicable.
+- **The KMIP 3.0 Playground's tour, glossary, quiz, and command reference now cite the published spec throughout** [view:/playground/cacp] [persona:developer] [persona:architect]: every remaining reference to the earlier working draft has been updated to the spec's actual published designation, and a batch of spec section numbers shown in lesson text and the command reference were corrected to match where the spec renumbered them.
+- **The Revoke reason picker in the KMIP 3.0 Playground now offers all 10 real revocation reasons, up from 5** [view:/playground/cacp] [persona:developer]: it was missing two reasons that were already valid under the prior spec, plus three new ones the latest spec just added, while the neighboring Deactivate picker already listed a complete set — both now match.
+- **The KMIP 3.0 Playground's in-browser engine was rebuilt against the latest published spec** [view:/playground/cacp] [persona:developer] [persona:architect]: picks up the reason-picker fix above along with the underlying spec-citation and terminology corrections, so the live Playground matches what the rest of the site now says.
+
 ## [4.25.4] - 2026-07-24
 
 ### Added

@@ -4,9 +4,14 @@
 // pqctoday-hsm/kmip/python-client/src/pqctoday_kmip/_ttlv.py's
 // `CodepointTable`. Loads the same spec-extraction JSON
 // (kmip-spec-3.0-tags-enums.json, staged as a public asset by
-// scripts/build-kmip-wasm.sh) plus the same hand-curated patches for
-// codepoints the published spec JSON is missing (WD19 PQC tags, a handful
-// of enum members). Keep these patches in sync with `_ttlv.py`'s
+// scripts/build-kmip-wasm.sh — as of 2026-07-24 extracted from the
+// published CSD02 HTML, not CSD01) plus the same hand-curated patches for
+// what that JSON still gets wrong or omits: `norm()`-collision aliases
+// (the spec's own hyphenation/casing doesn't match our request-builder's
+// option strings), genuine vendor extensions (FrodoKEM, Classic-McEliece,
+// LAMPS composites — never OASIS codepoints), and one table
+// (`DeactivationReasonCode`) the extractor still attributes to the wrong
+// spec table. Keep these patches in sync with `_ttlv.py`'s
 // `_SPEC_EXTRACT_PATCHES`/`_SPEC_EXTRACT_TAG_PATCHES` if either ever needs
 // updating — they are NOT auto-derived from one another.
 
@@ -25,26 +30,20 @@ interface SpecJson {
   enums: Record<string, SpecEnumMember[]>
 }
 
-/** WD19 PQC tags absent from the published-3.0 spec JSON — mirrors
- * `_ttlv.py`'s `_SPEC_EXTRACT_TAG_PATCHES`. Exported so `wd19Delta.local.test.ts`
- * can assert every genuinely-WD19-only entry here is documented in
- * `public/kmip-corpus/tags-enums-wd19-delta.json` (2026-07-23 re-audit, X1). */
+/** Tag entries kept as an explicit, independently-verified cross-check
+ * against `pqctoday-hsm/kmip/src/kmip30/wire.rs`'s own `tags::*` constants
+ * (the decoder these requests are built to match) — every one of these is
+ * ALSO present natively in the spec-extraction JSON under its spaced name
+ * ("Certificate Value", …), so `norm()`-based lookup would find it anyway.
+ * Mirrors `_ttlv.py`'s `_SPEC_EXTRACT_TAG_PATCHES`.
+ *
+ * (2026-07-24 CSD02 migration: the 8 WD19-only KEM/PQC tags this block used
+ * to carry — KEMAlgorithm, Deterministic, ContextString, Seed,
+ * InputKeyMaterial, Internal, ExternalMu, Random — are now supplied natively
+ * by the regenerated spec JSON and were removed. §6.1.64 Validate /
+ * §6.1.6 Certify / §6.1.52 Re-certify's tags below predate that migration
+ * and stay for the cross-check reason above, not a spec gap.) */
 export const SPEC_EXTRACT_TAG_PATCHES: Record<string, number> = {
-  KEMAlgorithm: 0x4201c3,
-  Deterministic: 0x4201c4,
-  ContextString: 0x4201c5,
-  Seed: 0x4201c6,
-  InputKeyMaterial: 0x4201c7,
-  Internal: 0x4201c8,
-  ExternalMu: 0x4201c9,
-  Random: 0x4201ca,
-  // §6.1.62 Validate / §6.1.6 Certify / §6.1.50 Re-certify (Certificate
-  // Services, WP5) — these 7 ARE present in the spec-extraction JSON under
-  // their spaced names ("Certificate Value", …), so this patch is redundant
-  // with `norm()`-based lookup; kept as an explicit, independently-verified
-  // cross-check against `pqctoday-hsm/kmip/src/kmip30/wire.rs`'s own
-  // `tags::*` constants (the decoder these requests are built to match).
-  // Values match both sources exactly.
   CertificateValue: 0x42001e,
   CertificateRequestType: 0x420019,
   CertificateRequest: 0x420018,
@@ -54,28 +53,40 @@ export const SPEC_EXTRACT_TAG_PATCHES: Record<string, number> = {
   ValidityIndicator: 0x42009b,
 }
 
-/** Enum members absent/incomplete in the published-3.0 spec JSON — mirrors
- * `_ttlv.py`'s `_SPEC_EXTRACT_PATCHES`. Exported for the same completeness-test
- * reason as `SPEC_EXTRACT_TAG_PATCHES` above. */
+/** Enum members the spec-extraction JSON either omits or gets wrong, plus
+ * `norm()`-collision aliases — the punctuation-insensitive lookup below is
+ * still case-SENSITIVE (`norm()` only strips non-alphanumerics), so e.g. the
+ * spec's own "Re-key" norms to `Rekey` while our request-builder's option
+ * string is `ReKey`: different strings, real collision. Mirrors `_ttlv.py`'s
+ * `_SPEC_EXTRACT_PATCHES`.
+ *
+ * (2026-07-24 CSD02 migration: every entry here was re-verified against the
+ * regenerated CSD02-sourced JSON. Entries that turned out to be exact
+ * case-sensitive matches natively — `KeyFormatType.SeedPrivateKey`,
+ * `CertificateRequestType.PKCS10`/`PEM`, all of `ValidityIndicator`,
+ * `CredentialType`'s 5 members other than `UsernameAndPassword`,
+ * `CryptographicAlgorithm.DES`/`RC4`/`X25519MLKEM768`, and
+ * `Operation.Encapsulate`/`Decapsulate` — were removed. What survives below
+ * is either a genuine casing/hyphenation alias, a vendor extension, or the
+ * `DeactivationReasonCode` table the extractor still mis-attributes.) */
 export const SPEC_EXTRACT_PATCHES: Record<string, Record<string, number>> = {
+  // Spec's own table has a typo — "MFG1", not "MGF1" — so this is a real
+  // alias, not a redundant safety net.
   MaskGenerator: { MGF1: 0x00000001 },
-  KeyFormatType: { SeedPrivateKey: 0x00000018 },
-  // §6.1.6 Certify / §6.1.50 Re-certify's `Certificate Request Type`
-  // (Certificate Services, WP5) — matches `kmip30::ops::CertificateRequestType`.
-  // Only PKCS10 is meaningful here (Certify rejects Crmf/Pem as
-  // OperationNotSupported — see certify.rs's `resolve_subject`).
-  CertificateRequestType: { Crmf: 0x00000001, PKCS10: 0x00000002, PEM: 0x00000003 },
-  // §6.1.62 Validate's three-way answer — matches
-  // `kmip30::ops::SignatureValidity`.
-  ValidityIndicator: { Valid: 0x00000001, Invalid: 0x00000002, Unknown: 0x00000003 },
+  // §6.1.6 Certify / §6.1.52 Re-certify's `Certificate Request Type` —
+  // matches `kmip30::ops::CertificateRequestType`. Spec's own member is
+  // "CRMF" (all-caps); our request-builder's option string is "Crmf". Only
+  // this one is a genuine alias — PKCS10/PEM already match natively.
+  CertificateRequestType: { Crmf: 0x00000001 },
   // §6.1.14 Deactivate's `Deactivation Reason Code` — the spec-extraction
-  // JSON's "Deactivation Reason Code" enum entries are a PDF-extraction
-  // mismatch (`Unspecified`/"Deactivation\n  Date"/"Protect Stop
-  // Date"/"Usage Limit" — clearly the wrong table), not the 7-member set
-  // `kmip30::ops::DeactivationReason` actually implements. Patched with
-  // the real values, verified 1:1 against `Revocation Reason Code`
-  // (`ops.rs`'s `DeactivationReason` enum mirrors `RevocationReason`'s
-  // codepoints exactly, both derived from the same §10.2-style table).
+  // JSON's "Deactivation Reason Code" table is still a PDF/HTML-extraction
+  // mismatch under CSD02 too (`Unspecified`/"Deactivation Date"/"Protect
+  // Stop Date"/"Usage Limit" — the wrong table, re-confirmed 2026-07-24),
+  // not the 7-member set `kmip30::ops::DeactivationReason` actually
+  // implements. Patched with the real values, verified 1:1 against
+  // `Revocation Reason Code` (`ops.rs`'s `DeactivationReason` enum mirrors
+  // `RevocationReason`'s codepoints exactly, both derived from the same
+  // §10.2-style table).
   DeactivationReasonCode: {
     Unspecified: 0x00000001,
     KeyCompromise: 0x00000002,
@@ -85,31 +96,23 @@ export const SPEC_EXTRACT_PATCHES: Record<string, Record<string, number>> = {
     CessationOfOperation: 0x00000006,
     PrivilegeWithdrawn: 0x00000007,
   },
+  // Spec's own member is "Username and Password" (lowercase "and"); our
+  // option string is "UsernameAndPassword" — real casing alias. The other 5
+  // members match the spec natively now.
   CredentialType: {
     UsernameAndPassword: 0x00000001,
-    Device: 0x00000002,
-    Attestation: 0x00000003,
-    OneTimePassword: 0x00000004,
-    HashedPassword: 0x00000005,
-    Ticket: 0x00000006,
   },
   CryptographicAlgorithm: {
-    DES: 0x00000001,
+    // Spec's own member is "3DES"; ours is "DES3" — real alias, not just a
+    // casing difference.
     DES3: 0x00000002,
-    // Found 2026-07-23 (WD19-delta completeness check): was 0x00000005 —
-    // that's DSA's codepoint, not RC4's. Real RC4 is 0x00000016 per the
-    // spec extraction's own 'RC4' entry; this patch was silently
-    // clobbering the correct base-JSON value with the wrong one. Currently
-    // unreachable (RC4 isn't in kmipMeta.ts's ALGORITHMS list, so no UI
-    // path encodes it), so no user-visible defect today — fixed anyway
-    // since it's the same defect class as H1 (wrong codepoint silently
-    // encoded) and now caught by the completeness test below.
-    RC4: 0x00000016,
     // BSI TR-02102-1 §2.4.1/§2.4.2 vendor KEMs (2026-07-06) — not in the
-    // published-3.0 spec JSON since they're vendor extensions, not OASIS
-    // codepoints (Classic McEliece's 0x34 is a real OASIS value; FrodoKEM's
-    // 0x8000_005f-0x64 range is ours). Bare family names default to the AES
-    // variant, mirroring create_key_pair.rs::parse_algorithm's convention.
+    // published spec JSON since they're vendor extensions, not OASIS
+    // codepoints (Classic McEliece's 0x34 is a real OASIS value, reused
+    // here under our own parameter-set-specific name; FrodoKEM's
+    // 0x8000_005f-0x64 range is ours outright). Bare family names default
+    // to the AES variant, mirroring create_key_pair.rs::parse_algorithm's
+    // convention.
     'FrodoKEM-640': 0x8000005f,
     'FrodoKEM-640-AES': 0x8000005f,
     'FrodoKEM-640-SHAKE': 0x80000060,
@@ -127,25 +130,27 @@ export const SPEC_EXTRACT_PATCHES: Record<string, Record<string, number>> = {
     'ML-DSA-44-RSA2048-PSS': 0x80000066,
     'ML-DSA-65-ECDSA-P256': 0x80000067,
     'ML-DSA-87-ECDSA-P384': 0x80000068,
-    // WD19 hybrid KEMs — real OASIS codepoints (0x5C/0x5D), just newer than
-    // the vendored spec-extraction JSON's CSD01 baseline (stops at 0x4A).
-    // Matches kmip/src/kmip30/algos.rs's KmipAlgorithm::X25519MlKem768 /
-    // SecP256r1MlKem768 exactly.
-    X25519MLKEM768: 0x0000005c,
+    // Published CSD02 hybrid KEM (§11.12) — spec's own member is
+    // "SECP256R1MLKEM768" (all-caps); ours is "SecP256r1MLKEM768" (matching
+    // the Rust engine's own naming) — real casing alias. X25519MLKEM768
+    // matches the spec's own casing exactly now and needs no patch.
     SecP256r1MLKEM768: 0x0000005d,
   },
   RevocationReasonCode: {
     // Spec member is "Cessation of Operation" (lowercase "of"), which norms
     // to a different key than this op-template's option string — same
-    // case-sensitive-norm trap as the Operation patch table above.
+    // case-sensitive-norm trap as CredentialType above.
     CessationOfOperation: 0x00000006,
   },
   Operation: {
+    // Spec's own hyphenated names ("Re-key", "Re-key Key Pair",
+    // "Re-certify") norm to `Rekey`/`RekeyKeyPair`/`Recertify` — different
+    // capitalization than our request-builder's option strings below.
+    // Encapsulate/Decapsulate matched the spec's own casing exactly and
+    // needed no patch even before this migration.
     ReKey: 0x00000004,
     ReKeyKeyPair: 0x0000001d,
     ReCertify: 0x00000007,
-    Encapsulate: 0x00000041,
-    Decapsulate: 0x00000042,
   },
   PKCS11Function: {
     CInitialize: 0x00000001,
