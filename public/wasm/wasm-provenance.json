@@ -9,9 +9,9 @@
       "sourceDirs": ["kmip", "wasm"],
       "track": "tip",
       "status": "built",
-      "hsmCommit": "8e7b09cc56ad4144e9c376ed9a78fdb808a52922",
-      "builtAt": "2026-07-24",
-      "_buildNote": "Corrects a stale record: this entry had said `5e08aa98`/2026-07-11 since that date, but the binary actually deployed since 2026-07-17 was built from hub commit 5e9238973 against hsm commits on the `test/all-changes-0710` branch (found during a 2026-07-24 re-audit) — the record was never updated for that rebuild or any since. This rebuild is the CSD02 migration's final step: real `cargo build --target wasm32-unknown-unknown` + `wasm-bindgen` + a live node smoke test (Query, Create, malformed-frame handling, ML-DSA-65 CreateKeyPair/Sign/SignatureVerify round-trip, an unimplemented-algorithm rejection, and a full X25519MLKEM768 hybrid-KEM CreateKeyPair→Activate→Encapsulate→Decapsulate round-trip — not simulated), from a clean worktree exactly matching `hsmCommit` (verified via `git status` before/after). No wasm-exported function signatures changed (only two §6.1.x doc-comment citations, in a sibling module the CSD02 citation migration had missed). `sync:wasm:check` was failing before this rebuild (15 hsm commits of drift, mostly the unrelated Part F multi-tenancy hardening pass) and is clean after."
+      "hsmCommit": "cfd71fc0a0d6bd763a958a9884e24b748dd008c8",
+      "builtAt": "2026-07-25",
+      "_buildNote": "Follow-up rebuild closing a 1-commit drift the CSD02 migration's own last hsm commit (cfd71fc, KAT provenance metadata) introduced against the prior entry (8e7b09c/2026-07-24) — found by running the provenance check with an explicit HSM_REPO_PATH override before shipping this release, since the default sibling-path check is a no-op without one. cfd71fc only touches kmip/kat/*.json documentation (no wasm-exported function signatures, no engine behavior), so this rebuild is a formality for the release record, not a functional change — confirmed via another real `cargo build --target wasm32-unknown-unknown` + `wasm-bindgen` + live node smoke test (Query, Create, malformed-frame handling, ML-DSA-65 CreateKeyPair/Sign/SignatureVerify round-trip, an unimplemented-algorithm rejection, and a full X25519MLKEM768 hybrid-KEM CreateKeyPair→Activate→Encapsulate→Decapsulate round-trip — not simulated), from a clean worktree exactly matching `hsmCommit`. `sync:wasm:check:cacp-kmip --check` is clean after."
     },
     {
       "name": "softhsmrustv3-engine",
