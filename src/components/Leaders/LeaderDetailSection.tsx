@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useEffect, useRef } from 'react'
 import { MapPin, BookOpen, ExternalLink, Clock, ShieldCheck, X, CheckCircle2 } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { motion } from 'framer-motion'
 import type { Leader } from '../../data/leadersData'
 import { CountryFlag } from '../common/CountryFlag'

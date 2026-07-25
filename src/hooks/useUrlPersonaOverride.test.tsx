@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render } from '@testing-library/react'
-import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { MemoryRouter, Routes, Route, useLocation } from 'react-router'
 import { useUrlPersonaOverride } from './useUrlPersonaOverride'
 import { usePersonaStore } from '@/store/usePersonaStore'
 

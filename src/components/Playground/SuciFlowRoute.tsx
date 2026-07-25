@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useCallback, useState } from 'react'
 import { Info } from 'lucide-react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 import { SuciFlow } from '@/components/PKILearning/modules/FiveG/SuciFlow'
 import { Button } from '@/components/ui/button'
 

@@ -2,7 +2,7 @@
 import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter } from 'react-router'
 import { BoardPitchBuilder } from './BoardPitchBuilder'
 import type { ExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import type { ExecutiveDocument } from '@/services/storage/types'

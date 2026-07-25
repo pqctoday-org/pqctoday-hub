@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import FocusLock from 'react-focus-lock'
 import { Search, Clock, X, ArrowRight, CornerDownLeft, ChevronUp, ChevronDown } from 'lucide-react'

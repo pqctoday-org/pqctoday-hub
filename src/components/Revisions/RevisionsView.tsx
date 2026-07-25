@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { GitMerge } from 'lucide-react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router'
 import { GlobalRevisionsFeed } from '@/components/ui/GlobalRevisionsFeed'
 import { useRevisions, type RevisionEntry } from '@/hooks/useRevisions'
 

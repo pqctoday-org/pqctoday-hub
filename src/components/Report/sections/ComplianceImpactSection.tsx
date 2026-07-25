@@ -2,7 +2,7 @@
 // /report's "Compliance Impact" section (REPORT_SECTION_ORDER:
 // 'complianceImpact'). Extracted from ReportContent.tsx — see
 // reportSectionToCswp39.ts.
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { CheckCircle, ArrowRight, BookOpen, Calendar } from 'lucide-react'
 import clsx from 'clsx'
 import type { ComplianceImpact } from '../../../hooks/assessmentTypes'

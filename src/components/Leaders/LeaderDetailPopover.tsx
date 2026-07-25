@@ -12,7 +12,7 @@ import {
 } from 'lucide-react'
 import { createPortal } from 'react-dom'
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import FocusLock from 'react-focus-lock'
 import type { Leader } from '../../data/leadersData'
 import { StatusBadge } from '../common/StatusBadge'

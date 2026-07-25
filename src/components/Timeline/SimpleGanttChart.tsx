@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useMemo, useCallback, useRef, useEffect, Fragment } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 import {
   ArrowUpDown,
   ArrowUp,

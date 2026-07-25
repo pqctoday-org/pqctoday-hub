@@ -14,7 +14,7 @@
  */
 
 import { useEffect } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router'
 import { useEmbedState } from './EmbedProvider'
 import { getFirstAllowedRoute } from './routePresets'
 import { isNativeApp } from './platform'

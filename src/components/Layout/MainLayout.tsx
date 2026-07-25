@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
-import { Outlet, NavLink, Link, useLocation } from 'react-router-dom'
+import { Outlet, NavLink, Link, useLocation } from 'react-router'
 import { motion } from 'framer-motion'
 import {
   Shield,

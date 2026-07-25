@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { render, screen, fireEvent } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter } from 'react-router'
 import { OpenSSLStudioView } from './OpenSSLStudioView'
 
 // Mock the sub-components to isolate the view logic

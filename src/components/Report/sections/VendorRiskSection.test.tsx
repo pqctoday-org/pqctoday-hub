@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { VendorRiskSection } from './VendorRiskSection'
 import type { SoftwareItem } from '@/types/MigrateTypes'

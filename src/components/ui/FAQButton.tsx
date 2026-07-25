@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { HelpCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ChevronLeft, ChevronRight, Lock, Cpu, Clock, Compass, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'

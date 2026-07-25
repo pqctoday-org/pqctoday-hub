@@ -4,7 +4,7 @@
 // writes store.currentStep through the track-relative mapping so the legacy
 // wizard and the redesign agree on what "step N" means (resume, ?step, analytics).
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useSearchParams, type SetURLSearchParams } from 'react-router-dom'
+import { useSearchParams, type SetURLSearchParams } from 'react-router'
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
 import { usePersonaStore } from '../../../store/usePersonaStore'
 import { logAssessStart, logAssessStep } from '../../../utils/analytics'

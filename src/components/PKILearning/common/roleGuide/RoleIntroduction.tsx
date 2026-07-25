@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { AlertTriangle, BookOpen, Rocket, ArrowRight, Shield, Clock, Target } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import type { RoleGuideData } from './types'
 

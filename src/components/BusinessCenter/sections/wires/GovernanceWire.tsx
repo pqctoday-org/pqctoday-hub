@@ -8,7 +8,7 @@
  *   3. Industry + country  — chips under Business Requirements.
  */
 import React, { useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { ArrowRight, Briefcase, Calendar, ShieldAlert } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { BusinessMetrics } from '../../hooks/useBusinessMetrics'

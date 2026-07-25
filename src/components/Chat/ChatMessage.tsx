@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import {
   Bot,
   User,

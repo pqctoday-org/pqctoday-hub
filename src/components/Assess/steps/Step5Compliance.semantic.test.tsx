@@ -6,7 +6,7 @@
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import * as useSemanticSearchModule from '@/services/search/useSemanticSearch'
 import { Step5Compliance } from './Step5Compliance'

@@ -9,7 +9,7 @@
  */
 import React, { useState } from 'react'
 import { ChevronDown, ChevronUp, GraduationCap } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { CSWP39_ZONE_DETAILS, CSWP39_ZONE_STYLES, type ZoneId } from '@/data/cswp39ZoneData'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'

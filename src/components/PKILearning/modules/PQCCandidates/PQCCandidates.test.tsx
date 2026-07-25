@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter } from 'react-router'
 import { PQCCandidatesModule } from './index'
 import { CANDIDATES, getCandidate } from './data/candidates'
 import { FAMILIES, FAMILY_LIST } from './data/families'

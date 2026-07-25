@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useEffect, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, GitBranch, ExternalLink, PackageOpen, BookOpen, Library } from 'lucide-react'
 import FocusLock from 'react-focus-lock'

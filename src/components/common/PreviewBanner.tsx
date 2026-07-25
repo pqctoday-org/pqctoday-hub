@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useEffect, useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router'
 import { Lock, BookOpen, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { PersonaSwitchModal } from '@/components/Persona/PersonaSwitchModal'

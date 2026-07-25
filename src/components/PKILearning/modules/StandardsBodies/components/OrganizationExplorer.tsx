@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { ExternalLink, BookOpen } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { ORGANIZATIONS } from '../data'
 import type { OrgEntry, OrgType, OrgScope, OrgAuthority } from '../data'
 import { Button } from '@/components/ui/button'

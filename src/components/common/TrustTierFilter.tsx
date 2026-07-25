@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { ShieldCheck } from 'lucide-react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 import { FilterDropdown } from './FilterDropdown'
 import type { FilterDropdownItem } from './FilterDropdown'
 import { getTrustScore, type TrustTier, type ScoredResourceType } from '@/data/trustScore'

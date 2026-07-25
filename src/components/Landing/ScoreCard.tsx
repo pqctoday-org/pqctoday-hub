@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { motion } from 'framer-motion'
 import { ArrowRight, Flame, GraduationCap, Info, Sparkles } from 'lucide-react'
 import { Button } from '../ui/button'

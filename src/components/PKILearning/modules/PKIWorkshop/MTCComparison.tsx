@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { ArrowRight, TreePine, Info } from 'lucide-react'
 import {
   ALGORITHM_SIZES,

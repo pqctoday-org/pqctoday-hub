@@ -9,7 +9,7 @@
 // The GlossaryProvider lives in TpmPlayground.tsx so the workbench's
 // Execution Log hovers share the same glossary session.
 import { useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import {
   CheckCircle2,
   ChevronRight,

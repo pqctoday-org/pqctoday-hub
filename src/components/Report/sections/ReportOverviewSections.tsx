@@ -5,7 +5,7 @@
 // gating stays in ReportContent.tsx; these components only render the body.
 // Extracted from ReportContent.tsx — see reportSectionToCswp39.ts.
 import { Calendar, ShieldAlert, AlertTriangle, ArrowRight, Briefcase } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import clsx from 'clsx'
 import type { AssessmentResult } from '../../../hooks/assessmentTypes'
 import { riskConfig, RiskGauge } from '../../shared/widgets/RiskGauge'

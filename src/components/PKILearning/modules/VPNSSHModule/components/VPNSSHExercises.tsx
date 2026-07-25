@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { Play, BookOpen, ArrowRight } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import type { IKEv2Mode } from '../data/ikev2Constants'
 import type { SSHKexAlgorithm } from '../data/sshConstants'
 import { Button } from '@/components/ui/button'

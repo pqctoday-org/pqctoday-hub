@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router'
 import { useWorkshopStore } from '@/store/useWorkshopStore'
 import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Zap, HardDrive, FlaskConical, Database } from 'lucide-react'
 import FocusLock from 'react-focus-lock'

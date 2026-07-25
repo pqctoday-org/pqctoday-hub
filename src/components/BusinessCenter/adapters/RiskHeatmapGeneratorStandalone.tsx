@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { Grid3X3 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { RiskHeatmapGenerator } from '@/components/PKILearning/modules/PQCRiskManagement/components/RiskHeatmapGenerator'

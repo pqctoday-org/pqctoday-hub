@@ -9,7 +9,7 @@
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { MemoryRouter, useLocation } from 'react-router-dom'
+import { MemoryRouter, useLocation } from 'react-router'
 import '@testing-library/jest-dom'
 import { AlgorithmsView } from './AlgorithmsView'
 import { usePersonaStore } from '@/store/usePersonaStore'

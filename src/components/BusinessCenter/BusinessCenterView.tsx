@@ -10,7 +10,7 @@ import {
   X,
   PlayCircle,
 } from 'lucide-react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router'
 import JSZip from 'jszip'
 import { PageHeader } from '@/components/common/PageHeader'
 import { PreviewBanner } from '@/components/common/PreviewBanner'

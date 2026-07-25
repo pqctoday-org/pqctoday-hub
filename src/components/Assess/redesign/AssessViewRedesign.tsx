@@ -12,7 +12,7 @@
 // This is the DEFAULT /assess route; the previous page is preserved at
 // /assess/legacy.
 import React, { useEffect, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router'
 import { motion } from 'framer-motion'
 import {
   ClipboardCheck,

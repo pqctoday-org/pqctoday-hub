@@ -2,7 +2,7 @@
 import React from 'react'
 import { Card, CardContent } from './card'
 import { AlertTriangle, ExternalLink } from 'lucide-react'
-import { useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router'
 
 export function WasmFallback({ children }: { children: React.ReactNode }) {
   const location = useLocation()

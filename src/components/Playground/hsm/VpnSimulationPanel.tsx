@@ -15,7 +15,7 @@ import {
   FlaskConical,
   Loader2,
 } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { VpnWireVisualization } from './VpnWireVisualization'
 import { VpnPacketInspector } from './VpnPacketInspector'

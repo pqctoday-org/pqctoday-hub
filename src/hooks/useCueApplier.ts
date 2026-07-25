@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useCallback, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import type { WorkshopCue, WorkshopFixtures } from '@/types/Workshop'
 import { buildUrl } from '@/utils/workshopDeepLink'
 import { useWorkshopStore } from '@/store/useWorkshopStore'

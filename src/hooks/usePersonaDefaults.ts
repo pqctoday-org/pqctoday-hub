@@ -21,7 +21,7 @@
  * See `<PersonaDefaultsBanner>` for the matching UI surface.
  */
 import { useCallback, useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 import { usePersonaStore } from '@/store/usePersonaStore'
 
 export interface UsePersonaDefaultsResult {

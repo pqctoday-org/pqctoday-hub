@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { logPersonaSelected } from '@/utils/analytics'
 import type { PersonaId } from '@/data/learningPersonas'

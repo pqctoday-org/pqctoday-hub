@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useMemo } from 'react'
 import { Building2 } from 'lucide-react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 import { FilterDropdown } from '../common/FilterDropdown'
 import type { FilterDropdownItem } from '../common/FilterDropdown'
 import { timelineData } from '../../data/timelineData'

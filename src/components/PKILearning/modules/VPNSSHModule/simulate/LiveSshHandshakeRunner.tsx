@@ -8,7 +8,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { Play, RotateCcw, ShieldCheck, ShieldAlert, AlertCircle, ExternalLink } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { HsmProvider, useHsmContext } from '@/components/Playground/hsm/HsmContext'
 import { sshEngine, type SshHandshakeResult } from '@/wasm/openssh'

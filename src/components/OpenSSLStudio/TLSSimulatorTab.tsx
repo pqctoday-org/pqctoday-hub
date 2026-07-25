@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useEffect, useCallback } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { ExternalLink, Loader2, Play } from 'lucide-react'
 import { useTLSStore, type SimulationResult } from '@/store/tls-learning.store'
 import { openSSLService } from '@/services/crypto/OpenSSLService'

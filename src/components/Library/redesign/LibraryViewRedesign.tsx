@@ -10,7 +10,7 @@
  * ref/prefs plus the geo[]/sector[]/tier params the shared filters own).
  */
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 import { BookOpen, ChevronDown, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { PageHeader } from '@/components/common/PageHeader'

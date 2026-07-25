@@ -2,7 +2,7 @@
 // /report's "Algorithm Migration Priority" section (REPORT_SECTION_ORDER:
 // 'algorithmMigration'). Extracted from ReportContent.tsx — see
 // reportSectionToCswp39.ts.
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import {
   ShieldAlert,
   AlertTriangle,

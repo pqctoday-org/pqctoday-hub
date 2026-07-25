@@ -18,11 +18,11 @@ vi.mock('@/services/search/useSemanticSearch', async () => {
   }
 })
 
-// Mock react-router-dom — component uses useSearchParams for deep linking.
+// Mock react-router — component uses useSearchParams for deep linking.
 // Stable reference prevents useEffect([searchParams]) from firing on every render.
 const mockSearchParams = new URLSearchParams()
 const mockSetSearchParams = vi.fn()
-vi.mock('react-router-dom', () => ({
+vi.mock('react-router', () => ({
   useSearchParams: () => [mockSearchParams, mockSetSearchParams],
 }))
 

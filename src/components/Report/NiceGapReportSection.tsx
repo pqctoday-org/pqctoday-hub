@@ -8,7 +8,7 @@ import {
   Download,
   ChevronRight,
 } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { generateNiceGapReport } from '@/utils/niceGapReport'
 import { NICE_COMPETENCY_AREAS, CA_TO_NFCOM, NF_COMPETENCY_AREAS } from '@/data/niceFramework'
 import type { AssessmentResult, AssessmentInput } from '@/hooks/assessmentTypes'

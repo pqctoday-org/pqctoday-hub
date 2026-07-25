@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen, within, fireEvent } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter } from 'react-router'
 import { TrapInsightsPanel } from './TrapInsightsPanel'
 import { recordTrapPick, clearTrapTally } from './simTrapTally'
 

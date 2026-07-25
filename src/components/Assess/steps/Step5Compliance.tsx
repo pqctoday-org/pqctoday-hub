@@ -12,7 +12,7 @@ import {
   ChevronUp,
   Plus,
 } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import clsx from 'clsx'
 
 import { useAssessmentStore } from '../../../store/useAssessmentStore'

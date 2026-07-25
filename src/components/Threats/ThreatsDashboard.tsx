@@ -16,7 +16,7 @@ import {
   Clock,
   List,
 } from 'lucide-react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 import { threatsData, threatsMetadata } from '../../data/threatsData'
 import type { ThreatItem } from '../../data/threatsData'
 import { AnimatePresence } from 'framer-motion'

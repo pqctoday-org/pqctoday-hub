@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useMemo, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { motion } from 'framer-motion'
 import { AlgorithmComparison } from './AlgorithmComparison'
 import { AlgorithmDetailedComparison } from './AlgorithmDetailedComparison'
