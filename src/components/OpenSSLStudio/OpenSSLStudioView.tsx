@@ -83,6 +83,7 @@ const VALID_CATEGORIES = new Set<string>([
   'lms',
   'configutl',
   'kdf',
+  'pkcs11',
 ])
 
 function resolveCmd(param: string | null): OpenSSLCategory {
@@ -290,6 +291,7 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
                     executeCommand={executeCommand}
                     executeSkey={executeSkey}
                     retryLoad={retryLoad}
+                    hsmKeygen={hsmKeygen}
                   />
                 </div>
 
