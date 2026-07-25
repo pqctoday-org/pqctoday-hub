@@ -24,6 +24,16 @@
  *   npx tsx scripts/apply-protocol-matrix-updates.ts           # dry-run
  *   npx tsx scripts/apply-protocol-matrix-updates.ts --apply
  *   npx tsx scripts/apply-protocol-matrix-updates.ts --apply --allow-dirty
+ *   npx tsx scripts/apply-protocol-matrix-updates.ts --apply --items-file=<path>
+ *
+ * `--items-file=<path>` (WP-1.11, 2026-07-25): names a JSON file holding an
+ * array of reviewer-approved {rowId, dimension, approvedStage,
+ * expectedEncoded} objects — the admin apply flow's per-item selection. When
+ * given, ONLY those (rowId, dimension) pairs are patched, never the whole
+ * report; each is re-checked against the live report first (stale-draft
+ * guard) and reported separately if it no longer matches what was approved.
+ * Without this flag the whole-report behavior is unchanged, for the
+ * standalone `npm run apply:protocol-matrix` workflow.
  *
  * Exit codes:
  *   0 — clean (no updates, or apply succeeded)
@@ -81,9 +91,10 @@ function todayIso(): string {
 export function patchMatrix(
   source: string,
   deltas: StageDelta[]
-): { next: string; applied: number; downgrades: string[] } {
+): { next: string; applied: number; appliedKeys: string[]; downgrades: string[] } {
   let next = source
   let applied = 0
+  const appliedKeys: string[] = []
   const grouped = new Map<string, StageDelta[]>()
   for (const d of deltas) {
     if (!d.current_stage) continue
@@ -170,6 +181,7 @@ export function patchMatrix(
     if (nextBlock !== block) {
       next = next.slice(0, dimStart) + nextBlock + next.slice(dimEnd + 1)
       applied += 1
+      appliedKeys.push(key)
     }
   }
 
@@ -180,13 +192,117 @@ export function patchMatrix(
     )
   }
 
-  return { next, applied, downgrades }
+  return { next, applied, appliedKeys, downgrades }
+}
+
+/** One reviewer-approved item, as the admin apply flow writes it (WP-1.11,
+ * 2026-07-25) — `--items-file=<path>` names a JSON file holding an array of
+ * these. `approvedStage` is `resolution.value` (falls back to the finding's
+ * own `expected` when a reviewer approved as-is without editing); `
+ * expectedEncoded` is the finding's `current` — the encoded stage the
+ * reviewer actually saw. Both are cross-checked against the LIVE report
+ * below, same "stale-draft guard" shape as every Python-side field-
+ * correction applier: the report can be regenerated between approval and
+ * apply, and a mismatch there must skip loudly, not silently patch the
+ * wrong value. */
+export interface ApprovedItem {
+  rowId: string
+  dimension: string
+  approvedStage: string
+  expectedEncoded: string | null
+}
+
+function loadItemsFilter(): ApprovedItem[] | null {
+  const arg = process.argv.slice(2).find((a) => a.startsWith('--items-file='))
+  if (!arg) return null
+  const path = arg.slice('--items-file='.length)
+  return JSON.parse(readFileSync(path, 'utf-8')) as ApprovedItem[]
+}
+
+/**
+ * Narrows `report.deltas` down to exactly the reviewer-approved (rowId,
+ * dimension) pairs, applying the stale-draft guard. This is the fix for
+ * the whole-file/per-item mismatch (WP-1.11): before this, ANY approved
+ * protocol-matrix item caused the ENTIRE report to be patched — approving
+ * one delta and rejecting another had no effect, because nothing told this
+ * script which ones were actually reviewed. `deltas` returned here carry
+ * the delta AS RECORDED IN THE LIVE REPORT (not the reviewer's stale copy)
+ * — the reviewer only chose WHICH pair to write, never a value that
+ * overrides the deterministic datatracker source of truth.
+ */
+export interface StaleItem {
+  key: string
+  reason: string
+}
+
+export function narrowToApprovedItems(
+  deltas: StageDelta[],
+  items: ApprovedItem[]
+): { narrowed: StageDelta[]; stale: StaleItem[] } {
+  const byKey = new Map<string, StageDelta>()
+  for (const d of deltas) byKey.set(`${d.row_id}::${d.dimension}`, d)
+  const narrowed: StageDelta[] = []
+  const stale: StaleItem[] = []
+  for (const item of items) {
+    const key = `${item.rowId}::${item.dimension}`
+    const live = byKey.get(key)
+    if (!live) {
+      stale.push({
+        key,
+        reason: 'no longer in the report (already applied, or the drift resolved itself)',
+      })
+      continue
+    }
+    if (item.expectedEncoded != null && live.encoded_stage !== item.expectedEncoded) {
+      stale.push({
+        key,
+        reason:
+          `encoded stage is now ${live.encoded_stage ?? 'null'}, not the ` +
+          `${item.expectedEncoded} this approval was based on`,
+      })
+      continue
+    }
+    if (live.current_stage !== item.approvedStage) {
+      stale.push({
+        key,
+        reason:
+          `datatracker now reports ${live.current_stage ?? 'null'}, not the ` +
+          `${item.approvedStage} that was approved`,
+      })
+      continue
+    }
+    narrowed.push(live)
+  }
+  return { narrowed, stale }
+}
+
+function printResultJson(appliedKeys: string[], stale: StaleItem[], downgrades: string[]): void {
+  // One machine-parseable line, additive to the human-readable output above
+  // it — only ever printed in --items-file mode, so the standalone `npm run
+  // apply:protocol-matrix` CLI workflow's output is byte-for-byte unchanged.
+  // Bare keys are derived HERE, once, by the code that built the formatted
+  // strings in the first place — never re-parsed downstream (a Python
+  // process splitting "rowId::dim: reason" on ':' would trip over the '::'
+  // inside the key itself).
+  const staleKeys = stale.map((s) => s.key)
+  const blockedKeys = downgrades.map((d) => d.split(': ')[0])
+  console.log(
+    'RESULT-JSON: ' +
+      JSON.stringify({
+        appliedKeys,
+        staleKeys,
+        blockedKeys,
+        staleReasons: stale.map((s) => `${s.key}: ${s.reason}`),
+        blockedReasons: downgrades,
+      })
+  )
 }
 
 function main(): void {
   const args = new Set(process.argv.slice(2))
   const apply = args.has('--apply')
   const allowDirty = args.has('--allow-dirty')
+  const itemsFilter = loadItemsFilter()
 
   if (!existsSync(REPORT_FILE)) {
     console.error(`ERROR: report not found at ${REPORT_FILE}`)
@@ -195,12 +311,35 @@ function main(): void {
   }
   const report = JSON.parse(readFileSync(REPORT_FILE, 'utf-8')) as EnrichmentReport
   if (!report.deltas || report.deltas.length === 0) {
+    if (itemsFilter) {
+      printResultJson(
+        [],
+        itemsFilter.map((i) => ({
+          key: `${i.rowId}::${i.dimension}`,
+          reason: 'report has no deltas at all',
+        })),
+        []
+      )
+    }
     console.log('No stage drift to apply.')
     process.exit(0)
   }
 
+  let deltasToPatch = report.deltas
+  let staleItems: StaleItem[] = []
+  if (itemsFilter) {
+    const r = narrowToApprovedItems(report.deltas, itemsFilter)
+    deltasToPatch = r.narrowed
+    staleItems = r.stale
+    if (staleItems.length > 0) {
+      console.error(`STALE ${staleItems.length} approved item(s) — not applied:`)
+      for (const s of staleItems) console.error(`  ${s.key}: ${s.reason}`)
+      console.error('')
+    }
+  }
+
   const source = readFileSync(MATRIX_FILE, 'utf-8')
-  const { next, applied, downgrades } = patchMatrix(source, report.deltas)
+  const { next, applied, appliedKeys, downgrades } = patchMatrix(source, deltasToPatch)
 
   // Reported before anything else, and on stderr, because a downgrade is not
   // routine: it means the feed disagreed with the matrix in the one direction
@@ -217,6 +356,7 @@ function main(): void {
   }
 
   if (applied === 0) {
+    if (itemsFilter) printResultJson([], staleItems, downgrades)
     if (downgrades.length > 0) {
       // Exit 1 = "drift detected, nothing applied" (the documented meaning),
       // NOT 0. Reporting "matrix already matches" here would be false: the
@@ -229,6 +369,7 @@ function main(): void {
   }
 
   if (!apply) {
+    if (itemsFilter) printResultJson(appliedKeys, staleItems, downgrades)
     console.log(`DRY-RUN: would patch ${applied} dimension block(s).`)
     console.log('Re-run with --apply to write changes.')
     console.log()
@@ -244,12 +385,14 @@ function main(): void {
   }
 
   if (!allowDirty && isMatrixDirty()) {
+    if (itemsFilter) printResultJson([], staleItems, downgrades)
     console.error('ERROR: matrix file has uncommitted changes; refusing to overwrite.')
     console.error('Either commit them first, or pass --allow-dirty.')
     process.exit(2)
   }
 
   writeFileSync(MATRIX_FILE, next)
+  if (itemsFilter) printResultJson(appliedKeys, staleItems, downgrades)
   console.log(`OK Applied ${applied} stage update(s) to ${MATRIX_FILE}`)
   console.log(`OK Bumped PROTOCOL_MATRIX_LAST_UPDATED to ${todayIso()}`)
 }
