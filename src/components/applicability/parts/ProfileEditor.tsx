@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { Info, ExternalLink } from 'lucide-react'
 import { FilterDropdown } from '../../common/FilterDropdown'
 import { useAssessmentStore } from '../../../store/useAssessmentStore'

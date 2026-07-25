@@ -22,7 +22,7 @@
  * both already shipped.
  */
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { ChevronDown, GitCompareArrows, ExternalLink, AlertTriangle, Grid3x3 } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'

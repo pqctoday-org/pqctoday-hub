@@ -13,7 +13,7 @@
  * underlying recommendation set.
  */
 import { useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { Layers, GlobeLock, ArrowRight } from 'lucide-react'
 import { useApplicabilityWithPaths } from '../../../hooks/useApplicabilityWithPaths'
 import { groupByTier, type UserProfile } from '../../../utils/applicabilityEngine'

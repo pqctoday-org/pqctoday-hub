@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { FileText, Sparkles, ChevronRight } from 'lucide-react'
 import { getCurrentVersion, useVersionStore } from '@/store/useVersionStore'
 import { Button } from '@/components/ui/button'

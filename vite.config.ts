@@ -308,7 +308,7 @@ export default defineConfig({
       ],
       output: {
         manualChunks: {
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-react': ['react', 'react-dom', 'react-router'],
           'vendor-ui': ['framer-motion', 'lucide-react', 'clsx'],
           'vendor-pqc': ['@oqs/liboqs-js', '@noble/hashes'],
           'vendor-zip': ['jszip'],

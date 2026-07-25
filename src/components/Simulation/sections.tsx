@@ -6,7 +6,7 @@
  * No store access — everything arrives via props.
  */
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { MATURITY_LEVEL_NAMES } from '@/data/phaseMaturity'
 import { type PhaseId } from '@/data/frameworkPhases'

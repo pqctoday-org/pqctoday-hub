@@ -10,7 +10,7 @@ import {
   Maximize2,
   Minimize2,
 } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import type { PatentItem, NistStatus } from '@/types/PatentTypes'
 import { logExternalLink } from '@/utils/analytics'

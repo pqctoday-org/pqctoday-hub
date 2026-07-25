@@ -19,7 +19,7 @@
  * `hooks/assessment/twoTrack.ts` (A = Confidentiality/KEM, B = Integrity/Signatures).
  */
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { Lock, FileSignature, ArrowRight, Layers, ClipboardCheck, ShieldAlert } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 

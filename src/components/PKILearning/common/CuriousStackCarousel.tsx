@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import type { ModuleItem } from '../ModuleCard'
 import { CuriousSummaryBanner } from './CuriousSummaryBanner'

@@ -17,7 +17,7 @@
  * For You views; only rendering differs.
  */
 import { useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import {
   Clock,
   ShieldAlert,

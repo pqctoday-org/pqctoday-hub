@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { ChevronDown, Sparkles } from 'lucide-react'
 import clsx from 'clsx'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { Button } from '../ui/button'
 import type { LibraryEnrichment } from '../../data/libraryEnrichmentData'
 import type { Leader } from '../../data/leadersData'

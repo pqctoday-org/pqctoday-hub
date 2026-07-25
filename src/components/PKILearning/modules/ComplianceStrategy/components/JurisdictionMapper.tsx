@@ -13,7 +13,7 @@ import {
   ExternalLink,
   Package,
 } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { ExportableArtifact } from '../../../common/executive'
 import { rowsToCsv } from '@/services/export/csvExport'

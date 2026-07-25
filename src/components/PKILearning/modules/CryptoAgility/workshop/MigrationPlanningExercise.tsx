@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { ChevronRight, ChevronLeft, CheckCircle, Circle, ClipboardCheck, Route } from 'lucide-react'
 import { MIGRATION_STEPS } from '@/data/migrationWorkflowData'
 import { Button } from '@/components/ui/button'

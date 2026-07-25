@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router'
 import { ArrowRight, X, CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useMigrationWorkflowStore, WORKFLOW_PHASES } from '@/store/useMigrationWorkflowStore'

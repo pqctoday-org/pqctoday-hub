@@ -11,7 +11,7 @@
 // own command preview could (in a later pass) share the same glossary
 // session; for now this view is its own consumer.
 import { useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import {
   AlertTriangle,
   CheckCircle2,

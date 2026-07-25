@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
-import { Navigate, useLocation } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router'
 import { useEmbed } from './EmbedProvider'
 import { matchesAllowedRoute, getFirstAllowedRoute } from './routePresets'
 import { MODULE_CATALOG } from '../components/PKILearning/moduleData'

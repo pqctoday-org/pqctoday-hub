@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useMemo, useEffect, useCallback } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 import { Globe, Link2, Check, Search, Download, Lightbulb } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { timelineData, timelineMetadata, transformToGanttData } from '../../data/timelineData'

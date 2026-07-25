@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useMemo } from 'react'
 import type { ReactNode } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { ArrowRight, Gamepad2, Map, Briefcase } from 'lucide-react'
 import clsx from 'clsx'
 import { usePersonaStore } from '@/store/usePersonaStore'

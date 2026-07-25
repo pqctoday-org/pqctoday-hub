@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router'
 import {
   Bookmark,
   BookmarkX,

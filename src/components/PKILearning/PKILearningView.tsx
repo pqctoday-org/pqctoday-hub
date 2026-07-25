@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { Suspense, useRef, type ComponentType } from 'react'
-import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router'
 import { LearnRedesignView } from './redesign/LearnRedesignView'
 import { ArrowLeft } from 'lucide-react'
 import { GlossaryButton } from '../ui/GlossaryButton'

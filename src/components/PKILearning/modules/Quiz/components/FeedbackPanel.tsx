@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { CheckCircle, AlertTriangle, ExternalLink } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { motion } from 'framer-motion'
 import clsx from 'clsx'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'

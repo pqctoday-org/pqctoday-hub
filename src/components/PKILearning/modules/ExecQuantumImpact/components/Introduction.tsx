@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { Briefcase, Clock, Scale, TrendingUp, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'

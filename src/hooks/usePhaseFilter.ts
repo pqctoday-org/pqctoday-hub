@@ -10,7 +10,7 @@
  * default, unfiltered page behaviour is unchanged.
  */
 import { useMemo } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 import { type PhaseId, PHASE_ORDER } from '../data/frameworkPhases'
 
 const PHASE_SET = new Set<PhaseId>(PHASE_ORDER)

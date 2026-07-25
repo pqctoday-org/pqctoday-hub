@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { Play, BookOpen, LayoutGrid } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { PersonaId } from '@/data/learningPersonas'

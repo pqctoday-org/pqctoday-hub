@@ -3,7 +3,7 @@ import { useState, useMemo, useEffect, useRef } from 'react'
 import type { MaturityRequirement } from '@/types/MaturityTypes'
 import { Button } from '@/components/ui/button'
 import { ScrollFadeContainer } from '@/components/ui/ScrollFadeContainer'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import {
   Network,
   ShieldCheck,

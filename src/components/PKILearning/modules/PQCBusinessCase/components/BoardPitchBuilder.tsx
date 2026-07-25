@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useCallback, useMemo, useState } from 'react'
 import { FileText, ExternalLink } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { ArtifactBuilder } from '@/components/PKILearning/common/executive'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useModuleStore } from '@/store/useModuleStore'

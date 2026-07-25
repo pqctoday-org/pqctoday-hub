@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router'
 import { useAchievementStore } from '@/store/useAchievementStore'
 
 const SECTION_MAP: Record<string, string> = {

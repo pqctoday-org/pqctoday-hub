@@ -14,7 +14,7 @@
  * moved to the Assets zone). This wire is the only content for the zone.
  */
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { ArrowRight, Wrench, Boxes, ShieldCheck, Layers } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { BusinessMetrics } from '../../hooks/useBusinessMetrics'

@@ -14,7 +14,7 @@ import {
   AlertTriangle,
   FileText,
 } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import {

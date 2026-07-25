@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router'
 import { ChevronRight, Home } from 'lucide-react'
 
 const ROUTE_NAMES: Record<string, string> = {

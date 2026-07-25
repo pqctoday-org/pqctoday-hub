@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { ExternalLink, FlaskConical, Library, BookOpen } from 'lucide-react'
 import { authoritativeSources } from '@/data/authoritativeSourcesData'
 import { CSWP39_RESOURCE_MAP } from '../lib/cswp39ResourceMap'

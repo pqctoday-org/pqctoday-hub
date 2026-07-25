@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState } from 'react'
 import { Info, KeyRound, Copy, Check } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import clsx from 'clsx'
 import { useOpenSSLStore } from '../../store'
 import { FilterDropdown } from '../../../common/FilterDropdown'

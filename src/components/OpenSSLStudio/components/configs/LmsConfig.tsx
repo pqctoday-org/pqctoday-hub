@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { Info } from 'lucide-react'
 import { useOpenSSLStore } from '../../store'
 import { FilterDropdown } from '../../../common/FilterDropdown'

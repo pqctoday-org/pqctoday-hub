@@ -8,7 +8,7 @@
  * Empty-state points the user back to /migrate.
  */
 import React, { useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { ArrowRight, Boxes, Package } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { SoftwareItem } from '@/types/MigrateTypes'

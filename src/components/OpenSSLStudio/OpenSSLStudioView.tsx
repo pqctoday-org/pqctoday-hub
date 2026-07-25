@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useCallback } from 'react'
-import { useSearchParams, Link } from 'react-router-dom'
+import { useSearchParams, Link } from 'react-router'
 import { Workbench } from './Workbench'
 import { WorkbenchFileManager } from './components/WorkbenchFileManager'
 import { TerminalOutput } from './TerminalOutput'

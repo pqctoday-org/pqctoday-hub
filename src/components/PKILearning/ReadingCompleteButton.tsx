@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { CheckCircle, CheckSquare } from 'lucide-react'
-import { useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router'
 import { useModuleStore } from '../../store/useModuleStore'
 import { LEARN_SECTIONS } from './moduleData'
 import { Button } from '../ui/button'

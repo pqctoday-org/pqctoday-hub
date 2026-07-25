@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useMemo, useCallback } from 'react'
 import { Info, Import, Package, X } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import clsx from 'clsx'
 
 import { useAssessmentStore } from '../../../store/useAssessmentStore'

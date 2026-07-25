@@ -16,7 +16,7 @@
  * For You views; only rendering differs.
  */
 import { useEffect, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { Compass, BookOpen, ShieldCheck, CalendarDays, ArrowRight } from 'lucide-react'
 import { useApplicabilityWithPaths } from '../../../hooks/useApplicabilityWithPaths'
 import { groupByTier, type UserProfile } from '../../../utils/applicabilityEngine'

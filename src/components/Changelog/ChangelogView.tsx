@@ -24,7 +24,7 @@ import {
   Search,
   Heart,
 } from 'lucide-react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router'
 import clsx from 'clsx'
 import { getCurrentVersion } from '../../store/useVersionStore'
 import { usePersonaStore } from '../../store/usePersonaStore'

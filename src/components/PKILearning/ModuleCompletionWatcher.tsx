@@ -13,7 +13,7 @@
  * score (useAwarenessScore), journey progress, and the next incomplete module.
  */
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useAwarenessScore } from '@/hooks/useAwarenessScore'

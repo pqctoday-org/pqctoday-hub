@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { Outlet } from 'react-router-dom'
+import { Outlet } from 'react-router'
 import { PlaygroundProvider } from './PlaygroundProvider'
 
 /**

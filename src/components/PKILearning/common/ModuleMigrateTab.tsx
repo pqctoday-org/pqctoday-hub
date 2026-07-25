@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { ExternalLink, Package, CheckCircle, ShieldAlert } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { getMigrateItemsForModule } from '@/data/migrateData'
 import { LAYERS } from '@/data/infrastructureLayers'
 import { CertBadges } from '@/components/Migrate/migrateHelpers'

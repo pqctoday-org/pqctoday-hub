@@ -14,7 +14,7 @@
  * the grade/objectives/closure blocks until the player re-commits.
  */
 import { PlayCircle, ShieldCheck, ListChecks, Award, ArrowRight, Lock } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { CollapsibleSection } from './reportContentShared'
 import { useSavedArtifactDocuments } from '@/hooks/useSavedArtifactInputs'
 import type { SimRoadmapInput } from '@/simulation/simRoadmap'

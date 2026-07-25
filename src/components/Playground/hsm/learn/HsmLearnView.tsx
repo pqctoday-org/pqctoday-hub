@@ -7,7 +7,7 @@
 // the KMIP playground's Learn tab shape (glossary rail, per-lesson quiz,
 // "try it in the workbench" backlink) via the shared learnkit.
 import { useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import {
   CheckCircle2,
   ChevronRight,

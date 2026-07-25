@@ -9,7 +9,7 @@
  * Framework "Common Ground" pattern (IR 8355 §4, common-ground use case).
  */
 import React from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router'
 import {
   Shield,
   Clock,

@@ -6,7 +6,7 @@
  * questions. Replaces the live page silently OMITTING these sections on a quick
  * assessment.
  */
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { Lock, ArrowRight } from 'lucide-react'
 
 interface ReportLockedOverlayProps {

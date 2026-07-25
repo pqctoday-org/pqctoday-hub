@@ -14,7 +14,7 @@
  * TrapInsightsPanel surfaces mid-run) and the same next-step links the walkthrough ending gives.
  */
 import { useEffect, useRef } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { Trophy, ShieldCheck, LayoutDashboard, CalendarClock, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
