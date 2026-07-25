@@ -140,6 +140,31 @@ export const TPM_LESSONS: TpmLesson[] = [
         },
       },
       {
+        op: 'TPM2_GetCapability(TPM_CAP_TPM_PROPERTIES)',
+        label: 'Check the version this chip actually claims to be',
+        run: async (ctx) => {
+          const resp = await execOk(ctx, buildGetCapabilityCmd(0x00000006, 0x100, 5))
+          // hdr(10) + moreData(1) + capability(4) + count(4) + {property(4)+value(4)}×count
+          const count = getU32(resp, 15)
+          const props = new Map<number, number>()
+          for (let i = 0; i < count; i++) {
+            const off = 19 + i * 8
+            props.set(getU32(resp, off), getU32(resp, off + 4))
+          }
+          const revision = props.get(0x102) // TPM_PT_REVISION
+          const year = props.get(0x104) // TPM_PT_YEAR
+          const errata = props.get(0x103) // TPM_PT_DAY_OF_YEAR — now TPM_SPEC_ERRATA (Errata v1 §2.1)
+          if (revision !== 185) {
+            throw new Error(
+              `TPM_PT_REVISION=${revision} — this engine does not report the published V1.85 baseline it implements (expected 185).`
+            )
+          }
+          return {
+            detail: `TPM_PT_REVISION=${revision} (Library v1.85), TPM_PT_YEAR=${year} (shall be zero per Errata v1 §2.1), errata level=${errata} (TPM_SPEC_ERRATA, the slot that used to be TPM_SPEC_DAY_OF_YEAR). This is a REAL capability query, not a claim — every TPM you meet in the field should answer the same way if it truly implements the published spec, not just its command set.`,
+          }
+        },
+      },
+      {
         op: 'TPM2_GetRandom(32)',
         label: 'Draw 32 bytes from the shared entropy source',
         run: async (ctx) => {
@@ -173,7 +198,7 @@ export const TPM_LESSONS: TpmLesson[] = [
     compareHeaders: ['', 'Pre-quantum TPM 2.0', 'V1.85'],
     notes: [
       'TPM_RC_INITIALIZE (0x100) on the double-Startup is the TPM enforcing its state machine — a specified, honest refusal, not a crash. This playground treats expected refusals as SUCCESSFUL outcomes.',
-      'Per Errata v1 §2.1, a TPM implementing the errata reports TPM_SPEC_VERSION=185 with the new TPM_SPEC_ERRATA constant = 1 (and TPM_SPEC_YEAR now always 0).',
+      'The GetCapability(TPM_CAP_TPM_PROPERTIES) step above is live proof, not an assertion: Errata v1 §2.1 retired TPM_SPEC_DAY_OF_YEAR in favor of TPM_SPEC_ERRATA and requires TPM_SPEC_YEAR=0 — this engine used to fail that check silently (TPM_PT_REVISION reported 183, not 185) until the 2026-07-24 spec-alignment audit caught it.',
     ],
     whyItMatters:
       'Migration planning starts with discovery. On real estates you will run exactly this capability query against thousands of TPMs to learn which ones already speak ML-KEM/ML-DSA — the PC Client PTP v1.07 profile (published 2026) makes them mandatory for new PC-class TPMs, but the installed base is a mix.',

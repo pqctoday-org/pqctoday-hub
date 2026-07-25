@@ -8469,6 +8469,116 @@
       "sizeBytes": 160365,
       "contentType": "text/html",
       "sha256": "92b150952349c3e60c45631e0fc3c2c7e77afe49b04d1a2873f2f423965bbb25"
+    },
+    {
+      "refId": "2510-10436-Post-Quantum-Cryptography-and-Quantum-Safe-Securi",
+      "title": "[2510.10436] Post-Quantum Cryptography and Quantum-Safe Security: A Comprehensive Survey",
+      "url": "https://arxiv.org/abs/2510.10436",
+      "status": "downloaded",
+      "filename": "2510-10436-Post-Quantum-Cryptography-and-Quantum-Safe-Securi.html",
+      "sizeBytes": 42727,
+      "contentType": "text/html",
+      "sha256": "e176de485d540710242e11dfc5c376b69ccffa1f3cf2febd4efcf73436d41b19"
+    },
+    {
+      "refId": "BSI-Quantum-Technologies-and-Quantum-Safe-Cryptography-BSI-T",
+      "title": "BSI  -  Quantum Technologies and Quantum-Safe Cryptography - BSI TR-02102-1 &#034;Cryptographic Mechanisms: Recommendations and Key Lengths&#034; Version: 2026-01",
+      "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.html?nn=916626",
+      "status": "downloaded",
+      "filename": "BSI-Quantum-Technologies-and-Quantum-Safe-Cryptography-BSI-T.html",
+      "sizeBytes": 51468,
+      "contentType": "text/html",
+      "sha256": "df329b04bf00ebd9299e43f60eb819109b0e99c3e428ec7a764bbfe8f0adc311"
+    },
+    {
+      "refId": "draft-ietf-lamps-pq-composite-sigs-19-Composite-Module-Latti",
+      "title": "draft-ietf-lamps-pq-composite-sigs-19 - Composite Module-Lattice-Based Digital Signature Algorithm (ML-DSA) for use in X.509 Public Key Infrastructure",
+      "url": "https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/",
+      "status": "downloaded",
+      "filename": "draft-ietf-lamps-pq-composite-sigs-19-Composite-Module-Latti.html",
+      "sizeBytes": 764120,
+      "contentType": "text/html",
+      "sha256": "be740ccf1c7cd31f5caeed50cb57689727ed6763db0bccb86979c4a875158584"
+    },
+    {
+      "refId": "ETSI-launches-new-standard-for-Quantum-Safe-Hybrid-Key-Excha",
+      "title": "ETSI launches new standard for Quantum-Safe Hybrid Key Exchanges to secure future post-quantum encryption - ETSI",
+      "url": "https://www.etsi.org/newsroom/press-releases/2513-etsi-launches-new-standard-for-quantum-safe-hybrid-key-exchanges-to-secure-future-post-quantum-encryption",
+      "status": "downloaded",
+      "filename": "ETSI-launches-new-standard-for-Quantum-Safe-Hybrid-Key-Excha.html",
+      "sizeBytes": 137345,
+      "contentType": "text/html",
+      "sha256": "187f12de795cde755208ed1b3dc03689cc20e2d673b1df6e31496f7d10bee922"
+    },
+    {
+      "refId": "https-arxiv-org-pdf-2505-08791",
+      "title": "https://arxiv.org/pdf/2505.08791",
+      "url": "https://arxiv.org/pdf/2505.08791",
+      "status": "downloaded",
+      "filename": "https-arxiv-org-pdf-2505-08791.html",
+      "sizeBytes": 299498,
+      "contentType": "text/html",
+      "sha256": "402e5fd783212b8905d166134c799896efb5969a907ea7d3cd45ba77580e6d1f"
+    },
+    {
+      "refId": "https-arxiv-org-pdf-2510-10436",
+      "title": "https://arxiv.org/pdf/2510.10436",
+      "url": "https://arxiv.org/pdf/2510.10436",
+      "status": "downloaded",
+      "filename": "https-arxiv-org-pdf-2510-10436.html",
+      "sizeBytes": 3987297,
+      "contentType": "text/html",
+      "sha256": "2a45f5a308ac0cad75b12fe1f88b44ee7f43888e8d3a738c1cfda55fa2f23855"
+    },
+    {
+      "refId": "https-arxiv-org-pdf-2606-04669",
+      "title": "https://arxiv.org/pdf/2606.04669",
+      "url": "https://arxiv.org/pdf/2606.04669",
+      "status": "downloaded",
+      "filename": "https-arxiv-org-pdf-2606-04669.html",
+      "sizeBytes": 4558865,
+      "contentType": "text/html",
+      "sha256": "c8389b67f4397be70160282a297f7850a4bef6b8b2848f1ce514b23e6dd061a4"
+    },
+    {
+      "refId": "https-nukib-gov-cz-download-publications-en-Annex-20to-20the",
+      "title": "https://nukib.gov.cz/download/publications_en/Annex%20to%20the%20document_Minimum%20Requirements%20for%20Cryptographic%20Algorithms.pdf",
+      "url": "https://nukib.gov.cz/download/publications_en/Annex%20to%20the%20document_Minimum%20Requirements%20for%20Cryptographic%20Algorithms.pdf",
+      "status": "downloaded",
+      "filename": "https-nukib-gov-cz-download-publications-en-Annex-20to-20the.html",
+      "sizeBytes": 1347430,
+      "contentType": "text/html",
+      "sha256": "28148e096fedadf7adf92b2bbf3223e722bb24b708f9eb6444a41aa2c41792ab"
+    },
+    {
+      "refId": "ISO-IEC-18033-2-2006-Amd-2-2026-Information-technology-Secur",
+      "title": "ISO/IEC 18033-2:2006/Amd 2:2026 - Information technology \u2014 Security techniques \u2014 Encryption algorithms \u2014 Part 2: Asymmetric ciphers \u2014 Amendment 2",
+      "url": "https://www.iso.org/standard/86890.html",
+      "status": "downloaded",
+      "filename": "ISO-IEC-18033-2-2006-Amd-2-2026-Information-technology-Secur.html",
+      "sizeBytes": 83950,
+      "contentType": "text/html",
+      "sha256": "4c42926239f4c4ecc47cbd0005bfb0d670553b68895b4a95dd41cba192a75eb1"
+    },
+    {
+      "refId": "OASIS-Approves-Two-Public-Key-Cryptography-Standards-to-Adva",
+      "title": "OASIS Approves Two Public-Key Cryptography Standards to Advance Post-Quantum Security and Interoperability - OASIS Open",
+      "url": "https://www.oasis-open.org/2026/07/15/oasis-approves-two-public-key-cryptography-standards/",
+      "status": "downloaded",
+      "filename": "OASIS-Approves-Two-Public-Key-Cryptography-Standards-to-Adva.html",
+      "sizeBytes": 145593,
+      "contentType": "text/html",
+      "sha256": "6c7dda180ee8d60fdc91fcd61e3aeb8218efb4d116dfd239960a54e2b2f646dc"
+    },
+    {
+      "refId": "SP-800-230-Additional-SLH-DSA-Parameter-Sets-for-Limited-Sig",
+      "title": "SP 800-230, Additional SLH-DSA Parameter Sets for Limited Signature Use Cases | CSRC",
+      "url": "https://csrc.nist.gov/pubs/sp/800/230/ipd",
+      "status": "downloaded",
+      "filename": "SP-800-230-Additional-SLH-DSA-Parameter-Sets-for-Limited-Sig.html",
+      "sizeBytes": 48529,
+      "contentType": "text/html",
+      "sha256": "de9b15531969bd823e08de2fe66df0ae3f9cbf08add821e657fe72705d117f6d"
     }
   ]
 }

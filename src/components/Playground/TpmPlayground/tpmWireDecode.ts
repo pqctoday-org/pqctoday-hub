@@ -52,6 +52,7 @@ export const CC_NAMES: Record<number, string> = {
   0x00000157: 'TPM2_Load',
   0x00000158: 'TPM2_Quote',
   0x00000159: 'TPM2_RSA_Decrypt',
+  0x00000184: 'TPM2_NV_Certify',
   0x0000015c: 'TPM2_SequenceUpdate',
   0x0000015d: 'TPM2_Sign',
   0x00000165: 'TPM2_FlushContext',

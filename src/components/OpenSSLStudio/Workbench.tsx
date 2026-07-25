@@ -6,6 +6,8 @@ import { WorkbenchHeader } from './components/WorkbenchHeader'
 import { WorkbenchConfig } from './components/WorkbenchConfig'
 import { WorkbenchPresets } from './components/WorkbenchPresets'
 import { WorkbenchPreview } from './components/WorkbenchPreview'
+import type { Pkcs11Key, Pkcs11Operation } from './components/configs/Pkcs11Config'
+import type { OpenSSLCategory } from './categories'
 import {
   sanitizeCountryCode,
   sanitizeOrganization,
@@ -13,39 +15,8 @@ import {
 } from '../../utils/inputValidation'
 
 interface WorkbenchProps {
-  category:
-    | 'genpkey'
-    | 'req'
-    | 'x509'
-    | 'enc'
-    | 'dgst'
-    | 'hash'
-    | 'rand'
-    | 'version'
-    | 'files'
-    | 'kem'
-    | 'pkcs12'
-    | 'lms'
-    | 'configutl'
-    | 'kdf'
-
-  setCategory: (
-    category:
-      | 'genpkey'
-      | 'req'
-      | 'x509'
-      | 'enc'
-      | 'dgst'
-      | 'hash'
-      | 'rand'
-      | 'version'
-      | 'files'
-      | 'kem'
-      | 'pkcs12'
-      | 'lms'
-      | 'configutl'
-      | 'kdf'
-  ) => void
+  category: OpenSSLCategory
+  setCategory: (category: OpenSSLCategory) => void
 
   // Sourced once from useOpenSSL() at the OpenSSLStudioView level — see
   // WorkbenchPreview.tsx for why this isn't called here directly.
@@ -53,6 +24,7 @@ interface WorkbenchProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   executeSkey: (opType: 'create' | 'derive', params: Record<string, any>) => Promise<void>
   retryLoad: () => void
+  hsmKeygen: (algorithm: string, keyId: string) => Promise<{ uri: string }>
 }
 
 export const Workbench = ({
@@ -61,6 +33,7 @@ export const Workbench = ({
   executeCommand,
   executeSkey,
   retryLoad,
+  hsmKeygen,
 }: WorkbenchProps) => {
   const { setCommand, files } = useOpenSSLStore()
 
@@ -144,6 +117,14 @@ export const Workbench = ({
   const [kdfScryptN, setKdfScryptN] = useState('1024')
   const [kdfScryptR, setKdfScryptR] = useState('8')
   const [kdfScryptP, setKdfScryptP] = useState('1')
+
+  // PKCS#11 State — token keys are addressed by pkcs11: URI, not a file, so
+  // they're tracked here rather than in the shared `files` store (see
+  // Pkcs11Config.tsx's doc comment on Pkcs11Key).
+  const [pkcs11Keys, setPkcs11Keys] = useState<Pkcs11Key[]>([])
+  const [pkcs11SelectedKeyId, setPkcs11SelectedKeyId] = useState('')
+  const [pkcs11Operation, setPkcs11Operation] = useState<Pkcs11Operation>('selfsign')
+  const addPkcs11Key = (key: Pkcs11Key) => setPkcs11Keys((prev) => [...prev, key])
 
   // Auto-select latest signature file when switching to verify or when files change
   useEffect(() => {
@@ -431,6 +412,47 @@ export const Workbench = ({
       }
 
       cmd += ` ${kdfAlgo}`
+    } else if (category === 'pkcs11') {
+      const selectedKey = pkcs11Keys.find((k) => k.id === pkcs11SelectedKeyId)
+      if (!selectedKey) {
+        // Nothing to run yet — keygen happens via the dedicated WASM button
+        // in Pkcs11Config, not this command preview (same reason genpkey
+        // -out pkcs11:... can't be used: see hsmKeygen's doc comment).
+        cmd = ''
+      } else {
+        const privUri = selectedKey.uri
+        const pubUri = privUri.replace(';type=private', ';type=public')
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5)
+        const isPQCSign = selectedKey.algo.startsWith('ML-DSA')
+
+        if (pkcs11Operation === 'selfsign') {
+          const certFile = `${selectedKey.id}-cert-${timestamp}.crt`
+          cmd += ` req -new -x509 -key "${privUri}" -out ${certFile} -days ${certDays} -${digestAlgo} -subj "${subj}"`
+        } else if (pkcs11Operation === 'csr') {
+          const csrFile = `${selectedKey.id}-csr-${timestamp}.csr`
+          cmd += ` req -new -key "${privUri}" -out ${csrFile} -${digestAlgo} -subj "${subj}"`
+        } else if (pkcs11Operation === 'sign') {
+          const dataFile = selectedDataFile || 'data.txt'
+          const sigFile = selectedSigFile || `${selectedKey.id}-${timestamp}.sig`
+          cmd += isPQCSign
+            ? ` pkeyutl -sign -inkey "${privUri}" -in ${dataFile} -out ${sigFile}`
+            : ` dgst -${sigHashAlgo} -sign "${privUri}" -out ${sigFile} ${dataFile}`
+        } else if (pkcs11Operation === 'verify') {
+          const dataFile = selectedDataFile || 'data.txt'
+          const sigFile = selectedSigFile || 'data.sig'
+          cmd += isPQCSign
+            ? ` pkeyutl -verify -pubin -inkey "${pubUri}" -in ${dataFile} -sigfile ${sigFile}`
+            : ` dgst -${sigHashAlgo} -verify "${pubUri}" -signature ${sigFile} ${dataFile}`
+        } else if (pkcs11Operation === 'encap') {
+          const ctFile = kemOutFile || 'ciphertext.bin'
+          const secretFile = kemSecretFile || 'secret.bin'
+          cmd += ` pkeyutl -encap -inkey "${pubUri}" -pubin -out ${ctFile} -secret ${secretFile}`
+        } else if (pkcs11Operation === 'decap') {
+          const inFile = kemInFile || 'ciphertext.bin'
+          const outFile = kemOutFile || 'secret.bin'
+          cmd += ` pkeyutl -decap -inkey "${privUri}" -in ${inFile} -out ${outFile}`
+        }
+      }
     }
 
     setCommand(cmd)
@@ -498,6 +520,9 @@ export const Workbench = ({
     kdfScryptR,
     kdfScryptP,
     lmsMode,
+    pkcs11Keys,
+    pkcs11SelectedKeyId,
+    pkcs11Operation,
   ])
 
   return (
@@ -629,6 +654,13 @@ export const Workbench = ({
             setKdfScryptR={setKdfScryptR}
             kdfScryptP={kdfScryptP}
             setKdfScryptP={setKdfScryptP}
+            hsmKeygen={hsmKeygen}
+            pkcs11Keys={pkcs11Keys}
+            addPkcs11Key={addPkcs11Key}
+            pkcs11SelectedKeyId={pkcs11SelectedKeyId}
+            setPkcs11SelectedKeyId={setPkcs11SelectedKeyId}
+            pkcs11Operation={pkcs11Operation}
+            setPkcs11Operation={setPkcs11Operation}
           />
           <WorkbenchPreview
             category={category}

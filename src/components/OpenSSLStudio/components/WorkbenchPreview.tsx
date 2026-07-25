@@ -80,7 +80,7 @@ export const WorkbenchPreview: React.FC<WorkbenchPreviewProps> = ({
               <Button
                 variant="ghost"
                 onClick={handleRun}
-                disabled={isProcessing || !isReady}
+                disabled={isProcessing || !isReady || !command.trim()}
                 className="btn-primary flex items-center gap-2 px-4 py-1.5 text-xs font-bold shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
               >
                 {isProcessing ? (
@@ -95,6 +95,12 @@ export const WorkbenchPreview: React.FC<WorkbenchPreviewProps> = ({
             )}
           </div>
         </div>
+
+        {category === 'pkcs11' && !command && !loadError && (
+          <div className="px-3 py-2 bg-muted/40 border-b border-border text-xs text-muted-foreground">
+            Generate a key in the token first (config panel above), then pick an operation.
+          </div>
+        )}
 
         {loadError && (
           <div className="px-3 py-2 bg-destructive/10 border-b border-destructive/20 text-xs text-destructive flex items-start gap-2">

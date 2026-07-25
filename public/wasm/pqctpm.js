@@ -1,13 +1,12 @@
 var PqcTpmModule = (() => {
   var _scriptName = globalThis.document?.currentScript?.src
   return async function (moduleArg = {}) {
-    var moduleRtn
     var Module = moduleArg
     var ENVIRONMENT_IS_WEB = !!globalThis.window
     var ENVIRONMENT_IS_WORKER = !!globalThis.WorkerGlobalScope
     var ENVIRONMENT_IS_NODE =
       globalThis.process?.versions?.node && globalThis.process?.type != 'renderer'
-    var arguments_ = []
+    var programArgs = []
     var thisProgram = './this.program'
     var quit_ = (status, toThrow) => {
       throw toThrow
@@ -41,7 +40,7 @@ var PqcTpmModule = (() => {
       if (process.argv.length > 1) {
         thisProgram = process.argv[1].replace(/\\/g, '/')
       }
-      arguments_ = process.argv.slice(2)
+      programArgs = process.argv.slice(2)
       quit_ = (status, toThrow) => {
         process.exitCode = status
         throw toThrow
@@ -91,12 +90,15 @@ var PqcTpmModule = (() => {
     var wasmBinary
     var ABORT = false
     var isFileURI = (filename) => filename.startsWith('file://')
-    var readyPromiseResolve, readyPromiseReject
-    var HEAP8, HEAPU8, HEAP16, HEAPU16, HEAP32, HEAPU32, HEAPF32, HEAPF64
-    var HEAP64, HEAPU64
+    class EmscriptenEH {}
+    class EmscriptenSjLj extends EmscriptenEH {}
     var runtimeInitialized = false
+    function getMemoryBuffer() {
+      return wasmMemory.buffer
+    }
     function updateMemoryViews() {
-      var b = wasmMemory.buffer
+      if (HEAP8?.buffer?.resizable) return
+      var b = getMemoryBuffer()
       HEAP8 = new Int8Array(b)
       HEAP16 = new Int16Array(b)
       Module['HEAPU8'] = HEAPU8 = new Uint8Array(b)
@@ -109,11 +111,10 @@ var PqcTpmModule = (() => {
       HEAPU64 = new BigUint64Array(b)
     }
     function preRun() {
-      if (Module['preRun']) {
-        if (typeof Module['preRun'] == 'function') Module['preRun'] = [Module['preRun']]
-        while (Module['preRun'].length) {
-          addOnPreRun(Module['preRun'].shift())
-        }
+      var preRun = Module['preRun']
+      if (preRun) {
+        if (typeof preRun == 'function') preRun = [preRun]
+        onPreRuns.push(...preRun)
       }
       callRuntimeCallbacks(onPreRuns)
     }
@@ -122,22 +123,20 @@ var PqcTpmModule = (() => {
       wasmExports['D']()
     }
     function postRun() {
-      if (Module['postRun']) {
-        if (typeof Module['postRun'] == 'function') Module['postRun'] = [Module['postRun']]
-        while (Module['postRun'].length) {
-          addOnPostRun(Module['postRun'].shift())
-        }
+      var postRun = Module['postRun']
+      if (postRun) {
+        if (typeof postRun == 'function') postRun = [postRun]
+        onPostRuns.push(...postRun)
       }
       callRuntimeCallbacks(onPostRuns)
     }
     function abort(what) {
       Module['onAbort']?.(what)
-      what = 'Aborted(' + what + ')'
+      what = `Aborted(${what})`
       err(what)
       ABORT = true
       what += '. Build with -sASSERTIONS for more info.'
       var e = new WebAssembly.RuntimeError(what)
-      readyPromiseReject?.(e)
       throw e
     }
     var wasmBinaryFile
@@ -145,9 +144,6 @@ var PqcTpmModule = (() => {
       return locateFile('pqctpm.wasm')
     }
     function getBinarySync(file) {
-      if (file == wasmBinaryFile && wasmBinary) {
-        return new Uint8Array(wasmBinary)
-      }
       if (readBinary) {
         return readBinary(file)
       }
@@ -190,7 +186,7 @@ var PqcTpmModule = (() => {
       return imports
     }
     async function createWasm() {
-      function receiveInstance(instance, module) {
+      function receiveInstance(instance) {
         wasmExports = instance.exports
         assignWasmExports(wasmExports)
         updateMemoryViews()
@@ -200,11 +196,10 @@ var PqcTpmModule = (() => {
         return receiveInstance(result['instance'])
       }
       var info = getWasmImports()
-      if (Module['instantiateWasm']) {
-        return new Promise((resolve, reject) => {
-          Module['instantiateWasm'](info, (inst, mod) => {
-            resolve(receiveInstance(inst, mod))
-          })
+      var instantiateWasm = Module['instantiateWasm']
+      if (instantiateWasm) {
+        return new Promise((resolve) => {
+          instantiateWasm(info, (inst) => resolve(receiveInstance(inst)))
         })
       }
       wasmBinaryFile ??= findWasmBinary()
@@ -219,15 +214,23 @@ var PqcTpmModule = (() => {
         this.status = status
       }
     }
+    var HEAP16
+    var HEAP32
+    var HEAP64
+    var HEAP8
+    var HEAPF32
+    var HEAPF64
+    var HEAPU16
+    var HEAPU32
+    var HEAPU64
+    var HEAPU8
     var callRuntimeCallbacks = (callbacks) => {
       while (callbacks.length > 0) {
         callbacks.shift()(Module)
       }
     }
     var onPostRuns = []
-    var addOnPostRun = (cb) => onPostRuns.push(cb)
     var onPreRuns = []
-    var addOnPreRun = (cb) => onPreRuns.push(cb)
     function getValue(ptr, type = 'i8') {
       if (type.endsWith('*')) type = '*'
       switch (type) {
@@ -351,7 +354,7 @@ var PqcTpmModule = (() => {
     var ___syscall_stat64 = (path, buf) => {}
     var __abort_js = () => abort('')
     var __emscripten_throw_longjmp = () => {
-      throw Infinity
+      throw new EmscriptenSjLj()
     }
     var INT53_MAX = 9007199254740992
     var INT53_MIN = -9007199254740992
@@ -359,6 +362,9 @@ var PqcTpmModule = (() => {
     function __gmtime_js(time, tmPtr) {
       time = bigintToI53Checked(time)
       var date = new Date(time * 1e3)
+      if (isNaN(date.getTime())) {
+        return 1
+      }
       HEAP32[tmPtr >> 2] = date.getUTCSeconds()
       HEAP32[(tmPtr + 4) >> 2] = date.getUTCMinutes()
       HEAP32[(tmPtr + 8) >> 2] = date.getUTCHours()
@@ -369,6 +375,7 @@ var PqcTpmModule = (() => {
       var start = Date.UTC(date.getUTCFullYear(), 0, 1, 0, 0, 0, 0)
       var yday = ((date.getTime() - start) / (1e3 * 60 * 60 * 24)) | 0
       HEAP32[(tmPtr + 28) >> 2] = yday
+      return 0
     }
     var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
       if (!(maxBytesToWrite > 0)) return 0
@@ -508,7 +515,7 @@ var PqcTpmModule = (() => {
       return false
     }
     var ENV = {}
-    var getExecutableName = () => thisProgram || './this.program'
+    var getExecutableName = () => thisProgram
     var getEnvStrings = () => {
       if (!getEnvStrings.strings) {
         var lang = (globalThis.navigator?.language ?? 'C').replace('-', '_') + '.UTF-8'
@@ -672,13 +679,13 @@ var PqcTpmModule = (() => {
       if (Module['noExitRuntime']) noExitRuntime = Module['noExitRuntime']
       if (Module['print']) out = Module['print']
       if (Module['printErr']) err = Module['printErr']
-      if (Module['wasmBinary']) wasmBinary = Module['wasmBinary']
-      if (Module['arguments']) arguments_ = Module['arguments']
+      if (Module['arguments']) programArgs = Module['arguments']
       if (Module['thisProgram']) thisProgram = Module['thisProgram']
-      if (Module['preInit']) {
-        if (typeof Module['preInit'] == 'function') Module['preInit'] = [Module['preInit']]
-        while (Module['preInit'].length > 0) {
-          Module['preInit'].shift()()
+      var preInit = Module['preInit']
+      if (preInit) {
+        if (typeof preInit == 'function') Module['preInit'] = preInit = [preInit]
+        while (preInit.length > 0) {
+          preInit.shift()()
         }
       }
     }
@@ -690,7 +697,7 @@ var PqcTpmModule = (() => {
     Module['stringToUTF8'] = stringToUTF8
     Module['lengthBytesUTF8'] = lengthBytesUTF8
     var ASM_CONSTS = {
-      633736: ($0, $1) => {
+      633964: ($0, $1) => {
         if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
           crypto.getRandomValues(HEAPU8.subarray($0, $0 + $1))
         }
@@ -778,7 +785,7 @@ var PqcTpmModule = (() => {
       dynCall_iiiiiiiiiii,
       dynCall_vij,
       dynCall_jiji,
-      dynCall_iidiiii,
+      dynCall_iidiiiii,
       memory,
       __indirect_function_table,
       wasmMemory,
@@ -830,7 +837,7 @@ var PqcTpmModule = (() => {
       dynCall_iiiiiiiiiii = wasmExports['dynCall_iiiiiiiiiii']
       dynCall_vij = wasmExports['dynCall_vij']
       dynCall_jiji = wasmExports['dynCall_jiji']
-      dynCall_iidiiii = wasmExports['dynCall_iidiiii']
+      dynCall_iidiiiii = wasmExports['dynCall_iidiiiii']
       memory = wasmMemory = wasmExports['C']
       __indirect_function_table = wasmTable = wasmExports['E']
     }
@@ -870,42 +877,27 @@ var PqcTpmModule = (() => {
         dynCall_viiii(index, a1, a2, a3, a4)
       } catch (e) {
         stackRestore(sp)
-        if (e !== e + 0) throw e
+        if (!(e instanceof EmscriptenEH)) throw e
         _setThrew(1, 0)
       }
     }
-    function run() {
+    async function run() {
       preRun()
-      function doRun() {
-        Module['calledRun'] = true
-        if (ABORT) return
-        initRuntime()
-        readyPromiseResolve?.(Module)
-        Module['onRuntimeInitialized']?.()
-        postRun()
+      var setStatus = Module['setStatus']
+      if (setStatus) {
+        setStatus('Running...')
+        await new Promise((resolve) => setTimeout(resolve, 1))
+        setTimeout(setStatus, 1, '')
       }
-      if (Module['setStatus']) {
-        Module['setStatus']('Running...')
-        setTimeout(() => {
-          setTimeout(() => Module['setStatus'](''), 1)
-          doRun()
-        }, 1)
-      } else {
-        doRun()
-      }
+      if (ABORT) return
+      initRuntime()
+      Module['onRuntimeInitialized']?.()
+      postRun()
     }
     var wasmExports
     wasmExports = await createWasm()
-    run()
-    if (runtimeInitialized) {
-      moduleRtn = Module
-    } else {
-      moduleRtn = new Promise((resolve, reject) => {
-        readyPromiseResolve = resolve
-        readyPromiseReject = reject
-      })
-    }
-    return moduleRtn
+    await run()
+    return Module
   }
 })()
 if (typeof exports === 'object' && typeof module === 'object') {

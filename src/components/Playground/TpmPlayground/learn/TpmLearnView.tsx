@@ -30,8 +30,10 @@ import {
   nvReadAll,
   getPqcBridgeStatus,
   setTpmWireListener,
+  withTpmLock,
   type TpmWireLogEntry,
 } from '../../../../wasm/tpmBridge'
+import { useTpmBusy } from '../useTpmBusy'
 import { getU16, getU32, toHex } from '../../../../wasm/tpmSerializer'
 import { getRcInfo } from '../tpmCommandDefs'
 import { TAG_NAMES, CC_NAMES } from '../tpmWireDecode'
@@ -214,6 +216,10 @@ export function TpmLearnView({
 }) {
   const [lessonIdx, setLessonIdx] = useState(0)
   const lesson = TPM_LESSONS[lessonIdx]
+  // Any panel — this one or another tab — holding the shared engine lock
+  // disables run controls here too, so a queued click never looks like a
+  // no-op (see useTpmBusy.ts).
+  const tpmBusy = useTpmBusy()
   const [stepStates, setStepStates] = useState<StepRunState[]>(() =>
     lesson.steps.map(() => ({ status: 'pending' }))
   )
@@ -258,40 +264,67 @@ export function TpmLearnView({
     setStepStates((prev) => prev.map((s, j) => (j === i ? { status: 'running' } : s)))
     wireLogsRef.current[i] = []
     setStepWireLogs((prev) => prev.map((l, j) => (j === i ? [] : l)))
-    setTpmWireListener((entry) => {
-      wireLogsRef.current[i] = [...wireLogsRef.current[i], entry]
-    })
-    try {
-      const result = await lesson.steps[i].run(makeCtx(), resultsRef.current)
-      resultsRef.current = resultsRef.current.map((r, j) => (j === i ? result : r))
-      setStepStates((prev) =>
-        prev.map((s, j) => (j === i ? { status: 'ok', detail: result.detail } : s))
-      )
-    } catch (e) {
-      const message = e instanceof Error ? e.message : String(e)
-      const expectedRefusal = lesson.steps[i].expect === 'refusal'
-      logEvent(
-        'Playground',
-        'TPM Learn Step',
-        `${lesson.id}:${lesson.steps[i].op}:${expectedRefusal ? 'refused-ok' : 'failed'}`
-      )
-      setStepStates((prev) =>
-        prev.map((s, j) =>
-          j === i ? { status: expectedRefusal ? 'refused-ok' : 'failed', detail: message } : s
+    // The step's entire command sequence — not just each individual wire
+    // call — must run exclusively against the shared WASM TPM instance, or
+    // another operation's commands (a different step, a different tab) can
+    // interleave in the `await` gaps between this step's own calls and
+    // corrupt shared transient-object state. The wire-listener registration
+    // lives inside the lock too, since it's a single global slot and two
+    // concurrently-running steps would otherwise capture each other's wire
+    // traffic. See tpmBridge.ts's withTpmLock and the 2026-07-24 TPM
+    // playground concurrency remediation.
+    await withTpmLock(async () => {
+      setTpmWireListener((entry) => {
+        wireLogsRef.current[i] = [...wireLogsRef.current[i], entry]
+      })
+      try {
+        const result = await lesson.steps[i].run(makeCtx(), resultsRef.current)
+        resultsRef.current = resultsRef.current.map((r, j) => (j === i ? result : r))
+        setStepStates((prev) =>
+          prev.map((s, j) => (j === i ? { status: 'ok', detail: result.detail } : s))
         )
-      )
-    } finally {
-      setTpmWireListener(null)
-      setStepWireLogs((prev) => prev.map((l, j) => (j === i ? wireLogsRef.current[i] : l)))
-    }
+      } catch (e) {
+        const message = e instanceof Error ? e.message : String(e)
+        const expectedRefusal = lesson.steps[i].expect === 'refusal'
+        logEvent(
+          'Playground',
+          'TPM Learn Step',
+          `${lesson.id}:${lesson.steps[i].op}:${expectedRefusal ? 'refused-ok' : 'failed'}`
+        )
+        setStepStates((prev) =>
+          prev.map((s, j) =>
+            j === i ? { status: expectedRefusal ? 'refused-ok' : 'failed', detail: message } : s
+          )
+        )
+      } finally {
+        setTpmWireListener(null)
+        setStepWireLogs((prev) => prev.map((l, j) => (j === i ? wireLogsRef.current[i] : l)))
+      }
+    })
   }
 
   const runAll = async () => {
-    for (let i = 0; i < lesson.steps.length; i++) {
-      if (stepStates[i].status === 'ok' || stepStates[i].status === 'refused-ok') continue
-      // Steps are deliberately sequential — each may read prior chain state.
-      await runStep(i)
-    }
+    // The WHOLE lesson run — not just each step individually — must be one
+    // exclusive operation. runStep's own withTpmLock wrap only stops two
+    // individual steps' WASM commands from truly overlapping; it does NOT
+    // stop a second, stale Run-all invocation's steps from interleaving
+    // BETWEEN this run's own steps at the queue level (A-step0, B-step0,
+    // A-step1, B-step1, ...) — and since all steps share ONE mutable
+    // `chainRef.current`, that interleaving corrupts THIS run's own chain
+    // state (e.g. a later step reads a handle a different run's step just
+    // overwrote) even though no two WASM calls ever literally overlap.
+    // Wrapping here makes runStep's nested lock calls reentrant instead,
+    // so a second Run-all invocation queues behind this ENTIRE run, not
+    // behind just its current step. Confirmed necessary by a same-tick
+    // double-click repro during the 2026-07-24 concurrency remediation —
+    // step-level locking alone still corrupted the streaming lesson.
+    await withTpmLock(async () => {
+      for (let i = 0; i < lesson.steps.length; i++) {
+        if (stepStates[i].status === 'ok' || stepStates[i].status === 'refused-ok') continue
+        // Steps are deliberately sequential — each may read prior chain state.
+        await runStep(i)
+      }
+    })
   }
 
   const allDone = stepStates.every((s) => s.status === 'ok' || s.status === 'refused-ok')
@@ -349,7 +382,7 @@ export function TpmLearnView({
                 size="sm"
                 variant="outline"
                 onClick={runAll}
-                disabled={allDone || !isWasmReady}
+                disabled={allDone || !isWasmReady || tpmBusy}
                 className="h-7 text-[11px]"
               >
                 Run all
@@ -364,7 +397,7 @@ export function TpmLearnView({
                   state={stepStates[i]}
                   wireLogs={stepWireLogs[i]}
                   onRun={() => runStep(i)}
-                  disabled={stepStates[i].status === 'running' || !isWasmReady}
+                  disabled={stepStates[i].status === 'running' || !isWasmReady || tpmBusy}
                 />
               ))}
             </ol>

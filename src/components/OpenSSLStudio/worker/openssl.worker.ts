@@ -26,6 +26,7 @@ type WorkerMessage =
   | { type: 'LOAD'; url: string; requestId?: string }
   | { type: 'FILE_UPLOAD'; name: string; data: Uint8Array; requestId?: string }
   | { type: 'DELETE_FILE'; name: string; requestId?: string }
+  | { type: 'HSM_KEYGEN'; algorithm: string; keyId: string; requestId?: string }
   | {
       type: 'TLS_SIMULATE'
       clientConfig: string
@@ -59,6 +60,13 @@ type WorkerMessage =
   | { type: 'LOG'; stream: 'stdout' | 'stderr'; message: string; requestId?: string }
   | { type: 'ERROR'; error: string; requestId?: string }
   | { type: 'DONE'; requestId?: string }
+  | {
+      type: 'HSM_KEY_CREATED'
+      keyId: string
+      algorithm: string
+      uri: string
+      requestId?: string
+    }
   | {
       type: 'SKEY_OPERATION'
       opType: 'create' | 'derive'
@@ -323,6 +331,686 @@ distinguished_name = req_distinguished_name
 }
 
 // ----------------------------------------------------------------------------
+// PKCS#11 token lifecycle (Rust softhsmrustv3 engine, statically linked)
+//
+// NOTE ON PLACEMENT: this is inlined here rather than imported from a
+// sibling module because this worker is `type: 'classic'` — in Vite dev
+// mode a classic worker is served via importScripts() with any `import`
+// statements left intact, which crashes the browser with "Cannot use
+// import statement outside a module". Same constraint the CMS workshop's
+// cms.worker.ts documents at its top. Keep this file dependency-free.
+//
+// Two things stand between "pkcs11 provider is registered" and "it works":
+//
+//  1. libctx isolation. pqctoday_cms_init() registers pkcs11-provider as a
+//     builtin in the GLOBAL lib ctx (and OpenSSL's patched apps_startup()
+//     re-runs it inside every callMain()). An explicit `-provider pkcs11`
+//     CLI flag builds a SEPARATE app_libctx that does NOT inherit that
+//     builtin, so OpenSSL falls back to dlopen()ing a .so absent from WASM
+//     and reports "Module initialization failed!". The fix is to not pass
+//     the flag — reach the provider implicitly via `pkcs11:` URIs.
+//
+//  2. No token. A registered provider with no initialized token fails every
+//     real operation. Tokens are created below via direct C_* exports.
+//
+// Persistence differs from the C++ engine deliberately. That engine kept
+// tokens as files under a tokendir (which is why the CMS workshop persists
+// /ssl/softhsm-tokens/**). The Rust engine holds token state in memory and
+// exposes an explicit snapshot API (pqctoday_hsm_state_take/_load/_free,
+// added for this embedding). EXIT_RUNTIME=1 means every callMain()
+// finalizes and wipes that state, so C_Finalize parks a snapshot first; we
+// read it out after each command and re-load it into the next module.
+// ----------------------------------------------------------------------------
+
+var CKR_OK = 0
+var CKR_CRYPTOKI_ALREADY_INITIALIZED = 0x191
+var CKF_SERIAL_SESSION = 0x00000004
+var CKF_RW_SESSION = 0x00000002
+var CKU_SO = 0
+
+var STUDIO_TOKEN_LABEL = 'openssl-studio'
+var STUDIO_SO_PIN = '1234'
+var STUDIO_USER_PIN = '1234'
+
+/**
+ * Historical note, kept because the old failure mode is widely documented
+ * (including in this repo) and it is easy to "re-fix" a problem that no
+ * longer exists:
+ *
+ *   Before 2026-07-24, `-provider pkcs11` reliably failed with "Module
+ *   initialization failed!". Two things changed. (1) config.h now defines
+ *   DEFAULT_PKCS11_MODULE, so the provider resolves the statically linked
+ *   engine with no config file at all. (2) apps_startup() registers the
+ *   provider as a builtin in the global lib ctx on every command ("Fix A").
+ *   Verified against the rebuilt binary: the flag now WORKS, and a command
+ *   that hits an unprovisioned token gets the honest "token was not present
+ *   in its slot" instead.
+ *
+ * So the flag is NOT refused. What a pkcs11 command still needs is a token,
+ * which ensureHsmToken() provisions below.
+ */
+
+/**
+ * The token snapshot, carried across module instances.
+ *
+ * Deliberately NOT part of commandVfs: OpenSSL Studio sends
+ * `replaceVfs: true` on every command (its file store is the source of
+ * truth for USER files), which clears that map. Token state is engine
+ * state, not a user file, and must survive that.
+ */
+var hsmSnapshot: Uint8Array | null = null
+
+/** True when the loaded openssl.wasm exposes the Rust engine snapshot API. */
+var hasSnapshotApi = (module: any): boolean =>
+  typeof module._pqctoday_hsm_state_take === 'function' &&
+  typeof module._pqctoday_hsm_state_load === 'function' &&
+  typeof module._pqctoday_hsm_state_free === 'function'
+
+/** Names of the PKCS#11 exports the token lifecycle needs but this build
+ *  lacks (empty array = build is capable). */
+var missingP11Exports = (module: any): string[] => {
+  var needed = [
+    '_C_Initialize',
+    '_C_GetSlotList',
+    '_C_GetTokenInfo',
+    '_C_InitToken',
+    '_C_InitPIN',
+    '_C_OpenSession',
+    '_C_CloseSession',
+    '_C_Login',
+    '_C_Logout',
+    '_malloc',
+    '_free',
+  ]
+  var missing: string[] = []
+  for (var i = 0; i < needed.length; i++) {
+    if (typeof module[needed[i]] !== 'function') missing.push(needed[i].replace(/^_/, ''))
+  }
+  if (!hasSnapshotApi(module)) missing.push('pqctoday_hsm_state_take/_load/_free')
+  return missing
+}
+
+/**
+ * Read the engine's token snapshot out of `module` as an owned copy, via a
+ * direct exported-function pull.
+ *
+ * SAFE ONLY when `module` has not (yet) had `callMain` invoked on it. Do
+ * NOT call this after `callMain` returns — verified directly (2026-07-24):
+ * any exported wasm function call, including `_malloc`, aborts post-exit
+ * with "native function `malloc` called after runtime exit" once
+ * `-sEXIT_RUNTIME=1`'s teardown has run. Use `readHsmStateFile` instead for
+ * the post-`callMain` case — see that function's doc comment for why a
+ * file, not this pull, is the real handoff mechanism there.
+ *
+ * Used by the Explorer's direct-C-API keygen path (`generateKeyInToken`),
+ * which never calls `callMain` on the module it operates on.
+ */
+var takeTokenSnapshot = (module: any): Uint8Array | null => {
+  if (!hasSnapshotApi(module)) return null
+  var lenP = module._malloc(4)
+  try {
+    module.setValue(lenP, 0, 'i32')
+    var ptr = module._pqctoday_hsm_state_take(lenP)
+    var len = module.getValue(lenP, 'i32')
+    if (!ptr || len <= 0) return null
+    // Copy before freeing — HEAPU8 is a live view into WASM memory.
+    var copy = new Uint8Array(module.HEAPU8.subarray(ptr, ptr + len))
+    module._pqctoday_hsm_state_free(ptr, len)
+    return copy
+  } catch (e) {
+    return null
+  } finally {
+    module._free(lenP)
+  }
+}
+
+/**
+ * MEMFS path the Rust engine's `atexit()` hook writes to — see
+ * `pqctoday_hsm_atexit_stash` in pqctoday-hsm/rust/src/state_snapshot.rs.
+ * That hook is registered (once per module instance, in
+ * cms_provider_init.c's `pqctoday_cms_init`, which "Fix A" calls on every
+ * `callMain`) via a genuine C `atexit()` — independent of OpenSSL's own
+ * provider-teardown machinery, which was found NOT to reach the engine's
+ * C_Finalize during a normal CLI command (2026-07-24: `OPENSSL_cleanup()`
+ * does run at the end of every `callMain`, confirmed directly, but its own
+ * body never references "provider" or "libctx" — it does not unload a
+ * provider loaded via an explicit `OSSL_PROVIDER_load()` call, which is
+ * exactly what `pqctoday_cms_init()` does).
+ */
+var HSM_STATE_FILE_PATH = '/tmp/.pqctoday_hsm_state.bin'
+
+/**
+ * Read the token snapshot out of `module` via a pure FS read.
+ *
+ * The correct call for AFTER `callMain` has returned: `FS.readFile` is pure
+ * JS (no exported wasm call), so it stays safe post-runtime-teardown — the
+ * file itself was written while the runtime was still alive, during the
+ * atexit hook described above. Null if the file doesn't exist (nothing was
+ * ever provisioned this command).
+ */
+var readHsmStateFile = (module: any): Uint8Array | null => {
+  try {
+    var data = module.FS.readFile(HSM_STATE_FILE_PATH)
+    return data && data.length > 0 ? new Uint8Array(data) : null
+  } catch (e) {
+    return null
+  }
+}
+
+/** Install a snapshot from a previous module instance. A corrupt blob is
+ *  rejected engine-side, leaving the fresh module untouched. */
+var loadTokenSnapshot = (module: any, snapshot: Uint8Array): boolean => {
+  if (!hasSnapshotApi(module) || snapshot.length === 0) return false
+  var buf = module._malloc(snapshot.length)
+  try {
+    module.HEAPU8.set(snapshot, buf)
+    return module._pqctoday_hsm_state_load(buf, snapshot.length) === CKR_OK
+  } catch (e) {
+    return false
+  } finally {
+    module._free(buf)
+  }
+}
+
+/** First slot id from C_GetSlotList, or null. */
+var firstSlot = (module: any): number | null => {
+  var cntP = module._malloc(4)
+  module.setValue(cntP, 0, 'i32')
+  if (module._C_GetSlotList(0, 0, cntP) !== CKR_OK) {
+    module._free(cntP)
+    return null
+  }
+  var count = module.getValue(cntP, 'i32')
+  module._free(cntP)
+  if (count <= 0) return null
+
+  var listP = module._malloc(count * 4)
+  var cnt2P = module._malloc(4)
+  module.setValue(cnt2P, count, 'i32')
+  var rv = module._C_GetSlotList(0, listP, cnt2P)
+  var slot = rv === CKR_OK ? module.getValue(listP, 'i32') : null
+  module._free(listP)
+  module._free(cnt2P)
+  return slot
+}
+
+// CK_TOKEN_INFO layout, per pkcs11t.h and confirmed against the Rust
+// engine's own C_GetTokenInfo (ck_abi.rs: "Engine blob (160 B): label@0..32,
+// mfr@32..64, model@64..80, serial@80..96, flags(u32)@96, ..."):
+//   label[32] + manufacturerID[32] + model[16] + serialNumber[16] = 96,
+//   then CK_FLAGS (u32 on this ILP32 target) at offset 96.
+var CK_TOKEN_INFO_SIZE = 160
+var CK_TOKEN_INFO_FLAGS_OFFSET = 96
+var CKF_TOKEN_INITIALIZED = 0x00000400
+
+/**
+ * Ask the token itself whether it has already been initialized — PKCS#11
+ * v3.2 §5.5.7: "The CKF_TOKEN_INITIALIZED flag in the CK_TOKEN_INFO
+ * structure indicates the action that will result from calling
+ * C_InitToken. If set, the token will be reinitialized." This is the
+ * authoritative check; JS-side bookkeeping (a restored snapshot) is a
+ * useful hint but not proof, and trusting it alone risks destroying every
+ * key on a real re-init (C_InitToken succeeds with the correct SO PIN even
+ * on an initialized token — it does not merely refuse).
+ *
+ * Three-valued on purpose: `null` means "could not ask" (C_GetTokenInfo
+ * itself failed), which is NOT the same as "not initialized". Collapsing
+ * that into `false` would make a transient query failure indistinguishable
+ * from a genuinely fresh token — and re-init a real one out from under a
+ * successful snapshot restore. Callers must fall back to the JS-side
+ * `restored` hint on `null`, never assume `false`.
+ */
+var tokenIsInitialized = (module: any, slot: number): boolean | null => {
+  var infoP = module._malloc(CK_TOKEN_INFO_SIZE)
+  try {
+    var rv = module._C_GetTokenInfo(slot, infoP)
+    if (rv !== CKR_OK) return null
+    var flags = module.getValue(infoP + CK_TOKEN_INFO_FLAGS_OFFSET, 'i32')
+    return (flags & CKF_TOKEN_INITIALIZED) !== 0
+  } finally {
+    module._free(infoP)
+  }
+}
+
+/**
+ * Ensure this module has an initialized token, restoring prior state first.
+ *
+ * The re-init guard is load-bearing: PKCS#11 v3.2 §5.5.7 specifies that
+ * C_InitToken on an ALREADY-initialized token with the correct SO PIN
+ * resets it and destroys every key object — it does not refuse, it
+ * succeeds destructively. So this never re-inits a token that
+ * tokenIsInitialized() reports as initialized, regardless of whether the
+ * JS-side snapshot restore appeared to succeed.
+ *
+ * Returns null on success, or an error string to surface verbatim.
+ */
+var ensureHsmToken = (module: any, requestId?: string): string | null => {
+  var missing = missingP11Exports(module)
+  if (missing.length > 0) {
+    return (
+      'This openssl.wasm build does not export ' +
+      missing.join(', ') +
+      ' — PKCS#11 token support needs the build that statically links the ' +
+      'Rust HSM engine (see openssl-studio-pkcs11-wiring-plan-07242026.md).'
+    )
+  }
+
+  // Restore BEFORE C_Initialize so the engine builds its slot list from the
+  // rehydrated token store rather than creating a fresh empty slot.
+  var restored = false
+  if (hsmSnapshot) {
+    restored = loadTokenSnapshot(module, hsmSnapshot)
+    if (!restored) {
+      self.postMessage({
+        type: 'LOG',
+        stream: 'stderr',
+        message: '[HSM] Token snapshot was rejected by the engine; re-initializing a fresh token.',
+        requestId,
+      })
+    }
+  }
+
+  var rv0 = module._C_Initialize(0)
+  if (rv0 !== CKR_OK && rv0 !== CKR_CRYPTOKI_ALREADY_INITIALIZED) {
+    return 'C_Initialize failed (rv=0x' + rv0.toString(16) + ')'
+  }
+
+  var slot = firstSlot(module)
+  if (slot === null) return 'C_GetSlotList returned no slots'
+
+  // Authoritative check — see tokenIsInitialized's doc comment. `true` wins
+  // outright. `null` (couldn't ask) falls back to the JS-side `restored`
+  // hint rather than being treated as "not initialized" — collapsing
+  // "unknown" into "false" here would re-init a real token out from under a
+  // successful restore on nothing more than a transient query failure.
+  // Only a confirmed `false` disagreeing with `restored` is worth logging:
+  // that is the one case where our own bookkeeping was actually wrong.
+  var initState = tokenIsInitialized(module, slot)
+  if (initState === true) return null
+  if (initState === null && restored) return null
+  if (initState === false && restored) {
+    self.postMessage({
+      type: 'LOG',
+      stream: 'stderr',
+      message:
+        '[HSM] Snapshot restore reported success but the token reports NOT initialized — ' +
+        'trusting the token and re-provisioning rather than risk operating on inconsistent state.',
+      requestId,
+    })
+  }
+
+  var labelP = module._malloc(32)
+  var label = new Uint8Array(32)
+  label.fill(0x20)
+  for (var i = 0; i < STUDIO_TOKEN_LABEL.length && i < 32; i++) {
+    label[i] = STUDIO_TOKEN_LABEL.charCodeAt(i)
+  }
+  module.HEAPU8.set(label, labelP)
+  var soPinP = module._malloc(STUDIO_SO_PIN.length + 1)
+  module.stringToUTF8(STUDIO_SO_PIN, soPinP, STUDIO_SO_PIN.length + 1)
+  var initRv = module._C_InitToken(slot, soPinP, STUDIO_SO_PIN.length, labelP)
+  module._free(soPinP)
+  module._free(labelP)
+  if (initRv !== CKR_OK) {
+    return 'C_InitToken failed (rv=0x' + initRv.toString(16) + ')'
+  }
+
+  // The token can move slots once initialized — re-read the list.
+  var tokenSlot = firstSlot(module)
+  if (tokenSlot === null) tokenSlot = slot
+
+  var sessP = module._malloc(4)
+  module.setValue(sessP, 0, 'i32')
+  var openRv = module._C_OpenSession(tokenSlot, CKF_SERIAL_SESSION | CKF_RW_SESSION, 0, 0, sessP)
+  if (openRv !== CKR_OK) {
+    module._free(sessP)
+    return 'C_OpenSession(SO) failed (rv=0x' + openRv.toString(16) + ')'
+  }
+  var soSess = module.getValue(sessP, 'i32')
+  module._free(sessP)
+
+  var soPinP2 = module._malloc(STUDIO_SO_PIN.length + 1)
+  module.stringToUTF8(STUDIO_SO_PIN, soPinP2, STUDIO_SO_PIN.length + 1)
+  var loginRv = module._C_Login(soSess, CKU_SO, soPinP2, STUDIO_SO_PIN.length)
+  module._free(soPinP2)
+  if (loginRv !== CKR_OK) {
+    module._C_CloseSession(soSess)
+    return 'C_Login(SO) failed (rv=0x' + loginRv.toString(16) + ')'
+  }
+
+  var userPinP = module._malloc(STUDIO_USER_PIN.length + 1)
+  module.stringToUTF8(STUDIO_USER_PIN, userPinP, STUDIO_USER_PIN.length + 1)
+  var pinRv = module._C_InitPIN(soSess, userPinP, STUDIO_USER_PIN.length)
+  module._free(userPinP)
+  module._C_Logout(soSess)
+  module._C_CloseSession(soSess)
+  if (pinRv !== CKR_OK) {
+    return 'C_InitPIN failed (rv=0x' + pinRv.toString(16) + ')'
+  }
+
+  self.postMessage({
+    type: 'LOG',
+    stream: 'stdout',
+    message:
+      '[HSM] Initialized token "' + STUDIO_TOKEN_LABEL + '" (user PIN ' + STUDIO_USER_PIN + ')',
+    requestId,
+  })
+  return null
+}
+
+// ── In-token key generation ──────────────────────────────────────────────
+//
+// Why this is not just `genpkey -out pkcs11:...`: that CLI form routes the
+// output through a BIO, i.e. POSIX open(), and writes a PEM file into
+// MEMFS. The key never reaches the token, so a later `pkcs11:object=<id>`
+// reference cannot find it. Generating through C_GenerateKeyPair with
+// CKA_TOKEN=TRUE is the only way to get a token-resident key. (The CMS
+// workshop hit exactly this and documents it the same way.)
+//
+// Constant values below are from the normative PKCS#11 v3.2 header
+// (pqctoday-hsm/src/lib/pkcs11/pkcs11t.h), not inferred.
+
+var CKO_PUBLIC_KEY = 0x00000002
+var CKO_PRIVATE_KEY = 0x00000003
+var CKA_CLASS = 0x00000000
+var CKA_TOKEN = 0x00000001
+var CKA_LABEL = 0x00000003
+var CKA_KEY_TYPE = 0x00000100
+var CKA_ID = 0x00000102
+var CKA_SENSITIVE = 0x00000103
+var CKA_SIGN = 0x00000108
+var CKA_VERIFY = 0x0000010a
+var CKA_PARAMETER_SET = 0x0000061d
+var CKA_EC_PARAMS = 0x00000180
+// PKCS#11 v3.2 §6.68.2's own ML-KEM public-key template uses these, and the
+// C_EncapsulateKey text is normative: "The CKA_ENCAPSULATE attribute of the
+// public key, which indicates whether the key supports encapsulation, MUST
+// be CK_TRUE." CKA_DERIVE (0x10c) is a key-agreement attribute and does not
+// apply to KEM keys — using it here was wrong (found 2026-07-24 validating
+// against the spec; ML-DSA was the only algorithm actually round-trip
+// tested, so a key that couldn't encapsulate would only have surfaced one
+// step later, in the Workbench).
+var CKA_ENCAPSULATE = 0x00000633
+var CKA_DECAPSULATE = 0x00000634
+var CKU_USER = 1
+
+var CKK_EC = 0x00000003
+var CKK_ML_KEM = 0x00000049
+var CKK_ML_DSA = 0x0000004a
+var CKM_EC_KEY_PAIR_GEN = 0x00001040
+var CKM_ML_KEM_KEY_PAIR_GEN = 0x0000000f
+var CKM_ML_DSA_KEY_PAIR_GEN = 0x0000001c
+
+/** DER-encoded OID for the NIST P-256 curve (1.2.840.10045.3.1.7), the
+ *  CKA_EC_PARAMS value for an EC keypair. */
+var EC_PARAMS_P256 = new Uint8Array([0x06, 0x08, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x03, 0x01, 0x07])
+
+// CKA_PARAMETER_SET values are the CKP_* ORDINALS from pkcs11t.h (1/2/3),
+// NOT the security level in the algorithm's name. Passing 65 for ML-DSA-65
+// is not merely rejected — it traps the engine with "memory access out of
+// bounds", so this distinction is worth being explicit about.
+var CKP_ML_DSA_44 = 0x00000001
+var CKP_ML_DSA_65 = 0x00000002
+var CKP_ML_DSA_87 = 0x00000003
+var CKP_ML_KEM_512 = 0x00000001
+var CKP_ML_KEM_768 = 0x00000002
+var CKP_ML_KEM_1024 = 0x00000003
+
+/** Algorithms the Studio can generate into the token, keyed by the name
+ *  shown in the UI. `paramSet` is CKA_PARAMETER_SET (ML-DSA/ML-KEM only). */
+var HSM_KEYGEN_ALGS: Record<
+  string,
+  { mech: number; keyType: number; paramSet?: number; kind: 'sign' | 'kem' | 'ec' }
+> = {
+  'ML-DSA-44': {
+    mech: CKM_ML_DSA_KEY_PAIR_GEN,
+    keyType: CKK_ML_DSA,
+    paramSet: CKP_ML_DSA_44,
+    kind: 'sign',
+  },
+  'ML-DSA-65': {
+    mech: CKM_ML_DSA_KEY_PAIR_GEN,
+    keyType: CKK_ML_DSA,
+    paramSet: CKP_ML_DSA_65,
+    kind: 'sign',
+  },
+  'ML-DSA-87': {
+    mech: CKM_ML_DSA_KEY_PAIR_GEN,
+    keyType: CKK_ML_DSA,
+    paramSet: CKP_ML_DSA_87,
+    kind: 'sign',
+  },
+  'ML-KEM-512': {
+    mech: CKM_ML_KEM_KEY_PAIR_GEN,
+    keyType: CKK_ML_KEM,
+    paramSet: CKP_ML_KEM_512,
+    kind: 'kem',
+  },
+  'ML-KEM-768': {
+    mech: CKM_ML_KEM_KEY_PAIR_GEN,
+    keyType: CKK_ML_KEM,
+    paramSet: CKP_ML_KEM_768,
+    kind: 'kem',
+  },
+  'ML-KEM-1024': {
+    mech: CKM_ML_KEM_KEY_PAIR_GEN,
+    keyType: CKK_ML_KEM,
+    paramSet: CKP_ML_KEM_1024,
+    kind: 'kem',
+  },
+  'EC-P256': { mech: CKM_EC_KEY_PAIR_GEN, keyType: CKK_EC, kind: 'ec' },
+}
+
+/** Write one CK_ATTRIBUTE (12 bytes on ILP32) at base[idx]. */
+var writeAttr = (
+  module: any,
+  base: number,
+  idx: number,
+  type: number,
+  valPtr: number,
+  valLen: number
+) => {
+  var off = base + idx * 12
+  module.setValue(off, type, 'i32')
+  module.setValue(off + 4, valPtr, 'i32')
+  module.setValue(off + 8, valLen, 'i32')
+}
+
+/**
+ * Generate a token-resident keypair. Returns null on success, else an error
+ * string. The caller must have run ensureHsmToken() on this module first.
+ */
+var generateKeyInToken = (module: any, algName: string, keyId: string): string | null => {
+  var spec = HSM_KEYGEN_ALGS[algName]
+  if (!spec) {
+    return (
+      'Unsupported HSM algorithm "' +
+      algName +
+      '". Supported: ' +
+      Object.keys(HSM_KEYGEN_ALGS).join(', ')
+    )
+  }
+  if (typeof module._C_GenerateKeyPair !== 'function') {
+    return 'This openssl.wasm build does not export C_GenerateKeyPair.'
+  }
+
+  var slot = firstSlot(module)
+  if (slot === null) return 'C_GetSlotList returned no slots'
+
+  var sessP = module._malloc(4)
+  module.setValue(sessP, 0, 'i32')
+  var openRv = module._C_OpenSession(slot, CKF_SERIAL_SESSION | CKF_RW_SESSION, 0, 0, sessP)
+  if (openRv !== CKR_OK) {
+    module._free(sessP)
+    return 'C_OpenSession failed (rv=0x' + openRv.toString(16) + ')'
+  }
+  var session = module.getValue(sessP, 'i32')
+  module._free(sessP)
+
+  var pinP = module._malloc(STUDIO_USER_PIN.length + 1)
+  module.stringToUTF8(STUDIO_USER_PIN, pinP, STUDIO_USER_PIN.length + 1)
+  var loginRv = module._C_Login(session, CKU_USER, pinP, STUDIO_USER_PIN.length)
+  module._free(pinP)
+  // ALREADY_LOGGED_IN is fine — the session may be reused within a command.
+  if (loginRv !== CKR_OK && loginRv !== 0x100) {
+    module._C_CloseSession(session)
+    return 'C_Login(user) failed (rv=0x' + loginRv.toString(16) + ')'
+  }
+
+  // Value buffers.
+  var boolTrueP = module._malloc(1)
+  module.HEAPU8[boolTrueP] = 1
+  var pubClassP = module._malloc(4)
+  module.setValue(pubClassP, CKO_PUBLIC_KEY, 'i32')
+  var privClassP = module._malloc(4)
+  module.setValue(privClassP, CKO_PRIVATE_KEY, 'i32')
+  var keyTypeP = module._malloc(4)
+  module.setValue(keyTypeP, spec.keyType, 'i32')
+
+  var idBytes = new TextEncoder().encode(keyId)
+  var labelP = module._malloc(idBytes.length)
+  module.HEAPU8.set(idBytes, labelP)
+  var idP = module._malloc(idBytes.length)
+  module.HEAPU8.set(idBytes, idP)
+
+  // CK_MECHANISM { type, pParameter, ulParameterLen } — 12 bytes on ILP32.
+  var mechP = module._malloc(12)
+  module.setValue(mechP, spec.mech, 'i32')
+  module.setValue(mechP + 4, 0, 'i32')
+  module.setValue(mechP + 8, 0, 'i32')
+
+  // Templates. Common head: CLASS, TOKEN, LABEL, ID, KEY_TYPE.
+  var pubAttrs: number[][] = [
+    [CKA_CLASS, pubClassP, 4],
+    [CKA_TOKEN, boolTrueP, 1],
+    [CKA_LABEL, labelP, idBytes.length],
+    [CKA_ID, idP, idBytes.length],
+    [CKA_KEY_TYPE, keyTypeP, 4],
+  ]
+  var privAttrs: number[][] = [
+    [CKA_CLASS, privClassP, 4],
+    [CKA_TOKEN, boolTrueP, 1],
+    [CKA_LABEL, labelP, idBytes.length],
+    [CKA_ID, idP, idBytes.length],
+    [CKA_KEY_TYPE, keyTypeP, 4],
+    [CKA_SENSITIVE, boolTrueP, 1],
+  ]
+
+  var paramSetP = 0
+  var ecParamsP = 0
+  if (spec.paramSet !== undefined) {
+    paramSetP = module._malloc(4)
+    module.setValue(paramSetP, spec.paramSet, 'i32')
+    pubAttrs.push([CKA_PARAMETER_SET, paramSetP, 4])
+    privAttrs.push([CKA_PARAMETER_SET, paramSetP, 4])
+  }
+  if (spec.kind === 'ec') {
+    ecParamsP = module._malloc(EC_PARAMS_P256.length)
+    module.HEAPU8.set(EC_PARAMS_P256, ecParamsP)
+    // CKA_EC_PARAMS must be on BOTH templates: pkcs11-provider's
+    // fetch_ec_key() (objects.c) fetches it with mandatory=true for
+    // CKO_PRIVATE_KEY as well as CKO_PUBLIC_KEY — it needs the curve to
+    // reconstruct an EVP_PKEY from a bare private scalar. Public-only left
+    // every `pkcs11:object=<ecKeyId>` PRIVATE-key lookup failing with
+    // CKR_KEY_INDIGESTIBLE ("Failed to load keys from slot") on any module
+    // that restored the key from a snapshot rather than the one that
+    // generated it.
+    pubAttrs.push([CKA_EC_PARAMS, ecParamsP, EC_PARAMS_P256.length])
+    privAttrs.push([CKA_EC_PARAMS, ecParamsP, EC_PARAMS_P256.length])
+  }
+  if (spec.kind === 'kem') {
+    // PKCS#11 v3.2 §6.68.2 / C_EncapsulateKey: ML-KEM keys encapsulate and
+    // decapsulate, not derive.
+    pubAttrs.push([CKA_ENCAPSULATE, boolTrueP, 1])
+    privAttrs.push([CKA_DECAPSULATE, boolTrueP, 1])
+  } else {
+    pubAttrs.push([CKA_VERIFY, boolTrueP, 1])
+    privAttrs.push([CKA_SIGN, boolTrueP, 1])
+  }
+
+  var pubTplP = module._malloc(pubAttrs.length * 12)
+  for (var i = 0; i < pubAttrs.length; i++) {
+    writeAttr(module, pubTplP, i, pubAttrs[i][0], pubAttrs[i][1], pubAttrs[i][2])
+  }
+  var privTplP = module._malloc(privAttrs.length * 12)
+  for (var j = 0; j < privAttrs.length; j++) {
+    writeAttr(module, privTplP, j, privAttrs[j][0], privAttrs[j][1], privAttrs[j][2])
+  }
+
+  var hPubP = module._malloc(4)
+  var hPrivP = module._malloc(4)
+  module.setValue(hPubP, 0, 'i32')
+  module.setValue(hPrivP, 0, 'i32')
+
+  var genRv = module._C_GenerateKeyPair(
+    session,
+    mechP,
+    pubTplP,
+    pubAttrs.length,
+    privTplP,
+    privAttrs.length,
+    hPubP,
+    hPrivP
+  )
+
+  module._free(hPubP)
+  module._free(hPrivP)
+  module._free(pubTplP)
+  module._free(privTplP)
+  module._free(mechP)
+  module._free(idP)
+  module._free(labelP)
+  module._free(keyTypeP)
+  module._free(privClassP)
+  module._free(pubClassP)
+  module._free(boolTrueP)
+  if (paramSetP) module._free(paramSetP)
+  if (ecParamsP) module._free(ecParamsP)
+
+  module._C_Logout(session)
+  module._C_CloseSession(session)
+
+  if (genRv !== CKR_OK) {
+    return 'C_GenerateKeyPair(' + algName + ') failed (rv=0x' + genRv.toString(16) + ')'
+  }
+  return null
+}
+
+/**
+ * Snapshot the engine via the malloc-based pull. ONLY for modules that have
+ * NOT had `callMain` invoked — see `takeTokenSnapshot`'s doc comment.
+ * Keeps the previous snapshot if the engine had nothing to give.
+ */
+var saveHsmSnapshotDirectApi = (module: any) => {
+  var snap = takeTokenSnapshot(module)
+  if (snap) hsmSnapshot = snap
+}
+
+/**
+ * Snapshot the engine via the file-based read. The correct call AFTER
+ * `callMain` has returned — see `readHsmStateFile`'s doc comment. Keeps
+ * the previous snapshot if the engine had nothing to give (e.g. this
+ * command never touched pkcs11, so the atexit hook wrote nothing new).
+ */
+var saveHsmSnapshotAfterCallMain = (module: any) => {
+  var snap = readHsmStateFile(module)
+  if (snap) hsmSnapshot = snap
+}
+
+/** True when a command touches the token and therefore needs the lifecycle
+ *  run first — either a `pkcs11:` URI anywhere in the args, or an explicit
+ *  `-provider pkcs11` (which works, but still needs a provisioned token:
+ *  without one it fails with "token was not present in its slot"). */
+var commandUsesPkcs11 = (args: string[]): boolean => {
+  for (var i = 0; i < args.length; i++) {
+    if (args[i].indexOf('pkcs11:') >= 0) return true
+    if (args[i] === '-provider' && args[i + 1] === 'pkcs11') return true
+    if (args[i] === '-propquery' && (args[i + 1] || '').indexOf('pkcs11') >= 0) return true
+  }
+  return false
+}
+
+// ----------------------------------------------------------------------------
 // Persistent virtual filesystem (VFS)
 //
 // The openssl.wasm bundle is built with -sEXIT_RUNTIME=1: every callMain()
@@ -534,6 +1222,16 @@ var executeCommand = async (
     requestId,
   })
   let openSSLModule
+  // Set only when THIS command actually engaged the token (ensureHsmToken
+  // ran, below). Gates the post-callMain snapshot save: the Rust engine's
+  // atexit hook writes a state file on EVERY command unconditionally
+  // (Fix A registers it regardless of the command), so for a command that
+  // never restored/touched the token, that file is an EMPTY snapshot —
+  // saving it would silently wipe out real token state built up by an
+  // earlier HSM_KEYGEN, just because the user ran an unrelated command
+  // (e.g. `openssl version`) afterward. Found 2026-07-24 while verifying
+  // the file-based handoff end-to-end; see also readHsmStateFile.
+  let commandTouchedToken = false
 
   try {
     self.postMessage({
@@ -567,6 +1265,13 @@ var executeCommand = async (
   }
 
   try {
+    // Provision/restore the token before any command that touches it.
+    if (commandUsesPkcs11(args)) {
+      commandTouchedToken = true
+      const hsmErr = ensureHsmToken(openSSLModule, requestId)
+      if (hsmErr) throw new Error(hsmErr)
+    }
+
     self.postMessage({
       type: 'LOG',
       stream: 'stdout',
@@ -673,6 +1378,19 @@ var executeCommand = async (
       // Persist FS state regardless of exit status (POSIX-like: partial
       // outputs of a failed command remain on disk for the next command).
       snapshotVfs(openSSLModule)
+      // Same for token state — but ONLY if this command actually restored
+      // it (commandTouchedToken). The atexit hook writes a state file on
+      // every command unconditionally; for a command that never called
+      // ensureHsmToken, that file is an empty snapshot (nothing was ever
+      // loaded into this module's token store), and saving it here would
+      // silently wipe out real token state from an earlier HSM_KEYGEN.
+      // Read via the file the engine's atexit hook wrote WHILE its runtime
+      // was still alive — callMain has already returned by this point, so
+      // nothing exported (malloc included) can be called on this module
+      // instance anymore; see readHsmStateFile.
+      if (commandTouchedToken) {
+        saveHsmSnapshotAfterCallMain(openSSLModule)
+      }
     }
 
     // Scan for output files — report only files new to this command
@@ -938,6 +1656,58 @@ var generateCaRoot = async (
   }
 }
 
+/**
+ * Generate a token-resident keypair and report the `pkcs11:` URI that now
+ * addresses it. Runs the token lifecycle first, then snapshots the engine so
+ * the key survives into subsequent commands.
+ */
+var generateHsmKey = async (algorithm: string, keyId: string, requestId?: string) => {
+  try {
+    await loadOpenSSLScript('/wasm/openssl.js', requestId)
+    const module = await createOpenSSLInstance(requestId)
+    injectEntropy(module, requestId)
+    configureEnvironment(module, requestId)
+
+    const tokenErr = ensureHsmToken(module, requestId)
+    if (tokenErr) throw new Error(tokenErr)
+
+    const genErr = generateKeyInToken(module, algorithm, keyId)
+    if (genErr) throw new Error(genErr)
+
+    // Persist immediately: unlike executeCommand there is no callMain here,
+    // so nothing else will snapshot for us. The malloc-based pull is safe
+    // here specifically because this module never had callMain invoked on
+    // it — see takeTokenSnapshot's doc comment.
+    saveHsmSnapshotDirectApi(module)
+
+    const uri = 'pkcs11:object=' + keyId + ';type=private?pin-value=' + STUDIO_USER_PIN
+    self.postMessage({
+      type: 'LOG',
+      stream: 'stdout',
+      message:
+        'Generated ' +
+        algorithm +
+        ' keypair in the token as "' +
+        keyId +
+        '".\n' +
+        '   Private key URI: ' +
+        uri +
+        '\n' +
+        '   The private key is token-resident — it has no file and cannot be exported.',
+      requestId,
+    })
+    self.postMessage({ type: 'HSM_KEY_CREATED', keyId, algorithm, uri, requestId })
+  } catch (error: any) {
+    self.postMessage({
+      type: 'ERROR',
+      error: error.message || 'HSM key generation failed',
+      requestId,
+    })
+  } finally {
+    self.postMessage({ type: 'DONE', requestId })
+  }
+}
+
 var executeSkeyOperation = async (opType: 'create' | 'derive', params: any, requestId?: string) => {
   try {
     // 1. Load/Init
@@ -1100,6 +1870,13 @@ self.addEventListener('message', async (event: MessageEvent<WorkerMessage>) => {
       })
 
       self.postMessage({ type: 'DONE', requestId })
+    } else if (type === 'HSM_KEYGEN') {
+      const { algorithm, keyId } = event.data as {
+        type: 'HSM_KEYGEN'
+        algorithm: string
+        keyId: string
+      }
+      await generateHsmKey(algorithm, keyId, requestId)
     } else if (type === 'SKEY_OPERATION') {
       const { opType, params } = event.data as any
       await executeSkeyOperation(opType, params, requestId)

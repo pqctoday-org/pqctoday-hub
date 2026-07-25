@@ -302,6 +302,11 @@ scripts/*
 !scripts/audit-trusted-source-freshness.ts
 !scripts/enrich-protocol-matrix.py
 !scripts/apply-protocol-matrix-updates.ts
+# Its unit tests — the downgrade guard (F8, 2026-07-25) is the reason this
+# script needs any. scripts/* is ignored wholesale, so every tracked file
+# here needs its own negation; without this line the tests exist locally and
+# nowhere else, which is exactly the failure mode the guard protects against.
+!scripts/apply-protocol-matrix-updates.test.ts
 # Build-pipeline generators are public — `npm run build` invokes them to
 # produce OSCAL + CBOM JSON from committed CSV data. Reading public input,
 # emitting public output: nothing private to protect.

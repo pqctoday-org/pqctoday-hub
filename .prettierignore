@@ -76,3 +76,7 @@ src/data/doc-enrichments/**
 
 # KMIP policy files are synced/generated from pqctoday-hsm — not hand-formatted
 public/kmip-policies/
+
+# Local pytest cache — git ignores its contents via a nested .gitignore, but
+# prettier walks in anyway and reports it on every local format:check run.
+.pytest_cache/

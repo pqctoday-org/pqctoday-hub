@@ -22,7 +22,7 @@
       "status": "built",
       "hsmCommit": "5c0eaddf57def0f1eb8b6330b04405c72ca2cdcf",
       "builtAt": "2026-07-17",
-      "_buildNote": "PKCS#11 v3.2 Baseline Provider + generic pre-hash mechanisms (2026-07-17, hsm commit 644a839, landed directly on main): adds the CKO_PROFILE object (CKA_PROFILE_ID=CKP_BASELINE_PROVIDER, every Profiles v3.2 §5.1 requirement checked against the fetched spec) and implements the previously-unadvertised generic CKM_HASH_ML_DSA (0x1F) / CKM_HASH_SLH_DSA (0x34) pre-hash mechanisms (CK_HASH_SIGN_ADDITIONAL_CONTEXT.hash parsing, remapped onto the existing hash-specific mechanisms). `hsmCommit` above (5c0eadd) is a same-day follow-up that only refreshes hsm's own tracked rust/pkg_bundler/ build artifact + a wasm/Cargo.lock version bump — no rust/ source changed beyond 644a839. No new exported wasm functions — same API surface (.d.ts/.js text diffs are empty), only the .wasm binary changed; verified 302 Rust unit tests pass (0 failed) and the .wasm binaries are byte-identical across all three hub vendor copies (public/wasm/rust/, src/wasm/, src/vendor/softhsm-wasm/wasm/ — the last of which was found stale relative to the other two, predating the FrodoKEM/McEliece shadow-stack fix, and is now back in sync as a side effect of this rebuild). Prior entry (`5303bd3`, 2026-07-11): fixed the FrodoKEM/Classic-McEliece wasm32 shadow-stack overflow in Encapsulate — see hsm CHANGELOG.md for that history."
+      "_buildNote": "PKCS#11 v3.2 Baseline Provider + generic pre-hash mechanisms (2026-07-17, hsm commit 644a839, landed directly on main): adds the CKO_PROFILE object (CKA_PROFILE_ID=CKP_BASELINE_PROVIDER, every Profiles v3.2 \u00a75.1 requirement checked against the fetched spec) and implements the previously-unadvertised generic CKM_HASH_ML_DSA (0x1F) / CKM_HASH_SLH_DSA (0x34) pre-hash mechanisms (CK_HASH_SIGN_ADDITIONAL_CONTEXT.hash parsing, remapped onto the existing hash-specific mechanisms). `hsmCommit` above (5c0eadd) is a same-day follow-up that only refreshes hsm's own tracked rust/pkg_bundler/ build artifact + a wasm/Cargo.lock version bump \u2014 no rust/ source changed beyond 644a839. No new exported wasm functions \u2014 same API surface (.d.ts/.js text diffs are empty), only the .wasm binary changed; verified 302 Rust unit tests pass (0 failed) and the .wasm binaries are byte-identical across all three hub vendor copies (public/wasm/rust/, src/wasm/, src/vendor/softhsm-wasm/wasm/ \u2014 the last of which was found stale relative to the other two, predating the FrodoKEM/McEliece shadow-stack fix, and is now back in sync as a side effect of this rebuild). Prior entry (`5303bd3`, 2026-07-11): fixed the FrodoKEM/Classic-McEliece wasm32 shadow-stack overflow in Encapsulate \u2014 see hsm CHANGELOG.md for that history."
     },
     {
       "name": "softhsm-cpp-engine",
@@ -33,7 +33,7 @@
       "status": "built",
       "hsmCommit": "e912488d3db86bd18bd23f15f70661a252613df2",
       "builtAt": "2026-06-27",
-      "_buildNote": "Includes fix(cpp) 250994d: SP800-108 KDF now requires keyed-MAC PRF (CKM_SHA256_HMAC); bare hash IDs rejected per PKCS#11 v3.2 §6.42."
+      "_buildNote": "Includes fix(cpp) 250994d: SP800-108 KDF now requires keyed-MAC PRF (CKM_SHA256_HMAC); bare hash IDs rejected per PKCS#11 v3.2 \u00a76.42."
     },
     {
       "name": "openssh-pkcs11",
@@ -44,7 +44,7 @@
       "status": "built",
       "hsmCommit": "1c637d3a3916b08fe59445120d93f26dfd79d639",
       "builtAt": "2026-07-10",
-      "_buildNote": "Re-stamped, not rebuilt: verified `git log 07cd2e0e1..1c637d3 -- openssh-pkcs11/` touches only CHANGELOG.md and STATUS.md (2 doc-only commits, zero source/behavior change). No emsdk/Emscripten toolchain is installed on this machine, so an actual rebuild wasn't attempted or needed — the existing binary is bit-for-bit what v0.14.0's source would produce."
+      "_buildNote": "Re-stamped, not rebuilt: verified `git log 07cd2e0e1..1c637d3 -- openssh-pkcs11/` touches only CHANGELOG.md and STATUS.md (2 doc-only commits, zero source/behavior change). No emsdk/Emscripten toolchain is installed on this machine, so an actual rebuild wasn't attempted or needed \u2014 the existing binary is bit-for-bit what v0.14.0's source would produce."
     },
     {
       "name": "strongswan",
@@ -55,7 +55,19 @@
       "status": "built",
       "hsmCommit": "1c637d3a3916b08fe59445120d93f26dfd79d639",
       "builtAt": "2026-07-10",
-      "_buildNote": "Re-stamped, not rebuilt: verified `git log 8e436210c..1c637d3 -- strongswan-wasm-shims/ strongswan-wasm-v2-shims/` touches only STATUS.md and README.md (1 doc-only commit, zero source/behavior change). No emsdk/Emscripten toolchain is installed on this machine, so an actual rebuild wasn't attempted or needed — the existing binary is bit-for-bit what v0.14.0's source would produce."
+      "_buildNote": "Re-stamped, not rebuilt: verified `git log 8e436210c..1c637d3 -- strongswan-wasm-shims/ strongswan-wasm-v2-shims/` touches only STATUS.md and README.md (1 doc-only commit, zero source/behavior change). No emsdk/Emscripten toolchain is installed on this machine, so an actual rebuild wasn't attempted or needed \u2014 the existing binary is bit-for-bit what v0.14.0's source would produce."
+    },
+    {
+      "name": "openssl-pkcs11",
+      "files": ["public/wasm/openssl.js", "public/wasm/openssl.wasm"],
+      "buildScript": "pqctoday-priv/build-wasm.sh",
+      "sourceDirs": ["rust", "src/vendor/pkcs11-provider", "scripts/build-openssl-wasm.sh"],
+      "track": "tip",
+      "status": "built",
+      "hsmCommit": "859774b5273869c256f604a73eafcc8ccc8ee80c",
+      "builtAt": "2026-07-24",
+      "_buildNote": "PKCS#11 engine swapped from the C++ SoftHSMv3 fork to the pure-Rust softhsmrustv3 (hsm rust/, wasm32-unknown-emscripten staticlib). The C++ fork's only crypto backend is OpenSSL libcrypto -- the same libcrypto.a linked into this binary -- so the chain CLI -> pkcs11-provider -> C++ softhsm -> same libcrypto was circular. The Rust engine has no OpenSSL dependency (RustCrypto + patched fips204/205/ml-kem), making the provider path a genuinely independent implementation. Build flags: -sSTACK_SIZE=8MB (Emscripten's 64KB default overflows during ML-DSA/ML-KEM keygen and traps with 'memory access out of bounds'). pkcs11-provider config.h is now generated by scripts/gen-pkcs11-provider-config-h.sh rather than required to pre-exist, and defines DEFAULT_PKCS11_MODULE so the provider resolves the in-process engine with no config file. The apps_startup() provider-registration patch ('Fix A') is recovered into pqctoday-priv/openssl-wasm-patches/ after previously existing only inside a gitignored openssl source tree -- verified at parity with the shipped binary before this rebuild. Token-state persistence across openssl.wasm's per-command modules (-sEXIT_RUNTIME=1) uses a NEW mechanism: a genuine C atexit() hook (registered in this hub's own src/wasm/cms_provider_init.c) calls a new Rust export, pqctoday_hsm_atexit_stash, which writes engine state to a fixed MEMFS path; JS reads it back via a pure FS.readFile after callMain returns. This replaced an earlier design that assumed OpenSSL's own provider teardown (C_Finalize) would run during callMain's atexit chain -- verified directly that it does not: OPENSSL_cleanup() runs on every callMain but never unloads a provider loaded via an explicit OSSL_PROVIDER_load() call, which is how this embedding registers pkcs11. ML-KEM keys now carry CKA_ENCAPSULATE/CKA_DECAPSULATE per PKCS#11 v3.2 SS6.68.2 (previously CKA_DERIVE, which is wrong for KEM keys). Token-init decisions now query the token's own CKF_TOKEN_INITIALIZED flag (C_GetTokenInfo, newly exported) rather than inferring from JS-side bookkeeping alone, per PKCS#11 v3.2 SS5.5.7. Verified end-to-end in Node against this exact binary: provider loads reporting the Rust engine; C_InitToken/InitPIN/GenerateKeyPair(ML-DSA-65 and ML-KEM-768) succeed; a real ML-KEM-768 encapsulate/decapsulate round trip across a fresh module produces byte-identical shared secrets; a 4-step CMS workshop flow (keygen -> self-signed cert -> cms sign -> cms verify), each step in its OWN fresh module, round-trips a real payload correctly using only the file-based snapshot handoff. Pinned anchor KATs (ML-DSA-44/65/87, SLH-DSA-SHA2-128s, ML-KEM-512/768/1024 decap, bit-flip negatives) pass against this binary. NOT YET VERIFIED: a full pass in an actual browser (all proof above is Node-against-the-binary); a possible second lost OpenSSL source patch referenced by the build script's own banner comment ('HRR detection') has not been confirmed present or absent.",
+      "hsmBranch": "feat/rust-pkcs11-emscripten-staticlib (NOT merged to hsm main as of this build)"
     }
   ]
 }

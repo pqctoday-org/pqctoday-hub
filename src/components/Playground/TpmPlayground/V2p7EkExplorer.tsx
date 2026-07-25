@@ -13,6 +13,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { CheckCircle2, XCircle, AlertCircle, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { readPublic } from '../../../wasm/tpmBridge'
+import { useTpmBusy } from './useTpmBusy'
 import { V2P7_EK_SPECS, type V2p7EkSpec, tpmAlgName, toHex, bytesEqual } from './v2p7-reference'
 
 interface ReadResult {
@@ -71,6 +72,7 @@ function expectedParmsLen(spec: V2p7EkSpec): number {
 export function V2p7EkExplorer({ isWasmReady, v2p7Status }: Props) {
   const [results, setResults] = useState<ReadResult[]>([])
   const [loading, setLoading] = useState(false)
+  const tpmBusy = useTpmBusy()
 
   const readAll = useCallback(async () => {
     if (!isWasmReady) return
@@ -113,7 +115,12 @@ export function V2p7EkExplorer({ isWasmReady, v2p7Status }: Props) {
               Table 2 pubkey sizes.
             </p>
           </div>
-          <Button variant="outline" size="sm" onClick={readAll} disabled={loading || !isWasmReady}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={readAll}
+            disabled={loading || !isWasmReady || tpmBusy}
+          >
             <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Re-read
           </Button>

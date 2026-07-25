@@ -70,16 +70,7 @@ function extractModuleIds(): string[] {
 // Listed 2026-07-09 (data-pipelines remediation).
 // Exported (2026-07-19) so export-learn-manifest-snapshot.ts can reuse the
 // single allowlist instead of duplicating it.
-export const KNOWN_MISSING = new Set([
-  'cbom',
-  'crypto-registry',
-  'pqc-grc',
-  'quiz',
-  'sbom',
-  'skills-team-structure',
-  'soc-implementation-pqc',
-  'verification-closure',
-])
+export const KNOWN_MISSING = new Set(['quiz'])
 
 function main() {
   const ids = extractModuleIds()

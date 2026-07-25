@@ -83,6 +83,7 @@ const VALID_CATEGORIES = new Set<string>([
   'lms',
   'configutl',
   'kdf',
+  'pkcs11',
 ])
 
 function resolveCmd(param: string | null): OpenSSLCategory {
@@ -106,12 +107,13 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
   const [category, setCategory] = useState<OpenSSLCategory>(() =>
     embedded ? 'genpkey' : resolveCmd(searchParams.get('cmd'))
   )
-  const { editingFile, activeTab, structuredLogs, setActiveTab, isReady } = useOpenSSLStore()
+  const { editingFile, activeTab, structuredLogs, setActiveTab, isReady, loadError } =
+    useOpenSSLStore()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   // Hoisted here (not inside WorkbenchPreview) so the Learn tab shares the
   // exact same worker/WASM instance as the Workbench instead of each tab
   // mounting its own useOpenSSL() and reloading the engine on tab switch.
-  const { executeCommand, executeSkey, runCommand, retryLoad } = useOpenSSL()
+  const { executeCommand, executeSkey, runCommand, retryLoad, hsmKeygen } = useOpenSSL()
 
   const handleCategoryChange = useCallback(
     (cat: OpenSSLCategory) => {
@@ -239,13 +241,21 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
           <TabsContent value="learn">
             <OpenSslLearnView
               isReady={isReady}
+              loadError={loadError}
+              retryLoad={retryLoad}
               runCommand={runCommand}
               onTryInWorkbench={handleCategoryChange}
             />
           </TabsContent>
 
           <TabsContent value="explore">
-            <AlgorithmExplorerPanel isReady={isReady} runCommand={runCommand} />
+            <AlgorithmExplorerPanel
+              isReady={isReady}
+              loadError={loadError}
+              retryLoad={retryLoad}
+              runCommand={runCommand}
+              hsmKeygen={hsmKeygen}
+            />
           </TabsContent>
 
           <TabsContent value="workbench">
@@ -281,6 +291,7 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
                     executeCommand={executeCommand}
                     executeSkey={executeSkey}
                     retryLoad={retryLoad}
+                    hsmKeygen={hsmKeygen}
                   />
                 </div>
 

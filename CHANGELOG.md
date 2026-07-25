@@ -29,6 +29,38 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.26.0] - 2026-07-25
+
+OpenSSL Studio gets a working hardware-token workbench backed by a genuinely independent PQC engine, the TPM 2.0 Playground stops corrupting itself when two panels are used at once, and seven Learn modules get the infographic they were missing.
+
+### Added
+
+- **OpenSSL Studio has a new PKCS#11 (HSM) workbench you can actually generate keys in** [view:/openssl] [persona:developer] [persona:architect] [persona:ops]: generate ML-DSA-44/65/87, ML-KEM-512/768/1024, or EC-P256 keys directly inside a software token, then pick a key and run only the operations it can really do — self-signed certificate, CSR, sign and verify for signing keys; encapsulate and decapsulate for KEM keys. Private keys never leave the token; every operation runs the real `openssl` command against it, and the command is shown to you before it runs.
+- **The token behind OpenSSL Studio is now a genuinely independent implementation** [view:/openssl] [persona:developer] [persona:researcher]: the previous PKCS#11 engine used OpenSSL's own crypto library as its only backend, so "OpenSSL talking to an HSM" was really OpenSSL calling itself in a circle — proving nothing about interoperability. It has been replaced with a pure-Rust engine that shares no code with OpenSSL, so a key generated in the token and used by the CLI now exercises two independent implementations.
+- **Seven Learn modules now show their infographic** [view:/learn] [persona:curious] [persona:executive] [persona:architect]: CBOM, Crypto Registry, PQC GRC, SBOM, Skills & Team Structure, SOC Implementation, and Verification & Closure had been shipping with the infographic pane hidden because no image existed. Module infographic coverage goes from 55 of 63 to 62 of 63.
+- **The TPM 2.0 Playground now proves the spec revision it claims, instead of asserting it** [view:/playground/tpm-playground] [persona:developer] [persona:researcher]: the first lesson stated the engine's TCG specification version and errata level as settled fact without ever asking the engine — and until a paired engine fix, that claim was wrong. It now queries the TPM live and shows the real answer. The Compliance Suite also gained a TPM2_NV_Certify check, a command that was previously untestable anywhere in the Playground, and it verifies the returned digest against an independently computed one rather than just accepting a success code.
+
+### Fixed
+
+- **The TPM 2.0 Playground no longer corrupts its own results when two panels run at once** [view:/playground/tpm-playground] [persona:developer] [persona:architect]: all seven panels drive a single TPM engine that can only handle one operation at a time, with nothing preventing overlap. Two independent operations interleaving mid-sequence could silently corrupt shared state — most visibly as lesson T5 reporting a signature failure after five clean steps, because the signature had been computed over the wrong message. Operations now run one at a time, including a whole "Run all" sequence, so a double-click can't interleave a second run into the first.
+- **Certificate steps that use an EC key in OpenSSL Studio's HSM demos now work** [view:/openssl] [persona:developer] [persona:ops]: any EC private key restored from the token was rejected as unreadable ("Failed to load keys from slot"), because the key was stored without recording which curve it used. Post-quantum keys were unaffected, which is why the dual-signature demo's ML-DSA certificate step always worked while the classical certificate step right after it always failed.
+- **OpenSSL Studio's Workbench buttons no longer get pushed off the screen** [view:/openssl] [persona:developer]: after running a command with a lot of output, the log panel grew without limit and stretched the whole page — leaving the operation buttons roughly fourteen screens down. The terminal and log panels now have a fixed height ceiling and scroll internally.
+- **OpenSSL Studio's Explore and Learn tabs now tell you when the engine fails to load** [view:/openssl] [persona:developer] [persona:researcher]: if the engine failed to start, both tabs sat on "waiting to initialize" forever with no error and no way to retry short of reloading the page. They now show the real error and a retry button, which the Workbench tab already did.
+- **A data-refresh bug that could have un-published two RFCs on the Algorithms page is fixed** [view:/algorithms] [persona:developer] [persona:architect] [persona:researcher]: the tool that refreshes the Protocol Matrix from the IETF datatracker wrote whatever the feed reported without comparing it to what the page already showed, so a superseding draft or a bad lookup could move a protocol _backwards_ in its standardization stage. Run against the current feed it would have applied 17 such downgrades, two of which would have shown a published RFC as not yet published. Backwards moves are now blocked and reported instead of written.
+- **Approving one Protocol Matrix correction no longer applies all of them** [view:/algorithms] [persona:ops]: in the maintenance review flow, approving a single suggested stage change caused every pending change in the report to be written, so rejecting one had no effect. Only the approved items are applied now, and each is re-checked against the current report first so a stale approval is skipped and flagged rather than writing the wrong value.
+
+### Data
+
+- **11 new standards documents added to the Library** [view:/library] [persona:researcher] [persona:architect]: each downloaded, cached, and enriched from its own source document.
+- **2 new industry threat framework entries** [view:/threats] [persona:executive] [persona:architect].
+- **3 government timeline entries retired because their source links no longer resolve** [view:/timeline] [persona:researcher]: two European Commission milestones and a Nigerian data-protection milestone. The entries are marked retired rather than deleted, so the record of what was once claimed — and why it no longer holds — is preserved.
+- **Australia keeps its 2030 deadline** [view:/timeline] [persona:executive] [persona:researcher]: an automated link check had flagged the Australian Signals Directorate's end-of-2030 legacy-crypto deadline as unreachable and retired it, which would have quietly removed Australia's deadline from the Timeline and the Simulation and fallen the country back to a generic estimate. The source is reachable by a person and its document is cached — the government site simply refuses automated downloads — so the entry stays.
+- **Three timeline entries now appear under their country again** [view:/timeline] [persona:researcher]: a Malaysian and two Czech entries had been added without the internal identifier the page groups and scores by, leaving them out of their country's grouping.
+
+### Changed
+
+- **Changelog entries now name the page they affect instead of showing a raw path** [view:/changelog] [persona:curious]: the OpenSSL Studio, TPM 2.0, KMIP 3.0, and PKCS#11 surfaces had no display name, so their tags rendered as unreadable URLs.
+
 ## [4.25.5] - 2026-07-25
 
 OASIS published the next revision of the KMIP 3.0 spec since our last update; this release moves the Protocol Matrix and the KMIP 3.0 Playground onto it.
