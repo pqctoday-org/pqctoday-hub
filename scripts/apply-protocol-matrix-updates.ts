@@ -34,6 +34,7 @@
 import { execSync } from 'node:child_process'
 import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
+import { DRAFT_STAGE_LEVEL, type DraftStage } from '../src/data/pqcProtocolMatrix'
 
 interface StageDelta {
   row_id: string
@@ -77,7 +78,10 @@ function todayIso(): string {
  *
  * Returns the new file contents (or the original if no patch applied).
  */
-function patchMatrix(source: string, deltas: StageDelta[]): { next: string; applied: number } {
+export function patchMatrix(
+  source: string,
+  deltas: StageDelta[]
+): { next: string; applied: number; downgrades: string[] } {
   let next = source
   let applied = 0
   const grouped = new Map<string, StageDelta[]>()
@@ -88,9 +92,39 @@ function patchMatrix(source: string, deltas: StageDelta[]): { next: string; appl
     grouped.get(key)!.push(d)
   }
 
+  const downgrades: string[] = []
+
   for (const [key, ds] of grouped) {
     const [rowId, dim] = key.split('::')
     const newStage = ds[0].current_stage!
+    const oldStage = ds[0].encoded_stage
+
+    // DOWNGRADE GUARD (2026-07-25, deferred finding F8 from the 07-23 E2E
+    // validation). This applier wrote current_stage unconditionally. The
+    // IETF datatracker query can legitimately return a LOWER stage than
+    // what's encoded — a draft that supersedes a published RFC, a query
+    // resolving to the wrong document, a transient API answer — and the
+    // result would have been the matrix silently showing a published RFC as
+    // un-published. That is the single worst thing this file can say.
+    //
+    // Ranking comes from DRAFT_STAGE_LEVEL, the same map that drives the
+    // heatmap palette, rather than a second ordering invented here. Note it
+    // is deliberately non-injective (wg-document and wg-last-call are both
+    // 4; iesg-submitted and rfc-editor-queue are both 6) — so this only
+    // blocks a STRICT decrease, and same-rank moves still apply.
+    //
+    // A downgrade is reported, never silently skipped: a real regression
+    // needs a human to look at it, not to be swallowed.
+    if (oldStage && newStage) {
+      const oldLevel = DRAFT_STAGE_LEVEL[oldStage as DraftStage]
+      const newLevel = DRAFT_STAGE_LEVEL[newStage as DraftStage]
+      if (oldLevel !== undefined && newLevel !== undefined && newLevel < oldLevel) {
+        downgrades.push(
+          `${rowId}::${dim}: ${oldStage} (level ${oldLevel}) -> ${newStage} (level ${newLevel})`
+        )
+        continue
+      }
+    }
     const newNote = ds[0].last_updated
       ? `${newStage.replace(/-/g, ' ')} (datatracker ${ds[0].last_updated})`
       : newStage.replace(/-/g, ' ')
@@ -146,7 +180,7 @@ function patchMatrix(source: string, deltas: StageDelta[]): { next: string; appl
     )
   }
 
-  return { next, applied }
+  return { next, applied, downgrades }
 }
 
 function main(): void {
@@ -166,9 +200,30 @@ function main(): void {
   }
 
   const source = readFileSync(MATRIX_FILE, 'utf-8')
-  const { next, applied } = patchMatrix(source, report.deltas)
+  const { next, applied, downgrades } = patchMatrix(source, report.deltas)
+
+  // Reported before anything else, and on stderr, because a downgrade is not
+  // routine: it means the feed disagreed with the matrix in the one direction
+  // that would make published work look unpublished. Blocked, never silently
+  // dropped — a real regression needs a human, and a spurious one needs the
+  // query fixed.
+  if (downgrades.length > 0) {
+    console.error(`BLOCKED ${downgrades.length} stage DOWNGRADE(s) — not applied:`)
+    for (const d of downgrades) console.error(`  ${d}`)
+    console.error('A lower stage than the one encoded usually means the datatracker')
+    console.error('query resolved to the wrong document, not that work regressed.')
+    console.error('Verify against the datatracker by hand before changing anything.')
+    console.error('')
+  }
 
   if (applied === 0) {
+    if (downgrades.length > 0) {
+      // Exit 1 = "drift detected, nothing applied" (the documented meaning),
+      // NOT 0. Reporting "matrix already matches" here would be false: the
+      // feed disagreed, we refused to act on it, and that needs attention.
+      console.error('No forward drift to apply; only blocked downgrades.')
+      process.exit(1)
+    }
     console.log('Patch found no targets to update (matrix already matches).')
     process.exit(0)
   }
@@ -199,4 +254,16 @@ function main(): void {
   console.log(`OK Bumped PROTOCOL_MATRIX_LAST_UPDATED to ${todayIso()}`)
 }
 
-main()
+// Run only when invoked as a script, not when imported. Without this guard
+// `import { patchMatrix }` executes the whole CLI — including its
+// process.exit() calls — which is what made the pure patch function
+// untestable in the first place (2026-07-25).
+const invokedDirectly =
+  typeof process !== 'undefined' &&
+  Array.isArray(process.argv) &&
+  process.argv[1] !== undefined &&
+  import.meta.url === new URL(`file://${process.argv[1]}`).href
+
+if (invokedDirectly) {
+  main()
+}
