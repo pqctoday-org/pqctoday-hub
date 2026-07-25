@@ -3552,50 +3552,68 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     id: 'kmip',
     name: 'KMIP',
     description:
-      'OASIS Key Management Interoperability Protocol v3.0 — key lifecycle over the wire. CSD01 defines ML-KEM and ML-DSA managed-object algorithm enumerations; our own server (pqctoday-kmip) implements Encapsulate/Decapsulate operations as a forward-looking extension ahead of the published draft.',
+      'OASIS Key Management Interoperability Protocol v3.0 — key lifecycle over the wire. CSD02 defines ML-KEM and ML-DSA managed-object algorithm enumerations AND the Encapsulate/Decapsulate operations natively; our own server (pqctoday-kmip) implements the full published set — no extensions needed for the PQC KEM/signature core.',
     latestRelease: [],
     latestDraft: [
       {
-        id: 'KMIP-v3.0-CSD01',
-        title: 'KMIP Specification v3.0 — Committee Specification Draft 01',
+        id: 'KMIP-v3.0-CSD02',
+        title: 'KMIP Specification v3.0 — Committee Specification Draft 02',
         url: 'https://docs.oasis-open.org/kmip/kmip-spec/v3.0/',
-        date: '2024-08-23',
+        date: '2026-05-07',
+      },
+      {
+        id: 'KMIP-Profiles-v3.0-CSD02',
+        title: 'KMIP Profiles v3.0 — Committee Specification Draft 02',
+        url: 'https://docs.oasis-open.org/kmip/kmip-profiles/v3.0/',
+        date: '2026-05-21',
       },
     ],
     dimensions: {
       pureKem: {
         value: 'draft',
         stageNote:
-          'OASIS Committee Specification Draft CSD01 (2024-08-23) — ML-KEM algorithm enumerations',
-        note: 'ML-KEM-512/768/1024 managed-object algorithm enumerations are defined in CSD01. The public draft does NOT yet define Encapsulate/Decapsulate operations — pqctoday-kmip implements them as a forward-looking extension, ahead of the OASIS spec.',
+          'OASIS Committee Specification Draft CSD02 (2026-05-07) — ML-KEM algorithm enumerations + native Encapsulate/Decapsulate operations',
+        note: 'ML-KEM-512/768/1024 managed-object algorithm enumerations and the Encapsulate/Decapsulate operations are both defined natively in CSD02 (§6.1.15/§6.1.22, §11.12) — pqctoday-kmip implements the published set directly, no extension needed.',
         deploymentPosture: 'pilot',
         refs: [
           {
             kind: 'spec',
-            id: 'KMIP 3.0 CSD01',
-            title: 'KMIP v3.0 — PQC objects (ML-KEM)',
+            id: 'KMIP 3.0 CSD02',
+            title: 'KMIP v3.0 — PQC objects + Encapsulate/Decapsulate (ML-KEM)',
             url: 'https://docs.oasis-open.org/kmip/kmip-spec/v3.0/',
-            publishedOn: '2024-08-23',
+            publishedOn: '2026-05-07',
           },
         ],
       },
       hybridKem: {
-        value: 'na',
-        note: 'KMIP transports whatever algorithm the server registers; it defines no composite/hybrid KEM construct of its own.',
-      },
-      pureSig: {
         value: 'draft',
         stageNote:
-          'OASIS CSD01 (2024-08-23) — ML-DSA algorithm enumeration used by KMIP’s existing Sign / SignatureVerify operations',
-        note: 'ML-DSA-44/65/87 managed objects use the pre-existing KMIP Sign / SignatureVerify operations once the ML-DSA algorithm enum value is present — CSD01 adds the enum, not new operations.',
+          'OASIS Committee Specification Draft CSD02 (2026-05-07) — first-class hybrid KEM algorithm values',
+        note: 'X25519MLKEM768 (0x5C) and SecP256r1MLKEM768 (0x5D) are first-class CryptographicAlgorithm values in CSD02 §11.12 — one managed object per hybrid pair, ordinary Encapsulate/Decapsulate, combiner runs inside the engine. Profiles CSD02 §3.3.3 separately mandates a third group, SecP384r1MLKEM1024, as a required TLS key-exchange group for the KMIP transport itself — the Specification still assigns it no managed-object codepoint, so the two documents are currently out of step on that one algorithm.',
         deploymentPosture: 'pilot',
         refs: [
           {
             kind: 'spec',
-            id: 'KMIP 3.0 CSD01',
+            id: 'KMIP 3.0 CSD02',
+            title: 'KMIP v3.0 §11.12 — Cryptographic Algorithm Enumeration (hybrid KEMs)',
+            url: 'https://docs.oasis-open.org/kmip/kmip-spec/v3.0/',
+            publishedOn: '2026-05-07',
+          },
+        ],
+      },
+      pureSig: {
+        value: 'draft',
+        stageNote:
+          'OASIS CSD02 (2026-05-07) — ML-DSA algorithm enumeration used by KMIP’s existing Sign / SignatureVerify operations',
+        note: 'ML-DSA-44/65/87 managed objects use the pre-existing KMIP Sign / SignatureVerify operations once the ML-DSA algorithm enum value is present — CSD02 adds the enum (plus 15 pre-hash Hash-ML-DSA-*/Hash-SLH-DSA-* variants, §11.12 Table 552), not new operations.',
+        deploymentPosture: 'pilot',
+        refs: [
+          {
+            kind: 'spec',
+            id: 'KMIP 3.0 CSD02',
             title: 'KMIP v3.0 — PQC objects (ML-DSA)',
             url: 'https://docs.oasis-open.org/kmip/kmip-spec/v3.0/',
-            publishedOn: '2024-08-23',
+            publishedOn: '2026-05-07',
           },
         ],
       },
@@ -3623,7 +3641,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         toolId: 'cacp-kmip',
         toolName: 'KMIP Control Plane',
         url: '/playground/cacp',
-        testability: { pureKem: 'full', hybridKem: 'na', pureSig: 'full', hybridSig: 'na' },
+        testability: { pureKem: 'full', hybridKem: 'full', pureSig: 'full', hybridSig: 'na' },
       },
     ],
     liveDeployments: [
