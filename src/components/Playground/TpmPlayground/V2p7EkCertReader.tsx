@@ -15,6 +15,7 @@ import { CheckCircle2, XCircle, AlertCircle, RefreshCw, Download, Info } from 'l
 import * as x509 from '@peculiar/x509'
 import { Button } from '@/components/ui/button'
 import { nvReadAll } from '../../../wasm/tpmBridge'
+import { useTpmBusy } from './useTpmBusy'
 import { V2P7_EK_SPECS, type V2p7EkSpec, toHex, bytesEqual } from './v2p7-reference'
 
 interface Props {
@@ -64,6 +65,7 @@ function extractSpkiOidBody(spkiDer: Uint8Array): Uint8Array {
 export function V2p7EkCertReader({ isWasmReady, v2p7Status }: Props) {
   const [results, setResults] = useState<CertResult[]>([])
   const [loading, setLoading] = useState(false)
+  const tpmBusy = useTpmBusy()
 
   const readAll = useCallback(async () => {
     if (!isWasmReady) return
@@ -109,7 +111,12 @@ export function V2p7EkCertReader({ isWasmReady, v2p7Status }: Props) {
               C against native swtpm — now running entirely in your browser.
             </p>
           </div>
-          <Button variant="outline" size="sm" onClick={readAll} disabled={loading || !isWasmReady}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={readAll}
+            disabled={loading || !isWasmReady || tpmBusy}
+          >
             <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Re-read
           </Button>

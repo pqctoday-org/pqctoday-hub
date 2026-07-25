@@ -1,3 +1,5 @@
+import { buildGetCapabilityCmd, getU32, TPM_CAP_HANDLES } from './tpmSerializer'
+
 export interface PqcTpmModule extends WebAssembly.Instance {
   cwrap: (ident: string, returnType: string, argTypes: string[]) => any
   ccall: (ident: string, returnType: string, argTypes: string[], args: any[]) => any
@@ -51,6 +53,67 @@ export type TpmWireListener = (entry: TpmWireLogEntry) => void
 let _wireListener: TpmWireListener | null = null
 export function setTpmWireListener(listener: TpmWireListener | null): void {
   _wireListener = listener
+}
+
+// Reentrancy guard: the WASM TPM instance is a single, non-reentrant engine
+// with 3 transient object slots, shared by every tab (Learn, Command
+// Builder, Compliance Suite, Attestation, EK explorers, ...). Nothing about
+// it protects against two logically-independent multi-command operations
+// interleaving their individual commands — e.g. Learn step 3's
+// CreatePrimary + SignSequenceStart racing another caller's CreatePrimary in
+// the `await` gap between them. executeTpmCommand/executeTpmCommandLarge
+// themselves have no internal `await` (each runs to completion in one
+// microtask), so locking only those two would be a no-op against that race;
+// the lock has to be held across a caller's WHOLE multi-command operation.
+// withTpmLock is reentrant (tracked via depth, not a call-stack check) so
+// composing locked helpers — e.g. flushAllTransient invoked from inside an
+// already-locked lesson step — runs inline instead of deadlocking on itself.
+// Every top-level, user-triggered operation (a Learn-tab step, a Command
+// Builder send, an Attestation run, ...) must wrap its entire body in this,
+// not just its individual command calls. See 2026-07-24 TPM playground
+// concurrency remediation.
+let _tpmQueue: Promise<unknown> = Promise.resolve()
+let _tpmLockDepth = 0
+// Multiple TPM playground panels can be mounted at once (Command Builder,
+// Compliance Suite, and State Inspector all live under the same "builder"
+// tab) — a single-slot listener like _wireListener would let them stomp on
+// each other, so busy state uses a real subscriber set instead.
+export type TpmBusyListener = (busy: boolean) => void
+const _busyListeners = new Set<TpmBusyListener>()
+export function subscribeTpmBusy(listener: TpmBusyListener): () => void {
+  _busyListeners.add(listener)
+  return () => {
+    _busyListeners.delete(listener)
+  }
+}
+function notifyTpmBusy(busy: boolean): void {
+  for (const l of _busyListeners) l(busy)
+}
+export function isTpmBusy(): boolean {
+  return _tpmLockDepth > 0
+}
+export function withTpmLock<T>(fn: () => Promise<T>): Promise<T> {
+  if (_tpmLockDepth > 0) {
+    _tpmLockDepth++
+    return fn().finally(() => {
+      _tpmLockDepth--
+    })
+  }
+  const run = _tpmQueue.then(async () => {
+    _tpmLockDepth = 1
+    notifyTpmBusy(true)
+    try {
+      return await fn()
+    } finally {
+      _tpmLockDepth = 0
+      notifyTpmBusy(false)
+    }
+  })
+  _tpmQueue = run.then(
+    () => undefined,
+    () => undefined
+  )
+  return run
 }
 
 // Build stamp used for cache-busting — updated each deploy
@@ -203,51 +266,53 @@ export async function initTpm(): Promise<void> {
  * Execute a raw TPM command buffer and return the response buffer.
  */
 export async function executeTpmCommand(command: Uint8Array): Promise<Uint8Array> {
-  if (!tpmInstance) {
-    throw new Error('TPM is not initialized')
-  }
-
-  const processCmd = tpmInstance.cwrap('tpm_wasm_process', 'number', [
-    'number',
-    'number',
-    'number',
-    'number',
-  ])
-
-  // Allocate memory for the command
-  const cmdPtr = tpmInstance._malloc(command.length)
-  tpmInstance.HEAPU8.set(command, cmdPtr)
-
-  // Allocate a 4096-byte buffer for the response
-  const MAX_RESP_SIZE = 4096
-  const respBufPtr = tpmInstance._malloc(MAX_RESP_SIZE)
-
-  try {
-    const rc = processCmd(cmdPtr, command.length, respBufPtr, MAX_RESP_SIZE)
-
-    // tpm_wasm_process returns the number of bytes written, or -1 on error
-    if (rc === -1) {
-      throw new Error(`TPMLIB_Process failed internally within the WASM emulator.`)
+  return withTpmLock(async () => {
+    if (!tpmInstance) {
+      throw new Error('TPM is not initialized')
     }
 
-    // Copy the response buffer of length 'rc'
-    const response = new Uint8Array(tpmInstance.HEAPU8.buffer, respBufPtr, rc)
-    const result = new Uint8Array(response) // Deep copy to prevent memory corruption
+    const processCmd = tpmInstance.cwrap('tpm_wasm_process', 'number', [
+      'number',
+      'number',
+      'number',
+      'number',
+    ])
 
-    _wireListener?.({ request: command, response: result })
-    return result
-  } catch (e) {
-    _wireListener?.({
-      request: command,
-      response: null,
-      error: e instanceof Error ? e.message : String(e),
-    })
-    throw e
-  } finally {
-    // Cleanup
-    tpmInstance._free(cmdPtr)
-    tpmInstance._free(respBufPtr)
-  }
+    // Allocate memory for the command
+    const cmdPtr = tpmInstance._malloc(command.length)
+    tpmInstance.HEAPU8.set(command, cmdPtr)
+
+    // Allocate a 4096-byte buffer for the response
+    const MAX_RESP_SIZE = 4096
+    const respBufPtr = tpmInstance._malloc(MAX_RESP_SIZE)
+
+    try {
+      const rc = processCmd(cmdPtr, command.length, respBufPtr, MAX_RESP_SIZE)
+
+      // tpm_wasm_process returns the number of bytes written, or -1 on error
+      if (rc === -1) {
+        throw new Error(`TPMLIB_Process failed internally within the WASM emulator.`)
+      }
+
+      // Copy the response buffer of length 'rc'
+      const response = new Uint8Array(tpmInstance.HEAPU8.buffer, respBufPtr, rc)
+      const result = new Uint8Array(response) // Deep copy to prevent memory corruption
+
+      _wireListener?.({ request: command, response: result })
+      return result
+    } catch (e) {
+      _wireListener?.({
+        request: command,
+        response: null,
+        error: e instanceof Error ? e.message : String(e),
+      })
+      throw e
+    } finally {
+      // Cleanup
+      tpmInstance._free(cmdPtr)
+      tpmInstance._free(respBufPtr)
+    }
+  })
 }
 
 /**
@@ -260,33 +325,35 @@ export async function executeTpmCommandLarge(
   command: Uint8Array,
   maxResp: number
 ): Promise<Uint8Array> {
-  if (!tpmInstance) throw new Error('TPM is not initialized')
-  const processCmd = tpmInstance.cwrap('tpm_wasm_process', 'number', [
-    'number',
-    'number',
-    'number',
-    'number',
-  ])
-  const cmdPtr = tpmInstance._malloc(command.length)
-  tpmInstance.HEAPU8.set(command, cmdPtr)
-  const respPtr = tpmInstance._malloc(maxResp)
-  try {
-    const rc = processCmd(cmdPtr, command.length, respPtr, maxResp)
-    if (rc === -1) throw new Error('TPMLIB_Process failed inside WASM')
-    const result = new Uint8Array(new Uint8Array(tpmInstance.HEAPU8.buffer, respPtr, rc))
-    _wireListener?.({ request: command, response: result })
-    return result
-  } catch (e) {
-    _wireListener?.({
-      request: command,
-      response: null,
-      error: e instanceof Error ? e.message : String(e),
-    })
-    throw e
-  } finally {
-    tpmInstance._free(cmdPtr)
-    tpmInstance._free(respPtr)
-  }
+  return withTpmLock(async () => {
+    if (!tpmInstance) throw new Error('TPM is not initialized')
+    const processCmd = tpmInstance.cwrap('tpm_wasm_process', 'number', [
+      'number',
+      'number',
+      'number',
+      'number',
+    ])
+    const cmdPtr = tpmInstance._malloc(command.length)
+    tpmInstance.HEAPU8.set(command, cmdPtr)
+    const respPtr = tpmInstance._malloc(maxResp)
+    try {
+      const rc = processCmd(cmdPtr, command.length, respPtr, maxResp)
+      if (rc === -1) throw new Error('TPMLIB_Process failed inside WASM')
+      const result = new Uint8Array(new Uint8Array(tpmInstance.HEAPU8.buffer, respPtr, rc))
+      _wireListener?.({ request: command, response: result })
+      return result
+    } catch (e) {
+      _wireListener?.({
+        request: command,
+        response: null,
+        error: e instanceof Error ? e.message : String(e),
+      })
+      throw e
+    } finally {
+      tpmInstance._free(cmdPtr)
+      tpmInstance._free(respPtr)
+    }
+  })
 }
 
 /* ─── Big-endian helpers for raw TPM command construction ────────────────── */
@@ -322,21 +389,43 @@ async function flushHandle(handle: number): Promise<void> {
 }
 
 /**
- * Flush every transient object slot (0x80000000-0x80000002 — the WASM
- * libtpms build is configured with 3 transient slots) and the conventional
- * sequence-handle range (0x80FF0000-0x80FF0004).
- *
- * Call before any operation that needs a fresh transient slot (Quote,
- * Certify, SignSequenceComplete, etc.) to avoid `TPM_RC_OBJECT_MEMORY
+ * Discover the transient handles (TPM_HT_TRANSIENT, 0x80000000+ — objects
+ * AND sequences both live in this one pool on this engine, live-verified
+ * 2026-07-24; the previously-assumed separate 0x80FF0000+ "sequence range"
+ * doesn't exist here and every probe against it returned TPM_RC_VALUE) that
+ * are ACTUALLY loaded right now, via TPM2_GetCapability(TPM_CAP_HANDLES) —
+ * same parse shape StateInspector.tsx already uses for the persistent range.
+ * NO_SESSIONS response layout: header(10) + moreData(1) + capability(4) +
+ * TPML_HANDLE{count(4), handle[count](4 each)}.
+ */
+async function getLoadedTransientHandles(): Promise<number[]> {
+  const resp = await executeTpmCommand(buildGetCapabilityCmd(TPM_CAP_HANDLES, 0x80000000, 16))
+  const rc = getU32(resp, 6)
+  if (rc !== 0 || resp.length < 15) return []
+  const count = getU32(resp, 15)
+  const handles: number[] = []
+  for (let i = 0; i < count; i++) {
+    const off = 19 + i * 4
+    if (resp.length < off + 4) break
+    handles.push(getU32(resp, off))
+  }
+  return handles
+}
+
+/**
+ * Flush every transient object/sequence slot that's ACTUALLY loaded right
+ * now (discovered via TPM2_GetCapability, not guessed). Call before any
+ * operation that needs a fresh transient slot (Quote, Certify,
+ * SignSequenceComplete, etc.) to avoid `TPM_RC_OBJECT_MEMORY
  * (0x902 = RC_WARN + 0x002)` accumulated from prior panel runs.
  */
 export async function flushAllTransient(): Promise<void> {
-  for (let h = 0x80000000; h <= 0x80000002; h++) {
-    await flushHandle(h)
-  }
-  for (let h = 0x80ff0000; h <= 0x80ff0004; h++) {
-    await flushHandle(h)
-  }
+  return withTpmLock(async () => {
+    const handles = await getLoadedTransientHandles()
+    for (const h of handles) {
+      await flushHandle(h)
+    }
+  })
 }
 
 /**
@@ -418,46 +507,48 @@ export function parseNvDataSize(nvPub: Uint8Array): number {
  * set (the case for the V2.7 §5.3.1 EK cert slots).
  */
 export async function nvReadAll(nvIndex: number): Promise<Uint8Array> {
-  const nvPub = await nvReadPublic(nvIndex)
-  const dataSize = parseNvDataSize(nvPub)
-  const CHUNK = 1024
-  const out = new Uint8Array(dataSize)
-  let off = 0
-  while (off < dataSize) {
-    const want = Math.min(CHUNK, dataSize - off)
-    // Empty-password session frame: handle(4)=TPM_RS_PW(0x40000009),
-    // nonce.size(2)=0, sessionAttributes(1)=0, hmac.size(2)=0 → 9 bytes.
-    const sessionFrame = [...u32be(0x40000009), ...u16be(0), 0, ...u16be(0)]
-    const cmd = new Uint8Array([
-      ...u16be(0x8002), // TPM_ST_SESSIONS
-      ...u32be(10 + 4 + 4 + 4 + sessionFrame.length + 2 + 2), // size
-      ...u32be(0x0000014e), // TPM_CC_NV_Read
-      ...u32be(nvIndex), // authHandle (= nvIndex; AUTHREAD)
-      ...u32be(nvIndex), // nvIndex
-      ...u32be(sessionFrame.length), // authBlock length
-      ...sessionFrame,
-      ...u16be(want), // size
-      ...u16be(off), // offset
-    ])
-    const resp = await executeTpmCommandLarge(cmd, 2048)
-    if (resp.length < 10) throw new Error('NV_Read: response too short')
-    const rc = (resp[6] << 24) | (resp[7] << 16) | (resp[8] << 8) | resp[9]
-    if (rc !== 0) {
-      throw new Error(
-        `NV_Read 0x${nvIndex.toString(16)} @ off ${off} returned TPM rc 0x${rc.toString(16)}`
-      )
+  return withTpmLock(async () => {
+    const nvPub = await nvReadPublic(nvIndex)
+    const dataSize = parseNvDataSize(nvPub)
+    const CHUNK = 1024
+    const out = new Uint8Array(dataSize)
+    let off = 0
+    while (off < dataSize) {
+      const want = Math.min(CHUNK, dataSize - off)
+      // Empty-password session frame: handle(4)=TPM_RS_PW(0x40000009),
+      // nonce.size(2)=0, sessionAttributes(1)=0, hmac.size(2)=0 → 9 bytes.
+      const sessionFrame = [...u32be(0x40000009), ...u16be(0), 0, ...u16be(0)]
+      const cmd = new Uint8Array([
+        ...u16be(0x8002), // TPM_ST_SESSIONS
+        ...u32be(10 + 4 + 4 + 4 + sessionFrame.length + 2 + 2), // size
+        ...u32be(0x0000014e), // TPM_CC_NV_Read
+        ...u32be(nvIndex), // authHandle (= nvIndex; AUTHREAD)
+        ...u32be(nvIndex), // nvIndex
+        ...u32be(sessionFrame.length), // authBlock length
+        ...sessionFrame,
+        ...u16be(want), // size
+        ...u16be(off), // offset
+      ])
+      const resp = await executeTpmCommandLarge(cmd, 2048)
+      if (resp.length < 10) throw new Error('NV_Read: response too short')
+      const rc = (resp[6] << 24) | (resp[7] << 16) | (resp[8] << 8) | resp[9]
+      if (rc !== 0) {
+        throw new Error(
+          `NV_Read 0x${nvIndex.toString(16)} @ off ${off} returned TPM rc 0x${rc.toString(16)}`
+        )
+      }
+      // Body: parameterSize(4 — present because tag=TPM_ST_SESSIONS),
+      //       TPM2B_MAX_NV_BUFFER { size(2), bytes }
+      const bodyOff = 10 + 4
+      if (resp.length < bodyOff + 2) throw new Error('NV_Read: truncated parameter')
+      const got = (resp[bodyOff] << 8) | resp[bodyOff + 1]
+      if (resp.length < bodyOff + 2 + got) throw new Error('NV_Read: truncated data')
+      out.set(resp.slice(bodyOff + 2, bodyOff + 2 + got), off)
+      off += got
+      if (got === 0) break
     }
-    // Body: parameterSize(4 — present because tag=TPM_ST_SESSIONS),
-    //       TPM2B_MAX_NV_BUFFER { size(2), bytes }
-    const bodyOff = 10 + 4
-    if (resp.length < bodyOff + 2) throw new Error('NV_Read: truncated parameter')
-    const got = (resp[bodyOff] << 8) | resp[bodyOff + 1]
-    if (resp.length < bodyOff + 2 + got) throw new Error('NV_Read: truncated data')
-    out.set(resp.slice(bodyOff + 2, bodyOff + 2 + got), off)
-    off += got
-    if (got === 0) break
-  }
-  return out
+    return out
+  })
 }
 
 // ── V2.7 cert provisioning helpers (TPM2_NV_DefineSpace + chunked Write) ──

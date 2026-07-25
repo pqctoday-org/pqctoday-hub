@@ -3,6 +3,7 @@ import { CheckCircle2, Circle, ChevronRight, Info, FlaskConical } from 'lucide-r
 import { Button } from '@/components/ui/button'
 import { serializeDemoCommand, toHex, type DemoCommandExtras } from '../../../wasm/tpmSerializer'
 import { executeTpmCommand } from '../../../wasm/tpmBridge'
+import { useTpmBusy } from './useTpmBusy'
 import { getCommandDef, getAlgParams, parseHybridAlgo } from './tpmCommandDefs'
 import {
   hybridLabeledKemEncap,
@@ -287,6 +288,7 @@ export function CommandBuilder({
   const [commandType, setCommandType] = useState('TPM2_GetCapability')
   const [algorithm, setAlgorithm] = useState('MLKEM-768')
   const [isExecuting, setIsExecuting] = useState(false)
+  const tpmBusy = useTpmBusy()
 
   // Cross-command state for the hybrid Labeled-KEM round trip. The Encap step
   // creates a peer classical key pair (stored here); the Decap step reads it
@@ -422,6 +424,7 @@ export function CommandBuilder({
   const isCommandDisabled =
     disabled ||
     isExecuting ||
+    tpmBusy ||
     !!isGatedOnKem ||
     !!isGatedOnDsa ||
     !!isGatedOnRsaSign ||

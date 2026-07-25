@@ -162,6 +162,13 @@ describe('TPM curriculum structure', () => {
 describe('TPM lessons replay against the real WASM engine', () => {
   let ctx: TpmLearnContext
   let provisionForT6: () => Promise<void>
+  // Every TPM2_FlushContext rc issued by flushAll() across the WHOLE
+  // curriculum replay — asserted all-success below. Before the 2026-07-24
+  // discovery-based rewrite, flushAll() blind-probed a handle range
+  // (0x80FF0000+) that never matches how this engine numbers sequence
+  // handles, so every run guaranteed several TPM_RC_VALUE failures; this
+  // regresses that (see also the flushAll() comment near its definition).
+  const flushRcs: number[] = []
 
   beforeAll(async () => {
     const factory = loadFactory()
@@ -205,11 +212,29 @@ describe('TPM lessons replay against the real WASM engine', () => {
       v & 0xff,
     ]
     const flushOne = async (h: number) => {
-      await exec(new Uint8Array([...u16(0x8001), ...u32(14), ...u32(0x00000165), ...u32(h)]))
+      const resp = await exec(
+        new Uint8Array([...u16(0x8001), ...u32(14), ...u32(0x00000165), ...u32(h)])
+      )
+      if (resp.length >= 10) flushRcs.push(SER.getU32(resp, 6))
     }
+    // Mirrors tpmBridge.ts's flushAllTransient: discover what's ACTUALLY
+    // loaded via TPM2_GetCapability(TPM_CAP_HANDLES) rather than guessing a
+    // handle range — the range this harness blind-probed before 2026-07-24
+    // (0x80FF0000+ for "sequences") never matches how this engine actually
+    // numbers handles (sequences share the 0x80000000+ pool with objects),
+    // so every one of those probes was a guaranteed TPM_RC_VALUE. Keeping
+    // this harness in sync with the real implementation, not a parallel
+    // fiction of it.
     const flushAll = async () => {
-      for (let h = 0x80000000; h <= 0x80000002; h++) await flushOne(h)
-      for (let h = 0x80ff0000; h <= 0x80ff0004; h++) await flushOne(h)
+      const resp = await exec(SER.buildGetCapabilityCmd(SER.TPM_CAP_HANDLES, 0x80000000, 16))
+      const rc = SER.getU32(resp, 6)
+      if (rc !== 0 || resp.length < 15) return
+      const count = SER.getU32(resp, 15)
+      for (let i = 0; i < count; i++) {
+        const off = 19 + i * 4
+        if (resp.length < off + 4) break
+        await flushOne(SER.getU32(resp, off))
+      }
     }
     const nvReadAll = async (nvIndex: number): Promise<Uint8Array> => {
       // Minimal chunked NV read mirroring tpmBridge.nvReadAll (SHA-256 slots).
@@ -344,4 +369,17 @@ describe('TPM lessons replay against the real WASM engine', () => {
       }
     }, 60_000)
   }
+
+  // Runs last (vitest executes a describe's `it`s in declaration order) —
+  // every flush issued by every lesson's ctx.flushAll() across the whole
+  // curriculum must have hit a handle the engine actually reported as
+  // loaded, so every one of them succeeds. See the flushRcs comment above.
+  it('flushAll() only ever flushes handles the engine reports as loaded — zero failures', () => {
+    expect(flushRcs.length, 'expected at least one flush across the curriculum').toBeGreaterThan(
+      0
+    )
+    expect(flushRcs.every((rc) => rc === 0), `non-success flush rcs: ${flushRcs.join(', ')}`).toBe(
+      true
+    )
+  })
 })
