@@ -106,14 +106,35 @@ static const char *PKCS11_CMS_CONF =
     "pkcs11-module-token-pin = 1234\n"
     "activate = 1\n";
 
+/* Rust engine's atexit-driven state stash — see
+ * pqctoday-hsm/rust/src/state_snapshot.rs's pqctoday_hsm_atexit_stash for the
+ * full reasoning. Declared extern here (statically linked, ordinary C symbol
+ * resolution — no Emscripten JS export needed since only this file's own
+ * atexit() call reaches it, never JS directly). */
+extern void pqctoday_hsm_atexit_stash(void);
+
+static int g_hsm_atexit_registered = 0;
+
 /* Exported entry point. Called from JS (the CMS worker) once per module instance.
  *
- * EXIT_RUNTIME=1 in the WASM build means each callMain() runs atexit handlers
- * which call OPENSSL_cleanup() — freeing all provider contexts including the
- * OSSL_PROVIDER pointed to by g_cms_pkcs11_provider. On the NEXT module
- * instance, g_cms_pkcs11_provider is a dangling (non-NULL!) pointer.  Using
- * OSSL_PROVIDER_available() instead of the raw pointer check is safe across
- * callMain boundaries because it re-checks the live provider store.
+ * EXIT_RUNTIME=1 means each callMain() is a FRESH WASM MODULE INSTANCE with
+ * its own memory: g_cms_pkcs11_provider from a PREVIOUS instance is not
+ * merely stale, it does not exist in this instance's address space at all.
+ * (Corrected 2026-07-24 — this comment previously attributed the staleness
+ * to OPENSSL_cleanup() "freeing provider contexts". Verified directly that
+ * OPENSSL_cleanup() does run on every callMain, but its own body never
+ * mentions "provider" or "libctx" — it does not unload a provider loaded via
+ * an explicit OSSL_PROVIDER_load() call the way pqctoday_cms_init() does.
+ * The real reason a stale pointer would be wrong is simply the fresh-module
+ * boundary, not provider teardown. Using OSSL_PROVIDER_available() instead
+ * of the raw pointer stays correct regardless — it re-checks the live
+ * provider store of WHICHEVER module instance is currently running.) The
+ * same fresh-module fact is exactly why the Rust engine's token state needs
+ * its own explicit atexit-based handoff (registered below) rather than
+ * relying on any provider-teardown callback: OPENSSL_cleanup() genuinely
+ * never reaches a provider's C_Finalize for a provider loaded this way, so
+ * that path (still present in state_snapshot.rs for a caller that DOES
+ * explicitly call pqctoday_cms_shutdown) cannot be relied on here.
  *
  * Return codes:
  *    0 — provider registered and loaded successfully
@@ -124,8 +145,20 @@ static const char *PKCS11_CMS_CONF =
  *    1 — already initialized (no-op)
  */
 int pqctoday_cms_init(void) {
+    /* Register the HSM state atexit hook exactly once per module instance —
+     * before the idempotency early-return below, so it fires whichever
+     * branch this call takes. This is the ONLY thing that reliably runs
+     * the Rust engine's token-state file write during a callMain-driven
+     * command: it is a genuine C atexit() registration, independent of
+     * OpenSSL's own provider-teardown machinery (which never reaches it —
+     * see the comment above). */
+    if (!g_hsm_atexit_registered) {
+        atexit(pqctoday_hsm_atexit_stash);
+        g_hsm_atexit_registered = 1;
+    }
+
     /* Idempotency guard: check the live provider store, not the potentially
-     * stale g_cms_pkcs11_provider pointer (freed by atexit OPENSSL_cleanup). */
+     * stale g_cms_pkcs11_provider pointer (see the fresh-module note above). */
     if (OSSL_PROVIDER_available(NULL, "pkcs11")) {
         g_cms_pkcs11_provider = OSSL_PROVIDER_load(NULL, "pkcs11");
         return 1;

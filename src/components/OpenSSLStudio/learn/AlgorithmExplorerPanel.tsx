@@ -13,7 +13,16 @@
 // are shown as usable — see algorithmListParser.ts's provider-honesty
 // section and openssl-studio-phase3-algorithm-explorer-plan-07242026.md.
 import { useState } from 'react'
-import { Search, ChevronDown, ChevronRight, Database, ShieldCheck, ShieldAlert } from 'lucide-react'
+import {
+  Search,
+  ChevronDown,
+  ChevronRight,
+  Database,
+  ShieldCheck,
+  ShieldAlert,
+  AlertTriangle,
+  RotateCcw,
+} from 'lucide-react'
 import { Button } from '../../ui/button'
 import { Input } from '../../ui/input'
 import { FilterDropdown } from '../../common/FilterDropdown'
@@ -27,6 +36,7 @@ import {
   parseLegacySection,
   pickProbeTarget,
   probeProviderFunctional,
+  probePkcs11Functional,
   type AlgorithmEntry,
   type AlgorithmFamily,
   type ProviderStatus,
@@ -185,6 +195,19 @@ const ProviderRow = ({
         {provider.buildInfo && (
           <p className="mt-1 text-[11px] text-muted-foreground">Build: {provider.buildInfo}</p>
         )}
+        {/* How it was probed — so "Verified functional" is an auditable claim
+            rather than a bare badge. */}
+        {functional === true && probe?.probedVia && (
+          <p className="mt-1 text-[11px] text-muted-foreground">
+            Probed via <span className="font-mono">{probe.probedVia}</span>
+            {probe.probedWith ? (
+              <>
+                {' '}
+                using <span className="font-mono">{probe.probedWith}</span>
+              </>
+            ) : null}
+          </p>
+        )}
         {functional === false && probe?.error && (
           <p className="mt-1 border-l-2 border-status-warning/60 bg-status-warning/5 py-1 pl-2 text-[11px] text-status-warning">
             Real error from probing with{' '}
@@ -198,10 +221,19 @@ const ProviderRow = ({
 
 export function AlgorithmExplorerPanel({
   isReady,
+  loadError,
+  retryLoad,
   runCommand,
+  hsmKeygen,
 }: {
   isReady: boolean
+  loadError?: string | null
+  retryLoad?: () => void
   runCommand: (cmd: string) => Promise<{ stdout: string }>
+  /** Generates a key INTO the PKCS#11 token. Supplied by the Studio (worker
+   *  backed); absent in contexts without token support, where the pkcs11
+   *  probe falls back to reading whatever key already exists. */
+  hsmKeygen?: (algorithm: string, keyId: string) => Promise<unknown>
 }) {
   const [providers, setProviders] = useState<ProviderStatus[]>([])
   const [probes, setProbes] = useState<Record<string, ProviderProbeResult>>({})
@@ -240,6 +272,16 @@ export function AlgorithmExplorerPanel({
             functional: true,
             probedWith: '(trusted — everything else here already depends on it)',
           }
+          continue
+        }
+        if (p.key === 'pkcs11') {
+          // Needs its own probe: the generic one asks a CKA_SENSITIVE
+          // token key to export itself to a file, which a real HSM must
+          // refuse — see algorithmListParser.ts's provider-honesty section
+          // for what "-provider pkcs11" actually does (it works; a URI
+          // probe is simply the more representative test, not a workaround
+          // for a broken flag).
+          nextProbes[p.key] = await probePkcs11Functional(runCommand, hsmKeygen)
           continue
         }
         const target = pickProbeTarget(merged, p.key)
@@ -300,31 +342,56 @@ export function AlgorithmExplorerPanel({
                 openssl list -providers / -public-key-algorithms / -kem-algorithms / …
               </p>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleQuery}
-              disabled={!isReady || loading}
-            >
-              {loading ? (
-                <>
-                  <span className="animate-spin mr-1.5">⟳</span>
-                  Querying…
-                </>
-              ) : (
-                <>
-                  <Database size={13} className="mr-1.5" />
-                  Query this build
-                </>
-              )}
-            </Button>
+            {loadError ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={retryLoad}
+                title={loadError}
+                className="border-destructive/40 bg-destructive/10 text-destructive hover:bg-destructive/20"
+              >
+                <AlertTriangle size={13} className="mr-1.5" />
+                WASM failed to load
+                <RotateCcw size={12} className="ml-1.5" />
+              </Button>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleQuery}
+                disabled={!isReady || loading}
+              >
+                {loading ? (
+                  <>
+                    <span className="animate-spin mr-1.5">⟳</span>
+                    Querying…
+                  </>
+                ) : (
+                  <>
+                    <Database size={13} className="mr-1.5" />
+                    Query this build
+                  </>
+                )}
+              </Button>
+            )}
           </div>
 
-          {!isReady && (
-            <p className="text-xs text-muted-foreground">
-              Waiting for the OpenSSL WASM engine to initialize — click{' '}
-              <strong>Query this build</strong> once it&apos;s ready.
+          {loadError ? (
+            <p className="flex items-start gap-2 rounded-lg border border-destructive/20 bg-destructive/10 px-3 py-2 text-xs text-destructive">
+              <AlertTriangle size={13} className="mt-0.5 shrink-0" aria-hidden="true" />
+              <span>
+                The OpenSSL WASM engine failed to load, so this build can&apos;t be queried.
+                <span className="block text-destructive/70 mt-0.5">{loadError}</span>
+                Click &ldquo;WASM failed to load&rdquo; above to retry, or reload the page.
+              </span>
             </p>
+          ) : (
+            !isReady && (
+              <p className="text-xs text-muted-foreground">
+                Waiting for the OpenSSL WASM engine to initialize — click{' '}
+                <strong>Query this build</strong> once it&apos;s ready.
+              </p>
+            )
           )}
           {error && (
             <p className="rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive">

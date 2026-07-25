@@ -545,9 +545,91 @@ function walkAndPersist(M: OpenSSLModule, dir: string): void {
   }
 }
 
+// ── Engine-state persistence (Rust engine) ──────────────────────────────────
+//
+// The file-based persistence below was written for the C++ SoftHSMv3 engine,
+// which kept tokens as files under a tokendir. openssl.wasm now links the
+// pure-Rust engine (softhsmrustv3), which holds token state IN MEMORY and
+// writes no files at all — verified: after a full C_InitToken/C_InitPIN
+// cycle, the WASM filesystem contains zero softhsm/token files.
+//
+// So walkAndPersist finds nothing, and with EXIT_RUNTIME=1 giving every
+// command a fresh module, a key generated in one step would not exist in the
+// next — silently breaking every multi-step HSM flow in this workshop.
+//
+// The engine exposes an explicit snapshot API for exactly this embedding
+// (pqctoday_hsm_state_take/_load/_free). We carry that blob across module
+// instances here. The file-walking path is deliberately KEPT: it is a no-op
+// against the Rust engine, and leaving it means this worker still works if a
+// build linking the C++ engine is ever loaded again.
+
+/** Token state carried across module instances (Rust engine). */
+let hsmStateSnapshot: Uint8Array | null = null
+
+function hasSnapshotApi(M: OpenSSLModule): boolean {
+  const m = M as unknown as Record<string, unknown>
+  return (
+    typeof m._pqctoday_hsm_state_take === 'function' &&
+    typeof m._pqctoday_hsm_state_load === 'function' &&
+    typeof m._pqctoday_hsm_state_free === 'function'
+  )
+}
+
+/** Read the engine's token snapshot out of `M` (owned copy), or null. */
+function takeHsmSnapshot(M: OpenSSLModule): Uint8Array | null {
+  if (!hasSnapshotApi(M)) return null
+  const m = M as unknown as Record<string, (...a: number[]) => number> & {
+    setValue: (p: number, v: number, t: string) => void
+    getValue: (p: number, t: string) => number
+    HEAPU8: Uint8Array
+  }
+  const lenP = m._malloc(4)
+  try {
+    m.setValue(lenP, 0, 'i32')
+    const ptr = m._pqctoday_hsm_state_take(lenP)
+    const len = m.getValue(lenP, 'i32')
+    if (!ptr || len <= 0) return null
+    const copy = new Uint8Array(m.HEAPU8.subarray(ptr, ptr + len))
+    m._pqctoday_hsm_state_free(ptr, len)
+    return copy
+  } catch {
+    return null
+  } finally {
+    m._free(lenP)
+  }
+}
+
+/** Install a previously-taken snapshot into a fresh module. */
+function loadHsmSnapshot(M: OpenSSLModule, snap: Uint8Array): boolean {
+  if (!hasSnapshotApi(M) || snap.length === 0) return false
+  const m = M as unknown as Record<string, (...a: number[]) => number> & { HEAPU8: Uint8Array }
+  const buf = m._malloc(snap.length)
+  try {
+    m.HEAPU8.set(snap, buf)
+    return m._pqctoday_hsm_state_load(buf, snap.length) === 0
+  } catch {
+    return false
+  } finally {
+    m._free(buf)
+  }
+}
+
+/** True when a token already exists (either engine's persistence model) —
+ *  a hint used alongside (not instead of) the token's own CKF_TOKEN_INITIALIZED
+ *  answer to enforce the PKCS#11 v3.2 §5.5.7 guard against re-initializing.
+ *  (Corrected 2026-07-24: this was cited as "§11.6" — that section number
+ *  does not exist in v3.2; C_InitToken is specified in §5.5.7.) */
+function hsmTokenAlreadyExists(): boolean {
+  if (hsmStateSnapshot !== null) return true
+  return [...vfs.keys()].some((k) => k.startsWith(SOFTHSM_TOKEN_DIR + '/'))
+}
+
 /** Save all /ssl/softhsm-tokens/** files to vfs so the next module instance
- *  finds the token — including any key objects written by a genpkey command. */
+ *  finds the token — including any key objects written by a genpkey command.
+ *  Also snapshots in-memory engine state (Rust engine — see the block above). */
 function persistSoftHsmTokenFiles(M: OpenSSLModule): void {
+  const snap = takeHsmSnapshot(M)
+  if (snap) hsmStateSnapshot = snap
   walkAndPersist(M, SOFTHSM_TOKEN_DIR)
 }
 
@@ -583,6 +665,7 @@ function initSoftHsmTokenIfNeeded(M: OpenSSLModule): void {
   const {
     _C_Initialize,
     _C_GetSlotList,
+    _C_GetTokenInfo,
     _C_InitToken,
     _C_OpenSession,
     _C_Login,
@@ -600,6 +683,7 @@ function initSoftHsmTokenIfNeeded(M: OpenSSLModule): void {
   if (
     typeof _C_Initialize !== 'function' ||
     typeof _C_GetSlotList !== 'function' ||
+    typeof _C_GetTokenInfo !== 'function' ||
     typeof _C_InitToken !== 'function' ||
     typeof _C_OpenSession !== 'function' ||
     typeof _C_Login !== 'function' ||
@@ -620,6 +704,7 @@ function initSoftHsmTokenIfNeeded(M: OpenSSLModule): void {
   type P11Fn = (...args: number[]) => number
   const pC_Initialize = _C_Initialize as P11Fn
   const pC_GetSlotList = _C_GetSlotList as P11Fn
+  const pC_GetTokenInfo = _C_GetTokenInfo as P11Fn
   const pC_InitToken = _C_InitToken as P11Fn
   const pC_OpenSession = _C_OpenSession as P11Fn
   const pC_Login = _C_Login as P11Fn
@@ -638,17 +723,9 @@ function initSoftHsmTokenIfNeeded(M: OpenSSLModule): void {
   const rv0 = pC_Initialize(0)
   if (rv0 !== 0 && rv0 !== CKR_CRYPTOKI_ALREADY_INITIALIZED) return
 
-  // If token files were already in vfs they are now restored to MEMFS and
-  // softhsmv3 has loaded the token (including all key objects). Return now —
-  // do NOT call C_InitToken. Per PKCS#11 §11.6, calling C_InitToken on an
-  // already-initialized token with the CORRECT SO PIN resets the token and
-  // destroys ALL key objects. Calling it here would silently wipe alice's
-  // ML-DSA-65 key on every cmsMkCert / cmsSign module call.
-  const tokenExists = [...vfs.keys()].some((k) => k.startsWith(SOFTHSM_TOKEN_DIR + '/'))
-  if (tokenExists) return
-
-  // ── First-time initialization path ─────────────────────────────────────
-  // Get the uninitialized virtual slot.
+  // Get the virtual slot up front — needed both for the authoritative
+  // CKF_TOKEN_INITIALIZED check below and, if this turns out to be a fresh
+  // token, for C_InitToken itself.
   const cntP = pmalloc(4)
   psetValue(cntP, 0, 'i32')
   if (pC_GetSlotList(0, 0, cntP) !== 0) {
@@ -670,6 +747,37 @@ function initSoftHsmTokenIfNeeded(M: OpenSSLModule): void {
   pfree(listP)
   pfree(c2P)
 
+  // Authoritative check — PKCS#11 v3.2 §5.5.7: "The CKF_TOKEN_INITIALIZED
+  // flag in the CK_TOKEN_INFO structure indicates the action that will
+  // result from calling C_InitToken." C_InitToken on an already-initialized
+  // token SUCCEEDS (does not refuse) given the correct SO PIN and destroys
+  // every key object — so this, not JS-side bookkeeping, is what decides
+  // whether to call it. `null` means the query itself failed (bad slot,
+  // driver error); that is NOT the same as "not initialized" and must not
+  // be treated as license to re-init — fall back to the file/snapshot hint.
+  // (Corrected 2026-07-24: previously relied solely on
+  // hsmTokenAlreadyExists(), which is a JS-side inference and was cited
+  // against a nonexistent "§11.6" — C_InitToken is specified in §5.5.7.)
+  const CKF_TOKEN_INITIALIZED = 0x00000400
+  const CK_TOKEN_INFO_FLAGS_OFFSET = 96 // see openssl.worker.ts's tokenIsInitialized for the layout derivation
+  const infoP = pmalloc(160)
+  const tokenInfoRv = pC_GetTokenInfo(slot0, infoP)
+  const initState: boolean | null =
+    tokenInfoRv !== 0
+      ? null
+      : (pgetValue(infoP + CK_TOKEN_INFO_FLAGS_OFFSET, 'i32') & CKF_TOKEN_INITIALIZED) !== 0
+  pfree(infoP)
+
+  const existsHint = hsmTokenAlreadyExists()
+  if (initState === true) return
+  if (initState === null && existsHint) return
+  if (initState === false && existsHint) {
+    console.warn(
+      '[cms.worker] token/snapshot hint said initialized but CKF_TOKEN_INITIALIZED disagrees — trusting the token and re-provisioning'
+    )
+  }
+
+  // ── First-time initialization path ─────────────────────────────────────
   // C_InitToken — create the token with label + SO PIN.
   const labelBuf = new Uint8Array(32).fill(0x20)
   const labelStr = 'cms-workshop'
@@ -770,6 +878,11 @@ async function newModule(withHsm = false): Promise<OpenSSLModule> {
     }
   }
   if (withHsm) {
+    // Restore in-memory engine state (Rust engine) BEFORE any C_* call, so
+    // C_Initialize builds its slot list from the rehydrated token store
+    // rather than creating a fresh empty one. No-op for a build linking the
+    // file-backed C++ engine. See the engine-state persistence block above.
+    if (hsmStateSnapshot) loadHsmSnapshot(M, hsmStateSnapshot)
     // Initialize the softhsm token via direct PKCS#11 calls if this is the
     // first HSM use (no token files in vfs yet). Must happen BEFORE
     // ensureProviderInit so pkcs11-provider's C_GetSlotList sees an initialized
@@ -2054,16 +2167,26 @@ function generateEcKeyInHsm(
   writeAttr(pubTplP, 5, CKA_EC_PARAMS_ATTR, ecParamsP, curveOid.length)
   writeAttr(pubTplP, 6, CKA_VERIFY_ATTR, boolTrueP, 1)
 
-  // Private key: CLASS, TOKEN, LABEL, ID, KEY_TYPE, SENSITIVE, SIGN
-  const privAttrCount = 7
+  // Private key: CLASS, TOKEN, LABEL, ID, KEY_TYPE, EC_PARAMS, SENSITIVE, SIGN
+  // CKA_EC_PARAMS is required on the PRIVATE object too, not just the public
+  // one — pkcs11-provider's fetch_ec_key() (objects.c) fetches it with
+  // mandatory=true for both CKO_PUBLIC_KEY and CKO_PRIVATE_KEY (it needs the
+  // curve to reconstruct an EVP_PKEY from a bare private scalar). Omitting
+  // it here made every `pkcs11:object=<ecKeyId>` private-key lookup fail
+  // with CKR_KEY_INDIGESTIBLE -> "Failed to load keys from slot" the moment
+  // a fresh module restored this key from a snapshot and tried to use it
+  // (e.g. DualSignDemo's classical cert step) — the ML-DSA sibling key
+  // never hit this because fetch_mldsa_key doesn't require it.
+  const privAttrCount = 8
   const privTplP = fn_malloc(privAttrCount * 12)
   writeAttr(privTplP, 0, CKA_CLASS_ATTR, privClassP, 4)
   writeAttr(privTplP, 1, CKA_TOKEN_ATTR, boolTrueP, 1)
   writeAttr(privTplP, 2, CKA_LABEL_ATTR, labelP, labelBytes.length)
   writeAttr(privTplP, 3, CKA_ID_ATTR, idP, idBytes.length)
   writeAttr(privTplP, 4, CKA_KEY_TYPE_ATTR, keyTypeP, 4)
-  writeAttr(privTplP, 5, CKA_SENSITIVE_ATTR, boolTrueP, 1)
-  writeAttr(privTplP, 6, CKA_SIGN_ATTR, boolTrueP, 1)
+  writeAttr(privTplP, 5, CKA_EC_PARAMS_ATTR, ecParamsP, curveOid.length)
+  writeAttr(privTplP, 6, CKA_SENSITIVE_ATTR, boolTrueP, 1)
+  writeAttr(privTplP, 7, CKA_SIGN_ATTR, boolTrueP, 1)
 
   const hPubP = fn_malloc(4)
   const hPrivP = fn_malloc(4)

@@ -13,11 +13,13 @@
 import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
+  AlertTriangle,
   CheckCircle2,
   ChevronRight,
   ExternalLink,
   Loader2,
   PlayCircle,
+  RotateCcw,
   XCircle,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -157,10 +159,14 @@ function StepRow({
 
 export function OpenSslLearnView({
   isReady,
+  loadError,
+  retryLoad,
   runCommand,
   onTryInWorkbench,
 }: {
   isReady: boolean
+  loadError?: string | null
+  retryLoad?: () => void
   runCommand: (cmd: string) => Promise<{ stdout: string }>
   onTryInWorkbench: (category: OpenSSLCategory) => void
 }) {
@@ -303,11 +309,31 @@ export function OpenSslLearnView({
               </p>
             </div>
 
-            {!isReady && (
-              <p className="rounded-lg border border-status-warning/30 bg-status-warning/10 px-3 py-2 text-[12px] text-status-warning">
-                Waiting for the OpenSSL WASM engine to initialize — steps enable once it&apos;s
-                ready.
+            {loadError ? (
+              <p className="flex items-start gap-2 rounded-lg border border-destructive/20 bg-destructive/10 px-3 py-2 text-[12px] text-destructive">
+                <AlertTriangle size={13} className="mt-0.5 shrink-0" aria-hidden="true" />
+                <span>
+                  The OpenSSL WASM engine failed to load, so steps can&apos;t run in this session.
+                  <span className="block text-destructive/70 mt-0.5">{loadError}</span>
+                  <Button
+                    variant="ghost"
+                    type="button"
+                    onClick={retryLoad}
+                    className="mt-1 h-auto inline-flex items-center gap-1 p-0 text-[12px] font-bold text-destructive underline underline-offset-2 hover:bg-transparent hover:no-underline"
+                  >
+                    <RotateCcw size={11} />
+                    Retry
+                  </Button>
+                  , or reload the page.
+                </span>
               </p>
+            ) : (
+              !isReady && (
+                <p className="rounded-lg border border-status-warning/30 bg-status-warning/10 px-3 py-2 text-[12px] text-status-warning">
+                  Waiting for the OpenSSL WASM engine to initialize — steps enable once it&apos;s
+                  ready.
+                </p>
+              )
             )}
 
             <div className="flex items-center justify-between">

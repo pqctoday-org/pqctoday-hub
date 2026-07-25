@@ -9,8 +9,7 @@ var createOpenSSLModule = (() => {
   // In EXPORT_ES6 mode we can just use 'import.meta.url'.
   var _scriptName = globalThis.document?.currentScript?.src;
   return async function(moduleArg = {}) {
-    var moduleRtn;
-
+    var Module = moduleArg;
 // include: shell.js
 // include: minimum_runtime_check.js
 (function() {
@@ -29,9 +28,14 @@ var createOpenSSLModule = (() => {
 
   // Note: We use a typeof check here instead of optional chaining using
   // globalThis because older browsers might not have globalThis defined.
-  var currentNodeVersion = typeof process !== 'undefined' && process.versions?.node ? humanReadableVersionToPacked(process.versions.node) : TARGET_NOT_SUPPORTED;
-  if (currentNodeVersion < 180300) {
-    throw new Error(`This emscripten-generated code requires node v${ packedVersionToHumanReadable(180300) } (detected v${packedVersionToHumanReadable(currentNodeVersion)})`);
+
+  // We skip the node version checking when running on Bun/Deno since the node
+  // version they report doesn't seem to be useful.
+  if (typeof process !== 'undefined' && !process.versions?.bun && typeof Deno == "undefined") {
+    var currentNodeVersion = process.versions?.node ? humanReadableVersionToPacked(process.versions.node) : TARGET_NOT_SUPPORTED;
+    if (currentNodeVersion < 180300) {
+      throw new Error(`This emscripten-generated code requires node v${ packedVersionToHumanReadable(180300) } (detected v${packedVersionToHumanReadable(currentNodeVersion)})`);
+    }
   }
 
   var userAgent = typeof navigator !== 'undefined' && navigator.userAgent;
@@ -69,7 +73,6 @@ var createOpenSSLModule = (() => {
 // after the generated code, you will need to define   var Module = {};
 // before the code. Then that object will be used in the code, and you
 // can continue to use Module afterwards as well.
-var Module = moduleArg;
 
 // Determine the runtime environment we are in. You can customize this by
 // setting the ENVIRONMENT setting at compile time (see settings.js).
@@ -86,7 +89,7 @@ var ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIR
 // refer to Module (if they choose; they can also define Module)
 
 
-var arguments_ = [];
+var programArgs = [];
 var thisProgram = './this.program';
 var quit_ = (status, toThrow) => {
   throw toThrow;
@@ -142,7 +145,7 @@ readAsync = async (filename, binary = true) => {
     thisProgram = process.argv[1].replace(/\\/g, '/');
   }
 
-  arguments_ = process.argv.slice(2);
+  programArgs = process.argv.slice(2);
 
   quit_ = (status, toThrow) => {
     process.exitCode = status;
@@ -286,44 +289,6 @@ function assert(condition, text) {
 var isFileURI = (filename) => filename.startsWith('file://');
 
 // include: runtime_common.js
-// include: runtime_stack_check.js
-// Initializes the stack cookie. Called at the startup of main and at the startup of each thread in pthreads mode.
-function writeStackCookie() {
-  var max = _emscripten_stack_get_end();
-  assert((max & 3) == 0);
-  // If the stack ends at address zero we write our cookies 4 bytes into the
-  // stack.  This prevents interference with SAFE_HEAP and ASAN which also
-  // monitor writes to address zero.
-  if (max == 0) {
-    max += 4;
-  }
-  // The stack grow downwards towards _emscripten_stack_get_end.
-  // We write cookies to the final two words in the stack and detect if they are
-  // ever overwritten.
-  HEAPU32[((max)>>2)] = 0x02135467;
-  HEAPU32[(((max)+(4))>>2)] = 0x89BACDFE;
-  // Also test the global address 0 for integrity.
-  HEAPU32[((0)>>2)] = 1668509029;
-}
-
-function checkStackCookie() {
-  if (ABORT) return;
-  var max = _emscripten_stack_get_end();
-  // See writeStackCookie().
-  if (max == 0) {
-    max += 4;
-  }
-  var cookie1 = HEAPU32[((max)>>2)];
-  var cookie2 = HEAPU32[(((max)+(4))>>2)];
-  if (cookie1 != 0x02135467 || cookie2 != 0x89BACDFE) {
-    abort(`Stack overflow! Stack cookie has been overwritten at ${ptrToString(max)}, expected hex dwords 0x89BACDFE and 0x2135467, but received ${ptrToString(cookie2)} ${ptrToString(cookie1)}`);
-  }
-  // Also test the global address 0 for integrity.
-  if (HEAPU32[((0)>>2)] != 0x63736d65 /* 'emsc' */) {
-    abort('Runtime error: The application has corrupted its heap memory area (address zero)!');
-  }
-}
-// end include: runtime_stack_check.js
 // include: runtime_exceptions.js
 // Base Emscripten EH error class
 class EmscriptenEH {}
@@ -351,15 +316,31 @@ function dbg(...args) {
 })();
 
 function consumedModuleProp(prop) {
-  if (!Object.getOwnPropertyDescriptor(Module, prop)) {
-    Object.defineProperty(Module, prop, {
-      configurable: true,
-      set() {
-        abort(`Attempt to set \`Module.${prop}\` after it has already been processed.  This can happen, for example, when code is injected via '--post-js' rather than '--pre-js'`);
-
+  var value = Module[prop];
+  var msg = `Attempt to modify \`Module.${prop}\` after it has already been processed.  This can happen, for example, when code is injected via '--post-js' rather than '--pre-js'`;
+  if (Array.isArray(value)) {
+    value = new Proxy(value, {
+      set(target, key, val) {
+        abort(msg);
+        return false;
+      },
+      defineProperty(target, key, descriptor) {
+        abort(msg);
+        return false;
+      },
+      deleteProperty(target, key) {
+        abort(msg);
+        return false;
       }
     });
   }
+  Object.defineProperty(Module, prop, {
+    configurable: true,
+    get() { return value; },
+    set() {
+      abort(msg);
+    }
+  });
 }
 
 function makeInvalidEarlyAccess(name) {
@@ -410,8 +391,51 @@ function unexportedRuntimeSymbol(sym) {
 }
 
 // end include: runtime_debug.js
-var readyPromiseResolve, readyPromiseReject;
+// include: runtime_stack_check.js
+const stackCookie1 = 0x02135467;
+const stackCookie2 = 0x89BACDFE;
 
+// Initializes the stack cookie. Called at the startup of main and at the startup of each thread in pthreads mode.
+function writeStackCookie() {
+  var max = _emscripten_stack_get_end();
+  assert((max & 3) == 0);
+  // If the stack ends at address zero we write our cookies 4 bytes into the
+  // stack.  This prevents interference with SAFE_HEAP and ASAN which also
+  // monitor writes to address zero.
+  if (max == 0) {
+    max += 4;
+  }
+  // The stack grow downwards towards _emscripten_stack_get_end.
+  // We write cookies to the final two words in the stack and detect if they are
+  // ever overwritten.
+  HEAPU32[((max)>>2)] = stackCookie1;
+  HEAPU32[(((max)+(4))>>2)] = stackCookie2;
+  // Also test the global address 0 for integrity.
+  HEAPU32[((0)>>2)] = 1668509029;
+}
+
+function u32ToHexString(num) {
+  return '0x' + (num >>> 0).toString(16).padStart(8, '0');
+}
+
+function checkStackCookie() {
+  if (ABORT) return;
+  var max = _emscripten_stack_get_end();
+  // See writeStackCookie().
+  if (max == 0) {
+    max += 4;
+  }
+  var val1 = HEAPU32[((max)>>2)];
+  var val2 = HEAPU32[(((max)+(4))>>2)];
+  if (val1 != stackCookie1 || val2 != stackCookie2) {
+    abort(`Stack overflow! Stack cookie has been overwritten at ${ptrToString(max)}, expected hex dwords ${u32ToHexString(stackCookie2)} and ${u32ToHexString(stackCookie1)}, but received ${u32ToHexString(val2)} ${u32ToHexString(val1)}`);
+  }
+  // Also test the global address 0 for integrity.
+  if (HEAPU32[((0)>>2)] != 0x63736d65 /* 'emsc' */) {
+    abort('Runtime error: The application has corrupted its heap memory area (address zero)!');
+  }
+}
+// end include: runtime_stack_check.js
 // Memory management
 
 var runtimeInitialized = false;
@@ -420,8 +444,17 @@ var runtimeExited = false;
 
 
 
+// When ALLOW_MEMORY_GROWTH is enabled, the conversion from Wasm
+// memory to ArrayBuffer requires some additional logic.
+function getMemoryBuffer() {
+  return wasmMemory.buffer;
+}
+
 function updateMemoryViews() {
-  var b = wasmMemory.buffer;
+  // If we already have a heap that is resizeable/growable buffer we don't
+  // need to do anything in updateMemoryViews.
+  if (HEAP8?.buffer?.resizable) return;
+  var b = getMemoryBuffer();
   HEAP8 = new Int8Array(b);
   HEAP16 = new Int16Array(b);
   Module['HEAPU8'] = HEAPU8 = new Uint8Array(b);
@@ -431,7 +464,7 @@ function updateMemoryViews() {
   HEAPF32 = new Float32Array(b);
   HEAPF64 = new Float64Array(b);
   HEAP64 = new BigInt64Array(b);
-  HEAPU64 = new BigUint64Array(b);
+  
 }
 
 // include: memoryprofiler.js
@@ -441,11 +474,10 @@ assert(globalThis.Int32Array && globalThis.Float64Array && Int32Array.prototype.
        'JS engine does not provide full typed array support');
 
 function preRun() {
-  if (Module['preRun']) {
-    if (typeof Module['preRun'] == 'function') Module['preRun'] = [Module['preRun']];
-    while (Module['preRun'].length) {
-      addOnPreRun(Module['preRun'].shift());
-    }
+  var preRun = Module['preRun'];
+  if (preRun) {
+    if (typeof preRun == 'function') preRun = [preRun];
+    onPreRuns.push(...preRun);
   }
   consumedModuleProp('preRun');
   // Begin ATPRERUNS hooks
@@ -471,17 +503,17 @@ PIPEFS.root = FS.mount(PIPEFS, {}, null);
   // Begin ATPOSTCTORS hooks
   FS.ignorePermissions = false;
   // End ATPOSTCTORS hooks
+
+  checkStackCookie();
 }
 
-function preMain() {
-  checkStackCookie();
-  // No ATMAINS hooks
-}
+var runtimeExiting = false;
 
 function exitRuntime() {
   assert(!runtimeExited);
+  assert(!runtimeExiting, 'Re-entrant call to exitRuntime()! This can happen if an atexit() registered callback throws an exception.');
+  runtimeExiting = true;
   checkStackCookie();
-   // PThreads reuse the runtime from the main thread.
   ___funcs_on_exit(); // Native atexit() functions
   // Begin ATEXITS hooks
   FS.quit();
@@ -493,13 +525,11 @@ clearTimers();
 
 function postRun() {
   checkStackCookie();
-   // PThreads reuse the runtime from the main thread.
 
-  if (Module['postRun']) {
-    if (typeof Module['postRun'] == 'function') Module['postRun'] = [Module['postRun']];
-    while (Module['postRun'].length) {
-      addOnPostRun(Module['postRun'].shift());
-    }
+  var postRun = Module['postRun'];
+  if (postRun) {
+    if (typeof postRun == 'function') postRun = [postRun];
+    onPostRuns.push(...postRun);
   }
   consumedModuleProp('postRun');
 
@@ -537,22 +567,20 @@ function abort(what) {
   /** @suppress {checkTypes} */
   var e = new WebAssembly.RuntimeError(what);
 
-  readyPromiseReject?.(e);
   // Throw the error whether or not MODULARIZE is set because abort is used
   // in code paths apart from instantiation where an exception is expected
   // to be thrown when abort is called.
   throw e;
 }
 
-function createExportWrapper(name, nargs) {
+function createExportWrapper(name, func, nargs) {
+  assert(func);
   return (...args) => {
     assert(runtimeInitialized, `native function \`${name}\` called before runtime initialization`);
     assert(!runtimeExited, `native function \`${name}\` called after runtime exit (use NO_EXIT_RUNTIME to keep it alive after main() exits)`);
-    var f = wasmExports[name];
-    assert(f, `exported native function \`${name}\` not found`);
     // Only assert for too many arguments. Too few can be valid since the missing arguments will be zero filled.
     assert(args.length <= nargs, `native function \`${name}\` called with ${args.length} args but expects ${nargs}`);
-    return f(...args);
+    return func(...args);
   };
 }
 
@@ -563,9 +591,6 @@ function findWasmBinary() {
 }
 
 function getBinarySync(file) {
-  if (file == wasmBinaryFile && wasmBinary) {
-    return new Uint8Array(wasmBinary);
-  }
   if (readBinary) {
     return readBinary(file);
   }
@@ -648,8 +673,7 @@ async function createWasm() {
   // Load the wasm module and create an instance of using native support in the JS engine.
   // handle a generated wasm instance, receiving its exports and
   // performing other necessary setup
-  /** @param {WebAssembly.Module=} module*/
-  function receiveInstance(instance, module) {
+  function receiveInstance(instance) {
     wasmExports = instance.exports;
 
     assignWasmExports(wasmExports);
@@ -682,15 +706,14 @@ async function createWasm() {
   // performing.
   // Also pthreads and wasm workers initialize the wasm instance through this
   // path.
-  if (Module['instantiateWasm']) {
-    return new Promise((resolve, reject) => {
+  var instantiateWasm = Module['instantiateWasm'];
+  if (instantiateWasm) {
+    return new Promise((resolve) => {
       try {
-        Module['instantiateWasm'](info, (inst, mod) => {
-          resolve(receiveInstance(inst, mod));
-        });
+        instantiateWasm(info, (inst) => resolve(receiveInstance(inst)));
       } catch(e) {
         err(`Module.instantiateWasm callback failed with error: ${e}`);
-        reject(e);
+        throw e;
       }
     });
   }
@@ -714,35 +737,14 @@ async function createWasm() {
       }
     }
 
-  /** @type {!Int16Array} */
-  var HEAP16;
-
   /** @type {!Int32Array} */
   var HEAP32;
-
-  /** not-@type {!BigInt64Array} */
-  var HEAP64;
 
   /** @type {!Int8Array} */
   var HEAP8;
 
-  /** @type {!Float32Array} */
-  var HEAPF32;
-
-  /** @type {!Float64Array} */
-  var HEAPF64;
-
-  /** @type {!Uint16Array} */
-  var HEAPU16;
-
   /** @type {!Uint32Array} */
   var HEAPU32;
-
-  /** not-@type {!BigUint64Array} */
-  var HEAPU64;
-
-  /** @type {!Uint8Array} */
-  var HEAPU8;
 
   var callRuntimeCallbacks = (callbacks) => {
       while (callbacks.length > 0) {
@@ -757,26 +759,6 @@ async function createWasm() {
   var addOnPreRun = (cb) => onPreRuns.push(cb);
 
 
-  
-    /**
-   * @param {number} ptr
-   * @param {string} type
-   */
-  function getValue(ptr, type = 'i8') {
-    if (type.endsWith('*')) type = '*';
-    switch (type) {
-      case 'i1': return HEAP8[ptr];
-      case 'i8': return HEAP8[ptr];
-      case 'i16': return HEAP16[((ptr)>>1)];
-      case 'i32': return HEAP32[((ptr)>>2)];
-      case 'i64': return HEAP64[((ptr)>>3)];
-      case 'float': return HEAPF32[((ptr)>>2)];
-      case 'double': return HEAPF64[((ptr)>>3)];
-      case '*': return HEAPU32[((ptr)>>2)];
-      default: abort(`invalid type for getValue: ${type}`);
-    }
-  }
-
   var noExitRuntime = false;
 
   function ptrToString(ptr) {
@@ -785,27 +767,6 @@ async function createWasm() {
       ptr >>>= 0;
       return '0x' + ptr.toString(16).padStart(8, '0');
     }
-
-  
-    /**
-   * @param {number} ptr
-   * @param {number} value
-   * @param {string} type
-   */
-  function setValue(ptr, value, type = 'i8') {
-    if (type.endsWith('*')) type = '*';
-    switch (type) {
-      case 'i1': HEAP8[ptr] = value; break;
-      case 'i8': HEAP8[ptr] = value; break;
-      case 'i16': HEAP16[((ptr)>>1)] = value; break;
-      case 'i32': HEAP32[((ptr)>>2)] = value; break;
-      case 'i64': HEAP64[((ptr)>>3)] = BigInt(value); break;
-      case 'float': HEAPF32[((ptr)>>2)] = value; break;
-      case 'double': HEAPF64[((ptr)>>3)] = value; break;
-      case '*': HEAPU32[((ptr)>>2)] = value; break;
-      default: abort(`invalid type for setValue: ${type}`);
-    }
-  }
 
   var stackRestore = (val) => __emscripten_stack_restore(val);
 
@@ -822,101 +783,7 @@ async function createWasm() {
 
   
 
-  var UTF8Decoder = globalThis.TextDecoder && new TextDecoder();
   
-  var findStringEnd = (heapOrArray, idx, maxBytesToRead, ignoreNul) => {
-      var maxIdx = idx + maxBytesToRead;
-      if (ignoreNul) return maxIdx;
-      // TextDecoder needs to know the byte length in advance, it doesn't stop on
-      // null terminator by itself.
-      // As a tiny code save trick, compare idx against maxIdx using a negation,
-      // so that maxBytesToRead=undefined/NaN means Infinity.
-      while (heapOrArray[idx] && !(idx >= maxIdx)) ++idx;
-      return idx;
-    };
-  
-  
-    /**
-   * Given a pointer 'idx' to a null-terminated UTF8-encoded string in the given
-   * array that contains uint8 values, returns a copy of that string as a
-   * Javascript String object.
-   * heapOrArray is either a regular array, or a JavaScript typed array view.
-   * @param {number=} idx
-   * @param {number=} maxBytesToRead
-   * @param {boolean=} ignoreNul - If true, the function will not stop on a NUL character.
-   * @return {string}
-   */
-  var UTF8ArrayToString = (heapOrArray, idx = 0, maxBytesToRead, ignoreNul) => {
-  
-      var endPtr = findStringEnd(heapOrArray, idx, maxBytesToRead, ignoreNul);
-  
-      // When using conditional TextDecoder, skip it for short strings as the overhead of the native call is not worth it.
-      if (endPtr - idx > 16 && heapOrArray.buffer && UTF8Decoder) {
-        return UTF8Decoder.decode(heapOrArray.subarray(idx, endPtr));
-      }
-      var str = '';
-      while (idx < endPtr) {
-        // For UTF8 byte structure, see:
-        // http://en.wikipedia.org/wiki/UTF-8#Description
-        // https://www.ietf.org/rfc/rfc2279.txt
-        // https://tools.ietf.org/html/rfc3629
-        var u0 = heapOrArray[idx++];
-        if (!(u0 & 0x80)) { str += String.fromCharCode(u0); continue; }
-        var u1 = heapOrArray[idx++] & 63;
-        if ((u0 & 0xE0) == 0xC0) { str += String.fromCharCode(((u0 & 31) << 6) | u1); continue; }
-        var u2 = heapOrArray[idx++] & 63;
-        if ((u0 & 0xF0) == 0xE0) {
-          u0 = ((u0 & 15) << 12) | (u1 << 6) | u2;
-        } else {
-          if ((u0 & 0xF8) != 0xF0) warnOnce(`Invalid UTF-8 leading byte ${ptrToString(u0)} encountered when deserializing a UTF-8 string in wasm memory to a JS string!`);
-          u0 = ((u0 & 7) << 18) | (u1 << 12) | (u2 << 6) | (heapOrArray[idx++] & 63);
-        }
-  
-        if (u0 < 0x10000) {
-          str += String.fromCharCode(u0);
-        } else {
-          var ch = u0 - 0x10000;
-          str += String.fromCharCode(0xD800 | (ch >> 10), 0xDC00 | (ch & 0x3FF));
-        }
-      }
-      return str;
-    };
-  
-    /**
-   * Given a pointer 'ptr' to a null-terminated UTF8-encoded string in the
-   * emscripten HEAP, returns a copy of that string as a Javascript String object.
-   *
-   * @param {number} ptr
-   * @param {number=} maxBytesToRead - An optional length that specifies the
-   *   maximum number of bytes to read. You can omit this parameter to scan the
-   *   string until the first 0 byte. If maxBytesToRead is passed, and the string
-   *   at [ptr, ptr+maxBytesToReadr[ contains a null byte in the middle, then the
-   *   string will cut short at that byte index.
-   * @param {boolean=} ignoreNul - If true, the function will not stop on a NUL character.
-   * @return {string}
-   */
-  var UTF8ToString = (ptr, maxBytesToRead, ignoreNul) => {
-      assert(typeof ptr == 'number', `UTF8ToString expects a number (got ${typeof ptr})`);
-      return ptr ? UTF8ArrayToString(HEAPU8, ptr, maxBytesToRead, ignoreNul) : '';
-    };
-  var ___assert_fail = (condition, filename, line, func) =>
-      abort(`Assertion failed: ${UTF8ToString(condition)}, at: ` + [filename ? UTF8ToString(filename) : 'unknown filename', line, func ? UTF8ToString(func) : 'unknown function']);
-
-  var wasmTableMirror = [];
-  
-  
-  var getWasmTableEntry = (funcPtr) => {
-      var func = wasmTableMirror[funcPtr];
-      if (!func) {
-        /** @suppress {checkTypes} */
-        wasmTableMirror[funcPtr] = func = wasmTable.get(funcPtr);
-      }
-      /** @suppress {checkTypes} */
-      assert(wasmTable.get(funcPtr) == func, 'table mirror is out of date');
-      return func;
-    };
-  var ___call_sighandler = (fp, sig) => getWasmTableEntry(fp)(sig);
-
   class ExceptionInfo {
       // excPtr - Thrown object pointer to wrap. Metadata pointer is calculated from it.
       constructor(excPtr) {
@@ -982,12 +849,122 @@ async function createWasm() {
       uncaughtExceptionCount++;
       assert(false, 'Exception thrown, but exception catching is not enabled. Compile with -sNO_DISABLE_EXCEPTION_CATCHING or -sEXCEPTION_CATCHING_ALLOWED=[..] to catch.');
     };
+  var __Unwind_RaiseException = (ex) => {
+      err('Warning: _Unwind_RaiseException is not correctly implemented');
+      return ___cxa_throw(ex, 0, 0);
+    };
+
+  var UTF8Decoder = globalThis.TextDecoder && new TextDecoder();
+  
+  
+    /**
+   * heapOrArray is either a regular array, or a JavaScript typed array view.
+   * @param {number} idx
+   * @param {number=} maxBytesToRead
+   * @param {boolean=} ignoreNul
+   * @return {number}
+   */
+  var findStringEnd = (heapOrArray, idx, maxBytesToRead, ignoreNul) => {
+      var maxIdx = idx + maxBytesToRead;
+      if (ignoreNul) return maxIdx;
+      // TextDecoder needs to know the byte length in advance, it doesn't stop on
+      // null terminator by itself.
+      // As a tiny code save trick, compare idx against maxIdx using a negation,
+      // so that maxBytesToRead=undefined/NaN means Infinity.
+      while (heapOrArray[idx] && !(idx >= maxIdx)) ++idx;
+      return idx;
+    };
+  
+  
+    /**
+   * Given a pointer 'idx' to a null-terminated UTF8-encoded string in the given
+   * array that contains uint8 values, returns a copy of that string as a
+   * Javascript String object.
+   * heapOrArray is either a regular array, or a JavaScript typed array view.
+   * @param {number=} idx
+   * @param {number=} maxBytesToRead
+   * @param {boolean=} ignoreNul - If true, the function will not stop on a NUL character.
+   * @return {string}
+   */
+  var UTF8ArrayToString = (heapOrArray, idx = 0, maxBytesToRead, ignoreNul) => {
+  
+      var endPtr = findStringEnd(heapOrArray, idx, maxBytesToRead, ignoreNul);
+  
+      // When using conditional TextDecoder, skip it for short strings as the overhead of the native call is not worth it.
+      if (endPtr - idx > 16 && heapOrArray.buffer && UTF8Decoder) {
+        return UTF8Decoder.decode(heapOrArray.subarray(idx, endPtr));
+      }
+      var str = '';
+      while (idx < endPtr) {
+        // For UTF8 byte structure, see:
+        // http://en.wikipedia.org/wiki/UTF-8#Description
+        // https://www.ietf.org/rfc/rfc2279.txt
+        // https://tools.ietf.org/html/rfc3629
+        var u0 = heapOrArray[idx++];
+        if (!(u0 & 0x80)) { str += String.fromCharCode(u0); continue; }
+        var u1 = heapOrArray[idx++] & 63;
+        if ((u0 & 0xE0) == 0xC0) { str += String.fromCharCode(((u0 & 31) << 6) | u1); continue; }
+        var u2 = heapOrArray[idx++] & 63;
+        if ((u0 & 0xF0) == 0xE0) {
+          u0 = ((u0 & 15) << 12) | (u1 << 6) | u2;
+        } else {
+          if ((u0 & 0xF8) != 0xF0) warnOnce(`Invalid UTF-8 leading byte ${ptrToString(u0)} encountered when deserializing a UTF-8 string in wasm memory to a JS string!`);
+          u0 = ((u0 & 7) << 18) | (u1 << 12) | (u2 << 6) | (heapOrArray[idx++] & 63);
+        }
+  
+        if (u0 < 0x10000) {
+          str += String.fromCharCode(u0);
+        } else {
+          var ch = u0 - 0x10000;
+          str += String.fromCharCode(0xD800 | (ch >> 10), 0xDC00 | (ch & 0x3FF));
+        }
+      }
+      return str;
+    };
+  
+  /** @type {!Uint8Array} */
+  var HEAPU8;
+  
+    /**
+   * Given a pointer 'ptr' to a null-terminated UTF8-encoded string in the
+   * emscripten HEAP, returns a copy of that string as a Javascript String object.
+   *
+   * @param {number} ptr
+   * @param {number=} maxBytesToRead - An optional length that specifies the
+   *   maximum number of bytes to read. You can omit this parameter to scan the
+   *   string until the first 0 byte. If maxBytesToRead is passed, and the string
+   *   at [ptr, ptr+maxBytesToReadr[ contains a null byte in the middle, then the
+   *   string will cut short at that byte index.
+   * @param {boolean=} ignoreNul - If true, the function will not stop on a NUL character.
+   * @return {string}
+   */
+  var UTF8ToString = (ptr, maxBytesToRead, ignoreNul) => {
+      assert(typeof ptr == 'number', `UTF8ToString expects a number (got ${typeof ptr})`);
+      return ptr ? UTF8ArrayToString(HEAPU8, ptr, maxBytesToRead, ignoreNul) : '';
+    };
+  var ___assert_fail = (condition, filename, line, func) =>
+      abort(`Assertion failed: ${UTF8ToString(condition)}, at: ` + [filename ? UTF8ToString(filename) : 'unknown filename', line, func ? UTF8ToString(func) : 'unknown function']);
+
+  var wasmTableMirror = [];
+  
+  
+  var getWasmTableEntry = (funcPtr) => {
+      var func = wasmTableMirror[funcPtr];
+      if (!func) {
+        /** @suppress {checkTypes} */
+        wasmTableMirror[funcPtr] = func = wasmTable.get(funcPtr);
+      }
+      /** @suppress {checkTypes} */
+      assert(wasmTable.get(funcPtr) == func, 'table mirror is out of date');
+      return func;
+    };
+  var ___call_sighandler = (fp, sig) => getWasmTableEntry(fp)(sig);
 
   var initRandomFill = () => {
       // This block is not needed on v19+ since crypto.getRandomValues is builtin
       if (ENVIRONMENT_IS_NODE) {
         var nodeCrypto = require('node:crypto');
-        return (view) => nodeCrypto.randomFillSync(view);
+        return (view) => (nodeCrypto.randomFillSync(view), 0);
       }
   
       return (view) => (crypto.getRandomValues(view), 0);
@@ -1378,6 +1355,7 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
   var mmapAlloc = (size) => {
       abort('internal error: mmapAlloc called but `emscripten_builtin_memalign` native symbol not exported');
     };
+  
   var MEMFS = {
   ops_table:null,
   mount(mount) {
@@ -1521,7 +1499,7 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
           return attr;
         },
   setattr(node, attr) {
-          for (const key of ["mode", "atime", "mtime", "ctime"]) {
+          for (const key of ['mode', 'atime', 'mtime', 'ctime']) {
             if (attr[key] != null) {
               node[key] = attr[key];
             }
@@ -1856,10 +1834,12 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
       }
     };
   
+  var dependenciesPromise = null;
+  var resolveRunDependencies = async () => dependenciesPromise;
   var runDependencies = 0;
   
   
-  var dependenciesFulfilled = null;
+  var dependenciesPromiseResolve = null;
   
   var runDependencyTracking = {
   };
@@ -1873,21 +1853,22 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
       assert(id, 'removeRunDependency requires an ID');
       assert(runDependencyTracking[id]);
       delete runDependencyTracking[id];
-      if (runDependencies == 0) {
+      if (!runDependencies) {
         if (runDependencyWatcher !== null) {
           clearInterval(runDependencyWatcher);
           runDependencyWatcher = null;
         }
-        if (dependenciesFulfilled) {
-          var callback = dependenciesFulfilled;
-          dependenciesFulfilled = null;
-          callback(); // can add another dependenciesFulfilled
-        }
+        dependenciesPromiseResolve();
       }
     };
   
   
+  
+  
   var addRunDependency = (id) => {
+      if (!runDependencies) {
+        dependenciesPromise = new Promise((resolve) => dependenciesPromiseResolve = resolve);
+      }
       runDependencies++;
   
       Module['monitorRunDependencies']?.(runDependencies);
@@ -1962,6 +1943,7 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
   var FS_createPreloadedFile = (parent, name, url, canRead, canWrite, onload, onerror, dontCreateFile, canOwn, preFinish) => {
       FS_preloadFile(parent, name, url, canRead, canWrite, dontCreateFile, canOwn, preFinish).then(onload).catch(onerror);
     };
+  
   var FS = {
   root:null,
   mounts:[],
@@ -2059,6 +2041,48 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
         }
         get isDevice() {
           return FS.isChrdev(this.mode);
+        }
+        // The per-inode readiness wait-queue. The node carries a Set of listener
+        // entries {cb}; producers (SOCKFS, PIPEFS) call notifyListeners on a
+        // readiness transition, and poll()/epoll consume it. It lives on the node
+        // (not the fd) so dup'd fds share one queue. Only nodes that derive real
+        // readiness (sockets, pipes, and an epoll's own node) ever use this -
+        // always-ready types (regular files, ttys) never register or notify.
+        addListener(cb, exclusive = false) {
+          var entry = {cb, exclusive};
+          var listeners = (this.listeners ??= new Set());
+          listeners.add(entry);
+          return {listeners, entry};
+        }
+        notifyListeners(flags) {
+          // Iterates the set without copying, which is safe ONLY under a
+          // load-bearing contract that every internal listener must honour:
+          //   1. A listener must not run user code synchronously (a poll waiter only
+          //      resolves a Promise; an epoll registration only re-lists +
+          //      re-notifies; the epoll callback only schedules a tick). User code
+          //      runs on a later tick, never inside this loop.
+          //   2. A listener may delete entries only from ITS OWN waiter, never from
+          //      a sibling node's set that may be mid-iteration. (Deleting an entry
+          //      of the set being iterated here is fine - a Set tolerates removal of
+          //      a not-yet-visited entry mid-iteration; mutating a *different* node's
+          //      set is fine because that set is not being iterated.)
+          // Violating either gives silently skipped wakeups that are near-impossible
+          // to reproduce. Any new producer/listener must preserve it.
+          if (!this.listeners) return;
+          // Fire every non-exclusive listener. Among EPOLLEXCLUSIVE registrations
+          // (one fd watched by several epolls) wake only one, rotating round-robin
+          // per node, to avoid a thundering herd. (Only epoll registrations are ever
+          // exclusive; poll waiters and a node's own consumers are not.)
+          var excl;
+          for (var entry of this.listeners) {
+            if (entry.exclusive) (excl ||= []).push(entry);
+            else entry.cb(flags);
+          }
+          if (excl) {
+            var i = (this.exclTurn || 0) % excl.length;
+            this.exclTurn = i + 1;
+            excl[i].cb(flags);
+          }
         }
       },
   lookupPath(path, opts = {}) {
@@ -2637,6 +2661,25 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
         }
         return parent.node_ops.symlink(parent, newname, oldpath);
       },
+  link(oldpath, newpath, flags) {
+        var lookup = FS.lookupPath(newpath, { parent: true });
+        var parent = lookup.node;
+        if (!parent) {
+          throw new FS.ErrnoError(44);
+        }
+        var newname = PATH.basename(newpath);
+        var errCode = FS.mayCreate(parent, newname);
+        if (errCode) {
+          throw new FS.ErrnoError(errCode);
+        }
+        // Hardlinks are only supported by filesystem backends that provide a
+        // `link` node op (e.g. NODERAWFS backed by the host). NODEFS omits it:
+        // a host hardlink cannot be confined to the mount root.
+        if (!parent.node_ops.link) {
+          throw new FS.ErrnoError(34);
+        }
+        return parent.node_ops.link(parent, newname, oldpath, flags);
+      },
   rename(old_path, new_path) {
         var old_dirname = PATH.dirname(old_path);
         var new_dirname = PATH.dirname(new_path);
@@ -2883,17 +2926,16 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
         }
         FS.doTruncate(stream, stream.node, len);
       },
-  utime(path, atime, mtime) {
-        var lookup = FS.lookupPath(path, { follow: true });
-        var node = lookup.node;
-        var setattr = FS.checkOpExists(node.node_ops.setattr, 63);
-        setattr(node, {
+  utime(path, atime, mtime, dontFollow) {
+        var lookup = FS.lookupPath(path, { follow: !dontFollow });
+        FS.doSetAttr(null, lookup.node, {
           atime: atime,
-          mtime: mtime
+          mtime: mtime,
+          dontFollow
         });
       },
   open(path, flags, mode = 0o666) {
-        if (path === "") {
+        if (path === '') {
           throw new FS.ErrnoError(44);
         }
         flags = FS_modeStringToFlags(flags);
@@ -2907,7 +2949,7 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
         if (typeof path == 'object') {
           node = path;
         } else {
-          isDirPath = path.endsWith("/");
+          isDirPath = path.endsWith('/');
           // noent_okay makes it so that if the final component of the path
           // doesn't exist, lookupPath returns `node: undefined`. `path` will be
           // updated to point to the target of all symlinks.
@@ -2990,6 +3032,11 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
           throw new FS.ErrnoError(8);
         }
         if (stream.getdents) stream.getdents = null; // free readdir state
+        // The fd is going away: wake anything waiting on it (poll/epoll) with
+        // POLLNVAL so a blocking wait unblocks and an epoll registration is evicted
+        // on its next derive. Only sockets/pipes/epoll ever carry a wait-queue, so
+        // for every other stream (incl. nodeless noderawfs stdio) this is a no-op.
+        stream.node?.notifyListeners(32);
         try {
           if (stream.stream_ops.close) {
             stream.stream_ops.close(stream);
@@ -3114,8 +3161,8 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
         return stream.stream_ops.ioctl(stream, cmd, arg);
       },
   readFile(path, opts = {}) {
-        opts.flags = opts.flags || 0;
-        opts.encoding = opts.encoding || 'binary';
+        opts.flags = opts.flags ?? 0;
+        opts.encoding = opts.encoding ?? 'binary';
         if (opts.encoding !== 'utf8' && opts.encoding !== 'binary') {
           abort(`Invalid encoding type "${opts.encoding}"`);
         }
@@ -3131,7 +3178,7 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
         return buf;
       },
   writeFile(path, data, opts = {}) {
-        opts.flags = opts.flags || 577;
+        opts.flags = opts.flags ?? 577;
         var stream = FS.open(path, opts.flags, opts.mode);
         data = FS_fileDataToTypedArray(data);
         FS.write(stream, data, 0, data.byteLength, undefined, opts.canOwn);
@@ -3425,7 +3472,7 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
   forceLoadFile(obj) {
         if (obj.isDevice || obj.isFolder || obj.link || obj.contents) return true;
         if (globalThis.XMLHttpRequest) {
-          abort("Lazy loading should have been performed (contents set) in createLazyFile, but it was not. Lazy loading only works in web workers. Use --embed-file or --preload-file in emcc on the main thread.");
+          abort('Lazy loading should have been performed (contents set) in createLazyFile, but it was not. Lazy loading only works in web workers. Use --embed-file or --preload-file in emcc on the main thread.');
         } else { // Command-line.
           try {
             obj.contents = readBinary(obj.url);
@@ -3456,11 +3503,11 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
             var xhr = new XMLHttpRequest();
             xhr.open('HEAD', url, false);
             xhr.send(null);
-            if (!(xhr.status >= 200 && xhr.status < 300 || xhr.status === 304)) abort("Couldn't load " + url + ". Status: " + xhr.status);
-            var datalength = Number(xhr.getResponseHeader("Content-length"));
+            if (!(xhr.status >= 200 && xhr.status < 300 || xhr.status === 304)) abort(`Couldn't load ${url}. Status: ${xhr.status}`);
+            var datalength = Number(xhr.getResponseHeader('Content-length'));
             var header;
-            var hasByteServing = (header = xhr.getResponseHeader("Accept-Ranges")) && header === "bytes";
-            var usesGzip = (header = xhr.getResponseHeader("Content-Encoding")) && header === "gzip";
+            var hasByteServing = (header = xhr.getResponseHeader('Accept-Ranges')) && header === 'bytes';
+            var usesGzip = (header = xhr.getResponseHeader('Content-Encoding')) && header === 'gzip';
   
             var chunkSize = 1024*1024; // Chunk size in bytes
   
@@ -3468,13 +3515,13 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
   
             // Function to get a range from the remote URL.
             var doXHR = (from, to) => {
-              if (from > to) abort("invalid range (" + from + ", " + to + ") or no bytes requested!");
-              if (to > datalength-1) abort("only " + datalength + " bytes available! programmer error!");
+              if (from > to) abort(`invalid range (${from}, ${to}) or no bytes requested!`);
+              if (to > datalength-1) abort(`only ${datalength} bytes available! programmer error!`);
   
               // TODO: Use mozResponseArrayBuffer, responseStream, etc. if available.
               var xhr = new XMLHttpRequest();
               xhr.open('GET', url, false);
-              if (datalength !== chunkSize) xhr.setRequestHeader("Range", "bytes=" + from + "-" + to);
+              if (datalength !== chunkSize) xhr.setRequestHeader('Range', `bytes=${from}-${to}`);
   
               // Some hints to the browser that we want binary data.
               xhr.responseType = 'arraybuffer';
@@ -3483,11 +3530,11 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
               }
   
               xhr.send(null);
-              if (!(xhr.status >= 200 && xhr.status < 300 || xhr.status === 304)) abort("Couldn't load " + url + ". Status: " + xhr.status);
+              if (!(xhr.status >= 200 && xhr.status < 300 || xhr.status === 304)) abort(`Couldn't load ${url}. Status: ${xhr.status}`);
               if (xhr.response !== undefined) {
                 return new Uint8Array(/** @type{Array<number>} */(xhr.response || []));
               }
-              return intArrayFromString(xhr.responseText || '', true);
+              return intArrayFromString(xhr.responseText ?? '', true);
             };
             var lazyArray = this;
             lazyArray.setDataGetter((chunkNum) => {
@@ -3506,7 +3553,7 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
               chunkSize = datalength = 1; // this will force getter(0)/doXHR do download the whole file
               datalength = this.getter(0).length;
               chunkSize = datalength;
-              out("LazyFiles on gzip forces download of the whole file when length is accessed");
+              out('LazyFiles on gzip forces download of the whole file when length is accessed');
             }
   
             this._length = datalength;
@@ -3595,6 +3642,7 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
         return node;
       },
   };
+  
   var SOCKFS = {
   websocketArgs:{
   },
@@ -3605,6 +3653,18 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
       },
   emit(event, param) {
         SOCKFS.callbacks[event]?.(param);
+        // Bridge socket readiness into the inode wait-queue (poll/epoll). The
+        // 'error' event carries [fd, ...]; the rest carry the fd directly.
+        var fd = event === 'error' ? param[0] : param;
+        var flags = {
+          'message':    64 | 1,
+          'open':       4,
+          'connection': 64 | 1,
+          'close':      1 | 16,
+          'error':      8,
+        }[event];
+        // 'listen' has no readiness mapping; skip it.
+        if (flags) FS.getStream(fd)?.node.notifyListeners(flags);
       },
   mount(mount) {
         // The incoming Module['websocket'] can be used for configuring 
@@ -3618,8 +3678,8 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
         return FS.createNode(null, '/', 16895, 0);
       },
   createSocket(family, type, protocol) {
-        // Emscripten only supports AF_INET
-        if (family != 2) {
+        if (family != 2
+           ) {
           throw new FS.ErrnoError(5);
         }
         type &= ~526336; // Some applications may pass it; it makes no sense for a single process.
@@ -3674,6 +3734,24 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
         return stream.node.sock;
       },
   stream_ops:{
+  getattr(stream) {
+          var node = stream.node;
+          return {
+            dev: 1,
+            ino: node.id,
+            mode: 49152 | 0o777,
+            nlink: 1,
+            uid: 0,
+            gid: 0,
+            rdev: 0,
+            size: 0,
+            atime: new Date(0),
+            mtime: new Date(0),
+            ctime: new Date(0),
+            blksize: 4096,
+            blocks: 0,
+          };
+        },
   poll(stream) {
           var sock = stream.node.sock;
           return sock.sock_ops.poll(sock);
@@ -3758,13 +3836,13 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
   
               if (url === 'ws://' || url === 'wss://') { // Is the supplied URL config just a prefix, if so complete it.
                 var parts = addr.split('/');
-                url = url + parts[0] + ":" + port + "/" + parts.slice(1).join('/');
+                url = url + parts[0] + ':' + port + '/' + parts.slice(1).join('/');
               }
   
               if (subProtocols !== 'null') {
                 // The regex trims the string (removes spaces at the beginning and end), then splits the string by
                 // <any space>,<any space> into an Array. Whitespace removal is important for Websockify and ws.
-                subProtocols = subProtocols.replace(/^ +| +$/g,"").split(/ *, */);
+                subProtocols = subProtocols.replace(/^ +| +$/g,'').split(/ *, */);
   
                 opts = subProtocols;
               }
@@ -3934,7 +4012,8 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
             if (sock.connecting) {
               mask |= 4;
             } else  {
-              mask |= 16;
+              // A closed peer is both a full hangup and a read-side hangup.
+              mask |= 16 | 8192;
             }
           }
   
@@ -4065,6 +4144,8 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
               // push to queue for accept to pick up
               sock.pending.push(newsock);
               SOCKFS.emit('connection', newsock.stream.fd);
+              // A queued client makes the listening socket readable (POLLIN).
+              sock.stream.node.notifyListeners(64 | 1);
             } else {
               // create a peer on the listen socket so calling sendto
               // with the listen socket and an address will resolve
@@ -4173,14 +4254,17 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
             throw new FS.ErrnoError(28);
           }
         },
-  recvmsg(sock, length) {
+  recvmsg(sock, length, flags) {
           // http://pubs.opengroup.org/onlinepubs/7908799/xns/recvmsg.html
           if (sock.type === 1 && sock.server) {
             // tcp servers should not be recv()'ing on the listen socket
             throw new FS.ErrnoError(53);
           }
   
-          var queued = sock.recv_queue.shift();
+          // MSG_PEEK returns the head of the queue without consuming it, so a
+          // later recv sees the same bytes and poll still reports it readable.
+          var peek = flags & 2;
+          var queued = sock.recv_queue[0];
           if (!queued) {
             if (sock.type === 1) {
               var dest = SOCKFS.websocket_sock_ops.getPeer(sock, sock.daddr, sock.dport);
@@ -4210,6 +4294,9 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
             addr: queued.addr,
             port: queued.port
           };
+  
+          if (peek) return res;
+          sock.recv_queue.shift();
   
           // push back any unread data for TCP connections
           if (sock.type === 1 && bytesRead < queuedLength) {
@@ -4248,25 +4335,25 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
       if (!valid6regx.test(str)) {
         return null;
       }
-      if (str === "::") {
+      if (str === '::') {
         return [0, 0, 0, 0, 0, 0, 0, 0];
       }
-      // Z placeholder to keep track of zeros when splitting the string on ":"
-      if (str.startsWith("::")) {
-        str = str.replace("::", "Z:"); // leading zeros case
+      // Z placeholder to keep track of zeros when splitting the string on ':'
+      if (str.startsWith('::')) {
+        str = str.replace('::', 'Z:'); // leading zeros case
       } else {
-        str = str.replace("::", ":Z:");
+        str = str.replace('::', ':Z:');
       }
   
-      if (str.indexOf(".") > 0) {
+      if (str.indexOf('.') > 0) {
         // parse IPv4 embedded address
-        str = str.replace(new RegExp('[.]', 'g'), ":");
-        words = str.split(":");
+        str = str.replace(new RegExp('[.]', 'g'), ':');
+        words = str.split(':');
         words[words.length-4] = Number(words[words.length-4]) + Number(words[words.length-3])*256;
         words[words.length-3] = Number(words[words.length-2]) + Number(words[words.length-1])*256;
         words = words.slice(0, words.length-2);
       } else {
-        words = str.split(":");
+        words = str.split(':');
       }
   
       offset = 0; z = 0;
@@ -4296,6 +4383,10 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
     };
   
   var zeroMemory = (ptr, size) => HEAPU8.fill(0, ptr, ptr + size);
+  
+  
+  /** @type {!Int16Array} */
+  var HEAP16;
   
   /** @param {number=} addrlen */
   var writeSockaddr = (sa, family, addr, port, addrlen) => {
@@ -4374,13 +4465,13 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
         return null;
       },
   };
-  function ___syscall_accept4(fd, addr, addrlen, flags, d1, d2) {
+  function ___syscall_accept4(fd, addr, len, flags, u1, u2) {
   try {
   
       var sock = getSocketFromFD(fd);
       var newsock = sock.sock_ops.accept(sock);
       if (addr) {
-        var errno = writeSockaddr(addr, newsock.family, DNS.lookup_name(newsock.daddr), newsock.dport, addrlen);
+        var errno = writeSockaddr(addr, newsock.family, DNS.lookup_name(newsock.daddr), newsock.dport, len);
         assert(!errno);
       }
       return newsock.stream.fd;
@@ -4411,7 +4502,7 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
       //  +--------------------------------------+----+---------------------+
       //  |0000..............................0000|FFFF|    IPv4 ADDRESS     | (mapped)
       //  +--------------------------------------+----+---------------------+
-      var str = "";
+      var str = '';
       var word = 0;
       var longest = 0;
       var lastzero = 0;
@@ -4432,7 +4523,7 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
       // Handle IPv4-compatible, IPv4-mapped, loopback and any/unspecified addresses
   
       var hasipv4 = true;
-      var v4part = "";
+      var v4part = '';
       // check if the 10 high-order bytes are all zeros (first 5 words)
       for (i = 0; i < 5; i++) {
         if (parts[i] !== 0) { hasipv4 = false; break; }
@@ -4443,16 +4534,16 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
         v4part = inetNtop4(parts[6] | (parts[7] << 16));
         // IPv4-mapped IPv6 address if 16-bit value (bytes 11 and 12) == 0xFFFF (6th word)
         if (parts[5] === -1) {
-          str = "::ffff:";
+          str = '::ffff:';
           str += v4part;
           return str;
         }
         // IPv4-compatible IPv6 address if 16-bit value (bytes 11 and 12) == 0x0000 (6th word)
         if (parts[5] === 0) {
-          str = "::";
+          str = '::';
           // special case IPv6 addresses
-          if (v4part === "0.0.0.0") v4part = ""; // any/unspecified address
-          if (v4part === "0.0.0.1") v4part = "1";// loopback address
+          if (v4part === '0.0.0.0') v4part = ''; // any/unspecified address
+          if (v4part === '0.0.0.1') v4part = '1';// loopback address
           str += v4part;
           return str;
         }
@@ -4477,21 +4568,26 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
   
       for (word = 0; word < 8; word++) {
         if (longest > 1) {
-          // compress contiguous zeros - to produce "::"
+          // compress contiguous zeros - to produce '::'
           if (parts[word] === 0 && word >= zstart && word < (zstart + longest) ) {
             if (word === zstart) {
-              str += ":";
-              if (zstart === 0) str += ":"; //leading zeros case
+              str += ':';
+              if (zstart === 0) str += ':'; //leading zeros case
             }
             continue;
           }
         }
         // converts 16-bit words from big-endian to little-endian before converting to hex string
         str += Number(_ntohs(parts[word] & 0xffff)).toString(16);
-        str += word < 7 ? ":" : "";
+        str += word < 7 ? ':' : '';
       }
       return str;
     };
+  
+  
+  
+  /** @type {!Uint16Array} */
+  var HEAPU16;
   
   var readSockaddr = (sa, salen) => {
       // family / port offsets are common to both sockaddr_in and sockaddr_in6
@@ -4533,11 +4629,11 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
       info.addr = DNS.lookup_addr(info.addr) || info.addr;
       return info;
     };
-  function ___syscall_bind(fd, addr, addrlen, d1, d2, d3) {
+  function ___syscall_bind(fd, addr, len, u1, u2, u3) {
   try {
   
       var sock = getSocketFromFD(fd);
-      var info = getSocketAddress(addr, addrlen);
+      var info = getSocketAddress(addr, len);
       sock.sock_ops.bind(sock, info.addr, info.port);
       return 0;
     } catch (e) {
@@ -4549,6 +4645,12 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
 
   
   
+  
+  
+  
+  
+  /** not-@type {!BigInt64Array} */
+  var HEAP64;
   var SYSCALLS = {
   currentUmask:18,
   calculateAt(dirfd, path, allowEmpty) {
@@ -4613,7 +4715,7 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
           // MAP_PRIVATE calls need not to be synced back to underlying fs
           return 0;
         }
-        var buffer = HEAPU8.slice(addr, addr + len);
+        var buffer = HEAPU8.subarray(addr, addr + len);
         FS.msync(stream, buffer, offset, len, flags);
       },
   getStreamFromFD(fd) {
@@ -4640,11 +4742,11 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
   
 
   
-  function ___syscall_connect(fd, addr, addrlen, d1, d2, d3) {
+  function ___syscall_connect(fd, addr, len, u1, u2, u3) {
   try {
   
       var sock = getSocketFromFD(fd);
-      var info = getSocketAddress(addr, addrlen);
+      var info = getSocketAddress(addr, len);
       sock.sock_ops.connect(sock, info.addr, info.port);
       return 0;
     } catch (e) {
@@ -4704,6 +4806,7 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
       return ret;
     };
   var syscallGetVarargP = syscallGetVarargI;
+  
   
   
   function ___syscall_fcntl64(fd, cmd, varargs) {
@@ -4769,30 +4872,31 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
   }
   
 
-  var INT53_MAX = 9007199254740992;
-  
-  var INT53_MIN = -9007199254740992;
-  var bigintToI53Checked = (num) => (num < INT53_MIN || num > INT53_MAX) ? NaN : Number(num);
-  function ___syscall_ftruncate64(fd, length) {
-    length = bigintToI53Checked(length);
   
   
-  try {
-  
-      if (isNaN(length)) return -22;
-      FS.ftruncate(fd, length);
-      return 0;
-    } catch (e) {
-    if (typeof FS == 'undefined' || !(e.name === 'ErrnoError')) throw e;
-    return -e.errno;
-  }
-  ;
-  }
-
   var stringToUTF8 = (str, outPtr, maxBytesToWrite) => {
       assert(typeof maxBytesToWrite == 'number', 'stringToUTF8 requires a third parameter that specifies the length of the output buffer');
       return stringToUTF8Array(str, HEAPU8, outPtr, maxBytesToWrite);
     };
+  function ___syscall_getcwd(buf, size) {
+  try {
+  
+      if (size === 0) return -28;
+      var cwd = FS.cwd();
+      var cwdLengthInBytes = lengthBytesUTF8(cwd) + 1;
+      if (size < cwdLengthInBytes) return -68;
+      stringToUTF8(cwd, buf, size);
+      return cwdLengthInBytes;
+    } catch (e) {
+    if (typeof FS == 'undefined' || !(e.name === 'ErrnoError')) throw e;
+    return -e.errno;
+  }
+  }
+  
+
+  
+  
+  
   
   function ___syscall_getdents64(fd, dirp, count) {
   try {
@@ -4854,16 +4958,22 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
   }
   
 
+  var ___syscall_getegid32 = () => 0;
+
+  var ___syscall_geteuid32 = () => 0;
+
+  var ___syscall_getgid32 = () => 0;
+
   
   
-  function ___syscall_getpeername(fd, addr, addrlen, d1, d2, d3) {
+  function ___syscall_getpeername(fd, addr, len, u1, u2, u3) {
   try {
   
       var sock = getSocketFromFD(fd);
       if (!sock.daddr) {
         return -53; // The socket is not connected.
       }
-      var errno = writeSockaddr(addr, sock.family, DNS.lookup_name(sock.daddr), sock.dport, addrlen);
+      var errno = writeSockaddr(addr, sock.family, DNS.lookup_name(sock.daddr), sock.dport, len);
       assert(!errno);
       return 0;
     } catch (e) {
@@ -4875,12 +4985,12 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
 
   
   
-  function ___syscall_getsockname(fd, addr, addrlen, d1, d2, d3) {
+  function ___syscall_getsockname(fd, addr, len, u1, u2, u3) {
   try {
   
       var sock = getSocketFromFD(fd);
       // TODO: sock.saddr should never be undefined, see TODO in websocket_sock_ops.getname
-      var errno = writeSockaddr(addr, sock.family, DNS.lookup_name(sock.saddr || '0.0.0.0'), sock.sport, addrlen);
+      var errno = writeSockaddr(addr, sock.family, DNS.lookup_name(sock.saddr || '0.0.0.0'), sock.sport, len);
       assert(!errno);
       return 0;
     } catch (e) {
@@ -4890,7 +5000,8 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
   }
   
 
-  function ___syscall_getsockopt(fd, level, optname, optval, optlen, d1) {
+  
+  function ___syscall_getsockopt(fd, level, optname, optval, optlen, unused) {
   try {
   
       var sock = getSocketFromFD(fd);
@@ -4912,6 +5023,11 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
   }
   
 
+  var ___syscall_getuid32 = () => 0;
+
+  
+  
+  
   
   function ___syscall_ioctl(fd, op, varargs) {
   SYSCALLS.varargs = varargs;
@@ -5010,7 +5126,7 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
   }
   
 
-  function ___syscall_listen(fd, backlog) {
+  function ___syscall_listen(fd, backlog, u1, u2, u3, u4) {
   try {
   
       var sock = getSocketFromFD(fd);
@@ -5086,6 +5202,7 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
   }
   
 
+  
   var PIPEFS = {
   BUCKET_BUFFER_SIZE:8192,
   mount(mount) {
@@ -5096,9 +5213,15 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
   createPipe() {
         var pipe = {
           buckets: [],
-          // refcnt 2 because pipe has a read end and a write end. We need to be
-          // able to read from the read end after write end is closed.
-          refcnt : 2,
+          // Open write ends. When it drops to 0 the reader sees EOF and poll must
+          // report POLLHUP (Linux semantics). Buckets are freed once both counts
+          // reach 0.
+          writerCount: 1,
+          writeClosed: false,
+          // Open read ends. When it drops to 0 the writer sees POLLERR (a further
+          // write would get EPIPE).
+          readerCount: 1,
+          readClosed: false,
           timestamp: new Date(),
         };
   
@@ -5115,6 +5238,10 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
   
         rNode.pipe = pipe;
         wNode.pipe = pipe;
+        // The read end's node carries the reader poll wait-queue (writes wake it);
+        // the write end's node carries the writer wait-queue (read-end close wakes it).
+        pipe.readNode = rNode;
+        pipe.writeNode = wNode;
   
         var readableStream = FS.createStream({
           path: rName,
@@ -5159,22 +5286,39 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
             blocks: 0,
           };
         },
-  poll(stream, timeout, notifyCallback) {
+  poll(stream) {
           var pipe = stream.node.pipe;
   
           if ((stream.flags & 2097155) === 1) {
-            return (256 | 4);
+            // Linux keeps the write end writable (the write itself fails with
+            // EPIPE) while also signalling POLLERR once every read end is closed.
+            var mask = 256 | 4;
+            if (pipe.readClosed) {
+              mask |= 8;
+            }
+            return mask;
           }
+          var mask = 0;
           for (var bucket of pipe.buckets) {
             if (bucket.offset - bucket.roffset > 0) {
-              return (64 | 1);
+              mask = 64 | 1;
+              break;
             }
           }
-  
-          return 0;
+          // With every write end closed the read end is at EOF: readable (read
+          // returns 0) and hung up.
+          if (pipe.writeClosed) {
+            mask |= 16 | 1;
+          }
+          return mask;
         },
   dup(stream) {
-          stream.node.pipe.refcnt++;
+          var pipe = stream.node.pipe;
+          if ((stream.flags & 2097155) === 1) {
+            pipe.writerCount++;
+          } else {
+            pipe.readerCount++;
+          }
         },
   ioctl(stream, request, argp) {
           if (request == 21531) {
@@ -5278,6 +5422,7 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
           if (freeBytesInCurrBuffer >= dataLen) {
             currBucket.buffer.set(data, currBucket.offset);
             currBucket.offset += dataLen;
+            pipe.readNode.notifyListeners(64 | 1);
             return dataLen;
           } else if (freeBytesInCurrBuffer > 0) {
             currBucket.buffer.set(data.subarray(0, freeBytesInCurrBuffer), currBucket.offset);
@@ -5309,12 +5454,25 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
             newBucket.buffer.set(data);
           }
   
+          pipe.readNode.notifyListeners(64 | 1);
           return dataLen;
         },
   close(stream) {
           var pipe = stream.node.pipe;
-          pipe.refcnt--;
-          if (pipe.refcnt === 0) {
+          // When the last write end closes, wake any poll/epoll waiter on the read
+          // end with POLLHUP so a reader blocked on the writer dropping unblocks.
+          if ((stream.flags & 2097155) === 1) {
+            if (--pipe.writerCount === 0) {
+              pipe.writeClosed = true;
+              pipe.readNode.notifyListeners(16 | 64 | 1);
+            }
+          } else if (--pipe.readerCount === 0) {
+            // Mirror: when the last read end closes, wake any poll/epoll waiter on
+            // the write end with POLLERR (a further write would get EPIPE).
+            pipe.readClosed = true;
+            pipe.writeNode.notifyListeners(8 | 256 | 4);
+          }
+          if (pipe.readerCount === 0 && pipe.writerCount === 0) {
             pipe.buckets = null;
           }
         },
@@ -5326,6 +5484,7 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
         return 'pipe[' + (PIPEFS.nextname.current++) + ']';
       },
   };
+  
   function ___syscall_pipe2(fdPtr, flags) {
   try {
   
@@ -5355,29 +5514,33 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
   }
   
 
+  var pollOne = (fd, events) => {
+      var stream = FS.getStream(fd);
+      if (!stream) return 32;
+      // Streams without a poll handler (regular files, incl. NODERAWFS/NODEFS
+      // which leave stream_ops unset) are treated as always readable+writable.
+      var flags = stream.stream_ops?.poll
+        ? stream.stream_ops.poll(stream)
+        : 5;
+      return flags & (events | 8 | 16 | 32);
+    };
+  
+  
+  var doPollSync = (fds, nfds) => {
+      var count = 0;
+      for (var i = 0, pollfd = fds; i < nfds; i++, pollfd += 8) {
+        var revents = pollOne(
+          HEAP32[((pollfd)>>2)],
+          HEAP16[(((pollfd)+(4))>>1)]);
+        if (revents) count++;
+        HEAP16[(((pollfd)+(6))>>1)] = revents;
+      }
+      return count;
+    };
   function ___syscall_poll(fds, nfds, timeout) {
   try {
   
-  
-      var count = 0;
-      for (var i = 0; i < nfds; i++) {
-        var pollfd = fds + 8 * i;
-        var fd = HEAP32[((pollfd)>>2)];
-        var events = HEAP16[(((pollfd)+(4))>>1)];
-        var flags = 32;
-        var stream = FS.getStream(fd);
-        if (stream) {
-          if (stream.stream_ops.poll) {
-            flags = stream.stream_ops.poll(stream, -1);
-          } else {
-            flags = 5;
-          }
-        }
-        flags &= events | 8 | 16;
-        if (flags) count++;
-        HEAP16[(((pollfd)+(6))>>1)] = flags;
-      }
-  
+      var count = doPollSync(fds, nfds);
       if (!count && timeout != 0) warnOnce('non-zero poll() timeout not supported: ' + timeout)
       return count;
     } catch (e) {
@@ -5387,6 +5550,18 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
   }
   
 
+  function ___syscall_poll_nonblocking(fds, nfds) {
+  try {
+  
+      return doPollSync(fds, nfds);
+    } catch (e) {
+    if (typeof FS == 'undefined' || !(e.name === 'ErrnoError')) throw e;
+    return -e.errno;
+  }
+  }
+  
+
+  
   
   
   function ___syscall_readlinkat(dirfd, path, buf, bufsize) {
@@ -5413,18 +5588,88 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
 
   
   
-  function ___syscall_recvfrom(fd, buf, len, flags, addr, addrlen) {
+  
+  function ___syscall_recvfrom(fd, buf, len, flags, addr, alen) {
   try {
   
       var sock = getSocketFromFD(fd);
-      var msg = sock.sock_ops.recvmsg(sock, len);
+      var msg = sock.sock_ops.recvmsg(sock, len, flags);
       if (!msg) return 0; // socket is closed
       if (addr) {
-        var errno = writeSockaddr(addr, sock.family, DNS.lookup_name(msg.addr), msg.port, addrlen);
+        var errno = writeSockaddr(addr, sock.family, DNS.lookup_name(msg.addr), msg.port, alen);
         assert(!errno);
       }
       HEAPU8.set(msg.buffer, buf);
       return msg.buffer.byteLength;
+    } catch (e) {
+    if (typeof FS == 'undefined' || !(e.name === 'ErrnoError')) throw e;
+    return -e.errno;
+  }
+  }
+  
+
+  
+  
+  
+  
+  
+  function ___syscall_recvmsg(fd, message, flags, u1, u2, u3) {
+  try {
+  
+      var sock = getSocketFromFD(fd);
+      var iov = HEAPU32[(((message)+(8))>>2)];
+      var num = HEAP32[(((message)+(12))>>2)];
+      // get the total amount of data we can read across all arrays
+      var total = 0;
+      for (var i = 0; i < num; i++) {
+        total += HEAP32[(((iov)+((8 * i) + 4))>>2)];
+      }
+      // try to read total data (MSG_PEEK, when set, leaves it buffered)
+      var msg = sock.sock_ops.recvmsg(sock, total, flags);
+      if (!msg) return 0; // socket is closed
+  
+      // TODO honor flags:
+      // MSG_OOB
+      // Requests out-of-band data. The significance and semantics of out-of-band data are protocol-specific.
+      // MSG_WAITALL
+      // Requests that the function block until the full amount of data requested can be returned. The function may return a smaller amount of data if a signal is caught, if the connection is terminated, if MSG_PEEK was specified, or if an error is pending for the socket.
+  
+      // write the source address out
+      var name = HEAPU32[((message)>>2)];
+      if (name) {
+        var namelen = message + 4;
+        var errno = writeSockaddr(name, sock.family, DNS.lookup_name(msg.addr), msg.port, namelen);
+        assert(!errno);
+      }
+      // write the buffer out to the scatter-gather arrays
+      var bytesRead = 0;
+      var bytesRemaining = msg.buffer.byteLength;
+      for (var i = 0; bytesRemaining > 0 && i < num; i++) {
+        var iovbase = HEAPU32[(((iov)+((8 * i) + 0))>>2)];
+        var iovlen = HEAP32[(((iov)+((8 * i) + 4))>>2)];
+        if (!iovlen) {
+          continue;
+        }
+        var length = Math.min(iovlen, bytesRemaining);
+        var buf = msg.buffer.subarray(bytesRead, bytesRead + length);
+        HEAPU8.set(buf, iovbase);
+        bytesRead += length;
+        bytesRemaining -= length;
+      }
+  
+      HEAP32[(((message)+(20))>>2)] = 0;
+      HEAP32[(((message)+(24))>>2)] = 0;
+  
+      // TODO report truncation in msghdr.msg_flags
+      // MSG_EOR
+      // End of record was received (if supported by the protocol).
+      // MSG_OOB
+      // Out-of-band data was received.
+      // MSG_TRUNC
+      // Normal data was truncated.
+      // MSG_CTRUNC
+  
+      return bytesRead;
     } catch (e) {
     if (typeof FS == 'undefined' || !(e.name === 'ErrnoError')) throw e;
     return -e.errno;
@@ -5448,12 +5693,41 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
   }
   
 
-  function ___syscall_rmdir(path) {
+  
+  
+  
+  
+  function ___syscall_sendmsg(fd, message, flags, u1, u2, u3) {
   try {
   
-      path = SYSCALLS.getStr(path);
-      FS.rmdir(path);
-      return 0;
+      var sock = getSocketFromFD(fd);
+      var iov = HEAPU32[(((message)+(8))>>2)];
+      var num = HEAP32[(((message)+(12))>>2)];
+      // read the address and port to send to
+      var addr, port;
+      var name = HEAPU32[((message)>>2)];
+      var namelen = HEAP32[(((message)+(4))>>2)];
+      if (name) {
+        var info = getSocketAddress(name, namelen);
+        port = info.port;
+        addr = info.addr;
+      }
+      // concatenate scatter-gather arrays into one message buffer
+      var total = 0;
+      for (var i = 0; i < num; i++) {
+        total += HEAP32[(((iov)+((8 * i) + 4))>>2)];
+      }
+      var view = new Uint8Array(total);
+      var offset = 0;
+      for (var i = 0; i < num; i++) {
+        var iovbase = HEAPU32[(((iov)+((8 * i) + 0))>>2)];
+        var iovlen = HEAP32[(((iov)+((8 * i) + 4))>>2)];
+        for (var j = 0; j < iovlen; j++) {
+          view[offset++] = HEAP8[(iovbase)+(j)];
+        }
+      }
+      // write the buffer
+      return sock.sock_ops.sendmsg(sock, view, 0, total, addr, port);
     } catch (e) {
     if (typeof FS == 'undefined' || !(e.name === 'ErrnoError')) throw e;
     return -e.errno;
@@ -5462,17 +5736,18 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
   
 
   
-  function ___syscall_sendto(fd, message, length, flags, addr, addr_len) {
+  
+  function ___syscall_sendto(fd, buf, len, flags, addr, alen) {
   try {
   
       var sock = getSocketFromFD(fd);
       if (!addr) {
         // send, no address provided
-        return FS.write(sock.stream, HEAP8, message, length);
+        return FS.write(sock.stream, HEAP8, buf, len);
       }
-      var dest = getSocketAddress(addr, addr_len);
+      var dest = getSocketAddress(addr, alen);
       // sendto an address
-      return sock.sock_ops.sendmsg(sock, HEAP8, message, length, dest.addr, dest.port);
+      return sock.sock_ops.sendmsg(sock, HEAP8, buf, len, dest.addr, dest.port);
     } catch (e) {
     if (typeof FS == 'undefined' || !(e.name === 'ErrnoError')) throw e;
     return -e.errno;
@@ -5480,11 +5755,34 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
   }
   
 
-  function ___syscall_socket(domain, type, protocol) {
+  function ___syscall_setsockopt(fd, level, optname, optval, optlen, unused) {
+  try {
+  
+      getSocketFromFD(fd); // validate the fd (and keep this syscall's catch reachable)
+      return -50; // The option is unknown at the level indicated.
+    } catch (e) {
+    if (typeof FS == 'undefined' || !(e.name === 'ErrnoError')) throw e;
+    return -e.errno;
+  }
+  }
+  
+
+  function ___syscall_shutdown(fd, how, u1, u2, u3, u4) {
+  try {
+  
+      var sock = getSocketFromFD(fd);
+      return -52; // unsupported feature
+    } catch (e) {
+    if (typeof FS == 'undefined' || !(e.name === 'ErrnoError')) throw e;
+    return -e.errno;
+  }
+  }
+  
+
+  function ___syscall_socket(domain, type, protocol, u1, u2, u3) {
   try {
   
       var sock = SOCKFS.createSocket(domain, type, protocol);
-      assert(sock.stream.fd < 64); // XXX ? select() assumes socket fd values are in 0..63
       return sock.stream.fd;
     } catch (e) {
     if (typeof FS == 'undefined' || !(e.name === 'ErrnoError')) throw e;
@@ -5549,11 +5847,19 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
       runtimeKeepaliveCounter = 0;
     };
 
+  var INT53_MAX = 9007199254740992;
+  
+  var INT53_MIN = -9007199254740992;
+  var bigintToI53Checked = (num) => (num < INT53_MIN || num > INT53_MAX) ? NaN : Number(num);
+  
   function __gmtime_js(time, tmPtr) {
     time = bigintToI53Checked(time);
   
   
       var date = new Date(time * 1000);
+      if (isNaN(date.getTime())) {
+        return 1;
+      }
       HEAP32[((tmPtr)>>2)] = date.getUTCSeconds();
       HEAP32[(((tmPtr)+(4))>>2)] = date.getUTCMinutes();
       HEAP32[(((tmPtr)+(8))>>2)] = date.getUTCHours();
@@ -5564,6 +5870,7 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
       var start = Date.UTC(date.getUTCFullYear(), 0, 1, 0, 0, 0, 0);
       var yday = ((date.getTime() - start) / (1000 * 60 * 60 * 24))|0;
       HEAP32[(((tmPtr)+(28))>>2)] = yday;
+      return 0;
     ;
   }
 
@@ -5580,11 +5887,15 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
       return yday;
     };
   
+  
   function __localtime_js(time, tmPtr) {
     time = bigintToI53Checked(time);
   
   
       var date = new Date(time*1000);
+      if (isNaN(date.getTime())) {
+        return 1;
+      }
       HEAP32[((tmPtr)>>2)] = date.getSeconds();
       HEAP32[(((tmPtr)+(4))>>2)] = date.getMinutes();
       HEAP32[(((tmPtr)+(8))>>2)] = date.getHours();
@@ -5603,6 +5914,7 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
       var winterOffset = start.getTimezoneOffset();
       var dst = (summerOffset != winterOffset && date.getTimezoneOffset() == Math.min(winterOffset, summerOffset))|0;
       HEAP32[(((tmPtr)+(32))>>2)] = dst;
+      return 0;
     ;
   }
 
@@ -5627,7 +5939,7 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
       checkStackCookie();
       if (e instanceof WebAssembly.RuntimeError) {
         if (_emscripten_stack_get_current() <= 0) {
-          err('Stack overflow detected.  You can try increasing -sSTACK_SIZE (currently set to 65536)');
+          err('Stack overflow detected.  You can try increasing -sSTACK_SIZE (currently set to 8388608)');
         }
       }
       quit_(1, e);
@@ -5656,7 +5968,6 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
       // if exit() was called explicitly, warn the user if the runtime isn't actually being shut down
       if (keepRuntimeAlive() && !implicit) {
         var msg = `program exited (with status: ${status}), but keepRuntimeAlive() is set (counter=${runtimeKeepaliveCounter}) due to an async operation, so halting execution but not exiting the runtime or preventing further async execution (you can use emscripten_force_exit, if you want to force a true shutdown)`;
-        readyPromiseReject?.(msg);
         err(msg);
       }
   
@@ -5714,6 +6025,8 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
     };
 
   
+  
+  
   var __tzset_js = (timezone, daylight, std_name, dst_name) => {
       // TODO: Use (malleable) environment variables instead of system settings.
       var currentYear = new Date().getFullYear();
@@ -5742,11 +6055,11 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
       var extractZone = (timezoneOffset) => {
         // Why inverse sign?
         // Read here https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTimezoneOffset
-        var sign = timezoneOffset >= 0 ? "-" : "+";
+        var sign = timezoneOffset >= 0 ? '-' : '+';
   
         var absOffset = Math.abs(timezoneOffset)
-        var hours = String(Math.floor(absOffset / 60)).padStart(2, "0");
-        var minutes = String(absOffset % 60).padStart(2, "0");
+        var hours = String(Math.floor(absOffset / 60)).padStart(2, '0');
+        var minutes = String(absOffset % 60).padStart(2, '0');
   
         return `UTC${sign}${hours}${minutes}`;
       }
@@ -5773,6 +6086,7 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
   var nowIsMonotonic = 1;
   
   var checkWasiClock = (clock_id) => clock_id >= 0 && clock_id <= 3;
+  
   
   function _clock_time_get(clk_id, ignored_precision, ptime) {
     ignored_precision = bigintToI53Checked(ignored_precision);
@@ -5811,7 +6125,7 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
 
   
   var alignMemory = (size, alignment) => {
-      assert(alignment, "alignment argument is required");
+      assert(alignment, 'alignment argument is required');
       return Math.ceil(size / alignment) * alignment;
     };
   
@@ -5826,9 +6140,10 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
       } catch(e) {
         err(`growMemory: Attempted to grow heap from ${oldHeapSize} bytes to ${size} bytes, but got error: ${e}`);
       }
-      // implicit 0 return to save code size (caller will cast "undefined" into 0
+      // implicit 0 return to save code size (caller will cast 'undefined' into 0
       // anyhow)
     };
+  
   var _emscripten_resize_heap = (requestedSize) => {
       var oldSize = HEAPU8.length;
       // With CAN_ADDRESS_2GB or MEMORY64, pointers are already unsigned.
@@ -5885,7 +6200,7 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
   var ENV = {
   };
   
-  var getExecutableName = () => thisProgram || './this.program';
+  var getExecutableName = () => thisProgram;
   var getEnvStrings = () => {
       if (!getEnvStrings.strings) {
         // Default values.
@@ -5916,6 +6231,7 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
       return getEnvStrings.strings;
     };
   
+  
   var _environ_get = (__environ, environ_buf) => {
       var bufSize = 0;
       var envp = 0;
@@ -5928,6 +6244,7 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
       return 0;
     };
 
+  
   
   var _environ_sizes_get = (penviron_count, penviron_buf_size) => {
       var strings = getEnvStrings();
@@ -5954,6 +6271,9 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
   }
   
 
+  
+  
+  
   function _fd_fdstat_get(fd, pbuf) {
   try {
   
@@ -5981,6 +6301,7 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
   }
   
 
+  
   /** @param {number=} offset */
   var doReadv = (stream, iov, iovcnt, offset) => {
       var ret = 0;
@@ -5988,7 +6309,18 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
         var ptr = HEAPU32[((iov)>>2)];
         var len = HEAPU32[(((iov)+(4))>>2)];
         iov += 8;
-        var curr = FS.read(stream, HEAP8, ptr, len, offset);
+        try {
+          var curr = FS.read(stream, HEAP8, ptr, len, offset);
+        } catch (e) {
+          // On a non-blocking stream a subsequent read may would-block after we
+          // already gathered data. POSIX readv is a single gather-read: return
+          // what we have rather than failing the whole call.
+          if (ret > 0 && e instanceof FS.ErrnoError &&
+              (e.errno == 6 || e.errno == 6)) {
+            break;
+          }
+          throw e;
+        }
         if (curr < 0) return -1;
         ret += curr;
         if (curr < len) break; // nothing more to read
@@ -5998,6 +6330,7 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
       }
       return ret;
     };
+  
   
   function _fd_read(fd, iov, iovcnt, pnum) {
   try {
@@ -6013,6 +6346,7 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
   }
   
 
+  
   
   function _fd_seek(fd, offset, whence, newOffset) {
     offset = bigintToI53Checked(offset);
@@ -6033,26 +6367,33 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
   ;
   }
 
+  
+  
   /** @param {number=} offset */
   var doWritev = (stream, iov, iovcnt, offset) => {
-      var ret = 0;
-      for (var i = 0; i < iovcnt; i++) {
+      // Gather all iovecs into one contiguous buffer and issue a single
+      // FS.write, matching POSIX writev's single gather-write semantics (as
+      // __syscall_sendmsg already does). Per-iovec writes fragment a stream
+      // socket send into multiple segments, breaking stream byte semantics.
+      if (iovcnt == 1) {
+        // Single iovec: write directly from HEAP8, no gather buffer needed.
+        return FS.write(stream, HEAP8, HEAPU32[((iov)>>2)], HEAPU32[(((iov)+(4))>>2)], offset);
+      }
+      var total = 0;
+      for (var i = 0, p = iov; i < iovcnt; i++, p += 8) {
+        total += HEAPU32[(((p)+(4))>>2)];
+      }
+      var view = new Uint8Array(total);
+      var voff = 0;
+      for (var i = 0; i < iovcnt; i++, iov += 8) {
         var ptr = HEAPU32[((iov)>>2)];
         var len = HEAPU32[(((iov)+(4))>>2)];
-        iov += 8;
-        var curr = FS.write(stream, HEAP8, ptr, len, offset);
-        if (curr < 0) return -1;
-        ret += curr;
-        if (curr < len) {
-          // No more space to write.
-          break;
-        }
-        if (typeof offset != 'undefined') {
-          offset += curr;
-        }
+        view.set(HEAPU8.subarray(ptr, ptr + len), voff);
+        voff += len;
       }
-      return ret;
+      return FS.write(stream, view, 0, total, offset);
     };
+  
   
   function _fd_write(fd, iov, iovcnt, pnum) {
   try {
@@ -6068,6 +6409,8 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
   }
   
 
+  
+  
   
   
   
@@ -6291,6 +6634,9 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
     };
 
 
+  
+  var _random_get = (buffer, size) => randomFill(HEAPU8.subarray(buffer, buffer + size));
+
 
 
   
@@ -6302,6 +6648,7 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
       stringToUTF8(str, ret, size);
       return ret;
     };
+
 
 
   var getCFunc = (ident) => {
@@ -6391,7 +6738,62 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
 
 
 
+  
+  
+  
+  
+  /** @type {!Float32Array} */
+  var HEAPF32;
+  
+  /** @type {!Float64Array} */
+  var HEAPF64;
+  
+  
+    /**
+   * @param {number} ptr
+   * @param {number} value
+   * @param {string} type
+   */
+  function setValue(ptr, value, type = 'i8') {
+    if (type.endsWith('*')) type = '*';
+    switch (type) {
+      case 'i1': HEAP8[ptr] = value; break;
+      case 'i8': HEAP8[ptr] = value; break;
+      case 'i16': HEAP16[((ptr)>>1)] = value; break;
+      case 'i32': HEAP32[((ptr)>>2)] = value; break;
+      case 'i64': HEAP64[((ptr)>>3)] = BigInt(value); break;
+      case 'float': HEAPF32[((ptr)>>2)] = value; break;
+      case 'double': HEAPF64[((ptr)>>3)] = value; break;
+      case '*': HEAPU32[((ptr)>>2)] = value; break;
+      default: abort(`invalid type for setValue: ${type}`);
+    }
+  }
 
+  
+  
+  
+  
+  
+  
+  
+    /**
+   * @param {number} ptr
+   * @param {string} type
+   */
+  function getValue(ptr, type = 'i8') {
+    if (type.endsWith('*')) type = '*';
+    switch (type) {
+      case 'i1': return HEAP8[ptr];
+      case 'i8': return HEAP8[ptr];
+      case 'i16': return HEAP16[((ptr)>>1)];
+      case 'i32': return HEAP32[((ptr)>>2)];
+      case 'i64': return HEAP64[((ptr)>>3)];
+      case 'float': return HEAPF32[((ptr)>>2)];
+      case 'double': return HEAPF64[((ptr)>>3)];
+      case '*': return HEAPU32[((ptr)>>2)];
+      default: abort(`invalid type for getValue: ${type}`);
+    }
+  }
 
   FS.createPreloadedFile = FS_createPreloadedFile;
   FS.preloadFile = FS_preloadFile;
@@ -6406,15 +6808,14 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
 
   // Begin ATMODULES hooks
   if (Module['noExitRuntime']) noExitRuntime = Module['noExitRuntime'];
-if (Module['preloadPlugins']) preloadPlugins = Module['preloadPlugins'];
+
 if (Module['print']) out = Module['print'];
 if (Module['printErr']) err = Module['printErr'];
-if (Module['wasmBinary']) wasmBinary = Module['wasmBinary'];
   // End ATMODULES hooks
 
   checkIncomingModuleAPI();
 
-  if (Module['arguments']) arguments_ = Module['arguments'];
+  if (Module['arguments']) programArgs = Module['arguments'];
   if (Module['thisProgram']) thisProgram = Module['thisProgram'];
 
   // Assertions on removed incoming Module JS APIs.
@@ -6433,10 +6834,13 @@ if (Module['wasmBinary']) wasmBinary = Module['wasmBinary'];
   assert(typeof Module['wasmMemory'] == 'undefined', 'Use of `wasmMemory` detected.  Use -sIMPORTED_MEMORY to define wasmMemory externally');
   assert(typeof Module['INITIAL_MEMORY'] == 'undefined', 'Detected runtime INITIAL_MEMORY setting.  Use -sIMPORTED_MEMORY to define wasmMemory dynamically');
 
-  if (Module['preInit']) {
-    if (typeof Module['preInit'] == 'function') Module['preInit'] = [Module['preInit']];
-    while (Module['preInit'].length > 0) {
-      Module['preInit'].shift()();
+  var preInit = Module['preInit'];
+  if (preInit) {
+    if (typeof preInit == 'function') Module['preInit'] = preInit = [preInit];
+    // Written as a loop so that preInit functions that themselves add more
+    // preInit functions.  Is this actually needed?
+    while (preInit.length > 0) {
+      preInit.shift()();
     }
   }
   consumedModuleProp('preInit');
@@ -6518,12 +6922,14 @@ if (Module['wasmBinary']) wasmBinary = Module['wasmBinary'];
   'registerOrientationChangeEventCallback',
   'fillFullscreenChangeEventData',
   'registerFullscreenChangeEventCallback',
+  'callCanvasResizedCallback',
   'JSEvents_requestFullscreen',
   'JSEvents_resizeCanvasForFullscreen',
   'registerRestoreOldStyle',
   'hideEverythingExceptGivenElement',
   'restoreHiddenElements',
   'setLetterbox',
+  'currentFullscreenStrategy',
   'softFullscreenResizeWebGLRenderTarget',
   'doRequestFullscreen',
   'fillPointerlockChangeEventData',
@@ -6553,6 +6959,7 @@ if (Module['wasmBinary']) wasmBinary = Module['wasmBinary'];
   'registerPreMainLoop',
   'getPromise',
   'makePromise',
+  'addPromise',
   'idsToPromises',
   'makePromiseCallback',
   'findMatchingCatch',
@@ -6577,6 +6984,7 @@ if (Module['wasmBinary']) wasmBinary = Module['wasmBinary'];
   'colorChannelsInGlTextureFormat',
   'emscriptenWebGLGetTexPixelData',
   'emscriptenWebGLGetUniform',
+  'webglGetProgramUniformLocation',
   'webglGetUniformLocation',
   'webglPrepareUniformLocationsBeforeFirstUse',
   'webglGetLeftBracePos',
@@ -6585,9 +6993,6 @@ if (Module['wasmBinary']) wasmBinary = Module['wasmBinary'];
   'writeGLArray',
   'registerWebGlEventCallback',
   'runAndAbortIfError',
-  'ALLOC_NORMAL',
-  'ALLOC_STACK',
-  'allocate',
   'writeStringToMemory',
   'writeAsciiToMemory',
   'allocateUTF8',
@@ -6670,7 +7075,6 @@ missingLibrarySymbols.forEach(missingLibrarySymbol)
   'JSEvents',
   'specialHTMLTargets',
   'findCanvasEventTarget',
-  'currentFullscreenStrategy',
   'restoreOldWindowedStyle',
   'UNWIND_CACHE',
   'ExitStatus',
@@ -6689,7 +7093,6 @@ missingLibrarySymbols.forEach(missingLibrarySymbol)
   'ExceptionInfo',
   'Browser',
   'requestFullscreen',
-  'requestFullScreen',
   'setCanvasSize',
   'getUserMedia',
   'createContext',
@@ -6777,6 +7180,7 @@ missingLibrarySymbols.forEach(missingLibrarySymbol)
   'FS_mkdir',
   'FS_mkdev',
   'FS_symlink',
+  'FS_link',
   'FS_rename',
   'FS_rmdir',
   'FS_readdir',
@@ -6856,6 +7260,26 @@ function checkIncomingModuleAPI() {
   ignoredModuleProp('onRealloc');
   ignoredModuleProp('onFree');
   ignoredModuleProp('onSbrkGrow');
+  ignoredModuleProp('onCOSCacheHit');
+  ignoredModuleProp('onCOSCacheMiss');
+  ignoredModuleProp('onCOSStore');
+  ignoredModuleProp('GL_MAX_TEXTURE_IMAGE_UNITS');
+  ignoredModuleProp('SDL_canPlayWithWebAudio');
+  ignoredModuleProp('SDL_numSimultaneouslyQueuedBuffers');
+  ignoredModuleProp('freePreloadedMediaOnUse');
+  ignoredModuleProp('preinitializedWebGLContext');
+  ignoredModuleProp('keyboardListeningElement');
+  ignoredModuleProp('doNotCaptureKeyboard');
+  ignoredModuleProp('extraStackTrace');
+  ignoredModuleProp('preloadPlugins');
+  ignoredModuleProp('preMainLoop');
+  ignoredModuleProp('postMainLoop');
+  ignoredModuleProp('forcedAspectRatio');
+  ignoredModuleProp('mainScriptUrlOrBlob');
+  ignoredModuleProp('onFullScreen');
+  ignoredModuleProp('INITIAL_MEMORY');
+  ignoredModuleProp('wasmMemory');
+  ignoredModuleProp('wasmBinary');
 }
 
 // Imports from the Wasm binary.
@@ -6886,25 +7310,29 @@ var _pqctoday_composite_cms_sign = Module['_pqctoday_composite_cms_sign'] = make
 var _pqctoday_composite_cms_verify = Module['_pqctoday_composite_cms_verify'] = makeInvalidEarlyAccess('_pqctoday_composite_cms_verify');
 var _generate_mock_ca_root = Module['_generate_mock_ca_root'] = makeInvalidEarlyAccess('_generate_mock_ca_root');
 var _execute_cmp_simulation = Module['_execute_cmp_simulation'] = makeInvalidEarlyAccess('_execute_cmp_simulation');
-var _C_Initialize = Module['_C_Initialize'] = makeInvalidEarlyAccess('_C_Initialize');
+var _C_CloseSession = Module['_C_CloseSession'] = makeInvalidEarlyAccess('_C_CloseSession');
 var _C_Finalize = Module['_C_Finalize'] = makeInvalidEarlyAccess('_C_Finalize');
+var _C_FindObjects = Module['_C_FindObjects'] = makeInvalidEarlyAccess('_C_FindObjects');
+var _C_FindObjectsFinal = Module['_C_FindObjectsFinal'] = makeInvalidEarlyAccess('_C_FindObjectsFinal');
+var _C_FindObjectsInit = Module['_C_FindObjectsInit'] = makeInvalidEarlyAccess('_C_FindObjectsInit');
+var _C_GenerateKeyPair = Module['_C_GenerateKeyPair'] = makeInvalidEarlyAccess('_C_GenerateKeyPair');
+var _C_GetAttributeValue = Module['_C_GetAttributeValue'] = makeInvalidEarlyAccess('_C_GetAttributeValue');
+var _C_Initialize = Module['_C_Initialize'] = makeInvalidEarlyAccess('_C_Initialize');
 var _C_GetSlotList = Module['_C_GetSlotList'] = makeInvalidEarlyAccess('_C_GetSlotList');
+var _C_GetTokenInfo = Module['_C_GetTokenInfo'] = makeInvalidEarlyAccess('_C_GetTokenInfo');
 var _C_InitToken = Module['_C_InitToken'] = makeInvalidEarlyAccess('_C_InitToken');
 var _C_InitPIN = Module['_C_InitPIN'] = makeInvalidEarlyAccess('_C_InitPIN');
 var _C_OpenSession = Module['_C_OpenSession'] = makeInvalidEarlyAccess('_C_OpenSession');
-var _C_CloseSession = Module['_C_CloseSession'] = makeInvalidEarlyAccess('_C_CloseSession');
 var _C_Login = Module['_C_Login'] = makeInvalidEarlyAccess('_C_Login');
 var _C_Logout = Module['_C_Logout'] = makeInvalidEarlyAccess('_C_Logout');
-var _C_GetAttributeValue = Module['_C_GetAttributeValue'] = makeInvalidEarlyAccess('_C_GetAttributeValue');
-var _C_FindObjectsInit = Module['_C_FindObjectsInit'] = makeInvalidEarlyAccess('_C_FindObjectsInit');
-var _C_FindObjects = Module['_C_FindObjects'] = makeInvalidEarlyAccess('_C_FindObjects');
-var _C_FindObjectsFinal = Module['_C_FindObjectsFinal'] = makeInvalidEarlyAccess('_C_FindObjectsFinal');
 var _C_SignInit = Module['_C_SignInit'] = makeInvalidEarlyAccess('_C_SignInit');
 var _C_Sign = Module['_C_Sign'] = makeInvalidEarlyAccess('_C_Sign');
-var _C_GenerateKeyPair = Module['_C_GenerateKeyPair'] = makeInvalidEarlyAccess('_C_GenerateKeyPair');
 var _C_MessageSignInit = Module['_C_MessageSignInit'] = makeInvalidEarlyAccess('_C_MessageSignInit');
 var _C_SignMessage = Module['_C_SignMessage'] = makeInvalidEarlyAccess('_C_SignMessage');
 var _C_MessageSignFinal = Module['_C_MessageSignFinal'] = makeInvalidEarlyAccess('_C_MessageSignFinal');
+var _pqctoday_hsm_state_free = Module['_pqctoday_hsm_state_free'] = makeInvalidEarlyAccess('_pqctoday_hsm_state_free');
+var _pqctoday_hsm_state_load = Module['_pqctoday_hsm_state_load'] = makeInvalidEarlyAccess('_pqctoday_hsm_state_load');
+var _pqctoday_hsm_state_take = Module['_pqctoday_hsm_state_take'] = makeInvalidEarlyAccess('_pqctoday_hsm_state_take');
 var ___funcs_on_exit = makeInvalidEarlyAccess('___funcs_on_exit');
 var _emscripten_stack_get_end = makeInvalidEarlyAccess('_emscripten_stack_get_end');
 var _emscripten_stack_get_base = makeInvalidEarlyAccess('_emscripten_stack_get_base');
@@ -6918,6 +7346,7 @@ var __emscripten_stack_alloc = makeInvalidEarlyAccess('__emscripten_stack_alloc'
 var _emscripten_stack_get_current = makeInvalidEarlyAccess('_emscripten_stack_get_current');
 var memory = makeInvalidEarlyAccess('memory');
 var __indirect_function_table = makeInvalidEarlyAccess('__indirect_function_table');
+var __RNvCs7byCvDedVM1_12wasm_bindgen32___WASM_BINDGEN_EMSCRIPTEN_MARKER = Module['__RNvCs7byCvDedVM1_12wasm_bindgen32___WASM_BINDGEN_EMSCRIPTEN_MARKER'] = makeInvalidEarlyAccess('__RNvCs7byCvDedVM1_12wasm_bindgen32___WASM_BINDGEN_EMSCRIPTEN_MARKER');
 var wasmMemory = makeInvalidEarlyAccess('wasmMemory');
 var wasmTable = makeInvalidEarlyAccess('wasmTable');
 
@@ -6949,25 +7378,29 @@ function assignWasmExports(wasmExports) {
   assert(typeof wasmExports['pqctoday_composite_cms_verify'] != 'undefined', 'missing Wasm export: pqctoday_composite_cms_verify');
   assert(typeof wasmExports['generate_mock_ca_root'] != 'undefined', 'missing Wasm export: generate_mock_ca_root');
   assert(typeof wasmExports['execute_cmp_simulation'] != 'undefined', 'missing Wasm export: execute_cmp_simulation');
-  assert(typeof wasmExports['C_Initialize'] != 'undefined', 'missing Wasm export: C_Initialize');
+  assert(typeof wasmExports['C_CloseSession'] != 'undefined', 'missing Wasm export: C_CloseSession');
   assert(typeof wasmExports['C_Finalize'] != 'undefined', 'missing Wasm export: C_Finalize');
+  assert(typeof wasmExports['C_FindObjects'] != 'undefined', 'missing Wasm export: C_FindObjects');
+  assert(typeof wasmExports['C_FindObjectsFinal'] != 'undefined', 'missing Wasm export: C_FindObjectsFinal');
+  assert(typeof wasmExports['C_FindObjectsInit'] != 'undefined', 'missing Wasm export: C_FindObjectsInit');
+  assert(typeof wasmExports['C_GenerateKeyPair'] != 'undefined', 'missing Wasm export: C_GenerateKeyPair');
+  assert(typeof wasmExports['C_GetAttributeValue'] != 'undefined', 'missing Wasm export: C_GetAttributeValue');
+  assert(typeof wasmExports['C_Initialize'] != 'undefined', 'missing Wasm export: C_Initialize');
   assert(typeof wasmExports['C_GetSlotList'] != 'undefined', 'missing Wasm export: C_GetSlotList');
+  assert(typeof wasmExports['C_GetTokenInfo'] != 'undefined', 'missing Wasm export: C_GetTokenInfo');
   assert(typeof wasmExports['C_InitToken'] != 'undefined', 'missing Wasm export: C_InitToken');
   assert(typeof wasmExports['C_InitPIN'] != 'undefined', 'missing Wasm export: C_InitPIN');
   assert(typeof wasmExports['C_OpenSession'] != 'undefined', 'missing Wasm export: C_OpenSession');
-  assert(typeof wasmExports['C_CloseSession'] != 'undefined', 'missing Wasm export: C_CloseSession');
   assert(typeof wasmExports['C_Login'] != 'undefined', 'missing Wasm export: C_Login');
   assert(typeof wasmExports['C_Logout'] != 'undefined', 'missing Wasm export: C_Logout');
-  assert(typeof wasmExports['C_GetAttributeValue'] != 'undefined', 'missing Wasm export: C_GetAttributeValue');
-  assert(typeof wasmExports['C_FindObjectsInit'] != 'undefined', 'missing Wasm export: C_FindObjectsInit');
-  assert(typeof wasmExports['C_FindObjects'] != 'undefined', 'missing Wasm export: C_FindObjects');
-  assert(typeof wasmExports['C_FindObjectsFinal'] != 'undefined', 'missing Wasm export: C_FindObjectsFinal');
   assert(typeof wasmExports['C_SignInit'] != 'undefined', 'missing Wasm export: C_SignInit');
   assert(typeof wasmExports['C_Sign'] != 'undefined', 'missing Wasm export: C_Sign');
-  assert(typeof wasmExports['C_GenerateKeyPair'] != 'undefined', 'missing Wasm export: C_GenerateKeyPair');
   assert(typeof wasmExports['C_MessageSignInit'] != 'undefined', 'missing Wasm export: C_MessageSignInit');
   assert(typeof wasmExports['C_SignMessage'] != 'undefined', 'missing Wasm export: C_SignMessage');
   assert(typeof wasmExports['C_MessageSignFinal'] != 'undefined', 'missing Wasm export: C_MessageSignFinal');
+  assert(typeof wasmExports['pqctoday_hsm_state_free'] != 'undefined', 'missing Wasm export: pqctoday_hsm_state_free');
+  assert(typeof wasmExports['pqctoday_hsm_state_load'] != 'undefined', 'missing Wasm export: pqctoday_hsm_state_load');
+  assert(typeof wasmExports['pqctoday_hsm_state_take'] != 'undefined', 'missing Wasm export: pqctoday_hsm_state_take');
   assert(typeof wasmExports['__funcs_on_exit'] != 'undefined', 'missing Wasm export: __funcs_on_exit');
   assert(typeof wasmExports['emscripten_stack_get_end'] != 'undefined', 'missing Wasm export: emscripten_stack_get_end');
   assert(typeof wasmExports['emscripten_stack_get_base'] != 'undefined', 'missing Wasm export: emscripten_stack_get_base');
@@ -6981,58 +7414,63 @@ function assignWasmExports(wasmExports) {
   assert(typeof wasmExports['emscripten_stack_get_current'] != 'undefined', 'missing Wasm export: emscripten_stack_get_current');
   assert(typeof wasmExports['memory'] != 'undefined', 'missing Wasm export: memory');
   assert(typeof wasmExports['__indirect_function_table'] != 'undefined', 'missing Wasm export: __indirect_function_table');
-  _asn1parse_main = Module['_asn1parse_main'] = createExportWrapper('asn1parse_main', 2);
-  _cmp_main = Module['_cmp_main'] = createExportWrapper('cmp_main', 2);
-  _cms_main = Module['_cms_main'] = createExportWrapper('cms_main', 2);
-  _crl2pkcs7_main = Module['_crl2pkcs7_main'] = createExportWrapper('crl2pkcs7_main', 2);
-  _genpkey_main = Module['_genpkey_main'] = createExportWrapper('genpkey_main', 2);
-  _strerror = createExportWrapper('strerror', 1);
-  _main = Module['_main'] = createExportWrapper('__main_argc_argv', 2);
-  _pqctoday_cms_init = Module['_pqctoday_cms_init'] = createExportWrapper('pqctoday_cms_init', 0);
-  _pkey_main = Module['_pkey_main'] = createExportWrapper('pkey_main', 2);
-  _pkeyutl_main = Module['_pkeyutl_main'] = createExportWrapper('pkeyutl_main', 2);
-  _req_main = Module['_req_main'] = createExportWrapper('req_main', 2);
-  _verify_main = Module['_verify_main'] = createExportWrapper('verify_main', 2);
-  _x509_main = Module['_x509_main'] = createExportWrapper('x509_main', 2);
-  _ntohs = createExportWrapper('ntohs', 1);
-  _fflush = createExportWrapper('fflush', 1);
-  _free = Module['_free'] = createExportWrapper('free', 1);
-  _malloc = Module['_malloc'] = createExportWrapper('malloc', 1);
-  _execute_tls_simulation = Module['_execute_tls_simulation'] = createExportWrapper('execute_tls_simulation', 3);
-  _tls_simulation_set_hsm_mode = Module['_tls_simulation_set_hsm_mode'] = createExportWrapper('tls_simulation_set_hsm_mode', 1);
-  _tls_simulation_get_hsm_mode = Module['_tls_simulation_get_hsm_mode'] = createExportWrapper('tls_simulation_get_hsm_mode', 0);
-  _C_GetFunctionList = Module['_C_GetFunctionList'] = createExportWrapper('C_GetFunctionList', 1);
-  _pqctoday_cms_shutdown = Module['_pqctoday_cms_shutdown'] = createExportWrapper('pqctoday_cms_shutdown', 0);
-  _pqctoday_composite_mkcert = Module['_pqctoday_composite_mkcert'] = createExportWrapper('pqctoday_composite_mkcert', 6);
-  _pqctoday_composite_cms_sign = Module['_pqctoday_composite_cms_sign'] = createExportWrapper('pqctoday_composite_cms_sign', 6);
-  _pqctoday_composite_cms_verify = Module['_pqctoday_composite_cms_verify'] = createExportWrapper('pqctoday_composite_cms_verify', 4);
-  _generate_mock_ca_root = Module['_generate_mock_ca_root'] = createExportWrapper('generate_mock_ca_root', 5);
-  _execute_cmp_simulation = Module['_execute_cmp_simulation'] = createExportWrapper('execute_cmp_simulation', 7);
-  _C_Initialize = Module['_C_Initialize'] = createExportWrapper('C_Initialize', 1);
-  _C_Finalize = Module['_C_Finalize'] = createExportWrapper('C_Finalize', 1);
-  _C_GetSlotList = Module['_C_GetSlotList'] = createExportWrapper('C_GetSlotList', 3);
-  _C_InitToken = Module['_C_InitToken'] = createExportWrapper('C_InitToken', 4);
-  _C_InitPIN = Module['_C_InitPIN'] = createExportWrapper('C_InitPIN', 3);
-  _C_OpenSession = Module['_C_OpenSession'] = createExportWrapper('C_OpenSession', 5);
-  _C_CloseSession = Module['_C_CloseSession'] = createExportWrapper('C_CloseSession', 1);
-  _C_Login = Module['_C_Login'] = createExportWrapper('C_Login', 4);
-  _C_Logout = Module['_C_Logout'] = createExportWrapper('C_Logout', 1);
-  _C_GetAttributeValue = Module['_C_GetAttributeValue'] = createExportWrapper('C_GetAttributeValue', 4);
-  _C_FindObjectsInit = Module['_C_FindObjectsInit'] = createExportWrapper('C_FindObjectsInit', 3);
-  _C_FindObjects = Module['_C_FindObjects'] = createExportWrapper('C_FindObjects', 4);
-  _C_FindObjectsFinal = Module['_C_FindObjectsFinal'] = createExportWrapper('C_FindObjectsFinal', 1);
-  _C_SignInit = Module['_C_SignInit'] = createExportWrapper('C_SignInit', 3);
-  _C_Sign = Module['_C_Sign'] = createExportWrapper('C_Sign', 5);
-  _C_GenerateKeyPair = Module['_C_GenerateKeyPair'] = createExportWrapper('C_GenerateKeyPair', 8);
-  _C_MessageSignInit = Module['_C_MessageSignInit'] = createExportWrapper('C_MessageSignInit', 3);
-  _C_SignMessage = Module['_C_SignMessage'] = createExportWrapper('C_SignMessage', 7);
-  _C_MessageSignFinal = Module['_C_MessageSignFinal'] = createExportWrapper('C_MessageSignFinal', 1);
-  ___funcs_on_exit = createExportWrapper('__funcs_on_exit', 0);
+  assert(typeof wasmExports['_RNvCs7byCvDedVM1_12wasm_bindgen32___WASM_BINDGEN_EMSCRIPTEN_MARKER'] != 'undefined', 'missing Wasm export: _RNvCs7byCvDedVM1_12wasm_bindgen32___WASM_BINDGEN_EMSCRIPTEN_MARKER');
+  _asn1parse_main = Module['_asn1parse_main'] = createExportWrapper('asn1parse_main', wasmExports['asn1parse_main'], 2);
+  _cmp_main = Module['_cmp_main'] = createExportWrapper('cmp_main', wasmExports['cmp_main'], 2);
+  _cms_main = Module['_cms_main'] = createExportWrapper('cms_main', wasmExports['cms_main'], 2);
+  _crl2pkcs7_main = Module['_crl2pkcs7_main'] = createExportWrapper('crl2pkcs7_main', wasmExports['crl2pkcs7_main'], 2);
+  _genpkey_main = Module['_genpkey_main'] = createExportWrapper('genpkey_main', wasmExports['genpkey_main'], 2);
+  _strerror = createExportWrapper('strerror', wasmExports['strerror'], 1);
+  _main = Module['_main'] = createExportWrapper('__main_argc_argv', wasmExports['__main_argc_argv'], 2);
+  _pqctoday_cms_init = Module['_pqctoday_cms_init'] = createExportWrapper('pqctoday_cms_init', wasmExports['pqctoday_cms_init'], 0);
+  _pkey_main = Module['_pkey_main'] = createExportWrapper('pkey_main', wasmExports['pkey_main'], 2);
+  _pkeyutl_main = Module['_pkeyutl_main'] = createExportWrapper('pkeyutl_main', wasmExports['pkeyutl_main'], 2);
+  _req_main = Module['_req_main'] = createExportWrapper('req_main', wasmExports['req_main'], 2);
+  _verify_main = Module['_verify_main'] = createExportWrapper('verify_main', wasmExports['verify_main'], 2);
+  _x509_main = Module['_x509_main'] = createExportWrapper('x509_main', wasmExports['x509_main'], 2);
+  _ntohs = createExportWrapper('ntohs', wasmExports['ntohs'], 1);
+  _fflush = createExportWrapper('fflush', wasmExports['fflush'], 1);
+  _free = Module['_free'] = createExportWrapper('free', wasmExports['free'], 1);
+  _malloc = Module['_malloc'] = createExportWrapper('malloc', wasmExports['malloc'], 1);
+  _execute_tls_simulation = Module['_execute_tls_simulation'] = createExportWrapper('execute_tls_simulation', wasmExports['execute_tls_simulation'], 3);
+  _tls_simulation_set_hsm_mode = Module['_tls_simulation_set_hsm_mode'] = createExportWrapper('tls_simulation_set_hsm_mode', wasmExports['tls_simulation_set_hsm_mode'], 1);
+  _tls_simulation_get_hsm_mode = Module['_tls_simulation_get_hsm_mode'] = createExportWrapper('tls_simulation_get_hsm_mode', wasmExports['tls_simulation_get_hsm_mode'], 0);
+  _C_GetFunctionList = Module['_C_GetFunctionList'] = createExportWrapper('C_GetFunctionList', wasmExports['C_GetFunctionList'], 1);
+  _pqctoday_cms_shutdown = Module['_pqctoday_cms_shutdown'] = createExportWrapper('pqctoday_cms_shutdown', wasmExports['pqctoday_cms_shutdown'], 0);
+  _pqctoday_composite_mkcert = Module['_pqctoday_composite_mkcert'] = createExportWrapper('pqctoday_composite_mkcert', wasmExports['pqctoday_composite_mkcert'], 6);
+  _pqctoday_composite_cms_sign = Module['_pqctoday_composite_cms_sign'] = createExportWrapper('pqctoday_composite_cms_sign', wasmExports['pqctoday_composite_cms_sign'], 6);
+  _pqctoday_composite_cms_verify = Module['_pqctoday_composite_cms_verify'] = createExportWrapper('pqctoday_composite_cms_verify', wasmExports['pqctoday_composite_cms_verify'], 4);
+  _generate_mock_ca_root = Module['_generate_mock_ca_root'] = createExportWrapper('generate_mock_ca_root', wasmExports['generate_mock_ca_root'], 5);
+  _execute_cmp_simulation = Module['_execute_cmp_simulation'] = createExportWrapper('execute_cmp_simulation', wasmExports['execute_cmp_simulation'], 7);
+  _C_CloseSession = Module['_C_CloseSession'] = createExportWrapper('C_CloseSession', wasmExports['C_CloseSession'], 1);
+  _C_Finalize = Module['_C_Finalize'] = createExportWrapper('C_Finalize', wasmExports['C_Finalize'], 1);
+  _C_FindObjects = Module['_C_FindObjects'] = createExportWrapper('C_FindObjects', wasmExports['C_FindObjects'], 4);
+  _C_FindObjectsFinal = Module['_C_FindObjectsFinal'] = createExportWrapper('C_FindObjectsFinal', wasmExports['C_FindObjectsFinal'], 1);
+  _C_FindObjectsInit = Module['_C_FindObjectsInit'] = createExportWrapper('C_FindObjectsInit', wasmExports['C_FindObjectsInit'], 3);
+  _C_GenerateKeyPair = Module['_C_GenerateKeyPair'] = createExportWrapper('C_GenerateKeyPair', wasmExports['C_GenerateKeyPair'], 8);
+  _C_GetAttributeValue = Module['_C_GetAttributeValue'] = createExportWrapper('C_GetAttributeValue', wasmExports['C_GetAttributeValue'], 4);
+  _C_Initialize = Module['_C_Initialize'] = createExportWrapper('C_Initialize', wasmExports['C_Initialize'], 1);
+  _C_GetSlotList = Module['_C_GetSlotList'] = createExportWrapper('C_GetSlotList', wasmExports['C_GetSlotList'], 3);
+  _C_GetTokenInfo = Module['_C_GetTokenInfo'] = createExportWrapper('C_GetTokenInfo', wasmExports['C_GetTokenInfo'], 2);
+  _C_InitToken = Module['_C_InitToken'] = createExportWrapper('C_InitToken', wasmExports['C_InitToken'], 4);
+  _C_InitPIN = Module['_C_InitPIN'] = createExportWrapper('C_InitPIN', wasmExports['C_InitPIN'], 3);
+  _C_OpenSession = Module['_C_OpenSession'] = createExportWrapper('C_OpenSession', wasmExports['C_OpenSession'], 5);
+  _C_Login = Module['_C_Login'] = createExportWrapper('C_Login', wasmExports['C_Login'], 4);
+  _C_Logout = Module['_C_Logout'] = createExportWrapper('C_Logout', wasmExports['C_Logout'], 1);
+  _C_SignInit = Module['_C_SignInit'] = createExportWrapper('C_SignInit', wasmExports['C_SignInit'], 3);
+  _C_Sign = Module['_C_Sign'] = createExportWrapper('C_Sign', wasmExports['C_Sign'], 5);
+  _C_MessageSignInit = Module['_C_MessageSignInit'] = createExportWrapper('C_MessageSignInit', wasmExports['C_MessageSignInit'], 3);
+  _C_SignMessage = Module['_C_SignMessage'] = createExportWrapper('C_SignMessage', wasmExports['C_SignMessage'], 7);
+  _C_MessageSignFinal = Module['_C_MessageSignFinal'] = createExportWrapper('C_MessageSignFinal', wasmExports['C_MessageSignFinal'], 1);
+  _pqctoday_hsm_state_free = Module['_pqctoday_hsm_state_free'] = createExportWrapper('pqctoday_hsm_state_free', wasmExports['pqctoday_hsm_state_free'], 2);
+  _pqctoday_hsm_state_load = Module['_pqctoday_hsm_state_load'] = createExportWrapper('pqctoday_hsm_state_load', wasmExports['pqctoday_hsm_state_load'], 2);
+  _pqctoday_hsm_state_take = Module['_pqctoday_hsm_state_take'] = createExportWrapper('pqctoday_hsm_state_take', wasmExports['pqctoday_hsm_state_take'], 1);
+  ___funcs_on_exit = createExportWrapper('__funcs_on_exit', wasmExports['__funcs_on_exit'], 0);
   _emscripten_stack_get_end = wasmExports['emscripten_stack_get_end'];
   _emscripten_stack_get_base = wasmExports['emscripten_stack_get_base'];
-  _htonl = createExportWrapper('htonl', 1);
-  _htons = createExportWrapper('htons', 1);
-  __emscripten_timeout = createExportWrapper('_emscripten_timeout', 2);
+  _htonl = createExportWrapper('htonl', wasmExports['htonl'], 1);
+  _htons = createExportWrapper('htons', wasmExports['htons'], 1);
+  __emscripten_timeout = createExportWrapper('_emscripten_timeout', wasmExports['_emscripten_timeout'], 2);
   _emscripten_stack_init = wasmExports['emscripten_stack_init'];
   _emscripten_stack_get_free = wasmExports['emscripten_stack_get_free'];
   __emscripten_stack_restore = wasmExports['_emscripten_stack_restore'];
@@ -7040,15 +7478,16 @@ function assignWasmExports(wasmExports) {
   _emscripten_stack_get_current = wasmExports['emscripten_stack_get_current'];
   memory = wasmMemory = wasmExports['memory'];
   __indirect_function_table = wasmTable = wasmExports['__indirect_function_table'];
+  __RNvCs7byCvDedVM1_12wasm_bindgen32___WASM_BINDGEN_EMSCRIPTEN_MARKER = Module['__RNvCs7byCvDedVM1_12wasm_bindgen32___WASM_BINDGEN_EMSCRIPTEN_MARKER'] = wasmExports['_RNvCs7byCvDedVM1_12wasm_bindgen32___WASM_BINDGEN_EMSCRIPTEN_MARKER'].value;
 }
 
 var wasmImports = {
   /** @export */
+  _Unwind_RaiseException: __Unwind_RaiseException,
+  /** @export */
   __assert_fail: ___assert_fail,
   /** @export */
   __call_sighandler: ___call_sighandler,
-  /** @export */
-  __cxa_throw: ___cxa_throw,
   /** @export */
   __syscall_accept4: ___syscall_accept4,
   /** @export */
@@ -7066,15 +7505,23 @@ var wasmImports = {
   /** @export */
   __syscall_fstat64: ___syscall_fstat64,
   /** @export */
-  __syscall_ftruncate64: ___syscall_ftruncate64,
+  __syscall_getcwd: ___syscall_getcwd,
   /** @export */
   __syscall_getdents64: ___syscall_getdents64,
+  /** @export */
+  __syscall_getegid32: ___syscall_getegid32,
+  /** @export */
+  __syscall_geteuid32: ___syscall_geteuid32,
+  /** @export */
+  __syscall_getgid32: ___syscall_getgid32,
   /** @export */
   __syscall_getpeername: ___syscall_getpeername,
   /** @export */
   __syscall_getsockname: ___syscall_getsockname,
   /** @export */
   __syscall_getsockopt: ___syscall_getsockopt,
+  /** @export */
+  __syscall_getuid32: ___syscall_getuid32,
   /** @export */
   __syscall_ioctl: ___syscall_ioctl,
   /** @export */
@@ -7092,15 +7539,23 @@ var wasmImports = {
   /** @export */
   __syscall_poll: ___syscall_poll,
   /** @export */
+  __syscall_poll_nonblocking: ___syscall_poll_nonblocking,
+  /** @export */
   __syscall_readlinkat: ___syscall_readlinkat,
   /** @export */
   __syscall_recvfrom: ___syscall_recvfrom,
   /** @export */
+  __syscall_recvmsg: ___syscall_recvmsg,
+  /** @export */
   __syscall_renameat: ___syscall_renameat,
   /** @export */
-  __syscall_rmdir: ___syscall_rmdir,
+  __syscall_sendmsg: ___syscall_sendmsg,
   /** @export */
   __syscall_sendto: ___syscall_sendto,
+  /** @export */
+  __syscall_setsockopt: ___syscall_setsockopt,
+  /** @export */
+  __syscall_shutdown: ___syscall_shutdown,
   /** @export */
   __syscall_socket: ___syscall_socket,
   /** @export */
@@ -7154,7 +7609,9 @@ var wasmImports = {
   /** @export */
   getnameinfo: _getnameinfo,
   /** @export */
-  proc_exit: _proc_exit
+  proc_exit: _proc_exit,
+  /** @export */
+  random_get: _random_get
 };
 
 
@@ -7201,85 +7658,54 @@ function stackCheckInit() {
   writeStackCookie();
 }
 
-function run(args = arguments_) {
-
-  if (runDependencies > 0) {
-    dependenciesFulfilled = run;
-    return;
-  }
+async function run(args = programArgs) {
+  assert(!calledRun);
+  calledRun = true;
 
   stackCheckInit();
 
   preRun();
 
-  // a preRun added a dependency, run will be called later
-  if (runDependencies > 0) {
-    dependenciesFulfilled = run;
-    return;
+  if (runDependencies) {
+    await resolveRunDependencies();
   }
 
-  function doRun() {
-    // run may have just been called through dependencies being fulfilled just in this very frame,
-    // or while the async setStatus time below was happening
-    assert(!calledRun);
-    calledRun = true;
-    Module['calledRun'] = true;
-
-    if (ABORT) return;
-
-    initRuntime();
-
-    preMain();
-
-    readyPromiseResolve?.(Module);
-    Module['onRuntimeInitialized']?.();
-    consumedModuleProp('onRuntimeInitialized');
-
-    var noInitialRun = Module['noInitialRun'] || true;
-    if (!noInitialRun) callMain(args);
-
-    postRun();
+  var setStatus = Module['setStatus'];
+  if (setStatus) {
+    setStatus('Running...');
+    // Yield to the event loop to allow the browser to paint "Running..."
+    await new Promise((resolve) => setTimeout(resolve, 1));
+    // Then we want to clear the status text, but only after the rest of this function runs.
+    setTimeout(setStatus, 1, '');
   }
 
-  if (Module['setStatus']) {
-    Module['setStatus']('Running...');
-    setTimeout(() => {
-      setTimeout(() => Module['setStatus'](''), 1);
-      doRun();
-    }, 1);
-  } else
-  {
-    doRun();
-  }
-  checkStackCookie();
+  if (ABORT) return;
+
+  initRuntime();
+
+  // No ATMAINS hooks
+
+  Module['onRuntimeInitialized']?.();
+  consumedModuleProp('onRuntimeInitialized');
+
+  var noInitialRun = Module['noInitialRun'] || true;
+  if (!noInitialRun) callMain(args);
+
+  postRun();
 }
 
 var wasmExports;
 
 // In modularize mode the generated code is within a factory function so we
 // can use await here (since it's not top-level-await).
-wasmExports = await (createWasm());
-
-run();
+wasmExports = await createWasm();
+await run();
 
 // end include: postamble.js
 
 // include: postamble_modularize.js
 // In MODULARIZE mode we wrap the generated code in a factory function
 // and return either the Module itself, or a promise of the module.
-//
-// We assign to the `moduleRtn` global here and configure closure to see
-// this as an extern so it won't get minified.
-
-if (runtimeInitialized)  {
-  moduleRtn = Module;
-} else {
-  // Set up the promise that indicates the Module is initialized
-  moduleRtn = new Promise((resolve, reject) => {
-    readyPromiseResolve = resolve;
-    readyPromiseReject = reject;
-  });
-}
 
 // Assertion for attempting to access module properties on the incoming
 // moduleArg.  In the past we used this object as the prototype of the module
@@ -7300,7 +7726,7 @@ for (const prop of Object.keys(Module)) {
 
 
 
-    return moduleRtn;
+    return Module;
   };
 })();
 

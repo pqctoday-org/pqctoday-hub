@@ -58,6 +58,10 @@ export const useOpenSSL = () => {
   // Learn tab's promise-based runner (runCommand below) — keyed by requestId,
   // separate from the fire-and-forget Workbench flow above it.
   const pendingRunsRef = useRef<Map<string, PendingRun>>(new Map())
+  /** In-flight HSM_KEYGEN requests, settled by HSM_KEY_CREATED / ERROR. */
+  const pendingKeygenRef = useRef<
+    Map<string, { resolve: (r: { uri: string }) => void; reject: (e: Error) => void }>
+  >(new Map())
 
   useEffect(() => {
     // Track if this effect instance is active
@@ -103,6 +107,17 @@ export const useOpenSSL = () => {
           })
           addLog('info', `File created: ${event.data.name} `)
           break
+        case 'HSM_KEY_CREATED': {
+          setIsProcessing(false)
+          const pending = event.data.requestId
+            ? pendingKeygenRef.current.get(event.data.requestId)
+            : undefined
+          if (pending && event.data.requestId) {
+            pendingKeygenRef.current.delete(event.data.requestId)
+            pending.resolve({ uri: event.data.uri })
+          }
+          break
+        }
         case 'READY':
           addLog('info', 'OpenSSL System Ready')
           setIsReady(true)
@@ -116,6 +131,11 @@ export const useOpenSSL = () => {
           if (!event.data.requestId) {
             setIsReady(false)
             setLoadError(event.data.error || 'Failed to load the OpenSSL WASM module.')
+          }
+          if (event.data.requestId && pendingKeygenRef.current.has(event.data.requestId)) {
+            const pk = pendingKeygenRef.current.get(event.data.requestId)!
+            pendingKeygenRef.current.delete(event.data.requestId)
+            pk.reject(new Error(event.data.error || 'HSM key generation failed'))
           }
           if (event.data.requestId && pendingRunsRef.current.has(event.data.requestId)) {
             const pending = pendingRunsRef.current.get(event.data.requestId)!
@@ -360,6 +380,35 @@ export const useOpenSSL = () => {
     [setIsProcessing]
   )
 
+  /**
+   * Generate a keypair INSIDE the PKCS#11 token, resolving with the
+   * `pkcs11:` URI that addresses it.
+   *
+   * Not expressible as a CLI command: `genpkey -out pkcs11:...` routes
+   * through a BIO and writes a PEM into the WASM filesystem, so the key
+   * never reaches the token and later `pkcs11:object=<id>` lookups fail.
+   * The worker calls C_GenerateKeyPair directly with CKA_TOKEN=TRUE.
+   */
+  const hsmKeygen = useCallback(
+    (algorithm: string, keyId: string): Promise<{ uri: string }> => {
+      if (!workerRef.current) {
+        return Promise.reject(new Error('OpenSSL WASM engine is not ready yet.'))
+      }
+      const requestId = `hsm_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
+      setIsProcessing(true)
+      return new Promise((resolve, reject) => {
+        pendingKeygenRef.current.set(requestId, { resolve, reject })
+        workerRef.current!.postMessage({
+          type: 'HSM_KEYGEN',
+          algorithm,
+          keyId,
+          requestId,
+        } as WorkerMessage)
+      })
+    },
+    [setIsProcessing]
+  )
+
   const executeSkey = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async (opType: 'create' | 'derive', params: Record<string, any>) => {
@@ -383,5 +432,5 @@ export const useOpenSSL = () => {
     [setIsProcessing, clearTerminalLogs, addLog, setLastExecutionTime]
   )
 
-  return { executeCommand, executeSkey, runCommand, retryLoad }
+  return { executeCommand, executeSkey, runCommand, retryLoad, hsmKeygen }
 }

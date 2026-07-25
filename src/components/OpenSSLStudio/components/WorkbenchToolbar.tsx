@@ -10,6 +10,7 @@ import {
   FileArchive,
   Info,
   Hash,
+  Cpu,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { useOpenSSLStore } from '../store'
@@ -161,6 +162,18 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
           )}
         >
           <Shield size={16} /> LMS (HSS)
+        </Button>
+        <Button
+          variant="ghost"
+          onClick={() => handleCategoryChange('pkcs11', 'PKCS#11 (HSM)')}
+          className={clsx(
+            'p-2 lg:p-3 rounded-lg border text-left transition-colors flex items-center gap-2 text-xs lg:text-sm',
+            category === 'pkcs11'
+              ? 'bg-primary/20 border-primary/40 text-primary'
+              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
+          )}
+        >
+          <Cpu size={16} /> PKCS#11 (HSM)
         </Button>
         <Button
           variant="ghost"

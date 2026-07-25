@@ -23,7 +23,12 @@ export const LogsTab = () => {
   }
 
   return (
-    <div className="h-full flex flex-col bg-card rounded-xl border border-border overflow-hidden font-mono text-sm">
+    // Same hard max-height backstop as TerminalOutput.tsx, and for the same
+    // reason -- see that component's comment. Both share the ancestor chain
+    // whose flex-1/min-h-0 sizing has no bounded ceiling in this app's real
+    // layout, so either panel's `overflow-y-auto` can silently stop working
+    // once its content is long enough.
+    <div className="h-full max-h-[70vh] flex flex-col bg-card rounded-xl border border-border overflow-hidden font-mono text-sm">
       {/* Toolbar */}
       <div className="flex items-center justify-end px-4 py-2 bg-muted/30 border-b border-border shrink-0">
         <Button
