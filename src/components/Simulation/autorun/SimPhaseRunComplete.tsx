@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { CheckCircle2, LayoutDashboard, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { PhaseFocus } from './useSimAutoRunPlayer'

@@ -13,7 +13,7 @@
  * and every branch/target is a shared-UI-kit `<Button>`.
  */
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { Compass, ArrowRight, ArrowLeft, Map } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {

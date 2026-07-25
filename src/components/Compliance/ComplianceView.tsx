@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { lazy, Suspense, useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 import { ComplianceTable } from './ComplianceTable'
 import { type FrameworkSortOption } from './ComplianceLandscape'
 import { DeadlineTimelineGate } from './DeadlineTimelineGate'

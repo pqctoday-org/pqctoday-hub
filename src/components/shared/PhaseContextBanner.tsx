@@ -11,7 +11,7 @@
  * Learn). The three anchor pages (Assess, Report, Command Center) render their
  * own phase UI via `usePhaseFilter`.
  */
-import { useLocation, useSearchParams } from 'react-router-dom'
+import { useLocation, useSearchParams } from 'react-router'
 import { X } from 'lucide-react'
 import { Button } from '../ui/button'
 import { FRAMEWORK_PHASES, PHASE_ORDER, type PhaseId } from '../../data/frameworkPhases'

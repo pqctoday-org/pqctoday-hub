@@ -9,7 +9,7 @@
  * pick dispatches. Collapsed by default to keep the console light.
  */
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { ChevronDown, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {

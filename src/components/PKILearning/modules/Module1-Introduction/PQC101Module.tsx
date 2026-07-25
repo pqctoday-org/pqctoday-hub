@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useEffect, useRef } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { usePersonaStore } from '@/store/usePersonaStore'

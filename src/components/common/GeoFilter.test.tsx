@@ -2,7 +2,7 @@
 import { describe, it, expect } from 'vitest'
 import type { ReactNode } from 'react'
 import { renderHook } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter } from 'react-router'
 import { useGeoFilter, matchesGeoFilter } from './GeoFilter'
 
 // W8: the read-hooks accept an optional params override so that, when the Library

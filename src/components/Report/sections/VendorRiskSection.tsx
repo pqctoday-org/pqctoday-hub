@@ -18,7 +18,7 @@
  */
 import clsx from 'clsx'
 import { Building2, ArrowRight } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { CollapsibleSection } from './reportContentShared'
 import { DefaultsUsedChip } from '../DefaultsUsedChip'
 import { vendorMap } from '@/data/migrateData'

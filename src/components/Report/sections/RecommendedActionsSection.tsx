@@ -2,7 +2,7 @@
 // /report's "Recommended Actions" section (REPORT_SECTION_ORDER:
 // 'recommendedActions'). Extracted from ReportContent.tsx — see
 // reportSectionToCswp39.ts.
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { ArrowRight } from 'lucide-react'
 import clsx from 'clsx'
 import type { RecommendedAction } from '../../../hooks/assessmentTypes'

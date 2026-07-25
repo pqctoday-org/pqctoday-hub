@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { loadGlossary, type GlossaryTerm } from '../../data/glossary'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { ExternalLink } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'

@@ -2,7 +2,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BookOpenText, Search, X, ExternalLink } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { loadGlossary, type GlossaryTerm } from '../../data/glossary'
 import clsx from 'clsx'
 import { CategoryBadge } from '../ui/category-badge'

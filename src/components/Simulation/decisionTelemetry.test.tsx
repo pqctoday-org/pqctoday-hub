@@ -5,7 +5,7 @@
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter } from 'react-router'
 import { DecisionSection } from './sections'
 import { logSimTrapPick } from '@/utils/analytics'
 import type { MoveCtx } from '@/data/simMoves'

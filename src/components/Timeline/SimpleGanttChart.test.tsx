@@ -2,7 +2,7 @@
 import type { ReactElement } from 'react'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter } from 'react-router'
 import { SimpleGanttChart } from './SimpleGanttChart'
 import { logEvent } from '../../utils/analytics'
 import type { GanttCountryData } from '../../types/timeline'

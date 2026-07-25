@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useMemo, useCallback } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 import { Network, CheckCircle2, Circle, Clock } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'

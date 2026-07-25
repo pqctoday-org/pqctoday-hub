@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { BookOpen, ArrowRight, BarChart3, Layers } from 'lucide-react'
 import type { RoleGuideData, SkillLevel } from './types'
 import { Button } from '@/components/ui/button'

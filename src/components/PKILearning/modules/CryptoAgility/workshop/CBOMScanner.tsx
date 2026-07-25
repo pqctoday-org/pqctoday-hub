@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { Shield, AlertTriangle, CheckCircle, Code, X, ArrowRight } from 'lucide-react'
 import { SAMPLE_CBOM, CBOM_CYCLONEDX_SAMPLE, type CBOMEntry } from '../data/cbomTemplates'
 import { LAYERS } from '@/data/infrastructureLayers'

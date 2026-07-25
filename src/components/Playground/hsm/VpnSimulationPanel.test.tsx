@@ -5,7 +5,7 @@
 // no exact DOM-structure expectations.
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter } from 'react-router'
 
 // Mock HsmContext — same pattern as SshSimulationPanel.test.tsx, plus the
 // extra fields the VPN panel destructures.

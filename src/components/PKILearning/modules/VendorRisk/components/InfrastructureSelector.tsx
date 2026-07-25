@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { Package, ExternalLink, Trash2, CheckCircle, ShieldAlert } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'

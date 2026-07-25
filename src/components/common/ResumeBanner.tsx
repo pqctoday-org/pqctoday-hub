@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useEffect, useMemo, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router'
 import { GraduationCap, ArrowRight, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useModuleStore } from '@/store/useModuleStore'

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { FC } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { Package, FileJson, ListChecks, Bug, Scale, ArrowRightLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 

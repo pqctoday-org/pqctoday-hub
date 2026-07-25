@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import clsx from 'clsx'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Search,

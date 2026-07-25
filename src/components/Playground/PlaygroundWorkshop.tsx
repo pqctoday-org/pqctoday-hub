@@ -14,7 +14,7 @@
 // reports the container reachable. Access is gated via useSandboxStore.
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import FocusLock from 'react-focus-lock'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router'
 import {
   Search,
   X,

@@ -2,7 +2,7 @@
 import React from 'react'
 import { useEmbeddedLearn } from '../../../embeddedLearnContext'
 import { Play, BookOpen, ArrowRight } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { useTLSStore } from '@/store/tls-learning.store'
 import {
   DEFAULT_SERVER_CERT,

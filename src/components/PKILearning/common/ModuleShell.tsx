@@ -16,7 +16,7 @@
  * because a module's in-page header often differs from its catalog description.
  */
 import { useState, type ReactNode } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import type { LucideIcon } from 'lucide-react'
 import { Trash2, Gamepad2, ArrowRight, Wrench, CheckCircle2 } from 'lucide-react'
 import { Tabs, TabsContent } from '@/components/ui/tabs'

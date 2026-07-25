@@ -2,7 +2,7 @@
 import { ExternalLink, Calendar, X, Flag, BookOpen } from 'lucide-react'
 import { createPortal } from 'react-dom'
 import { useEffect, useRef } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import clsx from 'clsx'
 import FocusLock from 'react-focus-lock'
 import { AskAssistantButton } from '../ui/AskAssistantButton'

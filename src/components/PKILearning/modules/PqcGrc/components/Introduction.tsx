@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import {
   Gauge,
   Scale,

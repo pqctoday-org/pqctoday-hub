@@ -2,7 +2,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { PKILearningView as PKILearning } from './PKILearningView'
-import { MemoryRouter, Routes, Route } from 'react-router-dom'
+import { MemoryRouter, Routes, Route } from 'react-router'
 import '@testing-library/jest-dom'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { EmbedProvider } from '../../embed/EmbedProvider'

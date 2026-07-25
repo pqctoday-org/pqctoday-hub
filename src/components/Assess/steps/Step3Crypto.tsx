@@ -16,7 +16,7 @@ import { Button } from '../../ui/button'
 
 import clsx from 'clsx'
 
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
 import { usePersonaStore } from '../../../store/usePersonaStore'
 import { ALGORITHM_DB } from '../../../hooks/assessmentData'

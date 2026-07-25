@@ -2,7 +2,7 @@
 import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter } from 'react-router'
 import { ROICalculator } from './ROICalculator'
 import type { ExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import type { AssessmentProfile } from '@/hooks/assessmentTypes'

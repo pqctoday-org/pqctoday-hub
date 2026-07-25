@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 // Mocks
 // ---------------------------------------------------------------------------
 
-vi.mock('react-router-dom', () => ({
+vi.mock('react-router', () => ({
   useNavigate: () => vi.fn(),
   useLocation: () => ({ pathname: '/timeline', search: '', hash: '', state: null }),
 }))

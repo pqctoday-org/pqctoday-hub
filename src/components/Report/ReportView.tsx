@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router'
 import { motion } from 'framer-motion'
 import { FileBarChart, ClipboardCheck, AlertCircle, ArrowRight } from 'lucide-react'
 import { ReportContent } from './ReportContent'

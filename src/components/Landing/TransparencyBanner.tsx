@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { motion } from 'framer-motion'
 import { Construction, Wrench } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 
 export function TransparencyBanner() {
   return (

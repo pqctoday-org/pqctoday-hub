@@ -2,7 +2,7 @@
 /* eslint-disable security/detect-object-injection */
 import { useEffect, useRef, useState } from 'react'
 import { CheckCircle, Lightbulb, X, ArrowLeft } from 'lucide-react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router'
 import { useModuleStore } from '../../store/useModuleStore'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { LEARN_SECTIONS, WORKSHOP_STEPS, MODULE_TRACKS, MODULE_TO_TRACK } from './moduleData'

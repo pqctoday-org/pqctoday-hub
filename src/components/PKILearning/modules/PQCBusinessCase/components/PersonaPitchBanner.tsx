@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { Target, ExternalLink } from 'lucide-react'
 import type { PersonaId } from '@/data/learningPersonas'
 import { isSupportedPitchPersona } from './pitchVariants'

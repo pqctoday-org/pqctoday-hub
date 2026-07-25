@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { FC } from 'react'
 import { Shield, FileCode, Key, BarChart3, CheckCircle, ExternalLink } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { SecureBootIntroduction } from './components/SecureBootIntroduction'
 import { SecureBootExercises } from './components/SecureBootExercises'
 import { SecureBootChainAnalyzer } from './workshop/SecureBootChainAnalyzer'

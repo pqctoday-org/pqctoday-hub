@@ -9,7 +9,7 @@ import { AssessStepRail } from './AssessStepRail'
 import { AssessQuestionPane } from './AssessQuestionPane'
 import { useAssessFlow } from './useAssessFlow'
 import type { AssessTrack } from './assessFlowModel'
-import type { SetURLSearchParams } from 'react-router-dom'
+import type { SetURLSearchParams } from 'react-router'
 
 interface AssessWizardScreenProps {
   mode: AssessTrack

@@ -13,7 +13,7 @@
  * - Persona/Assess: `industry` + `country` → Cross-cutting context section
  */
 import React, { useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { ExternalLink } from 'lucide-react'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useModuleStore } from '@/store/useModuleStore'

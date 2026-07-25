@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { useWorkshopOverlayStore } from '@/store/useWorkshopOverlayStore'
 import { useWorkshopStore, isWorkshopActive } from '@/store/useWorkshopStore'
 import { CaptionBar } from './CaptionBar'

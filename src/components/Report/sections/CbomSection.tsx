@@ -26,7 +26,7 @@
  */
 import clsx from 'clsx'
 import { FileJson, ShieldCheck, ShieldAlert, Layers, ArrowRight } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { CollapsibleSection } from './reportContentShared'
 import { useSavedArtifactDocuments } from '@/hooks/useSavedArtifactInputs'
 import type { CbomReportSummary } from '@/services/cbom/reportSummary'

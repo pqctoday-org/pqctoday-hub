@@ -5,7 +5,7 @@
  * questions to unlock the full report. Routes back into the wizard's
  * comprehensive flow. Hidden in print and for shared (read-only) reports.
  */
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { Lock, ArrowRight } from 'lucide-react'
 
 interface ReportUpgradeNudgeProps {

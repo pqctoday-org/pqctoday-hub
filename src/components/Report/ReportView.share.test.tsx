@@ -8,7 +8,7 @@
 // no-prior-assessment case still mutating their store on every open.)
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { ReportView } from './ReportView'
 import { useAssessmentStore } from '../../store/useAssessmentStore'

@@ -18,7 +18,7 @@
  * `personaToRoles` × `ROLE_CROSSWALK` — so it cannot drift from the model.
  */
 import { useMemo } from 'react'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router'
 import clsx from 'clsx'
 import { Check, Circle, CircleDot, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import { Button } from '../ui/button'

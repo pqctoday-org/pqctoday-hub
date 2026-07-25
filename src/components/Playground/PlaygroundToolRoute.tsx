@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { Suspense, useEffect } from 'react'
-import { useParams, useNavigate, useSearchParams, Navigate, Link } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams, Navigate, Link } from 'react-router'
 import { ArrowLeft, Wrench, ArrowRight } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Skeleton } from '../ui/skeleton'

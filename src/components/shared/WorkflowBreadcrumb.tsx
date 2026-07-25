@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import clsx from 'clsx'
 import { ClipboardCheck, FileBarChart, LayoutDashboard, ShieldCheck } from 'lucide-react'
 

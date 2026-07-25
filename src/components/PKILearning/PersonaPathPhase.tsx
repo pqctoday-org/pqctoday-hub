@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { Check, ChevronRight, Circle, FlaskConical } from 'lucide-react'
 import clsx from 'clsx'
 import { MODULE_CATALOG } from './moduleData'

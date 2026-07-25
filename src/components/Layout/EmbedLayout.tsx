@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
-import { Outlet, NavLink, useLocation } from 'react-router-dom'
+import { Outlet, NavLink, useLocation } from 'react-router'
 import { motion } from 'framer-motion'
 import {
   Globe,
@@ -32,7 +32,7 @@ import { WhatsNewModal } from '../ui/WhatsNewModal'
 import { useRightPanelStore } from '../../store/useRightPanelStore'
 import { logEmbedPolicyApplied } from '../../utils/analytics'
 import { INDUSTRY_SLUG_TO_LABEL } from '../../data/personaConfig'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 
 const RightPanel = React.lazy(() =>
   import('../RightPanel/RightPanel').then((m) => ({ default: m.RightPanel }))

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useMemo, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { HelpCircle, ChevronDown, ChevronRight, Search, ExternalLink, Sparkles } from 'lucide-react'
 import { FAQ_DATA, type FAQCategory, type FAQItem } from './faqData'
 import { Button } from '@/components/ui/button'

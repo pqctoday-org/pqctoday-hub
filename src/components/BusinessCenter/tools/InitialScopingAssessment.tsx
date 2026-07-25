@@ -12,7 +12,7 @@
  */
 import React, { useMemo, useState } from 'react'
 import { ClipboardList, ChevronDown, ChevronRight, Info } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'

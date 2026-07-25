@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useMemo, useState } from 'react'
 import { GitMerge, Bot, Filter, X } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { useRevisions, byRecord, type RevisionEntry } from '@/hooks/useRevisions'
 import { Button } from '@/components/ui/button'
 import { BypassChip } from '@/components/ui/BypassChip'

@@ -13,7 +13,7 @@
  */
 import { useMemo, useState, useEffect, useRef, useCallback, Suspense } from 'react'
 import { Monitor } from 'lucide-react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router'
 import {
   BUSINESS_TOOL_COMPONENTS,
   WORKSHOP_TOOL_COMPONENTS,

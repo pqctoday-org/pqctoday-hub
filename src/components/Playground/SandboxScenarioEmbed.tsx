@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router'
 import { ExternalLink, ServerCrash, Container, Network } from 'lucide-react'
 import { buttonVariants } from '../ui/button-variants'
 import { Skeleton } from '../ui/skeleton'
