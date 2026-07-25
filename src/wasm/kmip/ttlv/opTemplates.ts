@@ -1186,6 +1186,10 @@ export const OP_TEMPLATES: OpTemplate[] = [
     params: [
       { key: 'uid', label: 'Object UID', kind: 'uid', default: '' },
       {
+        // Full 10-member CSD02 Revocation Reason Code set (Table 598) — was
+        // missing AffiliationChanged/PrivilegeWithdrawn even under CSD01
+        // (found 2026-07-24 fixing the CSD02 gap below; CertificateHold/
+        // RemoveFromCrl/AaCompromise are the genuinely CSD02-new members).
         key: 'reason',
         label: 'Reason',
         kind: 'select',
@@ -1193,8 +1197,13 @@ export const OP_TEMPLATES: OpTemplate[] = [
           'Unspecified',
           'KeyCompromise',
           'CACompromise',
+          'AffiliationChanged',
           'Superseded',
           'CessationOfOperation',
+          'PrivilegeWithdrawn',
+          'CertificateHold',
+          'RemoveFromCRL',
+          'AACompromise',
         ],
         default: 'Unspecified',
       },
