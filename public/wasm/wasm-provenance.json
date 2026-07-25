@@ -9,9 +9,9 @@
       "sourceDirs": ["kmip", "wasm"],
       "track": "tip",
       "status": "built",
-      "hsmCommit": "5e08aa980bc7f495ba54890feeda129cd22e795f",
-      "builtAt": "2026-07-11",
-      "_buildNote": "Prior rebuilds (2026-07-10/11, merged via hub #410/#411/#412, hsm #139/#140): corrected a stale manifest entry, picked up CKA_ALLOWED_MECHANISMS/CKO_CERTIFICATE engine-side support, fixed the wasm32 compile break in Register/Import's certificate projection, and added the WP-4 raw_pkcs11_encrypt_probe showcase export. This rebuild (hub #413, merged) adds the WP-3 showcase (`Pkcs11CertificateDemo.tsx`): a real fix (Register(Certificate) with a PublicKeyLink now reuses that key's own CKA_ID instead of minting a fresh one, matching the native Certify path — hsm #141, merged; `hsmCommit` above is that PR's squash-merge commit on hsm main) plus two wasm exports, `register_certificate_demo` and `engine_certificate_attributes`. Verified: native `cargo test -p pqctoday-kmip` (593 passed), wasm32 build + smoke test, and a standalone node script + a real-browser Playwright pass confirming a genuine Register → engine-projection → real CKA_SUBJECT/CKA_ISSUER/CKA_SERIAL_NUMBER/CKA_VALUE readback (not simulated)."
+      "hsmCommit": "8e7b09cc56ad4144e9c376ed9a78fdb808a52922",
+      "builtAt": "2026-07-24",
+      "_buildNote": "Corrects a stale record: this entry had said `5e08aa98`/2026-07-11 since that date, but the binary actually deployed since 2026-07-17 was built from hub commit 5e9238973 against hsm commits on the `test/all-changes-0710` branch (found during a 2026-07-24 re-audit) — the record was never updated for that rebuild or any since. This rebuild is the CSD02 migration's final step: real `cargo build --target wasm32-unknown-unknown` + `wasm-bindgen` + a live node smoke test (Query, Create, malformed-frame handling, ML-DSA-65 CreateKeyPair/Sign/SignatureVerify round-trip, an unimplemented-algorithm rejection, and a full X25519MLKEM768 hybrid-KEM CreateKeyPair→Activate→Encapsulate→Decapsulate round-trip — not simulated), from a clean worktree exactly matching `hsmCommit` (verified via `git status` before/after). No wasm-exported function signatures changed (only two §6.1.x doc-comment citations, in a sibling module the CSD02 citation migration had missed). `sync:wasm:check` was failing before this rebuild (15 hsm commits of drift, mostly the unrelated Part F multi-tenancy hardening pass) and is clean after."
     },
     {
       "name": "softhsmrustv3-engine",

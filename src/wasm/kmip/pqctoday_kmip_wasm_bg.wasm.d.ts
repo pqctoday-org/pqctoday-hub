@@ -128,9 +128,9 @@ export const _C_SetOperationState: (a: number, b: number, c: number, d: number, 
 export const _C_SignRecover: (a: number, b: number, c: number, d: number, e: number) => number;
 export const _C_VerifyRecover: (a: number, b: number, c: number, d: number, e: number) => number;
 export const wasm_start: () => void;
-export const _C_GetMechanismList: (a: number, b: number, c: number) => number;
 export const _free: (a: number, b: number) => void;
 export const _malloc: (a: number) => number;
+export const _C_GetMechanismList: (a: number, b: number, c: number) => number;
 export const __wbindgen_exn_store: (a: number) => void;
 export const __externref_table_alloc: () => number;
 export const __wbindgen_externrefs: WebAssembly.Table;
