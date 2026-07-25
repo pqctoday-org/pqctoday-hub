@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "source_file": "spec/oasis-kmip-3.0/kmip-spec-v3.0.html",
-  "source_sha256": "4197ff9090e5dcc684854a0ffdd03e8c7af36a267b13a4554b524655aa06bb40",
-  "extracted_at": "2026-06-07T20:11:42.836879Z",
+  "source_file": "spec/oasis-kmip-3.0/kmip-spec-v3.0-csd02.html",
+  "source_sha256": "c6277cc83a2505bdac75ab154355211085feeadad07c7de9ae20a19d6d4c7b74",
+  "extracted_at": "2026-07-25T02:37:14.447793Z",
   "tags": [
     {
       "name": "Activation Date",
@@ -89,7 +89,7 @@
       "codepoint": "0x42001e"
     },
     {
-      "name": "Compromise \n  Date",
+      "name": "Compromise Date",
       "codepoint": "0x420020"
     },
     {
@@ -913,7 +913,7 @@
       "codepoint": "0x4200fd"
     },
     {
-      "name": "Authenticated \n  Encryption Additional Data",
+      "name": "Authenticated Encryption Additional Data",
       "codepoint": "0x4200fe"
     },
     {
@@ -1583,6 +1583,42 @@
     {
       "name": "NIST Security Category",
       "codepoint": "0x4201c2"
+    },
+    {
+      "name": "KEM Algorithm",
+      "codepoint": "0x4201c3"
+    },
+    {
+      "name": "Deterministic",
+      "codepoint": "0x4201c4"
+    },
+    {
+      "name": "Context String",
+      "codepoint": "0x4201c5"
+    },
+    {
+      "name": "Seed",
+      "codepoint": "0x4201c6"
+    },
+    {
+      "name": "Input Key Material",
+      "codepoint": "0x4201c7"
+    },
+    {
+      "name": "Internal",
+      "codepoint": "0x4201c8"
+    },
+    {
+      "name": "External Mu",
+      "codepoint": "0x4201c9"
+    },
+    {
+      "name": "Random",
+      "codepoint": "0x4201ca"
+    },
+    {
+      "name": "Performs CRL Checks",
+      "codepoint": "0x4201cb"
     }
   ],
   "enums": {
@@ -1658,7 +1694,7 @@
         "value": "0x00000003"
       }
     ],
-    "Batch Error Continuation\nOption": [
+    "Batch Error Continuation Option": [
       {
         "name": "Continue",
         "value": "0x00000001"
@@ -1796,7 +1832,7 @@
         "value": "0x00000002"
       }
     ],
-    "Client Registration\nMethod": [
+    "Client Registration Method": [
       {
         "name": "Unspecified",
         "value": "0x00000001"
@@ -2148,6 +2184,82 @@
       {
         "name": "SLH-DSA-SHAKE-256f",
         "value": "0x0000004a"
+      },
+      {
+        "name": "Hash-SLH-DSA-SHA2-128s-with-SHA256",
+        "value": "0x0000004b"
+      },
+      {
+        "name": "Hash-SLH-DSA-SHA2-128f-with-SHA256",
+        "value": "0x0000004c"
+      },
+      {
+        "name": "Hash-SLH-DSA-SHA2-192s-with-SHA512",
+        "value": "0x0000004d"
+      },
+      {
+        "name": "Hash-SLH-DSA-SHA2-192f-with-SHA512",
+        "value": "0x0000004e"
+      },
+      {
+        "name": "Hash-SLH-DSA-SHA2-256s-with-SHA512",
+        "value": "0x0000004f"
+      },
+      {
+        "name": "Hash-SLH-DSA-SHA2-256f-with-SHA512",
+        "value": "0x00000050"
+      },
+      {
+        "name": "Hash-SLH-DSA-SHAKE-128s-with-SHAKE128",
+        "value": "0x00000051"
+      },
+      {
+        "name": "Hash-SLH-DSA-SHAKE-128f-with-SHAKE128",
+        "value": "0x00000052"
+      },
+      {
+        "name": "Hash-SLH-DSA-SHAKE-192s-with-SHAKE256",
+        "value": "0x00000053"
+      },
+      {
+        "name": "Hash-SLH-DSA-SHAKE-192f-with-SHAKE256",
+        "value": "0x00000054"
+      },
+      {
+        "name": "Hash-SLH-DSA-SHAKE-256s-with-SHAKE256",
+        "value": "0x00000055"
+      },
+      {
+        "name": "Hash-SLH-DSA-SHAKE-256f-with-SHAKE256",
+        "value": "0x00000056"
+      },
+      {
+        "name": "Hash-ML-DSA-44-with-SHA512",
+        "value": "0x00000057"
+      },
+      {
+        "name": "Hash-ML-DSA-65-with-SHA512",
+        "value": "0x00000058"
+      },
+      {
+        "name": "Hash-ML-DSA-87-with-SHA512",
+        "value": "0x00000059"
+      },
+      {
+        "name": "X25519",
+        "value": "0x0000005a"
+      },
+      {
+        "name": "X448",
+        "value": "0x0000005b"
+      },
+      {
+        "name": "X25519MLKEM768",
+        "value": "0x0000005c"
+      },
+      {
+        "name": "SECP256R1MLKEM768",
+        "value": "0x0000005d"
       }
     ],
     "DRBG Algorithm": [
@@ -2200,6 +2312,14 @@
       {
         "name": "Signature Verify",
         "value": "0x00000007"
+      },
+      {
+        "name": "Encapsulate",
+        "value": "0x00000008"
+      },
+      {
+        "name": "Decapsulate",
+        "value": "0x00000009"
       }
     ],
     "Deactivation Reason Code": [
@@ -2208,7 +2328,7 @@
         "value": "0x00000001"
       },
       {
-        "name": "Deactivation\n  Date",
+        "name": "Deactivation Date",
         "value": "0x00000002"
       },
       {
@@ -2292,7 +2412,7 @@
         "value": "0x00000007"
       }
     ],
-    "Digital Signature\nAlgorithm": [
+    "Digital Signature Algorithm": [
       {
         "name": "MD2 with RSA Encryption",
         "value": "0x00000001"
@@ -2576,102 +2696,18 @@
         "value": "0x0000000e"
       }
     ],
-    "Key\nRole Type": [
+    "KEM Algorithm": [
       {
-        "name": "BDK",
+        "name": "RSASVE",
         "value": "0x00000001"
       },
       {
-        "name": "CVK",
+        "name": "DHKEM",
         "value": "0x00000002"
       },
       {
-        "name": "DEK",
+        "name": "MLKEM",
         "value": "0x00000003"
-      },
-      {
-        "name": "MKAC",
-        "value": "0x00000004"
-      },
-      {
-        "name": "MKSMC",
-        "value": "0x00000005"
-      },
-      {
-        "name": "MKSMI",
-        "value": "0x00000006"
-      },
-      {
-        "name": "MKDAC",
-        "value": "0x00000007"
-      },
-      {
-        "name": "MKDN",
-        "value": "0x00000008"
-      },
-      {
-        "name": "MKCP",
-        "value": "0x00000009"
-      },
-      {
-        "name": "MKOTH",
-        "value": "0x0000000a"
-      },
-      {
-        "name": "KEK",
-        "value": "0x0000000b"
-      },
-      {
-        "name": "MAC16609",
-        "value": "0x0000000c"
-      },
-      {
-        "name": "MAC97971",
-        "value": "0x0000000d"
-      },
-      {
-        "name": "MAC97972",
-        "value": "0x0000000e"
-      },
-      {
-        "name": "MAC97973",
-        "value": "0x0000000f"
-      },
-      {
-        "name": "MAC97974",
-        "value": "0x00000010"
-      },
-      {
-        "name": "MAC97975",
-        "value": "0x00000011"
-      },
-      {
-        "name": "ZPK",
-        "value": "0x00000012"
-      },
-      {
-        "name": "PVKIBM",
-        "value": "0x00000013"
-      },
-      {
-        "name": "PVKPVV",
-        "value": "0x00000014"
-      },
-      {
-        "name": "PVKOTH",
-        "value": "0x00000015"
-      },
-      {
-        "name": "DUKPT",
-        "value": "0x00000016"
-      },
-      {
-        "name": "IV",
-        "value": "0x00000017"
-      },
-      {
-        "name": "TRKBK",
-        "value": "0x00000018"
       }
     ],
     "Key Compression Type": [
@@ -2784,6 +2820,108 @@
       {
         "name": "PKCS#10",
         "value": "0x00000017"
+      },
+      {
+        "name": "Seed Private Key",
+        "value": "0x00000018"
+      }
+    ],
+    "Key Role Type": [
+      {
+        "name": "BDK",
+        "value": "0x00000001"
+      },
+      {
+        "name": "CVK",
+        "value": "0x00000002"
+      },
+      {
+        "name": "DEK",
+        "value": "0x00000003"
+      },
+      {
+        "name": "MKAC",
+        "value": "0x00000004"
+      },
+      {
+        "name": "MKSMC",
+        "value": "0x00000005"
+      },
+      {
+        "name": "MKSMI",
+        "value": "0x00000006"
+      },
+      {
+        "name": "MKDAC",
+        "value": "0x00000007"
+      },
+      {
+        "name": "MKDN",
+        "value": "0x00000008"
+      },
+      {
+        "name": "MKCP",
+        "value": "0x00000009"
+      },
+      {
+        "name": "MKOTH",
+        "value": "0x0000000a"
+      },
+      {
+        "name": "KEK",
+        "value": "0x0000000b"
+      },
+      {
+        "name": "MAC16609",
+        "value": "0x0000000c"
+      },
+      {
+        "name": "MAC97971",
+        "value": "0x0000000d"
+      },
+      {
+        "name": "MAC97972",
+        "value": "0x0000000e"
+      },
+      {
+        "name": "MAC97973",
+        "value": "0x0000000f"
+      },
+      {
+        "name": "MAC97974",
+        "value": "0x00000010"
+      },
+      {
+        "name": "MAC97975",
+        "value": "0x00000011"
+      },
+      {
+        "name": "ZPK",
+        "value": "0x00000012"
+      },
+      {
+        "name": "PVKIBM",
+        "value": "0x00000013"
+      },
+      {
+        "name": "PVKPVV",
+        "value": "0x00000014"
+      },
+      {
+        "name": "PVKOTH",
+        "value": "0x00000015"
+      },
+      {
+        "name": "DUKPT",
+        "value": "0x00000016"
+      },
+      {
+        "name": "IV",
+        "value": "0x00000017"
+      },
+      {
+        "name": "TRKBK",
+        "value": "0x00000018"
       }
     ],
     "Key Value Location Type": [
@@ -2814,79 +2952,79 @@
     ],
     "NIST Key Type": [
       {
-        "name": "Private\n  signature key",
+        "name": "Private signature key",
         "value": "0x00000001"
       },
       {
-        "name": "Public\n  signature verification key",
+        "name": "Public signature verification key",
         "value": "0x00000002"
       },
       {
-        "name": "Symmetric\n  authentication key",
+        "name": "Symmetric authentication key",
         "value": "0x00000003"
       },
       {
-        "name": "Private\n  authentication key",
+        "name": "Private authentication key",
         "value": "0x00000004"
       },
       {
-        "name": "Public\n  authentication key",
+        "name": "Public authentication key",
         "value": "0x00000005"
       },
       {
-        "name": "Symmetric\n  data encryption key",
+        "name": "Symmetric data encryption key",
         "value": "0x00000006"
       },
       {
-        "name": "Symmetric\n  key wrapping key",
+        "name": "Symmetric key wrapping key",
         "value": "0x00000007"
       },
       {
-        "name": "Symmetric\n  random number generation key",
+        "name": "Symmetric random number generation key",
         "value": "0x00000008"
       },
       {
-        "name": "Symmetric\n  master key",
+        "name": "Symmetric master key",
         "value": "0x00000009"
       },
       {
-        "name": "Private\n  key transport key",
+        "name": "Private key transport key",
         "value": "0x0000000a"
       },
       {
-        "name": "Public\n  key transport key",
+        "name": "Public key transport key",
         "value": "0x0000000b"
       },
       {
-        "name": "Symmetric\n  key agreement key",
+        "name": "Symmetric key agreement key",
         "value": "0x0000000c"
       },
       {
-        "name": "Private\n  static key agreement key",
+        "name": "Private static key agreement key",
         "value": "0x0000000d"
       },
       {
-        "name": "Public\n  static key agreement key",
+        "name": "Public static key agreement key",
         "value": "0x0000000e"
       },
       {
-        "name": "Private\n  ephemeral key agreement key",
+        "name": "Private ephemeral key agreement key",
         "value": "0x0000000f"
       },
       {
-        "name": "Public\n  ephemeral key agreement key",
+        "name": "Public ephemeral key agreement key",
         "value": "0x00000010"
       },
       {
-        "name": "Symmetric\n  authorization key",
+        "name": "Symmetric authorization key",
         "value": "0x00000011"
       },
       {
-        "name": "Private\n  authorization key",
+        "name": "Private authorization key",
         "value": "0x00000012"
       },
       {
-        "name": "Public\n  authorization key",
+        "name": "Public authorization key",
         "value": "0x00000013"
       }
     ],
@@ -3232,6 +3370,14 @@
       {
         "name": "Deactivate",
         "value": "0x00000040"
+      },
+      {
+        "name": "Encapsulate",
+        "value": "0x00000041"
+      },
+      {
+        "name": "Decapsulate",
+        "value": "0x00000042"
       }
     ],
     "Padding Method": [
@@ -3858,6 +4004,42 @@
       {
         "name": "CURVE448",
         "value": "0x00000046"
+      },
+      {
+        "name": "ANSIX9C2PNB176W1",
+        "value": "0x00000047"
+      },
+      {
+        "name": "ANSIX9C2TNB191V4",
+        "value": "0x00000048"
+      },
+      {
+        "name": "ANSIX9C2TNB191V5",
+        "value": "0x00000049"
+      },
+      {
+        "name": "ANSIX9C2TNB239V4",
+        "value": "0x0000004a"
+      },
+      {
+        "name": "ANSIX9C2TNB239V5",
+        "value": "0x0000004b"
+      },
+      {
+        "name": "CURVE25519PH",
+        "value": "0x0000004c"
+      },
+      {
+        "name": "CURVE448PH",
+        "value": "0x0000004d"
+      },
+      {
+        "name": "OpenPGP Ed25519",
+        "value": "0x0000004e"
+      },
+      {
+        "name": "OpenPGP Curve25519",
+        "value": "0x0000004f"
       }
     ],
     "Result Reason": [
@@ -4220,6 +4402,18 @@
       {
         "name": "Privilege Withdrawn",
         "value": "0x00000007"
+      },
+      {
+        "name": "Certificate Hold",
+        "value": "0x00000008"
+      },
+      {
+        "name": "Remove From CRL",
+        "value": "0x00000009"
+      },
+      {
+        "name": "AA Compromise",
+        "value": "0x0000000a"
       }
     ],
     "Secret Data Type": [
@@ -4324,7 +4518,7 @@
         "value": "0x00000004"
       },
       {
-        "name": "Create Key Pair Private\n  Key",
+        "name": "Create Key Pair Private Key",
         "value": "0x00000005"
       },
       {
@@ -4368,7 +4562,7 @@
         "value": "0x0000000f"
       },
       {
-        "name": "Re-key Key Pair Private\n  Key",
+        "name": "Re-key Key Pair Private Key",
         "value": "0x00000010"
       },
       {
@@ -4554,6 +4748,14 @@
         "value": "0x00008000"
       },
       {
+        "name": "User",
+        "value": "0x00000001"
+      },
+      {
+        "name": "System",
+        "value": "0x00000002"
+      },
+      {
         "name": "Software",
         "value": "0x00000001"
       },
@@ -4594,7 +4796,7 @@
         "value": "0x00000200"
       },
       {
-        "name": "Self\n  Managed",
+        "name": "Self Managed",
         "value": "0x00000400"
       },
       {
@@ -4620,20 +4822,12 @@
       {
         "name": "Destroyed storage",
         "value": "0x00000004"
-      },
-      {
-        "name": "User",
-        "value": "0x00000001"
-      },
-      {
-        "name": "System",
-        "value": "0x00000002"
       }
     ]
   },
   "stats": {
-    "tag_count": 395,
-    "enum_count": 62,
-    "enum_value_count": 730
+    "tag_count": 404,
+    "enum_count": 63,
+    "enum_value_count": 769
   }
 }
