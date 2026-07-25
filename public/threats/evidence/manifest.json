@@ -1560,5 +1560,29 @@
     "downloaded_at": "2026-07-16T04:19:50.883302+00:00",
     "fetch_tier": null,
     "sha256": "3a4c18893d54c21557ec4ef3e5c9bb6079cf505e5b0475b7046c858ea61ff807"
+  },
+  {
+    "threat_id": "CROS-001",
+    "source_url": "https://wwwcdn.imo.org/localresources/en/OurWork/Security/Documents/IAPH%20Cyber%20resilience%20guidelines%20for%20emerging%20technologies%20in%20the%20maritime%20supply%20chain%20ENG.pdf",
+    "main_source": "https://wwwcdn.imo.org/localresources/en/OurWork/Security/Documents/IAPH%20Cyber%20resilience%20guidelines%20for%20emerging%20technologies%20in%20the%20maritime%20supply%20chain%20ENG.pdf",
+    "download_status": "ok",
+    "evidence_file": "threats/CROS-001.html",
+    "content_type": "text/html",
+    "size_bytes": 22157048,
+    "http_status": 200,
+    "error_message": null,
+    "downloaded_at": "2026-07-25T03:15:15.262759+00:00"
+  },
+  {
+    "threat_id": "CROS-002",
+    "source_url": "https://www.cisa.gov/resources-tools/resources/post-quantum-considerations-operational-technology",
+    "main_source": "Post-Quantum Considerations for Operational Technology | CISA",
+    "download_status": "ok",
+    "evidence_file": "threats/CROS-002.html",
+    "content_type": "text/html",
+    "size_bytes": 55622,
+    "http_status": 200,
+    "error_message": null,
+    "downloaded_at": "2026-07-25T03:15:24.967041+00:00"
   }
 ]
