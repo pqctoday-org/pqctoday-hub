@@ -112,6 +112,10 @@ const PERSONA_CONFIG: Record<string, { label: string; Icon: IconComponent }> = {
 const VIEW_LABELS: Record<string, string> = {
   '/timeline': 'Timeline',
   '/playground': 'Playground',
+  '/playground/tpm-playground': 'TPM 2.0 Playground',
+  '/playground/cacp': 'KMIP 3.0 Playground',
+  '/playground/hsm': 'PKCS#11 Playground',
+  '/openssl': 'OpenSSL Studio',
   '/compliance': 'Compliance',
   '/learn': 'Learn',
   '/migrate': 'Migrate',

@@ -375,11 +375,10 @@ describe('TPM lessons replay against the real WASM engine', () => {
   // curriculum must have hit a handle the engine actually reported as
   // loaded, so every one of them succeeds. See the flushRcs comment above.
   it('flushAll() only ever flushes handles the engine reports as loaded — zero failures', () => {
-    expect(flushRcs.length, 'expected at least one flush across the curriculum').toBeGreaterThan(
-      0
-    )
-    expect(flushRcs.every((rc) => rc === 0), `non-success flush rcs: ${flushRcs.join(', ')}`).toBe(
-      true
-    )
+    expect(flushRcs.length, 'expected at least one flush across the curriculum').toBeGreaterThan(0)
+    expect(
+      flushRcs.every((rc) => rc === 0),
+      `non-success flush rcs: ${flushRcs.join(', ')}`
+    ).toBe(true)
   })
 })

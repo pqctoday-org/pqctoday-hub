@@ -1372,7 +1372,11 @@ export function ComplianceRunner() {
                   'V185-025',
                   `nvDigest=${toHex(nvDigest)} ≠ expected SHA-256=${toHex(expectedDigest)}`
                 )
-                addLine('recv', '    ← nvDigest does not match — wrong hash algorithm used ✗', false)
+                addLine(
+                  'recv',
+                  '    ← nvDigest does not match — wrong hash algorithm used ✗',
+                  false
+                )
               }
             }
           } catch (e) {
