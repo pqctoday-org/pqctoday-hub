@@ -24,6 +24,16 @@
  *   npx tsx scripts/apply-protocol-matrix-updates.ts           # dry-run
  *   npx tsx scripts/apply-protocol-matrix-updates.ts --apply
  *   npx tsx scripts/apply-protocol-matrix-updates.ts --apply --allow-dirty
+ *   npx tsx scripts/apply-protocol-matrix-updates.ts --apply --items-file=<path>
+ *
+ * `--items-file=<path>` (WP-1.11, 2026-07-25): names a JSON file holding an
+ * array of reviewer-approved {rowId, dimension, approvedStage,
+ * expectedEncoded} objects — the admin apply flow's per-item selection. When
+ * given, ONLY those (rowId, dimension) pairs are patched, never the whole
+ * report; each is re-checked against the live report first (stale-draft
+ * guard) and reported separately if it no longer matches what was approved.
+ * Without this flag the whole-report behavior is unchanged, for the
+ * standalone `npm run apply:protocol-matrix` workflow.
  *
  * Exit codes:
  *   0 — clean (no updates, or apply succeeded)
@@ -34,6 +44,7 @@
 import { execSync } from 'node:child_process'
 import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
+import { DRAFT_STAGE_LEVEL, type DraftStage } from '../src/data/pqcProtocolMatrix'
 
 interface StageDelta {
   row_id: string
@@ -77,9 +88,13 @@ function todayIso(): string {
  *
  * Returns the new file contents (or the original if no patch applied).
  */
-function patchMatrix(source: string, deltas: StageDelta[]): { next: string; applied: number } {
+export function patchMatrix(
+  source: string,
+  deltas: StageDelta[]
+): { next: string; applied: number; appliedKeys: string[]; downgrades: string[] } {
   let next = source
   let applied = 0
+  const appliedKeys: string[] = []
   const grouped = new Map<string, StageDelta[]>()
   for (const d of deltas) {
     if (!d.current_stage) continue
@@ -88,9 +103,39 @@ function patchMatrix(source: string, deltas: StageDelta[]): { next: string; appl
     grouped.get(key)!.push(d)
   }
 
+  const downgrades: string[] = []
+
   for (const [key, ds] of grouped) {
     const [rowId, dim] = key.split('::')
     const newStage = ds[0].current_stage!
+    const oldStage = ds[0].encoded_stage
+
+    // DOWNGRADE GUARD (2026-07-25, deferred finding F8 from the 07-23 E2E
+    // validation). This applier wrote current_stage unconditionally. The
+    // IETF datatracker query can legitimately return a LOWER stage than
+    // what's encoded — a draft that supersedes a published RFC, a query
+    // resolving to the wrong document, a transient API answer — and the
+    // result would have been the matrix silently showing a published RFC as
+    // un-published. That is the single worst thing this file can say.
+    //
+    // Ranking comes from DRAFT_STAGE_LEVEL, the same map that drives the
+    // heatmap palette, rather than a second ordering invented here. Note it
+    // is deliberately non-injective (wg-document and wg-last-call are both
+    // 4; iesg-submitted and rfc-editor-queue are both 6) — so this only
+    // blocks a STRICT decrease, and same-rank moves still apply.
+    //
+    // A downgrade is reported, never silently skipped: a real regression
+    // needs a human to look at it, not to be swallowed.
+    if (oldStage && newStage) {
+      const oldLevel = DRAFT_STAGE_LEVEL[oldStage as DraftStage]
+      const newLevel = DRAFT_STAGE_LEVEL[newStage as DraftStage]
+      if (oldLevel !== undefined && newLevel !== undefined && newLevel < oldLevel) {
+        downgrades.push(
+          `${rowId}::${dim}: ${oldStage} (level ${oldLevel}) -> ${newStage} (level ${newLevel})`
+        )
+        continue
+      }
+    }
     const newNote = ds[0].last_updated
       ? `${newStage.replace(/-/g, ' ')} (datatracker ${ds[0].last_updated})`
       : newStage.replace(/-/g, ' ')
@@ -136,6 +181,7 @@ function patchMatrix(source: string, deltas: StageDelta[]): { next: string; appl
     if (nextBlock !== block) {
       next = next.slice(0, dimStart) + nextBlock + next.slice(dimEnd + 1)
       applied += 1
+      appliedKeys.push(key)
     }
   }
 
@@ -146,13 +192,117 @@ function patchMatrix(source: string, deltas: StageDelta[]): { next: string; appl
     )
   }
 
-  return { next, applied }
+  return { next, applied, appliedKeys, downgrades }
+}
+
+/** One reviewer-approved item, as the admin apply flow writes it (WP-1.11,
+ * 2026-07-25) — `--items-file=<path>` names a JSON file holding an array of
+ * these. `approvedStage` is `resolution.value` (falls back to the finding's
+ * own `expected` when a reviewer approved as-is without editing); `
+ * expectedEncoded` is the finding's `current` — the encoded stage the
+ * reviewer actually saw. Both are cross-checked against the LIVE report
+ * below, same "stale-draft guard" shape as every Python-side field-
+ * correction applier: the report can be regenerated between approval and
+ * apply, and a mismatch there must skip loudly, not silently patch the
+ * wrong value. */
+export interface ApprovedItem {
+  rowId: string
+  dimension: string
+  approvedStage: string
+  expectedEncoded: string | null
+}
+
+function loadItemsFilter(): ApprovedItem[] | null {
+  const arg = process.argv.slice(2).find((a) => a.startsWith('--items-file='))
+  if (!arg) return null
+  const path = arg.slice('--items-file='.length)
+  return JSON.parse(readFileSync(path, 'utf-8')) as ApprovedItem[]
+}
+
+/**
+ * Narrows `report.deltas` down to exactly the reviewer-approved (rowId,
+ * dimension) pairs, applying the stale-draft guard. This is the fix for
+ * the whole-file/per-item mismatch (WP-1.11): before this, ANY approved
+ * protocol-matrix item caused the ENTIRE report to be patched — approving
+ * one delta and rejecting another had no effect, because nothing told this
+ * script which ones were actually reviewed. `deltas` returned here carry
+ * the delta AS RECORDED IN THE LIVE REPORT (not the reviewer's stale copy)
+ * — the reviewer only chose WHICH pair to write, never a value that
+ * overrides the deterministic datatracker source of truth.
+ */
+export interface StaleItem {
+  key: string
+  reason: string
+}
+
+export function narrowToApprovedItems(
+  deltas: StageDelta[],
+  items: ApprovedItem[]
+): { narrowed: StageDelta[]; stale: StaleItem[] } {
+  const byKey = new Map<string, StageDelta>()
+  for (const d of deltas) byKey.set(`${d.row_id}::${d.dimension}`, d)
+  const narrowed: StageDelta[] = []
+  const stale: StaleItem[] = []
+  for (const item of items) {
+    const key = `${item.rowId}::${item.dimension}`
+    const live = byKey.get(key)
+    if (!live) {
+      stale.push({
+        key,
+        reason: 'no longer in the report (already applied, or the drift resolved itself)',
+      })
+      continue
+    }
+    if (item.expectedEncoded != null && live.encoded_stage !== item.expectedEncoded) {
+      stale.push({
+        key,
+        reason:
+          `encoded stage is now ${live.encoded_stage ?? 'null'}, not the ` +
+          `${item.expectedEncoded} this approval was based on`,
+      })
+      continue
+    }
+    if (live.current_stage !== item.approvedStage) {
+      stale.push({
+        key,
+        reason:
+          `datatracker now reports ${live.current_stage ?? 'null'}, not the ` +
+          `${item.approvedStage} that was approved`,
+      })
+      continue
+    }
+    narrowed.push(live)
+  }
+  return { narrowed, stale }
+}
+
+function printResultJson(appliedKeys: string[], stale: StaleItem[], downgrades: string[]): void {
+  // One machine-parseable line, additive to the human-readable output above
+  // it — only ever printed in --items-file mode, so the standalone `npm run
+  // apply:protocol-matrix` CLI workflow's output is byte-for-byte unchanged.
+  // Bare keys are derived HERE, once, by the code that built the formatted
+  // strings in the first place — never re-parsed downstream (a Python
+  // process splitting "rowId::dim: reason" on ':' would trip over the '::'
+  // inside the key itself).
+  const staleKeys = stale.map((s) => s.key)
+  const blockedKeys = downgrades.map((d) => d.split(': ')[0])
+  console.log(
+    'RESULT-JSON: ' +
+      JSON.stringify({
+        appliedKeys,
+        staleKeys,
+        blockedKeys,
+        staleReasons: stale.map((s) => `${s.key}: ${s.reason}`),
+        blockedReasons: downgrades,
+      })
+  )
 }
 
 function main(): void {
   const args = new Set(process.argv.slice(2))
   const apply = args.has('--apply')
   const allowDirty = args.has('--allow-dirty')
+  const itemsFilter = loadItemsFilter()
 
   if (!existsSync(REPORT_FILE)) {
     console.error(`ERROR: report not found at ${REPORT_FILE}`)
@@ -161,19 +311,65 @@ function main(): void {
   }
   const report = JSON.parse(readFileSync(REPORT_FILE, 'utf-8')) as EnrichmentReport
   if (!report.deltas || report.deltas.length === 0) {
+    if (itemsFilter) {
+      printResultJson(
+        [],
+        itemsFilter.map((i) => ({
+          key: `${i.rowId}::${i.dimension}`,
+          reason: 'report has no deltas at all',
+        })),
+        []
+      )
+    }
     console.log('No stage drift to apply.')
     process.exit(0)
   }
 
+  let deltasToPatch = report.deltas
+  let staleItems: StaleItem[] = []
+  if (itemsFilter) {
+    const r = narrowToApprovedItems(report.deltas, itemsFilter)
+    deltasToPatch = r.narrowed
+    staleItems = r.stale
+    if (staleItems.length > 0) {
+      console.error(`STALE ${staleItems.length} approved item(s) — not applied:`)
+      for (const s of staleItems) console.error(`  ${s.key}: ${s.reason}`)
+      console.error('')
+    }
+  }
+
   const source = readFileSync(MATRIX_FILE, 'utf-8')
-  const { next, applied } = patchMatrix(source, report.deltas)
+  const { next, applied, appliedKeys, downgrades } = patchMatrix(source, deltasToPatch)
+
+  // Reported before anything else, and on stderr, because a downgrade is not
+  // routine: it means the feed disagreed with the matrix in the one direction
+  // that would make published work look unpublished. Blocked, never silently
+  // dropped — a real regression needs a human, and a spurious one needs the
+  // query fixed.
+  if (downgrades.length > 0) {
+    console.error(`BLOCKED ${downgrades.length} stage DOWNGRADE(s) — not applied:`)
+    for (const d of downgrades) console.error(`  ${d}`)
+    console.error('A lower stage than the one encoded usually means the datatracker')
+    console.error('query resolved to the wrong document, not that work regressed.')
+    console.error('Verify against the datatracker by hand before changing anything.')
+    console.error('')
+  }
 
   if (applied === 0) {
+    if (itemsFilter) printResultJson([], staleItems, downgrades)
+    if (downgrades.length > 0) {
+      // Exit 1 = "drift detected, nothing applied" (the documented meaning),
+      // NOT 0. Reporting "matrix already matches" here would be false: the
+      // feed disagreed, we refused to act on it, and that needs attention.
+      console.error('No forward drift to apply; only blocked downgrades.')
+      process.exit(1)
+    }
     console.log('Patch found no targets to update (matrix already matches).')
     process.exit(0)
   }
 
   if (!apply) {
+    if (itemsFilter) printResultJson(appliedKeys, staleItems, downgrades)
     console.log(`DRY-RUN: would patch ${applied} dimension block(s).`)
     console.log('Re-run with --apply to write changes.')
     console.log()
@@ -189,14 +385,28 @@ function main(): void {
   }
 
   if (!allowDirty && isMatrixDirty()) {
+    if (itemsFilter) printResultJson([], staleItems, downgrades)
     console.error('ERROR: matrix file has uncommitted changes; refusing to overwrite.')
     console.error('Either commit them first, or pass --allow-dirty.')
     process.exit(2)
   }
 
   writeFileSync(MATRIX_FILE, next)
+  if (itemsFilter) printResultJson(appliedKeys, staleItems, downgrades)
   console.log(`OK Applied ${applied} stage update(s) to ${MATRIX_FILE}`)
   console.log(`OK Bumped PROTOCOL_MATRIX_LAST_UPDATED to ${todayIso()}`)
 }
 
-main()
+// Run only when invoked as a script, not when imported. Without this guard
+// `import { patchMatrix }` executes the whole CLI — including its
+// process.exit() calls — which is what made the pure patch function
+// untestable in the first place (2026-07-25).
+const invokedDirectly =
+  typeof process !== 'undefined' &&
+  Array.isArray(process.argv) &&
+  process.argv[1] !== undefined &&
+  import.meta.url === new URL(`file://${process.argv[1]}`).href
+
+if (invokedDirectly) {
+  main()
+}
