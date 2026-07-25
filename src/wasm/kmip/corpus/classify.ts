@@ -39,7 +39,7 @@ export const CHAINED_TEST_GROUPS: Record<string, string[]> = {
 
 /** OASIS tests that pin one of several MUTUALLY EXCLUSIVE conformant
  * server behaviors (RNGSeed: full-consume / partial-consume / ignore-seed
- * / deny — KMIP 3.0 §6.1.55 permits any; `ops/deps.rs::RngSeedMode` made
+ * / deny — KMIP 3.0 §6.1.57 permits any; `ops/deps.rs::RngSeedMode` made
  * all four real in engine 0.12.0). The wasm binding now exposes the mode
  * as a constructor parameter, so instead of skipping these, the replay
  * BOOTS each variant test on an engine pinned to its expected mode —

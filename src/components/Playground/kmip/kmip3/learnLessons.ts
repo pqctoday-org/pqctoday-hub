@@ -313,7 +313,7 @@ export const LESSONS: Lesson[] = [
         },
       ],
       prose:
-        "That's as far as this demo's wire flow goes for ECDH: each side Gets the other's public key and computes the shared secret with local elliptic-curve math. KMIP does have an operation that CAN run the agreement server-side — Derive Key with Derivation Method = Asymmetric Key (§6.1.18, and this engine implements it) — but even that carries no ciphertext over the wire; it just references the two already-known key UIDs. Nothing resembling Encapsulate/Decapsulate's wire-carried secret exists for ECDH either way.",
+        "That's as far as this demo's wire flow goes for ECDH: each side Gets the other's public key and computes the shared secret with local elliptic-curve math. KMIP does have an operation that CAN run the agreement server-side — Derive Key with Derivation Method = Asymmetric Key (§6.1.19, and this engine implements it) — but even that carries no ciphertext over the wire; it just references the two already-known key UIDs. Nothing resembling Encapsulate/Decapsulate's wire-carried secret exists for ECDH either way.",
     },
     modernize: {
       algorithm: 'ML-KEM-768',
@@ -620,7 +620,7 @@ export const LESSONS: Lesson[] = [
       { label: 'CryptographicAlgorithm value', a: 'ML-KEM-768', b: 'X25519MLKEM768', same: false },
     ],
     notes: [
-      "X25519MLKEM768 is a single first-class KMIP 3.0 WD19 CryptographicAlgorithm value (draft codepoint 0x5C) — one managed object, ordinary Encapsulate/Decapsulate. Your client code doesn't know two algorithms are running underneath; the engine combines both secrets by pure concatenation (ss_mlkem ‖ ss_x25519, 64 B total) — no KDF, matching draft-ietf-tls-ecdhe-mlkem exactly.",
+      "X25519MLKEM768 is a single first-class KMIP 3.0 CSD02 CryptographicAlgorithm value (published codepoint 0x5C) — one managed object, ordinary Encapsulate/Decapsulate. Your client code doesn't know two algorithms are running underneath; the engine combines both secrets by pure concatenation (ss_mlkem ‖ ss_x25519, 64 B total) — no KDF, matching draft-ietf-tls-ecdhe-mlkem exactly.",
       "A second hybrid variant exists for shops standardized on NIST curves instead of X25519: SecP256r1MLKEM768 (draft codepoint 0x5D, IANA TLS group 0x11EB) — same idea, ECDH P-256 in place of X25519, same pure-concatenation combiner (ss_p256 ‖ ss_mlkem). Not run as its own step here since the wire flow is identical to X25519MLKEM768 above; try it directly in the Commands tab's algorithm picker.",
       '⚠ What about hybrid SIGNATURES — e.g. "need both ECDSA and ML-DSA to verify"? KMIP has no native composite-signature algorithm or dual-sign operation yet; no committee draft defines one. Two spec-compliant workarounds exist today: (1) an extension codepoint (KMIP reserves 8XXXXXXX) registering a single composite name, planned but not yet standard, or (2) two independently-linked keys signed together inside ONE Batch request — which you actually can run: see the Batch & Macros tab\'s "Provision & sign" recipe pattern.',
     ],
@@ -638,7 +638,7 @@ export const LESSONS: Lesson[] = [
     title: 'Split custody: M-of-N key shares',
     blurb: 'Split a key into 5 shares where any 3 recover it — and 2 honestly cannot.',
     setup:
-      "A root key guarded by one custodian is one phished laptop away from disaster. KMIP 3.0's Create Split Key / Join Split Key (§6.1.12/§6.1.31) split a key into N share objects where any M — the threshold — reconstruct it, and fewer than M genuinely cannot. All four §11.54 secret-sharing methods run for real in this engine; this lesson uses polynomial (Shamir) sharing over GF(2⁸). Fun fact: implementing the GF(2¹⁶) variant surfaced a transcription error in the KMIP 3.0 draft's own multiplication formula — re-derived from first principles and cross-checked against the spec's inverse formula before the implementation shipped.",
+      "A root key guarded by one custodian is one phished laptop away from disaster. KMIP 3.0's Create Split Key / Join Split Key (§6.1.12/§6.1.33) split a key into N share objects where any M — the threshold — reconstruct it, and fewer than M genuinely cannot. All four §11.54 secret-sharing methods run for real in this engine; this lesson uses polynomial (Shamir) sharing over GF(2⁸). Fun fact: implementing the GF(2¹⁶) variant surfaced a transcription error in the KMIP 3.0 draft's own multiplication formula — re-derived from first principles and cross-checked against the spec's inverse formula before the implementation shipped.",
     sideHeaders: ['One custodian', 'Split custody'],
     classical: {
       algorithm: 'AES-256',
@@ -723,7 +723,7 @@ export const LESSONS: Lesson[] = [
     title: 'Ask now, answer later: asynchronous jobs',
     blurb: 'Enqueue an op as a real background job, then Poll its correlation value.',
     setup:
-      "Some HSM operations are slow — a Classic McEliece keygen takes real time even on good hardware. KMIP 3.0 §8.1.2 lets a client mark a request 'Asynchronous Indicator = Mandatory': instead of blocking, the server answers OperationPending plus a correlation value — a claim ticket for a genuine background job. Poll (§6.1.43) redeems the ticket; Cancel (§6.1.5) races the executor to stop it; Process (§6.1.44) blocks until it finishes; Query Asynchronous Requests (§6.1.46) lists what's in flight. All four are real in this engine as of 0.12.0 — this lesson runs the whole loop on a Hash, the one op that needs no key setup.",
+      "Some HSM operations are slow — a Classic McEliece keygen takes real time even on good hardware. KMIP 3.0 §8.1.2 lets a client mark a request 'Asynchronous Indicator = Mandatory': instead of blocking, the server answers OperationPending plus a correlation value — a claim ticket for a genuine background job. Poll (§6.1.45) redeems the ticket; Cancel (§6.1.5) races the executor to stop it; Process (§6.1.48) blocks until it finishes; Query Asynchronous Requests (§6.1.48) lists what's in flight. All four are real in this engine as of 0.12.0 — this lesson runs the whole loop on a Hash, the one op that needs no key setup.",
     sideHeaders: ['Synchronous', 'Asynchronous'],
     classical: {
       algorithm: null,

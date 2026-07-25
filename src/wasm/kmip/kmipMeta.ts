@@ -47,7 +47,7 @@ export const TAG_NAMES: Record<string, string> = {
   '0x420064': 'PrivateKey',
   '0x420092': 'TimeStamp',
   '0x420094': 'UniqueIdentifier',
-  // §6.1.62 Validate / §6.1.6 Certify / §6.1.50 Re-certify (Certificate
+  // §6.1.64 Validate / §6.1.6 Certify / §6.1.52 Re-certify (Certificate
   // Services, WP5) — cross-checked against `pqctoday-hsm/kmip/src/kmip30/
   // wire.rs`'s `tags::*` constants (the decoder these are built to match).
   '0x420013': 'Certificate',
@@ -279,7 +279,7 @@ export const ALGORITHMS: AlgoChoice[] = [
     ],
   },
   { value: 'AES', label: 'AES-256 (symmetric, quantum-safe)', kind: 'symmetric', pqc: false },
-  // Hybrid KEMs (KMIP 3.0 WD19 names, draft-track codepoints) — RUNNABLE:
+  // Hybrid KEMs (KMIP 3.0 CSD02 names, published codepoints) — RUNNABLE:
   // the engine composes them in-process (K6). These are the one hybrid
   // primitive the stack executes; BSI-style hybrid mandates are testable.
   { value: 'X25519MLKEM768', label: 'X25519MLKEM768 (hybrid KEM)', kind: 'kem', pqc: true },

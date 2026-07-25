@@ -267,7 +267,7 @@ describe('op-template pipeline (real wasm engine)', () => {
     expect(resultReason).toBeDefined()
   })
 
-  it('Validate on an empty chain is Success/Unknown, not an error — §6.1.62 "nothing to check"', () => {
+  it('Validate on an empty chain is Success/Unknown, not an error — §6.1.64 "nothing to check"', () => {
     // Since the pure-Rust cert-ops port (WP4), Validate dispatches for
     // real here (previously OperationNotSupported — ring/rcgen didn't
     // cross-compile to wasm32). An empty chain can't be affirmed Valid,
@@ -373,7 +373,7 @@ describe('op-template pipeline (real wasm engine)', () => {
     expect(info.publicKeyOID).toBe(publicKeyOID)
     expect(info.extensionOIDs).toEqual([])
 
-    // Validate needs the full chain supplied explicitly (§6.1.62 — it
+    // Validate needs the full chain supplied explicitly (§6.1.64 — it
     // never auto-resolves an issuer from just the leaf's own UID; native
     // counterpart: validate.rs::leaf_with_ca_chain_is_valid). Leaf UID
     // first, then the CA's own stored certificate UID.

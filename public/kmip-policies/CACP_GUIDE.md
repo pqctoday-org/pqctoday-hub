@@ -370,7 +370,7 @@ and each has a hands-on surface:
 
 ## 6. Certificate Services — pure-Rust cert-ops port (0.14, verified 2026-07-09)
 
-Through 0.13, §6.1.6 Certify, §6.1.50 Re-certify, and §6.1.62 Validate were
+Through 0.13, §6.1.6 Certify, §6.1.52 Re-certify, and §6.1.64 Validate were
 real, spec'd operations with real NATIVE handlers — but this in-browser
 playground answered all three with `OperationNotSupported`, because their
 crypto backends (`rcgen` for Certify's CSR check, `ring`-backed
@@ -394,10 +394,10 @@ longer gates either module.
   real `SubjectPublicKeyInfo` on record (true for a `Register`'d key; NOT
   true for a bare `CreateKeyPair` output, whose material lives only in the
   engine) — use "Set up demo CA" (below) or a CSR to sidestep this.
-- **Re-certify (§6.1.50).** Renews an existing certificate with a fresh
+- **Re-certify (§6.1.52).** Renews an existing certificate with a fresh
   validity window (`Offset` seconds from now), or re-keys it with a new
   CSR. Links `Replaced`/`Replacement` back to the original.
-- **Validate (§6.1.62).** Checks a supplied/stored certificate chain:
+- **Validate (§6.1.64).** Checks a supplied/stored certificate chain:
   `Valid` only when every certificate parses, is within its validity
   window, every non-root signature verifies against its issuer, and the
   chain reaches a self-signed trust anchor present in the set. Anything
