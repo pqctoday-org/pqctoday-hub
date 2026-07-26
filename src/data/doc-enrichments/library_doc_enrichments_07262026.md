@@ -60,7 +60,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
-
 ## AFiR-Post-Quantum-Signed-Inference-Receipts-as-a-TEE-Free-Pr
 
 - **Reference ID**: AFiR-Post-Quantum-Signed-Inference-Receipts-as-a-TEE-Free-Pr
@@ -116,7 +115,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
-
 ## Analysis-of-Hybrid-Key-Establishment-and-Standalone-ML-KEM-i
 
 - **Reference ID**: Analysis-of-Hybrid-Key-Establishment-and-Standalone-ML-KEM-i
@@ -172,7 +170,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
-
 ## Composite-ML-DSA-Signatures-for-SSH
 
 - **Reference ID**: Composite-ML-DSA-Signatures-for-SSH
@@ -228,7 +225,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
-
 ## EAP-WSIM-SIM-Based-EAP-Authentication-for-Enterprise-Wi-Fi-U
 
 - **Reference ID**: EAP-WSIM-SIM-Based-EAP-Authentication-for-Enterprise-Wi-Fi-U
@@ -284,7 +280,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
-
 ## Gaps-in-Operational-Visibility-for-Post-Quantum-Cryptographi
 
 - **Reference ID**: Gaps-in-Operational-Visibility-for-Post-Quantum-Cryptographi
@@ -340,7 +335,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
-
 ## Merkle-Tree-Agent-Certificates-MTAC-Batch-Issued-Post-Quantu
 
 - **Reference ID**: Merkle-Tree-Agent-Certificates-MTAC-Batch-Issued-Post-Quantu
@@ -396,7 +390,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
-
 ## ML-DSA-44-Ed255192-Composite-Signatures-in-SSH
 
 - **Reference ID**: ML-DSA-44-Ed255192-Composite-Signatures-in-SSH
@@ -405,41 +398,41 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Publication Date**: 2026-07-26
 - **Last Updated**: Not specified
 - **Document Status**: Unverified — needs review
-- **Main Topic**: Specification of the MLDSA44-Ed25519-SHA512 composite signature scheme integration into the Secure Shell (SSH) protocol.
+- **Main Topic**: Specification of the ML-DSA-44/Ed25519 composite signature scheme integration into the Secure Shell (SSH) protocol.
 - **PQC Algorithms Covered**: ML-DSA
-- **Quantum Threats Addressed**: security against both quantum and classical adversaries
+- **Quantum Threats Addressed**: Quantum computing threats to traditional asymmetric cryptography
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: None detected
-- **Leaders Contributions Mentioned**: Damien Miller
-- **PQC Products Mentioned**: None detected
+- **Leaders Contributions Mentioned**: D. Miller (Author)
+- **PQC Products Mentioned**: OpenSSH
 - **Protocols Covered**: SSH
 - **Infrastructure Layers**: None detected
 - **Standardization Bodies**: IETF
 - **Compliance Frameworks Referenced**: None detected
 - **Classical Algorithms Referenced**: Ed25519; SHA-512
-- **Key Takeaways**: The document specifies the MLDSA44-Ed25519-SHA512 composite signature scheme for SSH; The scheme combines ML-DSA with Ed25519 to provide security against quantum and classical adversaries; This is an expired Internet-Draft replaced by draft-miller-sshm-composite-sigs
+- **Key Takeaways**: The document defines a composite signature scheme combining ML-DSA-44 and Ed25519 for SSH; Composite public keys are 1344 bytes and private keys are 64 bytes; Signatures are 3373 bytes consisting of concatenated ML-DSA and Ed25519 signatures; Implementations must not reuse component key material between composite and non-composite keys; The scheme uses the identifier ssh-mldsa44-ed25519@openssh.com
 - **Security Levels & Parameters**: ML-DSA-44
-- **Hybrid & Transition Approaches**: Composite signature scheme
-- **Pure PQC KEM Support**: No
+- **Hybrid & Transition Approaches**: Composite signatures
+- **Pure PQC KEM Support**: Not Applicable
 - **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Support**: Not Applicable
 - **Hybrid PQC KEM Evidence**: None detected
 - **Pure PQC Signature Support**: No
 - **Pure PQC Signature Evidence**: None detected
 - **Hybrid PQC Signature Support**: Yes
-- **Hybrid PQC Signature Evidence**: "MLDSA44-Ed25519-SHA512 composite signature scheme"
+- **Hybrid PQC Signature Evidence**: "composite signature scheme... combines... ML-DSA... with... Ed25519" (§1)
 - **PQC Heatmap Protocols Covered**: SSH
-- **PQC Heatmap Protocols Evidence**: SSH: "integration of the MLDSA44-Ed25519-SHA512 composite signature scheme into the Secure Shell (SSH) protocol"
-- **Lifecycle State**: Expired
-- **Performance & Size Considerations**: None detected
+- **PQC Heatmap Protocols Evidence**: SSH: "integration of the... composite signature scheme into the Secure Shell (SSH) protocol" (§Abstract)
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: Composite public key 1344 bytes; Composite private key 64 bytes; Composite signature 3373 bytes; ML-DSA-44 public key 1312 bytes; Ed25519 public key 32 bytes; ML-DSA-44 signature 3309 bytes; Ed25519 signature 64 bytes
 - **Target Audience**: Developer; Security Architect
-- **Implementation Prerequisites**: None detected
+- **Implementation Prerequisites**: Cryptographically sound source for seeds (CSPRNG/RBG); Support for ML-DSA-44 and Ed25519 primitives
 - **Relevant PQC Today Features**: hybrid-crypto; vpn-ssh-pqc; Algorithms
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
 - **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
+- **QRNG & Entropy Sources**: CSPRNG/RBG
 - **Constrained Device & IoT Suitability**: None detected
 - **Supply Chain & Vendor Risk**: None detected
 - **Deployment & Migration Complexity**: None detected
@@ -447,12 +440,11 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Organizational Readiness**: None detected
 - **Math Family**: Lattice
 - **PQC Round**: Standardised
-- **Source Document**: ML-DSA-44-Ed255192-Composite-Signatures-in-SSH.html (40,952 bytes, 1,624 extracted chars)
-- **Extraction Timestamp**: 2026-07-26T09:24:17
+- **Source Document**: ML-DSA-44-Ed255192-Composite-Signatures-in-SSH.html (14,017 bytes, 13,847 extracted chars)
+- **Extraction Timestamp**: 2026-07-26T11:10:38
 - **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
-
 ## Module-Lattice-Based-Signatures-with-Merkle-Tree-Ladders-ML
 
 - **Reference ID**: Module-Lattice-Based-Signatures-with-Merkle-Tree-Ladders-ML
@@ -508,7 +500,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
-
 ## MVPS-Proof-Envelope-Tamper-Evident-Binding-of-Theorem-Catalo
 
 - **Reference ID**: MVPS-Proof-Envelope-Tamper-Evident-Binding-of-Theorem-Catalo
@@ -564,7 +555,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
-
 ## N-PAMP-Native-Post-Quantum-Agent-Messaging-Protocol
 
 - **Reference ID**: N-PAMP-Native-Post-Quantum-Agent-Messaging-Protocol
@@ -620,7 +610,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
-
 ## New-Hybrid-Post-Quantum-Protocol-Specification
 
 - **Reference ID**: New-Hybrid-Post-Quantum-Protocol-Specification
@@ -629,54 +618,53 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Publication Date**: 2026-07-26
 - **Last Updated**: Not specified
 - **Document Status**: Unverified — needs review
-- **Main Topic**: Specification of the Abdelaziz Hybrid Key Protocol (AHKP) for hybrid post-quantum security and future transition to full PQC.
-- **PQC Algorithms Covered**: None detected
+- **Main Topic**: Specification of the Abdelaziz Hybrid Key Protocol (AHKP), a hybrid post-quantum protocol for secure transport layer communication using ML-KEM, ML-DSA, and X25519.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA
 - **Quantum Threats Addressed**: quantum attacks
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: None detected
-- **Leaders Contributions Mentioned**: Abdelaziz Muhammad (Author)
+- **Leaders Contributions Mentioned**: A. Muhammad (Author)
 - **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
+- **Protocols Covered**: AHKP
+- **Infrastructure Layers**: HSM; TPM
 - **Standardization Bodies**: IETF
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: AHKP is designed to protect systems using hybrid post-quantum mechanics; The protocol aims to facilitate a transition to full PQC in the future; It is intended for use in high-security environments; The document is an expired Internet-Draft with no formal IETF standing
+- **Compliance Frameworks Referenced**: NIST-SP800-140
+- **Classical Algorithms Referenced**: X25519; AES-256-GCM; SHAKE256
+- **Key Takeaways**: Clients must solve a cryptographic Proof of Work within 450ms to establish a connection; The protocol mandates hybrid key exchange using both ML-KEM and X25519 to derive shared secrets; ML-DSA is used for mutual authentication with 3-hour rotating certificates; Server response times must be strictly controlled (75ms-145ms) to prevent timing side-channel attacks; Packet sizes are expected to be 6-10KB due to hybrid key and certificate overhead.
 - **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: hybrid, post-quantum mechanics; transition to full PQC
+- **Hybrid & Transition Approaches**: Hybrid PQC protocol; hybrid key exchange (ML-KEM + X25519)
 - **Pure PQC KEM Support**: No
 - **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: No
-- **Hybrid PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: "client generates an ML-KEM and X25519 keypair" (§4)
 - **Pure PQC Signature Support**: No
 - **Pure PQC Signature Evidence**: None detected
 - **Hybrid PQC Signature Support**: No
 - **Hybrid PQC Signature Evidence**: None detected
 - **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Expired
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Security Architect; Researcher
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: hybrid-crypto; migration-program; pqc-risk-management
-- **Implementation Attack Surface**: None detected
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: PoW solve time <450ms; Server response time 75ms-145ms; Packet size 6-10KB; MTU 1450-1500 bytes
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: GPU, HSM, or TPM for side-channel protection; CSPRNG for nonce generation
+- **Relevant PQC Today Features**: hybrid-crypto; Algorithms; Threats; hsm-pqc
+- **Implementation Attack Surface**: timing attacks; side-channel attacks (power cycles, electromagnetic spikes); replay attacks; DDoS; ARP poisoning; buffer overflow
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
 - **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
+- **QRNG & Entropy Sources**: CSPRNGs
 - **Constrained Device & IoT Suitability**: None detected
 - **Supply Chain & Vendor Risk**: None detected
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: Not Applicable
-- **Source Document**: New-Hybrid-Post-Quantum-Protocol-Specification.html (41,042 bytes, 1,512 extracted chars)
-- **Extraction Timestamp**: 2026-07-26T09:24:19
+- **Math Family**: Lattice; Hybrid
+- **PQC Round**: Standardised
+- **Source Document**: New-Hybrid-Post-Quantum-Protocol-Specification.html (23,999 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-07-26T11:10:38
 - **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
-
 ## New-Pure-Post-Quantum-Protocol-Specification
 
 - **Reference ID**: New-Pure-Post-Quantum-Protocol-Specification
@@ -685,54 +673,53 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Publication Date**: 2026-07-26
 - **Last Updated**: Not specified
 - **Document Status**: Unverified — needs review
-- **Main Topic**: Specification of the Abdelaziz Pure Key Protocol (APKP) for pure post-quantum security in high-security environments.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: quantum attacks
+- **Main Topic**: Specification of the Abdelaziz Pure Key Protocol (APKP), a pure post-quantum transport protocol using ML-KEM, HQC, and ML-DSA.
+- **PQC Algorithms Covered**: ML-DSA; ML-KEM-768; HQC-256
+- **Quantum Threats Addressed**: Quantum attacks; downgrade attacks to classical algorithms
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: None detected
-- **Leaders Contributions Mentioned**: Abdelaziz Muhammad (Author)
+- **Leaders Contributions Mentioned**: A. Muhammad (Author)
 - **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
+- **Protocols Covered**: TLS 1.3; UDP; TCP
 - **Infrastructure Layers**: None detected
 - **Standardization Bodies**: IETF
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: APKP is designed for pure post-quantum mechanics without classical fallback; The protocol targets high-security environments to protect against quantum attacks; The document serves as a specification for transitioning to full PQC in the future; This is an expired Internet-Draft with no formal IETF standing.
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: transition to full PQC
-- **Pure PQC KEM Support**: No
-- **Pure PQC KEM Evidence**: None detected
+- **Compliance Frameworks Referenced**: BCP 78; BCP 79; BCP 14
+- **Classical Algorithms Referenced**: AES-256-GCM; SHAKE256; SHA-384; HKDF; X25519; ECDSA; RSA
+- **Key Takeaways**: APKP mandates pure post-quantum key exchange using ML-KEM-768 and HQC-256 to eliminate classical downgrade risks; Clients must solve a cryptographic Proof of Work within 450ms to establish connections; ML-DSA is used for mutual authentication and signing handshake parameters; Packet sizes are expected to be 22-27KB, requiring UDP splitting mechanisms similar to IKE; The protocol replaces TLS hybrid approaches with pure PQC to ensure security against quantum computers.
+- **Security Levels & Parameters**: ML-KEM-768; HQC-256; AES-256
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Yes
+- **Pure PQC KEM Evidence**: "The Abdelaziz Pure Key Protocol is a pure PQC protocol" (§1)
 - **Hybrid PQC KEM Support**: No
 - **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: No
-- **Pure PQC Signature Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "ML-DSA... primarily used... for mutual authentication" (§3.2)
 - **Hybrid PQC Signature Support**: No
 - **Hybrid PQC Signature Evidence**: None detected
 - **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Expired
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Security Architect; Researcher
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Algorithms; Threats; migration-program
-- **Implementation Attack Surface**: None detected
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: Expected packet size 22-27KB; PoW solve time <450ms
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: Cryptographic hash solving capability; ML-KEM and HQC library support; ML-DSA library support; UDP packet splitting mechanism
+- **Relevant PQC Today Features**: Algorithms; hybrid-crypto; tls-basics; vpn-ssh-pqc
+- **Implementation Attack Surface**: MITM attacks; TCP SYN flood attacks; IP spoofing; database manipulation
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
 - **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
+- **QRNG & Entropy Sources**: CSPRNGs for nonce generation
 - **Constrained Device & IoT Suitability**: None detected
 - **Supply Chain & Vendor Risk**: None detected
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: Not Applicable
-- **Source Document**: New-Pure-Post-Quantum-Protocol-Specification.html (40,626 bytes, 1,478 extracted chars)
-- **Extraction Timestamp**: 2026-07-26T09:24:19
+- **Math Family**: Lattice; Code-based
+- **PQC Round**: Standardised
+- **Source Document**: New-Pure-Post-Quantum-Protocol-Specification.html (34,048 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-07-26T11:10:39
 - **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
-
 ## New-Pure-Post-Quantum-Protocol-Specification-2
 
 - **Reference ID**: New-Pure-Post-Quantum-Protocol-Specification-2
@@ -788,7 +775,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
-
 ## Post-Quantum-Cryptographic-Discipline-for-x402-STARK-Receipt
 
 - **Reference ID**: Post-Quantum-Cryptographic-Discipline-for-x402-STARK-Receipt
@@ -844,7 +830,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
-
 ## Post-quantum-Key-Encapsulation-with-ML-KEM-in-Public-Key-Cry
 
 - **Reference ID**: Post-quantum-Key-Encapsulation-with-ML-KEM-in-Public-Key-Cry
@@ -900,7 +885,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
-
 ## Post-Quantum-Signature-Algorithm-Profile-and-Migration-Consi
 
 - **Reference ID**: Post-Quantum-Signature-Algorithm-Profile-and-Migration-Consi
@@ -956,7 +940,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
-
 ## Preventing-Key-Reuse-and-Cross-Key-Forgeries-in-Composite-ML
 
 - **Reference ID**: Preventing-Key-Reuse-and-Cross-Key-Forgeries-in-Composite-ML
@@ -1012,7 +995,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
-
 ## Requirements-and-Gaps-for-Post-Quantum-Certificate-Rotation
 
 - **Reference ID**: Requirements-and-Gaps-for-Post-Quantum-Certificate-Rotation
@@ -1068,7 +1050,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
-
 ## SLH-DSA-for-JOSE-and-COSE
 
 - **Reference ID**: SLH-DSA-for-JOSE-and-COSE
@@ -1124,7 +1105,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
-
 ## Use-of-SLH-DSA-in-TLS-1-3
 
 - **Reference ID**: Use-of-SLH-DSA-in-TLS-1-3
@@ -1133,54 +1113,53 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Publication Date**: 2026-07-26
 - **Last Updated**: Not specified
 - **Document Status**: Unverified — needs review
-- **Main Topic**: Specification of how the post-quantum signature scheme SLH-DSA is used for authentication in TLS 1.3
+- **Main Topic**: Specification of the use of the post-quantum signature scheme SLH-DSA for authentication in TLS 1.3.
 - **PQC Algorithms Covered**: SLH-DSA
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: None detected
-- **Leaders Contributions Mentioned**: Tirumaleswar Reddy.K; Tim Hollebeek; John Gray; Scott Fluhrer
+- **Leaders Contributions Mentioned**: None detected
 - **PQC Products Mentioned**: None detected
-- **Protocols Covered**: TLS 1.3
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: IETF
-- **Compliance Frameworks Referenced**: FIPS 205
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: SLH-DSA is specified for authentication in TLS 1.3; The document references FIPS 205 for the SLH-DSA scheme; The draft is an individual submission to the IETF; The document is currently expired and no longer active
-- **Security Levels & Parameters**: None detected
+- **Protocols Covered**: TLS 1.3; X.509
+- **Infrastructure Layers**: PKI
+- **Standardization Bodies**: IETF; NIST
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: AES-128; AES-192; AES-256; SHA-256; SHA-512
+- **Key Takeaways**: SLH-DSA is specified for pure post-quantum authentication in TLS 1.3 via signature_algorithms extensions; SLH-DSA variants offer trade-offs between signature size and signing speed, with small variants optimized for size and fast variants for speed; SLH-DSA is recommended for long-lived CA certificates due to strong security assurances and smaller key sizes, while ML-DSA is preferred for end-entity certificates; Deployments can minimize handshake overhead by using SLH-DSA for certificate signing but avoiding it in the CertificateVerify message; The document defines 12 specific SLH-DSA SignatureScheme types for SHA-2 and SHAKE hash functions across security levels 1, 3, and 5.
+- **Security Levels & Parameters**: NIST L1; NIST L3; NIST L5; SLH-DSA-128S-SHA2; SLH-DSA-128F-SHA2; SLH-DSA-192S-SHA2; SLH-DSA-192F-SHA2; SLH-DSA-256S-SHA2; SLH-DSA-256F-SHA2; SLH-DSA-128S-SHAKE; SLH-DSA-128F-SHAKE; SLH-DSA-192S-SHAKE; SLH-DSA-192F-SHAKE; SLH-DSA-256S-SHAKE; SLH-DSA-256F-SHAKE
 - **Hybrid & Transition Approaches**: None detected
 - **Pure PQC KEM Support**: Not Applicable
 - **Pure PQC KEM Evidence**: None detected
 - **Hybrid PQC KEM Support**: Not Applicable
 - **Hybrid PQC KEM Evidence**: None detected
 - **Pure PQC Signature Support**: Yes
-- **Pure PQC Signature Evidence**: "specifies how the post-quantum signature scheme SLH-DSA ... is used for authentication in TLS 1.3"
+- **Pure PQC Signature Evidence**: "slhdsa* entries represent the pure versions" (§3)
 - **Hybrid PQC Signature Support**: No
 - **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: TLS-1.3
-- **PQC Heatmap Protocols Evidence**: TLS-1.3: "Use of SLH-DSA in TLS 1.3"
-- **Lifecycle State**: Expired
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Developer; Security Architect
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Algorithms; tls-basics; stateful-signatures
+- **PQC Heatmap Protocols Covered**: TLS-1.3; X.509
+- **PQC Heatmap Protocols Evidence**: TLS-1.3: "Use of SLH-DSA in TLS 1.3" (Title); X.509: "signing X.509 certificates" (§2)
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: Signature sizes 7856 bytes to 29792 bytes; minimal impact on connection performance for large data transfers
+- **Target Audience**: Security Architect; Developer
+- **Implementation Prerequisites**: Support for SHA-256, SHA-512, or SHAKE256; TLS 1.3 implementation
+- **Relevant PQC Today Features**: Algorithms; tls-basics; pki-workshop; stateful-signatures
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
 - **QKD Protocols & Quantum Networking**: None detected
 - **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
+- **Constrained Device & IoT Suitability**: Small variants suitable for resource-constrained environments IoT devices
 - **Supply Chain & Vendor Risk**: None detected
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Math Family**: Hash-based
 - **PQC Round**: Standardised
-- **Source Document**: Use-of-SLH-DSA-in-TLS-1-3.html (43,201 bytes, 1,445 extracted chars)
-- **Extraction Timestamp**: 2026-07-26T09:24:24
+- **Source Document**: Use-of-SLH-DSA-in-TLS-1-3.html (24,700 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-07-26T11:10:39
 - **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
-
 ## X-509v3-ML-DSA-Certificates-for-the-Secure-Shell-SSH-Protoco
 
 - **Reference ID**: X-509v3-ML-DSA-Certificates-for-the-Secure-Shell-SSH-Protoco
@@ -1236,7 +1215,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
-
 ## x402-Cryptographic-Receipts-Format-Post-Quantum-Discipline-a
 
 - **Reference ID**: x402-Cryptographic-Receipts-Format-Post-Quantum-Discipline-a
@@ -1292,7 +1270,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
-
 ## 1775309727973
 
 - **Reference ID**: 1775309727973
@@ -1346,7 +1323,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## 1775362994566
 
 - **Reference ID**: 1775362994566
@@ -1400,7 +1376,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## 2510-10436-Post-Quantum-Cryptography-and-Quantum-Safe-Securi
 
 - **Reference ID**: 2510-10436-Post-Quantum-Cryptography-and-Quantum-Safe-Securi
@@ -1454,7 +1429,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## 3GPP TS 33.501
 
 - **Reference ID**: 3GPP TS 33.501
@@ -1508,7 +1482,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## 3GPP TS 33.501 Rel-19
 
 - **Reference ID**: 3GPP TS 33.501 Rel-19
@@ -1562,7 +1535,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## 3GPP-PQC-Study-2025
 
 - **Reference ID**: 3GPP-PQC-Study-2025
@@ -1616,7 +1588,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## 5G-Americas-PQCS-2025
 
 - **Reference ID**: 5G-Americas-PQCS-2025
@@ -1670,7 +1641,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## 5gsuci-NIST.CSWP.36A.ipd
 
 - **Reference ID**: 5gsuci-NIST.CSWP.36A.ipd
@@ -1724,7 +1694,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ACS-Google-Cloudflare-PQC-2029
 
 - **Reference ID**: ACS-Google-Cloudflare-PQC-2029
@@ -1778,7 +1747,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ACSC-Essential-Eight
 
 - **Reference ID**: ACSC-Essential-Eight
@@ -1832,7 +1800,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ANSI X9.62
 
 - **Reference ID**: ANSI X9.62
@@ -1886,7 +1853,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ANSI X9.63
 
 - **Reference ID**: ANSI X9.63
@@ -1940,7 +1906,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ANSSI PQC Follow-up Paper
 
 - **Reference ID**: ANSSI PQC Follow-up Paper
@@ -1994,7 +1959,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ANSSI PQC Position Paper
 
 - **Reference ID**: ANSSI PQC Position Paper
@@ -2048,7 +2012,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ANSSI-BSI-QKD-Position-Paper
 
 - **Reference ID**: ANSSI-BSI-QKD-Position-Paper
@@ -2102,7 +2065,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ANSSI-PG-083-v3-2026
 
 - **Reference ID**: ANSSI-PG-083-v3-2026
@@ -2156,7 +2118,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ANSSI-PQC-FAQ-2025
 
 - **Reference ID**: ANSSI-PQC-FAQ-2025
@@ -2210,7 +2171,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ANSSI-PQC-IPsec-Transition
 
 - **Reference ID**: ANSSI-PQC-IPsec-Transition
@@ -2264,7 +2224,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ANSSI-PQC-Position-2022
 
 - **Reference ID**: ANSSI-PQC-Position-2022
@@ -2318,7 +2277,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ANSSI-PQC-SSH-Transition-v2
 
 - **Reference ID**: ANSSI-PQC-SSH-Transition-v2
@@ -2372,7 +2330,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ANSSI-PQC-TLS13-Transition
 
 - **Reference ID**: ANSSI-PQC-TLS13-Transition
@@ -2426,7 +2383,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## APRA-CPS-234
 
 - **Reference ID**: APRA-CPS-234
@@ -2480,7 +2436,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## AQ-PQC-Migration-Framework-v1.1-2026
 
 - **Reference ID**: AQ-PQC-Migration-Framework-v1.1-2026
@@ -2534,7 +2489,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## AQ-PQC-Migration-Framework-v2.1-2026
 
 - **Reference ID**: AQ-PQC-Migration-Framework-v2.1-2026
@@ -2588,7 +2542,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ARINC-Standard-811
 
 - **Reference ID**: ARINC-Standard-811
@@ -2642,7 +2595,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ARINC-Standard-827
 
 - **Reference ID**: ARINC-Standard-827
@@ -2696,7 +2648,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ASC-X9-Financial-PKI
 
 - **Reference ID**: ASC-X9-Financial-PKI
@@ -2750,7 +2701,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ASC-X9-IR-F01-2022
 
 - **Reference ID**: ASC-X9-IR-F01-2022
@@ -2804,7 +2754,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ASC-X9-PQC-Readiness-2025
 
 - **Reference ID**: ASC-X9-PQC-Readiness-2025
@@ -2858,7 +2807,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ASC-X9-TR-50-2019
 
 - **Reference ID**: ASC-X9-TR-50-2019
@@ -2912,7 +2860,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## AU-ACSC-Quantum-Tech-Primer-Communications-2026
 
 - **Reference ID**: AU-ACSC-Quantum-Tech-Primer-Communications-2026
@@ -2966,7 +2913,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## AU-ASD-ISM-Crypto-2024
 
 - **Reference ID**: AU-ASD-ISM-Crypto-2024
@@ -3020,7 +2966,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## AU-National-Quantum-Strategy-2023
 
 - **Reference ID**: AU-National-Quantum-Strategy-2023
@@ -3074,7 +3019,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## AU-Privacy-Act-APPs
 
 - **Reference ID**: AU-Privacy-Act-APPs
@@ -3128,7 +3072,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## AUSTRAC-AML-CTF-Act
 
 - **Reference ID**: AUSTRAC-AML-CTF-Act
@@ -3182,7 +3125,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Algorand-PQC-Technical-Brief
 
 - **Reference ID**: Algorand-PQC-Technical-Brief
@@ -3236,7 +3178,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Algorand-PQC-Technology
 
 - **Reference ID**: Algorand-PQC-Technology
@@ -3290,7 +3231,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Algorand-Post-Quantum-Ledger
 
 - **Reference ID**: Algorand-Post-Quantum-Ledger
@@ -3344,7 +3284,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## An-Assessment-Framework-for-Application-Level-Cryptographic
 
 - **Reference ID**: An-Assessment-Framework-for-Application-Level-Cryptographic
@@ -3398,7 +3337,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Anchorage-Custody-Platform
 
 - **Reference ID**: Anchorage-Custody-Platform
@@ -3452,7 +3390,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Anchorage-Porto-Self-Custody
 
 - **Reference ID**: Anchorage-Porto-Self-Custody
@@ -3506,7 +3443,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## AppViewX-47Day-Certs
 
 - **Reference ID**: AppViewX-47Day-Certs
@@ -3560,7 +3496,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Apple-PQ3-Security-Blog
 
 - **Reference ID**: Apple-PQ3-Security-Blog
@@ -3614,7 +3549,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Aptos-AIP137-SLH-DSA
 
 - **Reference ID**: Aptos-AIP137-SLH-DSA
@@ -3668,7 +3602,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ArXiv-2025-SLH-DSA-Rowhammer
 
 - **Reference ID**: ArXiv-2025-SLH-DSA-Rowhammer
@@ -3722,7 +3655,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ArsTechnica-Ransomware-Quantum-Safe-2026
 
 - **Reference ID**: ArsTechnica-Ransomware-Quantum-Safe-2026
@@ -3776,7 +3708,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Avalanche-AIP-QR-001
 
 - **Reference ID**: Avalanche-AIP-QR-001
@@ -3830,7 +3761,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Avis-de-lANSSI-sur-la-migration-vers-la-cryptographie
 
 - **Reference ID**: Avis-de-lANSSI-sur-la-migration-vers-la-cryptographie
@@ -3884,7 +3814,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## BIKE-Round4-Spec-2022
 
 - **Reference ID**: BIKE-Round4-Spec-2022
@@ -3938,7 +3867,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## BIP-141
 
 - **Reference ID**: BIP-141
@@ -3992,7 +3920,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## BIP-32
 
 - **Reference ID**: BIP-32
@@ -4046,7 +3973,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## BIP-340
 
 - **Reference ID**: BIP-340
@@ -4100,7 +4026,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## BIP-341
 
 - **Reference ID**: BIP-341
@@ -4154,7 +4079,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## BIP-39
 
 - **Reference ID**: BIP-39
@@ -4208,7 +4132,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## BIP-43
 
 - **Reference ID**: BIP-43
@@ -4262,7 +4185,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## BIP-44
 
 - **Reference ID**: BIP-44
@@ -4316,7 +4238,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## BIS-OTHP107
 
 - **Reference ID**: BIS-OTHP107
@@ -4370,7 +4291,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## BIS-Paper-158
 
 - **Reference ID**: BIS-Paper-158
@@ -4424,7 +4344,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## BSI TR-02102
 
 - **Reference ID**: BSI TR-02102
@@ -4478,7 +4397,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## BSI TR-02102-1
 
 - **Reference ID**: BSI TR-02102-1
@@ -4532,7 +4450,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## BSI TR-02102-2
 
 - **Reference ID**: BSI TR-02102-2
@@ -4586,7 +4503,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## BSI TR-02102-3
 
 - **Reference ID**: BSI TR-02102-3
@@ -4640,7 +4556,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## BSI TR-02102-4
 
 - **Reference ID**: BSI TR-02102-4
@@ -4694,7 +4609,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## BSI-AIS-20-31
 
 - **Reference ID**: BSI-AIS-20-31
@@ -4748,7 +4662,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## BSI-ANSSI-QKD-Position-2024
 
 - **Reference ID**: BSI-ANSSI-QKD-Position-2024
@@ -4802,7 +4715,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## BSI-BSZ-METHOD
 
 - **Reference ID**: BSI-BSZ-METHOD
@@ -4856,7 +4768,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## BSI-Quantum-Technologies-and-Quantum-Safe-Cryptography-BSI-T
 
 - **Reference ID**: BSI-Quantum-Technologies-and-Quantum-Safe-Cryptography-BSI-T
@@ -4910,7 +4821,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Bernstein-Lange-Fallout-2017
 
 - **Reference ID**: Bernstein-Lange-Fallout-2017
@@ -4964,7 +4874,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Bernstein-Lange-PQC-Survey
 
 - **Reference ID**: Bernstein-Lange-PQC-Survey
@@ -5018,7 +4927,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Bernstein-MLDSA-Bugs-2026
 
 - **Reference ID**: Bernstein-MLDSA-Bugs-2026
@@ -5072,7 +4980,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## BitGo-Multisig-vs-MPC
 
 - **Reference ID**: BitGo-Multisig-vs-MPC
@@ -5126,7 +5033,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## BitGo-TSS
 
 - **Reference ID**: BitGo-TSS
@@ -5180,7 +5086,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Bitcoin-BIP360-P2QRH
 
 - **Reference ID**: Bitcoin-BIP360-P2QRH
@@ -5234,7 +5139,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Bitcoin-Whitepaper
 
 - **Reference ID**: Bitcoin-Whitepaper
@@ -5288,7 +5192,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## CA-B-Forum-Ballot-SMC013
 
 - **Reference ID**: CA-B-Forum-Ballot-SMC013
@@ -5342,7 +5245,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## CA-CFDIR-Quantum-Readiness-2023
 
 - **Reference ID**: CA-CFDIR-Quantum-Readiness-2023
@@ -5396,7 +5298,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## CA-TBS-SPIN-PQC-2025
 
 - **Reference ID**: CA-TBS-SPIN-PQC-2025
@@ -5450,7 +5351,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## CA/Browser Forum Ballot SC-PQC
 
 - **Reference ID**: CA/Browser Forum Ballot SC-PQC
@@ -5504,7 +5404,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## CAB-Forum-SC-081v3
 
 - **Reference ID**: CAB-Forum-SC-081v3
@@ -5558,7 +5457,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## CC-2022-CEM
 
 - **Reference ID**: CC-2022-CEM
@@ -5612,7 +5510,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## CC-2022-PART1
 
 - **Reference ID**: CC-2022-PART1
@@ -5666,7 +5563,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## CC-2022-PART2
 
 - **Reference ID**: CC-2022-PART2
@@ -5720,7 +5616,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## CC-2022-PART3
 
 - **Reference ID**: CC-2022-PART3
@@ -5774,7 +5669,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## CCCS-ITSAP40018
 
 - **Reference ID**: CCCS-ITSAP40018
@@ -5828,7 +5722,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## CIRCL-Cloudflare
 
 - **Reference ID**: CIRCL-Cloudflare
@@ -5882,7 +5775,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## CISA-Bad-Practices-PQC-2025
 
 - **Reference ID**: CISA-Bad-Practices-PQC-2025
@@ -5936,7 +5828,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## CISA-PQC-CATEGORY-LIST-2025
 
 - **Reference ID**: CISA-PQC-CATEGORY-LIST-2025
@@ -5990,7 +5881,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## CISA-PQC-CATEGORY-LIST-2026
 
 - **Reference ID**: CISA-PQC-CATEGORY-LIST-2026
@@ -6044,7 +5934,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## CISA-Quantum-Readiness-Roadmap
 
 - **Reference ID**: CISA-Quantum-Readiness-Roadmap
@@ -6098,7 +5987,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## CMMC-2.0-MODEL
 
 - **Reference ID**: CMMC-2.0-MODEL
@@ -6152,7 +6040,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## CMVP-MGMT-MANUAL
 
 - **Reference ID**: CMVP-MGMT-MANUAL
@@ -6206,7 +6093,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## CNSSP 15
 
 - **Reference ID**: CNSSP 15
@@ -6260,7 +6146,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## COMMON-CRITERIA
 
 - **Reference ID**: COMMON-CRITERIA
@@ -6314,7 +6199,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## COPPA-16-CFR-312
 
 - **Reference ID**: COPPA-16-CFR-312
@@ -6368,7 +6252,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## CRYSTALS-Dilithium-Spec-v31
 
 - **Reference ID**: CRYSTALS-Dilithium-Spec-v31
@@ -6422,7 +6305,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## CRYSTALS-Kyber-Spec-v302
 
 - **Reference ID**: CRYSTALS-Kyber-Spec-v302
@@ -6476,7 +6358,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## CSA-Crypto-News-June-2026
 
 - **Reference ID**: CSA-Crypto-News-June-2026
@@ -6530,7 +6411,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## CSA-CryptoNews-May2026
 
 - **Reference ID**: CSA-CryptoNews-May2026
@@ -6584,7 +6464,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## CSA-PQC-Guide-2025
 
 - **Reference ID**: CSA-PQC-Guide-2025
@@ -6638,7 +6517,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## CSA-Practitioners-Guide-PQC-2025
 
 - **Reference ID**: CSA-Practitioners-Guide-PQC-2025
@@ -6692,7 +6570,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## CSC-API-v2-Spec
 
 - **Reference ID**: CSC-API-v2-Spec
@@ -6746,7 +6623,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## CZ-NUKIB-Crypto-Requirements-2023
 
 - **Reference ID**: CZ-NUKIB-Crypto-Requirements-2023
@@ -6800,7 +6676,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Cambridge-JBS-Quantum-Blockchain-2025
 
 - **Reference ID**: Cambridge-JBS-Quantum-Blockchain-2025
@@ -6854,7 +6729,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Campbell-Enterprise-PQC-Timelines-2026
 
 - **Reference ID**: Campbell-Enterprise-PQC-Timelines-2026
@@ -6908,7 +6782,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Canada CSE PQC Guidance
 
 - **Reference ID**: Canada CSE PQC Guidance
@@ -6962,7 +6835,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Cardano-PQC-Research
 
 - **Reference ID**: Cardano-PQC-Research
@@ -7016,7 +6888,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## China CACR PQC Competition Results
 
 - **Reference ID**: China CACR PQC Competition Results
@@ -7070,7 +6941,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Cipher-suites-supported-by-Corda-Open-Source-4.12
 
 - **Reference ID**: Cipher-suites-supported-by-Corda-Open-Source-4.12
@@ -7124,7 +6994,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Circle-PQC-Roadmap-2026
 
 - **Reference ID**: Circle-PQC-Roadmap-2026
@@ -7178,7 +7047,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Cisco-Quantum-Safe-Architecture-2026
 
 - **Reference ID**: Cisco-Quantum-Safe-Architecture-2026
@@ -7232,7 +7100,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Citi-GPS-Quantum-Threat-2026
 
 - **Reference ID**: Citi-GPS-Quantum-Threat-2026
@@ -7286,7 +7153,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Classic-McEliece-Spec
 
 - **Reference ID**: Classic-McEliece-Spec
@@ -7340,7 +7206,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Cloudflare-MTC-Blog
 
 - **Reference ID**: Cloudflare-MTC-Blog
@@ -7394,7 +7259,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Cloudflare-PQ-Internet-2025
 
 - **Reference ID**: Cloudflare-PQ-Internet-2025
@@ -7448,7 +7312,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Cloudflare-PostQuantum-Roadmap-2026
 
 - **Reference ID**: Cloudflare-PostQuantum-Roadmap-2026
@@ -7502,7 +7365,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## CoT-Decrypting-Future-PQC-Timelines-2026
 
 - **Reference ID**: CoT-Decrypting-Future-PQC-Timelines-2026
@@ -7556,7 +7418,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Coinbase-Institutional
 
 - **Reference ID**: Coinbase-Institutional
@@ -7610,7 +7471,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Coinbase-Prime-Custody
 
 - **Reference ID**: Coinbase-Prime-Custody
@@ -7664,7 +7524,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Copper-Digital-Asset-Custody
 
 - **Reference ID**: Copper-Digital-Asset-Custody
@@ -7718,7 +7577,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Cosmos-PQC-DoraFactory
 
 - **Reference ID**: Cosmos-PQC-DoraFactory
@@ -7772,7 +7630,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## CycloneDX-Cryptography-Registry
 
 - **Reference ID**: CycloneDX-Cryptography-Registry
@@ -7826,7 +7683,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## CycloneDX-Spec-Overview
 
 - **Reference ID**: CycloneDX-Spec-Overview
@@ -7880,7 +7736,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Czech-NUKIB-Crypto-Rec-2023
 
 - **Reference ID**: Czech-NUKIB-Crypto-Rec-2023
@@ -7934,7 +7789,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## DFNS-HSM-Integration
 
 - **Reference ID**: DFNS-HSM-Integration
@@ -7988,7 +7842,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## DFNS-Key-Orchestration
 
 - **Reference ID**: DFNS-Key-Orchestration
@@ -8042,7 +7895,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## DORA-REG-2022-2554
 
 - **Reference ID**: DORA-REG-2022-2554
@@ -8096,7 +7948,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Deloitte-TechTrends-2025-Quantum
 
 - **Reference ID**: Deloitte-TechTrends-2025-Quantum
@@ -8150,7 +8001,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## DigiCert-PQC-Maturity-Model
 
 - **Reference ID**: DigiCert-PQC-Maturity-Model
@@ -8204,7 +8054,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## DoD-CIO-PQC-Memo-2025
 
 - **Reference ID**: DoD-CIO-PQC-Memo-2025
@@ -8258,7 +8107,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Draft-for-Public-Consultation-Quantum-Readiness-Index-Oct-2025
 
 - **Reference ID**: Draft-for-Public-Consultation-Quantum-Readiness-Index-Oct-2025
@@ -8312,7 +8160,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EC-Recommendation-2024-1101
 
 - **Reference ID**: EC-Recommendation-2024-1101
@@ -8366,7 +8213,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ECCG-ACM-v2
 
 - **Reference ID**: ECCG-ACM-v2
@@ -8420,7 +8266,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EFF-Encryption-Y2K-Moment-2026
 
 - **Reference ID**: EFF-Encryption-Y2K-Moment-2026
@@ -8474,7 +8319,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EIDAS-REG-910-2014
 
 - **Reference ID**: EIDAS-REG-910-2014
@@ -8528,7 +8372,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EIP-155
 
 - **Reference ID**: EIP-155
@@ -8582,7 +8425,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EIP-2
 
 - **Reference ID**: EIP-2
@@ -8636,7 +8478,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EIP-2718
 
 - **Reference ID**: EIP-2718
@@ -8690,7 +8531,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EIP-2929
 
 - **Reference ID**: EIP-2929
@@ -8744,7 +8584,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EIP-2930
 
 - **Reference ID**: EIP-2930
@@ -8798,7 +8637,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EIP-3541
 
 - **Reference ID**: EIP-3541
@@ -8852,7 +8690,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EIP-3607
 
 - **Reference ID**: EIP-3607
@@ -8906,7 +8743,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EIP-4844
 
 - **Reference ID**: EIP-4844
@@ -8960,7 +8796,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EIP-55
 
 - **Reference ID**: EIP-55
@@ -9014,7 +8849,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EJBCA-Beyond-CBOM
 
 - **Reference ID**: EJBCA-Beyond-CBOM
@@ -9068,7 +8902,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EJBCA-Understanding-CPM
 
 - **Reference ID**: EJBCA-Understanding-CPM
@@ -9122,7 +8955,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ENISA PQC Guidelines
 
 - **Reference ID**: ENISA PQC Guidelines
@@ -9176,7 +9008,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ENISA-Crypto-Market-Analysis-2024
 
 - **Reference ID**: ENISA-Crypto-Market-Analysis-2024
@@ -9230,7 +9061,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ENISA-EUDI-Wallet-Security
 
 - **Reference ID**: ENISA-EUDI-Wallet-Security
@@ -9284,7 +9114,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ENISA-Hybridization-Standardisation-Status
 
 - **Reference ID**: ENISA-Hybridization-Standardisation-Status
@@ -9338,7 +9167,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ENISA-PQC-Integration-Study-2022
 
 - **Reference ID**: ENISA-PQC-Integration-Study-2022
@@ -9392,7 +9220,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ENISA-Report-Security-in-5G-Specifications
 
 - **Reference ID**: ENISA-Report-Security-in-5G-Specifications
@@ -9446,7 +9273,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ENISA-SBOM-Adoption-2026
 
 - **Reference ID**: ENISA-SBOM-Adoption-2026
@@ -9500,7 +9326,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ENISA-State-of-Cybersecurity-2024
 
 - **Reference ID**: ENISA-State-of-Cybersecurity-2024
@@ -9554,7 +9379,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ENISA-Threat-Landscape-2025
 
 - **Reference ID**: ENISA-Threat-Landscape-2025
@@ -9608,7 +9432,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EO-14028
 
 - **Reference ID**: EO-14028
@@ -9662,7 +9485,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EO-14144
 
 - **Reference ID**: EO-14144
@@ -9716,7 +9538,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EO-14306
 
 - **Reference ID**: EO-14306
@@ -9770,7 +9591,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EO-14409-Securing-the-Nation
 
 - **Reference ID**: EO-14409-Securing-the-Nation
@@ -9824,7 +9644,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EO-14413
 
 - **Reference ID**: EO-14413
@@ -9878,7 +9697,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EO-2026-06-22-Securing-the-Nation
 
 - **Reference ID**: EO-2026-06-22-Securing-the-Nation
@@ -9932,7 +9750,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EPC-342-08-Crypto-Guidelines-v16
 
 - **Reference ID**: EPC-342-08-Crypto-Guidelines-v16
@@ -9986,7 +9803,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI GR QSC 020
 
 - **Reference ID**: ETSI GR QSC 020
@@ -10040,7 +9856,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI TR 103 619
 
 - **Reference ID**: ETSI TR 103 619
@@ -10094,7 +9909,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI TS 103 744
 
 - **Reference ID**: ETSI TS 103 744
@@ -10148,7 +9962,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI TS 103 744 v1.3.1
 
 - **Reference ID**: ETSI TS 103 744 v1.3.1
@@ -10202,7 +10015,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI TS 103 774
 
 - **Reference ID**: ETSI TS 103 774
@@ -10256,7 +10068,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-EG-203-310
 
 - **Reference ID**: ETSI-EG-203-310
@@ -10310,7 +10121,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-EN-303645
 
 - **Reference ID**: ETSI-EN-303645
@@ -10364,7 +10174,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-EN-319-411
 
 - **Reference ID**: ETSI-EN-319-411
@@ -10418,7 +10227,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-GR-QKD-007
 
 - **Reference ID**: ETSI-GR-QKD-007
@@ -10472,7 +10280,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-GR-QSC-001
 
 - **Reference ID**: ETSI-GR-QSC-001
@@ -10526,7 +10333,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-GR-QSC-003
 
 - **Reference ID**: ETSI-GR-QSC-003
@@ -10580,7 +10386,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-GR-QSC-004
 
 - **Reference ID**: ETSI-GR-QSC-004
@@ -10634,7 +10439,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-GR-QSC-006
 
 - **Reference ID**: ETSI-GR-QSC-006
@@ -10688,7 +10492,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-GS-QKD-002
 
 - **Reference ID**: ETSI-GS-QKD-002
@@ -10742,7 +10545,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-GS-QKD-003
 
 - **Reference ID**: ETSI-GS-QKD-003
@@ -10796,7 +10598,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-GS-QKD-004
 
 - **Reference ID**: ETSI-GS-QKD-004
@@ -10850,7 +10651,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-GS-QKD-005
 
 - **Reference ID**: ETSI-GS-QKD-005
@@ -10904,7 +10704,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-GS-QKD-008
 
 - **Reference ID**: ETSI-GS-QKD-008
@@ -10958,7 +10757,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-GS-QKD-011
 
 - **Reference ID**: ETSI-GS-QKD-011
@@ -11012,7 +10810,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-GS-QKD-012
 
 - **Reference ID**: ETSI-GS-QKD-012
@@ -11066,7 +10863,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-GS-QKD-014
 
 - **Reference ID**: ETSI-GS-QKD-014
@@ -11120,7 +10916,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-GS-QKD-014-V2.1.1
 
 - **Reference ID**: ETSI-GS-QKD-014-V2.1.1
@@ -11174,7 +10969,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-GS-QKD-015
 
 - **Reference ID**: ETSI-GS-QKD-015
@@ -11228,7 +11022,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-GS-QKD-016
 
 - **Reference ID**: ETSI-GS-QKD-016
@@ -11282,7 +11075,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-GS-QKD-016-V2
 
 - **Reference ID**: ETSI-GS-QKD-016-V2
@@ -11336,7 +11128,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-GS-QKD-018
 
 - **Reference ID**: ETSI-GS-QKD-018
@@ -11390,7 +11181,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-TR-103-570
 
 - **Reference ID**: ETSI-TR-103-570
@@ -11444,7 +11234,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-TR-103-949
 
 - **Reference ID**: ETSI-TR-103-949
@@ -11498,7 +11287,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-TR-103-965
 
 - **Reference ID**: ETSI-TR-103-965
@@ -11552,7 +11340,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-TR-103-966
 
 - **Reference ID**: ETSI-TR-103-966
@@ -11606,7 +11393,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-TR-103-967
 
 - **Reference ID**: ETSI-TR-103-967
@@ -11660,7 +11446,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-TR-104-016
 
 - **Reference ID**: ETSI-TR-104-016
@@ -11714,7 +11499,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-TS-103-673
 
 - **Reference ID**: ETSI-TS-103-673
@@ -11768,7 +11552,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-TS-104-015
 
 - **Reference ID**: ETSI-TS-104-015
@@ -11822,7 +11605,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-TS-119-312
 
 - **Reference ID**: ETSI-TS-119-312
@@ -11876,7 +11658,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ETSI-launches-new-standard-for-Quantum-Safe-Hybrid-Key-Excha
 
 - **Reference ID**: ETSI-launches-new-standard-for-Quantum-Safe-Hybrid-Key-Excha
@@ -11930,7 +11711,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EU PQC Recommendation
 
 - **Reference ID**: EU PQC Recommendation
@@ -11984,7 +11764,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EU-BSI-PQC-Joint-Statement-2024
 
 - **Reference ID**: EU-BSI-PQC-Joint-Statement-2024
@@ -12038,7 +11817,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EU-CRA-REG-2024-2847
 
 - **Reference ID**: EU-CRA-REG-2024-2847
@@ -12092,7 +11870,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EU-NIS-CG-Roadmap-v1.1
 
 - **Reference ID**: EU-NIS-CG-Roadmap-v1.1
@@ -12146,7 +11923,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EU-NIS-CG-Security-Measures-2026
 
 - **Reference ID**: EU-NIS-CG-Security-Measures-2026
@@ -12200,7 +11976,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EU-REC-2024-1101
 
 - **Reference ID**: EU-REC-2024-1101
@@ -12254,7 +12029,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EUCC v2.0 ACM
 
 - **Reference ID**: EUCC v2.0 ACM
@@ -12308,7 +12082,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EUDI-Wallet-ARF
 
 - **Reference ID**: EUDI-Wallet-ARF
@@ -12362,7 +12135,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## EmergentMind-Nonce-Reuse-Crypto
 
 - **Reference ID**: EmergentMind-Nonce-Reuse-Crypto
@@ -12416,7 +12188,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Enhancing-Security-in-EAP-AKA-prime-with-Hybrid-Post-Quantum
 
 - **Reference ID**: Enhancing-Security-in-EAP-AKA-prime-with-Hybrid-Post-Quantum
@@ -12470,7 +12241,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Ethereum-EIP4337-AA
 
 - **Reference ID**: Ethereum-EIP4337-AA
@@ -12524,7 +12294,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Ethereum-EIP7702
 
 - **Reference ID**: Ethereum-EIP7702
@@ -12578,7 +12347,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Ethereum-PQC-Roadmap-2026
 
 - **Reference ID**: Ethereum-PQC-Roadmap-2026
@@ -12632,7 +12400,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Ethereum-PQC-Tasklist-Ethresearch
 
 - **Reference ID**: Ethereum-PQC-Tasklist-Ethresearch
@@ -12686,7 +12453,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Ethereum-Yellow-Paper
 
 - **Reference ID**: Ethereum-Yellow-Paper
@@ -12740,7 +12506,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Europol-FS-ISAC-PQC-Financial-2026
 
 - **Reference ID**: Europol-FS-ISAC-PQC-Financial-2026
@@ -12794,7 +12559,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Europol-QSFF-Call-to-Action-2025
 
 - **Reference ID**: Europol-QSFF-Call-to-Action-2025
@@ -12848,7 +12612,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## FAEST-Round2-Spec
 
 - **Reference ID**: FAEST-Round2-Spec
@@ -12902,7 +12665,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## FDA-21-CFR-11
 
 - **Reference ID**: FDA-21-CFR-11
@@ -12956,7 +12718,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## FERPA-34-CFR-99
 
 - **Reference ID**: FERPA-34-CFR-99
@@ -13010,7 +12771,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## FIPS 180
 
 - **Reference ID**: FIPS 180
@@ -13064,7 +12824,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## FIPS 186-5
 
 - **Reference ID**: FIPS 186-5
@@ -13118,7 +12877,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## FIPS 199
 
 - **Reference ID**: FIPS 199
@@ -13172,7 +12930,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## FIPS 202
 
 - **Reference ID**: FIPS 202
@@ -13226,7 +12983,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## FIPS 203
 
 - **Reference ID**: FIPS 203
@@ -13280,7 +13036,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## FIPS 204
 
 - **Reference ID**: FIPS 204
@@ -13334,7 +13089,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## FIPS 205
 
 - **Reference ID**: FIPS 205
@@ -13388,7 +13142,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## FIPS 206
 
 - **Reference ID**: FIPS 206
@@ -13442,7 +13195,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## FIPS-140-3
 
 - **Reference ID**: FIPS-140-3
@@ -13496,7 +13248,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## FIPS-140-3-STANDARD
 
 - **Reference ID**: FIPS-140-3-STANDARD
@@ -13550,7 +13301,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## FIPS-180-4
 
 - **Reference ID**: FIPS-180-4
@@ -13604,7 +13354,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## FIPS-197
 
 - **Reference ID**: FIPS-197
@@ -13658,7 +13407,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## FIPS-198
 
 - **Reference ID**: FIPS-198
@@ -13712,7 +13460,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## FIPS-198-1
 
 - **Reference ID**: FIPS-198-1
@@ -13766,7 +13513,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## FISMA-NIST-SP-800-53r5
 
 - **Reference ID**: FISMA-NIST-SP-800-53r5
@@ -13820,7 +13566,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## FPLLL
 
 - **Reference ID**: FPLLL
@@ -13874,7 +13619,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## FRB-FEDS-2025093-Blockchain-PQC
 
 - **Reference ID**: FRB-FEDS-2025093-Blockchain-PQC
@@ -13928,7 +13672,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## FS-ISAC-PQC-Timeline-2026
 
 - **Reference ID**: FS-ISAC-PQC-Timeline-2026
@@ -13982,7 +13725,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Falcon-Spec-v12
 
 - **Reference ID**: Falcon-Spec-v12
@@ -14036,7 +13778,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Final-technical-report-on-migration-to-PQC-28-03-25
 
 - **Reference ID**: Final-technical-report-on-migration-to-PQC-28-03-25
@@ -14090,7 +13831,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Fireblocks-MPC-CMP
 
 - **Reference ID**: Fireblocks-MPC-CMP
@@ -14144,7 +13884,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Fireblocks-MPC-CMP-Whitepaper
 
 - **Reference ID**: Fireblocks-MPC-CMP-Whitepaper
@@ -14198,7 +13937,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Fireblocks-Open-Source-MPC
 
 - **Reference ID**: Fireblocks-Open-Source-MPC
@@ -14252,7 +13990,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## FrodoKEM-SCA-Countermeasures-2024
 
 - **Reference ID**: FrodoKEM-SCA-Countermeasures-2024
@@ -14306,7 +14043,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## G7-CB-QT-Financial-2026
 
 - **Reference ID**: G7-CB-QT-Financial-2026
@@ -14360,7 +14096,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## G7-CEG-Financial-PQC-2026
 
 - **Reference ID**: G7-CEG-Financial-PQC-2026
@@ -14414,7 +14149,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## G7-Financial-PQC-Roadmap-2026
 
 - **Reference ID**: G7-Financial-PQC-Roadmap-2026
@@ -14468,7 +14202,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## GDPR-REG-2016-679
 
 - **Reference ID**: GDPR-REG-2016-679
@@ -14522,7 +14255,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## GRI-Quantum-Threat-Timeline-2024
 
 - **Reference ID**: GRI-Quantum-Threat-Timeline-2024
@@ -14576,7 +14308,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## GRI-Quantum-Threat-Timeline-2025
 
 - **Reference ID**: GRI-Quantum-Threat-Timeline-2025
@@ -14630,7 +14361,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## GSA-PQC-Buyers-Guide-2025
 
 - **Reference ID**: GSA-PQC-Buyers-Guide-2025
@@ -14684,7 +14414,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## GSMA FS.50 PQC Guidelines
 
 - **Reference ID**: GSMA FS.50 PQC Guidelines
@@ -14738,7 +14467,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## GSMA PQ.03 PQC Guidelines
 
 - **Reference ID**: GSMA PQ.03 PQC Guidelines
@@ -14792,7 +14520,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## GSMA-NG116
 
 - **Reference ID**: GSMA-NG116
@@ -14846,7 +14573,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## GSMA-PQ01
 
 - **Reference ID**: GSMA-PQ01
@@ -14900,7 +14626,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## GSMA-PQ02
 
 - **Reference ID**: GSMA-PQ02
@@ -14954,7 +14679,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## GSMA-PQ03-v2-2024
 
 - **Reference ID**: GSMA-PQ03-v2-2024
@@ -15008,7 +14732,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## GSMA-PQC-Country-Survey-2025
 
 - **Reference ID**: GSMA-PQC-Country-Survey-2025
@@ -15062,7 +14785,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## GSS-API-Key-Exchange-with-hybrid-ML-KEM
 
 - **Reference ID**: GSS-API-Key-Exchange-with-hybrid-ML-KEM
@@ -15116,7 +14838,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Galileo-FT-Platform
 
 - **Reference ID**: Galileo-FT-Platform
@@ -15170,7 +14891,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Gartner-CryptoCOE-Mahdi
 
 - **Reference ID**: Gartner-CryptoCOE-Mahdi
@@ -15224,7 +14944,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Gartner-PQC-Time-To-Prepare
 
 - **Reference ID**: Gartner-PQC-Time-To-Prepare
@@ -15278,7 +14997,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## GhostLock-A-Hybrid-Post-Quantum-Encryption-Protocol
 
 - **Reference ID**: GhostLock-A-Hybrid-Post-Quantum-Encryption-Protocol
@@ -15332,7 +15050,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Google-QuantumAI-EC-Crypto-Quantum-2026
 
 - **Reference ID**: Google-QuantumAI-EC-Crypto-Quantum-2026
@@ -15386,7 +15103,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## GopherSecurity-PQC-Agility-MCP-2026
 
 - **Reference ID**: GopherSecurity-PQC-Agility-MCP-2026
@@ -15440,7 +15156,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## HAWK-Round2-Spec
 
 - **Reference ID**: HAWK-Round2-Spec
@@ -15494,7 +15209,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## HIPAA-45-CFR-164
 
 - **Reference ID**: HIPAA-45-CFR-164
@@ -15548,7 +15262,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## HITECH-PL-111-5
 
 - **Reference ID**: HITECH-PL-111-5
@@ -15602,7 +15315,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## HK-CI-Ordinance-2025
 
 - **Reference ID**: HK-CI-Ordinance-2025
@@ -15656,7 +15368,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## HKMA-FINTECH-BLUEPRINT-2026
 
 - **Reference ID**: HKMA-FINTECH-BLUEPRINT-2026
@@ -15710,7 +15421,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## HKMA-Fintech-Adoption-Report-2025
 
 - **Reference ID**: HKMA-Fintech-Adoption-Report-2025
@@ -15764,7 +15474,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## HKMA-Fintech-Blueprint-2026
 
 - **Reference ID**: HKMA-Fintech-Blueprint-2026
@@ -15818,7 +15527,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## HQC Specification
 
 - **Reference ID**: HQC Specification
@@ -15872,7 +15580,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## HSBC-InfoSecGlobal-Thales-CryptographicInventory-2025
 
 - **Reference ID**: HSBC-InfoSecGlobal-Thales-CryptographicInventory-2025
@@ -15926,7 +15633,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Hex-Trust-Custody
 
 - **Reference ID**: Hex-Trust-Custody
@@ -15980,7 +15686,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Hybrid-Post-Quantum-Password-Authenticated-Key-Exchange
 
 - **Reference ID**: Hybrid-Post-Quantum-Password-Authenticated-Key-Exchange
@@ -16034,7 +15739,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Hybrid-Post-Quantum-and-Traditional-Authentication-for-IKEv2
 
 - **Reference ID**: Hybrid-Post-Quantum-and-Traditional-Authentication-for-IKEv2
@@ -16088,7 +15792,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Hyperledger-Besu-Overview
 
 - **Reference ID**: Hyperledger-Besu-Overview
@@ -16142,7 +15845,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Hyperledger-Fabric-Crypto
 
 - **Reference ID**: Hyperledger-Fabric-Crypto
@@ -16196,7 +15898,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IACR-2018-952
 
 - **Reference ID**: IACR-2018-952
@@ -16250,7 +15951,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IACR-2019-1086
 
 - **Reference ID**: IACR-2019-1086
@@ -16304,7 +16004,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IACR-2022-1031
 
 - **Reference ID**: IACR-2022-1031
@@ -16358,7 +16057,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IACR-2022-952-FrodoKEM-Rowhammer
 
 - **Reference ID**: IACR-2022-952-FrodoKEM-Rowhammer
@@ -16412,7 +16110,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IACR-2024-1828-McEliece-SCA-Fault
 
 - **Reference ID**: IACR-2024-1828-McEliece-SCA-Fault
@@ -16466,7 +16163,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IBM-CBOM-Harishankar
 
 - **Reference ID**: IBM-CBOM-Harishankar
@@ -16520,7 +16216,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IBM-IBV-Secure-PostQuantum-2025
 
 - **Reference ID**: IBM-IBV-Secure-PostQuantum-2025
@@ -16574,7 +16269,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IBM-Quantum-Safe-Research
 
 - **Reference ID**: IBM-Quantum-Safe-Research
@@ -16628,7 +16322,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IEC 62443
 
 - **Reference ID**: IEC 62443
@@ -16682,7 +16375,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IEEE 1363
 
 - **Reference ID**: IEEE 1363
@@ -16736,7 +16428,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IEEE 1363a
 
 - **Reference ID**: IEEE 1363a
@@ -16790,7 +16481,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IEEE 1609.2 Amendment
 
 - **Reference ID**: IEEE 1609.2 Amendment
@@ -16844,7 +16534,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IEEE-802-1AE-2018
 
 - **Reference ID**: IEEE-802-1AE-2018
@@ -16898,7 +16587,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IEEE-P1931-1-ROSA
 
 - **Reference ID**: IEEE-P1931-1-ROSA
@@ -16952,7 +16640,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF RFC 3394
 
 - **Reference ID**: IETF RFC 3394
@@ -17006,7 +16693,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF RFC 4253
 
 - **Reference ID**: IETF RFC 4253
@@ -17060,7 +16746,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF RFC 4556
 
 - **Reference ID**: IETF RFC 4556
@@ -17114,7 +16799,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF RFC 4880
 
 - **Reference ID**: IETF RFC 4880
@@ -17168,7 +16852,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF RFC 5480
 
 - **Reference ID**: IETF RFC 5480
@@ -17222,7 +16905,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF RFC 5649
 
 - **Reference ID**: IETF RFC 5649
@@ -17276,7 +16958,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF RFC 5656
 
 - **Reference ID**: IETF RFC 5656
@@ -17330,7 +17011,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF RFC 6979
 
 - **Reference ID**: IETF RFC 6979
@@ -17384,7 +17064,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF RFC 7296
 
 - **Reference ID**: IETF RFC 7296
@@ -17438,7 +17117,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF RFC 7662
 
 - **Reference ID**: IETF RFC 7662
@@ -17492,7 +17170,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF RFC 8391
 
 - **Reference ID**: IETF RFC 8391
@@ -17546,7 +17223,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF RFC 8554
 
 - **Reference ID**: IETF RFC 8554
@@ -17600,7 +17276,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF RFC 8555
 
 - **Reference ID**: IETF RFC 8555
@@ -17654,7 +17329,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF RFC 8709
 
 - **Reference ID**: IETF RFC 8709
@@ -17708,7 +17382,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF RFC 8731
 
 - **Reference ID**: IETF RFC 8731
@@ -17762,7 +17435,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF RFC 8784
 
 - **Reference ID**: IETF RFC 8784
@@ -17816,7 +17488,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF RFC 9162
 
 - **Reference ID**: IETF RFC 9162
@@ -17870,7 +17541,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF RFC 9180
 
 - **Reference ID**: IETF RFC 9180
@@ -17924,7 +17594,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF RFC 9258
 
 - **Reference ID**: IETF RFC 9258
@@ -17978,7 +17647,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF RFC 9370
 
 - **Reference ID**: IETF RFC 9370
@@ -18032,7 +17700,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF RFC 9700
 
 - **Reference ID**: IETF RFC 9700
@@ -18086,7 +17753,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF RFC 9701
 
 - **Reference ID**: IETF RFC 9701
@@ -18140,7 +17806,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF RFC 9763
 
 - **Reference ID**: IETF RFC 9763
@@ -18194,7 +17859,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF RFC 9909
 
 - **Reference ID**: IETF RFC 9909
@@ -18248,7 +17912,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF-LAMPS-COMPOSITE-KEM-11
 
 - **Reference ID**: IETF-LAMPS-COMPOSITE-KEM-11
@@ -18302,7 +17965,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF-ML-KEM-for-TLS-1.3
 
 - **Reference ID**: IETF-ML-KEM-for-TLS-1.3
@@ -18356,7 +18018,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF-MTC-Draft-09
 
 - **Reference ID**: IETF-MTC-Draft-09
@@ -18410,7 +18071,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF-RFC-4210-CMP
 
 - **Reference ID**: IETF-RFC-4210-CMP
@@ -18464,7 +18124,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF-RFC-7030-EST
 
 - **Reference ID**: IETF-RFC-7030-EST
@@ -18518,7 +18177,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF-RFC-7465
 
 - **Reference ID**: IETF-RFC-7465
@@ -18572,7 +18230,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF-RFC-8555
 
 - **Reference ID**: IETF-RFC-8555
@@ -18626,7 +18283,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF-RFC-8996
 
 - **Reference ID**: IETF-RFC-8996
@@ -18680,7 +18336,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF-SD-JWT-Draft
 
 - **Reference ID**: IETF-SD-JWT-Draft
@@ -18734,7 +18389,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF-TLS-ECDHE-MLKEM-03
 
 - **Reference ID**: IETF-TLS-ECDHE-MLKEM-03
@@ -18788,7 +18442,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IETF-Token-Status-List
 
 - **Reference ID**: IETF-Token-Status-List
@@ -18842,7 +18495,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IL-INCD-Cybersecurity-Strategy-2025
 
 - **Reference ID**: IL-INCD-Cybersecurity-Strategy-2025
@@ -18896,7 +18548,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IN-CERTIN-QBOM-Guidelines-2025
 
 - **Reference ID**: IN-CERTIN-QBOM-Guidelines-2025
@@ -18950,7 +18601,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IN-TEC-PQC-Migration-Report-2025
 
 - **Reference ID**: IN-TEC-PQC-Migration-Report-2025
@@ -19004,7 +18654,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IOTA-Tangle-Signatures
 
 - **Reference ID**: IOTA-Tangle-Signatures
@@ -19058,7 +18707,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## IPv4-5-A-Locator-Identifier-Separated-Extension-to-IPv4-with
 
 - **Reference ID**: IPv4-5-A-Locator-Identifier-Separated-Extension-to-IPv4-with
@@ -19112,7 +18760,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ISO-14971-2000
 
 - **Reference ID**: ISO-14971-2000
@@ -19166,7 +18813,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ISO-18013-5-mDL
 
 - **Reference ID**: ISO-18013-5-mDL
@@ -19220,7 +18866,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ISO-26262-Road-vehicles-Functional-safety
 
 - **Reference ID**: ISO-26262-Road-vehicles-Functional-safety
@@ -19274,7 +18919,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ISO-IEC-17799-2000
 
 - **Reference ID**: ISO-IEC-17799-2000
@@ -19328,7 +18972,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ISO-IEC-18033-2-2006-Amd-2-2026-Information-technology-Secur
 
 - **Reference ID**: ISO-IEC-18033-2-2006-Amd-2-2026-Information-technology-Secur
@@ -19382,7 +19025,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ISO-IEC-23837-1
 
 - **Reference ID**: ISO-IEC-23837-1
@@ -19436,7 +19078,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ISO-IEC-23837-2
 
 - **Reference ID**: ISO-IEC-23837-2
@@ -19490,7 +19131,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ISO-IEC-27001-2022
 
 - **Reference ID**: ISO-IEC-27001-2022
@@ -19544,7 +19184,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ISO/IEC 14888-4:2024
 
 - **Reference ID**: ISO/IEC 14888-4:2024
@@ -19598,7 +19237,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ISO/IEC 18033-2:2006
 
 - **Reference ID**: ISO/IEC 18033-2:2006
@@ -19652,7 +19290,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ISO/IEC 18033-2:2006/AMD1:2017
 
 - **Reference ID**: ISO/IEC 18033-2:2006/AMD1:2017
@@ -19706,7 +19343,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ISO/IEC NP 29192-8
 
 - **Reference ID**: ISO/IEC NP 29192-8
@@ -19760,7 +19396,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ITPro-Monetizing-Quantum-Shift-PQC-2026
 
 - **Reference ID**: ITPro-Monetizing-Quantum-Shift-PQC-2026
@@ -19814,7 +19449,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ITU-T X.1819
 
 - **Reference ID**: ITU-T X.1819
@@ -19868,7 +19502,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ITU-T-X.1819-2024
 
 - **Reference ID**: ITU-T-X.1819-2024
@@ -19922,7 +19555,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ITU-T-X1811
 
 - **Reference ID**: ITU-T-X1811
@@ -19976,7 +19608,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ITU-T-X509-2019
 
 - **Reference ID**: ITU-T-X509-2019
@@ -20030,7 +19661,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## India-DST-NQM-Roadmap
 
 - **Reference ID**: India-DST-NQM-Roadmap
@@ -20084,7 +19714,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## India-DST-Quantum-Safe-Roadmap-2026
 
 - **Reference ID**: India-DST-Quantum-Safe-Roadmap-2026
@@ -20138,7 +19767,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## India-TEC-910018-2025
 
 - **Reference ID**: India-TEC-910018-2025
@@ -20192,7 +19820,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## InfoSec-Global-Hype-Cycles
 
 - **Reference ID**: InfoSec-Global-Hype-Cycles
@@ -20246,7 +19873,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Intel-PQC-Research
 
 - **Reference ID**: Intel-PQC-Research
@@ -20300,7 +19926,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Invicti-OWASP-CryptoFailures-2025
 
 - **Reference ID**: Invicti-OWASP-CryptoFailures-2025
@@ -20354,7 +19979,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## JPMorgan-RWPQC-2025
 
 - **Reference ID**: JPMorgan-RWPQC-2025
@@ -20408,7 +20032,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Japan CRYPTREC Report 2024
 
 - **Reference ID**: Japan CRYPTREC Report 2024
@@ -20462,7 +20085,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## KE-DPA-TEXT
 
 - **Reference ID**: KE-DPA-TEXT
@@ -20516,7 +20138,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## KEM-based-Authentication-for-IKEv2-with-Post-quantum-Securit
 
 - **Reference ID**: KEM-based-Authentication-for-IKEv2-with-Post-quantum-Securit
@@ -20570,7 +20191,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## KLEPTO-2014-DualEC-Backdoor
 
 - **Reference ID**: KLEPTO-2014-DualEC-Backdoor
@@ -20624,7 +20244,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## KLEPTO-2022-Kyber-Backdoor
 
 - **Reference ID**: KLEPTO-2022-Kyber-Backdoor
@@ -20678,7 +20297,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## KMIP-V2-1-OASIS
 
 - **Reference ID**: KMIP-V2-1-OASIS
@@ -20732,7 +20350,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Keyfactor-Introducing-CBOM
 
 - **Reference ID**: Keyfactor-Introducing-CBOM
@@ -20786,7 +20403,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Komainu-Custody
 
 - **Reference ID**: Komainu-Custody
@@ -20840,7 +20456,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## KpqC-AIMer
 
 - **Reference ID**: KpqC-AIMer
@@ -20894,7 +20509,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## KpqC-Competition-Results
 
 - **Reference ID**: KpqC-Competition-Results
@@ -20948,7 +20562,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## KpqC-HAETAE
 
 - **Reference ID**: KpqC-HAETAE
@@ -21002,7 +20615,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## KpqC-NTRU-Plus
 
 - **Reference ID**: KpqC-NTRU-Plus
@@ -21056,7 +20668,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## KpqC-SMAUG-T
 
 - **Reference ID**: KpqC-SMAUG-T
@@ -21110,7 +20721,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Labour-Tech-Defend-or-Depend-Policy-2025
 
 - **Reference ID**: Labour-Tech-Defend-or-Depend-Policy-2025
@@ -21164,7 +20774,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Lattice-Estimator
 
 - **Reference ID**: Lattice-Estimator
@@ -21218,7 +20827,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Ledger-Enterprise-MPC-Readiness
 
 - **Reference ID**: Ledger-Enterprise-MPC-Readiness
@@ -21272,7 +20880,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Liboqs-cpp
 
 - **Reference ID**: Liboqs-cpp
@@ -21326,7 +20933,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Liboqs-go
 
 - **Reference ID**: Liboqs-go
@@ -21380,7 +20986,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Liboqs-python
 
 - **Reference ID**: Liboqs-python
@@ -21434,7 +21039,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## MAS-CIRCULAR-IT-RISK
 
 - **Reference ID**: MAS-CIRCULAR-IT-RISK
@@ -21488,7 +21092,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## MAYO-Round2-Spec
 
 - **Reference ID**: MAYO-Round2-Spec
@@ -21542,7 +21145,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## MDPI-2018-NTRU-SingleTrace-SCA
 
 - **Reference ID**: MDPI-2018-NTRU-SingleTrace-SCA
@@ -21596,7 +21198,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## MICA-REG-2023-1114
 
 - **Reference ID**: MICA-REG-2023-1114
@@ -21650,7 +21251,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ML-KEM-Security-Considerations
 
 - **Reference ID**: ML-KEM-Security-Considerations
@@ -21704,7 +21304,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## MQOM-Round2-Spec
 
 - **Reference ID**: MQOM-Round2-Spec
@@ -21758,7 +21357,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Malaysia-NACSA-PQC-2025
 
 - **Reference ID**: Malaysia-NACSA-PQC-2025
@@ -21812,7 +21410,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Marchesi-CryptoAgility-Survey-2025
 
 - **Reference ID**: Marchesi-CryptoAgility-Survey-2025
@@ -21866,7 +21463,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## McKinsey-PQC-Preparation
 
 - **Reference ID**: McKinsey-PQC-Preparation
@@ -21920,7 +21516,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Meta-PQC-Migration-2026
 
 - **Reference ID**: Meta-PQC-Migration-2026
@@ -21974,7 +21569,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Microchip-TS1800-PQC-RootOfTrust-2026
 
 - **Reference ID**: Microchip-TS1800-PQC-RootOfTrust-2026
@@ -22028,7 +21622,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Microsoft-Crypto-Inventory-CPM-2026
 
 - **Reference ID**: Microsoft-Crypto-Inventory-CPM-2026
@@ -22082,7 +21675,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Microsoft-PQC-Research
 
 - **Reference ID**: Microsoft-PQC-Research
@@ -22136,7 +21728,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Microsoft-QSP-Roadmap-2025
 
 - **Reference ID**: Microsoft-QSP-Roadmap-2025
@@ -22190,7 +21781,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Multi-Authentication-in-IKEv2-with-Post-quantum-Security
 
 - **Reference ID**: Multi-Authentication-in-IKEv2-with-Post-quantum-Security
@@ -22244,7 +21834,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NATO-Quantum-Strategy-2024
 
 - **Reference ID**: NATO-Quantum-Strategy-2024
@@ -22298,7 +21887,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NERC-CIP-REQS
 
 - **Reference ID**: NERC-CIP-REQS
@@ -22352,7 +21940,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIAP
 
 - **Reference ID**: NIAP
@@ -22406,7 +21993,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIAP-CCEVS-MANUAL
 
 - **Reference ID**: NIAP-CCEVS-MANUAL
@@ -22460,7 +22046,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIAP-CCEVS-POLICY
 
 - **Reference ID**: NIAP-CCEVS-POLICY
@@ -22514,7 +22099,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIS2-DIRECTIVE-2022-2555
 
 - **Reference ID**: NIS2-DIRECTIVE-2022-2555
@@ -22568,7 +22152,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST CSWP 39
 
 - **Reference ID**: NIST CSWP 39
@@ -22622,7 +22205,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST CSWP 48
 
 - **Reference ID**: NIST CSWP 48
@@ -22676,7 +22258,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST IR 8105
 
 - **Reference ID**: NIST IR 8105
@@ -22730,7 +22311,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST IR 8309
 
 - **Reference ID**: NIST IR 8309
@@ -22784,7 +22364,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST IR 8320E
 
 - **Reference ID**: NIST IR 8320E
@@ -22838,7 +22417,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST IR 8413
 
 - **Reference ID**: NIST IR 8413
@@ -22892,7 +22470,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST IR 8477
 
 - **Reference ID**: NIST IR 8477
@@ -22946,7 +22523,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST IR 8545
 
 - **Reference ID**: NIST IR 8545
@@ -23000,7 +22576,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST IR 8547
 
 - **Reference ID**: NIST IR 8547
@@ -23054,7 +22629,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST IR 8610
 
 - **Reference ID**: NIST IR 8610
@@ -23108,7 +22682,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST NCCoE SP 1800-38A
 
 - **Reference ID**: NIST NCCoE SP 1800-38A
@@ -23162,7 +22735,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST NCCoE SP 1800-38B
 
 - **Reference ID**: NIST NCCoE SP 1800-38B
@@ -23216,7 +22788,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST NCCoE SP 1800-38C
 
 - **Reference ID**: NIST NCCoE SP 1800-38C
@@ -23270,7 +22841,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST PQC FAQ
 
 - **Reference ID**: NIST PQC FAQ
@@ -23324,7 +22894,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST SP 800-108
 
 - **Reference ID**: NIST SP 800-108
@@ -23378,7 +22947,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST SP 800-111
 
 - **Reference ID**: NIST SP 800-111
@@ -23432,7 +23000,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST SP 800-181r1
 
 - **Reference ID**: NIST SP 800-181r1
@@ -23486,7 +23053,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST SP 800-207
 
 - **Reference ID**: NIST SP 800-207
@@ -23540,7 +23106,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST SP 800-208
 
 - **Reference ID**: NIST SP 800-208
@@ -23594,7 +23159,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST SP 800-218
 
 - **Reference ID**: NIST SP 800-218
@@ -23648,7 +23212,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST SP 800-227
 
 - **Reference ID**: NIST SP 800-227
@@ -23702,7 +23265,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST SP 800-37
 
 - **Reference ID**: NIST SP 800-37
@@ -23756,7 +23318,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST SP 800-53
 
 - **Reference ID**: NIST SP 800-53
@@ -23810,7 +23371,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST SP 800-56A
 
 - **Reference ID**: NIST SP 800-56A
@@ -23864,7 +23424,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST SP 800-66
 
 - **Reference ID**: NIST SP 800-66
@@ -23918,7 +23477,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST SP 800-82 Rev. 3
 
 - **Reference ID**: NIST SP 800-82 Rev. 3
@@ -23972,7 +23530,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST SP 800-88
 
 - **Reference ID**: NIST SP 800-88
@@ -24026,7 +23583,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST SP 800-90
 
 - **Reference ID**: NIST SP 800-90
@@ -24080,7 +23636,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST SP 800-90A
 
 - **Reference ID**: NIST SP 800-90A
@@ -24134,7 +23689,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST SP 800-90B
 
 - **Reference ID**: NIST SP 800-90B
@@ -24188,7 +23742,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-ACVP
 
 - **Reference ID**: NIST-ACVP
@@ -24242,7 +23795,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-CMVP-MIP-List
 
 - **Reference ID**: NIST-CMVP-MIP-List
@@ -24296,7 +23848,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-CMVP-Validated-Modules
 
 - **Reference ID**: NIST-CMVP-Validated-Modules
@@ -24350,7 +23901,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-CSF-2.0
 
 - **Reference ID**: NIST-CSF-2.0
@@ -24404,7 +23954,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-CSWP-36A
 
 - **Reference ID**: NIST-CSWP-36A
@@ -24458,7 +24007,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-CSWP-39
 
 - **Reference ID**: NIST-CSWP-39
@@ -24512,7 +24060,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-FIPS-140-3-IG-Sep-2025-PQC
 
 - **Reference ID**: NIST-FIPS-140-3-IG-Sep-2025-PQC
@@ -24566,7 +24113,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-FIPS140-3-IG-PQC
 
 - **Reference ID**: NIST-FIPS140-3-IG-PQC
@@ -24620,7 +24166,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-IR-8528
 
 - **Reference ID**: NIST-IR-8528
@@ -24674,7 +24219,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-IR-8547-IPD2
 
 - **Reference ID**: NIST-IR-8547-IPD2
@@ -24728,7 +24272,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-IR-8547-Initial-Public-Draft-Transition-to-Post-Quantum
 
 - **Reference ID**: NIST-IR-8547-Initial-Public-Draft-Transition-to-Post-Quantum
@@ -24782,7 +24325,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-PQC-Seminar-FaultInjection-Lattice
 
 - **Reference ID**: NIST-PQC-Seminar-FaultInjection-Lattice
@@ -24836,7 +24378,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-PQC-Workshop-Yassir-2020
 
 - **Reference ID**: NIST-PQC-Workshop-Yassir-2020
@@ -24890,7 +24431,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-108-R1
 
 - **Reference ID**: NIST-SP-800-108-R1
@@ -24944,7 +24484,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-131A-Rev3
 
 - **Reference ID**: NIST-SP-800-131A-Rev3
@@ -24998,7 +24537,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-132
 
 - **Reference ID**: NIST-SP-800-132
@@ -25052,7 +24590,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-133r3-ipd
 
 - **Reference ID**: NIST-SP-800-133r3-ipd
@@ -25106,7 +24643,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-140A
 
 - **Reference ID**: NIST-SP-800-140A
@@ -25160,7 +24696,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-140B
 
 - **Reference ID**: NIST-SP-800-140B
@@ -25214,7 +24749,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-140C
 
 - **Reference ID**: NIST-SP-800-140C
@@ -25268,7 +24802,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-140Cr1
 
 - **Reference ID**: NIST-SP-800-140Cr1
@@ -25322,7 +24855,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-140D
 
 - **Reference ID**: NIST-SP-800-140D
@@ -25376,7 +24908,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-140Dr1
 
 - **Reference ID**: NIST-SP-800-140Dr1
@@ -25430,7 +24961,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-140E
 
 - **Reference ID**: NIST-SP-800-140E
@@ -25484,7 +25014,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-140F
 
 - **Reference ID**: NIST-SP-800-140F
@@ -25538,7 +25067,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-152
 
 - **Reference ID**: NIST-SP-800-152
@@ -25592,7 +25120,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-175B
 
 - **Reference ID**: NIST-SP-800-175B
@@ -25646,7 +25173,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-185
 
 - **Reference ID**: NIST-SP-800-185
@@ -25700,7 +25226,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-186
 
 - **Reference ID**: NIST-SP-800-186
@@ -25754,7 +25279,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-22-R1A
 
 - **Reference ID**: NIST-SP-800-22-R1A
@@ -25808,7 +25332,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-230-ipd
 
 - **Reference ID**: NIST-SP-800-230-ipd
@@ -25862,7 +25385,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-232
 
 - **Reference ID**: NIST-SP-800-232
@@ -25916,7 +25438,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-38D
 
 - **Reference ID**: NIST-SP-800-38D
@@ -25970,7 +25491,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-53
 
 - **Reference ID**: NIST-SP-800-53
@@ -26024,7 +25544,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-56A
 
 - **Reference ID**: NIST-SP-800-56A
@@ -26078,7 +25597,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-56B
 
 - **Reference ID**: NIST-SP-800-56B
@@ -26132,7 +25650,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-56C-R2
 
 - **Reference ID**: NIST-SP-800-56C-R2
@@ -26186,7 +25703,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-57-Pt1-R5
 
 - **Reference ID**: NIST-SP-800-57-Pt1-R5
@@ -26240,7 +25756,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-57-Pt1-R6
 
 - **Reference ID**: NIST-SP-800-57-Pt1-R6
@@ -26294,7 +25809,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-63-3
 
 - **Reference ID**: NIST-SP-800-63-3
@@ -26348,7 +25862,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-90A-R1
 
 - **Reference ID**: NIST-SP-800-90A-R1
@@ -26402,7 +25915,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-90B
 
 - **Reference ID**: NIST-SP-800-90B
@@ -26456,7 +25968,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NIST-SP-800-90C
 
 - **Reference ID**: NIST-SP-800-90C
@@ -26510,7 +26021,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NL-PQC-Migration-Handbook-2024
 
 - **Reference ID**: NL-PQC-Migration-Handbook-2024
@@ -26564,7 +26074,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NSA CNSA 2.0
 
 - **Reference ID**: NSA CNSA 2.0
@@ -26618,7 +26127,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NSA CNSA 2.0 FAQ
 
 - **Reference ID**: NSA CNSA 2.0 FAQ
@@ -26672,7 +26180,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NSA CSfC PQC Guidance Addendum
 
 - **Reference ID**: NSA CSfC PQC Guidance Addendum
@@ -26726,7 +26233,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NSA-QKD-Advisory-2023
 
 - **Reference ID**: NSA-QKD-Advisory-2023
@@ -26780,7 +26286,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NSM-10
 
 - **Reference ID**: NSM-10
@@ -26834,7 +26339,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NTIA-SBOM-Minimum-Elements-2021
 
 - **Reference ID**: NTIA-SBOM-Minimum-Elements-2021
@@ -26888,7 +26392,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NTNU-PQC-Challenges-Silde
 
 - **Reference ID**: NTNU-PQC-Challenges-Silde
@@ -26942,7 +26445,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NY-DFS-23-NYCRR-500-A2
 
 - **Reference ID**: NY-DFS-23-NYCRR-500-A2
@@ -26996,7 +26498,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## NZISM-V3-9
 
 - **Reference ID**: NZISM-V3-9
@@ -27050,7 +26551,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## OASIS-Approves-Two-Public-Key-Cryptography-Standards-to-Adva
 
 - **Reference ID**: OASIS-Approves-Two-Public-Key-Cryptography-Standards-to-Adva
@@ -27104,7 +26604,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## OASIS-CSAF-2.0-VEX
 
 - **Reference ID**: OASIS-CSAF-2.0-VEX
@@ -27158,7 +26657,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## OASIS-SAML-2-0-Core
 
 - **Reference ID**: OASIS-SAML-2-0-Core
@@ -27212,7 +26710,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## OMB-M-23-02
 
 - **Reference ID**: OMB-M-23-02
@@ -27266,7 +26763,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## OMB-M-26-15
 
 - **Reference ID**: OMB-M-26-15
@@ -27320,7 +26816,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## OWASP-CycloneDX-CBOM-Guide
 
 - **Reference ID**: OWASP-CycloneDX-CBOM-Guide
@@ -27374,7 +26869,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## OpenID4VCI-Spec
 
 - **Reference ID**: OpenID4VCI-Spec
@@ -27428,7 +26922,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## OpenID4VP-Spec
 
 - **Reference ID**: OpenID4VP-Spec
@@ -27482,7 +26975,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## OpenSSL-3.5.0-Release
 
 - **Reference ID**: OpenSSL-3.5.0-Release
@@ -27536,7 +27028,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## OpenSSL-3x-Docs
 
 - **Reference ID**: OpenSSL-3x-Docs
@@ -27590,7 +27081,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Output-Schema-Based-on-Cryptographic-Bill-of-Materials-CBoM
 
 - **Reference ID**: Output-Schema-Based-on-Cryptographic-Bill-of-Materials-CBoM
@@ -27644,7 +27134,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## P2025062700238
 
 - **Reference ID**: P2025062700238
@@ -27698,7 +27187,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## PCI-DSS-QRG
 
 - **Reference ID**: PCI-DSS-QRG
@@ -27752,7 +27240,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## PKCS11-V3-OASIS
 
 - **Reference ID**: PKCS11-V3-OASIS
@@ -27806,7 +27293,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## PKCS11-V31-OASIS
 
 - **Reference ID**: PKCS11-V31-OASIS
@@ -27860,7 +27346,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## PKCS11-V32-OASIS
 
 - **Reference ID**: PKCS11-V32-OASIS
@@ -27914,7 +27399,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## PKCS11-V32-OS-OASIS
 
 - **Reference ID**: PKCS11-V32-OS-OASIS
@@ -27968,7 +27452,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## PKI-Consortium-PQC-2025
 
 - **Reference ID**: PKI-Consortium-PQC-2025
@@ -28022,7 +27505,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## PQCC-Inventory-Workbook-2025
 
 - **Reference ID**: PQCC-Inventory-Workbook-2025
@@ -28076,7 +27558,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## PQCC-Migration-Roadmap-2025
 
 - **Reference ID**: PQCC-Migration-Roadmap-2025
@@ -28130,7 +27611,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## PQClean
 
 - **Reference ID**: PQClean
@@ -28184,7 +27664,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## PQShield-4-Quantum-Threats-Enterprises-2026
 
 - **Reference ID**: PQShield-4-Quantum-Threats-Enterprises-2026
@@ -28238,7 +27717,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## PROACT-2025-SCA-Lattice-PQC
 
 - **Reference ID**: PROACT-2025-SCA-Lattice-PQC
@@ -28292,7 +27770,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Parkin-Julian-5g-suci
 
 - **Reference ID**: Parkin-Julian-5g-suci
@@ -28346,7 +27823,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Peikert-Lattice-Survey-2016
 
 - **Reference ID**: Peikert-Lattice-Survey-2016
@@ -28400,7 +27876,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Polkadot-Substrate-Crypto
 
 - **Reference ID**: Polkadot-Substrate-Crypto
@@ -28454,7 +27929,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Ponemon-Global-PKI-Trends-2026
 
 - **Reference ID**: Ponemon-Global-PKI-Trends-2026
@@ -28508,7 +27982,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Post-Quantum-Cryptography-Recommendations-for-TLS-based-Appl
 
 - **Reference ID**: Post-Quantum-Cryptography-Recommendations-for-TLS-based-Appl
@@ -28562,7 +28035,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Post-Quantum-Enhancements-to-TLS-Based-EAP-Methods
 
 - **Reference ID**: Post-Quantum-Enhancements-to-TLS-Based-EAP-Methods
@@ -28616,7 +28088,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Post-Quantum-Enhancements-to-TLS-Based-EAP-Methods-WG-draft
 
 - **Reference ID**: Post-Quantum-Enhancements-to-TLS-Based-EAP-Methods-WG-draft
@@ -28670,7 +28141,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Post-Quantum-Guidance-for-current-deployments-of-IETF-protoc
 
 - **Reference ID**: Post-Quantum-Guidance-for-current-deployments-of-IETF-protoc
@@ -28724,7 +28194,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Post-Quantum-Key-Encapsulation-Mechanisms-PQ-KEMs-for-COSE
 
 - **Reference ID**: Post-Quantum-Key-Encapsulation-Mechanisms-PQ-KEMs-for-COSE
@@ -28778,7 +28247,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Post-Quantum-Key-Encapsulation-Mechanisms-PQ-KEMs-in-EAP-AKA
 
 - **Reference ID**: Post-Quantum-Key-Encapsulation-Mechanisms-PQ-KEMs-in-EAP-AKA
@@ -28832,7 +28300,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Post-Quantum-Traditional-PQ-T-Hybrid-PKI-Authentication-in-t
 
 - **Reference ID**: Post-Quantum-Traditional-PQ-T-Hybrid-PKI-Authentication-in-t
@@ -28886,7 +28353,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ProjectEleven-Quantum-Threat-Blockchains-2026
 
 - **Reference ID**: ProjectEleven-Quantum-Threat-Blockchains-2026
@@ -28940,7 +28406,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## QCCPA-2022
 
 - **Reference ID**: QCCPA-2022
@@ -28994,7 +28459,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## QCReport-QDay-Accelerated-Timeline-2026
 
 - **Reference ID**: QCReport-QDay-Accelerated-Timeline-2026
@@ -29048,7 +28512,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## QCReport-QSE-Enterprise-PQC-Platform-2026
 
 - **Reference ID**: QCReport-QSE-Enterprise-PQC-Platform-2026
@@ -29102,7 +28565,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## QFB-Portrait-Quantum-Technologies-Finance-2026
 
 - **Reference ID**: QFB-Portrait-Quantum-Technologies-Finance-2026
@@ -29156,7 +28618,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## QR-UOV-Round2-Spec
 
 - **Reference ID**: QR-UOV-Round2-Spec
@@ -29210,7 +28671,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## QRL-Quantum-Resistant-Ledger
 
 - **Reference ID**: QRL-Quantum-Resistant-Ledger
@@ -29264,7 +28724,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Quantum-Economy-Landscape-in-Saudi-Arabia-23
 
 - **Reference ID**: Quantum-Economy-Landscape-in-Saudi-Arabia-23
@@ -29318,7 +28777,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Quantum-Ready-FN-DSA-FIPS-206-Nears-Draft-Approval-from-NIST-DigiCert
 
 - **Reference ID**: Quantum-Ready-FN-DSA-FIPS-206-Nears-Draft-Approval-from-NIST-DigiCert
@@ -29372,7 +28830,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## QuantumFinanceBoardroom-Ganguly-PQC-Ch24-2026
 
 - **Reference ID**: QuantumFinanceBoardroom-Ganguly-PQC-Ch24-2026
@@ -29426,7 +28883,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## QuantumInsider-25-Companies-PQC-2026
 
 - **Reference ID**: QuantumInsider-25-Companies-PQC-2026
@@ -29480,7 +28936,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## QuantumInsider-AES128-Safe-Quantum-2026
 
 - **Reference ID**: QuantumInsider-AES128-Safe-Quantum-2026
@@ -29534,7 +28989,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## QuantumInsider-QS-Threats-Solutions-2026
 
 - **Reference ID**: QuantumInsider-QS-Threats-Solutions-2026
@@ -29588,7 +29042,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## QuantumInsider-QuantumXChange-PhioTX-2026
 
 - **Reference ID**: QuantumInsider-QuantumXChange-PhioTX-2026
@@ -29642,7 +29095,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## QuantumInsider-Why-2026-Matters-QS
 
 - **Reference ID**: QuantumInsider-Why-2026-Matters-QS
@@ -29696,7 +29148,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## QuantumZeitgeist-CryptoNext-NIST-Cert-2026
 
 - **Reference ID**: QuantumZeitgeist-CryptoNext-NIST-Cert-2026
@@ -29750,7 +29201,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## REF-PQC-Report-FINAL-Send
 
 - **Reference ID**: REF-PQC-Report-FINAL-Send
@@ -29804,7 +29254,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 1847
 
 - **Reference ID**: RFC 1847
@@ -29858,7 +29307,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 2119
 
 - **Reference ID**: RFC 2119
@@ -29912,7 +29360,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 3370
 
 - **Reference ID**: RFC 3370
@@ -29966,7 +29413,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 3394
 
 - **Reference ID**: RFC 3394
@@ -30020,7 +29466,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 3560
 
 - **Reference ID**: RFC 3560
@@ -30074,7 +29519,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 4034
 
 - **Reference ID**: RFC 4034
@@ -30128,7 +29572,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 4056
 
 - **Reference ID**: RFC 4056
@@ -30182,7 +29625,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 4210
 
 - **Reference ID**: RFC 4210
@@ -30236,7 +29678,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 4250
 
 - **Reference ID**: RFC 4250
@@ -30290,7 +29731,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 4251
 
 - **Reference ID**: RFC 4251
@@ -30344,7 +29784,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 4252
 
 - **Reference ID**: RFC 4252
@@ -30398,7 +29837,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 4253
 
 - **Reference ID**: RFC 4253
@@ -30452,7 +29890,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 4254
 
 - **Reference ID**: RFC 4254
@@ -30506,7 +29943,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 4301
 
 - **Reference ID**: RFC 4301
@@ -30560,7 +29996,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 4302
 
 - **Reference ID**: RFC 4302
@@ -30614,7 +30049,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 4303
 
 - **Reference ID**: RFC 4303
@@ -30668,7 +30102,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 4306
 
 - **Reference ID**: RFC 4306
@@ -30722,7 +30155,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 4419
 
 - **Reference ID**: RFC 4419
@@ -30776,7 +30208,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 4718
 
 - **Reference ID**: RFC 4718
@@ -30830,7 +30261,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 5056
 
 - **Reference ID**: RFC 5056
@@ -30884,7 +30314,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 5083
 
 - **Reference ID**: RFC 5083
@@ -30938,7 +30367,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 5246
 
 - **Reference ID**: RFC 5246
@@ -30992,7 +30420,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 5280
 
 - **Reference ID**: RFC 5280
@@ -31046,7 +30473,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 5652
 
 - **Reference ID**: RFC 5652
@@ -31100,7 +30526,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 5751
 
 - **Reference ID**: RFC 5751
@@ -31154,7 +30579,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 5754
 
 - **Reference ID**: RFC 5754
@@ -31208,7 +30632,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 5869
 
 - **Reference ID**: RFC 5869
@@ -31262,7 +30685,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 5911
 
 - **Reference ID**: RFC 5911
@@ -31316,7 +30738,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 5912
 
 - **Reference ID**: RFC 5912
@@ -31370,7 +30791,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 5958
 
 - **Reference ID**: RFC 5958
@@ -31424,7 +30844,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 5990
 
 - **Reference ID**: RFC 5990
@@ -31478,7 +30897,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 5996
 
 - **Reference ID**: RFC 5996
@@ -31532,7 +30950,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 6090
 
 - **Reference ID**: RFC 6090
@@ -31586,7 +31003,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 6176
 
 - **Reference ID**: RFC 6176
@@ -31640,7 +31056,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 6234
 
 - **Reference ID**: RFC 6234
@@ -31694,7 +31109,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 6749
 
 - **Reference ID**: RFC 6749
@@ -31748,7 +31162,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 6962
 
 - **Reference ID**: RFC 6962
@@ -31802,7 +31215,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 7030
 
 - **Reference ID**: RFC 7030
@@ -31856,7 +31268,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 7228
 
 - **Reference ID**: RFC 7228
@@ -31910,7 +31321,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 7250
 
 - **Reference ID**: RFC 7250
@@ -31964,7 +31374,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 7296
 
 - **Reference ID**: RFC 7296
@@ -32018,7 +31427,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 7468
 
 - **Reference ID**: RFC 7468
@@ -32072,7 +31480,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 7515
 
 - **Reference ID**: RFC 7515
@@ -32126,7 +31533,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 7516
 
 - **Reference ID**: RFC 7516
@@ -32180,7 +31586,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 7517
 
 - **Reference ID**: RFC 7517
@@ -32234,7 +31639,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 7518
 
 - **Reference ID**: RFC 7518
@@ -32288,7 +31692,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 7519
 
 - **Reference ID**: RFC 7519
@@ -32342,7 +31745,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 7568
 
 - **Reference ID**: RFC 7568
@@ -32396,7 +31798,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 7693
 
 - **Reference ID**: RFC 7693
@@ -32450,7 +31851,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 7748
 
 - **Reference ID**: RFC 7748
@@ -32504,7 +31904,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 8017
 
 - **Reference ID**: RFC 8017
@@ -32558,7 +31957,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 8037
 
 - **Reference ID**: RFC 8037
@@ -32612,7 +32010,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 8174
 
 - **Reference ID**: RFC 8174
@@ -32666,7 +32063,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 8268
 
 - **Reference ID**: RFC 8268
@@ -32720,7 +32116,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 8391
 
 - **Reference ID**: RFC 8391
@@ -32774,7 +32169,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 8446
 
 - **Reference ID**: RFC 8446
@@ -32828,7 +32222,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 8551
 
 - **Reference ID**: RFC 8551
@@ -32882,7 +32275,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 8554
 
 - **Reference ID**: RFC 8554
@@ -32936,7 +32328,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 8603
 
 - **Reference ID**: RFC 8603
@@ -32990,7 +32381,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 8702
 
 - **Reference ID**: RFC 8702
@@ -33044,7 +32434,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 8708
 
 - **Reference ID**: RFC 8708
@@ -33098,7 +32487,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 8725
 
 - **Reference ID**: RFC 8725
@@ -33152,7 +32540,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 8755
 
 - **Reference ID**: RFC 8755
@@ -33206,7 +32593,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 8756
 
 - **Reference ID**: RFC 8756
@@ -33260,7 +32646,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 8778
 
 - **Reference ID**: RFC 8778
@@ -33314,7 +32699,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 8784
 
 - **Reference ID**: RFC 8784
@@ -33368,7 +32752,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 8879
 
 - **Reference ID**: RFC 8879
@@ -33422,7 +32805,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 8996
 
 - **Reference ID**: RFC 8996
@@ -33476,7 +32858,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 8998
 
 - **Reference ID**: RFC 8998
@@ -33530,7 +32911,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9001
 
 - **Reference ID**: RFC 9001
@@ -33584,7 +32964,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9019
 
 - **Reference ID**: RFC 9019
@@ -33638,7 +33017,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9052
 
 - **Reference ID**: RFC 9052
@@ -33692,7 +33070,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9053
 
 - **Reference ID**: RFC 9053
@@ -33746,7 +33123,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9142
 
 - **Reference ID**: RFC 9142
@@ -33800,7 +33176,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9147
 
 - **Reference ID**: RFC 9147
@@ -33854,7 +33229,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9180
 
 - **Reference ID**: RFC 9180
@@ -33908,7 +33282,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9325
 
 - **Reference ID**: RFC 9325
@@ -33962,7 +33335,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9364
 
 - **Reference ID**: RFC 9364
@@ -34016,7 +33388,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9370
 
 - **Reference ID**: RFC 9370
@@ -34070,7 +33441,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9420
 
 - **Reference ID**: RFC 9420
@@ -34124,7 +33494,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9449
 
 - **Reference ID**: RFC 9449
@@ -34178,7 +33547,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9480
 
 - **Reference ID**: RFC 9480
@@ -34232,7 +33600,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9528
 
 - **Reference ID**: RFC 9528
@@ -34286,7 +33653,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9580
 
 - **Reference ID**: RFC 9580
@@ -34340,7 +33706,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9581
 
 - **Reference ID**: RFC 9581
@@ -34394,7 +33759,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9593
 
 - **Reference ID**: RFC 9593
@@ -34448,7 +33812,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9629
 
 - **Reference ID**: RFC 9629
@@ -34502,7 +33865,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9690
 
 - **Reference ID**: RFC 9690
@@ -34556,7 +33918,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9708
 
 - **Reference ID**: RFC 9708
@@ -34610,7 +33971,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9794
 
 - **Reference ID**: RFC 9794
@@ -34664,7 +34024,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9802
 
 - **Reference ID**: RFC 9802
@@ -34718,7 +34077,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9810
 
 - **Reference ID**: RFC 9810
@@ -34772,7 +34130,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9811
 
 - **Reference ID**: RFC 9811
@@ -34826,7 +34183,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9814
 
 - **Reference ID**: RFC 9814
@@ -34880,7 +34236,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9847
 
 - **Reference ID**: RFC 9847
@@ -34934,7 +34289,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9858
 
 - **Reference ID**: RFC 9858
@@ -34988,7 +34342,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9867
 
 - **Reference ID**: RFC 9867
@@ -35042,7 +34395,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9881
 
 - **Reference ID**: RFC 9881
@@ -35096,7 +34448,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9882
 
 - **Reference ID**: RFC 9882
@@ -35150,7 +34501,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9941
 
 - **Reference ID**: RFC 9941
@@ -35204,7 +34554,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC 9980
 
 - **Reference ID**: RFC 9980
@@ -35258,7 +34607,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-0793
 
 - **Reference ID**: RFC-0793
@@ -35312,7 +34660,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-1950
 
 - **Reference ID**: RFC-1950
@@ -35366,7 +34713,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-2397
 
 - **Reference ID**: RFC-2397
@@ -35420,7 +34766,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-3647
 
 - **Reference ID**: RFC-3647
@@ -35474,7 +34819,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-4255
 
 - **Reference ID**: RFC-4255
@@ -35528,7 +34872,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-4346
 
 - **Reference ID**: RFC-4346
@@ -35582,7 +34925,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-5234
 
 - **Reference ID**: RFC-5234
@@ -35636,7 +34978,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-5469
 
 - **Reference ID**: RFC-5469
@@ -35690,7 +35031,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-5741
 
 - **Reference ID**: RFC-5741
@@ -35744,7 +35084,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-5763
 
 - **Reference ID**: RFC-5763
@@ -35798,7 +35137,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-5869
 
 - **Reference ID**: RFC-5869
@@ -35852,7 +35190,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-6019
 
 - **Reference ID**: RFC-6019
@@ -35906,7 +35243,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-6024
 
 - **Reference ID**: RFC-6024
@@ -35960,7 +35296,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-6347
 
 - **Reference ID**: RFC-6347
@@ -36014,7 +35349,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-6594
 
 - **Reference ID**: RFC-6594
@@ -36068,7 +35402,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-6750
 
 - **Reference ID**: RFC-6750
@@ -36122,7 +35455,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-6763
 
 - **Reference ID**: RFC-6763
@@ -36176,7 +35508,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-6928
 
 - **Reference ID**: RFC-6928
@@ -36230,7 +35561,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-6960
 
 - **Reference ID**: RFC-6960
@@ -36284,7 +35614,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-7009
 
 - **Reference ID**: RFC-7009
@@ -36338,7 +35667,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-7159
 
 - **Reference ID**: RFC-7159
@@ -36392,7 +35720,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-7231
 
 - **Reference ID**: RFC-7231
@@ -36446,7 +35773,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-7301
 
 - **Reference ID**: RFC-7301
@@ -36500,7 +35826,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-7383
 
 - **Reference ID**: RFC-7383
@@ -36554,7 +35879,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-7427
 
 - **Reference ID**: RFC-7427
@@ -36608,7 +35932,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-7465
 
 - **Reference ID**: RFC-7465
@@ -36662,7 +35985,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-7479
 
 - **Reference ID**: RFC-7479
@@ -36716,7 +36038,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-7525
 
 - **Reference ID**: RFC-7525
@@ -36770,7 +36091,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-7638
 
 - **Reference ID**: RFC-7638
@@ -36824,7 +36144,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-7841
 
 - **Reference ID**: RFC-7841
@@ -36878,7 +36197,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-7924
 
 - **Reference ID**: RFC-7924
@@ -36932,7 +36250,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-7932
 
 - **Reference ID**: RFC-7932
@@ -36986,7 +36303,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-8032
 
 - **Reference ID**: RFC-8032
@@ -37040,7 +36356,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-8126
 
 - **Reference ID**: RFC-8126
@@ -37094,7 +36409,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-8152
 
 - **Reference ID**: RFC-8152
@@ -37148,7 +36462,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-8229
 
 - **Reference ID**: RFC-8229
@@ -37202,7 +36515,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-8230
 
 - **Reference ID**: RFC-8230
@@ -37256,7 +36568,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-8240
 
 - **Reference ID**: RFC-8240
@@ -37310,7 +36621,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-8410
 
 - **Reference ID**: RFC-8410
@@ -37364,7 +36674,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-8420
 
 - **Reference ID**: RFC-8420
@@ -37418,7 +36727,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-8447
 
 - **Reference ID**: RFC-8447
@@ -37472,7 +36780,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-8478
 
 - **Reference ID**: RFC-8478
@@ -37526,7 +36833,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-8610
 
 - **Reference ID**: RFC-8610
@@ -37580,7 +36886,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-8705
 
 - **Reference ID**: RFC-8705
@@ -37634,7 +36939,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-8707
 
 - **Reference ID**: RFC-8707
@@ -37688,7 +36992,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-8792
 
 - **Reference ID**: RFC-8792
@@ -37742,7 +37045,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-9000
 
 - **Reference ID**: RFC-9000
@@ -37796,7 +37098,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-9110
 
 - **Reference ID**: RFC-9110
@@ -37850,7 +37151,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-9146
 
 - **Reference ID**: RFC-9146
@@ -37904,7 +37204,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-9155
 
 - **Reference ID**: RFC-9155
@@ -37958,7 +37257,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-9162
 
 - **Reference ID**: RFC-9162
@@ -38012,7 +37310,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-9242
 
 - **Reference ID**: RFC-9242
@@ -38066,7 +37363,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-9258
 
 - **Reference ID**: RFC-9258
@@ -38120,7 +37416,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-9345
 
 - **Reference ID**: RFC-9345
@@ -38174,7 +37469,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-9380
 
 - **Reference ID**: RFC-9380
@@ -38228,7 +37522,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-9496
 
 - **Reference ID**: RFC-9496
@@ -38282,7 +37575,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-9679
 
 - **Reference ID**: RFC-9679
@@ -38336,7 +37628,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-9763
 
 - **Reference ID**: RFC-9763
@@ -38390,7 +37681,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1
 
 - **Reference ID**: RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1
@@ -38444,7 +37734,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-9901-SD-JWT-VC
 
 - **Reference ID**: RFC-9901-SD-JWT-VC
@@ -38498,7 +37787,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-9909
 
 - **Reference ID**: RFC-9909
@@ -38552,7 +37840,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-9935
 
 - **Reference ID**: RFC-9935
@@ -38606,7 +37893,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-9936
 
 - **Reference ID**: RFC-9936
@@ -38660,7 +37946,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-9941
 
 - **Reference ID**: RFC-9941
@@ -38714,7 +37999,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-9958
 
 - **Reference ID**: RFC-9958
@@ -38768,7 +38052,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## RFC-9964
 
 - **Reference ID**: RFC-9964
@@ -38822,7 +38105,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Radboud-MTC-Thesis-2025
 
 - **Reference ID**: Radboud-MTC-Thesis-2025
@@ -38876,7 +38158,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Regev-LWE-Survey
 
 - **Reference ID**: Regev-LWE-Survey
@@ -38930,7 +38211,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Report-TaskForce-PQMigration-4Feb26-v1
 
 - **Reference ID**: Report-TaskForce-PQMigration-4Feb26-v1
@@ -38984,7 +38264,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Rosenpass-Protocol
 
 - **Reference ID**: Rosenpass-Protocol
@@ -39038,7 +38317,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## SALSA-2022-Lattice-Transformer
 
 - **Reference ID**: SALSA-2022-Lattice-Transformer
@@ -39092,7 +38370,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## SCA-2017-AES-CNN-Jitter
 
 - **Reference ID**: SCA-2017-AES-CNN-Jitter
@@ -39146,7 +38423,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## SCA-2023-Masked-Kyber-DL
 
 - **Reference ID**: SCA-2023-Masked-Kyber-DL
@@ -39200,7 +38476,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## SDitH-Round2-Spec
 
 - **Reference ID**: SDitH-Round2-Spec
@@ -39254,7 +38529,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## SEC 1
 
 - **Reference ID**: SEC 1
@@ -39308,7 +38582,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## SEC2-v2
 
 - **Reference ID**: SEC2-v2
@@ -39362,7 +38635,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## SG-MAS-QKD-Sandbox-Report-2025
 
 - **Reference ID**: SG-MAS-QKD-Sandbox-Report-2025
@@ -39416,7 +38688,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## SG-MAS-Quantum-Advisory-2024
 
 - **Reference ID**: SG-MAS-Quantum-Advisory-2024
@@ -39470,7 +38741,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## SG-Quantum-Safe-Handbook-2025
 
 - **Reference ID**: SG-Quantum-Safe-Handbook-2025
@@ -39524,7 +38794,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## SLIP-0010
 
 - **Reference ID**: SLIP-0010
@@ -39578,7 +38847,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## SNOVA-Round2-Spec
 
 - **Reference ID**: SNOVA-Round2-Spec
@@ -39632,7 +38900,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## SP-800-230-Additional-SLH-DSA-Parameter-Sets-for-Limited-Sig
 
 - **Reference ID**: SP-800-230-Additional-SLH-DSA-Parameter-Sets-for-Limited-Sig
@@ -39686,7 +38953,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## SP-800-73-6-Part-1-PIV-Card-Application-Namespace-Data-Model
 
 - **Reference ID**: SP-800-73-6-Part-1-PIV-Card-Application-Namespace-Data-Model
@@ -39740,7 +39006,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## SP-800-73-6-Part-2-PIV-Card-Application-Card-Command-Interfa
 
 - **Reference ID**: SP-800-73-6-Part-2-PIV-Card-Application-Card-Command-Interfa
@@ -39794,7 +39059,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## SP-800-78-6-Cryptographic-Algorithms-and-Key-Sizes-for-PIV
 
 - **Reference ID**: SP-800-78-6-Cryptographic-Algorithms-and-Key-Sizes-for-PIV
@@ -39848,7 +39112,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## SPDX-Spec-ISO-5962
 
 - **Reference ID**: SPDX-Spec-ISO-5962
@@ -39902,7 +39165,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## SPHINCS-Plus-Spec-v31
 
 - **Reference ID**: SPHINCS-Plus-Spec-v31
@@ -39956,7 +39218,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## SQIsign-Round2-Spec
 
 - **Reference ID**: SQIsign-Round2-Spec
@@ -40010,7 +39271,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Sammo-PQC-NPP-MonteCarlo-2026
 
 - **Reference ID**: Sammo-PQC-NPP-MonteCarlo-2026
@@ -40064,7 +39324,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## SandboxAQ-PQC-Readiness-2025
 
 - **Reference ID**: SandboxAQ-PQC-Readiness-2025
@@ -40118,7 +39377,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Sandhu-Sharma-HybridCrypto-Finance-2026
 
 - **Reference ID**: Sandhu-Sharma-HybridCrypto-Finance-2026
@@ -40172,7 +39430,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Saudi-NCA-ECC2-2024
 
 - **Reference ID**: Saudi-NCA-ECC2-2024
@@ -40226,7 +39483,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Saudi-NCA-NCS1-2020
 
 - **Reference ID**: Saudi-NCA-NCS1-2020
@@ -40280,7 +39536,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## SecBoulevard-Carielli-CryptoAgility-2025
 
 - **Reference ID**: SecBoulevard-Carielli-CryptoAgility-2025
@@ -40334,7 +39589,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Sectigo-State-Crypto-Agility-2025
 
 - **Reference ID**: Sectigo-State-Crypto-Agility-2025
@@ -40388,7 +39642,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Signal-PQXDH-Spec
 
 - **Reference ID**: Signal-PQXDH-Spec
@@ -40442,7 +39695,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Singapore IMDA Cyber Security Guide
 
 - **Reference ID**: Singapore IMDA Cyber Security Guide
@@ -40496,7 +39748,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Singapore-CSA-Quantum-Safe-Handbook
 
 - **Reference ID**: Singapore-CSA-Quantum-Safe-Handbook
@@ -40550,7 +39801,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Singapore-NQSN-Plus
 
 - **Reference ID**: Singapore-NQSN-Plus
@@ -40604,7 +39854,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Solana-PQC-Helius
 
 - **Reference ID**: Solana-PQC-Helius
@@ -40658,7 +39907,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Spherity-PQC-Identity-Corridors-2026
 
 - **Reference ID**: Spherity-PQC-Identity-Corridors-2026
@@ -40712,7 +39960,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Springer-MathFoundations-PQC-2026
 
 - **Reference ID**: Springer-MathFoundations-PQC-2026
@@ -40766,7 +40013,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Sui-PQC-Blog
 
 - **Reference ID**: Sui-PQC-Blog
@@ -40820,7 +40066,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## TCG-EK-Credential-Profile-v2.7
 
 - **Reference ID**: TCG-EK-Credential-Profile-v2.7
@@ -40874,7 +40119,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## TCG-PC-Client-Platform-TPM-Profile-v1.07
 
 - **Reference ID**: TCG-PC-Client-Platform-TPM-Profile-v1.07
@@ -40928,7 +40172,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## TCG-TPM-2.0-Library-v1.85-Errata
 
 - **Reference ID**: TCG-TPM-2.0-Library-v1.85-Errata
@@ -40982,7 +40225,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## TCG-TPM-2.0-Library-v1.85-Part3-Published
 
 - **Reference ID**: TCG-TPM-2.0-Library-v1.85-Part3-Published
@@ -41036,7 +40278,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## TCG-TPM-PQC-Spec-2025
 
 - **Reference ID**: TCG-TPM-PQC-Spec-2025
@@ -41090,7 +40331,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## TCG-TPM-V185-Part0
 
 - **Reference ID**: TCG-TPM-V185-Part0
@@ -41144,7 +40384,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## TCG-TPM-V185-Part1
 
 - **Reference ID**: TCG-TPM-V185-Part1
@@ -41198,7 +40437,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## TCG-TPM-V185-Part2
 
 - **Reference ID**: TCG-TPM-V185-Part2
@@ -41252,7 +40490,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## TCG-TPM-V185-Part3
 
 - **Reference ID**: TCG-TPM-V185-Part3
@@ -41306,7 +40543,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## TNO-PQC-Migration-WP-2025
 
 - **Reference ID**: TNO-PQC-Migration-WP-2025
@@ -41360,7 +40596,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## TSA-SD-PIPELINE-2021-02F
 
 - **Reference ID**: TSA-SD-PIPELINE-2021-02F
@@ -41414,7 +40649,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Taurus-SA-Product
 
 - **Reference ID**: Taurus-SA-Product
@@ -41468,7 +40702,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## TechnicalGuidelines-on-SBOMQBOMCBOMAIBOM-and-HBOM-ver2.0
 
 - **Reference ID**: TechnicalGuidelines-on-SBOMQBOMCBOMAIBOM-and-HBOM-ver2.0
@@ -41522,7 +40755,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Testing.Measuring.and.Managing.PQC.Migration.WP
 
 - **Reference ID**: Testing.Measuring.and.Managing.PQC.Migration.WP
@@ -41576,7 +40808,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## UAE-DESC-PQC-Guideline
 
 - **Reference ID**: UAE-DESC-PQC-Guideline
@@ -41630,7 +40861,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## UEFI-SPEC-2.10-SecureBoot
 
 - **Reference ID**: UEFI-SPEC-2.10-SecureBoot
@@ -41684,7 +40914,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## UK NCSC PQC Guidance
 
 - **Reference ID**: UK NCSC PQC Guidance
@@ -41738,7 +40967,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## UK-CMORG-PQC-Guidance-2025
 
 - **Reference ID**: UK-CMORG-PQC-Guidance-2025
@@ -41792,7 +41020,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## UK-DSIT-CNI-PQC-Perspectives-2025
 
 - **Reference ID**: UK-DSIT-CNI-PQC-Perspectives-2025
@@ -41846,7 +41073,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## UK-NCSC-Migration-Timelines-2025
 
 - **Reference ID**: UK-NCSC-Migration-Timelines-2025
@@ -41900,7 +41126,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## UK-NCSC-PQC-Whitepaper-2024
 
 - **Reference ID**: UK-NCSC-PQC-Whitepaper-2024
@@ -41954,7 +41179,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## UNECE-WP29-R155
 
 - **Reference ID**: UNECE-WP29-R155
@@ -42008,7 +41232,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## UOV-Round2-Spec
 
 - **Reference ID**: UOV-Round2-Spec
@@ -42062,7 +41285,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## US-CISA-ACDI-Strategy-2024
 
 - **Reference ID**: US-CISA-ACDI-Strategy-2024
@@ -42116,7 +41338,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## US-CISA-PQC-OT-2024
 
 - **Reference ID**: US-CISA-PQC-OT-2024
@@ -42170,7 +41391,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## US-NSA-CNSA-2.0-2022
 
 - **Reference ID**: US-NSA-CNSA-2.0-2022
@@ -42224,7 +41444,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## US-QCCPA-2022
 
 - **Reference ID**: US-QCCPA-2022
@@ -42278,7 +41497,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## US-TREASURY-FSRMP-2025
 
 - **Reference ID**: US-TREASURY-FSRMP-2025
@@ -42332,7 +41550,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## USENIX-2024-HQC-Division-Timing
 
 - **Reference ID**: USENIX-2024-HQC-Division-Timing
@@ -42386,7 +41603,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## VIAVI-PQC-Migration-WP-2026
 
 - **Reference ID**: VIAVI-PQC-Migration-WP-2026
@@ -42440,7 +41656,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Venafi-Ponemon-Outage-Cost
 
 - **Reference ID**: Venafi-Ponemon-Outage-Cost
@@ -42494,7 +41709,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## W3C WebAuthn
 
 - **Reference ID**: W3C WebAuthn
@@ -42548,7 +41762,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## WEF-2026-Quantum-Security-Leaders
 
 - **Reference ID**: WEF-2026-Quantum-Security-Leaders
@@ -42602,7 +41815,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## WEF-2026-QuantumSafe-Migration-CryptoDepth
 
 - **Reference ID**: WEF-2026-QuantumSafe-Migration-CryptoDepth
@@ -42656,7 +41868,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## WH-PQC-Report-2024
 
 - **Reference ID**: WH-PQC-Report-2024
@@ -42710,7 +41921,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## WebPKI PQC Timeline
 
 - **Reference ID**: WebPKI PQC Timeline
@@ -42764,7 +41974,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Weger-Code-Based-Survey-2022
 
 - **Reference ID**: Weger-Code-Based-Survey-2022
@@ -42818,7 +42027,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Westerbaan-PQCrypto2025-Slides
 
 - **Reference ID**: Westerbaan-PQCrypto2025-Slides
@@ -42872,7 +42080,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## YahooFinance-Quantum-Ready-2030-2026
 
 - **Reference ID**: YahooFinance-Quantum-Ready-2030-2026
@@ -42926,7 +42133,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ZA-POPIA-TEXT
 
 - **Reference ID**: ZA-POPIA-TEXT
@@ -42980,7 +42186,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## Zodia-Custody
 
 - **Reference ID**: Zodia-Custody
@@ -43034,7 +42239,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## arXiv-2403-11741
 
 - **Reference ID**: arXiv-2403-11741
@@ -43088,7 +42292,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## arXiv-2508-01694
 
 - **Reference ID**: arXiv-2508-01694
@@ -43142,7 +42345,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## arXiv-2603-01091-HNDL-Rekeying
 
 - **Reference ID**: arXiv-2603-01091-HNDL-Rekeying
@@ -43196,7 +42398,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## arXiv-2603-28627
 
 - **Reference ID**: arXiv-2603-28627
@@ -43250,7 +42451,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## arXiv-2603-28728
 
 - **Reference ID**: arXiv-2603-28728
@@ -43304,7 +42504,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## catalogue-produits-services-profils-de-protection-sites-certifies-qualifies-agrees-anssi
 
 - **Reference ID**: catalogue-produits-services-profils-de-protection-sites-certifies-qualifies-agrees-anssi
@@ -43358,7 +42557,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-becker-cnsa2-ssh-profile
 
 - **Reference ID**: draft-becker-cnsa2-ssh-profile
@@ -43412,7 +42610,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-becker-cnsa2-ssh-profile-03
 
 - **Reference ID**: draft-becker-cnsa2-ssh-profile-03
@@ -43466,7 +42663,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-bonnell-lamps-chameleon-certs-07
 
 - **Reference ID**: draft-bonnell-lamps-chameleon-certs-07
@@ -43520,7 +42716,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-celi-wiggers-tls-authkem
 
 - **Reference ID**: draft-celi-wiggers-tls-authkem
@@ -43574,7 +42769,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-celi-wiggers-tls-authkem-07
 
 - **Reference ID**: draft-celi-wiggers-tls-authkem-07
@@ -43628,7 +42822,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-fregly-dnsop-slh-dsa-mtl-dnssec-06
 
 - **Reference ID**: draft-fregly-dnsop-slh-dsa-mtl-dnssec-06
@@ -43682,7 +42875,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-harrison-sshm-mlkem
 
 - **Reference ID**: draft-harrison-sshm-mlkem
@@ -43736,7 +42928,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-hu-ipsecme-pqt-hybrid-auth
 
 - **Reference ID**: draft-hu-ipsecme-pqt-hybrid-auth
@@ -43790,7 +42981,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-cose-dilithium
 
 - **Reference ID**: draft-ietf-cose-dilithium
@@ -43844,7 +43034,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-cose-dilithium-05
 
 - **Reference ID**: draft-ietf-cose-dilithium-05
@@ -43898,7 +43087,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-cose-falcon-03
 
 - **Reference ID**: draft-ietf-cose-falcon-03
@@ -43952,7 +43140,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-cose-falcon-04
 
 - **Reference ID**: draft-ietf-cose-falcon-04
@@ -44006,7 +43193,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-cose-hpke
 
 - **Reference ID**: draft-ietf-cose-hpke
@@ -44060,7 +43246,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-hpke-pq
 
 - **Reference ID**: draft-ietf-hpke-pq
@@ -44114,7 +43299,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-ipsecme-hybrid-kem-ikev2-frodo-00
 
 - **Reference ID**: draft-ietf-ipsecme-hybrid-kem-ikev2-frodo-00
@@ -44168,7 +43352,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-ipsecme-ikev2-downgrade-prevention
 
 - **Reference ID**: draft-ietf-ipsecme-ikev2-downgrade-prevention
@@ -44222,7 +43405,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-ipsecme-ikev2-mldsa
 
 - **Reference ID**: draft-ietf-ipsecme-ikev2-mldsa
@@ -44276,7 +43458,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-ipsecme-ikev2-mlkem
 
 - **Reference ID**: draft-ietf-ipsecme-ikev2-mlkem
@@ -44330,7 +43511,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-ipsecme-ikev2-mlkem-03
 
 - **Reference ID**: draft-ietf-ipsecme-ikev2-mlkem-03
@@ -44384,7 +43564,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-ipsecme-ikev2-mlkem-05
 
 - **Reference ID**: draft-ietf-ipsecme-ikev2-mlkem-05
@@ -44438,7 +43617,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-ipsecme-ikev2-mlkem-06
 
 - **Reference ID**: draft-ietf-ipsecme-ikev2-mlkem-06
@@ -44492,7 +43670,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-ipsecme-ikev2-pqc-auth
 
 - **Reference ID**: draft-ietf-ipsecme-ikev2-pqc-auth
@@ -44546,7 +43723,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-ipsecme-ikev2-pqc-auth-08
 
 - **Reference ID**: draft-ietf-ipsecme-ikev2-pqc-auth-08
@@ -44600,7 +43776,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-jose-hpke-encrypt
 
 - **Reference ID**: draft-ietf-jose-hpke-encrypt
@@ -44654,7 +43829,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-jose-pq-composite-sigs
 
 - **Reference ID**: draft-ietf-jose-pq-composite-sigs
@@ -44708,7 +43882,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-jose-pqc-algorithms
 
 - **Reference ID**: draft-ietf-jose-pqc-algorithms
@@ -44762,7 +43935,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-jose-pqc-kem
 
 - **Reference ID**: draft-ietf-jose-pqc-kem
@@ -44816,7 +43988,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-lake-edhoc-psk
 
 - **Reference ID**: draft-ietf-lake-edhoc-psk
@@ -44870,7 +44041,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-lamps-cert-binding-for-multi-auth
 
 - **Reference ID**: draft-ietf-lamps-cert-binding-for-multi-auth
@@ -44924,7 +44094,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-lamps-cms-composite-kem
 
 - **Reference ID**: draft-ietf-lamps-cms-composite-kem
@@ -44978,7 +44147,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-lamps-cms-composite-kem-01
 
 - **Reference ID**: draft-ietf-lamps-cms-composite-kem-01
@@ -45032,7 +44200,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-lamps-cms-composite-sigs
 
 - **Reference ID**: draft-ietf-lamps-cms-composite-sigs
@@ -45086,7 +44253,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-lamps-cms-composite-sigs-04
 
 - **Reference ID**: draft-ietf-lamps-cms-composite-sigs-04
@@ -45140,7 +44306,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-lamps-cms-kyber-13
 
 - **Reference ID**: draft-ietf-lamps-cms-kyber-13
@@ -45194,7 +44359,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-lamps-dilithium-certificates
 
 - **Reference ID**: draft-ietf-lamps-dilithium-certificates
@@ -45248,7 +44412,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-lamps-dilithium-certificates-13
 
 - **Reference ID**: draft-ietf-lamps-dilithium-certificates-13
@@ -45302,7 +44465,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-lamps-kyber-certificates
 
 - **Reference ID**: draft-ietf-lamps-kyber-certificates
@@ -45356,7 +44518,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-lamps-kyber-certificates-11
 
 - **Reference ID**: draft-ietf-lamps-kyber-certificates-11
@@ -45410,7 +44571,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-lamps-pq-composite-kem-10
 
 - **Reference ID**: draft-ietf-lamps-pq-composite-kem-10
@@ -45464,7 +44624,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-lamps-pq-composite-kem-11
 
 - **Reference ID**: draft-ietf-lamps-pq-composite-kem-11
@@ -45518,7 +44677,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-lamps-pq-composite-kem-12
 
 - **Reference ID**: draft-ietf-lamps-pq-composite-kem-12
@@ -45572,7 +44730,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-lamps-pq-composite-kem-14
 
 - **Reference ID**: draft-ietf-lamps-pq-composite-kem-14
@@ -45626,7 +44783,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-lamps-pq-composite-kem-16
 
 - **Reference ID**: draft-ietf-lamps-pq-composite-kem-16
@@ -45680,7 +44836,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-lamps-pq-composite-sigs-13
 
 - **Reference ID**: draft-ietf-lamps-pq-composite-sigs-13
@@ -45734,7 +44889,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-lamps-pq-composite-sigs-14
 
 - **Reference ID**: draft-ietf-lamps-pq-composite-sigs-14
@@ -45788,7 +44942,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-lamps-pq-composite-sigs-15
 
 - **Reference ID**: draft-ietf-lamps-pq-composite-sigs-15
@@ -45842,7 +44995,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-lamps-pq-composite-sigs-19
 
 - **Reference ID**: draft-ietf-lamps-pq-composite-sigs-19
@@ -45896,7 +45048,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-lamps-pq-composite-sigs-19-Composite-Module-Latti
 
 - **Reference ID**: draft-ietf-lamps-pq-composite-sigs-19-Composite-Module-Latti
@@ -45950,7 +45101,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-mls-combiner-02
 
 - **Reference ID**: draft-ietf-mls-combiner-02
@@ -46004,7 +45154,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-mls-extensions-09
 
 - **Reference ID**: draft-ietf-mls-extensions-09
@@ -46058,7 +45207,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-mls-pq-ciphersuites-04
 
 - **Reference ID**: draft-ietf-mls-pq-ciphersuites-04
@@ -46112,7 +45260,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-openpgp-nist-bp-comp
 
 - **Reference ID**: draft-ietf-openpgp-nist-bp-comp
@@ -46166,7 +45313,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-openpgp-nist-bp-comp-03
 
 - **Reference ID**: draft-ietf-openpgp-nist-bp-comp-03
@@ -46220,7 +45366,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-openpgp-pqc-14
 
 - **Reference ID**: draft-ietf-openpgp-pqc-14
@@ -46274,7 +45419,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-openpgp-pqc-16
 
 - **Reference ID**: draft-ietf-openpgp-pqc-16
@@ -46328,7 +45472,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-openpgp-pqc-17
 
 - **Reference ID**: draft-ietf-openpgp-pqc-17
@@ -46382,7 +45525,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-opsawg-rfc5706bis
 
 - **Reference ID**: draft-ietf-opsawg-rfc5706bis
@@ -46436,7 +45578,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-plants-merkle-tree-certs
 
 - **Reference ID**: draft-ietf-plants-merkle-tree-certs
@@ -46490,7 +45631,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-plants-merkle-tree-certs-00
 
 - **Reference ID**: draft-ietf-plants-merkle-tree-certs-00
@@ -46544,7 +45684,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-plants-merkle-tree-certs-01
 
 - **Reference ID**: draft-ietf-plants-merkle-tree-certs-01
@@ -46598,7 +45737,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-pquip-hbs-state
 
 - **Reference ID**: draft-ietf-pquip-hbs-state
@@ -46652,7 +45790,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-pquip-hybrid-signature-spectrums
 
 - **Reference ID**: draft-ietf-pquip-hybrid-signature-spectrums
@@ -46706,7 +45843,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-pquip-hybrid-signature-spectrums-06
 
 - **Reference ID**: draft-ietf-pquip-hybrid-signature-spectrums-06
@@ -46760,7 +45896,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-pquip-hybrid-signature-spectrums-07
 
 - **Reference ID**: draft-ietf-pquip-hybrid-signature-spectrums-07
@@ -46814,7 +45949,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-pquip-pqc-engineers-14
 
 - **Reference ID**: draft-ietf-pquip-pqc-engineers-14
@@ -46868,7 +46002,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-pquip-pqc-hsm-constrained-03
 
 - **Reference ID**: draft-ietf-pquip-pqc-hsm-constrained-03
@@ -46922,7 +46055,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-pquip-pqt-hybrid-terminology
 
 - **Reference ID**: draft-ietf-pquip-pqt-hybrid-terminology
@@ -46976,7 +46108,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-sshm-mlkem-hybrid-kex
 
 - **Reference ID**: draft-ietf-sshm-mlkem-hybrid-kex
@@ -47030,7 +46161,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-sshm-mlkem-hybrid-kex-04
 
 - **Reference ID**: draft-ietf-sshm-mlkem-hybrid-kex-04
@@ -47084,7 +46214,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-sshm-mlkem-hybrid-kex-10
 
 - **Reference ID**: draft-ietf-sshm-mlkem-hybrid-kex-10
@@ -47138,7 +46267,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-sshm-ntruprime-ssh
 
 - **Reference ID**: draft-ietf-sshm-ntruprime-ssh
@@ -47192,7 +46320,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-tls-authkem
 
 - **Reference ID**: draft-ietf-tls-authkem
@@ -47246,7 +46373,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-tls-cert-abridge
 
 - **Reference ID**: draft-ietf-tls-cert-abridge
@@ -47300,7 +46426,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-tls-ecdhe-mlkem-03
 
 - **Reference ID**: draft-ietf-tls-ecdhe-mlkem-03
@@ -47354,7 +46479,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-tls-ecdhe-mlkem-04
 
 - **Reference ID**: draft-ietf-tls-ecdhe-mlkem-04
@@ -47408,7 +46532,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-tls-ecdhe-mlkem-05
 
 - **Reference ID**: draft-ietf-tls-ecdhe-mlkem-05
@@ -47462,7 +46585,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-tls-hybrid-design-16
 
 - **Reference ID**: draft-ietf-tls-hybrid-design-16
@@ -47516,7 +46638,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-tls-key-share-prediction
 
 - **Reference ID**: draft-ietf-tls-key-share-prediction
@@ -47570,7 +46691,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-tls-merkle-tree-certs
 
 - **Reference ID**: draft-ietf-tls-merkle-tree-certs
@@ -47624,7 +46744,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-tls-mldsa
 
 - **Reference ID**: draft-ietf-tls-mldsa
@@ -47678,7 +46797,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-tls-mldsa-01
 
 - **Reference ID**: draft-ietf-tls-mldsa-01
@@ -47732,7 +46850,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-tls-mldsa-02
 
 - **Reference ID**: draft-ietf-tls-mldsa-02
@@ -47786,7 +46903,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-tls-mldsa-03
 
 - **Reference ID**: draft-ietf-tls-mldsa-03
@@ -47840,7 +46956,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-tls-mldsa-04
 
 - **Reference ID**: draft-ietf-tls-mldsa-04
@@ -47894,7 +47009,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-tls-mlkem-04
 
 - **Reference ID**: draft-ietf-tls-mlkem-04
@@ -47948,7 +47062,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-tls-mlkem-05
 
 - **Reference ID**: draft-ietf-tls-mlkem-05
@@ -48002,7 +47115,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-tls-mlkem-07
 
 - **Reference ID**: draft-ietf-tls-mlkem-07
@@ -48056,7 +47168,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-tls-rfc8447bis-15
 
 - **Reference ID**: draft-ietf-tls-rfc8447bis-15
@@ -48110,7 +47221,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-tls-semistatic-dh
 
 - **Reference ID**: draft-ietf-tls-semistatic-dh
@@ -48164,7 +47274,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-tls-subcerts
 
 - **Reference ID**: draft-ietf-tls-subcerts
@@ -48218,7 +47327,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-uta-pqc-app-00
 
 - **Reference ID**: draft-ietf-uta-pqc-app-00
@@ -48272,7 +47380,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-ietf-uta-pqc-app-01
 
 - **Reference ID**: draft-ietf-uta-pqc-app-01
@@ -48326,7 +47433,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-josefsson-ntruprime-ssh
 
 - **Reference ID**: draft-josefsson-ntruprime-ssh
@@ -48380,7 +47486,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-josefsson-ssh-sphincs
 
 - **Reference ID**: draft-josefsson-ssh-sphincs
@@ -48434,7 +47539,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-kampanakis-curdle-ssh-pq-ke
 
 - **Reference ID**: draft-kampanakis-curdle-ssh-pq-ke
@@ -48488,7 +47592,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-kwiatkowski-pquip-pqc-migration-00
 
 - **Reference ID**: draft-kwiatkowski-pquip-pqc-migration-00
@@ -48542,7 +47645,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-miller-sshm-mldsa44-ed25519-composite-sigs-00
 
 - **Reference ID**: draft-miller-sshm-mldsa44-ed25519-composite-sigs-00
@@ -48596,7 +47698,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-miller-sshm-mldsa65-ed25519-composite-sigs
 
 - **Reference ID**: draft-miller-sshm-mldsa65-ed25519-composite-sigs
@@ -48650,7 +47751,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-reddy-cose-jose-pqc-hybrid-hpke
 
 - **Reference ID**: draft-reddy-cose-jose-pqc-hybrid-hpke
@@ -48704,7 +47804,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-reddy-cose-jose-pqc-hybrid-hpke-11
 
 - **Reference ID**: draft-reddy-cose-jose-pqc-hybrid-hpke-11
@@ -48758,7 +47857,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-reddy-lamps-x509-pq-commit
 
 - **Reference ID**: draft-reddy-lamps-x509-pq-commit
@@ -48812,7 +47910,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-reddy-tls-composite-mldsa
 
 - **Reference ID**: draft-reddy-tls-composite-mldsa
@@ -48866,7 +47963,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-sfluhrer-ipsecme-ikev2-mldsa
 
 - **Reference ID**: draft-sfluhrer-ipsecme-ikev2-mldsa
@@ -48920,7 +48016,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-sfluhrer-ipsecme-ikev2-mldsa-00
 
 - **Reference ID**: draft-sfluhrer-ipsecme-ikev2-mldsa-00
@@ -48974,7 +48069,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-sfluhrer-ipsecme-ikev2-mldsa-01
 
 - **Reference ID**: draft-sfluhrer-ipsecme-ikev2-mldsa-01
@@ -49028,7 +48122,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-sfluhrer-ssh-mldsa
 
 - **Reference ID**: draft-sfluhrer-ssh-mldsa
@@ -49082,7 +48175,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-sheffer-tls-pqc-continuity
 
 - **Reference ID**: draft-sheffer-tls-pqc-continuity
@@ -49136,7 +48228,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-sheth-pqc-dnssec-strategy-01
 
 - **Reference ID**: draft-sheth-pqc-dnssec-strategy-01
@@ -49190,7 +48281,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-spm-lake-pqsuites
 
 - **Reference ID**: draft-spm-lake-pqsuites
@@ -49244,7 +48334,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-turner-lamps-cms-fn-dsa-00
 
 - **Reference ID**: draft-turner-lamps-cms-fn-dsa-00
@@ -49298,7 +48387,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-vitap-ml-dsa-webauthn
 
 - **Reference ID**: draft-vitap-ml-dsa-webauthn
@@ -49352,7 +48440,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-wang-ipsecme-hybrid-kem-ikev2-frodo-03
 
 - **Reference ID**: draft-wang-ipsecme-hybrid-kem-ikev2-frodo-03
@@ -49406,7 +48493,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-wang-ipsecme-kem-auth-ikev2-01
 
 - **Reference ID**: draft-wang-ipsecme-kem-auth-ikev2-01
@@ -49460,7 +48546,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-wang-ipsecme-kem-auth-ikev2-03
 
 - **Reference ID**: draft-wang-ipsecme-kem-auth-ikev2-03
@@ -49514,7 +48599,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-wiggers-tls-authkem-psk
 
 - **Reference ID**: draft-wiggers-tls-authkem-psk
@@ -49568,7 +48652,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-yang-tls-hybrid-sm2-mlkem-02
 
 - **Reference ID**: draft-yang-tls-hybrid-sm2-mlkem-02
@@ -49622,7 +48705,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-yang-tls-hybrid-sm2-mlkem-03
 
 - **Reference ID**: draft-yang-tls-hybrid-sm2-mlkem-03
@@ -49676,7 +48758,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## draft-yusef-tls-pqt-dual-certs
 
 - **Reference ID**: draft-yusef-tls-pqt-dual-certs
@@ -49730,7 +48811,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## eIDAS-2-Regulation
 
 - **Reference ID**: eIDAS-2-Regulation
@@ -49784,7 +48864,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## eccpqcthreatsandmitigation04062026
 
 - **Reference ID**: eccpqcthreatsandmitigation04062026
@@ -49838,7 +48917,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## eprint-2025-2059
 
 - **Reference ID**: eprint-2025-2059
@@ -49892,7 +48970,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## https-arxiv-org-pdf-2505-08791
 
 - **Reference ID**: https-arxiv-org-pdf-2505-08791
@@ -49946,7 +49023,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## https-arxiv-org-pdf-2510-10436
 
 - **Reference ID**: https-arxiv-org-pdf-2510-10436
@@ -50000,7 +49076,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## https-arxiv-org-pdf-2606-04669
 
 - **Reference ID**: https-arxiv-org-pdf-2606-04669
@@ -50054,7 +49129,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## https-nukib-gov-cz-download-publications-en-Annex-20to-20the
 
 - **Reference ID**: https-nukib-gov-cz-download-publications-en-Annex-20to-20the
@@ -50108,7 +49182,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## liboqs-v0.15.0
 
 - **Reference ID**: liboqs-v0.15.0
@@ -50162,7 +49235,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ref-aardal-falcon-labrador
 
 - **Reference ID**: ref-aardal-falcon-labrador
@@ -50216,7 +49288,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ref-amy-sha2-preimage
 
 - **Reference ID**: ref-amy-sha2-preimage
@@ -50270,7 +49341,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ref-bindel-hybrid-sigs
 
 - **Reference ID**: ref-bindel-hybrid-sigs
@@ -50324,7 +49394,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ref-bravyi-quantum-memory
 
 - **Reference ID**: ref-bravyi-quantum-memory
@@ -50378,7 +49447,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ref-costa-pqfif
 
 - **Reference ID**: ref-costa-pqfif
@@ -50432,7 +49500,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ref-defeo-sqisign
 
 - **Reference ID**: ref-defeo-sqisign
@@ -50486,7 +49553,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ref-drake-hash-multisig
 
 - **Reference ID**: ref-drake-hash-multisig
@@ -50540,7 +49606,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ref-fukuda-grand-challenge
 
 - **Reference ID**: ref-fukuda-grand-challenge
@@ -50594,7 +49659,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ref-gidney-factor-rsa
 
 - **Reference ID**: ref-gidney-factor-rsa
@@ -50648,7 +49712,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ref-gidney-factor-rsa-8h
 
 - **Reference ID**: ref-gidney-factor-rsa-8h
@@ -50702,7 +49765,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ref-google-willow-below-threshold
 
 - **Reference ID**: ref-google-willow-below-threshold
@@ -50756,7 +49818,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ref-habovstiak-hashed-keys
 
 - **Reference ID**: ref-habovstiak-hashed-keys
@@ -50810,7 +49871,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ref-ibm-qldpc-gross-code
 
 - **Reference ID**: ref-ibm-qldpc-gross-code
@@ -50864,7 +49924,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ref-joseph-transitioning
 
 - **Reference ID**: ref-joseph-transitioning
@@ -50918,7 +49977,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ref-kim-ecdlp
 
 - **Reference ID**: ref-kim-ecdlp
@@ -50972,7 +50030,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ref-litinski-toffoli
 
 - **Reference ID**: ref-litinski-toffoli
@@ -51026,7 +50083,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ref-obrien-chrome-hybrid
 
 - **Reference ID**: ref-obrien-chrome-hybrid
@@ -51080,7 +50136,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ref-pont-downtime
 
 - **Reference ID**: ref-pont-downtime
@@ -51134,7 +50189,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ref-quantinuum-helios
 
 - **Reference ID**: ref-quantinuum-helios
@@ -51188,7 +50242,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ref-stutz-reuse-pubkeys
 
 - **Reference ID**: ref-stutz-reuse-pubkeys
@@ -51242,7 +50295,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
 ## ref-webster-pinnacle
 
 - **Reference ID**: ref-webster-pinnacle
@@ -51296,4 +50348,3 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
