@@ -29,6 +29,24 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.27.0] - 2026-07-26
+
+The Library page now shows who reviewed each document and when, four documents that had been silently showing site-navigation text instead of their real content are fixed, and seven Timeline milestones get their review badge back.
+
+### Added
+
+- **Library documents now show their review status** [view:/library] [persona:developer] [persona:architect] [persona:researcher]: every document card and its detail view carries a "Reviewed by / Unreviewed" badge, matching the same signal already shown on Learn modules, Timeline, and Compliance. Clicking a reviewed badge opens the full revision history — who reviewed it, when, and what changed.
+
+### Changed
+
+- **The About page's Trust Engine section now explains the actual review pipeline** [view:/about] [persona:curious] [persona:executive]: previously silent on how a record actually gets reviewed, it now explains that every data update is proposed (often with AI assistance), checked against its source, and only takes effect once a maintainer approves it — plus a new bullet on the AI-assisted marker already shown in the audit trail below.
+
+### Fixed
+
+- **Four recently-added Library documents had broken extracted content** [view:/library] [persona:researcher]: these are expired IETF individual drafts whose overview page doesn't inline the document's abstract, so the pipeline had captured only site-navigation text instead of the real content. Re-fetched from the stable archive URL and re-analyzed.
+- **Brand-new Library documents no longer sort to the bottom of "Newest first"** [view:/library] [persona:developer]: a freshly-added document has no "last updated" date yet, only a publication date, and the sort only looked at the former — so the newest addition to the catalog could appear last instead of first. It now falls back to the publication date when there's no update date.
+- **Seven Timeline milestones show their review badge again** [view:/timeline] [persona:ops] [persona:researcher]: a data-repair pass found these rows' review records were keyed to internal labels instead of the milestone's real id, so the badge never matched and silently showed nothing. Fixed as part of a broader repair of 49 mismatched review records across Compliance, Timeline, and Migrate data.
+
 ## [4.26.0] - 2026-07-25
 
 OpenSSL Studio gets a working hardware-token workbench backed by a genuinely independent PQC engine, the TPM 2.0 Playground stops corrupting itself when two panels are used at once, and seven Learn modules get the infographic they were missing.

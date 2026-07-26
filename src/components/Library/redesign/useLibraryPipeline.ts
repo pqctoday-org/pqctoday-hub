@@ -13,6 +13,7 @@ import {
   libraryData,
   LIBRARY_CATEGORIES,
   LIBRARY_PURPOSES,
+  parseDateMs,
   type LibraryItem,
   type LibraryPurpose,
 } from '@/data/libraryData'
@@ -104,6 +105,21 @@ export const ORG_CANONICAL_MAP: Record<string, string> = {
  *  canonical map — keeps them reachable via the org filter instead of vanishing. */
 export const ORG_OTHER = 'Other'
 
+/** Effective "how recent is this" timestamp for newest-first ordering.
+ *
+ * Prefers lastUpdateDate, falling back to initialPublicationDate — add_row.py
+ * only ever sets the latter, leaving lastUpdateDate blank for a freshly-added
+ * stub row. Sorting on lastUpdateDate alone (the previous behavior) parses
+ * that blank as an invalid date, which silently drops the row to the bottom
+ * of "Newest first" and the Recently Changed carousel despite it being the
+ * most recent addition to the catalog. Items with neither date sort last
+ * (`0`), same as before this fix for any row that was already missing both. */
+export function newestFirstMs(
+  item: Pick<LibraryItem, 'lastUpdateDate' | 'initialPublicationDate'>
+): number {
+  return parseDateMs(item.lastUpdateDate) ?? parseDateMs(item.initialPublicationDate) ?? 0
+}
+
 export interface LibraryPipelineInput {
   activePurpose: LibraryPurpose | 'all' // coarse intent door, or 'all'
   activeCategory: string // 'All' or a LIBRARY_CATEGORIES value
@@ -165,9 +181,7 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
     () =>
       libraryData
         .filter((item) => item.status === 'New' || item.status === 'Updated')
-        .sort(
-          (a, b) => new Date(b.lastUpdateDate).getTime() - new Date(a.lastUpdateDate).getTime()
-        ),
+        .sort((a, b) => newestFirstMs(b) - newestFirstMs(a)),
     []
   )
 
@@ -316,9 +330,7 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
     const items = [...filteredItems]
     switch (sortBy) {
       case 'newest':
-        items.sort(
-          (a, b) => new Date(b.lastUpdateDate).getTime() - new Date(a.lastUpdateDate).getTime()
-        )
+        items.sort((a, b) => newestFirstMs(b) - newestFirstMs(a))
         break
       case 'name':
         items.sort((a, b) => a.documentTitle.localeCompare(b.documentTitle))

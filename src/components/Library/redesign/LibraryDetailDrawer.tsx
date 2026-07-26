@@ -20,6 +20,9 @@ import {
   buildLibraryEndorsementUrl,
   buildLibraryFlagUrl,
 } from '@/components/Library/libraryEndorsement'
+import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
+import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
+import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import { lifecycleLabel, lifecyclePillClass, formatLibDate, trustInfo } from './libraryPills'
 
 interface LibraryDetailDrawerProps {
@@ -69,6 +72,8 @@ function DrawerPanel({
 }: LibraryDetailDrawerProps & { item: LibraryItem }) {
   // Transform-only entrance: mount at translateX(26px), flip to 0 next frame.
   const [entered, setEntered] = useState(false)
+  const [drilldownOpen, setDrilldownOpen] = useState(false)
+  const { revisions } = useRevisions()
   useEffect(() => {
     const id = requestAnimationFrame(() => setEntered(true))
     return () => cancelAnimationFrame(id)
@@ -139,6 +144,11 @@ function DrawerPanel({
                   {item.status}
                 </span>
               )}
+              <ReviewedBadge
+                domain="library"
+                entityId={item.referenceId}
+                onOpenDrilldown={() => setDrilldownOpen(true)}
+              />
             </div>
             <h2 className="mt-1.5 text-[18px] font-bold leading-snug text-foreground">
               {item.documentTitle}
@@ -394,6 +404,16 @@ function DrawerPanel({
           </Button>
         </div>
       </div>
+
+      {drilldownOpen && (
+        <RevisionDrilldownPanel
+          domain="library"
+          entityId={item.referenceId}
+          entityLabel={item.documentTitle}
+          revisions={byRecord(revisions, 'library', item.referenceId)}
+          onClose={() => setDrilldownOpen(false)}
+        />
+      )}
     </div>
   )
 }
