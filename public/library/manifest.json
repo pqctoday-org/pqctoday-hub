@@ -8579,6 +8579,236 @@
       "sizeBytes": 48529,
       "contentType": "text/html",
       "sha256": "de9b15531969bd823e08de2fe66df0ae3f9cbf08add821e657fe72705d117f6d"
+    },
+    {
+      "refId": "A-Post-Quantum-Hybrid-Commitment-Certificate-Extension-PQCHC",
+      "title": "A Post-Quantum Hybrid-Commitment Certificate Extension (PQCHC)",
+      "url": "https://datatracker.ietf.org/doc/draft-vicente-lamps-pqchc/",
+      "status": "downloaded",
+      "filename": "A-Post-Quantum-Hybrid-Commitment-Certificate-Extension-PQCHC.html",
+      "sizeBytes": 63712,
+      "contentType": "text/html",
+      "sha256": "752ebf254bd86c97703af1d1ddef7759404b26906af383fc60f8559e9d136e4d"
+    },
+    {
+      "refId": "AFiR-Post-Quantum-Signed-Inference-Receipts-as-a-TEE-Free-Pr",
+      "title": "AFiR: Post-Quantum Signed Inference Receipts as a TEE-Free Profile for IETF SPICE Inference Chain",
+      "url": "https://datatracker.ietf.org/doc/draft-rotzin-spice-afir-profile/",
+      "status": "downloaded",
+      "filename": "AFiR-Post-Quantum-Signed-Inference-Receipts-as-a-TEE-Free-Pr.html",
+      "sizeBytes": 70587,
+      "contentType": "text/html",
+      "sha256": "39da10a7b405426d019b838cc174c8dca2f13acfc0d6077355ad40e7e9dbb63e"
+    },
+    {
+      "refId": "Analysis-of-Hybrid-Key-Establishment-and-Standalone-ML-KEM-i",
+      "title": "Analysis of Hybrid Key Establishment and Standalone ML-KEM in TLS 1.3",
+      "url": "https://datatracker.ietf.org/doc/draft-usama-tls-risks-of-mlkem/",
+      "status": "downloaded",
+      "filename": "Analysis-of-Hybrid-Key-Establishment-and-Standalone-ML-KEM-i.html",
+      "sizeBytes": 85659,
+      "contentType": "text/html",
+      "sha256": "ca2f312df758271f3a3438cc715ee43f3927688555cc67666b3c7c349cf65b0c"
+    },
+    {
+      "refId": "Composite-ML-DSA-Signatures-for-SSH",
+      "title": "Composite ML-DSA Signatures for SSH",
+      "url": "https://datatracker.ietf.org/doc/draft-sun-ssh-composite-sigs/",
+      "status": "downloaded",
+      "filename": "Composite-ML-DSA-Signatures-for-SSH.html",
+      "sizeBytes": 66494,
+      "contentType": "text/html",
+      "sha256": "776e98b1caca20f6f876757967a6d86479da8d2182591ccb53122882d3ad203e"
+    },
+    {
+      "refId": "EAP-WSIM-SIM-Based-EAP-Authentication-for-Enterprise-Wi-Fi-U",
+      "title": "EAP-WSIM: SIM-Based EAP Authentication for Enterprise Wi-Fi Using the MILENAGE-ML-KEM-FWD Construction",
+      "url": "https://datatracker.ietf.org/doc/draft-gupta-emu-eap-wsim/",
+      "status": "downloaded",
+      "filename": "EAP-WSIM-SIM-Based-EAP-Authentication-for-Enterprise-Wi-Fi-U.html",
+      "sizeBytes": 124601,
+      "contentType": "text/html",
+      "sha256": "a2a8b673fc97fda5914bd641b5709ec248a8043b3a630009e7c06a15fea808c5"
+    },
+    {
+      "refId": "Gaps-in-Operational-Visibility-for-Post-Quantum-Cryptographi",
+      "title": "Gaps in Operational Visibility for Post-Quantum Cryptographic Readiness in Networked Computing Environments",
+      "url": "https://datatracker.ietf.org/doc/draft-vicente-pquip-pqc-readiness-gaps/",
+      "status": "downloaded",
+      "filename": "Gaps-in-Operational-Visibility-for-Post-Quantum-Cryptographi.html",
+      "sizeBytes": 60290,
+      "contentType": "text/html",
+      "sha256": "f184381c9f25dfb7b12fc9b40f318aba8d1e2f5a50b3544145c9c7c2ee9e51fb"
+    },
+    {
+      "refId": "Merkle-Tree-Agent-Certificates-MTAC-Batch-Issued-Post-Quantu",
+      "title": "Merkle Tree Agent Certificates (MTAC): Batch-Issued Post-Quantum Identity Credentials for AI Agents",
+      "url": "https://datatracker.ietf.org/doc/draft-burls-mtac/",
+      "status": "downloaded",
+      "filename": "Merkle-Tree-Agent-Certificates-MTAC-Batch-Issued-Post-Quantu.html",
+      "sizeBytes": 102060,
+      "contentType": "text/html",
+      "sha256": "c6b8b8d722424784b707a67378e69761135905536a024605e3f94bf052ae24ad"
+    },
+    {
+      "refId": "ML-DSA-44-Ed255192-Composite-Signatures-in-SSH",
+      "title": "ML-DSA 44/Ed255192 Composite Signatures in SSH",
+      "url": "https://datatracker.ietf.org/doc/draft-miller-sshm-mldsa44-ed25519-composite-sigs/",
+      "status": "downloaded",
+      "filename": "ML-DSA-44-Ed255192-Composite-Signatures-in-SSH.html",
+      "sizeBytes": 40952,
+      "contentType": "text/html",
+      "sha256": "02358b79ce9ecc6757881643a523b6e8c097cb219d5c69fac354b0c7cfbc9074"
+    },
+    {
+      "refId": "Module-Lattice-Based-Signatures-with-Merkle-Tree-Ladders-ML",
+      "title": "Module-Lattice-Based Signatures with Merkle Tree Ladders (ML-DSA-MTL) for DNSSEC",
+      "url": "https://datatracker.ietf.org/doc/draft-kaizer-dnsop-ml-dsa-mtl-dnssec/",
+      "status": "downloaded",
+      "filename": "Module-Lattice-Based-Signatures-with-Merkle-Tree-Ladders-ML.html",
+      "sizeBytes": 88903,
+      "contentType": "text/html",
+      "sha256": "8e9618672a2902c5ead785e3625c711cc8ba64783352815131043b699f12a486"
+    },
+    {
+      "refId": "MVPS-Proof-Envelope-Tamper-Evident-Binding-of-Theorem-Catalo",
+      "title": "MVPS Proof Envelope: Tamper-Evident Binding of Theorem Catalogues, Validators, and Numerical Receipts, with an Optional Post-Quantum Profile",
+      "url": "https://datatracker.ietf.org/doc/draft-melegassi-ippm-mvps-proof-envelope/",
+      "status": "downloaded",
+      "filename": "MVPS-Proof-Envelope-Tamper-Evident-Binding-of-Theorem-Catalo.html",
+      "sizeBytes": 61245,
+      "contentType": "text/html",
+      "sha256": "826954348b9142f9339ca0a209f1907d41a3ec62d65e1554a39350f76a05770c"
+    },
+    {
+      "refId": "N-PAMP-Native-Post-Quantum-Agent-Messaging-Protocol",
+      "title": "N-PAMP: Native Post-Quantum Agent Messaging Protocol",
+      "url": "https://datatracker.ietf.org/doc/draft-bubblefish-npamp/",
+      "status": "downloaded",
+      "filename": "N-PAMP-Native-Post-Quantum-Agent-Messaging-Protocol.html",
+      "sizeBytes": 116768,
+      "contentType": "text/html",
+      "sha256": "277e2118ff4cc22593c9834616dbab9b30af9054ecdc95d922194623fe5c6294"
+    },
+    {
+      "refId": "New-Hybrid-Post-Quantum-Protocol-Specification",
+      "title": "New Hybrid Post-Quantum Protocol Specification",
+      "url": "https://datatracker.ietf.org/doc/draft-muhammad-ahkp-pqcprotocol/",
+      "status": "downloaded",
+      "filename": "New-Hybrid-Post-Quantum-Protocol-Specification.html",
+      "sizeBytes": 41042,
+      "contentType": "text/html",
+      "sha256": "3944549bb48bdcad6b776388a59e5971b3939bd19d7dee55e2db8b65a8d2a1fc"
+    },
+    {
+      "refId": "New-Pure-Post-Quantum-Protocol-Specification",
+      "title": "New Pure Post-Quantum Protocol Specification",
+      "url": "https://datatracker.ietf.org/doc/draft-muhammad-apkp-pqcprotocol/",
+      "status": "downloaded",
+      "filename": "New-Pure-Post-Quantum-Protocol-Specification.html",
+      "sizeBytes": 40626,
+      "contentType": "text/html",
+      "sha256": "12b6f2452164ecb299596bfb62bfdff044d83fb3c5415cf728316c5bdaaef594"
+    },
+    {
+      "refId": "New-Pure-Post-Quantum-Protocol-Specification-2",
+      "title": "New Pure Post-Quantum Protocol Specification",
+      "url": "https://datatracker.ietf.org/doc/draft-muhammad-pquip-apkp-pqcprotocol/",
+      "status": "downloaded",
+      "filename": "New-Pure-Post-Quantum-Protocol-Specification-2.html",
+      "sizeBytes": 75971,
+      "contentType": "text/html",
+      "sha256": "0db18b3314f1bdee45bbb8e954fb82b5b7727232ded649142b1bcd35341809a1"
+    },
+    {
+      "refId": "Post-Quantum-Cryptographic-Discipline-for-x402-STARK-Receipt",
+      "title": "Post-Quantum Cryptographic Discipline for x402 STARK Receipts",
+      "url": "https://datatracker.ietf.org/doc/draft-vauban-x402-pqc-receipts/",
+      "status": "downloaded",
+      "filename": "Post-Quantum-Cryptographic-Discipline-for-x402-STARK-Receipt.html",
+      "sizeBytes": 83137,
+      "contentType": "text/html",
+      "sha256": "6883113d04c5e778e7906e6d766f9f78ef37df0f93f8ce4c4d37ba6b84cb16e0"
+    },
+    {
+      "refId": "Post-quantum-Key-Encapsulation-with-ML-KEM-in-Public-Key-Cry",
+      "title": "Post-quantum Key Encapsulation with ML-KEM in Public Key Cryptography for Initial Authentication in Kerberos (PKINIT)",
+      "url": "https://datatracker.ietf.org/doc/draft-bokovoy-kitten-pkinit-pqc/",
+      "status": "downloaded",
+      "filename": "Post-quantum-Key-Encapsulation-with-ML-KEM-in-Public-Key-Cry.html",
+      "sizeBytes": 92866,
+      "contentType": "text/html",
+      "sha256": "4429c0d15cca1594a7b6ed6c32275d9160f152e05ab4f99db3cd27ef5900ac50"
+    },
+    {
+      "refId": "Post-Quantum-Signature-Algorithm-Profile-and-Migration-Consi",
+      "title": "Post-Quantum Signature Algorithm Profile and Migration Considerations for the Resource Public Key Infrastructure (RPKI)",
+      "url": "https://datatracker.ietf.org/doc/draft-yoshikawa-sidrops-pqc-rpki/",
+      "status": "downloaded",
+      "filename": "Post-Quantum-Signature-Algorithm-Profile-and-Migration-Consi.html",
+      "sizeBytes": 108774,
+      "contentType": "text/html",
+      "sha256": "158210adf50ae35f466620911b67ff4492ead6958e8576ee994358a943bb95a8"
+    },
+    {
+      "refId": "Preventing-Key-Reuse-and-Cross-Key-Forgeries-in-Composite-ML",
+      "title": "Preventing Key Reuse and Cross-Key Forgeries in Composite ML-DSA",
+      "url": "https://datatracker.ietf.org/doc/draft-gray-lamps-compositepkc/",
+      "status": "downloaded",
+      "filename": "Preventing-Key-Reuse-and-Cross-Key-Forgeries-in-Composite-ML.html",
+      "sizeBytes": 54808,
+      "contentType": "text/html",
+      "sha256": "348e1ebe4726e7655f97e7370c71e38a3eac3a7a50c124ddc593488554f4d2e0"
+    },
+    {
+      "refId": "Requirements-and-Gaps-for-Post-Quantum-Certificate-Rotation",
+      "title": "Requirements and Gaps for Post-Quantum Certificate Rotation in Multi-Tenant Public Key Infrastructure Environments",
+      "url": "https://datatracker.ietf.org/doc/draft-vicente-pquip-multitenant-pki-requirements/",
+      "status": "downloaded",
+      "filename": "Requirements-and-Gaps-for-Post-Quantum-Certificate-Rotation.html",
+      "sizeBytes": 57662,
+      "contentType": "text/html",
+      "sha256": "fa00326d661394d32767bf9740f2efed7f1f9a675061dc0bfd11abb73aa975cb"
+    },
+    {
+      "refId": "SLH-DSA-for-JOSE-and-COSE",
+      "title": "SLH-DSA for JOSE and COSE",
+      "url": "https://datatracker.ietf.org/doc/draft-ietf-cose-sphincs-plus/",
+      "status": "downloaded",
+      "filename": "SLH-DSA-for-JOSE-and-COSE.html",
+      "sizeBytes": 113070,
+      "contentType": "text/html",
+      "sha256": "903365b91d97a64627bcd6f3cab3fd741e4c5c93ac3cceb027db8a3cc0baf63a"
+    },
+    {
+      "refId": "Use-of-SLH-DSA-in-TLS-1-3",
+      "title": "Use of SLH-DSA in TLS 1.3",
+      "url": "https://datatracker.ietf.org/doc/draft-reddy-tls-slhdsa/",
+      "status": "downloaded",
+      "filename": "Use-of-SLH-DSA-in-TLS-1-3.html",
+      "sizeBytes": 43201,
+      "contentType": "text/html",
+      "sha256": "b4252112c00a8a2c54f082ee9f2b12e96e033299532691647e8f60b3dc18bdaa"
+    },
+    {
+      "refId": "X-509v3-ML-DSA-Certificates-for-the-Secure-Shell-SSH-Protoco",
+      "title": "X.509v3 ML-DSA Certificates for the Secure Shell (SSH) Protocol",
+      "url": "https://datatracker.ietf.org/doc/draft-rpe-ssh-x509-mldsa/",
+      "status": "downloaded",
+      "filename": "X-509v3-ML-DSA-Certificates-for-the-Secure-Shell-SSH-Protoco.html",
+      "sizeBytes": 54470,
+      "contentType": "text/html",
+      "sha256": "c8587f5503b675607a6db10033ad35ffd43ffd7454ddbc16a4b830e050e6c5a4"
+    },
+    {
+      "refId": "x402-Cryptographic-Receipts-Format-Post-Quantum-Discipline-a",
+      "title": "x402 Cryptographic Receipts: Format, Post-Quantum Discipline, and Starknet Anchor",
+      "url": "https://datatracker.ietf.org/doc/draft-vauban-x402-consolidated/",
+      "status": "downloaded",
+      "filename": "x402-Cryptographic-Receipts-Format-Post-Quantum-Discipline-a.html",
+      "sizeBytes": 136836,
+      "contentType": "text/html",
+      "sha256": "7eba1868247caf4543db406b316c4298b295f7263e3cf10d1ab621bc07118cfb"
     }
   ]
 }
