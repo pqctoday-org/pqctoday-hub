@@ -111,8 +111,75 @@ export function TrustEngineSection() {
                 <strong className="text-foreground">trust score</strong>, a{' '}
                 <strong className="text-foreground">named reviewer</strong>, and a{' '}
                 <strong className="text-foreground">link to the original source document</strong>.
-                The Trust Engine is the layer that produces those signals. All the rules behind it
-                are open source — anyone can read exactly how a score was computed.
+                None of that is a one-time label — it comes out of a maintenance pipeline that runs
+                every time a piece of data changes, on every source the platform tracks.
+              </p>
+
+              <h3 className="text-base font-semibold mt-5">How a record actually gets updated</h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Nothing on PQC Today updates itself. Every change — a new standard, a corrected
+                date, a re-checked certification — moves through the same maintenance pipeline,
+                whichever source it touches:
+              </p>
+              <ol className="mt-3 space-y-3 text-sm text-muted-foreground list-none pl-0">
+                <li className="flex items-start gap-3">
+                  <span className="shrink-0 w-6 h-6 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center mt-0.5">
+                    1
+                  </span>
+                  <span>
+                    <strong className="text-foreground">Found and proposed.</strong> The pipeline
+                    watches every source for something worth acting on — a new document, a stale
+                    date, a broken link — and drafts a proposed change. Research and drafting are
+                    often AI-assisted; nothing is published from this step alone.
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="shrink-0 w-6 h-6 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center mt-0.5">
+                    2
+                  </span>
+                  <span>
+                    <strong className="text-foreground">Decided by a maintainer.</strong> Every
+                    proposal sits in a review queue until a named human approves it, rejects it, or
+                    holds it for closer judgment. Nothing moves forward without that decision.
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="shrink-0 w-6 h-6 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center mt-0.5">
+                    3
+                  </span>
+                  <span>
+                    <strong className="text-foreground">Applied and checked.</strong> Approved
+                    changes are written to the real data — but only if they pass the same automated
+                    checks (data validation, tests) that gate every other change to this site. A
+                    change that fails a check doesn't go through, approved or not.
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="shrink-0 w-6 h-6 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center mt-0.5">
+                    4
+                  </span>
+                  <span>
+                    <strong className="text-foreground">Merged.</strong> Like any other update to
+                    PQC Today, it goes out through a reviewed pull request, not a direct edit.
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="shrink-0 w-6 h-6 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center mt-0.5">
+                    5
+                  </span>
+                  <span>
+                    <strong className="text-foreground">Recorded, automatically.</strong> The moment
+                    it merges, the reviewer, the date, and whether AI assisted the drafting in step
+                    1 are stamped into the public audit trail below — there's no separate step for
+                    anyone to forget, and no record that skips it.
+                  </span>
+                </li>
+              </ol>
+              <p className="mt-3 text-sm text-muted-foreground">
+                Same five steps whether the change is to a library document, a compliance deadline,
+                a migration guide entry, or a Learn module — one pipeline, not a different process
+                per page. All the rules behind the trust score itself are open source too — anyone
+                can read exactly how a score was computed.
               </p>
 
               <h3 className="text-base font-semibold mt-5">What you see on every record</h3>
@@ -128,8 +195,8 @@ export function TrustEngineSection() {
                 <li className="flex items-start gap-2.5">
                   <span className="text-primary mt-1 shrink-0">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Reviewer pill</strong> — the SME who
-                    approved this record and the date they signed off.
+                    <strong className="text-foreground">Reviewer pill</strong> — the maintainer who
+                    approved this record (step 2 above) and the date they signed off.
                   </span>
                 </li>
                 <li className="flex items-start gap-2.5">
@@ -148,6 +215,14 @@ export function TrustEngineSection() {
                     that citation at a glance.
                   </span>
                 </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-primary mt-1 shrink-0">&#9679;</span>
+                  <span>
+                    <strong className="text-foreground">AI-assisted marker</strong> — in the audit
+                    trail below, an icon marks every revision where step 1 had AI assistance. It
+                    still went through steps 2-5 like everything else.
+                  </span>
+                </li>
               </ul>
 
               <h3 className="text-base font-semibold mt-5">How to verify a claim yourself</h3>
@@ -163,6 +238,11 @@ export function TrustEngineSection() {
                 <li>
                   Want the math? Expand <em>Trust Score Methodology</em> at the bottom of this
                   section for the full dimension table + formula.
+                </li>
+                <li>
+                  Want to see the pipeline's own paper trail for a specific record? Expand{' '}
+                  <em>Content Audit Trail</em> below and filter to it — every approval from step 2
+                  is there, with its reviewer and date.
                 </li>
               </ol>
 

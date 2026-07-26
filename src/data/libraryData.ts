@@ -546,7 +546,7 @@ const citationCounts = computeCitationCounts(currentItems)
 // single CSV on disk; the diff result (statusMap) is kept as a fallback.
 export const RECENCY_WINDOW_DAYS = 30
 
-function parseDateMs(value: string | undefined): number | null {
+export function parseDateMs(value: string | undefined): number | null {
   if (!value) return null
   const ms = Date.parse(value.trim())
   return Number.isNaN(ms) ? null : ms
