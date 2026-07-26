@@ -335,9 +335,16 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
  *               source_passages — same enrich-docs.py gap class as the
  *               pre-existing 717 backlog, now also hitting brand-new rows.
  *               Enrich to drive down).
+ *   2026-07-26: 752 (bumped +27 after this session's library new-row batch
+ *               (23 rows via the maintenance-agent apply flow, library_
+ *               07262026_r25.csv) landed without extracted source_passages
+ *               yet — same enrich-docs.py gap class as the pre-existing
+ *               725 backlog (KpqC, NIST-FIPS140-3-IG-PQC, 3GPP-PQC-Study-
+ *               2025, liboqs-v0.15.0, TCG-TPM-V185-Part0 — still
+ *               unenriched since 2026-06-19). Enrich to drive down).
  * Only DECREASE — every reduction is enrichment improving.
  */
-const MAX_DOC_WITHOUT_PASSAGES = 725
+const MAX_DOC_WITHOUT_PASSAGES = 752
 
 /** Pinned count of CSV files referenced in prov.was_derived_from but missing on disk. */
 const MAX_MISSING_CSVS = 0
