@@ -8,6 +8,7 @@
 import { Building2, Bookmark, ExternalLink, Layers } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { LibraryItem } from '@/data/libraryData'
+import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
 import {
   lifecycleLabel,
   lifecyclePillClass,
@@ -101,6 +102,7 @@ export function LibraryDocumentCard({
             {revisionCount} rev{revisionCount === 1 ? '' : 's'}
           </span>
         )}
+        <ReviewedBadge domain="library" entityId={item.referenceId} showUnreviewed={false} />
       </div>
 
       <div className="mt-2 flex items-center gap-1.5 text-[12px] text-muted-foreground">
