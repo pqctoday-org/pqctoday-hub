@@ -2181,9 +2181,10 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stage: 'rfc-published',
-        stageNote: 'rfc published (datatracker 2026-05-20)',
-        note: 'Same draft as Pure KEM. No standalone RFC for hybrid KEM in IKEv2 (corrects an earlier mis-encoding to "rfc"). RFC 9370 multi-KE framework + draft-ietf-ipsecme-ikev2-mlkem together define the hybrid binding.',
+        stage: 'rfc-editor-queue',
+        stageNote:
+          'REVERTED 2026-07-27: a hand-verified apply incorrectly set this to rfc-published on the strength of RFC 9370 alone — but RFC 9370 is the shared multi-KE enabler framework both dimensions cite, not the hybrid-KEM-specific mechanism. See the note below, which already documented this exact mistake before this revert.',
+        note: 'Same draft as Pure KEM. No standalone RFC for hybrid KEM in IKEv2 (corrects an earlier mis-encoding to "rfc"). RFC 9370 multi-KE framework + draft-ietf-ipsecme-ikev2-mlkem together define the hybrid binding; the binding draft itself is still in the RFC Editor queue, matching Pure KEM.',
         deploymentPosture: 'production',
         deploymentNote:
           'Cisco, Fortinet, Cloudflare, Palo Alto have shipped hybrid IKEv2 with multi-KE + ML-KEM in production while the binding draft is at IESG.',
@@ -3286,7 +3287,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'draft',
-        stage: 'rfc-editor-queue',
+        stage: 'wg-document',
         note: 'EAP-TLS/TTLS/PEAP/TEAP inherit ML-DSA/SLH-DSA certificates via TLS 1.3 + X.509 (see those rows). The resulting oversized certificate chains are exactly the problem RFC 9191 anticipated (“lattice-based cryptography would have public keys of approximately 1000 bytes and signatures of approximately 2000 bytes”) and draft-ietf-emu-pqc-eap-tls now addresses directly. EAP-AKA’ is a symmetric SIM-credential method with no signature dimension — N/A for that variant.',
         refs: [
           {
