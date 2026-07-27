@@ -86,6 +86,16 @@ jobs:
         # different company). See scripts/audit-vendor-refs.ts for details.
         run: npm run audit:vendor-refs
 
+      - name: Audit CSV archival (no more than 2 versions per source)
+        # Every dated-CSV loader eager-globs its whole prefix into the JS
+        # bundle, so un-archived old revisions silently bloat the production
+        # build. Enforces the CSVmaintenance.md convention that manual
+        # discipline alone had let slip to 42 files for one source on
+        # 2026-07-26, breaking the build outright. See
+        # scripts/audit-csv-archival.ts and
+        # pqctoday-priv/maintenance/REVISIONS-INTEGRITY-REMEDIATION-PLAN-07262026.md.
+        run: npm run audit:csv-archival
+
       - name: Audit module infographic coverage
         # Verifies every MODULE_CATALOG entry has public/images/infographics/pqcstd_<id>.png.
         # CuriousSummaryBanner has no fallback chain — a missing PNG renders as a broken image.
