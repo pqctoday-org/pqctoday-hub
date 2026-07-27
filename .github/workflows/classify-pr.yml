@@ -6,8 +6,11 @@ name: Classify PR change-type (FR-D-06)
 #   2. Auto-applies the inferred label when the classification is unambiguous
 #      (single label, no unclassified files).
 #
-# Closes FR-D-06 of the trust-engine PRD. The downstream consumer is
-# `append-revision.ts`, which reads PR labels to decide change_type/domain.
+# Closes FR-D-06 of the trust-engine PRD. Labels applied here are informational
+# for reviewers; the change_type/domain a merged PR's revision entry carries now
+# comes from maintenance/emit_revision.py (see
+# pqctoday-priv/maintenance/TRUST-ENGINE-RETIREMENT-PLAN-07262026.md) — the old
+# consumer, append-revision.ts, was deleted 2026-07-26.
 
 on:
   pull_request:
