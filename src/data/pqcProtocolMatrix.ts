@@ -50,7 +50,7 @@
 import type { Freshness } from './contentFreshness'
 
 /** ISO date of the last manual update to PROTOCOL_MATRIX below. */
-export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-07-23'
+export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-07-27'
 
 /**
  * Structured freshness for the content-freshness manifest — pairs the snapshot
@@ -778,9 +778,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridSig: {
         value: 'draft',
-        stage: 'individual-draft',
-        stageNote:
-          'TLS-specific dual-cert draft at Individual-Draft stage; LAMPS composite-sigs (cross-WG, not TLS-specific) is in RFC Ed Queue but awaits TLS profiling',
+        stage: 'rfc-editor-queue',
+        stageNote: 'rfc editor queue (datatracker 2026-06-02)',
         note: 'Three approaches to composite/hybrid signatures for TLS 1.3: dual-certificate negotiation in TLS WG (Internet-Draft), composite signatures from LAMPS that TLS will profile after publication, and an individual draft proposing composite ML-DSA directly in the TLS handshake. TLS profiling pending LAMPS RFC publication.',
         refs: [
           {
@@ -1817,9 +1816,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stage: 'individual-draft',
-        stageNote:
-          'Same individual draft as Pure KEM — optionally allows composite ML-KEM per the LAMPS composite-KEM draft (now in IETF Last Call)',
+        stage: 'ietf-last-call',
+        stageNote: 'ietf last call (datatracker 2026-07-23)',
         note: 'Same draft as Pure KEM; hybrid mode composes with draft-ietf-lamps-pq-composite-kem, itself still in IETF Last Call at the X.509 layer (see X.509 row).',
         refs: [
           {
@@ -2183,9 +2181,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stage: 'rfc-editor-queue',
-        stageNote:
-          'DISCUSS cleared after the 2026-07-02 telechat — now in RFC Editor queue (draft-09); same draft as Pure KEM; no RFC yet',
+        stage: 'rfc-published',
+        stageNote: 'rfc published (datatracker 2026-05-20)',
         note: 'Same draft as Pure KEM. No standalone RFC for hybrid KEM in IKEv2 (corrects an earlier mis-encoding to "rfc"). RFC 9370 multi-KE framework + draft-ietf-ipsecme-ikev2-mlkem together define the hybrid binding.',
         deploymentPosture: 'production',
         deploymentNote:
