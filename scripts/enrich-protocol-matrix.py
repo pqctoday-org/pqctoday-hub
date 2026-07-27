@@ -370,8 +370,81 @@ def state_to_stage(doc: dict[str, Any]) -> tuple[str | None, str | None]:
     return None, None
 
 
+# Ported from src/data/pqcProtocolMatrix.ts's own DRAFT_STAGE_LEVEL —
+# ADDED 2026-07-27 for the multi-ref sibling-suppression fix below. NOT the
+# same numbers as DATATRACKER_TO_STAGE's own (unused, dead-code) level
+# column — those were never consumed by anything and are demonstrably
+# inconsistent (wg-document/wg-last-call both '4', wg-last-call/iesg-
+# submitted collide in places) precisely because nothing ever depended on
+# them being right. This table is now load-bearing, so it's copied
+# verbatim from the one place in the codebase whose numbers are actually
+# used and tested (test_protocol_matrix_stage_level_matches_ts_source on
+# the priv side keeps validators.py's own copy in sync with this same TS
+# constant — same discipline applies here).
+STAGE_LEVEL: dict[str, int] = {
+    "none": 0, "na": 0, "identified": 1, "experimental": 2,
+    "individual-draft": 3, "wg-document": 4, "wg-last-call": 4,
+    "ietf-last-call": 5, "iesg-submitted": 6, "rfc-editor-queue": 6,
+    "rfc-published": 7,
+}
+
+
+def _suppress_covered_downgrades(
+    deltas: list["StageDelta"], resolved: dict[tuple[str, str, str], str]
+) -> list["StageDelta"]:
+    """CONSERVATIVE multi-ref fix (2026-07-27, per user decision — suppress
+    only, never auto-generate a new proposed value from a sibling). Cell
+    context: `resolved` holds EVERY ref's live stage that was successfully
+    determined this run, keyed by (row_id, dimension, ref_id) — including
+    refs that never produced a delta because their live stage already
+    matched what's encoded. If a delta represents a DOWNGRADE (encoded
+    level > proposed level) and some OTHER ref in the same (row_id,
+    dimension) cell has a resolved live stage whose level already covers
+    the encoded value, that downgrade is very likely the same false-
+    positive class found live 3 times earlier this session (ssh:hybridKem,
+    cose:pureKem/hybridKem/pureSig, jose:hybridKem) — suppress it rather
+    than propose a regression a stronger sibling ref already contradicts.
+
+    Deliberately does NOT do the reverse (never turns a sibling's higher
+    stage into a new forward-moving proposal) — that generalization was
+    considered and explicitly rejected: it's only validated against 2
+    observed cell shapes, and a cell where two refs are genuinely a
+    conjunction (both must land before the capability is real) would make
+    that direction actively wrong. This function only ever REMOVES a
+    delta, never adds one."""
+    out: list["StageDelta"] = []
+    for d in deltas:
+        enc_level = STAGE_LEVEL.get(d.encoded_stage or "")
+        cur_level = STAGE_LEVEL.get(d.current_stage or "")
+        is_downgrade = enc_level is not None and cur_level is not None and cur_level < enc_level
+        if is_downgrade:
+            covered_by = None
+            for (row_id, dim, ref_id), stage in resolved.items():
+                if row_id != d.row_id or dim != d.dimension or ref_id == d.ref_id:
+                    continue
+                lvl = STAGE_LEVEL.get(stage or "")
+                if lvl is not None and lvl >= enc_level:
+                    covered_by = (ref_id, stage)
+                    break
+            if covered_by:
+                print(
+                    f"  note: {d.row_id}:{d.dimension} downgrade via {d.ref_id} "
+                    f"({d.encoded_stage!r} -> {d.current_stage!r}) SUPPRESSED — sibling ref "
+                    f"{covered_by[0]} already resolves to {covered_by[1]!r}, which covers the "
+                    f"encoded value. Not a real regression."
+                )
+                continue
+        out.append(d)
+    return out
+
+
 def deterministic_refresh(refs: list[MatrixRef]) -> list[StageDelta]:
     deltas: list[StageDelta] = []
+    # ADDED 2026-07-27: every ref's successfully-resolved live stage, not
+    # just the ones that produced a delta — _suppress_covered_downgrades
+    # needs a MATCHING sibling's stage too, and a ref whose live stage
+    # equals the encoded one never gets a StageDelta today.
+    resolved_stage_by_ref: dict[tuple[str, str, str], str] = {}
     seen: dict[str, dict[str, Any] | None] = {}
     for r in refs:
         dt_name = datatracker_name(r.ref_id)
@@ -411,6 +484,13 @@ def deterministic_refresh(refs: list[MatrixRef]) -> list[StageDelta]:
             continue
         cur_stage, slug = state_to_stage(doc)
         last_updated = doc.get("time", "")[:10] or None
+        # Capture every non-repl ref's resolved stage for the sibling-
+        # suppression pass below — repl refs are captured separately, after
+        # their chain is resolved, since the naive cur_stage='experimental'
+        # here would be exactly the misleading value that fix exists to
+        # avoid propagating anywhere else.
+        if cur_stage and slug != "repl":
+            resolved_stage_by_ref[(r.row_id, r.dimension, r.ref_id)] = cur_stage
         # FIXED 2026-07-27: 'repl' (replaced) used to fall straight through
         # DATATRACKER_TO_STAGE to ('experimental', 2) — misleading, since
         # 'replaced' means a NEW document continues the work under a
@@ -424,6 +504,8 @@ def deterministic_refresh(refs: list[MatrixRef]) -> list[StageDelta]:
                 repl_stage, repl_slug = (
                     state_to_stage(replacement_doc) if replacement_doc else (None, None)
                 )
+            if repl_stage:
+                resolved_stage_by_ref[(r.row_id, r.dimension, r.ref_id)] = repl_stage
             if chain and repl_stage and repl_stage != r.encoded_stage:
                 # Real, resolved successor with a real, different stage —
                 # this is the only shape worth proposing as a correction.
@@ -475,7 +557,7 @@ def deterministic_refresh(refs: list[MatrixRef]) -> list[StageDelta]:
                     ],
                 )
             )
-    return deltas
+    return _suppress_covered_downgrades(deltas, resolved_stage_by_ref)
 
 
 # ---------------------------------------------------------------------------
