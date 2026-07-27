@@ -9,7 +9,9 @@
  * Also checks individual tool component TSX files under src/components/Playground/
  * (heuristic: file change → the tool with matching id needs a version bump).
  *
- * Outputs BUMPED_TOOLS_JSON to stdout for append-revision.ts to consume.
+ * Outputs BUMPED_TOOLS_JSON to stdout (currently unconsumed — its former
+ * reader, append-revision.ts, was deleted 2026-07-26; see
+ * pqctoday-priv/maintenance/TRUST-ENGINE-RETIREMENT-PLAN-07262026.md).
  *
  * Exit codes:
  *   0 — all modified tools have version bumps (or no registry change)

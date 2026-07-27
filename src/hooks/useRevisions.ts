@@ -31,7 +31,7 @@ export interface RevisionEntry {
   rows_affected: number | null
   module_id: string | null
   tool_id: string | null
-  /** Explicit list of affected record IDs — populated by append-revision.ts CI script. */
+  /** Explicit list of affected record IDs — populated by maintenance/emit_revision.py. */
   record_ids?: string[]
   /** Per-cell before/after diff for record-scoped changes. Optional. */
   field_changes?: FieldChange[]

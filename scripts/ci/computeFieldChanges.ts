@@ -1,7 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
- * computeFieldChanges — pure function used by append-revision.ts to populate
- * the per-cell `field_changes` payload on a revision entry.
+ * computeFieldChanges — pure function for populating the per-cell
+ * `field_changes` payload on a revision entry. Currently UNUSED: its only
+ * caller, append-revision.ts, was deleted 2026-07-26 (see
+ * pqctoday-priv/maintenance/TRUST-ENGINE-RETIREMENT-PLAN-07262026.md), and
+ * the replacement writer, maintenance/emit_revision.py, does not call this
+ * (it sets `field_changes: None` — "not implemented this version", see
+ * that file's own comment). Left in place as the ready-made implementation
+ * for whenever a Python or TS caller wires per-cell diffs back in.
  *
  * Given two parsed CSV row sets (before / after) and a primary-key column,
  * produces one entry per changed cell. List-typed columns are emitted as
