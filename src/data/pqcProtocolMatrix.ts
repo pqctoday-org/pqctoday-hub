@@ -1502,9 +1502,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stage: 'rfc-editor-queue',
+        stage: 'ietf-last-call',
         stageNote:
-          'HPKE-in-JOSE enabling framework (draft-ietf-jose-hpke-encrypt-20) IESG-approved, in AD Followup ahead of RFC Editor queue as of 2026-07-02; concrete hybrid KEM algorithm profile (draft-reddy: MLKEM768+P256/X25519, MLKEM1024+P384) remains an individual draft with no IETF standing',
+          'UPDATED 2026-07-27, verified live: draft-ietf-jose-hpke-encrypt is genuinely "In Last Call (ends 2026-08-03)" — a real regression from the earlier AD-Followup state (revised text triggered a fresh Last Call), not a bad datatracker match. Concrete hybrid KEM algorithm profile (draft-reddy: MLKEM768+P256/X25519, MLKEM1024+P384) remains an individual draft with no IETF standing.',
         note: 'Same HPKE construction covers both pure and hybrid KEM modes.',
         refs: [
           {
