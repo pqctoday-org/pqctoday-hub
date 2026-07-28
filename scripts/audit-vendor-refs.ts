@@ -168,6 +168,19 @@ const KNOWN_INDIRECT: Array<{ prefix: string; vnd: string }> = [
   { prefix: 'trezor-', vnd: 'VND-351' },
   // QANplatform (QAN xLink)
   { prefix: 'qan-', vnd: 'VND-318' },
+  // Open Quantum Safe Project — 'liboqs'/'oqs-' don't token-match "Open
+  // Quantum Safe Project" but are genuinely OQS's own repos.
+  { prefix: 'liboqs', vnd: 'VND-048' },
+  { prefix: 'oqs-', vnd: 'VND-048' },
+  // Giesecke+Devrient GmbH — 'g-d-'/'giesecke-devrient-' don't token-match
+  // "Giesecke+Devrient GmbH" (the '+' breaks tokenization) but are genuine.
+  { prefix: 'g-d-', vnd: 'VND-159' },
+  { prefix: 'giesecke-devrient-', vnd: 'VND-159' },
+  // KiviCore Oy — 'cast-kivipqc-kem' embeds 'kivi' mid-token
+  // ('kivipqc'), so the tokenizer never isolates it. vendor_id corrected
+  // from VND-247 (ANSSI) to VND-256 (KiviCore) 2026-07-27; still needs
+  // this entry since the name still doesn't token-match.
+  { prefix: 'cast-kivipqc-', vnd: 'VND-256' },
 ]
 
 // ---------------------------------------------------------------------------
