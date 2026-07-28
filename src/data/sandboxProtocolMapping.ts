@@ -44,6 +44,18 @@ const SANDBOX_PROTOCOL_MAP: Record<string, SandboxProtocolRef> = {
   sequoia: { protocolId: 'openpgp', label: 'OpenPGP' },
   // KMIP
   'pqctoday-kmip': { protocolId: 'kmip', label: 'KMIP' },
+  // PKCS#11 — the benchmark drives the softhsmv3 PKCS#11 v3.2 engine directly,
+  // which is the matrix's `pkcs11` row rather than any wire protocol.
+  'hsm-perf-bench': { protocolId: 'pkcs11', label: 'PKCS#11' },
+  // WireGuard — the matrix has had a `wireguard` row all along; this scenario
+  // was simply never mapped to it (found 2026-07-27 during the realignment
+  // audit).
+  wireguard: { protocolId: 'wireguard', label: 'WireGuard' },
+  // NOTE — `mtc` (Merkle Tree Certificates) is deliberately NOT mapped here.
+  // The hub does track it, but as a TRANSPORT_ISSUES entry (`merkle-tree-certs`),
+  // not as a PROTOCOL_MATRIX row — MTC is a certificate-size mitigation, not a
+  // protocol. Mapping it to a matrix row would fail the unit test below. If a
+  // sandbox↔transport-issue overlay is ever wanted, it needs its own map.
   // Software supply-chain signing
   'supply-chain-signing': { protocolId: 'sigstore', label: 'Sigstore' },
   // JOSE / JWT
