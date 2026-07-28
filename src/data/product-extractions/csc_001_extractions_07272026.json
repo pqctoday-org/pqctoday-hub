@@ -39,5 +39,46 @@
       "backend": "mlx",
       "generated_at": "2026-07-27"
     }
+  },
+  {
+    "platform_name": "HYCU Cryptographic Library Module",
+    "category": "Cryptographic Libraries",
+    "product_name": "HYCU Cryptographic Library Module",
+    "product_brief": "A comprehensive suite of FIPS Approved algorithms implemented in pure Java.",
+    "pqc_support": "Partial",
+    "pqc_capability_description": "The module supports LMS and HSS signature schemes (RFC 8708) as non-approved algorithms allowed in non-approved mode. It does not list any PQC algorithms (e.g., ML-KEM, ML-DSA) in the Approved Algorithms table.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "AES, DSA, ECDSA, RSA, SHA-1, SHA-2, SHA-3, HMAC, KMAC, cSHAKE, Counter DRBG, Hash DRBG, HMAC DRBG, KAS-ECC, KAS-FFC, KAS-IFC, KTS-IFC, PBKDF, LMS, HSS, EdDSA (Ed25519, Ed448), XDH (X25519, X448)",
+    "key_management_model": "Software-based cryptographic library (Multi-Chip Stand Alone embodiment)",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Software Library",
+    "infrastructure_layer": "Libraries",
+    "license_type": "Commercial",
+    "license": "Not stated",
+    "latest_version": "2.0.0",
+    "release_date": "2025-06-26",
+    "fips_validated": "Yes, FIPS 140-3 Level 1 (Certificate #5053, Status Active)",
+    "primary_platforms": "VMware Photon OS, HP-UX, Linux (Centos, Debian, Fedora, Oracle RHC, Oracle UEK, Photon, SUSE, Ubuntu, Red Hat Enterprise Linux, ClevOS), Mac OS X, Microsoft Windows, Solaris, AIX",
+    "target_industries": "US Federal agencies, Enterprise",
+    "regulatory_status": "FIPS 140-3 Validated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "DSA, ECDSA, RSA, LMS, HSS, EdDSA (Ed25519, Ed448)",
+    "authoritative_source_url": "https://www.hycu.com",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "CAVP tested (Cert A4399), FIPS 140-3 Validated",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Uses Approved DRBGs (Counter, Hash, HMAC) compliant with SP 800-90Ar1; supports External RNG",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-07-27"
+    }
   }
 ]

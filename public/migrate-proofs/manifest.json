@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
   "generated": "2026-07-09",
-  "count": 1091,
+  "count": 1090,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -8560,14 +8560,6 @@
       "file": "keysight-cyperf-51e9daac.html",
       "bytes": 21030,
       "tier": "curl_cffi:chrome124",
-      "recovered": true
-    },
-    {
-      "product_id": "entrust-cryptographic-platform",
-      "url": "https://www.entrust.com/company/newsroom/entrust-nshield-hsms-achieve-validation-from-nist-cryptographic-algorithm-validation-program",
-      "file": "entrust-cryptographic-platform-b51d51cd.html",
-      "bytes": 104386,
-      "tier": "curl_cffi:chrome120",
       "recovered": true
     },
     {
