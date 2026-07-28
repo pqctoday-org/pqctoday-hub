@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "SUSE Rancher Kubernetes Cryptographic Library",
+    "category": "Container Orchestration & Service Mesh",
+    "product_name": "SUSE Rancher Kubernetes Cryptographic Library",
+    "product_brief": "A software library that provides cryptographic functionality to the Go standard library and other Go applications.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "The module implements ML-KEM (FIPS 203) with parameter sets ML-KEM-1024 and ML-KEM-768, supporting Encapsulation and Decapsulation functions. It is FIPS 140-3 validated (Certificate #5325) with an active status.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "AES-CBC, AES-CMAC, AES-CTR, AES-GCM, Counter DRBG, cSHAKE-128, cSHAKE-256, Deterministic ECDSA, ECDSA, EDDSA (Ed25519), HMAC DRBG, HMAC-SHA2, HMAC-SHA3, KAS-ECC-SSC, KDA HKDF, KDF SP800-108, KDF SSH, KTS-IFC, ML-KEM, PBKDF, RSA, SHA2, SHA3, SHAKE, TLS KDF",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Software library (Multi-Chip Standalone)",
+    "infrastructure_layer": "Application",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "v1.0.0",
+    "release_date": "Unknown",
+    "fips_validated": "Yes, FIPS 140-3 Level 1, Certificate #5325, Status Active, Sunset Date 4/26/2031",
+    "primary_platforms": "Red Hat Enterprise Linux, Alpine Linux, Amazon Linux, Oracle Linux, SUSE Linux Enterprise Server, Ubuntu, Debian, FreeBSD, Microsoft Windows, Apple macOS, Google Cloud, AWS EC2, HPE hardware",
+    "target_industries": "Unknown",
+    "regulatory_status": "FIPS 140-3 Validated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ECDSA (P-224, P-256, P-384, P-521), EDDSA (Ed25519), RSA (PKCS1v1.5, PSS)",
+    "authoritative_source_url": "https://csrc.nist.gov",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "CAVP Cert A6650; Pre-Operational Self-Tests, Conditional Self-Tests, Periodic Self-Tests; Integrity Test via HMAC-SHA2-256",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-07-27"
+    }
+  }
+]

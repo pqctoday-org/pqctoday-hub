@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "Quantum Xchange PhioTX",
+    "category": "Quantum Key Distribution Software",
+    "product_name": "Quantum Xchange Phio TX",
+    "product_brief": "Hardware module providing network and secure communications functionality to facilitate propagation of keys between nodes and endpoint clients in a Phio Hive.",
+    "pqc_support": "Partial",
+    "pqc_capability_description": "PQC is an optional feature used for redundant communications channel obfuscation. It is excluded from the cryptographic boundary and FIPS 140-3 requirements. No specific PQC algorithms are listed.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "AES-CBC, AES-ECB, AES-GCM, Counter DRBG, DSA KeyGen, ECDSA KeyGen, ECDSA SigGen, ECDSA SigVer, HMAC-SHA-1, HMAC-SHA2-256, HMAC-SHA2-384, KAS-ECC-SSC, KAS-FFC-SSC, KDF SSH, RSA SigGen, RSA SigVer, SHA-1, SHA2-256, SHA2-384, SHA2-512, TLS v1.2 KDF",
+    "key_management_model": "Key propagation between Phio TX nodes and endpoint clients in a Phio Hive (dynamic peer network); supports ETSI and SKIP REST services for key exchange; uses KAS-ECC-SSC and KAS-FFC-SSC for key agreement.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Hardware module, multi-chip standalone embodiment",
+    "infrastructure_layer": "Network, Hardware",
+    "license_type": "Commercial",
+    "license": "Proprietary (requires valid Phio TX License for Approved mode enforcement)",
+    "latest_version": "3.2.3",
+    "release_date": "2024-10-16",
+    "fips_validated": "Yes, FIPS 140-3 Level 2 (Certificate #4850, Active, Sunset Date 10/22/2029)",
+    "primary_platforms": "Hardware (Phio TX, Phio TX-Q)",
+    "target_industries": "Not stated",
+    "regulatory_status": "FIPS 140-3 Validated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ECDSA (P-256, P-384), RSA (2048, 3072), DSA (2048, 3072)",
+    "authoritative_source_url": "https://csrc.nist.gov",
+    "implementation_attack_surface": "Non-invasive security level 2; physical security level 2; mitigates other attacks level N/A; excludes TPM, whole disk encryption, PQC, QRNG, and password hash from cryptographic boundary.",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "CAVP tested (A2983); ACVP conformance; Conditional Self-Tests (CASTs); Firmware integrity tests (txscan); Approved Algorithms tested per FIPS 140-3.",
+    "qkd_protocols_&_quantum_networking": "Not stated",
+    "qrng_&_entropy_sources": "Optional QRNG hardware option (Phio TX-Q) used as additional entropy input; not credited in DRBG seeding strength rationale; ENT (NP) entropy source used to seed approved DRBG.",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Vendor: Quantum Xchange; Prepared by KeyPair Consulting Inc.; Lab: Acumen Security.",
+    "deployment_&_migration_complexity": "Requires installation of valid Phio TX License with locked Approved mode enforcement; does not support non-Approved or degraded mode; no manual key entry supported.",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-07-27"
+    }
+  }
+]

@@ -7,7 +7,6 @@ export type SandboxTrackId =
   | 'protocol-simulation'
   | 'infrastructure'
   | 'supply-chain'
-  | 'quantum'
   | 'secrets-kms'
   | 'web'
   | 'applications'
@@ -100,20 +99,9 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     difficulty: 'advanced',
     trackId: 'infrastructure',
     tool: {
-      name: 'OpenSSL 3.6.2 (file-based keys; no HSM)',
+      name: 'OpenSSL 3.6.3 (file-based keys; no HSM)',
       url: 'https://github.com/openssl/openssl',
     },
-  },
-  {
-    id: 'mtc',
-    title: 'Merkle Tree Certificates',
-    emoji: '🌳',
-    useCase:
-      'Mitigate PQC certificate bloat: compare a real X.509 ML-DSA-87 three-cert chain (root → intermediate → leaf) against a Merkle Tree Certificate (assertion + inclusion proof) issued by a real bwesterb/mtc v0.1.2 CA with an ML-DSA-87 signing key. Certificate management and SIZE only — no TLS stack negotiates MTC yet.',
-    algorithms: ['ML-DSA-87', 'MTC', 'Cert size'],
-    difficulty: 'advanced',
-    trackId: 'infrastructure',
-    tool: { name: 'bwesterb/mtc + OpenSSL', url: 'https://github.com/bwesterb/mtc' },
   },
   {
     id: 'cloud-kms',
@@ -127,17 +115,6 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     tool: { name: 'OpenSSL', url: 'https://www.openssl.org' },
   },
   {
-    id: 'secrets-vault',
-    title: 'Zero-Trust Secrets Transit',
-    emoji: '🔐',
-    useCase:
-      "Encrypt secrets through OpenBao's transit engine while the client↔OpenBao TLS channel negotiates X25519MLKEM768. PQC protects the secret IN TRANSIT only — the transit KEK itself is AES-256-GCM (no asymmetric PQC inside the engine).",
-    algorithms: ['ML-KEM-768', 'OpenBao'],
-    difficulty: 'intermediate',
-    trackId: 'infrastructure',
-    tool: { name: 'OpenBao', url: 'https://openbao.org/' },
-  },
-  {
     id: 'smime',
     title: 'Secure Email (S/MIME)',
     emoji: '📧',
@@ -146,15 +123,18 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     algorithms: ['ML-DSA-65', 'ML-KEM-768'],
     difficulty: 'intermediate',
     trackId: 'infrastructure',
-    tool: { name: 'OpenSSL 3.6.2 smime', url: 'https://github.com/openssl/openssl' },
+    tool: {
+      name: 'OpenSSL cms (PQC) / smime (classical)',
+      url: 'https://github.com/openssl/openssl',
+    },
   },
   {
     id: 'wireguard',
     title: 'Modern Transport Tunnels',
     emoji: '🚇',
     useCase:
-      'Protect WireGuard (wireguard-go) tunnel establishment with Rosenpass — a production PQC-VPN daemon that runs a real ML-KEM-768 exchange and rotates the WireGuard PreSharedKey every ~2 minutes, defeating "Harvest Now, Decrypt Later".',
-    algorithms: ['ML-KEM-768', 'Wireguard'],
+      'Protect WireGuard (wireguard-go) tunnel establishment with Rosenpass — a production PQC-VPN daemon that runs a real Classic-McEliece-460896 + Kyber-512 exchange and rotates the WireGuard PreSharedKey every ~2 minutes, defeating "Harvest Now, Decrypt Later". Note Rosenpass does NOT use ML-KEM: Kyber-512 is the pre-standardisation CRYSTALS-Kyber submission, and FIPS 203 changed the KDF and encoding, so the two are not interoperable.',
+    algorithms: ['Classic McEliece + Kyber', 'Wireguard'],
     difficulty: 'intermediate',
     trackId: 'infrastructure',
     tool: { name: 'Rosenpass + wireguard-go', url: 'https://rosenpass.eu' },
@@ -164,11 +144,11 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     title: 'CBOM Compliance Audit — PQC Readiness Scoring',
     emoji: '✅',
     useCase:
-      'Scan the full sandbox container with cdxgen (--type os --include-crypto) to generate a real CycloneDX 1.6 CBOM covering every installed crypto library and tool. Evaluate it against CNSA 2.0 and NIST IR 8547 policies using OPA / Rego. Compare a pre-migration classical state (high at-risk count) against a post-migration PQC state to quantify compliance progress. Reuses the CBOM produced by scenario 16 if run within 30 minutes.',
+      'Generate real classical, hybrid and post-quantum key material, identify each asset algorithm with OpenSSL, and emit it as a CycloneDX 1.6 CBOM of cryptographic-assets. Evaluate that CBOM against a CNSA 2.0 / NIST IR 8547 policy in OPA / Rego to produce a compliance score. Scope note: this audits the crypto THIS scenario generates, not a full-container inventory — cdxgen OS scanning needs an optional binary plugin that is not installed here and returned zero components.',
     algorithms: ['CBOM CycloneDX 1.6', 'CNSA 2.0', 'NIST IR 8547'],
     difficulty: 'advanced',
     trackId: 'supply-chain',
-    tool: { name: 'cdxgen + OPA', url: 'https://github.com/CycloneDX/cdxgen' },
+    tool: { name: 'OpenSSL + OPA', url: 'https://github.com/open-policy-agent/opa' },
   },
   {
     id: 'tpm-pqc-migration',
@@ -208,17 +188,6 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
       name: 'Sequoia sq + opgpkcs11 (openpgp-pkcs11-sequoia)',
       url: 'https://sequoia-pgp.org',
     },
-  },
-  {
-    id: 'crypto-discovery',
-    title: 'Crypto Discovery & CBOM',
-    emoji: '🔍',
-    useCase:
-      'Scan the sandbox infrastructure with cdxgen (CycloneDX CBOM generator), testssl.sh, and ssh-audit to produce a complete Cryptographic Bill of Materials — covering installed libraries, runtime-negotiated TLS, and SSH algorithms. Step zero of any PQC migration.',
-    algorithms: ['CBOM', 'cdxgen', 'testssl.sh'],
-    difficulty: 'advanced',
-    trackId: 'quantum',
-    tool: { name: 'cdxgen + testssl.sh + ssh-audit', url: 'https://github.com/CycloneDX/cdxgen' },
   },
   {
     id: 'pqctoday-kmip',
@@ -268,17 +237,6 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     tool: { name: 'OpenSSL', url: 'https://www.openssl.org' },
   },
   {
-    id: 'haproxy',
-    title: 'Enterprise Edge Load-Balancing',
-    emoji: '⚖️',
-    useCase:
-      'Deploy HAProxy configured with hybrid ML-KEM/ECDHE bindings to measure Post-Quantum TLS handshake performance under heavy concurrent edge load.',
-    algorithms: ['ML-KEM-768', 'HAProxy 3.0'],
-    difficulty: 'advanced',
-    trackId: 'web',
-    tool: { name: 'HAProxy', url: 'https://haproxy.org' },
-  },
-  {
     id: 'ab-handshake-bench',
     title: 'A/B TLS Handshake Benchmark',
     emoji: '⚡',
@@ -297,25 +255,14 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     title: 'HSM Performance Benchmark',
     emoji: '📊',
     useCase:
-      "Measure real PKCS#11 v3.2 throughput and latency across 16 signature/key-agreement/KEM algorithms — classical (ECDSA, X25519/ECDH) vs pure post-quantum (ML-DSA, ML-KEM, optionally SLH-DSA) — against a real Rust PKCS#11 engine, through the exact same dlopen'd C ABI a real application would load. Every number comes from a real timed C_Sign/C_DeriveKey/C_EncapsulateKey call; keygen is measured and reported separately, never mixed into the hot-loop numbers.",
+      "Measure real PKCS#11 v3.2 throughput and latency across 26 algorithms by default (16 signature, 10 key-establishment; 32 with --include-slow, which adds the six SLH-DSA small-signature parameter sets) — classical (ECDSA, X25519/ECDH) vs pure post-quantum (ML-DSA, ML-KEM, optionally SLH-DSA) — against a real Rust PKCS#11 engine, through the exact same dlopen'd C ABI a real application would load. Every number comes from a real timed C_Sign/C_DeriveKey/C_EncapsulateKey call; keygen is measured and reported separately, never mixed into the hot-loop numbers.",
     algorithms: ['ML-DSA', 'ML-KEM', 'Benchmark'],
     difficulty: 'advanced',
     trackId: 'web',
     tool: {
       name: 'bench-harness (softhsmrustv3)',
-      url: 'https://csrc.nist.gov/pubs/fips/203/final',
+      url: 'https://github.com/pqctoday-org/pqctoday-hsm/tree/main/rust/bench-harness',
     },
-  },
-  {
-    id: 'pqcflow',
-    title: 'PQC Network Traffic Analysis',
-    emoji: '📡',
-    useCase:
-      'Capture live TLS traffic on the loopback and run pqc-flow (CipherIQ) to identify which flows are quantum-safe (X25519MLKEM768) vs classical-at-risk (X25519, RSA) — the zero-disruption first step of any PQC network migration. This sandbox run exercises TLS only; pqc-flow also classifies SSH/QUIC, but that traffic is not generated here.',
-    algorithms: ['Passive Discovery', 'PCAP'],
-    difficulty: 'intermediate',
-    trackId: 'web',
-    tool: { name: 'pqc-flow', url: 'https://github.com/CipherIQ/pqc-flow' },
   },
   {
     id: 'api-security-jwt',
@@ -376,7 +323,10 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     algorithms: ['ML-DSA-65', 'PE/Authenticode'],
     difficulty: 'intermediate',
     trackId: 'applications',
-    tool: { name: 'osslsigncode', url: 'https://github.com/mtrojnar/osslsigncode' },
+    tool: {
+      name: 'osslsigncode (PQCToday PQC fork)',
+      url: 'https://github.com/mtrojnar/osslsigncode',
+    },
   },
   {
     id: 'iot-mqtt',
@@ -410,14 +360,7 @@ export const SANDBOX_TRACKS: SandboxTrack[] = [
     id: 'supply-chain',
     label: 'Supply Chain & Compliance',
     subtitle:
-      'CNSA 2.0 CBOM audit with cdxgen + OPA, TPM 2.0 PQC migration, container provenance, and PGP code signing',
-    difficulty: 'Advanced',
-  },
-  {
-    id: 'quantum',
-    label: 'Crypto Discovery',
-    subtitle:
-      'Scan running systems with cdxgen + testssl.sh to produce a CycloneDX CBOM and surface at-risk algorithms',
+      'CNSA 2.0 CBOM audit with OpenSSL + OPA, TPM 2.0 PQC migration, container provenance, and PGP code signing',
     difficulty: 'Advanced',
   },
   {

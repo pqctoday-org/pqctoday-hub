@@ -8809,6 +8809,46 @@
       "sizeBytes": 136836,
       "contentType": "text/html",
       "sha256": "7eba1868247caf4543db406b316c4298b295f7263e3cf10d1ab621bc07118cfb"
+    },
+    {
+      "refId": "Post-Quantum-Composite-Signatures-in-SSH",
+      "title": "Post-Quantum Composite Signatures in SSH",
+      "url": "https://datatracker.ietf.org/doc/draft-miller-sshm-composite-sigs/",
+      "status": "downloaded",
+      "filename": "Post-Quantum-Composite-Signatures-in-SSH.html",
+      "sizeBytes": 57112,
+      "contentType": "text/html",
+      "sha256": "8dfc5fa452cfd183771dc71af241e2c89014e4a2b9fa9452390bf7ab695b377c"
+    },
+    {
+      "refId": "ETSI-TS-103-744-Quantum-safe-Hybrid-Key-Exchanges",
+      "title": "ETSI TS 103 744 - Quantum-safe Hybrid Key Exchanges",
+      "url": "https://www.etsi.org/deliver/etsi_ts/103700_103799/103744/01.01.01_60/ts_103744v010101p.pdf",
+      "status": "downloaded",
+      "filename": "ETSI-TS-103-744-Quantum-safe-Hybrid-Key-Exchanges.html",
+      "sizeBytes": 406092,
+      "contentType": "text/html",
+      "sha256": "ab07ddb76bcf5dcec8c8a134955215abaa58e6b4067a7deb5cc1e4e58befe267"
+    },
+    {
+      "refId": "BSI-TR-02102-1-Cryptographic-Mechanisms-Recommendations-and",
+      "title": "BSI TR-02102-1 - Cryptographic Mechanisms: Recommendations and Key Lengths",
+      "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.html",
+      "status": "downloaded",
+      "filename": "BSI-TR-02102-1-Cryptographic-Mechanisms-Recommendations-and.html",
+      "sizeBytes": 56055,
+      "contentType": "text/html",
+      "sha256": "a05e43f55bf7c8bb57a2ebb0c7ac8404c6ec565aa1d417e03dd81d500e2e90f8"
+    },
+    {
+      "refId": "A-Survey-on-Security-Reductions-in-Post-Quantum-Cryptography",
+      "title": "A Survey on Security Reductions in Post-Quantum Cryptography",
+      "url": "https://eprint.iacr.org/2026/846",
+      "status": "downloaded",
+      "filename": "A-Survey-on-Security-Reductions-in-Post-Quantum-Cryptography.html",
+      "sizeBytes": 20216,
+      "contentType": "text/html",
+      "sha256": "94829d0e88a05d73e6d850f07ec2b4ddb80e620dfeddbc80eeed972d84694f8b"
     }
   ]
 }
