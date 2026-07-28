@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
   "generated": "2026-07-09",
-  "count": 1090,
+  "count": 1103,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -8890,6 +8890,97 @@
       "url": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5416.pdf",
       "file": "KIOXIA-FIPS-TC58NC1137GTC-Crypto-Sub-Chi-1886514b.pdf",
       "bytes": 670093,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Hikvision-FIPS-Provider",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20788",
+      "file": "Hikvision-FIPS-Provider-8ff12dbe.html",
+      "bytes": 189398,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "HPE-Cryptographic-Module",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20448",
+      "file": "HPE-Cryptographic-Module-6f485505.html",
+      "bytes": 165238,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "IDEMIA-Sphere-Cryptographic-Library",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19694",
+      "file": "IDEMIA-Sphere-Cryptographic-Library-aab8cb8f.html",
+      "bytes": 173024,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Jmem-PUF-Embedded-Quantum-Safe-PQCryptoE",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20059",
+      "file": "Jmem-PUF-Embedded-Quantum-Safe-PQCryptoE-09afa789.html",
+      "bytes": 56086,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Oracle-OpenSSL-FIPS-Provider",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20549",
+      "file": "Oracle-OpenSSL-FIPS-Provider-cb3d8bfe.html",
+      "bytes": 1407835,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "PQSecure-libpqsecure-rs",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20431",
+      "file": "PQSecure-libpqsecure-rs-2401bdaf.html",
+      "bytes": 57473,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "PQSecure-Agility",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=21214",
+      "file": "PQSecure-Agility-1c087a3e.html",
+      "bytes": 56246,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "The-OpenSSL-Corporation-OpenSSL-FIPS-Pro",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20272",
+      "file": "The-OpenSSL-Corporation-OpenSSL-FIPS-Pro-c5b47d65.html",
+      "bytes": 1728488,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Xiphera-XIP6220B",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20269",
+      "file": "Xiphera-XIP6220B-dd7947e2.html",
+      "bytes": 41292,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-6",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20406",
+      "file": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-6-509e1620.html",
+      "bytes": 86698,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-7",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20402",
+      "file": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-7-92da9228.html",
+      "bytes": 86570,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-8",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20408",
+      "file": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-8-bf543ca2.html",
+      "bytes": 86702,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Infineon-IFX-CCI-00007Ah-8Fh-Crypto-Suit",
+      "url": "https://certification.enisa.europa.eu/certificates/eucc-3087-2026-0000000001-00000_en",
+      "file": "Infineon-IFX-CCI-00007Ah-8Fh-Crypto-Suit-a4e392ac.html",
+      "bytes": 81878,
       "tier": "curl_cffi:chrome124"
     }
   ]
