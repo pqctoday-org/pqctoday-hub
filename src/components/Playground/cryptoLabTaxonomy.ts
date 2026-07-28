@@ -121,24 +121,34 @@ export const VERB_TAGS: Record<string, VerbId[]> = {
   'sbx-pki': ['certs'],
   'sbx-cert-validation': ['certs'],
   'sbx-hybrid-certs': ['certs'],
-  'sbx-mtc': ['certs', 'benchmark'],
+  // 'sbx-mtc' omitted: removed from pqctoday-sandbox in v0.7.0 (#50).
   'sbx-cloud-kms': ['encrypt'],
-  'sbx-secrets-vault': ['encrypt'],
+  // 'sbx-secrets-vault' omitted: removed from pqctoday-sandbox in v0.6.0 —
+  // performed no PQC at all (RSA-2048 key + AES-256-GCM symmetric wrap only;
+  // its one X25519MLKEM768 probe wasn't mode-gated, so the classical run
+  // also reported quantum_safe: true).
   'sbx-smime': ['sign', 'encrypt'],
   'sbx-wireguard': ['simulate'],
   'sbx-cbom-compliance': ['discover'],
   'sbx-tpm-pqc-migration': ['keys', 'certs'],
   'sbx-supply-chain-signing': ['sign'],
   'sbx-sequoia': ['sign'],
-  'sbx-crypto-discovery': ['discover'],
+  // 'sbx-crypto-discovery' omitted: removed from pqctoday-sandbox in v0.6.0 —
+  // only observed a hybrid group via `openssl s_client`, generated no key and
+  // signed nothing; no PQC operation actually ran.
   'sbx-pqctoday-kmip': ['keys', 'sign', 'encrypt'],
   'sbx-sops': ['encrypt'],
   'sbx-browser-tls': ['simulate', 'discover'],
   'sbx-migration-impact': ['benchmark'],
-  'sbx-haproxy': ['benchmark', 'simulate'],
+  // 'sbx-haproxy' omitted: removed from pqctoday-sandbox in v0.6.0 — never
+  // passed `-groups` (the flag was documented in a comment, not the actual
+  // command); certificate was ECDSA P-256, every "post-quantum" output field
+  // just restated the mode argument.
   'sbx-ab-handshake-bench': ['benchmark'],
   'sbx-hsm-perf-bench': ['benchmark'],
-  'sbx-pqcflow': ['discover'],
+  // 'sbx-pqcflow' omitted: removed from pqctoday-sandbox in v0.6.0 — ran one
+  // hybrid handshake purely to generate traffic to capture; implemented no
+  // post-quantum cryptography itself.
   'sbx-api-security-jwt': ['sign'],
   'sbx-stepca': ['certs'],
   'sbx-database-postgres': ['simulate'],
@@ -172,14 +182,8 @@ export const SUBGROUPS: Record<string, SubGroup[]> = {
     },
     {
       label: 'Encryption & key wrap',
-      ids: [
-        'hybrid-encrypt',
-        'envelope-encrypt',
-        'tee-channel',
-        'sbx-cloud-kms',
-        'sbx-secrets-vault',
-        'sbx-sops',
-      ],
+      // 'sbx-secrets-vault' omitted: see VERB_TAGS comment above.
+      ids: ['hybrid-encrypt', 'envelope-encrypt', 'tee-channel', 'sbx-cloud-kms', 'sbx-sops'],
     },
     {
       label: 'Key management & sizing',
@@ -193,7 +197,8 @@ export const SUBGROUPS: Record<string, SubGroup[]> = {
     },
     {
       label: 'Formats, proofs & sizing',
-      ids: ['hybrid-certs', 'sbx-hybrid-certs', 'cert-capacity', 'sbx-mtc', 'merkle-proof'],
+      // 'sbx-mtc' omitted: see VERB_TAGS comment above.
+      ids: ['hybrid-certs', 'sbx-hybrid-certs', 'cert-capacity', 'merkle-proof'],
     },
     {
       label: 'Supply chain & signing',
@@ -203,7 +208,8 @@ export const SUBGROUPS: Record<string, SubGroup[]> = {
   'Protocol Simulations': [
     {
       label: 'TLS & web',
-      ids: ['tls-simulator', 'sbx-tls', 'sbx-browser-tls', 'sbx-haproxy', 'sbx-database-postgres'],
+      // 'sbx-haproxy' omitted: see VERB_TAGS comment above.
+      ids: ['tls-simulator', 'sbx-tls', 'sbx-browser-tls', 'sbx-database-postgres'],
     },
     {
       label: 'SSH & VPN tunnels',
@@ -220,13 +226,8 @@ export const SUBGROUPS: Record<string, SubGroup[]> = {
     },
     {
       label: 'Benchmark & discovery',
-      ids: [
-        'sbx-migration-impact',
-        'sbx-ab-handshake-bench',
-        'sbx-hsm-perf-bench',
-        'sbx-crypto-discovery',
-        'sbx-pqcflow',
-      ],
+      // 'sbx-crypto-discovery' / 'sbx-pqcflow' omitted: see VERB_TAGS comment above.
+      ids: ['sbx-migration-impact', 'sbx-ab-handshake-bench', 'sbx-hsm-perf-bench'],
     },
   ],
 }

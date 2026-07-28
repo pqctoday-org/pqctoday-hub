@@ -997,7 +997,14 @@ const SANDBOX_ICONS: Record<SandboxTrackId, React.ElementType> = {
 // (a flat ['developer','architect','ops'] previously hid all sandbox scenarios
 // from researcher / executive / curious). Every track lists ≥1 of those three.
 const SANDBOX_TRACK_PERSONAS: Record<SandboxTrackId, PersonaId[]> = {
-  'protocol-simulation': ['developer', 'architect', 'researcher'],
+  // 'curious' moved here from 'quantum' 2026-07-28: pqctoday-sandbox removed
+  // every scenario that had been tagged to the 'quantum' track (crypto-
+  // discovery, secrets-vault, haproxy, pqcflow, mtc) — none of them actually
+  // ran post-quantum cryptography, so the whole track is now empty and was
+  // silently hiding the sandbox from this persona. protocol-simulation is
+  // real, populated PQC-protocol content and the closest fit for casual
+  // exploration.
+  'protocol-simulation': ['developer', 'architect', 'researcher', 'curious'],
   infrastructure: ['architect', 'ops', 'developer'],
   'supply-chain': ['architect', 'ops', 'executive'],
   quantum: ['researcher', 'architect', 'curious'],
