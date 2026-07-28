@@ -1,5 +1,5 @@
 ---
-generated: 2026-07-27
+generated: 2026-07-28
 collection: vendor-roadmaps
 enrichment_method: ollama-qwen3.6:27b-q8_0
 source: public/vendor-roadmaps/
@@ -8,49 +8,27 @@ source: public/vendor-roadmaps/
 # Vendor PQC Roadmap Enrichments
 
 
-## VND-056 — SEALSQ Corp.
-
-- **Vendor ID**: VND-056
-- **Vendor Name**: SEALSQ Corp.
-- **Roadmap Title**: SEALSQ Announces Development of QASIC, the Quantum-Resistant ASIC, By IC'Alps
-- **Roadmap URL**: https://www.sealsq.com/investors/news-releases/sealsq-announces-development-of-qasic-the-quantum-resistant-asic-by-icalps
-- **Publish Date**: 2026-07-28
-- **Local File**: vendor-roadmaps/VND-056_SEALSQ_Corp.html
-- **CSV Coverage Notes**: None
-- **PQC Algorithms Announced**: None detected
-- **Target Migration Dates**: None detected
-- **Products / Services Covered**: QASIC; Catalog ICs; Custom ICs; Security IP; Chiplet-based Hardware Security Modules (CHSMs); Post-Quantum Hardware Security Modules (HSMs); secure microcontrollers
-- **Compliance Frameworks**: ISO 9001; ISO 13485; EN 9100; Common Criteria
-- **Hybrid Mode Support**: None detected
-- **Current GA Status**: Planned
-- **Customer Action Required**: None detected
-- **Key Commitments & Quotes**: "commercialization of the first PQC standard chip on the market"; "development of custom IC solutions, the QASIC - Quantum ASIC"; "first prototype from this integrated roadmap is expected in 2026"
-- **Coverage Verification**: CONSISTENT — The document is a high-level strategic announcement regarding the acquisition and roadmap, containing no specific technical details or product versions to verify against CSV notes.
-- **Extraction Quality**: LOW
-- **Source Document**: VND-056_SEALSQ_Corp.html (79.5 KB)
-- **Extraction Timestamp**: 2026-07-27T23:27:52
-
 ## VND-001 — Amazon Web Services Inc.
 
 - **Vendor ID**: VND-001
 - **Vendor Name**: Amazon Web Services Inc.
-- **Roadmap Title**: AWS Post-Quantum Cryptography Migration Plan
-- **Roadmap URL**: https://aws.amazon.com/security/post-quantum-cryptography/migrating-to-post-quantum-cryptography/
-- **Publish Date**: 2026-04-23
-- **Local File**: vendor-roadmaps/VND-001_Amazon_Web_Services_Inc..html
-- **CSV Coverage Notes**: AWS PQC migration plan: ML-KEM (FIPS 203) key exchange enabled across KMS, ACM, Secrets Manager, S3, CloudFront, API Gateway, ALB/NLB, Transfer Family, Payment Cryptography; ML-DSA (FIPS 204) signatures in AWS Private CA and KMS, CloudHSM ML-DSA in preview. Built on AWS-LC and s2n-tls. Some features transparently enabled, others customer-opt-in under shared responsibility model. | Milestone: ML-KEM hybrid key exchange live across KMS, ACM, Secrets Manager, S3, CloudFront (default client-to-edge), API Gateway, ALB/NLB, Transfer Family, Payment Cryptography; ML-DSA signing in Private CA and KMS,
-- **PQC Algorithms Announced**: ML-KEM; ML-DSA; SLH-DSA
+- **Roadmap Title**: AWS Secrets Manager Hybrid Post-Quantum TLS
+- **Roadmap URL**: https://aws.amazon.com/about-aws/whats-new/2026/04/aws-secrets-manager-post-quantum-tls/
+- **Publish Date**: 2026-07-28
+- **Local File**: vendor-roadmaps/VND-001_Amazon_Web_Services_Inc.html
+- **CSV Coverage Notes**: None
+- **PQC Algorithms Announced**: ML-KEM
 - **Target Migration Dates**: None detected
-- **Products / Services Covered**: Elastic Load Balancers (ALB, NLB); API Gateway; CloudFront; Transfer Family; AWS Key Management Service (KMS); AWS Certificate Manager (ACM); AWS Secrets Manager; AWS Payment Cryptography; Amazon Simple Storage Service (S3); AWS Private Certificate Authority (Private CA); AWS CloudHSM; IAM Roles Anywhere
-- **Compliance Frameworks**: NIST FIPS 203; NIST FIPS 204; NIST FIPS 205; NIST IR 8547; European Commission Recommendation on a Coordinated Implementation Roadmap; NCSC whitepaper; BSI Technical Guideline TR-02102; ANSSI position paper; ASD guidance; Canadian Centre for Cyber Security ITSM.40.001; UAE Cyber Security Council National Encryption Policy v1.0; G7 Cyber Expert Group coordinated roadmap; ASC X9 Post Quantum Cryptography Financial Readiness Needs Assessment; GSMA Post-Quantum Telco Network Taskforce guidelines
-- **Hybrid Mode Support**: Yes, the document states that services offer "hybrid PQ-key exchange using ML-KEM" and references BSI recommendations for "hybrid post-quantum cryptography... combining traditional and quantum-resistant algorithms".
-- **Current GA Status**: GA (General Availability), with CloudHSM ML-DSA support in preview.
-- **Customer Action Required**: Update client-side components/SDKs to versions supporting ML-KEM; apply PQ-TLS policies to customer-owned resources; ensure applications use TLS 1.3; explicitly specify desired TLS policies in infrastructure-as-code; use IAM condition keys to restrict TLS policies; update PKI infrastructure to use ML-DSA.
-- **Key Commitments & Quotes**: "AWS is migrating to post-quantum cryptography (PQC), and helping our customers do the same under a shared responsibility model."; "AWS uses the ML-KEM algorithm for this purpose."; "AWS uses the ML-DSA algorithm for this purpose."
-- **Coverage Verification**: PARTIAL, the document confirms the listed services and ML-KEM/ML-DSA support but does not explicitly mention the underlying libraries "AWS-LC and s2n-tls" in the provided text.
+- **Products / Services Covered**: AWS Secrets Manager Agent (version 2.0.0+); AWS Lambda Extension (version 19+); AWS Secrets and Configuration Provider (version 2.0.0+); AWS SDKs (Rust, Go, Node.js, Kotlin, Python, Java v2)
+- **Compliance Frameworks**: None detected
+- **Hybrid Mode Support**: Yes, combining classical key exchange with post-quantum cryptography
+- **Current GA Status**: GA
+- **Customer Action Required**: Upgrade to the latest client versions (Secrets Manager Agent, Lambda Extension, SDKs)
+- **Key Commitments & Quotes**: "AWS Secrets Manager clients now support hybrid post-quantum TLS to protect secrets from quantum risks"; "combining classical key exchange with post-quantum cryptography to protect against both traditional cryptographic attacks and future quantum computing risks"; "No code changes, configuration updates, or migration effort are required for use cases that have already upgraded to the latest client versions"
+- **Coverage Verification**: CONSISTENT, the document details specific product versions and support status, which aligns with the lack of specific CSV coverage notes in the prompt.
 - **Extraction Quality**: HIGH
-- **Source Document**: VND-001_Amazon_Web_Services_Inc..html (311.1 KB)
-- **Extraction Timestamp**: 2026-07-26T22:34:01
+- **Source Document**: VND-001_Amazon_Web_Services_Inc.html (174.0 KB)
+- **Extraction Timestamp**: 2026-07-28T06:09:15
 
 ## VND-002 — Apple Inc.
 
@@ -962,6 +940,28 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: LOW
 - **Source Document**: VND-055_evolutionQ_Inc.html (38.4 KB)
 - **Extraction Timestamp**: 2026-07-12T21:05:16
+
+## VND-056 — SEALSQ Corp.
+
+- **Vendor ID**: VND-056
+- **Vendor Name**: SEALSQ Corp.
+- **Roadmap Title**: SEALSQ Announces Development of QASIC, the Quantum-Resistant ASIC, By IC'Alps
+- **Roadmap URL**: https://www.sealsq.com/investors/news-releases/sealsq-announces-development-of-qasic-the-quantum-resistant-asic-by-icalps
+- **Publish Date**: 2026-07-28
+- **Local File**: vendor-roadmaps/VND-056_SEALSQ_Corp.html
+- **CSV Coverage Notes**: None
+- **PQC Algorithms Announced**: None detected
+- **Target Migration Dates**: None detected
+- **Products / Services Covered**: QASIC; Catalog ICs; Custom ICs; Security IP; Chiplet-based Hardware Security Modules (CHSMs); Post-Quantum Hardware Security Modules (HSMs); secure microcontrollers
+- **Compliance Frameworks**: ISO 9001; ISO 13485; EN 9100; Common Criteria
+- **Hybrid Mode Support**: None detected
+- **Current GA Status**: Planned
+- **Customer Action Required**: None detected
+- **Key Commitments & Quotes**: "commercialization of the first PQC standard chip on the market"; "development of custom IC solutions, the QASIC - Quantum ASIC"; "first prototype from this integrated roadmap is expected in 2026"
+- **Coverage Verification**: CONSISTENT — The document is a high-level strategic announcement regarding the acquisition and roadmap, containing no specific technical details or product versions to verify against CSV notes.
+- **Extraction Quality**: LOW
+- **Source Document**: VND-056_SEALSQ_Corp.html (79.5 KB)
+- **Extraction Timestamp**: 2026-07-27T23:27:52
 
 ## VND-057 — Cloudflare Inc.
 

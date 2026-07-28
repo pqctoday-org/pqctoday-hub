@@ -74,7 +74,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
-## Going-beyond-encryption-Malaysia-rolls-out-quantum-cryptogra
+## Malaysia:NACSA — Going beyond encryption, Malaysia rolls out quantum cryptography sandbox to safeguard digital borders | Malay Mail
 
 - **Reference ID**: Going-beyond-encryption-Malaysia-rolls-out-quantum-cryptogra
 - **Title**: Going-beyond-encryption-Malaysia-rolls-out-quantum-cryptogra
@@ -142,7 +142,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
-## National-Cyber-and-Information-Security-Agency-EU-Member-Sta
+## Czech Republic:NUKIB — National Cyber and Information Security Agency - EU Member States Warn of the Quantum Threat and Call for the Transition to Post-Quantum Cryptography
 
 - **Reference ID**: National-Cyber-and-Information-Security-Agency-EU-Member-Sta
 - **Title**: National-Cyber-and-Information-Security-Agency-EU-Member-Sta
