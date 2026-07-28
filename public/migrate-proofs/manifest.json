@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
   "generated": "2026-07-09",
-  "count": 1103,
+  "count": 1104,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -8982,6 +8982,15 @@
       "file": "Infineon-IFX-CCI-00007Ah-8Fh-Crypto-Suit-a4e392ac.html",
       "bytes": 81878,
       "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Ledger-SDK-Post-Quantum-Cryptography",
+      "url": "https://www.ledger.com/blog-post-quantum-cryptography-ledger-sdk",
+      "ok": true,
+      "file": "Ledger-SDK-Post-Quantum-Cryptography-af0bf395.html",
+      "bytes": 277790,
+      "content_type": "text/html; charset=UTF-8",
+      "tier": "manual-curl-2026-07-27"
     }
   ]
 }
