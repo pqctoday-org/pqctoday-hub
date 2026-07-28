@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "SEALSQ Quantum Shield QS7001",
+    "category": "Hardware Security & Semiconductors",
+    "product_name": "SEALSQ Quantum Shield QS7001",
+    "product_brief": "Post-quantum secure element semiconductor supporting RSA, ECC, AES, SHA, ML-KEM-1024, and ML-DSA-87 algorithms.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "QS7001 V1 supports ML-KEM-1024 and ML-DSA-87. V2 extends full post-quantum algorithm API security and covers full PQC certification scope, including secured cryptographic API protections. Production samples for V1 available March 2026; V2 production samples targeted for October 2026.",
+    "pqc_migration_priority": "Critical",
+    "crypto_primitives": "RSA, ECC, AES, SHA-1, SHA-2, SHA-3, ML-KEM-1024, ML-DSA-87",
+    "key_management_model": "Hardware-anchored security; flash-based design enabling firmware updates and patches without hardware replacement.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Secure Element (flash-based semiconductor design)",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Commercial",
+    "license": "Not stated",
+    "latest_version": "QS7001 V2",
+    "release_date": "2026-03-06",
+    "fips_validated": "Not stated (Note: FIPS 140-3 is mentioned for QVault TPM, but not explicitly for QS7001; QS7001 is pursuing Common Criteria)",
+    "primary_platforms": "Not stated",
+    "target_industries": "Government, critical infrastructure, financial services, enterprise, Multi-Factor Authentication tokens, Smart Energy, Medical and Healthcare Systems, Defense, IT Network Infrastructure, Automotive, Industrial Automation and Control Systems",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "QS7001 V1 production samples March 2026; CC ETR March 2026. QS7001 V2 engineering samples July 2026; CC ETR September 2026; production samples October 2026. V2 to cover full PQC certification scope.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ML-DSA-87, RSA, ECC",
+    "authoritative_source_url": "www.sealsq.com",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Hardware Evaluation Test Report (ETR) by accredited Common Criteria laboratory (SERMA Technologies); CC certification process.",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Not stated (Note: QVault TPM targets IoT, but QS7001 specific IoT suitability is not explicitly detailed beyond general semiconductor applications)",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Flash-based designs enable firmware updates and patches without hardware replacement.",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-07-27"
+    }
+  }
+]

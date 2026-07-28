@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "PQCA mldsa-native",
+    "category": "Post-Quantum Cryptography Libraries",
+    "product_name": "mldsa-native",
+    "product_brief": "A C90 library supporting the ML-DSA / FIPS 204 post-quantum cryptography standard with minimal performance and maintenance cost.",
+    "pqc_support": "Yes (ML-DSA / FIPS 204)",
+    "pqc_capability_description": "v1.0.0-alpha release of a C90 library for ML-DSA / FIPS 204. Designed for production with minimal dependencies. Includes native backends for AArch64 and x86-64. Memory safety, type safety, and timing leakage are checked via static model checking (CBMC) and dynamic instrumentation (valgrind). External APIs are expected but not guaranteed to be stable.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "ML-DSA / FIPS 204",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Library with native backends for AArch64 and x86-64",
+    "infrastructure_layer": "Libraries",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "v1.0.0-alpha",
+    "release_date": "2025-11-25",
+    "fips_validated": "Supports FIPS 204 standard; validation status not stated",
+    "primary_platforms": "AArch64, x86-64",
+    "target_industries": "Unknown",
+    "regulatory_status": "Supported by the Linux Foundation and Post-Quantum Cryptography Alliance",
+    "pqc_roadmap_details": "Alpha release with external APIs expected but not guaranteed to be stable",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "ML-DSA / FIPS 204",
+    "authoritative_source_url": "https://github.com/pq-code-package/mldsa-native",
+    "implementation_attack_surface": "Memory safety, type safety, and absence of various classes of timing leakage are automatically checked using static model checking (CBMC) and dynamic instrumentation (valgrind)",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Static model checking (CBMC) and dynamic instrumentation (valgrind)",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Minimal and configurable dependencies on the standard library",
+    "deployment_&_migration_complexity": "Designed for production deployments with minimal performance and maintenance cost; easy to integrate into diverse environments",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-07-27"
+    }
+  }
+]

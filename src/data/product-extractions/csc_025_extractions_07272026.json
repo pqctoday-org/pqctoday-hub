@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "Quantum Secure Encryption Corp. QPA v2",
+    "category": "Cryptographic Agility Frameworks",
+    "product_name": "QPA v2",
+    "product_brief": "Enterprise post-quantum cryptographic migration platform for assessing posture and planning migration.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "QPA v2 is an enterprise post-quantum cryptographic migration platform that transforms fragmented, manual processes into structured, data-driven workflows. It provides real-time visibility into quantum readiness, risk levels, and migration progress. It includes a PQC Planning Wizard for governance, budgeting, and strategy; AI-enhanced assessment modules for cryptographic posture and compliance; integrated inventory analysis for software, hardware, and cryptographic components; and centralized executive dashboards. It is designed to support the transition to post-quantum cryptographic standards.",
+    "pqc_migration_priority": "Critical",
+    "crypto_primitives": "Unknown",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Unknown",
+    "infrastructure_layer": "Application",
+    "license_type": "Commercial",
+    "license": "Unknown",
+    "latest_version": "v2",
+    "release_date": "2026-03-31",
+    "fips_validated": "No",
+    "primary_platforms": "Unknown",
+    "target_industries": "Enterprise, Public-sector",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "Unknown",
+    "authoritative_source_url": "FlyOnWallStreet.com",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Yes. Integrated inventory analysis covers software, hardware, and cryptographic components, identifying risk exposure across complex environments.",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Supports planning, assessment, and execution layers. Provides structured, repeatable framework for assessing current state, prioritizing risk, and planning migration.",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Supports governance design, budgeting, timelines, and migration strategy development via PQC Planning Wizard.",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-07-27"
+    }
+  }
+]

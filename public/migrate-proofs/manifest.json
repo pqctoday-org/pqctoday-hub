@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
   "generated": "2026-07-09",
-  "count": 1067,
+  "count": 1071,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -8731,6 +8731,34 @@
       "file": "debian-13-trixie-0b351c13.html",
       "bytes": 14839,
       "tier": "playwright-stealth"
+    },
+    {
+      "product_id": "JEP-527-Post-Quantum-Hybrid-Key-Exchange",
+      "url": "https://openjdk.org/jeps/527",
+      "file": "JEP-527-Post-Quantum-Hybrid-Key-Exchange-53dcba8a.html",
+      "bytes": 17381,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Quantum-Secure-Encryption-Corp-QPA-v2",
+      "url": "https://www.prnewswire.com/news-releases/quantum-secure-encryption-corp-announces-official-launch-of-qpa-v2-its-enterprise-post-quantum-cryptographic-migration-platform-302734784.html",
+      "file": "Quantum-Secure-Encryption-Corp-QPA-v2-445f5869.html",
+      "bytes": 214727,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "PQCA-mldsa-native",
+      "url": "https://pqca.org/blog/2025/pqca-announces-alpha-release-of-mldsa-native/",
+      "file": "PQCA-mldsa-native-4066ccf8.html",
+      "bytes": 112474,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Microsoft-Research-Post-Quantum-TLS",
+      "url": "https://www.microsoft.com/en-us/research/project/post-quantum-tls/",
+      "file": "Microsoft-Research-Post-Quantum-TLS-e7966eda.html",
+      "bytes": 176363,
+      "tier": "curl_cffi:chrome124"
     }
   ]
 }
