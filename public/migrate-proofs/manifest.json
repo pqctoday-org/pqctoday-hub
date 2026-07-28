@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
   "generated": "2026-07-09",
-  "count": 1067,
+  "count": 1104,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -8563,14 +8563,6 @@
       "recovered": true
     },
     {
-      "product_id": "entrust-cryptographic-platform",
-      "url": "https://www.entrust.com/company/newsroom/entrust-nshield-hsms-achieve-validation-from-nist-cryptographic-algorithm-validation-program",
-      "file": "entrust-cryptographic-platform-b51d51cd.html",
-      "bytes": 104386,
-      "tier": "curl_cffi:chrome120",
-      "recovered": true
-    },
-    {
       "product_id": "azure-dedicated-hsm-marvell-liquidsecurity",
       "url": "https://www.marvell.com/company/newsroom/marvell-liquidSecurity2-hardware-security-multi-cloud-era.html",
       "file": "azure-dedicated-hsm-marvell-liquidsecurity-1e6d8d10.html",
@@ -8731,6 +8723,274 @@
       "file": "debian-13-trixie-0b351c13.html",
       "bytes": 14839,
       "tier": "playwright-stealth"
+    },
+    {
+      "product_id": "JEP-527-Post-Quantum-Hybrid-Key-Exchange",
+      "url": "https://openjdk.org/jeps/527",
+      "file": "JEP-527-Post-Quantum-Hybrid-Key-Exchange-53dcba8a.html",
+      "bytes": 17381,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Quantum-Secure-Encryption-Corp-QPA-v2",
+      "url": "https://www.prnewswire.com/news-releases/quantum-secure-encryption-corp-announces-official-launch-of-qpa-v2-its-enterprise-post-quantum-cryptographic-migration-platform-302734784.html",
+      "file": "Quantum-Secure-Encryption-Corp-QPA-v2-445f5869.html",
+      "bytes": 214727,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "PQCA-mldsa-native",
+      "url": "https://pqca.org/blog/2025/pqca-announces-alpha-release-of-mldsa-native/",
+      "file": "PQCA-mldsa-native-4066ccf8.html",
+      "bytes": 112474,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Microsoft-Research-Post-Quantum-TLS",
+      "url": "https://www.microsoft.com/en-us/research/project/post-quantum-tls/",
+      "file": "Microsoft-Research-Post-Quantum-TLS-e7966eda.html",
+      "bytes": 176363,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Quantum-Xchange-PhioTX",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4850",
+      "file": "Quantum-Xchange-PhioTX-99acdfa3.html",
+      "bytes": 50531,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Quantum-Corporation-Cryptographic-Module",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5181",
+      "file": "Quantum-Corporation-Cryptographic-Module-34c76084.html",
+      "bytes": 42469,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Nuvoton-Cryptographic-Library-3-0",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5098",
+      "file": "Nuvoton-Cryptographic-Library-3-0-46680320.html",
+      "bytes": 42115,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Higher-Ground-CipherLinq",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5062",
+      "file": "Higher-Ground-CipherLinq-c603ca27.html",
+      "bytes": 109247,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "HYCU-Cryptographic-Library-Module",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5053",
+      "file": "HYCU-Cryptographic-Library-Module-3cde7976.html",
+      "bytes": 76409,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Nuvoton-Cryptographic-Library-3-3",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5340",
+      "file": "Nuvoton-Cryptographic-Library-3-3-affd7a85.html",
+      "bytes": 42021,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "SUSE-Rancher-Kubernetes-Cryptographic-Li",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5325",
+      "file": "SUSE-Rancher-Kubernetes-Cryptographic-Li-c9f811e0.html",
+      "bytes": 42050,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Broadcom-PGP-Cryptographic-Engine",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=21463",
+      "file": "Broadcom-PGP-Cryptographic-Engine-79ec8d1c.html",
+      "bytes": 382285,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "SecureMachines-Prastaara-Quantum-Cryptog",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=21594",
+      "file": "SecureMachines-Prastaara-Quantum-Cryptog-57b8401a.html",
+      "bytes": 53808,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Vector-Informatik-vSecPrim",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=21448",
+      "file": "Vector-Informatik-vSecPrim-86561b16.html",
+      "bytes": 76803,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "KIOXIA-FIPS-TC58NC1137GTC-Crypto-Sub-Chi",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5416",
+      "file": "KIOXIA-FIPS-TC58NC1137GTC-Crypto-Sub-Chi-b91a416b.html",
+      "bytes": 42127,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Toshiba-Hardware-Security-Module-PQC-cry",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=21604",
+      "file": "Toshiba-Hardware-Security-Module-PQC-cry-5e22ed18.html",
+      "bytes": 48360,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Quantum-Xchange-PhioTX",
+      "url": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4850.pdf",
+      "file": "Quantum-Xchange-PhioTX-ddc537d0.pdf",
+      "bytes": 840662,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Quantum-Corporation-Cryptographic-Module",
+      "url": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5181.pdf",
+      "file": "Quantum-Corporation-Cryptographic-Module-971104b6.pdf",
+      "bytes": 1529616,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Nuvoton-Cryptographic-Library-3-0",
+      "url": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5098.pdf",
+      "file": "Nuvoton-Cryptographic-Library-3-0-d35c4fdd.pdf",
+      "bytes": 631905,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Higher-Ground-CipherLinq",
+      "url": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5062.pdf",
+      "file": "Higher-Ground-CipherLinq-5fac8ecd.pdf",
+      "bytes": 1144992,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "HYCU-Cryptographic-Library-Module",
+      "url": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5053.pdf",
+      "file": "HYCU-Cryptographic-Library-Module-f2723e43.pdf",
+      "bytes": 1075909,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Nuvoton-Cryptographic-Library-3-3",
+      "url": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5340.pdf",
+      "file": "Nuvoton-Cryptographic-Library-3-3-9f3b999c.pdf",
+      "bytes": 629648,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "SUSE-Rancher-Kubernetes-Cryptographic-Li",
+      "url": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5325.pdf",
+      "file": "SUSE-Rancher-Kubernetes-Cryptographic-Li-82665af2.pdf",
+      "bytes": 626615,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "KIOXIA-FIPS-TC58NC1137GTC-Crypto-Sub-Chi",
+      "url": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5416.pdf",
+      "file": "KIOXIA-FIPS-TC58NC1137GTC-Crypto-Sub-Chi-1886514b.pdf",
+      "bytes": 670093,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Hikvision-FIPS-Provider",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20788",
+      "file": "Hikvision-FIPS-Provider-8ff12dbe.html",
+      "bytes": 189398,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "HPE-Cryptographic-Module",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20448",
+      "file": "HPE-Cryptographic-Module-6f485505.html",
+      "bytes": 165238,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "IDEMIA-Sphere-Cryptographic-Library",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19694",
+      "file": "IDEMIA-Sphere-Cryptographic-Library-aab8cb8f.html",
+      "bytes": 173024,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Jmem-PUF-Embedded-Quantum-Safe-PQCryptoE",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20059",
+      "file": "Jmem-PUF-Embedded-Quantum-Safe-PQCryptoE-09afa789.html",
+      "bytes": 56086,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Oracle-OpenSSL-FIPS-Provider",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20549",
+      "file": "Oracle-OpenSSL-FIPS-Provider-cb3d8bfe.html",
+      "bytes": 1407835,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "PQSecure-libpqsecure-rs",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20431",
+      "file": "PQSecure-libpqsecure-rs-2401bdaf.html",
+      "bytes": 57473,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "PQSecure-Agility",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=21214",
+      "file": "PQSecure-Agility-1c087a3e.html",
+      "bytes": 56246,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "The-OpenSSL-Corporation-OpenSSL-FIPS-Pro",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20272",
+      "file": "The-OpenSSL-Corporation-OpenSSL-FIPS-Pro-c5b47d65.html",
+      "bytes": 1728488,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Xiphera-XIP6220B",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20269",
+      "file": "Xiphera-XIP6220B-dd7947e2.html",
+      "bytes": 41292,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-6",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20406",
+      "file": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-6-509e1620.html",
+      "bytes": 86698,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-7",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20402",
+      "file": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-7-92da9228.html",
+      "bytes": 86570,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-8",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20408",
+      "file": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-8-bf543ca2.html",
+      "bytes": 86702,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Infineon-IFX-CCI-00007Ah-8Fh-Crypto-Suit",
+      "url": "https://certification.enisa.europa.eu/certificates/eucc-3087-2026-0000000001-00000_en",
+      "file": "Infineon-IFX-CCI-00007Ah-8Fh-Crypto-Suit-a4e392ac.html",
+      "bytes": 81878,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Ledger-SDK-Post-Quantum-Cryptography",
+      "url": "https://www.ledger.com/blog-post-quantum-cryptography-ledger-sdk",
+      "ok": true,
+      "file": "Ledger-SDK-Post-Quantum-Cryptography-af0bf395.html",
+      "bytes": 277790,
+      "content_type": "text/html; charset=UTF-8",
+      "tier": "manual-curl-2026-07-27"
     }
   ]
 }

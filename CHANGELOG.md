@@ -29,6 +29,31 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.28.0] - 2026-07-28
+
+A big data-accuracy and coverage pass across Migrate, Vendor Roadmaps, Timeline, Trusted Sources, Threats, and Algorithms — plus real fixes to broken certificate links, a mis-detected PQC algorithm, and several data-pipeline bugs found along the way.
+
+### Added
+
+- **13 previously-broken product certificate links now resolve to the real NIST validation record** [view:/migrate] [persona:developer] [persona:architect]: products like Hikvision, HPE, Oracle, PQSecure, Xiphera, and three Chainguard FIPS builds had a placeholder certificate reference instead of a working link — most now show real, verified PQC algorithm support (ML-KEM, ML-DSA, SLH-DSA, LMS) pulled from their actual NIST validation page.
+- **New Migrate catalog entries**: IBM's Quantum Safe Migration Orchestrator, Ledger's post-quantum SDK (ML-KEM/ML-DSA in hardware-wallet firmware), and dozens of other products spanning cryptographic libraries, HSMs, and PKI tooling.
+- **27 new authoritative sources** [persona:researcher] [persona:architect]: national cybersecurity authorities and industry bodies across APAC, the Middle East, and Latin America (South Korea's KpqC, Saudi Arabia's NCA, FS-ISAC, NIST NCCoE, and more), closing real regional gaps in source coverage.
+- **18 new industry threat & compliance documents** [view:/threats] [persona:ops] [persona:architect]: real sector-specific PQC guidance across finance (BIS, FINMA, MAS, X9), energy (NERC), healthcare (HSCC), telecom (ANSSI IPsec transition guide), and critical infrastructure.
+- **New vendor roadmaps**: SEALSQ's quantum-resistant ASIC (QASIC) program, Ericsson's telecom PQC migration strategy (ML-KEM/ML-DSA/SLH-DSA with a 2031/2035 timeline), and first-time roadmaps for 13 more vendors.
+- **14 new government PQC milestones on the Timeline** [view:/timeline] [persona:executive] [persona:ops]: including Germany's classified-systems 2030 deadline, a UK NCSC industry workshop report, and an FAA Request for Information on quantum-safe air traffic control systems.
+
+### Changed
+
+- **Classic McEliece is now shown as a fully standardised algorithm** [view:/algorithms]: it was formally adopted as ISO/IEC 18033-2 Amendment 2 in June 2026, on top of its existing German BSI recommendation.
+- **9 NIST digital-signature candidates (UOV, SQIsign, FAEST, SNOVA, MAYO, HAWK) now show Round 3 status** [view:/algorithms], reflecting NIST's May 2026 advancement announcement; CROSS and LESS are marked as not advancing.
+
+### Fixed
+
+- **A product with LMS/HSS hash-based signatures was incorrectly marked as having no post-quantum support** [persona:developer]: the extraction process didn't recognize LMS and HSS as post-quantum algorithm families (it only looked for the newer lattice-based ones), so a FIPS-validated cryptographic module's real PQC certification was being missed.
+- **Three catalog entries had inaccurate claims corrected** after a routine accuracy check: HAProxy's PQC support claim is confirmed accurate (a misread GitHub issue had suggested otherwise), Entrust's platform description was verified against the source, and Scality RING9's product-name evidence link was pointing at a page that had since been renamed.
+- **A threat-database document's evidence file was corrupted at the source** (a PDF had been saved as unreadable binary data), which led the system to guess a protocol-coverage claim from the document's title alone. The real document was re-downloaded and the extraction redone with genuine supporting evidence.
+- Several internal consistency checks (duplicate source entries, stale playground scenario references, and a couple of new-algorithm classification gaps) were caught and fixed before release.
+
 ## [4.27.0] - 2026-07-26
 
 The Library page now shows who reviewed each document and when, four documents that had been silently showing site-navigation text instead of their real content are fixed, and seven Timeline milestones get their review badge back.

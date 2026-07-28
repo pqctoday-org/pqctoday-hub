@@ -124,17 +124,51 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   'IETF Internet-Draft|||IETF Internet-Draft — DRAFT (not yet RFC)': 'ietf-draft',
   'IETF Internet-Draft (alias for HPKE with PQ KEM)|||IETF Internet-Draft — DRAFT (not yet RFC)':
     'ietf-draft', // HPKE-PQ
-  'Candidate|||NIST Additional Signatures Round 2': 'round2-candidate', // MAYO, HAWK
+  'Candidate|||NIST Additional Signatures Round 2': 'round2-candidate', // MAYO, HAWK (pre-2026-07-27 snapshots)
   'NIST Additional Sig Round 2 — Candidate|||NIST Additional Sig — Round 2 candidate (NOT standardised)':
-    'round2-candidate', // UOV, CROSS, LESS, FAEST, SNOVA
+    'round2-candidate', // UOV, CROSS, LESS, FAEST, SNOVA (pre-2026-07-27 snapshots)
   'NIST Additional Sig Round 2 — Candidate (SQIsign-I)|||NIST Additional Sig — Round 2 candidate (NOT standardised)':
+    'round2-candidate', // SQIsign (pre-2026-07-27 snapshots)
+  // 2026-07-27: 9 of these confirmed advanced to Round 3 (csrc.nist.gov's own
+  // announcement) — status text bumped, fips_standard column left as-is (still
+  // literally says "Round 2" — a separate, lower-priority cleanup). CROSS/LESS
+  // did NOT advance; status now says so explicitly instead of the stale
+  // "Round 2 — Candidate" text. No new UI tier needed for any of these — Round
+  // 3 candidacy and Round-2-eliminated are both still 'round2-candidate' in
+  // maturity terms (not yet standardised either way); a real 'round3-candidate'
+  // / 'eliminated'-for-these-specific-rows tier is future work, not this fix's
+  // job — this table's only contract is "don't crash the build."
+  'NIST Additional Sig Round 3 — Candidate|||NIST Additional Signatures Round 2':
+    'round2-candidate', // MAYO-1/2/3/5, HAWK-512/1024
+  'NIST Additional Sig Round 3 — Candidate|||NIST Additional Sig — Round 2 candidate (NOT standardised)':
+    'round2-candidate', // UOV, FAEST, SNOVA
+  'NIST Additional Sig Round 3 — Candidate (SQIsign-I)|||NIST Additional Sig — Round 2 candidate (NOT standardised)':
     'round2-candidate', // SQIsign
+  'NIST Additional Sig Round 2 — Eliminated (did not advance to Round 3, 2026-05)|||NIST Additional Sig — Round 2 candidate (NOT standardised)':
+    'eliminated', // CROSS, LESS
+  'NIST Additional Sig Round 3 — Candidate|||': 'round2-candidate', // MQOM, QR-UOV, SDitH — new
+  // stub rows (2026-07-27), fips_standard genuinely blank (add_row.py leaves it for human
+  // follow-up rather than guessing). The status itself IS verified (csrc.nist.gov's own
+  // Round 3 announcement), so 'round2-candidate' (matching the other 9 Round 3 candidates
+  // above) is the honest tier — 'unverified' would misrepresent the one fact that actually
+  // is confirmed here.
   'Candidate|||NIST PQC Round 4 (concluded 2025; not selected)': 'round4-not-selected', // BIKE
   'BSI TR-02102-1|||NIST PQC Round 4 (Alternate)': 'regional', // Classic-McEliece
   'Standardised (BSI TR-02102-1)|||BSI TR-02102-1 (recommended Level 5); NOT in NIST FIPS':
     'regional',
   'Standardised (BSI TR-02102-1)|||BSI/conservative national security recs; NOT in NIST FIPS':
     'regional',
+  // Classic-McEliece upgraded to 'final' 2026-07-27: ISO/IEC 18033-2:2006/Amd 2:2026
+  // formally standardized it internationally (iso.org/standard/86890.html), on top of
+  // the pre-existing BSI TR-02102-1 national recommendation — status text now carries
+  // both facts ("; "-joined, matching this CSV's existing multi-fact convention, e.g.
+  // the LAC row below). 'final' means "published FIPS/SP/RFC/ISO/ETSI standard", which
+  // this now genuinely is; 'regional' would understate it.
+  'ISO 18033-2 Amd2; BSI TR-02102-1|||NIST PQC Round 4 (Alternate)': 'final',
+  'ISO 18033-2 Amd2; Standardised (BSI TR-02102-1)|||BSI TR-02102-1 (recommended Level 5); NOT in NIST FIPS':
+    'final',
+  'ISO 18033-2 Amd2; Standardised (BSI TR-02102-1)|||BSI/conservative national security recs; NOT in NIST FIPS':
+    'final',
   'Candidate|||KR-PQC Round 1 (KPQC)': 'regional', // SMAUG-T/NTRU+/HAETAE/AIMer — verified KpqC winners
   'To Be Checked|||KR-PQC Round 1 (KPQC)': 'unverified', // Aigis-enc/sig
   'CACR competition winner (2020); ELIMINATED from NIST Round 2 (not advanced); NOT an adopted national standard — do not treat as deployable|||CACR national competition winner (as LAC.KEX, ~2018-2020) — NOT an issued OSCCA/GB national standard':

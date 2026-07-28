@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "JEP 527: Post-Quantum Hybrid Key Exchange for TLS 1.3",
+    "category": "TLS/SSL Implementation Software",
+    "product_name": "JEP 527: Post-Quantum Hybrid Key Exchange for TLS 1.3",
+    "product_brief": "Enhances Java TLS 1.3 security by implementing hybrid key exchange algorithms combining quantum-resistant and traditional methods.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Implements hybrid key exchange for TLS 1.3 using ML-KEM combined with ECDHE. Supports X25519MLKEM768 (default), SecP256r1MLKEM768, and SecP384r1MLKEM1024. Delivered in JDK 27.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "ML-KEM-768, ML-KEM-1024, X25519, secp256r1, secp384r1, secp521r1, x448, ffdhe2048, ffdhe3072, ffdhe4096, ffdhe6144, ffdhe8192, RSA, ECDH",
+    "key_management_model": "Hybrid",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Hybrid",
+    "infrastructure_layer": "Software",
+    "license_type": "Open Source",
+    "license": "GPLv2",
+    "latest_version": "27",
+    "release_date": "Unknown",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Java Platform, JDK",
+    "target_industries": "Enterprise",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Delivered in JDK 27. Future work may include pure ML-KEM non-hybrid schemes.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "JEP-527-Post-Quantum-Hybrid-Key-Exchange-53dcba8a.html",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Unit tests for client/server operation and named groups; interoperability testing against other TLS implementations.",
+    "qkd_protocols_&_quantum_networking": "Not applicable",
+    "qrng_&_entropy_sources": "Not applicable",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "No changes to existing code required for default benefit; backward compatible via default scheme ordering.",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-07-27"
+    }
+  }
+]
