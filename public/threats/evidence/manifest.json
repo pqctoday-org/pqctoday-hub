@@ -1566,12 +1566,12 @@
     "source_url": "https://wwwcdn.imo.org/localresources/en/OurWork/Security/Documents/IAPH%20Cyber%20resilience%20guidelines%20for%20emerging%20technologies%20in%20the%20maritime%20supply%20chain%20ENG.pdf",
     "main_source": "https://wwwcdn.imo.org/localresources/en/OurWork/Security/Documents/IAPH%20Cyber%20resilience%20guidelines%20for%20emerging%20technologies%20in%20the%20maritime%20supply%20chain%20ENG.pdf",
     "download_status": "ok",
-    "evidence_file": "threats/CROS-001.html",
-    "content_type": "text/html",
-    "size_bytes": 22157048,
+    "evidence_file": "threats/CROS-001.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 12089813,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-07-25T03:15:15.262759+00:00"
+    "downloaded_at": "2026-07-28T13:10:00+00:00"
   },
   {
     "threat_id": "CROS-002",
@@ -1590,12 +1590,12 @@
     "source_url": "https://www.bis.org/publ/bppdf/bispap158.pdf",
     "main_source": "Quantum-readiness for the financial system: a roadmap",
     "download_status": "ok",
-    "evidence_file": "threats/FINA-002.html",
-    "content_type": "text/html",
-    "size_bytes": 3974225,
+    "evidence_file": "threats/FINA-002.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 2159075,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-07-28T11:16:18.153690+00:00"
+    "downloaded_at": "2026-07-28T13:10:00+00:00"
   },
   {
     "threat_id": "CROS-003",
@@ -1614,12 +1614,12 @@
     "source_url": "https://www.etsi.org/deliver/etsi_tr/104000_104099/104005/01.01.01_60/tr_104005v010101p.pdf",
     "main_source": "ETSI TR 104 005 V1.1.1 Secure Element Technologies",
     "download_status": "ok",
-    "evidence_file": "threats/INTE-001.html",
-    "content_type": "text/html",
-    "size_bytes": 139439,
+    "evidence_file": "threats/INTE-001.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 81922,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-07-28T11:17:00.956673+00:00"
+    "downloaded_at": "2026-07-28T13:10:00+00:00"
   },
   {
     "threat_id": "CROS-004",
@@ -1638,48 +1638,48 @@
     "source_url": "https://messervices.cyber.gouv.fr/documents-guides/anssi-guide-mecanismes-crypto-3.00.pdf",
     "main_source": "ANSSI-PG-083 Guide des mecanismes cryptographiques v3.00",
     "download_status": "ok",
-    "evidence_file": "threats/CROS-005.html",
-    "content_type": "text/html",
-    "size_bytes": 2247509,
+    "evidence_file": "threats/CROS-005.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 1365473,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-07-28T11:17:47.277533+00:00"
+    "downloaded_at": "2026-07-28T13:10:00+00:00"
   },
   {
     "threat_id": "ENER-001",
     "source_url": "https://www.nerc.com/globalassets/our-work/reports/special-reports/nerc_cip_roadmap_01122026.pdf",
     "main_source": "NERC CIP Roadmap (January 2026)",
     "download_status": "ok",
-    "evidence_file": "threats/ENER-001.html",
-    "content_type": "text/html",
-    "size_bytes": 1551243,
+    "evidence_file": "threats/ENER-001.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 871081,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-07-28T11:18:03.210316+00:00"
+    "downloaded_at": "2026-07-28T13:10:00+00:00"
   },
   {
     "threat_id": "HEAL-001",
     "source_url": "https://healthsectorcouncil.org/wp-content/uploads/2026/04/HSCC-Cyber-Working-Group-Q1-2026-Progress-Report.pdf",
     "main_source": "HSCC Cyber Working Group Q1 2026 Progress Report",
     "download_status": "ok",
-    "evidence_file": "threats/HEAL-001.html",
-    "content_type": "text/html",
-    "size_bytes": 1584427,
+    "evidence_file": "threats/HEAL-001.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 919857,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-07-28T11:18:19.064135+00:00"
+    "downloaded_at": "2026-07-28T13:10:00+00:00"
   },
   {
     "threat_id": "PAYM-001",
     "source_url": "https://www.fsisac.com/hubfs/Knowledge/PQC/TheImpactOfQuantumComputingOnThePaymentCardIndustry.pdf",
     "main_source": "The Impact of Quantum Computing on the Payment Card Industry",
     "download_status": "ok",
-    "evidence_file": "threats/PAYM-001.html",
-    "content_type": "text/html",
-    "size_bytes": 806350,
+    "evidence_file": "threats/PAYM-001.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 478488,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-07-28T11:18:35.226265+00:00"
+    "downloaded_at": "2026-07-28T13:10:00+00:00"
   },
   {
     "threat_id": "FINA-003",
@@ -1734,12 +1734,12 @@
     "source_url": "https://www.ccn.cni.es/gl/docman/documentos-publicos/boletines-pytec/499-ccn-tec-009-recomendaciones-transicion-postcuantica-segura-english/file",
     "main_source": "CCN-TEC 009 Recommendations for a safe post-quantum transition",
     "download_status": "ok",
-    "evidence_file": "threats/CROS-006.html",
-    "content_type": "text/html",
-    "size_bytes": 1506815,
+    "evidence_file": "threats/CROS-006.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 844313,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-07-28T11:20:14.340814+00:00"
+    "downloaded_at": "2026-07-28T13:10:00+00:00"
   },
   {
     "threat_id": "FINA-006",
@@ -1758,12 +1758,12 @@
     "source_url": "https://messervices.cyber.gouv.fr/documents-guides/transition_post_quantique_ipsec.pdf",
     "main_source": "ANSSI-FT-117 Transition post-quantique d'IPsec",
     "download_status": "ok",
-    "evidence_file": "threats/TELE-001.html",
-    "content_type": "text/html",
-    "size_bytes": 2280994,
+    "evidence_file": "threats/TELE-001.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 1480897,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-07-28T11:20:52.919005+00:00"
+    "downloaded_at": "2026-07-28T13:00:00+00:00"
   },
   {
     "threat_id": "FINA-007",

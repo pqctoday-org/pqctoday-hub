@@ -419,7 +419,7 @@ enrichment_method: dual: mlx-mlx-community/Qwen3.6-27B-8bit (local) + omlx-qwen3
 - **Classical Algorithms Referenced**: None detected
 - **Key Takeaways**: None detected
 - **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
+- **Hybrid & Transition Approaches**: ANSSI recommends hybridation (combining a proven classical asymmetric mechanism with a post-quantum KEM) during the transition period — corrected 2026-07-28 from the re-verified real PDF text (original pass read only corrupted/binary evidence).
 - **Pure PQC KEM Support**: No
 - **Pure PQC KEM Evidence**: None detected
 - **Hybrid PQC KEM Support**: No
@@ -429,7 +429,7 @@ enrichment_method: dual: mlx-mlx-community/Qwen3.6-27B-8bit (local) + omlx-qwen3
 - **Hybrid PQC Signature Support**: No
 - **Hybrid PQC Signature Evidence**: None detected
 - **PQC Heatmap Protocols Covered**: IKE/IPsec
-- **PQC Heatmap Protocols Evidence**: IKE/IPsec: "Transition post-quantique d'IPsec"
+- **PQC Heatmap Protocols Evidence**: IKE/IPsec: "IKEv2 [9] (Internet Key Exchange), AH [10] (Authentication Header) et ESP [11] (Encapsulating Security Payload). La partie impactée par la transition post-quantique est indiquée en rouge" — corrected 2026-07-28, original evidence was fabricated from the document title (cached file was corrupted raw PDF bytes at extraction time, not real text; re-verified against the real re-downloaded PDF)
 - **Lifecycle State**: Released
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect; Operations
