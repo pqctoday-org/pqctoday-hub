@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "HYCU Cryptographic Library Module",
+    "category": "Cryptographic Libraries",
+    "product_name": "HYCU Cryptographic Library Module",
+    "product_brief": "A comprehensive suite of FIPS Approved algorithms implemented in pure Java.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document lists approved and non-approved algorithms including AES, RSA, DSA, ECDSA, SHA, and various KDFs/KAS schemes. There is no mention of Post-Quantum Cryptography (PQC) algorithms (e.g., CRYSTALS-Kyber, CRYSTALS-Dilithium, SPHINCS+) or PQC migration plans.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "AES, DSA, ECDSA, RSA, SHA-1, SHA-2, SHA-3, HMAC, DRBG (Counter, Hash, HMAC), KAS-FFC, KAS-ECC, KAS-IFC, KTS-IFC, PBKDF, KDF (HKDF, SP800-108, etc.), cSHAKE, KMAC, TupleHash, ParallelHash",
+    "key_management_model": "Software-based cryptographic library; keys generated via DRBG or key agreement/transport primitives within the module boundary.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Software Cryptographic Module (Multi-Chip Stand Alone embodiment)",
+    "infrastructure_layer": "Libraries",
+    "license_type": "Commercial",
+    "license": "Proprietary (Copyright HYCU Inc, 2025)",
+    "latest_version": "2.0.0",
+    "release_date": "2025-06-26",
+    "fips_validated": "Yes, FIPS 140-3 Level 1 (Certificate #5053, Status Active)",
+    "primary_platforms": "VMware Photon OS, HP-UX, Linux (Centos, Debian, Fedora, Oracle RHC/UEK, Photon, SUSE, Ubuntu, ClevOS), Red Hat Enterprise Linux, Mac OS X, Microsoft Windows (XP, Server), Solaris, AIX",
+    "target_industries": "US Federal agencies and other markets requiring FIPS 140-3 validation",
+    "regulatory_status": "FIPS 140-3 Validated (Certificate #5053)",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "DSA, ECDSA, RSA (PKCS#1 v2.1 PSS and PKCS1.5)",
+    "authoritative_source_url": "https://www.hycu.com",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "CAVP tested (Certificate A4399); FIPS 140-3 Validated; Pre-Operational and Conditional Self-Tests",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Uses Approved DRBGs (Counter, Hash, HMAC) compliant with SP 800-90Ar1; supports External RNG; guidance provided for configuring JVM's Entropy Source",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-07-27"
+    }
+  }
+]

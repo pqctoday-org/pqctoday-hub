@@ -1,43 +1,121 @@
 ---
 generated: 2026-07-27
 collection: csc_034
-documents_processed: 1
+documents_processed: 3
 enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 ---
 
-## SEALSQ Quantum Shield QS7001
+## Nuvoton Cryptographic Library 3.0
 
 - **Category**: Hardware Security & Semiconductors
-- **Product Name**: SEALSQ Quantum Shield QS7001
-- **Product Brief**: Post-quantum secure element semiconductor supporting RSA, ECC, AES, SHA, ML-KEM-1024, and ML-DSA-87 algorithms.
-- **PQC Support**: Yes (with details)
-- **PQC Capability Description**: QS7001 V1 supports ML-KEM-1024 and ML-DSA-87. V2 extends full post-quantum algorithm API security and covers full PQC certification scope, including secured cryptographic API protections. Production samples for V1 available March 2026; V2 production samples targeted for October 2026.
-- **PQC Migration Priority**: Critical
-- **Crypto Primitives**: RSA, ECC, AES, SHA-1, SHA-2, SHA-3, ML-KEM-1024, ML-DSA-87
-- **Key Management Model**: Hardware-anchored security; flash-based design enabling firmware updates and patches without hardware replacement.
+- **Product Name**: Nuvoton Cryptographic Library 3.0
+- **Product Brief**: Hardware Single Chip cryptographic module providing FIPS 140-3 Level 1 validated cryptographic services for embedded controllers.
+- **PQC Support**: Partial (with scope)
+- **PQC Capability Description**: Supports LMS (Leighton-Micali Signature) verification (LMS SigVer) and HSS (Hash-based Signature Scheme) verification as vendor-affirmed algorithms. Includes LMS modes LMS_SHA256_M32_H10, H15, H20, H25, H5 and LMOTS modes. No PQC key generation or signing is explicitly stated as approved; only verification is listed.
+- **PQC Migration Priority**: Medium
+- **Crypto Primitives**: AES-CBC, AES-CCM, AES-CFB128, AES-CMAC, AES-CTR, AES-ECB, AES-GCM, AES-GMAC, AES-OFB, ECDSA (P-256, P-384, P-521), RSA (2048, 3072), SHA2-256, SHA2-384, SHA2-512, HMAC-SHA2, Hash_DRBG, KAS-ECC-SSC (ECDH), KDF SP800-108, LMS, HSS
+- **Key Management Model**: Hardware key storage within a Single Chip cryptographic boundary; secure key generation using SP 800-90A compliant DRBG seeded by SP 800-90B compliant physical entropy source (Ring Oscillators); key derivation via SP800-108 KBKDF.
 - **Supported Blockchains**: Not stated
-- **Architecture Type**: Secure Element (flash-based semiconductor design)
+- **Architecture Type**: Hardware Single Chip (Sub-chip cryptographic subsystem)
 - **Infrastructure Layer**: Hardware
-- **License Type**: Commercial
-- **License**: Not stated
-- **Latest Version**: QS7001 V2
-- **Release Date**: 2026-03-06
-- **FIPS Validated**: Not stated (Note: FIPS 140-3 is mentioned for QVault TPM, but not explicitly for QS7001; QS7001 is pursuing Common Criteria)
-- **Primary Platforms**: Not stated
-- **Target Industries**: Government, critical infrastructure, financial services, enterprise, Multi-Factor Authentication tokens, Smart Energy, Medical and Healthcare Systems, Defense, IT Network Infrastructure, Automotive, Industrial Automation and Control Systems
-- **Regulatory Status**: Not stated
-- **PQC Roadmap Details**: QS7001 V1 production samples March 2026; CC ETR March 2026. QS7001 V2 engineering samples July 2026; CC ETR September 2026; production samples October 2026. V2 to cover full PQC certification scope.
+- **License Type**: Proprietary
+- **License**: Proprietary (Copyright 2025 Nuvoton Technology Corporation / atsec information security)
+- **Latest Version**: 3.0.8
+- **Release Date**: 2025-11-19
+- **FIPS Validated**: Yes, FIPS 140-3 Level 1 (Overall Level 1, Physical Security Level 2), Certificate #5098, Status Active, Sunset Date 11/29/2030
+- **Primary Platforms**: Nuvoton NPCX499HA0BX (Notebook Embedded Controller), Nuvoton NPCD324HA0DX (Desktop Super I/O), Nuvoton NPCX499HA1BX (Notebook Embedded Controller)
+- **Target Industries**: Not stated
+- **Regulatory Status**: FIPS 140-3 Validated (Certificate #5098)
+- **PQC Roadmap Details**: Not stated
 - **Consensus Mechanism**: Not stated
-- **Signature Schemes**: ML-DSA-87, RSA, ECC
-- **Authoritative Source URL**: www.sealsq.com
+- **Signature Schemes**: ECDSA (P-256, P-384, P-521), RSA (PKCS#1 v1.5, PSS), LMS (Verification only), HSS (Verification only)
+- **Authoritative Source URL**: https://csrc.nist.gov
 - **Implementation Attack Surface**: Unknown
 - **Cryptographic Discovery & Inventory**: Unknown
-- **Testing & Validation Methods**: Hardware Evaluation Test Report (ETR) by accredited Common Criteria laboratory (SERMA Technologies); CC certification process.
+- **Testing & Validation Methods**: ACVP/CAVP conformance (Certs A4659, A5276); FIPS 140-3 validation by atsec information security corporation; Pre-Operational, Conditional, and Periodic Self-Tests implemented.
 - **QKD Protocols & Quantum Networking**: Unknown
-- **QRNG & Entropy Sources**: Unknown
-- **Constrained Device & IoT Suitability**: Not stated (Note: QVault TPM targets IoT, but QS7001 specific IoT suitability is not explicitly detailed beyond general semiconductor applications)
+- **QRNG & Entropy Sources**: Physical entropy source (Nuvoton NTCES03) using Ring Oscillators in hardware; SP 800-90B compliant; 512 bits entropy per sample; conditioned using SHA2-512; seeds Hash_DRBG (SP 800-90A Rev. 1).
+- **Constrained Device & IoT Suitability**: Designed for Embedded Controllers (EC) and Super I/O (SIO) chips; Single Chip embodiment; suitable for embedded systems.
+- **Supply Chain & Vendor Risk**: Vendor: Nuvoton Technology Corporation; Validation Lab: atsec information security corporation.
+- **Deployment & Migration Complexity**: Unknown
+- **Financial & Business Impact**: Unknown
+- **Organizational Readiness**: Unknown
+- **Generated By**: mlx-community/Qwen3.6-27B-8bit (mlx, 2026-07-27)
+
+---
+
+## Nuvoton Cryptographic Library 3.3
+
+- **Category**: Hardware Security & Semiconductors
+- **Product Name**: Nuvoton Cryptographic Library 3.3
+- **Product Brief**: Hardware Single Chip cryptographic module providing cryptographic services for Nuvoton NPCM8mnx BMC.
+- **PQC Support**: Partial
+- **PQC Capability Description**: Supports LMS (Leighton-Micali Signature) and HSS (Hash-based Signature Scheme) for signature verification. LMS modes include LMS_SHA256_M32_H5/10/15/20/25. HSS SigVer uses LMS operations. These are vendor-affirmed or approved algorithms within the FIPS 140-3 module.
+- **PQC Migration Priority**: Unknown
+- **Crypto Primitives**: AES-CBC, AES-CCM, AES-CFB128, AES-CMAC, AES-CTR, AES-ECB, AES-GCM, AES-GMAC, AES-OFB, ECDSA (P-256, P-384, P-521), RSA (2048, 3072), SHA2-256, SHA2-384, SHA2-512, HMAC-SHA2, Hash_DRBG, KAS-ECC-SSC, KDF SP800-108, LMS, HSS
+- **Key Management Model**: Hardware key storage within the cryptographic boundary of the Single Chip module. Keys generated via CKG (Cryptographic Key Generation) using DRBG. Crypto Officer role initializes key registers.
+- **Supported Blockchains**: Not stated
+- **Architecture Type**: Hardware Single Chip (Sub-chip cryptographic subsystem)
+- **Infrastructure Layer**: Hardware
+- **License Type**: Proprietary
+- **License**: Proprietary (Copyright 2026 Nuvoton Technology Corporation / atsec information security)
+- **Latest Version**: 3.3.2
+- **Release Date**: 2026-06-10
+- **FIPS Validated**: FIPS 140-3 Level 1 (Active, Certificate #5340, Sunset Date 6/17/2031)
+- **Primary Platforms**: Nuvoton NPCM8mnx Rev. A3 (Arbel Baseboard Management Controller), ARM Cortex M4
+- **Target Industries**: Not stated
+- **Regulatory Status**: FIPS 140-3 Validated
+- **PQC Roadmap Details**: Not stated
+- **Consensus Mechanism**: Not stated
+- **Signature Schemes**: ECDSA (P-256, P-384, P-521), RSA (PKCS#1 v1.5, PSS), LMS, HSS
+- **Authoritative Source URL**: https://csrc.nist.gov
+- **Implementation Attack Surface**: Unknown
+- **Cryptographic Discovery & Inventory**: Unknown
+- **Testing & Validation Methods**: ACVP/CAVP conformance (Cert A7343 for algorithms, Cert E94 for entropy). Pre-operational, conditional, and periodic self-tests implemented.
+- **QKD Protocols & Quantum Networking**: Unknown
+- **QRNG & Entropy Sources**: Physical entropy source (Ring Oscillators in hardware) compliant with SP 800-90B. Full entropy. Conditioned using SHA2-512. Seeds Hash_DRBG (SP 800-90A Rev 1).
+- **Constrained Device & IoT Suitability**: Embedded in Baseboard Management Controller (BMC) on ARM Cortex M4. Single Chip hardware embodiment.
 - **Supply Chain & Vendor Risk**: Unknown
-- **Deployment & Migration Complexity**: Flash-based designs enable firmware updates and patches without hardware replacement.
+- **Deployment & Migration Complexity**: Unknown
+- **Financial & Business Impact**: Unknown
+- **Organizational Readiness**: Unknown
+- **Generated By**: mlx-community/Qwen3.6-27B-8bit (mlx, 2026-07-27)
+
+---
+
+## KIOXIA FIPS TC58NC1137GTC Crypto Sub-Chip Class A1
+
+- **Category**: Hardware Security & Semiconductors
+- **Product Name**: KIOXIA FIPS TC58NC1137GTC Crypto Sub-Chip Class A1
+- **Product Brief**: Single-chip hardware crypto module for solid state drive data security, compliant with TCG OPAL SSC and FIPS 140-3 Level 2.
+- **PQC Support**: Partial (with scope)
+- **PQC Capability Description**: Supports Leighton-Micali Signature (LMS) for signature verification (LMS_SHA256_M32_H15). LMS is a post-quantum secure signature scheme. Used for firmware digital signature verification.
+- **PQC Migration Priority**: High
+- **Crypto Primitives**: AES-CBC, AES-ECB, AES-XTS, ECDSA (P-384), HMAC-SHA2-256, KDF SP800-108, LMS, RSA (2048, 3072), SHA2-256, SHA2-384, Hash DRBG
+- **Key Management Model**: Hardware key storage within single-chip cryptographic boundary; secure key generation using internal entropy source and Hash DRBG; key injection via external loading with security caveats; zeroization methods defined.
+- **Supported Blockchains**: Not stated
+- **Architecture Type**: Single Chip Hardware Sub-Chip embedded in TC58NC1137GTC 0003 SoC
+- **Infrastructure Layer**: Hardware
+- **License Type**: Proprietary
+- **License**: Proprietary
+- **Latest Version**: Firmware Version SC02DN; Soft Circuitry core module 0002; Hardware Version 0003
+- **Release Date**: 2026-07-02
+- **FIPS Validated**: Yes, FIPS 140-3 Level 2 Overall, Certificate #5416, Status Active, Sunset Date 7/13/2031
+- **Primary Platforms**: Solid State Drives (SSD) with TCG OPAL compliant controllers
+- **Target Industries**: Enterprise, Data Storage
+- **Regulatory Status**: FIPS 140-3 Validated
+- **PQC Roadmap Details**: Not stated
+- **Consensus Mechanism**: Not stated
+- **Signature Schemes**: ECDSA (P-384), LMS (LMS_SHA256_M32_H15), RSA (pkcs1v1.5)
+- **Authoritative Source URL**: https://csrc.nist.gov
+- **Implementation Attack Surface**: Non-invasive security level N/A; Mitigation of other attacks level N/A; Physical security Level 2.
+- **Cryptographic Discovery & Inventory**: Unknown
+- **Testing & Validation Methods**: CAVP Certified (A7087, A7174, A7297, A7223, A7173); Pre-Operational Self-Tests (POST, KAT, CAST); Conditional Self-Tests; Periodic Self-Tests.
+- **QKD Protocols & Quantum Networking**: Unknown
+- **QRNG & Entropy Sources**: Hardware Entropy Source (E275) inside CM boundary; supplies Hash_DRBG with 1024 bits entropy input (~683 bits entropy); NIST SP 800-90A Rev 1 compliant Hash DRBG.
+- **Constrained Device & IoT Suitability**: Embedded in SSD controllers; Cortex-M3 processor; Single-Chip embodiment.
+- **Supply Chain & Vendor Risk**: Vendor: KIOXIA Corporation; Security Certification Team contact provided.
+- **Deployment & Migration Complexity**: Installation, initialization, and startup procedures defined in Section 11.1; requires configuration as specified in Security Policy.
 - **Financial & Business Impact**: Unknown
 - **Organizational Readiness**: Unknown
 - **Generated By**: mlx-community/Qwen3.6-27B-8bit (mlx, 2026-07-27)

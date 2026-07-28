@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "Toshiba Hardware Security Module PQC cryptographic library",
+    "category": "Hardware Security Module (HSM) Software",
+    "product_name": "Toshiba Hardware Security Module PQC cryptographic library",
+    "product_brief": "PQC cryptographic library manufactured by Toshiba, specifically designed for use with the Toshiba Hardware Security Module.",
+    "pqc_support": "Yes (ML-DSA, ML-KEM)",
+    "pqc_capability_description": "The library supports ML-DSA (KeyGen, SigGen, SigVer) and ML-KEM (EncapDecap, KeyGen). It also supports SHA3-256, SHA3-384, SHA3-512, SHAKE-128, and SHAKE-256. Validated on XCZU15EG hardware.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "ML-DSA, ML-KEM, SHA3-256, SHA3-384, SHA3-512, SHAKE-128, SHAKE-256",
+    "key_management_model": "Hardware Security Module (HSM)",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Hardware Security Module (HSM)",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "1.0",
+    "release_date": "Unknown",
+    "fips_validated": "No",
+    "primary_platforms": "XCZU15EG",
+    "target_industries": "Unknown",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "ML-DSA",
+    "authoritative_source_url": "https://csrc.nist.gov",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "ACVP/CAVP conformance (First Validated: 7/16/2026)",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-07-27"
+    }
+  }
+]
