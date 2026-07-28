@@ -8,27 +8,49 @@ source: public/vendor-roadmaps/
 # Vendor PQC Roadmap Enrichments
 
 
+## VND-154 — Ericsson AB
+
+- **Vendor ID**: VND-154
+- **Vendor Name**: Ericsson AB
+- **Roadmap Title**: Migration to quantum-resistant cryptography - Ericsson
+- **Roadmap URL**: https://www.ericsson.com/en/reports-and-papers/ericsson-technology-review/articles/migrating-telecom-to-quantum-resistant-cryptography
+- **Publish Date**: 2026-07-28
+- **Local File**: vendor-roadmaps/VND-154_Ericsson_AB.html
+- **CSV Coverage Notes**: None
+- **PQC Algorithms Announced**: ML-KEM; ML-DSA; SLH-DSA; FN-DSA; XMSS; LMS
+- **Target Migration Dates**: high-priority systems should migrate before 2031; full transition should be completed by 2035
+- **Products / Services Covered**: None detected
+- **Compliance Frameworks**: FIPS 203; FIPS 204; FIPS 205
+- **Hybrid Mode Support**: Yes, the document states that "algorithm implementation concerns have motivated a hybrid solution where the final key is a combination of traditional and PQC key exchange" for key establishment.
+- **Current GA Status**: Planned
+- **Customer Action Required**: preparation and deployment must begin immediately
+- **Key Commitments & Quotes**: "PQC is the only feasible approach for achieving quantum-safe security, and its adoption is a priority"
+- **Coverage Verification**: CONSISTENT, as the document is a general strategic overview and does not specify product-level coverage details.
+- **Extraction Quality**: MEDIUM
+- **Source Document**: VND-154_Ericsson_AB.html (270.0 KB)
+- **Extraction Timestamp**: 2026-07-28T06:12:54
+
 ## VND-001 — Amazon Web Services Inc.
 
 - **Vendor ID**: VND-001
 - **Vendor Name**: Amazon Web Services Inc.
-- **Roadmap Title**: AWS Secrets Manager Hybrid Post-Quantum TLS
-- **Roadmap URL**: https://aws.amazon.com/about-aws/whats-new/2026/04/aws-secrets-manager-post-quantum-tls/
-- **Publish Date**: 2026-07-28
-- **Local File**: vendor-roadmaps/VND-001_Amazon_Web_Services_Inc.html
-- **CSV Coverage Notes**: None
-- **PQC Algorithms Announced**: ML-KEM
+- **Roadmap Title**: AWS Post-Quantum Cryptography Migration Plan
+- **Roadmap URL**: https://aws.amazon.com/security/post-quantum-cryptography/migrating-to-post-quantum-cryptography/
+- **Publish Date**: 2026-04-23
+- **Local File**: vendor-roadmaps/VND-001_Amazon_Web_Services_Inc..html
+- **CSV Coverage Notes**: AWS PQC migration plan: ML-KEM (FIPS 203) key exchange enabled across KMS, ACM, Secrets Manager, S3, CloudFront, API Gateway, ALB/NLB, Transfer Family, Payment Cryptography; ML-DSA (FIPS 204) signatures in AWS Private CA and KMS, CloudHSM ML-DSA in preview. Built on AWS-LC and s2n-tls. Some features transparently enabled, others customer-opt-in under shared responsibility model. | Milestone: ML-KEM hybrid key exchange live across KMS, ACM, Secrets Manager, S3, CloudFront (default client-to-edge), API Gateway, ALB/NLB, Transfer Family, Payment Cryptography; ML-DSA signing in Private CA and KMS,
+- **PQC Algorithms Announced**: ML-KEM; ML-DSA; SLH-DSA
 - **Target Migration Dates**: None detected
-- **Products / Services Covered**: AWS Secrets Manager Agent (version 2.0.0+); AWS Lambda Extension (version 19+); AWS Secrets and Configuration Provider (version 2.0.0+); AWS SDKs (Rust, Go, Node.js, Kotlin, Python, Java v2)
-- **Compliance Frameworks**: None detected
-- **Hybrid Mode Support**: Yes, combining classical key exchange with post-quantum cryptography
-- **Current GA Status**: GA
-- **Customer Action Required**: Upgrade to the latest client versions (Secrets Manager Agent, Lambda Extension, SDKs)
-- **Key Commitments & Quotes**: "AWS Secrets Manager clients now support hybrid post-quantum TLS to protect secrets from quantum risks"; "combining classical key exchange with post-quantum cryptography to protect against both traditional cryptographic attacks and future quantum computing risks"; "No code changes, configuration updates, or migration effort are required for use cases that have already upgraded to the latest client versions"
-- **Coverage Verification**: CONSISTENT, the document details specific product versions and support status, which aligns with the lack of specific CSV coverage notes in the prompt.
+- **Products / Services Covered**: Elastic Load Balancers (ALB, NLB); API Gateway; CloudFront; Transfer Family; AWS Key Management Service (KMS); AWS Certificate Manager (ACM); AWS Secrets Manager; AWS Payment Cryptography; Amazon Simple Storage Service (S3); AWS Private Certificate Authority (Private CA); AWS CloudHSM; IAM Roles Anywhere
+- **Compliance Frameworks**: NIST FIPS 203; NIST FIPS 204; NIST FIPS 205; NIST IR 8547; European Commission Recommendation on a Coordinated Implementation Roadmap; NCSC whitepaper; BSI Technical Guideline TR-02102; ANSSI position paper; ASD guidance; Canadian Centre for Cyber Security ITSM.40.001; UAE Cyber Security Council National Encryption Policy v1.0; G7 Cyber Expert Group coordinated roadmap; ASC X9 Post Quantum Cryptography Financial Readiness Needs Assessment; GSMA Post-Quantum Telco Network Taskforce guidelines
+- **Hybrid Mode Support**: Yes, the document states that services offer "hybrid PQ-key exchange using ML-KEM" and references BSI recommendations for "hybrid post-quantum cryptography... combining traditional and quantum-resistant algorithms".
+- **Current GA Status**: GA (General Availability), with CloudHSM ML-DSA support in preview.
+- **Customer Action Required**: Update client-side components/SDKs to versions supporting ML-KEM; apply PQ-TLS policies to customer-owned resources; ensure applications use TLS 1.3; explicitly specify desired TLS policies in infrastructure-as-code; use IAM condition keys to restrict TLS policies; update PKI infrastructure to use ML-DSA.
+- **Key Commitments & Quotes**: "AWS is migrating to post-quantum cryptography (PQC), and helping our customers do the same under a shared responsibility model."; "AWS uses the ML-KEM algorithm for this purpose."; "AWS uses the ML-DSA algorithm for this purpose."
+- **Coverage Verification**: PARTIAL, the document confirms the listed services and ML-KEM/ML-DSA support but does not explicitly mention the underlying libraries "AWS-LC and s2n-tls" in the provided text.
 - **Extraction Quality**: HIGH
-- **Source Document**: VND-001_Amazon_Web_Services_Inc.html (174.0 KB)
-- **Extraction Timestamp**: 2026-07-28T06:09:15
+- **Source Document**: VND-001_Amazon_Web_Services_Inc..html (311.1 KB)
+- **Extraction Timestamp**: 2026-07-26T22:34:01
 
 ## VND-002 — Apple Inc.
 
@@ -1418,29 +1440,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: MEDIUM
 - **Source Document**: VND-152_Adtran_Networks_SE_formerly_ADVA_.html (138.9 KB)
 - **Extraction Timestamp**: 2026-07-07T20:32:32
-
-## VND-154 — Ericsson AB
-
-- **Vendor ID**: VND-154
-- **Vendor Name**: Ericsson AB
-- **Roadmap Title**: Quantum-safe networks explained
-- **Roadmap URL**: https://www.ericsson.com/en/security/quantum-safe-networks
-- **Publish Date**: 2025
-- **Local File**: public/vendor-roadmaps/VND-154_Ericsson_AB.html
-- **CSV Coverage Notes**: Official Ericsson strategy page for transitioning telecom networks to quantum-resistant cryptography, referencing NIST ML-KEM/ML-DSA/SLH-DSA, NSA CNSA 2.0, and standardization work in 3GPP, IETF, GSMA. Lays out a phased migration: PQC likely introduced in 5G releases 20/21, with 6G (release 21) quantum-resistant from the start. | Milestone: PQC expected to be introduced in 5G era (3GPP releases 20/21) and 6G fully quantum-resistant from the start (~release 21), aligned with NSA 2030 phase-out guidance.
-- **Roadmap Scope**: Portfolio-wide strategy
-- **PQC Algorithms Announced**: ML-KEM; ML-DSA; SLH-DSA
-- **Target Migration Dates**: PQC likely introduced in 5G releases 20/21; 6G fully quantum-resistant from the start
-- **Products / Services Covered**: Portfolio-wide commitment (no individual products named)
-- **Compliance Frameworks**: NIST; IETF; 3GPP
-- **Hybrid Mode Support**: No
-- **Current GA Status**: Planned
-- **Customer Action Required**: None detected
-- **Key Commitments & Quotes**: "In 3GPP, post-quantum cryptography will likely be introduced already in the 5G era as part of upcoming releases 20 and/or 21."
-- **Coverage Verification**: PARTIAL; The document confirms the 3GPP timeline and NIST algorithm references but does not explicitly mention NSA CNSA 2.0 or GSMA in the provided text.
-- **Extraction Quality**: MEDIUM
-- **Source Document**: VND-154_Ericsson_AB.html (290.9 KB)
-- **Extraction Timestamp**: 2026-07-07T20:38:19
 
 ## VND-155 — Nokia Corporation
 
