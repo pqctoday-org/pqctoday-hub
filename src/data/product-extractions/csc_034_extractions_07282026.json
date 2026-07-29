@@ -367,5 +367,46 @@
       "backend": "mlx",
       "generated_at": "2026-07-28"
     }
+  },
+  {
+    "platform_name": "ITE LAx-551x Embedded Controller with PQC Cryptographic Engine",
+    "category": "Hardware Security & Semiconductors",
+    "product_name": "ITE LAx-551x Embedded Controller with PQC Cryptographic Engine",
+    "product_brief": "High-performance embedded controller based on RISC-V 32-bit architecture supporting Post-Quantum Cryptography algorithms.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Supports Post-Quantum Cryptography (PQC) algorithms, effectively defending against potential quantum attacks. Specifically validated for ML-DSA (KeyGen, SigGen, SigVer) and ML-KEM (EncapDecap, KeyGen).",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "ML-DSA, ML-KEM, SHA3-224, SHA3-256, SHA3-384, SHA3-512, SHAKE-128, SHAKE-256",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Hardware",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "HW01",
+    "release_date": "Unknown",
+    "fips_validated": "Yes (Validated under Cryptographic Algorithm Validation Program; First Validated: 5/6/2026)",
+    "primary_platforms": "RISC-V 32-bit architecture",
+    "target_industries": "Unknown",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "ML-DSA",
+    "authoritative_source_url": "https://csrc.nist.gov",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "ACVP/CAVP conformance (Validated under Cryptographic Algorithm Validation Program)",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Embedded controller based on RISC-V 32-bit architecture",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-07-28"
+    }
   }
 ]

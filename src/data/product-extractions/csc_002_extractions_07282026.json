@@ -39,5 +39,46 @@
       "backend": "mlx",
       "generated_at": "2026-07-28"
     }
+  },
+  {
+    "platform_name": "LS2 HSM Family",
+    "category": "Hardware Security Module (HSM) Software",
+    "product_name": "LS2 HSM Family",
+    "product_brief": "Multi-chip Cryptographic Module with firmware installed in Host CryptoBind HSM and CryptoBind DSS.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document lists approved algorithms including AES, ECDSA, RSA, SHA, and TDES. No post-quantum cryptography algorithms (e.g., ML-KEM, ML-DSA, LMS, XMSS) are mentioned in the approved or allowed algorithms lists.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "AES-CBC, AES-CCM, AES-CMAC, AES-CTR, AES-ECB, AES-GCM, AES-GMAC, AES-KW, AES-KWP, Counter DRBG, ECDSA, Hash DRBG, HMAC-SHA-1, HMAC-SHA2-256, HMAC-SHA2-384, HMAC-SHA2-512, KAS-ECC, KAS-ECC-SSC, KAS-IFC-SSC, KDA HKDF, KDA OneStep, KDA TwoStep, KDF ANS 9.63, KDF SP800-108, KDF TLS, KTS-IFC, PBKDF, RSA, SHA-1, SHA2-256, SHA2-384, SHA2-512, SHA3-224, SHA3-256, SHA3-384, SHA3-512, SHAKE-128, SHAKE-256, TDES-CBC, TDES-ECB, TDES-KW, EC Diffie-Hellman",
+    "key_management_model": "HSM-backed",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "HSM-based",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "MARVELL-LS2-FW-10.23-1202",
+    "release_date": "Unknown",
+    "fips_validated": "Yes, FIPS 140-3 Level 3, Certificate #5220, Status Active, Sunset Date 6/5/2029",
+    "primary_platforms": "Host CryptoBind HSM, CryptoBind DSS",
+    "target_industries": "Unknown",
+    "regulatory_status": "FIPS 140-3 Validated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ECDSA, RSA",
+    "authoritative_source_url": "http://www.jisasoftech.com/liquidsecurity-hsm-adapter/",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "FIPS 140-3 Validation, Tested by Leidos Accredited Testing & Evaluation (AT&E) Lab",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Hardware ENT (P)",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-07-28"
+    }
   }
 ]
