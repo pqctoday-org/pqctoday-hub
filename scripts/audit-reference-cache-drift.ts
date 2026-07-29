@@ -122,6 +122,14 @@ interface DriftFinding {
   /** Size of the just-fetched response body, in bytes. */
   observedSizeBytes: number | null
   errorMessage?: string
+  /** How an `ok` was reached. Absent means the bytes matched outright.
+   *  'normalized-text' means the bytes differ but the document's visible text
+   *  is identical to the cached copy — a rotating build id, not a change. */
+  okVia?: 'normalized-text'
+  /** On a drift/size-mismatch: whether the text comparison actually ran.
+   *  'unavailable' means the local cache is not on this machine, so the
+   *  verdict rests on bytes alone. */
+  textComparison?: 'differs' | 'unavailable'
   checkedAt: string
   /** Present only when --stealth-retry attempted a second-pass fetch on this
    * finding (see module docstring). Absent entirely when the flag isn't set. */
@@ -264,6 +272,73 @@ const CHALLENGE_RE =
 // — a boundary set from an actual measured cluster, not a guess, but not a
 // mathematically airtight one either; the cross-entry hash-dedup pass below
 // is the stronger, evidence-based signal and doesn't depend on this number.
+// ---------------------------------------------------------------------------
+// Normalized-text comparison (2026-07-29)
+//
+// WHY. This audit answered "did the BYTES change?", and every consumer of its
+// output — the proof gate, reference-cache's trust_chain, the review queue —
+// was asking "did the DOCUMENT change?". Those are not the same question, and
+// for a large share of this corpus they have permanently different answers:
+// IETF datatracker and similar hosts emit a rotating build id / nonce on every
+// request, so a sha256 ledger is stale by construction the moment it is written.
+//
+// Measured, not assumed (2026-07-29): 121 library documents were re-cached from
+// their live URLs and a drift run ~30 minutes later classified ALL 121 as
+// drifted again — 105 drift + 16 size-mismatch, zero reaching 'ok'. Separately,
+// comparing visible text showed 105 of 119 differed by <1%: byte deltas of
+// 11-724 bytes on 80KB-825KB pages. reference-cache trust_chain sat at 40.7%
+// and re-caching moved it 419 -> 420 of 1033. The metric could not be improved
+// by the action it prescribed.
+//
+// So a byte mismatch now falls through to a text comparison against the LOCAL
+// CACHED FILE — the actual evidence a row rests on, and the thing we care about
+// having drifted. The byte hash is still computed and reported: it remains the
+// right signal for tamper-detection, and demoting it would lose that.
+//
+// This is safe to read the cache from because this audit is local-only — its
+// scheduled workflow was removed 2026-07-12 under the no-scheduled-data-
+// collection principle. When the cache is absent the comparison is skipped and
+// the finding says so, rather than silently claiming a verdict it cannot reach.
+// REFERENCE_CACHE_ROOT overrides the default, matching the SANDBOX_ROOT
+// convention already used on the priv side. Read per-call rather than frozen at
+// module load so a caller (or a test) can point it somewhere else without
+// depending on import order.
+function cacheRoot(): string {
+  return (
+    process.env.REFERENCE_CACHE_ROOT ??
+    path.resolve(process.cwd(), '..', 'pqctoday-priv', 'local-evidence-cache')
+  )
+}
+
+/** Same three elements the hub's own extractor strips
+ *  (scripts/validators/source-document-quality.ts stripHtmlTags). <noscript>
+ *  matters most: on a client-rendered page its fallback IS most of the
+ *  extractable text, so leaving it in makes a JS shell look like a document. */
+export function normalizedText(bytes: Uint8Array): string {
+  let t = Buffer.from(bytes).toString('utf-8')
+  t = t.replace(/<script[\s\S]*?<\/script>/gi, ' ')
+  t = t.replace(/<style[\s\S]*?<\/style>/gi, ' ')
+  t = t.replace(/<noscript[\s\S]*?<\/noscript>/gi, ' ')
+  t = t.replace(/<[^>]+>/g, ' ')
+  return t.replace(/\s+/g, ' ').trim()
+}
+
+export function normalizedSha(bytes: Uint8Array): string {
+  return createHash('sha256').update(normalizedText(bytes)).digest('hex')
+}
+
+/** The cached document this manifest entry describes, or null when the cache
+ *  is not present on this machine. */
+function readCachedBytes(collection: string, entry: ManifestEntry): Uint8Array | null {
+  if (!entry.filename) return null
+  const p = path.join(cacheRoot(), collection, entry.filename)
+  try {
+    return fs.readFileSync(p)
+  } catch {
+    return null
+  }
+}
+
 const BLOCKED_SCAN_MAX_BYTES = 100_000
 
 // Real bug found the SAME day this was added (2026-07-12): scanning the
@@ -376,6 +451,23 @@ export async function classifyEntry(
       observedSizeBytes: observedSize,
     }
   }
+  // Bytes differ and it is not a block page. Before calling that drift, ask
+  // the question the consumers actually care about: did the DOCUMENT change?
+  // See the CACHE_ROOT block above for why — on rotating-build-id hosts the
+  // byte answer is permanently "yes" and says nothing.
+  const cached = readCachedBytes(collection, entry)
+  if (cached) {
+    if (normalizedSha(cached) === normalizedSha(result.bytes)) {
+      return {
+        ...base,
+        classification: 'ok',
+        okVia: 'normalized-text',
+        observedSha256: result.sha256,
+        observedSizeBytes: observedSize,
+      }
+    }
+  }
+
   // Hash mismatch, not a detected block: distinguish full drift (different
   // content) from a size-only mismatch (rare but informative — same byte
   // count yet different bytes is a meaningful subset of drift).
@@ -383,6 +475,10 @@ export async function classifyEntry(
   return {
     ...base,
     classification: sizeMatched ? 'size-mismatch' : 'drift',
+    // Absent when the cache is not on this machine: the text comparison could
+    // not run, so this verdict rests on bytes alone and must not pretend
+    // otherwise.
+    textComparison: cached ? 'differs' : 'unavailable',
     observedSha256: result.sha256,
     observedSizeBytes: observedSize,
   }

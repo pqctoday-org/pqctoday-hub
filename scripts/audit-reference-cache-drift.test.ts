@@ -8,6 +8,7 @@ import {
   classifyEntry,
   dedupeBlockedByHash,
   looksBlocked,
+  normalizedText,
   mapPool,
   run,
   type FetchImpl,
@@ -627,5 +628,117 @@ describe('run', () => {
     } finally {
       fs.rmSync(root, { recursive: true, force: true })
     }
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Normalized-text comparison (2026-07-29). The audit answered "did the BYTES
+// change?" while every consumer asked "did the DOCUMENT change?" — and on
+// rotating-build-id hosts those have permanently different answers. Measured:
+// 121 library documents re-cached from their live URLs were ALL classified as
+// drifted again ~30 minutes later, zero reaching ok, while 105 of 119 differed
+// by <1% of visible text.
+// ---------------------------------------------------------------------------
+
+describe('normalized-text comparison', () => {
+  const NOW = new Date('2026-07-29T12:00:00Z')
+
+  it('strips script, style and noscript — noscript most of all', () => {
+    const shell =
+      '<html><body><div id=app></div>' +
+      '<noscript>Please enable JavaScript to view this site.</noscript>' +
+      '<script>var x=1</script><style>.a{}</style></body></html>'
+    // Without stripping <noscript>, a client-rendered shell reads as a
+    // document: on the real ethresear.ch case that was 11,666 chars vs the 64
+    // the hub's own extractor measured.
+    expect(normalizedText(Buffer.from(shell, 'utf-8'))).toBe('')
+  })
+
+  it('reports ok via normalized-text when only a build id rotated', async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'drift-norm-'))
+    const cacheDir = path.join(dir, 'pqctoday-priv', 'local-evidence-cache', 'library')
+    fs.mkdirSync(cacheDir, { recursive: true })
+    const filler = '<p>The substantive text of the document.</p>'.repeat(120)
+    const cached = `<html><body><!-- build a1 -->${filler}</body></html>`
+    const live = `<html><body><!-- build b2 -->${filler}</body></html>`
+    fs.writeFileSync(path.join(cacheDir, 'doc.html'), cached)
+
+    const prev = process.env.REFERENCE_CACHE_ROOT
+    process.env.REFERENCE_CACHE_ROOT = path.join(dir, 'pqctoday-priv', 'local-evidence-cache')
+    try {
+      const fetcher: FetchImpl = async () => ({
+        bytes: Buffer.from(live, 'utf-8'),
+        sha256: sha256Of(live),
+      })
+      const finding = await classifyEntry(
+        'library',
+        {
+          refId: 'DOC',
+          url: 'https://example.invalid/doc',
+          status: 'downloaded',
+          filename: 'doc.html',
+          sha256: sha256Of(cached),
+          sizeBytes: cached.length,
+        },
+        fetcher,
+        5000,
+        NOW
+      )
+      expect(finding.classification).toBe('ok')
+      expect(finding.okVia).toBe('normalized-text')
+      // The byte hash is still reported — it stays the right tamper signal.
+      expect(finding.observedSha256).toBe(sha256Of(live))
+      expect(finding.storedSha256).toBe(sha256Of(cached))
+    } finally {
+      if (prev === undefined) delete process.env.REFERENCE_CACHE_ROOT
+      else process.env.REFERENCE_CACHE_ROOT = prev
+      fs.rmSync(dir, { recursive: true, force: true })
+    }
+  })
+
+  it('still reports drift when the text genuinely changed', async () => {
+    const body = `<html><body>${'<p>wholly different wording.</p>'.repeat(200)}</body></html>`
+    const fetcher: FetchImpl = async () => ({
+      bytes: Buffer.from(body, 'utf-8'),
+      sha256: sha256Of(body),
+    })
+    const finding = await classifyEntry(
+      'library',
+      {
+        refId: 'GONE',
+        url: 'https://example.invalid/gone',
+        status: 'downloaded',
+        filename: 'definitely-not-on-disk.html',
+        sha256: sha256Of('the original text'),
+        sizeBytes: 17,
+      },
+      fetcher,
+      5000,
+      NOW
+    )
+    expect(finding.classification).toBe('drift')
+  })
+
+  it('says so when the cache is absent instead of implying a text verdict', async () => {
+    const body = `<html><body>${'<p>live body text here.</p>'.repeat(200)}</body></html>`
+    const fetcher: FetchImpl = async () => ({
+      bytes: Buffer.from(body, 'utf-8'),
+      sha256: sha256Of(body),
+    })
+    const finding = await classifyEntry(
+      'library',
+      {
+        refId: 'NOCACHE',
+        url: 'https://example.invalid/x',
+        status: 'downloaded',
+        filename: 'not-present-anywhere.html',
+        sha256: sha256Of('stored'),
+        sizeBytes: 6,
+      },
+      fetcher,
+      5000,
+      NOW
+    )
+    expect(finding.textComparison).toBe('unavailable')
   })
 })
