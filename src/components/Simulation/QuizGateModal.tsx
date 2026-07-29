@@ -117,7 +117,13 @@ export function QuizGateModal({ question, moduleTitle, onPass, onCancel }: QuizG
             onSelectAnswer={setAnswer}
           />
 
-          {submitted && <FeedbackPanel isCorrect={correct} explanation={question.explanation} />}
+          {submitted && (
+            <FeedbackPanel
+              isCorrect={correct}
+              explanation={question.explanation}
+              learnMorePath={question.learnMorePath}
+            />
+          )}
 
           <div className="mt-4 flex justify-end gap-2">
             {!submitted ? (

@@ -113,7 +113,11 @@ import { useSandboxAvailable } from '@/components/Playground/useSandboxAvailable
 import { computeReadiness } from '@/simulation/readiness'
 import { buildScoreboard } from '@/simulation/scoreboard'
 import { runQuarter } from '@/simulation/quarterEngine'
-import { buildSimRoadmapDoc } from '@/simulation/simRoadmap'
+import {
+  buildSimRoadmapDoc,
+  serializeSimRoadmap,
+  type SimRoadmapInput,
+} from '@/simulation/simRoadmap'
 import { sectorStepsForPhase } from '@/simulation/sectorTrack'
 import { getBalance, type DifficultyId } from '@/data/simBalance'
 import { Eyebrow, Ring, Dial, ReadonlyDial, Stat, PlanningBadge, MandateBadge } from './atoms'
@@ -1317,50 +1321,60 @@ export function SimulationView() {
 
   // WS-15 — opt-in: commit this run as a draft roadmap into the Command Center.
   // Inverse of the read-only Assess→Sim bridge; never touches the assessment.
-  const commitPlan = () => {
-    const phases = LIFECYCLE.map((p) => ({
+  const buildRoadmapInput = (): SimRoadmapInput => ({
+    sector,
+    size,
+    country,
+    difficulty,
+    phases: LIFECYCLE.map((p) => ({
       id: p,
       name: FRAMEWORK_PHASES[p].name,
       level: levelOf(p),
       cleared: levelOf(p) >= PHASE_WIN_LEVEL,
-    }))
-    addExecutiveDocument(
-      buildSimRoadmapDoc(
-        {
-          sector,
-          size,
-          country,
-          difficulty,
-          phases,
-          clearedCount: cleared,
-          totalPhases: LIFECYCLE.length,
-          readinessPct: readiness.pct,
-          yearsToHorizon: clock.yearsToHorizon,
-          over: clock.over,
-          // Wave 5 (WP5.1) — additive: the same live values the ribbon/ceremony
-          // already compute, captured at commit time for the /report section.
-          compliancePct: readiness.compliancePct,
-          objectives: scoreboard.objectives.map((o) => ({
-            id: o.id,
-            label: o.label,
-            byYear: o.byYear,
-            done: o.done,
-            achievedYear: objectiveAchievedYears[o.id],
-          })),
-          score: computeRunScore({
-            quartersUsed: (year - RUN_START.year) * 4 + (q - RUN_START.q),
-            difficulty,
-            trapsThisRun,
-            compliancePct: readiness.compliancePct,
-            objectivesOnTime,
-            objectivesTotal: scoreboard.objectives.length,
-          }),
-          verifyCloseCleared: levelOf('verify-close') >= PHASE_WIN_LEVEL,
-        },
-        nowMs()
-      )
-    )
+    })),
+    clearedCount: cleared,
+    totalPhases: LIFECYCLE.length,
+    readinessPct: readiness.pct,
+    yearsToHorizon: clock.yearsToHorizon,
+    over: clock.over,
+    // Wave 5 (WP5.1) — additive: the same live values the ribbon/ceremony
+    // already compute, captured at commit time for the /report section.
+    compliancePct: readiness.compliancePct,
+    objectives: scoreboard.objectives.map((o) => ({
+      id: o.id,
+      label: o.label,
+      byYear: o.byYear,
+      done: o.done,
+      achievedYear: objectiveAchievedYears[o.id],
+    })),
+    score: computeRunScore({
+      quartersUsed: (year - RUN_START.year) * 4 + (q - RUN_START.q),
+      difficulty,
+      trapsThisRun,
+      compliancePct: readiness.compliancePct,
+      objectivesOnTime,
+      objectivesTotal: scoreboard.objectives.length,
+    }),
+    verifyCloseCleared: levelOf('verify-close') >= PHASE_WIN_LEVEL,
+  })
+  const commitPlan = () => {
+    addExecutiveDocument(buildSimRoadmapDoc(buildRoadmapInput(), nowMs()))
     toast.success('Draft roadmap committed to the Command Center.')
+  }
+  // 07-29 review E-M2 — the ceremony's "Save my roadmap": commit to the
+  // Command Center AND download a markdown takeaway, so the run's learning
+  // summary isn't gated on remembering COMMIT PLAN before the ceremony.
+  const saveRoadmapFromCeremony = () => {
+    const input = buildRoadmapInput()
+    addExecutiveDocument(buildSimRoadmapDoc(input, nowMs()))
+    const blob = new Blob([serializeSimRoadmap(input)], { type: 'text/markdown' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `pqc-roadmap-${year}-Q${q}.md`
+    a.click()
+    URL.revokeObjectURL(url)
+    toast.success('Roadmap saved to the Command Center and downloaded as markdown.')
   }
 
   // REQUIRE-ASSESSMENT GATE — the simulation runs on the user's assessed
@@ -2495,6 +2509,7 @@ export function SimulationView() {
                     assessRec={nextMoveRec}
                     onTrapPicked={incrementTrapsThisRun}
                     guided={guided}
+                    wrongPickCostQuarters={sel === 'p1' || sel === 'p5' ? 2 : 1}
                     onWrongPick={(label) => {
                       // WP4.4 — uniform stakes: 1 quarter of rework everywhere, 2 on
                       // Inventory (p1) / Pilots (p5), where the I1 pilot found the
@@ -3649,6 +3664,7 @@ export function SimulationView() {
               objectivesTotal: scoreboard.objectives.length,
             })}
             onCopyChallenge={copyChallenge}
+            onSaveRoadmap={saveRoadmapFromCeremony}
             onClose={() => setRunCompleteOpen(false)}
           />
         )}
