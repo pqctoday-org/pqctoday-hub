@@ -424,8 +424,31 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
  *
  *               So "Enrich to drive down" now has a named blocker: fix the
  *               extractor's cache-root resolution first.)
+ *
+ *   2026-07-29 (later still): 12 (DRIVEN DOWN from 187 — the blocker above is
+ *               fixed. extract-source-passages.py had THREE independent path
+ *               bugs, any one of which was fatal:
+ *                 - CSVs were looked for in pqctoday-priv/src/data, which does
+ *                   not exist; they live in the hub.
+ *                 - `local_file` resolved against the repo root instead of
+ *                   pqctoday-priv/local-evidence-cache/ (the 2026-07-12 move).
+ *                 - the `_rN` revision suffix sorted as a STRING, so with
+ *                   library_07282026_r9.csv and _r10.csv both present it picked
+ *                   r9 — the older file. (The MMDDYYYY date was compared whole
+ *                   too, which would have mis-sorted across a year boundary.)
+ *               Plus a wrong CSV prefix for threats, and — the dangerous one —
+ *               it wrote its empty result to a NEW dated file that
+ *               loadSourcePassages() would then prefer, so a broken run
+ *               actively destroyed provenance. It now refuses to write an
+ *               artifact containing zero passages.
+ *
+ *               Result: 886 of 976 library records resolve (was 0), 879 got
+ *               passages, and the corpus went from 576 chunks with passages to
+ *               751. This ratchet is the honest measure it was always meant to
+ *               be, and 12 is the real backlog — rows whose cached document
+ *               genuinely yields no extractable passage. Enrich to drive down.)
  */
-const MAX_DOC_WITHOUT_PASSAGES = 187
+const MAX_DOC_WITHOUT_PASSAGES = 12
 
 /** Pinned count of CSV files referenced in prov.was_derived_from but missing on disk. */
 const MAX_MISSING_CSVS = 0
