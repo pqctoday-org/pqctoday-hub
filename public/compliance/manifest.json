@@ -1325,15 +1325,6 @@
       "sha256": "ee545d893e166d32848c41dcc962dab3dae96b8e60a74b057b93c66b25f68b0b"
     },
     {
-      "refId": "EUROPOL-QSFF",
-      "url": "https://www.europol.europa.eu/publications-events/publications/prioritising-post-quantum-cryptography-migration-activities-in-financial-services",
-      "status": "downloaded",
-      "filename": "EUROPOL-QSFF.html",
-      "sizeBytes": 37509,
-      "contentType": "text/html",
-      "sha256": "46d44f453ac7adfb65bff4ae86bef05ffc998a45d253fdef989d8da5f3602e7b"
-    },
-    {
       "refId": "QED-C",
       "url": "https://quantumconsortium.org/publication/a-guide-to-a-quantum-safe-organization/",
       "status": "downloaded",
@@ -1458,6 +1449,15 @@
       "sizeBytes": 73281,
       "contentType": "text/html",
       "sha256": "12ddab7bf998f601612d618c28dc06c0a65652ae011973ae994cbf9fbd86266e"
+    },
+    {
+      "refId": "EUROPOL-QSFF",
+      "url": "https://www.europol.europa.eu/publications-events/publications/prioritising-post-quantum-cryptography-migration-activities-in-financial-services",
+      "status": "downloaded",
+      "filename": "EUROPOL-QSFF.html",
+      "sizeBytes": 84081,
+      "contentType": "text/html",
+      "sha256": "38965c3c264f9fa0e7fa45de40fd2619874d618032ea7429dad976190e22b405"
     }
   ],
   "blocked": {
