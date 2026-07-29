@@ -19,7 +19,7 @@ export const content: ModuleContent = {
     getStandard('NIST SP 800-227'), // hybrid combiner + KEM recommendations, cited throughout
     // PKCS#11 v3.2 adds the C_EncapsulateKey/C_DecapsulateKey mechanisms the live
     // HSM demo (EnvelopeEncryptionDemo) calls for the ML-KEM envelope flow.
-    getStandard('PKCS11-V32-OASIS'),
+    getStandard('PKCS11-V32-OS-OASIS'),
     // Governs the HKDF salt/derivation step (cited "SP 800-56C Rev 2 §4.1") that
     // turns the ML-KEM shared secret into a wrapping key.
     getStandard('NIST-SP-800-56C-R2'),
@@ -31,7 +31,7 @@ export const content: ModuleContent = {
     getStandard('IETF RFC 5649'),
     // HKDF — derives the wrapping key from the KEM shared secret and combines
     // classical + PQC secrets in the hybrid combiner modes.
-    getStandard('RFC-5869'),
+    getStandard('RFC 5869'),
   ],
 
   algorithms: [
