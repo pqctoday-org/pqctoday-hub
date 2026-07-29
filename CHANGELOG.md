@@ -29,6 +29,25 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.29.0] - 2026-07-28
+
+The Algorithms catalog now describes hybrid key exchange properly — the kind that pairs a classical algorithm with a post-quantum one, which is how most real deployments are rolling out PQC today.
+
+### Added
+
+- **Hybrid key exchange is now catalogued beyond TLS** [view:/algorithms] [persona:architect] [persona:developer] [persona:ops]: the catalog previously listed only three hybrids, all of them TLS-specific, so anything hybrid outside a browser connection simply wasn't described. It now covers 20, grouped so you can tell at a glance whether a mechanism works anywhere or only inside one protocol.
+- **X-Wing, the general-purpose hybrid** [view:/algorithms] [persona:developer]: combines X25519 with ML-KEM-768 and isn't tied to any single protocol, which is why it shows up in file and secrets encryption as well as on the wire. Its specification is now in the Library too, so citations to it resolve.
+- **Post-quantum SSH key exchange** [view:/algorithms] [persona:ops] [persona:developer]: the published RFC 9941 mechanism that OpenSSH has shipped by default for some time, plus the three ML-KEM hybrids currently going through the IETF — so you can look up what your SSH server is actually negotiating.
+- **Composite certificates for PKI** [view:/algorithms] [persona:architect] [persona:ops]: twelve combinations that let a single certificate carry both a post-quantum and a classical key under one identifier, rather than issuing and managing two certificates side by side. Key and message sizes are listed for each, so you can see the certificate-size impact before committing to one.
+
+### Changed
+
+- **The three existing TLS hybrids are relabelled to say they're TLS-specific** [view:/algorithms]: they were filed under a generic "Composite" label that couldn't distinguish "usable anywhere" from "only inside TLS" — the distinction that made general-purpose hybrids invisible in the first place.
+
+### Data
+
+- Two SSH entries deliberately leave key sizes blank. Their specification doesn't state them, and the sizes depend on an encoding defined in a different document — so the field says nothing rather than showing a number that looks more authoritative than it is.
+
 ## [4.28.0] - 2026-07-28
 
 A big data-accuracy and coverage pass across Migrate, Vendor Roadmaps, Timeline, Trusted Sources, Threats, and Algorithms — plus real fixes to broken certificate links, a mis-detected PQC algorithm, and several data-pipeline bugs found along the way.
