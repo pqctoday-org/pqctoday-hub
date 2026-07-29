@@ -129,17 +129,6 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     },
   },
   {
-    id: 'wireguard',
-    title: 'Modern Transport Tunnels',
-    emoji: '🚇',
-    useCase:
-      'Protect WireGuard (wireguard-go) tunnel establishment with Rosenpass — a production PQC-VPN daemon that runs a real Classic-McEliece-460896 + Kyber-512 exchange and rotates the WireGuard PreSharedKey every ~2 minutes, defeating "Harvest Now, Decrypt Later". Note Rosenpass does NOT use ML-KEM: Kyber-512 is the pre-standardisation CRYSTALS-Kyber submission, and FIPS 203 changed the KDF and encoding, so the two are not interoperable.',
-    algorithms: ['Classic McEliece + Kyber', 'Wireguard'],
-    difficulty: 'intermediate',
-    trackId: 'infrastructure',
-    tool: { name: 'Rosenpass + wireguard-go', url: 'https://rosenpass.eu' },
-  },
-  {
     id: 'cbom-compliance',
     title: 'CBOM Compliance Audit — PQC Readiness Scoring',
     emoji: '✅',
