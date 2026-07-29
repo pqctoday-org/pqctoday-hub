@@ -43,25 +43,39 @@ generated_against:
 execution_status:
   region_items_taxonomy_fix: DONE — AlgorithmFilters.tsx REGION_ITEMS updated, worktree
     pqctoday-hub-regional-standards-0728, branch data-maintenance/regional-standards-grounding-0728
-  transitions_csv_new_rows: DONE — 45 new rows added, algorithms_transitions_07282026.csv
+  transitions_csv_new_rows: DONE — 58 new rows total (45 initial + 9 IETF citation fixes + 4 CCN-STIC 221), algorithms_transitions_07282026.csv, 189 rows
   library_ingestion_new_documents: >
-    DONE (2026-07-29, after the maintenance.lock held by a genuinely active concurrent
-    migrate-catalog session cleared). All 7 documents added via add_row.py --source library:
-    ETSI TS 119 312 V2.1.1, EU-NIS-CG roadmap PDF, CRYPTREC LS-0001, CRYPTREC LS-0003, the Japan
-    Cabinet Secretariat report, the ACN TLS guidelines, and CCN-TEC 009. Library grew from 965 to
-    972 active rows (src/data/library_07282026_r6.csv). 4 of the 7 (ETSI, both CRYPTREC docs, JP
-    Cabinet report) came back from add_row.py's own fetcher as pdf_warning=true (decoded-text,
-    not byte-correct PDF) — replaced with the byte-correct copies already verified earlier in
-    this session, re-hashed in public/library/manifest.json, renamed .html->.pdf, and the
-    local_file column corrected in the CSV. Intermediate per-call CSV revisions (library_07282026
-    through _r5) archived to src/data/archive/ per the repo's CSV convention (keep 2 current
-    dated versions). Enrichment (the matching /update-library pass) NOT run — these are stub
-    rows only, a legitimate follow-up.
+    DONE. 8 documents added via add_row.py --source library: ETSI TS 119 312 V2.1.1, EU-NIS-CG
+    roadmap PDF, CRYPTREC LS-0001, CRYPTREC LS-0003, the Japan Cabinet Secretariat report, the
+    ACN TLS guidelines, CCN-TEC 009, and (gap-closure pass, 2026-07-29) CCN-STIC 221. Library
+    grew from 965 to 973 active rows (src/data/library_07282026_r7.csv). 5 of the 8 (ETSI, both
+    CRYPTREC docs, JP Cabinet report, CCN-STIC 221) came back from add_row.py's own fetcher
+    corrupted — 4 as pdf_warning=true (decoded-text, not byte-correct PDF), 1 (CCN-STIC 221) as
+    a silently-saved bot-detection interstitial page — all 5 replaced with verified byte-correct
+    copies (4 from earlier direct downloads, 1 via Wayback Machine), re-hashed in
+    public/library/manifest.json. Intermediate per-call CSV revisions archived to
+    src/data/archive/ per the repo's CSV convention (keep 2 current dated versions). Enrichment
+    (the matching /update-library pass) NOT run — these are stub rows only, a legitimate follow-up.
   tests_run: >
     DONE. tsc -b clean. Full vitest suite: 4742/4742 passing, 0 failures, 37 skipped, 1 todo
-    (one timing-flake seen on an earlier run, confirmed passing both in isolation and on this
+    (one timing-flake seen on an earlier run, confirmed passing both in isolation and on a
     clean full re-run). Live Playwright browser check against the dev build confirmed the
     region dropdown, removed/added region sets, and real filtering behavior.
+  crosscheck_script: >
+    DONE — pqctoday-priv/maintenance/crosscheck_regional_standards.py, built 2026-07-29. Three
+    automated checks: every REGION_ITEMS value has a CSV row with a real citation, every value
+    is documented in this file, every CSV Region value is filterable or documented-removed.
+    Passes clean as of this update.
+  gap_closure_pass_2026_07_29: >
+    Follow-up pass closing gaps flagged in the prior status report: (1) all 9 previously-empty
+    IETF status_url rows now cite real, verified-resolving IETF datatracker URLs; (2) New
+    Zealand's Section 17.2 fetched and confirmed no PQC content (closes the open follow-up,
+    does not change the no-filter-value verdict); (3) Australia's ASD ISM June 2026 release
+    still unreachable after a second retry — upgraded to multi-source corroboration instead;
+    (4) Spain's CCN-STIC 221 (the blocked full catalogue) retrieved via Wayback Machine and
+    added with 4 new rows. Still open: Switzerland/Nordics/Belgium/Austria/Poland/Ireland/
+    Estonia/Singapore/Hong-Kong/Taiwan/Malaysia/Thailand/Indonesia confirmed genuinely empty in
+    the original wide search, not re-checked in this pass (no new information expected).
 
 standards:
   # ---- BASELINE (already grounded before this audit; documented 2026-07-29
@@ -199,7 +213,21 @@ standards:
     verification: primary-pdf
     region_items_value: CCN
     transitions_rows: 2
-    note: "NEW FINDING, Phase B wide search (2026-07-29). Adopts EU roadmap's own 2030/2035 dates explicitly. Companion CCN-STIC 221 (the BSI/ANSSI-class full catalogue) exists but is blocked by bot-detection from this environment — priority re-fetch target."
+    note: "NEW FINDING, Phase B wide search (2026-07-29). Adopts EU roadmap's own 2030/2035 dates explicitly."
+
+  - id: ES-CCN-STIC-221
+    file: ES-CCN-STIC-221.yaml
+    class: mechanism-catalogue
+    country: ES
+    version: "Noviembre de 2024"
+    date: 2024-11
+    has_pqc: true
+    has_classical_end_dates: true
+    key_dates: [2025-12-31, 2030-12-31]
+    verification: wayback-machine-pdf
+    region_items_value: CCN
+    transitions_rows: 4
+    note: "CLOSED 2026-07-29 (gap-closure pass). The full BSI/ANSSI-class catalogue for Spain, flagged as blocked in the original find — closed via a Wayback Machine snapshot after 3 direct-fetch attempts (curl, WebFetch, add_row.py) all hit the live domain's bot-detection. RSA/DH legacy deadline 2025-12-31 mirrors ECCG exactly."
 
   # ---- APAC ----
   - id: AU-ASD-ISM-CRYPTOGRAPHY

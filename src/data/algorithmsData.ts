@@ -88,6 +88,7 @@ const TRANSITION_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   'CRYPTREC LS-0001-2022R2': 'regional',
   'ACN Linee Guida Funzioni Crittografiche - TLS v2.0': 'regional',
   'CCN-TEC 009 / BP-37': 'regional',
+  'CCN-STIC 221 (Nov 2024)': 'regional',
 }
 
 /** Second-level disambiguation for Status === 'Candidate', keyed on the

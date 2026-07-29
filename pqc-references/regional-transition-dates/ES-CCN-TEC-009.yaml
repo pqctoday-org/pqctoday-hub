@@ -49,12 +49,12 @@ classical_deprecation_note: >
   Document is PQC-introduction-focused; it does not itself set a classical-algorithm end date
   (RSA/ECC), only migration COMPLETION deadlines by risk tier, inherited from the EU roadmap.
 
-companion_document_not_verified:
+companion_document_VERIFIED_2026_07_29:
   id: "CCN-STIC 221"
   title: "Guia de mecanismos criptograficos autorizados por el CCN"
-  as_of: 2025-11
-  status: "EXISTS (confirmed via search citation) but blocked by the same bot-detection interstitial from this environment — content NOT primary-verified. This is the BSI/ANSSI-class document class (full mechanism catalogue with key sizes) and should be the priority re-fetch target for Spain in any follow-up pass."
-  url_attempted: "https://www.ccn-cert.cni.es/es/series-ccn-stic/guias/series-ccn-stic/guias-de-acceso-publico-ccn-stic/6954-ccn-stic-221-guia-de-mecanismos-criptograficos-autorizados-por-el-ccn-1/file.html"
+  status: "CLOSED — retrieved via a Wayback Machine snapshot after the live domain's bot-detection blocked three separate direct-fetch attempts. See ES-CCN-STIC-221.yaml for the full mechanism catalogue: RSA/DH legacy deadline 2025-12-31 (mirrors ECCG exactly), ML-KEM/ML-DSA/SLH-DSA/XMSS tables. 4 new algorithms_transitions rows added under the same 'CCN' filter value as this document."
+  edition_retrieved: "2024-11 (via 2025-06-05 snapshot)"
+  possible_newer_edition_not_checked: "A November 2025 edition may exist per a distinct search hit title — not independently confirmed."
 
 also_found:
   - id: "CCN-TEC 009 RSA extension note"

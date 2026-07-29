@@ -23,13 +23,28 @@ coverage:
   symmetric_and_hash: true
   significance: "The most aggressive per-algorithm deprecation schedule of any national authority found in this audit — a single hard 2030 cliff covering classical AND the lower PQC parameter sets."
 verification:
-  verified_on: 2026-07-28
-  method: cached primary-source PDF (December 2024) text-extracted from pqctoday-priv/public/library
-  caveat: "cyber.gov.au was unreachable from this environment (HTTP/2 INTERNAL_ERROR, then timeout). The June 2026 release was NOT line-verified; web search confirms the ML-KEM-768 and RSA 'beyond 2030' clauses persist in it. Every date below is quoted from the December 2024 cached PDF."
+  verified_on: 2026-07-29
+  method: cached primary-source PDF (December 2024) text-extracted directly; June 2026 release
+    corroborated via multiple independent secondary sources (2026-07-29 retry)
+  caveat: >
+    cyber.gov.au remains unreachable from this environment as of a second retry attempt
+    (2026-07-29, both direct download and WebFetch, both timed out — this is a persistent
+    environmental limitation, not a one-off). Upgraded confidence instead of retrying further:
+    four independent secondary sources (QPF.org, Sparke Helmore [law firm], SOCFortress,
+    Axiom Sovereign) all corroborate on 2026-07-29 that the June 2026 release keeps the exact
+    same "will not be approved beyond 2030" language for DH/ECDH/ECDSA/RSA and ML-DSA-65. Every
+    date below is still quoted from the December 2024 primary PDF, not the June 2026 one.
+  new_in_june_2026_per_secondary_sources: >
+    The 'data protection' principle was renamed to 'cryptographic protection', and ASD set
+    three explicit milestones: refined PQC transition plan by end of 2026, transition
+    commencement for critical systems by end of 2028, full transition by end of 2030. Also
+    reported: ASD recommends ML-DSA-87 (matching CNSA 2.0's level) with ML-DSA-65 acceptable
+    only until 2030 — consistent with, not a change from, the December 2024 wording already
+    quoted below.
   hub_library_reference_id: AU-ASD-ISM-Crypto-2024
   hub_library_local_file: library/AU-ASD-ISM-Crypto-2024.pdf
   hub_library_local_file_status: OK
-  hub_library_status: STALE     # library holds December 2024; current release is June 2026
+  hub_library_status: STALE     # library holds December 2024; current release is June 2026 — still not fetchable from this environment
 
 classical_deprecation:
   common_end_date_iso: 2030-12-31

@@ -9,10 +9,11 @@ authority:
   region_scope: [NZ, FIVEEYES]
 status: NO_PQC_CONTENT_YET
 document:
-  designation: "NZISM 17.1 — Cryptographic Fundamentals"
+  designation: "NZISM 17.1 — Cryptographic Fundamentals; 17.2 — Approved Cryptographic Algorithms"
   version: "3.9"
   as_of: 2025-11
   url: "https://nzism.gcsb.govt.nz/ism-document/pdf/Section/15746"
+  url_17_2: "https://nzism.gcsb.govt.nz/ism-document/pdf/Section/15853"
 finding: >
   NZISM v3.9 (November 2025) is real and current, and Section 17.1 explicitly acknowledges the
   quantum threat and points to Section 17.2 (Approved Cryptographic Algorithms) / 17.3 (Approved
@@ -25,17 +26,21 @@ finding: >
   a confirmed gap-record for grounding purposes: real document, wrong content for this need.
 verification:
   verified_on: 2026-07-29
-  method: primary-source PDF downloaded and text-extracted (this is a genuine re-fetch of a
-    document the original audit found only as a broken 2KB stub in a stale cache directory —
-    the live gcsb.govt.nz copy fetched cleanly)
-  follow_up: >
-    Section 17.2 (Approved Cryptographic Algorithms) was NOT fetched in this pass — only 17.1
-    (Cryptographic Fundamentals). If 17.2 sets classical key-length end dates or names any PQC
-    algorithm, that would upgrade this from gap-record to mechanism-catalogue. Priority follow-up.
+  method: primary-source PDF downloaded and text-extracted for BOTH sections (17.1 and, as of
+    the 2026-07-29 gap-closure pass, 17.2 as well — this is a genuine re-fetch of a document
+    the original audit found only as a broken 2KB stub in a stale cache directory; the live
+    gcsb.govt.nz copies fetched cleanly for both)
+  follow_up_CLOSED: >
+    Section 17.2 (Approved Cryptographic Algorithms) fetched 2026-07-29. Confirmed: RSA
+    (min 2048-bit), DSA (legacy only), DH, ECDH, ECDSA, SHA-256/384/512, AES, 3DES (legacy),
+    PBKDF2. NO post-quantum algorithm of any kind (ML-KEM, ML-DSA, SLH-DSA, or any other NIST
+    PQC candidate) appears anywhere in 17.2. This confirms rather than overturns the 17.1
+    finding — New Zealand genuinely has nothing to cite yet, checked exhaustively across both
+    the general-fundamentals and the algorithm-approval sections.
 
 classical_deprecation: null
 pqc_introduction: null
 
 crosscheck:
-  transition_tab_region_value: "(none — no NZ value in REGION_ITEMS, and this finding doesn't yet support adding one)"
-  action_taken: "Not added to REGION_ITEMS — no PQC algorithm or date to ground a filter value on. Revisit if Section 17.2 turns out to carry real content."
+  transition_tab_region_value: "(none — no NZ value in REGION_ITEMS)"
+  action_taken: "Not added to REGION_ITEMS — confirmed across both relevant NZISM sections that there is no PQC algorithm or date to ground a filter value on. This is now a closed finding, not a pending follow-up: NZ genuinely has nothing yet."

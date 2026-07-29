@@ -8919,6 +8919,16 @@
       "sizeBytes": 5351148,
       "contentType": "text/html",
       "sha256": "20e6b42f3cc73f51a1ab942e415a3a55aeade0129f21090682812dbb029de310"
+    },
+    {
+      "refId": "CCN-STIC-221-Spain-Guia-de-Mecanismos-Criptograficos-autoriz",
+      "title": "CCN-STIC 221 (Spain) - Guia de Mecanismos Criptograficos autorizados por el CCN (Noviembre 2024)",
+      "url": "https://www.ccn-cert.cni.es/es/guias-de-acceso-publico-ccn-stic/6954-ccn-stic-221-guia-de-mecanismos-criptograficos-autorizados-por-el-ccn-1/file.html",
+      "status": "downloaded",
+      "filename": "CCN-STIC-221-Spain-Guia-de-Mecanismos-Criptograficos-autoriz.pdf",
+      "sizeBytes": 2162498,
+      "contentType": "application/pdf",
+      "sha256": "05ef1611e1a3736ac903ccc47b770c86d658ac0f93bb51c0e599abdfdcbb3153"
     }
   ]
 }

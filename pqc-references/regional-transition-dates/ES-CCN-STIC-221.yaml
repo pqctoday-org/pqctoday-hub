@@ -1,0 +1,90 @@
+# Cross-check reference for the Algorithms > Transition Guide tab.
+# Reference artefact only — nothing here has been written into src/data.
+standard_id: ES-CCN-STIC-221
+document_class: mechanism-catalogue   # the full BSI/ANSSI-class catalogue for Spain
+authority:
+  name: "Centro Criptologico Nacional"
+  short: CCN
+  country: ES
+  region_scope: [ES, EU]
+document:
+  designation: "CCN-STIC 221"
+  title: "Guia de Mecanismos Criptograficos autorizados por el CCN"
+  as_of: "2024-11 (Noviembre de 2024)"
+  language: es
+  url: "https://www.ccn-cert.cni.es/es/guias-de-acceso-publico-ccn-stic/6954-ccn-stic-221-guia-de-mecanismos-criptograficos-autorizados-por-el-ccn-1/file.html"
+  fetch_note: >
+    The live ccn-cert.cni.es domain blocks automated fetches with a bot-detection interstitial
+    ('Voight-Kampff Browser Test') from this environment — confirmed on THREE separate attempts
+    (direct curl, WebFetch, and add_row.py's own fetcher, which silently saved the 3.8KB
+    interstitial page as if it were the document). Retrieved instead via a Wayback Machine
+    snapshot dated 2025-06-05, which itself preserves the November 2024 edition of the document.
+  possible_newer_edition: >
+    A web search surfaced a distinct result titled "Noviembre de 2025 Guia de Seguridad de las
+    TIC CCN-STIC 221" — suggesting a November 2025 edition may exist that this pass did not
+    verify (the Wayback snapshot only reaches back to the November 2024 edition). Worth a
+    follow-up once/if the live domain becomes reachable.
+coverage:
+  classical_mechanisms: true
+  pqc_mechanisms: true
+  per_mechanism_end_dates: true
+verification:
+  verified_on: 2026-07-29
+  method: "Wayback Machine snapshot (2025-06-05) of the live PDF, downloaded and text-extracted directly"
+  hub_library_status: ADDED 2026-07-29
+  hub_library_reference_id: CCN-STIC-221-Spain-Guia-de-Mecanismos-Criptograficos-autoriz
+  hub_library_local_file: library/CCN-STIC-221-Spain-Guia-de-Mecanismos-Criptograficos-autoriz.pdf
+  hub_library_note: "add_row.py's own fetch silently saved the bot-check interstitial page (3.8KB, pdf_warning=false because it correctly detected HTML content-type — the CONTENT was simply wrong). Replaced with the verified Wayback Machine PDF and re-hashed the manifest entry."
+
+classical_deprecation:
+  - mechanism: RSA
+    condition: "modulus >= 1900 bits and < 3000 bits"
+    classification: legacy
+    expires_iso: 2025-12-31
+    clause: "Nota 34 [RSA Heredado]"
+    quote_es: "La fecha limite aceptable para el uso heredado de un modulo de tamano superior a 1900 bits, pero inferior a 3000 bits, se establece en el 31 de diciembre de 2025."
+    note: "Identical deadline to ECCG Agreed Cryptographic Mechanisms' Note 30-LegacyRSA — Spain's national guide mirrors the EU-level document almost exactly on this point."
+  - mechanism: "DH / finite-field discrete log"
+    condition: "prime modulus >= 1900 bits and < 3000 bits"
+    classification: legacy
+    expires_iso: 2025-12-31
+    clause: "Nota 36 [DLP Heredado]"
+  - mechanism: "DHE (TLS 1.3 groups)"
+    condition: "2048-bit groups"
+    classification: legacy
+    expires_iso: 2030-12-31
+    clause: "Section on TLS 1.3, para 257"
+    quote_es: "se sugiere el uso de grupos de 3072 bits o mas (se aceptan grupos de 2048 bits para la proteccion de datos, solo hasta 2030)"
+
+pqc_introduction:
+  mechanisms:
+    - name: ML-KEM
+      function: KEM
+      standardised_by: FIPS 203
+      classification: R
+      clause: "Tabla B.7 (approved parameter sets), Tabla B.8 (key/ciphertext byte sizes)"
+    - name: ML-DSA
+      function: signature
+      standardised_by: FIPS 204
+      classification: R
+      clause: "Tabla B.9 (parameter sets)"
+    - name: SLH-DSA
+      function: signature
+      standardised_by: FIPS 205
+      classification: R
+      clause: "Tabla B.12 (parameter sets)"
+    - name: XMSS
+      function: signature
+      standardised_by: "RFC 8391 / NIST SP 800-208"
+      classification: R
+      clause: "Section B.3.2"
+      note: "Recommended only for firmware/software signature verification use ('unicamente para verificacion de FW/SW'), per para 2791."
+
+crosscheck:
+  transition_tab_region_value: "CCN"   # shared with ES-CCN-TEC-009 (the roadmap-dates document)
+  rows_added: 4
+  note: >
+    This is the document ES-CCN-TEC-009.yaml originally flagged as "exists but blocked,
+    priority follow-up." Closed 2026-07-29 via the Wayback Machine route. Spain now has both
+    halves grounded under one CCN filter value: the roadmap dates (from CCN-TEC 009) and the
+    actual mechanism catalogue (from this document).
