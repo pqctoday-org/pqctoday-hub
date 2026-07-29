@@ -24203,7 +24203,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "d7e5d2d463196607",
+      "bom-ref": "05111787419ee996",
       "name": "Utimaco Athos",
       "version": "5.x",
       "cryptoProperties": {
@@ -24227,7 +24227,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "utimaco-athos"
         },
         {
           "name": "pqctoday:category",
@@ -24249,7 +24249,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "4e87e8177669a2bc",
+      "bom-ref": "cf5f1c59bc91f0d4",
       "name": "UEFI Forum Secure Boot",
       "version": "UEFI 2.10",
       "cryptoProperties": {
@@ -24273,7 +24273,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "uefi-forum-secure-boot"
         },
         {
           "name": "pqctoday:category",
@@ -24295,7 +24295,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "f7bfe981b47f3b08",
+      "bom-ref": "7fece16b0c4d6377",
       "name": "Windows Secure Boot",
       "version": "Windows 11 24H2",
       "cryptoProperties": {
@@ -24319,7 +24319,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "windows-secure-boot"
         },
         {
           "name": "pqctoday:category",
@@ -24341,7 +24341,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "97e1fb884329b64c",
+      "bom-ref": "32371feed4a2f811",
       "name": "Oracle TDE",
       "version": "26ai",
       "cryptoProperties": {
@@ -24365,7 +24365,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "oracle-tde"
         },
         {
           "name": "pqctoday:category",
@@ -24387,7 +24387,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "c32ae1534df4e133",
+      "bom-ref": "abefd413a97b8bd8",
       "name": "Thunderbird + OpenPGP",
       "version": "144",
       "purl": "pkg:github/nickolay/rnp",
@@ -24408,7 +24408,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "thunderbird-openpgp"
         },
         {
           "name": "pqctoday:category",
@@ -24430,7 +24430,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "ddaea5a42079239b",
+      "bom-ref": "be90f739ddf1ac7b",
       "name": "Microsoft Outlook S/MIME",
       "version": "Microsoft 365",
       "cryptoProperties": {
@@ -24454,7 +24454,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "microsoft-outlook-s-mime"
         },
         {
           "name": "pqctoday:category",
@@ -24476,7 +24476,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "b8e3075b21fde37f",
+      "bom-ref": "2cac89a6f0511471",
       "name": "Entrust Signing Automation",
       "version": "Current",
       "cryptoProperties": {
@@ -24500,7 +24500,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "entrust-signing-automation"
         },
         {
           "name": "pqctoday:category",
@@ -24522,7 +24522,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "4829c1fa705fcc4b",
+      "bom-ref": "e009e44dc94d91ec",
       "name": "ForgeRock Identity Cloud",
       "version": "Current",
       "cryptoProperties": {
@@ -24542,7 +24542,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "forgerock-identity-cloud"
         },
         {
           "name": "pqctoday:category",
@@ -24564,7 +24564,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "44e2d87b936f87aa",
+      "bom-ref": "b7efaf5d77e04f42",
       "name": "Quantum Bridge Subsea QKD",
       "version": "Current",
       "cryptoProperties": {
@@ -24589,7 +24589,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "quantum-bridge-subsea-qkd"
         },
         {
           "name": "pqctoday:category",
@@ -24611,7 +24611,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "6ec4c51eaa314550",
+      "bom-ref": "33e3ecd933c5136c",
       "name": "BlackBerry QNX Neutrino RTOS",
       "version": "8.0 (SDP 8.0)",
       "cryptoProperties": {
@@ -24635,7 +24635,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "blackberry-qnx-neutrino-rtos"
         },
         {
           "name": "pqctoday:category",
@@ -24657,7 +24657,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "dd4155c88babcfec",
+      "bom-ref": "0bb65d01ca341005",
       "name": "BeyondTrust Privilege Management",
       "version": "Current",
       "cryptoProperties": {
@@ -24677,7 +24677,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "beyondtrust-privilege-management"
         },
         {
           "name": "pqctoday:category",
@@ -24699,7 +24699,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "d864cc8227c53be6",
+      "bom-ref": "11f68a6a91cf2d6f",
       "name": "Google Workspace Identity",
       "version": "Current",
       "cryptoProperties": {
@@ -24723,7 +24723,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "google-workspace-identity"
         },
         {
           "name": "pqctoday:category",
@@ -24745,7 +24745,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "85aed419e0366de8",
+      "bom-ref": "5a3351dbe846b17d",
       "name": "AnyDesk",
       "version": "8.x",
       "cryptoProperties": {
@@ -24770,7 +24770,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "anydesk"
         },
         {
           "name": "pqctoday:category",
@@ -24792,7 +24792,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "1a7274d83b1840be",
+      "bom-ref": "7335c69c3f4bda96",
       "name": "Robust Intelligence AI Firewall",
       "version": "2.1",
       "cryptoProperties": {
@@ -24817,7 +24817,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "robust-intelligence-ai-firewall"
         },
         {
           "name": "pqctoday:category",
@@ -24839,7 +24839,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "aa09127cd15cd794",
+      "bom-ref": "5224e680a0b0e99a",
       "name": "Thales CipherTrust Data Discovery and Classification",
       "version": "2.x",
       "cryptoProperties": {
@@ -24859,7 +24859,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "thales-ciphertrust-data-discovery-and-classification"
         },
         {
           "name": "pqctoday:category",
@@ -24881,7 +24881,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "fb6e657a4f83d957",
+      "bom-ref": "f76363212ab133fd",
       "name": "Post-Quantum Hybrid PQ VPN",
       "version": "Current",
       "cryptoProperties": {
@@ -24905,7 +24905,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "post-quantum-hybrid-pq-vpn"
         },
         {
           "name": "pqctoday:category",
@@ -24927,7 +24927,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "c87a49da98a8f180",
+      "bom-ref": "2477d7d8f41496b3",
       "name": "Ping Identity / ForgeRock",
       "version": "Current",
       "cryptoProperties": {
@@ -24947,7 +24947,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "ping-identity-forgerock"
         },
         {
           "name": "pqctoday:category",
@@ -24969,7 +24969,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "d359403672b9c899",
+      "bom-ref": "f3b56aebcc034207",
       "name": "Kudelski IoT Security IP",
       "version": "Current",
       "cryptoProperties": {
@@ -24989,7 +24989,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "kudelski-iot-security-ip"
         },
         {
           "name": "pqctoday:category",
@@ -25011,7 +25011,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "fdf892ee18c68a85",
+      "bom-ref": "7c234fb8c0ac3c3a",
       "name": "Nokia NetGuard",
       "version": "Current",
       "cryptoProperties": {
@@ -25031,7 +25031,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "nokia-netguard"
         },
         {
           "name": "pqctoday:category",
@@ -25053,7 +25053,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "f1ecd4851e877e06",
+      "bom-ref": "ac07a9bc7cfc184c",
       "name": "Okta Entra ID Integration",
       "version": "Current",
       "cryptoProperties": {
@@ -25073,7 +25073,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "okta-entra-id-integration"
         },
         {
           "name": "pqctoday:category",
@@ -25095,7 +25095,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "e59e88ec4971b72f",
+      "bom-ref": "e32ec44cfdbf0d6e",
       "name": "Palo Alto Orion",
       "version": "Current",
       "cryptoProperties": {
@@ -25115,7 +25115,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "palo-alto-orion"
         },
         {
           "name": "pqctoday:category",
@@ -25137,7 +25137,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "56a4caf9bf2e58cf",
+      "bom-ref": "7703ed33b990f1c8",
       "name": "ArgoCD / FluxCD 2026",
       "version": "Current",
       "cryptoProperties": {
@@ -25157,7 +25157,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "argocd-fluxcd-2026"
         },
         {
           "name": "pqctoday:category",
@@ -25179,7 +25179,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "7a85ec16e8144590",
+      "bom-ref": "09538881cc3719f5",
       "name": "Bamboo CI (Roadmap)",
       "version": "Current",
       "cryptoProperties": {
@@ -25199,7 +25199,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "bamboo-ci"
         },
         {
           "name": "pqctoday:category",
@@ -25221,7 +25221,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "76dfb47591667b51",
+      "bom-ref": "b716cd950c5d19a6",
       "name": "HashiCorp Terraform / HCP",
       "version": "Current",
       "cryptoProperties": {
@@ -25241,7 +25241,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "hashicorp-terraform-hcp"
         },
         {
           "name": "pqctoday:category",
@@ -25263,7 +25263,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "0735db215da90444",
+      "bom-ref": "1c9d1f31cd4649cf",
       "name": "Ansible / PQC App Recs",
       "version": "Current",
       "cryptoProperties": {
@@ -25283,7 +25283,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "ansible-pqc-app-recs"
         },
         {
           "name": "pqctoday:category",
@@ -25305,7 +25305,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "d4d7885da8c1d9a0",
+      "bom-ref": "ce12e8c4365f8574",
       "name": "Pulumi / Talan 2026",
       "version": "Current",
       "cryptoProperties": {
@@ -25325,7 +25325,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "pulumi-talan-2026"
         },
         {
           "name": "pqctoday:category",
@@ -25347,7 +25347,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "28a01ede90a961ec",
+      "bom-ref": "20741d2d7b4df852",
       "name": "DigiCert Code-Signing (v2026)",
       "version": "Current",
       "cryptoProperties": {
@@ -25367,7 +25367,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "digicert-code-signing"
         },
         {
           "name": "pqctoday:category",
@@ -25389,7 +25389,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "b7ccc471f5509c05",
+      "bom-ref": "6d187b599ca01806",
       "name": "GlobalSign Support (Atlas)",
       "version": "Current",
       "cryptoProperties": {
@@ -25409,7 +25409,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "globalsign-support"
         },
         {
           "name": "pqctoday:category",
@@ -25431,7 +25431,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "8a28c16f6f611e4f",
+      "bom-ref": "ef17e1ff5d9c6541",
       "name": "Kudelski KSE IP",
       "version": "Current",
       "cryptoProperties": {
@@ -25451,7 +25451,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "kudelski-kse-ip"
         },
         {
           "name": "pqctoday:category",
@@ -25523,7 +25523,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "0ece9f8dcbe01e40",
+      "bom-ref": "ba7d3d55f5c9c83d",
       "name": "Intel Stratix 10 (Secure)",
       "version": "Current",
       "cryptoProperties": {
@@ -25543,7 +25543,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "intel-stratix-10"
         },
         {
           "name": "pqctoday:category",
@@ -25565,7 +25565,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "89fd893266ebc5f8",
+      "bom-ref": "c12ce002560fe112",
       "name": "Cloudian HyperStore 8.0",
       "version": "Current",
       "cryptoProperties": {
@@ -25585,7 +25585,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "cloudian-hyperstore-8-0"
         },
         {
           "name": "pqctoday:category",
@@ -25607,7 +25607,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "c684f9fefbab9ad0",
+      "bom-ref": "2d83c2510bba3f65",
       "name": "Oracle Cloud Infrastructure (OCI)",
       "version": "Current",
       "cryptoProperties": {
@@ -25627,7 +25627,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "oracle-cloud-infrastructure"
         },
         {
           "name": "pqctoday:category",
@@ -25649,7 +25649,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "7d0b6ee3566e2d6c",
+      "bom-ref": "c09d7fd2c4b048a4",
       "name": "Snyk Container",
       "version": "Current",
       "cryptoProperties": {
@@ -25669,7 +25669,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "snyk-container"
         },
         {
           "name": "pqctoday:category",
@@ -25691,7 +25691,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "e64796bd68d4f8b0",
+      "bom-ref": "b397c2ebf118db86",
       "name": "Microsoft IIS 11",
       "version": "Current",
       "cryptoProperties": {
@@ -25716,7 +25716,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "microsoft-iis-11"
         },
         {
           "name": "pqctoday:category",
@@ -25738,7 +25738,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "2c8f4eae8b7030f9",
+      "bom-ref": "cb53bd7f4cfac01c",
       "name": "Microsoft Teams / Premium",
       "version": "Current",
       "cryptoProperties": {
@@ -25758,7 +25758,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "microsoft-teams-premium"
         },
         {
           "name": "pqctoday:category",
@@ -25780,7 +25780,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "ab635373758f237c",
+      "bom-ref": "3e18a43fb349fc4c",
       "name": "Slack Enterprise Grid",
       "version": "Current",
       "cryptoProperties": {
@@ -25800,7 +25800,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "slack-enterprise-grid"
         },
         {
           "name": "pqctoday:category",
@@ -25822,7 +25822,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "865a3565d5c47ece",
+      "bom-ref": "4e2edb3cf669e779",
       "name": "Zix / AppRiver",
       "version": "Current",
       "cryptoProperties": {
@@ -25842,7 +25842,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "zix-appriver"
         },
         {
           "name": "pqctoday:category",
@@ -25864,7 +25864,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "bfb79febf06c6365",
+      "bom-ref": "1671c0baa09a1198",
       "name": "Box Shield",
       "version": "Current",
       "cryptoProperties": {
@@ -25884,7 +25884,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "box-shield"
         },
         {
           "name": "pqctoday:category",
@@ -25906,7 +25906,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "223a1177c6731b5c",
+      "bom-ref": "446eed06811141cd",
       "name": "Egnyte Governance",
       "version": "Current",
       "cryptoProperties": {
@@ -25926,7 +25926,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "egnyte-governance"
         },
         {
           "name": "pqctoday:category",
@@ -25948,7 +25948,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "f8cc46900c7732ce",
+      "bom-ref": "e0f9c9aab9115756",
       "name": "SentinelOne Singularity",
       "version": "Current",
       "cryptoProperties": {
@@ -25968,7 +25968,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "sentinelone-singularity"
         },
         {
           "name": "pqctoday:category",
@@ -25990,7 +25990,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "d50b8b6cbb8c604a",
+      "bom-ref": "db7dfa513f14f1fc",
       "name": "Trend Micro Vision One",
       "version": "Current",
       "cryptoProperties": {
@@ -26010,7 +26010,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "trend-micro-vision-one"
         },
         {
           "name": "pqctoday:category",
@@ -26081,7 +26081,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "fd0dd773be02f30e",
+      "bom-ref": "93da906ca2f0f1b4",
       "name": "Vivaldi Browser",
       "version": "Current",
       "cryptoProperties": {
@@ -26101,7 +26101,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "vivaldi-browser"
         },
         {
           "name": "pqctoday:category",
@@ -26123,7 +26123,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "34c951d6293062f9",
+      "bom-ref": "068cbe17e696c5b4",
       "name": "SWIFT (Post-Quantum Strategy)",
       "version": "Current",
       "cryptoProperties": {
@@ -26143,7 +26143,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "swift"
         },
         {
           "name": "pqctoday:category",
@@ -26165,7 +26165,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "296cea15cbfd4f4b",
+      "bom-ref": "ccf8f6fff525fbec",
       "name": "JPMorgan Chase (PQC Framework)",
       "version": "Current",
       "cryptoProperties": {
@@ -26185,7 +26185,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "jpmorgan-chase"
         },
         {
           "name": "pqctoday:category",
@@ -26207,7 +26207,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "873d8a8a96b55f6e",
+      "bom-ref": "b96782a872235db2",
       "name": "Mastercard (PQC for Payments)",
       "version": "Current",
       "cryptoProperties": {
@@ -26227,7 +26227,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "mastercard"
         },
         {
           "name": "pqctoday:category",
@@ -26249,7 +26249,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "16f2e3f98242e220",
+      "bom-ref": "c2a2bed4070668ef",
       "name": "Visa (Quantum Readiness)",
       "version": "Current",
       "cryptoProperties": {
@@ -26269,7 +26269,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "visa"
         },
         {
           "name": "pqctoday:category",
@@ -26291,7 +26291,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "2aa62d220829df86",
+      "bom-ref": "5c1dceced3c63597",
       "name": "HSBC (Quantum Protection)",
       "version": "Current",
       "cryptoProperties": {
@@ -26311,7 +26311,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "hsbc"
         },
         {
           "name": "pqctoday:category",
@@ -26333,7 +26333,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "57f62e693818b928",
+      "bom-ref": "f839257c5e6dbff1",
       "name": "Barclays (PQC Research)",
       "version": "Current",
       "cryptoProperties": {
@@ -26353,7 +26353,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "barclays"
         },
         {
           "name": "pqctoday:category",
@@ -26375,7 +26375,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "25ad47b4b927cac4",
+      "bom-ref": "045ef5a277e8d93a",
       "name": "Temenos Core Banking",
       "version": "Current",
       "cryptoProperties": {
@@ -26395,7 +26395,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "temenos-core-banking"
         },
         {
           "name": "pqctoday:category",
@@ -26417,7 +26417,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "c51c12eda566c65d",
+      "bom-ref": "c0db8d6df1249b22",
       "name": "Thought Machine Vault",
       "version": "Current",
       "cryptoProperties": {
@@ -26437,7 +26437,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "thought-machine-vault"
         },
         {
           "name": "pqctoday:category",
@@ -26459,7 +26459,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "8429ceb759d80afc",
+      "bom-ref": "41a14cc3af018708",
       "name": "Stripe (v2026)",
       "version": "Current",
       "cryptoProperties": {
@@ -26479,7 +26479,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "stripe"
         },
         {
           "name": "pqctoday:category",
@@ -26501,7 +26501,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "b52673936ac15164",
+      "bom-ref": "c7e8ef785adc0f29",
       "name": "PayPal / Braintree",
       "version": "Current",
       "cryptoProperties": {
@@ -26521,7 +26521,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "paypal-braintree"
         },
         {
           "name": "pqctoday:category",
@@ -26543,7 +26543,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "c17bf66c8c6a6b5a",
+      "bom-ref": "7097a8de86b730c2",
       "name": "Boeing (Quantum-Safe Sky)",
       "version": "Current",
       "cryptoProperties": {
@@ -26563,7 +26563,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "boeing"
         },
         {
           "name": "pqctoday:category",
@@ -26585,7 +26585,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "b601dd51ee1fed68",
+      "bom-ref": "30fb0132416bf904",
       "name": "Airbus (Quantum Program)",
       "version": "Current",
       "cryptoProperties": {
@@ -26605,7 +26605,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "airbus"
         },
         {
           "name": "pqctoday:category",
@@ -26627,7 +26627,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "f3388acb47457a2e",
+      "bom-ref": "5eba979554614614",
       "name": "Lockheed Martin (PQC)",
       "version": "Current",
       "cryptoProperties": {
@@ -26647,7 +26647,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "lockheed-martin"
         },
         {
           "name": "pqctoday:category",
@@ -26669,7 +26669,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "c955c2b7216456f4",
+      "bom-ref": "203bee68dbd05e4e",
       "name": "Northrop Grumman",
       "version": "Current",
       "cryptoProperties": {
@@ -26689,7 +26689,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "northrop-grumman"
         },
         {
           "name": "pqctoday:category",
@@ -26711,7 +26711,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "6b3013696bb4d62a",
+      "bom-ref": "ba1663137638b352",
       "name": "PCI DSS v4.0.1 (PQC Guidance)",
       "version": "Current",
       "cryptoProperties": {
@@ -26731,7 +26731,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "pci-dss-v4-0-1"
         },
         {
           "name": "pqctoday:category",
@@ -26753,7 +26753,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "a64f9ec52158aad9",
+      "bom-ref": "a26d56a9ab2f4307",
       "name": "Entrust KeyControl",
       "version": "10.4.3",
       "cryptoProperties": {
@@ -26777,7 +26777,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "entrust-keycontrol-2"
         },
         {
           "name": "pqctoday:category",
@@ -26799,7 +26799,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "77c757244d3ef4a0",
+      "bom-ref": "fea89da46825b504",
       "name": "Windows Server 2025",
       "version": "Nov 2025 Update",
       "cryptoProperties": {
@@ -26823,7 +26823,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "windows-server-2025-2"
         },
         {
           "name": "pqctoday:category",
@@ -26845,7 +26845,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "8b98c9814023ef7d",
+      "bom-ref": "e89009767a13d105",
       "name": "OQS-OpenSSL Provider (liboqs-provider)",
       "version": "0.8.0",
       "purl": "pkg:github/open-quantum-safe/oqs-provider",
@@ -26870,7 +26870,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "oqs-openssl-provider-2"
         },
         {
           "name": "pqctoday:category",
@@ -27000,7 +27000,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "fd1deac45ad06bc8",
+      "bom-ref": "82b97e846f3ac0d2",
       "name": "Venafi",
       "version": "24.1+",
       "cryptoProperties": {
@@ -27024,7 +27024,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "venafi"
         },
         {
           "name": "pqctoday:category",
@@ -27046,7 +27046,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "7ef80a5f447abb5b",
+      "bom-ref": "25d8177723a59e80",
       "name": "Azure Dedicated HSM",
       "version": "Current",
       "cryptoProperties": {
@@ -27070,7 +27070,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "azure-dedicated-hsm"
         },
         {
           "name": "pqctoday:category",
@@ -27137,7 +27137,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "a31bd3a7a4c0a0e0",
+      "bom-ref": "3fe5a40aeca6601e",
       "name": "iOS 26 / macOS 16",
       "version": "iOS 26 macOS 16",
       "cryptoProperties": {
@@ -27161,7 +27161,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "ios-26-macos-16"
         },
         {
           "name": "pqctoday:category",
@@ -27183,7 +27183,7 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "3b3266bb831f31f4",
+      "bom-ref": "90f8925845a95901",
       "name": "Signal Protocol",
       "version": "Current",
       "purl": "pkg:github/signalapp/libsignal",
@@ -27209,7 +27209,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "signal-protocol"
         },
         {
           "name": "pqctoday:category",
