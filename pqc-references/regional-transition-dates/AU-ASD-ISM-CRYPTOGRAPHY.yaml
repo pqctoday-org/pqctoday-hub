@@ -24,26 +24,28 @@ coverage:
   significance: "The most aggressive per-algorithm deprecation schedule of any national authority found in this audit — a single hard 2030 cliff covering classical AND the lower PQC parameter sets."
 verification:
   verified_on: 2026-07-29
-  method: cached primary-source PDF (December 2024) text-extracted directly; June 2026 release
-    corroborated via multiple independent secondary sources (2026-07-29 retry)
-  caveat: >
-    cyber.gov.au remains unreachable from this environment as of a second retry attempt
-    (2026-07-29, both direct download and WebFetch, both timed out — this is a persistent
-    environmental limitation, not a one-off). Upgraded confidence instead of retrying further:
-    four independent secondary sources (QPF.org, Sparke Helmore [law firm], SOCFortress,
-    Axiom Sovereign) all corroborate on 2026-07-29 that the June 2026 release keeps the exact
-    same "will not be approved beyond 2030" language for DH/ECDH/ECDSA/RSA and ML-DSA-65. Every
-    date below is still quoted from the December 2024 primary PDF, not the June 2026 one.
-  new_in_june_2026_per_secondary_sources: >
-    The 'data protection' principle was renamed to 'cryptographic protection', and ASD set
-    three explicit milestones: refined PQC transition plan by end of 2026, transition
-    commencement for critical systems by end of 2028, full transition by end of 2030. Also
-    reported: ASD recommends ML-DSA-87 (matching CNSA 2.0's level) with ML-DSA-65 acceptable
-    only until 2030 — consistent with, not a change from, the December 2024 wording already
-    quoted below.
+  method: >
+    CLOSED via Wayback Machine (2026-07-29 gap-closure pass, second attempt after direct
+    curl/WebFetch to the live cyber.gov.au domain both timed out twice). Two snapshots
+    retrieved and text-extracted directly: (1) the live 'Guidelines for cryptography' HTML
+    page, snapshot dated 2026-06-21 — i.e. genuinely current, not a secondary summary; (2)
+    the official 'ISM June 2026 changes' PDF, snapshot dated 2026-07-24.
+  finding: >
+    Snapshot (1) shows every control text quoted in classical_deprecation/pqc_parameter_deprecation
+    below verbatim, each with its own ASD control ID and 'Revision'/'Updated' metadata — and
+    every one of those controls is stamped 'Updated: Dec-24'. That is direct, first-hand
+    confirmation (not secondary corroboration) that the December 2024 wording this file already
+    quoted is STILL the live wording as of the June 2026 release; nothing in these specific
+    controls changed. Snapshot (2) confirms what changed in June 2026 was scope/terminology
+    only: the 'data protection' principle was renamed to 'cryptographic protection', and two
+    existing controls (media encryption, network protocol encryption) were reworded to "capture
+    all scenarios" — no date or algorithm changed.
   hub_library_reference_id: AU-ASD-ISM-Crypto-2024
   hub_library_local_file: library/AU-ASD-ISM-Crypto-2024.pdf
   hub_library_local_file_status: OK
+  hub_library_reference_id_current: ASD-Australia-Information-Security-Manual-Guidelines-for-Cry
+  hub_library_local_file_current: library/ASD-Australia-Information-Security-Manual-Guidelines-for-Cry.html
+  hub_library_note: "New row added 2026-07-29 citing the live guidelines page (verified current via the 2026-06-21 Wayback snapshot above) alongside the original Dec-2024 PDF citation — both kept, not replaced, since the PDF is still a valid point-in-time record."
   hub_library_status: STALE     # library holds December 2024; current release is June 2026 — still not fetchable from this environment
 
 classical_deprecation:

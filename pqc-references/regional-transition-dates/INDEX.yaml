@@ -67,15 +67,31 @@ execution_status:
     is documented in this file, every CSV Region value is filterable or documented-removed.
     Passes clean as of this update.
   gap_closure_pass_2026_07_29: >
-    Follow-up pass closing gaps flagged in the prior status report: (1) all 9 previously-empty
-    IETF status_url rows now cite real, verified-resolving IETF datatracker URLs; (2) New
-    Zealand's Section 17.2 fetched and confirmed no PQC content (closes the open follow-up,
-    does not change the no-filter-value verdict); (3) Australia's ASD ISM June 2026 release
-    still unreachable after a second retry — upgraded to multi-source corroboration instead;
-    (4) Spain's CCN-STIC 221 (the blocked full catalogue) retrieved via Wayback Machine and
-    added with 4 new rows. Still open: Switzerland/Nordics/Belgium/Austria/Poland/Ireland/
-    Estonia/Singapore/Hong-Kong/Taiwan/Malaysia/Thailand/Indonesia confirmed genuinely empty in
-    the original wide search, not re-checked in this pass (no new information expected).
+    First follow-up pass: (1) all 9 previously-empty IETF status_url rows fixed with real
+    datatracker URLs; (2) New Zealand's Section 17.2 fetched, confirmed no PQC content;
+    (3) Australia's ASD ISM — attempted Wayback Machine, no snapshot for the exact PDF URL at
+    that point, fell back to secondary-source corroboration; (4) Spain's CCN-STIC 221 retrieved
+    via Wayback Machine, 4 new rows added.
+  gap_closure_pass_2_2026_07_29: >
+    Second follow-up pass, same day: (1) Australia's ASD ISM — retried Wayback Machine against
+    the HTML guidelines page and the official 'ISM June 2026 changes' PDF instead of the exact
+    dated PDF filename; both snapshots resolved (2026-06-21 and 2026-07-24), giving direct
+    primary-source confirmation (every quoted control stamped 'Updated: Dec-24', i.e. genuinely
+    unchanged) rather than secondary corroboration — CLOSED, no longer an open gap. Also added
+    a fresh library row citing the live guidelines page (add_row.py's own fetch succeeded this
+    time). (2) Checked the Wayback Machine's full snapshot history (via its CDX API) for Spain's
+    CCN-STIC 221 to look for a possible November 2025 edition a search result hinted at — no
+    snapshot exists past June 2025, and the Dec-2024/June-2025 snapshots are byte-identical, so
+    the November 2024 edition already cited is confirmed stable; the "November 2025" search
+    title could not be corroborated against any actual content. (3) Re-checked Switzerland,
+    Netherlands, and Singapore with fresh, differently-worded searches — same empty verdict both
+    times, and one secondary-source claim about Singapore's MAS advisory naming specific
+    algorithms was checked directly and found false (not added). (4) Re-checked Hong Kong,
+    Taiwan, and the Nordics — still no algorithm catalogue for any of them; Hong Kong has a new
+    July 2026 bank readiness SCORE (2.3/10) but that's not a mechanism catalogue either.
+    Remaining unconfirmed-on-a-second-pass: Belgium, Austria, Poland, Ireland, Estonia, Malaysia,
+    Thailand, Indonesia — original single-pass finding stands, diminishing-returns judgment call
+    not to spend further search budget here without new information to chase.
 
 standards:
   # ---- BASELINE (already grounded before this audit; documented 2026-07-29
@@ -234,12 +250,12 @@ standards:
     file: AU-ASD-ISM-CRYPTOGRAPHY.yaml
     class: mechanism-catalogue
     country: AU
-    version: "June 2026 (verified against December 2024)"
+    version: "June 2026, confirmed directly via a 2026-06-21 Wayback Machine snapshot"
     date: 2026-06
     has_pqc: true
     has_classical_end_dates: true
     key_dates: [2030-12-31]
-    verification: primary-pdf-cached-2024 + web-confirmed-2026
+    verification: primary-source-wayback-snapshot   # CLOSED 2026-07-29 — was corroboration-only
     region_items_value: ASD
     transitions_rows: 11
 
@@ -330,16 +346,24 @@ standards:
 # catalogue. Recorded so the absence is a documented finding, not an oversight. Search budget:
 # ~2 targeted searches + 1 fetch attempt per jurisdiction, per the grounding plan's stop rule.
 no_catalogue_found:
+  reconfirmed_2026_07_29: >
+    CH, NL, and SG were re-checked with fresh, differently-worded searches in the 2026-07-29
+    gap-closure pass specifically to test whether the original wide search had simply missed
+    something. It hadn't — same verdict both times. HK, TW, and the Nordics were also
+    re-checked. One correction worth flagging: a secondary source claimed Singapore's MAS
+    Quantum Advisory names CRYSTALS-Kyber/Dilithium/FALCON/SPHINCS+ specifically — checked the
+    actual document directly (both the cached copy and a fresh fetch attempt) and found no such
+    algorithm list. The secondary source was wrong; not corroborated, not added.
   europe: [CH, NL, SE, NO, DK, FI, BE, AT, PL, IE, EE]
   europe_notes:
     CH: "No NCSC-CH/MELANI algorithm catalogue found. FINMA guidance (financial-sector risk survey, Nov 2025-Jan 2026) is risk guidance, not an algorithm list."
     NL: "AIVD/TNO/CWI PQC Migration Handbook (2nd ed., Dec 2024) confirmed still a migration guide, not a mechanism catalogue with dates."
-    SE/NO/DK/FI: "No country-specific catalogues found. Norway launched a national quantum-technology strategy process in May 2025 (not crypto-specific)."
+    SE/NO/DK/FI: "No country-specific catalogues found on a second pass either. Sweden co-signed a Jan 2024 QKD position paper with ANSSI/BSI/NLNCSA (policy, not an algorithm catalogue). Norway launched a national quantum-technology strategy process in May 2025 (not crypto-specific)."
     BE/AT/PL/IE/EE: "Participate in the EU NIS-CG roadmap and the 2024 joint 18-member-state statement; no independent national mechanism catalogue found for any of the five."
   apac: [SG, HK, TW, MY, TH, ID]
   apac_notes:
-    SG: "MAS Advisory (2024-02-20) and CSA Quantum-Safe Handbook (2024-06) remain advisories; no algorithm list, no dates."
-    HK: "HKMA Fintech Blueprint (2026-02-03) announces a Quantum Preparedness Index; no dates, no algorithm list."
-    TW: "No formal NICS/TWCERT standard found — only conference/industry framing of a 'transition then migration' strategy referencing NIST/CNSA 2.0 by name, not an independent Taiwanese document."
+    SG: "MAS Advisory (2024-02-20) and CSA Quantum-Safe Handbook (2024-06) remain advisories; no algorithm list, no dates. Checked the MAS advisory PDF directly a second time (2026-07-29) after a secondary source claimed it named specific algorithms — it doesn't."
+    HK: "HKMA launched a Quantum Preparedness Index for banks on 2026-07-27 (banks scored 2.3/10) — a readiness SCORE, not an algorithm catalogue. Still no dates, no algorithm list."
+    TW: "No formal NICS/TWCERT standard found on a second pass either — only continued conference/industry framing referencing NIST/CNSA 2.0 by name, not an independent Taiwanese document."
     MY: "NACSA National Cryptography Policy and PQC Migration Plan 2025 remains an HTML page with no extractable dates."
     TH/ID: "Early-stage awareness only (industry workshops, BSSN coordination discussions in Indonesia); no published standard."

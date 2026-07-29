@@ -8929,6 +8929,16 @@
       "sizeBytes": 2162498,
       "contentType": "application/pdf",
       "sha256": "05ef1611e1a3736ac903ccc47b770c86d658ac0f93bb51c0e599abdfdcbb3153"
+    },
+    {
+      "refId": "ASD-Australia-Information-Security-Manual-Guidelines-for-Cry",
+      "title": "ASD (Australia) - Information Security Manual, Guidelines for Cryptography (verified current as of June 2026 release)",
+      "url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/ism/cyber-security-guidelines/guidelines-for-cryptography",
+      "status": "downloaded",
+      "filename": "ASD-Australia-Information-Security-Manual-Guidelines-for-Cry.html",
+      "sizeBytes": 362231,
+      "contentType": "text/html",
+      "sha256": "c5d90383d1d42b9637479497996efa78aa33f693c1cfff4b03f15363155fc62a"
     }
   ]
 }

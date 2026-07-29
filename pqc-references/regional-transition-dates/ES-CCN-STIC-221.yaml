@@ -19,11 +19,16 @@ document:
     (direct curl, WebFetch, and add_row.py's own fetcher, which silently saved the 3.8KB
     interstitial page as if it were the document). Retrieved instead via a Wayback Machine
     snapshot dated 2025-06-05, which itself preserves the November 2024 edition of the document.
-  possible_newer_edition: >
-    A web search surfaced a distinct result titled "Noviembre de 2025 Guia de Seguridad de las
-    TIC CCN-STIC 221" — suggesting a November 2025 edition may exist that this pass did not
-    verify (the Wayback snapshot only reaches back to the November 2024 edition). Worth a
-    follow-up once/if the live domain becomes reachable.
+  possible_newer_edition_CHECKED_2026_07_29: >
+    Followed up: queried the Wayback Machine's CDX API for every snapshot of this exact URL
+    (4 total, spanning April 2024 to June 2025). The December 2024 and June 2025 snapshots
+    have an IDENTICAL content hash — the document at this URL did not change between those
+    dates, confirming the "November 2024" edition text this file quotes was still current as
+    of June 2025. No snapshot exists after June 2025. A blog post from September 2025 that
+    references this document (inza.blog) does not cite any edition date. The "Noviembre de
+    2025" search-result title could not be corroborated against any actual document content —
+    most likely a search-engine indexing artifact rather than a confirmed newer edition.
+    Reasonable effort exhausted; not pursued further.
 coverage:
   classical_mechanisms: true
   pqc_mechanisms: true
