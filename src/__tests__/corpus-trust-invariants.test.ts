@@ -192,7 +192,24 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     software-hipaa-quantum-security-rule without a corpus trust-score entry;
   //     will resolve to 0 on the next refresh-index run.
   migrate: 1,
-  timeline: 3,
+  timeline: 1,
+  //     2026-07-29: DRIVEN DOWN 3 → 1 (maintenance-flow remediation WP-0.1).
+  //     The 07-24 entry below predicted this would "resolve to 1 on the next
+  //     real refresh-index commit". It did not, and could not: that backfill
+  //     filled Country/FlagCode/OrgName/OrgFullName on the two NUKIB rows but
+  //     left StartYear/EndYear blank, and timelineData.ts drops a row on
+  //     unparseable years (:227-229) exactly as firmly as on a blank Country
+  //     (:225). The rows stayed invisible to trustScoreData.ts for five more
+  //     days, and nothing said so — because refresh-index itself had been
+  //     failing since, so the corpus these invariants test never changed.
+  //     Now fixed for real in timeline_07292026.csv: the 2 NUKIB rows plus 3
+  //     further Phase-2 intake stubs (BSI, NCSC, FAA) that had blank Country.
+  //     4 of the 5 are completed from their own cached evidence documents and
+  //     their org's existing rows; the FAA row is left OPEN on purpose — its
+  //     only evidence is a fedscoop-hosted mirror of the RFI, there is no FAA
+  //     entry in trusted_sources, and inventing a country/year to make this
+  //     number go green is precisely what a proof gate exists to prevent.
+  //     That single row is what `1` now allows.
   //     2026-07-24: bumped 1 → 3 — 2 NUKIB (Czech Republic) Phase-2 intake
   //     rows landed with Country/OrgName blank (S5 of the E2E remediation
   //     plan only backfilled trusted_source_id, not the rest); the just-run
@@ -231,7 +248,21 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     "variants missing from algorithms_transitions CSV" residual above.
   //     Resolve by adding SM4→NGCC-BC / SM3→NGCC-CH transition rows once the
   //     classical pairing is verified against a primary OSCCA/ICCS source.
-  algorithms: 2,
+  algorithms: 0,
+  //     2026-07-29: DRIVEN DOWN 2 → 0 (maintenance-flow remediation WP-0.1),
+  //     and it was never really 2 — the refreshed corpus measured 22. The
+  //     2026-07-08 entry above diagnosed the mechanism correctly (the
+  //     per-algorithm loop is sourced from algorithmsData, i.e. the
+  //     transitions CSV) but prescribed the wrong cure: inventing SM4→NGCC-BC
+  //     / SM3→NGCC-CH transition rows for a competition that has not opened.
+  //     17 of the 22 are hybrid/composite WIRE-FORMAT identifiers (X-Wing, the
+  //     draft-ietf-lamps-pq-composite id-MLKEM* OIDs, the SSH/TLS combiners) —
+  //     nothing "transitions to" a combiner, so a transitions row for them
+  //     would be fiction. trustScoreData.ts now scores from the algorithm
+  //     REFERENCE catalogue for names the transitions join cannot reach, using
+  //     the peer_reviewed / vetting_body / fips_standard columns it was
+  //     already importing and only ever reading as a join. Same data, same
+  //     rules, applied to the rows the join missed. 22 → 0.
   //     2026-05-31: bumped 113 → 118 — 5 new catalog enrichments (Tectia SSH, IVPN, libcrux, Trail of Bits ml-dsa, InfoSec Global AgileSec)
   //     2026-06-19: bumped 118 → 119 — pre-existing drift (the committed corpus
   //     was already at 119; the pin lagged). One more sector-threat enrichment
@@ -343,8 +374,35 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
  *               2025, liboqs-v0.15.0, TCG-TPM-V185-Part0 — still
  *               unenriched since 2026-06-19). Enrich to drive down).
  * Only DECREASE — every reduction is enrichment improving.
+ *
+ *   2026-07-29: 186 (DRIVEN DOWN from 752 — maintenance-flow remediation
+ *               WP-0.1. Enrichment was never the cause of ANY bump above.
+ *
+ *               generate-rag-corpus.ts reads passages from
+ *               `scripts/source-passages-*.json`, which is GITIGNORED
+ *               (.gitignore `scripts/*`) and therefore exists ONLY in the main
+ *               hub checkout. loadSourcePassages() returned an empty Map
+ *               without a word when it wasn't there, so every corpus
+ *               regenerated from a git worktree — which is how data-maintenance
+ *               work is done here — silently dropped source_passages from
+ *               EVERY chunk. Measured directly: 0 of 13203 chunks carried a
+ *               passage, and all 762 "gaps" were simply every library row that
+ *               has a cached document. The four bumps above (693 → 695 → 717 →
+ *               725 → 752), each annotated "landed without extracted
+ *               source_passages … Enrich to drive down", were reading corpus
+ *               GROWTH as an enrichment regression. No amount of enrichment
+ *               could have moved the number.
+ *
+ *               With the artifact linked in, the same corpus reports 576
+ *               chunks WITH passages and 186 without — a real measurement of
+ *               rows whose cached document has no extracted passage, which is
+ *               what this ratchet was always meant to track. loadSourcePassages
+ *               now warns loudly instead of returning empty in silence, so a
+ *               regeneration that would repeat this cannot do so quietly.
+ *               186 is the first honest value this constant has ever held.
+ *               Enrich to drive down — and now that will actually work.)
  */
-const MAX_DOC_WITHOUT_PASSAGES = 752
+const MAX_DOC_WITHOUT_PASSAGES = 186
 
 /** Pinned count of CSV files referenced in prov.was_derived_from but missing on disk. */
 const MAX_MISSING_CSVS = 0
