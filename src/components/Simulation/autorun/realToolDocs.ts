@@ -117,6 +117,7 @@ import {
   DEFAULT_MILESTONES as ROADMAP_DEFAULT_MILESTONES,
 } from '@/components/PKILearning/modules/MigrationProgram/components/RoadmapBuilder'
 import { TIMELINE_COUNTRY_DEADLINE_YEAR } from '@/data/timelineFacts.generated'
+import { CRQC_BAND_STANDARD } from '@/data/narrationFacts'
 
 /**
  * Thales Luna is the fleet vendor for this demo org. Derived from `HSM_VENDORS`
@@ -861,12 +862,13 @@ export const REAL_DOC_GENERATORS: Partial<
   // Batch 3 (07192026) — remaining risk/vendor/strategy docs.
   //
   // crqc-scenario: the tool's own algorithm tables and compliance-deadline
-  // rows (module constants) via its real builder. crqcYear 2031 sits inside
-  // the sim's own 2029–2033 aggressive planning band; the urgency label
-  // mirrors the tool's own thresholds for that horizon.
+  // rows (module constants) via its real builder. crqcYear is the midpoint of
+  // the sim's derived aggressive planning band (narrationFacts, anchored on
+  // QC_FIRST_YEAR) so it can never drift outside the band the narration
+  // states; the urgency label mirrors the tool's own thresholds.
   'crqc-scenario': (sector) => {
     const currentYear = new Date().getFullYear()
-    const crqcYear = 2031
+    const crqcYear = CRQC_BAND_STANDARD.startYear + 2
     const yearsRemaining = crqcYear - currentYear
     const urgencyLevel = yearsRemaining <= 3 ? 'critical' : yearsRemaining <= 6 ? 'high' : 'medium'
     return {
@@ -962,7 +964,7 @@ export const REAL_DOC_GENERATORS: Partial<
         protocol: 'TLS 1.3',
         audience: 'global-commercial',
         interopProfile: ['non-pqc-peers', 'hybrid-peers'],
-        complianceDeadline: '2030',
+        complianceDeadline: String(TIMELINE_COUNTRY_DEADLINE_YEAR.US),
       },
       standardsConstraints: {
         standardsPosture: 'nist-pqc-only',
@@ -994,7 +996,7 @@ export const REAL_DOC_GENERATORS: Partial<
         interoperabilityRequirement: ['classical-peers', 'fips-validated'],
         bandwidthBudget: 'moderate',
         cryptoAgility: 'medium',
-        complianceDeadline: '2030',
+        complianceDeadline: String(TIMELINE_COUNTRY_DEADLINE_YEAR.US),
       },
       plan: {},
     }),
