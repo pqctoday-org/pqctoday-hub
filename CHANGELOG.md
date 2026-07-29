@@ -29,6 +29,15 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.28.1] - 2026-07-29
+
+52 Library documents that were sitting as bare, unreviewed stubs now show real information — document type, industries, authors, migration urgency, and more — instead of blank fields.
+
+### Data
+
+- **52 Library entries completed with real, cited detail** [view:/library] [persona:researcher] [persona:architect] [persona:developer]: recently-added documents (IETF drafts, national cryptography guidelines from Italy/Spain/Australia/Japan, NIST publications, ISO standards, and more) previously showed almost nothing beyond a title and link. Every field — document type, applicable industries, authoring organization, related standards, migration urgency, and confidence — was researched from the document's own text and is now populated.
+- **4 duplicate/superseded entries cleaned up** [view:/library] [persona:researcher]: a draft that's now been published as an RFC, a duplicate composite-signature draft stub, a duplicate arXiv paper URL variant, and a superseded protocol draft are now correctly marked and linked to their current versions instead of appearing as separate, unrelated entries.
+
 ## [4.28.0] - 2026-07-28
 
 A big data-accuracy and coverage pass across Migrate, Vendor Roadmaps, Timeline, Trusted Sources, Threats, and Algorithms — plus real fixes to broken certificate links, a mis-detected PQC algorithm, and several data-pipeline bugs found along the way.
