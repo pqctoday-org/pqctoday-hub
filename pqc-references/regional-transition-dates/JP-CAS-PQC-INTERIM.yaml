@@ -1,0 +1,58 @@
+# Cross-check reference for the Algorithms > Transition Guide tab.
+# Reference artefact only — nothing here has been written into src/data.
+standard_id: JP-CAS-PQC-INTERIM
+document_class: migration-roadmap    # NOT a mechanism catalogue
+authority:
+  name: "Cabinet Secretariat (内閣官房)"
+  country: JP
+  region_scope: [JP]
+document:
+  title_ja: "政府機関等における耐量子計算機暗号（PQC）への移行について（中間とりまとめ）"
+  title_en: "On the migration to post-quantum cryptography in government institutions (interim summary)"
+  published: "令和7年11月 (November 2025)"
+  pdf_created_iso: 2025-11-18
+  pages: 8
+  language: ja
+  url: https://www.cas.go.jp/jp/seisaku/pqc/pdf/report_202511.pdf
+  process_start_iso: 2025-06-30    # first meeting of the government PQC migration study group
+coverage:
+  classical_mechanisms: false
+  pqc_mechanisms: false
+  per_mechanism_end_dates: false
+verification:
+  verified_on: 2026-07-28
+  method: primary-source PDF downloaded and text-extracted
+  hub_library_status: ADDED 2026-07-29
+  hub_library_reference_id: Cabinet-Secretariat-Japan-PQC-Migration-Interim-Report-for-G
+  hub_library_local_file: library/Cabinet-Secretariat-Japan-PQC-Migration-Interim-Report-for-G.pdf
+  hub_library_note: "add_row.py initially saved this as decoded text (pdf_warning=true); replaced with the byte-correct PDF fetched earlier in this session and re-hashed the manifest entry."
+
+migration_deadline:
+  target_iso: 2035-12-31
+  clause: "Section 4(1)"
+  quote_ja: "原則として、2035 年を目処に、耐量子計算機暗号（PQC）へ移行を行うこととする。"
+  english: "As a general rule, migration to post-quantum cryptography shall be carried out with 2035 as the target."
+  exception_quote_ja: "特に機微な情報や保護期間が非常に長期となることが想定されている情報等を扱う場合等においては、より早期に移行を行うことも含め、情報システムごとに適切に検討を行うこととする。"
+  exception_english: "For particularly sensitive information or information with a very long protection period, earlier migration shall be considered per information system."
+
+roadmap_production:
+  deadline: "FY2026 (2026年度, i.e. by 2027-03-31)"
+  quote_ja: "関係府省庁の連携の下、2026 年度に工程表（ロードマップ）を策定し、我が国における円滑な移行を推進していく。"
+  english: "A roadmap will be formulated in FY2026 under inter-ministerial cooperation."
+
+classical_deprecation: null
+classical_deprecation_note:
+  clause: "Section 4(2) 暗号技術の利用に係る停止の時期"
+  quote_ja: "暗号技術の安全性が低下・危殆化した場合の利用に係る停止の時期は、今後の量子計算機技術の進展を踏まえた暗号技術の安全性評価、政府機関等における耐量子計算機暗号（PQC）への移行等の状況、諸外国の状況等を十分に踏まえながら、CRYPTREC 暗号リストの取扱い等について、具体的方策の検討を進めていくこととする。"
+  english: >
+    The date on which use of a weakened cryptographic technology must stop is EXPLICITLY DEFERRED —
+    concrete measures, including how the CRYPTREC Ciphers List is handled, remain under study.
+    Japan has therefore set a PQC introduction target with NO classical deprecation date.
+
+crqc_estimate_cited:
+  quote_ja: "2039 年よりも前に RSA-2048 を解読できる量子計算機が実現する可能性は５％未満"
+  english: "Less than a 5% probability that a quantum computer able to break RSA-2048 exists before 2039."
+
+crosscheck:
+  transition_tab_region_value: "(none — no JP value exists in REGION_ITEMS)"
+  pairs_with: [JP-CRYPTREC-LS-0001, JP-CRYPTREC-LS-0003]

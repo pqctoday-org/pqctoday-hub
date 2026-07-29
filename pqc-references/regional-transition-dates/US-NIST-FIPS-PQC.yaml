@@ -1,0 +1,31 @@
+# Cross-check reference for the Algorithms > Transition Guide tab.
+# Reference artefact only.
+standard_id: US-NIST-FIPS-PQC
+document_class: mechanism-catalogue
+authority:
+  name: "National Institute of Standards and Technology"
+  short: NIST
+  country: US
+  region_scope: [US, Global]
+document:
+  designation: "Multiple — FIPS 180-4, 197, 198-1, 202, 203, 204, 205; SP 800-208"
+  note: >
+    Not a single document like BSI TR-02102-1 — NIST's citations in the transitions CSV are a
+    set of individually-published FIPS/SP standards, one per mechanism, each with its own
+    canonical csrc.nist.gov URL. This file documents the region as a whole rather than one
+    document, unlike every other entry in this index.
+  url: https://csrc.nist.gov/projects/post-quantum-cryptography
+coverage:
+  classical_mechanisms: true
+  pqc_mechanisms: true
+  per_mechanism_end_dates: true
+verification:
+  verified_on: 2026-07-28
+  method: "Pre-existing at audit start — this was the ONE region already fully and correctly grounded before this pass. Not independently re-verified document-by-document in this audit; spot-checked citation format only (all csrc.nist.gov, all working, all FIPS-numbered)."
+  status: BASELINE — no changes made
+
+crosscheck:
+  transition_tab_region_value: "NIST"
+  rows_before: 91
+  rows_after: 91
+  action_taken: "None — already the best-grounded region in the tab. Documented here for completeness so the cross-check script (crosscheck_regional_standards.py) has full REGION_ITEMS coverage."

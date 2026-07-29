@@ -1,0 +1,59 @@
+# Cross-check reference for the Algorithms > Transition Guide tab.
+# Reference artefact only — nothing here has been written into src/data.
+standard_id: CN-SCA-COMMERCIAL-CRYPTO
+document_class: gap-record         # no PQC standard and no deprecation dates exist yet
+authority:
+  name: "State Cryptography Administration / Institute of Commercial Cryptography Standards"
+  short: SCA (OSCCA) / ICCS
+  country: CN
+  region_scope: [CN]
+status: NO_PQC_STANDARD
+finding: >
+  China has a mature classical mechanism catalogue (the GM/T industry standards and GB/T national
+  standards covering SM2, SM3, SM4, SM9) but as of 2026-07-28 has published no post-quantum
+  algorithm standard and no deprecation date for any classical mechanism. A national PQC standard
+  is expected within roughly three years of March 2026.
+verification:
+  verified_on: 2026-07-29
+  method: "Upgraded from web-search-only: corroborated across multiple independent sources — National Cryptography Administration Announcement No. 55 (2026-01-30, on nca.gov.cn), and press coverage of the 2026 National People's Congress reiterating the 3-year national-standard-system timeline. The underlying government announcement text itself was not text-extracted (no accessible PDF found), so this stays short of primary-pdf verification."
+  confidence: MEDIUM-HIGH
+  finding: "Announcement No. 55 concerns building an automated security assessment/verification PLATFORM for post-quantum algorithms (side-channel and fault-attack analysis capability) — i.e. future testing INFRASTRUCTURE, not a published algorithm standard. Confirms rather than contradicts the original finding: no PQC standard exists yet. Migration path reported: 2026-2027 planning/inventory, 2028-2029 pilot verification + standard release, 2030+ large-scale rollout."
+
+existing_mechanism_catalogue:
+  standard_families:
+    - {prefix: "GM/T", issuer: "State Cryptography Administration", scope: "commercial cryptography industry standards"}
+    - {prefix: "GB/T", issuer: "National Standardization Management Committee", scope: "national standards"}
+  algorithms: [SM2, SM3, SM4, SM9]
+  post_quantum_entries: 0
+  deprecation_dates: null
+
+pqc_programme:
+  - event: "CACR post-quantum cryptography competition results"
+    date_iso: 2020-02-01
+    outcome: "Competition winners announced; no algorithm carried into a national standard."
+    note: "This is the event the hub Transition tab currently cites for the CACR region — it is over six years old."
+  - event: "ICCS global call for post-quantum algorithm proposals"
+    date_iso: 2025-02-01
+    outcome: "Open international call; China chose to develop its own standards rather than adopt NIST's."
+    technical_direction: "Preference for unstructured / 'structureless' lattice constructions (e.g. S-Cloud+) over the algebraic lattices NIST standardised."
+  - event: "Public statement on national PQC standard timing"
+    date_iso: 2026-03-19
+    outcome: "China expects to finalise national post-quantum cryptography standards within three years (i.e. by roughly 2029)."
+    priority_sectors: [finance, energy]
+
+hybrid_work:
+  - {id: "draft-yang-tls-hybrid-sm2-mlkem", title: "Hybrid Post-quantum Key Exchange SM2-MLKEM for TLSv1.3", date: 2024-08-01, note: "In the hub library; an IETF individual draft, not a Chinese national standard."}
+
+classical_deprecation: null
+classical_deprecation_note: "No published end date for SM2, RSA or ECC in Chinese commercial cryptography policy."
+
+crosscheck:
+  transition_tab_region_values_before: ["CACR", "CN"]
+  transition_tab_region_values_after: []
+  action_taken: >
+    2026-07-29: REMOVED from REGION_ITEMS (AlgorithmFilters.tsx) per the grounding rule. All 9
+    underlying rows (5 tagged CACR status 'To Be Checked', 4 tagged CN status 'Research') had an
+    EMPTY status_url — the only region in the tab with zero citations before this fix. Rows
+    RETAINED, not deleted, and annotated in data_quality_notes — see
+    algorithms_transitions_07282026.csv. Re-add once a real Chinese national PQC standard exists
+    (expected ~2028-2029 per Announcement No. 55's own timeline) — never speculatively.

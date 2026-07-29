@@ -128,7 +128,9 @@ export const VERB_TAGS: Record<string, VerbId[]> = {
   // its one X25519MLKEM768 probe wasn't mode-gated, so the classical run
   // also reported quantum_safe: true).
   'sbx-smime': ['sign', 'encrypt'],
-  'sbx-wireguard': ['simulate'],
+  // 'sbx-wireguard' omitted: removed from pqctoday-sandbox in v0.9.0 — no
+  // shipped PQ-WireGuard implementation to demo (Rosenpass is pre-standard
+  // Kyber-512, not ML-KEM; upstream WireGuard/Mullvad have no usable release).
   'sbx-cbom-compliance': ['discover'],
   'sbx-tpm-pqc-migration': ['keys', 'certs'],
   'sbx-supply-chain-signing': ['sign'],
@@ -213,7 +215,7 @@ export const SUBGROUPS: Record<string, SubGroup[]> = {
     },
     {
       label: 'SSH & VPN tunnels',
-      ids: ['pqc-ssh-sim', 'sbx-ssh', 'vpn-sim', 'sbx-vpn', 'sbx-wireguard'],
+      ids: ['pqc-ssh-sim', 'sbx-ssh', 'vpn-sim', 'sbx-vpn'],
     },
     {
       label: 'Messaging & mobile',

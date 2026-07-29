@@ -42,20 +42,31 @@ export const FUNCTION_ITEMS = [
   { id: 'Signature', label: 'Signature' },
 ]
 
+// Grounded-or-removed (2026-07-28 regional-standards grounding audit): every
+// value here must have at least one row citing a real, dated reference
+// standard from that authority — not a competition-results page, not a
+// policy roadmap with no algorithm list, not an empty status_url, not a
+// participant/team site standing in for the standards body. KpqC, CACR,
+// Global, KR and CN were removed because no such standard exists yet for
+// them (Korea's KCMVP has zero PQC entries as of a direct fetch of KISA's
+// own list; China's National Cryptography Administration confirms no PQC
+// standard exists, ~2029 expected; 'Global' matched zero rows). BSI/ANSSI
+// split into two values now that ANSSI has its own grounded citations
+// (ANSSI-PG-083 v3.00) rather than being cited zero times under the old
+// combined label. See pqc-references/regional-transition-dates/INDEX.yaml
+// for the full per-standard verification record.
 export const REGION_ITEMS = [
   { id: 'All', label: 'All Regions' },
   { id: 'NIST', label: 'NIST (US)' },
   { id: 'IETF', label: 'IETF (Global)' },
-  { id: 'BSI/ANSSI', label: 'BSI/ANSSI (Europe)' },
+  { id: 'BSI', label: 'BSI (Germany)' },
+  { id: 'ANSSI', label: 'ANSSI (France)' },
+  { id: 'ECCG', label: 'ECCG (EU)' },
   { id: 'ETSI', label: 'ETSI (Europe)' },
-  { id: 'KpqC', label: 'KpqC (Korea)' },
-  { id: 'CACR', label: 'CACR (China)' },
-  // Distinct literal region values the CSVs also use alongside 'KpqC'/'CACR'
-  // above — both spellings appear in the wired data, so both must be
-  // independently selectable or their rows are unreachable via this facet.
-  { id: 'Global', label: 'Global' },
-  { id: 'KR', label: 'KR (South Korea)' },
-  { id: 'CN', label: 'CN (China)' },
+  { id: 'ASD', label: 'ASD (Australia)' },
+  { id: 'CRYPTREC', label: 'CRYPTREC (Japan)' },
+  { id: 'ACN', label: 'ACN (Italy)' },
+  { id: 'CCN', label: 'CCN (Spain)' },
 ]
 
 export const STATUS_ITEMS = [

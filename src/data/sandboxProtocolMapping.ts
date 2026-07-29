@@ -47,10 +47,13 @@ const SANDBOX_PROTOCOL_MAP: Record<string, SandboxProtocolRef> = {
   // PKCS#11 — the benchmark drives the softhsmv3 PKCS#11 v3.2 engine directly,
   // which is the matrix's `pkcs11` row rather than any wire protocol.
   'hsm-perf-bench': { protocolId: 'pkcs11', label: 'PKCS#11' },
-  // WireGuard — the matrix has had a `wireguard` row all along; this scenario
-  // was simply never mapped to it (found 2026-07-27 during the realignment
-  // audit).
-  wireguard: { protocolId: 'wireguard', label: 'WireGuard' },
+  // NOTE — `wireguard` was mapped here until 2026-07-28, when the sandbox
+  // scenario was deleted. Rosenpass, the only PQ-WireGuard we could ship, uses
+  // pre-standardisation Kyber-512 (FIPS 203 superseded it with ML-KEM, and the
+  // two are not interoperable), upstream has no ML-KEM release, and Mullvad's
+  // ML-KEM implementation is client-only and account-gated. The matrix's
+  // `wireguard` row therefore has NO scenario again — a real coverage gap, kept
+  // visible here rather than silently dropped.
   // NOTE — `mtc` (Merkle Tree Certificates) is deliberately NOT mapped here.
   // The hub does track it, but as a TRANSPORT_ISSUES entry (`merkle-tree-certs`),
   // not as a PROTOCOL_MATRIX row — MTC is a certificate-size mitigation, not a

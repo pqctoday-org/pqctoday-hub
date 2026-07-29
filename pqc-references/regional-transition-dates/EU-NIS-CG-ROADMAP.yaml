@@ -1,0 +1,68 @@
+# Cross-check reference for the Algorithms > Transition Guide tab.
+# Reference artefact only — nothing here has been written into src/data.
+standard_id: EU-NIS-CG-ROADMAP
+document_class: migration-roadmap    # NOT a mechanism catalogue — no algorithm list, no key sizes
+authority:
+  name: "NIS Cooperation Group, work stream on PQC (EU Member States, supported by the Commission)"
+  short: NIS CG
+  country: EU
+  region_scope: [EU]
+document:
+  title: "A Coordinated Implementation Roadmap for the Transition to Post-Quantum Cryptography"
+  published_iso: 2025-06-23
+  pages: 17
+  language: en
+  landing_url: https://digital-strategy.ec.europa.eu/en/library/coordinated-implementation-roadmap-transition-post-quantum-cryptography
+  pdf_url: https://ec.europa.eu/newsroom/dae/redirection/document/117507
+coverage:
+  classical_mechanisms: false
+  pqc_mechanisms: false
+  per_mechanism_end_dates: false
+  note: "Sets organisational deadlines only. It is the document BSI TR-02102-1 and ETSI TS 119 312 both defer to for migration timing."
+verification:
+  verified_on: 2026-07-28
+  method: primary-source PDF downloaded and text-extracted
+  hub_library_reference_id: EU-NIS-CG-Roadmap-v1.1
+  hub_library_local_file: library/EU-NIS-CG-Roadmap-v1.1.html
+  hub_library_local_file_status: LANDING_PAGE_ONLY    # the PDF itself was never cached
+  hub_library_recorded_date: 2025-01-01               # WRONG — actual publication is 2025-06-23
+
+milestones:
+  - id: 1
+    deadline_iso: 2026-12-31
+    achievements:
+      - "At least the First Steps have been implemented by all Member States."
+      - "Initial national PQC transition roadmaps have been established by all Member States."
+      - "PQC transition planning and pilots for high- and medium-risk use cases have been initiated."
+    first_steps:
+      - "Identify and involve stakeholders."
+      - "Support mature cryptographic asset management."
+      - "Create dependency maps."
+      - "Perform quantum risk analysis."
+      - "Include the supply chain."
+      - "Create a national awareness and communication program."
+      - "Share knowledge and get involved with the NIS CG work stream on PQC."
+  - id: 2
+    deadline_iso: 2030-12-31
+    achievements:
+      - "The Next Steps have been implemented by all Member States."
+      - "The PQC transition for high-risk use cases has been completed."
+      - "PQC transition planning and pilots for medium-risk use cases have been completed."
+      - "Quantum-safe software and firmware upgrades are enabled by default."
+    upgrade_path_rule: "Products entering the market with an expected lifetime beyond 2030 should be upgradable to PQC, and the software/firmware upgrade mechanism should use post-quantum signature schemes for integrity and authenticity."
+  - id: 3
+    deadline_iso: 2035-12-31
+    achievements:
+      - "The PQC transition for medium-risk use cases has been completed."
+      - "The PQC transition for low-risk use cases has been completed as much as feasible."
+    basis_quote: "In the recently published initial public draft of NIST IR 8547, it is stated that traditional public-key cryptographic mechanisms will be disallowed after 2035. ... Similarly, the recently published timeline of the UK NCSC sets 2035 as the target date for the PQC transition."
+
+related_regulatory_date:
+  date_iso: 2027-12-11
+  source: "EU Cyber Resilience Act"
+  claim: "Requirement applying to products with digital elements placed on the EU market from 11.12.2027, including a requirement to protect confidentiality."
+
+crosscheck:
+  transition_tab_region_value: "(none — no EU value exists in REGION_ITEMS)"
+  cited_by: [DE-BSI-TR-02102-1, EU-ETSI-TS-119-312, FR-ANSSI-PG-083]
+  note: "BSI TR-02102-1 v2026-01 explicitly aligns its 2035 classical-signature horizon to this roadmap."

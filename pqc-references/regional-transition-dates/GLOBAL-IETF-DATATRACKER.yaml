@@ -1,0 +1,32 @@
+# Cross-check reference for the Algorithms > Transition Guide tab.
+# Reference artefact only.
+standard_id: GLOBAL-IETF-DATATRACKER
+document_class: mechanism-catalogue
+authority:
+  name: "Internet Engineering Task Force"
+  short: IETF
+  country: null
+  region_scope: [Global]
+document:
+  designation: "Multiple — RFCs and Internet-Drafts tracked via datatracker.ietf.org"
+  note: >
+    Like NIST, not a single document — 18 rows citing various drafts/RFCs (LAMPS, COSE
+    composite signatures, etc.), each with its own datatracker.ietf.org or IETF archive URL.
+  url: https://datatracker.ietf.org/
+coverage:
+  classical_mechanisms: false
+  pqc_mechanisms: true
+  per_mechanism_end_dates: false
+verification:
+  verified_on: 2026-07-28
+  method: "Pre-existing at audit start. Spot-checked only: of 18 rows, 9 have a real datatracker.ietf.org citation (Draft status) and 9 have an empty status_url (Candidate status) — the empty-URL rows were flagged as a gap in the original gap report (2026-07-28) but not fixed in this pass; still open."
+  status: BASELINE — no changes made
+  open_gap: "9 of 18 IETF rows (Status='Candidate') have status_url=''. A follow-up pass should either find a real citation for each or drop them from the CSV per the proof-gate convention."
+
+crosscheck:
+  transition_tab_region_value: "IETF"
+  rows_before: 18
+  rows_after: 18
+  cited_rows: 9
+  uncited_rows: 9
+  action_taken: "None — pre-existing partial gap, documented but not closed in this pass."

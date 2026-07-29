@@ -1,0 +1,81 @@
+# Cross-check reference for the Algorithms > Transition Guide tab.
+# Reference artefact only — nothing here has been written into src/data.
+standard_id: JP-CRYPTREC-LS-0001
+document_class: mechanism-catalogue        # covers ALL mechanisms, classical + PQC
+authority:
+  name: "CRYPTREC (Digital Agency / MIC / METI joint cryptographic technology evaluation)"
+  short: CRYPTREC
+  country: JP
+  region_scope: [JP]
+  note: "Binding on Japanese government procurement via the Cybersecurity Strategic HQ 'Common Standards for Information Security Measures for Government Agencies' (FY2025 edition, 2025-06-27)."
+document:
+  designation: CRYPTREC LS-0001-2022R2
+  title_ja: "電子政府における調達のために参照すべき暗号のリスト（CRYPTREC暗号リスト）"
+  title_en: "List of Ciphers to be Referred to for Procurement in e-Government (CRYPTREC Ciphers List)"
+  first_edition: 2023-03-30
+  last_updated: 2026-03-30            # 令和8年3月30日
+  language: ja
+  url: https://www.cryptrec.go.jp/list/cryptrec-ls-0001-2022r2.pdf
+  index_url: https://www.cryptrec.go.jp/list.html
+coverage:
+  classical_mechanisms: true
+  pqc_mechanisms: true
+  per_mechanism_end_dates: false        # dates live in the companion LS-0003 document
+  symmetric_and_hash: true
+verification:
+  verified_on: 2026-07-28
+  method: primary-source PDF downloaded from cryptrec.go.jp and text-extracted
+  hub_library_status: ADDED 2026-07-29
+  hub_library_reference_id: CRYPTREC-LS-0001-2022R2-List-of-Ciphers-to-be-Referred-to-fo
+  hub_library_local_file: library/CRYPTREC-LS-0001-2022R2-List-of-Ciphers-to-be-Referred-to-fo.pdf
+  hub_library_note: "add_row.py initially saved this as decoded text (pdf_warning=true); replaced with the byte-correct PDF fetched earlier in this session and re-hashed the manifest entry."
+
+structure:
+  table_1: "電子政府推奨暗号リスト — e-Government Recommended Ciphers List"
+  table_2: "耐量子計算機暗号（PQC）リスト — PQC List  [NEW in the 2026-03-30 revision]"
+  other_lists: ["推奨候補暗号リスト (Candidate Recommended)", "運用監視暗号リスト (Monitored Ciphers — the Japanese deprecation mechanism)"]
+
+pqc_introduction:
+  table: "Table 2 (PQC List)"
+  added_iso: 2026-03-30
+  significance: "First formal listing of a post-quantum algorithm in Japanese government procurement policy."
+  definition_quote_ja: "現行暗号の解読に利用可能な水準の量子計算機（CRQC）への耐性を有することが確認された暗号技術のリスト"
+  mechanisms:
+    - name: ML-KEM
+      function: key-agreement
+      parameter_sets:
+        - {set: ML-KEM-768,  nist_category: 3}
+        - {set: ML-KEM-1024, nist_category: 5}
+    - name: AES
+      function: symmetric
+      parameter_sets:
+        - {set: AES-192, nist_category: 3}
+        - {set: AES-256, nist_category: 5}
+    - name: SHA2
+      function: hash
+      parameter_sets:
+        - {set: SHA-384, nist_category: 4}
+        - {set: SHA-512}
+    - name: SHA3
+      function: hash
+      parameter_sets:
+        - {set: SHA3-384, nist_category: 4}
+        - {set: SHA3-512}
+  signature_entry: null
+  signature_note_ja: "署名 — （空欄）"
+  signature_note_en: "The signature row of Table 2 is EMPTY. Japan has listed no post-quantum signature algorithm yet; footnote 4 states additions to the PQC List are under consideration (CRYPTREC MT-1501-2026)."
+  key_length_criteria_exemption:
+    quote_ja: "当面の間、表２（耐量子計算機暗号（PQC）リスト）の公開鍵暗号は、当該設定基準を適用しない。"
+    meaning: "For the time being the LS-0003 key-length/security-strength criteria do NOT apply to the public-key entries of the PQC list."
+
+classical_deprecation:
+  mechanism: "Monitored Ciphers List (運用監視暗号リスト)"
+  note: "Japan deprecates by moving an algorithm to the Monitored list rather than by publishing a per-algorithm sunset year. The dated schedule lives in the companion document — see JP-CRYPTREC-LS-0003."
+
+crosscheck:
+  transition_tab_region_value_before: "(none — no JP value existed in REGION_ITEMS)"
+  rows_before: 0
+  transition_tab_region_value_after: "CRYPTREC"
+  rows_after: 2
+  action_taken: "CRYPTREC added to REGION_ITEMS 2026-07-29 with 2 new rows (algorithms_transitions_07282026.csv) citing LS-0001-2022R2's ML-KEM-768/1024 PQC table directly."
+  hub_only_japanese_source_before: "Japan CRYPTREC Report 2024 (cryptrec-gl-2007-2024.pdf, 2025-03) — a PQC research-trends survey, NOT the procurement cipher list. Superseded for grounding purposes by LS-0001-2022R2 itself, added to the library 2026-07-29."

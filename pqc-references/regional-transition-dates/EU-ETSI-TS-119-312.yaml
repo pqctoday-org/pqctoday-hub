@@ -1,0 +1,107 @@
+# Cross-check reference for the Algorithms > Transition Guide tab.
+# Reference artefact only — nothing here has been written into src/data.
+standard_id: EU-ETSI-TS-119-312
+document_class: mechanism-catalogue        # covers ALL mechanisms, classical + PQC
+authority:
+  name: European Telecommunications Standards Institute, TC ESI
+  short: ETSI
+  country: EU
+  region_scope: [EU]
+document:
+  designation: ETSI TS 119 312
+  title: "Electronic Signatures and Trust Infrastructures (ESI); Cryptographic Suites"
+  version: "V2.1.1"
+  as_of: 2026-06
+  supersedes: "V1.5.1 (2024-12)"
+  language: en
+  url: https://www.etsi.org/deliver/etsi_ts/119300_119399/119312/02.01.01_60/ts_119312v020101p.pdf
+  significance: "Major revision: migrates the document from the SOG-IS basis to ECCG Agreed Cryptographic Mechanisms v2.0 and adds quantum-safe signature mechanisms."
+coverage:
+  classical_mechanisms: true
+  pqc_mechanisms: true
+  per_mechanism_end_dates: true
+  symmetric_and_hash: true
+  scope_limit: "Signatures, seals and trust-service certificates under eIDAS. Not a general-purpose KEM catalogue."
+verification:
+  verified_on: 2026-07-28
+  method: primary-source PDF downloaded and text-extracted
+  hub_library_reference_id: ETSI-TS-119-312
+  hub_library_recorded_version: "V1.5.1 (2024-12)"
+  hub_library_local_file: library/ETSI-TS-119-312.pdf
+  hub_library_status: STALE      # library holds V1.5.1; V2.1.1 published 2026-06
+
+notation:
+  L: "legacy mechanism, deprecation/phasing-out date 31.12.2034; semantically L[2034+]"
+  "L[yyyy]": "legacy; deprecation date no later than 31.12.yyyy"
+  "L[yyyy+]": "legacy; deprecation date 31.12.yyyy, extendable"
+  delta_vs_eccg: "+3 years is added to all ECCG end dates to reflect typical end-entity certificate validity."
+  clause: "Section 3.4"
+
+classical_deprecation:
+  - mechanism: RSA
+    condition: "log2(n) >= 1900 and < 3000 bits"
+    classification: "L[2026]"
+    end_date_iso: 2026-12-31
+    clause: "Table 6, Section 8.4"
+    quote: "RSA keys with a length of at least 1 900 bits and less than 3 000 bits shall not be used to issue new certificates after 2026-12-31."
+    trailing_certificate_rule_iso: 2028-12-31
+    trailing_quote: "Certificates based on such keys that were issued on or before 2026-12-31 shall have a validity period ending no later than 2028-12-31."
+    note: "NOTE 1 states this overrides previous guidance: 'The transition to Post-Quantum Cryptography and the recommendations in ECCG Agreed Mechanisms v2.0 require expedited phasing out of RSA key sizes < 3 000 bits by the end of 2026.'"
+  - mechanism: RSA
+    condition: "log2(n) >= 3000 bits"
+    classification: R
+    end_date_iso: null
+  - mechanism: DSA
+    condition: "log2(p) >= 1900 and < 3000, log2(q) >= 200 and < 250"
+    classification: "L[2026]"
+    end_date_iso: 2026-12-31
+    clause: "Table 7, Section 8.4"
+  - mechanism: DSA
+    condition: "log2(p) >= 3000, log2(q) >= 250"
+    classification: R
+    end_date_iso: null
+  - mechanism: SHA-224
+    classification: "L[2028]"
+    end_date_iso: 2028-12-31
+    clause: "Table 1, Section 5.1"
+  - mechanism: sha224-with-rsa
+    classification: "L[2028]"
+    end_date_iso: 2028-12-31
+    clause: "Table 3"
+  - mechanism: EdDSA (Ed25519, Ed448)
+    classification: R
+    end_date_iso: null
+    clause: "NOTE 2, Section 8.4"
+
+pqc_introduction:
+  mechanisms:
+    - name: ML-DSA
+      function: signature
+      standardised_by: FIPS 204
+      clause: "Section 6.2.2.5 / Table 3.1"
+      references: [IETF RFC 9882]
+    - name: SLH-DSA
+      function: signature
+      standardised_by: FIPS 205
+      clause: "Section 6.2.2.6 / Table 3.2"
+      references: [IETF RFC 9814]
+  migration_timeline_stance:
+    clause: "Section 8.5"
+    quote: "The present document provides mechanism suitability classifications (R/L) that are independent of deployment-phase timelines. Migration scheduling, transition phases, and compliance deadlines ... is planned to be addressed in the applicable post-quantum migration document currently under development."
+    defers_to: [EU-NIS-CG-ROADMAP, ENISA]
+
+hash_table:
+  SHA-224: "L[2028]"
+  SHA-256: R
+  SHA-384: R
+  SHA-512: R
+  SHA3-256: R
+  SHA3-384: R
+  SHA3-512: R
+
+crosscheck:
+  transition_tab_region_value: "ETSI"    # unchanged — already grounded, just weakly
+  rows_before: 1     # a single Covercrypt row citing ETSI TS 104 015, which sets no dates
+  rows_after: 6      # +5 new rows 2026-07-29 citing TS 119 312 V2.1.1 directly (algorithms_transitions_07282026.csv)
+  imminent_deadline: 2026-12-31     # nearest hard European deadline found in this audit — now actually wired
+  action_taken: "5 new rows added citing TS 119 312 V2.1.1's RSA/DSA <3000-bit 2026-12-31 deadline, SHA-224 2028 deadline, and ML-DSA/SLH-DSA introduction. Library row updated to the current V2.1.1 (was V1.5.1)."

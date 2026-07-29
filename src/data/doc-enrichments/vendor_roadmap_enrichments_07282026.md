@@ -8,27 +8,27 @@ source: public/vendor-roadmaps/
 # Vendor PQC Roadmap Enrichments
 
 
-## VND-154 — Ericsson AB
+## VND-236 — Centre for Development of Telematics (C-DOT)
 
-- **Vendor ID**: VND-154
-- **Vendor Name**: Ericsson AB
-- **Roadmap Title**: Migration to quantum-resistant cryptography - Ericsson
-- **Roadmap URL**: https://www.ericsson.com/en/reports-and-papers/ericsson-technology-review/articles/migrating-telecom-to-quantum-resistant-cryptography
-- **Publish Date**: 2026-07-28
-- **Local File**: vendor-roadmaps/VND-154_Ericsson_AB.html
+- **Vendor ID**: VND-236
+- **Vendor Name**: Centre for Development of Telematics (C-DOT)
+- **Roadmap Title**: Post Quantum Cryptography product category
+- **Roadmap URL**: https://www.cdot.in/cdotweb/web/product_category.php?lang=en&catId=10
+- **Publish Date**: 2026-07-29
+- **Local File**: vendor-roadmaps/VND-236_Centre_for_Development_of_Telematics_C_DOT.html
 - **CSV Coverage Notes**: None
-- **PQC Algorithms Announced**: ML-KEM; ML-DSA; SLH-DSA; FN-DSA; XMSS; LMS
-- **Target Migration Dates**: high-priority systems should migrate before 2031; full transition should be completed by 2035
-- **Products / Services Covered**: None detected
-- **Compliance Frameworks**: FIPS 203; FIPS 204; FIPS 205
-- **Hybrid Mode Support**: Yes, the document states that "algorithm implementation concerns have motivated a hybrid solution where the final key is a combination of traditional and PQC key exchange" for key establishment.
-- **Current GA Status**: Planned
-- **Customer Action Required**: preparation and deployment must begin immediately
-- **Key Commitments & Quotes**: "PQC is the only feasible approach for achieving quantum-safe security, and its adoption is a priority"
-- **Coverage Verification**: CONSISTENT, as the document is a general strategic overview and does not specify product-level coverage details.
-- **Extraction Quality**: MEDIUM
-- **Source Document**: VND-154_Ericsson_AB.html (270.0 KB)
-- **Extraction Timestamp**: 2026-07-28T06:12:54
+- **PQC Algorithms Announced**: None detected
+- **Target Migration Dates**: None detected
+- **Products / Services Covered**: C-DOT QUANTUM SAFE ENTERPRISE NETWORK e-QSAN; C-DOT ENHANCED QUATUM SECURE ACCESS NODE (e-QSAN); C-DOT SECURE AD-HOC NETWORK NODE QSWP2P-Quantum Safe Wireless P2P Solution; Q-SIIP; C-DOT QUANTUM SECURE IN-LINE NODE FOR IP PHONE Q-SETU PINE; Post Quantum In-Line Network Encryptor QSSVIP; Quantum Secure Smart Video IP Phone CEM; Compact Encryption Module
+- **Compliance Frameworks**: None detected
+- **Hybrid Mode Support**: None detected
+- **Current GA Status**: No PQC
+- **Customer Action Required**: None detected
+- **Key Commitments & Quotes**: None detected
+- **Coverage Verification**: CONSISTENT — The document lists product names but contains no roadmap details, dates, or algorithm specifications, consistent with "Not specified" coverage notes.
+- **Extraction Quality**: LOW
+- **Source Document**: VND-236_Centre_for_Development_of_Telematics_C_DOT.html (58.7 KB)
+- **Extraction Timestamp**: 2026-07-28T20:42:37
 
 ## VND-001 — Amazon Web Services Inc.
 
@@ -1440,6 +1440,29 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: MEDIUM
 - **Source Document**: VND-152_Adtran_Networks_SE_formerly_ADVA_.html (138.9 KB)
 - **Extraction Timestamp**: 2026-07-07T20:32:32
+
+## VND-154 — Ericsson AB
+
+- **Vendor ID**: VND-154
+- **Vendor Name**: Ericsson AB
+- **Roadmap Title**: Quantum-safe networks explained
+- **Roadmap URL**: https://www.ericsson.com/en/security/quantum-safe-networks
+- **Publish Date**: 2025
+- **Local File**: public/vendor-roadmaps/VND-154_Ericsson_AB.html
+- **CSV Coverage Notes**: Official Ericsson strategy page for transitioning telecom networks to quantum-resistant cryptography, referencing NIST ML-KEM/ML-DSA/SLH-DSA, NSA CNSA 2.0, and standardization work in 3GPP, IETF, GSMA. Lays out a phased migration: PQC likely introduced in 5G releases 20/21, with 6G (release 21) quantum-resistant from the start. | Milestone: PQC expected to be introduced in 5G era (3GPP releases 20/21) and 6G fully quantum-resistant from the start (~release 21), aligned with NSA 2030 phase-out guidance.
+- **Roadmap Scope**: Portfolio-wide strategy
+- **PQC Algorithms Announced**: ML-KEM; ML-DSA; SLH-DSA
+- **Target Migration Dates**: PQC likely introduced in 5G releases 20/21; 6G fully quantum-resistant from the start
+- **Products / Services Covered**: Portfolio-wide commitment (no individual products named)
+- **Compliance Frameworks**: NIST; IETF; 3GPP
+- **Hybrid Mode Support**: No
+- **Current GA Status**: Planned
+- **Customer Action Required**: None detected
+- **Key Commitments & Quotes**: "In 3GPP, post-quantum cryptography will likely be introduced already in the 5G era as part of upcoming releases 20 and/or 21."
+- **Coverage Verification**: PARTIAL; The document confirms the 3GPP timeline and NIST algorithm references but does not explicitly mention NSA CNSA 2.0 or GSMA in the provided text.
+- **Extraction Quality**: MEDIUM
+- **Source Document**: VND-154_Ericsson_AB.html (290.9 KB)
+- **Extraction Timestamp**: 2026-07-07T20:38:19
 
 ## VND-155 — Nokia Corporation
 

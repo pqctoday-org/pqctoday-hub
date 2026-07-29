@@ -1,0 +1,103 @@
+# Cross-check reference for the Algorithms > Transition Guide tab.
+# Reference artefact only — nothing here has been written into src/data.
+standard_id: AU-ASD-ISM-CRYPTOGRAPHY
+document_class: mechanism-catalogue        # covers ALL mechanisms, classical + PQC
+authority:
+  name: Australian Signals Directorate
+  short: ASD
+  country: AU
+  region_scope: [AU, FIVEEYES]
+document:
+  designation: "ISM — Guidelines for Cryptography"
+  title: "Australian Government Information Security Manual, Guidelines for Cryptography"
+  current_release: "June 2026"
+  cadence: quarterly
+  verified_release: "December 2024"
+  language: en
+  url: https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/ism/cyber-security-guidelines/guidelines-for-cryptography
+  current_release_url: "https://www.cyber.gov.au/sites/default/files/2026-06/Information%20security%20manual%20(June%202026).pdf"
+coverage:
+  classical_mechanisms: true
+  pqc_mechanisms: true
+  per_mechanism_end_dates: true
+  symmetric_and_hash: true
+  significance: "The most aggressive per-algorithm deprecation schedule of any national authority found in this audit — a single hard 2030 cliff covering classical AND the lower PQC parameter sets."
+verification:
+  verified_on: 2026-07-29
+  method: >
+    CLOSED via Wayback Machine (2026-07-29 gap-closure pass, second attempt after direct
+    curl/WebFetch to the live cyber.gov.au domain both timed out twice). Two snapshots
+    retrieved and text-extracted directly: (1) the live 'Guidelines for cryptography' HTML
+    page, snapshot dated 2026-06-21 — i.e. genuinely current, not a secondary summary; (2)
+    the official 'ISM June 2026 changes' PDF, snapshot dated 2026-07-24.
+  finding: >
+    Snapshot (1) shows every control text quoted in classical_deprecation/pqc_parameter_deprecation
+    below verbatim, each with its own ASD control ID and 'Revision'/'Updated' metadata — and
+    every one of those controls is stamped 'Updated: Dec-24'. That is direct, first-hand
+    confirmation (not secondary corroboration) that the December 2024 wording this file already
+    quoted is STILL the live wording as of the June 2026 release; nothing in these specific
+    controls changed. Snapshot (2) confirms what changed in June 2026 was scope/terminology
+    only: the 'data protection' principle was renamed to 'cryptographic protection', and two
+    existing controls (media encryption, network protocol encryption) were reworded to "capture
+    all scenarios" — no date or algorithm changed.
+  hub_library_reference_id: AU-ASD-ISM-Crypto-2024
+  hub_library_local_file: library/AU-ASD-ISM-Crypto-2024.pdf
+  hub_library_local_file_status: OK
+  hub_library_reference_id_current: ASD-Australia-Information-Security-Manual-Guidelines-for-Cry
+  hub_library_local_file_current: library/ASD-Australia-Information-Security-Manual-Guidelines-for-Cry.html
+  hub_library_note: "New row added 2026-07-29 citing the live guidelines page (verified current via the 2026-06-21 Wayback snapshot above) alongside the original Dec-2024 PDF citation — both kept, not replaced, since the PDF is still a valid point-in-time record."
+  hub_library_status: STALE     # library holds December 2024; current release is June 2026 — still not fetchable from this environment
+
+classical_deprecation:
+  common_end_date_iso: 2030-12-31
+  common_wording: "will not be approved for use beyond 2030"
+  mechanisms:
+    - {mechanism: RSA,            role: encryption-and-signature, end_date_iso: 2030-12-31}
+    - {mechanism: DH,             role: key-agreement,            end_date_iso: 2030-12-31}
+    - {mechanism: ECDH,           role: key-agreement,            end_date_iso: 2030-12-31}
+    - {mechanism: ECDSA,          role: signature,                end_date_iso: 2030-12-31}
+    - {mechanism: SHA-224,        role: hash,                     end_date_iso: 2030-12-31}
+    - {mechanism: SHA-256,        role: hash,                     end_date_iso: 2030-12-31}
+    - {mechanism: AES-128,        role: symmetric,                end_date_iso: 2030-12-31}
+    - {mechanism: AES-192,        role: symmetric,                end_date_iso: 2030-12-31}
+    - {mechanism: HMAC-SHA-256,   role: mac,                      end_date_iso: 2030-12-31}
+  note: "SHA-3 family (SHA3-*, SHAKE128, SHAKE256) is restricted to use within the internal steps of ML-DSA and ML-KEM."
+
+pqc_parameter_deprecation:
+  note: "ASD also sunsets the LOWER PQC parameter sets on the same 2030 date — no other authority in this audit does this."
+  mechanisms:
+    - {mechanism: ML-KEM-768, end_date_iso: 2030-12-31, quote: "taking into account projected technological advances in quantum computing, ML-KEM-768 will not be approved for use beyond 2030."}
+    - {mechanism: ML-DSA-65,  end_date_iso: 2030-12-31, quote: "taking into account projected technological advances in quantum computing, ML-DSA-65 will not be approved for use beyond 2030."}
+
+pqc_introduction:
+  hybrid_permitted: true
+  hybrid_definition: "at least one post-quantum algorithm (e.g. ML-KEM) combined with at least one traditional algorithm"
+  mechanisms:
+    - name: ML-KEM
+      function: KEM
+      standardised_by: FIPS 203
+      approved_parameter_sets: [ML-KEM-768, ML-KEM-1024]
+      preferred: ML-KEM-1024
+      rejected_parameter_sets: [ML-KEM-512]
+    - name: ML-DSA
+      function: signature
+      standardised_by: FIPS 204
+      approved_parameter_sets: [ML-DSA-65, ML-DSA-87]
+      preferred: ML-DSA-87
+      rejected_parameter_sets: [ML-DSA-44]
+      variant_guidance: "hedged variant used whenever possible"
+      prehash_guidance: "pre-hashed ML-DSA-65 requires at least SHA-384; pre-hashed ML-DSA-87 requires at least SHA-512"
+
+procurement_deadline:
+  deadline_iso: 2030-12-31
+  quote: "The development or procurement of new cryptographic equipment and software, which is intended to be used beyond 2030, should be undertaken with the goal of supporting ASD-approved post-quantum cryptographic algorithms by 2030."
+  target_set: [ML-DSA-87, ML-KEM-1024, SHA-384, SHA-512, AES-256]
+  target_quote: "... support ML-DSA-87, ML-KEM-1024, SHA-384, SHA-512 and AES-256 by no later than 2030."
+
+crosscheck:
+  transition_tab_region_value_before: "(none — no AU value existed in REGION_ITEMS)"
+  rows_before: 0
+  transition_tab_region_value_after: "ASD"
+  rows_after: 11
+  action_taken: "ASD added to REGION_ITEMS 2026-07-29 with 11 new rows (algorithms_transitions_07282026.csv) — the uniform 2030 cliff across RSA/DH/ECDH/ECDSA/SHA-224/SHA-256/AES-128/AES-192/HMAC-SHA-256, plus the ML-KEM-768/ML-DSA-65 PQC-parameter sunset unique to this regulator."
+  impact_resolved: "An Australian reader can now select ASD and see their regulator disallows RSA/ECDH/ECDSA/AES-128 AND ML-KEM-768/ML-DSA-65 five years earlier than the NIST 'disallowed' date, instead of only seeing NIST's 2030/2035 dates."

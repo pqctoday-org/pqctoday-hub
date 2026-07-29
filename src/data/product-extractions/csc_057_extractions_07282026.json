@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "Ledger SDK Post-Quantum Cryptography",
+    "category": "Digital Asset Custody",
+    "product_name": "Ledger SDK Post-Quantum Cryptography",
+    "product_brief": "Ledger SDK implementation of ML-KEM and ML-DSA for quantum-resistant key exchange and signatures on embedded devices.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Implements ML-KEM (FIPS 203) for key encapsulation and ML-DSA (FIPS 204) for digital signatures. Optimized for constrained hardware (Ledger devices) with low-RAM techniques. Output is bit-for-bit identical to NIST reference. Current version lacks side-channel countermeasures (planned for v2).",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "ML-KEM, ML-DSA, ECDSA, ECDH, RSA, SHA3-256, SHA3-512, SHAKE-128, SHAKE-256, AES",
+    "key_management_model": "Secure Element-backed key generation and storage on Ledger hardware devices; programmatic API for key pair generation, encapsulation, decapsulation, signing, and verification.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Hardware Secure Element (HSM-based)",
+    "infrastructure_layer": "Application, Hardware",
+    "license_type": "Proprietary",
+    "license": "Proprietary",
+    "latest_version": "V1 (implied by \"NO SIDE-CHANNEL COUNTERMEASURES IN V1\")",
+    "release_date": "2026-06-01",
+    "fips_validated": "No (Implements FIPS 203/204 standards; output matches NIST test vectors, but no FIPS 140 validation status stated)",
+    "primary_platforms": "Ledger Nano X, Ledger Nano S Plus, Ledger Flex, Ledger Stax, Ledger Nano Gen5",
+    "target_industries": "Cryptocurrency, Digital Asset Custody",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Future v2 will add side-channel countermeasures including shuffling (random permutation of polynomial operations) and arithmetic masking.",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "ML-DSA (ML-DSA-44, ML-DSA-65, ML-DSA-87), ECDSA",
+    "authoritative_source_url": "Ledger-SDK-Post-Quantum-Cryptography-af0bf395.html",
+    "implementation_attack_surface": "Current V1 lacks hardware countermeasures against fault injection and side-channel attacks (e.g., arithmetic masking, execution shuffling). Constant-time comparison and sensitive zeroization are implemented.",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Bit-for-bit identical output to NIST reference test vectors.",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Highly suitable for constrained embedded systems; optimized for stack usage <16kB on Ledger secure elements using row-by-row matrix expansion and on-the-fly polynomial recomputation.",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-07-28"
+    }
+  }
+]
