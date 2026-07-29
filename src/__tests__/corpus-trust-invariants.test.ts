@@ -238,7 +238,25 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     PKCS11-V32-OASIS = v3.2 CSD01 draft), both superseded_by the final v3.2
   //     OASIS Standard. Deprecated rows aren't tier-scored, so they surface as
   //     gaps here (DS19 confirms both carry proper deprecation metadata). Expected.
-  library: 2,
+  //     2026-07-29: bumped 2 → 5 — five more deprecated library rows, none of
+  //     them a routing gap:
+  //       - BSI-Quantum-Technologies-and-Quantum-Safe-Cryptography-BSI-T: pre-
+  //         existing drift from the 07-28 PR #468 dedup pass (deprecated as a
+  //         duplicate BSI TR-02102-1 URL variant) that was never reflected in
+  //         this pinned count — the committed corpus already had a chunk for
+  //         it, this is the first time this test actually ran against that
+  //         state.
+  //       - draft-ietf-pquip-pqc-engineers-14, draft-ietf-lamps-pq-composite-
+  //         sigs-19-Composite-Module-Latti, https-arxiv-org-pdf-2510-10436,
+  //         New-Pure-Post-Quantum-Protocol-Specification: newly deprecated by
+  //         the 07-29 library-stub-completion pass (published-RFC supersession,
+  //         2 duplicate stubs, 1 IETF-Datatracker-confirmed draft supersession
+  //         — see library-stub-completion-proposals-07292026.md). Each carries
+  //         a corpus chunk from before deprecation; DS19/DS21 confirm all five
+  //         rows carry proper deprecation/supersession metadata.
+  //     Resolves toward 0 on the next refresh-index run per the standing
+  //     data-PR-lag convention documented throughout this file.
+  library: 5,
   //     2026-07-08: bumped 0 → 2 — NGCC-BC and NGCC-CH (China's NGCC program
   //     block-cipher and hash track placeholders) exist as rows in
   //     pqc_complete_algorithm_reference_07062026.csv but have no matching
