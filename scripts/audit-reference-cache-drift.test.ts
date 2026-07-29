@@ -10,6 +10,7 @@ import {
   contentRegion,
   decodeEntities,
   dedupeBlockedByHash,
+  isPdf,
   looksBlocked,
   normalizedText,
   mapPool,
@@ -880,5 +881,75 @@ describe('zero-width markup is not a word boundary', () => {
   it('a real block boundary still separates words', () => {
     // The reason tags become a space in the first place — this must not regress.
     expect(normalizedText(Buffer.from('<main><p>alpha</p><p>beta</p></main>'))).toBe('alpha beta')
+  })
+})
+
+describe('url-type-mismatch — a landing page is not a changed document', () => {
+  const NOW = new Date('2026-07-29T12:00:00Z')
+
+  function withCache(cached: Buffer, live: Buffer) {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'drift-type-'))
+    const cacheDir = path.join(dir, 'priv', 'local-evidence-cache', 'library')
+    fs.mkdirSync(cacheDir, { recursive: true })
+    fs.writeFileSync(path.join(cacheDir, 'FIPS_186-5.pdf'), cached)
+    const prev = process.env.REFERENCE_CACHE_ROOT
+    process.env.REFERENCE_CACHE_ROOT = path.join(dir, 'priv', 'local-evidence-cache')
+    const fetcher: FetchImpl = async () => ({
+      bytes: live,
+      sha256: sha256Of(live.toString('latin1')),
+    })
+    const entry = {
+      refId: 'FIPS 186-5',
+      url: 'https://csrc.nist.gov/pubs/fips/186-5/final',
+      status: 'downloaded',
+      filename: 'FIPS_186-5.pdf',
+      sha256: sha256Of(cached.toString('latin1')),
+      sizeBytes: cached.length,
+    }
+    const restore = () => {
+      if (prev === undefined) delete process.env.REFERENCE_CACHE_ROOT
+      else process.env.REFERENCE_CACHE_ROOT = prev
+      fs.rmSync(dir, { recursive: true, force: true })
+    }
+    return { fetcher, entry, restore }
+  }
+
+  const PDF = Buffer.concat([Buffer.from('%PDF-1.7\n'), Buffer.from('a'.repeat(4000))])
+  const LANDING = Buffer.from(
+    '<html><body><main>' +
+      '<h1>FIPS 186-5, Digital Signature Standard</h1>'.repeat(60) +
+      '</main></body></html>'
+  )
+
+  it('a cached PDF against a fetched HTML page is not drift', async () => {
+    // The live case: 18 of 135 findings. The row's URL is the publication's
+    // landing page; local_file is the PDF it links to. Driving the re-cache
+    // over the first eight found every real PDF byte-identical to the cache.
+    const { fetcher, entry, restore } = withCache(PDF, LANDING)
+    try {
+      const f = await classifyEntry('library', entry, fetcher, 5000, NOW)
+      expect(f.classification).toBe('url-type-mismatch')
+    } finally {
+      restore()
+    }
+  })
+
+  it('a genuinely changed PDF is still drift', async () => {
+    const changed = Buffer.concat([Buffer.from('%PDF-1.7\n'), Buffer.from('b'.repeat(9000))])
+    const { fetcher, entry, restore } = withCache(PDF, changed)
+    try {
+      const f = await classifyEntry('library', entry, fetcher, 5000, NOW)
+      expect(f.classification).toBe('drift')
+      expect(f.textComparison).toBe('differs')
+    } finally {
+      restore()
+    }
+  })
+
+  it('isPdf keys on the magic bytes, not the extension', () => {
+    expect(isPdf(Buffer.from('%PDF-1.4 ...'))).toBe(true)
+    expect(isPdf(Buffer.from('<!doctype html>'))).toBe(false)
+    expect(isPdf(Buffer.from('%PD'))).toBe(false)
+    expect(isPdf(Buffer.alloc(0))).toBe(false)
   })
 })

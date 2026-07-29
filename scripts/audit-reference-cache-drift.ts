@@ -110,6 +110,9 @@ type DriftClassification =
   | 'size-mismatch'
   | 'no-stored-hash'
   | 'blocked'
+  /** The cached copy is a PDF and the URL served HTML — the citation points at
+   *  a landing page, not the document. Not a content change; see classifyEntry. */
+  | 'url-type-mismatch'
 
 interface DriftFinding {
   collection: string
@@ -455,6 +458,19 @@ function readCachedBytes(collection: string, entry: ManifestEntry): Uint8Array |
   }
 }
 
+/** PDF magic bytes. A cached PDF and a fetched HTML page are not the same
+ *  document in two states — they are different things entirely. */
+export function isPdf(bytes: Uint8Array): boolean {
+  return (
+    bytes.length >= 5 &&
+    bytes[0] === 0x25 &&
+    bytes[1] === 0x50 &&
+    bytes[2] === 0x44 &&
+    bytes[3] === 0x46 &&
+    bytes[4] === 0x2d
+  )
+}
+
 const BLOCKED_SCAN_MAX_BYTES = 100_000
 
 // Real bug found the SAME day this was added (2026-07-12): scanning the
@@ -578,6 +594,28 @@ export async function classifyEntry(
         ...base,
         classification: 'ok',
         okVia: 'normalized-text',
+        observedSha256: result.sha256,
+        observedSizeBytes: observedSize,
+      }
+    }
+    // A cached PDF against a fetched HTML page is not a changed document — it
+    // is a URL that does not serve the document at all. ADDED 2026-07-29: 18 of
+    // the 135 drift findings were exactly this, because the row's URL is the
+    // publication's LANDING page (NIST csrc /pubs/.../final, NCSC whitepapers,
+    // arXiv /abs/, ITU /rec/) while local_file is the PDF it links to. Driving
+    // the re-cache over the first eight fetched every real PDF through the
+    // landing-page link and found all eight byte-identical to the cache: the
+    // documents had not changed at all, and comparing a page against a
+    // different file format can only ever say "differs".
+    //
+    // Reported as its own classification rather than drift, because the action
+    // is different in kind: nothing needs re-caching, the citation needs to
+    // resolve to the document (see recache_drifted_evidence.resolve_pdf_url,
+    // which follows the link without changing the human-facing URL).
+    if (isPdf(cached) && !isPdf(result.bytes)) {
+      return {
+        ...base,
+        classification: 'url-type-mismatch',
         observedSha256: result.sha256,
         observedSizeBytes: observedSize,
       }
