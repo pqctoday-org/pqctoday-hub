@@ -449,6 +449,52 @@ function computeAllScores(): Map<string, TrustScore> {
     }
   }
 
+  // Algorithms present in the REFERENCE catalogue but absent from the
+  // transitions CSV. Added 2026-07-29 (maintenance-flow remediation WP-0.1).
+  //
+  // The loop above iterates `algorithmsData`, which is
+  // algorithms_transitions_*.csv — a "what replaces what" table. Anything the
+  // reference catalogue lists that nothing classical transitions TO therefore
+  // got no score entry at all, and every corpus chunk for it orphaned in the
+  // C3 tier-resolution invariant. That was 22 of 118 catalogued algorithms:
+  //
+  //   * 17 hybrid/composite wire-format identifiers (X-Wing, the
+  //     draft-ietf-lamps-pq-composite id-MLKEM* OIDs, the SSH/TLS combiners
+  //     like mlkem768x25519-sha256). Nothing "transitions to" a combiner — the
+  //     classical→PQC move is already recorded against ML-KEM-768 itself — so
+  //     a transitions row for them would be fiction, not data.
+  //   * 3 NIST additional-signature candidates (MQOM, QR-UOV, SDitH).
+  //   * 2 NGCC placeholders whose competition has not opened.
+  //
+  // The reference CSV already carries their real peer_reviewed / vetting_body /
+  // fips_standard values (X-Wing: peer_reviewed=yes, vetting_body=IRTF CFRG) —
+  // this module was importing that map and only ever reading it as a JOIN onto
+  // the transitions list, never as a source of rows. Scoring from it directly
+  // is the same data through the same rules, applied to the entries the join
+  // could not reach.
+  //
+  // Deliberately second, and guarded on `!scores.has(...)`: a transitions row
+  // carries a standardizationDate this map does not, so where both exist the
+  // richer one above wins.
+  for (const [name, trust] of algorithmTrustByName) {
+    const cleanName = name.replace(/\s*\([^)]*\)\s*$/, '')
+    if (!cleanName || scores.has(`algorithm:${cleanName}`)) continue
+    const derivedVetting = new Set<string>(trust.vettingBody ?? [])
+    if (trust.fipsStandard) derivedVetting.add('NIST')
+    score('algorithm', cleanName, {
+      peerReviewed: trust.peerReviewed,
+      vettingBody: derivedVetting.size > 0 ? Array.from(derivedVetting) : undefined,
+      algorithmFamily: cleanName,
+    })
+    if (cleanName !== name) {
+      scores.set(`algorithm:${name}`, scores.get(`algorithm:${cleanName}`)!)
+    }
+    const hyphenated = cleanName.replace(/\s+/g, '-')
+    if (hyphenated !== cleanName) {
+      scores.set(`algorithm:${hyphenated}`, scores.get(`algorithm:${cleanName}`)!)
+    }
+  }
+
   return scores
 }
 

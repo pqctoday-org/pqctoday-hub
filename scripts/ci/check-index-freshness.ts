@@ -42,14 +42,34 @@ const idSet = (corpusPath: string): Set<string> => {
 
 function regenerateCorpusToTemp(): string {
   const out = path.join(mkdtempSync(path.join(tmpdir(), 'rag-fresh-')), 'rag-corpus.json')
-  execFileSync('npx', ['tsx', 'scripts/generate-rag-corpus.ts'], {
-    cwd: ROOT,
-    // TSX_TSCONFIG_PATH: see comment in refresh-index.sh — the generator
-    // imports a `@/*`-aliased .tsx file (workshopRegistry) that tsx can't
-    // resolve from the solution-style root tsconfig.json.
-    env: { ...process.env, RAG_CORPUS_OUT: out, TSX_TSCONFIG_PATH: 'tsconfig.app.json' },
-    stdio: 'ignore',
-  })
+  try {
+    execFileSync('npx', ['tsx', 'scripts/generate-rag-corpus.ts'], {
+      cwd: ROOT,
+      // TSX_TSCONFIG_PATH: see comment in refresh-index.sh — the generator
+      // imports a `@/*`-aliased .tsx file (workshopRegistry) that tsx can't
+      // resolve from the solution-style root tsconfig.json.
+      env: { ...process.env, RAG_CORPUS_OUT: out, TSX_TSCONFIG_PATH: 'tsconfig.app.json' },
+      // 'pipe', not 'ignore' — the generator's own failure text is the ONLY
+      // thing that says what went wrong, and discarding it made a real outage
+      // undiagnosable. On 2026-07-29 the generator was aborting on 29 vendor
+      // rows whose website value had no https:// scheme ("Deep-link validation
+      // failed: 29 chunk(s)"), so this check — and `npm run refresh-index` —
+      // had been failing on main. All an operator saw was execFileSync's own
+      // stack trace with `output: [ null, null, null ]`, naming neither the
+      // reason nor even the collection. Re-raise with the child's stderr
+      // attached so the first run points at the actual cause.
+      stdio: 'pipe',
+      encoding: 'utf-8',
+    })
+  } catch (err) {
+    const e = err as { stderr?: string; stdout?: string; status?: number }
+    const detail = [e.stderr, e.stdout].filter(Boolean).join('\n').trim()
+    throw new Error(
+      `generate-rag-corpus.ts exited ${e.status ?? '?'} — the corpus could not be ` +
+        `regenerated, so freshness cannot be compared.\n` +
+        (detail || '(the generator produced no output at all)')
+    )
+  }
   return out
 }
 

@@ -138,7 +138,22 @@ const OUTPUT_FILE = process.env.RAG_CORPUS_OUT || path.join(OUTPUT_DIR, 'rag-cor
 
 /**
  * Load the latest source-passages-*.json produced by extract-source-passages.py.
- * Returns a Map<refId, string[]> of passage texts, or an empty map if not found.
+ * Returns a Map<refId, string[]> of passage texts.
+ *
+ * THIS INPUT IS GITIGNORED AND MAIN-CHECKOUT-ONLY (.gitignore `scripts/*`), so
+ * a corpus generated from a git worktree silently loses EVERY chunk's
+ * source_passages unless the file is linked in. That is not hypothetical: it
+ * is what made corpus-trust-invariants' C4 ratchet
+ * (MAX_DOC_WITHOUT_PASSAGES) climb 717 → 725 → 752 across four separate
+ * sessions, each bump annotated "new rows landed without extracted
+ * source_passages … Enrich to drive down". Enrichment was never the problem —
+ * with the artifact present the same corpus reports 186 rather than 762, and
+ * 576 chunks carry passages instead of zero. Four bumps rode on one silent
+ * empty Map.
+ *
+ * So: never return an empty map quietly. A missing or unreadable artifact is
+ * an environment problem with a one-line fix (link or copy it in from the main
+ * checkout), and saying so costs one line of output.
  */
 function loadSourcePassages(): Map<string, string[]> {
   const files = fs
@@ -146,7 +161,15 @@ function loadSourcePassages(): Map<string, string[]> {
     .filter((f) => f.startsWith('source-passages-') && f.endsWith('.json'))
     .sort((a, b) => datedFileKey(a).localeCompare(datedFileKey(b)))
     .reverse()
-  if (files.length === 0) return new Map()
+  if (files.length === 0) {
+    console.warn(
+      `  ⚠ No scripts/source-passages-*.json found under ${SCRIPTS_DIR} — every chunk's\n` +
+        `    prov.source_passages will be EMPTY. The file is gitignored and lives only in\n` +
+        `    the main hub checkout; from a worktree, link it in first:\n` +
+        `      ln -s ../../pqctoday-hub/scripts/source-passages-<date>.json scripts/`
+    )
+    return new Map()
+  }
   try {
     const raw = fs.readFileSync(path.join(SCRIPTS_DIR, files[0]), 'utf-8')
     const data = JSON.parse(raw) as { passages?: Record<string, { text: string }[]> }
@@ -157,8 +180,14 @@ function loadSourcePassages(): Map<string, string[]> {
         passages.map((p) => p.text)
       )
     }
+    if (map.size === 0) {
+      console.warn(`  ⚠ ${files[0]} parsed but contained no passages — prov.source_passages`)
+      console.warn(`    will be empty for every chunk.`)
+    }
     return map
-  } catch {
+  } catch (err) {
+    console.warn(`  ⚠ Could not read ${files[0]}: ${String(err)} — prov.source_passages`)
+    console.warn(`    will be empty for every chunk.`)
     return new Map()
   }
 }
