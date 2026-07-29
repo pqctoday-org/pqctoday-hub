@@ -13,7 +13,7 @@
       "prettier --write"
     ],
     "**/*.{json,md,css,html}": "prettier --write",
-    "**/*.csv": "perl -pi -e 's/\\r$//'"
+    "!(**/archive/**)*.csv": "perl -pi -e 's/\\r$//'"
   },
   "scripts": {
     "gen:timeline-facts": "node scripts/gen-timeline-facts.mjs",

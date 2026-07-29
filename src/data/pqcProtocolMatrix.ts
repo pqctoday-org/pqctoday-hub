@@ -50,7 +50,7 @@
 import type { Freshness } from './contentFreshness'
 
 /** ISO date of the last manual update to PROTOCOL_MATRIX below. */
-export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-07-27'
+export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-07-29'
 
 /**
  * Structured freshness for the content-freshness manifest — pairs the snapshot
@@ -728,8 +728,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        stage: 'wg-last-call',
-        stageNote: 'In WG Last Call (draft-08, Jun 2026; intended status Informational)',
+        stage: 'iesg-submitted',
+        stageNote: 'iesg submitted (datatracker 2026-07-28)',
         deploymentPosture: 'pilot',
         deploymentNote:
           'Standalone ML-KEM groups gated behind feature flags in BoringSSL / Chromium experimental builds.',
@@ -990,8 +990,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stage: 'ietf-last-call',
-        stageNote: 'IETF Last Call — ends 2026-07-27 (draft-17)',
+        stage: 'iesg-submitted',
+        stageNote: 'iesg submitted (datatracker 2026-07-27)',
         note: 'Composite mode pairs ML-KEM with RSA-OAEP / ECDH / X25519 / X448 classical KEMs.',
         refs: [
           {
@@ -1657,9 +1657,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stage: 'ietf-last-call',
-        stageNote:
-          'Inherited from X.509 row — draft-ietf-lamps-pq-composite-kem-17 in IETF Last Call (ends 2026-07-27)',
+        stage: 'iesg-submitted',
+        stageNote: 'iesg submitted (datatracker 2026-07-27)',
         note: 'Composite enrollment uses PKCS#10 / CMP wrappers — see X.509 row for the composite KEM construction.',
         refs: [
           {
@@ -1816,8 +1815,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stage: 'ietf-last-call',
-        stageNote: 'ietf last call (datatracker 2026-07-23)',
+        stage: 'iesg-submitted',
+        stageNote: 'iesg submitted (datatracker 2026-07-27)',
         note: 'Same draft as Pure KEM; hybrid mode composes with draft-ietf-lamps-pq-composite-kem, itself still in IETF Last Call at the X.509 layer (see X.509 row).',
         refs: [
           {
@@ -2935,7 +2934,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        stage: 'wg-last-call',
+        stage: 'iesg-submitted',
+        stageNote: 'iesg submitted (datatracker 2026-07-28)',
         note: 'Inherits TLS 1.3 — pure ML-KEM groups.',
         refs: [
           {
@@ -3031,7 +3031,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        stage: 'wg-last-call',
+        stage: 'iesg-submitted',
+        stageNote: 'iesg submitted (datatracker 2026-07-28)',
         note: 'Inherits TLS 1.3 — pure ML-KEM groups.',
         refs: [
           {
@@ -3113,7 +3114,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        stage: 'wg-last-call',
+        stage: 'iesg-submitted',
+        stageNote: 'iesg submitted (datatracker 2026-07-28)',
         note: 'Inherits TLS 1.3 (EAP-TLS bootstrap) — pure ML-KEM via TLS 1.3 KEX.',
         refs: [
           {

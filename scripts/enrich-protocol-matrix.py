@@ -342,9 +342,27 @@ def resolve_replaced_chain(name: str, *, max_hops: int = 3) -> tuple[str, list[s
     return current, chain
 
 
+# The datatracker returns a document's type as a NAME resource
+# (`/api/v1/name/doctypename/rfc/`), not a DOC resource. This constant used to
+# be spelled `/api/v1/doc/doctypename/rfc` inline below — one segment wrong, so
+# the RFC branch never once matched and every RFC ref fell through to the
+# states-based path instead of resolving to 'rfc-published'.
+#
+# The visible symptom was two permanent false "downgrades" that had to be
+# re-triaged on every run: ssh:hybridKem and cose:pureSig both encode
+# 'rfc-published' on the strength of a published RFC sibling (RFC 9941 and
+# RFC 9964 respectively) while ALSO tracking a follow-on draft that is
+# legitimately still in progress. _suppress_covered_downgrades exists precisely
+# to silence that case — but it can only suppress when the sibling's resolved
+# stage is known, and the RFC sibling's stage was never resolved. So the
+# suppression fired for draft-vs-draft pairs (5 of them this run) and never for
+# draft-vs-RFC. Found 2026-07-29 by querying the API directly.
+_RFC_DOCTYPE_PREFIX = "/api/v1/name/doctypename/rfc"
+
+
 def state_to_stage(doc: dict[str, Any]) -> tuple[str | None, str | None]:
     """Pick the most informative state and map to DraftStage."""
-    if doc.get("type", "").startswith("/api/v1/doc/doctypename/rfc"):
+    if doc.get("type", "").startswith(_RFC_DOCTYPE_PREFIX):
         return "rfc-published", "rfc"
     # the 'states' field is an array of dicts OR resource-URI strings
     states = doc.get("states") or []
