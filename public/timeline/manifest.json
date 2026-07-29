@@ -1934,12 +1934,12 @@
     },
     {
       "label": "Thailand-NCSA-Quantum-Ready-2030-Roadmap",
-      "url": "https://www.bangkokpost.com/business/general/3276244/agency-introduces-quantum-roadmap-cyber-strategy",
+      "url": "https://pqc-learn.ncsa.or.th",
       "status": "downloaded",
       "file": "timeline/Thailand-NCSA-Quantum-Ready-2030-Roadmap.html",
-      "sizeBytes": 77051,
+      "sizeBytes": 95269,
       "contentType": "text/html",
-      "sha256": "5ee4da4aa81c39a7bae099a2c050277deb5e8156a37abd8a22836b7caa500a87"
+      "sha256": "e40e04f917bb202d23ee507dac7e7343687da7191d5caeedd159adc495dd829e"
     },
     {
       "label": "Indonesia-BSSN-National-PQC-Migration-Roadmap-Task-Force",
