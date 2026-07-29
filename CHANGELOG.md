@@ -29,6 +29,14 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.28.1] - 2026-07-28
+
+A small data-quality cleanup on the Library page.
+
+### Fixed
+
+- **Four duplicate Library entries removed** [view:/library] [persona:researcher] [persona:architect]: a German BSI cryptography guideline and an arXiv survey paper had each been accidentally added to the catalog more than once under slightly different web addresses; the extra copies are now retired in favor of the original, fully-reviewed entries.
+
 ## [4.28.0] - 2026-07-28
 
 A big data-accuracy and coverage pass across Migrate, Vendor Roadmaps, Timeline, Trusted Sources, Threats, and Algorithms — plus real fixes to broken certificate links, a mis-detected PQC algorithm, and several data-pipeline bugs found along the way.
