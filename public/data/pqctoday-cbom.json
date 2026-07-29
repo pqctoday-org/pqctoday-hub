@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:2174a1f3-059d-4a21-afaa-52d48e056958",
+  "serialNumber": "urn:uuid:3b9db9ba-559a-4664-a073-330b8dc5cc3a",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-07-27T00:00:00.000Z",
+    "timestamp": "2026-07-28T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -34140,6 +34140,548 @@
         {
           "name": "pqctoday:layer",
           "value": "Application"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "7a40282fbcf2aa10",
+      "name": "Libpqsecure-rs",
+      "version": "1.0",
+      "manufacturer": {
+        "name": "PQSecure Technologies, Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "Rust implementation of post-quantum cryptography algorithms with no_std support. Supports LMS (KeyGen, SigGen, SigVer), ML-DSA (KeyGen, SigGen, SigVer), ML-KEM (EncapDecap, KeyGen), and SLH-DSA (KeyGen, SigGen, SigVer). Validated on Raspberry Pi OS (Debian 12) in ARM Cortex-A76.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Libpqsecure-rs"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Post-Quantum Cryptography Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Yes (First Validated: 10/29/2025 via CAVP)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "cd38cf52cc15d404",
+      "name": "PhioTX",
+      "version": "4.2.1",
+      "manufacturer": {
+        "name": "Quantum Xchange Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "kem",
+          "algorithmFamily": "ML-KEM"
+        }
+      },
+      "description": "Supports ML-KEM (EncapDecap and KeyGen). Validated under NIST CAVP.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "PhioTX"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Key Management Systems (KMS)"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Yes (NIST CAVP validated; First Validated: 11/4/2024)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "f5b47751e61eb81d",
+      "name": "Secure-IC PQC Solutions",
+      "version": "1.0",
+      "manufacturer": {
+        "name": "Secure-IC"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "Supports ML-KEM, ML-DSA, SLH-DSA, and LMS algorithms. Optimized for faster throughput in hardware implementations. Embedded in Secure-IC's integrated Secure Elements (Securyzr™ iSEs S100, S300, S700, S900 neo series) and Securyzr™ Crypto Solutions/Crypto co-processors. Strictly follows NIST PQC requirements.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Secure-IC-PQC-Solutions"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Hardware Security & Semiconductors"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Yes (CAVP Validated; First Validated: 10/30/2024)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "413b98a754432e5c",
+      "name": "Uni-sentry SecIP-PQCHSM Secure Hardware",
+      "version": "v1.0",
+      "manufacturer": {
+        "name": "Shanghai Uni-Sentry Intelligent Technology Co., Ltd."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "Integrates classical and postquantum cryptography. Supports ML-KEM (KeyGen, EncapDecap), ML-DSA (KeyGen, SigGen, SigVer), and SLH-DSA (KeyGen, SigGen, SigVer). Validated on Xilinx Kintex-7 XC7K325T.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Uni-sentry-SecIP-PQCHSM-Secure-Hardware"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Hardware Security Module (HSM) Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Yes (First Validated: 3/30/2026; Algorithms reference FIPS 186-4, FIPS 186-5, FIPS 202)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "f874d53a853054ff",
+      "name": "TASS Crypto Engine (LMS)",
+      "version": "H2.00.00",
+      "manufacturer": {
+        "name": "Beijing JN TASS Technology Co., Ltd."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The implementation supports the LMS (Leighton-Micali Signature) algorithm family, specifically covering LMS KeyGen, LMS SigGen, and LMS SigVer operations. It is a FIPS-validated cryptographic algorithm implementation.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "TASS-Crypto-Engine-LMS"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Yes (First Validated: 5/27/2025)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "252e8a9c756a48e8",
+      "name": "Cryptographic library NesLib 6.11.6 on ST33K1M5A and ST33K1M5M B04 Version : 6.11.6 / B04 (EUCC-3090-2026-17)",
+      "version": "6.11.6",
+      "manufacturer": {
+        "name": "STMicroelectronics N.V."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Supports the (post-quantum) stateful hash-based LMS signature scheme.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Cryptographic-library-NesLib-6-11-6-on-S"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Smart Cards & Secure Elements"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "996647fa8da65305",
+      "name": "Cryptographic library NesLib 6.11.6 on ST33K1M5C and ST33K1M5T C03 Version : 6.11.6 / C03 (EUCC-3090-2026-16)",
+      "version": "6.11.6",
+      "manufacturer": {
+        "name": "STMicroelectronics N.V."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Supports the (post-quantum) stateful hash-based LMS signature scheme. Includes LMS signature verification operation (SFHDSA).",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Cryptographic-library-NesLib-6-11-6-on-S-2"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Smart Cards & Secure Elements"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "f408e7dab48dacf5",
+      "name": "Cryptographic library NESLIB 6.11.3 on ST31R480 A01 (version 6.11.3)(ANSSI-CC-2025/26)",
+      "version": "6.11.3",
+      "manufacturer": {
+        "name": "STMicroelectronics N.V."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Supports the (post-quantum) stateful hash-based LMS signature scheme. Includes LMS signature verification operation (SFHDSA).",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Cryptographic-library-NESLIB-6-11-3-on-S"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Smart Cards & Secure Elements"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "b7b9835cf5585b9a",
+      "name": "Cryptographic library NESLIB 6.11.3 on ST31R480 B01 (version 6.11.3) (ANSSI-CC-2025/27)",
+      "version": "6.11.3",
+      "manufacturer": {
+        "name": "STMicroelectronics N.V."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Supports the (post-quantum) stateful hash-based LMS signature scheme. Includes LMS signature verification operation (SFHDSA).",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Cryptographic-library-NESLIB-6-11-3-on-S-2"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Smart Cards & Secure Elements"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "fab2a52379e04dab",
+      "name": "ITE LAx-551x Embedded Controller with PQC Cryptographic Engine",
+      "version": "HW01",
+      "manufacturer": {
+        "name": "ITE Tech. Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "Supports Post-Quantum Cryptography (PQC) algorithms, effectively defending against potential quantum attacks. Specifically validated for ML-DSA (KeyGen, SigGen, SigVer) and ML-KEM (EncapDecap, KeyGen).",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "ITE-LAx-551x-Embedded-Controller-with-PQ"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Hardware Security & Semiconductors"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Yes (Validated under Cryptographic Algorithm Validation Program; First Validated: 5/6/2026)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "fd2cbd089d5cd0e5",
+      "name": "AWS Key Management Service Cryptographic Algorithm Library",
+      "version": "3.0.3",
+      "manufacturer": {
+        "name": "Amazon Web Services Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-DSA",
+          "primitive": "signature",
+          "algorithmFamily": "ML-DSA"
+        }
+      },
+      "description": "Supports ML-DSA (CRYSTALS-Dilithium) for KeyGen, SigGen, and SigVer operations. Validated on Intel Cascade Lake and Sapphire Rapids processors.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "AWS-Key-Management-Service-Cryptographic"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Yes (First Validated: 9/8/2025; references FIPS 186-5, FIPS 203/204 implied by ML-DSA naming, SP 800-56A/B, SP 800-108)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "df1c7ef5bc1c3172",
+      "name": "Cloudian-FJA (FIPS Java API)",
+      "manufacturer": {
+        "name": "Cloudian Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Cloudian-FJA-FIPS-Java-API"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "372f6162a917a19d",
+      "name": "ASI-HSM AHX5 KNET Cryptographic Module",
+      "manufacturer": {
+        "name": "Kryptus Segurança da Informação S.A."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "ASI-HSM-AHX5-KNET-Cryptographic-Module"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Hardware Security Module (HSM) Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
         },
         {
           "name": "pqctoday:fips_validated",
