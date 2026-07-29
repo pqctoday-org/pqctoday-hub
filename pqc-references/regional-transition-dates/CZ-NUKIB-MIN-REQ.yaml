@@ -1,0 +1,64 @@
+# Cross-check reference for the Algorithms > Transition Guide tab.
+# Reference artefact only — nothing here has been written into src/data.
+standard_id: CZ-NUKIB-MIN-REQ
+document_class: mechanism-catalogue        # covers ALL mechanisms, classical + PQC
+authority:
+  name: "Narodni urad pro kybernetickou a informacni bezpecnost"
+  short: NUKIB
+  country: CZ
+  region_scope: [CZ, EU]
+document:
+  designation: "Minimum Requirements for Cryptographic Algorithms"
+  version: "4.0"
+  valid_from: 2025-02-01
+  approved: 2025-05-20
+  language: "cs (non-binding EN translation available)"
+  tlp: TLP:CLEAR
+  changes_in_v4: "NIST post-quantum standards, KMAC, parameter update for secure password storage algorithms, legacy algorithms removal"
+coverage:
+  classical_mechanisms: true
+  pqc_mechanisms: true
+  per_mechanism_end_dates: false          # approval tiers only, no calendar deadlines
+  symmetric_and_hash: true
+verification:
+  verified_on: 2026-07-28
+  method: cached primary-source PDF text-extracted from pqctoday-priv/public/library
+  hub_library_reference_id: CZ-NUKIB-Crypto-Requirements-2023
+  hub_library_local_file: library/CZ-NUKIB-Crypto-Requirements-2023.pdf
+  hub_library_local_file_status: OK
+  hub_library_date_mismatch: "library records initial_publication_date 2023-06-01 (that is v3.0); the cached PDF is v4.0 valid from 2025-02-01"
+
+classification:
+  Approved: "believed secure for the stated horizon"
+  Recommended: "preferred subset"
+
+pqc_introduction:
+  hybrid_required: true
+  hybrid_quote: "In hybrid combination, it is possible to use the standardized ML-KEM..."
+  mechanisms:
+    - name: ML-KEM
+      function: KEM
+      approved_parameter_sets: [ML-KEM-1024]
+      hybrid_permitted_sets: [ML-KEM-1024, ML-KEM-768]
+      standardised_by: FIPS 203
+      note: "Only ML-KEM-1024 is Approved standalone; ML-KEM-768 is permitted only inside a hybrid combination."
+    - name: ML-DSA
+      function: signature
+      approved_parameter_sets: [ML-DSA-87]
+      hybrid_permitted_sets: [ML-DSA-87, ML-DSA-65]
+      standardised_by: FIPS 204
+      note: "Only ML-DSA-87 is Approved standalone."
+
+classical_mechanisms_retained:
+  - {mechanism: RSA-PSS,  role: signature,     min_key_size_bits: 3072}
+  - {mechanism: RSA-OAEP, role: encryption,    min_key_size_bits: 3072}
+  - {mechanism: RSA-KEM,  role: KEM}
+  - {mechanism: ECDH,     role: key-agreement, min_key_size_bits: 256}
+
+deprecation_dates: null
+deprecation_note: "NUKIB v4.0 states 'legacy algorithms removal' as a change but publishes no calendar sunset years. This document tells you WHAT is approved, not UNTIL WHEN — unlike BSI, ANSSI, ECCG, ETSI and ASD."
+
+crosscheck:
+  transition_tab_region_value: "(none — no CZ value exists in REGION_ITEMS)"
+  rows_currently_citing_this_doc: 0
+  usefulness_for_transition_tab: "Medium — supplies the strictest European parameter-set floor (ML-KEM-1024 / ML-DSA-87 only), but contributes no dates."

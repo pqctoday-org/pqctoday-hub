@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "IBM Quantum Safe Migration Orchestrator",
+    "category": "Cryptographic Discovery Platforms",
+    "product_name": "IBM Quantum Safe Migration Orchestrator",
+    "product_brief": "AI-driven platform exclusively used by IBM Consulting to help organizations navigate quantum safe transformation.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "The platform is designed to help organizations navigate a multi-year quantum safe transformation journey. It provides orchestration, automation, and strategic execution for quantum-safe migration. It is backed by IBM Research, which led three of the NIST PQC algorithms. It is actively used by IBM’s CIO and clients for their quantum safe migration journey.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "Unknown",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "AI-driven platform; exclusively used by IBM Consulting",
+    "infrastructure_layer": "Security Stack",
+    "license_type": "Proprietary",
+    "license": "Proprietary",
+    "latest_version": "Unknown",
+    "release_date": "2025-12-11",
+    "fips_validated": "No",
+    "primary_platforms": "Unknown",
+    "target_industries": "Enterprise",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Establishes tailored, multi-horizon migration roadmaps balancing urgency, feasibility, compliance, and quantum readiness of components.",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "Unknown",
+    "authoritative_source_url": "IBM-Quantum-Safe-Migration-Orchestrator-dc3b077c.html",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Captures known and hidden dependencies across hybrid IT environments. Offers options for integration with Cryptographic Bills of Materials (CBOM). Enhances raw discovery data with business relevance.",
+    "testing_&_validation_methods": "Successfully validated and actively being used by IBM’s CIO and several IBM clients.",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Options for integration with Cryptographic Bills of Materials (CBOM). Backed by IBM Research that led the CBOM standard.",
+    "deployment_&_migration_complexity": "Supports multi-year transformation journey with phases including risk-based prioritization, decomposition, migration planning, and strategic integration with CI/CD pipelines, PKI, CLM, and KMS.",
+    "financial_&_business_impact": "Addresses \"cryptographic debt\" and the cost of remediation. Ensures investments are focused where they matter most through business context enrichment.",
+    "organizational_readiness": "Provides governance and reporting dashboards for CISOs, CIOs, and boards. Includes options for integration with Change Management Databases (CMDB).",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-07-28"
+    }
+  }
+]

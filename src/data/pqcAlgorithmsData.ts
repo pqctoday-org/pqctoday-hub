@@ -177,6 +177,20 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
     'placeholder', // NGCC-BC
   'CONFIRMED PLACEHOLDER — official ICCS program track name (Cryptographic Hash category); no winning algorithm selected yet|||NGCC TBD — submission window open, candidates not yet selected':
     'placeholder', // NGCC-CH
+  // --- Hybrid KEM mechanisms (added 2026-07-28) -----------------------------
+  // Until now the catalogue's only hybrids were the three TLS named groups, so
+  // hybrid coverage was implicitly scoped to "TLS wire construction". These
+  // entries extend it to general-purpose, SSH and X.509/CMS composite hybrids.
+  // This lookup failing closed is what caught the omission — adding rows without
+  // registering their status pair throws rather than defaulting to Certified.
+  'Candidate|||draft-connolly-cfrg-xwing-kem': 'ietf-draft', // X-Wing
+  'Candidate|||draft-ietf-sshm-mlkem-hybrid-kex': 'ietf-draft', // SSH ML-KEM hybrids
+  'Candidate|||draft-ietf-lamps-pq-composite-kem-16': 'ietf-draft', // Composite ML-KEM
+  // RFC 9941 is a published RFC, so `final` — matching how RFC 7919 is treated.
+  // The sntrup761 COMPONENT is a NIST round-3 alternate rather than a FIPS
+  // algorithm, but the tier describes the standards status of the mechanism
+  // named by the row, and this one is standards-track and published.
+  'RFC 9941|||RFC 9941': 'final', // sntrup761x25519-sha512
 }
 
 /** Throws on any (status, fips_standard) pair not in the lookup table above —

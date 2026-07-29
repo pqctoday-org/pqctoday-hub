@@ -1,0 +1,107 @@
+# Cross-check reference for the Algorithms > Transition Guide tab.
+# Reference artefact only — nothing here has been written into src/data.
+standard_id: EU-ECCG-ACM
+document_class: mechanism-catalogue        # covers ALL mechanisms, classical + PQC
+authority:
+  name: European Cybersecurity Certification Group, Sub-group on Cryptography
+  short: ECCG
+  country: EU
+  region_scope: [EU]
+  note: "Successor to the SOG-IS Agreed Cryptographic Mechanisms. This is the EU-level equivalent of BSI TR-02102-1 / ANSSI PG-083 and is the document ETSI and the EUCC scheme now delegate to."
+document:
+  designation: "ECCG Agreed Cryptographic Mechanisms"
+  title: "Agreed Cryptographic Mechanisms"
+  version: "2.0"
+  as_of: 2025-04-01
+  adopted: 2025-05-06
+  pages: 53
+  language: en
+  url: https://certification.enisa.europa.eu/document/download/a845662b-aee0-484e-9191-890c4cfa7aaa_en
+coverage:
+  classical_mechanisms: true
+  pqc_mechanisms: true
+  per_mechanism_end_dates: true
+  symmetric_and_hash: true
+verification:
+  verified_on: 2026-07-28
+  method: cached primary-source PDF text-extracted from pqctoday-priv/public/library
+  hub_library_reference_id: ECCG-ACM-v2
+  hub_library_local_file: library/ECCG-ACM-v2.pdf
+  hub_library_local_file_status: OK
+  related_hub_row: "EUCC v2.0 ACM (library/EUCC_v2.0_ACM.pdf) — same mechanism list applied to the EUCC certification scheme"
+
+notation:
+  R: "recommended — state of the art"
+  L: "legacy — widely deployed, no longer state of the art, has a validity period"
+  "L[yyyy]": "legacy; acceptance expires 31 December yyyy"
+  "L[yyyy+]": "legacy; acceptance runs at least to yyyy and may be extended"
+  default_legacy: "L[2031+]"
+  clause: "Section 1.2"
+  quote: "For instance the notation L[2031] indicates that the acceptance of the mechanism expires on December 31, 2031. ... The default validity period for legacy mechanisms is set to L[2031+]."
+
+classical_deprecation:
+  - mechanism: RSA
+    condition: "modulus >= 1900 bits and < 3000 bits"
+    classification: legacy
+    expires_iso: 2025-12-31
+    clause: "Note 30-LegacyRSA"
+    quote: "The acceptability deadline for the legacy use of modulus of size above 1900 bits, but less that 3000 bits, is set to December 31, 2025. A later acceptability deadline for user/data authentication with this particular algorithm may be set on a national level."
+  - mechanism: DH / finite-field discrete log
+    condition: "prime modulus >= 1900 bits and < 3000 bits"
+    classification: legacy
+    expires_iso: 2025-12-31
+    clause: "Note 34-LegacyFF-DLOG"
+  - mechanism: HMAC-SHA-1
+    condition: "k >= 100"
+    classification: legacy
+    expires_iso: 2030-12-31
+    notation: "L[2030]"
+    clause: "Section on MAC mechanisms"
+    quote: "It is recommended however to phase out HMAC-SHA-1."
+  - mechanism: "all other legacy asymmetric mechanisms"
+    classification: legacy
+    expires_iso: 2031-12-31
+    notation: "L[2031+]"
+    note: "Default; extendable in a future revision."
+
+pqc_introduction:
+  hybrid_required: true
+  hybrid_clause: "Section 1.4"
+  quote: "These hybrid modes shall ensure that all combined pre or post-quantum cryptographic mechanisms need to be broken."
+  mechanisms:
+    - name: ML-KEM
+      function: KEM
+      standardised_by: FIPS 203
+      classification: R
+      notes: [57-KE-Auth, 60-Hybridization, 61-ML-KEM Parameters]
+      parameter_guidance: "It is recommended to use the highest possible standardised parameter size, either ML-KEM-1024 or ML-KEM-768."
+    - name: FrodoKEM
+      function: KEM
+      classification: R
+      notes: [57-KE-Auth, 60-Hybridization, 62-FrodoKEM Parameters]
+      parameter_guidance: "Either FrodoKEM-1344 or FrodoKEM-976."
+    - name: ML-DSA
+      function: signature
+      standardised_by: FIPS 204
+      classification: R
+      notes: [51-Hybridization, 55-ML-DSA Parameters]
+      parameter_guidance: "It is recommended to use the highest possible standardised parameter size, either ML-DSA-87 or ML-DSA-65."
+    - name: SLH-DSA
+      function: signature
+      standardised_by: FIPS 205
+      classification: R
+      notes: [52-SLH-DSAParameters, 53-OptionalHybridization]
+      parameter_guidance: "Parameter sets from FIPS 205 Table 1 at the stated security level."
+      hybridisation: optional
+
+security_floor:
+  recommended_bits: 125
+  legacy_bits: 100
+  quote: "ECCG recommended mechanisms should provide at least 125 bits of security against offline attacks. 100 bits of security may be used by ECCG legacy mechanisms."
+
+crosscheck:
+  transition_tab_region_value_before: "(none — no ECCG/EU value existed in REGION_ITEMS)"
+  rows_before: 0
+  transition_tab_region_value_after: "ECCG"
+  rows_after: 7
+  action_taken: "ECCG added to REGION_ITEMS 2026-07-29 with 7 new rows (algorithms_transitions_07282026.csv) citing ECCG Agreed Cryptographic Mechanisms v2.0 directly."
