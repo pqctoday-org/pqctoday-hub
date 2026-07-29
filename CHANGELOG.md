@@ -46,6 +46,11 @@ The Algorithms catalog now describes hybrid key exchange properly — the pairin
 - **The three existing TLS hybrids are relabelled to say they're TLS-specific** [view:/algorithms]: they were filed under a generic "Composite" label that couldn't distinguish "usable anywhere" from "only inside TLS" — the distinction that made general-purpose hybrids invisible in the first place.
 - **The WireGuard sandbox walkthrough is retired** [view:/playground] [persona:ops]: the only post-quantum WireGuard we could ship still used a pre-standardisation algorithm that FIPS 203 has replaced, and no upgrade exists — the upstream project hasn't migrated, and the one implementation that has is tied to a commercial VPN account. Post-quantum VPN coverage is unaffected: the IKEv2 walkthrough uses fully standardised ML-KEM.
 
+### Fixed
+
+- **83 more Migrate catalog products now show up under the right migration step** [view:/migrate] [persona:architect] [persona:ops]: they had no step tagged at all, so they were invisible to the Assess/Plan/Test/Migrate/Launch filter no matter which stage you were looking at. Each was tagged from its own existing PQC-support evidence, not guessed — confirmed-unsupported products are marked Assess, vendor-announced roadmaps get Assess+Plan, and confirmed PQC-ready libraries and hardware get Test/Migrate or Migrate/Launch depending on whether you'd integrate them or deploy them as-is.
+- **76 catalog entries were missing their internal product identifier** [persona:developer]: all deprecated, superseded listings that predate the identifier being required. Backfilled so every row in the catalog is addressable the same way.
+
 ### Data
 
 - Two SSH entries deliberately leave key sizes blank. Their specification doesn't state them and the sizes depend on an encoding defined in a different document, so the field says nothing rather than showing a number that looks more authoritative than it is.
