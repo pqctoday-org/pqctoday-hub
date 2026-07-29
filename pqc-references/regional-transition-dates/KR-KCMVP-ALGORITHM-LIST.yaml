@@ -14,10 +14,10 @@ finding: >
   in the BSI/ANSSI class: nothing states a per-algorithm end date, and the KCMVP list does not yet
   contain any post-quantum algorithm.
 verification:
-  verified_on: 2026-07-28
-  method: web search only — no Korean primary source retrieved or text-verified
-  confidence: MEDIUM
-  caveat: "Treat every claim in this file as unverified against a primary source. The KCMVP list itself was not downloaded."
+  verified_on: 2026-07-29
+  method: "UPGRADED from web-search-only: fetched KISA's own KCMVP algorithm page directly (seed.kisa.or.kr/kisa/kcmvp/EgovVerification.do)."
+  confidence: HIGH
+  finding: "Confirmed directly from the source: ML-KEM, ML-DSA and every other post-quantum algorithm are absent from the page. Every entry is a classical primitive (ARIA/SEED/LEA/HIGHT/AES; RSAES; RSA-PSS/KCDSA/EC-KCDSA/ECDSA; DH/ECDH; SHA-2/LSH/SHA-3; HMAC/CMAC/GMAC; the three DRBGs; KBKDF/PBKDF)."
 
 existing_mechanism_list:
   name: "KCMVP 검증대상 암호알고리즘 (KCMVP validated algorithms)"
@@ -61,10 +61,20 @@ classical_deprecation: null
 classical_deprecation_note: "No Korean document publishes an end date for RSA, ECDSA, ECDH, DH or KCDSA."
 
 crosscheck:
-  transition_tab_region_values: ["KpqC", "KR"]
-  rows_currently_present: 16     # 12 tagged KR (status 'KpqC Round 2'), 4 tagged KpqC (status 'Candidate')
-  data_defect: >
-    The tab carries two separate region values for one country and labels the four algorithms
-    'KpqC Round 2' / 'Candidate' when they were finally SELECTED on 2025-01-16. Both status
-    strings are stale by 18 months, and the KR rows point at kpqc.cryptolab.co.kr (a
-    participant-team site) rather than kpqc.or.kr (the programme site).
+  transition_tab_region_values_before: ["KpqC", "KR"]
+  transition_tab_region_values_after: []
+  action_taken: >
+    2026-07-29: REMOVED from REGION_ITEMS (AlgorithmFilters.tsx) per the grounding rule — no
+    Korean document sets a per-algorithm date or approves a PQC algorithm, so neither 'KpqC'
+    nor 'KR' can be grounded to a reference standard. The underlying 16 CSV rows (12 tagged KR
+    status 'KpqC Round 2', 4 tagged KpqC status 'Candidate') were RETAINED, not deleted, and
+    annotated in data_quality_notes explaining the removal — see
+    algorithms_transitions_07282026.csv. If Korea publishes a dated national standard (KCMVP 3.0
+    adding ML-KEM/ML-DSA is the most likely candidate), add it back with real citations, never
+    speculatively.
+  prior_data_defect: >
+    The tab carried two separate region values for one country and labelled the four algorithms
+    'KpqC Round 2' / 'Candidate' when they were finally SELECTED on 2025-01-16 — both strings
+    stale by 18 months, and the KR rows pointed at kpqc.cryptolab.co.kr (a participant-team site)
+    rather than kpqc.or.kr (the programme site). Superseded by the removal above, not fixed in
+    place, since there is still no dated standard to cite even with a corrected URL.

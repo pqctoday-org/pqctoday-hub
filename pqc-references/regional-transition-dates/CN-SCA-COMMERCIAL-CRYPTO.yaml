@@ -14,10 +14,10 @@ finding: >
   algorithm standard and no deprecation date for any classical mechanism. A national PQC standard
   is expected within roughly three years of March 2026.
 verification:
-  verified_on: 2026-07-28
-  method: web search only — no Chinese primary source (SCA announcement, GM/T text) retrieved or text-verified
-  confidence: MEDIUM
-  caveat: "Treat every claim in this file as unverified against a primary source."
+  verified_on: 2026-07-29
+  method: "Upgraded from web-search-only: corroborated across multiple independent sources — National Cryptography Administration Announcement No. 55 (2026-01-30, on nca.gov.cn), and press coverage of the 2026 National People's Congress reiterating the 3-year national-standard-system timeline. The underlying government announcement text itself was not text-extracted (no accessible PDF found), so this stays short of primary-pdf verification."
+  confidence: MEDIUM-HIGH
+  finding: "Announcement No. 55 concerns building an automated security assessment/verification PLATFORM for post-quantum algorithms (side-channel and fault-attack analysis capability) — i.e. future testing INFRASTRUCTURE, not a published algorithm standard. Confirms rather than contradicts the original finding: no PQC standard exists yet. Migration path reported: 2026-2027 planning/inventory, 2028-2029 pilot verification + standard release, 2030+ large-scale rollout."
 
 existing_mechanism_catalogue:
   standard_families:
@@ -48,10 +48,12 @@ classical_deprecation: null
 classical_deprecation_note: "No published end date for SM2, RSA or ECC in Chinese commercial cryptography policy."
 
 crosscheck:
-  transition_tab_region_values: ["CACR", "CN"]
-  rows_currently_present: 9      # 5 tagged CACR with Status 'To Be Checked', 4 tagged CN with Status 'Research'
-  data_defect: >
-    All 9 rows have an EMPTY status_url — they are the only region in the Transition tab with no
-    citation at all. 'To Be Checked' has been the status for an unknown period. The honest
-    representation is that China has no PQC standard yet and an expected-by-2029 target, which is
-    a statement the tab has no field to make.
+  transition_tab_region_values_before: ["CACR", "CN"]
+  transition_tab_region_values_after: []
+  action_taken: >
+    2026-07-29: REMOVED from REGION_ITEMS (AlgorithmFilters.tsx) per the grounding rule. All 9
+    underlying rows (5 tagged CACR status 'To Be Checked', 4 tagged CN status 'Research') had an
+    EMPTY status_url — the only region in the tab with zero citations before this fix. Rows
+    RETAINED, not deleted, and annotated in data_quality_notes — see
+    algorithms_transitions_07282026.csv. Re-add once a real Chinese national PQC standard exists
+    (expected ~2028-2029 per Announcement No. 55's own timeline) — never speculatively.

@@ -4,23 +4,58 @@
 #          src/data/algorithms_transitions_*.csv) against what each region's own authority
 #          actually publishes.
 #
-# THIS DIRECTORY IS A REFERENCE ARTEFACT. Nothing here has been written into src/data.
+# THIS DIRECTORY IS A REFERENCE ARTEFACT. Nothing here has been written into src/data
+# EXCEPT algorithms_transitions_07282026.csv and AlgorithmFilters.tsx (REGION_ITEMS),
+# both changed 2026-07-29 to ground the tab against the standards below. See
+# regional-crypto-standards-grounding-plan-07282026.md (workspace root) for the plan
+# this executed and regional-crypto-standards-gap-report-07282026.md for the original audit.
 #
-# Two document classes are tracked and MUST NOT be conflated:
-#   mechanism-catalogue  — enumerates every mechanism (classical AND post-quantum) with key sizes
+# Three document classes are tracked and MUST NOT be conflated:
+#   mechanism-catalogue  — enumerates mechanisms (classical AND/OR post-quantum) with key sizes
 #                          and, in the good ones, a validity horizon per mechanism.
 #                          Archetypes: BSI TR-02102-1, ANSSI PG-083.
 #   migration-roadmap    — organisational deadlines only; no algorithm list, no key sizes.
 #                          Archetypes: UK NCSC timelines, EU NIS CG roadmap.
-#   gap-record           — a region where no dated catalogue exists; recorded so the absence is
-#                          explicit rather than silent.
+#   gap-record           — a region where no dated catalogue (or no PQC content at all) exists;
+#                          recorded so the absence is explicit rather than silent.
+#
+# GROUNDING RULE (added 2026-07-28, applied 2026-07-29): a REGION_ITEMS filter value survives
+# only if at least one row cites a real reference standard — not a competition-results page, not
+# a roadmap with no algorithm list, not an empty status_url, not a participant/team site standing
+# in for the standards body. KpqC, CACR, CN, KR and Global were removed from the filter on this
+# basis; the underlying CSV rows were retained (never deleted) and annotated.
 
 generated_iso: 2026-07-28
+updated_iso: 2026-07-29
 generated_against:
-  transitions_csv: src/data/algorithms_transitions_06252026.csv
+  transitions_csv: src/data/algorithms_transitions_07282026.csv
   region_filter: src/components/Algorithms/AlgorithmFilters.tsx (REGION_ITEMS)
   library_csv: src/data/library_07272026_r3.csv
-  doc_cache: pqctoday-priv/public/library
+  doc_cache_authoritative: pqctoday-priv/local-evidence-cache/library
+  doc_cache_note: >
+    CORRECTION (2026-07-29): the original audit (2026-07-28) checked pqctoday-priv/public/library/
+    and found BSI TR-02102-1 and the NCSC timelines PDF "broken" (HTML landing pages, not real
+    PDFs). That directory is STALE — the pipeline-authoritative cache, per add_row.py's own
+    LOCAL_CACHE_ROOT, is pqctoday-priv/local-evidence-cache/library/, where both files are
+    confirmed genuine and current. That finding in the original gap report was wrong; both
+    documents were already fine. See DE-BSI-TR-02102-1.yaml / UK-NCSC-MIGRATION-TIMELINES.yaml.
+
+execution_status:
+  region_items_taxonomy_fix: DONE — AlgorithmFilters.tsx REGION_ITEMS updated, worktree
+    pqctoday-hub-regional-standards-0728, branch data-maintenance/regional-standards-grounding-0728
+  transitions_csv_new_rows: DONE — 45 new rows added, algorithms_transitions_07282026.csv
+  library_ingestion_new_documents: >
+    BLOCKED — pqctoday-priv/maintenance/maintenance.lock was held by a genuinely active
+    concurrent session (update_run.py --source migrate-catalog) for the duration of this
+    execution pass, confirmed active via two separate checks (different PID, different batch,
+    18 minutes apart). Not bypassed. ETSI TS 119 312 V2.1.1, EU-NIS-CG roadmap PDF, CRYPTREC
+    LS-0001/LS-0003, the Japan Cabinet Secretariat report, the ACN TLS guidelines, and CCN-TEC
+    009 are all downloaded to the session scratchpad and verified, but NOT yet added as library
+    rows. The algorithms_transitions rows above cite these documents' primary URLs directly
+    (matching how existing NIST/BSI rows already work — a library row was never a hard
+    prerequisite), so the tab is grounded even though this step is outstanding. Retry once the
+    other session's maintenance.lock clears.
+  tests_run: PENDING — see report
 
 standards:
   # ---- EUROPE ----
@@ -34,6 +69,8 @@ standards:
     has_classical_end_dates: true
     key_dates: [2029-12-31, 2030-12-31, 2031-12-31, 2035-12-31]
     verification: primary-pdf
+    region_items_value: BSI
+    transitions_rows: 11
 
   - id: FR-ANSSI-PG-083
     file: FR-ANSSI-PG-083.yaml
@@ -45,6 +82,8 @@ standards:
     has_classical_end_dates: true
     key_dates: [2030-01-01, 2030-12-31, 2031-01-01]
     verification: primary-pdf-cached
+    region_items_value: ANSSI
+    transitions_rows: 5
 
   - id: EU-ECCG-ACM
     file: EU-ECCG-ACM.yaml
@@ -56,6 +95,8 @@ standards:
     has_classical_end_dates: true
     key_dates: [2025-12-31, 2030-12-31, 2031-12-31]
     verification: primary-pdf-cached
+    region_items_value: ECCG
+    transitions_rows: 7
 
   - id: EU-ETSI-TS-119-312
     file: EU-ETSI-TS-119-312.yaml
@@ -67,6 +108,8 @@ standards:
     has_classical_end_dates: true
     key_dates: [2026-12-31, 2028-12-31, 2034-12-31]
     verification: primary-pdf
+    region_items_value: ETSI
+    transitions_rows: "5 new (added to the pre-existing 1 TS-104-015 row)"
 
   - id: CZ-NUKIB-MIN-REQ
     file: CZ-NUKIB-MIN-REQ.yaml
@@ -77,6 +120,8 @@ standards:
     has_pqc: true
     has_classical_end_dates: false
     verification: primary-pdf-cached
+    region_items_value: null
+    note: "No dates to ground a filter value on; not added to REGION_ITEMS."
 
   - id: UK-NCSC-MIGRATION-TIMELINES
     file: UK-NCSC-MIGRATION-TIMELINES.yaml
@@ -86,7 +131,9 @@ standards:
     has_pqc: true
     has_classical_end_dates: false
     key_dates: [2028-12-31, 2031-12-31, 2035-12-31]
-    verification: live-page
+    verification: primary-pdf (corrected 2026-07-29 — cache was fine, see doc_cache_note above)
+    region_items_value: null
+    note: "Roadmap only, no algorithm/date table; not added to REGION_ITEMS."
 
   - id: EU-NIS-CG-ROADMAP
     file: EU-NIS-CG-ROADMAP.yaml
@@ -97,6 +144,34 @@ standards:
     has_classical_end_dates: false
     key_dates: [2026-12-31, 2027-12-11, 2030-12-31, 2035-12-31]
     verification: primary-pdf
+    region_items_value: null
+    note: "Roadmap only; not added to REGION_ITEMS. Cited by DE, FR, ES entries as the source of their 2030/2035 milestones."
+
+  - id: IT-ACN-TLS-GUIDELINES
+    file: IT-ACN-TLS-GUIDELINES.yaml
+    class: mechanism-catalogue
+    country: IT
+    version: "2.0"
+    date: 2026-05-12
+    has_pqc: true
+    has_classical_end_dates: false
+    verification: primary-pdf
+    region_items_value: ACN
+    transitions_rows: 2
+    note: "NEW FINDING, Phase B wide search (2026-07-29). Weak on dates (no classical deprecation table found), strong on PQC introduction (ML-KEM hybrid, ML-DSA/SLH-DSA/LMS/XMSS)."
+
+  - id: ES-CCN-TEC-009
+    file: ES-CCN-TEC-009.yaml
+    class: mechanism-catalogue
+    country: ES
+    date: 2026-07
+    has_pqc: true
+    has_classical_end_dates: true
+    key_dates: [2030-12-31, 2035-12-31]
+    verification: primary-pdf
+    region_items_value: CCN
+    transitions_rows: 2
+    note: "NEW FINDING, Phase B wide search (2026-07-29). Adopts EU roadmap's own 2030/2035 dates explicitly. Companion CCN-STIC 221 (the BSI/ANSSI-class full catalogue) exists but is blocked by bot-detection from this environment — priority re-fetch target."
 
   # ---- APAC ----
   - id: AU-ASD-ISM-CRYPTOGRAPHY
@@ -109,6 +184,8 @@ standards:
     has_classical_end_dates: true
     key_dates: [2030-12-31]
     verification: primary-pdf-cached-2024 + web-confirmed-2026
+    region_items_value: ASD
+    transitions_rows: 11
 
   - id: JP-CRYPTREC-LS-0001
     file: JP-CRYPTREC-LS-0001.yaml
@@ -119,6 +196,8 @@ standards:
     has_pqc: true
     has_classical_end_dates: false      # dates live in LS-0003
     verification: primary-pdf
+    region_items_value: CRYPTREC
+    transitions_rows: 2
 
   - id: JP-CRYPTREC-LS-0003
     file: JP-CRYPTREC-LS-0003.yaml
@@ -130,6 +209,8 @@ standards:
     has_classical_end_dates: true
     key_dates: [2030-12-31, 2040-12-31, 2050-12-31]
     verification: primary-pdf
+    region_items_value: CRYPTREC
+    note: "Folded under the same CRYPTREC filter value as LS-0001 — no separate transitions rows drafted for the strength-band schedule in this pass (derived, not directly quotable per-algorithm)."
 
   - id: IN-DST-NQM-ROADMAP
     file: IN-DST-NQM-ROADMAP.yaml
@@ -140,6 +221,8 @@ standards:
     has_classical_end_dates: false
     key_dates: [2027-12-31, 2028-12-31, 2029-12-31, 2030-12-31, 2033-12-31]
     verification: primary-pdf-cached
+    region_items_value: null
+    note: "Roadmap only, adopts NIST algorithms by reference; not added to REGION_ITEMS."
 
   - id: JP-CAS-PQC-INTERIM
     file: JP-CAS-PQC-INTERIM.yaml
@@ -150,6 +233,22 @@ standards:
     has_classical_end_dates: false
     key_dates: [2035-12-31]
     verification: primary-pdf
+    region_items_value: null
+
+  - id: NZ-NZISM-CRYPTO
+    file: NZ-NZISM-CRYPTO.yaml
+    class: gap-record
+    country: NZ
+    date: 2025-11
+    has_pqc: false
+    has_classical_end_dates: false
+    verification: primary-pdf
+    region_items_value: null
+    note: >
+      NEW CHECK, Phase B (2026-07-29). Downgraded from the original gap report's "priority,
+      plausible real catalogue" expectation — the cached file WAS a broken 2KB stub, but the
+      live re-fetch of Section 17.1 shows NZISM has not approved any PQC algorithm yet and sets
+      no date. Section 17.2 (Approved Cryptographic Algorithms) not yet fetched — follow-up.
 
   - id: KR-KCMVP-ALGORITHM-LIST
     file: KR-KCMVP-ALGORITHM-LIST.yaml
@@ -157,7 +256,9 @@ standards:
     country: KR
     has_pqc: false
     has_classical_end_dates: false
-    verification: web-search-only
+    verification: primary-source (upgraded 2026-07-29 — fetched KISA's own KCMVP page directly, confirmed zero PQC entries)
+    region_items_value: null
+    action: "REMOVED from REGION_ITEMS 2026-07-29 (previously KpqC + KR, both ungrounded)."
 
   - id: CN-SCA-COMMERCIAL-CRYPTO
     file: CN-SCA-COMMERCIAL-CRYPTO.yaml
@@ -165,21 +266,24 @@ standards:
     country: CN
     has_pqc: false
     has_classical_end_dates: false
-    verification: web-search-only
+    verification: corroborated (upgraded 2026-07-29 — National Cryptography Administration Announcement No. 55 + NPC coverage, confirms no standard exists, confirmation platform under construction)
+    region_items_value: null
+    action: "REMOVED from REGION_ITEMS 2026-07-29 (previously CACR + CN, both ungrounded, all 9 rows had empty status_url)."
 
-# Jurisdictions checked and found to have NO mechanism catalogue of the BSI/ANSSI class.
-# Recorded so their absence is a documented finding rather than an oversight.
+# Jurisdictions checked (Phase B, 2026-07-29) and confirmed to have no PQC-relevant mechanism
+# catalogue. Recorded so the absence is a documented finding, not an oversight. Search budget:
+# ~2 targeted searches + 1 fetch attempt per jurisdiction, per the grounding plan's stop rule.
 no_catalogue_found:
-  europe: [ES, IT, CH, NL, SE, NO, DK, FI, BE, AT, PL, IE, EE]
+  europe: [CH, NL, SE, NO, DK, FI, BE, AT, PL, IE, EE]
   europe_notes:
-    ES: "CCN-STIC-807 'Criptologia de empleo en el ENS' is the right document class, but no post-2022 edition with PQC content was located. Not in the hub library."
-    IT: "No ACN/AgID cryptographic-mechanism catalogue with PQC content located."
-    CH: "No NCSC-CH catalogue located."
-    NL: "AIVD/TNO/CWI PQC Migration Handbook (2nd ed., Dec 2024) is a migration guide, not a mechanism catalogue with dates."
-  apac: [SG, HK, TW, NZ, MY, TH, ID]
+    CH: "No NCSC-CH/MELANI algorithm catalogue found. FINMA guidance (financial-sector risk survey, Nov 2025-Jan 2026) is risk guidance, not an algorithm list."
+    NL: "AIVD/TNO/CWI PQC Migration Handbook (2nd ed., Dec 2024) confirmed still a migration guide, not a mechanism catalogue with dates."
+    SE/NO/DK/FI: "No country-specific catalogues found. Norway launched a national quantum-technology strategy process in May 2025 (not crypto-specific)."
+    BE/AT/PL/IE/EE: "Participate in the EU NIS-CG roadmap and the 2024 joint 18-member-state statement; no independent national mechanism catalogue found for any of the five."
+  apac: [SG, HK, TW, MY, TH, ID]
   apac_notes:
-    SG: "MAS Advisory (2024-02-20) and CSA Quantum-Safe Handbook (2024-06) are advisories; no algorithm list, no dates."
+    SG: "MAS Advisory (2024-02-20) and CSA Quantum-Safe Handbook (2024-06) remain advisories; no algorithm list, no dates."
     HK: "HKMA Fintech Blueprint (2026-02-03) announces a Quantum Preparedness Index; no dates, no algorithm list."
-    NZ: "NZISM v3.9 (2025-11) is in the hub library but its cryptography chapter was NOT verified in this pass — the cached file is a 2 KB stub. Candidate for a follow-up check."
-    TW: "Nothing in the hub library; nothing located."
-    MY: "NACSA National Cryptography Policy and PQC Migration Plan 2025 is in the library as an HTML page with no extractable dates."
+    TW: "No formal NICS/TWCERT standard found — only conference/industry framing of a 'transition then migration' strategy referencing NIST/CNSA 2.0 by name, not an independent Taiwanese document."
+    MY: "NACSA National Cryptography Policy and PQC Migration Plan 2025 remains an HTML page with no extractable dates."
+    TH/ID: "Early-stage awareness only (industry workshops, BSSN coordination discussions in Indonesia); no published standard."
