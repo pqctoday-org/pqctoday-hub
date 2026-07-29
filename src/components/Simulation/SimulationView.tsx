@@ -65,6 +65,7 @@ import { getScenario } from './autorun/scenarioConfig'
 import { transformationStatus } from './autorun/transformationStatus'
 import { TransformationStatusPanel } from './autorun/TransformationStatusPanel'
 import { RunActionsMenu, type RunActionItem } from './RunActionsMenu'
+import { SimTermsPanel } from './SimTermsPanel'
 import { EmbedLoading } from './EmbedLoading'
 
 import { TimelineEmbed } from '@/components/shared/widgets/TimelineEmbed'
@@ -868,6 +869,7 @@ export function SimulationView() {
   // see the plan's rev. 3 notes). Persona/phase-context only pick which card
   // opens visually emphasized.
   const [playModalOpen, setPlayModalOpen] = useState(false)
+  const [termsOpen, setTermsOpen] = useState(false)
   const [pendingModeSwitch, setPendingModeSwitch] = useState<RunMode | null>(null)
   const businessPersona = selectedPersona === 'executive' || selectedPersona === 'curious'
   const defaultCard: SimPlayDefaultCard = arrivedViaPhaseRef.current
@@ -1525,6 +1527,45 @@ export function SimulationView() {
             </div>
           ))}
         </dl>
+        {/* Narrated Executive Overview is passive, so it works on a phone
+            (07-29 review U-M2, option a): transport bar + captions + intro
+            modals are all fixed-position and responsive. The playable board
+            stays tablet/desktop-only. */}
+        {!autoRunPlayer.running && !autoRunPlayer.done && (
+          <Button
+            type="button"
+            variant="gradient"
+            size="sm"
+            className="gap-1.5"
+            onClick={() => autoRunPlayer.start({ mode: 'walkthrough' })}
+          >
+            ▶ Watch the Executive Overview
+          </Button>
+        )}
+        {(autoRunPlayer.running || autoRunPlayer.done) && (
+          <>
+            <SimAutoRunOverlay player={autoRunPlayer} />
+            {autoRunPlayer.scenarioIntro && (
+              <SimScenarioIntroCard
+                scenario={autoRunPlayer.scenarioIntro}
+                onBegin={autoRunPlayer.beginScenario}
+              />
+            )}
+            {autoRunPlayer.passIntro && !autoRunPlayer.scenarioIntro && (
+              <SimPassIntroModal pass={autoRunPlayer.passIntro} onBegin={autoRunPlayer.beginPass} />
+            )}
+            {autoRunPlayer.phaseIntro && (
+              <SimPhaseIntroModal
+                phase={autoRunPlayer.phaseIntro.phase}
+                onBegin={autoRunPlayer.beginPhase}
+              />
+            )}
+            <SimArtifactReveal type={autoRunPlayer.reveal} />
+          </>
+        )}
+        {walkthroughDoneOpen && (
+          <SimExecWalkthroughComplete onClose={() => setWalkthroughDoneOpen(false)} />
+        )}
         <Link to="/" className="text-sm text-primary underline underline-offset-4">
           Back to hub
         </Link>
@@ -1737,6 +1778,12 @@ export function SimulationView() {
             <RunActionsMenu
               items={
                 [
+                  {
+                    key: 'terms',
+                    label: 'Terms & glossary',
+                    description: 'Plain-English sim vocabulary + the full PQC glossary.',
+                    onSelect: () => setTermsOpen(true),
+                  },
                   {
                     key: 'challenge',
                     label: 'Challenge a colleague',
@@ -3671,6 +3718,7 @@ export function SimulationView() {
             sectorLabel={sectorOpt.label}
           />
         )}
+        {termsOpen && <SimTermsPanel onClose={() => setTermsOpen(false)} />}
         {pendingModeSwitch && (
           <SimConfirmDialog
             title="Start a different path?"

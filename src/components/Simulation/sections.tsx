@@ -8,6 +8,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
 import { MATURITY_LEVEL_NAMES } from '@/data/phaseMaturity'
 import { type PhaseId } from '@/data/frameworkPhases'
 import { SIM_MOVES, type MoveCtx } from '@/data/simMoves'
@@ -479,8 +480,9 @@ export function QuarterReport({
   onClose: () => void
 }) {
   const drift = +(report.clockFrom - report.clockTo).toFixed(2)
+  const trapRef = useFocusTrap(true)
   return (
-    <div className="fixed inset-0 z-[100] grid place-items-center bg-black/60 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[100] grid place-items-center bg-foreground/40 p-4 backdrop-blur-sm">
       <Button
         type="button"
         variant="ghost"
@@ -489,6 +491,7 @@ export function QuarterReport({
         className="absolute inset-0 h-full w-full rounded-none bg-transparent p-0 hover:bg-transparent"
       />
       <div
+        ref={trapRef}
         role="dialog"
         aria-modal="true"
         className="relative z-10 max-h-[88vh] w-[560px] max-w-[92vw] overflow-auto rounded-2xl border border-border bg-card"

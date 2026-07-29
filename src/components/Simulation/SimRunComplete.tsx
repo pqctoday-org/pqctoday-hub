@@ -14,6 +14,7 @@
  * TrapInsightsPanel surfaces mid-run) and the same next-step links the walkthrough ending gives.
  */
 import { useEffect, useRef } from 'react'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
 import { Link } from 'react-router'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { Trophy, ShieldCheck, LayoutDashboard, CalendarClock, Users } from 'lucide-react'
@@ -63,6 +64,7 @@ export function SimRunComplete({
 }: SimRunCompleteProps) {
   const reduce = useReducedMotion()
   const primaryRef = useRef<HTMLButtonElement>(null)
+  const trapRef = useFocusTrap(true)
   const allMet = objectives.length > 0 && objectives.every((o) => o.done)
   // Top 3 — this is a closing reflection, not the full TrapInsightsPanel dashboard.
   const topTraps = readTrapTally().slice(0, 3)
@@ -86,6 +88,7 @@ export function SimRunComplete({
         onClick={onClose}
       >
         <motion.div
+          ref={trapRef}
           role="dialog"
           aria-modal="true"
           aria-label="Migration program complete"
