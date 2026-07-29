@@ -8849,6 +8849,16 @@
       "sizeBytes": 20216,
       "contentType": "text/html",
       "sha256": "94829d0e88a05d73e6d850f07ec2b4ddb80e620dfeddbc80eeed972d84694f8b"
+    },
+    {
+      "refId": "draft-connolly-cfrg-xwing-kem-10",
+      "title": "X-Wing: general-purpose hybrid post-quantum KEM",
+      "url": "https://www.ietf.org/archive/id/draft-connolly-cfrg-xwing-kem-10.html",
+      "status": "downloaded",
+      "filename": "draft-connolly-cfrg-xwing-kem-10.html",
+      "sizeBytes": 144806,
+      "contentType": "text/html",
+      "sha256": "04f83cb9c00ebccbb062ccd39128ee33ee896ec1ab0461de24eb812c229b94d5"
     }
   ]
 }
