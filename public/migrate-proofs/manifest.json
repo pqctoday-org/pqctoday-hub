@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
   "generated": "2026-07-09",
-  "count": 1149,
+  "count": 1158,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -9305,6 +9305,69 @@
       "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5062",
       "file": "CipherLinq-c603ca27.html",
       "bytes": 109247,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "ITE-LAx-551x-Embedded-Controller-with-PQ",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=21092",
+      "file": "ITE-LAx-551x-Embedded-Controller-with-PQ-cd40afb6.html",
+      "bytes": 50010,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "AWS-Key-Management-Service-Cryptographic",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20140",
+      "file": "AWS-Key-Management-Service-Cryptographic-486047ad.html",
+      "bytes": 118641,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "LS2-HSM-Family",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5220",
+      "file": "LS2-HSM-Family-98a83158.html",
+      "bytes": 73317,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "N-able-FIPS-Cryptographic-Module-Java-14",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5211",
+      "file": "N-able-FIPS-Cryptographic-Module-Java-14-81d1a78a.html",
+      "bytes": 76756,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Kaseya-FIPS-Cryptographic-Module-for-Jav",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5210",
+      "file": "Kaseya-FIPS-Cryptographic-Module-for-Jav-df1ec569.html",
+      "bytes": 76952,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Kloudfuse-Java-Cryptographic-Module",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5209",
+      "file": "Kloudfuse-Java-Cryptographic-Module-7c3aab52.html",
+      "bytes": 76625,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Minimus-Cryptographic-Module-for-Java",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5142",
+      "file": "Minimus-Cryptographic-Module-for-Java-09a99afe.html",
+      "bytes": 76388,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "InformaCast-Advanced-and-Fusion-Server-J",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5129",
+      "file": "InformaCast-Advanced-and-Fusion-Server-J-96dfa48d.html",
+      "bytes": 76598,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "SL-FJA3-SafeLogic-FIPS-Java-API",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5081",
+      "file": "SL-FJA3-SafeLogic-FIPS-Java-API-c969155f.html",
+      "bytes": 76711,
       "tier": "curl_cffi:chrome124"
     }
   ]
