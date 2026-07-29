@@ -399,10 +399,33 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
  *               what this ratchet was always meant to track. loadSourcePassages
  *               now warns loudly instead of returning empty in silence, so a
  *               regeneration that would repeat this cannot do so quietly.
- *               186 is the first honest value this constant has ever held.
- *               Enrich to drive down — and now that will actually work.)
+ *               186 is the first honest value this constant has ever held.)
+ *
+ *   2026-07-29 (later): 187 (+1 — upstream v4.29.0's new SLSA library row has a
+ *               cached document and no extracted passage. A real, correctly
+ *               measured +1: exactly what this ratchet is now for.
+ *
+ *               AND the reason it cannot yet be driven down, found while trying
+ *               to: scripts/extract-source-passages.py (pqctoday-priv) has been
+ *               BROKEN since the 2026-07-12 local-evidence-cache relocation. It
+ *               resolves each row's `local_file` against the repo ROOT
+ *               (:474, :496), but the cached documents moved to
+ *               pqctoday-priv/local-evidence-cache/<collection>/ that day and
+ *               `local_file` values are stored relative to THAT root. Run today
+ *               it reads 975 library records and reports "Records with local
+ *               source files: 0" — which is why the newest passages artifact on
+ *               disk is still dated 06-07, three weeks before the relocation.
+ *
+ *               It also writes its empty result to a NEW dated file, and
+ *               loadSourcePassages() takes the newest — so running it in its
+ *               current state actively re-wipes every chunk's provenance. Two
+ *               such empty artifacts were produced and deleted while
+ *               diagnosing this.
+ *
+ *               So "Enrich to drive down" now has a named blocker: fix the
+ *               extractor's cache-root resolution first.)
  */
-const MAX_DOC_WITHOUT_PASSAGES = 186
+const MAX_DOC_WITHOUT_PASSAGES = 187
 
 /** Pinned count of CSV files referenced in prov.was_derived_from but missing on disk. */
 const MAX_MISSING_CSVS = 0
