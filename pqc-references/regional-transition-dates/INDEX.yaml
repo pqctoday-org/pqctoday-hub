@@ -1,0 +1,185 @@
+# Regional cryptographic-standard date reference — index
+#
+# Purpose: cross-check the Algorithms > Transition Guide tab (AlgorithmComparison, fed by
+#          src/data/algorithms_transitions_*.csv) against what each region's own authority
+#          actually publishes.
+#
+# THIS DIRECTORY IS A REFERENCE ARTEFACT. Nothing here has been written into src/data.
+#
+# Two document classes are tracked and MUST NOT be conflated:
+#   mechanism-catalogue  — enumerates every mechanism (classical AND post-quantum) with key sizes
+#                          and, in the good ones, a validity horizon per mechanism.
+#                          Archetypes: BSI TR-02102-1, ANSSI PG-083.
+#   migration-roadmap    — organisational deadlines only; no algorithm list, no key sizes.
+#                          Archetypes: UK NCSC timelines, EU NIS CG roadmap.
+#   gap-record           — a region where no dated catalogue exists; recorded so the absence is
+#                          explicit rather than silent.
+
+generated_iso: 2026-07-28
+generated_against:
+  transitions_csv: src/data/algorithms_transitions_06252026.csv
+  region_filter: src/components/Algorithms/AlgorithmFilters.tsx (REGION_ITEMS)
+  library_csv: src/data/library_07272026_r3.csv
+  doc_cache: pqctoday-priv/public/library
+
+standards:
+  # ---- EUROPE ----
+  - id: DE-BSI-TR-02102-1
+    file: DE-BSI-TR-02102-1.yaml
+    class: mechanism-catalogue
+    country: DE
+    version: "2026-01"
+    date: 2026-01-23
+    has_pqc: true
+    has_classical_end_dates: true
+    key_dates: [2029-12-31, 2030-12-31, 2031-12-31, 2035-12-31]
+    verification: primary-pdf
+
+  - id: FR-ANSSI-PG-083
+    file: FR-ANSSI-PG-083.yaml
+    class: mechanism-catalogue
+    country: FR
+    version: "3.00"
+    date: 2026-03-20
+    has_pqc: true
+    has_classical_end_dates: true
+    key_dates: [2030-01-01, 2030-12-31, 2031-01-01]
+    verification: primary-pdf-cached
+
+  - id: EU-ECCG-ACM
+    file: EU-ECCG-ACM.yaml
+    class: mechanism-catalogue
+    country: EU
+    version: "2.0"
+    date: 2025-04-01
+    has_pqc: true
+    has_classical_end_dates: true
+    key_dates: [2025-12-31, 2030-12-31, 2031-12-31]
+    verification: primary-pdf-cached
+
+  - id: EU-ETSI-TS-119-312
+    file: EU-ETSI-TS-119-312.yaml
+    class: mechanism-catalogue
+    country: EU
+    version: "V2.1.1"
+    date: 2026-06
+    has_pqc: true
+    has_classical_end_dates: true
+    key_dates: [2026-12-31, 2028-12-31, 2034-12-31]
+    verification: primary-pdf
+
+  - id: CZ-NUKIB-MIN-REQ
+    file: CZ-NUKIB-MIN-REQ.yaml
+    class: mechanism-catalogue
+    country: CZ
+    version: "4.0"
+    date: 2025-02-01
+    has_pqc: true
+    has_classical_end_dates: false
+    verification: primary-pdf-cached
+
+  - id: UK-NCSC-MIGRATION-TIMELINES
+    file: UK-NCSC-MIGRATION-TIMELINES.yaml
+    class: migration-roadmap
+    country: GB
+    date: 2025-03-20
+    has_pqc: true
+    has_classical_end_dates: false
+    key_dates: [2028-12-31, 2031-12-31, 2035-12-31]
+    verification: live-page
+
+  - id: EU-NIS-CG-ROADMAP
+    file: EU-NIS-CG-ROADMAP.yaml
+    class: migration-roadmap
+    country: EU
+    date: 2025-06-23
+    has_pqc: false
+    has_classical_end_dates: false
+    key_dates: [2026-12-31, 2027-12-11, 2030-12-31, 2035-12-31]
+    verification: primary-pdf
+
+  # ---- APAC ----
+  - id: AU-ASD-ISM-CRYPTOGRAPHY
+    file: AU-ASD-ISM-CRYPTOGRAPHY.yaml
+    class: mechanism-catalogue
+    country: AU
+    version: "June 2026 (verified against December 2024)"
+    date: 2026-06
+    has_pqc: true
+    has_classical_end_dates: true
+    key_dates: [2030-12-31]
+    verification: primary-pdf-cached-2024 + web-confirmed-2026
+
+  - id: JP-CRYPTREC-LS-0001
+    file: JP-CRYPTREC-LS-0001.yaml
+    class: mechanism-catalogue
+    country: JP
+    version: "LS-0001-2022R2"
+    date: 2026-03-30
+    has_pqc: true
+    has_classical_end_dates: false      # dates live in LS-0003
+    verification: primary-pdf
+
+  - id: JP-CRYPTREC-LS-0003
+    file: JP-CRYPTREC-LS-0003.yaml
+    class: key-length-and-date-criteria
+    country: JP
+    version: "LS-0003-2022R1"
+    date: 2022-03
+    has_pqc: false
+    has_classical_end_dates: true
+    key_dates: [2030-12-31, 2040-12-31, 2050-12-31]
+    verification: primary-pdf
+
+  - id: IN-DST-NQM-ROADMAP
+    file: IN-DST-NQM-ROADMAP.yaml
+    class: migration-roadmap
+    country: IN
+    date: 2026-02-04
+    has_pqc: true
+    has_classical_end_dates: false
+    key_dates: [2027-12-31, 2028-12-31, 2029-12-31, 2030-12-31, 2033-12-31]
+    verification: primary-pdf-cached
+
+  - id: JP-CAS-PQC-INTERIM
+    file: JP-CAS-PQC-INTERIM.yaml
+    class: migration-roadmap
+    country: JP
+    date: 2025-11-18
+    has_pqc: false
+    has_classical_end_dates: false
+    key_dates: [2035-12-31]
+    verification: primary-pdf
+
+  - id: KR-KCMVP-ALGORITHM-LIST
+    file: KR-KCMVP-ALGORITHM-LIST.yaml
+    class: gap-record
+    country: KR
+    has_pqc: false
+    has_classical_end_dates: false
+    verification: web-search-only
+
+  - id: CN-SCA-COMMERCIAL-CRYPTO
+    file: CN-SCA-COMMERCIAL-CRYPTO.yaml
+    class: gap-record
+    country: CN
+    has_pqc: false
+    has_classical_end_dates: false
+    verification: web-search-only
+
+# Jurisdictions checked and found to have NO mechanism catalogue of the BSI/ANSSI class.
+# Recorded so their absence is a documented finding rather than an oversight.
+no_catalogue_found:
+  europe: [ES, IT, CH, NL, SE, NO, DK, FI, BE, AT, PL, IE, EE]
+  europe_notes:
+    ES: "CCN-STIC-807 'Criptologia de empleo en el ENS' is the right document class, but no post-2022 edition with PQC content was located. Not in the hub library."
+    IT: "No ACN/AgID cryptographic-mechanism catalogue with PQC content located."
+    CH: "No NCSC-CH catalogue located."
+    NL: "AIVD/TNO/CWI PQC Migration Handbook (2nd ed., Dec 2024) is a migration guide, not a mechanism catalogue with dates."
+  apac: [SG, HK, TW, NZ, MY, TH, ID]
+  apac_notes:
+    SG: "MAS Advisory (2024-02-20) and CSA Quantum-Safe Handbook (2024-06) are advisories; no algorithm list, no dates."
+    HK: "HKMA Fintech Blueprint (2026-02-03) announces a Quantum Preparedness Index; no dates, no algorithm list."
+    NZ: "NZISM v3.9 (2025-11) is in the hub library but its cryptography chapter was NOT verified in this pass — the cached file is a 2 KB stub. Candidate for a follow-up check."
+    TW: "Nothing in the hub library; nothing located."
+    MY: "NACSA National Cryptography Policy and PQC Migration Plan 2025 is in the library as an HTML page with no extractable dates."

@@ -1,0 +1,73 @@
+# Cross-check reference for the Algorithms > Transition Guide tab.
+# Reference artefact only — nothing here has been written into src/data.
+standard_id: JP-CRYPTREC-LS-0003
+document_class: key-length-and-date-criteria   # the dated half of Japan's mechanism catalogue
+authority:
+  name: CRYPTREC
+  country: JP
+  region_scope: [JP]
+document:
+  designation: CRYPTREC LS-0003-2022R1
+  title_ja: "暗号強度要件（アルゴリズム及び鍵長選択）に関する設定基準"
+  title_en: "Criteria for setting cryptographic strength requirements (algorithm and key-length selection)"
+  first_edition: 2022-03
+  language: ja
+  url: https://www.cryptrec.go.jp/list/cryptrec-ls-0003-2022r1.pdf
+  binding_note: "Using a key length that does not conform to this document means the CRYPTREC Ciphers List is not considered to be in use."
+coverage:
+  classical_mechanisms: true
+  pqc_mechanisms: false
+  per_mechanism_end_dates: true
+  method: "Dates are expressed as security-strength bands keyed to the system's planned decommissioning year, not as per-algorithm sunset years."
+verification:
+  verified_on: 2026-07-28
+  method: primary-source PDF downloaded from cryptrec.go.jp and text-extracted
+  hub_library_status: ABSENT
+  caution: "Tables 11 and 12 of this document restate the NIST and ANSSI criteria for comparison. Do NOT read those as Japanese rules. The Japanese rule is Table 5 plus notes (a)/(b)/(c), reproduced below."
+
+security_strength_schedule:
+  keyed_on: "planned system decommissioning year / end of use period (NOT the system start year)"
+  clause: "Table 5, Section 3"
+  bands:
+    - strength_bits: 112
+      "2022-2030": "new generation permitted; migration-completion period"
+      "2031-2040": "not usable (limited processing exception, see note b)"
+      "2041+": "not usable"
+    - strength_bits: 128
+      "2022-2030": usable
+      "2031-2040": usable
+      "2041-2050": "migration-completion period"
+      "2051+": "not usable"
+    - strength_bits: 192
+      "all bands through 2070": usable
+    - strength_bits: 256
+      "all bands through 2070": usable
+  note_a:
+    scope: "applying new cryptographic protection (encryption, signature generation)"
+    rule: "choose >= 128-bit security through 2040; >= 192-bit security from 2041"
+  note_b:
+    scope: "processing already-protected data (decryption, signature verification)"
+    rule: ">= 128-bit through 2040, >= 192-bit from 2041; 112-bit tolerated 2031-2040 only where compensating technical or operational controls exist"
+  note_c:
+    scope: "short-lived operations (e.g. entity authentication) or continued use of / interoperability with existing e-Government systems"
+    rule: "112-bit permitted through 2030; 128-bit permitted through 2050"
+
+derived_classical_deprecation:
+  note: "Mapping the strength bands onto concrete algorithms via the standard equivalences. Derived, not quoted — the document itself names strengths, not algorithms."
+  mechanisms:
+    - {mechanism: RSA-2048,  security_bits: 112, new_use_until_iso: 2030-12-31, then: "RSA-3072 or stronger required"}
+    - {mechanism: DH-2048,   security_bits: 112, new_use_until_iso: 2030-12-31}
+    - {mechanism: ECDSA-224, security_bits: 112, new_use_until_iso: 2030-12-31}
+    - {mechanism: RSA-3072,  security_bits: 128, new_use_until_iso: 2040-12-31}
+    - {mechanism: ECDSA-256, security_bits: 128, new_use_until_iso: 2040-12-31}
+    - {mechanism: AES-128,   security_bits: 128, new_use_until_iso: 2040-12-31}
+    - {mechanism: AES-256,   security_bits: 256, new_use_until_iso: null}
+
+pqc_exemption:
+  source: JP-CRYPTREC-LS-0001 footnote 3
+  quote_ja: "当該設定基準の見直しの検討を行う予定であり、当面の間、表２（耐量子計算機暗号（PQC）リスト）の公開鍵暗号は、当該設定基準を適用しない。"
+  meaning: "A revision of these criteria is planned; for the time being they are NOT applied to the public-key entries of the PQC List (ML-KEM)."
+
+crosscheck:
+  transition_tab_region_value: "(none — no JP value exists in REGION_ITEMS)"
+  significance: "Japan's classical deprecation cliff for 112-bit (RSA-2048) new use is 2030-12-31 — the same year as NIST's 'deprecated' and BSI's high-protection date, but expressed as a strength band rather than an algorithm name."

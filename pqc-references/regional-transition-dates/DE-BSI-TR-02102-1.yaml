@@ -1,0 +1,132 @@
+# Cross-check reference for the Algorithms > Transition Guide tab.
+# Reference artefact only — nothing here has been written into src/data.
+standard_id: DE-BSI-TR-02102-1
+document_class: mechanism-catalogue        # covers ALL mechanisms, classical + PQC
+authority:
+  name: Bundesamt fuer Sicherheit in der Informationstechnik
+  short: BSI
+  country: DE
+  region_scope: [DE, EU]
+document:
+  designation: BSI TR-02102-1
+  title: "Cryptographic Mechanisms: Recommendations and Key Lengths"
+  version: "2026-01"
+  as_of: 2026-01-23
+  supersedes: "2025-01 (2025-01-31)"
+  language: en
+  url: https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.pdf
+  cadence: annual (January)
+coverage:
+  classical_mechanisms: true
+  pqc_mechanisms: true
+  per_mechanism_end_dates: true
+  symmetric_and_hash: true
+verification:
+  verified_on: 2026-07-28
+  method: primary-source PDF downloaded and text-extracted
+  hub_library_reference_id: "BSI TR-02102-1"
+  hub_library_local_file: library/BSI-TR-02102-1.pdf
+  hub_library_local_file_status: BROKEN        # cached file is the HTML landing page, not the PDF
+  hub_library_recorded_update: 2026-01-31      # actual document date is 2026-01-23
+
+classical_deprecation:
+  - mechanism: RSA
+    role: key-agreement-and-encryption
+    min_key_size_bits: 3000
+    recommended_until_iso: 2031-12-31
+    clause: "Table 2.2"
+    quote: "The sole use of classic key agreement mechanisms is only recommended until the end of 2031."
+  - mechanism: RSA
+    role: signature
+    min_key_size_bits: 3000
+    recommended_until_iso: 2035-12-31
+    clause: "Section 5.3.1"
+    quote: "The restriction of the recommendation for RSA until 2031 in Table 2.2 only applies to key exchange. Signatures with RSA are expected to be recommended until 2035."
+  - mechanism: DH
+    role: key-agreement
+    min_key_size_bits: 3000
+    recommended_until_iso: 2031-12-31
+    clause: "Table 2.2"
+  - mechanism: ECDH
+    role: key-agreement
+    min_key_size_bits: 250
+    recommended_until_iso: 2031-12-31
+    clause: "Table 2.2"
+  - mechanism: DLIES
+    role: encryption
+    min_key_size_bits: 3000
+    recommended_until_iso: 2031-12-31
+    clause: "Table 2.2"
+  - mechanism: ECIES
+    role: encryption
+    min_key_size_bits: 250
+    recommended_until_iso: 2031-12-31
+    clause: "Table 2.2"
+  - mechanism: DSA
+    role: signature
+    recommended_until_iso: 2029-12-31
+    clause: "Table 1.1 footnote 1 / Section 5.3.2"
+    quote: "The use of the DSA signature algorithm is in this Technical Guideline only recommended until 2029 due to its low prevalence and the discontinuation in FIPS 186-5."
+  - mechanism: ECDSA
+    role: signature
+    recommended_until_iso: 2035-12-31
+    note: "Falls under the general classical-signature horizon, not an individual table entry."
+    clause: "Section 2.1"
+    quote: "Based on current knowledge, the use of classic signature mechanisms is therefore only recommended until the end of 2035."
+
+accelerated_deadline:
+  applies_to: "applications with very high protection requirements"
+  deadline_iso: 2030-12-31
+  clause: "Section 2.1"
+  quote: "For applications with very high protection requirements, the transition to quantum-safe mechanisms should already take place by the end of 2030."
+  basis: "joint recommendation by the BSI and European partner authorities"
+
+pqc_introduction:
+  hybrid_required: true
+  hybrid_clause: "Section 2.1 / Section 2.2"
+  hybrid_quote: "The quantum-safe mechanisms recommended in Section 2.4 should be used in 'hybrid' form, i.e., in a suitable combination with a classical method."
+  mechanisms:
+    - name: ML-KEM
+      function: KEM
+      parameter_sets: [ML-KEM-768, ML-KEM-1024]
+      standardised_by: FIPS 203
+      status: recommended
+      clause: "Section 2.4.3 / Table 2.7"
+      note: "ML-KEM-512 is NOT in the BSI recommended set."
+    - name: FrodoKEM
+      function: KEM
+      parameter_sets: [FrodoKEM-976, FrodoKEM-1344]
+      status: recommended
+      clause: "Section 2.4.1 / Table 2.5"
+      note: "Unstructured-lattice conservative choice; not NIST-standardised."
+    - name: Classic McEliece
+      function: KEM
+      status: recommended
+      clause: "Section 2.4.2 / Table 2.6"
+      note: "Under ISO standardisation; BSI recommended since version 2020-01."
+    - name: ML-DSA
+      function: signature
+      variant: hedged
+      standardised_by: FIPS 204
+      status: recommended
+      clause: "Section 5.3 / Table 5.7"
+    - name: SLH-DSA
+      function: signature
+      variant: hedged
+      parameter_sets: [SLH-DSA-SHA2-192s, SLH-DSA-SHAKE-192s, SLH-DSA-SHA2-192f, SLH-DSA-SHAKE-192f, SLH-DSA-SHA2-256s, SLH-DSA-SHAKE-256s]
+      standardised_by: FIPS 205
+      status: recommended
+      clause: "Section 5.3.4.1 / Table 5.6"
+    - name: LMS/HSS
+      function: signature
+      status: recommended
+      note: "Stateful hash-based; NIST SP 800-208."
+    - name: XMSS/XMSS-MT
+      function: signature
+      status: recommended
+      note: "Stateful hash-based; NIST SP 800-208."
+
+crosscheck:
+  transition_tab_region_value: "BSI/ANSSI"
+  rows_currently_citing_this_doc: 2      # Classic McEliece only
+  expected_rows_if_backed_properly: ">= 13 (7 classical horizons + 6 PQC mechanisms)"

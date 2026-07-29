@@ -1,0 +1,83 @@
+# Cross-check reference for the Algorithms > Transition Guide tab.
+# Reference artefact only — nothing here has been written into src/data.
+standard_id: AU-ASD-ISM-CRYPTOGRAPHY
+document_class: mechanism-catalogue        # covers ALL mechanisms, classical + PQC
+authority:
+  name: Australian Signals Directorate
+  short: ASD
+  country: AU
+  region_scope: [AU, FIVEEYES]
+document:
+  designation: "ISM — Guidelines for Cryptography"
+  title: "Australian Government Information Security Manual, Guidelines for Cryptography"
+  current_release: "June 2026"
+  cadence: quarterly
+  verified_release: "December 2024"
+  language: en
+  url: https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/ism/cyber-security-guidelines/guidelines-for-cryptography
+  current_release_url: "https://www.cyber.gov.au/sites/default/files/2026-06/Information%20security%20manual%20(June%202026).pdf"
+coverage:
+  classical_mechanisms: true
+  pqc_mechanisms: true
+  per_mechanism_end_dates: true
+  symmetric_and_hash: true
+  significance: "The most aggressive per-algorithm deprecation schedule of any national authority found in this audit — a single hard 2030 cliff covering classical AND the lower PQC parameter sets."
+verification:
+  verified_on: 2026-07-28
+  method: cached primary-source PDF (December 2024) text-extracted from pqctoday-priv/public/library
+  caveat: "cyber.gov.au was unreachable from this environment (HTTP/2 INTERNAL_ERROR, then timeout). The June 2026 release was NOT line-verified; web search confirms the ML-KEM-768 and RSA 'beyond 2030' clauses persist in it. Every date below is quoted from the December 2024 cached PDF."
+  hub_library_reference_id: AU-ASD-ISM-Crypto-2024
+  hub_library_local_file: library/AU-ASD-ISM-Crypto-2024.pdf
+  hub_library_local_file_status: OK
+  hub_library_status: STALE     # library holds December 2024; current release is June 2026
+
+classical_deprecation:
+  common_end_date_iso: 2030-12-31
+  common_wording: "will not be approved for use beyond 2030"
+  mechanisms:
+    - {mechanism: RSA,            role: encryption-and-signature, end_date_iso: 2030-12-31}
+    - {mechanism: DH,             role: key-agreement,            end_date_iso: 2030-12-31}
+    - {mechanism: ECDH,           role: key-agreement,            end_date_iso: 2030-12-31}
+    - {mechanism: ECDSA,          role: signature,                end_date_iso: 2030-12-31}
+    - {mechanism: SHA-224,        role: hash,                     end_date_iso: 2030-12-31}
+    - {mechanism: SHA-256,        role: hash,                     end_date_iso: 2030-12-31}
+    - {mechanism: AES-128,        role: symmetric,                end_date_iso: 2030-12-31}
+    - {mechanism: AES-192,        role: symmetric,                end_date_iso: 2030-12-31}
+    - {mechanism: HMAC-SHA-256,   role: mac,                      end_date_iso: 2030-12-31}
+  note: "SHA-3 family (SHA3-*, SHAKE128, SHAKE256) is restricted to use within the internal steps of ML-DSA and ML-KEM."
+
+pqc_parameter_deprecation:
+  note: "ASD also sunsets the LOWER PQC parameter sets on the same 2030 date — no other authority in this audit does this."
+  mechanisms:
+    - {mechanism: ML-KEM-768, end_date_iso: 2030-12-31, quote: "taking into account projected technological advances in quantum computing, ML-KEM-768 will not be approved for use beyond 2030."}
+    - {mechanism: ML-DSA-65,  end_date_iso: 2030-12-31, quote: "taking into account projected technological advances in quantum computing, ML-DSA-65 will not be approved for use beyond 2030."}
+
+pqc_introduction:
+  hybrid_permitted: true
+  hybrid_definition: "at least one post-quantum algorithm (e.g. ML-KEM) combined with at least one traditional algorithm"
+  mechanisms:
+    - name: ML-KEM
+      function: KEM
+      standardised_by: FIPS 203
+      approved_parameter_sets: [ML-KEM-768, ML-KEM-1024]
+      preferred: ML-KEM-1024
+      rejected_parameter_sets: [ML-KEM-512]
+    - name: ML-DSA
+      function: signature
+      standardised_by: FIPS 204
+      approved_parameter_sets: [ML-DSA-65, ML-DSA-87]
+      preferred: ML-DSA-87
+      rejected_parameter_sets: [ML-DSA-44]
+      variant_guidance: "hedged variant used whenever possible"
+      prehash_guidance: "pre-hashed ML-DSA-65 requires at least SHA-384; pre-hashed ML-DSA-87 requires at least SHA-512"
+
+procurement_deadline:
+  deadline_iso: 2030-12-31
+  quote: "The development or procurement of new cryptographic equipment and software, which is intended to be used beyond 2030, should be undertaken with the goal of supporting ASD-approved post-quantum cryptographic algorithms by 2030."
+  target_set: [ML-DSA-87, ML-KEM-1024, SHA-384, SHA-512, AES-256]
+  target_quote: "... support ML-DSA-87, ML-KEM-1024, SHA-384, SHA-512 and AES-256 by no later than 2030."
+
+crosscheck:
+  transition_tab_region_value: "(none — no AU value exists in REGION_ITEMS)"
+  rows_currently_citing_this_doc: 0
+  impact: "The Transition tab shows 2030/2035 NIST dates but cannot show that an Australian reader's regulator disallows RSA, ECDH, ECDSA, AES-128 AND ML-KEM-768/ML-DSA-65 five years earlier than the NIST 'disallowed' date."

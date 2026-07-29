@@ -1,0 +1,84 @@
+# Cross-check reference for the Algorithms > Transition Guide tab.
+# Reference artefact only — nothing here has been written into src/data.
+standard_id: IN-DST-NQM-ROADMAP
+document_class: migration-roadmap    # NOT a mechanism catalogue
+authority:
+  name: "Department of Science & Technology, Task Force under the National Quantum Mission"
+  short: DST / NQM
+  country: IN
+  region_scope: [IN]
+document:
+  title: "Implementation of Quantum Safe Ecosystem in India — Report of the Task Force"
+  published_iso: 2026-02-04
+  pages: 26
+  language: en
+  url: "https://dst.gov.in/sites/default/files/Report_TaskForce_PQMigration_4Feb26%20(v1).pdf"
+  sub_groups:
+    - {id: 1, lead: "Telecommunication Engineering Centre (TEC)", output: "Draft Framework for Testing and Certification of PQC-based Quantum-Safe Products and Solutions (Annexure B)"}
+    - {id: 2, lead: "DSCI", output: "crypto-agility, PQC migration planning, QKD network integration"}
+coverage:
+  classical_mechanisms: false
+  pqc_mechanisms: true            # adopts NIST algorithms by reference; no key-size/date table
+  per_mechanism_end_dates: false
+verification:
+  verified_on: 2026-07-28
+  method: cached primary-source PDF text-extracted from pqctoday-priv/public/library
+  hub_library_reference_id: India-DST-NQM-Roadmap
+  hub_library_local_file: library/India-DST-NQM-Roadmap.pdf
+  hub_library_local_file_status: OK
+
+milestones:
+  - id: 1
+    name: "Build Foundations"
+    deadline_cii_iso: 2027-12-31
+    deadline_enterprise_iso: 2028-12-31
+    items:
+      - "Establish leadership, governance and cross-functional quantum risk management."
+      - "Inventory cryptographic assets and assess quantum risk."
+      - "Initiate pilot projects and early migration of high-priority systems."
+      - "Begin adopting PQC/hybrid signatures for critical software and systems."
+      - "Introduce PQC readiness requirements in procurement, including phased adoption of CBOMs."
+      - "Mandate CBOM submissions from vendors starting FY 2027-28."
+  - id: 2
+    name: "Migrate High-Priority Systems"
+    deadline_cii_iso: 2028-12-31
+    deadline_enterprise_iso: 2030-12-31
+    items:
+      - "Enforce 'no new classical-only deployments'."
+      - "Upgrade PKI, HSMs, KMS and libraries to PQC-ready versions."
+      - "Mandate PQC-capable digital signatures."
+      - "Contain classical-only systems within controlled enclaves where immediate migration is not feasible."
+  - id: 3
+    name: "Full PQC Adoption"
+    deadline_cii_iso: 2029-12-31
+    deadline_enterprise_iso: 2033-12-31
+    items:
+      - "Complete enterprise-wide PQC/hybrid adoption."
+      - "Operate PQC-only trust chains; all digital signatures quantum-safe."
+      - "Implement layered risk management for remaining legacy systems."
+
+personas:
+  urgent_adopters: "Critical infrastructure and high-risk organisations (power, telecom, ISRO, DRDO, ONGC) — accelerated across all milestones."
+  regular_adopters: "Enterprises with moderate risk — standard milestones 2028-2033."
+  technology_providers: "Cryptography solution vendors — lead by example."
+
+lab_infrastructure_dates:
+  - {deadline_iso: 2026-12-31, item: "Tier-1 and Tier-2 PQC testing laboratories operational under TEC, STQC and BIS."}
+  - {window: "2028-2030", item: "Tier-3 (L3/L4) laboratories upgraded under a Public-Private Partnership model."}
+  - {window: "2027-01 to 2029-12", item: "Migration window stated for critical applications."}
+
+pqc_algorithms_adopted: [ML-KEM, ML-DSA, SLH-DSA]
+algorithm_source: "NIST FIPS 203/204/205 adopted by reference — India publishes no national algorithm list of its own."
+
+classical_deprecation: null
+classical_deprecation_note: >
+  No per-algorithm sunset year. The nearest binding statement is the Milestone 2 rule
+  "Enforce 'no new classical-only deployments'" (CII 2028 / enterprises 2030). India's 2033
+  enterprise completion date is EARLIER than the 2035 most other jurisdictions use.
+
+companion_documents:
+  - {id: "TEC 910018:2025", title: "India TEC Technical Report — Migration to Post-Quantum Cryptography", date: 2025-03-28, hub_library_reference_id: IN-TEC-PQC-Migration-Report-2025}
+  - {id: "CERT-In QBOM/CBOM Guidelines v2.0", date: 2025-01-01, hub_library_reference_id: IN-CERTIN-QBOM-Guidelines-2025}
+
+crosscheck:
+  transition_tab_region_value: "(none — no IN value exists in REGION_ITEMS)"

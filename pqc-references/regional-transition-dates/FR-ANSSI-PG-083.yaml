@@ -1,0 +1,123 @@
+# Cross-check reference for the Algorithms > Transition Guide tab.
+# Reference artefact only — nothing here has been written into src/data.
+standard_id: FR-ANSSI-PG-083
+document_class: mechanism-catalogue        # covers ALL mechanisms, classical + PQC
+authority:
+  name: Agence nationale de la securite des systemes d'information
+  short: ANSSI
+  country: FR
+  region_scope: [FR, EU]
+document:
+  designation: ANSSI-PG-083
+  title: "Regles et recommandations concernant le choix et le dimensionnement des mecanismes cryptographiques"
+  version: "3.00"
+  as_of: 2026-03-20
+  supersedes: "v2.04 (2021)"
+  language: fr
+  url: https://messervices.cyber.gouv.fr/documents-guides/anssi-guide-mecanismes-crypto-3.00.pdf
+  licence: "Licence Ouverte v2.0 (Etalab)"
+coverage:
+  classical_mechanisms: true
+  pqc_mechanisms: true
+  per_mechanism_end_dates: true
+  symmetric_and_hash: true
+verification:
+  verified_on: 2026-07-28
+  method: cached primary-source PDF text-extracted from pqctoday-priv/public/library
+  hub_library_reference_id: ANSSI-PG-083-v3-2026
+  hub_library_local_file: library/ANSSI-PG-083-v3-2026.pdf
+  hub_library_local_file_status: OK
+  hub_library_recorded_publication: 2004-11-19   # v1 date; last_update_date 2026-03-20 is correct
+
+general_rule:
+  id: RecoSecuLongTerme
+  trigger_iso: 2030-01-01
+  clause: "Section 2.1"
+  quote: "En cas d'utilisation prevue au-dela du 1er janvier 2030 d'un mecanisme cryptographique ou de l'existence d'un risque d'attaque retroactive sur celui-ci, il est recommande de viser une securite post-quantique."
+  english: "Where a cryptographic mechanism is intended to be used beyond 1 January 2030, or where there is retroactive-attack risk, post-quantum security should be targeted."
+
+classical_deprecation:
+  - mechanism: RSA
+    problem: factorisation
+    rule_id: RegleFactorisation
+    min_key_size_bits: 2048
+    valid_until_iso: 2030-12-31
+    then_min_key_size_bits: 3072
+    then_from_iso: 2031-01-01
+    clause: "Section 2.2.1.1"
+    quote: "La taille minimale du module est de 2048 bits, pour une utilisation ne devant pas depasser la fin de l'annee 2030. Pour une utilisation a partir de l'annee 2031, la taille minimale du module est de 3072 bits."
+    recommendation: "RecoFactorisation: use >= 3072 bits even for use not exceeding 2030."
+  - mechanism: DH (finite field)
+    problem: discrete-log-GF(p)
+    rule_id: RegleLogDiscretGFp
+    min_key_size_bits: 2048
+    valid_until_iso: 2030-12-31
+    then_min_key_size_bits: 3072
+    then_from_iso: 2031-01-01
+    clause: "Section 2.2.1.2"
+    subgroup_order_min_bits: 250
+  - mechanism: ECDH / ECDSA
+    problem: discrete-log-elliptic-curve
+    note: "Elliptic-curve minimum sizes are unchanged by the 2030/2031 step; the post-quantum obligation comes from RegleSecuAsym + ReglePQSecuAsym instead."
+
+pqc_introduction:
+  hybrid_required: true
+  hybrid_rule_ids: [RegleSecuAsym, ReglePQSecuAsym]
+  hybrid_clause: "Section 2.2 / 2.4"
+  quote: "Utilise sans hybridation et quel que soit le jeu de parametres utilise, le mecanisme d'encapsulation de cles ML-KEM ne respecte pas la regle RegleSecuAsym."
+  mechanisms:
+    - name: ML-KEM
+      function: KEM
+      standardised_by: FIPS 203
+      hybrid_required: true
+      parameter_notes:
+        ML-KEM-512: "conformant only when hybridised with a classical mechanism; ML-KEM-768 preferred"
+        ML-KEM-768: "preferred level"
+        ML-KEM-1024: "conformant when hybridised"
+      standalone_allowed: false
+    - name: ML-DSA
+      function: signature
+      standardised_by: FIPS 204
+      hybrid_required: true
+      standalone_allowed: false
+      clause: "Section 2.4"
+    - name: SLH-DSA
+      function: signature
+      standardised_by: FIPS 205
+      hybrid_required: false
+      standalone_allowed: true
+      standalone_from_iso: 2030-01-01
+      clause: "Section 2.4"
+      quote: "Le mecanisme de signature numerique SLH-DSA defini dans le FIPS 205 ... peut donc etre utilise tel quel apres 2030."
+
+companion_documents:
+  - id: ANSSI-FT-115
+    title: "Transition post-quantique de TLS 1.3"
+    date: 2026-02-02
+    hub_library_reference_id: ANSSI-PQC-TLS13-Transition
+  - id: ANSSI-FT-116
+    title: "Transition post-quantique de SSHv2"
+    date: 2026-02-02
+    hub_library_reference_id: ANSSI-PQC-SSH-Transition-v2
+  - id: ANSSI-FT-117
+    title: "Transition post-quantique d'IPsec / IKEv2"
+    date: 2026-02-02
+    hub_library_reference_id: ANSSI-PQC-IPsec-Transition
+
+policy_dates_from_anssi_faq:
+  source: ANSSI-PQC-FAQ-2025 (2025-10)
+  hub_library_local_file: library/ANSSI-PQC-FAQ-2025.html
+  items:
+    - date_iso: 2027-01-01
+      claim: "ANSSI aims to make PQC mandatory for products entering the qualification process."
+      quote: "L'ANSSI vise la mise en place d'obligations PQC pour l'entree en qualification de produits a partir de 2027."
+    - date_iso: 2030-01-01
+      claim: "Buying products without PQC will not be reasonable."
+      quote: "Il ne sera pas raisonnable d'acheter des produits qui n'integrent pas de la PQC apres 2030."
+    - date_iso: 2026-12-31
+      claim: "Revision of the IPsec DR reference framework planned during 2026."
+
+crosscheck:
+  transition_tab_region_value: "BSI/ANSSI"
+  rows_currently_citing_this_doc: 0
+  expected_rows_if_backed_properly: ">= 6 (RSA/DH 2030->2031 step + 3 PQC mechanisms + hybrid rule)"
