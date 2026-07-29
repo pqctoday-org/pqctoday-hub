@@ -137,7 +137,7 @@ export function MobileTransitionWizard({
               <div className="flex flex-wrap gap-1.5">
                 {items.map(({ classical, fn }) => (
                   <Button
-                    key={classical}
+                    key={`${classical}-${fn}`}
                     variant="ghost"
                     size="sm"
                     onClick={() => {

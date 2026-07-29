@@ -1,0 +1,66 @@
+# Cross-check reference for the Algorithms > Transition Guide tab.
+# Reference artefact only — nothing here has been written into src/data.
+standard_id: IT-ACN-TLS-GUIDELINES
+document_class: mechanism-catalogue   # scoped to TLS specifically; weak on classical dates
+authority:
+  name: "Agenzia per la Cybersicurezza Nazionale"
+  short: ACN
+  country: IT
+  region_scope: [IT, EU]
+document:
+  designation: "Linee Guida Funzioni Crittografiche — Transport Layer Security (TLS)"
+  version: "2.0"
+  as_of: 2026-05-12
+  supersedes: "1.0, 26/02/2025 — v2.0 added a 'Scopo del documento' section and integrated post-quantum solutions"
+  language: it
+  url: "https://www.acn.gov.it/portale/documents/20119/85999/ACN_LG_Transport_Layer_Security_TLS.pdf/32f67240-a7e5-c707-e7fd-cc3ac0de2d3c"
+  series: "Linee Guida Funzioni Crittografiche — a multi-document series covering Digital Signatures, Block Ciphers, Stream Ciphers, Authenticated Encryption, Hash Functions, MACs, and TLS, all dated 2026 per this document's own bibliography"
+coverage:
+  classical_mechanisms: true
+  pqc_mechanisms: true
+  per_mechanism_end_dates: false
+  scope_limit: "TLS-specific. Companion 'Firme Digitali' (Digital Signatures) document exists per this doc's bibliography [12] but was not independently fetched/verified in this pass."
+verification:
+  verified_on: 2026-07-28
+  method: primary-source PDF downloaded and text-extracted, found via web search during the Phase B wide-jurisdiction sweep
+  hub_library_status: ADDED 2026-07-29
+  hub_library_reference_id: ACN-Italy-Linee-Guida-Funzioni-Crittografiche-Transport-Laye
+  hub_library_local_file: library/ACN-Italy-Linee-Guida-Funzioni-Crittografiche-Transport-Laye.html
+  also_found_but_not_pqc_relevant: "ACN_Crittografia_Quantum_Safe.pdf (July 2024) — a general quantum-threat awareness document, superseded in currency by this TLS-specific guide for grounding purposes."
+
+pqc_introduction:
+  hybrid_mentioned: true
+  mechanisms:
+    - name: ML-KEM
+      function: KEM
+      usage: "Hybridised with ECDHE for key exchange (harvest-now-decrypt-later protection)."
+      clause: "Sec 5, references [34],[35]"
+    - name: ML-DSA
+      function: signature
+      clause: "references [37]"
+    - name: SLH-DSA
+      function: signature
+      clause: "references [38]"
+    - name: LMS
+      function: signature
+      clause: "references [39]"
+    - name: XMSS
+      function: signature
+      clause: "references [39]"
+
+classical_deprecation: null
+classical_deprecation_note: >
+  No explicit calendar-year deprecation table for RSA/ECDHE/ECDSA was found in this document —
+  it discusses obsolescence qualitatively (SSL 2.0/3.0 "obsolete", MD5 "obsolete since 2024",
+  various extensions "sconsigliate"/discouraged) rather than with a BSI/ANSSI-style dated table.
+  Weak on dates, same category as ETSI TS 104 015 — real and current, but doesn't ground a
+  deprecation year.
+
+crosscheck:
+  transition_tab_region_value: "ACN (new, added 2026-07-28)"
+  rows_added: 2
+  note: >
+    Added to REGION_ITEMS despite the missing classical-date table because the grounding rule
+    requires a REAL reference standard, not necessarily a dated one — same standard applied to
+    ETSI. If ACN's companion 'Firme Digitali' document does carry classical dates, a follow-up
+    pass should fetch it and strengthen this row.

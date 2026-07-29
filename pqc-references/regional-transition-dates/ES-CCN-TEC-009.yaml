@@ -1,0 +1,66 @@
+# Cross-check reference for the Algorithms > Transition Guide tab.
+# Reference artefact only — nothing here has been written into src/data.
+standard_id: ES-CCN-TEC-009
+document_class: mechanism-catalogue
+authority:
+  name: "Centro Criptologico Nacional"
+  short: CCN
+  country: ES
+  region_scope: [ES, EU]
+document:
+  designation: "CCN-TEC 009 / BP-37"
+  title: "Recomendaciones para una transicion postcuantica segura"
+  subtitle: "Guia de Buenas Practicas"
+  as_of: 2026-07
+  language: es
+  url: "https://www.ccn.cni.es/eu/docman/documentos-publicos/boletines-pytec/495-ccn-tec-009-recomendaciones-transicion-postcuantica-segura/file"
+  fetch_note: "The canonical ccn-cert.cni.es domain blocks automated fetches with a bot-detection interstitial ('Voight-Kampff Browser Test') from this environment; the mirror on ccn.cni.es (a different CCN domain) served the real PDF."
+coverage:
+  classical_mechanisms: false
+  pqc_mechanisms: true
+  per_mechanism_end_dates: true    # via adoption of the EU roadmap's own milestone years
+verification:
+  verified_on: 2026-07-28
+  method: primary-source PDF downloaded and text-extracted, found via web search during the Phase B wide-jurisdiction sweep
+  hub_library_status: ADDED 2026-07-29
+  hub_library_reference_id: CCN-TEC-009-BP-37-Spain-Recomendaciones-para-una-transicion
+  hub_library_local_file: library/CCN-TEC-009-BP-37-Spain-Recomendaciones-para-una-transicion.html
+
+migration_deadlines:
+  source: "Explicitly adopts the EU NIS-CG roadmap's own milestone structure (see EU-NIS-CG-ROADMAP.yaml)"
+  deadlines:
+    - risk_tier: high
+      deadline_iso: 2030-12-31
+      quote_es: "Antes del 31.12.2030, los sistemas con riesgo alto deberan estar [migrados]"
+    - risk_tier: medium
+      deadline_iso: 2035-12-31
+      quote_es: "Antes del 31.12.2035 todos los sistemas con riesgo medio deberan [estar migrados]"
+
+pqc_algorithms_named:
+  - {name: ML-KEM,   underlying: CRYSTALS-Kyber,  math_family: "structured lattice (MLWE)", standard: "FIPS 203"}
+  - {name: HQC-KEM,  underlying: HQC,             math_family: "code-based (error-correcting)", standard: "FIPS 207 (expected 2027)"}
+  - {name: ML-DSA,   underlying: CRYSTALS-Dilithium, math_family: "structured lattice (MLWE)", standard: "FIPS 204"}
+  - {name: SLH-DSA,  underlying: SPHINCS+,        math_family: "hash-based", standard: "FIPS 205"}
+  - {name: FN-DSA,   underlying: FALCON,          math_family: "structured lattice (SIS)", standard: "FIPS 206 (expected 2026)"}
+  - {name: FrodoKEM, math_family: "unstructured lattice (LWE)", note: "explicitly recommended alongside the NIST-standardised KEMs; ISO/IEC 18033-2:2006/Amd 2:2026 incorporates it"}
+
+classical_deprecation: null
+classical_deprecation_note: >
+  Document is PQC-introduction-focused; it does not itself set a classical-algorithm end date
+  (RSA/ECC), only migration COMPLETION deadlines by risk tier, inherited from the EU roadmap.
+
+companion_document_VERIFIED_2026_07_29:
+  id: "CCN-STIC 221"
+  title: "Guia de mecanismos criptograficos autorizados por el CCN"
+  status: "CLOSED — retrieved via a Wayback Machine snapshot after the live domain's bot-detection blocked three separate direct-fetch attempts. See ES-CCN-STIC-221.yaml for the full mechanism catalogue: RSA/DH legacy deadline 2025-12-31 (mirrors ECCG exactly), ML-KEM/ML-DSA/SLH-DSA/XMSS tables. 4 new algorithms_transitions rows added under the same 'CCN' filter value as this document."
+  edition_retrieved: "2024-11 (via 2025-06-05 snapshot)"
+  possible_newer_edition_not_checked: "A November 2025 edition may exist per a distinct search hit title — not independently confirmed."
+
+also_found:
+  - id: "CCN-TEC 009 RSA extension note"
+    claim: "RSA authorization for trust service providers with modulus 1900-3000 bits extended to 2026-12-31"
+    verification: "cited in web search summary, NOT independently confirmed in the fetched PDF text during this pass — flag for re-check"
+
+crosscheck:
+  transition_tab_region_value: "CCN (new, added 2026-07-28)"
+  rows_added: 2

@@ -1,0 +1,64 @@
+# Cross-check reference for the Algorithms > Transition Guide tab.
+# Reference artefact only — nothing here has been written into src/data.
+standard_id: UK-NCSC-MIGRATION-TIMELINES
+document_class: migration-roadmap    # NOT a mechanism catalogue
+authority:
+  name: "National Cyber Security Centre"
+  short: NCSC
+  country: GB
+  region_scope: [GB, FIVEEYES]
+document:
+  title: "Timelines for migration to post-quantum cryptography"
+  version: "1.0"
+  published_iso: 2025-03-20
+  last_updated_iso: 2025-03-20
+  language: en
+  url: https://www.ncsc.gov.uk/guidance/pqc-migration-timelines
+coverage:
+  classical_mechanisms: false
+  pqc_mechanisms: true            # names algorithms, sets no key-size or end-date table
+  per_mechanism_end_dates: false
+verification:
+  verified_on: 2026-07-28
+  method: live page fetched and read
+  hub_library_reference_id: UK-NCSC-Migration-Timelines-2025
+  hub_library_local_file: library/pqc-migration-timelines.pdf
+  hub_library_local_file_status: BROKEN     # file is HTML, not a PDF, despite the .pdf extension
+  hub_library_recorded_date: 2025-05-01     # WRONG — actual publication is 2025-03-20
+
+milestones:
+  - deadline_iso: 2028-12-31
+    label: "by 2028"
+    achievements:
+      - "Define your migration goals."
+      - "Carry out a full discovery exercise of systems and services dependent on cryptography."
+      - "Build an initial plan for migration."
+      - "Identify supplier dependencies and infrastructure requirements."
+  - deadline_iso: 2031-12-31
+    label: "by 2031"
+    achievements:
+      - "Execute the highest-priority migration activities protecting critical assets."
+      - "Refine the plan into a thorough roadmap for completing migration."
+      - "Prepare infrastructure to support a post-quantum future."
+  - deadline_iso: 2035-12-31
+    label: "by 2035"
+    achievements:
+      - "Complete migration to PQC of all systems, services and products."
+
+pqc_named:
+  - {name: ML-KEM,  standardised_by: FIPS 203}
+  - {name: ML-DSA,  standardised_by: FIPS 204}
+  - {name: SLH-DSA, standardised_by: FIPS 205}
+  - {name: LMS,     standardised_by: "NIST SP 800-208", note: "limited uses"}
+  - {name: XMSS,    standardised_by: "NIST SP 800-208", note: "limited uses"}
+
+classical_deprecation: null
+classical_deprecation_note: >
+  NCSC publishes no per-algorithm retirement date. Its endpoint condition is stated as no longer
+  having "any sole dependence on traditional PKC". The UK is the only major European jurisdiction
+  in this audit with a national PQC timeline but NO national mechanism catalogue of the
+  BSI/ANSSI kind.
+
+crosscheck:
+  transition_tab_region_value: "(none — no GB/UK value exists in REGION_ITEMS)"
+  rows_currently_citing_uk: 0

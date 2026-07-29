@@ -1,0 +1,80 @@
+# Cross-check reference for the Algorithms > Transition Guide tab.
+# Reference artefact only — nothing here has been written into src/data.
+standard_id: KR-KCMVP-ALGORITHM-LIST
+document_class: gap-record         # no dated mechanism catalogue exists yet
+authority:
+  name: "National Intelligence Service / KISA (Korea Cryptographic Module Validation Program)"
+  short: NIS / KISA
+  country: KR
+  region_scope: [KR]
+status: NO_DATED_CATALOGUE
+finding: >
+  South Korea has a mechanism list (the KCMVP validated-algorithm list, 22 algorithms) and it has
+  selected four national PQC algorithms, but as of 2026-07-28 there is no published Korean document
+  in the BSI/ANSSI class: nothing states a per-algorithm end date, and the KCMVP list does not yet
+  contain any post-quantum algorithm.
+verification:
+  verified_on: 2026-07-29
+  method: "UPGRADED from web-search-only: fetched KISA's own KCMVP algorithm page directly (seed.kisa.or.kr/kisa/kcmvp/EgovVerification.do)."
+  confidence: HIGH
+  finding: "Confirmed directly from the source: ML-KEM, ML-DSA and every other post-quantum algorithm are absent from the page. Every entry is a classical primitive (ARIA/SEED/LEA/HIGHT/AES; RSAES; RSA-PSS/KCDSA/EC-KCDSA/ECDSA; DH/ECDH; SHA-2/LSH/SHA-3; HMAC/CMAC/GMAC; the three DRBGs; KBKDF/PBKDF)."
+
+existing_mechanism_list:
+  name: "KCMVP 검증대상 암호알고리즘 (KCMVP validated algorithms)"
+  count: 22
+  post_quantum_entries: 0
+  classical_entries:
+    block_ciphers: [ARIA, SEED, LEA, HIGHT]
+    public_key_encryption: [RSAES]
+    signature: [RSA-PSS, KCDSA, EC-KCDSA, ECDSA]
+    key_establishment: [DH, ECDH]
+    hash: [SHA-2, SHA-3, LSH]
+    mac: [CMAC, GMAC, HMAC]
+    drbg: [CTR-DRBG, HASH-DRBG, HMAC-DRBG]
+    kdf: [KBKDF, PBKDF]
+  expected_change: "KCMVP 3.0 is expected to add ML-KEM and ML-DSA; Korean KpqC algorithms pending NIS/KISA evaluation. No published date."
+
+national_pqc_selection:
+  programme: "KpqC — Korean Post-Quantum Cryptography Competition"
+  launched: 2021-11
+  round_1_finalists: 2023-12
+  final_selection_iso: 2025-01-16
+  selected:
+    - {name: "NTRU+",   function: KEM}
+    - {name: "SMAUG-T", function: KEM}
+    - {name: "AIMer",   function: signature}
+    - {name: "HAETAE",  function: signature}
+  standardisation_status: "Selected by competition; not yet published as a dated national algorithm standard with validity horizons."
+
+national_policy_dates:
+  document: "범국가 암호체계 전환 마스터플랜 (Pan-national Cryptographic Transition Master Plan)"
+  issuer: "NIS + MSIT + related ministries"
+  announced: 2023-07
+  document_class: migration-roadmap
+  milestones:
+    - {year: 2024, item: "detailed action plans across 6 areas (technology, institutions, procedures)"}
+    - {year: 2030, item: "implementation base for systematic transition to quantum-resistant cryptography established"}
+    - {year: 2035, item: "transition to post-quantum cryptography completed; technical and policy support system in place"}
+  classical_deprecation_dates: null
+
+classical_deprecation: null
+classical_deprecation_note: "No Korean document publishes an end date for RSA, ECDSA, ECDH, DH or KCDSA."
+
+crosscheck:
+  transition_tab_region_values_before: ["KpqC", "KR"]
+  transition_tab_region_values_after: []
+  action_taken: >
+    2026-07-29: REMOVED from REGION_ITEMS (AlgorithmFilters.tsx) per the grounding rule — no
+    Korean document sets a per-algorithm date or approves a PQC algorithm, so neither 'KpqC'
+    nor 'KR' can be grounded to a reference standard. The underlying 16 CSV rows (12 tagged KR
+    status 'KpqC Round 2', 4 tagged KpqC status 'Candidate') were RETAINED, not deleted, and
+    annotated in data_quality_notes explaining the removal — see
+    algorithms_transitions_07282026.csv. If Korea publishes a dated national standard (KCMVP 3.0
+    adding ML-KEM/ML-DSA is the most likely candidate), add it back with real citations, never
+    speculatively.
+  prior_data_defect: >
+    The tab carried two separate region values for one country and labelled the four algorithms
+    'KpqC Round 2' / 'Candidate' when they were finally SELECTED on 2025-01-16 — both strings
+    stale by 18 months, and the KR rows pointed at kpqc.cryptolab.co.kr (a participant-team site)
+    rather than kpqc.or.kr (the programme site). Superseded by the removal above, not fixed in
+    place, since there is still no dated standard to cite even with a corrected URL.

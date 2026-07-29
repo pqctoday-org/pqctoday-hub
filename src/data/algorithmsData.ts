@@ -76,6 +76,19 @@ const TRANSITION_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   Draft: 'ietf-draft',
   Research: 'unverified', // Aigis (CN)
   'To Be Checked': 'unverified',
+  // Regional-standards grounding audit additions (2026-07-28/29) — all
+  // 'regional' per the existing BSI TR-02102-1/KpqC Round 2 convention:
+  // final, published documents within their own jurisdiction, not
+  // FIPS-certified.
+  'BSI TR-02102-1 v2026-01': 'regional',
+  'ANSSI-PG-083 v3.00': 'regional',
+  'ECCG ACM v2.0': 'regional',
+  'ETSI TS 119 312 V2.1.1': 'regional',
+  'ASD ISM - Guidelines for Cryptography': 'regional',
+  'CRYPTREC LS-0001-2022R2': 'regional',
+  'ACN Linee Guida Funzioni Crittografiche - TLS v2.0': 'regional',
+  'CCN-TEC 009 / BP-37': 'regional',
+  'CCN-STIC 221 (Nov 2024)': 'regional',
 }
 
 /** Second-level disambiguation for Status === 'Candidate', keyed on the
