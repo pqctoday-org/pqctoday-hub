@@ -100,6 +100,8 @@ security_floor:
   quote: "ECCG recommended mechanisms should provide at least 125 bits of security against offline attacks. 100 bits of security may be used by ECCG legacy mechanisms."
 
 crosscheck:
-  transition_tab_region_value: "(none — no ECCG/EU value exists in REGION_ITEMS)"
-  rows_currently_citing_this_doc: 0
-  note: "This is the highest-authority EU mechanism catalogue and the Transition tab has no way to surface it."
+  transition_tab_region_value_before: "(none — no ECCG/EU value existed in REGION_ITEMS)"
+  rows_before: 0
+  transition_tab_region_value_after: "ECCG"
+  rows_after: 7
+  action_taken: "ECCG added to REGION_ITEMS 2026-07-29 with 7 new rows (algorithms_transitions_07282026.csv) citing ECCG Agreed Cryptographic Mechanisms v2.0 directly."

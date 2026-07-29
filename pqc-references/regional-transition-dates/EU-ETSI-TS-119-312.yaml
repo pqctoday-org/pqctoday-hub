@@ -100,7 +100,8 @@ hash_table:
   SHA3-512: R
 
 crosscheck:
-  transition_tab_region_value: "ETSI"
-  rows_currently_citing_etsi: 1     # a single Covercrypt row citing ETSI TS 104 015
-  imminent_deadline: 2026-12-31     # nearest hard European deadline found in this audit
-  note: "The one ETSI row in the Transition tab points at TS 104 015 (Covercrypt hybrid KEM), which sets no dates. The document that does set dates — TS 119 312 — is not wired into the tab and the library copy is one major version behind."
+  transition_tab_region_value: "ETSI"    # unchanged — already grounded, just weakly
+  rows_before: 1     # a single Covercrypt row citing ETSI TS 104 015, which sets no dates
+  rows_after: 6      # +5 new rows 2026-07-29 citing TS 119 312 V2.1.1 directly (algorithms_transitions_07282026.csv)
+  imminent_deadline: 2026-12-31     # nearest hard European deadline found in this audit — now actually wired
+  action_taken: "5 new rows added citing TS 119 312 V2.1.1's RSA/DSA <3000-bit 2026-12-31 deadline, SHA-224 2028 deadline, and ML-DSA/SLH-DSA introduction. Library row updated to the current V2.1.1 (was V1.5.1)."

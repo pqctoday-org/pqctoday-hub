@@ -45,19 +45,47 @@ execution_status:
     pqctoday-hub-regional-standards-0728, branch data-maintenance/regional-standards-grounding-0728
   transitions_csv_new_rows: DONE — 45 new rows added, algorithms_transitions_07282026.csv
   library_ingestion_new_documents: >
-    BLOCKED — pqctoday-priv/maintenance/maintenance.lock was held by a genuinely active
-    concurrent session (update_run.py --source migrate-catalog) for the duration of this
-    execution pass, confirmed active via two separate checks (different PID, different batch,
-    18 minutes apart). Not bypassed. ETSI TS 119 312 V2.1.1, EU-NIS-CG roadmap PDF, CRYPTREC
-    LS-0001/LS-0003, the Japan Cabinet Secretariat report, the ACN TLS guidelines, and CCN-TEC
-    009 are all downloaded to the session scratchpad and verified, but NOT yet added as library
-    rows. The algorithms_transitions rows above cite these documents' primary URLs directly
-    (matching how existing NIST/BSI rows already work — a library row was never a hard
-    prerequisite), so the tab is grounded even though this step is outstanding. Retry once the
-    other session's maintenance.lock clears.
-  tests_run: PENDING — see report
+    DONE (2026-07-29, after the maintenance.lock held by a genuinely active concurrent
+    migrate-catalog session cleared). All 7 documents added via add_row.py --source library:
+    ETSI TS 119 312 V2.1.1, EU-NIS-CG roadmap PDF, CRYPTREC LS-0001, CRYPTREC LS-0003, the Japan
+    Cabinet Secretariat report, the ACN TLS guidelines, and CCN-TEC 009. Library grew from 965 to
+    972 active rows (src/data/library_07282026_r6.csv). 4 of the 7 (ETSI, both CRYPTREC docs, JP
+    Cabinet report) came back from add_row.py's own fetcher as pdf_warning=true (decoded-text,
+    not byte-correct PDF) — replaced with the byte-correct copies already verified earlier in
+    this session, re-hashed in public/library/manifest.json, renamed .html->.pdf, and the
+    local_file column corrected in the CSV. Intermediate per-call CSV revisions (library_07282026
+    through _r5) archived to src/data/archive/ per the repo's CSV convention (keep 2 current
+    dated versions). Enrichment (the matching /update-library pass) NOT run — these are stub
+    rows only, a legitimate follow-up.
+  tests_run: >
+    DONE. tsc -b clean. Full vitest suite: 4742/4742 passing, 0 failures, 37 skipped, 1 todo
+    (one timing-flake seen on an earlier run, confirmed passing both in isolation and on this
+    clean full re-run). Live Playwright browser check against the dev build confirmed the
+    region dropdown, removed/added region sets, and real filtering behavior.
 
 standards:
+  # ---- BASELINE (already grounded before this audit; documented 2026-07-29
+  #      once crosscheck_regional_standards.py flagged their absence here) ----
+  - id: US-NIST-FIPS-PQC
+    file: US-NIST-FIPS-PQC.yaml
+    class: mechanism-catalogue
+    country: US
+    has_pqc: true
+    has_classical_end_dates: true
+    verification: baseline
+    region_items_value: NIST
+    transitions_rows: 91
+
+  - id: GLOBAL-IETF-DATATRACKER
+    file: GLOBAL-IETF-DATATRACKER.yaml
+    class: mechanism-catalogue
+    country: null
+    has_pqc: true
+    has_classical_end_dates: false
+    verification: baseline
+    region_items_value: IETF
+    transitions_rows: "18 (9 cited, 9 with empty status_url — open gap)"
+
   # ---- EUROPE ----
   - id: DE-BSI-TR-02102-1
     file: DE-BSI-TR-02102-1.yaml

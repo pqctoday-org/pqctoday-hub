@@ -22,7 +22,10 @@ coverage:
 verification:
   verified_on: 2026-07-28
   method: primary-source PDF downloaded from cryptrec.go.jp and text-extracted
-  hub_library_status: ABSENT
+  hub_library_status: ADDED 2026-07-29
+  hub_library_reference_id: CRYPTREC-LS-0003-2022R1-Criteria-for-Setting-Cryptographic-S
+  hub_library_local_file: library/CRYPTREC-LS-0003-2022R1-Criteria-for-Setting-Cryptographic-S.pdf
+  hub_library_note: "add_row.py initially saved this as decoded text (pdf_warning=true); replaced with the byte-correct PDF fetched earlier in this session and re-hashed the manifest entry."
   caution: "Tables 11 and 12 of this document restate the NIST and ANSSI criteria for comparison. Do NOT read those as Japanese rules. The Japanese rule is Table 5 plus notes (a)/(b)/(c), reproduced below."
 
 security_strength_schedule:

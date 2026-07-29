@@ -127,6 +127,8 @@ pqc_introduction:
       note: "Stateful hash-based; NIST SP 800-208."
 
 crosscheck:
-  transition_tab_region_value: "BSI/ANSSI"
-  rows_currently_citing_this_doc: 2      # Classic McEliece only
-  expected_rows_if_backed_properly: ">= 13 (7 classical horizons + 6 PQC mechanisms)"
+  transition_tab_region_value_before: "BSI/ANSSI"
+  rows_before: 2      # Classic McEliece only, combined with ANSSI (cited 0 times) under one label
+  transition_tab_region_value_after: "BSI"       # 2026-07-29: split out of the combined BSI/ANSSI value
+  rows_after: 11
+  action_taken: "11 new rows added 2026-07-29 (algorithms_transitions_07282026.csv) citing BSI TR-02102-1 v2026-01 directly."

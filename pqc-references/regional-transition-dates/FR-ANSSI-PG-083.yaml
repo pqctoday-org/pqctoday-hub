@@ -118,6 +118,8 @@ policy_dates_from_anssi_faq:
       claim: "Revision of the IPsec DR reference framework planned during 2026."
 
 crosscheck:
-  transition_tab_region_value: "BSI/ANSSI"
-  rows_currently_citing_this_doc: 0
-  expected_rows_if_backed_properly: ">= 6 (RSA/DH 2030->2031 step + 3 PQC mechanisms + hybrid rule)"
+  transition_tab_region_value_before: "BSI/ANSSI"
+  rows_before: 0      # cited zero times despite being half of the combined label
+  transition_tab_region_value_after: "ANSSI"     # 2026-07-29: split out with its own real citations
+  rows_after: 5
+  action_taken: "5 new rows added 2026-07-29 (algorithms_transitions_07282026.csv) citing ANSSI-PG-083 v3.00 directly."

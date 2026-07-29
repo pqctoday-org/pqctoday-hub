@@ -25,7 +25,10 @@ coverage:
 verification:
   verified_on: 2026-07-28
   method: primary-source PDF downloaded from cryptrec.go.jp and text-extracted
-  hub_library_status: ABSENT            # not in library_07272026_r3.csv in any version
+  hub_library_status: ADDED 2026-07-29
+  hub_library_reference_id: CRYPTREC-LS-0001-2022R2-List-of-Ciphers-to-be-Referred-to-fo
+  hub_library_local_file: library/CRYPTREC-LS-0001-2022R2-List-of-Ciphers-to-be-Referred-to-fo.pdf
+  hub_library_note: "add_row.py initially saved this as decoded text (pdf_warning=true); replaced with the byte-correct PDF fetched earlier in this session and re-hashed the manifest entry."
 
 structure:
   table_1: "電子政府推奨暗号リスト — e-Government Recommended Ciphers List"
@@ -70,6 +73,9 @@ classical_deprecation:
   note: "Japan deprecates by moving an algorithm to the Monitored list rather than by publishing a per-algorithm sunset year. The dated schedule lives in the companion document — see JP-CRYPTREC-LS-0003."
 
 crosscheck:
-  transition_tab_region_value: "(none — no JP value exists in REGION_ITEMS)"
-  rows_currently_citing_japan: 0
-  hub_only_japanese_source: "Japan CRYPTREC Report 2024 (cryptrec-gl-2007-2024.pdf, 2025-03) — a PQC research-trends survey, NOT the procurement cipher list."
+  transition_tab_region_value_before: "(none — no JP value existed in REGION_ITEMS)"
+  rows_before: 0
+  transition_tab_region_value_after: "CRYPTREC"
+  rows_after: 2
+  action_taken: "CRYPTREC added to REGION_ITEMS 2026-07-29 with 2 new rows (algorithms_transitions_07282026.csv) citing LS-0001-2022R2's ML-KEM-768/1024 PQC table directly."
+  hub_only_japanese_source_before: "Japan CRYPTREC Report 2024 (cryptrec-gl-2007-2024.pdf, 2025-03) — a PQC research-trends survey, NOT the procurement cipher list. Superseded for grounding purposes by LS-0001-2022R2 itself, added to the library 2026-07-29."

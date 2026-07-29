@@ -8849,6 +8849,76 @@
       "sizeBytes": 20216,
       "contentType": "text/html",
       "sha256": "94829d0e88a05d73e6d850f07ec2b4ddb80e620dfeddbc80eeed972d84694f8b"
+    },
+    {
+      "refId": "ETSI-TS-119-312-V2-1-1-Electronic-Signatures-and-Trust-Infra",
+      "title": "ETSI TS 119 312 V2.1.1 - Electronic Signatures and Trust Infrastructures (ESI); Cryptographic Suites",
+      "url": "https://www.etsi.org/deliver/etsi_ts/119300_119399/119312/02.01.01_60/ts_119312v020101p.pdf",
+      "status": "downloaded",
+      "filename": "ETSI-TS-119-312-V2-1-1-Electronic-Signatures-and-Trust-Infra.pdf",
+      "sizeBytes": 303240,
+      "contentType": "application/pdf",
+      "sha256": "7d8428f6433221fae87525507ec204f39ef31a1d5547338444708a801ed18f72"
+    },
+    {
+      "refId": "EU-NIS-Cooperation-Group-A-Coordinated-Implementation-Roadma",
+      "title": "EU NIS Cooperation Group - A Coordinated Implementation Roadmap for the Transition to Post-Quantum Cryptography (2025-06-23)",
+      "url": "https://ec.europa.eu/newsroom/dae/redirection/document/117507",
+      "status": "downloaded",
+      "filename": "EU-NIS-Cooperation-Group-A-Coordinated-Implementation-Roadma.html",
+      "sizeBytes": 993306,
+      "contentType": "text/html",
+      "sha256": "3c35d7c46c34b7c80b06b43d342194e97bd671a45aa6d7cb50fce68746facaa4"
+    },
+    {
+      "refId": "CRYPTREC-LS-0001-2022R2-List-of-Ciphers-to-be-Referred-to-fo",
+      "title": "CRYPTREC LS-0001-2022R2 - List of Ciphers to be Referred to for Procurement in e-Government (CRYPTREC Ciphers List)",
+      "url": "https://www.cryptrec.go.jp/list/cryptrec-ls-0001-2022r2.pdf",
+      "status": "downloaded",
+      "filename": "CRYPTREC-LS-0001-2022R2-List-of-Ciphers-to-be-Referred-to-fo.pdf",
+      "sizeBytes": 239893,
+      "contentType": "application/pdf",
+      "sha256": "a492a5dce043b51cc0afd064a0bf7202518b31c65fb808bcc492f9cd4f0b32e3"
+    },
+    {
+      "refId": "CRYPTREC-LS-0003-2022R1-Criteria-for-Setting-Cryptographic-S",
+      "title": "CRYPTREC LS-0003-2022R1 - Criteria for Setting Cryptographic Strength Requirements (Algorithm and Key-Length Selection)",
+      "url": "https://www.cryptrec.go.jp/list/cryptrec-ls-0003-2022r1.pdf",
+      "status": "downloaded",
+      "filename": "CRYPTREC-LS-0003-2022R1-Criteria-for-Setting-Cryptographic-S.pdf",
+      "sizeBytes": 1424925,
+      "contentType": "application/pdf",
+      "sha256": "f249b7a5f880ce4bd239972de945bc8d5375912a98bf9d5e938e3293154cdced"
+    },
+    {
+      "refId": "Cabinet-Secretariat-Japan-PQC-Migration-Interim-Report-for-G",
+      "title": "Cabinet Secretariat (Japan) - PQC Migration Interim Report for Government Institutions (2025-11)",
+      "url": "https://www.cas.go.jp/jp/seisaku/pqc/pdf/report_202511.pdf",
+      "status": "downloaded",
+      "filename": "Cabinet-Secretariat-Japan-PQC-Migration-Interim-Report-for-G.pdf",
+      "sizeBytes": 230950,
+      "contentType": "application/pdf",
+      "sha256": "6c550bacbb715a71880e926e36b7bc5d67d7a3c00f6f2b6f836d54feb483c611"
+    },
+    {
+      "refId": "ACN-Italy-Linee-Guida-Funzioni-Crittografiche-Transport-Laye",
+      "title": "ACN (Italy) - Linee Guida Funzioni Crittografiche - Transport Layer Security (TLS) v2.0",
+      "url": "https://www.acn.gov.it/portale/documents/20119/85999/ACN_LG_Transport_Layer_Security_TLS.pdf/32f67240-a7e5-c707-e7fd-cc3ac0de2d3c",
+      "status": "downloaded",
+      "filename": "ACN-Italy-Linee-Guida-Funzioni-Crittografiche-Transport-Laye.html",
+      "sizeBytes": 12484312,
+      "contentType": "text/html",
+      "sha256": "8f5000a9c26e9da2e6396ee1adf267f3dea9eddf1e2550e4c8213bf9c768ed2d"
+    },
+    {
+      "refId": "CCN-TEC-009-BP-37-Spain-Recomendaciones-para-una-transicion",
+      "title": "CCN-TEC 009 / BP-37 (Spain) - Recomendaciones para una transicion postcuantica segura",
+      "url": "https://www.ccn.cni.es/eu/docman/documentos-publicos/boletines-pytec/495-ccn-tec-009-recomendaciones-transicion-postcuantica-segura/file",
+      "status": "downloaded",
+      "filename": "CCN-TEC-009-BP-37-Spain-Recomendaciones-para-una-transicion.html",
+      "sizeBytes": 5351148,
+      "contentType": "text/html",
+      "sha256": "20e6b42f3cc73f51a1ab942e415a3a55aeade0129f21090682812dbb029de310"
     }
   ]
 }

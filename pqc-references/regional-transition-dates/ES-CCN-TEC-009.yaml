@@ -22,7 +22,9 @@ coverage:
 verification:
   verified_on: 2026-07-28
   method: primary-source PDF downloaded and text-extracted, found via web search during the Phase B wide-jurisdiction sweep
-  hub_library_status: ABSENT — candidate for a new library row (blocked on an active concurrent maintenance session's file lock at time of this audit; not yet added)
+  hub_library_status: ADDED 2026-07-29
+  hub_library_reference_id: CCN-TEC-009-BP-37-Spain-Recomendaciones-para-una-transicion
+  hub_library_local_file: library/CCN-TEC-009-BP-37-Spain-Recomendaciones-para-una-transicion.html
 
 migration_deadlines:
   source: "Explicitly adopts the EU NIS-CG roadmap's own milestone structure (see EU-NIS-CG-ROADMAP.yaml)"

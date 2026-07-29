@@ -23,7 +23,9 @@ coverage:
 verification:
   verified_on: 2026-07-28
   method: primary-source PDF downloaded and text-extracted, found via web search during the Phase B wide-jurisdiction sweep
-  hub_library_status: ABSENT — candidate for a new library row (blocked on an active concurrent maintenance session's file lock at time of this audit; not yet added)
+  hub_library_status: ADDED 2026-07-29
+  hub_library_reference_id: ACN-Italy-Linee-Guida-Funzioni-Crittografiche-Transport-Laye
+  hub_library_local_file: library/ACN-Italy-Linee-Guida-Funzioni-Crittografiche-Transport-Laye.html
   also_found_but_not_pqc_relevant: "ACN_Crittografia_Quantum_Safe.pdf (July 2024) — a general quantum-threat awareness document, superseded in currency by this TLS-specific guide for grounding purposes."
 
 pqc_introduction:

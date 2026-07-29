@@ -78,6 +78,9 @@ procurement_deadline:
   target_quote: "... support ML-DSA-87, ML-KEM-1024, SHA-384, SHA-512 and AES-256 by no later than 2030."
 
 crosscheck:
-  transition_tab_region_value: "(none — no AU value exists in REGION_ITEMS)"
-  rows_currently_citing_this_doc: 0
-  impact: "The Transition tab shows 2030/2035 NIST dates but cannot show that an Australian reader's regulator disallows RSA, ECDH, ECDSA, AES-128 AND ML-KEM-768/ML-DSA-65 five years earlier than the NIST 'disallowed' date."
+  transition_tab_region_value_before: "(none — no AU value existed in REGION_ITEMS)"
+  rows_before: 0
+  transition_tab_region_value_after: "ASD"
+  rows_after: 11
+  action_taken: "ASD added to REGION_ITEMS 2026-07-29 with 11 new rows (algorithms_transitions_07282026.csv) — the uniform 2030 cliff across RSA/DH/ECDH/ECDSA/SHA-224/SHA-256/AES-128/AES-192/HMAC-SHA-256, plus the ML-KEM-768/ML-DSA-65 PQC-parameter sunset unique to this regulator."
+  impact_resolved: "An Australian reader can now select ASD and see their regulator disallows RSA/ECDH/ECDSA/AES-128 AND ML-KEM-768/ML-DSA-65 five years earlier than the NIST 'disallowed' date, instead of only seeing NIST's 2030/2035 dates."
