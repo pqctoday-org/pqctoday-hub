@@ -937,6 +937,8 @@ function managementToolsAudit(sector: DemoSector): DemoDoc {
       '| Code signing pipeline | GitHub Actions + cosign | No | ECDSA P-256 hardcoded | High |',
       '| Vulnerability watch | Dependabot + NVD | Partial | No PQC CVE tagging | Medium |',
       '| HSM management | Thales CipherTrust | Yes | ML-KEM-768 firmware available | Low |',
+      '| Key-management interop (KMIP / PKCS#11) | KMIP server + PKCS#11 v3.2 stack | Partial | PQC key types not yet enabled org-wide | Medium |',
+      '| Platform attestation (TPM 2.0) | Vendor TPM stack | No | Classical EK/AK certificates only | Medium |',
       '',
       `*Gaps prioritised against ${REG[sector]} timeline requirements.*`
     ),

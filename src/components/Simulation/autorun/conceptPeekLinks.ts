@@ -18,4 +18,7 @@ export const CONCEPT_LEARN_MODULE: Record<TourConceptId, string> = {
   'weakest-domain-maturity': 'pqc-governance',
   'kpi-pack': 'pqc-governance',
   readiness: 'migration-program',
+  // 07-29 review G-M1 — compromise response lives in the SOC module (monitoring,
+  // triggers, response runbooks for PQC estates); /threats covers the sector view.
+  'incident-response': 'soc-implementation-pqc',
 }
