@@ -367,6 +367,30 @@ export function decodeEntities(t: string): string {
     .replace(/&amp;/gi, '&') // last: never re-decode what an earlier rule produced
 }
 
+/** Markup that occupies ZERO width — a hint about where a line may break,
+ *  carrying no text of its own.
+ *
+ *  ADDED 2026-07-29, third layer of the same defect. After <main> extraction,
+ *  15 rfc-editor.org RFCs still read as "text changed" — and an RFC's text
+ *  cannot change. RFC 9142's entire diff was:
+ *
+ *    old:  tamper with both I_C and I_S
+ *    new:  tamper with both I_ C and I_ S
+ *
+ *  because the publisher had begun emitting `I_<wbr>C`, and the general
+ *  tag-stripping below turns every tag into a SPACE. A space is right for a
+ *  block boundary (</p><p> really does separate words) and wrong for a
+ *  zero-width one, which is what invented the phantom edit.
+ *
+ *  Deliberately limited to markup that is zero-width BY DEFINITION — <wbr>,
+ *  soft hyphen, zero-width space/non-joiner/joiner. General inline tags
+ *  (<span>, <a>, <b>) are NOT included: they are far more common, and
+ *  collapsing them to nothing would silently glue words together wherever a
+ *  publisher relies on markup for spacing, trading a visible false positive
+ *  for an invisible false negative. */
+const ZERO_WIDTH_MARKUP =
+  /<wbr\s*\/?>|&shy;|&#173;|&#x00ad;|&#8203;|&#x200[bcd];|&Zero[Ww]idth[A-Za-z]*;/gi
+
 /** Same three elements the hub's own extractor strips
  *  (scripts/validators/source-document-quality.ts stripHtmlTags). <noscript>
  *  matters most: on a client-rendered page its fallback IS most of the
@@ -380,6 +404,7 @@ export function normalizedText(bytes: Uint8Array): string {
   t = t.replace(/<style[\s\S]*?<\/style>/gi, ' ')
   t = t.replace(/<noscript[\s\S]*?<\/noscript>/gi, ' ')
   t = contentRegion(t)
+  t = t.replace(ZERO_WIDTH_MARKUP, '')
   t = t.replace(/<[^>]+>/g, ' ')
   t = decodeEntities(t)
   return t.replace(/\s+/g, ' ').trim()

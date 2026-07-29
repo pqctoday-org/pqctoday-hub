@@ -858,3 +858,27 @@ describe('cachedRelativePath — the three manifests spell this field differentl
     expect(cachedRelativePath({ url: 'u', status: 'downloaded', file: '../..' })).toBeNull()
   })
 })
+
+describe('zero-width markup is not a word boundary', () => {
+  it('the real RFC 9142 case: <wbr> must not become a space', () => {
+    // The publisher began emitting I_<wbr>C. Turning every tag into a space
+    // rendered that as "I_ C" and re-flagged an immutable RFC as changed.
+    const cached = normalizedText(Buffer.from('<main><p>tamper with both I_C and I_S</p></main>'))
+    const live = normalizedText(
+      Buffer.from('<main><p>tamper with both I_<wbr>C and I_<wbr>S</p></main>')
+    )
+    expect(live).toBe(cached)
+    expect(live).toBe('tamper with both I_C and I_S')
+  })
+
+  it('handles the self-closing spelling and soft hyphens', () => {
+    expect(normalizedText(Buffer.from('<main>Post<wbr />Quantum</main>'))).toBe('PostQuantum')
+    expect(normalizedText(Buffer.from('<main>Post&shy;Quantum</main>'))).toBe('PostQuantum')
+    expect(normalizedText(Buffer.from('<main>Post&#8203;Quantum</main>'))).toBe('PostQuantum')
+  })
+
+  it('a real block boundary still separates words', () => {
+    // The reason tags become a space in the first place — this must not regress.
+    expect(normalizedText(Buffer.from('<main><p>alpha</p><p>beta</p></main>'))).toBe('alpha beta')
+  })
+})
