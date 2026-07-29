@@ -29,6 +29,32 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.29.0] - 2026-07-28
+
+The Algorithms catalog now describes hybrid key exchange properly — the pairing of a classical algorithm with a post-quantum one, which is how most real PQC deployments are rolling out.
+
+### Added
+
+- **Hybrid key exchange is now catalogued beyond TLS** [view:/algorithms] [persona:architect] [persona:developer] [persona:ops]: the catalog previously listed only three hybrids, all TLS-specific, so anything hybrid outside a browser connection simply wasn't described. It now covers 20, grouped so you can tell at a glance whether a mechanism works anywhere or only inside one protocol.
+- **X-Wing, the general-purpose hybrid** [view:/algorithms] [persona:developer]: combines X25519 with ML-KEM-768 and isn't tied to any single protocol, which is why it turns up in file and secrets encryption as well as on the wire. Its specification is in the Library too, so citations to it resolve.
+- **Post-quantum SSH key exchange** [view:/algorithms] [persona:ops] [persona:developer]: the published RFC 9941 mechanism that OpenSSH has shipped by default for some time, plus the three ML-KEM hybrids currently moving through the IETF — so you can look up what your SSH server is actually negotiating.
+- **Composite certificates for PKI** [view:/algorithms] [persona:architect] [persona:ops]: twelve combinations that let a single certificate carry both a post-quantum and a classical key under one identifier, instead of issuing and managing two certificates side by side. Key and message sizes are listed for each, so the certificate-size impact is visible before you commit to one.
+- **The SLSA v1.1 specification joins the Library** [view:/library] [persona:developer] [persona:ops]: the supply-chain integrity framework the sandbox's artifact-signing walkthrough is built around, so that reference now resolves to a real document.
+
+### Changed
+
+- **The three existing TLS hybrids are relabelled to say they're TLS-specific** [view:/algorithms]: they were filed under a generic "Composite" label that couldn't distinguish "usable anywhere" from "only inside TLS" — the distinction that made general-purpose hybrids invisible in the first place.
+- **The WireGuard sandbox walkthrough is retired** [view:/playground] [persona:ops]: the only post-quantum WireGuard we could ship still used a pre-standardisation algorithm that FIPS 203 has replaced, and no upgrade exists — the upstream project hasn't migrated, and the one implementation that has is tied to a commercial VPN account. Post-quantum VPN coverage is unaffected: the IKEv2 walkthrough uses fully standardised ML-KEM.
+
+### Fixed
+
+- **83 more Migrate catalog products now show up under the right migration step** [view:/migrate] [persona:architect] [persona:ops]: they had no step tagged at all, so they were invisible to the Assess/Plan/Test/Migrate/Launch filter no matter which stage you were looking at. Each was tagged from its own existing PQC-support evidence, not guessed — confirmed-unsupported products are marked Assess, vendor-announced roadmaps get Assess+Plan, and confirmed PQC-ready libraries and hardware get Test/Migrate or Migrate/Launch depending on whether you'd integrate them or deploy them as-is.
+- **76 catalog entries were missing their internal product identifier** [persona:developer]: all deprecated, superseded listings that predate the identifier being required. Backfilled so every row in the catalog is addressable the same way.
+
+### Data
+
+- Two SSH entries deliberately leave key sizes blank. Their specification doesn't state them and the sizes depend on an encoding defined in a different document, so the field says nothing rather than showing a number that looks more authoritative than it is.
+
 ## [4.28.0] - 2026-07-28
 
 A big data-accuracy and coverage pass across Migrate, Vendor Roadmaps, Timeline, Trusted Sources, Threats, and Algorithms — plus real fixes to broken certificate links, a mis-detected PQC algorithm, and several data-pipeline bugs found along the way.
