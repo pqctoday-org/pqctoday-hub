@@ -8949,6 +8949,16 @@
       "sizeBytes": 362231,
       "contentType": "text/html",
       "sha256": "c5d90383d1d42b9637479497996efa78aa33f693c1cfff4b03f15363155fc62a"
+    },
+    {
+      "refId": "SLSA-Specification-v1.1",
+      "title": "SLSA Specification v1.1",
+      "url": "https://slsa.dev/spec/v1.1/",
+      "status": "downloaded",
+      "filename": "SLSA-Specification-v1.1.html",
+      "sizeBytes": 20092,
+      "contentType": "text/html",
+      "sha256": "3edcdc7b84f92803b764c1504f6d37dc3c4f382c6ea383eb1f7cf49337f39519"
     }
   ]
 }
