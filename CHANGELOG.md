@@ -29,6 +29,15 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.29.2] - 2026-07-29
+
+Four organizations behind recently-added Library documents — an aviation standards consortium, an ISO committee, and Italy's and Japan's national cybersecurity bodies — are now tracked as verified sources instead of showing no source at all.
+
+### Data
+
+- **4 new trusted sources registered** [view:/library] [persona:researcher]: AEEC/SAE (aviation engineering standards), ISO/TC 210 (the medical-device quality-management committee), Italy's national cybersecurity agency (ACN), and Japan's Cabinet Secretariat PQC liaison conference were missing from the source registry entirely — a gap found while completing the 52 Library entries in the previous release. The 5 Library rows that cited them are now linked to a real, verified source instead of showing none.
+- **6 cached evidence documents recovered** [persona:researcher]: six Library source documents had corrupted local copies (binary PDF content saved with a mismatched extension) that silently produced empty results in automated enrichment. Re-fetched cleanly from their original public URLs.
+
 ## [4.29.1] - 2026-07-29
 
 52 Library documents that were sitting as bare, unreviewed stubs now show real information — document type, industries, authors, migration urgency, and more — instead of blank fields.

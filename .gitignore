@@ -342,6 +342,15 @@ scripts/*
 !scripts/audit-reference-cache-drift.ts
 !scripts/audit-reference-cache-drift.test.ts
 
+# Migration-phases hygiene gate — runs in ci.yml (npm run audit:migration-phases,
+# also part of gate:data). The .ts was tracked only because it predated the
+# `scripts/*` rule and had no re-include of its own; its test could not be added
+# at all until 2026-07-29, which is exactly the silent gap the validators comment
+# above describes. Both are listed now so neither can be lost on a re-add.
+# Reads the public product catalog CSV, writes nothing — nothing private.
+!scripts/audit-migration-phases.ts
+!scripts/audit-migration-phases.local.test.ts
+
 # RAG index freshness report — regenerated each run by the scheduled
 # rag-index-freshness workflow (uploaded as a build artifact, not committed).
 public/data/rag-index-freshness.json

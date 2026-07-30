@@ -5,8 +5,12 @@ import fs from 'fs'
 import os from 'os'
 import path from 'path'
 import {
+  cachedRelativePath,
   classifyEntry,
+  contentRegion,
+  decodeEntities,
   dedupeBlockedByHash,
+  isPdf,
   looksBlocked,
   normalizedText,
   mapPool,
@@ -740,5 +744,212 @@ describe('normalized-text comparison', () => {
       NOW
     )
     expect(finding.textComparison).toBe('unavailable')
+  })
+})
+
+describe('contentRegion — compare the document, not the publisher’s website', () => {
+  it('takes <main> over the surrounding page chrome', () => {
+    const page =
+      '<html><body><nav>Home About</nav>' +
+      '<main><h1>Title</h1><p>Body text.</p></main>' +
+      '<footer>Version 1.69.0</footer></body></html>'
+    const region = contentRegion(page)
+    expect(region).toContain('Body text.')
+    expect(region).not.toContain('Version 1.69.0')
+    expect(region).not.toContain('Home About')
+  })
+
+  it('falls back to <article> when there is no <main>', () => {
+    const page =
+      '<html><body><article><p>Body.</p></article><footer>build 42</footer></body></html>'
+    expect(contentRegion(page)).toContain('Body.')
+    expect(contentRegion(page)).not.toContain('build 42')
+  })
+
+  it('returns the whole document when neither element is present', () => {
+    // The honest default: an unmarked page gives no way to tell chrome from
+    // content, and guessing risks dropping real text.
+    const page = '<html><body><p>Body.</p></body></html>'
+    expect(contentRegion(page)).toBe(page)
+  })
+
+  it('the real RFC-Editor case: a site build string no longer reads as drift', () => {
+    // Measured 2026-07-29 on RFC 5869 — 24178 chars each side, differing in
+    // exactly four, all inside the site footer. 56 immutable RFCs were flagged
+    // as "text changed" by one deploy of the publisher's website.
+    const rfc = (siteVersion: string) =>
+      '<html><body><nav>Skip to content</nav>' +
+      '<main><pre>HMAC-based Extract-and-Expand Key Derivation Function</pre></main>' +
+      `<footer>Report a Bug · Version ${siteVersion} Useful links</footer>` +
+      '</body></html>'
+    const cached = normalizedText(Buffer.from(rfc('1.69.0'), 'utf-8'))
+    const live = normalizedText(Buffer.from(rfc('1.71.3'), 'utf-8'))
+    expect(cached).toBe(live)
+    expect(cached).toContain('HMAC-based Extract-and-Expand')
+  })
+
+  it('a real change INSIDE the content region is still drift', () => {
+    const page = (body: string) => `<html><body><main><p>${body}</p></main></body></html>`
+    const a = normalizedText(Buffer.from(page('The deadline is 2030.'), 'utf-8'))
+    const b = normalizedText(Buffer.from(page('The deadline is 2035.'), 'utf-8'))
+    expect(a).not.toBe(b)
+  })
+})
+
+describe('decodeEntities', () => {
+  it('makes a plain-text cached copy comparable to an HTML-served one', () => {
+    // Several cached copies are the plain-text rendering of a document whose
+    // URL now serves HTML, so one side spells a quote &quot; and the other ".
+    expect(decodeEntities('the &quot;certificate&quot; field')).toBe('the "certificate" field')
+  })
+
+  it('handles numeric and hex references, and nbsp as a space', () => {
+    expect(decodeEntities('a&#160;b')).toBe('a b')
+    expect(decodeEntities('&#65;&#x42;')).toBe('AB')
+  })
+
+  it('decodes &amp; last so an earlier rule’s output is never re-decoded', () => {
+    // &amp;quot; is a literal "&quot;" in the source text, not a quote mark.
+    expect(decodeEntities('&amp;quot;')).toBe('&quot;')
+  })
+})
+
+describe('cachedRelativePath — the three manifests spell this field differently', () => {
+  it('reads library’s bare filename', () => {
+    expect(cachedRelativePath({ url: 'u', status: 'downloaded', filename: 'FIPS_203.html' })).toBe(
+      'FIPS_203.html'
+    )
+  })
+
+  it('reads timeline’s collection-prefixed `file` — it has no filename at all', () => {
+    // The live gap: all 67 downloaded timeline entries carry only `file`, so
+    // every one resolved to null and fell back to the raw byte hash — the exact
+    // noisy signal the normalized-text comparison exists to replace.
+    expect(
+      cachedRelativePath({ url: 'u', status: 'downloaded', file: 'timeline/EU_ECCG_Algos.pdf' })
+    ).toBe('EU_ECCG_Algos.pdf')
+  })
+
+  it('strips threats’ stale `public/` prefix', () => {
+    expect(
+      cachedRelativePath({ url: 'u', status: 'downloaded', file: 'public/threats/AERO-002.pdf' })
+    ).toBe('AERO-002.pdf')
+  })
+
+  it('prefers filename when an entry carries both (threats does)', () => {
+    expect(
+      cachedRelativePath({
+        url: 'u',
+        status: 'downloaded',
+        filename: 'AERO-002.pdf',
+        file: 'public/threats/AERO-002.pdf',
+      })
+    ).toBe('AERO-002.pdf')
+  })
+
+  it('returns null when neither field is present', () => {
+    expect(cachedRelativePath({ url: 'u', status: 'downloaded' })).toBeNull()
+  })
+
+  it('cannot be walked out of the cache directory', () => {
+    // Taking the basename is what makes a `../`-bearing manifest value safe.
+    expect(
+      cachedRelativePath({ url: 'u', status: 'downloaded', file: '../../../etc/passwd' })
+    ).toBe('passwd')
+    expect(cachedRelativePath({ url: 'u', status: 'downloaded', file: '../..' })).toBeNull()
+  })
+})
+
+describe('zero-width markup is not a word boundary', () => {
+  it('the real RFC 9142 case: <wbr> must not become a space', () => {
+    // The publisher began emitting I_<wbr>C. Turning every tag into a space
+    // rendered that as "I_ C" and re-flagged an immutable RFC as changed.
+    const cached = normalizedText(Buffer.from('<main><p>tamper with both I_C and I_S</p></main>'))
+    const live = normalizedText(
+      Buffer.from('<main><p>tamper with both I_<wbr>C and I_<wbr>S</p></main>')
+    )
+    expect(live).toBe(cached)
+    expect(live).toBe('tamper with both I_C and I_S')
+  })
+
+  it('handles the self-closing spelling and soft hyphens', () => {
+    expect(normalizedText(Buffer.from('<main>Post<wbr />Quantum</main>'))).toBe('PostQuantum')
+    expect(normalizedText(Buffer.from('<main>Post&shy;Quantum</main>'))).toBe('PostQuantum')
+    expect(normalizedText(Buffer.from('<main>Post&#8203;Quantum</main>'))).toBe('PostQuantum')
+  })
+
+  it('a real block boundary still separates words', () => {
+    // The reason tags become a space in the first place — this must not regress.
+    expect(normalizedText(Buffer.from('<main><p>alpha</p><p>beta</p></main>'))).toBe('alpha beta')
+  })
+})
+
+describe('url-type-mismatch — a landing page is not a changed document', () => {
+  const NOW = new Date('2026-07-29T12:00:00Z')
+
+  function withCache(cached: Buffer, live: Buffer) {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'drift-type-'))
+    const cacheDir = path.join(dir, 'priv', 'local-evidence-cache', 'library')
+    fs.mkdirSync(cacheDir, { recursive: true })
+    fs.writeFileSync(path.join(cacheDir, 'FIPS_186-5.pdf'), cached)
+    const prev = process.env.REFERENCE_CACHE_ROOT
+    process.env.REFERENCE_CACHE_ROOT = path.join(dir, 'priv', 'local-evidence-cache')
+    const fetcher: FetchImpl = async () => ({
+      bytes: live,
+      sha256: sha256Of(live.toString('latin1')),
+    })
+    const entry = {
+      refId: 'FIPS 186-5',
+      url: 'https://csrc.nist.gov/pubs/fips/186-5/final',
+      status: 'downloaded',
+      filename: 'FIPS_186-5.pdf',
+      sha256: sha256Of(cached.toString('latin1')),
+      sizeBytes: cached.length,
+    }
+    const restore = () => {
+      if (prev === undefined) delete process.env.REFERENCE_CACHE_ROOT
+      else process.env.REFERENCE_CACHE_ROOT = prev
+      fs.rmSync(dir, { recursive: true, force: true })
+    }
+    return { fetcher, entry, restore }
+  }
+
+  const PDF = Buffer.concat([Buffer.from('%PDF-1.7\n'), Buffer.from('a'.repeat(4000))])
+  const LANDING = Buffer.from(
+    '<html><body><main>' +
+      '<h1>FIPS 186-5, Digital Signature Standard</h1>'.repeat(60) +
+      '</main></body></html>'
+  )
+
+  it('a cached PDF against a fetched HTML page is not drift', async () => {
+    // The live case: 18 of 135 findings. The row's URL is the publication's
+    // landing page; local_file is the PDF it links to. Driving the re-cache
+    // over the first eight found every real PDF byte-identical to the cache.
+    const { fetcher, entry, restore } = withCache(PDF, LANDING)
+    try {
+      const f = await classifyEntry('library', entry, fetcher, 5000, NOW)
+      expect(f.classification).toBe('url-type-mismatch')
+    } finally {
+      restore()
+    }
+  })
+
+  it('a genuinely changed PDF is still drift', async () => {
+    const changed = Buffer.concat([Buffer.from('%PDF-1.7\n'), Buffer.from('b'.repeat(9000))])
+    const { fetcher, entry, restore } = withCache(PDF, changed)
+    try {
+      const f = await classifyEntry('library', entry, fetcher, 5000, NOW)
+      expect(f.classification).toBe('drift')
+      expect(f.textComparison).toBe('differs')
+    } finally {
+      restore()
+    }
+  })
+
+  it('isPdf keys on the magic bytes, not the extension', () => {
+    expect(isPdf(Buffer.from('%PDF-1.4 ...'))).toBe(true)
+    expect(isPdf(Buffer.from('<!doctype html>'))).toBe(false)
+    expect(isPdf(Buffer.from('%PD'))).toBe(false)
+    expect(isPdf(Buffer.alloc(0))).toBe(false)
   })
 })
