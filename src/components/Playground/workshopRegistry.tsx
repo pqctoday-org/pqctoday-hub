@@ -1029,7 +1029,8 @@ const SANDBOX_SCENARIO_CATEGORY: Record<string, WorkshopCategory> = {
   'cloud-kms': 'HSM / PKCS#11',
   'secrets-vault': 'HSM / PKCS#11',
   smime: 'OpenSSL Studio',
-  wireguard: 'Protocol Simulations',
+  // 'wireguard' omitted: removed from pqctoday-sandbox in v0.9.0 (see
+  // cryptoLabTaxonomy.ts for why) — this override is now inert.
   // supply-chain track — TPM key hierarchy is an HSM/key concern
   'tpm-pqc-migration': 'HSM / PKCS#11',
   // applications track — JOSE/JWT, automated CA, firmware keys, code signing

@@ -55,7 +55,7 @@ const SCENARIO_CA_OVERRIDES: Record<string, NiceCompetencyAreaId[]> = {
   stepca: ['CA-IDENT', 'CA-SECPROG'],
   'cert-validation': ['CA-IDENT', 'CA-CRYPTO'],
   'hybrid-certs': ['CA-IDENT', 'CA-CRYPTO'],
-  mtc: ['CA-IDENT', 'CA-NETDEF'],
+  // 'mtc' omitted: removed from pqctoday-sandbox in v0.7.0 (#50) — inert override.
   // Data-at-rest / secrets management
   'secrets-vault': ['CA-DATASEC', 'CA-SYSARCH'],
   sops: ['CA-DATASEC', 'CA-SECPROG'],
@@ -64,7 +64,7 @@ const SCENARIO_CA_OVERRIDES: Record<string, NiceCompetencyAreaId[]> = {
   'database-postgres': ['CA-DATASEC', 'CA-SECPROG'],
   // Network transport
   'iot-mqtt': ['CA-NETDEF', 'CA-SECPROG'],
-  wireguard: ['CA-NETDEF', 'CA-SYSARCH'],
+  // 'wireguard' omitted: removed from pqctoday-sandbox in v0.9.0 — inert override.
   vpn: ['CA-NETDEF', 'CA-SYSARCH'],
   tls: ['CA-NETDEF', 'CA-CRYPTO'],
   ssh: ['CA-NETDEF', 'CA-IDENT'],
