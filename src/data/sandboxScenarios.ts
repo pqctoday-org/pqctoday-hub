@@ -48,7 +48,13 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     emoji: '💻',
     useCase:
       'Full post-quantum SSH session: host and client auth keys (ML-DSA-65) held in softhsmv3 via PKCS#11 v3.2, combined with draft-ietf-sshm-mlkem-hybrid-kex hybrid ML-KEM key exchange (mlkem768x25519). Every auth signature traverses C_Sign on the HSM token; the ephemeral ML-KEM KEX runs in-process inside OpenSSH.',
-    algorithms: ['ML-DSA-65', 'ML-KEM hybrid KEX', 'OpenSSH 10.3', 'PKCS#11 v3.2'],
+    algorithms: [
+      'ML-DSA-65',
+      'SLH-DSA-SHA2-128s',
+      'ML-KEM hybrid KEX',
+      'OpenSSH 10.3',
+      'PKCS#11 v3.2',
+    ],
     difficulty: 'intermediate',
     trackId: 'protocol-simulation',
     tool: {
@@ -90,20 +96,6 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     tool: { name: 'OpenSSL', url: 'https://github.com/openssl/openssl' },
   },
   {
-    id: 'hybrid-certs',
-    title: 'Hybrid Certificate Formats',
-    emoji: '📜',
-    useCase:
-      'Generate and compare all 7 PQC X.509 certificate formats — Pure ML-DSA, Pure SLH-DSA, Composite, Alt-Sig/Catalyst, Related Certificates, Chameleon, and the new ML-KEM-768 KEM certificate (RFC 9935) — measuring DER sizes, keygen times, backward compatibility, and encapsulation round-trips.',
-    algorithms: ['7 Formats', 'X.509', 'RFC 9935'],
-    difficulty: 'advanced',
-    trackId: 'infrastructure',
-    tool: {
-      name: 'OpenSSL 3.6.3 (file-based keys; no HSM)',
-      url: 'https://github.com/openssl/openssl',
-    },
-  },
-  {
     id: 'cloud-kms',
     title: 'Cloud KMS Key Wrapping',
     emoji: '🔑',
@@ -129,12 +121,26 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     },
   },
   {
+    id: 'hybrid-certs',
+    title: 'Hybrid Certificate Formats',
+    emoji: '📜',
+    useCase:
+      'Generate and compare all 7 PQC X.509 certificate formats — Pure ML-DSA, Pure SLH-DSA, Composite, Alt-Sig/Catalyst, Related Certificates, Chameleon, and the new ML-KEM-768 KEM certificate (RFC 9935) — measuring DER sizes, keygen times, backward compatibility, and encapsulation round-trips.',
+    algorithms: ['7 Formats', 'X.509', 'RFC 9935'],
+    difficulty: 'advanced',
+    trackId: 'infrastructure',
+    tool: {
+      name: 'OpenSSL 3.6.3 (file-based keys; no HSM)',
+      url: 'https://github.com/openssl/openssl',
+    },
+  },
+  {
     id: 'cbom-compliance',
     title: 'CBOM Compliance Audit — PQC Readiness Scoring',
     emoji: '✅',
     useCase:
       'Generate real classical, hybrid and post-quantum key material, identify each asset algorithm with OpenSSL, and emit it as a CycloneDX 1.6 CBOM of cryptographic-assets. Evaluate that CBOM against a CNSA 2.0 / NIST IR 8547 policy in OPA / Rego to produce a compliance score. Scope note: this audits the crypto THIS scenario generates, not a full-container inventory — cdxgen OS scanning needs an optional binary plugin that is not installed here and returned zero components.',
-    algorithms: ['CBOM CycloneDX 1.6', 'CNSA 2.0', 'NIST IR 8547'],
+    algorithms: ['CBOM CycloneDX 1.6', 'CNSA 2.0', 'NIST IR 8547 (draft)'],
     difficulty: 'advanced',
     trackId: 'supply-chain',
     tool: { name: 'OpenSSL + OPA', url: 'https://github.com/open-policy-agent/opa' },
@@ -183,8 +189,8 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     title: 'PQCToday KMIP 3.0 KMS',
     emoji: '🏢',
     useCase:
-      'Drive a real crypto-agile KMIP key lifecycle with pqctoday-kmip (Rust, MIT) backed by softhsmrustv3 — CreateKeyPair → Activate → Sign for ML-DSA-65, and CreateKeyPair → Activate → Encapsulate → Decapsulate for ML-KEM-768. The server speaks KMIP ProtocolVersion 3.0; note that KMIP 3.0 is still an OASIS Committee Specification Draft (the latest ratified standard is 2.1) and the PQC algorithm tags come from KMIP Working Draft 19.',
-    algorithms: ['ML-DSA/ML-KEM', 'KMIP 3.0 (OASIS draft / PQC WD19)'],
+      'Drive a real crypto-agile KMIP key lifecycle with pqctoday-kmip (Rust, MIT) backed by softhsmrustv3 — CreateKeyPair → Activate → Sign for ML-DSA-65, and CreateKeyPair → Activate → Encapsulate → Decapsulate for ML-KEM-768. The server speaks KMIP ProtocolVersion 3.0; note that KMIP 3.0 is still an OASIS Committee Specification Draft — CSD02, 2026-05-07 — (the latest ratified standard is 2.1) and the PQC algorithm tags follow CSD02 §11.12 Table 552.',
+    algorithms: ['ML-DSA/ML-KEM', 'KMIP 3.0 (OASIS CSD02)'],
     difficulty: 'advanced',
     trackId: 'secrets-kms',
     tool: {
@@ -335,14 +341,14 @@ export const SANDBOX_TRACKS: SandboxTrack[] = [
     id: 'protocol-simulation',
     label: 'Protocol Simulation',
     subtitle:
-      'Interactive hardware telemetry for OpenSSL TLS 1.3, OpenSSH, IKEv2 VPN, and WASM TPM 2.0 PQC',
+      'Interactive hardware telemetry for OpenSSL TLS 1.3, OpenSSH, IKEv2 VPN, and WASM TPM 2.0 PQC. Same ML-KEM-768, three integration styles: TLS negotiates it as one named hybrid group (X25519MLKEM768, ciphertext inside the key_share), SSH concatenates it into the KEX payload (mlkem768x25519-sha256, 1088 B + 32 B = 1120 B), and IKEv2 carries it as an RFC 9370 Additional Key Exchange under the IANA name ml-kem-768 — run all three and compare the wire evidence.',
     difficulty: 'Intermediate',
   },
   {
     id: 'infrastructure',
     label: 'Cryptographic Infrastructure',
     subtitle:
-      'PKI chain of trust, certificate validation, hybrid migration path, cloud KMS, and foundational key stacks',
+      'PKI chain of trust, certificate validation, cloud KMS, S/MIME, then the hybrid-format migration path — ordered easiest to hardest',
     difficulty: 'Beginner → Intermediate',
   },
   {
