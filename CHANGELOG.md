@@ -29,6 +29,16 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.30.1] - 2026-07-30
+
+Four Migrate catalog entries had the wrong company listed as their maker, and five Library/Compliance citations that pointed at inaccessible pages now resolve to the real source documents.
+
+### Data
+
+- **4 products' vendor attribution corrected** [view:/migrate] [persona:researcher]: Secure-IC Securyzr, MTG AG CARA, Mozilla Firefox, and sigstore/cosign were each linked to the wrong company (a South Korean government standards body, a telecom operator, an unrelated open-source foundation, and a different foundation, respectively) instead of their real makers.
+- **5 Library and Compliance citations now resolve to real source documents** [view:/library] [view:/compliance] [persona:researcher]: a French national cybersecurity position paper, a UN vehicle cybersecurity regulation, an EU cross-government security-measures reference document, and the EU's cybersecurity certification scheme regulation were previously either missing their cached copy or pointed at a page that never served the document (a bot-check page or a language-selection screen).
+- **A community leader's citation now points at a real, current document** [view:/leaders] [persona:researcher]: pointed at an IETF draft that has since been published as an RFC; updated to cite the published version.
+
 ## [4.30.0] - 2026-07-29
 
 The Simulation got a full accuracy, usability, and teaching pass: every factual claim was re-verified against its source, hands-on play is now a clearly named option (and phones can watch the narrated overview), and the game finally explains its own scoring.
