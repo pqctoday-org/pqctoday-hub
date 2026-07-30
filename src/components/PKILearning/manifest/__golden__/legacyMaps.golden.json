@@ -565,6 +565,15 @@
       "duration": "60 min",
       "difficulty": "intermediate",
       "frameworkPhase": "p6"
+    },
+    "government-defense-pqc": {
+      "id": "government-defense-pqc",
+      "lm_id": "LM-062",
+      "title": "Government & Defense PQC",
+      "description": "The federal PQC policy layer: the CNSA 2.0 suite and its dated mandates, National Security Systems and CSfC, Federal PKI and the PQC certificate profile, the statute/EO/OMB stack, and how CISA product categories shape procurement.",
+      "duration": "60 min",
+      "difficulty": "advanced",
+      "frameworkPhase": "p5"
     }
   },
   "MODULE_STEP_COUNTS": {
@@ -631,7 +640,8 @@
     "vendor-risk": 4,
     "verification-closure": 3,
     "web-gateway-pqc": 5,
-    "assess": 1
+    "assess": 1,
+    "government-defense-pqc": 3
   },
   "LEARN_SECTIONS": {
     "ai-security-pqc": [
@@ -1864,6 +1874,28 @@
       {
         "id": "vendor-paths",
         "label": "Vendor Migration Paths"
+      }
+    ],
+    "government-defense-pqc": [
+      {
+        "id": "cnsa-suite",
+        "label": "The CNSA 2.0 Suite"
+      },
+      {
+        "id": "cnsa-timeline",
+        "label": "Mandates & Dated Milestones"
+      },
+      {
+        "id": "nss-csfc",
+        "label": "National Security Systems & CSfC"
+      },
+      {
+        "id": "federal-pki",
+        "label": "Federal PKI & the PQC Profile"
+      },
+      {
+        "id": "procurement",
+        "label": "Procurement & Supply Chain"
       }
     ]
   },
@@ -3151,6 +3183,20 @@
         "id": "vendor-readiness",
         "label": "Vendor Readiness Matrix"
       }
+    ],
+    "government-defense-pqc": [
+      {
+        "id": "suite-comparator",
+        "label": "CNSA 1.0 → 2.0 Comparator"
+      },
+      {
+        "id": "mandate-explorer",
+        "label": "Federal Mandate Explorer"
+      },
+      {
+        "id": "fpki-profile-pair",
+        "label": "Federal PKI Profile Pair"
+      }
     ]
   },
   "MODULE_TRACKS": [
@@ -3754,6 +3800,15 @@
           "duration": "60 min",
           "difficulty": "advanced",
           "workInProgress": true,
+          "frameworkPhase": "p5"
+        },
+        {
+          "id": "government-defense-pqc",
+          "lm_id": "LM-062",
+          "title": "Government & Defense PQC",
+          "description": "The federal PQC policy layer: the CNSA 2.0 suite and its dated mandates, National Security Systems and CSfC, Federal PKI and the PQC certificate profile, the statute/EO/OMB stack, and how CISA product categories shape procurement.",
+          "duration": "60 min",
+          "difficulty": "advanced",
           "frameworkPhase": "p5"
         }
       ]
