@@ -9264,6 +9264,16 @@
       "sizeBytes": 1408734,
       "contentType": "application/pdf",
       "sha256": "96b1fabf32bd90e09c6d1fadcd688a9d54808dc28623ce559e79c427f4ee6ed7"
+    },
+    {
+      "refId": "NIST-SP-800-78-5-Cryptographic-Algorithms-and-Key-Sizes-for",
+      "title": "NIST SP 800-78-5 \u2014 Cryptographic Algorithms and Key Sizes for Personal Identity Verification",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-78-5.pdf",
+      "status": "downloaded",
+      "filename": "NIST-SP-800-78-5-Cryptographic-Algorithms-and-Key-Sizes-for.pdf",
+      "sizeBytes": 693666,
+      "contentType": "application/pdf",
+      "sha256": "7d5733af8c2516364084286528f49cb65b18dc01f1d4301beced4afbf31b2d3c"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00"
