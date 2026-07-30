@@ -5,12 +5,22 @@ import { motion } from 'framer-motion'
 import { AlgorithmComparison } from './AlgorithmComparison'
 import { AlgorithmDetailedComparison } from './AlgorithmDetailedComparison'
 import { PQCProtocolMatrix } from './PQCProtocolMatrix'
+import { IndustryLandscapeView } from './IndustryLandscapeView'
 import { AlgorithmValidationView } from './AlgorithmValidationView'
 import { AlgorithmFilters } from './AlgorithmFilters'
 import { AlgorithmCompareBar } from './AlgorithmCompareBar'
 import { AlgorithmComparisonPanel } from './AlgorithmComparisonPanel'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
-import { ArrowRight, BarChart3, Shield, Network, Info, Lock, FlaskConical } from 'lucide-react'
+import {
+  ArrowRight,
+  BarChart3,
+  Shield,
+  Network,
+  Info,
+  Lock,
+  FlaskConical,
+  Factory,
+} from 'lucide-react'
 import { Skeleton } from '../ui/skeleton'
 import { PageHeader } from '../common/PageHeader'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
@@ -320,7 +330,7 @@ export function AlgorithmsView() {
           {/* Control deck — filters + QuickView + CNSA lens + persona hint in one panel.
               Hidden on Protocol Support: that tab filters/sorts its own table
               (family/fn/level/region/status here have no effect on it). */}
-          {activeTab !== 'support' && (
+          {activeTab !== 'support' && activeTab !== 'landscape' && (
             <>
               <AlgorithmFilters
                 cryptoFamily={filterCryptoFamily}
@@ -346,7 +356,6 @@ export function AlgorithmsView() {
                 onToggleResearchGapOnly={handleToggleResearchGapOnly}
                 onClearAll={handleClearAllFilters}
                 personaHint={
-                  /* eslint-disable-next-line security/detect-object-injection */
                   selectedPersona && !hintDismissed
                     ? ALGO_PERSONA_HINTS[selectedPersona]
                     : undefined
@@ -431,6 +440,15 @@ export function AlgorithmsView() {
                 <span className="hidden sm:inline">Protocol Support</span>
                 <span className="sm:hidden">Protocol</span>
               </TabsTrigger>
+              <TabsTrigger
+                value="landscape"
+                className="flex items-center gap-2"
+                title="Cross-references 22 industries and their use cases with the classical crypto mechanisms in use, PQC replacements, applicable technical standards (linked to the Library), and official-statistics market sizes."
+              >
+                <Factory size={18} />
+                <span className="hidden sm:inline">Industry Landscape</span>
+                <span className="sm:hidden">Industries</span>
+              </TabsTrigger>
               <TabsTrigger value="validation" className="flex items-center gap-2">
                 <FlaskConical size={18} />
                 Validation
@@ -486,6 +504,17 @@ export function AlgorithmsView() {
                 data-workshop-target="section-algorithm-protocol-support"
               >
                 <PQCProtocolMatrix />
+              </motion.div>
+            </TabsContent>
+
+            <TabsContent value="landscape">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                data-workshop-target="section-algorithm-industry-landscape"
+              >
+                <IndustryLandscapeView />
               </motion.div>
             </TabsContent>
 

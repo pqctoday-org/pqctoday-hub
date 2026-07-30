@@ -140,7 +140,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
  * `hasActiveParams`.
  * ────────────────────────────────────────────────────────────────────────────── */
 
-export type AlgorithmTabId = 'transition' | 'detailed' | 'support' | 'validation'
+export type AlgorithmTabId = 'transition' | 'detailed' | 'support' | 'landscape' | 'validation'
 
 export type AlgorithmFilterKey = 'family' | 'fn' | 'level' | 'region' | 'status'
 

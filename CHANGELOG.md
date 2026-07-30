@@ -29,6 +29,21 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.31.0] - 2026-07-30
+
+A new Industry Landscape tab on the Algorithms page shows what crypto mechanisms each industry actually relies on today — cross-referenced against real standards, official market-size figures, and live threat data.
+
+### Added
+
+- **Industry Landscape tab** [view:/algorithms] [persona:architect] [persona:executive] [persona:researcher]: a new tab next to Protocol Support lets you explore either by industry or by crypto mechanism — 75 real-world use cases across 21 industries, each citing an active threat record. Standards chips deep-link into the Library, use cases link into Protocol Support, and market-size badges link to the official source (BEA, Census, IMF, WHO, IEA, World Bank, ITU, and Fed only — no analyst estimates).
+- **"Learn: &lt;industry&gt;" links on industry pages** [view:/algorithms] [persona:curious]: the 8 industries with a matching Learn module (aerospace, automotive, digital assets, payments, energy, 5G, healthcare, IoT) now show a direct link into that module alongside the existing Threats link. The 13 industries without one yet are a known, reported gap rather than a silent absence.
+
+### Data
+
+- **34 industry standards, verified to actually name a crypto mechanism** [view:/algorithms] [persona:researcher]: every standards row was checked against its own cached document text — 16 candidates that only referenced general governance (no specific mechanism) were dropped rather than padded in, and mechanism attributions were corrected where the source didn't say what an earlier draft assumed (e.g., RFC 5280 cites RSA, not a PQC algorithm).
+- **8 new Library documents added, each independently downloaded and verified** [view:/library] [persona:researcher]: UNISIG SUBSET-137 (rail key management), the WCO SAFE Framework, IMO maritime cyber-risk guidelines, the NAIC Insurance Data Security Model Law, AACS, DVB BlueBook A165, UN Regulation 155, and the W3C Verifiable Credentials Data Model v2.0.
+- **Insurance industry re-grounded** [view:/algorithms] [persona:researcher]: the Munich Re cyber-insurance quantum-risk citation is now checked against the actual cached report text rather than resting on an unverified reference.
+
 ## [4.30.1] - 2026-07-30
 
 Four Migrate catalog entries had the wrong company listed as their maker, and five Library/Compliance citations that pointed at inaccessible pages now resolve to the real source documents.
