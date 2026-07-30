@@ -12,6 +12,7 @@ import {
 } from '../utils/analytics'
 import { LEARN_SECTIONS, WORKSHOP_STEPS } from '../components/PKILearning/moduleData'
 import { applyModuleRenames } from '../components/PKILearning/manifest/contentVersion'
+import { MANIFEST_BY_ID } from '../components/PKILearning/manifest/registry'
 
 const MODULE_STORE_VERSION = 15
 const KPI_HISTORY_CAP = 30
@@ -19,6 +20,31 @@ const KPI_HISTORY_CAP = 30
 // Ephemeral session tracker — NOT in Zustand state, intentionally non-persisted.
 // Set when a module mounts, cleared when it unmounts or the page unloads.
 let _activeSession: { moduleId: string; startTime: number } | null = null
+
+/**
+ * Sections that must be checked for `moduleId` to count as complete.
+ *
+ * Default is every section, which is what every module did before learn paths
+ * existed and what every module without `learnPaths` still does. When the
+ * module declares paths AND the learner has picked one, only that path's
+ * sections are required — a banking learner shouldn't be held to POS key
+ * injection to finish the Financial Services module.
+ *
+ * Falls back to all sections if the stored path id no longer exists (a path
+ * renamed or removed between releases), so stale progress degrades to the
+ * old, stricter behaviour rather than silently marking a module complete.
+ */
+const requiredSectionIds = (moduleId: string, activePathId?: string): string[] => {
+  const all = (LEARN_SECTIONS[moduleId] ?? []).map((s) => s.id)
+  if (!activePathId) return all
+  const path = MANIFEST_BY_ID[moduleId]?.learnPaths?.find((p) => p.id === activePathId)
+  if (!path) return all
+  // Intersect with real section ids so a typo'd manifest can't make a module
+  // completable by checking nothing.
+  const known = new Set(all)
+  const required = path.sections.filter((id) => known.has(id))
+  return required.length > 0 ? required : all
+}
 
 interface ModuleState extends LearningProgress {
   // Actions
@@ -208,8 +234,8 @@ export const useModuleStore = create<ModuleState>()(
           const updatedChecks = { ...currentChecks, [sectionId]: nowChecked }
 
           // Determine if all sections are now checked
-          const sections = LEARN_SECTIONS[moduleId] ?? []
-          const allChecked = sections.length > 0 && sections.every((s) => updatedChecks[s.id])
+          const required = requiredSectionIds(moduleId, module.activeLearnPath)
+          const allChecked = required.length > 0 && required.every((id) => updatedChecks[id])
 
           let newStatus = module.status
           if (allChecked && module.status !== 'completed') {
@@ -252,8 +278,8 @@ export const useModuleStore = create<ModuleState>()(
             logModuleStart(moduleId)
           }
           const updatedChecks = { ...currentChecks, [sectionId]: true }
-          const sections = LEARN_SECTIONS[moduleId] ?? []
-          const allChecked = sections.length > 0 && sections.every((s) => updatedChecks[s.id])
+          const required = requiredSectionIds(moduleId, module.activeLearnPath)
+          const allChecked = required.length > 0 && required.every((id) => updatedChecks[id])
           let newStatus = module.status
           if (allChecked && module.status !== 'completed') {
             newStatus = 'completed'
