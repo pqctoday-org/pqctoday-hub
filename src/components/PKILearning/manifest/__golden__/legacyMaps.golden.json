@@ -574,6 +574,15 @@
       "duration": "60 min",
       "difficulty": "advanced",
       "frameworkPhase": "p5"
+    },
+    "trust-services-pqc": {
+      "id": "trust-services-pqc",
+      "lm_id": "LM-063",
+      "title": "Trust Services & Long-Term Signatures",
+      "description": "Signatures that must still verify in thirty years: qualified vs advanced signatures, timestamping and proof of existence, long-term validation and re-timestamping, trust service provider conformity, and the ETSI suites that just gained post-quantum modes.",
+      "duration": "60 min",
+      "difficulty": "intermediate",
+      "frameworkPhase": "p5"
     }
   },
   "MODULE_STEP_COUNTS": {
@@ -641,7 +650,8 @@
     "verification-closure": 3,
     "web-gateway-pqc": 5,
     "assess": 1,
-    "government-defense-pqc": 3
+    "government-defense-pqc": 3,
+    "trust-services-pqc": 3
   },
   "LEARN_SECTIONS": {
     "ai-security-pqc": [
@@ -1896,6 +1906,28 @@
       {
         "id": "procurement",
         "label": "Procurement & Supply Chain"
+      }
+    ],
+    "trust-services-pqc": [
+      {
+        "id": "qualified-signatures",
+        "label": "Qualified vs Advanced Signatures"
+      },
+      {
+        "id": "timestamping",
+        "label": "Timestamping & Proof of Existence"
+      },
+      {
+        "id": "long-term-validation",
+        "label": "Long-Term Validation & Archival"
+      },
+      {
+        "id": "suites-evolving",
+        "label": "Cryptographic Suites, Evolving"
+      },
+      {
+        "id": "trust-providers",
+        "label": "Trust Service Providers & Conformity"
       }
     ]
   },
@@ -3197,6 +3229,20 @@
         "id": "fpki-profile-pair",
         "label": "Federal PKI Profile Pair"
       }
+    ],
+    "trust-services-pqc": [
+      {
+        "id": "longevity-calculator",
+        "label": "Signature Longevity Calculator"
+      },
+      {
+        "id": "supersession-explorer",
+        "label": "Standards Supersession Explorer"
+      },
+      {
+        "id": "hybrid-suite-picker",
+        "label": "Hybrid Suite Picker"
+      }
     ]
   },
   "MODULE_TRACKS": [
@@ -3809,6 +3855,15 @@
           "description": "The federal PQC policy layer: the CNSA 2.0 suite and its dated mandates, National Security Systems and CSfC, Federal PKI and the PQC certificate profile, the statute/EO/OMB stack, and how CISA product categories shape procurement.",
           "duration": "60 min",
           "difficulty": "advanced",
+          "frameworkPhase": "p5"
+        },
+        {
+          "id": "trust-services-pqc",
+          "lm_id": "LM-063",
+          "title": "Trust Services & Long-Term Signatures",
+          "description": "Signatures that must still verify in thirty years: qualified vs advanced signatures, timestamping and proof of existence, long-term validation and re-timestamping, trust service provider conformity, and the ETSI suites that just gained post-quantum modes.",
+          "duration": "60 min",
+          "difficulty": "intermediate",
           "frameworkPhase": "p5"
         }
       ]
