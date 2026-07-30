@@ -1168,6 +1168,10 @@
       {
         "id": "lifecycle-connectivity",
         "label": "Lifecycle & Connectivity"
+      },
+      {
+        "id": "water-wastewater",
+        "label": "Water & Wastewater"
       }
     ],
     "entropy-randomness": [
@@ -1294,6 +1298,10 @@
       {
         "id": "zero-trust-identity",
         "label": "PQC Zero Trust Identity"
+      },
+      {
+        "id": "federation-eap",
+        "label": "Identity Federation & EAP"
       }
     ],
     "iot-ot-pqc": [
@@ -1316,6 +1324,10 @@
       {
         "id": "scada",
         "label": "SCADA/ICS Migration"
+      },
+      {
+        "id": "rail-transit",
+        "label": "Rail & Transit Key Management"
       }
     ],
     "kms-pqc": [
@@ -1338,6 +1350,10 @@
       {
         "id": "kmip",
         "label": "KMIP Cross-Provider Sync"
+      },
+      {
+        "id": "cloud-responsibility",
+        "label": "Cloud Shared Responsibility"
       }
     ],
     "mls-group-messaging": [

@@ -12,6 +12,7 @@ import {
   Lock,
   BookOpen,
   Route,
+  Wifi,
 } from 'lucide-react'
 import {
   IAM_PROTOCOLS,
@@ -22,6 +23,7 @@ import {
 } from '../data/iamConstants'
 import { IAM_VENDORS, PQC_STATUS_LABELS, getVendorPqcStatus } from '../data/iamProviderData'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { LearnSection } from '@/components/PKILearning/common/LearnSection'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { Button } from '@/components/ui/button'
 
@@ -557,6 +559,67 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
           PQC roadmap.
         </p>
       </div>
+
+      <LearnSection
+        sectionId="federation-eap"
+        title="Identity Federation at Scale (eduroam &amp; EAP)"
+        icon={<Wifi size={20} className="text-primary" />}
+      >
+        <p className="text-muted-foreground">
+          Enterprise IAM usually means web SSO. Federated network access is a different problem:
+          EAP-TLS inside RADIUS, across thousands of independently operated institutions, with a
+          supplicant on the far end that may be a decade old. eduroam is the canonical example — one
+          credential authenticating across research and education networks worldwide.
+        </p>
+        <p className="text-muted-foreground">
+          Two properties make this harder than web SSO under PQC. EAP fragments over RADIUS, so
+          larger certificates and signatures multiply round trips on exactly the link where they
+          hurt. And the supplicant is often embedded firmware that cannot be updated on the
+          federation&rsquo;s schedule, so the classical path has to stay open far longer than the
+          server operator would like.
+        </p>
+        <div className="p-4 rounded-lg bg-muted/50 border border-border">
+          <h4 className="font-semibold text-foreground">Where the research is</h4>
+          <p className="mt-1 text-sm text-muted-foreground">
+            This is one of the better-served areas in the literature, which is why the section can
+            be grounded rather than speculative.
+          </p>
+          <ul className="mt-2 space-y-1 text-xs">
+            <li>
+              <Link
+                to="/library?ref=Post-Quantum-Enhancements-to-TLS-Based-EAP-Methods"
+                className="text-primary hover:underline"
+              >
+                Post-Quantum Enhancements to TLS-Based EAP Methods
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/library?ref=Post-Quantum-Key-Encapsulation-Mechanisms-PQ-KEMs-in"
+                className="text-primary hover:underline"
+              >
+                Post-Quantum KEMs in EAP
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/library?ref=Enhancing-Security-in-EAP-AKA-prime-with-Hybrid-Post"
+                className="text-primary hover:underline"
+              >
+                Hybrid PQC in EAP-AKA&rsquo;
+              </Link>
+            </li>
+          </ul>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Education / Research in the Industry Landscape links to{' '}
+          <Link to="/learn/research-quantum-impact" className="text-primary hover:underline">
+            Researcher Quantum Impact
+          </Link>{' '}
+          for the long-lived-data framing; the federation mechanics live here, because they are an
+          IAM problem rather than a sector one.
+        </p>
+      </LearnSection>
 
       <ReadingCompleteButton />
     </div>

@@ -20,6 +20,7 @@ const manifest: ModuleManifest = {
     { id: 'hybrid-wrap', label: 'Hybrid Key Wrapping' },
     { id: 'rotation', label: 'Key Rotation Planning' },
     { id: 'kmip', label: 'KMIP Cross-Provider Sync' },
+    { id: 'cloud-responsibility', label: 'Cloud Shared Responsibility' },
   ],
   workshopSteps: [
     { id: 'key-hierarchy', label: 'Key Hierarchy' },

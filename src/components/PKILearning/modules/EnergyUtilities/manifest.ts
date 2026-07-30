@@ -21,6 +21,7 @@ const manifest: ModuleManifest = {
     { id: 'smart-meters', label: 'Smart Meter Management' },
     { id: 'safety-environmental', label: 'Safety & Environmental' },
     { id: 'lifecycle-connectivity', label: 'Lifecycle & Connectivity' },
+    { id: 'water-wastewater', label: 'Water & Wastewater' },
   ],
   workshopSteps: [
     { id: 'protocol-security-analyzer', label: 'Protocol Analyzer' },

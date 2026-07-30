@@ -27,6 +27,7 @@ import {
 } from '../data/kmsConstants'
 import { KMS_PROVIDERS, KMS_STATUS_LABELS, getKmsPqcStatus } from '../data/kmsProviderData'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { LearnSection } from '@/components/PKILearning/common/LearnSection'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { Button } from '@/components/ui/button'
 
@@ -703,6 +704,87 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
           Design key hierarchies, visualize envelope encryption, and plan PQC rotation strategies.
         </p>
       </div>
+
+      <LearnSection
+        sectionId="cloud-responsibility"
+        title="Cloud Shared Responsibility & Key Ownership"
+        icon={<Cloud size={20} className="text-primary" />}
+      >
+        <p className="text-muted-foreground">
+          Every cloud PQC conversation eventually reduces to one question: who holds the root of
+          trust, and can they prove what happened to it? The algorithms are the easy part — the hard
+          part is that the answer differs per service, per tenant model, and per region.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-3">
+          {[
+            {
+              model: 'Provider-managed',
+              root: 'Cloud provider',
+              migration:
+                'The provider migrates on its own schedule. You inherit the timeline and usually cannot audit the key material directly.',
+            },
+            {
+              model: 'BYOK',
+              root: 'You generate, provider stores',
+              migration:
+                'You control generation and can move to ML-KEM wrapping early, but the provider still controls the HSM boundary and its FIPS posture.',
+            },
+            {
+              model: 'HYOK / external key store',
+              root: 'You, entirely',
+              migration:
+                'Full control of the migration and full operational burden. The provider never holds usable key material.',
+            },
+          ].map((m) => (
+            <div key={m.model} className="p-4 rounded-lg bg-muted/50 border border-border">
+              <h4 className="font-semibold text-foreground">{m.model}</h4>
+              <p className="mt-1 text-xs uppercase tracking-wide text-muted-foreground">
+                Root of trust
+              </p>
+              <p className="text-sm text-foreground">{m.root}</p>
+              <p className="mt-2 text-sm text-muted-foreground">{m.migration}</p>
+            </div>
+          ))}
+        </div>
+        <p className="text-muted-foreground">
+          NIST SP 800-210 sets out access-control guidance across IaaS, PaaS and SaaS and is the
+          reference for arguing where a boundary actually sits. It was published in July 2020,
+          predates the PQC standards, and names no post-quantum mechanism — useful for the boundary
+          argument, not for the algorithm one. The Cloud Security Alliance practitioner guide is the
+          post-quantum-aware companion.
+        </p>
+        <div className="flex flex-wrap gap-3 text-xs">
+          <Link
+            to="/library?ref=NIST-SP-800-210-General-Access-Control-Guidance-for-Cloud-Sy"
+            className="text-primary hover:underline"
+          >
+            NIST SP 800-210
+          </Link>
+          <Link to="/library?ref=CSA-PQC-Guide-2025" className="text-primary hover:underline">
+            CSA Practitioner&rsquo;s Guide to PQC
+          </Link>
+          <Link to="/library?ref=KMIP-V2-1-OASIS" className="text-primary hover:underline">
+            KMIP v2.1
+          </Link>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Cloud Computing / Data Centers in the Industry Landscape links here rather than to a
+          separate cloud module: the cryptography is already covered by this module,{' '}
+          <Link to="/learn/confidential-computing" className="text-primary hover:underline">
+            Confidential Computing
+          </Link>
+          ,{' '}
+          <Link to="/learn/database-encryption-pqc" className="text-primary hover:underline">
+            Database Encryption
+          </Link>{' '}
+          and{' '}
+          <Link to="/learn/web-gateway-pqc" className="text-primary hover:underline">
+            Web Gateway PQC
+          </Link>
+          . What was missing was this ownership framing.
+        </p>
+      </LearnSection>
+
       <ReadingCompleteButton />
     </div>
   )
