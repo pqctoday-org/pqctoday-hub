@@ -59,9 +59,9 @@ const METRIC_LABEL: Record<string, string> = {
 }
 
 const STATUS_STYLE: Record<IndustryUseCase['migrationStatus'], string> = {
-  production: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
-  pilot: 'bg-sky-500/15 text-sky-600 dark:text-sky-400',
-  draft: 'bg-amber-500/15 text-amber-600 dark:text-amber-400',
+  production: 'bg-status-success/15 text-status-success',
+  pilot: 'bg-status-info/15 text-status-info',
+  draft: 'bg-status-warning/15 text-status-warning',
   none: 'bg-muted text-muted-foreground',
 }
 
@@ -117,7 +117,7 @@ function MechanismChip({
           ? 'border-primary bg-primary text-primary-foreground'
           : classical
             ? 'border-border bg-muted/60 text-foreground hover:border-primary/50'
-            : 'border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:border-emerald-500'
+            : 'border-status-success/40 bg-status-success/10 text-status-success hover:border-status-success'
       }`}
       title={def ? `${def.family} — ${def.kinds.join(', ')}` : family}
     >
@@ -139,12 +139,12 @@ function StandardChip({ std }: { std: IndustryStandard }) {
       <BookMarked size={11} className="opacity-60" />
       {std.standardLabel}
       {std.pqcReadiness === 'published' && (
-        <span className="rounded bg-emerald-500/15 px-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+        <span className="rounded bg-status-success/15 px-1 text-[10px] font-semibold text-status-success">
           PQC
         </span>
       )}
       {std.pqcReadiness === 'in-progress' && (
-        <span className="rounded bg-amber-500/15 px-1 text-[10px] font-semibold text-amber-600 dark:text-amber-400">
+        <span className="rounded bg-status-warning/15 px-1 text-[10px] font-semibold text-status-warning">
           PQC WIP
         </span>
       )}
