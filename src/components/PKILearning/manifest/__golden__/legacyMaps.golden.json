@@ -1248,16 +1248,32 @@
     ],
     "hsm-pqc": [
       {
+        "id": "hsm-architecture",
+        "label": "HSM Architecture for PQC"
+      },
+      {
         "id": "pkcs11",
-        "label": "PKCS#11 PQC Mechanisms"
+        "label": "PKCS#11 v3.2 PQC Mechanisms"
       },
       {
-        "id": "vendors",
-        "label": "HSM Vendor Landscape"
+        "id": "on-prem",
+        "label": "On-Prem HSM PQC Deep Dive"
       },
       {
-        "id": "migration",
-        "label": "Firmware Dual-Partition"
+        "id": "cloud-hsm",
+        "label": "Cloud HSM PQC Deep Dive"
+      },
+      {
+        "id": "side-channel",
+        "label": "Side-Channel Attack Surfaces"
+      },
+      {
+        "id": "firmware-migration",
+        "label": "HSM Firmware Migration"
+      },
+      {
+        "id": "stateful-state",
+        "label": "Stateful Signature State in HSMs"
       }
     ],
     "hybrid-crypto": [
@@ -1333,23 +1349,27 @@
     "kms-pqc": [
       {
         "id": "key-hierarchy",
-        "label": "PQC Key Hierarchy Design"
+        "label": "PQC Key Management Fundamentals"
       },
       {
         "id": "envelope",
-        "label": "ML-KEM Envelope Encrypt"
+        "label": "Envelope Encryption with ML-KEM"
       },
       {
         "id": "hybrid-wrap",
         "label": "Hybrid Key Wrapping"
       },
       {
-        "id": "rotation",
-        "label": "Key Rotation Planning"
+        "id": "providers",
+        "label": "KMS Provider PQC Landscape"
       },
       {
-        "id": "kmip",
-        "label": "KMIP Cross-Provider Sync"
+        "id": "rotation",
+        "label": "PQC Key Rotation Strategies"
+      },
+      {
+        "id": "architecture",
+        "label": "Enterprise Architecture Patterns"
       },
       {
         "id": "cloud-responsibility",
