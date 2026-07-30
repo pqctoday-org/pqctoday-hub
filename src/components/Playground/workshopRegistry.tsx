@@ -1027,7 +1027,7 @@ const SANDBOX_TRACK_CATEGORY: Record<SandboxTrackId, WorkshopCategory> = {
 const SANDBOX_SCENARIO_CATEGORY: Record<string, WorkshopCategory> = {
   // infrastructure track — key management / mail belong elsewhere
   'cloud-kms': 'HSM / PKCS#11',
-  'secrets-vault': 'HSM / PKCS#11',
+  // 'secrets-vault' omitted: see SANDBOX_TRACK_PERSONAS comment above — inert override.
   smime: 'OpenSSL Studio',
   // 'wireguard' omitted: removed from pqctoday-sandbox in v0.9.0 (see
   // cryptoLabTaxonomy.ts for why) — this override is now inert.

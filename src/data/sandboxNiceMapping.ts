@@ -57,7 +57,8 @@ const SCENARIO_CA_OVERRIDES: Record<string, NiceCompetencyAreaId[]> = {
   'hybrid-certs': ['CA-IDENT', 'CA-CRYPTO'],
   // 'mtc' omitted: removed from pqctoday-sandbox in v0.7.0 (#50) — inert override.
   // Data-at-rest / secrets management
-  'secrets-vault': ['CA-DATASEC', 'CA-SYSARCH'],
+  // 'secrets-vault' omitted: removed from pqctoday-sandbox in v0.6.0 (see
+  // workshopRegistry.tsx for why) — inert override.
   sops: ['CA-DATASEC', 'CA-SECPROG'],
   'pqctoday-kmip': ['CA-DATASEC', 'CA-SYSARCH'],
   'cloud-kms': ['CA-DATASEC', 'CA-SYSARCH'],
@@ -68,14 +69,15 @@ const SCENARIO_CA_OVERRIDES: Record<string, NiceCompetencyAreaId[]> = {
   vpn: ['CA-NETDEF', 'CA-SYSARCH'],
   tls: ['CA-NETDEF', 'CA-CRYPTO'],
   ssh: ['CA-NETDEF', 'CA-IDENT'],
-  haproxy: ['CA-NETDEF', 'CA-SYSARCH'],
+  // 'haproxy' omitted: never shipped in pqctoday-sandbox (dropped with the
+  // track that never had an orchestrator) — inert override.
   'browser-tls': ['CA-NETDEF', 'CA-CRYPTO'],
-  pqcflow: ['CA-NETDEF', 'CA-RISK'],
+  // 'pqcflow' omitted: same as 'haproxy' above — inert override.
   'ab-handshake-bench': ['CA-NETDEF', 'CA-RISK'],
   // Inventory / governance / risk
   'cbom-compliance': ['CA-GOVCOMP', 'CA-RISK'],
   'migration-impact': ['CA-RISK', 'CA-GOVCOMP'],
-  'crypto-discovery': ['CA-RISK', 'CA-CRYPTO'],
+  // 'crypto-discovery' omitted: same as 'haproxy' above — inert override.
   // Code / firmware / supply-chain integrity
   osslsigncode: ['CA-SECPROG', 'CA-SYSARCH'],
   'supply-chain-signing': ['CA-SECPROG', 'CA-GOVCOMP'],
@@ -94,8 +96,8 @@ const SCENARIO_CA_OVERRIDES: Record<string, NiceCompetencyAreaId[]> = {
 const SCENARIO_WORK_ROLE_OVERRIDES: Record<string, NiceWorkRoleId[]> = {
   'cbom-compliance': ['is-security-manager', 'risk-manager', 'systems-security-analyst'],
   'migration-impact': ['risk-manager', 'security-architect', 'is-security-manager'],
-  'crypto-discovery': ['systems-security-analyst', 'security-architect'],
-  'secrets-vault': ['security-architect', 'system-administrator'],
+  // 'crypto-discovery' / 'secrets-vault' omitted: never shipped / removed
+  // from pqctoday-sandbox — see the competency-area table above for detail.
   'cloud-kms': ['security-architect', 'system-administrator'],
   'tpm-pqc-migration': ['security-architect', 'security-developer'],
   'supply-chain-signing': ['security-developer', 'is-security-manager'],
