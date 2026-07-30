@@ -85,7 +85,11 @@ export function useAlgorithmExplorer(
 
   // --- Active tab ---
   const isAlgorithmTab = (t: string | null): t is AlgorithmTabId =>
-    t === 'transition' || t === 'detailed' || t === 'support' || t === 'validation'
+    t === 'transition' ||
+    t === 'detailed' ||
+    t === 'support' ||
+    t === 'landscape' ||
+    t === 'validation'
 
   const [activeTab, setActiveTab] = useState<AlgorithmTabId>(() => {
     const tab = searchParams.get('tab')
