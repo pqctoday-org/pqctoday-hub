@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import type { Freshness } from './contentFreshness'
 // Industry breach cost baselines — IBM Cost of a Data Breach Report 2025
 // (https://www.ibm.com/reports/data-breach), read directly from the primary
 // report's Figure 3 (average total cost of a breach by industry, USD). IBM's
@@ -8,6 +9,18 @@
 // figure as a labeled proxy (F11 follow-up: source a dedicated figure if one
 // becomes available).
 export const INDUSTRY_BREACH_BASELINES_AS_OF = '2025-07'
+
+/**
+ * Freshness stamp for the IBM-derived baselines (aggregated in
+ * contentFreshness). IBM refreshes the report annually around end-July —
+ * verified still-current 2026-07-29; the 2026 edition lands any week now, and
+ * this stamp aging past its window is the reminder to re-source the table
+ * (update every figure below + the citation string in derivedFinancialDocs).
+ */
+export const IBM_BREACH_BASELINES_FRESHNESS: Freshness = {
+  asOf: '2026-07-29',
+  recheck: 'https://www.ibm.com/reports/data-breach',
+}
 export const INDUSTRY_BREACH_BASELINES: Record<string, number> = {
   'Finance & Banking': 5_560_000, // IBM Financial
   Healthcare: 7_420_000, // IBM Healthcare

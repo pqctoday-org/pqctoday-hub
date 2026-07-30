@@ -26,8 +26,11 @@ export function useFocusTrap(isActive: boolean) {
     const container = containerRef.current
     if (!container) return
 
-    // Focus first focusable element after a brief delay (animation)
+    // Focus first focusable element after a brief delay (animation) — unless
+    // the dialog already placed focus on its own primary control (several sim
+    // modals focus a specific "Recommended" action, which must win).
     const focusTimer = setTimeout(() => {
+      if (container.contains(document.activeElement)) return
       const focusable = container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)
       if (focusable.length > 0) focusable[0].focus()
     }, 50)

@@ -17,6 +17,8 @@
 import { Q_DAY_FRESHNESS } from './quantumTimeline'
 import { PROTOCOL_MATRIX_FRESHNESS } from './pqcProtocolMatrix'
 import { SIM_MOVES } from './simMoves'
+import { NARRATION_TIME_ANCHOR_FRESHNESS } from './narrationFacts'
+import { IBM_BREACH_BASELINES_FRESHNESS } from './roiBaselines'
 
 /** A structured, re-verifiable timestamp attached to a time-sensitive claim. */
 export interface Freshness {
@@ -92,6 +94,20 @@ export const FRESHNESS_CLAIMS: FreshnessClaim[] = [
     claim: 'PQC protocol-support matrix snapshot (RFC/draft stages, GA dates)',
     source: 'src/data/pqcProtocolMatrix.ts',
     ...PROTOCOL_MATRIX_FRESHNESS,
+  },
+  {
+    id: 'narration-time-anchors',
+    claim:
+      'Sim narration time anchors: PROGRAM_START_YEAR (fiction plan dates + derived docs CURRENT_YEAR) and the CRQC planning band derived from the Q-Day anchor',
+    source: 'src/data/narrationFacts.ts',
+    ...NARRATION_TIME_ANCHOR_FRESHNESS,
+  },
+  {
+    id: 'ibm-breach-baselines',
+    claim:
+      'Industry breach-cost baselines sourced from IBM Cost of a Data Breach 2025 (annual refresh ~end of July — re-source the table when the next edition lands)',
+    source: 'src/data/roiBaselines.ts',
+    ...IBM_BREACH_BASELINES_FRESHNESS,
   },
   ...simMoveClaims(),
 ].sort((a, b) => a.id.localeCompare(b.id))

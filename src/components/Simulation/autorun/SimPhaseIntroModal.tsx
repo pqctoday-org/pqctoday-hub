@@ -6,6 +6,7 @@
  * framework-2.1.json, the SoT) — nothing is authored here.
  */
 import { useEffect, useRef } from 'react'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
 import { Button } from '@/components/ui/button'
 import { FRAMEWORK_PHASE_INTROS } from '@/data/frameworkPhaseIntros.generated'
 import type { PhaseId } from '@/data/frameworkPhases'
@@ -14,6 +15,7 @@ export function SimPhaseIntroModal({ phase, onBegin }: { phase: PhaseId; onBegin
   // eslint-disable-next-line security/detect-object-injection
   const intro = FRAMEWORK_PHASE_INTROS[phase]
   const beginRef = useRef<HTMLButtonElement>(null)
+  const trapRef = useFocusTrap(true)
 
   useEffect(() => {
     beginRef.current?.focus()
@@ -27,8 +29,9 @@ export function SimPhaseIntroModal({ phase, onBegin }: { phase: PhaseId; onBegin
   if (!intro) return null
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-foreground/40 p-4 backdrop-blur-sm">
       <div
+        ref={trapRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="sim-phase-intro-heading"

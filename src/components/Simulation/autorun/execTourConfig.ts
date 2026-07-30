@@ -31,6 +31,7 @@ export type TourConceptId =
   | 'weakest-domain-maturity'
   | 'kpi-pack'
   | 'readiness'
+  | 'incident-response'
 
 /**
  * A hand-picked representative step for a LIGHT stage, matched in the phase tree by
@@ -133,7 +134,14 @@ export const EXEC_TOUR_STAGES: readonly TourStage[] = [
   },
   { phase: 'p6', depth: 'light', lightStep: { kind: 'learn', ref: 'pki-workshop' } },
   { phase: 'p7', depth: 'light', lightStep: { kind: 'learn', ref: 'vendor-risk' } },
-  { phase: 'verify-close', depth: 'deep', revealArtifacts: ['migration-verification'] },
+  {
+    phase: 'verify-close',
+    depth: 'deep',
+    revealArtifacts: ['migration-verification'],
+    // 07-29 review G-M1 — the one lifecycle topic the tour never named:
+    // what happens when an algorithm breaks AFTER the program closes.
+    conceptCards: ['incident-response'],
+  },
 ]
 
 /** Concept peeks shown at the very start (threat + deadline math), before p0. */
@@ -204,6 +212,13 @@ export const EXEC_TOUR_CONCEPTS: Record<TourConceptId, TourConcept> = {
     source: 'inline',
     inline:
       'A connection only counts as migrated when BOTH gates pass: you’ve done enough execution work to unlock it, AND you’ve chosen a real strategy (hybrid or pure) for it. A choice with no work, or work with no choice, counts for nothing — and the denominator is every vulnerable connection, so links with no PQC path yet hold this below 100% on purpose.',
+  },
+  'incident-response': {
+    id: 'incident-response',
+    title: 'Compromise response: swap, don’t scramble',
+    source: 'inline',
+    inline:
+      'Verification closes the program, but algorithms keep aging after it. If one is broken — or a CRQC lands earlier than modeled — the rehearsed response is substitution, not a new program: the CBOM shows where the algorithm lives, the abstraction layer lets you swap it, and the incident playbook drives revocation and disclosure order. Your SOC watches for the trigger; the crypto-agility drill makes the swap a routine update instead of an emergency.',
   },
 }
 
