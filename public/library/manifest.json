@@ -9041,15 +9041,8 @@
       "sha256": "48b3b117569f72558ba71813360d77abdfa11fcf28747bd269148104936b52b7"
     },
     {
-      "refId": "ATIS-Preparing-5G-for-the-Quantum-Era-An-Analysis-of-3GPP-Ar",
-      "title": "ATIS \u2014 Preparing 5G for the Quantum Era: An Analysis of 3GPP Architecture and the Transition to Quantum-Resistant Cryptography",
-      "url": "https://cdn.atis.org/atis.org/2025/02/25152429/Preparing-5G-for-the-Quantum-Era-WP-V9.pdf",
-      "status": "downloaded",
-      "filename": "ATIS-Preparing-5G-for-the-Quantum-Era-An-Analysis-of-3GPP-Ar.pdf",
-      "sizeBytes": 3791096,
-      "contentType": "application/pdf",
-      "sha256": "53307a9b4e027095ab34b8b415e23cd78a697b4298cef5228e4d182be9053e89",
       "refId": "Campbell-Enterprise-PQC-Timelines-2026",
+      "title": "ATIS \u2014 Preparing 5G for the Quantum Era: An Analysis of 3GPP Architecture and the Transition to Quantum-Resistant Cryptography",
       "url": "https://doi.org/10.3390/computers15010009",
       "status": "downloaded",
       "filename": "Campbell-Enterprise-PQC-Timelines-2026.pdf",
@@ -9091,6 +9084,176 @@
       "sha256": "fd9603d1b5384d0df692093a6882aaba1e82c0cf0b5e2ed46255137264d87f4c",
       "acquisition": "manual",
       "acquiredAt": "2026-07-30"
+    },
+    {
+      "refId": "Federal-PKI-Common-Policy-X-509-Certificate-and-CRL-Profile",
+      "title": "Federal PKI Common Policy X.509 Certificate and CRL Profile \u2014 Post-Quantum (Draft)",
+      "url": "https://www.idmanagement.gov/docs/fpki-x509-cert-profile-common-pqc.pdf",
+      "status": "downloaded",
+      "filename": "Federal-PKI-Common-Policy-X-509-Certificate-and-CRL-Profile.pdf",
+      "sizeBytes": 699725,
+      "contentType": "application/pdf",
+      "sha256": "7558e63e8c539470286ce443b10fa0209869016e54bd511e16400315ead08531"
+    },
+    {
+      "refId": "X-509-Certificate-Policy-for-the-U-S-Federal-PKI-Common-Poli",
+      "title": "X.509 Certificate Policy for the U.S. Federal PKI Common Policy Framework",
+      "url": "https://www.idmanagement.gov/docs/fpki-x509-cert-policy-common.pdf",
+      "status": "downloaded",
+      "filename": "X-509-Certificate-Policy-for-the-U-S-Federal-PKI-Common-Poli.pdf",
+      "sizeBytes": 958498,
+      "contentType": "application/pdf",
+      "sha256": "40c8bfb4b5fac18d05871c82c8a81978318d05c64a060fa101dcb8ca7bf1d560"
+    },
+    {
+      "refId": "Common-Policy-X-509-Certificate-and-CRL-Profile",
+      "title": "Common Policy X.509 Certificate and CRL Profile",
+      "url": "https://www.idmanagement.gov/docs/fpki-x509-cert-profile-common.pdf",
+      "status": "downloaded",
+      "filename": "Common-Policy-X-509-Certificate-and-CRL-Profile.pdf",
+      "sizeBytes": 572911,
+      "contentType": "application/pdf",
+      "sha256": "22cef45f373bb929f862a59b2a237275f51d218e60b96ba86e44b8977ac20ae4"
+    },
+    {
+      "refId": "NIST-SP-800-171-Rev-3-Protecting-Controlled-Unclassified-Inf",
+      "title": "NIST SP 800-171 Rev. 3 \u2014 Protecting Controlled Unclassified Information in Nonfederal Systems and Organizations",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-171r3.pdf",
+      "status": "downloaded",
+      "filename": "NIST-SP-800-171-Rev-3-Protecting-Controlled-Unclassified-Inf.pdf",
+      "sizeBytes": 1593213,
+      "contentType": "application/pdf",
+      "sha256": "3e4631df8b5d61f40a6e542b52779ef30ddbbfff31e09214fa94ad6e6f5e6d08"
+    },
+    {
+      "refId": "NIST-SP-800-210-General-Access-Control-Guidance-for-Cloud-Sy",
+      "title": "NIST SP 800-210 \u2014 General Access Control Guidance for Cloud Systems",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-210.pdf",
+      "status": "downloaded",
+      "filename": "NIST-SP-800-210-General-Access-Control-Guidance-for-Cloud-Sy.pdf",
+      "sizeBytes": 1289805,
+      "contentType": "application/pdf",
+      "sha256": "147271600180dfd048c21da0892a1228f574bdf7b69f5982710a3aa6ebf79a95"
+    },
+    {
+      "refId": "RFC-3161-Internet-X-509-Public-Key-Infrastructure-Time-Stamp",
+      "title": "RFC 3161 \u2014 Internet X.509 Public Key Infrastructure Time-Stamp Protocol (TSP)",
+      "url": "https://www.rfc-editor.org/rfc/rfc3161.txt",
+      "status": "downloaded",
+      "filename": "RFC-3161-Internet-X-509-Public-Key-Infrastructure-Time-Stamp.html",
+      "sizeBytes": 54585,
+      "contentType": "text/html",
+      "sha256": "39fd17644ff2d654bc83814a78b1c5b5e7517f496741f34ead5064943eb98240"
+    },
+    {
+      "refId": "ETSI-EN-319-422-V1-1-1-Time-stamping-protocol-and-time-stamp",
+      "title": "ETSI EN 319 422 V1.1.1 \u2014 Time-stamping protocol and time-stamp token profiles",
+      "url": "https://www.etsi.org/deliver/etsi_en/319400_319499/319422/01.01.01_60/en_319422v010101p.pdf",
+      "status": "downloaded",
+      "filename": "ETSI-EN-319-422-V1-1-1-Time-stamping-protocol-and-time-stamp.pdf",
+      "sizeBytes": 70119,
+      "contentType": "application/pdf",
+      "sha256": "b8dce6e415c906877ce36fd3d91b41e0543eda332f400cb444116ec760b5a4bf"
+    },
+    {
+      "refId": "ETSI-TS-103-764-Rail-Telecommunications-RT-FRMCS-System-Arch",
+      "title": "ETSI TS 103 764 \u2014 Rail Telecommunications (RT); FRMCS System Architecture",
+      "url": "https://www.etsi.org/deliver/etsi_ts/103700_103799/103764/01.01.00_30/ts_103764v010100va.pdf",
+      "status": "downloaded",
+      "filename": "ETSI-TS-103-764-Rail-Telecommunications-RT-FRMCS-System-Arch.pdf",
+      "sizeBytes": 765637,
+      "contentType": "application/pdf",
+      "sha256": "51c9182eb7c729b2fcd9c87a4c47f744f9a84e7ef6499b8b6b0a70de17a688d5"
+    },
+    {
+      "refId": "ETSI-TS-103-765-1-Rail-Telecommunications-RT-FRMCS-Transport",
+      "title": "ETSI TS 103 765-1 \u2014 Rail Telecommunications (RT); FRMCS Transport Stratum",
+      "url": "https://www.etsi.org/deliver/etsi_ts/103700_103799/10376501/01.01.01_60/ts_10376501v010101p.pdf",
+      "status": "downloaded",
+      "filename": "ETSI-TS-103-765-1-Rail-Telecommunications-RT-FRMCS-Transport.pdf",
+      "sizeBytes": 657010,
+      "contentType": "application/pdf",
+      "sha256": "536c9ef39aaa2475f5a1be3495f27a54df404a236f52494c4088d3e16bff65e7"
+    },
+    {
+      "refId": "FRA-Information-Guide-on-Positive-Train-Control-in-49-CFR-Pa",
+      "title": "FRA Information Guide on Positive Train Control in 49 CFR Part 236, Subpart I",
+      "url": "https://railroads.dot.gov/sites/fra.dot.gov/files/2022-12/2022_12%20PTC%20FAQs_final.pdf",
+      "status": "downloaded",
+      "filename": "FRA-Information-Guide-on-Positive-Train-Control-in-49-CFR-Pa.pdf",
+      "sizeBytes": 277108,
+      "contentType": "application/pdf",
+      "sha256": "196d6aae6dc51feb9f4f9f758b9b0f48e0e29f3524582dade6906450b6cae40f"
+    },
+    {
+      "refId": "EPA-Guidance-on-Improving-Cybersecurity-at-Drinking-Water-an",
+      "title": "EPA Guidance on Improving Cybersecurity at Drinking Water and Wastewater Systems (Aug 2024)",
+      "url": "https://www.epa.gov/system/files/documents/2024-08/epa-guidance-on-improving-cybersecurity-at-drinking-water-and-wastewater-systems-1.pdf",
+      "status": "downloaded",
+      "filename": "EPA-Guidance-on-Improving-Cybersecurity-at-Drinking-Water-an.pdf",
+      "sizeBytes": 458249,
+      "contentType": "application/pdf",
+      "sha256": "a2e9460d901436eb94a7bb8675520e621aabab35c5eb8712f2faaf82f2de5eff"
+    },
+    {
+      "refId": "FERC-Security-Program-for-Hydropower-Projects-Division-of-Da",
+      "title": "FERC Security Program for Hydropower Projects (Division of Dam Safety and Inspections)",
+      "url": "https://www.ferc.gov/sites/default/files/2020-04/security.pdf",
+      "status": "downloaded",
+      "filename": "FERC-Security-Program-for-Hydropower-Projects-Division-of-Da.pdf",
+      "sizeBytes": 437278,
+      "contentType": "application/pdf",
+      "sha256": "93d0d643952c625c5b2e069b55667922b845518f9b28e0dcb6f7ec2005914f3b"
+    },
+    {
+      "refId": "Swift-Customer-Security-Controls-Framework-CSCF-v2026",
+      "title": "Swift Customer Security Controls Framework (CSCF) v2026",
+      "url": "https://www2.swift.com/knowledgecentre/rest/v1/publications/cscf_dd/70.0/CSCF_v2026_202507015.pdf?logDownload=true",
+      "status": "downloaded",
+      "filename": "Swift-Customer-Security-Controls-Framework-CSCF-v2026.pdf",
+      "sizeBytes": 4576203,
+      "contentType": "application/pdf",
+      "sha256": "1a04c3a03b71559ad9e6eb89356320dc45083b265b222c844093b6325ae5c55c"
+    },
+    {
+      "refId": "ETSI-TS-103-765-2-Rail-Telecommunications-RT-FRMCS-Service-S",
+      "title": "ETSI TS 103 765-2 \u2014 Rail Telecommunications (RT); FRMCS Service Stratum",
+      "url": "https://www.etsi.org/deliver/etsi_ts/103700_103799/10376502/01.01.01_60/ts_10376502v010101p.pdf",
+      "status": "downloaded",
+      "filename": "ETSI-TS-103-765-2-Rail-Telecommunications-RT-FRMCS-Service-S.pdf",
+      "sizeBytes": 418909,
+      "contentType": "application/pdf",
+      "sha256": "43b8e74a12423375a2557ac76803a3b7095555062b1fd4c84fca50e2ff5c7e85"
+    },
+    {
+      "refId": "ETSI-TS-103-765-4-Rail-Telecommunications-RT-FRMCS-On-Networ",
+      "title": "ETSI TS 103 765-4 \u2014 Rail Telecommunications (RT); FRMCS On-Network Interworking",
+      "url": "https://www.etsi.org/deliver/etsi_ts/103700_103799/10376504/01.01.01_60/ts_10376504v010101p.pdf",
+      "status": "downloaded",
+      "filename": "ETSI-TS-103-765-4-Rail-Telecommunications-RT-FRMCS-On-Networ.pdf",
+      "sizeBytes": 202812,
+      "contentType": "application/pdf",
+      "sha256": "37129ad574fbe8f78bd0841aa29a71fcf72eaf103cef3099994b5d6943c110bc"
+    },
+    {
+      "refId": "UIC-FRMCS-T-v1-0-Future-Railway-Mobile-Communication-System",
+      "title": "UIC FRMCS-T v1.0 \u2014 Future Railway Mobile Communication System Technical Specification",
+      "url": "https://uic.org/IMG/pdf/frmcs-t_v1_0_.pdf",
+      "status": "downloaded",
+      "filename": "UIC-FRMCS-T-v1-0-Future-Railway-Mobile-Communication-System.pdf",
+      "sizeBytes": 700264,
+      "contentType": "application/pdf",
+      "sha256": "18c06fcfed1bd9c0767091b937ec93aea71934a4bb2a5845b8b71e21a9488886"
+    },
+    {
+      "refId": "DCSA-Information-Model-v3-0",
+      "title": "DCSA Information Model v3.0",
+      "url": "https://dcsa.org/wp-content/uploads/2020/12/20201208-DCSA-P1-DCSA-Information-Model-v3.0-FINAL.pdf",
+      "status": "downloaded",
+      "filename": "DCSA-Information-Model-v3-0.pdf",
+      "sizeBytes": 2566936,
+      "contentType": "application/pdf",
+      "sha256": "58b7a95d3b87d8f088110a90f5dd9bfc48c427083305db40c0794792efd13b73"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00"
