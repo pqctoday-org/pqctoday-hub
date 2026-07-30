@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router'
 import {
   Zap,
@@ -8,8 +8,6 @@ import {
   Key,
   AlertTriangle,
   Clock,
-  ChevronDown,
-  ChevronUp,
   Cpu,
   Scale,
   GitBranch,
@@ -27,42 +25,9 @@ import { EQUIPMENT_LIFECYCLES } from '../data/energyConstants'
 
 // -- Local CollapsibleSection ------------------------------------------------
 
-interface CollapsibleSectionProps {
-  title: string
-  icon: React.ReactNode
-  defaultOpen?: boolean
-  children: React.ReactNode
-}
-
-const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
-  title,
-  icon,
-  defaultOpen = false,
-  children,
-}) => {
-  const [isOpen, setIsOpen] = useState(defaultOpen)
-
-  return (
-    <section className="glass-panel overflow-hidden">
-      <Button
-        variant="ghost"
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-6 text-left"
-      >
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-primary/10">{icon}</div>
-          <h2 className="text-xl font-bold text-gradient">{title}</h2>
-        </div>
-        {isOpen ? (
-          <ChevronUp size={20} className="text-muted-foreground shrink-0" />
-        ) : (
-          <ChevronDown size={20} className="text-muted-foreground shrink-0" />
-        )}
-      </Button>
-      {isOpen && <div className="px-6 pb-6 space-y-4">{children}</div>}
-    </section>
-  )
-}
+// The local CollapsibleSection was replaced by the shared anchored
+// LearnSection (2026-07-30): industry deep links now land on a section,
+// and per-section reading is recorded instead of only the button below.
 
 // -- Introduction Component --------------------------------------------------
 
@@ -89,7 +54,8 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
   return (
     <div className="space-y-8 w-full">
       {/* -- Section 1: Why Energy & Utilities Is Different ------------------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="why-energy"
         title="Why Energy & Utilities Is Different"
         icon={<Zap size={24} className="text-primary" />}
         defaultOpen={true}
@@ -218,10 +184,11 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
             </table>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Section 2: NERC CIP & IEC 62351 Compliance ---------------------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="nerc-cip"
         title="NERC CIP & IEC 62351 Compliance"
         icon={<Shield size={24} className="text-primary" />}
       >
@@ -320,10 +287,11 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
             </p>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Section 3: Substation Protocols ---------------------------------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="substation-protocols"
         title="Substation Protocols"
         icon={<Network size={24} className="text-primary" />}
       >
@@ -445,10 +413,11 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
             </p>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Section 4: Smart Meter Key Management at Scale ------------------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="smart-meters"
         title="Smart Meter Key Management at Scale"
         icon={<Key size={24} className="text-primary" />}
       >
@@ -579,10 +548,11 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
             </div>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Section 5: Safety & Environmental Risk --------------------------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="safety-environmental"
         title="Safety & Environmental Risk"
         icon={<AlertTriangle size={24} className="text-primary" />}
       >
@@ -754,10 +724,11 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
             </div>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Section 6: Extended Lifecycles & Connectivity Challenges ---------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="lifecycle-connectivity"
         title="Extended Lifecycles & Connectivity Challenges"
         icon={<Clock size={24} className="text-primary" />}
       >
@@ -876,7 +847,7 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
             </div>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Workshop CTA ----------------------------------------------------- */}
       <div className="glass-panel p-6 border-primary/20">

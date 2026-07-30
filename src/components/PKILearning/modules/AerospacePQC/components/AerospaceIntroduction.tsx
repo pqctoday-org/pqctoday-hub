@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState } from 'react'
+import React from 'react'
 import {
   Rocket,
   Radio,
@@ -8,8 +8,6 @@ import {
   Scale,
   Clock,
   Truck,
-  ChevronDown,
-  ChevronUp,
   ArrowRight,
   AlertTriangle,
   Satellite,
@@ -23,46 +21,14 @@ import { Link } from 'react-router'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { LearnSection } from '@/components/PKILearning/common/LearnSection'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 
 // -- Local CollapsibleSection ------------------------------------------------
 
-interface CollapsibleSectionProps {
-  title: string
-  icon: React.ReactNode
-  defaultOpen?: boolean
-  children: React.ReactNode
-}
-
-const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
-  title,
-  icon,
-  defaultOpen = false,
-  children,
-}) => {
-  const [isOpen, setIsOpen] = useState(defaultOpen)
-
-  return (
-    <section className="glass-panel overflow-hidden">
-      <Button
-        variant="ghost"
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-6 text-left"
-      >
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-primary/10">{icon}</div>
-          <h2 className="text-xl font-bold text-gradient">{title}</h2>
-        </div>
-        {isOpen ? (
-          <ChevronUp size={20} className="text-muted-foreground shrink-0" />
-        ) : (
-          <ChevronDown size={20} className="text-muted-foreground shrink-0" />
-        )}
-      </Button>
-      {isOpen && <div className="px-6 pb-6 space-y-4">{children}</div>}
-    </section>
-  )
-}
+// The local CollapsibleSection was replaced by the shared anchored
+// LearnSection (2026-07-30): industry deep links now land on a section,
+// and per-section reading is recorded instead of only the button below.
 
 // -- Introduction Component --------------------------------------------------
 
@@ -74,7 +40,8 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
   return (
     <div className="space-y-8 w-full">
       {/* -- Section 1: The Quantum Threat to Aerospace ----------------------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="quantum-threat"
         title="The Quantum Threat to Aerospace"
         icon={<Rocket size={24} className="text-primary" />}
         defaultOpen={true}
@@ -140,10 +107,11 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
             </div>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Section 2: PQC Algorithm Sizes vs. Aviation Protocols ------------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="protocol-limits"
         title="PQC Algorithm Sizes vs. Aviation Protocol Limits"
         icon={<Radio size={24} className="text-primary" />}
       >
@@ -253,10 +221,11 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
             require secure monotonic counters to prevent state reuse.
           </p>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Section 3: Radiation & Key Material Integrity -------------------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="radiation-integrity"
         title="Radiation & Cryptographic Key Material Integrity"
         icon={<Radiation size={24} className="text-primary" />}
       >
@@ -382,10 +351,11 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
             Ultra-constrained CubeSat processors (Vorago class) can only run hash-based signatures.
           </p>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Section 4: Certification Cost of PQC Integration ----------------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="certification-cost"
         title="Certification Cost of PQC Crypto Library Integration"
         icon={<ShieldCheck size={24} className="text-primary" />}
       >
@@ -457,10 +427,11 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
             optimal first targets for native PQC integration.
           </p>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Section 5: Algorithm Selection Under Export Constraints ----------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="export-constraints"
         title="PQC Algorithm Selection Under Export Constraints"
         icon={<Scale size={24} className="text-primary" />}
       >
@@ -504,10 +475,11 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
             regimes, and compliance evidence.
           </p>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Section 6: Crypto Lifecycle Across Decades ----------------------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="crypto-lifecycle"
         title="Crypto Lifecycle Across Multi-Decade Equipment Life"
         icon={<Clock size={24} className="text-primary" />}
       >
@@ -579,10 +551,11 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
             will never receive PQC firmware.
           </p>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Section 7: Key Provisioning for Unreachable Platforms ------------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="key-provisioning"
         title="Key Provisioning for Unreachable Platforms"
         icon={<Truck size={24} className="text-primary" />}
       >
@@ -628,7 +601,7 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
             certificates for supply chain integrity.
           </p>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Related Resources */}
       <section className="glass-panel p-6 border-secondary/20">
