@@ -56,6 +56,7 @@ interface ModuleState extends LearningProgress {
   toggleLearnSection: (moduleId: string, sectionId: string) => void
   markLearnSectionRead: (moduleId: string, sectionId: string) => void
   markAllLearnSectionsComplete: (moduleId: string) => void
+  setActiveLearnPath: (moduleId: string, pathId: string) => void
   loadProgress: (progress: LearningProgress) => void
   resetProgress: () => void
   resetModuleProgress: (moduleId: string) => void
@@ -296,6 +297,33 @@ export const useModuleStore = create<ModuleState>()(
                 lastVisited: Date.now(),
                 learnSectionChecks: updatedChecks,
               },
+            },
+            timestamp: Date.now(),
+          }
+        }),
+
+      /**
+       * Record which LearnPath the learner is following. Set from the `?path=`
+       * the Industry Landscape adds to its link; harmless for modules that
+       * declare no paths, since requiredSectionIds() falls back to all
+       * sections when the id resolves to nothing.
+       */
+      setActiveLearnPath: (moduleId, pathId) =>
+        set((state) => {
+          const existing = state.modules[moduleId]
+          if (existing?.activeLearnPath === pathId) return state
+          const module = existing || {
+            status: 'in-progress' as const,
+            lastVisited: Date.now(),
+            timeSpent: 0,
+            completedSteps: [],
+            quizScores: {},
+            learnSectionChecks: {},
+          }
+          return {
+            modules: {
+              ...state.modules,
+              [moduleId]: { ...module, activeLearnPath: pathId, lastVisited: Date.now() },
             },
             timestamp: Date.now(),
           }
