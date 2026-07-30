@@ -1,0 +1,144 @@
+// SPDX-License-Identifier: GPL-3.0-only
+/**
+ * Anchored collapsible learn section.
+ *
+ * Every Industries-track module renders its learn tab as a stack of local
+ * `CollapsibleSection` components. Those were copy-pasted per module and none
+ * of them emitted a section anchor, which meant three things were quietly
+ * impossible on exactly the modules the Industry Landscape links to:
+ *
+ *   1. `?section=` / `#section-id` deep links had nothing to land on, so every
+ *      industry link dropped the learner at the top of the module.
+ *   2. The IntersectionObserver in LearnStepper never saw them, so per-section
+ *      reading progress was never recorded — only the manual
+ *      `ReadingCompleteButton` at the very bottom moved the needle.
+ *   3. Per-path completion (LearnPath) had no per-section signal to evaluate.
+ *
+ * This component keeps the accordion behaviour those modules already have and
+ * adds the missing anchor, URL-driven opening, and read tracking. It is a
+ * drop-in replacement for the per-module `CollapsibleSection`: same props plus
+ * a required `sectionId` that must match the module manifest's
+ * `learnSections[].id`.
+ */
+import React, { useEffect, useId, useRef, useState } from 'react'
+import { useLocation } from 'react-router'
+import { ChevronDown, ChevronUp } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { useModuleStore } from '@/store/useModuleStore'
+
+export interface LearnSectionProps {
+  /** must match the manifest's `learnSections[].id` */
+  sectionId: string
+  title: string
+  icon: React.ReactNode
+  defaultOpen?: boolean
+  children: React.ReactNode
+}
+
+/** Reads the deep-link target from either `#section-id` or `?section=`. */
+export const useDeepLinkTarget = (): string => {
+  const location = useLocation()
+  const fromHash = location.hash.replace(/^#/, '')
+  if (fromHash) return decodeURIComponent(fromHash)
+  return new URLSearchParams(location.search).get('section') ?? ''
+}
+
+/**
+ * Records the `?path=` the learner arrived with, so completion is judged
+ * against that path rather than every section. Call once per learn tab; it is
+ * a no-op when no `?path=` is present, which is every link except the ones the
+ * Industry Landscape builds for multi-industry modules.
+ */
+export const useActiveLearnPath = (): void => {
+  const location = useLocation()
+  const setActiveLearnPath = useModuleStore((s) => s.setActiveLearnPath)
+  const moduleId = location.pathname.replace(/^\/learn\/?/, '') || ''
+  const pathId = new URLSearchParams(location.search).get('path') ?? ''
+  useEffect(() => {
+    if (!moduleId || !pathId) return
+    setActiveLearnPath(moduleId, pathId)
+  }, [moduleId, pathId, setActiveLearnPath])
+}
+
+export const LearnSection: React.FC<LearnSectionProps> = ({
+  sectionId,
+  title,
+  icon,
+  defaultOpen = false,
+  children,
+}) => {
+  const location = useLocation()
+  const moduleId = location.pathname.replace(/^\/learn\/?/, '') || ''
+  const markLearnSectionRead = useModuleStore((s) => s.markLearnSectionRead)
+  const target = useDeepLinkTarget()
+  const isTarget = target === sectionId
+
+  // Open state is DERIVED, not synced in an effect: a deep-linked section is
+  // open because the URL names it, not because something called setState after
+  // render. `userToggled` stays null until the reader actually clicks, so a
+  // deep link opens the section without an effect-driven cascading render.
+  const [userToggled, setUserToggled] = useState<boolean | null>(null)
+  const isOpen = userToggled ?? (defaultOpen || isTarget)
+
+  const ref = useRef<HTMLElement | null>(null)
+  const headingId = `${useId()}-heading`
+
+  // Scroll only — the opening is handled by the derivation above. Deferred past
+  // paint so the expanded body has laid out first; scrolling to a collapsed
+  // height lands short.
+  useEffect(() => {
+    if (!isTarget) return
+    const raf = requestAnimationFrame(() => {
+      ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+    return () => cancelAnimationFrame(raf)
+  }, [isTarget])
+
+  // Mark read once half the section is on screen — but only while it is open,
+  // so a collapsed header scrolling past does not count as having read it.
+  useEffect(() => {
+    const el = ref.current
+    if (!el || !moduleId || !isOpen) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+            markLearnSectionRead(moduleId, sectionId)
+          }
+        }
+      },
+      { threshold: [0.5] }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [moduleId, sectionId, isOpen, markLearnSectionRead])
+
+  return (
+    <section
+      ref={ref}
+      data-section-id={sectionId}
+      aria-labelledby={headingId}
+      className="glass-panel overflow-hidden scroll-mt-24"
+    >
+      <Button
+        variant="ghost"
+        onClick={() => setUserToggled(!isOpen)}
+        className="w-full flex items-center justify-between p-6 text-left"
+        aria-expanded={isOpen}
+      >
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-primary/10">{icon}</div>
+          <h2 id={headingId} className="text-xl font-bold text-gradient">
+            {title}
+          </h2>
+        </div>
+        {isOpen ? (
+          <ChevronUp size={20} className="text-muted-foreground shrink-0" />
+        ) : (
+          <ChevronDown size={20} className="text-muted-foreground shrink-0" />
+        )}
+      </Button>
+      {isOpen && <div className="px-6 pb-6 space-y-4">{children}</div>}
+    </section>
+  )
+}

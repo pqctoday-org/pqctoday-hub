@@ -9254,6 +9254,16 @@
       "sizeBytes": 2566936,
       "contentType": "application/pdf",
       "sha256": "58b7a95d3b87d8f088110a90f5dd9bfc48c427083305db40c0794792efd13b73"
+    },
+    {
+      "refId": "EPC-342-08-v16-0-1-Guidelines-on-Cryptographic-Algorithms-Us",
+      "title": "EPC 342-08 v16.0.1 \u2014 Guidelines on Cryptographic Algorithms Usage and Key Management (2026)",
+      "url": "https://www.europeanpaymentscouncil.eu/sites/default/files/kb/file/2026-06/EPC342-08%20v16.0.1%20Approved%20-%20Guidelines%20on%20Cryptographic%20Algorithms%20Usage%20and%20Key%20Management.pdf",
+      "status": "downloaded",
+      "filename": "EPC-342-08-v16-0-1-Guidelines-on-Cryptographic-Algorithms-Us.pdf",
+      "sizeBytes": 1408734,
+      "contentType": "application/pdf",
+      "sha256": "96b1fabf32bd90e09c6d1fadcd688a9d54808dc28623ce559e79c427f4ee6ed7"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00"

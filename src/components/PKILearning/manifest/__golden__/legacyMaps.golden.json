@@ -174,9 +174,9 @@
     "emv-payment-pqc": {
       "id": "emv-payment-pqc",
       "lm_id": "LM-044",
-      "title": "EMV Payment Systems & PQC",
-      "description": "Explore the EMV payment ecosystem — card authentication, tokenization, authorization networks, POS terminals, and e-commerce — and plan quantum-safe migration across Visa, Mastercard, Amex, UnionPay, and Discover.",
-      "duration": "80 min",
+      "title": "Financial Services & Payments PQC",
+      "description": "The whole payments and banking stack: EMV card authentication, tokenization, acquiring and retail checkout, interbank settlement rails, bank key management and key blocks, and the sector regulation that sets the pace — planned as one quantum-safe migration.",
+      "duration": "110 min",
       "difficulty": "advanced",
       "frameworkPhase": "p5"
     },
@@ -587,7 +587,7 @@
     "dev-quantum-impact": 4,
     "digital-assets": 6,
     "digital-id": 5,
-    "emv-payment-pqc": 6,
+    "emv-payment-pqc": 8,
     "email-signing": 3,
     "energy-utilities-pqc": 5,
     "entropy-randomness": 5,
@@ -1087,11 +1087,23 @@
       },
       {
         "id": "ecommerce",
-        "label": "E-Commerce & CNP"
+        "label": "E-Commerce, CNP & Retail Checkout"
       },
       {
         "id": "pos-terminals",
         "label": "POS & Key Injection"
+      },
+      {
+        "id": "interbank-rails",
+        "label": "Interbank Rails & Settlement"
+      },
+      {
+        "id": "banking-key-management",
+        "label": "Banking Key Management & Key Blocks"
+      },
+      {
+        "id": "sector-regulation",
+        "label": "Sector Regulation & Deadlines"
       },
       {
         "id": "quantum-threats",
@@ -2286,6 +2298,14 @@
       {
         "id": "migration-risk-matrix",
         "label": "Migration Risk Matrix"
+      },
+      {
+        "id": "settlement-exposure",
+        "label": "Settlement Exposure Modeller"
+      },
+      {
+        "id": "regulation-timeline",
+        "label": "Sector Regulation Timeline"
       }
     ],
     "email-signing": [
@@ -3711,9 +3731,9 @@
         {
           "id": "emv-payment-pqc",
           "lm_id": "LM-044",
-          "title": "EMV Payment Systems & PQC",
-          "description": "Explore the EMV payment ecosystem — card authentication, tokenization, authorization networks, POS terminals, and e-commerce — and plan quantum-safe migration across Visa, Mastercard, Amex, UnionPay, and Discover.",
-          "duration": "80 min",
+          "title": "Financial Services & Payments PQC",
+          "description": "The whole payments and banking stack: EMV card authentication, tokenization, acquiring and retail checkout, interbank settlement rails, bank key management and key blocks, and the sector regulation that sets the pace — planned as one quantum-safe migration.",
+          "duration": "110 min",
           "difficulty": "advanced",
           "frameworkPhase": "p5"
         },
