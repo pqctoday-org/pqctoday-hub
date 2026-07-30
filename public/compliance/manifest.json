@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-28T01:25:14.140714+00:00",
+  "generated": "2026-07-30T00:36:07.109878+00:00",
   "entries": [
     {
       "refId": "NIST",
@@ -351,15 +351,6 @@
       "sizeBytes": 148733,
       "contentType": "text/html",
       "sha256": "3f0d29b7ea72efac6e32ba952cedb1bb003bb26ac6a53358de677c96619543b8"
-    },
-    {
-      "refId": "EUCC",
-      "url": "https://certification.enisa.europa.eu",
-      "status": "downloaded",
-      "filename": "EUCC.html",
-      "sizeBytes": 17654,
-      "contentType": "text/html",
-      "sha256": "991da71888aeebc84f704fda68cd8e4e37058947a82b4ccba8c871c77c6b0f02"
     },
     {
       "refId": "CRYPTREC-BODY",
@@ -1325,15 +1316,6 @@
       "sha256": "ee545d893e166d32848c41dcc962dab3dae96b8e60a74b057b93c66b25f68b0b"
     },
     {
-      "refId": "EUROPOL-QSFF",
-      "url": "https://www.europol.europa.eu/publications-events/publications/prioritising-post-quantum-cryptography-migration-activities-in-financial-services",
-      "status": "downloaded",
-      "filename": "EUROPOL-QSFF.html",
-      "sizeBytes": 37509,
-      "contentType": "text/html",
-      "sha256": "46d44f453ac7adfb65bff4ae86bef05ffc998a45d253fdef989d8da5f3602e7b"
-    },
-    {
       "refId": "QED-C",
       "url": "https://quantumconsortium.org/publication/a-guide-to-a-quantum-safe-organization/",
       "status": "downloaded",
@@ -1422,18 +1404,69 @@
       "sizeBytes": 216777,
       "contentType": "text/html",
       "sha256": "c6cf5096704d3963157180a1b93e007a0e52a9c1d63e49d87aaa0ece0f1eeb68"
+    },
+    {
+      "refId": "DISA-STIG",
+      "url": "https://public.cyber.mil/stigs/",
+      "status": "downloaded",
+      "filename": "DISA-STIG.html",
+      "sizeBytes": 719743,
+      "contentType": "text/html",
+      "sha256": "d8e01dad2bc94f057678e780bd0ef3c02aa9dd8b2229e848fcc7b3b979e62e1c"
+    },
+    {
+      "refId": "CZ-NUKIB-MIN-CRYPTO-REQS",
+      "url": "https://nukib.gov.cz/download/publications_en/Minimum%20Requirements%20for%20Cryptographic%20Algorithms.pdf",
+      "status": "downloaded",
+      "filename": "CZ-NUKIB-MIN-CRYPTO-REQS.pdf",
+      "sizeBytes": 382269,
+      "contentType": "application/pdf",
+      "sha256": "f0de9ce55b2761a7213e1b18fab026b3d57025f657a6c5435780def313ea0944"
+    },
+    {
+      "refId": "IL-BOI-DIRECTIVE-364-QUANTUM",
+      "url": "https://www.boi.org.il/media/sm4f1ssu/202501en.pdf",
+      "status": "downloaded",
+      "filename": "IL-BOI-DIRECTIVE-364-QUANTUM.pdf",
+      "sizeBytes": 325353,
+      "contentType": "application/pdf",
+      "sha256": "8f388d10f06ffb1e90020ed4b1990013ccd8b9df77aef4a5f400e659e93554f5"
+    },
+    {
+      "refId": "US-CISA-PQC-PRODUCT-CATEGORIES",
+      "url": "https://www.cisa.gov/resources-tools/resources/product-categories-technologies-use-post-quantum-cryptography-standards",
+      "status": "downloaded",
+      "filename": "US-CISA-PQC-PRODUCT-CATEGORIES.html",
+      "sizeBytes": 73281,
+      "contentType": "text/html",
+      "sha256": "12ddab7bf998f601612d618c28dc06c0a65652ae011973ae994cbf9fbd86266e"
+    },
+    {
+      "refId": "EUROPOL-QSFF",
+      "url": "https://www.europol.europa.eu/publications-events/publications/prioritising-post-quantum-cryptography-migration-activities-in-financial-services",
+      "status": "downloaded",
+      "filename": "EUROPOL-QSFF.html",
+      "sizeBytes": 84081,
+      "contentType": "text/html",
+      "sha256": "38965c3c264f9fa0e7fa45de40fd2619874d618032ea7429dad976190e22b405"
+    },
+    {
+      "refId": "EUCC",
+      "url": "https://certification.enisa.europa.eu",
+      "status": "downloaded",
+      "filename": "EUCC.pdf",
+      "sizeBytes": 677521,
+      "contentType": "application/pdf",
+      "sha256": "074a5e09b5686e75f1186b0a9ff25a1649a63ee5f605b1b766bc0b95156757a0",
+      "acquisition": "manual",
+      "acquiredAt": "2026-07-30"
     }
   ],
   "blocked": {
-    "DISA-STIG": {
-      "reason": "wrong-redirect: public.cyber.mil + www.cyber.mil both redirect to generic LWC Communities portal page for unauthenticated fetches",
-      "blocked_at": "2026-07-14T02:16:08.133645+00:00",
-      "attempts": 5
-    },
     "UN-ECE-WP29": {
-      "reason": "hard-blocked: crawl4ai timeout/err on retry",
-      "blocked_at": "2026-07-14T02:16:08.133645+00:00",
-      "attempts": 5
+      "reason": "status=err, tier=crawl4ai",
+      "blocked_at": "2026-07-29T21:51:27.259243+00:00",
+      "attempts": 6
     },
     "IEC-62443": {
       "reason": "hard-blocked: rejected at all 3 fetch_resilient tiers",
@@ -1441,9 +1474,9 @@
       "attempts": 5
     },
     "NIS2": {
-      "reason": "hard-blocked: crawl4ai timeout/err on retry",
-      "blocked_at": "2026-07-14T02:16:08.133645+00:00",
-      "attempts": 5
+      "reason": "status=err, tier=crawl4ai",
+      "blocked_at": "2026-07-29T21:51:27.259243+00:00",
+      "attempts": 6
     },
     "KCMVP": {
       "reason": "client-side-only redirect stub (window.location.href, no server-rendered content)",
@@ -1451,9 +1484,9 @@
       "attempts": 5
     },
     "NZISM": {
-      "reason": "hard-blocked: crawl4ai timeout/err",
-      "blocked_at": "2026-07-14T02:16:08.133645+00:00",
-      "attempts": 5
+      "reason": "status=200, tier=crawl4ai",
+      "blocked_at": "2026-07-29T21:51:27.259243+00:00",
+      "attempts": 6
     },
     "UAE-CSC-PQC": {
       "reason": "status=err, tier=crawl4ai",
@@ -1477,13 +1510,13 @@
     },
     "ETSI-EN-303645": {
       "reason": "status=200, tier=crawl4ai",
-      "blocked_at": "2026-07-14T02:26:04.869521+00:00",
-      "attempts": 1
+      "blocked_at": "2026-07-29T21:51:27.259243+00:00",
+      "attempts": 2
     },
     "APRA-CPS-234": {
       "reason": "status=200, tier=crawl4ai",
-      "blocked_at": "2026-07-14T02:26:04.869521+00:00",
-      "attempts": 1
+      "blocked_at": "2026-07-29T21:51:27.259243+00:00",
+      "attempts": 2
     },
     "KE-DPA": {
       "reason": "status=err, tier=crawl4ai",
@@ -1497,11 +1530,6 @@
     },
     "MEXICO-CNBV-CUB": {
       "reason": "bot challenge page (Radware-style Challenge Validation)",
-      "blocked_at": "2026-07-14T02:33:20.355580+00:00",
-      "attempts": 1
-    },
-    "BRAZIL-BACEN-4893": {
-      "reason": "Angular JS-shell, empty <app-root>, noscript warning present",
       "blocked_at": "2026-07-14T02:33:20.355580+00:00",
       "attempts": 1
     },
@@ -1522,8 +1550,8 @@
     },
     "occ-bulletin-2024-23-pqc": {
       "reason": "status=200, tier=crawl4ai",
-      "blocked_at": "2026-07-14T02:36:37.949884+00:00",
-      "attempts": 1
+      "blocked_at": "2026-07-29T21:51:27.259243+00:00",
+      "attempts": 2
     }
   }
 }
