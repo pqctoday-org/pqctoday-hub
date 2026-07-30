@@ -1046,24 +1046,28 @@
     ],
     "digital-assets": [
       {
-        "id": "bitcoin",
-        "label": "Bitcoin secp256k1 & ECDSA"
+        "id": "blockchain-crypto",
+        "label": "What is Blockchain Cryptography?"
       },
       {
-        "id": "ethereum",
-        "label": "Ethereum Smart Contracts"
+        "id": "elliptic-curves",
+        "label": "Elliptic Curves: secp256k1 vs Ed25519"
+      },
+      {
+        "id": "address-derivation",
+        "label": "Address Derivation Across Chains"
+      },
+      {
+        "id": "signatures",
+        "label": "Digital Signatures: ECDSA vs EdDSA"
       },
       {
         "id": "hd-wallets",
-        "label": "HD Wallets: BIP32/39/44"
+        "label": "HD Wallets and Key Management"
       },
       {
         "id": "pqc-blockchain",
-        "label": "PQC Asset Migration"
-      },
-      {
-        "id": "custody",
-        "label": "Custody Architecture"
+        "label": "Post-Quantum Threats to Blockchains"
       }
     ],
     "digital-id": [
@@ -1212,8 +1216,16 @@
     ],
     "5g-security": [
       {
+        "id": "what-is-5g-security",
+        "label": "What is 5G Security?"
+      },
+      {
+        "id": "three-pillars",
+        "label": "The Three Pillars of 5G Security"
+      },
+      {
         "id": "suci",
-        "label": "SUCI Identity Protection"
+        "label": "SUCI Protection Schemes"
       },
       {
         "id": "aka",
@@ -1221,7 +1233,11 @@
       },
       {
         "id": "provisioning",
-        "label": "SIM Key Provisioning"
+        "label": "SIM Provisioning & Supply Chain"
+      },
+      {
+        "id": "quantum-threat",
+        "label": "Post-Quantum Threat to 5G"
       }
     ],
     "healthcare-pqc": [
@@ -1248,32 +1264,16 @@
     ],
     "hsm-pqc": [
       {
-        "id": "hsm-architecture",
-        "label": "HSM Architecture for PQC"
-      },
-      {
         "id": "pkcs11",
-        "label": "PKCS#11 v3.2 PQC Mechanisms"
+        "label": "PKCS#11 PQC Mechanisms"
       },
       {
-        "id": "on-prem",
-        "label": "On-Prem HSM PQC Deep Dive"
+        "id": "vendors",
+        "label": "HSM Vendor Landscape"
       },
       {
-        "id": "cloud-hsm",
-        "label": "Cloud HSM PQC Deep Dive"
-      },
-      {
-        "id": "side-channel",
-        "label": "Side-Channel Attack Surfaces"
-      },
-      {
-        "id": "firmware-migration",
-        "label": "HSM Firmware Migration"
-      },
-      {
-        "id": "stateful-state",
-        "label": "Stateful Signature State in HSMs"
+        "id": "migration",
+        "label": "Firmware Dual-Partition"
       }
     ],
     "hybrid-crypto": [
@@ -1322,24 +1322,32 @@
     ],
     "iot-ot-pqc": [
       {
+        "id": "why-different",
+        "label": "Why IoT/OT Is Different"
+      },
+      {
         "id": "constrained",
-        "label": "Constrained Devices"
-      },
-      {
-        "id": "firmware",
-        "label": "Firmware Signing"
-      },
-      {
-        "id": "protocols",
-        "label": "CoAP/DTLS Protocols"
+        "label": "Algorithm Selection for Constrained Devices"
       },
       {
         "id": "certs",
-        "label": "Cert Chain Bloat in IoT"
+        "label": "Certificate Chain Bloat"
+      },
+      {
+        "id": "firmware",
+        "label": "Firmware Signing for IoT"
+      },
+      {
+        "id": "protocols",
+        "label": "Protocol Considerations"
       },
       {
         "id": "scada",
-        "label": "SCADA/ICS Migration"
+        "label": "SCADA/ICS Security"
+      },
+      {
+        "id": "hybrid-constrained",
+        "label": "Hybrid Approaches on Constrained Hardware"
       },
       {
         "id": "rail-transit",
@@ -1349,27 +1357,23 @@
     "kms-pqc": [
       {
         "id": "key-hierarchy",
-        "label": "PQC Key Management Fundamentals"
+        "label": "PQC Key Hierarchy Design"
       },
       {
         "id": "envelope",
-        "label": "Envelope Encryption with ML-KEM"
+        "label": "ML-KEM Envelope Encrypt"
       },
       {
         "id": "hybrid-wrap",
         "label": "Hybrid Key Wrapping"
       },
       {
-        "id": "providers",
-        "label": "KMS Provider PQC Landscape"
-      },
-      {
         "id": "rotation",
-        "label": "PQC Key Rotation Strategies"
+        "label": "Key Rotation Planning"
       },
       {
-        "id": "architecture",
-        "label": "Enterprise Architecture Patterns"
+        "id": "kmip",
+        "label": "KMIP Cross-Provider Sync"
       },
       {
         "id": "cloud-responsibility",

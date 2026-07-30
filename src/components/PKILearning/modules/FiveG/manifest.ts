@@ -14,10 +14,17 @@ const manifest: ModuleManifest = {
   frameworkPhase: 'p5',
   track: 'Industries',
   trackOrder: 6,
+  // learnSections CORRECTED 2026-07-30 to describe this module's actual
+  // learn tab. The previous ids read like the module's workshop steps and
+  // did not correspond to any rendered heading — which made the table of
+  // contents, section progress and deep links all wrong together.
   learnSections: [
-    { id: 'suci', label: 'SUCI Identity Protection' },
+    { id: 'what-is-5g-security', label: 'What is 5G Security?' },
+    { id: 'three-pillars', label: 'The Three Pillars of 5G Security' },
+    { id: 'suci', label: 'SUCI Protection Schemes' },
     { id: 'aka', label: '5G-AKA Authentication' },
-    { id: 'provisioning', label: 'SIM Key Provisioning' },
+    { id: 'provisioning', label: 'SIM Provisioning & Supply Chain' },
+    { id: 'quantum-threat', label: 'Post-Quantum Threat to 5G' },
   ],
   workshopSteps: [
     { id: 'suci', label: 'SUCI Deconcealment' },

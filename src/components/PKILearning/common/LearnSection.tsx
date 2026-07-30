@@ -44,6 +44,60 @@ export const useDeepLinkTarget = (): string => {
 }
 
 /**
+ * Makes already-present `data-section-id` anchors live, for modules that
+ * render continuous prose rather than accordions.
+ *
+ * ADDED 2026-07-30. Several modules — the four Role Guides especially — were
+ * already emitting `data-section-id` on plain `<section>` blocks, but nothing
+ * read the URL or observed them, so the anchors were decorative: deep links
+ * landed at the top and no section was ever marked read.
+ *
+ * Deliberately NOT implemented by wrapping those blocks in {@link LearnSection}.
+ * That would collapse content which is meant to read continuously, changing
+ * how shipped modules present for no benefit. This hook adds exactly the two
+ * missing behaviours and leaves the markup alone.
+ *
+ * Call once from a module's learn tab. Safe on modules with no anchors at all.
+ */
+export const useSectionAnchors = (): void => {
+  const location = useLocation()
+  const moduleId = location.pathname.replace(/^\/learn\/?/, '') || ''
+  const markLearnSectionRead = useModuleStore((s) => s.markLearnSectionRead)
+  const target = useDeepLinkTarget()
+
+  // Scroll to the section the URL names, once it has laid out.
+  useEffect(() => {
+    if (!target) return
+    const raf = requestAnimationFrame(() => {
+      document
+        .querySelector(`[data-section-id="${target}"]`)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+    return () => cancelAnimationFrame(raf)
+  }, [target])
+
+  // Mark each section read once half of it has been on screen.
+  useEffect(() => {
+    if (!moduleId) return
+    const els = document.querySelectorAll<HTMLElement>('[data-section-id]')
+    if (els.length === 0) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+            const id = (entry.target as HTMLElement).dataset.sectionId
+            if (id) markLearnSectionRead(moduleId, id)
+          }
+        }
+      },
+      { threshold: [0.5] }
+    )
+    els.forEach((el) => observer.observe(el))
+    return () => observer.disconnect()
+  }, [moduleId, markLearnSectionRead])
+}
+
+/**
  * Records the `?path=` the learner arrived with, so completion is judged
  * against that path rather than every section. Call once per learn tab; it is
  * a no-op when no `?path=` is present, which is every link except the ones the

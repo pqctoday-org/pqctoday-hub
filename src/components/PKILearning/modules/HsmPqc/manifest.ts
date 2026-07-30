@@ -14,20 +14,10 @@ const manifest: ModuleManifest = {
   frameworkPhase: 'p6',
   track: 'Hardware Infrastructure',
   trackOrder: 2,
-  // learnSections CORRECTED 2026-07-30. They did not describe this module's
-  // own learn tab: the manifest is what drives the table of contents, section
-  // progress and deep links, so a manifest that disagrees with the page is
-  // wrong in every one of those. Nothing referenced the old ids outside this
-  // file, and the module never emitted section anchors, so no recorded
-  // progress was keyed to them — the correction loses nothing.
   learnSections: [
-    { id: 'hsm-architecture', label: 'HSM Architecture for PQC' },
-    { id: 'pkcs11', label: 'PKCS#11 v3.2 PQC Mechanisms' },
-    { id: 'on-prem', label: 'On-Prem HSM PQC Deep Dive' },
-    { id: 'cloud-hsm', label: 'Cloud HSM PQC Deep Dive' },
-    { id: 'side-channel', label: 'Side-Channel Attack Surfaces' },
-    { id: 'firmware-migration', label: 'HSM Firmware Migration' },
-    { id: 'stateful-state', label: 'Stateful Signature State in HSMs' },
+    { id: 'pkcs11', label: 'PKCS#11 PQC Mechanisms' },
+    { id: 'vendors', label: 'HSM Vendor Landscape' },
+    { id: 'migration', label: 'Firmware Dual-Partition' },
   ],
   workshopSteps: [
     { id: 'pkcs11-simulator', label: 'PKCS#11 Simulator' },
