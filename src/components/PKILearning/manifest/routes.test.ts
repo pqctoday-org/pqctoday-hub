@@ -79,6 +79,7 @@ const GOLDEN_ROUTE_PATHS = [
   'soc-implementation-pqc',
   'standards-bodies',
   'stateful-signatures',
+  'trust-services-pqc',
   'tls-basics',
   'vendor-risk',
   'verification-closure',

@@ -707,6 +707,17 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     canonical: `${BASE_URL}/learn/government-defense-pqc`,
     structuredData: buildModuleSchema('Government & Defense PQC', 'PT60M', 'Advanced'),
   },
+  '/learn/trust-services-pqc': {
+    title: 'Trust Services & Long-Term Signatures — Timestamping, LTV & PQC | PQC Today',
+    description:
+      'Signatures that must verify in thirty years: qualified vs advanced signatures, RFC 3161 timestamping, long-term validation and re-timestamping, TSP conformity, and ETSI TS 119 312 V2.1.1 post-quantum suites.',
+    canonical: `${BASE_URL}/learn/trust-services-pqc`,
+    structuredData: buildModuleSchema(
+      'Trust Services & Long-Term Signatures',
+      'PT60M',
+      'Intermediate'
+    ),
+  },
 
   '/learn/crypto-dev-apis': {
     title: 'Cryptographic APIs & Developer Languages — JCA, OpenSSL EVP, PKCS#11, CNG | PQC Today',
