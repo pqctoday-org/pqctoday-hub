@@ -18,6 +18,7 @@
  * flow with a primary action, not a destructive-action interrupt.
  */
 import { useEffect, useRef, useState } from 'react'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { CheckCircle2, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -46,6 +47,7 @@ export interface QuizGateModalProps {
 export function QuizGateModal({ question, moduleTitle, onPass, onCancel }: QuizGateModalProps) {
   const reduce = useReducedMotion()
   const cancelRef = useRef<HTMLButtonElement>(null)
+  const trapRef = useFocusTrap(true)
   const [answer, setAnswer] = useState<string | string[] | undefined>(undefined)
   const [submitted, setSubmitted] = useState(false)
   const correct = submitted && isCorrect(question, answer)
@@ -68,13 +70,14 @@ export function QuizGateModal({ question, moduleTitle, onPass, onCancel }: QuizG
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-[80] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+        className="fixed inset-0 z-[80] flex items-center justify-center bg-foreground/40 p-4 backdrop-blur-sm"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onCancel}
       >
         <motion.div
+          ref={trapRef}
           role="dialog"
           aria-modal="true"
           aria-labelledby="quiz-gate-title"
@@ -114,7 +117,13 @@ export function QuizGateModal({ question, moduleTitle, onPass, onCancel }: QuizG
             onSelectAnswer={setAnswer}
           />
 
-          {submitted && <FeedbackPanel isCorrect={correct} explanation={question.explanation} />}
+          {submitted && (
+            <FeedbackPanel
+              isCorrect={correct}
+              explanation={question.explanation}
+              learnMorePath={question.learnMorePath}
+            />
+          )}
 
           <div className="mt-4 flex justify-end gap-2">
             {!submitted ? (

@@ -20,8 +20,10 @@
  */
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { Play } from 'lucide-react'
+import { Gamepad2, Play } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
 import { PHASE_ORDER, type PhaseId } from '@/data/frameworkPhases'
 import { phaseName } from './simTrapTally'
 import { SIM_TREES } from '@/simulation'
@@ -50,6 +52,12 @@ export interface SimPlayChoiceModalProps {
   defaultPhase: PhaseId
   /** Sector line for the "this run uses your assessed sector" personalization note. */
   sectorLabel?: string
+  /**
+   * "Play it yourself" — close onto the interactive board (07-29 review U-H1:
+   * manual play is the actual game and must be a NAMED mode here, not
+   * something a first-timer has to discover by dismissing the modal).
+   */
+  onInteractive?: () => void
 }
 
 function fmtMin(min: number): string {
@@ -149,9 +157,11 @@ export function SimPlayChoiceModal({
   defaultCard,
   defaultPhase,
   sectorLabel,
+  onInteractive,
 }: SimPlayChoiceModalProps) {
   const reduce = useReducedMotion()
   const primaryRef = useRef<HTMLButtonElement>(null)
+  const trapRef = useFocusTrap(true)
   const [phase, setPhase] = useState<PhaseId>(defaultPhase)
   // WP2.4: every phase with a real tree is playable here, including the spanning
   // Foundations band — previously excluded (LIFECYCLE_PHASES omits it on purpose
@@ -193,6 +203,7 @@ export function SimPlayChoiceModal({
         onClick={onClose}
       >
         <motion.div
+          ref={trapRef}
           role="dialog"
           aria-modal="true"
           aria-label="Choose how to play the simulation"
@@ -250,19 +261,39 @@ export function SimPlayChoiceModal({
               firstFocusRef={defaultCard === 'phase' ? primaryRef : undefined}
               onPlay={(deep) => onStart(deep ? 'phase-deep' : 'phase', phase)}
               extra={
-                <select
-                  value={phase}
-                  onChange={(e) => setPhase(e.target.value as PhaseId)}
-                  className="rounded-md border border-border bg-background px-2 py-1 text-[12px] text-foreground"
-                >
-                  {playablePhases.map((p) => (
-                    <option key={p} value={p}>
-                      {phaseName(p)}
-                    </option>
-                  ))}
-                </select>
+                <FilterDropdown
+                  items={playablePhases.map((p) => ({ id: p, label: phaseName(p) }))}
+                  selectedId={phase}
+                  onSelect={(id) => setPhase(id as PhaseId)}
+                  size="sm"
+                  noContainer
+                  opaque
+                />
               }
             />
+          </div>
+
+          <div className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-border bg-card p-4">
+            <div className="min-w-0">
+              <h3 className="flex items-center gap-1.5 text-sm font-bold text-foreground">
+                <Gamepad2 size={14} aria-hidden="true" className="text-primary" />
+                Play it yourself — interactive
+              </h3>
+              <p className="text-[12.5px] leading-snug text-muted-foreground">
+                No narration: you make every call on the board — pick moves, spend quarters, clear
+                gates, and live with the traps you hit. The three narrated runs above show the
+                journey; this one is the game.
+              </p>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="shrink-0"
+              onClick={() => (onInteractive ? onInteractive() : onClose())}
+            >
+              Use the board
+            </Button>
           </div>
 
           <Button

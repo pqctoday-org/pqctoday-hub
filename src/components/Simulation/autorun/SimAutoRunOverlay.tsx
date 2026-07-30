@@ -73,17 +73,31 @@ export function SimAutoRunOverlay({ player }: { player: SimAutoRunPlayer }) {
                 {player.phaseLabel} · {player.index}/{player.total}
               </span>
             </Button>
+            {/* Progress stays visible in BOTH states (07-29 review U10) — it
+                previously lived inside the collapsible block, so percent
+                complete vanished after the ~10s auto-collapse. */}
+            <div className="mt-1.5 h-0.5 overflow-hidden rounded bg-background/20">
+              <div
+                className="h-full rounded bg-primary transition-all"
+                style={{ width: `${pct}%` }}
+              />
+            </div>
+            {/* Collapsed: keep the current narration line readable (07-29
+                review E6) — voice keeps talking after the collapse, and a
+                muted or deaf/HoH viewer loses the words otherwise. */}
+            {!expanded && player.caption && (
+              <p
+                aria-live="polite"
+                className="mt-1 truncate text-[13px] leading-snug text-background/75"
+              >
+                {player.caption}
+              </p>
+            )}
             <div
               className={`overflow-hidden transition-[max-height,opacity,margin] duration-300 ease-out ${
                 expanded ? 'mt-1.5 max-h-[26vh] opacity-100' : 'max-h-0 opacity-0'
               }`}
             >
-              <div className="mb-2 h-0.5 overflow-hidden rounded bg-background/20">
-                <div
-                  className="h-full rounded bg-primary transition-all"
-                  style={{ width: `${pct}%` }}
-                />
-              </div>
               <div className="overflow-y-auto pr-2 text-[16px] leading-relaxed text-background/90">
                 <p>{focus.summary}</p>
                 {focus.gate && (

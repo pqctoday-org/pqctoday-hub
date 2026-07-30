@@ -12,6 +12,15 @@
  * edit-mode restore sees populated sections.
  */
 import type { ExecutiveDocumentType } from '@/services/storage/types'
+import {
+  CRQC_BAND_BY_SECTOR,
+  EO_DEADLINE_CLAUSE,
+  PROGRAM_START_YEAR,
+  US_EO_KEM_YEAR,
+  US_EO_SIG_YEAR,
+  crqcBandSentence,
+  type NarrationSector,
+} from '@/data/narrationFacts'
 
 export interface DemoDoc {
   title: string
@@ -19,14 +28,8 @@ export interface DemoDoc {
   data: string
 }
 
-export type DemoSector =
-  | 'financial'
-  | 'healthcare'
-  | 'government'
-  | 'energy'
-  | 'telecom'
-  | 'retail'
-  | 'general'
+/** Sector union lives in narrationFacts (data layer) so pure-data modules never import back up. */
+export type DemoSector = NarrationSector
 
 /** Reference org per sector — used in authored content. */
 export const ORG: Record<DemoSector, string> = {
@@ -85,14 +88,14 @@ const crqcScenario: Record<DemoSector, DemoDoc> = {
       '',
       '## Harvest-now, decrypt-later (HNDL)',
       '- Customer financial records and transaction histories protected by RSA-2048 / ECDHE have a regulatory retention horizon of 7 years (SOX audit-record retention; sector rules vary).',
-      '- Assume bulk capture today; CRQC availability modelled 2029–2033 (aggressive planning estimate — see note below) — the exposure window opens inside the retention horizon.',
+      `- Assume bulk capture today; CRQC availability modelled ${CRQC_BAND_BY_SECTOR.financial.label} (aggressive planning estimate — see note below) — the exposure window opens inside the retention horizon.`,
       '',
       '## Threaten-now, forge-later (TNFL)',
       '- Code-signing keys for core banking software (10-yr support lifecycle) use ECDSA P-256.',
       '- Transaction signing and payment authentication (EMV, SWIFT) depend on RSA-2048.',
       '',
       '## Mosca inequality',
-      '- X (secrecy) ≈ 7y, Y (migration) ≈ 4y, Z (CRQC) ≈ 5–9y → X + Y > Z. Migration cannot wait for refresh cycle alignment.',
+      `- X (secrecy) ≈ 7y, Y (migration) ≈ 4y, Z (CRQC) ≈ ${CRQC_BAND_BY_SECTOR.financial.zLabel} → X + Y > Z. Migration cannot wait for refresh cycle alignment.`,
       MOSCA_PLANNING_NOTE
     ),
   },
@@ -103,13 +106,13 @@ const crqcScenario: Record<DemoSector, DemoDoc> = {
       '',
       '## Harvest-now, decrypt-later (HNDL)',
       '- Patient records carry a ~40-year confidentiality horizon under GDPR Art. 9 / national health data law, today protected by RSA-2048 / ECDHE.',
-      '- Assume capture today; CRQC availability modelled 2030–2034 (aggressive planning estimate — see note below) — the exposure window opens well inside the retention horizon.',
+      `- Assume capture today; CRQC availability modelled ${CRQC_BAND_BY_SECTOR.healthcare.label} (aggressive planning estimate — see note below) — the exposure window opens well inside the retention horizon.`,
       '',
       '## Threaten-now, forge-later (TNFL)',
       '- Long-lived firmware and medical-device code-signing keys (10–15 yr) currently use ECDSA P-256.',
       '',
       '## Mosca inequality',
-      '- X (secrecy) ≈ 40y, Y (migration) ≈ 6y, Z (CRQC) ≈ 6–10y → X + Y > Z. Begin migration now.',
+      `- X (secrecy) ≈ 40y, Y (migration) ≈ 6y, Z (CRQC) ≈ ${CRQC_BAND_BY_SECTOR.healthcare.zLabel} → X + Y > Z. Begin migration now.`,
       MOSCA_PLANNING_NOTE
     ),
   },
@@ -126,7 +129,7 @@ const crqcScenario: Record<DemoSector, DemoDoc> = {
       '- PKI trust anchors (DoD Root CA) have 20-year lifetimes; firmware signing for embedded systems runs 15+ years.',
       '',
       '## Mosca inequality',
-      "- X (secrecy) ≈ 25y, Y (migration) ≈ 5y, Z (CRQC) ≈ 5–9y → X + Y > Z. The June 2026 EO's 2030 key-establishment deadline is binding (NSM-10 set the 2035 whole-of-NSS goal).",
+      `- X (secrecy) ≈ 25y, Y (migration) ≈ 5y, Z (CRQC) ≈ ${CRQC_BAND_BY_SECTOR.government.zLabel} → X + Y > Z. The June 2026 EO's ${US_EO_KEM_YEAR} key-establishment deadline is binding (NSM-10 set the 2035 whole-of-government goal; CNSA 2.0 sets the 2035 NSS completion).`,
       MOSCA_PLANNING_NOTE
     ),
   },
@@ -143,7 +146,7 @@ const crqcScenario: Record<DemoSector, DemoDoc> = {
       '- A forged firmware update to a transmission substation is a national-security event.',
       '',
       '## Mosca inequality',
-      '- X (secrecy) ≈ 10y, Y (migration) ≈ 7y, Z (CRQC) ≈ 6–10y → X + Y > Z. NERC CIP-014 hardening already mandated.',
+      `- X (secrecy) ≈ 10y, Y (migration) ≈ 7y, Z (CRQC) ≈ ${CRQC_BAND_BY_SECTOR.energy.zLabel} → X + Y > Z. NERC CIP-014 hardening already mandated.`,
       MOSCA_PLANNING_NOTE
     ),
   },
@@ -159,7 +162,7 @@ const crqcScenario: Record<DemoSector, DemoDoc> = {
       '- 5G SUCI protection uses ECIES over ECDH P-256; a quantum-capable adversary could de-anonymise SUCI within the 5G RAN lifespan (15 years).',
       '',
       '## Mosca inequality',
-      '- X (secrecy) ≈ 7y, Y (migration) ≈ 5y, Z (CRQC) ≈ 5–9y → X + Y > Z. 3GPP Release 20 PQC profile is in scope.',
+      `- X (secrecy) ≈ 7y, Y (migration) ≈ 5y, Z (CRQC) ≈ ${CRQC_BAND_BY_SECTOR.telecom.zLabel} → X + Y > Z. 3GPP Release 20 PQC profile is in scope.`,
       MOSCA_PLANNING_NOTE
     ),
   },
@@ -175,7 +178,7 @@ const crqcScenario: Record<DemoSector, DemoDoc> = {
       '- Code-signing keys for payment firmware (EMV kernel) have a 10-year lifecycle.',
       '',
       '## Mosca inequality',
-      '- X (secrecy) ≈ 7y, Y (migration) ≈ 4y, Z (CRQC) ≈ 5–9y → X + Y > Z. PCI SSC has signaled PQC attention but published no PQC requirements or v5.0 timeline yet.',
+      `- X (secrecy) ≈ 7y, Y (migration) ≈ 4y, Z (CRQC) ≈ ${CRQC_BAND_BY_SECTOR.retail.zLabel} → X + Y > Z. PCI SSC added PQC requirements to PTS HSM v5.0 (May 2026), but PCI DSS itself has published no PQC requirements or v5.0 timeline yet.`,
       MOSCA_PLANNING_NOTE
     ),
   },
@@ -191,7 +194,7 @@ const crqcScenario: Record<DemoSector, DemoDoc> = {
       '- Software release signing keys (ECDSA P-256) have an effective lifecycle matching the product support window (8–12 years).',
       '',
       '## Mosca inequality',
-      '- X (secrecy) ≈ 10y, Y (migration) ≈ 4y, Z (CRQC) ≈ 5–9y → X + Y > Z. CISA/NSA/NIST quantum-readiness guidance: begin migration planning now.',
+      `- X (secrecy) ≈ 10y, Y (migration) ≈ 4y, Z (CRQC) ≈ ${CRQC_BAND_BY_SECTOR.general.zLabel} → X + Y > Z. CISA/NSA/NIST quantum-readiness guidance: begin migration planning now.`,
       MOSCA_PLANNING_NOTE
     ),
   },
@@ -293,7 +296,7 @@ const roiModel: Record<DemoSector, DemoDoc> = {
       '',
       '| Driver | 3-yr cost avoided |',
       '| --- | --- |',
-      '| Payment card breach (PCI DSS 4.0 liability) | A$14.2M |',
+      '| Payment card breach (PCI DSS 4.x liability) | A$14.2M |',
       '| Privacy Act 1988 non-compliance penalty | A$4.1M |',
       '| Emergency migration premium (peak-season blackout) | A$5.8M |',
       '',
@@ -522,8 +525,8 @@ function boardDeck(sector: DemoSector): DemoDoc {
     data: md(
       `# Board Pitch — Securing ${ORG[sector]} Against the Quantum Threat`,
       '',
-      `1. **The threat is dated:** adversaries harvest encrypted data today; a cryptographically relevant quantum computer (CRQC) would decrypt it retroactively. This deck models an aggressive planning estimate of 2029–2033 to stress-test urgency — the Applied Quantum Framework 2.1 range is 10–20 years; treat either as a planning anchor, not a forecast.`,
-      `2. **The deadlines are real:** the June 2026 US Executive Order sets binding PQC deadlines (key establishment 2030, signatures 2031; CNSA 2.0 for national-security systems), and regulators behind ${reg} increasingly expect demonstrable migration progress.`,
+      `1. **The threat is dated:** adversaries harvest encrypted data today; a cryptographically relevant quantum computer (CRQC) would decrypt it retroactively. ${crqcBandSentence(sector)}`,
+      `2. **The deadlines are real:** ${EO_DEADLINE_CLAUSE}, and regulators behind ${reg} increasingly expect demonstrable migration progress.`,
       `3. **The ask:** a phased mandate of ${budgetAsk} aligned to existing refresh cycles — deferral doubles cost.`,
       `4. **The cost of waiting:** an unplanned migration runs ~2× and risks regulatory penalty plus a notifiable data breach.`
     ),
@@ -596,7 +599,7 @@ function riskRegister(sector: DemoSector): DemoDoc {
           `| ${a} | ${alg} | ${threat} | 4 | 5 | Migrate to ML-KEM-768 / ML-DSA-65 by 2027 |`
       ),
       '',
-      `*Aligned to ${REG[sector]} — quantum risk horizon modeled at 2029–2033 (aggressive planning assumption; Framework 2.1 states 10–20 years).*`
+      `*Aligned to ${REG[sector]} — quantum risk horizon modeled at ${CRQC_BAND_BY_SECTOR[sector].label} (aggressive planning assumption; Framework 2.1 states 10–20 years).*`
     ),
   }
 }
@@ -632,24 +635,24 @@ function migrationRoadmap(sector: DemoSector): DemoDoc {
       `# PQC Migration Roadmap (Two-Track) — ${ORG[sector]}`,
       '',
       '## External Regulatory Deadlines',
-      `- ${REG[sector]}: regulators increasingly expect demonstrable PQC progress; binding US deadlines come from the June 2026 Executive Order (key establishment 2030, signatures 2031)`,
+      `- ${REG[sector]}: regulators increasingly expect demonstrable PQC progress; binding US deadlines come from the June 2026 Executive Order (key establishment ${US_EO_KEM_YEAR}, signatures ${US_EO_SIG_YEAR})`,
       '',
       '## Track A — Confidentiality (KEM)',
       '',
       '| Milestone | Year | Notes |',
       '| --- | --- | --- |',
-      '| Inventory complete (Tier-1) | 2025 | G1 gate |',
-      '| Hybrid KEM pilot (3 systems) | 2025 | X25519+ML-KEM-768 |',
-      '| Tier-1 migration complete | 2026 | Pure ML-KEM or hybrid |',
-      '| Tier-2 migration complete | 2027 | Refresh-cycle aligned |',
+      `| Inventory complete (Tier-1) | ${PROGRAM_START_YEAR} | G1 gate |`,
+      `| Hybrid KEM pilot (3 systems) | ${PROGRAM_START_YEAR} | X25519+ML-KEM-768 |`,
+      `| Tier-1 migration complete | ${PROGRAM_START_YEAR + 1} | Pure ML-KEM or hybrid |`,
+      `| Tier-2 migration complete | ${PROGRAM_START_YEAR + 2} | Refresh-cycle aligned |`,
       '',
       '## Track B — Integrity (Signatures)',
       '',
       '| Milestone | Year | Notes |',
       '| --- | --- | --- |',
-      '| Code-signing pilot (ML-DSA-65) | 2026 | CI/CD integration |',
-      '| PKI subordinate CA (hybrid) | 2026 | Dual-stack issue |',
-      '| Root CA transition | 2028 | New root, 20-yr lifetime |',
+      `| Code-signing pilot (ML-DSA-65) | ${PROGRAM_START_YEAR + 1} | CI/CD integration |`,
+      `| PKI subordinate CA (hybrid) | ${PROGRAM_START_YEAR + 1} | Dual-stack issue |`,
+      `| Root CA transition | ${PROGRAM_START_YEAR + 2} | New root, 20-yr lifetime |`,
       '',
       '## Milestone Gates',
       '- G0: Charter, budget & QRPM approved; G1: Scoping done, Priority-A ≥90%, classical findings reported, continuous discovery live; G2: CBOM live, freshness governance enforced; G3: CBOM scored; QRA delivered; G4: Roadmap approved; Year 1 plan resourced; G5: Pilots validated; Tier-1 rollout approved; G6: Infrastructure upgrades scheduled; vendor commitments tracked; G8: Verification complete; classical material decommissioned; closed to BAU',
@@ -675,16 +678,16 @@ function stakeholderComms(sector: DemoSector): DemoDoc {
       '## 2. Message Framework',
       '',
       '### Board / C-Suite',
-      `Quantum computing threatens current encryption; regulators behind ${REG[sector]} increasingly expect demonstrable PQC progress, and the June 2026 US Executive Order sets binding 2030/2031 deadlines. Planned program: phased, refresh-aligned, net-positive ROI by year 2.`,
+      `Quantum computing threatens current encryption; regulators behind ${REG[sector]} increasingly expect demonstrable PQC progress, and the June 2026 US Executive Order sets binding ${US_EO_KEM_YEAR}/${US_EO_SIG_YEAR} deadlines. Planned program: phased, refresh-aligned, net-positive ROI by year 2.`,
       '',
       '### Technical Leadership',
-      'NIST FIPS 203/204/205 (ML-KEM, ML-DSA, SLH-DSA) are final. Two-track plan: Track A (KEM) starts 2025; Track B (signatures) starts 2026. Hybrid mode is used during transition where required by jurisdiction; NIST permits (does not mandate) hybrid.',
+      `NIST FIPS 203/204/205 (ML-KEM, ML-DSA, SLH-DSA) are final. Two-track plan: Track A (KEM) starts ${PROGRAM_START_YEAR}; Track B (signatures) starts ${PROGRAM_START_YEAR + 1}. Hybrid mode is used during transition where required by jurisdiction; NIST permits (does not mandate) hybrid.`,
       '',
       '### Development Teams',
-      'Externalise algorithm choice behind a crypto-provider interface. Use ML-KEM-768 for new KEM, ML-DSA-65 for new signing. No classical RSA/ECDHE in new greenfield after Q3 2025.',
+      `Externalise algorithm choice behind a crypto-provider interface. Use ML-KEM-768 for new KEM, ML-DSA-65 for new signing. No classical RSA/ECDHE in new greenfield after Q3 ${PROGRAM_START_YEAR}.`,
       '',
       '### External Partners',
-      'Request PQC roadmap and timeline from all Tier-1 vendors. Hybrid-capable products required for renewal after 2026. Contract clause template available from Procurement.',
+      `Request PQC roadmap and timeline from all Tier-1 vendors. Hybrid-capable products required for renewal after ${PROGRAM_START_YEAR}. Contract clause template available from Procurement.`,
       '',
       '## 3. Communication Cadence',
       '- Board: Quarterly | SteerCo: Monthly | Dev teams: Sprint-level | Partners: Annually',
@@ -707,11 +710,11 @@ function hybridTransition(sector: DemoSector): DemoDoc {
       '',
       '| Protocol | Classical | PQC | Hybrid standard | Status |',
       '| --- | --- | --- | --- | --- |',
-      '| TLS 1.3 KEM | X25519 | ML-KEM-768 | IETF draft-ietf-tls-ecdhe-mlkem | Pilot |',
-      '| IKEv2 / IPsec | ECDH P-256 | ML-KEM-768 | RFC 9370 / NIST SP 1800-38 | Planned 2025 |',
-      '| SSH KEX | ECDH P-256 | ML-KEM-768 | draft-ietf-sshm-mlkem-hybrid-kex | Planned 2025 |',
-      '| Code signing | ECDSA P-256 | ML-DSA-65 | FIPS 204 | Track B 2026 |',
-      '| Certificate issuance | RSA-2048 | ML-DSA-65 | FIPS 204 / dual-stack | Planned 2026 |',
+      '| TLS 1.3 KEM | X25519 | ML-KEM-768 | draft-ietf-tls-ecdhe-mlkem (RFC-editor queue); X25519MLKEM768 widely deployed | Pilot |',
+      `| IKEv2 / IPsec | ECDH P-256 | ML-KEM-768 | RFC 9370 / draft-ietf-ipsecme-ikev2-mlkem (RFC-editor queue) | Planned ${PROGRAM_START_YEAR} |`,
+      `| SSH KEX | ECDH P-256 | ML-KEM-768 | draft-ietf-sshm-mlkem-hybrid-kex (hybrid sntrup761 already RFC 9941) | Planned ${PROGRAM_START_YEAR} |`,
+      `| Code signing | ECDSA P-256 | ML-DSA-65 | FIPS 204 | Track B ${PROGRAM_START_YEAR + 1} |`,
+      `| Certificate issuance | RSA-2048 | ML-DSA-65 | FIPS 204 / dual-stack | Planned ${PROGRAM_START_YEAR + 1} |`,
       '',
       '*Hybrid mode maintained until classical algorithms are formally deprecated in jurisdiction.*'
     ),
@@ -771,12 +774,12 @@ function mtiNegotiator(sector: DemoSector): DemoDoc {
       '',
       '| Vendor | Product | Classical MTI | PQC MTI committed | Roadmap date | Status |',
       '| --- | --- | --- | --- | --- | --- |',
-      `| Primary ${sector === 'energy' ? 'SCADA' : sector === 'telecom' ? 'Core Network' : 'Platform'} Vendor | Core System | RSA-2048, ECDHE | ML-KEM-768 (hybrid) | Q3 2025 | In negotiation |`,
-      '| HSM Vendor | Hardware | RSA-4096 | ML-KEM-768, ML-DSA-65 | Q1 2025 | Committed |',
+      `| Primary ${sector === 'energy' ? 'SCADA' : sector === 'telecom' ? 'Core Network' : 'Platform'} Vendor | Core System | RSA-2048, ECDHE | ML-KEM-768 (hybrid) | Q3 ${PROGRAM_START_YEAR} | In negotiation |`,
+      `| HSM Vendor | Hardware | RSA-4096 | ML-KEM-768, ML-DSA-65 | Q1 ${PROGRAM_START_YEAR} | Committed |`,
       '| TLS Library | OpenSSL 3.x | TLS 1.3 | TLS PQC hybrid | 3.5.0 (2025) | Available |',
-      '| Identity Provider | IdP | ECDSA P-256 | ML-DSA-65 hybrid | 2026 | Roadmap |',
+      `| Identity Provider | IdP | ECDSA P-256 | ML-DSA-65 hybrid | ${PROGRAM_START_YEAR + 1} | Roadmap |`,
       '',
-      '**Negotiation principle:** hybrid MTI required for all Tier-1 renewals after 2025; pure PQC MTI required after 2028.'
+      `**Negotiation principle:** hybrid MTI required for all Tier-1 renewals after ${PROGRAM_START_YEAR}; pure PQC MTI required after ${PROGRAM_START_YEAR + 2}.`
     ),
   }
 }
@@ -845,14 +848,14 @@ function supplyChainMatrix(sector: DemoSector): DemoDoc {
       '- 4 products assessed; 1 PQC-committed; 3 uncommitted',
       '',
       '### Software / OS Layer (3 products)',
-      '- TLS library: ML-KEM available; OS keystore: roadmap 2025',
+      `- TLS library: ML-KEM available; OS keystore: roadmap ${PROGRAM_START_YEAR}`,
       '',
       '### Hardware / HSM Layer (3 products)',
       '- HSM: ML-KEM-768 + ML-DSA-65 firmware available',
       '- Smartcards: PQC in prototype (2026)',
       '',
       '### Cloud / SaaS Layer (2 products)',
-      '- Cloud KMS: PQC KEK available; SaaS IdP: hybrid 2025',
+      `- Cloud KMS: PQC KEK available; SaaS IdP: hybrid ${PROGRAM_START_YEAR}`,
       '',
       '## CBOM (6 crypto-asset classes, per NIST CSWP 39 crypto-agility guidance)',
       '- Code: 4 classical libs identified; 1 hybrid-capable',
@@ -934,6 +937,8 @@ function managementToolsAudit(sector: DemoSector): DemoDoc {
       '| Code signing pipeline | GitHub Actions + cosign | No | ECDSA P-256 hardcoded | High |',
       '| Vulnerability watch | Dependabot + NVD | Partial | No PQC CVE tagging | Medium |',
       '| HSM management | Thales CipherTrust | Yes | ML-KEM-768 firmware available | Low |',
+      '| Key-management interop (KMIP / PKCS#11) | KMIP server + PKCS#11 v3.2 stack | Partial | PQC key types not yet enabled org-wide | Medium |',
+      '| Platform attestation (TPM 2.0) | Vendor TPM stack | No | Classical EK/AK certificates only | Medium |',
       '',
       `*Gaps prioritised against ${REG[sector]} timeline requirements.*`
     ),
@@ -956,14 +961,14 @@ function cryptoArchitecture(sector: DemoSector): DemoDoc {
       '| Internet perimeter | TLS 1.3 (ECDHE-RSA) | P-256 / RSA-2048 | Classical — migrate first |',
       '| Internal service mesh | mTLS (ECDSA) | P-256 | Classical — wave 2 |',
       '| Data at rest | AES-256-GCM (KEK: RSA-2048) | 256 / 2048 | KEK migrate to ML-KEM |',
-      '| Code signing | ECDSA P-256 | P-256 | Classical — Track B 2026 |',
-      '| PKI (CA) | RSA-4096 / ECDSA | 4096 / P-256 | Hybrid root 2026 |',
+      `| Code signing | ECDSA P-256 | P-256 | Classical — Track B ${PROGRAM_START_YEAR + 1} |`,
+      `| PKI (CA) | RSA-4096 / ECDSA | 4096 / P-256 | Hybrid root ${PROGRAM_START_YEAR + 1} |`,
       '',
       '## Migration priority',
       '1. Internet perimeter TLS KEM → ML-KEM-768 hybrid (Track A, Wave 1)',
       '2. Data-at-rest KEK → ML-KEM-768 (Track A, Wave 2)',
-      '3. Code signing → ML-DSA-65 (Track B, 2026)',
-      '4. Internal mesh + PKI → hybrid certs (Track B, 2026–2027)'
+      `3. Code signing → ML-DSA-65 (Track B, ${PROGRAM_START_YEAR + 1})`,
+      `4. Internal mesh + PKI → hybrid certs (Track B, ${PROGRAM_START_YEAR + 1}–${PROGRAM_START_YEAR + 2})`
     ),
   }
 }
@@ -981,11 +986,11 @@ function cryptoVulnerabilityWatch(sector: DemoSector): DemoDoc {
       '**CPE:** cpe:2.3:a:openssl:openssl:3.1.0:*',
       '**CVEs:** 3 in scope (top 3 of 8 in NVD)',
       '',
-      '**CVE-2023-5363** · HIGH · CVSS 7.4 · 2023-10-24',
+      '**CVE-2023-5363** · HIGH · CVSS 7.5 · 2023-10-24',
       'Incorrect cipher key and IV length processing. Upgrade to 3.1.4.',
       '',
-      '**CVE-2024-0727** · MEDIUM · CVSS 5.9 · 2024-01-26',
-      'PKCS12 parsing null-pointer dereference. Upgrade to 3.2.1.',
+      '**CVE-2024-0727** · MEDIUM · CVSS 5.5 · 2024-01-26',
+      'PKCS12 parsing null-pointer dereference. Upgrade to 3.1.5.',
       '',
       '## libpqcrypto 0.0.20211031',
       '**CPE:** cpe:2.3:a:libpqcrypto:libpqcrypto:0.0.20211031:*',
@@ -1011,7 +1016,7 @@ function cryptoCbom(sector: DemoSector): DemoDoc {
       '| libp11 | 0.4.12 | RSA | 2048 | Yes | Migrate |',
       '| bouncy-castle | 1.77 | RSA, ECDSA | 2048/P-256 | Yes | Migrate |',
       '| AWS KMS SDK | 3.x | AES-256, RSA-2048 (wrap) | 256/2048 | Partial | KEK upgrade |',
-      '| cosign | 2.0 | ECDSA P-256 | P-256 | No (TNFL) | Track B 2026 |',
+      `| cosign | 2.0 | ECDSA P-256 | P-256 | No (TNFL) | Track B ${PROGRAM_START_YEAR + 1} |`,
       '| internal-tls-sidecar | 1.2.0 | TLS 1.3, ECDHE | P-256 | Yes | Wave 1 |',
       '',
       '**Total classical assets:** 14 | **PQC-ready:** 0 | **Hybrid-capable:** 2',
