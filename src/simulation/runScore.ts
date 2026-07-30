@@ -38,14 +38,22 @@ export interface RunScoreBreakdown {
 
 const clamp0to100 = (n: number) => Math.max(0, Math.min(100, n))
 
-/** 5 points off per quarter over par; a run that finishes at or under par scores 100. */
+// Scoring rules — exported so the grade card can EXPLAIN the math it shows
+// (07-29 review E-M1) instead of restating magic numbers that could drift.
+export const PACE_POINTS_PER_QUARTER_OVER_PAR = 5
+export const TRAP_PENALTY_POINTS = 15
+export const GRADE_THRESHOLDS: Record<Exclude<RunGrade, 'D'>, number> = { A: 90, B: 75, C: 60 }
+
+/** Points off per quarter over par; a run that finishes at or under par scores 100. */
 function paceScore(quartersUsed: number, parQuarters: number): number {
-  return clamp0to100(100 - Math.max(0, quartersUsed - parQuarters) * 5)
+  return clamp0to100(
+    100 - Math.max(0, quartersUsed - parQuarters) * PACE_POINTS_PER_QUARTER_OVER_PAR
+  )
 }
 
-/** 15 points off per trap picked this run. */
+/** Points off per trap picked this run. */
 function trapScore(trapsThisRun: number): number {
-  return clamp0to100(100 - trapsThisRun * 15)
+  return clamp0to100(100 - trapsThisRun * TRAP_PENALTY_POINTS)
 }
 
 function onTimeScore(objectivesOnTime: number, objectivesTotal: number): number {
@@ -53,9 +61,9 @@ function onTimeScore(objectivesOnTime: number, objectivesTotal: number): number 
 }
 
 function gradeOf(overall: number): RunGrade {
-  if (overall >= 90) return 'A'
-  if (overall >= 75) return 'B'
-  if (overall >= 60) return 'C'
+  if (overall >= GRADE_THRESHOLDS.A) return 'A'
+  if (overall >= GRADE_THRESHOLDS.B) return 'B'
+  if (overall >= GRADE_THRESHOLDS.C) return 'C'
   return 'D'
 }
 

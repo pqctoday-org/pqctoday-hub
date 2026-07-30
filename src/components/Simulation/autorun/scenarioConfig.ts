@@ -22,6 +22,7 @@ import {
   TIMELINE_COUNTRY_MILESTONES,
   TIMELINE_COUNTRY_DEADLINE_YEAR,
 } from '@/data/timelineFacts.generated'
+import { PROGRAM_START_YEAR } from '@/data/narrationFacts'
 
 export type SimTrackId = 'hndl-critical' | 'tnfl-critical' | 'hndl-general' | 'tnfl-general'
 export type SimObjectiveId = 'governance' | 'critical' | 'migration'
@@ -55,7 +56,7 @@ export interface SimScenario {
   standards: { HNDL: string; TNFL: string }
 }
 
-const PROGRAM_START_YEAR = 2026
+// PROGRAM_START_YEAR imported from narrationFacts — the sim's single time anchor.
 const PROGRAM_END_YEAR = 2035 // operate/govern horizon; the general-asset tracks run to here
 const GENERAL_HNDL_LAG = 3 // general HNDL trails critical HNDL (framework: general after critical)
 const GOVERNANCE_LEAD = 3 // governance in place ahead of critical HNDL migration

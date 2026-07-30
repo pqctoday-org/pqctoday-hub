@@ -14,12 +14,18 @@
  * TrapInsightsPanel surfaces mid-run) and the same next-step links the walkthrough ending gives.
  */
 import { useEffect, useRef } from 'react'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
 import { Link } from 'react-router'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { Trophy, ShieldCheck, LayoutDashboard, CalendarClock, Users } from 'lucide-react'
+import { Trophy, ShieldCheck, LayoutDashboard, CalendarClock, Users, FileDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { readTrapTally, remediation, phaseName } from './simTrapTally'
-import type { RunScoreBreakdown } from '@/simulation/runScore'
+import {
+  GRADE_THRESHOLDS,
+  PACE_POINTS_PER_QUARTER_OVER_PAR,
+  TRAP_PENALTY_POINTS,
+  type RunScoreBreakdown,
+} from '@/simulation/runScore'
 
 export interface SimRunCompleteObjective {
   id: string
@@ -43,6 +49,12 @@ export interface SimRunCompleteProps {
   /** WP4.6 — copies a `?seed=` challenge link (the view owns clipboard + toast;
    *  this component stays presentational). Omit to hide the affordance. */
   onCopyChallenge?: () => void
+  /** 07-29 review E-M2 — save the run's takeaway right at the ceremony:
+   *  commits the draft roadmap to the Command Center AND downloads a markdown
+   *  summary (the view owns both; this component stays presentational).
+   *  Previously the only path was the header's COMMIT PLAN, which had to be
+   *  remembered BEFORE the ceremony. Omit to hide. */
+  onSaveRoadmap?: () => void
   onClose: () => void
 }
 
@@ -59,10 +71,12 @@ export function SimRunComplete({
   programEndYear,
   score,
   onCopyChallenge,
+  onSaveRoadmap,
   onClose,
 }: SimRunCompleteProps) {
   const reduce = useReducedMotion()
   const primaryRef = useRef<HTMLButtonElement>(null)
+  const trapRef = useFocusTrap(true)
   const allMet = objectives.length > 0 && objectives.every((o) => o.done)
   // Top 3 — this is a closing reflection, not the full TrapInsightsPanel dashboard.
   const topTraps = readTrapTally().slice(0, 3)
@@ -86,6 +100,7 @@ export function SimRunComplete({
         onClick={onClose}
       >
         <motion.div
+          ref={trapRef}
           role="dialog"
           aria-modal="true"
           aria-label="Migration program complete"
@@ -140,6 +155,19 @@ export function SimRunComplete({
                   On-time <b>{score.onTimeScore}</b>
                 </div>
               </div>
+              <details className="mt-2 text-[11px] text-foreground/70">
+                <summary className="cursor-pointer font-semibold text-foreground/80">
+                  How scoring works
+                </summary>
+                <p className="mt-1 leading-snug">
+                  Each sub-score starts at 100: Pace loses {PACE_POINTS_PER_QUARTER_OVER_PAR} points
+                  per quarter over par ({score.parQuarters} quarters for this difficulty),
+                  Discipline loses {TRAP_PENALTY_POINTS} per trap picked, Compliance is your
+                  jurisdiction-compliance percentage, and On-time is the share of objectives met by
+                  their deadline year. The grade is the average: A ≥ {GRADE_THRESHOLDS.A} · B ≥{' '}
+                  {GRADE_THRESHOLDS.B} · C ≥ {GRADE_THRESHOLDS.C} · below that, D.
+                </p>
+              </details>
             </div>
           )}
 
@@ -209,6 +237,18 @@ export function SimRunComplete({
           )}
 
           <div className="mb-4 flex flex-wrap justify-center gap-2">
+            {onSaveRoadmap && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="gap-1.5"
+                onClick={onSaveRoadmap}
+              >
+                <FileDown size={14} aria-hidden="true" />
+                Save my roadmap
+              </Button>
+            )}
             <Link to="/business" onClick={onClose}>
               <Button variant="outline" size="sm" className="gap-1.5">
                 <LayoutDashboard size={14} aria-hidden="true" />

@@ -231,7 +231,12 @@ export function Dial({
       <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
         {label} ⟳
       </span>
-      <span className="text-[12.5px] font-bold text-background">{value}</span>
+      {/* aria-live so cycling the dial announces the new value to screen
+          readers (07-29 review U7) — the button's aria-label alone is only
+          read on focus, not on value change. */}
+      <span aria-live="polite" className="text-[12.5px] font-bold text-background">
+        {value}
+      </span>
       <span className="text-sim-micro text-background/50">{hint}</span>
     </Button>
   )
