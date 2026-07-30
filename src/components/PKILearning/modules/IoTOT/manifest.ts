@@ -14,12 +14,18 @@ const manifest: ModuleManifest = {
   frameworkPhase: 'p5',
   track: 'Applications',
   trackOrder: 3,
+  // learnSections CORRECTED 2026-07-30 to describe this module's actual
+  // learn tab. The previous ids read like the module's workshop steps and
+  // did not correspond to any rendered heading — which made the table of
+  // contents, section progress and deep links all wrong together.
   learnSections: [
-    { id: 'constrained', label: 'Constrained Devices' },
-    { id: 'firmware', label: 'Firmware Signing' },
-    { id: 'protocols', label: 'CoAP/DTLS Protocols' },
-    { id: 'certs', label: 'Cert Chain Bloat in IoT' },
-    { id: 'scada', label: 'SCADA/ICS Migration' },
+    { id: 'why-different', label: 'Why IoT/OT Is Different' },
+    { id: 'constrained', label: 'Algorithm Selection for Constrained Devices' },
+    { id: 'certs', label: 'Certificate Chain Bloat' },
+    { id: 'firmware', label: 'Firmware Signing for IoT' },
+    { id: 'protocols', label: 'Protocol Considerations' },
+    { id: 'scada', label: 'SCADA/ICS Security' },
+    { id: 'hybrid-constrained', label: 'Hybrid Approaches on Constrained Hardware' },
     { id: 'rail-transit', label: 'Rail & Transit Key Management' },
   ],
   workshopSteps: [

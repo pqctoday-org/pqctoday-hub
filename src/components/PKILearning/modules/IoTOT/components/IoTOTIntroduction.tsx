@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
+import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import { Link } from 'react-router'
 import {
   Cpu,
@@ -28,13 +29,15 @@ interface IoTOTIntroductionProps {
 }
 
 export const IoTOTIntroduction: React.FC<IoTOTIntroductionProps> = ({ onNavigateToWorkshop }) => {
+  useSectionAnchors()
+
   const kemAlgorithms = CONSTRAINED_ALGORITHMS.filter((a) => a.type === 'KEM')
   const sigAlgorithms = CONSTRAINED_ALGORITHMS.filter((a) => a.type === 'Signature')
 
   return (
     <div className="space-y-8 w-full">
       {/* Section 1: Why IoT/OT Is Different */}
-      <section className="glass-panel p-6">
+      <section data-section-id="why-different" className="glass-panel p-6 scroll-mt-20">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-primary/10">
             <Cpu size={24} className="text-primary" />
@@ -133,7 +136,7 @@ export const IoTOTIntroduction: React.FC<IoTOTIntroductionProps> = ({ onNavigate
       </section>
 
       {/* Section 2: Algorithm Selection for Constrained Devices */}
-      <section className="glass-panel p-6">
+      <section data-section-id="constrained" className="glass-panel p-6 scroll-mt-20">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-secondary/10">
             <Shield size={24} className="text-secondary" />
@@ -228,7 +231,7 @@ export const IoTOTIntroduction: React.FC<IoTOTIntroductionProps> = ({ onNavigate
       </section>
 
       {/* Section 3: Certificate Chain Bloat */}
-      <section className="glass-panel p-6">
+      <section data-section-id="certs" className="glass-panel p-6 scroll-mt-20">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-primary/10">
             <Link2 size={24} className="text-primary" />
@@ -300,7 +303,7 @@ export const IoTOTIntroduction: React.FC<IoTOTIntroductionProps> = ({ onNavigate
       </section>
 
       {/* Section 4: Firmware Signing for IoT */}
-      <section className="glass-panel p-6">
+      <section data-section-id="firmware" className="glass-panel p-6 scroll-mt-20">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-secondary/10">
             <FileCode size={24} className="text-secondary" />
@@ -367,7 +370,7 @@ export const IoTOTIntroduction: React.FC<IoTOTIntroductionProps> = ({ onNavigate
       </section>
 
       {/* Section 5: Protocol Considerations */}
-      <section className="glass-panel p-6">
+      <section data-section-id="protocols" className="glass-panel p-6 scroll-mt-20">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-primary/10">
             <Network size={24} className="text-primary" />
@@ -439,7 +442,7 @@ export const IoTOTIntroduction: React.FC<IoTOTIntroductionProps> = ({ onNavigate
       </section>
 
       {/* Section 6: SCADA/ICS Security */}
-      <section className="glass-panel p-6">
+      <section data-section-id="scada" className="glass-panel p-6 scroll-mt-20">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-secondary/10">
             <Factory size={24} className="text-secondary" />
@@ -513,7 +516,7 @@ export const IoTOTIntroduction: React.FC<IoTOTIntroductionProps> = ({ onNavigate
       </section>
 
       {/* Section 7: Hybrid Approaches on Constrained Hardware */}
-      <section className="glass-panel p-6">
+      <section data-section-id="hybrid-constrained" className="glass-panel p-6 scroll-mt-20">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-primary/10">
             <Layers size={24} className="text-primary" />

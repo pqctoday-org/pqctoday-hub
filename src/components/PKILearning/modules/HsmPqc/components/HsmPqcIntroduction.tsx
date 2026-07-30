@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React from 'react'
+import React, { useState } from 'react'
+import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import { Link } from 'react-router'
 import {
   Server,
   Lock,
   Cloud,
   ArrowRight,
+  ChevronDown,
+  ChevronUp,
   Shield,
   Cpu,
   AlertTriangle,
@@ -25,24 +28,62 @@ import {
 } from '../data/hsmConstants'
 import { Button } from '@/components/ui/button'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
-import { LearnSection } from '@/components/PKILearning/common/LearnSection'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 
 interface HsmPqcIntroductionProps {
   onNavigateToWorkshop: () => void
 }
 
-// Local CollapsibleSection replaced by the shared anchored LearnSection (2026-07-30).
+interface CollapsibleSectionProps {
+  title: string
+  icon: React.ReactNode
+  defaultOpen?: boolean
+  children: React.ReactNode
+}
+
+const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
+  title,
+  icon,
+  defaultOpen = false,
+  children,
+}) => {
+  const [isOpen, setIsOpen] = useState(defaultOpen)
+
+  return (
+    <section className="glass-panel overflow-hidden">
+      <Button
+        variant="ghost"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between p-6 text-left"
+      >
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-primary/10">{icon}</div>
+          <h2 className="text-xl font-bold text-gradient">{title}</h2>
+        </div>
+        {isOpen ? (
+          <ChevronUp size={20} className="text-muted-foreground shrink-0" />
+        ) : (
+          <ChevronDown size={20} className="text-muted-foreground shrink-0" />
+        )}
+      </Button>
+      {isOpen && <div className="px-6 pb-6 space-y-4">{children}</div>}
+    </section>
+  )
+}
 
 export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNavigateToWorkshop }) => {
+  // The data-section-id anchors below were already here and already
+  // matched this module's manifest; nothing read them. One call makes
+  // deep links land and section progress record.
+  useSectionAnchors()
+
   const classicalMechanisms = PKCS11_MECHANISMS.filter((m) => m.type === 'classical')
   const pqcMechanisms = PKCS11_MECHANISMS.filter((m) => m.type === 'pqc')
 
   return (
     <div className="space-y-8 w-full">
       {/* Section 1: HSM Architecture for PQC */}
-      <LearnSection
-        sectionId="hsm-architecture"
+      <CollapsibleSection
         title="HSM Architecture for PQC"
         icon={<Server size={24} className="text-primary" />}
         defaultOpen={true}
@@ -140,12 +181,11 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
             </div>
           </div>
         </div>
-      </LearnSection>
+      </CollapsibleSection>
 
       {/* Section 2: PKCS#11 v3.2 PQC Mechanisms */}
       <div data-section-id="pkcs11" className="scroll-mt-20">
-        <LearnSection
-          sectionId="pkcs11"
+        <CollapsibleSection
           title="PKCS#11 v3.2 PQC Mechanisms"
           icon={<Lock size={24} className="text-primary" />}
         >
@@ -279,13 +319,12 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               </table>
             </div>
           </div>
-        </LearnSection>
+        </CollapsibleSection>
       </div>
 
       {/* Section 3: On-Prem HSM PQC Deep Dive */}
       <div data-section-id="vendors" className="scroll-mt-20">
-        <LearnSection
-          sectionId="on-prem"
+        <CollapsibleSection
           title="On-Prem HSM PQC Deep Dive"
           icon={<Cpu size={24} className="text-primary" />}
         >
@@ -425,12 +464,11 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               </div>
             </div>
           </div>
-        </LearnSection>
+        </CollapsibleSection>
       </div>
 
       {/* Section 4: Cloud HSM PQC Deep Dive */}
-      <LearnSection
-        sectionId="cloud-hsm"
+      <CollapsibleSection
         title="Cloud HSM PQC Deep Dive"
         icon={<Cloud size={24} className="text-primary" />}
       >
@@ -553,11 +591,10 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
             </div>
           </div>
         </div>
-      </LearnSection>
+      </CollapsibleSection>
 
       {/* Section 5: Side-Channel Attack Surfaces */}
-      <LearnSection
-        sectionId="side-channel"
+      <CollapsibleSection
         title="Side-Channel Attack Surfaces"
         icon={<Eye size={24} className="text-primary" />}
       >
@@ -640,12 +677,11 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
             </div>
           </div>
         </div>
-      </LearnSection>
+      </CollapsibleSection>
 
       {/* Section 6: HSM Firmware Migration */}
       <div data-section-id="migration" className="scroll-mt-20">
-        <LearnSection
-          sectionId="firmware-migration"
+        <CollapsibleSection
           title="HSM Firmware Migration"
           icon={<RefreshCw size={24} className="text-primary" />}
         >
@@ -720,12 +756,11 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               but the formal CMVP certificate has not yet been re-issued.
             </div>
           </div>
-        </LearnSection>
+        </CollapsibleSection>
       </div>
 
       {/* Section 7: Stateful Signature State in HSMs */}
-      <LearnSection
-        sectionId="stateful-state"
+      <CollapsibleSection
         title="Stateful Signature State in HSMs"
         icon={<HardDrive size={24} className="text-primary" />}
       >
@@ -792,7 +827,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
             LMS/HSS firmware.
           </div>
         </div>
-      </LearnSection>
+      </CollapsibleSection>
 
       {/* Try Workshop CTA */}
       <div className="glass-panel p-6 border-primary/20">

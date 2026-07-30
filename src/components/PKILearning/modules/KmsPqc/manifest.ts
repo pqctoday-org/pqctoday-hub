@@ -14,19 +14,12 @@ const manifest: ModuleManifest = {
   frameworkPhase: 'p6',
   track: 'Hardware Infrastructure',
   trackOrder: 3,
-  // learnSections CORRECTED 2026-07-30. They did not describe this module's
-  // own learn tab: the manifest is what drives the table of contents, section
-  // progress and deep links, so a manifest that disagrees with the page is
-  // wrong in every one of those. Nothing referenced the old ids outside this
-  // file, and the module never emitted section anchors, so no recorded
-  // progress was keyed to them — the correction loses nothing.
   learnSections: [
-    { id: 'key-hierarchy', label: 'PQC Key Management Fundamentals' },
-    { id: 'envelope', label: 'Envelope Encryption with ML-KEM' },
+    { id: 'key-hierarchy', label: 'PQC Key Hierarchy Design' },
+    { id: 'envelope', label: 'ML-KEM Envelope Encrypt' },
     { id: 'hybrid-wrap', label: 'Hybrid Key Wrapping' },
-    { id: 'providers', label: 'KMS Provider PQC Landscape' },
-    { id: 'rotation', label: 'PQC Key Rotation Strategies' },
-    { id: 'architecture', label: 'Enterprise Architecture Patterns' },
+    { id: 'rotation', label: 'Key Rotation Planning' },
+    { id: 'kmip', label: 'KMIP Cross-Provider Sync' },
     { id: 'cloud-responsibility', label: 'Cloud Shared Responsibility' },
   ],
   workshopSteps: [

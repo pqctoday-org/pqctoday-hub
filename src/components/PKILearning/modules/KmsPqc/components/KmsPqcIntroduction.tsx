@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React from 'react'
+import React, { useState } from 'react'
+import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import { Link } from 'react-router'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import {
@@ -10,6 +11,7 @@ import {
   RefreshCw,
   Building2,
   ArrowRight,
+  ChevronRight,
   BookOpen,
   Wrench,
   Route,
@@ -34,15 +36,51 @@ interface KmsPqcIntroductionProps {
   onNavigateToWorkshop: () => void
 }
 
-// Local CollapsibleSection replaced by the shared anchored LearnSection (2026-07-30).
+interface CollapsibleSectionProps {
+  icon: React.ReactNode
+  title: string
+  defaultOpen?: boolean
+  children: React.ReactNode
+}
+
+const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
+  icon,
+  title,
+  defaultOpen = false,
+  children,
+}) => {
+  const [isOpen, setIsOpen] = useState(defaultOpen)
+
+  return (
+    <section className="glass-panel p-6">
+      <Button
+        variant="ghost"
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-3 w-full text-left"
+      >
+        <div className="p-2 rounded-lg bg-primary/10 shrink-0">{icon}</div>
+        <h2 className="text-xl font-bold text-gradient flex-1">{title}</h2>
+        <ChevronRight
+          size={18}
+          className={`text-muted-foreground transition-transform duration-200 shrink-0 ${isOpen ? 'rotate-90' : ''}`}
+        />
+      </Button>
+      {isOpen && <div className="mt-4 space-y-4 text-sm text-foreground/80">{children}</div>}
+    </section>
+  )
+}
 
 export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNavigateToWorkshop }) => {
+  // The data-section-id anchors below were already here and already
+  // matched this module's manifest; nothing read them. One call makes
+  // deep links land and section progress record.
+  useSectionAnchors()
+
   return (
     <div className="space-y-8 w-full">
       {/* Section 1: PQC Key Management Fundamentals */}
       <div data-section-id="key-hierarchy" className="scroll-mt-20">
-        <LearnSection
-          sectionId="key-hierarchy"
+        <CollapsibleSection
           icon={<KeyRound size={24} className="text-primary" />}
           title="PQC Key Management Fundamentals"
           defaultOpen
@@ -160,13 +198,12 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
               certificate sizes, and network bandwidth during key distribution.
             </p>
           </div>
-        </LearnSection>
+        </CollapsibleSection>
       </div>
 
       {/* Section 2: Envelope Encryption with ML-KEM */}
       <div data-section-id="envelope" className="scroll-mt-20">
-        <LearnSection
-          sectionId="envelope"
+        <CollapsibleSection
           icon={<Lock size={24} className="text-primary" />}
           title="Envelope Encryption with ML-KEM"
         >
@@ -238,13 +275,12 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
               </div>
             </div>
           </div>
-        </LearnSection>
+        </CollapsibleSection>
       </div>
 
       {/* Section 3: Hybrid Key Wrapping */}
       <div data-section-id="hybrid-wrap" className="scroll-mt-20">
-        <LearnSection
-          sectionId="hybrid-wrap"
+        <CollapsibleSection
           icon={<Shuffle size={24} className="text-primary" />}
           title="Hybrid Key Wrapping"
         >
@@ -287,12 +323,11 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
               </div>
             ))}
           </div>
-        </LearnSection>
+        </CollapsibleSection>
       </div>
 
       {/* Section 4: KMS Provider PQC Landscape */}
-      <LearnSection
-        sectionId="providers"
+      <CollapsibleSection
         icon={<Cloud size={24} className="text-primary" />}
         title="KMS Provider PQC Landscape"
       >
@@ -362,12 +397,11 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
             )
           })}
         </div>
-      </LearnSection>
+      </CollapsibleSection>
 
       {/* Section 5: PQC Key Rotation Strategies */}
       <div data-section-id="rotation" className="scroll-mt-20">
-        <LearnSection
-          sectionId="rotation"
+        <CollapsibleSection
           icon={<RefreshCw size={24} className="text-primary" />}
           title="PQC Key Rotation Strategies"
         >
@@ -457,13 +491,12 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
               ))}
             </div>
           </div>
-        </LearnSection>
+        </CollapsibleSection>
       </div>
 
       {/* Section 6: Enterprise Architecture Patterns */}
       <div data-section-id="kmip" className="scroll-mt-20">
-        <LearnSection
-          sectionId="architecture"
+        <CollapsibleSection
           icon={<Building2 size={24} className="text-primary" />}
           title="Enterprise Architecture Patterns"
         >
@@ -568,7 +601,7 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
               ))}
             </div>
           </div>
-        </LearnSection>
+        </CollapsibleSection>
       </div>
 
       {/* Related Resources */}
