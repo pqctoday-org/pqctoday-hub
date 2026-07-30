@@ -8959,6 +8959,86 @@
       "sizeBytes": 20092,
       "contentType": "text/html",
       "sha256": "3edcdc7b84f92803b764c1504f6d37dc3c4f382c6ea383eb1f7cf49337f39519"
+    },
+    {
+      "refId": "W3C-Verifiable-Credentials-Data-Model-v2-0",
+      "title": "W3C Verifiable Credentials Data Model v2.0",
+      "url": "https://www.w3.org/TR/vc-data-model-2.0/",
+      "status": "downloaded",
+      "filename": "W3C-Verifiable-Credentials-Data-Model-v2-0.html",
+      "sizeBytes": 1023165,
+      "contentType": "text/html",
+      "sha256": "a9196a3d0b6601356c4e127bad24f8c7f2c17f6ed22e41b35755a910104156f8"
+    },
+    {
+      "refId": "UNISIG-SUBSET-137-ERTMS-ETCS-On-line-Key-Management-FFFIS",
+      "title": "UNISIG SUBSET-137 \u2014 ERTMS/ETCS On-line Key Management FFFIS",
+      "url": "https://www.era.europa.eu/system/files/2023-01/sos3_index083_-_subset-137_v100.pdf",
+      "status": "downloaded",
+      "filename": "UNISIG-SUBSET-137-ERTMS-ETCS-On-line-Key-Management-FFFIS.pdf",
+      "sizeBytes": 1635883,
+      "contentType": "application/pdf",
+      "sha256": "768b4f415f1c47f7ab3a389aeba0424db71d671cfea377b4cd63e2fa3c842009"
+    },
+    {
+      "refId": "WCO-SAFE-Framework-of-Standards-2021",
+      "title": "WCO SAFE Framework of Standards 2021",
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/facilitation/instruments-and-tools/tools/safe-package/safe-framework-of-standards.pdf",
+      "status": "downloaded",
+      "filename": "WCO-SAFE-Framework-of-Standards-2021.pdf",
+      "sizeBytes": 2987075,
+      "contentType": "application/pdf",
+      "sha256": "44742b0b07923f839a6b1eb1c3e829f5771f4d4cea6bc16133893067e59c35eb"
+    },
+    {
+      "refId": "IMO-MSC-FAL-1-Circ-3-Rev-2-Guidelines-on-Maritime-Cyber-Risk",
+      "title": "IMO MSC-FAL.1/Circ.3/Rev.2 \u2014 Guidelines on Maritime Cyber Risk Management",
+      "url": "https://wwwcdn.imo.org/localresources/en/OurWork/Security/Documents/MSC-FAL.1-Circ.3-Rev.2%20-%20Guidelines%20On%20Maritime%20Cyber%20Risk%20Management%20(Secretariat)%20(1).pdf",
+      "status": "downloaded",
+      "filename": "IMO-MSC-FAL-1-Circ-3-Rev-2-Guidelines-on-Maritime-Cyber-Risk.pdf",
+      "sizeBytes": 424627,
+      "contentType": "application/pdf",
+      "sha256": "d9558b0a6e05c6da430ea99b265c7be0f7d2d0c3f1e8b7143e75afb77c954607"
+    },
+    {
+      "refId": "NAIC-Insurance-Data-Security-Model-Law-MDL-668",
+      "title": "NAIC Insurance Data Security Model Law (MDL-668)",
+      "url": "https://content.naic.org/sites/default/files/model-law-668.pdf",
+      "status": "downloaded",
+      "filename": "NAIC-Insurance-Data-Security-Model-Law-MDL-668.pdf",
+      "sizeBytes": 238211,
+      "contentType": "application/pdf",
+      "sha256": "761e268abebbe55d4612b406d1ea1cfcba23b86264da2255ef15134da601e45f"
+    },
+    {
+      "refId": "AACS-Introduction-and-Common-Cryptographic-Elements-Book-Rev",
+      "title": "AACS Introduction and Common Cryptographic Elements Book (Rev 0.953)",
+      "url": "https://aacsla.com/wp-content/uploads/2019/02/AACS_Spec_Common_Final_0953.pdf",
+      "status": "downloaded",
+      "filename": "AACS-Introduction-and-Common-Cryptographic-Elements-Book-Rev.pdf",
+      "sizeBytes": 1862877,
+      "contentType": "application/pdf",
+      "sha256": "508aefdc2aa16afba3423a6b01893a525943577bfc2b4d126f31166b7fdbf1b0"
+    },
+    {
+      "refId": "DVB-BlueBook-A165-Extensions-to-the-CI-Plus-Specification",
+      "title": "DVB BlueBook A165 \u2014 Extensions to the CI Plus Specification",
+      "url": "https://dvb.org/wp-content/uploads/2019/12/a165-extensions-to-the-ci-plus-specification-drts-103-205-v141.pdf",
+      "status": "downloaded",
+      "filename": "DVB-BlueBook-A165-Extensions-to-the-CI-Plus-Specification.pdf",
+      "sizeBytes": 1998347,
+      "contentType": "application/pdf",
+      "sha256": "f861e3b8da19e292169b9ef41fb5e39ffd69c7ca77a1155760c17b8859acc8a0"
+    },
+    {
+      "refId": "UN-Regulation-No-155-Cyber-Security-and-Cyber-Security-Manag",
+      "title": "UN Regulation No 155 \u2014 Cyber Security and Cyber Security Management System",
+      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:42021X0387",
+      "status": "downloaded",
+      "filename": "UN-Regulation-No-155-Cyber-Security-and-Cyber-Security-Manag.html",
+      "sizeBytes": 565900,
+      "contentType": "text/html",
+      "sha256": "c09806ad903cd5a3ba76256ed166718d4d374b0c8662e5d25acec3d3bce59aaa"
     }
   ]
 }

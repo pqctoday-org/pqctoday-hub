@@ -1800,5 +1800,17 @@
     "http_status": 200,
     "error_message": null,
     "downloaded_at": "2026-07-28T11:21:46.604034+00:00"
+  },
+  {
+    "threat_id": "INSU-001",
+    "source_url": "https://www.munichre.com/en/insights/cyber/cyber-insurance-risks-and-trends-2025.html",
+    "main_source": "Munich Re \u2014 Cyber Insurance: Risks and Trends 2025 (Quantum computing security section)",
+    "download_status": "ok",
+    "evidence_file": "threats/INSU-001.html",
+    "content_type": "text/html",
+    "size_bytes": 134588,
+    "http_status": 200,
+    "error_message": null,
+    "downloaded_at": "2026-07-30T00:25:01.904339+00:00"
   }
 ]

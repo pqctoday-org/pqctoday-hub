@@ -24,7 +24,9 @@ const { useCases, standards, marketSizes } = loadIndustryLandscape()
 /** Industries with no official-statistics market figure, by design:
  *  Cross-Industry (not an industry), Hardware Security Modules (product
  *  segment — only analyst estimates exist), IoT (verified 2026-07-29: no
- *  official source publishes a market size). */
+ *  official source publishes a market size). Insurance was exempt for one
+ *  revision (its threats evidence was audit-rejected) and was re-grounded on
+ *  Munich Re's 2025 cyber-trends report + BEA value added on 2026-07-29. */
 const MARKET_SIZE_EXEMPT = new Set([
   'Cross-Industry',
   'Hardware Security Modules',
@@ -95,6 +97,21 @@ describe('industry-landscape driftguards', () => {
           `${uc.useCaseId}: "${m}" listed as PQC`
         ).toBe(false)
       }
+    }
+  })
+
+  it('every standards row names at least one specific mechanism', () => {
+    // Design rule (user decision 2026-07-29): the standards column exists to
+    // show which SPECIFIC crypto mechanisms a technical standard references —
+    // governance/process frameworks that name none (HIPAA, FERPA, WCO SAFE,
+    // IMO circular, NAIC 668, UNECE R155...) live in the Library only, never
+    // as a standards row. Each row's mechanisms were verified against the
+    // cached document text (grep of the library evidence, 2026-07-29).
+    for (const s of standards) {
+      expect(
+        s.mechanismsReferenced.length,
+        `${s.standardId}: standards rows must reference >=1 specific mechanism`
+      ).toBeGreaterThan(0)
     }
   })
 
