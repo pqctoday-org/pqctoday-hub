@@ -9,6 +9,16 @@
       "sizeBytes": 134588,
       "contentType": "text/html",
       "sha256": "152028af9fd8f61a8947fb9ff2b791836df02ae91adb0d73af66fd6d9a7b24df"
+    },
+    {
+      "refId": "Mastercard-PQC-industry-awareness-payment-ecosystem-quantum",
+      "title": "Mastercard PQC industry awareness (payment ecosystem quantum-migration whitepaper)",
+      "url": "https://www.mastercard.com/content/dam/mccom/shared/news-and-trends/stories/2025/quantum-explainer-and-white-paper/Migration-to-post-quantum-cryptography-WhitePaper_2025.pdf",
+      "status": "pending-manual",
+      "filename": "Mastercard-PQC-industry-awareness-payment-ecosystem-quantum.pdf",
+      "sizeBytes": 0,
+      "contentType": "application/pdf",
+      "sha256": ""
     }
   ]
 }
