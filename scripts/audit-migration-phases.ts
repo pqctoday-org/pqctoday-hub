@@ -55,10 +55,29 @@ export interface Finding {
 const VALID_STEP_IDS = ['assess', 'plan', 'preparation', 'test', 'migrate', 'launch', 'rampup']
 // Keep in sync with MIGRATION_STEP_ALIASES (src/data/migrateData.ts).
 const STEP_ALIASES: Record<string, string> = { prepare: 'preparation' }
-// After the 06192026_r3 migration-phase re-tag the empty ratio dropped to ~6.8%
-// (the remainder are products the classifier left phase-agnostic). Cap just above
-// that so it can't quietly grow back.
-const EMPTY_RATIO_BASELINE = 0.08
+// FIXED 2026-07-29: this audit counted EVERY row in the CSV, including
+// status='deprecated' ones that `filterActive` (src/data/loaderUtils.ts) removes
+// before the Migrate page ever sees them. Measured on
+// pqc_product_catalog_07292026.csv: 45/995 rows had no migration_phases and the
+// gate reported them as "shown in every step (phase-agnostic)" — but ALL 45 were
+// deprecated, i.e. shown in NO step. The true active figure was 0/903. The gate
+// was reporting a user-visible problem that did not exist, and the same unfiltered
+// read let step-reachability count a step as reachable via deprecated products
+// alone, which would have hidden a genuinely empty step filter.
+//
+// After filtering, the empty ratio is 0%. The baseline is NOT set to 0: add_row.py
+// cannot classify migration_phases for a new product (it is on that script's
+// needs_human list), so newly-added rows legitimately arrive untagged and would
+// turn every catalog addition into a CI failure. 2% of ~900 leaves roughly 18 rows
+// of headroom between re-tagging passes while still being a 4x tightening.
+const EMPTY_RATIO_BASELINE = 0.02
+
+/** Mirrors `filterActive` in src/data/loaderUtils.ts — the DS-series
+ *  self-containment convention keeps deprecated rows in the latest CSV forever,
+ *  so any audit that reasons about what users SEE must drop them. */
+function isActive(row: Record<string, string>): boolean {
+  return (row.status ?? 'active').trim().toLowerCase() !== 'deprecated'
+}
 
 function findLatestCatalogCsv(dataDir: string): string {
   const re = /^pqc_product_catalog_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/
@@ -92,6 +111,7 @@ export function audit(csvPath: string): Finding[] {
 
   for (const row of data) {
     if (!row || !row.product_id) continue
+    if (!isActive(row)) continue
     total++
     const cell = (row.migration_phases ?? '').trim()
     if (!cell) {
@@ -146,13 +166,13 @@ export function audit(csvPath: string): Finding[] {
     findings.push({
       severity: 'error',
       rule: 'empty-ratio',
-      message: `Empty migration_phases ratio ${(ratio * 100).toFixed(1)}% exceeds baseline ${(EMPTY_RATIO_BASELINE * 100).toFixed(0)}% (${empty}/${total}). Re-tag products before it grows.`,
+      message: `Empty migration_phases ratio ${(ratio * 100).toFixed(1)}% exceeds baseline ${(EMPTY_RATIO_BASELINE * 100).toFixed(0)}% (${empty}/${total} ACTIVE products). Re-tag products before it grows.`,
     })
   } else if (empty > 0) {
     findings.push({
       severity: 'warn',
       rule: 'empty-ratio',
-      message: `${empty}/${total} products (${(ratio * 100).toFixed(1)}%) have no migration_phases — shown in every step (phase-agnostic). Re-tagging would sharpen the step filter.`,
+      message: `${empty}/${total} ACTIVE products (${(ratio * 100).toFixed(1)}%) have no migration_phases — shown in every step (phase-agnostic). Re-tagging would sharpen the step filter.`,
     })
   }
 

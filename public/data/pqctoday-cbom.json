@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:3b9db9ba-559a-4664-a073-330b8dc5cc3a",
+  "serialNumber": "urn:uuid:db289b7c-043f-42d9-afc2-2bd701152dfa",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-07-28T00:00:00.000Z",
+    "timestamp": "2026-07-29T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
