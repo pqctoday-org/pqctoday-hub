@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router'
 import {
-  ChevronDown,
-  ChevronUp,
   Code2,
   Globe,
   Lock,
@@ -17,51 +15,19 @@ import {
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { LearnSection } from '@/components/PKILearning/common/LearnSection'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
-import { Button } from '@/components/ui/button'
 
-interface CollapsibleSectionProps {
-  title: string
-  icon: React.ReactNode
-  defaultOpen?: boolean
-  children: React.ReactNode
-}
-
-const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
-  title,
-  icon,
-  defaultOpen = false,
-  children,
-}) => {
-  const [isOpen, setIsOpen] = useState(defaultOpen)
-  return (
-    <section className="glass-panel overflow-hidden">
-      <Button
-        variant="ghost"
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-6 text-left"
-      >
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-primary/10">{icon}</div>
-          <h2 className="text-xl font-bold text-gradient">{title}</h2>
-        </div>
-        {isOpen ? (
-          <ChevronUp size={20} className="text-muted-foreground shrink-0" />
-        ) : (
-          <ChevronDown size={20} className="text-muted-foreground shrink-0" />
-        )}
-      </Button>
-      {isOpen && <div className="px-6 pb-6 space-y-4">{children}</div>}
-    </section>
-  )
-}
+// Local CollapsibleSection replaced by the shared anchored LearnSection
+// (2026-07-30).
 
 export const CryptoDevAPIsIntroduction: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Section 1 */}
       <div data-section-id="landscape" className="scroll-mt-20">
-        <CollapsibleSection
+        <LearnSection
+          sectionId="landscape"
           title="The Crypto API Landscape"
           icon={<Globe size={20} className="text-primary" />}
           defaultOpen
@@ -100,12 +66,13 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
               </div>
             ))}
           </div>
-        </CollapsibleSection>
+        </LearnSection>
       </div>
 
       {/* Section 2 */}
       <div data-section-id="principles" className="scroll-mt-20">
-        <CollapsibleSection
+        <LearnSection
+          sectionId="principles"
           title="Common Principles Across All APIs"
           icon={<Layers size={20} className="text-primary" />}
         >
@@ -144,12 +111,13 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
               </li>
             ))}
           </ul>
-        </CollapsibleSection>
+        </LearnSection>
       </div>
 
       {/* Section 3 */}
       <div data-section-id="jca-bc" className="scroll-mt-20">
-        <CollapsibleSection
+        <LearnSection
+          sectionId="jca-bc"
           title="JCA/JCE & Bouncy Castle"
           icon={<Code2 size={20} className="text-primary" />}
         >
@@ -176,12 +144,13 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
             JCA and PKCS#11 — once registered, standard JCA calls transparently hit the HSM. This is
             the recommended pattern for enterprise Java apps that need HSM-backed keys.
           </p>
-        </CollapsibleSection>
+        </LearnSection>
       </div>
 
       {/* Section 4 */}
       <div data-section-id="openssl" className="scroll-mt-20">
-        <CollapsibleSection
+        <LearnSection
+          sectionId="openssl"
           title="OpenSSL & libcrypto"
           icon={<Lock size={20} className="text-primary" />}
         >
@@ -208,12 +177,13 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
             . Either way, the EVP layer means zero application code changes when switching to PQC —
             only the algorithm name changes.
           </p>
-        </CollapsibleSection>
+        </LearnSection>
       </div>
 
       {/* Section 5 */}
       <div data-section-id="pkcs11" className="scroll-mt-20">
-        <CollapsibleSection
+        <LearnSection
+          sectionId="pkcs11"
           title="PKCS#11 — Hardware Abstraction"
           icon={<Server size={20} className="text-primary" />}
         >
@@ -245,12 +215,13 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
               open session. Session management is the #1 source of bugs in PKCS#11 implementations.
             </p>
           </div>
-        </CollapsibleSection>
+        </LearnSection>
       </div>
 
       {/* Section 6 */}
       <div data-section-id="cng" className="scroll-mt-20">
-        <CollapsibleSection
+        <LearnSection
+          sectionId="cng"
           title="KSP & Windows CNG"
           icon={<Shield size={20} className="text-primary" />}
         >
@@ -268,12 +239,13 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
             mode. PQC support went GA in November 2025: ML-KEM, ML-DSA, and SLH-DSA APIs are
             available on Windows 11 24H2+ and Windows Server 2025 (and in .NET 10).
           </p>
-        </CollapsibleSection>
+        </LearnSection>
       </div>
 
       {/* Section 7 */}
       <div data-section-id="build-buy" className="scroll-mt-20">
-        <CollapsibleSection
+        <LearnSection
+          sectionId="build-buy"
           title="Build vs Buy vs Open Source"
           icon={<Wrench size={20} className="text-primary" />}
         >
@@ -333,12 +305,13 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
               </div>
             ))}
           </div>
-        </CollapsibleSection>
+        </LearnSection>
       </div>
 
       {/* Section 8 */}
       <div data-section-id="pqc-libs" className="scroll-mt-20">
-        <CollapsibleSection
+        <LearnSection
+          sectionId="pqc-libs"
           title="Open-Source PQC Libraries"
           icon={<Package size={20} className="text-primary" />}
         >
@@ -416,12 +389,13 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
               </tbody>
             </table>
           </div>
-        </CollapsibleSection>
+        </LearnSection>
       </div>
 
       {/* Section 9 */}
       <div data-section-id="languages" className="scroll-mt-20">
-        <CollapsibleSection
+        <LearnSection
+          sectionId="languages"
           title="Language Ecosystem Overview"
           icon={<BookOpen size={20} className="text-primary" />}
         >
@@ -485,12 +459,13 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
               </div>
             ))}
           </div>
-        </CollapsibleSection>
+        </LearnSection>
       </div>
 
       {/* Section 10 */}
       <div data-section-id="pqc-roadmap" className="scroll-mt-20">
-        <CollapsibleSection
+        <LearnSection
+          sectionId="pqc-roadmap"
           title="PQC Readiness & Roadmap"
           icon={<Shuffle size={20} className="text-primary" />}
         >
@@ -597,7 +572,7 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
               </li>
             </ul>
           </div>
-        </CollapsibleSection>
+        </LearnSection>
       </div>
 
       {/* Related Resources */}

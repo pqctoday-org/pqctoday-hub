@@ -23,6 +23,7 @@ import { Link } from 'react-router'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { LearnSection } from '@/components/PKILearning/common/LearnSection'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 
 // -- Local CollapsibleSection ------------------------------------------------
@@ -76,7 +77,8 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
   return (
     <div className="space-y-8 w-full">
       {/* -- Section 1: The Automotive Crypto Landscape ------------------------ */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="vehicle-crypto-landscape"
         title="The Automotive Crypto Landscape"
         icon={<Car size={24} className="text-primary" />}
         defaultOpen={true}
@@ -175,7 +177,7 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             but even Ethernet will require IP fragmentation for ML-DSA-44 or larger signatures.
           </p>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- SAE J3016 Reference ------------------------------------------------ */}
       <div className="glass-panel p-4 border-l-4 border-primary/50">
@@ -213,7 +215,8 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
       </div>
 
       {/* -- Section 2: Autonomous Driving Data Integrity ---------------------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="autonomous-data"
         title="Autonomous Driving Data Integrity"
         icon={<Eye size={24} className="text-primary" />}
       >
@@ -348,10 +351,11 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             </div>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Section 3: Safety-Critical Systems & ISO 26262 -------------------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="safety-critical"
         title="Safety-Critical Systems & ISO 26262"
         icon={<ShieldCheck size={24} className="text-primary" />}
       >
@@ -470,10 +474,11 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             ML-DSA, FN-DSA, and hash-based signatures in resource-limited environments.
           </p>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Section 4: HSM Lifecycle: Factory to End-of-Life ------------------ */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="hsm-lifecycle"
         title="HSM Lifecycle: Factory to End-of-Life"
         icon={<HardDrive size={24} className="text-primary" />}
       >
@@ -645,10 +650,11 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             lifecycle management patterns, and hands-on exercises with PQC-enabled HSM emulation.
           </p>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Section 5: Long Vehicle Lifecycle & Crypto-Agility ---------------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="lifecycle-agility"
         title="Long Vehicle Lifecycle & Crypto-Agility"
         icon={<Clock size={24} className="text-primary" />}
       >
@@ -726,10 +732,11 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             coordinated with PQC adoption.
           </p>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Section 6: Connected Car Privacy & GDPR --------------------------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="privacy-connected"
         title="Connected Car Privacy & GDPR"
         icon={<Lock size={24} className="text-primary" />}
       >
@@ -845,10 +852,11 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             charging records, it reveals home/work patterns with high confidence.
           </p>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Section 7: In-Vehicle Payments & EV Charging ---------------------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="vehicle-payments"
         title="In-Vehicle Payments & EV Charging"
         icon={<CreditCard size={24} className="text-primary" />}
       >
@@ -932,10 +940,11 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             </div>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Section 8: Digital Car Key (CCC Digital Key 3.0) ------------------ */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="digital-car-key"
         title="Digital Car Key (CCC Digital Key 3.0)"
         icon={<Key size={24} className="text-primary" />}
       >
@@ -1072,10 +1081,11 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             </div>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Section 9: Supply Chain: TISAX, VDA & AUTOSAR --------------------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="supply-chain"
         title="Supply Chain: TISAX, VDA & AUTOSAR"
         icon={<Package size={24} className="text-primary" />}
       >
@@ -1209,7 +1219,7 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             </div>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Related Resources */}
       <section className="glass-panel p-6 border-secondary/20">
