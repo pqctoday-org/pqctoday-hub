@@ -14,10 +14,12 @@ import {
   Scale,
   GitBranch,
   ArrowRight,
+  Droplets,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { LearnSection } from '@/components/PKILearning/common/LearnSection'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { NERC_CIP_STANDARDS, IEC_62351_PARTS } from '../data/nercCipData'
 import { ENERGY_PROTOCOLS } from '../data/substationProtocolData'
@@ -976,6 +978,60 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
       <VendorCoverageNotice migrateLayer="AppServers" />
 
       {/* -- Reading Complete ------------------------------------------------- */}
+
+      <LearnSection
+        sectionId="water-wastewater"
+        title="Water & Wastewater: the same protocols, a different regulator"
+        icon={<Droplets size={20} className="text-primary" />}
+      >
+        <p className="text-muted-foreground">
+          Water and wastewater utilities run substantially the same operational technology as the
+          electricity sector — SCADA, remote telemetry, vendor VPNs into treatment plants. What
+          differs is the regulatory regime, and the difference is stark.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="p-4 rounded-lg bg-muted/50 border border-border">
+            <h4 className="font-semibold text-foreground">Electricity</h4>
+            <p className="mt-1 text-sm text-muted-foreground">
+              NERC CIP is mandatory and enforceable with financial penalties, and IEC 62351 gives
+              substation protocols a security profile that names mechanisms.
+            </p>
+          </div>
+          <div className="p-4 rounded-lg bg-muted/50 border border-border">
+            <h4 className="font-semibold text-foreground">Water &amp; wastewater</h4>
+            <p className="mt-1 text-sm text-muted-foreground">
+              EPA guidance is advisory and its cybersecurity checklist is explicitly voluntary.
+              FERC&rsquo;s hydropower security programme covers dams and generation, not treatment.
+              Neither names a cryptographic mechanism.
+            </p>
+          </div>
+        </div>
+        <div className="p-4 rounded-lg bg-status-warning/10 border border-status-warning/30">
+          <p className="text-sm">
+            <strong className="text-foreground">The practical consequence.</strong> A water utility
+            has no mandatory crypto baseline to migrate <em>from</em>, and no regulator setting a
+            date to migrate <em>by</em>. Every Water / Wastewater use case in the Industry Landscape
+            currently carries no PQC mechanism at all — that is an accurate reflection of the
+            sector, not a gap in the data. The migration argument here has to be made on operational
+            risk, because there is no compliance lever.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-3 text-xs">
+          <Link
+            to="/library?ref=EPA-Guidance-on-Improving-Cybersecurity-at-Drinking-Water-an"
+            className="text-primary hover:underline"
+          >
+            EPA cybersecurity guidance (Aug 2024)
+          </Link>
+          <Link
+            to="/library?ref=FERC-Security-Program-for-Hydropower-Projects-Division-of-Da"
+            className="text-primary hover:underline"
+          >
+            FERC hydropower security programme
+          </Link>
+        </div>
+      </LearnSection>
+
       <ReadingCompleteButton />
     </div>
   )

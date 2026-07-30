@@ -20,6 +20,7 @@ const manifest: ModuleManifest = {
     { id: 'protocols', label: 'CoAP/DTLS Protocols' },
     { id: 'certs', label: 'Cert Chain Bloat in IoT' },
     { id: 'scada', label: 'SCADA/ICS Migration' },
+    { id: 'rail-transit', label: 'Rail & Transit Key Management' },
   ],
   workshopSteps: [
     { id: 'constrained-algorithm', label: 'Algorithm Explorer' },

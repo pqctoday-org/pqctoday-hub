@@ -14,10 +14,12 @@ import {
   Car,
   Zap,
   HeartPulse,
+  TrainFront,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { DEVICE_CLASSES, CONSTRAINED_ALGORITHMS, IOT_PROTOCOLS, PURDUE_LAYERS } from '../constants'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { LearnSection } from '@/components/PKILearning/common/LearnSection'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { Button } from '@/components/ui/button'
 
@@ -664,6 +666,49 @@ export const IoTOTIntroduction: React.FC<IoTOTIntroductionProps> = ({ onNavigate
         </p>
       </div>
       <VendorCoverageNotice migrateLayer="Hardware" />
+
+      <LearnSection
+        sectionId="rail-transit"
+        title="Rail &amp; Transit Key Management"
+        icon={<TrainFront size={20} className="text-primary" />}
+      >
+        <p className="text-muted-foreground">
+          Rail signalling is OT with a 30-to-40 year asset life and a safety case attached to every
+          change. European train control (ERTMS/ETCS) distributes keys to on-board and trackside
+          equipment through a Key Management Centre, specified in UNISIG SUBSET-137 — which names
+          RSA and ECDH directly, making it the one rail document with a concrete migration target.
+        </p>
+        <div className="p-4 rounded-lg bg-muted/50 border border-border">
+          <h4 className="font-semibold text-foreground">Why rail has no module of its own</h4>
+          <p className="mt-1 text-sm text-muted-foreground">
+            The successor radio system (FRMCS, ETSI TS 103 764 and the TS 103 765 series) was
+            checked for mechanism-level content and names none — it delegates every cryptographic
+            choice to 3GPP. The US Positive Train Control regulation (49 CFR 236 Subpart I) is a
+            safety-performance rule and likewise names no algorithm. With SUBSET-137 as the only
+            mechanism-naming source, rail is a section here rather than a thin module of its own.
+          </p>
+        </div>
+        <p className="text-muted-foreground">
+          The constraints in this module apply directly: certificate chain size matters on trackside
+          links, firmware signing has to survive decades of rolling stock, and the safety-case
+          burden means a crypto change is a re-certification event rather than a deployment.
+        </p>
+        <div className="flex flex-wrap gap-3 text-xs">
+          <Link
+            to="/library?ref=UNISIG-SUBSET-137-ERTMS-ETCS-On-line-Key-Management-FFFIS"
+            className="text-primary hover:underline"
+          >
+            UNISIG SUBSET-137 (KMC-ETCS)
+          </Link>
+          <Link
+            to="/library?ref=ETSI-TS-103-764-Rail-Telecommunications-RT-FRMCS-System-Arch"
+            className="text-primary hover:underline"
+          >
+            ETSI TS 103 764 (FRMCS)
+          </Link>
+        </div>
+      </LearnSection>
+
       <ReadingCompleteButton />
     </div>
   )
