@@ -481,16 +481,6 @@
       "sha256": "9338643a2c5019bf1c819c759b9c1e903203f0db79e5ecb087b0ace0613f4de8"
     },
     {
-      "refId": "ANSSI PQC Position Paper",
-      "title": "Avis de l'ANSSI sur la Migration Vers la Cryptographie",
-      "url": "https://cyber.gouv.fr/sites/default/files/2022/04/anssi-avis-migration-vers-la-cryptographie-post-quantique.pdf",
-      "status": "downloaded",
-      "filename": "ANSSI_PQC_Position_Paper.pdf",
-      "sizeBytes": 291409,
-      "contentType": "application/pdf",
-      "sha256": "be016b8c16c45444c766395ce58858d74943938afb1ba171c641bad369aa38c4"
-    },
-    {
       "refId": "ANSSI PQC Follow-up Paper",
       "title": "ANSSI Views on Post-Quantum Cryptography Transition (2023 Follow-up)",
       "url": "https://cyber.gouv.fr/sites/default/files/document/follow_up_position_paper_on_post_quantum_cryptography.pdf",
@@ -4491,16 +4481,6 @@
       "sha256": "a84f83d19cbd4806815d1933ecae83d3d011f348b9a229dda083442e7fd11dee"
     },
     {
-      "refId": "UNECE-WP29-R155",
-      "title": "UN Regulation No. 155 \u2014 Cybersecurity and Cybersecurity Management Systems (CSMS)",
-      "url": "https://unece.org/transport/documents/2021/03/standards/un-regulation-no-155-cyber-security-and-cyber-security",
-      "status": "downloaded",
-      "filename": "UNECE-WP29-R155.html",
-      "sizeBytes": 27664,
-      "contentType": "text/html",
-      "sha256": "0a9a1358a696ec72862c3821cf5a872825762ab10f075af4b337b883c422a908"
-    },
-    {
       "refId": "NZISM-V3-9",
       "title": "New Zealand Information Security Manual (NZISM) v3.9 \u2014 November 2025",
       "url": "https://nzism.gcsb.govt.nz/",
@@ -7841,16 +7821,6 @@
       "sha256": "2e2130f0f7f433362f1b67b6b42377135a2980c4a17a6afa7fa54b113f3c9cdd"
     },
     {
-      "refId": "EU-NIS-CG-Security-Measures-2026",
-      "title": "EU NIS Cooperation Group \u2014 Reference Document on Security Measures for Entities under NIS2 v1.0",
-      "url": "https://digital-strategy.ec.europa.eu/en/policies/nis-cooperation-group",
-      "status": "downloaded",
-      "filename": "EU-NIS-CG-Security-Measures-2026.pdf",
-      "sizeBytes": 699857,
-      "contentType": "application/pdf",
-      "sha256": "8aea4315a0bc6231c92ba905042f839a4bdfc00960fe008981f42fade1b14713"
-    },
-    {
       "refId": "NIST SP 800-181r1",
       "title": "Workforce Framework for Cybersecurity (NICE Framework)",
       "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-181r1.pdf",
@@ -8019,16 +7989,6 @@
       "sizeBytes": 225680,
       "contentType": "text/html",
       "sha256": "9baa40cb5aa32d37a4a38980ee2928ae1adb7699e2015ccd075932d9940d22e6"
-    },
-    {
-      "refId": "Campbell-Enterprise-PQC-Timelines-2026",
-      "title": "Enterprise Migration to Post-Quantum Cryptography: Timeline Analysis and Strategic Frameworks",
-      "url": "https://doi.org/10.3390/computers15010009",
-      "status": "downloaded",
-      "filename": "Campbell-Enterprise-PQC-Timelines-2026.pdf",
-      "sizeBytes": 435269,
-      "contentType": "application/pdf",
-      "sha256": "84d69e52fa8cbc80830316540b1595b54955cfa34b06567bf88e9a9cd808df01"
     },
     {
       "refId": "Sammo-PQC-NPP-MonteCarlo-2026",
@@ -9088,7 +9048,50 @@
       "filename": "ATIS-Preparing-5G-for-the-Quantum-Era-An-Analysis-of-3GPP-Ar.pdf",
       "sizeBytes": 3791096,
       "contentType": "application/pdf",
-      "sha256": "53307a9b4e027095ab34b8b415e23cd78a697b4298cef5228e4d182be9053e89"
+      "sha256": "53307a9b4e027095ab34b8b415e23cd78a697b4298cef5228e4d182be9053e89",
+      "refId": "Campbell-Enterprise-PQC-Timelines-2026",
+      "url": "https://doi.org/10.3390/computers15010009",
+      "status": "downloaded",
+      "filename": "Campbell-Enterprise-PQC-Timelines-2026.pdf",
+      "sizeBytes": 435269,
+      "contentType": "application/pdf",
+      "sha256": "84d69e52fa8cbc80830316540b1595b54955cfa34b06567bf88e9a9cd808df01",
+      "acquisition": "manual",
+      "acquiredAt": "2026-07-30"
+    },
+    {
+      "refId": "ANSSI PQC Position Paper",
+      "url": "https://cyber.gouv.fr/sites/default/files/2022/04/anssi-avis-migration-vers-la-cryptographie-post-quantique.pdf",
+      "status": "downloaded",
+      "filename": "ANSSI_PQC_Position_Paper.pdf",
+      "sizeBytes": 186014,
+      "contentType": "application/pdf",
+      "sha256": "d1d67cc3d6a3252530f86a6cba88591983f7a20b3799b3c453e9dced9fa9eea3",
+      "acquisition": "manual",
+      "acquiredAt": "2026-07-30"
+    },
+    {
+      "refId": "UNECE-WP29-R155",
+      "url": "https://unece.org/transport/documents/2021/03/standards/un-regulation-no-155-cyber-security-and-cyber-security",
+      "status": "downloaded",
+      "filename": "UNECE-WP29-R155.pdf",
+      "sizeBytes": 448517,
+      "contentType": "application/pdf",
+      "sha256": "c41424c6f17784aa7cf8d3de79491e6bce142a674748039f1235dc8c37ea9654",
+      "acquisition": "manual",
+      "acquiredAt": "2026-07-30"
+    },
+    {
+      "refId": "EU-NIS-CG-Security-Measures-2026",
+      "url": "https://digital-strategy.ec.europa.eu/en/policies/nis-cooperation-group",
+      "status": "downloaded",
+      "filename": "EU-NIS-CG-Security-Measures-2026.html",
+      "sizeBytes": 50206,
+      "contentType": "text/html",
+      "sha256": "fd9603d1b5384d0df692093a6882aaba1e82c0cf0b5e2ed46255137264d87f4c",
+      "acquisition": "manual",
+      "acquiredAt": "2026-07-30"
     }
-  ]
+  ],
+  "generated": "2026-07-30T00:36:07.104551+00:00"
 }

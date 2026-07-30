@@ -8,6 +8,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
 import { MATURITY_LEVEL_NAMES } from '@/data/phaseMaturity'
 import { type PhaseId } from '@/data/frameworkPhases'
 import { SIM_MOVES, type MoveCtx } from '@/data/simMoves'
@@ -190,6 +191,7 @@ export function DecisionSection({
   onWrongPick,
   onTrapPicked,
   guided = false,
+  wrongPickCostQuarters,
 }: {
   phaseId: PhaseId
   ctx: MoveCtx
@@ -213,6 +215,10 @@ export function DecisionSection({
    *  it, a wrong pick sticks (you see why it failed, but don't get a costless
    *  do-over) so the setback stays a real consequence, not an inconvenience. */
   guided?: boolean
+  /** 07-29 review E4 — the concrete rework cost (in quarters) a trap pick
+   *  carries in THIS phase, stated in the feedback box itself so the player
+   *  sees what the misstep cost without hunting for the setback toast. */
+  wrongPickCostQuarters?: number
 }) {
   const [chosen, setChosen] = useState<number | null>(null)
   // reset the choice whenever the move changes (new phase or a step completed)
@@ -409,6 +415,12 @@ export function DecisionSection({
             ✕ Common failure
           </div>
           <div className="text-[11px] leading-snug text-muted-foreground">{chosenCard.detail}</div>
+          {wrongPickCostQuarters != null && (
+            <div className="mt-1 text-[10.5px] font-semibold leading-snug text-destructive">
+              This pick cost you {wrongPickCostQuarters} quarter
+              {wrongPickCostQuarters > 1 ? 's' : ''} of rework{guided ? '' : ' — the pick stands'}.
+            </div>
+          )}
           {/* W3 #13: ground the consequence in THIS run's live Mosca state when the
               player is already over the line — felt, not a flashcard. */}
           {ctx.over > 0 && (
@@ -479,8 +491,9 @@ export function QuarterReport({
   onClose: () => void
 }) {
   const drift = +(report.clockFrom - report.clockTo).toFixed(2)
+  const trapRef = useFocusTrap(true)
   return (
-    <div className="fixed inset-0 z-[100] grid place-items-center bg-black/60 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[100] grid place-items-center bg-foreground/40 p-4 backdrop-blur-sm">
       <Button
         type="button"
         variant="ghost"
@@ -489,6 +502,7 @@ export function QuarterReport({
         className="absolute inset-0 h-full w-full rounded-none bg-transparent p-0 hover:bg-transparent"
       />
       <div
+        ref={trapRef}
         role="dialog"
         aria-modal="true"
         className="relative z-10 max-h-[88vh] w-[560px] max-w-[92vw] overflow-auto rounded-2xl border border-border bg-card"

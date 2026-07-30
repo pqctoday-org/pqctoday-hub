@@ -110,9 +110,18 @@ test.describe('Simulation — Verification & Closure is played (PR-3)', () => {
       .click()
     // The active-phase header reflects the terminal closure band…
     await expect(page.getByText(/Verification & Closure/i).first()).toBeVisible()
-    // …and its real L1→L2 activity leaf — the evidence dossier — is shown.
-    await expect(page.getByText(/Assemble the evidence dossier/i).first()).toBeVisible({
-      timeout: 15_000,
-    })
+    // …and its real activity tree renders (07292026: re-anchored to what a
+    // FRESH run actually shows — the 07182026 tree revision renamed the dossier
+    // step to "Assemble the migration evidence dossier" AND moved it into the
+    // locked L2 band, whose leaf labels only render once unlocked, so the old
+    // "Assemble the evidence dossier" assertion had been failing against main).
+    // Visible on a fresh run: the L1 verification-standard activity and the L2
+    // goal band's 5-point evidence-standard summary.
+    await expect(
+      page.getByText(/Set the Verification Standard & Closure Plan/i).first()
+    ).toBeVisible({ timeout: 15_000 })
+    await expect(
+      page.getByText(/verified against the 5-point evidence standard/i).first()
+    ).toBeVisible()
   })
 })

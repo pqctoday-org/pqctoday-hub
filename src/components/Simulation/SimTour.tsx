@@ -8,6 +8,7 @@
  */
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
 
 export interface TourStep {
   title: string
@@ -66,6 +67,10 @@ export const GUIDED_DEFS: TourStep[] = [
     body: 'SteerCo (Steering Committee) = the cross-functional group that signs off at each gate. PMO (Program Management Office) = the team running the day-to-day schedule, budget and risk tracking. RACI = a chart naming who’s Responsible, Accountable, Consulted and Informed for each task, so decisions don’t stall on "I thought someone else owned that." QRPM and Executive Sponsor — the other names you’ll see on gate labels — are specific roles in this same structure: QRPM runs the program day to day, the Executive Sponsor owns it at board level.',
   },
   {
+    title: 'Plain English: CBOM',
+    body: 'Cryptography Bill of Materials — a machine-readable inventory of every cryptographic asset you use (algorithms, keys, certificates, libraries, where each lives). It is the structured output of the inventory phase and the thing every later decision — risk scoring, planning, vendor asks, verification — reads from. Format-wise, CycloneDX added crypto-asset support in v1.6.',
+  },
+  {
     title: 'Plain English: crypto-agility',
     body: 'The ability to swap a cryptographic algorithm — because it’s broken, deprecated, or a stronger one arrives — without re-running the whole migration. You get there by tracking what you use (the CBOM), keeping it behind clean interfaces instead of hard-coded, and rehearsing the swap on a regular drill, so the next algorithm change is a routine update, not a repeat of this whole program.',
   },
@@ -82,12 +87,14 @@ export function SimTour({
 }) {
   const steps = guided ? [...TOUR_STEPS, ...GUIDED_DEFS] : TOUR_STEPS
   const [i, setI] = useState(0)
+  const trapRef = useFocusTrap(true)
   const idx = Math.min(i, steps.length - 1)
   const step = steps[idx]
   const last = idx === steps.length - 1
   return (
     <div
-      className="fixed inset-0 z-[200] grid place-items-center bg-black/60 p-4 backdrop-blur-sm"
+      ref={trapRef}
+      className="fixed inset-0 z-[200] grid place-items-center bg-foreground/40 p-4 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       aria-label="Simulation guide"

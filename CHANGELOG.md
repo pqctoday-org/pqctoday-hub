@@ -29,6 +29,71 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.31.0] - 2026-07-30
+
+A new Industry Landscape tab on the Algorithms page shows what crypto mechanisms each industry actually relies on today — cross-referenced against real standards, official market-size figures, and live threat data.
+
+### Added
+
+- **Industry Landscape tab** [view:/algorithms] [persona:architect] [persona:executive] [persona:researcher]: a new tab next to Protocol Support lets you explore either by industry or by crypto mechanism — 75 real-world use cases across 21 industries, each citing an active threat record. Standards chips deep-link into the Library, use cases link into Protocol Support, and market-size badges link to the official source (BEA, Census, IMF, WHO, IEA, World Bank, ITU, and Fed only — no analyst estimates).
+- **"Learn: &lt;industry&gt;" links on industry pages** [view:/algorithms] [persona:curious]: the 8 industries with a matching Learn module (aerospace, automotive, digital assets, payments, energy, 5G, healthcare, IoT) now show a direct link into that module alongside the existing Threats link. The 13 industries without one yet are a known, reported gap rather than a silent absence.
+
+### Data
+
+- **34 industry standards, verified to actually name a crypto mechanism** [view:/algorithms] [persona:researcher]: every standards row was checked against its own cached document text — 16 candidates that only referenced general governance (no specific mechanism) were dropped rather than padded in, and mechanism attributions were corrected where the source didn't say what an earlier draft assumed (e.g., RFC 5280 cites RSA, not a PQC algorithm).
+- **8 new Library documents added, each independently downloaded and verified** [view:/library] [persona:researcher]: UNISIG SUBSET-137 (rail key management), the WCO SAFE Framework, IMO maritime cyber-risk guidelines, the NAIC Insurance Data Security Model Law, AACS, DVB BlueBook A165, UN Regulation 155, and the W3C Verifiable Credentials Data Model v2.0.
+- **Insurance industry re-grounded** [view:/algorithms] [persona:researcher]: the Munich Re cyber-insurance quantum-risk citation is now checked against the actual cached report text rather than resting on an unverified reference.
+
+## [4.30.1] - 2026-07-30
+
+Four Migrate catalog entries had the wrong company listed as their maker, and five Library/Compliance citations that pointed at inaccessible pages now resolve to the real source documents.
+
+### Data
+
+- **4 products' vendor attribution corrected** [view:/migrate] [persona:researcher]: Secure-IC Securyzr, MTG AG CARA, Mozilla Firefox, and sigstore/cosign were each linked to the wrong company (a South Korean government standards body, a telecom operator, an unrelated open-source foundation, and a different foundation, respectively) instead of their real makers.
+- **5 Library and Compliance citations now resolve to real source documents** [view:/library] [view:/compliance] [persona:researcher]: a French national cybersecurity position paper, a UN vehicle cybersecurity regulation, an EU cross-government security-measures reference document, and the EU's cybersecurity certification scheme regulation were previously either missing their cached copy or pointed at a page that never served the document (a bot-check page or a language-selection screen).
+- **A community leader's citation now points at a real, current document** [view:/leaders] [persona:researcher]: pointed at an IETF draft that has since been published as an RFC; updated to cite the published version.
+
+## [4.30.0] - 2026-07-29
+
+The Simulation got a full accuracy, usability, and teaching pass: every factual claim was re-verified against its source, hands-on play is now a clearly named option (and phones can watch the narrated overview), and the game finally explains its own scoring.
+
+### Added
+
+- **"Play it yourself" is now a named way to play** [view:/simulation] [persona:curious] [persona:executive]: the PLAY menu previously offered only the three narrated tours — the interactive board, the actual game, was something you had to discover by dismissing the menu. A fourth card now explains it and drops you straight onto the board.
+- **Watch the Executive Overview on your phone** [view:/simulation] [persona:executive]: the narrated walkthrough — captions, phase intros, and playback controls — now works on phones. The full playable board still needs a tablet or desktop screen.
+- **Terms & glossary inside the sim** [view:/simulation] [persona:curious]: a new "Terms & glossary" entry in the ⋯ MORE menu opens plain-English definitions of every sim term (Mosca, HNDL, TNFL, CBOM, hybrid vs pure, crypto-agility) plus the full PQC glossary — previously these definitions only appeared if you switched on Guided mode during the intro tour.
+- **The grade card explains its own math** [view:/simulation] [persona:curious]: a "How scoring works" note on the run-complete screen spells out the scale — points lost per quarter over par, per trap picked, and the A/B/C/D thresholds — instead of showing bare numbers.
+- **Save your roadmap at the finish line** [view:/simulation] [persona:executive]: the run-complete screen now has "Save my roadmap" — it files the draft roadmap into the Command Center and downloads a markdown summary, so you no longer had to remember to commit your plan before finishing.
+- **What happens after the migration closes** [view:/simulation] [persona:architect] [persona:ops]: a new teaching moment at the verification phase covers compromise response — what a rehearsed algorithm swap looks like when something breaks after the program ends — linking to the SOC operations lesson.
+
+### Changed
+
+- **Wrong picks now state their price** [view:/simulation] [persona:curious]: trap feedback says exactly what the misstep cost ("this pick cost you 2 quarters of rework") instead of leaving you to find the setback notice elsewhere.
+- **Playback progress no longer disappears** [view:/simulation]: during narrated runs, the progress bar stays visible after the explanation panel auto-collapses, and the current narration line remains readable — so muted or hard-of-hearing viewers don't lose the words.
+- **Dialogs keep keyboard focus where it belongs** [view:/simulation]: all simulation dialogs now trap Tab focus inside themselves (previously you could tab out into the live board behind the overlay), and changing a header dial announces its new value to screen readers.
+
+### Fixed
+
+- **Payment-industry claim brought up to date** [view:/simulation] [persona:executive]: the retail scenario said PCI had "published no PQC requirements" — true when written, but PCI's hardware security module standard added PQC requirements in May 2026. The claim is now scoped correctly to PCI DSS.
+- **Deadline attribution corrected** [view:/simulation] [persona:researcher]: the 2035 national-security-systems completion date was credited to the wrong policy document — it comes from CNSA 2.0; NSM-10 set the whole-of-government goal. Two CVE severity scores in the vulnerability-watch demo were also corrected against the National Vulnerability Database.
+- **The quantum-threat window now adds up** [view:/simulation] [persona:researcher]: the narration's CRQC planning band and its "years to Q-Day" figures had drifted apart (the math only worked from a 2024 vantage point), and the healthcare board deck contradicted its own scenario document. Both now derive from the sim's single Q-Day anchor, so they can never disagree again — and a test guards it.
+- **Fictional planning dates no longer read as overdue** [view:/simulation]: the demo organization's plan showed "Planned 2025" milestones as if they were still upcoming. All in-fiction dates now track the program's start year, and the protocol table reflects current real-world standards maturity (the SSH and IPsec hybrid drafts have advanced considerably).
+
+### Data
+
+- **India moved out of the jurisdiction picker** [view:/simulation] [persona:researcher]: India's entry had no curated hybrid/end-state stance, so picking it silently enforced nothing. It's now reference-tier (like China) until a citable national stance is sourced — its notes and authority information remain.
+- **Framework cross-references verified against source documents** [view:/simulation] [persona:researcher]: every phase's mapping to ETSI TR 103 619, the Dutch PQC Migration Handbook, and the PQCC Migration Roadmap was re-checked against the actual documents — including the full PQCC roadmap PDF, which showed risk prioritisation belongs under "Baseline Understanding," not "Planning and Execution." Four mappings were corrected.
+
+## [4.29.2] - 2026-07-29
+
+Four organizations behind recently-added Library documents — an aviation standards consortium, an ISO committee, and Italy's and Japan's national cybersecurity bodies — are now tracked as verified sources instead of showing no source at all.
+
+### Data
+
+- **4 new trusted sources registered** [view:/library] [persona:researcher]: AEEC/SAE (aviation engineering standards), ISO/TC 210 (the medical-device quality-management committee), Italy's national cybersecurity agency (ACN), and Japan's Cabinet Secretariat PQC liaison conference were missing from the source registry entirely — a gap found while completing the 52 Library entries in the previous release. The 5 Library rows that cited them are now linked to a real, verified source instead of showing none.
+- **6 cached evidence documents recovered** [persona:researcher]: six Library source documents had corrupted local copies (binary PDF content saved with a mismatched extension) that silently produced empty results in automated enrichment. Re-fetched cleanly from their original public URLs.
+
 ## [4.29.1] - 2026-07-29
 
 52 Library documents that were sitting as bare, unreviewed stubs now show real information — document type, industries, authors, migration urgency, and more — instead of blank fields.

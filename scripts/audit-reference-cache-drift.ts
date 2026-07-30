@@ -87,6 +87,10 @@ interface ManifestEntry {
   url: string
   status: string
   filename?: string
+  /** Alternative spelling of `filename`, carrying a path rather than a bare
+   *  name. The three manifests disagree: library uses `filename` only, threats
+   *  carries both, and timeline carries ONLY this. See cachedRelativePath(). */
+  file?: string
   sizeBytes?: number
   contentType?: string
   sha256?: string
@@ -106,6 +110,9 @@ type DriftClassification =
   | 'size-mismatch'
   | 'no-stored-hash'
   | 'blocked'
+  /** The cached copy is a PDF and the URL served HTML — the citation points at
+   *  a landing page, not the document. Not a content change; see classifyEntry. */
+  | 'url-type-mismatch'
 
 interface DriftFinding {
   collection: string
@@ -310,16 +317,99 @@ function cacheRoot(): string {
   )
 }
 
+/** The document's own content region, when the page marks one.
+ *
+ *  ADDED 2026-07-29. Comparing whole-page text still compared the PUBLISHER'S
+ *  SITE, not the document. Measured: 56 of the 174 confirmed "text changed"
+ *  findings were rfc-editor.org RFCs — documents that are immutable by
+ *  definition. Diffing RFC 5869 cached-vs-live gave 24178 characters on both
+ *  sides differing in exactly four: the site footer's own build string,
+ *  "Version 1.69.0" -> "Version 1.71.3". One deploy of the RFC Editor's website
+ *  re-flagged every cached RFC as drifted.
+ *
+ *  That is the same defect as the byte-hash it replaced, one layer up: a
+ *  measurement dominated by the container rather than the contents. Extracting
+ *  <main>/<article> takes RFC 5869 to an exact match.
+ *
+ *  Falls back to the whole document when no such element exists, which is the
+ *  honest default — an unmarked page gives no way to tell chrome from content,
+ *  and silently guessing (heuristic boilerplate removal) would risk dropping
+ *  real text. First match wins; <main> before <article> because a page with
+ *  both nests the articles inside main. */
+const CONTENT_REGIONS = [
+  /<main\b[^>]*>([\s\S]*?)<\/main>/i,
+  /<article\b[^>]*>([\s\S]*?)<\/article>/i,
+]
+
+export function contentRegion(html: string): string {
+  for (const re of CONTENT_REGIONS) {
+    const m = re.exec(html)
+    if (m) return m[1]
+  }
+  return html
+}
+
+/** Decode the HTML entities that survive tag-stripping.
+ *
+ *  ADDED 2026-07-29 alongside contentRegion: several cached copies are the
+ *  plain-text rendering of a document whose URL now serves HTML, so the live
+ *  side spells a literal quote as &quot; and the cached side as ". Without this
+ *  the two read as different text on every quoted term. Only the five XML
+ *  predefined entities plus &nbsp; and numeric refs — deliberately not a full
+ *  HTML5 entity table, since anything rarer is not worth a dependency and
+ *  degrades to the pre-existing behaviour. */
+export function decodeEntities(t: string): string {
+  return t
+    .replace(/&(?:nbsp|#160|#xa0);/gi, ' ')
+    .replace(/&#(\d+);/g, (_, d: string) => String.fromCodePoint(Number(d)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, h: string) => String.fromCodePoint(parseInt(h, 16)))
+    .replace(/&quot;/gi, '"')
+    .replace(/&apos;/gi, "'")
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&amp;/gi, '&') // last: never re-decode what an earlier rule produced
+}
+
+/** Markup that occupies ZERO width — a hint about where a line may break,
+ *  carrying no text of its own.
+ *
+ *  ADDED 2026-07-29, third layer of the same defect. After <main> extraction,
+ *  15 rfc-editor.org RFCs still read as "text changed" — and an RFC's text
+ *  cannot change. RFC 9142's entire diff was:
+ *
+ *    old:  tamper with both I_C and I_S
+ *    new:  tamper with both I_ C and I_ S
+ *
+ *  because the publisher had begun emitting `I_<wbr>C`, and the general
+ *  tag-stripping below turns every tag into a SPACE. A space is right for a
+ *  block boundary (</p><p> really does separate words) and wrong for a
+ *  zero-width one, which is what invented the phantom edit.
+ *
+ *  Deliberately limited to markup that is zero-width BY DEFINITION — <wbr>,
+ *  soft hyphen, zero-width space/non-joiner/joiner. General inline tags
+ *  (<span>, <a>, <b>) are NOT included: they are far more common, and
+ *  collapsing them to nothing would silently glue words together wherever a
+ *  publisher relies on markup for spacing, trading a visible false positive
+ *  for an invisible false negative. */
+const ZERO_WIDTH_MARKUP =
+  /<wbr\s*\/?>|&shy;|&#173;|&#x00ad;|&#8203;|&#x200[bcd];|&Zero[Ww]idth[A-Za-z]*;/gi
+
 /** Same three elements the hub's own extractor strips
  *  (scripts/validators/source-document-quality.ts stripHtmlTags). <noscript>
  *  matters most: on a client-rendered page its fallback IS most of the
- *  extractable text, so leaving it in makes a JS shell look like a document. */
+ *  extractable text, so leaving it in makes a JS shell look like a document.
+ *
+ *  Then narrowed to the content region and entity-decoded — see contentRegion()
+ *  and decodeEntities() above for the measurements that forced each step. */
 export function normalizedText(bytes: Uint8Array): string {
   let t = Buffer.from(bytes).toString('utf-8')
   t = t.replace(/<script[\s\S]*?<\/script>/gi, ' ')
   t = t.replace(/<style[\s\S]*?<\/style>/gi, ' ')
   t = t.replace(/<noscript[\s\S]*?<\/noscript>/gi, ' ')
+  t = contentRegion(t)
+  t = t.replace(ZERO_WIDTH_MARKUP, '')
   t = t.replace(/<[^>]+>/g, ' ')
+  t = decodeEntities(t)
   return t.replace(/\s+/g, ' ').trim()
 }
 
@@ -327,16 +417,58 @@ export function normalizedSha(bytes: Uint8Array): string {
   return createHash('sha256').update(normalizedText(bytes)).digest('hex')
 }
 
+/** The cache-relative name of the document an entry describes, or null.
+ *
+ *  ADDED 2026-07-29. The three manifests do not agree on this field, and the
+ *  audit only ever read `filename`:
+ *
+ *    library    filename: 'FIPS_203.html'                  (bare)
+ *    threats    filename: 'AERO-002.pdf'  + file: 'public/threats/AERO-002.pdf'
+ *    timeline   file: 'timeline/EU_ECCG_....html'          — and NO filename
+ *
+ *  So every one of timeline's 67 downloaded entries returned null here and
+ *  could never be text-compared — they fell back to the raw byte hash, which
+ *  is precisely the noisy signal the normalized-text comparison exists to
+ *  replace. 30 of the 224 drift findings in the 2026-07-29 report were timeline
+ *  entries measured that way.
+ *
+ *  `file` carries a path, and which prefix it carries differs by collection
+ *  (`public/threats/...` vs `timeline/...`), while raw documents live at
+ *  <cacheRoot>/<collection>/<name> with no prefix at all (CLAUDE.md, Reference
+ *  Document Cache). Taking the basename is correct for every current manifest
+ *  and cannot escape the cache directory — which a raw join of an untrusted
+ *  `../`-bearing path could. */
+export function cachedRelativePath(entry: ManifestEntry): string | null {
+  const raw = entry.filename ?? entry.file
+  if (!raw) return null
+  const base = path.basename(raw.trim())
+  return base && base !== '.' && base !== '..' ? base : null
+}
+
 /** The cached document this manifest entry describes, or null when the cache
  *  is not present on this machine. */
 function readCachedBytes(collection: string, entry: ManifestEntry): Uint8Array | null {
-  if (!entry.filename) return null
-  const p = path.join(cacheRoot(), collection, entry.filename)
+  const rel = cachedRelativePath(entry)
+  if (!rel) return null
+  const p = path.join(cacheRoot(), collection, rel)
   try {
     return fs.readFileSync(p)
   } catch {
     return null
   }
+}
+
+/** PDF magic bytes. A cached PDF and a fetched HTML page are not the same
+ *  document in two states — they are different things entirely. */
+export function isPdf(bytes: Uint8Array): boolean {
+  return (
+    bytes.length >= 5 &&
+    bytes[0] === 0x25 &&
+    bytes[1] === 0x50 &&
+    bytes[2] === 0x44 &&
+    bytes[3] === 0x46 &&
+    bytes[4] === 0x2d
+  )
 }
 
 const BLOCKED_SCAN_MAX_BYTES = 100_000
@@ -462,6 +594,28 @@ export async function classifyEntry(
         ...base,
         classification: 'ok',
         okVia: 'normalized-text',
+        observedSha256: result.sha256,
+        observedSizeBytes: observedSize,
+      }
+    }
+    // A cached PDF against a fetched HTML page is not a changed document — it
+    // is a URL that does not serve the document at all. ADDED 2026-07-29: 18 of
+    // the 135 drift findings were exactly this, because the row's URL is the
+    // publication's LANDING page (NIST csrc /pubs/.../final, NCSC whitepapers,
+    // arXiv /abs/, ITU /rec/) while local_file is the PDF it links to. Driving
+    // the re-cache over the first eight fetched every real PDF through the
+    // landing-page link and found all eight byte-identical to the cache: the
+    // documents had not changed at all, and comparing a page against a
+    // different file format can only ever say "differs".
+    //
+    // Reported as its own classification rather than drift, because the action
+    // is different in kind: nothing needs re-caching, the citation needs to
+    // resolve to the document (see recache_drifted_evidence.resolve_pdf_url,
+    // which follows the link without changing the human-facing URL).
+    if (isPdf(cached) && !isPdf(result.bytes)) {
+      return {
+        ...base,
+        classification: 'url-type-mismatch',
         observedSha256: result.sha256,
         observedSizeBytes: observedSize,
       }

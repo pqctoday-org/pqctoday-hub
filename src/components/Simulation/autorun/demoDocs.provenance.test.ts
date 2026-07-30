@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
- * Guardrail (local-only, not run in CI): demoDocs.ts is hand-authored narration,
+ * Guardrail: demoDocs.ts is hand-authored narration,
  * the one place in the simulation where factual drift has crept in before
  * (see simulation-mode-improvement-plan — Wave 1). This scans every rendered
  * doc body for citation patterns that must not appear unqualified:
@@ -21,10 +21,21 @@
  * for months: `deriveBoardDeck`'s CRQC sentence dropped the planning-assumption
  * label this guard's last rule exists to catch, because only the hand-authored
  * path was ever scanned. See simulation-mode-review-07182026.md finding A8.
+ *
+ * NOTE (07292026): this file deliberately does NOT use the `.local.test.*`
+ * naming — it rides the normal CI unit-test job. An earlier header claimed it
+ * was local-only; that was never true of the vitest exclude pattern, and the
+ * 07-29 review (finding C-M3) confirms we WANT it gating merges.
  */
 import { describe, it, expect } from 'vitest'
 import { DEMO_DOCS_BY_SECTOR, type DemoSector } from './demoDocs'
 import { REAL_DOC_GENERATORS } from './realToolDocs'
+import {
+  CRQC_BAND_BY_SECTOR,
+  PROGRAM_START_YEAR,
+  US_EO_KEM_YEAR,
+  US_EO_SIG_YEAR,
+} from '@/data/narrationFacts'
 
 const SECTORS: DemoSector[] = [
   'financial',
@@ -151,6 +162,55 @@ describe('demoDocs narration provenance guard', () => {
         /planning/i.test(data),
         `${sector}/${type} states a CRQC year range with no planning-assumption qualifier`
       ).toBe(true)
+    }
+  })
+})
+
+// 07292026 review remediation (findings C-M1 / A-M3 / A-M4 / F-M1): the facts
+// below are single-sourced in `@/data/narrationFacts` — these rules exist so a
+// future hand-typed literal that bypasses the source fails the suite instead
+// of shipping as silent drift.
+describe('narration single-source guard (narrationFacts)', () => {
+  it('every EO deadline-year pair in narration matches the generated timeline facts', () => {
+    const expected = [String(US_EO_KEM_YEAR), String(US_EO_SIG_YEAR)]
+    for (const { sector, type, data } of ALL_DOC_BODIES) {
+      for (const m of data.matchAll(/key establishment (\d{4}), signatures (\d{4})/g)) {
+        expect([m[1], m[2]], `${sector}/${type}: "${m[0]}"`).toEqual(expected)
+      }
+      for (const m of data.matchAll(/binding (\d{4})\/(\d{4}) deadlines/g)) {
+        expect([m[1], m[2]], `${sector}/${type}: "${m[0]}"`).toEqual(expected)
+      }
+    }
+  })
+
+  it('every CRQC band range in a doc matches that sector band (board deck cannot contradict the scenario doc)', () => {
+    for (const { sector, type, data } of ALL_DOC_BODIES) {
+      const band = CRQC_BAND_BY_SECTOR[sector as DemoSector]
+      for (const m of data.matchAll(/CRQC[^.]{0,80}?(20\d{2})[–-](20\d{2})/g)) {
+        expect(`${m[1]}–${m[2]}`, `${sector}/${type}: "${m[0]}"`).toBe(band.label)
+      }
+    }
+  })
+
+  it('every Mosca Z label matches the sector band Z (band and Z can never drift apart)', () => {
+    for (const { sector, type, data } of ALL_DOC_BODIES) {
+      const band = CRQC_BAND_BY_SECTOR[sector as DemoSector]
+      for (const m of data.matchAll(/Z \(CRQC\) ≈ (\d+[–-]\d+y)/g)) {
+        expect(m[1], `${sector}/${type}: "${m[0]}"`).toBe(band.zLabel)
+      }
+    }
+  })
+
+  it('no in-fiction forward-plan date predates the program start year', () => {
+    for (const { sector, type, data } of ALL_DOC_BODIES) {
+      for (const m of data.matchAll(
+        /(?:Planned|starts|roadmap|renewals? after|Track [AB],?) (\d{4})/gi
+      )) {
+        expect(
+          Number(m[1]),
+          `${sector}/${type}: "${m[0]}" reads as an already-past forward plan`
+        ).toBeGreaterThanOrEqual(PROGRAM_START_YEAR)
+      }
     }
   })
 })

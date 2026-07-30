@@ -6,6 +6,7 @@
  * years / standards are pulled LIVE from getScenario() — nothing is hardcoded here.
  */
 import { useEffect, useRef } from 'react'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
 import { Button } from '@/components/ui/button'
 import type { ScenarioIntro } from './useSimAutoRunPlayer'
 
@@ -17,6 +18,7 @@ export function SimScenarioIntroCard({
   onBegin: () => void
 }) {
   const beginRef = useRef<HTMLButtonElement>(null)
+  const trapRef = useFocusTrap(true)
 
   useEffect(() => {
     beginRef.current?.focus()
@@ -28,8 +30,9 @@ export function SimScenarioIntroCard({
   }, [onBegin])
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-foreground/40 p-4 backdrop-blur-sm">
       <div
+        ref={trapRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="sim-scenario-intro-heading"
