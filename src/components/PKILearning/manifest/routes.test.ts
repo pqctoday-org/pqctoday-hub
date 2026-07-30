@@ -43,6 +43,7 @@ const GOLDEN_ROUTE_PATHS = [
   'energy-utilities-pqc',
   'entropy-randomness',
   'exec-quantum-impact',
+  'government-defense-pqc',
   'healthcare-pqc',
   'hsm-pqc',
   'hybrid-crypto',

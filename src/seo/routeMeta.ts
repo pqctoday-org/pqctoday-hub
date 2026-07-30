@@ -693,11 +693,19 @@ export const ROUTE_META: Record<string, RouteMeta> = {
   },
 
   '/learn/emv-payment-pqc': {
-    title: 'EMV Payment Systems & PQC — Card Auth, Tokenization & DUKPT Migration | PQC Today',
+    title:
+      'Financial Services & Payments PQC — Cards, Interbank Settlement & Key Blocks | PQC Today',
     description:
-      'Post-quantum migration for payment ecosystems: EMV SDA/DDA/CDA authentication, Visa/Mastercard tokenization, POS terminal upgrades, DUKPT key injection, and FN-DSA for constrained cards.',
+      'Post-quantum migration across payments and banking: EMV SDA/DDA/CDA authentication, tokenization, POS and DUKPT key injection, Swift and RTGS settlement rails, ANSI X9.143 key blocks, and the sector regulation setting the pace.',
     canonical: `${BASE_URL}/learn/emv-payment-pqc`,
-    structuredData: buildModuleSchema('EMV Payment Systems & PQC', 'PT120M', 'Advanced'),
+    structuredData: buildModuleSchema('Financial Services & Payments PQC', 'PT110M', 'Advanced'),
+  },
+  '/learn/government-defense-pqc': {
+    title: 'Government & Defense PQC — CNSA 2.0, Federal PKI & NSS Mandates | PQC Today',
+    description:
+      'The federal post-quantum policy layer: the CNSA 2.0 suite, the dated CNSSP 15 milestones for National Security Systems, CSfC, Federal PKI and its draft ML-DSA/ML-KEM certificate profile, and PQC procurement requirements.',
+    canonical: `${BASE_URL}/learn/government-defense-pqc`,
+    structuredData: buildModuleSchema('Government & Defense PQC', 'PT60M', 'Advanced'),
   },
 
   '/learn/crypto-dev-apis': {
