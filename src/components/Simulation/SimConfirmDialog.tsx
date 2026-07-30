@@ -10,6 +10,7 @@
  * click-to-dismiss-on-backdrop pattern doesn't need a synthetic button role.
  */
 import { useEffect, useRef } from 'react'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 
@@ -30,6 +31,7 @@ export function SimConfirmDialog({
 }: SimConfirmDialogProps) {
   const reduce = useReducedMotion()
   const cancelRef = useRef<HTMLButtonElement>(null)
+  const trapRef = useFocusTrap(true)
 
   useEffect(() => {
     cancelRef.current?.focus()
@@ -43,13 +45,14 @@ export function SimConfirmDialog({
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-[80] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+        className="fixed inset-0 z-[80] flex items-center justify-center bg-foreground/40 p-4 backdrop-blur-sm"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onCancel}
       >
         <motion.div
+          ref={trapRef}
           role="alertdialog"
           aria-modal="true"
           aria-labelledby="sim-confirm-title"

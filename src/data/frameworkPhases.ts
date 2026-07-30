@@ -116,6 +116,10 @@ export interface PhaseCrosswalk {
    * and Execution, Monitoring and Evaluation. Do not invent finer-grained
    * step names; a sim phase maps to one of these four, honestly, even when
    * several phases share a category.
+   * Activity-level verified 2026-07-29 against the cached roadmap PDF
+   * (pqctoday-priv/local-evidence-cache/library/PQCC-Migration-Roadmap-2025.pdf):
+   * risk-based prioritisation is Activity 2.3 inside Baseline Understanding,
+   * NOT Planning and Execution — p3 maps there.
    */
   pqcc: string
   /**
@@ -202,7 +206,8 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
       pqcc: 'Preparation (governance & executive sponsorship)',
       etsiTr103619:
         'Not a discrete TR stage — nearest is Stage 2, migration-plan preparation (an org mandate feeds the plan)',
-      dutchHandbook: 'Diagnosis (management mandate & scope)',
+      dutchHandbook:
+        'Not a discrete handbook step — nearest is Planning (team formation & governance sit in Step 2)',
     },
   },
   p1: {
@@ -296,8 +301,9 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     surfaces: ['/assess', '/business', '/report'],
     crosswalk: {
       nistCsf: ['ID.RA-01', 'ID.RA-04', 'ID.RA-05', 'GV.RM-02'],
-      pqcc: 'Planning and Execution (prioritise the backlog by risk — HNDL / HNFL)',
-      etsiTr103619: 'Stage 2 — Migration-plan preparation (risk assessment feeds the plan)',
+      pqcc: 'Baseline Understanding (Activity 2.3 — prioritise critical assets by risk, HNDL / HNFL)',
+      etsiTr103619:
+        'Stage 2 — Migration-plan preparation (prioritisation; the TR itself puts risk quantification in Stage 1, Annex A.1.1)',
       dutchHandbook: 'Diagnosis (risk analysis closes this step, per the handbook’s own structure)',
     },
   },
@@ -493,10 +499,10 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     produce: [{ route: '/business', ref: 'migration-verification', status: 'live' }],
     surfaces: ['/business', '/report'],
     crosswalk: {
-      nistCsf: ['GV.OV-03', 'ID.IM-03', 'PR.PS-06'],
+      nistCsf: ['GV.OV-03', 'ID.IM-03', 'ID.AM-08'],
       pqcc: 'Monitoring and Evaluation (verify, decommission classical material, sustain)',
       etsiTr103619:
-        'Stage 3 — Migration execution (verification & decommissioning close this stage)',
+        'Stage 3 — Migration execution (nearest home for verification & decommissioning; the TR defines no explicit closure activity)',
       dutchHandbook:
         'Execution (verify migration & decommission classical material — the handbook has no distinct closure step)',
     },
