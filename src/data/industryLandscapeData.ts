@@ -24,6 +24,10 @@ export interface IndustryUseCase {
   summary: string
   /** standard_ids in the standards CSV. */
   relatedStandards: string[]
+  /** Learn module id (PKILearning ModuleManifest.id) for this industry, e.g.
+   *  'healthcare-pqc' — empty when no Industries-track module exists yet
+   *  (validated non-empty values only; empty is a real, reportable gap). */
+  learnModuleId: string
   mainSource: string
   sourceUrl: string
   trustedSourceId: string
@@ -78,6 +82,7 @@ interface RawLandscapeRow {
   migration_status: string
   summary: string
   related_standards: string
+  learn_module_id: string
   main_source: string
   source_url: string
   trusted_source_id: string
@@ -162,6 +167,7 @@ function loadLandscape(): IndustryUseCase[] {
             migrationStatus: r.migration_status as IndustryUseCase['migrationStatus'],
             summary: r.summary,
             relatedStandards: splitSemicolon(r.related_standards),
+            learnModuleId: r.learn_module_id || '',
             mainSource: r.main_source,
             sourceUrl: r.source_url,
             trustedSourceId: r.trusted_source_id,

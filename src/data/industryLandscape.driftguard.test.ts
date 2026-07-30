@@ -18,6 +18,7 @@ import { PROTOCOL_MATRIX } from './pqcProtocolMatrix'
 import { threatsData } from './threatsData'
 import { libraryData } from './libraryData'
 import { INDUSTRY_ICONS, USE_CASE_ICONS } from '../components/Algorithms/landscapeIcons'
+import { MANIFEST_BY_ID } from '../components/PKILearning/manifest/registry'
 
 const { useCases, standards, marketSizes } = loadIndustryLandscape()
 
@@ -72,6 +73,10 @@ describe('industry-landscape driftguards', () => {
   })
 
   it('mechanism families only reference real ALGORITHM_REGISTRY members', () => {
+    // AES/SHA are symmetric — ALGORITHM_REGISTRY is asymmetric-only by design
+    // (it backs the Detailed Comparison tab), so they're the only families
+    // allowed an empty registryMembers list (see cryptoMechanisms.ts interface doc).
+    const SYMMETRIC_EXEMPT = new Set(['AES', 'SHA'])
     for (const fam of CRYPTO_MECHANISMS) {
       for (const member of fam.registryMembers) {
         expect(
@@ -79,7 +84,9 @@ describe('industry-landscape driftguards', () => {
           `${fam.family}: member "${String(member)}" missing from ALGORITHM_REGISTRY`
         ).toBeDefined()
       }
-      expect(fam.registryMembers.length).toBeGreaterThan(0)
+      if (!SYMMETRIC_EXEMPT.has(fam.family)) {
+        expect(fam.registryMembers.length).toBeGreaterThan(0)
+      }
     }
   })
 
@@ -173,6 +180,36 @@ describe('industry-landscape driftguards', () => {
       expect(landscapeIndustries, `market row for unknown industry "${m.industry}"`).toContain(
         m.industry
       )
+    }
+  })
+
+  it('learn_module_id, when set, resolves to a real Learn module', () => {
+    // Consistency check requested 2026-07-29: Industry Landscape must not
+    // silently drift from the Learn feature's "Industries" track. Every
+    // non-empty learnModuleId must be a real ModuleManifest.id; a missing
+    // link is a reportable content gap (see gap report), not a test failure —
+    // so this only checks the values that ARE set, never requires coverage.
+    for (const uc of useCases) {
+      if (!uc.learnModuleId) continue
+      expect(
+        MANIFEST_BY_ID[uc.learnModuleId],
+        `${uc.useCaseId}: learn_module_id "${uc.learnModuleId}" is not a real Learn module id`
+      ).toBeDefined()
+    }
+    // All rows for the same industry must agree on the same module id — the
+    // field is industry-level, repeated per use-case row; a mismatch means a
+    // stale row was edited without updating its siblings.
+    const byIndustry = new Map<string, Set<string>>()
+    for (const uc of useCases) {
+      const set = byIndustry.get(uc.industry) ?? new Set<string>()
+      set.add(uc.learnModuleId)
+      byIndustry.set(uc.industry, set)
+    }
+    for (const [industry, ids] of byIndustry) {
+      expect(
+        ids.size,
+        `industry "${industry}" has inconsistent learn_module_id values: ${[...ids]}`
+      ).toBe(1)
     }
   })
 

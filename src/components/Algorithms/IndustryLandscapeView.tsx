@@ -18,6 +18,7 @@ import {
   ArrowLeft,
   BookMarked,
   Landmark as LandmarkIcon,
+  GraduationCap as GraduationCapIcon,
   Lock,
   Globe,
 } from 'lucide-react'
@@ -528,12 +529,22 @@ export function IndustryLandscapeView() {
                       No official market-size figure
                     </span>
                   )}
-                  <Link
-                    to={`/threats?industry=${encodeURIComponent(selectedIndustry)}`}
-                    className="ml-auto inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary"
-                  >
-                    <LandmarkIcon size={12} /> Quantum threats for this industry
-                  </Link>
+                  <div className="ml-auto flex items-center gap-3">
+                    {cases[0]?.learnModuleId && (
+                      <Link
+                        to={`/learn/${cases[0].learnModuleId}`}
+                        className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary"
+                      >
+                        <GraduationCapIcon size={12} /> Learn: {selectedIndustry}
+                      </Link>
+                    )}
+                    <Link
+                      to={`/threats?industry=${encodeURIComponent(selectedIndustry)}`}
+                      className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary"
+                    >
+                      <LandmarkIcon size={12} /> Quantum threats for this industry
+                    </Link>
+                  </div>
                 </div>
 
                 {industryStandards.length > 0 && (

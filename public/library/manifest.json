@@ -9039,6 +9039,56 @@
       "sizeBytes": 565900,
       "contentType": "text/html",
       "sha256": "c09806ad903cd5a3ba76256ed166718d4d374b0c8662e5d25acec3d3bce59aaa"
+    },
+    {
+      "refId": "ONC-Health-IT-Certification-Criterion-170-315-d-7-End-User-D",
+      "title": "ONC Health IT Certification Criterion \u00a7 170.315(d)(7) \u2014 End-User Device Encryption",
+      "url": "https://www.healthit.gov/test-method/end-user-device-encryption",
+      "status": "downloaded",
+      "filename": "ONC-Health-IT-Certification-Criterion-170-315-d-7-End-User-D.html",
+      "sizeBytes": 409328,
+      "contentType": "text/html",
+      "sha256": "6580acfd34f6ccbbec141088bac71d8dfde901e9fbf45bcde4622c8160092826"
+    },
+    {
+      "refId": "ONC-Health-IT-Certification-Criterion-170-315-d-8-Integrity",
+      "title": "ONC Health IT Certification Criterion \u00a7 170.315(d)(8) \u2014 Integrity",
+      "url": "https://www.healthit.gov/test-method/integrity",
+      "status": "downloaded",
+      "filename": "ONC-Health-IT-Certification-Criterion-170-315-d-8-Integrity.html",
+      "sizeBytes": 393160,
+      "contentType": "text/html",
+      "sha256": "2e948efb861a9fe210610505124fd0b621e0b9db9df4aaf905750c4e8f1199c2"
+    },
+    {
+      "refId": "ONC-Health-IT-Certification-Criterion-170-315-d-9-Trusted-Co",
+      "title": "ONC Health IT Certification Criterion \u00a7 170.315(d)(9) \u2014 Trusted Connection",
+      "url": "https://www.healthit.gov/test-method/trusted-connection",
+      "status": "downloaded",
+      "filename": "ONC-Health-IT-Certification-Criterion-170-315-d-9-Trusted-Co.html",
+      "sizeBytes": 395538,
+      "contentType": "text/html",
+      "sha256": "958261486c6b4f0e962cc93b8c7784344c0b4c99db3aad49efb1aae886443041"
+    },
+    {
+      "refId": "Matter-1-6-Core-Specification",
+      "title": "Matter 1.6 Core Specification",
+      "url": "https://csa-iot.org/wp-content/uploads/2026/06/23-27349-011_Matter-1.6-Core-Specification.pdf",
+      "status": "downloaded",
+      "filename": "Matter-1-6-Core-Specification.pdf",
+      "sizeBytes": 15679164,
+      "contentType": "application/pdf",
+      "sha256": "48b3b117569f72558ba71813360d77abdfa11fcf28747bd269148104936b52b7"
+    },
+    {
+      "refId": "ATIS-Preparing-5G-for-the-Quantum-Era-An-Analysis-of-3GPP-Ar",
+      "title": "ATIS \u2014 Preparing 5G for the Quantum Era: An Analysis of 3GPP Architecture and the Transition to Quantum-Resistant Cryptography",
+      "url": "https://cdn.atis.org/atis.org/2025/02/25152429/Preparing-5G-for-the-Quantum-Era-WP-V9.pdf",
+      "status": "downloaded",
+      "filename": "ATIS-Preparing-5G-for-the-Quantum-Era-An-Analysis-of-3GPP-Ar.pdf",
+      "sizeBytes": 3791096,
+      "contentType": "application/pdf",
+      "sha256": "53307a9b4e027095ab34b8b415e23cd78a697b4298cef5228e4d182be9053e89"
     }
   ]
 }

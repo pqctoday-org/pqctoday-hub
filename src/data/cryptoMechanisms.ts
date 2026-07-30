@@ -18,14 +18,22 @@
 
 import { ALGORITHM_REGISTRY } from './algorithmProperties'
 
-export type MechanismKind = 'kem' | 'signature' | 'key-exchange' | 'encryption'
+export type MechanismKind = 'kem' | 'signature' | 'key-exchange' | 'encryption' | 'hash'
 
 export interface CryptoMechanismFamily {
   /** Family label used verbatim in the industry-landscape CSVs. */
   family: string
   classical: boolean
   kinds: MechanismKind[]
-  /** Parameter-set members — keys into ALGORITHM_REGISTRY. */
+  /**
+   * Parameter-set members — keys into ALGORITHM_REGISTRY. Empty ONLY for
+   * symmetric families (AES, SHA): ALGORITHM_REGISTRY is asymmetric-only (it
+   * backs the Detailed Comparison tab, which doesn't cover symmetric crypto),
+   * but real technical standards (PCI P2PE, ONC health-IT certification,
+   * GSMA/ENISA PQC guidance) routinely name AES/SHA as the specific
+   * mechanism — excluding them would misrepresent those standards as
+   * "generic", the opposite of this vocabulary's purpose.
+   */
   registryMembers: (keyof typeof ALGORITHM_REGISTRY)[]
   /** CycloneDX 1.7 registry algorithmFamily enum values; [] = no entry. */
   cycloneDxFamilies: string[]
@@ -181,6 +189,24 @@ export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
     kinds: ['signature'],
     registryMembers: ['XMSS-SHA2_20'],
     cycloneDxFamilies: ['XMSS'],
+    oids: [],
+  },
+  {
+    family: 'AES',
+    classical: true,
+    kinds: ['encryption'],
+    registryMembers: [], // symmetric — see interface doc; not in ALGORITHM_REGISTRY
+    cycloneDxFamilies: ['AES'],
+    oids: [],
+  },
+  {
+    family: 'SHA',
+    classical: true,
+    kinds: ['hash'],
+    registryMembers: [], // symmetric/hash — see interface doc
+    // Registry splits by generation (verified 2026-07-29); "SHA" here is the
+    // umbrella label industry-landscape CSVs use for any SHA-2/SHA-3 mention.
+    cycloneDxFamilies: ['SHA-1', 'SHA-2', 'SHA-3'],
     oids: [],
   },
 ]
