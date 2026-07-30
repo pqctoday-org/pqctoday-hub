@@ -7821,16 +7821,6 @@
       "sha256": "2e2130f0f7f433362f1b67b6b42377135a2980c4a17a6afa7fa54b113f3c9cdd"
     },
     {
-      "refId": "EU-NIS-CG-Security-Measures-2026",
-      "title": "EU NIS Cooperation Group \u2014 Reference Document on Security Measures for Entities under NIS2 v1.0",
-      "url": "https://digital-strategy.ec.europa.eu/en/policies/nis-cooperation-group",
-      "status": "downloaded",
-      "filename": "EU-NIS-CG-Security-Measures-2026.pdf",
-      "sizeBytes": 699857,
-      "contentType": "application/pdf",
-      "sha256": "8aea4315a0bc6231c92ba905042f839a4bdfc00960fe008981f42fade1b14713"
-    },
-    {
       "refId": "NIST SP 800-181r1",
       "title": "Workforce Framework for Cybersecurity (NICE Framework)",
       "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-181r1.pdf",
@@ -8962,7 +8952,18 @@
       "sha256": "c41424c6f17784aa7cf8d3de79491e6bce142a674748039f1235dc8c37ea9654",
       "acquisition": "manual",
       "acquiredAt": "2026-07-30"
+    },
+    {
+      "refId": "EU-NIS-CG-Security-Measures-2026",
+      "url": "https://digital-strategy.ec.europa.eu/en/policies/nis-cooperation-group",
+      "status": "downloaded",
+      "filename": "EU-NIS-CG-Security-Measures-2026.html",
+      "sizeBytes": 50206,
+      "contentType": "text/html",
+      "sha256": "fd9603d1b5384d0df692093a6882aaba1e82c0cf0b5e2ed46255137264d87f4c",
+      "acquisition": "manual",
+      "acquiredAt": "2026-07-30"
     }
   ],
-  "generated": "2026-07-30T00:17:07.210675+00:00"
+  "generated": "2026-07-30T00:36:07.104551+00:00"
 }

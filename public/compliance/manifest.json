@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-29T21:52:33.200221+00:00",
+  "generated": "2026-07-30T00:36:07.109878+00:00",
   "entries": [
     {
       "refId": "NIST",
@@ -351,15 +351,6 @@
       "sizeBytes": 148733,
       "contentType": "text/html",
       "sha256": "3f0d29b7ea72efac6e32ba952cedb1bb003bb26ac6a53358de677c96619543b8"
-    },
-    {
-      "refId": "EUCC",
-      "url": "https://certification.enisa.europa.eu",
-      "status": "downloaded",
-      "filename": "EUCC.html",
-      "sizeBytes": 17654,
-      "contentType": "text/html",
-      "sha256": "991da71888aeebc84f704fda68cd8e4e37058947a82b4ccba8c871c77c6b0f02"
     },
     {
       "refId": "CRYPTREC-BODY",
@@ -1458,6 +1449,17 @@
       "sizeBytes": 84081,
       "contentType": "text/html",
       "sha256": "38965c3c264f9fa0e7fa45de40fd2619874d618032ea7429dad976190e22b405"
+    },
+    {
+      "refId": "EUCC",
+      "url": "https://certification.enisa.europa.eu",
+      "status": "downloaded",
+      "filename": "EUCC.pdf",
+      "sizeBytes": 677521,
+      "contentType": "application/pdf",
+      "sha256": "074a5e09b5686e75f1186b0a9ff25a1649a63ee5f605b1b766bc0b95156757a0",
+      "acquisition": "manual",
+      "acquiredAt": "2026-07-30"
     }
   ],
   "blocked": {
