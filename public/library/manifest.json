@@ -8475,10 +8475,10 @@
       "title": "https://arxiv.org/pdf/2505.08791",
       "url": "https://arxiv.org/pdf/2505.08791",
       "status": "downloaded",
-      "filename": "https-arxiv-org-pdf-2505-08791.html",
-      "sizeBytes": 299498,
-      "contentType": "text/html",
-      "sha256": "402e5fd783212b8905d166134c799896efb5969a907ea7d3cd45ba77580e6d1f"
+      "filename": "https-arxiv-org-pdf-2505-08791.pdf",
+      "sizeBytes": 187404,
+      "contentType": "application/pdf",
+      "sha256": "4e087ec9393292429e349004d69259c3cdd2b4837661566bcc51cce8c1b90d53"
     },
     {
       "refId": "https-arxiv-org-pdf-2510-10436",
@@ -8495,10 +8495,10 @@
       "title": "https://arxiv.org/pdf/2606.04669",
       "url": "https://arxiv.org/pdf/2606.04669",
       "status": "downloaded",
-      "filename": "https-arxiv-org-pdf-2606-04669.html",
-      "sizeBytes": 4558865,
-      "contentType": "text/html",
-      "sha256": "c8389b67f4397be70160282a297f7850a4bef6b8b2848f1ce514b23e6dd061a4"
+      "filename": "https-arxiv-org-pdf-2606-04669.pdf",
+      "sizeBytes": 2547947,
+      "contentType": "application/pdf",
+      "sha256": "bb814317a9f632e36e62803f1c1b320e6835512e218be5ac1787eaa0f059c7ff"
     },
     {
       "refId": "https-nukib-gov-cz-download-publications-en-Annex-20to-20the",
@@ -8835,10 +8835,10 @@
       "title": "EU NIS Cooperation Group - A Coordinated Implementation Roadmap for the Transition to Post-Quantum Cryptography (2025-06-23)",
       "url": "https://ec.europa.eu/newsroom/dae/redirection/document/117507",
       "status": "downloaded",
-      "filename": "EU-NIS-Cooperation-Group-A-Coordinated-Implementation-Roadma.html",
-      "sizeBytes": 993306,
-      "contentType": "text/html",
-      "sha256": "3c35d7c46c34b7c80b06b43d342194e97bd671a45aa6d7cb50fce68746facaa4"
+      "filename": "EU-NIS-Cooperation-Group-A-Coordinated-Implementation-Roadma.pdf",
+      "sizeBytes": 553179,
+      "contentType": "application/pdf",
+      "sha256": "e76b0ea3abe5606e71d49c154a2fe1422413b5c31d0cc8dbf87a74263ead00ea"
     },
     {
       "refId": "CRYPTREC-LS-0001-2022R2-List-of-Ciphers-to-be-Referred-to-fo",
@@ -8885,10 +8885,10 @@
       "title": "CCN-TEC 009 / BP-37 (Spain) - Recomendaciones para una transicion postcuantica segura",
       "url": "https://www.ccn.cni.es/eu/docman/documentos-publicos/boletines-pytec/495-ccn-tec-009-recomendaciones-transicion-postcuantica-segura/file",
       "status": "downloaded",
-      "filename": "CCN-TEC-009-BP-37-Spain-Recomendaciones-para-una-transicion.html",
-      "sizeBytes": 5351148,
-      "contentType": "text/html",
-      "sha256": "20e6b42f3cc73f51a1ab942e415a3a55aeade0129f21090682812dbb029de310"
+      "filename": "CCN-TEC-009-BP-37-Spain-Recomendaciones-para-una-transicion.pdf",
+      "sizeBytes": 3076740,
+      "contentType": "application/pdf",
+      "sha256": "16ef2f0730a7d4a9d9e77fe71eac3e0e842e372d5ef7deb44b23f616eccd9f92"
     },
     {
       "refId": "CCN-STIC-221-Spain-Guia-de-Mecanismos-Criptograficos-autoriz",
