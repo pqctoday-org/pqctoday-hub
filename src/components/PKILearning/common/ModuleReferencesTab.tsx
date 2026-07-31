@@ -63,7 +63,39 @@ export function ModuleReferencesTab({ moduleId }: ModuleReferencesTabProps) {
                   className="shrink-0 opacity-50 group-hover:opacity-100 transition-opacity"
                 />
               </a>
+              {/* A paid standard is still worth naming — ISO/IEC 18013-5 defines
+                  the mdoc format whether or not a reader can download it — but
+                  the link above goes to a shop, not a document. Say so on the
+                  link itself rather than letting it read as a download. */}
+              {item.accessType === 'paid' && (
+                <span className="text-xs px-1.5 py-0.5 rounded bg-status-warning/10 text-status-warning border border-status-warning/20 whitespace-nowrap">
+                  Purchase required
+                </span>
+              )}
             </div>
+            {item.accessType === 'paid' && (
+              <p className="text-xs text-muted-foreground mt-1">
+                {item.authorsOrOrganization || 'The publisher'} sells this standard — the link above
+                is a purchase page, not a free download.
+                {item.freeSummaryUrl && (
+                  <>
+                    {' '}
+                    <a
+                      href={item.freeSummaryUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline inline-flex items-center gap-1"
+                    >
+                      Read a free summary
+                      <ExternalLink size={10} className="shrink-0" />
+                    </a>{' '}
+                    <span className="opacity-80">
+                      (an abstract describing the standard — not the standard itself).
+                    </span>
+                  </>
+                )}
+              </p>
+            )}
             <div className="flex items-center gap-2 mt-1 flex-wrap">
               <span className="text-xs text-muted-foreground font-medium">
                 {item.authorsOrOrganization}

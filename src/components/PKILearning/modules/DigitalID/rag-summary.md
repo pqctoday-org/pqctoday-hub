@@ -28,7 +28,7 @@ The EUDI Digital Identity Wallet module simulates the European Digital Identity 
 
 - `eIDAS-2-Regulation` — eIDAS 2.0 (Regulation EU 2024/1183): legal framework mandating EUDI Wallets for all 27 EU member states by late 2026
 - `EUDI-Wallet-ARF` — EUDI Architecture Reference Framework: technical specification for attestation formats and the trust framework. It specifies no PQC migration roadmap — see `EU PQC Recommendation` for the transition dates
-- `ISO-18013-5-mDL` — ISO/IEC 18013-5:2021: mso_mdoc credential format (CBOR binary, proximity via NFC/BLE). Defines the `org.iso.18013.5.1` namespace; the EUDI `eu.europa.ec.eudi.pid.1` doctype is defined by the ARF PID Rulebook, not by ISO
+- `ISO-18013-5-mDL` — ISO/IEC 18013-5:2021: mso_mdoc credential format (CBOR binary, proximity via NFC/BLE) and the `org.iso.18013.5.1` namespace; the EUDI `eu.europa.ec.eudi.pid.1` doctype comes from the ARF PID Rulebook, not from ISO. Sold by ISO, so it carries access_type=paid — named and cited, but never presented as a free download
 - `RFC-9901-SD-JWT-VC` — RFC 9901: Selective Disclosure for JWTs (base SD-JWT); the SD-JWT VC credential profile is the separate draft-ietf-oauth-sd-jwt-vc (JSON text, optimised for online verification)
 - `OpenID4VCI-Spec` — OpenID4VCI (Final): credential issuance protocol used by all EUDI PID and attestation issuers
 - `OpenID4VP-Spec` — OpenID4VP (1.0 Final, July 2025): credential presentation protocol for relying party verification. Queries use DCQL; the earlier DIF Presentation Exchange syntax was removed before 1.0

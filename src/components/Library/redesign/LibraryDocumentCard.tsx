@@ -140,7 +140,30 @@ export function LibraryDocumentCard({
               aria-hidden="true"
             />
           </Button>
-          {item.downloadUrl ? (
+          {item.accessType === 'paid' && item.freeSummaryUrl ? (
+            /* Paid standards are still named — the name stays useful even when
+               the document is sold — but "Open" would promise a document the
+               reader can't reach. Lead with the free summary, and say plainly
+               that it is a summary rather than the standard. */
+            <a
+              href={item.freeSummaryUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              title="A free abstract describing this standard — not the standard itself, which must be purchased."
+              className="flex items-center gap-1 rounded-md px-1.5 py-1 text-[12px] font-semibold text-primary hover:bg-primary/10"
+            >
+              Free summary
+              <ExternalLink size={12} aria-hidden="true" />
+            </a>
+          ) : item.accessType === 'paid' ? (
+            <span
+              className="px-1.5 py-1 text-[12px] font-medium text-status-warning"
+              title="This standard is sold by its publisher. No free copy or summary is available."
+            >
+              Purchase required
+            </span>
+          ) : item.downloadUrl ? (
             <a
               href={item.downloadUrl}
               target="_blank"
