@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Landmark, CheckCircle, Loader2, Eye } from 'lucide-react'
+import { Landmark, CheckCircle, Loader2, Eye, AlertTriangle } from 'lucide-react'
 import type { WalletInstance } from '../../types'
 import { useDigitalIDLogs } from '../../hooks/useDigitalIDLogs'
 import { createPresentation } from '../../utils/sdjwt-utils'
@@ -312,9 +312,29 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
                       cryptographically hidden from the verifier.
                     </p>
                   </div>
-                  <Button variant="ghost" onClick={handleStart} className="w-full">
-                    Login with Wallet
-                  </Button>
+                  {/* Steps 3 and 5 guard on a missing PID with an explanatory
+                      panel; this step used to have no guard at all and simply
+                      threw "No signing key found in wallet to create proof."
+                      into the log — and it is the step most likely to be
+                      entered cold, straight from the step rail. */}
+                  {!availableKey ? (
+                    <div className="bg-warning/5 p-4 rounded border border-warning/30 text-warning">
+                      <h4 className="font-bold flex items-center gap-2">
+                        <AlertTriangle className="w-4 h-4" /> Identity Required
+                      </h4>
+                      <p className="text-sm mt-1">
+                        Your wallet holds no credential to present yet. Issue your Person
+                        Identification Data first — the bank needs a key-bound credential to verify.
+                      </p>
+                      <Button onClick={onBack} variant="secondary" className="mt-3 w-full">
+                        Go back to get PID
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button variant="ghost" onClick={handleStart} className="w-full">
+                      Login with Wallet
+                    </Button>
+                  )}
                 </div>
               )}
 
