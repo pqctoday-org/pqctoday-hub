@@ -41,6 +41,18 @@ export interface DeadlineRef {
   year: number
   /** Source of the deadline (e.g., 'CNSA 2.0', 'NIST IR 8547') */
   source: string
+  /**
+   * `event_id` of the timeline row this deadline comes from.
+   *
+   * The timeline CSV is the project's single source of truth for PQC
+   * deadlines, but until 2026-07-31 this type had NO field capable of
+   * expressing that link — so every module retyped its years by hand and they
+   * could drift from the timeline silently. Optional while the 41 modules that
+   * declare deadlines are migrated; once a deadline carries this, the year and
+   * label should be read as a cache of the timeline row, not an independent
+   * claim.
+   */
+  timelineEventId?: string
 }
 
 /** Structured content for a learn module */

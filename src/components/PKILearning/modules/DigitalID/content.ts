@@ -46,6 +46,7 @@ export const content: ModuleContent = {
       label: 'EUDI Wallet mandatory for all 27 EU member states',
       year: 2026,
       source: 'eIDAS-2-Regulation',
+      timelineEventId: 'european-union-ec-eudi-wallet-available-all-member-states',
     },
     // The 2026/2030/2035 dates come from the NIS Cooperation Group "Coordinated
     // Implementation Roadmap for the Transition to Post-Quantum Cryptography"
@@ -57,12 +58,19 @@ export const content: ModuleContent = {
       label: 'National PQC transition roadmaps due',
       year: 2026,
       source: 'EU PQC Recommendation',
+      timelineEventId: 'european-union-ec-member-state-strategy-initiation',
     },
-    { label: 'High-risk system PQC migration', year: 2030, source: 'EU PQC Recommendation' },
+    {
+      label: 'High-risk system PQC migration',
+      year: 2030,
+      source: 'EU PQC Recommendation',
+      timelineEventId: 'european-union-ec-high-risk-systems-secured',
+    },
     {
       label: 'Full PQC transition for EUDI infrastructure',
       year: 2035,
       source: 'EU PQC Recommendation',
+      timelineEventId: 'european-union-ec-full-eu-pqc-transition',
     },
   ],
 
