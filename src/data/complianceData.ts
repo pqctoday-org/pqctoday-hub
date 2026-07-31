@@ -61,6 +61,24 @@ export interface ComplianceFramework {
    */
   deadlineDates?: { year: number; label: string }[]
   /**
+   * First stated milestone — when the obligation starts to bite.
+   *
+   * DERIVED from deadlineDates, never stored. Two columns holding the same
+   * fact is the drift that produced this catalog's industry bug, where
+   * `industries` and `naics_codes` were identical until they silently were
+   * not. deadlineDates stays the single source of truth.
+   */
+  deadlineStart?: number
+  /**
+   * Last stated milestone — the date by which the transition must be COMPLETE.
+   *
+   * This is the compliance-critical one. NIST IR 8547 deprecates at 2030 and
+   * disallows at 2035; an organisation with a 10-year retention horizon is
+   * bound by 2035, not by 2030. Before WP-1.2 only the earliest date existed,
+   * so the binding constraint was the one the data could not express.
+   */
+  deadlineEnd?: number
+  /**
    * fixed | phased | ongoing | none | unknown.
    *
    * Splits what used to be one "ongoing / no year" bucket into states that
@@ -246,6 +264,12 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
       return { year: parseInt(y, 10), label: rest.join(':').trim() }
     })
     .filter((d) => Number.isFinite(d.year))
+    // Sorted ascending HERE rather than trusted from the CSV. The migration
+    // writes them in order, but a hand-edited row must not be able to make
+    // deadlineDates[0] mean something other than "the first milestone" —
+    // consumers index it directly, and an out-of-order row would silently
+    // render a later date as the start.
+    .sort((a, b) => a.year - b.year)
 
   const validKinds: DeadlineKind[] = ['fixed', 'phased', 'ongoing', 'none', 'unknown']
   const deadlineKind: DeadlineKind = validKinds.includes(row.deadline_kind as DeadlineKind)
@@ -254,10 +278,15 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
 
   // Earliest stated date drives the existing single-year consumers; the full
   // set is available via deadlineDates for the facet and timeline.
-  const deadlineYear =
-    deadlineDates.length > 0
-      ? Math.min(...deadlineDates.map((d) => d.year))
-      : extractDeadlineYear(deadline)
+  // deadlineDates is sorted ascending above, so these are its two ends.
+  const deadlineStart = deadlineDates.length > 0 ? deadlineDates[0].year : undefined
+  const deadlineEnd =
+    deadlineDates.length > 0 ? deadlineDates[deadlineDates.length - 1].year : undefined
+
+  // deadlineYear keeps its original meaning — the EARLIEST date — because
+  // existing consumers (sort, urgency badge, Assess/Report) read it as "the
+  // next thing due". Callers that need the completion date want deadlineEnd.
+  const deadlineYear = deadlineStart ?? extractDeadlineYear(deadline)
   const deadlinePhase = classifyDeadline(deadline, deadlineYear)
 
   return {
@@ -279,6 +308,8 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
     deadlinePhase,
     deadlineDates,
     deadlineKind,
+    deadlineStart,
+    deadlineEnd,
     notes: row.notes || '',
     enforcementBody: row.enforcement_body || '',
     libraryRefs: splitSemicolon(row.library_refs),
