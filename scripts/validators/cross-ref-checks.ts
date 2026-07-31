@@ -556,6 +556,79 @@ export function runCrossRefChecks(): CheckResult[] {
     )
   }
 
+  // C4T: module content.ts deadlines → timeline event_id.
+  //
+  // The timeline CSV is the single source of truth for PQC deadlines, but
+  // DeadlineRef had no field able to express that link until 2026-07-31, so all
+  // 109 deadlines across 61 modules were retyped by hand and could drift from
+  // the timeline silently. `timelineEventId` closes that; this check makes sure
+  // the ones that carry it actually resolve, and that the year agrees with the
+  // row they claim to come from.
+  //
+  // WARNING, not ERROR: the field is optional during migration, so most
+  // deadlines legitimately have none yet. This only judges the ones that do.
+  {
+    const f: Finding[] = []
+    const eventYears = new Map<string, Set<string>>()
+    for (const row of timeline.rows) {
+      if (!row.event_id) continue
+      const years = new Set<string>()
+      if (row.StartYear) years.add(row.StartYear)
+      if (row.EndYear) years.add(row.EndYear)
+      eventYears.set(row.event_id, years)
+    }
+    const modulesDir = path.resolve(process.cwd(), 'src/components/PKILearning/modules')
+    if (fs.existsSync(modulesDir)) {
+      for (const entry of fs.readdirSync(modulesDir, { withFileTypes: true })) {
+        if (!entry.isDirectory()) continue
+        const contentPath = path.join(modulesDir, entry.name, 'content.ts')
+        if (!fs.existsSync(contentPath)) continue
+        const src = fs.readFileSync(contentPath, 'utf-8')
+        const block = src.match(/\n {2}deadlines:\s*\[([\s\S]*?)\n {2}\],/)
+        if (!block) continue
+        for (const ent of block[1].match(/\{[\s\S]*?\}/g) ?? []) {
+          const idM = ent.match(/timelineEventId:\s*'([^']+)'/)
+          if (!idM) continue
+          const yearM = ent.match(/year:\s*(\d{4})/)
+          const eventId = idM[1]
+          const years = eventYears.get(eventId)
+          if (!years) {
+            f.push(
+              finding(
+                `${entry.name}/content.ts`,
+                0,
+                'timelineEventId',
+                eventId,
+                `Module "${entry.name}" deadline cites timeline event "${eventId}", which is not a timeline event_id`
+              )
+            )
+          } else if (yearM && !years.has(yearM[1])) {
+            f.push(
+              finding(
+                `${entry.name}/content.ts`,
+                0,
+                'year',
+                eventId,
+                `Module "${entry.name}" deadline says ${yearM[1]} but timeline event "${eventId}" spans ${[...years].join('-')}`
+              )
+            )
+          }
+        }
+      }
+    }
+    results.push(
+      makeCheck(
+        'C4T-deadline-timeline-refs',
+        'cross-reference',
+        'module deadlines → timeline event_id (and year agreement)',
+        'modules',
+        'timeline',
+        'WARNING',
+        f
+      )
+    )
+  }
+
   // C5: threats.related_modules → MODULE_CATALOG
   {
     const f: Finding[] = []
