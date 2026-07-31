@@ -27,6 +27,16 @@ export type ImpactLevel = 'High' | 'Medium' | 'Low'
 
 export interface InsightsFilter {
   assignee?: string
+  /** Matches against the raw patents.inventors field ("Surname; Givenname et al."),
+   * word-set comparison not exact equality — see usePatentResults.ts's inventorMatches(). */
+  inventor?: string
+  /** Comma-separated patent_number list (bare or "US"-prefixed, either works —
+   * see usePatentResults.ts). Used by the leaders page's "view N patents" link,
+   * which already knows the exact patents (leader.patentRefs) rather than
+   * needing to re-derive them via name matching — more reliable than `inventor`
+   * for that one use case since patents.inventors is truncated/name-order-
+   * inverted and can't always losslessly round-trip a display name. */
+  patentIds?: string
   agility?: string
   domain?: string
   impact?: string

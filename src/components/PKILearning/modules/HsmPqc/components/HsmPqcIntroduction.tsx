@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState } from 'react'
+import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import { Link } from 'react-router'
 import {
   Server,
@@ -71,6 +72,11 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
 }
 
 export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNavigateToWorkshop }) => {
+  // The data-section-id anchors below were already here and already
+  // matched this module's manifest; nothing read them. One call makes
+  // deep links land and section progress record.
+  useSectionAnchors()
+
   const classicalMechanisms = PKCS11_MECHANISMS.filter((m) => m.type === 'classical')
   const pqcMechanisms = PKCS11_MECHANISMS.filter((m) => m.type === 'pqc')
 

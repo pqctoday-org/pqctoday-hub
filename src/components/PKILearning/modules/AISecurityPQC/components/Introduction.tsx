@@ -17,6 +17,7 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { LearnSection } from '@/components/PKILearning/common/LearnSection'
 
 // ── Local CollapsibleSection ─────────────────────────────────────────────
 
@@ -67,7 +68,8 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
   return (
     <div className="space-y-8 w-full">
       {/* Section 1: AI Data Pipeline Threats */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="pipeline-threats"
         title="AI Data Pipeline: The Quantum Threat Surface"
         icon={<Database size={20} className="text-primary" />}
         defaultOpen={true}
@@ -131,10 +133,11 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           signatures.
         </p>
         <ReadingCompleteButton />
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Section 2: Synthetic Data & Model Collapse */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="synthetic-data"
         title="The Synthetic Data Crisis: Model Collapse & Authenticity"
         icon={<FileCheck size={20} className="text-primary" />}
       >
@@ -198,10 +201,11 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           </p>
         </div>
         <ReadingCompleteButton />
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Section 3: Model Weight Protection */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="model-weights"
         title="Model Weight Protection & IP Security"
         icon={<Lock size={20} className="text-primary" />}
       >
@@ -276,10 +280,11 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           for hardware-enforced model protection during inference.
         </p>
         <ReadingCompleteButton />
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Section 4: Agentic AI */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="agentic-ai"
         title="Agentic AI: Identity, Delegation & Commerce"
         icon={<Bot size={20} className="text-primary" />}
       >
@@ -358,10 +363,11 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           for PQC migration patterns for JWT/DPoP tokens.
         </p>
         <ReadingCompleteButton />
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Section 5: Scale */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="scale"
         title="Protecting Data at Scale: Petabyte-Era Cryptography"
         icon={<Server size={20} className="text-primary" />}
       >
@@ -420,7 +426,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           key hierarchies.
         </p>
         <ReadingCompleteButton />
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* AI-Assisted Migration & the Human-Review Gate (Applied Quantum §5.7) */}
       <CollapsibleSection

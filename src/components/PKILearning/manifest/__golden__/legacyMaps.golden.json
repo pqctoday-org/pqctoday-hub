@@ -174,9 +174,9 @@
     "emv-payment-pqc": {
       "id": "emv-payment-pqc",
       "lm_id": "LM-044",
-      "title": "EMV Payment Systems & PQC",
-      "description": "Explore the EMV payment ecosystem — card authentication, tokenization, authorization networks, POS terminals, and e-commerce — and plan quantum-safe migration across Visa, Mastercard, Amex, UnionPay, and Discover.",
-      "duration": "80 min",
+      "title": "Financial Services & Payments PQC",
+      "description": "The whole payments and banking stack: EMV card authentication, tokenization, acquiring and retail checkout, interbank settlement rails, bank key management and key blocks, and the sector regulation that sets the pace — planned as one quantum-safe migration.",
+      "duration": "110 min",
       "difficulty": "advanced",
       "frameworkPhase": "p5"
     },
@@ -565,6 +565,24 @@
       "duration": "60 min",
       "difficulty": "intermediate",
       "frameworkPhase": "p6"
+    },
+    "government-defense-pqc": {
+      "id": "government-defense-pqc",
+      "lm_id": "LM-062",
+      "title": "Government & Defense PQC",
+      "description": "The federal PQC policy layer: the CNSA 2.0 suite and its dated mandates, National Security Systems and CSfC, Federal PKI and the PQC certificate profile, the statute/EO/OMB stack, and how CISA product categories shape procurement.",
+      "duration": "60 min",
+      "difficulty": "advanced",
+      "frameworkPhase": "p5"
+    },
+    "trust-services-pqc": {
+      "id": "trust-services-pqc",
+      "lm_id": "LM-063",
+      "title": "Trust Services & Long-Term Signatures",
+      "description": "Signatures that must still verify in thirty years: qualified vs advanced signatures, timestamping and proof of existence, long-term validation and re-timestamping, trust service provider conformity, and the ETSI suites that just gained post-quantum modes.",
+      "duration": "60 min",
+      "difficulty": "intermediate",
+      "frameworkPhase": "p5"
     }
   },
   "MODULE_STEP_COUNTS": {
@@ -587,7 +605,7 @@
     "dev-quantum-impact": 4,
     "digital-assets": 6,
     "digital-id": 5,
-    "emv-payment-pqc": 6,
+    "emv-payment-pqc": 8,
     "email-signing": 3,
     "energy-utilities-pqc": 5,
     "entropy-randomness": 5,
@@ -631,7 +649,9 @@
     "vendor-risk": 4,
     "verification-closure": 3,
     "web-gateway-pqc": 5,
-    "assess": 1
+    "assess": 1,
+    "government-defense-pqc": 3,
+    "trust-services-pqc": 3
   },
   "LEARN_SECTIONS": {
     "ai-security-pqc": [
@@ -1026,24 +1046,28 @@
     ],
     "digital-assets": [
       {
-        "id": "bitcoin",
-        "label": "Bitcoin secp256k1 & ECDSA"
+        "id": "blockchain-crypto",
+        "label": "What is Blockchain Cryptography?"
       },
       {
-        "id": "ethereum",
-        "label": "Ethereum Smart Contracts"
+        "id": "elliptic-curves",
+        "label": "Elliptic Curves: secp256k1 vs Ed25519"
+      },
+      {
+        "id": "address-derivation",
+        "label": "Address Derivation Across Chains"
+      },
+      {
+        "id": "signatures",
+        "label": "Digital Signatures: ECDSA vs EdDSA"
       },
       {
         "id": "hd-wallets",
-        "label": "HD Wallets: BIP32/39/44"
+        "label": "HD Wallets and Key Management"
       },
       {
         "id": "pqc-blockchain",
-        "label": "PQC Asset Migration"
-      },
-      {
-        "id": "custody",
-        "label": "Custody Architecture"
+        "label": "Post-Quantum Threats to Blockchains"
       }
     ],
     "digital-id": [
@@ -1087,11 +1111,23 @@
       },
       {
         "id": "ecommerce",
-        "label": "E-Commerce & CNP"
+        "label": "E-Commerce, CNP & Retail Checkout"
       },
       {
         "id": "pos-terminals",
         "label": "POS & Key Injection"
+      },
+      {
+        "id": "interbank-rails",
+        "label": "Interbank Rails & Settlement"
+      },
+      {
+        "id": "banking-key-management",
+        "label": "Banking Key Management & Key Blocks"
+      },
+      {
+        "id": "sector-regulation",
+        "label": "Sector Regulation & Deadlines"
       },
       {
         "id": "quantum-threats",
@@ -1136,6 +1172,10 @@
       {
         "id": "lifecycle-connectivity",
         "label": "Lifecycle & Connectivity"
+      },
+      {
+        "id": "water-wastewater",
+        "label": "Water & Wastewater"
       }
     ],
     "entropy-randomness": [
@@ -1176,8 +1216,16 @@
     ],
     "5g-security": [
       {
+        "id": "what-is-5g-security",
+        "label": "What is 5G Security?"
+      },
+      {
+        "id": "three-pillars",
+        "label": "The Three Pillars of 5G Security"
+      },
+      {
         "id": "suci",
-        "label": "SUCI Identity Protection"
+        "label": "SUCI Protection Schemes"
       },
       {
         "id": "aka",
@@ -1185,7 +1233,11 @@
       },
       {
         "id": "provisioning",
-        "label": "SIM Key Provisioning"
+        "label": "SIM Provisioning & Supply Chain"
+      },
+      {
+        "id": "quantum-threat",
+        "label": "Post-Quantum Threat to 5G"
       }
     ],
     "healthcare-pqc": [
@@ -1262,28 +1314,44 @@
       {
         "id": "zero-trust-identity",
         "label": "PQC Zero Trust Identity"
+      },
+      {
+        "id": "federation-eap",
+        "label": "Identity Federation & EAP"
       }
     ],
     "iot-ot-pqc": [
       {
+        "id": "why-different",
+        "label": "Why IoT/OT Is Different"
+      },
+      {
         "id": "constrained",
-        "label": "Constrained Devices"
-      },
-      {
-        "id": "firmware",
-        "label": "Firmware Signing"
-      },
-      {
-        "id": "protocols",
-        "label": "CoAP/DTLS Protocols"
+        "label": "Algorithm Selection for Constrained Devices"
       },
       {
         "id": "certs",
-        "label": "Cert Chain Bloat in IoT"
+        "label": "Certificate Chain Bloat"
+      },
+      {
+        "id": "firmware",
+        "label": "Firmware Signing for IoT"
+      },
+      {
+        "id": "protocols",
+        "label": "Protocol Considerations"
       },
       {
         "id": "scada",
-        "label": "SCADA/ICS Migration"
+        "label": "SCADA/ICS Security"
+      },
+      {
+        "id": "hybrid-constrained",
+        "label": "Hybrid Approaches on Constrained Hardware"
+      },
+      {
+        "id": "rail-transit",
+        "label": "Rail & Transit Key Management"
       }
     ],
     "kms-pqc": [
@@ -1306,6 +1374,10 @@
       {
         "id": "kmip",
         "label": "KMIP Cross-Provider Sync"
+      },
+      {
+        "id": "cloud-responsibility",
+        "label": "Cloud Shared Responsibility"
       }
     ],
     "mls-group-messaging": [
@@ -1320,24 +1392,28 @@
     ],
     "merkle-tree-certs": [
       {
-        "id": "merkle",
-        "label": "Merkle Tree & SHA-256"
+        "id": "cert-bloat",
+        "label": "The Certificate Bloat Problem"
       },
       {
-        "id": "inclusion",
-        "label": "Inclusion & Auth Paths"
+        "id": "how-mtc-works",
+        "label": "How Merkle Tree Certificates Work"
       },
       {
-        "id": "verification",
-        "label": "Proof Verification"
+        "id": "mtc-architecture",
+        "label": "MTC Architecture"
       },
       {
-        "id": "comparison",
-        "label": "MTC vs X.509 Trade-offs"
+        "id": "cert-types",
+        "label": "Certificate Types & Tradeoffs"
       },
       {
-        "id": "ct-log",
-        "label": "CT Log ML-DSA-44"
+        "id": "landmark-certs",
+        "label": "Deep Dive: Landmark Certificates"
+      },
+      {
+        "id": "ietf-status",
+        "label": "IETF Standardization Status"
       }
     ],
     "migration-program": [
@@ -1853,6 +1929,50 @@
         "id": "vendor-paths",
         "label": "Vendor Migration Paths"
       }
+    ],
+    "government-defense-pqc": [
+      {
+        "id": "cnsa-suite",
+        "label": "The CNSA 2.0 Suite"
+      },
+      {
+        "id": "cnsa-timeline",
+        "label": "Mandates & Dated Milestones"
+      },
+      {
+        "id": "nss-csfc",
+        "label": "National Security Systems & CSfC"
+      },
+      {
+        "id": "federal-pki",
+        "label": "Federal PKI & the PQC Profile"
+      },
+      {
+        "id": "procurement",
+        "label": "Procurement & Supply Chain"
+      }
+    ],
+    "trust-services-pqc": [
+      {
+        "id": "qualified-signatures",
+        "label": "Qualified vs Advanced Signatures"
+      },
+      {
+        "id": "timestamping",
+        "label": "Timestamping & Proof of Existence"
+      },
+      {
+        "id": "long-term-validation",
+        "label": "Long-Term Validation & Archival"
+      },
+      {
+        "id": "suites-evolving",
+        "label": "Cryptographic Suites, Evolving"
+      },
+      {
+        "id": "trust-providers",
+        "label": "Trust Service Providers & Conformity"
+      }
     ]
   },
   "WORKSHOP_STEPS": {
@@ -2286,6 +2406,14 @@
       {
         "id": "migration-risk-matrix",
         "label": "Migration Risk Matrix"
+      },
+      {
+        "id": "settlement-exposure",
+        "label": "Settlement Exposure Modeller"
+      },
+      {
+        "id": "regulation-timeline",
+        "label": "Sector Regulation Timeline"
       }
     ],
     "email-signing": [
@@ -3131,6 +3259,34 @@
         "id": "vendor-readiness",
         "label": "Vendor Readiness Matrix"
       }
+    ],
+    "government-defense-pqc": [
+      {
+        "id": "suite-comparator",
+        "label": "CNSA 1.0 → 2.0 Comparator"
+      },
+      {
+        "id": "mandate-explorer",
+        "label": "Federal Mandate Explorer"
+      },
+      {
+        "id": "fpki-profile-pair",
+        "label": "Federal PKI Profile Pair"
+      }
+    ],
+    "trust-services-pqc": [
+      {
+        "id": "longevity-calculator",
+        "label": "Signature Longevity Calculator"
+      },
+      {
+        "id": "supersession-explorer",
+        "label": "Standards Supersession Explorer"
+      },
+      {
+        "id": "hybrid-suite-picker",
+        "label": "Hybrid Suite Picker"
+      }
     ]
   },
   "MODULE_TRACKS": [
@@ -3711,9 +3867,9 @@
         {
           "id": "emv-payment-pqc",
           "lm_id": "LM-044",
-          "title": "EMV Payment Systems & PQC",
-          "description": "Explore the EMV payment ecosystem — card authentication, tokenization, authorization networks, POS terminals, and e-commerce — and plan quantum-safe migration across Visa, Mastercard, Amex, UnionPay, and Discover.",
-          "duration": "80 min",
+          "title": "Financial Services & Payments PQC",
+          "description": "The whole payments and banking stack: EMV card authentication, tokenization, acquiring and retail checkout, interbank settlement rails, bank key management and key blocks, and the sector regulation that sets the pace — planned as one quantum-safe migration.",
+          "duration": "110 min",
           "difficulty": "advanced",
           "frameworkPhase": "p5"
         },
@@ -3734,6 +3890,24 @@
           "duration": "60 min",
           "difficulty": "advanced",
           "workInProgress": true,
+          "frameworkPhase": "p5"
+        },
+        {
+          "id": "government-defense-pqc",
+          "lm_id": "LM-062",
+          "title": "Government & Defense PQC",
+          "description": "The federal PQC policy layer: the CNSA 2.0 suite and its dated mandates, National Security Systems and CSfC, Federal PKI and the PQC certificate profile, the statute/EO/OMB stack, and how CISA product categories shape procurement.",
+          "duration": "60 min",
+          "difficulty": "advanced",
+          "frameworkPhase": "p5"
+        },
+        {
+          "id": "trust-services-pqc",
+          "lm_id": "LM-063",
+          "title": "Trust Services & Long-Term Signatures",
+          "description": "Signatures that must still verify in thirty years: qualified vs advanced signatures, timestamping and proof of existence, long-term validation and re-timestamping, trust service provider conformity, and the ETSI suites that just gained post-quantum modes.",
+          "duration": "60 min",
+          "difficulty": "intermediate",
           "frameworkPhase": "p5"
         }
       ]

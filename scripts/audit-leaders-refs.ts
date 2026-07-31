@@ -27,7 +27,12 @@
  * stub rows already satisfy this by construction, and deprecated rows are
  * already excluded from the live site):
  *
- *  A) NO_REF (warn, error under --strict) — `KeyResourceRefs` is empty.
+ *  A) NO_REF (warn, error under --strict) — `KeyResourceRefs` is empty AND
+ *     `PatentRefs` (ADDED 2026-07-30, see leaders_patents_xref.py on the
+ *     priv side) has no id resolving to a real patents.patent_number either.
+ *     A row citing a real PQC patent as its proof is just as validated as
+ *     one citing a library reference — the "author or contributor of a
+ *     validated resource" rule doesn't say WHICH catalogued resource.
  *  B) UNRESOLVED_REF (error) — `KeyResourceRefs` is non-empty but none of
  *     its semicolon-separated ids resolve to an active (non-deprecated)
  *     `reference_id` in the latest library CSV. This is worse than NO_REF:
@@ -125,6 +130,33 @@ export function audit(): Finding[] {
     library.filter((r) => (r.status || 'active') === 'active').map((r) => r.reference_id)
   )
 
+  // ADDED 2026-07-30: patents has no status/deprecated column (unlike the
+  // DS-series self-contained sources) — every row is a real, usable patent
+  // record. Loaded defensively: a missing patents CSV must not crash the
+  // whole leaders audit, it just means PatentRefs can't satisfy the gate
+  // this run (KeyResourceRefs-based checks below are unaffected).
+  let activePatentIds = new Set<string>()
+  try {
+    const patentsPath = latestCSV(/^patents_\d{8}(?:_r\d+)?\.csv$/, 'patents')
+    activePatentIds = new Set(parseCSV(patentsPath).map((r) => r.patent_number))
+  } catch {
+    // no patents CSV found — proceed with library-only resolution
+  }
+
+  // ADDED 2026-07-30: same defensive-load pattern as patents above, for
+  // migrate-catalog's open_source_maintainers-backed MigrateCatalogRefs.
+  let activeMigrateProductIds = new Set<string>()
+  try {
+    const migratePath = latestCSV(/^pqc_product_catalog_\d{8}(?:_r\d+)?\.csv$/, 'migrate-catalog')
+    activeMigrateProductIds = new Set(
+      parseCSV(migratePath)
+        .filter((r) => (r.status || 'active') === 'active')
+        .map((r) => r.product_id)
+    )
+  } catch {
+    // no migrate-catalog CSV found — proceed without this resolution path
+  }
+
   const findings: Finding[] = []
 
   for (const row of leaders) {
@@ -133,6 +165,11 @@ export function audit(): Finding[] {
 
     const refs = splitSemicolon(row.KeyResourceRefs ?? '')
     if (refs.length === 0) {
+      const patentRefs = splitSemicolon(row.PatentRefs ?? '')
+      if (patentRefs.some((id) => activePatentIds.has(id))) continue // proof satisfied via PatentRefs
+      const migrateRefs = splitSemicolon(row.MigrateCatalogRefs ?? '')
+      if (migrateRefs.some((id) => activeMigrateProductIds.has(id))) continue // proof satisfied via MigrateCatalogRefs
+
       const rawKeyResourceUrl = (row.KeyResourceUrl ?? '').trim()
       // KeyResourceUrl is meant to hold a single URL, but some rows have a
       // semicolon-delimited list of reference_id-shaped strings sitting there

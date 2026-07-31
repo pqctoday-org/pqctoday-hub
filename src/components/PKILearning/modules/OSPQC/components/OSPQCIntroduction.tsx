@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import {
@@ -8,7 +8,6 @@ import {
   Key,
   Package,
   Shield,
-  ChevronRight,
   ArrowRight,
   BookOpen,
   Route,
@@ -22,6 +21,7 @@ import {
   getOsPqcStatus,
 } from '../data/osProviderData'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { LearnSection } from '@/components/PKILearning/common/LearnSection'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { Button } from '@/components/ui/button'
 
@@ -29,45 +29,14 @@ interface OSPQCIntroductionProps {
   onNavigateToWorkshop: () => void
 }
 
-interface CollapsibleSectionProps {
-  icon: React.ReactNode
-  title: string
-  defaultOpen?: boolean
-  children: React.ReactNode
-}
-
-const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
-  icon,
-  title,
-  defaultOpen = false,
-  children,
-}) => {
-  const [isOpen, setIsOpen] = useState(defaultOpen)
-
-  return (
-    <section className="glass-panel p-6">
-      <Button
-        variant="ghost"
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-3 w-full text-left"
-      >
-        <div className="p-2 rounded-lg bg-primary/10 shrink-0">{icon}</div>
-        <h2 className="text-xl font-bold text-gradient flex-1">{title}</h2>
-        <ChevronRight
-          size={18}
-          className={`text-muted-foreground transition-transform duration-200 shrink-0 ${isOpen ? 'rotate-90' : ''}`}
-        />
-      </Button>
-      {isOpen && <div className="mt-4 space-y-4 text-sm text-foreground/80">{children}</div>}
-    </section>
-  )
-}
+// Local CollapsibleSection replaced by the shared anchored LearnSection (2026-07-30).
 
 export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigateToWorkshop }) => {
   return (
     <div className="space-y-8 w-full">
       {/* Section 1: OS Cryptography Stack */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="os-crypto-landscape"
         icon={<Monitor size={24} className="text-primary" />}
         title="OS Cryptography: Where PQC Fits in the System Stack"
         defaultOpen
@@ -151,10 +120,11 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
             </p>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Section 2: System-Wide TLS Policy */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="system-tls"
         icon={<Settings size={24} className="text-primary" />}
         title="System-Wide TLS Policy: OpenSSL, CNG, and GnuTLS"
       >
@@ -238,10 +208,11 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
             <code className="text-xs bg-muted px-1 rounded">SECURE128:+X25519MLKEM768</code>.
           </p>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Section 3: SSH Host Key Migration */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="ssh-host-keys"
         icon={<Key size={24} className="text-primary" />}
         title="SSH Host Key Migration to ML-DSA-65"
       >
@@ -331,10 +302,11 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
             </div>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Section 4: Package Signing */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="package-signing"
         icon={<Package size={24} className="text-primary" />}
         title="Package Manager Signing: RPM/DEB Migration to ML-DSA"
       >
@@ -382,10 +354,11 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
             signatures are a promising intermediate solution.
           </p>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Section 5: FIPS Mode + PQC */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="fips-mode"
         icon={<Shield size={24} className="text-primary" />}
         title="FIPS Mode, OS Hardening, and PQC Compatibility"
       >
@@ -458,7 +431,7 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
             </div>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Related Resources */}
       <section className="glass-panel p-6 border-secondary/20">

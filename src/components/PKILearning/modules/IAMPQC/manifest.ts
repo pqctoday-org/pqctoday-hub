@@ -23,6 +23,7 @@ const manifest: ModuleManifest = {
     },
     { id: 'vendor-roadmaps', label: 'IAM Vendor Roadmaps' },
     { id: 'zero-trust-identity', label: 'PQC Zero Trust Identity' },
+    { id: 'federation-eap', label: 'Identity Federation & EAP' },
   ],
   workshopSteps: [
     { id: 'iam-crypto-inventory', label: 'IAM Crypto Inventory' },

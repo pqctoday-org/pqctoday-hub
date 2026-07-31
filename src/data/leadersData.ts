@@ -17,6 +17,14 @@ export interface Leader {
   keyResourceUrl?: string[]
   /** Library reference IDs cited as evidence for this leader's contribution. Used by trust scoring to inherit peer-review + vetting from authored documents (the `keyResourceUrl` field above stores URLs, not IDs, so it cannot be used as a lookup key against the library map). */
   keyResourceRefs?: string[]
+  /** Patent numbers (patents.patent_number) this leader is the first-named inventor on — a separate proof anchor from keyResourceRefs, added 2026-07-30 for the patents↔leaders cross-check. */
+  patentRefs?: string[]
+  /** Google Patents URLs matching patentRefs positionally, same pairing convention as keyResourceRefs/keyResourceUrl. */
+  patentUrl?: string[]
+  /** migrate-catalog product_ids this leader is a credited open-source maintainer/author of — a third proof anchor, added 2026-07-30 for the migrate-catalog↔leaders cross-check. */
+  migrateCatalogRefs?: string[]
+  /** Repository URLs matching migrateCatalogRefs positionally, same pairing convention as patentRefs/patentUrl. */
+  migrateCatalogUrl?: string[]
   peerReviewed?: 'yes' | 'no' | 'partial'
   vettingBody?: string[]
   status?: 'New' | 'Updated'
@@ -44,6 +52,10 @@ interface RawLeaderRow {
   KeyResourceUrls: string
   KeyResourceUrl: string
   KeyResourceRefs: string
+  PatentRefs?: string
+  PatentUrls?: string
+  MigrateCatalogRefs?: string
+  MigrateCatalogUrls?: string
   trusted_source_id: string
   peer_reviewed: string
   vetting_body: string
@@ -93,6 +105,14 @@ const {
           ? splitSemicolon(row.KeyResourceUrl)
           : undefined,
       keyResourceRefs: row.KeyResourceRefs ? splitSemicolon(row.KeyResourceRefs) : undefined,
+      patentRefs: row.PatentRefs ? splitSemicolon(row.PatentRefs) : undefined,
+      patentUrl: row.PatentUrls ? splitSemicolon(row.PatentUrls) : undefined,
+      migrateCatalogRefs: row.MigrateCatalogRefs
+        ? splitSemicolon(row.MigrateCatalogRefs)
+        : undefined,
+      migrateCatalogUrl: row.MigrateCatalogUrls
+        ? splitSemicolon(row.MigrateCatalogUrls)
+        : undefined,
       peerReviewed: (row.peer_reviewed?.toLowerCase() as Leader['peerReviewed']) || undefined,
       vettingBody: row.vetting_body ? splitSemicolon(row.vetting_body) : undefined,
       sourceKind: isAutoImportedRow(row.data_quality_notes ?? '') ? 'auto-imported' : 'curated',

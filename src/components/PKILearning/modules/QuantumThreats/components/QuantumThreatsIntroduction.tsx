@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
+import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import { Link } from 'react-router'
 import {
   Atom,
@@ -26,6 +27,8 @@ interface QuantumThreatsIntroductionProps {
 export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProps> = ({
   onNavigateToWorkshop,
 }) => {
+  useSectionAnchors()
+
   return (
     <div className="space-y-6 w-full">
       {/* Qubits & Superposition */}

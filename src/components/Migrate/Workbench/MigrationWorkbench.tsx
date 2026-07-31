@@ -115,6 +115,44 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
     /* eslint-enable react-hooks/set-state-in-effect */
   }, [embedded, searchParams, setSearchParams, setTabStore])
 
+  // ── Product-id-set deep link (?productIds=<id1>,<id2>,...) ───────────────
+  // ADDED 2026-07-30 for the leader-detail "view N open-source projects" link
+  // (migrate-catalog↔leaders cross-check). Same shape as ?product= above, but
+  // id-based (not name-based, so it doesn't depend on softwareName staying
+  // stable) and supports multiple products at once. Domain is resolved from
+  // the FIRST matched product — like ?product=, this page shows one domain's
+  // list at a time, so a leader whose credited products span multiple domains
+  // will only see the first domain's subset highlighted; the rest remain
+  // reachable by switching domains manually.
+  const [productIdsDeepLink, setProductIdsDeepLink] = useState<{
+    domain: DomainId
+    productIds: string[]
+  } | null>(null)
+  const productIdsHydratedRef = useRef(false)
+  useEffect(() => {
+    if (embedded || productIdsHydratedRef.current) return
+    const raw = searchParams.get('productIds')
+    if (!raw) return
+    productIdsHydratedRef.current = true
+    const ids = raw
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)
+    const sp = new URLSearchParams(searchParams)
+    sp.delete('productIds')
+    sp.set('tab', 'replace')
+    setSearchParams(sp, { replace: true })
+    const idSet = new Set(ids)
+    const matched = softwareData.filter((p) => idSet.has(p.productId))
+    const domain = matched[0]
+      ? classifyProductDomain(matched[0].categoryName, matched[0].infrastructureLayer)
+      : null
+    /* eslint-disable react-hooks/set-state-in-effect -- one-time hydrate from the ?productIds= link, same as ?share=/?product= above */
+    setTabStore('replace')
+    if (domain) setProductIdsDeepLink({ domain, productIds: ids })
+    /* eslint-enable react-hooks/set-state-in-effect */
+  }, [embedded, searchParams, setSearchParams, setTabStore])
+
   const shareUrl = useMemo(
     () =>
       `${window.location.origin}${window.location.pathname}?share=${encodeMigrateShareToken(plan, choice)}`,
@@ -222,8 +260,9 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
         <TabsContent value="replace" className="mt-4">
           <ReplaceTab
             persona={persona}
-            initialDomain={productDeepLink?.domain ?? focus?.domain}
+            initialDomain={productDeepLink?.domain ?? productIdsDeepLink?.domain ?? focus?.domain}
             initialFilter={productDeepLink?.filter}
+            initialProductIds={productIdsDeepLink?.productIds}
             onGoToRoadmaps={() => setTab('roadmaps')}
           />
         </TabsContent>

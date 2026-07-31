@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
+import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import { Link } from 'react-router'
 import {
   Globe,
@@ -28,6 +29,8 @@ interface WebGatewayIntroductionProps {
 export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
   onNavigateToWorkshop,
 }) => {
+  useSectionAnchors()
+
   const productionVendors = GATEWAY_VENDORS.filter((v) => v.pqcStatus === 'production')
   const plannedVendors = GATEWAY_VENDORS.filter((v) => v.pqcStatus === 'planned')
 

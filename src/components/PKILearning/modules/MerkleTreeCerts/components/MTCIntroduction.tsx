@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState } from 'react'
+import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import { Link } from 'react-router'
 import {
   TreePine,
@@ -23,11 +24,13 @@ interface MTCIntroductionProps {
 }
 
 export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWorkshop }) => {
+  useSectionAnchors()
+
   const [showSignatureless, setShowSignatureless] = useState(false)
   return (
     <div className="space-y-6 w-full">
       {/* Section 1: The Certificate Bloat Problem */}
-      <section className="glass-panel p-6">
+      <section data-section-id="cert-bloat" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <AlertTriangle size={20} /> The Certificate Bloat Problem
         </h2>
@@ -67,7 +70,7 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
       </section>
 
       {/* Section 2: How Merkle Tree Certificates Work */}
-      <section className="glass-panel p-6">
+      <section data-section-id="how-mtc-works" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <TreePine size={20} /> How Merkle Tree Certificates Work
         </h2>
@@ -159,7 +162,7 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
       </section>
 
       {/* Section 3: MTC Architecture */}
-      <section className="glass-panel p-6">
+      <section data-section-id="mtc-architecture" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Shield size={20} /> MTC Architecture
         </h2>
@@ -213,7 +216,7 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
       </section>
 
       {/* Section 4: Certificate Types & Tradeoffs */}
-      <section className="glass-panel p-6">
+      <section data-section-id="cert-types" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Scale size={20} /> Certificate Types &amp; Tradeoffs
         </h2>
@@ -277,7 +280,7 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
       </section>
 
       {/* Section 4.5: Advanced — Signatureless Certificates */}
-      <section className="glass-panel">
+      <section data-section-id="landmark-certs" className="glass-panel scroll-mt-20">
         <Button
           variant="ghost"
           onClick={() => setShowSignatureless((v) => !v)}
@@ -394,7 +397,7 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
       </section>
 
       {/* Section 5: IETF Standardization */}
-      <section className="glass-panel p-6">
+      <section data-section-id="ietf-status" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Globe size={20} /> IETF Standardization Status
         </h2>

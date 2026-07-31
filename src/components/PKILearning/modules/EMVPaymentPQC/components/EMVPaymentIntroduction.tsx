@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router'
 import {
   Shield,
@@ -10,8 +10,6 @@ import {
   ShoppingCart,
   Monitor,
   AlertTriangle,
-  ChevronDown,
-  ChevronUp,
   ArrowRight,
   Lock,
   Layers,
@@ -19,11 +17,20 @@ import {
   Server,
   Cpu,
   Scale,
+  Landmark,
+  FileKey,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
+import { LearnSection, useActiveLearnPath } from '@/components/PKILearning/common/LearnSection'
+import {
+  SETTLEMENT_RAILS,
+  KEY_BLOCK_FACTS,
+  EPC_PQC_POSITION,
+  SECTOR_BODIES,
+} from '../data/bankingData'
 import { PAYMENT_NETWORKS } from '../data/paymentNetworkData'
 import { CARD_AUTH_SPECS } from '../data/cardCryptoData'
 import { MOBILE_WALLETS } from '../data/tokenizationData'
@@ -36,44 +43,9 @@ import {
   SEVERITY_LABELS,
 } from '../data/emvConstants'
 
-// ── Local CollapsibleSection ─────────────────────────────────────────────
-
-interface CollapsibleSectionProps {
-  title: string
-  icon: React.ReactNode
-  defaultOpen?: boolean
-  children: React.ReactNode
-}
-
-const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
-  title,
-  icon,
-  defaultOpen = false,
-  children,
-}) => {
-  const [isOpen, setIsOpen] = useState(defaultOpen)
-
-  return (
-    <section className="glass-panel overflow-hidden">
-      <Button
-        variant="ghost"
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-6 text-left"
-      >
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-primary/10">{icon}</div>
-          <h2 className="text-xl font-bold text-gradient">{title}</h2>
-        </div>
-        {isOpen ? (
-          <ChevronUp size={20} className="text-muted-foreground shrink-0" />
-        ) : (
-          <ChevronDown size={20} className="text-muted-foreground shrink-0" />
-        )}
-      </Button>
-      {isOpen && <div className="px-6 pb-6 space-y-4">{children}</div>}
-    </section>
-  )
-}
+// The local CollapsibleSection this module used to declare was replaced by the
+// shared, anchored LearnSection (2026-07-30) so that industry deep links can
+// land on a specific section and per-section reading is actually recorded.
 
 // ── Introduction Component ───────────────────────────────────────────────
 
@@ -84,6 +56,10 @@ interface EMVPaymentIntroductionProps {
 export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
   onNavigateToWorkshop,
 }) => {
+  // Records `?path=` when a learner arrives from the Industry Landscape, so
+  // this module completes on their path's sections rather than all eleven.
+  useActiveLearnPath()
+
   const activeNetworks = PAYMENT_NETWORKS.filter(
     (n) => n.pqcPosture === 'active-pilot' || n.pqcPosture === 'research'
   ).length
@@ -92,7 +68,8 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
   return (
     <div className="w-full space-y-6">
       {/* ── Section 1: The EMV Payment Ecosystem ── */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="emv-ecosystem"
         title="1. The EMV Payment Ecosystem"
         icon={<Globe size={20} className="text-primary" />}
         defaultOpen
@@ -171,10 +148,11 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
             Every transaction traverses this chain. Cryptography protects each link.
           </p>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* ── Section 2: Card Authentication ── */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="card-auth"
         title="2. Card Authentication: SDA, DDA & CDA"
         icon={<Shield size={20} className="text-primary" />}
       >
@@ -223,10 +201,11 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
             enabling counterfeit cards to pass offline terminal verification.
           </p>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* ── Section 3: Payment Network Architecture ── */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="network-architecture"
         title="3. Payment Network Architecture"
         icon={<Globe size={20} className="text-primary" />}
       >
@@ -279,10 +258,11 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
           real-time issuer authorization, providing a second layer of defense. Offline transactions
           rely entirely on the RSA certificate chain — the quantum attack surface is larger.
         </p>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* ── Section 4: Tokenization & Mobile Payments ── */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="tokenization"
         title="4. Tokenization & Mobile Payments"
         icon={<Smartphone size={20} className="text-primary" />}
       >
@@ -324,11 +304,12 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
             attestation and TLS key exchange to the TSP.
           </p>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* ── Section 5: E-Commerce & Card-Not-Present ── */}
-      <CollapsibleSection
-        title="5. E-Commerce & Card-Not-Present"
+      <LearnSection
+        sectionId="ecommerce"
+        title="5. E-Commerce, Card-Not-Present & Retail Checkout"
         icon={<ShoppingCart size={20} className="text-primary" />}
       >
         <p className="text-muted-foreground">
@@ -361,10 +342,11 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
             supported by major CDN providers and browsers.
           </p>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* ── Section 6: POS Terminals & Key Injection ── */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="pos-terminals"
         title="6. POS Terminals & Key Injection"
         icon={<Monitor size={20} className="text-primary" />}
       >
@@ -416,11 +398,156 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
           <ArrowRight size={12} />
           Explore Payment HSMs in the HSM & PQC Module
         </Link>
-      </CollapsibleSection>
+      </LearnSection>
 
-      {/* ── Section 7: Quantum Threats to Payment Systems ── */}
-      <CollapsibleSection
-        title="7. Quantum Threats to Payment Systems"
+      {/* ── Section 7: Interbank Rails & Settlement ── */}
+      <LearnSection
+        sectionId="interbank-rails"
+        title="7. Interbank Rails & Settlement"
+        icon={<Landmark size={20} className="text-primary" />}
+      >
+        <p className="text-muted-foreground">
+          Cards are only one half of the payments estate. The other half moves money between
+          institutions — and it has a different threat profile, because settlement traffic is
+          long-lived, highly structured, and traverses parties you do not control.
+        </p>
+        <div className="space-y-3">
+          {SETTLEMENT_RAILS.map((rail) => (
+            <div key={rail.id} className="p-4 rounded-lg bg-muted/50 border border-border">
+              <h4 className="font-semibold text-foreground">{rail.label}</h4>
+              <p className="mt-1 text-sm text-muted-foreground">{rail.description}</p>
+              <dl className="mt-3 grid gap-2 sm:grid-cols-3 text-sm">
+                <div>
+                  <dt className="text-xs uppercase tracking-wide text-muted-foreground">
+                    Protected today by
+                  </dt>
+                  <dd className="mt-0.5 text-foreground">{rail.classical}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs uppercase tracking-wide text-muted-foreground">
+                    Data lifetime
+                  </dt>
+                  <dd className="mt-0.5 text-foreground">{rail.dataLifetime}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs uppercase tracking-wide text-muted-foreground">
+                    PQC posture
+                  </dt>
+                  <dd className="mt-0.5 text-foreground">{rail.pqcPosture}</dd>
+                </div>
+              </dl>
+            </div>
+          ))}
+        </div>
+        <div className="p-4 rounded-lg bg-status-warning/10 border border-status-warning/30">
+          <p className="text-sm">
+            <AlertTriangle size={14} className="inline mr-1.5 -mt-0.5 text-status-warning" />
+            The correspondent chain is the structural problem: a payment crosses several
+            institutions, each retaining its own records, and no participant can migrate the chain
+            unilaterally. This is why the sector publishes jointly rather than per-bank.
+          </p>
+        </div>
+        <Button variant="outline" onClick={onNavigateToWorkshop} className="text-sm">
+          Model settlement exposure in the Workshop <ArrowRight size={14} className="ml-1" />
+        </Button>
+      </LearnSection>
+
+      {/* ── Section 8: Banking Key Management & Key Blocks ── */}
+      <LearnSection
+        sectionId="banking-key-management"
+        title="8. Banking Key Management & Key Blocks"
+        icon={<FileKey size={20} className="text-primary" />}
+      >
+        <p className="text-muted-foreground">{KEY_BLOCK_FACTS.what}</p>
+        <p className="text-muted-foreground">{KEY_BLOCK_FACTS.controlVector}</p>
+
+        <div className="p-4 rounded-lg bg-muted/50 border border-border">
+          <h4 className="font-semibold text-foreground">
+            Cite the current standard, not the famous one
+          </h4>
+          <p className="mt-1 text-sm text-muted-foreground">
+            The key-block specification most people name is{' '}
+            <strong className="text-foreground">{KEY_BLOCK_FACTS.supersededStandard}</strong>. The
+            current one is{' '}
+            <strong className="text-foreground">{KEY_BLOCK_FACTS.currentStandard}</strong>.{' '}
+            {KEY_BLOCK_FACTS.supersessionNote}
+          </p>
+        </div>
+
+        <div className="p-4 rounded-lg bg-status-info/10 border border-status-info/30">
+          <p className="text-sm text-muted-foreground">
+            <strong className="text-foreground">
+              Why this module teaches around those documents.
+            </strong>{' '}
+            {KEY_BLOCK_FACTS.paywallNote}
+          </p>
+        </div>
+
+        <p className="text-muted-foreground">{KEY_BLOCK_FACTS.pciMandate}</p>
+
+        <div className="p-4 rounded-lg bg-muted/50 border border-border space-y-2">
+          <h4 className="font-semibold text-foreground">
+            Where payments cryptography stands, in the sector&rsquo;s own words
+          </h4>
+          <p className="text-sm text-muted-foreground">{EPC_PQC_POSITION.standardised}</p>
+          <p className="text-sm text-muted-foreground">{EPC_PQC_POSITION.inPreparation}</p>
+          <p className="text-sm text-muted-foreground">{EPC_PQC_POSITION.tlsDirection}</p>
+          <p className="text-sm text-muted-foreground">{EPC_PQC_POSITION.hndlDriver}</p>
+          <p className="text-sm text-muted-foreground">{EPC_PQC_POSITION.symmetricNote}</p>
+          <p className="text-xs text-muted-foreground pt-1">
+            Source: EPC 342-08 v16.0.1, 24 June 2026 —{' '}
+            <Link
+              to="/library?ref=EPC-342-08-v16-0-1-Guidelines-on-Cryptographic-Algorithms-Us"
+              className="text-primary hover:underline"
+            >
+              open in the Library
+            </Link>
+            .
+          </p>
+        </div>
+      </LearnSection>
+
+      {/* ── Section 9: Sector Regulation & Deadlines ── */}
+      <LearnSection
+        sectionId="sector-regulation"
+        title="9. Sector Regulation & Deadlines"
+        icon={<Scale size={20} className="text-primary" />}
+      >
+        <p className="text-muted-foreground">
+          No single authority sets the financial sector&rsquo;s post-quantum timetable. A dozen
+          bodies publish across as many jurisdictions, and which of them binds a given institution
+          depends on where it is regulated — not on where it operates.
+        </p>
+        <div className="space-y-2">
+          {SECTOR_BODIES.map((b) => (
+            <div
+              key={b.id}
+              className="flex flex-wrap items-baseline gap-2 p-3 rounded-lg bg-muted/50 border border-border"
+            >
+              <Link
+                to={`/library?ref=${encodeURIComponent(b.libraryRef)}`}
+                className="font-medium text-primary hover:underline"
+              >
+                {b.label}
+              </Link>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-background text-muted-foreground">
+                {b.jurisdiction}
+              </span>
+              <p className="w-full text-sm text-muted-foreground">{b.contribution}</p>
+            </div>
+          ))}
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Unlike Government &amp; Defense, none of these carries a dated algorithm mandate of the
+          CNSA 2.0 kind. The sector&rsquo;s pressure comes from operational-resilience regulation
+          and from harvest-now-decrypt-later exposure, not from a compliance cliff.
+        </p>
+      </LearnSection>
+
+      {/* ── Section 10: Quantum Threats to Payment Systems ── */}
+      <LearnSection
+        sectionId="quantum-threats"
+        title="10. Quantum Threats to Payment Systems"
         icon={<ShieldAlert size={20} className="text-primary" />}
       >
         <p className="text-muted-foreground">
@@ -477,11 +604,12 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
             <div className="text-xs text-muted-foreground">Networks Active</div>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* ── Section 8: PQC Migration Landscape ── */}
-      <CollapsibleSection
-        title="8. PQC Migration Landscape"
+      <LearnSection
+        sectionId="migration-landscape"
+        title="11. PQC Migration Landscape"
         icon={<Lock size={20} className="text-primary" />}
       >
         <p className="text-muted-foreground">
@@ -518,7 +646,7 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
             </li>
           </ul>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Related Resources */}
       <section className="glass-panel p-6 border-secondary/20">
