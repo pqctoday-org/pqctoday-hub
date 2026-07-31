@@ -9,7 +9,6 @@ export const TRANSACTION_FLOWS: TransactionFlow[] = [
     description:
       'Standard EMV chip transaction with real-time issuer authorization. The card generates an ARQC cryptogram using symmetric keys, sent through the acquirer and network to the issuer for verification.',
     totalLatencyMs: 1200,
-    cryptoTouchpoints: 5,
     quantumVulnerableSteps: 2,
     steps: [
       {
@@ -92,8 +91,14 @@ export const TRANSACTION_FLOWS: TransactionFlow[] = [
         fromActor: 'network',
         toActor: 'issuer',
         description:
-          'Issuer HSM verifies the ARQC using the card master key (symmetric), checks balance/fraud. Generates ARPC (Authorization Response Cryptogram) for the card.',
-        cryptoUsed: ['3DES/AES ARQC verification (symmetric)', 'HSM key wrapping (RSA-2048)'],
+          'Issuer HSM verifies the ARQC using the card master key (symmetric), checks balance/fraud. Generates ARPC (Authorization Response Cryptogram) for the card. The card master key lives in the HSM under a symmetric Local Master Key, so nothing in this step is quantum-vulnerable — the RSA exposure in issuer key management is in key DISTRIBUTION between institutions, modelled separately as the hsm-key-wrapping and key-injection vectors.',
+        // 'HSM key wrapping (RSA-2048)' was listed here until 2026-07-31 while
+        // the step was (correctly) flagged quantum-safe — the only step in this
+        // file naming an asymmetric primitive on a safe step. Per-transaction
+        // ARQC verification does not use RSA: payment HSMs protect the issuer
+        // master key under a symmetric LMK and derive the session key from it.
+        // The listed entry was the error, not the flag.
+        cryptoUsed: ['3DES/AES ARQC verification (symmetric)'],
         quantumVulnerable: false,
         dataSize: '~128 bytes',
         latencyMs: 300,
@@ -121,7 +126,6 @@ export const TRANSACTION_FLOWS: TransactionFlow[] = [
     description:
       'Dynamic Data Authentication: the card proves its authenticity by generating a unique RSA signature per transaction. No network connection required \u2014 the terminal verifies locally using the certificate chain.',
     totalLatencyMs: 350,
-    cryptoTouchpoints: 3,
     quantumVulnerableSteps: 3,
     steps: [
       {
@@ -205,7 +209,6 @@ export const TRANSACTION_FLOWS: TransactionFlow[] = [
     description:
       'Combined Data Authentication (CDA): the card signs the Application Cryptogram (AC) together with dynamic transaction data, combining card authentication and transaction integrity in a single signature. Requires the terminal to verify the card signature offline.',
     totalLatencyMs: 400,
-    cryptoTouchpoints: 4,
     quantumVulnerableSteps: 3,
     steps: [
       {
@@ -292,7 +295,6 @@ export const TRANSACTION_FLOWS: TransactionFlow[] = [
     description:
       'Tap-to-pay using NFC (ISO 14443). Uses a fast path with abbreviated offline authentication and online authorization. Transaction must complete within 500ms for good user experience.',
     totalLatencyMs: 500,
-    cryptoTouchpoints: 4,
     quantumVulnerableSteps: 2,
     steps: [
       {
@@ -362,7 +364,6 @@ export const TRANSACTION_FLOWS: TransactionFlow[] = [
     description:
       'Apple Pay, Google Pay, or Samsung Pay: the phone presents a payment token (not the real PAN) via NFC. The token is detokenized at the network level. Uses device-bound cryptographic keys in a Secure Element.',
     totalLatencyMs: 550,
-    cryptoTouchpoints: 6,
     quantumVulnerableSteps: 3,
     steps: [
       {
