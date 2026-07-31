@@ -493,22 +493,18 @@ export function runCrossRefChecks(): CheckResult[] {
   // a publisher. IEEE 802.x is deliberately absent — that series is free of
   // charge via the IEEE GET Program.
   {
-    const PAID_HOSTS = [
-      'iso.org',
-      'iec.ch',
-      'standards.ieee.org',
-      'ieeexplore.ieee.org',
-      'webstore.ansi.org',
-      'ansi.org',
-      'saemobilus.sae.org',
-      'sae.org',
-      'astm.org',
-      'bsigroup.com',
-      'din.de',
-      'nfpa.org',
-      'techstreet.com',
-      'standards.iteh.ai',
-    ]
+    // Loaded from src/data/paidPublishers.json — the SINGLE source of truth,
+    // shared with the maintenance agent's paid_sources.py (which resolves the
+    // hub checkout and reads this same file). Previously duplicated here by
+    // hand, which would have drifted the moment a publisher was added.
+    const paidCfg = JSON.parse(
+      fs.readFileSync(path.resolve(process.cwd(), 'src/data/paidPublishers.json'), 'utf-8')
+    ) as {
+      paidPublisherHosts: string[]
+      freeDespitePaidHost: { urlPatterns: string[] }
+    }
+    const PAID_HOSTS = paidCfg.paidPublisherHosts
+    const FREE_PATTERNS = paidCfg.freeDespitePaidHost.urlPatterns.map((p) => new RegExp(p))
     const hostOf = (url: string): string => {
       try {
         return new URL(url.trim()).hostname.toLowerCase().replace(/^www\./, '')
@@ -521,8 +517,8 @@ export function runCrossRefChecks(): CheckResult[] {
       const host = hostOf(row.download_url || '')
       if (!host) return
       const isPaidHost = PAID_HOSTS.some((p) => host === p || host.endsWith('.' + p))
-      // IEEE 802.x is free via the IEEE GET Program despite the paid host.
-      const isFreeIeee802 = /(^|\/)802\./.test(row.download_url || '')
+      // Exceptions within a paid host (e.g. IEEE 802.x, free via IEEE GET).
+      const isFreeIeee802 = FREE_PATTERNS.some((re) => re.test(row.download_url || ''))
       const marked = (row.access_type || '').trim().toLowerCase() === 'paid'
       if (isPaidHost && !isFreeIeee802 && !marked) {
         f.push(
