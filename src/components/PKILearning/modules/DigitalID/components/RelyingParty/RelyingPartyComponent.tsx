@@ -16,6 +16,8 @@ import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import type { CryptoKey } from '../../types'
 import type { SdJwtVc } from '../../utils/sdjwt-utils'
+import type { MsoMdoc } from '../../types'
+import { createMdocPresentation, verifyMdocPresentation } from '../../utils/mdoc-utils'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { WhyThisMatters } from '@/components/ui/WhyThisMatters'
 import { CopyableOutput } from '@/components/ui/CopyableOutput'
@@ -26,7 +28,7 @@ interface RelyingPartyComponentProps {
   onBack: () => void
 }
 
-type RPStep = 'START' | 'DISCLOSURE' | 'PRESENTATION' | 'VERIFICATION' | 'COMPLETE'
+type RPStep = 'START' | 'DISCLOSURE' | 'PRESENTATION' | 'VERIFICATION' | 'COMPLETE' | 'REFUSED'
 
 export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
   wallet,
@@ -59,49 +61,81 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
   // Heuristic: Ensure we have at least one valid key to sign with
   const availableKey = wallet.keys.find((k) => k.usage === 'SIGN')
 
-  /** Claims the bank asks for. Drives both the log and the actual disclosure. */
-  const REQUESTED_CLAIMS = ['family_name', 'given_name', 'degree']
+  /**
+   * What the bank asks for. Spans BOTH credentials in one request, which is
+   * the ARF's own model: `age_over_18` proves eligibility from the PID while
+   * `birth_date` stays withheld, and the diploma supplies the degree.
+   */
+  const REQUESTED_CLAIMS = ['family_name', 'given_name', 'degree', 'age_over_18']
 
   /** The SD-JWT credential this presentation will disclose from, if any. */
   const sdJwtCred = wallet.credentials.find(
     (c) => c.type.includes('UniversityDegreeCredential') || c.format === 'dc+sd-jwt'
   )
+  /** The PID (mdoc) — carries age_over_18 and birth_date. */
+  const pidCred = wallet.credentials.find(
+    (c) => c.type.includes('PersonIdentificationData') || c.format === 'mso_mdoc'
+  )
+
+  /** Every claim the holder could disclose, per credential, read from the credentials themselves. */
+  const availableClaims = (): { key: string; source: 'diploma' | 'pid' }[] => {
+    const out: { key: string; source: 'diploma' | 'pid' }[] = []
+    if (sdJwtCred?.raw) {
+      try {
+        const parsed = JSON.parse(sdJwtCred.raw) as SdJwtVc
+        parsed.disclosures.forEach((d) => out.push({ key: d.key, source: 'diploma' }))
+      } catch {
+        /* malformed credential — nothing to offer */
+      }
+    }
+    if (pidCred?.raw) {
+      try {
+        const parsed = JSON.parse(pidCred.raw) as MsoMdoc
+        ;(parsed.issuerSignedItems ?? []).forEach((i) =>
+          out.push({ key: i.elementIdentifier, source: 'pid' })
+        )
+      } catch {
+        /* malformed credential — nothing to offer */
+      }
+    }
+    return out
+  }
+
+  const claims = availableClaims()
 
   /**
-   * Revealed/hidden are derived from the credential's own disclosures rather
-   * than hardcoded: until 2026-07-31 this logged a fixed
-   * "[address, birth_place, gender]" as hidden, none of which is ever issued
-   * by this workshop (the diploma carries given_name, family_name, degree,
-   * gpa, honors). Deriving it keeps the claim honest when the issuer changes.
+   * The holder's choice. Defaults to exactly what the bank asked for, so the
+   * guided path still works for a learner who just clicks through, but every
+   * box is free to untick — under-sharing is allowed precisely so the refusal
+   * below is something you can cause and observe.
    */
-  const disclosurePreview = (): { revealed: string[]; hidden: string[] } => {
-    if (!sdJwtCred?.raw) return { revealed: [], hidden: [] }
-    try {
-      const parsed = JSON.parse(sdJwtCred.raw) as SdJwtVc
-      const all = parsed.disclosures.map((d) => d.key)
-      return {
-        revealed: all.filter((k) => REQUESTED_CLAIMS.includes(k)),
-        hidden: all.filter((k) => !REQUESTED_CLAIMS.includes(k)),
-      }
-    } catch {
-      return { revealed: [], hidden: [] }
-    }
-  }
+  const [selectedClaims, setSelectedClaims] = useState<string[]>(REQUESTED_CLAIMS)
+  const toggleClaim = (k: string) =>
+    setSelectedClaims((prev) => (prev.includes(k) ? prev.filter((x) => x !== k) : [...prev, k]))
+
+  const offeredKeys = claims.map((c) => c.key)
+  /** Claims the bank asked for that the wallet actually holds. */
+  const satisfiable = REQUESTED_CLAIMS.filter((k) => offeredKeys.includes(k))
+  const missing = satisfiable.filter((k) => !selectedClaims.includes(k))
 
   const handleStart = () => {
     addLog('Connecting to Bank (Relying Party)...')
     addLog(`Bank requests: [${REQUESTED_CLAIMS.join(', ')}] for Account Opening.`)
+    addLog('age_over_18 is requested INSTEAD of birth_date — the bank needs eligibility, not your date of birth.')
     setStep('DISCLOSURE')
   }
 
   const handleDisclosure = () => {
     addLog('User Review: Selective Disclosure applied.')
-    const { revealed, hidden } = disclosurePreview()
-    if (revealed.length || hidden.length) {
-      addLog(`Revealed attributes: [${revealed.join(', ') || 'none'}]`)
-      addLog(`Hidden attributes: [${hidden.join(', ') || 'none'}]`)
-    } else {
-      addLog('No SD-JWT credential held — presenting a device binding proof instead.')
+    const revealed = claims.filter((c) => selectedClaims.includes(c.key)).map((c) => c.key)
+    const withheld = claims.filter((c) => !selectedClaims.includes(c.key)).map((c) => c.key)
+    addLog(`Revealed attributes: [${revealed.join(', ') || 'none'}]`)
+    addLog(`Hidden attributes: [${withheld.join(', ') || 'none'}]`)
+    if (withheld.includes('birth_date') && revealed.includes('age_over_18')) {
+      addLog('Note: age_over_18 is proven while birth_date is withheld from the same signed credential.')
+    }
+    if (missing.length) {
+      addLog(`WARNING: withholding [${missing.join(', ')}] — the bank requires these.`)
     }
     setStep('PRESENTATION')
     handlePresentation()
@@ -126,9 +160,14 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
         const audience = 'https://bank.example.com'
 
         const provider = getCryptoProvider()
+        // Only the diploma's own claims go to the SD-JWT presentation; the PID
+        // half is a separate mdoc disclosure below.
+        const diplomaSelection = claims
+          .filter((c) => c.source === 'diploma' && selectedClaims.includes(c.key))
+          .map((c) => c.key)
         const presentationString = await createPresentation(
           sdJwtVc,
-          REQUESTED_CLAIMS,
+          diplomaSelection,
           availableKey,
           audience,
           challenge,
@@ -142,6 +181,29 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
           key: availableKey,
         })
         addLog(`Presentation generated:\n${presentationString.substring(0, 40)}...`)
+
+        // PID half — a REAL ISO 18013-5 selective disclosure: only the chosen
+        // IssuerSignedItems travel, and the verifier re-hashes each against the
+        // issuer-signed MSO. This is what makes the age proof more than a label.
+        if (pidCred?.raw) {
+          const pidSelection = claims
+            .filter((c) => c.source === 'pid' && selectedClaims.includes(c.key))
+            .map((c) => c.key)
+          const mdoc = JSON.parse(pidCred.raw) as MsoMdoc
+          const mdocPres = createMdocPresentation(mdoc, pidSelection)
+          addLog(
+            `PID mdoc disclosure: sending [${mdocPres.disclosed.map((d) => d.elementIdentifier).join(', ') || 'none'}], withholding [${mdocPres.withheld.join(', ') || 'none'}]`
+          )
+          const checks = await verifyMdocPresentation(mdocPres, provider, addOpenSSLLog)
+          for (const c of checks) {
+            addLog(
+              `  digest check ${c.element}: ${c.digestMatched ? 'MATCHES the issuer-signed MSO' : 'FAILED'}`
+            )
+          }
+          if (mdocPres.withheld.includes('birth_date')) {
+            addLog('  birth_date was never transmitted — it is absent from the payload, not merely hidden.')
+          }
+        }
       } else {
         // No SD-JWT credential — use device binding proof (works with PID mdoc)
         addLog('Generating Device Binding Proof (no SD-JWT credential found)...')
@@ -177,6 +239,18 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
   const handleVerification = async () => {
     setLoading(true)
     addLog('Bank Verifying Presentation...')
+
+    // Under-sharing is allowed at the disclosure step precisely so this is
+    // reachable: a verifier that accepts an incomplete presentation would
+    // teach the wrong lesson about what selective disclosure costs.
+    if (missing.length) {
+      addLog(`Bank: presentation is missing [${missing.join(', ')}].`)
+      addLog('Bank: cryptographic proof is VALID, but the request is unsatisfied — account opening refused.')
+      addLog('Nothing you withheld was transmitted; the bank cannot see it to judge it.')
+      setLoading(false)
+      setStep('REFUSED')
+      return
+    }
 
     try {
       if (presentationData) {
@@ -342,12 +416,63 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
                 <div className="space-y-4">
                   <div className="bg-muted/10 p-3 rounded text-sm">
                     <p className="font-semibold mb-2 flex items-center gap-2">
-                      <Eye className="w-4 h-4" /> Requested Data:
+                      <Eye className="w-4 h-4" /> You choose what to share
                     </p>
-                    <ul className="list-disc pl-5 space-y-1 text-xs">
-                      <li>Personal ID (Required)</li>
-                      <li>University Degree (Required)</li>
-                    </ul>
+                    <p className="text-xs text-muted-foreground mb-3">
+                      The bank asked for{' '}
+                      <span className="font-mono">{REQUESTED_CLAIMS.join(', ')}</span>. Untick
+                      anything you would rather keep — the presentation is built from this list, so
+                      what you withhold is never transmitted.
+                    </p>
+                    {claims.length === 0 ? (
+                      <p className="text-xs text-muted-foreground">
+                        No disclosable credential in the wallet yet.
+                      </p>
+                    ) : (
+                      <ul className="space-y-1.5">
+                        {claims.map((c) => {
+                          const asked = REQUESTED_CLAIMS.includes(c.key)
+                          const on = selectedClaims.includes(c.key)
+                          return (
+                            <li key={`${c.source}-${c.key}`} className="flex items-center gap-2">
+                              <input
+                                type="checkbox"
+                                id={`claim-${c.source}-${c.key}`}
+                                checked={on}
+                                onChange={() => toggleClaim(c.key)}
+                                className="accent-tertiary w-3.5 h-3.5"
+                              />
+                              <label
+                                htmlFor={`claim-${c.source}-${c.key}`}
+                                className="text-xs font-mono cursor-pointer"
+                              >
+                                {c.key}
+                              </label>
+                              <span className="text-[10px] px-1 py-0.5 rounded bg-muted text-muted-foreground">
+                                {c.source === 'pid' ? 'PID' : 'diploma'}
+                              </span>
+                              {asked && (
+                                <span className="text-[10px] px-1 py-0.5 rounded bg-tertiary/10 text-tertiary border border-tertiary/20">
+                                  requested
+                                </span>
+                              )}
+                              {c.key === 'birth_date' && (
+                                <span className="text-[10px] text-muted-foreground italic">
+                                  not requested — age_over_18 proves eligibility instead
+                                </span>
+                              )}
+                            </li>
+                          )
+                        })}
+                      </ul>
+                    )}
+                    {missing.length > 0 && (
+                      <p className="text-xs text-status-warning mt-3">
+                        Withholding <span className="font-mono">{missing.join(', ')}</span> — the
+                        bank requires these. Share anyway to see what a verifier does with an
+                        incomplete presentation.
+                      </p>
+                    )}
                   </div>
                   <Button
                     variant="ghost"
@@ -373,6 +498,31 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
                 <Button variant="ghost" onClick={handleVerification} className="w-full">
                   Check Verification Result
                 </Button>
+              )}
+
+              {step === 'REFUSED' && (
+                <div className="space-y-4">
+                  <div className="bg-status-warning/5 p-4 rounded border border-status-warning/30 text-center">
+                    <AlertTriangle className="w-12 h-12 text-status-warning mx-auto mb-2" />
+                    <h3 className="font-bold text-status-warning">Account Opening Refused</h3>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Your proof was cryptographically valid — the bank simply did not receive
+                      everything it asked for. The attributes you withheld were never transmitted,
+                      so it has no way to evaluate them.
+                    </p>
+                    <Button
+                      onClick={() => {
+                        setSelectedClaims(REQUESTED_CLAIMS)
+                        setStep('DISCLOSURE')
+                      }}
+                      variant="outline"
+                      size="sm"
+                      className="mt-4"
+                    >
+                      Choose again
+                    </Button>
+                  </div>
+                </div>
               )}
 
               {step === 'COMPLETE' && (
