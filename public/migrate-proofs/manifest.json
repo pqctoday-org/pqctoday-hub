@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
   "generated": "2026-07-09",
-  "count": 1159,
+  "count": 1166,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -9378,6 +9378,55 @@
       "bytes": 88317,
       "content_type": "text/html; charset=utf-8",
       "tier": "new"
+    },
+    {
+      "product_id": "proofpoint-aegis",
+      "url": "https://www.proofpoint.com/us/resources/data-sheets/email-encryption",
+      "file": "proofpoint-aegis-b0c2d039.html",
+      "bytes": 88388,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Cloudian-FJA-FIPS-Java-API",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5068",
+      "file": "Cloudian-FJA-FIPS-Java-API-2d8abf32.html",
+      "bytes": 76447,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "ASI-HSM-AHX5-KNET-Cryptographic-Module",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=18785",
+      "file": "ASI-HSM-AHX5-KNET-Cryptographic-Module-c35800a1.html",
+      "bytes": 88655,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "PQnet",
+      "url": "https://github.com/pdb0102/PQnet",
+      "file": "PQnet-454c950b.html",
+      "bytes": 281286,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "CryptoScan",
+      "url": "https://github.com/csnp/cryptoscan",
+      "file": "CryptoScan-01d09699.html",
+      "bytes": 546964,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "QPKI",
+      "url": "https://github.com/qpki/qpki",
+      "file": "QPKI-01fa97f6.html",
+      "bytes": 324851,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "libbitcoinpqc",
+      "url": "https://github.com/cryptoquick/libbitcoinpqc",
+      "file": "libbitcoinpqc-7b8f1d70.html",
+      "bytes": 369823,
+      "tier": "curl_cffi:chrome124"
     }
   ]
 }
