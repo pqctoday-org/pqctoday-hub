@@ -541,7 +541,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'individual-draft',
         stageNote: 'Internet-Draft (individual)',
-        note: 'Composite ML-DSA+Ed25519 host-key authentication track; the CNSA 2.0 SSH profile (Independent Submission) also touches composite-sig host-key semantics.',
+        note: 'Composite ML-DSA+Ed25519 host-key authentication track; the CNSA 2.0 SSH profile (Independent Submission) also touches composite-sig host-key semantics. OpenSSH 10.4 (2026-07-06) shipped the first implementation — experimental, opt-in support for mldsa44-ed25519 host keys and user auth (ssh-keygen -t mldsa44-ed25519; not enabled by default).',
         refs: [
           {
             kind: 'draft',
@@ -557,7 +557,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       {
         productId: 'openssh',
         name: 'OpenSSH',
-        versionNote: '10.0+ (mlkem768x25519 default); 10.4 latest (2026-07)',
+        versionNote:
+          '10.0+ (mlkem768x25519 default KEX); 10.4 (2026-07-06) adds experimental opt-in composite ML-DSA-44+Ed25519 signatures',
       },
     ],
     commercialLibraries: [
@@ -607,7 +608,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       {
         label: 'OpenSSH release notes',
         url: 'https://www.openssh.com/releasenotes.html',
-        note: 'mlkem768x25519 default since 10.0 (Apr 2025); 10.4 latest (2026-07-06)',
+        note: 'mlkem768x25519 default since 10.0 (Apr 2025); 10.4 (2026-07-06) adds experimental composite ML-DSA-44+Ed25519 signatures (opt-in)',
       },
       {
         label: 'IETF SSHM working group documents',
