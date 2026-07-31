@@ -312,7 +312,7 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
             <div>
               <div className="text-sm font-medium text-foreground">Compliance</div>
               <div className="text-xs text-muted-foreground">
-                NIST, BSI, ANSSI &amp; Common Criteria requirements
+                eIDAS 2.0 obligations, PQC expectations &amp; GDPR Art. 32
               </div>
             </div>
           </Link>
@@ -329,14 +329,14 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
             </div>
           </Link>
           <Link
-            to="/timeline"
+            to="/timeline?country=European%20Union"
             className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
           >
             <Calendar size={16} className="text-primary shrink-0" />
             <div>
               <div className="text-sm font-medium text-foreground">Migration Timeline</div>
               <div className="text-xs text-muted-foreground">
-                NIST milestones, country deadlines &amp; standardization
+                EU PQC milestones: 2026 roadmaps, 2030 high-risk, 2035 full
               </div>
             </div>
           </Link>
