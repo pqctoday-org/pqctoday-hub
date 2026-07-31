@@ -32,7 +32,7 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
         <p className="text-foreground/80 leading-relaxed">
           The European Digital Identity Regulation (
           <InlineTooltip term="eIDAS 2.0">eIDAS 2.0</InlineTooltip>, Regulation EU 2024/1183)
-          entered into force in May 2024 and mandates that all 27 EU member states provide citizens
+          entered into force on 20 May 2024 and mandates that all 27 EU member states provide citizens
           and residents with at least one{' '}
           <InlineTooltip term="EUDI Wallet">EUDI Wallet</InlineTooltip> by late 2026. Unlike eIDAS
           1.0 where national eID notification was voluntary, eIDAS 2.0 makes digital identity
@@ -61,8 +61,8 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
             <div className="text-sm font-bold text-warning mb-1">Key Deadlines</div>
             <ul className="text-xs text-muted-foreground space-y-1">
-              <li>May 2024: Regulation entered into force</li>
-              <li>Dec 2024: Five implementing regulations adopted</li>
+              <li>20 May 2024: Regulation entered into force</li>
+              <li>Nov 2024: Five implementing regulations adopted (published 4 Dec)</li>
               <li>Dec 2026: Wallets available</li>
               <li>Late 2027: Private sector acceptance</li>
             </ul>
@@ -76,9 +76,11 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
           <FileText size={20} /> Credential Formats: mdoc vs SD-JWT
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
-          The EUDI Architecture Reference Framework (ARF 2.0) supports two credential formats. Both
-          enable <InlineTooltip term="Selective Disclosure">selective disclosure</InlineTooltip>,
-          but serve different use cases.
+          The EUDI Architecture Reference Framework (ARF v3.0.0) makes two attestation formats
+          mandatory, and adds W3C Verifiable Credentials Data Model v2.0 as an optional third. Both
+          mandatory formats enable{' '}
+          <InlineTooltip term="Selective Disclosure">selective disclosure</InlineTooltip>, but serve
+          different use cases.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -103,7 +105,7 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <div className="text-sm font-bold text-success mb-2">
-              vc+sd-jwt (<InlineTooltip term="SD-JWT">SD-JWT</InlineTooltip> RFC 9901)
+              dc+sd-jwt (<InlineTooltip term="SD-JWT">SD-JWT</InlineTooltip> RFC 9901)
             </div>
             <ul className="text-xs text-muted-foreground space-y-1.5">
               <li>
@@ -261,11 +263,11 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
               </div>
               <div className="p-2 rounded border bg-muted/30 text-center">
                 <div className="font-bold text-foreground">NOBID</div>
-                <div className="text-muted-foreground">Banking & Telecom</div>
+                <div className="text-muted-foreground">Payments</div>
               </div>
               <div className="p-2 rounded border bg-muted/30 text-center">
                 <div className="font-bold text-foreground">POTENTIAL</div>
-                <div className="text-muted-foreground">Government & Payments</div>
+                <div className="text-muted-foreground">Government, SIM, mDL & Payments</div>
               </div>
             </div>
           </div>

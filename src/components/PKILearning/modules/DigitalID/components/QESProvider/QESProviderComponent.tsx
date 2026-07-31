@@ -32,13 +32,13 @@ const QES_ALGORITHM_OPTIONS: QesAlgorithmOption[] = [
     label: 'ES384 (P-384)',
     algorithm: 'ES384',
     curve: 'P-384',
-    description: 'ECDSA with P-384 — ETSI TS 119 312 recommended for QES (≥128-bit security)',
+    description: 'ECDSA with P-384 — listed for qualified signatures in ETSI TS 119 312 (~192-bit classical security)',
   },
   {
     label: 'ES256 (P-256)',
     algorithm: 'ES256',
     curve: 'P-256',
-    description: 'ECDSA with P-256 — widely supported, 128-bit security',
+    description: 'ECDSA with P-256 — widely supported (~128-bit classical security)',
   },
   {
     label: 'EdDSA (Ed25519)',
@@ -209,7 +209,7 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({
                   </p>
                   <p>
                     Remote <InlineTooltip term="Qualified Electronic Signature">QES</InlineTooltip>{' '}
-                    uses the CSC API standard (v2) to interact with a cloud-based HSM managed by a{' '}
+                    uses the CSC API standard (V2.2, November 2025) to interact with a cloud-based HSM managed by a{' '}
                     <InlineTooltip term="QTSP">
                       Qualified Trust Service Provider (QTSP)
                     </InlineTooltip>

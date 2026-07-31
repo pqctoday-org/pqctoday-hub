@@ -73,7 +73,8 @@ export const OPENID4VCI_METADATA = {
       format: 'mso_mdoc',
       doctype: 'eu.europa.ec.eudi.pid.1',
       cryptographic_binding_methods_supported: ['cose_key'],
-      cryptographic_suites_supported: ['ES256', 'ES384'],
+      // Renamed from `cryptographic_suites_supported` in OpenID4VCI 1.0 Final.
+      credential_signing_alg_values_supported: ['ES256', 'ES384'],
       display: [
         {
           name: 'Person Identification Data',
@@ -106,7 +107,7 @@ export const OPENID4VP_PRESENTATION_DEF = {
       id: 'diploma_education',
       name: 'Education Verification',
       purpose: 'Premium account eligibility',
-      format: { 'vc+sd-jwt': {} },
+      format: { 'dc+sd-jwt': {} },
       constraints: {
         fields: [{ path: ['$.degree_type'] }, { path: ['$.institution_name'] }],
       },
@@ -148,7 +149,7 @@ export const EUDI_GLOSSARY = {
   OpenID4VCI:
     'OpenID for Verifiable Credential Issuance (1.0) - Protocol for issuing verifiable credentials to wallets.',
   OpenID4VP:
-    'OpenID for Verifiable Presentations (1.0 Final, July 2025) - Protocol for presenting verifiable credentials to Relying Parties.',
+    'OpenID for Verifiable Presentations (1.0 Final, July 2025) - Protocol for presenting verifiable credentials to Relying Parties. Queries use DCQL; the earlier DIF Presentation Exchange syntax was removed before 1.0.',
   'SD-JWT':
     'Selective Disclosure JWT (RFC 9901) - A JWT format that allows selective disclosure of claims. The SD-JWT VC credential profile remains a draft.',
   mdoc: 'Mobile Document - CBOR-based credential format defined in ISO/IEC 18013-5.',
@@ -175,11 +176,7 @@ export const EUDI_GLOSSARY = {
     'Cross-border mechanism ensuring mutual recognition of digital identities and qualified attestations across all 27 EU member states.',
 }
 
-// Module metadata
-export const DIGITAL_ID_MODULE = {
-  id: 'digital-id',
-  title: 'Digital ID',
-  description:
-    'Master EUDI Wallet: Wallet activation, PID issuance, attestations, QES, and verification.',
-  duration: '120 min',
-}
+// NOTE: a `DIGITAL_ID_MODULE` constant used to live here duplicating the
+// module's id/title/description/duration. It had no consumers and its
+// duration ('120 min') contradicted the manifest ('80 min'), which is what
+// the UI actually renders. manifest.ts is the single source of truth.

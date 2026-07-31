@@ -42,7 +42,10 @@ export interface VerifiableCredential {
     proofPurpose: string
     jws: string
   }
-  format?: 'mso_mdoc' | 'vc+sd-jwt' | 'jwt_vc'
+  // `dc+sd-jwt` replaced `vc+sd-jwt` in draft-ietf-oauth-sd-jwt-vc (Nov 2024),
+  // to avoid colliding with the W3C-registered `vc` subtype. OpenID4VCI 1.0
+  // Final uses `dc+sd-jwt` exclusively.
+  format?: 'mso_mdoc' | 'dc+sd-jwt' | 'jwt_vc'
   raw?: string
 }
 
