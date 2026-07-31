@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "libbitcoinpqc",
+    "category": "Blockchain & DLT Protocols",
+    "product_name": "libbitcoinpqc",
+    "product_brief": "A C library for Post-Quantum Cryptographic (PQC) signature algorithms for Bitcoin, implementing ML-DSA-44, SLH-DSA, and BIP 340 Schnorr.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Implements two NIST-standardized PQC signature algorithms: ML-DSA-44 (FIPS 204, lattice-based) and SLH-DSA-SHA2-128s (FIPS 205, stateless hash-based). Also supports BIP 340 Schnorr (secp256k1). The implementations are based on reference code from the NIST PQC standardization process and are explicitly stated as \"not production-hardened.\" It provides key generation, signing, and verification functions with a unified C API.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "secp256k1 (Schnorr/BIP 340), ML-DSA-44 (CRYSTALS-Dilithium), SLH-DSA-SHA2-128s (SPHINCS+), SHA-256, SHAKE-256",
+    "key_management_model": "User-provided entropy (bring your own randomness); library does not provide its own random number generation.",
+    "supported_blockchains": "Bitcoin",
+    "architecture_type": "Software library (C library)",
+    "infrastructure_layer": "Application",
+    "license_type": "Open Source",
+    "license": "MIT License",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "No (The text states the algorithms are \"FIPS-certified\" referring to the standards FIPS 204 and FIPS 205, but the library itself is based on reference code and is \"not production-hardened,\" implying the library implementation is not FIPS 140 validated).",
+    "primary_platforms": "Unknown (Mentions Nix, CMake, C99 compiler, but no specific OS deployment targets)",
+    "target_industries": "Cryptocurrency (Bitcoin)",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "secp256k1 Schnorr (BIP 340), ML-DSA-44 (FIPS 204), SLH-DSA-SHA2-128s (FIPS 205)",
+    "authoritative_source_url": "https://github.com/cryptoquick/libbitcoinpqc",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Registered tests cover BIP 340 golden vectors, ML-DSA-44 keygen/sign/verify/tamper rejection, and SLH-DSA golden vectors/determinism/verify/reject paths. Includes short entropy rejection and NULL argument rejection tests.",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown (Library requires user-provided entropy from a cryptographically secure source; does not provide its own RNG).",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Dependencies include sphincsplus and pq-crystals/dilithium reference implementations.",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-07-31"
+    }
+  }
+]

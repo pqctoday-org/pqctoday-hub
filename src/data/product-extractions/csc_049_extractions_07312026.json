@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "CryptoScan",
+    "category": "Cryptographic Discovery Platforms",
+    "product_name": "CryptoScan",
+    "product_brief": "Cryptographic discovery tool for source code to assess quantum risk and plan post-quantum migration.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Detects NIST-standardized PQC algorithms including ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205), and draft FN-DSA (FIPS 206). Also detects stateful hash-based signatures (XMSS, LMS per SP 800-208). Recognizes legacy names (Kyber, Dilithium, SPHINCS+). Identifies hybrid implementations (e.g., X25519+ML-KEM, ECDSA+ML-DSA).",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "RSA, ECDSA, DSA, DH, ECDH, Ed25519, X25519, AES, ChaCha20-Poly1305, DES, 3DES, RC4, Blowfish, SHA-2, SHA-3, SHAKE128/256, BLAKE2, BLAKE3, MD5, SHA-1, HMAC-SHA256/384/512, HMAC-SHA3, KMAC128/256, CMAC, GMAC, Poly1305, HKDF, PBKDF2, Argon2id, scrypt, bcrypt, ML-KEM, ML-DSA, SLH-DSA, FN-DSA, XMSS, LMS",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Unknown",
+    "infrastructure_layer": "Security Stack",
+    "license_type": "Open Source",
+    "license": "Apache License 2.0",
+    "latest_version": "v1.3",
+    "release_date": "Unknown",
+    "fips_validated": "No",
+    "primary_platforms": "Go 1.21+, Linux/macOS/Windows (implied by Go binary), GitHub Actions, GitLab CI",
+    "target_industries": "Enterprise, Government (federal compliance mentioned)",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "v1.4 (Next): Smart remediation engine, Enhanced CBOM output, Git history scanning. v2.0 (Future): AWS/Azure/GCP resource scanning, Infrastructure-as-Code analysis.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ECDSA, Ed25519, DSA, ML-DSA, SLH-DSA, FN-DSA, XMSS, LMS",
+    "authoritative_source_url": "https://github.com/csnp/cryptoscan",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Yes. Scans source code, configs, and dependencies. Generates CBOM. Detects 90+ patterns. Context-aware confidence scoring.",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Not applicable",
+    "qrng_&_entropy_sources": "Not applicable",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Scans package manifests (package.json, go.mod, etc.) for crypto libraries. Generates CBOM.",
+    "deployment_&_migration_complexity": "Provides Migration Readiness Score. Maps to QRAMM framework. Offers migration guidance and remediation advice.",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Maps findings to QRAMM Dimension 1: Cryptographic Visibility & Inventory.",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-07-31"
+    }
+  }
+]
