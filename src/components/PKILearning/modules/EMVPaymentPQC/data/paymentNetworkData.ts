@@ -54,30 +54,33 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
     },
     pqcPosture: 'active-pilot',
     /**
-     * PROOF NOTE (2026-07-31). Mastercard's "Migration to Post-Quantum
-     * Cryptography" white paper (2025) is real — it is registered in
-     * industry_landscape_*.csv and corroborated by independent search hits —
-     * but mastercard.com bot-blocks every automated fetch, so the platform has
-     * NO cached copy and cannot verify anything the document says.
+     * PROOF NOTE (2026-07-31, updated). The "Migration to Post-Quantum
+     * Cryptography" white paper (Mastercard R&D, 2025) was manually acquired
+     * — mastercard.com bot-blocks the automated pipeline — and is now cached
+     * (industry-landscape evidence manifest, sha256 3ac0c764...). Read in
+     * full. Claims below are what the paper actually says, not what earlier
+     * secondary reporting implied:
      *
-     * This module states elsewhere that it "cites nothing it has not read"
-     * (SectorRegulationTimeline). So the figures previously summarised from it
-     * — a double-digit percentage of TLS 1.3 connections PQC-secured by end
-     * 2024, QKD trials, a five-year readiness recommendation — are not
-     * asserted here. Only the paper's existence is, which is independently
-     * established.
-     *
-     * TO REVERSE THIS: drop the PDF in
-     * pqctoday-priv/local-evidence-cache/_inbox/ and run
-     * ingest_manual_evidence.py, then cite it properly.
+     * - The "double-digit % of TLS 1.3 connections secured with PQC by end
+     *   2024" figure IS in the paper — but it is Cloudflare's internet-wide
+     *   adoption statistic, which the paper CITES, not a claim about
+     *   Mastercard's own network. Attributed correctly below.
+     * - No QKD trial or pilot is described anywhere in the paper — that
+     *   claim had no basis and stays dropped.
+     * - No specific FI-readiness timeline (3 years, 5 years, or otherwise)
+     *   appears anywhere in the text. The paper's one concrete
+     *   recommendation is to invest in cryptographic inventory tooling
+     *   immediately, independent of an institution's own migration
+     *   timeline — quoted below instead of the invented "5 years".
      */
     pqcInitiatives: [
-      'Published "Migration to Post-Quantum Cryptography" white paper (2025) — the only card network to publish a dedicated PQC paper',
-      'Contents not verifiable here: the paper is not fetchable by the evidence pipeline, so no figure from it is quoted',
+      'Published "Migration to Post-Quantum Cryptography" white paper (Mastercard R&D, 2025) — the only card network to publish a dedicated PQC paper',
+      'Paper frames HNDL as the central driver and compares PQC against Quantum Key Distribution (QKD), favoring PQC for deployability',
+      'Cites Cloudflare’s internet-wide TLS 1.3 PQC adoption data (~2% of connections by March 2024, reaching double digits by end of 2024) as evidence of momentum — an industry-wide figure the paper quotes, not a claim about Mastercard’s own network',
       'EMVCo PQC study group participation',
     ],
     pqcTimeline:
-      'Publicly engaged, with a published white paper; no dated commitment the platform can verify from a cached source',
+      'No pilot or dated commitment described in the paper. Its guidance to financial institutions: invest in cryptographic inventory tooling now, "regardless of the timeline for PQC migration that it deems to be ideal"',
     radarScores: {
       scale: 3,
       offlineExposure: 4,
