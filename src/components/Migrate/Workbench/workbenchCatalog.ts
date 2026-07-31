@@ -66,13 +66,27 @@ export function domainProductCount(domain: DomainId): number {
 }
 
 /** Free-text filter within a product list (name / vendor-ish / category). */
-export function filterProducts(items: SoftwareItem[], query: string): SoftwareItem[] {
+/** `productIds`, when given, is an EXACT membership filter (by SoftwareItem.productId)
+ * that takes over from the free-text `query` entirely — added 2026-07-30 for the
+ * leader-detail "view N open-source projects" deep link, which already knows the
+ * exact product ids (leader.migrateCatalogRefs) and shouldn't re-derive them via a
+ * fuzzy text match the way the plain `query` path does. */
+export function filterProducts(
+  items: SoftwareItem[],
+  query: string,
+  productIds?: string[]
+): SoftwareItem[] {
+  if (productIds && productIds.length > 0) {
+    const wanted = new Set(productIds)
+    return items.filter((p) => wanted.has(p.productId))
+  }
   const q = query.trim().toLowerCase()
   if (!q) return items
   return items.filter(
     (p) =>
       p.softwareName.toLowerCase().includes(q) ||
       (p.categoryName || '').toLowerCase().includes(q) ||
-      (p.vendorId || '').toLowerCase().includes(q)
+      (p.vendorId || '').toLowerCase().includes(q) ||
+      p.productId.toLowerCase() === q
   )
 }

@@ -56,6 +56,8 @@ const PRESET_PARAM = 'preset'
 const FILTER_PARAMS = [
   'search',
   'assignee',
+  'inventor',
+  'patentIds',
   'agility',
   'domain',
   'impact',
