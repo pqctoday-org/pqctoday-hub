@@ -69,9 +69,10 @@ export const useSectionAnchors = (): void => {
   useEffect(() => {
     if (!target) return
     const raf = requestAnimationFrame(() => {
-      document
-        .querySelector(`[data-section-id="${target}"]`)
-        ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      const el =
+        document.querySelector(`[data-section-id="${target}"]`) ??
+        document.querySelector(`section[id="${CSS.escape(target)}"]`)
+      el?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     })
     return () => cancelAnimationFrame(raf)
   }, [target])
@@ -79,13 +80,20 @@ export const useSectionAnchors = (): void => {
   // Mark each section read once half of it has been on screen.
   useEffect(() => {
     if (!moduleId) return
-    const els = document.querySelectorAll<HTMLElement>('[data-section-id]')
+    // Both anchor styles. Some modules mark sections with `data-section-id`;
+    // others (cbom, sbom, crypto-registry, pqc-candidates,
+    // verification-closure) use a local <Section id="..."> helper that emits a
+    // plain HTML id. Those were already correctly anchored and matched their
+    // manifests exactly — they were invisible to this hook only because it
+    // looked for one attribute.
+    const els = document.querySelectorAll<HTMLElement>('[data-section-id], section[id]')
     if (els.length === 0) return
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
-            const id = (entry.target as HTMLElement).dataset.sectionId
+            const el = entry.target as HTMLElement
+            const id = el.dataset.sectionId ?? el.id
             if (id) markLearnSectionRead(moduleId, id)
           }
         }

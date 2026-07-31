@@ -15,6 +15,7 @@ import {
 import { Link } from 'react-router'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { LearnSection } from '@/components/PKILearning/common/LearnSection'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { Button } from '@/components/ui/button'
 
@@ -207,7 +208,8 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
   return (
     <div className="space-y-8 w-full">
       {/* Section 1 */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="encryption-layers"
         icon={<Layers size={24} className="text-primary" />}
         title="Encryption Layers: TDE, CLE, Field-Level, Queryable"
         defaultOpen
@@ -291,10 +293,11 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
             algorithms to ML-KEM-1024 is the scope of PQC database migration.
           </p>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Section 2 */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="byok-hyok"
         icon={<KeyRound size={24} className="text-primary" />}
         title="BYOK, HYOK, and External PQC Key Managers"
       >
@@ -366,10 +369,11 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
           7&ndash;10 years before harvest-now-decrypt-later attacks become practical. Databases with
           HYOK architecture can upgrade immediately by rotating to ML-KEM-1024 master keys.
         </p>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Section 3 */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="online-migration"
         icon={<ArrowRightLeft size={24} className="text-primary" />}
         title="Online vs Offline Migration, Performance Overhead"
       >
@@ -489,10 +493,11 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
           KMS metadata grows. Performance overhead on OLTP query paths is zero after the
           re-encryption window.
         </p>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Section 4 */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="queryable-pqc"
         icon={<Search size={24} className="text-primary" />}
         title="Queryable Encryption Patterns with PQC"
       >
@@ -552,10 +557,11 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
             </p>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Section 5 */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="compliance"
         icon={<BookOpen size={24} className="text-primary" />}
         title="GDPR, HIPAA, and Regulatory Requirements"
       >
@@ -622,7 +628,7 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
             risk for new data immediately; historical records require re-encryption.
           </p>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Data-at-Rest Strategy Chooser (Applied Quantum §5.6) */}
       <CollapsibleSection
