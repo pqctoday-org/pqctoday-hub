@@ -818,6 +818,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       { productId: 'boringssl', name: 'BoringSSL', versionNote: 'X25519MLKEM768 production' },
       { productId: 'rustls', name: 'rustls', versionNote: 'via rustls-post-quantum crate' },
       { productId: 'oqs-provider', name: 'oqs-provider', versionNote: 'OpenSSL 3.x plugin' },
+      {
+        productId: 'JEP-527-Post-Quantum-Hybrid-Key-Exchange',
+        name: 'JEP 527: Post-Quantum Hybrid Key Exchange for TLS 1.3',
+        versionNote: 'X25519MLKEM768 default, SecP256r1MLKEM768, SecP384r1MLKEM1024 (JDK 27)',
+      },
     ],
     commercialLibraries: [
       { productId: 'wolfssl', name: 'wolfSSL', versionNote: 'ML-KEM + ML-DSA + FALCON' },
