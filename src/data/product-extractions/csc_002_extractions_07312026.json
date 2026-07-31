@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "ASI-HSM AHX5 KNET Cryptographic Module",
+    "category": "Hardware Security Module (HSM) Software",
+    "product_name": "ASI-HSM AHX5 KNET Cryptographic Module",
+    "product_brief": "Hardware module providing cryptographic services via Ethernet/IP, typically embedded in network appliances for large-scale cloud infrastructures.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Supports ML-DSA (KeyGen, SigGen, SigVer) and ML-KEM (EncapDecap, KeyGen) algorithms. Validated under NIST CAVP program.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "AES-CBC, AES-CMAC, AES-CTR, AES-ECB, AES-GCM, AES-KW, AES-CBC-MAC, ECDSA, EDDSA, Hash DRBG, HMAC-SHA-1, HMAC-SHA2, HMAC-SHA3, KAS-ECC-SSC, KDF TLS, ML-DSA, ML-KEM, RSA, SHA2, SHA3, SHAKE-256, TDES-CBC, TDES-ECB",
+    "key_management_model": "HSM-backed",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "HSM-based",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "1.1.0",
+    "release_date": "Unknown",
+    "fips_validated": "Yes (NIST CAVP validated; references FIPS 186-5, FIPS 203/204 implied by ML-KEM/ML-DSA, SP 800-90B, SP 800-56Ar3)",
+    "primary_platforms": "Stand-alone network appliance, large-scale cloud infrastructures",
+    "target_industries": "Enterprise, Cloud Infrastructure",
+    "regulatory_status": "NIST CAVP Validated (A6066)",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ECDSA, EDDSA, RSA, ML-DSA",
+    "authoritative_source_url": "https://csrc.nist.gov",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "NIST CAVP (Cryptographic Algorithm Validation Program) conformance",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "SP800-90B Conditioning Component, Hash DRBG",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-07-31"
+    }
+  }
+]
