@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-31T22:14:02.102055+00:00",
+  "generated": "2026-07-31T22:49:02.233370+00:00",
   "entries": [
     {
       "refId": "NIST",
@@ -1649,6 +1649,107 @@
       "sizeBytes": 28733,
       "contentType": "text/html",
       "sha256": "3a343269cc78d6532228dca0a3f8cdd254b0e26ef0d15274bbf7523da0c90036"
+    },
+    {
+      "refId": "FFIEC-IT-EXAMINATION-HANDBOOK-",
+      "url": "https://ithandbook.ffiec.gov/it-booklets/information-security",
+      "status": "downloaded",
+      "filename": "FFIEC-IT-EXAMINATION-HANDBOOK-.html",
+      "sizeBytes": 58546,
+      "contentType": "text/html",
+      "sha256": "a4a041bbeb112f874d0ebcc858dc447b568e8e413441d194b8cb4dc9453304d7"
+    },
+    {
+      "refId": "CJIS-SECURITY-POLICY-FBI",
+      "url": "https://le.fbi.gov/file-repository/cjis_security_policy_v6-1_20260625.pdf",
+      "status": "downloaded",
+      "filename": "CJIS-SECURITY-POLICY-FBI.pdf",
+      "sizeBytes": 4443912,
+      "contentType": "application/pdf",
+      "sha256": "0e0f0f53db17f2b6408b2ce486fafb84acb0f628f68a794372ef4eb0c87ff4f8"
+    },
+    {
+      "refId": "PSD2-REVISED-PAYMENT-SERVICES-",
+      "url": "https://eur-lex.europa.eu/eli/dir/2015/2366/oj/eng",
+      "status": "downloaded",
+      "filename": "PSD2-REVISED-PAYMENT-SERVICES-.html",
+      "sizeBytes": 1122118,
+      "contentType": "text/html",
+      "sha256": "1109cd435d9aa729aff87d6476913c45ad999ac14bedf5152633b98a8cbf5e30"
+    },
+    {
+      "refId": "CCCS-ITSP-40-111-CRYPTOGRAPHIC",
+      "url": "https://www.cyber.gc.ca/en/guidance/cryptographic-algorithms-unclassified-protected-protected-b-information-itsp40111",
+      "status": "downloaded",
+      "filename": "CCCS-ITSP-40-111-CRYPTOGRAPHIC.html",
+      "sizeBytes": 264573,
+      "contentType": "text/html",
+      "sha256": "0481832765cba7bbff393bcac176c1322ac0ccbf42264803eba6c878a8283a83"
+    },
+    {
+      "refId": "INDIA-DPDP-ACT-2023",
+      "url": "https://www.meity.gov.in/static/uploads/2024/06/2bf1f0e9f04e6fb4f8fef35e82c42aa5.pdf",
+      "status": "downloaded",
+      "filename": "INDIA-DPDP-ACT-2023.pdf",
+      "sizeBytes": 182082,
+      "contentType": "application/pdf",
+      "sha256": "4deb23981d3010c8225a2ff6149e7243dc2268455b299e283afebdd7b72a7d15"
+    },
+    {
+      "refId": "SFC-CIRCULAR-EXTERNA-007-2018-",
+      "url": "https://www.fundacionmicrofinanzasbbva.org/revistaprogreso/wp-content/uploads/2018/05/Col-CE-007-ciberseguridad.pdf",
+      "status": "downloaded",
+      "filename": "SFC-CIRCULAR-EXTERNA-007-2018-.pdf",
+      "sizeBytes": 13955,
+      "contentType": "application/pdf",
+      "sha256": "7cf984c6f226349b097b1e35cc629a347ca117b724d153c310533ba6a1928a7b"
+    },
+    {
+      "refId": "OJK-POJK-11-2022-IT-IMPLEMENTA",
+      "url": "https://ojk.go.id/id/regulasi/Documents/Pages/Penyelenggaraan-Teknologi-Informasi-Oleh-Bank-Umum/POJK%2011%20-%2003%20-%202022.pdf",
+      "status": "downloaded",
+      "filename": "OJK-POJK-11-2022-IT-IMPLEMENTA.pdf",
+      "sizeBytes": 241982,
+      "contentType": "application/pdf",
+      "sha256": "d4e8d59915bdecdbdc1ae61388b858b8c898bc349d23cbb64326f43a48b5b733"
+    },
+    {
+      "refId": "SBS-RESOLUCION-504-2021-INFORM",
+      "url": "https://busquedas.elperuano.pe/normaslegales/aprueban-el-reglamento-para-la-gestion-de-la-seguridad-de-la-resolucion-no-504-2021-1929393-1/",
+      "status": "downloaded",
+      "filename": "SBS-RESOLUCION-504-2021-INFORM.html",
+      "sizeBytes": 282275,
+      "contentType": "text/html",
+      "sha256": "1d57db6677ed4ddb4898985885ab179bee12584977088b318daab4fd4bbe8139"
+    },
+    {
+      "refId": "SAMA-CYBER-SECURITY-FRAMEWORK-",
+      "url": "https://rulebook.sama.gov.sa/en/cyber-security-framework-2",
+      "status": "downloaded",
+      "filename": "SAMA-CYBER-SECURITY-FRAMEWORK-.html",
+      "sizeBytes": 327048,
+      "contentType": "text/html",
+      "sha256": "649b2a00224eecacbe3683540dec0638e298f48d89dd4b02319981226780b7fb"
+    },
+    {
+      "refId": "BNM-RMIT-RISK-MANAGEMENT-IN-TE",
+      "url": "https://www.bnm.gov.my/documents/20124/938039/pd-rmit-nov25.pdf",
+      "status": "downloaded",
+      "filename": "BNM-RMIT-RISK-MANAGEMENT-IN-TE.pdf",
+      "sizeBytes": 762759,
+      "contentType": "application/pdf",
+      "sha256": "064ffdd45fa2c3fae16847ed87b9fcae3efaecb465d47046c33a5740f155076c",
+      "note": "Fetched manually by the user 2026-07-31 -- all automated fetch tiers (curl_cffi, playwright-stealth, crawl4ai) were blocked by bnm.gov.my."
+    },
+    {
+      "refId": "NCSA-QATAR-COMMON-CRITERIA-SCH",
+      "url": "https://assurance.ncsa.gov.qa/en/certification/qccs",
+      "status": "downloaded",
+      "filename": "NCSA-QATAR-COMMON-CRITERIA-SCH.html",
+      "sizeBytes": 1490886,
+      "contentType": "text/html",
+      "sha256": "52a419bc48e1f354f4464d4227c4a4b1796d20dae23de45c611b922a4c40c57c",
+      "note": "Fetched manually by the user 2026-07-31 (saved webpage) -- every automated fetch tier returned an 8-character JS shell for this URL on both its own domains."
     }
   ],
   "blocked": {
@@ -1725,11 +1826,6 @@
     "BRAZIL-BACEN-4893": {
       "reason": "unusable content: only 23 chars of visible text (floor 200) \u2014 a shell, not a document",
       "blocked_at": "2026-07-31T22:02:59.774776+00:00",
-      "attempts": 1
-    },
-    "NCSA-QATAR-COMMON-CRITERIA-SCH": {
-      "reason": "unusable content: only 8 chars of visible text (floor 200) \u2014 a shell, not a document",
-      "blocked_at": "2026-07-31T22:14:01.109629+00:00",
       "attempts": 1
     }
   }
