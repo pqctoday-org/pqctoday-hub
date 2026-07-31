@@ -59,16 +59,50 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
   // Heuristic: Ensure we have at least one valid key to sign with
   const availableKey = wallet.keys.find((k) => k.usage === 'SIGN')
 
+  /** Claims the bank asks for. Drives both the log and the actual disclosure. */
+  const REQUESTED_CLAIMS = ['family_name', 'given_name', 'degree']
+
+  /** The SD-JWT credential this presentation will disclose from, if any. */
+  const sdJwtCred = wallet.credentials.find(
+    (c) => c.type.includes('UniversityDegreeCredential') || c.format === 'dc+sd-jwt'
+  )
+
+  /**
+   * Revealed/hidden are derived from the credential's own disclosures rather
+   * than hardcoded: until 2026-07-31 this logged a fixed
+   * "[address, birth_place, gender]" as hidden, none of which is ever issued
+   * by this workshop (the diploma carries given_name, family_name, degree,
+   * gpa, honors). Deriving it keeps the claim honest when the issuer changes.
+   */
+  const disclosurePreview = (): { revealed: string[]; hidden: string[] } => {
+    if (!sdJwtCred?.raw) return { revealed: [], hidden: [] }
+    try {
+      const parsed = JSON.parse(sdJwtCred.raw) as SdJwtVc
+      const all = parsed.disclosures.map((d) => d.key)
+      return {
+        revealed: all.filter((k) => REQUESTED_CLAIMS.includes(k)),
+        hidden: all.filter((k) => !REQUESTED_CLAIMS.includes(k)),
+      }
+    } catch {
+      return { revealed: [], hidden: [] }
+    }
+  }
+
   const handleStart = () => {
     addLog('Connecting to Bank (Relying Party)...')
-    addLog('Bank requests: [pid_id, diploma_degree] for Account Opening.')
+    addLog(`Bank requests: [${REQUESTED_CLAIMS.join(', ')}] for Account Opening.`)
     setStep('DISCLOSURE')
   }
 
   const handleDisclosure = () => {
     addLog('User Review: Selective Disclosure applied.')
-    addLog('Hidden attributes: [address, birth_place, gender]')
-    addLog('Revealed attributes: [family_name, given_name, degree_type]')
+    const { revealed, hidden } = disclosurePreview()
+    if (revealed.length || hidden.length) {
+      addLog(`Revealed attributes: [${revealed.join(', ') || 'none'}]`)
+      addLog(`Hidden attributes: [${hidden.join(', ') || 'none'}]`)
+    } else {
+      addLog('No SD-JWT credential held — presenting a device binding proof instead.')
+    }
     setStep('PRESENTATION')
     handlePresentation()
   }
@@ -84,11 +118,6 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
         hsm.addStepLog('🔐 Generate Key Binding Proof (Presentation)')
       }
 
-      // Prefer diploma (SD-JWT VC), fall back to any vc+sd-jwt credential
-      const sdJwtCred = wallet.credentials.find(
-        (c) => c.type.includes('UniversityDegreeCredential') || c.format === 'vc+sd-jwt'
-      )
-
       if (sdJwtCred?.raw) {
         addLog('Generating SD-JWT Presentation with Key Binding...')
 
@@ -99,7 +128,7 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
         const provider = getCryptoProvider()
         const presentationString = await createPresentation(
           sdJwtVc,
-          ['family_name', 'given_name', 'degree'],
+          REQUESTED_CLAIMS,
           availableKey,
           audience,
           challenge,

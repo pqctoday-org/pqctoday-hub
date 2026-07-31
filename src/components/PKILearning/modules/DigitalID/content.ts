@@ -20,7 +20,12 @@ export const content: ModuleContent = {
     getStandard('OpenID4VP-Spec'),
     getStandard('CSC-API-v2-Spec'),
     getStandard('ETSI-EN-319-411'),
-    getStandard('ENISA-EUDI-Wallet-Security'),
+    // 'ENISA-EUDI-Wallet-Security' was cited here until 2026-07-31 and has been
+    // dropped: that library row's download_url points at the unrelated 2022
+    // ENISA PQC Integration Study, so the citation could not be substantiated.
+    // 'EU PQC Recommendation' is the document that actually carries the
+    // 2026/2030/2035 transition dates this module teaches.
+    getStandard('EU PQC Recommendation'),
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
   ],
@@ -37,16 +42,22 @@ export const content: ModuleContent = {
       year: 2026,
       source: 'eIDAS-2-Regulation',
     },
+    // The 2026/2030/2035 dates come from the NIS Cooperation Group "Coordinated
+    // Implementation Roadmap for the Transition to Post-Quantum Cryptography"
+    // (11 June 2025), which implements Commission Recommendation (EU) 2024/1101.
+    // They are NOT in the EUDI ARF (v3.0.0 contains no PQC roadmap at all) and
+    // NOT in the ENISA wallet-architecture analysis — both were cited here
+    // previously and neither states these dates.
     {
       label: 'National PQC transition roadmaps due',
       year: 2026,
-      source: 'ENISA-EUDI-Wallet-Security',
+      source: 'EU PQC Recommendation',
     },
-    { label: 'High-risk system PQC migration', year: 2030, source: 'ENISA-EUDI-Wallet-Security' },
+    { label: 'High-risk system PQC migration', year: 2030, source: 'EU PQC Recommendation' },
     {
       label: 'Full PQC transition for EUDI infrastructure',
       year: 2035,
-      source: 'ENISA-EUDI-Wallet-Security',
+      source: 'EU PQC Recommendation',
     },
   ],
 

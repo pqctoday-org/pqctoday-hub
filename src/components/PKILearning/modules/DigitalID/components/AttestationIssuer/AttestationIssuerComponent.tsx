@@ -37,7 +37,7 @@ const DIGITAL_ID_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'did-pid-sigver',
     useCase: 'PID credential SD-JWT signing',
-    standard: 'eIDAS 2.0 ARF v1.4 + FIPS 204 ACVP',
+    standard: 'eIDAS 2.0 ARF v3.0.0 + FIPS 204 ACVP',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
     kind: { type: 'mldsa-sigver', variant: 65 },
@@ -204,7 +204,7 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
       issuer: 'Technical University of Madrid',
       issuanceDate: new Date().toISOString(),
       credentialSubject: {}, // In SD-JWT, claims are in the JWT/disclosures
-      format: 'vc+sd-jwt',
+      format: 'dc+sd-jwt',
       raw: JSON.stringify(sdJwt),
     }
 
