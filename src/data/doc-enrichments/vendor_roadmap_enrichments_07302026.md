@@ -7,6 +7,29 @@ source: public/vendor-roadmaps/
 
 # Vendor PQC Roadmap Enrichments
 
+
+## VND-315 — PQSecure Technologies, Inc.
+
+- **Vendor ID**: VND-315
+- **Vendor Name**: PQSecure Technologies, Inc.
+- **Roadmap Title**: PQSecure Technologies — PQSecure Software Products
+- **Roadmap URL**: https://pqsecurity.com/pqsecure-software/
+- **Publish Date**: 2026-07-31
+- **Local File**: vendor-roadmaps/VND-315_PQSecure_Technologies_Inc.html
+- **CSV Coverage Notes**: None
+- **PQC Algorithms Announced**: ML-KEM; ML-DSA; SLH-DSA; FN-DSA; XMSS; LMS
+- **Target Migration Dates**: None detected
+- **Products / Services Covered**: PQSecure-SW; libpqsecure-C; libpqsecure-rs; libpqsecure-asm; PQSecure-TRUST
+- **Compliance Frameworks**: FIPS 180; FIPS 203; FIPS 204; FIPS 205; FIPS 206; FIPS 202; RFC 8391; RFC 8554; NIST SP 800-208; RFC 6234; CNSA 2.0; ACVP
+- **Hybrid Mode Support**: Partial, with brief description: The document mentions "classical primitives required for hybrid deployments" and lists SHA-2, HMAC, and HKDF, but does not explicitly detail hybrid key exchange or signature schemes.
+- **Current GA Status**: GA
+- **Customer Action Required**: None detected
+- **Key Commitments & Quotes**: "PQSecure-SW™ delivers production-grade, side-channel-aware, formally verified post-quantum cryptography software"; "libpqsecure consistently demonstrates measurable performance advantages"; "Designed for FIPS-oriented validation pathways"
+- **Coverage Verification**: CONSISTENT, as the document provides detailed product and algorithm information despite the CSV notes being unspecified.
+- **Extraction Quality**: HIGH
+- **Source Document**: VND-315_PQSecure_Technologies_Inc.html (74.4 KB)
+- **Extraction Timestamp**: 2026-07-30T21:26:57
+
 ## VND-001 — Amazon Web Services Inc.
 
 - **Vendor ID**: VND-001
