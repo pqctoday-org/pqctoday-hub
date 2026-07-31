@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState } from 'react'
+import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import { Link } from 'react-router'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import {
@@ -67,6 +68,8 @@ interface NetworkSecurityIntroductionProps {
 export const NetworkSecurityIntroduction: React.FC<NetworkSecurityIntroductionProps> = ({
   onNavigateToWorkshop,
 }) => {
+  useSectionAnchors()
+
   return (
     <div className="space-y-8 w-full">
       {/* Section 1: How PQC Changes Network Security */}

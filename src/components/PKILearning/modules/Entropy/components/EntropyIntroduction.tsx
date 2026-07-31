@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
+import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import { Link } from 'react-router'
 import {
   Shuffle,
@@ -25,6 +26,8 @@ interface EntropyIntroductionProps {
 export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
   onNavigateToWorkshop,
 }) => {
+  useSectionAnchors()
+
   return (
     <div className="space-y-6 w-full">
       {/* Section 1: Why Entropy Matters */}

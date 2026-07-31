@@ -21,6 +21,34 @@ export interface TabItem {
   label: string
 }
 
+/**
+ * A named route through a module's sections (2026-07-30).
+ *
+ * Added for modules that legitimately serve more than one audience, where
+ * demanding the whole runtime from everyone would be wrong. The Financial
+ * Services & Payments module is the first: it merges cards, banking, and
+ * retail, three industries deep-link into it, and a banking learner has no
+ * reason to study POS key injection.
+ *
+ * When a module declares `learnPaths`, completion is evaluated against the
+ * learner's active path rather than every section (see useModuleStore), and
+ * the catalogue card advertises per-path durations rather than one total.
+ * Modules without `learnPaths` behave exactly as before.
+ */
+export interface LearnPath {
+  /** slug used in `?path=` */
+  id: string
+  label: string
+  /** section the learner lands on when arriving via this path */
+  entrySection: string
+  /** sections required to complete the module *via this path* */
+  sections: string[]
+  /** human duration for this path alone, e.g. '45 min' */
+  duration: string
+  /** one line on who this path is for; shown in the path picker */
+  audience?: string
+}
+
 export interface ModuleManifest {
   /** slug — equals the route path and the MODULE_CATALOG key */
   id: string
@@ -42,6 +70,12 @@ export interface ModuleManifest {
 
   /** ordered Learn-tab sections (absent for custom/special modules) */
   learnSections?: { id: string; label: string }[]
+  /**
+   * Named routes through `learnSections` for multi-audience modules. When
+   * present, `duration` remains the whole-module total and each path
+   * advertises its own. See {@link LearnPath}.
+   */
+  learnPaths?: LearnPath[]
   /** ordered Workshop steps; their length is the canonical step count */
   workshopSteps?: { id: string; label: string }[]
   /** step count for modules with no workshopSteps (quiz/assess only) */

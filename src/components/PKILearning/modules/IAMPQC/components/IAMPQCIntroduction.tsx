@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import {
@@ -7,11 +7,11 @@ import {
   Database,
   BarChart3,
   Shield,
-  ChevronRight,
   ArrowRight,
   Lock,
   BookOpen,
   Route,
+  Wifi,
 } from 'lucide-react'
 import {
   IAM_PROTOCOLS,
@@ -22,6 +22,7 @@ import {
 } from '../data/iamConstants'
 import { IAM_VENDORS, PQC_STATUS_LABELS, getVendorPqcStatus } from '../data/iamProviderData'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { LearnSection } from '@/components/PKILearning/common/LearnSection'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { Button } from '@/components/ui/button'
 
@@ -29,46 +30,14 @@ interface IAMPQCIntroductionProps {
   onNavigateToWorkshop: () => void
 }
 
-interface CollapsibleSectionProps {
-  icon: React.ReactNode
-  title: string
-  defaultOpen?: boolean
-  children: React.ReactNode
-}
-
-const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
-  icon,
-  title,
-  defaultOpen = false,
-  children,
-}) => {
-  const [isOpen, setIsOpen] = useState(defaultOpen)
-
-  return (
-    <section className="glass-panel p-6">
-      <Button
-        variant="ghost"
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-3 w-full text-left"
-      >
-        <div className="p-2 rounded-lg bg-primary/10 shrink-0">{icon}</div>
-        <h2 className="text-xl font-bold text-gradient flex-1">{title}</h2>
-        <ChevronRight
-          size={18}
-          className={`text-muted-foreground transition-transform duration-200 shrink-0 ${isOpen ? 'rotate-90' : ''}`}
-          aria-hidden="true"
-        />
-      </Button>
-      {isOpen && <div className="mt-4 space-y-4 text-sm text-foreground/80">{children}</div>}
-    </section>
-  )
-}
+// Local CollapsibleSection replaced by the shared anchored LearnSection (2026-07-30).
 
 export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNavigateToWorkshop }) => {
   return (
     <div className="space-y-8 w-full">
       {/* Section 1: Crypto in IAM Foundations */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="iam-crypto-foundations"
         icon={<Lock size={24} className="text-primary" />}
         title="Crypto in IAM: Tokens, Certificates, MFA"
         defaultOpen
@@ -192,10 +161,11 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
             </table>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Section 2: Token Migration */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="token-migration"
         icon={<Key size={24} className="text-primary" />}
         title="JWT, SAML, and OIDC Token Signing with ML-DSA"
       >
@@ -268,10 +238,11 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
             </div>
           ))}
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Section 3: Directory Services */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="directory-services"
         icon={<Database size={24} className="text-primary" />}
         title="Active Directory, LDAP, and Kerberos Under Quantum Threat"
       >
@@ -339,10 +310,11 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
             </li>
           </ul>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Section 4: Vendor Roadmaps */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="vendor-roadmaps"
         icon={<BarChart3 size={24} className="text-primary" />}
         title="Okta, Entra, PingFederate, ForgeRock Migration Paths"
       >
@@ -404,10 +376,11 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
             ))}
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Section 5: Zero Trust Identity */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="zero-trust-identity"
         icon={<Shield size={24} className="text-primary" />}
         title="PQC-Aware Zero Trust Identity Architecture"
       >
@@ -480,7 +453,7 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
             </div>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Related Resources */}
       <section className="glass-panel p-6 border-secondary/20">
@@ -557,6 +530,67 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
           PQC roadmap.
         </p>
       </div>
+
+      <LearnSection
+        sectionId="federation-eap"
+        title="Identity Federation at Scale (eduroam &amp; EAP)"
+        icon={<Wifi size={20} className="text-primary" />}
+      >
+        <p className="text-muted-foreground">
+          Enterprise IAM usually means web SSO. Federated network access is a different problem:
+          EAP-TLS inside RADIUS, across thousands of independently operated institutions, with a
+          supplicant on the far end that may be a decade old. eduroam is the canonical example — one
+          credential authenticating across research and education networks worldwide.
+        </p>
+        <p className="text-muted-foreground">
+          Two properties make this harder than web SSO under PQC. EAP fragments over RADIUS, so
+          larger certificates and signatures multiply round trips on exactly the link where they
+          hurt. And the supplicant is often embedded firmware that cannot be updated on the
+          federation&rsquo;s schedule, so the classical path has to stay open far longer than the
+          server operator would like.
+        </p>
+        <div className="p-4 rounded-lg bg-muted/50 border border-border">
+          <h4 className="font-semibold text-foreground">Where the research is</h4>
+          <p className="mt-1 text-sm text-muted-foreground">
+            This is one of the better-served areas in the literature, which is why the section can
+            be grounded rather than speculative.
+          </p>
+          <ul className="mt-2 space-y-1 text-xs">
+            <li>
+              <Link
+                to="/library?ref=Post-Quantum-Enhancements-to-TLS-Based-EAP-Methods"
+                className="text-primary hover:underline"
+              >
+                Post-Quantum Enhancements to TLS-Based EAP Methods
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/library?ref=Post-Quantum-Key-Encapsulation-Mechanisms-PQ-KEMs-in"
+                className="text-primary hover:underline"
+              >
+                Post-Quantum KEMs in EAP
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/library?ref=Enhancing-Security-in-EAP-AKA-prime-with-Hybrid-Post"
+                className="text-primary hover:underline"
+              >
+                Hybrid PQC in EAP-AKA&rsquo;
+              </Link>
+            </li>
+          </ul>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Education / Research in the Industry Landscape links to{' '}
+          <Link to="/learn/research-quantum-impact" className="text-primary hover:underline">
+            Researcher Quantum Impact
+          </Link>{' '}
+          for the long-lived-data framing; the federation mechanics live here, because they are an
+          IAM problem rather than a sector one.
+        </p>
+      </LearnSection>
 
       <ReadingCompleteButton />
     </div>

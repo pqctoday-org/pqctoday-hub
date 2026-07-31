@@ -1,9 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * Render-parity golden test for the EMVPaymentPQC ModuleShell conversion.
- * Captured against the PRE-conversion module; must stay green after
- * EMVPaymentPQC adopts <ModuleShell>, proving the conversion is
- * behaviour-preserving.
+ * Captured against the PRE-conversion module; proves the ModuleShell
+ * conversion is behaviour-preserving.
+ *
+ * UPDATED 2026-07-30: the title and in-page description are re-pinned because
+ * the module deliberately grew from cards-only to the whole financial-services
+ * estate (cards + banking + retail). The module id and route are unchanged —
+ * only the copy moved, and this test exists to notice exactly that, so it is
+ * re-pinned rather than loosened.
  */
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
@@ -22,7 +27,9 @@ describe('EMVPaymentPQC render parity', () => {
       </EmbedProvider>
     )
     // header title (renders the literal "&" — JSX entity in source only)
-    expect(screen.getByRole('heading', { name: 'EMV Payment Systems & PQC' })).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { name: 'Financial Services & Payments PQC' })
+    ).toBeInTheDocument()
     // in-page description differs from the catalog description (the override slot)
     expect(
       screen.getByText(/Card authentication, tokenization, authorization networks/)

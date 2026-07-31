@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
+import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import { Link } from 'react-router'
 import {
   ShieldAlert,
@@ -22,6 +23,11 @@ interface IntroductionProps {
 }
 
 export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop }) => {
+  // The data-section-id anchors below were already here and already
+  // matched this module's manifest; nothing read them. One call makes
+  // deep links land and section progress record.
+  useSectionAnchors()
+
   return (
     <div className="space-y-8 w-full">
       {/* Quantum Computing Primer */}

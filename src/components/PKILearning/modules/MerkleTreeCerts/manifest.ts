@@ -14,12 +14,19 @@ const manifest: ModuleManifest = {
   frameworkPhase: 'p6',
   track: 'Software Infrastructure',
   trackOrder: 4,
+  // learnSections CORRECTED 2026-07-30. The previous ids (merkle, inclusion,
+  // verification, comparison, ct-log) mirrored this module's workshopSteps
+  // (build-tree, inclusion-proof, verify-proof, size-comparison, ct-log —
+  // note ct-log appeared in both) and named nothing on the learn tab, so the
+  // table of contents advertised workshop steps as reading sections. These
+  // describe the page.
   learnSections: [
-    { id: 'merkle', label: 'Merkle Tree & SHA-256' },
-    { id: 'inclusion', label: 'Inclusion & Auth Paths' },
-    { id: 'verification', label: 'Proof Verification' },
-    { id: 'comparison', label: 'MTC vs X.509 Trade-offs' },
-    { id: 'ct-log', label: 'CT Log ML-DSA-44' },
+    { id: 'cert-bloat', label: 'The Certificate Bloat Problem' },
+    { id: 'how-mtc-works', label: 'How Merkle Tree Certificates Work' },
+    { id: 'mtc-architecture', label: 'MTC Architecture' },
+    { id: 'cert-types', label: 'Certificate Types & Tradeoffs' },
+    { id: 'landmark-certs', label: 'Deep Dive: Landmark Certificates' },
+    { id: 'ietf-status', label: 'IETF Standardization Status' },
   ],
   workshopSteps: [
     { id: 'build-tree', label: 'Build Tree' },

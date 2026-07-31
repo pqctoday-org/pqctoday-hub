@@ -525,6 +525,54 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     workRoles: ['security-architect', 'network-security-specialist'],
     isCommonGround: false,
   },
+  {
+    moduleId: 'government-defense-pqc',
+    // Supply Chain Security: CISA product categories, CMMC 2.0, and SP 800-171
+    // Rev.3 govern what federal contractors may procure and how they must
+    // protect Controlled Unclassified Information — a supply-chain control,
+    // not a network or OS lens (matches the NF-COM-011 pattern used by
+    // vendor-risk / migration-program / code-signing above).
+    nfExtra: ['NF-COM-011'],
+    competencyAreas: ['CA-GOVCOMP', 'CA-CRYPTO', 'CA-IDENT'],
+    tier: 'practitioner',
+    workRoles: [
+      // is-security-manager: owns CA-GOVCOMP — the dated CNSSP 15 mandates,
+      // NSS-vs-federal-civilian applicability, and CMMC/SP 800-171r3
+      // procurement compliance are a security-program-governance job, not a
+      // hands-on engineering one.
+      'is-security-manager',
+      // security-architect: owns CA-CRYPTO — the CNSA 1.0 -> 2.0 suite
+      // mechanics (ML-KEM-1024, ML-DSA-87, LMS/XMSS per SP 800-208) and
+      // National Security System / CSfC design decisions are architecture
+      // work.
+      'security-architect',
+      // iam-specialist: owns CA-IDENT — Federal PKI / PIV and the draft
+      // ML-DSA/ML-KEM certificate profile are a credentialing/PKI job.
+      'iam-specialist',
+    ],
+    isCommonGround: false,
+  },
+  {
+    moduleId: 'trust-services-pqc',
+    competencyAreas: ['CA-IDENT', 'CA-CRYPTO', 'CA-GOVCOMP'],
+    tier: 'practitioner',
+    workRoles: [
+      // iam-specialist: owns CA-IDENT — qualified vs advanced e-signatures
+      // and RFC 3161 timestamping are trust-service/credential-assurance
+      // content, the same lens as digital-id / code-signing above.
+      'iam-specialist',
+      // security-architect: owns CA-CRYPTO — choosing and sequencing hybrid
+      // suites (ETSI TS 119 312 V2.1.1) and planning re-timestamping across a
+      // 20-30 year archival horizon is cryptographic architecture, not
+      // day-to-day implementation.
+      'security-architect',
+      // is-security-manager: owns CA-GOVCOMP — assessing trust service
+      // provider conformity against ETSI EN 319 4xx and eIDAS is a
+      // governance/audit function, not an engineering one.
+      'is-security-manager',
+    ],
+    isCommonGround: false,
+  },
 ]
 
 // ---------------------------------------------------------------------------

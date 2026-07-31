@@ -39,6 +39,7 @@ import { PROTOCOL_MATRIX } from '../../data/pqcProtocolMatrix'
 import { INDUSTRY_ICONS, USE_CASE_ICONS } from './landscapeIcons'
 import { Button } from '../ui/button'
 import { libraryHref } from './libraryRef'
+import { learnHref } from './learnHref'
 
 // ── Formatting helpers ───────────────────────────────────────────────────────
 
@@ -532,7 +533,7 @@ export function IndustryLandscapeView() {
                   <div className="ml-auto flex items-center gap-3">
                     {cases[0]?.learnModuleId && (
                       <Link
-                        to={`/learn/${cases[0].learnModuleId}`}
+                        to={learnHref(cases[0].learnModuleId, selectedIndustry)}
                         className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary"
                       >
                         <GraduationCapIcon size={12} /> Learn: {selectedIndustry}
