@@ -351,8 +351,9 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     confidence:
       'Architecture-dependent \u2014 year range is THIS dataset\u2019s derived estimate, not asserted by the source',
     notes:
-      'Mar 2026: secp256k1 ECDLP breakable with \u22641,200 logical qubits. The whitepaper itself makes NO CRQC-arrival-date claim (confirmed 2026-07-16) \u2014 yearLow/yearHigh here are derived by combining its 1,200-qubit threshold with published hardware roadmaps (e.g. IonQ), not read off the paper. Introduces fast-clock (superconducting/photonic) vs slow-clock (trapped ion/neutral atom) CRQC distinction. Fast-clock CRQCs enable on-spend attacks on public mempools; slow-clock enable at-rest attacks on dormant wallets. 2.3M BTC identified as at-risk.',
+      'Mar 2026: secp256k1 ECDLP breakable with \u22641,200 logical qubits (1,200\u20131,450 per the two circuit variants) and <500,000 physical qubits \u2014 the most aggressive resource estimate to date, ~20x below prior best estimates. The whitepaper itself makes NO CRQC-arrival-date claim (confirmed 2026-07-16) \u2014 yearLow/yearHigh here are derived by combining its qubit threshold with published hardware roadmaps (e.g. IonQ), not read off the paper. Introduces fast-clock (superconducting/photonic) vs slow-clock (trapped ion/neutral atom) CRQC distinction. Fast-clock CRQCs enable on-spend attacks on public mempools; slow-clock enable at-rest attacks on dormant wallets. 2.3M BTC identified as at-risk.',
     url: 'https://quantumai.google/static/site-assets/downloads/cryptocurrency-whitepaper.pdf',
+    lastReviewed: '2026-07-30',
   },
   {
     source: 'Global Risk Institute (2025)',
@@ -362,6 +363,7 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     notes:
       '26-expert survey (March 2026). Significant acceleration: 28-49% probability within 10 years (up from 19-34% in 2024). Majority consider CRQC by 2035 quite likely.',
     url: 'https://globalriskinstitute.org/publication/quantum-threat-timeline-report-2025b/',
+    lastReviewed: '2026-07-30',
   },
   {
     source: 'NIST IR 8547 (IPD, Nov 2024)',
@@ -369,8 +371,9 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     yearHigh: 2035,
     confidence: 'Planning horizon',
     notes:
-      'Deprecate RSA/ECC by 2030, disallow by 2035. Assumes CRQC is imminent enough to act now.',
+      'Deprecate RSA/ECC by 2030, disallow by 2035. Assumes CRQC is imminent enough to act now. Re-verified 2026-07-30 directly against csrc.nist.gov: still Initial Public Draft status (comment period closed 2025-01-10, no second draft or final version published) \u2014 a third-party aggregator claimed a "final 2025 version" that does not match the authoritative NIST page.',
     url: 'https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf',
+    lastReviewed: '2026-07-30',
   },
   {
     source: 'NSA CNSA 2.0 (2022)',
@@ -378,16 +381,19 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     yearHigh: 2033,
     confidence: 'Mandate',
     notes:
-      'Migration MANDATE dates (not a CRQC-arrival prediction): support-and-prefer from 2025 (sw/fw signing) and 2026 (networking); exclusive use 2030 (signing, networking) and 2033 (web/cloud, OS). NSM-10 targets all NSS quantum-resistant by 2035.',
+      'Migration MANDATE dates (not a CRQC-arrival prediction): support-and-prefer from 2025 (sw/fw signing) and 2026 (networking); exclusive use 2030 (signing, networking) and 2033 (web/cloud, OS). NSM-10 targets all NSS quantum-resistant by 2035. New NSS acquisitions must be CNSA 2.0-compliant from 2027-01-01.',
     url: 'https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF',
+    lastReviewed: '2026-07-30',
   },
   {
     source: 'BSI Germany (2024)',
     yearLow: 2030,
     yearHigh: 2040,
     confidence: 'Recommend migration now',
-    notes: 'Recommends hybrid crypto today. Assumes CRQC within planning horizon.',
+    notes:
+      'Recommends hybrid crypto today. Assumes CRQC within planning horizon. TR-02102-1 (2026-01 edition): very-high-protection systems migrate by end of 2030; classical-only key agreement ends 2031.',
     url: 'https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Crypto/Migration_to_Post_Quantum_Cryptography.pdf?__blob=publicationFile&v=2',
+    lastReviewed: '2026-07-30',
   },
   {
     source: 'ANSSI France (2022, upd. 2023)',
@@ -395,8 +401,9 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     yearHigh: 2035,
     confidence: 'Migration milestone, not a CRQC forecast',
     notes:
-      'ANSSI gives no CRQC arrival date; 2030/2035 are transition milestones. Hybrid PQC is required only where quantum-resistance is claimed, not mandated for all government systems.',
-    url: 'https://cyber.gouv.fr/en/publications/anssi-views-post-quantum-cryptography-transition',
+      'ANSSI gives no CRQC arrival date; 2030/2035 are transition milestones. Hybrid PQC is required only where quantum-resistance is claimed, not mandated for all government systems. ANSSI is targeting 2027 for PQC obligations to begin applying to security qualifications/certifications.',
+    url: 'https://messervices.cyber.gouv.fr/guides/en-anssi-views-post-quantum-cryptography-transition',
+    lastReviewed: '2026-07-30',
   },
 ]
 
