@@ -85,7 +85,6 @@ export interface TransactionFlow {
   description: string
   steps: TransactionFlowStep[]
   totalLatencyMs: number
-  cryptoTouchpoints: number
   quantumVulnerableSteps: number
 }
 

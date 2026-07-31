@@ -11,6 +11,7 @@ import {
   Monitor,
   AlertTriangle,
   ArrowRight,
+  ArrowRightLeft,
   Lock,
   Layers,
   KeyRound,
@@ -89,6 +90,11 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
 
         <div className="glass-panel p-4">
           <h3 className="text-sm font-semibold text-foreground mb-3">Major Payment Networks</h3>
+          <p className="text-xs text-muted-foreground mb-3">
+            Five of EMVCo&rsquo;s six owners are profiled below. JCB, the sixth, is not — its
+            published PQC position and card-fleet figures are not sourced to the standard the other
+            five rows meet, and this module does not assert what it cannot cite.
+          </p>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -728,6 +734,67 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
               <div className="text-sm font-medium text-foreground">Compliance Strategy</div>
               <div className="text-xs text-muted-foreground">
                 PCI DSS, G7, and BIS regulatory timelines for payment PQC
+              </div>
+            </div>
+          </Link>
+        </div>
+
+        {/*
+          Added 2026-07-31. This module previously reached only /learn and
+          /library — it named threat ids in its own search summary with no path
+          for a learner to open them, and offered no route to the compliance or
+          timeline catalogues despite being the most regulation-dense module in
+          the Industries track.
+        */}
+        <h4 className="text-sm font-semibold text-foreground mt-6 mb-3">
+          This sector, elsewhere in the hub
+        </h4>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <Link
+            to="/threats?industry=Payment%20Card%20Industry"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <AlertTriangle size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Payment Card Threats</div>
+              <div className="text-xs text-muted-foreground">
+                Card-ecosystem quantum threats, with sources
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/threats?industry=Financial%20Services%20%2F%20Banking"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Landmark size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Banking Threats</div>
+              <div className="text-xs text-muted-foreground">
+                Settlement, HSM and interbank threat entries
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/compliance"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Scale size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Compliance Landscape</div>
+              <div className="text-xs text-muted-foreground">
+                DORA and the sector&rsquo;s regulatory obligations
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/timeline"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <ArrowRightLeft size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Migration Timeline</div>
+              <div className="text-xs text-muted-foreground">
+                The 2030-2032 targets this module cites
               </div>
             </div>
           </Link>
