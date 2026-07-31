@@ -14,6 +14,11 @@ export const content: ModuleContent = {
   standards: [
     getStandard('eIDAS-2-Regulation'),
     getStandard('EUDI-Wallet-ARF'),
+    // ISO publishes 18013-5 behind a paywall, so this row is marked
+    // access_type=paid: the References tab labels it "Purchase required" and
+    // offers a free summary rather than presenting a shop page as a download.
+    // Still cited, because the standard's NAME is what matters here — it
+    // defines the mso_mdoc format the PID credential in this module uses.
     getStandard('ISO-18013-5-mDL'),
     getStandard('RFC-9901-SD-JWT-VC'),
     getStandard('OpenID4VCI-Spec'),
