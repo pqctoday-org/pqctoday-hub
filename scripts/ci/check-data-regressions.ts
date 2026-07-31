@@ -99,6 +99,55 @@ function complianceIds(raw: string): Set<string> {
   }
 }
 
+// ── Check 1b: certificate scheme attribution must not regress ──────────────
+// ADDED 2026-07-31 (remediation WP-3.1). The issuing certification scheme was
+// carried for every Common Criteria record since the scraper was written, but
+// only inside the `vendor` display string as "Manufacturer (Scheme: XX)" —
+// real data in a place nothing could query. It now has its own `scheme` /
+// `schemeCountry` fields.
+//
+// The specific regression this guards: a future scraper change (or a partial
+// re-scrape) silently reverting to the concatenated form, or dropping the
+// field. Both would look like a successful run — the record COUNT would be
+// unchanged, so Check 1 above would pass — while quietly removing per-country
+// certification attribution again. Counting non-empty `scheme` catches it;
+// asserting no vendor string carries the suffix catches the revert directly.
+function schemeStats(raw: string): { withScheme: number; suffixed: number } {
+  const arr = JSON.parse(raw) as Array<{ scheme?: string; vendor?: string }>
+  return {
+    withScheme: arr.filter((r) => (r.scheme ?? '').trim() !== '').length,
+    suffixed: arr.filter((r) => /\(Scheme:/.test(r.vendor ?? '')).length,
+  }
+}
+{
+  const baseRaw = showFromBase(COMPLIANCE)
+  if (baseRaw !== null && existsSync(join(ROOT, COMPLIANCE))) {
+    const head = schemeStats(readFileSync(join(ROOT, COMPLIANCE), 'utf8'))
+    const base = schemeStats(baseRaw)
+    if (head.withScheme < base.withScheme) {
+      failures.push(
+        `compliance-data.json: records with a queryable \`scheme\` dropped ` +
+          `${base.withScheme} → ${head.withScheme}. The issuing certification ` +
+          `scheme is what makes per-country certification coverage answerable; ` +
+          `losing it is silent because the record count is unaffected.`
+      )
+    } else if (head.suffixed > 0) {
+      failures.push(
+        `compliance-data.json: ${head.suffixed} record(s) carry the issuing ` +
+          `scheme inside the \`vendor\` string as "(Scheme: XX)". That form was ` +
+          `retired 2026-07-31 — it hides queryable data in a display field and ` +
+          `splits one manufacturer into one identity per scheme. Set ` +
+          `record.scheme instead (see scripts/scrapers/cc.ts).`
+      )
+    } else {
+      console.log(
+        `✓ compliance-data.json: ${head.withScheme} records carry a queryable scheme ` +
+          `(base ${base.withScheme}); 0 vendor strings carry the retired suffix`
+      )
+    }
+  }
+}
+
 // ── Check 2: vendor roadmap algorithms must not go non-empty → empty ────────
 // Mirrors src/data/vendorRoadmapEnrichmentData.ts: parse every dated md file,
 // merge last-file-wins by sorted filename, key by Vendor ID.
