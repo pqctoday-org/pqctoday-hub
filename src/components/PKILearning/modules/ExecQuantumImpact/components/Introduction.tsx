@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
+import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import { Link } from 'react-router'
 import { Briefcase, Clock, Scale, TrendingUp, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -11,6 +12,8 @@ interface Props {
 }
 
 export const Introduction: React.FC<Props> = ({ onNavigateToWorkshop }) => {
+  useSectionAnchors()
+
   return (
     <div className="space-y-8 w-full">
       {/* Opening statement */}

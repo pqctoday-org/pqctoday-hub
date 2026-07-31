@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import {
@@ -9,48 +9,16 @@ import {
   Cloud,
   Terminal,
   ArrowRight,
-  ChevronRight,
   Lock,
   Route,
   Workflow,
 } from 'lucide-react'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { LearnSection } from '@/components/PKILearning/common/LearnSection'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { Button } from '@/components/ui/button'
 
-interface CollapsibleSectionProps {
-  icon: React.ReactNode
-  title: string
-  defaultOpen?: boolean
-  children: React.ReactNode
-}
-
-const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
-  icon,
-  title,
-  defaultOpen = false,
-  children,
-}) => {
-  const [isOpen, setIsOpen] = useState(defaultOpen)
-
-  return (
-    <section className="glass-panel p-6">
-      <Button
-        variant="ghost"
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-3 w-full text-left"
-      >
-        <div className="p-2 rounded-lg bg-primary/10 shrink-0">{icon}</div>
-        <h2 className="text-xl font-bold text-gradient flex-1">{title}</h2>
-        <ChevronRight
-          size={18}
-          className={`text-muted-foreground transition-transform duration-200 shrink-0 ${isOpen ? 'rotate-90' : ''}`}
-        />
-      </Button>
-      {isOpen && <div className="mt-4 space-y-4 text-sm text-foreground/80">{children}</div>}
-    </section>
-  )
-}
+// Local CollapsibleSection replaced by the shared anchored LearnSection (2026-07-30).
 
 interface SecretsManagementIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -62,7 +30,8 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
   return (
     <div className="space-y-8 w-full">
       {/* Section 1 */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="secrets-vs-keys"
         icon={<Key size={24} className="text-primary" />}
         title="Secrets vs Keys: What Needs PQC Protection"
         defaultOpen
@@ -170,10 +139,11 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
             protection to all stored secrets.
           </p>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Section 2 */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="hndl-risk"
         icon={<Shield size={24} className="text-primary" />}
         title="HNDL Risk for Secrets in Transit and at Rest"
       >
@@ -283,10 +253,11 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
             operational step before any cryptographic algorithm change.
           </p>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Section 3 */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="automated-rotation"
         icon={<RefreshCw size={24} className="text-primary" />}
         title="Automated Rotation with PQC Keys"
       >
@@ -379,10 +350,11 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
             </p>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Section 4 */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="provider-roadmaps"
         icon={<Cloud size={24} className="text-primary" />}
         title="AWS / Azure / GCP / HashiCorp Vault / Delinea PQC Roadmaps"
       >
@@ -494,10 +466,11 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
             </p>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Section 5 */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="kubernetes-cicd"
         icon={<Terminal size={24} className="text-primary" />}
         title="Kubernetes, CI/CD, and Zero-Trust Secrets"
       >
@@ -565,7 +538,7 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
             </ul>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Related Resources */}
       <section className="glass-panel p-6 border-secondary/20">
