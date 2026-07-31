@@ -67,11 +67,28 @@ describe('complianceData', () => {
     expect(byId('cisa-pqc-initiative')?.pqcRequirement).toBe('guidance')
   })
 
-  it('resolves duplicate-label rows (ANSSI, CRYPTREC) to requiresPQC=true, order-independent', () => {
+  it('resolves duplicate-label rows deterministically, order-independent', () => {
     // ANSSI and CRYPTREC each appear as a compliance_framework row AND a
-    // standardization_body row. The PQC-requiring variant must win deterministically,
-    // so the assessment scoring is never silently shadowed by CSV import order.
-    expect(complianceDB['ANSSI'].requiresPQC).toBe(true)
+    // standardization_body row. The mechanism under test: a row that REQUIRES
+    // PQC wins over one that does not, so a real obligation is never silently
+    // shadowed by CSV import order. That mechanism is unchanged.
+    //
+    // CHANGED 2026-07-31 (WP-2.2 remediation): ANSSI-BODY's requires_pqc was
+    // 'yes' before this pass — one of 20 organization rows (standards/
+    // certification bodies) wrongly claiming a PQC mandate, which is exactly
+    // the defect class R6 in validators.py exists to catch. Its own cited
+    // page states ANSSI "vise la mise en place d'obligations PQC... a partir
+    // de 2027" — a real, dated, but not-yet-in-force, narrowly-scoped
+    // obligation — so it is now 'expected', not 'yes'. The sibling
+    // compliance_framework row (id=ANSSI) was already 'guidance', unchanged
+    // by this pass and never flagged. With neither surviving ANSSI row making
+    // an unconditional 'yes' claim, the honestly-merged answer is false — the
+    // data got MORE accurate, and this pin needed to move with it.
+    //
+    // CRYPTREC is the control case proving the dedup mechanism itself still
+    // works: its compliance_framework row (id=CRYPTREC, untouched by WP-2.2)
+    // independently states requires_pqc=yes, so it still wins the merge.
+    expect(complianceDB['ANSSI'].requiresPQC).toBe(false)
     expect(complianceDB['CRYPTREC'].requiresPQC).toBe(true)
   })
 
