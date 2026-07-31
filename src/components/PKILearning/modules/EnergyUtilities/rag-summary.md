@@ -2,7 +2,7 @@
 
 ## Overview
 
-Advanced-level module (90 min, 5 workshop steps) covering post-quantum cryptography migration for the energy sector — an industry where OT protocol security failures can cause physical equipment damage, widespread power outages, and safety-critical protection relay failures. Asset lifetimes of 40–50 years (substations) mean cryptographic decisions made today lock in quantum exposure for decades.
+Intermediate-level module (60 min, 5 workshop steps) covering post-quantum cryptography migration for the energy sector — an industry where OT protocol security failures can cause physical equipment damage, widespread power outages, and safety-critical protection relay failures. Asset lifetimes of 40–50 years (substations) mean cryptographic decisions made today lock in quantum exposure for decades.
 
 ## Key Topics
 
