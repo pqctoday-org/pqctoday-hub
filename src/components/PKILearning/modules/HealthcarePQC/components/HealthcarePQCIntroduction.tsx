@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router'
 import {
   Fingerprint,
@@ -7,8 +7,6 @@ import {
   HeartPulse,
   Activity,
   Building2,
-  ChevronDown,
-  ChevronUp,
   ArrowRight,
   ShieldCheck,
   AlertTriangle,
@@ -19,46 +17,14 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { LearnSection } from '@/components/PKILearning/common/LearnSection'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 
 // -- Local CollapsibleSection ------------------------------------------------
 
-interface CollapsibleSectionProps {
-  title: string
-  icon: React.ReactNode
-  defaultOpen?: boolean
-  children: React.ReactNode
-}
-
-const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
-  title,
-  icon,
-  defaultOpen = false,
-  children,
-}) => {
-  const [isOpen, setIsOpen] = useState(defaultOpen)
-
-  return (
-    <section className="glass-panel overflow-hidden">
-      <Button
-        variant="ghost"
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-6 text-left"
-      >
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-primary/10">{icon}</div>
-          <h2 className="text-xl font-bold text-gradient">{title}</h2>
-        </div>
-        {isOpen ? (
-          <ChevronUp size={20} className="text-muted-foreground shrink-0" />
-        ) : (
-          <ChevronDown size={20} className="text-muted-foreground shrink-0" />
-        )}
-      </Button>
-      {isOpen && <div className="px-6 pb-6 space-y-4">{children}</div>}
-    </section>
-  )
-}
+// The local CollapsibleSection was replaced by the shared anchored
+// LearnSection (2026-07-30): industry deep links now land on a section,
+// and per-section reading is recorded instead of only the button below.
 
 // -- Introduction Component --------------------------------------------------
 
@@ -72,7 +38,8 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
   return (
     <div className="space-y-8 w-full">
       {/* -- Section 1: Biometric Data ---------------------------------------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="biometric-threat"
         title="Biometric Data: The Irreplaceable Secret"
         icon={<Fingerprint size={24} className="text-primary" />}
         defaultOpen={true}
@@ -162,10 +129,11 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
             </p>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Section 2: Pharmaceutical IP ------------------------------------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="pharma-ip"
         title="Pharmaceutical IP & Research Data Protection"
         icon={<FlaskConical size={24} className="text-primary" />}
       >
@@ -269,10 +237,11 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
             </div>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Section 3: Patient Privacy --------------------------------------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="patient-privacy"
         title="Patient Privacy as a Fundamental Right"
         icon={<HeartPulse size={24} className="text-primary" />}
       >
@@ -407,10 +376,11 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
             </p>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Section 4: Medical Device Safety --------------------------------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="device-safety"
         title="Medical Device Safety & PQC"
         icon={<Activity size={24} className="text-primary" />}
       >
@@ -534,10 +504,11 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
             </div>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Section 5: Sector-Wide Migration --------------------------------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="healthcare-migration"
         title="Healthcare PQC Migration: A Sector-Wide Challenge"
         icon={<Building2 size={24} className="text-primary" />}
       >
@@ -681,7 +652,7 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
             </p>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Workshop CTA ----------------------------------------------------- */}
       <div className="glass-panel p-6 border-primary/20">

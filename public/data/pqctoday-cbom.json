@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:db289b7c-043f-42d9-afc2-2bd701152dfa",
+  "serialNumber": "urn:uuid:3cca8515-1155-4028-a5e8-d06337d2d30f",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-07-29T00:00:00.000Z",
+    "timestamp": "2026-07-30T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -310,7 +310,7 @@
           "primitive": "other"
         }
       },
-      "description": "Platform for automated discovery and inventory of cryptographic assets. Facilitates transition to post-quantum cryptography and enhances cyber readiness against AI-powered attacks. Provides continuous visibility into cryptographic dependencies. Deployed in U.S. Department of Defense (DoD) CIO systems. HQC algorithm contributor selected by NIST.",
+      "description": "Platform for automated discovery and inventory of cryptographic assets. Facilitates transition to post-quantum cryptography and enhances cyber readiness against AI-powered attacks. Provides continuous visibility into cryptographic dependencies. Deployed in U.S. Department of War (DoW) CIO systems (per Dec 2025 press release; DoD renamed to Department of War in 2026). HQC algorithm contributor selected by NIST.",
       "externalReferences": [
         {
           "type": "website",
@@ -1219,7 +1219,7 @@
       "externalReferences": [
         {
           "type": "vcs",
-          "url": "https://github.com/wolfeidau/leancrypto"
+          "url": "https://github.com/smuellerDD/leancrypto"
         },
         {
           "type": "website",
@@ -29271,7 +29271,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "FIPS 140-3 validated (CMVP certificate #5083). Provides the stateful hash-based post-quantum signature schemes LMS and HSS (per NIST SP 800-208) for digital signature operations, alongside its classical Suite B algorithms.",
+      "description": "FIPS 140-3 validated (CMVP certificate #5083) for classical cryptographic algorithms (AES, DSA, ECDSA, RSA, SHA family, HMAC, KAS, KDF, KMAC) used in Momentum's PKI, data-at-rest/in-transit encryption, and digital signature operations. The certificate's approved-algorithms list contains no post-quantum (LMS/HSS or other) algorithms.",
       "externalReferences": [
         {
           "type": "website",
@@ -33066,7 +33066,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -33106,7 +33106,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -33151,7 +33151,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -33195,7 +33195,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -33239,7 +33239,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -33283,7 +33283,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -33327,7 +33327,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -33371,7 +33371,51 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "a82166e4f8a96ba4",
+      "name": "Oracle OpenSSL FIPS Provider",
+      "version": "3.5.4",
+      "manufacturer": {
+        "name": "Oracle Corporation"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "Implements the NIST PQC standards ML-DSA (FIPS 204) KeyGen/SigGen/SigVer, ML-KEM (FIPS 203) KeyGen/EncapDecap, and SLH-DSA (FIPS 205) KeyGen/SigGen/SigVer, validated for algorithmic correctness through the NIST ACVP/CAVP program (CSRC product #20549) across all listed platforms (Oracle ILOM OS, Oracle Linux 9.6, Oracle Solaris 11.4, Windows Server 2022/2025), alongside its classical algorithms (AES, DSA, ECDSA, EdDSA, Counter DRBG).",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Oracle-OpenSSL-FIPS-Provider"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Yes, FIPS 140-3 validated (First Validated: 12/11/2025)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
         }
       ]
     },
@@ -33415,7 +33459,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -33459,7 +33503,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -33499,7 +33543,51 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "9a4d5aa8c2518ea9",
+      "name": "The OpenSSL Corporation OpenSSL FIPS Provider",
+      "version": "3.5.4",
+      "manufacturer": {
+        "name": "The OpenSSL Corporation"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "Implements the NIST PQC standards ML-DSA (FIPS 204) KeyGen/SigGen/SigVer, ML-KEM (FIPS 203) KeyGen/EncapDecap, and SLH-DSA (FIPS 205) KeyGen/SigGen/SigVer, validated for algorithmic correctness through the NIST ACVP/CAVP program (CSRC product #20272) across all listed platforms (Debian, FreeBSD, macOS, Windows, Ubuntu), alongside its classical algorithms (AES variants, Counter DRBG).",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "The-OpenSSL-Corporation-OpenSSL-FIPS-Pro"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Yes, First Validated: 10/6/2025"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
         }
       ]
     },
@@ -33544,7 +33632,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -33589,7 +33677,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -33634,7 +33722,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -33679,7 +33767,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -33719,7 +33807,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -33763,7 +33851,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -33803,7 +33891,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -33848,7 +33936,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -33892,7 +33980,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -33936,7 +34024,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -33981,7 +34069,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -34021,7 +34109,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -34065,7 +34153,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -34108,7 +34196,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -34151,7 +34239,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -34195,7 +34283,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -34240,7 +34328,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -34284,7 +34372,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -34328,7 +34416,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -34368,7 +34456,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -34408,7 +34496,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -34448,7 +34536,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -34488,7 +34576,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -34528,7 +34616,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -34572,7 +34660,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -34617,45 +34705,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
-        }
-      ]
-    },
-    {
-      "type": "cryptographic-asset",
-      "bom-ref": "df1c7ef5bc1c3172",
-      "name": "Cloudian-FJA (FIPS Java API)",
-      "manufacturer": {
-        "name": "Cloudian Inc."
-      },
-      "cryptoProperties": {
-        "assetType": "related-crypto-material"
-      },
-      "externalReferences": [],
-      "properties": [
-        {
-          "name": "pqctoday:product_id",
-          "value": "Cloudian-FJA-FIPS-Java-API"
-        },
-        {
-          "name": "pqctoday:category",
-          "value": "Cryptographic Libraries"
-        },
-        {
-          "name": "pqctoday:layer",
-          "value": ""
-        },
-        {
-          "name": "pqctoday:fips_validated",
-          "value": "false"
-        },
-        {
-          "name": "pqctoday:algorithm_source",
-          "value": "capability_description"
-        },
-        {
-          "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "60"
         }
       ]
     },
@@ -34667,8 +34717,13 @@
         "name": "Kryptus Segurança da Informação S.A."
       },
       "cryptoProperties": {
-        "assetType": "related-crypto-material"
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "kem"
+        }
       },
+      "description": "NIST CAVP-validated (Cert A6066, 2024-11-04) HSM cryptographic module implementing ML-KEM (KeyGen, EncapDecap) and ML-DSA (KeyGen, SigGen, SigVer) per FIPS 203/204, alongside AES (CBC/CMAC/CTR/ECB/GCM/KW), TDES, SHA-2/SHA-3/SHAKE-256, HMAC, ECDSA, EdDSA, RSA, KAS-ECC-SSC (SP 800-56Ar3), and Hash DRBG.",
       "externalReferences": [],
       "properties": [
         {
@@ -34685,7 +34740,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No (CAVP algorithm validation only — Cert A6066 — not a full FIPS 140 module validation)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -34693,7 +34748,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "0"
+          "value": "75"
         }
       ]
     }

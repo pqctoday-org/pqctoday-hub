@@ -26,8 +26,15 @@ interface LearnStepperProps {
  * simultaneously inside a `<section data-section-id="...">` block so:
  *  - Workshop `scroll-to [data-section-id="X"]` cues land deterministically
  *  - Browser Cmd-F searches the whole module
- *  - URL hash anchors (`/learn/x#section-id`) deep-link to the section
+ *  - URL anchors (`/learn/x#section-id` or `?section=section-id`) deep-link
+ *    to the section — see `useSectionDeepLink` below
  *  - Screen readers can navigate continuously
+ *
+ * NOTE (2026-07-30): the deep-link bullet above was documented here from the
+ * beginning but was never implemented — no code in the repo read
+ * `location.hash`, so `/learn/x#section-id` silently landed at the module
+ * top. Implemented now, because the combined Financial Services & Payments
+ * module needs three industries to land in three different places.
  *
  * Section completion is tracked via IntersectionObserver — when 50% of a
  * section is visible, it gets marked read (idempotent set; never unsets).
@@ -67,6 +74,30 @@ export const LearnStepper = ({ steps }: LearnStepperProps) => {
     const el = document.querySelector(`[data-section-id="${id}"]`)
     el?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
+
+  // Deep link: `#section-id` or `?section=section-id`. Runs once per target,
+  // after the sections have mounted. `?section=` exists alongside the hash
+  // because the Industry Landscape builds its links with react-router `<Link
+  // to>` + query params, and a hash there would collide with the tab state
+  // those pages already keep in the query string.
+  const deepLinkTarget = (() => {
+    const fromHash = location.hash.replace(/^#/, '')
+    if (fromHash) return decodeURIComponent(fromHash)
+    return new URLSearchParams(location.search).get('section') ?? ''
+  })()
+
+  useEffect(() => {
+    if (!deepLinkTarget) return
+    if (!steps.some((s) => s.id === deepLinkTarget)) return
+    // Defer past paint so the section elements exist and layout has settled;
+    // `scrollIntoView` on an unmounted/zero-height node is a no-op.
+    const raf = requestAnimationFrame(() => {
+      document
+        .querySelector(`[data-section-id="${deepLinkTarget}"]`)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+    return () => cancelAnimationFrame(raf)
+  }, [deepLinkTarget, steps])
 
   return (
     <div className="w-full">

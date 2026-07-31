@@ -8,6 +8,8 @@ import {
   Landmark,
   Trophy,
   MessageSquareWarning,
+  Award,
+  FolderGit2,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
@@ -17,6 +19,8 @@ export const LEADER_CATEGORIES = [
   'Industry Vendor',
   'Industry Adopter',
   'Algorithm Inventor',
+  'Patent Inventor',
+  'Open Source Maintainer',
   'Government',
   'Skeptic/Critic',
 ] as const
@@ -42,6 +46,8 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   'Industry Vendor': <Briefcase size={18} aria-hidden="true" />,
   'Industry Adopter': <Building2 size={18} aria-hidden="true" />,
   'Algorithm Inventor': <Lightbulb size={18} aria-hidden="true" />,
+  'Patent Inventor': <Award size={18} aria-hidden="true" />,
+  'Open Source Maintainer': <FolderGit2 size={18} aria-hidden="true" />,
   Government: <Landmark size={18} aria-hidden="true" />,
   'Skeptic/Critic': <MessageSquareWarning size={18} aria-hidden="true" />,
 }

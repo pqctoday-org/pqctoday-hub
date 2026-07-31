@@ -491,6 +491,8 @@ export const MODULE_INDUSTRY_RELEVANCE: Record<string, string[] | null> = {
     'Healthcare',
   ],
   'slh-dsa': ['Government & Defense', 'Finance & Banking', 'Technology'],
+  'government-defense-pqc': ['Government & Defense'],
+  'trust-services-pqc': ['Finance & Banking', 'Government & Defense', 'Technology'],
 }
 
 /** Nav paths that are always shown regardless of persona. */

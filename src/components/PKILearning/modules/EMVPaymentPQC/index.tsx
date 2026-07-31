@@ -7,6 +7,8 @@ import {
   ShieldCheck,
   Monitor,
   AlertTriangle,
+  Landmark,
+  Scale,
 } from 'lucide-react'
 import { EMVPaymentIntroduction } from './components/EMVPaymentIntroduction'
 import { EMVPaymentExercises } from './components/EMVPaymentExercises'
@@ -16,6 +18,8 @@ import { CardProvisioningVisualizer } from './workshop/CardProvisioningVisualize
 import { TokenizationExplorer } from './workshop/TokenizationExplorer'
 import { POSCryptoAnalyzer } from './workshop/POSCryptoAnalyzer'
 import { MigrationRiskMatrix } from './workshop/MigrationRiskMatrix'
+import { SettlementExposureModeller } from './workshop/SettlementExposureModeller'
+import { SectorRegulationTimeline } from './workshop/SectorRegulationTimeline'
 import { ModuleShell, type WorkshopPart } from '@/components/PKILearning/common/ModuleShell'
 import manifest from './manifest'
 
@@ -62,12 +66,26 @@ const PARTS: WorkshopPart[] = [
       'Map 10 payment components on a severity-effort matrix with dependency chains and migration timelines.',
     icon: AlertTriangle,
   },
+  {
+    id: 'settlement-exposure',
+    title: 'Step 7: Settlement Exposure Modeller',
+    description:
+      'Model harvest-now-decrypt-later exposure for Swift messaging, domestic RTGS, and correspondent chains — driven by data retention rather than a guessed CRQC date.',
+    icon: Landmark,
+  },
+  {
+    id: 'regulation-timeline',
+    title: 'Step 8: Sector Regulation Timeline',
+    description:
+      'Filter the financial sector’s PQC guidance by jurisdiction — BIS, G7 CEG, CMORG, Europol QSFF, FS-ISAC, MAS, DORA — and open each source document.',
+    icon: Scale,
+  },
 ]
 
 export const EMVPaymentPQCModule: FC = () => (
   <ModuleShell
     manifest={manifest}
-    description="Card authentication, tokenization, authorization networks, POS terminals, and PQC migration across Visa, Mastercard, Amex, UnionPay, and Discover."
+    description="Card authentication, tokenization, authorization networks and POS terminals; interbank settlement rails, bank key management and key blocks; and the sector regulation that sets the migration pace."
     learn={(api) => <EMVPaymentIntroduction onNavigateToWorkshop={api.goToWorkshop} />}
     exercises={(api) => (
       <EMVPaymentExercises
@@ -90,6 +108,10 @@ export const EMVPaymentPQCModule: FC = () => (
           return <POSCryptoAnalyzer key={`pos-crypto-${configKey}`} />
         case 5:
           return <MigrationRiskMatrix key={`mig-risk-${configKey}`} />
+        case 6:
+          return <SettlementExposureModeller key={`settlement-${configKey}`} />
+        case 7:
+          return <SectorRegulationTimeline key={`regulation-${configKey}`} />
         default:
           return null
       }

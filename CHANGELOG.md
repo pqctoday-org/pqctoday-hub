@@ -29,6 +29,22 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.32.0] - 2026-07-30
+
+Two new Learn modules cover government/defense and trust-service PQC migration, community leaders are now cross-linked to their patents and open-source projects, and this week's vendor, certification, and threat-watch data is refreshed.
+
+### Added
+
+- **Two new Learn modules: Government & Defense, and Trust Services** [view:/learn] [persona:architect] [persona:ops]: cover CNSA 2.0 mandates and Federal PKI transition planning, and qualified e-signature/timestamp longevity under eIDAS — both mapped to NICE Framework v2.2.0 roles.
+- **Leaders now link to their patents and open-source projects** [view:/leaders] [persona:researcher]: community leader profiles cite the PQC patents they're first-named inventor on and the open-source products they maintain, each linking straight into the Patents and Migrate catalogs as a second and third form of validated proof alongside existing library citations.
+- **Product-id and inventor deep links into Patents and Migrate** [view:/patents] [view:/migrate] [persona:researcher]: the Migrate catalog and Patents explorer now accept direct id-based links, powering the new Leaders cross-links above.
+
+### Data
+
+- **Library, compliance, algorithms, migrate, assessment, and threats catalogs refreshed** [view:/library] [view:/compliance] [view:/algorithms] [view:/migrate] [persona:researcher]: this week's verification and enrichment pass across all six catalogs, including 2 new vendor roadmap entries (IronCore Labs, PQSecure Technologies) and 7 vendors confirmed to have no public PQC roadmap yet.
+- **Product certifications and CRQC-watch data re-synced** [view:/migrate] [view:/threats] [persona:researcher]: certification records re-scraped and re-matched against the catalog; the quantum-computing capability watch re-verified against all 6 estimate sources.
+- **OpenSSH 10.4's composite signature support noted in the Protocol Support matrix** [view:/algorithms] [persona:developer]: experimental, opt-in ML-DSA-44+Ed25519 host-key support shipped 2026-07-06.
+
 ## [4.31.0] - 2026-07-30
 
 A new Industry Landscape tab on the Algorithms page shows what crypto mechanisms each industry actually relies on today — cross-referenced against real standards, official market-size figures, and live threat data.
