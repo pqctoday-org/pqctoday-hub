@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "QPKI",
+    "category": "PKI & Certificate Lifecycle",
+    "product_name": "QPKI",
+    "product_brief": "Quantum-safe PKI toolkit for post-quantum cryptography with interoperable, standards-compliant certificates.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Supports ML-DSA, SLH-DSA, and ML-KEM via Cloudflare CIRCL (FIPS 203/204/205 implementations). Features hybrid certificates (classical + PQC), composite certificates, and CSR generation for PQC algorithms. Validated with NIST ACVP test vectors.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "ECDSA (P-256, P-384, P-521), EdDSA (Ed25519, Ed448), RSA (2048, 4096), ML-DSA (44/65/87), SLH-DSA (128/192/256), ML-KEM (512/768/1024)",
+    "key_management_model": "CLI-first, no database required; HSM support via PKCS#11; pure Go by default (CGO optional for HSM)",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Application-layer toolkit (CLI)",
+    "infrastructure_layer": "Application",
+    "license_type": "Open Source",
+    "license": "Apache License 2.0",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "No (uses FIPS 203/204/205 implementations from Cloudflare CIRCL and NIST ACVP test vectors, but no FIPS 140 validation stated)",
+    "primary_platforms": "Linux, macOS, Windows",
+    "target_industries": "Unknown",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Supports migration between algorithms (e.g., ECDSA -> ML-DSA); supports hybrid and composite certificates for transition.",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "ECDSA, EdDSA (Ed25519, Ed448), RSA, ML-DSA, SLH-DSA",
+    "authoritative_source_url": "qpki.io",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Cross-validated with external implementations (OpenSSL, BouncyCastle); NIST ACVP test vectors validated.",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "CLI-first, simple, scriptable, no database required; supports crypto-agility for seamless migration.",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-07-31"
+    }
+  }
+]
