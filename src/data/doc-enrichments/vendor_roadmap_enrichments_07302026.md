@@ -35,24 +35,23 @@ source: public/vendor-roadmaps/
 
 - **Vendor ID**: VND-001
 - **Vendor Name**: Amazon Web Services Inc.
-- **Roadmap Title**: AWS Secrets Manager Hybrid Post-Quantum TLS
-- **Roadmap URL**: https://aws.amazon.com/about-aws/whats-new/2026/04/aws-secrets-manager-post-quantum-tls/
-- **Publish Date**: 2026-07-28
-- **Local File**: vendor-roadmaps/VND-001_Amazon_Web_Services_Inc.html
-- **CSV Coverage Notes**: None
-- **PQC Algorithms Announced**: ML-KEM
+- **Roadmap Title**: AWS Post-Quantum Cryptography Migration Plan
+- **Roadmap URL**: https://aws.amazon.com/security/post-quantum-cryptography/migrating-to-post-quantum-cryptography/
+- **Publish Date**: 2026-04-23
+- **Local File**: vendor-roadmaps/VND-001_Amazon_Web_Services_Inc..html
+- **CSV Coverage Notes**: AWS PQC migration plan: ML-KEM (FIPS 203) key exchange enabled across KMS, ACM, Secrets Manager, S3, CloudFront, API Gateway, ALB/NLB, Transfer Family, Payment Cryptography; ML-DSA (FIPS 204) signatures in AWS Private CA and KMS, CloudHSM ML-DSA in preview. Built on AWS-LC and s2n-tls. Some features transparently enabled, others customer-opt-in under shared responsibility model. | Milestone: ML-KEM hybrid key exchange live across KMS, ACM, Secrets Manager, S3, CloudFront (default client-to-edge), API Gateway, ALB/NLB, Transfer Family, Payment Cryptography; ML-DSA signing in Private CA and KMS,
+- **PQC Algorithms Announced**: ML-KEM; ML-DSA; SLH-DSA
 - **Target Migration Dates**: None detected
-- **Products / Services Covered**: AWS Secrets Manager Agent (version 2.0.0+); AWS Lambda Extension (version 19+); AWS Secrets and Configuration Provider (version 2.0.0+); AWS SDKs (Rust, Go, Node.js, Kotlin, Python, Java v2)
-- **Compliance Frameworks**: None detected
-- **Hybrid Mode Support**: Yes, combining classical key exchange with post-quantum cryptography
-- **Current GA Status**: GA
-- **Customer Action Required**: Upgrade to the latest client versions (Secrets Manager Agent, Lambda Extension, SDKs)
-- **Key Commitments & Quotes**: "AWS Secrets Manager clients now support hybrid post-quantum TLS to protect secrets from quantum risks"; "combining classical key exchange with post-quantum cryptography to protect against both traditional cryptographic attacks and future quantum computing risks"; "No code changes, configuration updates, or migration effort are required for use cases that have already upgraded to the latest client versions"
-- **Coverage Verification**: CONSISTENT, the document details specific product versions and support status, which aligns with the lack of specific CSV coverage notes in the prompt.
+- **Products / Services Covered**: Elastic Load Balancers (ALB, NLB); API Gateway; CloudFront; Transfer Family; AWS Key Management Service (KMS); AWS Certificate Manager (ACM); AWS Secrets Manager; AWS Payment Cryptography; Amazon Simple Storage Service (S3); AWS Private Certificate Authority (Private CA); AWS CloudHSM; IAM Roles Anywhere
+- **Compliance Frameworks**: NIST FIPS 203; NIST FIPS 204; NIST FIPS 205; NIST IR 8547; European Commission Recommendation on a Coordinated Implementation Roadmap; NCSC whitepaper; BSI Technical Guideline TR-02102; ANSSI position paper; ASD guidance; Canadian Centre for Cyber Security ITSM.40.001; UAE Cyber Security Council National Encryption Policy v1.0; G7 Cyber Expert Group coordinated roadmap; ASC X9 Post Quantum Cryptography Financial Readiness Needs Assessment; GSMA Post-Quantum Telco Network Taskforce guidelines
+- **Hybrid Mode Support**: Yes, the document states that services offer "hybrid PQ-key exchange using ML-KEM" and references BSI recommendations for "hybrid post-quantum cryptography... combining traditional and quantum-resistant algorithms".
+- **Current GA Status**: GA (General Availability), with CloudHSM ML-DSA support in preview.
+- **Customer Action Required**: Update client-side components/SDKs to versions supporting ML-KEM; apply PQ-TLS policies to customer-owned resources; ensure applications use TLS 1.3; explicitly specify desired TLS policies in infrastructure-as-code; use IAM condition keys to restrict TLS policies; update PKI infrastructure to use ML-DSA.
+- **Key Commitments & Quotes**: "AWS is migrating to post-quantum cryptography (PQC), and helping our customers do the same under a shared responsibility model."; "AWS uses the ML-KEM algorithm for this purpose."; "AWS uses the ML-DSA algorithm for this purpose."
+- **Coverage Verification**: PARTIAL, the document confirms the listed services and ML-KEM/ML-DSA support but does not explicitly mention the underlying libraries "AWS-LC and s2n-tls" in the provided text.
 - **Extraction Quality**: HIGH
-- **Source Document**: VND-001_Amazon_Web_Services_Inc.html (174.0 KB)
-- **Extraction Timestamp**: 2026-07-30T20:54:13
-
+- **Source Document**: VND-001_Amazon_Web_Services_Inc..html (311.1 KB)
+- **Extraction Timestamp**: 2026-07-26T22:34:01
 
 ## VND-017 — Futurex Inc.
 
@@ -117,11 +116,10 @@ source: public/vendor-roadmaps/
 - **Current GA Status**: GA; "In 2024, Infineon made a huge step... We received the world’s first Common Criteria EAL6+ certification"
 - **Customer Action Required**: None detected
 - **Key Commitments & Quotes**: "In 2024, Infineon made a huge step toward a quantum resistant world. We received the world’s first Common Criteria EAL6+ certification for a security controller comprising the secured implementation of a post-quantum cryptography (PQC) algorithm."; "from 2025 on, Infineon PSOC™ microcontrollers (MCUs) are compliant with PQC requirements for firmware verification outlined in the Commercial National Security Algorithm (CNSA) Suite 2.0"; "In 2025, we become world‘s first company to receive Common Criteria EAL6... for the secured implementation of a post-quantum cryptography algorithm on our TEGRION security controller."
-- **Coverage Verification**: PARTIAL; The document confirms TEGRION/Integrity Guard 32 CC certification and PSOC CNSA 2.0 compliance, but does not explicitly mention the SLC27 product name, the specific Oct 2025 launch date, or the 2026 production timeline for PSOC Control C3.
-- **Extraction Quality**: HIGH
+- **Coverage Verification**: PARTIAL; The document confirms TEGRION/Integrity Guard 32 CC certification and PSOC CNSA 2.0 compliance, but does not explicitly mention the SLC27 product name, the Oct 2025 launch date, or specific ML-DSA/ML-KEM library details for those products.
+- **Extraction Quality**: MEDIUM
 - **Source Document**: VND-021_Infineon_Technologies_AG.html (1682.4 KB)
-- **Extraction Timestamp**: 2026-07-30T20:55:05
-
+- **Extraction Timestamp**: 2026-07-17T07:52:32
 
 ## VND-024 — Keyfactor Inc.
 
@@ -130,21 +128,21 @@ source: public/vendor-roadmaps/
 - **Roadmap Title**: Keyfactor Post-Quantum Cryptography Lab
 - **Roadmap URL**: https://www.keyfactor.com/post-quantum-cryptography-lab/
 - **Publish Date**: 2025-01-01
-- **Local File**: vendor-roadmaps/VND-024_Keyfactor_Inc..html
+- **Local File**: public/vendor-roadmaps/VND-024_Keyfactor_Inc..html
 - **CSV Coverage Notes**: Keyfactor PQC Lab is a resource hub (webinars, sandboxed test envs, toolkits) emphasizing crypto-agility ahead of the 2035 deadline. EJBCA 9.1 and SignServer 7.1 add quantum-safe algorithms (Dilithium/ML-DSA, SPHINCS+/SLH-DSA, Falcon) via Bouncy Castle APIs; Keyfactor Command for certificate lifecycle/IoT PKI; ACME support. Free trials on Azure Marketplace. | Milestone: EJBCA 9.1 and SignServer 7.1 deliver PQC: issuance/signing with ML-DSA (Dilithium), SLH-DSA (SPHINCS+) and Falcon via Bouncy Castle; Command available for crypto-agile PKI/cert lifecycle
+- **Roadmap Scope**: Multi-product
 - **PQC Algorithms Announced**: Dilithium; SPHINCS+; Falcon
 - **Target Migration Dates**: 2035
-- **Products / Services Covered**: Keyfactor Command; SignServer; EJBCA; Bouncy Castle
+- **Products / Services Covered**: Keyfactor Command; SignServer; Bouncy Castle APIs; PQC Lab
 - **Compliance Frameworks**: None detected
-- **Hybrid Mode Support**: Partial, mentions "Post-quantum hybrid cryptography" in video titles and "Hybrid Certificates" in blog titles.
+- **Hybrid Mode Support**: Yes; Post-quantum hybrid cryptography in Bouncy Castle
 - **Current GA Status**: GA
-- **Customer Action Required**: Start a free 30-day trial of Keyfactor Command or SignServer in Azure; assess PKI maturity; explore PQC Lab resources.
+- **Customer Action Required**: Get hands-on with a free SaaS-based PKI sandbox; start a 30-day trial of Keyfactor Command or SignServer in Azure
 - **Key Commitments & Quotes**: "Crypto-agility—swapping cryptographic algorithms quickly and confidently—is essential, as all encryption must be post-quantum secure by 2035."
-- **Coverage Verification**: PARTIAL, the document confirms the algorithms, products, and 2035 deadline but does not explicitly mention ACME support or IoT PKI in the provided text.
-- **Extraction Quality**: MEDIUM
+- **Coverage Verification**: CONSISTENT; The document confirms the PQC Lab as a resource hub, mentions the 2035 deadline, and explicitly lists SignServer, Keyfactor Command, and Bouncy Castle with support for Dilithium, SPHINCS+, and Falcon via Azure trials.
+- **Extraction Quality**: HIGH
 - **Source Document**: VND-024_Keyfactor_Inc..html (177.4 KB)
-- **Extraction Timestamp**: 2026-07-30T20:55:31
-
+- **Extraction Timestamp**: 2026-07-07T20:22:39
 
 ## VND-027 — Microsoft Corporation
 
@@ -152,22 +150,21 @@ source: public/vendor-roadmaps/
 - **Vendor Name**: Microsoft Corporation
 - **Roadmap Title**: Accelerating the quantum-safe timeline | Microsoft Security Blog
 - **Roadmap URL**: https://www.microsoft.com/en-us/security/blog/2026/06/30/microsoft-advances-quantum-safe-security-as-the-risk-timeline-shifts/
-- **Publish Date**: 2026-07-28
+- **Publish Date**: 2026-07-15
 - **Local File**: vendor-roadmaps/VND-027_Microsoft_Corporation.html
 - **CSV Coverage Notes**: None
 - **PQC Algorithms Announced**: None detected
-- **Target Migration Dates**: 2029
+- **Target Migration Dates**: transition products and services to PQC by 2029
 - **Products / Services Covered**: None detected
 - **Compliance Frameworks**: None detected
-- **Hybrid Mode Support**: None detected
+- **Hybrid Mode Support**: Yes; "enables hybrid and post-quantum key exchange as standards mature"
 - **Current GA Status**: Planned
-- **Customer Action Required**: None detected
-- **Key Commitments & Quotes**: "transitioning critical products and services to post-quantum cryptography (PQC) by 2029"; "incorporate PQC requirements into its Secure Future Initiative ( SFI )"; "organizations need to start now"
-- **Coverage Verification**: CONSISTENT. The document does not specify product-level coverage details, aligning with the "Not specified" note.
-- **Extraction Quality**: LOW
-- **Source Document**: VND-027_Microsoft_Corporation.html (164.3 KB)
-- **Extraction Timestamp**: 2026-07-30T20:55:54
-
+- **Customer Action Required**: Align on strategy; Design for change; Begin with inventory; Modernize protocols
+- **Key Commitments & Quotes**: "transition products and services to PQC by 2029"; "incorporating PQC requirements into our Secure Future Initiative (SFI)"; "Critical endpoints negotiate TLS 1.3 by default"
+- **Coverage Verification**: CONSISTENT; The document is a high-level roadmap announcement and does not specify product-level coverage details.
+- **Extraction Quality**: MEDIUM
+- **Source Document**: VND-027_Microsoft_Corporation.html (276.2 KB)
+- **Extraction Timestamp**: 2026-07-15T23:33:21
 
 ## VND-028 — NXP Semiconductors N.V.
 
@@ -176,21 +173,21 @@ source: public/vendor-roadmaps/
 - **Roadmap Title**: Conservative Post-Quantum Security with FrodoKEM
 - **Roadmap URL**: https://www.nxp.com/company/about-nxp/smarter-world-blog/BL-POST-QUANTUM-SECURITY-WITH-FRODOKEM
 - **Publish Date**: 2023-05-24
-- **Local File**: vendor-roadmaps/VND-028_NXP_Semiconductors_N.V..html
+- **Local File**: public/vendor-roadmaps/VND-028_NXP_Semiconductors_N.V..html
 - **CSV Coverage Notes**: (2026-07-01: original URL (BL-NXP-STANDS-POST-QUANTUM-CRYPTOGRAPHY) returns HTTP 404; replaced with a current, confirmed-live NXP PQC blog post.) (2026-07-01 r1: publish_date corrected 2025-11-18 -> 2023-05-24 per JSON-LD datePublished and visible "May 24, 2023" byline in the archived HTML; 2025-11-18 is the page dateModified. url_needs_review: roadmap_url returns HTTP 404 to automated checks (WebFetch + browser-UA curl), but nxp.com serves 404 to ALL automated fetches including the homepage (bot blocking), so liveness could not be verified programmatically; the URL remains the canonical search-indexed location and no relocated/alternate URL for the same FrodoKEM post was found. Archived HTML in local_file is the durable proof.)
+- **Roadmap Scope**: Algorithm/standard reference
 - **PQC Algorithms Announced**: Kyber; Dilithium; FrodoKEM; Rainbow; SIKE
 - **Target Migration Dates**: None detected
 - **Products / Services Covered**: None detected
 - **Compliance Frameworks**: NIST; BSI; ANSSI; ISO
-- **Hybrid Mode Support**: None detected
+- **Hybrid Mode Support**: No
 - **Current GA Status**: No PQC
 - **Customer Action Required**: None detected
-- **Key Commitments & Quotes**: "NXP is setting future security standards."
-- **Coverage Verification**: CONSISTENT — The document text confirms the "May 24, 2023" publish date and FrodoKEM focus described in the coverage notes.
-- **Extraction Quality**: HIGH
+- **Key Commitments & Quotes**: None detected
+- **Coverage Verification**: CONSISTENT; The document text matches the title "Conservative Post-Quantum Security with FrodoKEM" and the byline date "May 24, 2023" cited in the coverage notes.
+- **Extraction Quality**: MEDIUM
 - **Source Document**: VND-028_NXP_Semiconductors_N.V..html (68.9 KB)
-- **Extraction Timestamp**: 2026-07-30T20:56:38
-
+- **Extraction Timestamp**: 2026-07-07T20:22:39
 
 ## VND-029 — Oracle Corporation
 
@@ -222,21 +219,21 @@ source: public/vendor-roadmaps/
 - **Roadmap Title**: Building the levee: Red Hat's post-quantum strategy is already in production
 - **Roadmap URL**: https://www.redhat.com/en/blog/building-levee-why-red-hats-post-quantum-strategy-already-production
 - **Publish Date**: 2026-05-25
-- **Local File**: vendor-roadmaps/VND-032_Red_Hat_Inc..html
+- **Local File**: public/vendor-roadmaps/VND-032_Red_Hat_Inc..html
 - **CSV Coverage Notes**: (2026-07-01: corrected publish_date from 2025-05-01 to 2026-05-25 per the byline on the live page.)
+- **Roadmap Scope**: Multi-product
 - **PQC Algorithms Announced**: ML-KEM; ML-DSA; SLH-DSA
 - **Target Migration Dates**: None detected
-- **Products / Services Covered**: Red Hat Enterprise Linux 10 (RHEL); Red Hat Enterprise Linux 10.1 (RHEL 10.1); OpenSSL; Network Security Services (NSS); Linux kernel
+- **Products / Services Covered**: Red Hat Enterprise Linux 10 (RHEL); Red Hat Enterprise Linux 10.1; Fedora; OpenSSL; Network Security Services (NSS); Linux kernel
 - **Compliance Frameworks**: NIST; FIPS 203; FIPS 204
 - **Hybrid Mode Support**: Yes; managing 2 estates simultaneously: classical cryptography and PQC
 - **Current GA Status**: GA
 - **Customer Action Required**: None detected
-- **Key Commitments & Quotes**: "Red Hat has been laying the groundwork for the post-quantum transition for years"; "we're helping build them. Our teams are deep in the trenches of OpenSSL, NSS, and the Linux kernel"; "With RHEL 10.1, we became the first major distribution to start signing our RPM packages with post-quantum keys"
-- **Coverage Verification**: CONSISTENT; The document text contains the byline "May 25, 2026", which matches the corrected publish_date in the CSV Coverage Notes.
+- **Key Commitments & Quotes**: "Red Hat has been laying the groundwork for the post-quantum transition for years"; "With RHEL 10.1, we became the first major distribution to start signing our RPM packages with post-quantum keys (ML-DSA)"; "We recognize moving to PQC requires managing 2 estates simultaneously: classical cryptography and PQC"
+- **Coverage Verification**: CONSISTENT; The document byline states "May 25, 2026", which matches the corrected publish_date in the CSV notes.
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-032_Red_Hat_Inc..html (620.0 KB)
-- **Extraction Timestamp**: 2026-07-30T20:59:21
-
+- **Extraction Timestamp**: 2026-07-07T20:23:35
 
 ## VND-041 — Thales Group
 
@@ -383,21 +380,21 @@ source: public/vendor-roadmaps/
 - **Roadmap Title**: DocuSign: Post-Quantum-Kryptografie (Post-Quantum Cryptography, DE)
 - **Roadmap URL**: https://www.docusign.com/de-de/blog/post-quanten-kryptografie
 - **Publish Date**: 2026-02-25
-- **Local File**: vendor-roadmaps/VND-171_DocuSign.html
+- **Local File**: public/vendor-roadmaps/VND-171_DocuSign.html
 - **CSV Coverage Notes**: DocuSign outlines a PQC strategy referencing ML-DSA (signatures), ML-KEM (key encapsulation) and SLH-DSA/SPHINCS+. Core approach is hybrid cryptography (RSA + ML-DSA) for crypto-agile, paced migration; three pillars: early planning, gradual hybrid transition, lifecycle protection of agreements. Note: English URL (/blog/post-quantum-cryptography) returns 404; canonical live page is the DE blog. | Milestone: Hybrid cryptography for e-signatures combining traditional algorithms (RSA) with PQC (ML-DSA), enabling phased migration; protecting agreements across full lifecycle against Harvest-Now-Decr
-- **PQC Algorithms Announced**: ML-KEM; ML-DSA; SLH-DSA
+- **Roadmap Scope**: Portfolio-wide strategy
+- **PQC Algorithms Announced**: ML-DSA
 - **Target Migration Dates**: None detected
-- **Products / Services Covered**: None detected
+- **Products / Services Covered**: Portfolio-wide commitment (no individual products named)
 - **Compliance Frameworks**: NIST; Europäische Kommission
-- **Hybrid Mode Support**: Yes, hybrid cryptography combining traditional algorithms (RSA) with PQC (ML-DSA)
+- **Hybrid Mode Support**: Yes; hybrid cryptography combining traditional algorithms (RSA) with PQC (ML-DSA)
 - **Current GA Status**: Planned
 - **Customer Action Required**: None detected
 - **Key Commitments & Quotes**: "Docusign sichert digitale Vereinbarungen für die Quanten-Ära mit Post-Quanten-Kryptografie (PQC)."
-- **Coverage Verification**: CONSISTENT, the document explicitly confirms the use of ML-DSA, ML-KEM, and SLH-DSA, the hybrid RSA+ML-DSA approach, and the three strategic pillars mentioned in the notes.
+- **Coverage Verification**: PARTIAL; The document confirms the ML-DSA hybrid strategy and three pillars, but does not explicitly mention ML-KEM or SLH-DSA/SPHINCS+ in the provided text.
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-171_DocuSign.html (483.5 KB)
-- **Extraction Timestamp**: 2026-07-30T21:08:03
-
+- **Extraction Timestamp**: 2026-07-07T20:28:31
 
 ## VND-178 — Ping Identity Holdings Corp.
 
@@ -406,21 +403,21 @@ source: public/vendor-roadmaps/
 - **Roadmap Title**: Ping Identity: Addressing the Quantum Threat in US Federal Government
 - **Roadmap URL**: https://www.pingidentity.com/en/resources/blog/post/quantum-threat-us-fed-gov.html
 - **Publish Date**: 2025-02-27
-- **Local File**: vendor-roadmaps/VND-178_Ping_Identity_Holdings_Corp..html
+- **Local File**: public/vendor-roadmaps/VND-178_Ping_Identity_Holdings_Corp..html
 - **CSV Coverage Notes**: Advisory blog (publ. 2025-02-27) covering NIST FIPS 203 (ML-KEM), 204 (ML-DSA), 205 (SLH-DSA) and the need for crypto-agility in IAM for federal buyers. Guidance/positioning piece - no specific Ping product PQC roadmap or dated milestones. | Milestone: No concrete product GA milestone; positions IAM around crypto-agility to transition to NIST FIPS 203 (ML-KEM), 204 (ML-DSA), 205 (SLH-DSA).
+- **Roadmap Scope**: Portfolio-wide strategy
 - **PQC Algorithms Announced**: ML-KEM; ML-DSA; SLH-DSA
 - **Target Migration Dates**: None detected
-- **Products / Services Covered**: None detected
-- **Compliance Frameworks**: NIST FIPS 203; NIST FIPS 204; NIST FIPS 205
-- **Hybrid Mode Support**: None detected
+- **Products / Services Covered**: Portfolio-wide commitment (no individual products named)
+- **Compliance Frameworks**: NIST FIPS 203; NIST FIPS 204; NIST FIPS 205; JOSE; COSE; IETF
+- **Hybrid Mode Support**: No
 - **Current GA Status**: No PQC
 - **Customer Action Required**: Understand the Threat; Adopt PQC Standards; Partner with Experts
-- **Key Commitments & Quotes**: "Begin transitioning to quantum-resistant algorithms in line with NIST’s guidelines."
-- **Coverage Verification**: CONSISTENT. The document is an advisory blog published on Feb 27, 2025, discussing NIST FIPS 203/204/205 and crypto-agility for IAM without specific product milestones.
-- **Extraction Quality**: HIGH
+- **Key Commitments & Quotes**: "organizations will need to adopt critical security capabilities, including: ... Cryptographic Agility"
+- **Coverage Verification**: CONSISTENT; The document is an advisory blog published on Feb 27, 2025, discussing NIST FIPS 203/204/205 and crypto-agility for IAM without naming specific product milestones.
+- **Extraction Quality**: MEDIUM
 - **Source Document**: VND-178_Ping_Identity_Holdings_Corp..html (61.4 KB)
-- **Extraction Timestamp**: 2026-07-30T21:09:01
-
+- **Extraction Timestamp**: 2026-07-07T20:28:31
 
 ## VND-225 — Proton AG
 
@@ -2786,4 +2783,26 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-433_OpenBao_LF_Edge_.html (338.4 KB)
 - **Extraction Timestamp**: 2026-07-07T20:41:12
+
+## VND-315 — PQSecure Technologies, Inc.
+
+- **Vendor ID**: VND-315
+- **Vendor Name**: PQSecure Technologies, Inc.
+- **Roadmap Title**: PQSecure Technologies — PQSecure Software Products
+- **Roadmap URL**: https://pqsecurity.com/pqsecure-software/
+- **Publish Date**: 2026-07-31
+- **Local File**: vendor-roadmaps/VND-315_PQSecure_Technologies_Inc.html
+- **CSV Coverage Notes**: None
+- **PQC Algorithms Announced**: ML-KEM; ML-DSA; SLH-DSA; FN-DSA; XMSS; LMS
+- **Target Migration Dates**: None detected
+- **Products / Services Covered**: PQSecure-SW; libpqsecure-C; libpqsecure-rs; libpqsecure-asm; PQSecure-TRUST
+- **Compliance Frameworks**: FIPS 180; FIPS 203; FIPS 204; FIPS 205; FIPS 206; FIPS 202; RFC 8391; RFC 8554; NIST SP 800-208; RFC 6234; CNSA 2.0; ACVP
+- **Hybrid Mode Support**: Partial, with brief description: The document mentions "classical primitives required for hybrid deployments" and lists SHA-2, HMAC, and HKDF, but does not explicitly detail hybrid key exchange or signature schemes.
+- **Current GA Status**: GA
+- **Customer Action Required**: None detected
+- **Key Commitments & Quotes**: "PQSecure-SW™ delivers production-grade, side-channel-aware, formally verified post-quantum cryptography software"; "libpqsecure consistently demonstrates measurable performance advantages"; "Designed for FIPS-oriented validation pathways"
+- **Coverage Verification**: CONSISTENT, as the document provides detailed product and algorithm information despite the CSV notes being unspecified.
+- **Extraction Quality**: HIGH
+- **Source Document**: VND-315_PQSecure_Technologies_Inc.html (74.4 KB)
+- **Extraction Timestamp**: 2026-07-30T21:26:57
 
