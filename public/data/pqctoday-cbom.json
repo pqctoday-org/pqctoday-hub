@@ -34760,8 +34760,13 @@
         "name": "PQnet Project"
       },
       "cryptoProperties": {
-        "assetType": "related-crypto-material"
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "primitive": "kem"
+        }
       },
+      "description": "Managed implementation of NIST Post-Quantum algorithms in C#. Supports ML-KEM (FIPS 203), ML-DSA (FIPS 204), and SLH-DSA (FIPS 205). Provides APIs for key generation, signing/verification, and encapsulation/decapsulation. Supports pure and \"pre-hash\" modes for signatures. All ACVP test vectors pass for ML-DSA, SLH-DSA, and ML-KEM.",
       "externalReferences": [],
       "properties": [
         {
@@ -34778,7 +34783,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -34792,14 +34797,20 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "edf69217339b0896",
+      "bom-ref": "cc38413dc6010073",
       "name": "CryptoScan",
+      "version": "v1.3",
       "manufacturer": {
         "name": "CryptoScan Project"
       },
       "cryptoProperties": {
-        "assetType": "related-crypto-material"
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA, Falcon",
+          "primitive": "kem"
+        }
       },
+      "description": "Detects NIST-standardized PQC algorithms including ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205), and draft FN-DSA (FIPS 206). Also detects stateful hash-based signatures (XMSS, LMS per SP 800-208). Recognizes legacy names (Kyber, Dilithium, SPHINCS+). Identifies hybrid implementations (e.g., X25519+ML-KEM, ECDSA+ML-DSA).",
       "externalReferences": [],
       "properties": [
         {
@@ -34816,7 +34827,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -34836,8 +34847,13 @@
         "name": "QPKI Project"
       },
       "cryptoProperties": {
-        "assetType": "related-crypto-material"
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "primitive": "kem"
+        }
       },
+      "description": "Supports ML-DSA, SLH-DSA, and ML-KEM via Cloudflare CIRCL (FIPS 203/204/205 implementations). Features hybrid certificates (classical + PQC), composite certificates, and CSR generation for PQC algorithms. Validated with NIST ACVP test vectors.",
       "externalReferences": [],
       "properties": [
         {
@@ -34854,7 +34870,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No (uses FIPS 203/204/205 implementations from Cloudflare CIRCL and NIST ACVP test vectors, but no FIPS 140 validation stated)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -34874,8 +34890,13 @@
         "name": "libbitcoinpqc Project"
       },
       "cryptoProperties": {
-        "assetType": "related-crypto-material"
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-DSA, SLH-DSA",
+          "primitive": "signature"
+        }
       },
+      "description": "Implements two NIST-standardized PQC signature algorithms: ML-DSA-44 (FIPS 204, lattice-based) and SLH-DSA-SHA2-128s (FIPS 205, stateless hash-based). Also supports BIP 340 Schnorr (secp256k1). The implementations are based on reference code from the NIST PQC standardization process and are explicitly stated as \"not production-hardened.\" It provides key generation, signing, and verification functions with a unified C API.",
       "externalReferences": [],
       "properties": [
         {
@@ -34892,7 +34913,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "No (The text states the algorithms are \"FIPS-certified\" referring to the standards FIPS 204 and FIPS 205, but the library itself is based on reference code and is \"not production-hardened,\" implying the library implementation is not FIPS 140 validated)."
         },
         {
           "name": "pqctoday:algorithm_source",
