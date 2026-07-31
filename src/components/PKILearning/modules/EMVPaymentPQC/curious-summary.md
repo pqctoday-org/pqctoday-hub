@@ -1,15 +1,15 @@
 ### What This Is About
 
-EMV is the global chip payment standard protecting roughly 14.7 billion cards in circulation. When a card is inserted into a terminal offline, authentication relies entirely on verifying a chain of RSA certificates.
+Payments run on two halves that share cryptography, share vendors and increasingly share deadlines, but are usually migrated by different teams reading different documents. One half is cards: EMV is the global chip standard protecting 14.7 billion cards in circulation at the end of 2024, and when a card is used offline, authentication rests entirely on a chain of RSA certificates. The other half moves money between institutions — Swift messaging, domestic RTGS, correspondent banking chains — plus the bank key management and sector regulation around them.
 
 ### Why It Matters
 
-A quantum computer capable of breaking RSA-2048 could forge the EMV root certificates, enabling criminals to create counterfeit offline cards that bypass terminal security. Additionally, the Points-of-Sale (POS) terminals themselves face massive quantum vulnerabilities during Key Injection Facilities (KIF), where compromising a central RSA-wrapped Base Derivation Key could expose millions of transactions.
+A quantum computer able to break RSA-2048 could forge EMV certificates, letting criminals create counterfeit cards that pass offline terminal checks. Point-of-sale estates face a second exposure at Key Injection Facilities, where an RSA-wrapped Base Derivation Key protects millions of transactions — compromise it and every past and future key derived from it falls with it. On the banking side the threat is different: settlement traffic is long-lived and traverses parties you do not control, so harvest-now-decrypt-later exposure multiplies along a correspondent chain no single institution can migrate alone.
 
 ### The Key Takeaway
 
-Because PQC algorithms like ML-DSA are too large for constrained smart cards, the payment industry is heavily focused on FN-DSA (Falcon) given its compact signature sizes. Organizations must plan now to align with 3-5 year card replacement cycles to meet late 2020s regulatory migration targets.
+Because ML-DSA signatures (2,420 bytes) are large for constrained smart cards, the card industry is focused on FN-DSA (Falcon), whose 666-byte signatures fit card memory — though FIPS 206 is still in preparation, so it is not yet deployable. Unlike government, the financial sector has no dated algorithm mandate: the pressure comes from operational-resilience regulation and from how long data stays sensitive. Plan against the 3-5 year card replacement cycle, because cards issued today will still be in wallets at the end of the decade.
 
 ### What's Happening
 
-Payment networks are evaluating FN-DSA (Falcon) for constrained smart cards and planning PQC migration roadmaps aligned with 3-5 year card replacement cycles, targeting late 2020s regulatory deadlines for offline EMV authentication upgrades across 14.7 billion cards in circulation.
+Seven bodies across five jurisdictions now publish financial-sector PQC direction — BIS Project Leap, the G7 Cyber Expert Group, UK CMORG, the Europol Quantum Safe Financial Forum, FS-ISAC, MAS and DORA — and which one binds an institution depends on where it is regulated, not where it operates. EMVCo does not expect quantum computing to threaten EMV infrastructure before 2040, and says it may never; BIS, the G7 and national regulators target 2030-2032 for critical financial systems. Mastercard is the one card network to have published a dedicated PQC white paper.
