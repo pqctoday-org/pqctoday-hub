@@ -29,6 +29,18 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.33.0] - 2026-07-31
+
+Learn modules and Playground tools now show a real, working revision history instead of a button that always claimed everything was up to date.
+
+### Added
+
+- **Learn modules and Playground tools now show their real review status** [view:/learn] [view:/playground] [persona:developer] [persona:architect] [persona:researcher]: every module and hands-on tool page now carries the same "Reviewed by / Unreviewed" badge already shown on Library, Timeline, Compliance, and Algorithms — clicking it opens the full revision history: who reviewed it, when, and what changed. The previous button checked a system that had never actually been wired up and always claimed "up to date," regardless of the real state.
+
+### Data
+
+- **Corrected 4 mislabeled entries in the site's revision-history log** [view:/revisions] [persona:researcher]: one entry had 29 unrelated Playground-tool ids bundled into it under the wrong category; one had a garbled id corrected to its real module; three had garbled ids with no live match and were removed rather than guessed at.
+
 ## [4.32.0] - 2026-07-30
 
 Two new Learn modules cover government/defense and trust-service PQC migration, community leaders are now cross-linked to their patents and open-source projects, and this week's vendor, certification, and threat-watch data is refreshed.

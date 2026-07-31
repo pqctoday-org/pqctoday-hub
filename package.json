@@ -1,7 +1,7 @@
 {
   "name": "pqctoday-hub",
   "private": true,
-  "version": "4.32.0",
+  "version": "4.33.0",
   "license": "GPL-3.0-only",
   "type": "module",
   "engines": {
@@ -59,6 +59,7 @@
     "audit:csv-archival": "tsx scripts/audit-csv-archival.ts",
     "audit:leaders-refs": "tsx scripts/audit-leaders-refs.ts",
     "audit:module-infographics": "tsx scripts/audit-module-infographics.ts",
+    "audit:content-revision-coverage": "tsx scripts/audit-content-revision-coverage.ts",
     "audit:timeline-aliases": "tsx scripts/audit-timeline-aliases.ts",
     "audit:migration-phases": "tsx scripts/audit-migration-phases.ts",
     "audit:compliance-countries": "tsx scripts/audit-compliance-countries.ts",
