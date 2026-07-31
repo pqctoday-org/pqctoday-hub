@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
   "generated": "2026-07-09",
-  "count": 1158,
+  "count": 1159,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -9369,6 +9369,15 @@
       "file": "SL-FJA3-SafeLogic-FIPS-Java-API-c969155f.html",
       "bytes": 76711,
       "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "ASI-HSM-AHX5-KNET-Cryptographic-Module",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=18785",
+      "ok": true,
+      "file": "ASI-HSM-AHX5-KNET-Cryptographic-Module-892e812c.html",
+      "bytes": 88317,
+      "content_type": "text/html; charset=utf-8",
+      "tier": "new"
     }
   ]
 }
