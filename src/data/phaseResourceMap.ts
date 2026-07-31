@@ -84,6 +84,8 @@ export const LEARN_PHASES: Record<string, PhaseResource> = {
   'healthcare-pqc': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
   'aerospace-pqc': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
   'automotive-pqc': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
+  'government-defense-pqc': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
+  'trust-services-pqc': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
   'exec-quantum-impact': { phasesServed: ['p0'], legs: ['learn', 'reference'] },
   'dev-quantum-impact': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
   'arch-quantum-impact': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },

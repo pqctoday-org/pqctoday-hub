@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState } from 'react'
+import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import { Link } from 'react-router'
 import {
   ShieldX,
@@ -65,6 +66,8 @@ interface IntroductionProps {
 }
 
 export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop }) => {
+  useSectionAnchors()
+
   return (
     <div className="space-y-6">
       {/* Section 1: Quantum Threats to Platform Cryptography */}

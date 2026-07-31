@@ -3,6 +3,7 @@ import React from 'react'
 import { AlertTriangle, BookOpen, Rocket, ArrowRight, Shield, Clock, Target } from 'lucide-react'
 import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
+import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import type { RoleGuideData } from './types'
 
 const SEVERITY_BADGE: Record<string, string> = {
@@ -18,6 +19,11 @@ interface Props {
 }
 
 export const RoleIntroduction: React.FC<Props> = ({ data, onNavigateToWorkshop }) => {
+  // These blocks already carried data-section-id; nothing read them until
+  // now, so deep links landed at the top and no section was marked read.
+  // One call here anchors all four Role Guide modules.
+  useSectionAnchors()
+
   const criticalCount = data.threatImpacts.filter((t) => t.severity === 'critical').length
   const highCount = data.threatImpacts.filter((t) => t.severity === 'high').length
 

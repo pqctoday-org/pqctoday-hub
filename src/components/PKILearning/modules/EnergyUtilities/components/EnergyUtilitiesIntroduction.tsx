@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router'
 import {
   Zap,
@@ -8,16 +8,16 @@ import {
   Key,
   AlertTriangle,
   Clock,
-  ChevronDown,
-  ChevronUp,
   Cpu,
   Scale,
   GitBranch,
   ArrowRight,
+  Droplets,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { LearnSection } from '@/components/PKILearning/common/LearnSection'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { NERC_CIP_STANDARDS, IEC_62351_PARTS } from '../data/nercCipData'
 import { ENERGY_PROTOCOLS } from '../data/substationProtocolData'
@@ -25,42 +25,9 @@ import { EQUIPMENT_LIFECYCLES } from '../data/energyConstants'
 
 // -- Local CollapsibleSection ------------------------------------------------
 
-interface CollapsibleSectionProps {
-  title: string
-  icon: React.ReactNode
-  defaultOpen?: boolean
-  children: React.ReactNode
-}
-
-const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
-  title,
-  icon,
-  defaultOpen = false,
-  children,
-}) => {
-  const [isOpen, setIsOpen] = useState(defaultOpen)
-
-  return (
-    <section className="glass-panel overflow-hidden">
-      <Button
-        variant="ghost"
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-6 text-left"
-      >
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-primary/10">{icon}</div>
-          <h2 className="text-xl font-bold text-gradient">{title}</h2>
-        </div>
-        {isOpen ? (
-          <ChevronUp size={20} className="text-muted-foreground shrink-0" />
-        ) : (
-          <ChevronDown size={20} className="text-muted-foreground shrink-0" />
-        )}
-      </Button>
-      {isOpen && <div className="px-6 pb-6 space-y-4">{children}</div>}
-    </section>
-  )
-}
+// The local CollapsibleSection was replaced by the shared anchored
+// LearnSection (2026-07-30): industry deep links now land on a section,
+// and per-section reading is recorded instead of only the button below.
 
 // -- Introduction Component --------------------------------------------------
 
@@ -87,7 +54,8 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
   return (
     <div className="space-y-8 w-full">
       {/* -- Section 1: Why Energy & Utilities Is Different ------------------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="why-energy"
         title="Why Energy & Utilities Is Different"
         icon={<Zap size={24} className="text-primary" />}
         defaultOpen={true}
@@ -216,10 +184,11 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
             </table>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Section 2: NERC CIP & IEC 62351 Compliance ---------------------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="nerc-cip"
         title="NERC CIP & IEC 62351 Compliance"
         icon={<Shield size={24} className="text-primary" />}
       >
@@ -318,10 +287,11 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
             </p>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Section 3: Substation Protocols ---------------------------------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="substation-protocols"
         title="Substation Protocols"
         icon={<Network size={24} className="text-primary" />}
       >
@@ -443,10 +413,11 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
             </p>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Section 4: Smart Meter Key Management at Scale ------------------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="smart-meters"
         title="Smart Meter Key Management at Scale"
         icon={<Key size={24} className="text-primary" />}
       >
@@ -577,10 +548,11 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
             </div>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Section 5: Safety & Environmental Risk --------------------------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="safety-environmental"
         title="Safety & Environmental Risk"
         icon={<AlertTriangle size={24} className="text-primary" />}
       >
@@ -752,10 +724,11 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
             </div>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Section 6: Extended Lifecycles & Connectivity Challenges ---------- */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="lifecycle-connectivity"
         title="Extended Lifecycles & Connectivity Challenges"
         icon={<Clock size={24} className="text-primary" />}
       >
@@ -874,7 +847,7 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
             </div>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* -- Workshop CTA ----------------------------------------------------- */}
       <div className="glass-panel p-6 border-primary/20">
@@ -976,6 +949,60 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
       <VendorCoverageNotice migrateLayer="AppServers" />
 
       {/* -- Reading Complete ------------------------------------------------- */}
+
+      <LearnSection
+        sectionId="water-wastewater"
+        title="Water & Wastewater: the same protocols, a different regulator"
+        icon={<Droplets size={20} className="text-primary" />}
+      >
+        <p className="text-muted-foreground">
+          Water and wastewater utilities run substantially the same operational technology as the
+          electricity sector — SCADA, remote telemetry, vendor VPNs into treatment plants. What
+          differs is the regulatory regime, and the difference is stark.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="p-4 rounded-lg bg-muted/50 border border-border">
+            <h4 className="font-semibold text-foreground">Electricity</h4>
+            <p className="mt-1 text-sm text-muted-foreground">
+              NERC CIP is mandatory and enforceable with financial penalties, and IEC 62351 gives
+              substation protocols a security profile that names mechanisms.
+            </p>
+          </div>
+          <div className="p-4 rounded-lg bg-muted/50 border border-border">
+            <h4 className="font-semibold text-foreground">Water &amp; wastewater</h4>
+            <p className="mt-1 text-sm text-muted-foreground">
+              EPA guidance is advisory and its cybersecurity checklist is explicitly voluntary.
+              FERC&rsquo;s hydropower security programme covers dams and generation, not treatment.
+              Neither names a cryptographic mechanism.
+            </p>
+          </div>
+        </div>
+        <div className="p-4 rounded-lg bg-status-warning/10 border border-status-warning/30">
+          <p className="text-sm">
+            <strong className="text-foreground">The practical consequence.</strong> A water utility
+            has no mandatory crypto baseline to migrate <em>from</em>, and no regulator setting a
+            date to migrate <em>by</em>. Every Water / Wastewater use case in the Industry Landscape
+            currently carries no PQC mechanism at all — that is an accurate reflection of the
+            sector, not a gap in the data. The migration argument here has to be made on operational
+            risk, because there is no compliance lever.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-3 text-xs">
+          <Link
+            to="/library?ref=EPA-Guidance-on-Improving-Cybersecurity-at-Drinking-Water-an"
+            className="text-primary hover:underline"
+          >
+            EPA cybersecurity guidance (Aug 2024)
+          </Link>
+          <Link
+            to="/library?ref=FERC-Security-Program-for-Hydropower-Projects-Division-of-Da"
+            className="text-primary hover:underline"
+          >
+            FERC hydropower security programme
+          </Link>
+        </div>
+      </LearnSection>
+
       <ReadingCompleteButton />
     </div>
   )

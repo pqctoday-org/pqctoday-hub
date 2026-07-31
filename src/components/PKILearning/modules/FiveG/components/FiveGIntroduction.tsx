@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
+import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import { Link } from 'react-router'
 import {
   Shield,
@@ -24,10 +25,12 @@ interface FiveGIntroductionProps {
 }
 
 export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigateToSimulate }) => {
+  useSectionAnchors()
+
   return (
     <div className="space-y-6 w-full">
       {/* What is 5G Security? */}
-      <section className="glass-panel p-6">
+      <section data-section-id="what-is-5g-security" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Shield size={20} /> What is 5G Security?
         </h2>
@@ -75,7 +78,7 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
       </section>
 
       {/* The Three Pillars */}
-      <section className="glass-panel p-6">
+      <section data-section-id="three-pillars" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Radio size={20} /> The Three Pillars of 5G Security
         </h2>
@@ -113,7 +116,7 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
       </section>
 
       {/* SUCI Protection Schemes */}
-      <section className="glass-panel p-6">
+      <section data-section-id="suci" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Key size={20} /> SUCI Protection Schemes
         </h2>
@@ -166,7 +169,7 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
       </section>
 
       {/* 5G-AKA Authentication */}
-      <section className="glass-panel p-6">
+      <section data-section-id="aka" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Lock size={20} /> 5G-AKA Authentication
         </h2>
@@ -223,7 +226,7 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
       </section>
 
       {/* SIM Provisioning & Supply Chain */}
-      <section className="glass-panel p-6">
+      <section data-section-id="provisioning" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Server size={20} /> SIM Provisioning &amp; Supply Chain
         </h2>
@@ -273,7 +276,7 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
       </section>
 
       {/* Post-Quantum Threat to 5G */}
-      <section className="glass-panel p-6">
+      <section data-section-id="quantum-threat" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Shield size={20} /> Post-Quantum Threat to 5G
         </h2>

@@ -14,12 +14,17 @@ const manifest: ModuleManifest = {
   frameworkPhase: 'p5',
   track: 'Industries',
   trackOrder: 5,
+  // learnSections CORRECTED 2026-07-30 to describe this module's actual
+  // learn tab. The previous ids read like the module's workshop steps and
+  // did not correspond to any rendered heading — which made the table of
+  // contents, section progress and deep links all wrong together.
   learnSections: [
-    { id: 'bitcoin', label: 'Bitcoin secp256k1 & ECDSA' },
-    { id: 'ethereum', label: 'Ethereum Smart Contracts' },
-    { id: 'hd-wallets', label: 'HD Wallets: BIP32/39/44' },
-    { id: 'pqc-blockchain', label: 'PQC Asset Migration' },
-    { id: 'custody', label: 'Custody Architecture' },
+    { id: 'blockchain-crypto', label: 'What is Blockchain Cryptography?' },
+    { id: 'elliptic-curves', label: 'Elliptic Curves: secp256k1 vs Ed25519' },
+    { id: 'address-derivation', label: 'Address Derivation Across Chains' },
+    { id: 'signatures', label: 'Digital Signatures: ECDSA vs EdDSA' },
+    { id: 'hd-wallets', label: 'HD Wallets and Key Management' },
+    { id: 'pqc-blockchain', label: 'Post-Quantum Threats to Blockchains' },
   ],
   workshopSteps: [
     { id: 'bitcoin', label: 'Bitcoin Flow' },

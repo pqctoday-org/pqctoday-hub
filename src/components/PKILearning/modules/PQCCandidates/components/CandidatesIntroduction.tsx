@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
+import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import {
   Workflow,
   ShieldCheck,
@@ -46,6 +47,8 @@ const EVENT_KIND_BADGE: Record<string, { label: string; tone: string }> = {
 export const CandidatesIntroduction: React.FC<CandidatesIntroductionProps> = ({
   onNavigateToWorkshop,
 }) => {
+  useSectionAnchors()
+
   const drillDowns = WORLDWIDE_BODIES.filter((b) => b.depth === 'drill-down')
   const surveys = WORLDWIDE_BODIES.filter((b) => b.depth === 'survey')
 

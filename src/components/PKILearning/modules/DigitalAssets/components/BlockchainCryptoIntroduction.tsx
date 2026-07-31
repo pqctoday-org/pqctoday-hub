@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
+import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import { Link } from 'react-router'
 import {
   Shield,
@@ -29,10 +30,12 @@ interface BlockchainCryptoIntroductionProps {
 export const BlockchainCryptoIntroduction: React.FC<BlockchainCryptoIntroductionProps> = ({
   onNavigateToWorkshop,
 }) => {
+  useSectionAnchors()
+
   return (
     <div className="space-y-6 w-full">
       {/* Section 1: What is Blockchain Cryptography? */}
-      <section className="glass-panel p-6">
+      <section data-section-id="blockchain-crypto" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Shield size={20} /> What is Blockchain Cryptography?
         </h2>
@@ -72,7 +75,7 @@ export const BlockchainCryptoIntroduction: React.FC<BlockchainCryptoIntroduction
       </section>
 
       {/* Section 2: Elliptic Curves */}
-      <section className="glass-panel p-6">
+      <section data-section-id="elliptic-curves" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Key size={20} /> Elliptic Curves: secp256k1 vs Ed25519
         </h2>
@@ -116,7 +119,7 @@ export const BlockchainCryptoIntroduction: React.FC<BlockchainCryptoIntroduction
       </section>
 
       {/* Section 3: Address Derivation */}
-      <section className="glass-panel p-6">
+      <section data-section-id="address-derivation" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Wallet size={20} /> Address Derivation Across Chains
         </h2>
@@ -159,7 +162,7 @@ export const BlockchainCryptoIntroduction: React.FC<BlockchainCryptoIntroduction
       </section>
 
       {/* Section 4: Digital Signatures */}
-      <section className="glass-panel p-6">
+      <section data-section-id="signatures" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <PenTool size={20} /> Digital Signatures: ECDSA vs EdDSA
         </h2>
@@ -208,7 +211,7 @@ export const BlockchainCryptoIntroduction: React.FC<BlockchainCryptoIntroduction
       </section>
 
       {/* Section 5: HD Wallets */}
-      <section className="glass-panel p-6">
+      <section data-section-id="hd-wallets" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <GitBranch size={20} /> HD Wallets and Key Management
         </h2>
@@ -268,7 +271,7 @@ export const BlockchainCryptoIntroduction: React.FC<BlockchainCryptoIntroduction
       </section>
 
       {/* Section 6: PQC Threats */}
-      <section className="glass-panel p-6">
+      <section data-section-id="pqc-blockchain" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           Post-Quantum Threats to Blockchains
         </h2>

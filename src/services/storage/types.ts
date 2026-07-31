@@ -131,6 +131,13 @@ export interface LearningProgress {
       completedSteps: string[]
       quizScores: { [quizId: string]: number }
       learnSectionChecks?: Record<string, boolean> // sectionId → manually checked by user
+      /**
+       * Active LearnPath id for multi-audience modules (2026-07-30). When set,
+       * completion is evaluated against that path's sections instead of every
+       * section in the module. Absent ⇒ whole-module completion, i.e. exactly
+       * the behaviour every module had before paths existed.
+       */
+      activeLearnPath?: string
     }
   }
 
