@@ -137,7 +137,15 @@ function RevisionRow({ r, entityId }: { r: RevisionEntry; entityId: string }) {
       <div className="flex items-center gap-2 mt-1 ml-5">
         <ChangeTypeBadge type={r.change_type} />
         <BypassChip revision={r} />
-        {r.pr_number > 0 ? (
+        {r.merge_sha === 'pending' ? (
+          <span
+            className="inline-flex items-center gap-0.5 text-xs text-muted-foreground italic"
+            title="Recorded when this edit was made; the PR containing it hasn't merged yet"
+          >
+            <GitMerge className="w-3 h-3" />
+            Pending merge
+          </span>
+        ) : r.pr_number > 0 ? (
           <a
             href={`https://github.com/pqctoday-org/pqctoday-hub/pull/${r.pr_number}`}
             target="_blank"
