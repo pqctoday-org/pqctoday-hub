@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:3cca8515-1155-4028-a5e8-d06337d2d30f",
+  "serialNumber": "urn:uuid:e4d90e25-218f-4759-9cc0-07738e39b192",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-07-30T00:00:00.000Z",
+    "timestamp": "2026-07-31T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -34749,6 +34749,158 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "75"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "b37a1eb17144285e",
+      "name": "PQnet",
+      "manufacturer": {
+        "name": "PQnet Project"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "PQnet"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Post-Quantum Cryptography Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries,Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "edf69217339b0896",
+      "name": "CryptoScan",
+      "manufacturer": {
+        "name": "CryptoScan Project"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "CryptoScan"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Discovery Platforms"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Cloud,Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "f6bbb5bbe0958b7d",
+      "name": "QPKI",
+      "manufacturer": {
+        "name": "QPKI Project"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "QPKI"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "PKI & Certificate Lifecycle"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Application"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "bfb81fb08f4133d7",
+      "name": "libbitcoinpqc",
+      "manufacturer": {
+        "name": "libbitcoinpqc Project"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "libbitcoinpqc"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Blockchain & DLT Protocols"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
         }
       ]
     }
