@@ -1,11 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useEffect, useRef } from 'react'
-import { MapPin, BookOpen, ExternalLink, Clock, ShieldCheck, X, CheckCircle2 } from 'lucide-react'
+import {
+  MapPin,
+  BookOpen,
+  ExternalLink,
+  Clock,
+  ShieldCheck,
+  X,
+  CheckCircle2,
+  Award,
+  FolderGit2,
+} from 'lucide-react'
 import { Link } from 'react-router'
 import { motion } from 'framer-motion'
 import type { Leader } from '../../data/leadersData'
 import { CountryFlag } from '../common/CountryFlag'
-import { FLAG_CODE_MAP } from './leadersConstants'
+import { FLAG_CODE_MAP, productLabelFromId } from './leadersConstants'
 import { Button } from '@/components/ui/button'
 
 interface LeaderDetailSectionProps {
@@ -86,6 +96,42 @@ export const LeaderDetailSection = ({ leader, onClose }: LeaderDetailSectionProp
               <ShieldCheck size={12} aria-hidden="true" />
               Compliance frameworks
             </Link>
+          </div>
+        )}
+
+        {leader.patentRefs && leader.patentRefs.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            <Link
+              to={`/patents?patentIds=${encodeURIComponent(leader.patentRefs.join(','))}&tab=explore`}
+              className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg bg-muted/30 border border-border hover:bg-muted/60 hover:border-primary/30 text-muted-foreground hover:text-foreground transition-all"
+              title={`View ${leader.name}'s patents`}
+            >
+              <Award size={12} aria-hidden="true" />
+              View {leader.patentRefs.length} patent{leader.patentRefs.length === 1 ? '' : 's'}
+            </Link>
+          </div>
+        )}
+
+        {leader.migrateCatalogRefs && leader.migrateCatalogRefs.length > 0 && (
+          <div className="rounded-lg bg-muted/20 border border-border p-2.5">
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold mb-1.5">
+              {leader.migrateCatalogRefs.length === 1
+                ? 'Open Source Project'
+                : `Open Source Projects (${leader.migrateCatalogRefs.length})`}
+            </p>
+            <div className="flex flex-col gap-0.5">
+              {leader.migrateCatalogRefs.map((productId) => (
+                <Link
+                  key={productId}
+                  to={`/migrate?productIds=${encodeURIComponent(productId)}&tab=replace`}
+                  className="text-xs font-medium text-secondary hover:text-secondary/80 transition-colors flex items-center gap-1.5"
+                  title={`View ${productId} in the Migrate catalog`}
+                >
+                  <FolderGit2 size={11} className="shrink-0" aria-hidden="true" />
+                  <span className="truncate">{productLabelFromId(productId)}</span>
+                </Link>
+              ))}
+            </div>
           </div>
         )}
 

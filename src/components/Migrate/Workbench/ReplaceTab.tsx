@@ -31,6 +31,11 @@ interface ReplaceTabProps {
    *  deep link (from ProductDetail's Endorse/Flag buttons) actually lands on
    *  the right row instead of a default, unfiltered tab. */
   initialFilter?: string
+  /** Optional exact product_id allow-list — added 2026-07-30 for the leader-
+   *  detail "view N open-source projects" deep link (/migrate?productIds=a,b).
+   *  Takes over from initialFilter's fuzzy text match entirely when present,
+   *  since the caller already knows the exact ids (leader.migrateCatalogRefs). */
+  initialProductIds?: string[]
   /** Empty-domain dead end (fix #6) routes here — MigrationWorkbench wires this
    *  to its own "Vendor roadmaps" tab. */
   onGoToRoadmaps?: () => void
@@ -40,6 +45,7 @@ export function ReplaceTab({
   persona,
   initialDomain,
   initialFilter,
+  initialProductIds,
   onGoToRoadmaps,
 }: ReplaceTabProps) {
   const plan = useMigrateSelectionStore((s) => s.plan)
@@ -49,6 +55,7 @@ export function ReplaceTab({
 
   const [selectedDomain, setSelectedDomain] = useState<DomainId | null>(initialDomain ?? 'tls')
   const [filter, setFilter] = useState(initialFilter ?? '')
+  const [productIdFilter, setProductIdFilter] = useState<string[] | undefined>(initialProductIds)
 
   // FIXED 2026-07-16 (Phase 5, U8 — caught by a failing regression test):
   // ReplaceTab is already mounted (tab defaults to 'replace') by the time
@@ -60,12 +67,14 @@ export function ReplaceTab({
     /* eslint-disable react-hooks/set-state-in-effect -- one-time sync when the deep-link values arrive, not on every parent re-render (same pattern as the ?share=/?product= effects in MigrationWorkbench.tsx) */
     if (initialDomain) setSelectedDomain(initialDomain)
     if (initialFilter) setFilter(initialFilter)
+    if (initialProductIds) setProductIdFilter(initialProductIds)
     /* eslint-enable react-hooks/set-state-in-effect */
-  }, [initialDomain, initialFilter])
+  }, [initialDomain, initialFilter, initialProductIds])
 
   const onSelect = (d: DomainId) => {
     setSelectedDomain(d)
     setFilter('')
+    setProductIdFilter(undefined)
   }
 
   const asset = selectedDomain ? (ASSET_BY_ID.get(selectedDomain) ?? null) : null
@@ -73,13 +82,19 @@ export function ReplaceTab({
     () => (selectedDomain ? productsForDomain(selectedDomain) : []),
     [selectedDomain]
   )
-  const filtered = useMemo(() => filterProducts(products, filter), [products, filter])
+  const filtered = useMemo(
+    () => filterProducts(products, filter, productIdFilter),
+    [products, filter, productIdFilter]
+  )
 
   const viewingLabel = asset?.label ?? (selectedDomain ? DOMAINS[selectedDomain].label : '')
 
   // "Filters" here means: viewing something other than the default domain, and/or
-  // a product-name search is narrowing the list — the two things `onClearAll` resets.
-  const activeFilterCount = (selectedDomain !== 'tls' ? 1 : 0) + (filter.trim() ? 1 : 0)
+  // a product-name search or an exact product-id set is narrowing the list — the
+  // things `onClearAll` resets.
+  const activeFilterCount =
+    (selectedDomain !== 'tls' ? 1 : 0) +
+    (filter.trim() || (productIdFilter && productIdFilter.length > 0) ? 1 : 0)
 
   return (
     <div className="flex flex-col items-start gap-4 lg:flex-row">
@@ -139,7 +154,12 @@ export function ReplaceTab({
                 />
                 <Input
                   value={filter}
-                  onChange={(e) => setFilter(e.target.value)}
+                  onChange={(e) => {
+                    setFilter(e.target.value)
+                    // Typing a fresh search must win over a stale deep-link id set —
+                    // filterProducts() would otherwise keep ignoring it.
+                    setProductIdFilter(undefined)
+                  }}
                   placeholder="Filter products…"
                   aria-label="Filter products"
                   className="pl-8"

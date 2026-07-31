@@ -78,3 +78,15 @@ export const LEADERS_REGION_COUNTRIES: Record<string, string[]> = {
   ],
   apac: ['Singapore', 'Japan', 'South Korea', 'Australia', 'India', 'China', 'New Zealand'],
 }
+
+/** migrate-catalog product_ids are kebab-case slugs ("bouncy-castle-java") —
+ * the CSV has no per-leader display name for them, so this derives a
+ * readable label (simple title-case; won't recover exact brand casing like
+ * "OpenSSL", but that's a display nicety, not a correctness concern — the
+ * link's href always carries the real product_id). */
+export function productLabelFromId(productId: string): string {
+  return productId
+    .split('-')
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ')
+}
