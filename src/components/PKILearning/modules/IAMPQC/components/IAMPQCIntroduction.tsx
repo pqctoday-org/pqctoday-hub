@@ -566,7 +566,7 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
             </li>
             <li>
               <Link
-                to="/library?ref=Post-Quantum-Key-Encapsulation-Mechanisms-PQ-KEMs-in"
+                to="/library?ref=Post-Quantum-Key-Encapsulation-Mechanisms-PQ-KEMs-in-EAP-AKA"
                 className="text-primary hover:underline"
               >
                 Post-Quantum KEMs in EAP
@@ -574,7 +574,7 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
             </li>
             <li>
               <Link
-                to="/library?ref=Enhancing-Security-in-EAP-AKA-prime-with-Hybrid-Post"
+                to="/library?ref=Enhancing-Security-in-EAP-AKA-prime-with-Hybrid-Post-Quantum"
                 className="text-primary hover:underline"
               >
                 Hybrid PQC in EAP-AKA&rsquo;

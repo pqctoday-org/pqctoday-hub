@@ -562,7 +562,7 @@ export const HybridEncryptionDemo: React.FC<{ initialStep?: number }> = ({ initi
           </a>
           {' · '}
           <a
-            href="/library?ref=RFC-5869"
+            href="/library?ref=RFC 5869"
             className="text-primary underline"
             target="_blank"
             rel="noopener noreferrer"
