@@ -85,6 +85,36 @@ function codeToNameFromJurisdictionsCSV(): Map<string, string> {
 }
 
 /**
+ * Country name -> compliance bloc, read from the jurisdictions CSV's
+ * `compliance_bloc` column.
+ *
+ * ADDED 2026-07-31 (WP-0.3). COUNTRY_TO_REGION in complianceData.ts used to be
+ * a plain inline literal that plain regex extraction could read. It is now
+ * DERIVED from this column, so a regex over the loader would see only the two
+ * inline synthetic tokens and report every real country as unbucketed. This
+ * mirrors exactly what codeToNameFromJurisdictionsCSV already does for the
+ * sibling map, and what the runtime does.
+ */
+function blocFromJurisdictionsCSV(): Map<string, string> {
+  const csvPath = latestCSV(
+    /^jurisdictions_\d{8}(?:_r\d+)?\.csv$/,
+    /^jurisdictions_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
+    'jurisdictions_*'
+  )
+  const raw = fs.readFileSync(csvPath, 'utf8')
+  const parsed = Papa.parse<Record<string, string>>(raw, { header: true, skipEmptyLines: true })
+  const out = new Map<string, string>()
+  for (const row of parsed.data) {
+    const name = row.name?.trim()
+    const bloc = row.compliance_bloc?.trim()
+    const status = row.status?.trim().toLowerCase()
+    if (!name || !bloc || status === 'deprecated') continue
+    out.set(name, bloc)
+  }
+  return out
+}
+
+/**
  * Pulls out the COUNTRY_CODE_TO_NAME and COUNTRY_TO_REGION maps from source.
  * We avoid importing the module directly — it uses the Vite glob shim.
  *
@@ -128,10 +158,15 @@ function readMapsFromLoader(): {
     codeToName.set(k, v)
   }
 
-  return {
-    codeToName,
-    countryToRegion: extractInlineEntries('COUNTRY_TO_REGION'),
+  // Same two-part reconstruction as codeToName above: the jurisdictions CSV
+  // supplies every real country, the loader's inline literal supplies the
+  // PQC-REGION-* synthetic tokens that are not jurisdictions at all.
+  const countryToRegion = blocFromJurisdictionsCSV()
+  for (const [k, v] of extractInlineEntries('COUNTRY_TO_REGION')) {
+    countryToRegion.set(k, v)
   }
+
+  return { codeToName, countryToRegion }
 }
 
 function main(): void {
