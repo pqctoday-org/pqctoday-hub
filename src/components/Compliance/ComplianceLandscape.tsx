@@ -167,10 +167,16 @@ function industryChip(industry: string): string {
 
 // ── Sort helpers ─────────────────────────────────────────────────────────
 
-export type FrameworkSortOption = 'name' | 'deadline'
+export type FrameworkSortOption = 'name' | 'deadline' | 'finish'
 
 const FRAMEWORK_SORT_OPTIONS: { id: FrameworkSortOption; label: string }[] = [
-  { id: 'deadline', label: 'Deadline ↑' },
+  { id: 'deadline', label: 'Starts soonest' },
+  // ADDED 2026-07-31 (WP-1.2). The two are genuinely different questions and
+  // only the first was answerable before: "what bites next" vs "what must I
+  // have FINISHED first". A phased framework starting in 2030 and completing
+  // in 2035 sorts differently under each, and for anyone with a long data
+  // retention horizon the completion date is the binding one.
+  { id: 'finish', label: 'Must finish first' },
   { id: 'name', label: 'Name A-Z' },
 ]
 
@@ -204,8 +210,12 @@ function sortFrameworks(items: ComplianceFramework[], sort: FrameworkSortOption)
     const pa = pqcSortPriority(a.pqcRequirement)
     const pb = pqcSortPriority(b.pqcRequirement)
     if (pa !== pb) return pa - pb
-    const aYear = extractYear(a.deadline) ?? 9999
-    const bYear = extractYear(b.deadline) ?? 9999
+    // 'deadline' sorts by the FIRST stated milestone, 'finish' by the LAST.
+    // Rows with no stated date sort last under either.
+    const pick = (fw: ComplianceFramework) =>
+      (sort === 'finish' ? fw.deadlineEnd : fw.deadlineStart) ?? extractYear(fw.deadline) ?? 9999
+    const aYear = pick(a)
+    const bYear = pick(b)
     if (aYear !== bYear) return aYear - bYear
     return a.label.localeCompare(b.label)
   })

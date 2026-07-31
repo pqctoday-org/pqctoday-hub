@@ -79,3 +79,66 @@ describe('structured deadlines', () => {
     }
   })
 })
+
+describe('deadline date ordering', () => {
+  it('stores every date sorted earliest → latest', () => {
+    // Consumers index deadlineDates[0] as the start and the last entry as the
+    // finish, so the ordering is an invariant, not a formatting nicety.
+    for (const fw of complianceFrameworks) {
+      const years = (fw.deadlineDates ?? []).map((d) => d.year)
+      expect(years, `${fw.id} deadline dates out of order`).toEqual(
+        [...years].sort((a, b) => a - b)
+      )
+    }
+  })
+
+  it('exposes start and finish as the two ends of that list', () => {
+    for (const fw of complianceFrameworks) {
+      const years = (fw.deadlineDates ?? []).map((d) => d.year)
+      if (years.length === 0) {
+        expect(fw.deadlineEnd).toBeUndefined()
+        continue
+      }
+      expect(fw.deadlineStart).toBe(years[0])
+      expect(fw.deadlineEnd).toBe(years[years.length - 1])
+    }
+  })
+
+  it('gives a phased framework a finish LATER than its start', () => {
+    const phased = complianceFrameworks.filter((f) => f.deadlineKind === 'phased')
+    expect(phased.length).toBeGreaterThan(0)
+    for (const fw of phased) {
+      expect(fw.deadlineEnd!, `${fw.id}`).toBeGreaterThan(fw.deadlineStart!)
+    }
+  })
+
+  it('surfaces the binding completion date for NIST IR 8547', () => {
+    // The audit's example: 2030 deprecate, 2035 disallow. An organisation with
+    // a long retention horizon is bound by the finish date, which the data
+    // could not express at all before WP-1.2.
+    const ir = complianceFrameworks.find((f) => f.id === 'NIST-IR-8547')!
+    expect(ir.deadlineStart).toBe(2030)
+    expect(ir.deadlineEnd).toBe(2035)
+  })
+})
+
+describe('start vs finish are different questions', () => {
+  it('ordering by finish differs from ordering by start', () => {
+    // If these ever coincide the second sort option is dead weight; today 19
+    // phased rows guarantee they do not.
+    const dated = complianceFrameworks.filter((f) => f.deadlineStart && f.deadlineEnd)
+    const byStart = [...dated].sort((a, b) => a.deadlineStart! - b.deadlineStart!).map((f) => f.id)
+    const byFinish = [...dated].sort((a, b) => a.deadlineEnd! - b.deadlineEnd!).map((f) => f.id)
+    expect(byStart).not.toEqual(byFinish)
+  })
+
+  it('a framework can start earlier but finish later than another', () => {
+    // The case that makes "must finish first" worth offering: sorting by start
+    // puts the wrong row first for someone asking "what must I complete soonest".
+    const dated = complianceFrameworks.filter((f) => f.deadlineStart && f.deadlineEnd)
+    const inverted = dated.some((a) =>
+      dated.some((b) => a.deadlineStart! < b.deadlineStart! && a.deadlineEnd! > b.deadlineEnd!)
+    )
+    expect(inverted).toBe(true)
+  })
+})
