@@ -64,6 +64,12 @@ describe('sector vocabulary', () => {
 describe('compliance industry filter', () => {
   it('every active framework carries at least one NAICS code', () => {
     // naics_codes is the filter key now; a row without one is unreachable.
+    //
+    // RESOLVED 2026-07-31: NCSA-QATAR-COMMON-CRITERIA-SCH was the one documented
+    // exception here (both its pages returned an 8-char JS shell to every
+    // automated fetch tier). The user manually saved the rendered page and its
+    // substance fields were completed from that real document — no exception
+    // needed any more. Back to a plain zero-orphans assertion.
     const orphans = complianceFrameworks.filter((fw) => (fw.naicsCodes ?? []).length === 0)
     expect(orphans.map((f) => f.id)).toEqual([])
   })
