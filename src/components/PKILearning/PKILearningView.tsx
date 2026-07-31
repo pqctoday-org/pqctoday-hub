@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { Suspense, useRef, type ComponentType } from 'react'
+import React, { Suspense, useRef, useState, type ComponentType } from 'react'
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router'
 import { LearnRedesignView } from './redesign/LearnRedesignView'
 import { ArrowLeft } from 'lucide-react'
@@ -16,7 +16,9 @@ import { ModuleCompletionWatcher } from './ModuleCompletionWatcher'
 import { CuriousModuleView } from './common/CuriousModuleView'
 import { MODULE_CATALOG, LM_ID_MAP } from './moduleData'
 import { MANIFESTS } from './manifest/registry'
-import { HistoryButton } from '../ui/HistoryButton'
+import { ReviewedBadge } from '../ui/ReviewedBadge'
+import { RevisionDrilldownPanel } from '../ui/RevisionDrilldownPanel'
+import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { WipModuleBadge } from './common/WipModuleBadge'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
@@ -47,6 +49,8 @@ export const PKILearningView: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const contentRef = useRef<HTMLDivElement>(null)
+  const [revisionDrilldownOpen, setRevisionDrilldownOpen] = useState(false)
+  const { revisions } = useRevisions()
   // The redesigned dashboard owns its header via the shared PageHeader, which
   // already carries Glossary + Guide. Suppress this top utility bar there so
   // those buttons don't render twice. (Formerly also covered the legacy
@@ -134,10 +138,10 @@ export const PKILearningView: React.FC = () => {
             <div className="hidden md:flex items-center gap-1">
               {showSidebar && moduleMeta && <WipModuleBadge moduleMeta={moduleMeta} />}
               {showSidebar && LM_ID_MAP[moduleId] && (
-                <HistoryButton
-                  itemId={moduleId}
-                  trackingId={LM_ID_MAP[moduleId]}
-                  itemLabel={`${LM_ID_MAP[moduleId]} · ${moduleId}`}
+                <ReviewedBadge
+                  domain="module"
+                  entityId={moduleId}
+                  onOpenDrilldown={() => setRevisionDrilldownOpen(true)}
                 />
               )}
               <GlossaryButton />
@@ -145,6 +149,16 @@ export const PKILearningView: React.FC = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {revisionDrilldownOpen && LM_ID_MAP[moduleId] && (
+        <RevisionDrilldownPanel
+          domain="module"
+          entityId={moduleId}
+          entityLabel={`${LM_ID_MAP[moduleId]} · ${moduleId}`}
+          revisions={byRecord(revisions, 'module', moduleId)}
+          onClose={() => setRevisionDrilldownOpen(false)}
+        />
       )}
 
       <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 items-start">
