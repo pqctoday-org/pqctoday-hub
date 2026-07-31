@@ -479,6 +479,87 @@ export function runCrossRefChecks(): CheckResult[] {
     )
   }
 
+  // C4P: paid-publisher rows must be marked, and must not claim to be downloads.
+  //
+  // pqctoday.com does not advertise or sell access to paid content. `access_type`
+  // was backfilled on 2026-07-31 from a hostname registry, but nothing stopped a
+  // NEW ISO/IEEE/ANSI row arriving later with `downloadable=yes` and no marker —
+  // which is exactly how the site would quietly start presenting a shop page as
+  // a free download again.
+  //
+  // The host list is duplicated from pqctoday-priv/maintenance/paid_sources.py,
+  // which is the source of truth (the maintenance sweep's PAYWALLED verdict
+  // reads it). It is short and changes rarely; keep the two in step when adding
+  // a publisher. IEEE 802.x is deliberately absent — that series is free of
+  // charge via the IEEE GET Program.
+  {
+    const PAID_HOSTS = [
+      'iso.org',
+      'iec.ch',
+      'standards.ieee.org',
+      'ieeexplore.ieee.org',
+      'webstore.ansi.org',
+      'ansi.org',
+      'saemobilus.sae.org',
+      'sae.org',
+      'astm.org',
+      'bsigroup.com',
+      'din.de',
+      'nfpa.org',
+      'techstreet.com',
+      'standards.iteh.ai',
+    ]
+    const hostOf = (url: string): string => {
+      try {
+        return new URL(url.trim()).hostname.toLowerCase().replace(/^www\./, '')
+      } catch {
+        return ''
+      }
+    }
+    const f: Finding[] = []
+    library.rows.forEach((row, i) => {
+      const host = hostOf(row.download_url || '')
+      if (!host) return
+      const isPaidHost = PAID_HOSTS.some((p) => host === p || host.endsWith('.' + p))
+      // IEEE 802.x is free via the IEEE GET Program despite the paid host.
+      const isFreeIeee802 = /(^|\/)802\./.test(row.download_url || '')
+      const marked = (row.access_type || '').trim().toLowerCase() === 'paid'
+      if (isPaidHost && !isFreeIeee802 && !marked) {
+        f.push(
+          finding(
+            library.file,
+            i + 2,
+            'access_type',
+            row.reference_id,
+            `Library "${row.reference_id}" links to a paid publisher (${host}) but is not marked access_type=paid — the site would present a purchase page as a download`
+          )
+        )
+      }
+      if (marked && (row.downloadable || '').trim().toLowerCase() === 'yes') {
+        f.push(
+          finding(
+            library.file,
+            i + 2,
+            'downloadable',
+            row.reference_id,
+            `Library "${row.reference_id}" is access_type=paid but downloadable=yes — a purchase page is not a download`
+          )
+        )
+      }
+    })
+    results.push(
+      makeCheck(
+        'C4P-paid-source-marking',
+        'cross-reference',
+        'library paid-publisher rows are marked and not presented as downloads',
+        'library',
+        'library',
+        'ERROR',
+        f
+      )
+    )
+  }
+
   // C5: threats.related_modules → MODULE_CATALOG
   {
     const f: Finding[] = []
