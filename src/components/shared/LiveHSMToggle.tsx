@@ -26,6 +26,16 @@ interface LiveHSMToggleProps {
   /** If true (default), automatically starts the HSM without requiring user click. */
   autoInit?: boolean
   className?: string
+  /**
+   * When true, the Disable control is shown but inert. Use this when this
+   * `hsm` session is shared by other consumers holding session-object key
+   * handles (CKA_TOKEN=false) minted from it — closing the session would
+   * silently invalidate those handles (CKR_KEY_HANDLE_INVALID on next use)
+   * with no UI signal until the next crypto op fails.
+   */
+  preventDisable?: boolean
+  /** Shown as the Disable button's tooltip when preventDisable is true. */
+  preventDisableReason?: string
 }
 
 export const LiveHSMToggle = ({
@@ -33,6 +43,8 @@ export const LiveHSMToggle = ({
   operations,
   autoInit = true,
   className = '',
+  preventDisable = false,
+  preventDisableReason = 'Disable is locked while keys generated in this session are still in use.',
 }: LiveHSMToggleProps) => {
   const { liveHsmEnabled, setLiveHsm } = useHSMMode()
 
@@ -130,6 +142,8 @@ export const LiveHSMToggle = ({
             size="sm"
             className="h-7 px-2 text-xs shrink-0 text-muted-foreground"
             onClick={handleDisable}
+            disabled={preventDisable}
+            title={preventDisable ? preventDisableReason : undefined}
           >
             Disable
           </Button>

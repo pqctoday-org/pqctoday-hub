@@ -8,9 +8,9 @@ import { useDigitalIDLogs } from '../../hooks/useDigitalIDLogs'
 import { createPresentation } from '../../utils/sdjwt-utils'
 import type { CryptoProvider } from '../../utils/crypto-provider'
 import { OpenSSLCryptoProvider } from '../../utils/openssl-crypto-provider'
-import { SoftHSMCryptoProvider } from '../../utils/hsm-crypto-provider'
+import { SoftHSMCryptoProvider, isHsmBackedKey } from '../../utils/hsm-crypto-provider'
 import { DualCryptoProvider } from '../../utils/dual-crypto-provider'
-import { useHSM } from '@/hooks/useHSM'
+import type { UseHSMResult } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
@@ -22,12 +22,17 @@ import { CopyableOutput } from '@/components/ui/CopyableOutput'
 
 interface RelyingPartyComponentProps {
   wallet: WalletInstance
+  hsm: UseHSMResult
   onBack: () => void
 }
 
 type RPStep = 'START' | 'DISCLOSURE' | 'PRESENTATION' | 'VERIFICATION' | 'COMPLETE'
 
-export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wallet, onBack }) => {
+export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
+  wallet,
+  hsm,
+  onBack,
+}) => {
   const [step, setStep] = useState<RPStep>('START')
   const [loading, setLoading] = useState(false)
   const [presentationData, setPresentationData] = useState<{
@@ -37,7 +42,6 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
   } | null>(null)
   const { logs, opensslLogs, activeLogTab, setActiveLogTab, addLog, addOpenSSLLog } =
     useDigitalIDLogs()
-  const hsm = useHSM()
 
   const getCryptoProvider = (): CryptoProvider => {
     const ossl = new OpenSSLCryptoProvider()
@@ -208,7 +212,13 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
         <CardDescription>Verify your identity to open a premium bank account</CardDescription>
       </CardHeader>
       <CardContent className="p-6">
-        <LiveHSMToggle hsm={hsm} operations={['C_Verify', 'C_Sign', 'C_Digest']} className="mb-4" />
+        <LiveHSMToggle
+          hsm={hsm}
+          operations={['C_Verify', 'C_Sign', 'C_Digest']}
+          className="mb-4"
+          preventDisable={wallet.keys.some(isHsmBackedKey)}
+          preventDisableReason="Disable is locked while your wallet holds HSM-backed keys — Reset the workshop to release them."
+        />
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           <div className="space-y-6 lg:col-span-2">
             {/* Steps Visualization */}
