@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
+import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import { Link } from 'react-router'
 import {
   ShieldAlert,
@@ -32,6 +33,8 @@ interface CodeSigningIntroductionProps {
 export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = ({
   onNavigateToWorkshop,
 }) => {
+  useSectionAnchors()
+
   const allAlgorithms = [...CODE_SIGNING_ALGORITHMS.classical, ...CODE_SIGNING_ALGORITHMS.pqc]
 
   return (

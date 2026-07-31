@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
+import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import { Link } from 'react-router'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
@@ -23,6 +24,8 @@ interface VPNSSHIntroductionProps {
 }
 
 export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNavigateToSimulate }) => {
+  useSectionAnchors()
+
   return (
     <div className="space-y-8 w-full">
       {/* Section 1: IKEv2 Handshake Overview */}

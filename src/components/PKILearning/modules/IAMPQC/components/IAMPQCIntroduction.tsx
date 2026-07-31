@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import {
@@ -7,7 +7,6 @@ import {
   Database,
   BarChart3,
   Shield,
-  ChevronRight,
   ArrowRight,
   Lock,
   BookOpen,
@@ -31,46 +30,14 @@ interface IAMPQCIntroductionProps {
   onNavigateToWorkshop: () => void
 }
 
-interface CollapsibleSectionProps {
-  icon: React.ReactNode
-  title: string
-  defaultOpen?: boolean
-  children: React.ReactNode
-}
-
-const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
-  icon,
-  title,
-  defaultOpen = false,
-  children,
-}) => {
-  const [isOpen, setIsOpen] = useState(defaultOpen)
-
-  return (
-    <section className="glass-panel p-6">
-      <Button
-        variant="ghost"
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-3 w-full text-left"
-      >
-        <div className="p-2 rounded-lg bg-primary/10 shrink-0">{icon}</div>
-        <h2 className="text-xl font-bold text-gradient flex-1">{title}</h2>
-        <ChevronRight
-          size={18}
-          className={`text-muted-foreground transition-transform duration-200 shrink-0 ${isOpen ? 'rotate-90' : ''}`}
-          aria-hidden="true"
-        />
-      </Button>
-      {isOpen && <div className="mt-4 space-y-4 text-sm text-foreground/80">{children}</div>}
-    </section>
-  )
-}
+// Local CollapsibleSection replaced by the shared anchored LearnSection (2026-07-30).
 
 export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNavigateToWorkshop }) => {
   return (
     <div className="space-y-8 w-full">
       {/* Section 1: Crypto in IAM Foundations */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="iam-crypto-foundations"
         icon={<Lock size={24} className="text-primary" />}
         title="Crypto in IAM: Tokens, Certificates, MFA"
         defaultOpen
@@ -194,10 +161,11 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
             </table>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Section 2: Token Migration */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="token-migration"
         icon={<Key size={24} className="text-primary" />}
         title="JWT, SAML, and OIDC Token Signing with ML-DSA"
       >
@@ -270,10 +238,11 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
             </div>
           ))}
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Section 3: Directory Services */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="directory-services"
         icon={<Database size={24} className="text-primary" />}
         title="Active Directory, LDAP, and Kerberos Under Quantum Threat"
       >
@@ -341,10 +310,11 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
             </li>
           </ul>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Section 4: Vendor Roadmaps */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="vendor-roadmaps"
         icon={<BarChart3 size={24} className="text-primary" />}
         title="Okta, Entra, PingFederate, ForgeRock Migration Paths"
       >
@@ -406,10 +376,11 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
             ))}
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Section 5: Zero Trust Identity */}
-      <CollapsibleSection
+      <LearnSection
+        sectionId="zero-trust-identity"
         icon={<Shield size={24} className="text-primary" />}
         title="PQC-Aware Zero Trust Identity Architecture"
       >
@@ -482,7 +453,7 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
             </div>
           </div>
         </div>
-      </CollapsibleSection>
+      </LearnSection>
 
       {/* Related Resources */}
       <section className="glass-panel p-6 border-secondary/20">
