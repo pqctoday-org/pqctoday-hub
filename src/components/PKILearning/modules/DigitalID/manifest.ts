@@ -14,12 +14,18 @@ const manifest: ModuleManifest = {
   frameworkPhase: 'p5',
   track: 'Applications',
   trackOrder: 5,
+  // These are the sections the Learn tab actually renders, in order. Until
+  // 2026-07-31 this listed five DIFFERENT ids ('wallet', 'pid', 'qes') that
+  // matched no rendered heading, and the tab emitted no anchors at all — so
+  // the sidebar advertised "0/5 sections read" against sections that did not
+  // exist, and every ?section= / #id deep link resolved to nothing.
   learnSections: [
-    { id: 'eidas', label: 'eIDAS 2.0 Framework' },
-    { id: 'wallet', label: 'EUDI Wallet Architecture' },
-    { id: 'pid', label: 'PID & Attestations' },
-    { id: 'selective-disclosure', label: 'Selective Disclosure' },
-    { id: 'qes', label: 'Qualified Signatures QES' },
+    { id: 'eidas', label: 'What is eIDAS 2.0?' },
+    { id: 'credential-formats', label: 'Credential Formats: mdoc vs SD-JWT' },
+    { id: 'trust-framework', label: 'Trust Framework' },
+    { id: 'privacy', label: 'Privacy by Design' },
+    { id: 'pqc-readiness', label: 'Post-Quantum Readiness' },
+    { id: 'large-scale-pilots', label: 'Large-Scale Pilots' },
   ],
   workshopSteps: [
     { id: 'wallet', label: 'EUDI Wallet' },

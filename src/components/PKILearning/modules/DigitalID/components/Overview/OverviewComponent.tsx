@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import { Button } from '@/components/ui/button'
 
 interface OverviewComponentProps {
@@ -22,10 +23,15 @@ interface OverviewComponentProps {
 }
 
 export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigateTo }) => {
+  // Makes the data-section-id anchors below live: URL-driven scroll plus
+  // per-section read tracking. Deliberately NOT LearnSection accordions —
+  // this tab is meant to read as continuous prose.
+  useSectionAnchors()
+
   return (
     <div className="space-y-6 w-full">
       {/* What is eIDAS 2.0? */}
-      <section className="glass-panel p-6">
+      <section data-section-id="eidas" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <BookOpen size={20} /> What is eIDAS 2.0?
         </h2>
@@ -71,7 +77,7 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
       </section>
 
       {/* Credential Formats */}
-      <section className="glass-panel p-6">
+      <section data-section-id="credential-formats" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <FileText size={20} /> Credential Formats: mdoc vs SD-JWT
         </h2>
@@ -129,7 +135,7 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
       </section>
 
       {/* Trust Framework */}
-      <section className="glass-panel p-6">
+      <section data-section-id="trust-framework" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Shield size={20} /> Trust Framework
         </h2>
@@ -176,7 +182,7 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
       </section>
 
       {/* Privacy & Data Minimization */}
-      <section className="glass-panel p-6">
+      <section data-section-id="privacy" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Lock size={20} /> Privacy by Design
         </h2>
@@ -209,7 +215,7 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
       </section>
 
       {/* PQC Readiness */}
-      <section className="glass-panel p-6">
+      <section data-section-id="pqc-readiness" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <AlertTriangle size={20} /> Post-Quantum Readiness
         </h2>
@@ -239,7 +245,7 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
       </section>
 
       {/* Large-Scale Pilots */}
-      <section className="glass-panel p-6">
+      <section data-section-id="large-scale-pilots" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Globe size={20} /> Large-Scale Pilots
         </h2>
