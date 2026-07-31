@@ -46,11 +46,11 @@ const SCENARIOS: Scenario[] = [
     id: 'selective-disclosure-privacy',
     title: '3. Selective Disclosure at the Bank',
     description:
-      "Navigate to the Bank (Relying Party, Step 4). The bank requests only your name and age for account opening. Complete the presentation flow and observe: how many attributes from your PID are disclosed vs. hidden? How does this satisfy GDPR Article 5(1)(c)? What's the risk if the presentation proof's signature algorithm is broken by a CRQC?",
+      "Navigate to the Bank (Relying Party, Step 4). The bank asks for your name, your degree, and age_over_18 — note it does NOT ask for birth_date. At the disclosure step you choose what to share. First run it as offered and read the log: which PID element's digest is verified, and which one never leaves the wallet? Then run it again and untick age_over_18 — what does the bank do, and is the proof itself still valid? Finally: what's the risk if the presentation proof's signature algorithm is broken by a CRQC?",
     badge: 'Privacy by Design',
     badgeColor: 'bg-warning/20 text-warning border-warning/50',
     observe:
-      'The bank receives only the two requested attributes; all other PID fields remain cryptographically hidden. This enforces data minimisation under GDPR Article 5(1)(c). However, even selective presentations include a key binding proof signed with ECDSA — a CRQC could forge this proof, allowing impersonation. ML-DSA-65 would fix this: a quantum-safe device key makes presentation forgery infeasible.',
+      'age_over_18 is disclosed and its digest is checked against the issuer-signed Mobile Security Object, while birth_date is absent from the payload entirely — not hidden from view, never transmitted. That is ISO 18013-5 selective disclosure: the issuer signs the digests, so withholding an element costs nothing cryptographically, and the bank learns you are eligible without learning when you were born. GDPR Article 5(1)(c) enforced by construction rather than by policy. Untick age_over_18 and the bank refuses — the proof stays cryptographically valid, it simply no longer answers the question asked, which is the honest cost of withholding. The key binding proof is still ECDSA, though: a CRQC could forge it and impersonate you. ML-DSA-65 would fix that.',
     stepIndex: 3,
   },
   {
