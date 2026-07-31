@@ -17,22 +17,17 @@ interface SectorFilterProps {
   setParams?: ReturnType<typeof useSearchParams>[1]
 }
 
-// NAICS 2-digit group labels relevant to PQC — used when no custom options provided
-export const NAICS_LABELS: Record<string, string> = {
-  '22': 'Energy & Utilities',
-  '44': 'Retail Trade',
-  '45': 'Retail Trade',
-  '48': 'Transportation',
-  '49': 'Transportation',
-  '51': 'Information Technology',
-  '52': 'Finance & Insurance',
-  '54': 'Professional & Technical Services',
-  '56': 'Administrative & Support Services',
-  '61': 'Educational Services',
-  '62': 'Healthcare & Life Sciences',
-  '91': 'Government & Defense',
-  '92': 'Public Administration',
-}
+/**
+ * NAICS 2-digit group labels.
+ *
+ * DERIVED from src/data/sector_vocabulary_*.csv since 2026-07-31 (WP-0.2) —
+ * this used to be a hardcoded object literal, which is why adding a sector was
+ * a code change and why four CSWP-39 anchors (Chemical, Critical
+ * Manufacturing, Food & Agriculture, Transportation Systems) had no filter at
+ * all. Re-exported here so existing importers keep working unchanged.
+ */
+export { NAICS_LABELS, industryLabel, resolveToNaicsSet } from '@/data/sectorVocabularyData'
+import { resolveToNaicsSet, SECTOR_ALIASES_BY_KEY } from '@/data/sectorVocabularyData'
 
 // Only sectors that actually match ≥1 library document. The previously-listed
 // '56' Administrative & Support Services and the three PQC-SECTOR-* vendor codes
@@ -50,18 +45,16 @@ export const DEFAULT_SECTOR_OPTIONS: FilterDropdownItem[] = [
   { id: '91', label: 'Government & Defense' },
 ]
 
-// Freeform industry strings that map to NAICS 2-digit groups
-export const INDUSTRY_TO_NAICS: Record<string, string[]> = {
-  '52': ['Finance & Banking', 'Finance & Insurance', 'Banking', 'financial'],
-  '92': ['Government & Defense', 'Government', 'Defense', 'Public Administration', 'Federal'],
-  '54': ['Technology', 'Professional Services', 'Consulting', 'Legal'],
-  '51': ['Technology', 'Information Technology', 'Software', 'IT'],
-  '62': ['Healthcare', 'Life Sciences', 'Medical', 'Health'],
-  '22': ['Energy & Utilities', 'Energy', 'Utilities', 'Oil & Gas'],
-  '48': ['Transportation', 'Logistics', 'Aviation', 'Maritime'],
-  '56': ['Administrative', 'Support Services'],
-  '91': ['Government & Defense', 'Defense', 'Military', 'National Security'],
-}
+/**
+ * REMOVED 2026-07-31 (WP-1.1). This hardcoded alias map is now the `aliases`
+ * column of src/data/sector_vocabulary_*.csv, reachable via resolveToNaicsSet.
+ *
+ * It had a real defect worth recording: 'Technology' appeared under BOTH '54'
+ * and '51', and the old single-value resolveToNaics returned whichever
+ * Object.entries yielded first — so what a deep link meant depended on key
+ * order in this literal. The vocabulary now maps 'technology' to both codes
+ * explicitly and the resolver returns a set.
+ */
 
 export function SectorFilter({
   options,
@@ -105,35 +98,21 @@ export function SectorFilter({
 }
 
 /**
- * Resolve a freeform industry string (e.g. "Finance & Banking", from a URL
- * param or persona store using a non-NAICS taxonomy) to a NAICS 2-digit code
- * if a known alias exists. Returns the input unchanged when it's already a
- * NAICS code or has no alias mapping.
+ * Resolve a freeform industry string to a single NAICS code.
+ *
+ * @deprecated 2026-07-31 (WP-1.1) — use `resolveToNaicsSet`, re-exported above.
+ *
+ * Kept only so nothing breaks mid-migration. Returning ONE code is not a
+ * simplification, it is the bug: six aliases legitimately resolve to more than
+ * one code, so this collapses a set to whichever element happens to come
+ * first. That is what made `?ind=Finance%20%26%20Banking` resolve to '52' and
+ * then exact-match to zero rows, none of which were the 12 rows literally
+ * tagged "Finance & Banking".
  */
 export function resolveToNaics(value: string): string {
   if (!value || value === 'All') return value
-  // Already a NAICS code present in our label table
-  if (Object.prototype.hasOwnProperty.call(NAICS_LABELS, value)) return value
-  const lower = value.toLowerCase()
-  for (const [code, aliases] of Object.entries(INDUSTRY_TO_NAICS)) {
-    if (aliases.some((alias) => alias.toLowerCase() === lower)) return code
-  }
-  return value
-}
-
-/**
- * Resolve an `industries`-column token to a human-readable sector label.
- * The column mixes two vocabularies — raw NAICS 2-digit codes (e.g. "54")
- * and already-named sectors (e.g. "Government & Defense"). NAICS codes are
- * expanded via NAICS_LABELS; named sectors pass through unchanged.
- */
-export function industryLabel(token: string): string {
-  if (!token) return token
-  if (Object.prototype.hasOwnProperty.call(NAICS_LABELS, token)) {
-    // eslint-disable-next-line security/detect-object-injection
-    return NAICS_LABELS[token]
-  }
-  return token
+  const set = resolveToNaicsSet(value)
+  return set.length > 0 ? set[0] : value
 }
 
 /** Read sector filter state — returns empty array when unset. Accepts an optional
@@ -151,10 +130,17 @@ export function matchesSectorFilter(sectorFilter: string[], values: string | str
     if (code.startsWith('PQC-')) {
       return arr.some((v) => v.toLowerCase().includes(code.toLowerCase()))
     }
-    // Match NAICS 2-digit code against freeform industry strings
-    const aliases = INDUSTRY_TO_NAICS[code] ?? []
+    // Match a NAICS 2-digit code against freeform industry strings.
+    // Aliases come from the sector vocabulary CSV since 2026-07-31 (WP-1.1);
+    // this used to read the hardcoded INDUSTRY_TO_NAICS literal.
+    //
+    // NOTE this is substring matching, deliberately looser than the compliance
+    // facet's exact set match — it serves the LIBRARY page, whose industry
+    // fields are still freeform prose rather than a migrated key column.
+    const aliases = SECTOR_ALIASES_BY_KEY[code] ?? []
     return arr.some(
-      (v) => v === code || aliases.some((alias) => v.toLowerCase().includes(alias.toLowerCase()))
+      (v) =>
+        v === code || aliases.some((alias: string) => v.toLowerCase().includes(alias.toLowerCase()))
     )
   })
 }

@@ -37,7 +37,7 @@ import {
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { isComplianceFrameworkEmphasized } from '@/data/personaConfig'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
-import { NAICS_LABELS, industryLabel } from '@/components/common/SectorFilter'
+import { NAICS_LABELS, industryLabel, resolveToNaicsSet } from '@/components/common/SectorFilter'
 import { CountryFlag } from '@/components/common/CountryFlag'
 import { ViewToggle, type ViewMode } from '@/components/Library/ViewToggle'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
@@ -1201,10 +1201,21 @@ export function ComplianceLandscape({
   // vocabulary (e.g. seeded from a cross-page persona/URL using a different
   // taxonomy like "Finance & Banking"), include it anyway so the dropdown
   // surfaces the active value instead of falling back to "Industry".
+  // CHANGED 2026-07-31 (WP-1.1): built from `naicsCodes`, not `industries`.
+  //
+  // `industries` carried two vocabularies at once — 147 rows used NAICS codes,
+  // 27 used free-text sector names — and this list was their raw union, so it
+  // offered 33 options for ~16 real sectors and listed some of them twice:
+  // NAICS_LABELS['22'] IS the string 'Energy & Utilities', so the dropdown
+  // showed both "Energy & Utilities (22)" and "Energy & Utilities" as separate
+  // choices, each matching a different subset of rows.
+  //
+  // `naicsCodes` is now the single machine key (see sectorVocabularyData.ts);
+  // `industries` is display text and is never filtered on.
   const industryItems = useMemo(() => {
     const inds = new Set<string>()
     for (const fw of complianceFrameworks) {
-      for (const i of fw.industries) inds.add(i)
+      for (const c of fw.naicsCodes ?? []) inds.add(c)
     }
     if (industryFilter !== 'All' && !inds.has(industryFilter)) {
       inds.add(industryFilter)
@@ -1279,7 +1290,18 @@ export function ComplianceLandscape({
       result = result.filter((fw) => fw.enforcementBody === orgFilter)
     }
     if (industryFilter !== 'All') {
-      result = result.filter((fw) => fw.industries.includes(industryFilter))
+      // CHANGED 2026-07-31 (WP-1.1). Was `fw.industries.includes(industryFilter)`
+      // — an exact string match against a column holding two vocabularies, which
+      // silently hid rows: selecting "Finance & Insurance (52)" returned 85
+      // frameworks and hid 15 more tagged with a finance NAME rather than the
+      // code. 74 row-tags were unreachable this way in total.
+      //
+      // Matching a resolved SET rather than one value also fixes the deep-link
+      // case, where an incoming ?ind= value may name a sector that maps to more
+      // than one code (see resolveToNaicsSet).
+      const wanted = resolveToNaicsSet(industryFilter)
+      const want = wanted.length > 0 ? wanted : [industryFilter]
+      result = result.filter((fw) => (fw.naicsCodes ?? []).some((c) => want.includes(c)))
     }
     if (regionFilter !== 'All') {
       result = result.filter((fw) => fw.countries.some((c) => regionForCountry(c) === regionFilter))
