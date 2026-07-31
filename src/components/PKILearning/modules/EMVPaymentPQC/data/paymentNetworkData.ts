@@ -53,14 +53,34 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       ecommerce: ['TLS 1.2/1.3 RSA/ECDSA', '3-D Secure 2.x ECDSA'],
     },
     pqcPosture: 'active-pilot',
+    /**
+     * PROOF NOTE (2026-07-31, updated). The "Migration to Post-Quantum
+     * Cryptography" white paper (Mastercard R&D, 2025) was manually acquired
+     * — mastercard.com bot-blocks the automated pipeline — and is now cached
+     * (industry-landscape evidence manifest, sha256 3ac0c764...). Read in
+     * full. Claims below are what the paper actually says, not what earlier
+     * secondary reporting implied:
+     *
+     * - The "double-digit % of TLS 1.3 connections secured with PQC by end
+     *   2024" figure IS in the paper — but it is Cloudflare's internet-wide
+     *   adoption statistic, which the paper CITES, not a claim about
+     *   Mastercard's own network. Attributed correctly below.
+     * - No QKD trial or pilot is described anywhere in the paper — that
+     *   claim had no basis and stays dropped.
+     * - No specific FI-readiness timeline (3 years, 5 years, or otherwise)
+     *   appears anywhere in the text. The paper's one concrete
+     *   recommendation is to invest in cryptographic inventory tooling
+     *   immediately, independent of an institution's own migration
+     *   timeline — quoted below instead of the invented "5 years".
+     */
     pqcInitiatives: [
-      'Published "Migration to post-quantum cryptography" white paper (2025)',
-      'Double-digit % of TLS 1.3 connections secured with PQC by end 2024',
-      'Real-world PQC algorithm testing and QKD trials in payment channels',
+      'Published "Migration to Post-Quantum Cryptography" white paper (Mastercard R&D, 2025) — the only card network to publish a dedicated PQC paper',
+      'Paper frames HNDL as the central driver and compares PQC against Quantum Key Distribution (QKD), favoring PQC for deployability',
+      'Cites Cloudflare’s internet-wide TLS 1.3 PQC adoption data (~2% of connections by March 2024, reaching double digits by end of 2024) as evidence of momentum — an industry-wide figure the paper quotes, not a claim about Mastercard’s own network',
       'EMVCo PQC study group participation',
-      'Guidance to FIs: pick quantum-safe signature scheme, invest in crypto inventory',
     ],
-    pqcTimeline: 'Active pilots ongoing; recommends FI readiness within 5 years',
+    pqcTimeline:
+      'No pilot or dated commitment described in the paper. Its guidance to financial institutions: invest in cryptographic inventory tooling now, "regardless of the timeline for PQC migration that it deems to be ideal"',
     radarScores: {
       scale: 3,
       offlineExposure: 4,
@@ -121,14 +141,16 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
     },
     pqcPosture: 'announced',
     pqcInitiatives: [
-      'Governed by China ICCS national PQC competition (Feb 2025 call)',
-      'GB/T PQC standard release expected Q4 2025-Q4 2026',
-      'National roadmap: main algorithm + backup algorithm approach',
+      'Governed by China ICCS national PQC competition (Feb 2025 call for quantum-resistant algorithms)',
+      'GB/T PQC standards not yet final — in March 2026 Wang Xiaoyun (Tsinghua) said China expects to finalize them within three years',
+      'National approach: a main algorithm plus a backup algorithm',
       'SM2/SM9 → national PQC algorithm transition planned',
-      '2029-2034 target: 80%+ migration completion',
     ],
+    // The "2029-2034, 80%+ migration" figure previously carried here traces to
+    // an academic recommendation, not a published national commitment, and had
+    // no cached source. Dropped 2026-07-31 rather than re-attributed.
     pqcTimeline:
-      'Tied to China GB/T standard release (expected Q4 2026); scale migration 2027-2034',
+      'Tied to GB/T standards that are still in development — finalization expected around 2029 on the most recent public statement, with scale migration after',
     radarScores: {
       scale: 5,
       offlineExposure: 5,

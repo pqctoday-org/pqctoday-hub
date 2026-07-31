@@ -39,7 +39,7 @@ export const EMVPaymentExercises: React.FC<ExercisesProps> = ({
       badge: 'Architecture',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'Visa has 4.6B cards with active PQC research (quantum lab since 2022), while UnionPay has 9.4B cards tied to China\u2019s pending GB/T standards. UnionPay\u2019s scale makes it the single largest quantum-vulnerable payment ecosystem. Combined offline exposure: ~14B cards using RSA-based CDA/DDA.',
+        'Visa has 4.6B cards with active PQC research (quantum lab since 2022), while UnionPay has 9.4B cards tied to China\u2019s pending GB/T standards. UnionPay\u2019s scale makes it the single largest quantum-vulnerable payment ecosystem. Note the two card counts are not subsets of the 14.7 billion EMV figure: network totals count every card a network has in circulation, including non-EMV and multi-badged cards, so they cannot be added up against it.',
       config: { step: 0 },
     },
     {

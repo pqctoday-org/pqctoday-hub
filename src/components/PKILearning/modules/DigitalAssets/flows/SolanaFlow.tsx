@@ -106,9 +106,11 @@ export const SolanaFlow: React.FC<SolanaFlowProps> = ({ onBack }) => {
             The final 32-byte value is the same Ed25519 seed this demo generates directly. The
             cryptographic operations from step 2 onward are identical regardless of how the seed was
             derived.{' '}
-            <a href="/learn/hd-wallets" className="text-primary hover:underline text-xs">
-              → Full BIP-32/39/44 + SLIP-0010 derivation walkthrough in the HD Wallets module
-            </a>
+            <span className="text-xs text-muted-foreground">
+              → For the full BIP-32/39/44 + SLIP-0010 derivation walkthrough, pick{' '}
+              <strong className="text-foreground">HD Wallet</strong> from the chain selector in this
+              workshop.
+            </span>
           </>
         ),
         code: `// SoftHSMv3 WebAssembly API
