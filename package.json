@@ -59,6 +59,7 @@
     "audit:csv-archival": "tsx scripts/audit-csv-archival.ts",
     "audit:leaders-refs": "tsx scripts/audit-leaders-refs.ts",
     "audit:module-infographics": "tsx scripts/audit-module-infographics.ts",
+    "audit:module-revision-coverage": "tsx scripts/audit-module-revision-coverage.ts",
     "audit:timeline-aliases": "tsx scripts/audit-timeline-aliases.ts",
     "audit:migration-phases": "tsx scripts/audit-migration-phases.ts",
     "audit:compliance-countries": "tsx scripts/audit-compliance-countries.ts",
