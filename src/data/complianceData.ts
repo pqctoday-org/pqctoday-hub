@@ -2,7 +2,10 @@
 import type { IndustryComplianceConfig } from './industryAssessConfig'
 import { loadLatestCSV, splitSemicolon, parseBoolYesNo } from './csvUtils'
 import { filterActive } from './loaderUtils'
-import { COUNTRY_CODE_TO_NAME as JURISDICTION_CODE_TO_NAME } from './jurisdictionsData'
+import {
+  COUNTRY_CODE_TO_NAME as JURISDICTION_CODE_TO_NAME,
+  COUNTRY_NAME_TO_COMPLIANCE_BLOC,
+} from './jurisdictionsData'
 
 // ── Types ────────────────────────────────────────────────────────────────
 
@@ -371,83 +374,26 @@ export type RegionBloc =
   | 'Global'
   | 'Other'
 
-/** Map each country string as used in compliance CSV to a regulatory bloc. */
+/**
+ * Country name -> regulatory bloc for the /compliance region facet.
+ *
+ * DERIVED 2026-07-31 (WP-0.3) from the jurisdictions registry's own
+ * `compliance_bloc` column. This used to be a hand-maintained literal of 66
+ * country names kept separately from jurisdictions_*.csv, and the two drifted
+ * exactly as two lists of the same thing do: 12 of those names had no
+ * jurisdictions row at all, so no compliance row could ever resolve to them —
+ * dead entries that read as coverage.
+ *
+ * Adding a country is now a one-row data change in the jurisdictions CSV, not
+ * an edit in two files that must agree.
+ *
+ * The PQC-REGION-* synthetic overlay tokens stay inline: they are not real
+ * jurisdictions, they are cross-cutting labels the compliance CSV uses.
+ */
 const COUNTRY_TO_REGION: Record<string, RegionBloc> = {
-  // North America
-  'United States': 'North America',
-  Canada: 'North America',
-  Mexico: 'Latin America',
-  // Latin America
-  Brazil: 'Latin America',
-  Argentina: 'Latin America',
-  Chile: 'Latin America',
-  Colombia: 'Latin America',
-  Peru: 'Latin America',
-  Uruguay: 'Latin America',
-  // EU / EEA
-  'European Union': 'European Union',
-  France: 'European Union',
-  Germany: 'European Union',
-  Netherlands: 'European Union',
-  Denmark: 'European Union',
-  Italy: 'European Union',
-  Spain: 'European Union',
-  Ireland: 'European Union',
-  Greece: 'European Union',
-  Poland: 'European Union',
-  Sweden: 'European Union',
-  Finland: 'European Union',
-  Belgium: 'European Union',
-  Austria: 'European Union',
-  Portugal: 'European Union',
-  'Czech Republic': 'European Union',
-  Czechia: 'European Union',
-  Estonia: 'European Union',
-  // Europe non-EU
-  Switzerland: 'Europe (non-EU)',
-  Norway: 'Europe (non-EU)',
-  Iceland: 'Europe (non-EU)',
-  Turkey: 'Europe (non-EU)',
-  Ukraine: 'Europe (non-EU)',
-  Russia: 'Europe (non-EU)',
-  // UK
-  'United Kingdom': 'United Kingdom',
-  // APAC
-  Japan: 'Asia-Pacific',
-  Australia: 'Asia-Pacific',
-  'South Korea': 'Asia-Pacific',
-  Singapore: 'Asia-Pacific',
-  India: 'Asia-Pacific',
-  'New Zealand': 'Asia-Pacific',
-  'Hong Kong': 'Asia-Pacific',
-  Taiwan: 'Asia-Pacific',
-  Malaysia: 'Asia-Pacific',
-  China: 'Asia-Pacific',
-  Indonesia: 'Asia-Pacific',
-  Philippines: 'Asia-Pacific',
-  Thailand: 'Asia-Pacific',
-  Vietnam: 'Asia-Pacific',
-  // Middle East
-  Israel: 'Middle East',
-  'United Arab Emirates': 'Middle East',
-  'Saudi Arabia': 'Middle East',
-  Bahrain: 'Middle East',
-  Jordan: 'Middle East',
-  Qatar: 'Middle East',
-  Kuwait: 'Middle East',
-  Oman: 'Middle East',
-  // Africa
-  'South Africa': 'Africa',
-  Nigeria: 'Africa',
-  Kenya: 'Africa',
-  Egypt: 'Africa',
-  Morocco: 'Africa',
-  Ghana: 'Africa',
-  Rwanda: 'Africa',
-  'African Union': 'Africa',
-  // Global
+  ...(COUNTRY_NAME_TO_COMPLIANCE_BLOC as Record<string, RegionBloc>),
   Global: 'Global',
-  International: 'Global',
+  'African Union': 'Africa',
 }
 
 /** Returns the regulatory bloc for a country string, or 'Other' if unknown. */
