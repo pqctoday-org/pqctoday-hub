@@ -187,18 +187,6 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.pqctoday.com/learn/government-defense-pqc</loc>
-    <lastmod>2026-06-24</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://www.pqctoday.com/learn/trust-services-pqc</loc>
-    <lastmod>2026-06-24</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://www.pqctoday.com/learn/energy-utilities-pqc</loc>
     <lastmod>2026-06-24</lastmod>
     <changefreq>monthly</changefreq>
@@ -212,6 +200,12 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/exec-quantum-impact</loc>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.pqctoday.com/learn/government-defense-pqc</loc>
     <lastmod>2026-06-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -374,6 +368,12 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/tls-basics</loc>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.pqctoday.com/learn/trust-services-pqc</loc>
     <lastmod>2026-06-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
