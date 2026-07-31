@@ -91,6 +91,14 @@ export const SECTOR_STEPS: Partial<Record<string, Partial<Record<PhaseId, Sector
         label: 'PKI enrollment protocols for government credentialing (PIV/CAC-style)',
         to: '/learn/pki-enrollment-protocols',
       },
+      {
+        // Citizen digital identity is squarely government, and the module was
+        // absent from every sector track until 2026-07-31 — its only route in
+        // was a deep dive hanging off an unrelated AI-migration activity.
+        moduleId: 'digital-id',
+        label: 'EUDI Wallet: citizen digital identity credentials (eIDAS 2.0)',
+        to: '/learn/digital-id',
+      },
     ],
   },
   energy: {

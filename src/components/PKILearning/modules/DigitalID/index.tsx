@@ -3,6 +3,7 @@ import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import { Trash2, Shield, FileText, PenTool, Building2, CheckSquare } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
+import { useHSM } from '@/hooks/useHSM'
 import { WalletComponent } from './components/Wallet/WalletComponent'
 import { PIDIssuerComponent } from './components/PIDIssuer/PIDIssuerComponent'
 import { AttestationIssuerComponent } from './components/AttestationIssuer/AttestationIssuerComponent'
@@ -77,6 +78,13 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
   const [currentStep, setCurrentStep] = useState(0)
   const [wallet, setWallet] = useState<WalletInstance>(INITIAL_WALLET)
   const prevStepRef = useRef<number | null>(null)
+  // One PKCS#11 session for the whole workshop: the wallet is a single physical
+  // device, so a key generated in one actor's step (e.g. PID Issuer) must still
+  // be a valid handle when reused in a later step (e.g. Bank Relying Party).
+  // Per-screen useHSM() instances would each open their own session, and since
+  // SoftHSM keys are session objects (CKA_TOKEN=false), a handle from a closed
+  // or different session fails with CKR_KEY_HANDLE_INVALID.
+  const hsm = useHSM()
 
   // Mark the previous workshop step complete whenever the user navigates
   useEffect(() => {
@@ -96,6 +104,11 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
       resetModuleProgress(MODULE_ID)
       const { resetStore } = useOpenSSLStore.getState()
       resetStore()
+      // Close the shared PKCS#11 session too — otherwise the HSM Key Registry
+      // (and any orphaned session-object key handles) survives the reset even
+      // though wallet.keys is now empty. The next screen's LiveHSMToggle
+      // auto-inits a fresh session on mount.
+      hsm.finalize()
       setWallet(INITIAL_WALLET)
       setCurrentStep(0)
     }
@@ -139,6 +152,7 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
         return (
           <PIDIssuerComponent
             wallet={wallet}
+            hsm={hsm}
             onCredentialIssued={handleCredentialIssued}
             onBack={() => navigateTo('wallet')}
           />
@@ -147,18 +161,27 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
         return (
           <AttestationIssuerComponent
             wallet={wallet}
+            hsm={hsm}
             onCredentialIssued={handleCredentialIssued}
             onBack={() => navigateTo('wallet')}
           />
         )
       case 'relying-party':
-        return <RelyingPartyComponent wallet={wallet} onBack={() => navigateTo('wallet')} />
+        return (
+          <RelyingPartyComponent wallet={wallet} hsm={hsm} onBack={() => navigateTo('wallet')} />
+        )
       case 'qes':
-        return <QESProviderComponent wallet={wallet} onBack={() => navigateTo('wallet')} />
+        return (
+          <QESProviderComponent wallet={wallet} hsm={hsm} onBack={() => navigateTo('wallet')} />
+        )
       default:
         return null
     }
-  }, [currentStep, wallet, navigateTo])
+    // hsm is a fresh object every render (useHSM doesn't memoize its return),
+    // so it must stay in deps — otherwise the step component would keep the
+    // hsm snapshot from whenever this memo last recomputed (e.g. phase stuck
+    // on 'loading' after the session actually opened).
+  }, [currentStep, wallet, navigateTo, hsm])
 
   const workshopContent = (
     <div className="max-w-7xl mx-auto space-y-6">

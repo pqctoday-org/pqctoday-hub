@@ -2456,5 +2456,116 @@
     "definition": "A patent claim that stands alone and defines the invention completely without referring to any other claim. Every patent has at least one. Independent claims set the broadest scope of protection; dependent claims narrow an independent claim by adding further limitations and must be read together with it.",
     "complexity": "beginner",
     "category": "concept"
+  },
+  {
+    "term": "Wallet Unit Attestation",
+    "definition": "A credential issued by the Wallet Provider that attests to the authenticity and security properties of a wallet instance. Without a valid WUA, no PID Provider will issue credentials.",
+    "relatedModule": "/learn/digital-id",
+    "complexity": "advanced",
+    "category": "concept",
+    "acronym": "WUA"
+  },
+  {
+    "term": "Qualified Electronic Attestation of Attributes",
+    "definition": "An attestation of attributes issued by a Qualified Trust Service Provider, carrying legal weight across all EU member states.",
+    "relatedModule": "/learn/digital-id",
+    "complexity": "intermediate",
+    "category": "concept",
+    "acronym": "QEAA"
+  },
+  {
+    "term": "Public Body Electronic Attestation of Attributes",
+    "definition": "An attestation issued by a public body on the basis of an authentic source.",
+    "relatedModule": "/learn/digital-id",
+    "complexity": "advanced",
+    "category": "concept",
+    "acronym": "PuB-EAA"
+  },
+  {
+    "term": "Device Binding",
+    "definition": "Cryptographic proof that the entity presenting a credential controls the private key the credential was bound to at issuance.",
+    "relatedModule": "/learn/digital-id",
+    "complexity": "intermediate",
+    "category": "concept"
+  },
+  {
+    "term": "Wallet Secure Cryptographic Device",
+    "definition": "The secure hardware storing an EUDI wallet's private keys. Can be local (device secure element, eSE, TEE) or remote (cloud HSM).",
+    "relatedModule": "/learn/digital-id",
+    "complexity": "advanced",
+    "category": "concept",
+    "acronym": "WSCD"
+  },
+  {
+    "term": "Wallet Secure Cryptographic Application",
+    "definition": "The firmware or software managing cryptographic operations inside the WSCD.",
+    "relatedModule": "/learn/digital-id",
+    "complexity": "advanced",
+    "category": "concept",
+    "acronym": "WSCA"
+  },
+  {
+    "term": "Cloud Signature Consortium API",
+    "definition": "Standard API for remote signature creation services, used by QTSPs for remote qualified electronic signatures. Version V2.2 was published in November 2025.",
+    "relatedModule": "/learn/digital-id",
+    "complexity": "intermediate",
+    "category": "concept",
+    "acronym": "CSC API"
+  },
+  {
+    "term": "Unlinkability",
+    "definition": "Privacy property ensuring that multiple presentations by the same credential holder cannot be correlated across different Relying Parties.",
+    "relatedModule": "/learn/digital-id",
+    "complexity": "advanced",
+    "category": "concept"
+  },
+  {
+    "term": "Data Minimization",
+    "definition": "The GDPR principle (Article 5(1)(c)) requiring collection of only the personal data necessary for a specific purpose. Selective disclosure enforces it cryptographically rather than by policy.",
+    "relatedModule": "/learn/digital-id",
+    "complexity": "beginner",
+    "category": "concept"
+  },
+  {
+    "term": "Trusted List",
+    "definition": "A machine-readable registry of Qualified Trust Service Providers published by each EU member state, enabling cross-border trust verification.",
+    "relatedModule": "/learn/digital-id",
+    "complexity": "intermediate",
+    "category": "concept"
+  },
+  {
+    "term": "eIDAS Trust Framework",
+    "definition": "The cross-border mechanism ensuring mutual recognition of digital identities, wallets and qualified attestations across all 27 EU member states.",
+    "relatedModule": "/learn/digital-id",
+    "complexity": "intermediate",
+    "category": "concept"
+  },
+  {
+    "term": "Remote HSM",
+    "definition": "A Hardware Security Module operated by a provider rather than held on the user's device. The EUDI ARF supports both local WSCD and remote WSCD (HSM) models.",
+    "relatedModule": "/learn/digital-id",
+    "complexity": "intermediate",
+    "category": "concept"
+  },
+  {
+    "term": "mso_mdoc",
+    "definition": "The CBOR-encoded mobile document credential format defined by ISO/IEC 18013-5, carrying a Mobile Security Object signed as a COSE_Sign1 structure. Optimised for proximity presentation over NFC or BLE.",
+    "relatedModule": "/learn/digital-id",
+    "complexity": "advanced",
+    "category": "concept"
+  },
+  {
+    "term": "SD-JWT VC",
+    "definition": "The Selective Disclosure JWT Verifiable Credential profile (draft-ietf-oauth-sd-jwt-vc), built on base SD-JWT (RFC 9901). Uses the dc+sd-jwt media type, which replaced vc+sd-jwt in November 2024.",
+    "relatedModule": "/learn/digital-id",
+    "complexity": "advanced",
+    "category": "concept"
+  },
+  {
+    "term": "COSE_Sign1",
+    "definition": "A CBOR Object Signing and Encryption single-signer signature structure (RFC 9052), used by ISO 18013-5 mdocs to sign the Mobile Security Object.",
+    "relatedModule": "/learn/digital-id",
+    "complexity": "advanced",
+    "category": "concept"
   }
 ]

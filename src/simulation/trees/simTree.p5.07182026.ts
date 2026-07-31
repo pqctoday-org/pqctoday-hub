@@ -295,7 +295,10 @@ const TREE: PhaseTree = {
             {
               kind: 'learn',
               label: 'Deep dive — Learn: Digital ID',
-              to: '/learn/digital-id',
+              // ?tab=workshop: openStep() parses it, and the value of this
+              // module from inside the sim is the hands-on credential flow,
+              // not its Learn tab.
+              to: '/learn/digital-id?tab=workshop',
               moduleId: 'digital-id',
             },
             {

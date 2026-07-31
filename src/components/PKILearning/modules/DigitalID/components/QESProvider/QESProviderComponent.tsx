@@ -7,7 +7,7 @@ import { useDigitalIDLogs } from '../../hooks/useDigitalIDLogs'
 import type { CryptoProvider } from '../../utils/crypto-provider'
 import type { KeyAlgorithm, KeyCurve } from '../../types'
 import { OpenSSLCryptoProvider } from '../../utils/openssl-crypto-provider'
-import { SoftHSMCryptoProvider } from '../../utils/hsm-crypto-provider'
+import { SoftHSMCryptoProvider, isHsmBackedKey } from '../../utils/hsm-crypto-provider'
 import { DualCryptoProvider } from '../../utils/dual-crypto-provider'
 import { generateX509Certificate } from '../../utils/x509-utils'
 import { Loader2, FileSignature, UploadCloud, CheckCircle, PenTool, Lock } from 'lucide-react'
@@ -15,7 +15,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
-import { useHSM } from '@/hooks/useHSM'
+import type { UseHSMResult } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
@@ -32,13 +32,13 @@ const QES_ALGORITHM_OPTIONS: QesAlgorithmOption[] = [
     label: 'ES384 (P-384)',
     algorithm: 'ES384',
     curve: 'P-384',
-    description: 'ECDSA with P-384 — ETSI TS 119 312 recommended for QES (≥128-bit security)',
+    description: 'ECDSA with P-384 — listed for qualified signatures in ETSI TS 119 312 (~192-bit classical security)',
   },
   {
     label: 'ES256 (P-256)',
     algorithm: 'ES256',
     curve: 'P-256',
-    description: 'ECDSA with P-256 — widely supported, 128-bit security',
+    description: 'ECDSA with P-256 — widely supported (~128-bit classical security)',
   },
   {
     label: 'EdDSA (Ed25519)',
@@ -58,10 +58,15 @@ const QES_LIVE_OPERATIONS = [
 
 interface QESProviderComponentProps {
   wallet: WalletInstance
+  hsm: UseHSMResult
   onBack: () => void
 }
 
-export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ wallet, onBack }) => {
+export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({
+  wallet,
+  hsm,
+  onBack,
+}) => {
   const [step, setStep] = useState<'UPLOAD' | 'PID_CHECK' | 'AUTH' | 'SIGN' | 'COMPLETE'>('UPLOAD')
   const [loading, setLoading] = useState(false)
   const { logs, opensslLogs, activeLogTab, setActiveLogTab, addLog, addOpenSSLLog } =
@@ -69,7 +74,6 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ wall
   const [docName, setDocName] = useState('Contract.pdf')
   const [docHash, setDocHash] = useState('')
   const [selectedAlg, setSelectedAlg] = useState<QesAlgorithmOption>(QES_ALGORITHM_OPTIONS[0])
-  const hsm = useHSM()
 
   const getCryptoProvider = (): CryptoProvider => {
     const ossl = new OpenSSLCryptoProvider()
@@ -188,7 +192,13 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ wall
         <CardDescription>Sign documents legally using Remote HSM and CSC API</CardDescription>
       </CardHeader>
       <CardContent className="p-6">
-        <LiveHSMToggle hsm={hsm} operations={QES_LIVE_OPERATIONS} className="mb-4" />
+        <LiveHSMToggle
+          hsm={hsm}
+          operations={QES_LIVE_OPERATIONS}
+          className="mb-4"
+          preventDisable={wallet.keys.some(isHsmBackedKey)}
+          preventDisableReason="Disable is locked while your wallet holds HSM-backed keys — Reset the workshop to release them."
+        />
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           <div className="space-y-6 lg:col-span-2">
             {step === 'UPLOAD' && (
@@ -199,7 +209,7 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ wall
                   </p>
                   <p>
                     Remote <InlineTooltip term="Qualified Electronic Signature">QES</InlineTooltip>{' '}
-                    uses the CSC API standard (v2) to interact with a cloud-based HSM managed by a{' '}
+                    uses the CSC API standard (V2.2, November 2025) to interact with a cloud-based HSM managed by a{' '}
                     <InlineTooltip term="QTSP">
                       Qualified Trust Service Provider (QTSP)
                     </InlineTooltip>

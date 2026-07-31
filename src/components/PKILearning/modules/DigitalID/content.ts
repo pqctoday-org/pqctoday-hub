@@ -9,18 +9,28 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'digital-id',
   version: '1.0.0',
-  lastReviewed: '2026-07-22',
+  lastReviewed: '2026-07-31',
 
   standards: [
     getStandard('eIDAS-2-Regulation'),
     getStandard('EUDI-Wallet-ARF'),
+    // ISO publishes 18013-5 behind a paywall, so this row is marked
+    // access_type=paid: the References tab labels it "Purchase required" and
+    // offers a free summary rather than presenting a shop page as a download.
+    // Still cited, because the standard's NAME is what matters here — it
+    // defines the mso_mdoc format the PID credential in this module uses.
     getStandard('ISO-18013-5-mDL'),
     getStandard('RFC-9901-SD-JWT-VC'),
     getStandard('OpenID4VCI-Spec'),
     getStandard('OpenID4VP-Spec'),
     getStandard('CSC-API-v2-Spec'),
     getStandard('ETSI-EN-319-411'),
-    getStandard('ENISA-EUDI-Wallet-Security'),
+    // 'ENISA-EUDI-Wallet-Security' was cited here until 2026-07-31 and has been
+    // dropped: that library row's download_url points at the unrelated 2022
+    // ENISA PQC Integration Study, so the citation could not be substantiated.
+    // 'EU PQC Recommendation' is the document that actually carries the
+    // 2026/2030/2035 transition dates this module teaches.
+    getStandard('EU PQC Recommendation'),
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
   ],
@@ -37,16 +47,22 @@ export const content: ModuleContent = {
       year: 2026,
       source: 'eIDAS-2-Regulation',
     },
+    // The 2026/2030/2035 dates come from the NIS Cooperation Group "Coordinated
+    // Implementation Roadmap for the Transition to Post-Quantum Cryptography"
+    // (11 June 2025), which implements Commission Recommendation (EU) 2024/1101.
+    // They are NOT in the EUDI ARF (v3.0.0 contains no PQC roadmap at all) and
+    // NOT in the ENISA wallet-architecture analysis — both were cited here
+    // previously and neither states these dates.
     {
       label: 'National PQC transition roadmaps due',
       year: 2026,
-      source: 'ENISA-EUDI-Wallet-Security',
+      source: 'EU PQC Recommendation',
     },
-    { label: 'High-risk system PQC migration', year: 2030, source: 'ENISA-EUDI-Wallet-Security' },
+    { label: 'High-risk system PQC migration', year: 2030, source: 'EU PQC Recommendation' },
     {
       label: 'Full PQC transition for EUDI infrastructure',
       year: 2035,
-      source: 'ENISA-EUDI-Wallet-Security',
+      source: 'EU PQC Recommendation',
     },
   ],
 
