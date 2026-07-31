@@ -1,0 +1,43 @@
+{
+  "$comment": [
+    "Single source of truth for 'this publisher SELLS its documents'.",
+    "Read by BOTH the hub's C4P validator (scripts/validators/cross-ref-checks.ts)",
+    "and the maintenance agent's paid_sources.py, which resolves the hub checkout",
+    "and loads this file. It lives in the hub because the hub cannot read the",
+    "private repo, but the private repo can read the hub.",
+    "",
+    "pqctoday.com does not advertise or sell access to paid content, but a paid",
+    "standard's NAME stays editorially relevant. A row matching one of these hosts",
+    "must carry access_type=paid and must never be presented as a download.",
+    "",
+    "Deliberately an allowlist, not a heuristic: 'did the fetch fail?' cannot tell",
+    "a paywall from an outage, and guessing wrong in the permanent direction",
+    "silently removes a real standard from the catalog.",
+    "Keep it conservative — a false positive suppresses a legitimate free download."
+  ],
+  "paidPublisherHosts": [
+    "iso.org",
+    "iec.ch",
+    "standards.ieee.org",
+    "ieeexplore.ieee.org",
+    "webstore.ansi.org",
+    "ansi.org",
+    "saemobilus.sae.org",
+    "sae.org",
+    "astm.org",
+    "bsigroup.com",
+    "din.de",
+    "nfpa.org",
+    "techstreet.com",
+    "standards.iteh.ai",
+    "iteh.ai"
+  ],
+  "knownFreeLookalikes": {
+    "$comment": "Documented rather than merely omitted — both have been mistaken for their commercial namesakes.",
+    "hosts": ["bsi.bund.de", "etsi.org", "3gpp.org"]
+  },
+  "freeDespitePaidHost": {
+    "$comment": "Exceptions WITHIN a paid host. IEEE 802.x is free of charge via the IEEE GET Program, so standards.ieee.org alone is too coarse a rule for it.",
+    "urlPatterns": ["802\\."]
+  }
+}

@@ -23,6 +23,21 @@ const base64ToBytes = (base64: string): Uint8Array => {
   return Uint8Array.from(binString, (m) => m.codePointAt(0)!)
 }
 
+/**
+ * True when `key` was minted by SoftHSMCryptoProvider.generateKeyPair — its
+ * `privateKey` is a raw `[PKCS#11 handle: N]` string, not portable key
+ * material. That handle is only valid for the PKCS#11 session that created
+ * it (SoftHSM generates it as a session object, CKA_TOKEN=false): a raw
+ * numeric handle is not a durable key identifier, only the shared `useHSM()`
+ * session staying open for the workshop's lifetime keeps it usable. If a
+ * caller ever closes that session (or reopens a fresh one) while a key like
+ * this is still referenced, every later sign/verify with it fails with
+ * CKR_KEY_HANDLE_INVALID. Use this to gate anything that could close the
+ * session (e.g. LiveHSMToggle's Disable control) while such a key is live.
+ */
+export const isHsmBackedKey = (key: Pick<CryptoKey, 'privateKey'>): boolean =>
+  key.privateKey?.startsWith('[PKCS#11 handle:') ?? false
+
 export class SoftHSMCryptoProvider implements CryptoProvider {
   module: SoftHSMModule
   hSession: number

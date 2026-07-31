@@ -92,6 +92,8 @@ export interface ComplianceFramework {
   notes: string
   enforcementBody: string
   libraryRefs: string[]
+  /** Learn-module ids this framework routes to. Added 2026-07-31 — traversal was one-way until then. */
+  learnModules?: string[]
   timelineRefs: string[]
   bodyType: BodyType
   website?: string
@@ -134,6 +136,7 @@ interface RawComplianceRow {
   notes: string
   enforcement_body: string
   library_refs: string
+  learn_modules: string
   timeline_refs: string
   body_type: string
   website: string
@@ -316,6 +319,7 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
     notes: row.notes || '',
     enforcementBody: row.enforcement_body || '',
     libraryRefs: splitSemicolon(row.library_refs),
+    learnModules: splitSemicolon(row.learn_modules),
     timelineRefs: splitSemicolon(row.timeline_refs),
     bodyType,
     website: row.website?.trim() || undefined,
