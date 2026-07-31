@@ -53,14 +53,31 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       ecommerce: ['TLS 1.2/1.3 RSA/ECDSA', '3-D Secure 2.x ECDSA'],
     },
     pqcPosture: 'active-pilot',
+    /**
+     * PROOF NOTE (2026-07-31). Mastercard's "Migration to Post-Quantum
+     * Cryptography" white paper (2025) is real — it is registered in
+     * industry_landscape_*.csv and corroborated by independent search hits —
+     * but mastercard.com bot-blocks every automated fetch, so the platform has
+     * NO cached copy and cannot verify anything the document says.
+     *
+     * This module states elsewhere that it "cites nothing it has not read"
+     * (SectorRegulationTimeline). So the figures previously summarised from it
+     * — a double-digit percentage of TLS 1.3 connections PQC-secured by end
+     * 2024, QKD trials, a five-year readiness recommendation — are not
+     * asserted here. Only the paper's existence is, which is independently
+     * established.
+     *
+     * TO REVERSE THIS: drop the PDF in
+     * pqctoday-priv/local-evidence-cache/_inbox/ and run
+     * ingest_manual_evidence.py, then cite it properly.
+     */
     pqcInitiatives: [
-      'Published "Migration to post-quantum cryptography" white paper (2025)',
-      'Double-digit % of TLS 1.3 connections secured with PQC by end 2024',
-      'Real-world PQC algorithm testing and QKD trials in payment channels',
+      'Published "Migration to Post-Quantum Cryptography" white paper (2025) — the only card network to publish a dedicated PQC paper',
+      'Contents not verifiable here: the paper is not fetchable by the evidence pipeline, so no figure from it is quoted',
       'EMVCo PQC study group participation',
-      'Guidance to FIs: pick quantum-safe signature scheme, invest in crypto inventory',
     ],
-    pqcTimeline: 'Active pilots ongoing; recommends FI readiness within 5 years',
+    pqcTimeline:
+      'Publicly engaged, with a published white paper; no dated commitment the platform can verify from a cached source',
     radarScores: {
       scale: 3,
       offlineExposure: 4,
@@ -121,14 +138,16 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
     },
     pqcPosture: 'announced',
     pqcInitiatives: [
-      'Governed by China ICCS national PQC competition (Feb 2025 call)',
-      'GB/T PQC standard release expected Q4 2025-Q4 2026',
-      'National roadmap: main algorithm + backup algorithm approach',
+      'Governed by China ICCS national PQC competition (Feb 2025 call for quantum-resistant algorithms)',
+      'GB/T PQC standards not yet final — in March 2026 Wang Xiaoyun (Tsinghua) said China expects to finalize them within three years',
+      'National approach: a main algorithm plus a backup algorithm',
       'SM2/SM9 → national PQC algorithm transition planned',
-      '2029-2034 target: 80%+ migration completion',
     ],
+    // The "2029-2034, 80%+ migration" figure previously carried here traces to
+    // an academic recommendation, not a published national commitment, and had
+    // no cached source. Dropped 2026-07-31 rather than re-attributed.
     pqcTimeline:
-      'Tied to China GB/T standard release (expected Q4 2026); scale migration 2027-2034',
+      'Tied to GB/T standards that are still in development — finalization expected around 2029 on the most recent public statement, with scale migration after',
     radarScores: {
       scale: 5,
       offlineExposure: 5,
