@@ -1,5 +1,25 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
+import type { Leader } from '@/data/leadersData'
+
+/** Category matching for the sidebar filter/counts. Every leader has ONE
+ * primary `category` (their main claim to fame — unchanged, still exact-match
+ * for every category), but "Patent Inventor" / "Open Source Maintainer" are
+ * additionally INCLUSIVE: a leader whose primary category is something else
+ * (e.g. Standards, Algorithm Inventor) but who also has a real patentRefs /
+ * migrateCatalogRefs entry still counts and still shows up when that filter
+ * is selected — reflecting a real, sourced contribution even when it isn't
+ * this person's primary identity. Confirmed 2026-07-31: 5 of 7 leaders with
+ * PatentRefs, and 5 of 7 with MigrateCatalogRefs, fall into exactly this
+ * case (e.g. Dr. Vadim Lyubashevsky is category=Algorithm Inventor but also
+ * holds a PQC patent). */
+export function leaderMatchesCategory(leader: Leader, category: string): boolean {
+  if (leader.category === category) return true
+  if (category === 'Patent Inventor') return (leader.patentRefs?.length ?? 0) > 0
+  if (category === 'Open Source Maintainer') return (leader.migrateCatalogRefs?.length ?? 0) > 0
+  return false
+}
+
 /** Maps country name values from the leaders CSV to ISO 3166-1 alpha-2 flag codes.
  *  Dual-country entries use the first-listed country's code. */
 export const FLAG_CODE_MAP: Record<string, string> = {

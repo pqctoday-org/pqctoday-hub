@@ -28,7 +28,7 @@ import { LeaderCard } from './LeaderCard'
 import { LeadersTable } from './LeadersTable'
 import { LeaderCategorySidebar, LEADER_CATEGORIES } from './LeaderCategorySidebar'
 import { LeadersExecutivePanel } from './LeadersExecutivePanel'
-import { FLAG_CODE_MAP, LEADERS_REGION_COUNTRIES } from './leadersConstants'
+import { FLAG_CODE_MAP, LEADERS_REGION_COUNTRIES, leaderMatchesCategory } from './leadersConstants'
 import { LeadersViewToggle } from './LeadersViewToggle'
 import type { LeadersViewMode } from './LeadersViewToggle'
 import { SectorStack } from './SectorStack'
@@ -253,36 +253,102 @@ export const LeadersGrid = () => {
     if (nextLeader) setHighlightedLeader((prev) => (prev !== nextLeader ? nextLeader : prev))
   }, [searchParams, selectedPersona])
 
+  // Keeps the LATEST filter values available inside the delayed callback
+  // below without making the effect itself depend on them (see that effect's
+  // own comment for why depending on them directly re-created the bug it
+  // fixes). Runs every render, no dependency array.
+  const liveFiltersRef = useRef({
+    selectedRegion,
+    selectedCountry,
+    selectedSector,
+    activeCategory,
+    searchQuery,
+  })
+  useEffect(() => {
+    liveFiltersRef.current = {
+      selectedRegion,
+      selectedCountry,
+      selectedSector,
+      activeCategory,
+      searchQuery,
+    }
+  })
+
   // Scroll to highlighted leader after render
   useEffect(() => {
     if (!highlightedLeader || !gridRef.current) return
+    // Snapshot filters as they were the moment this deep link was requested —
+    // compared against liveFiltersRef.current below to detect a filter change
+    // that happens WHILE the 300ms lookup is in flight (see next comment).
+    const filtersAtStart = { ...liveFiltersRef.current }
     const timer = setTimeout(() => {
       const id = `leader-${highlightedLeader.replace(/\s+/g, '-')}`
       const el = document.getElementById(id)
       if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'center' })
         setTimeout(() => setHighlightedLeader(null), 3000)
+        return
+      }
+      // FIXED 2026-07-31: this branch used to always assume "not found" meant
+      // "hidden by stale filters from before the deep link landed" and reset
+      // them all to reveal the target. But this timer is still scheduled from
+      // when highlightedLeader first became truthy — if the user picks a
+      // DIFFERENT filter in the ~300ms before it fires (a real, reproducible
+      // race, not a corner case: it's exactly what "click a leader card, then
+      // immediately click a category pill" does), that's a deliberate choice
+      // made after the deep link landed, not a stale pre-existing filter. The
+      // old code couldn't tell the two apart and clobbered the user's own
+      // filter pick every time. Comparing against the live ref (not the
+      // snapshot at effect-creation time, which never changes since this
+      // effect deliberately no longer depends on the filters — see above)
+      // detects the difference.
+      const live = liveFiltersRef.current
+      const filtersChangedSinceHighlight =
+        filtersAtStart.selectedRegion !== live.selectedRegion ||
+        filtersAtStart.selectedCountry !== live.selectedCountry ||
+        filtersAtStart.selectedSector !== live.selectedSector ||
+        filtersAtStart.activeCategory !== live.activeCategory ||
+        filtersAtStart.searchQuery !== live.searchQuery
+      if (filtersChangedSinceHighlight) {
+        // Respect the user's own filter choice — just drop the pending
+        // highlight quietly instead of fighting it.
+        setHighlightedLeader(null)
+        return
+      }
+      // Check if leader exists in unfiltered data but is hidden by filters
+      const existsUnfiltered = leadersData.some((l) => l.name === highlightedLeader)
+      if (existsUnfiltered) {
+        // Clear filters so the card becomes visible, then re-trigger scroll.
+        // Also reveal auto-imported stubs if that's what's hiding this leader —
+        // a deep link should always be able to resolve to its target.
+        setFilters({ region: 'All', country: 'All', sector: 'All', category: 'All' })
+        setSearchQuery('')
+        const target = leadersData.find((l) => l.name === highlightedLeader)
+        if (target?.sourceKind === 'auto-imported') setShowAllContributors(true)
       } else {
-        // Check if leader exists in unfiltered data but is hidden by filters
-        const existsUnfiltered = leadersData.some((l) => l.name === highlightedLeader)
-        if (existsUnfiltered) {
-          // Clear filters so the card becomes visible, then re-trigger scroll.
-          // Also reveal auto-imported stubs if that's what's hiding this leader —
-          // a deep link should always be able to resolve to its target.
-          setFilters({ region: 'All', country: 'All', sector: 'All', category: 'All' })
-          setSearchQuery('')
-          const target = leadersData.find((l) => l.name === highlightedLeader)
-          if (target?.sourceKind === 'auto-imported') setShowAllContributors(true)
-        } else {
-          // Leader doesn't exist in database at all
-          setNotFoundMessage(`"${highlightedLeader}" was not found in the Community list.`)
-          setHighlightedLeader(null)
-          setTimeout(() => setNotFoundMessage(null), 4000)
-        }
+        // Leader doesn't exist in database at all
+        setNotFoundMessage(`"${highlightedLeader}" was not found in the Community list.`)
+        setHighlightedLeader(null)
+        setTimeout(() => setNotFoundMessage(null), 4000)
       }
     }, 300)
     return () => clearTimeout(timer)
-  }, [highlightedLeader, selectedCountry, selectedSector, searchQuery, activeCategory, setFilters])
+    // Deliberately depends ONLY on highlightedLeader — this effect resolves a
+    // fresh ?leader= deep link exactly once. selectedCountry/selectedSector/
+    // searchQuery/activeCategory used to be listed here despite never being
+    // read in the body, which re-ran this "hidden by filters?" check on every
+    // unrelated filter change: picking a new category while a leader card was
+    // still highlighted (open within the last ~3s) made this effect fail to
+    // find that leader under the new filter and silently reset every filter
+    // back to 'All' ~300ms later. setFilters was ALSO removed 2026-07-31
+    // (found live: it is not referentially stable across renders — `filters.set`
+    // is a useCallback wrapping setSearchParams, which itself churns identity —
+    // so leaving it here reintroduced the exact same re-fire-on-every-filter-
+    // change bug through a second path even after the first fix). Safe to
+    // call a "stale" closure over it: it only ever dispatches through the
+    // stable useState/useSearchParams setters underneath, so its BEHAVIOR
+    // doesn't depend on which render captured it, only its identity does.
+  }, [highlightedLeader])
 
   // Region items
   const regionItems = useMemo(
@@ -366,7 +432,7 @@ export const LeadersGrid = () => {
   // so counts always match what's actually browsable.
   const categoryInfo = useMemo(() => {
     return LEADER_CATEGORIES.map((name) => {
-      const items = tierScopedLeaders.filter((l) => l.category === name)
+      const items = tierScopedLeaders.filter((l) => leaderMatchesCategory(l, name))
       return {
         name,
         count: items.length,
@@ -395,7 +461,7 @@ export const LeadersGrid = () => {
 
     // Category filter
     if (activeCategory !== 'All') {
-      result = result.filter((l) => l.category === activeCategory)
+      result = result.filter((l) => leaderMatchesCategory(l, activeCategory))
     }
 
     // Country / Region filter
@@ -864,7 +930,7 @@ export const LeadersGrid = () => {
                     .map((leader) => (
                       <div
                         key={leader.id}
-                        id={`leader-${leader.name.replace(/\\s+/g, '-')}`}
+                        id={`leader-${leader.name.replace(/\s+/g, '-')}`}
                         className={clsx(
                           highlightedLeader === leader.name &&
                             'ring-2 ring-primary/60 rounded-xl transition-all duration-500'
@@ -892,7 +958,7 @@ export const LeadersGrid = () => {
           {sortedLeaders.map((leader) => (
             <div
               key={leader.id}
-              id={`leader-${leader.name.replace(/\\s+/g, '-')}`}
+              id={`leader-${leader.name.replace(/\s+/g, '-')}`}
               className={clsx(
                 highlightedLeader === leader.name &&
                   'ring-2 ring-primary/60 rounded-xl transition-all duration-500'
@@ -923,7 +989,7 @@ export const LeadersGrid = () => {
             {sortedLeaders.map((leader) => (
               <div
                 key={leader.id}
-                id={`leader-${leader.name.replace(/\\s+/g, '-')}`}
+                id={`leader-${leader.name.replace(/\s+/g, '-')}`}
                 className={clsx(
                   highlightedLeader === leader.name &&
                     'ring-2 ring-primary/60 rounded-xl transition-all duration-500'
