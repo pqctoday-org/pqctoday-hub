@@ -1212,25 +1212,64 @@ export function ComplianceLandscape({
   //
   // `naicsCodes` is now the single machine key (see sectorVocabularyData.ts);
   // `industries` is display text and is never filtered on.
+  // Options are grouped BY DISPLAY LABEL, not by code, and the option id is the
+  // label rather than a single code.
+  //
+  // NAICS splits some sectors across two codes that share one name — retail is
+  // 44 and 45, transportation 48 and 49. Keying options by code therefore
+  // rendered "Retail Trade (44)" and "Retail Trade (45)" as two visually
+  // identical choices matching different rows, which is the same defect (a
+  // duplicate-looking option that silently hides rows) that this work package
+  // removed from the code-vs-name mixture.
+  //
+  // The label is a safe id because resolveToNaicsSet resolves it back to the
+  // full set of codes it covers, and the filter matches ANY of them. A legacy
+  // `?ind=52` link still works — resolveToNaicsSet('52') is ['52'] — and is
+  // normalized to its label below so it highlights the right option.
   const industryItems = useMemo(() => {
-    const inds = new Set<string>()
+    const labelToCodes = new Map<string, string[]>()
     for (const fw of complianceFrameworks) {
-      for (const c of fw.naicsCodes ?? []) inds.add(c)
+      for (const c of fw.naicsCodes ?? []) {
+        // eslint-disable-next-line security/detect-object-injection
+        const label = NAICS_LABELS[c] ?? c
+        if (!labelToCodes.has(label)) labelToCodes.set(label, [])
+        const codes = labelToCodes.get(label)!
+        if (!codes.includes(c)) codes.push(c)
+      }
     }
-    if (industryFilter !== 'All' && !inds.has(industryFilter)) {
-      inds.add(industryFilter)
+    const items = [...labelToCodes.entries()]
+      .map(([label, codes]) => ({ id: label, label: `${label} (${codes.sort().join('/')})` }))
+      .sort((a, b) => a.label.localeCompare(b.label))
+
+    // Surface an active value the vocabulary does not know (e.g. a persona
+    // store using a third taxonomy) rather than falling back to "Industry".
+    const activeLabel = NAICS_LABELS[industryFilter] ?? industryFilter
+    if (industryFilter !== 'All' && !items.some((i) => i.id === activeLabel)) {
+      items.push({ id: activeLabel, label: activeLabel })
     }
-    const labelFor = (code: string) => {
-      // eslint-disable-next-line security/detect-object-injection
-      const label = NAICS_LABELS[code]
-      return label ? `${label} (${code})` : code
+    return [{ id: 'All', label: 'All Industries' }, ...items]
+  }, [industryFilter])
+
+  // Normalize the active value to the option id it belongs to, so a legacy
+  // code link (?ind=52) or an alias link (?ind=Finance%20%26%20Banking) both
+  // highlight the canonical "Finance & Insurance" option instead of rendering
+  // a second, off-vocabulary entry beside it.
+  //
+  // Only when the value resolves to exactly ONE sector. An alias that spans
+  // two — "Technology" is 51 and 54 by design — has no single option to
+  // highlight, so it keeps its own label rather than silently claiming to be
+  // one of them.
+  const industryFilterId = useMemo(() => {
+    if (industryFilter === 'All') return 'All'
+    // eslint-disable-next-line security/detect-object-injection
+    const direct = NAICS_LABELS[industryFilter]
+    if (direct) return direct
+    const codes = resolveToNaicsSet(industryFilter)
+    if (codes.length === 1) {
+      const label = NAICS_LABELS[codes[0]]
+      if (label) return label
     }
-    return [
-      { id: 'All', label: 'All Industries' },
-      ...[...inds]
-        .sort((a, b) => labelFor(a).localeCompare(labelFor(b)))
-        .map((i) => ({ id: i, label: labelFor(i) })),
-    ]
+    return industryFilter
   }, [industryFilter])
 
   // Region options — derived from full dataset with per-region counts so the
@@ -1570,7 +1609,7 @@ export function ComplianceLandscape({
               <div className="flex-1 min-w-[130px]">
                 <FilterDropdown
                   items={industryItems}
-                  selectedId={industryFilter}
+                  selectedId={industryFilterId}
                   onSelect={setIndustryFilter}
                   defaultLabel="Industry"
                   noContainer
