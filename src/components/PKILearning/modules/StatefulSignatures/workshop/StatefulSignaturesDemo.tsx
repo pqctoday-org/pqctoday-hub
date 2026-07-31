@@ -1038,10 +1038,7 @@ export function StatefulSignaturesDemo() {
                     <ul className="space-y-3 text-sm">
                       <li>
                         <strong>RFC Specification:</strong>{' '}
-                        <Link
-                          to="/library?ref=IETF%20RFC%208554"
-                          className="text-primary hover:underline"
-                        >
+                        <Link to="/library?ref=RFC%208554" className="text-primary hover:underline">
                           RFC 8554
                         </Link>
                       </li>
@@ -1075,10 +1072,7 @@ export function StatefulSignaturesDemo() {
                     <ul className="space-y-3 text-sm">
                       <li>
                         <strong>RFC Specification:</strong>{' '}
-                        <Link
-                          to="/library?ref=IETF%20RFC%208391"
-                          className="text-primary hover:underline"
-                        >
+                        <Link to="/library?ref=RFC%208391" className="text-primary hover:underline">
                           RFC 8391
                         </Link>
                       </li>
@@ -1161,7 +1155,7 @@ export function StatefulSignaturesDemo() {
                             <td className="py-1.5 pr-4 text-foreground">
                               {prop === 'Spec' ? (
                                 <Link
-                                  to="/library?ref=IETF%20RFC%208554"
+                                  to="/library?ref=RFC%208554"
                                   className="text-primary hover:underline"
                                 >
                                   {hss}
@@ -1173,7 +1167,7 @@ export function StatefulSignaturesDemo() {
                             <td className="py-1.5 text-foreground">
                               {prop === 'Spec' ? (
                                 <Link
-                                  to="/library?ref=IETF%20RFC%208391"
+                                  to="/library?ref=RFC%208391"
                                   className="text-primary hover:underline"
                                 >
                                   {xmssmt}

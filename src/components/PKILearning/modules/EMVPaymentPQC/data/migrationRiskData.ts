@@ -76,10 +76,10 @@ export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
     componentLabel: 'EMV Offline Authentication (DDA/CDA)',
     currentCrypto: ['RSA-2048 certificate chain (4 levels)', 'RSA-2048 dynamic signatures'],
     vulnerability:
-      'Offline authentication relies entirely on RSA signatures. A quantum computer can forge ICC signatures, allowing counterfeit cards to pass offline terminal verification. 14.7 billion cards affected.',
+      'Offline authentication relies entirely on RSA signatures. A quantum computer can forge ICC signatures, allowing counterfeit cards to pass offline terminal verification. 14.7 billion cards affected (EMVCo, end of 2024).',
     severity: 'critical',
     hndlExposure: false,
-    affectedScale: '14.7 billion EMV cards globally',
+    affectedScale: '14.7 billion EMV cards globally (EMVCo, end of 2024)',
     migrationEffort: 5,
     migrationTimeline: '2029-2035',
     pqcSolution: [
@@ -100,7 +100,12 @@ export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
       'TLS connections between terminals, acquirers, networks, and issuers use RSA/ECDSA key exchange. Quantum computers can break these key exchanges, enabling man-in-the-middle attacks on authorization messages.',
     severity: 'high',
     hndlExposure: true,
-    affectedScale: 'All online card transactions (~$30 trillion annually)',
+    // Scope stated rather than totalled: the per-network annual volumes in
+    // paymentNetworkData.ts are the source of truth for this number, and they
+    // sum to ~$46.6T across the five networks. An unattributed "~$30 trillion"
+    // contradicted that table by 50%.
+    affectedScale:
+      'All online card transactions — ~$46.6 trillion a year across the five networks in the Network Comparator',
     migrationEffort: 3,
     migrationTimeline: '2025-2028',
     pqcSolution: [
