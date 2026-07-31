@@ -17,6 +17,13 @@ export type BodyType =
 export type DeadlinePhase = 'active' | 'imminent' | 'near' | 'mid' | 'long' | 'ongoing'
 
 /**
+ * Why a row has (or has not) a date — see ComplianceFramework.deadlineKind.
+ * `unknown` is deliberately distinct from `none`: one is a gap in our data,
+ * the other is a fact about the regulation.
+ */
+export type DeadlineKind = 'fixed' | 'phased' | 'ongoing' | 'none' | 'unknown'
+
+/**
  * Five-valued PQC-requirement enum (canonical surface). Existing consumers
  * keep using the legacy `requiresPQC` boolean (= `pqcRequirement === 'yes'`);
  * new code should branch on the enum to surface the full spectrum.
@@ -42,6 +49,25 @@ export interface ComplianceFramework {
   deadline: string
   deadlineYear?: number
   deadlinePhase: DeadlinePhase
+  /**
+   * Every milestone date the source states, as {year, label}, parsed from the
+   * `deadline_dates` column (WP-1.2, 2026-07-31).
+   *
+   * The free-text `deadline` above is for humans. This is what the facet and
+   * the timeline read. Before it existed both derived from prose, so 66% of
+   * rows produced no year and vanished from the timeline, and 21 phased rows
+   * were collapsed to their earliest date — NIST IR 8547's "2030 (deprecate),
+   * 2035 (disallow)" filed under 2030 only.
+   */
+  deadlineDates?: { year: number; label: string }[]
+  /**
+   * fixed | phased | ongoing | none | unknown.
+   *
+   * Splits what used to be one "ongoing / no year" bucket into states that
+   * mean different things: genuinely open-ended (`ongoing`), the source states
+   * no deadline (`none`), and nobody has read the source yet (`unknown`).
+   */
+  deadlineKind?: DeadlineKind
   notes: string
   enforcementBody: string
   libraryRefs: string[]
@@ -82,6 +108,8 @@ interface RawComplianceRow {
   countries: string
   requires_pqc: string
   deadline: string
+  deadline_dates?: string
+  deadline_kind?: string
   notes: string
   enforcement_body: string
   library_refs: string
@@ -206,7 +234,30 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
     : 'compliance_framework'
 
   const deadline = row.deadline || 'Ongoing'
-  const deadlineYear = extractDeadlineYear(deadline)
+
+  // Prefer the structured column; fall back to parsing the prose only for rows
+  // that predate the WP-1.2 migration (deprecated rows keep their old shape).
+  const deadlineDates = (row.deadline_dates || '')
+    .split(';')
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((part) => {
+      const [y, ...rest] = part.split(':')
+      return { year: parseInt(y, 10), label: rest.join(':').trim() }
+    })
+    .filter((d) => Number.isFinite(d.year))
+
+  const validKinds: DeadlineKind[] = ['fixed', 'phased', 'ongoing', 'none', 'unknown']
+  const deadlineKind: DeadlineKind = validKinds.includes(row.deadline_kind as DeadlineKind)
+    ? (row.deadline_kind as DeadlineKind)
+    : 'unknown'
+
+  // Earliest stated date drives the existing single-year consumers; the full
+  // set is available via deadlineDates for the facet and timeline.
+  const deadlineYear =
+    deadlineDates.length > 0
+      ? Math.min(...deadlineDates.map((d) => d.year))
+      : extractDeadlineYear(deadline)
   const deadlinePhase = classifyDeadline(deadline, deadlineYear)
 
   return {
@@ -226,6 +277,8 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
     deadline,
     deadlineYear,
     deadlinePhase,
+    deadlineDates,
+    deadlineKind,
     notes: row.notes || '',
     enforcementBody: row.enforcement_body || '',
     libraryRefs: splitSemicolon(row.library_refs),
@@ -369,6 +422,22 @@ const COUNTRY_TO_REGION: Record<string, RegionBloc> = {
 /** Returns the regulatory bloc for a country string, or 'Other' if unknown. */
 export function regionForCountry(country: string): RegionBloc {
   return COUNTRY_TO_REGION[country.trim()] ?? 'Other'
+}
+
+/**
+ * Every deadline phase a framework legitimately belongs to.
+ *
+ * ADDED 2026-07-31 (WP-1.2). `deadlinePhase` is a single value derived from the
+ * EARLIEST stated date, which is wrong for the 19 phased rows: filtering
+ * "Long-term (>6y)" could never surface NIST IR 8547's 2035 disallow date,
+ * because the row was filed under its 2030 deprecate date. Matching against
+ * this set instead makes a phased framework reachable from every bucket it
+ * actually has a milestone in.
+ */
+export function deadlinePhasesFor(fw: ComplianceFramework): DeadlinePhase[] {
+  const dates = fw.deadlineDates ?? []
+  if (dates.length === 0) return [fw.deadlinePhase]
+  return [...new Set(dates.map((d) => classifyDeadline(fw.deadline, d.year)))]
 }
 
 /** All region blocs present in the current dataset, sorted for stable UI. */

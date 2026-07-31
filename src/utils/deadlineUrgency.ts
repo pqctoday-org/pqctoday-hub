@@ -32,13 +32,25 @@ export function extractYear(deadline: string): number | null {
   return future ?? years[0]
 }
 
-/** Classify urgency relative to the current year */
+/**
+ * Classify urgency relative to the current year.
+ *
+ * ALIGNED 2026-07-31 (WP-1.2) with classifyDeadline's boundaries in
+ * complianceData.ts. The two used different thresholds — this used imminent
+ * <=+2 / near <=+4, the facet used imminent <=+1 / near <=+3 — so a 2028 date
+ * was filed as "Near-term" by the filter and rendered as "Imminent" on the
+ * card at the same time. One date, two contradictory labels on one screen.
+ *
+ * The buckets themselves stay distinct on purpose: this drives a per-row
+ * urgency colour (and has an `overdue` state the facet has no use for), while
+ * classifyDeadline drives the facet's selectable ranges.
+ */
 export function deadlineUrgency(deadline: string): DeadlineUrgency {
   const year = extractYear(deadline)
   if (!year) return 'ongoing'
   if (year < CURRENT_YEAR) return 'overdue'
-  if (year <= CURRENT_YEAR + 2) return 'imminent'
-  if (year <= CURRENT_YEAR + 4) return 'near'
+  if (year <= CURRENT_YEAR + 1) return 'imminent'
+  if (year <= CURRENT_YEAR + 3) return 'near'
   return 'future'
 }
 

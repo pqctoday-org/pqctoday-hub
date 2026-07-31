@@ -46,7 +46,7 @@ import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
 import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
 import { SourcePassagesDrawer } from '@/components/ui/SourcePassagesDrawer'
 import { useRevisions, byRecord } from '@/hooks/useRevisions'
-import { conceptIdForFramework } from '@/data/complianceData'
+import { conceptIdForFramework, deadlinePhasesFor } from '@/data/complianceData'
 import { hasGraphEdges } from '@/utils/conceptXwalkGraph'
 import { FrameworkConceptGraphModal } from './FrameworkConceptGraphModal'
 import { resolveTimelineRef } from '@/utils/timelineResolver'
@@ -231,15 +231,28 @@ export function DeadlineTimeline({
   frameworks: ComplianceFramework[]
   label?: string
 }) {
-  const withDeadlines = frameworks.filter((f) => extractYear(f.deadline) !== null)
+  // CHANGED 2026-07-31 (WP-1.2): plots EVERY date a framework states, from the
+  // structured `deadlineDates` column, instead of one year parsed out of prose.
+  //
+  // Before this, a phased framework appeared once at its earliest date and its
+  // later milestones were invisible — NIST IR 8547 showed at 2030 (deprecate)
+  // and never at 2035 (disallow); eIDAS showed at 2026 and never at 2030/2035.
+  // 19 rows are phased.
   const years = Array.from({ length: TIMELINE_SPAN + 1 }, (_, i) => TIMELINE_START + i)
 
   const byYear = new Map<number, ComplianceFramework[]>()
-  for (const fw of withDeadlines) {
-    const year = extractYear(fw.deadline)!
-    const bucket = Math.max(TIMELINE_START, Math.min(TIMELINE_END, year))
-    if (!byYear.has(bucket)) byYear.set(bucket, [])
-    byYear.get(bucket)!.push(fw)
+  for (const fw of frameworks) {
+    const dates =
+      fw.deadlineDates && fw.deadlineDates.length > 0
+        ? fw.deadlineDates.map((d) => d.year)
+        : ((y) => (y === null ? [] : [y]))(extractYear(fw.deadline))
+    if (dates.length === 0) continue
+    for (const year of new Set(dates)) {
+      const bucket = Math.max(TIMELINE_START, Math.min(TIMELINE_END, year))
+      if (!byYear.has(bucket)) byYear.set(bucket, [])
+      // A framework can legitimately appear at several years; never twice at one.
+      if (!byYear.get(bucket)!.includes(fw)) byYear.get(bucket)!.push(fw)
+    }
   }
 
   const maxStackHeight = Math.max(
@@ -1349,7 +1362,9 @@ export function ComplianceLandscape({
       result = result.filter((fw) => fw.countries.some((c) => c.trim() === countryFilter))
     }
     if (deadlineFilter !== 'All') {
-      result = result.filter((fw) => fw.deadlinePhase === deadlineFilter)
+      // WP-1.2: match on ANY stated date, so a phased framework is reachable
+      // from every bucket it genuinely belongs to rather than only its first.
+      result = result.filter((fw) => deadlinePhasesFor(fw).includes(deadlineFilter))
     }
     if (searchFilterText.trim()) {
       const q = searchFilterText.toLowerCase()
