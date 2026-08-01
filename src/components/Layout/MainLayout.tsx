@@ -45,6 +45,7 @@ import { PersonaSwitchModal } from '../Persona/PersonaSwitchModal'
 import { PreviewBanner } from '../common/PreviewBanner'
 import { useWorkshopUrlAutostart } from '../../hooks/useWorkshopUrlAutostart'
 import { ScrollFadeContainer } from '../ui/ScrollFadeContainer'
+import { useIsBelowLgViewport } from '../../hooks/useIsBelowLgViewport'
 
 const RightPanel = React.lazy(() =>
   import('../RightPanel/RightPanel').then((m) => ({ default: m.RightPanel }))
@@ -246,6 +247,25 @@ export const MainLayout = () => {
   )
   const isArchitect = selectedPersona === 'architect'
 
+  // Persona-journeys A-grade redesign (2026-08-01): the Curious persona's
+  // mobile board (`CuriousMobileBoard`, rendered by LandingView at '/') is a
+  // standalone screen with its OWN header (brand + search + "More") and its
+  // OWN persistent bottom tab bar — not a small tweak to this file's mobile
+  // nav row, a genuinely different navigation paradigm scoped to this one
+  // persona/route/viewport combination (IMPLEMENTATION-PLAN-2026-08-01.md
+  // §3.4). Left un-suppressed, MainLayout's own mobile header + "More" sheet
+  // would double up underneath/above it. `isBelowLg` uses the exact same
+  // breakpoint this file's `hidden lg:flex` / `lg:hidden` rail split already
+  // uses (see useIsBelowLgViewport's own docs) and LandingView gates its
+  // CuriousMobileBoard render on the identical condition, so the two can
+  // never disagree about when this applies. Scoped to `pathname === '/'`
+  // specifically — every OTHER route (e.g. a curious-mobile user on
+  // `/library`) must keep this file's normal header/nav so they aren't
+  // stranded with no way to navigate away.
+  const isBelowLg = useIsBelowLgViewport()
+  const isCuriousMobileTakeover =
+    selectedPersona === 'curious' && isBelowLg && location.pathname === '/'
+
   const isPathActive = React.useCallback(
     (path: string) =>
       path === '/' ? location.pathname === '/' : location.pathname.startsWith(path),
@@ -439,184 +459,193 @@ export const MainLayout = () => {
             PQC Today Sim, so the simulation context is never lost on a redirect. */}
         <ResumeSimBar />
 
-        <header
-          className="m-4 sticky top-[max(1rem,env(safe-area-inset-top))] z-50 transition-all duration-300 print:hidden"
-          role="banner"
-        >
-          <div className="glass-panel p-2 lg:p-4 flex w-full items-center gap-2 relative">
-            {/* Mobile brand — always a button; toggles Airplane Mode on/off.
+        {/* Suppressed for the Curious-mobile-board takeover (see
+            `isCuriousMobileTakeover` above) — that screen renders its own
+            header; this one would only double up underneath it. */}
+        {!isCuriousMobileTakeover && (
+          <header
+            className="m-4 sticky top-[max(1rem,env(safe-area-inset-top))] z-50 transition-all duration-300 print:hidden"
+            role="banner"
+          >
+            <div className="glass-panel p-2 lg:p-4 flex w-full items-center gap-2 relative">
+              {/* Mobile brand — always a button; toggles Airplane Mode on/off.
                 Desktop copy lives in the rail above. */}
-            <Button
-              variant="ghost"
-              type="button"
-              onClick={() => setAirplaneMode(!airplaneMode)}
-              className="lg:hidden flex-shrink-0 flex items-center gap-1.5 min-h-[44px] min-w-[44px]"
-              aria-label={
-                airplaneMode ? 'Airplane Mode on — tap to go online' : 'Toggle Airplane Mode'
-              }
-              title={airplaneMode ? 'Tap to disable Airplane Mode' : 'Tap to enable Airplane Mode'}
-            >
-              <span className="text-base font-bold text-gradient">PQC</span>
-              {airplaneMode && (
-                <Plane size={12} className="text-primary animate-pulse" aria-hidden="true" />
-              )}
-            </Button>
+              <Button
+                variant="ghost"
+                type="button"
+                onClick={() => setAirplaneMode(!airplaneMode)}
+                className="lg:hidden flex-shrink-0 flex items-center gap-1.5 min-h-[44px] min-w-[44px]"
+                aria-label={
+                  airplaneMode ? 'Airplane Mode on — tap to go online' : 'Toggle Airplane Mode'
+                }
+                title={
+                  airplaneMode ? 'Tap to disable Airplane Mode' : 'Tap to enable Airplane Mode'
+                }
+              >
+                <span className="text-base font-bold text-gradient">PQC</span>
+                {airplaneMode && (
+                  <Plane size={12} className="text-primary animate-pulse" aria-hidden="true" />
+                )}
+              </Button>
 
-            {/* Desktop top bar — region/industry pill, WIP chip, action icon
+              {/* Desktop top bar — region/industry pill, WIP chip, action icon
                 cluster, ⌘K search, role switcher. Rail owns nav on desktop, so
                 this replaces the old flat nav row entirely at lg+. */}
-            <div className="hidden lg:flex items-center justify-between gap-3 flex-1 min-w-0">
-              <div className="flex items-center gap-2 min-w-0">
-                {selectedPersona ? (
-                  <span
-                    className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-muted/20 px-2.5 py-1.5 text-xs text-muted-foreground min-w-0 truncate"
-                    title={`PERSONA_TIMELINE_REGION.${selectedPersona} = "${regionValue}" · PERSONA_THREATS_DEFAULT_INDUSTRIES.${selectedPersona} = [${
-                      industriesValue.join(', ') || '—'
-                    }]`}
-                  >
-                    <span className="truncate">
-                      {REGION_LABELS[regionValue ?? 'global'] ?? regionValue}
-                      {industriesValue.length > 0 ? ` · ${industriesValue.join(', ')}` : ''}
+              <div className="hidden lg:flex items-center justify-between gap-3 flex-1 min-w-0">
+                <div className="flex items-center gap-2 min-w-0">
+                  {selectedPersona ? (
+                    <span
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-muted/20 px-2.5 py-1.5 text-xs text-muted-foreground min-w-0 truncate"
+                      title={`PERSONA_TIMELINE_REGION.${selectedPersona} = "${regionValue}" · PERSONA_THREATS_DEFAULT_INDUSTRIES.${selectedPersona} = [${
+                        industriesValue.join(', ') || '—'
+                      }]`}
+                    >
+                      <span className="truncate">
+                        {REGION_LABELS[regionValue ?? 'global'] ?? regionValue}
+                        {industriesValue.length > 0 ? ` · ${industriesValue.join(', ')}` : ''}
+                      </span>
                     </span>
-                  </span>
-                ) : (
-                  <span
-                    className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-muted/20 px-2.5 py-1.5 text-xs text-muted-foreground"
-                    title="No role selected — showing unfiltered data across all regions and industries"
+                  ) : (
+                    <span
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-muted/20 px-2.5 py-1.5 text-xs text-muted-foreground"
+                      title="No role selected — showing unfiltered data across all regions and industries"
+                    >
+                      All regions · All industries
+                    </span>
+                  )}
+                  {showWipChip && (
+                    <span
+                      className="inline-flex items-center gap-1 rounded-lg border text-status-warning bg-status-warning px-2 py-1 text-[11px] font-medium shrink-0"
+                      title="Some destinations on this board are marked in-progress — see the dashed rail rows."
+                    >
+                      <Wrench size={12} aria-hidden="true" />
+                      WIP
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-1 shrink-0 flex-wrap justify-end">
+                  <Button
+                    variant="ghost"
+                    onClick={() => openRightPanel('chat')}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 text-foreground text-sm font-medium transition-colors border border-primary/20"
+                    aria-label="Open PQC Assistant"
                   >
-                    All regions · All industries
-                  </span>
-                )}
-                {showWipChip && (
-                  <span
-                    className="inline-flex items-center gap-1 rounded-lg border text-status-warning bg-status-warning px-2 py-1 text-[11px] font-medium shrink-0"
-                    title="Some destinations on this board are marked in-progress — see the dashed rail rows."
+                    <MessageCircle size={14} aria-hidden="true" />
+                    <span>Assistant</span>
+                  </Button>
+                  <ShareButton title={`${currentLabel} — PQC Today`} />
+                  <FAQButton />
+                  {viewTypeForRoute && <SourcesButton viewType={viewTypeForRoute} />}
+                  <GlossaryButton />
+                  {pageIdForRoute && <UserManualButton pageId={pageIdForRoute} />}
+
+                  <Button
+                    variant="outline"
+                    onClick={openPalette}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg border-border bg-muted/30 hover:border-primary/30 hover:bg-muted/50 text-sm text-muted-foreground min-w-[140px] h-auto"
+                    aria-label="Search (⌘K)"
                   >
-                    <Wrench size={12} aria-hidden="true" />
-                    WIP
-                  </span>
-                )}
+                    <Search size={14} aria-hidden="true" />
+                    <span className="flex-1 text-left">Search…</span>
+                    <kbd className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-border bg-muted/50">
+                      ⌘K
+                    </kbd>
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    onClick={() => setPersonaSwitchOpen(true)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg h-auto text-sm"
+                    aria-label="Switch role"
+                    title="Switch your role"
+                  >
+                    <UserCog size={14} aria-hidden="true" />
+                    <span className="truncate max-w-[110px]">{roleLabel}</span>
+                    <ChevronDown size={12} aria-hidden="true" />
+                  </Button>
+                </div>
               </div>
 
-              <div className="flex items-center gap-1 shrink-0 flex-wrap justify-end">
-                <Button
-                  variant="ghost"
-                  onClick={() => openRightPanel('chat')}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 text-foreground text-sm font-medium transition-colors border border-primary/20"
-                  aria-label="Open PQC Assistant"
-                >
-                  <MessageCircle size={14} aria-hidden="true" />
-                  <span>Assistant</span>
-                </Button>
-                <ShareButton title={`${currentLabel} — PQC Today`} />
-                <FAQButton />
-                {viewTypeForRoute && <SourcesButton viewType={viewTypeForRoute} />}
-                <GlossaryButton />
-                {pageIdForRoute && <UserManualButton pageId={pageIdForRoute} />}
-
-                <Button
-                  variant="outline"
-                  onClick={openPalette}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg border-border bg-muted/30 hover:border-primary/30 hover:bg-muted/50 text-sm text-muted-foreground min-w-[140px] h-auto"
-                  aria-label="Search (⌘K)"
-                >
-                  <Search size={14} aria-hidden="true" />
-                  <span className="flex-1 text-left">Search…</span>
-                  <kbd className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-border bg-muted/50">
-                    ⌘K
-                  </kbd>
-                </Button>
-
-                <Button
-                  variant="outline"
-                  onClick={() => setPersonaSwitchOpen(true)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg h-auto text-sm"
-                  aria-label="Switch role"
-                  title="Switch your role"
-                >
-                  <UserCog size={14} aria-hidden="true" />
-                  <span className="truncate max-w-[110px]">{roleLabel}</span>
-                  <ChevronDown size={12} aria-hidden="true" />
-                </Button>
-              </div>
-            </div>
-
-            {/* Mobile nav row — icon-only row + "More" sheet trigger.
+              {/* Mobile nav row — icon-only row + "More" sheet trigger.
                 Unchanged mechanism from before the rail rebuild; only the
                 underlying path list now sources from the same rail sections
                 the desktop rail uses (see mobileVisiblePaths above). */}
-            <nav className="w-full lg:hidden" role="navigation" aria-label="Main navigation">
-              <ScrollFadeContainer scrollClassName="flex flex-row flex-nowrap items-center justify-between gap-1">
-                {mobileVisiblePaths.map((path) => {
-                  const Icon = iconFor(path)
-                  const label = labelFor(path)
-                  return (
-                    <NavLink
-                      key={path}
-                      to={path}
-                      end={path === '/'}
-                      className="flex-1 flex justify-center"
-                    >
-                      {({ isActive }) => (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          aria-label={`${label} view`}
-                          aria-current={isActive ? 'page' : undefined}
-                          className={
-                            isActive
-                              ? 'bg-primary/10 text-foreground border border-primary/20 px-2 min-h-[44px] flex-col items-center gap-0'
-                              : 'text-muted-foreground hover:text-foreground px-2 min-h-[44px] flex-col items-center gap-0'
-                          }
-                        >
-                          <Icon size={18} aria-hidden="true" />
-                          <span className="text-[11px] leading-tight mt-1 truncate max-w-[72px] text-center">
-                            {label === 'Command Center' ? 'Command' : label}
-                          </span>
-                        </Button>
-                      )}
-                    </NavLink>
-                  )
-                })}
+              <nav className="w-full lg:hidden" role="navigation" aria-label="Main navigation">
+                <ScrollFadeContainer scrollClassName="flex flex-row flex-nowrap items-center justify-between gap-1">
+                  {mobileVisiblePaths.map((path) => {
+                    const Icon = iconFor(path)
+                    const label = labelFor(path)
+                    return (
+                      <NavLink
+                        key={path}
+                        to={path}
+                        end={path === '/'}
+                        className="flex-1 flex justify-center"
+                      >
+                        {({ isActive }) => (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            aria-label={`${label} view`}
+                            aria-current={isActive ? 'page' : undefined}
+                            className={
+                              isActive
+                                ? 'bg-primary/10 text-foreground border border-primary/20 px-2 min-h-[44px] flex-col items-center gap-0'
+                                : 'text-muted-foreground hover:text-foreground px-2 min-h-[44px] flex-col items-center gap-0'
+                            }
+                          >
+                            <Icon size={18} aria-hidden="true" />
+                            <span className="text-[11px] leading-tight mt-1 truncate max-w-[72px] text-center">
+                              {label === 'Command Center' ? 'Command' : label}
+                            </span>
+                          </Button>
+                        )}
+                      </NavLink>
+                    )
+                  })}
 
-                {/* Mobile "More" button — folds FOR YOU (rest) + MORE + the
+                  {/* Mobile "More" button — folds FOR YOU (rest) + MORE + the
                     architect CACP shortcut into the existing bottom sheet. */}
-                {mobileSheetAllPaths.length > 0 && (
-                  <div className="flex-1 flex justify-center">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setMoreMenuOpen(true)}
-                      aria-label={`More navigation options (${mobileSheetAllPaths.length} pages)`}
-                      aria-expanded={moreMenuOpen}
-                      aria-haspopup="dialog"
-                      title={`More pages (${mobileSheetAllPaths.length})`}
-                      className={
-                        isMoreActive
-                          ? 'relative bg-primary/10 text-foreground border border-primary/20 px-1 min-h-[44px] flex-col items-center gap-0'
-                          : 'relative text-muted-foreground hover:text-foreground px-1 min-h-[44px] flex-col items-center gap-0'
-                      }
-                    >
-                      <span className="relative">
-                        <MoreHorizontal size={18} aria-hidden="true" />
-                        <span
-                          aria-hidden="true"
-                          className="absolute -top-1.5 -right-2 min-w-[14px] h-[14px] px-1 rounded-full bg-primary/20 text-primary text-[9px] font-semibold leading-[14px] text-center"
-                        >
-                          {mobileSheetAllPaths.length}
+                  {mobileSheetAllPaths.length > 0 && (
+                    <div className="flex-1 flex justify-center">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setMoreMenuOpen(true)}
+                        aria-label={`More navigation options (${mobileSheetAllPaths.length} pages)`}
+                        aria-expanded={moreMenuOpen}
+                        aria-haspopup="dialog"
+                        title={`More pages (${mobileSheetAllPaths.length})`}
+                        className={
+                          isMoreActive
+                            ? 'relative bg-primary/10 text-foreground border border-primary/20 px-1 min-h-[44px] flex-col items-center gap-0'
+                            : 'relative text-muted-foreground hover:text-foreground px-1 min-h-[44px] flex-col items-center gap-0'
+                        }
+                      >
+                        <span className="relative">
+                          <MoreHorizontal size={18} aria-hidden="true" />
+                          <span
+                            aria-hidden="true"
+                            className="absolute -top-1.5 -right-2 min-w-[14px] h-[14px] px-1 rounded-full bg-primary/20 text-primary text-[9px] font-semibold leading-[14px] text-center"
+                          >
+                            {mobileSheetAllPaths.length}
+                          </span>
                         </span>
-                      </span>
-                      <span className="text-[11px] leading-tight mt-0.5">More</span>
-                    </Button>
-                  </div>
-                )}
-              </ScrollFadeContainer>
-            </nav>
-          </div>
-        </header>
+                        <span className="text-[11px] leading-tight mt-0.5">More</span>
+                      </Button>
+                    </div>
+                  )}
+                </ScrollFadeContainer>
+              </nav>
+            </div>
+          </header>
+        )}
 
-        {/* Mobile "More" bottom sheet */}
-        {moreMenuOpen && (
+        {/* Mobile "More" bottom sheet — unreachable in the Curious-mobile
+            takeover state anyway (its trigger button lives inside the
+            suppressed header above), gated explicitly for clarity/safety. */}
+        {!isCuriousMobileTakeover && moreMenuOpen && (
           <>
             {/* Backdrop */}
             <div
@@ -830,82 +859,108 @@ export const MainLayout = () => {
 
         {/* Scrollable content area */}
         <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
-          {/* Main Content Area */}
-          <main id="main-content" className="container py-4 px-4 md:py-8 md:px-8" role="main">
-            {/* Offline mode info banner */}
-            <AirplaneModeBanner />
-
-            {/* Migration planning workflow progress banner */}
-            <WorkflowBanner />
-
-            {/* Preview mode banner — curious persona browsing advanced routes */}
-            {selectedPersona === 'curious' &&
-              viewAccess === 'preview' &&
-              !ALWAYS_VISIBLE_PATHS.includes(location.pathname) &&
-              !(PERSONA_NAV_PATHS.curious ?? []).includes(location.pathname) && <PreviewBanner />}
-
-            {/* Suspense boundary for route-level code splitting */}
-            <React.Suspense
-              fallback={
-                <div className="flex min-h-[200px] h-[50dvh] w-full items-center justify-center">
-                  <div className="flex flex-col items-center gap-4">
-                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-                    <p className="text-muted-foreground animate-pulse">Loading...</p>
+          {isCuriousMobileTakeover ? (
+            /* Curious-mobile takeover: bare Outlet, no container padding, no
+               banners/Breadcrumb/PhaseContextBanner — CuriousMobileBoard is a
+               full-bleed standalone screen that supplies all of its own
+               chrome. `id="main-content"` + `role="main"` are kept so the
+               skip-link and the page's main landmark still resolve. */
+            <div id="main-content" role="main">
+              <React.Suspense
+                fallback={
+                  <div className="flex min-h-[200px] h-[50dvh] w-full items-center justify-center">
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+                      <p className="text-muted-foreground animate-pulse">Loading...</p>
+                    </div>
                   </div>
-                </div>
-              }
-            >
-              <motion.div
-                key={location.pathname}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-                className="lg:flex lg:items-start lg:gap-6"
+                }
               >
-                <div className="min-w-0 lg:flex-1">
-                  <Breadcrumb />
-                  {/* "You're viewing Phase X" banner — shows when a ?phase= param is
-                      present (e.g. a deep link); self-skips Assess/Report/Command Center. */}
-                  <PhaseContextBanner />
-                  <Outlet />
-                </div>
-              </motion.div>
-            </React.Suspense>
-          </main>
+                <Outlet />
+              </React.Suspense>
+            </div>
+          ) : (
+            <>
+              {/* Main Content Area */}
+              <main id="main-content" className="container py-4 px-4 md:py-8 md:px-8" role="main">
+                {/* Offline mode info banner */}
+                <AirplaneModeBanner />
 
-          {/* Footer */}
-          <footer className="border-t border-border mt-12 py-8 text-center text-muted-foreground text-sm px-4 print:hidden safe-bottom">
-            <p>
-              © 2025 PQC Today. Data sourced from the public internet resources.{' '}
-              <Link to="/terms" className="underline hover:text-foreground transition-colors">
-                Terms of Service
-              </Link>
-              {' · '}
-              <Link
-                to="/editorial-independence"
-                className="underline hover:text-foreground transition-colors"
-              >
-                Editorial Independence
-              </Link>
-              {' · '}
-              <Link to="/sponsor" className="underline hover:text-foreground transition-colors">
-                Sponsor
-              </Link>
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Content may be inaccurate. Please verify information independently. Report
-              inaccuracies in{' '}
-              <a
-                href="https://github.com/pqctoday-org/pqctoday-hub/discussions"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline hover:text-foreground transition-colors"
-              >
-                GitHub Discussions
-              </a>
-              .
-            </p>
-          </footer>
+                {/* Migration planning workflow progress banner */}
+                <WorkflowBanner />
+
+                {/* Preview mode banner — curious persona browsing advanced routes */}
+                {selectedPersona === 'curious' &&
+                  viewAccess === 'preview' &&
+                  !ALWAYS_VISIBLE_PATHS.includes(location.pathname) &&
+                  !(PERSONA_NAV_PATHS.curious ?? []).includes(location.pathname) && (
+                    <PreviewBanner />
+                  )}
+
+                {/* Suspense boundary for route-level code splitting */}
+                <React.Suspense
+                  fallback={
+                    <div className="flex min-h-[200px] h-[50dvh] w-full items-center justify-center">
+                      <div className="flex flex-col items-center gap-4">
+                        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+                        <p className="text-muted-foreground animate-pulse">Loading...</p>
+                      </div>
+                    </div>
+                  }
+                >
+                  <motion.div
+                    key={location.pathname}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="lg:flex lg:items-start lg:gap-6"
+                  >
+                    <div className="min-w-0 lg:flex-1">
+                      <Breadcrumb />
+                      {/* "You're viewing Phase X" banner — shows when a ?phase= param is
+                          present (e.g. a deep link); self-skips Assess/Report/Command Center. */}
+                      <PhaseContextBanner />
+                      <Outlet />
+                    </div>
+                  </motion.div>
+                </React.Suspense>
+              </main>
+
+              {/* Footer */}
+              <footer className="border-t border-border mt-12 py-8 text-center text-muted-foreground text-sm px-4 print:hidden safe-bottom">
+                <p>
+                  © 2025 PQC Today. Data sourced from the public internet resources.{' '}
+                  <Link to="/terms" className="underline hover:text-foreground transition-colors">
+                    Terms of Service
+                  </Link>
+                  {' · '}
+                  <Link
+                    to="/editorial-independence"
+                    className="underline hover:text-foreground transition-colors"
+                  >
+                    Editorial Independence
+                  </Link>
+                  {' · '}
+                  <Link to="/sponsor" className="underline hover:text-foreground transition-colors">
+                    Sponsor
+                  </Link>
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Content may be inaccurate. Please verify information independently. Report
+                  inaccuracies in{' '}
+                  <a
+                    href="https://github.com/pqctoday-org/pqctoday-hub/discussions"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline hover:text-foreground transition-colors"
+                  >
+                    GitHub Discussions
+                  </a>
+                  .
+                </p>
+              </footer>
+            </>
+          )}
 
           {/* Offline connectivity toast + monitor */}
           <AirplaneModeToast />
