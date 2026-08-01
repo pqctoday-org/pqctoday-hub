@@ -95,8 +95,11 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     // standalone nav path — OpenSSL Studio is reachable via the Playground
     // grid's own 'openssl-studio' (PT-023) card (RAIL_HIDDEN_PATHS below),
     // per the redesign's "folded into Playground" decision. /simulation
-    // added as the dashed/marked row (PERSONA_SIM_PRACTICE_PHASES.developer
-    // is real, but the general console's exit-affordance fix is pending).
+    // added as a plain (non-marked) row — PERSONA_SIM_PRACTICE_PHASES.developer
+    // is real, and the general console's "Exit to hub" affordance
+    // (SimulationView.tsx) already shipped (verified 2026-08-01 final review,
+    // pre-dating this branch — see PERSONA_MARKED_NAV_PATHS' doc comment for
+    // why this is no longer marked/dashed).
     '/simulation',
   ],
   architect: [
@@ -112,7 +115,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/patents',
     '/revisions',
     // Same redesign notes as developer above: /openssl folded into
-    // Playground's own card; /simulation added as the dashed/marked row.
+    // Playground's own card; /simulation added as a plain (non-marked) row.
     '/simulation',
   ],
   researcher: null,
@@ -135,7 +138,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/playground',
     '/revisions',
     // /openssl folded into Playground's own card (see developer's note above).
-    // /simulation added as the dashed/marked row.
+    // /simulation added as a plain (non-marked) row.
     '/simulation',
   ],
   curious: [
@@ -175,14 +178,30 @@ export const RAIL_HIDDEN_PATHS: string[] = ['/openssl']
  * placement) and from any row given the separate "featured" green treatment
  * (e.g. executive's '/simulation', styled as the Executive Overview tour
  * entry point, is intentionally NOT in this list).
+ *
+ * CORRECTION (2026-08-01 final self-review): an earlier pass in this same
+ * build marked developer/architect/ops's '/simulation' row as dashed/pending,
+ * citing IMPLEMENTATION-PLAN-2026-08-01.md §4.5's "general console, pending
+ * its exit-affordance fix" caveat — but per that same plan section's own
+ * instruction ("before wiring this row live, verify the exit-affordance fix
+ * has actually shipped"), a build-time check was required and was not done.
+ * Checking now: SimulationView.tsx already ships a working "Exit to hub" link
+ * (`aria-label="Exit to hub"`, covered by SimulationView.test.tsx) via commits
+ * 691eb55a0 and 6ee1e91f3, BOTH already merged into main well before this
+ * branch's own base commit — the dependency this plan flagged was resolved
+ * before this build even started. developer/architect/ops's '/simulation'
+ * therefore gets the same plain (non-marked) treatment as curious's, not
+ * dashed — PERSONA_SIM_PRACTICE_PHASES already gives all three a real,
+ * accurate phase mapping into the same general console exec's tour points at.
  */
 export const PERSONA_MARKED_NAV_PATHS: Record<PersonaId, string[]> = {
   executive: ['/playground'],
-  developer: ['/simulation'],
-  architect: ['/simulation'],
+  // developer/architect/ops: no marked rows — see CORRECTION note above.
+  developer: [],
+  architect: [],
   // researcher: PERSONA_NAV_PATHS is null (no gating at all) — nothing marked.
   researcher: [],
-  ops: ['/simulation'],
+  ops: [],
   // curious: every route is already reachable and un-gated — nothing marked.
   curious: [],
 }

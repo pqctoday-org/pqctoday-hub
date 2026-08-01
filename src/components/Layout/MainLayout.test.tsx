@@ -130,17 +130,24 @@ describe('MainLayout', () => {
       expect(within(rail).getByRole('button', { name: /community view/i })).toBeInTheDocument()
     })
 
-    it('gives /simulation the dashed "marked" treatment, not solid active', () => {
+    // 2026-08-01 final self-review correction: developer's '/simulation' row
+    // used to get the dashed "marked" treatment, justified by an "exit-
+    // affordance fix pending" claim that turned out to be false — the general
+    // console's "Exit to hub" link (SimulationView.tsx) already shipped well
+    // before this branch existed (commits 691eb55a0 / 6ee1e91f3). It now
+    // renders like any other real, reachable route — see
+    // personaConfig.ts's PERSONA_MARKED_NAV_PATHS doc comment.
+    it('gives /simulation the plain/active treatment, NOT dashed (exit-affordance dependency already shipped)', () => {
       renderLayout('/simulation')
       const rail = getRailNav()
       const button = within(rail).getByRole('button', { name: /simulation view/i })
-      expect(button.className).toMatch(/border-dashed/)
-      expect(button.className).not.toMatch(/border-l-primary/)
+      expect(button.className).not.toMatch(/border-dashed/)
+      expect(button.className).toMatch(/border-l-primary/)
     })
 
-    it('shows the WIP chip (developer has a marked row)', () => {
+    it('does not show the WIP chip (developer has no marked rows post-correction)', () => {
       renderLayout()
-      expect(screen.getByText('WIP')).toBeInTheDocument()
+      expect(screen.queryByText('WIP')).not.toBeInTheDocument()
     })
   })
 
@@ -163,6 +170,11 @@ describe('MainLayout', () => {
       const rail = getRailNav()
       const button = within(rail).getByRole('button', { name: /playground view/i })
       expect(button.className).toMatch(/border-dashed/)
+    })
+
+    it('shows the WIP chip (executive has a marked row: /playground)', () => {
+      renderLayout()
+      expect(screen.getByText('WIP')).toBeInTheDocument()
     })
   })
 

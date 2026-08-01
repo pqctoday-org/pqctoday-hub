@@ -90,13 +90,25 @@ describe('getRowTreatment', () => {
   })
 
   it('marked rows stay "marked" even when active (dashed wins over solid active)', () => {
-    expect(getRowTreatment('developer', '/simulation', true)).toBe('marked')
-    expect(getRowTreatment('developer', '/simulation', false)).toBe('marked')
+    // executive's '/playground' is the current marked row (a genuine "Labs
+    // preview, not yet exec-tailored" row) — developer/architect/ops's
+    // '/simulation' was DEmarked in the 2026-08-01 final self-review once the
+    // general console's "Exit to hub" affordance was confirmed already
+    // shipped (see personaConfig.ts's PERSONA_MARKED_NAV_PATHS doc comment).
+    expect(getRowTreatment('executive', '/playground', true)).toBe('marked')
+    expect(getRowTreatment('executive', '/playground', false)).toBe('marked')
   })
 
   it('falls back to active/plain for unmarked, non-featured rows', () => {
     expect(getRowTreatment('developer', '/migrate', true)).toBe('active')
     expect(getRowTreatment('developer', '/migrate', false)).toBe('plain')
+  })
+
+  it('developer/architect/ops give /simulation the plain (non-marked) treatment — the exit-affordance dependency that used to justify "marked" already shipped', () => {
+    expect(getRowTreatment('developer', '/simulation', false)).toBe('plain')
+    expect(getRowTreatment('developer', '/simulation', true)).toBe('active')
+    expect(getRowTreatment('architect', '/simulation', false)).toBe('plain')
+    expect(getRowTreatment('ops', '/simulation', false)).toBe('plain')
   })
 
   it('researcher has no marked rows and no featured row', () => {
