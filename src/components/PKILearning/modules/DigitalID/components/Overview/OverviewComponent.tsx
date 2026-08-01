@@ -38,8 +38,8 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
         <p className="text-foreground/80 leading-relaxed">
           The European Digital Identity Regulation (
           <InlineTooltip term="eIDAS 2.0">eIDAS 2.0</InlineTooltip>, Regulation EU 2024/1183)
-          entered into force on 20 May 2024 and mandates that all 27 EU member states provide citizens
-          and residents with at least one{' '}
+          entered into force on 20 May 2024 and mandates that all 27 EU member states provide
+          citizens and residents with at least one{' '}
           <InlineTooltip term="EUDI Wallet">EUDI Wallet</InlineTooltip> by late 2026. Unlike eIDAS
           1.0 where national eID notification was voluntary, eIDAS 2.0 makes digital identity
           wallets mandatory — creating a pan-European trust framework for identity, attestations,
