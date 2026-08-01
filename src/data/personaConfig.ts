@@ -270,6 +270,7 @@ const ALGORITHM_FALLBACK_DEFAULTS: AlgorithmDefaults = {
  *  developer-like baseline when no persona is selected. */
 export function getAlgorithmDefaults(persona: PersonaId | null): AlgorithmDefaults {
   if (!persona) return ALGORITHM_FALLBACK_DEFAULTS
+  // eslint-disable-next-line security/detect-object-injection -- persona is the typed PersonaId union, not user input
   return ALGORITHM_PERSONA_DEFAULTS[persona] ?? ALGORITHM_FALLBACK_DEFAULTS
 }
 
@@ -1145,6 +1146,7 @@ export function isComplianceFrameworkEmphasized(
   frameworkId: string
 ): boolean {
   if (!persona) return false
+  // eslint-disable-next-line security/detect-object-injection -- persona is the typed PersonaId union, not user input
   const set = PERSONA_COMPLIANCE_FRAMEWORK_EMPHASIS[persona]
   if (!set) return false
   return set.includes(frameworkId)
@@ -1188,10 +1190,13 @@ const BELT_TIER_INDEX: Record<string, 0 | 1 | 2 | 3> = {
  */
 export function getBeltTierLabel(persona: PersonaId | null, beltName: string): string | null {
   if (!persona) return null
+  // eslint-disable-next-line security/detect-object-injection -- persona is the typed PersonaId union, not user input
   const tiers = PERSONA_BELT_TIER_LABELS[persona]
   if (!tiers) return null
+  // eslint-disable-next-line security/detect-object-injection -- bounded lookup, guarded by the undefined check below
   const idx = BELT_TIER_INDEX[beltName]
   if (idx === undefined) return null
+  // eslint-disable-next-line security/detect-object-injection -- idx is narrowed to the 0|1|2|3 tuple index
   return tiers[idx]
 }
 

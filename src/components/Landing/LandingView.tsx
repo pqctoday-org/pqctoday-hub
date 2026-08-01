@@ -97,6 +97,7 @@ const LATEST_RFC_FALLBACK = 'RFC 9964 just landed'
 
 function resolveTagline(template: string, values: Record<string, string>): string {
   return template.replace(/\{\{(\w+)\}\}/g, (_match, key: string) =>
+    // eslint-disable-next-line security/detect-object-injection -- guarded by the hasOwnProperty check above
     Object.prototype.hasOwnProperty.call(values, key) ? values[key] : ''
   )
 }

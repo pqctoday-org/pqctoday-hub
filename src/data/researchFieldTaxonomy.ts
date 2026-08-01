@@ -113,8 +113,10 @@ const FAMILY_BUCKET_DESCRIPTION: Record<AlgorithmFamily, string> = {
  */
 export const RESEARCH_FIELD_BUCKETS: ResearchFieldBucket[] = [
   ...ALGORITHM_FAMILIES.map((family) => ({
+    // eslint-disable-next-line security/detect-object-injection -- family is drawn from ALGORITHM_FAMILIES itself
     id: FAMILY_BUCKET_ID[family],
     label: family,
+    // eslint-disable-next-line security/detect-object-injection -- family is drawn from ALGORITHM_FAMILIES itself
     description: FAMILY_BUCKET_DESCRIPTION[family],
   })),
   {
@@ -156,5 +158,8 @@ export function mapAlgorithmFamilyToFields(raw: string): string[] {
     if (family) matchedFamilies.add(family)
   }
   if (matchedFamilies.size === 0) return [OTHER_FIELD_BUCKET_ID]
-  return ALGORITHM_FAMILIES.filter((f) => matchedFamilies.has(f)).map((f) => FAMILY_BUCKET_ID[f])
+  return ALGORITHM_FAMILIES.filter((f) => matchedFamilies.has(f)).map(
+    // eslint-disable-next-line security/detect-object-injection -- f is drawn from ALGORITHM_FAMILIES itself
+    (f) => FAMILY_BUCKET_ID[f]
+  )
 }

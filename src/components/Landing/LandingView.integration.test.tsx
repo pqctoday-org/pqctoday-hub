@@ -61,6 +61,7 @@ function expectFullRailCoverage() {
   const rail = getRailNav()
   const universe = Object.keys(NAV_PATH_LABELS).filter((p) => !RAIL_HIDDEN_PATHS.includes(p))
   for (const path of universe) {
+    // eslint-disable-next-line security/detect-object-injection -- path comes from Object.keys(NAV_PATH_LABELS) itself
     const label = NAV_PATH_LABELS[path]
     expect(within(rail).getByRole('button', { name: `${label} view` })).toBeInTheDocument()
   }
