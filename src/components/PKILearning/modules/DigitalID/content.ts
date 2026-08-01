@@ -9,7 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'digital-id',
   version: '1.0.0',
-  lastReviewed: '2026-07-31',
+  lastReviewed: '2026-08-01',
 
   standards: [
     getStandard('eIDAS-2-Regulation'),
