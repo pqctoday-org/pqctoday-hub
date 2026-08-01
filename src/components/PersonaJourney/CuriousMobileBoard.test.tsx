@@ -152,6 +152,13 @@ describe('CuriousMobileBoard', () => {
       fireEvent.click(screen.getByRole('searchbox', { name: /search pqc today/i }))
       expect(useCommandPaletteStore.getState().isOpen).toBe(true)
     })
+
+    it('also opens the command palette on focus (e.g. tabbing in), not just click', () => {
+      renderBoard()
+      expect(useCommandPaletteStore.getState().isOpen).toBe(false)
+      fireEvent.focus(screen.getByRole('searchbox', { name: /search pqc today/i }))
+      expect(useCommandPaletteStore.getState().isOpen).toBe(true)
+    })
   })
 
   describe('"More" menu', () => {
@@ -185,6 +192,29 @@ describe('CuriousMobileBoard', () => {
       fireEvent.click(screen.getByRole('button', { name: /more menu/i }))
       fireEvent.click(screen.getByRole('link', { name: /faq/i }))
       expect(screen.getByText('FAQ Page')).toBeInTheDocument()
+    })
+
+    it('closes via the backdrop click, without firing any of the entry actions', () => {
+      renderBoard()
+      fireEvent.click(screen.getByRole('button', { name: /more menu/i }))
+      expect(screen.getByRole('dialog', { name: /more/i })).toBeInTheDocument()
+
+      // The backdrop is decorative (aria-hidden, no accessible role/name) —
+      // query it the same testid-based way the rest of this file already
+      // queries other non-accessible decorative elements (hndl-card,
+      // labs-gating, icon-*).
+      fireEvent.click(screen.getByTestId('more-menu-backdrop'))
+      expect(screen.queryByRole('dialog', { name: /more/i })).toBeNull()
+      expect(useRightPanelStore.getState().isOpen).toBe(false)
+    })
+
+    it('closes via the explicit "Close menu" button', () => {
+      renderBoard()
+      fireEvent.click(screen.getByRole('button', { name: /more menu/i }))
+      expect(screen.getByRole('dialog', { name: /more/i })).toBeInTheDocument()
+
+      fireEvent.click(screen.getByRole('button', { name: /close menu/i }))
+      expect(screen.queryByRole('dialog', { name: /more/i })).toBeNull()
     })
   })
 })

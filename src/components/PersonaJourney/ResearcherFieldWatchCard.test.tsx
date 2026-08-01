@@ -25,6 +25,30 @@ const FIXTURE_ROWS: FieldWatchRow[] = [
   },
 ]
 
+// A second fixture set with TWO deprecations in the same followed field, used
+// only by the plural-punchline test below (the single-deprecation fixture
+// above can only ever exercise the singular "1 document ... has been
+// retracted" copy, never the plural "N documents ... have been retracted"
+// branch).
+const MULTI_DEPRECATED_ROWS: FieldWatchRow[] = [
+  {
+    referenceId: 'FIX-DEPRECATED-1',
+    algorithmFamily: 'Lattice-based',
+    lastUpdateDateMs: null,
+    isDeprecated: true,
+    deprecatedAtMs: ROW_TIMESTAMP,
+  },
+  {
+    referenceId: 'FIX-DEPRECATED-2',
+    algorithmFamily: 'Lattice-based',
+    lastUpdateDateMs: null,
+    isDeprecated: true,
+    deprecatedAtMs: ROW_TIMESTAMP,
+  },
+]
+
+let activeFixtureRows = FIXTURE_ROWS
+
 // Mock only `loadFieldWatchRows` (the I/O adapter) — keep the real
 // `computeResearchFieldWatch` so this test still exercises the real seam
 // between the card and the compute module, per repo convention (test the
@@ -33,7 +57,7 @@ vi.mock('@/data/researchFieldWatch', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/data/researchFieldWatch')>()
   return {
     ...actual,
-    loadFieldWatchRows: () => FIXTURE_ROWS,
+    loadFieldWatchRows: () => activeFixtureRows,
   }
 })
 
@@ -47,6 +71,7 @@ function resetStore(overrides: { followedFields?: string[]; lastVisitedAt?: numb
 describe('ResearcherFieldWatchCard', () => {
   beforeEach(() => {
     resetStore()
+    activeFixtureRows = FIXTURE_ROWS
   })
 
   it('renders the illustrative provenance chip and the title', () => {
@@ -102,6 +127,17 @@ describe('ResearcherFieldWatchCard', () => {
     expect(screen.getByTestId('field-watch-punchline')).toHaveTextContent(/retracted/i)
     expect(screen.getByTestId('field-watch-punchline')).not.toHaveTextContent(
       'Nothing you cited has been retracted.'
+    )
+  })
+
+  it('uses the plural punchline copy ("documents ... have been retracted") when more than one document was retracted', () => {
+    activeFixtureRows = MULTI_DEPRECATED_ROWS
+    resetStore({ followedFields: ['lattice-based'], lastVisitedAt: OLD_VISIT })
+    render(<ResearcherFieldWatchCard />)
+
+    expect(screen.getByTestId('corpus-deprecated')).toHaveTextContent('-2 docs')
+    expect(screen.getByTestId('field-watch-punchline')).toHaveTextContent(
+      '2 documents in your followed fields have been retracted since your last visit.'
     )
   })
 

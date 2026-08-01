@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { useResearchFieldsStore } from './useResearchFieldsStore'
 
 const reset = () => useResearchFieldsStore.setState({ followedFields: [], lastVisitedAt: null })
@@ -95,6 +95,12 @@ describe('useResearchFieldsStore migrate() — persistence conventions', () => {
     expect(migrated.lastVisitedAt).toBe(12345)
   })
 
+  it('is a no-op on an already-current (v1) persisted state — passes fields through unchanged', () => {
+    const migrated = migrate({ followedFields: ['lattice-based'], lastVisitedAt: 12345 }, 1)
+    expect(migrated.followedFields).toEqual(['lattice-based'])
+    expect(migrated.lastVisitedAt).toBe(12345)
+  })
+
   it('handles a totally corrupt (non-object) persisted state without throwing', () => {
     expect(() => migrate(null, 0)).not.toThrow()
     expect(() => migrate('garbage-string', 0)).not.toThrow()
@@ -107,5 +113,33 @@ describe('useResearchFieldsStore migrate() — persistence conventions', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accessing internal persist options
     const options = useResearchFieldsStore.persist.getOptions() as any
     expect(typeof options.onRehydrateStorage).toBe('function')
+  })
+
+  it('onRehydrateStorage logs (never throws) when rehydration errors', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accessing internal persist options
+    const options = useResearchFieldsStore.persist.getOptions() as any
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const onRehydrate = options.onRehydrateStorage()
+    const rehydrationError = new Error('corrupted localStorage')
+
+    expect(() => onRehydrate(undefined, rehydrationError)).not.toThrow()
+    expect(consoleError).toHaveBeenCalledWith(
+      'Research fields store rehydration failed:',
+      rehydrationError
+    )
+
+    consoleError.mockRestore()
+  })
+
+  it('onRehydrateStorage is a silent no-op when there is no error', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accessing internal persist options
+    const options = useResearchFieldsStore.persist.getOptions() as any
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const onRehydrate = options.onRehydrateStorage()
+
+    expect(() => onRehydrate(undefined, undefined)).not.toThrow()
+    expect(consoleError).not.toHaveBeenCalled()
+
+    consoleError.mockRestore()
   })
 })
