@@ -25,6 +25,16 @@ export function defaultTierForPersona(personaId: PersonaId | null): NiceProficie
 interface PersonaState {
   selectedPersona: PersonaId | null
   hasSeenPersonaPicker: boolean
+  /**
+   * True once the user has explicitly chosen NOT to pick a persona (e.g. Role
+   * Home's "Show me everything" footer button), distinct from simply never
+   * having picked one yet. `selectedPersona === null && hasSeenPersonaPicker
+   * === false` is what should show Role Home; this flag lets a caller say
+   * "don't show Role Home again" without touching either of those two fields
+   * or repurposing `setPersona(null)` (which already means something else —
+   * see `clearPersona`).
+   */
+  hasSkippedPersonalization: boolean
   selectedRegion: Region | null
   selectedIndustry: string | null
   selectedIndustries: string[]
@@ -48,6 +58,10 @@ interface PersonaState {
   setPersona: (persona: PersonaId | null) => void
   clearPersona: () => void
   markPickerSeen: () => void
+  /** Explicitly opt out of personalization without selecting a persona — see
+   *  `hasSkippedPersonalization` above. Leaves `selectedPersona` and
+   *  `hasSeenPersonaPicker` untouched. */
+  skipPersonalization: () => void
   setRegion: (region: Region | null) => void
   setIndustry: (industry: string | null) => void
   setIndustries: (industries: string[]) => void
@@ -68,6 +82,7 @@ export const usePersonaStore = create<PersonaState>()(
     (set) => ({
       selectedPersona: null,
       hasSeenPersonaPicker: false,
+      hasSkippedPersonalization: false,
       selectedRegion: 'global' as Region,
       selectedIndustry: null,
       selectedIndustries: [],
@@ -96,6 +111,8 @@ export const usePersonaStore = create<PersonaState>()(
         set({ selectedPersona: null, hasSeenPersonaPicker: false, niceTierOverridden: false }),
 
       markPickerSeen: () => set({ hasSeenPersonaPicker: true }),
+
+      skipPersonalization: () => set({ hasSkippedPersonalization: true }),
 
       setRegion: (region) => set({ selectedRegion: region }),
 
@@ -131,6 +148,7 @@ export const usePersonaStore = create<PersonaState>()(
       clearPreferences: () =>
         set({
           selectedPersona: null,
+          hasSkippedPersonalization: false,
           selectedRegion: 'global',
           selectedIndustry: null,
           selectedIndustries: [],
@@ -146,7 +164,7 @@ export const usePersonaStore = create<PersonaState>()(
     {
       name: 'pqc-learning-persona',
       storage: createJSONStorage(() => localStorage),
-      version: 9,
+      version: 10,
       migrate: (persisted: unknown, fromVersion: number) => {
         const s = (persisted ?? {}) as Record<string, unknown>
         if (fromVersion < 1) {
@@ -193,6 +211,12 @@ export const usePersonaStore = create<PersonaState>()(
         if (fromVersion < 9) {
           // Executive Overview walkthrough completion flag.
           s.execOverviewSeen = s.execOverviewSeen ?? false
+        }
+        if (fromVersion < 10) {
+          // Role Home escape hatch: "chose not to pick a persona" is distinct
+          // from "never picked one yet" — default false preserves existing
+          // Role Home behavior for every already-persisted user.
+          s.hasSkippedPersonalization = s.hasSkippedPersonalization ?? false
         }
         return s
       },

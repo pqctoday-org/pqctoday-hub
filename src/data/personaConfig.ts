@@ -3,6 +3,8 @@ import type { PersonaId } from './learningPersonas'
 import type { Region } from '../store/usePersonaStore'
 import type { AssessmentMode } from '../store/useAssessmentStore'
 import type { PhaseId } from './frameworkPhases'
+import { libraryData } from './libraryData'
+import { authoritativeSources } from './authoritativeSourcesData'
 
 /**
  * Persona-aware "Practice in the Simulation" CTA — which migration phases each
@@ -1191,4 +1193,448 @@ export function getBeltTierLabel(persona: PersonaId | null, beltName: string): s
   const idx = BELT_TIER_INDEX[beltName]
   if (idx === undefined) return null
   return tiers[idx]
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+ * Persona journey board — persona-journeys A-grade redesign (2026-08-01).
+ *
+ * Content config for the redesigned per-persona journey page: hero copy, a
+ * "sourced vs illustrative" side-card, a curated 3-card "what you walk out
+ * with" grid, and the learning-track strip. Pure data — the shared board
+ * skeleton component (built separately, config-driven per §3.3 of
+ * IMPLEMENTATION-PLAN-2026-08-01.md) is the only thing that renders this.
+ *
+ * The 3rd element of every `gridCards` tuple is always the one the renderer
+ * highlights — that is a rendering concern, not encoded here, but every
+ * persona's content below is ordered so index [2] really is the intended
+ * highlight.
+ * ────────────────────────────────────────────────────────────────────────────── */
+
+export interface PersonaJourneyBoard {
+  heroEyebrow: string
+  heroBadge?: { text: string; tone: 'sourced' | 'illustrative' }
+  headline: string
+  sub: string
+  ctaPrimary: string
+  ctaSecondary: string
+  proofChips: string[]
+  sideCard: {
+    title: string
+    tone: 'bad' | 'warn' | 'info' | 'accent'
+    provenance: 'sourced' | 'illustrative'
+    rows: { label: string; value: string }[]
+    punchline: string
+    footnote?: string
+  }
+  gridTitle: string
+  gridSub: string
+  /** Always exactly 3 cards; the renderer highlights index [2]. */
+  gridCards: [
+    { title: string; body: string },
+    { title: string; body: string },
+    { title: string; body: string },
+  ]
+  trackTitle: string
+  trackNote?: string
+  trackChips: string[]
+  /** Absent for researcher only — the deliberate "no funnel" persona (no capstone). */
+  capstoneChip?: { label: string }
+}
+
+/**
+ * Live active-row count for the library corpus, read from the same loader
+ * every other page uses (`libraryData.ts`, already filtered to `status !==
+ * 'deprecated'/'obsolete'` rows). The design mockup's "691 sources" was a
+ * snapshot against an older CSV — hardcoding it here would reintroduce the
+ * exact staleness problem this redesign exists to fix, so it is recomputed
+ * from the live import instead every time this module loads.
+ */
+const LIBRARY_ACTIVE_SOURCE_COUNT = libraryData.length
+
+/** Formats an ISO `YYYY-MM-DD` as "D Mon YYYY" (UTC — no local-timezone drift). */
+function formatVerifiedDate(isoDate: string): string {
+  const d = new Date(`${isoDate}T00:00:00Z`)
+  if (Number.isNaN(d.getTime())) return isoDate
+  return d.toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC',
+  })
+}
+
+/**
+ * Live "regulatory data last verified" date for the executive board's proof
+ * chip — the most recent `lastVerifiedDate` among authoritative sources that
+ * actually feed the compliance CSV (`complianceCsv === true`), read from
+ * `authoritativeSourcesData.ts`. The design mockup's "30 Jul 2026" was a
+ * snapshot of when the mockup was authored, not a computed value; there is no
+ * single existing "compliance data verified as of" field anywhere else in the
+ * codebase, so this derives the closest real equivalent from data that already
+ * exists rather than hardcoding a date or inventing new plumbing. `undefined`
+ * only if the authoritative-sources CSV somehow has zero compliance-tagged
+ * rows with a verified date, which is not expected in practice.
+ */
+const REGULATORY_DATA_VERIFIED_DATE: string | undefined = (() => {
+  const dates = authoritativeSources
+    .filter((s) => s.complianceCsv && s.lastVerifiedDate)
+    .map((s) => s.lastVerifiedDate)
+    .sort()
+  const latest = dates[dates.length - 1]
+  return latest ? formatVerifiedDate(latest) : undefined
+})()
+
+export const PERSONA_JOURNEY_BOARD: Record<PersonaId, PersonaJourneyBoard> = {
+  executive: {
+    heroEyebrow: "Illustrative — this user's inputs",
+    heroBadge: {
+      text: 'Default: Americas · Finance & Banking — scenario shown: EU',
+      tone: 'illustrative',
+    },
+    headline: 'Answer the board in eleven minutes.',
+    sub: 'Eight questions about your estate. You get a defensible risk position, the regulatory dates that already bind you under NIS2 and DORA, and a board pack you can present on Thursday.',
+    ctaPrimary: 'Start — 8 questions, about 6 minutes',
+    ctaSecondary: 'See a finished example',
+    proofChips: [
+      'Verified in your browser against NIST ACVP vectors',
+      `${LIBRARY_ACTIVE_SOURCE_COUNT} sources, trust-tiered`,
+      REGULATORY_DATA_VERIFIED_DATE
+        ? `Regulatory data verified ${REGULATORY_DATA_VERIFIED_DATE}`
+        : 'Regulatory data verified against source',
+      'How we verify',
+    ],
+    sideCard: {
+      title: 'Your exposure window',
+      tone: 'bad',
+      provenance: 'illustrative',
+      rows: [
+        { label: 'Data must stay secret', value: '12 yrs' },
+        { label: 'Your migration takes', value: '5 yrs' },
+        { label: 'Cryptanalytic quantum computer', value: '2032 ±4' },
+      ],
+      punchline: 'You are four years short.',
+      footnote:
+        "Mosca's inequality. The 2032 estimate is a median across 4 published expert surveys; the ±4 band is their interquartile range, not a forecast.",
+    },
+    gridTitle: 'What you walk out with',
+    gridSub: 'Generated from your 8 answers',
+    gridCards: [
+      {
+        title: 'Risk position',
+        body: 'From riskScore, keyFindings and riskBreakdown — three of the 17 report sections, all already open by default for your role.',
+      },
+      {
+        title: 'Two already bind you',
+        body: 'NIS2 (since Oct 2024) · DORA (since Jan 2025) · National PQC roadmap due (Dec 2026) · High-risk systems migrated (Dec 2030)',
+      },
+      {
+        title: 'Your board pack',
+        body: 'The four artifacts BC_ZONE_EMPHASIS_BY_PERSONA already features in your Governance zone: board-deck, roi-model, policy-draft, audit-checklist.',
+      },
+    ],
+    trackTitle: 'Then, if you want the background: 3 hours 20, not 10¼.',
+    trackNote:
+      'Seven essentials against the full 17-module, 615-minute path. The path already inserts your real milestones after exec-cp-3/exec-cp-4.',
+    trackChips: [
+      'PQC 101',
+      'Quantum impact',
+      'Quantum threats',
+      'Risk management',
+      'Business case',
+      'Governance',
+      'Compliance strategy',
+    ],
+    capstoneChip: { label: 'Board-Ready' },
+  },
+
+  developer: {
+    heroEyebrow: 'Developer · Node + Go services · TLS termination at the edge',
+    heroBadge: { text: 'Americas · Technology', tone: 'sourced' },
+    headline: 'Five minutes to a real ML-KEM handshake.',
+    sub: 'Not a diagram. Real WASM crypto in this tab, with the PKCS#11 call log open and a plain-English column beside it. Then we tell you what to change in your stack.',
+    ctaPrimary: 'Run X25519MLKEM768 now',
+    ctaSecondary: 'Compare against my stack',
+    proofChips: [
+      'Real liboqs + SoftHSMv3 in your browser',
+      'Verified against NIST ACVP vectors',
+      'No signup, no key required',
+    ],
+    sideCard: {
+      title: 'What this breaks in your code',
+      tone: 'warn',
+      provenance: 'sourced',
+      rows: [
+        { label: 'ML-DSA-65 public key', value: '1,952 B · was 64' },
+        { label: 'ML-DSA-65 signature', value: '3,309 B · was 64' },
+        { label: 'Your VARCHAR(256) key column', value: 'overflows' },
+      ],
+      punchline: 'Your schema breaks before your crypto does.',
+      footnote:
+        'Sizes read from algorithmProperties.ts — the second of the four anti-patterns the Crypto Agility module already teaches.',
+    },
+    gridTitle: 'What you walk out with',
+    gridSub: 'Surfaces named from personaConfig.ts',
+    gridCards: [
+      {
+        title: 'Migrate, scoped to your layers',
+        body: 'PERSONA_MIGRATE_LAYERS gives you Libraries, Cloud and Database — the catalogue opens pre-filtered to the three you actually own.',
+      },
+      {
+        title: 'Command Center · Implementation View',
+        body: 'Opens on the Migration zone with migration-roadmap, deployment-playbook, crypto-architecture and policy-draft featured.',
+      },
+      {
+        title: 'A report that is finally yours',
+        body: 'PERSONA_REPORT_CONFIG.developer is literally {} — all 17 sections at defaults. This version opens algorithmMigration and cbom first.',
+      },
+    ],
+    trackTitle: 'Then, the background: 5 hours 25, not 28¼.',
+    trackChips: [
+      'PQC 101',
+      'Dev quantum impact',
+      'PQC candidates',
+      'TLS basics',
+      'Hybrid crypto',
+      'Crypto agility',
+      'PKI workshop',
+      'Crypto dev APIs',
+    ],
+    capstoneChip: { label: 'capstone' },
+  },
+
+  architect: {
+    heroEyebrow: 'Security architect · Multi-region PKI · 40k certificates',
+    heroBadge: { text: 'Global · Technology, Telecommunications', tone: 'sourced' },
+    headline: 'Change one policy line. Watch the estate rekey.',
+    sub: 'A KMIP 3.0 control plane and a real PKCS#11 HSM, both in this tab. Create keys by business label, flip Classical → Hybrid → Full PQC, and watch the same request get allowed, denied, or auto-rekeyed.',
+    ctaPrimary: 'Open the control plane',
+    ctaSecondary: 'See the seven-key estate',
+    proofChips: [
+      'Real ML-KEM / ML-DSA / SLH-DSA, no server',
+      'KMIP 3.0 conformance corpus replays live',
+      'All 66 KMIP operations documented',
+    ],
+    sideCard: {
+      title: 'Why agility, not just algorithms',
+      tone: 'info',
+      provenance: 'illustrative',
+      rows: [
+        { label: 'Algorithms you will migrate to', value: '3' },
+        { label: 'Times you will migrate again', value: '≥ 2' },
+        { label: 'Cost of the second migration', value: 'near zero' },
+      ],
+      punchline: 'Agility is the deliverable. PQC is the first test of it.',
+    },
+    gridTitle: 'What you walk out with',
+    gridSub: 'Artifact ids from BC_ZONE_EMPHASIS_BY_PERSONA',
+    gridCards: [
+      {
+        title: 'A rekey lineage',
+        body: 'Old to new across the seven-key business estate, per mode, with the KMIP log per key — from the CACP migration tab.',
+      },
+      {
+        title: 'Command Center · System View',
+        body: 'Governance zone featuring crypto-architecture, raci-matrix, vendor-scorecard, supply-chain-matrix, cloud-responsibility-matrix and policy-draft.',
+      },
+      {
+        title: 'Migration artifacts',
+        body: 'mti-negotiator, hybrid-transition, crypto-api-refactor and migration-roadmap — the richest featured set of any persona.',
+      },
+    ],
+    trackTitle: 'Then, the background: 6 hours 20, not 29¾.',
+    trackChips: [
+      'PQC 101',
+      'Arch quantum impact',
+      'PQC candidates',
+      'Crypto agility',
+      'Crypto mgmt modernization',
+      'Hybrid crypto',
+      'KMS',
+      'HSM',
+      'PKI workshop',
+    ],
+    capstoneChip: { label: 'capstone' },
+  },
+
+  ops: {
+    heroEyebrow: 'IT Ops · 12k certs · 4 HSM partitions · next renewal window in 90 days',
+    heroBadge: {
+      text: 'Americas · Energy & Utilities, Telecommunications',
+      tone: 'sourced',
+    },
+    headline: 'Will your HSMs survive the cutover?',
+    sub: 'Ten enterprise workflows, sized side by side: RSA-3072 and ECDSA P-256 today against ML-DSA-44/65/87. Storage, bandwidth, and CPU cores per workflow, with a totals row.',
+    ctaPrimary: 'Size my fleet',
+    ctaSecondary: 'Import my cert inventory',
+    proofChips: [
+      'Sizing from real FIPS 203/204 key sizes',
+      'Benchmarked through a real PKCS#11 engine',
+      'CNSA 2.0 mandate dates built in',
+    ],
+    sideCard: {
+      title: 'What changes on renewal day',
+      tone: 'warn',
+      provenance: 'sourced',
+      rows: [
+        { label: 'ML-DSA-65 signature', value: '3,309 B · was 64' },
+        // Tightened from the design mockup's ambiguous "classical HSM" label —
+        // the ops/s figure needs to name which algorithm it's benchmarking, or
+        // it doesn't disambiguate against the ML-DSA-65 signature row above.
+        {
+          label: "ML-DSA-65 sign rate on today's HSM",
+          value: '150 ops/s · ~133× slower than ECDSA',
+        },
+        { label: 'Per OCSP / CRL response', value: '+3.3 KB · ~5 KB with key' },
+      ],
+      punchline: 'Your next renewal window is your migration window.',
+      footnote:
+        'Figures from hsmCapacityDefaults.ts and algorithmProperties.ts — the same defaults behind the HSM Capacity Calculator this page opens with.',
+    },
+    gridTitle: 'What you walk out with',
+    gridSub: 'Zones and artifacts from personaConfig.ts',
+    gridCards: [
+      {
+        title: 'A sizing verdict',
+        body: "Per workflow: storage MB, aggregate network MB/s, CPU cores, and whether your fleet clears it — across the calculator's ten enterprise use cases.",
+      },
+      {
+        title: 'Command Center · Run View',
+        body: 'Opens on Migration with deployment-playbook, kpi-tracker and kpi-dashboard, plus migration-roadmap, supply-chain-matrix and audit-checklist. Mitigation gateways carry mandatory sunset dates per CSWP.39 §4.6.',
+      },
+      {
+        title: 'A report built for the cutover',
+        body: 'PERSONA_REPORT_CONFIG.ops opens migrationRoadmap, migrationToolkit and algorithmMigration, and hides HNDL — correct emphasis, already shipped.',
+      },
+    ],
+    trackTitle: 'Then, the background: 6 hours, not 29½.',
+    trackChips: [
+      'PQC 101',
+      'Ops quantum impact',
+      'TLS basics',
+      'VPN/SSH',
+      'PKI workshop',
+      'Crypto agility',
+      'Migration program',
+      'KMS',
+      'HSM',
+    ],
+    capstoneChip: { label: 'capstone' },
+  },
+
+  researcher: {
+    heroEyebrow: 'Researcher · unfiltered corpus · strict chronological · no gating',
+    heroBadge: { text: 'All regions · unfiltered', tone: 'illustrative' },
+    headline: 'Check our work.',
+    sub: 'Every claim on this site carries a source tier, a verification date, and where one exists, the strongest published argument against it. Run the known-answer tests yourself in this tab.',
+    ctaPrimary: 'Open the evidence workspace',
+    ctaSecondary: 'Run the ACVP vectors',
+    proofChips: [
+      'ACVP + KAT run locally, not asserted',
+      'Authoritative / High / Moderate / Low source tiers',
+      'Counter-claims dataset · CVE snapshots',
+      'Drift guards fail the build on silent data change',
+    ],
+    // NOTE: the researcher side-card is intentionally a stub. Per
+    // IMPLEMENTATION-PLAN-2026-08-01.md §6, "Changed in your fields since
+    // [date]" is a separate, real, in-scope workstream (a new persisted
+    // followed-fields store + a live revision/deprecation counter), owned by
+    // ResearcherFieldWatchCard — NOT this static config. That component
+    // overrides this whole sideCard at render time with its own live-computed
+    // title/rows/punchline/footnote. rows: [] only exists so this object still
+    // satisfies the PersonaJourneyBoard type; do not add real row content here.
+    sideCard: {
+      title: 'Changed in your fields since your last visit',
+      tone: 'info',
+      provenance: 'illustrative',
+      rows: [],
+      punchline: '',
+    },
+    gridTitle: 'What the workspace gives you',
+    gridSub: 'Not a funnel — instruments, named from source',
+    gridCards: [
+      {
+        title: 'Provenance on every claim',
+        body: 'Source tier, verification date, and the counter-claim where one is on file. Library and Migrate filters are both empty arrays for this persona — the corpus arrives unfiltered by design.',
+      },
+      {
+        title: 'Reproducible verification',
+        body: 'ACVP vectors, KATs and the 16-check TCG V1.85 runner, all in your browser, log exportable.',
+      },
+      {
+        title: 'Command Center · Risk Analysis',
+        body: 'The one persona that opens on the risk-management zone: risk-register, risk-treatment-plan, policy-draft, crqc-scenario and audit-checklist as citable evidence.',
+      },
+    ],
+    trackTitle: 'Learning path: available, never pushed.',
+    trackNote:
+      'For this persona it is a reference shelf, not a curriculum, and the UI should say so.',
+    trackChips: [
+      'PQC 101',
+      'Research quantum impact',
+      'PQC candidates',
+      'Entropy & randomness',
+      'Hybrid crypto',
+      'Crypto agility',
+      'Standards bodies',
+      'TLS basics',
+      'PKI workshop',
+    ],
+    // Deliberately no capstoneChip — the only persona without one, matching
+    // the "no funnel" framing. Do not add one.
+  },
+
+  curious: {
+    heroEyebrow: 'No background needed · about 6 minutes · nothing to install',
+    heroBadge: { text: 'Americas · unfiltered', tone: 'illustrative' },
+    headline: 'What actually breaks, and when.',
+    sub: 'The padlock in your browser relies on maths a quantum computer would undo. Watch it happen to a real connection in this tab, then decide how much further you want to go.',
+    ctaPrimary: 'Show me',
+    ctaSecondary: 'I have 30 seconds — the short version',
+    proofChips: [
+      'Real cryptography, running here',
+      'Plain English by default',
+      'Every term explained on hover',
+    ],
+    sideCard: {
+      title: 'The bit that surprises people',
+      tone: 'bad',
+      provenance: 'illustrative',
+      rows: [
+        { label: 'Encrypted data captured today', value: 'still readable later' },
+        { label: 'If it must stay secret for', value: '12 years' },
+        { label: 'And the machine arrives in', value: '~2032' },
+      ],
+      punchline: 'The deadline already passed for some data.',
+      footnote:
+        'Harvest now, decrypt later. That is the whole argument, and it is the one idea worth leaving with even if you read nothing else.',
+    },
+    gridTitle: 'Where you can go next',
+    gridSub: 'Optional, none of it locked — config from personaConfig.ts',
+    gridCards: [
+      {
+        title: 'The short version',
+        body: 'Six modules, 205 minutes, plain language throughout. Milestones already sit in the path: Take Assessment, Explore Timeline, Threat Landscape.',
+      },
+      {
+        title: 'A library worth browsing',
+        body: 'Today PERSONA_LIBRARY_CATEGORIES.curious is two categories — Migration Guidance and Government & Policy. A library with two shelves.',
+      },
+      {
+        title: 'A read on your own risk',
+        body: 'Today the report hides HNDL, algorithmMigration, migrationRoadmap and migrationToolkit and caps actions at 3. Here it explains rather than withholds.',
+      },
+    ],
+    trackTitle: 'Six modules, 205 minutes — and yes, that is still a lot.',
+    trackNote:
+      'Honest note: this is the one number the redesign cannot fix by re-fronting. The curious essentials track (205 min) is longer than the executive one (200 min), for a less technical audience. That is a content problem, not a mockup problem.',
+    trackChips: [
+      'PQC 101',
+      'PQC candidates',
+      'Quantum threats',
+      'Risk basics',
+      'Compliance timelines',
+      'TLS basics',
+    ],
+    capstoneChip: { label: 'Quantum-Native' },
+  },
 }
