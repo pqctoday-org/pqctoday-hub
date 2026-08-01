@@ -19,6 +19,7 @@ const PERSONA_DEFAULT_TIER: Record<string, NiceProficiencyTier> = {
 
 export function defaultTierForPersona(personaId: PersonaId | null): NiceProficiencyTier {
   if (!personaId) return 'awareness'
+  // eslint-disable-next-line security/detect-object-injection -- personaId is the typed PersonaId union, not user input
   return PERSONA_DEFAULT_TIER[personaId] ?? 'awareness'
 }
 

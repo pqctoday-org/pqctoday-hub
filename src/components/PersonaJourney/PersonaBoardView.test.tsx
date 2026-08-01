@@ -23,6 +23,7 @@ describe('PersonaBoardView', () => {
 
   it.each(ALL_PERSONAS)('renders the %s board headline from config', (personaId) => {
     render(<PersonaBoardView personaId={personaId} />)
+    // eslint-disable-next-line security/detect-object-injection -- personaId is drawn from ALL_PERSONAS itself
     expect(screen.getByText(PERSONA_JOURNEY_BOARD[personaId].headline)).toBeInTheDocument()
   })
 
@@ -30,6 +31,7 @@ describe('PersonaBoardView', () => {
     'renders all 3 grid cards for %s, with only the 3rd carrying the highlight',
     (personaId) => {
       render(<PersonaBoardView personaId={personaId} />)
+      // eslint-disable-next-line security/detect-object-injection -- personaId is drawn from ALL_PERSONAS itself
       const board = PERSONA_JOURNEY_BOARD[personaId]
 
       board.gridCards.forEach((card) => {
@@ -54,20 +56,24 @@ describe('PersonaBoardView', () => {
 
   it('has a capstone chip for exactly the 5 personas that define one', () => {
     const personasWithCapstone = ALL_PERSONAS.filter(
+      // eslint-disable-next-line security/detect-object-injection -- id is drawn from ALL_PERSONAS itself
       (id) => PERSONA_JOURNEY_BOARD[id].capstoneChip !== undefined
     )
     expect(personasWithCapstone).toHaveLength(5)
     expect(personasWithCapstone).not.toContain('researcher')
   })
 
-  it.each(ALL_PERSONAS.filter((id) => PERSONA_JOURNEY_BOARD[id].capstoneChip !== undefined))(
-    'renders the capstone chip with its configured label for %s',
-    (personaId) => {
-      render(<PersonaBoardView personaId={personaId} />)
-      const board = PERSONA_JOURNEY_BOARD[personaId]
-      expect(screen.getByTestId('capstone-chip').textContent).toBe(board.capstoneChip?.label)
-    }
-  )
+  it.each(
+    ALL_PERSONAS.filter(
+      // eslint-disable-next-line security/detect-object-injection -- id is drawn from ALL_PERSONAS itself
+      (id) => PERSONA_JOURNEY_BOARD[id].capstoneChip !== undefined
+    )
+  )('renders the capstone chip with its configured label for %s', (personaId) => {
+    render(<PersonaBoardView personaId={personaId} />)
+    // eslint-disable-next-line security/detect-object-injection -- personaId is drawn from ALL_PERSONAS itself
+    const board = PERSONA_JOURNEY_BOARD[personaId]
+    expect(screen.getByTestId('capstone-chip').textContent).toBe(board.capstoneChip?.label)
+  })
 
   it('renders NO capstone chip at all for researcher (not an empty one)', () => {
     expect(PERSONA_JOURNEY_BOARD.researcher.capstoneChip).toBeUndefined()

@@ -76,6 +76,7 @@ function ProvenanceChip({
 }
 
 export function PersonaBoardView({ personaId, customSideCard }: PersonaBoardViewProps) {
+  // eslint-disable-next-line security/detect-object-injection -- personaId is the typed PersonaId union, not user input
   const board = PERSONA_JOURNEY_BOARD[personaId]
   const useCustomSideCard = personaId === 'researcher' && customSideCard !== undefined
 
