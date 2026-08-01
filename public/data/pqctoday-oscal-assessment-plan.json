@@ -128,7 +128,7 @@
         "uuid": "295ef171-8da3-43da-8a15-3c5582f4b06d",
         "type": "milestone",
         "title": "Integrity validator suite (~120 checks)",
-        "description": "scripts/validate-data-integrity.ts runs the full check suite (CM-W, CM-C, CM-T, CM-G, CM-TS, CM-AT, MR-1, QA-S, QA-CSWP, N1..N21, etc.). Any ERROR-severity finding blocks merge.",
+        "description": "scripts/validate-data-integrity.ts runs the full check suite (CM-W, CM-C, CM-T, CM-G, CM-TS, CM-AT, MR-1, QA-S, QA-CSWP, N1..N21, etc.), invoked via `npm run validate:data`. As of 2026-08-01 this runs locally (`gate:data`/`gate:local`) and from apply_approved.py, but is not wired into hub CI — an ERROR-severity finding here does not currently block a GitHub merge.",
         "responsible-roles": [
           {
             "role-id": "editorial-board"

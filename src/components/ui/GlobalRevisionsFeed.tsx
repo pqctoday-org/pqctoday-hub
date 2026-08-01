@@ -25,6 +25,14 @@ function getEntityLabels(): Map<string, string> {
   return m
 }
 
+// ADDED 2026-08-01: timeline, leaders, trusted-sources, vendors, multi,
+// rag-index were live domain='...' values in revisions.jsonl that this list
+// never named — those entries could never be shown or filtered on, even
+// though useRevisions/byDomain would happily return them. A domain with zero
+// current entries is harmless here: chipDomains (below) already hides any
+// chip with no matching revisions, so listing every domain the data model
+// supports costs nothing and just stops future entries from being silently
+// invisible again.
 const ALL_DOMAINS = [
   'module',
   'tool',
@@ -33,6 +41,12 @@ const ALL_DOMAINS = [
   'migrate',
   'threats',
   'algorithms',
+  'timeline',
+  'leaders',
+  'trusted-sources',
+  'vendors',
+  'rag-index',
+  'multi',
   'data',
 ]
 
@@ -180,7 +194,14 @@ function FeedEntry({ r }: { r: RevisionEntry }) {
             >
               PR #{r.pr_number}
             </a>
-          ) : r.merge_sha && r.merge_sha !== 'baseline' ? (
+          ) : r.merge_sha === 'baseline' ? (
+            <span
+              className="text-xs text-muted-foreground italic"
+              title="Recorded before this module/tool had a tracked PR or commit — no git object to link to."
+            >
+              Initial import
+            </span>
+          ) : r.merge_sha ? (
             <a
               href={`https://github.com/pqctoday-org/pqctoday-hub/commit/${r.merge_sha}`}
               target="_blank"
@@ -220,7 +241,6 @@ export function GlobalRevisionsFeed({
   const domainCounts = useMemo(() => {
     const counts = new Map<string, number>()
     for (const r of revisions) {
-      if (r.merge_sha === 'baseline') continue
       counts.set(r.domain, (counts.get(r.domain) ?? 0) + 1)
     }
     return counts
@@ -240,14 +260,14 @@ export function GlobalRevisionsFeed({
   }, [selectedPersona, personaSortActive])
 
   const filtered = useMemo(() => {
+    // REMOVED 2026-08-01: this used to drop every merge_sha==='baseline'
+    // entry unconditionally (81 of 143 as of the audit that found this) —
+    // a badge could claim a review the feed had no visible record of.
+    // Baseline entries are now shown with an "Initial import" label
+    // (FeedEntry) instead of a PR/commit link, rather than hidden.
     const base = entityFilter
-      ? byRecord(revisions, domainFilter ?? '', entityFilter).filter(
-          (r) => r.merge_sha !== 'baseline'
-        )
-      : revisions.filter(
-          (r) =>
-            r.merge_sha !== 'baseline' && (activeDomains.size === 0 || activeDomains.has(r.domain))
-        )
+      ? byRecord(revisions, domainFilter ?? '', entityFilter)
+      : revisions.filter((r) => activeDomains.size === 0 || activeDomains.has(r.domain))
 
     // When entityFilter is active the entries are already scoped to one
     // record, so persona sort is a no-op.

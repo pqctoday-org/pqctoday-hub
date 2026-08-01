@@ -477,8 +477,10 @@ async function main(): Promise<void> {
 }
 
 // Detect ESM "called as script" (vitest imports without running main).
-// scripts/ci/append-revision.ts uses the same pattern via `main().catch(...)`
-// at the bottom of the file, but ours is tested, so guard behind a check.
+// The deleted scripts/ci/append-revision.ts (removed 2026-07-26, see
+// pqctoday-priv/maintenance/TRUST-ENGINE-RETIREMENT-PLAN-07262026.md) used the
+// same `main().catch(...)` pattern at the bottom of the file; ours is tested,
+// so guard behind a check.
 if (
   typeof process !== 'undefined' &&
   process.argv[1] &&
