@@ -29,6 +29,23 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.37.0] - 2026-08-01
+
+A full front-door and navigation redesign built around six personas — Executive, Developer, Security Architect, IT Ops, Researcher, and Curious Explorer — replacing the flat top nav with a two-section rail and giving every persona a real first win instead of a generic hero banner.
+
+### Added
+
+- **A new "Who's asking?" front door** [persona:executive] [persona:developer] [persona:architect] [persona:ops] [persona:researcher] [persona:curious]: pick your role from 6 cards up front — each stating your real first win in minutes (e.g. "Run a real ML-KEM handshake · 5 min" for developers, "Size your HSM fleet · 10 min" for ops) — and land straight on a board built around it, instead of a multi-step wizard before you see anything. Nothing is hidden afterward, and "Show me everything" skips personalization entirely and stays skipped.
+- **A real navigation rail, not a flat row** [persona:executive] [persona:developer] [persona:architect] [persona:ops] [persona:researcher] [persona:curious]: destinations are now grouped into "For You" (your persona's real destinations) and "More" (everything else, still one click away) — nothing that used to be reachable became unreachable, it's just organized around who's using it.
+- **Six persona boards, each with a real first win**: Executive gets an 8-question board-ready risk assessment with the regulatory dates that already bind them; Developer gets a live X25519MLKEM768 handshake with the PKCS#11 call log open; Security Architect gets a direct route into the Crypto Agility Control Plane (previously three clicks deep with no nav entry at all); IT Ops gets the HSM Capacity Calculator front and center instead of buried in a 50+ tool grid; Researcher gets an unfiltered evidence workspace instead of a funnel; Curious gets a 6-minute "what actually breaks" demo.
+- **A dedicated mobile experience for new/non-technical visitors** [persona:curious]: a simpler, single-screen layout with a persistent 5-tab bottom bar, replacing the desktop-style nav mobile visitors were getting before.
+- **Researchers can now watch specific topics for changes** [persona:researcher]: follow fields you actually work in (e.g. "Lattice / ML-KEM," "Hash-based / Stateful signatures") and see revision and deprecation counts since your last visit, instead of rechecking the whole corpus by hand.
+
+### Fixed
+
+- **The "show me everything" escape hatch actually works now** [view:/learn] [persona:curious]: a button that looked functional but was silently wired to nothing now correctly switches to the full, unfiltered module catalog.
+- **OpenSSL Studio no longer has two separate front doors** [view:/playground] [persona:developer] [persona:architect] [persona:ops]: it's reachable from the Playground tool grid; the redundant standalone nav item is gone (a direct link to the page still works if you had it bookmarked).
+
 ## [4.36.0] - 2026-08-01
 
 A three-phase mobile UX remediation: five app-wide root causes fixed once each, 28 high-severity page-specific bugs resolved, and a 51-finding touch-target sweep across 40 files — plus two real functional bugs caught along the way that weren't mobile-specific at all.
