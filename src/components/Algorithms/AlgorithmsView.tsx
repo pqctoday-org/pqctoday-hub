@@ -194,7 +194,6 @@ export function AlgorithmsView() {
     <div>
       <PageHeader
         icon={Shield}
-        pageId="algorithms"
         title="Post-Quantum Algorithms & Protocols"
         description="Compare post-quantum algorithms and track their support across IETF protocols"
         dataSource={
@@ -202,9 +201,6 @@ export function AlgorithmsView() {
           `${metadata?.filename ?? 'pqc_complete_algorithm_reference.csv'} • Updated: ` +
           `${(metadata?.date ?? transitionMetadata?.date ?? new Date()).toLocaleDateString()}`
         }
-        viewType="Algorithms"
-        shareTitle="PQC Algorithm Comparison — ML-KEM, ML-DSA, SLH-DSA & More"
-        shareText={`Compare ${algorithmData.length || 'dozens of'} cryptographic algorithms side-by-side — security levels, key sizes, and performance.`}
         onExport={handleExportCsv}
         endorseUrl={buildEndorsementUrl({
           category: 'algorithm-endorsement',

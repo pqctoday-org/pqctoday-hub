@@ -93,6 +93,10 @@ const ROUTE_VIEW_TYPE: Partial<Record<string, ViewType>> = {
   '/algorithms': 'Algorithms',
   '/compliance': 'Compliance',
   '/migrate': 'Migrate',
+  // OpenSSL Studio's own (now-removed) PageHeader call passed viewType="Library"
+  // (it reuses the Library authoritative-sources list — there is no distinct
+  // "OpenSSL" ViewType) — preserved here so /openssl keeps its Sources button.
+  '/openssl': 'Library',
 }
 
 const ROUTE_PAGE_ID: Partial<Record<string, PageId>> = {
@@ -108,7 +112,78 @@ const ROUTE_PAGE_ID: Partial<Record<string, PageId>> = {
   '/assess': 'assess',
   '/report': 'report',
   '/business': 'business-center',
+  // BusinessToolsGrid ('/business/tools') is a separate nested route from
+  // BusinessCenterView ('/business' index) but shares the same pageId — its
+  // own (now-removed) PageHeader call passed pageId="business-center" too.
+  '/business/tools': 'business-center',
   '/learn': 'learn',
+}
+
+// Bespoke Share title/text per route — preserved from each page's own
+// (now-removed) `<PageHeader shareTitle=... shareText=...>` call so the
+// global top bar's ShareButton keeps the same copy instead of falling back to
+// the generic `"{route label} — PQC Today"` title for every route. Routes
+// absent here (e.g. /learn, /migrate) never had a bespoke shareTitle on their
+// PageHeader either — they keep the generic fallback, same as before.
+//
+// Two of these intentionally approximate rather than reproduce a dynamic
+// shareText (see IMPLEMENTATION-PLAN follow-up, 2026-08-01 PageHeader
+// consolidation):
+//  - /algorithms used `${algorithmData.length || 'dozens of'}` — reusing the
+//    same page's own "no data yet" fallback copy ("dozens of") rather than
+//    duplicating its data-loading hook here.
+//  - /business/tools used `${BUSINESS_TOOLS.length}` — reusing the page's own
+//    static `description` copy instead of importing the tools registry (a
+//    sizeable data+icon module) into the always-loaded MainLayout shell.
+const ROUTE_SHARE: Partial<Record<string, { title: string; text?: string }>> = {
+  '/algorithms': {
+    title: 'PQC Algorithm Comparison — ML-KEM, ML-DSA, SLH-DSA & More',
+    text: 'Compare dozens of cryptographic algorithms side-by-side — security levels, key sizes, and performance.',
+  },
+  '/assess': {
+    title: 'PQC Risk Assessment — Post-Quantum Cryptography Migration Tool',
+    text: 'Get a personalized quantum risk score, migration priorities, and actionable recommendations for your organization.',
+  },
+  '/business': {
+    title: 'PQC Command Center — Quantum Readiness Workspace',
+    text: 'Your PQC readiness command center — risk, compliance, governance, and actionable next steps.',
+  },
+  '/business/tools': {
+    title: 'PQC Business Tools — Planning & Governance Toolkit',
+    text: 'Interactive planning and governance tools for PQC migration — ROI calculators, RACI builders, vendor scorecards, and more.',
+  },
+  '/compliance': {
+    title: 'PQC Compliance Tracker — Standards, Certifications, Frameworks',
+    text: 'Explore PQC compliance: standardization bodies, certification programs (FIPS 140-3, ACVP, Common Criteria), and regulatory frameworks.',
+  },
+  '/leaders': {
+    title: 'PQC Community — People Contributing to the Advances of Post-Quantum Cryptography',
+    text: 'Meet the people contributing to the advances of post-quantum cryptography.',
+  },
+  '/library': {
+    title: 'PQC Library — NIST, IETF, ETSI & More',
+    text: 'Explore post-quantum cryptography standards, drafts, and key documents.',
+  },
+  '/openssl': {
+    title: 'OpenSSL Studio — Interactive OpenSSL v3.6.2 in Your Browser',
+    text: 'Run real OpenSSL 3.6.2 commands — key generation, certificates, KEM, PQC — entirely in your browser via WebAssembly.',
+  },
+  '/patents': {
+    title: 'PQC Patents — Post-Quantum Migration Patent Corpus',
+    text: 'Cryptographic patents relevant to post-quantum migration, enriched across 25 technical dimensions.',
+  },
+  '/report': {
+    title: 'PQC Assessment Report — Post-Quantum Cryptography Risk Analysis',
+    text: 'View your personalized PQC risk score, migration priorities, and actionable recommendations.',
+  },
+  '/threats': {
+    title: 'Quantum Threats Dashboard — Industry Risk Analysis',
+    text: 'Detailed analysis of quantum threats across industries — criticality ratings, at-risk cryptography, and PQC replacements.',
+  },
+  '/timeline': {
+    title: 'PQC Migration Timeline — Global Post-Quantum Cryptography Roadmap',
+    text: 'Compare PQC migration timelines across nations — track phases from discovery to full migration.',
+  },
 }
 
 const REGION_LABELS: Record<string, string> = {
@@ -314,6 +389,7 @@ export const MainLayout = () => {
     : 'Everyone'
   const viewTypeForRoute = ROUTE_VIEW_TYPE[location.pathname]
   const pageIdForRoute = ROUTE_PAGE_ID[location.pathname]
+  const shareForRoute = ROUTE_SHARE[location.pathname]
 
   return (
     <div
@@ -534,7 +610,10 @@ export const MainLayout = () => {
                     <MessageCircle size={14} aria-hidden="true" />
                     <span>Assistant</span>
                   </Button>
-                  <ShareButton title={`${currentLabel} — PQC Today`} />
+                  <ShareButton
+                    title={shareForRoute?.title ?? `${currentLabel} — PQC Today`}
+                    text={shareForRoute?.text}
+                  />
                   <FAQButton />
                   {viewTypeForRoute && <SourcesButton viewType={viewTypeForRoute} />}
                   <GlossaryButton />

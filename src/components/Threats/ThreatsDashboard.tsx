@@ -511,13 +511,9 @@ export const ThreatsDashboard: React.FC<{
       {!simEmbed && (
         <PageHeader
           icon={AlertTriangle}
-          pageId="threats"
           title="Quantum Threats"
           description="Detailed analysis of quantum threats across industries, including criticality, at-risk cryptography, and PQC replacements."
           dataSource={`${threatsMetadata?.filename ?? 'quantum_threats_hsm_industries.csv'} • Updated: ${threatsMetadata?.lastUpdate?.toLocaleDateString() ?? 'Unknown'}`}
-          viewType="Threats"
-          shareTitle="Quantum Threats Dashboard — Industry Risk Analysis"
-          shareText="Detailed analysis of quantum threats across industries — criticality ratings, at-risk cryptography, and PQC replacements."
           endorseUrl={buildEndorsementUrl({
             category: 'threat-endorsement',
             title: 'Endorse: Quantum Threats Dashboard',

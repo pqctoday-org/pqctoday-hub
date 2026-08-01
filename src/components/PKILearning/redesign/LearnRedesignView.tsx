@@ -101,7 +101,6 @@ export const LearnRedesignView = () => {
       {!isEmbed && (
         <PageHeader
           icon={GraduationCap}
-          pageId="learn"
           title="Learn"
           description="One guided path through post-quantum cryptography — tuned to your role."
           dataSource={`${TOTAL_MODULE_COUNT} modules · ${TRACK_COUNT} tracks`}

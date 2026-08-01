@@ -370,8 +370,6 @@ export function PatentsViewRedesign() {
         description="Cryptographic patents relevant to post-quantum migration, enriched across 25 technical dimensions. For research — not legal or IP advice."
         dataSource={dataSource}
         onExport={handleExport}
-        shareTitle="PQC Patents — Post-Quantum Migration Patent Corpus"
-        shareText="Cryptographic patents relevant to post-quantum migration, enriched across 25 technical dimensions."
         endorseUrl={buildEndorsementUrl({
           category: 'patent-endorsement',
           title: 'Endorse: PQC Patents',

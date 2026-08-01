@@ -420,7 +420,6 @@ export function LibraryViewRedesign({
       {!simEmbed && (
         <PageHeader
           icon={BookOpen}
-          pageId="library"
           title="PQC Library"
           description="The standards, drafts and guidance that define post-quantum cryptography."
           dataSource={
@@ -428,9 +427,6 @@ export function LibraryViewRedesign({
               ? `${libraryMetadata.filename} • Updated: ${libraryMetadata.lastUpdate.toLocaleDateString()}`
               : undefined
           }
-          viewType="Library"
-          shareTitle="PQC Library — NIST, IETF, ETSI & More"
-          shareText="Explore post-quantum cryptography standards, drafts, and key documents."
           onExport={handleExportCsv}
           endorseUrl={buildEndorsementUrl({
             category: 'library-resource-endorsement',
