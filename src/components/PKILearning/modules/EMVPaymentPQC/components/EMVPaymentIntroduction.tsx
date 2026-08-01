@@ -550,6 +550,15 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
           CNSA 2.0 kind. The sector&rsquo;s pressure comes from operational-resilience regulation
           and from harvest-now-decrypt-later exposure, not from a compliance cliff.
         </p>
+        <p className="text-sm text-muted-foreground border-l-2 border-border pl-3">
+          <strong className="text-foreground">Out of scope.</strong> This module covers card
+          payments and the interbank rails behind them. PSD2, open banking APIs, instant-payment
+          schemes (SEPA Instant, FedNow), and central bank digital currencies raise their own
+          post-quantum questions — different threat models, different standards bodies — that this
+          module does not address. They are not covered here because the library does not yet hold a
+          substantive PQC source for any of them; this note will be replaced by real coverage once
+          one is acquired, not expanded from general knowledge.
+        </p>
       </LearnSection>
 
       {/* ── Section 10: Quantum Threats to Payment Systems ── */}
