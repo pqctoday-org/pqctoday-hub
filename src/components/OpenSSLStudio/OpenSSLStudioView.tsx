@@ -342,7 +342,7 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
               {/* Right Pane: File Manager, File Editor, & Terminal Output */}
               <div className="col-span-12 lg:col-span-8 flex flex-col min-h-0">
                 {/* File Manager (Always Visible) */}
-                <div className="glass-panel p-4 mb-6 shrink-0 max-h-[300px] overflow-y-auto custom-scrollbar">
+                <div className="glass-panel p-4 mb-6 shrink-0 max-h-none overflow-y-auto custom-scrollbar lg:max-h-[300px]">
                   <WorkbenchFileManager />
                 </div>
                 {/* Cross-link to TLS Simulator — always visible */}

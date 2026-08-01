@@ -345,7 +345,7 @@ export const WorkbenchFileManager: React.FC = () => {
                   </Button>
                 </th>
                 <th className="text-right p-3 text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                  Actions
+                  <span className="sr-only sm:not-sr-only">Actions</span>
                 </th>
               </tr>
             </thead>

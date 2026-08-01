@@ -325,7 +325,7 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
                   </motion.div>
 
                   {/* Phase Indicators (Dots) */}
-                  <div className="flex gap-1.5 mt-3 justify-center">
+                  <div className="flex flex-wrap gap-1.5 mt-3 justify-center">
                     {phases.map((p, i) => (
                       <Button
                         variant="ghost"

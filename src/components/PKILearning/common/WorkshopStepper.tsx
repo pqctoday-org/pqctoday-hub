@@ -57,7 +57,7 @@ export const WorkshopStepper: React.FC<WorkshopStepperProps> = ({
               disabled={!clickable}
               onClick={() => clickable && onStepClick!(idx)}
               className={clsx(
-                'h-auto rounded-full px-2 py-0.5 text-[11px] font-medium transition-colors',
+                'h-auto rounded-full px-2 py-0.5 max-sm:min-h-[44px] max-sm:px-3 text-[11px] font-medium transition-colors',
                 isDone && [
                   'bg-status-success/15 border border-status-success/40 text-status-success',
                   clickable && 'hover:bg-status-success/25',

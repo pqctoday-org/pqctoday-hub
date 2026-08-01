@@ -181,24 +181,29 @@ export function ArtifactCard({
           />
         </div>
       </div>
-      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="flex items-center gap-1 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
         <Button
           variant="ghost"
           size="sm"
-          className="h-7 w-7 p-0"
+          className="h-7 w-7 p-0 max-md:h-11 max-md:w-11"
           onClick={() => onView(document)}
           data-workshop-target={`business-artifact-${document.type}-view`}
           aria-label="View artifact"
         >
           <Eye size={14} />
         </Button>
-        <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => onEdit(document)}>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 w-7 p-0 max-md:h-11 max-md:w-11"
+          onClick={() => onEdit(document)}
+        >
           <Pencil size={14} />
         </Button>
         <Button
           variant="ghost"
           size="sm"
-          className="h-7 w-7 p-0 text-destructive hover:text-destructive"
+          className="h-7 w-7 p-0 max-md:h-11 max-md:w-11 text-destructive hover:text-destructive"
           onClick={() => onDelete(document)}
         >
           <Trash2 size={14} />

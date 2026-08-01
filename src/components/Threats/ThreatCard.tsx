@@ -65,8 +65,9 @@ const Chips = ({
       {shown.map((c, i) => (
         <span
           key={i}
+          title={c}
           className={clsx(
-            'whitespace-nowrap rounded-sm border px-1.5 py-0.5',
+            'whitespace-nowrap rounded-sm border px-1.5 py-0.5 max-md:inline-block max-md:max-w-[22ch] max-md:truncate',
             tone === 'risk'
               ? 'border-status-error/25 bg-status-error/5 text-status-error/90'
               : 'border-status-success/25 bg-status-success/5 text-status-success/90'

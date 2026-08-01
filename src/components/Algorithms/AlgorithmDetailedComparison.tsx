@@ -704,14 +704,18 @@ function BrowseTable({
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <CompareCheckbox
-                    algo={algo}
-                    algorithms={algorithms}
-                    compareSet={compareSet}
-                    compareType={compareType}
-                    maxCompareReached={maxCompareReached}
-                    onToggleCompare={onToggleCompare}
-                  />
+                  {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- control is
+                      the <input> rendered inside CompareCheckbox, which the static rule can't see through */}
+                  <label className="inline-flex items-center justify-center shrink-0 min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0">
+                    <CompareCheckbox
+                      algo={algo}
+                      algorithms={algorithms}
+                      compareSet={compareSet}
+                      compareType={compareType}
+                      maxCompareReached={maxCompareReached}
+                      onToggleCompare={onToggleCompare}
+                    />
+                  </label>
                   <span className="font-semibold text-foreground">{algo.name}</span>
                   <DraftBadge algo={algo} />
                   <Cnsa20Badge algo={algo} />

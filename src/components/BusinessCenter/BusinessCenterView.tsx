@@ -566,7 +566,7 @@ export function BusinessCenterView() {
            learners don't need a portfolio toolbar at the top; cross-zone
            filtering belongs on the artifact library page. */}
           {!metrics.isFullyEmpty && allArtifacts.length > 0 && showTopToolbar(density) && (
-            <div className="flex flex-wrap items-center gap-3 mb-6">
+            <div className="flex flex-wrap items-center gap-3 mb-6 max-md:flex-col max-md:items-stretch">
               <Filter size={14} className="text-muted-foreground shrink-0" />
               <FilterDropdown
                 items={TYPE_FILTER_ITEMS}
@@ -581,7 +581,7 @@ export function BusinessCenterView() {
               <Button
                 variant="outline"
                 size="sm"
-                className="ml-auto gap-1.5"
+                className="ml-auto gap-1.5 max-md:w-full max-md:justify-center max-md:ml-0"
                 onClick={handleExportZip}
                 disabled={filteredArtifacts.length === 0}
               >

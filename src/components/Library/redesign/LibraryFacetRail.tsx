@@ -31,7 +31,7 @@ const QUICK_VIEWS: { id: LibraryQuickView; label: string; icon: typeof Bookmark 
 ]
 
 const ROW_BASE =
-  'flex h-auto w-full items-center justify-start gap-2 rounded-lg px-2 py-1.5 text-left text-[13px] font-normal transition-colors'
+  'flex h-auto min-h-[44px] md:min-h-0 w-full items-center justify-start gap-2 rounded-lg px-2 py-1.5 text-left text-[13px] font-normal transition-colors'
 
 function RailCard({ label, children }: { label: string; children: React.ReactNode }) {
   return (

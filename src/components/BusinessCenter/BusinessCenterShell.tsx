@@ -61,7 +61,7 @@ export const BusinessCenterShell = () => {
                 tabIndex={active ? 0 : -1}
                 onClick={() => navigate(path)}
                 onKeyDown={(e) => handleKeyDown(e, index)}
-                className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
+                className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors max-md:min-h-[44px] ${
                   active
                     ? 'border-primary text-primary'
                     : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'

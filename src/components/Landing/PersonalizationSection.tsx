@@ -746,7 +746,7 @@ export const PersonalizationSection = () => {
                   variant="link"
                   size="sm"
                   onClick={handleClear}
-                  className="sm:absolute sm:left-0 sm:top-1/2 sm:-translate-y-1/2 text-xs text-muted-foreground hover:text-foreground p-0 h-auto"
+                  className="sm:absolute sm:left-0 sm:top-1/2 sm:-translate-y-1/2 text-xs text-muted-foreground hover:text-foreground p-0 h-auto max-md:-m-3 max-md:p-3"
                 >
                   Clear all
                 </Button>
@@ -1013,7 +1013,7 @@ export const PersonalizationSection = () => {
                           <Info size={12} /> How do industry filters work?
                         </Button>
                       </div>
-                      <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3">
                         {!embedIndustries && (
                           <SelectionCard
                             isActive={selectedIndustries.length === 0}

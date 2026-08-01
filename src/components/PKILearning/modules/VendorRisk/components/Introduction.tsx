@@ -212,8 +212,13 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 desc: 'Vendor claims FIPS-mode operation but has no CMVP certificate. Lowest assurance.',
               },
             ].map((item) => (
-              <div key={item.tier} className="flex items-start gap-3 bg-muted/50 rounded-lg p-3">
-                <span className={`text-sm font-bold shrink-0 w-48 ${item.color}`}>{item.tier}</span>
+              <div
+                key={item.tier}
+                className="flex flex-col sm:flex-row items-start gap-1 sm:gap-3 bg-muted/50 rounded-lg p-3"
+              >
+                <span className={`text-sm font-bold shrink-0 w-full sm:w-48 ${item.color}`}>
+                  {item.tier}
+                </span>
                 <p className="text-xs text-muted-foreground">{item.desc}</p>
               </div>
             ))}

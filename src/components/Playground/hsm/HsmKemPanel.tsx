@@ -204,8 +204,8 @@ export const HsmKemPanel = () => {
               title={f.id !== 'ml-kem' ? 'BSI TR-02102-1 — Rust engine only' : undefined}
               className={
                 family === f.id
-                  ? 'bg-primary/20 text-primary text-xs h-7 px-3'
-                  : 'text-muted-foreground text-xs h-7 px-3'
+                  ? 'bg-primary/20 text-primary text-xs min-h-[44px] md:min-h-0 md:h-7 px-3'
+                  : 'text-muted-foreground text-xs min-h-[44px] md:min-h-0 md:h-7 px-3'
               }
             >
               {f.label}
@@ -244,8 +244,8 @@ export const HsmKemPanel = () => {
                 }}
                 className={
                   variant === v
-                    ? 'bg-primary/20 text-primary text-xs h-7 px-3'
-                    : 'text-muted-foreground text-xs h-7 px-3'
+                    ? 'bg-primary/20 text-primary text-xs min-h-[44px] md:min-h-0 md:h-7 px-3'
+                    : 'text-muted-foreground text-xs min-h-[44px] md:min-h-0 md:h-7 px-3'
                 }
               >
                 ML-KEM-{v}

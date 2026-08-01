@@ -12,6 +12,7 @@ import { Search, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { FilterDrawer } from '@/components/common/FilterDrawer'
 import { ColumnPicker } from '@/components/Patents/ColumnPicker'
 import { inferRegion, NIST_STATUS_LABELS } from '@/components/Patents/PatentsInsights'
 import type { PatentItem } from '@/types/PatentTypes'
@@ -106,6 +107,19 @@ export function PatentsFilterBar({
 
   const search = params.get('search') ?? ''
 
+  // Primary (Region/Agility/Impact/Domain) active count — drives the mobile
+  // "Filters" drawer trigger badge and its own Clear All (search + column
+  // preset + secondary chips stay outside the drawer, so they're untouched).
+  const primaryActiveCount = PRIMARY.filter((key) => {
+    const v = params.get(key)
+    return Boolean(v) && v !== 'All'
+  }).length
+  const clearPrimaryFilters = () => {
+    const next = new URLSearchParams(params)
+    PRIMARY.forEach((k) => next.delete(k))
+    setParams(next, { replace: true })
+  }
+
   return (
     <div className="glass-panel rounded-xl p-3">
       <div className="flex flex-wrap items-center gap-2">
@@ -123,34 +137,78 @@ export function PatentsFilterBar({
             className="pl-9"
           />
         </div>
-        <FilterDropdown
-          items={regionOpts}
-          selectedId={params.get('region') ?? 'All'}
-          onSelect={(v) => set('region', v)}
-          label="Region"
-          defaultLabel="All regions"
-        />
-        <FilterDropdown
-          items={agilityOpts}
-          selectedId={params.get('agility') ?? 'All'}
-          onSelect={(v) => set('agility', v)}
-          label="Agility"
-          defaultLabel="All agility"
-        />
-        <FilterDropdown
-          items={impactOpts}
-          selectedId={params.get('impact') ?? 'All'}
-          onSelect={(v) => set('impact', v)}
-          label="Impact"
-          defaultLabel="All impact"
-        />
-        <FilterDropdown
-          items={domainOpts}
-          selectedId={params.get('domain') ?? 'All'}
-          onSelect={(v) => set('domain', v)}
-          label="Domain"
-          defaultLabel="All domains"
-        />
+        {/* Desktop (lg+): Region/Agility/Impact/Domain render inline, unchanged. */}
+        <div className="hidden lg:contents">
+          <FilterDropdown
+            items={regionOpts}
+            selectedId={params.get('region') ?? 'All'}
+            onSelect={(v) => set('region', v)}
+            label="Region"
+            defaultLabel="All regions"
+          />
+          <FilterDropdown
+            items={agilityOpts}
+            selectedId={params.get('agility') ?? 'All'}
+            onSelect={(v) => set('agility', v)}
+            label="Agility"
+            defaultLabel="All agility"
+          />
+          <FilterDropdown
+            items={impactOpts}
+            selectedId={params.get('impact') ?? 'All'}
+            onSelect={(v) => set('impact', v)}
+            label="Impact"
+            defaultLabel="All impact"
+          />
+          <FilterDropdown
+            items={domainOpts}
+            selectedId={params.get('domain') ?? 'All'}
+            onSelect={(v) => set('domain', v)}
+            label="Domain"
+            defaultLabel="All domains"
+          />
+        </div>
+
+        {/* Mobile (below lg): collapse the 4 dropdowns into a single Filters drawer. */}
+        <div className="lg:hidden">
+          <FilterDrawer
+            label="Filters"
+            activeFilterCount={primaryActiveCount}
+            onClearAll={clearPrimaryFilters}
+            filterContent={
+              <>
+                <FilterDropdown
+                  items={regionOpts}
+                  selectedId={params.get('region') ?? 'All'}
+                  onSelect={(v) => set('region', v)}
+                  label="Region"
+                  defaultLabel="All regions"
+                />
+                <FilterDropdown
+                  items={agilityOpts}
+                  selectedId={params.get('agility') ?? 'All'}
+                  onSelect={(v) => set('agility', v)}
+                  label="Agility"
+                  defaultLabel="All agility"
+                />
+                <FilterDropdown
+                  items={impactOpts}
+                  selectedId={params.get('impact') ?? 'All'}
+                  onSelect={(v) => set('impact', v)}
+                  label="Impact"
+                  defaultLabel="All impact"
+                />
+                <FilterDropdown
+                  items={domainOpts}
+                  selectedId={params.get('domain') ?? 'All'}
+                  onSelect={(v) => set('domain', v)}
+                  label="Domain"
+                  defaultLabel="All domains"
+                />
+              </>
+            }
+          />
+        </div>
         <span className="ml-auto shrink-0 text-[12.5px] text-muted-foreground tabular-nums">
           Showing <span className="font-semibold text-foreground">{count}</span> of {total}
         </span>

@@ -240,7 +240,7 @@ function LessonRunner({
             variant="ghost"
             onClick={() => selectLesson(i)}
             className={cn(
-              'flex h-auto w-full items-start justify-start gap-1.5 whitespace-normal break-words rounded-md px-2 py-1.5 text-left text-[12px] font-normal',
+              'flex h-auto min-h-[44px] w-full items-start justify-start gap-1.5 whitespace-normal break-words rounded-md px-2 py-1.5 text-left text-[12px] font-normal md:min-h-0',
               i === lessonIdx
                 ? 'bg-primary/15 font-semibold text-primary'
                 : 'text-muted-foreground hover:bg-muted/50'

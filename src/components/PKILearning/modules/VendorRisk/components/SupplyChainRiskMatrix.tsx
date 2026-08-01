@@ -703,7 +703,7 @@ const DependencyRelationCard: React.FC<{ rel: DependencyRelation }> = ({ rel }) 
             key={d.productId}
             size="sm"
             aria-expanded={expanded?.productId === d.productId}
-            className={`h-auto rounded-full px-2 py-0.5 text-xs font-normal ${
+            className={`h-auto rounded-full px-2 py-0.5 max-md:py-1.5 text-xs font-normal ${
               expanded?.productId === d.productId
                 ? 'border-primary text-primary bg-background'
                 : 'border-border text-muted-foreground bg-background'

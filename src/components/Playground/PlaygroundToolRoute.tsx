@@ -54,15 +54,15 @@ export const PlaygroundToolRoute = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 max-sm:flex-wrap">
         <Button variant="ghost" size="sm" onClick={handleBack}>
           <ArrowLeft className="w-4 h-4 mr-1" />
           All Tools
         </Button>
-        <span className="text-sm text-muted-foreground">
+        <span className="text-sm text-muted-foreground max-sm:min-w-0 max-sm:flex-1 max-sm:truncate">
           {tool.category} / {tool.name}
         </span>
-        <div className="ml-auto flex items-center gap-1">
+        <div className="ml-auto flex items-center gap-1 max-sm:w-full max-sm:justify-end">
           <ShareButton
             title={`${tool.name} — PQC Playground`}
             text={`Try the ${tool.name} tool in the PQC Today Playground`}

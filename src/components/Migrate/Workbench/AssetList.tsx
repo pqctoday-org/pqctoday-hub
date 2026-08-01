@@ -158,13 +158,21 @@ export function AssetList({ persona, selectedDomain, onSelect }: AssetListProps)
                       togglePlanAsset(asset.id)
                     }
                   }}
-                  className={`flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded-md border ${
-                    inPlan
-                      ? 'border-primary bg-primary text-primary-foreground'
-                      : 'border-border text-muted-foreground'
-                  }`}
+                  className="flex shrink-0 cursor-pointer items-center justify-center max-md:min-h-[44px] max-md:min-w-[44px]"
                 >
-                  {inPlan ? <Check size={13} /> : <Plus size={13} />}
+                  {/* Visual chip stays a fixed 20x20px on every viewport — only
+                   *  the interactive wrapper above grows the tappable area on
+                   *  mobile, so the checkbox's on-screen size is unchanged. */}
+                  <span
+                    aria-hidden="true"
+                    className={`flex h-5 w-5 items-center justify-center rounded-md border ${
+                      inPlan
+                        ? 'border-primary bg-primary text-primary-foreground'
+                        : 'border-border text-muted-foreground'
+                    }`}
+                  >
+                    {inPlan ? <Check size={13} /> : <Plus size={13} />}
+                  </span>
                 </span>
 
                 <span className="min-w-0 flex-1">

@@ -88,7 +88,7 @@ export const SourcesModal = ({ isOpen, onClose, viewType }: SourcesModalProps) =
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-6 max-md:sticky max-md:top-0 max-md:z-10 max-md:-mx-6 max-md:-mt-6 max-md:px-6 max-md:pt-6 max-md:pb-4 max-md:bg-card/95 max-md:backdrop-blur-md max-md:border-b max-md:border-border">
               <div>
                 <h2 id="sources-modal-title" className="text-2xl font-bold">
                   Authoritative Sources
@@ -122,7 +122,7 @@ export const SourcesModal = ({ isOpen, onClose, viewType }: SourcesModalProps) =
                                 href={source.primaryUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-foreground hover:text-primary font-medium inline-flex items-center gap-2 group"
+                                className="text-foreground hover:text-primary font-medium inline-flex items-center gap-2 group max-md:min-h-[44px]"
                               >
                                 {source.sourceName}
                                 <span className="sr-only"> (opens in new tab)</span>

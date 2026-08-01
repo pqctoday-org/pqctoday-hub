@@ -95,7 +95,7 @@ const DefinitionBadge: React.FC<{
         onMouseLeave={close}
         aria-expanded={isOpen}
         aria-label={`${label} definition`}
-        className={`h-auto inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold border cursor-help ${badgeClassName} ${className}`}
+        className={`h-auto inline-flex items-center px-1.5 py-0.5 max-md:min-h-[44px] max-md:min-w-[44px] rounded text-[10px] font-bold border cursor-help ${badgeClassName} ${className}`}
       >
         {label}
       </Button>
