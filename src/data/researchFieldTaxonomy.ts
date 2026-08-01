@@ -11,7 +11,10 @@ import type { AlgorithmFamily } from '@/components/common/AlgorithmFamilyFilter'
  * the Researcher persona's field-watch card (IMPLEMENTATION-PLAN-2026-08-01.md
  * §6). This is the one genuinely new piece of information architecture in the
  * whole persona-journeys redesign — an editorial judgment call, not a
- * mechanical derivation — and should be reviewed as such.
+ * mechanical derivation. Reviewed and approved as-is, 2026-08-01 (including the
+ * decision to reuse the Library page's classifier rather than build a second
+ * one, and to drop the plan doc's PKI/Compliance/HSM/Supply-Chain bucket
+ * suggestions since `AlgorithmFamily` carries no real signal for them).
  *
  * DESIGN DECISION (read before revising): the library CSV's `AlgorithmFamily`
  * column is free text — semicolon-joined multi-values, ~40% blank, and a very
