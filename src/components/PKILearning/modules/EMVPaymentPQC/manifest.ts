@@ -11,14 +11,14 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
  */
 const manifest: ModuleManifest = {
   id: 'emv-payment-pqc',
-  contentVersion: 2,
+  contentVersion: 3,
   lm_id: 'LM-044',
   title: 'Financial Services & Payments PQC',
   description:
     'The whole payments and banking stack: EMV card authentication, tokenization, acquiring and retail checkout, interbank settlement rails, bank key management and key blocks, and the sector regulation that sets the pace — planned as one quantum-safe migration.',
   whyThisMatters:
     'Cards, banking rails and retail checkout share cryptography, share vendors, and increasingly share deadlines — but are usually migrated by different teams reading different documents. One un-migrated link is a fraud vector at scale, and no single institution can fix a correspondent chain alone.',
-  duration: '110 min',
+  duration: '120 min',
   difficulty: 'advanced',
   frameworkPhase: 'p5',
   track: 'Industries',
@@ -33,6 +33,7 @@ const manifest: ModuleManifest = {
     { id: 'interbank-rails', label: 'Interbank Rails & Settlement' },
     { id: 'banking-key-management', label: 'Banking Key Management & Key Blocks' },
     { id: 'sector-regulation', label: 'Sector Regulation & Deadlines' },
+    { id: 'open-banking-psd2', label: 'Open Banking & PSD2 Strong Customer Authentication' },
     { id: 'quantum-threats', label: 'Quantum Payment Threats' },
     { id: 'migration-landscape', label: 'PQC Migration Landscape' },
   ],
@@ -67,11 +68,12 @@ const manifest: ModuleManifest = {
       label: 'Banking & Settlement',
       audience: 'Banks, central banks, financial market infrastructure',
       entrySection: 'interbank-rails',
-      duration: '45 min',
+      duration: '55 min',
       sections: [
         'interbank-rails',
         'banking-key-management',
         'sector-regulation',
+        'open-banking-psd2',
         'quantum-threats',
         'migration-landscape',
       ],

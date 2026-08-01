@@ -170,9 +170,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
         <ul className="list-disc list-inside space-y-2 text-sm text-foreground/80">
           <li>
             <strong>
-              <InlineTooltip term="Content Credentials (C2PA)">
-                Content Credentials (C2PA)
-              </InlineTooltip>
+              <InlineTooltip term="Content Credentials">Content Credentials (C2PA)</InlineTooltip>
             </strong>
             : Signed metadata embedded in content files — creator identity, creation tool, edit
             history. Creates a verifiable chain of custody from origin to consumption.

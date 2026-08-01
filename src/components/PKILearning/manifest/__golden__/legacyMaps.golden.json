@@ -176,7 +176,7 @@
       "lm_id": "LM-044",
       "title": "Financial Services & Payments PQC",
       "description": "The whole payments and banking stack: EMV card authentication, tokenization, acquiring and retail checkout, interbank settlement rails, bank key management and key blocks, and the sector regulation that sets the pace — planned as one quantum-safe migration.",
-      "duration": "110 min",
+      "duration": "120 min",
       "difficulty": "advanced",
       "frameworkPhase": "p5"
     },
@@ -1132,6 +1132,10 @@
       {
         "id": "sector-regulation",
         "label": "Sector Regulation & Deadlines"
+      },
+      {
+        "id": "open-banking-psd2",
+        "label": "Open Banking & PSD2 Strong Customer Authentication"
       },
       {
         "id": "quantum-threats",
@@ -3873,7 +3877,7 @@
           "lm_id": "LM-044",
           "title": "Financial Services & Payments PQC",
           "description": "The whole payments and banking stack: EMV card authentication, tokenization, acquiring and retail checkout, interbank settlement rails, bank key management and key blocks, and the sector regulation that sets the pace — planned as one quantum-safe migration.",
-          "duration": "110 min",
+          "duration": "120 min",
           "difficulty": "advanced",
           "frameworkPhase": "p5"
         },

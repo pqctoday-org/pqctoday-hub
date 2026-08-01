@@ -274,10 +274,10 @@ const Step3HandoffAndVendors: React.FC = () => (
         </div>
         <p className="text-xs text-muted-foreground">
           For Tier 1 vendors, require a machine-readable{' '}
-          <InlineTooltip term="Cryptographic Bill of Materials">CBOM</InlineTooltip> (CycloneDX
-          1.6+). A vendor who cannot produce one has a level of cryptographic visibility that should
-          itself concern the organization. Maintain a documented substitution assessment for each —
-          concentration on a single HSM vendor, CA, or crypto library is its own risk.
+          <InlineTooltip term="CBOM">CBOM</InlineTooltip> (CycloneDX 1.6+). A vendor who cannot
+          produce one has a level of cryptographic visibility that should itself concern the
+          organization. Maintain a documented substitution assessment for each — concentration on a
+          single HSM vendor, CA, or crypto library is its own risk.
         </p>
       </div>
     </section>
