@@ -230,6 +230,7 @@ export function CuriousMobileBoard() {
       {moreOpen && (
         <>
           <div
+            data-testid="more-menu-backdrop"
             className="fixed inset-0 z-nav-backdrop bg-black/60"
             onClick={() => setMoreOpen(false)}
             aria-hidden="true"

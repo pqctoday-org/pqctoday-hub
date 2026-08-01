@@ -92,6 +92,25 @@ describe('RoleHomeView', () => {
     expect(onSelectPersona).toHaveBeenCalledWith('developer')
   })
 
+  it('activates a card via keyboard (Space) too, not just Enter', async () => {
+    const user = userEvent.setup()
+    const onSelectPersona = vi.fn()
+    render(<RoleHomeView onSelectPersona={onSelectPersona} onSkip={vi.fn()} />)
+    getCard('architect').focus()
+    await user.keyboard(' ')
+    expect(onSelectPersona).toHaveBeenCalledTimes(1)
+    expect(onSelectPersona).toHaveBeenCalledWith('architect')
+  })
+
+  it('ignores unrelated key presses (e.g. a letter key) — no selection, no navigation', async () => {
+    const user = userEvent.setup()
+    const onSelectPersona = vi.fn()
+    render(<RoleHomeView onSelectPersona={onSelectPersona} onSkip={vi.fn()} />)
+    getCard('ops').focus()
+    await user.keyboard('a')
+    expect(onSelectPersona).not.toHaveBeenCalled()
+  })
+
   it('calls onSkip when "Show me everything" is clicked, without touching onSelectPersona', async () => {
     const user = userEvent.setup()
     const onSkip = vi.fn()
