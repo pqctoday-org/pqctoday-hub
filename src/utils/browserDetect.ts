@@ -24,6 +24,10 @@ export interface BrowserSupport {
   name: string
   /** Per-user-agent reason shown in tooltips / banners. */
   reason?: string
+  /** True on iOS/iPadOS, where Apple requires every browser (including
+   * "Chrome" and "Edge" for iOS) to run on WebKit — so "switch browsers"
+   * is not an available fix on this device, unlike on desktop/Android. */
+  isIOS?: boolean
 }
 
 /** Pure detection, safe to call in SSR/non-browser environments. */
@@ -41,11 +45,27 @@ export function detectBrowser(userAgent?: string): BrowserSupport {
     return { supported: true, name: 'Unknown' }
   }
 
+  // iOS Safari-in-disguise: Chrome/Edge/Firefox for iOS all report their own
+  // brand token (CriOS/, EdgiOS/, FxiOS/) but are WebKit underneath, same
+  // engine limits as Safari. Detect the platform first so the messaging
+  // below can be honest about there being no "switch browsers" fix here.
+  const isIOS = /\b(iPhone|iPad|iPod)\b/.test(ua) || /\bCriOS\/|\bEdgiOS\/|\bFxiOS\//.test(ua)
+
   const isChromiumLike =
     /\bChrome\//.test(ua) || /\bEdg\//.test(ua) || /\bOPR\//.test(ua) || /\bBrave\//.test(ua)
   const isFirefox = /\bFirefox\//.test(ua)
   // Safari UA contains "Safari" but also "Version/XX.Y" and *not* "Chrome".
   const isSafari = /\bSafari\//.test(ua) && !/\bChrome\//.test(ua)
+
+  if (isIOS) {
+    return {
+      supported: false,
+      name: 'iOS',
+      isIOS: true,
+      reason:
+        'This live simulation needs browser-engine features (SharedArrayBuffer + WASM threads) that WebKit does not yet support — and Apple requires every browser on iPhone/iPad, including Chrome and Edge, to run on WebKit. There is no in-browser fix on this device; the walkthrough below still covers the same handshake step by step. On a desktop browser (Chrome, Edge, or Brave), the live version works.',
+    }
+  }
 
   if (isChromiumLike) {
     return { supported: true, name: 'Chromium' }

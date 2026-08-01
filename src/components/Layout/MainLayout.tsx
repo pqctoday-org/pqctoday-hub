@@ -164,7 +164,7 @@ export const MainLayout = () => {
       // Visible on mobile for executive/architect; hidden for others
       hiddenOnMobile: !(selectedPersona === 'executive' || selectedPersona === 'architect'),
       mobileMore: selectedPersona !== 'executive' && selectedPersona !== 'architect',
-      moreOrder: 5,
+      moreOrder: 7,
     },
     {
       path: '/playground',
@@ -176,13 +176,29 @@ export const MainLayout = () => {
       moreOrder: 2,
     },
     // — Keep Up to Date —
+    // Threats + Library moved to the mobile "More" sheet (2026-08-01 remediation):
+    // with Home/Simulation/Learn/Timeline/Migrate/Assess already competing for
+    // the same 390px row, 8 always-visible items left almost nothing reachable
+    // without scrolling and no cue that scrolling was even possible. Both stay
+    // fully visible on desktop (lg:block, same as every other hiddenOnMobile item).
     {
       path: '/threats',
       label: NAV_PATH_LABELS['/threats'],
       icon: AlertTriangle,
       section: 'current',
+      hiddenOnMobile: true,
+      mobileMore: true,
+      moreOrder: 5,
     },
-    { path: '/library', label: NAV_PATH_LABELS['/library'], icon: BookOpen, section: 'current' },
+    {
+      path: '/library',
+      label: NAV_PATH_LABELS['/library'],
+      icon: BookOpen,
+      section: 'current',
+      hiddenOnMobile: true,
+      mobileMore: true,
+      moreOrder: 6,
+    },
     {
       path: '/leaders',
       label: NAV_PATH_LABELS['/leaders'],
@@ -190,7 +206,7 @@ export const MainLayout = () => {
       section: 'current',
       hiddenOnMobile: true,
       mobileMore: true,
-      moreOrder: 7,
+      moreOrder: 8,
     },
     {
       path: '/patents',
@@ -199,7 +215,7 @@ export const MainLayout = () => {
       section: 'current',
       hiddenOnMobile: true,
       mobileMore: true,
-      moreOrder: 8,
+      moreOrder: 9,
     },
     {
       path: '/about',
@@ -207,7 +223,7 @@ export const MainLayout = () => {
       icon: Info,
       hiddenOnMobile: true,
       mobileMore: true,
-      moreOrder: 9,
+      moreOrder: 10,
     },
   ]
 

@@ -28,7 +28,11 @@ export const ChromiumGateBanner: React.FC<{ feature: string }> = ({ feature }) =
     >
       <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true" />
       <span>
-        <strong>{feature} requires a Chromium-based browser.</strong>{' '}
+        <strong>
+          {support.isIOS
+            ? `${feature} isn't available on iPhone/iPad.`
+            : `${feature} requires a Chromium-based browser.`}
+        </strong>{' '}
         {support.reason ??
           `Detected: ${support.name}. The live handshake buttons below are disabled; open this page in Chrome, Edge, or Brave to run the simulation.`}
       </span>
