@@ -504,6 +504,22 @@ export const MainLayout = () => {
                 </span>
               </Button>
 
+              {/* Search shortcut — the only touch-reachable entry point to
+                  CommandPalette on mobile; desktop already has the "Search…"
+                  chip (hidden lg:flex, above) plus the ⌘K/Ctrl+K shortcut. */}
+              <Button
+                variant="ghost"
+                type="button"
+                onClick={() => {
+                  setMoreMenuOpen(false)
+                  openPalette()
+                }}
+                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-colors"
+              >
+                <Search size={18} aria-hidden="true" />
+                Search
+              </Button>
+
               {/* Journey History shortcut */}
               <Button
                 variant="ghost"
