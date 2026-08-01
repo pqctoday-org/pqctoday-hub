@@ -42,7 +42,10 @@ export interface VerifiableCredential {
     proofPurpose: string
     jws: string
   }
-  format?: 'mso_mdoc' | 'vc+sd-jwt' | 'jwt_vc'
+  // `dc+sd-jwt` replaced `vc+sd-jwt` in draft-ietf-oauth-sd-jwt-vc (Nov 2024),
+  // to avoid colliding with the W3C-registered `vc` subtype. OpenID4VCI 1.0
+  // Final uses `dc+sd-jwt` exclusively.
+  format?: 'mso_mdoc' | 'dc+sd-jwt' | 'jwt_vc'
   raw?: string
 }
 
@@ -71,9 +74,25 @@ export interface ActivityLog {
 
 // --- Protocol Types ---
 
+/**
+ * One issuer-signed data element, kept verbatim (salt included) so the holder
+ * can present a subset later. ISO 18013-5 §9.1.2.4 — the verifier re-hashes
+ * exactly these bytes and matches the result against the signed MSO, which is
+ * only possible if `random` survives issuance.
+ */
+export interface IssuerSignedItem {
+  digestID: number
+  /** base64 of the 16-byte salt */
+  random: string
+  elementIdentifier: string
+  elementValue: unknown
+}
+
 export interface MsoMdoc {
   docType: string
   namespaces: Record<string, Record<string, unknown>>
+  /** Present on mdocs issued from 2026-07-31; absent on older stored credentials. */
+  issuerSignedItems?: IssuerSignedItem[]
   mobileSecurityObject: {
     version: string
     digestAlgorithm: string
@@ -86,6 +105,13 @@ export interface MsoMdoc {
     deviceKeyInfo: {
       deviceKey: unknown // Public key JWK/COSE
     }
+    /**
+     * digestID -> salted hash of the element, per namespace. `createMdoc` has
+     * always written this (it is what the issuer's COSE_Sign1 actually covers)
+     * but the type omitted it, so nothing downstream could read the digests
+     * back to verify a selective disclosure. Declared 2026-07-31.
+     */
+    valueDigests?: Record<string, Record<string, unknown>>
   }
   issuerSignature: string
 }

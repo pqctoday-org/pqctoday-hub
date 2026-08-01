@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import type { CryptoKey, CredentialAttribute, MsoMdoc } from '../types'
+import type { CryptoKey, CredentialAttribute, MsoMdoc, IssuerSignedItem } from '../types'
 import type { CryptoProvider } from './crypto-provider'
 import { encode } from 'cborg'
+import { bytesToBase64 } from './hsm-crypto-provider'
 
 // EUDI ARF requires exact CBOR structural encoding and COSE_Sign1 definitions.
 // See ISO 18013-5 9.1.2.4
@@ -29,6 +30,13 @@ export const createMdoc = async (
   // 2. Prepare Value Digests for MSO (Mobile Security Object)
   // According to ARF, each element is serialized inside an IssuerSignedItem, then CBOR encoded and hashed
   const digests: Map<number, Uint8Array> = new Map()
+  // Each element's salt is retained alongside its digest. Without it a holder
+  // cannot later present a SUBSET of elements: ISO 18013-5 selective disclosure
+  // works by sending the chosen IssuerSignedItems verbatim so the verifier can
+  // re-hash them and match against the signed MSO. This used to be generated
+  // inside the loop and thrown away, which left the mdoc structurally unable to
+  // do the selective disclosure the module teaches (added 2026-07-31).
+  const issuerSignedItems: IssuerSignedItem[] = []
   let digestId = 0
   const keys = Object.keys(namespaces[docType])
 
@@ -43,6 +51,12 @@ export const createMdoc = async (
     itemMap.set('elementValue', namespaces[docType][key]) // eslint-disable-line security/detect-object-injection
 
     const itemBytes = encode(itemMap)
+    issuerSignedItems.push({
+      digestID: digestId,
+      random: bytesToBase64(salt),
+      elementIdentifier: key,
+      elementValue: namespaces[docType][key], // eslint-disable-line security/detect-object-injection
+    })
 
     // Hash the resulting CBOR mapping
     const hashB64url = await provider.sha256Hash(itemBytes, onLog)
@@ -106,14 +120,110 @@ export const createMdoc = async (
   const binStringAuth = String.fromCharCode(...Array.from(issuerAuthBytes))
   const finalSignatureB64 = btoa(binStringAuth)
 
+  // The CBOR that gets signed above uses Maps, which is structurally correct
+  // per ISO 18013-5. The RETURNED object, however, is JSON.stringify'd into
+  // the wallet's credential store — and a Map serialises to `{}`, which
+  // silently dropped every value digest the moment a credential was saved.
+  // Emit a JSON-safe mirror (base64 digests keyed by digestID) so a stored
+  // mdoc can still be verified after a round trip.
+  const jsonValueDigests: Record<string, Record<string, string>> = {
+    [docType]: Object.fromEntries(
+      Array.from(digests.entries()).map(([id, bytes]) => [String(id), bytesToBase64(bytes)])
+    ),
+  }
+
   return {
     docType,
     namespaces,
-    mobileSecurityObject: Object.fromEntries(mso) as MsoMdoc['mobileSecurityObject'],
+    issuerSignedItems,
+    mobileSecurityObject: {
+      ...(Object.fromEntries(mso) as MsoMdoc['mobileSecurityObject']),
+      valueDigests: jsonValueDigests,
+    },
     issuerSignature: finalSignatureB64,
   }
 }
 
 export const parseMdoc = (mdocJSON: string): MsoMdoc => {
   return JSON.parse(mdocJSON)
+}
+
+/**
+ * ISO 18013-5 selective disclosure for an mdoc.
+ *
+ * The holder sends only the chosen IssuerSignedItems. Everything else — the
+ * MSO and the issuer's COSE_Sign1 over it — travels unchanged, because the
+ * issuer's signature covers the DIGESTS, not the values. Withholding an
+ * element therefore costs nothing cryptographically: the verifier simply has
+ * one fewer item to re-hash, and the digest it would have matched stays in the
+ * MSO unmatched.
+ *
+ * This is what lets a wallet prove `age_over_18` while withholding
+ * `birth_date` from the very same signed credential.
+ */
+export const createMdocPresentation = (
+  mdoc: MsoMdoc,
+  selectedElements: string[]
+): {
+  docType: string
+  disclosed: IssuerSignedItem[]
+  withheld: string[]
+  mobileSecurityObject: MsoMdoc['mobileSecurityObject']
+  issuerSignature: string
+} => {
+  const items = mdoc.issuerSignedItems ?? []
+  const disclosed = items.filter((i) => selectedElements.includes(i.elementIdentifier))
+  const withheld = items
+    .filter((i) => !selectedElements.includes(i.elementIdentifier))
+    .map((i) => i.elementIdentifier)
+  return {
+    docType: mdoc.docType,
+    disclosed,
+    withheld,
+    mobileSecurityObject: mdoc.mobileSecurityObject,
+    issuerSignature: mdoc.issuerSignature,
+  }
+}
+
+/**
+ * Verifier side: re-hash each disclosed item and match it against the digest
+ * the issuer signed. Returns per-element results so the UI can show that a
+ * withheld element is genuinely absent rather than merely hidden from view.
+ */
+export const verifyMdocPresentation = async (
+  presentation: ReturnType<typeof createMdocPresentation>,
+  provider: CryptoProvider,
+  onLog?: (log: string) => void
+): Promise<{ element: string; digestMatched: boolean }[]> => {
+  const digestMap = (presentation.mobileSecurityObject?.valueDigests ?? {}) as Record<
+    string,
+    Record<string, unknown>
+  >
+  const nsDigests = digestMap[presentation.docType] ?? {}
+  const results: { element: string; digestMatched: boolean }[] = []
+
+  for (const item of presentation.disclosed) {
+    // Rebuild the exact IssuerSignedItem CBOR the issuer hashed at issuance.
+    const salt = Uint8Array.from(atob(item.random), (c) => c.charCodeAt(0))
+    const itemMap = new Map<string, unknown>()
+    itemMap.set('digestID', item.digestID)
+    itemMap.set('random', salt)
+    itemMap.set('elementIdentifier', item.elementIdentifier)
+    itemMap.set('elementValue', item.elementValue)
+
+    const hashB64url = await provider.sha256Hash(encode(itemMap), onLog)
+    const recomputed = hashB64url.replace(/-/g, '+').replace(/_/g, '/')
+
+    const expectedRaw = (nsDigests as Record<string, unknown>)[String(item.digestID)]
+    const expected =
+      expectedRaw instanceof Uint8Array
+        ? bytesToBase64(expectedRaw)
+        : typeof expectedRaw === 'string'
+          ? expectedRaw
+          : ''
+    // Compare on padded base64 so encoding differences don't read as tampering.
+    const matched = expected !== '' && recomputed.replace(/=+$/, '') === expected.replace(/=+$/, '')
+    results.push({ element: item.elementIdentifier, digestMatched: matched })
+  }
+  return results
 }

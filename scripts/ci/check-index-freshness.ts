@@ -21,6 +21,7 @@
  * fresh. The scheduled workflow inspects the report to open a tracking issue;
  * `npm run refresh-index` runs it as a post-rebuild sanity check.
  */
+import { createHash } from 'crypto'
 import { execFileSync } from 'node:child_process'
 import { readFileSync, writeFileSync, statSync, mkdtempSync } from 'node:fs'
 import { tmpdir } from 'node:os'
@@ -86,7 +87,27 @@ function main(): number {
   if (removed.length) findings.push(`${removed.length} committed chunk(s) no longer in source`)
 
   // 2. Embeddings ⇄ corpus
-  const meta = JSON.parse(readFileSync(META, 'utf-8')) as { chunkCount: number; dimensions: number }
+  const meta = JSON.parse(readFileSync(META, 'utf-8')) as {
+    chunkCount: number
+    dimensions: number
+    corpusHash?: string
+  }
+  // Content check. Everything below compares COUNTS and SIZES, which cannot see
+  // a chunk whose text changed while its id and the total stayed put — exactly
+  // what happens when a QA answer or a summary is corrected. The vectors then
+  // still encode the OLD text and retrieval silently ranks on it, while this
+  // gate reports "in sync". embeddings-meta already records the corpusHash it
+  // was built from; it just was not being compared. (Found 2026-07-31 by
+  // editing two QA answers and watching the gate pass.)
+  if (meta.corpusHash) {
+    const actualCorpusHash = createHash('sha256').update(readFileSync(CORPUS)).digest('hex')
+    if (actualCorpusHash !== meta.corpusHash)
+      findings.push(
+        `embeddings were built from corpus ${meta.corpusHash.slice(0, 12)}… but the committed ` +
+          `corpus hashes to ${actualCorpusHash.slice(0, 12)}… — chunk text changed since the ` +
+          `vectors were generated; re-run npm run refresh-index`
+      )
+  }
   const corpusCount = committed.size
   if (meta.chunkCount !== corpusCount)
     findings.push(`embeddings-meta.chunkCount=${meta.chunkCount} ≠ corpus chunks=${corpusCount}`)

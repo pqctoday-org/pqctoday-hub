@@ -70,13 +70,22 @@ export const ORGANIZATIONS: OrgEntry[] = [
       'International standards body developing globally adopted information security standards through voting by national member bodies. SC 27 Working Group 2 (WG 2) handles cryptography and security mechanisms, producing ISO/IEC standards referenced by regulators worldwide.',
     decisionMaking:
       '5-stage process: Working Draft (WD) → Committee Draft (CD) → Draft International Standard (DIS) → Final DIS (FDIS) → International Standard (IS). National bodies from 170+ countries vote at each stage. Full IS typically takes 3–5 years. PQC standards are developed in parallel with NIST and cross-reference FIPS.',
+    // Corrected 2026-07-31, verified against ISO's own catalogue pages. Two
+    // entries here named standards that do not exist as described:
+    //   - "ISO/IEC 18033-2/AMD1 (PQC addendum)" — Amendment 1:2017 is
+    //     "FACE", a classical asymmetric cipher. The PQC content (FrodoKEM,
+    //     Classic McEliece, ML-KEM) is Amendment 2:2026.
+    //   - "ISO/IEC NP 29192-8 (Lightweight PQC)" — 29192-8:2022 is published
+    //     "Authenticated encryption", not a PQC work item.
     keyPqcOutputs: [
-      'ISO/IEC 14888-4:2024 (Hash-based Digital Signatures – XMSS, LMS)',
-      'ISO/IEC 18033-2/AMD1 (Asymmetric Ciphers – PQC addendum)',
-      'ISO/IEC NP 29192-8 (Lightweight PQC, in development)',
+      'ISO/IEC 14888-4:2024 (Digital signatures with appendix – Part 4: Stateful hash-based mechanisms, XMSS/LMS)',
+      'ISO/IEC 18033-2:2006/Amd 2:2026 (Asymmetric ciphers – post-quantum KEMs: FrodoKEM, Classic McEliece, ML-KEM)',
       'ISO/IEC 20085 (KEM reference, in development)',
     ],
-    libraryRefs: ['ISO/IEC 14888-4:2024', 'ISO/IEC 18033-2:2006/AMD1:2017'],
+    libraryRefs: [
+      'ISO/IEC 14888-4:2024',
+      'ISO-IEC-18033-2-2006-Amd-2-2026-Information-technology-Secur',
+    ],
     websiteUrl: 'https://www.iso.org/committee/45306.html',
   },
   {

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-30T00:36:07.109878+00:00",
+  "generated": "2026-07-31T23:12:59.239427+00:00",
   "entries": [
     {
       "refId": "NIST",
@@ -9,15 +9,6 @@
       "sizeBytes": 62101,
       "contentType": "text/html",
       "sha256": "dc1bbdd0bc4a034f93f25de72a01b806b1bf2d5b9bb4304a724dc31edc235693"
-    },
-    {
-      "refId": "ENISA",
-      "url": "https://www.enisa.europa.eu/",
-      "status": "downloaded",
-      "filename": "ENISA.html",
-      "sizeBytes": 63843,
-      "contentType": "text/html",
-      "sha256": "45a923201ab68a883c88058326b00d23c3e44f7569bccde6c9e7260eee91a042"
     },
     {
       "refId": "ISO-IEC",
@@ -387,15 +378,6 @@
       "sizeBytes": 170253,
       "contentType": "text/html",
       "sha256": "fc8a5d360f9c642917a0c1d0aa4973647a57a5d671b05c2c0a791b7599d37b2c"
-    },
-    {
-      "refId": "BSI",
-      "url": "https://www.bsi.bund.de/EN/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Technische-Richtlinien/TR-nach-Thema-sortiert/tr02102/tr02102_node.html",
-      "status": "downloaded",
-      "filename": "BSI.html",
-      "sizeBytes": 58509,
-      "contentType": "text/html",
-      "sha256": "ade25b413fb81a367ee12e76ebcf081370efac9036931438d65dc6cafa11a79f"
     },
     {
       "refId": "NSA",
@@ -1307,15 +1289,6 @@
       "sha256": "8f388d10f06ffb1e90020ed4b1990013ccd8b9df77aef4a5f400e659e93554f5"
     },
     {
-      "refId": "ANSSI-BODY",
-      "url": "https://cyber.gouv.fr/en/technological-and-cybersecurity-challenges/post-quantum-cryptography/",
-      "status": "downloaded",
-      "filename": "ANSSI-BODY.html",
-      "sizeBytes": 26524,
-      "contentType": "text/html",
-      "sha256": "ee545d893e166d32848c41dcc962dab3dae96b8e60a74b057b93c66b25f68b0b"
-    },
-    {
       "refId": "QED-C",
       "url": "https://quantumconsortium.org/publication/a-guide-to-a-quantum-safe-organization/",
       "status": "downloaded",
@@ -1460,6 +1433,324 @@
       "sha256": "074a5e09b5686e75f1186b0a9ff25a1649a63ee5f605b1b766bc0b95156757a0",
       "acquisition": "manual",
       "acquiredAt": "2026-07-30"
+    },
+    {
+      "refId": "SPAIN-CCN-PQC",
+      "url": "https://www.ccn-cert.cni.es/",
+      "status": "downloaded",
+      "filename": "SPAIN-CCN-PQC.html",
+      "sizeBytes": 372059,
+      "contentType": "text/html",
+      "sha256": "11ace239491049812b8d2357ba1e9704e21753c18622d28ad4a070e2ffb6f3e5"
+    },
+    {
+      "refId": "KE-DPA",
+      "url": "https://www.odpc.go.ke",
+      "status": "downloaded",
+      "filename": "KE-DPA.html",
+      "sizeBytes": 129472,
+      "contentType": "text/html",
+      "sha256": "bfa45383c07be1b8dd38ee083e96f64245707e9b8d64c0ddc4690ad4273181b4"
+    },
+    {
+      "refId": "MEXICO-CNBV-CUB",
+      "url": "https://www.cnbv.gob.mx/",
+      "status": "downloaded",
+      "filename": "MEXICO-CNBV-CUB.html",
+      "sizeBytes": 67440,
+      "contentType": "text/html",
+      "sha256": "9baadc26bc1f25c29524a7515167b5436d01513a04068eefb7d7054aeb2f5f7c"
+    },
+    {
+      "refId": "ID-PDP",
+      "url": "https://www.bssn.go.id",
+      "status": "downloaded",
+      "filename": "ID-PDP.html",
+      "sizeBytes": 2849,
+      "contentType": "text/html",
+      "sha256": "4260d64d714ed889c1ecffc33279ad41484edc506315356b8f3dee3822ffc630"
+    },
+    {
+      "refId": "AISEP-AUSTRALIAN-INFORMATION-S",
+      "url": "https://www.cyber.gov.au/business-government/protecting-devices-systems/assessment-evaluation-programs/australian-information-security-evaluation-program",
+      "status": "downloaded",
+      "filename": "AISEP-AUSTRALIAN-INFORMATION-S.html",
+      "sizeBytes": 329252,
+      "contentType": "text/html",
+      "sha256": "21d32d23011fecbc8c572cfb8b10907b7d8fe284001bb062be3c007e0e561475"
+    },
+    {
+      "refId": "CANADIAN-COMMON-CRITERIA-SCHEM",
+      "url": "https://www.cyber.gc.ca/en/tools-services/common-criteria",
+      "status": "downloaded",
+      "filename": "CANADIAN-COMMON-CRITERIA-SCHEM.html",
+      "sizeBytes": 119293,
+      "contentType": "text/html",
+      "sha256": "5e653b5dd4f3cab7247664c7a61cb3775381fc425215c6d8a90690e7da1d6101"
+    },
+    {
+      "refId": "BSI-COMMON-CRITERIA-CERTIFICAT",
+      "url": "https://www.bsi.bund.de/EN/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Zertifizierung-und-Anerkennung/Zertifizierung-von-Produkten/Zertifizierung-nach-CC/zertifizierung-nach-cc_node.html",
+      "status": "downloaded",
+      "filename": "BSI-COMMON-CRITERIA-CERTIFICAT.html",
+      "sizeBytes": 63437,
+      "contentType": "text/html",
+      "sha256": "83ea8572e02652aa70a90757c51bc0a8839688961cb5bb334193e45f7d70e8fe"
+    },
+    {
+      "refId": "ORGANISMO-DE-CERTIFICACION-OC-",
+      "url": "https://oc.ccn.cni.es/en/",
+      "status": "downloaded",
+      "filename": "ORGANISMO-DE-CERTIFICACION-OC-.html",
+      "sizeBytes": 204664,
+      "contentType": "text/html",
+      "sha256": "72c89b9b6cbf32b6c0ccb44adf268a5254f9f4440a17b7af4be545c6c8dfb015"
+    },
+    {
+      "refId": "IC3S-INDIAN-COMMON-CRITERIA-CE",
+      "url": "https://commoncriteria-india.gov.in/indian-common-criteria-certification-scheme-ic3s-overview",
+      "status": "downloaded",
+      "filename": "IC3S-INDIAN-COMMON-CRITERIA-CE.html",
+      "sizeBytes": 31475,
+      "contentType": "text/html",
+      "sha256": "4c02a2179f8d2572ab4648c8a295cd59bdc1d18215d8f3ffb8231164eb6176e3"
+    },
+    {
+      "refId": "OCSI-ORGANISMO-DI-CERTIFICAZIO",
+      "url": "https://www.ocsi.gov.it/index.php/organismo/lo-schema.html",
+      "status": "downloaded",
+      "filename": "OCSI-ORGANISMO-DI-CERTIFICAZIO.html",
+      "sizeBytes": 141398,
+      "contentType": "text/html",
+      "sha256": "2a2465624cd50659b6fd259a1f419ec920eba5798e2482bf1e50f9804a6c38f1"
+    },
+    {
+      "refId": "JISEC-JAPAN-IT-SECURITY-EVALUA",
+      "url": "https://www.ipa.go.jp/en/security/jisec/index.html",
+      "status": "downloaded",
+      "filename": "JISEC-JAPAN-IT-SECURITY-EVALUA.html",
+      "sizeBytes": 64573,
+      "contentType": "text/html",
+      "sha256": "d62cb8954254c9316d20ace397e1eb9ff575d99f6942e7ad5f1d43e603013c97"
+    },
+    {
+      "refId": "ITSCC-IT-SECURITY-CERTIFICATIO",
+      "url": "https://www.itscc.kr/main.do",
+      "status": "downloaded",
+      "filename": "ITSCC-IT-SECURITY-CERTIFICATIO.html",
+      "sizeBytes": 28896,
+      "contentType": "text/html",
+      "sha256": "217733a55a2e4207440fffb2d87693b7a876a8d590c92a470834c18c667f3075"
+    },
+    {
+      "refId": "MYCC-MALAYSIAN-COMMON-CRITERIA",
+      "url": "https://www.cybersecurity.my/portal-main/services/malaysian-common-criteria-scheme-overview",
+      "status": "downloaded",
+      "filename": "MYCC-MALAYSIAN-COMMON-CRITERIA.html",
+      "sizeBytes": 176542,
+      "contentType": "text/html",
+      "sha256": "2c10573a6b45c337d1589279f23b37e40930e4b7a1d486a89bb30d32cd3dc999"
+    },
+    {
+      "refId": "NSCIB-NETHERLANDS-SCHEME-FOR-C",
+      "url": "https://trustcb.com/common-criteria/nscib/",
+      "status": "downloaded",
+      "filename": "NSCIB-NETHERLANDS-SCHEME-FOR-C.html",
+      "sizeBytes": 1335284,
+      "contentType": "text/html",
+      "sha256": "70eeebd90f115cadd5acf6d1d717108d897cd652aa33d1ddb17bd32ac2d146fa"
+    },
+    {
+      "refId": "SERTIT-NORWEGIAN-CERTIFICATION",
+      "url": "https://sertit.no/the-norwegian-certification-scheme/about-the-certification-scheme/",
+      "status": "downloaded",
+      "filename": "SERTIT-NORWEGIAN-CERTIFICATION.html",
+      "sizeBytes": 44882,
+      "contentType": "text/html",
+      "sha256": "d0ee00de0eaf5c2f7417fb3acba7ceb2b0db12f4fb23663570b999d21b45600f"
+    },
+    {
+      "refId": "NASK-COMMON-CRITERIA-CERTIFICA",
+      "url": "https://certyfikacja.nask.pl/en/en-common-criteria/",
+      "status": "downloaded",
+      "filename": "NASK-COMMON-CRITERIA-CERTIFICA.html",
+      "sizeBytes": 213221,
+      "contentType": "text/html",
+      "sha256": "6f3f7c1e6d428ee6d1a54aad19f730d0775129c8d775582aab065b297127ef50"
+    },
+    {
+      "refId": "CSEC-SWEDISH-CERTIFICATION-BOD",
+      "url": "https://www.fmv.se/english/supplier-information/csec/",
+      "status": "downloaded",
+      "filename": "CSEC-SWEDISH-CERTIFICATION-BOD.html",
+      "sizeBytes": 79997,
+      "contentType": "text/html",
+      "sha256": "410de4d0d79025331206e9a9ff6ad8e359a321c45269c07150ba5127a1cf5b3a"
+    },
+    {
+      "refId": "SCCS-SINGAPORE-COMMON-CRITERIA",
+      "url": "https://www.csa.gov.sg/our-programmes/certification-and-labelling-schemes/singapore-common-criteria-scheme",
+      "status": "downloaded",
+      "filename": "SCCS-SINGAPORE-COMMON-CRITERIA.html",
+      "sizeBytes": 482780,
+      "contentType": "text/html",
+      "sha256": "3c42b7f370d2fd72827cc6862d656a294cf4a74b696ab325d4ea8b9b6a59a153"
+    },
+    {
+      "refId": "TSE-COMMON-CRITERIA-CERTIFICAT",
+      "url": "https://www.tse.org.tr/",
+      "status": "downloaded",
+      "filename": "TSE-COMMON-CRITERIA-CERTIFICAT.html",
+      "sizeBytes": 436763,
+      "contentType": "text/html",
+      "sha256": "bb4185b20950539fe31c697c29b880644a8340cfa7233764be56fff1951a66c1"
+    },
+    {
+      "refId": "NIAP-NATIONAL-INFORMATION-ASSU",
+      "url": "https://www.niap-ccevs.org/protectionprofiles",
+      "status": "downloaded",
+      "filename": "NIAP-NATIONAL-INFORMATION-ASSU.html",
+      "sizeBytes": 256646,
+      "contentType": "text/html",
+      "sha256": "1a5fb7a37f01507aa728c2586ca0527c8612ff58621c80d1f1424a09cf57087a"
+    },
+    {
+      "refId": "ANSSI-COMMON-CRITERIA-CERTIFIC",
+      "url": "https://cyber.gouv.fr/offre-de-service/solutions-certifiees-et-qualifiees/comprendre-levaluation-de-securite/certification-de-produits/comprendre-la-certification/",
+      "status": "downloaded",
+      "filename": "ANSSI-COMMON-CRITERIA-CERTIFIC.html",
+      "sizeBytes": 28733,
+      "contentType": "text/html",
+      "sha256": "3a343269cc78d6532228dca0a3f8cdd254b0e26ef0d15274bbf7523da0c90036"
+    },
+    {
+      "refId": "FFIEC-IT-EXAMINATION-HANDBOOK-",
+      "url": "https://ithandbook.ffiec.gov/it-booklets/information-security",
+      "status": "downloaded",
+      "filename": "FFIEC-IT-EXAMINATION-HANDBOOK-.html",
+      "sizeBytes": 58546,
+      "contentType": "text/html",
+      "sha256": "a4a041bbeb112f874d0ebcc858dc447b568e8e413441d194b8cb4dc9453304d7"
+    },
+    {
+      "refId": "CJIS-SECURITY-POLICY-FBI",
+      "url": "https://le.fbi.gov/file-repository/cjis_security_policy_v6-1_20260625.pdf",
+      "status": "downloaded",
+      "filename": "CJIS-SECURITY-POLICY-FBI.pdf",
+      "sizeBytes": 4443912,
+      "contentType": "application/pdf",
+      "sha256": "0e0f0f53db17f2b6408b2ce486fafb84acb0f628f68a794372ef4eb0c87ff4f8"
+    },
+    {
+      "refId": "PSD2-REVISED-PAYMENT-SERVICES-",
+      "url": "https://eur-lex.europa.eu/eli/dir/2015/2366/oj/eng",
+      "status": "downloaded",
+      "filename": "PSD2-REVISED-PAYMENT-SERVICES-.html",
+      "sizeBytes": 1122118,
+      "contentType": "text/html",
+      "sha256": "1109cd435d9aa729aff87d6476913c45ad999ac14bedf5152633b98a8cbf5e30"
+    },
+    {
+      "refId": "CCCS-ITSP-40-111-CRYPTOGRAPHIC",
+      "url": "https://www.cyber.gc.ca/en/guidance/cryptographic-algorithms-unclassified-protected-protected-b-information-itsp40111",
+      "status": "downloaded",
+      "filename": "CCCS-ITSP-40-111-CRYPTOGRAPHIC.html",
+      "sizeBytes": 264573,
+      "contentType": "text/html",
+      "sha256": "0481832765cba7bbff393bcac176c1322ac0ccbf42264803eba6c878a8283a83"
+    },
+    {
+      "refId": "INDIA-DPDP-ACT-2023",
+      "url": "https://www.meity.gov.in/static/uploads/2024/06/2bf1f0e9f04e6fb4f8fef35e82c42aa5.pdf",
+      "status": "downloaded",
+      "filename": "INDIA-DPDP-ACT-2023.pdf",
+      "sizeBytes": 182082,
+      "contentType": "application/pdf",
+      "sha256": "4deb23981d3010c8225a2ff6149e7243dc2268455b299e283afebdd7b72a7d15"
+    },
+    {
+      "refId": "SFC-CIRCULAR-EXTERNA-007-2018-",
+      "url": "https://www.fundacionmicrofinanzasbbva.org/revistaprogreso/wp-content/uploads/2018/05/Col-CE-007-ciberseguridad.pdf",
+      "status": "downloaded",
+      "filename": "SFC-CIRCULAR-EXTERNA-007-2018-.pdf",
+      "sizeBytes": 13955,
+      "contentType": "application/pdf",
+      "sha256": "7cf984c6f226349b097b1e35cc629a347ca117b724d153c310533ba6a1928a7b"
+    },
+    {
+      "refId": "OJK-POJK-11-2022-IT-IMPLEMENTA",
+      "url": "https://ojk.go.id/id/regulasi/Documents/Pages/Penyelenggaraan-Teknologi-Informasi-Oleh-Bank-Umum/POJK%2011%20-%2003%20-%202022.pdf",
+      "status": "downloaded",
+      "filename": "OJK-POJK-11-2022-IT-IMPLEMENTA.pdf",
+      "sizeBytes": 241982,
+      "contentType": "application/pdf",
+      "sha256": "d4e8d59915bdecdbdc1ae61388b858b8c898bc349d23cbb64326f43a48b5b733"
+    },
+    {
+      "refId": "SBS-RESOLUCION-504-2021-INFORM",
+      "url": "https://busquedas.elperuano.pe/normaslegales/aprueban-el-reglamento-para-la-gestion-de-la-seguridad-de-la-resolucion-no-504-2021-1929393-1/",
+      "status": "downloaded",
+      "filename": "SBS-RESOLUCION-504-2021-INFORM.html",
+      "sizeBytes": 282275,
+      "contentType": "text/html",
+      "sha256": "1d57db6677ed4ddb4898985885ab179bee12584977088b318daab4fd4bbe8139"
+    },
+    {
+      "refId": "SAMA-CYBER-SECURITY-FRAMEWORK-",
+      "url": "https://rulebook.sama.gov.sa/en/cyber-security-framework-2",
+      "status": "downloaded",
+      "filename": "SAMA-CYBER-SECURITY-FRAMEWORK-.html",
+      "sizeBytes": 327048,
+      "contentType": "text/html",
+      "sha256": "649b2a00224eecacbe3683540dec0638e298f48d89dd4b02319981226780b7fb"
+    },
+    {
+      "refId": "BNM-RMIT-RISK-MANAGEMENT-IN-TE",
+      "url": "https://www.bnm.gov.my/documents/20124/938039/pd-rmit-nov25.pdf",
+      "status": "downloaded",
+      "filename": "BNM-RMIT-RISK-MANAGEMENT-IN-TE.pdf",
+      "sizeBytes": 762759,
+      "contentType": "application/pdf",
+      "sha256": "064ffdd45fa2c3fae16847ed87b9fcae3efaecb465d47046c33a5740f155076c",
+      "note": "Fetched manually by the user 2026-07-31 -- all automated fetch tiers (curl_cffi, playwright-stealth, crawl4ai) were blocked by bnm.gov.my."
+    },
+    {
+      "refId": "NCSA-QATAR-COMMON-CRITERIA-SCH",
+      "url": "https://assurance.ncsa.gov.qa/en/certification/qccs",
+      "status": "downloaded",
+      "filename": "NCSA-QATAR-COMMON-CRITERIA-SCH.html",
+      "sizeBytes": 1490886,
+      "contentType": "text/html",
+      "sha256": "52a419bc48e1f354f4464d4227c4a4b1796d20dae23de45c611b922a4c40c57c",
+      "note": "Fetched manually by the user 2026-07-31 (saved webpage) -- every automated fetch tier returned an 8-character JS shell for this URL on both its own domains."
+    },
+    {
+      "refId": "ANSSI-BODY",
+      "url": "https://cyber.gouv.fr/enjeux-technologiques/cryptographie-post-quantique/",
+      "status": "downloaded",
+      "filename": "ANSSI-BODY.html",
+      "sizeBytes": 50394,
+      "contentType": "text/html",
+      "sha256": "34468a09f983f242225a589214e45b59bb22d615b1bcf603520af5dd3cc1f173"
+    },
+    {
+      "refId": "ENISA",
+      "url": "https://www.enisa.europa.eu/publications/post-quantum-cryptography-current-state-and-quantum-mitigation",
+      "status": "downloaded",
+      "filename": "ENISA.html",
+      "sizeBytes": 53760,
+      "contentType": "text/html",
+      "sha256": "e2ad30c1ad3b897ad7fcf177dde8a6779687a9521b072da23d41961d2b2d09a2"
+    },
+    {
+      "refId": "BSI",
+      "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.pdf",
+      "status": "downloaded",
+      "filename": "BSI.pdf",
+      "sizeBytes": 568388,
+      "contentType": "application/pdf",
+      "sha256": "f601cdf25c000b431573a307a3c125f3c51d301897089e7e63dde0449367a62a",
+      "note": "Same document already cached for library row BSI-TR-02102-1 -- copied rather than re-fetched, per user pointer."
     }
   ],
   "blocked": {
@@ -1479,9 +1770,9 @@
       "attempts": 6
     },
     "KCMVP": {
-      "reason": "client-side-only redirect stub (window.location.href, no server-rendered content)",
-      "blocked_at": "2026-07-14T02:16:08.133645+00:00",
-      "attempts": 5
+      "reason": "unusable content: only 13 chars of visible text (floor 200) \u2014 a shell, not a document",
+      "blocked_at": "2026-07-31T22:02:59.774776+00:00",
+      "attempts": 6
     },
     "NZISM": {
       "reason": "status=200, tier=crawl4ai",
@@ -1490,23 +1781,18 @@
     },
     "UAE-CSC-PQC": {
       "reason": "status=err, tier=crawl4ai",
-      "blocked_at": "2026-07-14T02:18:36.654597+00:00",
-      "attempts": 1
+      "blocked_at": "2026-07-31T22:02:59.774776+00:00",
+      "attempts": 2
     },
     "INDIA-CERTIN-CBOM": {
       "reason": "status=err, tier=crawl4ai",
-      "blocked_at": "2026-07-14T02:19:47.181064+00:00",
-      "attempts": 1
-    },
-    "SPAIN-CCN-PQC": {
-      "reason": "status=err, tier=crawl4ai",
-      "blocked_at": "2026-07-14T02:19:47.181064+00:00",
-      "attempts": 1
+      "blocked_at": "2026-07-31T22:02:59.774776+00:00",
+      "attempts": 2
     },
     "JORDAN-CBJ-PQC": {
-      "reason": "JS-shell page, empty <body> in curl_cffi/stealth snapshot",
-      "blocked_at": "2026-07-14T02:22:56.281304+00:00",
-      "attempts": 1
+      "reason": "status=err, tier=crawl4ai",
+      "blocked_at": "2026-07-31T22:02:59.774776+00:00",
+      "attempts": 2
     },
     "ETSI-EN-303645": {
       "reason": "status=200, tier=crawl4ai",
@@ -1518,40 +1804,30 @@
       "blocked_at": "2026-07-29T21:51:27.259243+00:00",
       "attempts": 2
     },
-    "KE-DPA": {
-      "reason": "status=err, tier=crawl4ai",
-      "blocked_at": "2026-07-14T02:27:15.404264+00:00",
-      "attempts": 1
-    },
     "CHILE-ANCI": {
       "reason": "status=err, tier=crawl4ai",
-      "blocked_at": "2026-07-14T02:31:41.619107+00:00",
-      "attempts": 1
-    },
-    "MEXICO-CNBV-CUB": {
-      "reason": "bot challenge page (Radware-style Challenge Validation)",
-      "blocked_at": "2026-07-14T02:33:20.355580+00:00",
-      "attempts": 1
+      "blocked_at": "2026-07-31T22:02:59.774776+00:00",
+      "attempts": 2
     },
     "TH-PDPA": {
       "reason": "status=err, tier=crawl4ai",
-      "blocked_at": "2026-07-14T02:34:00.743901+00:00",
-      "attempts": 1
+      "blocked_at": "2026-07-31T22:02:59.774776+00:00",
+      "attempts": 2
     },
     "VN-CYBER": {
       "reason": "status=err, tier=crawl4ai",
-      "blocked_at": "2026-07-14T02:34:00.743901+00:00",
-      "attempts": 1
-    },
-    "ID-PDP": {
-      "reason": "Indonesian-language error page (Layanan Tidak Tersedia = Service Unavailable), not caught by English-only title patterns",
-      "blocked_at": "2026-07-14T02:35:17.460738+00:00",
-      "attempts": 1
+      "blocked_at": "2026-07-31T22:02:59.774776+00:00",
+      "attempts": 2
     },
     "occ-bulletin-2024-23-pqc": {
       "reason": "status=200, tier=crawl4ai",
       "blocked_at": "2026-07-29T21:51:27.259243+00:00",
       "attempts": 2
+    },
+    "BRAZIL-BACEN-4893": {
+      "reason": "unusable content: only 23 chars of visible text (floor 200) \u2014 a shell, not a document",
+      "blocked_at": "2026-07-31T22:02:59.774776+00:00",
+      "attempts": 1
     }
   }
 }

@@ -2,7 +2,7 @@
 
 ## Overview
 
-Advanced-level module (120 min, 6 workshop steps) covering post-quantum cryptography migration for the aerospace and space industries — environments with extreme bandwidth constraints, multi-decade asset lifetimes, mandatory re-certification requirements, and export-control implications for cryptographic algorithm changes.
+Advanced-level module (80 min, 6 workshop steps) covering post-quantum cryptography migration for the aerospace and space industries — environments with extreme bandwidth constraints, multi-decade asset lifetimes, mandatory re-certification requirements, and export-control implications for cryptographic algorithm changes.
 
 ## Key Topics
 

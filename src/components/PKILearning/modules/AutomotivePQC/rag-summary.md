@@ -2,7 +2,7 @@
 
 ## Overview
 
-Advanced-level module (120 min, 6 workshop steps) covering post-quantum cryptography migration for the automotive industry — an ecosystem with stringent functional safety requirements (ISO 26262), 15-year vehicle lifetimes that exceed the projected quantum threat window, complex in-vehicle network topologies, and a global OTA update infrastructure that is itself a primary attack surface.
+Advanced-level module (80 min, 6 workshop steps) covering post-quantum cryptography migration for the automotive industry — an ecosystem with stringent functional safety requirements (ISO 26262), 15-year vehicle lifetimes that exceed the projected quantum threat window, complex in-vehicle network topologies, and a global OTA update infrastructure that is itself a primary attack surface.
 
 ## Key Topics
 

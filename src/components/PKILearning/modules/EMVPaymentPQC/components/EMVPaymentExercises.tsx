@@ -39,7 +39,7 @@ export const EMVPaymentExercises: React.FC<ExercisesProps> = ({
       badge: 'Architecture',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'Visa has 4.6B cards with active PQC research (quantum lab since 2022), while UnionPay has 9.4B cards tied to China\u2019s pending GB/T standards. UnionPay\u2019s scale makes it the single largest quantum-vulnerable payment ecosystem. Combined offline exposure: ~14B cards using RSA-based CDA/DDA.',
+        'Visa has 4.6B cards with active PQC research (quantum lab since 2022), while UnionPay has 9.4B cards tied to China\u2019s pending GB/T standards. UnionPay\u2019s scale makes it the single largest quantum-vulnerable payment ecosystem. Note the two card counts are not subsets of the 14.7 billion EMV figure: network totals count every card a network has in circulation, including non-EMV and multi-badged cards, so they cannot be added up against it.',
       config: { step: 0 },
     },
     {
@@ -50,7 +50,7 @@ export const EMVPaymentExercises: React.FC<ExercisesProps> = ({
       badge: 'Authentication',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'Online mode has 2 quantum-vulnerable steps (TLS key exchange, HSM key wrapping). Offline CDA has 3 (ICC certificate verification, combined signature, chain verification). Offline CDA is more dangerous because forged certificates enable counterfeit acceptance at any terminal without network connectivity. Online mode mitigates risk through real-time issuer authorization.',
+        'Online mode has 2 quantum-vulnerable steps: the ICC certificate-chain verification during card authentication, and the TLS key exchange from terminal to acquirer. Issuer ARQC verification is NOT one of them — it is symmetric end to end. Offline CDA has 3 (ICC certificate verification, the combined AC+SSAD signature, and the combined-signature verification). Offline CDA is more dangerous because forged certificates enable counterfeit acceptance at any terminal without network connectivity. Online mode mitigates risk through real-time issuer authorization.',
       config: { step: 1 },
     },
     {
@@ -72,7 +72,7 @@ export const EMVPaymentExercises: React.FC<ExercisesProps> = ({
       badge: 'Tokenization',
       badgeColor: 'bg-status-success/20 text-status-success border-status-success/50',
       observe:
-        '4 of 6 provisioning steps are quantum-vulnerable: (1) TLS enrollment uses RSA/ECDSA key exchange, (2) ID&V uses ECDSA token signing, (3) HSM key wrapping uses RSA-2048, (4) device attestation uses ECDSA. The per-transaction cryptogram generation (AES-256) and activation confirmation are quantum-safe. Priority: migrate TSP TLS and device attestation first.',
+        '5 of the 6 Visa VTS provisioning steps are quantum-vulnerable: (1) TLS enrollment uses RSA/ECDSA key exchange, (2) ID&V uses ECDSA token request signing, (3) token generation uses RSA-2048 HSM key wrapping, (4) token cryptographic key (LUK) provisioning uses RSA-2048/ECDH key agreement, (5) Secure Element provisioning uses an ECDSA device attestation certificate. Only activation confirmation is quantum-safe. Note MDES and Amex EST come out at 4 of 6 — the LUK provisioning step is where VTS differs. Priority: migrate TSP TLS and device attestation first.',
       config: { step: 3 },
     },
     {
@@ -83,7 +83,7 @@ export const EMVPaymentExercises: React.FC<ExercisesProps> = ({
       badge: 'Key Management',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'DUKPT per-transaction key derivation uses symmetric crypto (quantum-safe). The quantum vulnerability is specifically at Step 2: RSA-2048 key transport wrapping the BDK at the KIF. Compromising this RSA wrapping exposes the BDK, which can derive ALL past and future transaction keys. ML-KEM-768 key encapsulation replaces RSA at Step 2. The symmetric DUKPT chain (Steps 1 and 4) needs no change.',
+        'DUKPT per-transaction key derivation uses symmetric crypto (quantum-safe). The quantum exposure spans TWO steps, not one: Step 2 wraps the BDK under an RSA-2048 key transport key, and Step 3 transports it — RSA-2048 decryption at the injection station plus TLS. Compromising either exposes the BDK, which can derive ALL past and future transaction keys. ML-KEM-768 key encapsulation replaces RSA at both. Steps 1 (BDK generation) and 4 (terminal derivation) are symmetric and need no change.',
       config: { step: 4 },
     },
     {

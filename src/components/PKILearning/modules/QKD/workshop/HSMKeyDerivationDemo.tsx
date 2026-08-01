@@ -25,7 +25,7 @@ const QKD_KAT_SPECS: KatTestSpec[] = [
     id: 'qkd-hkdf',
     useCase: 'Key derivation functional testing (HKDF)',
     standard: 'SP 800-108 + RFC 5869',
-    referenceUrl: '/library?ref=RFC-5869',
+    referenceUrl: '/library?ref=RFC 5869',
     kind: { type: 'hkdf-derive' },
   },
 ]
@@ -729,7 +729,7 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
               ETSI GS QKD 014
             </a>{' '}
             ·{' '}
-            <a href="/library?ref=PKCS11-V3-OASIS" className="text-primary hover:underline">
+            <a href="/library?ref=PKCS11-V32-OS-OASIS" className="text-primary hover:underline">
               PKCS#11 v3.0
             </a>{' '}
             ·{' '}

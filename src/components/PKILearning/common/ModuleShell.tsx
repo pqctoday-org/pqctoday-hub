@@ -18,7 +18,7 @@
 import { useState, type ReactNode } from 'react'
 import { Link } from 'react-router'
 import type { LucideIcon } from 'lucide-react'
-import { Trash2, Gamepad2, ArrowRight, Wrench, CheckCircle2 } from 'lucide-react'
+import { Trash2, Gamepad2, ArrowRight, Wrench, CheckCircle2, GraduationCap } from 'lucide-react'
 import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { ModuleTabBar } from './ModuleTabBar'
@@ -30,6 +30,7 @@ import { WorkshopStepHeader } from './WorkshopStepHeader'
 import { GlossaryAutoWrap } from './GlossaryAutoWrap'
 import { useModuleProgress } from './useModuleProgress'
 import { STANDARD_TABS, type ModuleManifest } from '../manifest/types'
+import { QUIZ_CATEGORIES } from '../modules/Quiz/types'
 import { MODULE_TO_TRACK, TRACK_COLORS, MODULE_TRACKS } from '../moduleData'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -504,6 +505,26 @@ export const ModuleShell = ({
                 <span className="font-medium text-foreground">Back to the Learning hub</span>
               </Link>
             )}
+            {/* Quiz handoff. Until 2026-07-31 nothing in the app routed a
+                learner from a finished module to its questions — the only
+                /learn/quiz?category= links lived in the persona path view — so
+                20 digital-id questions (and every other module's) were
+                effectively unreachable from the module itself. Gated on the
+                module id actually being a quiz category: 59 of 65 are, and the
+                remaining 6 correctly get no CTA rather than a dead link. */}
+            {(QUIZ_CATEGORIES as readonly string[]).includes(manifest.id) ? (
+              <Link to={`/learn/quiz?category=${manifest.id}`} className={footerLink}>
+                <GraduationCap size={15} className="shrink-0 text-primary" />
+                <span className="min-w-0">
+                  <span className="block text-[11px] uppercase tracking-wide text-muted-foreground">
+                    Check your understanding
+                  </span>
+                  <span className="block truncate font-medium text-foreground">
+                    Take the {manifest.title} quiz
+                  </span>
+                </span>
+              </Link>
+            ) : null}
             {manifest.playgroundTool ? (
               <Link to={`/playground/${manifest.playgroundTool}`} className={footerLink}>
                 <Wrench size={15} className="shrink-0 text-primary" />

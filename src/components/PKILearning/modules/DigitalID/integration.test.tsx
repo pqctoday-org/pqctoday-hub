@@ -91,15 +91,19 @@ vi.mock('../../../OpenSSLStudio/store', () => ({
 }))
 
 describe('EUDI Digital ID Integration', () => {
-  it('renders the Digital ID module with 4-tab navigation', () => {
+  it('renders the Digital ID module with its full tab set', () => {
     renderWithRouter()
 
     expect(screen.getByText('EUDI Digital Identity Wallet')).toBeDefined()
-    // 4-tab nav triggers
+    // ModuleShell's STANDARD_TABS: asserted in full so a tab silently
+    // appearing or disappearing fails here. This test claimed "4-tab
+    // navigation" until 2026-07-31 while the module actually rendered six.
     expect(screen.getByText('Learn')).toBeDefined()
+    expect(screen.getByText('Visual')).toBeDefined()
     expect(screen.getByText('Workshop')).toBeDefined()
     expect(screen.getByText('Exercises')).toBeDefined()
     expect(screen.getByText('References')).toBeDefined()
+    expect(screen.getByText('Tools & Products')).toBeDefined()
     // Learn tab is active by default — shows eIDAS 2.0 overview content
     expect(screen.getByText(/What is eIDAS 2\.0/i)).toBeDefined()
   })

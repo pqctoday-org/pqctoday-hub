@@ -8,6 +8,7 @@
 // user except the researcher persona's For You view.
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import { MemoryRouter } from 'react-router'
 import { ComplianceDetailDrawer } from './ComplianceDetailDrawer'
 import { complianceFrameworks, type ComplianceFramework } from '@/data/complianceData'
 
@@ -98,5 +99,35 @@ describe('ComplianceDetailDrawer', () => {
     )
     expect(screen.getByText('Traceability chain')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Open CSWP\.39 crosswalk/i })).toBeInTheDocument()
+  })
+})
+
+describe('ComplianceDetailDrawer — learn backlink', () => {
+  // Traversal was one-way until 2026-07-31: a module could link out to
+  // /compliance, but no compliance row could route a reader back into the
+  // module that teaches it. Asserted here rather than in a browser because the
+  // Landscape drawer needs the full page (tabs + persona filters) to open.
+  const renderDrawer = (fw: ComplianceFramework) =>
+    render(
+      <MemoryRouter>
+        <ComplianceDetailDrawer framework={fw} pillar="comply" onClose={() => {}} />
+      </MemoryRouter>
+    )
+
+  it('renders a link per learn module, titled from the catalog', () => {
+    renderDrawer(framework({ label: 'eIDAS 2.0', learnModules: ['digital-id'] }))
+    expect(screen.getByText('Learn this')).toBeDefined()
+    const link = screen.getByRole('link', { name: /Digital ID/i })
+    expect(link.getAttribute('href')).toBe('/learn/digital-id')
+  })
+
+  it('omits the section entirely when no modules are mapped', () => {
+    renderDrawer(framework({ label: 'Unmapped', learnModules: [] }))
+    expect(screen.queryByText('Learn this')).toBeNull()
+  })
+
+  it('omits the section when the field is absent (older rows)', () => {
+    renderDrawer(framework({ label: 'No column' }))
+    expect(screen.queryByText('Learn this')).toBeNull()
   })
 })

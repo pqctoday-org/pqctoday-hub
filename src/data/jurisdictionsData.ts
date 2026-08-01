@@ -96,6 +96,20 @@ export interface JurisdictionEntry {
   /** Region grouping for all entries (picker + reference-only). */
   region: JurisdictionRegion
   /**
+   * The /compliance display bloc for this jurisdiction.
+   *
+   * ADDED 2026-07-31 (WP-0.3). Deliberately a SEPARATE field from `region`
+   * rather than derived from it, because the two taxonomies genuinely disagree
+   * in three places and a derivation would have to guess: `americas` splits
+   * into North America and Latin America, `mena` splits (Egypt is Africa), and
+   * the UK is region='eu' for picker grouping but its own compliance bloc.
+   *
+   * Before this, complianceData.ts kept its own hand-maintained map of 66
+   * country names. The two drifted exactly as you would expect: 12 of those
+   * names had no jurisdictions row at all and could never be reached.
+   */
+  complianceBloc: string
+  /**
    * Whether this entry appears in jurisdiction pickers (Assess, Learn, Sim).
    * false = reference-only: used for COUNTRY_CODE_TO_NAME compliance expansion
    * and assessBridge archetype fallbacks, but not shown in selectors.
@@ -141,6 +155,7 @@ interface RawJurisdictionRow {
   name: string
   flag_code: string
   region: string
+  compliance_bloc: string
   show_in_picker: string
   eu_member: string
   authority: string
@@ -224,6 +239,7 @@ const { data: allRows } = loadLatestCSV<RawJurisdictionRow, JurisdictionEntry>(
       name,
       flagCode: row.flag_code?.trim() || code.toLowerCase(),
       region,
+      complianceBloc: row.compliance_bloc?.trim() || '',
       showInPicker: row.show_in_picker?.trim().toLowerCase() === 'yes',
       euMember: row.eu_member?.trim().toLowerCase() === 'yes',
       authority: row.authority?.trim() || '',
@@ -279,6 +295,18 @@ export const COUNTRY_CODE_TO_NAME: Record<string, string> = {
  * compliance cascade: selecting European Union seeds frameworks for all
  * of these codes in addition to the EU code itself.
  */
+/**
+ * Country NAME -> /compliance display bloc. The single source of truth for the
+ * compliance region facet, replacing the hand-maintained COUNTRY_TO_REGION
+ * literal that used to live in complianceData.ts (WP-0.3).
+ *
+ * Keyed by name rather than code because the compliance CSV's `countries`
+ * column is expanded to names before the facet sees it.
+ */
+export const COUNTRY_NAME_TO_COMPLIANCE_BLOC: Record<string, string> = Object.fromEntries(
+  ACTIVE_ALL.filter((j) => j.complianceBloc).map((j) => [j.name, j.complianceBloc])
+)
+
 export const EU_MEMBER_CODES: ReadonlySet<string> = new Set(
   ACTIVE_ALL.filter((j) => j.euMember).map((j) => j.code)
 )

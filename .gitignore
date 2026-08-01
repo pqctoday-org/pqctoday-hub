@@ -374,6 +374,11 @@ public/data/rag-index-freshness.json
 # CuriousSummaryBanner has no fallback chain; missing PNG = broken image.
 !scripts/audit-module-infographics.ts
 
+# Content revision-coverage audit (LEARN-MODULE-REVISION-HISTORY-REMEDIATION-
+# PLAN-07312026.md Phase 2, covers Learn modules + Playground tools) — CI
+# gate, `npm run audit:content-revision-coverage`.
+!scripts/audit-content-revision-coverage.ts
+
 # Learn-module snapshot exporter — emits the JSON snapshot the maintainer
 # agent's Python validators consume (learn-modules maintenance Phase 0).
 # Execute-imports real manifests + AST-extracts content.ts/component text:

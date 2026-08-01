@@ -7,13 +7,13 @@ import { useDigitalIDLogs } from '../../hooks/useDigitalIDLogs'
 import { createMdoc } from '../../utils/mdoc-utils'
 import type { CryptoProvider } from '../../utils/crypto-provider'
 import { OpenSSLCryptoProvider } from '../../utils/openssl-crypto-provider'
-import { SoftHSMCryptoProvider } from '../../utils/hsm-crypto-provider'
+import { SoftHSMCryptoProvider, isHsmBackedKey } from '../../utils/hsm-crypto-provider'
 import { DualCryptoProvider } from '../../utils/dual-crypto-provider'
 import { generateX509Certificate } from '../../utils/x509-utils'
 import { Loader2, CheckCircle, Smartphone, Lock, UserCheck, CreditCard } from 'lucide-react'
 import { MARIA_IDENTITY } from '../../constants'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
-import { useHSM } from '@/hooks/useHSM'
+import type { UseHSMResult } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
@@ -22,6 +22,7 @@ const PID_LIVE_OPERATIONS = ['C_GenerateKeyPair', 'C_GetAttributeValue', 'C_Sign
 
 interface PIDIssuerComponentProps {
   wallet: WalletInstance
+  hsm: UseHSMResult
   onCredentialIssued: (cred: VerifiableCredential, key: CryptoKey) => void
   onBack: () => void
 }
@@ -47,6 +48,7 @@ const KeyIcon = (props: React.ComponentProps<'svg'>) => (
 
 export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
   wallet,
+  hsm,
   onCredentialIssued,
   onBack,
 }) => {
@@ -54,7 +56,6 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
   const [loading, setLoading] = useState(false)
   const { logs, opensslLogs, activeLogTab, setActiveLogTab, addLog, addOpenSSLLog } =
     useDigitalIDLogs()
-  const hsm = useHSM()
 
   const handleStart = async () => {
     setStep('AUTH')
@@ -202,7 +203,13 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
         </CardDescription>
       </CardHeader>
       <CardContent className="p-6">
-        <LiveHSMToggle hsm={hsm} operations={PID_LIVE_OPERATIONS} className="mb-4" />
+        <LiveHSMToggle
+          hsm={hsm}
+          operations={PID_LIVE_OPERATIONS}
+          className="mb-4"
+          preventDisable={wallet.keys.some(isHsmBackedKey)}
+          preventDisableReason="Disable is locked while your wallet holds HSM-backed keys — Reset the workshop to release them."
+        />
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           {/* status visualization */}
           <div className="space-y-6 lg:col-span-2">

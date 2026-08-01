@@ -3,7 +3,6 @@ import { useState, useCallback, useEffect } from 'react'
 import { useSearchParams } from 'react-router'
 import debounce from 'lodash/debounce'
 import { usePersonaStore } from '@/store/usePersonaStore'
-import { resolveToNaics } from '@/components/common/SectorFilter'
 import { INDUSTRY_COMPLIANCE_HINT, REGION_COMPLIANCE_HINT } from '@/data/compliancePersonaHints'
 import type { RegionBloc, DeadlinePhase } from '@/data/complianceData'
 import type { FrameworkSortOption } from './ComplianceLandscape'
@@ -121,12 +120,19 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
   // ── Landscape filter state ─────────────────────────────────────────────
 
   const [lsOrg, setLsOrg] = useState(() => searchParams.get('org') ?? 'All')
-  const [lsIndustry, setLsIndustry] = useState(() =>
-    resolveToNaics(
+  // CHANGED 2026-07-31 (WP-1.1): no longer pre-resolved through resolveToNaics.
+  //
+  // That call collapsed an incoming value to a SINGLE NAICS code before the
+  // filter ever saw it, which is what made `?ind=Finance%20%26%20Banking`
+  // return nothing: it became '52', and the filter then exact-matched '52'
+  // against the `industries` column, where the 12 rows carrying that literal
+  // label did not have it. The raw value is now kept and resolved — to a set,
+  // matching ANY — inside the filter itself.
+  const [lsIndustry, setLsIndustry] = useState(
+    () =>
       searchParams.get('industry') ??
-        searchParams.get('ind') ??
-        (selectedIndustries.length === 1 ? selectedIndustries[0] : 'All')
-    )
+      searchParams.get('ind') ??
+      (selectedIndustries.length === 1 ? selectedIndustries[0] : 'All')
   )
   const [lsRegion, setLsRegion] = useState<RegionBloc | 'All'>(
     () => (searchParams.get('region') as RegionBloc | null) ?? 'All'
@@ -323,9 +329,9 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
 
     if (isLandscapeTab(tab) || tab === 'foryou') {
       const nextOrg = searchParams.get('org') ?? 'All'
-      const nextInd = resolveToNaics(
+      // See the note on lsIndustry above — raw value, resolved in the filter.
+      const nextInd =
         searchParams.get('ind') ?? (selectedIndustries.length === 1 ? selectedIndustries[0] : 'All')
-      )
       const nextRegion = (searchParams.get('region') as RegionBloc | null) ?? 'All'
       const nextCountry = searchParams.get('country') ?? 'All'
       const nextPhase = (searchParams.get('phase') as DeadlinePhase | null) ?? 'All'

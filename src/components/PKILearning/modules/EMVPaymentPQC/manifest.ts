@@ -11,6 +11,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
  */
 const manifest: ModuleManifest = {
   id: 'emv-payment-pqc',
+  contentVersion: 2,
   lm_id: 'LM-044',
   title: 'Financial Services & Payments PQC',
   description:
@@ -94,6 +95,9 @@ const manifest: ModuleManifest = {
     { id: 'settlement-exposure', label: 'Settlement Exposure Modeller' },
     { id: 'regulation-timeline', label: 'Sector Regulation Timeline' },
   ],
+  // simRelevance.ts already maps this module to the financial and retail
+  // scenarios; declaring it here is what actually surfaces the sim as practice.
+  practiceInSim: true,
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.EMVPaymentPQCModule })),
 }
