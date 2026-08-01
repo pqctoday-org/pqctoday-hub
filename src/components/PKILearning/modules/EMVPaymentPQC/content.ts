@@ -39,6 +39,10 @@ export const content: ModuleContent = {
     // Post-Quantum Cryptography in the Financial Sector", January 2026.
     getStandard('G7-CEG-Financial-PQC-2026'),
     getStandard('SG-MAS-Quantum-Advisory-2024'),
+    // Added 2026-08-01: read against the cached PDF (was named-but-unread in
+    // EPC_CITED_EMERGING). Sets a dated transition expectation, not an
+    // algorithm mandate — see the deadlines[] comment below.
+    getStandard('EU-NIS-CG-Roadmap-v1.1'),
     // Added 2026-08-01. All four were already tagged for this module in the
     // library (except CA-CFDIR — see below) yet went uncited, so the References
     // tab omitted the sector's four most substantive PQC sources. Each verified
@@ -58,6 +62,11 @@ export const content: ModuleContent = {
     // Europol/QSFF scoring framework for ranking systems by quantum risk and
     // migration time; mentions EMV throughout.
     getStandard('Europol-FS-ISAC-PQC-Financial-2026'),
+    // Added 2026-08-01 for the new open-banking-psd2 section. eur-lex.europa.eu
+    // blocks automated fetches; read against the legislation.gov.uk mirror
+    // (retained EU law) instead — see the library rows' data_quality_notes.
+    getStandard('PSD2-Directive-EU-2015-2366'),
+    getStandard('EBA-RTS-SCA-2018-389'),
   ],
 
   algorithms: [
@@ -95,7 +104,7 @@ export const content: ModuleContent = {
 
   narratives: {
     overview:
-      'Advanced module covering post-quantum migration across the whole payments and banking estate: the EMV card ecosystem (14.7 billion chip cards at the end of 2024, across Visa, Mastercard, Amex, UnionPay and Discover), retail and card-not-present acceptance, interbank settlement rails, bank key management, and the sector regulation setting the pace. Three learner paths — Cards & Acceptance, Banking & Settlement, Retail & E-Commerce — so no audience is asked for the full 110 minutes.',
+      'Advanced module covering post-quantum migration across the whole payments and banking estate: the EMV card ecosystem (14.7 billion chip cards at the end of 2024, across Visa, Mastercard, Amex, UnionPay and Discover), retail and card-not-present acceptance, interbank settlement rails, bank key management, and the sector regulation setting the pace. Three learner paths — Cards & Acceptance, Banking & Settlement, Retail & E-Commerce — so no audience is asked for the full 120 minutes.',
     keyConcepts:
       'EMV card authentication: SDA (static RSA), DDA (dynamic RSA per transaction), CDA (combined with application cryptogram), all resting on RSA-2048 certificate chains. Settlement rails: Swift messaging, domestic RTGS, and correspondent chains, where the weakest hop sets the security of the whole path and no participant can migrate it alone. Key blocks: a key wrapped together with its usage attributes so it cannot be repurposed — the attribute binding is the security property, and the current standard is ANSI X9.143, not the far more frequently cited X9 TR-31. Harvest-now-decrypt-later drives the timetable: exposure is a function of how long data stays sensitive, not of a guessed CRQC date.',
     workshopSummary:

@@ -442,10 +442,7 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <div className="text-xs font-bold text-foreground mb-2">
-              <InlineTooltip term="Envelope Encryption (Secrets)">
-                Envelope Encryption
-              </InlineTooltip>{' '}
-              Pattern
+              <InlineTooltip term="Envelope Encryption">Envelope Encryption</InlineTooltip> Pattern
             </div>
             <p className="text-xs text-muted-foreground">
               All cloud providers use envelope encryption: DEK (AES-256-GCM) encrypts the secret,

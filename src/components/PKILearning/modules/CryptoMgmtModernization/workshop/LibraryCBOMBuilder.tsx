@@ -679,8 +679,8 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
           <p className="text-xs text-muted-foreground mb-3">
             Cryptographically protected files: signed binaries, encrypted data-at-rest, certificate
             files, key files, archive signatures. Covers the "Files" asset type — one of the nine
-            asset types <InlineTooltip term="NIST CSWP 39">NIST CSWP.39</InlineTooltip> identifies
-            for a cryptographic asset inventory: application codes, libraries, software, hardware,
+            asset types <InlineTooltip term="CSWP 39">NIST CSWP.39</InlineTooltip> identifies for a
+            cryptographic asset inventory: application codes, libraries, software, hardware,
             firmware, user-generated content, communication protocols, enterprise services, and
             systems.
           </p>

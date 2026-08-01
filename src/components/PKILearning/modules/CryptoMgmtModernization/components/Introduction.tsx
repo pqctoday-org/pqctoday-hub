@@ -62,9 +62,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           <p>
             Quantum-safe migration gets the headlines, but four compounding forcing functions
             &mdash; one per crypto asset class &mdash; already bite every enterprise, whether a{' '}
-            <InlineTooltip term="Cryptographically Relevant Quantum Computer">
-              cryptographically relevant quantum computer
-            </InlineTooltip>{' '}
+            <InlineTooltip term="CRQC">cryptographically relevant quantum computer</InlineTooltip>{' '}
             arrives in 2030 or never. Certificates, libraries, application software, and key
             material each have their own deadline; managing one without the others leaves the chain
             weakest at the unmanaged class.
@@ -409,7 +407,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           <p>
             A CPM program treats cryptography as four tightly-linked asset classes, each with its
             own discovery technique but rolled up under a single{' '}
-            <InlineTooltip term="Cryptographic Bill of Materials">CBOM</InlineTooltip>.
+            <InlineTooltip term="CBOM">CBOM</InlineTooltip>.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
