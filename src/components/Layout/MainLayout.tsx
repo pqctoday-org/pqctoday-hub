@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
-import { Outlet, NavLink, Link, useLocation } from 'react-router'
+import { Outlet, NavLink, Link, useLocation, useNavigate } from 'react-router'
 import { motion } from 'framer-motion'
 import {
   Info,
@@ -42,6 +42,7 @@ import { useAirplaneModeStore } from '../../store/useAirplaneModeStore'
 import { CommandPalette } from '../Search/CommandPalette'
 import { useCommandPaletteStore } from '../../store/useCommandPaletteStore'
 import { PersonaSwitchModal } from '../Persona/PersonaSwitchModal'
+import { RegionIndustryPill } from '../Persona/RegionIndustryPill'
 import { PreviewBanner } from '../common/PreviewBanner'
 import { useWorkshopUrlAutostart } from '../../hooks/useWorkshopUrlAutostart'
 import { ScrollFadeContainer } from '../ui/ScrollFadeContainer'
@@ -64,8 +65,6 @@ import {
   PERSONA_NAV_PATHS,
   ALWAYS_VISIBLE_PATHS,
   NAV_PATH_LABELS,
-  PERSONA_TIMELINE_REGION,
-  PERSONA_THREATS_DEFAULT_INDUSTRIES,
   PERSONA_MARKED_NAV_PATHS,
 } from '../../data/personaConfig'
 import { PERSONAS } from '../../data/learningPersonas'
@@ -186,15 +185,6 @@ const ROUTE_SHARE: Partial<Record<string, { title: string; text?: string }>> = {
   },
 }
 
-const REGION_LABELS: Record<string, string> = {
-  americas: 'Americas',
-  eu: 'EU',
-  mena: 'MENA',
-  apac: 'APAC',
-  global: 'Global',
-  All: 'All regions',
-}
-
 // Left-border + tint per FOR YOU row treatment. MORE rows never use these —
 // they get a fixed, smaller/muted style regardless of treatment (see RailRow).
 const ROW_TREATMENT_CLASS: Record<RailRowTreatment, string> = {
@@ -277,7 +267,8 @@ const RailRow: React.FC<RailRowProps> = ({
 
 export const MainLayout = () => {
   const location = useLocation()
-  const { selectedPersona, viewAccess } = usePersonaStore()
+  const navigate = useNavigate()
+  const { selectedPersona, viewAccess, hasSkippedPersonalization } = usePersonaStore()
   const { isOpen: isPanelOpen, toggle: openPanel, open: openRightPanel } = useRightPanelStore()
   const recordVisit = useHistoryStore((s) => s.recordVisit)
   // Auto-start Workshop Video Mode from `?workshop=video&autoplay=1` (Playwright recorder hook).
@@ -355,6 +346,30 @@ export const MainLayout = () => {
     setMoreMenuOpen(false)
   }, [location.pathname])
 
+  // "Update your profile" deep link — `/?picker=open` (PQC101Module's two
+  // "Update profile"/"Set profile" links, AboutNextStepCTA's "Find my
+  // starting point" fallback). Previously handled by PersonalizationSection's
+  // own `?scroll=persona`/`?picker=open` effect, which scrolled to/opened the
+  // wizard; both retired together (see PersonalizationSection.tsx's removal).
+  // PQC101Module's two links used `?scroll=persona` — repointed to
+  // `?picker=open` so both CTAs share this one handler. Judgment call (flagged
+  // in the build report): opens the persona-switch modal — the same identity
+  // control the rail's role-switcher opens — rather than the new region/
+  // industry pill, since these three CTAs were always about "pick a persona",
+  // not region/industry. When no persona is set and Role Home hasn't been
+  // skipped, Role Home already renders on `/` and fully covers this, so the
+  // effect no-ops instead of stacking a second persona picker on top of it.
+  React.useEffect(() => {
+    if (location.pathname !== '/') return
+    const params = new URLSearchParams(location.search)
+    if (params.get('picker') !== 'open') return
+    if (selectedPersona || hasSkippedPersonalization) {
+      setPersonaSwitchOpen(true)
+    }
+    navigate('/', { replace: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- deliberately re-runs only on navigation to '/' with the param present; navigate/selectedPersona/hasSkippedPersonalization are read, not depended on, for re-triggering
+  }, [location.pathname, location.search])
+
   // Mobile "More" sheet content = everything reachable minus what's already an
   // icon in the mobile row, grouped the same way the desktop rail is (FOR YOU
   // then MORE) so the two surfaces never disagree about what's reachable.
@@ -369,12 +384,6 @@ export const MainLayout = () => {
 
   // ── Top bar data ───────────────────────────────────────────────────────────
   const currentLabel = NAV_PATH_LABELS[location.pathname] ?? 'PQC Today'
-  // eslint-disable-next-line security/detect-object-injection
-  const regionValue = selectedPersona ? PERSONA_TIMELINE_REGION[selectedPersona] : null
-  const industriesValue = selectedPersona
-    ? // eslint-disable-next-line security/detect-object-injection
-      PERSONA_THREATS_DEFAULT_INDUSTRIES[selectedPersona]
-    : []
   const markedPaths = selectedPersona
     ? // eslint-disable-next-line security/detect-object-injection
       (PERSONA_MARKED_NAV_PATHS[selectedPersona] ?? [])
@@ -569,26 +578,7 @@ export const MainLayout = () => {
                 this replaces the old flat nav row entirely at lg+. */}
               <div className="hidden lg:flex items-center justify-between gap-3 flex-1 min-w-0">
                 <div className="flex items-center gap-2 min-w-0">
-                  {selectedPersona ? (
-                    <span
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-muted/20 px-2.5 py-1.5 text-xs text-muted-foreground min-w-0 truncate"
-                      title={`PERSONA_TIMELINE_REGION.${selectedPersona} = "${regionValue}" · PERSONA_THREATS_DEFAULT_INDUSTRIES.${selectedPersona} = [${
-                        industriesValue.join(', ') || '—'
-                      }]`}
-                    >
-                      <span className="truncate">
-                        {REGION_LABELS[regionValue ?? 'global'] ?? regionValue}
-                        {industriesValue.length > 0 ? ` · ${industriesValue.join(', ')}` : ''}
-                      </span>
-                    </span>
-                  ) : (
-                    <span
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-muted/20 px-2.5 py-1.5 text-xs text-muted-foreground"
-                      title="No role selected — showing unfiltered data across all regions and industries"
-                    >
-                      All regions · All industries
-                    </span>
-                  )}
+                  <RegionIndustryPill />
                   {showWipChip && (
                     <span
                       className="inline-flex items-center gap-1 rounded-lg border text-status-warning bg-status-warning px-2 py-1 text-[11px] font-medium shrink-0"
