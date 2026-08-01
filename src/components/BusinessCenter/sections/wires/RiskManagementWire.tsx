@@ -100,7 +100,7 @@ function HealthTile({ metrics }: { metrics: BusinessMetrics }) {
       : null
 
   return (
-    <div className="rounded-lg border border-border bg-card/50 p-3 flex items-center gap-3 flex-wrap">
+    <div className="rounded-lg border border-border bg-card/50 p-3 flex items-center gap-3 flex-wrap max-md:flex-col max-md:items-start">
       <Activity size={18} className="text-primary shrink-0" />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">

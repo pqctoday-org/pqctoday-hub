@@ -88,37 +88,41 @@ export function PostureCommandCenter({
       </div>
 
       {/* next move */}
-      <div className="mt-3 flex items-center gap-3 rounded-xl border border-status-success/20 bg-status-success/[0.07] p-3">
-        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-status-success/20 text-status-success">
-          <ArrowRight size={15} aria-hidden />
-        </span>
-        <p className="min-w-0 flex-1 text-xs text-foreground">
-          <strong>Next move:</strong>{' '}
-          {nextMove
-            ? `${nextMove.asset.label} is a ${DECISIONS[nextMove.asset.decision].label} — ${
-                nextMove.product ?? 'pick a product'
-              }`
-            : plannedAssets.length === 0
-              ? 'add what you run to start your plan'
-              : 'unblock your roadmap/mitigate assets'}
-        </p>
-        {nextMove && (
-          <span className="shrink-0 font-mono text-[11px] text-muted-foreground">
-            Wave {nextMove.asset.wave} · {nextMove.asset.cnsaYear}
+      <div className="mt-3 flex flex-col items-start gap-2 rounded-xl border border-status-success/20 bg-status-success/[0.07] p-3 sm:flex-row sm:items-center sm:gap-3">
+        <div className="flex w-full items-center gap-3 sm:w-auto sm:min-w-0 sm:flex-1">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-status-success/20 text-status-success">
+            <ArrowRight size={15} aria-hidden />
           </span>
-        )}
-        <ConfirmButton
-          size="sm"
-          className="shrink-0 text-muted-foreground hover:text-foreground"
-          onConfirm={clearPlan}
-          confirmChildren={
-            <>
-              <RotateCcw size={13} /> Clear it all?
-            </>
-          }
-        >
-          <RotateCcw size={13} /> Start over
-        </ConfirmButton>
+          <p className="min-w-0 flex-1 text-xs text-foreground">
+            <strong>Next move:</strong>{' '}
+            {nextMove
+              ? `${nextMove.asset.label} is a ${DECISIONS[nextMove.asset.decision].label} — ${
+                  nextMove.product ?? 'pick a product'
+                }`
+              : plannedAssets.length === 0
+                ? 'add what you run to start your plan'
+                : 'unblock your roadmap/mitigate assets'}
+          </p>
+        </div>
+        <div className="flex shrink-0 items-center gap-3">
+          {nextMove && (
+            <span className="shrink-0 font-mono text-[11px] text-muted-foreground">
+              Wave {nextMove.asset.wave} · {nextMove.asset.cnsaYear}
+            </span>
+          )}
+          <ConfirmButton
+            size="sm"
+            className="shrink-0 text-muted-foreground hover:text-foreground"
+            onConfirm={clearPlan}
+            confirmChildren={
+              <>
+                <RotateCcw size={13} /> Clear it all?
+              </>
+            }
+          >
+            <RotateCcw size={13} /> Start over
+          </ConfirmButton>
+        </div>
       </div>
     </div>
   )

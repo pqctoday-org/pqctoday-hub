@@ -42,8 +42,8 @@ export const WorkbenchPreview: React.FC<WorkbenchPreviewProps> = ({
   return (
     <div className="my-auto flex flex-col gap-4">
       {/* Command Preview */}
-      <div className="glass-panel overflow-hidden shrink-0 flex flex-col">
-        <div className="p-2 pl-3 border-b border-border bg-muted/20 flex items-center justify-between gap-4">
+      <div className="glass-panel overflow-hidden max-md:overflow-x-auto shrink-0 flex flex-col">
+        <div className="p-2 pl-3 border-b border-border bg-muted/20 flex items-center max-md:flex-wrap justify-between gap-4">
           <h4 className="font-bold text-foreground flex items-center gap-2 text-sm whitespace-nowrap">
             <Terminal size={14} />
             Command Preview

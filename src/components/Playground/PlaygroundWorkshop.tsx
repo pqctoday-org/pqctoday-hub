@@ -481,7 +481,7 @@ const ToolDetailModal: React.FC<ToolModalProps> = ({
         aria-label="Close dialog"
         className="absolute inset-0 h-full w-full cursor-default rounded-none bg-transparent hover:bg-transparent"
       />
-      <FocusLock returnFocus>
+      <FocusLock returnFocus className="max-lg:contents">
         <div
           role="dialog"
           aria-modal="true"
@@ -1095,6 +1095,7 @@ export const PlaygroundWorkshop = () => {
               onClick={() => {
                 setSearchText('')
                 setActiveNav(cat)
+                setSidebarOpen(false)
               }}
             />
           )
@@ -1115,6 +1116,7 @@ export const PlaygroundWorkshop = () => {
           onClick={() => {
             setSearchText('')
             setActiveNav('mytools')
+            setSidebarOpen(false)
           }}
         />
         <SandboxRuntimeToggle />

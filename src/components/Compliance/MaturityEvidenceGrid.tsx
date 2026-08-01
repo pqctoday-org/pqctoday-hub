@@ -226,7 +226,7 @@ export function MaturityEvidenceGrid({
         <span className="text-xs text-muted-foreground">
           {filtered.length} requirements · {uniqueSources} sources
         </span>
-        <div className="flex gap-2 ml-auto">
+        <div className="flex gap-2 max-md:flex-wrap ml-auto">
           <FilterDropdown
             items={CATEGORY_OPTIONS}
             selectedId={categoryFilter}

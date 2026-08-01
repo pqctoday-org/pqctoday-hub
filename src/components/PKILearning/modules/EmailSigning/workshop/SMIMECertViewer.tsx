@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { ShieldCheck, Eye, EyeOff } from 'lucide-react'
 import { CERT_FIELD_COMPARISON, SMIME_CERT_EXTENSIONS } from '../data/emailSigningConstants'
 import { Button } from '@/components/ui/button'
+import { ScrollFadeContainer } from '@/components/ui/ScrollFadeContainer'
 
 type ViewMode = 'comparison' | 'extensions'
 
@@ -61,7 +62,7 @@ export const SMIMECertViewer: React.FC = () => {
             </Button>
           </div>
 
-          <div className="overflow-x-auto">
+          <ScrollFadeContainer>
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
@@ -92,7 +93,7 @@ export const SMIMECertViewer: React.FC = () => {
                 ))}
               </tbody>
             </table>
-          </div>
+          </ScrollFadeContainer>
 
           {/* Size Impact Visual */}
           <div className="glass-panel p-4">

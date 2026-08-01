@@ -163,6 +163,24 @@ export const EmbedLayout = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- embedConfig.allowedOrigins is stable (set once before mount)
   }, [])
 
+  // Mobile-only viewport detection (Tailwind `md` breakpoint = 768px). Drives
+  // mobile-scoped behaviors below (forced narrow sidebar, top-nav active-link
+  // scroll-into-view + edge fade) without touching desktop/tablet rendering.
+  // Mirrors the live matchMedia pattern in ComplianceTable.tsx.
+  const [isBelowMdViewport, setIsBelowMdViewport] = React.useState(
+    () =>
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(max-width: 767px)').matches
+  )
+  React.useEffect(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return
+    const mq = window.matchMedia('(max-width: 767px)')
+    const handler = (e: MediaQueryListEvent) => setIsBelowMdViewport(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
+
   // Preset → nav item definition (icon + label + base path)
   const PRESET_NAV_ITEMS: Record<
     string,
@@ -199,16 +217,40 @@ export const EmbedLayout = () => {
   const isSidebarLayout =
     !embedConfig.policy.features.hideNav && embedConfig.policy.theme?.navLayout === 'sidebar'
   const sidebarWidth = embedConfig.policy.theme?.navWidth ?? '200px'
-  // Icon+label stacked mode when sidebar width is narrow (≤ 80px)
-  const isNarrowSidebar = isSidebarLayout && parseInt(sidebarWidth, 10) <= 80
-  // Effective width: enforce minimum 72px in narrow mode so labels ("Algorithms", "Compliance") don't clip
+  // Icon+label stacked mode when sidebar width is narrow (≤ 80px), OR when
+  // below the `md` viewport — mobile has no room for the vendor's configured
+  // desktop navWidth (e.g. default 200px), so it's forced into the same
+  // narrow treatment regardless of what the vendor configured. Desktop/tablet
+  // (isBelowMdViewport === false) is unaffected — identical to before.
+  const isNarrowSidebar = isSidebarLayout && (parseInt(sidebarWidth, 10) <= 80 || isBelowMdViewport)
+  // Effective width: enforce minimum 72px in narrow mode so labels ("Algorithms", "Compliance") don't clip.
+  // Below md, if narrowness comes purely from the viewport override (the vendor's own
+  // configured width is wide), collapse to a flat 72px instead of deriving from that wide value.
   const effectiveSidebarWidth = isNarrowSidebar
-    ? `${Math.max(parseInt(sidebarWidth, 10), 72)}px`
+    ? isBelowMdViewport && parseInt(sidebarWidth, 10) > 80
+      ? '72px'
+      : `${Math.max(parseInt(sidebarWidth, 10), 72)}px`
     : sidebarWidth
   const navBg = embedConfig.policy.theme?.sidebar
   const navFg = embedConfig.policy.theme?.sidebarForeground
   const navActiveBg = embedConfig.policy.theme?.navActiveBackground
   const headerHeight = embedConfig.policy.theme?.headerHeight ?? '48px'
+
+  // Top-bar layout only: ref to the scrollable <nav> so the active link can be
+  // scrolled into view below md (see effect below). Unused/unset in sidebar layout.
+  const topNavRef = React.useRef<HTMLElement>(null)
+
+  // Mobile only: the top-bar nav packs overflow toward flex-end on desktop, but
+  // below md it lays out left-to-right (see `max-md:justify-start` on the <nav>
+  // below) — scroll the current page's link into view so it's visible by default
+  // instead of requiring the user to discover the nav is swipeable.
+  React.useEffect(() => {
+    if (isSidebarLayout || !isBelowMdViewport) return
+    const nav = topNavRef.current
+    if (!nav) return
+    const active = nav.querySelector<HTMLElement>('[aria-current="page"]')
+    active?.scrollIntoView({ inline: 'nearest', block: 'nearest' })
+  }, [location.pathname, isSidebarLayout, isBelowMdViewport])
 
   // Shared nav items renderer (used in both top and sidebar layouts)
   const renderNavItems = () =>
@@ -485,7 +527,22 @@ export const EmbedLayout = () => {
           >
             {renderBrand()}
             <nav
-              className="flex flex-row flex-nowrap items-center gap-1 overflow-x-auto h-full hide-scrollbar flex-grow justify-end pl-4"
+              ref={topNavRef}
+              className="flex flex-row flex-nowrap items-center gap-1 overflow-x-auto h-full hide-scrollbar flex-grow justify-end max-md:justify-start pl-4"
+              style={
+                // Mobile-only edge fade: below md, `justify-start` (above) makes the nav
+                // genuinely swipeable, and `hide-scrollbar` removes the native scrollbar
+                // affordance, so add a soft fade mask at both edges as an overflow hint.
+                // Desktop/tablet (isBelowMdViewport === false) gets no style override.
+                isBelowMdViewport
+                  ? {
+                      WebkitMaskImage:
+                        'linear-gradient(to right, transparent, black 20px, black calc(100% - 20px), transparent)',
+                      maskImage:
+                        'linear-gradient(to right, transparent, black 20px, black calc(100% - 20px), transparent)',
+                    }
+                  : undefined
+              }
               role="navigation"
               aria-label="Main navigation"
             >
@@ -504,7 +561,14 @@ export const EmbedLayout = () => {
       )}
 
       {/* Main Content Area */}
-      <main id="main-content" className="flex-grow w-full py-4 px-4 md:py-6 md:px-6" role="main">
+      {/* max-md:overflow-x-hidden: contains any horizontally-overflowing descendant (e.g. an
+          unwrapped-text badge) below md, matching MainLayout's scrollable-content containment —
+          scoped to <main> rather than the outer wrapper so it can't affect the sticky header above. */}
+      <main
+        id="main-content"
+        className="flex-grow w-full py-4 px-4 md:py-6 md:px-6 max-md:overflow-x-hidden"
+        role="main"
+      >
         {renderContent()}
       </main>
 

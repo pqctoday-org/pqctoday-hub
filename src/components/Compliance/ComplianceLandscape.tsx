@@ -1044,36 +1044,38 @@ function FrameworkTableRow({ fw }: { fw: ComplianceFramework }) {
 
 function FrameworkTable({ frameworks }: { frameworks: ComplianceFramework[] }) {
   return (
-    <div className="glass-panel overflow-x-auto">
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="border-b border-border bg-muted/30">
-            <th className="py-2.5 px-2 w-8 text-center text-xs font-semibold text-muted-foreground">
-              My
-            </th>
-            <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground">
-              Name
-            </th>
-            <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground whitespace-nowrap">
-              Enforcement Body
-            </th>
-            <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground">
-              Deadline
-            </th>
-            <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground">
-              Countries
-            </th>
-            <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground">
-              Refs
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {frameworks.map((fw) => (
-            <FrameworkTableRow key={fw.id} fw={fw} />
-          ))}
-        </tbody>
-      </table>
+    <div className="glass-panel">
+      <ScrollFadeContainer>
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-border bg-muted/30">
+              <th className="py-2.5 px-2 w-8 text-center text-xs font-semibold text-muted-foreground">
+                My
+              </th>
+              <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground">
+                Name
+              </th>
+              <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground whitespace-nowrap">
+                Enforcement Body
+              </th>
+              <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground">
+                Deadline
+              </th>
+              <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground">
+                Countries
+              </th>
+              <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground">
+                Refs
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {frameworks.map((fw) => (
+              <FrameworkTableRow key={fw.id} fw={fw} />
+            ))}
+          </tbody>
+        </table>
+      </ScrollFadeContainer>
       {frameworks.length === 0 && (
         <div className="p-8 text-center text-muted-foreground text-sm">
           No entries match the selected filters.
