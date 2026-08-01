@@ -48,6 +48,7 @@ import { useCommandPaletteStore } from '../../store/useCommandPaletteStore'
 import { PersonaSwitchModal } from '../Persona/PersonaSwitchModal'
 import { PreviewBanner } from '../common/PreviewBanner'
 import { useWorkshopUrlAutostart } from '../../hooks/useWorkshopUrlAutostart'
+import { ScrollFadeContainer } from '../ui/ScrollFadeContainer'
 
 const RightPanel = React.lazy(() =>
   import('../RightPanel/RightPanel').then((m) => ({ default: m.RightPanel }))
@@ -322,86 +323,89 @@ export const MainLayout = () => {
             </Button>
           </div>
 
-          {/* Universal Navigation: Row of Icons on Mobile, Full Nav on Desktop */}
-          <nav
-            className="flex flex-row flex-nowrap items-center justify-between w-full lg:w-auto gap-1 lg:gap-2 overflow-x-auto"
-            role="navigation"
-            aria-label="Main navigation"
-          >
-            {visibleNavItems.map((item, idx) => {
-              const prev = visibleNavItems[idx - 1]
-              const showDivider = prev?.section && item.section && prev.section !== item.section
+          {/* Universal Navigation: Row of Icons on Mobile, Full Nav on Desktop.
+              ScrollFadeContainer preserves the prior unconditional overflow-x-auto
+              behavior (so desktop is unaffected) and additionally shows a
+              right-edge fade whenever the row overflows — on a phone this is
+              nearly always, and previously there was no cue at all that
+              "Migrate…" and beyond were still reachable by scrolling the row. */}
+          <nav className="w-full lg:w-auto" role="navigation" aria-label="Main navigation">
+            <ScrollFadeContainer scrollClassName="flex flex-row flex-nowrap items-center justify-between gap-1 lg:gap-2">
+              {visibleNavItems.map((item, idx) => {
+                const prev = visibleNavItems[idx - 1]
+                const showDivider = prev?.section && item.section && prev.section !== item.section
 
-              return (
-                <React.Fragment key={item.path}>
-                  {showDivider && (
-                    <span
-                      className="hidden lg:block w-px h-9 bg-border/40 shrink-0"
-                      aria-hidden="true"
-                    />
-                  )}
-                  <NavLink
-                    to={item.path}
-                    end={item.end}
+                return (
+                  <React.Fragment key={item.path}>
+                    {showDivider && (
+                      <span
+                        className="hidden lg:block w-px h-9 bg-border/40 shrink-0"
+                        aria-hidden="true"
+                      />
+                    )}
+                    <NavLink
+                      to={item.path}
+                      end={item.end}
+                      className={
+                        item.hiddenOnMobile
+                          ? 'hidden lg:block'
+                          : 'flex-1 lg:flex-none flex justify-center'
+                      }
+                    >
+                      {({ isActive }) => (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          aria-label={`${item.label} view`}
+                          aria-current={isActive ? 'page' : undefined}
+                          className={
+                            isActive
+                              ? 'bg-primary/10 text-foreground border border-primary/20 px-2 lg:px-3 min-h-[44px] flex-col items-center gap-0'
+                              : 'text-muted-foreground hover:text-foreground px-2 lg:px-3 min-h-[44px] flex-col items-center gap-0'
+                          }
+                        >
+                          <item.icon size={18} aria-hidden="true" />
+                          <span className="text-[11px] leading-tight mt-1 truncate max-w-[72px] text-center">
+                            {SHORT_LABELS[item.label] ?? item.label}
+                          </span>
+                        </Button>
+                      )}
+                    </NavLink>
+                  </React.Fragment>
+                )
+              })}
+
+              {/* Mobile "More" button — only shown when there are overflow items */}
+              {moreNavItems.length > 0 && (
+                <div className="flex-1 lg:hidden flex justify-center">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setMoreMenuOpen(true)}
+                    aria-label={`More navigation options (${moreNavItems.length} pages)`}
+                    aria-expanded={moreMenuOpen}
+                    aria-haspopup="dialog"
+                    title={`More pages (${moreNavItems.length})`}
                     className={
-                      item.hiddenOnMobile
-                        ? 'hidden lg:block'
-                        : 'flex-1 lg:flex-none flex justify-center'
+                      isMoreActive
+                        ? 'relative bg-primary/10 text-foreground border border-primary/20 px-1 min-h-[44px] flex-col items-center gap-0'
+                        : 'relative text-muted-foreground hover:text-foreground px-1 min-h-[44px] flex-col items-center gap-0'
                     }
                   >
-                    {({ isActive }) => (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        aria-label={`${item.label} view`}
-                        aria-current={isActive ? 'page' : undefined}
-                        className={
-                          isActive
-                            ? 'bg-primary/10 text-foreground border border-primary/20 px-2 lg:px-3 min-h-[44px] flex-col items-center gap-0'
-                            : 'text-muted-foreground hover:text-foreground px-2 lg:px-3 min-h-[44px] flex-col items-center gap-0'
-                        }
+                    <span className="relative">
+                      <MoreHorizontal size={18} aria-hidden="true" />
+                      <span
+                        aria-hidden="true"
+                        className="absolute -top-1.5 -right-2 min-w-[14px] h-[14px] px-1 rounded-full bg-primary/20 text-primary text-[9px] font-semibold leading-[14px] text-center"
                       >
-                        <item.icon size={18} aria-hidden="true" />
-                        <span className="text-[11px] leading-tight mt-1 truncate max-w-[72px] text-center">
-                          {SHORT_LABELS[item.label] ?? item.label}
-                        </span>
-                      </Button>
-                    )}
-                  </NavLink>
-                </React.Fragment>
-              )
-            })}
-
-            {/* Mobile "More" button — only shown when there are overflow items */}
-            {moreNavItems.length > 0 && (
-              <div className="flex-1 lg:hidden flex justify-center">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setMoreMenuOpen(true)}
-                  aria-label={`More navigation options (${moreNavItems.length} pages)`}
-                  aria-expanded={moreMenuOpen}
-                  aria-haspopup="dialog"
-                  title={`More pages (${moreNavItems.length})`}
-                  className={
-                    isMoreActive
-                      ? 'relative bg-primary/10 text-foreground border border-primary/20 px-1 min-h-[44px] flex-col items-center gap-0'
-                      : 'relative text-muted-foreground hover:text-foreground px-1 min-h-[44px] flex-col items-center gap-0'
-                  }
-                >
-                  <span className="relative">
-                    <MoreHorizontal size={18} aria-hidden="true" />
-                    <span
-                      aria-hidden="true"
-                      className="absolute -top-1.5 -right-2 min-w-[14px] h-[14px] px-1 rounded-full bg-primary/20 text-primary text-[9px] font-semibold leading-[14px] text-center"
-                    >
-                      {moreNavItems.length}
+                        {moreNavItems.length}
+                      </span>
                     </span>
-                  </span>
-                  <span className="text-[11px] leading-tight mt-0.5">More</span>
-                </Button>
-              </div>
-            )}
+                    <span className="text-[11px] leading-tight mt-0.5">More</span>
+                  </Button>
+                </div>
+              )}
+            </ScrollFadeContainer>
           </nav>
         </div>
       </header>

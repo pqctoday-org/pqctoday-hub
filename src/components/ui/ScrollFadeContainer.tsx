@@ -9,6 +9,10 @@ interface ScrollFadeContainerProps {
   className?: string
   /** Applied to the inner `overflow-x-auto` scroll div */
   scrollClassName?: string
+  /** Extra attributes spread onto the inner scroll div (e.g. `role="tablist"`,
+   * `data-tour`) when wrapping an existing tab bar / toolbar that already
+   * carries its own semantics or hooks. */
+  scrollProps?: React.HTMLAttributes<HTMLDivElement>
 }
 
 /**
@@ -19,7 +23,7 @@ interface ScrollFadeContainerProps {
  * Ported from the TabsList component in tabs.tsx.
  */
 const ScrollFadeContainer = React.forwardRef<HTMLDivElement, ScrollFadeContainerProps>(
-  ({ className, scrollClassName, children }, ref) => {
+  ({ className, scrollClassName, scrollProps, children }, ref) => {
     const internalRef = React.useRef<HTMLDivElement>(null)
     const [showFade, setShowFade] = React.useState(false)
 
@@ -52,7 +56,11 @@ const ScrollFadeContainer = React.forwardRef<HTMLDivElement, ScrollFadeContainer
 
     return (
       <div className={cn('relative w-full', className)}>
-        <div ref={setRef} className={cn('overflow-x-auto no-scrollbar', scrollClassName)}>
+        <div
+          ref={setRef}
+          className={cn('overflow-x-auto no-scrollbar', scrollClassName)}
+          {...scrollProps}
+        >
           {children}
         </div>
         <div
