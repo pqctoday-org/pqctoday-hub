@@ -145,7 +145,6 @@ export const CSC_API_ENDPOINTS = {
 // migrated into src/data/glossary/concepts.json on 2026-07-31, where the
 // global tooltip and glossary page both read them.
 
-
 // NOTE: a `DIGITAL_ID_MODULE` constant used to live here duplicating the
 // module's id/title/description/duration. It had no consumers and its
 // duration ('120 min') contradicted the manifest ('80 min'), which is what

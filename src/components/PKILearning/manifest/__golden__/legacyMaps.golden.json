@@ -133,10 +133,7 @@
       "description": "Classify organizational data assets, map compliance obligations (GDPR, HIPAA, DORA, NIS2), apply NIST RMF/ISO 27005/FAIR risk methodologies, and generate a PQC migration priority map.",
       "duration": "50 min",
       "difficulty": "intermediate",
-      "frameworkPhase": [
-        "p1",
-        "p3"
-      ]
+      "frameworkPhase": ["p1", "p3"]
     },
     "database-encryption-pqc": {
       "id": "database-encryption-pqc",
@@ -416,10 +413,7 @@
       "description": "Inventory, migrate, and monitor every cryptographic primitive in your software delivery pipeline — CI/CD crypto assets, container image signing, IaC quantum-vulnerable defaults, OPA/Kyverno algorithm enforcement, and crypto posture monitoring.",
       "duration": "80 min",
       "difficulty": "advanced",
-      "frameworkPhase": [
-        "p1",
-        "p5"
-      ]
+      "frameworkPhase": ["p1", "p5"]
     },
     "pqc-grc": {
       "id": "pqc-grc",
@@ -3410,10 +3404,7 @@
           "description": "Classify organizational data assets, map compliance obligations (GDPR, HIPAA, DORA, NIS2), apply NIST RMF/ISO 27005/FAIR risk methodologies, and generate a PQC migration priority map.",
           "duration": "50 min",
           "difficulty": "intermediate",
-          "frameworkPhase": [
-            "p1",
-            "p3"
-          ]
+          "frameworkPhase": ["p1", "p3"]
         },
         {
           "id": "hybrid-crypto",
@@ -3685,10 +3676,7 @@
           "description": "Inventory, migrate, and monitor every cryptographic primitive in your software delivery pipeline — CI/CD crypto assets, container image signing, IaC quantum-vulnerable defaults, OPA/Kyverno algorithm enforcement, and crypto posture monitoring.",
           "duration": "80 min",
           "difficulty": "advanced",
-          "frameworkPhase": [
-            "p1",
-            "p5"
-          ]
+          "frameworkPhase": ["p1", "p5"]
         },
         {
           "id": "iam-pqc",
@@ -3950,14 +3938,8 @@
   },
   "MODULE_TAXONOMY": {
     "api-security-jwt": {
-      "algorithms": [
-        "ML-DSA",
-        "SLH-DSA"
-      ],
-      "standards": [
-        "JOSE",
-        "RFC 9421"
-      ]
+      "algorithms": ["ML-DSA", "SLH-DSA"],
+      "standards": ["JOSE", "RFC 9421"]
     },
     "sbom": {
       "standards": [
@@ -3968,177 +3950,79 @@
       ]
     },
     "cbom": {
-      "standards": [
-        "CycloneDX / ECMA-424",
-        "SPDX / ISO 5962",
-        "NIST SP 1800-38"
-      ]
+      "standards": ["CycloneDX / ECMA-424", "SPDX / ISO 5962", "NIST SP 1800-38"]
     },
     "crypto-registry": {
-      "standards": [
-        "CycloneDX Cryptography Registry"
-      ]
+      "standards": ["CycloneDX Cryptography Registry"]
     },
     "code-signing": {
-      "algorithms": [
-        "ML-DSA",
-        "LMS/XMSS"
-      ],
-      "standards": [
-        "FIPS 204",
-        "NIST SP 800-208"
-      ]
+      "algorithms": ["ML-DSA", "LMS/XMSS"],
+      "standards": ["FIPS 204", "NIST SP 800-208"]
     },
     "digital-id": {
-      "algorithms": [
-        "ML-DSA"
-      ],
-      "standards": [
-        "X.509"
-      ]
+      "algorithms": ["ML-DSA"],
+      "standards": ["X.509"]
     },
     "email-signing": {
-      "algorithms": [
-        "ML-DSA"
-      ],
-      "standards": [
-        "JOSE",
-        "X.509"
-      ]
+      "algorithms": ["ML-DSA"],
+      "standards": ["JOSE", "X.509"]
     },
     "5g-security": {
-      "algorithms": [
-        "ML-KEM",
-        "ML-DSA"
-      ],
-      "standards": [
-        "X.509"
-      ]
+      "algorithms": ["ML-KEM", "ML-DSA"],
+      "standards": ["X.509"]
     },
     "hsm-pqc": {
-      "algorithms": [
-        "ML-KEM",
-        "ML-DSA"
-      ],
-      "standards": [
-        "PKCS#11"
-      ]
+      "algorithms": ["ML-KEM", "ML-DSA"],
+      "standards": ["PKCS#11"]
     },
     "hybrid-crypto": {
-      "algorithms": [
-        "ML-KEM",
-        "X25519",
-        "ECDH"
-      ],
-      "standards": [
-        "RFC 9180"
-      ]
+      "algorithms": ["ML-KEM", "X25519", "ECDH"],
+      "standards": ["RFC 9180"]
     },
     "kms-pqc": {
-      "algorithms": [
-        "ML-KEM"
-      ],
-      "standards": [
-        "FIPS 203"
-      ]
+      "algorithms": ["ML-KEM"],
+      "standards": ["FIPS 203"]
     },
     "mls-group-messaging": {
-      "algorithms": [
-        "ML-KEM",
-        "ML-DSA"
-      ],
-      "standards": [
-        "JOSE"
-      ]
+      "algorithms": ["ML-KEM", "ML-DSA"],
+      "standards": ["JOSE"]
     },
     "merkle-tree-certs": {
-      "algorithms": [
-        "LMS/XMSS"
-      ],
-      "standards": [
-        "NIST SP 800-208"
-      ]
+      "algorithms": ["LMS/XMSS"],
+      "standards": ["NIST SP 800-208"]
     },
     "pqc-101": {
-      "algorithms": [
-        "ML-KEM",
-        "ML-DSA",
-        "SLH-DSA"
-      ]
+      "algorithms": ["ML-KEM", "ML-DSA", "SLH-DSA"]
     },
     "pki-workshop": {
-      "algorithms": [
-        "ML-DSA",
-        "ECDSA",
-        "RSA"
-      ],
-      "standards": [
-        "X.509",
-        "FIPS 204"
-      ]
+      "algorithms": ["ML-DSA", "ECDSA", "RSA"],
+      "standards": ["X.509", "FIPS 204"]
     },
     "pqc-candidates": {
-      "algorithms": [
-        "ML-KEM",
-        "ML-DSA",
-        "SLH-DSA",
-        "Falcon",
-        "HQC"
-      ]
+      "algorithms": ["ML-KEM", "ML-DSA", "SLH-DSA", "Falcon", "HQC"]
     },
     "slh-dsa": {
-      "algorithms": [
-        "SLH-DSA"
-      ],
-      "standards": [
-        "FIPS 205"
-      ]
+      "algorithms": ["SLH-DSA"],
+      "standards": ["FIPS 205"]
     },
     "stateful-signatures": {
-      "algorithms": [
-        "LMS/XMSS"
-      ],
-      "standards": [
-        "NIST SP 800-208"
-      ]
+      "algorithms": ["LMS/XMSS"],
+      "standards": ["NIST SP 800-208"]
     },
     "tls-basics": {
-      "algorithms": [
-        "ML-KEM",
-        "X25519",
-        "ECDSA",
-        "ML-DSA"
-      ],
-      "standards": [
-        "RFC 8446",
-        "X.509"
-      ]
+      "algorithms": ["ML-KEM", "X25519", "ECDSA", "ML-DSA"],
+      "standards": ["RFC 8446", "X.509"]
     },
     "vpn-ssh-pqc": {
-      "algorithms": [
-        "ML-KEM",
-        "ECDH"
-      ],
-      "standards": [
-        "RFC 9442"
-      ]
+      "algorithms": ["ML-KEM", "ECDH"],
+      "standards": ["RFC 9442"]
     },
     "verification-closure": {
-      "standards": [
-        "NIST IR 8547",
-        "NIST SP 800-131A",
-        "ISO/IEC 27001"
-      ]
+      "standards": ["NIST IR 8547", "NIST SP 800-131A", "ISO/IEC 27001"]
     },
     "hybrid-certs": {
-      "algorithms": [
-        "ML-DSA",
-        "ECDSA"
-      ],
-      "standards": [
-        "X.509",
-        "RFC 9794"
-      ]
+      "algorithms": ["ML-DSA", "ECDSA"],
+      "standards": ["X.509", "RFC 9794"]
     }
   }
 }

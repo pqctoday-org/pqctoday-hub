@@ -121,7 +121,9 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
   const handleStart = () => {
     addLog('Connecting to Bank (Relying Party)...')
     addLog(`Bank requests: [${REQUESTED_CLAIMS.join(', ')}] for Account Opening.`)
-    addLog('age_over_18 is requested INSTEAD of birth_date — the bank needs eligibility, not your date of birth.')
+    addLog(
+      'age_over_18 is requested INSTEAD of birth_date — the bank needs eligibility, not your date of birth.'
+    )
     setStep('DISCLOSURE')
   }
 
@@ -132,7 +134,9 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
     addLog(`Revealed attributes: [${revealed.join(', ') || 'none'}]`)
     addLog(`Hidden attributes: [${withheld.join(', ') || 'none'}]`)
     if (withheld.includes('birth_date') && revealed.includes('age_over_18')) {
-      addLog('Note: age_over_18 is proven while birth_date is withheld from the same signed credential.')
+      addLog(
+        'Note: age_over_18 is proven while birth_date is withheld from the same signed credential.'
+      )
     }
     if (missing.length) {
       addLog(`WARNING: withholding [${missing.join(', ')}] — the bank requires these.`)
@@ -201,7 +205,9 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
             )
           }
           if (mdocPres.withheld.includes('birth_date')) {
-            addLog('  birth_date was never transmitted — it is absent from the payload, not merely hidden.')
+            addLog(
+              '  birth_date was never transmitted — it is absent from the payload, not merely hidden.'
+            )
           }
         }
       } else {
@@ -245,7 +251,9 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
     // teach the wrong lesson about what selective disclosure costs.
     if (missing.length) {
       addLog(`Bank: presentation is missing [${missing.join(', ')}].`)
-      addLog('Bank: cryptographic proof is VALID, but the request is unsatisfied — account opening refused.')
+      addLog(
+        'Bank: cryptographic proof is VALID, but the request is unsatisfied — account opening refused.'
+      )
       addLog('Nothing you withheld was transmitted; the bank cannot see it to judge it.')
       setLoading(false)
       setStep('REFUSED')

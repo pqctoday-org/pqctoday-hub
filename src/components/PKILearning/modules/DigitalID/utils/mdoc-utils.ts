@@ -164,7 +164,13 @@ export const parseMdoc = (mdocJSON: string): MsoMdoc => {
 export const createMdocPresentation = (
   mdoc: MsoMdoc,
   selectedElements: string[]
-): { docType: string; disclosed: IssuerSignedItem[]; withheld: string[]; mobileSecurityObject: MsoMdoc['mobileSecurityObject']; issuerSignature: string } => {
+): {
+  docType: string
+  disclosed: IssuerSignedItem[]
+  withheld: string[]
+  mobileSecurityObject: MsoMdoc['mobileSecurityObject']
+  issuerSignature: string
+} => {
   const items = mdoc.issuerSignedItems ?? []
   const disclosed = items.filter((i) => selectedElements.includes(i.elementIdentifier))
   const withheld = items
