@@ -62,7 +62,7 @@ export function SectionInfoTip({ sectionId }: { sectionId: string }) {
           e.stopPropagation()
           setOpen(true)
         }}
-        className="p-1 h-auto w-auto rounded hover:bg-muted/30 text-muted-foreground hover:text-foreground"
+        className="p-1 min-h-[44px] min-w-[44px] md:h-auto md:w-auto md:min-h-0 md:min-w-0 rounded hover:bg-muted/30 text-muted-foreground hover:text-foreground"
         aria-label="Section info"
       >
         <Info size={14} />

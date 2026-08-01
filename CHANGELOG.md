@@ -29,6 +29,27 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.36.0] - 2026-08-01
+
+A three-phase mobile UX remediation: five app-wide root causes fixed once each, 28 high-severity page-specific bugs resolved, and a 51-finding touch-target sweep across 40 files — plus two real functional bugs caught along the way that weren't mobile-specific at all.
+
+### Fixed
+
+- **The AI Assistant button no longer covers page content while you scroll on mobile** [persona:curious]: the floating button now shrinks and fades while you scroll (restoring once you stop), fixing real content it was blocking on 21 of 30 audited mobile pages — Assess's save button, Quiz answers, Timeline cards, KMIP3.0 operation rows, and more.
+- **The glossary panel no longer crowds out tool content on mobile** [view:/playground] [persona:developer] [persona:ops]: OpenSSL Studio, HSM Playground, TPM Playground, and KMIP3.0's Learn/Commands tabs now default to a collapsed glossary rail below 1024px instead of an always-expanded one.
+- **Mobile navigation hints when there's more to scroll to, and fits better** [persona:curious]: the bottom nav row now fades at its edge instead of hard-clipping item labels, and Threats + Library moved into the "More" sheet so the always-visible row isn't overcrowded on a 390px screen.
+- **A hidden Compliance tab is visible again on mobile** [view:/compliance] [persona:researcher]: the CSWP.39 Agility Explorer tab was scrolled off-screen with no indication it existed; the tab bar now scroll-fades like the rest of the app.
+- **Search is now reachable on mobile** [persona:curious]: sitewide search (Cmd/Ctrl+K) previously had zero touch-reachable entry point on any page; it's now in the mobile "More" sheet.
+- **iPhone/iPad users get honest guidance on the VPN/SSH live-crypto gate** [view:/learn] [persona:curious]: previously told to "use Chrome, Edge, or Brave," which doesn't help on iOS, where every browser runs on the same underlying engine as Safari. Now explains the platform limitation and points to the written walkthrough instead.
+- **Simulation's mobile locked-screen header and full-migration flow no longer clip or drop options** [view:/simulation] [persona:curious]: the header no longer clips on phone, "watch full migration" now offers all 3 scope options on mobile instead of silently dropping two, and the narrated auto-run overlay's text is scrollable again.
+- **The Algorithms "Transition Guide" tab is reachable again on mobile** [view:/algorithms] [persona:researcher]: a regression had made the tab bar permanently center-aligned regardless of whether its contents actually overflowed the screen.
+- **TPM Playground's EK Certs tab no longer hangs forever** [view:/playground] [persona:ops] [persona:developer]: a real bug, reproducible on desktop too — development-mode double-mounting raced two certificate reads against the same lock; now guarded.
+- **Threats dashboard cards no longer take up to a minute to appear** [view:/threats] [persona:researcher]: a fade-in delay was compounding across industry groups instead of resetting, so later sectors could take ~60 seconds to become visible.
+- **Playground Workshop's tool list and detail modal now work on mobile** [view:/playground] [persona:developer]: the category sidebar closes itself after you pick a tool instead of pushing the tool list off-screen, and the Tool Detail Modal no longer clips content at both edges.
+- **The embedded (vendor-hosted) view's navigation and sidebar work correctly on mobile** [persona:developer]: top-bar items are no longer geometrically unreachable, and the sidebar collapses to the same narrow layout mobile users get elsewhere.
+- **51 more controls across 40 files now meet the app's 44px mobile touch-target minimum** [persona:curious]: a second, wider sweep across Assess, Business Center, Library, Migrate Workbench, OpenSSL Studio, PKI Learning, Patents, Report, Threats, and the AI Assistant panel itself.
+- **Smaller mobile fixes**: Migrate Workbench's guidance card layout, Compliance's Gantt label column and evidence-filter row, Business Center CTA collisions and hover-only actions, Learn's step-progress row, Timeline's phase-dot row, Industry Landscape card overflow, Vendor Risk's FIPS tier list, and OpenSSL Studio's Command Preview header clipping.
+
 ## [4.35.0] - 2026-08-01
 
 The Financial Services & Payments module gains a real Open Banking & PSD2 section, a revived BSI standard and 4 real evidence documents replace low-quality captures in the Library, and 22 broken glossary links across 9 modules are fixed.

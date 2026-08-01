@@ -443,7 +443,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                           variant="ghost"
                           size="sm"
                           onClick={clearPhase}
-                          className="text-xs h-7 px-3 border border-border whitespace-nowrap gap-1.5"
+                          className="text-xs min-h-[44px] md:h-7 md:min-h-0 px-3 border border-border whitespace-nowrap gap-1.5"
                           aria-label="Clear phase filter and show the full report"
                         >
                           <X size={12} />
@@ -834,7 +834,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                               variant="ghost"
                               size="sm"
                               onClick={() => setShowFullReport(true)}
-                              className="text-xs h-7 px-3 border border-border whitespace-nowrap"
+                              className="text-xs min-h-[44px] md:h-7 md:min-h-0 px-3 border border-border whitespace-nowrap"
                             >
                               Show full report
                             </Button>

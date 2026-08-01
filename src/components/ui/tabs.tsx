@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import * as React from 'react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
@@ -39,6 +40,15 @@ const TabsList = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
   ({ className, ...props }, ref) => {
     const internalRef = React.useRef<HTMLDivElement>(null)
     const [showFade, setShowFade] = React.useState(false)
+    const [showLeftFade, setShowLeftFade] = React.useState(false)
+    // Tracks whether the tab list's content is wider than its scroll
+    // container. justify-center on an overflowing flex row clamps
+    // scrollLeft at 0, permanently hiding the start-side content — so we
+    // only switch to justify-start in that overflow case (narrow
+    // viewports / more tabs than fit). When content already fits
+    // (desktop, or any page's mobile view with few tabs), this stays
+    // false and rendering is unchanged.
+    const [isOverflowing, setIsOverflowing] = React.useState(false)
 
     // Merge forwarded ref with internal ref so we can track scroll state
     const setRef = React.useCallback(
@@ -54,9 +64,10 @@ const TabsList = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
       const el = internalRef.current
       if (!el) return
       const update = () => {
-        setShowFade(
-          el.scrollWidth > el.clientWidth + 1 && el.scrollLeft < el.scrollWidth - el.clientWidth - 1
-        )
+        const overflowing = el.scrollWidth > el.clientWidth + 1
+        setIsOverflowing(overflowing)
+        setShowFade(overflowing && el.scrollLeft < el.scrollWidth - el.clientWidth - 1)
+        setShowLeftFade(overflowing && el.scrollLeft > 1)
       }
       update()
       el.addEventListener('scroll', update, { passive: true })
@@ -73,19 +84,32 @@ const TabsList = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
         <div
           ref={setRef}
           className={cn(
-            'inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground overflow-x-auto no-scrollbar w-full',
+            'inline-flex h-10 items-center rounded-md bg-muted p-1 text-muted-foreground overflow-x-auto no-scrollbar w-full',
+            isOverflowing ? 'justify-start' : 'justify-center',
             className
           )}
           {...props}
         />
+        {/* Left-edge scroll hint — mobile only, fades in once scrolled right of 0 */}
+        <div
+          className={cn(
+            'pointer-events-none absolute left-0 top-0 flex h-10 w-10 items-center justify-start bg-gradient-to-r from-muted to-transparent rounded-l-md transition-opacity duration-200 sm:hidden',
+            showLeftFade ? 'opacity-100' : 'opacity-0'
+          )}
+          aria-hidden="true"
+        >
+          <ChevronLeft size={14} className="text-muted-foreground" />
+        </div>
         {/* Right-edge scroll hint — mobile only, fades out when scrolled to end */}
         <div
           className={cn(
-            'pointer-events-none absolute right-0 top-0 h-10 w-10 bg-gradient-to-l from-muted to-transparent rounded-r-md transition-opacity duration-200 sm:hidden',
+            'pointer-events-none absolute right-0 top-0 flex h-10 w-10 items-center justify-end bg-gradient-to-l from-muted to-transparent rounded-r-md transition-opacity duration-200 sm:hidden',
             showFade ? 'opacity-100' : 'opacity-0'
           )}
           aria-hidden="true"
-        />
+        >
+          <ChevronRight size={14} className="text-muted-foreground" />
+        </div>
       </div>
     )
   }
@@ -112,7 +136,7 @@ const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>(
         ref={ref}
         type="button"
         className={cn(
-          'inline-flex items-center justify-center whitespace-nowrap shrink-0 rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm',
+          'inline-flex items-center justify-center whitespace-nowrap shrink-0 rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm min-h-[44px] md:min-h-0',
           className
         )}
         data-state={isActive ? 'active' : 'inactive'}

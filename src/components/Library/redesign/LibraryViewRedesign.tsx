@@ -630,7 +630,7 @@ function FilterChip({ label, onClear }: { label: string; onClear: () => void }) 
         variant="ghost"
         aria-label={`Clear ${label}`}
         onClick={onClear}
-        className="h-auto p-0 text-muted-foreground hover:bg-transparent"
+        className="h-auto p-0 max-md:-m-1.5 max-md:p-1.5 text-muted-foreground hover:bg-transparent"
       >
         <X size={12} aria-hidden="true" />
       </Button>

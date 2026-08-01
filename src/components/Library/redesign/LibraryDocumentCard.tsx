@@ -132,7 +132,7 @@ export function LibraryDocumentCard({
               e.stopPropagation()
               onToggleBookmark(item.referenceId)
             }}
-            className="h-auto px-1.5 py-1"
+            className="h-auto px-1.5 py-1 max-md:min-h-[44px] max-md:min-w-[44px]"
           >
             <Bookmark
               size={15}
@@ -151,7 +151,7 @@ export function LibraryDocumentCard({
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
               title="A free abstract describing this standard — not the standard itself, which must be purchased."
-              className="flex items-center gap-1 rounded-md px-1.5 py-1 text-[12px] font-semibold text-primary hover:bg-primary/10"
+              className="flex items-center gap-1 rounded-md px-1.5 py-1 max-md:min-h-[44px] text-[12px] font-semibold text-primary hover:bg-primary/10"
             >
               Free summary
               <ExternalLink size={12} aria-hidden="true" />
@@ -169,7 +169,7 @@ export function LibraryDocumentCard({
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="flex items-center gap-1 rounded-md px-1.5 py-1 text-[12px] font-semibold text-primary hover:bg-primary/10"
+              className="flex items-center gap-1 rounded-md px-1.5 py-1 max-md:min-h-[44px] text-[12px] font-semibold text-primary hover:bg-primary/10"
             >
               Open
               <ExternalLink size={12} aria-hidden="true" />

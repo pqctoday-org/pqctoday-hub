@@ -10,7 +10,7 @@
 // the polyfill is installed when /playground/tpm loads (pre-existing entry
 // only fires on the embed view).
 import 'reflect-metadata'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { CheckCircle2, XCircle, AlertCircle, RefreshCw, Download, Info } from 'lucide-react'
 import * as x509 from '@peculiar/x509'
 import { Button } from '@/components/ui/button'
@@ -66,27 +66,51 @@ export function V2p7EkCertReader({ isWasmReady, v2p7Status }: Props) {
   const [results, setResults] = useState<CertResult[]>([])
   const [loading, setLoading] = useState(false)
   const tpmBusy = useTpmBusy()
+  // Guards against two concurrent readAll() bodies racing tpmBridge.ts's
+  // withTpmLock. React 18 StrictMode (see AppRoot.tsx) deliberately
+  // double-invokes this component's mount effect in dev, which — with no
+  // guard — fires two overlapping readAll() calls. Each iterates the 6 EK
+  // specs sequentially and awaits nvReadAll() (itself withTpmLock-wrapped),
+  // so the two calls' NV_Read chunks interleave against the single shared
+  // lock. withTpmLock's reentrancy check is a global depth counter, not a
+  // call-chain identity, so it cannot tell "nested call from within my own
+  // locked operation" from "an unrelated caller happened to invoke me while
+  // I'm holding the lock" — a chunk read from the second readAll() can see
+  // the lock depth at 0 (reset by the first readAll()'s unrelated top-level
+  // turn completing at that exact moment) and re-queue itself onto
+  // _tpmQueue *behind its own already-enqueued, still-awaiting ancestor* —
+  // a circular wait that never resolves or rejects. Live-reproduced via
+  // Playwright with diagnostic logging: confirmed 0 result cards, "Re-read"
+  // permanently disabled, zero errors thrown. Restricting this component to
+  // one in-flight readAll() at a time removes the only trigger that
+  // produces two overlapping top-level lock acquisitions here.
+  const inFlightRef = useRef(false)
 
   const readAll = useCallback(async () => {
-    if (!isWasmReady) return
+    if (!isWasmReady || inFlightRef.current) return
+    inFlightRef.current = true
     setLoading(true)
     const out: CertResult[] = []
-    for (const spec of V2P7_EK_SPECS) {
-      try {
-        const certDer = await nvReadAll(spec.nvCertIndex)
-        // Copy into a fresh ArrayBuffer so peculiar/x509 sees a plain
-        // ArrayBuffer (not the SharedArrayBuffer-typed WASM HEAP backing).
-        const detached = new Uint8Array(certDer).buffer
-        const cert = new x509.X509Certificate(detached)
-        const spkiBytes = new Uint8Array(cert.publicKey.rawData)
-        const oidBody = extractSpkiOidBody(spkiBytes)
-        out.push({ spec, cert, certDer, spkiOidBody: oidBody })
-      } catch (err: unknown) {
-        out.push({ spec, error: err instanceof Error ? err.message : String(err) })
+    try {
+      for (const spec of V2P7_EK_SPECS) {
+        try {
+          const certDer = await nvReadAll(spec.nvCertIndex)
+          // Copy into a fresh ArrayBuffer so peculiar/x509 sees a plain
+          // ArrayBuffer (not the SharedArrayBuffer-typed WASM HEAP backing).
+          const detached = new Uint8Array(certDer).buffer
+          const cert = new x509.X509Certificate(detached)
+          const spkiBytes = new Uint8Array(cert.publicKey.rawData)
+          const oidBody = extractSpkiOidBody(spkiBytes)
+          out.push({ spec, cert, certDer, spkiOidBody: oidBody })
+        } catch (err: unknown) {
+          out.push({ spec, error: err instanceof Error ? err.message : String(err) })
+        }
       }
+      setResults(out)
+    } finally {
+      setLoading(false)
+      inFlightRef.current = false
     }
-    setResults(out)
-    setLoading(false)
   }, [isWasmReady])
 
   useEffect(() => {

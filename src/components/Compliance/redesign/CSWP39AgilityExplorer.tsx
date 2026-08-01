@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
+import { ScrollFadeContainer } from '@/components/ui/ScrollFadeContainer'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { MaturityEvidenceGrid } from '../MaturityEvidenceGrid'
 import { maturityRequirements } from '@/data/maturityGovernanceData'
@@ -146,7 +147,7 @@ export function CSWP39AgilityExplorer({
       )}
 
       {/* Sub-nav */}
-      <div className="overflow-x-auto no-scrollbar">
+      <ScrollFadeContainer>
         <div
           className="inline-flex rounded-xl border border-input bg-muted/40 p-1"
           role="tablist"
@@ -170,7 +171,7 @@ export function CSWP39AgilityExplorer({
             </Button>
           ))}
         </div>
-      </div>
+      </ScrollFadeContainer>
 
       {view === 'cycle' && (
         <CycleView
@@ -549,7 +550,7 @@ function EvidenceView({
 
       {/* Satisfies table */}
       <div className="overflow-hidden rounded-2xl border border-border bg-card">
-        <div className="overflow-x-auto">
+        <ScrollFadeContainer>
           <table className="w-full min-w-[640px] text-left text-xs">
             <thead className="bg-muted/40 text-[10.5px] uppercase tracking-wide text-muted-foreground">
               <tr>
@@ -574,7 +575,7 @@ function EvidenceView({
               ))}
             </tbody>
           </table>
-        </div>
+        </ScrollFadeContainer>
       </div>
 
       {/* Hybrid vs pure-PQC */}

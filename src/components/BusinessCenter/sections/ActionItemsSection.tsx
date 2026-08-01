@@ -17,7 +17,7 @@ function ActionRow({ item }: { item: ActionItem }) {
 
   return (
     <div
-      className={`flex items-start gap-3 p-3 border-l-2 rounded-r-md bg-card hover:bg-muted/50 transition-colors ${borderClass}`}
+      className={`flex items-start gap-3 p-3 border-l-2 rounded-r-md bg-card hover:bg-muted/50 transition-colors max-md:flex-col max-md:items-start ${borderClass}`}
     >
       <item.icon size={18} className="text-primary shrink-0 mt-0.5" />
       <div className="flex-1 min-w-0">

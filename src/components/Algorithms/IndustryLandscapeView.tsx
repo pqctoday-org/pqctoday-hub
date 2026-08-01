@@ -232,12 +232,12 @@ function UseCaseCard({
         </div>
       )}
 
-      <div className="mt-3 flex items-center justify-between border-t border-border pt-2 text-xs text-muted-foreground">
+      <div className="mt-3 flex items-center justify-between border-t border-border pt-2 text-xs text-muted-foreground max-md:min-w-0">
         <a
           href={uc.sourceUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex max-w-[75%] items-center gap-1 truncate hover:text-primary"
+          className="inline-flex max-w-[75%] items-center gap-1 truncate hover:text-primary max-md:min-w-0"
           title={uc.mainSource}
         >
           <ExternalLink size={10} className="shrink-0 opacity-60" />

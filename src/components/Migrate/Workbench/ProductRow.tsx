@@ -101,7 +101,7 @@ export function ProductRow({
           <Button
             variant={chosen ? 'secondary' : 'outline'}
             size="sm"
-            className="shrink-0"
+            className="shrink-0 min-h-[44px] md:min-h-0"
             onClick={onChoose}
             aria-label={
               chosen ? `Remove ${product.softwareName} from plan` : `Choose ${product.softwareName}`

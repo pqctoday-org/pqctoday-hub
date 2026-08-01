@@ -467,8 +467,11 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
             )}
           </div>
 
-          {/* Run Assessment CTA */}
-          <div className="mx-6 mb-4 p-4 rounded-lg border border-primary/20 bg-primary/5 flex flex-col sm:flex-row sm:items-center gap-3">
+          {/* Run Assessment CTA — hidden below `md` where it otherwise eats a fixed
+          chunk of the 90vh dialog budget above the sticky footer, squeezing the
+          scrollable content pane; a compact equivalent link folds into the footer
+          itself instead (below). Unchanged at `md+`. */}
+          <div className="mx-6 mb-4 p-4 rounded-lg border border-primary/20 bg-primary/5 flex flex-col sm:flex-row sm:items-center gap-3 max-md:hidden">
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-foreground flex items-center gap-1.5">
                 <ClipboardCheck size={14} className="text-primary shrink-0" />
@@ -489,6 +492,16 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
 
           {/* Sticky Bottom Action Bar */}
           <div className="p-4 border-t bg-card sticky bottom-0 z-10 shrink-0 flex flex-wrap justify-end gap-2 items-center">
+            {/* Compact stand-in for the CTA card hidden above below `md` — same
+            destination, folded into the footer instead of its own block. */}
+            <Link
+              to="/assess"
+              className="mr-auto inline-flex min-h-[44px] items-center gap-1.5 rounded-lg bg-gradient-to-r from-secondary to-primary px-3 py-2.5 text-xs font-semibold text-primary-foreground transition-all duration-200 hover:opacity-90 md:hidden"
+            >
+              <ClipboardCheck size={14} className="shrink-0" aria-hidden="true" />
+              Run Assessment
+              <ArrowRight size={12} />
+            </Link>
             <EndorseButton
               endorseUrl={buildEndorsementUrl({
                 category: 'threat-endorsement',

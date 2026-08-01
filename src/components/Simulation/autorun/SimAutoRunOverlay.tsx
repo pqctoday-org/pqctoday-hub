@@ -21,6 +21,16 @@ export function SimAutoRunOverlay({ player }: { player: SimAutoRunPlayer }) {
   const [expanded, setExpanded] = useState(true)
   const [prevPhase, setPrevPhase] = useState(focus?.name)
   const collapseTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // NEW-overlay-40pct-viewport-clipped-text (mobile-only): the expanded text
+  // block below gets a real max-height + overflow-y-auto scroll region on
+  // narrow viewports (max-md:), so it can genuinely be scrolled rather than
+  // just hard-clipped by this outer max-h-[26vh] wrapper with no way back. This
+  // tracks whether that inner region actually has more content below the fold
+  // (and hasn't already been scrolled there), to drive a bottom fade + "scroll
+  // for more" hint — desktop is untouched, the inner block keeps no height
+  // constraint of its own above md.
+  const textRef = useRef<HTMLDivElement>(null)
+  const [showScrollHint, setShowScrollHint] = useState(false)
 
   // On each new phase, re-open the explanation. Adjusting state during render
   // (React's "reset state when a prop changes" pattern) avoids a synchronous
@@ -40,6 +50,28 @@ export function SimAutoRunOverlay({ player }: { player: SimAutoRunPlayer }) {
       if (collapseTimer.current) clearTimeout(collapseTimer.current)
     }
   }, [focus?.name])
+
+  // Tracks the mobile-only scroll region's real overflow state (see textRef
+  // above) — recomputed whenever the phase text changes or the block
+  // opens/closes, plus on resize/scroll so the hint disappears once the user
+  // has actually scrolled to the end.
+  useEffect(() => {
+    const el = textRef.current
+    if (!el) return
+    const update = () => {
+      const hasOverflow = el.scrollHeight > el.clientHeight + 1
+      const atBottom = el.scrollTop >= el.scrollHeight - el.clientHeight - 1
+      setShowScrollHint(hasOverflow && !atBottom)
+    }
+    update()
+    el.addEventListener('scroll', update, { passive: true })
+    const ro = new ResizeObserver(update)
+    ro.observe(el)
+    return () => {
+      el.removeEventListener('scroll', update)
+      ro.disconnect()
+    }
+  }, [expanded, focus?.summary, focus?.gate])
 
   // Manual toggle cancels the auto-collapse so it stays where the user put it.
   const toggle = () => {
@@ -98,12 +130,31 @@ export function SimAutoRunOverlay({ player }: { player: SimAutoRunPlayer }) {
                 expanded ? 'mt-1.5 max-h-[26vh] opacity-100' : 'max-h-0 opacity-0'
               }`}
             >
-              <div className="overflow-y-auto pr-2 text-[16px] leading-relaxed text-background/90">
-                <p>{focus.summary}</p>
-                {focus.gate && (
-                  <p className="mt-2 text-[14px] leading-relaxed text-background/60">
-                    <span className="font-bold text-background/80">Exit gate:</span> {focus.gate}
-                  </p>
+              <div className="relative">
+                <div
+                  ref={textRef}
+                  className="overflow-y-auto pr-2 text-[16px] leading-relaxed text-background/90 max-md:max-h-[24vh]"
+                >
+                  <p>{focus.summary}</p>
+                  {focus.gate && (
+                    <p className="mt-2 text-[14px] leading-relaxed text-background/60">
+                      <span className="font-bold text-background/80">Exit gate:</span> {focus.gate}
+                    </p>
+                  )}
+                </div>
+                {/* Mobile-only bottom fade + hint — the desktop block above md
+                    has no height constraint of its own, so this can never
+                    trigger there (hasOverflow stays false against an
+                    unconstrained clientHeight). */}
+                {showScrollHint && (
+                  <div
+                    className="pointer-events-none absolute inset-x-0 bottom-0 hidden h-6 items-end justify-center bg-gradient-to-t from-foreground to-transparent max-md:flex"
+                    aria-hidden="true"
+                  >
+                    <span className="mb-0.5 font-mono text-[10px] text-background/70">
+                      ▾ scroll for more
+                    </span>
+                  </div>
                 )}
               </div>
             </div>

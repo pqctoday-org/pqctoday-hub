@@ -151,7 +151,7 @@ function FeedEntry({ r }: { r: RevisionEntry }) {
     r.approval_method === 'offline' && r.approved_via ? ` · via ${r.approved_via}` : ''
 
   return (
-    <div className="flex items-start gap-3 py-3 border-b border-border last:border-0">
+    <div className="flex max-sm:flex-col items-start gap-3 py-3 border-b border-border last:border-0">
       <div className="mt-0.5 shrink-0">
         {r.authored_by_llm ? (
           <Bot className="w-4 h-4 text-accent" aria-label="LLM-authored" />

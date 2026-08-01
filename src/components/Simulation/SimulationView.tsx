@@ -873,6 +873,26 @@ export function SimulationView() {
   // see the plan's rev. 3 notes). Persona/phase-context only pick which card
   // opens visually emphasized.
   const [playModalOpen, setPlayModalOpen] = useState(false)
+  // NEW-playchoice-modal-hidden-mobile: SimPlayChoiceModal (below) only ever
+  // mounts inside the desktop-only `hidden md:flex` board wrapper, which has no
+  // JS gate of its own — it stays mounted (just CSS-hidden) at every viewport.
+  // The phone block needs its own real-viewport check (mirrors the isMobile
+  // pattern in ComplianceTable.tsx) rather than a plain `md:hidden` class, so
+  // its lightweight mobile equivalent of the 3-way choice below never
+  // double-mounts alongside the real modal on a wide viewport.
+  const [isMobileViewport, setIsMobileViewport] = useState(
+    () =>
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(max-width: 767px)').matches
+  )
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return
+    const mq = window.matchMedia('(max-width: 767px)')
+    const handler = (e: MediaQueryListEvent) => setIsMobileViewport(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
   const [termsOpen, setTermsOpen] = useState(false)
   const [pendingModeSwitch, setPendingModeSwitch] = useState<RunMode | null>(null)
   const businessPersona = selectedPersona === 'executive' || selectedPersona === 'curious'
@@ -1385,13 +1405,19 @@ export function SimulationView() {
     return (
       <div className="fixed inset-0 flex flex-col bg-background text-foreground">
         <header className="flex shrink-0 flex-wrap items-center gap-3 bg-foreground px-4 py-2 text-background">
-          <div className="flex shrink-0 items-center gap-2">
+          {/* NEW-locked-header-clip (mobile-only): this early-return header has
+              no md: gate at all (a visitor with no saved assessment sees it on
+              any viewport), so unlike the desktop full-board header below it
+              must not pin itself to its unwrapped max-content width on phones —
+              that pushed the framework-attribution link off the right edge of a
+              390px viewport with no way to scroll to it. */}
+          <div className="flex shrink-0 items-center gap-2 max-md:shrink max-md:min-w-0">
             <img
               src={pqctodayLogo}
               alt="PQC Today"
               className="h-15 w-15 shrink-0 rounded-md object-contain"
             />
-            <div>
+            <div className="max-md:min-w-0">
               <div className="whitespace-nowrap text-[13.5px] font-extrabold">PQC Today Sim</div>
               <div className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
                 PQC Migration Simulation
@@ -1401,7 +1427,7 @@ export function SimulationView() {
                 target="_blank"
                 rel="noopener noreferrer"
                 title={`${FRAMEWORK_NAME} ${FRAMEWORK_VERSION} — ${FRAMEWORK_AUTHOR} (${FRAMEWORK_LICENSE})`}
-                className="font-mono text-sim-micro font-semibold tracking-[0.08em] text-background/40 underline decoration-dotted underline-offset-2 hover:text-background/70"
+                className="font-mono text-sim-micro font-semibold tracking-[0.08em] text-background/40 underline decoration-dotted underline-offset-2 hover:text-background/70 max-md:block max-md:truncate"
               >
                 Built on the {FRAMEWORK_NAME} {FRAMEWORK_VERSION} ↗
               </a>
@@ -1545,7 +1571,68 @@ export function SimulationView() {
             (07-29 review U-M2, option a): transport bar + captions + intro
             modals are all fixed-position and responsive. The playable board
             stays tablet/desktop-only. */}
-        {!autoRunPlayer.running && !autoRunPlayer.done && (
+        {/* NEW-playchoice-modal-hidden-mobile: the real SimPlayChoiceModal
+            (rendered below, inside the desktop-only board) never becomes
+            visible on a phone. When the locked screen's "Watch the full
+            migration (sample org)" button has set playModalOpen, offer the
+            same 3 scopes here — a lightweight stand-in, not the full modal —
+            instead of silently collapsing to a single "Watch the Executive
+            Overview" choice. */}
+        {isMobileViewport && playModalOpen && !autoRunPlayer.running && !autoRunPlayer.done && (
+          <div className="w-full max-w-[320px] space-y-2 text-left">
+            <p className="text-center font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-primary">
+              Choose how to play
+            </p>
+            <Button
+              type="button"
+              variant="outline"
+              size="tile"
+              onClick={() => startFromModal('walkthrough')}
+              className="border-primary/50 bg-primary/5"
+            >
+              <div className="text-sm font-bold text-foreground">Executive Overview</div>
+              <p className="text-[11px] leading-snug text-muted-foreground">
+                8 curated highlights across all 9 phases — board / exec audience, no technical
+                detail.
+              </p>
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="tile"
+              onClick={() => startFromModal('climb')}
+            >
+              <div className="text-sm font-bold text-foreground">Full Migration Journey</div>
+              <p className="text-[11px] leading-snug text-muted-foreground">
+                Every required step, all 9 phases, genuinely completed — for practitioners and
+                technical evaluators.
+              </p>
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="tile"
+              onClick={() => startFromModal('phase', defaultPhase)}
+            >
+              <div className="text-sm font-bold text-foreground">
+                Play This Phase — {FRAMEWORK_PHASES[defaultPhase].name}
+              </div>
+              <p className="text-[11px] leading-snug text-muted-foreground">
+                Just this phase's required steps, narrated and auto-advanced.
+              </p>
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setPlayModalOpen(false)}
+              className="w-full text-muted-foreground"
+            >
+              Cancel
+            </Button>
+          </div>
+        )}
+        {!(isMobileViewport && playModalOpen) && !autoRunPlayer.running && !autoRunPlayer.done && (
           <Button
             type="button"
             variant="gradient"

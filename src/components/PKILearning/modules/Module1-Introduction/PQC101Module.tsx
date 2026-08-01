@@ -687,35 +687,37 @@ export const PQC101Module: React.FC = () => {
 
       {/* Progress Steps */}
       <div className="mb-8">
-        <div className="flex justify-between relative">
-          <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10" />
-          {steps.map((step, idx) => (
-            <Button
-              variant="ghost"
-              key={step.id}
-              onClick={() => setCurrentStep(idx)}
-              className={`flex flex-col items-center gap-2 group ${
-                idx === currentStep ? 'text-primary' : 'text-muted-foreground'
-              }`}
-            >
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-colors bg-background text-sm
-                ${
-                  idx === currentStep
-                    ? 'border-primary text-primary'
-                    : idx < currentStep
-                      ? 'border-status-success text-status-success'
-                      : 'border-border text-muted-foreground'
-                }
-              `}
+        <div className="max-md:overflow-x-auto max-md:no-scrollbar">
+          <div className="flex max-md:w-max max-md:min-w-full max-md:gap-x-6 md:justify-between relative">
+            <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10" />
+            {steps.map((step, idx) => (
+              <Button
+                variant="ghost"
+                key={step.id}
+                onClick={() => setCurrentStep(idx)}
+                className={`flex flex-col items-center gap-2 group max-md:shrink-0 min-h-[44px] md:min-h-0 ${
+                  idx === currentStep ? 'text-primary' : 'text-muted-foreground'
+                }`}
               >
-                {idx < currentStep ? '✓' : idx + 1}
-              </div>
-              <span className="text-[10px] md:text-xs font-medium max-w-[80px] text-center leading-tight">
-                {step.title}
-              </span>
-            </Button>
-          ))}
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-colors bg-background text-sm
+                  ${
+                    idx === currentStep
+                      ? 'border-primary text-primary'
+                      : idx < currentStep
+                        ? 'border-status-success text-status-success'
+                        : 'border-border text-muted-foreground'
+                  }
+                `}
+                >
+                  {idx < currentStep ? '✓' : idx + 1}
+                </div>
+                <span className="text-[10px] md:text-xs font-medium max-w-[80px] text-center leading-tight">
+                  {step.title}
+                </span>
+              </Button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -734,7 +736,7 @@ export const PQC101Module: React.FC = () => {
           onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
           disabled={currentStep === 0}
           data-workshop-target="learn-stepper-prev"
-          className="px-6 py-2 rounded-lg border border-border hover:bg-muted/10 disabled:opacity-50 transition-colors text-foreground"
+          className="px-6 py-2 min-h-[44px] md:min-h-0 rounded-lg border border-border hover:bg-muted/10 disabled:opacity-50 transition-colors text-foreground"
         >
           ← Previous
         </Button>
@@ -744,7 +746,7 @@ export const PQC101Module: React.FC = () => {
             variant="ghost"
             onClick={handleFinalComplete}
             data-workshop-target="learn-stepper-complete"
-            className="px-6 py-2 bg-status-success text-foreground font-bold rounded-lg hover:bg-status-success/90 transition-colors"
+            className="px-6 py-2 min-h-[44px] md:min-h-0 bg-status-success text-foreground font-bold rounded-lg hover:bg-status-success/90 transition-colors"
           >
             ✓ Complete Module
           </Button>
@@ -757,7 +759,7 @@ export const PQC101Module: React.FC = () => {
               handleStepComplete(step.id, currentStep + 1)
             }}
             data-workshop-target="learn-stepper-next"
-            className="px-6 py-2 font-bold rounded-lg transition-colors"
+            className="px-6 py-2 min-h-[44px] md:min-h-0 font-bold rounded-lg transition-colors"
           >
             Next →
           </Button>

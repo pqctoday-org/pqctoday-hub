@@ -151,7 +151,7 @@ export const WhereToStartTree: React.FC<WhereToStartTreeProps> = ({ defaultOpen 
                   key={b.id}
                   variant="ghost"
                   onClick={() => setSelected(b)}
-                  className="group/branch h-auto text-left rounded-lg border border-border bg-card/60 hover:border-primary/40 hover:bg-card transition-colors px-3 py-2.5 flex items-start justify-between gap-2 w-full"
+                  className="group/branch h-auto text-left rounded-lg border border-border bg-card/60 hover:border-primary/40 hover:bg-card transition-colors px-3 py-2.5 flex items-start justify-between gap-2 w-full max-md:whitespace-normal"
                 >
                   <span className="text-sm font-medium text-foreground leading-snug">
                     {b.question}

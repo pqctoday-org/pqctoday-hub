@@ -47,7 +47,7 @@ export const ThreatsCardGrid = ({
 
   return (
     <div className="space-y-8">
-      {groups.map(([industry, groupItems], gi) => (
+      {groups.map(([industry, groupItems]) => (
         <section key={industry} id={`industry-${industrySlug(industry)}`}>
           <div className="flex items-center gap-2 mb-4">
             <span className="text-muted-foreground">{getIndustryIcon(industry, 16)}</span>
@@ -60,7 +60,7 @@ export const ThreatsCardGrid = ({
                 <ThreatCard
                   key={item.threatId}
                   item={item}
-                  index={gi * 100 + i}
+                  index={i}
                   onClick={onItemClick}
                   dimmed={relevantIndustries != null && !relevantIndustries.has(item.industry)}
                   dimmedReason={

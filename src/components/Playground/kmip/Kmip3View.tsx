@@ -48,7 +48,11 @@ export function Kmip3View({
   return (
     <GlossaryProvider data={KMIP_GLOSSARY_DATA}>
       <KeystoreStrip engine={engine} />
-      <div className="flex items-start gap-4">
+      {/* max-lg:overflow-x-hidden is a defensive containment boundary: without
+          it, a child that overflows horizontally (e.g. a wide table inside
+          CommandsView) can offset this whole row's scroll position rather than
+          just its own content, clipping everything below the header on phones. */}
+      <div className="flex items-start gap-4 max-lg:overflow-x-hidden">
         <div className="min-w-0 flex-1">
           <div
             className="mb-4 flex items-center gap-1 border-b border-border"

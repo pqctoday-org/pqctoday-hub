@@ -3,6 +3,7 @@ import React, { useMemo } from 'react'
 import { CalendarDays } from 'lucide-react'
 import type { ComplianceFramework, DeadlinePhase } from '@/data/complianceData'
 import { Button } from '@/components/ui/button'
+import { ScrollFadeContainer } from '@/components/ui/ScrollFadeContainer'
 
 interface Props {
   /**
@@ -72,10 +73,10 @@ export const ValidationGantt: React.FC<Props> = ({
       </header>
 
       {rows.length > 0 && (
-        <div className="overflow-x-auto no-scrollbar">
+        <ScrollFadeContainer>
           <div className="relative min-w-[480px]">
             {/* Year axis */}
-            <div className="grid grid-cols-[160px_1fr] gap-3 items-center">
+            <div className="grid max-md:grid-cols-[92px_1fr] grid-cols-[160px_1fr] gap-3 items-center">
               <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
                 Framework
               </div>
@@ -97,7 +98,7 @@ export const ValidationGantt: React.FC<Props> = ({
             </div>
 
             {/* Today marker */}
-            <div className="grid grid-cols-[160px_1fr] gap-3">
+            <div className="grid max-md:grid-cols-[92px_1fr] grid-cols-[160px_1fr] gap-3">
               <div />
               <div className="relative h-0">
                 <span
@@ -125,7 +126,10 @@ export const ValidationGantt: React.FC<Props> = ({
                 const labelClickable = !!onSelectFramework
 
                 return (
-                  <div key={fw.id} className="grid grid-cols-[160px_1fr] gap-3 items-center group">
+                  <div
+                    key={fw.id}
+                    className="grid max-md:grid-cols-[92px_1fr] grid-cols-[160px_1fr] gap-3 items-center group"
+                  >
                     {labelClickable ? (
                       <Button
                         variant="ghost"
@@ -162,7 +166,7 @@ export const ValidationGantt: React.FC<Props> = ({
               })}
             </div>
           </div>
-        </div>
+        </ScrollFadeContainer>
       )}
 
       {/* Legend */}

@@ -249,7 +249,7 @@ export function ArtifactDrawer({
             <Button
               variant="ghost"
               size="sm"
-              className="h-8 w-8 p-0"
+              className="h-8 w-8 p-0 max-md:h-11 max-md:w-11"
               onClick={onClose}
               data-workshop-target="artifact-drawer-close"
             >

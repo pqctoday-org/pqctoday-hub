@@ -71,6 +71,7 @@ import { ComplianceDetailDrawer } from './redesign/ComplianceDetailDrawer'
 import { CSWP39AgilityExplorer } from './redesign/CSWP39AgilityExplorer'
 import { RecordsGlossaryStrip } from './redesign/RecordsGlossaryStrip'
 import { type PillarId, pillarForBodyType } from './redesign/pillarModel'
+import { ScrollFadeContainer } from '../ui/ScrollFadeContainer'
 
 // ── Stable tab model ───────────────────────────────────────────────────────
 // Four tabs, same order for every persona. Persona is a LENS (it tunes content
@@ -855,12 +856,16 @@ export const ComplianceView = ({
         </div>
       )}
 
-      {/* ── Stable tab bar — same order for every persona ── */}
+      {/* ── Stable tab bar — same order for every persona ──
+          overflow-x-auto already existed here, but with no fade/hint that
+          more tabs (e.g. CSWP.39 Agility) are reachable off-screen on a
+          phone — ScrollFadeContainer adds that cue without changing the
+          scroll behavior itself. */}
       <div id="compliance-tabs">
-        <div
-          className="mb-4 flex items-center gap-1 overflow-x-auto border-b border-border"
-          role="tablist"
-          aria-label="Compliance views"
+        <ScrollFadeContainer
+          className="mb-4"
+          scrollClassName="flex items-center gap-1 border-b border-border"
+          scrollProps={{ role: 'tablist', 'aria-label': 'Compliance views' }}
         >
           {STABLE_TABS.map(({ id, label, icon: Icon }) => {
             const active = activeStableTab === id
@@ -884,7 +889,7 @@ export const ComplianceView = ({
               </Button>
             )
           })}
-        </div>
+        </ScrollFadeContainer>
 
         {/* ── Landscape — three-pillar pipeline ── */}
         {activeStableTab === 'landscape' && (

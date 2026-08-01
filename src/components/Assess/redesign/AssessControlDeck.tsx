@@ -20,7 +20,7 @@ interface AssessControlDeckProps {
 
 const segClasses = (active: boolean) =>
   [
-    'h-auto gap-1.5 rounded-lg px-3 py-1.5 text-[12.5px] font-bold',
+    'h-auto min-h-[44px] md:min-h-0 gap-1.5 rounded-lg px-3 py-1.5 text-[12.5px] font-bold',
     active
       ? 'bg-primary text-primary-foreground hover:bg-primary'
       : 'bg-transparent text-muted-foreground hover:bg-transparent hover:text-foreground',
@@ -37,7 +37,7 @@ export const AssessControlDeck: React.FC<AssessControlDeckProps> = ({
 
   return (
     <div className="glass-panel mb-4 flex flex-wrap items-center gap-4 px-3.5 py-2.5">
-      <div className="flex items-center gap-2.5">
+      <div className="flex flex-wrap items-center gap-2.5 sm:flex-nowrap">
         <span className="text-[10.5px] font-bold uppercase tracking-wide text-muted-foreground/70">
           Track
         </span>
@@ -67,7 +67,7 @@ export const AssessControlDeck: React.FC<AssessControlDeckProps> = ({
             {TRACK_INFO.comprehensive.label}
           </Button>
         </div>
-        <span className="font-mono text-[11px] text-muted-foreground/70">
+        <span className="basis-full font-mono text-[11px] text-muted-foreground/70 sm:basis-auto">
           {info.count} questions · ~{info.minutes} min
         </span>
       </div>
@@ -80,7 +80,7 @@ export const AssessControlDeck: React.FC<AssessControlDeckProps> = ({
         <Button
           variant="ghost"
           onClick={() => onSetMode('comprehensive')}
-          className="ml-auto h-auto gap-2 rounded-lg border border-status-warning/40 bg-status-warning/10 px-3 py-1.5 text-xs font-bold text-status-warning hover:bg-status-warning/15 hover:text-status-warning"
+          className="ml-auto h-auto min-h-[44px] md:min-h-0 gap-2 rounded-lg border border-status-warning/40 bg-status-warning/10 px-3 py-1.5 text-xs font-bold text-status-warning hover:bg-status-warning/15 hover:text-status-warning"
         >
           <Lock size={14} />
           Switch to full track
