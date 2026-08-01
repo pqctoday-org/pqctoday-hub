@@ -2567,5 +2567,40 @@
     "relatedModule": "/learn/digital-id",
     "complexity": "advanced",
     "category": "concept"
+  },
+  {
+    "term": "LDAP",
+    "acronym": "Lightweight Directory Access Protocol",
+    "definition": "The protocol used to query and update directory services such as Microsoft Active Directory — the store of user accounts, groups, and credentials that authentication systems rely on.",
+    "technicalNote": "LDAP channels are typically secured with StartTLS or LDAPS (LDAP over TLS), so LDAP's own PQC exposure is really the TLS layer beneath it: the handshake needs hybrid ML-KEM key exchange, and any client-certificate authentication needs an ML-DSA-capable CA chain. LDAP simple binds that send credentials in the clear (no TLS) remain a separate, non-quantum risk.",
+    "relatedModule": "/learn/iam-pqc",
+    "complexity": "beginner",
+    "category": "concept"
+  },
+  {
+    "term": "OpenSSL",
+    "definition": "The most widely deployed open-source cryptography and TLS toolkit, providing both a command-line tool and the libssl/libcrypto libraries that a large share of Linux, network appliance, and application-layer software links against for TLS and general cryptographic operations.",
+    "technicalNote": "OpenSSL 3.5 (April 2025) added ML-KEM and ML-DSA to its default provider, so any application linked against system OpenSSL 3.5+ gains hybrid PQC TLS support without code changes — the same mechanism the oqsprovider add-on supplied for older 3.x releases. Distinct from OpenSSL Provider, which is the plugin architecture that makes this pluggable.",
+    "relatedModule": "/learn/os-pqc",
+    "complexity": "beginner",
+    "category": "concept"
+  },
+  {
+    "term": "Governance, Risk, and Compliance",
+    "acronym": "GRC",
+    "definition": "The organisational function that measures, reports on, and governs risk — as distinct from a SOC, which detects and responds to it. GRC produces the instruments a board uses for oversight, a CISO uses to manage a program, and internal audit uses to verify it.",
+    "technicalNote": "For a PQC migration, GRC is what turns a cryptographic inventory (a CBOM) into board-level risk reporting, tracks migration milestones against regulatory deadlines, and provides the audit trail that a program actually happened rather than merely being claimed.",
+    "relatedModule": "/learn/pqc-grc",
+    "complexity": "beginner",
+    "category": "concept"
+  },
+  {
+    "term": "WAF",
+    "acronym": "Web Application Firewall",
+    "definition": "A filtering layer, typically deployed alongside a reverse proxy or CDN edge node, that inspects HTTP(S) requests for application-layer attacks (SQL injection, XSS, and similar) before they reach an origin server.",
+    "technicalNote": "Because a WAF sits inline with TLS traffic — often terminating it itself — its PQC readiness follows the same path as any other TLS termination point: the underlying TLS stack needs hybrid ML-KEM key exchange, and certificate validation needs to tolerate the larger ML-DSA certificate chains.",
+    "relatedModule": "/learn/web-gateway-pqc",
+    "complexity": "beginner",
+    "category": "concept"
   }
 ]

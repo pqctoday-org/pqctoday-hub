@@ -121,8 +121,11 @@ export const SECTOR_BODIES: SectorBody[] = [
     id: 'g7-ceg',
     label: 'G7 Cyber Expert Group',
     jurisdiction: 'G7',
-    libraryRef: 'G7-Financial-PQC-Roadmap-2026',
-    contribution: 'Coordinated approach and sector roadmap for financial-sector PQC.',
+    // 2026-08-01: re-pointed from G7-Financial-PQC-Roadmap-2026 (the Treasury
+    // press release) to the statement itself. See content.ts standards[].
+    libraryRef: 'G7-CEG-Financial-PQC-2026',
+    contribution:
+      'Coordinated roadmap for financial-sector PQC. Explicitly sets no regulatory expectation: it prioritises risk-based sequencing "rather than prescribe fixed timelines".',
   },
   {
     id: 'cmorg',
@@ -160,6 +163,14 @@ export const SECTOR_BODIES: SectorBody[] = [
     contribution:
       'Operational-resilience obligations. Not PQC-specific, but the instrument under which an EU institution’s crypto-resilience failures become a regulatory matter.',
   },
+  {
+    id: 'eu-nis-cg-roadmap',
+    label: 'EU NIS CG Coordinated Implementation Roadmap v1.1',
+    jurisdiction: 'European Union',
+    libraryRef: 'EU-NIS-CG-Roadmap-v1.1',
+    contribution:
+      'Commission Recommendation-derived roadmap addressed to Member States: national transition strategies by end-2026, high-risk use cases transitioned by end-2030. Horizontal EU policy — the word "financial" does not appear in it — that reaches EU banks through NIS2/DORA rather than as a payments-sector instrument, and sets no algorithm names or dates.',
+  },
 ]
 
 /**
@@ -168,12 +179,16 @@ export const SECTOR_BODIES: SectorBody[] = [
  * 2025 — and so the next intake pass has a queue.
  */
 export const EPC_CITED_EMERGING = [
-  'EU Commission — Coordinated Implementation Roadmap for the Transition to Post-Quantum Cryptography',
   'GFMA — Quantum migration: mapping the emerging landscape',
   // Mastercard's white paper moved off this list 2026-07-31: it has now been
   // read (industry-landscape evidence manifest, sha256 3ac0c764...) and its
   // claims cited properly in PAYMENT_NETWORKS' Mastercard entry instead of
   // sitting here as named-but-unread.
+  //
+  // The EU NIS CG Coordinated Implementation Roadmap moved off this list
+  // 2026-08-01: it has now been read (local-evidence-cache/library/
+  // EU-NIS-CG-Roadmap-v1.1.pdf) and is cited properly in SECTOR_BODIES
+  // instead of sitting here as named-but-unread.
   'US SEC Crypto Task Force — Post-Quantum Financial Infrastructure roadmap',
   'ETSI TR 103 967 — Impact of Quantum Computing on Symmetric Cryptography',
 ]

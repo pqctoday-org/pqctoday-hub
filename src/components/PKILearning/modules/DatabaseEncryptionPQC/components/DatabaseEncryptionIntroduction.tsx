@@ -225,9 +225,9 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
               1. Transparent Data Encryption (TDE) &mdash; Innermost
             </div>
             <p>
-              <InlineTooltip term="Transparent Data Encryption (TDE)">TDE</InlineTooltip> encrypts
-              database files on disk (data pages, log files, backups) using AES-256. It protects
-              against physical theft of storage media or backup exfiltration &mdash; but provides{' '}
+              <InlineTooltip term="TDE">TDE</InlineTooltip> encrypts database files on disk (data
+              pages, log files, backups) using AES-256. It protects against physical theft of
+              storage media or backup exfiltration &mdash; but provides{' '}
               <strong>no protection against a privileged DBA</strong> who has direct database
               access. The database engine decrypts data transparently on read.
             </p>
@@ -243,8 +243,8 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
               2. Column-Level Encryption (CLE) &mdash; Middle Layer
             </div>
             <p>
-              <InlineTooltip term="Column-Level Encryption (CLE)">CLE</InlineTooltip> encrypts
-              specific columns (PAN, SSN, date-of-birth) using per-column keys. In{' '}
+              <InlineTooltip term="CLE">CLE</InlineTooltip> encrypts specific columns (PAN, SSN,
+              date-of-birth) using per-column keys. In{' '}
               <InlineTooltip term="Always Encrypted">Always Encrypted</InlineTooltip> (SQL Server),
               the Column Master Key (CMK) lives in Azure Key Vault or an HSM &mdash; the database
               engine never sees the plaintext CMK, only the Column Encryption Key (CEK) wrapped by
@@ -334,9 +334,9 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
             </div>
             <p className="text-xs text-muted-foreground">
               Customer key never leaves on-prem infrastructure. Cloud receives only encrypted{' '}
-              <InlineTooltip term="Data Encryption Key (DEK)">DEKs</InlineTooltip>. HYOK with Thales
-              CipherTrust or Utimaco HSM supporting PKCS#11 v3.2 is already PQC-ready today &mdash;
-              firmware upgrade to enable ML-KEM-1024 mechanism.
+              <InlineTooltip term="DEK">DEKs</InlineTooltip>. HYOK with Thales CipherTrust or
+              Utimaco HSM supporting PKCS#11 v3.2 is already PQC-ready today &mdash; firmware
+              upgrade to enable ML-KEM-1024 mechanism.
             </p>
           </div>
         </div>
@@ -364,10 +364,10 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
 
         <p>
           For regulated industries (financial services under DORA, defense under NSM-8), HYOK with
-          on-prem <InlineTooltip term="Column Master Key (CMK)">CMK</InlineTooltip> custody is the
-          required architecture. The key lifetime of RSA-2048 wrapped CMKs is approximately
-          7&ndash;10 years before harvest-now-decrypt-later attacks become practical. Databases with
-          HYOK architecture can upgrade immediately by rotating to ML-KEM-1024 master keys.
+          on-prem <InlineTooltip term="CMK">CMK</InlineTooltip> custody is the required
+          architecture. The key lifetime of RSA-2048 wrapped CMKs is approximately 7&ndash;10 years
+          before harvest-now-decrypt-later attacks become practical. Databases with HYOK
+          architecture can upgrade immediately by rotating to ML-KEM-1024 master keys.
         </p>
       </LearnSection>
 
@@ -488,10 +488,9 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
 
         <p>
           The actual data encryption layer uses{' '}
-          <InlineTooltip term="Transparent Data Encryption (TDE)">AES-256-XTS</InlineTooltip> or
-          AES-256-GCM regardless of classical or PQC key wrapping. Only the KEM ciphertext stored in
-          KMS metadata grows. Performance overhead on OLTP query paths is zero after the
-          re-encryption window.
+          <InlineTooltip term="TDE">AES-256-XTS</InlineTooltip> or AES-256-GCM regardless of
+          classical or PQC key wrapping. Only the KEM ciphertext stored in KMS metadata grows.
+          Performance overhead on OLTP query paths is zero after the re-encryption window.
         </p>
       </LearnSection>
 

@@ -385,9 +385,9 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
         title="PQC-Aware Zero Trust Identity Architecture"
       >
         <p>
-          <InlineTooltip term="Zero Trust">Zero Trust</InlineTooltip> architectures assume no
-          implicit trust and verify every identity claim explicitly. Migrating to PQC strengthens
-          the cryptographic foundation of each zero trust pillar.
+          <InlineTooltip term="Zero Trust Architecture">Zero Trust</InlineTooltip> architectures
+          assume no implicit trust and verify every identity claim explicitly. Migrating to PQC
+          strengthens the cryptographic foundation of each zero trust pillar.
         </p>
 
         <div className="space-y-3">

@@ -658,5 +658,23 @@
     "relatedModule": "/learn/crypto-mgmt-modernization",
     "complexity": "intermediate",
     "category": "protocol"
+  },
+  {
+    "term": "PSK",
+    "acronym": "Pre-Shared Key",
+    "definition": "In TLS 1.3, a symmetric key issued by the server after a full handshake and presented by the client on reconnection to enable session resumption — feeding into the Early Secret stage of a faster resumed handshake, optionally with 0-RTT early data.",
+    "technicalNote": "PSK-based resumption is itself symmetric-key and therefore not directly threatened by a quantum computer, but the PSK is only as trustworthy as the full handshake that established it — if that handshake's key exchange was classical (not hybrid ML-KEM), a harvested session ticket carries the same exposure forward.",
+    "relatedModule": "/learn/tls-basics",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "SNI",
+    "acronym": "Server Name Indication",
+    "definition": "A TLS extension carried in the ClientHello that tells the server which hostname the client is connecting to, so a single IP address can serve TLS certificates for multiple domains. Sent in plaintext in standard TLS.",
+    "technicalNote": "Because the ClientHello (and SNI within it) is unencrypted, it reveals which site a user is visiting even though the connection content is protected — a metadata leak Encrypted Client Hello (ECH) closes by encrypting the ClientHello using a key published in DNS. SNI/ECH is a transport-metadata concern orthogonal to PQC key exchange, not solved by it.",
+    "relatedModule": "/learn/tls-basics",
+    "complexity": "intermediate",
+    "category": "protocol"
   }
 ]

@@ -522,7 +522,7 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
         icon={<Scale size={20} className="text-primary" />}
       >
         <p className="text-muted-foreground">
-          No single authority sets the financial sector&rsquo;s post-quantum timetable. The seven
+          No single authority sets the financial sector&rsquo;s post-quantum timetable. The eight
           bodies below publish across five jurisdictions, and which of them binds a given
           institution depends on where it is regulated — not on where it operates.
         </p>
@@ -546,16 +546,120 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
           ))}
         </div>
         <p className="text-sm text-muted-foreground">
-          Unlike Government &amp; Defense, none of these carries a dated algorithm mandate of the
-          CNSA 2.0 kind. The sector&rsquo;s pressure comes from operational-resilience regulation
-          and from harvest-now-decrypt-later exposure, not from a compliance cliff.
+          Unlike Government &amp; Defense, none of these carries a dated{' '}
+          <strong className="text-foreground">algorithm</strong> mandate of the CNSA 2.0 kind —
+          nothing here names a specific algorithm and a date it must be running by. The EU NIS CG
+          Coordinated Implementation Roadmap (above) is the closest exception: it sets a dated{' '}
+          <strong className="text-foreground">transition expectation</strong> for EU Member States —
+          high-risk use cases transitioned by end-2030 — that reaches EU-regulated banks indirectly
+          through NIS2 and DORA&rsquo;s state-of-the-art-cryptography requirements. It is a
+          Commission Recommendation, not a law, and it names no algorithm. Otherwise, the
+          sector&rsquo;s pressure comes from operational-resilience regulation and from
+          harvest-now-decrypt-later exposure, not from a compliance cliff.
+        </p>
+        <p className="text-sm text-muted-foreground border-l-2 border-border pl-3">
+          <strong className="text-foreground">Out of scope.</strong> This module covers card
+          payments, interbank rails, and — as of the next section — open banking APIs and PSD2
+          Strong Customer Authentication. Instant-payment schemes (SEPA Instant, FedNow) and central
+          bank digital currencies raise their own post-quantum questions — different threat models,
+          different standards bodies — that this module does not address. They are not covered here
+          because the library does not yet hold a substantive PQC source for either; this note will
+          be narrowed further once one is acquired, not expanded from general knowledge.
         </p>
       </LearnSection>
 
-      {/* ── Section 10: Quantum Threats to Payment Systems ── */}
+      {/* ── Section 10: Open Banking & PSD2 Strong Customer Authentication ── */}
+      <LearnSection
+        sectionId="open-banking-psd2"
+        title="10. Open Banking & PSD2 Strong Customer Authentication"
+        icon={<ArrowRightLeft size={20} className="text-primary" />}
+      >
+        <p className="text-muted-foreground">
+          Open banking gives account information service providers (AISPs) and payment initiation
+          service providers (PISPs) — often fintechs, not banks — programmatic access to a
+          customer&rsquo;s account at their bank. In the EU this is not a voluntary API program; it
+          is a legal right created by{' '}
+          <Link
+            to="/library?ref=PSD2-Directive-EU-2015-2366"
+            className="text-primary hover:underline"
+          >
+            PSD2
+          </Link>{' '}
+          Article 97, which requires two-factor strong customer authentication (knowledge,
+          possession, and inherence — at least two of the three) for online account access, remote
+          payment initiation, and any action carrying fraud risk, with the authentication code
+          dynamically linked to the exact amount and payee of the transaction.
+        </p>
+        <div className="p-4 rounded-lg bg-muted/50 border border-border space-y-2">
+          <h4 className="font-semibold text-foreground">
+            The RTS on SCA (Commission Delegated Regulation (EU) 2018/389)
+          </h4>
+          <p className="text-sm text-muted-foreground">
+            PSD2 sets the legal requirement; the RTS is where the technical shape of it lives — and
+            where the cryptography actually shows up.
+          </p>
+          <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
+            <li>
+              <strong className="text-foreground">Dedicated interface (Art. 30).</strong> Every bank
+              offering online-accessible accounts must expose an interface AISPs and PISPs can use
+              to identify themselves, request account data, and initiate payments — the legal basis
+              for every open-banking API in the EU.
+            </li>
+            <li>
+              <strong className="text-foreground">Mandatory fallback (Art. 33).</strong> If a
+              bank&rsquo;s dedicated interface is unavailable or under-performing, third-party
+              providers must be able to fall back to the interface the bank&rsquo;s own customers
+              use — unless the bank&rsquo;s interface has passed three months of problem-free
+              operation under independent testing.
+            </li>
+            <li>
+              <strong className="text-foreground">eIDAS qualified certificates (Art. 34).</strong>{' '}
+              AISPs, PISPs, and banks identify themselves to each other using qualified certificates
+              for website authentication (QWAC) or electronic seals (QSealC) under eIDAS — the same
+              certificate framework{' '}
+              <Link to="/learn/digital-id" className="text-primary hover:underline">
+                the Digital ID module
+              </Link>{' '}
+              covers for the EUDI Wallet.
+            </li>
+            <li>
+              <strong className="text-foreground">Channel encryption (Art. 35).</strong> The
+              regulation requires &ldquo;strong and widely recognised encryption techniques&rdquo;
+              for the communication channel — it names no algorithm and no TLS version. That wording
+              is deliberately technology-neutral: migrating a dedicated interface to hybrid ML-KEM
+              TLS needs no legislative change, only an implementation one.
+            </li>
+          </ul>
+          <p className="text-xs text-muted-foreground pt-1">
+            Sources:{' '}
+            <Link
+              to="/library?ref=PSD2-Directive-EU-2015-2366"
+              className="text-primary hover:underline"
+            >
+              Directive (EU) 2015/2366, Art. 97
+            </Link>
+            ;{' '}
+            <Link to="/library?ref=EBA-RTS-SCA-2018-389" className="text-primary hover:underline">
+              Commission Delegated Regulation (EU) 2018/389, Art. 4, 5, 30, 33, 34, 35
+            </Link>
+            .
+          </p>
+        </div>
+        <p className="text-sm text-muted-foreground border-l-2 border-border pl-3">
+          <strong className="text-foreground">
+            Continental Europe&rsquo;s dominant technical implementation
+          </strong>{' '}
+          of the Article 30 dedicated interface is the Berlin Group&rsquo;s NextGenPSD2 Framework,
+          adopted by most large EU banking groups. Its site was unreachable while researching this
+          section, so this module names it without citing specifics from its own spec — the same
+          discipline applied everywhere else here.
+        </p>
+      </LearnSection>
+
+      {/* ── Section 11: Quantum Threats to Payment Systems ── */}
       <LearnSection
         sectionId="quantum-threats"
-        title="10. Quantum Threats to Payment Systems"
+        title="11. Quantum Threats to Payment Systems"
         icon={<ShieldAlert size={20} className="text-primary" />}
       >
         <p className="text-muted-foreground">
@@ -617,15 +721,18 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
       {/* ── Section 8: PQC Migration Landscape ── */}
       <LearnSection
         sectionId="migration-landscape"
-        title="11. PQC Migration Landscape"
+        title="12. PQC Migration Landscape"
         icon={<Lock size={20} className="text-primary" />}
       >
         <p className="text-muted-foreground">
           The payment industry is at an inflection point. EMVCo does not expect quantum computing to
           threaten EMV infrastructure before <strong className="text-foreground">2040</strong> — and
-          says it may never — while BIS, G7 and national regulators target{' '}
-          <strong className="text-foreground">2030-2032</strong> for critical financial system
-          migration. Among the card networks,{' '}
+          says it may never — while the G7 Cyber Expert Group points to{' '}
+          <strong className="text-foreground">2030-2032</strong> for the most critical financial
+          systems, against a broader <strong className="text-foreground">2035</strong> horizon. The
+          G7 CEG is explicit that this is not a deadline: the period &ldquo;is reflective of the
+          variety of envisaged approaches taken across G7 jurisdictions&rdquo;, and the statement
+          &ldquo;does not set guidance or regulatory expectations&rdquo;. Among the card networks,{' '}
           <strong className="text-foreground">Mastercard</strong> is the one that has published a
           dedicated PQC white paper; the rest engage through the EMVCo study group without public
           timetables.
