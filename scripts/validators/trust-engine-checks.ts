@@ -746,6 +746,77 @@ async function runCmT(): Promise<CheckResult[]> {
   ]
 }
 
+// ── CM-T-04: Compliance-landscape trusted_source_id resolution ───────────────
+// ADDED 2026-08-01 (maintenance-agent-framework-audit-08012026.md, finding T7):
+// CM-T-02 only ever checked timeline; compliance-landscape has the identical
+// referential-integrity risk (a row's trusted_source_id can drift or be
+// mistyped and nothing catches it) and the live audit found 29 such rows.
+// This generalizes CM-T-02's resolution check to compliance, reusing the
+// same trusted_sources registry lookup.
+
+async function runCmCompliance04(): Promise<CheckResult> {
+  const complianceFiles = await glob('src/data/compliance_*.csv', { cwd: REPO_ROOT })
+  complianceFiles.sort()
+  const latestCompliance = complianceFiles.at(-1)
+  if (!latestCompliance)
+    return pass(
+      'CM-T-04',
+      'Compliance trusted_source_id resolves in trusted_sources CSV',
+      'src/data/compliance_*.csv'
+    )
+
+  const trustedSourceFiles = await glob('src/data/trusted_sources_*.csv', { cwd: REPO_ROOT })
+  trustedSourceFiles.sort()
+  const latestTrusted = trustedSourceFiles.at(-1)
+
+  const knownSourceIds = new Set<string>()
+  if (latestTrusted) {
+    const trustedRaw = fs.readFileSync(path.join(REPO_ROOT, latestTrusted), 'utf-8')
+    const { data: trustedRows } = Papa.parse<Record<string, string>>(trustedRaw, {
+      header: true,
+      skipEmptyLines: true,
+    })
+    for (const r of trustedRows) {
+      if (r['source_id']?.trim()) knownSourceIds.add(r['source_id'].trim())
+    }
+  }
+
+  const complianceRaw = fs.readFileSync(path.join(REPO_ROOT, latestCompliance), 'utf-8')
+  const { data: complianceRows } = Papa.parse<Record<string, string>>(complianceRaw, {
+    header: true,
+    skipEmptyLines: true,
+  })
+
+  const findings: Finding[] = []
+  for (const row of complianceRows) {
+    if ((row['status'] ?? 'active').trim() === 'deprecated') continue
+    const label = row['label'] ?? row['id'] ?? ''
+    const srcId = (row['trusted_source_id'] ?? '').trim()
+    if (srcId && knownSourceIds.size > 0 && !knownSourceIds.has(srcId)) {
+      findings.push({
+        csv: latestCompliance,
+        row: null,
+        field: 'trusted_source_id',
+        value: label,
+        message: `"${label}" has unresolved trusted_source_id: "${srcId}"`,
+      })
+    }
+  }
+
+  return findings.length > 0
+    ? fail(
+        'CM-T-04',
+        'Compliance trusted_source_id resolves in trusted_sources CSV',
+        latestCompliance,
+        findings
+      )
+    : pass(
+        'CM-T-04',
+        'Compliance trusted_source_id resolves in trusted_sources CSV',
+        latestCompliance
+      )
+}
+
 // ── CM-TS: Trust-tier vocabulary normalisation ───────────────────────────────
 
 const ALLOWED_TIERS = new Set(['1_Authoritative', '2_Core', '3_Supporting', '4_Contextual'])
@@ -1791,7 +1862,7 @@ async function runCmXwalk(): Promise<CheckResult[]> {
 // ── Entry point ──────────────────────────────────────────────────────────────
 
 export async function runTrustEngineChecks(): Promise<CheckResult[]> {
-  const [cm1, cm2, cm3, cmE, cmCswp, cmG, cmT, cmTs, cmAt, cmF, cmXw, cmAx, cmRg, cmCn] =
+  const [cm1, cm2, cm3, cmE, cmCswp, cmG, cmT, cmT04, cmTs, cmAt, cmF, cmXw, cmAx, cmRg, cmCn] =
     await Promise.all([
       runCm1(),
       runCm2(),
@@ -1800,6 +1871,7 @@ export async function runTrustEngineChecks(): Promise<CheckResult[]> {
       runCmCswp(),
       runCmG(),
       runCmT(),
+      runCmCompliance04(),
       runCmTs(),
       runCmAt(),
       runCmF(),
@@ -1820,6 +1892,7 @@ export async function runTrustEngineChecks(): Promise<CheckResult[]> {
     cmCswp,
     cmG,
     ...cmT,
+    cmT04,
     cmTs,
     ...cmAt,
     ...cmF,

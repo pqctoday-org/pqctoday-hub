@@ -30,6 +30,8 @@ export interface TimelineDocumentRow {
   phase: string
   type: string
   title: string
+  /** CSV event_id — the key revisions.jsonl's record_ids actually use for domain="timeline". Falls back to title when absent (older rows). */
+  eventId?: string
   startYear: number
   endYear: number
   description: string

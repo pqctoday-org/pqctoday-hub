@@ -114,7 +114,7 @@ export const TimelineDocumentCard = ({
         <span onClick={(e) => e.stopPropagation()}>
           <ReviewedBadge
             domain="timeline"
-            entityId={row.title}
+            entityId={row.eventId || row.title}
             showUnreviewed={false}
             onOpenDrilldown={() => setDrilldownOpen(true)}
           />
@@ -227,9 +227,9 @@ export const TimelineDocumentCard = ({
         <div onClick={(e) => e.stopPropagation()}>
           <RevisionDrilldownPanel
             domain="timeline"
-            entityId={row.title}
+            entityId={row.eventId || row.title}
             entityLabel={row.title}
-            revisions={byRecord(revisions, 'timeline', row.title)}
+            revisions={byRecord(revisions, 'timeline', row.eventId || row.title)}
             onClose={() => setDrilldownOpen(false)}
           />
         </div>

@@ -57,6 +57,7 @@ export const DocumentTable = ({ data, title }: DocumentTableProps) => {
         phase: phase.phase,
         type: phase.type,
         title: phase.title,
+        eventId: ev?.eventId,
         startYear: phase.startYear,
         endYear: phase.endYear,
         description: phase.description,

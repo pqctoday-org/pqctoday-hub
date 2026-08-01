@@ -193,6 +193,11 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
             icon={TrendingUp}
             title="PQC Migration Workbench"
             description="Start from what you run — get a sequenced, quantum-safe plan aligned to NIST IR 8547 (Initial Public Draft) & CNSA 2.0."
+            // ADDED 2026-08-01: this page had a ViewType ('Migrate') already
+            // defined in authoritativeSourcesData.ts but no PageHeader on the
+            // app used it — the catalog's 907 trusted_source_id-backed rows
+            // had no Sources button anywhere to surface that provenance from.
+            viewType="Migrate"
             // ADDED 2026-07-16 (migrate-process remediation Phase 5, U1): the
             // catalog snapshot date was loaded (softwareMetadata) but never
             // surfaced anywhere on this page — a reviewer had no way to tell
