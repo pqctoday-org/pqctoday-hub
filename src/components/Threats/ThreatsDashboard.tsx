@@ -15,6 +15,7 @@ import {
   ShieldAlert,
   Clock,
   List,
+  ChevronDown,
 } from 'lucide-react'
 import { useSearchParams } from 'react-router'
 import { threatsData, threatsMetadata } from '../../data/threatsData'
@@ -167,6 +168,12 @@ export const ThreatsDashboard: React.FC<{
     return param === 'cards' || param === 'table' ? param : 'table'
   })
   const [activeNavIndustry, setActiveNavIndustry] = useState<string | null>(null)
+  // Below `lg` the Industries TOC stacks full-width above the content instead
+  // of sitting in the sticky side rail, so it collapses behind a toggle there
+  // (mirrors the `showMobileFilters` disclosure above); `lg:block` keeps it
+  // always-visible at `lg+` regardless of this state, matching prior desktop
+  // behavior exactly.
+  const [tocMobileOpen, setTocMobileOpen] = useState(false)
 
   // Sync all filter params on same-route navigations (e.g. chatbot deep links).
   // Functional setters prevent infinite loops when syncFiltersToUrl triggers a searchParams update.
@@ -802,37 +809,66 @@ export const ThreatsDashboard: React.FC<{
           {/* View Rendering — left-rail TOC of filtered threats + main view */}
           <div className="flex flex-col lg:flex-row gap-6">
             <aside className="lg:w-64 lg:shrink-0 lg:sticky lg:top-20 lg:self-start lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
-              <LeftNavTOC
-                title="Industries"
-                ariaLabel="Industries"
-                targetPrefix="threats-toc"
-                activeItemId={activeNavIndustry}
-                onSelect={(slug) => {
-                  setActiveNavIndustry(slug)
-                  document
-                    .getElementById(`industry-${slug}`)
-                    ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                }}
-                groups={[
-                  {
-                    id: 'industries',
-                    label: 'Industries',
-                    items: Array.from(
-                      new Map(
-                        filteredAndSortedData.map((t) => [
-                          t.industry,
-                          {
-                            id: t.industry.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-                            label: t.industry,
-                            hint: `${filteredAndSortedData.filter((x) => x.industry === t.industry).length} threats`,
-                          },
-                        ])
-                      ).values()
-                    ),
-                  },
-                ]}
-                emptyMessage="No threats match the current filters."
-              />
+              {/* Below `lg` this rail would otherwise stack full-width above the
+              content; collapse it behind a toggle there instead. `lg:hidden` /
+              `lg:block` below keep `lg+` rendering exactly as before. */}
+              <Button
+                variant="outline"
+                className="mb-3 flex min-h-[44px] w-full items-center justify-between gap-2 px-3 py-2.5 lg:hidden"
+                onClick={() => setTocMobileOpen((v) => !v)}
+                aria-expanded={tocMobileOpen}
+                aria-controls="threats-toc-mobile-panel"
+              >
+                <span className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                  <List size={16} className="text-primary" aria-hidden="true" />
+                  Industries
+                </span>
+                <ChevronDown
+                  size={16}
+                  className={clsx(
+                    'text-muted-foreground transition-transform duration-200',
+                    tocMobileOpen && 'rotate-180'
+                  )}
+                  aria-hidden="true"
+                />
+              </Button>
+              <div
+                id="threats-toc-mobile-panel"
+                className={clsx(tocMobileOpen ? 'block' : 'hidden', 'lg:block')}
+              >
+                <LeftNavTOC
+                  title="Industries"
+                  ariaLabel="Industries"
+                  targetPrefix="threats-toc"
+                  activeItemId={activeNavIndustry}
+                  onSelect={(slug) => {
+                    setActiveNavIndustry(slug)
+                    setTocMobileOpen(false)
+                    document
+                      .getElementById(`industry-${slug}`)
+                      ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                  }}
+                  groups={[
+                    {
+                      id: 'industries',
+                      label: 'Industries',
+                      items: Array.from(
+                        new Map(
+                          filteredAndSortedData.map((t) => [
+                            t.industry,
+                            {
+                              id: t.industry.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+                              label: t.industry,
+                              hint: `${filteredAndSortedData.filter((x) => x.industry === t.industry).length} threats`,
+                            },
+                          ])
+                        ).values()
+                      ),
+                    },
+                  ]}
+                  emptyMessage="No threats match the current filters."
+                />
+              </div>
             </aside>
 
             <div className="flex-1 min-w-0">

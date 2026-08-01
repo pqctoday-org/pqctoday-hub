@@ -49,7 +49,7 @@ export function SortControl<T extends string = SortOption>({
         onClick={() => setIsOpen(!isOpen)}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-muted/30 hover:bg-muted/50 border border-border text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+        className="flex items-center gap-1.5 px-3 py-1.5 max-md:min-h-[44px] max-md:min-w-[44px] rounded-lg bg-muted/30 hover:bg-muted/50 border border-border text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
       >
         <ArrowUpDown size={14} aria-hidden="true" />
         <span className="hidden sm:inline">{selected?.label ?? 'Sort'}</span>

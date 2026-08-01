@@ -47,7 +47,7 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
               variant="ghost"
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className={`flex items-center gap-1.5 px-3 py-2.5 text-sm font-medium rounded-t-lg border-b-2 transition-colors ${
+              className={`min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 flex items-center gap-1.5 px-3 py-2.5 text-sm font-medium rounded-t-lg border-b-2 transition-colors ${
                 activeTab === tab.id
                   ? 'border-primary text-foreground'
                   : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'

@@ -208,7 +208,7 @@ export const CSWP39ZonePanel: React.FC<CSWP39ZonePanelProps> = ({
         </div>
         <Button
           variant="ghost"
-          className="shrink-0 h-8 px-2"
+          className="shrink-0 h-8 px-2 max-md:h-11 max-md:w-11"
           onClick={handleToggle}
           aria-expanded={open}
           aria-label={open ? `Collapse ${detail.title}` : `Expand ${detail.title}`}

@@ -190,7 +190,7 @@ function ProgramOwnership() {
             value={f.value}
             onChange={(e) => f.onChange(e.target.value)}
             placeholder={f.placeholder}
-            className="w-full rounded-md border border-border bg-background px-2 py-1.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary print:border-none print:p-0 print:bg-transparent"
+            className="w-full rounded-md border border-border bg-background px-2 py-2.5 md:py-1.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary print:border-none print:p-0 print:bg-transparent"
           />
         </div>
       ))}

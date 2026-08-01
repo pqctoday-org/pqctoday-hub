@@ -214,7 +214,7 @@ export const ChatPanelContent: React.FC = () => {
           </div>
           {provider && (
             <div className="flex items-center gap-1 shrink-0">
-              <div className="flex items-center gap-1.5 px-1">
+              <div className="flex items-center gap-1.5 px-1 max-sm:min-h-[44px]">
                 <Plane
                   size={14}
                   className={airplaneMode ? 'text-primary' : 'text-muted-foreground'}
@@ -374,7 +374,7 @@ export const ChatPanelContent: React.FC = () => {
           )}
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto overflow-x-hidden px-3 md:px-4 py-4">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden px-3 md:px-4 py-4 max-md:overscroll-y-contain">
             <div className="space-y-4" aria-live="polite" aria-atomic="false">
               {messages.length === 0 && !isStreaming && (
                 <div className="text-center py-12 space-y-4">
@@ -513,7 +513,7 @@ export const ChatPanelContent: React.FC = () => {
           </div>
 
           {/* Input */}
-          <div className="px-3 md:px-4 py-3 border-t border-border shrink-0">
+          <div className="px-3 md:px-4 py-3 border-t border-border shrink-0 safe-bottom">
             <div className="flex gap-2">
               <Textarea
                 ref={inputRef}

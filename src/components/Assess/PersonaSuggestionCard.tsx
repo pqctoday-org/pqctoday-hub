@@ -140,7 +140,7 @@ export const PersonaSuggestionCard: React.FC = () => {
           size="sm"
           onClick={handleClose}
           aria-label="Dismiss suggestion"
-          className="h-6 w-6 p-0 shrink-0 -mr-1"
+          className="h-11 w-11 p-0 shrink-0 -mr-1 md:h-6 md:w-6"
         >
           <X size={12} aria-hidden="true" />
         </Button>

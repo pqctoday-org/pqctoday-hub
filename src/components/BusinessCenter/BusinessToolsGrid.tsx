@@ -184,6 +184,7 @@ export const BusinessToolsGrid = () => {
             label="Zone"
             size="sm"
             noContainer
+            className="max-md:[&_button]:min-h-[44px]"
           />
           <FilterDropdown
             items={PHASE_FILTER_ITEMS}
@@ -195,6 +196,7 @@ export const BusinessToolsGrid = () => {
             label="Phase"
             size="sm"
             noContainer
+            className="max-md:[&_button]:min-h-[44px]"
           />
           <FilterDropdown
             items={AUDIENCE_FILTER_ITEMS}
@@ -206,6 +208,7 @@ export const BusinessToolsGrid = () => {
             label="Audience"
             size="sm"
             noContainer
+            className="max-md:[&_button]:min-h-[44px]"
           />
         </div>
       </div>
@@ -222,7 +225,7 @@ export const BusinessToolsGrid = () => {
               <div key={s.id} className="flex items-center gap-2">
                 <Link
                   to={`/business/tools/${s.id}`}
-                  className="flex items-center gap-2 rounded-full border border-border px-3 py-1 text-sm text-foreground hover:border-primary/40 hover:text-primary transition-colors"
+                  className="flex items-center gap-2 rounded-full border border-border px-3 py-1 text-sm text-foreground hover:border-primary/40 hover:text-primary transition-colors max-md:min-h-[44px]"
                 >
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10 text-[11px] font-semibold text-primary">
                     {s.step}

@@ -47,6 +47,23 @@ export const RightPanel: React.FC = () => {
     }
   }, [workshopActive, isOpen])
 
+  // Lock the underlying page content's own scroll while the panel is open on
+  // narrow viewports, mirroring the scroll-lock pattern every other overlay
+  // in this app uses (FilterDrawer, LibraryDetailPopover, etc.) — but target
+  // the MainLayout scroll container rather than document.body, since on
+  // mobile the panel takes over the full viewport as its own scroll region.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (!isOpen || !window.matchMedia('(max-width: 639px)').matches) return
+    const scrollContainer = document.getElementById('main-content')?.parentElement
+    if (!scrollContainer) return
+    const prevOverflow = scrollContainer.style.overflow
+    scrollContainer.style.overflow = 'hidden'
+    return () => {
+      scrollContainer.style.overflow = prevOverflow
+    }
+  }, [isOpen])
+
   // E2E UI Bypass
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -135,7 +152,7 @@ export const RightPanel: React.FC = () => {
                     </div>
                   }
                 >
-                  <div className="flex-1 overflow-y-auto">
+                  <div className="flex-1 overflow-y-auto max-md:overscroll-y-contain">
                     <FAQPage />
                   </div>
                 </React.Suspense>

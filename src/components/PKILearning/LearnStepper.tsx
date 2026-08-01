@@ -5,6 +5,7 @@ import { CheckCircle } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { LEARN_SECTIONS } from './moduleData'
 import { Button } from '@/components/ui/button'
+import { ScrollFadeContainer } from '@/components/ui/ScrollFadeContainer'
 
 export interface LearnStep {
   /** Section id matching `LEARN_SECTIONS[moduleId][i].id`. Used as the
@@ -101,8 +102,11 @@ export const LearnStepper = ({ steps }: LearnStepperProps) => {
 
   return (
     <div className="w-full">
-      {/* Sticky table-of-contents — numbered circles with connecting line */}
-      <div className="sticky top-16 z-10 mb-8 -mx-4 px-4 pt-3 pb-5 bg-background/80 backdrop-blur-sm border-b border-border overflow-x-auto no-scrollbar">
+      {/* Sticky table-of-contents — numbered circles with connecting line.
+          ScrollFadeContainer (same technique as tabs.tsx's TabsList) adds a
+          right-edge fade cue on mobile so users know more sections are
+          reachable by swiping when the row overflows. */}
+      <ScrollFadeContainer className="sticky top-16 z-10 mb-8 -mx-4 px-4 pt-3 pb-5 bg-background/80 backdrop-blur-sm border-b border-border">
         <div className="relative flex w-max min-w-full items-start justify-center gap-x-6 sm:gap-x-12">
           <div className="absolute top-4 left-10 right-10 h-0.5 bg-border -z-10" />
           {steps.map((step) => {
@@ -135,7 +139,7 @@ export const LearnStepper = ({ steps }: LearnStepperProps) => {
             )
           })}
         </div>
-      </div>
+      </ScrollFadeContainer>
 
       {/* All sections rendered vertically; each is a workshop scroll-to target */}
       <div className="space-y-6">

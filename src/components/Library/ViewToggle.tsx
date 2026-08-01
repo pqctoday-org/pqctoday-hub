@@ -23,7 +23,7 @@ export const ViewToggle = ({ mode, onChange }: ViewToggleProps) => {
         role="radio"
         aria-checked={mode === 'cards'}
         className={clsx(
-          'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all',
+          'flex items-center gap-1.5 px-3 py-1.5 max-md:min-h-[44px] max-md:min-w-[44px] rounded-md text-xs font-medium transition-all',
           mode === 'cards'
             ? 'bg-primary/10 text-primary border border-primary/30'
             : 'text-muted-foreground hover:text-foreground border border-transparent'

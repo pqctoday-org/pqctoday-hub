@@ -158,7 +158,7 @@ export const LearnRedesignView = () => {
           type="button"
           onClick={() => setShowRouter((v) => !v)}
           aria-pressed={showRouter}
-          className="h-auto inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border border-accent/30 text-accent bg-accent/5 hover:bg-accent/10 transition-colors"
+          className="h-auto min-h-[44px] md:min-h-0 inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border border-accent/30 text-accent bg-accent/5 hover:bg-accent/10 transition-colors"
         >
           <Compass size={13} aria-hidden="true" />
           Not sure? Guided routing
@@ -214,7 +214,12 @@ export const LearnRedesignView = () => {
               <span className="text-sm text-muted-foreground">
                 Pick a role above for a guided path — or
               </span>
-              <Button variant="outline" size="sm" onClick={() => selectMode('browse')}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => selectMode('browse')}
+                className="min-h-[44px] md:min-h-0"
+              >
                 Browse all {TOTAL_MODULE_COUNT} modules
               </Button>
             </div>

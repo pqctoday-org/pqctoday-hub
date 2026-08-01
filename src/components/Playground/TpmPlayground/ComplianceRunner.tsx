@@ -1489,7 +1489,7 @@ export function ComplianceRunner() {
             variant="ghost"
             size="icon"
             onClick={handleCopyLog}
-            className="h-7 w-7 text-muted-foreground hover:text-primary"
+            className="h-7 w-7 min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 text-muted-foreground hover:text-primary"
             title="Copy Log"
           >
             <Copy className="h-4 w-4" />
@@ -1529,11 +1529,11 @@ export function ComplianceRunner() {
       {hasData && (
         <div className="bg-background border border-border rounded-lg overflow-hidden">
           {/* Tab headers */}
-          <div className="flex border-b border-border bg-muted/20">
+          <div className="flex overflow-x-auto no-scrollbar border-b border-border bg-muted/20">
             <Button
               variant="ghost"
               onClick={() => setActiveTab('compliance')}
-              className={`flex items-center gap-1.5 rounded-none px-3 py-2 h-auto text-[11px] font-semibold uppercase tracking-wider transition-colors ${
+              className={`flex shrink-0 items-center gap-1.5 rounded-none px-3 py-2 h-auto min-h-[44px] md:min-h-0 text-[11px] font-semibold uppercase tracking-wider transition-colors ${
                 activeTab === 'compliance'
                   ? 'text-primary border-b-2 border-primary -mb-px bg-background'
                   : 'text-muted-foreground hover:text-foreground'
@@ -1545,7 +1545,7 @@ export function ComplianceRunner() {
             <Button
               variant="ghost"
               onClick={() => setActiveTab('scenario')}
-              className={`flex items-center gap-1.5 rounded-none px-3 py-2 h-auto text-[11px] font-semibold uppercase tracking-wider transition-colors ${
+              className={`flex shrink-0 items-center gap-1.5 rounded-none px-3 py-2 h-auto min-h-[44px] md:min-h-0 text-[11px] font-semibold uppercase tracking-wider transition-colors ${
                 activeTab === 'scenario'
                   ? 'text-primary border-b-2 border-primary -mb-px bg-background'
                   : 'text-muted-foreground hover:text-foreground'
