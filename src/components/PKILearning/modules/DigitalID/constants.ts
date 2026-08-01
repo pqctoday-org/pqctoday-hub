@@ -73,7 +73,8 @@ export const OPENID4VCI_METADATA = {
       format: 'mso_mdoc',
       doctype: 'eu.europa.ec.eudi.pid.1',
       cryptographic_binding_methods_supported: ['cose_key'],
-      cryptographic_suites_supported: ['ES256', 'ES384'],
+      // Renamed from `cryptographic_suites_supported` in OpenID4VCI 1.0 Final.
+      credential_signing_alg_values_supported: ['ES256', 'ES384'],
       display: [
         {
           name: 'Person Identification Data',
@@ -106,7 +107,7 @@ export const OPENID4VP_PRESENTATION_DEF = {
       id: 'diploma_education',
       name: 'Education Verification',
       purpose: 'Premium account eligibility',
-      format: { 'vc+sd-jwt': {} },
+      format: { 'dc+sd-jwt': {} },
       constraints: {
         fields: [{ path: ['$.degree_type'] }, { path: ['$.institution_name'] }],
       },
@@ -137,49 +138,14 @@ export const CSC_API_ENDPOINTS = {
   signatures_signHash: '/csc/v2/signatures/signHash',
 }
 
-// Educational tooltips for EUDI terms
-export const EUDI_GLOSSARY = {
-  WUA: 'Wallet Unit Attestation - A credential issued by the Wallet Provider that attests to the authenticity and security properties of the wallet instance.',
-  PID: 'Person Identification Data - The core identity credential in the EUDI Wallet, containing mandatory attributes like name, birth date, and nationality.',
-  mDL: 'Mobile Driving License - A digital representation of a physical driving license following ISO/IEC 18013-5 standard.',
-  QEAA: 'Qualified Electronic Attestation of Attributes - An attestation issued by a Qualified Trust Service Provider.',
-  'PuB-EAA':
-    'Public Body Electronic Attestation of Attributes - An attestation issued by a public body based on authentic sources.',
-  OpenID4VCI:
-    'OpenID for Verifiable Credential Issuance (1.0) - Protocol for issuing verifiable credentials to wallets.',
-  OpenID4VP:
-    'OpenID for Verifiable Presentations (1.0 Final, July 2025) - Protocol for presenting verifiable credentials to Relying Parties.',
-  'SD-JWT':
-    'Selective Disclosure JWT (RFC 9901) - A JWT format that allows selective disclosure of claims. The SD-JWT VC credential profile remains a draft.',
-  mdoc: 'Mobile Document - CBOR-based credential format defined in ISO/IEC 18013-5.',
-  'Device Binding':
-    'Cryptographic proof that the presenter controls the private key associated with the credential.',
-  'Remote HSM':
-    'Hardware Security Module operated by the Wallet Provider for remote key management. The ARF supports both local WSCD (device secure element) and remote WSCD (HSM) models.',
-  WSCD: 'Wallet Secure Cryptographic Device - The secure hardware storing private keys. Can be local (device secure element, eSE, TEE) or remote (cloud HSM). This simulation demonstrates the remote HSM model.',
-  WSCA: 'Wallet Secure Cryptographic Application - The firmware/software managing cryptographic operations in the WSCD.',
-  'CSC API': 'Cloud Signature Consortium API - Standard for remote signature creation services.',
-  QES: 'Qualified Electronic Signature - A type of electronic signature with the same legal effect as a handwritten signature in the EU.',
-  QTSP: 'Qualified Trust Service Provider - An organization authorized to provide qualified trust services.',
-  'Relying Party':
-    'An entity that relies on and verifies credentials presented by a holder (e.g., a bank verifying identity).',
-  'Selective Disclosure':
-    'Cryptographic technique allowing the holder to reveal only specific attributes from a credential, hiding all others from the verifier.',
-  Unlinkability:
-    'Privacy property ensuring that multiple presentations by the same holder cannot be correlated across different Relying Parties.',
-  'Data Minimization':
-    'GDPR principle (Art. 5(1)(c)) requiring collection of only the minimum personal data necessary for a specific purpose.',
-  'Trusted List':
-    'Machine-readable registry of Qualified Trust Service Providers published by each EU member state, enabling cross-border trust verification.',
-  'eIDAS Trust Framework':
-    'Cross-border mechanism ensuring mutual recognition of digital identities and qualified attestations across all 27 EU member states.',
-}
+// NOTE: an `EUDI_GLOSSARY` map of 22 EUDI definitions used to live here.
+// Its only consumer was InfoTooltip.tsx, which was never rendered, so none
+// of it reached a learner — while mso_mdoc / SD-JWT VC / COSE_Sign1 rendered
+// as dead <InlineTooltip> terms in this very module. The definitions were
+// migrated into src/data/glossary/concepts.json on 2026-07-31, where the
+// global tooltip and glossary page both read them.
 
-// Module metadata
-export const DIGITAL_ID_MODULE = {
-  id: 'digital-id',
-  title: 'Digital ID',
-  description:
-    'Master EUDI Wallet: Wallet activation, PID issuance, attestations, QES, and verification.',
-  duration: '120 min',
-}
+// NOTE: a `DIGITAL_ID_MODULE` constant used to live here duplicating the
+// module's id/title/description/duration. It had no consumers and its
+// duration ('120 min') contradicted the manifest ('80 min'), which is what
+// the UI actually renders. manifest.ts is the single source of truth.

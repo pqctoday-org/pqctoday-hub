@@ -11,10 +11,10 @@ import type {
 import { createSDJWT } from '../../utils/sdjwt-utils'
 import type { CryptoProvider } from '../../utils/crypto-provider'
 import { OpenSSLCryptoProvider } from '../../utils/openssl-crypto-provider'
-import { SoftHSMCryptoProvider } from '../../utils/hsm-crypto-provider'
+import { SoftHSMCryptoProvider, isHsmBackedKey } from '../../utils/hsm-crypto-provider'
 import { DualCryptoProvider } from '../../utils/dual-crypto-provider'
 import { generateX509Certificate } from '../../utils/x509-utils'
-import { useHSM } from '@/hooks/useHSM'
+import type { UseHSMResult } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
@@ -37,7 +37,7 @@ const DIGITAL_ID_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'did-pid-sigver',
     useCase: 'PID credential SD-JWT signing',
-    standard: 'eIDAS 2.0 ARF v1.4 + FIPS 204 ACVP',
+    standard: 'eIDAS 2.0 ARF v3.0.0 + FIPS 204 ACVP',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
     kind: { type: 'mldsa-sigver', variant: 65 },
@@ -62,6 +62,7 @@ const DIGITAL_ID_KAT_SPECS: KatTestSpec[] = [
 
 interface AttestationIssuerComponentProps {
   wallet: WalletInstance
+  hsm: UseHSMResult
   onCredentialIssued: (cred: VerifiableCredential, key: CryptoKey) => void
   onBack: () => void
 }
@@ -70,6 +71,7 @@ type FlowStep = 'START' | 'PID_CHECK' | 'PRESENTATION' | 'VERIFICATION' | 'ISSUA
 
 export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProps> = ({
   wallet,
+  hsm,
   onCredentialIssued,
   onBack,
 }) => {
@@ -77,7 +79,6 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
   const [loading, setLoading] = useState(false)
   const { logs, opensslLogs, activeLogTab, setActiveLogTab, addLog, addOpenSSLLog } =
     useDigitalIDLogs()
-  const hsm = useHSM()
 
   const getCryptoProvider = (): CryptoProvider => {
     const ossl = new OpenSSLCryptoProvider()
@@ -133,8 +134,7 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
     const challengePayload = JSON.stringify({ nonce, aud: 'university' })
 
     const provider = getCryptoProvider()
-    const isHsmKey = pidKey.privateKey?.startsWith('[PKCS#11 handle') ?? false
-    if (isHsmKey) {
+    if (isHsmBackedKey(pidKey)) {
       addLog('Key Binding Signature via PKCS#11 HSM (CKM_ECDSA_SHA256)')
     }
     try {
@@ -204,7 +204,7 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
       issuer: 'Technical University of Madrid',
       issuanceDate: new Date().toISOString(),
       credentialSubject: {}, // In SD-JWT, claims are in the JWT/disclosures
-      format: 'vc+sd-jwt',
+      format: 'dc+sd-jwt',
       raw: JSON.stringify(sdJwt),
     }
 
@@ -232,6 +232,8 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
             hsm={hsm}
             operations={['C_GenerateKeyPair', 'C_Sign', 'C_Digest']}
             className="mb-4"
+            preventDisable={wallet.keys.some(isHsmBackedKey)}
+            preventDisableReason="Disable is locked while your wallet holds HSM-backed keys — Reset the workshop to release them."
           />
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
             <div className="space-y-6 lg:col-span-2">

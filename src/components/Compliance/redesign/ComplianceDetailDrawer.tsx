@@ -6,10 +6,12 @@
 // Supersedes FrameworkDetailPopover for the redesigned Landscape.
 
 import { useEffect, useRef } from 'react'
+import { Link } from 'react-router'
 import { createPortal } from 'react-dom'
 import FocusLock from 'react-focus-lock'
 import {
   ArrowDown,
+  BookOpen,
   ExternalLink,
   Globe,
   ListChecks,
@@ -21,6 +23,7 @@ import {
 import { Button } from '@/components/ui/button'
 import type { ComplianceFramework } from '@/data/complianceData'
 import { maturityByRefId } from '@/data/maturityGovernanceData'
+import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { getTrustedSource } from '@/data/trustedSourcesData'
 import { getAuthoritativeSource } from '@/data/authoritativeSourcesData'
 import { buildDrawerDetail, type PillarId } from './pillarModel'
@@ -244,6 +247,30 @@ export function ComplianceDetailDrawer({
                     </div>
                   )}
                 </dl>
+              </section>
+            )}
+
+            {/* Learn backlink. Traversal was one-way until 2026-07-31: a module
+                could link out to /compliance, but no compliance row could route
+                a reader into the module that teaches it. */}
+            {(framework.learnModules ?? []).length > 0 && (
+              <section>
+                <h3 className="mb-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Learn this
+                </h3>
+                <ul className="space-y-1">
+                  {(framework.learnModules ?? []).map((id) => (
+                    <li key={id}>
+                      <Link
+                        to={`/learn/${id}`}
+                        className="flex items-center gap-2 rounded px-2 py-1.5 text-sm text-foreground transition-colors hover:bg-muted/40"
+                      >
+                        <BookOpen size={13} className="shrink-0 text-primary" aria-hidden="true" />
+                        <span>{MODULE_CATALOG[id]?.title ?? id}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </section>
             )}
 

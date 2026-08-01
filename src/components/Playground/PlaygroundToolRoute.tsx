@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { Suspense, useEffect } from 'react'
+import React, { Suspense, useEffect, useState } from 'react'
 import { useParams, useNavigate, useSearchParams, Navigate, Link } from 'react-router'
 import { ArrowLeft, Wrench, ArrowRight } from 'lucide-react'
 import { Button } from '../ui/button'
@@ -9,7 +9,9 @@ import { useAchievementStore } from '@/store/useAchievementStore'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
-import { HistoryButton } from '../ui/HistoryButton'
+import { ReviewedBadge } from '../ui/ReviewedBadge'
+import { RevisionDrilldownPanel } from '../ui/RevisionDrilldownPanel'
+import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import { ShareButton } from '../ui/ShareButton'
 
 export const PlaygroundToolRoute = () => {
@@ -30,6 +32,8 @@ export const PlaygroundToolRoute = () => {
       : undefined
 
   const tool = toolId ? WORKSHOP_TOOLS.find((t) => t.id === toolId) : null
+  const [revisionDrilldownOpen, setRevisionDrilldownOpen] = useState(false)
+  const { revisions } = useRevisions()
 
   useEffect(() => {
     if (tool) useAchievementStore.getState().recordPlaygroundToolUsage(tool.id)
@@ -90,14 +94,23 @@ export const PlaygroundToolRoute = () => {
             resourceType="playground-tool"
             variant="icon"
           />
-          <HistoryButton
-            itemId={tool.id}
-            trackingId={tool.pt_id}
-            itemLabel={`${tool.pt_id} · ${tool.id}`}
-            version={tool.version}
+          <ReviewedBadge
+            domain="tool"
+            entityId={tool.pt_id}
+            onOpenDrilldown={() => setRevisionDrilldownOpen(true)}
           />
         </div>
       </div>
+
+      {revisionDrilldownOpen && (
+        <RevisionDrilldownPanel
+          domain="tool"
+          entityId={tool.pt_id}
+          entityLabel={`${tool.pt_id} · ${tool.id}`}
+          revisions={byRecord(revisions, 'tool', tool.pt_id)}
+          onClose={() => setRevisionDrilldownOpen(false)}
+        />
+      )}
 
       {tool.wip && (
         <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-status-warning/10 border border-status-warning/30 text-status-warning text-sm">

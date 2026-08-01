@@ -57,6 +57,20 @@ export interface LibraryItem {
   vettingBody?: string[]
   githubContributionUrl?: string
   downloadUrlQuality?: string
+  /**
+   * 'paid' when the publisher SELLS this document (ISO, IEC, IEEE SA, ANSI,
+   * SAE/ARINC). Absent means free. The site names paid standards because the
+   * name stays editorially relevant, but must never present `downloadUrl` as
+   * a download for these — it is a purchase page. See the maintenance repo's
+   * SCHEMA.md section 6 "Paid-source policy".
+   */
+  accessType?: 'paid'
+  /**
+   * A freely-readable page that DESCRIBES a paid standard (official abstract
+   * or scope page). It is a summary, NOT the standard — any UI surfacing it
+   * must say so, or a reader will think they have the full document.
+   */
+  freeSummaryUrl?: string
   trustedSourceIdStatus?: string
   dataQualityNotes?: string
   confidenceScore?: number
@@ -269,6 +283,8 @@ interface RawLibraryRow {
   change_status: string
   manual_category: string
   downloadable: string
+  access_type: string
+  free_summary_url: string
   local_file: string
   module_ids: string
   misc_info: string
@@ -394,6 +410,8 @@ function transformLibraryRow(row: RawLibraryRow): LibraryItem | null {
     vettingBody: row.vetting_body ? splitSemicolon(row.vetting_body) : undefined,
     githubContributionUrl: row.github_contribution_url?.trim() || undefined,
     downloadUrlQuality: row.download_url_quality || undefined,
+    accessType: row.access_type?.trim().toLowerCase() === 'paid' ? 'paid' : undefined,
+    freeSummaryUrl: row.free_summary_url?.trim() || undefined,
     trustedSourceIdStatus: row.trusted_source_id_status || undefined,
     dataQualityNotes: row.data_quality_notes || undefined,
     confidenceScore: row.confidence_score ? Number(row.confidence_score) : undefined,

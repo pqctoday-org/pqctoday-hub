@@ -11,6 +11,7 @@ import {
   Monitor,
   AlertTriangle,
   ArrowRight,
+  ArrowRightLeft,
   Lock,
   Layers,
   KeyRound,
@@ -81,12 +82,19 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
           (Europay, Mastercard, Visa) is the global standard for chip-based payment card
           authentication. Originally developed in the 1990s, EMV is now managed by{' '}
           <strong className="text-foreground">EMVCo</strong>, jointly owned by the six major payment
-          networks. With approximately <strong className="text-foreground">14.7 billion</strong> EMV
-          cards in circulation, it is the largest deployed PKI ecosystem in the world.
+          networks. With <strong className="text-foreground">14.7 billion</strong> EMV cards in
+          circulation at the end of 2024 — EMVCo&rsquo;s own figure, reported at the 2025 EMV User
+          Meeting, and growing about 7% a year — it is the largest deployed PKI ecosystem in the
+          world.
         </p>
 
         <div className="glass-panel p-4">
           <h3 className="text-sm font-semibold text-foreground mb-3">Major Payment Networks</h3>
+          <p className="text-xs text-muted-foreground mb-3">
+            Five of EMVCo&rsquo;s six owners are profiled below. JCB, the sixth, is not — its
+            published PQC position and card-fleet figures are not sourced to the standard the other
+            five rows meet, and this module does not assert what it cannot cite.
+          </p>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -514,9 +522,9 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
         icon={<Scale size={20} className="text-primary" />}
       >
         <p className="text-muted-foreground">
-          No single authority sets the financial sector&rsquo;s post-quantum timetable. A dozen
-          bodies publish across as many jurisdictions, and which of them binds a given institution
-          depends on where it is regulated — not on where it operates.
+          No single authority sets the financial sector&rsquo;s post-quantum timetable. The seven
+          bodies below publish across five jurisdictions, and which of them binds a given
+          institution depends on where it is regulated — not on where it operates.
         </p>
         <div className="space-y-2">
           {SECTOR_BODIES.map((b) => (
@@ -553,8 +561,8 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
         <p className="text-muted-foreground">
           The payment ecosystem faces multiple quantum threat vectors, from offline card
           authentication to key injection infrastructure. The scale is unprecedented —{' '}
-          <strong className="text-foreground">14.7 billion EMV cards</strong> cannot be replaced
-          overnight.
+          <strong className="text-foreground">14.7 billion EMV cards</strong> (end of 2024) cannot
+          be replaced overnight.
         </p>
 
         <div className="glass-panel p-4">
@@ -613,11 +621,14 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
         icon={<Lock size={20} className="text-primary" />}
       >
         <p className="text-muted-foreground">
-          The payment industry is at an inflection point. EMVCo does not expect quantum threats
-          until 2040+, but BIS, G7, and national regulators target{' '}
+          The payment industry is at an inflection point. EMVCo does not expect quantum computing to
+          threaten EMV infrastructure before <strong className="text-foreground">2040</strong> — and
+          says it may never — while BIS, G7 and national regulators target{' '}
           <strong className="text-foreground">2030-2032</strong> for critical financial system
-          migration. Only <strong className="text-foreground">Mastercard</strong> has published a
-          comprehensive PQC white paper and active TLS 1.3 PQC pilots.
+          migration. Among the card networks,{' '}
+          <strong className="text-foreground">Mastercard</strong> is the one that has published a
+          dedicated PQC white paper; the rest engage through the EMVCo study group without public
+          timetables.
         </p>
 
         <div className="glass-panel p-4 space-y-3">
@@ -625,8 +636,8 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
           <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1.5">
             <li>
               <strong className="text-foreground">FN-DSA (Falcon, FIPS 206 in development):</strong>{' '}
-              Leading candidate for constrained card chips — compact signatures (~690 bytes vs
-              ML-DSA&apos;s ~2,420 bytes)
+              Leading candidate for constrained card chips — compact signatures (666 bytes, a fixed
+              padded size, vs ML-DSA&apos;s 2,420 bytes)
             </li>
             <li>
               <strong className="text-foreground">Hybrid approach:</strong> Dual-signature cards
@@ -641,8 +652,10 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
               PQC key wrapping before any downstream migration can begin
             </li>
             <li>
-              <strong className="text-foreground">PCI DSS alignment:</strong> PCI SSC recognizes
-              NIST FIPS 203/204/205 — binding requirements expected in 2026+ wave
+              <strong className="text-foreground">PCI DSS alignment:</strong> v4.0.1 is the current
+              standard — there is no v5.0. PCI SSC opened a six-week request for comments on it on 3
+              June 2026, explicitly to shape the next version; that is where PQC requirements would
+              first appear
             </li>
           </ul>
         </div>
@@ -721,6 +734,67 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
               <div className="text-sm font-medium text-foreground">Compliance Strategy</div>
               <div className="text-xs text-muted-foreground">
                 PCI DSS, G7, and BIS regulatory timelines for payment PQC
+              </div>
+            </div>
+          </Link>
+        </div>
+
+        {/*
+          Added 2026-07-31. This module previously reached only /learn and
+          /library — it named threat ids in its own search summary with no path
+          for a learner to open them, and offered no route to the compliance or
+          timeline catalogues despite being the most regulation-dense module in
+          the Industries track.
+        */}
+        <h4 className="text-sm font-semibold text-foreground mt-6 mb-3">
+          This sector, elsewhere in the hub
+        </h4>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <Link
+            to="/threats?industry=Payment%20Card%20Industry"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <AlertTriangle size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Payment Card Threats</div>
+              <div className="text-xs text-muted-foreground">
+                Card-ecosystem quantum threats, with sources
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/threats?industry=Financial%20Services%20%2F%20Banking"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Landmark size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Banking Threats</div>
+              <div className="text-xs text-muted-foreground">
+                Settlement, HSM and interbank threat entries
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/compliance"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Scale size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Compliance Landscape</div>
+              <div className="text-xs text-muted-foreground">
+                DORA and the sector&rsquo;s regulatory obligations
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/timeline"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <ArrowRightLeft size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Migration Timeline</div>
+              <div className="text-xs text-muted-foreground">
+                The 2030-2032 targets this module cites
               </div>
             </div>
           </Link>

@@ -101,6 +101,15 @@ jobs:
         # CuriousSummaryBanner has no fallback chain — a missing PNG renders as a broken image.
         run: npm run audit:module-infographics
 
+      - name: Audit Learn module / Playground tool revision coverage
+        # A Learn module or Playground tool content edit must carry its own
+        # public/data/revisions.jsonl entry in the same diff (emit_revision.py
+        # --module-edit/--tool-edit writes both together) — otherwise the
+        # "Revision History" panel silently stays empty for real edits, the
+        # gap LEARN-MODULE-REVISION-HISTORY-REMEDIATION-PLAN-07312026.md
+        # fixes. See scripts/audit-content-revision-coverage.ts.
+        run: npm run audit:content-revision-coverage
+
       - name: Audit timeline aliases
         run: npm run audit:timeline-aliases
 

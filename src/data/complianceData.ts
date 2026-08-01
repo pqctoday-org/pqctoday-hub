@@ -2,7 +2,10 @@
 import type { IndustryComplianceConfig } from './industryAssessConfig'
 import { loadLatestCSV, splitSemicolon, parseBoolYesNo } from './csvUtils'
 import { filterActive } from './loaderUtils'
-import { COUNTRY_CODE_TO_NAME as JURISDICTION_CODE_TO_NAME } from './jurisdictionsData'
+import {
+  COUNTRY_CODE_TO_NAME as JURISDICTION_CODE_TO_NAME,
+  COUNTRY_NAME_TO_COMPLIANCE_BLOC,
+} from './jurisdictionsData'
 
 // ── Types ────────────────────────────────────────────────────────────────
 
@@ -15,6 +18,13 @@ export type BodyType =
   | 'regulatory_body'
 
 export type DeadlinePhase = 'active' | 'imminent' | 'near' | 'mid' | 'long' | 'ongoing'
+
+/**
+ * Why a row has (or has not) a date — see ComplianceFramework.deadlineKind.
+ * `unknown` is deliberately distinct from `none`: one is a gap in our data,
+ * the other is a fact about the regulation.
+ */
+export type DeadlineKind = 'fixed' | 'phased' | 'ongoing' | 'none' | 'unknown'
 
 /**
  * Five-valued PQC-requirement enum (canonical surface). Existing consumers
@@ -42,9 +52,48 @@ export interface ComplianceFramework {
   deadline: string
   deadlineYear?: number
   deadlinePhase: DeadlinePhase
+  /**
+   * Every milestone date the source states, as {year, label}, parsed from the
+   * `deadline_dates` column (WP-1.2, 2026-07-31).
+   *
+   * The free-text `deadline` above is for humans. This is what the facet and
+   * the timeline read. Before it existed both derived from prose, so 66% of
+   * rows produced no year and vanished from the timeline, and 21 phased rows
+   * were collapsed to their earliest date — NIST IR 8547's "2030 (deprecate),
+   * 2035 (disallow)" filed under 2030 only.
+   */
+  deadlineDates?: { year: number; label: string }[]
+  /**
+   * First stated milestone — when the obligation starts to bite.
+   *
+   * DERIVED from deadlineDates, never stored. Two columns holding the same
+   * fact is the drift that produced this catalog's industry bug, where
+   * `industries` and `naics_codes` were identical until they silently were
+   * not. deadlineDates stays the single source of truth.
+   */
+  deadlineStart?: number
+  /**
+   * Last stated milestone — the date by which the transition must be COMPLETE.
+   *
+   * This is the compliance-critical one. NIST IR 8547 deprecates at 2030 and
+   * disallows at 2035; an organisation with a 10-year retention horizon is
+   * bound by 2035, not by 2030. Before WP-1.2 only the earliest date existed,
+   * so the binding constraint was the one the data could not express.
+   */
+  deadlineEnd?: number
+  /**
+   * fixed | phased | ongoing | none | unknown.
+   *
+   * Splits what used to be one "ongoing / no year" bucket into states that
+   * mean different things: genuinely open-ended (`ongoing`), the source states
+   * no deadline (`none`), and nobody has read the source yet (`unknown`).
+   */
+  deadlineKind?: DeadlineKind
   notes: string
   enforcementBody: string
   libraryRefs: string[]
+  /** Learn-module ids this framework routes to. Added 2026-07-31 — traversal was one-way until then. */
+  learnModules?: string[]
   timelineRefs: string[]
   bodyType: BodyType
   website?: string
@@ -82,9 +131,12 @@ interface RawComplianceRow {
   countries: string
   requires_pqc: string
   deadline: string
+  deadline_dates?: string
+  deadline_kind?: string
   notes: string
   enforcement_body: string
   library_refs: string
+  learn_modules: string
   timeline_refs: string
   body_type: string
   website: string
@@ -206,7 +258,41 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
     : 'compliance_framework'
 
   const deadline = row.deadline || 'Ongoing'
-  const deadlineYear = extractDeadlineYear(deadline)
+
+  // Prefer the structured column; fall back to parsing the prose only for rows
+  // that predate the WP-1.2 migration (deprecated rows keep their old shape).
+  const deadlineDates = (row.deadline_dates || '')
+    .split(';')
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((part) => {
+      const [y, ...rest] = part.split(':')
+      return { year: parseInt(y, 10), label: rest.join(':').trim() }
+    })
+    .filter((d) => Number.isFinite(d.year))
+    // Sorted ascending HERE rather than trusted from the CSV. The migration
+    // writes them in order, but a hand-edited row must not be able to make
+    // deadlineDates[0] mean something other than "the first milestone" —
+    // consumers index it directly, and an out-of-order row would silently
+    // render a later date as the start.
+    .sort((a, b) => a.year - b.year)
+
+  const validKinds: DeadlineKind[] = ['fixed', 'phased', 'ongoing', 'none', 'unknown']
+  const deadlineKind: DeadlineKind = validKinds.includes(row.deadline_kind as DeadlineKind)
+    ? (row.deadline_kind as DeadlineKind)
+    : 'unknown'
+
+  // Earliest stated date drives the existing single-year consumers; the full
+  // set is available via deadlineDates for the facet and timeline.
+  // deadlineDates is sorted ascending above, so these are its two ends.
+  const deadlineStart = deadlineDates.length > 0 ? deadlineDates[0].year : undefined
+  const deadlineEnd =
+    deadlineDates.length > 0 ? deadlineDates[deadlineDates.length - 1].year : undefined
+
+  // deadlineYear keeps its original meaning — the EARLIEST date — because
+  // existing consumers (sort, urgency badge, Assess/Report) read it as "the
+  // next thing due". Callers that need the completion date want deadlineEnd.
+  const deadlineYear = deadlineStart ?? extractDeadlineYear(deadline)
   const deadlinePhase = classifyDeadline(deadline, deadlineYear)
 
   return {
@@ -226,9 +312,14 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
     deadline,
     deadlineYear,
     deadlinePhase,
+    deadlineDates,
+    deadlineKind,
+    deadlineStart,
+    deadlineEnd,
     notes: row.notes || '',
     enforcementBody: row.enforcement_body || '',
     libraryRefs: splitSemicolon(row.library_refs),
+    learnModules: splitSemicolon(row.learn_modules),
     timelineRefs: splitSemicolon(row.timeline_refs),
     bodyType,
     website: row.website?.trim() || undefined,
@@ -287,88 +378,47 @@ export type RegionBloc =
   | 'Global'
   | 'Other'
 
-/** Map each country string as used in compliance CSV to a regulatory bloc. */
+/**
+ * Country name -> regulatory bloc for the /compliance region facet.
+ *
+ * DERIVED 2026-07-31 (WP-0.3) from the jurisdictions registry's own
+ * `compliance_bloc` column. This used to be a hand-maintained literal of 66
+ * country names kept separately from jurisdictions_*.csv, and the two drifted
+ * exactly as two lists of the same thing do: 12 of those names had no
+ * jurisdictions row at all, so no compliance row could ever resolve to them —
+ * dead entries that read as coverage.
+ *
+ * Adding a country is now a one-row data change in the jurisdictions CSV, not
+ * an edit in two files that must agree.
+ *
+ * The PQC-REGION-* synthetic overlay tokens stay inline: they are not real
+ * jurisdictions, they are cross-cutting labels the compliance CSV uses.
+ */
 const COUNTRY_TO_REGION: Record<string, RegionBloc> = {
-  // North America
-  'United States': 'North America',
-  Canada: 'North America',
-  Mexico: 'Latin America',
-  // Latin America
-  Brazil: 'Latin America',
-  Argentina: 'Latin America',
-  Chile: 'Latin America',
-  Colombia: 'Latin America',
-  Peru: 'Latin America',
-  Uruguay: 'Latin America',
-  // EU / EEA
-  'European Union': 'European Union',
-  France: 'European Union',
-  Germany: 'European Union',
-  Netherlands: 'European Union',
-  Denmark: 'European Union',
-  Italy: 'European Union',
-  Spain: 'European Union',
-  Ireland: 'European Union',
-  Greece: 'European Union',
-  Poland: 'European Union',
-  Sweden: 'European Union',
-  Finland: 'European Union',
-  Belgium: 'European Union',
-  Austria: 'European Union',
-  Portugal: 'European Union',
-  'Czech Republic': 'European Union',
-  Czechia: 'European Union',
-  Estonia: 'European Union',
-  // Europe non-EU
-  Switzerland: 'Europe (non-EU)',
-  Norway: 'Europe (non-EU)',
-  Iceland: 'Europe (non-EU)',
-  Turkey: 'Europe (non-EU)',
-  Ukraine: 'Europe (non-EU)',
-  Russia: 'Europe (non-EU)',
-  // UK
-  'United Kingdom': 'United Kingdom',
-  // APAC
-  Japan: 'Asia-Pacific',
-  Australia: 'Asia-Pacific',
-  'South Korea': 'Asia-Pacific',
-  Singapore: 'Asia-Pacific',
-  India: 'Asia-Pacific',
-  'New Zealand': 'Asia-Pacific',
-  'Hong Kong': 'Asia-Pacific',
-  Taiwan: 'Asia-Pacific',
-  Malaysia: 'Asia-Pacific',
-  China: 'Asia-Pacific',
-  Indonesia: 'Asia-Pacific',
-  Philippines: 'Asia-Pacific',
-  Thailand: 'Asia-Pacific',
-  Vietnam: 'Asia-Pacific',
-  // Middle East
-  Israel: 'Middle East',
-  'United Arab Emirates': 'Middle East',
-  'Saudi Arabia': 'Middle East',
-  Bahrain: 'Middle East',
-  Jordan: 'Middle East',
-  Qatar: 'Middle East',
-  Kuwait: 'Middle East',
-  Oman: 'Middle East',
-  // Africa
-  'South Africa': 'Africa',
-  Nigeria: 'Africa',
-  Kenya: 'Africa',
-  Egypt: 'Africa',
-  Morocco: 'Africa',
-  Ghana: 'Africa',
-  Rwanda: 'Africa',
-  'African Union': 'Africa',
-  // Global
+  ...(COUNTRY_NAME_TO_COMPLIANCE_BLOC as Record<string, RegionBloc>),
   Global: 'Global',
-  International: 'Global',
+  'African Union': 'Africa',
 }
 
 /** Returns the regulatory bloc for a country string, or 'Other' if unknown. */
 export function regionForCountry(country: string): RegionBloc {
   return COUNTRY_TO_REGION[country.trim()] ?? 'Other'
+}
+
+/**
+ * Every deadline phase a framework legitimately belongs to.
+ *
+ * ADDED 2026-07-31 (WP-1.2). `deadlinePhase` is a single value derived from the
+ * EARLIEST stated date, which is wrong for the 19 phased rows: filtering
+ * "Long-term (>6y)" could never surface NIST IR 8547's 2035 disallow date,
+ * because the row was filed under its 2030 deprecate date. Matching against
+ * this set instead makes a phased framework reachable from every bucket it
+ * actually has a milestone in.
+ */
+export function deadlinePhasesFor(fw: ComplianceFramework): DeadlinePhase[] {
+  const dates = fw.deadlineDates ?? []
+  if (dates.length === 0) return [fw.deadlinePhase]
+  return [...new Set(dates.map((d) => classifyDeadline(fw.deadline, d.year)))]
 }
 
 /** All region blocs present in the current dataset, sorted for stable UI. */

@@ -361,6 +361,274 @@ export function runCrossRefChecks(): CheckResult[] {
     )
   }
 
+  // C4R: module content.ts / rag-summary.md standards → library (the REVERSE of C4)
+  //
+  // C4 only walks library → modules. Nothing walked modules → library, so a
+  // module could cite a standard the library had deprecated, renamed, or never
+  // tagged back to it, and no check would notice. That gap produced three
+  // separate live defects found in the 2026-07-31 Digital ID audit:
+  //   - content.ts cited FIPS 204/205 and ENISA-EUDI-Wallet-Security, none of
+  //     which carried a `digital-id` module_id, so the References tab (which
+  //     renders from module_ids) never showed them;
+  //   - rag-summary.md named `RFC-9901-SD-JWT`, which is not a reference_id at
+  //     all (the real row is `RFC-9901-SD-JWT-VC`) — and rag-summary text is
+  //     embedded into the chatbot's citation corpus;
+  //   - ETSI-TS-119-312 stayed tagged to the module after being deprecated,
+  //     while its successor — the revision that adds the PQC suites — was
+  //     tagged to nothing.
+  //
+  // Deliberately WARNING, not ERROR: this check fails on modules other than the
+  // one it was written for, and turning the whole learn tree red in one commit
+  // would be worse than surfacing the debt. Promote to ERROR once the backlog
+  // it reports is cleared.
+  {
+    const f: Finding[] = []
+    const modulesDir = path.resolve(process.cwd(), 'src/components/PKILearning/modules')
+    const activeRefIds = new Set(
+      library.rows.filter((r) => !r.status || r.status === 'active').map((r) => r.reference_id)
+    )
+    const refToModules = new Map<string, Set<string>>()
+    for (const row of library.rows) {
+      refToModules.set(row.reference_id, new Set(splitSemicolon(row.module_ids)))
+    }
+
+    if (fs.existsSync(modulesDir)) {
+      for (const entry of fs.readdirSync(modulesDir, { withFileTypes: true })) {
+        if (!entry.isDirectory()) continue
+        const dir = path.join(modulesDir, entry.name)
+        const manifestPath = path.join(dir, 'manifest.ts')
+        if (!fs.existsSync(manifestPath)) continue
+        const idMatch = fs
+          .readFileSync(manifestPath, 'utf-8')
+          .match(/^ {2}id:\s*'([a-z0-9-]+)',?\s*$/m)
+        if (!idMatch) continue
+        const moduleId = idMatch[1]
+
+        // Collect cited reference ids: getStandard('X') in content.ts, and
+        // `X` backticked ids under rag-summary.md's "Related Standards".
+        const cited = new Map<string, string>() // refId -> source file
+        const contentPath = path.join(dir, 'content.ts')
+        if (fs.existsSync(contentPath)) {
+          const src = fs.readFileSync(contentPath, 'utf-8')
+          for (const m of src.matchAll(/getStandard\(\s*'([^']+)'\s*\)/g)) {
+            cited.set(m[1], 'content.ts')
+          }
+        }
+        const ragPath = path.join(dir, 'rag-summary.md')
+        if (fs.existsSync(ragPath)) {
+          const src = fs.readFileSync(ragPath, 'utf-8')
+          // Bound the section at the next `## ` heading — without this the
+          // scan runs on into sibling sections (e.g. "## Cross-References",
+          // which backticks module ids, not reference_ids) and reports every
+          // one of them as a missing library row.
+          const after = src.split(/^##\s+Related Standards\s*$/m)[1]
+          const section = after?.split(/^##\s+/m)[0]
+          if (section) {
+            for (const m of section.matchAll(/^-\s+`([^`]+)`/gm)) {
+              if (!cited.has(m[1])) cited.set(m[1], 'rag-summary.md')
+            }
+          }
+        }
+
+        for (const [refId, where] of cited) {
+          const tagged = refToModules.get(refId)
+          if (!tagged) {
+            f.push(
+              finding(
+                `${entry.name}/${where}`,
+                0,
+                'reference_id',
+                refId,
+                `Module "${moduleId}" cites "${refId}", which is not a library reference_id`
+              )
+            )
+          } else if (!activeRefIds.has(refId)) {
+            f.push(
+              finding(
+                `${entry.name}/${where}`,
+                0,
+                'reference_id',
+                refId,
+                `Module "${moduleId}" cites "${refId}", which is a deprecated library row`
+              )
+            )
+          } else if (!tagged.has(moduleId)) {
+            f.push(
+              finding(
+                `${entry.name}/${where}`,
+                0,
+                'module_ids',
+                refId,
+                `Module "${moduleId}" cites "${refId}", but that row's module_ids does not list "${moduleId}" — it will not render in the References tab`
+              )
+            )
+          }
+        }
+      }
+    }
+    results.push(
+      makeCheck(
+        'C4R-module-standards-to-library',
+        'cross-reference',
+        'module content.ts / rag-summary.md standards → library',
+        'modules',
+        'library',
+        'WARNING',
+        f
+      )
+    )
+  }
+
+  // C4P: paid-publisher rows must be marked, and must not claim to be downloads.
+  //
+  // pqctoday.com does not advertise or sell access to paid content. `access_type`
+  // was backfilled on 2026-07-31 from a hostname registry, but nothing stopped a
+  // NEW ISO/IEEE/ANSI row arriving later with `downloadable=yes` and no marker —
+  // which is exactly how the site would quietly start presenting a shop page as
+  // a free download again.
+  //
+  // The host list is duplicated from pqctoday-priv/maintenance/paid_sources.py,
+  // which is the source of truth (the maintenance sweep's PAYWALLED verdict
+  // reads it). It is short and changes rarely; keep the two in step when adding
+  // a publisher. IEEE 802.x is deliberately absent — that series is free of
+  // charge via the IEEE GET Program.
+  {
+    // Loaded from src/data/paidPublishers.json — the SINGLE source of truth,
+    // shared with the maintenance agent's paid_sources.py (which resolves the
+    // hub checkout and reads this same file). Previously duplicated here by
+    // hand, which would have drifted the moment a publisher was added.
+    const paidCfg = JSON.parse(
+      fs.readFileSync(path.resolve(process.cwd(), 'src/data/paidPublishers.json'), 'utf-8')
+    ) as {
+      paidPublisherHosts: string[]
+      freeDespitePaidHost: { urlPatterns: string[] }
+    }
+    const PAID_HOSTS = paidCfg.paidPublisherHosts
+    const FREE_PATTERNS = paidCfg.freeDespitePaidHost.urlPatterns.map((p) => new RegExp(p))
+    const hostOf = (url: string): string => {
+      try {
+        return new URL(url.trim()).hostname.toLowerCase().replace(/^www\./, '')
+      } catch {
+        return ''
+      }
+    }
+    const f: Finding[] = []
+    library.rows.forEach((row, i) => {
+      const host = hostOf(row.download_url || '')
+      if (!host) return
+      const isPaidHost = PAID_HOSTS.some((p) => host === p || host.endsWith('.' + p))
+      // Exceptions within a paid host (e.g. IEEE 802.x, free via IEEE GET).
+      const isFreeIeee802 = FREE_PATTERNS.some((re) => re.test(row.download_url || ''))
+      const marked = (row.access_type || '').trim().toLowerCase() === 'paid'
+      if (isPaidHost && !isFreeIeee802 && !marked) {
+        f.push(
+          finding(
+            library.file,
+            i + 2,
+            'access_type',
+            row.reference_id,
+            `Library "${row.reference_id}" links to a paid publisher (${host}) but is not marked access_type=paid — the site would present a purchase page as a download`
+          )
+        )
+      }
+      if (marked && (row.downloadable || '').trim().toLowerCase() === 'yes') {
+        f.push(
+          finding(
+            library.file,
+            i + 2,
+            'downloadable',
+            row.reference_id,
+            `Library "${row.reference_id}" is access_type=paid but downloadable=yes — a purchase page is not a download`
+          )
+        )
+      }
+    })
+    results.push(
+      makeCheck(
+        'C4P-paid-source-marking',
+        'cross-reference',
+        'library paid-publisher rows are marked and not presented as downloads',
+        'library',
+        'library',
+        'ERROR',
+        f
+      )
+    )
+  }
+
+  // C4T: module content.ts deadlines → timeline event_id.
+  //
+  // The timeline CSV is the single source of truth for PQC deadlines, but
+  // DeadlineRef had no field able to express that link until 2026-07-31, so all
+  // 109 deadlines across 61 modules were retyped by hand and could drift from
+  // the timeline silently. `timelineEventId` closes that; this check makes sure
+  // the ones that carry it actually resolve, and that the year agrees with the
+  // row they claim to come from.
+  //
+  // WARNING, not ERROR: the field is optional during migration, so most
+  // deadlines legitimately have none yet. This only judges the ones that do.
+  {
+    const f: Finding[] = []
+    const eventYears = new Map<string, Set<string>>()
+    for (const row of timeline.rows) {
+      if (!row.event_id) continue
+      const years = new Set<string>()
+      if (row.StartYear) years.add(row.StartYear)
+      if (row.EndYear) years.add(row.EndYear)
+      eventYears.set(row.event_id, years)
+    }
+    const modulesDir = path.resolve(process.cwd(), 'src/components/PKILearning/modules')
+    if (fs.existsSync(modulesDir)) {
+      for (const entry of fs.readdirSync(modulesDir, { withFileTypes: true })) {
+        if (!entry.isDirectory()) continue
+        const contentPath = path.join(modulesDir, entry.name, 'content.ts')
+        if (!fs.existsSync(contentPath)) continue
+        const src = fs.readFileSync(contentPath, 'utf-8')
+        const block = src.match(/\n {2}deadlines:\s*\[([\s\S]*?)\n {2}\],/)
+        if (!block) continue
+        for (const ent of block[1].match(/\{[\s\S]*?\}/g) ?? []) {
+          const idM = ent.match(/timelineEventId:\s*'([^']+)'/)
+          if (!idM) continue
+          const yearM = ent.match(/year:\s*(\d{4})/)
+          const eventId = idM[1]
+          const years = eventYears.get(eventId)
+          if (!years) {
+            f.push(
+              finding(
+                `${entry.name}/content.ts`,
+                0,
+                'timelineEventId',
+                eventId,
+                `Module "${entry.name}" deadline cites timeline event "${eventId}", which is not a timeline event_id`
+              )
+            )
+          } else if (yearM && !years.has(yearM[1])) {
+            f.push(
+              finding(
+                `${entry.name}/content.ts`,
+                0,
+                'year',
+                eventId,
+                `Module "${entry.name}" deadline says ${yearM[1]} but timeline event "${eventId}" spans ${[...years].join('-')}`
+              )
+            )
+          }
+        }
+      }
+    }
+    results.push(
+      makeCheck(
+        'C4T-deadline-timeline-refs',
+        'cross-reference',
+        'module deadlines → timeline event_id (and year agreement)',
+        'modules',
+        'timeline',
+        'WARNING',
+        f
+      )
+    )
+  }
+
   // C5: threats.related_modules → MODULE_CATALOG
   {
     const f: Finding[] = []

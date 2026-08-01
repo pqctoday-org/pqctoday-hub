@@ -170,7 +170,10 @@ export const SECTOR_BODIES: SectorBody[] = [
 export const EPC_CITED_EMERGING = [
   'EU Commission — Coordinated Implementation Roadmap for the Transition to Post-Quantum Cryptography',
   'GFMA — Quantum migration: mapping the emerging landscape',
-  'Mastercard — Migration to post-quantum cryptography (white paper)',
+  // Mastercard's white paper moved off this list 2026-07-31: it has now been
+  // read (industry-landscape evidence manifest, sha256 3ac0c764...) and its
+  // claims cited properly in PAYMENT_NETWORKS' Mastercard entry instead of
+  // sitting here as named-but-unread.
   'US SEC Crypto Task Force — Post-Quantum Financial Infrastructure roadmap',
   'ETSI TR 103 967 — Impact of Quantum Computing on Symmetric Cryptography',
 ]

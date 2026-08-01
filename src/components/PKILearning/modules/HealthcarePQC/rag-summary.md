@@ -2,7 +2,7 @@
 
 ## Overview
 
-Intermediate-level module (75 min, 5 workshop steps) covering post-quantum cryptography migration for the healthcare industry — a sector with the highest density of irreplaceable biometric data, long data retention requirements (PHI, genomic records), life-critical medical device security, and complex regulatory obligations under HIPAA, GDPR Article 9, and FDA cybersecurity guidance.
+Intermediate-level module (60 min, 5 workshop steps) covering post-quantum cryptography migration for the healthcare industry — a sector with the highest density of irreplaceable biometric data, long data retention requirements (PHI, genomic records), life-critical medical device security, and complex regulatory obligations under HIPAA, GDPR Article 9, and FDA cybersecurity guidance.
 
 ## Key Topics
 

@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import { Button } from '@/components/ui/button'
 
 interface OverviewComponentProps {
@@ -22,18 +23,23 @@ interface OverviewComponentProps {
 }
 
 export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigateTo }) => {
+  // Makes the data-section-id anchors below live: URL-driven scroll plus
+  // per-section read tracking. Deliberately NOT LearnSection accordions —
+  // this tab is meant to read as continuous prose.
+  useSectionAnchors()
+
   return (
     <div className="space-y-6 w-full">
       {/* What is eIDAS 2.0? */}
-      <section className="glass-panel p-6">
+      <section data-section-id="eidas" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <BookOpen size={20} /> What is eIDAS 2.0?
         </h2>
         <p className="text-foreground/80 leading-relaxed">
           The European Digital Identity Regulation (
           <InlineTooltip term="eIDAS 2.0">eIDAS 2.0</InlineTooltip>, Regulation EU 2024/1183)
-          entered into force in May 2024 and mandates that all 27 EU member states provide citizens
-          and residents with at least one{' '}
+          entered into force on 20 May 2024 and mandates that all 27 EU member states provide
+          citizens and residents with at least one{' '}
           <InlineTooltip term="EUDI Wallet">EUDI Wallet</InlineTooltip> by late 2026. Unlike eIDAS
           1.0 where national eID notification was voluntary, eIDAS 2.0 makes digital identity
           wallets mandatory — creating a pan-European trust framework for identity, attestations,
@@ -61,8 +67,8 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
             <div className="text-sm font-bold text-warning mb-1">Key Deadlines</div>
             <ul className="text-xs text-muted-foreground space-y-1">
-              <li>May 2024: Regulation entered into force</li>
-              <li>Dec 2024: Five implementing regulations adopted</li>
+              <li>20 May 2024: Regulation entered into force</li>
+              <li>Nov 2024: Five implementing regulations adopted (published 4 Dec)</li>
               <li>Dec 2026: Wallets available</li>
               <li>Late 2027: Private sector acceptance</li>
             </ul>
@@ -71,14 +77,16 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
       </section>
 
       {/* Credential Formats */}
-      <section className="glass-panel p-6">
+      <section data-section-id="credential-formats" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <FileText size={20} /> Credential Formats: mdoc vs SD-JWT
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
-          The EUDI Architecture Reference Framework (ARF 2.0) supports two credential formats. Both
-          enable <InlineTooltip term="Selective Disclosure">selective disclosure</InlineTooltip>,
-          but serve different use cases.
+          The EUDI Architecture Reference Framework (ARF v3.0.0) makes two attestation formats
+          mandatory, and adds W3C Verifiable Credentials Data Model v2.0 as an optional third. Both
+          mandatory formats enable{' '}
+          <InlineTooltip term="Selective Disclosure">selective disclosure</InlineTooltip>, but serve
+          different use cases.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -103,7 +111,7 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <div className="text-sm font-bold text-success mb-2">
-              vc+sd-jwt (<InlineTooltip term="SD-JWT">SD-JWT</InlineTooltip> RFC 9901)
+              dc+sd-jwt (<InlineTooltip term="SD-JWT">SD-JWT</InlineTooltip> RFC 9901)
             </div>
             <ul className="text-xs text-muted-foreground space-y-1.5">
               <li>
@@ -127,7 +135,7 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
       </section>
 
       {/* Trust Framework */}
-      <section className="glass-panel p-6">
+      <section data-section-id="trust-framework" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Shield size={20} /> Trust Framework
         </h2>
@@ -174,7 +182,7 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
       </section>
 
       {/* Privacy & Data Minimization */}
-      <section className="glass-panel p-6">
+      <section data-section-id="privacy" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Lock size={20} /> Privacy by Design
         </h2>
@@ -207,7 +215,7 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
       </section>
 
       {/* PQC Readiness */}
-      <section className="glass-panel p-6">
+      <section data-section-id="pqc-readiness" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <AlertTriangle size={20} /> Post-Quantum Readiness
         </h2>
@@ -237,7 +245,7 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
       </section>
 
       {/* Large-Scale Pilots */}
-      <section className="glass-panel p-6">
+      <section data-section-id="large-scale-pilots" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Globe size={20} /> Large-Scale Pilots
         </h2>
@@ -261,11 +269,11 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
               </div>
               <div className="p-2 rounded border bg-muted/30 text-center">
                 <div className="font-bold text-foreground">NOBID</div>
-                <div className="text-muted-foreground">Banking & Telecom</div>
+                <div className="text-muted-foreground">Payments</div>
               </div>
               <div className="p-2 rounded border bg-muted/30 text-center">
                 <div className="font-bold text-foreground">POTENTIAL</div>
-                <div className="text-muted-foreground">Government & Payments</div>
+                <div className="text-muted-foreground">Government, SIM, mDL & Payments</div>
               </div>
             </div>
           </div>
@@ -310,7 +318,7 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
             <div>
               <div className="text-sm font-medium text-foreground">Compliance</div>
               <div className="text-xs text-muted-foreground">
-                NIST, BSI, ANSSI &amp; Common Criteria requirements
+                eIDAS 2.0 obligations, PQC expectations &amp; GDPR Art. 32
               </div>
             </div>
           </Link>
@@ -327,14 +335,14 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
             </div>
           </Link>
           <Link
-            to="/timeline"
+            to="/timeline?country=European%20Union"
             className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
           >
             <Calendar size={16} className="text-primary shrink-0" />
             <div>
               <div className="text-sm font-medium text-foreground">Migration Timeline</div>
               <div className="text-xs text-muted-foreground">
-                NIST milestones, country deadlines &amp; standardization
+                EU PQC milestones: 2026 roadmaps, 2030 high-risk, 2035 full
               </div>
             </div>
           </Link>

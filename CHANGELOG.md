@@ -29,6 +29,49 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.34.0] - 2026-07-31
+
+The Digital ID module gets real mdoc/SD-JWT credential flows and links back from the compliance frameworks it covers, 10 new real regulations and 17 certification schemes join Standardization & Compliance, and this week's Financial Services quiz and module content is corrected.
+
+### Added
+
+- **Digital ID module: real mdoc selective disclosure and the share chooser** [view:/learn] [persona:developer] [persona:architect]: the EUDI Wallet workshop now performs actual ISO 18013-5 selective disclosure over mdoc credentials, plus a share-chooser step and an over-18 age-proof flow, replacing placeholder walkthroughs.
+- **Compliance frameworks link back to the module that teaches them** [view:/compliance] [persona:curious] [persona:developer]: eIDAS, GDPR, DORA, NIS2, HIPAA, and PCI-DSS now show a "Learn this" section in their detail drawer, closing a gap where modules linked out to Compliance but nothing linked back.
+- **Deadlines can now derive from the timeline** [view:/compliance] [view:/timeline] [persona:researcher]: framework deadlines wired to Digital ID (EUDI Wallet rollout) now pull from the single timeline source of truth instead of a separately hand-maintained date.
+- **Compliance deadlines: separate start and finish dates, sortable by finish** [view:/compliance] [persona:executive] [persona:ops]: deadlines with a phased rollout (e.g. wallet deployment vs. full PQC readiness) now show both dates as a machine-readable range instead of one ambiguous string.
+- **The Simulation routes Digital ID from the government sector track** [view:/simulation] [persona:curious]: playing the government sector now surfaces the Digital ID module at the right moment instead of only being reachable from Learn.
+
+### Fixed
+
+- **Digital ID module: corrected wrong facts, refreshed stale spec references, fixed a shared-session bug** [view:/learn] [persona:developer]: the EUDI workshop now shares one PKCS#11 session across its steps instead of silently reopening it, the Learn tab's declared reading sections are all real (none were placeholders), Related Resources labelling is corrected, and 15 glossary terms that had become unreachable are linked again.
+- **The EUDI Wallet rollout date no longer overwrites the EU's PQC deadline** [view:/timeline] [persona:researcher]: adding the new EUDI Wallet timeline row had been silently replacing the EU's separate post-quantum migration deadline on the same chart.
+- **3 fabricated PQC standards removed from the Library, a 4th corrected** [view:/library] [persona:researcher]: none of the three had a real published source; 5 additional dead Library links were repaired, and paid standards now show a free plain-language summary instead of only a paywalled link.
+- **Financial Services & Payments module (LM-044): factual and consistency corrections** [view:/learn] [persona:researcher]: corrected outdated figures and internal contradictions, re-pointed 8 dead links (7 in-module, 1 cross-module), and restored the Mastercard PQC posture claims now that the underlying whitepaper is readable again.
+- **Financial Services & Payments quiz: 2 answers corrected, 2 learner paths now assessed** [view:/assess] [persona:curious]: the quiz previously said ~4-5 billion payment cards are in circulation (stale; EMVCo's real end-2024 figure is 14.7 billion) and credited Visa with publishing the first PQC readiness framework (it's Mastercard, verified against the actual paper); 7 new questions now cover the module's Banking & Settlement and Retail & E-Commerce paths, which previously had zero quiz coverage.
+- **5 modules' listed duration/difficulty corrected to match their actual content** [view:/learn] [persona:curious].
+
+### Data
+
+- **10 new real compliance regulations added, across the US, EU, Canada, and 6 emerging markets** [view:/compliance] [persona:researcher].
+- **17 new certification schemes added and cross-linked into trusted sources** [view:/compliance] [persona:researcher].
+- **20 organization rows corrected after wrongly claiming a PQC mandate** [view:/compliance] [persona:researcher]: each was checked against its own source document; only records that actually state a mandate keep that label.
+- **13 missing EU member states added to the jurisdictions registry** [view:/compliance] [persona:researcher], and the region map now derives from that registry instead of a separately maintained list.
+- **Compliance industry filter fixed to return what you actually select** [view:/compliance] [persona:researcher]: duplicate industry options were collapsed and the filter's matching logic corrected.
+- **Mastercard's 2025 PQC industry-awareness whitepaper added to Industry Landscape** [view:/algorithms] [persona:researcher]: sourced from the downloaded PDF, covering its HNDL framing and its comparison of PQC against QKD.
+- **Search index refreshed** to match all of the above.
+
+## [4.33.0] - 2026-07-31
+
+Learn modules and Playground tools now show a real, working revision history instead of a button that always claimed everything was up to date.
+
+### Added
+
+- **Learn modules and Playground tools now show their real review status** [view:/learn] [view:/playground] [persona:developer] [persona:architect] [persona:researcher]: every module and hands-on tool page now carries the same "Reviewed by / Unreviewed" badge already shown on Library, Timeline, Compliance, and Algorithms — clicking it opens the full revision history: who reviewed it, when, and what changed. The previous button checked a system that had never actually been wired up and always claimed "up to date," regardless of the real state.
+
+### Data
+
+- **Corrected 4 mislabeled entries in the site's revision-history log** [view:/revisions] [persona:researcher]: one entry had 29 unrelated Playground-tool ids bundled into it under the wrong category; one had a garbled id corrected to its real module; three had garbled ids with no live match and were removed rather than guessed at.
+
 ## [4.32.0] - 2026-07-30
 
 Two new Learn modules cover government/defense and trust-service PQC migration, community leaders are now cross-linked to their patents and open-source projects, and this week's vendor, certification, and threat-watch data is refreshed.

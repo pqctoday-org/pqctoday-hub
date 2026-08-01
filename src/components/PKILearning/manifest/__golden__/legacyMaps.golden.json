@@ -1073,23 +1073,27 @@
     "digital-id": [
       {
         "id": "eidas",
-        "label": "eIDAS 2.0 Framework"
+        "label": "What is eIDAS 2.0?"
       },
       {
-        "id": "wallet",
-        "label": "EUDI Wallet Architecture"
+        "id": "credential-formats",
+        "label": "Credential Formats: mdoc vs SD-JWT"
       },
       {
-        "id": "pid",
-        "label": "PID & Attestations"
+        "id": "trust-framework",
+        "label": "Trust Framework"
       },
       {
-        "id": "selective-disclosure",
-        "label": "Selective Disclosure"
+        "id": "privacy",
+        "label": "Privacy by Design"
       },
       {
-        "id": "qes",
-        "label": "Qualified Signatures QES"
+        "id": "pqc-readiness",
+        "label": "Post-Quantum Readiness"
+      },
+      {
+        "id": "large-scale-pilots",
+        "label": "Large-Scale Pilots"
       }
     ],
     "emv-payment-pqc": [

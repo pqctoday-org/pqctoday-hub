@@ -37,7 +37,7 @@ import {
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { isComplianceFrameworkEmphasized } from '@/data/personaConfig'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
-import { NAICS_LABELS, industryLabel } from '@/components/common/SectorFilter'
+import { NAICS_LABELS, industryLabel, resolveToNaicsSet } from '@/components/common/SectorFilter'
 import { CountryFlag } from '@/components/common/CountryFlag'
 import { ViewToggle, type ViewMode } from '@/components/Library/ViewToggle'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
@@ -46,7 +46,7 @@ import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
 import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
 import { SourcePassagesDrawer } from '@/components/ui/SourcePassagesDrawer'
 import { useRevisions, byRecord } from '@/hooks/useRevisions'
-import { conceptIdForFramework } from '@/data/complianceData'
+import { conceptIdForFramework, deadlinePhasesFor } from '@/data/complianceData'
 import { hasGraphEdges } from '@/utils/conceptXwalkGraph'
 import { FrameworkConceptGraphModal } from './FrameworkConceptGraphModal'
 import { resolveTimelineRef } from '@/utils/timelineResolver'
@@ -167,10 +167,16 @@ function industryChip(industry: string): string {
 
 // ── Sort helpers ─────────────────────────────────────────────────────────
 
-export type FrameworkSortOption = 'name' | 'deadline'
+export type FrameworkSortOption = 'name' | 'deadline' | 'finish'
 
 const FRAMEWORK_SORT_OPTIONS: { id: FrameworkSortOption; label: string }[] = [
-  { id: 'deadline', label: 'Deadline ↑' },
+  { id: 'deadline', label: 'Starts soonest' },
+  // ADDED 2026-07-31 (WP-1.2). The two are genuinely different questions and
+  // only the first was answerable before: "what bites next" vs "what must I
+  // have FINISHED first". A phased framework starting in 2030 and completing
+  // in 2035 sorts differently under each, and for anyone with a long data
+  // retention horizon the completion date is the binding one.
+  { id: 'finish', label: 'Must finish first' },
   { id: 'name', label: 'Name A-Z' },
 ]
 
@@ -204,8 +210,12 @@ function sortFrameworks(items: ComplianceFramework[], sort: FrameworkSortOption)
     const pa = pqcSortPriority(a.pqcRequirement)
     const pb = pqcSortPriority(b.pqcRequirement)
     if (pa !== pb) return pa - pb
-    const aYear = extractYear(a.deadline) ?? 9999
-    const bYear = extractYear(b.deadline) ?? 9999
+    // 'deadline' sorts by the FIRST stated milestone, 'finish' by the LAST.
+    // Rows with no stated date sort last under either.
+    const pick = (fw: ComplianceFramework) =>
+      (sort === 'finish' ? fw.deadlineEnd : fw.deadlineStart) ?? extractYear(fw.deadline) ?? 9999
+    const aYear = pick(a)
+    const bYear = pick(b)
     if (aYear !== bYear) return aYear - bYear
     return a.label.localeCompare(b.label)
   })
@@ -231,15 +241,28 @@ export function DeadlineTimeline({
   frameworks: ComplianceFramework[]
   label?: string
 }) {
-  const withDeadlines = frameworks.filter((f) => extractYear(f.deadline) !== null)
+  // CHANGED 2026-07-31 (WP-1.2): plots EVERY date a framework states, from the
+  // structured `deadlineDates` column, instead of one year parsed out of prose.
+  //
+  // Before this, a phased framework appeared once at its earliest date and its
+  // later milestones were invisible — NIST IR 8547 showed at 2030 (deprecate)
+  // and never at 2035 (disallow); eIDAS showed at 2026 and never at 2030/2035.
+  // 19 rows are phased.
   const years = Array.from({ length: TIMELINE_SPAN + 1 }, (_, i) => TIMELINE_START + i)
 
   const byYear = new Map<number, ComplianceFramework[]>()
-  for (const fw of withDeadlines) {
-    const year = extractYear(fw.deadline)!
-    const bucket = Math.max(TIMELINE_START, Math.min(TIMELINE_END, year))
-    if (!byYear.has(bucket)) byYear.set(bucket, [])
-    byYear.get(bucket)!.push(fw)
+  for (const fw of frameworks) {
+    const dates =
+      fw.deadlineDates && fw.deadlineDates.length > 0
+        ? fw.deadlineDates.map((d) => d.year)
+        : ((y) => (y === null ? [] : [y]))(extractYear(fw.deadline))
+    if (dates.length === 0) continue
+    for (const year of new Set(dates)) {
+      const bucket = Math.max(TIMELINE_START, Math.min(TIMELINE_END, year))
+      if (!byYear.has(bucket)) byYear.set(bucket, [])
+      // A framework can legitimately appear at several years; never twice at one.
+      if (!byYear.get(bucket)!.includes(fw)) byYear.get(bucket)!.push(fw)
+    }
   }
 
   const maxStackHeight = Math.max(
@@ -1201,25 +1224,75 @@ export function ComplianceLandscape({
   // vocabulary (e.g. seeded from a cross-page persona/URL using a different
   // taxonomy like "Finance & Banking"), include it anyway so the dropdown
   // surfaces the active value instead of falling back to "Industry".
+  // CHANGED 2026-07-31 (WP-1.1): built from `naicsCodes`, not `industries`.
+  //
+  // `industries` carried two vocabularies at once — 147 rows used NAICS codes,
+  // 27 used free-text sector names — and this list was their raw union, so it
+  // offered 33 options for ~16 real sectors and listed some of them twice:
+  // NAICS_LABELS['22'] IS the string 'Energy & Utilities', so the dropdown
+  // showed both "Energy & Utilities (22)" and "Energy & Utilities" as separate
+  // choices, each matching a different subset of rows.
+  //
+  // `naicsCodes` is now the single machine key (see sectorVocabularyData.ts);
+  // `industries` is display text and is never filtered on.
+  // Options are grouped BY DISPLAY LABEL, not by code, and the option id is the
+  // label rather than a single code.
+  //
+  // NAICS splits some sectors across two codes that share one name — retail is
+  // 44 and 45, transportation 48 and 49. Keying options by code therefore
+  // rendered "Retail Trade (44)" and "Retail Trade (45)" as two visually
+  // identical choices matching different rows, which is the same defect (a
+  // duplicate-looking option that silently hides rows) that this work package
+  // removed from the code-vs-name mixture.
+  //
+  // The label is a safe id because resolveToNaicsSet resolves it back to the
+  // full set of codes it covers, and the filter matches ANY of them. A legacy
+  // `?ind=52` link still works — resolveToNaicsSet('52') is ['52'] — and is
+  // normalized to its label below so it highlights the right option.
   const industryItems = useMemo(() => {
-    const inds = new Set<string>()
+    const labelToCodes = new Map<string, string[]>()
     for (const fw of complianceFrameworks) {
-      for (const i of fw.industries) inds.add(i)
+      for (const c of fw.naicsCodes ?? []) {
+        // eslint-disable-next-line security/detect-object-injection
+        const label = NAICS_LABELS[c] ?? c
+        if (!labelToCodes.has(label)) labelToCodes.set(label, [])
+        const codes = labelToCodes.get(label)!
+        if (!codes.includes(c)) codes.push(c)
+      }
     }
-    if (industryFilter !== 'All' && !inds.has(industryFilter)) {
-      inds.add(industryFilter)
+    const items = [...labelToCodes.entries()]
+      .map(([label, codes]) => ({ id: label, label: `${label} (${codes.sort().join('/')})` }))
+      .sort((a, b) => a.label.localeCompare(b.label))
+
+    // Surface an active value the vocabulary does not know (e.g. a persona
+    // store using a third taxonomy) rather than falling back to "Industry".
+    const activeLabel = NAICS_LABELS[industryFilter] ?? industryFilter
+    if (industryFilter !== 'All' && !items.some((i) => i.id === activeLabel)) {
+      items.push({ id: activeLabel, label: activeLabel })
     }
-    const labelFor = (code: string) => {
-      // eslint-disable-next-line security/detect-object-injection
-      const label = NAICS_LABELS[code]
-      return label ? `${label} (${code})` : code
+    return [{ id: 'All', label: 'All Industries' }, ...items]
+  }, [industryFilter])
+
+  // Normalize the active value to the option id it belongs to, so a legacy
+  // code link (?ind=52) or an alias link (?ind=Finance%20%26%20Banking) both
+  // highlight the canonical "Finance & Insurance" option instead of rendering
+  // a second, off-vocabulary entry beside it.
+  //
+  // Only when the value resolves to exactly ONE sector. An alias that spans
+  // two — "Technology" is 51 and 54 by design — has no single option to
+  // highlight, so it keeps its own label rather than silently claiming to be
+  // one of them.
+  const industryFilterId = useMemo(() => {
+    if (industryFilter === 'All') return 'All'
+    // eslint-disable-next-line security/detect-object-injection
+    const direct = NAICS_LABELS[industryFilter]
+    if (direct) return direct
+    const codes = resolveToNaicsSet(industryFilter)
+    if (codes.length === 1) {
+      const label = NAICS_LABELS[codes[0]]
+      if (label) return label
     }
-    return [
-      { id: 'All', label: 'All Industries' },
-      ...[...inds]
-        .sort((a, b) => labelFor(a).localeCompare(labelFor(b)))
-        .map((i) => ({ id: i, label: labelFor(i) })),
-    ]
+    return industryFilter
   }, [industryFilter])
 
   // Region options — derived from full dataset with per-region counts so the
@@ -1279,7 +1352,18 @@ export function ComplianceLandscape({
       result = result.filter((fw) => fw.enforcementBody === orgFilter)
     }
     if (industryFilter !== 'All') {
-      result = result.filter((fw) => fw.industries.includes(industryFilter))
+      // CHANGED 2026-07-31 (WP-1.1). Was `fw.industries.includes(industryFilter)`
+      // — an exact string match against a column holding two vocabularies, which
+      // silently hid rows: selecting "Finance & Insurance (52)" returned 85
+      // frameworks and hid 15 more tagged with a finance NAME rather than the
+      // code. 74 row-tags were unreachable this way in total.
+      //
+      // Matching a resolved SET rather than one value also fixes the deep-link
+      // case, where an incoming ?ind= value may name a sector that maps to more
+      // than one code (see resolveToNaicsSet).
+      const wanted = resolveToNaicsSet(industryFilter)
+      const want = wanted.length > 0 ? wanted : [industryFilter]
+      result = result.filter((fw) => (fw.naicsCodes ?? []).some((c) => want.includes(c)))
     }
     if (regionFilter !== 'All') {
       result = result.filter((fw) => fw.countries.some((c) => regionForCountry(c) === regionFilter))
@@ -1288,7 +1372,9 @@ export function ComplianceLandscape({
       result = result.filter((fw) => fw.countries.some((c) => c.trim() === countryFilter))
     }
     if (deadlineFilter !== 'All') {
-      result = result.filter((fw) => fw.deadlinePhase === deadlineFilter)
+      // WP-1.2: match on ANY stated date, so a phased framework is reachable
+      // from every bucket it genuinely belongs to rather than only its first.
+      result = result.filter((fw) => deadlinePhasesFor(fw).includes(deadlineFilter))
     }
     if (searchFilterText.trim()) {
       const q = searchFilterText.toLowerCase()
@@ -1548,7 +1634,7 @@ export function ComplianceLandscape({
               <div className="flex-1 min-w-[130px]">
                 <FilterDropdown
                   items={industryItems}
-                  selectedId={industryFilter}
+                  selectedId={industryFilterId}
                   onSelect={setIndustryFilter}
                   defaultLabel="Industry"
                   noContainer

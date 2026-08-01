@@ -101,7 +101,7 @@ export const createSDJWT = async (
 
   const header = {
     alg: issuerKey.algorithm,
-    typ: 'vc+sd-jwt',
+    typ: 'dc+sd-jwt',
   }
 
   // Sign JWT
