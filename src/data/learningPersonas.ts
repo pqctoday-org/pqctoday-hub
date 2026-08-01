@@ -782,11 +782,12 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    // 2735 as of 2026-07-30: +30 min when the EMV module grew from cards-only
-    // (80 min) into Financial Services & Payments (110 min). A learner
-    // arriving via an industry path sees only that path's duration; this
-    // figure is the whole-catalogue sum the persona test asserts.
-    estimatedMinutes: 2735,
+    // 2745 as of 2026-08-01: +10 min when Financial Services & Payments grew
+    // from 110 to 120 min (new Open Banking & PSD2 SCA section, folded into
+    // the Banking & Settlement path). A learner arriving via an industry path
+    // sees only that path's duration; this figure is the whole-catalogue sum
+    // the persona test asserts.
+    estimatedMinutes: 2745,
     essentials: [
       'pqc-101',
       'research-quantum-impact',

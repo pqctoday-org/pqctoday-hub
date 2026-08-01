@@ -9284,6 +9284,26 @@
       "sizeBytes": 1675799,
       "contentType": "application/pdf",
       "sha256": "23beac46260d57dfbed7ff4b7f39f8896f27f44a93e2453da15d764c02665f79"
+    },
+    {
+      "refId": "PSD2-Directive-EU-2015-2366",
+      "title": "Directive (EU) 2015/2366 on payment services in the internal market (PSD2)",
+      "url": "https://www.legislation.gov.uk/eudr/2015/2366/data.htm",
+      "status": "downloaded",
+      "filename": "PSD2-Directive-EU-2015-2366.html",
+      "sizeBytes": 609023,
+      "contentType": "text/html",
+      "sha256": "79ed7b5c7aba538fef48bbaf805acc0c331fdd64f4f80ba6b8bc631a540a364d"
+    },
+    {
+      "refId": "EBA-RTS-SCA-2018-389",
+      "title": "Commission Delegated Regulation (EU) 2018/389 \u2014 RTS on Strong Customer Authentication and Secure Communication",
+      "url": "https://www.legislation.gov.uk/eur/2018/389/data.htm",
+      "status": "downloaded",
+      "filename": "EBA-RTS-SCA-2018-389.html",
+      "sizeBytes": 165553,
+      "contentType": "text/html",
+      "sha256": "0be3d91c9fe5011b4e25a9e0ba9e5aec0994a8d374c31e4e5eb6d4507ef61bcb"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00"

@@ -29,6 +29,27 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.35.0] - 2026-08-01
+
+The Financial Services & Payments module gains a real Open Banking & PSD2 section, a revived BSI standard and 4 real evidence documents replace low-quality captures in the Library, and 22 broken glossary links across 9 modules are fixed.
+
+### Added
+
+- **New section: Open Banking & PSD2 Strong Customer Authentication** [view:/learn] [persona:developer] [persona:architect]: the Financial Services & Payments module now covers the actual legal basis for EU open banking — PSD2 Article 97's two-factor authentication requirement, the RTS's dedicated-interface obligation that created open-banking APIs, the mandatory fallback mechanism, eIDAS certificate requirements for third-party providers, and the deliberately technology-neutral encryption wording that lets a bank migrate to hybrid ML-KEM without waiting on new legislation. Sourced from the actual EU directive and regulation text (eur-lex.europa.eu blocks automated fetches; read against the UK's official retained-EU-law mirror instead), not summarized from general knowledge.
+
+### Fixed
+
+- **BSI-AIS-20-31 standard revived a second time** [view:/library] [persona:researcher]: the first fix cached the standard's landing page instead of the document itself; now points at the real PDF.
+- **4 more Library documents replaced with the real thing** [view:/library] [persona:researcher]: a EU roadmap, a BIS paper, a G7 statement, and an MAS advisory were each cached as a landing page, an abstract, a press release, or a JS shell instead of the actual document — every downstream claim resting on them was unverifiable until now.
+- **22 broken glossary links fixed across 9 Learn modules** [view:/learn] [persona:curious]: tooltips for terms like CBOM, CRQC, TDE, PSK, and SNI were passing a display string the glossary didn't recognize (e.g. "Column-Level Encryption (CLE)" instead of the glossary's "Column-Level Encryption"), so hovering did nothing. Most were one-line corrections; 6 terms (LDAP, OpenSSL, GRC, WAF, PSK, SNI) had no glossary entry at all and now do.
+- **The financial sector's "no dated mandate" claim, qualified** [view:/learn] [persona:researcher]: the module correctly says no body sets a dated _algorithm_ mandate the way CNSA 2.0 does for Government & Defense — but didn't mention that the EU's Coordinated Implementation Roadmap does set a dated _transition_ expectation (high-risk systems by end-2030) that reaches EU banks through NIS2 and DORA. Both statements are now in the text, each qualified correctly.
+- **"PQC Candidates & Lifecycle" title corrected** [view:/learn] [persona:curious]: the module's internal topic summary called it "& Standardisation Lifecycle," one word longer than the module's actual title.
+
+### Data
+
+- **library_07312026_r2.csv and trusted_sources_07312026_r7.csv refreshed** [view:/library] [persona:researcher]: consolidates this batch's evidence and citation fixes.
+- **Search index refreshed** to match all of the above.
+
 ## [4.34.0] - 2026-07-31
 
 The Digital ID module gets real mdoc/SD-JWT credential flows and links back from the compliance frameworks it covers, 10 new real regulations and 17 certification schemes join Standardization & Compliance, and this week's Financial Services quiz and module content is corrected.
