@@ -29,8 +29,35 @@ export const content: ModuleContent = {
     // Added 2026-07-31: both are sector bodies the module already deep-links to
     // from SECTOR_BODIES, but they were absent here, so they never reached the
     // References tab.
-    getStandard('G7-Financial-PQC-Roadmap-2026'),
+    //
+    // 2026-08-01: was G7-Financial-PQC-Roadmap-2026, which is the US Treasury
+    // *press release* announcing the statement (download_url is
+    // home.treasury.gov/news/press-releases/sb0355). The statement itself is a
+    // separate row pointing at the PDF the Treasury and UK Cabinet Office both
+    // host. Verified against the cached document: "G7 CYBER EXPERT GROUP
+    // STATEMENT ON Advancing a Coordinated Roadmap for the Transition to
+    // Post-Quantum Cryptography in the Financial Sector", January 2026.
+    getStandard('G7-CEG-Financial-PQC-2026'),
     getStandard('SG-MAS-Quantum-Advisory-2024'),
+    // Added 2026-08-01. All four were already tagged for this module in the
+    // library (except CA-CFDIR — see below) yet went uncited, so the References
+    // tab omitted the sector's four most substantive PQC sources. Each verified
+    // against its cached document and anchored to a live publisher URL.
+    //
+    // X9 is the body behind X9.143, which this module teaches — citing its own
+    // 120-page quantum risk study closes that gap.
+    getStandard('ASC-X9-IR-F01-2022'),
+    // The module cited BIS Project Leap (BIS-OTHP107) but not BIS's actual
+    // sector roadmap. rag-summary.md already listed this as a source, so the
+    // summary described a citation the module did not make.
+    getStandard('BIS-Paper-158'),
+    // Adds a sixth jurisdiction to the five in SECTOR_BODIES. NOTE: this row's
+    // module_ids does not yet include emv-payment-pqc — the reverse link is owed
+    // in the next library revision.
+    getStandard('CA-CFDIR-Quantum-Readiness-2023'),
+    // Europol/QSFF scoring framework for ranking systems by quantum risk and
+    // migration time; mentions EMV throughout.
+    getStandard('Europol-FS-ISAC-PQC-Financial-2026'),
   ],
 
   algorithms: [
@@ -49,6 +76,21 @@ export const content: ModuleContent = {
     // no dated algorithm mandate — its pressure comes from operational-
     // resilience regulation and HNDL exposure. Inventing dates here would
     // misrepresent the sector.
+    //
+    // 2026-08-01: re-verified against the primary documents rather than left as
+    // an assertion. The sector's own body says so in as many words — G7 CEG,
+    // January 2026: "This statement does not set guidance or regulatory
+    // expectations", and its dual-track approach "encourages institutions to
+    // consider a risk-based prioritization of their systems and data assets
+    // rather than prescribe fixed timelines. The period 2030-32 is reflective
+    // of the variety of envisaged approaches taken across G7 jurisdictions."
+    //
+    // The dated obligations that do reach banks are horizontal, not sectoral:
+    // the EU NIS CG Coordinated Implementation Roadmap v1.1 sets end-2030 for
+    // high-risk use cases and 2035 overall, and the word "financial" does not
+    // appear in it. It binds EU-regulated institutions through NIS2/DORA, not
+    // as a payments mandate. Populating deadlines[] from it would attribute
+    // horizontal policy to the sector — the error this comment guards against.
   ],
 
   narratives: {

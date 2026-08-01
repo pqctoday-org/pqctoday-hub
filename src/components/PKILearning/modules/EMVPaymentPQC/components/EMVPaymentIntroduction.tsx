@@ -550,6 +550,15 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
           CNSA 2.0 kind. The sector&rsquo;s pressure comes from operational-resilience regulation
           and from harvest-now-decrypt-later exposure, not from a compliance cliff.
         </p>
+        <p className="text-sm text-muted-foreground border-l-2 border-border pl-3">
+          <strong className="text-foreground">Out of scope.</strong> This module covers card
+          payments and the interbank rails behind them. PSD2, open banking APIs, instant-payment
+          schemes (SEPA Instant, FedNow), and central bank digital currencies raise their own
+          post-quantum questions — different threat models, different standards bodies — that this
+          module does not address. They are not covered here because the library does not yet hold a
+          substantive PQC source for any of them; this note will be replaced by real coverage once
+          one is acquired, not expanded from general knowledge.
+        </p>
       </LearnSection>
 
       {/* ── Section 10: Quantum Threats to Payment Systems ── */}
@@ -623,9 +632,12 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
         <p className="text-muted-foreground">
           The payment industry is at an inflection point. EMVCo does not expect quantum computing to
           threaten EMV infrastructure before <strong className="text-foreground">2040</strong> — and
-          says it may never — while BIS, G7 and national regulators target{' '}
-          <strong className="text-foreground">2030-2032</strong> for critical financial system
-          migration. Among the card networks,{' '}
+          says it may never — while the G7 Cyber Expert Group points to{' '}
+          <strong className="text-foreground">2030-2032</strong> for the most critical financial
+          systems, against a broader <strong className="text-foreground">2035</strong> horizon. The
+          G7 CEG is explicit that this is not a deadline: the period &ldquo;is reflective of the
+          variety of envisaged approaches taken across G7 jurisdictions&rdquo;, and the statement
+          &ldquo;does not set guidance or regulatory expectations&rdquo;. Among the card networks,{' '}
           <strong className="text-foreground">Mastercard</strong> is the one that has published a
           dedicated PQC white paper; the rest engage through the EMVCo study group without public
           timetables.
