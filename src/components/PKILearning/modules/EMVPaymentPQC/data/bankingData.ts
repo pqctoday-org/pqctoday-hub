@@ -121,8 +121,11 @@ export const SECTOR_BODIES: SectorBody[] = [
     id: 'g7-ceg',
     label: 'G7 Cyber Expert Group',
     jurisdiction: 'G7',
-    libraryRef: 'G7-Financial-PQC-Roadmap-2026',
-    contribution: 'Coordinated approach and sector roadmap for financial-sector PQC.',
+    // 2026-08-01: re-pointed from G7-Financial-PQC-Roadmap-2026 (the Treasury
+    // press release) to the statement itself. See content.ts standards[].
+    libraryRef: 'G7-CEG-Financial-PQC-2026',
+    contribution:
+      'Coordinated roadmap for financial-sector PQC. Explicitly sets no regulatory expectation: it prioritises risk-based sequencing "rather than prescribe fixed timelines".',
   },
   {
     id: 'cmorg',
