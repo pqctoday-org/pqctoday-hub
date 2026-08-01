@@ -69,6 +69,14 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/leaders',
     '/patents',
     '/revisions',
+    // Persona-journeys A-grade redesign (2026-08-01): the Executive Overview
+    // guided tour already exists (EXEC_TOUR_STAGES, SimulationView.tsx) but
+    // /simulation was never nav-linked for this persona — it's the featured
+    // "Walk the program" row (see PERSONA_MARKED_NAV_PATHS' sibling featured
+    // set below), not a marked/pending one. /playground is added too, as the
+    // dashed "Labs" preview row (real Playground tools, not yet exec-tailored).
+    '/simulation',
+    '/playground',
   ],
   developer: [
     '/migrate',
@@ -79,9 +87,15 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/algorithms',
     '/library',
     '/playground',
-    '/openssl',
     '/patents',
     '/revisions',
+    // Persona-journeys A-grade redesign (2026-08-01): /openssl dropped as a
+    // standalone nav path — OpenSSL Studio is reachable via the Playground
+    // grid's own 'openssl-studio' (PT-023) card (RAIL_HIDDEN_PATHS below),
+    // per the redesign's "folded into Playground" decision. /simulation
+    // added as the dashed/marked row (PERSONA_SIM_PRACTICE_PHASES.developer
+    // is real, but the general console's exit-affordance fix is pending).
+    '/simulation',
   ],
   architect: [
     '/migrate',
@@ -92,10 +106,12 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/algorithms',
     '/library',
     '/playground',
-    '/openssl',
     '/leaders',
     '/patents',
     '/revisions',
+    // Same redesign notes as developer above: /openssl folded into
+    // Playground's own card; /simulation added as the dashed/marked row.
+    '/simulation',
   ],
   researcher: null,
   ops: [
@@ -107,12 +123,18 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     // /algorithms fits ops: the Certified filter + deployment-relevant status hints are
     // directly useful (see ALGORITHM_PERSONA_DEFAULTS.ops below). /patents deliberately
     // stays excluded — IP research isn't an ops task (07-19 follow-up remediation, O1).
+    // NOTE (2026-08-01 persona-journeys redesign): the design handoff's ops rail
+    // mockup showed a dashed "Patents" row alongside "Simulation" — deliberately
+    // NOT implemented here. That would reverse the O1 decision directly above
+    // without being asked to; only /simulation was added. Flagged for the user.
     '/algorithms',
     '/library',
     '/leaders',
     '/playground',
-    '/openssl',
     '/revisions',
+    // /openssl folded into Playground's own card (see developer's note above).
+    // /simulation added as the dashed/marked row.
+    '/simulation',
   ],
   curious: [
     '/explore',
@@ -126,7 +148,41 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/playground',
     '/patents',
     '/revisions',
+    // Persona-journeys A-grade redesign (2026-08-01): /simulation added as a
+    // plain (non-featured, non-marked) entry — curious keeps every route
+    // reachable but gives simulation no special rail treatment, per design.
+    '/simulation',
   ],
+}
+
+/**
+ * Rail rows that must never render as their own top-level nav item, for any
+ * persona — the route stays real and reachable (URL, deep link, or a feature
+ * card elsewhere), it just isn't offered as a rail destination in its own
+ * right. Added 2026-08-01 (persona-journeys A-grade redesign) for '/openssl':
+ * OpenSSL Studio is reachable via the Playground grid's own 'openssl-studio'
+ * (PT-023) card, so the standalone nav item would be a duplicate front door.
+ */
+export const RAIL_HIDDEN_PATHS: string[] = ['/openssl']
+
+/**
+ * Per-persona rail rows that should render with the "marked/pending" dashed
+ * left-border treatment (persona-journeys A-grade redesign, 2026-08-01) — a
+ * route the persona can already reach, but that isn't fully tailored to them
+ * yet. Distinct from PERSONA_NAV_PATHS (which controls FOR YOU vs MORE
+ * placement) and from any row given the separate "featured" green treatment
+ * (e.g. executive's '/simulation', styled as the Executive Overview tour
+ * entry point, is intentionally NOT in this list).
+ */
+export const PERSONA_MARKED_NAV_PATHS: Record<PersonaId, string[]> = {
+  executive: ['/playground'],
+  developer: ['/simulation'],
+  architect: ['/simulation'],
+  // researcher: PERSONA_NAV_PATHS is null (no gating at all) — nothing marked.
+  researcher: [],
+  ops: ['/simulation'],
+  // curious: every route is already reachable and un-gated — nothing marked.
+  curious: [],
 }
 
 /* ──────────────────────────────────────────────────────────────────────────────
