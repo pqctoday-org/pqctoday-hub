@@ -51,6 +51,14 @@ function getMobileNav() {
 describe('MainLayout', () => {
   afterEach(() => {
     usePersonaStore.getState().setPersona(null)
+    // Full reset — a couple of tests below call setRegion()/setState() directly
+    // to exercise the live-vs-persona-default pill logic, which setPersona(null)
+    // alone does not undo.
+    usePersonaStore.setState({
+      selectedRegion: 'global',
+      selectedIndustries: [],
+      hasSkippedPersonalization: false,
+    })
   })
 
   describe('Structure', () => {
@@ -219,17 +227,33 @@ describe('MainLayout', () => {
   })
 
   describe('Top bar', () => {
-    it('shows a region/industry pill citing the live persona config keys', () => {
+    it('shows a region/industry pill falling back to the persona default when the store is untouched', () => {
       usePersonaStore.getState().setPersona('executive')
       renderLayout()
-      const pill = screen.getByTitle(/PERSONA_TIMELINE_REGION\.executive/i)
-      expect(pill).toBeInTheDocument()
+      // Real RegionIndustryPill.test.tsx covers the live-vs-default logic in
+      // depth; this just pins that MainLayout actually wires it in.
+      const pill = screen.getByRole('button', { name: /region and industry/i })
       expect(pill).toHaveTextContent('Americas')
     })
 
-    it('shows a generic pill with no persona selected', () => {
+    it('shows "Global" with no persona selected and no custom region/industry set', () => {
       renderLayout()
-      expect(screen.getByText('All regions · All industries')).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /region and industry/i })).toHaveTextContent(
+        'Global'
+      )
+    })
+
+    it('reads a LIVE selectedRegion from the store instead of the persona default', () => {
+      usePersonaStore.getState().setPersona('executive')
+      usePersonaStore.getState().setRegion('apac')
+      renderLayout()
+      expect(screen.getByRole('button', { name: /region and industry/i })).toHaveTextContent('APAC')
+    })
+
+    it('opens the region/industry pill editor on click', () => {
+      renderLayout()
+      fireEvent.click(screen.getByRole('button', { name: /region and industry/i }))
+      expect(screen.getByRole('dialog', { name: /edit region and industry/i })).toBeInTheDocument()
     })
 
     it('shows the role switcher with the active persona label', () => {
@@ -311,6 +335,29 @@ describe('MainLayout', () => {
       const moreButton = within(mobileNav).getByRole('button', { name: /more navigation options/i })
       fireEvent.click(moreButton)
       expect(screen.getByRole('dialog', { name: /more navigation/i })).toBeInTheDocument()
+    })
+  })
+
+  // "Update your profile" deep link — PQC101Module's two links (repointed
+  // 2026-08-01 from `?scroll=persona`) and AboutNextStepCTA's fallback both
+  // land on `/?picker=open` now that PersonalizationSection (which used to
+  // handle both param names itself) is retired.
+  describe('"?picker=open" deep link', () => {
+    it('opens the persona-switch modal when a persona is already selected', () => {
+      usePersonaStore.getState().setPersona('developer')
+      renderLayout('/?picker=open')
+      expect(screen.getByRole('dialog', { name: /switch your role/i })).toBeInTheDocument()
+    })
+
+    it('opens the persona-switch modal for a "show me everything" visitor (no persona, but skipped)', () => {
+      usePersonaStore.setState({ hasSkippedPersonalization: true })
+      renderLayout('/?picker=open')
+      expect(screen.getByRole('dialog', { name: /switch your role/i })).toBeInTheDocument()
+    })
+
+    it('no-ops when Role Home would already cover it (no persona, not skipped)', () => {
+      renderLayout('/?picker=open')
+      expect(screen.queryByRole('dialog', { name: /switch your role/i })).not.toBeInTheDocument()
     })
   })
 })

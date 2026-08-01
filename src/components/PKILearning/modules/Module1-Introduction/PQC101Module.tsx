@@ -492,7 +492,7 @@ const Step5NextSteps: React.FC = () => {
               <span className="font-semibold text-foreground text-sm">Your Profile</span>
             </div>
             <Link
-              to="/?scroll=persona"
+              to="/?picker=open"
               className="flex items-center gap-1.5 text-xs text-primary hover:underline"
             >
               <Pencil size={12} />
@@ -535,7 +535,7 @@ const Step5NextSteps: React.FC = () => {
             <span>No profile set — personalise your learning journey</span>
           </div>
           <Link
-            to="/?scroll=persona"
+            to="/?picker=open"
             className="flex items-center gap-1.5 text-xs text-primary hover:underline shrink-0"
           >
             <Pencil size={12} />

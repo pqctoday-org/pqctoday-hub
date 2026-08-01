@@ -11,7 +11,7 @@ import { UnifiedStorageService } from '@/services/storage/UnifiedStorageService'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { useModuleStore } from '@/store/useModuleStore'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
-import { PersonalizationSection } from './PersonalizationSection'
+import { ScoreCard } from './ScoreCard'
 import { OnboardingCTAs } from './OnboardingCTAs'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { TransparencyBanner } from './TransparencyBanner'
@@ -302,8 +302,10 @@ export const LandingView = () => {
   // `skipPersonalization()`, which flips `hasSkippedPersonalization` so this
   // screen never returns for that user — see usePersonaStore's own doc
   // comment on that flag). The old Track → Role → Region → Industry wizard
-  // (`PersonalizationSection`) is deliberately NOT removed — see the build
-  // report for why it stays reachable below, once a role is picked.
+  // (`PersonalizationSection`) has since been retired (2026-08-01 top-bar
+  // pill follow-up) — Role Home replaced its Track/Role steps, and the top
+  // bar's RegionIndustryPill (MainLayout.tsx) replaced its Region/Industry
+  // steps.
   if (!selectedPersona && !hasSkippedPersonalization) {
     return <RoleHomeView onSelectPersona={setPersona} onSkip={skipPersonalization} />
   }
@@ -324,14 +326,18 @@ export const LandingView = () => {
   // alongside it). What stays, below the board, and why:
   //  - OnboardingCTAs: a genuinely distinct feature (video tour / browse
   //    workshops) the board skeleton doesn't cover.
-  //  - PersonalizationSection: renders in its compact "avatar + ScoreCard"
-  //    form once a persona is set (not the wizard) — kept because it is
-  //    currently the ONLY way to edit region/industry post-selection, and the
-  //    only thing that answers the `?scroll=persona` / `?picker=open`
-  //    "Update profile" deep links (PQC101Module, AboutNextStepCTA). The
-  //    plan's own recommendation (§3.2) is to eventually move this to the top
-  //    bar's region/industry pill — that pill is display-only today, so this
-  //    is a deliberate, documented stopgap, not an oversight.
+  //  - ScoreCard: the learning-progress/belt-rank summary — genuinely
+  //    separate from persona/region/industry selection (it tracks module
+  //    completion, quiz mastery, and artifact generation, not profile
+  //    fields). Previously rendered indirectly via PersonalizationSection's
+  //    collapsed "avatar + ScoreCard" state; rendered directly now that
+  //    PersonalizationSection (the Track→Role→Region→Industry wizard, plus
+  //    its avatar/"Change persona" framing) has been retired — Role Home +
+  //    the rail's role-switcher + the top bar's RegionIndustryPill fully
+  //    replace what that wizard did. See the build report for the removal's
+  //    full rationale, including the `?scroll=persona`/`?picker=open`
+  //    "Update profile" deep-link CTAs (PQC101Module, AboutNextStepCTA),
+  //    which now open the persona-switch modal via MainLayout instead.
   //  - TransparencyBanner / CuriousGuide / Backup & Restore: generic,
   //    persona-independent utility sections, unchanged from today.
   if (selectedPersona) {
@@ -346,7 +352,7 @@ export const LandingView = () => {
 
         <OnboardingCTAs persona={selectedPersona} region={selectedRegion} />
 
-        <PersonalizationSection />
+        <ScoreCard />
 
         <TransparencyBanner />
 
@@ -412,7 +418,12 @@ export const LandingView = () => {
           <ResumeBanner dismissKey="landing-hero" />
         </motion.div>
 
-        {/* Personalization Section */}
+        {/* Learning-progress summary — see the persona-selected branch above
+            for why this renders ScoreCard directly rather than through the
+            now-retired PersonalizationSection wizard. Region/industry/persona
+            selection for this "show me everything" visitor now happens via
+            the top bar's RegionIndustryPill and role-switcher (MainLayout),
+            reachable from every route, not just here. */}
         <motion.div
           initial="hidden"
           animate="visible"
@@ -420,7 +431,7 @@ export const LandingView = () => {
           custom={2.5}
           className="mb-6"
         >
-          <PersonalizationSection />
+          <ScoreCard />
         </motion.div>
 
         {/* Onboarding CTAs */}

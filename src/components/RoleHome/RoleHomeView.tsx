@@ -102,10 +102,13 @@ interface RoleCardProps {
 }
 
 /**
- * One selectable role tile. Modeled on `PersonalizationSection.tsx`'s
- * `SelectionCard` (clickable div + `role="button"`, not a raw `<button>` —
- * raw `<button>` is ESLint-blocked repo-wide) for visual/interaction
- * consistency with the rest of the persona-selection UI.
+ * One selectable role tile. Modeled on the old Track→Role→Region→Industry
+ * wizard's `SelectionCard` (clickable div + `role="button"`, not a raw
+ * `<button>` — raw `<button>` is ESLint-blocked repo-wide) for visual/
+ * interaction consistency with the rest of the persona-selection UI. That
+ * wizard (`PersonalizationSection.tsx`) was retired 2026-08-01 once Role Home
+ * (this component) + the top bar's RegionIndustryPill fully replaced it —
+ * referenced here only as the historical origin of this pattern.
  */
 const RoleCard = ({ personaId, onSelect }: RoleCardProps) => {
   const persona = PERSONAS[personaId]
