@@ -19,6 +19,7 @@ const TestSimulation = () => <div>Simulation Page</div>
 const TestOpenssl = () => <div>OpenSSL Page</div>
 const TestBusinessTools = () => <div>Business Tools Page</div>
 const TestExplore = () => <div>Explore Page</div>
+const TestCompliance = () => <div>Compliance Page</div>
 
 function renderLayout(initialEntry = '/') {
   return render(
@@ -33,6 +34,7 @@ function renderLayout(initialEntry = '/') {
           <Route path="/business/tools" element={<TestBusinessTools />} />
           <Route path="/timeline" element={<div>Real Timeline Page</div>} />
           <Route path="/explore" element={<TestExplore />} />
+          <Route path="/compliance" element={<TestCompliance />} />
         </Route>
       </Routes>
     </MemoryRouter>
@@ -379,6 +381,21 @@ describe('MainLayout', () => {
       expect(
         screen.getByRole('button', { name: /view authoritative sources/i })
       ).toBeInTheDocument()
+    })
+
+    // Final self-review finding (2026-08-01): ux-standard.md P10 has a MUST
+    // NOT rule against rendering SourcesButton on /compliance (its own
+    // provenance comes from inline TrustPathPopover, not the generic
+    // authoritative-sources list) — ComplianceView's own (now-removed)
+    // PageHeader call enforced this with `suppressSources`, but the global
+    // top bar's ROUTE_VIEW_TYPE map (introduced by the nav rebuild, before
+    // this fixup session) never modeled that suppression at all. Fixed by
+    // omitting '/compliance' from ROUTE_VIEW_TYPE.
+    it('omits Sources on /compliance (ux-standard.md P10 MUST NOT — provenance is inline via TrustPathPopover, not the generic Sources list)', () => {
+      renderLayout('/compliance')
+      expect(
+        screen.queryByRole('button', { name: /view authoritative sources/i })
+      ).not.toBeInTheDocument()
     })
 
     // PageHeader-consolidation follow-up (2026-08-01): /openssl's own PageHeader

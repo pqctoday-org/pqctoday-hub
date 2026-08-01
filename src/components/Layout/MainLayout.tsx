@@ -85,13 +85,27 @@ import {
 // routes below have a registered ViewType / PageId (see authoritativeSourcesData.ts
 // / userManualData.ts). Routes without an entry simply omit that button, same
 // as PageHeader.tsx's own `showSources = !!viewType` conditional.
+// '/compliance' is deliberately ABSENT here — final self-review finding
+// (2026-08-01, this fixup session's verification pass): ux-standard.md P10
+// has a MUST NOT rule ("Do not render SourcesButton on this page — provenance
+// is surfaced inline via TrustPathPopover on framework tiles and a
+// ContentUpdatesFeed in PageHeader"), and ComplianceView.tsx's own
+// (now-removed) PageHeader call enforced it with an explicit `suppressSources`
+// prop alongside `viewType="Compliance"`. The nav-rebuild commit (857b8219b)
+// that introduced this global top-bar Sources button copied every page's
+// viewType into this map WITHOUT carrying over that suppression, so the top
+// bar had already been silently violating the MUST NOT since before this
+// session started (the header-dedup commit, f5421407c, then preserved that
+// pre-existing gap rather than introducing it fresh — it never modeled
+// `suppressSources` at all). Caught auditing Sources coverage for this
+// review; fixed by omission rather than adding a suppression mechanism, since
+// '/compliance' is the only route that ever needed one.
 const ROUTE_VIEW_TYPE: Partial<Record<string, ViewType>> = {
   '/timeline': 'Timeline',
   '/library': 'Library',
   '/threats': 'Threats',
   '/leaders': 'Leaders',
   '/algorithms': 'Algorithms',
-  '/compliance': 'Compliance',
   '/migrate': 'Migrate',
   // OpenSSL Studio's own (now-removed) PageHeader call passed viewType="Library"
   // (it reuses the Library authoritative-sources list — there is no distinct
