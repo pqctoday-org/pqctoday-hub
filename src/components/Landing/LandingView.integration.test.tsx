@@ -23,7 +23,7 @@
  * double up — see MainLayout.tsx's `isCuriousMobileTakeover`).
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { render, screen, within } from '@testing-library/react'
+import { render, screen, within, fireEvent } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { MainLayout } from '../Layout/MainLayout'
 import { LandingView } from './LandingView'
@@ -59,6 +59,13 @@ function getRailNav() {
  *  here against the actual rendered DOM after a real LandingView mount. */
 function expectFullRailCoverage() {
   const rail = getRailNav()
+  // MORE is collapsed by default (2026-08-01 rail declutter follow-up) —
+  // expand it first so this full-coverage check still sees every row, not
+  // just FOR YOU + the 5 always-visible paths. If the active route already
+  // auto-expanded it (see MainLayout's isMoreSectionActive), the toggle's
+  // accessible name is already "Hide more pages…" and this is a no-op.
+  const moreToggle = within(rail).queryByRole('button', { name: /show more pages/i })
+  if (moreToggle) fireEvent.click(moreToggle)
   const universe = Object.keys(NAV_PATH_LABELS).filter((p) => !RAIL_HIDDEN_PATHS.includes(p))
   for (const path of universe) {
     // eslint-disable-next-line security/detect-object-injection -- path comes from Object.keys(NAV_PATH_LABELS) itself

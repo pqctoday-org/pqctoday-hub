@@ -119,6 +119,86 @@ export const RAIL_ICON_MAP: Record<string, LucideIcon> = {
 }
 
 /**
+ * Rail declutter follow-up (2026-08-01, post-launch user review: "too
+ * cluttered... collapsible [sections] and better organization"). Screenshots
+ * of the live rail showed the actual wall-of-rows problem is FOR YOU itself
+ * for 5 of 6 personas (11-12 flat rows) — only `researcher`/no-persona put
+ * the bulk in MORE (empty FOR YOU, full universe in MORE). Chunking FOR YOU
+ * into a few calmer visual clusters addresses both cases with one taxonomy,
+ * rather than special-casing researcher.
+ *
+ * One FIXED grouping definition shared by every persona (not a bespoke
+ * per-persona taxonomy) — deliberately simple:
+ *  - `workflow`  — the actual migration-governance work (assess risk, read
+ *    the report, plan the migration, track compliance, the command center).
+ *  - `practice`  — hands-on/interactive surfaces (simulation, playground,
+ *    explore).
+ *  - `reference` — standing reference & community material (algorithms,
+ *    library, community, patents, revisions).
+ */
+export type ForYouGroupId = 'workflow' | 'practice' | 'reference'
+
+export const FOR_YOU_GROUP_LABELS: Record<ForYouGroupId, string> = {
+  workflow: 'Workflow',
+  practice: 'Practice',
+  reference: 'Reference',
+}
+
+/** Fixed path → group assignment. Deliberately a `Partial` — any path absent
+ * here (there are none among today's 13 gateable paths, but a future addition
+ * to NAV_PATH_LABELS could land before this map is updated) still renders,
+ * just bucketed into a trailing "More for you" catch-all by
+ * `getForYouGroups` below, so a missed mapping can never silently drop a row. */
+const FOR_YOU_PATH_GROUP: Partial<Record<string, ForYouGroupId>> = {
+  '/assess': 'workflow',
+  '/report': 'workflow',
+  '/migrate': 'workflow',
+  '/compliance': 'workflow',
+  '/business': 'workflow',
+  '/simulation': 'practice',
+  '/playground': 'practice',
+  '/explore': 'practice',
+  '/algorithms': 'reference',
+  '/library': 'reference',
+  '/leaders': 'reference',
+  '/patents': 'reference',
+  '/revisions': 'reference',
+}
+
+const FOR_YOU_GROUP_ORDER: ForYouGroupId[] = ['workflow', 'practice', 'reference']
+
+export interface ForYouGroup {
+  id: ForYouGroupId | 'other'
+  label: string
+  paths: string[]
+}
+
+/**
+ * Partitions a persona's FOR YOU rows into fixed, ordered visual groups
+ * (Workflow → Practice → Reference → an "Other" catch-all for anything
+ * unmapped), preserving each path's original relative order within its
+ * group. Purely a rendering aid — the union of every returned group's
+ * `paths`, in some order, always equals `forYou` exactly (see
+ * railNav.test.ts's "groups partition FOR YOU" coverage); this never changes
+ * reachability, just how FOR YOU rows are visually chunked. Groups with zero
+ * matching rows for this persona are omitted so e.g. curious (no '/business')
+ * doesn't render an empty "Workflow" header.
+ */
+export function getForYouGroups(forYou: string[]): ForYouGroup[] {
+  const groups: ForYouGroup[] = FOR_YOU_GROUP_ORDER.map((id) => ({
+    id,
+    // eslint-disable-next-line security/detect-object-injection -- id is drawn from the typed FOR_YOU_GROUP_ORDER literal union, not user input
+    label: FOR_YOU_GROUP_LABELS[id],
+    // eslint-disable-next-line security/detect-object-injection
+    paths: forYou.filter((path) => FOR_YOU_PATH_GROUP[path] === id),
+  }))
+  const grouped = new Set(groups.flatMap((g) => g.paths))
+  const other = forYou.filter((path) => !grouped.has(path))
+  if (other.length > 0) groups.push({ id: 'other', label: 'More for you', paths: other })
+  return groups.filter((g) => g.paths.length > 0)
+}
+
+/**
  * Curated small set of paths kept as top-level icons in the MOBILE nav row
  * (below `lg`), independent of FOR YOU/MORE classification — this is the
  * already-tuned overflow fix from the 2026-08-01 remediation (see MainLayout's

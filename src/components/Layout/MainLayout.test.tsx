@@ -18,6 +18,7 @@ const TestMigrate = () => <div>Migrate Page</div>
 const TestSimulation = () => <div>Simulation Page</div>
 const TestOpenssl = () => <div>OpenSSL Page</div>
 const TestBusinessTools = () => <div>Business Tools Page</div>
+const TestExplore = () => <div>Explore Page</div>
 
 function renderLayout(initialEntry = '/') {
   return render(
@@ -31,10 +32,19 @@ function renderLayout(initialEntry = '/') {
           <Route path="/openssl" element={<TestOpenssl />} />
           <Route path="/business/tools" element={<TestBusinessTools />} />
           <Route path="/timeline" element={<div>Real Timeline Page</div>} />
+          <Route path="/explore" element={<TestExplore />} />
         </Route>
       </Routes>
     </MemoryRouter>
   )
+}
+
+/** Clicks the desktop rail's collapsible MORE toggle (collapsed by default —
+ * see the 2026-08-01 rail declutter follow-up). Scoped to the rail landmark
+ * so it never collides with the mobile "More" bottom-sheet trigger, which
+ * has its own distinct accessible name. */
+function expandMore(rail: HTMLElement) {
+  fireEvent.click(within(rail).getByRole('button', { name: /show more pages/i }))
 }
 
 /** The desktop rail's own nav landmark — distinct from the mobile row's
@@ -89,12 +99,15 @@ describe('MainLayout', () => {
   })
 
   describe('Rail — no persona selected (null)', () => {
-    it('shows a collapsed "For You" header with no rows, and MORE holds the full universe', () => {
+    it('shows a collapsed "For You" header with no rows, and a collapsed MORE toggle holding the full universe', () => {
       renderLayout()
       const rail = getRailNav()
       expect(within(rail).getByText('For You')).toBeInTheDocument()
       expect(within(rail).getByText('Everything, unfiltered')).toBeInTheDocument()
-      expect(within(rail).getByText('More')).toBeInTheDocument()
+      // MORE is collapsed by default (2026-08-01 declutter follow-up) — its
+      // rows aren't in the document until the toggle is clicked.
+      expect(within(rail).queryByRole('button', { name: /migrate view/i })).not.toBeInTheDocument()
+      expandMore(rail)
       // Migrate has no persona-specific gating reason to hide — it must show up in MORE.
       expect(within(rail).getByRole('button', { name: /migrate view/i })).toBeInTheDocument()
     })
@@ -139,7 +152,8 @@ describe('MainLayout', () => {
       // /migrate is in developer's PERSONA_NAV_PATHS
       expect(within(rail).getByRole('button', { name: /migrate view/i })).toBeInTheDocument()
       // /leaders ("Community") is NOT in developer's PERSONA_NAV_PATHS — still
-      // reachable, just in MORE.
+      // reachable, just in MORE (collapsed by default; expand to confirm).
+      expandMore(rail)
       expect(within(rail).getByRole('button', { name: /community view/i })).toBeInTheDocument()
     })
 
@@ -214,6 +228,7 @@ describe('MainLayout', () => {
       usePersonaStore.getState().setPersona('curious')
       renderLayout()
       const rail = getRailNav()
+      expandMore(rail)
       expect(within(rail).getByRole('button', { name: /command center view/i })).toBeInTheDocument()
     })
 
@@ -222,7 +237,92 @@ describe('MainLayout', () => {
       renderLayout()
       const rail = getRailNav()
       expect(within(rail).getByText('Everything, unfiltered')).toBeInTheDocument()
+      expandMore(rail)
       expect(within(rail).getByRole('button', { name: /migrate view/i })).toBeInTheDocument()
+    })
+  })
+
+  // 2026-08-01 rail declutter follow-up: live-review feedback called the rail
+  // "too cluttered" and asked for "collapsible [sections] and better
+  // organization" — MORE now defaults collapsed, and FOR YOU is chunked into
+  // fixed Workflow/Practice/Reference sub-groups (railNav.ts's
+  // getForYouGroups).
+  describe('Rail — MORE section is collapsible (declutter follow-up, 2026-08-01)', () => {
+    it('is collapsed by default: aria-expanded is false and MORE rows are absent from the DOM', () => {
+      usePersonaStore.getState().setPersona('developer')
+      renderLayout()
+      const rail = getRailNav()
+      const toggle = within(rail).getByRole('button', { name: /show more pages/i })
+      expect(toggle).toHaveAttribute('aria-expanded', 'false')
+      // developer's MORE = /explore, /leaders — neither should be mounted yet.
+      expect(within(rail).queryByRole('button', { name: /explore view/i })).not.toBeInTheDocument()
+      expect(
+        within(rail).queryByRole('button', { name: /community view/i })
+      ).not.toBeInTheDocument()
+    })
+
+    it('clicking the toggle reveals MORE rows and flips aria-expanded/its label; clicking again re-collapses', () => {
+      usePersonaStore.getState().setPersona('developer')
+      renderLayout()
+      const rail = getRailNav()
+      const toggle = () => within(rail).getByRole('button', { name: /(show|hide) more pages/i })
+
+      fireEvent.click(toggle())
+      expect(toggle()).toHaveAttribute('aria-expanded', 'true')
+      expect(toggle()).toHaveAccessibleName(/hide more pages/i)
+      expect(within(rail).getByRole('button', { name: /community view/i })).toBeInTheDocument()
+
+      fireEvent.click(toggle())
+      expect(toggle()).toHaveAttribute('aria-expanded', 'false')
+      expect(toggle()).toHaveAccessibleName(/show more pages/i)
+      expect(
+        within(rail).queryByRole('button', { name: /community view/i })
+      ).not.toBeInTheDocument()
+    })
+
+    it('auto-expands when the CURRENT route lives in MORE, so active-route highlighting is never hidden behind a collapsed section', () => {
+      usePersonaStore.getState().setPersona('developer')
+      // /explore is not in developer's PERSONA_NAV_PATHS, so it's a MORE row.
+      renderLayout('/explore')
+      const rail = getRailNav()
+      const toggle = within(rail).getByRole('button', { name: /(show|hide) more pages/i })
+      expect(toggle).toHaveAttribute('aria-expanded', 'true')
+      const exploreButton = within(rail).getByRole('button', { name: /explore view/i })
+      expect(exploreButton).toHaveAttribute('aria-current', 'page')
+    })
+
+    it('does NOT auto-expand when the current route lives in FOR YOU, not MORE', () => {
+      usePersonaStore.getState().setPersona('developer')
+      renderLayout('/migrate')
+      const rail = getRailNav()
+      expect(within(rail).getByRole('button', { name: /show more pages/i })).toHaveAttribute(
+        'aria-expanded',
+        'false'
+      )
+    })
+  })
+
+  describe('Rail — FOR YOU is chunked into Workflow/Practice/Reference sub-groups', () => {
+    it('renders all three sub-group headers for a persona whose rows span all three (executive)', () => {
+      usePersonaStore.getState().setPersona('executive')
+      renderLayout()
+      const rail = getRailNav()
+      expect(within(rail).getByText('Workflow')).toBeInTheDocument()
+      expect(within(rail).getByText('Practice')).toBeInTheDocument()
+      expect(within(rail).getByText('Reference')).toBeInTheDocument()
+      // Grouping is presentational only — every row is still reachable.
+      expect(within(rail).getByRole('button', { name: /migrate view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /simulation view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /library view/i })).toBeInTheDocument()
+    })
+
+    it('renders no sub-group headers when FOR YOU is empty (researcher)', () => {
+      usePersonaStore.getState().setPersona('researcher')
+      renderLayout()
+      const rail = getRailNav()
+      expect(within(rail).queryByText('Workflow')).not.toBeInTheDocument()
+      expect(within(rail).queryByText('Practice')).not.toBeInTheDocument()
+      expect(within(rail).queryByText('Reference')).not.toBeInTheDocument()
     })
   })
 
