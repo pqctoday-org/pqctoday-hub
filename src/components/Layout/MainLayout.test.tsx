@@ -16,6 +16,8 @@ const TestTimeline = () => <div>Timeline Page</div>
 const TestAbout = () => <div>About Page</div>
 const TestMigrate = () => <div>Migrate Page</div>
 const TestSimulation = () => <div>Simulation Page</div>
+const TestOpenssl = () => <div>OpenSSL Page</div>
+const TestBusinessTools = () => <div>Business Tools Page</div>
 
 function renderLayout(initialEntry = '/') {
   return render(
@@ -26,6 +28,9 @@ function renderLayout(initialEntry = '/') {
           <Route path="/about" element={<TestAbout />} />
           <Route path="/migrate" element={<TestMigrate />} />
           <Route path="/simulation" element={<TestSimulation />} />
+          <Route path="/openssl" element={<TestOpenssl />} />
+          <Route path="/business/tools" element={<TestBusinessTools />} />
+          <Route path="/timeline" element={<div>Real Timeline Page</div>} />
         </Route>
       </Routes>
     </MemoryRouter>
@@ -250,6 +255,43 @@ describe('MainLayout', () => {
       expect(
         screen.getByRole('button', { name: /view authoritative sources/i })
       ).toBeInTheDocument()
+    })
+
+    // PageHeader-consolidation follow-up (2026-08-01): /openssl's own PageHeader
+    // call (now removed) passed viewType="Library" — ROUTE_VIEW_TYPE must keep
+    // covering it so the global Sources button doesn't regress on this route.
+    it('renders Sources on /openssl (viewType carried over from its removed PageHeader call)', () => {
+      renderLayout('/openssl')
+      expect(
+        screen.getByRole('button', { name: /view authoritative sources for library/i })
+      ).toBeInTheDocument()
+    })
+
+    // Same follow-up: BusinessToolsGrid ('/business/tools') passed
+    // pageId="business-center" on its own removed PageHeader call — a nested
+    // route distinct from '/business' (BusinessCenterView), so it needs its
+    // own ROUTE_PAGE_ID entry rather than inheriting '/business''s.
+    it('renders the Guide button on /business/tools (pageId carried over from its removed PageHeader call)', () => {
+      renderLayout('/business/tools')
+      expect(screen.getByRole('button', { name: /open page guide/i })).toBeInTheDocument()
+    })
+
+    // PageHeader-consolidation follow-up: bespoke shareTitle strings that used
+    // to live on each page's own (now-removed) PageHeader call must survive on
+    // the global ShareButton instead of falling back to the generic
+    // "{route label} — PQC Today" title.
+    it("uses the bespoke share title preserved from /timeline's removed PageHeader call", () => {
+      renderLayout('/timeline')
+      expect(
+        screen.getByRole('button', {
+          name: /share pqc migration timeline — global post-quantum cryptography roadmap/i,
+        })
+      ).toBeInTheDocument()
+    })
+
+    it('falls back to the generic share title on a route with no bespoke shareTitle (e.g. /migrate)', () => {
+      renderLayout('/migrate')
+      expect(screen.getByRole('button', { name: /share migrate — pqc today/i })).toBeInTheDocument()
     })
   })
 

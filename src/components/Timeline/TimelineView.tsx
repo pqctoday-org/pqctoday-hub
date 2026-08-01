@@ -391,7 +391,6 @@ export const TimelineView = () => {
     <div data-testid="timeline-view-root">
       <PageHeader
         icon={Globe}
-        pageId="timeline"
         title="Global Migration Timeline"
         description="Compare Post-Quantum Cryptography migration roadmaps across nations. Track phases from discovery to full migration and key regulatory milestones."
         dataSource={
@@ -399,9 +398,6 @@ export const TimelineView = () => {
             ? `${timelineMetadata.filename} • Updated: ${timelineMetadata.lastUpdate.toLocaleDateString()}`
             : undefined
         }
-        viewType="Timeline"
-        shareTitle="PQC Migration Timeline — Global Post-Quantum Cryptography Roadmap"
-        shareText="Compare PQC migration timelines across nations — track phases from discovery to full migration."
         onExport={handleExportCsv}
         endorseUrl={buildEndorsementUrl({
           category: 'timeline-endorsement',

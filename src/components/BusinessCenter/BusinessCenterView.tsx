@@ -523,14 +523,11 @@ export function BusinessCenterView() {
       <WorkflowBreadcrumb current="business" />
       <PageHeader
         icon={LayoutDashboard}
-        pageId="business-center"
         title={zoneEmphasis.headline ?? 'Command Center'}
         description={
           zoneEmphasis.tagline ??
           'Your PQC readiness command center, organised around the NIST CSWP.39 Fig 3 Crypto Agility Strategic Plan (Considerations for Achieving Crypto Agility, Dec 2025).'
         }
-        shareTitle="PQC Command Center — Quantum Readiness Workspace"
-        shareText="Your PQC readiness command center — risk, compliance, governance, and actionable next steps."
       />
 
       {/* LearningFrame — names what kind of artifact this page is. The

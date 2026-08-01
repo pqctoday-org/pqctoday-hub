@@ -298,7 +298,6 @@ export const AssessViewRedesign: React.FC<{
           <WorkflowBreadcrumb current="assess" />
           <PageHeader
             icon={ClipboardCheck}
-            pageId="assess"
             title="PQC Risk Assessment"
             description="Answer a few questions to get a personalized quantum risk score, migration priorities, and actionable recommendations for your organization."
             dataSource={
@@ -306,8 +305,6 @@ export const AssessViewRedesign: React.FC<{
                 ? `${metadata.filename} • Updated: ${metadata.lastUpdate.toLocaleDateString()}`
                 : undefined
             }
-            shareTitle="PQC Risk Assessment — Post-Quantum Cryptography Migration Tool"
-            shareText="Get a personalized quantum risk score, migration priorities, and actionable recommendations for your organization."
             endorseUrl={buildEndorsementUrl({
               category: 'pqc-tool-endorsement',
               title: 'Endorse: PQC Risk Assessment',

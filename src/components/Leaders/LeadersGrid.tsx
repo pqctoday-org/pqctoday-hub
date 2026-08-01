@@ -614,7 +614,6 @@ export const LeadersGrid = () => {
     <div className="space-y-6">
       <PageHeader
         icon={Users}
-        pageId="leaders"
         title="Community"
         description="People contributing to the advances of post-quantum cryptography."
         dataSource={
@@ -622,9 +621,6 @@ export const LeadersGrid = () => {
             ? `${leadersMetadata.filename} • Updated: ${leadersMetadata.lastUpdate.toLocaleDateString()}`
             : undefined
         }
-        viewType="Leaders"
-        shareTitle="PQC Community — People Contributing to the Advances of Post-Quantum Cryptography"
-        shareText="Meet the people contributing to the advances of post-quantum cryptography."
         onExport={handleExportCsv}
         endorseUrl={buildEndorsementUrl({
           category: 'leader-endorsement',

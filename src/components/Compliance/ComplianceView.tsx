@@ -636,7 +636,6 @@ export const ComplianceView = ({
       {!simEmbed && (
         <PageHeader
           icon={ShieldCheck}
-          pageId="compliance"
           title="Standardization, Certification & Compliance"
           description="Who defines the algorithms, who validates the products, who mandates adoption — across standardization bodies, certification schemes, and compliance frameworks."
           dataSource={
@@ -644,10 +643,6 @@ export const ComplianceView = ({
               ? `${complianceMetadata.filename} • Updated: ${complianceMetadata.lastUpdate.toLocaleDateString()}`
               : undefined
           }
-          viewType="Compliance"
-          suppressSources
-          shareTitle="PQC Compliance Tracker — Standards, Certifications, Frameworks"
-          shareText="Explore PQC compliance: standardization bodies, certification programs (FIPS 140-3, ACVP, Common Criteria), and regulatory frameworks."
           onExport={handleExportCsv}
           endorseUrl={buildEndorsementUrl({
             category: 'compliance-endorsement',
