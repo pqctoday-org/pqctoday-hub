@@ -74,6 +74,7 @@ import {
   getRailSections,
   getRowTreatment,
   getMobileVisiblePaths,
+  getForYouGroups,
   RAIL_ICON_MAP,
   RAIL_ALWAYS_VISIBLE_PATHS,
   type RailRowTreatment,
@@ -307,6 +308,7 @@ export const MainLayout = () => {
   // helper (railNav.ts) so desktop rail + mobile sheet share one source of
   // truth instead of drifting the way the old static `navItems` array could.
   const { forYou, more } = React.useMemo(() => getRailSections(selectedPersona), [selectedPersona])
+  const forYouGroups = React.useMemo(() => getForYouGroups(forYou), [forYou])
   const mobileVisiblePaths = React.useMemo(
     () => getMobileVisiblePaths(selectedPersona),
     [selectedPersona]
@@ -345,6 +347,28 @@ export const MainLayout = () => {
   React.useEffect(() => {
     setMoreMenuOpen(false)
   }, [location.pathname])
+
+  // ── Desktop rail's collapsible MORE section (2026-08-01 declutter follow-up) ──
+  // Collapsed by default per the user's live-review request ("too cluttered...
+  // collapsible sections"). Plain local component state, NOT a persisted
+  // usePersonaStore field — judgment call (flagged): a persisted "user closed
+  // MORE" preference would fight the auto-expand-on-active-route behavior
+  // right below (which must win open on every landing whether or not the user
+  // previously collapsed it), and this is cheap, low-stakes UI chrome a user
+  // can re-expand in one click — not worth a version bump + migrate() +
+  // onRehydrateStorage for. Resets to collapsed each session/full reload.
+  const [moreExpanded, setMoreExpanded] = React.useState(false)
+  const moreSectionId = React.useId()
+  const isMoreSectionActive = more.some((path) => isPathActive(path))
+  // Auto-reveal MORE when the CURRENT route lives in it — otherwise a user who
+  // deep-links (or searches via ⌘K) into a deprioritized route would see no
+  // rail row highlighted at all, silently breaking the "active-route
+  // highlighting" invariant this follow-up must preserve. One-directional:
+  // never auto-collapses again once open, so a manual expand/collapse still
+  // behaves like a normal disclosure control.
+  React.useEffect(() => {
+    if (isMoreSectionActive) setMoreExpanded(true)
+  }, [isMoreSectionActive])
 
   // "Update your profile" deep link — `/?picker=open` (PQC101Module's two
   // "Update profile"/"Set profile" links, AboutNextStepCTA's "Find my
@@ -466,26 +490,38 @@ export const MainLayout = () => {
               Everything, unfiltered
             </span>
           )}
-          {forYou.map((path) => {
-            const active = isPathActive(path)
-            const treatment = getRowTreatment(selectedPersona, path, active)
-            const title =
-              treatment === 'featured'
-                ? 'Executive Overview — a guided, ~20-minute walk through the program (EXEC_TOUR_STAGES)'
-                : treatment === 'marked'
-                  ? `${labelFor(path)} — in progress, not yet fully tailored to this role`
-                  : undefined
-            return (
-              <RailRow
-                key={path}
-                path={path}
-                label={labelFor(path)}
-                active={active}
-                treatment={treatment}
-                title={title}
-              />
-            )
-          })}
+          {forYouGroups.map((group) => (
+            <React.Fragment key={group.id}>
+              {/* Sub-group header only when there's more than one group —
+                  a persona whose FOR YOU rows all land in one bucket doesn't
+                  need a lone sub-header repeating "For You" above it. */}
+              {forYouGroups.length > 1 && (
+                <span className="px-2 pt-2 pb-0.5 text-[9px] font-medium uppercase tracking-wide text-muted-foreground/60">
+                  {group.label}
+                </span>
+              )}
+              {group.paths.map((path) => {
+                const active = isPathActive(path)
+                const treatment = getRowTreatment(selectedPersona, path, active)
+                const title =
+                  treatment === 'featured'
+                    ? 'Executive Overview — a guided, ~20-minute walk through the program (EXEC_TOUR_STAGES)'
+                    : treatment === 'marked'
+                      ? `${labelFor(path)} — in progress, not yet fully tailored to this role`
+                      : undefined
+                return (
+                  <RailRow
+                    key={path}
+                    path={path}
+                    label={labelFor(path)}
+                    active={active}
+                    treatment={treatment}
+                    title={title}
+                  />
+                )
+              })}
+            </React.Fragment>
+          ))}
           {isArchitect && (
             <RailRow
               path="/playground/cacp"
@@ -497,18 +533,41 @@ export const MainLayout = () => {
             />
           )}
 
-          <span className="px-2 pt-3 pb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-            More
-          </span>
-          {more.map((path) => (
-            <RailRow
-              key={path}
-              path={path}
-              label={labelFor(path)}
-              active={isPathActive(path)}
-              variant="more"
+          {/* MORE — collapsed by default (2026-08-01 declutter follow-up: the
+              live rail read as cluttered; this was previously a permanently-
+              expanded flat list). Auto-reveals when the active route lives in
+              it (see isMoreSectionActive above), so active-route highlighting
+              never silently disappears behind a collapsed section. */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setMoreExpanded((open) => !open)}
+            aria-expanded={moreExpanded}
+            aria-controls={moreSectionId}
+            aria-label={`${moreExpanded ? 'Hide' : 'Show'} more pages (${more.length})`}
+            title={moreExpanded ? 'Hide more pages' : 'Show more pages'}
+            className="w-full h-auto justify-between gap-1 px-2 pt-3 pb-1 rounded-md text-[10px] font-semibold uppercase tracking-wider text-muted-foreground hover:text-foreground hover:bg-transparent"
+          >
+            <span>More</span>
+            <ChevronDown
+              size={12}
+              aria-hidden="true"
+              className={`transition-transform duration-200 ${moreExpanded ? '' : '-rotate-90'}`}
             />
-          ))}
+          </Button>
+          {moreExpanded && (
+            <div id={moreSectionId} className="flex flex-col gap-0.5">
+              {more.map((path) => (
+                <RailRow
+                  key={path}
+                  path={path}
+                  label={labelFor(path)}
+                  active={isPathActive(path)}
+                  variant="more"
+                />
+              ))}
+            </div>
+          )}
         </nav>
 
         {/* Utility dock — same open-state as the existing Assistant/Journey

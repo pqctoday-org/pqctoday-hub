@@ -2,7 +2,12 @@
 import { describe, it, expect } from 'vitest'
 import type { PersonaId } from '@/data/learningPersonas'
 import { NAV_PATH_LABELS, RAIL_HIDDEN_PATHS } from '@/data/personaConfig'
-import { getRailSections, getRowTreatment, RAIL_ALWAYS_VISIBLE_PATHS } from './railNav'
+import {
+  getRailSections,
+  getRowTreatment,
+  getForYouGroups,
+  RAIL_ALWAYS_VISIBLE_PATHS,
+} from './railNav'
 
 const ALL_PERSONAS: PersonaId[] = [
   'executive',
@@ -80,6 +85,51 @@ describe('getRailSections — hard reachability invariant', () => {
     expect(getRailSections('ops').more).toContain('/patents')
     expect(getRailSections('ops').more).toContain('/explore')
     expect(getRailSections('developer').more).toContain('/leaders')
+  })
+})
+
+describe('getForYouGroups — rail declutter follow-up (2026-08-01)', () => {
+  it.each([...ALL_PERSONAS, null])(
+    "every group's paths, combined, exactly equal FOR YOU with no drops or dupes (persona=%s)",
+    (persona) => {
+      const { forYou } = getRailSections(persona)
+      const groups = getForYouGroups(forYou)
+      const flattened = groups.flatMap((g) => g.paths)
+      expect(new Set(flattened)).toEqual(new Set(forYou))
+      expect(flattened.length).toBe(forYou.length) // no dupes across groups
+    }
+  )
+
+  it('groups render in a fixed Workflow → Practice → Reference order', () => {
+    const groups = getForYouGroups(getRailSections('executive').forYou)
+    expect(groups.map((g) => g.id)).toEqual(['workflow', 'practice', 'reference'])
+  })
+
+  it('omits a group entirely when the persona has no rows in it (curious has no /business)', () => {
+    const groups = getForYouGroups(getRailSections('curious').forYou)
+    const workflow = groups.find((g) => g.id === 'workflow')
+    expect(workflow?.paths).not.toContain('/business')
+    // curious still has other workflow rows (compliance/assess/report/migrate),
+    // so the group itself isn't omitted — just missing that one path.
+    expect(workflow?.paths.length).toBeGreaterThan(0)
+  })
+
+  it('empty FOR YOU (researcher / no persona) yields no groups at all', () => {
+    expect(getForYouGroups(getRailSections('researcher').forYou)).toEqual([])
+    expect(getForYouGroups(getRailSections(null).forYou)).toEqual([])
+  })
+
+  it('sanity-checks concrete per-persona group membership', () => {
+    const executive = getForYouGroups(getRailSections('executive').forYou)
+    expect(executive.find((g) => g.id === 'workflow')?.paths).toEqual(
+      expect.arrayContaining(['/migrate', '/compliance', '/business', '/assess', '/report'])
+    )
+    expect(executive.find((g) => g.id === 'practice')?.paths).toEqual(
+      expect.arrayContaining(['/simulation', '/playground'])
+    )
+    expect(executive.find((g) => g.id === 'reference')?.paths).toEqual(
+      expect.arrayContaining(['/algorithms', '/library', '/leaders', '/patents', '/revisions'])
+    )
   })
 })
 
