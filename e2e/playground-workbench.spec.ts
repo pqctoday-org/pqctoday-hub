@@ -8,6 +8,11 @@ import { test, expect } from '@playwright/test'
  * "minimal-mode" gate) with one app-like two-pane layout: a persistent sidebar
  * and one main pane. Role is now a single optional re-sorting input — there is
  * no per-persona gate; every role sees the same chrome.
+ *
+ * Phase 0.2 fix: Playground no longer has its own page-local "Viewing as"
+ * persona control — it only READS `usePersonaStore` (role is set elsewhere,
+ * e.g. the shared `PersonaChip` used by other pages' headers, or the Persona
+ * Journeys landing page) and re-sorts/re-titles its content accordingly.
  */
 
 function seedPersona(p: string) {
@@ -49,8 +54,11 @@ test('renders the two-pane workbench — sidebar, Overview and full-playground c
   // card and the "Featured" banner further down this Overview (playground.md item 3).
   await expect(page.getByText('KMIP Control Plane').first()).toBeVisible()
 
-  // Default role is Everyone; no minimal-mode gate exists anymore.
-  await expect(page.getByText('Everyone')).toBeVisible()
+  // No role selected → the shared top-bar PersonaChip renders nothing (it
+  // returns null when selectedPersona is unset) and Playground has no
+  // page-local persona control of its own (Phase 0.2) — no minimal-mode
+  // gate exists either.
+  await expect(page.getByRole('button', { name: /Viewing as/i })).toHaveCount(0)
   await expect(page.getByTestId('playground-show-full-catalog')).toHaveCount(0)
 })
 
@@ -59,8 +67,10 @@ test('curious persona sees the same workbench (no minimal-mode gate)', async ({ 
   await page.goto('/playground')
 
   await expect(page.getByText('Crypto Lab')).toBeVisible({ timeout: 15000 })
-  // Role selector reflects the persona.
-  await expect(page.getByRole('button', { name: /Viewing as Curious Explorer/i })).toBeVisible()
+  // No page-local persona control exists (Phase 0.2) — Playground only reads
+  // the seeded persona and re-titles its content, it never renders a picker.
+  await expect(page.getByRole('button', { name: /Viewing as/i })).toHaveCount(0)
+  await expect(page.getByText('Recommended for Curious Explorer')).toBeVisible()
   // The removed minimal-mode CTA must not reappear.
   await expect(page.getByTestId('playground-show-full-catalog')).toHaveCount(0)
   // Overview hero is present (catalog is not gated behind a disclosure step).
