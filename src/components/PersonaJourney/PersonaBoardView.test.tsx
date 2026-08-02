@@ -10,11 +10,19 @@
  */
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import { MemoryRouter } from 'react-router'
+import type { ReactElement } from 'react'
 import { PersonaBoardView } from './PersonaBoardView'
 import { PERSONA_JOURNEY_BOARD } from '@/data/personaConfig'
 import type { PersonaId } from '@/data/learningPersonas'
 
 const ALL_PERSONAS = Object.keys(PERSONA_JOURNEY_BOARD) as PersonaId[]
+
+// ctaPrimary/ctaSecondary call useNavigate() (2026-08-01: the buttons used to
+// have no click behavior at all) — every render needs a Router ancestor now.
+function renderBoard(ui: ReactElement) {
+  return render(<MemoryRouter>{ui}</MemoryRouter>)
+}
 
 describe('PersonaBoardView', () => {
   it('covers all 6 real personas', () => {
@@ -22,7 +30,7 @@ describe('PersonaBoardView', () => {
   })
 
   it.each(ALL_PERSONAS)('renders the %s board headline from config', (personaId) => {
-    render(<PersonaBoardView personaId={personaId} />)
+    renderBoard(<PersonaBoardView personaId={personaId} />)
     // eslint-disable-next-line security/detect-object-injection -- personaId is drawn from ALL_PERSONAS itself
     expect(screen.getByText(PERSONA_JOURNEY_BOARD[personaId].headline)).toBeInTheDocument()
   })
@@ -30,7 +38,7 @@ describe('PersonaBoardView', () => {
   it.each(ALL_PERSONAS)(
     'renders all 3 grid cards for %s, with only the 3rd carrying the highlight',
     (personaId) => {
-      render(<PersonaBoardView personaId={personaId} />)
+      renderBoard(<PersonaBoardView personaId={personaId} />)
       // eslint-disable-next-line security/detect-object-injection -- personaId is drawn from ALL_PERSONAS itself
       const board = PERSONA_JOURNEY_BOARD[personaId]
 
@@ -69,7 +77,7 @@ describe('PersonaBoardView', () => {
       (id) => PERSONA_JOURNEY_BOARD[id].capstoneChip !== undefined
     )
   )('renders the capstone chip with its configured label for %s', (personaId) => {
-    render(<PersonaBoardView personaId={personaId} />)
+    renderBoard(<PersonaBoardView personaId={personaId} />)
     // eslint-disable-next-line security/detect-object-injection -- personaId is drawn from ALL_PERSONAS itself
     const board = PERSONA_JOURNEY_BOARD[personaId]
     expect(screen.getByTestId('capstone-chip').textContent).toBe(board.capstoneChip?.label)
@@ -77,18 +85,18 @@ describe('PersonaBoardView', () => {
 
   it('renders NO capstone chip at all for researcher (not an empty one)', () => {
     expect(PERSONA_JOURNEY_BOARD.researcher.capstoneChip).toBeUndefined()
-    render(<PersonaBoardView personaId="researcher" />)
+    renderBoard(<PersonaBoardView personaId="researcher" />)
     expect(screen.queryByTestId('capstone-chip')).toBeNull()
   })
 
   it('renders the default data-driven side card when no override is passed', () => {
-    render(<PersonaBoardView personaId="executive" />)
+    renderBoard(<PersonaBoardView personaId="executive" />)
     expect(screen.getByTestId('default-side-card')).toBeInTheDocument()
     expect(screen.getByText(PERSONA_JOURNEY_BOARD.executive.sideCard.title)).toBeInTheDocument()
   })
 
   it('replaces the default side card with customSideCard for researcher', () => {
-    render(
+    renderBoard(
       <PersonaBoardView
         personaId="researcher"
         customSideCard={<div data-testid="field-watch-card">Lattice / ML-KEM: 6 revisions</div>}
@@ -102,7 +110,7 @@ describe('PersonaBoardView', () => {
   })
 
   it('ignores customSideCard for every persona other than researcher', () => {
-    render(
+    renderBoard(
       <PersonaBoardView
         personaId="executive"
         customSideCard={<div data-testid="field-watch-card">Should not render here</div>}
@@ -110,5 +118,36 @@ describe('PersonaBoardView', () => {
     )
     expect(screen.queryByTestId('field-watch-card')).toBeNull()
     expect(screen.getByTestId('default-side-card')).toBeInTheDocument()
+  })
+
+  // 2026-08-01 bug fix: the CTA buttons rendered with zero click behavior at
+  // all ("none of the buttons on the page does anything") — every persona
+  // needs a real, non-empty destination for both CTAs, and clicking must
+  // actually navigate there.
+  it.each(ALL_PERSONAS)('%s: both CTAs have a real, non-empty href', (personaId) => {
+    // eslint-disable-next-line security/detect-object-injection -- personaId is drawn from ALL_PERSONAS itself
+    const board = PERSONA_JOURNEY_BOARD[personaId]
+    expect(board.ctaPrimaryHref).toMatch(/^\//)
+    expect(board.ctaSecondaryHref).toMatch(/^\//)
+  })
+
+  it("clicking ctaPrimary navigates to the board's configured ctaPrimaryHref", async () => {
+    const { default: userEvent } = await import('@testing-library/user-event')
+    const { useLocation } = await import('react-router')
+    const user = userEvent.setup()
+    const seenLocations: string[] = []
+    function LocationProbe() {
+      const loc = useLocation()
+      seenLocations.push(loc.pathname + loc.search)
+      return null
+    }
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <PersonaBoardView personaId="executive" />
+        <LocationProbe />
+      </MemoryRouter>
+    )
+    await user.click(screen.getByText(PERSONA_JOURNEY_BOARD.executive.ctaPrimary))
+    expect(seenLocations.at(-1)).toBe(PERSONA_JOURNEY_BOARD.executive.ctaPrimaryHref)
   })
 })
