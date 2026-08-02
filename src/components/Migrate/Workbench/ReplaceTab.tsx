@@ -124,7 +124,7 @@ export function ReplaceTab({
               inPlan={plan.includes(asset.id)}
               onToggle={() => togglePlanAsset(asset.id)}
             />
-            {asset.decision === 'mitigate' && (
+            {(asset.decision === 'mitigate' || asset.decision === 'roadmap') && (
               <div className="mt-3">
                 <GapCard asset={asset} hasCandidates={products.length > 0} />
               </div>
@@ -279,16 +279,29 @@ function AssetDetailCard({
 }
 
 function GapCard({ asset, hasCandidates }: { asset: ReplaceAsset; hasCandidates: boolean }) {
+  const isRoadmap = asset.decision === 'roadmap'
+  const decision = DECISIONS[asset.decision]
+  const toneClass = isRoadmap
+    ? { border: 'border-status-warning/40', bg: 'bg-status-warning/5', text: 'text-status-warning' }
+    : { border: 'border-status-error/40', bg: 'bg-status-error/5', text: 'text-status-error' }
+
   return (
-    <div className="rounded-xl border border-dashed border-status-error/40 bg-status-error/5 p-4">
-      <div className="flex items-center gap-2 text-status-error">
+    <div className={`rounded-xl border border-dashed ${toneClass.border} ${toneClass.bg} p-4`}>
+      <div className={`flex items-center gap-2 ${toneClass.text}`}>
         <AlertTriangle size={16} aria-hidden />
-        <span className="text-sm font-semibold">No GA quantum-safe product for this yet</span>
+        <span className="text-sm font-semibold">
+          {isRoadmap
+            ? 'No GA quantum-safe product yet — vendor has announced one'
+            : 'No GA quantum-safe product for this yet'}
+        </span>
       </div>
       <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{asset.note}</p>
       <p className="mt-2 text-xs text-muted-foreground">
-        Lands in Wave {asset.wave}, flagged <strong className="text-status-error">Mitigate</strong>.
-        {hasCandidates && ' Partial / early candidates are listed below — none are GA yet.'}
+        Lands in Wave {asset.wave}, flagged{' '}
+        <strong className={toneClass.text}>{decision.label}</strong>.
+        {isRoadmap
+          ? ' Check the vendor roadmaps tab for the announced timeline.'
+          : hasCandidates && ' Partial / early candidates are listed below — none are GA yet.'}
       </p>
     </div>
   )
