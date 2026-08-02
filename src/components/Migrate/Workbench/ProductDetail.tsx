@@ -6,12 +6,16 @@
 // proof, evidence flags, capability text, vendor + repo links.
 
 import { useState } from 'react'
-import { ExternalLink, FileText } from 'lucide-react'
+import { Link } from 'react-router'
+import { ExternalLink, FileText, BookOpen } from 'lucide-react'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import { getCertsForProduct } from '@/data/certificationXrefData'
+import { cpeByProduct } from '@/data/cpeXrefData'
+import { purlByProduct } from '@/data/purlXrefData'
 import { roadmapByVendorId } from '@/data/vendorRoadmapData'
 import { enrichmentByVendorId } from '@/data/vendorRoadmapEnrichmentData'
 import { vendorMap } from '@/data/migrateData'
+import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { VendorRoadmapPanel } from '../VendorRoadmapPanel'
 import { CertBadges, EvidenceWarnings } from '../migrateHelpers'
 import { EndorseButton } from '@/components/ui/EndorseButton'
@@ -34,6 +38,15 @@ import { useRevisions, byRecord } from '@/hooks/useRevisions'
 
 export function ProductDetail({ product }: { product: SoftwareItem }) {
   const certs = getCertsForProduct(product.productId, product.softwareName)
+  // ADDED (Bug 2 remediation): the CPE/PURL cross-reference join (~915 + 800
+  // rows, keyed by softwareName like certsByProduct) was loaded and used for
+  // CBOM export + CVE matching elsewhere, but never rendered as a link
+  // anywhere in src/components/Migrate. Only surface rows with a real match
+  // (never `not_found`) so this never links out with an empty href.
+  const cpe = cpeByProduct.get(product.softwareName)
+  const hasCpe = !!cpe && (cpe.status === 'matched' || cpe.status === 'partial') && !!cpe.nvdUrl
+  const purl = purlByProduct.get(product.softwareName)
+  const hasPurl = !!purl && purl.status === 'matched' && !!purl.registryUrl
   const roadmap = product.vendorId ? roadmapByVendorId.get(product.vendorId) : undefined
   const enrichment = product.vendorId ? enrichmentByVendorId.get(product.vendorId) : undefined
   const vendor = product.vendorId ? vendorMap.get(product.vendorId) : undefined
@@ -48,6 +61,17 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
     .trim()
 
   const verification = productVerificationBadge(product)
+
+  // ADDED (Bug 2 remediation): learningModules was curated on 749/907 catalog
+  // rows (semicolon-separated module ids, e.g. "tls-basics;hybrid-crypto")
+  // but never rendered anywhere in src/components/Migrate — zero <Link>
+  // elements existed in this directory. Every id here is verified to resolve
+  // to a real MODULE_CATALOG entry (see migrateData.ts's row.learning_modules
+  // sourcing), so this is a safe, real /learn/<id> deep link, not a guess.
+  const learningModuleIds = (product.learningModules || '')
+    .split(';')
+    .map((id) => id.trim())
+    .filter(Boolean)
 
   return (
     <div className="flex flex-col gap-3 border-t border-border bg-muted/20 px-3 py-3 text-xs">
@@ -105,6 +129,59 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
             Certifications
           </p>
           <CertBadges certs={certs} />
+        </div>
+      )}
+
+      {(hasCpe || hasPurl) && (
+        <div>
+          <p className="mb-1 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+            Identifiers
+          </p>
+          <div className="flex flex-wrap items-center gap-3">
+            {hasCpe && (
+              <a
+                href={cpe!.nvdUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={cpe!.cpeUri}
+                className="inline-flex items-center gap-1 text-primary hover:underline"
+              >
+                <ExternalLink size={12} aria-hidden /> CPE: {cpe!.cpeUri}
+              </a>
+            )}
+            {hasPurl && (
+              <a
+                href={purl!.registryUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={purl!.purl}
+                className="inline-flex items-center gap-1 text-primary hover:underline"
+              >
+                <ExternalLink size={12} aria-hidden /> PURL: {purl!.purl}
+              </a>
+            )}
+          </div>
+        </div>
+      )}
+
+      {learningModuleIds.length > 0 && (
+        <div>
+          <p className="mb-1 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+            Learn this
+          </p>
+          <ul className="flex flex-wrap gap-1.5">
+            {learningModuleIds.map((id) => (
+              <li key={id}>
+                <Link
+                  to={`/learn/${id}`}
+                  className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-2 py-0.5 text-[11px] text-primary hover:underline"
+                >
+                  <BookOpen size={11} aria-hidden />
+                  {MODULE_CATALOG[id]?.title ?? id}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
 
