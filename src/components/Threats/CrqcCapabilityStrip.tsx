@@ -153,6 +153,11 @@ export const CrqcCapabilityStrip: React.FC<{ defaultExpanded?: boolean }> = ({
             (qLDPC, 2026).
           </div>
           <div className="text-[10px] text-muted-foreground mt-1">
+            The <em>logical</em>-qubit count for the same RSA-2048 target has fallen too: ~4,098
+            (2016-era 2n+2 estimate) → ~1,730 (Chevignard–Fouque–Schrottenloher, CRYPTO 2025) — an
+            algorithmic improvement independent of the physical-qubit-overhead cuts above.
+          </div>
+          <div className="text-[10px] text-muted-foreground mt-1">
             Lead: {leadMachine.vendor} {leadMachine.name} ({leadMachine.qubitType})
           </div>
         </div>
