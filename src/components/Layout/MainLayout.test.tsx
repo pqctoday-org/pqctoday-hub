@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { useEffect, type ReactNode } from 'react'
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { render, screen, within, fireEvent } from '@testing-library/react'
+import { render, screen, within, fireEvent, waitFor } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { MainLayout } from './MainLayout'
 import { usePersonaStore } from '../../store/usePersonaStore'
+import { usePageActionsStore } from '../../store/usePageActionsStore'
 import '@testing-library/jest-dom'
 
 // Mock the build timestamp
@@ -21,7 +23,9 @@ const TestBusinessTools = () => <div>Business Tools Page</div>
 const TestExplore = () => <div>Explore Page</div>
 const TestCompliance = () => <div>Compliance Page</div>
 
-function renderLayout(initialEntry = '/') {
+const TestReport = () => <div>Report Page</div>
+
+function renderLayout(initialEntry = '/', reportElement: ReactNode = <TestReport />) {
   return render(
     <MemoryRouter initialEntries={[initialEntry]}>
       <Routes>
@@ -35,6 +39,7 @@ function renderLayout(initialEntry = '/') {
           <Route path="/timeline" element={<div>Real Timeline Page</div>} />
           <Route path="/explore" element={<TestExplore />} />
           <Route path="/compliance" element={<TestCompliance />} />
+          <Route path="/report" element={reportElement} />
         </Route>
       </Routes>
     </MemoryRouter>
@@ -535,6 +540,64 @@ describe('MainLayout', () => {
     it('falls back to the generic share title on a route with no bespoke shareTitle (e.g. /migrate)', () => {
       renderLayout('/migrate')
       expect(screen.getByRole('button', { name: /share migrate — pqc today/i })).toBeInTheDocument()
+    })
+
+    // BUG FIX (Grade-A remediation Phase 2, top-bar Share correctness —
+    // pqctoday-priv/grade-a-remediation/PLAN-00-TOP-CONNECTING-PLAN.md §6,
+    // PLAN-02-CORE-FUNNEL.md): the top-bar ShareButton used to always share
+    // `window.location.href`, which on /report is the bare `/report` path —
+    // a recipient with no local assessment state lands on "No Report Yet"
+    // even though the sender got a success toast. /report now registers a
+    // real, self-contained token URL via `usePageActionsStore` (see
+    // ReportView.tsx), and the top bar must actually use it instead of its
+    // generic fallback.
+    describe('top-bar Share URL uses a page-registered pageActions.url when present', () => {
+      beforeEach(() => {
+        Object.defineProperty(navigator, 'clipboard', {
+          value: { writeText: vi.fn().mockResolvedValue(undefined) },
+          writable: true,
+          configurable: true,
+        })
+      })
+
+      afterEach(() => {
+        usePageActionsStore.getState().clearPageActions()
+      })
+
+      it("copies the page-registered share URL (e.g. /report's token link), not window.location.href", async () => {
+        const registeredUrl = 'https://pqctoday.example/report?share=eyJ2IjoyLCJyZXN1bHQiOnt9fQ'
+        const TestReportWithShareUrl = () => {
+          useEffect(() => {
+            usePageActionsStore
+              .getState()
+              .setPageActions({ title: 'PQC Assessment Report', url: registeredUrl })
+            return () => usePageActionsStore.getState().clearPageActions()
+          }, [])
+          return <div>Report Page</div>
+        }
+        renderLayout('/report', <TestReportWithShareUrl />)
+
+        fireEvent.click(screen.getByRole('button', { name: /share pqc assessment report/i }))
+        fireEvent.click(screen.getByText('Copy link'))
+
+        await waitFor(() => {
+          expect(navigator.clipboard.writeText).toHaveBeenCalledWith(registeredUrl)
+        })
+      })
+
+      it('falls back to window.location.href on a route with no registered pageActions.url (e.g. /migrate)', async () => {
+        renderLayout('/migrate')
+
+        fireEvent.click(screen.getByRole('button', { name: /share migrate — pqc today/i }))
+        fireEvent.click(screen.getByText('Copy link'))
+
+        await waitFor(() => {
+          expect(navigator.clipboard.writeText).toHaveBeenCalledWith(window.location.href)
+        })
+        const copied = (navigator.clipboard.writeText as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string
+        expect(copied).not.toContain('share=')
+      })
     })
   })
 

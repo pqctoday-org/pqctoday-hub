@@ -15,6 +15,16 @@ import { create } from 'zustand'
  */
 export interface PageActions {
   title?: string
+  /**
+   * Overrides the global top bar ShareButton's `url` prop (which otherwise
+   * falls back to `window.location.href`). Most routes are fine with that
+   * fallback — their whole state lives in the URL already — but a page whose
+   * shareable state lives in local/session state (e.g. /report's computed
+   * assessment result) must mint its own self-contained shareable URL here,
+   * or the top-bar Share button silently shares a bare, unloadable link.
+   * See ReportView.tsx's registration for the canonical example.
+   */
+  url?: string
   dataSource?: string
   dataSourceLoading?: boolean
   onExport?: () => void
