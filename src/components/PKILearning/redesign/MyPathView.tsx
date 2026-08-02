@@ -6,7 +6,6 @@ import {
   PlayCircle,
   Trophy,
   Lock,
-  Users,
   ArrowRight,
   Search,
   CheckCircle2,
@@ -18,13 +17,10 @@ import {
 import { Button } from '@/components/ui/button'
 import { PERSONAS, essentialsQuizCategories, type PersonaId } from '@/data/learningPersonas'
 import { useModuleStore } from '@/store/useModuleStore'
-import { useAssessmentResultStore } from '@/store/useAssessmentResultStore'
-import { inferRecommendedModules } from '@/utils/inferRecommendedModules'
 import { logEvent, personaLabel } from '@/utils/analytics'
 import { MODULE_CATALOG, MODULE_STEP_COUNTS } from '../moduleData'
 import { usePersonaPathItems } from '../usePersonaPathItems'
 import { PersonaPathView, computeNextIncompleteModuleId } from '../PersonaPathView'
-import { AssessmentRecommendationsBanner } from '../AssessmentRecommendationsBanner'
 import { ProgressDial } from './ProgressDial'
 import { computePathProgress, CHECKPOINT_PASS_THRESHOLD } from './learnRedesign.helpers'
 
@@ -41,8 +37,10 @@ const formatHours = (minutes: number): string => `~${Math.max(1, Math.round(minu
 
 /**
  * "My Path" — answers "what should I do next?". A persona-driven journey:
- * assessment focus strip → org common-ground (exec/curious) → Essentials vs Full
- * toggle → resume + progress dial → the current tier's body → capstone → catalog escape.
+ * Essentials vs Full toggle → resume + progress dial → the current tier's body
+ * → capstone → catalog escape. (The assessment focus strip and the org
+ * common-ground callout that used to open this sequence were removed on
+ * 2026-08-02 — see the note in the render body for why.)
  *
  * A1: the path defaults to the short **Essentials** core, and the capstone (final
  * quiz) unlocks once the Essentials are complete — no longer gated on finishing every
@@ -67,16 +65,6 @@ export const MyPathView = ({ personaId, onOpenCatalog }: MyPathViewProps) => {
     setSearchParams(params, { replace: true })
     logEvent('Learning', 'Path Tier Toggle', `${personaLabel(personaId)}:${next}`)
   }
-
-  // Assessment focus strip — reuses the existing inference (weakest-area ranking
-  // is a planned refinement, G5).
-  const assessmentResult = useAssessmentResultStore()
-  const completedAt = assessmentResult.completedAt
-  const categoryScores = assessmentResult.lastResult?.categoryScores
-  const recommendedModuleIds = useMemo(() => {
-    if (!completedAt || !categoryScores) return []
-    return inferRecommendedModules(categoryScores, personaId)
-  }, [completedAt, categoryScores, personaId])
 
   const statusById = useMemo(() => {
     const map: Record<string, string | undefined> = {}
@@ -116,7 +104,6 @@ export const MyPathView = ({ personaId, onOpenCatalog }: MyPathViewProps) => {
         )
       )
     : 0
-  const showCommonGround = personaId === 'executive' || personaId === 'curious'
 
   // In Essentials view the dial reflects the short core; in Full view, the whole path.
   const dialProgress =
@@ -166,39 +153,30 @@ export const MyPathView = ({ personaId, onOpenCatalog }: MyPathViewProps) => {
         </div>
       )}
 
-      {/* Assessment focus strip */}
-      {recommendedModuleIds.length > 0 && (
-        <AssessmentRecommendationsBanner
-          moduleIds={recommendedModuleIds}
-          onRetakeAssessment={() => navigate('/assess')}
-        />
-      )}
+      {/* Two rows were removed here on 2026-08-02, both for the same reason —
+          they re-offered what the persona path already contained:
 
-      {/* Common-ground callout — execs / curious */}
-      {showCommonGround && (
-        <div className="glass-panel border border-accent/25 rounded-xl px-4 py-3 flex items-start justify-between gap-4">
-          <div className="flex items-start gap-3">
-            <Users className="text-accent shrink-0 mt-0.5" size={16} aria-hidden="true" />
-            <div>
-              <span className="text-sm font-semibold text-foreground">
-                PQC for Your Organization
-              </span>
-              <p className="text-xs text-muted-foreground">
-                Five focused modules for executives, procurement, and legal — no code required.
-              </p>
-            </div>
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigate('/learn/common-ground')}
-            className="shrink-0 text-xs gap-1.5"
-          >
-            Start path
-            <ArrowRight size={12} />
-          </Button>
-        </div>
-      )}
+          1. The assessment focus strip. It surfaced up to 3 modules inferred
+             from the /assess category scores, but the inference could only ever
+             return 4 modules (quantum-threats, migration-program,
+             crypto-agility, pqc-101) plus one persona boost, out of 64 — so
+             different assessments produced near-identical picks. It also never
+             filtered on completion, so it routinely "recommended" modules the
+             reader had already finished. Its own comment conceded the ranking
+             was provisional ("weakest-area ranking is a planned refinement").
+             Role filtering already chooses the module set; this added a weaker
+             second signal on top.
+
+          2. The "PQC for Your Organization" common-ground callout. All five of
+             its modules (pqc-101, compliance-strategy, vendor-risk,
+             pqc-risk-management, migration-program) are already in the
+             executive path, and four of five are in the curious path — so
+             "Start path" led an executive to a strict subset of the path they
+             were already on.
+
+          The /learn/common-ground route still exists but now has NO in-app
+          link. Either delete the page or give it an entry point; leaving it
+          unlinked is not a resting state. */}
 
       {/* Essentials ⇄ Full track toggle */}
       <div
@@ -316,17 +294,10 @@ export const MyPathView = ({ personaId, onOpenCatalog }: MyPathViewProps) => {
               )
             })}
           </ol>
-          <p className="text-[11px] text-muted-foreground pt-1">
-            Want the deep dive? Switch to{' '}
-            <Button
-              variant="link"
-              onClick={() => setTier('full')}
-              className="h-auto p-0 text-[11px] font-medium align-baseline"
-            >
-              Full track ({formatHours(persona.estimatedMinutes)})
-            </Button>
-            .
-          </p>
+          {/* "Want the deep dive? Switch to Full track (~Xh)" was removed here
+              on 2026-08-02 — it duplicated the Essentials ⇄ Full track tablist
+              directly above, which already carries both tiers and their hour
+              counts. The tablist is the single control. */}
         </div>
       ) : (
         <PersonaPathView
