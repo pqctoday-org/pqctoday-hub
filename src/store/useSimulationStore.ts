@@ -73,13 +73,9 @@ export interface SimulationState {
   difficulty: DifficultyId
   /** Whether the first-run guided tour has been seen/dismissed (WS-12). */
   tourSeen: boolean
-  /** Novice "Guided" mode (PR-4) — expands labels, slows the tour, and captions
-   *  the Mosca dials in plain language. Independent of difficulty (a beginner can
-   *  play Realistic with guidance on). */
-  guided: boolean
   /** Concept-peek ids (WP2.3) the player has already seen in interactive play —
    *  each concept surfaces once, on first entry to the phase it's keyed to, then
-   *  never repeats. Browser/tutorial state like tourSeen/guided: preserved across
+   *  never repeats. Browser/tutorial state like tourSeen: preserved across
    *  reset(), never part of a portable run save/snapshot. */
   seenConceptPeeks: string[]
   /** Wave 4 (WP4.3) — the program budget (€M) earned so far, MATERIALIZED: written
@@ -98,7 +94,7 @@ export interface SimulationState {
   trapsThisRun: number
   /** Wave 4 (WP4.5) — lifetime achievement-tracking counters, sourced into
    *  ActivitySnapshot at snapshot build. Never reset by reset() (same browser-
-   *  level persistence class as tourSeen/guided) — a fresh run must not erase
+   *  level persistence class as tourSeen) — a fresh run must not erase
    *  what the player has already accomplished across past runs. */
   simRunsCompleted: number
   /** Completed runs (full lifecycle clear) that had zero traps picked the whole
@@ -178,10 +174,8 @@ export interface SimulationState {
   /** Wave 4 (WP4.6) — set the run's deterministic seed. Callers gate this to a
    *  fresh run (never mutates a run in progress) — the store applies it as given. */
   setSeed: (n: number) => void
-  /** Mark the first-run guided tour as seen (WS-12). */
+  /** Mark the first-run tour as seen (WS-12). */
   markTourSeen: () => void
-  /** Toggle novice Guided mode (PR-4); independent of difficulty. */
-  setGuided: (v: boolean) => void
   /** Mark a concept peek (WP2.3) as seen — idempotent, never shows it again. */
   markConceptPeekSeen: (id: string) => void
   reset: () => void
@@ -241,7 +235,7 @@ const SEED = {
  *  used calculation) don't hardcode a copy of SEED.year/q that could drift. */
 export const RUN_START = { year: SEED.year, q: SEED.q }
 
-const STORE_VERSION = 16
+const STORE_VERSION = 17
 const SAVE_KIND = 'pqc-simulation-save'
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null
@@ -257,6 +251,16 @@ const asDifficulty = (v: unknown): DifficultyId =>
  * rather than trying to reinterpret it — org setup + visited refs still carry
  * forward. Exported standalone (not inline in persist()) so it has a direct
  * unit test instead of only being exercised indirectly through rehydration.
+ *
+ * v16 → v17 (2026-08-02): `guided` was removed. It is DROPPED, not translated —
+ * deliberately. Its layout half (hiding the Expert rail) has no successor to map
+ * onto, since the rail is now the Signals tab and is closed by default for
+ * everyone. Its stakes half (a free retry on a wrong decision pick) moved onto
+ * the MODE difficulty dial, so the tempting mapping would be guided:true →
+ * difficulty:'easy'. We do NOT do that: Easy also changes the budget multiplier,
+ * event probabilities, CRQC creep and AI advance chance, so a player who only
+ * ever wanted the calmer layout would silently have their whole run rebalanced.
+ * Dropping the field leaves difficulty untouched — the smaller surprise.
  */
 export function migrateSimulationState(persisted: unknown) {
   const s = (persisted ?? {}) as Record<string, unknown>
@@ -282,14 +286,13 @@ export function migrateSimulationState(persisted: unknown) {
     seed: typeof s.seed === 'number' ? (s.seed as number) : newSeed(),
     difficulty: asDifficulty(s.difficulty),
     tourSeen: typeof s.tourSeen === 'boolean' ? s.tourSeen : false,
-    guided: typeof s.guided === 'boolean' ? s.guided : false,
     seenConceptPeeks: Array.isArray(s.seenConceptPeeks) ? (s.seenConceptPeeks as string[]) : [],
     // Wave 4 (WP4.1-4.3): run-scoped like edgeDecisions/year/q above — a real
     // migration resets the run, it doesn't try to reinterpret old numbers.
     securedBudgetM: SEED.securedBudgetM,
     spentBudgetM: SEED.spentBudgetM,
     trapsThisRun: SEED.trapsThisRun,
-    // Wave 4 (WP4.5): lifetime like tourSeen/guided above — preserved, not reset.
+    // Wave 4 (WP4.5): lifetime like tourSeen above — preserved, not reset.
     simRunsCompleted: typeof s.simRunsCompleted === 'number' ? (s.simRunsCompleted as number) : 0,
     simZeroTrapPhases:
       typeof s.simZeroTrapPhases === 'number' ? (s.simZeroTrapPhases as number) : 0,
@@ -369,7 +372,6 @@ export const useSimulationStore = create<SimulationState>()(
       ...SEED,
       seed: newSeed(),
       tourSeen: false,
-      guided: false,
       seenConceptPeeks: [],
       simRunsCompleted: 0,
       simZeroTrapPhases: 0,
@@ -481,7 +483,6 @@ export const useSimulationStore = create<SimulationState>()(
       setDifficulty: (difficulty) => set({ difficulty }),
       setSeed: (seed) => set({ seed }),
       markTourSeen: () => set({ tourSeen: true }),
-      setGuided: (guided) => set({ guided }),
       markConceptPeekSeen: (id) =>
         set((s) =>
           s.seenConceptPeeks.includes(id) ? s : { seenConceptPeeks: [...s.seenConceptPeeks, id] }
@@ -493,7 +494,6 @@ export const useSimulationStore = create<SimulationState>()(
           ...SEED,
           seed: newSeed(),
           tourSeen: s.tourSeen,
-          guided: s.guided,
           seenConceptPeeks: s.seenConceptPeeks,
           simRunsCompleted: s.simRunsCompleted,
           simZeroTrapPhases: s.simZeroTrapPhases,
@@ -532,7 +532,6 @@ export const useSimulationStore = create<SimulationState>()(
       partialize: (s) => ({
         ...saveSlice(s),
         tourSeen: s.tourSeen,
-        guided: s.guided,
         seenConceptPeeks: s.seenConceptPeeks,
         simRunsCompleted: s.simRunsCompleted,
         simZeroTrapPhases: s.simZeroTrapPhases,

@@ -76,16 +76,11 @@ export const GUIDED_DEFS: TourStep[] = [
   },
 ]
 
-export function SimTour({
-  guided,
-  onEnableGuided,
-  onClose,
-}: {
-  guided: boolean
-  onEnableGuided: () => void
-  onClose: () => void
-}) {
-  const steps = guided ? [...TOUR_STEPS, ...GUIDED_DEFS] : TOUR_STEPS
+export function SimTour({ onClose }: { onClose: () => void }) {
+  // One tour for everyone (2026-08-02). The plain-language definitions used to be
+  // appended only for players who had GUIDED mode on; with that mode retired there
+  // is no second-class tour — every player gets the definitions.
+  const steps = [...TOUR_STEPS, ...GUIDED_DEFS]
   const [i, setI] = useState(0)
   const trapRef = useFocusTrap(true)
   const idx = Math.min(i, steps.length - 1)
@@ -105,16 +100,6 @@ export function SimTour({
         </div>
         <h2 className="mt-1 text-[18px] font-extrabold text-foreground">{step.title}</h2>
         <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">{step.body}</p>
-        {!guided && idx === 0 && (
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={onEnableGuided}
-            className="mt-3 h-auto rounded-md border border-primary/40 bg-primary/5 px-3 py-1.5 text-[11px] font-bold text-primary hover:bg-primary/10"
-          >
-            New to PQC? Turn on plain-language guidance →
-          </Button>
-        )}
         <div className="mt-5 flex items-center justify-between">
           <Button
             type="button"

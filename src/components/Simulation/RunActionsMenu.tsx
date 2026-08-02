@@ -45,6 +45,9 @@ export function RunActionsMenu({ items }: { items: RunActionItem[] }) {
 
   return (
     <div ref={wrapRef} className="relative">
+      {/* 2026-08-02 — icon-only trigger (was "⋯ MORE"): part of the header's action
+        hierarchy where only Play/End Quarter carry text + fill emphasis; the
+        secondary actions (this, Exit) read as icon-only, not competing labels. */}
       <Button
         ref={triggerRef}
         type="button"
@@ -52,10 +55,11 @@ export function RunActionsMenu({ items }: { items: RunActionItem[] }) {
         aria-haspopup="menu"
         aria-expanded={open}
         title="More run actions"
+        aria-label="More run actions"
         onClick={() => setOpen((v) => !v)}
         className="h-auto rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background/70 hover:bg-background/10"
       >
-        ⋯ MORE
+        ⋯
       </Button>
       {open && (
         <div

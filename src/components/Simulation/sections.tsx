@@ -190,7 +190,7 @@ export function DecisionSection({
   assessRec,
   onWrongPick,
   onTrapPicked,
-  guided = false,
+  allowRetry = false,
   wrongPickCostQuarters,
 }: {
   phaseId: PhaseId
@@ -211,10 +211,12 @@ export function DecisionSection({
   /** WP4.2: called on every wrong pick in every phase — feeds trapsThisRun (the
    *  run-scoped score input), independent of onWrongPick's time-cost consequence. */
   onTrapPicked?: () => void
-  /** WP4.4: the free instant "↺ try again" only appears in Guided mode — outside
-   *  it, a wrong pick sticks (you see why it failed, but don't get a costless
-   *  do-over) so the setback stays a real consequence, not an inconvenience. */
-  guided?: boolean
+  /** WP4.4: the free instant "↺ try again" only appears on the Easy difficulty —
+   *  outside it, a wrong pick sticks (you see why it failed, but don't get a
+   *  costless do-over) so the setback stays a real consequence, not an
+   *  inconvenience. Sourced from `SimBalance.decisions.freeRetryOnWrongPick`;
+   *  this rode on the retired GUIDED mode until 2026-08-02. */
+  allowRetry?: boolean
   /** 07-29 review E4 — the concrete rework cost (in quarters) a trap pick
    *  carries in THIS phase, stated in the feedback box itself so the player
    *  sees what the misstep cost without hunting for the setback toast. */
@@ -418,7 +420,8 @@ export function DecisionSection({
           {wrongPickCostQuarters != null && (
             <div className="mt-1 text-[10.5px] font-semibold leading-snug text-destructive">
               This pick cost you {wrongPickCostQuarters} quarter
-              {wrongPickCostQuarters > 1 ? 's' : ''} of rework{guided ? '' : ' — the pick stands'}.
+              {wrongPickCostQuarters > 1 ? 's' : ''} of rework
+              {allowRetry ? '' : ' — the pick stands'}.
             </div>
           )}
           {/* W3 #13: ground the consequence in THIS run's live Mosca state when the
@@ -440,7 +443,7 @@ export function DecisionSection({
               {correctCard.detail}
             </div>
           </div>
-          {guided ? (
+          {allowRetry ? (
             <Button
               variant="ghost"
               type="button"
