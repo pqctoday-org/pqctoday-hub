@@ -343,7 +343,7 @@ export const FrameworkDetailPopover = ({
                               {req.assetClass}
                             </span>
                           )}
-                          <span className="ml-auto text-[10px] text-muted-foreground/60">
+                          <span className="ml-auto text-[10px] text-muted-foreground">
                             {req.confidence} confidence
                           </span>
                         </div>

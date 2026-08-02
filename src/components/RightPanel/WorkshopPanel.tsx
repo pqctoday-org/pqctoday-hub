@@ -238,7 +238,7 @@ export const WorkshopPanel: React.FC = () => {
               >
                 {entry.title}
                 {entry.isGenericFallback && (
-                  <span className="ml-1.5 text-[10px] text-muted-foreground/70">(fallback)</span>
+                  <span className="ml-1.5 text-[10px] text-muted-foreground">(fallback)</span>
                 )}
               </Button>
             )
@@ -686,7 +686,7 @@ const AgendaChapterSection: React.FC<AgendaChapterSectionProps> = ({ chapter, re
                     <ul className="mt-1 space-y-0.5">
                       {step.tasks.map((task, j) => (
                         <li key={j} className="flex gap-1.5 text-muted-foreground/90">
-                          <span className="text-muted-foreground/60 shrink-0">·</span>
+                          <span className="text-muted-foreground shrink-0">·</span>
                           <span>{task}</span>
                         </li>
                       ))}

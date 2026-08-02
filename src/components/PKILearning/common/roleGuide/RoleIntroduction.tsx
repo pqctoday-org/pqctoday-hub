@@ -89,7 +89,7 @@ export const RoleIntroduction: React.FC<Props> = ({ data, onNavigateToWorkshop }
               <div>
                 <p className="font-medium text-foreground">{threat.title}</p>
                 <p className="text-sm text-muted-foreground">{threat.description}</p>
-                <p className="text-xs text-muted-foreground/70 mt-1">{threat.timeframe}</p>
+                <p className="text-xs text-muted-foreground mt-1">{threat.timeframe}</p>
               </div>
             </div>
           ))}

@@ -370,7 +370,7 @@ export function ScoreCard({ embedded = false }: { embedded?: boolean }) {
                 {thresholdGates.map((gate, i) => (
                   <p key={i} className="text-xs text-muted-foreground leading-relaxed">
                     {gate.message}
-                    {gate.hint && <span className="text-muted-foreground/60"> — {gate.hint}</span>}
+                    {gate.hint && <span className="text-muted-foreground"> — {gate.hint}</span>}
                   </p>
                 ))}
               </>

@@ -830,7 +830,7 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
           <div className="flex flex-wrap gap-3 text-xs font-mono text-muted-foreground">
             <span>pubH={handles.pub}</span>
             <span>privH={handles.priv}</span>
-            <span className="text-muted-foreground/60">→ visible in HSM Key Registry ↓</span>
+            <span className="text-muted-foreground">→ visible in HSM Key Registry ↓</span>
           </div>
         )}
         <div className="text-xs text-muted-foreground bg-muted/40 rounded-lg px-3 py-2 leading-relaxed">

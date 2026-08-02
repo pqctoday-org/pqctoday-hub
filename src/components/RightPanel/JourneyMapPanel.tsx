@@ -203,7 +203,7 @@ function OffPathSection() {
             >
               {item.label}
               {item.track && (
-                <span className="text-[10px] text-muted-foreground/60 ml-1">({item.track})</span>
+                <span className="text-[10px] text-muted-foreground ml-1">({item.track})</span>
               )}
             </span>
             {item.stepProgress && (

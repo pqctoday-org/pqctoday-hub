@@ -478,24 +478,18 @@ function FrameworkCard({
   }, [fw.libraryRefs, maturityByRefId])
 
   return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- deliberate: a REDUNDANT mouse convenience, not the only affordance. Keyboard and screen-reader users get the named control inside. Adding role+tabIndex here instead is what caused the nested-interactive violation this change fixes.
     <div
       id={`fw-${fw.id}`}
       data-workshop-target={`compliance-framework-${fw.id}`}
       className={`glass-panel p-4 space-y-3 flex flex-col scroll-mt-20 transition-shadow duration-300${onSelectDetail ? ' cursor-pointer' : ''} ${highlighted ? 'ring-2 ring-primary shadow-glow' : personaEmphasis ? 'border-primary/40 bg-primary/[0.03]' : ''}`}
+      // 2026-08-02 a11y: the card was `role="button" tabIndex={0}` while
+      // containing its own controls (trust-path popover, deadline chips), i.e.
+      // `nested-interactive` — 56 nodes on /compliance, with those inner
+      // controls unreachable to a screen reader. The framework NAME below is
+      // now the card's focusable action; this click stays as a redundant mouse
+      // convenience.
       onClick={onSelectDetail ? () => onSelectDetail(fw) : undefined}
-      onKeyDown={
-        onSelectDetail
-          ? (e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                onSelectDetail(fw)
-              }
-            }
-          : undefined
-      }
-      role={onSelectDetail ? 'button' : undefined}
-      tabIndex={onSelectDetail ? 0 : undefined}
-      aria-label={onSelectDetail ? `View details for ${fw.label}` : undefined}
     >
       <div className="flex items-start gap-2">
         {fw.pqcRequirement === 'yes' ? (
@@ -509,7 +503,21 @@ function FrameworkCard({
         )}
         <div className="min-w-0 flex-1">
           <h4 className="font-semibold text-foreground text-sm leading-tight flex items-center gap-1.5 flex-wrap">
-            <span>{fw.label}</span>
+            {onSelectDetail ? (
+              <Button
+                variant="ghost"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onSelectDetail(fw)
+                }}
+                aria-label={`View details for ${fw.label}`}
+                className="h-auto p-0 text-sm font-semibold text-foreground hover:bg-transparent"
+              >
+                {fw.label}
+              </Button>
+            ) : (
+              <span>{fw.label}</span>
+            )}
             {personaEmphasis && (
               <span
                 className="inline-flex items-center text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-primary/15 text-primary border border-primary/30"
@@ -1748,19 +1756,19 @@ export function ComplianceLandscape({
           <div className="glass-panel p-8 text-center text-muted-foreground space-y-2">
             <p>No entries match your current selection.</p>
             {searchFilterText.trim() && semantic.loading && (
-              <p className="text-xs text-muted-foreground/70">
+              <p className="text-xs text-muted-foreground">
                 Semantic search is still loading — results may update in a moment.
               </p>
             )}
             {searchFilterText.trim() && !semantic.loading && semantic.mode === 'semantic' && (
-              <p className="text-xs text-muted-foreground/70">
+              <p className="text-xs text-muted-foreground">
                 Neither keyword nor semantic matching found a framework for &ldquo;
                 {searchFilterText.trim()}&rdquo;. Try rephrasing, or clear a Region or Deadline
                 filter to widen the scope.
               </p>
             )}
             {searchFilterText.trim() && !semantic.loading && semantic.mode === 'lexical' && (
-              <p className="text-xs text-muted-foreground/70">
+              <p className="text-xs text-muted-foreground">
                 No keyword match for &ldquo;{searchFilterText.trim()}&rdquo;. Semantic search is not
                 yet available — try different terms, or clear a filter.
               </p>

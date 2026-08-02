@@ -364,7 +364,7 @@ const Step11Infrastructure = ({
                         (from your products)
                       </span>
                     ) : (
-                      <span className="normal-case font-normal ml-1 text-muted-foreground/60">
+                      <span className="normal-case font-normal ml-1 text-muted-foreground">
                         (none selected = all included)
                       </span>
                     )}

@@ -135,7 +135,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
               onKeyDown={onInputKeyDown}
               placeholder="Run a tool, algorithm or task…"
               aria-label="Search the Crypto Lab"
-              className="h-12 flex-1 bg-transparent text-[14px] text-foreground placeholder:text-muted-foreground/70 focus:outline-none"
+              className="h-12 flex-1 bg-transparent text-[14px] text-foreground placeholder:text-muted-foreground focus:outline-none"
             />
             <Button
               variant="ghost"

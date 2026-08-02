@@ -77,7 +77,7 @@ function Node({ node, depth, annotated }: { node: TtlvNode; depth: number; annot
         </span>
         {!isStruct && <span className="text-muted-foreground break-all">{renderValue(node)}</span>}
         {isStruct && node.children && (
-          <span className="text-muted-foreground/60">{`{${node.children.length}}`}</span>
+          <span className="text-muted-foreground">{`{${node.children.length}}`}</span>
         )}
       </div>
       {annotated && caption && (

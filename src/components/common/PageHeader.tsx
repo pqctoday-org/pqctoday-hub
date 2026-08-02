@@ -37,6 +37,18 @@ interface PageHeaderProps {
    * of building a bespoke header.
    */
   actions?: ReactNode
+  /**
+   * Renders `actions` inline to the right of the description on md+ instead of
+   * in the action row underneath (2026-08-02). Opt-in, because it only pays off
+   * for a page whose ONLY action is `actions` — /learn passes a single Quiz
+   * button and everything else (dataSource, export, endorse, flag) now lives in
+   * the global top bar, so the action row was one full row of vertical space
+   * spent on one button. Pages that still render dataSource/export/endorse/flag
+   * should leave this off: those stay in the row below regardless, and pulling
+   * only `actions` out would split one cluster across two places.
+   * No effect on mobile — the 3-dot menu is unchanged.
+   */
+  actionsInline?: boolean
 }
 
 /**
@@ -66,6 +78,7 @@ export const PageHeader = ({
   flagResourceType,
   testId,
   actions,
+  actionsInline = false,
 }: PageHeaderProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const mobileMenuRef = useRef<HTMLDivElement>(null)
@@ -81,6 +94,10 @@ export const PageHeader = ({
   }, [mobileMenuOpen])
 
   const hasActions = dataSource || dataSourceNode || onExport || endorseUrl || flagUrl || actions
+  /** Everything in the md+ action row EXCEPT `actions` — used to decide whether
+   *  that row still has a reason to exist once `actionsInline` lifts `actions`
+   *  out of it. */
+  const hasDesktopRowContent = !!(dataSource || dataSourceNode || onExport || endorseUrl || flagUrl)
 
   // Only `actions` and `onExport` live behind the mobile 3-dot menu now — no
   // point showing an empty dropdown toggle when neither is present.
@@ -96,10 +113,19 @@ export const PageHeader = ({
       <p className="md:hidden text-xs text-muted-foreground max-w-xl mx-auto mb-2 line-clamp-2 px-4">
         {description}
       </p>
-      {/* Tablet+: full description */}
-      <p className="hidden md:block text-sm md:text-base text-muted-foreground max-w-2xl mx-auto mb-4">
-        {description}
-      </p>
+      {/* Tablet+: full description. With `actionsInline` the description and
+          the action node share one centered row, so a page whose only action is
+          a single button doesn't spend a second row on it. */}
+      {actionsInline && actions ? (
+        <div className="hidden md:flex items-center justify-center gap-4 mb-4">
+          <p className="text-sm md:text-base text-muted-foreground max-w-2xl">{description}</p>
+          <div className="shrink-0">{actions}</div>
+        </div>
+      ) : (
+        <p className="hidden md:block text-sm md:text-base text-muted-foreground max-w-2xl mx-auto mb-4">
+          {description}
+        </p>
+      )}
 
       {/* Mobile-only action row — 3-dot menu on small screens */}
       {hasActions && (
@@ -146,11 +172,12 @@ export const PageHeader = ({
         </div>
       )}
 
-      {/* Tablet + desktop action row — visible at md+ */}
-      {hasActions && (
+      {/* Tablet + desktop action row — visible at md+. Suppressed entirely when
+          `actionsInline` moved the only occupant up beside the description. */}
+      {hasActions && !(actionsInline && !hasDesktopRowContent) && (
         <div className="hidden md:flex justify-center items-center gap-3 text-[10px] md:text-xs text-muted-foreground font-mono">
           {dataSourceNode ?? (dataSource && <p>{dataSource}</p>)}
-          {actions}
+          {!actionsInline && actions}
           {onExport && <ExportButton onExport={onExport} />}
           {endorseUrl && (
             <EndorseButton

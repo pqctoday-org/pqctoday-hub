@@ -34,7 +34,7 @@ const TermCard = ({ term }: { term: GlossaryTerm }) => (
     </div>
     <p className="text-sm text-muted-foreground leading-relaxed mb-2">{term.definition}</p>
     {term.technicalNote && (
-      <p className="text-xs text-muted-foreground/70 italic mb-2">💡 {term.technicalNote}</p>
+      <p className="text-xs text-muted-foreground italic mb-2">💡 {term.technicalNote}</p>
     )}
     {term.relatedModule && (
       <Link

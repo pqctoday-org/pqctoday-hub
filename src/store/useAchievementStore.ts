@@ -114,7 +114,16 @@ export const useAchievementStore = create<AchievementState>()(
         sectionsVisited: state.sectionsVisited,
         playgroundToolsUsed: state.playgroundToolsUsed,
         businessToolsUsed: state.businessToolsUsed,
-        toastQueue: state.toastQueue,
+        // `toastQueue` is deliberately NOT persisted (2026-08-02). It was, and
+        // that made celebrations fire at the wrong moment: AchievementToast
+        // refuses to dequeue until `pqc-tour-completed` is set and waits 1.5 s
+        // first, so an achievement earned on module completion was frequently
+        // written to localStorage un-shown — then popped up on the next
+        // snapshot change, typically when the learner OPENED a later module.
+        // A celebration is a moment-in-time thing: if it is missed it should be
+        // dropped, not replayed out of context. Nothing is lost — the award
+        // itself lives in `unlocked`, which IS persisted and drives the badge
+        // grid.
       }),
       migrate: (persistedState: unknown) => {
         const state = (persistedState ?? {}) as Record<string, unknown>
@@ -128,7 +137,9 @@ export const useAchievementStore = create<AchievementState>()(
         state.businessToolsUsed = Array.isArray(state.businessToolsUsed)
           ? state.businessToolsUsed
           : []
-        state.toastQueue = Array.isArray(state.toastQueue) ? state.toastQueue : []
+        // Always start with an EMPTY queue, discarding any celebrations left
+        // over from a previous session by the old persisted-queue behaviour.
+        state.toastQueue = []
         return state as unknown as AchievementState
       },
       onRehydrateStorage: () => (_state, error) => {

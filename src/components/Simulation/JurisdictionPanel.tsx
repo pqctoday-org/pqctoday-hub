@@ -38,7 +38,7 @@ export function JurisdictionPanel({ country, size }: { country: string; size: Si
           Jurisdiction — {partial.authority}
         </h2>
         <p className="text-sm text-muted-foreground">{partial.note}</p>
-        <p className="mt-2 text-xs text-muted-foreground/60">
+        <p className="mt-2 text-xs text-muted-foreground">
           No published hybrid/pure-end-state ruling yet — stance chips are omitted until guidance is
           formally verified.
         </p>

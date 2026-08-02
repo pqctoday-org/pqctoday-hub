@@ -118,20 +118,18 @@ export function AssetList({ persona, selectedDomain, onSelect }: AssetListProps)
             const isSelected = selectedDomain === asset.id
             const decision = DECISIONS[asset.decision]
             return (
+              // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- deliberate: a REDUNDANT mouse convenience. The checkbox and the label Button inside are the real, reachable controls; making this row a widget again would re-create the nested-interactive violation.
               <div
                 key={asset.id}
-                role="button"
-                tabIndex={0}
-                aria-label={`Select ${asset.label}`}
                 data-workshop-target={`migrate-domain-${asset.id}`}
+                // 2026-08-02 a11y: this row was `role="button" tabIndex={0}`
+                // while containing a `role="checkbox"` — a focusable widget
+                // inside a focusable widget (`nested-interactive`), which left
+                // the add/remove checkbox unreachable to a screen reader. The
+                // row is now an inert container with two sibling controls: the
+                // checkbox, and the label button below that selects the asset.
+                // This click stays as a redundant mouse convenience.
                 onClick={() => onSelect(asset.id)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault()
-                    onSelect(asset.id)
-                  }
-                }}
-                aria-pressed={isSelected}
                 className={`group flex cursor-pointer items-center gap-2.5 rounded-xl border p-3 text-left transition-colors ${
                   isSelected
                     ? 'border-primary bg-primary/10'
@@ -177,9 +175,17 @@ export function AssetList({ persona, selectedDomain, onSelect }: AssetListProps)
 
                 <span className="min-w-0 flex-1">
                   <span className="flex items-center gap-1.5">
-                    <span className="truncate text-sm font-semibold text-foreground">
+                    <Button
+                      variant="ghost"
+                      aria-pressed={isSelected}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onSelect(asset.id)
+                      }}
+                      className="h-auto truncate p-0 text-sm font-semibold text-foreground hover:bg-transparent"
+                    >
                       {asset.label}
-                    </span>
+                    </Button>
                     {asset.hndl && (
                       <span className="rounded bg-status-error/15 px-1 text-[9px] font-bold uppercase text-status-error">
                         HNDL

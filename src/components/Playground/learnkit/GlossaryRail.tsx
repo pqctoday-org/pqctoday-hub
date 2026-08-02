@@ -46,7 +46,7 @@ function GlossarySection({ title, entries }: { title: string; entries: RailEntry
             <li key={e.key} className="text-[11.5px] leading-snug">
               <span className="font-semibold text-foreground">{e.label}</span>
               {e.hex && (
-                <span className="ml-1 font-mono text-[10px] text-muted-foreground/70">{e.hex}</span>
+                <span className="ml-1 font-mono text-[10px] text-muted-foreground">{e.hex}</span>
               )}
               <span className="ml-1 text-muted-foreground">{e.def}</span>
             </li>

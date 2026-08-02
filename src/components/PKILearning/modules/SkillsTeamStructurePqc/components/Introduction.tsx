@@ -301,7 +301,7 @@ const Step3TrainingAndChampions: React.FC = () => (
               <div className="flex-1">
                 <div className="text-sm font-medium text-foreground">
                   {t.name}{' '}
-                  <span className="text-[10px] text-muted-foreground/70 font-normal">
+                  <span className="text-[10px] text-muted-foreground font-normal">
                     ({t.duration})
                   </span>
                 </div>

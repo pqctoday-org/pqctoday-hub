@@ -141,7 +141,7 @@ function CoveragePanel({ summary }: { summary: CbomReportSummary }) {
         colorClass="bg-primary"
       />
       {withoutCrypto > 0 && (
-        <p className="text-[11px] text-muted-foreground/70 italic">
+        <p className="text-[11px] text-muted-foreground italic">
           {withoutCrypto} of {summary.componentCount} component
           {summary.componentCount === 1 ? '' : 's'} had no cryptography detected — not a compliance
           gap by itself, just outside what text-based detection could find.

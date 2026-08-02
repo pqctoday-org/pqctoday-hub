@@ -72,7 +72,7 @@ export const MobileAlgorithmList = ({
                 <h3 className="font-semibold text-foreground text-sm">
                   {cleanName(algo.classical)}
                 </h3>
-                <div className="flex items-center gap-1 text-xs text-muted-foreground/60 font-mono">
+                <div className="flex items-center gap-1 text-xs text-muted-foreground font-mono">
                   <ArrowRight size={10} />
                   <span>{cleanName(algo.pqc)}</span>
                 </div>

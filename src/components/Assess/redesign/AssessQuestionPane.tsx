@@ -52,11 +52,11 @@ export const AssessQuestionPane: React.FC<AssessQuestionPaneProps> = ({
         {/* Tag row */}
         <div className="mb-3 flex flex-wrap items-center gap-2">
           <span className={pillClasses(domain.tone)}>{domain.label}</span>
-          <span className="font-mono text-[11px] text-muted-foreground/70">
+          <span className="font-mono text-[11px] text-muted-foreground">
             Step {stepIdx + 1} / {total}
           </span>
           {meta.freelyOptional && (
-            <span className="rounded-full border border-border px-2 py-0.5 text-[10px] text-muted-foreground/70">
+            <span className="rounded-full border border-border px-2 py-0.5 text-[10px] text-muted-foreground">
               Optional
             </span>
           )}
@@ -107,7 +107,7 @@ export const AssessQuestionPane: React.FC<AssessQuestionPaneProps> = ({
           <ChevronLeft size={15} />
           Back
         </Button>
-        <span className="font-mono text-[11px] text-muted-foreground/70">
+        <span className="font-mono text-[11px] text-muted-foreground">
           Step {stepIdx + 1} / {total}
         </span>
 

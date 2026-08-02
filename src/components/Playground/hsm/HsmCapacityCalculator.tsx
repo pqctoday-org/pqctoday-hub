@@ -1618,7 +1618,7 @@ export function HsmCapacityCalculator() {
             <p className="font-semibold text-foreground mb-0.5">
               Distribution &amp; redundancy assumptions
             </p>
-            <ul className="list-disc list-inside space-y-0.5 marker:text-muted-foreground/60">
+            <ul className="list-disc list-inside space-y-0.5 marker:text-muted-foreground">
               <li>
                 <span className="text-foreground">Full workload at every location, not split.</span>{' '}
                 This is geo-redundant active-active: each site independently runs the entire
@@ -1647,7 +1647,7 @@ export function HsmCapacityCalculator() {
 
           <div>
             <p className="font-semibold text-foreground mb-0.5">Workload modelling</p>
-            <ul className="list-disc list-inside space-y-0.5 marker:text-muted-foreground/60">
+            <ul className="list-disc list-inside space-y-0.5 marker:text-muted-foreground">
               <li>
                 <span className="text-foreground">Throughput-based, not latency-based.</span> The
                 model assumes a workload is feasible as long as ops/sec ≤ capacity. It does not
@@ -1685,7 +1685,7 @@ export function HsmCapacityCalculator() {
 
           <div>
             <p className="font-semibold text-foreground mb-0.5">HSM throughput data caveats</p>
-            <ul className="list-disc list-inside space-y-0.5 marker:text-muted-foreground/60">
+            <ul className="list-disc list-inside space-y-0.5 marker:text-muted-foreground">
               <li>
                 <span className="text-foreground">PQC numbers are extrapolated.</span> No vendor
                 currently publishes production ML-DSA hardware-accelerated TPS. The &quot;next-gen
@@ -1711,7 +1711,7 @@ export function HsmCapacityCalculator() {
 
           <div>
             <p className="font-semibold text-foreground mb-0.5">Migration dynamics not modelled</p>
-            <ul className="list-disc list-inside space-y-0.5 marker:text-muted-foreground/60">
+            <ul className="list-disc list-inside space-y-0.5 marker:text-muted-foreground">
               <li>
                 <span className="text-foreground">One-time re-keying spike.</span> Migrating
                 certificates, TDE master keys, code-signing roots, and PIN zones to PQC produces a
@@ -1738,7 +1738,7 @@ export function HsmCapacityCalculator() {
             <p className="font-semibold text-foreground mb-0.5">
               UI behaviour — non-obvious slider interactions
             </p>
-            <ul className="list-disc list-inside space-y-0.5 marker:text-muted-foreground/60">
+            <ul className="list-disc list-inside space-y-0.5 marker:text-muted-foreground">
               <li>
                 <span className="text-foreground">
                   Deployed HSM-per-location sliders do not affect required HSMs.
@@ -2062,7 +2062,7 @@ export function HsmCapacityCalculator() {
                     <span className="text-secondary">Total fleet required</span> = L × per-location
                     HA need
                   </p>
-                  <p className="text-muted-foreground/70">
+                  <p className="text-muted-foreground">
                     R = per-site raw HSMs (summed across algorithms; largest share = bottleneck) · L
                     = number of geo-redundant sites
                   </p>
@@ -2082,7 +2082,7 @@ export function HsmCapacityCalculator() {
                     <p>Per-location HA = 49 × 2 = 98 HSMs</p>
                     <p>Total required = 3 × 98 = 294 HSMs</p>
                   </div>
-                  <p className="text-muted-foreground/70 mt-2">
+                  <p className="text-muted-foreground mt-2">
                     Note: this model treats each site as fully active-active. Adding L locations
                     multiplies total HSM count by L (since every site carries the full workload) —
                     this is the most conservative geo-redundant sizing. If your real deployment
@@ -2866,7 +2866,7 @@ export function HsmCapacityCalculator() {
 
           <div>
             <p className="font-semibold text-foreground mb-0.5">What this does not model</p>
-            <ul className="list-disc list-inside space-y-0.5 marker:text-muted-foreground/60">
+            <ul className="list-disc list-inside space-y-0.5 marker:text-muted-foreground">
               <li>
                 Certificate chains (intermediate/root storage) — sized per leaf key object only.
               </li>

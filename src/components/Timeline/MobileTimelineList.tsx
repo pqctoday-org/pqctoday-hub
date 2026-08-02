@@ -156,7 +156,7 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
                   <h3 className="font-bold text-foreground leading-tight">{country.countryName}</h3>
                   <p className="text-xs text-muted-foreground">{country.bodies[0]?.name}</p>
                   {lastVerified && (
-                    <p className="text-[9px] text-muted-foreground/70 font-mono">
+                    <p className="text-[9px] text-muted-foreground font-mono">
                       Verified {lastVerified}
                     </p>
                   )}
@@ -233,7 +233,7 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
                     </h3>
                     <p className="text-xs text-muted-foreground">{country.bodies[0]?.name}</p>
                     {lastVerified && (
-                      <p className="text-[9px] text-muted-foreground/70 font-mono">
+                      <p className="text-[9px] text-muted-foreground font-mono">
                         Verified {lastVerified}
                       </p>
                     )}
@@ -325,7 +325,7 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
                         </div>
                       </div>
                       <div className="flex flex-col items-end gap-1">
-                        <span className="text-[9px] text-muted-foreground/70 tracking-wider uppercase pr-2 sm:pr-4">
+                        <span className="text-[9px] text-muted-foreground tracking-wider uppercase pr-2 sm:pr-4">
                           Phase {currentIndex + 1} of {phases.length}
                         </span>
                         <ChevronRight

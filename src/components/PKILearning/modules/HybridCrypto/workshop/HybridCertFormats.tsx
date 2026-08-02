@@ -441,7 +441,7 @@ export const HybridCertFormats: React.FC = () => {
         {!hsm.isReady && (
           <p className="text-xs text-muted-foreground bg-muted/20 border border-border rounded-lg px-4 py-2">
             Enable the HSM above to generate certificates.{' '}
-            <span className="text-muted-foreground/70">
+            <span className="text-muted-foreground">
               (softhsmv3 WASM loads once — allow 3–8 seconds on first use.)
             </span>
           </p>

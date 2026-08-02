@@ -38,7 +38,7 @@ export const AssessControlDeck: React.FC<AssessControlDeckProps> = ({
   return (
     <div className="glass-panel mb-4 flex flex-wrap items-center gap-4 px-3.5 py-2.5">
       <div className="flex flex-wrap items-center gap-2.5 sm:flex-nowrap">
-        <span className="text-[10.5px] font-bold uppercase tracking-wide text-muted-foreground/70">
+        <span className="text-[10.5px] font-bold uppercase tracking-wide text-muted-foreground">
           Track
         </span>
         <div
@@ -67,7 +67,7 @@ export const AssessControlDeck: React.FC<AssessControlDeckProps> = ({
             {TRACK_INFO.comprehensive.label}
           </Button>
         </div>
-        <span className="basis-full font-mono text-[11px] text-muted-foreground/70 sm:basis-auto">
+        <span className="basis-full font-mono text-[11px] text-muted-foreground sm:basis-auto">
           {info.count} questions · ~{info.minutes} min
         </span>
       </div>

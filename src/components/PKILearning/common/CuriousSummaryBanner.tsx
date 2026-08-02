@@ -355,7 +355,7 @@ export const CuriousSummaryBanner = ({
           >
             <X size={24} />
           </Button>
-          <p className="absolute bottom-4 left-0 right-0 z-10 text-center text-xs text-muted-foreground/70 pointer-events-none">
+          <p className="absolute bottom-4 left-0 right-0 z-10 text-center text-xs text-muted-foreground pointer-events-none">
             Pinch to zoom · Tap outside to close
           </p>
         </div>

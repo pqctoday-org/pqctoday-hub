@@ -131,21 +131,21 @@ export function SimulationOutcomesSection({ defaultOpen = false }: { defaultOpen
             </h4>
             <div className="flex flex-wrap gap-3">
               <div className="min-w-[8rem] rounded-lg border border-border bg-muted/30 px-4 py-3">
-                <span className="block text-[10px] font-medium uppercase tracking-wider text-muted-foreground/70">
+                <span className="block text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
                   Readiness
                 </span>
                 <span className="text-xl font-bold text-foreground">{r.readinessPct}%</span>
               </div>
               {r.compliancePct != null && (
                 <div className="min-w-[8rem] rounded-lg border border-border bg-muted/30 px-4 py-3">
-                  <span className="block text-[10px] font-medium uppercase tracking-wider text-muted-foreground/70">
+                  <span className="block text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
                     Compliance
                   </span>
                   <span className="text-xl font-bold text-foreground">{r.compliancePct}%</span>
                 </div>
               )}
               <div className="min-w-[8rem] rounded-lg border border-border bg-muted/30 px-4 py-3">
-                <span className="block text-[10px] font-medium uppercase tracking-wider text-muted-foreground/70">
+                <span className="block text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
                   Years to Q-Day
                 </span>
                 <span className="text-xl font-bold text-foreground">{r.yearsToHorizon}y</span>
