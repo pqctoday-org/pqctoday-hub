@@ -4,8 +4,9 @@ import {
   computeTimelineConfidence,
   parseTimelineCSV,
   phaseColors,
+  getCountryLastVerified,
 } from './timelineData'
-import type { Phase, EntityType } from '../types/timeline'
+import type { CountryData, Phase, EntityType } from '../types/timeline'
 import { CATEGORY_DEFAULT, matchesCategoryFilter } from '../components/Timeline/CategoryFilter'
 
 describe('timelineData', () => {
@@ -196,5 +197,58 @@ describe('parseTimelineCSV — malformed year hardening', () => {
 
     expect(events).toHaveLength(0)
     expect(errorSpy).toHaveBeenCalled()
+  })
+})
+
+describe('getCountryLastVerified (Phase 8.4 — per-country freshness stamp)', () => {
+  function buildCountry(lastVerifiedByEvent: Array<string | undefined>): CountryData {
+    return {
+      countryName: 'Testland',
+      flagCode: 'TL',
+      bodies: [
+        {
+          name: 'Agency',
+          fullName: 'Agency Full',
+          countryCode: 'TL',
+          events: lastVerifiedByEvent.map((lastVerified, i) => ({
+            startYear: 2024,
+            endYear: 2025,
+            phase: 'Research',
+            type: 'Phase',
+            title: `Event ${i}`,
+            description: '',
+            entityType: 'government',
+            orgName: 'Agency',
+            orgFullName: 'Agency Full',
+            countryName: 'Testland',
+            flagCode: 'TL',
+            lastVerified,
+          })),
+        },
+      ],
+    }
+  }
+
+  it('returns undefined when no event has a lastVerified date', () => {
+    expect(getCountryLastVerified(buildCountry([undefined, undefined]))).toBeUndefined()
+  })
+
+  it('returns the single lastVerified date when only one event has one', () => {
+    expect(getCountryLastVerified(buildCountry([undefined, '2026-05-01']))).toBe('2026-05-01')
+  })
+
+  it('returns the most recent (max) lastVerified date across multiple events', () => {
+    expect(getCountryLastVerified(buildCountry(['2025-01-01', '2026-07-16', '2024-12-31']))).toBe(
+      '2026-07-16'
+    )
+  })
+
+  it('ignores bodies with no events', () => {
+    const country: CountryData = {
+      countryName: 'Empty',
+      flagCode: 'EM',
+      bodies: [{ name: 'Agency', fullName: 'Agency Full', countryCode: 'EM', events: [] }],
+    }
+    expect(getCountryLastVerified(country)).toBeUndefined()
   })
 })
