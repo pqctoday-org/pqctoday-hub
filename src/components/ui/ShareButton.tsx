@@ -80,10 +80,14 @@ export const ShareButton = ({
         size={variant === 'icon' ? 'icon' : 'sm'}
         onClick={handleNativeShare}
         aria-label={`Share ${title}`}
-        className="text-muted-foreground hover:text-foreground"
+        className={
+          variant === 'full'
+            ? 'flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors'
+            : 'text-muted-foreground hover:text-foreground'
+        }
       >
-        <Share2 size={16} />
-        {variant === 'full' && <span className="ml-2">Share</span>}
+        <Share2 size={variant === 'full' ? 13 : 16} aria-hidden="true" />
+        {variant === 'full' && <span>Share</span>}
       </Button>
 
       {showMenu && (

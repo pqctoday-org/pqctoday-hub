@@ -5,7 +5,16 @@ import { UserManualPanel } from '../common/UserManualPanel'
 import type { PageId } from '../../data/userManualData'
 import { Button } from '@/components/ui/button'
 
-export const UserManualButton = ({ pageId }: { pageId: PageId }) => {
+/** `compact`: small icon + text-xs, no border/background — used by the global
+ * top bar (MainLayout.tsx). Default keeps the bordered-pill look everywhere
+ * else. */
+export const UserManualButton = ({
+  pageId,
+  compact = false,
+}: {
+  pageId: PageId
+  compact?: boolean
+}) => {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
@@ -13,10 +22,14 @@ export const UserManualButton = ({ pageId }: { pageId: PageId }) => {
       <Button
         variant="ghost"
         onClick={() => setIsOpen(true)}
-        className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 text-foreground text-sm font-medium transition-colors border border-primary/20"
+        className={
+          compact
+            ? 'flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors'
+            : 'flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 text-foreground text-sm font-medium transition-colors border border-primary/20'
+        }
         aria-label="Open page guide"
       >
-        <BookText size={14} />
+        <BookText size={compact ? 13 : 14} />
         <span>Guide</span>
       </Button>
 
