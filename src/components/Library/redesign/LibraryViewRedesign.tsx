@@ -2,12 +2,16 @@
 /**
  * LibraryViewRedesign — the rebuilt /library page (handoff: design_handoff_library_redesign).
  *
- * Composition: PageHeader → Role Lens → Recently-changed strip → Start here →
+ * Composition: PageHeader → Recently-changed strip → Start here →
  * two-pane (facet rail + results) → detail drawer. Filtering/sorting is delegated
  * to useLibraryPipeline (lifted verbatim from the live LibraryView for parity).
- * Persona lives in usePersonaStore, bookmarks in useBookmarkStore, the rest of the
- * filter/sort/view/ref state in the URL (?cat/org/q/sort/view/lifecycle/cswp39/qv/
- * ref/prefs plus the geo[]/sector[]/tier params the shared filters own).
+ * Persona is read (not written) from usePersonaStore — the shared top-bar role
+ * switcher is the app's single global persona/role control (design program
+ * cross-cutting rule); this page no longer renders its own persona picker
+ * (LibraryRoleLens removed — see IMPLEMENTATION-PLAN-LIBRARY-2026-08-01.md §4/§6).
+ * Bookmarks live in useBookmarkStore, the rest of the filter/sort/view/ref state
+ * in the URL (?cat/org/q/sort/view/lifecycle/cswp39/qv/ref/prefs plus the
+ * geo[]/sector[]/tier params the shared filters own).
  */
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router'
@@ -40,10 +44,8 @@ import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { LIBRARY_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import type { SortOption } from '@/components/Library/SortControl'
 import type { ViewMode } from '@/components/Library/ViewToggle'
-import type { PersonaId } from '@/data/learningPersonas'
 import { libraryDefaultSortForPersona } from '@/data/libraryPersonaConfig'
 import { useLibraryPipeline, ORG_CANONICAL_MAP, ORG_OTHER } from './useLibraryPipeline'
-import { LibraryRoleLens } from './LibraryRoleLens'
 import { LibraryControlDeck } from './LibraryControlDeck'
 import { LibraryFacetRail, type LibraryQuickView } from './LibraryFacetRail'
 import { LibraryPurposeDoors, type LibraryPurposeSelection } from './LibraryPurposeDoors'
@@ -160,7 +162,6 @@ export function LibraryViewRedesign({
         })
     : realSetParams
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
-  const setPersona = usePersonaStore((s) => s.setPersona)
   const libraryBookmarks = useBookmarkStore((s) => s.libraryBookmarks)
   const toggleLibraryBookmark = useBookmarkStore((s) => s.toggleLibraryBookmark)
 
@@ -477,11 +478,6 @@ export function LibraryViewRedesign({
           flagResourceType="Library"
         />
       )}
-
-      <LibraryRoleLens
-        selectedPersona={selectedPersona}
-        onSelectPersona={(p: PersonaId) => setPersona(p)}
-      />
 
       <LibraryRecentlyChanged items={pipeline.activityItems} onOpen={openDetail} />
 
