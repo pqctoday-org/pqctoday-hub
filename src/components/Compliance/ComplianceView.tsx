@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { lazy, Suspense, useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
+import { ErrorAlert } from '@/components/ui/error-alert'
 import { useSearchParams } from 'react-router'
 import { ComplianceTable } from './ComplianceTable'
 import { type FrameworkSortOption } from './ComplianceLandscape'
@@ -264,7 +266,13 @@ export const ComplianceView = ({
   const [drawerPillar, setDrawerPillar] = useState<PillarId>('comply')
 
   const tierFilter = useTrustTierFilter()
-  const { data, loading, refresh, lastUpdated, enrichRecord } = useComplianceRefresh()
+  const { data, loading, error, refresh, lastUpdated, enrichRecord } = useComplianceRefresh()
+  // Page-wide loading/error state — shared across every tab (Landscape,
+  // Product Records, For You, CSWP.39 Agility all read the same `data`), not
+  // duplicated per tab. Only the very first load shows the skeleton; a
+  // filter-triggered background refresh with data already on screen keeps
+  // using ComplianceTable's own spinner overlay, unchanged.
+  const showComplianceSkeleton = loading && data.length === 0
   const { selectedIndustries, selectedRegion } = usePersonaStore()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const myFrameworks = useComplianceSelectionStore((s) => s.myFrameworks)
@@ -891,8 +899,24 @@ export const ComplianceView = ({
           })}
         </ScrollFadeContainer>
 
+        {error && (
+          <div className="mt-4">
+            <ErrorAlert message={error} onRetry={refresh} />
+          </div>
+        )}
+
+        {!error && showComplianceSkeleton && (
+          <div className="mt-4 space-y-3" aria-busy="true" aria-label="Loading compliance data">
+            <Skeleton className="h-8 w-2/3" />
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-5/6" />
+          </div>
+        )}
+
         {/* ── Landscape — three-pillar pipeline ── */}
-        {activeStableTab === 'landscape' && (
+        {activeStableTab === 'landscape' && !error && !showComplianceSkeleton && (
           <div className="mt-0 space-y-4">
             <PillarPipeline
               frameworks={tierFilteredFrameworks}
@@ -904,7 +928,7 @@ export const ComplianceView = ({
         )}
 
         {/* ── Product Records ── */}
-        {activeStableTab === 'records' && (
+        {activeStableTab === 'records' && !error && !showComplianceSkeleton && (
           <div className="mt-0 space-y-4">
             <SectionHeader
               icon={<GlobeLock size={20} className="text-primary" />}
@@ -945,7 +969,7 @@ export const ComplianceView = ({
         )}
 
         {/* ── For You — stable skeleton, tuned per persona via the shared lens ── */}
-        {activeStableTab === 'foryou' && (
+        {activeStableTab === 'foryou' && !error && !showComplianceSkeleton && (
           <div className="mt-0 space-y-4">
             <SectionHeader
               icon={<Sparkles size={20} className="text-primary" />}
@@ -960,7 +984,7 @@ export const ComplianceView = ({
         )}
 
         {/* ── CSWP.39 Agility ── */}
-        {activeStableTab === 'cswp39' && (
+        {activeStableTab === 'cswp39' && !error && !showComplianceSkeleton && (
           <div className="mt-0 space-y-4">
             <CSWP39AgilityExplorer
               onNavigateToFramework={handleCswp39Jump}
