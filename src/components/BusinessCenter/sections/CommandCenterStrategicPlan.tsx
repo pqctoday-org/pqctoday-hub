@@ -11,7 +11,12 @@
 import React from 'react'
 import { ArrowDown, ArrowLeft, ArrowRight, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { CSWP39_ZONE_DETAILS, CSWP39_ZONE_STYLES, type ZoneId } from '@/data/cswp39ZoneData'
+import {
+  CSWP39_ZONE_DETAILS,
+  CSWP39_ZONE_ORDER,
+  CSWP39_ZONE_STYLES,
+  type ZoneId,
+} from '@/data/cswp39ZoneData'
 import type { BusinessMetrics } from '../hooks/useBusinessMetrics'
 import { ZONE_ARTIFACT_TYPES, getArtifactsForZone } from '../lib/cswp39StepMapping'
 
@@ -102,6 +107,46 @@ export const CommandCenterStrategicPlan: React.FC<CommandCenterStrategicPlanProp
   activeZone,
   onZoneSelect,
 }) => {
+  // -1 when no zone is currently open (e.g. the active zone panel was
+  // collapsed via handleZoneToggle). CSWP39_ZONE_ORDER.indexOf always
+  // resolves for a real ZoneId, so -1 only ever means "nothing open".
+  const activeIndex = activeZone ? CSWP39_ZONE_ORDER.indexOf(activeZone) : -1
+  const zoneCount = CSWP39_ZONE_ORDER.length
+
+  // "Step N of 6" reflects the currently open zone's position in the
+  // canonical loop order. When nothing is open there is no "current step"
+  // to report, so the stepper reads "No zone open" rather than implying
+  // step 1 is active — the buttons stay fully functional either way (see
+  // handlePrevZone/handleNextZone below).
+  const stepLabel = activeIndex >= 0 ? `Step ${activeIndex + 1} of ${zoneCount}` : 'No zone open'
+
+  // Wraparound via modulo: Migration (last) → next → Governance (first);
+  // Governance (first) → prev → Migration (last). Reuses the same
+  // `onZoneSelect` the zone cards call directly, so opening/scrolling
+  // behaves identically whether the user clicks a card or the stepper.
+  const handlePrevZone = () => {
+    if (activeIndex < 0) {
+      // Nothing open — "prev" enters the loop at its last step (Migration),
+      // the natural predecessor of Governance in the iterative loop.
+      onZoneSelect(CSWP39_ZONE_ORDER[zoneCount - 1])
+      return
+    }
+    const prevIndex = (activeIndex - 1 + zoneCount) % zoneCount
+    // eslint-disable-next-line security/detect-object-injection -- prevIndex is a modulo-bounded array index, not user input
+    onZoneSelect(CSWP39_ZONE_ORDER[prevIndex])
+  }
+
+  const handleNextZone = () => {
+    if (activeIndex < 0) {
+      // Nothing open — "next" enters the loop at its first step (Governance).
+      onZoneSelect(CSWP39_ZONE_ORDER[0])
+      return
+    }
+    const nextIndex = (activeIndex + 1) % zoneCount
+    // eslint-disable-next-line security/detect-object-injection -- nextIndex is a modulo-bounded array index, not user input
+    onZoneSelect(CSWP39_ZONE_ORDER[nextIndex])
+  }
+
   return (
     <div className="glass-panel p-4 sm:p-6 space-y-4">
       <div className="flex items-center gap-2">
@@ -115,11 +160,33 @@ export const CommandCenterStrategicPlan: React.FC<CommandCenterStrategicPlanProp
 
       {/* Outer Crypto Agility frame */}
       <div className="border-2 border-primary/50 rounded-xl p-4 space-y-4 relative">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-1 text-xs font-bold text-primary">
-            <ArrowLeft size={14} />
-            <span>Crypto Agility (iterative loop)</span>
-            <ArrowRight size={14} />
+        <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-primary">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={handlePrevZone}
+              aria-label="Previous zone in the iterative loop (wraps from Governance to Migration)"
+              data-testid="zone-stepper-prev"
+              className="h-6 w-6 p-0 text-primary hover:bg-primary/10 shrink-0"
+            >
+              <ArrowLeft size={14} />
+            </Button>
+            <span data-testid="zone-stepper-label">
+              Crypto Agility (iterative loop) &mdash; {stepLabel}
+            </span>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={handleNextZone}
+              aria-label="Next zone in the iterative loop (wraps from Migration to Governance)"
+              data-testid="zone-stepper-next"
+              className="h-6 w-6 p-0 text-primary hover:bg-primary/10 shrink-0"
+            >
+              <ArrowRight size={14} />
+            </Button>
           </div>
           <span className="text-[10px] text-muted-foreground">NIST CSWP.39 Fig. 3</span>
         </div>
