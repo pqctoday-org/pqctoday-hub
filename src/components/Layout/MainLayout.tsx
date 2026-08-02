@@ -617,8 +617,17 @@ export const MainLayout = () => {
                   honoring that same 2026-08-01 decision independent of this
                   fix — it remains reachable via search (⌘K), direct URL, or
                   the mobile More sheet, same as for every other persona. */}
+              {/* Full-opacity `text-muted-foreground`, NOT the `/70` used by the
+                  "Everything, unfiltered" label above. At 10px this is small
+                  text, so WCAG AA wants 4.5:1: muted-foreground alone measures
+                  7.0:1 (light) / 7.5:1 (dark), but composited at 70% opacity it
+                  drops to 3.43:1 / 4.19:1 and fails. That regression broke the
+                  a11y gate on all 14 smoke routes when this section was first
+                  restored (CI run 30757441984) — this label renders on every
+                  page for no-persona and researcher visitors, so it failed
+                  everywhere at once. */}
               {more.length > 0 && (
-                <span className="px-2 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+                <span className="px-2 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                   More
                 </span>
               )}
