@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import type { ReactNode } from 'react'
 import { create } from 'zustand'
 
 /**
@@ -24,6 +25,23 @@ export interface PageActions {
   flagUrl?: string
   flagLabel?: string
   flagResourceType?: string
+  /**
+   * Overrides the top bar's route-derived Share copy. Routes whose share text
+   * is per-record rather than per-route (every `/learn/<module-id>` page, whose
+   * real title is the module's, not "Learn — PQC Today") set this on mount;
+   * `ROUTE_SHARE` in `MainLayout.tsx` still covers the static routes.
+   */
+  shareTitle?: string
+  shareText?: string
+  /**
+   * Escape hatch for page-specific chips/badges with no generic equivalent —
+   * rendered at the end of the top bar's strip. Learn module pages ride their
+   * `WipModuleBadge` + `ReviewedBadge` here (2026-08-02: "all icons and info
+   * goes to the top bar"), which is why this store holds a node rather than
+   * only serializable fields. Same `actions` passthrough idea `PageHeader`
+   * already exposes; keep it to small inline elements, never a layout.
+   */
+  extra?: ReactNode
 }
 
 interface PageActionsState {

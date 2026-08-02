@@ -44,6 +44,25 @@ describe('ModuleShell', () => {
     expect(screen.getByRole('button', { name: 'Learn' })).toBeInTheDocument()
   })
 
+  // Moved here from PKILearningView's utility row (2026-08-02), which was
+  // removed as a duplicate of the global top bar. The link sits on the chip
+  // row now, so it must actually render — and must stay out of both embed
+  // contexts, neither of which has a Learn dashboard to return to.
+  it('renders the back-to-dashboard link in the chip row, pointing at /learn', () => {
+    renderShell(<ModuleShell manifest={base} learn={<div>L</div>} />)
+    const back = screen.getByRole('link', { name: /back to dashboard/i })
+    expect(back).toHaveAttribute('href', '/learn')
+  })
+
+  it('hides the back-to-dashboard link when embedded in the simulation', () => {
+    renderShell(
+      <EmbeddedLearnProvider>
+        <ModuleShell manifest={base} learn={<div>L</div>} />
+      </EmbeddedLearnProvider>
+    )
+    expect(screen.queryByRole('link', { name: /back to dashboard/i })).not.toBeInTheDocument()
+  })
+
   it('lets the header description be overridden (it often differs from the catalog)', () => {
     renderShell(
       <ModuleShell manifest={base} description="Overridden header" learn={<div>L</div>} />

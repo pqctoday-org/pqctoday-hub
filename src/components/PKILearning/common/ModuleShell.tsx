@@ -18,11 +18,20 @@
 import { useState, type ReactNode } from 'react'
 import { Link } from 'react-router'
 import type { LucideIcon } from 'lucide-react'
-import { Trash2, Gamepad2, ArrowRight, Wrench, CheckCircle2, GraduationCap } from 'lucide-react'
+import {
+  Trash2,
+  Gamepad2,
+  ArrowRight,
+  ArrowLeft,
+  Wrench,
+  CheckCircle2,
+  GraduationCap,
+} from 'lucide-react'
 import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { ModuleTabBar } from './ModuleTabBar'
 import { useEmbeddedLearn } from '../embeddedLearnContext'
+import { useIsEmbedded } from '@/embed/EmbedProvider'
 import { ModuleVisualTab } from './ModuleVisualTab'
 import { ModuleReferencesTab } from './ModuleReferencesTab'
 import { ModuleMigrateTab } from './ModuleMigrateTab'
@@ -336,6 +345,15 @@ export const ModuleShell = ({
   const phaseLabel = phaseChipLabel(manifest.frameworkPhase)
   const chip = 'rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide'
 
+  // "Back to Dashboard" used to sit on its own row above the module, rendered
+  // by PKILearningView alongside a cluster of buttons the global top bar now
+  // duplicates. That row is gone (2026-08-02); the back link lives here, on the
+  // chip row, so the page opens on the module itself. Hidden in both embed
+  // contexts for the same reason the old row was: neither the sim panel nor an
+  // iframe embed has a Learn dashboard to go back to.
+  const iframeEmbedded = useIsEmbedded()
+  const showBackLink = !embedded && !iframeEmbedded
+
   // "Practice in the Simulation" is persona-aware: relevance depends on the
   // active profile, not the lesson's track. An exec practices the governance/
   // program phases; an architect/ops/dev practices the technical execution &
@@ -366,6 +384,15 @@ export const ModuleShell = ({
         {/* Context rail (P2.1) — small mono-cased chips above a solid title.
             Gradient retired here so the active workshop step is the one hero. */}
         <div className="flex flex-wrap items-center gap-2 mb-2">
+          {showBackLink ? (
+            <Link
+              to="/learn"
+              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <ArrowLeft size={16} aria-hidden="true" />
+              Back to Dashboard
+            </Link>
+          ) : null}
           {track ? (
             <span className={`${chip} ${TRACK_COLORS[track] ?? 'bg-muted text-muted-foreground'}`}>
               {track}
