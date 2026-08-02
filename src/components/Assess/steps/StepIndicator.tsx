@@ -34,7 +34,7 @@ function StepIndicator({
           <span className="text-sm font-bold text-primary">
             Step {current + 1} of {total}
           </span>
-          {timeLabel && <span className="text-[10px] text-muted-foreground/70">{timeLabel}</span>}
+          {timeLabel && <span className="text-[10px] text-muted-foreground">{timeLabel}</span>}
         </div>
         <div
           className="flex-1 max-w-48 h-2 rounded-full bg-border overflow-hidden"

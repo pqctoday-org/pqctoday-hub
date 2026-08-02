@@ -301,7 +301,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                       <Search size={28} className="text-status-error" aria-hidden="true" />
                       <p className="text-sm text-status-error font-medium">Search unavailable</p>
                       <p className="text-xs text-muted-foreground max-w-sm">{error}</p>
-                      <p className="text-xs text-muted-foreground/70 mt-2">
+                      <p className="text-xs text-muted-foreground mt-2">
                         Try reloading the page. If the problem persists the search index may need to
                         be regenerated.
                       </p>

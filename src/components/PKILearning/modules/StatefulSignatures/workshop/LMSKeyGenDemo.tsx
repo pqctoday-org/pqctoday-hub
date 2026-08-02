@@ -222,7 +222,7 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
                   className={`px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
                     isProductionOnly
                       ? selectedParamId === param.id
-                        ? 'bg-muted/30 text-muted-foreground/60 border border-border/50'
+                        ? 'bg-muted/30 text-muted-foreground border border-border/50'
                         : 'bg-muted/20 text-muted-foreground/40 border border-border/30'
                       : selectedParamId === param.id
                         ? 'bg-primary/20 text-primary border border-primary/50'

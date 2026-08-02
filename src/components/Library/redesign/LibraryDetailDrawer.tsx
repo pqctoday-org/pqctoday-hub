@@ -324,7 +324,7 @@ function DrawerPanel({
                                 {r.evidenceQuote}
                               </blockquote>
                             )}
-                            <div className="mt-0.5 flex items-center gap-2 text-[10px] text-muted-foreground/70">
+                            <div className="mt-0.5 flex items-center gap-2 text-[10px] text-muted-foreground">
                               {r.evidenceLocation && <span>{r.evidenceLocation}</span>}
                               {r.confidence && <span>· {r.confidence} confidence</span>}
                             </div>

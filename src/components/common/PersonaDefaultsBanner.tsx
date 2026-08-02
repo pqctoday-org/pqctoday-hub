@@ -67,7 +67,7 @@ export function PersonaDefaultsBanner({
           {`· ${newHiddenCount} newly added ${newPluralized} hidden by ${roleLabel}`}
         </span>
       )}
-      <span className="text-muted-foreground/60">·</span>
+      <span className="text-muted-foreground">·</span>
       <Button variant="link" onClick={onReset} className="text-xs h-auto p-0">
         Show all {totalCount}
       </Button>

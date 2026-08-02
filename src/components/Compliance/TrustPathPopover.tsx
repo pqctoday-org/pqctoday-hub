@@ -158,7 +158,7 @@ export function TrustPathPopover({ path, standardLabel }: TrustPathPopoverProps)
             </div>
 
             {path.hop === 2 && (
-              <p className="text-muted-foreground/70 text-[10px]">2-hop derivation</p>
+              <p className="text-muted-foreground text-[10px]">2-hop derivation</p>
             )}
           </div>,
           document.body

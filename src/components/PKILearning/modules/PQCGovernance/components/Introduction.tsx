@@ -173,7 +173,7 @@ const Step1WhyRaciPolicy: React.FC = () => (
               <div className="flex-1">
                 <div className="text-sm font-medium text-foreground">{policy.level}</div>
                 <p className="text-xs text-muted-foreground">{policy.desc}</p>
-                <p className="text-[10px] text-muted-foreground/70 mt-1">{policy.scope}</p>
+                <p className="text-[10px] text-muted-foreground mt-1">{policy.scope}</p>
               </div>
             </div>
           ))}
@@ -238,7 +238,7 @@ const Step1WhyRaciPolicy: React.FC = () => (
               <p className="text-[11px] text-muted-foreground">{el.d}</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1">
                 <div className="rounded p-2 bg-muted border border-border/80">
-                  <p className="text-[10px] text-muted-foreground/70">{el.warn}</p>
+                  <p className="text-[10px] text-muted-foreground">{el.warn}</p>
                 </div>
                 <div className="rounded p-2 bg-primary/5 border border-primary/20">
                   <p className="text-[10px] text-foreground/80">{el.good}</p>
@@ -285,7 +285,7 @@ const Step2ModelsEscalationKpis: React.FC = () => (
             migration. Best for smaller organizations or those with a strong central security
             function.
           </p>
-          <div className="text-[10px] text-muted-foreground/70 border-t border-border pt-2">
+          <div className="text-[10px] text-muted-foreground border-t border-border pt-2">
             <strong>Pros:</strong> Consistent standards, faster decisions
             <br />
             <strong>Cons:</strong> May not account for BU-specific needs
@@ -304,7 +304,7 @@ const Step2ModelsEscalationKpis: React.FC = () => (
             Governance board sets boundaries but delegates execution. Common in regulated
             multi-nationals.
           </p>
-          <div className="text-[10px] text-muted-foreground/70 border-t border-border pt-2">
+          <div className="text-[10px] text-muted-foreground border-t border-border pt-2">
             <strong>Pros:</strong> Local autonomy, compliance flexibility
             <br />
             <strong>Cons:</strong> Risk of inconsistency, slower alignment
@@ -323,7 +323,7 @@ const Step2ModelsEscalationKpis: React.FC = () => (
             execution and testing. Most common model for large enterprises migrating to{' '}
             <InlineTooltip term="Post-Quantum Cryptography">PQC</InlineTooltip>.
           </p>
-          <div className="text-[10px] text-muted-foreground/70 border-t border-border pt-2">
+          <div className="text-[10px] text-muted-foreground border-t border-border pt-2">
             <strong>Pros:</strong> Balance of control and agility
             <br />
             <strong>Cons:</strong> Requires clear decision-rights mapping
@@ -605,7 +605,7 @@ const Step2ModelsEscalationKpis: React.FC = () => (
               </div>
             ))}
           </div>
-          <p className="text-[10px] text-muted-foreground/70 mt-2">
+          <p className="text-[10px] text-muted-foreground mt-2">
             Illustrative figures — calibrate to your sector, jurisdiction, and confidentiality
             horizons. The GRC function owns the risk-appetite statement and the KRI framework.
           </p>

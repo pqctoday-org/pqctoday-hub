@@ -223,7 +223,7 @@ export const CommonGroundPath: React.FC = () => {
             Organization Assessment
           </Button>
         </div>
-        <p className="text-xs text-muted-foreground/60">
+        <p className="text-xs text-muted-foreground">
           {commonGroundData.length} modules across{' '}
           {[...new Set(commonGroundData.flatMap((m) => m.competencyAreas))].length} NICE Competency
           Areas are tagged for the Common Ground path in the full library.

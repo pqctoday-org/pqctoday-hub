@@ -35,7 +35,7 @@ export function CorpusFreshnessBadge() {
 
   return (
     <p
-      className={`text-xs flex items-center justify-center gap-1 ${isStale ? 'text-status-warning' : 'text-muted-foreground/60'}`}
+      className={`text-xs flex items-center justify-center gap-1 ${isStale ? 'text-status-warning' : 'text-muted-foreground'}`}
     >
       <Database size={10} />
       {isStale ? `Data may be outdated (${formatted})` : `Data current as of ${formatted}`}

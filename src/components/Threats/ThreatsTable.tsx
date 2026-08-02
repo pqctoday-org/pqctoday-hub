@@ -210,7 +210,7 @@ export const ThreatsTable = ({
                                     ))}
                                     {hiddenCount > 0 && (
                                       <span
-                                        className="px-1.5 py-0.5 rounded-sm bg-muted/30 border border-border/50 text-muted-foreground/70"
+                                        className="px-1.5 py-0.5 rounded-sm bg-muted/30 border border-border/50 text-muted-foreground"
                                         title={item.cryptoAtRisk}
                                       >
                                         +{hiddenCount} more

@@ -270,7 +270,7 @@ export function ArtifactPlaceholder({
             />
           )}
         </div>
-        <span className="text-xs text-muted-foreground/60 line-clamp-1">
+        <span className="text-xs text-muted-foreground line-clamp-1">
           {suggestion ? suggestion.reason : description}
         </span>
       </div>

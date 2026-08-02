@@ -67,7 +67,7 @@ export function AirplaneModeBanner() {
                 <li>Compliance live refresh (NIST/ACVP/CC)</li>
                 <li>External links (RFCs, standards bodies)</li>
               </ul>
-              <p className="text-[10px] text-muted-foreground/70 mt-1">
+              <p className="text-[10px] text-muted-foreground mt-1">
                 If you downloaded a local AI model before going offline, local chat still works.
               </p>
             </div>

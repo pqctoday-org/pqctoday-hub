@@ -297,7 +297,7 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
                           <span className="text-xs font-semibold text-foreground">{uc.title}</span>
                         </div>
                         <p className="text-xs text-muted-foreground">{uc.detection}</p>
-                        <p className="text-[11px] text-muted-foreground/70 mt-1">
+                        <p className="text-[11px] text-muted-foreground mt-1">
                           <span className="uppercase tracking-wide">Signal:</span> {uc.signal}
                         </p>
                       </li>

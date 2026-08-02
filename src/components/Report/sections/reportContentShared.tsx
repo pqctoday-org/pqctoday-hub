@@ -159,7 +159,7 @@ export const ProfileField = ({ label, value }: { label: string; value: string | 
   if (!value) return null
   return (
     <div className="flex flex-col gap-0.5">
-      <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70 font-medium">
+      <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
         {label}
       </span>
       <span className="text-xs text-foreground">{value}</span>

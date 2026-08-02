@@ -77,7 +77,7 @@ export const WorkshopOperationLog: React.FC<WorkshopOperationLogProps> = ({
           >
             {entry.message}
             {entry.durationMs !== undefined && (
-              <span className="ml-1.5 text-muted-foreground/60">[{entry.durationMs}ms]</span>
+              <span className="ml-1.5 text-muted-foreground">[{entry.durationMs}ms]</span>
             )}
           </span>
         </div>

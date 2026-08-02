@@ -3169,7 +3169,7 @@ export function SimulationView() {
                     <div className="rounded-xl border border-secondary/30 bg-secondary/5 p-4">
                       <Eyebrow className="mb-2 block">
                         Assessment KPIs{' '}
-                        <span className="text-muted-foreground/60">· informational</span>
+                        <span className="text-muted-foreground">· informational</span>
                       </Eyebrow>
                       <div className="grid grid-cols-2 gap-1.5">
                         {(
@@ -3213,7 +3213,7 @@ export function SimulationView() {
                     <div className="rounded-xl border border-border bg-card p-4">
                       <Eyebrow className="mb-2 block">
                         Readiness trend{' '}
-                        <span className="text-muted-foreground/60">· assessed → in-sim</span>
+                        <span className="text-muted-foreground">· assessed → in-sim</span>
                       </Eyebrow>
                       <div className="flex items-baseline justify-between font-mono">
                         <span className="text-[11px] text-muted-foreground">
@@ -3305,7 +3305,7 @@ export function SimulationView() {
                   <div className="rounded-xl border border-border bg-card p-4">
                     <Eyebrow className="mb-2 block">
                       Critical assets{' '}
-                      <span className="text-muted-foreground/60">· €{totalValueM}M</span>
+                      <span className="text-muted-foreground">· €{totalValueM}M</span>
                     </Eyebrow>
                     {!assetsDiscovered && (
                       <p className="mb-2 rounded-md border border-dashed border-warning/50 bg-warning/5 px-2 py-1 text-sim-chip text-warning">
@@ -3359,7 +3359,7 @@ export function SimulationView() {
                     <div className="rounded-xl border border-border bg-card p-4">
                       <Eyebrow className="mb-2 block">
                         Applicable compliance{' '}
-                        <span className="text-muted-foreground/60">· from assessment</span>
+                        <span className="text-muted-foreground">· from assessment</span>
                       </Eyebrow>
                       <div className="flex flex-col gap-1.5">
                         {assessCompliance.map((c) => (
@@ -3397,7 +3397,7 @@ export function SimulationView() {
                     <div className="rounded-xl border border-border bg-card p-4">
                       <Eyebrow className="mb-2 block">
                         Situational factors{' '}
-                        <span className="text-muted-foreground/60">· from assessment</span>
+                        <span className="text-muted-foreground">· from assessment</span>
                       </Eyebrow>
                       <div className="flex flex-col gap-1.5">
                         {assessBoosts.map((b) => (
@@ -3461,7 +3461,7 @@ export function SimulationView() {
                   <div className="rounded-xl border border-border bg-card p-4">
                     <Eyebrow className="mb-2.5 block">
                       {phase.name} artifacts{' '}
-                      <span className="text-muted-foreground/60">
+                      <span className="text-muted-foreground">
                         · {phaseDocs.length}/{phaseArtifactTypes.size}
                       </span>
                     </Eyebrow>
@@ -3559,7 +3559,7 @@ export function SimulationView() {
                     <div className="rounded-xl border border-border bg-card p-4">
                       <Eyebrow className="mb-2 block">
                         Quantum risk — four scoring dimensions{' '}
-                        <span className="text-muted-foreground/60">· from assessment</span>
+                        <span className="text-muted-foreground">· from assessment</span>
                       </Eyebrow>
                       <div className="grid grid-cols-2 gap-1.5">
                         {(
@@ -3609,7 +3609,7 @@ export function SimulationView() {
                     <div className="rounded-xl border border-border bg-card p-4">
                       <Eyebrow className="mb-2 block">
                         Score drivers{' '}
-                        <span className="text-muted-foreground/60">· why these scores</span>
+                        <span className="text-muted-foreground">· why these scores</span>
                       </Eyebrow>
                       <div className="flex flex-col gap-2">
                         {(
@@ -3637,7 +3637,7 @@ export function SimulationView() {
                     <div className="rounded-xl border border-border bg-card p-4">
                       <Eyebrow className="mb-2 block">
                         PQC migration backlog{' '}
-                        <span className="text-muted-foreground/60">· from assessment</span>
+                        <span className="text-muted-foreground">· from assessment</span>
                       </Eyebrow>
                       {assessTwoTrack && (
                         <div className="mb-2.5 flex flex-col gap-1.5">
