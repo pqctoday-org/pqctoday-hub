@@ -25,10 +25,30 @@ import {
 
 const CURRENT_YEAR = new Date().getFullYear()
 
-export const CrqcCapabilityStrip: React.FC<{ defaultExpanded?: boolean }> = ({
-  defaultExpanded = false,
-}) => {
-  const [expanded, setExpanded] = useState(defaultExpanded)
+export const CrqcCapabilityStrip: React.FC<{
+  defaultExpanded?: boolean
+  /**
+   * Optionally-controlled expand state (Phase 7 item 2 of the 2026-pages plan):
+   * when both `expanded` and `onExpandedChange` are supplied, the parent owns
+   * the toggle (e.g. so it can share it with a sibling like CrqcTrajectoryChart)
+   * and the internal `useState` below is bypassed entirely. Any existing caller
+   * that only passes `defaultExpanded` (or nothing) keeps managing its own
+   * state exactly as before.
+   */
+  expanded?: boolean
+  onExpandedChange?: (expanded: boolean) => void
+}> = ({ defaultExpanded = false, expanded: controlledExpanded, onExpandedChange }) => {
+  const [internalExpanded, setInternalExpanded] = useState(defaultExpanded)
+  const isControlled = controlledExpanded !== undefined && onExpandedChange !== undefined
+  const expanded = isControlled ? controlledExpanded : internalExpanded
+  const setExpanded = (next: boolean | ((v: boolean) => boolean)) => {
+    const resolved = typeof next === 'function' ? next(expanded) : next
+    if (isControlled) {
+      onExpandedChange(resolved)
+    } else {
+      setInternalExpanded(resolved)
+    }
+  }
 
   // Single-sourced via getCrqcConsensus() (Threats #1) — the same derivation
   // SectorExposureHero, CrqcTrajectoryChart, and ThreatEconomicsHeader use.
