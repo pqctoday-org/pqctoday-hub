@@ -29,6 +29,35 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.39.0] - 2026-08-02
+
+A round of genuine bug fixes found by re-checking last week's UX audit against the actual code — a migration deadline that displayed a date in the past, filters that returned nothing, links that went nowhere, and a Share button that sent people to an empty page. Also roughly 26 MB less to download on your first visit.
+
+### Fixed
+
+- **The Threats page no longer shows a migration deadline that has already passed as if it were upcoming** [view:/threats] [persona:executive] [persona:architect]: for sectors with long data-secrecy requirements the Mosca calculation genuinely lands in the past — for government and defence it's 2003 — but it was printed as a bare year under "Your migration deadline", which read like a broken calculator. It now says plainly that the window closed and how many years ago, keeping the real number and the real (uncomfortable) conclusion intact.
+- **The Algorithms region filter actually returns results** [view:/algorithms] [persona:architect] [persona:researcher]: 7 of its 10 options silently returned nothing because the filter list and the underlying data used different names for the same regulators. The list is now built from the real values in both data files, and a guard test fails the build if they drift apart again.
+- **Sharing your readiness report now sends a working link** [view:/report] [persona:executive]: the top-bar Share button sent a bare page address, so recipients landed on "No Report Yet" while the sender saw a success message. It now shares the same self-contained link the in-page share button always produced.
+- **The Migration Workbench feeds the Roadmap Builder again** [view:/migrate] [persona:ops] [persona:architect]: products chosen in the workbench never reached the Roadmap Builder, and saving or restoring your work silently discarded the plan entirely. Both now read your real selection.
+- **Migrate's references to learning modules are clickable** [view:/migrate] [persona:developer] [persona:ops]: 749 curated module references rendered as plain text with nowhere to go. Product identifiers (CPE/PURL) now link out too.
+- **Patent links to algorithms work for older patents** [view:/patents] [persona:researcher]: patents filed before standardisation use the original names — Kyber, Dilithium, SPHINCS+, Falcon — while the Algorithms page uses the final FIPS names, so more than half the links went nowhere. Working links went from 44% to 66% of patents.
+- **First-time visitors can reach the whole site from the desktop menu** [view:/] [persona:researcher]: anyone who hadn't picked a role — including every first-time visitor — saw only five menu entries, with no route at all to 13 destinations including the readiness check and report. On phones the full menu had been there the whole time.
+- **The Compliance table view can open framework details** [view:/compliance] [persona:executive]: only the card view could; clicking a table row did nothing. Shared links pointing at a specific framework now open it, rather than briefly highlighting it.
+- **The Library's top pick for executives opens** [view:/library] [persona:executive]: the first "Start here" recommendation pointed at a document that had since been renamed, so it was a dead click.
+- **OpenSSL Studio shows the right documentation for post-quantum algorithms** [view:/openssl] [persona:developer]: the per-command help never matched any PQC algorithm, so it always fell back to a generic page.
+- **The curious mobile home screen's buttons work** [view:/] [persona:curious]: both main buttons did nothing when tapped.
+- **The About page no longer describes a cloud-sync control that doesn't exist** [view:/about]: it told you that you could turn sync off from the home page. There is no sign-in anywhere in the app, so sync can't be turned on or off at all — the page now says so.
+- **Migrate's page header stays put** [view:/migrate]: it shifted position depending on whether you had anything selected to share, and carried a second Share button of its own. Share now lives only in the top bar, as on every other page.
+
+### Changed
+
+- **About 26 MB less to download on your first visit** [persona:developer]: eight superseded copies of the library enrichment data were being bundled into the app even though only the newest is ever read.
+- **The footer year is computed rather than hardcoded**, so it stops going stale.
+
+### Added
+
+- **Phone-sized browser testing** [persona:developer]: the automated test suite ran only at desktop sizes, on a product where the phone experience is the weakest area. A mobile test run now exists (not yet gating merges).
+
 ## [4.38.0] - 2026-08-02
 
 A page-by-page pass across Algorithms, Compliance, Library, Migrate, Playground, Threats, Timeline, and the Command Center — unlocking content that was gated for no good reason, replacing hand-typed lists with the real catalogue behind them, and giving pages honest error states instead of silent blank ones.

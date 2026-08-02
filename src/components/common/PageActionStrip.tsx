@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { FileClock, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { EndorseButton } from '@/components/ui/EndorseButton'
@@ -38,6 +38,12 @@ export interface PageActionStripProps {
   flagUrl?: string
   flagLabel?: string
   flagResourceType?: string
+  /**
+   * Page-specific chips/badges with no generic equivalent, rendered last —
+   * e.g. a Learn module's WIP chip and its reviewed badge. Small inline
+   * elements only; anything structural belongs on the page, not in the bar.
+   */
+  extra?: ReactNode
   testId?: string
   className?: string
 }
@@ -65,12 +71,14 @@ export const PageActionStrip = ({
   flagUrl,
   flagLabel,
   flagResourceType,
+  extra,
   testId,
   className = '',
 }: PageActionStripProps) => {
   const showSkeleton = dataSourceLoading && !dataSource
   const showInfo = Boolean(dataSource) || showSkeleton
-  const hasAnything = showInfo || Boolean(onExport) || Boolean(endorseUrl) || Boolean(flagUrl)
+  const hasAnything =
+    showInfo || Boolean(onExport) || Boolean(endorseUrl) || Boolean(flagUrl) || Boolean(extra)
 
   // 2026-08-01 bug fix ("info does not seem to work"): this used to be a
   // plain <span title=...> — a hover-only native tooltip with no click
@@ -167,6 +175,7 @@ export const PageActionStrip = ({
           className="!text-xs !px-2 !py-1.5 !min-h-0"
         />
       )}
+      {extra}
     </div>
   )
 }

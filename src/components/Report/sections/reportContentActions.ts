@@ -12,26 +12,41 @@ export const printReport = () => {
 }
 
 /**
- * ACCURACY-0708-2: share the sender's exact computed `result` as a snapshot
- * (v2 token) rather than the partial quick-track inputs the old v1 token
- * carried — decode then renders this directly, with no recompute, so the
- * recipient sees precisely what's on screen right now.
+ * The real, token-minting share mechanism for /report (ACCURACY-0708-2):
+ * mints a self-contained `?share=<v2 token>` URL that base64url-encodes the
+ * sender's exact computed `AssessmentResult` (plus persona) directly in the
+ * URL — no server/session lookup involved, so a fresh visitor with no local
+ * assessment state can still decode and render it (see ReportView.tsx's
+ * hydration effect, which reads `?share=` via `decodeShareToken`).
  *
  * For an already-shared/example view (`shared`), re-share the URL the
  * recipient opened rather than regenerating a token from the recipient's own
  * assessment input, which would not match the report they're looking at.
+ *
+ * This is the SINGLE source of truth for building a /report share URL —
+ * both the in-page Share button (`shareReport` below) and the global top-bar
+ * ShareButton (registered via `usePageActionsStore` in ReportView.tsx) call
+ * this so they always produce the same working link, never a second/broken
+ * bare-path mechanism.
+ */
+export const buildReportShareUrl = (result: AssessmentResult, shared: boolean): string => {
+  if (shared) return window.location.href
+  const personaState = usePersonaStore.getState()
+  const token = encodeShareToken({
+    result,
+    persona: personaState.selectedPersona,
+  })
+  return `${window.location.origin}${window.location.pathname}?share=${token}`
+}
+
+/**
+ * ACCURACY-0708-2: share the sender's exact computed `result` as a snapshot
+ * (v2 token) rather than the partial quick-track inputs the old v1 token
+ * carried — decode then renders this directly, with no recompute, so the
+ * recipient sees precisely what's on screen right now.
  */
 export const shareReport = async (result: AssessmentResult, shared: boolean) => {
-  const url = shared
-    ? window.location.href
-    : (() => {
-        const personaState = usePersonaStore.getState()
-        const token = encodeShareToken({
-          result,
-          persona: personaState.selectedPersona,
-        })
-        return `${window.location.origin}${window.location.pathname}?share=${token}`
-      })()
+  const url = buildReportShareUrl(result, shared)
 
   if (navigator.share) {
     try {

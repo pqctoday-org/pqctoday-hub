@@ -42,31 +42,49 @@ export const FUNCTION_ITEMS = [
   { id: 'Signature', label: 'Signature' },
 ]
 
-// Grounded-or-removed (2026-07-28 regional-standards grounding audit): every
-// value here must have at least one row citing a real, dated reference
-// standard from that authority — not a competition-results page, not a
-// policy roadmap with no algorithm list, not an empty status_url, not a
-// participant/team site standing in for the standards body. KpqC, CACR,
-// Global, KR and CN were removed because no such standard exists yet for
-// them (Korea's KCMVP has zero PQC entries as of a direct fetch of KISA's
-// own list; China's National Cryptography Administration confirms no PQC
-// standard exists, ~2029 expected; 'Global' matched zero rows). BSI/ANSSI
-// split into two values now that ANSSI has its own grounded citations
-// (ANSSI-PG-083 v3.00) rather than being cited zero times under the old
-// combined label. See pqc-references/regional-transition-dates/INDEX.yaml
-// for the full per-standard verification record.
+// Grade-A remediation Phase 2 (2026-08-02, PLAN-04-ALGORITHMS.md): the prior
+// "grounded-or-removed" pass (2026-07-28) only checked
+// algorithms_transitions_*.csv (the Transition Guide tab's data source) and
+// missed that the Detailed Comparison tab reads a SEPARATE file
+// (pqc_complete_algorithm_reference_*.csv) with its own, coarser `region`
+// vocabulary. The two files disagree — the reference CSV never uses bare
+// 'BSI', 'ANSSI', 'ECCG', 'ASD', 'CRYPTREC', 'ACN' or 'CCN' (only the
+// combined 'BSI/ANSSI'), while it DOES use 'KpqC', 'CACR' and 'Global',
+// none of which were in the old list. Net effect: 7 of the 10 old options
+// returned zero rows on Detailed Comparison, while real, citation-backed
+// values in the data (BSI/ANSSI, KpqC, CACR, Global, plus transitions-only
+// 'KR' and 'CN') were unreachable.
+//
+// Fixed by deriving `id` as the UNION of every distinct, non-blank `region` /
+// `Region` value actually present across BOTH loaded CSVs (verified directly
+// against pqc_complete_algorithm_reference_07302026.csv and
+// algorithms_transitions_07282026.csv — every id below has at least one row
+// with a real, dated status_url citation in one or both files). Values are
+// kept separate rather than merged (e.g. 'KpqC' vs 'KR', 'CACR' vs 'CN')
+// because the two CSVs tag conceptually-similar rows with different literal
+// strings and the comparison in useAlgorithmExplorer.ts is exact-string
+// (`algo.region !== filterRegion` / `t.region !== filterRegion`) — merging
+// them would require inventing match semantics not present in the data
+// itself. If a future data-cleanup pass consolidates the CSV vocabulary,
+// shrink this list to match.
 export const REGION_ITEMS = [
   { id: 'All', label: 'All Regions' },
   { id: 'NIST', label: 'NIST (US)' },
   { id: 'IETF', label: 'IETF (Global)' },
+  { id: 'ETSI', label: 'ETSI (Europe)' },
   { id: 'BSI', label: 'BSI (Germany)' },
   { id: 'ANSSI', label: 'ANSSI (France)' },
+  { id: 'BSI/ANSSI', label: 'BSI/ANSSI (Germany/France)' },
   { id: 'ECCG', label: 'ECCG (EU)' },
-  { id: 'ETSI', label: 'ETSI (Europe)' },
   { id: 'ASD', label: 'ASD (Australia)' },
   { id: 'CRYPTREC', label: 'CRYPTREC (Japan)' },
   { id: 'ACN', label: 'ACN (Italy)' },
   { id: 'CCN', label: 'CCN (Spain)' },
+  { id: 'KpqC', label: 'KpqC (South Korea)' },
+  { id: 'KR', label: 'KR (South Korea, general)' },
+  { id: 'CACR', label: 'CACR (China)' },
+  { id: 'CN', label: 'CN (China, general)' },
+  { id: 'Global', label: 'Global' },
 ]
 
 export const STATUS_ITEMS = [

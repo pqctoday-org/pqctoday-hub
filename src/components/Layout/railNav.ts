@@ -54,11 +54,26 @@ export interface RailSections {
 
 /**
  * Computes the FOR YOU / MORE rail sections for a persona (or `null` for no
- * selection). `null` and `researcher` (whose PERSONA_NAV_PATHS is `null`,
- * meaning "show everything, no gating") both yield an empty FOR YOU — the rail
- * shows a collapsed "FOR YOU" header with nothing under it and the full nav
- * universe sits in MORE, which is the correct behavior for "no gating at all",
- * not a bug.
+ * selection).
+ *
+ * `researcher` is a deliberate special case (2026-08-02). Its
+ * `PERSONA_NAV_PATHS` entry is `null`, meaning "no gating — sees everything",
+ * and that `null` is load-bearing well outside the rail: `ReportContent.tsx`
+ * (`personaPaths === null` → every report section visible) and `GuidedTour.tsx`
+ * (`null` → no slide filtering) both branch on it. So we do NOT give researcher
+ * a PERSONA_NAV_PATHS array — that would silently gate its report sections and
+ * tour slides.
+ *
+ * What we DO fix here is the rail's *presentation*. Previously an empty FOR YOU
+ * dropped researcher into the flat "Everything, unfiltered" + MORE fallback —
+ * the same layout a brand-new visitor with no persona gets. Those two cases are
+ * genuinely different: no-persona means "we know nothing about you yet", while
+ * researcher is an explicit choice that deserves the same grouped
+ * Workflow/Practice/Reference rail every other persona gets. So researcher's
+ * FOR YOU is the full nav universe, ordered by NAV_PATH_LABELS, and
+ * `getForYouGroups` buckets it exactly as it does for everyone else.
+ *
+ * `null` (no persona yet) keeps the flat fallback — unchanged.
  *
  * The union `forYou ∪ more ∪ RAIL_ALWAYS_VISIBLE_PATHS ∪ RAIL_HIDDEN_PATHS`
  * always equals every key in NAV_PATH_LABELS — see railNav.test.ts.
@@ -66,7 +81,34 @@ export interface RailSections {
 export function getRailSections(persona: PersonaId | null): RailSections {
   // eslint-disable-next-line security/detect-object-injection
   const allowed = persona ? PERSONA_NAV_PATHS[persona] : null
-  const forYou = (allowed ?? []).filter((path) => !RAIL_HIDDEN_PATHS.includes(path))
+  // Paths MainLayout places itself, outside the FOR YOU group mechanism:
+  // '/' renders at the very top of the rail and '/about' as the very last row;
+  // '/learn', '/timeline' and '/threats' are appended to the Reference group
+  // and '/business/tools' to Practice, both unconditionally and by path
+  // literal (see MainLayout's `displayPaths`). Including any of them in
+  // researcher's FOR YOU would render them TWICE — once from group.paths and
+  // once from that render-only append.
+  // '/revisions' is excluded for the same reason it was dropped from every
+  // persona's PERSONA_NAV_PATHS on 2026-08-01 ("remove more and revisions from
+  // the left bar"). Researcher takes the whole nav universe, so without this it
+  // would silently reappear inside the Reference group — invisible today only
+  // because Reference is collapsed by default, which is not a guarantee.
+  const RAIL_SELF_PLACED_PATHS = [
+    '/',
+    '/about',
+    '/learn',
+    '/timeline',
+    '/threats',
+    '/business/tools',
+    '/revisions',
+  ]
+  const researcherSeesAll =
+    persona === 'researcher'
+      ? Object.keys(NAV_PATH_LABELS).filter((path) => !RAIL_SELF_PLACED_PATHS.includes(path))
+      : null
+  const forYou = (researcherSeesAll ?? allowed ?? []).filter(
+    (path) => !RAIL_HIDDEN_PATHS.includes(path)
+  )
   const more = Object.keys(NAV_PATH_LABELS).filter(
     (path) =>
       !RAIL_ALWAYS_VISIBLE_PATHS.includes(path) &&

@@ -81,6 +81,11 @@ import {
   type RailRowTreatment,
 } from './railNav'
 
+// Footer copyright year — computed once at module load so it never needs a
+// manual bump (was a hardcoded "© 2025" literal that would silently go stale
+// every January).
+const COPYRIGHT_YEAR = new Date().getFullYear()
+
 // ── Route → shared-component-id lookups for the top bar's icon cluster ──────
 // Both SourcesButton and UserManualButton require a page-specific id; only the
 // routes below have a registered ViewType / PageId (see authoritativeSourcesData.ts
@@ -133,6 +138,18 @@ const ROUTE_PAGE_ID: Partial<Record<string, PageId>> = {
   '/business/tools': 'business-center',
   '/learn': 'learn',
 }
+
+/**
+ * Prefix fallback for `ROUTE_PAGE_ID`, which is an exact-path table. Nested
+ * routes inherit their section's user-manual page — `/learn/pqc-101` and
+ * `/learn/quiz` both document under `learn`. Deliberately a small explicit
+ * list, not a generic "first path segment" rule: only sections whose nested
+ * routes genuinely share one manual entry belong here.
+ */
+const NESTED_ROUTE_PAGE_ID: ReadonlyArray<readonly [string, PageId]> = [['/learn/', 'learn']]
+
+const pageIdForNestedRoute = (pathname: string): PageId | undefined =>
+  NESTED_ROUTE_PAGE_ID.find(([prefix]) => pathname.startsWith(prefix))?.[1]
 
 // Bespoke Share title/text per route — preserved from each page's own
 // (now-removed) `<PageHeader shareTitle=... shareText=...>` call so the
@@ -409,11 +426,16 @@ export const MainLayout = () => {
       return next
     })
   }, [])
-  // MORE removed from the desktop rail entirely (2026-08-01 follow-up:
-  // "remove more and revisions from the left bar") — /revisions and anything
-  // else that would have lived in `more` are reachable via search (⌘K) or
-  // direct URL, not a rail row. `more` itself is kept (still used by the
-  // mobile "More" sheet, a separate surface not touched by this request).
+  // MORE removed from the desktop rail's FOR-YOU-populated case entirely
+  // (2026-08-01 follow-up: "remove more and revisions from the left bar") —
+  // for executive/developer/architect/ops/curious, whatever lands in `more`
+  // (e.g. /revisions for everyone, /explore or /leaders for some personas) is
+  // reachable via search (⌘K) or direct URL, not a rail row. `more` itself is
+  // kept — used by the mobile "More" sheet as before, AND (reachability fix,
+  // Grade-A remediation Phase 2, 2026-08-02) rendered directly in the desktop
+  // rail's `forYou.length === 0` fallback below, since for researcher/
+  // no-persona `more` is the ONLY place the other 13 routes exist at all —
+  // see that block's own comment for the full history.
 
   // "Update your profile" deep link — `/?picker=open` (PQC101Module's two
   // "Update profile"/"Set profile" links, AboutNextStepCTA's "Find my
@@ -490,7 +512,12 @@ export const MainLayout = () => {
       ? `${roleShortLabel} · ${regionLabel}, ${effectiveIndustries.join(', ')}`
       : `${roleShortLabel} · ${regionLabel}`
   const viewTypeForRoute = ROUTE_VIEW_TYPE[location.pathname]
-  const pageIdForRoute = ROUTE_PAGE_ID[location.pathname]
+  // Exact match first, then the nested-route fallback below. Both tables are
+  // keyed by top-level path, so `/learn/<module-id>` matched nothing and every
+  // module page silently rendered the top bar WITHOUT a Guide button — the
+  // gap §5 of HEADER-TOPBAR-STANDARDIZATION-PLAN-2026-08-01.md said to close
+  // BEFORE deleting PKILearningView's own copies of these buttons.
+  const pageIdForRoute = ROUTE_PAGE_ID[location.pathname] ?? pageIdForNestedRoute(location.pathname)
   const shareForRoute = ROUTE_SHARE[location.pathname]
 
   return (
@@ -568,6 +595,53 @@ export const MainLayout = () => {
                   treatment={isPathActive(path) ? 'active' : 'plain'}
                 />
               ))}
+              {/* Reachability fix (Grade-A remediation Phase 2, 2026-08-02):
+                  forYou is empty here, so forYouGroups below renders nothing
+                  at all — before this fix, `more` (the other 13 routes:
+                  /assess, /report, /migrate, /compliance, /business,
+                  /business/tools, /simulation, /playground, /explore,
+                  /algorithms, /library, /leaders, /patents) had NO desktop
+                  rail row whatsoever for researcher/no-persona, even though
+                  PERSONA_NAV_PATHS documents researcher as "unrestricted"
+                  (railNav.ts). The desktop MORE section was removed entirely
+                  in the 2026-08-01 declutter follow-up ("remove more and
+                  revisions from the left bar", commit 5cebd1d46) — that
+                  request was about decluttering personas whose FOR YOU was
+                  already populated (its own commit message claims "railNav's
+                  pure reachability logic is unchanged," which is true, but
+                  the *rendering* logic silently orphaned this one case).
+                  Mirrors the already-correct mobile "More" sheet: same `more`
+                  array, same muted RailRow 'more' variant, unconditional (no
+                  collapse toggle — nothing to collapse away from a user who
+                  has no other nav at all). /revisions stays excluded here,
+                  honoring that same 2026-08-01 decision independent of this
+                  fix — it remains reachable via search (⌘K), direct URL, or
+                  the mobile More sheet, same as for every other persona. */}
+              {/* Full-opacity `text-muted-foreground`, NOT the `/70` used by the
+                  "Everything, unfiltered" label above. At 10px this is small
+                  text, so WCAG AA wants 4.5:1: muted-foreground alone measures
+                  7.0:1 (light) / 7.5:1 (dark), but composited at 70% opacity it
+                  drops to 3.43:1 / 4.19:1 and fails. That regression broke the
+                  a11y gate on all 14 smoke routes when this section was first
+                  restored (CI run 30757441984) — this label renders on every
+                  page for no-persona and researcher visitors, so it failed
+                  everywhere at once. */}
+              {more.length > 0 && (
+                <span className="px-2 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  More
+                </span>
+              )}
+              {more
+                .filter((path) => path !== '/revisions')
+                .map((path) => (
+                  <RailRow
+                    key={path}
+                    path={path}
+                    label={labelFor(path)}
+                    active={isPathActive(path)}
+                    variant="more"
+                  />
+                ))}
             </>
           )}
           {forYouGroups.map((group) => {
@@ -795,8 +869,23 @@ export const MainLayout = () => {
                     <span>Ask</span>
                   </Button>
                   <ShareButton
-                    title={shareForRoute?.title ?? `${currentLabel} — PQC Today`}
-                    text={shareForRoute?.text}
+                    title={
+                      pageActions?.shareTitle ??
+                      shareForRoute?.title ??
+                      `${currentLabel} — PQC Today`
+                    }
+                    text={pageActions?.shareText ?? shareForRoute?.text}
+                    // BUG FIX (Grade-A remediation Phase 2, top-bar Share):
+                    // most routes' whole shareable state lives in the URL
+                    // already, so omitting `url` and falling back to
+                    // ShareButton's own `window.location.href` default is
+                    // correct for them. /report is the exception — its state
+                    // lives in local/session store, not the URL — so it
+                    // registers a self-contained token URL via
+                    // `usePageActionsStore` (see ReportView.tsx). Every other
+                    // route's `pageActions.url` stays undefined, preserving
+                    // the existing bare-URL fallback exactly.
+                    url={pageActions?.url}
                     variant="full"
                   />
                   <FAQButton compact />
@@ -1188,7 +1277,7 @@ export const MainLayout = () => {
               {/* Footer */}
               <footer className="border-t border-border mt-12 py-8 text-center text-muted-foreground text-sm px-4 print:hidden safe-bottom">
                 <p>
-                  © 2025 PQC Today. Data sourced from the public internet resources.{' '}
+                  © {COPYRIGHT_YEAR} PQC Today. Data sourced from the public internet resources.{' '}
                   <Link to="/terms" className="underline hover:text-foreground transition-colors">
                     Terms of Service
                   </Link>

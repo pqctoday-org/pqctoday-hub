@@ -3,7 +3,7 @@ import React, { useMemo } from 'react'
 import { useNavigate } from 'react-router'
 import { Package, ExternalLink, Trash2, CheckCircle, ShieldAlert } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
+import { useMigrateSelectionStore, useSelectedProductIds } from '@/store/useMigrateSelectionStore'
 import { softwareData } from '@/data/migrateData'
 import { LAYERS } from '@/data/infrastructureLayers'
 import type { SoftwareItem } from '@/types/MigrateTypes'
@@ -78,7 +78,18 @@ function renderPqcBadge(support: string) {
 
 export const InfrastructureSelector: React.FC = () => {
   const navigate = useNavigate()
-  const { myProducts, clearMyProducts, toggleMyProduct } = useMigrateSelectionStore()
+  // Effective selection = legacy myProducts ∪ the /migrate redesign's choice
+  // picks (see useSelectedProductIds' docstring). Remove/clear route through
+  // the cross-store actions so they stay consistent whichever path added the
+  // product — mirrors BookmarksPanel.tsx's established pattern.
+  const myProducts = useSelectedProductIds()
+  const removeSelectedProduct = useMigrateSelectionStore((s) => s.removeSelectedProduct)
+  const clearMyProducts = useMigrateSelectionStore((s) => s.clearMyProducts)
+  const clearPlan = useMigrateSelectionStore((s) => s.clearPlan)
+  const handleClearAll = () => {
+    clearMyProducts()
+    clearPlan()
+  }
 
   const groupedByLayer = useMemo(() => resolveSelections(myProducts), [myProducts])
 
@@ -128,7 +139,7 @@ export const InfrastructureSelector: React.FC = () => {
             <ExternalLink size={14} className="mr-1.5" />
             Edit in Migrate
           </Button>
-          <Button variant="ghost" size="sm" onClick={() => clearMyProducts()}>
+          <Button variant="ghost" size="sm" onClick={handleClearAll}>
             <Trash2 size={14} className="mr-1.5" />
             Clear All
           </Button>
@@ -172,7 +183,7 @@ export const InfrastructureSelector: React.FC = () => {
                         variant="ghost"
                         size="sm"
                         className="opacity-0 group-hover:opacity-100 transition-opacity h-6 px-2 text-xs text-muted-foreground hover:text-destructive"
-                        onClick={() => toggleMyProduct(key)}
+                        onClick={() => removeSelectedProduct(key)}
                       >
                         Remove
                       </Button>

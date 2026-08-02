@@ -40,6 +40,8 @@ import { getBeltTierLabel } from '@/data/personaConfig'
 import { useAwarenessScore } from '@/hooks/useAwarenessScore'
 import { decodeShareToken, type ReportShareSchemaV1 } from '@/utils/reportShareToken'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
+import { buildReportShareUrl } from './sections/reportContentActions'
 
 const VALID_SENSITIVITIES = new Set(['low', 'medium', 'high', 'critical'])
 const VALID_MIGRATIONS = new Set(['started', 'planning', 'not-started', 'unknown'])
@@ -460,6 +462,29 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
   // What actually renders: the sender's ephemeral snapshot when viewing a
   // shared/example link, otherwise the recipient's own live result.
   const result = sharedView ? sharedView.result : ownResult
+
+  // Register this page's Share URL with the global top bar (BUG FIX,
+  // Grade-A remediation Phase 2 — top-bar Share, per
+  // PLAN-02-CORE-FUNNEL.md/PLAN-00-TOP-CONNECTING-PLAN.md §6): the top bar's
+  // ShareButton (rendered in MainLayout.tsx) otherwise falls back to
+  // `window.location.href`, which on /report is just the bare `/report`
+  // path — a recipient who opens it lands on "No Report Yet" while the
+  // sender gets a success toast implying it worked. `buildReportShareUrl` is
+  // the SAME token-minting mechanism the in-page Share button
+  // (`ReportContent`'s `handleShare` → `shareReport`) already uses, so both
+  // affordances always produce the identical, self-contained `?share=`
+  // link. Gated on `!simEmbed`, same pattern as ThreatsDashboard/TimelineView,
+  // and on `result` being present — with no report yet there is nothing
+  // meaningful to share, so the top bar keeps its generic bare-path fallback.
+  useEffect(() => {
+    if (simEmbed || !result) return
+    const { setPageActions, clearPageActions } = usePageActionsStore.getState()
+    setPageActions({
+      title: 'PQC Assessment Report',
+      url: buildReportShareUrl(result, isShared),
+    })
+    return () => clearPageActions()
+  }, [simEmbed, result, isShared])
 
   // Active compute state: assessment exists, result still pending. Show
   // the progress log so users see the 10-stage pipeline grinding rather
