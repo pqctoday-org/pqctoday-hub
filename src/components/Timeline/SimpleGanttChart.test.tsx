@@ -170,6 +170,79 @@ describe('SimpleGanttChart', () => {
     expect(within(table).getByText('CSE')).toBeInTheDocument()
   })
 
+  describe('Per-country last-verified date (Phase 8.4)', () => {
+    it('does not render a Verified line when no event has a lastVerified date', () => {
+      renderG(<SimpleGanttChart {...defaultProps} />)
+      const table = screen.getByRole('table')
+      expect(within(table).queryByText(/^Verified /)).not.toBeInTheDocument()
+    })
+
+    it('renders the most recent Verified date next to the country name', () => {
+      const dataWithVerified: GanttCountryData[] = [
+        {
+          country: {
+            countryName: 'United States',
+            flagCode: 'US',
+            bodies: [
+              {
+                name: 'NIST',
+                fullName: 'National Institute of Standards and Technology',
+                countryCode: 'US',
+                events: [
+                  {
+                    startYear: 2024,
+                    endYear: 2026,
+                    phase: 'Research',
+                    type: 'Phase',
+                    title: 'PQC Research',
+                    description: 'Research phase',
+                    entityType: 'government',
+                    orgName: 'NIST',
+                    orgFullName: 'National Institute of Standards and Technology',
+                    countryName: 'United States',
+                    flagCode: 'US',
+                    lastVerified: '2026-01-10',
+                  },
+                  {
+                    startYear: 2025,
+                    endYear: 2025,
+                    phase: 'Policy',
+                    type: 'Milestone',
+                    title: 'US Policy Milestone',
+                    description: 'Policy milestone',
+                    entityType: 'government',
+                    orgName: 'NIST',
+                    orgFullName: 'National Institute of Standards and Technology',
+                    countryName: 'United States',
+                    flagCode: 'US',
+                    lastVerified: '2026-07-16',
+                  },
+                ],
+              },
+            ],
+          },
+          phases: [
+            {
+              phase: 'Research',
+              type: 'Phase',
+              title: 'PQC Research',
+              startYear: 2024,
+              endYear: 2026,
+              description: 'Research phase',
+              events: [],
+            },
+          ],
+        },
+      ]
+
+      renderG(<SimpleGanttChart {...defaultProps} data={dataWithVerified} countryItems={[]} />)
+      const table = screen.getByRole('table')
+      // getCountryLastVerified reads from country.bodies[].events[] — the
+      // most recent of the two dates set above should win.
+      expect(within(table).getByText('Verified 2026-07-16')).toBeInTheDocument()
+    })
+  })
+
   it('renders phase bars correctly', () => {
     renderG(<SimpleGanttChart {...defaultProps} />)
 

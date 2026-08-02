@@ -2,7 +2,7 @@
 /* eslint-disable security/detect-object-injection */
 import type { GanttCountryData, Phase } from '../../types/timeline'
 import { CountryFlag } from '../common/CountryFlag'
-import { phaseColors } from '../../data/timelineData'
+import { phaseColors, getCountryLastVerified } from '../../data/timelineData'
 import { ChevronRight, ChevronLeft, Flag, Rows3, GalleryHorizontal } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { GanttDetailPopover } from './GanttDetailPopover'
@@ -136,6 +136,7 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
       {viewMode === 'compact' &&
         data.map((countryData) => {
           const { country, phases } = countryData
+          const lastVerified = getCountryLastVerified(country)
           return (
             <div
               key={`compact-${country.countryName}`}
@@ -154,6 +155,11 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
                 <div>
                   <h3 className="font-bold text-foreground leading-tight">{country.countryName}</h3>
                   <p className="text-xs text-muted-foreground">{country.bodies[0]?.name}</p>
+                  {lastVerified && (
+                    <p className="text-[9px] text-muted-foreground/70 font-mono">
+                      Verified {lastVerified}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -202,6 +208,7 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
           const { country, phases } = countryData
           const currentIndex = getCurrentPhaseIndex(country.countryName)
           const currentPhase = phases[currentIndex]
+          const lastVerified = getCountryLastVerified(country)
 
           return (
             <div
@@ -225,6 +232,11 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
                       {country.countryName}
                     </h3>
                     <p className="text-xs text-muted-foreground">{country.bodies[0]?.name}</p>
+                    {lastVerified && (
+                      <p className="text-[9px] text-muted-foreground/70 font-mono">
+                        Verified {lastVerified}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>

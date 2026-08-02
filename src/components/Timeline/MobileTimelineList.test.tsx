@@ -211,4 +211,65 @@ describe('MobileTimelineList', () => {
       .filter((btn) => btn.textContent?.includes('Research') || btn.textContent?.includes('Policy'))
     expect(phaseCards.length).toBeGreaterThan(0)
   })
+
+  describe('Per-country last-verified date (Phase 8.4)', () => {
+    const dataWithVerified: GanttCountryData[] = [
+      {
+        country: {
+          countryName: 'United States',
+          flagCode: 'US',
+          bodies: [
+            {
+              name: 'NIST',
+              fullName: 'National Institute of Standards and Technology',
+              countryCode: 'US',
+              events: [
+                {
+                  startYear: 2024,
+                  endYear: 2026,
+                  phase: 'Research',
+                  type: 'Phase',
+                  title: 'PQC Research',
+                  description: 'Research phase',
+                  entityType: 'government',
+                  orgName: 'NIST',
+                  orgFullName: 'National Institute of Standards and Technology',
+                  countryName: 'United States',
+                  flagCode: 'US',
+                  lastVerified: '2026-07-16',
+                },
+              ],
+            },
+          ],
+        },
+        phases: [
+          {
+            phase: 'Research',
+            type: 'Phase',
+            title: 'PQC Research',
+            startYear: 2024,
+            endYear: 2026,
+            description: 'Research phase',
+            events: [],
+          },
+        ],
+      },
+    ]
+
+    it('does not render a Verified line when no event has a lastVerified date (swipe mode)', () => {
+      render(<MobileTimelineList data={mockData} />)
+      expect(screen.queryByText(/^Verified /)).not.toBeInTheDocument()
+    })
+
+    it('renders the Verified date in swipe mode when present', () => {
+      render(<MobileTimelineList data={dataWithVerified} />)
+      expect(screen.getByText('Verified 2026-07-16')).toBeInTheDocument()
+    })
+
+    it('renders the Verified date in compact ("All phases") mode when present', () => {
+      render(<MobileTimelineList data={dataWithVerified} />)
+      fireEvent.click(screen.getByRole('button', { name: /All phases/i }))
+      expect(screen.getByText('Verified 2026-07-16')).toBeInTheDocument()
+    })
+  })
 })

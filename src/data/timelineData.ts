@@ -554,3 +554,23 @@ export function transformToGanttData(countries: CountryData[]): GanttCountryData
     }
   })
 }
+
+/**
+ * Most recent human-verification date across a country's events (CSV
+ * `last_verified` column — added 2026-07-16, maintenance-facing, sparse
+ * coverage today). Returns undefined when no event for this country has
+ * been reviewed yet; callers should render nothing rather than a
+ * placeholder in that case (Phase 8.4 — per-country freshness stamp).
+ * ISO `YYYY-MM-DD` strings compare correctly lexicographically.
+ */
+export function getCountryLastVerified(country: CountryData): string | undefined {
+  let latest: string | undefined
+  for (const body of country.bodies) {
+    for (const event of body.events) {
+      if (event.lastVerified && (!latest || event.lastVerified > latest)) {
+        latest = event.lastVerified
+      }
+    }
+  }
+  return latest
+}
