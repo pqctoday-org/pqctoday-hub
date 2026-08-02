@@ -1,40 +1,34 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
-import { Outlet, NavLink, Link, useLocation } from 'react-router'
+import { Outlet, NavLink, Link, useLocation, useNavigate } from 'react-router'
 import { motion } from 'framer-motion'
 import {
-  Shield,
-  Globe,
-  Users,
-  FlaskConical,
-  BookOpen,
-  AlertTriangle,
   Info,
-  GraduationCap,
-  ShieldCheck,
-  ArrowRightLeft,
-  Home,
-  ClipboardCheck,
-  FileBarChart,
-  LayoutDashboard,
   MoreHorizontal,
   X,
   Plane,
   Clock,
-  Compass,
   Search,
-  ScrollText,
   UserCog,
-  Gamepad2,
+  Bot,
+  Map,
+  Wrench,
+  ChevronDown,
+  MessageCircle,
+  type LucideIcon,
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { WhatsNewModal } from '../ui/WhatsNewModal'
 import { DisclaimerModal } from '../ui/DisclaimerModal'
 import { AchievementToast } from '../ui/AchievementToast'
 import { PhaseCompletionToast } from '../ui/PhaseCompletionToast'
+import { SourcesButton } from '../ui/SourcesButton'
+import { ShareButton } from '../ui/ShareButton'
+import { GlossaryButton } from '../ui/GlossaryButton'
+import { FAQButton } from '../ui/FAQButton'
+import { UserManualButton } from '../ui/UserManualButton'
 
 import { GuidedTour } from '../common/GuidedTour'
-import { Breadcrumb } from '../common/Breadcrumb'
 import { PhaseContextBanner } from '../shared/PhaseContextBanner'
 import { ResumeSimBar } from '../shared/ResumeSimBar'
 import { RightPanelFAB } from '../RightPanel/RightPanelFAB'
@@ -46,9 +40,12 @@ import { useAirplaneModeStore } from '../../store/useAirplaneModeStore'
 import { CommandPalette } from '../Search/CommandPalette'
 import { useCommandPaletteStore } from '../../store/useCommandPaletteStore'
 import { PersonaSwitchModal } from '../Persona/PersonaSwitchModal'
+import { PageActionStrip } from '../common/PageActionStrip'
+import { usePageActionsStore } from '../../store/usePageActionsStore'
 import { PreviewBanner } from '../common/PreviewBanner'
 import { useWorkshopUrlAutostart } from '../../hooks/useWorkshopUrlAutostart'
 import { ScrollFadeContainer } from '../ui/ScrollFadeContainer'
+import { useIsBelowLgViewport } from '../../hooks/useIsBelowLgViewport'
 
 const RightPanel = React.lazy(() =>
   import('../RightPanel/RightPanel').then((m) => ({ default: m.RightPanel }))
@@ -63,12 +60,238 @@ const WorkshopOverlayHost = React.lazy(() =>
 )
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { useHistoryStore } from '../../store/useHistoryStore'
-import { PERSONA_NAV_PATHS, ALWAYS_VISIBLE_PATHS, NAV_PATH_LABELS } from '../../data/personaConfig'
+import {
+  PERSONA_NAV_PATHS,
+  ALWAYS_VISIBLE_PATHS,
+  NAV_PATH_LABELS,
+  PERSONA_MARKED_NAV_PATHS,
+  PERSONA_TIMELINE_REGION,
+  PERSONA_THREATS_DEFAULT_INDUSTRIES,
+} from '../../data/personaConfig'
+import { REGION_LABELS } from '../../data/regionIndustryOptions'
+import { PERSONAS } from '../../data/learningPersonas'
+import type { ViewType } from '../../data/authoritativeSourcesData'
+import type { PageId } from '../../data/userManualData'
+import {
+  getRailSections,
+  getRowTreatment,
+  getMobileVisiblePaths,
+  getForYouGroups,
+  RAIL_ICON_MAP,
+  type RailRowTreatment,
+} from './railNav'
+
+// ── Route → shared-component-id lookups for the top bar's icon cluster ──────
+// Both SourcesButton and UserManualButton require a page-specific id; only the
+// routes below have a registered ViewType / PageId (see authoritativeSourcesData.ts
+// / userManualData.ts). Routes without an entry simply omit that button, same
+// as PageHeader.tsx's own `showSources = !!viewType` conditional.
+// '/compliance' is deliberately ABSENT here — final self-review finding
+// (2026-08-01, this fixup session's verification pass): ux-standard.md P10
+// has a MUST NOT rule ("Do not render SourcesButton on this page — provenance
+// is surfaced inline via TrustPathPopover on framework tiles and a
+// ContentUpdatesFeed in PageHeader"), and ComplianceView.tsx's own
+// (now-removed) PageHeader call enforced it with an explicit `suppressSources`
+// prop alongside `viewType="Compliance"`. The nav-rebuild commit (857b8219b)
+// that introduced this global top-bar Sources button copied every page's
+// viewType into this map WITHOUT carrying over that suppression, so the top
+// bar had already been silently violating the MUST NOT since before this
+// session started (the header-dedup commit, f5421407c, then preserved that
+// pre-existing gap rather than introducing it fresh — it never modeled
+// `suppressSources` at all). Caught auditing Sources coverage for this
+// review; fixed by omission rather than adding a suppression mechanism, since
+// '/compliance' is the only route that ever needed one.
+const ROUTE_VIEW_TYPE: Partial<Record<string, ViewType>> = {
+  '/timeline': 'Timeline',
+  '/library': 'Library',
+  '/threats': 'Threats',
+  '/leaders': 'Leaders',
+  '/algorithms': 'Algorithms',
+  '/migrate': 'Migrate',
+  // OpenSSL Studio's own (now-removed) PageHeader call passed viewType="Library"
+  // (it reuses the Library authoritative-sources list — there is no distinct
+  // "OpenSSL" ViewType) — preserved here so /openssl keeps its Sources button.
+  '/openssl': 'Library',
+}
+
+const ROUTE_PAGE_ID: Partial<Record<string, PageId>> = {
+  '/timeline': 'timeline',
+  '/algorithms': 'algorithms',
+  '/library': 'library',
+  '/playground': 'playground',
+  '/openssl': 'openssl-studio',
+  '/threats': 'threats',
+  '/leaders': 'leaders',
+  '/compliance': 'compliance',
+  '/migrate': 'migrate',
+  '/assess': 'assess',
+  '/report': 'report',
+  '/business': 'business-center',
+  // BusinessToolsGrid ('/business/tools') is a separate nested route from
+  // BusinessCenterView ('/business' index) but shares the same pageId — its
+  // own (now-removed) PageHeader call passed pageId="business-center" too.
+  '/business/tools': 'business-center',
+  '/learn': 'learn',
+}
+
+// Bespoke Share title/text per route — preserved from each page's own
+// (now-removed) `<PageHeader shareTitle=... shareText=...>` call so the
+// global top bar's ShareButton keeps the same copy instead of falling back to
+// the generic `"{route label} — PQC Today"` title for every route. Routes
+// absent here (e.g. /learn, /migrate) never had a bespoke shareTitle on their
+// PageHeader either — they keep the generic fallback, same as before.
+//
+// Two of these intentionally approximate rather than reproduce a dynamic
+// shareText (see IMPLEMENTATION-PLAN follow-up, 2026-08-01 PageHeader
+// consolidation):
+//  - /algorithms used `${algorithmData.length || 'dozens of'}` — reusing the
+//    same page's own "no data yet" fallback copy ("dozens of") rather than
+//    duplicating its data-loading hook here.
+//  - /business/tools used `${BUSINESS_TOOLS.length}` — reusing the page's own
+//    static `description` copy instead of importing the tools registry (a
+//    sizeable data+icon module) into the always-loaded MainLayout shell.
+const ROUTE_SHARE: Partial<Record<string, { title: string; text?: string }>> = {
+  '/algorithms': {
+    title: 'PQC Algorithm Comparison — ML-KEM, ML-DSA, SLH-DSA & More',
+    text: 'Compare dozens of cryptographic algorithms side-by-side — security levels, key sizes, and performance.',
+  },
+  '/assess': {
+    title: 'PQC Risk Assessment — Post-Quantum Cryptography Migration Tool',
+    text: 'Get a personalized quantum risk score, migration priorities, and actionable recommendations for your organization.',
+  },
+  '/business': {
+    title: 'PQC Command Center — Quantum Readiness Workspace',
+    text: 'Your PQC readiness command center — risk, compliance, governance, and actionable next steps.',
+  },
+  '/business/tools': {
+    title: 'PQC Business Tools — Planning & Governance Toolkit',
+    text: 'Interactive planning and governance tools for PQC migration — ROI calculators, RACI builders, vendor scorecards, and more.',
+  },
+  '/compliance': {
+    title: 'PQC Compliance Tracker — Standards, Certifications, Frameworks',
+    text: 'Explore PQC compliance: standardization bodies, certification programs (FIPS 140-3, ACVP, Common Criteria), and regulatory frameworks.',
+  },
+  '/leaders': {
+    title: 'PQC Community — People Contributing to the Advances of Post-Quantum Cryptography',
+    text: 'Meet the people contributing to the advances of post-quantum cryptography.',
+  },
+  '/library': {
+    title: 'PQC Library — NIST, IETF, ETSI & More',
+    text: 'Explore post-quantum cryptography standards, drafts, and key documents.',
+  },
+  '/openssl': {
+    title: 'OpenSSL Studio — Interactive OpenSSL v3.6.2 in Your Browser',
+    text: 'Run real OpenSSL 3.6.2 commands — key generation, certificates, KEM, PQC — entirely in your browser via WebAssembly.',
+  },
+  '/patents': {
+    title: 'PQC Patents — Post-Quantum Migration Patent Corpus',
+    text: 'Cryptographic patents relevant to post-quantum migration, enriched across 25 technical dimensions.',
+  },
+  '/report': {
+    title: 'PQC Assessment Report — Post-Quantum Cryptography Risk Analysis',
+    text: 'View your personalized PQC risk score, migration priorities, and actionable recommendations.',
+  },
+  '/threats': {
+    title: 'Quantum Threats Dashboard — Industry Risk Analysis',
+    text: 'Detailed analysis of quantum threats across industries — criticality ratings, at-risk cryptography, and PQC replacements.',
+  },
+  '/timeline': {
+    title: 'PQC Migration Timeline — Global Post-Quantum Cryptography Roadmap',
+    text: 'Compare PQC migration timelines across nations — track phases from discovery to full migration.',
+  },
+}
+
+// Left-border + tint per FOR YOU row treatment. MORE rows never use these —
+// they get a fixed, smaller/muted style regardless of treatment (see RailRow).
+const ROW_TREATMENT_CLASS: Record<RailRowTreatment, string> = {
+  featured: 'border-l-2 border-l-accent bg-accent/10 text-accent hover:bg-accent/15',
+  marked:
+    'border-l-2 border-dashed border-l-warning/70 text-muted-foreground hover:text-foreground',
+  active: 'border-l-2 border-l-primary bg-primary/10 text-primary',
+  plain:
+    'border-l-2 border-l-transparent text-muted-foreground hover:text-foreground hover:bg-muted/20',
+}
+
+/** Route label lookup, defaulting to the raw path — centralizes the one
+ * dynamic-key access instead of repeating it (and its lint suppression) at
+ * every call site. */
+function labelFor(path: string): string {
+  // eslint-disable-next-line security/detect-object-injection
+  return NAV_PATH_LABELS[path] ?? path
+}
+
+/** Route icon lookup, defaulting to a generic Info glyph. */
+function iconFor(path: string): LucideIcon {
+  // eslint-disable-next-line security/detect-object-injection
+  return RAIL_ICON_MAP[path] ?? Info
+}
+
+interface RailRowProps {
+  path: string
+  label: string
+  icon?: LucideIcon
+  active: boolean
+  /** Only meaningful when `variant` is 'primary' (the default). */
+  treatment?: RailRowTreatment
+  /** 'more' renders the smaller/muted style the spec requires for MORE rows —
+   * it never gets the marked/dashed/featured FOR YOU treatments. */
+  variant?: 'primary' | 'more'
+  title?: string
+  onNavigate?: () => void
+}
+
+/** One rail row (desktop rail FOR YOU/MORE, or the mobile "More" sheet). */
+const RailRow: React.FC<RailRowProps> = ({
+  path,
+  label,
+  icon,
+  active,
+  treatment = 'plain',
+  variant = 'primary',
+  title,
+  onNavigate,
+}) => {
+  const Icon = icon ?? iconFor(path)
+  const isMore = variant === 'more'
+  const treatmentClass = isMore
+    ? active
+      ? 'text-foreground'
+      : 'text-muted-foreground hover:text-foreground'
+    : // eslint-disable-next-line security/detect-object-injection
+      ROW_TREATMENT_CLASS[treatment]
+
+  return (
+    <NavLink to={path} end={path === '/'} onClick={onNavigate} className="block w-full">
+      {({ isActive }) => (
+        <Button
+          variant="ghost"
+          size="sm"
+          aria-label={`${label} view`}
+          aria-current={isActive ? 'page' : undefined}
+          title={title ?? label}
+          className={`w-full justify-start gap-2 min-h-[36px] rounded-md ${
+            isMore ? 'pl-3 pr-2 text-[11px]' : 'pl-2 pr-2 text-[11px]'
+          } ${treatmentClass}`}
+        >
+          <Icon size={isMore ? 13 : 16} aria-hidden="true" className="shrink-0" />
+          <span className="truncate">{label}</span>
+        </Button>
+      )}
+    </NavLink>
+  )
+}
 
 export const MainLayout = () => {
   const location = useLocation()
-  const { selectedPersona, viewAccess } = usePersonaStore()
-  const { isOpen: isPanelOpen, toggle: openPanel } = useRightPanelStore()
+  const navigate = useNavigate()
+  const {
+    selectedPersona,
+    viewAccess,
+    hasSkippedPersonalization,
+    selectedRegion,
+    selectedIndustries,
+  } = usePersonaStore()
+  const { isOpen: isPanelOpen, toggle: openPanel, open: openRightPanel } = useRightPanelStore()
   const recordVisit = useHistoryStore((s) => s.recordVisit)
   // Auto-start Workshop Video Mode from `?workshop=video&autoplay=1` (Playwright recorder hook).
   useWorkshopUrlAutostart()
@@ -76,6 +299,22 @@ export const MainLayout = () => {
   React.useEffect(() => {
     recordVisit(location.pathname)
   }, [location.pathname, recordVisit])
+
+  // The app's real scroll container is this inner div (see the ref below), not
+  // window/document — ScrollToTop.tsx's window.scrollTo only fires on a real
+  // route change, and picking a persona (Role Home card, or the top-bar
+  // switcher from anywhere) never changes the route (always `/`). Without
+  // this, switching persona while scrolled down left the new board rendered
+  // at the old scroll offset — its hero/CTA buttons pushed off-screen above
+  // the viewport, reading as "the buttons don't work" when they were just not
+  // visible. Resets on both persona change and pathname change (belt-and-
+  // suspenders alongside ScrollToTop.tsx for this specific container).
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null)
+  React.useLayoutEffect(() => {
+    // Plain scrollTop assignment, not scrollTo({behavior:'instant'}) - jsdom
+    // (used by every test in this file) doesn't implement Element.scrollTo.
+    if (scrollContainerRef.current) scrollContainerRef.current.scrollTop = 0
+  }, [selectedPersona, location.pathname])
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -101,166 +340,162 @@ export const MainLayout = () => {
   // Build timestamp - set at compile time
   const buildTime = __BUILD_TIMESTAMP__
 
-  const navItems = [
-    { path: '/', label: NAV_PATH_LABELS['/'], icon: Home, end: true },
-    {
-      path: '/simulation',
-      label: NAV_PATH_LABELS['/simulation'],
-      icon: Gamepad2,
-      section: 'start',
-    },
-    // — Explore entry point (curious persona only) —
-    {
-      path: '/explore',
-      label: NAV_PATH_LABELS['/explore'],
-      icon: Compass,
-      section: 'start',
-      curiousOnly: true,
-    },
-    // — Start the Journey —
-    { path: '/learn', label: NAV_PATH_LABELS['/learn'], icon: GraduationCap, section: 'start' },
-    { path: '/timeline', label: NAV_PATH_LABELS['/timeline'], icon: Globe, section: 'start' },
-    {
-      path: '/algorithms',
-      label: NAV_PATH_LABELS['/algorithms'],
-      icon: Shield,
-      section: 'start',
-      hiddenOnMobile: true,
-      mobileMore: true,
-      moreOrder: 1,
-    },
-    // — My Journey —
-    {
-      path: '/migrate',
-      label: NAV_PATH_LABELS['/migrate'],
-      icon: ArrowRightLeft,
-      section: 'journey',
-    },
-    {
-      path: '/compliance',
-      label: NAV_PATH_LABELS['/compliance'],
-      icon: ShieldCheck,
-      section: 'journey',
-      hiddenOnMobile: true,
-      mobileMore: true,
-      moreOrder: 3,
-    },
-    // — Assess & Report —
-    { path: '/assess', label: NAV_PATH_LABELS['/assess'], icon: ClipboardCheck, section: 'assess' },
-    {
-      path: '/report',
-      label: NAV_PATH_LABELS['/report'],
-      icon: FileBarChart,
-      section: 'assess',
-      hiddenOnMobile: true,
-      mobileMore: true,
-      moreOrder: 4,
-    },
-    {
-      path: '/business',
-      label: NAV_PATH_LABELS['/business'],
-      icon: LayoutDashboard,
-      section: 'assess',
-      // Visible on mobile for executive/architect; hidden for others
-      hiddenOnMobile: !(selectedPersona === 'executive' || selectedPersona === 'architect'),
-      mobileMore: selectedPersona !== 'executive' && selectedPersona !== 'architect',
-      moreOrder: 7,
-    },
-    {
-      path: '/playground',
-      label: NAV_PATH_LABELS['/playground'],
-      icon: FlaskConical,
-      hiddenOnMobile: true,
-      mobileMore: true,
-      section: 'assess',
-      moreOrder: 2,
-    },
-    // — Keep Up to Date —
-    // Threats + Library moved to the mobile "More" sheet (2026-08-01 remediation):
-    // with Home/Simulation/Learn/Timeline/Migrate/Assess already competing for
-    // the same 390px row, 8 always-visible items left almost nothing reachable
-    // without scrolling and no cue that scrolling was even possible. Both stay
-    // fully visible on desktop (lg:block, same as every other hiddenOnMobile item).
-    {
-      path: '/threats',
-      label: NAV_PATH_LABELS['/threats'],
-      icon: AlertTriangle,
-      section: 'current',
-      hiddenOnMobile: true,
-      mobileMore: true,
-      moreOrder: 5,
-    },
-    {
-      path: '/library',
-      label: NAV_PATH_LABELS['/library'],
-      icon: BookOpen,
-      section: 'current',
-      hiddenOnMobile: true,
-      mobileMore: true,
-      moreOrder: 6,
-    },
-    {
-      path: '/leaders',
-      label: NAV_PATH_LABELS['/leaders'],
-      icon: Users,
-      section: 'current',
-      hiddenOnMobile: true,
-      mobileMore: true,
-      moreOrder: 8,
-    },
-    {
-      path: '/patents',
-      label: NAV_PATH_LABELS['/patents'],
-      icon: ScrollText,
-      section: 'current',
-      hiddenOnMobile: true,
-      mobileMore: true,
-      moreOrder: 9,
-    },
-    {
-      path: '/about',
-      label: NAV_PATH_LABELS['/about'],
-      icon: Info,
-      hiddenOnMobile: true,
-      mobileMore: true,
-      moreOrder: 10,
-    },
-  ]
+  // ── Rail sections (persona-journeys A-grade redesign, 2026-08-01) ─────────
+  // FOR YOU / MORE are derived from PERSONA_NAV_PATHS via a pure, unit-tested
+  // helper (railNav.ts) so desktop rail + mobile sheet share one source of
+  // truth instead of drifting the way the old static `navItems` array could.
+  const { forYou, more } = React.useMemo(() => getRailSections(selectedPersona), [selectedPersona])
+  const forYouGroups = React.useMemo(() => getForYouGroups(forYou), [forYou])
+  const mobileVisiblePaths = React.useMemo(
+    () => getMobileVisiblePaths(selectedPersona),
+    [selectedPersona]
+  )
 
-  // Abbreviated labels for stacked icon+label nav (only override labels that don't fit)
-  const SHORT_LABELS: Record<string, string> = {
-    'Command Center': 'Command',
-  }
+  // Persona-journeys A-grade redesign (2026-08-01): the Curious persona's
+  // mobile board (`CuriousMobileBoard`, rendered by LandingView at '/') is a
+  // standalone screen with its OWN header (brand + search + "More") and its
+  // OWN persistent bottom tab bar — not a small tweak to this file's mobile
+  // nav row, a genuinely different navigation paradigm scoped to this one
+  // persona/route/viewport combination (IMPLEMENTATION-PLAN-2026-08-01.md
+  // §3.4). Left un-suppressed, MainLayout's own mobile header + "More" sheet
+  // would double up underneath/above it. `isBelowLg` uses the exact same
+  // breakpoint this file's `hidden lg:flex` / `lg:hidden` rail split already
+  // uses (see useIsBelowLgViewport's own docs) and LandingView gates its
+  // CuriousMobileBoard render on the identical condition, so the two can
+  // never disagree about when this applies. Scoped to `pathname === '/'`
+  // specifically — every OTHER route (e.g. a curious-mobile user on
+  // `/library`) must keep this file's normal header/nav so they aren't
+  // stranded with no way to navigate away.
+  const isBelowLg = useIsBelowLgViewport()
+  const isCuriousMobileTakeover =
+    selectedPersona === 'curious' && isBelowLg && location.pathname === '/'
+
+  const isPathActive = React.useCallback(
+    (path: string) =>
+      path === '/' ? location.pathname === '/' : location.pathname.startsWith(path),
+    [location.pathname]
+  )
 
   const [moreMenuOpen, setMoreMenuOpen] = React.useState(false)
-  const [mobilePersonaSwitchOpen, setMobilePersonaSwitchOpen] = React.useState(false)
+  const [personaSwitchOpen, setPersonaSwitchOpen] = React.useState(false)
 
   // Close the More menu on route changes (e.g., browser back button)
   React.useEffect(() => {
     setMoreMenuOpen(false)
   }, [location.pathname])
 
-  const personaAllowed = selectedPersona ? PERSONA_NAV_PATHS[selectedPersona] : null
-  const visibleNavItems = navItems
-    .filter((item) => !item.curiousOnly || selectedPersona === 'curious')
-    .filter((item) =>
-      personaAllowed
-        ? ALWAYS_VISIBLE_PATHS.includes(item.path) || personaAllowed.includes(item.path)
-        : true
-    )
-
-  // Items that appear in the mobile "More" bottom sheet, ordered by frequency/importance
-  const moreNavItems = visibleNavItems
-    .filter((item) => item.mobileMore)
-    .slice()
-    .sort((a, b) => (a.moreOrder ?? 999) - (b.moreOrder ?? 999))
-  const isMoreActive = moreNavItems.some((item) =>
-    item.end ? location.pathname === item.path : location.pathname.startsWith(item.path)
+  // ── Desktop rail's collapsible MORE section (2026-08-01 declutter follow-up) ──
+  // Collapsed by default per the user's live-review request ("too cluttered...
+  // collapsible sections"). Plain local component state, NOT a persisted
+  // usePersonaStore field — judgment call (flagged): a persisted "user closed
+  // MORE" preference would fight the auto-expand-on-active-route behavior
+  // right below (which must win open on every landing whether or not the user
+  // previously collapsed it), and this is cheap, low-stakes UI chrome a user
+  // can re-expand in one click — not worth a version bump + migrate() +
+  // onRehydrateStorage for. Resets to collapsed each session/full reload.
+  // Per-FOR-YOU-sub-group collapse (2026-08-01 follow-up: "collapse is per
+  // section not just a more at the end"). Defaults OPEN for Workflow/Practice
+  // (the essential, contextual-to-role content) but COLLAPSED for Reference
+  // (2026-08-01 follow-up: "collapse reference by default" — standing
+  // reference/community material, lower priority than day-to-day workflow).
+  const [collapsedForYouGroups, setCollapsedForYouGroups] = React.useState<Set<string>>(
+    () => new Set(['reference'])
   )
+  const toggleForYouGroup = React.useCallback((groupId: string) => {
+    setCollapsedForYouGroups((prev) => {
+      const next = new Set(prev)
+      if (next.has(groupId)) next.delete(groupId)
+      else next.add(groupId)
+      return next
+    })
+  }, [])
+  // MORE removed from the desktop rail entirely (2026-08-01 follow-up:
+  // "remove more and revisions from the left bar") — /revisions and anything
+  // else that would have lived in `more` are reachable via search (⌘K) or
+  // direct URL, not a rail row. `more` itself is kept (still used by the
+  // mobile "More" sheet, a separate surface not touched by this request).
+
+  // "Update your profile" deep link — `/?picker=open` (PQC101Module's two
+  // "Update profile"/"Set profile" links, AboutNextStepCTA's "Find my
+  // starting point" fallback). Previously handled by PersonalizationSection's
+  // own `?scroll=persona`/`?picker=open` effect, which scrolled to/opened the
+  // wizard; both retired together (see PersonalizationSection.tsx's removal).
+  // PQC101Module's two links used `?scroll=persona` — repointed to
+  // `?picker=open` so both CTAs share this one handler. Judgment call (flagged
+  // in the build report): opens the persona-switch modal — the same identity
+  // control the rail's role-switcher opens — rather than the new region/
+  // industry pill, since these three CTAs were always about "pick a persona",
+  // not region/industry. When no persona is set and Role Home hasn't been
+  // skipped, Role Home already renders on `/` and fully covers this, so the
+  // effect no-ops instead of stacking a second persona picker on top of it.
+  React.useEffect(() => {
+    if (location.pathname !== '/') return
+    const params = new URLSearchParams(location.search)
+    if (params.get('picker') !== 'open') return
+    if (selectedPersona || hasSkippedPersonalization) {
+      setPersonaSwitchOpen(true)
+    }
+    navigate('/', { replace: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- deliberately re-runs only on navigation to '/' with the param present; navigate/selectedPersona/hasSkippedPersonalization are read, not depended on, for re-triggering
+  }, [location.pathname, location.search])
+
+  // Mobile "More" sheet content = everything reachable minus what's already an
+  // icon in the mobile row, grouped the same way the desktop rail is (FOR YOU
+  // then MORE) so the two surfaces never disagree about what's reachable.
+  const mobileSheetForYou = forYou.filter((p) => !mobileVisiblePaths.includes(p))
+  const mobileSheetMore = more.filter((p) => !mobileVisiblePaths.includes(p))
+  // CACP has no direct shortcut anywhere in nav (2026-08-01 follow-up) —
+  // Playground grid only.
+  const mobileSheetAllPaths = [...mobileSheetForYou, ...mobileSheetMore]
+  const isMoreActive = mobileSheetAllPaths.some((p) => isPathActive(p))
+
+  // ── Top bar data ───────────────────────────────────────────────────────────
+  const currentLabel = NAV_PATH_LABELS[location.pathname] ?? 'PQC Today'
+  const markedPaths = selectedPersona
+    ? // eslint-disable-next-line security/detect-object-injection
+      (PERSONA_MARKED_NAV_PATHS[selectedPersona] ?? [])
+    : []
+  // Simpler of the two spec-offered options: show the WIP chip whenever this
+  // persona has ANY marked/pending rail rows at all, rather than only while
+  // the user is actively on one of those routes.
+  const showWipChip = markedPaths.length > 0
+  const pageActions = usePageActionsStore((s) => s.current)
+  // Merged persona + region/industry summary (2026-08-01 follow-up: "merge
+  // the persona filtering in one drop down" / "become a persona dropdown") —
+  // ONE button now carries all three; clicking it opens PersonaSwitchModal,
+  // which has the region/industry pickers folded into it (was a separate
+  // RegionIndustryPill trigger before this).
+  const roleShortLabel = selectedPersona
+    ? // eslint-disable-next-line security/detect-object-injection
+      (PERSONAS[selectedPersona]?.label ?? 'Everyone')
+    : 'Everyone'
+  const hasCustomRegion = selectedRegion !== null && selectedRegion !== 'global'
+  const hasCustomIndustries = selectedIndustries.length > 0
+  const effectiveRegion = hasCustomRegion
+    ? selectedRegion
+    : selectedPersona
+      ? // eslint-disable-next-line security/detect-object-injection
+        PERSONA_TIMELINE_REGION[selectedPersona]
+      : 'global'
+  const effectiveIndustries = hasCustomIndustries
+    ? selectedIndustries
+    : selectedPersona
+      ? // eslint-disable-next-line security/detect-object-injection
+        PERSONA_THREATS_DEFAULT_INDUSTRIES[selectedPersona]
+      : []
+  // eslint-disable-next-line security/detect-object-injection
+  const regionLabel = REGION_LABELS[effectiveRegion] ?? effectiveRegion
+  const roleLabel =
+    effectiveIndustries.length > 0
+      ? `${roleShortLabel} · ${regionLabel}, ${effectiveIndustries.join(', ')}`
+      : `${roleShortLabel} · ${regionLabel}`
+  const viewTypeForRoute = ROUTE_VIEW_TYPE[location.pathname]
+  const pageIdForRoute = ROUTE_PAGE_ID[location.pathname]
+  const shareForRoute = ROUTE_SHARE[location.pathname]
 
   return (
     <div
-      className={`h-dvh flex flex-col bg-background text-foreground print:min-h-0 print:h-auto overflow-clip transition-[padding] duration-300 ${
+      className={`h-dvh flex flex-col lg:flex-row bg-background text-foreground print:min-h-0 print:h-auto overflow-clip transition-[padding] duration-300 ${
         isPanelOpen ? 'sm:pr-[40vw]' : ''
       }`}
     >
@@ -272,393 +507,731 @@ export const MainLayout = () => {
         Skip to main content
       </a>
 
-      {/* Sim header strip — kept visible on every hub resource opened from the
-          PQC Today Sim, so the simulation context is never lost on a redirect. */}
-      <ResumeSimBar />
-
-      <header
-        className="m-4 sticky top-[max(1rem,env(safe-area-inset-top))] z-50 transition-all duration-300 print:hidden"
-        role="banner"
-      >
-        <div className="glass-panel p-2 lg:p-4 flex w-full justify-center lg:justify-between items-center relative">
-          <div className="flex flex-row items-center gap-4">
-            {/* Mobile brand — always a button; toggles Airplane Mode on/off */}
-            <Button
-              variant="ghost"
-              type="button"
-              onClick={() => setAirplaneMode(!airplaneMode)}
-              className="lg:hidden flex-shrink-0 flex items-center gap-1.5 min-h-[44px] min-w-[44px]"
-              aria-label={
-                airplaneMode ? 'Airplane Mode on — tap to go online' : 'Toggle Airplane Mode'
-              }
-              title={airplaneMode ? 'Tap to disable Airplane Mode' : 'Tap to enable Airplane Mode'}
-            >
-              <span className="text-base font-bold text-gradient">PQC</span>
+      {/* ── Desktop left rail (lg+) — persistent two-axis nav ──────────────── */}
+      <aside className="hidden lg:flex lg:flex-col lg:w-[168px] lg:shrink-0 border-r border-border/60 bg-card/30 print:hidden">
+        {/* Brand wordmark — desktop copy lives here now; mobile copy stays in the header below */}
+        <div className="p-3 border-b border-border/40">
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={() => setAirplaneMode(!airplaneMode)}
+            className="w-full flex flex-col items-start px-2"
+            aria-label={
+              airplaneMode ? 'Airplane Mode on — click to go online' : 'Toggle Airplane Mode'
+            }
+            title={
+              airplaneMode ? 'Click to disable Airplane Mode' : 'Click to enable Airplane Mode'
+            }
+          >
+            <span className="flex items-center gap-2">
+              <span className="text-lg font-bold text-gradient">PQC Today</span>
               {airplaneMode && (
                 <Plane size={12} className="text-primary animate-pulse" aria-hidden="true" />
               )}
-            </Button>
-            {/* Desktop brand — always a button; toggles Airplane Mode on/off */}
-            <Button
-              variant="ghost"
-              type="button"
-              onClick={() => setAirplaneMode(!airplaneMode)}
-              className="hidden lg:flex flex-col items-start"
-              aria-label={
-                airplaneMode ? 'Airplane Mode on — click to go online' : 'Toggle Airplane Mode'
-              }
-              title={
-                airplaneMode ? 'Click to disable Airplane Mode' : 'Click to enable Airplane Mode'
-              }
-            >
-              <span className="flex items-center gap-2">
-                <span className="text-2xl font-bold text-gradient">PQC Today</span>
-                {airplaneMode && (
-                  <Plane size={14} className="text-primary animate-pulse" aria-hidden="true" />
-                )}
+            </span>
+            <span className="text-[10px] text-muted-foreground uppercase tracking-widest truncate">
+              {buildTime}
+            </span>
+          </Button>
+        </div>
+
+        <nav
+          className="flex-1 overflow-y-auto px-2 py-2 flex flex-col gap-0.5"
+          aria-label="Primary navigation"
+        >
+          {/* Home leads the rail — always the first row, orientation anchor.
+              FOR YOU follows immediately after (2026-08-01 reorder: it's
+              contextual to the selected role, so it's the primary thing, not
+              an afterthought below the other generic global pages). */}
+          <RailRow
+            path="/"
+            label={labelFor('/')}
+            active={isPathActive('/')}
+            treatment={isPathActive('/') ? 'active' : 'plain'}
+          />
+          {forYou.length === 0 && (
+            <>
+              <span className="px-2 pb-2 text-[11px] italic text-muted-foreground/70">
+                Everything, unfiltered
               </span>
-              <span className="text-xs text-muted-foreground uppercase tracking-widest hidden sm:block">
-                Last Updated: {buildTime}
-              </span>
-            </Button>
-          </div>
-
-          {/* Search chip — desktop only */}
-          <div className="hidden lg:flex items-center gap-2">
-            <Button
-              variant="outline"
-              onClick={openPalette}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg border-border bg-muted/30 hover:border-primary/30 hover:bg-muted/50 text-sm text-muted-foreground min-w-[180px] h-auto"
-              aria-label="Search (⌘K)"
-            >
-              <Search size={14} aria-hidden="true" />
-              <span className="flex-1 text-left">Search…</span>
-              <kbd className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-border bg-muted/50">
-                ⌘K
-              </kbd>
-            </Button>
-          </div>
-
-          {/* Universal Navigation: Row of Icons on Mobile, Full Nav on Desktop.
-              ScrollFadeContainer preserves the prior unconditional overflow-x-auto
-              behavior (so desktop is unaffected) and additionally shows a
-              right-edge fade whenever the row overflows — on a phone this is
-              nearly always, and previously there was no cue at all that
-              "Migrate…" and beyond were still reachable by scrolling the row. */}
-          <nav className="w-full lg:w-auto" role="navigation" aria-label="Main navigation">
-            <ScrollFadeContainer scrollClassName="flex flex-row flex-nowrap items-center justify-between gap-1 lg:gap-2">
-              {visibleNavItems.map((item, idx) => {
-                const prev = visibleNavItems[idx - 1]
-                const showDivider = prev?.section && item.section && prev.section !== item.section
-
-                return (
-                  <React.Fragment key={item.path}>
-                    {showDivider && (
-                      <span
-                        className="hidden lg:block w-px h-9 bg-border/40 shrink-0"
-                        aria-hidden="true"
-                      />
-                    )}
-                    <NavLink
-                      to={item.path}
-                      end={item.end}
-                      className={
-                        item.hiddenOnMobile
-                          ? 'hidden lg:block'
-                          : 'flex-1 lg:flex-none flex justify-center'
-                      }
-                    >
-                      {({ isActive }) => (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          aria-label={`${item.label} view`}
-                          aria-current={isActive ? 'page' : undefined}
-                          className={
-                            isActive
-                              ? 'bg-primary/10 text-foreground border border-primary/20 px-2 lg:px-3 min-h-[44px] flex-col items-center gap-0'
-                              : 'text-muted-foreground hover:text-foreground px-2 lg:px-3 min-h-[44px] flex-col items-center gap-0'
-                          }
-                        >
-                          <item.icon size={18} aria-hidden="true" />
-                          <span className="text-[11px] leading-tight mt-1 truncate max-w-[72px] text-center">
-                            {SHORT_LABELS[item.label] ?? item.label}
-                          </span>
-                        </Button>
-                      )}
-                    </NavLink>
-                  </React.Fragment>
-                )
-              })}
-
-              {/* Mobile "More" button — only shown when there are overflow items */}
-              {moreNavItems.length > 0 && (
-                <div className="flex-1 lg:hidden flex justify-center">
+              {/* No persona (or researcher, whose PERSONA_NAV_PATHS is null)
+                  means forYouGroups has no 'reference' group to carry Learn/
+                  Timeline/Threats — render them directly here so they aren't
+                  silently dropped for exactly the persona with the broadest
+                  reachability guarantee. */}
+              {['/learn', '/timeline', '/threats'].map((path) => (
+                <RailRow
+                  key={path}
+                  path={path}
+                  label={labelFor(path)}
+                  active={isPathActive(path)}
+                  treatment={isPathActive(path) ? 'active' : 'plain'}
+                />
+              ))}
+            </>
+          )}
+          {forYouGroups.map((group) => {
+            // Workflow's visual order (2026-08-01 follow-up: "reorder workflow:
+            // migrate; assess; report; command center") — a fixed display
+            // priority, independent of PERSONA_NAV_PATHS's own array order.
+            // Anything not in this list (e.g. compliance) keeps its original
+            // relative order, appended after the prioritized ones.
+            // '/explore' visually moved from Practice to Workflow, first
+            // position (2026-08-01 follow-up: "Explore goes first in
+            // workflow section") — still classified 'practice' in
+            // FOR_YOU_PATH_GROUP (railNav.ts), this is purely a rendering
+            // reassignment, not a reachability change.
+            const WORKFLOW_ORDER = ['/explore', '/migrate', '/assess', '/report', '/business']
+            // Reference visually includes Learn + Timeline + Threats
+            // (2026-08-01 follow-up) even though they're globally
+            // always-visible, not persona-gated — purely a rendering
+            // position, not a reachability change (they render ONLY here,
+            // nowhere else, so there's no duplicate row).
+            const displayPaths =
+              group.id === 'workflow'
+                ? [
+                    ...WORKFLOW_ORDER.filter(
+                      (p) => group.paths.includes(p) || (p === '/explore' && forYou.includes(p))
+                    ),
+                    ...group.paths.filter((p) => !WORKFLOW_ORDER.includes(p)),
+                  ]
+                : group.id === 'practice'
+                  ? // '/business/tools' visually added to Practice (2026-08-01
+                    // follow-up: "add tool into practices section") — was
+                    // reached via an in-page Dashboard/Tools tab bar on
+                    // /business, now a real rail row instead. Not in
+                    // FOR_YOU_PATH_GROUP/PERSONA_NAV_PATHS at all (same
+                    // render-only-addition pattern as Reference's Learn/
+                    // Timeline/Threats above), so it renders here for every
+                    // persona that has a Practice group, unconditionally.
+                    [...group.paths.filter((p) => p !== '/explore'), '/business/tools']
+                  : group.id === 'reference'
+                    ? [...group.paths, '/learn', '/timeline', '/threats']
+                    : group.paths
+            const groupHasActiveRoute = displayPaths.some((path) => isPathActive(path))
+            const groupExpanded = groupHasActiveRoute || !collapsedForYouGroups.has(group.id)
+            const groupContentId = `for-you-group-${group.id}`
+            return (
+              <React.Fragment key={group.id}>
+                {/* Sub-group header only when there's more than one group —
+                    a persona whose FOR YOU rows all land in one bucket doesn't
+                    need a lone sub-header repeating "For You" above it. Each
+                    group is independently collapsible (2026-08-01 follow-up),
+                    same auto-expand-on-active-route guarantee as MORE. */}
+                {forYouGroups.length > 1 ? (
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => setMoreMenuOpen(true)}
-                    aria-label={`More navigation options (${moreNavItems.length} pages)`}
-                    aria-expanded={moreMenuOpen}
-                    aria-haspopup="dialog"
-                    title={`More pages (${moreNavItems.length})`}
-                    className={
-                      isMoreActive
-                        ? 'relative bg-primary/10 text-foreground border border-primary/20 px-1 min-h-[44px] flex-col items-center gap-0'
-                        : 'relative text-muted-foreground hover:text-foreground px-1 min-h-[44px] flex-col items-center gap-0'
-                    }
+                    onClick={() => toggleForYouGroup(group.id)}
+                    aria-expanded={groupExpanded}
+                    aria-controls={groupContentId}
+                    aria-label={`${groupExpanded ? 'Hide' : 'Show'} ${group.label} (${group.paths.length})`}
+                    title={groupExpanded ? `Hide ${group.label}` : `Show ${group.label}`}
+                    className="w-full h-auto justify-between gap-1 px-2 pt-2 pb-0.5 rounded-md text-sm font-bold uppercase tracking-wide text-muted-foreground hover:text-foreground hover:bg-transparent"
                   >
-                    <span className="relative">
-                      <MoreHorizontal size={18} aria-hidden="true" />
-                      <span
-                        aria-hidden="true"
-                        className="absolute -top-1.5 -right-2 min-w-[14px] h-[14px] px-1 rounded-full bg-primary/20 text-primary text-[9px] font-semibold leading-[14px] text-center"
-                      >
-                        {moreNavItems.length}
-                      </span>
+                    <span>{group.label}</span>
+                    <ChevronDown
+                      size={10}
+                      aria-hidden="true"
+                      className={`transition-transform ${groupExpanded ? 'rotate-180' : ''}`}
+                    />
+                  </Button>
+                ) : null}
+                {groupExpanded && (
+                  <div id={groupContentId} className="flex flex-col gap-0.5">
+                    {displayPaths.map((path) => {
+                      const active = isPathActive(path)
+                      const treatment = getRowTreatment(selectedPersona, path, active)
+                      const title =
+                        treatment === 'featured'
+                          ? 'Executive Overview — a guided, ~20-minute walk through the program (EXEC_TOUR_STAGES)'
+                          : treatment === 'marked'
+                            ? `${labelFor(path)} — in progress, not yet fully tailored to this role`
+                            : undefined
+                      return (
+                        <RailRow
+                          key={path}
+                          path={path}
+                          label={labelFor(path)}
+                          active={active}
+                          treatment={treatment}
+                          title={title}
+                        />
+                      )
+                    })}
+                  </div>
+                )}
+              </React.Fragment>
+            )
+          })}
+          {/* CACP is deliberately NOT a direct rail shortcut (2026-08-01
+              follow-up: "CACP is fold in playground no direct access") —
+              reachable via the Playground grid's own featured card only. */}
+
+          {/* Every RAIL_ALWAYS_VISIBLE_PATHS entry now has an explicit home
+              (2026-08-01 follow-up): '/' renders once, at the very top of the
+              rail (see above FOR YOU); '/learn', '/timeline', '/threats'
+              render inside the Reference group; '/about' renders last, after
+              MORE, below. Nothing left to render as a separate "global pages"
+              block — deliberately empty, not a missing case. */}
+
+          {/* About — deliberately the very last row in the rail (2026-08-01
+              reorder), after FOR YOU, the global pages, and MORE. */}
+          <RailRow
+            path="/about"
+            label={labelFor('/about')}
+            active={isPathActive('/about')}
+            treatment={isPathActive('/about') ? 'active' : 'plain'}
+          />
+        </nav>
+
+        {/* Utility dock — same open-state as the existing Assistant/Journey
+            triggers elsewhere (PageHeader's Assistant button, the mobile
+            sheet's Journey History button); no parallel feature built. */}
+        <div className="p-2 border-t border-border/40 flex items-center justify-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => openRightPanel('chat')}
+            className="h-7 w-7 text-muted-foreground hover:text-primary"
+            aria-label="Assistant"
+            title="Ask the PQC Assistant"
+          >
+            <Bot size={16} aria-hidden="true" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => openPanel('history')}
+            className="h-7 w-7 text-muted-foreground hover:text-primary"
+            aria-label="Journey"
+            title="Open your Journey map"
+          >
+            <Map size={16} aria-hidden="true" />
+          </Button>
+        </div>
+      </aside>
+
+      {/* ── Right column: top bar + scrollable content ─────────────────────── */}
+      <div className="flex-1 flex flex-col min-w-0 min-h-0">
+        {/* Sim header strip — kept visible on every hub resource opened from the
+            PQC Today Sim, so the simulation context is never lost on a redirect. */}
+        <ResumeSimBar />
+
+        {/* Suppressed for the Curious-mobile-board takeover (see
+            `isCuriousMobileTakeover` above) — that screen renders its own
+            header; this one would only double up underneath it. */}
+        {!isCuriousMobileTakeover && (
+          <header
+            className="m-4 sticky top-[max(1rem,env(safe-area-inset-top))] z-50 transition-all duration-300 print:hidden"
+            role="banner"
+          >
+            <div className="glass-panel p-2 lg:p-4 flex w-full items-center gap-2 relative">
+              {/* Mobile brand — always a button; toggles Airplane Mode on/off.
+                Desktop copy lives in the rail above. */}
+              <Button
+                variant="ghost"
+                type="button"
+                onClick={() => setAirplaneMode(!airplaneMode)}
+                className="lg:hidden flex-shrink-0 flex items-center gap-1.5 min-h-[44px] min-w-[44px]"
+                aria-label={
+                  airplaneMode ? 'Airplane Mode on — tap to go online' : 'Toggle Airplane Mode'
+                }
+                title={
+                  airplaneMode ? 'Tap to disable Airplane Mode' : 'Tap to enable Airplane Mode'
+                }
+              >
+                <span className="text-base font-bold text-gradient">PQC</span>
+                {airplaneMode && (
+                  <Plane size={12} className="text-primary animate-pulse" aria-hidden="true" />
+                )}
+              </Button>
+
+              {/* Desktop top bar — region/industry pill, WIP chip, action icon
+                cluster, ⌘K search, role switcher. Rail owns nav on desktop, so
+                this replaces the old flat nav row entirely at lg+. */}
+              {/* 2026-08-01 bug fix: the two clusters below previously fought
+                  each other for space at narrow widths (e.g. Assistant panel
+                  open) with no shared overflow handling, reading as
+                  overlapping text. One flex-nowrap + overflow-x-auto row: at
+                  narrow widths the whole bar scrolls together instead of any
+                  part of it ever clipping/overlapping. */}
+              <div className="hidden lg:flex items-center justify-between gap-2 flex-1 min-w-0 flex-nowrap overflow-x-auto">
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {showWipChip && (
+                    <span
+                      className="inline-flex items-center gap-1 rounded-lg border text-status-warning bg-status-warning px-1.5 py-1 text-[10px] font-medium shrink-0"
+                      title="Some destinations on this board are marked in-progress — see the dashed rail rows."
+                    >
+                      <Wrench size={11} aria-hidden="true" />
+                      WIP
                     </span>
-                    <span className="text-[11px] leading-tight mt-0.5">More</span>
+                  )}
+                  {pageActions && (
+                    <>
+                      <span className="w-px h-4 bg-border shrink-0" aria-hidden="true" />
+                      <PageActionStrip {...pageActions} className="shrink-0" />
+                    </>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-0.5 shrink-0 flex-nowrap justify-end">
+                  <Button
+                    variant="ghost"
+                    onClick={() => openRightPanel('chat')}
+                    className="flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors"
+                    aria-label="Open PQC Assistant"
+                    title="Open PQC Assistant"
+                  >
+                    <MessageCircle size={13} aria-hidden="true" />
+                    <span>Ask</span>
+                  </Button>
+                  <ShareButton
+                    title={shareForRoute?.title ?? `${currentLabel} — PQC Today`}
+                    text={shareForRoute?.text}
+                    variant="full"
+                  />
+                  <FAQButton compact />
+                  {viewTypeForRoute && (
+                    <SourcesButton
+                      viewType={viewTypeForRoute}
+                      compact
+                      dataSource={pageActions?.dataSource}
+                    />
+                  )}
+                  <GlossaryButton compact />
+                  {pageIdForRoute && <UserManualButton pageId={pageIdForRoute} compact />}
+
+                  <Button
+                    variant="ghost"
+                    onClick={openPalette}
+                    className="flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors"
+                    aria-label="Search (⌘K)"
+                    title="Search (⌘K)"
+                  >
+                    <Search size={13} aria-hidden="true" />
+                    <span>Search</span>
+                    <kbd className="text-[9px] font-mono px-1 py-0.5 rounded border border-border/60 bg-muted/40">
+                      ⌘K
+                    </kbd>
+                  </Button>
+
+                  <Button
+                    variant="ghost"
+                    onClick={() => setPersonaSwitchOpen(true)}
+                    className="flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors shrink min-w-0"
+                    aria-label={`Switch role — currently ${roleLabel}`}
+                    title="Switch your role, region, or industry"
+                  >
+                    <UserCog size={13} aria-hidden="true" />
+                    <span className="truncate max-w-[200px]">{roleLabel}</span>
+                    <ChevronDown size={11} aria-hidden="true" className="shrink-0" />
                   </Button>
                 </div>
-              )}
-            </ScrollFadeContainer>
-          </nav>
-        </div>
-      </header>
+              </div>
 
-      {/* Mobile "More" bottom sheet */}
-      {moreMenuOpen && (
-        <>
-          {/* Backdrop */}
-          <div
-            className="fixed inset-0 z-nav-backdrop bg-black/60 lg:hidden"
-            onClick={() => setMoreMenuOpen(false)}
-            aria-hidden="true"
-          />
-          {/* Sheet */}
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-label="More navigation"
-            className="fixed inset-x-0 bottom-0 z-nav lg:hidden bg-card border-t border-border rounded-t-2xl p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-2xl"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-medium text-foreground">More</span>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="min-h-[44px] min-w-[44px] p-0"
-                onClick={() => setMoreMenuOpen(false)}
-                aria-label="Close menu"
-              >
-                <X size={16} />
-              </Button>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              {moreNavItems.map((item) => (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  end={item.end}
-                  onClick={() => setMoreMenuOpen(false)}
-                >
-                  {({ isActive }) => (
-                    <Button
-                      variant="ghost"
-                      className={`w-full min-h-[44px] justify-start gap-2 ${
-                        isActive
-                          ? 'bg-primary/10 text-foreground border border-primary/20'
-                          : 'text-muted-foreground hover:text-foreground'
-                      }`}
-                      aria-label={`${item.label} view`}
-                      aria-current={isActive ? 'page' : undefined}
-                    >
-                      <item.icon size={18} aria-hidden="true" />
-                      <span>{item.label}</span>
-                    </Button>
+              {/* Mobile nav row — icon-only row + "More" sheet trigger.
+                Unchanged mechanism from before the rail rebuild; only the
+                underlying path list now sources from the same rail sections
+                the desktop rail uses (see mobileVisiblePaths above). */}
+              <nav className="w-full lg:hidden" role="navigation" aria-label="Main navigation">
+                <ScrollFadeContainer scrollClassName="flex flex-row flex-nowrap items-center justify-between gap-1">
+                  {mobileVisiblePaths.map((path) => {
+                    const Icon = iconFor(path)
+                    const label = labelFor(path)
+                    return (
+                      <NavLink
+                        key={path}
+                        to={path}
+                        end={path === '/'}
+                        className="flex-1 flex justify-center"
+                      >
+                        {({ isActive }) => (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            aria-label={`${label} view`}
+                            aria-current={isActive ? 'page' : undefined}
+                            className={
+                              isActive
+                                ? 'bg-primary/10 text-foreground border border-primary/20 px-2 min-h-[44px] flex-col items-center gap-0'
+                                : 'text-muted-foreground hover:text-foreground px-2 min-h-[44px] flex-col items-center gap-0'
+                            }
+                          >
+                            <Icon size={18} aria-hidden="true" />
+                            <span className="text-[11px] leading-tight mt-1 truncate max-w-[72px] text-center">
+                              {label === 'Command Center' ? 'Command' : label}
+                            </span>
+                          </Button>
+                        )}
+                      </NavLink>
+                    )
+                  })}
+
+                  {/* Mobile "More" button — folds FOR YOU (rest) + MORE + the
+                    architect CACP shortcut into the existing bottom sheet. */}
+                  {mobileSheetAllPaths.length > 0 && (
+                    <div className="flex-1 flex justify-center">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setMoreMenuOpen(true)}
+                        aria-label={`More navigation options (${mobileSheetAllPaths.length} pages)`}
+                        aria-expanded={moreMenuOpen}
+                        aria-haspopup="dialog"
+                        title={`More pages (${mobileSheetAllPaths.length})`}
+                        className={
+                          isMoreActive
+                            ? 'relative bg-primary/10 text-foreground border border-primary/20 px-1 min-h-[44px] flex-col items-center gap-0'
+                            : 'relative text-muted-foreground hover:text-foreground px-1 min-h-[44px] flex-col items-center gap-0'
+                        }
+                      >
+                        <span className="relative">
+                          <MoreHorizontal size={18} aria-hidden="true" />
+                          <span
+                            aria-hidden="true"
+                            className="absolute -top-1.5 -right-2 min-w-[14px] h-[14px] px-1 rounded-full bg-primary/20 text-primary text-[9px] font-semibold leading-[14px] text-center"
+                          >
+                            {mobileSheetAllPaths.length}
+                          </span>
+                        </span>
+                        <span className="text-[11px] leading-tight mt-0.5">More</span>
+                      </Button>
+                    </div>
                   )}
-                </NavLink>
-              ))}
+                </ScrollFadeContainer>
+              </nav>
+            </div>
+          </header>
+        )}
 
-              {/* Airplane Mode toggle */}
-              <Button
-                variant="ghost"
-                type="button"
-                onClick={() => {
-                  setAirplaneMode(!airplaneMode)
-                  setMoreMenuOpen(false)
-                }}
-                className="col-span-2 w-full flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-colors"
-                aria-pressed={airplaneMode}
-              >
-                <span className="flex items-center gap-2">
-                  <Plane size={18} aria-hidden="true" />
-                  Airplane Mode
-                </span>
-                <span
-                  className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                    airplaneMode ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'
-                  }`}
+        {/* Mobile "More" bottom sheet — unreachable in the Curious-mobile
+            takeover state anyway (its trigger button lives inside the
+            suppressed header above), gated explicitly for clarity/safety. */}
+        {!isCuriousMobileTakeover && moreMenuOpen && (
+          <>
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 z-nav-backdrop bg-black/60 lg:hidden"
+              onClick={() => setMoreMenuOpen(false)}
+              aria-hidden="true"
+            />
+            {/* Sheet */}
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-label="More navigation"
+              className="fixed inset-x-0 bottom-0 z-nav lg:hidden bg-card border-t border-border rounded-t-2xl p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-2xl max-h-[75dvh] overflow-y-auto"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-sm font-medium text-foreground">More</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="min-h-[44px] min-w-[44px] p-0"
+                  onClick={() => setMoreMenuOpen(false)}
+                  aria-label="Close menu"
                 >
-                  {airplaneMode ? 'On' : 'Off'}
-                </span>
-              </Button>
+                  <X size={16} />
+                </Button>
+              </div>
 
-              {/* Search shortcut — the only touch-reachable entry point to
-                  CommandPalette on mobile; desktop already has the "Search…"
-                  chip (hidden lg:flex, above) plus the ⌘K/Ctrl+K shortcut. */}
-              <Button
-                variant="ghost"
-                type="button"
-                onClick={() => {
-                  setMoreMenuOpen(false)
-                  openPalette()
-                }}
-                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-colors"
-              >
-                <Search size={18} aria-hidden="true" />
-                Search
-              </Button>
+              {mobileSheetForYou.length > 0 && (
+                <>
+                  <span className="block px-1 pb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    For You
+                  </span>
+                  <div className="grid grid-cols-2 gap-2 mb-3">
+                    {mobileSheetForYou.map((path) => (
+                      <NavLink
+                        key={path}
+                        to={path}
+                        end={path === '/'}
+                        onClick={() => setMoreMenuOpen(false)}
+                      >
+                        {({ isActive }) => (
+                          <Button
+                            variant="ghost"
+                            className={`w-full min-h-[44px] justify-start gap-2 ${
+                              isActive
+                                ? 'bg-primary/10 text-foreground border border-primary/20'
+                                : 'text-muted-foreground hover:text-foreground'
+                            }`}
+                            aria-label={`${labelFor(path)} view`}
+                            aria-current={isActive ? 'page' : undefined}
+                          >
+                            {React.createElement(iconFor(path), {
+                              size: 18,
+                              'aria-hidden': true,
+                            })}
+                            <span>{labelFor(path)}</span>
+                          </Button>
+                        )}
+                      </NavLink>
+                    ))}
+                  </div>
+                </>
+              )}
 
-              {/* Journey History shortcut */}
-              <Button
-                variant="ghost"
-                type="button"
-                onClick={() => {
-                  setMoreMenuOpen(false)
-                  openPanel('history')
-                }}
-                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-colors"
-              >
-                <Clock size={18} aria-hidden="true" />
-                Journey History
-              </Button>
+              {mobileSheetMore.length > 0 && (
+                <>
+                  <span className="block px-1 pb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    More
+                  </span>
+                  <div className="grid grid-cols-2 gap-2">
+                    {mobileSheetMore.map((path) => (
+                      <NavLink
+                        key={path}
+                        to={path}
+                        end={path === '/'}
+                        onClick={() => setMoreMenuOpen(false)}
+                      >
+                        {({ isActive }) => (
+                          <Button
+                            variant="ghost"
+                            className={`w-full min-h-[44px] justify-start gap-2 text-xs ${
+                              isActive
+                                ? 'text-foreground'
+                                : 'text-muted-foreground hover:text-foreground'
+                            }`}
+                            aria-label={`${labelFor(path)} view`}
+                            aria-current={isActive ? 'page' : undefined}
+                          >
+                            {React.createElement(iconFor(path), {
+                              size: 16,
+                              'aria-hidden': true,
+                            })}
+                            <span>{labelFor(path)}</span>
+                          </Button>
+                        )}
+                      </NavLink>
+                    ))}
+                  </div>
+                </>
+              )}
 
-              {/* Switch role shortcut — only when a persona is set */}
-              {selectedPersona && (
+              <div className="grid grid-cols-2 gap-2 mt-3">
+                {/* Airplane Mode toggle */}
+                <Button
+                  variant="ghost"
+                  type="button"
+                  onClick={() => {
+                    setAirplaneMode(!airplaneMode)
+                    setMoreMenuOpen(false)
+                  }}
+                  className="col-span-2 w-full flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-colors"
+                  aria-pressed={airplaneMode}
+                >
+                  <span className="flex items-center gap-2">
+                    <Plane size={18} aria-hidden="true" />
+                    Airplane Mode
+                  </span>
+                  <span
+                    className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                      airplaneMode ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'
+                    }`}
+                  >
+                    {airplaneMode ? 'On' : 'Off'}
+                  </span>
+                </Button>
+
+                {/* Search shortcut — the only touch-reachable entry point to
+                    CommandPalette on mobile; desktop already has the "Search…"
+                    chip (hidden lg:flex, in the top bar) plus the ⌘K/Ctrl+K shortcut. */}
                 <Button
                   variant="ghost"
                   type="button"
                   onClick={() => {
                     setMoreMenuOpen(false)
-                    setMobilePersonaSwitchOpen(true)
+                    openPalette()
                   }}
                   className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-colors"
                 >
-                  <UserCog size={18} aria-hidden="true" />
-                  Switch role
+                  <Search size={18} aria-hidden="true" />
+                  Search
                 </Button>
-              )}
+
+                {/* Journey History shortcut */}
+                <Button
+                  variant="ghost"
+                  type="button"
+                  onClick={() => {
+                    setMoreMenuOpen(false)
+                    openPanel('history')
+                  }}
+                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-colors"
+                >
+                  <Clock size={18} aria-hidden="true" />
+                  Journey History
+                </Button>
+
+                {/* Assistant shortcut */}
+                <Button
+                  variant="ghost"
+                  type="button"
+                  onClick={() => {
+                    setMoreMenuOpen(false)
+                    openRightPanel('chat')
+                  }}
+                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-colors"
+                >
+                  <Bot size={18} aria-hidden="true" />
+                  Assistant
+                </Button>
+
+                {/* Switch role shortcut — only when a persona is set */}
+                {selectedPersona && (
+                  <Button
+                    variant="ghost"
+                    type="button"
+                    onClick={() => {
+                      setMoreMenuOpen(false)
+                      setPersonaSwitchOpen(true)
+                    }}
+                    className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-colors"
+                  >
+                    <UserCog size={18} aria-hidden="true" />
+                    Switch role
+                  </Button>
+                )}
+              </div>
             </div>
-          </div>
-        </>
-      )}
+          </>
+        )}
 
-      {mobilePersonaSwitchOpen && (
-        <PersonaSwitchModal onClose={() => setMobilePersonaSwitchOpen(false)} />
-      )}
+        {personaSwitchOpen && <PersonaSwitchModal onClose={() => setPersonaSwitchOpen(false)} />}
 
-      {/* Scrollable content area */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
-        {/* Main Content Area */}
-        <main id="main-content" className="container py-4 px-4 md:py-8 md:px-8" role="main">
-          {/* Offline mode info banner */}
-          <AirplaneModeBanner />
-
-          {/* Migration planning workflow progress banner */}
-          <WorkflowBanner />
-
-          {/* Preview mode banner — curious persona browsing advanced routes */}
-          {selectedPersona === 'curious' &&
-            viewAccess === 'preview' &&
-            !ALWAYS_VISIBLE_PATHS.includes(location.pathname) &&
-            !(PERSONA_NAV_PATHS.curious ?? []).includes(location.pathname) && <PreviewBanner />}
-
-          {/* Suspense boundary for route-level code splitting */}
-          <React.Suspense
-            fallback={
-              <div className="flex min-h-[200px] h-[50dvh] w-full items-center justify-center">
-                <div className="flex flex-col items-center gap-4">
-                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-                  <p className="text-muted-foreground animate-pulse">Loading...</p>
-                </div>
-              </div>
-            }
-          >
-            <motion.div
-              key={location.pathname}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              className="lg:flex lg:items-start lg:gap-6"
-            >
-              <div className="min-w-0 lg:flex-1">
-                <Breadcrumb />
-                {/* "You're viewing Phase X" banner — shows when a ?phase= param is
-                    present (e.g. a deep link); self-skips Assess/Report/Command Center. */}
-                <PhaseContextBanner />
+        {/* Scrollable content area */}
+        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
+          {isCuriousMobileTakeover ? (
+            /* Curious-mobile takeover: bare Outlet, no container padding, no
+               banners/Breadcrumb/PhaseContextBanner — CuriousMobileBoard is a
+               full-bleed standalone screen that supplies all of its own
+               chrome. `id="main-content"` + `role="main"` are kept so the
+               skip-link and the page's main landmark still resolve. */
+            <div id="main-content" role="main">
+              <React.Suspense
+                fallback={
+                  <div className="flex min-h-[200px] h-[50dvh] w-full items-center justify-center">
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+                      <p className="text-muted-foreground animate-pulse">Loading...</p>
+                    </div>
+                  </div>
+                }
+              >
                 <Outlet />
-              </div>
-            </motion.div>
-          </React.Suspense>
-        </main>
+              </React.Suspense>
+            </div>
+          ) : (
+            <>
+              {/* Main Content Area */}
+              <main id="main-content" className="container py-4 px-4 md:py-8 md:px-8" role="main">
+                {/* Offline mode info banner */}
+                <AirplaneModeBanner />
 
-        {/* Footer */}
-        <footer className="border-t border-border mt-12 py-8 text-center text-muted-foreground text-sm px-4 print:hidden safe-bottom">
-          <p>
-            © 2025 PQC Today. Data sourced from the public internet resources.{' '}
-            <Link to="/terms" className="underline hover:text-foreground transition-colors">
-              Terms of Service
-            </Link>
-            {' · '}
-            <Link
-              to="/editorial-independence"
-              className="underline hover:text-foreground transition-colors"
-            >
-              Editorial Independence
-            </Link>
-            {' · '}
-            <Link to="/sponsor" className="underline hover:text-foreground transition-colors">
-              Sponsor
-            </Link>
-          </p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Content may be inaccurate. Please verify information independently. Report inaccuracies
-            in{' '}
-            <a
-              href="https://github.com/pqctoday-org/pqctoday-hub/discussions"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline hover:text-foreground transition-colors"
-            >
-              GitHub Discussions
-            </a>
-            .
-          </p>
-        </footer>
+                {/* Migration planning workflow progress banner */}
+                <WorkflowBanner />
 
-        {/* Offline connectivity toast + monitor */}
-        <AirplaneModeToast />
+                {/* Preview mode banner — curious persona browsing advanced routes */}
+                {selectedPersona === 'curious' &&
+                  viewAccess === 'preview' &&
+                  !ALWAYS_VISIBLE_PATHS.includes(location.pathname) &&
+                  !(PERSONA_NAV_PATHS.curious ?? []).includes(location.pathname) && (
+                    <PreviewBanner />
+                  )}
 
-        {/* What's New Modal — persona-aware, data-driven */}
-        <WhatsNewModal />
+                {/* Suspense boundary for route-level code splitting */}
+                <React.Suspense
+                  fallback={
+                    <div className="flex min-h-[200px] h-[50dvh] w-full items-center justify-center">
+                      <div className="flex flex-col items-center gap-4">
+                        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+                        <p className="text-muted-foreground animate-pulse">Loading...</p>
+                      </div>
+                    </div>
+                  }
+                >
+                  <motion.div
+                    key={location.pathname}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="lg:flex lg:items-start lg:gap-6"
+                  >
+                    <div className="min-w-0 lg:flex-1">
+                      {/* Breadcrumb removed (2026-08-01 follow-up: "remove also on
+                          each page the paths before page title") — redundant with
+                          the rail's own FOR YOU/Workflow/Practice/Reference
+                          structure now that it leads with real navigation. */}
+                      {/* "You're viewing Phase X" banner — shows when a ?phase= param is
+                          present (e.g. a deep link); self-skips Assess/Report/Command Center. */}
+                      <PhaseContextBanner />
+                      <Outlet />
+                    </div>
+                  </motion.div>
+                </React.Suspense>
+              </main>
 
-        {/* First-visit disclaimer — must acknowledge before using the app */}
-        <DisclaimerModal />
+              {/* Footer */}
+              <footer className="border-t border-border mt-12 py-8 text-center text-muted-foreground text-sm px-4 print:hidden safe-bottom">
+                <p>
+                  © 2025 PQC Today. Data sourced from the public internet resources.{' '}
+                  <Link to="/terms" className="underline hover:text-foreground transition-colors">
+                    Terms of Service
+                  </Link>
+                  {' · '}
+                  <Link
+                    to="/editorial-independence"
+                    className="underline hover:text-foreground transition-colors"
+                  >
+                    Editorial Independence
+                  </Link>
+                  {' · '}
+                  <Link to="/sponsor" className="underline hover:text-foreground transition-colors">
+                    Sponsor
+                  </Link>
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Content may be inaccurate. Please verify information independently. Report
+                  inaccuracies in{' '}
+                  <a
+                    href="https://github.com/pqctoday-org/pqctoday-hub/discussions"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline hover:text-foreground transition-colors"
+                  >
+                    GitHub Discussions
+                  </a>
+                  .
+                </p>
+              </footer>
+            </>
+          )}
 
-        {/* Toast notifications — role="status" so screen readers announce them.
-            A plain <div>'s implicit role is "generic", which prohibits aria-label
-            (axe: aria-prohibited-attr) since a generic element can't have a name. */}
-        <div role="status" aria-live="polite" aria-label="Notifications" aria-atomic="false">
-          {/* Achievement Toast Notification */}
-          <AchievementToast />
+          {/* Offline connectivity toast + monitor */}
+          <AirplaneModeToast />
 
-          {/* Phase Completion Toast */}
-          <PhaseCompletionToast />
+          {/* What's New Modal — persona-aware, data-driven */}
+          <WhatsNewModal />
+
+          {/* First-visit disclaimer — must acknowledge before using the app */}
+          <DisclaimerModal />
+
+          {/* Toast notifications — role="status" so screen readers announce them.
+              A plain <div>'s implicit role is "generic", which prohibits aria-label
+              (axe: aria-prohibited-attr) since a generic element can't have a name. */}
+          <div role="status" aria-live="polite" aria-label="Notifications" aria-atomic="false">
+            {/* Achievement Toast Notification */}
+            <AchievementToast />
+
+            {/* Phase Completion Toast */}
+            <PhaseCompletionToast />
+          </div>
+
+          {/* First-visit Guided Tour */}
+          <GuidedTour />
         </div>
-
-        {/* First-visit Guided Tour */}
-        <GuidedTour />
       </div>
 
       {/* Assistant bottom drawer — pinned below scrollable content */}

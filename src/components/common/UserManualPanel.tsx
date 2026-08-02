@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BookText, X, Lightbulb } from 'lucide-react'
 import { pageManuals, type PageId } from '../../data/userManualData'
@@ -22,7 +23,12 @@ export const UserManualPanel: React.FC<{
     return () => window.removeEventListener('keydown', handler)
   }, [isOpen, onClose])
 
-  return (
+  // Not embedded (2026-08-01 bug fix, same root cause + fix as Glossary.tsx —
+  // "clicking outside does not close" the guide panel): portal to
+  // document.body so the fixed backdrop can't be silently contained by an
+  // ancestor's stacking context. Embedded mode untouched (relies on its
+  // `absolute` positioning staying nested in the embed container).
+  const content = (
     <AnimatePresence>
       {isOpen && (
         <>
@@ -100,4 +106,6 @@ export const UserManualPanel: React.FC<{
       )}
     </AnimatePresence>
   )
+
+  return isEmbedded ? content : createPortal(content, document.body)
 }

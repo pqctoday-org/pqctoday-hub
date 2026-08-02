@@ -34,6 +34,7 @@ import type { LeadersViewMode } from './LeadersViewToggle'
 import { SectorStack } from './SectorStack'
 import { SortControl } from '../Library/SortControl'
 import { PageHeader } from '../common/PageHeader'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { LEADERS_CSV_COLUMNS } from '@/utils/csvExportConfigs'
@@ -610,44 +611,49 @@ export const LeadersGrid = () => {
     writeLeaderParam(null, { push: false })
   }
 
+  // Register this page's actions with the global top bar (page-action-strip
+  // rollout, 2026-08-01) — info/export/endorse/flag render there now, not as
+  // a row on the page itself. Mirrors TimelineView.tsx's pattern.
+  useEffect(() => {
+    const { setPageActions, clearPageActions } = usePageActionsStore.getState()
+    setPageActions({
+      title: 'Community',
+      dataSource: leadersMetadata
+        ? `${leadersMetadata.filename} • Updated: ${leadersMetadata.lastUpdate.toLocaleDateString()}`
+        : undefined,
+      onExport: handleExportCsv,
+      endorseUrl: buildEndorsementUrl({
+        category: 'leader-endorsement',
+        title: 'Endorse: PQC Community',
+        resourceType: 'Leaders Page',
+        resourceId: 'PQC Community',
+        resourceDetails:
+          '**Page:** PQC Community — People contributing to the advances of post-quantum cryptography.',
+        pageUrl: '/leaders',
+      }),
+      endorseLabel: 'Community Page',
+      endorseResourceType: 'Community',
+      flagUrl: buildFlagUrl({
+        category: 'leader-endorsement',
+        title: 'Flag: PQC Community',
+        resourceType: 'Leaders Page',
+        resourceId: 'PQC Community',
+        resourceDetails:
+          '**Page:** PQC Community — People contributing to the advances of post-quantum cryptography.',
+        pageUrl: '/leaders',
+      }),
+      flagLabel: 'Community Page',
+      flagResourceType: 'Community',
+    })
+    return () => clearPageActions()
+  }, [handleExportCsv])
+
   return (
     <div className="space-y-6">
       <PageHeader
         icon={Users}
-        pageId="leaders"
         title="Community"
         description="People contributing to the advances of post-quantum cryptography."
-        dataSource={
-          leadersMetadata
-            ? `${leadersMetadata.filename} • Updated: ${leadersMetadata.lastUpdate.toLocaleDateString()}`
-            : undefined
-        }
-        viewType="Leaders"
-        shareTitle="PQC Community — People Contributing to the Advances of Post-Quantum Cryptography"
-        shareText="Meet the people contributing to the advances of post-quantum cryptography."
-        onExport={handleExportCsv}
-        endorseUrl={buildEndorsementUrl({
-          category: 'leader-endorsement',
-          title: 'Endorse: PQC Community',
-          resourceType: 'Leaders Page',
-          resourceId: 'PQC Community',
-          resourceDetails:
-            '**Page:** PQC Community — People contributing to the advances of post-quantum cryptography.',
-          pageUrl: '/leaders',
-        })}
-        endorseLabel="Community Page"
-        endorseResourceType="Community"
-        flagUrl={buildFlagUrl({
-          category: 'leader-endorsement',
-          title: 'Flag: PQC Community',
-          resourceType: 'Leaders Page',
-          resourceId: 'PQC Community',
-          resourceDetails:
-            '**Page:** PQC Community — People contributing to the advances of post-quantum cryptography.',
-          pageUrl: '/leaders',
-        })}
-        flagLabel="Community Page"
-        flagResourceType="Community"
       />
 
       {/* Executive overview — institutional influence + why each group matters.

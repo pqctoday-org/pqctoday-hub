@@ -203,7 +203,7 @@ export function buildSuiteSummary(
   return { pass, fail, total: expectedTotal, notRun: Math.max(0, expectedTotal - pass - fail) }
 }
 
-const INITIAL_CHECKS: Omit<CheckEntry, 'status' | 'detail'>[] = [
+export const INITIAL_CHECKS: Omit<CheckEntry, 'status' | 'detail'>[] = [
   { id: 'V185-001', name: 'TPM2_SelfTest(fullTest)', section: 'Part 3 §10.2' },
   { id: 'V185-002', name: 'Response Header Structure', section: 'Part 1 §15.2' },
   { id: 'V185-003', name: 'TPM2_GetCapability(ALGS)', section: 'Part 3 §30.2' },
