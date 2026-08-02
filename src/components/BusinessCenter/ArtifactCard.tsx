@@ -8,46 +8,8 @@ import { TOOL_LABELS_BY_ARTIFACT_TYPE, getCswp39RefForArtifactType } from './bus
 import { Cswp39SectionBadge } from './widgets/Cswp39SectionBadge'
 import { ApprovalStatusControl } from './widgets/ApprovalStatusControl'
 
-export const TYPE_LABELS: Record<ExecutiveDocumentType, string> = {
-  'roi-model': 'ROI Model',
-  'risk-register': 'Risk Register',
-  'raci-matrix': 'RACI Matrix',
-  'vendor-scorecard': 'Vendor Scorecard',
-  'policy-draft': 'Policy Draft',
-  'compliance-checklist': 'Compliance Checklist',
-  'audit-checklist': 'Audit Checklist',
-  'compliance-timeline': 'Compliance Timeline',
-  'migration-verification': 'Migration Verification & Closure',
-  'board-deck': 'Board Deck',
-  'contract-clause': 'Contract Clause',
-  'kpi-dashboard': 'KPI Dashboard',
-  'migration-roadmap': 'Migration Roadmap',
-  'stakeholder-comms': 'Stakeholder Comms',
-  'kpi-tracker': 'KPI Tracker',
-  'risk-treatment-plan': 'Risk Treatment Plan',
-  'crqc-scenario': 'CRQC Scenario',
-  'breach-scenario': 'Breach Scenario',
-  'cost-of-inaction': 'Cost of Inaction',
-  'cost-model-comparison': 'Cost Model Comparison',
-  'supply-chain-matrix': 'Supply Chain Matrix',
-  'deployment-playbook': 'Deployment Playbook',
-  'crypto-architecture': 'Crypto Architecture',
-  'management-tools-audit': 'Management Tools Audit',
-  'crypto-cbom': 'Crypto BOM (CBOM)',
-  'crypto-vulnerability-watch': 'Crypto Vulnerability Watch',
-  'hybrid-transition': 'Hybrid Transition Plan',
-  'mti-negotiator': 'MTI Recommendation',
-  'crypto-api-refactor': 'Crypto API Refactor Audit',
-  'cloud-responsibility-matrix': 'Cloud Responsibility Matrix',
-  'program-charter': 'Program Charter',
-  'initial-scoping': 'Initial Scoping Assessment',
-  'skills-team-plan': 'Skills & Team Plan',
-  'infra-modernization-plan': 'Infrastructure Modernization Plan',
-  'refresh-cycle-alignment': 'Refresh-Cycle Alignment',
-  'accelerated-execution-profile': 'Accelerated Execution Profile',
-  'data-at-rest-strategy': 'Data-at-Rest Strategy',
-  'sim-roadmap': 'Simulation Roadmap',
-}
+export { TYPE_LABELS } from '@/data/artifactLabels'
+import { TYPE_LABELS } from '@/data/artifactLabels'
 
 const PILLAR_COLORS: Record<string, string> = {
   risk: 'bg-destructive/10 text-destructive',
