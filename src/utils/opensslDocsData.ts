@@ -40,7 +40,15 @@ const parseDocsMap = (): Map<string, DocsMapEntry> => {
   return map
 }
 
-/** Returns the entry metadata for a command, or undefined if not found. */
+/**
+ * Returns the entry metadata for a command or algorithm name, or undefined
+ * if not found. This is the canonical, case-insensitive access point for
+ * the docs map — parseDocsMap's keys are normalized lower case, so any
+ * direct `map.get(...)` call with an unnormalized query key (e.g. the
+ * upper-case algorithm names OpenSSL Studio's presets emit, like
+ * `ML-DSA-65`) silently misses. Always go through this helper (or
+ * getOpenSSLDocUrl below) instead of reaching into the map directly.
+ */
 export const getOpenSSLDocEntry = (command: string): DocsMapEntry | undefined =>
   parseDocsMap().get(command.toLowerCase())
 
@@ -53,22 +61,29 @@ export const getOpenSSLDocUrl = (commandLine: string): string => {
 
   if (!commandLine) return `${BASE_URL}/${DEFAULT_DOC}`
 
-  const map = parseDocsMap()
   const parts = commandLine.trim().split(/\s+/)
 
   let primaryCommand = parts[0]
   if (primaryCommand === 'openssl' && parts.length > 1) primaryCommand = parts[1]
   if (primaryCommand.startsWith('-')) return `${BASE_URL}/${DEFAULT_DOC}`
 
-  // 1. Direct match — prefer explicit doc_url from CSV if present
-  const entry = map.get(primaryCommand)
-  if (entry) return entry.docUrl ?? `${BASE_URL}/${entry.filename}`
-
-  // 2. Scan args for known keys (algorithm names used as flags)
+  // 1. Scan the remaining args first for a more specific match — algorithm
+  //    names (e.g. ML-DSA-65) have their own CSV rows pointing at a focused
+  //    man page (EVP_SIGNATURE-ML-DSA.html), which is more useful than the
+  //    primary command's generic page below. Uses getOpenSSLDocEntry (not a
+  //    raw map.get) so the lookup is case-insensitive regardless of how the
+  //    caller cased the token — every shipped preset emits algorithm names
+  //    in upper case (e.g. WorkbenchPresets.tsx) while the CSV keys are
+  //    normalized lower case by parseDocsMap.
   for (const part of parts) {
-    const e = map.get(part.trim())
+    if (part === primaryCommand) continue
+    const e = getOpenSSLDocEntry(part.trim())
     if (e) return e.docUrl ?? `${BASE_URL}/${e.filename}`
   }
+
+  // 2. Fall back to the primary command's own doc page
+  const entry = getOpenSSLDocEntry(primaryCommand)
+  if (entry) return entry.docUrl ?? `${BASE_URL}/${entry.filename}`
 
   return `${BASE_URL}/openssl-${primaryCommand}.html`
 }
