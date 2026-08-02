@@ -54,7 +54,12 @@ export default defineConfig({
   workers: process.env.CI ? 2 : 4,
   reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'list',
   use: {
-    actionTimeout: 0,
+    // Bounded so a zero-match interaction fails fast instead of hanging for
+    // the full test (was 0 = unbounded). 15s leaves headroom for ~2 stalled
+    // actions plus assertion overhead inside the 45s global `timeout` below,
+    // while still failing well short of it — chosen relative to `expect.timeout`
+    // (7500ms) rather than picked arbitrarily.
+    actionTimeout: 15_000,
     trace: 'on-first-retry',
     baseURL: BASE_URL,
   },
@@ -84,6 +89,19 @@ export default defineConfig({
       name: 'local',
       use: { ...devices['Desktop Chrome'] },
       testMatch: ['**/*.local.spec.ts'],
+    },
+    // MOBILE-SMOKE tier — NEW (2026-08-02), NOT yet CI-gated. Runs the same
+    // SMOKE_SPECS allowlist as `smoke` above, but at an iPhone 14 viewport —
+    // this product had literally zero mobile-viewport E2E coverage despite
+    // mobile being its worst-scoring UX dimension. Run locally via
+    // `npx playwright test --project=mobile-smoke` (build first, e.g.
+    // `npm run build`). Deliberately NOT added to `ci.yml`'s PR gate yet —
+    // that's a separate decision about CI time/cost budget; wire it in only
+    // after that's explicitly decided.
+    {
+      name: 'mobile-smoke',
+      use: { ...devices['iPhone 14'] },
+      testMatch: SMOKE_SPECS.map((f) => `**/${f}`),
     },
   ],
   webServer: {
