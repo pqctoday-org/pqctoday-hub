@@ -923,12 +923,34 @@ function FrameworkCard({
 
 // ── Framework table row ─────────────────────────────────────────────────
 
-function FrameworkTableRow({ fw }: { fw: ComplianceFramework }) {
+function FrameworkTableRow({
+  fw,
+  onSelectFramework,
+}: {
+  fw: ComplianceFramework
+  /** Row click → opens the same traceability drawer the card grid opens. */
+  onSelectFramework?: (fw: ComplianceFramework) => void
+}) {
   const urgency = deadlineUrgency(fw.deadline)
   const isSelected = useComplianceSelectionStore((s) => s.myFrameworks.includes(fw.id))
   const toggleMyFramework = useComplianceSelectionStore((s) => s.toggleMyFramework)
   return (
-    <tr className="border-b border-border hover:bg-muted/20 transition-colors">
+    <tr
+      className={`border-b border-border hover:bg-muted/20 transition-colors${onSelectFramework ? ' cursor-pointer' : ''}`}
+      onClick={onSelectFramework ? () => onSelectFramework(fw) : undefined}
+      onKeyDown={
+        onSelectFramework
+          ? (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                onSelectFramework(fw)
+              }
+            }
+          : undefined
+      }
+      tabIndex={onSelectFramework ? 0 : undefined}
+      aria-label={onSelectFramework ? `View details for ${fw.label}` : undefined}
+    >
       <td className="py-2.5 px-2 w-8 text-center">
         <Button
           type="button"
@@ -1010,6 +1032,7 @@ function FrameworkTableRow({ fw }: { fw: ComplianceFramework }) {
           {fw.libraryRefs.length > 0 && (
             <Link
               to={`/library?q=${encodeURIComponent(fw.libraryRefs.join(' '))}`}
+              onClick={(e) => e.stopPropagation()}
               className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-secondary/10 text-secondary font-medium hover:bg-secondary/20 transition-colors"
             >
               <BookOpen size={8} />
@@ -1029,6 +1052,7 @@ function FrameworkTableRow({ fw }: { fw: ComplianceFramework }) {
               return (
                 <Link
                   to={href}
+                  onClick={(e) => e.stopPropagation()}
                   className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent font-medium hover:bg-accent/20 transition-colors"
                   title={title}
                 >
@@ -1042,7 +1066,14 @@ function FrameworkTableRow({ fw }: { fw: ComplianceFramework }) {
   )
 }
 
-function FrameworkTable({ frameworks }: { frameworks: ComplianceFramework[] }) {
+function FrameworkTable({
+  frameworks,
+  onSelectFramework,
+}: {
+  frameworks: ComplianceFramework[]
+  /** Row click → opens the same traceability drawer the card grid opens. */
+  onSelectFramework?: (fw: ComplianceFramework) => void
+}) {
   return (
     <div className="glass-panel">
       <ScrollFadeContainer>
@@ -1071,7 +1102,7 @@ function FrameworkTable({ frameworks }: { frameworks: ComplianceFramework[] }) {
           </thead>
           <tbody>
             {frameworks.map((fw) => (
-              <FrameworkTableRow key={fw.id} fw={fw} />
+              <FrameworkTableRow key={fw.id} fw={fw} onSelectFramework={onSelectFramework} />
             ))}
           </tbody>
         </table>
@@ -1116,7 +1147,7 @@ interface ComplianceLandscapeProps {
   onViewModeChange?: (mode: ViewMode) => void
   /** When set, scroll to and ring-highlight this framework ID for 3 s */
   highlightFrameworkId?: string | null
-  /** Called when user clicks "Details →" on a framework card */
+  /** Called when user clicks a framework card, or a row in table view */
   onSelectFramework?: (fw: ComplianceFramework) => void
 }
 
@@ -1756,7 +1787,7 @@ export function ComplianceLandscape({
           </div>
         )
       ) : (
-        <FrameworkTable frameworks={displayedFrameworks} />
+        <FrameworkTable frameworks={displayedFrameworks} onSelectFramework={onSelectFramework} />
       )}
     </div>
   )
