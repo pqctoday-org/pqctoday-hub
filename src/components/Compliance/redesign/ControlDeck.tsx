@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-// Consolidated control deck. The redesign's central UX bet: one persona/role
-// lens, shared across every tab (header pill, For-You, CSWP.39 role highlight),
-// instead of per-tab role controls. Also surfaces the active jurisdiction/sector
-// context and the trust-tier filter in a single card.
+// Consolidated control deck. Surfaces the active jurisdiction/sector context
+// and the trust-tier filter in a single card. Persona/role is set exclusively
+// via the global top-bar role switcher (design program Phase 0.2 — no page
+// may carry a second, page-local persona control) — this deck only reads
+// selectedIndustries/selectedRegion, it never writes usePersonaStore.
 
 import { Lightbulb } from 'lucide-react'
-import { RoleFilter } from '@/components/common/RoleFilter'
 import { TrustTierFilter } from '@/components/common/TrustTierFilter'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { industryLabel } from '@/components/common/SectorFilter'
@@ -36,22 +36,14 @@ export function ControlDeck({ simEmbed = false, count }: ControlDeckProps) {
 
   return (
     <div className="space-y-3 rounded-2xl border border-border bg-card p-4">
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-        <div className="flex items-center gap-2">
-          <span className="text-[10.5px] font-semibold uppercase tracking-wide text-muted-foreground">
-            Lens
+      <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
+        {count && (
+          <span className="text-xs text-muted-foreground">
+            Showing <span className="font-semibold text-foreground">{count.shown}</span> of{' '}
+            {count.total}
           </span>
-          <RoleFilter syncWithPersona />
-        </div>
-        <div className="ml-auto flex items-center gap-3">
-          {count && (
-            <span className="text-xs text-muted-foreground">
-              Showing <span className="font-semibold text-foreground">{count.shown}</span> of{' '}
-              {count.total}
-            </span>
-          )}
-          {!simEmbed && <TrustTierFilter />}
-        </div>
+        )}
+        {!simEmbed && <TrustTierFilter />}
       </div>
 
       <div className="flex items-start gap-2 rounded-lg border border-primary/15 bg-primary/[0.04] px-3 py-2">
@@ -60,15 +52,15 @@ export function ControlDeck({ simEmbed = false, count }: ControlDeckProps) {
           {sector ? (
             <>
               Focused on <span className="font-semibold text-foreground">{sector}</span> ·{' '}
-              <span className="font-semibold text-foreground">{regionName}</span>. The lens above
-              tunes every tab — Landscape pillars, your mandates in For You, and which CSWP.39 steps
-              you own.
+              <span className="font-semibold text-foreground">{regionName}</span>. Your{' '}
+              <span className="font-semibold text-foreground">role</span> (top bar) tunes every tab
+              — Landscape pillars, your mandates in For You, and which CSWP.39 steps you own.
             </>
           ) : (
             <>
-              Set a sector and region on the assessment to personalise this page. The{' '}
-              <span className="font-semibold text-foreground">lens</span> above tunes every tab
-              consistently — switch it once and all four tabs follow.
+              Set a sector and region on the assessment to personalise this page. Your{' '}
+              <span className="font-semibold text-foreground">role</span> — set once in the top bar
+              — tunes every tab consistently.
             </>
           )}
         </p>
