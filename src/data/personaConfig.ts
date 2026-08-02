@@ -1425,12 +1425,26 @@ function reportSectionsByState(personaId: PersonaId, state: SectionState): Repor
 const REPORT_SECTION_TOTAL_COUNT = Object.keys(REPORT_SECTION_DEFAULTS).length
 const DEVELOPER_REPORT_OVERRIDE_COUNT = Object.keys(PERSONA_REPORT_CONFIG.developer).length
 
-/** Distinct checkpoint ids PERSONA_MILESTONES actually inserts real journey
- * milestones after, for a persona - e.g. "exec-cp-3/exec-cp-4" for executive.
- * Was hand-typed; reads PERSONA_MILESTONES directly instead. */
-function uniqueMilestoneCheckpoints(personaId: PersonaId): string[] {
+/**
+ * One real milestone label per distinct insertion point in a persona's path
+ * (e.g. "Run Risk Assessment and Explore Business Tools" for executive, whose
+ * milestones insert after 2 distinct checkpoints). Deliberately surfaces the
+ * human-readable `label`, not the internal `afterPhase` checkpoint id
+ * ("exec-cp-3") - that id means nothing to a site visitor; an earlier pass of
+ * this fix made the id computed-instead-of-hardcoded but missed that it was
+ * still the wrong thing to show at all.
+ */
+function firstMilestoneLabelPerCheckpoint(personaId: PersonaId): string[] {
+  const seen = new Set<string>()
+  const labels: string[] = []
   // eslint-disable-next-line security/detect-object-injection -- personaId is a PersonaId union, not user input
-  return [...new Set(PERSONA_MILESTONES[personaId].map((m) => m.afterPhase))]
+  for (const m of PERSONA_MILESTONES[personaId]) {
+    if (!seen.has(m.afterPhase)) {
+      seen.add(m.afterPhase)
+      labels.push(m.label)
+    }
+  }
+  return labels
 }
 
 /**
@@ -1524,7 +1538,7 @@ export const PERSONA_JOURNEY_BOARD: Record<PersonaId, PersonaJourneyBoard> = {
       },
     ],
     trackTitle: `Then, if you want the background: ${formatEssentialsVsFull('executive')}.`,
-    trackNote: `${capitalizedSmallNumberWord(PERSONAS.executive.essentials.length)} essentials against the full ${PERSONAS.executive.recommendedPath.filter((id) => id !== 'quiz').length}-module, ${PERSONAS.executive.estimatedMinutes}-minute path. The path already inserts your real milestones after ${uniqueMilestoneCheckpoints('executive').join('/')}.`,
+    trackNote: `${capitalizedSmallNumberWord(PERSONAS.executive.essentials.length)} essentials against the full ${PERSONAS.executive.recommendedPath.filter((id) => id !== 'quiz').length}-module, ${PERSONAS.executive.estimatedMinutes}-minute path. The path already inserts real actions like ${joinWithAnd(firstMilestoneLabelPerCheckpoint('executive'))} right where they're relevant.`,
     trackChips: [
       'PQC 101',
       'Quantum impact',
