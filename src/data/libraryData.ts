@@ -496,9 +496,32 @@ let currentItems: LibraryItem[] = []
 let previousItems: LibraryItem[] = []
 let parsedMetadata: { filename: string; lastUpdate: Date } | null = null
 
+/** Corpus health, read live from the latest CSV — never hardcode this
+ * anywhere it's displayed (design_handoff_2026_pages/IMPLEMENTATION-PLAN-
+ * LIBRARY-2026-08-01.md §3.1). `reasonCounts` uses the CSV's own real
+ * `deprecated_reason` values verbatim, not invented copy. */
+export interface LibraryCorpusHealth {
+  active: number
+  deprecated: number
+  total: number
+  reasonCounts: { reason: string; count: number }[]
+}
+let libraryCorpusHealth: LibraryCorpusHealth = {
+  active: 0,
+  deprecated: 0,
+  total: 0,
+  reasonCounts: [],
+}
+
 if (import.meta.env.VITE_MOCK_DATA === 'true') {
   currentItems = parseLibraryCSV(MOCK_LIBRARY_CSV_CONTENT)
   parsedMetadata = { filename: 'MOCK_LIBRARY_DATA', lastUpdate: new Date() }
+  libraryCorpusHealth = {
+    active: currentItems.length,
+    deprecated: 0,
+    total: currentItems.length,
+    reasonCounts: [],
+  }
 } else {
   const modules = import.meta.glob('./library_*.csv', {
     query: '?raw',
@@ -519,11 +542,38 @@ if (import.meta.env.VITE_MOCK_DATA === 'true') {
     transformDeprecatedRow
   )
 
+  // Second pass over the same latest CSV, this time keeping every
+  // deprecated/obsolete row (not just the ones with a superseded_by link
+  // transformDeprecatedRow requires) so the corpus-health count and its
+  // "why" breakdown reflect the true deprecated total.
+  const deprecatedRowResult = loadLatestCSV<RawLibraryRow, { reason: string }>(
+    modules,
+    /library_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
+    (row) =>
+      row.status === 'deprecated' || row.status === 'obsolete'
+        ? { reason: (row.deprecated_reason || '').trim() || 'No reason recorded' }
+        : null
+  )
+  const reasonTally = new Map<string, number>()
+  for (const { reason } of deprecatedRowResult.data) {
+    reasonTally.set(reason, (reasonTally.get(reason) ?? 0) + 1)
+  }
+
   // Keep currentItems FLAT + enriched; buildTree runs last (in the export below).
   currentItems = attachPriorRevisions(result.data, priorResult.data)
   previousItems = result.previousData ? result.previousData : []
   parsedMetadata = result.metadata
+  libraryCorpusHealth = {
+    active: currentItems.length,
+    deprecated: deprecatedRowResult.data.length,
+    total: currentItems.length + deprecatedRowResult.data.length,
+    reasonCounts: [...reasonTally.entries()]
+      .map(([reason, count]) => ({ reason, count }))
+      .sort((a, b) => b.count - a.count),
+  }
 }
+
+export { libraryCorpusHealth }
 
 // Compute status map if previous data exists
 const statusMap =

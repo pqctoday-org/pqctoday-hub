@@ -16,6 +16,7 @@ import {
   Undo2,
 } from 'lucide-react'
 import { PageHeader } from '../../common/PageHeader'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { Button } from '../../ui/button'
 import { ShareButton } from '../../ui/ShareButton'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -30,6 +31,7 @@ import { ReplaceTab } from './ReplaceTab'
 import { PlanTab } from './PlanTab'
 import { RoadmapsTab } from './RoadmapsTab'
 import { SupplyChainRiskMatrix } from '../../PKILearning/modules/VendorRisk/components/SupplyChainRiskMatrix'
+import { VendorConcentrationRiskPanel } from './VendorConcentrationRiskPanel'
 
 interface MigrationWorkbenchProps {
   /** When embedded in the Simulation, hide the PageHeader and don't touch the URL. */
@@ -185,6 +187,27 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
     [embedded, searchParams, setSearchParams, setTabStore]
   )
 
+  // Register this page's actions with the global top bar (page-action-strip
+  // rollout, 2026-08-01) — info renders there now, not as a row on the page
+  // itself. Mirrors TimelineView.tsx's pattern. Gated on `!embedded`, same as
+  // the PageHeader render below.
+  useEffect(() => {
+    if (embedded) return
+    const { setPageActions, clearPageActions } = usePageActionsStore.getState()
+    setPageActions({
+      title: 'PQC Migration Workbench',
+      // ADDED 2026-07-16 (migrate-process remediation Phase 5, U1): the
+      // catalog snapshot date was loaded (softwareMetadata) but never
+      // surfaced anywhere on this page — a reviewer had no way to tell how
+      // current the whole product list is, only individual rows' own
+      // verified-pill tooltips (which needed expanding to see).
+      dataSource: softwareMetadata
+        ? `${softwareMetadata.filename} • Catalog as of ${softwareMetadata.lastUpdate.toLocaleDateString()}`
+        : undefined,
+    })
+    return () => clearPageActions()
+  }, [embedded])
+
   return (
     <div className="mx-auto w-full max-w-[1180px] px-4 pb-12 pt-4 sm:px-6">
       {!embedded && (
@@ -193,21 +216,16 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
             icon={TrendingUp}
             title="PQC Migration Workbench"
             description="Start from what you run — get a sequenced, quantum-safe plan aligned to NIST IR 8547 (Initial Public Draft) & CNSA 2.0."
-            // ADDED 2026-08-01: this page had a ViewType ('Migrate') already
-            // defined in authoritativeSourcesData.ts but no PageHeader on the
-            // app used it — the catalog's 907 trusted_source_id-backed rows
-            // had no Sources button anywhere to surface that provenance from.
-            viewType="Migrate"
-            // ADDED 2026-07-16 (migrate-process remediation Phase 5, U1): the
-            // catalog snapshot date was loaded (softwareMetadata) but never
-            // surfaced anywhere on this page — a reviewer had no way to tell
-            // how current the whole product list is, only individual rows'
-            // own verified-pill tooltips (which needed expanding to see).
-            dataSource={
-              softwareMetadata
-                ? `${softwareMetadata.filename} • Catalog as of ${softwareMetadata.lastUpdate.toLocaleDateString()}`
-                : undefined
-            }
+            // NOTE (merge, 2026-08-02): this branch added viewType="Migrate"
+            // and a dataSource prop here to give the catalog's 907
+            // trusted_source_id-backed rows a Sources button and a visible
+            // snapshot date. Both landed on main first, via 4.38.0's
+            // page-action-strip rollout — MainLayout's ROUTE_VIEW_TYPE now maps
+            // '/migrate' -> 'Migrate' (global top-bar Sources button), and this
+            // component's own setPageActions() effect above already passes the
+            // same softwareMetadata-derived dataSource string. Re-adding them
+            // here would render both controls twice, which is exactly what that
+            // rollout existed to stop.
           />
           {hasSelection && (
             <ShareButton
@@ -278,6 +296,7 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
           <RoadmapsTab />
         </TabsContent>
         <TabsContent value="vendorrisk" className="mt-4">
+          <VendorConcentrationRiskPanel />
           <SupplyChainRiskMatrix variant="flat" />
         </TabsContent>
       </Tabs>

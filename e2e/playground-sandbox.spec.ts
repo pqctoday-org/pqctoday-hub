@@ -60,20 +60,32 @@ test.describe('Crypto Lab Workbench — Sandbox facet', () => {
     await expect(card.getByText('needs runtime')).toHaveCount(0)
   })
 
-  test('when the probe fails, sandbox scenarios are hidden and the runtime toggle reports them off', async ({
+  test('when the probe fails, sandbox scenarios dim/lock in place rather than disappearing (Phase 9.4)', async ({
     page,
   }) => {
     // Override the stub: make /api/status fail so the probe lands 'offline'.
     await page.route(`${SANDBOX_ORIGIN}/api/status`, (route) => route.abort('failed'))
     await page.goto(PROTOCOL_SIMS_URL)
 
-    // Crypto Lab redesign (commit ee6651aa) changed offline behavior: rather
-    // than listing sandbox scenarios "locked", it STRIPS them from the grid and
-    // the runtime toggle's hint reports the hidden count.
-    await expect(page.getByText(/Docker scenarios hidden/i)).toBeVisible({ timeout: 10000 })
+    // Fix (playground.md Phase 9.4): sandbox tools stay in the grid, shown with
+    // a Sandbox badge, dimmed/locked — never stripped out entirely.
+    await expect(page.getByText(/Docker scenarios locked/i)).toBeVisible({ timeout: 10000 })
 
-    // The scenario is stripped from the grid while the runtime is off.
-    await expect(page.locator('[role="button"]', { hasText: SANDBOX_TILE })).toHaveCount(0)
+    // The scenario card stays in the grid, dimmed.
+    const card = page.locator('[role="button"]', { hasText: SANDBOX_TILE }).first()
+    await expect(card).toBeVisible({ timeout: 10000 })
+    await expect(card.getByText('Sandbox', { exact: true })).toBeVisible()
+    await expect(card.getByText('needs runtime')).toBeVisible()
+    await expect(card).toHaveClass(/opacity-60/)
+
+    // Clicking it opens the detail modal gated behind "Start sandbox runtime",
+    // not a direct navigation into a broken tool.
+    await card.click()
+    const dialog = page.getByRole('dialog')
+    await expect(dialog).toBeVisible()
+    await expect(dialog.getByRole('button', { name: /Start sandbox runtime/i })).toBeVisible()
+    await expect(dialog.getByRole('button', { name: /^Open tool/i })).toHaveCount(0)
+    await dialog.getByRole('button', { name: 'Close' }).click()
 
     // The runtime toggle is present and reports the off state.
     await expect(page.getByRole('button', { name: 'Sandbox runtime' })).toHaveAttribute(

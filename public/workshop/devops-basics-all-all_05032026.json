@@ -64,109 +64,83 @@
         "page": {
           "route": "/"
         },
-        "tasks": ["Confirm role = Ops", "Confirm proficiency = Beginner or Expert"],
+        "tasks": [
+          "Open the role switcher in the top bar",
+          "Pick the role that fits you",
+          "Set your region and industry"
+        ],
         "expectedOutput": "Persona context locked to Ops.",
-        "narration": "Set the persona once — the platform tunes every page to operational concerns.",
+        "narration": "Your role, region, and industry drive every recommendation on the platform. Set them from the role switcher in the top bar — it is on every page, and each choice applies immediately.",
         "cues": [
           {
-            "tMs": 0,
             "kind": "navigate",
-            "route": "/"
+            "route": "/",
+            "tMs": 0
           },
           {
-            "tMs": 1000,
-            "kind": "scroll-to",
-            "selector": "#personalization-section"
-          },
-          {
-            "tMs": 1500,
             "kind": "caption",
-            "text": "Persona definition — four picks shape every page. Ops drives this flow."
+            "text": "Your role, region, and industry shape every page. Ops drives this flow.",
+            "tMs": 1200
           },
           {
-            "tMs": 8172,
-            "kind": "click",
-            "selector": "[data-workshop-target=\"persona-edit\"]"
-          },
-          {
-            "tMs": 8672,
-            "kind": "caption",
-            "text": "Opening the persona wizard."
-          },
-          {
-            "tMs": 12201,
-            "kind": "caption",
-            "text": "Step 1 — Track. Technical track unlocks developer, architect, ops, and researcher roles."
-          },
-          {
-            "tMs": 20087,
             "kind": "spotlight",
-            "selector": "[data-workshop-target^=\"persona-track-\"][aria-pressed=\"true\"]"
+            "selector": "[data-workshop-target=\"persona-switch-open\"]",
+            "tMs": 8022
           },
           {
-            "tMs": 24087,
-            "kind": "click",
-            "selector": "[data-workshop-target^=\"persona-track-\"][aria-pressed=\"true\"]"
-          },
-          {
-            "tMs": 26087,
             "kind": "caption",
-            "text": "Step 2 — Role. Ops surfaces the modules and tools tuned to your job."
+            "text": "The role switcher lives in the top bar, on every page.",
+            "tMs": 10522
           },
           {
-            "tMs": 32545,
+            "kind": "click",
+            "selector": "[data-workshop-target=\"persona-switch-open\"]",
+            "tMs": 16130
+          },
+          {
+            "kind": "caption",
+            "text": "Six roles: executive, developer, architect, ops, researcher, curious.",
+            "tMs": 18630
+          },
+          {
             "kind": "spotlight",
-            "selector": "[data-workshop-target^=\"persona-role-\"][aria-pressed=\"true\"]"
+            "selector": "[data-workshop-target^=\"persona-role-\"][aria-pressed=\"true\"]",
+            "tMs": 25309
           },
           {
-            "tMs": 36545,
             "kind": "callout",
             "selector": "[data-workshop-target^=\"persona-role-\"][aria-pressed=\"true\"]",
-            "label": "Ops — pre-selected for this flow"
+            "label": "Ops — pre-selected for this flow",
+            "tMs": 27809
           },
           {
-            "tMs": 44545,
-            "kind": "click",
-            "selector": "[data-workshop-target^=\"persona-role-\"][aria-pressed=\"true\"]"
-          },
-          {
-            "tMs": 46545,
             "kind": "caption",
-            "text": "Step 3 — Region. Filters timeline, leaders, threats and compliance to your jurisdiction."
+            "text": "Region filters timeline, leaders, threats, and compliance to your jurisdiction.",
+            "tMs": 30309
           },
           {
-            "tMs": 54431,
             "kind": "spotlight",
-            "selector": "[data-workshop-target^=\"persona-region-\"][aria-pressed=\"true\"]"
+            "selector": "[data-workshop-target=\"persona-region-select\"]",
+            "tMs": 37702
           },
           {
-            "tMs": 62431,
-            "kind": "click",
-            "selector": "[data-workshop-target=\"persona-wizard-next\"]"
-          },
-          {
-            "tMs": 64431,
             "kind": "caption",
-            "text": "Step 4 — Industry. Surfaces industry-specific threats, frameworks and vendors."
+            "text": "Industry surfaces the threats, frameworks, and vendors that apply to you.",
+            "tMs": 40202
           },
           {
-            "tMs": 71603,
             "kind": "spotlight",
-            "selector": "[data-workshop-target^=\"persona-industry-\"][aria-pressed=\"true\"]"
+            "selector": "[data-workshop-target=\"persona-industry-select\"]",
+            "tMs": 47167
           },
           {
-            "tMs": 81603,
-            "kind": "click",
-            "selector": "[data-workshop-target=\"persona-wizard-done\"]"
-          },
-          {
-            "tMs": 82603,
             "kind": "caption",
-            "text": "These four facets shape every workshop step. Change any one to re-personalize."
+            "text": "Both apply immediately — no separate save step.",
+            "tMs": 49667
           },
           {
-            "tMs": 145603,
-            "kind": "advance"
+            "kind": "advance",
+            "tMs": 54775
           }
         ]
       }

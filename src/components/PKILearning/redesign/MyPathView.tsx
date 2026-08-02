@@ -340,6 +340,7 @@ export const MyPathView = ({ personaId, onOpenCatalog }: MyPathViewProps) => {
           onTakeCheckpointQuiz={(categories) =>
             navigate(`/learn/quiz?category=${categories.join(',')}`)
           }
+          onShowEverything={onOpenCatalog}
         />
       )}
 

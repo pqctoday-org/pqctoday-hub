@@ -6,6 +6,7 @@ import { AlgorithmsView } from './AlgorithmsView'
 import '@testing-library/jest-dom'
 import * as useSemanticSearchModule from '@/services/search/useSemanticSearch'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 
 vi.mock('@/services/search/useSemanticSearch', async () => {
   const actual = await vi.importActual<typeof useSemanticSearchModule>(
@@ -64,7 +65,13 @@ describe('AlgorithmsView', () => {
       expect(
         screen.getAllByText(/track their support across IETF protocols/i)[0]
       ).toBeInTheDocument()
-      expect(await screen.findByText(/Data Sources:/i)).toBeInTheDocument()
+      // dataSource moved off PageHeader into usePageActionsStore
+      // (page-action-strip rollout, 2026-08-01) — it now renders in
+      // MainLayout's top bar via PageActionStrip, not in AlgorithmsView's own
+      // tree, so this checks the store registration directly.
+      await waitFor(() =>
+        expect(usePageActionsStore.getState().current?.dataSource).toMatch(/Data Sources:/i)
+      )
       expect(await screen.findByText('Transition Guide')).toBeInTheDocument()
       expect(await screen.findByText('Detailed Comparison')).toBeInTheDocument()
       expect(await screen.findByTestId('algorithm-comparison')).toBeInTheDocument()
@@ -323,13 +330,11 @@ describe('AlgorithmsView', () => {
       }
     })
 
-    it('curious tab-visit gate records visits and ultimately reveals Protocol Support', async () => {
+    it('curious persona sees Protocol Support enabled from first paint (2026-08-02: lock removed)', async () => {
       // Curious persona starts in preview; bypass the unlock teaser by
       // simulating that the user has already unlocked the full view.
       usePersonaStore.getState().setPersona('curious')
       usePersonaStore.getState().setAdvancedViewsUnlocked(true)
-      // Sanity-check the gate's preconditions before AlgorithmsView mounts.
-      expect(usePersonaStore.getState().algorithmsTabsVisited).toEqual([])
 
       render(
         <MemoryRouter initialEntries={['/algorithms']}>
@@ -337,13 +342,14 @@ describe('AlgorithmsView', () => {
         </MemoryRouter>
       )
 
-      // The Transition Guide is the curious default; the markAlgorithmsTabVisited
-      // effect fires on mount and records the visit, opening the gate.
-      await waitFor(() => {
-        expect(usePersonaStore.getState().algorithmsTabsVisited).toContain('transition')
-      })
-      // Once the visit is recorded, the Protocol Support tab is rendered.
-      expect(await screen.findByText('Protocol Support')).toBeInTheDocument()
+      // No visit-gating: the tab is present and enabled immediately, with no
+      // "explore X first" lock tooltip — a reference table teaches nothing
+      // by being hidden. See design_handoff_2026_pages/
+      // IMPLEMENTATION-PLAN-ALGORITHMS-2026-08-01.md §3.2.
+      const supportTab = await screen.findByText('Protocol Support')
+      expect(supportTab).toBeInTheDocument()
+      expect(supportTab.closest('button')).not.toBeDisabled()
+      expect(screen.queryByTitle(/explore transition or detailed first/i)).not.toBeInTheDocument()
     })
   })
 
@@ -363,6 +369,19 @@ describe('AlgorithmsView', () => {
       )
       expect(await screen.findByText('Validation')).toBeInTheDocument()
       expect(screen.getByText('Protocol Support')).toBeInTheDocument()
+    })
+
+    it('shows a persistent ACVP trust badge that opens Validation on click (2026-08-02)', async () => {
+      render(
+        <MemoryRouter initialEntries={['/algorithms']}>
+          <AlgorithmsView />
+        </MemoryRouter>
+      )
+      const badge = await screen.findByRole('button', { name: /ACVP Verified/i })
+      expect(badge).toBeInTheDocument()
+      fireEvent.click(badge)
+      expect(await screen.findByText('Implementation Attacks')).toBeInTheDocument()
+      expect(screen.getByText('KAT Validation')).toBeInTheDocument()
     })
 
     it('shows the Implementation Attacks + KAT sections when the Validation tab is opened', async () => {

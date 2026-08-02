@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import { useSearchParams } from 'react-router'
-import { Globe, Link2, Check, Search, Download, Lightbulb } from 'lucide-react'
+import { Globe, Link2, Check, Search, Download, Lightbulb, AlertTriangle } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { timelineData, timelineMetadata, transformToGanttData } from '../../data/timelineData'
 import { applyTimelineScope, applyTierFilter } from '@/data/timelineScope'
@@ -18,6 +18,7 @@ import { MobileTimelineList } from './MobileTimelineList'
 import { CoverageByRegion } from './CoverageByRegion'
 import { CountryFlag } from '../common/CountryFlag'
 import { PageHeader } from '../common/PageHeader'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { TrustTierFilter, useTrustTierFilter } from '../common/TrustTierFilter'
@@ -296,6 +297,44 @@ export const TimelineView = () => {
     [ganttData]
   )
 
+  // Register this page's actions with the global top bar (HEADER-TOPBAR-
+  // STANDARDIZATION-PLAN-2026-08-01.md §3/§4) — info/export/endorse/flag
+  // render there now, not as a row on the page itself.
+  useEffect(() => {
+    const { setPageActions, clearPageActions } = usePageActionsStore.getState()
+    setPageActions({
+      title: 'Global Migration Timeline',
+      dataSource: timelineMetadata
+        ? `${timelineMetadata.filename} • Updated: ${timelineMetadata.lastUpdate.toLocaleDateString()}`
+        : undefined,
+      dataSourceLoading: !timelineMetadata,
+      onExport: () => handleExportCsv(),
+      endorseUrl: buildEndorsementUrl({
+        category: 'timeline-endorsement',
+        title: 'Endorse: Global PQC Migration Timeline',
+        resourceType: 'Timeline Page',
+        resourceId: 'Global Migration Timeline',
+        resourceDetails:
+          '**Page:** Global Migration Timeline — Compare PQC migration roadmaps across nations.',
+        pageUrl: '/timeline',
+      }),
+      endorseLabel: 'Timeline Page',
+      endorseResourceType: 'Timeline',
+      flagUrl: buildFlagUrl({
+        category: 'timeline-endorsement',
+        title: 'Flag: Global PQC Migration Timeline',
+        resourceType: 'Timeline Page',
+        resourceId: 'Global Migration Timeline',
+        resourceDetails:
+          '**Page:** Global Migration Timeline — Compare PQC migration roadmaps across nations.',
+        pageUrl: '/timeline',
+      }),
+      flagLabel: 'Timeline Page',
+      flagResourceType: 'Timeline',
+    })
+    return () => clearPageActions()
+  }, [handleExportCsv])
+
   // Region filter items
   const regionItems = useMemo(
     () => [
@@ -357,15 +396,22 @@ export const TimelineView = () => {
     ]
   }, [regionFilter, countryEventCounts])
 
-  // Genuinely-not-loaded → loading copy. Trust-tier-zeroed → fall through and
-  // render the page chrome + an explanatory EmptyState below.
+  // timelineData is parsed synchronously from a bundled CSV at module load
+  // (src/data/timelineData.ts) — there is no async "loading" moment for this
+  // branch to genuinely catch. If it's ever empty, the real cause is a
+  // parse/bundling failure, not a slow network — the old "Please wait while
+  // we load..." copy was actively misleading about what state this is.
+  // Trust-tier-zeroed data takes a different path and falls through to an
+  // explanatory EmptyState further below, unaffected by this change.
   if (!timelineData || timelineData.length === 0) {
     return (
       <div className="py-8">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Loading Timeline Data...</h2>
-          <p className="text-muted-foreground">Please wait while we load the migration timeline.</p>
-        </div>
+        <EmptyState
+          icon={<AlertTriangle size={28} aria-hidden="true" />}
+          title="Timeline data failed to load."
+          description="The migration timeline dataset didn't load correctly. Try reloading the page; if this keeps happening, the underlying data file may be broken."
+          action={{ label: 'Reload', onClick: () => window.location.reload() }}
+        />
       </div>
     )
   }
@@ -391,40 +437,8 @@ export const TimelineView = () => {
     <div data-testid="timeline-view-root">
       <PageHeader
         icon={Globe}
-        pageId="timeline"
         title="Global Migration Timeline"
         description="Compare Post-Quantum Cryptography migration roadmaps across nations. Track phases from discovery to full migration and key regulatory milestones."
-        dataSource={
-          timelineMetadata
-            ? `${timelineMetadata.filename} • Updated: ${timelineMetadata.lastUpdate.toLocaleDateString()}`
-            : undefined
-        }
-        viewType="Timeline"
-        shareTitle="PQC Migration Timeline — Global Post-Quantum Cryptography Roadmap"
-        shareText="Compare PQC migration timelines across nations — track phases from discovery to full migration."
-        onExport={handleExportCsv}
-        endorseUrl={buildEndorsementUrl({
-          category: 'timeline-endorsement',
-          title: 'Endorse: Global PQC Migration Timeline',
-          resourceType: 'Timeline Page',
-          resourceId: 'Global Migration Timeline',
-          resourceDetails:
-            '**Page:** Global Migration Timeline — Compare PQC migration roadmaps across nations.',
-          pageUrl: '/timeline',
-        })}
-        endorseLabel="Timeline Page"
-        endorseResourceType="Timeline"
-        flagUrl={buildFlagUrl({
-          category: 'timeline-endorsement',
-          title: 'Flag: Global PQC Migration Timeline',
-          resourceType: 'Timeline Page',
-          resourceId: 'Global Migration Timeline',
-          resourceDetails:
-            '**Page:** Global Migration Timeline — Compare PQC migration roadmaps across nations.',
-          pageUrl: '/timeline',
-        })}
-        flagLabel="Timeline Page"
-        flagResourceType="Timeline"
         testId="timeline-header"
       />
 
