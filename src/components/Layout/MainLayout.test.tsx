@@ -386,6 +386,44 @@ describe('MainLayout', () => {
   })
 
   describe('Rail — FOR YOU sub-groups are independently collapsible (declutter follow-up, 2026-08-01: "collapse is per section not just a more at the end")', () => {
+    // Learn was promoted out of Reference to its own row directly under Home
+    // (2026-08-02). Reference starts collapsed, so Learn used to be one expand
+    // away from being visible at all — for a primary destination, not standing
+    // lookup material. These three lock in the move; nothing previously
+    // asserted Learn's position (the collapse tests probe Reference via
+    // /library view/), so the old placement could have regressed silently.
+    it('Learn is the second rail row, directly after Home', () => {
+      usePersonaStore.getState().setPersona('executive')
+      renderLayout()
+      const rail = getRailNav()
+      const rows = within(rail)
+        .getAllByRole('button')
+        .map((b) => b.getAttribute('aria-label') ?? '')
+        .filter((n) => /view$/i.test(n))
+      expect(rows[0]).toMatch(/home view/i)
+      expect(rows[1]).toMatch(/learn view/i)
+    })
+
+    it('Learn stays visible while Reference is collapsed', () => {
+      usePersonaStore.getState().setPersona('executive')
+      renderLayout()
+      const rail = getRailNav()
+      // Reference is collapsed by default — its own rows are hidden...
+      expect(within(rail).queryByRole('button', { name: /library view/i })).not.toBeInTheDocument()
+      // ...but Learn is no longer one of them.
+      expect(within(rail).getByRole('button', { name: /learn view/i })).toBeInTheDocument()
+    })
+
+    it('renders exactly one Learn row once Reference is expanded', () => {
+      usePersonaStore.getState().setPersona('executive')
+      renderLayout()
+      const rail = getRailNav()
+      toggleForYouGroup(rail, 'Reference')
+      // The regression this guards: leaving '/learn' in the Reference display
+      // list as well as the new unconditional row would render it twice.
+      expect(within(rail).getAllByRole('button', { name: /learn view/i })).toHaveLength(1)
+    })
+
     it('Workflow and Practice start expanded; Reference starts collapsed', () => {
       usePersonaStore.getState().setPersona('executive')
       renderLayout()
