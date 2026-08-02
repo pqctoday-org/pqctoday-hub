@@ -17,7 +17,7 @@ import {
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import type { GanttCountryData, TimelinePhase, Phase } from '../../types/timeline'
-import { phaseColors } from '../../data/timelineData'
+import { phaseColors, getCountryLastVerified } from '../../data/timelineData'
 import { GanttDetailPopover } from './GanttDetailPopover'
 import { DocumentTable } from './DocumentTable'
 import { logEvent } from '../../utils/analytics'
@@ -812,6 +812,7 @@ export const SimpleGanttChart = ({
               return processedData.map((countryData) => {
                 const { country, phases } = countryData
                 const totalRows = phases.length
+                const countryLastVerified = getCountryLastVerified(country)
                 return (
                   <Fragment key={country.countryName}>
                     {phases.map((phaseData, idx) => {
@@ -853,6 +854,14 @@ export const SimpleGanttChart = ({
                                   {country.countryName}
                                 </span>
                               </div>
+                              {countryLastVerified && (
+                                <div
+                                  className="text-[9px] text-muted-foreground/70 font-mono mt-0.5"
+                                  title="Most recent human-verification date for this country's timeline events"
+                                >
+                                  Verified {countryLastVerified}
+                                </div>
+                              )}
                               <div className="flex items-center gap-0.5 -ml-1 mt-0.5">
                                 {onToggleMyCountry && (
                                   <Button
