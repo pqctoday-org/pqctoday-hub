@@ -461,6 +461,25 @@ export const ComplianceView = ({
     if (isLandscapeTab(activeTab)) setPillar(tabToPillar(activeTab))
   }, [activeTab])
 
+  // Deep-link reachability: `?framework=<id>` used to only drive
+  // highlightFrameworkId, which scrolls to and rings the card grid's entry
+  // for 3s (ComplianceLandscape) — it never actually opened the traceability
+  // drawer, so a shared "/compliance?framework=NIST-IR-8547" link landed on a
+  // page that visually flashed and then looked like nothing happened,
+  // especially in table view where there's no card to ring at all. Opening
+  // the drawer here makes the URL a real deep link into the drawer itself,
+  // matching what onSelectRelated already does for in-drawer navigation.
+  const didOpenDrawerFromUrlRef = useRef<string | null>(null)
+  useEffect(() => {
+    if (!highlightFrameworkId) return
+    if (didOpenDrawerFromUrlRef.current === highlightFrameworkId) return
+    didOpenDrawerFromUrlRef.current = highlightFrameworkId
+    const fw = complianceFrameworks.find((f) => f.id === highlightFrameworkId)
+    if (!fw) return
+    setDrawerPillar(pillarForBodyType(fw.bodyType))
+    setDrawerFramework(fw)
+  }, [highlightFrameworkId])
+
   // CSWP.39 jump-back marker + query (ephemeral UI state).
   const [cswp39JumpActive, setCswp39JumpActive] = useState(false)
   const [cswp39JumpQuery, setCswp39JumpQuery] = useState('')
