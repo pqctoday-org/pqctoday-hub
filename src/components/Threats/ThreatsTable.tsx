@@ -137,15 +137,15 @@ export const ThreatsTable = ({
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
                           className="border-b border-border hover:bg-muted/30 transition-colors group cursor-pointer"
+                          // 2026-08-02 a11y: the row was `role="button"
+                          // tabIndex={0}`, i.e. a focusable widget containing
+                          // other focusable widgets (StatusBadge/TrustScoreBadge
+                          // render controls) — `nested-interactive`, 114 nodes
+                          // on /threats, and the inner controls were unreachable
+                          // to a screen reader. The threat-id cell below is now
+                          // the row's one focusable action; this click stays as
+                          // a redundant mouse convenience.
                           onClick={() => onItemClick(item)}
-                          role="button"
-                          tabIndex={0}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.preventDefault()
-                              onItemClick(item)
-                            }
-                          }}
                         >
                           <td className="p-4 text-sm text-muted-foreground group-hover:text-foreground transition-colors text-center md:text-left">
                             <span
@@ -158,7 +158,17 @@ export const ThreatsTable = ({
                           </td>
                           <td className="hidden md:table-cell p-4 text-sm font-mono text-primary/80">
                             <div className="flex items-center gap-2">
-                              {item.threatId}
+                              <Button
+                                variant="ghost"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  onItemClick(item)
+                                }}
+                                aria-label={`Open ${item.threatId}`}
+                                className="h-auto p-0 font-mono text-sm text-primary hover:bg-transparent"
+                              >
+                                {item.threatId}
+                              </Button>
                               <StatusBadge status={item.status} size="sm" />
                               <TrustScoreBadge
                                 resourceType="threats"

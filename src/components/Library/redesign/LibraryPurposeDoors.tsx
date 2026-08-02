@@ -69,9 +69,7 @@ export function LibraryPurposeDoors({ active, counts, onSelect }: LibraryPurpose
               </span>
               <span
                 className={`ml-auto shrink-0 rounded-full px-1.5 py-0.5 text-[11px] ${
-                  isActive
-                    ? 'bg-primary/20 text-primary-legible'
-                    : 'bg-muted/60 text-muted-foreground'
+                  isActive ? 'bg-primary/20 text-foreground' : 'bg-muted/60 text-muted-foreground'
                 }`}
               >
                 {/* eslint-disable-next-line security/detect-object-injection */}

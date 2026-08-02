@@ -29,6 +29,25 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.40.0] - 2026-08-02
+
+Text and controls across the light theme now meet the WCAG AA contrast
+standard, and the navigation loses three controls that duplicated the top bar.
+
+### Fixed
+
+- **Small text is readable again throughout the light theme** [view:/] [view:/timeline] [view:/library] [view:/compliance] [view:/migrate] [persona:executive] [persona:ops] [persona:curious]: the teal, green, amber and red used for labels, chips, badges and counts were picked to work as background fills and were too pale to read as text — several fell below half the contrast the accessibility standard requires, and worse again where coloured text sat on a tinted chip of the same colour. Every one of those colours is now dark enough to pass, adjusted by the smallest amount that does so, so the palette still looks like itself. Dark mode is unchanged; it already passed.
+- **Cards, table rows and framework tiles work with a keyboard and a screen reader** [view:/library] [view:/threats] [view:/compliance] [view:/migrate] [persona:researcher] [persona:ops]: these were built as one big clickable block that also contained its own buttons — bookmark, add-to-plan, review badges — so assistive technology announced the whole card as a single control and the buttons inside it could not be reached at all. Each card now has a proper focusable title, and the controls inside it are reachable on their own. Clicking anywhere on the card still works.
+- **The achievement celebration appears when you earn it, not later** [view:/learn] [persona:curious] [persona:developer]: an award earned by finishing a module was often saved unshown and then popped up at a random later moment — typically the next time you opened a different module, making it look like opening a module had completed it. Celebrations are now shown in the moment or not at all; the award itself is still recorded and still appears in your badges.
+- **Horizontally scrolling strips can be scrolled without a mouse** [view:/compliance]: keyboard users could not reach or move them.
+
+### Changed
+
+- **The assistant and your journey map are both in the top bar** [view:/] [persona:executive] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:curious]: the large floating assistant bubble that followed you around every page is gone, along with the single leftover icon at the bottom of the left bar. "Ask" is now "Assistant", and "Journey" sits next to it. Embedded copies of the site keep the floating button, since they have no top bar.
+- **The Reference group in the left bar starts open** [view:/] [persona:curious] [persona:researcher]: Algorithms, Library, Community, Patents, Timeline and Threats were hidden behind a collapsed section on a fresh visit. It can still be collapsed.
+- **The Learn page is less crowded** [view:/learn] [persona:curious] [persona:executive]: the role selector has gone — it was a second copy of the one in the top bar — and "Guided routing" is now a third choice alongside My Path and Browse all, rather than a separate button above them. Quiz moves up beside the page description. Two panels that only re-offered modules already on your path were removed: the assessment shortcut, which frequently recommended modules you had already finished, and the "PQC for Your Organization" strip, whose modules were all already in the executive path.
+- **Role pages promise what they actually deliver** [view:/] [persona:ops] [persona:executive]: the IT Ops page asked "Will your HSMs survive the cutover?" above a tool that sizes fleets rather than answering that; "Size my fleet" opened the wrong tool entirely; and "Import my cert inventory" offered something the site cannot do. The executive page's "See a finished example" led to an empty report instead of the example. All four now match reality, and the worked example is available to every role.
+
 ## [4.39.1] - 2026-08-02
 
 ### Fixed
