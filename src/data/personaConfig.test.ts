@@ -6,11 +6,17 @@ import {
   isComplianceFrameworkEmphasized,
   PERSONA_COMPLIANCE_FRAMEWORK_EMPHASIS,
   PERSONA_SIM_PRACTICE_PHASES,
+  PERSONA_JOURNEY_BOARD,
+  PERSONA_MIGRATE_LAYERS,
+  PERSONA_LIBRARY_CATEGORIES,
 } from './personaConfig'
 import { ROLE_CROSSWALK, personaToRoles } from './roleCrosswalk'
-import type { PersonaId } from './learningPersonas'
+import { PERSONAS, type PersonaId } from './learningPersonas'
 import type { PhaseId } from './frameworkPhases'
 import { EXEC_TOUR_STAGES } from '@/components/Simulation/autorun/execTourConfig'
+import { MANIFEST_BY_ID } from '@/components/PKILearning/manifest/registry'
+import { INITIAL_CHECKS } from '@/components/Playground/TpmPlayground/ComplianceRunner'
+import { CSWP39_ZONE_DETAILS } from './cswp39ZoneData'
 
 describe('getBeltTierLabel', () => {
   it('returns null when no persona is selected', () => {
@@ -133,5 +139,50 @@ describe('PERSONA_SIM_PRACTICE_PHASES ↔ ROLE_CROSSWALK drift guard', () => {
     for (const phase of ALLOWED_EXTRAS.executive ?? []) {
       expect(tourPhases.has(phase), `exec tour no longer visits ${phase}`).toBe(true)
     }
+  })
+})
+
+describe('PERSONA_JOURNEY_BOARD drift guards (HOME-PAGE-DYNAMIC-DATA-REMEDIATION-PLAN-2026-08-01.md rev. 2)', () => {
+  // trackChips are deliberately hand-written, persona-appropriate labels (not
+  // literal module titles — e.g. curious's "Risk basics" vs the module's real
+  // title "PQC Risk Management"), so the plan's decision was: keep the wording
+  // hand-authored, but guard the one thing that's a real drift risk — that
+  // each chip still corresponds, in order, to a real essentials module.
+  for (const personaId of Object.keys(PERSONAS) as PersonaId[]) {
+    it(`${personaId}: trackChips count matches essentials.length`, () => {
+      const board = PERSONA_JOURNEY_BOARD[personaId]
+      const essentials = PERSONAS[personaId].essentials
+      expect(
+        board.trackChips.length,
+        `${personaId} has ${essentials.length} essentials but ${board.trackChips.length} trackChips`
+      ).toBe(essentials.length)
+    })
+
+    it(`${personaId}: every essentials module id still resolves to a real module`, () => {
+      for (const moduleId of PERSONAS[personaId].essentials) {
+        expect(
+          MANIFEST_BY_ID[moduleId],
+          `essentials id "${moduleId}" has no manifest`
+        ).toBeDefined()
+      }
+    })
+  }
+
+  it('researcher: Library and Migrate filters really are both empty arrays (gridCards[0] asserts this by name)', () => {
+    expect(PERSONA_MIGRATE_LAYERS.researcher).toEqual([])
+    expect(PERSONA_LIBRARY_CATEGORIES.researcher).toEqual([])
+  })
+
+  it("researcher: gridCards[1] cites the TCG V1.85 runner's real check count", () => {
+    const body = PERSONA_JOURNEY_BOARD.researcher.gridCards[1].body
+    const match = /(\d+)-check TCG V1\.85 runner/.exec(body)
+    expect(match, `expected an "N-check TCG V1.85 runner" phrase in: ${body}`).not.toBeNull()
+    expect(Number(match?.[1])).toBe(INITIAL_CHECKS.length)
+  })
+
+  it("ops: gridCards[1]'s CSWP.39 §4.6 citation matches the mitigation zone's own reference", () => {
+    const body = PERSONA_JOURNEY_BOARD.ops.gridCards[1].body
+    expect(CSWP39_ZONE_DETAILS.mitigation.cswpRef).toContain('§4.6')
+    expect(body).toContain('CSWP.39 §4.6')
   })
 })

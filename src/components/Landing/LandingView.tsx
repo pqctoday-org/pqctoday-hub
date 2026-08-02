@@ -11,14 +11,18 @@ import { UnifiedStorageService } from '@/services/storage/UnifiedStorageService'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { useModuleStore } from '@/store/useModuleStore'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
-import { PersonalizationSection } from './PersonalizationSection'
+import { ScoreCard } from './ScoreCard'
 import { OnboardingCTAs } from './OnboardingCTAs'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { TransparencyBanner } from './TransparencyBanner'
-import { PersonaChip } from '@/components/Persona/PersonaChip'
 import { ResumeBanner } from '@/components/common/ResumeBanner'
 import { CuriousGuide } from '@/components/common/CuriousGuide'
 import { logEvent, personaLabel } from '@/utils/analytics'
+import { RoleHomeView } from '@/components/RoleHome/RoleHomeView'
+import { PersonaBoardView } from '@/components/PersonaJourney/PersonaBoardView'
+import { CuriousMobileBoard } from '@/components/PersonaJourney/CuriousMobileBoard'
+import { ResearcherFieldWatchCard } from '@/components/PersonaJourney/ResearcherFieldWatchCard'
+import { useIsBelowLgViewport } from '@/hooks/useIsBelowLgViewport'
 
 const MODULE_COUNT = Object.keys(MODULE_CATALOG).filter((k) => k !== 'quiz').length
 
@@ -93,6 +97,7 @@ const LATEST_RFC_FALLBACK = 'RFC 9964 just landed'
 
 function resolveTagline(template: string, values: Record<string, string>): string {
   return template.replace(/\{\{(\w+)\}\}/g, (_match, key: string) =>
+    // eslint-disable-next-line security/detect-object-injection -- guarded by the hasOwnProperty check above
     Object.prototype.hasOwnProperty.call(values, key) ? values[key] : ''
   )
 }
@@ -102,9 +107,111 @@ const DEFAULT_HERO_CTA = {
   secondary: { label: 'Explore the Timeline', path: '/timeline' },
 }
 
+/**
+ * Progress export/import — collapsed by default, persona-independent.
+ * Extracted so the persona-selected branch (persona-journeys A-grade
+ * redesign, 2026-08-01) and the pre-redesign "Show me everything" branch
+ * below don't hand-duplicate this ~80-line block.
+ */
+const BackupRestoreSection = () => (
+  <section className="pt-4">
+    <details className="group">
+      <summary className="text-lg font-bold text-foreground mb-3 flex items-center gap-2 cursor-pointer list-none select-none">
+        <Save size={20} className="text-primary" />
+        Backup &amp; Restore progress
+        <span className="text-xs font-normal text-muted-foreground ml-1 group-open:hidden">
+          — export or import your saved progress
+        </span>
+      </summary>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+        <motion.button
+          type="button"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          aria-label="Export backup — download all progress and settings"
+          className="glass-panel p-3 flex items-center gap-3 hover:border-primary/50 transition-colors text-left w-full"
+          onClick={() => {
+            try {
+              UnifiedStorageService.downloadSnapshot()
+            } catch (error) {
+              console.error('Failed to export backup:', error)
+              toast.error('Failed to export backup')
+            }
+          }}
+        >
+          <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
+            <Save size={18} aria-hidden="true" />
+          </div>
+          <div className="min-w-0">
+            <h4 className="text-sm font-semibold text-foreground">Export Backup</h4>
+            <p className="text-xs text-muted-foreground leading-snug">
+              Downloads all progress — modules, assessment, persona, quiz mastery, chat history,
+              artifacts, and settings.
+            </p>
+          </div>
+        </motion.button>
+
+        <motion.button
+          type="button"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          aria-label="Import backup — restore from a previously exported backup file"
+          className="glass-panel p-3 flex items-center gap-3 hover:border-secondary/50 transition-colors text-left w-full"
+          onClick={() => {
+            const input = document.createElement('input')
+            input.type = 'file'
+            input.accept = '.json'
+            input.onchange = async (e) => {
+              const file = (e.target as HTMLInputElement).files?.[0]
+              if (!file) return
+              try {
+                const snapshot = await UnifiedStorageService.importSnapshot(file)
+                UnifiedStorageService.restoreSnapshot(snapshot)
+                toast.success('Backup restored successfully. The page will now reload.')
+                setTimeout(() => window.location.reload(), 500)
+              } catch (error) {
+                console.error('Failed to restore backup:', error)
+                toast.error(error instanceof Error ? error.message : 'Failed to restore backup')
+              }
+            }
+            input.click()
+          }}
+        >
+          <div className="p-2 rounded-lg bg-secondary/10 text-secondary shrink-0">
+            <Upload size={18} aria-hidden="true" />
+          </div>
+          <div className="min-w-0">
+            <h4 className="text-sm font-semibold text-foreground">Import Backup</h4>
+            <p className="text-xs text-muted-foreground leading-snug">
+              Restore from a previously exported backup file to resume all progress and settings.
+            </p>
+          </div>
+        </motion.button>
+      </div>
+    </details>
+  </section>
+)
+
 export const LandingView = () => {
-  const { selectedPersona, selectedRegion, setPersona } = usePersonaStore()
+  const {
+    selectedPersona,
+    selectedRegion,
+    setPersona,
+    hasSkippedPersonalization,
+    skipPersonalization,
+  } = usePersonaStore()
   const assessmentStatus = useAssessmentStore((s) => s.assessmentStatus)
+  // Persona-journeys A-grade redesign (2026-08-01): Curious's mobile board is
+  // a structurally different, standalone layout (own header/bottom-tab-bar —
+  // see CuriousMobileBoard.tsx), not a responsive variant of PersonaBoardView.
+  // `useIsBelowLgViewport` is the SAME breakpoint MainLayout.tsx's rail uses
+  // (`hidden lg:flex` / `lg:hidden`) so the two components can never disagree
+  // about which viewport width means "mobile" here — see the hook's own docs.
+  const isBelowLg = useIsBelowLgViewport()
 
   const moduleModules = useModuleStore((s) => s.modules)
 
@@ -188,16 +295,80 @@ export const LandingView = () => {
     })
   }, [])
 
+  // ── Persona-journeys A-grade redesign (2026-08-01) ─────────────────────────
+  // Role Home is the new pre-personalization front door
+  // (IMPLEMENTATION-PLAN-2026-08-01.md §3.2): shown exactly once, until the
+  // user either picks a role or explicitly skips ("Show me everything" →
+  // `skipPersonalization()`, which flips `hasSkippedPersonalization` so this
+  // screen never returns for that user — see usePersonaStore's own doc
+  // comment on that flag). The old Track → Role → Region → Industry wizard
+  // (`PersonalizationSection`) has since been retired (2026-08-01 top-bar
+  // pill follow-up) — Role Home replaced its Track/Role steps, and the top
+  // bar's RegionIndustryPill (MainLayout.tsx) replaced its Region/Industry
+  // steps.
+  if (!selectedPersona && !hasSkippedPersonalization) {
+    return <RoleHomeView onSelectPersona={setPersona} onSkip={skipPersonalization} />
+  }
+
+  // Curious · mobile (IMPLEMENTATION-PLAN-2026-08-01.md §3.4) — a standalone,
+  // structurally simpler layout with its OWN header/bottom-tab-bar, not a
+  // responsive variant of PersonaBoardView. Scoped to Curious + below-`lg`
+  // only; MainLayout.tsx suppresses its own header chrome for this exact same
+  // condition so the two never fight over the screen (see MainLayout.tsx's
+  // `isCuriousMobileTakeover`).
+  if (selectedPersona === 'curious' && isBelowLg) {
+    return <CuriousMobileBoard />
+  }
+
+  // A persona is selected (and we're not in the Curious-mobile case above) —
+  // PersonaBoardView (§3.3) is the real per-persona experience now, replacing
+  // the old generic hero/CTA-buttons/stats-bar block entirely (not stacked
+  // alongside it). What stays, below the board, and why:
+  //  - OnboardingCTAs: a genuinely distinct feature (video tour / browse
+  //    workshops) the board skeleton doesn't cover.
+  //  - ScoreCard: the learning-progress/belt-rank summary — genuinely
+  //    separate from persona/region/industry selection (it tracks module
+  //    completion, quiz mastery, and artifact generation, not profile
+  //    fields). Previously rendered indirectly via PersonalizationSection's
+  //    collapsed "avatar + ScoreCard" state; rendered directly now that
+  //    PersonalizationSection (the Track→Role→Region→Industry wizard, plus
+  //    its avatar/"Change persona" framing) has been retired — Role Home +
+  //    the rail's role-switcher + the top bar's RegionIndustryPill fully
+  //    replace what that wizard did. See the build report for the removal's
+  //    full rationale, including the `?scroll=persona`/`?picker=open`
+  //    "Update profile" deep-link CTAs (PQC101Module, AboutNextStepCTA),
+  //    which now open the persona-switch modal via MainLayout instead.
+  //  - TransparencyBanner / CuriousGuide / Backup & Restore: generic,
+  //    persona-independent utility sections, unchanged from today.
+  if (selectedPersona) {
+    return (
+      <div className="w-full space-y-16 md:space-y-24">
+        <PersonaBoardView
+          personaId={selectedPersona}
+          customSideCard={
+            selectedPersona === 'researcher' ? <ResearcherFieldWatchCard /> : undefined
+          }
+        />
+
+        <OnboardingCTAs persona={selectedPersona} region={selectedRegion} />
+
+        <ScoreCard />
+
+        <TransparencyBanner />
+
+        <CuriousGuide />
+
+        <BackupRestoreSection />
+      </div>
+    )
+  }
+
+  // hasSkippedPersonalization === true && selectedPersona === null — "Show me
+  // everything": identical to today's pre-redesign Landing, unfiltered.
   return (
     <div className="w-full space-y-16 md:space-y-24">
       {/* Hero Section */}
       <section className="text-center pt-8 md:pt-16">
-        {selectedPersona && (
-          <div className="flex justify-end mb-4 -mt-2">
-            <PersonaChip />
-          </div>
-        )}
-
         <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}>
           <p className="text-sm font-mono uppercase tracking-widest text-primary-legible mb-4">
             Prepare for the Quantum Era
@@ -247,7 +418,12 @@ export const LandingView = () => {
           <ResumeBanner dismissKey="landing-hero" />
         </motion.div>
 
-        {/* Personalization Section */}
+        {/* Learning-progress summary — see the persona-selected branch above
+            for why this renders ScoreCard directly rather than through the
+            now-retired PersonalizationSection wizard. Region/industry/persona
+            selection for this "show me everything" visitor now happens via
+            the top bar's RegionIndustryPill and role-switcher (MainLayout),
+            reachable from every route, not just here. */}
         <motion.div
           initial="hidden"
           animate="visible"
@@ -255,7 +431,7 @@ export const LandingView = () => {
           custom={2.5}
           className="mb-6"
         >
-          <PersonalizationSection />
+          <ScoreCard />
         </motion.div>
 
         {/* Onboarding CTAs */}
@@ -329,26 +505,6 @@ export const LandingView = () => {
           />
         </motion.div>
 
-        {/* Switch role hint — visible only when a persona is active */}
-        {selectedPersona && (
-          <motion.p
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
-            custom={3.5}
-            className="mt-3 text-xs text-muted-foreground/60 text-center"
-          >
-            Viewing as {selectedPersona.charAt(0).toUpperCase() + selectedPersona.slice(1)} ·{' '}
-            <Button
-              variant="link"
-              className="text-xs h-auto p-0 text-muted-foreground/60 hover:text-primary"
-              onClick={() => setPersona(null)}
-            >
-              Switch role
-            </Button>
-          </motion.p>
-        )}
-
         {/* Stats bar */}
         <motion.div
           initial="hidden"
@@ -391,87 +547,7 @@ export const LandingView = () => {
 
       {/* Progress Management — collapsed by default so housekeeping does not compete
           with the hero/personalization content; the export/import feature is retained. */}
-      <section className="pt-4">
-        <details className="group">
-          <summary className="text-lg font-bold text-foreground mb-3 flex items-center gap-2 cursor-pointer list-none select-none">
-            <Save size={20} className="text-primary" />
-            Backup &amp; Restore progress
-            <span className="text-xs font-normal text-muted-foreground ml-1 group-open:hidden">
-              — export or import your saved progress
-            </span>
-          </summary>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
-            <motion.button
-              type="button"
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              aria-label="Export backup — download all progress and settings"
-              className="glass-panel p-3 flex items-center gap-3 hover:border-primary/50 transition-colors text-left w-full"
-              onClick={() => {
-                try {
-                  UnifiedStorageService.downloadSnapshot()
-                } catch (error) {
-                  console.error('Failed to export backup:', error)
-                  toast.error('Failed to export backup')
-                }
-              }}
-            >
-              <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
-                <Save size={18} aria-hidden="true" />
-              </div>
-              <div className="min-w-0">
-                <h4 className="text-sm font-semibold text-foreground">Export Backup</h4>
-                <p className="text-xs text-muted-foreground leading-snug">
-                  Downloads all progress — modules, assessment, persona, quiz mastery, chat history,
-                  artifacts, and settings.
-                </p>
-              </div>
-            </motion.button>
-
-            <motion.button
-              type="button"
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              aria-label="Import backup — restore from a previously exported backup file"
-              className="glass-panel p-3 flex items-center gap-3 hover:border-secondary/50 transition-colors text-left w-full"
-              onClick={() => {
-                const input = document.createElement('input')
-                input.type = 'file'
-                input.accept = '.json'
-                input.onchange = async (e) => {
-                  const file = (e.target as HTMLInputElement).files?.[0]
-                  if (!file) return
-                  try {
-                    const snapshot = await UnifiedStorageService.importSnapshot(file)
-                    UnifiedStorageService.restoreSnapshot(snapshot)
-                    toast.success('Backup restored successfully. The page will now reload.')
-                    setTimeout(() => window.location.reload(), 500)
-                  } catch (error) {
-                    console.error('Failed to restore backup:', error)
-                    toast.error(error instanceof Error ? error.message : 'Failed to restore backup')
-                  }
-                }
-                input.click()
-              }}
-            >
-              <div className="p-2 rounded-lg bg-secondary/10 text-secondary shrink-0">
-                <Upload size={18} aria-hidden="true" />
-              </div>
-              <div className="min-w-0">
-                <h4 className="text-sm font-semibold text-foreground">Import Backup</h4>
-                <p className="text-xs text-muted-foreground leading-snug">
-                  Restore from a previously exported backup file to resume all progress and
-                  settings.
-                </p>
-              </div>
-            </motion.button>
-          </div>
-        </details>
-      </section>
+      <BackupRestoreSection />
     </div>
   )
 }

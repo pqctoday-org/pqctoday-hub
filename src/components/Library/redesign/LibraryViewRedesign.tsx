@@ -14,6 +14,7 @@ import { useSearchParams } from 'react-router'
 import { BookOpen, ChevronDown, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { PageHeader } from '@/components/common/PageHeader'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { Button } from '@/components/ui/button'
 import {
@@ -415,45 +416,52 @@ export function LibraryViewRedesign({
       onClear: () => clearMulti('algo', fam),
     })
 
+  // Register this page's actions with the global top bar (page-action-strip
+  // rollout, 2026-08-01) — info/export/endorse/flag render there now, not as
+  // a row on the page itself. Mirrors TimelineView.tsx's pattern. Gated on
+  // `!simEmbed`, same as the PageHeader render below.
+  useEffect(() => {
+    if (simEmbed) return
+    const { setPageActions, clearPageActions } = usePageActionsStore.getState()
+    setPageActions({
+      title: 'PQC Library',
+      dataSource: libraryMetadata
+        ? `${libraryMetadata.filename} • Updated: ${libraryMetadata.lastUpdate.toLocaleDateString()}`
+        : undefined,
+      onExport: handleExportCsv,
+      endorseUrl: buildEndorsementUrl({
+        category: 'library-resource-endorsement',
+        title: 'Endorse: PQC Library',
+        resourceType: 'Library Page',
+        resourceId: 'PQC Library',
+        resourceDetails:
+          '**Page:** PQC Library — the standards, drafts and guidance that define post-quantum cryptography.',
+        pageUrl: '/library',
+      }),
+      endorseLabel: 'Library Page',
+      endorseResourceType: 'Library',
+      flagUrl: buildFlagUrl({
+        category: 'library-resource-endorsement',
+        title: 'Flag: PQC Library',
+        resourceType: 'Library Page',
+        resourceId: 'PQC Library',
+        resourceDetails:
+          '**Page:** PQC Library — the standards, drafts and guidance that define post-quantum cryptography.',
+        pageUrl: '/library',
+      }),
+      flagLabel: 'Library Page',
+      flagResourceType: 'Library',
+    })
+    return () => clearPageActions()
+  }, [simEmbed, handleExportCsv])
+
   return (
     <div className="animate-fade-in space-y-4 pb-24">
       {!simEmbed && (
         <PageHeader
           icon={BookOpen}
-          pageId="library"
           title="PQC Library"
           description="The standards, drafts and guidance that define post-quantum cryptography."
-          dataSource={
-            libraryMetadata
-              ? `${libraryMetadata.filename} • Updated: ${libraryMetadata.lastUpdate.toLocaleDateString()}`
-              : undefined
-          }
-          viewType="Library"
-          shareTitle="PQC Library — NIST, IETF, ETSI & More"
-          shareText="Explore post-quantum cryptography standards, drafts, and key documents."
-          onExport={handleExportCsv}
-          endorseUrl={buildEndorsementUrl({
-            category: 'library-resource-endorsement',
-            title: 'Endorse: PQC Library',
-            resourceType: 'Library Page',
-            resourceId: 'PQC Library',
-            resourceDetails:
-              '**Page:** PQC Library — the standards, drafts and guidance that define post-quantum cryptography.',
-            pageUrl: '/library',
-          })}
-          endorseLabel="Library Page"
-          endorseResourceType="Library"
-          flagUrl={buildFlagUrl({
-            category: 'library-resource-endorsement',
-            title: 'Flag: PQC Library',
-            resourceType: 'Library Page',
-            resourceId: 'PQC Library',
-            resourceDetails:
-              '**Page:** PQC Library — the standards, drafts and guidance that define post-quantum cryptography.',
-            pageUrl: '/library',
-          })}
-          flagLabel="Library Page"
-          flagResourceType="Library"
         />
       )}
 

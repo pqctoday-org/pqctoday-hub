@@ -1,12 +1,47 @@
 // SPDX-License-Identifier: GPL-3.0-only
+/* eslint-disable security/detect-object-injection -- every bracket access below is keyed by a
+   typed union (Region / PersonaId) or a value drawn from AVAILABLE_INDUSTRIES itself, never
+   free-form user input; RegionIndustryPill.tsx (folded into this modal) used the same
+   file-level suppression for the identical pattern. */
 import React, { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
-import { X, Briefcase, Code, ShieldCheck, GraduationCap, Server, Lightbulb } from 'lucide-react'
+import {
+  X,
+  Briefcase,
+  Code,
+  ShieldCheck,
+  GraduationCap,
+  Server,
+  Lightbulb,
+  Globe,
+  Layers,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { FilterDropdown, type FilterDropdownItem } from '@/components/common/FilterDropdown'
 import { PERSONAS } from '@/data/learningPersonas'
 import type { PersonaId } from '@/data/learningPersonas'
 import { usePersonaStore } from '@/store/usePersonaStore'
-import { logPersonaSelected } from '@/utils/analytics'
+import type { Region } from '@/store/usePersonaStore'
+import { useAssessmentStore } from '@/store/useAssessmentStore'
+import {
+  PERSONA_TIMELINE_REGION,
+  PERSONA_THREATS_DEFAULT_INDUSTRIES,
+  REGION_COUNTRIES_MAP,
+} from '@/data/personaConfig'
+import { REGIONS, INDUSTRY_ICONS } from '@/data/regionIndustryOptions'
+import { AVAILABLE_INDUSTRIES } from '@/hooks/assessmentData'
+import { logPersonaSelected, logRegionSelected, logIndustrySelected } from '@/utils/analytics'
+
+const REGION_ITEMS: FilterDropdownItem[] = REGIONS.map((r) => ({
+  id: r.id,
+  label: r.label,
+  icon: <r.Icon size={14} aria-hidden="true" />,
+}))
+
+const INDUSTRY_ITEMS: FilterDropdownItem[] = AVAILABLE_INDUSTRIES.map((industry) => {
+  const Icon = INDUSTRY_ICONS[industry] ?? Layers
+  return { id: industry, label: industry, icon: <Icon size={14} aria-hidden="true" /> }
+})
 
 const PERSONA_ICONS = {
   Briefcase,
@@ -31,8 +66,55 @@ interface Props {
 }
 
 export const PersonaSwitchModal: React.FC<Props> = ({ onClose }) => {
-  const { selectedPersona, setPersona } = usePersonaStore()
+  const {
+    selectedPersona,
+    setPersona,
+    selectedRegion,
+    selectedIndustries,
+    setRegion,
+    setIndustries,
+  } = usePersonaStore()
+  const {
+    setCountry,
+    setIndustry: setAssessIndustry,
+    assessmentStatus,
+    editFromStep,
+  } = useAssessmentStore()
   const containerRef = useRef<HTMLDivElement>(null)
+
+  // Region/industry, folded into this same modal (2026-08-01 follow-up:
+  // "merge the persona filtering in one drop down") — was a separate
+  // RegionIndustryPill trigger/popover; same "unset" heuristic and handlers,
+  // just rendered here instead. See that file's history for the flagged
+  // hasCustomizedRegion/hasCustomizedIndustries limitation (unchanged).
+  const hasCustomRegion = selectedRegion !== null && selectedRegion !== 'global'
+  const hasCustomIndustries = selectedIndustries.length > 0
+  const effectiveRegion: Region | 'All' = hasCustomRegion
+    ? selectedRegion
+    : selectedPersona
+      ? PERSONA_TIMELINE_REGION[selectedPersona]
+      : 'global'
+  const effectiveIndustries: string[] = hasCustomIndustries
+    ? selectedIndustries
+    : selectedPersona
+      ? PERSONA_THREATS_DEFAULT_INDUSTRIES[selectedPersona]
+      : []
+
+  const handleRegionSelect = (id: string) => {
+    const region: Region = id === 'All' ? 'global' : (id as Region)
+    setRegion(region)
+    setCountry(REGION_COUNTRIES_MAP[region]?.[0] ?? '')
+    logRegionSelected(region)
+    if (assessmentStatus === 'complete') editFromStep(0)
+  }
+
+  const handleIndustrySelect = (id: string) => {
+    const industries = id === 'All' ? [] : [id]
+    setIndustries(industries)
+    setAssessIndustry(industries[0] ?? '')
+    if (industries[0]) logIndustrySelected(industries[0])
+    if (assessmentStatus === 'complete') editFromStep(0)
+  }
 
   // Trap focus within modal
   useEffect(() => {
@@ -128,6 +210,37 @@ export const PersonaSwitchModal: React.FC<Props> = ({ onClose }) => {
                 </Button>
               )
             })}
+          </div>
+
+          <div className="mt-5 pt-4 border-t border-border grid grid-cols-2 gap-3">
+            <div>
+              <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                Region
+              </p>
+              <FilterDropdown
+                items={REGION_ITEMS}
+                selectedId={effectiveRegion}
+                onSelect={handleRegionSelect}
+                defaultLabel="All regions"
+                defaultIcon={<Globe size={14} className="text-primary" />}
+                noContainer
+                className="w-full"
+              />
+            </div>
+            <div>
+              <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                Industry
+              </p>
+              <FilterDropdown
+                items={INDUSTRY_ITEMS}
+                selectedId={effectiveIndustries[0] ?? 'All'}
+                onSelect={handleIndustrySelect}
+                defaultLabel="All industries"
+                defaultIcon={<Layers size={14} className="text-primary" />}
+                noContainer
+                className="w-full"
+              />
+            </div>
           </div>
         </div>
       </div>

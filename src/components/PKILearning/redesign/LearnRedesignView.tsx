@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router'
 import { GraduationCap, Compass, ListChecks } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { PageHeader } from '@/components/common/PageHeader'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { useIsEmbedded } from '@/embed/EmbedProvider'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
@@ -92,6 +93,22 @@ export const LearnRedesignView = () => {
     return `${TOTAL_MODULE_COUNT} modules · ${TRACK_COUNT} tracks`
   }, [mode, selectedPersona, pathSummary])
 
+  // Register this page's actions with the global top bar (page-action-strip
+  // rollout, 2026-08-01) — the info/dataSource indicator renders there now,
+  // not as a row on the page itself. Mirrors TimelineView.tsx's pattern.
+  // Gated on `!isEmbed`, same as the PageHeader render below. The `actions`
+  // Quiz button stays on PageHeader itself — it's out of scope for this
+  // rollout (only dataSource/onExport/endorse/flag move to the store).
+  useEffect(() => {
+    if (isEmbed) return
+    const { setPageActions, clearPageActions } = usePageActionsStore.getState()
+    setPageActions({
+      title: 'Learn',
+      dataSource: `${TOTAL_MODULE_COUNT} modules · ${TRACK_COUNT} tracks`,
+    })
+    return () => clearPageActions()
+  }, [isEmbed])
+
   return (
     <div className="space-y-4">
       {/* Header — shared PageHeader, identical to /compliance and every other
@@ -101,10 +118,8 @@ export const LearnRedesignView = () => {
       {!isEmbed && (
         <PageHeader
           icon={GraduationCap}
-          pageId="learn"
           title="Learn"
           description="One guided path through post-quantum cryptography — tuned to your role."
-          dataSource={`${TOTAL_MODULE_COUNT} modules · ${TRACK_COUNT} tracks`}
           testId="learn-page-header"
           actions={
             <Button

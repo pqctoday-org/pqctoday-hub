@@ -14,7 +14,6 @@ import { Link, useNavigate, useSearchParams } from 'react-router'
 import JSZip from 'jszip'
 import { PageHeader } from '@/components/common/PageHeader'
 import { PreviewBanner } from '@/components/common/PreviewBanner'
-import { WorkflowBreadcrumb } from '@/components/shared/WorkflowBreadcrumb'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { logEvent, personaLabel } from '@/utils/analytics'
@@ -534,17 +533,13 @@ export function BusinessCenterView() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6" data-testid="bc-dashboard-ready">
-      <WorkflowBreadcrumb current="business" />
       <PageHeader
         icon={LayoutDashboard}
-        pageId="business-center"
         title={zoneEmphasis.headline ?? 'Command Center'}
         description={
           zoneEmphasis.tagline ??
           'Your PQC readiness command center, organised around the NIST CSWP.39 Fig 3 Crypto Agility Strategic Plan (Considerations for Achieving Crypto Agility, Dec 2025).'
         }
-        shareTitle="PQC Command Center — Quantum Readiness Workspace"
-        shareText="Your PQC readiness command center — risk, compliance, governance, and actionable next steps."
       />
 
       {/* LearningFrame — names what kind of artifact this page is. The

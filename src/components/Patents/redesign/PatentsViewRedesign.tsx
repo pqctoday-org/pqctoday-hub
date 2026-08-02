@@ -9,11 +9,12 @@
  * the live PatentsView state: pqcOnly (LS), columns (LS), sort (LS + executive
  * default), tab/patent/filter URL params, CSV export, persona.
  */
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router'
 import { ScrollText } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { PageHeader } from '@/components/common/PageHeader'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { PreviewBanner } from '@/components/common/PreviewBanner'
 import { patentsData, patentsMetadata } from '@/data/patentsData'
@@ -362,38 +363,47 @@ export function PatentsViewRedesign() {
     ? `${displayPatents.length} patents · enriched ${patentsMetadata.lastUpdate.toLocaleDateString()}`
     : `${displayPatents.length} patents`
 
+  // Register this page's actions with the global top bar (page-action-strip
+  // rollout, 2026-08-01) — info/export/endorse/flag render there now, not as
+  // a row on the page itself. Mirrors TimelineView.tsx's pattern.
+  useEffect(() => {
+    const { setPageActions, clearPageActions } = usePageActionsStore.getState()
+    setPageActions({
+      title: 'PQC Patents',
+      dataSource,
+      onExport: handleExport,
+      endorseUrl: buildEndorsementUrl({
+        category: 'patent-endorsement',
+        title: 'Endorse: PQC Patents',
+        resourceType: 'Patents Page',
+        resourceId: 'PQC Patents',
+        resourceDetails:
+          '**Page:** PQC Patents — cryptographic patents relevant to post-quantum migration.',
+        pageUrl: '/patents',
+      }),
+      endorseLabel: 'Patents Page',
+      endorseResourceType: 'Patents',
+      flagUrl: buildFlagUrl({
+        category: 'patent-endorsement',
+        title: 'Flag: PQC Patents',
+        resourceType: 'Patents Page',
+        resourceId: 'PQC Patents',
+        resourceDetails:
+          '**Page:** PQC Patents — cryptographic patents relevant to post-quantum migration.',
+        pageUrl: '/patents',
+      }),
+      flagLabel: 'Patents Page',
+      flagResourceType: 'Patents',
+    })
+    return () => clearPageActions()
+  }, [dataSource, handleExport])
+
   return (
     <div className="animate-fade-in space-y-4 pb-24">
       <PageHeader
         icon={ScrollText}
         title="PQC Patents"
         description="Cryptographic patents relevant to post-quantum migration, enriched across 25 technical dimensions. For research — not legal or IP advice."
-        dataSource={dataSource}
-        onExport={handleExport}
-        shareTitle="PQC Patents — Post-Quantum Migration Patent Corpus"
-        shareText="Cryptographic patents relevant to post-quantum migration, enriched across 25 technical dimensions."
-        endorseUrl={buildEndorsementUrl({
-          category: 'patent-endorsement',
-          title: 'Endorse: PQC Patents',
-          resourceType: 'Patents Page',
-          resourceId: 'PQC Patents',
-          resourceDetails:
-            '**Page:** PQC Patents — cryptographic patents relevant to post-quantum migration.',
-          pageUrl: '/patents',
-        })}
-        endorseLabel="Patents Page"
-        endorseResourceType="Patents"
-        flagUrl={buildFlagUrl({
-          category: 'patent-endorsement',
-          title: 'Flag: PQC Patents',
-          resourceType: 'Patents Page',
-          resourceId: 'PQC Patents',
-          resourceDetails:
-            '**Page:** PQC Patents — cryptographic patents relevant to post-quantum migration.',
-          pageUrl: '/patents',
-        })}
-        flagLabel="Patents Page"
-        flagResourceType="Patents"
       />
 
       {/* Control deck */}

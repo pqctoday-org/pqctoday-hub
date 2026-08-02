@@ -18,6 +18,7 @@ import { MobileTimelineList } from './MobileTimelineList'
 import { CoverageByRegion } from './CoverageByRegion'
 import { CountryFlag } from '../common/CountryFlag'
 import { PageHeader } from '../common/PageHeader'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { TrustTierFilter, useTrustTierFilter } from '../common/TrustTierFilter'
@@ -296,6 +297,44 @@ export const TimelineView = () => {
     [ganttData]
   )
 
+  // Register this page's actions with the global top bar (HEADER-TOPBAR-
+  // STANDARDIZATION-PLAN-2026-08-01.md §3/§4) — info/export/endorse/flag
+  // render there now, not as a row on the page itself.
+  useEffect(() => {
+    const { setPageActions, clearPageActions } = usePageActionsStore.getState()
+    setPageActions({
+      title: 'Global Migration Timeline',
+      dataSource: timelineMetadata
+        ? `${timelineMetadata.filename} • Updated: ${timelineMetadata.lastUpdate.toLocaleDateString()}`
+        : undefined,
+      dataSourceLoading: !timelineMetadata,
+      onExport: () => handleExportCsv(),
+      endorseUrl: buildEndorsementUrl({
+        category: 'timeline-endorsement',
+        title: 'Endorse: Global PQC Migration Timeline',
+        resourceType: 'Timeline Page',
+        resourceId: 'Global Migration Timeline',
+        resourceDetails:
+          '**Page:** Global Migration Timeline — Compare PQC migration roadmaps across nations.',
+        pageUrl: '/timeline',
+      }),
+      endorseLabel: 'Timeline Page',
+      endorseResourceType: 'Timeline',
+      flagUrl: buildFlagUrl({
+        category: 'timeline-endorsement',
+        title: 'Flag: Global PQC Migration Timeline',
+        resourceType: 'Timeline Page',
+        resourceId: 'Global Migration Timeline',
+        resourceDetails:
+          '**Page:** Global Migration Timeline — Compare PQC migration roadmaps across nations.',
+        pageUrl: '/timeline',
+      }),
+      flagLabel: 'Timeline Page',
+      flagResourceType: 'Timeline',
+    })
+    return () => clearPageActions()
+  }, [handleExportCsv])
+
   // Region filter items
   const regionItems = useMemo(
     () => [
@@ -391,40 +430,8 @@ export const TimelineView = () => {
     <div data-testid="timeline-view-root">
       <PageHeader
         icon={Globe}
-        pageId="timeline"
         title="Global Migration Timeline"
         description="Compare Post-Quantum Cryptography migration roadmaps across nations. Track phases from discovery to full migration and key regulatory milestones."
-        dataSource={
-          timelineMetadata
-            ? `${timelineMetadata.filename} • Updated: ${timelineMetadata.lastUpdate.toLocaleDateString()}`
-            : undefined
-        }
-        viewType="Timeline"
-        shareTitle="PQC Migration Timeline — Global Post-Quantum Cryptography Roadmap"
-        shareText="Compare PQC migration timelines across nations — track phases from discovery to full migration."
-        onExport={handleExportCsv}
-        endorseUrl={buildEndorsementUrl({
-          category: 'timeline-endorsement',
-          title: 'Endorse: Global PQC Migration Timeline',
-          resourceType: 'Timeline Page',
-          resourceId: 'Global Migration Timeline',
-          resourceDetails:
-            '**Page:** Global Migration Timeline — Compare PQC migration roadmaps across nations.',
-          pageUrl: '/timeline',
-        })}
-        endorseLabel="Timeline Page"
-        endorseResourceType="Timeline"
-        flagUrl={buildFlagUrl({
-          category: 'timeline-endorsement',
-          title: 'Flag: Global PQC Migration Timeline',
-          resourceType: 'Timeline Page',
-          resourceId: 'Global Migration Timeline',
-          resourceDetails:
-            '**Page:** Global Migration Timeline — Compare PQC migration roadmaps across nations.',
-          pageUrl: '/timeline',
-        })}
-        flagLabel="Timeline Page"
-        flagResourceType="Timeline"
         testId="timeline-header"
       />
 

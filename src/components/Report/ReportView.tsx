@@ -33,7 +33,6 @@ import {
 } from '../../hooks/assessmentData'
 import type { AssessmentInput } from '../../hooks/assessmentTypes'
 import { PageHeader } from '../common/PageHeader'
-import { WorkflowBreadcrumb } from '../shared/WorkflowBreadcrumb'
 import { logReportViewed, logReportShareLinkOpened, logReportCta } from '@/utils/analytics'
 import { EXAMPLE_REPORT_URL } from '@/data/exampleReport'
 import { PersonaSuggestionCard } from '@/components/Assess/PersonaSuggestionCard'
@@ -535,15 +534,11 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
 
   return (
     <div className="animate-fade-in">
-      {!simEmbed && <WorkflowBreadcrumb current="report" />}
       {!simEmbed && (
         <PageHeader
           icon={FileBarChart}
-          pageId="report"
           title="PQC Assessment Report"
           description="Your personalized post-quantum cryptography risk report with scores, priorities, and recommendations."
-          shareTitle="PQC Assessment Report — Post-Quantum Cryptography Risk Analysis"
-          shareText="View your personalized PQC risk score, migration priorities, and actionable recommendations."
         />
       )}
 

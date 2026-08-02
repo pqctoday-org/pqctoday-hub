@@ -11,6 +11,7 @@
 //   Plane 3 · PKCS#11  — the keystore the engine actually populated, plus the
 //                        cross-plane audit trail every op emits.
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router'
 import {
   Cpu,
   KeyRound,
@@ -245,7 +246,18 @@ export function KmipPlaygroundView() {
 
   const [mode, setMode] = useState<ViewMode>(readMode)
   const expert = mode === 'expert'
-  const [plane, setPlane] = useState<Plane>('agility')
+  // Supports deep-linking straight to a plane, e.g. the persona board's
+  // architect CTA "See the seven-key estate" -> /playground/cacp?plane=migration.
+  const [searchParams] = useSearchParams()
+  const [plane, setPlane] = useState<Plane>(() => {
+    const requested = searchParams.get('plane')
+    return requested === 'agility' ||
+      requested === 'policy' ||
+      requested === 'kmip3' ||
+      requested === 'migration'
+      ? requested
+      : 'agility'
+  })
   const chooseMode = (m: ViewMode) => {
     setMode(m)
     try {
