@@ -76,19 +76,21 @@ describe('SimulationView (Mission Control)', () => {
   it('renders the console shell, setup dials and KPI ribbon', () => {
     renderPage()
     expect(screen.getByText('PQC Today Sim')).toBeInTheDocument()
-    expect(screen.getByText('PQC Migration Simulation')).toBeInTheDocument()
-    // ORG is now read-only (sourced from the assessment) — label has no ⟳ glyph,
-    // and the dial is not a button.
-    const org = screen.getByText('ORG')
-    expect(org).toBeInTheDocument()
-    expect(org.textContent).not.toContain('⟳')
-    expect(org.closest('button')).toBeNull()
-    // SEAT stays switchable — it keeps the ⟳ glyph on a button.
-    expect(screen.getByText('SEAT ⟳')).toBeInTheDocument()
-    expect(screen.getByText(/Transformation/)).toBeInTheDocument()
+    // subtitle + framework attribution merged onto one line (2026-08-02)
+    expect(screen.getByText(/Migration Sim/)).toBeInTheDocument()
+    // ORG/JURISDICTION/SECTOR merged into one read-only Profile pill (2026-08-02):
+    // still not a button, still sourced from the assessment.
+    const profile = screen.getByText('Profile')
+    expect(profile).toBeInTheDocument()
+    expect(profile.closest('button')).toBeNull()
+    // Seat stays switchable — a real button that cycles.
+    expect(screen.getByRole('button', { name: /^Seat:/ })).toBeInTheDocument()
+    // The full Transformation panel moved into the Signals tab (2026-08-02);
+    // the header keeps a one-line Maturity glance in its compact KPI cluster.
+    expect(screen.getByText('Maturity')).toBeInTheDocument()
     // WP2.2: relabeled from "Phases cleared" — the L2 count is a milestone,
     // not the win condition (see scoreboard.ts).
-    expect(screen.getByText('Governance floor (L2)')).toBeInTheDocument()
+    expect(screen.getByText('Gov L2')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /End Quarter/ })).toBeInTheDocument()
     // exit affordance back to the hub is a visible button on the console
     expect(screen.getByRole('button', { name: /Exit to hub/i })).toBeInTheDocument()
@@ -105,13 +107,16 @@ describe('SimulationView (Mission Control)', () => {
     expect(screen.queryByText('Vital signs')).not.toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Signals' }))
     expect(screen.getByText('Vital signs')).toBeInTheDocument()
-    expect(screen.getAllByText('HNDL risk').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('TNFL risk').length).toBeGreaterThan(0)
+    // HNDL/TNFL de-duplicated out of Vital signs (2026-08-02) — Program status
+    // above it already shows both, with per-tier track bars.
+    expect(screen.getByText('Program status')).toBeInTheDocument()
+    expect(screen.getAllByText(/HNDL ·/).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/TNFL ·/).length).toBeGreaterThan(0)
     // scoreboard + clock + budget still present on the ribbon (Budget secured
     // also appears in the mobile fallback summary, hence getAllByText)
-    expect(screen.getByText('Governance floor (L2)')).toBeInTheDocument()
-    expect(screen.getByText('Years to Q-Day')).toBeInTheDocument()
-    expect(screen.getAllByText('Budget secured').length).toBeGreaterThan(0)
+    expect(screen.getByText('Gov L2')).toBeInTheDocument()
+    expect(screen.getByText('Q-Day')).toBeInTheDocument()
+    expect(screen.getAllByText(/Budget/).length).toBeGreaterThan(0)
   })
 
   // The sim runs on the user's assessed org (single source of truth): with no
@@ -149,8 +154,11 @@ describe('SimulationView (Mission Control)', () => {
       assessmentStatus: 'complete',
     })
     renderPage()
-    expect(screen.getByText('Australia')).toBeInTheDocument()
-    expect(screen.queryByText('Germany')).not.toBeInTheDocument()
+    // jurisdiction is a bare text node inside the merged Profile pill now (it
+    // shares its element with org size + sector), so assert on the pill itself.
+    const pill = screen.getByLabelText(/^Profile:/)
+    expect(pill.textContent).toContain('Australia')
+    expect(pill.textContent).not.toContain('Germany')
     useAssessmentFormStore.getState().reset()
   })
 
@@ -362,7 +370,7 @@ describe('SimulationView (Mission Control)', () => {
   it('"Challenge a colleague" copies a ?seed= link for THIS run\'s seed', async () => {
     useSimulationStore.setState({ seed: 999888 })
     renderPage()
-    fireEvent.click(screen.getByRole('button', { name: /⋯ MORE/i }))
+    fireEvent.click(screen.getByRole('button', { name: /More run actions/i }))
     fireEvent.click(screen.getByRole('menuitem', { name: /challenge a colleague/i }))
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
       expect.stringContaining('/simulation?seed=999888')
@@ -381,7 +389,7 @@ describe('SimulationView — unified PLAY modal', () => {
 
   it('clicking ▶ PLAY opens the modal with all 3 scopes visible', () => {
     renderPage()
-    fireEvent.click(screen.getByRole('button', { name: /^▶ PLAY$/ }))
+    fireEvent.click(screen.getByRole('button', { name: /^▶ Play$/ }))
     expect(screen.getByRole('dialog', { name: /choose how to play/i })).toBeInTheDocument()
     expect(screen.getByText('Executive Overview')).toBeInTheDocument()
     expect(screen.getByText('Full Migration Journey')).toBeInTheDocument()
@@ -390,7 +398,7 @@ describe('SimulationView — unified PLAY modal', () => {
 
   it('with no persona set, Full Migration Journey is the recommended default', () => {
     renderPage()
-    fireEvent.click(screen.getByRole('button', { name: /^▶ PLAY$/ }))
+    fireEvent.click(screen.getByRole('button', { name: /^▶ Play$/ }))
     const dialog = screen.getByRole('dialog', { name: /choose how to play/i })
     const journeyCard = within(dialog).getByText('Full Migration Journey').closest('div')!
     expect(within(journeyCard).getByText(/recommended for you/i)).toBeInTheDocument()
@@ -399,7 +407,7 @@ describe('SimulationView — unified PLAY modal', () => {
   it('a business persona (executive) recommends Executive Overview instead', () => {
     usePersonaStore.getState().setPersona('executive')
     renderPage()
-    fireEvent.click(screen.getByRole('button', { name: /^▶ PLAY$/ }))
+    fireEvent.click(screen.getByRole('button', { name: /^▶ Play$/ }))
     const dialog = screen.getByRole('dialog', { name: /choose how to play/i })
     const execCard = within(dialog).getByText('Executive Overview').closest('div')!
     expect(within(execCard).getByText(/recommended for you/i)).toBeInTheDocument()
@@ -411,7 +419,7 @@ describe('SimulationView — unified PLAY modal', () => {
   it('a technical persona (developer) recommends Full Migration Journey', () => {
     usePersonaStore.getState().setPersona('developer')
     renderPage()
-    fireEvent.click(screen.getByRole('button', { name: /^▶ PLAY$/ }))
+    fireEvent.click(screen.getByRole('button', { name: /^▶ Play$/ }))
     const dialog = screen.getByRole('dialog', { name: /choose how to play/i })
     const journeyCard = within(dialog).getByText('Full Migration Journey').closest('div')!
     expect(within(journeyCard).getByText(/recommended for you/i)).toBeInTheDocument()

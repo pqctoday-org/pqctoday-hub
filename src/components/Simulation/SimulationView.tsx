@@ -1547,17 +1547,21 @@ export function SimulationView() {
     (sel === 'p3' || sel === 'p5') && (assessBacklog.length > 0 || !!assessTwoTrack)
   const showRailBoosts = sel === 'p0' && assessBoosts.length > 0
   const showRailDrivers = sel === 'p3' && !!assessDrivers
-  // Signals tab — does the "From your assessment" group have anything to show for
-  // THIS phase? Each of its panels is phase-gated (p0 / p3 / p5), so on most phases
-  // the group is empty and both it and its heading are suppressed entirely rather
-  // than leaving an orphan heading over nothing.
-  const hasAssessmentSignals =
-    showRailKpis ||
-    showRailCompliance ||
-    showRailBoosts ||
-    showRailQuantum ||
-    showRailBacklog ||
-    (showRailDrivers && !!assessDrivers)
+  // Signals tab — how many "From your assessment" panels does THIS phase have?
+  // Each is phase-gated (p0 / p3 / p5), so most phases have only the always-on
+  // Assessment KPIs. The group renders whenever there's at least one panel, but
+  // its HEADING only appears at 2+: a section header introducing a single card
+  // reads as broken, and the KPI card already says "· informational" so its
+  // provenance is clear without one.
+  const assessmentSignalCount = [
+    showRailKpis,
+    showRailCompliance,
+    showRailBoosts,
+    showRailQuantum,
+    showRailBacklog,
+    showRailDrivers && !!assessDrivers,
+  ].filter(Boolean).length
+  const hasAssessmentSignals = assessmentSignalCount > 0
 
   return (
     <>
@@ -2566,6 +2570,11 @@ export function SimulationView() {
                       left-column card). Compact chip row; FTE detail dropped — a
                       staffing-planning number, not something the mission line or the
                       decision below needs. */}
+                      {phaseRoles.length === 0 && (
+                        <p className="mb-2 text-[11px] text-muted-foreground">
+                          No role mapped (overlay gap).
+                        </p>
+                      )}
                       {phaseRoles.length > 0 && (
                         <div className="mb-2 flex flex-wrap items-center gap-2">
                           {phaseRoles.map((r) => {
@@ -2573,6 +2582,10 @@ export function SimulationView() {
                             return (
                               <span
                                 key={r.id}
+                                // FTE is the one datum the Team-card merge dropped from
+                                // view; kept here on hover (2026-08-02 gap analysis) so
+                                // the staffing figure isn't lost outright.
+                                title={`${r.label} — ${r.typicalFte} FTE · ${you ? 'your seat' : 'run by your AI team'}`}
                                 className="flex items-center gap-1.5 rounded-full border border-border bg-muted/40 py-0.5 pl-0.5 pr-2"
                               >
                                 <span
@@ -3345,31 +3358,14 @@ export function SimulationView() {
                       sitting in separate cards; adjacent they would mislead. */}
                         <div className="rounded-xl border border-border bg-card p-4 md:col-span-2">
                           <Eyebrow className="mb-2 block">Vital signs</Eyebrow>
-                          <div className="grid grid-cols-3 gap-1.5">
-                            <div className="rounded-lg border border-border bg-muted/40 px-2 py-1.5">
-                              <RibbonTermTooltip concept="hndl">
-                                <span className="block text-sim-micro leading-tight text-muted-foreground">
-                                  HNDL risk
-                                </span>
-                              </RibbonTermTooltip>
-                              <span
-                                className={`block font-mono text-[13px] font-extrabold ${threat.hndl.tone}`}
-                              >
-                                {threat.hndl.label}
-                              </span>
-                            </div>
-                            <div className="rounded-lg border border-border bg-muted/40 px-2 py-1.5">
-                              <RibbonTermTooltip concept="tnfl">
-                                <span className="block text-sim-micro leading-tight text-muted-foreground">
-                                  TNFL risk
-                                </span>
-                              </RibbonTermTooltip>
-                              <span
-                                className={`block font-mono text-[13px] font-extrabold ${threat.tnfl.tone}`}
-                              >
-                                {threat.tnfl.label}
-                              </span>
-                            </div>
+                          {/* HNDL/TNFL risk chips were REMOVED here 2026-08-02: the
+                          Program status panel directly above shows both, in more
+                          detail (live harvest-now exposure % + per-tier track bars),
+                          and stacking them adjacently said the same thing twice.
+                          Their plain-English RibbonTermTooltip definitions moved
+                          onto Program status's own track labels so the educational
+                          affordance survives the de-duplication. */}
+                          <div className="grid grid-cols-1 gap-1.5">
                             <div className="rounded-lg border border-border bg-muted/40 px-2 py-1.5">
                               <RibbonTermTooltip concept="readiness">
                                 <span className="block text-sim-micro leading-tight text-muted-foreground">
@@ -3543,11 +3539,14 @@ export function SimulationView() {
                       {/* ---- From your assessment — imported context, not live run state.
                 Every panel below already carried "· from assessment" in its own
                 eyebrow; the heading just makes the provenance split explicit. Each
-                is phase-gated (p0 / p3 / p5), so on most phases this group is
-                empty and the heading is suppressed entirely. ---- */}
+                is phase-gated (p0 / p3 / p5), so on most phases only the always-on
+                Assessment KPIs is present — and a heading over ONE card reads as
+                broken, so the heading needs 2+ panels to appear. ---- */}
                       {hasAssessmentSignals && (
                         <>
-                          <Eyebrow className="block">From your assessment</Eyebrow>
+                          {assessmentSignalCount > 1 && (
+                            <Eyebrow className="block">From your assessment</Eyebrow>
+                          )}
                           <div className="grid grid-cols-1 gap-3.5 md:grid-cols-2">
                             {/* Assessment KPIs — read-only category scores (informational; never
                 grant maturity, which is earned in-game) */}
