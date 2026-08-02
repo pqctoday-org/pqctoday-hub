@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { ReactNode } from 'react'
-import { useNavigate } from 'react-router'
+import { useNavigate, Link } from 'react-router'
 import { Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { PERSONA_JOURNEY_BOARD, type PersonaJourneyBoard } from '@/data/personaConfig'
-import type { PersonaId } from '@/data/learningPersonas'
+import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
 
 /**
  * PersonaBoardView — shared, persona-agnostic board skeleton for the
@@ -218,14 +218,25 @@ export function PersonaBoardView({ personaId, customSideCard }: PersonaBoardView
         {board.trackNote && <p className="mt-1 text-xs text-muted-foreground">{board.trackNote}</p>}
 
         <ul className="mt-3 flex flex-wrap gap-2">
-          {board.trackChips.map((chip) => (
-            <li
-              key={chip}
-              className="rounded-full border border-border bg-muted/30 px-3 py-1 text-xs text-muted-foreground"
-            >
-              {chip}
-            </li>
-          ))}
+          {board.trackChips.map((chip, i) => {
+            // trackChips are persona-appropriate labels, not module titles (see
+            // personaConfig.test.ts's drift guard) - but they're positionally
+            // 1:1 with the persona's real essentials module ids, so each chip
+            // can still link to its real /learn/:moduleId (2026-08-01 fix:
+            // these were plain <li>s with no link at all).
+            // eslint-disable-next-line security/detect-object-injection -- personaId is the typed PersonaId union, i is a small array index, neither is user input
+            const moduleId = PERSONAS[personaId].essentials[i]
+            return (
+              <li key={chip}>
+                <Link
+                  to={`/learn/${moduleId}`}
+                  className="rounded-full border border-border bg-muted/30 px-3 py-1 text-xs text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors"
+                >
+                  {chip}
+                </Link>
+              </li>
+            )
+          })}
 
           {/* Absent for researcher only — no capstone at all, not an empty chip. */}
           {board.capstoneChip && (
