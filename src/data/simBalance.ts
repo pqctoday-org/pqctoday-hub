@@ -69,6 +69,19 @@ export interface SimBalance {
     /** hndlExposure (0–1) must exceed this for a danger event to have teeth. */
     hndlExposureThreshold: number
   }
+  /**
+   * Decision-card stakes (2026-08-02). Easy grants a costless "↺ try again" on a
+   * wrong Next-Move pick; the grounded presets make the setback real — you see
+   * why the pick failed, but it stands. This lever previously rode on the GUIDED
+   * mode toggle, which conflated a difficulty choice with a layout one; GUIDED's
+   * layout half is gone (the Expert rail is now the Signals tab, closed by
+   * default for everyone) and its stakes half lives here, on the dial that
+   * already owns every other difficulty consequence.
+   */
+  decisions: {
+    /** Whether a wrong decision pick can be retried for free. */
+    freeRetryOnWrongPick: boolean
+  }
 }
 
 /** Difficulty presets (WS-14) — each is a complete SimBalance variant. Pure
@@ -89,6 +102,7 @@ export const SIM_PRESETS: Record<DifficultyId, SimBalance> = {
       goodNewsCreditM: 2,
       hndlExposureThreshold: 0.5,
     },
+    decisions: { freeRetryOnWrongPick: true },
   },
   // The grounded baseline (the original WS-03 values).
   realistic: {
@@ -103,6 +117,7 @@ export const SIM_PRESETS: Record<DifficultyId, SimBalance> = {
       goodNewsCreditM: 1.5,
       hndlExposureThreshold: 0.35,
     },
+    decisions: { freeRetryOnWrongPick: false },
   },
   // Punishing: more shocks, faster Q-Day creep, sparse AI help.
   hard: {
@@ -117,6 +132,7 @@ export const SIM_PRESETS: Record<DifficultyId, SimBalance> = {
       goodNewsCreditM: 1,
       hndlExposureThreshold: 0.2,
     },
+    decisions: { freeRetryOnWrongPick: false },
   },
 }
 

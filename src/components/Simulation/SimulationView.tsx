@@ -337,8 +337,6 @@ export function SimulationView() {
     setDifficulty,
     tourSeen,
     markTourSeen,
-    guided,
-    setGuided,
     runCompleteSeen,
     markRunComplete,
     recordObjectiveAchieved,
@@ -1142,8 +1140,8 @@ export function SimulationView() {
   // store flag (run-slice, cleared by RESET) keeps it from re-firing on reload and
   // lets a fresh run celebrate again. Deferred out of render via setTimeout(0).
   const [runCompleteOpen, setRunCompleteOpen] = useState(false)
-  // Re-openable guide: shows on first run (!tourSeen) or when the player turns on
-  // Guided mode (the novice walkthrough), independent of the one-time tourSeen flag.
+  // Re-openable guide: shows on first run (!tourSeen), and stays re-openable from
+  // the ⋯ MORE menu afterwards, independent of the one-time tourSeen flag.
   const [tourOpen, setTourOpen] = useState(false)
   // Shared by the completion effect (WP4.5 lifetime counters) and the ceremony's
   // own score card — computed once so both read the same number.
@@ -1167,16 +1165,11 @@ export function SimulationView() {
     objectivesOnTime,
   ])
 
-  // First-visit default: start non-technical roles (executive / curious) in the
-  // low-density Guided view instead of the dense Expert console. Gated on
-  // `!tourSeen`, so it fires only on the very first visit and never overrides a
-  // later manual toggle; technical roles are untouched and keep Expert as default.
-  // `guided` is intentionally NOT a dependency — re-asserting it would fight a
-  // user who turns it off while still on their first visit.
-  useEffect(() => {
-    if (tourSeen) return
-    if (selectedPersona === 'executive' || selectedPersona === 'curious') setGuided(true)
-  }, [tourSeen, selectedPersona, setGuided])
+  // (Retired 2026-08-02) A first-visit effect used to flip executive/curious
+  // personas into GUIDED mode to spare them the dense Expert console. There is no
+  // dense console left to spare anyone from — every phase opens on Decide alone
+  // and the intel panels sit behind the Signals tab for all players — so the
+  // persona special-case is gone rather than reproduced.
 
   // Record the program year each objective is FIRST achieved, for the ceremony's on-time
   // badges (idempotent — recordObjectiveAchieved ignores an id already set).
@@ -1763,22 +1756,11 @@ export function SimulationView() {
             <Dial
               label="MODE"
               value={difficulty[0].toUpperCase() + difficulty.slice(1)}
-              hint="clock + budget"
-              title="Difficulty — Easy / Realistic / Hard tune the Mosca clock pressure and your budget. Realistic is recommended for a first run."
+              hint="clock + budget + stakes"
+              title="Difficulty — Easy / Realistic / Hard tune the Mosca clock pressure and your budget. Easy also lets you retry a wrong Next-Move pick for free; on Realistic and Hard the pick stands and costs you rework. Realistic is recommended for a first run."
               onClick={() =>
                 setDifficulty(DIFF_ORDER[(DIFF_ORDER.indexOf(difficulty) + 1) % DIFF_ORDER.length])
               }
-            />
-            <Dial
-              label="GUIDED"
-              value={guided ? 'On' : 'Off'}
-              hint="simpler view + help"
-              title="Guided mode — a focused, low-density view: hides the advanced intel panels, defines unfamiliar terms (Mosca's inequality, HNDL, hybrid vs pure), and captions the dials in plain language. Turn off for the full Expert console. Independent of difficulty."
-              onClick={() => {
-                const next = !guided
-                setGuided(next)
-                if (next) setTourOpen(true) // novice turning guidance on → show the walkthrough
-              }}
             />
             <Link
               to="/assess"
@@ -2351,10 +2333,7 @@ export function SimulationView() {
                 </Button>
               </div>
             )}
-            <div
-              data-sim-board
-              className={`grid min-h-0 flex-1 gap-3.5 p-4 ${guided ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-[minmax(0,1fr)_332px]'}`}
-            >
+            <div data-sim-board className="grid min-h-0 flex-1 grid-cols-1 gap-3.5 p-4">
               {/* PR7 — board-main: left (team/journey) + center (active-phase ops)
             stay together as one unit so the rail reflows beside it (lg) or below
             it as a 2-up band (md), instead of being buried under the tall centre
@@ -2625,7 +2604,7 @@ export function SimulationView() {
                         onOpenStep={openStep}
                         assessRec={nextMoveRec}
                         onTrapPicked={incrementTrapsThisRun}
-                        guided={guided}
+                        allowRetry={balance.decisions.freeRetryOnWrongPick}
                         wrongPickCostQuarters={sel === 'p1' || sel === 'p5' ? 2 : 1}
                         onWrongPick={(label) => {
                           // WP4.4 — uniform stakes: 1 quarter of rework everywhere, 2 on
@@ -3804,8 +3783,6 @@ export function SimulationView() {
         {((!tourSeen && !autoRunPlayer.running && searchParams.get('run') !== 'exec') ||
           tourOpen) && (
           <SimTour
-            guided={guided}
-            onEnableGuided={() => setGuided(true)}
             onClose={() => {
               markTourSeen()
               setTourOpen(false)
