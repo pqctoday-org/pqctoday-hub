@@ -162,7 +162,7 @@ const GroupHeader: React.FC<{ label: string; count: number }> = ({ label, count 
     <h2 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
       {label}
     </h2>
-    <span className="text-[10.5px] text-muted-foreground/70">{count}</span>
+    <span className="text-[10.5px] text-muted-foreground">{count}</span>
     <span className="h-px flex-1 bg-border" aria-hidden="true" />
   </div>
 )
@@ -186,7 +186,7 @@ const SubGroupPill: React.FC<{
     )}
   >
     {label}
-    <span className={cn('text-[10.5px]', active ? 'text-primary/80' : 'text-muted-foreground/70')}>
+    <span className={cn('text-[10.5px]', active ? 'text-primary/80' : 'text-muted-foreground')}>
       {count}
     </span>
   </Button>

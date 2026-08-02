@@ -258,7 +258,7 @@ const Step3Crypto = ({ hideHeading = false, hideHints = false }: EmbeddedStepPro
                 <div key={cat.id} className="glass-panel p-3 space-y-2">
                   <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                     {cat.label} — specific algorithms
-                    <span className="normal-case font-normal ml-1 text-muted-foreground/60">
+                    <span className="normal-case font-normal ml-1 text-muted-foreground">
                       (none selected = all included)
                     </span>
                   </p>

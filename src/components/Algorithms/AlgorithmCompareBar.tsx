@@ -80,7 +80,7 @@ export function AlgorithmCompareBar({
             {Array.from({ length: emptySlots }).map((_, i) => (
               <span
                 key={`slot-${i}`}
-                className="text-[10px] sm:text-xs text-muted-foreground/60 border border-dashed border-border rounded-full px-2 sm:px-3 py-0.5 select-none whitespace-nowrap"
+                className="text-[10px] sm:text-xs text-muted-foreground border border-dashed border-border rounded-full px-2 sm:px-3 py-0.5 select-none whitespace-nowrap"
               >
                 + add
               </span>

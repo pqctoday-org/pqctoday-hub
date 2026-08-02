@@ -53,7 +53,7 @@ export const AssessStepRail: React.FC<AssessStepRailProps> = ({ flow, mode, onSw
           className="mb-1.5 h-auto min-h-[44px] w-full items-center justify-between gap-2 p-0 hover:bg-transparent md:min-h-0 lg:pointer-events-none"
         >
           <span className="flex min-w-0 flex-col text-left">
-            <span className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground/70">
+            <span className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
               {answeredCount} of {total} answered
             </span>
             <span className="truncate text-[11px] font-medium text-muted-foreground lg:hidden">
@@ -125,7 +125,7 @@ export const AssessStepRail: React.FC<AssessStepRailProps> = ({ flow, mode, onSw
                         ? 'font-bold text-foreground'
                         : reachable
                           ? 'font-medium text-foreground/80'
-                          : 'text-muted-foreground/60',
+                          : 'text-muted-foreground',
                     ].join(' ')}
                   >
                     {meta.label}

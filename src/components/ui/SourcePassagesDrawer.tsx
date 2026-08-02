@@ -48,7 +48,7 @@ export function SourcePassagesDrawer({ chunkId, className = '' }: SourcePassages
         )}
         <Quote size={11} aria-hidden="true" className="shrink-0" />
         <span>Source evidence</span>
-        <span className="text-muted-foreground/70 min-w-0 break-words">
+        <span className="text-muted-foreground min-w-0 break-words">
           ({attribution} · {summary})
         </span>
       </Button>

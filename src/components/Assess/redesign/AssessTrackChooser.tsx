@@ -39,7 +39,7 @@ export const AssessTrackChooser: React.FC<AssessTrackChooserProps> = ({
           </div>
           <div className="text-[17px] font-bold text-foreground">{fast.label}</div>
           {recommendedMode === 'quick' && <RecommendedPill />}
-          <span className="ml-auto font-mono text-[11px] text-muted-foreground/70">
+          <span className="ml-auto font-mono text-[11px] text-muted-foreground">
             {fast.count} Q · ~{fast.minutes} min
           </span>
         </div>
@@ -47,7 +47,7 @@ export const AssessTrackChooser: React.FC<AssessTrackChooserProps> = ({
           The essentials — industry, crypto stack, data sensitivity, infrastructure and migration
           status. Best for a first read or a quick board-ready snapshot.
         </p>
-        <div className="mb-2 text-[10px] font-bold uppercase tracking-wide text-muted-foreground/70">
+        <div className="mb-2 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
           Your report includes
         </div>
         <div className="mb-4 flex flex-col gap-1.5">
@@ -57,7 +57,7 @@ export const AssessTrackChooser: React.FC<AssessTrackChooserProps> = ({
               {s}
             </div>
           ))}
-          <div className="flex items-center gap-2 text-xs text-muted-foreground/70">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <Lock className="shrink-0" size={13} />
             {FAST_LOCKED_COUNT} sections stay locked
           </div>
@@ -83,7 +83,7 @@ export const AssessTrackChooser: React.FC<AssessTrackChooserProps> = ({
           </div>
           <div className="text-[17px] font-bold text-foreground">{full.label}</div>
           {recommendedMode === 'comprehensive' && <RecommendedPill />}
-          <span className="ml-auto font-mono text-[11px] text-muted-foreground/70">
+          <span className="ml-auto font-mono text-[11px] text-muted-foreground">
             {full.count} Q · ~{full.minutes} min
           </span>
         </div>
@@ -91,7 +91,7 @@ export const AssessTrackChooser: React.FC<AssessTrackChooserProps> = ({
           Everything in fast track plus use cases, retention, credential lifetimes, scale, crypto
           agility and vendor dependencies — for a credible migration plan.
         </p>
-        <div className="mb-2 text-[10px] font-bold uppercase tracking-wide text-muted-foreground/70">
+        <div className="mb-2 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
           Unlocks everything, including
         </div>
         <div className="mb-4 flex flex-col gap-1.5">

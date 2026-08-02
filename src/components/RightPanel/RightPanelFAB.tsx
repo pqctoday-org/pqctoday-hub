@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useEffect, useRef, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { MessageCircle, Clock } from 'lucide-react'
 import { Button } from '../ui/button'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
@@ -49,6 +49,16 @@ export const RightPanelFAB: React.FC = () => {
   // the 0.5s mount delay for the FIRST appearance only; later toggles (from
   // scrolling) animate immediately.
   const [hasIntroed, setHasIntroed] = useState(false)
+  // `<MotionConfig reducedMotion="user">` in AppRoot only suppresses TRANSFORM
+  // and layout animations — framer-motion deliberately keeps opacity, because
+  // cross-fades are not what triggers vestibular discomfort. The "Need Help?"
+  // bubble below animates opacity through a 10 s keyframe, so under reduced
+  // motion it still fades, and an automated contrast check that samples the
+  // page mid-fade reads a partially-transparent foreground and reports a
+  // WCAG failure with a different ratio on every run. It is decorative (the
+  // button carries its own aria-label), so under reduced motion we omit it
+  // entirely rather than animate it.
+  const prefersReducedMotion = useReducedMotion()
 
   if (isOpen) return null
 
@@ -70,23 +80,32 @@ export const RightPanelFAB: React.FC = () => {
         delay: hasIntroed ? 0 : 0.5,
       }}
       onAnimationComplete={() => setHasIntroed(true)}
-      className={`${embedConfig.isEmbedded ? 'absolute' : 'fixed'} bottom-20 right-4 z-40 md:bottom-6 md:right-6 print:hidden`}
+      // 2026-08-02: moved from bottom-RIGHT to the left of the page title.
+      // Below lg it stays bottom-left (there is no rail and no room beside the
+      // title). At lg+ it sits at the content column's left edge, level with
+      // the <h1>: the rail is 168px and content padding puts the title at
+      // x=200, y=138 (measured at 1440px). It is `fixed`, so it neither enters
+      // the header's flow nor shifts the centred title — that centring is
+      // computed across the full content width and is unaffected by an
+      // out-of-flow element.
+      className={`${embedConfig.isEmbedded ? 'absolute' : 'fixed'} bottom-20 left-4 z-40 md:bottom-6 md:left-6 lg:bottom-auto lg:left-[176px] lg:top-[112px] print:hidden`}
     >
       <div className="relative flex items-center">
         {/* "Need Help?" speech bubble — slides in, fades out after 10 s.
             Desktop-only: on mobile its extra width sits on top of page content
             (the icon button alone already communicates the same affordance). */}
-        {isChat && (
+        {isChat && !prefersReducedMotion && (
           <motion.div
-            initial={{ opacity: 0, x: 8 }}
-            animate={{ opacity: [0, 1, 1, 0], x: [8, 0, 0, 0] }}
+            initial={{ opacity: 0, x: -8 }}
+            animate={{ opacity: [0, 1, 1, 0], x: [-8, 0, 0, 0] }}
             transition={{ duration: 10, times: [0, 0.08, 0.88, 1], ease: 'easeInOut', delay: 0.8 }}
-            className="hidden md:block absolute right-full mr-3 top-1/2 -translate-y-1/2 pointer-events-none"
+            className="hidden md:block absolute left-full ml-3 top-1/2 -translate-y-1/2 pointer-events-none"
           >
             <div className="relative bg-card border border-border rounded-lg px-3 py-1.5 shadow-md whitespace-nowrap">
               <span className="text-sm font-medium text-foreground">Need Help?</span>
-              {/* Arrow pointing right toward the button */}
-              <span className="absolute -right-[7px] top-1/2 -translate-y-1/2 w-3 h-3 bg-card border-r border-t border-border rotate-45" />
+              {/* Arrow points LEFT toward the button, which now sits on the
+                  left edge of the viewport (2026-08-02). */}
+              <span className="absolute -left-[7px] top-1/2 -translate-y-1/2 w-3 h-3 bg-card border-l border-b border-border rotate-45" />
             </div>
           </motion.div>
         )}

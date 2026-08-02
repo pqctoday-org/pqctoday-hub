@@ -271,7 +271,7 @@ function DimensionSection({
 }) {
   return (
     <div className={clsx(!isFirst && 'border-t border-border/30 pt-3')}>
-      <h4 className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest mb-2">
+      <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">
         {title}
       </h4>
       <div className="space-y-3">{children}</div>

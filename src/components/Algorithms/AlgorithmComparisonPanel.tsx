@@ -156,7 +156,7 @@ export function AlgorithmComparisonPanel({
                       </span>
                     )}
                     {!isBase && isClassicalAlgo && (
-                      <span className="ml-1 text-[10px] font-medium text-muted-foreground/70 uppercase">
+                      <span className="ml-1 text-[10px] font-medium text-muted-foreground uppercase">
                         classical
                       </span>
                     )}
@@ -501,7 +501,7 @@ function BenchmarkSection({
                             </span>
                           )}
                           {!isBaseline && isClassicalRun && (
-                            <span className="ml-1 text-[10px] text-muted-foreground/60 uppercase">
+                            <span className="ml-1 text-[10px] text-muted-foreground uppercase">
                               classical
                             </span>
                           )}
@@ -584,7 +584,7 @@ function BenchmarkSection({
                               </span>
                             )}
                             {!isBaseline && isClassicalSummary && (
-                              <span className="ml-1 text-[10px] text-muted-foreground/60 uppercase">
+                              <span className="ml-1 text-[10px] text-muted-foreground uppercase">
                                 classical
                               </span>
                             )}

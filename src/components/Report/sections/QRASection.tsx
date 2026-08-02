@@ -67,7 +67,7 @@ function ExecSummary({ qra }: { qra: ReturnType<typeof buildQRA> }) {
     <div className="space-y-4">
       <div className="flex flex-wrap items-stretch gap-3">
         <div className="flex flex-col justify-center rounded-lg border border-border bg-muted/30 px-4 py-3 min-w-[8rem]">
-          <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70 font-medium">
+          <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
             Risk Score
           </span>
           <span className="text-2xl font-bold text-foreground">
@@ -79,7 +79,7 @@ function ExecSummary({ qra }: { qra: ReturnType<typeof buildQRA> }) {
           </span>
         </div>
         <div className="flex flex-col justify-center rounded-lg border border-border bg-muted/30 px-4 py-3 min-w-[10rem]">
-          <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70 font-medium">
+          <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
             Urgency Tier
           </span>
           <span className="text-base font-bold text-foreground">{execSummary.tier.label}</span>
@@ -89,7 +89,7 @@ function ExecSummary({ qra }: { qra: ReturnType<typeof buildQRA> }) {
         </div>
       </div>
       <p className="text-sm text-muted-foreground leading-relaxed">{execSummary.text}</p>
-      <p className="text-xs text-muted-foreground/70">{execSummary.tier.description}</p>
+      <p className="text-xs text-muted-foreground">{execSummary.tier.description}</p>
     </div>
   )
 }
@@ -129,7 +129,7 @@ function Heatmap({ cells }: { cells: QRAHeatmapCell[] }) {
           </div>
         )
       })}
-      <p className="text-[11px] text-muted-foreground/60">
+      <p className="text-[11px] text-muted-foreground">
         Bars show attention needed (higher = more urgent). Organizational readiness is inverted —
         low readiness reads as high attention.
       </p>
@@ -180,7 +180,7 @@ function ProgramOwnership() {
         <div key={f.id}>
           <label
             htmlFor={f.id}
-            className="block text-[10px] uppercase tracking-wider text-muted-foreground/70 font-medium mb-1"
+            className="block text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-1"
           >
             {f.label}
           </label>
@@ -438,7 +438,7 @@ export function QRASection({
               <ListChecks size={16} className="text-primary" aria-hidden="true" />
               Prioritised Backlog
             </h3>
-            <p className="text-xs text-muted-foreground/70 mb-2">
+            <p className="text-xs text-muted-foreground mb-2">
               Per-item owners below are the <strong>Responsible</strong> role for each action —
               program-level accountability is set above.
             </p>

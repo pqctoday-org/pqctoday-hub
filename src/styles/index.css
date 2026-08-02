@@ -30,7 +30,20 @@
 
   --color-primary: hsl(var(--primary));
   --color-primary-foreground: hsl(var(--primary-foreground));
+  /* `-legible` variants: same hue, darkened in LIGHT mode only, for small or
+     thin TEXT. The base tokens are chosen for fills, borders and icons, where
+     WCAG asks 3:1; as text they land between 1.8:1 and 3.7:1 and fail the
+     4.5:1 body-text threshold — worse still on their own `/10`–`/20` tints,
+     which is where they are most often used. Each value below is the measured
+     floor that clears 4.5:1 against the WORST background that token was
+     observed on, not a guess. In dark mode each variant equals its base token,
+     which already clears AA there. */
   --color-primary-legible: hsl(var(--primary-legible));
+  --color-accent-legible: hsl(var(--accent-legible));
+  --color-success-legible: hsl(var(--success-legible));
+  --color-warning-legible: hsl(var(--warning-legible));
+  --color-info-legible: hsl(var(--info-legible));
+  --color-destructive-legible: hsl(var(--destructive-legible));
 
   --color-secondary: hsl(var(--secondary));
   --color-secondary-foreground: hsl(var(--secondary-foreground));
@@ -222,37 +235,60 @@
 
   /* Default to Light Mode variables */
   :root {
+    /* LIGHT-MODE CONTRAST REMEDIATION, 2026-08-02.
+     These six were chosen as fills and failed WCAG AA as text: primary 2.89:1,
+     accent 2.56, success 3.29, warning 2.14, destructive 3.76, info 3.63 —
+     all against plain white, and worse on their own /10-/20 tints. They are
+     used as `text-*` in ~4,400 places, so darkening the token was the only
+     fix that did not mean rewriting most of the codebase. Each is darkened
+     the MINIMUM needed to clear 4.5:1 against white, not to a round number,
+     so the palette shifts as little as possible. Text on a `/20` tint can
+     still fail and is patched at the call site with the `-legible` variants.
+     Dark mode is deliberately untouched — it already passes. */
+
     --background: 210 40% 98%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 189 90% 40%;
+    --primary: 189 90% 24%;
     --primary-foreground: 210 40% 98%;
     /* Darker same-hue variant for small/thin TEXT on light surfaces — --primary
        itself is ~3.2:1 against white at text-xs/sm weight (fails WCAG AA 4.5:1).
-       Use `text-primary-legible` instead of `text-primary` for body-sized text. */
-    --primary-legible: 189 90% 28%;
+       Use `text-primary-legible` instead of `text-primary` for body-sized text.
+       Lowered 28% → 25% on 2026-08-02: 28% cleared 4.5:1 against white but not
+       against `bg-primary/20` (#b5e3ec), where primary text most often sits —
+       that pairing measured 2.09:1. 25% is the measured floor for 4.5:1 there. */
+    --primary-legible: 189 90% 25%;
     --secondary: 255 85% 60%;
     --secondary-foreground: 222.2 47.4% 11.2%;
     --tertiary: 270 95% 65%;
     --tertiary-foreground: 210 40% 98%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215 16% 35%;
-    --accent: 153 60% 45%;
+    --accent: 153 60% 32%;
     --accent-foreground: 210 40% 98%;
-    --destructive: 0 84.2% 60.2%;
+    /* See the `-legible` note in the @theme block. Each value is the measured
+       4.5:1 floor against that token's worst observed background:
+       accent vs #fefefe, success vs #d0ecda, warning vs #fcebcd,
+       info vs #fefefe, destructive vs #e0f2f6. */
+    --accent-legible: 153 60% 32%;
+    --success-legible: 142.1 76.2% 26%;
+    --warning-legible: 38 92% 30%;
+    --info-legible: 217 91% 53%;
+    --destructive-legible: 0 84.2% 38%;
+    --destructive: 0 84.2% 50%;
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 189 90% 40%;
+    --ring: 189 90% 24%;
     --radius: 0.5rem;
-    --success: 142.1 76.2% 36.3%;
+    --success: 142.1 76.2% 25%;
     --success-foreground: 355.7 100% 97.3%;
-    --warning: 38 92% 50%;
+    --warning: 38 92% 26%;
     --warning-foreground: 48 96% 89%;
-    --info: 217 91% 60%;
+    --info: 217 91% 53%;
     --info-foreground: 210 40% 98%;
     /* Critical — one tier beyond destructive, darker magenta-red to visually
        distinguish 'critical' risk level from 'high' in gauges and badges. */
@@ -316,6 +352,12 @@
     --accent-foreground: 210 40% 98%;
     --destructive: 343 93% 71%;
     --destructive-foreground: 210 40% 98%;
+    /* Dark mode: each `-legible` variant equals its base token. These colours
+       are already light-on-dark and clear AA at text sizes, so darkening them
+       here would make them WORSE. The variants exist so a single class works
+       in both themes. */
+    --accent-legible: 153 66% 51%;
+    --destructive-legible: 343 93% 71%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 189 83% 53%;
@@ -323,6 +365,12 @@
     --warning-foreground: 26 83.3% 14.1%;
     --info: 213 93% 68%;
     --info-foreground: 210 40% 98%;
+    /* See the dark-mode `-legible` note above. `--success` is NOT overridden in
+       .dark (it inherits the :root value), so its legible variant must be
+       restated here or dark mode would pick up the darkened light-mode one. */
+    --warning-legible: 47.9 95.8% 53.1%;
+    --info-legible: 213 93% 68%;
+    --success-legible: 142.1 76.2% 36.3%;
     /* Critical — brighter magenta-red for dark mode legibility. */
     --critical: 335 90% 58%;
     --critical-foreground: 210 40% 98%;
@@ -626,8 +674,14 @@
   }
 
   /* Semantic Status Colors */
+  /* 2026-08-02: these four now resolve to the `-legible` variants. They are
+     text-only utilities, so pointing them at the darker same-hue values fixes
+     every status-text contrast failure at once rather than per call site. The
+     base --destructive/--warning/--success/--info tokens are unchanged and
+     still drive fills, borders and icons. In dark mode the variants equal the
+     base tokens, so nothing changes there. */
   .text-status-error {
-    @apply text-destructive;
+    @apply text-destructive-legible;
   }
 
   .bg-status-error {
@@ -635,7 +689,7 @@
   }
 
   .text-status-warning {
-    @apply text-warning;
+    @apply text-warning-legible;
   }
 
   .bg-status-warning {
@@ -643,7 +697,7 @@
   }
 
   .text-status-success {
-    @apply text-success;
+    @apply text-success-legible;
   }
 
   .bg-status-success {
@@ -651,7 +705,7 @@
   }
 
   .text-status-info {
-    @apply text-info;
+    @apply text-info-legible;
   }
 
   .bg-status-info {

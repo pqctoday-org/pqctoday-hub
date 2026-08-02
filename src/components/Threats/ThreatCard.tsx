@@ -76,7 +76,7 @@ const Chips = ({
           {c}
         </span>
       ))}
-      {extra > 0 && <span className="self-center text-muted-foreground/60">+{extra}</span>}
+      {extra > 0 && <span className="self-center text-muted-foreground">+{extra}</span>}
     </>
   )
 }
@@ -189,7 +189,7 @@ export const ThreatCard = ({
         {/* footer: at-risk crypto → PQC replacement + open dossier */}
         <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-1">
           <div className="flex min-w-0 flex-wrap items-center gap-1 font-mono text-[11px]">
-            <span className="mr-0.5 font-sans text-[10px] uppercase tracking-wide text-muted-foreground/70">
+            <span className="mr-0.5 font-sans text-[10px] uppercase tracking-wide text-muted-foreground">
               At risk
             </span>
             {/* Shor tier describes the urgency of breaking this specific crypto, so

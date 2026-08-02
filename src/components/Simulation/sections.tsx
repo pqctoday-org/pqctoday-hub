@@ -90,7 +90,7 @@ export function ResCol({ title, items }: { title: string; items: ResItem[] }) {
     <div className="rounded-xl border border-border bg-card p-3">
       <Eyebrow className="mb-2 block">
         {title}{' '}
-        <span className="text-muted-foreground/60">
+        <span className="text-muted-foreground">
           · {doneCount > 0 ? `${doneCount}/${items.length}` : items.length}
         </span>
       </Eyebrow>

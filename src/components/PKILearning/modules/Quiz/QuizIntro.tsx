@@ -95,7 +95,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
           areas.
         </p>
         {quizMetadata && (
-          <div className="hidden lg:flex items-center justify-center gap-3 text-[10px] md:text-xs text-muted-foreground/60 mt-3 font-mono">
+          <div className="hidden lg:flex items-center justify-center gap-3 text-[10px] md:text-xs text-muted-foreground mt-3 font-mono">
             <p>
               Data Source: {quizMetadata.filename} • Updated:{' '}
               {quizMetadata.lastUpdate.toLocaleDateString()}

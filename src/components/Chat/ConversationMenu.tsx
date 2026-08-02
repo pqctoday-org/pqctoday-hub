@@ -165,7 +165,7 @@ export const ConversationMenu: React.FC = () => {
                 >
                   <MessageSquare size={12} className="shrink-0" />
                   <span className="truncate flex-1 text-xs">{conv.title}</span>
-                  <span className="text-[10px] text-muted-foreground/60 shrink-0 hidden sm:inline">
+                  <span className="text-[10px] text-muted-foreground shrink-0 hidden sm:inline">
                     {conv.messages.length} msg{conv.messages.length !== 1 ? 's' : ''}
                   </span>
                   {/* Export button */}

@@ -129,7 +129,7 @@ function HealthTile({ metrics }: { metrics: BusinessMetrics }) {
           )}
           {delta === 0 && metrics.previousRiskScore !== null && (
             <span
-              className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground/60"
+              className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground"
               title="No change vs. previous assessment"
             >
               <Minus size={10} /> no change
@@ -150,7 +150,7 @@ function HealthTile({ metrics }: { metrics: BusinessMetrics }) {
               const isGood = lowerIsBetter ? d < 0 : d > 0
               const colorClass =
                 d === 0
-                  ? 'text-muted-foreground/60'
+                  ? 'text-muted-foreground'
                   : isGood
                     ? 'text-status-success'
                     : 'text-status-error'

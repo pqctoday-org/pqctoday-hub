@@ -523,7 +523,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                     className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
                       isProdOnly
                         ? lmsHeight === h
-                          ? 'bg-muted/30 text-muted-foreground/60 border border-border/50'
+                          ? 'bg-muted/30 text-muted-foreground border border-border/50'
                           : 'bg-muted/20 text-muted-foreground/40 border border-border/30'
                         : lmsHeight === h
                           ? 'bg-primary/20 text-primary border border-primary/50'
@@ -601,7 +601,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                           className={`px-2 py-1 rounded text-[10px] font-medium transition-colors ${
                             isProdOnly
                               ? level2Height === h
-                                ? 'bg-muted/30 text-muted-foreground/60 border border-border/50'
+                                ? 'bg-muted/30 text-muted-foreground border border-border/50'
                                 : 'bg-muted/20 text-muted-foreground/40 border border-border/30'
                               : level2Height === h
                                 ? 'bg-primary/20 text-primary border border-primary/50'
@@ -639,7 +639,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                           className={`px-2 py-1 rounded text-[10px] font-medium transition-colors ${
                             isProdOnly
                               ? level3Height === h
-                                ? 'bg-muted/30 text-muted-foreground/60 border border-border/50'
+                                ? 'bg-muted/30 text-muted-foreground border border-border/50'
                                 : 'bg-muted/20 text-muted-foreground/40 border border-border/30'
                               : level3Height === h
                                 ? 'bg-primary/20 text-primary border border-primary/50'

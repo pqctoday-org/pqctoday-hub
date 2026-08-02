@@ -3547,7 +3547,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 spellCheck={false}
               />
               {selectedMode !== 'classical' && (
-                <p className="text-[10px] text-muted-foreground/70 italic mt-1">
+                <p className="text-[10px] text-muted-foreground italic mt-1">
                   ML-KEM proposal strings (e.g. <code>aes256-mlkem768-sha384!</code>) parse
                   successfully against charon&apos;s proposal engine in the WASM binary (ML-KEM
                   transform IDs 35/36/37 per draft-ietf-ipsecme-ikev2-mlkem are recognized) — use
@@ -4693,7 +4693,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                     All session key material (SK_e, SK_a, SK_d) is derived exclusively from the
                     ML-KEM shared secret — fully quantum-safe from the first exchange.
                   </p>
-                  <p className="text-muted-foreground/70">
+                  <p className="text-muted-foreground">
                     Spec: draft-ietf-ipsecme-ikev2-mlkem §5 · RFC 7296 §2.14
                   </p>
                 </>
@@ -4706,7 +4706,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                     and ML-KEM-768 exchanges to recover the final keys. Either alone is
                     insufficient.
                   </p>
-                  <p className="text-muted-foreground/70">
+                  <p className="text-muted-foreground">
                     Spec: draft-ietf-ipsecme-ikev2-mlkem §5 · RFC 9370 §2.2.2 · RFC 7296 §2.14
                   </p>
                 </>
@@ -4831,7 +4831,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                       IP network. Combines quantum-resistant confidentiality with scalable
                       deployment. Governed by ETSI GS QKD 014 and NIST SP 800-227.
                     </p>
-                    <p className="text-muted-foreground/70">
+                    <p className="text-muted-foreground">
                       NIST SP 800-227 (KEM recommendations) and ETSI GS QKD 014 cover these
                       distribution models. In this simulation the PSK is entered manually — in
                       production, inject it from your QKD appliance or PQC-wrapped key transport.
