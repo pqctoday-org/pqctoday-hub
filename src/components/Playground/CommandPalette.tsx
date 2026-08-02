@@ -3,8 +3,9 @@
 // Crypto Lab command palette (⌘K / `/`). Type-to-run any tool by name, algorithm
 // or intent, plus verb shortcuts that jump to an intent view. Keyboard: ↑/↓ move
 // a single highlighted index across the flat verb+tool list, ↵ activates, Esc
-// closes. It searches the visible universe passed in (sandbox tools are absent
-// while the runtime is off, matching the rest of the surface).
+// closes. It searches the universe passed in — sandbox tools stay searchable
+// even while the runtime is off (dim, not hide); picking one opens the same
+// detail modal that gates "Open tool" behind a locked state.
 import React, { useMemo, useState } from 'react'
 import FocusLock from 'react-focus-lock'
 import { Search, Zap, Container, CornerDownLeft, X } from 'lucide-react'

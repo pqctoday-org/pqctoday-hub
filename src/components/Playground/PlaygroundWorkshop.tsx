@@ -39,11 +39,9 @@ import {
   type WorkshopCategory,
   type ToolDifficulty,
 } from './workshopRegistry'
-import type { PersonaId } from '@/data/learningPersonas'
 import {
   CATEGORY_META,
   SIDEBAR_CATEGORIES,
-  ROLE_OPTIONS,
   roleLabel,
   PERSONA_CHIP_LABEL,
   FEATURE_PLAYGROUNDS,
@@ -294,85 +292,6 @@ const ToolCardView: React.FC<ToolCardProps> = ({
       >
         <Star className={cn('w-4 h-4', bookmarked && 'fill-current')} aria-hidden="true" />
       </Button>
-    </div>
-  )
-}
-
-// ---------------------------------------------------------------------------
-// Role selector ("Viewing as")
-// ---------------------------------------------------------------------------
-
-interface RoleSelectorProps {
-  role: PersonaId | null
-  onSelect: (_role: PersonaId | null) => void
-}
-
-const RoleSelector: React.FC<RoleSelectorProps> = ({ role, onSelect }) => {
-  const [open, setOpen] = useState(false)
-  const wrapperRef = React.useRef<HTMLDivElement | null>(null)
-
-  useEffect(() => {
-    if (!open) return
-    const onDocClick = (e: MouseEvent) => {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) setOpen(false)
-    }
-    const onEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false)
-    }
-    document.addEventListener('mousedown', onDocClick)
-    document.addEventListener('keydown', onEsc)
-    return () => {
-      document.removeEventListener('mousedown', onDocClick)
-      document.removeEventListener('keydown', onEsc)
-    }
-  }, [open])
-
-  return (
-    <div ref={wrapperRef} className="relative mt-4">
-      <Button
-        variant="ghost"
-        onClick={() => setOpen((o) => !o)}
-        aria-haspopup="listbox"
-        aria-expanded={open}
-        className="w-full h-auto flex-col items-start gap-0.5 rounded-lg border border-border bg-muted/30 px-3 py-2 hover:border-primary/40"
-      >
-        <span className="text-[9.5px] font-bold uppercase tracking-wider text-muted-foreground">
-          Viewing as
-        </span>
-        <span className="flex w-full items-center justify-between">
-          <span className="text-[13px] font-semibold text-primary">{roleLabel(role)}</span>
-          <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" />
-        </span>
-      </Button>
-      {open && (
-        <div
-          role="listbox"
-          aria-label="Viewing as role"
-          className="glass-panel absolute left-0 right-0 top-full z-30 mt-1.5 rounded-xl p-1.5 shadow-glow"
-        >
-          {ROLE_OPTIONS.map((opt) => {
-            const active = opt.id === role
-            return (
-              <Button
-                key={opt.id ?? 'everyone'}
-                variant="ghost"
-                role="option"
-                aria-selected={active}
-                onClick={() => {
-                  onSelect(opt.id)
-                  setOpen(false)
-                }}
-                className={cn(
-                  'w-full justify-start rounded-lg px-2.5 py-2 text-[12.5px] font-normal',
-                  active ? 'text-primary font-semibold' : 'text-foreground'
-                )}
-              >
-                {opt.label}
-              </Button>
-            )
-          })}
-        </div>
-      )}
     </div>
   )
 }
@@ -687,7 +606,7 @@ const SandboxRuntimeToggle: React.FC = () => {
   const handleClick = () => {
     if (status === 'checking') return
     if (runtimeOn) {
-      // On → turn it off (re-hides the sandbox scenarios).
+      // On → turn it off (sandbox scenarios re-lock/dim in place).
       disable()
       setOpen(false)
       return
@@ -701,7 +620,7 @@ const SandboxRuntimeToggle: React.FC = () => {
     ? `Runtime active · ${SANDBOX_TOOL_COUNT} sandbox scenarios unlocked`
     : status === 'checking'
       ? 'Checking sandbox…'
-      : `Off · ${SANDBOX_TOOL_COUNT} Docker scenarios hidden`
+      : `Off · ${SANDBOX_TOOL_COUNT} Docker scenarios locked`
 
   // Solid, contrasting switch (knob colour differs from the track in both themes).
   const trackClass = runtimeOn
@@ -788,9 +707,9 @@ export const PlaygroundWorkshop = () => {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
 
-  // Role — backed by the shared persona store (mirrors Learn).
+  // Role — backed by the shared persona store (mirrors Learn). Read-only here:
+  // the global top-bar role switcher is the single write control (Phase 0.2).
   const role = usePersonaStore((s) => s.selectedPersona)
-  const setPersona = usePersonaStore((s) => s.setPersona)
 
   // Bookmarks — backed by the shared bookmark store ("My tools").
   const myPlaygroundTools = useBookmarkStore((s) => s.myPlaygroundTools)
@@ -914,15 +833,15 @@ export const PlaygroundWorkshop = () => {
 
   // Tool universe feeding search, categories and counts (nav narrows further):
   //  • environments are surfaced as their own marquee cards, never as grid tools
-  //  • sandbox scenarios stay hidden while the runtime is off (no clutter)
+  //  • sandbox scenarios stay IN the grid while the runtime is off — they render
+  //    dimmed/locked (via `isLocked`) rather than disappearing (Phase 9.4)
   //  • the run-context + difficulty filters narrow what remains
   const visibleTools = useMemo(() => {
     let base = WORKSHOP_TOOLS.filter((t) => !isEnvironmentTool(t.id))
-    if (!runtimeOn) base = base.filter((t) => !t.sandbox)
     if (runFilter !== 'all') base = base.filter((t) => runFor(t) === runFilter)
     if (difficulty !== 'All') base = base.filter((t) => t.difficulty === difficulty)
     return base
-  }, [difficulty, runFilter, runtimeOn])
+  }, [difficulty, runFilter])
 
   // Stable sort: recommended-for-role first, locked sandbox scenarios last.
   const sortTools = useCallback(
@@ -976,12 +895,10 @@ export const PlaygroundWorkshop = () => {
     [activeVerb, visibleTools, sortTools]
   )
 
-  // The command palette is a global finder: runtime-aware (sandbox hidden while
-  // off) but independent of the difficulty / run-context chips.
-  const paletteUniverse = useMemo(
-    () => WORKSHOP_TOOLS.filter((t) => !isEnvironmentTool(t.id) && (runtimeOn || !t.sandbox)),
-    [runtimeOn]
-  )
+  // The command palette is a global finder: locked sandbox tools stay searchable
+  // (consistent with "dim, not hide") so a user can find one and see why it's
+  // locked; independent of the difficulty / run-context chips.
+  const paletteUniverse = useMemo(() => WORKSHOP_TOOLS.filter((t) => !isEnvironmentTool(t.id)), [])
 
   // Per-verb counts for the overview "I want to…" row (respect active filters).
   const verbCounts = useMemo(() => {
@@ -992,12 +909,12 @@ export const PlaygroundWorkshop = () => {
     return counts
   }, [visibleTools])
 
-  // Overview "Recommended" pool.
+  // Overview "Start here" pool — 3 tools (playground.md Phase 9.2 acceptance).
   const recommendedPool = useMemo(() => {
     const base = role
       ? visibleTools.filter((t) => t.recommendedPersonas.includes(role) && !isLocked(t))
       : visibleTools.filter((t) => t.difficulty === 'beginner' && !isLocked(t))
-    return sortTools(base).slice(0, 6)
+    return sortTools(base).slice(0, 3)
   }, [role, visibleTools, isLocked, sortTools])
 
   // ── Actions ──────────────────────────────────────────────────────────────
@@ -1014,10 +931,10 @@ export const PlaygroundWorkshop = () => {
     void probe()
   }, [probe])
 
-  // Sandbox scenarios in the active category that are hidden because the runtime
-  // is off (they reappear once connected). Counted from the full registry since
-  // they're filtered out of the visible universe.
-  const hiddenSandboxInCategory = useMemo(() => {
+  // Sandbox scenarios in the active category that render locked/dimmed because
+  // the runtime is off (they unlock in place once connected — they were never
+  // removed from the grid, see `visibleTools` above).
+  const lockedSandboxInCategory = useMemo(() => {
     if (runtimeOn || activeNav === 'overview' || activeNav === 'mytools') return 0
     return WORKSHOP_TOOLS.filter(
       (t) => !isEnvironmentTool(t.id) && t.sandbox && t.category === activeNav
@@ -1061,8 +978,6 @@ export const PlaygroundWorkshop = () => {
           </p>
         </div>
       </div>
-
-      <RoleSelector role={role} onSelect={(r) => setPersona(r)} />
 
       {/* Nav */}
       <nav className="mt-4 flex flex-1 flex-col gap-0.5" aria-label="Crypto Lab categories">
@@ -1222,12 +1137,10 @@ export const PlaygroundWorkshop = () => {
 
     const categoryBody =
       categoryTools.length === 0 ? (
-        hiddenSandboxInCategory > 0 ? null : (
-          <EmptyResults
-            title="Nothing here"
-            subtitle="Try clearing the difficulty or run-context filter."
-          />
-        )
+        <EmptyResults
+          title="Nothing here"
+          subtitle="Try clearing the difficulty or run-context filter."
+        />
       ) : !groups ? (
         renderGrid(categoryTools)
       ) : (
@@ -1298,15 +1211,15 @@ export const PlaygroundWorkshop = () => {
           </Link>
         )}
 
-        {hiddenSandboxInCategory > 0 && (
+        {lockedSandboxInCategory > 0 && (
           <div className="mt-4 flex items-center gap-3 rounded-xl border border-border bg-status-warning/5 p-3.5">
             <span className="flex w-[30px] h-[30px] shrink-0 items-center justify-center rounded-lg bg-status-warning/12 text-status-warning">
               <Container className="w-4 h-4" aria-hidden="true" />
             </span>
             <p className="flex-1 text-[12px] leading-snug text-foreground/80">
-              {hiddenSandboxInCategory} Docker{' '}
-              {hiddenSandboxInCategory === 1 ? 'demo is' : 'demos are'} hidden here. Connect the
-              sandbox runtime to show {hiddenSandboxInCategory === 1 ? 'it' : 'them'}.
+              {lockedSandboxInCategory} Docker{' '}
+              {lockedSandboxInCategory === 1 ? 'demo is' : 'demos are'} locked below. Connect the
+              sandbox runtime to unlock {lockedSandboxInCategory === 1 ? 'it' : 'them'}.
             </p>
             <Button
               variant="gradient"
