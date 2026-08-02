@@ -98,7 +98,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               </p>
             </div>
           </div>
-          <p className="text-[10px] text-muted-foreground/70 italic">
+          <p className="text-[10px] text-muted-foreground italic">
             <strong>RFC 9794</strong> standardizes terminology for hybrid schemes &mdash;
             distinguishing &ldquo;composite&rdquo; (single OID, both-must-verify) from
             &ldquo;non-composite&rdquo; (parallel independent algorithms) and establishing naming
@@ -394,7 +394,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 </tbody>
               </table>
             </div>
-            <p className="text-[10px] text-muted-foreground/70 italic">
+            <p className="text-[10px] text-muted-foreground italic">
               HNDL risk + data-retention window should drive the choice: if harvested ciphertext
               must remain secret past ~2035, prefer Cat 3 or Cat 5 over Cat 1.
             </p>
@@ -445,7 +445,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 so shared secrets cannot be replayed across protocols.
               </li>
             </ul>
-            <p className="text-[10px] text-muted-foreground/70 italic">
+            <p className="text-[10px] text-muted-foreground italic">
               The X-Wing KEM draft bakes this combiner in directly (single labeled extraction); TLS
               1.3 relies on its own <InlineTooltip term="HKDF">HKDF</InlineTooltip> key schedule for
               the same effect.
@@ -522,7 +522,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               </p>
             </div>
           </div>
-          <p className="text-[10px] text-muted-foreground/70 italic">
+          <p className="text-[10px] text-muted-foreground italic">
             For a full interactive TLS 1.3 handshake simulation with hybrid KEM negotiation, see the{' '}
             <Link to="/learn/tls-basics" className="text-primary hover:underline">
               TLS Basics
@@ -593,7 +593,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               </p>
             </div>
           </div>
-          <p className="text-[10px] text-muted-foreground/70 italic">
+          <p className="text-[10px] text-muted-foreground italic">
             In short: hybrid gets you algorithmic safety (dual-PRF), but SP 800-227 §4 is what gets
             you <em>deployment</em> safety. Both are required.
           </p>

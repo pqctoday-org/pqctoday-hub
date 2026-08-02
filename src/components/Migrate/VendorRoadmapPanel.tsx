@@ -177,7 +177,7 @@ export const VendorRoadmapPanel = ({ roadmap, enrichment }: VendorRoadmapPanelPr
 
       {/* No roadmap fallback */}
       {!hasUrl && !enrichment && (
-        <p className="text-xs text-muted-foreground/60">No roadmap published</p>
+        <p className="text-xs text-muted-foreground">No roadmap published</p>
       )}
     </div>
   )

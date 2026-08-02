@@ -801,7 +801,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                             )
                           })}
                         </div>
-                        <p className="text-xs text-muted-foreground/60 mt-2">
+                        <p className="text-xs text-muted-foreground mt-2">
                           {PERSONAS[selectedPersona].label} learning path —{' '}
                           {PERSONAS[selectedPersona].recommendedPath.length - 1} modules, ~
                           {Math.round(PERSONAS[selectedPersona].estimatedMinutes / 60)} hours

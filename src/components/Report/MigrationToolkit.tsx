@@ -264,7 +264,7 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
               <tbody key={layer}>
                 <tr>
                   <td colSpan={5} className="pt-4 pb-1">
-                    <h4 className="text-xs font-mono uppercase tracking-wider text-muted-foreground/60">
+                    <h4 className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
                       {layer}
                     </h4>
                   </td>

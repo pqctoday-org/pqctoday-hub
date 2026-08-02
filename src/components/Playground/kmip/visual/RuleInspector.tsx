@@ -173,7 +173,7 @@ function Field({
       <FieldLabel>
         {label}
         {spec.optional && (
-          <span className="ml-1 normal-case text-muted-foreground/60">(optional)</span>
+          <span className="ml-1 normal-case text-muted-foreground">(optional)</span>
         )}
       </FieldLabel>
       {control}
@@ -199,7 +199,7 @@ export function RuleInspector({
           Select a node to edit its rule — the operations it scopes to, its algorithms, and the
           reason shown when it denies a request.
         </p>
-        <p className="mt-2 text-[11px] text-muted-foreground/70">
+        <p className="mt-2 text-[11px] text-muted-foreground">
           Or add a rule from the palette on the left.
         </p>
       </div>

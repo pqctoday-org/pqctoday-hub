@@ -272,7 +272,7 @@ const TestResultRow: React.FC<{ result: TestResult }> = ({ result }) => (
     </div>
     <div className="text-[10px] font-mono text-muted-foreground shrink-0">
       {result.value.toFixed(3)}
-      <span className="text-muted-foreground/60"> / {result.threshold.toFixed(3)}</span>
+      <span className="text-muted-foreground"> / {result.threshold.toFixed(3)}</span>
     </div>
   </div>
 )

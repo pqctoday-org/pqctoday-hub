@@ -102,7 +102,7 @@ export const RecommendedActionsSection = ({
             </div>
             {action.relatedModule.startsWith('/migrate') && relevantSoftware.length > 0 && (
               <div className="flex flex-wrap gap-1 mt-1.5 print:hidden">
-                <span className="text-[10px] text-muted-foreground/70">Tools:</span>
+                <span className="text-[10px] text-muted-foreground">Tools:</span>
                 {relevantSoftware.slice(0, 2).map((sw) => (
                   <Link
                     to={`/migrate?industry=${encodeURIComponent(industry)}`}

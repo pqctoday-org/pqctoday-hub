@@ -486,7 +486,7 @@ export const CostModelExplorer: React.FC = () => {
         </p>
       </ExportableArtifact>
 
-      <p className="text-[10px] italic text-muted-foreground/70">
+      <p className="text-[10px] italic text-muted-foreground">
         Illustrative simulation for building intuition. Figures derive from the sliders above and
         the labelled constants in each method — not from your organization&apos;s data.
       </p>

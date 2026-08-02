@@ -294,7 +294,7 @@ const Step5Compliance = ({ hideHeading = false, hideHints = false }: EmbeddedSte
                         <span className="text-sm font-medium">{fw.label}</span>
                       </div>
                       {reason && (
-                        <p className="text-[10px] mt-0.5 text-muted-foreground/70 font-normal leading-snug">
+                        <p className="text-[10px] mt-0.5 text-muted-foreground font-normal leading-snug">
                           {reason}
                         </p>
                       )}

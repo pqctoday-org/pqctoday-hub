@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { test, expect } from '@playwright/test'
-import { injectAxe, checkA11y } from 'axe-playwright'
+import { injectAxe, checkA11y, getViolations } from 'axe-playwright'
 
 // Scan with reduced motion so axe never samples a mid-fade/mid-pulse frame of a
 // framer-motion or CSS `animate-*` transition (e.g. the RightPanel FAB's "Need
@@ -54,8 +54,49 @@ for (const { path, name } of ROUTES) {
     await page.waitForSelector('h1, h2, [data-testid]', { timeout: 15000 }).catch(() => {
       // Some pages (Landing, Assess) may not have h1/h2 — that's fine, axe will catch it.
     })
+    // Belt-and-suspenders on top of the real fix (2026-08-02, MainLayout.tsx's
+    // route-content wrapper): `waitForSelector` resolves the INSTANT an
+    // element mounts, which for the primary-content motion.div was also the
+    // instant its (now-fixed) opacity fade started — this test previously ran
+    // axe with zero settle time between mount and assertion. `networkidle`
+    // gives any data-driven content one more beat to finish loading before
+    // judging its accessibility, matching what manual local reproduction
+    // always did (and why it could never reproduce the CI failure — see the
+    // MainLayout.tsx comment for the full chain).
+    await page.waitForLoadState('networkidle').catch(() => {})
 
     await injectAxe(page)
+
+    // Diagnostic logging before the assertion (2026-08-02). The default
+    // reporter prints only a summary table — rule id, impact, node COUNT — so a
+    // CI-only failure gives you "color-contrast, serious, 1 node" and nothing
+    // about WHICH node. /migrate failed three times that way while the same
+    // commit passed locally against the same production build, and 18 repeated
+    // local samples at this spec's exact timing could not reproduce it. Without
+    // the element and its measured colours there is nothing to fix but a guess,
+    // and guessing has already produced two wrong diagnoses here.
+    //
+    // This does not change what the test asserts — `checkA11y` below is
+    // unchanged and still fails the build. It only makes a failure legible.
+    const violations = await getViolations(page, 'html', A11Y_OPTIONS.axeOptions)
+    const blocking = violations.filter((v) => v.impact === 'serious' || v.impact === 'critical')
+    for (const v of blocking) {
+      for (const node of v.nodes) {
+        const contrast = [...node.any, ...node.all].find((c) => c.id === 'color-contrast')
+        const d = contrast?.data as
+          | { contrastRatio?: number; fgColor?: string; bgColor?: string; fontSize?: string }
+          | undefined
+
+        console.log(
+          `[a11y] ${path} ${v.id} target=${JSON.stringify(node.target)}` +
+            (d
+              ? ` ratio=${d.contrastRatio} fg=${d.fgColor} bg=${d.bgColor} size=${d.fontSize}`
+              : '') +
+            `\n[a11y]   html=${node.html.slice(0, 200)}`
+        )
+      }
+    }
+
     await checkA11y(page, 'html', A11Y_OPTIONS, false, 'default')
   })
 }

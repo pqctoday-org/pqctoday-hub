@@ -228,7 +228,7 @@ export const TLSHandshakeDiagram: React.FC<TLSHandshakeDiagramProps> = ({ mTLSEn
         </div>
 
         {/* PQC note — dynamic based on current group selection */}
-        <p className="mt-4 text-[10px] text-muted-foreground/70 text-center">
+        <p className="mt-4 text-[10px] text-muted-foreground text-center">
           Current group: <span className="font-mono">{selectedGroup}</span> — client key share{' '}
           {ks.ek} B, server response {ks.ct} B (classical X25519 uses 32 B each; hybrid sizes
           include both components).

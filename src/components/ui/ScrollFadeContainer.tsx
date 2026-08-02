@@ -56,8 +56,17 @@ const ScrollFadeContainer = React.forwardRef<HTMLDivElement, ScrollFadeContainer
 
     return (
       <div className={cn('relative w-full', className)}>
+        {/* `tabIndex={0}` is required, not decorative: this is a horizontally
+            scrollable region, and axe's `scrollable-region-focusable` (serious)
+            fires when such a region can be reached by neither keyboard focus
+            nor focusable content — a keyboard-only user then cannot scroll it
+            at all. Making the container itself focusable is the standard fix.
+            `scrollProps` is spread after, so a caller can still override. */}
         <div
           ref={setRef}
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; axe's `scrollable-region-focusable` (serious) fires without it and making the region focusable is the documented fix.
+          tabIndex={0}
+          role="group"
           className={cn('overflow-x-auto no-scrollbar', scrollClassName)}
           {...scrollProps}
         >

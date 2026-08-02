@@ -167,7 +167,7 @@ export function TrustScoreMethodologySection() {
               </div>
 
               {/* Weight redistribution note */}
-              <p className="text-xs text-muted-foreground/70">
+              <p className="text-xs text-muted-foreground">
                 Not all dimensions apply to every resource type. When a dimension does not apply
                 (e.g., Cryptographic Simulation for a leader profile), its weight is redistributed
                 proportionally among the remaining applicable dimensions so the total always sums to
@@ -175,7 +175,7 @@ export function TrustScoreMethodologySection() {
               </p>
 
               {/* Transparency note */}
-              <p className="text-xs text-muted-foreground/70">
+              <p className="text-xs text-muted-foreground">
                 All trust scores are computed client-side from open data. The methodology and source
                 code are fully open. Community endorsements via GitHub Discussions feed
                 Cross-Reference Density (community-corroboration sub-signal); the Peer Review

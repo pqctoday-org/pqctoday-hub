@@ -235,7 +235,7 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
                 <div>
                   <div className="text-sm font-medium text-foreground">{m.name}</div>
                   <p className="text-xs text-muted-foreground">{m.description}</p>
-                  <p className="text-xs text-muted-foreground/70 mt-0.5">{m.applicability}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{m.applicability}</p>
                 </div>
               </div>
             ))}
