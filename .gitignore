@@ -310,6 +310,11 @@ scripts/*
 !scripts/lib/
 !scripts/lib/roleBoardTokens.ts
 
+# Role-board content maintenance aid — npm run audit:role-board-content,
+# backing the audit-role-board-content skill. Same reason: referenced by a
+# committed package.json script.
+!scripts/audit-role-board-content.ts
+
 # NVD CVE scraper — runs weekly in .github/workflows/update-cve.yml (public
 # CI), must be tracked or that workflow fails with "No such file or directory"
 # (as it silently did for weeks — see git history). Reads public CPE xref CSV,
