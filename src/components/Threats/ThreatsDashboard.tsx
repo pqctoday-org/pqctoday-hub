@@ -175,6 +175,11 @@ export const ThreatsDashboard: React.FC<{
   // always-visible at `lg+` regardless of this state, matching prior desktop
   // behavior exactly.
   const [tocMobileOpen, setTocMobileOpen] = useState(false)
+  // CRQC Threat Horizon detail toggle (2026-pages Phase 7 item 2): the headline
+  // Z-estimate stays always-visible, but the per-source estimate list, the
+  // hardware-trajectory chart, and the technology-track breakdown all sit
+  // behind this single "Full detail" collapse instead of loading open.
+  const [detailOpen, setDetailOpen] = useState(false)
 
   // Sync all filter params on same-route navigations (e.g. chatbot deep links).
   // Functional setters prevent infinite loops when syncFiltersToUrl triggers a searchParams update.
@@ -584,8 +589,8 @@ export const ThreatsDashboard: React.FC<{
         >
           <div className="space-y-4">
             <ThreatEconomicsHeader defaultExpanded />
-            <CrqcCapabilityStrip defaultExpanded />
-            <CrqcTrajectoryChart />
+            <CrqcCapabilityStrip expanded={detailOpen} onExpandedChange={setDetailOpen} />
+            {detailOpen && <CrqcTrajectoryChart />}
           </div>
         </CollapsibleSection>
 
