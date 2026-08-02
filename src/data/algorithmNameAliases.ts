@@ -4,10 +4,12 @@
  *
  * The patent corpus's `pqc_algorithms` / `classical_algorithms` values stay
  * historically accurate to the filing-era name the patent actually used
- * (e.g. "Kyber", "Dilithium", "SPHINCS+") — those names predate NIST's
- * FIPS 203/204/205 standardization and renaming. Searching for the modern
- * FIPS name should still surface filing-era patents, and vice versa, so this
- * is a search-time-only lookup layer — it never rewrites the underlying data.
+ * (e.g. "Kyber", "Dilithium", "SPHINCS+", "Falcon") — those names predate
+ * NIST's FIPS 203/204/205 standardization and renaming, and predate FIPS 206
+ * (still in development; /algorithms lists its candidate parameter sets as
+ * FN-DSA-512 / FN-DSA-1024). Searching for the modern FIPS name should still
+ * surface filing-era patents, and vice versa, so this is a search-time-only
+ * lookup layer — it never rewrites the underlying data.
  */
 export const ALGORITHM_NAME_ALIASES: Record<string, string[]> = {
   kyber: ['ML-KEM'],
@@ -16,6 +18,8 @@ export const ALGORITHM_NAME_ALIASES: Record<string, string[]> = {
   'ml-dsa': ['Dilithium'],
   'sphincs+': ['SLH-DSA'],
   'slh-dsa': ['SPHINCS+'],
+  falcon: ['FN-DSA'],
+  'fn-dsa': ['Falcon'],
 }
 
 /**

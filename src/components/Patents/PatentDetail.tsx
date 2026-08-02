@@ -18,6 +18,7 @@ import { EndorseButton } from '@/components/ui/EndorseButton'
 import { FlagButton } from '@/components/ui/FlagButton'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
+import { expandAlgorithmAliases } from '@/data/algorithmNameAliases'
 
 interface Props {
   patent: PatentItem
@@ -204,6 +205,18 @@ export function PatentDetail({
     patent.filingDate && { label: 'Filed', term: 'Filing Date', value: patent.filingDate },
     patent.issueDate && { label: 'Issued', term: 'Issue Date', value: patent.issueDate },
   ].filter((d): d is { label: string; term: string; value: string } => Boolean(d))
+
+  // The patent corpus keeps filing-era algorithm names (Kyber, Dilithium,
+  // SPHINCS+, Falcon) rather than rewriting history to their later FIPS
+  // parameter-set names — but /algorithms' own data is keyed on the FIPS
+  // names (ML-KEM, ML-DSA, SLH-DSA, FN-DSA). Expand through the same
+  // legacy⇄FIPS alias table PatentSearchPanel already uses for search, so a
+  // patent filed under "Kyber" still deep-links to a real highlighted row.
+  const highlightedAlgorithms = patent.pqcAlgorithms.slice(0, 6)
+  const algorithmsHighlightParam = [
+    ...highlightedAlgorithms,
+    ...expandAlgorithmAliases(highlightedAlgorithms),
+  ].join(',')
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
@@ -512,7 +525,7 @@ export function PatentDetail({
             <div className="flex flex-wrap gap-2">
               {patent.pqcAlgorithms.length > 0 && (
                 <Link
-                  to={`/algorithms?highlight=${encodeURIComponent(patent.pqcAlgorithms.slice(0, 6).join(','))}&tab=detailed`}
+                  to={`/algorithms?highlight=${encodeURIComponent(algorithmsHighlightParam)}&tab=detailed`}
                   onClick={onClose}
                   className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-muted/30 border border-border hover:bg-muted/60 hover:border-primary/30 text-muted-foreground hover:text-foreground transition-all"
                   title={`View ${patent.pqcAlgorithms.join(', ')} in Algorithms`}
