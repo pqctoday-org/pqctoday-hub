@@ -1512,7 +1512,7 @@ export const PERSONA_JOURNEY_BOARD: Record<PersonaId, PersonaJourneyBoard> = {
       },
       {
         title: 'Your board pack',
-        body: `The ${toWordIfSmall(combinedArtifacts('executive', ['governance']).length)} artifacts BC_ZONE_EMPHASIS_BY_PERSONA already features in your Governance zone: ${combinedArtifacts('executive', ['governance']).join(', ')}.`,
+        body: `The ${toWordIfSmall(combinedArtifacts('executive', ['governance']).length)} artifacts already featured in your Governance zone: ${combinedArtifacts('executive', ['governance']).join(', ')}.`,
       },
     ],
     trackTitle: `Then, if you want the background: ${formatEssentialsVsFull('executive')}.`,
@@ -1554,14 +1554,14 @@ export const PERSONA_JOURNEY_BOARD: Record<PersonaId, PersonaJourneyBoard> = {
       ],
       punchline: 'Your schema breaks before your crypto does.',
       footnote:
-        'Sizes read from algorithmProperties.ts — the second of the four anti-patterns the Crypto Agility module already teaches.',
+        'Real sizes, not illustrative — the second of the four anti-patterns the Crypto Agility module already teaches.',
     },
     gridTitle: 'What you walk out with',
-    gridSub: 'Surfaces named from personaConfig.ts',
+    gridSub: 'Real surfaces mapped to what you actually own',
     gridCards: [
       {
         title: 'Migrate, scoped to your layers',
-        body: `PERSONA_MIGRATE_LAYERS gives you ${joinWithAnd(PERSONA_MIGRATE_LAYERS.developer)} — the catalogue opens pre-filtered to the ${toWordIfSmall(PERSONA_MIGRATE_LAYERS.developer.length)} you actually own.`,
+        body: `Your persona gives you ${joinWithAnd(PERSONA_MIGRATE_LAYERS.developer)} — the catalogue opens pre-filtered to the ${toWordIfSmall(PERSONA_MIGRATE_LAYERS.developer.length)} you actually own.`,
       },
       {
         title: 'Command Center · Implementation View',
@@ -1571,8 +1571,8 @@ export const PERSONA_JOURNEY_BOARD: Record<PersonaId, PersonaJourneyBoard> = {
         title: 'A report that is finally yours',
         body:
           DEVELOPER_REPORT_OVERRIDE_COUNT === 0
-            ? `PERSONA_REPORT_CONFIG.developer is literally {} — all ${REPORT_SECTION_TOTAL_COUNT} sections at defaults. This version opens algorithmMigration and cbom first.`
-            : `PERSONA_REPORT_CONFIG.developer now tailors ${DEVELOPER_REPORT_OVERRIDE_COUNT} section${DEVELOPER_REPORT_OVERRIDE_COUNT === 1 ? '' : 's'} for this persona. This version opens algorithmMigration and cbom first.`,
+            ? `Your report config is untouched — all ${REPORT_SECTION_TOTAL_COUNT} sections at defaults. This version opens algorithmMigration and cbom first.`
+            : `Your report now tailors ${DEVELOPER_REPORT_OVERRIDE_COUNT} section${DEVELOPER_REPORT_OVERRIDE_COUNT === 1 ? '' : 's'} for this persona. This version opens algorithmMigration and cbom first.`,
       },
     ],
     trackTitle: `Then, the background: ${formatEssentialsVsFull('developer')}.`,
@@ -1615,7 +1615,7 @@ export const PERSONA_JOURNEY_BOARD: Record<PersonaId, PersonaJourneyBoard> = {
       punchline: 'Agility is the deliverable. PQC is the first test of it.',
     },
     gridTitle: 'What you walk out with',
-    gridSub: 'Artifact ids from BC_ZONE_EMPHASIS_BY_PERSONA',
+    gridSub: 'Real artifacts from your zone configuration',
     gridCards: [
       {
         title: 'A rekey lineage',
@@ -1679,10 +1679,10 @@ export const PERSONA_JOURNEY_BOARD: Record<PersonaId, PersonaJourneyBoard> = {
       ],
       punchline: 'Your next renewal window is your migration window.',
       footnote:
-        'Figures from hsmCapacityDefaults.ts and algorithmProperties.ts — the same defaults behind the HSM Capacity Calculator this page opens with.',
+        'Real figures, not illustrative — the same defaults behind the HSM Capacity Calculator this page opens with.',
     },
     gridTitle: 'What you walk out with',
-    gridSub: 'Zones and artifacts from personaConfig.ts',
+    gridSub: 'Real zones and artifacts for your fleet',
     gridCards: [
       {
         title: 'A sizing verdict',
@@ -1694,7 +1694,7 @@ export const PERSONA_JOURNEY_BOARD: Record<PersonaId, PersonaJourneyBoard> = {
       },
       {
         title: 'A report built for the cutover',
-        body: `PERSONA_REPORT_CONFIG.ops opens ${joinWithAnd(reportSectionsByState('ops', 'open'))}, and hides ${joinWithAnd(reportSectionsByState('ops', 'hidden').map(reportSectionLabel))} — correct emphasis, already shipped.`,
+        body: `Your report opens ${joinWithAnd(reportSectionsByState('ops', 'open'))}, and hides ${joinWithAnd(reportSectionsByState('ops', 'hidden').map(reportSectionLabel))} — correct emphasis, already shipped.`,
       },
     ],
     trackTitle: `Then, the background: ${formatEssentialsVsFull('ops')}.`,
@@ -1804,7 +1804,7 @@ export const PERSONA_JOURNEY_BOARD: Record<PersonaId, PersonaJourneyBoard> = {
         'Harvest now, decrypt later. That is the whole argument, and it is the one idea worth leaving with even if you read nothing else.',
     },
     gridTitle: 'Where you can go next',
-    gridSub: 'Optional, none of it locked — config from personaConfig.ts',
+    gridSub: 'Optional, none of it locked — all of it real',
     gridCards: [
       {
         title: 'The short version',
@@ -1812,7 +1812,7 @@ export const PERSONA_JOURNEY_BOARD: Record<PersonaId, PersonaJourneyBoard> = {
       },
       {
         title: 'A library worth browsing',
-        body: `Today PERSONA_LIBRARY_CATEGORIES.curious is ${toWordIfSmall(PERSONA_LIBRARY_CATEGORIES.curious.length)} categories — ${joinWithAnd(PERSONA_LIBRARY_CATEGORIES.curious)}. A library with ${toWordIfSmall(PERSONA_LIBRARY_CATEGORIES.curious.length)} shelves.`,
+        body: `Today your library is ${toWordIfSmall(PERSONA_LIBRARY_CATEGORIES.curious.length)} categories — ${joinWithAnd(PERSONA_LIBRARY_CATEGORIES.curious)}. A library with ${toWordIfSmall(PERSONA_LIBRARY_CATEGORIES.curious.length)} shelves.`,
       },
       {
         title: 'A read on your own risk',
