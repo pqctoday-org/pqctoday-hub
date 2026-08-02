@@ -267,6 +267,7 @@ async function main() {
     const heroBadgeText = scalar(slots, 'hero_badge_text')
     const heroBadgeTone = scalar(slots, 'hero_badge_tone')
     const sideCardFootnote = scalar(slots, 'side_card_footnote')
+    const sideCardEmptyState = scalar(slots, 'side_card_empty_state')
     const trackNote = scalar(slots, 'track_note')
     const capstoneLabel = scalar(slots, 'capstone_chip_label')
 
@@ -287,6 +288,7 @@ async function main() {
       rows: [${rowLabels.map((label, i) => `{ label: ${jsString(label)}, value: ${jsString(rowValues[i])} }`).join(', ')}],
       punchline: ${jsString(requireScalar(slots, 'side_card_punchline', ctx))},
       ${sideCardFootnote !== undefined ? `footnote: ${jsString(sideCardFootnote)},` : ''}
+      ${sideCardEmptyState !== undefined ? `emptyState: ${jsString(sideCardEmptyState)},` : ''}
     },
     gridTitle: ${jsString(requireScalar(slots, 'grid_title', ctx))},
     gridSub: ${jsString(requireScalar(slots, 'grid_sub', ctx))},

@@ -29,7 +29,7 @@ import { authoritativeSources } from './authoritativeSourcesData'
 export const LIBRARY_ACTIVE_SOURCE_COUNT = libraryData.length
 
 /** Formats an ISO `YYYY-MM-DD` as "D Mon YYYY" (UTC — no local-timezone drift). */
-function formatVerifiedDate(isoDate: string): string {
+export function formatVerifiedDate(isoDate: string): string {
   const d = new Date(`${isoDate}T00:00:00Z`)
   if (Number.isNaN(d.getTime())) return isoDate
   return d.toLocaleDateString('en-GB', {
