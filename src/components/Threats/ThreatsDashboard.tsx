@@ -40,6 +40,7 @@ import { PersonaSwitchModal } from '../Persona/PersonaSwitchModal'
 import { usePersonaDefaults } from '@/hooks/usePersonaDefaults'
 import clsx from 'clsx'
 import { PageHeader } from '../common/PageHeader'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { Button } from '../ui/button'
 import { CollapsibleSection } from '../ui/CollapsibleSection'
@@ -174,6 +175,11 @@ export const ThreatsDashboard: React.FC<{
   // always-visible at `lg+` regardless of this state, matching prior desktop
   // behavior exactly.
   const [tocMobileOpen, setTocMobileOpen] = useState(false)
+  // CRQC Threat Horizon detail toggle (2026-pages Phase 7 item 2): the headline
+  // Z-estimate stays always-visible, but the per-source estimate list, the
+  // hardware-trajectory chart, and the technology-track breakdown all sit
+  // behind this single "Full detail" collapse instead of loading open.
+  const [detailOpen, setDetailOpen] = useState(false)
 
   // Sync all filter params on same-route navigations (e.g. chatbot deep links).
   // Functional setters prevent infinite loops when syncFiltersToUrl triggers a searchParams update.
@@ -506,40 +512,50 @@ export const ThreatsDashboard: React.FC<{
     [heroScopedIndustries]
   )
 
+  // Register this page's actions with the global top bar (page-action-strip
+  // rollout, 2026-08-01) — info/endorse/flag render there now, not as a row
+  // on the page itself. Mirrors TimelineView.tsx's pattern. Gated on
+  // `!simEmbed`, same as the PageHeader render below. No onExport here —
+  // Threats genuinely has no export button today, unlike its sibling pages.
+  useEffect(() => {
+    if (simEmbed) return
+    const { setPageActions, clearPageActions } = usePageActionsStore.getState()
+    setPageActions({
+      title: 'Quantum Threats',
+      dataSource: `${threatsMetadata?.filename ?? 'quantum_threats_hsm_industries.csv'} • Updated: ${threatsMetadata?.lastUpdate?.toLocaleDateString() ?? 'Unknown'}`,
+      endorseUrl: buildEndorsementUrl({
+        category: 'threat-endorsement',
+        title: 'Endorse: Quantum Threats Dashboard',
+        resourceType: 'Threats Page',
+        resourceId: 'Quantum Threats Dashboard',
+        resourceDetails:
+          '**Page:** Quantum Threats — Detailed analysis of quantum threats across industries, including criticality, at-risk cryptography, and PQC replacements.',
+        pageUrl: '/threats',
+      }),
+      endorseLabel: 'Threats Page',
+      endorseResourceType: 'Threats',
+      flagUrl: buildFlagUrl({
+        category: 'threat-endorsement',
+        title: 'Flag: Quantum Threats Dashboard',
+        resourceType: 'Threats Page',
+        resourceId: 'Quantum Threats Dashboard',
+        resourceDetails:
+          '**Page:** Quantum Threats — Detailed analysis of quantum threats across industries, including criticality, at-risk cryptography, and PQC replacements.',
+        pageUrl: '/threats',
+      }),
+      flagLabel: 'Threats Page',
+      flagResourceType: 'Threats',
+    })
+    return () => clearPageActions()
+  }, [simEmbed])
+
   return (
     <div>
       {!simEmbed && (
         <PageHeader
           icon={AlertTriangle}
-          pageId="threats"
           title="Quantum Threats"
           description="Detailed analysis of quantum threats across industries, including criticality, at-risk cryptography, and PQC replacements."
-          dataSource={`${threatsMetadata?.filename ?? 'quantum_threats_hsm_industries.csv'} • Updated: ${threatsMetadata?.lastUpdate?.toLocaleDateString() ?? 'Unknown'}`}
-          viewType="Threats"
-          shareTitle="Quantum Threats Dashboard — Industry Risk Analysis"
-          shareText="Detailed analysis of quantum threats across industries — criticality ratings, at-risk cryptography, and PQC replacements."
-          endorseUrl={buildEndorsementUrl({
-            category: 'threat-endorsement',
-            title: 'Endorse: Quantum Threats Dashboard',
-            resourceType: 'Threats Page',
-            resourceId: 'Quantum Threats Dashboard',
-            resourceDetails:
-              '**Page:** Quantum Threats — Detailed analysis of quantum threats across industries, including criticality, at-risk cryptography, and PQC replacements.',
-            pageUrl: '/threats',
-          })}
-          endorseLabel="Threats Page"
-          endorseResourceType="Threats"
-          flagUrl={buildFlagUrl({
-            category: 'threat-endorsement',
-            title: 'Flag: Quantum Threats Dashboard',
-            resourceType: 'Threats Page',
-            resourceId: 'Quantum Threats Dashboard',
-            resourceDetails:
-              '**Page:** Quantum Threats — Detailed analysis of quantum threats across industries, including criticality, at-risk cryptography, and PQC replacements.',
-            pageUrl: '/threats',
-          })}
-          flagLabel="Threats Page"
-          flagResourceType="Threats"
         />
       )}
 
@@ -573,8 +589,8 @@ export const ThreatsDashboard: React.FC<{
         >
           <div className="space-y-4">
             <ThreatEconomicsHeader defaultExpanded />
-            <CrqcCapabilityStrip defaultExpanded />
-            <CrqcTrajectoryChart />
+            <CrqcCapabilityStrip expanded={detailOpen} onExpandedChange={setDetailOpen} />
+            {detailOpen && <CrqcTrajectoryChart />}
           </div>
         </CollapsibleSection>
 

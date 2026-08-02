@@ -1,8 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { PersonaId } from './learningPersonas'
+import { PERSONAS } from './learningPersonas'
 import type { Region } from '../store/usePersonaStore'
 import type { AssessmentMode } from '../store/useAssessmentStore'
 import type { PhaseId } from './frameworkPhases'
+import { libraryData } from './libraryData'
+import { authoritativeSources } from './authoritativeSourcesData'
+import { ALGORITHM_REGISTRY } from './algorithmProperties'
+import { CLASSICAL_HSM_DEFAULT, USE_CASES } from './hsmCapacityDefaults'
+import { MIGRATION_KEYS } from '../components/Playground/kmip/migration/migrationKeys'
 
 /**
  * Persona-aware "Practice in the Simulation" CTA — which migration phases each
@@ -68,7 +74,14 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/library',
     '/leaders',
     '/patents',
-    '/revisions',
+    // Persona-journeys A-grade redesign (2026-08-01): the Executive Overview
+    // guided tour already exists (EXEC_TOUR_STAGES, SimulationView.tsx) but
+    // /simulation was never nav-linked for this persona — it's the featured
+    // "Walk the program" row (see PERSONA_MARKED_NAV_PATHS' sibling featured
+    // set below), not a marked/pending one. /playground is added too, as the
+    // dashed "Labs" preview row (real Playground tools, not yet exec-tailored).
+    '/simulation',
+    '/playground',
   ],
   developer: [
     '/migrate',
@@ -79,9 +92,17 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/algorithms',
     '/library',
     '/playground',
-    '/openssl',
     '/patents',
-    '/revisions',
+    // Persona-journeys A-grade redesign (2026-08-01): /openssl dropped as a
+    // standalone nav path — OpenSSL Studio is reachable via the Playground
+    // grid's own 'openssl-studio' (PT-023) card (RAIL_HIDDEN_PATHS below),
+    // per the redesign's "folded into Playground" decision. /simulation
+    // added as a plain (non-marked) row — PERSONA_SIM_PRACTICE_PHASES.developer
+    // is real, and the general console's "Exit to hub" affordance
+    // (SimulationView.tsx) already shipped (verified 2026-08-01 final review,
+    // pre-dating this branch — see PERSONA_MARKED_NAV_PATHS' doc comment for
+    // why this is no longer marked/dashed).
+    '/simulation',
   ],
   architect: [
     '/migrate',
@@ -92,10 +113,11 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/algorithms',
     '/library',
     '/playground',
-    '/openssl',
     '/leaders',
     '/patents',
-    '/revisions',
+    // Same redesign notes as developer above: /openssl folded into
+    // Playground's own card; /simulation added as a plain (non-marked) row.
+    '/simulation',
   ],
   researcher: null,
   ops: [
@@ -107,26 +129,83 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     // /algorithms fits ops: the Certified filter + deployment-relevant status hints are
     // directly useful (see ALGORITHM_PERSONA_DEFAULTS.ops below). /patents deliberately
     // stays excluded — IP research isn't an ops task (07-19 follow-up remediation, O1).
+    // NOTE (2026-08-01 persona-journeys redesign): the design handoff's ops rail
+    // mockup showed a dashed "Patents" row alongside "Simulation" — deliberately
+    // NOT implemented here. That would reverse the O1 decision directly above
+    // without being asked to; only /simulation was added. Flagged for the user.
     '/algorithms',
     '/library',
     '/leaders',
     '/playground',
-    '/openssl',
-    '/revisions',
+    // /openssl folded into Playground's own card (see developer's note above).
+    // /simulation added as a plain (non-marked) row.
+    '/simulation',
   ],
   curious: [
     '/explore',
+    // Migrate → Compliance kept adjacent, matching every other persona's
+    // order below (executive/developer/architect/ops all list them as a
+    // consecutive pair) — curious was the one inconsistent list.
+    '/migrate',
     '/compliance',
     '/assess',
     '/report',
     '/algorithms',
     '/library',
     '/leaders',
-    '/migrate',
     '/playground',
     '/patents',
-    '/revisions',
+    // Persona-journeys A-grade redesign (2026-08-01): /simulation added as a
+    // plain (non-featured, non-marked) entry — curious keeps every route
+    // reachable but gives simulation no special rail treatment, per design.
+    '/simulation',
   ],
+}
+
+/**
+ * Rail rows that must never render as their own top-level nav item, for any
+ * persona — the route stays real and reachable (URL, deep link, or a feature
+ * card elsewhere), it just isn't offered as a rail destination in its own
+ * right. Added 2026-08-01 (persona-journeys A-grade redesign) for '/openssl':
+ * OpenSSL Studio is reachable via the Playground grid's own 'openssl-studio'
+ * (PT-023) card, so the standalone nav item would be a duplicate front door.
+ */
+export const RAIL_HIDDEN_PATHS: string[] = ['/openssl']
+
+/**
+ * Per-persona rail rows that should render with the "marked/pending" dashed
+ * left-border treatment (persona-journeys A-grade redesign, 2026-08-01) — a
+ * route the persona can already reach, but that isn't fully tailored to them
+ * yet. Distinct from PERSONA_NAV_PATHS (which controls FOR YOU vs MORE
+ * placement) and from any row given the separate "featured" green treatment
+ * (e.g. executive's '/simulation', styled as the Executive Overview tour
+ * entry point, is intentionally NOT in this list).
+ *
+ * CORRECTION (2026-08-01 final self-review): an earlier pass in this same
+ * build marked developer/architect/ops's '/simulation' row as dashed/pending,
+ * citing IMPLEMENTATION-PLAN-2026-08-01.md §4.5's "general console, pending
+ * its exit-affordance fix" caveat — but per that same plan section's own
+ * instruction ("before wiring this row live, verify the exit-affordance fix
+ * has actually shipped"), a build-time check was required and was not done.
+ * Checking now: SimulationView.tsx already ships a working "Exit to hub" link
+ * (`aria-label="Exit to hub"`, covered by SimulationView.test.tsx) via commits
+ * 691eb55a0 and 6ee1e91f3, BOTH already merged into main well before this
+ * branch's own base commit — the dependency this plan flagged was resolved
+ * before this build even started. developer/architect/ops's '/simulation'
+ * therefore gets the same plain (non-marked) treatment as curious's, not
+ * dashed — PERSONA_SIM_PRACTICE_PHASES already gives all three a real,
+ * accurate phase mapping into the same general console exec's tour points at.
+ */
+export const PERSONA_MARKED_NAV_PATHS: Record<PersonaId, string[]> = {
+  executive: ['/playground'],
+  // developer/architect/ops: no marked rows — see CORRECTION note above.
+  developer: [],
+  architect: [],
+  // researcher: PERSONA_NAV_PATHS is null (no gating at all) — nothing marked.
+  researcher: [],
+  ops: [],
+  // curious: every route is already reachable and un-gated — nothing marked.
+  curious: [],
 }
 
 /* ──────────────────────────────────────────────────────────────────────────────
@@ -212,6 +291,7 @@ const ALGORITHM_FALLBACK_DEFAULTS: AlgorithmDefaults = {
  *  developer-like baseline when no persona is selected. */
 export function getAlgorithmDefaults(persona: PersonaId | null): AlgorithmDefaults {
   if (!persona) return ALGORITHM_FALLBACK_DEFAULTS
+  // eslint-disable-next-line security/detect-object-injection -- persona is the typed PersonaId union, not user input
   return ALGORITHM_PERSONA_DEFAULTS[persona] ?? ALGORITHM_FALLBACK_DEFAULTS
 }
 
@@ -233,6 +313,7 @@ export const NAV_PATH_LABELS: Record<string, string> = {
   '/assess': 'Assess',
   '/report': 'Report',
   '/business': 'Command Center',
+  '/business/tools': 'Business Tools',
   '/playground': 'Playground',
   '/threats': 'Threats',
   '/library': 'Library',
@@ -1087,6 +1168,7 @@ export function isComplianceFrameworkEmphasized(
   frameworkId: string
 ): boolean {
   if (!persona) return false
+  // eslint-disable-next-line security/detect-object-injection -- persona is the typed PersonaId union, not user input
   const set = PERSONA_COMPLIANCE_FRAMEWORK_EMPHASIS[persona]
   if (!set) return false
   return set.includes(frameworkId)
@@ -1130,9 +1212,648 @@ const BELT_TIER_INDEX: Record<string, 0 | 1 | 2 | 3> = {
  */
 export function getBeltTierLabel(persona: PersonaId | null, beltName: string): string | null {
   if (!persona) return null
+  // eslint-disable-next-line security/detect-object-injection -- persona is the typed PersonaId union, not user input
   const tiers = PERSONA_BELT_TIER_LABELS[persona]
   if (!tiers) return null
+  // eslint-disable-next-line security/detect-object-injection -- bounded lookup, guarded by the undefined check below
   const idx = BELT_TIER_INDEX[beltName]
   if (idx === undefined) return null
+  // eslint-disable-next-line security/detect-object-injection -- idx is narrowed to the 0|1|2|3 tuple index
   return tiers[idx]
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+ * Persona journey board — persona-journeys A-grade redesign (2026-08-01).
+ *
+ * Content config for the redesigned per-persona journey page: hero copy, a
+ * "sourced vs illustrative" side-card, a curated 3-card "what you walk out
+ * with" grid, and the learning-track strip. Pure data — the shared board
+ * skeleton component (built separately, config-driven per §3.3 of
+ * IMPLEMENTATION-PLAN-2026-08-01.md) is the only thing that renders this.
+ *
+ * The 3rd element of every `gridCards` tuple is always the one the renderer
+ * highlights — that is a rendering concern, not encoded here, but every
+ * persona's content below is ordered so index [2] really is the intended
+ * highlight.
+ * ────────────────────────────────────────────────────────────────────────────── */
+
+export interface PersonaJourneyBoard {
+  heroEyebrow: string
+  heroBadge?: { text: string; tone: 'sourced' | 'illustrative' }
+  headline: string
+  sub: string
+  ctaPrimary: string
+  /** Real in-app route the primary CTA navigates to — see PersonaBoardView.tsx.
+   * 2026-08-01 follow-up: these buttons rendered with zero click behavior at
+   * all ("none of the buttons on the page does anything") — every CTA now
+   * has a real destination, not just display text. */
+  ctaPrimaryHref: string
+  ctaSecondary: string
+  ctaSecondaryHref: string
+  proofChips: string[]
+  sideCard: {
+    title: string
+    tone: 'bad' | 'warn' | 'info' | 'accent'
+    provenance: 'sourced' | 'illustrative'
+    rows: { label: string; value: string }[]
+    punchline: string
+    footnote?: string
+  }
+  gridTitle: string
+  gridSub: string
+  /** Always exactly 3 cards; the renderer highlights index [2]. */
+  gridCards: [
+    { title: string; body: string },
+    { title: string; body: string },
+    { title: string; body: string },
+  ]
+  trackTitle: string
+  trackNote?: string
+  trackChips: string[]
+  /** Absent for researcher only — the deliberate "no funnel" persona (no capstone). */
+  capstoneChip?: { label: string }
+}
+
+/**
+ * Live active-row count for the library corpus, read from the same loader
+ * every other page uses (`libraryData.ts`, already filtered to `status !==
+ * 'deprecated'/'obsolete'` rows). The design mockup's "691 sources" was a
+ * snapshot against an older CSV — hardcoding it here would reintroduce the
+ * exact staleness problem this redesign exists to fix, so it is recomputed
+ * from the live import instead every time this module loads.
+ */
+const LIBRARY_ACTIVE_SOURCE_COUNT = libraryData.length
+
+/** Formats an ISO `YYYY-MM-DD` as "D Mon YYYY" (UTC — no local-timezone drift). */
+function formatVerifiedDate(isoDate: string): string {
+  const d = new Date(`${isoDate}T00:00:00Z`)
+  if (Number.isNaN(d.getTime())) return isoDate
+  return d.toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC',
+  })
+}
+
+/**
+ * Live "regulatory data last verified" date for the executive board's proof
+ * chip — the most recent `lastVerifiedDate` among authoritative sources that
+ * actually feed the compliance CSV (`complianceCsv === true`), read from
+ * `authoritativeSourcesData.ts`. The design mockup's "30 Jul 2026" was a
+ * snapshot of when the mockup was authored, not a computed value; there is no
+ * single existing "compliance data verified as of" field anywhere else in the
+ * codebase, so this derives the closest real equivalent from data that already
+ * exists rather than hardcoding a date or inventing new plumbing. `undefined`
+ * only if the authoritative-sources CSV somehow has zero compliance-tagged
+ * rows with a verified date, which is not expected in practice.
+ */
+const REGULATORY_DATA_VERIFIED_DATE: string | undefined = (() => {
+  const dates = authoritativeSources
+    .filter((s) => s.complianceCsv && s.lastVerifiedDate)
+    .map((s) => s.lastVerifiedDate)
+    .sort()
+  const latest = dates[dates.length - 1]
+  return latest ? formatVerifiedDate(latest) : undefined
+})()
+
+/* ──────────────────────────────────────────────────────────────────────────────
+ * Persona-board copy helpers — 2026-08-01 dynamic-data remediation
+ * (HOME-PAGE-DYNAMIC-DATA-REMEDIATION-PLAN-2026-08-01.md rev. 2). Every number
+ * or list below used to be a hand-typed string literal; these read the same
+ * source files every other page already uses, so a future change to an
+ * algorithm size, an HSM default, a zone's featured artifacts, or a persona's
+ * learning path can't silently leave this page's copy wrong.
+ * ────────────────────────────────────────────────────────────────────────────── */
+
+const SMALL_NUMBER_WORDS = [
+  'zero',
+  'one',
+  'two',
+  'three',
+  'four',
+  'five',
+  'six',
+  'seven',
+  'eight',
+  'nine',
+  'ten',
+]
+
+function toWordIfSmall(n: number): string {
+  // eslint-disable-next-line security/detect-object-injection -- n is bounds-checked above
+  return n >= 0 && n < SMALL_NUMBER_WORDS.length ? SMALL_NUMBER_WORDS[n] : String(n)
+}
+
+function capitalizedSmallNumberWord(n: number): string {
+  const word = toWordIfSmall(n)
+  return word.charAt(0).toUpperCase() + word.slice(1)
+}
+
+/** "a, b and c" — no Oxford comma, matching this page's existing house style. */
+function joinWithAnd(items: string[]): string {
+  if (items.length === 0) return ''
+  if (items.length === 1) return items[0]
+  return `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`
+}
+
+function formatBytes(n: number): string {
+  return `${n.toLocaleString()} B`
+}
+
+const ML_DSA_65 = ALGORITHM_REGISTRY['ML-DSA-65']
+
+const ML_DSA_65_PUBLIC_KEY_ROW = `${formatBytes(ML_DSA_65.publicKeyBytes)} · was 64`
+const ML_DSA_65_SIGNATURE_ROW = `${formatBytes(ML_DSA_65.signatureOrCiphertextBytes)} · was 64`
+const ML_DSA_65_SIGNATURE_ONLY = formatBytes(ML_DSA_65.signatureOrCiphertextBytes)
+
+/**
+ * ops sideCard's "150 ops/s · ~133× slower than ECDSA" — both figures already
+ * exist as the HSM Capacity Calculator's own defaults (`CLASSICAL_HSM_DEFAULT.
+ * opsPerSec`), the same numbers the calculator itself uses. There is no need
+ * for a new constant here; this was mis-diagnosed as missing during planning
+ * (a truncated grep hid the `opsPerSec` block further down the file) — it
+ * exists, so this is a plain wiring fix like the byte-size rows above.
+ */
+const OPS_SIDECARD_THROUGHPUT_ROW = `${CLASSICAL_HSM_DEFAULT.opsPerSec['ml-dsa-65']} ops/s · ~${Math.round(
+  CLASSICAL_HSM_DEFAULT.opsPerSec['ecdsa-p256'] / CLASSICAL_HSM_DEFAULT.opsPerSec['ml-dsa-65']
+)}× slower than ECDSA`
+
+const OCSP_CRL_SIGNATURE_ONLY_KB = (ML_DSA_65.signatureOrCiphertextBytes / 1000).toFixed(1)
+const OCSP_CRL_WITH_KEY_KB = Math.round(
+  (ML_DSA_65.signatureOrCiphertextBytes + ML_DSA_65.publicKeyBytes) / 1000
+)
+const OPS_SIDECARD_OCSP_ROW = `+${OCSP_CRL_SIGNATURE_ONLY_KB} KB · ~${OCSP_CRL_WITH_KEY_KB} KB with key`
+
+/** HSM Capacity Calculator's real workflow count — "ten enterprise use cases". */
+const HSM_CAPACITY_USE_CASE_COUNT = USE_CASES.length
+
+/** The CACP migration tab's real estate size — "seven-key business estate". */
+const MIGRATION_ESTATE_KEY_COUNT = MIGRATION_KEYS.length
+
+/**
+ * Combines a persona's featured artifacts across the given Fig 3 zones, in
+ * zone order then within-zone config order. Board copy that names these
+ * artifacts by hand (§3 Tier 2 of the remediation plan) reads this instead —
+ * note this may reorder 1-2 items relative to the old hand-tuned sentence
+ * flow (e.g. a trailing item moved earlier to match config order); the set of
+ * artifacts named is what matters and stays exact.
+ */
+function combinedArtifacts(personaId: PersonaId, zones: ZoneId[]): string[] {
+  // eslint-disable-next-line security/detect-object-injection -- personaId is a PersonaId union, not user input
+  const emphasis = BC_ZONE_EMPHASIS_BY_PERSONA[personaId]
+  if (!emphasis) return []
+  // eslint-disable-next-line security/detect-object-injection -- zone is a ZoneId union, not user input
+  return zones.flatMap((zone) => emphasis.featuredArtifacts[zone] ?? [])
+}
+
+/** Report section ids whose displayed name differs from the literal id. */
+const REPORT_SECTION_DISPLAY_LABEL: Partial<Record<ReportSectionId, string>> = {
+  hndlHnfl: 'HNDL',
+}
+
+function reportSectionLabel(id: ReportSectionId): string {
+  // eslint-disable-next-line security/detect-object-injection -- id is a ReportSectionId union, not user input
+  return REPORT_SECTION_DISPLAY_LABEL[id] ?? id
+}
+
+function reportSectionsByState(personaId: PersonaId, state: SectionState): ReportSectionId[] {
+  // eslint-disable-next-line security/detect-object-injection -- personaId is a PersonaId union, not user input
+  const config = PERSONA_REPORT_CONFIG[personaId] ?? {}
+  return (Object.entries(config) as [ReportSectionId, ReportSectionConfig][])
+    .filter(([, cfg]) => cfg.state === state)
+    .map(([id]) => id)
+}
+
+const REPORT_SECTION_TOTAL_COUNT = Object.keys(REPORT_SECTION_DEFAULTS).length
+const DEVELOPER_REPORT_OVERRIDE_COUNT = Object.keys(PERSONA_REPORT_CONFIG.developer).length
+
+/**
+ * One real milestone label per distinct insertion point in a persona's path
+ * (e.g. "Run Risk Assessment and Explore Business Tools" for executive, whose
+ * milestones insert after 2 distinct checkpoints). Deliberately surfaces the
+ * human-readable `label`, not the internal `afterPhase` checkpoint id
+ * ("exec-cp-3") - that id means nothing to a site visitor; an earlier pass of
+ * this fix made the id computed-instead-of-hardcoded but missed that it was
+ * still the wrong thing to show at all.
+ */
+function firstMilestoneLabelPerCheckpoint(personaId: PersonaId): string[] {
+  const seen = new Set<string>()
+  const labels: string[] = []
+  // eslint-disable-next-line security/detect-object-injection -- personaId is a PersonaId union, not user input
+  for (const m of PERSONA_MILESTONES[personaId]) {
+    if (!seen.has(m.afterPhase)) {
+      seen.add(m.afterPhase)
+      labels.push(m.label)
+    }
+  }
+  return labels
+}
+
+/**
+ * "3 hours 20, not 10¼" — the essentials-vs-full-path fragment used by 4 of
+ * the 5 personas whose trackTitle carries this shape (researcher's doesn't;
+ * curious's uses a different sentence built separately below). Reads the same
+ * `essentialsMinutes`/`estimatedMinutes` fields `RoleHomeView.tsx`'s
+ * `trackLine()` already computes live, tested there.
+ *
+ * The "not Z¼" figure rounds the full-path total to the nearest quarter hour.
+ * Every persona except ops lands on an exact quarter hour today; ops's real
+ * total (1765 min = 29h25m) doesn't, so its figure is a ~5-minute rounding
+ * approximation — same as its hand-typed predecessor, just computed instead
+ * of typed, so it can't drift further without this formula changing with it.
+ */
+function formatEssentialsVsFull(personaId: PersonaId): string {
+  // eslint-disable-next-line security/detect-object-injection -- personaId is a PersonaId union, not user input
+  const persona = PERSONAS[personaId]
+  const essentialsH = Math.floor(persona.essentialsMinutes / 60)
+  const essentialsM = persona.essentialsMinutes % 60
+  const essentialsPhrase =
+    essentialsM === 0 ? `${essentialsH} hours` : `${essentialsH} hours ${essentialsM}`
+
+  const totalQuarters = Math.round((persona.estimatedMinutes / 60) * 4)
+  const fullWhole = Math.floor(totalQuarters / 4)
+  const remainderQuarters = totalQuarters % 4
+  const fractionGlyph =
+    remainderQuarters === 1
+      ? '¼'
+      : remainderQuarters === 2
+        ? '½'
+        : remainderQuarters === 3
+          ? '¾'
+          : ''
+
+  return `${essentialsPhrase}, not ${fullWhole}${fractionGlyph}`
+}
+
+export const PERSONA_JOURNEY_BOARD: Record<PersonaId, PersonaJourneyBoard> = {
+  executive: {
+    heroEyebrow: "Illustrative — this user's inputs",
+    heroBadge: {
+      text: 'Default: Americas · Finance & Banking — scenario shown: EU',
+      tone: 'illustrative',
+    },
+    headline: 'Answer the board in eleven minutes.',
+    sub: 'Eight questions about your estate. You get a defensible risk position, the regulatory dates that already bind you under NIS2 and DORA, and a board pack you can present on Thursday.',
+    ctaPrimary: 'Start — 8 questions, about 6 minutes',
+    ctaPrimaryHref: '/assess',
+    ctaSecondary: 'See a finished example',
+    ctaSecondaryHref: '/report',
+    proofChips: [
+      'Verified in your browser against NIST ACVP vectors',
+      `${LIBRARY_ACTIVE_SOURCE_COUNT} sources, trust-tiered`,
+      REGULATORY_DATA_VERIFIED_DATE
+        ? `Regulatory data verified ${REGULATORY_DATA_VERIFIED_DATE}`
+        : 'Regulatory data verified against source',
+      'How we verify',
+    ],
+    sideCard: {
+      title: 'Your exposure window',
+      tone: 'bad',
+      provenance: 'illustrative',
+      rows: [
+        { label: 'Data must stay secret', value: '12 yrs' },
+        { label: 'Your migration takes', value: '5 yrs' },
+        { label: 'Cryptanalytic quantum computer', value: '2032 ±4' },
+      ],
+      punchline: 'You are four years short.',
+      footnote:
+        "Mosca's inequality. The 2032 estimate is a median across 4 published expert surveys; the ±4 band is their interquartile range, not a forecast.",
+    },
+    gridTitle: 'What you walk out with',
+    gridSub: 'Generated from your 8 answers',
+    gridCards: [
+      {
+        title: 'Risk position',
+        body: `From riskScore, keyFindings and riskBreakdown — three of the ${REPORT_SECTION_TOTAL_COUNT} report sections, all already open by default for your role.`,
+      },
+      {
+        title: 'Two already bind you',
+        // NIS2/DORA/roadmap dates are intentionally NOT wired live here — see
+        // COMPLIANCE-DEADLINE-DATE-FIELDS-PLAN-2026-08-01.md. 3 of these 4
+        // dates aren't in a structured CSV field on their own record today;
+        // that's a separate CSV-schema task, decoupled from this one.
+        body: 'NIS2 (since Oct 2024) · DORA (since Jan 2025) · National PQC roadmap due (Dec 2026) · High-risk systems migrated (Dec 2030)',
+      },
+      {
+        title: 'Your board pack',
+        body: `The ${toWordIfSmall(combinedArtifacts('executive', ['governance']).length)} artifacts already featured in your Governance zone: ${combinedArtifacts('executive', ['governance']).join(', ')}.`,
+      },
+    ],
+    trackTitle: `Then, if you want the background: ${formatEssentialsVsFull('executive')}.`,
+    trackNote: `${capitalizedSmallNumberWord(PERSONAS.executive.essentials.length)} essentials against the full ${PERSONAS.executive.recommendedPath.filter((id) => id !== 'quiz').length}-module, ${PERSONAS.executive.estimatedMinutes}-minute path. The path already inserts real actions like ${joinWithAnd(firstMilestoneLabelPerCheckpoint('executive'))} right where they're relevant.`,
+    trackChips: [
+      'PQC 101',
+      'Quantum impact',
+      'Quantum threats',
+      'Risk management',
+      'Business case',
+      'Governance',
+      'Compliance strategy',
+    ],
+    capstoneChip: { label: 'Board-Ready' },
+  },
+
+  developer: {
+    heroEyebrow: 'Developer · Node + Go services · TLS termination at the edge',
+    heroBadge: { text: 'Americas · Technology', tone: 'sourced' },
+    headline: 'Five minutes to a real ML-KEM handshake.',
+    sub: 'Not a diagram. Real WASM crypto in this tab, with the PKCS#11 call log open and a plain-English column beside it. Then we tell you what to change in your stack.',
+    ctaPrimary: 'Run X25519MLKEM768 now',
+    ctaPrimaryHref: '/playground/tls-simulator',
+    ctaSecondary: 'Compare against my stack',
+    ctaSecondaryHref: '/migrate',
+    proofChips: [
+      'Real liboqs + SoftHSMv3 in your browser',
+      'Verified against NIST ACVP vectors',
+      'No signup, no key required',
+    ],
+    sideCard: {
+      title: 'What this breaks in your code',
+      tone: 'warn',
+      provenance: 'sourced',
+      rows: [
+        { label: 'ML-DSA-65 public key', value: ML_DSA_65_PUBLIC_KEY_ROW },
+        { label: 'ML-DSA-65 signature', value: ML_DSA_65_SIGNATURE_ROW },
+        { label: 'Your VARCHAR(256) key column', value: 'overflows' },
+      ],
+      punchline: 'Your schema breaks before your crypto does.',
+      footnote:
+        'Real sizes, not illustrative — the second of the four anti-patterns the Crypto Agility module already teaches.',
+    },
+    gridTitle: 'What you walk out with',
+    gridSub: 'Real surfaces mapped to what you actually own',
+    gridCards: [
+      {
+        title: 'Migrate, scoped to your layers',
+        body: `Your persona gives you ${joinWithAnd(PERSONA_MIGRATE_LAYERS.developer)} — the catalogue opens pre-filtered to the ${toWordIfSmall(PERSONA_MIGRATE_LAYERS.developer.length)} you actually own.`,
+      },
+      {
+        title: 'Command Center · Implementation View',
+        body: `Opens on the Migration zone with ${joinWithAnd(combinedArtifacts('developer', ['migration', 'mitigation', 'governance']))} featured.`,
+      },
+      {
+        title: 'A report that is finally yours',
+        body:
+          DEVELOPER_REPORT_OVERRIDE_COUNT === 0
+            ? `Your report config is untouched — all ${REPORT_SECTION_TOTAL_COUNT} sections at defaults. This version opens algorithmMigration and cbom first.`
+            : `Your report now tailors ${DEVELOPER_REPORT_OVERRIDE_COUNT} section${DEVELOPER_REPORT_OVERRIDE_COUNT === 1 ? '' : 's'} for this persona. This version opens algorithmMigration and cbom first.`,
+      },
+    ],
+    trackTitle: `Then, the background: ${formatEssentialsVsFull('developer')}.`,
+    trackChips: [
+      'PQC 101',
+      'Dev quantum impact',
+      'PQC candidates',
+      'TLS basics',
+      'Hybrid crypto',
+      'Crypto agility',
+      'PKI workshop',
+      'Crypto dev APIs',
+    ],
+    capstoneChip: { label: 'capstone' },
+  },
+
+  architect: {
+    heroEyebrow: 'Security architect · Multi-region PKI · 40k certificates',
+    heroBadge: { text: 'Global · Technology, Telecommunications', tone: 'sourced' },
+    headline: 'Change one policy line. Watch the estate rekey.',
+    sub: 'A KMIP 3.0 control plane and a real PKCS#11 HSM, both in this tab. Create keys by business label, flip Classical → Hybrid → Full PQC, and watch the same request get allowed, denied, or auto-rekeyed.',
+    ctaPrimary: 'Open the control plane',
+    ctaPrimaryHref: '/playground/cacp',
+    ctaSecondary: `See the ${toWordIfSmall(MIGRATION_ESTATE_KEY_COUNT)}-key estate`,
+    ctaSecondaryHref: '/playground/cacp?plane=migration',
+    proofChips: [
+      'Real ML-KEM / ML-DSA / SLH-DSA, no server',
+      'KMIP 3.0 conformance corpus replays live',
+      'All 66 KMIP operations documented',
+    ],
+    sideCard: {
+      title: 'Why agility, not just algorithms',
+      tone: 'info',
+      provenance: 'illustrative',
+      rows: [
+        { label: 'Algorithms you will migrate to', value: '3' },
+        { label: 'Times you will migrate again', value: '≥ 2' },
+        { label: 'Cost of the second migration', value: 'near zero' },
+      ],
+      punchline: 'Agility is the deliverable. PQC is the first test of it.',
+    },
+    gridTitle: 'What you walk out with',
+    gridSub: 'Real artifacts from your zone configuration',
+    gridCards: [
+      {
+        title: 'A rekey lineage',
+        body: `Old to new across the ${toWordIfSmall(MIGRATION_ESTATE_KEY_COUNT)}-key business estate, per mode, with the KMIP log per key — from the CACP migration tab.`,
+      },
+      {
+        title: 'Command Center · System View',
+        body: `Governance zone featuring ${joinWithAnd(combinedArtifacts('architect', ['governance']))}.`,
+      },
+      {
+        title: 'Migration artifacts',
+        body: `${joinWithAnd(combinedArtifacts('architect', ['migration']))} — the richest featured set of any persona.`,
+      },
+    ],
+    trackTitle: `Then, the background: ${formatEssentialsVsFull('architect')}.`,
+    trackChips: [
+      'PQC 101',
+      'Arch quantum impact',
+      'PQC candidates',
+      'Crypto agility',
+      'Crypto mgmt modernization',
+      'Hybrid crypto',
+      'KMS',
+      'HSM',
+      'PKI workshop',
+    ],
+    capstoneChip: { label: 'capstone' },
+  },
+
+  ops: {
+    heroEyebrow: 'IT Ops · 12k certs · 4 HSM partitions · next renewal window in 90 days',
+    heroBadge: {
+      text: 'Americas · Energy & Utilities, Telecommunications',
+      tone: 'sourced',
+    },
+    headline: 'Will your HSMs survive the cutover?',
+    sub: `${capitalizedSmallNumberWord(HSM_CAPACITY_USE_CASE_COUNT)} enterprise workflows, sized side by side: RSA-3072 and ECDSA P-256 today against ML-DSA-44/65/87. Storage, bandwidth, and CPU cores per workflow, with a totals row.`,
+    ctaPrimary: 'Size my fleet',
+    ctaPrimaryHref: '/playground/hsm',
+    ctaSecondary: 'Import my cert inventory',
+    ctaSecondaryHref: '/migrate',
+    proofChips: [
+      'Sizing from real FIPS 203/204 key sizes',
+      'Benchmarked through a real PKCS#11 engine',
+      'CNSA 2.0 mandate dates built in',
+    ],
+    sideCard: {
+      title: 'What changes on renewal day',
+      tone: 'warn',
+      provenance: 'sourced',
+      rows: [
+        { label: 'ML-DSA-65 signature', value: ML_DSA_65_SIGNATURE_ONLY },
+        // Tightened from the design mockup's ambiguous "classical HSM" label —
+        // the ops/s figure needs to name which algorithm it's benchmarking, or
+        // it doesn't disambiguate against the ML-DSA-65 signature row above.
+        {
+          label: "ML-DSA-65 sign rate on today's HSM",
+          value: OPS_SIDECARD_THROUGHPUT_ROW,
+        },
+        { label: 'Per OCSP / CRL response', value: OPS_SIDECARD_OCSP_ROW },
+      ],
+      punchline: 'Your next renewal window is your migration window.',
+      footnote:
+        'Real figures, not illustrative — the same defaults behind the HSM Capacity Calculator this page opens with.',
+    },
+    gridTitle: 'What you walk out with',
+    gridSub: 'Real zones and artifacts for your fleet',
+    gridCards: [
+      {
+        title: 'A sizing verdict',
+        body: `Per workflow: storage MB, aggregate network MB/s, CPU cores, and whether your fleet clears it — across the calculator's ${toWordIfSmall(HSM_CAPACITY_USE_CASE_COUNT)} enterprise use cases.`,
+      },
+      {
+        title: 'Command Center · Run View',
+        body: `Opens on Migration with ${joinWithAnd(combinedArtifacts('ops', ['mitigation', 'risk-management', 'migration', 'governance']))}. Mitigation gateways carry mandatory sunset dates per CSWP.39 §4.6.`,
+      },
+      {
+        title: 'A report built for the cutover',
+        body: `Your report opens ${joinWithAnd(reportSectionsByState('ops', 'open'))}, and hides ${joinWithAnd(reportSectionsByState('ops', 'hidden').map(reportSectionLabel))} — correct emphasis, already shipped.`,
+      },
+    ],
+    trackTitle: `Then, the background: ${formatEssentialsVsFull('ops')}.`,
+    trackChips: [
+      'PQC 101',
+      'Ops quantum impact',
+      'TLS basics',
+      'VPN/SSH',
+      'PKI workshop',
+      'Crypto agility',
+      'Migration program',
+      'KMS',
+      'HSM',
+    ],
+    capstoneChip: { label: 'capstone' },
+  },
+
+  researcher: {
+    heroEyebrow: 'Researcher · unfiltered corpus · strict chronological · no gating',
+    heroBadge: { text: 'All regions · unfiltered', tone: 'illustrative' },
+    headline: 'Check our work.',
+    sub: 'Every claim on this site carries a source tier, a verification date, and where one exists, the strongest published argument against it. Run the known-answer tests yourself in this tab.',
+    ctaPrimary: 'Open the evidence workspace',
+    ctaPrimaryHref: '/library',
+    ctaSecondary: 'Run the ACVP vectors',
+    ctaSecondaryHref: '/playground/hsm',
+    proofChips: [
+      'ACVP + KAT run locally, not asserted',
+      'Authoritative / High / Moderate / Low source tiers',
+      'Counter-claims dataset · CVE snapshots',
+      'Drift guards fail the build on silent data change',
+    ],
+    // NOTE: the researcher side-card is intentionally a stub. Per
+    // IMPLEMENTATION-PLAN-2026-08-01.md §6, "Changed in your fields since
+    // [date]" is a separate, real, in-scope workstream (a new persisted
+    // followed-fields store + a live revision/deprecation counter), owned by
+    // ResearcherFieldWatchCard — NOT this static config. That component
+    // overrides this whole sideCard at render time with its own live-computed
+    // title/rows/punchline/footnote. rows: [] only exists so this object still
+    // satisfies the PersonaJourneyBoard type; do not add real row content here.
+    sideCard: {
+      title: 'Changed in your fields since your last visit',
+      tone: 'info',
+      provenance: 'illustrative',
+      rows: [],
+      punchline: '',
+    },
+    gridTitle: 'What the workspace gives you',
+    gridSub: 'Not a funnel — instruments, named from source',
+    gridCards: [
+      {
+        title: 'Provenance on every claim',
+        body: 'Source tier, verification date, and the counter-claim where one is on file. Library and Migrate filters are both empty arrays for this persona — the corpus arrives unfiltered by design.',
+      },
+      {
+        title: 'Reproducible verification',
+        body: 'ACVP vectors, KATs and the 25-check TCG V1.85 runner, all in your browser, log exportable.',
+      },
+      {
+        title: 'Command Center · Risk Analysis',
+        body: `The one persona that opens on the risk-management zone: ${joinWithAnd(combinedArtifacts('researcher', ['risk-management', 'governance']))} as citable evidence.`,
+      },
+    ],
+    trackTitle: 'Learning path: available, never pushed.',
+    trackNote:
+      'For this persona it is a reference shelf, not a curriculum, and the UI should say so.',
+    trackChips: [
+      'PQC 101',
+      'Research quantum impact',
+      'PQC candidates',
+      'Entropy & randomness',
+      'Hybrid crypto',
+      'Crypto agility',
+      'Standards bodies',
+      'TLS basics',
+      'PKI workshop',
+    ],
+    // Deliberately no capstoneChip — the only persona without one, matching
+    // the "no funnel" framing. Do not add one.
+  },
+
+  curious: {
+    heroEyebrow: 'No background needed · about 6 minutes · nothing to install',
+    heroBadge: { text: 'Americas · unfiltered', tone: 'illustrative' },
+    headline: 'What actually breaks, and when.',
+    sub: 'The padlock in your browser relies on maths a quantum computer would undo. Watch it happen to a real connection in this tab, then decide how much further you want to go.',
+    ctaPrimary: 'Show me',
+    ctaPrimaryHref: '/playground/tls-simulator',
+    ctaSecondary: 'I have 30 seconds — the short version',
+    ctaSecondaryHref: '/timeline',
+    proofChips: [
+      'Real cryptography, running here',
+      'Plain English by default',
+      'Every term explained on hover',
+    ],
+    sideCard: {
+      title: 'The bit that surprises people',
+      tone: 'bad',
+      provenance: 'illustrative',
+      rows: [
+        { label: 'Encrypted data captured today', value: 'still readable later' },
+        { label: 'If it must stay secret for', value: '12 years' },
+        { label: 'And the machine arrives in', value: '~2032' },
+      ],
+      punchline: 'The deadline already passed for some data.',
+      footnote:
+        'Harvest now, decrypt later. That is the whole argument, and it is the one idea worth leaving with even if you read nothing else.',
+    },
+    gridTitle: 'Where you can go next',
+    gridSub: 'Optional, none of it locked — all of it real',
+    gridCards: [
+      {
+        title: 'The short version',
+        body: `${capitalizedSmallNumberWord(PERSONAS.curious.essentials.length)} modules, ${PERSONAS.curious.essentialsMinutes} minutes, plain language throughout. Milestones already sit in the path: ${PERSONA_MILESTONES.curious.map((m) => m.label).join(', ')}.`,
+      },
+      {
+        title: 'A library worth browsing',
+        body: `Today your library is ${toWordIfSmall(PERSONA_LIBRARY_CATEGORIES.curious.length)} categories — ${joinWithAnd(PERSONA_LIBRARY_CATEGORIES.curious)}. A library with ${toWordIfSmall(PERSONA_LIBRARY_CATEGORIES.curious.length)} shelves.`,
+      },
+      {
+        title: 'A read on your own risk',
+        body: `Today the report hides ${joinWithAnd(reportSectionsByState('curious', 'hidden').map(reportSectionLabel))} and caps actions at ${PERSONA_REPORT_CONFIG.curious.recommendedActions?.maxItems}. Here it explains rather than withholds.`,
+      },
+    ],
+    trackTitle: `${capitalizedSmallNumberWord(PERSONAS.curious.essentials.length)} modules, ${PERSONAS.curious.essentialsMinutes} minutes — and yes, that is still a lot.`,
+    trackNote: `Honest note: this is the one number the redesign cannot fix by re-fronting. The curious essentials track (${PERSONAS.curious.essentialsMinutes} min) is longer than the executive one (${PERSONAS.executive.essentialsMinutes} min), for a less technical audience. That is a content problem, not a mockup problem.`,
+    trackChips: [
+      'PQC 101',
+      'PQC candidates',
+      'Quantum threats',
+      'Risk basics',
+      'Compliance timelines',
+      'TLS basics',
+    ],
+    capstoneChip: { label: 'Quantum-Native' },
+  },
 }

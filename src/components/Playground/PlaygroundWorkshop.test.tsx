@@ -61,18 +61,29 @@ describe('Crypto Lab Workbench', () => {
     )
   })
 
-  it('defaults to "Everyone" and re-titles Recommended when a role is picked', () => {
+  it('has no page-local persona control and defaults to the no-role Overview heading', () => {
     renderWorkbench()
-    // Role selector reads "Everyone"; Overview shows the no-role heading.
-    expect(screen.getByText('Everyone')).toBeInTheDocument()
+    // No page-local persona control (Phase 0.2 — the top-bar switcher is the
+    // only write path into the shared persona store).
+    expect(screen.queryByRole('button', { name: /Viewing as/i })).toBeNull()
     expect(screen.getByText('Good places to start')).toBeInTheDocument()
+  })
 
-    // Open the role dropdown and choose Developer.
-    fireEvent.click(screen.getByRole('button', { name: /Viewing as/i }))
-    fireEvent.click(screen.getByRole('option', { name: 'Developer' }))
-
+  it('re-titles Recommended when the global persona store already has a role', () => {
+    // The page still READS the shared store — it never writes to it locally.
+    // Simulate the global top-bar switcher having set a role.
+    usePersonaStore.setState({ selectedPersona: 'developer' })
+    renderWorkbench()
     expect(screen.getByText('Recommended for Developer')).toBeInTheDocument()
-    expect(usePersonaStore.getState().selectedPersona).toBe('developer')
+  })
+
+  it('caps the "Start here" row at 3 tools (playground.md Phase 9.2)', () => {
+    // The developer role has well over 3 eligible non-sandbox tools in the
+    // real registry, so this genuinely exercises the cap rather than
+    // coincidentally landing on 3.
+    usePersonaStore.setState({ selectedPersona: 'developer' })
+    renderWorkbench()
+    expect(screen.getByText('3 tools matched to your role')).toBeInTheDocument()
   })
 
   it('searches across all categories and shows a flat result list', () => {
@@ -94,13 +105,27 @@ describe('Crypto Lab Workbench', () => {
     expect(within(dialog).getByText(/Runs instantly in your browser/i)).toBeInTheDocument()
   })
 
-  it('hides Docker-sandbox scenarios when the runtime is offline, with a Connect hint', () => {
+  it('dims (not hides) Docker-sandbox scenarios when the runtime is offline, with a Connect hint', () => {
     // OpenSSL TLS 1.3 sandbox scenario is re-homed to Protocol Simulations.
     renderWorkbench('/playground?cat=Protocol%20Simulations')
-    // Offline (beforeEach): sandbox demos are hidden entirely, not shown locked.
-    expect(screen.queryByText('OpenSSL TLS 1.3 + Composite Cert')).toBeNull()
-    // The category surfaces a hint with a Connect-runtime CTA instead.
+    // Offline (beforeEach): the sandbox demo stays in the grid, dimmed/locked
+    // (Phase 9.4) — never removed from the list entirely.
+    const card = screen.getByText('OpenSSL TLS 1.3 + Composite Cert').closest('[role="button"]')
+    expect(card).not.toBeNull()
+    expect(within(card as HTMLElement).getByText('Sandbox')).toBeInTheDocument()
+    expect(card).toHaveClass('opacity-60')
+
+    // The category also surfaces a hint with a Connect-runtime CTA.
     expect(screen.getByRole('button', { name: /Connect runtime/i })).toBeInTheDocument()
+
+    // Clicking the locked card opens the detail modal but gates it behind
+    // "Start sandbox runtime" rather than navigating into a broken tool.
+    fireEvent.click(card as HTMLElement)
+    const dialog = screen.getByRole('dialog')
+    expect(
+      within(dialog).getByRole('button', { name: /Start sandbox runtime/i })
+    ).toBeInTheDocument()
+    expect(within(dialog).queryByRole('button', { name: /^Open tool/i })).toBeNull()
   })
 
   it('shows Docker-sandbox scenarios with a Sandbox badge when the runtime is online', () => {

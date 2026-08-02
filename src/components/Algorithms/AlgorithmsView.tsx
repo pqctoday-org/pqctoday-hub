@@ -15,14 +15,15 @@ import {
   ArrowRight,
   BarChart3,
   Shield,
+  ShieldCheck,
   Network,
   Info,
-  Lock,
   FlaskConical,
   Factory,
 } from 'lucide-react'
 import { Skeleton } from '../ui/skeleton'
 import { PageHeader } from '../common/PageHeader'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { AlgorithmInfoModal } from './AlgorithmInfoModal'
 import { AlgorithmEntryStrip } from './AlgorithmEntryStrip'
@@ -54,8 +55,6 @@ export function AlgorithmsView() {
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const viewAccess = usePersonaStore((s) => s.viewAccess)
   const setAdvancedViewsUnlocked = usePersonaStore((s) => s.setAdvancedViewsUnlocked)
-  const algorithmsTabsVisited = usePersonaStore((s) => s.algorithmsTabsVisited)
-  const markAlgorithmsTabVisited = usePersonaStore((s) => s.markAlgorithmsTabVisited)
 
   // Persona-derived defaults — used to seed first-paint tab / filter / highlight
   // state when no URL params are present. Deep-links always win.
@@ -174,60 +173,79 @@ export function AlgorithmsView() {
     return undefined
   }, [searchParams, personaDefaults.highlight, hasActiveParams])
 
-  // P2.3: record tab visits so the curious-persona gate on Protocol Support
-  // can open after the user has explored Transition or Detailed at least once.
-  useEffect(() => {
-    if (activeTab === 'transition' || activeTab === 'detailed') {
-      markAlgorithmsTabVisited(activeTab)
-    }
-  }, [activeTab, markAlgorithmsTabVisited])
+  // 2026-08-02 (design_handoff_2026_pages/IMPLEMENTATION-PLAN-ALGORITHMS-
+  // 2026-08-01.md §3.2): the curious-only Protocol Support lock (P2.3,
+  // formerly gated on algorithmsTabsVisited/markAlgorithmsTabVisited in
+  // usePersonaStore) is removed — "a reference table teaches nothing by
+  // being hidden." The tab is unlocked from first paint for every persona
+  // now. algorithmsTabsVisited/markAlgorithmsTabVisited are left in
+  // usePersonaStore itself (not read anywhere else) rather than removed —
+  // pruning a field from that widely-shared, version-9 persisted store is a
+  // separate, higher-risk cleanup than this fix calls for.
 
-  // Curious-only gate: keep Protocol Support visible but LOCKED until they have
-  // visited at least one of the friendlier tabs (no layout shift on unlock).
-  // Power personas and unlocked-curious users get it enabled.
-  const supportLocked =
-    selectedPersona === 'curious' &&
-    !algorithmsTabsVisited.includes('transition') &&
-    !algorithmsTabsVisited.includes('detailed')
+  // Register this page's actions with the global top bar (page-action-strip
+  // rollout, 2026-08-01) — info/export/endorse/flag render there now, not as
+  // a row on the page itself. Mirrors TimelineView.tsx's pattern.
+  useEffect(() => {
+    const { setPageActions, clearPageActions } = usePageActionsStore.getState()
+    setPageActions({
+      title: 'Post-Quantum Algorithms & Protocols',
+      dataSource:
+        `Data Sources: ${transitionMetadata?.filename ?? 'algorithms_transitions.csv'}, ` +
+        `${metadata?.filename ?? 'pqc_complete_algorithm_reference.csv'} • Updated: ` +
+        `${(metadata?.date ?? transitionMetadata?.date ?? new Date()).toLocaleDateString()}`,
+      onExport: handleExportCsv,
+      endorseUrl: buildEndorsementUrl({
+        category: 'algorithm-endorsement',
+        title: 'Endorse: PQC Algorithms & Protocols',
+        resourceType: 'Algorithms Page',
+        resourceId: 'Post-Quantum Algorithms & Protocols',
+        resourceDetails:
+          '**Page:** Post-Quantum Algorithms & Protocols — compare PQC algorithms and IETF protocol support.',
+        pageUrl: '/algorithms',
+      }),
+      endorseLabel: 'Algorithms Page',
+      endorseResourceType: 'Algorithms',
+      flagUrl: buildFlagUrl({
+        category: 'algorithm-endorsement',
+        title: 'Flag: PQC Algorithms & Protocols',
+        resourceType: 'Algorithms Page',
+        resourceId: 'Post-Quantum Algorithms & Protocols',
+        resourceDetails:
+          '**Page:** Post-Quantum Algorithms & Protocols — compare PQC algorithms and IETF protocol support.',
+        pageUrl: '/algorithms',
+      }),
+      flagLabel: 'Algorithms Page',
+      flagResourceType: 'Algorithms',
+    })
+    return () => clearPageActions()
+  }, [handleExportCsv, metadata, transitionMetadata])
 
   return (
     <div>
       <PageHeader
         icon={Shield}
-        pageId="algorithms"
         title="Post-Quantum Algorithms & Protocols"
         description="Compare post-quantum algorithms and track their support across IETF protocols"
-        dataSource={
-          `Data Sources: ${transitionMetadata?.filename ?? 'algorithms_transitions.csv'}, ` +
-          `${metadata?.filename ?? 'pqc_complete_algorithm_reference.csv'} • Updated: ` +
-          `${(metadata?.date ?? transitionMetadata?.date ?? new Date()).toLocaleDateString()}`
+        actions={
+          // 2026-08-02 (design_handoff_2026_pages/IMPLEMENTATION-PLAN-
+          // ALGORITHMS-2026-08-01.md §3.3): "verified against NIST ACVP
+          // vectors in your browser" was real but two clicks deep (Validation
+          // tab -> KAT accordion). Promoted to a persistent chrome badge —
+          // the claim is promoted, the actual KAT-running UI stays where it
+          // was, one click away via this same badge.
+          <Button
+            key="acvp-badge"
+            variant="ghost"
+            size="sm"
+            onClick={() => handleTabChange('validation')}
+            title="Runs real NIST ACVP known-answer test vectors in your browser — click to open Validation."
+            className="gap-1.5 text-[11px] font-semibold text-status-success hover:text-status-success"
+          >
+            <ShieldCheck size={14} aria-hidden="true" />
+            <span className="hidden sm:inline">ACVP Verified</span>
+          </Button>
         }
-        viewType="Algorithms"
-        shareTitle="PQC Algorithm Comparison — ML-KEM, ML-DSA, SLH-DSA & More"
-        shareText={`Compare ${algorithmData.length || 'dozens of'} cryptographic algorithms side-by-side — security levels, key sizes, and performance.`}
-        onExport={handleExportCsv}
-        endorseUrl={buildEndorsementUrl({
-          category: 'algorithm-endorsement',
-          title: 'Endorse: PQC Algorithms & Protocols',
-          resourceType: 'Algorithms Page',
-          resourceId: 'Post-Quantum Algorithms & Protocols',
-          resourceDetails:
-            '**Page:** Post-Quantum Algorithms & Protocols — compare PQC algorithms and IETF protocol support.',
-          pageUrl: '/algorithms',
-        })}
-        endorseLabel="Algorithms Page"
-        endorseResourceType="Algorithms"
-        flagUrl={buildFlagUrl({
-          category: 'algorithm-endorsement',
-          title: 'Flag: PQC Algorithms & Protocols',
-          resourceType: 'Algorithms Page',
-          resourceId: 'Post-Quantum Algorithms & Protocols',
-          resourceDetails:
-            '**Page:** Post-Quantum Algorithms & Protocols — compare PQC algorithms and IETF protocol support.',
-          pageUrl: '/algorithms',
-        })}
-        flagLabel="Algorithms Page"
-        flagResourceType="Algorithms"
       />
 
       <AlgorithmEntryStrip
@@ -428,15 +446,10 @@ export function AlgorithmsView() {
               </TabsTrigger>
               <TabsTrigger
                 value="support"
-                disabled={supportLocked}
                 className="flex items-center gap-2"
-                title={
-                  supportLocked
-                    ? 'Explore Transition or Detailed first'
-                    : 'Tracks 28 protocols across IETF, TCG, OASIS, 3GPP, IEEE, UEFI, and vendor specs — pure-KEM, hybrid-KEM, pure-Sig, hybrid-Sig dimensions. IETF stages refresh weekly from datatracker; other standards bodies are refreshed manually.'
-                }
+                title="Tracks 28 protocols across IETF, TCG, OASIS, 3GPP, IEEE, UEFI, and vendor specs — pure-KEM, hybrid-KEM, pure-Sig, hybrid-Sig dimensions. IETF stages refresh weekly from datatracker; other standards bodies are refreshed manually."
               >
-                {supportLocked ? <Lock size={16} /> : <Network size={18} />}
+                <Network size={18} />
                 <span className="hidden sm:inline">Protocol Support</span>
                 <span className="sm:hidden">Protocol</span>
               </TabsTrigger>
