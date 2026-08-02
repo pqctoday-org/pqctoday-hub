@@ -14,7 +14,6 @@ import { Link, useNavigate, useSearchParams } from 'react-router'
 import JSZip from 'jszip'
 import { PageHeader } from '@/components/common/PageHeader'
 import { PreviewBanner } from '@/components/common/PreviewBanner'
-import { WorkflowBreadcrumb } from '@/components/shared/WorkflowBreadcrumb'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { logEvent, personaLabel } from '@/utils/analytics'
@@ -520,7 +519,6 @@ export function BusinessCenterView() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6" data-testid="bc-dashboard-ready">
-      <WorkflowBreadcrumb current="business" />
       <PageHeader
         icon={LayoutDashboard}
         title={zoneEmphasis.headline ?? 'Command Center'}
