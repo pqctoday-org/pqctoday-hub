@@ -53,6 +53,8 @@ import {
 } from './lib/density'
 import { ArtifactDrawer, type DrawerMode } from './ArtifactDrawer'
 import { CryptoAgilityDefinitions } from './widgets/CryptoAgilityDefinitions'
+import { ExecutiveWalkthrough } from './ExecutiveWalkthrough'
+import { useCommandCenterOnboardingStore } from '@/store/useCommandCenterOnboardingStore'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
 
 // The four board-level questions every PQC program has to answer, each mapped to
@@ -306,9 +308,21 @@ export function BusinessCenterView() {
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const experienceLevel = usePersonaStore((s) => s.experienceLevel)
   const workshopActive = useWorkshopStore((s) => isWorkshopActive(s.mode))
+  const hasSeenExecWalkthrough = useCommandCenterOnboardingStore((s) => s.hasSeenExecWalkthrough)
   const zoneEmphasis = useMemo(
     () => getBusinessCenterZoneEmphasis(selectedPersona),
     [selectedPersona]
+  )
+  // Read live from cswp39ZoneData rather than hardcoding a zone count/names —
+  // the same "never hardcode derived data" rule applied throughout this
+  // 2026-08-01 audit's fixes (e.g. the Library corpus-count correction).
+  const curiousPreviewZoneNames = useMemo(
+    () =>
+      CSWP39_ZONE_ORDER.map((zone) => {
+        // eslint-disable-next-line security/detect-object-injection -- `zone` is a ZoneId, a closed union
+        return CSWP39_ZONE_DETAILS[zone].title
+      }).join(', '),
+    []
   )
 
   // Density adapts the page to the user's persona/experience. See lib/density.ts.
@@ -552,8 +566,15 @@ export function BusinessCenterView() {
           omits /business). Show a soft preview banner instead of a hard 403 so
           the page still teaches the shape of a PQC program. (P14-P0-01) */}
       {selectedPersona === 'curious' && (
-        <PreviewBanner pageContext="GRC, Architect, Developer, Ops, Researcher" />
+        <PreviewBanner
+          pageContext={`GRC, Architect, Developer, Ops, Researcher (the ${curiousPreviewZoneNames} zones)`}
+        />
       )}
+
+      {/* "Board pack in 3 steps" — shown once on an executive's first visit
+          (design_handoff_2026_pages/IMPLEMENTATION-PLAN-COMMAND-CENTER-2026-
+          08-01.md §3.1); the zone map below is unaffected either way. */}
+      {selectedPersona === 'executive' && !hasSeenExecWalkthrough && <ExecutiveWalkthrough />}
 
       {/* ?phase=<id> overlay — when a phase is active, replace the zone body
            with a compact phase header + the tools narrowed to that phase. When
