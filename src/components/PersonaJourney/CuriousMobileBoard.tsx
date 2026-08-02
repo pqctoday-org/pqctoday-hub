@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState } from 'react'
-import { NavLink, Link } from 'react-router'
+import { NavLink, Link, useNavigate } from 'react-router'
 import { Search, Menu, X, Bot, Map, HelpCircle, type LucideIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { useCommandPaletteStore } from '@/store/useCommandPaletteStore'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
-import { NAV_PATH_LABELS } from '@/data/personaConfig'
+import { NAV_PATH_LABELS, PERSONA_JOURNEY_BOARD } from '@/data/personaConfig'
 import { RAIL_ICON_MAP } from '@/components/Layout/railNav'
 
 /**
@@ -32,6 +32,12 @@ import { RAIL_ICON_MAP } from '@/components/Layout/railNav'
  * '/threats' and '/learn'. Only the '/' tab's label is overridden locally
  * ("Start", not "Home") — a per-surface label override, same pattern
  * MainLayout already uses for "Command Center" -> "Command" on its mobile row.
+ *
+ * The two hero CTAs navigate to `PERSONA_JOURNEY_BOARD.curious.ctaPrimaryHref`
+ * / `ctaSecondaryHref` — the SAME data source and `useNavigate` pattern
+ * `PersonaBoardView.tsx` uses for the desktop curious board (2026-08-02 fix:
+ * these rendered as inert `<Button>`s with no click behavior at all, the
+ * mobile-only counterpart of the bug already fixed on desktop 2026-08-01).
  */
 
 interface RoutedTabDef {
@@ -94,8 +100,10 @@ function RoutedBottomTab({ path, label, icon: Icon, testId }: RoutedTabDef) {
 
 export function CuriousMobileBoard() {
   const [moreOpen, setMoreOpen] = useState(false)
+  const navigate = useNavigate()
   const openSearch = useCommandPaletteStore((s) => s.open)
   const openRightPanel = useRightPanelStore((s) => s.open)
+  const board = PERSONA_JOURNEY_BOARD.curious
 
   const handleAssistant = () => {
     setMoreOpen(false)
@@ -160,10 +168,20 @@ export function CuriousMobileBoard() {
         </p>
 
         <div className="mt-5 flex flex-col gap-3">
-          <Button type="button" variant="gradient" className="w-full">
+          <Button
+            type="button"
+            variant="gradient"
+            className="w-full"
+            onClick={() => navigate(board.ctaPrimaryHref)}
+          >
             Show me
           </Button>
-          <Button type="button" variant="outline" className="w-full">
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={() => navigate(board.ctaSecondaryHref)}
+          >
             I have 30 seconds
           </Button>
         </div>
