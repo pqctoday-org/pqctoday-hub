@@ -74,7 +74,31 @@ describe('PKILearning', () => {
     ).toBeInTheDocument()
   })
 
-  it('allows navigating back from a module', async () => {
+  // The back link used to live on this view's own utility row, above every
+  // /learn/* route. That row was removed as a duplicate of the global top bar
+  // (2026-08-02) and catalog modules now render the link themselves, in
+  // ModuleShell's chip row — covered by ModuleShell.test.tsx, not here, since
+  // the module components are mocked out in this file. What this view still
+  // owns is the fallback for routes with NO catalog entry (the quiz, the
+  // common-ground path), which render no ModuleShell and would otherwise have
+  // no way back to the dashboard at all.
+  it('renders its own back link on a non-catalog /learn route', () => {
+    render(
+      <EmbedProvider>
+        <MemoryRouter initialEntries={['/learn/common-ground']}>
+          <Routes>
+            <Route path="/learn/*" element={<PKILearning />} />
+          </Routes>
+        </MemoryRouter>
+      </EmbedProvider>
+    )
+
+    fireEvent.click(screen.getByText('Back to Dashboard'))
+
+    expect(screen.getByText('Viewing as')).toBeInTheDocument()
+  })
+
+  it('does not render its own back link on a catalog module route', async () => {
     renderWithRouter()
     goToBrowse()
 
@@ -83,11 +107,8 @@ describe('PKILearning', () => {
       await screen.findByTestId('module-digital-assets', {}, { timeout: 5000 })
     ).toBeInTheDocument()
 
-    // Click Back — returns to the redesigned dashboard at /learn
-    fireEvent.click(screen.getByText('Back to Dashboard'))
-
-    expect(screen.getByText('Viewing as')).toBeInTheDocument()
-    expect(screen.queryByTestId('module-digital-assets')).not.toBeInTheDocument()
+    // ModuleShell owns it there — this view must not render a second one.
+    expect(screen.queryByText('Back to Dashboard')).not.toBeInTheDocument()
   })
 
   it('redirects the retired legacy five-mode dashboard at /learn/legacy to /learn', () => {

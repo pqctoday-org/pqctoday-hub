@@ -1,14 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { Suspense, useRef, useState, type ComponentType } from 'react'
+import React, { Suspense, useEffect, useRef, useState, type ComponentType } from 'react'
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router'
 import { LearnRedesignView } from './redesign/LearnRedesignView'
 import { ArrowLeft } from 'lucide-react'
-import { GlossaryButton } from '../ui/GlossaryButton'
-import { UserManualButton } from '../ui/UserManualButton'
-import { ShareButton } from '../ui/ShareButton'
-import { EndorseButton } from '../ui/EndorseButton'
-import { FlagButton } from '../ui/FlagButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { lazyWithRetry } from '@/utils/lazyWithRetry'
 import { ModuleProgressSidebar } from './ModuleProgressSidebar'
 import { ModuleProgressHeader } from './ModuleProgressHeader'
@@ -39,6 +35,11 @@ const MODULE_COMPONENTS = new Map<string, ComponentType>(
   MANIFESTS.filter((m) => m.load).map((m) => [m.id, lazyWithRetry(m.load!)])
 )
 
+// `custom` modules (the quiz) own their whole body — ModuleShell returns their
+// children directly and never renders its header, so they get NO back link from
+// it, catalog entry or not. They need this view's standalone one.
+const CUSTOM_MODULE_IDS = new Set(MANIFESTS.filter((m) => m.custom).map((m) => m.id))
+
 // Legacy/short path aliases that resolve to a canonical module id.
 const ROUTE_ALIASES: Record<string, string> = { mls: 'mls-group-messaging' }
 const ROUTE_ALIAS_ENTRIES = Object.entries(ROUTE_ALIASES)
@@ -51,12 +52,10 @@ export const PKILearningView: React.FC = () => {
   const contentRef = useRef<HTMLDivElement>(null)
   const [revisionDrilldownOpen, setRevisionDrilldownOpen] = useState(false)
   const { revisions } = useRevisions()
-  // The redesigned dashboard owns its header via the shared PageHeader, which
-  // already carries Glossary + Guide. Suppress this top utility bar there so
-  // those buttons don't render twice. (Formerly also covered the legacy
-  // five-mode dashboard at /learn/legacy, now retired and redirected to /learn.)
+  // The dashboard owns its header via the shared PageHeader and needs no back
+  // link — it IS the destination that link points at. (The legacy five-mode
+  // dashboard at /learn/legacy is retired and redirects to /learn.)
   const isDashboard = location.pathname === '/learn' || location.pathname === '/learn/'
-  const isRedesignDashboard = isDashboard
 
   const isEmbed = useIsEmbedded()
 
@@ -74,80 +73,90 @@ export const PKILearningView: React.FC = () => {
   const isCuriousMode =
     (experienceLevel === 'curious' || selectedPersona === 'curious') && !diveDeeper
 
+  // This view used to open with its own utility row — back link on the left,
+  // then Endorse/Flag/Share/WIP/Reviewed/Glossary/Guide on the right. The
+  // persona-journeys top bar now carries Share/Glossary/Guide globally on every
+  // route, so that row read as a duplicate of the bar directly above it
+  // (HEADER-TOPBAR-STANDARDIZATION-PLAN-2026-08-01.md §2.2/§4). The row is gone:
+  //   - Endorse/Flag/Share + the WIP and Reviewed badges register into the top
+  //     bar's page-action strip below, same mechanism Timeline prototyped.
+  //   - Glossary/Guide are simply dropped — the bar has them (Guide only since
+  //     `pageIdForNestedRoute` in MainLayout started matching `/learn/*`).
+  //   - "Back to Dashboard" moved down into the module's own chip row, in
+  //     ModuleShell/CuriousModuleView. Routes that render neither (the
+  //     common-ground path, which has no catalog entry; the quiz, whose
+  //     `custom` manifest skips ModuleShell's header) keep the standalone link
+  //     below — without it they'd have no way back at all.
+  const hasOwnBackLink = Boolean(moduleMeta) && !CUSTOM_MODULE_IDS.has(moduleId)
+  const showStandaloneBackLink = !isDashboard && !isEmbed && !hasOwnBackLink
+
+  const showModuleActions = showSidebar && Boolean(moduleMeta)
+  const hasReviewRecord = Boolean(LM_ID_MAP[moduleId])
+
+  useEffect(() => {
+    const { setPageActions, clearPageActions } = usePageActionsStore.getState()
+    if (!showModuleActions || !moduleMeta) {
+      clearPageActions()
+      return
+    }
+    const resourceDetails = [
+      `**Module:** ${moduleMeta.title}`,
+      `**Duration:** ${moduleMeta.duration}`,
+      `**Difficulty:** ${moduleMeta.difficulty}`,
+      `**Description:** ${moduleMeta.description}`,
+    ].join('\n')
+    setPageActions({
+      title: moduleMeta.title,
+      shareTitle: moduleMeta.title,
+      shareText: `Learn about ${moduleMeta.title} — PQC Timeline`,
+      endorseUrl: buildEndorsementUrl({
+        category: 'learn-module-endorsement',
+        title: `Endorse: ${moduleMeta.title}`,
+        resourceType: 'Learn Module',
+        resourceId: moduleMeta.title,
+        resourceDetails,
+        pageUrl: `/learn/${moduleId}`,
+      }),
+      endorseLabel: moduleMeta.title,
+      endorseResourceType: 'Learn Module',
+      flagUrl: buildFlagUrl({
+        category: 'learn-module-endorsement',
+        title: `Flag: ${moduleMeta.title}`,
+        resourceType: 'Learn Module',
+        resourceId: moduleMeta.title,
+        resourceDetails,
+        pageUrl: `/learn/${moduleId}`,
+      }),
+      flagLabel: moduleMeta.title,
+      flagResourceType: 'Learn Module',
+      extra: (
+        <>
+          <WipModuleBadge moduleMeta={moduleMeta} />
+          {hasReviewRecord && (
+            <ReviewedBadge
+              domain="module"
+              entityId={moduleId}
+              onOpenDrilldown={() => setRevisionDrilldownOpen(true)}
+            />
+          )}
+        </>
+      ),
+    })
+    return () => clearPageActions()
+  }, [showModuleActions, moduleMeta, moduleId, hasReviewRecord])
+
   return (
     <div className="animate-fade-in">
-      {!isRedesignDashboard && (
-        <div className="flex items-center justify-between flex-wrap gap-y-2 mb-6">
-          {!isDashboard && !isEmbed ? (
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/learn')}
-              className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <ArrowLeft size={20} />
-              Back to Dashboard
-            </Button>
-          ) : (
-            <div />
-          )}
-          <div className="flex items-center gap-1 shrink-0">
-            {showSidebar && moduleMeta && (
-              <>
-                <EndorseButton
-                  endorseUrl={buildEndorsementUrl({
-                    category: 'learn-module-endorsement',
-                    title: `Endorse: ${moduleMeta.title}`,
-                    resourceType: 'Learn Module',
-                    resourceId: moduleMeta.title,
-                    resourceDetails: [
-                      `**Module:** ${moduleMeta.title}`,
-                      `**Duration:** ${moduleMeta.duration}`,
-                      `**Difficulty:** ${moduleMeta.difficulty}`,
-                      `**Description:** ${moduleMeta.description}`,
-                    ].join('\n'),
-                    pageUrl: `/learn/${moduleId}`,
-                  })}
-                  resourceLabel={moduleMeta.title}
-                  resourceType="Learn Module"
-                />
-                <div className="hidden md:flex items-center gap-1">
-                  <FlagButton
-                    flagUrl={buildFlagUrl({
-                      category: 'learn-module-endorsement',
-                      title: `Flag: ${moduleMeta.title}`,
-                      resourceType: 'Learn Module',
-                      resourceId: moduleMeta.title,
-                      resourceDetails: [
-                        `**Module:** ${moduleMeta.title}`,
-                        `**Duration:** ${moduleMeta.duration}`,
-                        `**Difficulty:** ${moduleMeta.difficulty}`,
-                        `**Description:** ${moduleMeta.description}`,
-                      ].join('\n'),
-                      pageUrl: `/learn/${moduleId}`,
-                    })}
-                    resourceLabel={moduleMeta.title}
-                    resourceType="Learn Module"
-                  />
-                </div>
-                <ShareButton
-                  title={moduleMeta.title}
-                  text={`Learn about ${moduleMeta.title} — PQC Timeline`}
-                />
-              </>
-            )}
-            <div className="hidden md:flex items-center gap-1">
-              {showSidebar && moduleMeta && <WipModuleBadge moduleMeta={moduleMeta} />}
-              {showSidebar && LM_ID_MAP[moduleId] && (
-                <ReviewedBadge
-                  domain="module"
-                  entityId={moduleId}
-                  onOpenDrilldown={() => setRevisionDrilldownOpen(true)}
-                />
-              )}
-              <GlossaryButton />
-              <UserManualButton pageId="learn" />
-            </div>
-          </div>
+      {showStandaloneBackLink && (
+        <div className="mb-6">
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/learn')}
+            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft size={20} />
+            Back to Dashboard
+          </Button>
         </div>
       )}
 
