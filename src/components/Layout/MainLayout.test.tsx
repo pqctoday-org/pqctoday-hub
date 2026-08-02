@@ -41,12 +41,25 @@ function renderLayout(initialEntry = '/') {
   )
 }
 
-/** Clicks the desktop rail's collapsible MORE toggle (collapsed by default —
- * see the 2026-08-01 rail declutter follow-up). Scoped to the rail landmark
- * so it never collides with the mobile "More" bottom-sheet trigger, which
- * has its own distinct accessible name. */
-function expandMore(rail: HTMLElement) {
-  fireEvent.click(within(rail).getByRole('button', { name: /show more pages/i }))
+/** Accessible-name matcher per FOR YOU sub-group toggle — a fixed literal
+ * regex per group (not built from a dynamic string) so this stays a plain,
+ * lint-clean matcher rather than a non-literal RegExp construction. */
+const FOR_YOU_GROUP_TOGGLE_NAME: Record<'Workflow' | 'Practice' | 'Reference', RegExp> = {
+  Workflow: /(show|hide) workflow/i,
+  Practice: /(show|hide) practice/i,
+  Reference: /(show|hide) reference/i,
+}
+
+/** Clicks a FOR YOU sub-group's collapsible toggle — Workflow/Practice/
+ * Reference (2026-08-01 rail declutter follow-up). The desktop rail's old
+ * single MORE toggle was removed entirely; each sub-group now has its own
+ * disclosure button instead (Reference starts collapsed, Workflow/Practice
+ * start expanded). Scoped to the rail landmark. */
+function toggleForYouGroup(rail: HTMLElement, groupLabel: 'Workflow' | 'Practice' | 'Reference') {
+  fireEvent.click(
+    // eslint-disable-next-line security/detect-object-injection -- groupLabel is drawn from the typed literal union above, not user input
+    within(rail).getByRole('button', { name: FOR_YOU_GROUP_TOGGLE_NAME[groupLabel] })
+  )
 }
 
 /** The desktop rail's own nav landmark — distinct from the mobile row's
@@ -86,7 +99,12 @@ describe('MainLayout', () => {
     it('displays the brand wordmark and build timestamp', () => {
       renderLayout()
       expect(screen.getByText('PQC Today')).toBeInTheDocument()
-      expect(screen.getByText(/Last Updated:/)).toBeInTheDocument()
+      // The "Last Updated:" label prefix was dropped (2026-08-01) — the rail
+      // now shows the bare build timestamp string. __BUILD_TIMESTAMP__ is a
+      // vite `define`-injected global (see vite-env.d.ts), not an importable
+      // module export, so mocking vite-env.d.ts above has no runtime effect —
+      // match the real "Mon D, YYYY" format instead of a fixed mocked string.
+      expect(screen.getByText(/\w{3} \d{1,2}, \d{4}/)).toBeInTheDocument()
     })
 
     it('renders the outlet content', () => {
@@ -101,17 +119,28 @@ describe('MainLayout', () => {
   })
 
   describe('Rail — no persona selected (null)', () => {
-    it('shows a collapsed "For You" header with no rows, and a collapsed MORE toggle holding the full universe', () => {
+    it('shows no "For You" label (removed 2026-08-01), the "Everything, unfiltered" fallback with Learn/Timeline/Threats as plain rows, and NO MORE section anywhere', () => {
       renderLayout()
       const rail = getRailNav()
-      expect(within(rail).getByText('For You')).toBeInTheDocument()
+      // The "For You" section label was removed entirely (2026-08-01) — only
+      // the Workflow/Practice/Reference sub-group headers remain, and those
+      // only render when FOR YOU has rows to group in the first place.
+      expect(within(rail).queryByText('For You')).not.toBeInTheDocument()
       expect(within(rail).getByText('Everything, unfiltered')).toBeInTheDocument()
-      // MORE is collapsed by default (2026-08-01 declutter follow-up) — its
-      // rows aren't in the document until the toggle is clicked.
+      // forYou.length === 0 (no persona) means there's no 'reference' group to
+      // carry Learn/Timeline/Threats — they fall back to plain rows right
+      // after the "Everything, unfiltered" text instead.
+      expect(within(rail).getByRole('button', { name: /learn view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /timeline view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /threats view/i })).toBeInTheDocument()
+      // The desktop rail's MORE section was removed entirely (2026-08-01
+      // follow-up: "remove more and revisions from the left bar") — /migrate
+      // (which has no persona-specific gating reason to hide) has no rail row
+      // anywhere on desktop now; it's reachable via ⌘K search or a direct URL.
+      expect(
+        within(rail).queryByRole('button', { name: /show more pages/i })
+      ).not.toBeInTheDocument()
       expect(within(rail).queryByRole('button', { name: /migrate view/i })).not.toBeInTheDocument()
-      expandMore(rail)
-      // Migrate has no persona-specific gating reason to hide — it must show up in MORE.
-      expect(within(rail).getByRole('button', { name: /migrate view/i })).toBeInTheDocument()
     })
 
     it('always-visible pages (Home/Learn/Timeline/Threats/About) render outside FOR YOU/MORE', () => {
@@ -148,15 +177,23 @@ describe('MainLayout', () => {
       usePersonaStore.getState().setPersona('developer')
     })
 
-    it('places persona nav paths under FOR YOU and leaves the rest in MORE', () => {
+    it('places persona nav paths under FOR YOU (Workflow); MORE is gone entirely so out-of-FOR-YOU paths have no desktop rail row at all', () => {
       renderLayout()
       const rail = getRailNav()
-      // /migrate is in developer's PERSONA_NAV_PATHS
+      // /migrate is in developer's PERSONA_NAV_PATHS, under the Workflow group.
       expect(within(rail).getByRole('button', { name: /migrate view/i })).toBeInTheDocument()
-      // /leaders ("Community") is NOT in developer's PERSONA_NAV_PATHS — still
-      // reachable, just in MORE (collapsed by default; expand to confirm).
-      expandMore(rail)
-      expect(within(rail).getByRole('button', { name: /community view/i })).toBeInTheDocument()
+      // /leaders ("Community") is NOT in developer's PERSONA_NAV_PATHS. It used
+      // to live in the collapsible MORE section; that section was removed
+      // entirely (2026-08-01 follow-up: "remove more and revisions from the
+      // left bar"), so Community has no desktop rail row for developer now —
+      // only reachable via ⌘K search, direct URL, or the (untouched) mobile
+      // "More" sheet.
+      expect(
+        within(rail).queryByRole('button', { name: /show more pages/i })
+      ).not.toBeInTheDocument()
+      expect(
+        within(rail).queryByRole('button', { name: /community view/i })
+      ).not.toBeInTheDocument()
     })
 
     // 2026-08-01 final self-review correction: developer's '/simulation' row
@@ -212,35 +249,48 @@ describe('MainLayout', () => {
       usePersonaStore.getState().setPersona('architect')
     })
 
-    it('adds a direct CACP shortcut row', () => {
+    it('does NOT add a direct CACP shortcut row (removed 2026-08-01: "CACP is fold in playground no direct access")', () => {
       renderLayout()
       const rail = getRailNav()
-      expect(within(rail).getByRole('button', { name: /cacp view/i })).toBeInTheDocument()
-      // The row's visible text matches its rendered label, so the anchor's own
-      // accessible name (computed from content) is just "CACP".
-      expect(within(rail).getByRole('link', { name: 'CACP' })).toHaveAttribute(
-        'href',
-        '/playground/cacp'
-      )
+      expect(within(rail).queryByRole('button', { name: /cacp view/i })).not.toBeInTheDocument()
+      expect(within(rail).queryByRole('link', { name: 'CACP' })).not.toBeInTheDocument()
+      // CACP is reachable via the Playground grid's own featured card only —
+      // /playground itself is still a real row for architect.
+      expect(within(rail).getByRole('button', { name: /playground view/i })).toBeInTheDocument()
     })
   })
 
   describe('Rail — curious and researcher personas keep every route reachable', () => {
-    it('curious: /business is deprioritized into MORE, not hidden', () => {
+    it('curious: /business (Command Center) has no desktop rail row at all now — MORE was removed entirely, not just collapsed', () => {
       usePersonaStore.getState().setPersona('curious')
       renderLayout()
       const rail = getRailNav()
-      expandMore(rail)
-      expect(within(rail).getByRole('button', { name: /command center view/i })).toBeInTheDocument()
+      // /business is NOT in curious's PERSONA_NAV_PATHS (railNav.ts's pure
+      // getRailSections still puts it in `more` — see railNav.test.ts's
+      // "curious: /business" membership check), but MainLayout no longer
+      // renders `more` on the desktop rail at all (2026-08-01 follow-up), so
+      // Command Center has no row here. Still reachable via ⌘K search, direct
+      // URL, or the (untouched) mobile "More" sheet.
+      expect(
+        within(rail).queryByRole('button', { name: /show more pages/i })
+      ).not.toBeInTheDocument()
+      expect(
+        within(rail).queryByRole('button', { name: /command center view/i })
+      ).not.toBeInTheDocument()
     })
 
-    it('researcher: FOR YOU is collapsed (no gating persona)', () => {
+    it('researcher: FOR YOU is empty (no gating persona); Learn/Timeline/Threats fall back to plain rows, and MORE is gone so /migrate has no desktop rail row', () => {
       usePersonaStore.getState().setPersona('researcher')
       renderLayout()
       const rail = getRailNav()
       expect(within(rail).getByText('Everything, unfiltered')).toBeInTheDocument()
-      expandMore(rail)
-      expect(within(rail).getByRole('button', { name: /migrate view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /learn view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /timeline view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /threats view/i })).toBeInTheDocument()
+      expect(
+        within(rail).queryByRole('button', { name: /show more pages/i })
+      ).not.toBeInTheDocument()
+      expect(within(rail).queryByRole('button', { name: /migrate view/i })).not.toBeInTheDocument()
     })
   })
 
@@ -249,58 +299,100 @@ describe('MainLayout', () => {
   // organization" — MORE now defaults collapsed, and FOR YOU is chunked into
   // fixed Workflow/Practice/Reference sub-groups (railNav.ts's
   // getForYouGroups).
-  describe('Rail — MORE section is collapsible (declutter follow-up, 2026-08-01)', () => {
-    it('is collapsed by default: aria-expanded is false and MORE rows are absent from the DOM', () => {
+  describe('Rail — MORE section removed entirely (declutter follow-up, 2026-08-01: "remove more and revisions from the left bar")', () => {
+    it('renders no MORE toggle and no MORE rows for any persona, even one with a non-empty MORE set', () => {
       usePersonaStore.getState().setPersona('developer')
       renderLayout()
       const rail = getRailNav()
-      const toggle = within(rail).getByRole('button', { name: /show more pages/i })
-      expect(toggle).toHaveAttribute('aria-expanded', 'false')
-      // developer's MORE = /explore, /leaders — neither should be mounted yet.
+      expect(
+        within(rail).queryByRole('button', { name: /(show|hide) more pages/i })
+      ).not.toBeInTheDocument()
+      // developer's MORE (railNav.ts) = /explore, /leaders — neither renders
+      // anywhere in the desktop rail now.
       expect(within(rail).queryByRole('button', { name: /explore view/i })).not.toBeInTheDocument()
       expect(
         within(rail).queryByRole('button', { name: /community view/i })
       ).not.toBeInTheDocument()
     })
 
-    it('clicking the toggle reveals MORE rows and flips aria-expanded/its label; clicking again re-collapses', () => {
-      usePersonaStore.getState().setPersona('developer')
+    it('/revisions has no desktop rail row for any persona (dropped from every PERSONA_NAV_PATHS array, and MORE — which would have carried it — is gone)', () => {
+      for (const persona of ['executive', 'developer', 'architect', 'ops', 'curious'] as const) {
+        usePersonaStore.getState().setPersona(persona)
+        const { unmount } = renderLayout()
+        expect(screen.queryByRole('button', { name: /revisions view/i })).not.toBeInTheDocument()
+        unmount()
+      }
+    })
+  })
+
+  describe('Rail — FOR YOU sub-groups are independently collapsible (declutter follow-up, 2026-08-01: "collapse is per section not just a more at the end")', () => {
+    it('Workflow and Practice start expanded; Reference starts collapsed', () => {
+      usePersonaStore.getState().setPersona('executive')
       renderLayout()
       const rail = getRailNav()
-      const toggle = () => within(rail).getByRole('button', { name: /(show|hide) more pages/i })
-
-      fireEvent.click(toggle())
-      expect(toggle()).toHaveAttribute('aria-expanded', 'true')
-      expect(toggle()).toHaveAccessibleName(/hide more pages/i)
-      expect(within(rail).getByRole('button', { name: /community view/i })).toBeInTheDocument()
-
-      fireEvent.click(toggle())
-      expect(toggle()).toHaveAttribute('aria-expanded', 'false')
-      expect(toggle()).toHaveAccessibleName(/show more pages/i)
-      expect(
-        within(rail).queryByRole('button', { name: /community view/i })
-      ).not.toBeInTheDocument()
-    })
-
-    it('auto-expands when the CURRENT route lives in MORE, so active-route highlighting is never hidden behind a collapsed section', () => {
-      usePersonaStore.getState().setPersona('developer')
-      // /explore is not in developer's PERSONA_NAV_PATHS, so it's a MORE row.
-      renderLayout('/explore')
-      const rail = getRailNav()
-      const toggle = within(rail).getByRole('button', { name: /(show|hide) more pages/i })
-      expect(toggle).toHaveAttribute('aria-expanded', 'true')
-      const exploreButton = within(rail).getByRole('button', { name: /explore view/i })
-      expect(exploreButton).toHaveAttribute('aria-current', 'page')
-    })
-
-    it('does NOT auto-expand when the current route lives in FOR YOU, not MORE', () => {
-      usePersonaStore.getState().setPersona('developer')
-      renderLayout('/migrate')
-      const rail = getRailNav()
-      expect(within(rail).getByRole('button', { name: /show more pages/i })).toHaveAttribute(
+      expect(within(rail).getByRole('button', { name: /hide workflow/i })).toHaveAttribute(
+        'aria-expanded',
+        'true'
+      )
+      expect(within(rail).getByRole('button', { name: /hide practice/i })).toHaveAttribute(
+        'aria-expanded',
+        'true'
+      )
+      expect(within(rail).getByRole('button', { name: /show reference/i })).toHaveAttribute(
         'aria-expanded',
         'false'
       )
+      // Workflow/Practice rows are already visible...
+      expect(within(rail).getByRole('button', { name: /migrate view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /simulation view/i })).toBeInTheDocument()
+      // ...but Reference's rows are not, until it's expanded.
+      expect(within(rail).queryByRole('button', { name: /library view/i })).not.toBeInTheDocument()
+    })
+
+    it('clicking the Reference toggle reveals its rows and flips aria-expanded/its label; clicking again re-collapses', () => {
+      usePersonaStore.getState().setPersona('executive')
+      renderLayout()
+      const rail = getRailNav()
+      const toggle = () => within(rail).getByRole('button', { name: /(show|hide) reference/i })
+
+      fireEvent.click(toggle())
+      expect(toggle()).toHaveAttribute('aria-expanded', 'true')
+      expect(toggle()).toHaveAccessibleName(/hide reference/i)
+      expect(within(rail).getByRole('button', { name: /library view/i })).toBeInTheDocument()
+
+      fireEvent.click(toggle())
+      expect(toggle()).toHaveAttribute('aria-expanded', 'false')
+      expect(toggle()).toHaveAccessibleName(/show reference/i)
+      expect(within(rail).queryByRole('button', { name: /library view/i })).not.toBeInTheDocument()
+    })
+
+    it('auto-expands Reference when the CURRENT route lives in it, so active-route highlighting is never hidden behind a collapsed section', () => {
+      usePersonaStore.getState().setPersona('executive')
+      // Reference's displayPaths include /timeline appended at render time
+      // (MainLayout.tsx) even though /timeline itself isn't PERSONA_NAV_PATHS-
+      // gated; Reference starts collapsed by default. /timeline is used here
+      // (rather than e.g. /library) because it's one of the few routes this
+      // test file's <Routes> actually registers a page for.
+      renderLayout('/timeline')
+      const rail = getRailNav()
+      expect(within(rail).getByRole('button', { name: /hide reference/i })).toHaveAttribute(
+        'aria-expanded',
+        'true'
+      )
+      const timelineButton = within(rail).getByRole('button', { name: /timeline view/i })
+      expect(timelineButton).toHaveAttribute('aria-current', 'page')
+    })
+
+    it('manually collapsing Workflow (which starts expanded) works when no active route lives in it', () => {
+      usePersonaStore.getState().setPersona('executive')
+      // /simulation is Practice, not Workflow — Workflow has no active route.
+      renderLayout('/simulation')
+      const rail = getRailNav()
+      const toggle = () => within(rail).getByRole('button', { name: /(show|hide) workflow/i })
+      expect(toggle()).toHaveAttribute('aria-expanded', 'true')
+      fireEvent.click(toggle())
+      expect(toggle()).toHaveAttribute('aria-expanded', 'false')
+      expect(within(rail).queryByRole('button', { name: /migrate view/i })).not.toBeInTheDocument()
     })
   })
 
@@ -313,8 +405,12 @@ describe('MainLayout', () => {
       expect(within(rail).getByText('Practice')).toBeInTheDocument()
       expect(within(rail).getByText('Reference')).toBeInTheDocument()
       // Grouping is presentational only — every row is still reachable.
+      // Workflow/Practice start expanded so their rows are immediately
+      // visible; Reference starts collapsed (2026-08-01 per-group collapse
+      // follow-up) so its rows need expanding first.
       expect(within(rail).getByRole('button', { name: /migrate view/i })).toBeInTheDocument()
       expect(within(rail).getByRole('button', { name: /simulation view/i })).toBeInTheDocument()
+      toggleForYouGroup(rail, 'Reference')
       expect(within(rail).getByRole('button', { name: /library view/i })).toBeInTheDocument()
     })
 
@@ -329,33 +425,39 @@ describe('MainLayout', () => {
   })
 
   describe('Top bar', () => {
-    it('shows a region/industry pill falling back to the persona default when the store is untouched', () => {
+    // The standalone RegionIndustryPill was merged into the persona/role
+    // switcher button (2026-08-01 follow-up: "merge the persona filtering in
+    // one drop down" / "become a persona dropdown") — RegionIndustryPill.tsx
+    // and its test file were deleted entirely. The same live-vs-persona-
+    // default region/industry fallback logic now drives the ONE button's
+    // visible `roleLabel`, and clicking it opens PersonaSwitchModal, which now
+    // also contains the region/industry FilterDropdown pickers.
+    it('shows a region/industry summary falling back to the persona default when the store is untouched', () => {
       usePersonaStore.getState().setPersona('executive')
       renderLayout()
-      // Real RegionIndustryPill.test.tsx covers the live-vs-default logic in
-      // depth; this just pins that MainLayout actually wires it in.
-      const pill = screen.getByRole('button', { name: /region and industry/i })
-      expect(pill).toHaveTextContent('Americas')
+      const button = screen.getByRole('button', { name: /switch role/i })
+      expect(button).toHaveTextContent('Americas')
     })
 
     it('shows "Global" with no persona selected and no custom region/industry set', () => {
       renderLayout()
-      expect(screen.getByRole('button', { name: /region and industry/i })).toHaveTextContent(
-        'Global'
-      )
+      expect(screen.getByRole('button', { name: /switch role/i })).toHaveTextContent('Global')
     })
 
     it('reads a LIVE selectedRegion from the store instead of the persona default', () => {
       usePersonaStore.getState().setPersona('executive')
       usePersonaStore.getState().setRegion('apac')
       renderLayout()
-      expect(screen.getByRole('button', { name: /region and industry/i })).toHaveTextContent('APAC')
+      expect(screen.getByRole('button', { name: /switch role/i })).toHaveTextContent('APAC')
     })
 
-    it('opens the region/industry pill editor on click', () => {
+    it('opens the persona-switch modal (which now carries the folded-in region/industry pickers) on click', () => {
       renderLayout()
-      fireEvent.click(screen.getByRole('button', { name: /region and industry/i }))
-      expect(screen.getByRole('dialog', { name: /edit region and industry/i })).toBeInTheDocument()
+      fireEvent.click(screen.getByRole('button', { name: /switch role/i }))
+      const dialog = screen.getByRole('dialog', { name: /switch your role/i })
+      expect(dialog).toBeInTheDocument()
+      expect(within(dialog).getByText('Region')).toBeInTheDocument()
+      expect(within(dialog).getByText('Industry')).toBeInTheDocument()
     })
 
     it('shows the role switcher with the active persona label', () => {

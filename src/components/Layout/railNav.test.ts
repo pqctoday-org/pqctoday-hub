@@ -127,9 +127,13 @@ describe('getForYouGroups — rail declutter follow-up (2026-08-01)', () => {
     expect(executive.find((g) => g.id === 'practice')?.paths).toEqual(
       expect.arrayContaining(['/simulation', '/playground'])
     )
+    // /revisions was dropped from every persona's PERSONA_NAV_PATHS
+    // (2026-08-01 follow-up: "remove more and revisions from the left bar") —
+    // it's no longer part of FOR YOU for anyone, so it's absent here now.
     expect(executive.find((g) => g.id === 'reference')?.paths).toEqual(
-      expect.arrayContaining(['/algorithms', '/library', '/leaders', '/patents', '/revisions'])
+      expect.arrayContaining(['/algorithms', '/library', '/leaders', '/patents'])
     )
+    expect(executive.find((g) => g.id === 'reference')?.paths).not.toContain('/revisions')
   })
 })
 
