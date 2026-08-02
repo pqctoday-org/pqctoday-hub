@@ -187,6 +187,10 @@ export const HsmPlayground = () => {
     if (engine) setEngineMode(engine)
     if (!tab || tab === DEFAULT_TAB) {
       // No explicit tab, or it matches the default — nothing extra to do.
+    } else if (tab === 'acvp' && (role === 'curious' || role === 'executive')) {
+      // ACVP is an engineering-workbench surface, gated for curious/executive
+      // (matches the ExecutiveRedirectBanner above) — don't honor a stale or
+      // hand-crafted ?tab=acvp deep link for these personas.
     } else if (tab === 'keystore') {
       // Manual 3-step walkthrough tab, on purpose — switch to it without
       // eagerly auto-initing the engine in the background.
@@ -227,6 +231,16 @@ export const HsmPlayground = () => {
   useEffect(() => {
     if (error) errorRef.current?.focus()
   }, [error])
+
+  // Safety net: if a persona switch lands a curious/executive user on the
+  // gated ACVP tab mid-session (they were on it as another persona, then
+  // switched role), fall back to the default tab rather than leaving them on
+  // a surface whose tab button is now hidden.
+  useEffect(() => {
+    if (activeTab === 'acvp' && (role === 'curious' || role === 'executive')) {
+      setActiveTab(DEFAULT_TAB)
+    }
+  }, [role, activeTab])
 
   useEffect(() => {
     const el = tabListRef.current
@@ -300,44 +314,48 @@ export const HsmPlayground = () => {
             text="Drive a real PKCS#11 HSM in your browser"
             variant="icon"
           />
-          {/* Engine mode selector */}
-          <div className="flex items-center gap-2 sm:gap-4 bg-muted/50 px-2 sm:px-3 py-1.5 rounded-full shadow-inner">
-            <span className="text-xs font-semibold text-muted-foreground mr-1 hidden sm:inline">
-              Engine:
-            </span>
-            {(['cpp', 'rust', 'dual'] as const).map((mode) => (
-              <label
-                key={mode}
-                className={`flex items-center gap-1 sm:gap-1.5 text-xs min-h-[44px] md:min-h-[36px] ${phase === 'idle' ? 'cursor-pointer hover:text-primary' : 'opacity-60 cursor-not-allowed'}`}
-              >
-                <input
-                  type="radio"
-                  name="engineMode-hsm"
-                  value={mode}
-                  checked={engineMode === mode}
-                  onChange={() => {
-                    if (phase === 'idle') setEngineMode(mode)
-                  }}
-                  disabled={phase !== 'idle'}
-                  className="accent-primary w-3 h-3"
-                />
-                <span
-                  className={
-                    engineMode === mode ? 'text-primary font-bold' : 'text-muted-foreground'
-                  }
+          {/* Engine mode selector — an engineering-workbench control, gated
+              for curious/executive same as the ACVP tab; they run on the
+              'rust' default without needing to choose. */}
+          {role !== 'curious' && role !== 'executive' && (
+            <div className="flex items-center gap-2 sm:gap-4 bg-muted/50 px-2 sm:px-3 py-1.5 rounded-full shadow-inner">
+              <span className="text-xs font-semibold text-muted-foreground mr-1 hidden sm:inline">
+                Engine:
+              </span>
+              {(['cpp', 'rust', 'dual'] as const).map((mode) => (
+                <label
+                  key={mode}
+                  className={`flex items-center gap-1 sm:gap-1.5 text-xs min-h-[44px] md:min-h-[36px] ${phase === 'idle' ? 'cursor-pointer hover:text-primary' : 'opacity-60 cursor-not-allowed'}`}
                 >
-                  {mode === 'cpp' && 'C++'}
-                  {mode === 'rust' && 'Rust'}
-                  {mode === 'dual' && (
-                    <>
-                      <span className="hidden sm:inline">Dual Parity</span>
-                      <span className="sm:hidden">Dual</span>
-                    </>
-                  )}
-                </span>
-              </label>
-            ))}
-          </div>
+                  <input
+                    type="radio"
+                    name="engineMode-hsm"
+                    value={mode}
+                    checked={engineMode === mode}
+                    onChange={() => {
+                      if (phase === 'idle') setEngineMode(mode)
+                    }}
+                    disabled={phase !== 'idle'}
+                    className="accent-primary w-3 h-3"
+                  />
+                  <span
+                    className={
+                      engineMode === mode ? 'text-primary font-bold' : 'text-muted-foreground'
+                    }
+                  >
+                    {mode === 'cpp' && 'C++'}
+                    {mode === 'rust' && 'Rust'}
+                    {mode === 'dual' && (
+                      <>
+                        <span className="hidden sm:inline">Dual Parity</span>
+                        <span className="sm:hidden">Dual</span>
+                      </>
+                    )}
+                  </span>
+                </label>
+              ))}
+            </div>
+          )}
 
           {/* WIP badge */}
           <Button
@@ -487,13 +505,15 @@ export const HsmPlayground = () => {
               </span>
             </>
           )}
-          {tabBtn(
-            'acvp',
-            <>
-              <ShieldCheck size={16} className="shrink-0" aria-hidden="true" />
-              <span className="text-xs ml-1">ACVP</span>
-            </>
-          )}
+          {role !== 'curious' &&
+            role !== 'executive' &&
+            tabBtn(
+              'acvp',
+              <>
+                <ShieldCheck size={16} className="shrink-0" aria-hidden="true" />
+                <span className="text-xs ml-1">ACVP</span>
+              </>
+            )}
           {tabBtn(
             'logs',
             <>
