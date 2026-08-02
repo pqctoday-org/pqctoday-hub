@@ -1425,6 +1425,14 @@ function reportSectionsByState(personaId: PersonaId, state: SectionState): Repor
 const REPORT_SECTION_TOTAL_COUNT = Object.keys(REPORT_SECTION_DEFAULTS).length
 const DEVELOPER_REPORT_OVERRIDE_COUNT = Object.keys(PERSONA_REPORT_CONFIG.developer).length
 
+/** Distinct checkpoint ids PERSONA_MILESTONES actually inserts real journey
+ * milestones after, for a persona - e.g. "exec-cp-3/exec-cp-4" for executive.
+ * Was hand-typed; reads PERSONA_MILESTONES directly instead. */
+function uniqueMilestoneCheckpoints(personaId: PersonaId): string[] {
+  // eslint-disable-next-line security/detect-object-injection -- personaId is a PersonaId union, not user input
+  return [...new Set(PERSONA_MILESTONES[personaId].map((m) => m.afterPhase))]
+}
+
 /**
  * "3 hours 20, not 10¼" — the essentials-vs-full-path fragment used by 4 of
  * the 5 personas whose trackTitle carries this shape (researcher's doesn't;
@@ -1516,7 +1524,7 @@ export const PERSONA_JOURNEY_BOARD: Record<PersonaId, PersonaJourneyBoard> = {
       },
     ],
     trackTitle: `Then, if you want the background: ${formatEssentialsVsFull('executive')}.`,
-    trackNote: `${capitalizedSmallNumberWord(PERSONAS.executive.essentials.length)} essentials against the full ${PERSONAS.executive.recommendedPath.filter((id) => id !== 'quiz').length}-module, ${PERSONAS.executive.estimatedMinutes}-minute path. The path already inserts your real milestones after exec-cp-3/exec-cp-4.`,
+    trackNote: `${capitalizedSmallNumberWord(PERSONAS.executive.essentials.length)} essentials against the full ${PERSONAS.executive.recommendedPath.filter((id) => id !== 'quiz').length}-module, ${PERSONAS.executive.estimatedMinutes}-minute path. The path already inserts your real milestones after ${uniqueMilestoneCheckpoints('executive').join('/')}.`,
     trackChips: [
       'PQC 101',
       'Quantum impact',
