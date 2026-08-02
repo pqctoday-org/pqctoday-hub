@@ -345,7 +345,7 @@ const Step1WhyConceptsCosts: React.FC = () => (
               (OMB). Peak staffing dozens of FTEs.
             </li>
           </ul>
-          <p className="text-[10px] text-muted-foreground/70 mt-2">
+          <p className="text-[10px] text-muted-foreground mt-2">
             Present gross program cost and net <em>incremental</em> cost separately — much of the
             spend is modernization you needed anyway.
           </p>

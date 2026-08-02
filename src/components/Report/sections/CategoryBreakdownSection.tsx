@@ -91,7 +91,7 @@ export const CategoryBreakdown = ({
               </div>
               {/* eslint-disable-next-line security/detect-object-injection */}
               {drivers?.[key] && (
-                <p className="text-xs text-muted-foreground/70 mt-1 capitalize">
+                <p className="text-xs text-muted-foreground mt-1 capitalize">
                   {/* eslint-disable-next-line security/detect-object-injection */}
                   {drivers[key]}
                 </p>

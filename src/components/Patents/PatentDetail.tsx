@@ -166,7 +166,7 @@ function ClaimNode({
       <div
         className={`flex items-baseline gap-1.5 py-0.5 text-xs ${depth === 0 ? 'font-semibold text-foreground' : 'text-muted-foreground'}`}
       >
-        <span className="shrink-0 font-mono tabular-nums text-[10px] text-muted-foreground/60 w-6 text-right">
+        <span className="shrink-0 font-mono tabular-nums text-[10px] text-muted-foreground w-6 text-right">
           {claim.claim}
         </span>
         <span>{claim.subject}</span>
@@ -253,16 +253,16 @@ export function PatentDetail({
           {patent.assignee ? (
             <p className="mt-0.5 text-xs text-muted-foreground">{patent.assignee}</p>
           ) : (
-            <p className="mt-0.5 text-xs italic text-muted-foreground/70">Assignee not available</p>
+            <p className="mt-0.5 text-xs italic text-muted-foreground">Assignee not available</p>
           )}
           {patent.inventors && (
             <p className="mt-0.5 text-xs text-muted-foreground truncate" title={patent.inventors}>
-              <span className="text-muted-foreground/70">Inventor(s): </span>
+              <span className="text-muted-foreground">Inventor(s): </span>
               {patent.inventors}
             </p>
           )}
           {patent.cpcCodes && (
-            <p className="mt-1 text-[10px] text-muted-foreground/60 leading-relaxed break-all">
+            <p className="mt-1 text-[10px] text-muted-foreground leading-relaxed break-all">
               <span className="font-sans">
                 <InlineTooltip term="CPC Code">CPC</InlineTooltip>:{' '}
               </span>

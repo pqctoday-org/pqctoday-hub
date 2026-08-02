@@ -64,7 +64,7 @@ export const TrustScoreTooltip: React.FC<TrustScoreTooltipProps> = ({ score, sty
                 style={{ width: `${dim.rawScore}%` }}
               />
             </div>
-            <p className="text-[10px] text-muted-foreground/70 mt-0.5 leading-tight">
+            <p className="text-[10px] text-muted-foreground mt-0.5 leading-tight">
               {dim.rationale}
             </p>
           </div>

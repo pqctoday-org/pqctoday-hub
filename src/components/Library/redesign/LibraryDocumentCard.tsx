@@ -39,17 +39,21 @@ export function LibraryDocumentCard({
   const revisionCount = item.priorRevisions?.length ?? 0
 
   return (
+    // 2026-08-02 a11y fix: this was `role="button" tabIndex={0}` on the card
+    // itself, which made every card a focusable widget CONTAINING another
+    // focusable widget — `ReviewedBadge` below renders a real <Button>. axe
+    // flags that as `nested-interactive` (serious), 789 nodes on /library, and
+    // it is a genuine defect: a screen reader announces the card as one button
+    // and its inner control becomes unreachable.
+    //
+    // Now the standard card pattern: the container is inert, and the TITLE is
+    // the focusable primary action. Mouse users keep click-anywhere via the
+    // container's onClick; keyboard and screen-reader users tab to a real,
+    // named button. The badge is then a sibling control, not a nested one.
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- deliberate: this click is a REDUNDANT mouse convenience (click anywhere on the card), not the card's only affordance. Full keyboard and screen-reader access is the title <Button> below, which is a real, named control. Giving this container a role + tabIndex instead is exactly what caused the nested-interactive violation this change fixes.
     <div
-      role="button"
-      tabIndex={0}
       onClick={() => onOpen(item.referenceId)}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          onOpen(item.referenceId)
-        }
-      }}
-      className="glass-panel flex min-h-[172px] cursor-pointer flex-col rounded-2xl p-3.5 transition-colors hover:border-primary/40 hover:bg-card"
+      className="glass-panel flex min-h-[172px] cursor-pointer flex-col rounded-2xl p-3.5 transition-colors hover:border-primary/40 hover:bg-card focus-within:border-primary/40"
     >
       <div className="flex items-start justify-between gap-2">
         <span className="font-mono text-[12px] font-semibold text-primary">{item.referenceId}</span>
@@ -64,8 +68,22 @@ export function LibraryDocumentCard({
         )}
       </div>
 
-      <h3 className="mt-1.5 line-clamp-2 text-[14px] font-bold leading-snug text-foreground">
-        {item.documentTitle}
+      <h3 className="mt-1.5 text-[14px] font-bold leading-snug text-foreground">
+        {/* The card's one focusable control — see the container comment. Styled
+            to look like plain text; `text-left`/`whitespace-normal` undo the
+            Button base styles so the title still wraps and clamps as before. */}
+        <Button
+          variant="ghost"
+          onClick={(e) => {
+            // The container also handles clicks; without this the same card
+            // would open twice on a title click.
+            e.stopPropagation()
+            onOpen(item.referenceId)
+          }}
+          className="line-clamp-2 h-auto w-full justify-start whitespace-normal p-0 text-left text-[14px] font-bold leading-snug text-foreground hover:bg-transparent"
+        >
+          {item.documentTitle}
+        </Button>
       </h3>
 
       <div className="mt-2 flex flex-wrap items-center gap-1.5">
@@ -176,7 +194,7 @@ export function LibraryDocumentCard({
             </a>
           ) : (
             <span
-              className="px-1.5 py-1 text-[12px] font-medium text-muted-foreground/70"
+              className="px-1.5 py-1 text-[12px] font-medium text-muted-foreground"
               title="No public source link is available for this document yet."
             >
               Source not available

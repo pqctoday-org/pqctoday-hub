@@ -78,7 +78,7 @@ export function CloudSyncPrivacySection() {
             </span>
           </li>
         </ul>
-        <p className="text-xs text-muted-foreground/70 pt-2 border-t border-border/40">
+        <p className="text-xs text-muted-foreground pt-2 border-t border-border/40">
           The scope requested is{' '}
           <code className="font-mono text-primary">
             https://www.googleapis.com/auth/drive.appdata

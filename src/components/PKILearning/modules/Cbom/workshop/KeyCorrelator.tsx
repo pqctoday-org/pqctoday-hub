@@ -106,7 +106,7 @@ export function KeyCorrelator() {
                 <span className="text-sm text-foreground">{f.system}</span>
                 <span className="ml-2 font-mono text-xs text-muted-foreground">{f.id}</span>
               </div>
-              <span className="shrink-0 font-mono text-xs text-muted-foreground/60">{f.algo}</span>
+              <span className="shrink-0 font-mono text-xs text-muted-foreground">{f.algo}</span>
             </div>
           ))}
           <p className="text-xs text-muted-foreground">

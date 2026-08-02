@@ -386,7 +386,7 @@ const Step2LmsXmss: React.FC = () => (
                   <td className="py-2 pr-4 font-medium text-foreground">
                     <InlineTooltip term="Forward Secrecy">Forward Security</InlineTooltip>
                   </td>
-                  <td className="py-2 pr-4 text-muted-foreground/60">No</td>
+                  <td className="py-2 pr-4 text-muted-foreground">No</td>
                   <td className="py-2 text-success font-medium">
                     Yes &mdash; past signatures stay secure even if current key is compromised
                   </td>
@@ -526,7 +526,7 @@ const Step3StateAndResources: React.FC<{ onNavigateToWorkshop: () => void }> = (
                   <td className="py-2 pr-4 text-success font-medium">
                     Required for firmware/software
                   </td>
-                  <td className="py-2 text-muted-foreground/60">Not included in CNSA 2.0</td>
+                  <td className="py-2 text-muted-foreground">Not included in CNSA 2.0</td>
                 </tr>
                 <tr>
                   <td className="py-2 pr-4 font-medium text-foreground">Best for</td>

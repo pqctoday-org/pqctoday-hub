@@ -76,7 +76,7 @@ export const RiskScoreSection = ({
         </div>
       )}
       {lastModifiedAt && (
-        <p className="text-[10px] text-muted-foreground/60 text-center mt-1 font-mono print:hidden">
+        <p className="text-[10px] text-muted-foreground text-center mt-1 font-mono print:hidden">
           Last updated:{' '}
           {new Date(lastModifiedAt).toLocaleDateString(undefined, {
             month: 'short',

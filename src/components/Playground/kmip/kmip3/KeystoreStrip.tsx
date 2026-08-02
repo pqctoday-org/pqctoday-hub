@@ -32,7 +32,7 @@ function ObjectChip({ object }: { object: KmipObject }) {
       <span className={cn('h-1.5 w-1.5 shrink-0 rounded-full', dot)} />
       <span className="font-medium text-foreground">{object.algorithm}</span>
       <span className="text-muted-foreground">{object.objectType}</span>
-      <span className="font-mono text-muted-foreground/70">{shortUid}</span>
+      <span className="font-mono text-muted-foreground">{shortUid}</span>
     </span>
   )
 }

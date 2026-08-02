@@ -78,7 +78,7 @@ export const MigrationWire: React.FC<MigrationWireProps> = ({ metrics }) => {
                 {isDone ? (
                   <Check size={12} />
                 ) : (
-                  <Circle size={12} className="text-muted-foreground/60" />
+                  <Circle size={12} className="text-muted-foreground" />
                 )}
                 <span>{phase.label}</span>
               </Button>

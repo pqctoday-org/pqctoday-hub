@@ -289,6 +289,16 @@ scripts/*
 !scripts/validators/
 !scripts/validate-data-integrity.ts
 
+# Role-board CTA gate — runs in the local gate (npm run audit:role-board-ctas)
+# and is referenced by a committed package.json script, so it MUST be tracked
+# or `npm run audit:role-board-ctas` fails file-not-found for everyone but the
+# machine that wrote it. Its .local.test.ts must be tracked for the same reason
+# `scripts/validators/` is: otherwise the suite proving the gate can fail is
+# invisible to every other checkout. (Found 2026-08-02 the same way the
+# validators gap was — the commit silently dropped both files.)
+!scripts/audit-role-board-ctas.ts
+!scripts/audit-role-board-ctas.local.test.ts
+
 # NVD CVE scraper — runs weekly in .github/workflows/update-cve.yml (public
 # CI), must be tracked or that workflow fails with "No such file or directory"
 # (as it silently did for weeks — see git history). Reads public CPE xref CSV,

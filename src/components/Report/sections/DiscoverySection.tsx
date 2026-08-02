@@ -77,7 +77,7 @@ export function DiscoverySection({
                     </span>
                   ))}
                 </div>
-                <p className="text-[11px] text-muted-foreground/70 mt-2 italic">
+                <p className="text-[11px] text-muted-foreground mt-2 italic">
                   {specific
                     ? 'A self-reported starting point — the algorithms you told us you use. Not a scan of your actual codebase or infrastructure.'
                     : 'Coarse crypto families you told us you use — not a scan of your actual codebase or infrastructure.'}

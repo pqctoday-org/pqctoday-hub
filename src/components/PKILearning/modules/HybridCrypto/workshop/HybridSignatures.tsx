@@ -855,7 +855,7 @@ export const HybridSignatures: React.FC = () => {
                 <div className="text-muted-foreground mt-1 text-[11px]">
                   μ = H(R ‖ pk_ec ‖ pk_ml ‖ msg) — both components are bound to this value
                 </div>
-                <div className="text-muted-foreground/60 mt-0.5 text-[10px] italic">
+                <div className="text-muted-foreground mt-0.5 text-[10px] italic">
                   Approximation: full Silithium (ePrint 2025/2059) also includes the ML-DSA round-1
                   lattice commitment w1 in μ. Not exposed by @noble/post-quantum externalMu API.
                 </div>

@@ -328,7 +328,7 @@ export function PatentSearchPanel({ patents, onSelectPatent, onResults }: Patent
             No patents matched{' '}
             <span className="text-foreground">&ldquo;{debouncedQuery}&rdquo;</span>
           </p>
-          <p className="text-xs text-muted-foreground/70">
+          <p className="text-xs text-muted-foreground">
             Try broader terms — algorithm name, assignee, or protocol
           </p>
         </div>
@@ -431,7 +431,7 @@ function PatentResultCard({
               </span>
             )}
             {patent.issueDate && (
-              <span className="text-[10px] text-muted-foreground/60 shrink-0">
+              <span className="text-[10px] text-muted-foreground shrink-0">
                 {patent.issueDate.slice(0, 7)}
               </span>
             )}
@@ -489,7 +489,7 @@ function PatentResultCard({
             </span>
           ))}
           {matchLabels.length > 0 && (
-            <span className="text-[10px] text-muted-foreground/60">
+            <span className="text-[10px] text-muted-foreground">
               matched: {matchLabels.join(', ')}
             </span>
           )}
