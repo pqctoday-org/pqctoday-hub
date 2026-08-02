@@ -5,6 +5,7 @@
 // is lost in the redesign: vendor PQC roadmap, certifications, validation
 // proof, evidence flags, capability text, vendor + repo links.
 
+import { useState } from 'react'
 import { ExternalLink, FileText } from 'lucide-react'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import { getCertsForProduct } from '@/data/certificationXrefData'
@@ -18,12 +19,26 @@ import { FlagButton } from '@/components/ui/FlagButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { Pill } from './workbenchUi'
 import { productVerificationBadge } from './productStatus'
+// ADDED 2026-08-01: migrate-catalog had 907/907 active rows carrying a
+// trusted_source_id and real revision entries in revisions.jsonl, but no
+// page on the app displayed either — TrustScoreBadge/ReviewedBadge are
+// mounted everywhere else (threats, algorithms, library, compliance,
+// timeline) but not here. TrustScoreBadge keys migrate scores by
+// softwareName (trustScoreData.ts); ReviewedBadge's revision entries key by
+// productId (the slug form, e.g. "ibm-hyper-protect-crypto") — different
+// identifier spaces, both wired correctly below.
+import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
+import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
+import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
+import { useRevisions, byRecord } from '@/hooks/useRevisions'
 
 export function ProductDetail({ product }: { product: SoftwareItem }) {
   const certs = getCertsForProduct(product.productId, product.softwareName)
   const roadmap = product.vendorId ? roadmapByVendorId.get(product.vendorId) : undefined
   const enrichment = product.vendorId ? enrichmentByVendorId.get(product.vendorId) : undefined
   const vendor = product.vendorId ? vendorMap.get(product.vendorId) : undefined
+  const { revisions } = useRevisions()
+  const [drilldownOpen, setDrilldownOpen] = useState(false)
 
   // The pqcSupport string carries the concise capability detail
   // (e.g. "Yes (ACVP: ML-DSA, ML-KEM, SLH-DSA)"). Strip the leading Yes/No.
@@ -36,7 +51,7 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
 
   return (
     <div className="flex flex-col gap-3 border-t border-border bg-muted/20 px-3 py-3 text-xs">
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <span className="font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
           Verification status
         </span>
@@ -45,6 +60,28 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
           <span className="text-[11px] text-muted-foreground">
             as of {product.lastVerifiedDate}
           </span>
+        )}
+        <TrustScoreBadge resourceType="migrate" resourceId={product.softwareName} size="sm" />
+        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+        <span onClick={(e) => e.stopPropagation()}>
+          <ReviewedBadge
+            domain="migrate"
+            entityId={product.productId}
+            showUnreviewed={false}
+            onOpenDrilldown={() => setDrilldownOpen(true)}
+          />
+        </span>
+        {drilldownOpen && (
+          // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+          <div onClick={(e) => e.stopPropagation()}>
+            <RevisionDrilldownPanel
+              domain="migrate"
+              entityId={product.productId}
+              entityLabel={product.softwareName}
+              revisions={byRecord(revisions, 'migrate', product.productId)}
+              onClose={() => setDrilldownOpen(false)}
+            />
+          </div>
         )}
       </div>
 
