@@ -11,7 +11,7 @@ import type {
 } from '@/store/useAssessmentStore'
 import type { AssessmentInput, AssessmentResult } from '@/hooks/assessmentTypes'
 import type { ChatProvider, Conversation } from '@/types/ChatTypes'
-import type { MigrateViewMode } from '@/store/useMigrateSelectionStore'
+import type { MigrateTab, MigrateViewMode } from '@/store/useMigrateSelectionStore'
 
 /** Magic string identifying a valid PQC Today snapshot file. */
 export const SNAPSHOT_FORMAT = 'pqc-today-snapshot' as const
@@ -122,6 +122,13 @@ export interface OpenSSLData {
 
 /**
  * Persisted slice of useMigrateSelectionStore.
+ *
+ * `myProducts` is the legacy product-keyed bookmark list; `plan`/`choice`/
+ * `nameToProductId` are the asset-first Workbench redesign's fields (see
+ * useMigrateSelectionStore.ts's docstring on {@link selectedProductIds} for
+ * why both must travel together). Before this fix, only `myProducts` was
+ * captured here, so exporting/restoring a snapshot silently discarded every
+ * pick a user made in the Migration Workbench's Replace/Plan tabs.
  */
 export interface MigrateData {
   hiddenProducts: string[]
@@ -130,6 +137,14 @@ export interface MigrateData {
   myProducts: string[]
   viewMode: MigrateViewMode
   workflowCollapsed: boolean
+  /** Asset ids in the Workbench plan (added in the export/restore fix). */
+  plan: string[]
+  /** Chosen replacement products per asset/domain (added in the export/restore fix). */
+  choice: Record<string, string[]>
+  /** productName → productId resolution cache (added in the export/restore fix). */
+  nameToProductId: Record<string, string>
+  /** Active Workbench tab (added in the export/restore fix). */
+  tab: MigrateTab
 }
 
 /**

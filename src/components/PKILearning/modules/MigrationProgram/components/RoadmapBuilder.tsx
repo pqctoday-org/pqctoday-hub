@@ -3,7 +3,7 @@ import React, { useMemo, useCallback, useEffect, useState } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useAlgorithmTransitionsForAssessment } from '@/hooks/useAlgorithmTransitionsForAssessment'
-import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
+import { useMigrateSelectionStore, useSelectedProductIds } from '@/store/useMigrateSelectionStore'
 import { softwareData } from '@/data/migrateData'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
@@ -238,7 +238,11 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
   const executiveDocuments = useModuleStore((s) => s.artifacts.executiveDocuments)
   const transitions = useAlgorithmTransitionsForAssessment()
   const myTimelineCountries = useBookmarkStore((s) => s.myTimelineCountries)
-  const myProductIdsBookmarked = useMigrateSelectionStore((s) => s.myProducts)
+  // Effective selection = legacy `myProducts` ∪ workbench `choice` picks (see
+  // useSelectedProductIds' docstring). Reading `myProducts` alone here missed
+  // every product a user actually picked via the Migration Workbench's Replace
+  // tab (which only ever writes `choice`/`plan`, never `myProducts`).
+  const myProductIdsBookmarked = useSelectedProductIds()
   const toggleMyProduct = useMigrateSelectionStore((s) => s.toggleMyProduct)
 
   // Map country deadlines to ExternalDeadline[] format
@@ -413,7 +417,9 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
   }, [externalDeadlines, deadlineSearch, deadlineCountryFilter])
 
   // CSWP.39 §4.6 — Mitigation gateway rows for assets where direct migration is blocked.
-  const myProductIds = useMigrateSelectionStore((s) => s.myProducts)
+  // Same union as myProductIdsBookmarked above — a gateway product chosen via the
+  // Workbench's Replace tab must show as already-selected here too.
+  const myProductIds = useSelectedProductIds()
   const candidateGateways = useMemo(() => {
     const myProductSet = new Set(myProductIds)
     const isGatewayCategory = (cat: string) => /gateway|sase|zero[\s-]?trust|tls/i.test(cat || '')
