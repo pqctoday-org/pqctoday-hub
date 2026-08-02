@@ -18,7 +18,17 @@ interface RegionStats {
   countries: number
   events: number
   lastUpdate: Date | null
+  atMigrationPlus: number
 }
+
+// The 10 real phases (GanttLegend.tsx) mix two different things: a sequential
+// technical-readiness track (Discovery → Testing → POC → Migration →
+// Standardization) and regulatory-action types that aren't stages a country
+// "graduates" through (Guidance/Policy/Regulation/Research/Deadline can occur
+// at any point). "At Migration+" is scoped to the two real execution stages
+// on the technical track — editorial call, revisit if a cleaner maturity
+// model is ever added to the underlying data.
+const MIGRATION_PLUS_PHASES = new Set(['Migration', 'Standardization'])
 
 function computeRegionStats(data: GanttCountryData[], region: Region): RegionStats {
   // eslint-disable-next-line security/detect-object-injection
@@ -27,7 +37,9 @@ function computeRegionStats(data: GanttCountryData[], region: Region): RegionSta
   const countries = rows.length
   let events = 0
   let latest = 0
+  let atMigrationPlus = 0
   for (const row of rows) {
+    if (row.phases.some((p) => MIGRATION_PLUS_PHASES.has(p.phase))) atMigrationPlus++
     for (const body of row.country.bodies) {
       events += body.events.length
       for (const ev of body.events) {
@@ -37,7 +49,7 @@ function computeRegionStats(data: GanttCountryData[], region: Region): RegionSta
       }
     }
   }
-  return { countries, events, lastUpdate: latest > 0 ? new Date(latest) : null }
+  return { countries, events, lastUpdate: latest > 0 ? new Date(latest) : null, atMigrationPlus }
 }
 
 interface Props {
@@ -99,6 +111,11 @@ export const CoverageByRegion = ({ data, selectedRegion, onSelectRegion }: Props
                 {s.countries} countr{s.countries === 1 ? 'y' : 'ies'}
                 {s.lastUpdate && ` · ${s.lastUpdate.toLocaleDateString()}`}
               </div>
+              {s.countries > 0 && (
+                <div className="text-[10px] text-muted-foreground">
+                  {s.atMigrationPlus} of {s.countries} at Migration+
+                </div>
+              )}
             </Button>
           )
         })}
