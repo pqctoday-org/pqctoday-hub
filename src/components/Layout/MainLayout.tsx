@@ -300,6 +300,22 @@ export const MainLayout = () => {
     recordVisit(location.pathname)
   }, [location.pathname, recordVisit])
 
+  // The app's real scroll container is this inner div (see the ref below), not
+  // window/document — ScrollToTop.tsx's window.scrollTo only fires on a real
+  // route change, and picking a persona (Role Home card, or the top-bar
+  // switcher from anywhere) never changes the route (always `/`). Without
+  // this, switching persona while scrolled down left the new board rendered
+  // at the old scroll offset — its hero/CTA buttons pushed off-screen above
+  // the viewport, reading as "the buttons don't work" when they were just not
+  // visible. Resets on both persona change and pathname change (belt-and-
+  // suspenders alongside ScrollToTop.tsx for this specific container).
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null)
+  React.useLayoutEffect(() => {
+    // Plain scrollTop assignment, not scrollTo({behavior:'instant'}) - jsdom
+    // (used by every test in this file) doesn't implement Element.scrollTo.
+    if (scrollContainerRef.current) scrollContainerRef.current.scrollTop = 0
+  }, [selectedPersona, location.pathname])
+
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
       // @ts-expect-error - Used only by Playwright
@@ -1086,7 +1102,7 @@ export const MainLayout = () => {
         {personaSwitchOpen && <PersonaSwitchModal onClose={() => setPersonaSwitchOpen(false)} />}
 
         {/* Scrollable content area */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
+        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
           {isCuriousMobileTakeover ? (
             /* Curious-mobile takeover: bare Outlet, no container padding, no
                banners/Breadcrumb/PhaseContextBanner — CuriousMobileBoard is a
