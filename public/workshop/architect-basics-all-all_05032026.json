@@ -50,112 +50,82 @@
           "route": "/"
         },
         "tasks": [
-          "Confirm role = Security Architect",
-          "Set proficiency to Basics or Expert",
-          "Set country (any) and industry (any)"
+          "Open the role switcher in the top bar",
+          "Pick the role that fits you",
+          "Set your region and industry"
         ],
         "expectedOutput": "Persona chip shows Security Architect.",
-        "narration": "Confirm your persona is Security Architect. Country and industry can be anything — this workshop is region-agnostic and applies the same architecture lens regardless of where you sit.",
+        "narration": "Your role, region, and industry drive every recommendation on the platform. Set them from the role switcher in the top bar — it is on every page, and each choice applies immediately.",
         "cues": [
           {
-            "tMs": 0,
             "kind": "navigate",
-            "route": "/"
+            "route": "/",
+            "tMs": 0
           },
           {
-            "tMs": 1000,
-            "kind": "scroll-to",
-            "selector": "#personalization-section"
-          },
-          {
-            "tMs": 1500,
             "kind": "caption",
-            "text": "Persona definition — four picks shape every page. Security Architect drives this flow."
+            "text": "Your role, region, and industry shape every page. Architect drives this flow.",
+            "tMs": 1200
           },
           {
-            "tMs": 9243,
-            "kind": "click",
-            "selector": "[data-workshop-target=\"persona-edit\"]"
-          },
-          {
-            "tMs": 9743,
-            "kind": "caption",
-            "text": "Opening the persona wizard."
-          },
-          {
-            "tMs": 13272,
-            "kind": "caption",
-            "text": "Step 1 — Track. Technical track unlocks developer, architect, ops, and researcher roles."
-          },
-          {
-            "tMs": 21158,
             "kind": "spotlight",
-            "selector": "[data-workshop-target^=\"persona-track-\"][aria-pressed=\"true\"]"
+            "selector": "[data-workshop-target=\"persona-switch-open\"]",
+            "tMs": 8450
           },
           {
-            "tMs": 25158,
-            "kind": "click",
-            "selector": "[data-workshop-target^=\"persona-track-\"][aria-pressed=\"true\"]"
-          },
-          {
-            "tMs": 27158,
             "kind": "caption",
-            "text": "Step 2 — Role. Security Architect surfaces the modules and tools tuned to your job."
+            "text": "The role switcher lives in the top bar, on every page.",
+            "tMs": 10950
           },
           {
-            "tMs": 34687,
+            "kind": "click",
+            "selector": "[data-workshop-target=\"persona-switch-open\"]",
+            "tMs": 16558
+          },
+          {
+            "kind": "caption",
+            "text": "Six roles: executive, developer, architect, ops, researcher, curious.",
+            "tMs": 19058
+          },
+          {
             "kind": "spotlight",
-            "selector": "[data-workshop-target^=\"persona-role-\"][aria-pressed=\"true\"]"
+            "selector": "[data-workshop-target^=\"persona-role-\"][aria-pressed=\"true\"]",
+            "tMs": 25737
           },
           {
-            "tMs": 38687,
             "kind": "callout",
             "selector": "[data-workshop-target^=\"persona-role-\"][aria-pressed=\"true\"]",
-            "label": "Security Architect — pre-selected for this flow"
+            "label": "Architect — pre-selected for this flow",
+            "tMs": 28237
           },
           {
-            "tMs": 46687,
-            "kind": "click",
-            "selector": "[data-workshop-target^=\"persona-role-\"][aria-pressed=\"true\"]"
-          },
-          {
-            "tMs": 48687,
             "kind": "caption",
-            "text": "Step 3 — Region. Filters timeline, leaders, threats and compliance to your jurisdiction."
+            "text": "Region filters timeline, leaders, threats, and compliance to your jurisdiction.",
+            "tMs": 30737
           },
           {
-            "tMs": 56573,
             "kind": "spotlight",
-            "selector": "[data-workshop-target^=\"persona-region-\"][aria-pressed=\"true\"]"
+            "selector": "[data-workshop-target=\"persona-region-select\"]",
+            "tMs": 38130
           },
           {
-            "tMs": 64573,
-            "kind": "click",
-            "selector": "[data-workshop-target=\"persona-wizard-next\"]"
-          },
-          {
-            "tMs": 66573,
             "kind": "caption",
-            "text": "Step 4 — Industry. Surfaces industry-specific threats, frameworks and vendors."
+            "text": "Industry surfaces the threats, frameworks, and vendors that apply to you.",
+            "tMs": 40630
           },
           {
-            "tMs": 73745,
             "kind": "spotlight",
-            "selector": "[data-workshop-target^=\"persona-industry-\"][aria-pressed=\"true\"]"
+            "selector": "[data-workshop-target=\"persona-industry-select\"]",
+            "tMs": 47595
           },
           {
-            "tMs": 83745,
-            "kind": "click",
-            "selector": "[data-workshop-target=\"persona-wizard-done\"]"
-          },
-          {
-            "tMs": 84745,
             "kind": "caption",
-            "text": "These four facets shape every workshop step. Change any one to re-personalize."
+            "text": "Both apply immediately — no separate save step.",
+            "tMs": 50095
           },
           {
-            "tMs": 147745,
-            "kind": "advance"
+            "kind": "advance",
+            "tMs": 55203
           }
         ]
       }

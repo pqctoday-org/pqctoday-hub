@@ -195,6 +195,10 @@ export const PersonaSwitchModal: React.FC<Props> = ({ onClose }) => {
                       : 'border-border bg-card/60 hover:border-primary/30 hover:bg-card text-muted-foreground hover:text-foreground'
                   }`}
                   aria-pressed={isActive}
+                  // Guided-workshop anchor. Keeps the `persona-role-` prefix the
+                  // retired wizard used, so the workshop's role cues still select
+                  // the active tile via [data-workshop-target^="persona-role-"].
+                  data-workshop-target={`persona-role-${id}`}
                 >
                   <Icon
                     size={16}
@@ -213,7 +217,7 @@ export const PersonaSwitchModal: React.FC<Props> = ({ onClose }) => {
           </div>
 
           <div className="mt-5 pt-4 border-t border-border grid grid-cols-2 gap-3">
-            <div>
+            <div data-workshop-target="persona-region-select">
               <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                 Region
               </p>
@@ -227,7 +231,7 @@ export const PersonaSwitchModal: React.FC<Props> = ({ onClose }) => {
                 className="w-full"
               />
             </div>
-            <div>
+            <div data-workshop-target="persona-industry-select">
               <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                 Industry
               </p>
