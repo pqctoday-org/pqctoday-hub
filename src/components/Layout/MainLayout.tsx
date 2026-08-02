@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { Outlet, NavLink, Link, useLocation, useNavigate } from 'react-router'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import {
   Info,
   MoreHorizontal,
@@ -299,6 +299,21 @@ const RailRow: React.FC<RailRowProps> = ({
 export const MainLayout = () => {
   const location = useLocation()
   const navigate = useNavigate()
+  // `<MotionConfig reducedMotion="user">` (AppRoot.tsx) only suppresses
+  // TRANSFORM-based animation — framer-motion's own design deliberately keeps
+  // opacity transitions running under reduced motion (cross-fades aren't
+  // treated as the kind of motion that triggers vestibular discomfort). The
+  // route-content wrapper below animates BOTH `y` and `opacity`, so a user who
+  // has explicitly asked for reduced motion still got a 300ms low-contrast
+  // fade on every single navigation — MotionConfig only silently dropped the
+  // y-slide. Found 2026-08-02 diagnosing a CI-only a11y failure: the E2E spec
+  // has no settle delay between paint and the axe check, so it reliably
+  // sampled mid-fade; local manual reproduction always added a `waitForTimeout`
+  // before injecting axe, which happened to outlast the 300ms fade every time,
+  // masking the defect through dozens of attempts. Real users with reduced
+  // motion see the identical flash on identical timing — this was a genuine
+  // accessibility defect, not just a test artifact.
+  const prefersReducedMotion = useReducedMotion()
   const {
     selectedPersona,
     viewAccess,
@@ -1237,7 +1252,14 @@ export const MainLayout = () => {
                   <div className="flex min-h-[200px] h-[50dvh] w-full items-center justify-center">
                     <div className="flex flex-col items-center gap-4">
                       <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-                      <p className="text-muted-foreground animate-pulse">Loading...</p>
+                      {/* The spinner ring keeps `animate-spin` — purely decorative
+                          motion, doesn't affect legibility. "Loading..." lost its
+                          `animate-pulse` (2026-08-02): pulsing a word's OPACITY
+                          means it is, by construction, below full contrast for
+                          part of every cycle — axe caught it on the CI runner at
+                          ratios as low as 2.26:1, and a sighted low-vision reader
+                          hits the identical dip in real use, not just in CI. */}
+                      <p className="text-muted-foreground">Loading...</p>
                     </div>
                   </div>
                 }
@@ -1269,16 +1291,16 @@ export const MainLayout = () => {
                     <div className="flex min-h-[200px] h-[50dvh] w-full items-center justify-center">
                       <div className="flex flex-col items-center gap-4">
                         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-                        <p className="text-muted-foreground animate-pulse">Loading...</p>
+                        <p className="text-muted-foreground">Loading...</p>
                       </div>
                     </div>
                   }
                 >
                   <motion.div
                     key={location.pathname}
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: prefersReducedMotion ? 0 : 0.3 }}
                     className="lg:flex lg:items-start lg:gap-6"
                   >
                     <div className="min-w-0 lg:flex-1">
