@@ -153,12 +153,8 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
         {!embedded && (
           <PageHeader
             icon={Terminal}
-            pageId="openssl-studio"
             title="OpenSSL Studio"
             description="Interactive OpenSSL v3.6.2 environment running entirely in your browser via WebAssembly. Educational use only — not a FIPS-validated module; the pending FIPS 140-3 validation submission covers the OpenSSL 3.5.4 provider (Oct 2025), not the 3.6.x line."
-            viewType="Library"
-            shareTitle="OpenSSL Studio — Interactive OpenSSL v3.6.2 in Your Browser"
-            shareText="Run real OpenSSL 3.6.2 commands — key generation, certificates, KEM, PQC — entirely in your browser via WebAssembly."
           />
         )}
 

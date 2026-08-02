@@ -99,6 +99,10 @@ export interface FeaturePlayground {
   description: string
   tag: string
   accent: FeatureAccent
+  /** True when this playground needs a local sandbox server (VITE_SANDBOX_BASE_URL)
+   * reachable before it works — shown as a badge on the card, before the click,
+   * rather than a visitor only discovering the requirement on the route itself. */
+  requiresLocalSandbox?: boolean
 }
 
 /** The "Full playgrounds" gradient cards on the Overview. */
@@ -135,6 +139,7 @@ export const FEATURE_PLAYGROUNDS: readonly FeaturePlayground[] = [
       'Docker-backed protocol scenarios and a PKCS#11 dev catalog — compare the same op in 5 languages.',
     tag: 'Docker · 5 languages',
     accent: 'warning',
+    requiresLocalSandbox: true,
   },
 ]
 

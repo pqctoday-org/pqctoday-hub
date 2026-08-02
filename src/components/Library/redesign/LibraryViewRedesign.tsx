@@ -2,23 +2,29 @@
 /**
  * LibraryViewRedesign — the rebuilt /library page (handoff: design_handoff_library_redesign).
  *
- * Composition: PageHeader → Role Lens → Recently-changed strip → Start here →
+ * Composition: PageHeader → Recently-changed strip → Start here →
  * two-pane (facet rail + results) → detail drawer. Filtering/sorting is delegated
  * to useLibraryPipeline (lifted verbatim from the live LibraryView for parity).
- * Persona lives in usePersonaStore, bookmarks in useBookmarkStore, the rest of the
- * filter/sort/view/ref state in the URL (?cat/org/q/sort/view/lifecycle/cswp39/qv/
- * ref/prefs plus the geo[]/sector[]/tier params the shared filters own).
+ * Persona is read (not written) from usePersonaStore — the shared top-bar role
+ * switcher is the app's single global persona/role control (design program
+ * cross-cutting rule); this page no longer renders its own persona picker
+ * (LibraryRoleLens removed — see IMPLEMENTATION-PLAN-LIBRARY-2026-08-01.md §4/§6).
+ * Bookmarks live in useBookmarkStore, the rest of the filter/sort/view/ref state
+ * in the URL (?cat/org/q/sort/view/lifecycle/cswp39/qv/ref/prefs plus the
+ * geo[]/sector[]/tier params the shared filters own).
  */
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router'
 import { BookOpen, ChevronDown, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { PageHeader } from '@/components/common/PageHeader'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { Button } from '@/components/ui/button'
 import {
   libraryData,
   libraryMetadata,
+  libraryCorpusHealth,
   findLibraryItemByRef,
   type LibraryItem,
   type LibraryPurpose,
@@ -39,10 +45,8 @@ import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { LIBRARY_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import type { SortOption } from '@/components/Library/SortControl'
 import type { ViewMode } from '@/components/Library/ViewToggle'
-import type { PersonaId } from '@/data/learningPersonas'
 import { libraryDefaultSortForPersona } from '@/data/libraryPersonaConfig'
 import { useLibraryPipeline, ORG_CANONICAL_MAP, ORG_OTHER } from './useLibraryPipeline'
-import { LibraryRoleLens } from './LibraryRoleLens'
 import { LibraryControlDeck } from './LibraryControlDeck'
 import { LibraryFacetRail, type LibraryQuickView } from './LibraryFacetRail'
 import { LibraryPurposeDoors, type LibraryPurposeSelection } from './LibraryPurposeDoors'
@@ -159,7 +163,6 @@ export function LibraryViewRedesign({
         })
     : realSetParams
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
-  const setPersona = usePersonaStore((s) => s.setPersona)
   const libraryBookmarks = useBookmarkStore((s) => s.libraryBookmarks)
   const toggleLibraryBookmark = useBookmarkStore((s) => s.toggleLibraryBookmark)
 
@@ -415,52 +418,74 @@ export function LibraryViewRedesign({
       onClear: () => clearMulti('algo', fam),
     })
 
+  // Register this page's actions with the global top bar (page-action-strip
+  // rollout, 2026-08-01) — info/export/endorse/flag render there now, not as
+  // a row on the page itself. Mirrors TimelineView.tsx's pattern. Gated on
+  // `!simEmbed`, same as the PageHeader render below.
+  useEffect(() => {
+    if (simEmbed) return
+    const { setPageActions, clearPageActions } = usePageActionsStore.getState()
+    setPageActions({
+      title: 'PQC Library',
+      dataSource: libraryMetadata
+        ? `${libraryMetadata.filename} • Updated: ${libraryMetadata.lastUpdate.toLocaleDateString()}`
+        : undefined,
+      onExport: handleExportCsv,
+      endorseUrl: buildEndorsementUrl({
+        category: 'library-resource-endorsement',
+        title: 'Endorse: PQC Library',
+        resourceType: 'Library Page',
+        resourceId: 'PQC Library',
+        resourceDetails:
+          '**Page:** PQC Library — the standards, drafts and guidance that define post-quantum cryptography.',
+        pageUrl: '/library',
+      }),
+      endorseLabel: 'Library Page',
+      endorseResourceType: 'Library',
+      flagUrl: buildFlagUrl({
+        category: 'library-resource-endorsement',
+        title: 'Flag: PQC Library',
+        resourceType: 'Library Page',
+        resourceId: 'PQC Library',
+        resourceDetails:
+          '**Page:** PQC Library — the standards, drafts and guidance that define post-quantum cryptography.',
+        pageUrl: '/library',
+      }),
+      flagLabel: 'Library Page',
+      flagResourceType: 'Library',
+    })
+    return () => clearPageActions()
+  }, [simEmbed, handleExportCsv])
+
   return (
     <div className="animate-fade-in space-y-4 pb-24">
       {!simEmbed && (
         <PageHeader
           icon={BookOpen}
-          pageId="library"
           title="PQC Library"
           description="The standards, drafts and guidance that define post-quantum cryptography."
-          dataSource={
-            libraryMetadata
-              ? `${libraryMetadata.filename} • Updated: ${libraryMetadata.lastUpdate.toLocaleDateString()}`
-              : undefined
+          actions={
+            // Corpus health, stated openly (design_handoff_2026_pages/
+            // IMPLEMENTATION-PLAN-LIBRARY-2026-08-01.md §3.1) — read live
+            // from libraryData.ts's own count, never hardcoded. Tooltip
+            // breaks down "why" using the CSV's real deprecated_reason
+            // values, not invented copy.
+            <span
+              key="corpus-health"
+              title={
+                libraryCorpusHealth.reasonCounts.length > 0
+                  ? `Why: ${libraryCorpusHealth.reasonCounts.map((r) => `${r.reason} (${r.count})`).join(', ')}`
+                  : undefined
+              }
+              className="text-[11px] font-medium text-muted-foreground"
+            >
+              {libraryCorpusHealth.active} active
+              {libraryCorpusHealth.deprecated > 0 &&
+                ` · ${libraryCorpusHealth.deprecated} deprecated`}
+            </span>
           }
-          viewType="Library"
-          shareTitle="PQC Library — NIST, IETF, ETSI & More"
-          shareText="Explore post-quantum cryptography standards, drafts, and key documents."
-          onExport={handleExportCsv}
-          endorseUrl={buildEndorsementUrl({
-            category: 'library-resource-endorsement',
-            title: 'Endorse: PQC Library',
-            resourceType: 'Library Page',
-            resourceId: 'PQC Library',
-            resourceDetails:
-              '**Page:** PQC Library — the standards, drafts and guidance that define post-quantum cryptography.',
-            pageUrl: '/library',
-          })}
-          endorseLabel="Library Page"
-          endorseResourceType="Library"
-          flagUrl={buildFlagUrl({
-            category: 'library-resource-endorsement',
-            title: 'Flag: PQC Library',
-            resourceType: 'Library Page',
-            resourceId: 'PQC Library',
-            resourceDetails:
-              '**Page:** PQC Library — the standards, drafts and guidance that define post-quantum cryptography.',
-            pageUrl: '/library',
-          })}
-          flagLabel="Library Page"
-          flagResourceType="Library"
         />
       )}
-
-      <LibraryRoleLens
-        selectedPersona={selectedPersona}
-        onSelectPersona={(p: PersonaId) => setPersona(p)}
-      />
 
       <LibraryRecentlyChanged items={pipeline.activityItems} onOpen={openDetail} />
 

@@ -49,8 +49,8 @@
           },
           {
             "tMs": 34000,
-            "kind": "scroll-to",
-            "selector": "#personalization-section"
+            "kind": "spotlight",
+            "selector": "[data-workshop-target=\"persona-switch-open\"]"
           },
           {
             "tMs": 36000,
@@ -60,7 +60,7 @@
           {
             "tMs": 50000,
             "kind": "spotlight",
-            "selector": "[data-workshop-target=\"persona-edit\"]"
+            "selector": "[data-workshop-target=\"persona-switch-open\"]"
           },
           {
             "tMs": 56000,

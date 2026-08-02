@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BookOpenText, Search, X, ExternalLink } from 'lucide-react'
 import { Link } from 'react-router'
@@ -110,7 +111,18 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
     return Array.from(letters).sort()
   }, [glossaryTerms])
 
-  return (
+  // Not embedded (2026-08-01 bug fix — "clicking outside does not close the
+  // glossary box"): rendered inline before, nested deep inside MainLayout's
+  // top-bar button tree. A `fixed inset-0` backdrop only actually covers the
+  // full viewport when nothing between it and the document root introduces a
+  // new stacking/containing-block context (a CSS transform, filter, etc. on
+  // any ancestor breaks this silently) — confirmed via elementFromPoint that
+  // clicks in the page body were reaching page content, not this backdrop.
+  // Portal to document.body instead, the same fix PersonaSwitchModal.tsx
+  // already uses for the identical reason. Embedded mode is untouched — it
+  // deliberately uses `absolute` positioning relative to the embed container,
+  // which a body-level portal would break.
+  const content = (
     <>
       {/* Modal */}
       <AnimatePresence>
@@ -232,4 +244,6 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
       </AnimatePresence>
     </>
   )
+
+  return isEmbedded ? content : createPortal(content, document.body)
 }

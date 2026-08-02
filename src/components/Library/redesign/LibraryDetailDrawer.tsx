@@ -7,10 +7,12 @@
  * sections and replicates the CSWP-39 pillar rollup.
  */
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router'
 import { X, ExternalLink, Bookmark, Building2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { LibraryItem } from '@/data/libraryData'
 import { maturityByRefId } from '@/data/maturityGovernanceData'
+import { PILLAR_TO_ZONE } from '@/data/cswp39ZoneData'
 import { libraryEnrichments } from '@/data/libraryEnrichmentData'
 import { getTrustScore } from '@/data/trustScore'
 import { DocumentAnalysis } from '@/components/Library/DocumentAnalysis'
@@ -276,39 +278,72 @@ function DrawerPanel({
 
           {groupedMaturity.length > 0 && (
             <Section title="CSWP-39 requirements">
-              <div className="space-y-2">
-                {groupedMaturity.map((g) => (
-                  <div key={g.pillar}>
-                    <div className="mb-1 flex items-center gap-1.5">
-                      <span className="text-[12px] font-semibold capitalize text-foreground">
-                        {g.pillar}
-                      </span>
-                      <div className="flex gap-0.5" aria-hidden="true">
-                        {[1, 2, 3, 4].map((tier) => (
-                          <span
-                            key={tier}
-                            className={`h-1.5 w-1.5 rounded-full ${
-                              g.reqs.some((r) => r.maturityLevel === tier)
-                                ? 'bg-primary'
-                                : 'bg-muted'
-                            }`}
-                          />
-                        ))}
+              <div className="space-y-3">
+                {groupedMaturity.map((g) => {
+                  const zone = PILLAR_TO_ZONE[g.pillar]
+                  return (
+                    <div key={g.pillar}>
+                      <div className="mb-1 flex items-center gap-1.5">
+                        {/* Pillar badge restored as a click-through to its
+                            Command Center zone (design_handoff_2026_pages/
+                            IMPLEMENTATION-PLAN-LIBRARY-2026-08-01.md §3.2) —
+                            was removed with no replacement in this drawer. */}
+                        <Link
+                          to={`/business#zone-${zone}`}
+                          className="text-[12px] font-semibold capitalize text-foreground hover:text-primary hover:underline"
+                          title={`Open the ${zone} zone in Command Center`}
+                        >
+                          {g.pillar}
+                        </Link>
+                        <div className="flex gap-0.5" aria-hidden="true">
+                          {[1, 2, 3, 4].map((tier) => (
+                            <span
+                              key={tier}
+                              className={`h-1.5 w-1.5 rounded-full ${
+                                g.reqs.some((r) => r.maturityLevel === tier)
+                                  ? 'bg-primary'
+                                  : 'bg-muted'
+                              }`}
+                            />
+                          ))}
+                        </div>
                       </div>
+                      <ul className="space-y-1.5">
+                        {g.reqs.map((r, i) => (
+                          <li key={i} className="text-[12px] text-muted-foreground">
+                            <span className="font-mono text-[10.5px] text-primary">
+                              L{r.maturityLevel}
+                            </span>{' '}
+                            {r.requirement}
+                            {/* Evidence quote/location/confidence — present in
+                                the legacy table-view popover but never ported
+                                to this drawer (a real regression, not just a
+                                missing link). */}
+                            {r.evidenceQuote && (
+                              <blockquote className="mt-0.5 text-[11px] text-muted-foreground/80 border-l-2 border-border pl-2 italic line-clamp-3">
+                                {r.evidenceQuote}
+                              </blockquote>
+                            )}
+                            <div className="mt-0.5 flex items-center gap-2 text-[10px] text-muted-foreground/70">
+                              {r.evidenceLocation && <span>{r.evidenceLocation}</span>}
+                              {r.confidence && <span>· {r.confidence} confidence</span>}
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
-                    <ul className="space-y-0.5">
-                      {g.reqs.map((r, i) => (
-                        <li key={i} className="text-[12px] text-muted-foreground">
-                          <span className="font-mono text-[10.5px] text-primary">
-                            L{r.maturityLevel}
-                          </span>{' '}
-                          {r.requirement}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
+              {/* Evidence-reference deep link, restored (same plan §3.2) —
+                  jumps to this document's own governance evidence inside the
+                  CSWP.39 Agility explorer. */}
+              <Link
+                to={`/compliance?tab=cswp39&evref=${encodeURIComponent(item.referenceId)}`}
+                className="mt-2 inline-block text-[11px] font-medium text-primary hover:underline"
+              >
+                Open in CSWP.39 evidence map →
+              </Link>
             </Section>
           )}
 

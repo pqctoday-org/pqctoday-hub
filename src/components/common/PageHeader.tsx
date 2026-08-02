@@ -2,21 +2,11 @@
 import { useState, useRef, useEffect } from 'react'
 import type { ReactNode } from 'react'
 import type { LucideIcon } from 'lucide-react'
-import { MessageCircle, MoreHorizontal } from 'lucide-react'
+import { MoreHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { SourcesButton } from '@/components/ui/SourcesButton'
-import { ShareButton } from '@/components/ui/ShareButton'
-import { GlossaryButton } from '@/components/ui/GlossaryButton'
-import { FAQButton } from '@/components/ui/FAQButton'
-import { UserManualButton } from '@/components/ui/UserManualButton'
 import { ExportButton } from '@/components/ui/ExportButton'
 import { EndorseButton } from '@/components/ui/EndorseButton'
 import { FlagButton } from '@/components/ui/FlagButton'
-import { PersonaChip } from '@/components/Persona/PersonaChip'
-import { useRightPanelStore } from '@/store/useRightPanelStore'
-import type { ViewType } from '@/data/authoritativeSourcesData'
-import { useEmbedState } from '@/embed/EmbedProvider'
-import type { PageId } from '@/data/userManualData'
 
 interface PageHeaderProps {
   icon: LucideIcon
@@ -30,9 +20,6 @@ interface PageHeaderProps {
    * chart). `dataSource` is still used as the mobile-row fallback.
    */
   dataSourceNode?: ReactNode
-  viewType?: ViewType
-  shareTitle?: string
-  shareText?: string
   onExport?: () => void
   /** When provided, renders an EndorseButton in the action cluster */
   endorseUrl?: string
@@ -42,20 +29,12 @@ interface PageHeaderProps {
   flagUrl?: string
   flagLabel?: string
   flagResourceType?: string
-  /** When provided, renders a page-specific Guide button */
-  pageId?: PageId
   testId?: string
   /**
-   * Suppress the `SourcesButton` in the action cluster even when `viewType` is
-   * set. Used by /compliance, where provenance is surfaced inline via
-   * `TrustPathPopover` + the explicit external link grid (ux-standard P10).
-   */
-  suppressSources?: boolean
-  /**
    * Page-specific action(s) rendered inside the shared action cluster (both the
-   * desktop row and the mobile menu), alongside Glossary/Guide/Assistant. Pass
-   * small buttons so they sit naturally among the standard actions — e.g.
-   * /learn rides its Quiz entry here instead of building a bespoke header.
+   * desktop row and the mobile menu). Pass small buttons so they sit naturally
+   * among the standard actions — e.g. /learn rides its Quiz entry here instead
+   * of building a bespoke header.
    */
   actions?: ReactNode
 }
@@ -63,6 +42,14 @@ interface PageHeaderProps {
 /**
  * Standard page header used across all data pages.
  * Renders a centered title block with icon, subtitle, and data-source row + action buttons.
+ *
+ * Sources / Share / Glossary / FAQ / Guide / Assistant / role-switcher used to
+ * live here too, but the persona-journeys A-grade redesign's MainLayout top
+ * bar (2026-08-01) now renders all of those globally on every route — keeping
+ * them here as well just duplicated the same buttons in a second row directly
+ * underneath. This component now only renders what's genuinely page-specific
+ * and has no global equivalent: the data-source display, export, endorse/flag,
+ * and the `actions` passthrough slot.
  */
 export const PageHeader = ({
   icon: Icon,
@@ -70,9 +57,6 @@ export const PageHeader = ({
   description,
   dataSource,
   dataSourceNode,
-  viewType,
-  shareTitle,
-  shareText,
   onExport,
   endorseUrl,
   endorseLabel,
@@ -80,13 +64,9 @@ export const PageHeader = ({
   flagUrl,
   flagLabel,
   flagResourceType,
-  pageId,
   testId,
-  suppressSources,
   actions,
 }: PageHeaderProps) => {
-  const showSources = !!viewType && !suppressSources
-  const openChat = useRightPanelStore((s) => s.open)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const mobileMenuRef = useRef<HTMLDivElement>(null)
 
@@ -100,20 +80,11 @@ export const PageHeader = ({
     return () => document.removeEventListener('mousedown', handler)
   }, [mobileMenuOpen])
 
-  const hasActions =
-    dataSource ||
-    dataSourceNode ||
-    viewType ||
-    shareTitle ||
-    onExport ||
-    endorseUrl ||
-    flagUrl ||
-    pageId ||
-    actions
+  const hasActions = dataSource || dataSourceNode || onExport || endorseUrl || flagUrl || actions
 
-  const embedState = useEmbedState()
-  const showAssistant =
-    !embedState.isEmbedded || embedState.policy.features.assistantEnabled !== false
+  // Only `actions` and `onExport` live behind the mobile 3-dot menu now — no
+  // point showing an empty dropdown toggle when neither is present.
+  const hasMobileMenu = !!(actions || onExport)
 
   return (
     <div className="text-center mb-2 md:mb-12" data-testid={testId}>
@@ -149,47 +120,29 @@ export const PageHeader = ({
               variant="text"
             />
           )}
-          <div className="relative" ref={mobileMenuRef}>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setMobileMenuOpen((p) => !p)}
-              aria-label="More actions"
-              aria-expanded={mobileMenuOpen}
-              className="min-h-[44px] min-w-[44px] p-0"
-            >
-              <MoreHorizontal size={20} />
-            </Button>
-            {mobileMenuOpen && (
-              <div
-                className="absolute right-0 top-full mt-1 z-50 bg-popover border border-border rounded-lg shadow-xl p-2 flex flex-col gap-1 min-w-[180px]"
-                role="menu"
+          {hasMobileMenu && (
+            <div className="relative" ref={mobileMenuRef}>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setMobileMenuOpen((p) => !p)}
+                aria-label="More actions"
+                aria-expanded={mobileMenuOpen}
+                className="min-h-[44px] min-w-[44px] p-0"
               >
-                {showSources && <SourcesButton viewType={viewType!} />}
-                {shareTitle && <ShareButton title={shareTitle} text={shareText} />}
-                <GlossaryButton />
-                <FAQButton />
-                {pageId && <UserManualButton pageId={pageId} />}
-                {actions}
-                {onExport && <ExportButton onExport={onExport} />}
-                {showAssistant && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setMobileMenuOpen(false)
-                      openChat('chat')
-                    }}
-                    className="w-full justify-start gap-2 min-h-[44px]"
-                    role="menuitem"
-                  >
-                    <MessageCircle size={15} aria-hidden="true" />
-                    Assistant
-                  </Button>
-                )}
-              </div>
-            )}
-          </div>
+                <MoreHorizontal size={20} />
+              </Button>
+              {mobileMenuOpen && (
+                <div
+                  className="absolute right-0 top-full mt-1 z-50 bg-popover border border-border rounded-lg shadow-xl p-2 flex flex-col gap-1 min-w-[180px]"
+                  role="menu"
+                >
+                  {actions}
+                  {onExport && <ExportButton onExport={onExport} />}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 
@@ -197,10 +150,6 @@ export const PageHeader = ({
       {hasActions && (
         <div className="hidden md:flex justify-center items-center gap-3 text-[10px] md:text-xs text-muted-foreground font-mono">
           {dataSourceNode ?? (dataSource && <p>{dataSource}</p>)}
-          {showSources && <SourcesButton viewType={viewType!} />}
-          {shareTitle && <ShareButton title={shareTitle} text={shareText} />}
-          <GlossaryButton />
-          {pageId && <UserManualButton pageId={pageId} />}
           {actions}
           {onExport && <ExportButton onExport={onExport} />}
           {endorseUrl && (
@@ -217,18 +166,6 @@ export const PageHeader = ({
               resourceType={flagResourceType ?? 'Page'}
             />
           )}
-          {showAssistant && (
-            <Button
-              variant="ghost"
-              onClick={() => openChat('chat')}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 text-foreground text-sm font-medium transition-colors border border-primary/20"
-              aria-label="Open PQC Assistant"
-            >
-              <MessageCircle size={14} aria-hidden="true" />
-              <span>Assistant</span>
-            </Button>
-          )}
-          <PersonaChip />
         </div>
       )}
     </div>

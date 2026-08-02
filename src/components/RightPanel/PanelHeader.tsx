@@ -40,14 +40,21 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
 
   return (
     <div className="px-4 md:px-12 pt-4 pb-0 border-b border-border shrink-0">
-      <div className="flex items-center justify-between max-w-4xl mx-auto">
-        <div className="flex items-center gap-1" role="tablist">
+      <div className="flex items-center justify-between gap-1 max-w-4xl mx-auto">
+        {/* min-w-0 lets this flex child actually shrink below its content
+            width instead of forcing the sibling icon cluster off the visible
+            panel (2026-08-01 bug fix: "have to increase the width of the
+            window to reach the close/minimize icon" — the tab row's natural
+            width previously always won the fight for space against the
+            close button). overflow-x-auto lets tabs scroll internally at
+            narrow widths rather than clipping. */}
+        <div className="flex items-center gap-1 min-w-0 overflow-x-auto" role="tablist">
           {tabs.map((tab) => (
             <Button
               variant="ghost"
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className={`min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 flex items-center gap-1.5 px-3 py-2.5 text-sm font-medium rounded-t-lg border-b-2 transition-colors ${
+              className={`shrink-0 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 flex items-center gap-1.5 px-3 py-2.5 text-sm font-medium rounded-t-lg border-b-2 transition-colors ${
                 activeTab === tab.id
                   ? 'border-primary text-foreground'
                   : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
@@ -60,7 +67,10 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
             </Button>
           ))}
         </div>
-        <div className="flex items-center gap-1">
+        {/* shrink-0: this cluster (expand/minimize/close) must ALWAYS stay
+            fully visible and reachable, regardless of how little room the
+            tab list above is willing to give up. */}
+        <div className="flex items-center gap-1 shrink-0">
           {onToggleExpanded && (
             <Button
               variant="ghost"

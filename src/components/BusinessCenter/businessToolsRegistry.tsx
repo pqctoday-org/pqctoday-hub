@@ -330,6 +330,10 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
       'tnfl',
     ],
     cswp39Zone: 'migration',
+    // Best-effort assignment (2026-08-02) — this tool orchestrates the whole
+    // zone's activity, not one narrow contains[] item; 'Library upgrades' is
+    // the most representative single workstream it sequences.
+    cswp39ZoneSubElement: 'Library upgrades',
     cswp39SectionRef: '§3.2',
     cswp39SubSection: 'Algorithm transitions',
     frameworkPhase: 'p4',
@@ -368,6 +372,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     icon: Rocket,
     keywords: ['deployment', 'playbook', 'rollback', 'validation', 'rollout'],
     cswp39Zone: 'mitigation',
+    cswp39ZoneSubElement: 'Crypto gateway / bump-in-the-wire',
     cswp39SectionRef: '§4',
     cswp39SubSection: 'System implementations',
     frameworkPhase: 'p5',
@@ -528,6 +533,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
       'enforcement',
     ],
     cswp39Zone: 'management-tools',
+    cswp39ZoneSubElement: 'Log/SIEM',
     cswp39SectionRef: '§5',
     cswp39SubSection: 'Identify gaps in enterprise management tools',
     frameworkPhase: 'p1',
@@ -653,6 +659,12 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
       'mtc',
     ],
     cswp39Zone: 'mitigation',
+    // Weak fit (2026-08-02) — this tool's real content (PKI/HSM/KMS upgrade
+    // scheduling) sits closer to the migration zone's "Firmware updates" than
+    // anything in mitigation's contains[] list; kept in its existing zone
+    // (only the missing sub-element was in scope) but the zone assignment
+    // itself is worth a follow-up review.
+    cswp39ZoneSubElement: 'Network-layer re-encryption',
     cswp39SectionRef: '§6',
     cswp39SubSection: 'Infrastructure modernization',
     frameworkPhase: 'p6',
@@ -675,6 +687,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
       'alignment',
     ],
     cswp39Zone: 'migration',
+    cswp39ZoneSubElement: 'Firmware updates',
     cswp39SectionRef: '§4',
     cswp39SubSection: 'Roadmap — refresh-cycle alignment',
     frameworkPhase: 'p4',
@@ -696,6 +709,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
       'profile',
     ],
     cswp39Zone: 'migration',
+    cswp39ZoneSubElement: 'ACME / EST / CMP automation',
     cswp39SectionRef: '§4',
     cswp39SubSection: 'Roadmap — contingency',
     frameworkPhase: 'p4',
@@ -718,6 +732,10 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
       'strategy',
     ],
     cswp39Zone: 'mitigation',
+    // Weak fit (2026-08-02) — none of mitigation's contains[] items name
+    // data-at-rest directly; 'Mandatory sunset date' picked since
+    // crypto-shred/delete decisions here pair with a retention deadline.
+    cswp39ZoneSubElement: 'Mandatory sunset date',
     cswp39SectionRef: '§5',
     cswp39SubSection: 'Data-at-rest strategy',
     frameworkPhase: 'p5',
@@ -741,6 +759,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
       'tnfl',
     ],
     cswp39Zone: 'governance',
+    cswp39ZoneSubElement: 'Processes',
     cswp39SectionRef: '§5.5',
     cswp39SubSection: 'Migration verification & evidence',
     frameworkPhase: 'verify-close',

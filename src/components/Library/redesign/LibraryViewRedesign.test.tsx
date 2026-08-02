@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, beforeEach } from 'vitest'
-import { render, screen, fireEvent, within } from '@testing-library/react'
+import { render, screen, act, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { LibraryViewRedesign } from './LibraryViewRedesign'
 import { usePersonaStore } from '@/store/usePersonaStore'
-import { LIBRARY_PERSONA_SENTENCE } from '@/data/libraryPersonaConfig'
 
 function renderView(initial = '/library') {
   return render(
@@ -17,19 +16,16 @@ function renderView(initial = '/library') {
 beforeEach(() => usePersonaStore.getState().setPersona(null))
 
 describe('LibraryViewRedesign', () => {
-  it('renders the Role Lens and a populated results grid', () => {
+  it('renders a populated results grid and does not render its own persona picker', () => {
     renderView()
-    expect(screen.getByRole('radiogroup', { name: /viewing the library as/i })).toBeInTheDocument()
     // At least one document card opens the drawer (role=button with the refId).
     expect(screen.getAllByText(/document/i).length).toBeGreaterThan(0)
-  })
-
-  it('the Role Lens drives the "what this means for you" sentence', () => {
-    renderView()
-    const group = screen.getByRole('radiogroup', { name: /viewing the library as/i })
-    fireEvent.click(within(group).getByRole('radio', { name: 'Developer' }))
-    expect(screen.getByText(LIBRARY_PERSONA_SENTENCE.developer)).toBeInTheDocument()
-    expect(usePersonaStore.getState().selectedPersona).toBe('developer')
+    // The shared top-bar role switcher is the app's single global persona/role
+    // control (design program cross-cutting rule) — LibraryRoleLens was removed,
+    // so the page must not render a second one.
+    expect(
+      screen.queryByRole('radiogroup', { name: /viewing the library as/i })
+    ).not.toBeInTheDocument()
   })
 
   it('opens the detail drawer when a result card is clicked (?ref deep-link seam)', () => {
@@ -46,11 +42,15 @@ describe('LibraryViewRedesign', () => {
     expect(within(drawer).getByText('NIST-FIPS-140-3-IG-Sep-2025-PQC')).toBeInTheDocument()
   })
 
-  it('a persona narrows the grid to its focus areas (architect ≠ all docs)', () => {
+  it('a persona set globally (top-bar control) narrows the grid to its focus areas (architect ≠ all docs)', () => {
     renderView()
     const allCount = screen.getByText(/\d+ documents?/i).textContent
-    const group = screen.getByRole('radiogroup', { name: /viewing the library as/i })
-    fireEvent.click(within(group).getByRole('radio', { name: 'Architect' }))
+    // The page only reads selectedPersona now — persona changes come from the
+    // shared top-bar role switcher, so drive the store directly here rather
+    // than clicking a local control (LibraryRoleLens was removed).
+    act(() => {
+      usePersonaStore.getState().setPersona('architect')
+    })
     const narrowedCount = screen.getByText(/\d+ documents?/i).textContent
     expect(narrowedCount).not.toBeNull()
     // Architect has a non-empty preferred-category set, so the grid changes.

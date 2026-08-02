@@ -356,7 +356,7 @@ export const TimelineDocumentDetailPopover = ({
               {/* Document Analysis — enriched base dimensions */}
               {isEnriched && <DocumentAnalysis enrichment={enrichment} />}
 
-              {/* Timeline Analysis — timeline-specific dimensions */}
+              {/* 8-dimension enrichment analysis — timeline-specific dimensions */}
               {isEnriched && <TimelineAnalysisPanel enrichment={enrichment} />}
             </div>
           </div>

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { ExternalLink, Calendar, Sparkles, ChevronDown, ChevronUp } from 'lucide-react'
+import { ExternalLink, Calendar } from 'lucide-react'
 import { createPortal } from 'react-dom'
 import clsx from 'clsx'
 import FocusLock from 'react-focus-lock'
@@ -9,7 +9,7 @@ import {
   TIMELINE_COUNTRY_DEADLINE_MANDATE_BY_NAME,
   type DeadlineMandate,
 } from '../../data/timelineFacts.generated'
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef } from 'react'
 import { StatusBadge } from '../common/StatusBadge'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { EndorseButton } from '../ui/EndorseButton'
@@ -24,7 +24,6 @@ import { TimelineAnalysisPanel } from './TimelineAnalysisPanel'
 import { TimelineEvidenceBadge } from './TimelineEvidenceBadge'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
-import { Button } from '@/components/ui/button'
 
 interface GanttDetailPopoverProps {
   isOpen: boolean
@@ -36,15 +35,6 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
   const popoverRef = useRef<HTMLDivElement>(null)
   const isEmbedded = useIsEmbedded()
   const positionStyle = useModalPosition(isEmbedded)
-
-  // Track which phase's analysis panel is expanded so it auto-collapses on phase change
-  const [analysisOpenForPhase, setAnalysisOpenForPhase] = useState<string | null>(null)
-  const analysisOpen = analysisOpenForPhase === phase?.title
-  const toggleAnalysis = useCallback(
-    () =>
-      setAnalysisOpenForPhase((prev) => (prev === phase?.title ? null : (phase?.title ?? null))),
-    [phase?.title]
-  )
 
   // Close on click outside
   useEffect(() => {
@@ -192,61 +182,9 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
                 </p>
               </div>
 
-              {/* Collapsible enrichment section */}
-              {isEnriched && enrichment && (
-                <div className="border-t border-border">
-                  <Button
-                    variant="ghost"
-                    type="button"
-                    onClick={toggleAnalysis}
-                    className="w-full flex items-center justify-between pt-2 pb-1 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider hover:text-accent transition-colors group"
-                    aria-expanded={analysisOpen}
-                  >
-                    <span className="flex items-center gap-1">
-                      <Sparkles size={9} aria-hidden="true" />
-                      Analysis
-                    </span>
-                    <span className="flex items-center gap-1 text-accent">
-                      <span className="text-[9px] normal-case font-normal">
-                        {analysisOpen ? 'collapse' : 'expand'}
-                      </span>
-                      {analysisOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-                    </span>
-                  </Button>
-
-                  {!analysisOpen && (
-                    <div className="pb-2 space-y-1.5">
-                      {enrichment.mainTopic && (
-                        <p className="text-xs text-foreground leading-relaxed line-clamp-3">
-                          {enrichment.mainTopic}
-                        </p>
-                      )}
-                      <div className="flex flex-wrap gap-1.5">
-                        {enrichment.mandateLevel && (
-                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-accent/10 text-accent border border-accent/20">
-                            {enrichment.mandateLevel}
-                          </span>
-                        )}
-                        {enrichment.migrationUrgency && (
-                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-status-warning/10 text-status-warning border border-status-warning/20">
-                            {enrichment.migrationUrgency}
-                          </span>
-                        )}
-                        {enrichment.sectorApplicability?.slice(0, 3).map((s) => (
-                          <span
-                            key={s}
-                            className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] bg-muted/30 text-muted-foreground border border-border"
-                          >
-                            {s}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {analysisOpen && <TimelineAnalysisPanel enrichment={enrichment} />}
-                </div>
-              )}
+              {/* Enrichment section — renders directly, no extra click (Phase 8.5:
+                  matches TimelineDocumentDetailPopover's zero-extra-click depth). */}
+              {isEnriched && enrichment && <TimelineAnalysisPanel enrichment={enrichment} />}
 
               {/* Detail grid: 2×2 on small screens, 4-col inline on sm+ */}
               <div className="pt-3 border-t border-border">
