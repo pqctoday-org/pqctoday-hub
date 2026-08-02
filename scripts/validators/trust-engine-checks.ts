@@ -746,6 +746,107 @@ async function runCmT(): Promise<CheckResult[]> {
   ]
 }
 
+// ── CM-T-04: Compliance-landscape trusted_source_id resolution ───────────────
+// ADDED 2026-08-01 (maintenance-agent-framework-audit-08012026.md, finding T7):
+// CM-T-02 only ever checked timeline; compliance-landscape has the identical
+// referential-integrity risk (a row's trusted_source_id can drift or be
+// mistyped and nothing catches it) and the live audit found 29 such rows.
+// This generalizes CM-T-02's resolution check to compliance, reusing the
+// same trusted_sources registry lookup.
+//
+// SEVERITY (2026-08-02): the 29 rows this surfaces name 28 distinct real
+// regulators — EIOPA, NCSC Switzerland, RBI, OCC, FAA, CCRA, OSCCA, and 21
+// national data-protection and cyber authorities — that simply have no entry
+// in the 845-row trusted_sources registry yet. Closing that needs 28
+// proof-gated registry rows, each with a verified source document; inventing
+// them to turn the check green would be exactly the fabrication the proof gate
+// exists to prevent. So this follows CM-AT's established convention for the
+// same class of debt rather than blocking every push on a backlog it cannot
+// fix: the existing rows are a WARNING, and any row verified on or after the
+// cutoff must resolve or it is an ERROR. Remediation is tracked as its own
+// data task, not as a release blocker.
+const CM_T_04_CUTOFF = '2026-08-02'
+
+async function runCmCompliance04(): Promise<CheckResult> {
+  const complianceFiles = await glob('src/data/compliance_*.csv', { cwd: REPO_ROOT })
+  complianceFiles.sort()
+  const latestCompliance = complianceFiles.at(-1)
+  if (!latestCompliance)
+    return pass(
+      'CM-T-04',
+      'Compliance trusted_source_id resolves in trusted_sources CSV',
+      'src/data/compliance_*.csv'
+    )
+
+  const trustedSourceFiles = await glob('src/data/trusted_sources_*.csv', { cwd: REPO_ROOT })
+  trustedSourceFiles.sort()
+  const latestTrusted = trustedSourceFiles.at(-1)
+
+  const knownSourceIds = new Set<string>()
+  if (latestTrusted) {
+    const trustedRaw = fs.readFileSync(path.join(REPO_ROOT, latestTrusted), 'utf-8')
+    const { data: trustedRows } = Papa.parse<Record<string, string>>(trustedRaw, {
+      header: true,
+      skipEmptyLines: true,
+    })
+    for (const r of trustedRows) {
+      if (r['source_id']?.trim()) knownSourceIds.add(r['source_id'].trim())
+    }
+  }
+
+  const complianceRaw = fs.readFileSync(path.join(REPO_ROOT, latestCompliance), 'utf-8')
+  const { data: complianceRows } = Papa.parse<Record<string, string>>(complianceRaw, {
+    header: true,
+    skipEmptyLines: true,
+  })
+
+  const errorFindings: Finding[] = []
+  const warnFindings: Finding[] = []
+  for (const row of complianceRows) {
+    if ((row['status'] ?? 'active').trim() === 'deprecated') continue
+    const label = row['label'] ?? row['id'] ?? ''
+    const srcId = (row['trusted_source_id'] ?? '').trim()
+    if (srcId && knownSourceIds.size > 0 && !knownSourceIds.has(srcId)) {
+      const date = (row['last_verified_date'] ?? '').trim()
+      const finding: Finding = {
+        csv: latestCompliance,
+        row: null,
+        field: 'trusted_source_id',
+        value: label,
+        message:
+          `"${label}" has unresolved trusted_source_id: "${srcId}"` +
+          (date ? ` (last_verified_date=${date})` : ''),
+      }
+      // Same split CM-AT already applies to the identical class of debt: the
+      // existing backlog is a WARNING, anything newer than the cutoff is an
+      // ERROR, so the gap is visible without being able to grow.
+      if (date && date >= CM_T_04_CUTOFF) errorFindings.push(finding)
+      else warnFindings.push(finding)
+    }
+  }
+
+  if (errorFindings.length > 0)
+    return fail(
+      'CM-T-04',
+      `Compliance trusted_source_id must resolve for rows last_verified_date >= ${CM_T_04_CUTOFF}`,
+      latestCompliance,
+      errorFindings
+    )
+  if (warnFindings.length > 0)
+    return fail(
+      'CM-T-04',
+      `Compliance trusted_source_id unresolved in trusted_sources (data debt; cutoff for new rows: ${CM_T_04_CUTOFF})`,
+      latestCompliance,
+      warnFindings,
+      'WARNING'
+    )
+  return pass(
+    'CM-T-04',
+    'Compliance trusted_source_id resolves in trusted_sources CSV',
+    latestCompliance
+  )
+}
+
 // ── CM-TS: Trust-tier vocabulary normalisation ───────────────────────────────
 
 const ALLOWED_TIERS = new Set(['1_Authoritative', '2_Core', '3_Supporting', '4_Contextual'])
@@ -1791,7 +1892,7 @@ async function runCmXwalk(): Promise<CheckResult[]> {
 // ── Entry point ──────────────────────────────────────────────────────────────
 
 export async function runTrustEngineChecks(): Promise<CheckResult[]> {
-  const [cm1, cm2, cm3, cmE, cmCswp, cmG, cmT, cmTs, cmAt, cmF, cmXw, cmAx, cmRg, cmCn] =
+  const [cm1, cm2, cm3, cmE, cmCswp, cmG, cmT, cmT04, cmTs, cmAt, cmF, cmXw, cmAx, cmRg, cmCn] =
     await Promise.all([
       runCm1(),
       runCm2(),
@@ -1800,6 +1901,7 @@ export async function runTrustEngineChecks(): Promise<CheckResult[]> {
       runCmCswp(),
       runCmG(),
       runCmT(),
+      runCmCompliance04(),
       runCmTs(),
       runCmAt(),
       runCmF(),
@@ -1820,6 +1922,7 @@ export async function runTrustEngineChecks(): Promise<CheckResult[]> {
     cmCswp,
     cmG,
     ...cmT,
+    cmT04,
     cmTs,
     ...cmAt,
     ...cmF,

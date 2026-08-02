@@ -216,6 +216,16 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
             icon={TrendingUp}
             title="PQC Migration Workbench"
             description="Start from what you run — get a sequenced, quantum-safe plan aligned to NIST IR 8547 (Initial Public Draft) & CNSA 2.0."
+            // NOTE (merge, 2026-08-02): this branch added viewType="Migrate"
+            // and a dataSource prop here to give the catalog's 907
+            // trusted_source_id-backed rows a Sources button and a visible
+            // snapshot date. Both landed on main first, via 4.38.0's
+            // page-action-strip rollout — MainLayout's ROUTE_VIEW_TYPE now maps
+            // '/migrate' -> 'Migrate' (global top-bar Sources button), and this
+            // component's own setPageActions() effect above already passes the
+            // same softwareMetadata-derived dataSource string. Re-adding them
+            // here would render both controls twice, which is exactly what that
+            // rollout existed to stop.
           />
           {hasSelection && (
             <ShareButton

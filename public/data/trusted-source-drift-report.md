@@ -1,0 +1,864 @@
+# Trusted-Source Freshness Report
+
+Generated: 2026-08-01T21:48:40.145Z
+Mode: baseline (initial run)
+Sources audited: 845 / 845
+
+## Drift detected (3)
+
+- **cmu-cylab** — https://www.cylab.cmu.edu/
+  - old: `4336509a21db1d24…`
+  - new: `5c1236a4c9ac9405…`
+- **mpi-sp** — https://www.mpi-sp.org/
+  - old: `3a6b93bfa49f5849…`
+  - new: `bf15b1b86b7d341b…`
+- **brno-ut** — https://www.vut.cz/en/
+  - old: `4fb86dd2915ed850…`
+  - new: `7360093caef9f67c…`
+
+## New sources (727)
+
+- duke-qc — https://quantum.duke.edu/
+- yale-qi — https://quantuminstitute.yale.edu/
+- vtech-cyber — https://cyber.vt.edu/
+- usd-crypto — https://cseweb.ucsd.edu/~nadiah/
+- ibm-research — https://www.ibm.com/quantum/quantum-safe
+- q360-alliance — https://www.ibm.com/consulting
+- resque — https://www.thalesgroup.com/
+- pqshield — https://pqshield.com/
+- sandboxaq — https://www.sandboxaq.com/
+- qusecure — https://qusecure.com/
+- qrypt — https://www.qrypt.com/
+- cryptonext — https://www.cryptonext-security.com/
+- cryptoexperts — https://www.cryptoexperts.com/
+- quantinuum — https://www.quantinuum.com/
+- kudelski-iot — https://www.kudelski-iot.com/
+- intellect-eu — https://www.intellecteu.com/
+- crypto-quantique — https://www.cryptoquantique.com/
+- xiphera — https://www.xiphera.com/
+- resquant — https://resquant.com/
+- sixscape — https://www.sixscape.com/
+- mcgill-crypto — https://crypto.cs.mcgill.ca/
+- ntnu-crypto — https://www.ntnu.edu/
+- u-ryukyu — https://www.u-ryukyu.ac.jp/en/
+- u-limoges-xlim — https://www.xlim.fr/en
+- iiit-kurnool — https://www.iiitk.ac.in/
+- nist-csrc — https://csrc.nist.gov/projects/post-quantum-cryptography
+- nist-news — https://www.nist.gov/news-events
+- cisa — https://www.cisa.gov/quantum
+- bsi — https://www.bsi.bund.de/EN/Themen/Unternehmen-und-Organisationen/Informationen-und-Empfehlungen/Quantentechnologien-und-Post-Quanten-Kryptografie/quantentechnologien-und-post-quanten-kryptografie_node.html
+- anssi — https://cyber.gouv.fr/en/
+- ncsc-uk — https://www.ncsc.gov.uk/whitepaper/quantum-safe-cryptography
+- enisa — https://www.enisa.europa.eu/topics/cryptography
+- cccs — https://cyber.gc.ca/en/
+- fed-reserve — https://www.federalreserve.gov/econres/feds/
+- ietf — https://datatracker.ietf.org/
+- etsi-cyber — https://www.etsi.org/technologies/quantum-safe-cryptography
+- ieee-sa — https://standards.ieee.org/
+- pki-consortium — https://pkic.org/
+- tcg — https://trustedcomputinggroup.org/
+- mit-csail — https://dci.mit.edu/
+- stanford-acg — https://crypto.stanford.edu/
+- uwaterloo-iqc — https://uwaterloo.ca/institute-for-quantum-computing/
+- eth-zurich-crypto — https://crypto.ethz.ch/
+- inria-crypto — https://www.inria.fr/en
+- ku-leuven-cosic — https://www.esat.kuleuven.be/cosic/
+- u-toronto-sg — https://www.utoronto.ca/
+- tsinghua-ql — https://www.tsinghua.edu.cn/en/
+- nus-cqt — https://www.quantumlah.org/
+- u-tokyo-q — https://www.u-tokyo.ac.jp/en/
+- abi-research — https://www.abiresearch.com/
+- thales-research — https://cpl.thalesgroup.com/resources
+- csa-cloud — https://cloudsecurityalliance.org/
+- owasp — https://owasp.org/
+- lf-qsc — https://www.linuxfoundation.org/
+- oqs-project — https://openquantumsafe.org/
+- nist-ir — https://csrc.nist.gov/publications/search
+- cmvp — https://csrc.nist.gov/projects/cryptographic-module-validation-program
+- ncsc-nl — https://www.ncsc.nl/
+- cccs-crypto-std — https://www.cyber.gc.ca/en/guidance/cryptographic-algorithms-unclassified-protected-protected-b-information-itsp40111
+- cryptrec — https://www.cryptrec.go.jp/en/
+- csa-singapore — https://www.csa.gov.sg/
+- atarc — https://www.atarc.org/
+- fips-repo — https://csrc.nist.gov/publications/fips
+- arxiv-crypto — https://arxiv.org/list/cs.CR/recent
+- iacr-eprint — https://eprint.iacr.org/
+- bundesdruckerei — https://www.bundesdruckerei.de/en
+- qc-report — https://quantumcomputingreport.com/
+- g7-ceg — https://home.treasury.gov/news/press-releases/sb0355
+- cisa-pqc-products — https://www.cisa.gov/resources-tools/resources/product-categories-technologies-use-post-quantum-cryptography-standards
+- eth-foundation — https://ethereum.org/
+- ascx9 — https://x9.org/
+- ec — https://digital-strategy.ec.europa.eu/
+- nato — https://www.nato.int/
+- fda — https://www.fda.gov/
+- fbi — https://www.fbi.gov/
+- ftc — https://www.ftc.gov/
+- omb — https://www.whitehouse.gov/omb/
+- us-treasury — https://home.treasury.gov/
+- disa — https://www.disa.mil/
+- hkma — https://www.hkma.gov.hk/
+- boe — https://www.bankofengland.co.uk/
+- bdf — https://www.banque-france.fr/
+- bundesbank — https://www.bundesbank.de/
+- nukib — https://www.nukib.cz/
+- nlncsa — https://www.ncsc.nl/
+- sncsa-sweden — https://www.msb.se/
+- saudi-nca — https://nca.gov.sa/
+- desc-dubai — https://www.desc.gov.ae/
+- cert-in — https://www.cert-in.org.in/
+- nacsa-malaysia — https://www.nacsa.gov.my/
+- imda-singapore — https://www.imda.gov.sg/
+- oasis — https://www.oasis-open.org/
+- pci-ssc — https://www.pcisecuritystandards.org/
+- emvco — https://www.emvco.com/
+- fido-alliance — https://fidoalliance.org/
+- gsma — https://www.gsma.com/
+- rtca — https://www.rtca.org/
+- openssf — https://openssf.org/
+- google — https://cloud.google.com/security/encryption-in-transit
+- microsoft — https://www.microsoft.com/en-us/security/
+- cloudflare — https://www.cloudflare.com/
+- digicert — https://www.digicert.com/
+- keyfactor — https://www.keyfactor.com/
+- ntt-research — https://ntt-research.com/
+- bis — https://www.bis.org/
+- icao — https://www.icao.int/
+- era-rail — https://www.era.europa.eu/
+- imo — https://www.imo.org/
+- wco — https://www.wcoomd.org/
+- nerc — https://www.nerc.com/
+- naic — https://www.naic.org/
+- nydfs — https://www.dfs.ny.gov/
+- dcsa — https://dcsa.org/
+- awwa — https://www.awwa.org/
+- gri — https://globalriskinstitute.org/
+- u-toronto — https://ece.utoronto.ca/
+- tu-darmstadt — https://www.tu-darmstadt.de/
+- cwi-amsterdam — https://www.cwi.nl/
+- amazon-aws — https://aws.amazon.com/
+- apple — https://developer.apple.com/
+- cisco-systems — https://www.cisco.com/
+- openssl-project — https://www.openssl.org/
+- wolfssl — https://www.wolfssl.com/
+- bouncy-castle — https://www.bouncycastle.org/
+- fortinet — https://www.fortinet.com/
+- palo-alto — https://www.paloaltonetworks.com/
+- juniper-networks — https://www.juniper.net/
+- red-hat — https://www.redhat.com/
+- secg — https://www.secg.org/
+- bitcoin-core — https://bitcoin.org/
+- satoshilabs — https://satoshilabs.com/
+- rosenpass — https://rosenpass.eu/
+- radboud-university — https://www.ru.nl/
+- federal-reserve — https://www.federalreserve.gov/
+- geneva-association — https://www.genevaassociation.org/
+- ccss — https://cryptoconsortium.org/standards/CCSS/
+- aacs — https://www.aacsla.com/
+- dvb-project — https://www.dvb.org/
+- forescout — https://www.forescout.com/
+- gip-acyma — https://www.cybermalveillance.gouv.fr/
+- secom — https://www.secom.co.jp/
+- pqstation — https://pqstation.com/
+- aicpa — https://www.aicpa-cima.com/
+- tbs-canada — https://www.tbs-sct.gc.ca/
+- china-telecom — https://www.chinatelecom.com.cn/
+- hk-legco — https://www.legco.gov.hk/
+- c4ir-saudi — https://www.c4irsaudiarabia.org/
+- pasqal — https://www.pasqal.com/
+- mozilla — https://www.mozilla.org/
+- sap — https://www.sap.com/
+- strongswan — https://strongswan.org/
+- openssh — https://openssh.com/
+- github — https://github.com
+- itu — https://www.itu.int/en/ITU-T/
+- intel — https://www.intel.com/content/www/us/en/research/quantum-computing.html
+- uefi-forum — https://uefi.org
+- signal — https://signal.org/blog/pqxdh/
+- btq — https://www.btq.com
+- algorand — https://algorand.foundation/
+- idemia — https://www.idemia.com
+- adva — https://www.adtran.com
+- mitre — https://pqc-coalition.org
+- etsi — https://www.etsi.org
+- w3c — https://www.w3.org
+- nzism — https://www.nzism.gcsb.govt.nz
+- sectigo — https://www.sectigo.com
+- google-quantum-ai — https://quantumai.google
+- applied-quantum — https://www.appliedquantum.com
+- cambridge-jbs — https://www.jbs.cam.ac.uk
+- charter-of-trust — https://www.charteroftrust.com
+- deloitte — https://www2.deloitte.com
+- forrester — https://www.forrester.com
+- ibm-ibv — https://www.ibm.com/thought-leadership/institute-business-value
+- infosec-global — https://www.infosecglobal.com
+- meta-engineering — https://engineering.fb.com
+- microsoft-security — https://www.microsoft.com/en-us/security
+- oasis-open — https://www.oasis-open.org
+- fireblocks — https://www.fireblocks.com/
+- hyperledger — https://www.hyperledger.org/
+- openid-foundation — https://openid.net/
+- niap — https://www.niap-ccevs.org/
+- coinbase — https://www.coinbase.com/
+- ledger-wallet — https://www.ledger.com/
+- anchorage-digital — https://www.anchorage.com/
+- dfns — https://www.dfns.co/
+- bitgo — https://www.bitgo.com/
+- zodia — https://zodia-custody.com/
+- komainu — https://www.komainu.com/
+- copper-crypto — https://copper.co/
+- cardano-iohk — https://iohk.io/
+- polkadot — https://web3.foundation/
+- taurus-group — https://www.taurushq.com/
+- avax-foundation — https://www.avax.network/
+- sui-foundation — https://sui.io/
+- solana-foundation — https://solana.org/
+- iota-foundation — https://www.iota.org/
+- cosmos-interchain — https://cosmos.network/
+- jpmorganchase — https://www.jpmorgan.com/
+- epc-eu — https://www.europeanpaymentscouncil.eu/
+- cabf — https://cabforum.org/
+- csc-cloudsig — https://cloudsignatureconsortium.org/
+- fpki — https://www.idmanagement.gov/fpki/
+- 3gpp — https://www.3gpp.org/
+- msit-korea — https://www.msit.go.kr/
+- ccn-spain — https://www.ccn.cni.es/
+- moda-uae — https://moda.gov.tw
+- mas-singapore — https://www.mas.gov.sg/
+- tii-uae — https://www.tii.ae/
+- iti-dc — https://www.itic.org/
+- auc-africa — https://au.int/
+- ndpc-nigeria — https://ndpc.gov.ng/
+- odpc-kenya — https://www.odpc.go.ke/
+- ised-canada — https://ised-isde.canada.ca/
+- cac-china — https://www.cac.gov.cn/
+- europol — https://www.europol.europa.eu/
+- nedo-japan — https://www.nedo.go.jp/
+- dsit-uk — https://www.gov.uk/government/organisations/department-for-science-innovation-and-technology
+- mcit — https://www.mcit.gov.sa/
+- sealsq — https://www.sealsq.com/
+- cmorg — https://www.bankofengland.co.uk/
+- tno-nl — https://www.tno.nl/
+- 5g-americas — https://www.5gamericas.org/
+- gsa-us — https://www.gsa.gov/
+- us-tsa — https://www.tsa.gov/
+- epa-us — https://www.epa.gov/
+- us-doe-ed — https://www.ed.gov/
+- internet2 — https://internet2.edu/
+- apnic — https://www.apnic.net/
+- viavi — https://www.viavisolutions.com/
+- boi-israel — https://www.boi.org.il/
+- ponemon — https://www.ponemon.org/
+- appviewx — https://www.appviewx.com/
+- venafi — https://venafi.com/
+- apra — https://www.apra.gov.au/
+- oaic — https://www.oaic.gov.au/
+- osfi — https://www.osfi-bsif.gc.ca/
+- uk-dsit — https://www.gov.uk/government/organisations/department-for-science-innovation-and-technology
+- pra-uk — https://www.bankofengland.co.uk/prudential-regulation
+- ico-uk — https://ico.org.uk/
+- nsm-norway — https://nsm.no/
+- msb-sweden — https://www.msb.se/en
+- ncsc-fi — https://www.kyberturvallisuuskeskus.fi/en
+- onti-argentina — https://www.argentina.gob.ar/jefatura/innovacion-publica
+- bacen-brazil — https://www.bcb.gov.br/
+- acpr-france — https://acpr.banque-france.fr/
+- amf-france — https://www.amf-france.org/en
+- ietf-rfc-series — https://www.rfc-editor.org/
+- ietf-internet-drafts — https://datatracker.ietf.org/
+- common-criteria-portal — https://www.commoncriteriaportal.org/
+- spdx-project — https://spdx.dev/
+- owasp-cyclonedx — https://cyclonedx.org/
+- oasis-csaf — https://www.oasis-open.org/committees/csaf/
+- eff — https://www.eff.org/
+- banque-de-france — https://www.banque-france.fr/
+- acs-australia — https://www.acs.org.au/
+- project-eleven — https://www.projecteleven.com/
+- gopher-security — https://www.gopher.security/
+- quantum-xchange — https://quantumxc.com/
+- circle — https://www.circle.com/
+- spherity — https://www.spherity.com/
+- quantum-security-defence — https://www.quantumsecuritydefence.com/
+- labour-tech — https://labour-tech.org.uk/
+- citi-gps — https://www.citigroup.com/global/insights
+- quantum-insider — https://thequantuminsider.com/
+- quantum-computing-report — https://quantumcomputingreport.com/
+- quantum-zeitgeist — https://quantumzeitgeist.com/
+- ars-technica — https://arstechnica.com/
+- yahoo-finance — https://finance.yahoo.com/
+- dst-india — https://dst.gov.in/
+- eur-lex — https://eur-lex.europa.eu/
+- es-moncloa — https://www.lamoncloa.gob.es/
+- nl-aivd — https://english.aivd.nl/
+- psnc-poland — https://www.psnc.pl/
+- sa-quti — https://saquti.org/
+- cl-minciencia — https://www.minciencia.gob.cl/
+- cybernetica-ee — https://cyber.ee/
+- telefonica — https://www.telefonica.com/
+- 1password-inc — https://1password.com
+- 6wind-sa — https://www.6wind.com
+- a10-networks-inc — https://www.a10networks.com/
+- adguard — https://adguard-dns.io
+- adobe-inc — https://adobe.com
+- africa-quantum-consortium — https://africaquantum.org
+- african-institute-for-mathematical-sciences-aims — https://qla.aimsric.org
+- age-project — https://age-encryption.org
+- alibaba-cloud — https://www.alibabacloud.com
+- alpine-linux-project — https://alpinelinux.org
+- american-binary — https://www.americanbinary.com
+- anchorage-digital-bank — https://anchorage.com
+- angelatek-ltd — https://angelatek.com/
+- animo-solutions-bv — https://animo.id
+- apache-software-foundation — https://apache.org
+- applivery — https://www.applivery.com
+- appviewx-inc — https://appviewx.com
+- arch-linux-project — https://archlinux.org
+- archtis-limited — https://www.archtis.com
+- arctera-us-llc — https://www.arctera.io/
+- arista-networks-inc — https://arista.com
+- arm-holdings-plc — https://arm.com
+- arqit-quantum-inc — https://arqit.uk
+- ascertia-ltd — https://www.ascertia.com/
+- asustek-computer-inc — https://www.asus.com
+- asustor-inc — https://www.asustor.com
+- att-enterprises — https://www.business.att.com
+- ava-labs-avalanche-foundation — https://avax.network
+- barracuda-networks — https://www.barracuda.com
+- best-pqc-intelligent-cybersecurity-ltd — https://bestpqc.com
+- bitgo-inc — https://bitgo.com
+- bitvise — https://www.bitvise.com
+- bitwarden-inc — https://bitwarden.com
+- blackberry-limited — https://blackberry.com
+- botan-project — https://botan.randombit.net
+- bradesco-sa-banco-bradesco — https://banco.bradesco
+- brave-software — https://brave.com
+- broadcom — https://www.broadcom.com
+- broadcom-inc — https://broadcom.com
+- bytedance-ltd — https://www.bytedance.com
+- caddy-project — https://caddyserver.com
+- canonical-ltd — https://canonical.com
+- cato-networks — https://www.catonetworks.com
+- cdxgen-project — https://github.com/CycloneDX/cdxgen
+- cellcrypt-limited — https://www.cellcrypt.com
+- centre-for-development-of-telematics — https://www.cdot.in/
+- centre-for-development-of-telematics-c-dot — https://www.cdot.in
+- cgi-federal-inc — https://www.cgi.com/us/en-us/federal
+- chainguard-inc — https://www.chainguard.dev
+- check-point-software-technologies-ltd — https://checkpoint.com
+- checkmarx — https://checkmarx.com
+- chelpis-quantum-corp — https://www.chelpis.com
+- china-telecom-corporation-limited — https://www.chinatelecom-h.com
+- chrony-project — https://chrony-project.org
+- chunghwa-telecom-labs — https://www.chttl.com.tw/en/
+- cipherplus-pte-ltd — https://www.cipherplus.io/
+- circleci-llc — https://circleci.com
+- citrix-systems-inc — https://citrix.com
+- claroty-ltd — https://claroty.com
+- cloud-native-computing-foundation — https://cncf.io
+- cloudera-inc — https://www.cloudera.com/
+- cockroachdb-inc — https://cockroachlabs.com
+- code-siren-llc — https://www.codesiren.com
+- codebat-technologies-inc — https://codebat.ai/
+- cohesity — https://www.cohesity.com
+- coinbase-inc — https://coinbase.com
+- commvault — https://www.commvault.com
+- confluent-inc — https://www.confluent.io
+- copper-technologies-ltd — https://copper.co
+- coreboot-project — https://coreboot.org
+- cranium-inc — https://cranium.ai
+- credebl-community — https://credebl.id
+- crowdstrike-holdings-inc — https://crowdstrike.com
+- crypto-quantique-ltd — https://www.cryptoquantique.com
+- crypto4a-technologies-inc — https://crypto4a.com
+- cryptomathic-a-s — https://cryptomathic.com
+- cryptsoft-pty-ltd — https://www.cryptsoft.com/
+- cryspen — https://cryspen.com
+- ctera-networks-ltd — https://www.ctera.com/
+- ctrl-iq — https://ciq.com
+- curl-project-daniel-stenberg — https://curl.se
+- cyberark-software-ltd — https://cyberark.com
+- cybernetica-as — https://cyber.ee
+- cybersecurityhubcz-czech-republic — https://www.cybersecurityhub.cz
+- cyberzero — https://cyberzero.io
+- czertainly-sro — https://www.czertainly.com/
+- dashlane — https://www.dashlane.com
+- debian-project — https://debian.org
+- deciso-bv — https://deciso.com
+- delinea-inc — https://delinea.com
+- dell-technologies — https://www.dell.com
+- department-of-science-and-technology-dst-india — https://dst.gov.in
+- descope-inc — https://descope.com
+- dfns-sas — https://www.dfns.co
+- dinamo-cyber-security — https://dinamosec.com
+- docker — https://www.docker.com
+- docusign-inc — https://docusign.com
+- dragos-inc — https://dragos.com
+- druva — https://www.druva.com
+- duckduckgo — https://duckduckgo.com
+- eclipse-foundation — https://eclipse.org
+- eigenq-inc — https://www.eigenq.com
+- elastic-nv — https://elastic.co
+- element-hq-ltd — https://element.io
+- emirates-telecommunications-group-company-e — https://eand.com
+- enquantum-ltd — https://www.enquantum.com
+- essendi-it-gmbh — https://www.essendi.de
+- etas-gmbh-robert-bosch-subsidiary — https://www.etas.com
+- ethereum-foundation — https://ethereum.foundation
+- evertrust-sas — https://evertrust.io/
+- eviden-sas-atos-group — https://eviden.com
+- evolutionq-inc — https://evolutionq.com
+- f5-inc — https://www.f5.com/
+- f5-inc-2 — https://f5.com
+- fastly-inc — https://www.fastly.com
+- fenasbac-federation-of-brazilian-banks — https://fenasbac.com.br
+- fireblocks-inc — https://fireblocks.com
+- fis — https://www.fisglobal.com
+- forcepoint — https://www.forcepoint.com
+- fortanix-inc — https://fortanix.com
+- fortifyiq-inc — https://fortifyiq.com
+- forward-edge-ai-inc — https://forwardedge-ai.com
+- forward-networks-inc — https://www.forwardnetworks.com
+- fraunhofer-institute-for-secure-information-technology-dyber-project — https://www.sit.fraunhofer.de
+- freebsd-foundation — https://freebsdfoundation.org
+- fujitsu-limited — https://www.fujitsu.com
+- fusionauth-inc — https://fusionauth.io
+- futurex-lp — https://futurex.com
+- galileo-technologies-inc — https://rungalileo.io
+- garantir-inc — https://garantir.io
+- genua-gmbh-bundesdruckerei-group — https://www.genua.de
+- geomys — https://geomys.org
+- giesecke-devrient-gmbh — https://gi-de.com
+- github-inc-microsoft — https://github.com
+- gitlab-inc — https://gitlab.com
+- globalsign-ltd — https://globalsign.com
+- gnupg-project — https://gnupg.org
+- gnutls-project — https://gnutls.org
+- government-of-spain — https://www.lamoncloa.gob.es
+- gravitational-inc — https://goteleport.com
+- hamad-bin-khalifa-university-hbku — https://www.hbku.edu.qa
+- haproxy-technologies — https://haproxy.org
+- hex-trust-ltd — https://hextrust.com
+- hiddenlayer-inc — https://hiddenlayer.ai
+- hikvision — https://www.hikvision.com/en/
+- hitachi-ltd — https://www.hitachi.com/
+- hoye-technology-co-ltd — https://www.hoyetec.com
+- hp-inc — https://www.hp.com
+- hyland — https://www.hyland.com
+- hyperledger-foundation — https://hyperledger.org
+- i4p-informatikai — https://www.i4p.com
+- ibm-research-cbomkit — https://github.com/IBM/cbomkit
+- iccs-china-national-standards — https://www.sac.gov.cn
+- ics-holding-kryptonite-russia — https://postquantum.com
+- id-quantique-sa — https://idquantique.com
+- ietf-2 — https://ietf.org
+- imdea-networks-institute — https://networks.imdea.org
+- imperva-inc — https://imperva.com
+- inria-hqc-consortium — https://pqc-hqc.org
+- interchain-foundation — https://interchain.io
+- internet-security-research-group — https://www.abetterinternet.org
+- internet-systems-consortium — https://www.isc.org
+- internxt-sl — https://internxt.com
+- inturai — https://inturai.com
+- ironcore-labs-inc — https://ironcorelabs.com
+- isara-corporation — https://isara.com
+- itri — https://www.itri.org.tw/english/
+- ivanti — https://www.ivanti.com
+- ivpn — https://www.ivpn.net
+- jamf — https://www.jamf.com
+- jenkins-cloudbees — https://jenkins.io
+- jetbrains — https://www.jetbrains.com
+- jfrog-ltd — https://jfrog.com
+- jumpcloud-inc — https://jumpcloud.com
+- kape-technologies-expressvpn — https://expressvpn.com
+- keeper-security — https://www.keepersecurity.com
+- kiteworks-inc — https://kiteworks.com
+- kivicore-oy — https://kivicore.com
+- komainu-ltd — https://komainu.com
+- kong-inc — https://konghq.com
+- kryotech-software — https://vox-messenger.app
+- kryptus-solu-es-em-ti-ltda — https://kryptus.com
+- kudelski-group — https://www.nagra.com
+- lakera-ag — https://lakera.ai
+- landis-gyr-group-ag — https://www.landisgyr.com
+- ledger-sas — https://ledger.com
+- libreswan-project — https://libreswan.org
+- libssh-project — https://libssh.org
+- libtpms-project — https://github.com/stefanberger/libtpms
+- mariadb-foundation — https://mariadb.org
+- mavenir-systems-inc — https://mavenir.com
+- meta-platforms-inc — https://meta.com
+- mikrotik-sia — https://mikrotik.com
+- mimecast — https://www.mimecast.com
+- minio — https://min.io
+- mongodb-inc — https://mongodb.com
+- mozilla-corporation — https://www.mozilla.org
+- mullvad-vpn-ab — https://mullvad.net
+- nacsa-national-cyber-security-agency-malaysia — https://www.cybersecurity.my
+- national-institute-of-information-and-communications-technology — https://www.nict.go.jp
+- nedo-new-energy-and-industrial-technology-development-organization — https://www.nedo.go.jp
+- netgate-inc — https://netgate.com
+- netsfere-infinite-convergence-solutions — https://netsfere.com
+- netskope-inc — https://www.netskope.com
+- nixos-foundation — https://nixos.org
+- novachips-co-ltd — https://www.novachips.com
+- ns-3-project — https://www.nsnam.org
+- nutanix — https://www.nutanix.com
+- nuvoton-technology-corporation — https://www.nuvoton.com
+- nvidia-corporation — https://nvidia.com
+- nxp-semiconductors-nv — https://nxp.com
+- okta-inc — https://okta.com
+- opa-project — https://www.openpolicyagent.org
+- open-information-security-foundation — https://oisf.net
+- open-security-research-inc — https://www.osr-tech.com/
+- openbao-lf-edge — https://openbao.org
+- openbsd-foundation — https://openbsdfoundation.org
+- openjs-foundation — https://openjsf.org
+- openmls-project — https://openmls.tech
+- openpgpjs-project — https://openpgpjs.org
+- openqkd-project — https://openqkd.eu
+- opentext — https://www.opentext.com
+- openvpn-inc — https://openvpn.net
+- openwrt-project — https://openwrt.org
+- opera-limited — https://www.opera.com
+- orange-sa — https://www.orange-business.com
+- osslsigncode-project — https://github.com/mtrojnar/osslsigncode
+- ovh-groupe-sa — https://www.ovhcloud.com
+- packetlight-networks-ltd — https://www.packetlight.com
+- payara-foundation — https://payara.fish
+- ping-identity-holdings-corp — https://pingidentity.com
+- post-quantum-ltd — https://www.post-quantum.com
+- postfix-project — https://www.postfix.org
+- postgresql-global-development-group — https://postgresql.org
+- powerdns-bv-desec-ev — https://www.powerdns.com
+- pqcee-inc — https://www.pqcee.com/
+- pqctoday-project — https://github.com/pqctoday-org/pqctoday-tpm
+- pqsecure-technologies-inc — https://pqsecurity.com
+- prestige-systems — https://prestigesystems.com
+- procivis-ag — https://procivis.ch
+- prometheus-authors-cncf — https://prometheus.io/
+- proofpoint — https://www.proofpoint.com
+- protect-ai-inc — https://protectai.com
+- proton-ag — https://proton.me
+- psnc-poznan-supercomputing-and-networking-center — https://www.psnc.pl
+- pufsecurity-corporation — https://www.pufsecurity.com/
+- pure-storage — https://www.purestorage.com
+- pycryptodome-team — https://www.pycryptodome.org/
+- python-cryptographic-authority — https://cryptography.io/
+- python-software-foundation — https://www.python.org/
+- qanplatform — https://qanplatform.com
+- qinvicta — https://qinvicta.com/
+- qnu-labs-pvt-ltd — https://www.qnulabs.com
+- qrl-foundation — https://theqrl.org
+- qualcomm-incorporated — https://qualcomm.com
+- qualys-inc — https://qualys.com
+- quantropi-inc — https://www.quantropi.com
+- quantum-emotion-inc — https://www.quantumemotion.com
+- quantum-knight-inc — https://quantumknight.io/
+- quantum-xchange-inc — https://quantumxc.com
+- quintessencelabs-pty-ltd — https://quintessencelabs.com
+- quranium — https://www.quranium.org
+- radiant-logic-inc — https://www.radiantlogic.com/
+- rakuten-symphony-inc — https://symphony.rakuten.com
+- rambus-inc — https://www.rambus.com
+- rapid7-inc — https://rapid7.com
+- realtek-semiconductor-corp — https://www.realtek.com/
+- recorded-future — https://www.recordedfuture.com
+- red-hat-dogtag — https://www.dogtagpki.org
+- redis-community — https://redis.io
+- renesas-electronics-corporation — https://www.renesas.com
+- ripple-labs-inc — https://ripple.com
+- rocky-linux-foundation — https://rockylinux.org
+- sa-quti-consortium — https://saquti.org
+- safelogic-inc — https://safelogic.com
+- sailpoint-technologies-inc — https://www.sailpoint.com
+- samsung-electronics-co — https://samsung.com
+- samsung-sds-co-ltd — https://www.samsungsds.com
+- sansec-technology-co-ltd — https://en.sansec.com.cn
+- saudi-telecom-company-stc — https://www.stc.com.sa
+- saviynt-inc — https://saviynt.com
+- scality — https://www.scality.com
+- sealsq-corp — https://sealsq.com
+- secqai-inc — https://www.secqai.com
+- secunet-security-networks-ag — https://www.secunet.com
+- securosys-sa — https://securosys.com
+- senetas-corporation-ltd — https://senetas.com
+- sequre-quantum-sa — https://sequrequantum.com
+- session-technology-foundation — https://session.foundation
+- shinewave-international-inc — https://www.shinewave.com
+- siemens-ag — https://siemens.com
+- signiant — https://www.signiant.com
+- signquantum — https://signquantum.com
+- simon-tatham-putty-project — https://putty.org
+- simplex-chat-ltd — https://simplex.chat
+- singapore-telecommunications-ltd — https://www.singtel.com
+- sk-telecom-co-ltd — https://www.sktelecom.com
+- smallstep-labs-inc — https://smallstep.com
+- solarwinds-worldwide-llc — https://www.solarwinds.com
+- sonatype-inc — https://sonatype.com
+- sonicwall-inc — https://www.sonicwall.com
+- sophos-ltd — https://www.sophos.com
+- soti — https://soti.net
+- sphereon-bv — https://sphereon.com
+- spherity-gmbh — https://spherity.com
+- splunk-inc-cisco — https://splunk.com
+- spruce-systems-inc — https://spruceid.com
+- ssh-communications-security — https://www.ssh.com
+- stv-group-as — https://www.stvgroup.cz
+- stytch-inc — https://stytch.com
+- surfshark — https://surfshark.com
+- suse-llc — https://suse.com
+- suse-llc-opensuse — https://opensuse.org
+- synopsys-inc — https://www.synopsys.com
+- tailscale-inc — https://tailscale.com
+- taiwan-qsmc-migration-center — https://www.qsmc.org
+- taurus-sa — https://taurushq.com
+- technology-innovation-institute-tii — https://www.tii.ae
+- technology-nexus-secured-business-solutions-ab — https://www.nexusgroup.com
+- telefonica-sa — https://www.telefonica.com
+- telegram-fz-llc — https://telegram.org
+- tellabs-enterprise-inc — https://www.tellabs.com
+- tenable-inc — https://tenable.com
+- terra-quantum-ag — https://terraquantum.swiss
+- testsslsh-project — https://testssl.sh
+- thales-trusted-cyber-technologies — https://www.thalestct.com
+- threema-gmbh — https://threema.ch
+- tianocore-community — https://www.tianocore.org/
+- tiktok-pte-ltd — https://www.tiktok.com
+- toppan-digital-inc — https://www.toppan.com
+- toppan-inc — https://www.holdings.toppan.com
+- tor-project — https://www.torproject.org
+- toshiba-corporation — https://toshiba.com
+- traefik-labs — https://traefik.io/
+- trail-of-bits — https://www.trailofbits.com
+- trend-micro-inc — https://www.trendmicro.com
+- trezor-company-sro — https://trezor.io
+- trustcloud-inc — https://www.trustcloud.ai
+- tubitak-bilgem-turkey — https://en.bilgem.tubitak.gov.tr
+- turkcell-iletisim-hizmetleri-as — https://www.turkcell.com.tr
+- tuta-gmbh — https://tuta.com
+- tutus-data-ab — https://tutus.se
+- unassigned — https://pqctoday.com
+- unisys — https://www.unisys.com
+- utimaco-is-gmbh — https://utimaco.com
+- vandyke-software — https://www.vandyke.com
+- veeam — https://www.veeam.com
+- venafi-inc — https://venafi.com
+- veracode — https://www.veracode.com
+- veracode-inc — https://veracode.com
+- veracrypt-project — https://veracrypt.fr
+- veridify-security-inc — https://www.veridify.com
+- versa-networks-inc — https://versa-networks.com
+- viavi-solutions-inc — https://viavisolutions.com
+- virtru-corporation — https://virtru.com
+- vodafone-group-plc — https://www.vodafone.com
+- waltid-gmbh — https://walt.id
+- web3-foundation — https://web3.foundation
+- wind-river-systems-inc — https://windriver.com
+- windscribe — https://windscribe.com
+- winscp-project-martin-prikryl — https://winscp.net
+- wire-swiss-gmbh — https://wire.com
+- wireguard-project — https://wireguard.com
+- wisecure-technologies-corporation — https://www.wisecure-tech.com
+- wisekey — https://wisekey.com
+- wiz-inc — https://www.wiz.io
+- xwiki-sas-cryptpad — https://cryptpad.org
+- yubico-ab — https://yubico.com
+- zeek-project — https://zeek.org
+- zerotier-inc — https://www.zerotier.com
+- zerto — https://www.zerto.com
+- zodia-custody-ltd — https://zodiacustody.com
+- zoom — https://zoom.us
+- zscaler — https://www.zscaler.com/
+- jisa-softech-private-limited — https://jisasoftech.com
+- gigamon-inc — https://gigamon.com
+- vector-informatik-gmbh — https://vector.com
+- kaseya-us-llc — https://kaseya.com
+- kioxia-corporation — https://kioxia.com
+- n-able-technologies-inc — https://n-able.com
+- minimus — https://minimus.io
+- cloudian-inc — https://cloudian.com
+- secure-ic — https://secure-ic.com
+- kloudfuse-inc — https://kloudfuse.com
+- hycu-inc — https://hycu.com
+- exequantum — https://exequantum.com
+- openjdk — https://openjdk.org
+- quantum-corporation — https://quantum.com
+- post-quantum-cryptography-alliance — https://pqca.org
+- globalfoundries-u-s-inc — https://gf.com
+- korea-telecom-corporation — https://kt.com
+- onespan-inc — https://onespan.com
+- sigstore — https://sigstore.dev
+- european-space-agency — https://esa.int
+- quantum-brilliance-pty-ltd — https://quantumbrilliance.com
+- kpqc-korea-post-quantum-crypto — https://www.kpqc.or.kr/
+- fs-isac-financial-services-fsi — https://www.fsisac.com/
+- qatar-national-cyber-security — https://ncsa.gov.qa/en
+- health-sector-coordinating-cou — https://healthsectorcouncil.org/wp-content/uploads/2026/04/HSCC-Cyber-Working-Group-Q1-2026-Progress-Report.pdf
+- africacert — https://www.africacert.org/home/
+- ghana-cyber-security-authority — https://www.csa.gov.gh/
+- nitda-nigeria-national-informa — https://nitda.gov.ng/
+- egypt-national-telecom-regulat — https://www.tra.gov.eg/en/industry/eg-cert/
+- fraunhofer-aisec-post-quantum — https://www.aisec.fraunhofer.de/en/spotlights/Competence-Center-PQC.html
+- aarhus-university-post-quantum — https://projects.au.dk/quantum/post-quantum-security-and-communication
+- csa-group-healthcare-cybersecu — https://www.csagroup.org/testing-certification/testing/cybersecurity/healthcare-cybersecurity/
+- finma-swiss-financial-market-s — https://www.finma.ch/en/news/2026/07/20260709-mm-am-05-26/
+- japan-financial-services-agenc — https://www.fsa.go.jp/news/r6/singi/20241126.html
+- japan-national-cybersecurity-o — https://www.nisc.go.jp/eng/
+- oas-cybersecurity-program-cict — https://www.oas.org/ext/en/security/prog-cyber
+- tum-chair-of-security-in-infor — https://www.ce.cit.tum.de/en/eisec/forschung/post-quantum-cryptography/
+- uae-telecommunications-and-dig — https://www.tdra.gov.ae/
+- 405-d-program-hhs-health-indus — https://405d.hhs.gov/post/detail/c840201e-c552-4f9a-9684-6bbe687fea1b
+- oman-national-center-for-infor — https://cert.gov.om
+- agesic-uruguay-e-government-an — https://www.gub.uy/agencia-gobierno-electronico-sociedad-informacion-conocimiento/
+- risa-rwanda-information-societ — https://www.risa.gov.rw/
+- ieee-802-11-post-quantum-crypt — https://www.ieee802.org/11/Reports/pqc_update.htm
+- bea — https://www.bea.gov/
+- us-census — https://www.census.gov/
+- who — https://www.who.int/
+- iea — https://www.iea.org/
+- world-bank — https://www.worldbank.org/
+- munich-re — https://www.munichre.com/
+- csa-iot — https://csa-iot.org/
+- atis — https://www.atis.org/
+- onc — https://www.healthit.gov/
+- gfma — https://www.gfma.org/
+- pqnet-project — https://github.com/pdb0102/PQnet
+- cryptoscan-project — https://github.com/csnp/cryptoscan
+- qpki-project — https://github.com/qpki/qpki
+- libbitcoinpqc-project — https://github.com/cryptoquick/libbitcoinpqc
+- aeec-sae — https://aviation-ia.sae-itc.com/
+- cas-pqc-jp — https://www.cas.go.jp/jp/seisaku/pqc/
+- cccs-cc — https://www.cyber.gc.ca/en/tools-services/common-criteria
+- bsi-cc-scheme — https://www.bsi.bund.de/EN/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Zertifizierung-und-Anerkennung/Zertifizierung-von-Produkten/Zertifizierung-nach-CC/zertifizierung-nach-cc_node.html
+- oc-ccn — https://oc.ccn.cni.es/en/
+- anssi-cc-scheme — https://cyber.gouv.fr/offre-de-service/solutions-certifiees-et-qualifiees/comprendre-levaluation-de-securite/certification-de-produits/comprendre-la-certification/
+- ic3s — https://commoncriteria-india.gov.in/indian-common-criteria-certification-scheme-ic3s-overview
+- ocsi — https://www.ocsi.gov.it/index.php/organismo/lo-schema.html
+- jisec — https://www.ipa.go.jp/en/security/jisec/index.html
+- itscc — https://www.itscc.kr/main.do
+- mycc — https://www.cybersecurity.my/portal-main/services/malaysian-common-criteria-scheme-overview
+- nscib — https://trustcb.com/common-criteria/nscib/
+- sertit — https://sertit.no/the-norwegian-certification-scheme/about-the-certification-scheme/
+- nask-cc — https://certyfikacja.nask.pl/en/en-common-criteria/
+- csec — https://www.fmv.se/english/supplier-information/csec/
+- sccs — https://www.csa.gov.sg/our-programmes/certification-and-labelling-schemes/singapore-common-criteria-scheme
+- tse-cc — https://www.tse.org.tr/
+- ncsa-qa-qccs — https://assurance.ncsa.gov.qa/en/certification/qccs
+- uk-legislation-gov-uk — https://www.legislation.gov.uk/
+
+## Errors (114)
+
+- rub-crypto — https://www.crypto.rub.de/ — fetch error / timeout
+- gmu-crypto — https://csis.gmu.edu/ — fetch error / timeout
+- 01quantum — https://01quantum.com/ — fetch error / timeout
+- archon-sec — https://www.archon.com/ — fetch error / timeout
+- uc-cincinnati — https://homepages.uc.edu/~coudtj/ — http-404
+- psu-crypto — https://www.cse.psu.edu/ — fetch error / timeout
+- nsa-advisory — https://www.nsa.gov/Press-Room/Cybersecurity-Advisories-Guidance/ — http-403
+- nsa-media — https://media.defense.gov/ — http-403
+- acsc — https://www.cyber.gov.au/ — fetch error / timeout
+- iso-iec-sc27 — https://www.iso.org/committee/45306.html — http-403
+- pqcrypto-alliance — https://pqcrypto.org/ — fetch error / timeout
+- pqca — https://www.pqca.org/ — fetch error / timeout
+- fs-isac — https://www.fs-isac.com/ — fetch error / timeout
+- tue-coding — https://www.tue.nl/en/research/research-groups/coding-theory-and-cryptology — http-404
+- kisa — https://www.kisa.or.kr/eng/ — http-400
+- us-congress — https://www.congress.gov/ — http-403
+- bahrain-ncsc — https://www.ncea.gov.bh/ — fetch error / timeout
+- uae-csc — https://www.csc.gov.ae/ — fetch error / timeout
+- incd-israel — https://www.gov.il/en/departments/israel_national_cyber_directorate/ — http-403
+- swift — https://www.swift.com/ — fetch error / timeout
+- iec — https://www.iec.ch/ — http-403
+- ansi — https://www.ansi.org/ — http-403
+- unece — https://unece.org/ — http-403
+- entrust — https://www.entrust.com/ — http-403
+- hhs — https://www.hhs.gov/hipaa — http-403
+- nrc — https://www.nrc.gov/ — http-403
+- gs1 — https://www.gs1.org/ — http-403
+- nokia — https://www.nokia.com/ — http-403
+- oracle — https://www.oracle.com/ — http-403
+- iccs-china — https://www.gmbz.org.cn/ — fetch error / timeout
+- wef — https://www.weforum.org/ — http-403
+- ericsson — https://www.ericsson.com/en/security/quantum-safe-networks — http-403
+- infineon — https://www.infineon.com/cms/en/discoveries/post-quantum-cryptography/ — http-404
+- ciena — https://www.ciena.com — http-403
+- dod-cio — https://dodcio.defense.gov — http-403
+- aptos-foundation — https://aptosfoundation.org/ — http-429
+- cbj-jordan — https://www.cbj.gov.jo/ — fetch error / timeout
+- cacr-china — https://www.cacrnet.org.cn/ — fetch error / timeout
+- disr-australia — https://www.industry.gov.au/ — fetch error / timeout
+- fra-us — https://railroads.dot.gov/ — http-403
+- ferc — https://www.ferc.gov/ — http-403
+- mckinsey — https://www.mckinsey.com/capabilities/quantumblack/our-insights — fetch error / timeout
+- gartner — https://www.gartner.com/en/information-technology/insights/quantum-computing — http-403
+- austrac — https://www.austrac.gov.au/ — fetch error / timeout
+- anci-chile — https://www.anci.gob.cl/ — http-403
+- cnbv-mexico — https://www.cnbv.gob.mx/ — fetch error / timeout
+- ntia — https://www.ntia.gov/ — fetch error / timeout
+- djb-cr-yp-to — https://cr.yp.to/ — fetch error / timeout
+- microchip — https://www.microchip.com/ — http-403
+- usenix-security — https://www.usenix.org/conference/usenixsecurity — http-404
+- id-bsn-bssn — https://bsn.go.id/ — fetch error / timeout
+- advanced-micro-devices-inc — https://amd.com — fetch error / timeout
+- advanced-technology-research-council — https://www.atrc.ae — fetch error / timeout
+- ahp-tech — https://www.ahptech.com.tw/en/ — http-403
+- akamai-technologies-inc — https://www.akamai.com — http-403
+- analog-devices — https://www.analog.com — fetch error / timeout
+- anydesk-software-gmbh — https://anydesk.com — http-403
+- backbone-hq — https://backbone.hq — fetch error / timeout
+- beijing-jn-tass-technology — https://www.tass.com.cn — fetch error / timeout
+- beyondtrust-corporation — https://beyondtrust.com — http-403
+- bssn-bsn-indonesia — https://bssn.go.id — http-403
+- cardano-foundation — https://cardanofoundation.org — http-429
+- cosmian-sas — https://cosmian.com — http-500
+- general-dynamics-mission-systems — https://gdmissionsystems.com — http-403
+- government-of-chile — https://www.gob.cl — http-403
+- hashicorp-inc — https://hashicorp.com — http-429
+- hewlett-packard-enterprise — https://www.hpe.com — fetch error / timeout
+- hhs-ocr — https://www.hhs.gov/hipaa — http-403
+- hid-global-corporation — https://www.hidglobal.com — http-403
+- huawei-technologies-co-ltd — https://www.huawei.com — http-403
+- keysight-technologies-inc — https://keysight.com — http-403
+- lattice-semiconductor — https://www.latticesemi.com — http-403
+- marvell-technology-inc — https://marvell.com — http-403
+- mastercard-incorporated — https://www.mastercard.com — http-403
+- microchip-technology-inc — https://microchip.com — http-403
+- mtg-ag — https://www.mtg.de — fetch error / timeout
+- national-security-research-institute-nsri-nis — https://www.nsr.re.kr — fetch error / timeout
+- nec-corporation — https://nec.com — http-403
+- netapp — https://www.netapp.com — http-403
+- nord-security — https://nordvpn.com — http-403
+- nozomi-networks-inc — https://nozomi.com — fetch error / timeout
+- ntt-corporation — https://www.ntt.com — http-403
+- p11-glue-project — https://p11-glue.github.io — http-404
+- qapp-russia — https://qapp.ru — fetch error / timeout
+- quantum-bridge-technologies-inc — https://quantumbridge.com — fetch error / timeout
+- quantumctek-co-ltd — https://www.quantumctec.com — fetch error / timeout
+- r3-ltd — https://r3.com — http-403
+- robust-intelligence-inc — https://robustintelligence.com — fetch error / timeout
+- rubrik — https://www.rubrik.com — http-403
+- shanghai-uni-sentry-intelligent-technology-co-ltd — http://www.uni-sentry.com — http-500
+- silvus-technologies — https://silvustechnologies.com — http-403
+- srd-wireless-pte-ltd — https://srdwireless.com — fetch error / timeout
+- stmicroelectronics-nv — https://st.com — fetch error / timeout
+- toshiba-research-europe-ltd — https://www.toshiba.eu/pages/eu/Research-and-Development — http-404
+- veritas — https://www.veritas.com — http-403
+- veritas-technologies-llc — https://www.veritas.com — http-403
+- vultr — https://www.vultr.com — http-403
+- singlewire-software — https://singlewire.com — fetch error / timeout
+- ite-tech-inc — https://ite.com.tw — fetch error / timeout
+- jmem-technology — https://jmemtech.com — fetch error / timeout
+- higher-ground-llc — https://highergroundcomms.com — fetch error / timeout
+- securemachines — https://securemachines.io — fetch error / timeout
+- universidad-carlos-iii-de-madrid — https://uc3m.es — fetch error / timeout
+- quantum-secure-encryption-corp — https://quantumsecureencryption.com — http-525
+- nist-nccoe-migration-to-post-q — https://www.nccoe.nist.gov/applied-cryptography/migration-to-pqc — http-403
+- kenya-ke-cirt-cc-communication — https://ke-cirt.go.ke/ — fetch error / timeout
+- sabs-south-african-bureau-of-s — https://www.sabs.co.za/ — fetch error / timeout
+- ancs-tunisia-national-cybersec — https://www.ancs.tn/ — fetch error / timeout
+- dgssi-morocco-general-director — https://www.dgssi.gov.ma/en/dgssi — fetch error / timeout
+- imf — https://www.imf.org/ — http-403
+- unisig — https://www.era.europa.eu/domains/telematics-affairs/ertmsetcs/subsets_en — http-404
+- unece-wp29 — https://unece.org/wp29-introduction — http-403
+- iso-tc210 — https://www.iso.org/committee/54892.html — http-403
+- aisep — https://www.cyber.gov.au/business-government/protecting-devices-systems/assessment-evaluation-programs/australian-information-security-evaluation-program — fetch error / timeout
