@@ -7,6 +7,11 @@ import type { PhaseId } from './frameworkPhases'
 import { libraryData } from './libraryData'
 import { authoritativeSources } from './authoritativeSourcesData'
 import { ALGORITHM_REGISTRY } from './algorithmProperties'
+import { TYPE_LABELS } from './artifactLabels'
+// Value import; `reportSectionToCswp39` imports ReportSectionId back from here
+// but as `import type`, which is erased at compile time — so this is a one-way
+// runtime edge, not a cycle.
+import { REPORT_SECTION_LABELS } from './reportSectionToCswp39'
 import { CLASSICAL_HSM_DEFAULT, USE_CASES } from './hsmCapacityDefaults'
 import { MIGRATION_KEYS } from '../components/Playground/kmip/migration/migrationKeys'
 
@@ -1403,18 +1408,38 @@ function combinedArtifacts(personaId: PersonaId, zones: ZoneId[]): string[] {
   // eslint-disable-next-line security/detect-object-injection -- personaId is a PersonaId union, not user input
   const emphasis = BC_ZONE_EMPHASIS_BY_PERSONA[personaId]
   if (!emphasis) return []
-  // eslint-disable-next-line security/detect-object-injection -- zone is a ZoneId union, not user input
-  return zones.flatMap((zone) => emphasis.featuredArtifacts[zone] ?? [])
+  // Mapped through TYPE_LABELS (2026-08-02). This returned RAW IDS until then,
+  // and the role-home board copy renders its result directly into prose — so
+  // five of six roles read like "Governance zone featuring crypto-architecture,
+  // raci-matrix, policy-draft, vendor-scorecard…". The label map was already
+  // complete; it just lived inside a React component this data module could not
+  // import, so it was never applied. Falls back to the id if one is ever
+  // missing, which is still better than dropping the artifact silently.
+  return zones.flatMap((zone) =>
+    // eslint-disable-next-line security/detect-object-injection -- zone is a ZoneId union, not user input
+    (emphasis.featuredArtifacts[zone] ?? []).map((id) => TYPE_LABELS[id] ?? id)
+  )
 }
 
-/** Report section ids whose displayed name differs from the literal id. */
-const REPORT_SECTION_DISPLAY_LABEL: Partial<Record<ReportSectionId, string>> = {
+/**
+ * Short display names for report sections, used in board copy.
+ *
+ * Until 2026-08-02 this was a one-entry map (`hndlHnfl: 'HNDL'`) with an
+ * `?? id` fallback, so every OTHER section rendered as its literal camelCase
+ * identifier — "Your report opens migrationRoadmap, migrationToolkit and
+ * algorithmMigration, and hides HNDL" was the shipped IT Ops copy, mapped and
+ * unmapped in the same sentence. It now defers to `REPORT_SECTION_LABELS`, the
+ * registry `/report` itself renders from (and which a test asserts is complete),
+ * with this map kept only for the few places board copy wants something SHORTER
+ * than the on-page heading.
+ */
+const REPORT_SECTION_SHORT_LABEL: Partial<Record<ReportSectionId, string>> = {
   hndlHnfl: 'HNDL',
 }
 
 function reportSectionLabel(id: ReportSectionId): string {
   // eslint-disable-next-line security/detect-object-injection -- id is a ReportSectionId union, not user input
-  return REPORT_SECTION_DISPLAY_LABEL[id] ?? id
+  return REPORT_SECTION_SHORT_LABEL[id] ?? REPORT_SECTION_LABELS[id] ?? id
 }
 
 function reportSectionsByState(personaId: PersonaId, state: SectionState): ReportSectionId[] {
@@ -1531,7 +1556,7 @@ export const PERSONA_JOURNEY_BOARD: Record<PersonaId, PersonaJourneyBoard> = {
     gridCards: [
       {
         title: 'Risk position',
-        body: `From riskScore, keyFindings and riskBreakdown — three of the ${REPORT_SECTION_TOTAL_COUNT} report sections, all already open by default for your role.`,
+        body: `From ${joinWithAnd(['riskScore', 'keyFindings', 'riskBreakdown'].map((id) => reportSectionLabel(id as ReportSectionId)))} — three of the ${REPORT_SECTION_TOTAL_COUNT} report sections, all open by default for your role.`,
       },
       {
         title: 'Two already bind you',
@@ -1602,8 +1627,8 @@ export const PERSONA_JOURNEY_BOARD: Record<PersonaId, PersonaJourneyBoard> = {
         title: 'A report that is finally yours',
         body:
           DEVELOPER_REPORT_OVERRIDE_COUNT === 0
-            ? `Your report config is untouched — all ${REPORT_SECTION_TOTAL_COUNT} sections at defaults. This version opens algorithmMigration and cbom first.`
-            : `Your report now tailors ${DEVELOPER_REPORT_OVERRIDE_COUNT} section${DEVELOPER_REPORT_OVERRIDE_COUNT === 1 ? '' : 's'} for this persona. This version opens algorithmMigration and cbom first.`,
+            ? `All ${REPORT_SECTION_TOTAL_COUNT} report sections, at their defaults — opening with ${reportSectionLabel('algorithmMigration')} and ${reportSectionLabel('cbom')}.`
+            : `${DEVELOPER_REPORT_OVERRIDE_COUNT} report section${DEVELOPER_REPORT_OVERRIDE_COUNT === 1 ? ' is' : 's are'} tailored to your role, opening with ${reportSectionLabel('algorithmMigration')} and ${reportSectionLabel('cbom')}.`,
       },
     ],
     trackTitle: `Then, the background: ${formatEssentialsVsFull('developer')}.`,
@@ -1658,7 +1683,7 @@ export const PERSONA_JOURNEY_BOARD: Record<PersonaId, PersonaJourneyBoard> = {
       },
       {
         title: 'Migration artifacts',
-        body: `${joinWithAnd(combinedArtifacts('architect', ['migration']))} — the richest featured set of any persona.`,
+        body: `${joinWithAnd(combinedArtifacts('architect', ['migration']))} — the full migration set.`,
       },
     ],
     trackTitle: `Then, the background: ${formatEssentialsVsFull('architect')}.`,
@@ -1748,7 +1773,7 @@ export const PERSONA_JOURNEY_BOARD: Record<PersonaId, PersonaJourneyBoard> = {
       },
       {
         title: 'A report built for the cutover',
-        body: `Your report opens ${joinWithAnd(reportSectionsByState('ops', 'open'))}, and hides ${joinWithAnd(reportSectionsByState('ops', 'hidden').map(reportSectionLabel))} — correct emphasis, already shipped.`,
+        body: `Your report opens ${joinWithAnd(reportSectionsByState('ops', 'open').map(reportSectionLabel))}, and hides ${joinWithAnd(reportSectionsByState('ops', 'hidden').map(reportSectionLabel))} — the emphasis a cutover needs.`,
       },
     ],
     trackTitle: `Then, the background: ${formatEssentialsVsFull('ops')}.`,
@@ -1797,11 +1822,11 @@ export const PERSONA_JOURNEY_BOARD: Record<PersonaId, PersonaJourneyBoard> = {
       punchline: '',
     },
     gridTitle: 'What the workspace gives you',
-    gridSub: 'Not a funnel — instruments, named from source',
+    gridSub: 'Instruments and evidence, every claim traceable to its source',
     gridCards: [
       {
         title: 'Provenance on every claim',
-        body: 'Source tier, verification date, and the counter-claim where one is on file. Library and Migrate filters are both empty arrays for this persona — the corpus arrives unfiltered by design.',
+        body: 'Source tier, verification date, and the counter-claim where one is on file. Nothing in the Library or the Migrate catalogue is filtered out for this role — the corpus arrives whole, by design.',
       },
       {
         title: 'Reproducible verification',
@@ -1866,7 +1891,7 @@ export const PERSONA_JOURNEY_BOARD: Record<PersonaId, PersonaJourneyBoard> = {
       },
       {
         title: 'A library worth browsing',
-        body: `Today your library is ${toWordIfSmall(PERSONA_LIBRARY_CATEGORIES.curious.length)} categories — ${joinWithAnd(PERSONA_LIBRARY_CATEGORIES.curious)}. A library with ${toWordIfSmall(PERSONA_LIBRARY_CATEGORIES.curious.length)} shelves.`,
+        body: `A shortlist rather than the whole corpus: ${joinWithAnd(PERSONA_LIBRARY_CATEGORIES.curious)}. Everything else is still one click away.`,
       },
       {
         title: 'A read on your own risk',
@@ -1874,7 +1899,7 @@ export const PERSONA_JOURNEY_BOARD: Record<PersonaId, PersonaJourneyBoard> = {
       },
     ],
     trackTitle: `${capitalizedSmallNumberWord(PERSONAS.curious.essentials.length)} modules, ${PERSONAS.curious.essentialsMinutes} minutes — and yes, that is still a lot.`,
-    trackNote: `Honest note: this is the one number the redesign cannot fix by re-fronting. The curious essentials track (${PERSONAS.curious.essentialsMinutes} min) is longer than the executive one (${PERSONAS.executive.essentialsMinutes} min), for a less technical audience. That is a content problem, not a mockup problem.`,
+    trackNote: `Worth saying plainly: at ${PERSONAS.curious.essentialsMinutes} minutes this is longer than the executive track (${PERSONAS.executive.essentialsMinutes} min), which is not what you would expect. Take it in pieces — your progress is saved between visits.`,
     trackChips: [
       'PQC 101',
       'PQC candidates',
