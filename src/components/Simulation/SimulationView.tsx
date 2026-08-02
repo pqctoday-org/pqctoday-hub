@@ -23,7 +23,7 @@
  * intel rail from beginners.
  */
 import { useMemo, useState, useEffect, useRef, useCallback, Suspense } from 'react'
-import { Monitor } from 'lucide-react'
+import { Monitor, Pencil } from 'lucide-react'
 import { Link, useNavigate, useSearchParams } from 'react-router'
 import {
   BUSINESS_TOOL_COMPONENTS,
@@ -132,7 +132,7 @@ import {
 } from '@/simulation/simRoadmap'
 import { sectorStepsForPhase } from '@/simulation/sectorTrack'
 import { getBalance, type DifficultyId } from '@/data/simBalance'
-import { Eyebrow, Ring, Dial, ReadonlyDial, Stat, PlanningBadge, MandateBadge } from './atoms'
+import { Eyebrow, Ring, Dial, PlanningBadge, MandateBadge } from './atoms'
 import { RibbonTermTooltip } from './RibbonTermTooltip'
 import { SimTour } from './SimTour'
 import { KIND_CHIP, markSimResume, markSimExited, clearSimExcursion } from './simChrome'
@@ -1066,6 +1066,21 @@ export function SimulationView() {
   const sizeOpt = SIZES.find((s) => s.id === size) ?? SIZES[1]
   const sectorOpt = SECTORS.find((s) => s.id === sector) ?? SECTORS[0]
   const jur = JURISDICTION_RULES[country]
+  // Merged profile line (2026-08-02) — ORG/JURISDICTION/SECTOR were 3 separate
+  // read-only dials for facts that are all "from your assessment" and none
+  // clickable; combined into one line. Their individual tooltips (the modelled-
+  // archetype note + the assessment-industry mapping) both survive, joined.
+  const profileTitle = [
+    'Org size, jurisdiction and sector — sourced from your assessment.',
+    assessJurisdiction && !assessJurisdiction.exact
+      ? `${assessJurisdiction.displayName} isn't modelled 1:1 — sim rules use the ${assessJurisdiction.countryCode} archetype.`
+      : undefined,
+    assessSnap?.result.assessmentProfile?.industry
+      ? `Mapped from your assessment industry: ${assessSnap.result.assessmentProfile.industry}.`
+      : undefined,
+  ]
+    .filter(Boolean)
+    .join(' ')
   const seatOpt = SEATS.find((s) => s.id === seat) ?? SEATS[0]
   // Researcher / Curious hold no FrameworkRoleId in ROLE_CROSSWALK (personaToRoles
   // deliberately maps them to [] — spec §4 orphan-personas decision, audience
@@ -1437,18 +1452,20 @@ export function SimulationView() {
             />
             <div className="max-md:min-w-0">
               <div className="whitespace-nowrap text-[13.5px] font-extrabold">PQC Today Sim</div>
-              <div className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
-                PQC Migration Simulation
+              {/* 2026-08-02 — subtitle + framework attribution merged into one line
+                (was 2 lines); the version stays a real link, just compacted. */}
+              <div className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50 max-md:truncate">
+                Migration Sim ·{' '}
+                <a
+                  href={FRAMEWORK_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={`${FRAMEWORK_NAME} ${FRAMEWORK_VERSION} — ${FRAMEWORK_AUTHOR} (${FRAMEWORK_LICENSE})`}
+                  className="underline decoration-dotted underline-offset-2 hover:text-background/80"
+                >
+                  {FRAMEWORK_VERSION} ↗
+                </a>
               </div>
-              <a
-                href={FRAMEWORK_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                title={`${FRAMEWORK_NAME} ${FRAMEWORK_VERSION} — ${FRAMEWORK_AUTHOR} (${FRAMEWORK_LICENSE})`}
-                className="font-mono text-sim-micro font-semibold tracking-[0.08em] text-background/40 underline decoration-dotted underline-offset-2 hover:text-background/70 max-md:block max-md:truncate"
-              >
-                Built on the {FRAMEWORK_NAME} {FRAMEWORK_VERSION} ↗
-              </a>
             </div>
           </div>
           <Link
@@ -1693,7 +1710,10 @@ export function SimulationView() {
 
       {/* Full simulation — hidden on phones, shown on tablet+ */}
       <div className="hidden md:flex flex-col fixed inset-0 bg-background text-foreground">
-        {/* header — command bar */}
+        {/* header — command bar. 2026-08-02: a GUARANTEED 2-row layout (flex-col),
+          not incidental flex-wrap — row 1 is identity/context, row 2 is actions,
+          so the split is predictable at any viewport width rather than only
+          appearing once row 1's content happens to overflow. */}
         <header className="flex shrink-0 flex-wrap items-center gap-3 bg-foreground px-4 py-2 text-background">
           <div className="flex shrink-0 items-center gap-2">
             <img
@@ -1703,58 +1723,61 @@ export function SimulationView() {
             />
             <div>
               <div className="whitespace-nowrap text-[13.5px] font-extrabold">PQC Today Sim</div>
+              {/* 2026-08-02 — subtitle + framework attribution merged into one line
+                (was 2 lines); the version stays a real link, just compacted. */}
               <div className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
-                PQC Migration Simulation
+                Migration Sim ·{' '}
+                <a
+                  href={FRAMEWORK_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={`${FRAMEWORK_NAME} ${FRAMEWORK_VERSION} — ${FRAMEWORK_AUTHOR} (${FRAMEWORK_LICENSE})`}
+                  className="underline decoration-dotted underline-offset-2 hover:text-background/80"
+                >
+                  {FRAMEWORK_VERSION} ↗
+                </a>
               </div>
-              <a
-                href={FRAMEWORK_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                title={`${FRAMEWORK_NAME} ${FRAMEWORK_VERSION} — ${FRAMEWORK_AUTHOR} (${FRAMEWORK_LICENSE})`}
-                className="font-mono text-sim-micro font-semibold tracking-[0.08em] text-background/40 underline decoration-dotted underline-offset-2 hover:text-background/70"
-              >
-                Built on the {FRAMEWORK_NAME} {FRAMEWORK_VERSION} ↗
-              </a>
             </div>
           </div>
           {/* ORG / JURISDICTION / SECTOR are READ-ONLY — sourced from the user's
-            assessment (single source of truth). SEAT + MODE stay switchable. */}
+            assessment (single source of truth) — one single-line pill, same
+            visual family as the SEAT/MODE dials (2026-08-02: was its own 3-line
+            box; "Profile"/"Seat"/"Mode" now read as one grouping, not three
+            different shapes). The edit-pencil replaces the separate "change in
+            /assess →" text link — same destination, docked to what it edits. */}
           <div className="flex flex-wrap items-center gap-1.5">
-            <ReadonlyDial label="ORG" value={sizeOpt.label} hint="from your assessment" />
-            <ReadonlyDial
-              label="JURISDICTION"
-              value={assessJurisdiction?.displayName ?? country}
-              hint="from your assessment"
-              badge={<MandateBadge country={country} />}
-              note={
-                assessJurisdiction && !assessJurisdiction.exact
-                  ? `(rules modeled on ${assessJurisdiction.countryCode})`
-                  : undefined
-              }
-              title={
-                assessJurisdiction && !assessJurisdiction.exact
-                  ? `${assessJurisdiction.displayName} isn't modelled 1:1 — sim rules use the ${assessJurisdiction.countryCode} archetype`
-                  : undefined
-              }
-            />
-            <ReadonlyDial
-              label="SECTOR"
-              value={sectorOpt.label}
-              hint={`shelf-life X ≈ ${sectorOpt.shelfLifeYears}y`}
-              badge={
+            <div
+              title={profileTitle}
+              aria-label={`Profile: ${sizeOpt.label}, ${assessJurisdiction?.displayName ?? country}, ${sectorOpt.label}. From your assessment.`}
+              className="flex items-center gap-1.5 whitespace-nowrap rounded-full border border-background/20 bg-background/10 py-1.5 pl-3 pr-1.5"
+            >
+              <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.1em] text-background/50">
+                Profile
+              </span>
+              <span className="flex flex-wrap items-center gap-1.5 text-[12.5px] font-bold text-background">
+                {sizeOpt.label}
+                <span className="text-background/30">·</span>
+                {assessJurisdiction?.displayName ?? country}
+                <MandateBadge country={country} />
+                <span className="text-background/30">·</span>
+                {sectorOpt.label}
                 <PlanningBadge
                   label="est."
                   tip={`Shelf-life X (${sectorOpt.shelfLifeYears}y for ${sectorOpt.label}) is an illustrative planning anchor for how long this sector's data must stay secret — not a published figure. Re-check the live source.`}
                 />
-              }
-              title={
-                assessSnap?.result.assessmentProfile?.industry
-                  ? `mapped from your assessment industry: ${assessSnap.result.assessmentProfile.industry}`
-                  : undefined
-              }
-            />
+              </span>
+              <Link
+                to="/assess"
+                onClick={() => markSimResume()}
+                title="Change your organization profile in the assessment"
+                aria-label="Change organization profile in the assessment"
+                className="grid h-5 w-5 shrink-0 place-items-center rounded-full text-background/50 hover:bg-background/20 hover:text-background"
+              >
+                <Pencil size={11} aria-hidden="true" />
+              </Link>
+            </div>
             <Dial
-              label="SEAT"
+              label="Seat"
               value={seatOpt.label}
               hint={isOrphanSeatPersona ? 'no role for your persona' : 'rest = AI team'}
               title={
@@ -1765,7 +1788,7 @@ export function SimulationView() {
               onClick={() => setSeat(cycle(SEATS, seat))}
             />
             <Dial
-              label="MODE"
+              label="Mode"
               value={difficulty[0].toUpperCase() + difficulty.slice(1)}
               hint="clock + budget + stakes"
               title="Difficulty — Easy / Realistic / Hard tune the Mosca clock pressure and your budget. Easy also lets you retry a wrong Next-Move pick for free; on Realistic and Hard the pick stands and costs you rework. Realistic is recommended for a first run."
@@ -1773,172 +1796,226 @@ export function SimulationView() {
                 setDifficulty(DIFF_ORDER[(DIFF_ORDER.indexOf(difficulty) + 1) % DIFF_ORDER.length])
               }
             />
-            <Link
-              to="/assess"
-              onClick={() => markSimResume()}
-              className="self-center rounded-md px-1.5 font-mono text-sim-micro font-bold text-background/60 underline-offset-2 hover:text-background hover:underline"
-            >
-              change in /assess →
-            </Link>
           </div>
-          <div className="ml-auto flex shrink-0 items-center gap-2.5">
-            {autoRunPlayer.resumable ? (
-              <>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => autoRunPlayer.start({ mode: autoRunPlayer.resumeMode })}
-                  disabled={autoRunPlayer.running}
-                  title="Resume the migration run from where you left off (it picks up at the first step you haven’t completed). Use Reset run to start over from the beginning."
-                  className="h-auto rounded-md border border-secondary/50 bg-secondary/15 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background hover:bg-secondary/25 disabled:opacity-40"
+          {/* KPI cluster (2026-08-02) — one bordered strip with internal dividers,
+            not 4 separate bordered boxes competing with the dials for the same
+            row. Folded into the header row itself (sized to the logo's own
+            height) rather than a separate full-width ribbon below. Full
+            explanatory sub-text lives in each segment's title tooltip. */}
+          <div className="flex items-stretch divide-x divide-background/15 overflow-hidden rounded-lg border border-background/20 bg-background/5">
+            {!suppressWinUI && (
+              <div
+                title="Program-wide maturity — full detail (objectives, HNDL/TNFL tracks) is in the Signals tab."
+                className="flex flex-col gap-px px-2.5 py-1.5 text-left"
+              >
+                <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
+                  Maturity
+                </span>
+                <span
+                  className={`text-[12.5px] font-bold ${txStatus.maturity >= PHASE_WIN_LEVEL ? 'text-success' : 'text-background'}`}
                 >
-                  ▶ Resume
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => setPlayModalOpen(true)}
-                  disabled={autoRunPlayer.running}
-                  title="Start a different path instead of resuming"
-                  className="h-auto rounded-md px-1.5 font-mono text-sim-micro text-background/60 hover:text-background hover:underline"
-                >
-                  ↻ start a different path
-                </Button>
-              </>
-            ) : (
+                  {txStatus.maturity.toFixed(1)}/4
+                </span>
+              </div>
+            )}
+            <div
+              title={
+                scoreboard.complete
+                  ? 'Governance floor (L2) — Milestone: program complete ✓'
+                  : 'Governance floor (L2) — Milestone: full win needs each phase at its own top band'
+              }
+              className="flex flex-col gap-px px-2.5 py-1.5 text-left"
+            >
+              <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
+                Gov L2
+              </span>
+              <span className="text-[12.5px] font-bold text-success">
+                {scoreboard.milestone.cleared}/{scoreboard.milestone.total}
+              </span>
+            </div>
+            <div
+              title={`Years to Q-Day — horizon ≈ ${horizonYear} · X+Y>Z. The Q-Day horizon is an illustrative planning anchor, not a published date.`}
+              className="flex flex-col gap-px px-2.5 py-1.5 text-left"
+            >
+              <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
+                Q-Day
+              </span>
+              <span
+                className={`text-[12.5px] font-bold ${clock.atRisk ? 'text-destructive' : 'text-background'}`}
+              >
+                {clock.yearsToHorizon.toFixed(1)}y
+              </span>
+            </div>
+            <div
+              title={`Budget secured — of €${budgetTarget}M target (P0 level ${p0Level})`}
+              className="flex flex-col gap-px px-2.5 py-1.5 text-left"
+            >
+              <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
+                Budget
+              </span>
+              <span
+                className={`text-[12.5px] font-bold ${budgetSecured > 0 ? 'text-success' : 'text-background/50'}`}
+              >
+                €{budgetSecured}M
+              </span>
+            </div>
+          </div>
+          {/* actions. Play/Resume and End Quarter are the only filled/gradient
+            buttons ("the two real commitments: start a run, close a quarter");
+            Commit Plan/Exit/More drop to outline/icon-only so they read as
+            secondary without disappearing. Single flex-wrap row with everything
+            above — wraps naturally if it doesn't fit, no forced line break. */}
+          {autoRunPlayer.resumable ? (
+            <>
+              {/* Resume carries the same primary/gradient emphasis as Play (2026-08-02)
+                — it IS the "start/continue a run" commitment once a run exists. */}
+              <Button
+                type="button"
+                onClick={() => autoRunPlayer.start({ mode: autoRunPlayer.resumeMode })}
+                disabled={autoRunPlayer.running}
+                title="Resume the migration run from where you left off (it picks up at the first step you haven’t completed). Use Reset run to start over from the beginning."
+                className="h-auto rounded-md bg-gradient-to-r from-primary to-secondary px-3 py-1.5 font-mono text-sim-chip font-bold text-background disabled:opacity-40"
+              >
+                ▶ Resume
+              </Button>
               <Button
                 type="button"
                 variant="ghost"
                 onClick={() => setPlayModalOpen(true)}
                 disabled={autoRunPlayer.running}
-                title="Choose how to play the simulation — Executive Overview, Full Migration Journey, or a single phase, each with an optional deep-dive."
-                className="h-auto rounded-md border border-primary/50 bg-primary/15 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background hover:bg-primary/25 disabled:opacity-40"
+                title="Start a different path instead of resuming"
+                className="h-auto rounded-md px-1.5 font-mono text-sim-micro text-background/60 hover:text-background hover:underline"
               >
-                ▶ PLAY
+                ↻ start a different path
               </Button>
-            )}
-            <SimAutoRunOverlay player={autoRunPlayer} />
-            <SimConceptPeek
-              concepts={conceptPeeks}
-              onDismiss={markConceptPeekSeen}
-              onLearnMore={(moduleId) =>
-                openStep({
-                  kind: 'learn',
-                  label: `Learn: ${moduleId}`,
-                  to: `/learn/${moduleId}`,
-                  moduleId,
-                })
-              }
-            />
-            <SimArtifactReveal type={autoRunPlayer.reveal} />
-            {autoRunPlayer.scenarioIntro && (
-              <SimScenarioIntroCard
-                scenario={autoRunPlayer.scenarioIntro}
-                onBegin={autoRunPlayer.beginScenario}
-              />
-            )}
-            {autoRunPlayer.passIntro && !autoRunPlayer.scenarioIntro && (
-              <SimPassIntroModal pass={autoRunPlayer.passIntro} onBegin={autoRunPlayer.beginPass} />
-            )}
-            {autoRunPlayer.phaseIntro && (
-              <SimPhaseIntroModal
-                phase={autoRunPlayer.phaseIntro.phase}
-                onBegin={autoRunPlayer.beginPhase}
-              />
-            )}
-            {viewDoc && (
-              <ArtifactDrawer
-                document={viewDoc}
-                mode="view"
-                readOnly
-                onClose={() => setViewDoc(null)}
-                onModeChange={() => {}}
-              />
-            )}
+            </>
+          ) : (
             <Button
               type="button"
-              variant="ghost"
-              onClick={commitPlan}
-              title="Save this run as a draft roadmap in the Command Center"
-              className="h-auto rounded-md border border-primary/40 bg-primary/10 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background hover:bg-primary/20"
+              onClick={() => setPlayModalOpen(true)}
+              disabled={autoRunPlayer.running}
+              title="Choose how to play the simulation — Executive Overview, Full Migration Journey, or a single phase, each with an optional deep-dive."
+              className="h-auto rounded-md bg-gradient-to-r from-primary to-secondary px-3 py-1.5 font-mono text-sim-chip font-bold text-background disabled:opacity-40"
             >
-              ▸ COMMIT PLAN
+              ▶ Play
             </Button>
-            <input
-              ref={importFileRef}
-              type="file"
-              accept="application/json,.json"
-              onChange={onImportFile}
-              className="hidden"
-              aria-hidden="true"
+          )}
+          <SimAutoRunOverlay player={autoRunPlayer} />
+          <SimConceptPeek
+            concepts={conceptPeeks}
+            onDismiss={markConceptPeekSeen}
+            onLearnMore={(moduleId) =>
+              openStep({
+                kind: 'learn',
+                label: `Learn: ${moduleId}`,
+                to: `/learn/${moduleId}`,
+                moduleId,
+              })
+            }
+          />
+          <SimArtifactReveal type={autoRunPlayer.reveal} />
+          {autoRunPlayer.scenarioIntro && (
+            <SimScenarioIntroCard
+              scenario={autoRunPlayer.scenarioIntro}
+              onBegin={autoRunPlayer.beginScenario}
             />
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => {
-                markSimExited()
-                navigate('/')
-              }}
-              title="Leave the simulation and return to the hub"
-              className="h-auto rounded-md border border-background/30 bg-background/10 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background hover:bg-background/20"
-            >
-              ← Exit to hub
-            </Button>
-            <RunActionsMenu
-              items={
-                [
-                  {
-                    key: 'terms',
-                    label: 'Terms & glossary',
-                    description: 'Plain-English sim vocabulary + the full PQC glossary.',
-                    onSelect: () => setTermsOpen(true),
-                  },
-                  {
-                    key: 'challenge',
-                    label: 'Challenge a colleague',
-                    description: 'Copy a link — same world, different choices.',
-                    onSelect: copyChallenge,
-                  },
-                  {
-                    key: 'export',
-                    label: 'Export',
-                    description: 'Download this run as a JSON save.',
-                    onSelect: exportRun,
-                  },
-                  {
-                    key: 'import',
-                    label: 'Import',
-                    description: 'Restore a run from a JSON save.',
-                    onSelect: () => importFileRef.current?.click(),
-                  },
-                  {
-                    key: 'reset',
-                    label: 'Reset run',
-                    description: 'Clear this run (your progress) — keeps your assessment.',
-                    onSelect: resetAll,
-                    tone: 'destructive',
-                  },
-                  {
-                    key: 'startover',
-                    label: 'Start over',
-                    description: 'Clear the run AND assessment — start from /assess again.',
-                    onSelect: startOver,
-                    tone: 'destructive',
-                  },
-                ] satisfies RunActionItem[]
-              }
+          )}
+          {autoRunPlayer.passIntro && !autoRunPlayer.scenarioIntro && (
+            <SimPassIntroModal pass={autoRunPlayer.passIntro} onBegin={autoRunPlayer.beginPass} />
+          )}
+          {autoRunPlayer.phaseIntro && (
+            <SimPhaseIntroModal
+              phase={autoRunPlayer.phaseIntro.phase}
+              onBegin={autoRunPlayer.beginPhase}
             />
-            <span className="font-mono text-[11px] font-bold text-background/70">
-              TURN · Q{q} {year}
-            </span>
-            <Button
-              type="button"
-              onClick={endQuarter}
-              className="h-auto rounded-md bg-gradient-to-r from-primary to-secondary px-4 py-2 text-[12px] font-extrabold text-background"
-            >
-              End Quarter →
-            </Button>
-          </div>
+          )}
+          {viewDoc && (
+            <ArtifactDrawer
+              document={viewDoc}
+              mode="view"
+              readOnly
+              onClose={() => setViewDoc(null)}
+              onModeChange={() => {}}
+            />
+          )}
+          {/* Demoted to a plain outline (2026-08-02, was tinted primary/10) — Commit
+              Plan is a real action but not one of the two primary commitments. */}
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={commitPlan}
+            title="Save this run as a draft roadmap in the Command Center"
+            className="h-auto rounded-md border border-background/30 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background hover:bg-background/10"
+          >
+            Commit plan
+          </Button>
+          <input
+            ref={importFileRef}
+            type="file"
+            accept="application/json,.json"
+            onChange={onImportFile}
+            className="hidden"
+            aria-hidden="true"
+          />
+          {/* Icon-only (2026-08-02, was "← Exit to hub") — secondary tier alongside
+              Commit Plan/More; full label survives in title + aria-label. */}
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => {
+              markSimExited()
+              navigate('/')
+            }}
+            title="Exit to hub — leave the simulation and return to the hub"
+            aria-label="Exit to hub"
+            className="grid h-auto place-items-center rounded-md border border-background/30 px-2.5 py-1.5 text-background hover:bg-background/10"
+          >
+            ←
+          </Button>
+          <RunActionsMenu
+            items={
+              [
+                {
+                  key: 'terms',
+                  label: 'Terms & glossary',
+                  description: 'Plain-English sim vocabulary + the full PQC glossary.',
+                  onSelect: () => setTermsOpen(true),
+                },
+                {
+                  key: 'challenge',
+                  label: 'Challenge a colleague',
+                  description: 'Copy a link — same world, different choices.',
+                  onSelect: copyChallenge,
+                },
+                {
+                  key: 'export',
+                  label: 'Export',
+                  description: 'Download this run as a JSON save.',
+                  onSelect: exportRun,
+                },
+                {
+                  key: 'import',
+                  label: 'Import',
+                  description: 'Restore a run from a JSON save.',
+                  onSelect: () => importFileRef.current?.click(),
+                },
+                {
+                  key: 'reset',
+                  label: 'Reset run',
+                  description: 'Clear this run (your progress) — keeps your assessment.',
+                  onSelect: resetAll,
+                  tone: 'destructive',
+                },
+                {
+                  key: 'startover',
+                  label: 'Start over',
+                  description: 'Clear the run AND assessment — start from /assess again.',
+                  onSelect: startOver,
+                  tone: 'destructive',
+                },
+              ] satisfies RunActionItem[]
+            }
+          />
         </header>
 
         {/* Live-feed ticker dropped for now: it was a hand-maintained CSV
@@ -1948,44 +2025,6 @@ export function SimulationView() {
           quarterEngine's event draw) are left in place so it can be re-enabled
           and wired to the hub timeline (QC_FIRST_YEAR / regulatoryTimelines / …)
           when we invest in doing it properly. */}
-
-        {/* KPI ribbon — WP4.7 (Wave 4 ribbon slimming): scoreboard + clock + budget
-          only. HNDL/TNFL risk and readiness moved to the Expert rail's pinned
-          "Threat & readiness" panel below — they're real signals, but a novice
-          had no action to take on them here, just more numbers to chase. */}
-        <div className="flex shrink-0 flex-wrap items-stretch gap-3 border-b border-border bg-card px-4 py-3">
-          {!suppressWinUI && <TransformationStatusPanel status={txStatus} />}
-          <Stat
-            label="Governance floor (L2)"
-            value={`${scoreboard.milestone.cleared}/${scoreboard.milestone.total}`}
-            sub={
-              scoreboard.complete
-                ? 'Milestone — program complete ✓'
-                : 'Milestone — full win needs each phase at its own top band'
-            }
-            tone="text-success"
-          />
-          <Stat
-            label="Years to Q-Day"
-            value={`${clock.yearsToHorizon.toFixed(1)}y`}
-            sub={`Q-Day horizon ≈ ${horizonYear} · X+Y>Z`}
-            tone={clock.atRisk ? 'text-destructive' : 'text-foreground'}
-            className="min-w-[132px]"
-            def="mosca"
-            badge={
-              <PlanningBadge
-                label="planning"
-                tip={`The Q-Day horizon (Z ≈ ${horizonYear}) is one of the illustrative planning anchors — a modelled year the CRQC could arrive, not a published date. Re-check the live source.`}
-              />
-            }
-          />
-          <Stat
-            label="Budget secured"
-            value={`€${budgetSecured}M`}
-            sub={`of €${budgetTarget}M — P0 L${p0Level}`}
-            tone={budgetSecured > 0 ? 'text-success' : 'text-muted-foreground'}
-          />
-        </div>
 
         {/* body — swaps to the embedded Learn module / activity tool when one is open.
           The sim header above stays, AND a persistent "Simulation mode" bar sits on
@@ -2353,51 +2392,10 @@ export function SimulationView() {
                 data-board-main
                 className="grid min-h-0 grid-cols-1 gap-3.5 md:grid-cols-[300px_minmax(0,1fr)]"
               >
-                {/* left — team (who runs this phase) above the phase journey */}
+                {/* left — the phase journey ladder. The Team card that used to sit
+                above it (2026-08-02) moved into the Decide tab's compact role row —
+                phase-relevant. */}
                 <div className="flex min-h-0 flex-col gap-3.5 overflow-auto">
-                  <div className="rounded-xl border border-border bg-card p-4">
-                    <Eyebrow className="mb-2.5 block">Team — who runs this phase</Eyebrow>
-                    <div className="flex flex-col gap-2">
-                      {phaseRoles.length === 0 && (
-                        <p className="text-sm text-muted-foreground">
-                          No role mapped (overlay gap).
-                        </p>
-                      )}
-                      {phaseRoles.map((r) => {
-                        const you = r.persona === seat
-                        return (
-                          <div key={r.id} className="flex items-center gap-2.5">
-                            <span
-                              className={`grid h-[25px] w-[25px] shrink-0 place-items-center rounded-md text-[11px] font-extrabold ${
-                                you
-                                  ? 'bg-primary text-primary-foreground'
-                                  : 'bg-muted text-muted-foreground'
-                              }`}
-                            >
-                              {r.label[0]}
-                            </span>
-                            <div className="min-w-0 flex-1">
-                              <div className="text-[11.5px] font-bold text-foreground">
-                                {r.label}
-                              </div>
-                              <div className="font-mono text-sim-micro text-muted-foreground">
-                                {r.typicalFte} FTE
-                              </div>
-                            </div>
-                            <span
-                              className={`rounded-full px-2 py-0.5 font-mono text-sim-micro font-bold ${
-                                you
-                                  ? 'bg-primary/15 text-primary'
-                                  : 'bg-muted text-muted-foreground'
-                              }`}
-                            >
-                              {you ? 'YOU' : 'AI'}
-                            </span>
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </div>
                   <div className="flex min-h-0 flex-col overflow-auto rounded-xl border border-border bg-card p-3">
                     <div className="mb-2 flex items-center justify-between">
                       <Eyebrow>Phase journey</Eyebrow>
@@ -2531,6 +2529,22 @@ export function SimulationView() {
                       </span>
                     )}
                   </div>
+                  {/* Turn + End Quarter (2026-08-02, moved out of the top header) —
+                  pinned here, above the tabs, so it's visible no matter which tab
+                  is open, right where you're looking once you've decided you're
+                  done with this phase. */}
+                  <div className="mb-2 flex shrink-0 items-center justify-between rounded-lg border border-border bg-muted/30 px-3 py-1.5">
+                    <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                      Turn · Q{q} {year}
+                    </span>
+                    <Button
+                      type="button"
+                      onClick={endQuarter}
+                      className="h-auto rounded-md bg-gradient-to-r from-primary to-secondary px-4 py-1.5 text-[12px] font-extrabold text-background"
+                    >
+                      End Quarter →
+                    </Button>
+                  </div>
                   <Tabs
                     value={activePhaseTab}
                     onValueChange={(v) => setActivePhaseTab(v as PhaseTab)}
@@ -2548,6 +2562,41 @@ export function SimulationView() {
                       value="decide"
                       className="flex min-h-0 flex-1 flex-col overflow-auto"
                     >
+                      {/* Team — who runs this phase (2026-08-02: merged in from its own
+                      left-column card). Compact chip row; FTE detail dropped — a
+                      staffing-planning number, not something the mission line or the
+                      decision below needs. */}
+                      {phaseRoles.length > 0 && (
+                        <div className="mb-2 flex flex-wrap items-center gap-2">
+                          {phaseRoles.map((r) => {
+                            const you = r.persona === seat
+                            return (
+                              <span
+                                key={r.id}
+                                className="flex items-center gap-1.5 rounded-full border border-border bg-muted/40 py-0.5 pl-0.5 pr-2"
+                              >
+                                <span
+                                  className={`grid h-5 w-5 shrink-0 place-items-center rounded-full text-[10px] font-extrabold ${
+                                    you
+                                      ? 'bg-primary text-primary-foreground'
+                                      : 'bg-muted text-muted-foreground'
+                                  }`}
+                                >
+                                  {r.label[0]}
+                                </span>
+                                <span className="text-[11px] font-semibold text-foreground">
+                                  {r.label}
+                                </span>
+                                <span
+                                  className={`font-mono text-sim-chip font-bold ${you ? 'text-primary' : 'text-muted-foreground'}`}
+                                >
+                                  {you ? 'YOU' : 'AI'}
+                                </span>
+                              </span>
+                            )
+                          })}
+                        </div>
+                      )}
                       <p className="mb-4 mt-1.5 text-sim-body leading-relaxed text-muted-foreground">
                         {mission?.mission}{' '}
                         <b className="text-foreground">
@@ -3266,6 +3315,19 @@ export function SimulationView() {
                       value="signals"
                       className="flex min-h-0 flex-1 flex-col gap-3.5 overflow-auto"
                     >
+                      {/* PROGRAM STATUS (2026-08-02) — the full Transformation detail
+                      (ring, 3 objectives, 4 HNDL/TNFL bars) that used to sit always-
+                      visible below the header; the header now keeps only a one-line
+                      Maturity glance in its compact KPI cluster. This is program-wide,
+                      not phase-specific, so it renders identically on every phase's
+                      Signals tab — same as Critical assets and the other run-level
+                      panels below, already duplicated across phases today. */}
+                      {!suppressWinUI && (
+                        <div>
+                          <Eyebrow className="mb-1.5 block">Program status</Eyebrow>
+                          <TransformationStatusPanel status={txStatus} />
+                        </div>
+                      )}
                       <Eyebrow className="block">This run</Eyebrow>
                       <div className="grid grid-cols-1 gap-3.5 md:grid-cols-2">
                         {/* VITAL SIGNS (2026-08-02) — one card replacing three small always-on
