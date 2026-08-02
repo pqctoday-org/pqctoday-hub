@@ -142,6 +142,21 @@ export const CSWP39ZonePanel: React.FC<CSWP39ZonePanelProps> = ({
   const missing = sectionTypes.filter((t) => !existing.has(t))
   const subGroups = buildSubGroups(zone, artifacts, missing)
   const hasContent = artifacts.length > 0 || missing.length > 0
+  // Completeness framing (design_handoff_2026_pages/IMPLEMENTATION-PLAN-
+  // COMMAND-CENTER-2026-08-01.md §3.2): the "N/M created" count alone doesn't
+  // say what's incomplete — name the missing artifacts inline rather than
+  // making a user scroll the list for placeholder cards.
+  const missingNames = missing.map((t) => {
+    // eslint-disable-next-line security/detect-object-injection -- `t` is an ExecutiveDocumentType, a closed union
+    const toolId = ARTIFACT_TYPE_TO_TOOL_ID[t]
+    const tool = toolId ? BUSINESS_TOOLS.find((bt) => bt.id === toolId) : undefined
+    return tool?.name ?? t
+  })
+  // Bird's-eye default (shared chrome design principle): name up to 3 inline,
+  // the rest only in the hover title — a zone with many gaps shouldn't force
+  // a wall of names into the header.
+  const missingPreview = missingNames.slice(0, 3).join(', ')
+  const missingExtra = missingNames.length > 3 ? ` +${missingNames.length - 3} more` : ''
 
   return (
     <div id={`zone-${zone}`} className={`glass-panel p-4 border-2 rounded-lg ${style.border}`}>
@@ -169,8 +184,12 @@ export const CSWP39ZonePanel: React.FC<CSWP39ZonePanelProps> = ({
                 <TierBadge result={tier} />
               </>
             )}
-            <span className="text-[10px] text-muted-foreground">
+            <span
+              className="text-[10px] text-muted-foreground"
+              title={missingNames.length > 0 ? `Missing: ${missingNames.join(', ')}` : undefined}
+            >
               {artifacts.length}/{sectionTypes.length} created
+              {missingNames.length > 0 && ` — missing ${missingPreview}${missingExtra}`}
             </span>
             {detail.learnRoute && !open && (
               // Collapsed: promote "Learn this zone" to a primary button so
