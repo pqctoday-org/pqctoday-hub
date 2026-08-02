@@ -16,6 +16,17 @@ interface SourcesModalProps {
   isOpen: boolean
   onClose: () => void
   viewType: ViewType
+  /**
+   * The page's own underlying CSV filename + last-updated date, e.g.
+   * "timeline_07312026.csv • Updated: 7/31/2026" — the same string already
+   * computed for the page-action strip's "Info" popover. 2026-08-01 follow-up
+   * ("what is missing is the latest sources csv file name or latest csv
+   * update date"): this modal listed each individual authoritative source's
+   * own verified date, but never named the actual data file backing the page
+   * itself. Optional since not every route has one (some pages have no
+   * PageActionStrip dataSource at all).
+   */
+  dataSource?: string
 }
 
 const regionToBadgeCategory: Record<
@@ -28,7 +39,7 @@ const regionToBadgeCategory: Record<
   Global: 'global',
 }
 
-export const SourcesModal = ({ isOpen, onClose, viewType }: SourcesModalProps) => {
+export const SourcesModal = ({ isOpen, onClose, viewType, dataSource }: SourcesModalProps) => {
   const isEmbedded = useIsEmbedded()
   const positionStyle = useModalPosition(isEmbedded)
   const sources = useMemo(() => getSourcesForView(viewType), [viewType])
@@ -96,6 +107,9 @@ export const SourcesModal = ({ isOpen, onClose, viewType }: SourcesModalProps) =
                 <p className="text-sm text-muted-foreground mt-1">
                   Sources referenced for {viewType} data
                 </p>
+                {dataSource && (
+                  <p className="text-xs text-muted-foreground/80 mt-1 font-mono">{dataSource}</p>
+                )}
               </div>
               <Button variant="ghost" size="icon" onClick={onClose} aria-label="Close modal">
                 <X size={20} />

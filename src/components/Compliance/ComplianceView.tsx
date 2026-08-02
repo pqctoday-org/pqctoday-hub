@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { lazy, Suspense, useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
+import { ErrorAlert } from '@/components/ui/error-alert'
 import { useSearchParams } from 'react-router'
 import { ComplianceTable } from './ComplianceTable'
 import { type FrameworkSortOption } from './ComplianceLandscape'
@@ -50,6 +52,7 @@ import type { ComplianceFramework } from '@/data/complianceData'
 import { useApplicability } from '@/hooks/useApplicability'
 import { logComplianceFilter } from '../../utils/analytics'
 import { PageHeader } from '../common/PageHeader'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { COMPLIANCE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
@@ -58,7 +61,6 @@ import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
 import { complianceFrameworks, complianceMetadata } from '@/data/complianceData'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
 import { useHistoryStore } from '@/store/useHistoryStore'
-import { RoleFilter } from '../common/RoleFilter'
 import { normalizeCountry } from '@/utils/applicabilityEngine'
 import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
 import { useComplianceUrlState, isLandscapeTab, type MobileSection } from './useComplianceUrlState'
@@ -264,7 +266,13 @@ export const ComplianceView = ({
   const [drawerPillar, setDrawerPillar] = useState<PillarId>('comply')
 
   const tierFilter = useTrustTierFilter()
-  const { data, loading, refresh, lastUpdated, enrichRecord } = useComplianceRefresh()
+  const { data, loading, error, refresh, lastUpdated, enrichRecord } = useComplianceRefresh()
+  // Page-wide loading/error state — shared across every tab (Landscape,
+  // Product Records, For You, CSWP.39 Agility all read the same `data`), not
+  // duplicated per tab. Only the very first load shows the skeleton; a
+  // filter-triggered background refresh with data already on screen keeps
+  // using ComplianceTable's own spinner overlay, unchanged.
+  const showComplianceSkeleton = loading && data.length === 0
   const { selectedIndustries, selectedRegion } = usePersonaStore()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const myFrameworks = useComplianceSelectionStore((s) => s.myFrameworks)
@@ -631,46 +639,55 @@ export const ComplianceView = ({
 
   const activeStableTab = stableTabFor(activeTab)
 
+  // Register this page's actions with the global top bar (page-action-strip
+  // rollout, 2026-08-01) — info/export/endorse/flag render there now, not as
+  // a row on the page itself. Mirrors TimelineView.tsx's pattern. Gated on
+  // `!simEmbed`, same as the PageHeader render below (this page's own
+  // separate in-page <ForYouSection onExportCsv={handleExportCsv} /> export
+  // button, further down, is untouched — handleExportCsv is still a real,
+  // shared function, just no longer ALSO wired to PageHeader's onExport).
+  useEffect(() => {
+    if (simEmbed) return
+    const { setPageActions, clearPageActions } = usePageActionsStore.getState()
+    setPageActions({
+      title: 'Standardization, Certification & Compliance',
+      dataSource: complianceMetadata
+        ? `${complianceMetadata.filename} • Updated: ${complianceMetadata.lastUpdate.toLocaleDateString()}`
+        : undefined,
+      onExport: handleExportCsv,
+      endorseUrl: buildEndorsementUrl({
+        category: 'compliance-endorsement',
+        title: 'Endorse: Standardization, Certification & Compliance',
+        resourceType: 'Compliance Page',
+        resourceId: 'Standardization, Certification & Compliance',
+        resourceDetails:
+          '**Page:** Standardization, Certification & Compliance — standards bodies, certification schemes, and regulatory frameworks.',
+        pageUrl: '/compliance',
+      }),
+      endorseLabel: 'Compliance Page',
+      endorseResourceType: 'Compliance',
+      flagUrl: buildFlagUrl({
+        category: 'compliance-endorsement',
+        title: 'Flag: Standardization, Certification & Compliance',
+        resourceType: 'Compliance Page',
+        resourceId: 'Standardization, Certification & Compliance',
+        resourceDetails:
+          '**Page:** Standardization, Certification & Compliance — standards bodies, certification schemes, and regulatory frameworks.',
+        pageUrl: '/compliance',
+      }),
+      flagLabel: 'Compliance Page',
+      flagResourceType: 'Compliance',
+    })
+    return () => clearPageActions()
+  }, [simEmbed, handleExportCsv])
+
   return (
     <div className="animate-fade-in space-y-6">
       {!simEmbed && (
         <PageHeader
           icon={ShieldCheck}
-          pageId="compliance"
           title="Standardization, Certification & Compliance"
           description="Who defines the algorithms, who validates the products, who mandates adoption — across standardization bodies, certification schemes, and compliance frameworks."
-          dataSource={
-            complianceMetadata
-              ? `${complianceMetadata.filename} • Updated: ${complianceMetadata.lastUpdate.toLocaleDateString()}`
-              : undefined
-          }
-          viewType="Compliance"
-          suppressSources
-          shareTitle="PQC Compliance Tracker — Standards, Certifications, Frameworks"
-          shareText="Explore PQC compliance: standardization bodies, certification programs (FIPS 140-3, ACVP, Common Criteria), and regulatory frameworks."
-          onExport={handleExportCsv}
-          endorseUrl={buildEndorsementUrl({
-            category: 'compliance-endorsement',
-            title: 'Endorse: Standardization, Certification & Compliance',
-            resourceType: 'Compliance Page',
-            resourceId: 'Standardization, Certification & Compliance',
-            resourceDetails:
-              '**Page:** Standardization, Certification & Compliance — standards bodies, certification schemes, and regulatory frameworks.',
-            pageUrl: '/compliance',
-          })}
-          endorseLabel="Compliance Page"
-          endorseResourceType="Compliance"
-          flagUrl={buildFlagUrl({
-            category: 'compliance-endorsement',
-            title: 'Flag: Standardization, Certification & Compliance',
-            resourceType: 'Compliance Page',
-            resourceId: 'Standardization, Certification & Compliance',
-            resourceDetails:
-              '**Page:** Standardization, Certification & Compliance — standards bodies, certification schemes, and regulatory frameworks.',
-            pageUrl: '/compliance',
-          })}
-          flagLabel="Compliance Page"
-          flagResourceType="Compliance"
         />
       )}
 
@@ -891,8 +908,24 @@ export const ComplianceView = ({
           })}
         </ScrollFadeContainer>
 
+        {error && (
+          <div className="mt-4">
+            <ErrorAlert message={error} onRetry={refresh} />
+          </div>
+        )}
+
+        {!error && showComplianceSkeleton && (
+          <div className="mt-4 space-y-3" aria-busy="true" aria-label="Loading compliance data">
+            <Skeleton className="h-8 w-2/3" />
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-5/6" />
+          </div>
+        )}
+
         {/* ── Landscape — three-pillar pipeline ── */}
-        {activeStableTab === 'landscape' && (
+        {activeStableTab === 'landscape' && !error && !showComplianceSkeleton && (
           <div className="mt-0 space-y-4">
             <PillarPipeline
               frameworks={tierFilteredFrameworks}
@@ -904,7 +937,7 @@ export const ComplianceView = ({
         )}
 
         {/* ── Product Records ── */}
-        {activeStableTab === 'records' && (
+        {activeStableTab === 'records' && !error && !showComplianceSkeleton && (
           <div className="mt-0 space-y-4">
             <SectionHeader
               icon={<GlobeLock size={20} className="text-primary" />}
@@ -945,22 +978,19 @@ export const ComplianceView = ({
         )}
 
         {/* ── For You — stable skeleton, tuned per persona via the shared lens ── */}
-        {activeStableTab === 'foryou' && (
+        {activeStableTab === 'foryou' && !error && !showComplianceSkeleton && (
           <div className="mt-0 space-y-4">
             <SectionHeader
               icon={<Sparkles size={20} className="text-primary" />}
               title="For You"
-              description="Standards, threats, library docs, and timeline milestones that apply to your industry, country, and region — tuned by the lens above and your assessment profile."
+              description="Standards, threats, library docs, and timeline milestones that apply to your industry, country, and region — tuned by your role (top bar) and your assessment profile."
             />
-            <div className="flex flex-wrap gap-2">
-              <RoleFilter syncWithPersona />
-            </div>
             <ForYouSection onExportCsv={handleExportCsv} />
           </div>
         )}
 
         {/* ── CSWP.39 Agility ── */}
-        {activeStableTab === 'cswp39' && (
+        {activeStableTab === 'cswp39' && !error && !showComplianceSkeleton && (
           <div className="mt-0 space-y-4">
             <CSWP39AgilityExplorer
               onNavigateToFramework={handleCswp39Jump}

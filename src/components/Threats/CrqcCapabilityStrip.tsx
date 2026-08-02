@@ -25,10 +25,30 @@ import {
 
 const CURRENT_YEAR = new Date().getFullYear()
 
-export const CrqcCapabilityStrip: React.FC<{ defaultExpanded?: boolean }> = ({
-  defaultExpanded = false,
-}) => {
-  const [expanded, setExpanded] = useState(defaultExpanded)
+export const CrqcCapabilityStrip: React.FC<{
+  defaultExpanded?: boolean
+  /**
+   * Optionally-controlled expand state (Phase 7 item 2 of the 2026-pages plan):
+   * when both `expanded` and `onExpandedChange` are supplied, the parent owns
+   * the toggle (e.g. so it can share it with a sibling like CrqcTrajectoryChart)
+   * and the internal `useState` below is bypassed entirely. Any existing caller
+   * that only passes `defaultExpanded` (or nothing) keeps managing its own
+   * state exactly as before.
+   */
+  expanded?: boolean
+  onExpandedChange?: (expanded: boolean) => void
+}> = ({ defaultExpanded = false, expanded: controlledExpanded, onExpandedChange }) => {
+  const [internalExpanded, setInternalExpanded] = useState(defaultExpanded)
+  const isControlled = controlledExpanded !== undefined && onExpandedChange !== undefined
+  const expanded = isControlled ? controlledExpanded : internalExpanded
+  const setExpanded = (next: boolean | ((v: boolean) => boolean)) => {
+    const resolved = typeof next === 'function' ? next(expanded) : next
+    if (isControlled) {
+      onExpandedChange(resolved)
+    } else {
+      setInternalExpanded(resolved)
+    }
+  }
 
   // Single-sourced via getCrqcConsensus() (Threats #1) — the same derivation
   // SectorExposureHero, CrqcTrajectoryChart, and ThreatEconomicsHeader use.
@@ -151,6 +171,11 @@ export const CrqcCapabilityStrip: React.FC<{ defaultExpanded?: boolean }> = ({
             (Google/Ethereum, 2026); earlier work ranged to ~2,330+ LQ. The bar to break RSA-2048
             keeps falling: ~20M physical qubits (2019) → &lt;1M (Gidney 2025) → &lt;100k projected
             (qLDPC, 2026).
+          </div>
+          <div className="text-[10px] text-muted-foreground mt-1">
+            The <em>logical</em>-qubit count for the same RSA-2048 target has fallen too: ~4,098
+            (2016-era 2n+2 estimate) → ~1,730 (Chevignard–Fouque–Schrottenloher, CRYPTO 2025) — an
+            algorithmic improvement independent of the physical-qubit-overhead cuts above.
           </div>
           <div className="text-[10px] text-muted-foreground mt-1">
             Lead: {leadMachine.vendor} {leadMachine.name} ({leadMachine.qubitType})

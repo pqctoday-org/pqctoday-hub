@@ -111,10 +111,15 @@ test.describe('Command Center — unified PDF export', () => {
     // ?zone=governance deep-link forces the governance panel open (where the
     // raci-matrix artifact lives). Without this the zone may be collapsed
     // depending on persona / density default.
-    await page.goto('/business?zone=governance', {
-      waitUntil: 'networkidle',
-      timeout: 30_000,
-    })
+    //
+    // 2026-08-02: dropped waitUntil: 'networkidle' — e2e/TRIAGE.md's
+    // corrected-root-causes section diagnosed this exact symptom (a spec
+    // timing out on first load) as the service-worker's ~3,300-entry
+    // precache never going network-idle within the test budget, and
+    // recommended switching affected specs off networkidle since they
+    // already assert a specific selector right after goto — which this one
+    // already does (the artifact card assertion below).
+    await page.goto('/business?zone=governance', { timeout: 30_000 })
 
     // Open the seeded artifact card in the drawer.
     const card = page.locator('[data-workshop-target="business-artifact-raci-matrix-view"]')

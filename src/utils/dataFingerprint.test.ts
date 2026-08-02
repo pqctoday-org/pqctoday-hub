@@ -10,6 +10,12 @@ import {
 // We test against actual data — these tests verify the public API shape
 // rather than mocking internals, since the data loaders are module-level singletons.
 
+// The distinctive opening of the curious-mode preamble emitted by
+// buildWhatsNewRAGChunk. Asserted verbatim rather than by keyword: the chunk
+// also embeds real CHANGELOG.md prose, so a loose keyword match tests the
+// release notes rather than the code under test.
+const CURIOUS_PREAMBLE_MARKER = '(Note to assistant: The user is non-technical.'
+
 describe('dataFingerprint', () => {
   describe('getDataSourceSummaries', () => {
     it('returns empty array when no sources are changed', () => {
@@ -198,8 +204,11 @@ describe('dataFingerprint', () => {
       if (chunk) {
         expect(chunk.title).toBe("What's new on PQC Today")
         expect(chunk.metadata.audience).toBe('curious')
-        // Curious preamble should be present
-        expect(chunk.content).toContain('non-technical')
+        // Curious preamble should be present. Match the full marker, not the
+        // bare word "non-technical" — that appears in real changelog prose too
+        // (e.g. 4.37.0's "new/non-technical visitors"), which made the inverse
+        // assertions below fail on entry text rather than on the preamble.
+        expect(chunk.content).toContain(CURIOUS_PREAMBLE_MARKER)
         // Should use friendly section headers, not developer jargon
         expect(chunk.content).not.toContain('## App Updates')
         expect(chunk.content).toContain('## Recent improvements')
@@ -211,7 +220,7 @@ describe('dataFingerprint', () => {
       if (chunk) {
         expect(chunk.title).toBe("What's New in PQC Today")
         expect(chunk.metadata.audience).toBeUndefined()
-        expect(chunk.content).not.toContain('non-technical')
+        expect(chunk.content).not.toContain(CURIOUS_PREAMBLE_MARKER)
         expect(chunk.content).toContain('## App Updates')
       }
     })
@@ -221,7 +230,7 @@ describe('dataFingerprint', () => {
       if (chunk) {
         expect(chunk.title).toBe("What's New in PQC Today")
         expect(chunk.metadata.audience).toBeUndefined()
-        expect(chunk.content).not.toContain('non-technical')
+        expect(chunk.content).not.toContain(CURIOUS_PREAMBLE_MARKER)
       }
     })
   })
