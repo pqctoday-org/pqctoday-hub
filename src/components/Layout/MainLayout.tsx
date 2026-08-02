@@ -797,6 +797,17 @@ export const MainLayout = () => {
                   <ShareButton
                     title={shareForRoute?.title ?? `${currentLabel} — PQC Today`}
                     text={shareForRoute?.text}
+                    // BUG FIX (Grade-A remediation Phase 2, top-bar Share):
+                    // most routes' whole shareable state lives in the URL
+                    // already, so omitting `url` and falling back to
+                    // ShareButton's own `window.location.href` default is
+                    // correct for them. /report is the exception — its state
+                    // lives in local/session store, not the URL — so it
+                    // registers a self-contained token URL via
+                    // `usePageActionsStore` (see ReportView.tsx). Every other
+                    // route's `pageActions.url` stays undefined, preserving
+                    // the existing bare-URL fallback exactly.
+                    url={pageActions?.url}
                     variant="full"
                   />
                   <FAQButton compact />
