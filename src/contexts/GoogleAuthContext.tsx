@@ -95,6 +95,13 @@ export function GoogleAuthProvider({ children }: { children: React.ReactNode }) 
   )
 }
 
+// NOTE: as of the Grade-A trust remediation (2026-08), useGoogleAuth() has zero
+// consumers anywhere in src/ — there is no sign-in/sign-out UI wired to this
+// context, so signIn()/signOut() are unreachable from the app today. The
+// GoogleAuthProvider still wraps the app in AppRoot.tsx, so this context is
+// live but dormant. See src/components/About/sections/CloudSyncPrivacySection.tsx
+// for the user-facing description of this state. Do not remove without a
+// deliberate decision to build (or formally drop) the sign-in UI.
 export function useGoogleAuth() {
   return useContext(GoogleAuthContext)
 }
