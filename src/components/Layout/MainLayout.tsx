@@ -576,17 +576,31 @@ export const MainLayout = () => {
             active={isPathActive('/')}
             treatment={isPathActive('/') ? 'active' : 'plain'}
           />
+          {/* Learn sits directly under Home (2026-08-02), promoted out of
+              Reference. Reference is collapsed by default, so Learn was one
+              expand away from being seen at all despite being a primary
+              destination rather than standing lookup material. Rendered here
+              unconditionally — it is globally always-visible, not persona-
+              gated — which also means it must NOT appear in either of the two
+              Reference render paths below, or personas with a Reference group
+              would get two Learn rows. */}
+          <RailRow
+            path="/learn"
+            label={labelFor('/learn')}
+            active={isPathActive('/learn')}
+            treatment={isPathActive('/learn') ? 'active' : 'plain'}
+          />
           {forYou.length === 0 && (
             <>
               <span className="px-2 pb-2 text-[11px] italic text-muted-foreground/70">
                 Everything, unfiltered
               </span>
               {/* No persona (or researcher, whose PERSONA_NAV_PATHS is null)
-                  means forYouGroups has no 'reference' group to carry Learn/
-                  Timeline/Threats — render them directly here so they aren't
-                  silently dropped for exactly the persona with the broadest
-                  reachability guarantee. */}
-              {['/learn', '/timeline', '/threats'].map((path) => (
+                  means forYouGroups has no 'reference' group to carry Timeline/
+                  Threats — render them directly here so they aren't silently
+                  dropped for exactly the persona with the broadest
+                  reachability guarantee. (Learn is above, unconditionally.) */}
+              {['/timeline', '/threats'].map((path) => (
                 <RailRow
                   key={path}
                   path={path}
@@ -667,11 +681,14 @@ export const MainLayout = () => {
               '/report',
               '/business',
             ]
-            // Reference visually includes Learn + Timeline + Threats
-            // (2026-08-01 follow-up) even though they're globally
-            // always-visible, not persona-gated — purely a rendering
-            // position, not a reachability change (they render ONLY here,
-            // nowhere else, so there's no duplicate row).
+            // Reference visually includes Timeline + Threats (2026-08-01
+            // follow-up) even though they're globally always-visible, not
+            // persona-gated — purely a rendering position, not a reachability
+            // change (they render ONLY here, nowhere else, so there's no
+            // duplicate row). Learn was here too until 2026-08-02, when it was
+            // promoted to its own row directly under Home; it is deliberately
+            // absent from this list now, since it renders unconditionally
+            // above and a second entry here would duplicate it.
             const displayPaths =
               group.id === 'workflow'
                 ? [
@@ -691,7 +708,7 @@ export const MainLayout = () => {
                     // persona that has a Practice group, unconditionally.
                     [...group.paths.filter((p) => p !== '/explore'), '/business/tools']
                   : group.id === 'reference'
-                    ? [...group.paths, '/learn', '/timeline', '/threats']
+                    ? [...group.paths, '/timeline', '/threats']
                     : group.paths
             const groupHasActiveRoute = displayPaths.some((path) => isPathActive(path))
             const groupExpanded = groupHasActiveRoute || !collapsedForYouGroups.has(group.id)
@@ -754,11 +771,12 @@ export const MainLayout = () => {
               reachable via the Playground grid's own featured card only. */}
 
           {/* Every RAIL_ALWAYS_VISIBLE_PATHS entry now has an explicit home
-              (2026-08-01 follow-up): '/' renders once, at the very top of the
-              rail (see above FOR YOU); '/learn', '/timeline', '/threats'
-              render inside the Reference group; '/about' renders last, after
-              MORE, below. Nothing left to render as a separate "global pages"
-              block — deliberately empty, not a missing case. */}
+              (2026-08-01 follow-up, revised 2026-08-02): '/' renders once, at
+              the very top of the rail, and '/learn' immediately under it (see
+              above FOR YOU); '/timeline' and '/threats' render inside the
+              Reference group; '/about' renders last, after MORE, below.
+              Nothing left to render as a separate "global pages" block —
+              deliberately empty, not a missing case. */}
 
           {/* About — deliberately the very last row in the rail (2026-08-01
               reorder), after FOR YOU, the global pages, and MORE. */}
