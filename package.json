@@ -55,6 +55,7 @@
     "export:learn-snapshot": "tsx scripts/export-learn-manifest-snapshot.ts",
     "audit:jurisdiction-refs": "tsx scripts/audit-jurisdiction-refs.ts",
     "audit:matrix-refs": "tsx scripts/audit-matrix-refs.ts",
+    "audit:role-board-ctas": "tsx scripts/audit-role-board-ctas.ts",
     "audit:vendor-refs": "tsx scripts/audit-vendor-refs.ts",
     "audit:trusted-source-freshness": "tsx scripts/audit-trusted-source-freshness.ts",
     "audit:trusted-source-freshness:baseline": "tsx scripts/audit-trusted-source-freshness.ts --baseline",
