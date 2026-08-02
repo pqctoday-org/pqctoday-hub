@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { ReactNode } from 'react'
+import { useNavigate } from 'react-router'
 import { Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -18,7 +19,9 @@ import type { PersonaId } from '@/data/learningPersonas'
  * both are explicitly called out in the design plan, not ad hoc branching.
  * Every other pixel of copy comes from the config object.
  *
- * Not wired into routing yet — that is a later integration phase.
+ * ctaPrimary/ctaSecondary navigate to `board.ctaPrimaryHref`/`ctaSecondaryHref`
+ * (2026-08-01 fix: these rendered as inert `<Button>`s with no click behavior
+ * at all — "none of the buttons on the page does anything").
  */
 export interface PersonaBoardViewProps {
   personaId: PersonaId
@@ -76,6 +79,7 @@ function ProvenanceChip({
 }
 
 export function PersonaBoardView({ personaId, customSideCard }: PersonaBoardViewProps) {
+  const navigate = useNavigate()
   // eslint-disable-next-line security/detect-object-injection -- personaId is the typed PersonaId union, not user input
   const board = PERSONA_JOURNEY_BOARD[personaId]
   const useCustomSideCard = personaId === 'researcher' && customSideCard !== undefined
@@ -105,8 +109,12 @@ export function PersonaBoardView({ personaId, customSideCard }: PersonaBoardView
           </p>
 
           <div className="mt-5 flex flex-wrap items-center gap-3">
-            <Button variant="gradient">{board.ctaPrimary}</Button>
-            <Button variant="outline">{board.ctaSecondary}</Button>
+            <Button variant="gradient" onClick={() => navigate(board.ctaPrimaryHref)}>
+              {board.ctaPrimary}
+            </Button>
+            <Button variant="outline" onClick={() => navigate(board.ctaSecondaryHref)}>
+              {board.ctaSecondary}
+            </Button>
           </div>
 
           <ul className="mt-5 flex flex-wrap gap-2" aria-label="Proof points">
