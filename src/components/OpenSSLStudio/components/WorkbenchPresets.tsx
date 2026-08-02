@@ -150,9 +150,9 @@ export const WorkbenchPresets: React.FC<WorkbenchPresetsProps> = ({ setCategory 
           Quick Start
         </span>
         {open ? (
-          <ChevronDown size={14} className="text-muted-foreground/60 shrink-0" />
+          <ChevronDown size={14} className="text-muted-foreground shrink-0" />
         ) : (
-          <ChevronRight size={14} className="text-muted-foreground/60 shrink-0" />
+          <ChevronRight size={14} className="text-muted-foreground shrink-0" />
         )}
       </Button>
 
@@ -160,7 +160,7 @@ export const WorkbenchPresets: React.FC<WorkbenchPresetsProps> = ({ setCategory 
         <div className="mt-3 space-y-3">
           {PRESET_GROUPS.map((g) => (
             <div key={g.group}>
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60 mb-1.5">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">
                 {g.group}
               </p>
               <div className="space-y-1">

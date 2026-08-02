@@ -359,7 +359,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
                     className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
                       isProductionOnly
                         ? xmssHeight === h
-                          ? 'bg-muted/30 text-muted-foreground/60 border border-border/50 cursor-not-allowed'
+                          ? 'bg-muted/30 text-muted-foreground border border-border/50 cursor-not-allowed'
                           : 'bg-muted/20 text-muted-foreground/40 border border-border/30 cursor-not-allowed'
                         : xmssHeight === h
                           ? 'bg-secondary/20 text-secondary border border-secondary/50'

@@ -14,7 +14,6 @@ import {
   Map,
   Wrench,
   ChevronDown,
-  MessageCircle,
   type LucideIcon,
 } from 'lucide-react'
 import { Button } from '../ui/button'
@@ -31,7 +30,6 @@ import { UserManualButton } from '../ui/UserManualButton'
 import { GuidedTour } from '../common/GuidedTour'
 import { PhaseContextBanner } from '../shared/PhaseContextBanner'
 import { ResumeSimBar } from '../shared/ResumeSimBar'
-import { RightPanelFAB } from '../RightPanel/RightPanelFAB'
 import { useRightPanelStore } from '../../store/useRightPanelStore'
 import { WorkflowBanner } from '../common/WorkflowBanner'
 import { AirplaneModeBanner } from '../ui/AirplaneModeBanner'
@@ -411,12 +409,17 @@ export const MainLayout = () => {
   // can re-expand in one click — not worth a version bump + migrate() +
   // onRehydrateStorage for. Resets to collapsed each session/full reload.
   // Per-FOR-YOU-sub-group collapse (2026-08-01 follow-up: "collapse is per
-  // section not just a more at the end"). Defaults OPEN for Workflow/Practice
-  // (the essential, contextual-to-role content) but COLLAPSED for Reference
-  // (2026-08-01 follow-up: "collapse reference by default" — standing
-  // reference/community material, lower priority than day-to-day workflow).
+  // section not just a more at the end"). All groups now default OPEN.
+  //
+  // Reference defaulted to COLLAPSED from 2026-08-01 ("collapse reference by
+  // default" — standing material, lower priority than day-to-day workflow) and
+  // was reopened on 2026-08-02. Collapsing it hid Algorithms, Library, Leaders,
+  // Patents, Timeline and Threats behind a disclosure on a fresh visit, which
+  // is a lot of the product to make invisible by default; it had already forced
+  // one related fix (Learn was promoted out of this group for the same reason).
+  // Rows stay collapsible — this only changes the initial state.
   const [collapsedForYouGroups, setCollapsedForYouGroups] = React.useState<Set<string>>(
-    () => new Set(['reference'])
+    () => new Set()
   )
   const toggleForYouGroup = React.useCallback((groupId: string) => {
     setCollapsedForYouGroups((prev) => {
@@ -592,7 +595,7 @@ export const MainLayout = () => {
           />
           {forYou.length === 0 && (
             <>
-              <span className="px-2 pb-2 text-[11px] italic text-muted-foreground/70">
+              <span className="px-2 pb-2 text-[11px] italic text-muted-foreground">
                 Everything, unfiltered
               </span>
               {/* No persona (or researcher, whose PERSONA_NAV_PATHS is null)
@@ -788,28 +791,12 @@ export const MainLayout = () => {
           />
         </nav>
 
-        {/* Utility dock (2026-08-02 follow-up, master plan Phase 0.1): the
-            rail's Assistant trigger was removed — confirmed duplicate of the
-            top bar's "Ask" button (both call openRightPanel('chat') against
-            the same useRightPanelStore state), which now lives one row up in
-            the desktop top bar. Journey is deliberately KEPT: it has no
-            top-bar equivalent anywhere in this file (only the mobile "more"
-            sheet's Journey History shortcut mirrors it), so removing it here
-            would be a real functionality cut with no replacement. Follow-up:
-            give Journey a top-bar entry point too, then this lone-icon dock
-            can likely go away entirely. */}
-        <div className="p-2 border-t border-border/40 flex items-center justify-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => openPanel('history')}
-            className="h-7 w-7 text-muted-foreground hover:text-primary"
-            aria-label="Journey"
-            title="Open your Journey map"
-          >
-            <Map size={16} aria-hidden="true" />
-          </Button>
-        </div>
+        {/* The rail's lone-icon utility dock was removed on 2026-08-02. It had
+            already lost its Assistant trigger (a confirmed duplicate of the top
+            bar's "Ask"), leaving one Journey icon behind a border in the rail
+            footer. Journey now has a real top-bar entry point beside Ask, so
+            the dock had nothing left to hold — which is the outcome its own
+            comment predicted. */}
       </aside>
 
       {/* ── Right column: top bar + scrollable content ─────────────────────── */}
@@ -883,8 +870,24 @@ export const MainLayout = () => {
                     aria-label="Open PQC Assistant"
                     title="Open PQC Assistant"
                   >
-                    <MessageCircle size={13} aria-hidden="true" />
-                    <span>Ask</span>
+                    <Bot size={13} aria-hidden="true" />
+                    <span>Assistant</span>
+                  </Button>
+                  {/* Journey — moved here from the rail's lone-icon utility dock
+                      on 2026-08-02, which is exactly what that dock's own
+                      comment prescribed ("give Journey a top-bar entry point
+                      too, then this lone-icon dock can likely go away
+                      entirely"). It sits beside Ask because both open the same
+                      right panel, just on different tabs. */}
+                  <Button
+                    variant="ghost"
+                    onClick={() => openRightPanel('history')}
+                    className="flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors"
+                    aria-label="Open your Journey map"
+                    title="Open your Journey map"
+                  >
+                    <Map size={13} aria-hidden="true" />
+                    <span>Journey</span>
                   </Button>
                   <ShareButton
                     title={
@@ -1353,8 +1356,15 @@ export const MainLayout = () => {
         </div>
       </div>
 
-      {/* Assistant bottom drawer — pinned below scrollable content */}
-      <RightPanelFAB />
+      {/* The floating assistant FAB was removed from the main layout on
+          2026-08-02. Both of its functions now have real top-bar entries —
+          "Ask" (chat) and "Journey" (history) — so it was a third control for
+          state the top bar already exposes, and a large one: a 96px animated
+          GIF pinned over page content at every breakpoint. It also carried the
+          "Need Help?" bubble whose 10 s opacity keyframe made automated
+          contrast checks non-deterministic.
+          It is deliberately KEPT in EmbedLayout: embeds render no top bar, so
+          there the FAB is the only way to reach the assistant at all. */}
       <React.Suspense fallback={null}>{isPanelOpen && <RightPanel />}</React.Suspense>
 
       {/* Workshop overlay primitives (Spotlight / Callout / CaptionBar) — shared by Workshop Mode + Video Mode */}

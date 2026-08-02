@@ -339,7 +339,7 @@ function MigrationKeystore({ engine, bump }: { engine: KmipEngine; bump: number 
                         {successor ? ` (${successor.algorithm})` : ''}
                       </span>
                     ) : (
-                      <span className="text-muted-foreground/60">—</span>
+                      <span className="text-muted-foreground">—</span>
                     )}
                   </td>
                 </tr>

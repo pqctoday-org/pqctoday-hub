@@ -296,7 +296,7 @@ export function NiceView({ navigate, activePersonaId }: NiceViewProps) {
                       </span>
                     ) : (
                       <span
-                        className="text-[10px] text-muted-foreground/70 shrink-0 self-center"
+                        className="text-[10px] text-muted-foreground shrink-0 self-center"
                         title="No official NICE v2.2.0 competency area maps to this lens"
                       >
                         no official NICE area

@@ -139,7 +139,7 @@ const Step2Internals: React.FC = () => (
       </p>
       <div className="bg-muted/40 rounded-lg p-4 text-xs font-mono space-y-1 text-muted-foreground">
         <div>sk_i → H(sk_i) → H²(sk_i) → … → Hʷ(sk_i) = pk_i</div>
-        <div className="text-muted-foreground/60 mt-1">
+        <div className="text-muted-foreground mt-1">
           Sign digit d: output chain[d]. Verify: apply w−d more hashes and compare to pk_i.
         </div>
       </div>
@@ -182,7 +182,7 @@ const Step2Internals: React.FC = () => (
           <div key={row.param} className="bg-muted/40 rounded p-3 space-y-1">
             <div className="font-mono font-bold text-primary">{row.param}</div>
             <div className="text-muted-foreground leading-relaxed">{row.role}</div>
-            <div className="text-muted-foreground/70">{row.example}</div>
+            <div className="text-muted-foreground">{row.example}</div>
           </div>
         ))}
       </div>
@@ -428,7 +428,7 @@ const Step3Parameters: React.FC = () => (
                 <li key={u}>{u}</li>
               ))}
             </ul>
-            <p className="text-muted-foreground/70">Avoid for: {col.avoid}</p>
+            <p className="text-muted-foreground">Avoid for: {col.avoid}</p>
           </div>
         ))}
       </div>

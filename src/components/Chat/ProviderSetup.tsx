@@ -444,7 +444,7 @@ export const ProviderSetup: React.FC = () => {
                       After download, the model runs entirely on your device — no data is sent to
                       any server during inference.
                     </p>
-                    <p className="text-xs text-muted-foreground/70">
+                    <p className="text-xs text-muted-foreground">
                       Ensure <strong>huggingface.co</strong> is not blocked by your ad blocker,
                       firewall, or VPN.
                     </p>
@@ -595,7 +595,7 @@ export const ProviderSetup: React.FC = () => {
                   </span>
                 </li>
               </ul>
-              <p className="text-[10px] text-muted-foreground/60 pt-1 border-t border-border">
+              <p className="text-[10px] text-muted-foreground pt-1 border-t border-border">
                 PQC Today has no affiliation with Google and receives no referral fees. We recommend
                 Gemini because it gives users the best experience with this tool.
               </p>

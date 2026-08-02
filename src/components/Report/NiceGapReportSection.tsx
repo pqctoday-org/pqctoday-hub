@@ -152,7 +152,7 @@ export const NiceGapReportSection: React.FC<NiceGapReportSectionProps> = ({ resu
                     ))}
                   </div>
                 )}
-                <p className="text-xs text-muted-foreground/60">
+                <p className="text-xs text-muted-foreground">
                   Sample TKS:{' '}
                   {ca.tksSample
                     .slice(0, 2)
@@ -244,7 +244,7 @@ export const NiceGapReportSection: React.FC<NiceGapReportSectionProps> = ({ resu
 
       {/* Partial coverage note */}
       {report.partialCoverage.length > 0 && (
-        <p className="text-xs text-muted-foreground/70 border-t border-border pt-3">
+        <p className="text-xs text-muted-foreground border-t border-border pt-3">
           Partial coverage: your active migration already addresses{' '}
           {report.partialCoverage.join(', ')} — modules shown for completion.
         </p>

@@ -134,7 +134,7 @@ export function ArchitecturePanel({
         <div className="mb-3">
           <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Your selection{' '}
-            <span className="normal-case text-muted-foreground/60">· from /migrate</span>
+            <span className="normal-case text-muted-foreground">· from /migrate</span>
           </div>
           <div className="flex flex-wrap gap-1.5">
             {selectedProducts.map((p) => (

@@ -1071,7 +1071,7 @@ export function KmipPlaygroundView() {
                   value={govAttrsText}
                   onChange={(e) => setGovAttrsText(e.target.value)}
                   placeholder="name=value, name=value (optional)"
-                  className="w-full rounded-md border border-border bg-background/60 px-2 py-1 font-mono text-[11px] text-foreground placeholder:text-muted-foreground/60 focus:border-primary/60 focus:outline-none"
+                  className="w-full rounded-md border border-border bg-background/60 px-2 py-1 font-mono text-[11px] text-foreground placeholder:text-muted-foreground focus:border-primary/60 focus:outline-none"
                 />
               </div>
 

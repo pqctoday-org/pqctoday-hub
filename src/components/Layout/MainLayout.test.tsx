@@ -59,8 +59,8 @@ const FOR_YOU_GROUP_TOGGLE_NAME: Record<'Workflow' | 'Practice' | 'Reference', R
 /** Clicks a FOR YOU sub-group's collapsible toggle — Workflow/Practice/
  * Reference (2026-08-01 rail declutter follow-up). The desktop rail's old
  * single MORE toggle was removed entirely; each sub-group now has its own
- * disclosure button instead (Reference starts collapsed, Workflow/Practice
- * start expanded). Scoped to the rail landmark. */
+ * disclosure button instead. All three groups start expanded as of
+ * 2026-08-02. Scoped to the rail landmark. */
 function toggleForYouGroup(rail: HTMLElement, groupLabel: 'Workflow' | 'Practice' | 'Reference') {
   fireEvent.click(
     // eslint-disable-next-line security/detect-object-injection -- groupLabel is drawn from the typed literal union above, not user input
@@ -408,9 +408,11 @@ describe('MainLayout', () => {
       usePersonaStore.getState().setPersona('executive')
       renderLayout()
       const rail = getRailNav()
-      // Reference is collapsed by default — its own rows are hidden...
+      // Every group now starts EXPANDED (2026-08-02), so collapse Reference
+      // explicitly — the property under test is that Learn survives it, which
+      // is independent of what the default happens to be.
+      toggleForYouGroup(rail, 'Reference')
       expect(within(rail).queryByRole('button', { name: /library view/i })).not.toBeInTheDocument()
-      // ...but Learn is no longer one of them.
       expect(within(rail).getByRole('button', { name: /learn view/i })).toBeInTheDocument()
     })
 
@@ -418,13 +420,13 @@ describe('MainLayout', () => {
       usePersonaStore.getState().setPersona('executive')
       renderLayout()
       const rail = getRailNav()
-      toggleForYouGroup(rail, 'Reference')
+      // Reference is expanded by default as of 2026-08-02, so no toggle needed.
       // The regression this guards: leaving '/learn' in the Reference display
       // list as well as the new unconditional row would render it twice.
       expect(within(rail).getAllByRole('button', { name: /learn view/i })).toHaveLength(1)
     })
 
-    it('Workflow and Practice start expanded; Reference starts collapsed', () => {
+    it('Workflow, Practice AND Reference all start expanded (2026-08-02)', () => {
       usePersonaStore.getState().setPersona('executive')
       renderLayout()
       const rail = getRailNav()
@@ -436,15 +438,17 @@ describe('MainLayout', () => {
         'aria-expanded',
         'true'
       )
-      expect(within(rail).getByRole('button', { name: /show reference/i })).toHaveAttribute(
+      // Reference collapsed by default from 2026-08-01 until 2026-08-02, when
+      // it was reopened — collapsing it hid Algorithms, Library, Leaders,
+      // Patents, Timeline and Threats on a fresh visit.
+      expect(within(rail).getByRole('button', { name: /hide reference/i })).toHaveAttribute(
         'aria-expanded',
-        'false'
+        'true'
       )
-      // Workflow/Practice rows are already visible...
+      // All three groups' rows are therefore visible without any interaction.
       expect(within(rail).getByRole('button', { name: /migrate view/i })).toBeInTheDocument()
       expect(within(rail).getByRole('button', { name: /simulation view/i })).toBeInTheDocument()
-      // ...but Reference's rows are not, until it's expanded.
-      expect(within(rail).queryByRole('button', { name: /library view/i })).not.toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /library view/i })).toBeInTheDocument()
     })
 
     it('clicking the Reference toggle reveals its rows and flips aria-expanded/its label; clicking again re-collapses', () => {
@@ -453,15 +457,19 @@ describe('MainLayout', () => {
       const rail = getRailNav()
       const toggle = () => within(rail).getByRole('button', { name: /(show|hide) reference/i })
 
-      fireEvent.click(toggle())
+      // Starts EXPANDED as of 2026-08-02, so the round-trip runs the other way.
       expect(toggle()).toHaveAttribute('aria-expanded', 'true')
-      expect(toggle()).toHaveAccessibleName(/hide reference/i)
       expect(within(rail).getByRole('button', { name: /library view/i })).toBeInTheDocument()
 
       fireEvent.click(toggle())
       expect(toggle()).toHaveAttribute('aria-expanded', 'false')
       expect(toggle()).toHaveAccessibleName(/show reference/i)
       expect(within(rail).queryByRole('button', { name: /library view/i })).not.toBeInTheDocument()
+
+      fireEvent.click(toggle())
+      expect(toggle()).toHaveAttribute('aria-expanded', 'true')
+      expect(toggle()).toHaveAccessibleName(/hide reference/i)
+      expect(within(rail).getByRole('button', { name: /library view/i })).toBeInTheDocument()
     })
 
     it('auto-expands Reference when the CURRENT route lives in it, so active-route highlighting is never hidden behind a collapsed section', () => {
@@ -503,12 +511,10 @@ describe('MainLayout', () => {
       expect(within(rail).getByText('Practice')).toBeInTheDocument()
       expect(within(rail).getByText('Reference')).toBeInTheDocument()
       // Grouping is presentational only — every row is still reachable.
-      // Workflow/Practice start expanded so their rows are immediately
-      // visible; Reference starts collapsed (2026-08-01 per-group collapse
-      // follow-up) so its rows need expanding first.
+      // All three groups start expanded (2026-08-02), so every row is visible
+      // without interaction.
       expect(within(rail).getByRole('button', { name: /migrate view/i })).toBeInTheDocument()
       expect(within(rail).getByRole('button', { name: /simulation view/i })).toBeInTheDocument()
-      toggleForYouGroup(rail, 'Reference')
       expect(within(rail).getByRole('button', { name: /library view/i })).toBeInTheDocument()
     })
 

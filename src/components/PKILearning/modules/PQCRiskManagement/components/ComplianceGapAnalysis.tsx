@@ -253,7 +253,7 @@ export const ComplianceGapAnalysis: React.FC<ComplianceGapAnalysisProps> = ({ ri
               <div>
                 <span className="font-medium text-foreground">{m.label}</span>
                 <span className="text-muted-foreground"> — {m.description}</span>
-                <span className="ml-1 text-muted-foreground/60">({m.scope})</span>
+                <span className="ml-1 text-muted-foreground">({m.scope})</span>
               </div>
             </div>
           ))}

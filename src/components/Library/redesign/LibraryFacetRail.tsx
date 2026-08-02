@@ -48,7 +48,7 @@ function CountPill({ n, active }: { n: number; active: boolean }) {
   return (
     <span
       className={`ml-auto shrink-0 rounded-full px-1.5 py-0.5 text-[11px] ${
-        active ? 'bg-primary/20 text-primary' : 'bg-muted/60 text-muted-foreground'
+        active ? 'bg-primary/20 text-primary-legible' : 'bg-muted/60 text-muted-foreground'
       }`}
     >
       {n}

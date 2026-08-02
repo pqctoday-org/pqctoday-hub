@@ -138,7 +138,7 @@ const ArtifactSummaryStrip: React.FC = () => {
                         {item.name}
                       </span>
                       {item.detail && (
-                        <span className="text-xs text-muted-foreground/60 shrink-0">
+                        <span className="text-xs text-muted-foreground shrink-0">
                           · {item.detail}
                         </span>
                       )}
@@ -399,7 +399,7 @@ export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({
       description={
         <>
           Learn PKI fundamentals, build certificate chains hands-on, and explore PQC migration.
-          <span className="block text-xs text-muted-foreground/60 mt-1">
+          <span className="block text-xs text-muted-foreground mt-1">
             Learning sandbox — private keys are stored in your browser and should not be used in
             production.
           </span>

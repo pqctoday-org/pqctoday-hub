@@ -216,7 +216,7 @@ function Group({
 function Connector({ collapsed }: { collapsed: boolean }) {
   if (collapsed) return null
   return (
-    <div className="flex justify-center py-0.5 text-muted-foreground/60" aria-hidden="true">
+    <div className="flex justify-center py-0.5 text-muted-foreground" aria-hidden="true">
       ↓
     </div>
   )

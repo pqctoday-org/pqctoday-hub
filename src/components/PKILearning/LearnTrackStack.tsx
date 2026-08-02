@@ -436,7 +436,7 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
 
                 {/* Mobile-only: module count + quiz + restore button + expand chevron */}
                 <div className="flex md:hidden items-center justify-between mt-1.5 gap-2">
-                  <span className="text-xs text-muted-foreground/70 tabular-nums">
+                  <span className="text-xs text-muted-foreground tabular-nums">
                     {filteredCount < totalCount
                       ? `${filteredCount} / ${totalCount} modules`
                       : `${totalCount} modules`}

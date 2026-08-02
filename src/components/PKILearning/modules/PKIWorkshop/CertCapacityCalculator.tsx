@@ -396,10 +396,10 @@ export function CertCapacityCalculator() {
               Models the CA database growing by one record per issued cert. If you keep all issued
               certs (audit trail), this is how much storage you add per year.
             </p>
-            <p className="text-muted-foreground/70">
+            <p className="text-muted-foreground">
               Sliders that affect this chart: <em>Certificate count</em>, <em>Renewal cadence</em>.
             </p>
-            <p className="text-muted-foreground/70">
+            <p className="text-muted-foreground">
               Size sources: NIST FIPS 204 Table 2 (ML-DSA), RFC 5480 (ECDSA), RFC 3447 (RSA).
             </p>
           </MathDisclosure>
@@ -452,12 +452,12 @@ export function CertCapacityCalculator() {
               <br />
               <span className="font-mono">aggregateMB/s = payloadKB × handshakesPerSec ÷ 1024</span>
             </p>
-            <p className="text-muted-foreground/70">
+            <p className="text-muted-foreground">
               Assumes the CA and the server leaf cert use the same algorithm family (e.g., ML-DSA CA
               issuing ML-DSA leaf certs). Hybrid PKI (ECDSA CA + ML-DSA leaf) would reduce the CA
               sig size in the Certificate message.
             </p>
-            <p className="text-muted-foreground/70">
+            <p className="text-muted-foreground">
               Slider that affects this chart: <em>TLS handshakes / sec</em>.
             </p>
           </MathDisclosure>
@@ -504,14 +504,14 @@ export function CertCapacityCalculator() {
               <br />
               <span className="font-mono">CPU% = (handshakesPerSec ÷ maxOps/s) × 100</span>
             </p>
-            <p className="text-muted-foreground/70">
+            <p className="text-muted-foreground">
               AVX2-optimised benchmarks, single-core 3 GHz x86-64 (Haswell-class). ML-DSA numbers
               are from the CRYSTALS-Dilithium AVX2 submission (NIST PQC Round 3, Appendix B); RSA
               and ECDSA from OpenSSL 3.x with CRT and AVX2 scalar-multiplication. Note: RSA signing
               improves further (~3–4×) with AVX-512 IFMA52 (Ice Lake+), which is not modelled here.
               Multi-core scaling is linear — divide CPU% by your core count for fleet capacity.
             </p>
-            <p className="text-muted-foreground/70">
+            <p className="text-muted-foreground">
               Slider that affects this chart: <em>TLS handshakes / sec</em>.
             </p>
           </MathDisclosure>

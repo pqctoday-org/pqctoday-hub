@@ -83,7 +83,7 @@ export function RulePalette({ guided, activePresetFile, onSelectPreset, onAddRul
                   {meta.label}
                 </span>
                 <span
-                  className="ml-auto cursor-help text-[10px] text-muted-foreground/60"
+                  className="ml-auto cursor-help text-[10px] text-muted-foreground"
                   title={meta.meaning}
                 >
                   ⓘ

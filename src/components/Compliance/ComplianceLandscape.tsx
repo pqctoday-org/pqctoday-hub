@@ -1748,19 +1748,19 @@ export function ComplianceLandscape({
           <div className="glass-panel p-8 text-center text-muted-foreground space-y-2">
             <p>No entries match your current selection.</p>
             {searchFilterText.trim() && semantic.loading && (
-              <p className="text-xs text-muted-foreground/70">
+              <p className="text-xs text-muted-foreground">
                 Semantic search is still loading — results may update in a moment.
               </p>
             )}
             {searchFilterText.trim() && !semantic.loading && semantic.mode === 'semantic' && (
-              <p className="text-xs text-muted-foreground/70">
+              <p className="text-xs text-muted-foreground">
                 Neither keyword nor semantic matching found a framework for &ldquo;
                 {searchFilterText.trim()}&rdquo;. Try rephrasing, or clear a Region or Deadline
                 filter to widen the scope.
               </p>
             )}
             {searchFilterText.trim() && !semantic.loading && semantic.mode === 'lexical' && (
-              <p className="text-xs text-muted-foreground/70">
+              <p className="text-xs text-muted-foreground">
                 No keyword match for &ldquo;{searchFilterText.trim()}&rdquo;. Semantic search is not
                 yet available — try different terms, or clear a filter.
               </p>

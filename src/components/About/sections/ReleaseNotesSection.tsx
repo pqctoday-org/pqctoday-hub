@@ -27,7 +27,7 @@ export function ReleaseNotesSection() {
             <p className="text-xs md:text-sm text-muted-foreground">
               What&apos;s new in v{version} — features, fixes, and improvements
             </p>
-            <p className="text-[10px] text-muted-foreground/60 mt-0.5">
+            <p className="text-[10px] text-muted-foreground mt-0.5">
               Deployed: {__BUILD_TIMESTAMP__}
             </p>
           </div>

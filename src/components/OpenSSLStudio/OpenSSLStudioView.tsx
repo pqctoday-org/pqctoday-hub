@@ -317,7 +317,7 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
                                 <span className="text-[10px] font-semibold text-primary truncate">
                                   {log.operationType}
                                 </span>
-                                <span className="text-[10px] text-muted-foreground/60 shrink-0 tabular-nums">
+                                <span className="text-[10px] text-muted-foreground shrink-0 tabular-nums">
                                   {log.executionTime.toFixed(0)} ms
                                 </span>
                               </div>
