@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import { useSearchParams } from 'react-router'
-import { Globe, Link2, Check, Search, Download, Lightbulb } from 'lucide-react'
+import { Globe, Link2, Check, Search, Download, Lightbulb, AlertTriangle } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { timelineData, timelineMetadata, transformToGanttData } from '../../data/timelineData'
 import { applyTimelineScope, applyTierFilter } from '@/data/timelineScope'
@@ -396,15 +396,22 @@ export const TimelineView = () => {
     ]
   }, [regionFilter, countryEventCounts])
 
-  // Genuinely-not-loaded → loading copy. Trust-tier-zeroed → fall through and
-  // render the page chrome + an explanatory EmptyState below.
+  // timelineData is parsed synchronously from a bundled CSV at module load
+  // (src/data/timelineData.ts) — there is no async "loading" moment for this
+  // branch to genuinely catch. If it's ever empty, the real cause is a
+  // parse/bundling failure, not a slow network — the old "Please wait while
+  // we load..." copy was actively misleading about what state this is.
+  // Trust-tier-zeroed data takes a different path and falls through to an
+  // explanatory EmptyState further below, unaffected by this change.
   if (!timelineData || timelineData.length === 0) {
     return (
       <div className="py-8">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Loading Timeline Data...</h2>
-          <p className="text-muted-foreground">Please wait while we load the migration timeline.</p>
-        </div>
+        <EmptyState
+          icon={<AlertTriangle size={28} aria-hidden="true" />}
+          title="Timeline data failed to load."
+          description="The migration timeline dataset didn't load correctly. Try reloading the page; if this keeps happening, the underlying data file may be broken."
+          action={{ label: 'Reload', onClick: () => window.location.reload() }}
+        />
       </div>
     )
   }
