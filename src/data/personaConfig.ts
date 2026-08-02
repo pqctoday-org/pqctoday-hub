@@ -1498,7 +1498,13 @@ export const PERSONA_JOURNEY_BOARD: Record<PersonaId, PersonaJourneyBoard> = {
     ctaPrimary: 'Start — 8 questions, about 6 minutes',
     ctaPrimaryHref: '/assess',
     ctaSecondary: 'See a finished example',
-    ctaSecondaryHref: '/report',
+    // 2026-08-02: was bare '/report'. `ReportView`'s empty state only offered
+    // the worked example to the curious persona, so an executive clicking
+    // "See a finished example" landed on "No Report Yet" telling them to go
+    // complete the assessment — the exact dead end this CTA promises to
+    // avoid. `?example=1` renders the example directly (ReportView's
+    // hydration effect); the empty-state link is now ungated too (RP-5).
+    ctaSecondaryHref: '/report?example=1',
     proofChips: [
       'Verified in your browser against NIST ACVP vectors',
       `${LIBRARY_ACTIVE_SOURCE_COUNT} sources, trust-tiered`,
@@ -1676,12 +1682,35 @@ export const PERSONA_JOURNEY_BOARD: Record<PersonaId, PersonaJourneyBoard> = {
       text: 'Americas · Energy & Utilities, Telecommunications',
       tone: 'sourced',
     },
-    headline: 'Will your HSMs survive the cutover?',
+    // 2026-08-02: was 'Will your HSMs survive the cutover?' — an over-promise.
+    // The tool this hero describes sizes ten workflows and tells you whether a
+    // configured fleet clears the resulting demand. It knows nothing about HSM
+    // firmware support for ML-DSA, key migration, or downtime, so it cannot
+    // answer whether anything "survives" a cutover. It was also the only
+    // rhetorical question among the six persona headlines. Replaced with what
+    // the page actually does, tied to the eyebrow's 90-day renewal window.
+    headline: 'Size your fleet before renewal day.',
     sub: `${capitalizedSmallNumberWord(HSM_CAPACITY_USE_CASE_COUNT)} enterprise workflows, sized side by side: RSA-3072 and ECDSA P-256 today against ML-DSA-44/65/87. Storage, bandwidth, and CPU cores per workflow, with a totals row.`,
     ctaPrimary: 'Size my fleet',
-    ctaPrimaryHref: '/playground/hsm',
-    ctaSecondary: 'Import my cert inventory',
-    ctaSecondaryHref: '/migrate',
+    // 2026-08-02: was '/playground/hsm', which is `HsmPlayground` — the
+    // PKCS#11 engine workbench (App.tsx's static `playground/hsm` route). It
+    // does not size anything. Every other element of this hero describes the
+    // HSM Capacity Calculator — the sub's "ten enterprise workflows … with a
+    // totals row", the "A sizing verdict" grid card, and the side card's
+    // footnote claiming these are "the same defaults behind the HSM Capacity
+    // Calculator this page opens with", which was simply false. The
+    // calculator is registered as `hsm-capacity` (workshopRegistry.tsx) and
+    // resolves through `PlaygroundToolRoute`.
+    ctaPrimaryHref: '/playground/hsm-capacity',
+    // 2026-08-02: was 'Import my cert inventory' → '/migrate'. There is no
+    // import, upload or inventory-ingest affordance anywhere under
+    // `src/components/Migrate/` — or anywhere else in the app. The link
+    // resolved, so it wasn't dead in the routing sense, but it promised a
+    // capability the product does not have. Replaced with the real follow-up
+    // question to fleet sizing: will my vendor support ML-DSA in time?
+    // `?tab=roadmaps` is honored by MigrationWorkbench's `tab` param.
+    ctaSecondary: "Check your HSM vendor's roadmap",
+    ctaSecondaryHref: '/migrate?tab=roadmaps',
     proofChips: [
       'Sizing from real FIPS 203/204 key sizes',
       'Benchmarked through a real PKCS#11 engine',
@@ -1704,7 +1733,7 @@ export const PERSONA_JOURNEY_BOARD: Record<PersonaId, PersonaJourneyBoard> = {
       ],
       punchline: 'Your next renewal window is your migration window.',
       footnote:
-        'Real figures, not illustrative — the same defaults behind the HSM Capacity Calculator this page opens with.',
+        'Real figures, not illustrative — the same defaults behind the HSM Capacity Calculator this page links to.',
     },
     gridTitle: 'What you walk out with',
     gridSub: 'Real zones and artifacts for your fleet',

@@ -34,7 +34,11 @@ import {
 import type { AssessmentInput } from '../../hooks/assessmentTypes'
 import { PageHeader } from '../common/PageHeader'
 import { logReportViewed, logReportShareLinkOpened, logReportCta } from '@/utils/analytics'
-import { EXAMPLE_REPORT_URL } from '@/data/exampleReport'
+import {
+  EXAMPLE_REPORT_URL,
+  EXAMPLE_REPORT_RESULT,
+  EXAMPLE_REPORT_PERSONA,
+} from '@/data/exampleReport'
 import { PersonaSuggestionCard } from '@/components/Assess/PersonaSuggestionCard'
 import { getBeltTierLabel } from '@/data/personaConfig'
 import { useAwarenessScore } from '@/hooks/useAwarenessScore'
@@ -356,6 +360,27 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
     if (hydratedRef.current) return
     hydratedRef.current = true
 
+    // Stable, human-readable entry point for the worked example:
+    // `/report?example=1`, equivalent to opening `EXAMPLE_REPORT_URL`.
+    // Why a second path rather than just linking the canonical URL: persona
+    // hero CTAs are configured in `src/data/personaConfig.ts`, which the nav
+    // pulls into the MAIN bundle. `EXAMPLE_REPORT_URL` embeds a token minted
+    // at module-eval by `computeAssessment`, so importing it there would drag
+    // the whole assessment orchestrator into every route. A static path lets
+    // the config reference the example without that cost. Renders under the
+    // example's own authored persona so both entry points show the identical
+    // report. (Executive "See a finished example" used to point at bare
+    // `/report` and land on "No Report Yet" — see RP-5.)
+    if (searchParams.get('example') === '1') {
+      logReportShareLinkOpened()
+      setSharedView({
+        result: EXAMPLE_REPORT_RESULT,
+        persona: toValidPersona(EXAMPLE_REPORT_PERSONA),
+        approximate: false,
+      })
+      return
+    }
+
     // Current token path: ?share=<base64 v2 token>, or an older v1 token
     // still circulating from before this fix shipped.
     const shareToken = searchParams.get('share')
@@ -529,19 +554,24 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
           <p className="text-muted-foreground mb-6">
             {isCurious
               ? 'Curious what a finished report looks like? Browse an example before committing to the assessment — or jump straight in.'
-              : 'Complete the PQC Risk Assessment to generate your personalized report with risk scores, migration priorities, and actionable recommendations.'}
+              : 'Complete the PQC Risk Assessment to generate your personalized report with risk scores, migration priorities, and actionable recommendations — or open a worked example first.'}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
-            {isCurious && (
-              <Link
-                to={EXAMPLE_REPORT_URL}
-                onClick={() => logReportCta('view-example')}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-border bg-card text-foreground font-medium hover:border-primary/40 hover:bg-muted transition-colors"
-              >
-                <FileBarChart size={16} />
-                See an example report
-              </Link>
-            )}
+            {/* RP-5: the worked example used to render only for the curious
+                persona. Every other persona hit this screen with no way to
+                see one — including an executive arriving from the persona
+                board's own "See a finished example" CTA, which pointed at
+                bare `/report`. That CTA now deep-links to `?example=1`, and
+                the link below is ungated so the empty state is never a dead
+                end for anyone who lands here by another route. */}
+            <Link
+              to={EXAMPLE_REPORT_URL}
+              onClick={() => logReportCta('view-example')}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-border bg-card text-foreground font-medium hover:border-primary/40 hover:bg-muted transition-colors"
+            >
+              <FileBarChart size={16} />
+              See an example report
+            </Link>
             <Link
               to="/assess"
               onClick={() => logReportCta('start-assessment')}
