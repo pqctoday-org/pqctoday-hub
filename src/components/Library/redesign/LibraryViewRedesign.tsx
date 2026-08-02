@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/button'
 import {
   libraryData,
   libraryMetadata,
+  libraryCorpusHealth,
   findLibraryItemByRef,
   type LibraryItem,
   type LibraryPurpose,
@@ -462,6 +463,26 @@ export function LibraryViewRedesign({
           icon={BookOpen}
           title="PQC Library"
           description="The standards, drafts and guidance that define post-quantum cryptography."
+          actions={
+            // Corpus health, stated openly (design_handoff_2026_pages/
+            // IMPLEMENTATION-PLAN-LIBRARY-2026-08-01.md §3.1) — read live
+            // from libraryData.ts's own count, never hardcoded. Tooltip
+            // breaks down "why" using the CSV's real deprecated_reason
+            // values, not invented copy.
+            <span
+              key="corpus-health"
+              title={
+                libraryCorpusHealth.reasonCounts.length > 0
+                  ? `Why: ${libraryCorpusHealth.reasonCounts.map((r) => `${r.reason} (${r.count})`).join(', ')}`
+                  : undefined
+              }
+              className="text-[11px] font-medium text-muted-foreground"
+            >
+              {libraryCorpusHealth.active} active
+              {libraryCorpusHealth.deprecated > 0 &&
+                ` · ${libraryCorpusHealth.deprecated} deprecated`}
+            </span>
+          }
         />
       )}
 
