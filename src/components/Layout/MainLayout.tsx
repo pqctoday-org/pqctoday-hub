@@ -581,7 +581,18 @@ export const MainLayout = () => {
             // workflow section") — still classified 'practice' in
             // FOR_YOU_PATH_GROUP (railNav.ts), this is purely a rendering
             // reassignment, not a reachability change.
-            const WORKFLOW_ORDER = ['/explore', '/migrate', '/assess', '/report', '/business']
+            // '/compliance' placed right before '/migrate' (2026-08-02
+            // follow-up: "compliance should be first in workflow section
+            // before migrate") — it was previously omitted from this
+            // priority list entirely, so it always fell to the end.
+            const WORKFLOW_ORDER = [
+              '/explore',
+              '/compliance',
+              '/migrate',
+              '/assess',
+              '/report',
+              '/business',
+            ]
             // Reference visually includes Learn + Timeline + Threats
             // (2026-08-01 follow-up) even though they're globally
             // always-visible, not persona-gated — purely a rendering
