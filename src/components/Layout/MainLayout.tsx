@@ -414,11 +414,16 @@ export const MainLayout = () => {
       return next
     })
   }, [])
-  // MORE removed from the desktop rail entirely (2026-08-01 follow-up:
-  // "remove more and revisions from the left bar") — /revisions and anything
-  // else that would have lived in `more` are reachable via search (⌘K) or
-  // direct URL, not a rail row. `more` itself is kept (still used by the
-  // mobile "More" sheet, a separate surface not touched by this request).
+  // MORE removed from the desktop rail's FOR-YOU-populated case entirely
+  // (2026-08-01 follow-up: "remove more and revisions from the left bar") —
+  // for executive/developer/architect/ops/curious, whatever lands in `more`
+  // (e.g. /revisions for everyone, /explore or /leaders for some personas) is
+  // reachable via search (⌘K) or direct URL, not a rail row. `more` itself is
+  // kept — used by the mobile "More" sheet as before, AND (reachability fix,
+  // Grade-A remediation Phase 2, 2026-08-02) rendered directly in the desktop
+  // rail's `forYou.length === 0` fallback below, since for researcher/
+  // no-persona `more` is the ONLY place the other 13 routes exist at all —
+  // see that block's own comment for the full history.
 
   // "Update your profile" deep link — `/?picker=open` (PQC101Module's two
   // "Update profile"/"Set profile" links, AboutNextStepCTA's "Find my
@@ -573,6 +578,44 @@ export const MainLayout = () => {
                   treatment={isPathActive(path) ? 'active' : 'plain'}
                 />
               ))}
+              {/* Reachability fix (Grade-A remediation Phase 2, 2026-08-02):
+                  forYou is empty here, so forYouGroups below renders nothing
+                  at all — before this fix, `more` (the other 13 routes:
+                  /assess, /report, /migrate, /compliance, /business,
+                  /business/tools, /simulation, /playground, /explore,
+                  /algorithms, /library, /leaders, /patents) had NO desktop
+                  rail row whatsoever for researcher/no-persona, even though
+                  PERSONA_NAV_PATHS documents researcher as "unrestricted"
+                  (railNav.ts). The desktop MORE section was removed entirely
+                  in the 2026-08-01 declutter follow-up ("remove more and
+                  revisions from the left bar", commit 5cebd1d46) — that
+                  request was about decluttering personas whose FOR YOU was
+                  already populated (its own commit message claims "railNav's
+                  pure reachability logic is unchanged," which is true, but
+                  the *rendering* logic silently orphaned this one case).
+                  Mirrors the already-correct mobile "More" sheet: same `more`
+                  array, same muted RailRow 'more' variant, unconditional (no
+                  collapse toggle — nothing to collapse away from a user who
+                  has no other nav at all). /revisions stays excluded here,
+                  honoring that same 2026-08-01 decision independent of this
+                  fix — it remains reachable via search (⌘K), direct URL, or
+                  the mobile More sheet, same as for every other persona. */}
+              {more.length > 0 && (
+                <span className="px-2 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+                  More
+                </span>
+              )}
+              {more
+                .filter((path) => path !== '/revisions')
+                .map((path) => (
+                  <RailRow
+                    key={path}
+                    path={path}
+                    label={labelFor(path)}
+                    active={isPathActive(path)}
+                    variant="more"
+                  />
+                ))}
             </>
           )}
           {forYouGroups.map((group) => {

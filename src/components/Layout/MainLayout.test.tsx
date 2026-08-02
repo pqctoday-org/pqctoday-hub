@@ -128,7 +128,7 @@ describe('MainLayout', () => {
   })
 
   describe('Rail — no persona selected (null)', () => {
-    it('shows no "For You" label (removed 2026-08-01), the "Everything, unfiltered" fallback with Learn/Timeline/Threats as plain rows, and NO MORE section anywhere', () => {
+    it('shows no "For You" label (removed 2026-08-01), the "Everything, unfiltered" fallback with Learn/Timeline/Threats as plain rows, and every other route reachable via the restored MORE fallback', () => {
       renderLayout()
       const rail = getRailNav()
       // The "For You" section label was removed entirely (2026-08-01) — only
@@ -142,14 +142,36 @@ describe('MainLayout', () => {
       expect(within(rail).getByRole('button', { name: /learn view/i })).toBeInTheDocument()
       expect(within(rail).getByRole('button', { name: /timeline view/i })).toBeInTheDocument()
       expect(within(rail).getByRole('button', { name: /threats view/i })).toBeInTheDocument()
-      // The desktop rail's MORE section was removed entirely (2026-08-01
-      // follow-up: "remove more and revisions from the left bar") — /migrate
-      // (which has no persona-specific gating reason to hide) has no rail row
-      // anywhere on desktop now; it's reachable via ⌘K search or a direct URL.
+      // Reachability fix (Grade-A remediation Phase 2, 2026-08-02): the
+      // desktop rail's MORE section was removed entirely in the 2026-08-01
+      // declutter follow-up ("remove more and revisions from the left bar"),
+      // which silently orphaned every route for exactly this persona — the
+      // one whose FOR YOU is legitimately empty. MainLayout now renders
+      // `more` unconditionally (no collapse toggle — there's nothing else to
+      // navigate with, so nothing to hide it behind) whenever FOR YOU is
+      // empty, restoring a real desktop rail row for all 13 previously
+      // orphaned routes, including the core funnel (/assess, /report).
+      expect(within(rail).getByText('More')).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /migrate view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /compliance view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /assess view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /report view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /command center view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /business tools view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /simulation view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /playground view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /explore view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /algorithms view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /library view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /community view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /patents view/i })).toBeInTheDocument()
+      // /revisions stays excluded from this restored fallback — that specific
+      // 2026-08-01 decision is unrelated to the reachability bug and is
+      // deliberately preserved (still reachable via ⌘K search, direct URL, or
+      // the mobile "More" sheet, same as for every other persona).
       expect(
-        within(rail).queryByRole('button', { name: /show more pages/i })
+        within(rail).queryByRole('button', { name: /revisions view/i })
       ).not.toBeInTheDocument()
-      expect(within(rail).queryByRole('button', { name: /migrate view/i })).not.toBeInTheDocument()
     })
 
     it('always-visible pages (Home/Learn/Timeline/Threats/About) render outside FOR YOU/MORE', () => {
@@ -288,7 +310,7 @@ describe('MainLayout', () => {
       ).not.toBeInTheDocument()
     })
 
-    it('researcher: FOR YOU is empty (no gating persona); Learn/Timeline/Threats fall back to plain rows, and MORE is gone so /migrate has no desktop rail row', () => {
+    it('researcher: FOR YOU is empty (no gating persona); Learn/Timeline/Threats fall back to plain rows, and the restored MORE fallback makes every other route reachable', () => {
       usePersonaStore.getState().setPersona('researcher')
       renderLayout()
       const rail = getRailNav()
@@ -296,10 +318,32 @@ describe('MainLayout', () => {
       expect(within(rail).getByRole('button', { name: /learn view/i })).toBeInTheDocument()
       expect(within(rail).getByRole('button', { name: /timeline view/i })).toBeInTheDocument()
       expect(within(rail).getByRole('button', { name: /threats view/i })).toBeInTheDocument()
+      // Reachability fix (Grade-A remediation Phase 2, 2026-08-02): researcher
+      // is documented (PERSONA_NAV_PATHS.researcher === null) as
+      // "unrestricted" — before this fix, that meant an empty FOR YOU with NO
+      // fallback, so researcher actually had the NARROWEST desktop
+      // reachability of any persona (~5 rows) despite being the one persona
+      // meant to see everything. `more` now renders unconditionally here, the
+      // same as for the no-persona case above.
+      expect(within(rail).getByText('More')).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /migrate view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /compliance view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /assess view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /report view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /command center view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /business tools view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /simulation view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /playground view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /explore view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /algorithms view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /library view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /community view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /patents view/i })).toBeInTheDocument()
+      // /revisions stays excluded — same deliberate 2026-08-01 decision as the
+      // no-persona case above, unrelated to this reachability fix.
       expect(
-        within(rail).queryByRole('button', { name: /show more pages/i })
+        within(rail).queryByRole('button', { name: /revisions view/i })
       ).not.toBeInTheDocument()
-      expect(within(rail).queryByRole('button', { name: /migrate view/i })).not.toBeInTheDocument()
     })
   })
 
