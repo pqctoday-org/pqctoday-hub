@@ -61,7 +61,6 @@ import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
 import { complianceFrameworks, complianceMetadata } from '@/data/complianceData'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
 import { useHistoryStore } from '@/store/useHistoryStore'
-import { RoleFilter } from '../common/RoleFilter'
 import { normalizeCountry } from '@/utils/applicabilityEngine'
 import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
 import { useComplianceUrlState, isLandscapeTab, type MobileSection } from './useComplianceUrlState'
@@ -984,11 +983,8 @@ export const ComplianceView = ({
             <SectionHeader
               icon={<Sparkles size={20} className="text-primary" />}
               title="For You"
-              description="Standards, threats, library docs, and timeline milestones that apply to your industry, country, and region — tuned by the lens above and your assessment profile."
+              description="Standards, threats, library docs, and timeline milestones that apply to your industry, country, and region — tuned by your role (top bar) and your assessment profile."
             />
-            <div className="flex flex-wrap gap-2">
-              <RoleFilter syncWithPersona />
-            </div>
             <ForYouSection onExportCsv={handleExportCsv} />
           </div>
         )}
