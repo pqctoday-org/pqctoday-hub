@@ -63,6 +63,30 @@ describe('ModuleShell', () => {
     expect(screen.queryByRole('link', { name: /back to dashboard/i })).not.toBeInTheDocument()
   })
 
+  // 'foundations' is the one numberless phase, so its chip label is bare
+  // "Foundations" — identical to the Foundations track's chip. Modules in both
+  // rendered the word twice; numbered phases can't collide, so they still show.
+  it('drops the phase chip when it merely repeats the track chip', () => {
+    renderShell(
+      <ModuleShell
+        manifest={{ ...base, id: 'pqc-101', frameworkPhase: 'foundations' }}
+        learn={<div>L</div>}
+      />
+    )
+    expect(screen.getAllByText(/^foundations$/i)).toHaveLength(1)
+  })
+
+  it('keeps a numbered phase chip alongside the track chip', () => {
+    renderShell(
+      <ModuleShell
+        manifest={{ ...base, id: 'pqc-101', frameworkPhase: 'p4' }}
+        learn={<div>L</div>}
+      />
+    )
+    expect(screen.getByText(/^phase 4 ·/i)).toBeInTheDocument()
+    expect(screen.getByText(/^foundations$/i)).toBeInTheDocument()
+  })
+
   it('lets the header description be overridden (it often differs from the catalog)', () => {
     renderShell(
       <ModuleShell manifest={base} description="Overridden header" learn={<div>L</div>} />

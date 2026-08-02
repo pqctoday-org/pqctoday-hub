@@ -342,7 +342,14 @@ export const ModuleShell = ({
   // P2.1 — context rail sourced from the manifest: ties the module to the same
   // track + framework-phase model the catalog and the simulation use.
   const track = MODULE_TO_TRACK[manifest.id]
-  const phaseLabel = phaseChipLabel(manifest.frameworkPhase)
+  const phaseChip = phaseChipLabel(manifest.frameworkPhase)
+  // The two chips are independent vocabularies that happen to collide: the
+  // `foundations` framework phase is numberless, so it renders as bare
+  // "Foundations" — the exact name of the Foundations track. Modules in both
+  // showed FOUNDATIONS twice in a row. Numbered phases ("Phase 4 · Execute")
+  // can never collide, so this drops nothing but the literal repeat.
+  const phaseLabel =
+    phaseChip && track && phaseChip.toLowerCase() === track.toLowerCase() ? null : phaseChip
   const chip = 'rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide'
 
   // "Back to Dashboard" used to sit on its own row above the module, rendered
