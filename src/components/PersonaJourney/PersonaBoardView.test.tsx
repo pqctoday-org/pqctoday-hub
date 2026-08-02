@@ -14,7 +14,7 @@ import { MemoryRouter } from 'react-router'
 import type { ReactElement } from 'react'
 import { PersonaBoardView } from './PersonaBoardView'
 import { PERSONA_JOURNEY_BOARD } from '@/data/personaConfig'
-import type { PersonaId } from '@/data/learningPersonas'
+import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
 
 const ALL_PERSONAS = Object.keys(PERSONA_JOURNEY_BOARD) as PersonaId[]
 
@@ -149,5 +149,21 @@ describe('PersonaBoardView', () => {
     )
     await user.click(screen.getByText(PERSONA_JOURNEY_BOARD.executive.ctaPrimary))
     expect(seenLocations.at(-1)).toBe(PERSONA_JOURNEY_BOARD.executive.ctaPrimaryHref)
+  })
+
+  // 2026-08-01 bug fix: trackChips were plain <li>s with no link at all
+  // ("link to learn modules are still not wired"). Each chip is positionally
+  // 1:1 with the persona's real essentials module id (drift-guarded in
+  // personaConfig.test.ts) and must link to that module's real page.
+  it.each(ALL_PERSONAS)('%s: every trackChip links to its real /learn/:moduleId', (personaId) => {
+    renderBoard(<PersonaBoardView personaId={personaId} />)
+    const essentials = PERSONAS[personaId].essentials
+    // eslint-disable-next-line security/detect-object-injection -- personaId is drawn from ALL_PERSONAS itself
+    const chips = PERSONA_JOURNEY_BOARD[personaId].trackChips
+    chips.forEach((chip, i) => {
+      const link = screen.getByText(chip).closest('a')
+      expect(link, `chip "${chip}" isn't rendered as a link`).not.toBeNull()
+      expect(link).toHaveAttribute('href', `/learn/${essentials[i]}`)
+    })
   })
 })
