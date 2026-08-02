@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { ExternalLink, Calendar, X, ChevronDown, ListChecks } from 'lucide-react'
+import { Link } from 'react-router'
 import { ShareButton } from '../ui/ShareButton'
 import { createPortal } from 'react-dom'
 import type { LibraryItem } from '../../data/libraryData'
@@ -324,18 +325,26 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                                   key={pillar}
                                   className={clsx('rounded-md border p-3 bg-card/40', style.border)}
                                 >
-                                  <div
+                                  {/* Pillar badge restored as a click-through
+                                      to its Command Center zone
+                                      (design_handoff_2026_pages/
+                                      IMPLEMENTATION-PLAN-LIBRARY-2026-08-01.md
+                                      §3.2) — was a real Link before a prior
+                                      redesign, quietly downgraded to static
+                                      text. */}
+                                  <Link
+                                    to={`/business#zone-${zone}`}
                                     className={clsx(
-                                      'inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold border mb-2',
+                                      'inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold border mb-2 hover:opacity-80',
                                       style.bg,
                                       style.text,
                                       style.border
                                     )}
-                                    title={detail.title}
+                                    title={`${detail.title} — open the ${zone} zone in Command Center`}
                                   >
                                     <span className="capitalize">{pillar}</span>
                                     <span className="opacity-70">·{items.length}</span>
-                                  </div>
+                                  </Link>
                                   <ul className="space-y-2">
                                     {items.map((r, i) => {
                                       const tier = CSWP39_TIERS[r.maturityLevel - 1]
@@ -387,6 +396,18 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                               )
                             })}
                           </div>
+                          {/* Evidence-reference deep link, restored (same
+                              plan §3.2) — jumps to this document's own
+                              governance evidence inside the CSWP.39 Agility
+                              explorer. */}
+                          {item && (
+                            <Link
+                              to={`/compliance?tab=cswp39&evref=${encodeURIComponent(item.referenceId)}`}
+                              className="mt-2 inline-block text-[11px] font-medium text-primary hover:underline"
+                            >
+                              Open in CSWP.39 evidence map →
+                            </Link>
+                          )}
                           <PillarDisclaimer className="mt-3" />
                         </div>
                       )}
