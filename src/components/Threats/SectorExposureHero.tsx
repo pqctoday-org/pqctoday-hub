@@ -195,7 +195,7 @@ export const SectorExposureHero = ({
       {showHorizon && (
         <Card>
           <div className="mb-1.5 flex items-center justify-between">
-            <Eyebrow>Your migration deadline</Eyebrow>
+            <Eyebrow>{rem < 0 ? 'Your Mosca migration window' : 'Your migration deadline'}</Eyebrow>
             <span
               className={`flex items-center gap-1 text-[10px] font-bold uppercase ${urgencyTone}`}
             >
@@ -203,18 +203,41 @@ export const SectorExposureHero = ({
               {urgency}
             </span>
           </div>
-          <div className="flex items-baseline gap-2">
-            <span className={`text-4xl font-extrabold tabular-nums ${urgencyTone}`}>
-              {deadline}
-            </span>
-            <span className="text-xs text-muted-foreground">
-              latest safe start for{' '}
-              <span className="font-semibold text-foreground">{sectorLabel}</span>
-            </span>
-          </div>
+          {rem < 0 ? (
+            // OVERDUE is a retrospective signal, not a scheduling target — a bare
+            // past year next to "your migration deadline" reads as a broken
+            // calculator (Grade-A Phase 2). Say explicitly that the window has
+            // already closed, in the primary headline itself, not just in the
+            // fine-print paragraph below. The computed year is never hidden or
+            // clamped — it still renders in full, at full size.
+            <>
+              <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                <span className={`text-xs font-bold uppercase tracking-wide ${urgencyTone}`}>
+                  Closed in
+                </span>
+                <span className={`text-4xl font-extrabold tabular-nums ${urgencyTone}`}>
+                  {deadline}
+                </span>
+              </div>
+              <div className={`mt-0.5 text-xs font-semibold ${urgencyTone}`}>
+                {Math.abs(rem)} year{Math.abs(rem) === 1 ? '' : 's'} past the safe-start line for{' '}
+                <span className="text-foreground">{sectorLabel}</span>
+              </div>
+            </>
+          ) : (
+            <div className="flex items-baseline gap-2">
+              <span className={`text-4xl font-extrabold tabular-nums ${urgencyTone}`}>
+                {deadline}
+              </span>
+              <span className="text-xs text-muted-foreground">
+                latest safe start for{' '}
+                <span className="font-semibold text-foreground">{sectorLabel}</span>
+              </span>
+            </div>
+          )}
           <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
             {rem < 0
-              ? `Already past the safe-start line by ${Math.abs(rem)}y — long-lived data may be exposed.`
+              ? `The recommended start date has already passed — this is not a future target, it is how far behind you already are. Long-lived data for ${sectorLabel} may already be exposed once a CRQC arrives.`
               : `About ${rem}y of runway before you must have started migrating.`}
           </p>
           <div className="mt-3 border-t border-border pt-2 font-mono text-[11px] text-muted-foreground">

@@ -291,7 +291,10 @@ export const ThreatEconomicsHeader: React.FC<{ defaultExpanded?: boolean }> = ({
           {/* One deadline row per threat model */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             {rows.map((row) => {
-              const urgency = URGENCY_CONFIG[urgencyFor(row.deadline)]
+              const urgencyKey = urgencyFor(row.deadline)
+              // eslint-disable-next-line security/detect-object-injection -- urgencyKey is the Urgency union, not user input
+              const urgency = URGENCY_CONFIG[urgencyKey]
+              const isOverdue = urgencyKey === 'overdue'
               return (
                 <div key={row.key} className={`rounded-lg border p-3 ${urgency.bg}`}>
                   <div className="flex items-center gap-2 mb-1">
@@ -302,9 +305,26 @@ export const ThreatEconomicsHeader: React.FC<{ defaultExpanded?: boolean }> = ({
                       {urgency.label}
                     </span>
                     <span className="text-xs font-bold text-foreground">{row.label}</span>
-                    <span className="text-xs text-muted-foreground">migration deadline</span>
+                    <span className="text-xs text-muted-foreground">
+                      {isOverdue ? 'migration window' : 'migration deadline'}
+                    </span>
                   </div>
-                  <div className={`text-2xl font-bold ${urgency.color}`}>{row.deadline}</div>
+                  {isOverdue ? (
+                    // Same "reads as a broken calculator" fix as SectorExposureHero
+                    // (Grade-A Phase 2): a bare past year next to "migration deadline"
+                    // looks like an upcoming date. Say explicitly it already closed,
+                    // right on the headline — the computed year still renders in full.
+                    <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                      <span
+                        className={`text-[11px] font-bold uppercase tracking-wide ${urgency.color}`}
+                      >
+                        Closed in
+                      </span>
+                      <span className={`text-2xl font-bold ${urgency.color}`}>{row.deadline}</span>
+                    </div>
+                  ) : (
+                    <div className={`text-2xl font-bold ${urgency.color}`}>{row.deadline}</div>
+                  )}
                   <p className="text-xs text-muted-foreground mt-1">
                     {urgencyMessage(row.deadline, row.atRiskPhrase)}
                   </p>
