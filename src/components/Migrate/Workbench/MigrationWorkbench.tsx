@@ -30,6 +30,7 @@ import { ReplaceTab } from './ReplaceTab'
 import { PlanTab } from './PlanTab'
 import { RoadmapsTab } from './RoadmapsTab'
 import { SupplyChainRiskMatrix } from '../../PKILearning/modules/VendorRisk/components/SupplyChainRiskMatrix'
+import { VendorConcentrationRiskPanel } from './VendorConcentrationRiskPanel'
 
 interface MigrationWorkbenchProps {
   /** When embedded in the Simulation, hide the PageHeader and don't touch the URL. */
@@ -273,6 +274,7 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
           <RoadmapsTab />
         </TabsContent>
         <TabsContent value="vendorrisk" className="mt-4">
+          <VendorConcentrationRiskPanel />
           <SupplyChainRiskMatrix variant="flat" />
         </TabsContent>
       </Tabs>
