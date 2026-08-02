@@ -50,6 +50,7 @@ import type { ComplianceFramework } from '@/data/complianceData'
 import { useApplicability } from '@/hooks/useApplicability'
 import { logComplianceFilter } from '../../utils/analytics'
 import { PageHeader } from '../common/PageHeader'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { COMPLIANCE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
@@ -631,6 +632,48 @@ export const ComplianceView = ({
 
   const activeStableTab = stableTabFor(activeTab)
 
+  // Register this page's actions with the global top bar (page-action-strip
+  // rollout, 2026-08-01) — info/export/endorse/flag render there now, not as
+  // a row on the page itself. Mirrors TimelineView.tsx's pattern. Gated on
+  // `!simEmbed`, same as the PageHeader render below (this page's own
+  // separate in-page <ForYouSection onExportCsv={handleExportCsv} /> export
+  // button, further down, is untouched — handleExportCsv is still a real,
+  // shared function, just no longer ALSO wired to PageHeader's onExport).
+  useEffect(() => {
+    if (simEmbed) return
+    const { setPageActions, clearPageActions } = usePageActionsStore.getState()
+    setPageActions({
+      title: 'Standardization, Certification & Compliance',
+      dataSource: complianceMetadata
+        ? `${complianceMetadata.filename} • Updated: ${complianceMetadata.lastUpdate.toLocaleDateString()}`
+        : undefined,
+      onExport: handleExportCsv,
+      endorseUrl: buildEndorsementUrl({
+        category: 'compliance-endorsement',
+        title: 'Endorse: Standardization, Certification & Compliance',
+        resourceType: 'Compliance Page',
+        resourceId: 'Standardization, Certification & Compliance',
+        resourceDetails:
+          '**Page:** Standardization, Certification & Compliance — standards bodies, certification schemes, and regulatory frameworks.',
+        pageUrl: '/compliance',
+      }),
+      endorseLabel: 'Compliance Page',
+      endorseResourceType: 'Compliance',
+      flagUrl: buildFlagUrl({
+        category: 'compliance-endorsement',
+        title: 'Flag: Standardization, Certification & Compliance',
+        resourceType: 'Compliance Page',
+        resourceId: 'Standardization, Certification & Compliance',
+        resourceDetails:
+          '**Page:** Standardization, Certification & Compliance — standards bodies, certification schemes, and regulatory frameworks.',
+        pageUrl: '/compliance',
+      }),
+      flagLabel: 'Compliance Page',
+      flagResourceType: 'Compliance',
+    })
+    return () => clearPageActions()
+  }, [simEmbed, handleExportCsv])
+
   return (
     <div className="animate-fade-in space-y-6">
       {!simEmbed && (
@@ -638,34 +681,6 @@ export const ComplianceView = ({
           icon={ShieldCheck}
           title="Standardization, Certification & Compliance"
           description="Who defines the algorithms, who validates the products, who mandates adoption — across standardization bodies, certification schemes, and compliance frameworks."
-          dataSource={
-            complianceMetadata
-              ? `${complianceMetadata.filename} • Updated: ${complianceMetadata.lastUpdate.toLocaleDateString()}`
-              : undefined
-          }
-          onExport={handleExportCsv}
-          endorseUrl={buildEndorsementUrl({
-            category: 'compliance-endorsement',
-            title: 'Endorse: Standardization, Certification & Compliance',
-            resourceType: 'Compliance Page',
-            resourceId: 'Standardization, Certification & Compliance',
-            resourceDetails:
-              '**Page:** Standardization, Certification & Compliance — standards bodies, certification schemes, and regulatory frameworks.',
-            pageUrl: '/compliance',
-          })}
-          endorseLabel="Compliance Page"
-          endorseResourceType="Compliance"
-          flagUrl={buildFlagUrl({
-            category: 'compliance-endorsement',
-            title: 'Flag: Standardization, Certification & Compliance',
-            resourceType: 'Compliance Page',
-            resourceId: 'Standardization, Certification & Compliance',
-            resourceDetails:
-              '**Page:** Standardization, Certification & Compliance — standards bodies, certification schemes, and regulatory frameworks.',
-            pageUrl: '/compliance',
-          })}
-          flagLabel="Compliance Page"
-          flagResourceType="Compliance"
         />
       )}
 
