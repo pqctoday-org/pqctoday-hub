@@ -672,6 +672,7 @@ export function conceptIdForLibraryItem(item: { referenceId: string }): string |
 // links instead of silently opening to nothing.
 export const REFERENCE_ID_ALIASES: Record<string, string> = {
   'NIST-IR-8547': 'NIST-IR-8547-IPD2',
+  'NIST-CSWP-39': 'NIST CSWP 39',
 }
 
 /** Resolve a `?ref=` value to a live library item, tolerating known reference_id renames. */
