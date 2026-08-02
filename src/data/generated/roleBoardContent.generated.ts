@@ -33,11 +33,11 @@ export const PERSONA_JOURNEY_BOARD: Record<PersonaId, PersonaJourneyBoard> = {
       rows: [
         { label: 'Data must stay secret', value: '12 yrs' },
         { label: 'Your migration takes', value: '5 yrs' },
-        { label: 'Cryptanalytic quantum computer', value: '2032 ±4' },
+        { label: 'Cryptanalytic quantum computer', value: '2033 (2030–2036)' },
       ],
-      punchline: 'You are four years short.',
+      punchline: 'Start by 2028, or your 12-year secrets are already late.',
       footnote:
-        "Mosca's inequality. The 2032 estimate is a median across 4 published expert surveys; the ±4 band is their interquartile range, not a forecast.",
+        "Mosca's inequality: a 5-year migration must finish before the machine arrives, so it has to start by 2028. The 2033 estimate is the median across 6 tracked sources; 2030–2036 is the consensus window, not a forecast.",
     },
     gridTitle: 'What you walk out with',
     gridSub: 'Generated from your 8 answers',
@@ -284,11 +284,14 @@ export const PERSONA_JOURNEY_BOARD: Record<PersonaId, PersonaJourneyBoard> = {
       'Drift guards fail the build on silent data change',
     ],
     sideCard: {
-      title: 'Changed in your fields since your last visit',
+      title: 'Changed in your fields',
       tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
       provenance: 'illustrative' as 'sourced' | 'illustrative',
       rows: [],
-      punchline: '',
+      punchline: 'Nothing in the fields you follow was retracted.',
+      footnote:
+        'Counts documents in the fields you follow that were updated or retracted in the 90 days before this release of the library.',
+      emptyState: 'Pick a few fields to see what has moved in them lately.',
     },
     gridTitle: 'What the workspace gives you',
     gridSub: 'Instruments and evidence, every claim traceable to its source',

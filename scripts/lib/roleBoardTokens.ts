@@ -211,6 +211,26 @@ const RESOLVERS: Record<string, Resolver> = {
     requireArgs('ops_sidecard_ocsp_row', args, 0)
     return mod.OPS_SIDECARD_OCSP_ROW
   },
+  exec_secrecy_row: (mod, args) => {
+    requireArgs('exec_secrecy_row', args, 0)
+    return mod.EXEC_SECRECY_ROW
+  },
+  exec_migration_row: (mod, args) => {
+    requireArgs('exec_migration_row', args, 0)
+    return mod.EXEC_MIGRATION_ROW
+  },
+  exec_crqc_estimate_row: (mod, args) => {
+    requireArgs('exec_crqc_estimate_row', args, 0)
+    return mod.EXEC_CRQC_ESTIMATE_ROW
+  },
+  exec_mosca_punchline: (mod, args) => {
+    requireArgs('exec_mosca_punchline', args, 0)
+    return mod.EXEC_MOSCA_PUNCHLINE
+  },
+  exec_mosca_footnote: (mod, args) => {
+    requireArgs('exec_mosca_footnote', args, 0)
+    return mod.EXEC_MOSCA_FOOTNOTE
+  },
 }
 
 export const KNOWN_TOKEN_NAMES: readonly string[] = Object.keys(RESOLVERS)

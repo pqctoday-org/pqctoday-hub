@@ -58,13 +58,13 @@ executive,default,side_card_title,,"Your exposure window",active,,,2026-08-02,
 executive,default,side_card_tone,,bad,active,,,2026-08-02,
 executive,default,side_card_provenance,,illustrative,active,,,2026-08-02,
 executive,default,side_card_row_label,0,"Data must stay secret",active,,,2026-08-02,
-executive,default,side_card_row_value,0,12 yrs,active,,,2026-08-02,
+executive,default,side_card_row_value,0,{exec_secrecy_row},active,,,2026-08-02,"Derived from EXEC_EXPOSURE.secrecyYears — was a literal until 2026-08-02, sitting above a punchline that had drifted out of agreement with it."
 executive,default,side_card_row_label,1,"Your migration takes",active,,,2026-08-02,
-executive,default,side_card_row_value,1,5 yrs,active,,,2026-08-02,
+executive,default,side_card_row_value,1,{exec_migration_row},active,,,2026-08-02,"Derived from EXEC_EXPOSURE.migrationYears."
 executive,default,side_card_row_label,2,"Cryptanalytic quantum computer",active,,,2026-08-02,
-executive,default,side_card_row_value,2,"2032 ±4",active,,,2026-08-02,
-executive,default,side_card_punchline,,"You are four years short.",active,,,2026-08-02,
-executive,default,side_card_footnote,,"Mosca's inequality. The 2032 estimate is a median across 4 published expert surveys; the ±4 band is their interquartile range, not a forecast.",active,,,2026-08-02,
+executive,default,side_card_row_value,2,{exec_crqc_estimate_row},active,,,2026-08-02,"Derived from getCrqcConsensus() — the same single source every Q-Day figure on the Threats page uses. The old literal 2032 ±4 disagreed with it (consensus is 2033, window 2030-2036)."
+executive,default,side_card_punchline,,{exec_mosca_punchline},active,,,2026-08-02,"Was ""You are four years short."" until 2026-08-02 — Mosca on this card's own three rows gives 11, not 4. Now computed from the rows so the conclusion cannot drift from its premises again."
+executive,default,side_card_footnote,,{exec_mosca_footnote},active,,,2026-08-02,"Derived — the old literal claimed a median across 4 expert surveys with an interquartile band; the real derivation is 6 tracked sources reduced by getCrqcConsensus()."
 executive,default,grid_title,,"What you walk out with",active,,,2026-08-02,
 executive,default,grid_sub,,"Generated from your 8 answers",active,,,2026-08-02,
 executive,default,grid_card_title,0,"Risk position",active,,,2026-08-02,
@@ -178,10 +178,12 @@ researcher,default,proof_chip,0,"ACVP + KAT run locally, not asserted",active,,,
 researcher,default,proof_chip,1,"Authoritative / High / Moderate / Low source tiers",active,,,2026-08-02,
 researcher,default,proof_chip,2,"Counter-claims dataset · CVE snapshots",active,,,2026-08-02,
 researcher,default,proof_chip,3,"Drift guards fail the build on silent data change",active,,,2026-08-02,
-researcher,default,side_card_title,,"Changed in your fields since your last visit",active,,,2026-08-02,"Stub — ResearcherFieldWatchCard overrides this whole sideCard at render time with live-computed content. rows/punchline exist only to satisfy the type."
+researcher,default,side_card_title,,"Changed in your fields",active,,,2026-08-02,"ResearcherFieldWatchCard renders the ROWS live from the library corpus, but takes this title and the punchline/footnote/empty-state below from here. Was 'Changed in your fields since your last visit' until 2026-08-02: the card compared document publication dates against browsing time, so every field read 0 forever."
 researcher,default,side_card_tone,,info,active,,,2026-08-02,
 researcher,default,side_card_provenance,,illustrative,active,,,2026-08-02,
-researcher,default,side_card_punchline,,,active,,,2026-08-02,"Deliberately empty — see side_card_title note."
+researcher,default,side_card_punchline,,"Nothing in the fields you follow was retracted.",active,,,2026-08-02,"Shown when the retracted count is zero. Was 'Nothing you cited has been retracted.' until 2026-08-02 — the app has no per-user citation list, a gap the card's own footnote admitted in fine print while the headline asserted it anyway."
+researcher,default,side_card_footnote,,"Counts documents in the fields you follow that were updated or retracted in the 90 days before this release of the library.",active,,,2026-08-02,"Was developer methodology prose hardcoded in the component ('...not a per-user citation list (this app doesn't have one)') — invisible to CSV review, same defect class as the researcher track_note reworded below."
+researcher,default,side_card_empty_state,,"Pick a few fields to see what has moved in them lately.",active,,,2026-08-02,"Shown before any field is followed."
 researcher,default,grid_title,,"What the workspace gives you",active,,,2026-08-02,
 researcher,default,grid_sub,,"Instruments and evidence, every claim traceable to its source",active,,,2026-08-02,
 researcher,default,grid_card_title,0,"Provenance on every claim",active,,,2026-08-02,

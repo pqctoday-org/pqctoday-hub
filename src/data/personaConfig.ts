@@ -12,6 +12,10 @@ import { TYPE_LABELS } from './artifactLabels'
 import { REPORT_SECTION_LABELS } from './reportSectionToCswp39'
 import { CLASSICAL_HSM_DEFAULT, USE_CASES } from './hsmCapacityDefaults'
 import { MIGRATION_KEYS } from '../components/Playground/kmip/migration/migrationKeys'
+import {
+  getCrqcConsensus,
+  CRQC_ESTIMATES,
+} from '../components/PKILearning/modules/QuantumThreats/data/quantumConstants'
 
 /**
  * Persona-aware "Practice in the Simulation" CTA — which migration phases each
@@ -1261,6 +1265,15 @@ export interface PersonaJourneyBoard {
     rows: { label: string; value: string }[]
     punchline: string
     footnote?: string
+    /**
+     * Copy shown when a live side card has nothing to report yet — researcher
+     * only, where `ResearcherFieldWatchCard` replaces the static rows with a
+     * computed field watch and needs a prompt before any field is followed.
+     * Lives here, in the CSV, rather than hardcoded in the component: the
+     * component's own hardcoded strings were exactly what the 2026-08-02
+     * editorial pass could not see or fix.
+     */
+    emptyState?: string
   }
   gridTitle: string
   gridSub: string
@@ -1326,6 +1339,63 @@ const ML_DSA_65 = ALGORITHM_REGISTRY['ML-DSA-65']
 export const ML_DSA_65_PUBLIC_KEY_ROW = `${formatBytes(ML_DSA_65.publicKeyBytes)} · was 64`
 export const ML_DSA_65_SIGNATURE_ROW = `${formatBytes(ML_DSA_65.signatureOrCiphertextBytes)} · was 64`
 export const ML_DSA_65_SIGNATURE_ONLY = formatBytes(ML_DSA_65.signatureOrCiphertextBytes)
+
+/* ── Executive side card: Mosca exposure window ──────────────────────────────
+ *
+ * WHY THESE ARE DERIVED (2026-08-02). All four values on this card — the three
+ * rows and the punchline — were hand-typed literals in the CSV, and the
+ * punchline had drifted out of agreement with its own rows: it read "You are
+ * four years short" above "Data must stay secret 12 yrs / Your migration takes
+ * 5 yrs / Cryptanalytic quantum computer 2032 ±4". Mosca's inequality on those
+ * numbers gives 11, not 4. ("Four" is what 12 would have been if the secrecy
+ * figure were still 5, which is the likeliest history.) A literal conclusion
+ * sitting above literal premises cannot be kept honest by review alone, so the
+ * conclusion is now computed from the premises.
+ *
+ * The CRQC year is no longer a literal either. It comes from
+ * `getCrqcConsensus()` — the single place the Threats page reduces its six
+ * sourced `CRQC_ESTIMATES` rows to headline numbers, which every Q-Day figure
+ * on that page already calls so they agree by construction. Its current output
+ * (zEstimate 2033, consensus window 2030–2036) does not match the card's old
+ * hand-typed "2032 ±4" either, and the old footnote's "median across 4
+ * published expert surveys ... interquartile range" misdescribed both the
+ * source count and the derivation.
+ *
+ * The punchline is expressed as a START-BY YEAR rather than a countdown from
+ * "now" deliberately: a `Date.now()`-dependent string would make the generated
+ * board differ every day and turn the CSV-vs-generated drift gate permanently
+ * red. `z - y` is stable, derived, and the more actionable number for the
+ * reader anyway.
+ */
+
+/** Illustrative planning assumptions for the executive board's exposure card. */
+export const EXEC_EXPOSURE = {
+  /** Mosca's x — how long the data must stay confidential. */
+  secrecyYears: 12,
+  /** Mosca's y — how long a migration of this estate takes. */
+  migrationYears: 5,
+} as const
+
+const CRQC = getCrqcConsensus()
+
+/** e.g. "2033 (2030–2036)" — consensus estimate with its data-derived window. */
+export const EXEC_CRQC_ESTIMATE_ROW = `${CRQC.zEstimate} (${CRQC.qdayLow}–${CRQC.qdayHigh})`
+
+/** e.g. "12 yrs" / "5 yrs". */
+export const EXEC_SECRECY_ROW = `${EXEC_EXPOSURE.secrecyYears} yrs`
+export const EXEC_MIGRATION_ROW = `${EXEC_EXPOSURE.migrationYears} yrs`
+
+/**
+ * Mosca's inequality restated as a deadline: a migration taking `y` years must
+ * BEGIN by `z - y` to finish before the threat arrives.
+ */
+export const EXEC_MOSCA_START_BY_YEAR = CRQC.zEstimate - EXEC_EXPOSURE.migrationYears
+
+/** e.g. "Start by 2028, or your 12-year secrets are already late." */
+export const EXEC_MOSCA_PUNCHLINE = `Start by ${EXEC_MOSCA_START_BY_YEAR}, or your ${EXEC_EXPOSURE.secrecyYears}-year secrets are already late.`
+
+/** Footnote describing the derivation, with the real source count. */
+export const EXEC_MOSCA_FOOTNOTE = `Mosca's inequality: a ${EXEC_EXPOSURE.migrationYears}-year migration must finish before the machine arrives, so it has to start by ${EXEC_MOSCA_START_BY_YEAR}. The ${CRQC.zEstimate} estimate is the median across ${CRQC_ESTIMATES.length} tracked sources; ${CRQC.qdayLow}–${CRQC.qdayHigh} is the consensus window, not a forecast.`
 
 /**
  * ops sideCard's "150 ops/s · ~133× slower than ECDSA" — both figures already
