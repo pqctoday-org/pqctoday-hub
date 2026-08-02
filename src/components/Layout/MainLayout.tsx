@@ -830,6 +830,10 @@ export const MainLayout = () => {
                     className="flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors shrink min-w-0"
                     aria-label={`Switch role — currently ${roleLabel}`}
                     title="Switch your role, region, or industry"
+                    // Guided-workshop entry point for the persona prerequisite step.
+                    // Replaces the retired PersonalizationSection wizard's
+                    // "persona-edit" anchor (see PersonaSwitchModal for the rest).
+                    data-workshop-target="persona-switch-open"
                   >
                     <UserCog size={13} aria-hidden="true" />
                     <span className="truncate max-w-[200px]">{roleLabel}</span>

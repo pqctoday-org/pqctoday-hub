@@ -64,59 +64,83 @@
         "page": {
           "route": "/"
         },
-        "tasks": ["Confirm role = Curious", "Confirm proficiency = Curious"],
+        "tasks": [
+          "Open the role switcher in the top bar",
+          "Pick the role that fits you",
+          "Set your region and industry"
+        ],
         "expectedOutput": "Persona context locked to Curious.",
-        "narration": "Curious mode reshapes the platform — visual diagrams replace tables, advanced modules stay hidden.",
+        "narration": "Your role, region, and industry drive every recommendation on the platform. Set them from the role switcher in the top bar — it is on every page, and each choice applies immediately.",
         "cues": [
           {
-            "tMs": 0,
             "kind": "navigate",
-            "route": "/"
+            "route": "/",
+            "tMs": 0
           },
           {
-            "tMs": 1000,
-            "kind": "scroll-to",
-            "selector": "#personalization-section"
-          },
-          {
-            "tMs": 1500,
             "kind": "caption",
-            "text": "Persona definition — one pick is enough for the curious tour."
+            "text": "Your role, region, and industry shape every page. Curious drives this flow.",
+            "tMs": 1200
           },
           {
-            "tMs": 7458,
-            "kind": "click",
-            "selector": "[data-workshop-target=\"persona-edit\"]"
-          },
-          {
-            "tMs": 7958,
-            "kind": "caption",
-            "text": "Opening the persona wizard."
-          },
-          {
-            "tMs": 11458,
-            "kind": "caption",
-            "text": "Curious track — visual content, plain language, no further setup needed."
-          },
-          {
-            "tMs": 18201,
             "kind": "spotlight",
-            "selector": "[data-workshop-target^=\"persona-track-\"][aria-pressed=\"true\"]"
+            "selector": "[data-workshop-target=\"persona-switch-open\"]",
+            "tMs": 8308
           },
           {
-            "tMs": 22201,
-            "kind": "callout",
-            "selector": "[data-workshop-target^=\"persona-track-\"][aria-pressed=\"true\"]",
-            "label": "Curious — pre-selected for this flow"
-          },
-          {
-            "tMs": 67201,
             "kind": "caption",
-            "text": "That's it — Curious skips region and industry. The platform shows visual content tuned for newcomers."
+            "text": "The role switcher lives in the top bar, on every page.",
+            "tMs": 10808
           },
           {
-            "tMs": 127201,
-            "kind": "advance"
+            "kind": "click",
+            "selector": "[data-workshop-target=\"persona-switch-open\"]",
+            "tMs": 16416
+          },
+          {
+            "kind": "caption",
+            "text": "Six roles: executive, developer, architect, ops, researcher, curious.",
+            "tMs": 18916
+          },
+          {
+            "kind": "spotlight",
+            "selector": "[data-workshop-target^=\"persona-role-\"][aria-pressed=\"true\"]",
+            "tMs": 25595
+          },
+          {
+            "kind": "callout",
+            "selector": "[data-workshop-target^=\"persona-role-\"][aria-pressed=\"true\"]",
+            "label": "Curious — pre-selected for this flow",
+            "tMs": 28095
+          },
+          {
+            "kind": "caption",
+            "text": "Region filters timeline, leaders, threats, and compliance to your jurisdiction.",
+            "tMs": 30595
+          },
+          {
+            "kind": "spotlight",
+            "selector": "[data-workshop-target=\"persona-region-select\"]",
+            "tMs": 37988
+          },
+          {
+            "kind": "caption",
+            "text": "Industry surfaces the threats, frameworks, and vendors that apply to you.",
+            "tMs": 40488
+          },
+          {
+            "kind": "spotlight",
+            "selector": "[data-workshop-target=\"persona-industry-select\"]",
+            "tMs": 47453
+          },
+          {
+            "kind": "caption",
+            "text": "Both apply immediately — no separate save step.",
+            "tMs": 49953
+          },
+          {
+            "kind": "advance",
+            "tMs": 55061
           }
         ]
       }
