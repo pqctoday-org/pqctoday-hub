@@ -16,6 +16,7 @@ describe('SIM_BALANCE', () => {
         goodNewsCreditM: 1.5,
         hndlExposureThreshold: 0.35,
       },
+      decisions: { freeRetryOnWrongPick: false },
     })
   })
 
@@ -59,7 +60,17 @@ describe('difficulty presets + scenarios (WS-14)', () => {
         expect(p, `${id}`).toBeLessThanOrEqual(1)
       }
       expect(b.budget.doneWeight, `${id} budget`).toBe(1)
+      expect(typeof b.decisions.freeRetryOnWrongPick, `${id} decisions`).toBe('boolean')
     }
+  })
+
+  // 2026-08-02 — decision stakes moved onto the difficulty dial when GUIDED mode
+  // was retired. Pinned here so the mapping can't drift silently: Easy forgives a
+  // wrong Next-Move pick, the two grounded presets make it stick.
+  it('decision stakes: only Easy grants a free retry on a wrong pick', () => {
+    expect(SIM_PRESETS.easy.decisions.freeRetryOnWrongPick).toBe(true)
+    expect(SIM_PRESETS.realistic.decisions.freeRetryOnWrongPick).toBe(false)
+    expect(SIM_PRESETS.hard.decisions.freeRetryOnWrongPick).toBe(false)
   })
 
   it('difficulty monotonicity: easy ≤ realistic ≤ hard on danger; AI help inverts', () => {

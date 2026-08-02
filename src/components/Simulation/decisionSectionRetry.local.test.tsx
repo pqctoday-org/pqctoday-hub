@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
- * WP4.4 — the free instant "↺ try again" after a wrong pick is Guided-mode-only;
- * outside Guided, the pick sticks (the setback stays a real consequence, not an
+ * WP4.4 — the free instant "↺ try again" after a wrong pick is Easy-difficulty-
+ * only; above Easy the pick sticks (the setback stays a real consequence, not an
  * inconvenience an instant do-over erases). The card still un-sticks on its own
  * once the player completes a real step elsewhere (sections.tsx's own moveKey
  * reset, unaffected by this change) — this only removes the FREE, INSTANT path.
+ *
+ * The gate rode on the retired GUIDED mode until 2026-08-02; it now reads
+ * SimBalance.decisions.freeRetryOnWrongPick, which the MODE dial selects.
  */
 import { describe, it, expect } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
@@ -24,7 +27,7 @@ const band = p0.levels[0]!
 const act = band.activities[0]!
 const nextMove = { band, act, step: act.steps[0]! }
 
-function renderDecision(guided: boolean) {
+function renderDecision(allowRetry: boolean) {
   return render(
     <DecisionSection
       phaseId="p0"
@@ -37,7 +40,7 @@ function renderDecision(guided: boolean) {
       onVisitRef={() => {}}
       canEmbed={() => false}
       onOpenStep={() => {}}
-      guided={guided}
+      allowRetry={allowRetry}
     />
   )
 }
@@ -52,20 +55,20 @@ function pickAWrongCard() {
 }
 
 describe('DecisionSection wrong-pick retry (WP4.4)', () => {
-  it('shows the free "try again" retry in Guided mode', () => {
+  it('shows the free "try again" retry when retries are allowed (Easy)', () => {
     renderDecision(true)
     pickAWrongCard()
     expect(screen.getByRole('button', { name: /try again/i })).toBeInTheDocument()
   })
 
-  it('hides the retry outside Guided mode, showing a stands-as-picked note instead', () => {
+  it('hides the retry when they are not, showing a stands-as-picked note instead', () => {
     renderDecision(false)
     pickAWrongCard()
     expect(screen.queryByRole('button', { name: /try again/i })).not.toBeInTheDocument()
     expect(screen.getByText(/the pick stands/i)).toBeInTheDocument()
   })
 
-  it('defaults to non-Guided behaviour when the guided prop is omitted', () => {
+  it('defaults to pick-stands behaviour when the allowRetry prop is omitted', () => {
     render(
       <DecisionSection
         phaseId="p0"

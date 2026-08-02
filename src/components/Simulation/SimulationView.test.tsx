@@ -67,10 +67,8 @@ beforeEach(() => {
   // console renders (gameplay tests assume it). Tests that need the gate reset it.
   useAssessmentResultStore.setState({ lastResult: null, completedAt: null })
   seedAssessment()
-  // suppress the first-run tour (WS-12) for the gameplay tests; guided defaults
-  // to false (Expert console) — reset() preserves it like tourSeen, so a test
-  // that flips it must not leak into the next one.
-  useSimulationStore.setState({ tourSeen: true, guided: false })
+  // suppress the first-run tour (WS-12) for the gameplay tests.
+  useSimulationStore.setState({ tourSeen: true })
   Object.assign(navigator, { clipboard: { writeText: vi.fn().mockResolvedValue(undefined) } })
 })
 
@@ -97,12 +95,16 @@ describe('SimulationView (Mission Control)', () => {
   })
 
   // WP4.7 — ribbon slimming: the KPI ribbon keeps only scoreboard + clock +
-  // budget; HNDL/TNFL risk and readiness moved to the Expert rail's pinned
-  // "Threat & readiness" panel (Guided mode never sees the rail at all).
-  it('slims the ribbon to scoreboard + clock + budget, moving threat/readiness to the Expert rail', () => {
+  // budget; HNDL/TNFL risk and readiness moved off it. Since 2026-08-02 they
+  // live in the Signals tab's Vital signs card, so they are NOT co-rendered with
+  // the ribbon any more — the tab has to be opened first.
+  it('slims the ribbon to scoreboard + clock + budget, moving threat/readiness into Signals', () => {
     renderPage()
     expect(screen.queryByText('Est. readiness')).not.toBeInTheDocument()
-    expect(screen.getByText('Threat & readiness')).toBeInTheDocument()
+    // not rendered until the Signals tab is opened (one panel at a time)
+    expect(screen.queryByText('Vital signs')).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Signals' }))
+    expect(screen.getByText('Vital signs')).toBeInTheDocument()
     expect(screen.getAllByText('HNDL risk').length).toBeGreaterThan(0)
     expect(screen.getAllByText('TNFL risk').length).toBeGreaterThan(0)
     // scoreboard + clock + budget still present on the ribbon (Budget secured
@@ -110,12 +112,6 @@ describe('SimulationView (Mission Control)', () => {
     expect(screen.getByText('Governance floor (L2)')).toBeInTheDocument()
     expect(screen.getByText('Years to Q-Day')).toBeInTheDocument()
     expect(screen.getAllByText('Budget secured').length).toBeGreaterThan(0)
-  })
-
-  it('hides the Expert rail (and its Threat & readiness panel) in Guided mode', () => {
-    useSimulationStore.setState({ guided: true })
-    renderPage()
-    expect(screen.queryByText('Threat & readiness')).not.toBeInTheDocument()
   })
 
   // The sim runs on the user's assessed org (single source of truth): with no
@@ -197,6 +193,8 @@ describe('SimulationView (Mission Control)', () => {
 
   it('opening a Learn/Activity resource from the list keeps the sim header (embeds, no navigation)', () => {
     renderPage()
+    // the resource columns live in their own tab since 2026-08-02
+    fireEvent.click(screen.getByRole('button', { name: 'Resources' }))
     // the "Open a resource" lists now embed in-sim: such items say "opens in simulation"
     const embeddable = screen.getAllByText('opens in simulation')
     expect(embeddable.length).toBeGreaterThan(0)
@@ -223,16 +221,47 @@ describe('SimulationView (Mission Control)', () => {
     expect(screen.getByText('✕ Common failure')).toBeInTheDocument()
   })
 
-  it('right column shows phase artifacts and gates the architecture view by phase', () => {
+  it('shows phase artifacts under Progress and gates the architecture view by phase', () => {
     renderPage()
-    // p0 (Executive Mandate) produces artifacts but is not an architecture phase
+    // Artifacts moved out of the old Expert rail into the Progress tab (2026-08-02)
+    fireEvent.click(screen.getByRole('button', { name: 'Progress' }))
     expect(screen.getByText(/Executive Mandate artifacts/)).toBeInTheDocument()
+    // p0 (Executive Mandate) produces artifacts but is not an architecture phase
+    fireEvent.click(screen.getByRole('button', { name: 'Signals' }))
     expect(screen.queryByText(/Your architecture/)).not.toBeInTheDocument()
-    // P1 (Discovery) acts on the estate → architecture view appears, now behind
-    // the Expert rail's "Show more" disclosure (PR3)
+    // P1 (Discovery) acts on the estate → architecture view appears in Signals.
+    // Switching phase resets the tab to Decide, so Signals is re-opened here.
     fireEvent.click(screen.getByRole('button', { name: /Discovery/i }))
-    fireEvent.click(screen.getByRole('button', { name: /Show \d+ more panel/i }))
+    fireEvent.click(screen.getByRole('button', { name: 'Signals' }))
     expect(screen.getByText(/Your architecture/)).toBeInTheDocument()
+  })
+
+  // Per-phase progressive disclosure (2026-08-02) — the point of the tabs is that
+  // only ONE panel is mounted at a time, and that a phase always opens on Decide.
+  it('opens every phase on Decide and mounts only the active tab', () => {
+    renderPage()
+    // Decide's content is up; the other tabs' content is not merely hidden but absent
+    expect(screen.queryByText(/Maturity gates/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Open a resource/)).not.toBeInTheDocument()
+    expect(screen.queryByText('Vital signs')).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Progress' }))
+    expect(screen.getByText(/Maturity gates/)).toBeInTheDocument()
+    expect(screen.queryByText(/Open a resource/)).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Resources' }))
+    expect(screen.getByText(/Open a resource/)).toBeInTheDocument()
+    expect(screen.queryByText(/Maturity gates/)).not.toBeInTheDocument()
+  })
+
+  it('resets to the Decide tab when the phase changes', () => {
+    renderPage()
+    fireEvent.click(screen.getByRole('button', { name: 'Resources' }))
+    expect(screen.getByText(/Open a resource/)).toBeInTheDocument()
+    // switching phase must not land the player on the new phase's Resources tab
+    fireEvent.click(screen.getByRole('button', { name: /Discovery/i }))
+    expect(screen.queryByText(/Open a resource/)).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Decide' })).toHaveAttribute('data-state', 'active')
   })
 
   it('End Quarter advances the turn and opens the Quarter Report', () => {
