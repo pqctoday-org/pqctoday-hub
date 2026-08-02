@@ -431,6 +431,7 @@ const FeatureCard: React.FC<{ item: (typeof FEATURE_PLAYGROUNDS)[number] }> = ({
         <p className="font-semibold text-[14px] text-foreground group-hover:text-primary transition-colors">
           {item.title}
         </p>
+        {item.requiresLocalSandbox && <SandboxBadge />}
       </div>
       <p className="mt-2.5 text-[12.5px] text-muted-foreground leading-snug">{item.description}</p>
       <p className={cn('mt-2.5 text-[10px] font-semibold font-mono', FEATURE_TAG[item.accent])}>
