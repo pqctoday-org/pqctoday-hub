@@ -696,20 +696,17 @@ export const MainLayout = () => {
           />
         </nav>
 
-        {/* Utility dock — same open-state as the existing Assistant/Journey
-            triggers elsewhere (PageHeader's Assistant button, the mobile
-            sheet's Journey History button); no parallel feature built. */}
+        {/* Utility dock (2026-08-02 follow-up, master plan Phase 0.1): the
+            rail's Assistant trigger was removed — confirmed duplicate of the
+            top bar's "Ask" button (both call openRightPanel('chat') against
+            the same useRightPanelStore state), which now lives one row up in
+            the desktop top bar. Journey is deliberately KEPT: it has no
+            top-bar equivalent anywhere in this file (only the mobile "more"
+            sheet's Journey History shortcut mirrors it), so removing it here
+            would be a real functionality cut with no replacement. Follow-up:
+            give Journey a top-bar entry point too, then this lone-icon dock
+            can likely go away entirely. */}
         <div className="p-2 border-t border-border/40 flex items-center justify-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => openRightPanel('chat')}
-            className="h-7 w-7 text-muted-foreground hover:text-primary"
-            aria-label="Assistant"
-            title="Ask the PQC Assistant"
-          >
-            <Bot size={16} aria-hidden="true" />
-          </Button>
           <Button
             variant="ghost"
             size="icon"
