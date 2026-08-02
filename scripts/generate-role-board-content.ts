@@ -28,12 +28,14 @@
  * Writes:  src/data/generated/roleBoardContent.generated.ts
  */
 
-import { readdirSync, readFileSync, writeFileSync, mkdirSync } from 'fs'
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { createServer } from 'vite'
 import Papa from 'papaparse'
 import { expandTokens, hasUnexpandedToken, type PersonaConfigModule } from './lib/roleBoardTokens'
+import { latestDatedCsv, ROLE_BOARD_CONTENT_RE } from './lib/latestDatedCsv'
+import { format, resolveConfig } from 'prettier'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
@@ -46,6 +48,8 @@ interface ContentRow {
   slot_index: string
   content: string
   status: string
+  deprecated_at?: string
+  deprecated_reason?: string
 }
 
 const ROLES = ['executive', 'developer', 'architect', 'ops', 'researcher', 'curious'] as const
@@ -72,19 +76,40 @@ const REQUIRED_SCALAR_SLOTS = [
 ] as const
 
 function latestContentCsv(): string {
-  const dataDir = join(ROOT, 'src/data')
-  const files = readdirSync(dataDir)
-    .filter((f) => /^role_board_content_\d{8}\.csv$/.test(f))
-    .sort()
-  if (files.length === 0) {
-    throw new Error('No src/data/role_board_content_*.csv found.')
-  }
-  return join(dataDir, files[files.length - 1])
+  const found = latestDatedCsv(join(ROOT, 'src/data'), ROLE_BOARD_CONTENT_RE)
+  if (!found) throw new Error('No src/data/role_board_content_*.csv found.')
+  return found
 }
 
-function parseRows(csvText: string): ContentRow[] {
+/** The only `status` values the pipeline understands. */
+const KNOWN_STATUSES = new Set(['active', 'deprecated'])
+
+/**
+ * Active rows only, with the lifecycle columns actually enforced rather than
+ * ignored. Previously this filtered on `status === 'active'` and never looked
+ * at `deprecated_at` / `deprecated_reason` at all, so the CSV advertised a
+ * deprecation workflow the pipeline did not honour — and a typo'd status
+ * (`activ`) silently dropped a row from the board instead of failing.
+ */
+function parseRows(csvText: string, csvPath: string): ContentRow[] {
   const parsed = Papa.parse<ContentRow>(csvText, { header: true, skipEmptyLines: true })
-  return (parsed.data ?? []).filter((r) => r && r.role_id && (r.status ?? 'active') === 'active')
+  const rows = (parsed.data ?? []).filter((r) => r && r.role_id)
+
+  for (const r of rows) {
+    const status = r.status || 'active'
+    const where = `${csvPath} :: ${r.role_id}/${r.variant_id}/${r.slot}[${r.slot_index}]`
+    if (!KNOWN_STATUSES.has(status)) {
+      throw new Error(`${where}: unknown status "${r.status}" (expected active or deprecated)`)
+    }
+    if (status === 'deprecated' && !(r.deprecated_at ?? '').trim()) {
+      throw new Error(`${where}: status=deprecated requires a deprecated_at date`)
+    }
+    if (status === 'active' && (r.deprecated_at ?? '').trim()) {
+      throw new Error(`${where}: deprecated_at is set but status is still active`)
+    }
+  }
+
+  return rows.filter((r) => (r.status || 'active') === 'active')
 }
 
 /** JS string literal, safe for embedding in the generated file (handles quotes, backslashes, newlines). */
@@ -94,7 +119,7 @@ function jsString(s: string): string {
 
 async function main() {
   const csvPath = latestContentCsv()
-  const rows = parseRows(readFileSync(csvPath, 'utf8'))
+  const rows = parseRows(readFileSync(csvPath, 'utf8'), csvPath)
   console.log(`Read ${rows.length} active rows from ${csvPath}`)
 
   const server = await createServer({
@@ -169,6 +194,43 @@ async function main() {
       .sort((a, b) => Number(a.index) - Number(b.index))
       .map((e) => e.content)
 
+  /**
+   * Repeating slot as an index->content map, for slots that must be PAIRED
+   * with another slot by `slot_index` rather than by array position.
+   *
+   * `repeating()` sorts and flattens to an array, which is right for
+   * independent lists (proof chips, track chips) but wrong for pairs: labels
+   * at indices 0,1,2 zipped against values at 0,1,3 have equal LENGTH, so the
+   * count check passes, and value[2] then silently pairs with label[2] —
+   * a mispaired side-card row that looks entirely correct in the generated
+   * output.
+   */
+  const byIndex = (slots: SlotMap, name: string): Map<string, string> => {
+    const out = new Map<string, string>()
+    for (const e of slots.get(name) ?? []) {
+      if (out.has(e.index)) {
+        throw new Error(`duplicate ${name}[${e.index}]`)
+      }
+      out.set(e.index, e.content)
+    }
+    return out
+  }
+
+  // Only the `default` variant is rendered today. A non-default variant used
+  // to be parsed, token-expanded, and then silently DROPPED here — the CSV
+  // advertised a capability the pipeline did not have, so a maintainer could
+  // author a whole alternate board and see no error and no effect. Fail loudly
+  // until multi-variant rendering lands.
+  const unsupportedVariants = [...boards.keys()].filter((k) => !k.endsWith('::default')).sort()
+  if (unsupportedVariants.length > 0) {
+    throw new Error(
+      `${csvPath}: found ${unsupportedVariants.length} non-default variant(s) ` +
+        `(${unsupportedVariants.join(', ')}), which this generator cannot render yet. ` +
+        `Rendering more than one variant per role requires the multi-variant board ` +
+        `output; refusing to silently drop them.`
+    )
+  }
+
   const boardEntries: string[] = []
   for (const role of ROLES) {
     const key = `${role}::default`
@@ -185,13 +247,22 @@ async function main() {
         `${ctx}: expected exactly ${REQUIRED_GRID_CARDS} grid_card_title/grid_card_body pairs, got ${gridTitles.length}/${gridBodies.length}`
       )
     }
-    const rowLabels = repeating(slots, 'side_card_row_label')
-    const rowValues = repeating(slots, 'side_card_row_value')
-    if (rowLabels.length !== rowValues.length) {
-      throw new Error(
-        `${ctx}: side_card_row_label/side_card_row_value count mismatch (${rowLabels.length} vs ${rowValues.length})`
-      )
+    // Paired by slot_index, not by position — see `byIndex`.
+    const labelByIndex = byIndex(slots, 'side_card_row_label')
+    const valueByIndex = byIndex(slots, 'side_card_row_value')
+    const rowIndices = [...labelByIndex.keys()].sort((a, b) => Number(a) - Number(b))
+    for (const idx of rowIndices) {
+      if (!valueByIndex.has(idx)) {
+        throw new Error(`${ctx}: side_card_row_label[${idx}] has no matching side_card_row_value`)
+      }
     }
+    for (const idx of valueByIndex.keys()) {
+      if (!labelByIndex.has(idx)) {
+        throw new Error(`${ctx}: side_card_row_value[${idx}] has no matching side_card_row_label`)
+      }
+    }
+    const rowLabels = rowIndices.map((i) => labelByIndex.get(i)!)
+    const rowValues = rowIndices.map((i) => valueByIndex.get(i)!)
 
     const heroBadgeText = scalar(slots, 'hero_badge_text')
     const heroBadgeTone = scalar(slots, 'hero_badge_tone')
@@ -246,8 +317,45 @@ ${boardEntries.join('\n')}
 }
 `
 
+  // Format through Prettier before writing. Generation must be DETERMINISTIC:
+  // the committed file was previously hand-formatted after generation, so the
+  // generator's raw `JSON.stringify` output (double quotes, everything on one
+  // line) could never match what was in git — which would make any
+  // CSV-vs-generated drift check permanently red and therefore useless. Running
+  // the repo's own Prettier config here means "regenerate" produces byte-identical
+  // output to "regenerate, then format", and the drift gate can compare directly.
+  const prettierConfig = await resolveConfig(OUT_FILE)
+  const formatted = await format(generated, {
+    ...prettierConfig,
+    filepath: OUT_FILE,
+    parser: 'typescript',
+  })
+
+  // --check: drift gate. Only `predev` and `build` regenerate, so a commit that
+  // edits the CSV without regenerating leaves the committed module stale — the
+  // production bundle would be correct (build regenerates) while tests, type
+  // checks and any local run silently use the OLD copy. This compares what the
+  // CSV produces against what is on disk and fails if they differ, so the CSV
+  // stays the single source of truth it claims to be.
+  if (process.argv.includes('--check')) {
+    const onDisk = existsSync(OUT_FILE) ? readFileSync(OUT_FILE, 'utf8') : null
+    if (onDisk === formatted) {
+      console.log(
+        `✓ ${OUT_FILE.replace(ROOT + '/', '')} is in sync with ${csvPath.replace(ROOT + '/', '')}`
+      )
+      return
+    }
+    console.error(
+      `✗ ${OUT_FILE.replace(ROOT + '/', '')} is STALE relative to ` +
+        `${csvPath.replace(ROOT + '/', '')}.\n` +
+        `  ${onDisk === null ? 'The generated file does not exist.' : 'The CSV has changed since it was last generated.'}\n` +
+        `  Run: npm run generate:role-board-content`
+    )
+    process.exit(1)
+  }
+
   mkdirSync(dirname(OUT_FILE), { recursive: true })
-  writeFileSync(OUT_FILE, generated)
+  writeFileSync(OUT_FILE, formatted)
   console.log(`Wrote ${OUT_FILE}`)
 }
 

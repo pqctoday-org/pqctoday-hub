@@ -40,10 +40,11 @@
  *   npm run audit:role-board-ctas -- --json
  */
 
-import { readFileSync, existsSync, readdirSync } from 'fs'
+import { readFileSync, existsSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import Papa from 'papaparse'
+import { latestDatedCsv, ROLE_BOARD_CTAS_RE, ROLE_BOARD_CONTENT_RE } from './lib/latestDatedCsv'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
@@ -77,10 +78,13 @@ export interface CtaFinding {
 /** Latest dated `role_board_ctas_*.csv` under src/data. */
 export function latestCtaCsv(dataDir = join(ROOT, 'src/data')): string | null {
   if (!existsSync(dataDir)) return null
-  const files = readdirSync(dataDir)
-    .filter((f) => /^role_board_ctas_\d{8}\.csv$/.test(f))
-    .sort()
-  return files.length ? join(dataDir, files[files.length - 1]) : null
+  return latestDatedCsv(dataDir, ROLE_BOARD_CTAS_RE)
+}
+
+/** Latest dated `role_board_content_*.csv` under src/data. */
+export function latestContentCsv(dataDir = join(ROOT, 'src/data')): string | null {
+  if (!existsSync(dataDir)) return null
+  return latestDatedCsv(dataDir, ROLE_BOARD_CONTENT_RE)
 }
 
 export function parseCtaRegistry(csvText: string): CtaRegistryRow[] {
@@ -92,15 +96,48 @@ export function parseCtaRegistry(csvText: string): CtaRegistryRow[] {
 }
 
 /**
- * The set of hrefs a role board can point at, extracted from personaConfig's
- * source rather than by importing it — the module pulls in the whole data layer
- * (library CSVs, algorithm registry, KMIP fixtures), which is far more than a
- * lint gate should load, and several of those imports assume a browser.
+ * The set of hrefs a role board can point at, read from the role-board content
+ * CSV's own `cta_primary_href` / `cta_secondary_href` rows.
+ *
+ * WHY THE CSV, NOT personaConfig.ts. This function used to regex-scrape
+ * `ctaPrimaryHref: '…'` out of `src/data/personaConfig.ts`. The 2026-08-02
+ * CSV migration moved those literals into
+ * `src/data/generated/roleBoardContent.generated.ts`, leaving personaConfig.ts
+ * with only a `ctaPrimaryHref: string` TYPE declaration — so the scrape started
+ * returning ZERO hrefs. The gate reported "0 CTAs, 11 registered", flagged all
+ * eleven registry rows as orphans (advice which, followed, would have deleted
+ * the entire capability-claim registry), and still exited 0, because
+ * ORPHAN_REGISTRY_ROW is not a blocking code. Every real check — route
+ * resolution, MISSING_CLAIM, STALE_VERIFICATION, UNREGISTERED — was dead for
+ * that whole window.
+ *
+ * Reading the CSV rather than the generated file is deliberate: the CSV is the
+ * source of truth maintainers edit, and the generated file is one more derived
+ * artifact that can drift from it (a drift the generator's own gate now
+ * covers separately). Pointing the gate at the source means a bad href is
+ * caught at the point it is written.
+ *
+ * Still a text-level read rather than an import: the generated module pulls in
+ * the whole data layer (library CSVs, algorithm registry, KMIP fixtures),
+ * which is far more than a lint gate should load, and several of those imports
+ * assume a browser.
+ *
+ * Deprecated rows are skipped — a CTA that is no longer served should not keep
+ * demanding a fresh capability claim.
  */
-export function extractBoardHrefs(personaConfigSrc: string): string[] {
+export function extractBoardHrefs(contentCsvText: string): string[] {
+  const rows = Papa.parse<Record<string, string>>(contentCsvText, {
+    header: true,
+    skipEmptyLines: true,
+  }).data
   const hrefs = new Set<string>()
-  for (const m of personaConfigSrc.matchAll(/ctaPrimaryHref:\s*'([^']+)'/g)) hrefs.add(m[1])
-  for (const m of personaConfigSrc.matchAll(/ctaSecondaryHref:\s*'([^']+)'/g)) hrefs.add(m[1])
+  for (const row of rows) {
+    if (!row || !row.role_id) continue
+    if ((row.status ?? 'active') !== 'active') continue
+    if (row.slot !== 'cta_primary_href' && row.slot !== 'cta_secondary_href') continue
+    const href = (row.content ?? '').trim()
+    if (href) hrefs.add(href)
+  }
   return [...hrefs]
 }
 
@@ -244,9 +281,23 @@ function main() {
     process.exit(1)
   }
   const registry = parseCtaRegistry(readFileSync(csvPath, 'utf8'))
-  const boardHrefs = extractBoardHrefs(
-    readFileSync(join(ROOT, 'src/data/personaConfig.ts'), 'utf8')
-  )
+  const contentCsvPath = latestContentCsv()
+  if (!contentCsvPath) {
+    console.error('✗ No src/data/role_board_content_YYYYMMDD.csv found.')
+    process.exit(1)
+  }
+  const boardHrefs = extractBoardHrefs(readFileSync(contentCsvPath, 'utf8'))
+  // A gate that finds no CTAs at all is not a passing gate — it is a broken
+  // one. This is exactly how the personaConfig.ts scrape failed silently after
+  // the CSV migration (see extractBoardHrefs), so fail loudly instead.
+  if (boardHrefs.length === 0) {
+    console.error(
+      `✗ No CTA hrefs found in ${contentCsvPath.replace(ROOT + '/', '')}.\n` +
+        `  Expected rows with slot=cta_primary_href / cta_secondary_href.\n` +
+        `  Refusing to report a pass over zero CTAs.`
+    )
+    process.exit(1)
+  }
   const routeSegments = extractAppRoutes(readFileSync(join(ROOT, 'src/App.tsx'), 'utf8'))
   const toolIds = extractPlaygroundToolIds(
     readFileSync(join(ROOT, 'src/components/Playground/workshopRegistry.tsx'), 'utf8')

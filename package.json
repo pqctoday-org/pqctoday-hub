@@ -93,6 +93,7 @@
     "prerender": "tsx scripts/prerender.ts",
     "generate:sitemap": "tsx scripts/generate-sitemap.ts",
     "generate:role-board-content": "tsx scripts/generate-role-board-content.ts",
+    "audit:role-board-drift": "tsx scripts/generate-role-board-content.ts --check",
     "generate:sitemap:check": "tsx scripts/generate-sitemap.ts --check",
     "generate-embeddings": "tsx scripts/build-embedding-index.ts",
     "generate-embeddings:dry": "tsx scripts/build-embedding-index.ts --dry-run",
