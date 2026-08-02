@@ -23,6 +23,7 @@ import {
 } from 'lucide-react'
 import { Skeleton } from '../ui/skeleton'
 import { PageHeader } from '../common/PageHeader'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { AlgorithmInfoModal } from './AlgorithmInfoModal'
 import { AlgorithmEntryStrip } from './AlgorithmEntryStrip'
@@ -190,40 +191,50 @@ export function AlgorithmsView() {
     !algorithmsTabsVisited.includes('transition') &&
     !algorithmsTabsVisited.includes('detailed')
 
+  // Register this page's actions with the global top bar (page-action-strip
+  // rollout, 2026-08-01) — info/export/endorse/flag render there now, not as
+  // a row on the page itself. Mirrors TimelineView.tsx's pattern.
+  useEffect(() => {
+    const { setPageActions, clearPageActions } = usePageActionsStore.getState()
+    setPageActions({
+      title: 'Post-Quantum Algorithms & Protocols',
+      dataSource:
+        `Data Sources: ${transitionMetadata?.filename ?? 'algorithms_transitions.csv'}, ` +
+        `${metadata?.filename ?? 'pqc_complete_algorithm_reference.csv'} • Updated: ` +
+        `${(metadata?.date ?? transitionMetadata?.date ?? new Date()).toLocaleDateString()}`,
+      onExport: handleExportCsv,
+      endorseUrl: buildEndorsementUrl({
+        category: 'algorithm-endorsement',
+        title: 'Endorse: PQC Algorithms & Protocols',
+        resourceType: 'Algorithms Page',
+        resourceId: 'Post-Quantum Algorithms & Protocols',
+        resourceDetails:
+          '**Page:** Post-Quantum Algorithms & Protocols — compare PQC algorithms and IETF protocol support.',
+        pageUrl: '/algorithms',
+      }),
+      endorseLabel: 'Algorithms Page',
+      endorseResourceType: 'Algorithms',
+      flagUrl: buildFlagUrl({
+        category: 'algorithm-endorsement',
+        title: 'Flag: PQC Algorithms & Protocols',
+        resourceType: 'Algorithms Page',
+        resourceId: 'Post-Quantum Algorithms & Protocols',
+        resourceDetails:
+          '**Page:** Post-Quantum Algorithms & Protocols — compare PQC algorithms and IETF protocol support.',
+        pageUrl: '/algorithms',
+      }),
+      flagLabel: 'Algorithms Page',
+      flagResourceType: 'Algorithms',
+    })
+    return () => clearPageActions()
+  }, [handleExportCsv, metadata, transitionMetadata])
+
   return (
     <div>
       <PageHeader
         icon={Shield}
         title="Post-Quantum Algorithms & Protocols"
         description="Compare post-quantum algorithms and track their support across IETF protocols"
-        dataSource={
-          `Data Sources: ${transitionMetadata?.filename ?? 'algorithms_transitions.csv'}, ` +
-          `${metadata?.filename ?? 'pqc_complete_algorithm_reference.csv'} • Updated: ` +
-          `${(metadata?.date ?? transitionMetadata?.date ?? new Date()).toLocaleDateString()}`
-        }
-        onExport={handleExportCsv}
-        endorseUrl={buildEndorsementUrl({
-          category: 'algorithm-endorsement',
-          title: 'Endorse: PQC Algorithms & Protocols',
-          resourceType: 'Algorithms Page',
-          resourceId: 'Post-Quantum Algorithms & Protocols',
-          resourceDetails:
-            '**Page:** Post-Quantum Algorithms & Protocols — compare PQC algorithms and IETF protocol support.',
-          pageUrl: '/algorithms',
-        })}
-        endorseLabel="Algorithms Page"
-        endorseResourceType="Algorithms"
-        flagUrl={buildFlagUrl({
-          category: 'algorithm-endorsement',
-          title: 'Flag: PQC Algorithms & Protocols',
-          resourceType: 'Algorithms Page',
-          resourceId: 'Post-Quantum Algorithms & Protocols',
-          resourceDetails:
-            '**Page:** Post-Quantum Algorithms & Protocols — compare PQC algorithms and IETF protocol support.',
-          pageUrl: '/algorithms',
-        })}
-        flagLabel="Algorithms Page"
-        flagResourceType="Algorithms"
       />
 
       <AlgorithmEntryStrip

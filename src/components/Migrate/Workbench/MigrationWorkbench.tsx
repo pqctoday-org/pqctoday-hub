@@ -16,6 +16,7 @@ import {
   Undo2,
 } from 'lucide-react'
 import { PageHeader } from '../../common/PageHeader'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { Button } from '../../ui/button'
 import { ShareButton } from '../../ui/ShareButton'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -185,6 +186,27 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
     [embedded, searchParams, setSearchParams, setTabStore]
   )
 
+  // Register this page's actions with the global top bar (page-action-strip
+  // rollout, 2026-08-01) — info renders there now, not as a row on the page
+  // itself. Mirrors TimelineView.tsx's pattern. Gated on `!embedded`, same as
+  // the PageHeader render below.
+  useEffect(() => {
+    if (embedded) return
+    const { setPageActions, clearPageActions } = usePageActionsStore.getState()
+    setPageActions({
+      title: 'PQC Migration Workbench',
+      // ADDED 2026-07-16 (migrate-process remediation Phase 5, U1): the
+      // catalog snapshot date was loaded (softwareMetadata) but never
+      // surfaced anywhere on this page — a reviewer had no way to tell how
+      // current the whole product list is, only individual rows' own
+      // verified-pill tooltips (which needed expanding to see).
+      dataSource: softwareMetadata
+        ? `${softwareMetadata.filename} • Catalog as of ${softwareMetadata.lastUpdate.toLocaleDateString()}`
+        : undefined,
+    })
+    return () => clearPageActions()
+  }, [embedded])
+
   return (
     <div className="mx-auto w-full max-w-[1180px] px-4 pb-12 pt-4 sm:px-6">
       {!embedded && (
@@ -193,16 +215,6 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
             icon={TrendingUp}
             title="PQC Migration Workbench"
             description="Start from what you run — get a sequenced, quantum-safe plan aligned to NIST IR 8547 (Initial Public Draft) & CNSA 2.0."
-            // ADDED 2026-07-16 (migrate-process remediation Phase 5, U1): the
-            // catalog snapshot date was loaded (softwareMetadata) but never
-            // surfaced anywhere on this page — a reviewer had no way to tell
-            // how current the whole product list is, only individual rows'
-            // own verified-pill tooltips (which needed expanding to see).
-            dataSource={
-              softwareMetadata
-                ? `${softwareMetadata.filename} • Catalog as of ${softwareMetadata.lastUpdate.toLocaleDateString()}`
-                : undefined
-            }
           />
           {hasSelection && (
             <ShareButton

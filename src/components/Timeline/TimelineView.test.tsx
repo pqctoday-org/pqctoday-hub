@@ -4,6 +4,7 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { TimelineView } from './TimelineView'
 import '@testing-library/jest-dom'
 import * as useSemanticSearchModule from '@/services/search/useSemanticSearch'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 
 vi.mock('@/services/search/useSemanticSearch', async () => {
   const actual = await vi.importActual<typeof useSemanticSearchModule>(
@@ -76,9 +77,13 @@ describe('TimelineView', () => {
       ).toBeInTheDocument()
     })
 
-    it('displays metadata information on desktop', () => {
+    it('registers metadata information with the page-actions store (page-action-strip rollout, 2026-08-01)', () => {
+      // dataSource moved off PageHeader into usePageActionsStore — it now
+      // renders in MainLayout's top bar via PageActionStrip, not in
+      // TimelineView's own tree, so this checks the store registration
+      // directly rather than DOM text that no longer exists here.
       render(<TimelineView />)
-      expect(screen.getByText(/Updated:/)).toBeInTheDocument()
+      expect(usePageActionsStore.getState().current?.dataSource).toMatch(/Updated:/)
     })
 
     it('renders the Gantt chart on desktop', () => {

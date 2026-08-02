@@ -6,6 +6,7 @@ import { AlgorithmsView } from './AlgorithmsView'
 import '@testing-library/jest-dom'
 import * as useSemanticSearchModule from '@/services/search/useSemanticSearch'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 
 vi.mock('@/services/search/useSemanticSearch', async () => {
   const actual = await vi.importActual<typeof useSemanticSearchModule>(
@@ -64,7 +65,13 @@ describe('AlgorithmsView', () => {
       expect(
         screen.getAllByText(/track their support across IETF protocols/i)[0]
       ).toBeInTheDocument()
-      expect(await screen.findByText(/Data Sources:/i)).toBeInTheDocument()
+      // dataSource moved off PageHeader into usePageActionsStore
+      // (page-action-strip rollout, 2026-08-01) — it now renders in
+      // MainLayout's top bar via PageActionStrip, not in AlgorithmsView's own
+      // tree, so this checks the store registration directly.
+      await waitFor(() =>
+        expect(usePageActionsStore.getState().current?.dataSource).toMatch(/Data Sources:/i)
+      )
       expect(await screen.findByText('Transition Guide')).toBeInTheDocument()
       expect(await screen.findByText('Detailed Comparison')).toBeInTheDocument()
       expect(await screen.findByTestId('algorithm-comparison')).toBeInTheDocument()

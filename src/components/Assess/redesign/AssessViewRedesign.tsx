@@ -36,8 +36,8 @@ import { PERSONA_NAV_PATHS, PERSONA_RECOMMENDED_MODE } from '../../../data/perso
 import { useSeedAssessFromPersona } from '../../../hooks/assessment/useSeedAssessFromPersona'
 import { Button } from '../../ui/button'
 import { PageHeader } from '../../common/PageHeader'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
-import { WorkflowBreadcrumb } from '../../shared/WorkflowBreadcrumb'
 import { logAssessComplete } from '../../../utils/analytics'
 import { AssessTrackChooser } from './AssessTrackChooser'
 import { AssessWizardScreen } from './AssessWizardScreen'
@@ -291,42 +291,53 @@ export const AssessViewRedesign: React.FC<{
   // eslint-disable-next-line security/detect-object-injection
   const resumeStepLabel = STEP_LABELS[currentStep] ?? ''
 
+  // Register this page's actions with the global top bar (page-action-strip
+  // rollout, 2026-08-01) — info/endorse/flag render there now, not as a row
+  // on the page itself. Mirrors TimelineView.tsx's pattern. Gated on
+  // `!simEmbed` — PageHeader itself (and everything it used to render here)
+  // was already suppressed for the embedded/sim case, so this preserves that.
+  useEffect(() => {
+    if (simEmbed) return
+    const { setPageActions, clearPageActions } = usePageActionsStore.getState()
+    setPageActions({
+      title: 'PQC Risk Assessment',
+      dataSource: metadata
+        ? `${metadata.filename} • Updated: ${metadata.lastUpdate.toLocaleDateString()}`
+        : undefined,
+      endorseUrl: buildEndorsementUrl({
+        category: 'pqc-tool-endorsement',
+        title: 'Endorse: PQC Risk Assessment',
+        resourceType: 'Assess Tool',
+        resourceId: 'PQC Risk Assessment',
+        resourceDetails:
+          '**Tool:** PQC Risk Assessment — personalized quantum risk score, migration priorities, and recommendations.',
+        pageUrl: '/assess',
+      }),
+      endorseLabel: 'Assess Tool',
+      endorseResourceType: 'Assess',
+      flagUrl: buildFlagUrl({
+        category: 'pqc-tool-endorsement',
+        title: 'Flag: PQC Risk Assessment',
+        resourceType: 'Assess Tool',
+        resourceId: 'PQC Risk Assessment',
+        resourceDetails:
+          '**Tool:** PQC Risk Assessment — personalized quantum risk score, migration priorities, and recommendations.',
+        pageUrl: '/assess',
+      }),
+      flagLabel: 'Assess Tool',
+      flagResourceType: 'Assess',
+    })
+    return () => clearPageActions()
+  }, [simEmbed])
+
   return (
     <div className="animate-fade-in">
       {!simEmbed && (
         <>
-          <WorkflowBreadcrumb current="assess" />
           <PageHeader
             icon={ClipboardCheck}
             title="PQC Risk Assessment"
             description="Answer a few questions to get a personalized quantum risk score, migration priorities, and actionable recommendations for your organization."
-            dataSource={
-              metadata
-                ? `${metadata.filename} • Updated: ${metadata.lastUpdate.toLocaleDateString()}`
-                : undefined
-            }
-            endorseUrl={buildEndorsementUrl({
-              category: 'pqc-tool-endorsement',
-              title: 'Endorse: PQC Risk Assessment',
-              resourceType: 'Assess Tool',
-              resourceId: 'PQC Risk Assessment',
-              resourceDetails:
-                '**Tool:** PQC Risk Assessment — personalized quantum risk score, migration priorities, and recommendations.',
-              pageUrl: '/assess',
-            })}
-            endorseLabel="Assess Tool"
-            endorseResourceType="Assess"
-            flagUrl={buildFlagUrl({
-              category: 'pqc-tool-endorsement',
-              title: 'Flag: PQC Risk Assessment',
-              resourceType: 'Assess Tool',
-              resourceId: 'PQC Risk Assessment',
-              resourceDetails:
-                '**Tool:** PQC Risk Assessment — personalized quantum risk score, migration priorities, and recommendations.',
-              pageUrl: '/assess',
-            })}
-            flagLabel="Assess Tool"
-            flagResourceType="Assess"
           />
         </>
       )}
