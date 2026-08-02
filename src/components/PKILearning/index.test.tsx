@@ -43,7 +43,12 @@ describe('PKILearning', () => {
     renderWithRouter()
 
     expect(screen.getByRole('heading', { name: 'Learn' })).toBeInTheDocument()
-    expect(screen.getByText('Viewing as')).toBeInTheDocument()
+    // Was `getByText('Viewing as')` until 2026-08-02, when the page-local
+    // persona row was removed as a duplicate of the top bar's picker. The mode
+    // toggle is this page's own chrome, so it's a stabler "landing rendered"
+    // signal than a control that happened to live here.
+    expect(screen.getByRole('button', { name: 'My Path' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Guided routing/ })).toBeInTheDocument()
 
     // Switch to Browse to see the catalog cards
     goToBrowse()
@@ -95,7 +100,8 @@ describe('PKILearning', () => {
 
     fireEvent.click(screen.getByText('Back to Dashboard'))
 
-    expect(screen.getByText('Viewing as')).toBeInTheDocument()
+    // See the note above — same substitution, same reason.
+    expect(screen.getByRole('button', { name: 'My Path' })).toBeInTheDocument()
   })
 
   it('does not render its own back link on a catalog module route', async () => {

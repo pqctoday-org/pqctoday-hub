@@ -12,14 +12,13 @@ import { usePersonaPathItems } from '../usePersonaPathItems'
 import { WhereToStartTree } from '../WhereToStartTree'
 import { MyPathView } from './MyPathView'
 import { BrowseAllView } from './BrowseAllView'
-import {
-  PERSONA_ORDER,
-  personaIcon,
-  TOTAL_MODULE_COUNT,
-  TRACK_COUNT,
-} from './learnRedesign.helpers'
+import { PERSONA_ORDER, TOTAL_MODULE_COUNT, TRACK_COUNT } from './learnRedesign.helpers'
 
-type Mode = 'path' | 'browse'
+/** 2026-08-02: 'guided' promoted from a separate `showRouter` toggle button
+ *  into a real third mode, so the page offers one row of three peers —
+ *  My Path / Browse all / Guided routing — instead of a mode pair plus a
+ *  floating toggle that rendered the same tree above them. */
+type Mode = 'path' | 'browse' | 'guided'
 
 /**
  * Redesigned /learn surface. Two modes anchored by a persistent persona lens:
@@ -60,10 +59,10 @@ export const LearnRedesignView = () => {
   const [mode, setMode] = useState<Mode>(() => {
     const m = searchParams.get('mode')
     if (m === 'browse') return 'browse'
+    if (m === 'guided') return 'guided'
     if (m === 'mypath') return 'path'
     return deepLinkNice ? 'browse' : 'path'
   })
-  const [showRouter, setShowRouter] = useState(false)
 
   // Toggle mode and reflect it in ?mode= so the active mode is shareable/
   // restorable. Skip the URL write when embedded (don't touch /simulation).
@@ -74,7 +73,7 @@ export const LearnRedesignView = () => {
       setSearchParams(
         (sp) => {
           const params = new URLSearchParams(sp)
-          params.set('mode', next === 'browse' ? 'browse' : 'mypath')
+          params.set('mode', next === 'path' ? 'mypath' : next)
           return params
         },
         { replace: true }
@@ -121,6 +120,10 @@ export const LearnRedesignView = () => {
           title="Learn"
           description="One guided path through post-quantum cryptography — tuned to your role."
           testId="learn-page-header"
+          // Quiz sits beside the description rather than in its own row — it is
+          // this page's only action, so the row cost a full band of vertical
+          // space for one button (2026-08-02).
+          actionsInline
           actions={
             <Button
               variant="outline"
@@ -135,55 +138,13 @@ export const LearnRedesignView = () => {
         />
       )}
 
-      {/* Persona lens */}
-      <div className="flex items-center gap-2.5 flex-wrap">
-        <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-          Viewing as
-        </span>
-        {PERSONA_ORDER.map((id) => {
-          const Icon = personaIcon(id)
-          const active = selectedPersona === id
-          return (
-            <Button
-              key={id}
-              variant="ghost"
-              size="sm"
-              type="button"
-              onClick={() => {
-                setPersona(id)
-                setShowRouter(false)
-                selectMode('path')
-              }}
-              aria-pressed={active}
-              className={`h-auto min-h-[44px] md:min-h-0 inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-colors ${
-                active
-                  ? 'border-primary/50 text-primary bg-primary/10'
-                  : 'border-border text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              <Icon size={13} aria-hidden="true" />
-              {PERSONAS[id].label}
-            </Button>
-          )
-        })}
-        <span className="w-px h-5 bg-border" aria-hidden="true" />
-        <Button
-          variant="ghost"
-          size="sm"
-          type="button"
-          onClick={() => setShowRouter((v) => !v)}
-          aria-pressed={showRouter}
-          className="h-auto min-h-[44px] md:min-h-0 inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border border-accent/30 text-accent bg-accent/5 hover:bg-accent/10 transition-colors"
-        >
-          <Compass size={13} aria-hidden="true" />
-          Not sure? Guided routing
-        </Button>
-      </div>
-
-      {/* Guided routing tree (cold-start helper) */}
-      {showRouter && <WhereToStartTree defaultOpen />}
-
-      {/* Mode toggle */}
+      {/* Mode toggle — My Path / Browse all / Guided routing.
+          The "Viewing as" persona row that used to sit above this was removed
+          on 2026-08-02: persona selection already lives in the top bar, so this
+          was a second control for the same state on the page most likely to be
+          entered with a persona already chosen. Guided routing was NOT part of
+          that duplication (it asks where to start, not who you are), so rather
+          than being removed with the row it became the third mode here. */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="inline-flex items-center bg-muted/30 border border-border rounded-xl p-1">
           <Button
@@ -212,12 +173,28 @@ export const LearnRedesignView = () => {
           >
             Browse all {TOTAL_MODULE_COUNT}
           </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            aria-pressed={mode === 'guided'}
+            onClick={() => selectMode('guided')}
+            className={`text-xs rounded-lg min-h-[44px] md:min-h-0 inline-flex items-center gap-1.5 ${
+              mode === 'guided'
+                ? 'bg-gradient-to-br from-primary to-accent text-background font-bold'
+                : 'text-muted-foreground'
+            }`}
+          >
+            <Compass size={13} aria-hidden="true" />
+            Guided routing
+          </Button>
         </div>
         <span className="text-xs text-muted-foreground">{metaLine}</span>
       </div>
 
       {/* Body */}
-      {mode === 'path' ? (
+      {mode === 'guided' ? (
+        <WhereToStartTree defaultOpen />
+      ) : mode === 'path' ? (
         selectedPersona ? (
           <MyPathView
             personaId={selectedPersona as PersonaId}
@@ -226,8 +203,12 @@ export const LearnRedesignView = () => {
         ) : (
           <div className="space-y-3">
             <div className="glass-panel flex flex-wrap items-center justify-center gap-x-2.5 gap-y-2 rounded-xl px-4 py-3 text-center">
+              {/* "Pick a role above" until 2026-08-02, when the page-local
+                  persona row was removed as a duplicate of the top bar's. The
+                  role picker is still one click away, just no longer on this
+                  page — so name where it actually is. */}
               <span className="text-sm text-muted-foreground">
-                Pick a role above for a guided path — or
+                Pick a role in the top bar for a guided path — or
               </span>
               <Button
                 variant="outline"
