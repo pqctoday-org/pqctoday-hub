@@ -6,6 +6,7 @@
  * dates, and a DYNAMIC harvest-now (HNDL) exposure that falls as the HNDL tracks migrate.
  */
 import { Ring } from '../atoms'
+import { RibbonTermTooltip } from '../RibbonTermTooltip'
 import type { TransformationStatus, OnTime } from './transformationStatus'
 
 function chip(onTime: OnTime): { icon: string; cls: string } {
@@ -59,15 +60,13 @@ export function TransformationStatusPanel({ status }: { status: TransformationSt
         {status.tracks.map((t) => (
           <div key={t.id} className="font-mono text-[10px]">
             <div className="flex justify-between text-muted-foreground">
-              <span
-                title={
-                  t.track === 'TNFL'
-                    ? 'Trust Now, Forge Later — same risk as HNFL (Harvest Now, Forge Later), the term used on /report and in Learn. The simulation and the Applied Quantum framework say TNFL.'
-                    : undefined
-                }
-              >
-                {t.track} · {t.tier}
-              </span>
+              {/* 2026-08-02 — carries the plain-English HNDL/TNFL definitions that
+                used to live on the (now de-duplicated) Vital signs risk chips. */}
+              <RibbonTermTooltip concept={t.track === 'TNFL' ? 'tnfl' : 'hndl'}>
+                <span>
+                  {t.track} · {t.tier}
+                </span>
+              </RibbonTermTooltip>
               <span>{t.year}</span>
             </div>
             <div className="mt-0.5 h-1.5 overflow-hidden rounded-full bg-muted">
