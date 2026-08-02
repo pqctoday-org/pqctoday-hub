@@ -4,6 +4,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { render, screen, within, fireEvent, waitFor } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { MainLayout } from './MainLayout'
+import { getRailSections } from './railNav'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { usePageActionsStore } from '../../store/usePageActionsStore'
 import '@testing-library/jest-dom'
@@ -310,22 +311,23 @@ describe('MainLayout', () => {
       ).not.toBeInTheDocument()
     })
 
-    it('researcher: FOR YOU is empty (no gating persona); Learn/Timeline/Threats fall back to plain rows, and the restored MORE fallback makes every other route reachable', () => {
+    it('researcher: gets the STANDARD grouped rail (Workflow/Practice/Reference), not the flat no-persona fallback, and every route stays reachable', () => {
       usePersonaStore.getState().setPersona('researcher')
       renderLayout()
       const rail = getRailNav()
-      expect(within(rail).getByText('Everything, unfiltered')).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /learn view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /timeline view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /threats view/i })).toBeInTheDocument()
-      // Reachability fix (Grade-A remediation Phase 2, 2026-08-02): researcher
-      // is documented (PERSONA_NAV_PATHS.researcher === null) as
-      // "unrestricted" — before this fix, that meant an empty FOR YOU with NO
-      // fallback, so researcher actually had the NARROWEST desktop
-      // reachability of any persona (~5 rows) despite being the one persona
-      // meant to see everything. `more` now renders unconditionally here, the
-      // same as for the no-persona case above.
-      expect(within(rail).getByText('More')).toBeInTheDocument()
+      // 2026-08-02: researcher previously shared the no-persona flat fallback
+      // ("Everything, unfiltered" + a MORE dump). It is an explicit choice, not
+      // an absence of one, so it now renders the same grouped rail as every
+      // other persona. PERSONA_NAV_PATHS.researcher stays null — ReportContent
+      // and GuidedTour branch on that null to mean "sees everything" — so only
+      // getRailSections' presentation changed.
+      expect(within(rail).queryByText('Everything, unfiltered')).not.toBeInTheDocument()
+      expect(within(rail).queryByText('More')).not.toBeInTheDocument()
+      expect(within(rail).getByText(/workflow/i)).toBeInTheDocument()
+      expect(within(rail).getByText(/reference/i)).toBeInTheDocument()
+      // Learn/Timeline/Threats live inside Reference, which is COLLAPSED by
+      // default for every persona (2026-08-01 "collapse reference by default").
+      // Their header is present; the rows appear on expand, same as elsewhere.
       expect(within(rail).getByRole('button', { name: /migrate view/i })).toBeInTheDocument()
       expect(within(rail).getByRole('button', { name: /compliance view/i })).toBeInTheDocument()
       expect(within(rail).getByRole('button', { name: /assess view/i })).toBeInTheDocument()
@@ -335,15 +337,20 @@ describe('MainLayout', () => {
       expect(within(rail).getByRole('button', { name: /simulation view/i })).toBeInTheDocument()
       expect(within(rail).getByRole('button', { name: /playground view/i })).toBeInTheDocument()
       expect(within(rail).getByRole('button', { name: /explore view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /algorithms view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /library view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /community view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /patents view/i })).toBeInTheDocument()
+      // Reference members (Algorithms, Library, Community, Patents, plus the
+      // render-added Learn/Timeline/Threats) are inside the collapsed group —
+      // asserted against getRailSections directly instead, so this test checks
+      // reachability rather than the default collapse state.
+      const { forYou } = getRailSections('researcher')
+      for (const path of ['/algorithms', '/library', '/leaders', '/patents']) {
+        expect(forYou).toContain(path)
+      }
       // /revisions stays excluded — same deliberate 2026-08-01 decision as the
       // no-persona case above, unrelated to this reachability fix.
       expect(
         within(rail).queryByRole('button', { name: /revisions view/i })
       ).not.toBeInTheDocument()
+      expect(forYou).not.toContain('/revisions')
     })
   })
 
@@ -467,8 +474,17 @@ describe('MainLayout', () => {
       expect(within(rail).getByRole('button', { name: /library view/i })).toBeInTheDocument()
     })
 
-    it('renders no sub-group headers when FOR YOU is empty (researcher)', () => {
+    it('renders the standard sub-group headers for researcher (2026-08-02)', () => {
       usePersonaStore.getState().setPersona('researcher')
+      renderLayout()
+      const rail = getRailNav()
+      expect(within(rail).getByText('Workflow')).toBeInTheDocument()
+      expect(within(rail).getByText('Practice')).toBeInTheDocument()
+      expect(within(rail).getByText('Reference')).toBeInTheDocument()
+    })
+
+    it('renders no sub-group headers when FOR YOU is genuinely empty (no persona)', () => {
+      usePersonaStore.getState().setPersona(null)
       renderLayout()
       const rail = getRailNav()
       expect(within(rail).queryByText('Workflow')).not.toBeInTheDocument()
