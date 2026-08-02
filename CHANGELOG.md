@@ -29,6 +29,13 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.39.1] - 2026-08-02
+
+### Fixed
+
+- **PQC 101's key generation works in both panes again** [view:/learn] [persona:developer] [persona:curious]: workshop step 3 generates a classical key and a post-quantum key, both written to the same filename. The second one to run reported "key file not produced" even though it had generated a real key — the browser's file store recognised the name as already present and never announced that the contents had been replaced. Whichever pane ran second failed, regardless of algorithm.
+- **Learn is visible on the left bar without expanding anything** [view:/] [persona:curious] [persona:developer]: it sat inside the Reference group, which starts collapsed, so on a fresh visit it wasn't on screen at all — grouped with standing lookup material despite being a primary destination. It now has its own row directly under Home.
+
 ## [4.39.0] - 2026-08-02
 
 A round of genuine bug fixes found by re-checking last week's UX audit against the actual code — a migration deadline that displayed a date in the past, filters that returned nothing, links that went nowhere, and a Share button that sent people to an empty page. Also roughly 26 MB less to download on your first visit.
