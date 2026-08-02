@@ -28,7 +28,9 @@ import { MemoryRouter, Route, Routes } from 'react-router'
 import { MainLayout } from '../Layout/MainLayout'
 import { LandingView } from './LandingView'
 import { usePersonaStore } from '../../store/usePersonaStore'
-import { NAV_PATH_LABELS, RAIL_HIDDEN_PATHS } from '../../data/personaConfig'
+import { NAV_PATH_LABELS } from '../../data/personaConfig'
+import { getRailSections } from '../Layout/railNav'
+import type { PersonaId } from '../../data/learningPersonas'
 import '@testing-library/jest-dom'
 
 vi.mock('../../vite-env.d.ts', () => ({
@@ -52,23 +54,55 @@ function getRailNav() {
   return screen.getByRole('navigation', { name: /primary navigation/i })
 }
 
-/** Every real route (minus RAIL_HIDDEN_PATHS, which deliberately never gets
- *  its own rail row — see personaConfig.ts) must have a clickable rail row,
- *  regardless of what LandingView renders in the main content area. This is
- *  the same invariant railNav.test.ts pins at the pure-function level, run
- *  here against the actual rendered DOM after a real LandingView mount. */
-function expectFullRailCoverage() {
+/** Accessible-name matcher per FOR YOU sub-group toggle — fixed literal
+ *  regexes, not built from a dynamic string, so this stays lint-clean
+ *  (mirrors MainLayout.test.tsx's identical helper). */
+const FOR_YOU_GROUP_TOGGLE_NAME: Record<'Workflow' | 'Practice' | 'Reference', RegExp> = {
+  Workflow: /(show|hide) workflow/i,
+  Practice: /(show|hide) practice/i,
+  Reference: /(show|hide) reference/i,
+}
+
+/** Expands every FOR YOU sub-group toggle that's currently collapsed.
+ *  Workflow/Practice start expanded; Reference starts collapsed (2026-08-01
+ *  per-group collapse follow-up) — clicking an already-expanded toggle would
+ *  wrongly re-collapse it, so this only clicks ones reporting
+ *  aria-expanded="false". */
+function expandAllForYouGroups(rail: HTMLElement) {
+  for (const label of ['Workflow', 'Practice', 'Reference'] as const) {
+    const toggle = within(rail).queryByRole('button', {
+      name: FOR_YOU_GROUP_TOGGLE_NAME[label],
+    })
+    if (toggle?.getAttribute('aria-expanded') === 'false') fireEvent.click(toggle)
+  }
+}
+
+/** Every route in the given persona's FOR YOU set (railNav.ts's
+ *  getRailSections — the same pure invariant railNav.test.ts pins) must have
+ *  a clickable desktop rail row, run here against the actual rendered DOM
+ *  after a real LandingView mount. Home/About/Learn/Timeline/Threats are
+ *  always reachable regardless of persona (see MainLayout.tsx).
+ *
+ *  NOTE (2026-08-01 rail declutter follow-up: "remove more and revisions from
+ *  the left bar"): this is deliberately narrower than the old
+ *  `expectFullRailCoverage`, which asserted every route in NAV_PATH_LABELS —
+ *  including MORE's routes — had a rail row. That invariant is no longer
+ *  true: the desktop rail's MORE section was removed entirely, so a route
+ *  outside the current persona's FOR YOU (e.g. developer's /leaders) now has
+ *  NO desktop rail row at all, by design — only reachable via ⌘K search, a
+ *  direct URL, or the (untouched) mobile "More" sheet. */
+function expectDesktopRailCoversForYou(persona: PersonaId | null) {
   const rail = getRailNav()
-  // MORE is collapsed by default (2026-08-01 rail declutter follow-up) —
-  // expand it first so this full-coverage check still sees every row, not
-  // just FOR YOU + the 5 always-visible paths. If the active route already
-  // auto-expanded it (see MainLayout's isMoreSectionActive), the toggle's
-  // accessible name is already "Hide more pages…" and this is a no-op.
-  const moreToggle = within(rail).queryByRole('button', { name: /show more pages/i })
-  if (moreToggle) fireEvent.click(moreToggle)
-  const universe = Object.keys(NAV_PATH_LABELS).filter((p) => !RAIL_HIDDEN_PATHS.includes(p))
-  for (const path of universe) {
-    // eslint-disable-next-line security/detect-object-injection -- path comes from Object.keys(NAV_PATH_LABELS) itself
+  expandAllForYouGroups(rail)
+  expect(within(rail).getByRole('button', { name: /home view/i })).toBeInTheDocument()
+  expect(within(rail).getByRole('button', { name: /about view/i })).toBeInTheDocument()
+  expect(within(rail).getByRole('button', { name: /learn view/i })).toBeInTheDocument()
+  expect(within(rail).getByRole('button', { name: /timeline view/i })).toBeInTheDocument()
+  expect(within(rail).getByRole('button', { name: /threats view/i })).toBeInTheDocument()
+
+  const { forYou } = getRailSections(persona)
+  for (const path of forYou) {
+    // eslint-disable-next-line security/detect-object-injection -- path comes from getRailSections' own return value, not user input
     const label = NAV_PATH_LABELS[path]
     expect(within(rail).getByRole('button', { name: `${label} view` })).toBeInTheDocument()
   }
@@ -100,10 +134,10 @@ describe('LandingView wired end-to-end under the real MainLayout', () => {
     vi.unstubAllGlobals()
   })
 
-  it('no persona, not skipped: renders Role Home, and the rail still covers every route', () => {
+  it('no persona, not skipped: renders Role Home, and the rail still covers every FOR YOU route', () => {
     renderApp()
     expect(screen.getByRole('heading', { name: /who's asking/i })).toBeInTheDocument()
-    expectFullRailCoverage()
+    expectDesktopRailCoversForYou(null)
   })
 
   it('"Show me everything" never shows Role Home again, and behaves like today\'s null-persona Landing', () => {
@@ -111,10 +145,10 @@ describe('LandingView wired end-to-end under the real MainLayout', () => {
     renderApp()
     expect(screen.queryByRole('heading', { name: /who's asking/i })).not.toBeInTheDocument()
     expect(screen.getByText(/the quantum era is/i)).toBeInTheDocument()
-    expectFullRailCoverage()
+    expectDesktopRailCoversForYou(null)
   })
 
-  it('a selected persona renders PersonaBoardView (not the old hero), with full rail coverage', () => {
+  it('a selected persona renders PersonaBoardView (not the old hero), with full FOR YOU rail coverage', () => {
     usePersonaStore.setState({ selectedPersona: 'developer' })
     renderApp()
     expect(screen.queryByRole('heading', { name: /who's asking/i })).not.toBeInTheDocument()
@@ -122,7 +156,13 @@ describe('LandingView wired end-to-end under the real MainLayout', () => {
     expect(
       screen.getByRole('heading', { name: /five minutes to a real ml-kem handshake/i })
     ).toBeInTheDocument()
-    expectFullRailCoverage()
+    expectDesktopRailCoversForYou('developer')
+    // Regression guard (2026-08-01 follow-up: "remove more and revisions from
+    // the left bar") — /leaders ("Community") is NOT in developer's FOR YOU;
+    // MORE used to carry it, that section is gone now, so it has no desktop
+    // rail row at all.
+    const rail = getRailNav()
+    expect(within(rail).queryByRole('button', { name: /community view/i })).not.toBeInTheDocument()
   })
 
   it('curious on a desktop-width viewport gets PersonaBoardView, not CuriousMobileBoard', () => {
@@ -133,7 +173,7 @@ describe('LandingView wired end-to-end under the real MainLayout', () => {
       screen.getByRole('heading', { name: /what actually breaks, and when/i })
     ).toBeInTheDocument()
     expect(screen.queryByLabelText('Curious mobile navigation')).not.toBeInTheDocument()
-    expectFullRailCoverage()
+    expectDesktopRailCoversForYou('curious')
   })
 
   it("curious below the `lg` breakpoint on '/' gets CuriousMobileBoard, with MainLayout's own header/footer suppressed", () => {
@@ -169,6 +209,6 @@ describe('LandingView wired end-to-end under the real MainLayout', () => {
     expect(screen.getByText('Library Page')).toBeInTheDocument()
     expect(screen.queryByLabelText('Curious mobile navigation')).not.toBeInTheDocument()
     expect(screen.getByText(/© 2025 PQC Today/)).toBeInTheDocument()
-    expectFullRailCoverage()
+    expectDesktopRailCoversForYou('curious')
   })
 })
