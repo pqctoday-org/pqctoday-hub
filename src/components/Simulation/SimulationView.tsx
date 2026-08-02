@@ -3,13 +3,24 @@
  * SimulationView — the PQC-migration "Mission Control" console.
  *
  * A serious-game over the existing hub: pick an organisation profile, race the
- * Mosca clock (X+Y>Z), and climb each of the framework's 9 phases (P0–P7 + the
- * terminal Verification & Closure band) up a 0–4 maturity ladder — staffing/
- * briefing an AI team and choosing sound vs trap
- * "next moves". A conductor over the hub: every resource is a real Command-
- * Center tool / Playground sandbox / Learn workshop. State persists via
- * useSimulationStore. Design: reports/framework-gap/SIMULATION-DESIGN.md +
- * the Mission Control handoff.
+ * Mosca clock (X+Y>Z), and climb the framework's phases up a 0–4 maturity ladder
+ * — staffing/briefing an AI team and choosing sound vs trap "next moves". A
+ * conductor over the hub: every resource is a real Command-Center tool /
+ * Playground sandbox / Learn workshop. State persists via useSimulationStore.
+ * Design: reports/framework-gap/SIMULATION-DESIGN.md + the Mission Control handoff.
+ *
+ * PHASE COUNT: the played lifecycle is 9 (P0–P7 + the terminal Verification &
+ * Closure band), which is what LIFECYCLE_PHASES/the ladder renders — but PhaseId
+ * has TEN values. The spanning `foundations` band is a real, separately-selectable
+ * `sel` that renders through this same per-phase view; it is reached from its own
+ * dashed row under the ladder, not from LIFECYCLE. This comment said "9 phases"
+ * flatly until 2026-08-02, which is why the distinction is spelled out here.
+ *
+ * PER-PHASE VIEW (2026-08-02): the active phase opens on ONE thing — the decision
+ * — with gates, resources and intel behind Decide/Progress/Resources/Signals tabs
+ * (`activePhaseTab`), one panel mounted at a time. This replaced both a ~9-block
+ * co-render and the GUIDED-vs-Expert mode split that existed only to hide the
+ * intel rail from beginners.
  */
 import { useMemo, useState, useEffect, useRef, useCallback, Suspense } from 'react'
 import { Monitor } from 'lucide-react'
