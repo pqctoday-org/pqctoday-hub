@@ -143,13 +143,16 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
   ],
   curious: [
     '/explore',
+    // Migrate → Compliance kept adjacent, matching every other persona's
+    // order below (executive/developer/architect/ops all list them as a
+    // consecutive pair) — curious was the one inconsistent list.
+    '/migrate',
     '/compliance',
     '/assess',
     '/report',
     '/algorithms',
     '/library',
     '/leaders',
-    '/migrate',
     '/playground',
     '/patents',
     // Persona-journeys A-grade redesign (2026-08-01): /simulation added as a
