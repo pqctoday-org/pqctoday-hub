@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import type { PersonaId } from '@/data/learningPersonas'
-import { NAV_PATH_LABELS, RAIL_HIDDEN_PATHS } from '@/data/personaConfig'
+import { NAV_PATH_LABELS, RAIL_HIDDEN_PATHS, PERSONA_NAV_PATHS } from '@/data/personaConfig'
 import {
   getRailSections,
   getRowTreatment,
@@ -63,9 +63,25 @@ describe('getRailSections — hard reachability invariant', () => {
     expect(new Set(more)).toEqual(new Set(expectedMore))
   })
 
-  it('researcher — FOR YOU is empty (PERSONA_NAV_PATHS.researcher is null: no gating)', () => {
-    const { forYou } = getRailSections('researcher')
-    expect(forYou).toEqual([])
+  it('researcher — FOR YOU is the full nav universe, so it gets the standard grouped rail (2026-08-02)', () => {
+    const { forYou, more } = getRailSections('researcher')
+    // researcher used to fall into the same flat "Everything, unfiltered" +
+    // MORE fallback a brand-new no-persona visitor gets. It is an explicit
+    // choice, so it now gets the same grouped rail as every other persona.
+    expect(forYou.length).toBeGreaterThan(0)
+    // Two deliberate leftovers in `more`, both inert because MORE does not
+    // render for a persona with a populated FOR YOU:
+    //  - '/business/tools' — MainLayout render-adds it to Practice by path
+    //    literal, so keeping it out of FOR YOU avoids a duplicate row.
+    //  - '/revisions' — dropped from the rail entirely on 2026-08-01.
+    expect(more).toEqual(['/business/tools', '/revisions'])
+    // PERSONA_NAV_PATHS.researcher stays null — ReportContent and GuidedTour
+    // branch on that null to mean "sees everything". Only the rail changed.
+    expect(PERSONA_NAV_PATHS.researcher).toBeNull()
+  })
+
+  it('no persona — FOR YOU is still empty (flat fallback unchanged)', () => {
+    expect(getRailSections(null).forYou).toEqual([])
   })
 
   it('never renders /openssl as a rail row for any persona', () => {
@@ -114,9 +130,17 @@ describe('getForYouGroups — rail declutter follow-up (2026-08-01)', () => {
     expect(workflow?.paths.length).toBeGreaterThan(0)
   })
 
-  it('empty FOR YOU (researcher / no persona) yields no groups at all', () => {
-    expect(getForYouGroups(getRailSections('researcher').forYou)).toEqual([])
+  it('empty FOR YOU (no persona) yields no groups at all', () => {
     expect(getForYouGroups(getRailSections(null).forYou)).toEqual([])
+  })
+
+  it('researcher gets real sub-groups, same as every other persona (2026-08-02)', () => {
+    const groups = getForYouGroups(getRailSections('researcher').forYou)
+    expect(groups.length).toBeGreaterThan(1)
+    // The standard buckets every other persona renders.
+    const ids = groups.map((g) => g.id)
+    expect(ids).toContain('workflow')
+    expect(ids).toContain('reference')
   })
 
   it('sanity-checks concrete per-persona group membership', () => {

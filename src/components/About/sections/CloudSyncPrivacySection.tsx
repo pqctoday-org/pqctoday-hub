@@ -17,9 +17,12 @@ export function CloudSyncPrivacySection() {
       </div>
       <div className="prose prose-invert max-w-none text-sm text-muted-foreground space-y-3">
         <p>
-          The optional <strong className="text-foreground">Sync to Google Drive</strong> feature
-          allows you to back up and restore your progress across devices. Here is exactly what
-          happens when you use it:
+          The <strong className="text-foreground">Sync to Google Drive</strong> feature is built
+          into the app&apos;s code to back up and restore your progress across devices.{' '}
+          <strong className="text-foreground">It is not currently enabled in the interface</strong>{' '}
+          — there is no sign-in control anywhere in the app today, so no one can turn cloud sync on
+          or off right now. The points below document exactly what the code does, for transparency,
+          even though the feature is currently dormant:
         </p>
         <ul className="space-y-2.5 list-none pl-0">
           <li className="flex items-start gap-2.5">
@@ -58,17 +61,20 @@ export function CloudSyncPrivacySection() {
           <li className="flex items-start gap-2.5">
             <span className="text-status-success mt-1 shrink-0">&#9679;</span>
             <span>
-              <strong className="text-foreground">Full user control.</strong> You can sign out at
-              any time from the home page. You can permanently delete the sync file via Google Drive
-              settings &rarr; Manage apps &rarr; PQC Today &rarr; Delete hidden app data.
+              <strong className="text-foreground">No in-app control exists today.</strong> There is
+              currently no sign-in or sign-out control anywhere in the app — cloud sync cannot be
+              enabled or disabled from the home page or any other screen. Regardless, any data ever
+              written to your Drive app-data folder can be permanently deleted at any time via
+              Google Drive settings &rarr; Manage apps &rarr; PQC Today &rarr; Delete hidden app
+              data — you do not need our app for that.
             </span>
           </li>
           <li className="flex items-start gap-2.5">
             <span className="text-status-success mt-1 shrink-0">&#9679;</span>
             <span>
-              <strong className="text-foreground">This feature is optional.</strong> The app works
-              fully without signing in. Declining or revoking access has no effect on any other
-              functionality.
+              <strong className="text-foreground">Nothing else is affected.</strong> The app works
+              fully without any Google account. The current unavailability of this feature has no
+              effect on any other functionality.
             </span>
           </li>
         </ul>

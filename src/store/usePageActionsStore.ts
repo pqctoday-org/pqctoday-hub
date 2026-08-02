@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import type { ReactNode } from 'react'
 import { create } from 'zustand'
 
 /**
@@ -15,6 +16,16 @@ import { create } from 'zustand'
  */
 export interface PageActions {
   title?: string
+  /**
+   * Overrides the global top bar ShareButton's `url` prop (which otherwise
+   * falls back to `window.location.href`). Most routes are fine with that
+   * fallback — their whole state lives in the URL already — but a page whose
+   * shareable state lives in local/session state (e.g. /report's computed
+   * assessment result) must mint its own self-contained shareable URL here,
+   * or the top-bar Share button silently shares a bare, unloadable link.
+   * See ReportView.tsx's registration for the canonical example.
+   */
+  url?: string
   dataSource?: string
   dataSourceLoading?: boolean
   onExport?: () => void
@@ -24,6 +35,23 @@ export interface PageActions {
   flagUrl?: string
   flagLabel?: string
   flagResourceType?: string
+  /**
+   * Overrides the top bar's route-derived Share copy. Routes whose share text
+   * is per-record rather than per-route (every `/learn/<module-id>` page, whose
+   * real title is the module's, not "Learn — PQC Today") set this on mount;
+   * `ROUTE_SHARE` in `MainLayout.tsx` still covers the static routes.
+   */
+  shareTitle?: string
+  shareText?: string
+  /**
+   * Escape hatch for page-specific chips/badges with no generic equivalent —
+   * rendered at the end of the top bar's strip. Learn module pages ride their
+   * `WipModuleBadge` + `ReviewedBadge` here (2026-08-02: "all icons and info
+   * goes to the top bar"), which is why this store holds a node rather than
+   * only serializable fields. Same `actions` passthrough idea `PageHeader`
+   * already exposes; keep it to small inline elements, never a layout.
+   */
+  extra?: ReactNode
 }
 
 interface PageActionsState {

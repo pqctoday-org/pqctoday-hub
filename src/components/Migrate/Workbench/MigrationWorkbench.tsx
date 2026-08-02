@@ -18,7 +18,6 @@ import {
 import { PageHeader } from '../../common/PageHeader'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { Button } from '../../ui/button'
-import { ShareButton } from '../../ui/ShareButton'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { softwareMetadata, softwareData } from '@/data/migrateData'
 import { useMigrateSelectionStore, type MigrateTab } from '@/store/useMigrateSelectionStore'
@@ -204,37 +203,42 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
       dataSource: softwareMetadata
         ? `${softwareMetadata.filename} • Catalog as of ${softwareMetadata.lastUpdate.toLocaleDateString()}`
         : undefined,
+      // FIX 2026-08-02 (Grade-A remediation): this page used to render its
+      // own second ShareButton next to PageHeader — the exact "one control,
+      // not two" mistake the dataSource note above already fixed once for
+      // Sources. Share lives ONLY in the top bar; when there's a selection
+      // worth sharing, register its self-contained token URL here instead,
+      // same pattern ReportView.tsx uses. No selection -> url stays
+      // undefined -> top bar falls back to its normal bare-URL share.
+      ...(hasSelection
+        ? {
+            url: shareUrl,
+            shareTitle: 'PQC Migration plan',
+            shareText: "Here's my PQC migration product selection",
+          }
+        : null),
     })
     return () => clearPageActions()
-  }, [embedded])
+  }, [embedded, hasSelection, shareUrl])
 
   return (
     <div className="mx-auto w-full max-w-[1180px] px-4 pb-12 pt-4 sm:px-6">
       {!embedded && (
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <PageHeader
-            icon={TrendingUp}
-            title="PQC Migration Workbench"
-            description="Start from what you run — get a sequenced, quantum-safe plan aligned to NIST IR 8547 (Initial Public Draft) & CNSA 2.0."
-            // NOTE (merge, 2026-08-02): this branch added viewType="Migrate"
-            // and a dataSource prop here to give the catalog's 907
-            // trusted_source_id-backed rows a Sources button and a visible
-            // snapshot date. Both landed on main first, via 4.38.0's
-            // page-action-strip rollout — MainLayout's ROUTE_VIEW_TYPE now maps
-            // '/migrate' -> 'Migrate' (global top-bar Sources button), and this
-            // component's own setPageActions() effect above already passes the
-            // same softwareMetadata-derived dataSource string. Re-adding them
-            // here would render both controls twice, which is exactly what that
-            // rollout existed to stop.
-          />
-          {hasSelection && (
-            <ShareButton
-              title="PQC Migration plan"
-              text="Here's my PQC migration product selection"
-              url={shareUrl}
-            />
-          )}
-        </div>
+        <PageHeader
+          icon={TrendingUp}
+          title="PQC Migration Workbench"
+          description="Start from what you run — get a sequenced, quantum-safe plan aligned to NIST IR 8547 (Initial Public Draft) & CNSA 2.0."
+          // NOTE (merge, 2026-08-02): this branch added viewType="Migrate"
+          // and a dataSource prop here to give the catalog's 907
+          // trusted_source_id-backed rows a Sources button and a visible
+          // snapshot date. Both landed on main first, via 4.38.0's
+          // page-action-strip rollout — MainLayout's ROUTE_VIEW_TYPE now maps
+          // '/migrate' -> 'Migrate' (global top-bar Sources button), and this
+          // component's own setPageActions() effect above already passes the
+          // same softwareMetadata-derived dataSource string. Re-adding them
+          // here would render both controls twice, which is exactly what that
+          // rollout existed to stop.
+        />
       )}
 
       {!embedded && priorSelection && (

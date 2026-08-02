@@ -1,9 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { useEffect, type ReactNode } from 'react'
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { render, screen, within, fireEvent } from '@testing-library/react'
+import { render, screen, within, fireEvent, waitFor } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { MainLayout } from './MainLayout'
+import { getRailSections } from './railNav'
 import { usePersonaStore } from '../../store/usePersonaStore'
+import { usePageActionsStore } from '../../store/usePageActionsStore'
 import '@testing-library/jest-dom'
 
 // Mock the build timestamp
@@ -21,7 +24,9 @@ const TestBusinessTools = () => <div>Business Tools Page</div>
 const TestExplore = () => <div>Explore Page</div>
 const TestCompliance = () => <div>Compliance Page</div>
 
-function renderLayout(initialEntry = '/') {
+const TestReport = () => <div>Report Page</div>
+
+function renderLayout(initialEntry = '/', reportElement: ReactNode = <TestReport />) {
   return render(
     <MemoryRouter initialEntries={[initialEntry]}>
       <Routes>
@@ -35,6 +40,7 @@ function renderLayout(initialEntry = '/') {
           <Route path="/timeline" element={<div>Real Timeline Page</div>} />
           <Route path="/explore" element={<TestExplore />} />
           <Route path="/compliance" element={<TestCompliance />} />
+          <Route path="/report" element={reportElement} />
         </Route>
       </Routes>
     </MemoryRouter>
@@ -114,12 +120,16 @@ describe('MainLayout', () => {
 
     it('displays footer', () => {
       renderLayout()
-      expect(screen.getByText(/© 2025 PQC Today/)).toBeInTheDocument()
+      // Year is computed via `new Date().getFullYear()` (Grade-A perf-infra
+      // fix — was a hardcoded literal that would silently go stale every
+      // January), so assert against the real current year, not a pinned one.
+      const year = new Date().getFullYear()
+      expect(screen.getByText(new RegExp(`© ${year} PQC Today`))).toBeInTheDocument()
     })
   })
 
   describe('Rail — no persona selected (null)', () => {
-    it('shows no "For You" label (removed 2026-08-01), the "Everything, unfiltered" fallback with Learn/Timeline/Threats as plain rows, and NO MORE section anywhere', () => {
+    it('shows no "For You" label (removed 2026-08-01), the "Everything, unfiltered" fallback with Learn/Timeline/Threats as plain rows, and every other route reachable via the restored MORE fallback', () => {
       renderLayout()
       const rail = getRailNav()
       // The "For You" section label was removed entirely (2026-08-01) — only
@@ -133,14 +143,36 @@ describe('MainLayout', () => {
       expect(within(rail).getByRole('button', { name: /learn view/i })).toBeInTheDocument()
       expect(within(rail).getByRole('button', { name: /timeline view/i })).toBeInTheDocument()
       expect(within(rail).getByRole('button', { name: /threats view/i })).toBeInTheDocument()
-      // The desktop rail's MORE section was removed entirely (2026-08-01
-      // follow-up: "remove more and revisions from the left bar") — /migrate
-      // (which has no persona-specific gating reason to hide) has no rail row
-      // anywhere on desktop now; it's reachable via ⌘K search or a direct URL.
+      // Reachability fix (Grade-A remediation Phase 2, 2026-08-02): the
+      // desktop rail's MORE section was removed entirely in the 2026-08-01
+      // declutter follow-up ("remove more and revisions from the left bar"),
+      // which silently orphaned every route for exactly this persona — the
+      // one whose FOR YOU is legitimately empty. MainLayout now renders
+      // `more` unconditionally (no collapse toggle — there's nothing else to
+      // navigate with, so nothing to hide it behind) whenever FOR YOU is
+      // empty, restoring a real desktop rail row for all 13 previously
+      // orphaned routes, including the core funnel (/assess, /report).
+      expect(within(rail).getByText('More')).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /migrate view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /compliance view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /assess view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /report view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /command center view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /business tools view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /simulation view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /playground view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /explore view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /algorithms view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /library view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /community view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /patents view/i })).toBeInTheDocument()
+      // /revisions stays excluded from this restored fallback — that specific
+      // 2026-08-01 decision is unrelated to the reachability bug and is
+      // deliberately preserved (still reachable via ⌘K search, direct URL, or
+      // the mobile "More" sheet, same as for every other persona).
       expect(
-        within(rail).queryByRole('button', { name: /show more pages/i })
+        within(rail).queryByRole('button', { name: /revisions view/i })
       ).not.toBeInTheDocument()
-      expect(within(rail).queryByRole('button', { name: /migrate view/i })).not.toBeInTheDocument()
     })
 
     it('always-visible pages (Home/Learn/Timeline/Threats/About) render outside FOR YOU/MORE', () => {
@@ -279,18 +311,46 @@ describe('MainLayout', () => {
       ).not.toBeInTheDocument()
     })
 
-    it('researcher: FOR YOU is empty (no gating persona); Learn/Timeline/Threats fall back to plain rows, and MORE is gone so /migrate has no desktop rail row', () => {
+    it('researcher: gets the STANDARD grouped rail (Workflow/Practice/Reference), not the flat no-persona fallback, and every route stays reachable', () => {
       usePersonaStore.getState().setPersona('researcher')
       renderLayout()
       const rail = getRailNav()
-      expect(within(rail).getByText('Everything, unfiltered')).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /learn view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /timeline view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /threats view/i })).toBeInTheDocument()
+      // 2026-08-02: researcher previously shared the no-persona flat fallback
+      // ("Everything, unfiltered" + a MORE dump). It is an explicit choice, not
+      // an absence of one, so it now renders the same grouped rail as every
+      // other persona. PERSONA_NAV_PATHS.researcher stays null — ReportContent
+      // and GuidedTour branch on that null to mean "sees everything" — so only
+      // getRailSections' presentation changed.
+      expect(within(rail).queryByText('Everything, unfiltered')).not.toBeInTheDocument()
+      expect(within(rail).queryByText('More')).not.toBeInTheDocument()
+      expect(within(rail).getByText(/workflow/i)).toBeInTheDocument()
+      expect(within(rail).getByText(/reference/i)).toBeInTheDocument()
+      // Learn/Timeline/Threats live inside Reference, which is COLLAPSED by
+      // default for every persona (2026-08-01 "collapse reference by default").
+      // Their header is present; the rows appear on expand, same as elsewhere.
+      expect(within(rail).getByRole('button', { name: /migrate view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /compliance view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /assess view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /report view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /command center view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /business tools view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /simulation view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /playground view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('button', { name: /explore view/i })).toBeInTheDocument()
+      // Reference members (Algorithms, Library, Community, Patents, plus the
+      // render-added Learn/Timeline/Threats) are inside the collapsed group —
+      // asserted against getRailSections directly instead, so this test checks
+      // reachability rather than the default collapse state.
+      const { forYou } = getRailSections('researcher')
+      for (const path of ['/algorithms', '/library', '/leaders', '/patents']) {
+        expect(forYou).toContain(path)
+      }
+      // /revisions stays excluded — same deliberate 2026-08-01 decision as the
+      // no-persona case above, unrelated to this reachability fix.
       expect(
-        within(rail).queryByRole('button', { name: /show more pages/i })
+        within(rail).queryByRole('button', { name: /revisions view/i })
       ).not.toBeInTheDocument()
-      expect(within(rail).queryByRole('button', { name: /migrate view/i })).not.toBeInTheDocument()
+      expect(forYou).not.toContain('/revisions')
     })
   })
 
@@ -414,8 +474,17 @@ describe('MainLayout', () => {
       expect(within(rail).getByRole('button', { name: /library view/i })).toBeInTheDocument()
     })
 
-    it('renders no sub-group headers when FOR YOU is empty (researcher)', () => {
+    it('renders the standard sub-group headers for researcher (2026-08-02)', () => {
       usePersonaStore.getState().setPersona('researcher')
+      renderLayout()
+      const rail = getRailNav()
+      expect(within(rail).getByText('Workflow')).toBeInTheDocument()
+      expect(within(rail).getByText('Practice')).toBeInTheDocument()
+      expect(within(rail).getByText('Reference')).toBeInTheDocument()
+    })
+
+    it('renders no sub-group headers when FOR YOU is genuinely empty (no persona)', () => {
+      usePersonaStore.getState().setPersona(null)
       renderLayout()
       const rail = getRailNav()
       expect(within(rail).queryByText('Workflow')).not.toBeInTheDocument()
@@ -535,6 +604,64 @@ describe('MainLayout', () => {
     it('falls back to the generic share title on a route with no bespoke shareTitle (e.g. /migrate)', () => {
       renderLayout('/migrate')
       expect(screen.getByRole('button', { name: /share migrate — pqc today/i })).toBeInTheDocument()
+    })
+
+    // BUG FIX (Grade-A remediation Phase 2, top-bar Share correctness —
+    // pqctoday-priv/grade-a-remediation/PLAN-00-TOP-CONNECTING-PLAN.md §6,
+    // PLAN-02-CORE-FUNNEL.md): the top-bar ShareButton used to always share
+    // `window.location.href`, which on /report is the bare `/report` path —
+    // a recipient with no local assessment state lands on "No Report Yet"
+    // even though the sender got a success toast. /report now registers a
+    // real, self-contained token URL via `usePageActionsStore` (see
+    // ReportView.tsx), and the top bar must actually use it instead of its
+    // generic fallback.
+    describe('top-bar Share URL uses a page-registered pageActions.url when present', () => {
+      beforeEach(() => {
+        Object.defineProperty(navigator, 'clipboard', {
+          value: { writeText: vi.fn().mockResolvedValue(undefined) },
+          writable: true,
+          configurable: true,
+        })
+      })
+
+      afterEach(() => {
+        usePageActionsStore.getState().clearPageActions()
+      })
+
+      it("copies the page-registered share URL (e.g. /report's token link), not window.location.href", async () => {
+        const registeredUrl = 'https://pqctoday.example/report?share=eyJ2IjoyLCJyZXN1bHQiOnt9fQ'
+        const TestReportWithShareUrl = () => {
+          useEffect(() => {
+            usePageActionsStore
+              .getState()
+              .setPageActions({ title: 'PQC Assessment Report', url: registeredUrl })
+            return () => usePageActionsStore.getState().clearPageActions()
+          }, [])
+          return <div>Report Page</div>
+        }
+        renderLayout('/report', <TestReportWithShareUrl />)
+
+        fireEvent.click(screen.getByRole('button', { name: /share pqc assessment report/i }))
+        fireEvent.click(screen.getByText('Copy link'))
+
+        await waitFor(() => {
+          expect(navigator.clipboard.writeText).toHaveBeenCalledWith(registeredUrl)
+        })
+      })
+
+      it('falls back to window.location.href on a route with no registered pageActions.url (e.g. /migrate)', async () => {
+        renderLayout('/migrate')
+
+        fireEvent.click(screen.getByRole('button', { name: /share migrate — pqc today/i }))
+        fireEvent.click(screen.getByText('Copy link'))
+
+        await waitFor(() => {
+          expect(navigator.clipboard.writeText).toHaveBeenCalledWith(window.location.href)
+        })
+        const copied = (navigator.clipboard.writeText as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string
+        expect(copied).not.toContain('share=')
+      })
     })
   })
 

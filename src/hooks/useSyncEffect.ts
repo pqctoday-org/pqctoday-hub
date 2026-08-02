@@ -117,6 +117,12 @@ function restoreStores(stores: Record<string, unknown>) {
  * useSyncEffect — mounts once when user signs in, auto-syncs on changes.
  *
  * Call this in a component that is always mounted (e.g. AppRoot or a top-level provider).
+ *
+ * NOTE: as of the Grade-A trust remediation (2026-08), this hook is mounted
+ * unconditionally in AppRoot.tsx (via SyncMount), but every effect below is
+ * gated on `accessToken`, which is only ever set by GoogleAuthContext's
+ * signIn() flow — and nothing in the app currently calls signIn() (no
+ * sign-in UI exists). In practice these effects are dead code paths today.
  */
 export function useSyncEffect() {
   const { accessToken, driveFileId, setDriveFileId, setSyncStatus, recordSync, lastSyncedAt } =

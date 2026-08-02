@@ -11,6 +11,9 @@ import {
   type LibraryItem,
   type PriorRevision,
 } from './libraryData'
+import { LIBRARY_EXECUTIVE_PICKS } from './libraryExecutivePicks'
+import { LIBRARY_OPS_PICKS } from './libraryOpsPicks'
+import { LIBRARY_CURIOUS_PICKS } from './libraryCuriousPicks'
 
 describe('libraryData', () => {
   it('loads without error', () => {
@@ -72,6 +75,28 @@ describe('findLibraryItemByRef', () => {
       const targetIsLive = libraryData.some((item) => item.referenceId === newRef)
       if (!targetIsLive) continue
       expect(findLibraryItemByRef(oldRef)?.referenceId).toBe(newRef)
+    }
+  })
+
+  it('resolves the deprecated NIST-CSWP-39 id to the live "NIST CSWP 39" revision (Grade-A remediation)', () => {
+    // NIST-CSWP-39 (hyphenated) was deprecated 2026-06-06 and superseded by
+    // "NIST CSWP 39" (spaced, no hyphen) — a different referenceId string.
+    // LIBRARY_EXECUTIVE_PICKS[0] still points at the old hyphenated id, so
+    // without this alias the executive persona's #1 "Start here" pick was a
+    // dead click (detail drawer never opened).
+    const resolved = findLibraryItemByRef('NIST-CSWP-39')
+    expect(resolved).toBeDefined()
+    expect(resolved?.referenceId).toBe('NIST CSWP 39')
+  })
+
+  it('resolves every persona "Start here" pick to a real, live library item', () => {
+    const allPicks = [...LIBRARY_EXECUTIVE_PICKS, ...LIBRARY_OPS_PICKS, ...LIBRARY_CURIOUS_PICKS]
+    for (const pick of allPicks) {
+      const resolved = findLibraryItemByRef(pick.referenceId)
+      expect(
+        resolved,
+        `persona pick "${pick.referenceId}" (${pick.label}) did not resolve to a live library item`
+      ).toBeDefined()
     }
   })
 })
