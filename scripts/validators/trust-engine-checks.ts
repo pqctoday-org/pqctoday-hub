@@ -610,8 +610,63 @@ async function runCmG(): Promise<CheckResult> {
 
 // ── CM-T: Timeline evidence quality checks ───────────────────────────────────
 
+/**
+ * Every id a `trusted_source_id` is allowed to name.
+ *
+ * A trusted_source_id resolves against the UNION of two registries, not one:
+ * trusted_sources_*.csv (845 ids) and pqc_authoritative_sources_reference_*.csv
+ * (697). They are genuinely complementary rather than one being a subset of the
+ * other — 623 ids overlap, 74 exist only in the authoritative file — and the app
+ * has always treated them that way (ComplianceDetailDrawer's
+ * resolveTrustedSourceName tries getTrustedSource, then getAuthoritativeSource).
+ * threats-proof-rule.ts (TP-3) and migrate-proof-rule.ts (MP-4) resolve against
+ * the authoritative file for the same reason.
+ *
+ * ADDED 2026-08-02: CM-T-02 and CM-T-04 each loaded trusted_sources alone, so
+ * any row naming one of the 74 authoritative-only ids was reported as a dangling
+ * reference the app resolves perfectly well. That produced 29 false positives on
+ * compliance the day CM-T-04 shipped (EIOPA behind DORA, RBI, OCC, FAA, OSCCA,
+ * and 21 national data-protection authorities — every one a real entry with a
+ * name and URL). Timeline was unaffected only by luck: none of its 242 ids
+ * happens to be authoritative-only today.
+ */
+async function loadKnownSourceIds(): Promise<Set<string>> {
+  const known = new Set<string>()
+
+  const trustedFiles = await glob('src/data/trusted_sources_*.csv', { cwd: REPO_ROOT })
+  trustedFiles.sort()
+  const latestTrusted = trustedFiles.at(-1)
+  if (latestTrusted) {
+    const raw = fs.readFileSync(path.join(REPO_ROOT, latestTrusted), 'utf-8')
+    const { data } = Papa.parse<Record<string, string>>(raw, {
+      header: true,
+      skipEmptyLines: true,
+    })
+    for (const r of data) if (r['source_id']?.trim()) known.add(r['source_id'].trim())
+  }
+
+  // Note the different key column: this registry's primary key is `id`, not
+  // `source_id`. Reading `source_id` here would silently add nothing and leave
+  // the union looking exactly like trusted_sources alone.
+  const authFiles = await glob('src/data/pqc_authoritative_sources_reference_*.csv', {
+    cwd: REPO_ROOT,
+  })
+  authFiles.sort()
+  const latestAuth = authFiles.at(-1)
+  if (latestAuth) {
+    const raw = fs.readFileSync(path.join(REPO_ROOT, latestAuth), 'utf-8')
+    const { data } = Papa.parse<Record<string, string>>(raw, {
+      header: true,
+      skipEmptyLines: true,
+    })
+    for (const r of data) if (r['id']?.trim()) known.add(r['id'].trim())
+  }
+
+  return known
+}
+
 // CM-T-01: Completed/In-Progress events must have trusted_source_id
-// CM-T-02: trusted_source_id must resolve in trusted_sources CSV
+// CM-T-02: trusted_source_id must resolve in the trusted-source registries
 // CM-T-03: local_file must exist in public/timeline/
 
 async function runCmT(): Promise<CheckResult[]> {
@@ -623,27 +678,13 @@ async function runCmT(): Promise<CheckResult[]> {
       pass('CM-T-01', 'Timeline trusted_source_id on completed events', 'src/data/timeline_*.csv'),
     ]
 
-  const trustedSourceFiles = await glob('src/data/trusted_sources_*.csv', { cwd: REPO_ROOT })
-  trustedSourceFiles.sort()
-  const latestTrusted = trustedSourceFiles.at(-1)
-
   const timelineRaw = fs.readFileSync(path.join(REPO_ROOT, latestTimeline), 'utf-8')
   const { data: timelineRows } = Papa.parse<Record<string, string>>(timelineRaw, {
     header: true,
     skipEmptyLines: true,
   })
 
-  const knownSourceIds = new Set<string>()
-  if (latestTrusted) {
-    const trustedRaw = fs.readFileSync(path.join(REPO_ROOT, latestTrusted), 'utf-8')
-    const { data: trustedRows } = Papa.parse<Record<string, string>>(trustedRaw, {
-      header: true,
-      skipEmptyLines: true,
-    })
-    for (const r of trustedRows) {
-      if (r['source_id']?.trim()) knownSourceIds.add(r['source_id'].trim())
-    }
-  }
+  const knownSourceIds = await loadKnownSourceIds()
 
   const f01: Finding[] = []
   const f02: Finding[] = []
@@ -750,22 +791,18 @@ async function runCmT(): Promise<CheckResult[]> {
 // ADDED 2026-08-01 (maintenance-agent-framework-audit-08012026.md, finding T7):
 // CM-T-02 only ever checked timeline; compliance-landscape has the identical
 // referential-integrity risk (a row's trusted_source_id can drift or be
-// mistyped and nothing catches it) and the live audit found 29 such rows.
-// This generalizes CM-T-02's resolution check to compliance, reusing the
-// same trusted_sources registry lookup.
+// mistyped and nothing catches it). This generalizes CM-T-02's resolution
+// check to compliance, over the same union of trusted-source registries.
 //
-// SEVERITY (2026-08-02): the 29 rows this surfaces name 28 distinct real
-// regulators — EIOPA, NCSC Switzerland, RBI, OCC, FAA, CCRA, OSCCA, and 21
-// national data-protection and cyber authorities — that simply have no entry
-// in the 845-row trusted_sources registry yet. Closing that needs 28
-// proof-gated registry rows, each with a verified source document; inventing
-// them to turn the check green would be exactly the fabrication the proof gate
-// exists to prevent. So this follows CM-AT's established convention for the
-// same class of debt rather than blocking every push on a backlog it cannot
-// fix: the existing rows are a WARNING, and any row verified on or after the
-// cutoff must resolve or it is an ERROR. Remediation is tracked as its own
-// data task, not as a release blocker.
-const CM_T_04_CUTOFF = '2026-08-02'
+// CORRECTED 2026-08-02: this shipped reading trusted_sources_*.csv alone and
+// immediately reported 29 findings, which read as a 28-regulator data gap. It
+// was not one — every one of those ids (eiopa behind DORA, rbi, occ, faa,
+// oscca-cn, ccra, and 22 more) is a complete entry in
+// pqc_authoritative_sources_reference_*.csv, the other half of the union the
+// app itself resolves against, so all 29 rendered a real name and URL in the
+// UI the whole time. Now resolves via loadKnownSourceIds() and is back to a
+// plain ERROR check with no data-debt carve-out: 0 findings, and a genuinely
+// dangling id fails the build again rather than being filed as backlog.
 
 async function runCmCompliance04(): Promise<CheckResult> {
   const complianceFiles = await glob('src/data/compliance_*.csv', { cwd: REPO_ROOT })
@@ -774,25 +811,11 @@ async function runCmCompliance04(): Promise<CheckResult> {
   if (!latestCompliance)
     return pass(
       'CM-T-04',
-      'Compliance trusted_source_id resolves in trusted_sources CSV',
+      'Compliance trusted_source_id resolves in a trusted-source registry',
       'src/data/compliance_*.csv'
     )
 
-  const trustedSourceFiles = await glob('src/data/trusted_sources_*.csv', { cwd: REPO_ROOT })
-  trustedSourceFiles.sort()
-  const latestTrusted = trustedSourceFiles.at(-1)
-
-  const knownSourceIds = new Set<string>()
-  if (latestTrusted) {
-    const trustedRaw = fs.readFileSync(path.join(REPO_ROOT, latestTrusted), 'utf-8')
-    const { data: trustedRows } = Papa.parse<Record<string, string>>(trustedRaw, {
-      header: true,
-      skipEmptyLines: true,
-    })
-    for (const r of trustedRows) {
-      if (r['source_id']?.trim()) knownSourceIds.add(r['source_id'].trim())
-    }
-  }
+  const knownSourceIds = await loadKnownSourceIds()
 
   const complianceRaw = fs.readFileSync(path.join(REPO_ROOT, latestCompliance), 'utf-8')
   const { data: complianceRows } = Papa.parse<Record<string, string>>(complianceRaw, {
@@ -800,51 +823,34 @@ async function runCmCompliance04(): Promise<CheckResult> {
     skipEmptyLines: true,
   })
 
-  const errorFindings: Finding[] = []
-  const warnFindings: Finding[] = []
+  const findings: Finding[] = []
   for (const row of complianceRows) {
     if ((row['status'] ?? 'active').trim() === 'deprecated') continue
     const label = row['label'] ?? row['id'] ?? ''
     const srcId = (row['trusted_source_id'] ?? '').trim()
     if (srcId && knownSourceIds.size > 0 && !knownSourceIds.has(srcId)) {
-      const date = (row['last_verified_date'] ?? '').trim()
-      const finding: Finding = {
+      findings.push({
         csv: latestCompliance,
         row: null,
         field: 'trusted_source_id',
         value: label,
-        message:
-          `"${label}" has unresolved trusted_source_id: "${srcId}"` +
-          (date ? ` (last_verified_date=${date})` : ''),
-      }
-      // Same split CM-AT already applies to the identical class of debt: the
-      // existing backlog is a WARNING, anything newer than the cutoff is an
-      // ERROR, so the gap is visible without being able to grow.
-      if (date && date >= CM_T_04_CUTOFF) errorFindings.push(finding)
-      else warnFindings.push(finding)
+        message: `"${label}" has unresolved trusted_source_id: "${srcId}"`,
+      })
     }
   }
 
-  if (errorFindings.length > 0)
-    return fail(
-      'CM-T-04',
-      `Compliance trusted_source_id must resolve for rows last_verified_date >= ${CM_T_04_CUTOFF}`,
-      latestCompliance,
-      errorFindings
-    )
-  if (warnFindings.length > 0)
-    return fail(
-      'CM-T-04',
-      `Compliance trusted_source_id unresolved in trusted_sources (data debt; cutoff for new rows: ${CM_T_04_CUTOFF})`,
-      latestCompliance,
-      warnFindings,
-      'WARNING'
-    )
-  return pass(
-    'CM-T-04',
-    'Compliance trusted_source_id resolves in trusted_sources CSV',
-    latestCompliance
-  )
+  return findings.length > 0
+    ? fail(
+        'CM-T-04',
+        'Compliance trusted_source_id resolves in a trusted-source registry',
+        latestCompliance,
+        findings
+      )
+    : pass(
+        'CM-T-04',
+        'Compliance trusted_source_id resolves in a trusted-source registry',
+        latestCompliance
+      )
 }
 
 // ── CM-TS: Trust-tier vocabulary normalisation ───────────────────────────────
