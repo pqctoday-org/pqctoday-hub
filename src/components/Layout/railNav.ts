@@ -23,6 +23,7 @@ import {
   Shield,
   ShieldCheck,
   Users,
+  Wrench,
   type LucideIcon,
 } from 'lucide-react'
 import type { PersonaId } from '@/data/learningPersonas'
@@ -109,6 +110,7 @@ export const RAIL_ICON_MAP: Record<string, LucideIcon> = {
   '/assess': ClipboardCheck,
   '/report': FileBarChart,
   '/business': LayoutDashboard,
+  '/business/tools': Wrench,
   '/playground': FlaskConical,
   '/threats': AlertTriangle,
   '/library': BookOpen,

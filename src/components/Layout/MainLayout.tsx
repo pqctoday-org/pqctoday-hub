@@ -13,7 +13,6 @@ import {
   Bot,
   Map,
   Wrench,
-  Cpu,
   ChevronDown,
   MessageCircle,
   type LucideIcon,
@@ -30,7 +29,6 @@ import { FAQButton } from '../ui/FAQButton'
 import { UserManualButton } from '../ui/UserManualButton'
 
 import { GuidedTour } from '../common/GuidedTour'
-import { Breadcrumb } from '../common/Breadcrumb'
 import { PhaseContextBanner } from '../shared/PhaseContextBanner'
 import { ResumeSimBar } from '../shared/ResumeSimBar'
 import { RightPanelFAB } from '../RightPanel/RightPanelFAB'
@@ -42,7 +40,8 @@ import { useAirplaneModeStore } from '../../store/useAirplaneModeStore'
 import { CommandPalette } from '../Search/CommandPalette'
 import { useCommandPaletteStore } from '../../store/useCommandPaletteStore'
 import { PersonaSwitchModal } from '../Persona/PersonaSwitchModal'
-import { RegionIndustryPill } from '../Persona/RegionIndustryPill'
+import { PageActionStrip } from '../common/PageActionStrip'
+import { usePageActionsStore } from '../../store/usePageActionsStore'
 import { PreviewBanner } from '../common/PreviewBanner'
 import { useWorkshopUrlAutostart } from '../../hooks/useWorkshopUrlAutostart'
 import { ScrollFadeContainer } from '../ui/ScrollFadeContainer'
@@ -66,7 +65,10 @@ import {
   ALWAYS_VISIBLE_PATHS,
   NAV_PATH_LABELS,
   PERSONA_MARKED_NAV_PATHS,
+  PERSONA_TIMELINE_REGION,
+  PERSONA_THREATS_DEFAULT_INDUSTRIES,
 } from '../../data/personaConfig'
+import { REGION_LABELS } from '../../data/regionIndustryOptions'
 import { PERSONAS } from '../../data/learningPersonas'
 import type { ViewType } from '../../data/authoritativeSourcesData'
 import type { PageId } from '../../data/userManualData'
@@ -76,7 +78,6 @@ import {
   getMobileVisiblePaths,
   getForYouGroups,
   RAIL_ICON_MAP,
-  RAIL_ALWAYS_VISIBLE_PATHS,
   type RailRowTreatment,
 } from './railNav'
 
@@ -269,7 +270,7 @@ const RailRow: React.FC<RailRowProps> = ({
           aria-current={isActive ? 'page' : undefined}
           title={title ?? label}
           className={`w-full justify-start gap-2 min-h-[36px] rounded-md ${
-            isMore ? 'pl-3 pr-2 text-xs' : 'pl-2 pr-2 text-sm'
+            isMore ? 'pl-3 pr-2 text-[11px]' : 'pl-2 pr-2 text-[11px]'
           } ${treatmentClass}`}
         >
           <Icon size={isMore ? 13 : 16} aria-hidden="true" className="shrink-0" />
@@ -283,7 +284,13 @@ const RailRow: React.FC<RailRowProps> = ({
 export const MainLayout = () => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { selectedPersona, viewAccess, hasSkippedPersonalization } = usePersonaStore()
+  const {
+    selectedPersona,
+    viewAccess,
+    hasSkippedPersonalization,
+    selectedRegion,
+    selectedIndustries,
+  } = usePersonaStore()
   const { isOpen: isPanelOpen, toggle: openPanel, open: openRightPanel } = useRightPanelStore()
   const recordVisit = useHistoryStore((s) => s.recordVisit)
   // Auto-start Workshop Video Mode from `?workshop=video&autoplay=1` (Playwright recorder hook).
@@ -327,7 +334,6 @@ export const MainLayout = () => {
     () => getMobileVisiblePaths(selectedPersona),
     [selectedPersona]
   )
-  const isArchitect = selectedPersona === 'architect'
 
   // Persona-journeys A-grade redesign (2026-08-01): the Curious persona's
   // mobile board (`CuriousMobileBoard`, rendered by LandingView at '/') is a
@@ -371,18 +377,27 @@ export const MainLayout = () => {
   // previously collapsed it), and this is cheap, low-stakes UI chrome a user
   // can re-expand in one click — not worth a version bump + migrate() +
   // onRehydrateStorage for. Resets to collapsed each session/full reload.
-  const [moreExpanded, setMoreExpanded] = React.useState(false)
-  const moreSectionId = React.useId()
-  const isMoreSectionActive = more.some((path) => isPathActive(path))
-  // Auto-reveal MORE when the CURRENT route lives in it — otherwise a user who
-  // deep-links (or searches via ⌘K) into a deprioritized route would see no
-  // rail row highlighted at all, silently breaking the "active-route
-  // highlighting" invariant this follow-up must preserve. One-directional:
-  // never auto-collapses again once open, so a manual expand/collapse still
-  // behaves like a normal disclosure control.
-  React.useEffect(() => {
-    if (isMoreSectionActive) setMoreExpanded(true)
-  }, [isMoreSectionActive])
+  // Per-FOR-YOU-sub-group collapse (2026-08-01 follow-up: "collapse is per
+  // section not just a more at the end"). Defaults OPEN for Workflow/Practice
+  // (the essential, contextual-to-role content) but COLLAPSED for Reference
+  // (2026-08-01 follow-up: "collapse reference by default" — standing
+  // reference/community material, lower priority than day-to-day workflow).
+  const [collapsedForYouGroups, setCollapsedForYouGroups] = React.useState<Set<string>>(
+    () => new Set(['reference'])
+  )
+  const toggleForYouGroup = React.useCallback((groupId: string) => {
+    setCollapsedForYouGroups((prev) => {
+      const next = new Set(prev)
+      if (next.has(groupId)) next.delete(groupId)
+      else next.add(groupId)
+      return next
+    })
+  }, [])
+  // MORE removed from the desktop rail entirely (2026-08-01 follow-up:
+  // "remove more and revisions from the left bar") — /revisions and anything
+  // else that would have lived in `more` are reachable via search (⌘K) or
+  // direct URL, not a rail row. `more` itself is kept (still used by the
+  // mobile "More" sheet, a separate surface not touched by this request).
 
   // "Update your profile" deep link — `/?picker=open` (PQC101Module's two
   // "Update profile"/"Set profile" links, AboutNextStepCTA's "Find my
@@ -413,11 +428,9 @@ export const MainLayout = () => {
   // then MORE) so the two surfaces never disagree about what's reachable.
   const mobileSheetForYou = forYou.filter((p) => !mobileVisiblePaths.includes(p))
   const mobileSheetMore = more.filter((p) => !mobileVisiblePaths.includes(p))
-  const mobileSheetAllPaths = [
-    ...mobileSheetForYou,
-    ...mobileSheetMore,
-    ...(isArchitect ? ['/playground/cacp'] : []),
-  ]
+  // CACP has no direct shortcut anywhere in nav (2026-08-01 follow-up) —
+  // Playground grid only.
+  const mobileSheetAllPaths = [...mobileSheetForYou, ...mobileSheetMore]
   const isMoreActive = mobileSheetAllPaths.some((p) => isPathActive(p))
 
   // ── Top bar data ───────────────────────────────────────────────────────────
@@ -430,10 +443,36 @@ export const MainLayout = () => {
   // persona has ANY marked/pending rail rows at all, rather than only while
   // the user is actively on one of those routes.
   const showWipChip = markedPaths.length > 0
-  const roleLabel = selectedPersona
+  const pageActions = usePageActionsStore((s) => s.current)
+  // Merged persona + region/industry summary (2026-08-01 follow-up: "merge
+  // the persona filtering in one drop down" / "become a persona dropdown") —
+  // ONE button now carries all three; clicking it opens PersonaSwitchModal,
+  // which has the region/industry pickers folded into it (was a separate
+  // RegionIndustryPill trigger before this).
+  const roleShortLabel = selectedPersona
     ? // eslint-disable-next-line security/detect-object-injection
       (PERSONAS[selectedPersona]?.label ?? 'Everyone')
     : 'Everyone'
+  const hasCustomRegion = selectedRegion !== null && selectedRegion !== 'global'
+  const hasCustomIndustries = selectedIndustries.length > 0
+  const effectiveRegion = hasCustomRegion
+    ? selectedRegion
+    : selectedPersona
+      ? // eslint-disable-next-line security/detect-object-injection
+        PERSONA_TIMELINE_REGION[selectedPersona]
+      : 'global'
+  const effectiveIndustries = hasCustomIndustries
+    ? selectedIndustries
+    : selectedPersona
+      ? // eslint-disable-next-line security/detect-object-injection
+        PERSONA_THREATS_DEFAULT_INDUSTRIES[selectedPersona]
+      : []
+  // eslint-disable-next-line security/detect-object-injection
+  const regionLabel = REGION_LABELS[effectiveRegion] ?? effectiveRegion
+  const roleLabel =
+    effectiveIndustries.length > 0
+      ? `${roleShortLabel} · ${regionLabel}, ${effectiveIndustries.join(', ')}`
+      : `${roleShortLabel} · ${regionLabel}`
   const viewTypeForRoute = ROUTE_VIEW_TYPE[location.pathname]
   const pageIdForRoute = ROUTE_PAGE_ID[location.pathname]
   const shareForRoute = ROUTE_SHARE[location.pathname]
@@ -474,8 +513,8 @@ export const MainLayout = () => {
                 <Plane size={12} className="text-primary animate-pulse" aria-hidden="true" />
               )}
             </span>
-            <span className="text-[10px] text-muted-foreground uppercase tracking-widest">
-              Last Updated: {buildTime}
+            <span className="text-[10px] text-muted-foreground uppercase tracking-widest truncate">
+              {buildTime}
             </span>
           </Button>
         </div>
@@ -484,104 +523,150 @@ export const MainLayout = () => {
           className="flex-1 overflow-y-auto px-2 py-2 flex flex-col gap-0.5"
           aria-label="Primary navigation"
         >
-          {/* Implicit/global pages — always reachable, not persona-gated, not
-              part of the FOR YOU/MORE coverage invariant (see railNav.ts). */}
-          {RAIL_ALWAYS_VISIBLE_PATHS.map((path) => (
-            <RailRow
-              key={path}
-              path={path}
-              label={labelFor(path)}
-              active={isPathActive(path)}
-              treatment={isPathActive(path) ? 'active' : 'plain'}
-            />
-          ))}
-
-          <span className="px-2 pt-3 pb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-            For You
-          </span>
+          {/* Home leads the rail — always the first row, orientation anchor.
+              FOR YOU follows immediately after (2026-08-01 reorder: it's
+              contextual to the selected role, so it's the primary thing, not
+              an afterthought below the other generic global pages). */}
+          <RailRow
+            path="/"
+            label={labelFor('/')}
+            active={isPathActive('/')}
+            treatment={isPathActive('/') ? 'active' : 'plain'}
+          />
           {forYou.length === 0 && (
-            <span className="px-2 pb-2 text-[11px] italic text-muted-foreground/70">
-              Everything, unfiltered
-            </span>
-          )}
-          {forYouGroups.map((group) => (
-            <React.Fragment key={group.id}>
-              {/* Sub-group header only when there's more than one group —
-                  a persona whose FOR YOU rows all land in one bucket doesn't
-                  need a lone sub-header repeating "For You" above it. */}
-              {forYouGroups.length > 1 && (
-                <span className="px-2 pt-2 pb-0.5 text-[9px] font-medium uppercase tracking-wide text-muted-foreground/60">
-                  {group.label}
-                </span>
-              )}
-              {group.paths.map((path) => {
-                const active = isPathActive(path)
-                const treatment = getRowTreatment(selectedPersona, path, active)
-                const title =
-                  treatment === 'featured'
-                    ? 'Executive Overview — a guided, ~20-minute walk through the program (EXEC_TOUR_STAGES)'
-                    : treatment === 'marked'
-                      ? `${labelFor(path)} — in progress, not yet fully tailored to this role`
-                      : undefined
-                return (
-                  <RailRow
-                    key={path}
-                    path={path}
-                    label={labelFor(path)}
-                    active={active}
-                    treatment={treatment}
-                    title={title}
-                  />
-                )
-              })}
-            </React.Fragment>
-          ))}
-          {isArchitect && (
-            <RailRow
-              path="/playground/cacp"
-              label="CACP"
-              icon={Cpu}
-              active={location.pathname.startsWith('/playground/cacp')}
-              treatment="plain"
-              title="Crypto Agility Control Plane — KMIP 3.0 control plane (1-click shortcut)"
-            />
-          )}
-
-          {/* MORE — collapsed by default (2026-08-01 declutter follow-up: the
-              live rail read as cluttered; this was previously a permanently-
-              expanded flat list). Auto-reveals when the active route lives in
-              it (see isMoreSectionActive above), so active-route highlighting
-              never silently disappears behind a collapsed section. */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setMoreExpanded((open) => !open)}
-            aria-expanded={moreExpanded}
-            aria-controls={moreSectionId}
-            aria-label={`${moreExpanded ? 'Hide' : 'Show'} more pages (${more.length})`}
-            title={moreExpanded ? 'Hide more pages' : 'Show more pages'}
-            className="w-full h-auto justify-between gap-1 px-2 pt-3 pb-1 rounded-md text-[10px] font-semibold uppercase tracking-wider text-muted-foreground hover:text-foreground hover:bg-transparent"
-          >
-            <span>More</span>
-            <ChevronDown
-              size={12}
-              aria-hidden="true"
-              className={`transition-transform duration-200 ${moreExpanded ? '' : '-rotate-90'}`}
-            />
-          </Button>
-          {moreExpanded && (
-            <div id={moreSectionId} className="flex flex-col gap-0.5">
-              {more.map((path) => (
+            <>
+              <span className="px-2 pb-2 text-[11px] italic text-muted-foreground/70">
+                Everything, unfiltered
+              </span>
+              {/* No persona (or researcher, whose PERSONA_NAV_PATHS is null)
+                  means forYouGroups has no 'reference' group to carry Learn/
+                  Timeline/Threats — render them directly here so they aren't
+                  silently dropped for exactly the persona with the broadest
+                  reachability guarantee. */}
+              {['/learn', '/timeline', '/threats'].map((path) => (
                 <RailRow
                   key={path}
                   path={path}
                   label={labelFor(path)}
                   active={isPathActive(path)}
-                  variant="more"
+                  treatment={isPathActive(path) ? 'active' : 'plain'}
                 />
               ))}
-            </div>
+            </>
           )}
+          {forYouGroups.map((group) => {
+            // Workflow's visual order (2026-08-01 follow-up: "reorder workflow:
+            // migrate; assess; report; command center") — a fixed display
+            // priority, independent of PERSONA_NAV_PATHS's own array order.
+            // Anything not in this list (e.g. compliance) keeps its original
+            // relative order, appended after the prioritized ones.
+            // '/explore' visually moved from Practice to Workflow, first
+            // position (2026-08-01 follow-up: "Explore goes first in
+            // workflow section") — still classified 'practice' in
+            // FOR_YOU_PATH_GROUP (railNav.ts), this is purely a rendering
+            // reassignment, not a reachability change.
+            const WORKFLOW_ORDER = ['/explore', '/migrate', '/assess', '/report', '/business']
+            // Reference visually includes Learn + Timeline + Threats
+            // (2026-08-01 follow-up) even though they're globally
+            // always-visible, not persona-gated — purely a rendering
+            // position, not a reachability change (they render ONLY here,
+            // nowhere else, so there's no duplicate row).
+            const displayPaths =
+              group.id === 'workflow'
+                ? [
+                    ...WORKFLOW_ORDER.filter(
+                      (p) => group.paths.includes(p) || (p === '/explore' && forYou.includes(p))
+                    ),
+                    ...group.paths.filter((p) => !WORKFLOW_ORDER.includes(p)),
+                  ]
+                : group.id === 'practice'
+                  ? // '/business/tools' visually added to Practice (2026-08-01
+                    // follow-up: "add tool into practices section") — was
+                    // reached via an in-page Dashboard/Tools tab bar on
+                    // /business, now a real rail row instead. Not in
+                    // FOR_YOU_PATH_GROUP/PERSONA_NAV_PATHS at all (same
+                    // render-only-addition pattern as Reference's Learn/
+                    // Timeline/Threats above), so it renders here for every
+                    // persona that has a Practice group, unconditionally.
+                    [...group.paths.filter((p) => p !== '/explore'), '/business/tools']
+                  : group.id === 'reference'
+                    ? [...group.paths, '/learn', '/timeline', '/threats']
+                    : group.paths
+            const groupHasActiveRoute = displayPaths.some((path) => isPathActive(path))
+            const groupExpanded = groupHasActiveRoute || !collapsedForYouGroups.has(group.id)
+            const groupContentId = `for-you-group-${group.id}`
+            return (
+              <React.Fragment key={group.id}>
+                {/* Sub-group header only when there's more than one group —
+                    a persona whose FOR YOU rows all land in one bucket doesn't
+                    need a lone sub-header repeating "For You" above it. Each
+                    group is independently collapsible (2026-08-01 follow-up),
+                    same auto-expand-on-active-route guarantee as MORE. */}
+                {forYouGroups.length > 1 ? (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => toggleForYouGroup(group.id)}
+                    aria-expanded={groupExpanded}
+                    aria-controls={groupContentId}
+                    aria-label={`${groupExpanded ? 'Hide' : 'Show'} ${group.label} (${group.paths.length})`}
+                    title={groupExpanded ? `Hide ${group.label}` : `Show ${group.label}`}
+                    className="w-full h-auto justify-between gap-1 px-2 pt-2 pb-0.5 rounded-md text-sm font-bold uppercase tracking-wide text-muted-foreground hover:text-foreground hover:bg-transparent"
+                  >
+                    <span>{group.label}</span>
+                    <ChevronDown
+                      size={10}
+                      aria-hidden="true"
+                      className={`transition-transform ${groupExpanded ? 'rotate-180' : ''}`}
+                    />
+                  </Button>
+                ) : null}
+                {groupExpanded && (
+                  <div id={groupContentId} className="flex flex-col gap-0.5">
+                    {displayPaths.map((path) => {
+                      const active = isPathActive(path)
+                      const treatment = getRowTreatment(selectedPersona, path, active)
+                      const title =
+                        treatment === 'featured'
+                          ? 'Executive Overview — a guided, ~20-minute walk through the program (EXEC_TOUR_STAGES)'
+                          : treatment === 'marked'
+                            ? `${labelFor(path)} — in progress, not yet fully tailored to this role`
+                            : undefined
+                      return (
+                        <RailRow
+                          key={path}
+                          path={path}
+                          label={labelFor(path)}
+                          active={active}
+                          treatment={treatment}
+                          title={title}
+                        />
+                      )
+                    })}
+                  </div>
+                )}
+              </React.Fragment>
+            )
+          })}
+          {/* CACP is deliberately NOT a direct rail shortcut (2026-08-01
+              follow-up: "CACP is fold in playground no direct access") —
+              reachable via the Playground grid's own featured card only. */}
+
+          {/* Every RAIL_ALWAYS_VISIBLE_PATHS entry now has an explicit home
+              (2026-08-01 follow-up): '/' renders once, at the very top of the
+              rail (see above FOR YOU); '/learn', '/timeline', '/threats'
+              render inside the Reference group; '/about' renders last, after
+              MORE, below. Nothing left to render as a separate "global pages"
+              block — deliberately empty, not a missing case. */}
+
+          {/* About — deliberately the very last row in the rail (2026-08-01
+              reorder), after FOR YOU, the global pages, and MORE. */}
+          <RailRow
+            path="/about"
+            label={labelFor('/about')}
+            active={isPathActive('/about')}
+            treatment={isPathActive('/about') ? 'active' : 'plain'}
+          />
         </nav>
 
         {/* Utility dock — same open-state as the existing Assistant/Journey
@@ -649,62 +734,82 @@ export const MainLayout = () => {
               {/* Desktop top bar — region/industry pill, WIP chip, action icon
                 cluster, ⌘K search, role switcher. Rail owns nav on desktop, so
                 this replaces the old flat nav row entirely at lg+. */}
-              <div className="hidden lg:flex items-center justify-between gap-3 flex-1 min-w-0">
-                <div className="flex items-center gap-2 min-w-0">
-                  <RegionIndustryPill />
+              {/* 2026-08-01 bug fix: the two clusters below previously fought
+                  each other for space at narrow widths (e.g. Assistant panel
+                  open) with no shared overflow handling, reading as
+                  overlapping text. One flex-nowrap + overflow-x-auto row: at
+                  narrow widths the whole bar scrolls together instead of any
+                  part of it ever clipping/overlapping. */}
+              <div className="hidden lg:flex items-center justify-between gap-2 flex-1 min-w-0 flex-nowrap overflow-x-auto">
+                <div className="flex items-center gap-1.5 shrink-0">
                   {showWipChip && (
                     <span
-                      className="inline-flex items-center gap-1 rounded-lg border text-status-warning bg-status-warning px-2 py-1 text-[11px] font-medium shrink-0"
+                      className="inline-flex items-center gap-1 rounded-lg border text-status-warning bg-status-warning px-1.5 py-1 text-[10px] font-medium shrink-0"
                       title="Some destinations on this board are marked in-progress — see the dashed rail rows."
                     >
-                      <Wrench size={12} aria-hidden="true" />
+                      <Wrench size={11} aria-hidden="true" />
                       WIP
                     </span>
                   )}
+                  {pageActions && (
+                    <>
+                      <span className="w-px h-4 bg-border shrink-0" aria-hidden="true" />
+                      <PageActionStrip {...pageActions} className="shrink-0" />
+                    </>
+                  )}
                 </div>
 
-                <div className="flex items-center gap-1 shrink-0 flex-wrap justify-end">
+                <div className="flex items-center gap-0.5 shrink-0 flex-nowrap justify-end">
                   <Button
                     variant="ghost"
                     onClick={() => openRightPanel('chat')}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 text-foreground text-sm font-medium transition-colors border border-primary/20"
+                    className="flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors"
                     aria-label="Open PQC Assistant"
+                    title="Open PQC Assistant"
                   >
-                    <MessageCircle size={14} aria-hidden="true" />
-                    <span>Assistant</span>
+                    <MessageCircle size={13} aria-hidden="true" />
+                    <span>Ask</span>
                   </Button>
                   <ShareButton
                     title={shareForRoute?.title ?? `${currentLabel} — PQC Today`}
                     text={shareForRoute?.text}
+                    variant="full"
                   />
-                  <FAQButton />
-                  {viewTypeForRoute && <SourcesButton viewType={viewTypeForRoute} />}
-                  <GlossaryButton />
-                  {pageIdForRoute && <UserManualButton pageId={pageIdForRoute} />}
+                  <FAQButton compact />
+                  {viewTypeForRoute && (
+                    <SourcesButton
+                      viewType={viewTypeForRoute}
+                      compact
+                      dataSource={pageActions?.dataSource}
+                    />
+                  )}
+                  <GlossaryButton compact />
+                  {pageIdForRoute && <UserManualButton pageId={pageIdForRoute} compact />}
 
                   <Button
-                    variant="outline"
+                    variant="ghost"
                     onClick={openPalette}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg border-border bg-muted/30 hover:border-primary/30 hover:bg-muted/50 text-sm text-muted-foreground min-w-[140px] h-auto"
+                    className="flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors"
                     aria-label="Search (⌘K)"
+                    title="Search (⌘K)"
                   >
-                    <Search size={14} aria-hidden="true" />
-                    <span className="flex-1 text-left">Search…</span>
-                    <kbd className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-border bg-muted/50">
+                    <Search size={13} aria-hidden="true" />
+                    <span>Search</span>
+                    <kbd className="text-[9px] font-mono px-1 py-0.5 rounded border border-border/60 bg-muted/40">
                       ⌘K
                     </kbd>
                   </Button>
 
                   <Button
-                    variant="outline"
+                    variant="ghost"
                     onClick={() => setPersonaSwitchOpen(true)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg h-auto text-sm"
-                    aria-label="Switch role"
-                    title="Switch your role"
+                    className="flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors shrink min-w-0"
+                    aria-label={`Switch role — currently ${roleLabel}`}
+                    title="Switch your role, region, or industry"
                   >
-                    <UserCog size={14} aria-hidden="true" />
-                    <span className="truncate max-w-[110px]">{roleLabel}</span>
-                    <ChevronDown size={12} aria-hidden="true" />
+                    <UserCog size={13} aria-hidden="true" />
+                    <span className="truncate max-w-[200px]">{roleLabel}</span>
+                    <ChevronDown size={11} aria-hidden="true" className="shrink-0" />
                   </Button>
                 </div>
               </div>
@@ -848,25 +953,6 @@ export const MainLayout = () => {
                         )}
                       </NavLink>
                     ))}
-                    {isArchitect && (
-                      <NavLink to="/playground/cacp" onClick={() => setMoreMenuOpen(false)}>
-                        {({ isActive }) => (
-                          <Button
-                            variant="ghost"
-                            className={`w-full min-h-[44px] justify-start gap-2 ${
-                              isActive
-                                ? 'bg-primary/10 text-foreground border border-primary/20'
-                                : 'text-muted-foreground hover:text-foreground'
-                            }`}
-                            aria-label="CACP view"
-                            aria-current={isActive ? 'page' : undefined}
-                          >
-                            <Cpu size={18} aria-hidden="true" />
-                            <span>CACP</span>
-                          </Button>
-                        )}
-                      </NavLink>
-                    )}
                   </div>
                 </>
               )}
@@ -1058,7 +1144,10 @@ export const MainLayout = () => {
                     className="lg:flex lg:items-start lg:gap-6"
                   >
                     <div className="min-w-0 lg:flex-1">
-                      <Breadcrumb />
+                      {/* Breadcrumb removed (2026-08-01 follow-up: "remove also on
+                          each page the paths before page title") — redundant with
+                          the rail's own FOR YOU/Workflow/Practice/Reference
+                          structure now that it leads with real navigation. */}
                       {/* "You're viewing Phase X" banner — shows when a ?phase= param is
                           present (e.g. a deep link); self-skips Assess/Report/Command Center. */}
                       <PhaseContextBanner />

@@ -70,7 +70,6 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/library',
     '/leaders',
     '/patents',
-    '/revisions',
     // Persona-journeys A-grade redesign (2026-08-01): the Executive Overview
     // guided tour already exists (EXEC_TOUR_STAGES, SimulationView.tsx) but
     // /simulation was never nav-linked for this persona — it's the featured
@@ -90,7 +89,6 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/library',
     '/playground',
     '/patents',
-    '/revisions',
     // Persona-journeys A-grade redesign (2026-08-01): /openssl dropped as a
     // standalone nav path — OpenSSL Studio is reachable via the Playground
     // grid's own 'openssl-studio' (PT-023) card (RAIL_HIDDEN_PATHS below),
@@ -113,7 +111,6 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/playground',
     '/leaders',
     '/patents',
-    '/revisions',
     // Same redesign notes as developer above: /openssl folded into
     // Playground's own card; /simulation added as a plain (non-marked) row.
     '/simulation',
@@ -136,7 +133,6 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/library',
     '/leaders',
     '/playground',
-    '/revisions',
     // /openssl folded into Playground's own card (see developer's note above).
     // /simulation added as a plain (non-marked) row.
     '/simulation',
@@ -152,7 +148,6 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/migrate',
     '/playground',
     '/patents',
-    '/revisions',
     // Persona-journeys A-grade redesign (2026-08-01): /simulation added as a
     // plain (non-featured, non-marked) entry — curious keeps every route
     // reachable but gives simulation no special rail treatment, per design.
@@ -311,6 +306,7 @@ export const NAV_PATH_LABELS: Record<string, string> = {
   '/assess': 'Assess',
   '/report': 'Report',
   '/business': 'Command Center',
+  '/business/tools': 'Business Tools',
   '/playground': 'Playground',
   '/threats': 'Threats',
   '/library': 'Library',
