@@ -6,11 +6,16 @@ import '@testing-library/jest-dom'
 import { CuriousMobileBoard } from './CuriousMobileBoard'
 import { useCommandPaletteStore } from '@/store/useCommandPaletteStore'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
+import { PERSONA_JOURNEY_BOARD } from '@/data/personaConfig'
 
 const TestTimeline = () => <div>Timeline Page</div>
 const TestThreats = () => <div>Threats Page</div>
 const TestLearn = () => <div>Learn Page</div>
 const TestFaq = () => <div>FAQ Page</div>
+// Destination page for the hero's primary CTA — routed at whatever
+// PERSONA_JOURNEY_BOARD.curious.ctaPrimaryHref actually is (not hardcoded),
+// so this test tracks the real data source instead of assuming its value.
+const TestCtaPrimaryDestination = () => <div>CTA Primary Destination Page</div>
 
 function renderBoard(initialEntry = '/') {
   return render(
@@ -21,6 +26,10 @@ function renderBoard(initialEntry = '/') {
         <Route path="/threats" element={<TestThreats />} />
         <Route path="/learn" element={<TestLearn />} />
         <Route path="/faq" element={<TestFaq />} />
+        <Route
+          path={PERSONA_JOURNEY_BOARD.curious.ctaPrimaryHref}
+          element={<TestCtaPrimaryDestination />}
+        />
       </Routes>
     </MemoryRouter>
   )
@@ -46,6 +55,28 @@ describe('CuriousMobileBoard', () => {
       expect(screen.getByText(/The padlock in your browser relies on maths/)).toBeInTheDocument()
       expect(screen.getByRole('button', { name: 'Show me' })).toBeInTheDocument()
       expect(screen.getByRole('button', { name: 'I have 30 seconds' })).toBeInTheDocument()
+    })
+
+    // 2026-08-02 bug fix: both hero CTAs rendered as inert <Button>s with no
+    // click behavior at all — the mobile-only counterpart of the desktop bug
+    // already fixed 2026-08-01 (see PersonaBoardView.test.tsx). Presence
+    // checks alone (above) don't catch this; these assert the click actually
+    // navigates, to whatever PERSONA_JOURNEY_BOARD.curious's own hrefs are.
+    it('tapping "Show me" navigates to the curious board\'s configured ctaPrimaryHref', () => {
+      renderBoard()
+      fireEvent.click(screen.getByRole('button', { name: 'Show me' }))
+      expect(screen.getByText('CTA Primary Destination Page')).toBeInTheDocument()
+    })
+
+    it('tapping "I have 30 seconds" navigates to the curious board\'s configured ctaSecondaryHref', () => {
+      // Routed via the shared '/timeline' fixture above — true today because
+      // PERSONA_JOURNEY_BOARD.curious.ctaSecondaryHref is '/timeline'; this
+      // assertion fails loudly (not silently) if that config value ever
+      // changes without this test being updated to match.
+      expect(PERSONA_JOURNEY_BOARD.curious.ctaSecondaryHref).toBe('/timeline')
+      renderBoard()
+      fireEvent.click(screen.getByRole('button', { name: 'I have 30 seconds' }))
+      expect(screen.getByText('Timeline Page')).toBeInTheDocument()
     })
   })
 
