@@ -157,6 +157,13 @@ function getMigrateData(): MigrateData {
     myProducts: state.myProducts,
     viewMode: state.viewMode,
     workflowCollapsed: state.workflowCollapsed,
+    // Workbench redesign fields — without these, a user's actual Migration
+    // Workbench plan (chosen replacement products) was silently dropped on
+    // export, so restoring the snapshot on another device lost it entirely.
+    plan: state.plan,
+    choice: state.choice,
+    nameToProductId: state.nameToProductId,
+    tab: state.tab,
   }
 }
 
@@ -434,9 +441,25 @@ export class UnifiedStorageService {
       })
     }
 
-    // 8. Migrate catalog selection (hidden products + active layer/sub-category)
+    // 8. Migrate catalog selection (hidden products + active layer/sub-category
+    //    + the Workbench redesign's plan/choice/nameToProductId/tab — restoring
+    //    only myProducts here would silently drop every Workbench pick).
     if (stores.migrate) {
       const m = stores.migrate
+      const choice =
+        m.choice && typeof m.choice === 'object' && !Array.isArray(m.choice)
+          ? Object.fromEntries(
+              Object.entries(m.choice).filter((entry): entry is [string, string[]] =>
+                Array.isArray(entry[1])
+              )
+            )
+          : {}
+      const nameToProductId =
+        m.nameToProductId &&
+        typeof m.nameToProductId === 'object' &&
+        !Array.isArray(m.nameToProductId)
+          ? m.nameToProductId
+          : {}
       useMigrateSelectionStore.setState({
         hiddenProducts: Array.isArray(m.hiddenProducts) ? m.hiddenProducts : [],
         activeLayer: m.activeLayer ?? 'All',
@@ -447,6 +470,12 @@ export class UnifiedStorageService {
             ? m.viewMode
             : 'stack',
         workflowCollapsed: m.workflowCollapsed ?? true,
+        plan: Array.isArray(m.plan) ? m.plan : [],
+        choice,
+        nameToProductId,
+        tab: ['replace', 'plan', 'roadmaps', 'vendorrisk'].includes(m.tab as string)
+          ? m.tab
+          : 'replace',
       })
     }
 
