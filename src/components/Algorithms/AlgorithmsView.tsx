@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 import { Link } from 'react-router'
 import { motion } from 'framer-motion'
 import { AlgorithmComparison } from './AlgorithmComparison'
@@ -15,9 +15,9 @@ import {
   ArrowRight,
   BarChart3,
   Shield,
+  ShieldCheck,
   Network,
   Info,
-  Lock,
   FlaskConical,
   Factory,
 } from 'lucide-react'
@@ -54,8 +54,6 @@ export function AlgorithmsView() {
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const viewAccess = usePersonaStore((s) => s.viewAccess)
   const setAdvancedViewsUnlocked = usePersonaStore((s) => s.setAdvancedViewsUnlocked)
-  const algorithmsTabsVisited = usePersonaStore((s) => s.algorithmsTabsVisited)
-  const markAlgorithmsTabVisited = usePersonaStore((s) => s.markAlgorithmsTabVisited)
 
   // Persona-derived defaults — used to seed first-paint tab / filter / highlight
   // state when no URL params are present. Deep-links always win.
@@ -174,21 +172,15 @@ export function AlgorithmsView() {
     return undefined
   }, [searchParams, personaDefaults.highlight, hasActiveParams])
 
-  // P2.3: record tab visits so the curious-persona gate on Protocol Support
-  // can open after the user has explored Transition or Detailed at least once.
-  useEffect(() => {
-    if (activeTab === 'transition' || activeTab === 'detailed') {
-      markAlgorithmsTabVisited(activeTab)
-    }
-  }, [activeTab, markAlgorithmsTabVisited])
-
-  // Curious-only gate: keep Protocol Support visible but LOCKED until they have
-  // visited at least one of the friendlier tabs (no layout shift on unlock).
-  // Power personas and unlocked-curious users get it enabled.
-  const supportLocked =
-    selectedPersona === 'curious' &&
-    !algorithmsTabsVisited.includes('transition') &&
-    !algorithmsTabsVisited.includes('detailed')
+  // 2026-08-02 (design_handoff_2026_pages/IMPLEMENTATION-PLAN-ALGORITHMS-
+  // 2026-08-01.md §3.2): the curious-only Protocol Support lock (P2.3,
+  // formerly gated on algorithmsTabsVisited/markAlgorithmsTabVisited in
+  // usePersonaStore) is removed — "a reference table teaches nothing by
+  // being hidden." The tab is unlocked from first paint for every persona
+  // now. algorithmsTabsVisited/markAlgorithmsTabVisited are left in
+  // usePersonaStore itself (not read anywhere else) rather than removed —
+  // pruning a field from that widely-shared, version-9 persisted store is a
+  // separate, higher-risk cleanup than this fix calls for.
 
   return (
     <div>
@@ -197,6 +189,25 @@ export function AlgorithmsView() {
         pageId="algorithms"
         title="Post-Quantum Algorithms & Protocols"
         description="Compare post-quantum algorithms and track their support across IETF protocols"
+        actions={
+          // 2026-08-02 (design_handoff_2026_pages/IMPLEMENTATION-PLAN-
+          // ALGORITHMS-2026-08-01.md §3.3): "verified against NIST ACVP
+          // vectors in your browser" was real but two clicks deep (Validation
+          // tab -> KAT accordion). Promoted to a persistent chrome badge —
+          // the claim is promoted, the actual KAT-running UI stays where it
+          // was, one click away via this same badge.
+          <Button
+            key="acvp-badge"
+            variant="ghost"
+            size="sm"
+            onClick={() => handleTabChange('validation')}
+            title="Runs real NIST ACVP known-answer test vectors in your browser — click to open Validation."
+            className="gap-1.5 text-[11px] font-semibold text-status-success hover:text-status-success"
+          >
+            <ShieldCheck size={14} aria-hidden="true" />
+            <span className="hidden sm:inline">ACVP Verified</span>
+          </Button>
+        }
         dataSource={
           `Data Sources: ${transitionMetadata?.filename ?? 'algorithms_transitions.csv'}, ` +
           `${metadata?.filename ?? 'pqc_complete_algorithm_reference.csv'} • Updated: ` +
@@ -428,15 +439,10 @@ export function AlgorithmsView() {
               </TabsTrigger>
               <TabsTrigger
                 value="support"
-                disabled={supportLocked}
                 className="flex items-center gap-2"
-                title={
-                  supportLocked
-                    ? 'Explore Transition or Detailed first'
-                    : 'Tracks 28 protocols across IETF, TCG, OASIS, 3GPP, IEEE, UEFI, and vendor specs — pure-KEM, hybrid-KEM, pure-Sig, hybrid-Sig dimensions. IETF stages refresh weekly from datatracker; other standards bodies are refreshed manually.'
-                }
+                title="Tracks 28 protocols across IETF, TCG, OASIS, 3GPP, IEEE, UEFI, and vendor specs — pure-KEM, hybrid-KEM, pure-Sig, hybrid-Sig dimensions. IETF stages refresh weekly from datatracker; other standards bodies are refreshed manually."
               >
-                {supportLocked ? <Lock size={16} /> : <Network size={18} />}
+                <Network size={18} />
                 <span className="hidden sm:inline">Protocol Support</span>
                 <span className="sm:hidden">Protocol</span>
               </TabsTrigger>
