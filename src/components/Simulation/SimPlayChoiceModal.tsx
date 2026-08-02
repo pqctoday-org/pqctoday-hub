@@ -212,7 +212,9 @@ export function SimPlayChoiceModal({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.96 }}
           transition={{ duration: reduce ? 0 : 0.2, ease: 'easeOut' }}
-          className="glass-panel relative max-h-[88vh] w-full max-w-2xl overflow-y-auto rounded-2xl border-2 border-primary/30 p-6 shadow-xl"
+          // 2026-08-02: widened from max-w-2xl (672px) — the 3 path cards were
+          // cramping their body copy to 3-4 words a line at that width.
+          className="glass-panel relative max-h-[88vh] w-full max-w-[46rem] overflow-y-auto rounded-2xl border-2 border-primary/30 p-6 shadow-xl"
         >
           <div className="mb-1 font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-primary">
             Choose how to play
