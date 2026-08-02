@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import '@testing-library/jest-dom'
 import { afterEach, vi } from 'vitest'
+import { cleanup } from '@testing-library/react'
 
 // Polyfill localStorage / sessionStorage with a real in-memory Storage.
 // Node 22+ (and notably Node 26 on dev machines) ships a native global
@@ -57,7 +58,18 @@ for (const name of ['localStorage', 'sessionStorage'] as const) {
 
 // Keep tests isolated: a persisted store written in one test must not leak into
 // the next. Clear web storage after every test.
+//
+// `cleanup()` ADDED 2026-08-02. @testing-library/react registers its own
+// auto-cleanup when a global afterEach exists (it does — vite.config.ts sets
+// globals: true), so this is belt-and-braces rather than a replacement. It was
+// added after HsmPlayground.test.tsx failed intermittently during full-suite
+// runs with getMultipleElementsFoundError on copy that only ONE component in
+// the tree emits — i.e. a previous test's render was still mounted, so the
+// auto-cleanup had not taken effect in that particular execution. Calling it
+// explicitly makes every test file self-isolating regardless. cleanup() is
+// idempotent, so running alongside the automatic one is harmless.
 afterEach(() => {
+  cleanup()
   localStorage.clear()
   sessionStorage.clear()
 })

@@ -42,6 +42,15 @@ describe('LibraryViewRedesign', () => {
     expect(within(drawer).getByText('NIST-FIPS-140-3-IG-Sep-2025-PQC')).toBeInTheDocument()
   })
 
+  // Explicit timeout: this is the heaviest test in the file — it renders the
+  // whole Library view over the full document corpus, then forces a complete
+  // re-filter and re-render by changing persona. It takes ~2.5s on a dev
+  // machine, and the GitHub runner is roughly 8x slower on this suite (565s
+  // there vs ~70s locally), which puts it over vitest's 5s default. It timed
+  // out in CI on 2026-08-02 while passing locally and in earlier CI runs —
+  // borderline, not broken. Measured with and without that day's setup.ts
+  // cleanup() change: 2.5s either way, so the timeout is about runner speed,
+  // not about anything the test or the harness is doing wrong.
   it('a persona set globally (top-bar control) narrows the grid to its focus areas (architect ≠ all docs)', () => {
     renderView()
     const allCount = screen.getByText(/\d+ documents?/i).textContent
@@ -55,5 +64,5 @@ describe('LibraryViewRedesign', () => {
     expect(narrowedCount).not.toBeNull()
     // Architect has a non-empty preferred-category set, so the grid changes.
     expect(narrowedCount).not.toBe(allCount)
-  })
+  }, 30_000)
 })
