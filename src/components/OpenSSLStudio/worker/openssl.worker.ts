@@ -1090,7 +1090,50 @@ var writeInputFiles = (
   return writtenFiles
 }
 
-var scanOutputFiles = (module: EmscriptenModule, inputFiles: Set<string>, requestId?: string) => {
+var REPORTABLE_OUTPUT_EXTENSIONS = [
+  '.key',
+  '.pub',
+  '.csr',
+  '.crt',
+  '.sig',
+  '.txt',
+  '.bin',
+  '.p12',
+  '.pem',
+  '.enc',
+  '.der',
+  '.p7b',
+  '.skey',
+  '.crl',
+]
+
+var bytesEqual = (a: Uint8Array, b: Uint8Array) => {
+  if (a.length !== b.length) return false
+  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false
+  return true
+}
+
+/**
+ * Report every output file this command produced, and return their names.
+ *
+ * `inputFiles` holds names that already existed when the command started
+ * (rehydrated persistent-VFS entries + caller-supplied inputs). Those are
+ * skipped so a command doesn't re-announce files it merely inherited — BUT
+ * only when the bytes are unchanged. Overwriting an existing name is a real
+ * output: re-running `genpkey -out private.key` (which every workshop does —
+ * both the classical and PQC panes of PQC-101 step 3 write that same name)
+ * produces a genuinely new key, and skipping it on name alone made the second
+ * run look like it silently produced nothing ("key file not produced").
+ * Verified in-browser 2026-08-02: whichever pane ran second always failed,
+ * regardless of algorithm.
+ */
+var scanOutputFiles = (
+  module: EmscriptenModule,
+  inputFiles: Set<string>,
+  requestId?: string,
+  priorContents?: Map<string, Uint8Array>
+): string[] => {
+  const reported: string[] = []
   try {
     const files = module.FS.readdir('/')
     for (const file of files) {
@@ -1103,30 +1146,19 @@ var scanOutputFiles = (module: EmscriptenModule, inputFiles: Set<string>, reques
         file === 'ssl'
       )
         continue
-      if (inputFiles.has(file)) continue
       try {
         const stat = module.FS.stat('/' + file)
-        if (module.FS.isFile(stat.mode)) {
-          if (
-            file.endsWith('.key') ||
-            file.endsWith('.pub') ||
-            file.endsWith('.csr') ||
-            file.endsWith('.crt') ||
-            file.endsWith('.sig') ||
-            file.endsWith('.txt') ||
-            file.endsWith('.bin') ||
-            file.endsWith('.p12') ||
-            file.endsWith('.pem') ||
-            file.endsWith('.enc') ||
-            file.endsWith('.der') ||
-            file.endsWith('.p7b') ||
-            file.endsWith('.skey') ||
-            file.endsWith('.crl')
-          ) {
-            const content = module.FS.readFile('/' + file)
-            self.postMessage({ type: 'FILE_CREATED', name: file, data: content, requestId })
-          }
+        if (!module.FS.isFile(stat.mode)) continue
+        if (!REPORTABLE_OUTPUT_EXTENSIONS.some((ext) => file.endsWith(ext))) continue
+
+        const content = module.FS.readFile('/' + file)
+        if (inputFiles.has(file)) {
+          // Unchanged (or un-diffable) inherited file — not this command's output.
+          const prior = priorContents?.get(file)
+          if (!prior || bytesEqual(prior, content)) continue
         }
+        self.postMessage({ type: 'FILE_CREATED', name: file, data: content, requestId })
+        reported.push(file)
       } catch (e) {
         self.postMessage({
           type: 'LOG',
@@ -1144,6 +1176,7 @@ var scanOutputFiles = (module: EmscriptenModule, inputFiles: Set<string>, reques
       requestId,
     })
   }
+  return reported
 }
 
 // ----------------------------------------------------------------------------
@@ -1290,9 +1323,12 @@ var executeCommand = async (
     // fresh module BEFORE caller-supplied inputs, so explicit inputs win.
     if (replaceVfs) commandVfs.clear()
     // Names that existed before this command ran — used below so FILE_CREATED
-    // only reports files this command actually created (not rehydrated ones,
-    // which were already reported by the command that created them).
+    // only reports files this command actually created or OVERWROTE (not
+    // rehydrated ones it left untouched, which were already reported by the
+    // command that created them). `priorContents` is what makes the
+    // "overwrote" half decidable — see scanOutputFiles.
     const preexisting = new Set<string>(commandVfs.keys())
+    const priorContents = new Map<string, Uint8Array>(commandVfs)
     rehydrateVfs(openSSLModule, requestId)
 
     self.postMessage({
@@ -1303,6 +1339,9 @@ var executeCommand = async (
     })
     const writtenFiles = writeInputFiles(openSSLModule, inputFiles, requestId)
     for (const name of writtenFiles) preexisting.add(name)
+    for (const file of inputFiles) {
+      if (writtenFiles.has(file.name)) priorContents.set(file.name, file.data)
+    }
 
     self.postMessage({
       type: 'LOG',
@@ -1393,8 +1432,8 @@ var executeCommand = async (
       }
     }
 
-    // Scan for output files — report only files new to this command
-    scanOutputFiles(openSSLModule, preexisting, requestId)
+    // Scan for output files — report only files this command created or rewrote
+    const producedFiles = scanOutputFiles(openSSLModule, preexisting, requestId, priorContents)
 
     // Inform user about encap outputs
     if (command === 'pkeyutl' && args.includes('-encap')) {
@@ -1412,8 +1451,9 @@ var executeCommand = async (
 
     // Inform user about public key extraction for genpkey
     if (command === 'genpkey') {
-      const files = openSSLModule.FS.readdir('/')
-      const privateKeyFile = files.find((f: string) => f.endsWith('.key') && !preexisting.has(f))
+      // Same rule as FILE_CREATED: the key this run produced, whether the name
+      // is new or was overwritten (re-running genpkey to the same -out path).
+      const privateKeyFile = producedFiles.find((f) => f.endsWith('.key'))
       if (privateKeyFile) {
         const publicKeyFile = privateKeyFile.replace('.key', '.pub')
         self.postMessage({
