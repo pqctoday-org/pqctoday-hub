@@ -54,6 +54,16 @@ for (const { path, name } of ROUTES) {
     await page.waitForSelector('h1, h2, [data-testid]', { timeout: 15000 }).catch(() => {
       // Some pages (Landing, Assess) may not have h1/h2 — that's fine, axe will catch it.
     })
+    // Belt-and-suspenders on top of the real fix (2026-08-02, MainLayout.tsx's
+    // route-content wrapper): `waitForSelector` resolves the INSTANT an
+    // element mounts, which for the primary-content motion.div was also the
+    // instant its (now-fixed) opacity fade started — this test previously ran
+    // axe with zero settle time between mount and assertion. `networkidle`
+    // gives any data-driven content one more beat to finish loading before
+    // judging its accessibility, matching what manual local reproduction
+    // always did (and why it could never reproduce the CI failure — see the
+    // MainLayout.tsx comment for the full chain).
+    await page.waitForLoadState('networkidle').catch(() => {})
 
     await injectAxe(page)
 
