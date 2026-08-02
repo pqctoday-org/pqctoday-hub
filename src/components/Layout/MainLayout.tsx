@@ -139,6 +139,18 @@ const ROUTE_PAGE_ID: Partial<Record<string, PageId>> = {
   '/learn': 'learn',
 }
 
+/**
+ * Prefix fallback for `ROUTE_PAGE_ID`, which is an exact-path table. Nested
+ * routes inherit their section's user-manual page — `/learn/pqc-101` and
+ * `/learn/quiz` both document under `learn`. Deliberately a small explicit
+ * list, not a generic "first path segment" rule: only sections whose nested
+ * routes genuinely share one manual entry belong here.
+ */
+const NESTED_ROUTE_PAGE_ID: ReadonlyArray<readonly [string, PageId]> = [['/learn/', 'learn']]
+
+const pageIdForNestedRoute = (pathname: string): PageId | undefined =>
+  NESTED_ROUTE_PAGE_ID.find(([prefix]) => pathname.startsWith(prefix))?.[1]
+
 // Bespoke Share title/text per route — preserved from each page's own
 // (now-removed) `<PageHeader shareTitle=... shareText=...>` call so the
 // global top bar's ShareButton keeps the same copy instead of falling back to
@@ -500,7 +512,12 @@ export const MainLayout = () => {
       ? `${roleShortLabel} · ${regionLabel}, ${effectiveIndustries.join(', ')}`
       : `${roleShortLabel} · ${regionLabel}`
   const viewTypeForRoute = ROUTE_VIEW_TYPE[location.pathname]
-  const pageIdForRoute = ROUTE_PAGE_ID[location.pathname]
+  // Exact match first, then the nested-route fallback below. Both tables are
+  // keyed by top-level path, so `/learn/<module-id>` matched nothing and every
+  // module page silently rendered the top bar WITHOUT a Guide button — the
+  // gap §5 of HEADER-TOPBAR-STANDARDIZATION-PLAN-2026-08-01.md said to close
+  // BEFORE deleting PKILearningView's own copies of these buttons.
+  const pageIdForRoute = ROUTE_PAGE_ID[location.pathname] ?? pageIdForNestedRoute(location.pathname)
   const shareForRoute = ROUTE_SHARE[location.pathname]
 
   return (
@@ -843,8 +860,12 @@ export const MainLayout = () => {
                     <span>Ask</span>
                   </Button>
                   <ShareButton
-                    title={shareForRoute?.title ?? `${currentLabel} — PQC Today`}
-                    text={shareForRoute?.text}
+                    title={
+                      pageActions?.shareTitle ??
+                      shareForRoute?.title ??
+                      `${currentLabel} — PQC Today`
+                    }
+                    text={pageActions?.shareText ?? shareForRoute?.text}
                     // BUG FIX (Grade-A remediation Phase 2, top-bar Share):
                     // most routes' whole shareable state lives in the URL
                     // already, so omitting `url` and falling back to
