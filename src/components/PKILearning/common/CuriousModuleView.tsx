@@ -6,9 +6,6 @@ import { CuriousSummaryBanner } from './CuriousSummaryBanner'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { PERSONAS } from '@/data/learningPersonas'
-import { EndorseButton } from '@/components/ui/EndorseButton'
-import { FlagButton } from '@/components/ui/FlagButton'
-import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -72,35 +69,27 @@ export const CuriousModuleView: React.FC<CuriousModuleViewProps> = ({ moduleId }
     <div className="space-y-6 animate-fade-in w-full pb-12 mt-4">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="w-full">
+          {/* Back link (2026-08-02): PKILearningView's utility row above every
+              module was removed as a duplicate of the global top bar, and it
+              owned this link. ModuleShell picked it up for standard modules;
+              curious mode renders its own header instead, so it needs its own. */}
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/learn')}
+            className="mb-2 -ml-2 flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <ArrowLeft size={16} aria-hidden="true" />
+            Back to Dashboard
+          </Button>
           <h1 className="text-3xl font-bold text-gradient">{moduleMeta.title}</h1>
           <p className="text-muted-foreground mt-2 text-lg">{moduleMeta.description}</p>
+          {/* Endorse/Flag used to sit here as a pair of icons. PKILearningView
+              now registers this module's Endorse/Flag into the global top bar
+              for every /learn/<module-id> route, curious mode included, so a
+              second pair here is the same duplication the 2026-08-02 header
+              cleanup removed everywhere else. "Mark as Reviewed" stays: it's
+              progress, not provenance, and has no top-bar equivalent. */}
           <div className="flex flex-wrap items-center gap-4 mt-6">
-            <div className="flex items-center gap-2">
-              <EndorseButton
-                endorseUrl={buildEndorsementUrl({
-                  category: 'learn-module-endorsement',
-                  title: `Endorse: ${moduleMeta.title}`,
-                  resourceType: 'Learning Module',
-                  resourceId: moduleId,
-                  resourceDetails: `**Module:** ${moduleMeta.title}\n**Description:** ${moduleMeta.description}`,
-                  pageUrl: `/learn/${moduleId}`,
-                })}
-                resourceLabel={moduleMeta.title}
-                resourceType="Module"
-              />
-              <FlagButton
-                flagUrl={buildFlagUrl({
-                  category: 'learn-module-endorsement',
-                  title: `Flag: ${moduleMeta.title}`,
-                  resourceType: 'Learning Module',
-                  resourceId: moduleId,
-                  resourceDetails: `**Module:** ${moduleMeta.title}\n**Description:** ${moduleMeta.description}`,
-                  pageUrl: `/learn/${moduleId}`,
-                })}
-                resourceLabel={moduleMeta.title}
-                resourceType="Module"
-              />
-            </div>
             <Button
               variant="ghost"
               onClick={handleMarkReviewed}
