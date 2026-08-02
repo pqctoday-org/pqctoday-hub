@@ -211,7 +211,7 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
   return (
     <div className="mx-auto w-full max-w-[1180px] px-4 pb-12 pt-4 sm:px-6">
       {!embedded && (
-        <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="relative">
           <PageHeader
             icon={TrendingUp}
             title="PQC Migration Workbench"
@@ -228,11 +228,13 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
             // rollout existed to stop.
           />
           {hasSelection && (
-            <ShareButton
-              title="PQC Migration plan"
-              text="Here's my PQC migration product selection"
-              url={shareUrl}
-            />
+            <div className="absolute right-0 top-0">
+              <ShareButton
+                title="PQC Migration plan"
+                text="Here's my PQC migration product selection"
+                url={shareUrl}
+              />
+            </div>
           )}
         </div>
       )}
