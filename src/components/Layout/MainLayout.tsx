@@ -81,6 +81,11 @@ import {
   type RailRowTreatment,
 } from './railNav'
 
+// Footer copyright year — computed once at module load so it never needs a
+// manual bump (was a hardcoded "© 2025" literal that would silently go stale
+// every January).
+const COPYRIGHT_YEAR = new Date().getFullYear()
+
 // ── Route → shared-component-id lookups for the top bar's icon cluster ──────
 // Both SourcesButton and UserManualButton require a page-specific id; only the
 // routes below have a registered ViewType / PageId (see authoritativeSourcesData.ts
@@ -1188,7 +1193,7 @@ export const MainLayout = () => {
               {/* Footer */}
               <footer className="border-t border-border mt-12 py-8 text-center text-muted-foreground text-sm px-4 print:hidden safe-bottom">
                 <p>
-                  © 2025 PQC Today. Data sourced from the public internet resources.{' '}
+                  © {COPYRIGHT_YEAR} PQC Today. Data sourced from the public internet resources.{' '}
                   <Link to="/terms" className="underline hover:text-foreground transition-colors">
                     Terms of Service
                   </Link>

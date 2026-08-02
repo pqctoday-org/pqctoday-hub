@@ -208,7 +208,12 @@ describe('LandingView wired end-to-end under the real MainLayout', () => {
 
     expect(screen.getByText('Library Page')).toBeInTheDocument()
     expect(screen.queryByLabelText('Curious mobile navigation')).not.toBeInTheDocument()
-    expect(screen.getByText(/© 2025 PQC Today/)).toBeInTheDocument()
+    // Year is computed via `new Date().getFullYear()` in MainLayout's footer
+    // (Grade-A perf-infra fix — was a hardcoded literal), so assert against
+    // the real current year, not a pinned one.
+    expect(
+      screen.getByText(new RegExp(`© ${new Date().getFullYear()} PQC Today`))
+    ).toBeInTheDocument()
     expectDesktopRailCoversForYou('curious')
   })
 })

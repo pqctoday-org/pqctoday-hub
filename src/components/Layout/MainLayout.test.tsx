@@ -114,7 +114,11 @@ describe('MainLayout', () => {
 
     it('displays footer', () => {
       renderLayout()
-      expect(screen.getByText(/© 2025 PQC Today/)).toBeInTheDocument()
+      // Year is computed via `new Date().getFullYear()` (Grade-A perf-infra
+      // fix — was a hardcoded literal that would silently go stale every
+      // January), so assert against the real current year, not a pinned one.
+      const year = new Date().getFullYear()
+      expect(screen.getByText(new RegExp(`© ${year} PQC Today`))).toBeInTheDocument()
     })
   })
 
