@@ -169,7 +169,21 @@ function KeystoreTable({ objects, expert }: { objects: KmipObject[]; expert: boo
                 )}
               </td>
               <td className="py-1 pr-2 text-muted-foreground">{o.objectType}</td>
-              <td className="py-1 pr-2 text-muted-foreground">{o.state}</td>
+              <td className="py-1 pr-2 text-muted-foreground">
+                {o.state}
+                {/* Rekey lineage was tracked in the data but only rendered in
+                    the Migration tab, so anyone driving the lifecycle from the
+                    Agility Workbench saw the old and new key as two unrelated
+                    rows with no hint that one replaced the other. */}
+                {o.supersedes && (
+                  <span
+                    className="ml-1 text-[9px] px-1 rounded bg-primary/15 text-primary align-middle"
+                    title={`Superseded by ${o.supersedes}`}
+                  >
+                    → {o.supersedes.slice(0, 8)}…
+                  </span>
+                )}
+              </td>
               {expert && (
                 <td className="py-1 font-mono text-[10px] text-muted-foreground truncate max-w-[140px]">
                   {o.uid}
