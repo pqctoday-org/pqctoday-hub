@@ -256,3 +256,20 @@ describe('WS8c — device fitness badge', () => {
     expect(within(card as HTMLElement).getByText('Sandbox')).toBeInTheDocument()
   })
 })
+
+describe('WS8c — the modal explains why a tool cannot run', () => {
+  it('names the missing capability instead of offering a spinner that cannot resolve', () => {
+    renderWorkbench('/playground?cat=Protocol%20Simulations')
+    fireEvent.click(screen.getByText('PQC VPN Simulator').closest('[role="button"]') as HTMLElement)
+    const dialog = screen.getByRole('dialog')
+    expect(within(dialog).getByText(/will not run on this device/i)).toBeInTheDocument()
+    expect(within(dialog).getByText(/SharedArrayBuffer/i)).toBeInTheDocument()
+  })
+
+  it('stays silent for a tool this device can run', () => {
+    renderWorkbench('/playground?cat=Entropy%20%26%20Random')
+    fireEvent.click(screen.getByText('Random Generation').closest('[role="button"]') as HTMLElement)
+    const dialog = screen.getByRole('dialog')
+    expect(within(dialog).queryByText(/will not run on this device/i)).toBeNull()
+  })
+})
