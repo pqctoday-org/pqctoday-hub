@@ -2,15 +2,13 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { useResearchFieldsStore } from './useResearchFieldsStore'
 
-const reset = () => useResearchFieldsStore.setState({ followedFields: [], lastVisitedAt: null })
+const reset = () => useResearchFieldsStore.setState({ followedFields: [] })
 
 describe('useResearchFieldsStore — followed fields', () => {
   beforeEach(reset)
 
-  it('starts with no followed fields and no lastVisitedAt', () => {
-    const s = useResearchFieldsStore.getState()
-    expect(s.followedFields).toEqual([])
-    expect(s.lastVisitedAt).toBeNull()
+  it('starts with no followed fields', () => {
+    expect(useResearchFieldsStore.getState().followedFields).toEqual([])
   })
 
   it('toggleFollowedField adds an unfollowed field id', () => {
@@ -44,28 +42,6 @@ describe('useResearchFieldsStore — followed fields', () => {
   })
 })
 
-describe('useResearchFieldsStore — markVisited', () => {
-  beforeEach(reset)
-
-  it('markVisited sets lastVisitedAt to a current timestamp', () => {
-    const before = Date.now()
-    useResearchFieldsStore.getState().markVisited()
-    const after = Date.now()
-    const { lastVisitedAt } = useResearchFieldsStore.getState()
-    expect(lastVisitedAt).not.toBeNull()
-    expect(lastVisitedAt as number).toBeGreaterThanOrEqual(before)
-    expect(lastVisitedAt as number).toBeLessThanOrEqual(after)
-  })
-
-  it('a second markVisited call advances lastVisitedAt (or holds steady, never goes backwards)', () => {
-    useResearchFieldsStore.getState().markVisited()
-    const first = useResearchFieldsStore.getState().lastVisitedAt as number
-    useResearchFieldsStore.getState().markVisited()
-    const second = useResearchFieldsStore.getState().lastVisitedAt as number
-    expect(second).toBeGreaterThanOrEqual(first)
-  })
-})
-
 describe('useResearchFieldsStore migrate() — persistence conventions', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accessing internal persist options
   const migrate = (useResearchFieldsStore.persist.getOptions() as any).migrate
@@ -85,20 +61,27 @@ describe('useResearchFieldsStore migrate() — persistence conventions', () => {
     expect(migrated.followedFields).toEqual(['lattice-based', 'qkd-quantum'])
   })
 
-  it('fromVersion < 1: defaults lastVisitedAt to null when absent or corrupt', () => {
-    expect(migrate({}, 0).lastVisitedAt).toBeNull()
-    expect(migrate({ lastVisitedAt: 'garbage' }, 0).lastVisitedAt).toBeNull()
-  })
-
-  it('fromVersion < 1: preserves a real lastVisitedAt number', () => {
-    const migrated = migrate({ lastVisitedAt: 12345 }, 0)
-    expect(migrated.lastVisitedAt).toBe(12345)
-  })
-
-  it('is a no-op on an already-current (v1) persisted state — passes fields through unchanged', () => {
+  /**
+   * v2 (2026-08-02) removed `lastVisitedAt`. A visitor carrying a v0 or v1
+   * state must come out the other side with the field GONE, not merely
+   * ignored — an orphaned key in localStorage is what makes a later "why is
+   * this here?" archaeology problem.
+   */
+  it('fromVersion < 2: drops lastVisitedAt from a persisted v1 state', () => {
     const migrated = migrate({ followedFields: ['lattice-based'], lastVisitedAt: 12345 }, 1)
     expect(migrated.followedFields).toEqual(['lattice-based'])
-    expect(migrated.lastVisitedAt).toBe(12345)
+    expect(migrated).not.toHaveProperty('lastVisitedAt')
+  })
+
+  it('fromVersion < 2: drops lastVisitedAt from a persisted v0 state too', () => {
+    const migrated = migrate({ lastVisitedAt: 12345 }, 0)
+    expect(migrated).not.toHaveProperty('lastVisitedAt')
+    expect(migrated.followedFields).toEqual([])
+  })
+
+  it('is a no-op on an already-current (v2) persisted state', () => {
+    const migrated = migrate({ followedFields: ['lattice-based'] }, 2)
+    expect(migrated.followedFields).toEqual(['lattice-based'])
   })
 
   it('handles a totally corrupt (non-object) persisted state without throwing', () => {
@@ -106,7 +89,6 @@ describe('useResearchFieldsStore migrate() — persistence conventions', () => {
     expect(() => migrate('garbage-string', 0)).not.toThrow()
     const migrated = migrate(null, 0)
     expect(migrated.followedFields).toEqual([])
-    expect(migrated.lastVisitedAt).toBeNull()
   })
 
   it('declares an onRehydrateStorage crash guard (static contract check)', () => {

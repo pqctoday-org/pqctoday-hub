@@ -270,7 +270,7 @@ export const PKCS11_PROBE_ALGORITHM = 'ML-DSA-65'
  * `OPENSSL_TEST_LIBCTX` test hook is set), so `-provider pkcs11` reaches the
  * exact same registration `pqctoday_cms_init()` made. A prior version of
  * this comment claimed the flag builds a separate context that "can't see"
- * the provider — that claim did not hold up against the OpenSSL 3.6.2
+ * the provider — that claim did not hold up against the OpenSSL 3.6.2 (now 3.6.3)
  * source and has been removed; do not reintroduce it.
  *
  * The flag is simply unnecessary here: `pkcs11:` URIs already resolve

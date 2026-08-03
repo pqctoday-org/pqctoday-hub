@@ -28,8 +28,13 @@ function parsePersistentHandles(resp: Uint8Array): number[] {
   return handles
 }
 
+/** This WASM build has 3 transient object slots, shared by every tab — see
+ *  tpmBridge.ts. Exceeding them fails with TPM_RC_OBJECT_MEMORY (0x902). */
+const TRANSIENT_SLOT_BUDGET = 3
+
 export function StateInspector({ objects, isWasmReady }: StateInspectorProps) {
   const [persistentHandles, setPersistentHandles] = useState<number[]>([])
+  const [transientHandles, setTransientHandles] = useState<number[] | null>(null)
 
   useEffect(() => {
     if (!isWasmReady) return
@@ -51,6 +56,28 @@ export function StateInspector({ objects, isWasmReady }: StateInspectorProps) {
     }
   }, [isWasmReady])
 
+  // Transient range (0x80000000, TPM_HT_TRANSIENT). The `objects` array above
+  // is this tab's own bookkeeping, so it cannot see objects loaded by the
+  // Learn tab, Command Builder or Compliance Runner — yet all of them draw on
+  // the SAME 3-slot budget. Exhausting it fails with TPM_RC_OBJECT_MEMORY, a
+  // cross-tab collision that was previously invisible, with flushAllTransient()
+  // as its only mitigation and nothing showing occupancy.
+  useEffect(() => {
+    if (!isWasmReady) return
+    let cancelled = false
+    const cmd = buildGetCapabilityCmd(TPM_CAP_HANDLES, 0x80000000, 16)
+    executeTpmCommand(cmd)
+      .then((resp) => {
+        if (!cancelled) setTransientHandles(parsePersistentHandles(resp))
+      })
+      .catch(() => {
+        // Leave as null — "couldn't ask" must not render as "0 in use".
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [isWasmReady, objects])
+
   return (
     <div className="space-y-6">
       <div className="bg-background border border-border rounded-lg overflow-hidden">
@@ -62,6 +89,32 @@ export function StateInspector({ objects, isWasmReady }: StateInspectorProps) {
           <p className="text-xs text-muted-foreground mb-2">
             Transient objects created from the Command Builder tab in this session.
           </p>
+
+          {/* Live occupancy, queried from the TPM rather than counted from the
+              local list — the budget is shared across every tab. */}
+          {transientHandles !== null && (
+            <div
+              className={`mb-3 rounded border px-3 py-2 text-xs ${
+                transientHandles.length >= TRANSIENT_SLOT_BUDGET
+                  ? 'border-status-error/40 bg-status-error/10 text-status-error'
+                  : 'border-border bg-muted/20 text-muted-foreground'
+              }`}
+            >
+              <span className="font-bold">
+                Transient slots: {transientHandles.length}/{TRANSIENT_SLOT_BUDGET} in use
+              </span>
+              {transientHandles.length > 0 && (
+                <span className="ml-2 font-mono text-[10px]">
+                  {transientHandles.map((h) => `0x${h.toString(16)}`).join(', ')}
+                </span>
+              )}
+              <div className="mt-1 leading-relaxed">
+                {transientHandles.length >= TRANSIENT_SLOT_BUDGET
+                  ? 'Full — the next CreatePrimary/Load will fail with TPM_RC_OBJECT_MEMORY (0x902) until something is flushed.'
+                  : 'This budget is shared by the Learn, Command Builder, Compliance and Attestation tabs, so objects loaded elsewhere count here too.'}
+              </div>
+            </div>
+          )}
 
           {objects.length === 0 ? (
             <div className="border border-border rounded p-3 bg-background flex items-start gap-3 opacity-50">

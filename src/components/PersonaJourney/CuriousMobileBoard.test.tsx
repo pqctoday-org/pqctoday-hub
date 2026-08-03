@@ -16,6 +16,10 @@ const TestFaq = () => <div>FAQ Page</div>
 // PERSONA_JOURNEY_BOARD.curious.ctaPrimaryHref actually is (not hardcoded),
 // so this test tracks the real data source instead of assuming its value.
 const TestCtaPrimaryDestination = () => <div>CTA Primary Destination Page</div>
+// Same treatment for the secondary. Hardcoding it broke twice on 2026-08-02 as
+// the boards were de-duplicated (/timeline -> /faq -> /tools/breach-simulator);
+// routing at the real configured href tracks the data instead of the guess.
+const TestCtaSecondaryDestination = () => <div>CTA Secondary Destination Page</div>
 
 function renderBoard(initialEntry = '/') {
   return render(
@@ -29,6 +33,10 @@ function renderBoard(initialEntry = '/') {
         <Route
           path={PERSONA_JOURNEY_BOARD.curious.ctaPrimaryHref}
           element={<TestCtaPrimaryDestination />}
+        />
+        <Route
+          path={PERSONA_JOURNEY_BOARD.curious.ctaSecondaryHref}
+          element={<TestCtaSecondaryDestination />}
         />
       </Routes>
     </MemoryRouter>
@@ -69,14 +77,13 @@ describe('CuriousMobileBoard', () => {
     })
 
     it('tapping "I have 30 seconds" navigates to the curious board\'s configured ctaSecondaryHref', () => {
-      // Routed via the shared '/timeline' fixture above — true today because
-      // PERSONA_JOURNEY_BOARD.curious.ctaSecondaryHref is '/timeline'; this
-      // assertion fails loudly (not silently) if that config value ever
-      // changes without this test being updated to match.
-      expect(PERSONA_JOURNEY_BOARD.curious.ctaSecondaryHref).toBe('/timeline')
+      // Routed at whatever the curious board's real ctaSecondaryHref is, so this
+      // tracks the data rather than a literal. The href changed twice on
+      // 2026-08-02 (/timeline -> /faq -> /tools/breach-simulator) as the 18
+      // boards were given non-overlapping destinations.
       renderBoard()
       fireEvent.click(screen.getByRole('button', { name: 'I have 30 seconds' }))
-      expect(screen.getByText('Timeline Page')).toBeInTheDocument()
+      expect(screen.getByText('CTA Secondary Destination Page')).toBeInTheDocument()
     })
   })
 

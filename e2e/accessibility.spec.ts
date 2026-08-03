@@ -13,11 +13,22 @@ import { injectAxe, checkA11y, getViolations } from 'axe-playwright'
 test.use({ reducedMotion: 'reduce' })
 
 // Only fail on serious and critical violations; moderate/minor tracked separately.
+// `detailedReport` ADDED 2026-08-02. Without it axe-playwright's default
+// reporter prints only the per-rule summary table — rule id, impact, and a
+// node COUNT — so a CI-only failure gives you no way to learn which elements
+// failed or what their contrast ratios were. That is exactly the wall hit on
+// 2026-08-02: the a11y smoke went red on the runner for 13-14 of 14 routes
+// with `color-contrast`, while the identical spec against the identical local
+// build passed 16/16, leaving nothing to diagnose from. This is diagnostic
+// output only — it changes what a FAILING run prints, never whether a run
+// passes, so it costs nothing on a green run.
 const A11Y_OPTIONS = {
   axeOptions: {
     runOnly: { type: 'tag' as const, values: ['wcag2a', 'wcag2aa'] },
   },
   includedImpacts: ['critical', 'serious'] as ('critical' | 'serious')[],
+  detailedReport: true,
+  detailedReportOptions: { html: true },
 }
 
 // Routes excluded from automated axe scanning:

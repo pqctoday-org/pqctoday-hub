@@ -27,6 +27,7 @@ type WorkerMessage =
   | { type: 'FILE_UPLOAD'; name: string; data: Uint8Array; requestId?: string }
   | { type: 'DELETE_FILE'; name: string; requestId?: string }
   | { type: 'HSM_KEYGEN'; algorithm: string; keyId: string; requestId?: string }
+  | { type: 'HSM_LIST_OBJECTS'; requestId?: string }
   | {
       type: 'TLS_SIMULATE'
       clientConfig: string
@@ -58,6 +59,17 @@ type WorkerMessage =
     }
   | { type: 'READY'; requestId?: string }
   | { type: 'LOG'; stream: 'stdout' | 'stderr'; message: string; requestId?: string }
+  | {
+      // Mirrors the 'P11CALL' arm of WorkerResponse in ./types.ts — that file
+      // is the shared contract with the main thread; this local union is the
+      // worker's own postMessage typing.
+      type: 'P11CALL'
+      fn: string
+      args: string
+      rv: number
+      ms: number
+      requestId?: string
+    }
   | { type: 'ERROR'; error: string; requestId?: string }
   | { type: 'DONE'; requestId?: string }
   | {
@@ -406,6 +418,50 @@ var hasSnapshotApi = (module: any): boolean =>
   typeof module._pqctoday_hsm_state_load === 'function' &&
   typeof module._pqctoday_hsm_state_free === 'function'
 
+/**
+ * Call one PKCS#11 entry point on `module`, emit it to the UI as a real call
+ * trace, and return its CK_RV unchanged.
+ *
+ * Scope, stated honestly because the panel this feeds could otherwise imply
+ * more than it shows: these are the C_* calls THIS WORKER makes from JS — the
+ * token lifecycle (Initialize/InitToken/InitPIN/Login/OpenSession) plus the
+ * Explorer's direct-C-API keygen. Crypto driven through the `pkcs11:` URI
+ * path runs inside openssl.wasm (CLI -> pkcs11-provider -> engine) and never
+ * crosses the JS boundary, so it cannot be traced here. The panel says so
+ * rather than letting a learner read an empty log as "no HSM activity".
+ *
+ * `argsText` is a short human-readable rendering of the salient arguments —
+ * handles and slots, never PIN bytes.
+ */
+var p11Call = (fn: string, argsText: string, invoke: () => number, requestId?: string): number => {
+  var t0 = Date.now()
+  var rv: number
+  try {
+    rv = invoke()
+  } catch (e) {
+    // A trap inside the engine is itself worth showing: report it as a
+    // general-error CK_RV rather than letting the row vanish.
+    self.postMessage({
+      type: 'P11CALL',
+      fn: fn,
+      args: argsText,
+      rv: 0x00000005 /* CKR_GENERAL_ERROR */,
+      ms: Date.now() - t0,
+      requestId: requestId,
+    })
+    throw e
+  }
+  self.postMessage({
+    type: 'P11CALL',
+    fn: fn,
+    args: argsText,
+    rv: rv >>> 0,
+    ms: Date.now() - t0,
+    requestId: requestId,
+  })
+  return rv
+}
+
 /** Names of the PKCS#11 exports the token lifecycle needs but this build
  *  lacks (empty array = build is capable). */
 var missingP11Exports = (module: any): string[] => {
@@ -610,7 +666,7 @@ var ensureHsmToken = (module: any, requestId?: string): string | null => {
     }
   }
 
-  var rv0 = module._C_Initialize(0)
+  var rv0 = p11Call('C_Initialize', 'pInitArgs=NULL', () => module._C_Initialize(0), requestId)
   if (rv0 !== CKR_OK && rv0 !== CKR_CRYPTOKI_ALREADY_INITIALIZED) {
     return 'C_Initialize failed (rv=0x' + rv0.toString(16) + ')'
   }
@@ -648,7 +704,12 @@ var ensureHsmToken = (module: any, requestId?: string): string | null => {
   module.HEAPU8.set(label, labelP)
   var soPinP = module._malloc(STUDIO_SO_PIN.length + 1)
   module.stringToUTF8(STUDIO_SO_PIN, soPinP, STUDIO_SO_PIN.length + 1)
-  var initRv = module._C_InitToken(slot, soPinP, STUDIO_SO_PIN.length, labelP)
+  var initRv = p11Call(
+    'C_InitToken',
+    'slot=' + slot + ", label='" + STUDIO_TOKEN_LABEL + "'",
+    () => module._C_InitToken(slot, soPinP, STUDIO_SO_PIN.length, labelP),
+    requestId
+  )
   module._free(soPinP)
   module._free(labelP)
   if (initRv !== CKR_OK) {
@@ -661,7 +722,12 @@ var ensureHsmToken = (module: any, requestId?: string): string | null => {
 
   var sessP = module._malloc(4)
   module.setValue(sessP, 0, 'i32')
-  var openRv = module._C_OpenSession(tokenSlot, CKF_SERIAL_SESSION | CKF_RW_SESSION, 0, 0, sessP)
+  var openRv = p11Call(
+    'C_OpenSession',
+    'slot=' + tokenSlot + ', flags=SERIAL|RW',
+    () => module._C_OpenSession(tokenSlot, CKF_SERIAL_SESSION | CKF_RW_SESSION, 0, 0, sessP),
+    requestId
+  )
   if (openRv !== CKR_OK) {
     module._free(sessP)
     return 'C_OpenSession(SO) failed (rv=0x' + openRv.toString(16) + ')'
@@ -671,19 +737,29 @@ var ensureHsmToken = (module: any, requestId?: string): string | null => {
 
   var soPinP2 = module._malloc(STUDIO_SO_PIN.length + 1)
   module.stringToUTF8(STUDIO_SO_PIN, soPinP2, STUDIO_SO_PIN.length + 1)
-  var loginRv = module._C_Login(soSess, CKU_SO, soPinP2, STUDIO_SO_PIN.length)
+  var loginRv = p11Call(
+    'C_Login',
+    'hSession=' + soSess + ', userType=CKU_SO',
+    () => module._C_Login(soSess, CKU_SO, soPinP2, STUDIO_SO_PIN.length),
+    requestId
+  )
   module._free(soPinP2)
   if (loginRv !== CKR_OK) {
-    module._C_CloseSession(soSess)
+    p11Call('C_CloseSession', 'hSession=' + soSess, () => module._C_CloseSession(soSess), requestId)
     return 'C_Login(SO) failed (rv=0x' + loginRv.toString(16) + ')'
   }
 
   var userPinP = module._malloc(STUDIO_USER_PIN.length + 1)
   module.stringToUTF8(STUDIO_USER_PIN, userPinP, STUDIO_USER_PIN.length + 1)
-  var pinRv = module._C_InitPIN(soSess, userPinP, STUDIO_USER_PIN.length)
+  var pinRv = p11Call(
+    'C_InitPIN',
+    'hSession=' + soSess,
+    () => module._C_InitPIN(soSess, userPinP, STUDIO_USER_PIN.length),
+    requestId
+  )
   module._free(userPinP)
-  module._C_Logout(soSess)
-  module._C_CloseSession(soSess)
+  p11Call('C_Logout', 'hSession=' + soSess, () => module._C_Logout(soSess), requestId)
+  p11Call('C_CloseSession', 'hSession=' + soSess, () => module._C_CloseSession(soSess), requestId)
   if (pinRv !== CKR_OK) {
     return 'C_InitPIN failed (rv=0x' + pinRv.toString(16) + ')'
   }
@@ -820,7 +896,12 @@ var writeAttr = (
  * Generate a token-resident keypair. Returns null on success, else an error
  * string. The caller must have run ensureHsmToken() on this module first.
  */
-var generateKeyInToken = (module: any, algName: string, keyId: string): string | null => {
+var generateKeyInToken = (
+  module: any,
+  algName: string,
+  keyId: string,
+  requestId?: string
+): string | null => {
   var spec = HSM_KEYGEN_ALGS[algName]
   if (!spec) {
     return (
@@ -839,7 +920,12 @@ var generateKeyInToken = (module: any, algName: string, keyId: string): string |
 
   var sessP = module._malloc(4)
   module.setValue(sessP, 0, 'i32')
-  var openRv = module._C_OpenSession(slot, CKF_SERIAL_SESSION | CKF_RW_SESSION, 0, 0, sessP)
+  var openRv = p11Call(
+    'C_OpenSession',
+    'slot=' + slot + ', flags=SERIAL|RW',
+    () => module._C_OpenSession(slot, CKF_SERIAL_SESSION | CKF_RW_SESSION, 0, 0, sessP),
+    requestId
+  )
   if (openRv !== CKR_OK) {
     module._free(sessP)
     return 'C_OpenSession failed (rv=0x' + openRv.toString(16) + ')'
@@ -849,11 +935,21 @@ var generateKeyInToken = (module: any, algName: string, keyId: string): string |
 
   var pinP = module._malloc(STUDIO_USER_PIN.length + 1)
   module.stringToUTF8(STUDIO_USER_PIN, pinP, STUDIO_USER_PIN.length + 1)
-  var loginRv = module._C_Login(session, CKU_USER, pinP, STUDIO_USER_PIN.length)
+  var loginRv = p11Call(
+    'C_Login',
+    'hSession=' + session + ', userType=CKU_USER',
+    () => module._C_Login(session, CKU_USER, pinP, STUDIO_USER_PIN.length),
+    requestId
+  )
   module._free(pinP)
   // ALREADY_LOGGED_IN is fine — the session may be reused within a command.
   if (loginRv !== CKR_OK && loginRv !== 0x100) {
-    module._C_CloseSession(session)
+    p11Call(
+      'C_CloseSession',
+      'hSession=' + session,
+      () => module._C_CloseSession(session),
+      requestId
+    )
     return 'C_Login(user) failed (rv=0x' + loginRv.toString(16) + ')'
   }
 
@@ -942,15 +1038,28 @@ var generateKeyInToken = (module: any, algName: string, keyId: string): string |
   module.setValue(hPubP, 0, 'i32')
   module.setValue(hPrivP, 0, 'i32')
 
-  var genRv = module._C_GenerateKeyPair(
-    session,
-    mechP,
-    pubTplP,
-    pubAttrs.length,
-    privTplP,
-    privAttrs.length,
-    hPubP,
-    hPrivP
+  var genRv = p11Call(
+    'C_GenerateKeyPair',
+    'hSession=' +
+      session +
+      ', mech=' +
+      algName +
+      ', pubAttrs=' +
+      pubAttrs.length +
+      ', privAttrs=' +
+      privAttrs.length,
+    () =>
+      module._C_GenerateKeyPair(
+        session,
+        mechP,
+        pubTplP,
+        pubAttrs.length,
+        privTplP,
+        privAttrs.length,
+        hPubP,
+        hPrivP
+      ),
+    requestId
   )
 
   module._free(hPubP)
@@ -967,13 +1076,169 @@ var generateKeyInToken = (module: any, algName: string, keyId: string): string |
   if (paramSetP) module._free(paramSetP)
   if (ecParamsP) module._free(ecParamsP)
 
-  module._C_Logout(session)
-  module._C_CloseSession(session)
+  p11Call('C_Logout', 'hSession=' + session, () => module._C_Logout(session), requestId)
+  p11Call('C_CloseSession', 'hSession=' + session, () => module._C_CloseSession(session), requestId)
 
   if (genRv !== CKR_OK) {
     return 'C_GenerateKeyPair(' + algName + ') failed (rv=0x' + genRv.toString(16) + ')'
   }
   return null
+}
+
+/**
+ * Enumerate what is ACTUALLY resident on the token, via a real
+ * C_FindObjectsInit/C_FindObjects/C_FindObjectsFinal sweep plus a
+ * C_GetAttributeValue read per object.
+ *
+ * This exists because the Studio's key list was previously just React state
+ * it populated itself when IT created a key — so a key generated in another
+ * tab, restored from a snapshot, or left by an earlier session was invisible,
+ * and the list could claim keys the token no longer had. This asks the token.
+ *
+ * Reads CKA_CLASS / CKA_KEY_TYPE / CKA_LABEL only. Deliberately never reads
+ * CKA_VALUE: private key material is CKA_SENSITIVE and asking for it would
+ * (correctly) fail, but attempting it at all is the wrong habit to model in
+ * a teaching tool.
+ */
+var listTokenObjects = (
+  module: any,
+  requestId?: string
+): Array<{ handle: number; cls: number; keyType: number; label: string }> => {
+  var out: Array<{ handle: number; cls: number; keyType: number; label: string }> = []
+  if (
+    typeof module._C_FindObjectsInit !== 'function' ||
+    typeof module._C_FindObjects !== 'function' ||
+    typeof module._C_FindObjectsFinal !== 'function'
+  ) {
+    return out
+  }
+
+  var slot = firstSlot(module)
+  if (slot === null) return out
+
+  var sessP = module._malloc(4)
+  module.setValue(sessP, 0, 'i32')
+  var openRv = p11Call(
+    'C_OpenSession',
+    'slot=' + slot + ', flags=SERIAL|RW',
+    () => module._C_OpenSession(slot, CKF_SERIAL_SESSION | CKF_RW_SESSION, 0, 0, sessP),
+    requestId
+  )
+  if (openRv !== CKR_OK) {
+    module._free(sessP)
+    return out
+  }
+  var session = module.getValue(sessP, 'i32')
+  module._free(sessP)
+
+  var pinP = module._malloc(STUDIO_USER_PIN.length + 1)
+  module.stringToUTF8(STUDIO_USER_PIN, pinP, STUDIO_USER_PIN.length + 1)
+  // CKR_USER_ALREADY_LOGGED_IN (0x100) is fine — private objects need a login,
+  // but the session may already have one.
+  p11Call(
+    'C_Login',
+    'hSession=' + session + ', userType=CKU_USER',
+    () => module._C_Login(session, CKU_USER, pinP, STUDIO_USER_PIN.length),
+    requestId
+  )
+  module._free(pinP)
+
+  try {
+    // Null template = "every object", per PKCS#11 v3.2 §5.7.1.
+    var initRv = p11Call(
+      'C_FindObjectsInit',
+      'hSession=' + session + ', pTemplate=NULL (all objects)',
+      () => module._C_FindObjectsInit(session, 0, 0),
+      requestId
+    )
+    if (initRv !== CKR_OK) return out
+
+    var MAX = 64
+    var handlesP = module._malloc(MAX * 4)
+    var countP = module._malloc(4)
+    module.setValue(countP, 0, 'i32')
+    var findRv = p11Call(
+      'C_FindObjects',
+      'hSession=' + session + ', ulMaxObjectCount=' + MAX,
+      () => module._C_FindObjects(session, handlesP, MAX, countP),
+      requestId
+    )
+    var found = findRv === CKR_OK ? module.getValue(countP, 'i32') : 0
+    var handles: number[] = []
+    for (var i = 0; i < found; i++) handles.push(module.getValue(handlesP + i * 4, 'i32'))
+    module._free(handlesP)
+    module._free(countP)
+
+    p11Call(
+      'C_FindObjectsFinal',
+      'hSession=' + session,
+      () => module._C_FindObjectsFinal(session),
+      requestId
+    )
+
+    for (var h = 0; h < handles.length; h++) {
+      out.push({
+        handle: handles[h],
+        cls: readUlongAttr(module, session, handles[h], CKA_CLASS),
+        keyType: readUlongAttr(module, session, handles[h], CKA_KEY_TYPE),
+        label: readStringAttr(module, session, handles[h], CKA_LABEL),
+      })
+    }
+  } finally {
+    p11Call('C_Logout', 'hSession=' + session, () => module._C_Logout(session), requestId)
+    p11Call(
+      'C_CloseSession',
+      'hSession=' + session,
+      () => module._C_CloseSession(session),
+      requestId
+    )
+  }
+  return out
+}
+
+/** One CK_ULONG attribute, or -1 when the object doesn't carry it. */
+var readUlongAttr = (module: any, session: number, obj: number, attrType: number): number => {
+  var valP = module._malloc(4)
+  var tplP = module._malloc(12)
+  module.setValue(tplP, attrType, 'i32')
+  module.setValue(tplP + 4, valP, 'i32')
+  module.setValue(tplP + 8, 4, 'i32')
+  var rv = module._C_GetAttributeValue(session, obj, tplP, 1)
+  var v = rv === CKR_OK ? module.getValue(valP, 'i32') : -1
+  module._free(valP)
+  module._free(tplP)
+  return v
+}
+
+/**
+ * One string attribute. Uses the standard two-call idiom: length first
+ * (pValue=NULL), then the buffer — CKR_BUFFER_TOO_SMALL is not an error here.
+ */
+var readStringAttr = (module: any, session: number, obj: number, attrType: number): string => {
+  var tplP = module._malloc(12)
+  module.setValue(tplP, attrType, 'i32')
+  module.setValue(tplP + 4, 0, 'i32')
+  module.setValue(tplP + 8, 0, 'i32')
+  if (module._C_GetAttributeValue(session, obj, tplP, 1) !== CKR_OK) {
+    module._free(tplP)
+    return ''
+  }
+  var len = module.getValue(tplP + 8, 'i32')
+  if (len <= 0 || len > 4096) {
+    module._free(tplP)
+    return ''
+  }
+  var bufP = module._malloc(len)
+  module.setValue(tplP + 4, bufP, 'i32')
+  module.setValue(tplP + 8, len, 'i32')
+  var s = ''
+  if (module._C_GetAttributeValue(session, obj, tplP, 1) === CKR_OK) {
+    var bytes = module.HEAPU8.subarray(bufP, bufP + len)
+    for (var i = 0; i < len; i++) s += String.fromCharCode(bytes[i])
+  }
+  module._free(bufP)
+  module._free(tplP)
+  return s.replace(/\0+$/, '')
 }
 
 /**
@@ -1006,6 +1271,27 @@ var commandUsesPkcs11 = (args: string[]): boolean => {
     if (args[i].indexOf('pkcs11:') >= 0) return true
     if (args[i] === '-provider' && args[i + 1] === 'pkcs11') return true
     if (args[i] === '-propquery' && (args[i + 1] || '').indexOf('pkcs11') >= 0) return true
+  }
+  return false
+}
+
+/**
+ * True for `-out pkcs11:...`, the one shape that silently does the OPPOSITE
+ * of what it reads like.
+ *
+ * `-out` goes through a BIO (POSIX open()), so this writes a PLAIN,
+ * EXPORTABLE PEM into MEMFS and never puts anything in the token — a later
+ * `pkcs11:object=<id>` lookup then fails, and the user is left holding an
+ * exportable private key while believing it is token-resident and
+ * non-extractable. See the in-token keygen doc comment above for why
+ * C_GenerateKeyPair with CKA_TOKEN=TRUE is the only real path.
+ *
+ * Not blocked — this is a teaching tool and the failure is instructive — but
+ * it must never pass silently.
+ */
+var commandWritesKeyToPkcs11Uri = (args: string[]): boolean => {
+  for (var i = 0; i < args.length; i++) {
+    if (args[i] === '-out' && (args[i + 1] || '').indexOf('pkcs11:') === 0) return true
   }
   return false
 }
@@ -1303,6 +1589,24 @@ var executeCommand = async (
       commandTouchedToken = true
       const hsmErr = ensureHsmToken(openSSLModule, requestId)
       if (hsmErr) throw new Error(hsmErr)
+    }
+
+    // `-out pkcs11:...` looks like "generate into the token" and does the
+    // opposite. Say so before the command runs, or the user walks away with
+    // an exportable PEM believing it is a non-extractable token key.
+    if (commandWritesKeyToPkcs11Uri(args)) {
+      self.postMessage({
+        type: 'LOG',
+        stream: 'stderr',
+        message:
+          '[HSM] Warning: "-out pkcs11:..." does NOT create a key in the token. ' +
+          '-out writes through a file BIO, so this produces an ordinary, EXPORTABLE ' +
+          'PEM in the virtual filesystem and the token stays empty — a later ' +
+          'pkcs11:object=<id> reference will not find it. To get a real ' +
+          'token-resident key, use "Generate Key in HSM Token" (PKCS#11 (HSM) ' +
+          'category), which calls C_GenerateKeyPair with CKA_TOKEN=TRUE.',
+        requestId,
+      })
     }
 
     self.postMessage({
@@ -1701,6 +2005,36 @@ var generateCaRoot = async (
  * addresses it. Runs the token lifecycle first, then snapshots the engine so
  * the key survives into subsequent commands.
  */
+/**
+ * Ask the token what it actually holds and report it.
+ *
+ * Runs the same lifecycle as keygen (fresh module, restore snapshot, ensure
+ * token) so the sweep sees the persisted token rather than an empty fresh
+ * one — the whole point is to reflect reality, including keys this session
+ * never created.
+ */
+var listHsmObjects = async (requestId?: string) => {
+  try {
+    await loadOpenSSLScript('/wasm/openssl.js', requestId)
+    const module = await createOpenSSLInstance(requestId)
+    injectEntropy(module, requestId)
+    configureEnvironment(module, requestId)
+
+    const tokenErr = ensureHsmToken(module, requestId)
+    if (tokenErr) throw new Error(tokenErr)
+
+    const objects = listTokenObjects(module, requestId)
+    // The sweep opens/closes a session, so re-snapshot to keep the persisted
+    // state consistent with what the engine now believes.
+    saveHsmSnapshotDirectApi(module)
+
+    self.postMessage({ type: 'HSM_OBJECTS', objects, requestId })
+    self.postMessage({ type: 'DONE', requestId })
+  } catch (e: any) {
+    self.postMessage({ type: 'ERROR', error: e?.message ?? String(e), requestId })
+  }
+}
+
 var generateHsmKey = async (algorithm: string, keyId: string, requestId?: string) => {
   try {
     await loadOpenSSLScript('/wasm/openssl.js', requestId)
@@ -1711,7 +2045,7 @@ var generateHsmKey = async (algorithm: string, keyId: string, requestId?: string
     const tokenErr = ensureHsmToken(module, requestId)
     if (tokenErr) throw new Error(tokenErr)
 
-    const genErr = generateKeyInToken(module, algorithm, keyId)
+    const genErr = generateKeyInToken(module, algorithm, keyId, requestId)
     if (genErr) throw new Error(genErr)
 
     // Persist immediately: unlike executeCommand there is no callMain here,
@@ -1917,6 +2251,8 @@ self.addEventListener('message', async (event: MessageEvent<WorkerMessage>) => {
         keyId: string
       }
       await generateHsmKey(algorithm, keyId, requestId)
+    } else if (type === 'HSM_LIST_OBJECTS') {
+      await listHsmObjects(requestId)
     } else if (type === 'SKEY_OPERATION') {
       const { opType, params } = event.data as any
       await executeSkeyOperation(opType, params, requestId)

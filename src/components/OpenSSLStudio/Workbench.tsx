@@ -25,6 +25,9 @@ interface WorkbenchProps {
   executeSkey: (opType: 'create' | 'derive', params: Record<string, any>) => Promise<void>
   retryLoad: () => void
   hsmKeygen: (algorithm: string, keyId: string) => Promise<{ uri: string }>
+  hsmListObjects?: () => Promise<
+    Array<{ handle: number; cls: number; keyType: number; label: string }>
+  >
 }
 
 export const Workbench = ({
@@ -34,6 +37,7 @@ export const Workbench = ({
   executeSkey,
   retryLoad,
   hsmKeygen,
+  hsmListObjects,
 }: WorkbenchProps) => {
   const { setCommand, files } = useOpenSSLStore()
 
@@ -655,6 +659,7 @@ export const Workbench = ({
             kdfScryptP={kdfScryptP}
             setKdfScryptP={setKdfScryptP}
             hsmKeygen={hsmKeygen}
+            hsmListObjects={hsmListObjects}
             pkcs11Keys={pkcs11Keys}
             addPkcs11Key={addPkcs11Key}
             pkcs11SelectedKeyId={pkcs11SelectedKeyId}

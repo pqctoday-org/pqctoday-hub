@@ -21,8 +21,6 @@ interface ResearchFieldsState {
   followedFields: string[]
   toggleFollowedField: (id: string) => void
   clearFollowedFields: () => void
-  lastVisitedAt: number | null
-  markVisited: () => void
 }
 
 const toggle = (arr: string[], val: string) =>
@@ -34,13 +32,10 @@ export const useResearchFieldsStore = create<ResearchFieldsState>()(
       followedFields: [],
       toggleFollowedField: (id) => set((s) => ({ followedFields: toggle(s.followedFields, id) })),
       clearFollowedFields: () => set({ followedFields: [] }),
-
-      lastVisitedAt: null,
-      markVisited: () => set({ lastVisitedAt: Date.now() }),
     }),
     {
       name: 'pqc-research-fields',
-      version: 1,
+      version: 2,
       storage: createJSONStorage(() => localStorage),
       migrate: (persistedState: unknown, version: number) => {
         const state =
@@ -50,7 +45,16 @@ export const useResearchFieldsStore = create<ResearchFieldsState>()(
 
         if (version < 1) {
           state.followedFields = Array.isArray(state.followedFields) ? state.followedFields : []
-          state.lastVisitedAt = typeof state.lastVisitedAt === 'number' ? state.lastVisitedAt : null
+        }
+
+        // v2 (2026-08-02): `lastVisitedAt` removed. The field watch it drove
+        // compared document publication dates against browsing time and could
+        // never return a non-zero count; it now reports against the corpus
+        // release window instead, which is the same for every visitor and
+        // needs no per-user timestamp. Dropped rather than left orphaned in
+        // localStorage.
+        if (version < 2) {
+          delete state.lastVisitedAt
         }
 
         return state as unknown as ResearchFieldsState

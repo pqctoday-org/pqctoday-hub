@@ -434,9 +434,9 @@ export function _C_SignMessageBegin(h_session: number, _p_param: number, _ul_par
  */
 export function _C_SignMessageNext(h_session: number, _p_param: number, _ul_param_len: number, p_part: number, ul_part_len: number, p_signature: number, pul_signature_len: number): number;
 
-export function _C_SignRecover(_h_session: number, _p_data: number, _ul_data_len: number, _p_signature: number, _pul_signature_len: number): number;
+export function _C_SignRecover(h_session: number, p_data: number, ul_data_len: number, p_signature: number, pul_signature_len: number): number;
 
-export function _C_SignRecoverInit(_h_session: number, _p_mechanism: number, _h_key: number): number;
+export function _C_SignRecoverInit(h_session: number, p_mechanism: number, h_key: number): number;
 
 export function _C_SignUpdate(h_session: number, p_part: number, ul_part_len: number): number;
 
@@ -463,9 +463,9 @@ export function _C_VerifyMessageBegin(h_session: number, _p_param: number, _ul_p
  */
 export function _C_VerifyMessageNext(h_session: number, _p_param: number, _ul_param_len: number, p_part: number, ul_part_len: number, p_signature: number, ul_signature_len: number): number;
 
-export function _C_VerifyRecover(_h_session: number, _p_signature: number, _ul_signature_len: number, _p_data: number, _pul_data_len: number): number;
+export function _C_VerifyRecover(h_session: number, p_signature: number, ul_signature_len: number, p_data: number, pul_data_len: number): number;
 
-export function _C_VerifyRecoverInit(_h_session: number, _p_mechanism: number, _h_key: number): number;
+export function _C_VerifyRecoverInit(h_session: number, p_mechanism: number, h_key: number): number;
 
 export function _C_VerifySignature(h_session: number, p_data: number, ul_data_len: number): number;
 

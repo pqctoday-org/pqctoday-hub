@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 // opensslLessons.ts — OpenSSL Studio's guided curriculum: 11 lessons whose
-// steps run REAL `openssl` commands against the same OpenSSL 3.6.2 WASM
+// steps run REAL `openssl` commands against the same OpenSSL 3.6.3 WASM
 // engine the Workbench drives (via OpenSslLearnContext — see
 // opensslLearnContext.ts for why the same lesson code runs in both the
 // browser and the Node curriculum-replay test). No mocked output anywhere;
@@ -57,7 +57,7 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
     blurb:
       'genpkey generates both eras of key with the same command shape — only the -algorithm value changes. Watch what changes (and what stays the same) between an RSA-2048 key and an ML-DSA-65 key.',
     setup:
-      "ML-DSA (FIPS 204) and ML-KEM (FIPS 203) have been native in OpenSSL's default provider since 3.5 (this Studio runs 3.6.2) — no external provider needed. The PQC variant name (e.g. ml-dsa-65) IS the -algorithm value; it is not a -pkeyopt. That trips up first-time users coming from RSA, where key size is a separate -pkeyopt.",
+      "ML-DSA (FIPS 204) and ML-KEM (FIPS 203) have been native in OpenSSL's default provider since 3.5 (this Studio runs 3.6.3) — no external provider needed. The PQC variant name (e.g. ml-dsa-65) IS the -algorithm value; it is not a -pkeyopt. That trips up first-time users coming from RSA, where key size is a separate -pkeyopt.",
     steps: [
       {
         op: 'genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out learn-l1-rsa.key',
@@ -412,7 +412,7 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
       },
     ],
     notes: [
-      'The real error is "Error initializing LMS context" plus an EVP fetch failure naming Algorithm LMS as unsupported — that text comes straight from this build\'s OpenSSL 3.6.2, verified 2026-07-24, not paraphrased.',
+      'The real error is "Error initializing LMS context" plus an EVP fetch failure naming Algorithm LMS as unsupported — that text comes straight from this build\'s OpenSSL 3.6.3, re-verified 2026-08-02, not paraphrased.',
       'Verification IS supported by the CLI (pkeyutl -verify against an LMS public key works) — only generation and signing are out of scope for OpenSSL core.',
       "The Studio's LMS panel (Workbench → lms) is upfront about this: it generates and signs via a bundled WebAssembly engine, and only routes -verify through the real openssl CLI you just tested here.",
     ],

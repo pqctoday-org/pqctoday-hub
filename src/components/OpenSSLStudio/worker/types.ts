@@ -25,6 +25,7 @@ export type WorkerMessage =
    * lookups fail. See openssl.worker.ts's in-token keygen section.
    */
   | { type: 'HSM_KEYGEN'; algorithm: string; keyId: string; requestId?: string }
+  | { type: 'HSM_LIST_OBJECTS'; requestId?: string }
   | {
       type: 'TLS_SIMULATE'
       clientConfig: string
@@ -51,6 +52,25 @@ export type WorkerMessage =
 
 export type WorkerResponse =
   | { type: 'LOG'; stream: 'stdout' | 'stderr'; message: string; requestId?: string }
+  | {
+      // One real PKCS#11 C_* call the worker made against the linked engine.
+      // Distinct from 'LOG', which carries openssl stdout/stderr plus the
+      // worker's own narration — that is prose, this is a call trace.
+      type: 'P11CALL'
+      fn: string
+      args: string
+      /** Raw CK_RV as returned by the engine (unsigned). */
+      rv: number
+      ms: number
+      requestId?: string
+    }
+  | {
+      // Result of a real C_FindObjects sweep of the token — what the token
+      // actually holds, as opposed to what the UI thinks it created.
+      type: 'HSM_OBJECTS'
+      objects: Array<{ handle: number; cls: number; keyType: number; label: string }>
+      requestId?: string
+    }
   | { type: 'FILE_CREATED'; name: string; data: Uint8Array; requestId?: string }
   | { type: 'READY'; requestId?: string }
   | { type: 'ERROR'; error: string; requestId?: string }

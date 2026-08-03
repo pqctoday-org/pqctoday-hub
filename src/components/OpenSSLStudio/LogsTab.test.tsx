@@ -21,6 +21,11 @@ vi.mock('./store', () => ({
   useOpenSSLStore: () => ({
     structuredLogs: mockStructuredLogs,
     clearStructuredLogs: vi.fn(),
+    // LogsTab also renders the shared Pkcs11LogPanel, which filters this
+    // array on render — omitting it makes the whole tab throw, not just
+    // skip the panel.
+    pkcs11Log: [],
+    clearPkcs11Log: vi.fn(),
   }),
 }))
 

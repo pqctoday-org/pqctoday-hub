@@ -27,3 +27,17 @@ fi
 # push regardless of whether one just happened.
 # Bypass with `git push --no-verify` for an intentional WIP push.
 npm run validate:data -- --exclude-checks TP-1,MP-2
+
+# WASM provenance drift — are the vendored crypto bundles still built from
+# the pqctoday-hsm commit they claim?
+# ADDED 2026-08-02. `sync:wasm:check` already existed as an npm script but was
+# wired into nothing, so drift accumulated silently: an audit that day found 5
+# of 6 bundles stale, the worst by 26 commits, meaning the HSM Workshop, TPM
+# bridge, MLS and SSH simulator all ran a two-week-old engine missing a
+# C_Login TOCTOU fix among others. Nobody had a signal.
+# Local-only on purpose, same reasoning as the validator above: the check is a
+# no-op unless a sibling ../pqctoday-hsm checkout exists, so it can only do
+# real work on a machine that actually has the engine source — which is
+# exactly where a rebuild would be performed.
+# Bypass with `git push --no-verify`.
+npm run sync:wasm:check

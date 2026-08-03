@@ -28,6 +28,15 @@ async function suppressWhatsNew(page: Page) {
         version: 3,
       })
     )
+    // The DisclaimerModal is a SEPARATE store with its own key. Without this
+    // it renders fixed-position at the bottom of the viewport and intercepts
+    // pointer events, so later steps in this spec (notably the SoftHSM
+    // toggle) time out on click with no visible cause. Same pattern as
+    // assess-redesign.spec.ts.
+    localStorage.setItem(
+      'pqc-disclaimer-storage',
+      JSON.stringify({ state: { acknowledgedMajorVersion: 99 }, version: 0 })
+    )
   })
 }
 
@@ -77,6 +86,49 @@ test.describe('API Security & JWT workshop — real crypto', () => {
     await page.getByRole('button', { name: /Tamper signature/ }).click()
     await page.getByRole('button', { name: 'Verify (noble)' }).click()
     await expect(page.getByText(/Signature invalid · noble/)).toBeVisible({ timeout: 25_000 })
+  })
+
+  // The SoftHSM backend had never been covered end-to-end: a 2026-08-02 audit
+  // tried and was blocked by the DisclaimerModal intercepting clicks (fixed in
+  // suppressWhatsNew above), so "does the JWT SoftHSM toggle actually work?"
+  // stayed an open question rather than a verified fact. This answers it by
+  // driving the real softhsmrustv3 WASM engine, not the pure-JS noble path.
+  test('SoftHSM3 backend signs a real ML-DSA-65 JWT through PKCS#11', async ({ page }) => {
+    await openWorkshop(page)
+
+    await page
+      .getByRole('button', { name: /PQC JWT Signing|Step 2/i })
+      .first()
+      .click()
+
+    // Switch off the default noble backend onto the PKCS#11 engine.
+    await page.getByRole('button', { name: /SoftHSM3 \(PKCS#11 v3\.2 WASM\)/ }).click()
+
+    // The engine loads asynchronously; keygen is only real once it is ready.
+    await page.getByRole('button', { name: 'Generate Keypair' }).click()
+
+    // Same ML-DSA-65 public-key size as the noble path — the HSM must produce
+    // a spec-conformant 1952-byte key, not a placeholder.
+    const pubKeyPanel = page.getByText(/Public Key \([0-9,]+ bytes\)/)
+    await expect(pubKeyPanel).toBeVisible({ timeout: 40_000 })
+    const pkText = (await pubKeyPanel.textContent()) ?? ''
+    expect(parseInt(pkText.replace(/[^\d]/g, ''), 10)).toBe(1952)
+
+    await page.getByRole('button', { name: /Sign JWT with ML-DSA-65/ }).click()
+    await expect(page.getByText(/^Signed JWT$/)).toBeVisible({ timeout: 40_000 })
+
+    // A real ML-DSA-65 signature is 3309 bytes → the whole token clears 4500
+    // chars. A stubbed/empty signature would not.
+    const totalCell = page.getByText(/^[0-9,]+ chars \([0-9.]+ KB\)$/).first()
+    await expect(totalCell).toBeVisible()
+    const totalText = (await totalCell.textContent()) ?? ''
+    expect(parseInt(totalText.split(' ')[0].replace(/,/g, ''), 10)).toBeGreaterThan(4500)
+
+    // Cross-backend check: a signature made in the HSM must verify under the
+    // independent pure-JS implementation. That is what proves the bytes are
+    // genuine ML-DSA and not merely well-sized.
+    await page.getByRole('button', { name: 'Verify (noble)' }).click()
+    await expect(page.getByText(/Signature valid · noble/)).toBeVisible({ timeout: 40_000 })
   })
 
   test('JWTInspector verifies the IETF KAT JWS for ML-DSA-65 (byte-exact draft vector)', async ({

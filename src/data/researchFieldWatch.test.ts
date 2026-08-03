@@ -2,12 +2,13 @@
 import { describe, it, expect } from 'vitest'
 import {
   computeResearchFieldWatch,
-  loadFieldWatchRows,
+  loadFieldWatchCorpus,
+  FIELD_WATCH_WINDOW_DAYS,
   type FieldWatchRow,
 } from './researchFieldWatch'
 import { parseDateMs } from './libraryData'
 
-const T0 = parseDateMs('2026-06-01') as number // "last visited"
+const T0 = parseDateMs('2026-06-01') as number // start of the reporting window
 const BEFORE = parseDateMs('2026-05-01') as number
 const AFTER = parseDateMs('2026-07-01') as number
 
@@ -24,7 +25,7 @@ function row(overrides: Partial<FieldWatchRow>): FieldWatchRow {
 }
 
 describe('computeResearchFieldWatch', () => {
-  it('first visit (lastVisitedAt = null): everything counts as zero, nothing retracted', () => {
+  it('no window (windowStartMs = null): counting is disabled rather than reporting zeros as a finding', () => {
     const rows: FieldWatchRow[] = [
       row({ referenceId: 'A', algorithmFamily: 'Lattice-based', lastUpdateDateMs: AFTER }),
       row({
@@ -38,11 +39,11 @@ describe('computeResearchFieldWatch', () => {
     expect(summary.fields).toEqual([
       { fieldId: 'lattice-based', label: 'Lattice-based', revisionCount: 0, deprecatedCount: 0 },
     ])
-    expect(summary.totalDeprecatedSinceVisit).toBe(0)
+    expect(summary.totalDeprecatedInWindow).toBe(0)
     expect(summary.nothingRetracted).toBe(true)
   })
 
-  it('counts a row revised after lastVisitedAt toward its mapped field', () => {
+  it('counts a row revised inside the window toward its mapped field', () => {
     const rows: FieldWatchRow[] = [
       row({ referenceId: 'A', algorithmFamily: 'Lattice-based', lastUpdateDateMs: AFTER }),
       row({ referenceId: 'B', algorithmFamily: 'Lattice-based', lastUpdateDateMs: BEFORE }), // stale, shouldn't count
@@ -51,7 +52,7 @@ describe('computeResearchFieldWatch', () => {
     expect(summary.fields[0].revisionCount).toBe(1)
   })
 
-  it('counts a row deprecated after lastVisitedAt toward deprecatedCount and flips nothingRetracted', () => {
+  it('counts a row deprecated inside the window toward deprecatedCount and flips nothingRetracted', () => {
     const rows: FieldWatchRow[] = [
       row({
         referenceId: 'A',
@@ -62,11 +63,11 @@ describe('computeResearchFieldWatch', () => {
     ]
     const summary = computeResearchFieldWatch(['hash-based'], T0, rows)
     expect(summary.fields[0].deprecatedCount).toBe(1)
-    expect(summary.totalDeprecatedSinceVisit).toBe(1)
+    expect(summary.totalDeprecatedInWindow).toBe(1)
     expect(summary.nothingRetracted).toBe(false)
   })
 
-  it('a deprecation from BEFORE lastVisitedAt does not count (old news, already seen)', () => {
+  it('a deprecation from before the window does not count', () => {
     const rows: FieldWatchRow[] = [
       row({
         referenceId: 'A',
@@ -138,30 +139,61 @@ describe('computeResearchFieldWatch', () => {
   })
 })
 
-describe('loadFieldWatchRows — real CSV sanity (not the fixture-driven tests above)', () => {
+describe('loadFieldWatchCorpus — real CSV sanity (not the fixture-driven tests above)', () => {
   it('loads a substantial number of real rows, both active and deprecated', () => {
-    const rows = loadFieldWatchRows(true)
+    const { rows } = loadFieldWatchCorpus(true)
     expect(rows.length).toBeGreaterThan(900) // library CSV had 1011 rows as of 2026-07-31
     expect(rows.some((r) => r.isDeprecated)).toBe(true)
     expect(rows.some((r) => !r.isDeprecated)).toBe(true)
   })
 
   it('every loaded row has a non-empty referenceId', () => {
-    const rows = loadFieldWatchRows()
+    const { rows } = loadFieldWatchCorpus()
     expect(rows.every((r) => r.referenceId.trim().length > 0)).toBe(true)
   })
 
   it('at least one deprecated row has a parsed deprecatedAtMs (proves the raw column round-trips)', () => {
-    const rows = loadFieldWatchRows()
+    const { rows } = loadFieldWatchCorpus()
     expect(rows.some((r) => r.isDeprecated && r.deprecatedAtMs !== null)).toBe(true)
   })
 
-  it('is memoized across calls (same array reference) unless forceReload is passed', () => {
-    const a = loadFieldWatchRows()
-    const b = loadFieldWatchRows()
+  it('derives a release date and a window that starts exactly FIELD_WATCH_WINDOW_DAYS earlier', () => {
+    const { releaseDateMs, windowStartMs } = loadFieldWatchCorpus()
+    expect(releaseDateMs).not.toBeNull()
+    expect(windowStartMs).not.toBeNull()
+    expect((releaseDateMs as number) - (windowStartMs as number)).toBe(
+      FIELD_WATCH_WINDOW_DAYS * 86_400_000
+    )
+  })
+
+  /**
+   * THE REGRESSION THIS CARD EXISTS TO PREVENT. Anchored to the corpus release
+   * the counts must be real; anchored to a visitor's browsing time they were
+   * structurally zero, because the newest last_update_date in the whole catalog
+   * (2026-06-29) predates any live visit. If this ever returns 0 again, the
+   * card is back to telling every researcher nothing changed, forever.
+   */
+  it('reports a non-zero count against the real corpus — the always-zero defect must not return', () => {
+    const corpus = loadFieldWatchCorpus()
+    const allFields = ['lattice-based', 'hash-based', 'code-based', 'other-uncategorized']
+    const summary = computeResearchFieldWatch(allFields, corpus.windowStartMs, corpus.rows)
+    const updated = summary.fields.reduce((n, f) => n + f.revisionCount, 0)
+    expect(updated + summary.totalDeprecatedInWindow).toBeGreaterThan(0)
+  })
+
+  it('a browsing-time boundary would report zero — proving the reframe was the fix, not a tweak', () => {
+    const corpus = loadFieldWatchCorpus()
+    const nowish = parseDateMs('2026-08-02') as number
+    const summary = computeResearchFieldWatch(['hash-based'], nowish, corpus.rows)
+    expect(summary.fields[0].revisionCount).toBe(0)
+  })
+
+  it('is memoized across calls (same object reference) unless forceReload is passed', () => {
+    const a = loadFieldWatchCorpus()
+    const b = loadFieldWatchCorpus()
     expect(a).toBe(b)
-    const c = loadFieldWatchRows(true)
+    const c = loadFieldWatchCorpus(true)
     expect(c).not.toBe(a)
-    expect(c).toEqual(a) // same content, fresh array
+    expect(c.rows).toEqual(a.rows) // same content, fresh object
   })
 })
