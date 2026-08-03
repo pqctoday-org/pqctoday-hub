@@ -4,15 +4,19 @@ import { useNavigate, Link } from 'react-router'
 import { Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { PERSONA_JOURNEY_BOARD, type PersonaJourneyBoard } from '@/data/personaConfig'
+import {
+  PERSONA_JOURNEY_BOARD_VARIANTS,
+  resolveRoleBoardVariant,
+  type PersonaJourneyBoard,
+} from '@/data/personaConfig'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
 
 /**
  * PersonaBoardView — shared, persona-agnostic board skeleton for the
  * persona-journeys A-grade redesign (IMPLEMENTATION-PLAN-2026-08-01.md §3.3).
  *
- * Renders ANY persona's board purely from `PERSONA_JOURNEY_BOARD[personaId]`
- * — hero, side card, 3-card grid and track strip. The only persona-specific
+ * Renders ANY persona's board purely from `PERSONA_JOURNEY_BOARD_VARIANTS[personaId]`
+ * — the option chips, hero, side card, 3-card grid and track strip. The only persona-specific
  * branching in this file is (a) the `customSideCard` override slot, which
  * only ever applies to `researcher`, and (b) the capstone chip being
  * genuinely optional (absent for researcher, present for the other five) —
@@ -28,14 +32,21 @@ export interface PersonaBoardViewProps {
   /**
    * Researcher-only override slot for the side card. When `personaId` is
    * `'researcher'` and this is supplied, it fully replaces the data-driven
-   * side card (title/rows/punchline/footnote sourced from
-   * `PERSONA_JOURNEY_BOARD.researcher.sideCard`, which is a deliberate stub
-   * — see the NOTE above that config entry). This is how the separate
-   * researcher field-watch feature (`ResearcherFieldWatchCard`, per
-   * IMPLEMENTATION-PLAN-2026-08-01.md §6) plugs in later, without this
-   * component needing to know anything about its internals.
+   * side card. This is how the researcher field-watch feature
+   * (`ResearcherFieldWatchCard`) plugs in, without this component needing to
+   * know anything about its internals.
    */
   customSideCard?: ReactNode
+  /**
+   * Which of the role's three board options to render. Defaults to the
+   * order-1 variant — the board the role opens on — when omitted or unknown.
+   * An unrecognised id falling back rather than throwing is deliberate: the
+   * value can come from a persisted store or a `?variant=` URL, neither of
+   * which is trustworthy after a variant is renamed or retired.
+   */
+  variantId?: string
+  /** Called when the visitor picks a different option from the chip row. */
+  onSelectVariant?: (variantId: string) => void
 }
 
 type SideCardTone = PersonaJourneyBoard['sideCard']['tone']
@@ -78,14 +89,57 @@ function ProvenanceChip({
   )
 }
 
-export function PersonaBoardView({ personaId, customSideCard }: PersonaBoardViewProps) {
+export function PersonaBoardView({
+  personaId,
+  customSideCard,
+  variantId,
+  onSelectVariant,
+}: PersonaBoardViewProps) {
   const navigate = useNavigate()
   // eslint-disable-next-line security/detect-object-injection -- personaId is the typed PersonaId union, not user input
-  const board = PERSONA_JOURNEY_BOARD[personaId]
+  const variants = PERSONA_JOURNEY_BOARD_VARIANTS[personaId]
+  const active = resolveRoleBoardVariant(personaId, variantId)
+  const board = active.board
   const useCustomSideCard = personaId === 'researcher' && customSideCard !== undefined
 
   return (
     <div className="w-full">
+      {/* Board option switcher — the role's top three use cases in a PQC
+          migration. Rendered as a real radio group rather than styled buttons
+          so the relationship (one of three, one selected) is announced, not
+          just implied by colour. */}
+      <div
+        className="mb-6 flex flex-wrap gap-2"
+        role="radiogroup"
+        aria-label="Choose what you want to do"
+        data-testid="board-variant-chips"
+      >
+        {variants.map((v) => {
+          const selected = v.id === active.id
+          return (
+            <Button
+              key={v.id}
+              type="button"
+              variant="ghost"
+              size="sm"
+              role="radio"
+              aria-checked={selected}
+              title={v.chipDescription}
+              data-testid={`board-variant-chip-${v.id}`}
+              onClick={() => onSelectVariant?.(v.id)}
+              className={cn(
+                'h-auto rounded-full border px-4 py-1.5 text-xs font-semibold transition-colors',
+                selected
+                  ? 'border-primary/50 bg-primary/10 text-primary'
+                  : 'border-border bg-muted/30 text-muted-foreground hover:border-primary/40 hover:text-foreground'
+              )}
+            >
+              {v.chipLabel}
+            </Button>
+          )
+        })}
+      </div>
+
       {/* Hero + side card row */}
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
         {/* Hero */}

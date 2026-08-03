@@ -13,7 +13,12 @@ import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import type { ReactElement } from 'react'
 import { PersonaBoardView } from './PersonaBoardView'
-import { PERSONA_JOURNEY_BOARD } from '@/data/personaConfig'
+import {
+  PERSONA_JOURNEY_BOARD,
+  PERSONA_JOURNEY_BOARD_VARIANTS,
+  resolveRoleBoardVariant,
+  RESEARCHER_FIELD_WATCH_VARIANT_ID,
+} from '@/data/personaConfig'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
 
 const ALL_PERSONAS = Object.keys(PERSONA_JOURNEY_BOARD) as PersonaId[]
@@ -165,5 +170,115 @@ describe('PersonaBoardView', () => {
       expect(link, `chip "${chip}" isn't rendered as a link`).not.toBeNull()
       expect(link).toHaveAttribute('href', `/learn/${essentials[i]}`)
     })
+  })
+})
+
+/**
+ * Board options — the three top use cases per role, added 2026-08-02.
+ */
+describe('PersonaBoardView — board options', () => {
+  it.each(ALL_PERSONAS)('%s offers exactly 3 options, each a real chip', (personaId) => {
+    renderBoard(<PersonaBoardView personaId={personaId} />)
+    const chips = screen.getAllByRole('radio')
+    expect(chips).toHaveLength(3)
+    // eslint-disable-next-line security/detect-object-injection -- personaId is drawn from ALL_PERSONAS itself
+    for (const v of PERSONA_JOURNEY_BOARD_VARIANTS[personaId]) {
+      expect(screen.getByText(v.chipLabel)).toBeInTheDocument()
+    }
+  })
+
+  it.each(ALL_PERSONAS)('%s opens on its order-1 board when no variant is given', (personaId) => {
+    renderBoard(<PersonaBoardView personaId={personaId} />)
+    // eslint-disable-next-line security/detect-object-injection -- personaId is drawn from ALL_PERSONAS itself
+    const first = PERSONA_JOURNEY_BOARD_VARIANTS[personaId][0]
+    expect(screen.getByText(first.board.headline)).toBeInTheDocument()
+    expect(screen.getByTestId(`board-variant-chip-${first.id}`)).toHaveAttribute(
+      'aria-checked',
+      'true'
+    )
+  })
+
+  it.each(ALL_PERSONAS)('%s renders the requested variant, not the default', (personaId) => {
+    // eslint-disable-next-line security/detect-object-injection -- personaId is drawn from ALL_PERSONAS itself
+    const variants = PERSONA_JOURNEY_BOARD_VARIANTS[personaId]
+    const third = variants[2]
+    renderBoard(<PersonaBoardView personaId={personaId} variantId={third.id} />)
+    expect(screen.getByText(third.board.headline)).toBeInTheDocument()
+    expect(screen.queryByText(variants[0].board.headline)).toBeNull()
+  })
+
+  it('exactly one option is selected at a time', () => {
+    renderBoard(<PersonaBoardView personaId="developer" variantId="sizing" />)
+    const checked = screen
+      .getAllByRole('radio')
+      .filter((c) => c.getAttribute('aria-checked') === 'true')
+    expect(checked).toHaveLength(1)
+  })
+
+  /**
+   * The id can arrive from a persisted store or a hand-typed `?variant=`, so
+   * a stale or invented value must degrade to the role's own board rather
+   * than crash the home page.
+   */
+  it('falls back to the order-1 board for an unknown variant id', () => {
+    renderBoard(<PersonaBoardView personaId="ops" variantId="retired-last-year" />)
+    expect(
+      screen.getByText(PERSONA_JOURNEY_BOARD_VARIANTS.ops[0].board.headline)
+    ).toBeInTheDocument()
+  })
+
+  it('reports the picked option to its caller', async () => {
+    const picked: string[] = []
+    renderBoard(
+      <PersonaBoardView personaId="architect" onSelectVariant={(id) => picked.push(id)} />
+    )
+    screen.getByTestId('board-variant-chip-keystores').click()
+    expect(picked).toEqual(['keystores'])
+  })
+
+  /**
+   * REGRESSION (2026-08-02). LandingView passed the researcher's live
+   * field-watch card whenever the persona was researcher, so it replaced the
+   * side card on ALL THREE researcher boards — silently discarding the two
+   * that carry their own authored side cards (the reproducibility surface and
+   * the CRQC consensus). Caught by rendering the boards, not by any test.
+   */
+  it('the researcher field-watch variant is one of the three real researcher variants', () => {
+    const ids = PERSONA_JOURNEY_BOARD_VARIANTS.researcher.map((v) => v.id)
+    expect(ids).toContain(RESEARCHER_FIELD_WATCH_VARIANT_ID)
+  })
+
+  it('the other two researcher boards carry their own side-card rows', () => {
+    for (const v of PERSONA_JOURNEY_BOARD_VARIANTS.researcher) {
+      if (v.id === RESEARCHER_FIELD_WATCH_VARIANT_ID) continue
+      expect(v.board.sideCard.rows.length).toBeGreaterThan(0)
+    }
+  })
+})
+
+describe('resolveRoleBoardVariant — one fallback rule, shared by both callers', () => {
+  it('returns the requested variant when it exists', () => {
+    expect(resolveRoleBoardVariant('curious', 'mylife').id).toBe('mylife')
+  })
+
+  it('returns the order-1 variant for undefined or unknown ids', () => {
+    expect(resolveRoleBoardVariant('curious', undefined).order).toBe(1)
+    expect(resolveRoleBoardVariant('curious', 'nope').order).toBe(1)
+  })
+
+  it("every role's variants are ordered 1..3", () => {
+    for (const personaId of ALL_PERSONAS) {
+      // eslint-disable-next-line security/detect-object-injection -- personaId is drawn from ALL_PERSONAS itself
+      expect(PERSONA_JOURNEY_BOARD_VARIANTS[personaId].map((v) => v.order)).toEqual([1, 2, 3])
+    }
+  })
+
+  it('PERSONA_JOURNEY_BOARD stays the order-1 board of each role', () => {
+    for (const personaId of ALL_PERSONAS) {
+      // eslint-disable-next-line security/detect-object-injection -- personaId is drawn from ALL_PERSONAS itself
+      expect(PERSONA_JOURNEY_BOARD[personaId]).toBe(
+        PERSONA_JOURNEY_BOARD_VARIANTS[personaId][0].board
+      )
+    }
   })
 })

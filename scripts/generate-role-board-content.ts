@@ -34,12 +34,34 @@ import { fileURLToPath } from 'url'
 import { createServer } from 'vite'
 import Papa from 'papaparse'
 import { expandTokens, hasUnexpandedToken, type PersonaConfigModule } from './lib/roleBoardTokens'
-import { latestDatedCsv, ROLE_BOARD_CONTENT_RE } from './lib/latestDatedCsv'
+import { latestDatedCsv, ROLE_BOARD_CONTENT_RE, ROLE_BOARD_VARIANTS_RE } from './lib/latestDatedCsv'
 import { format, resolveConfig } from 'prettier'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
 const OUT_FILE = join(ROOT, 'src/data/generated/roleBoardContent.generated.ts')
+
+/** One row of `role_board_variants_*.csv` — the variant registry. */
+interface VariantRow {
+  role_id: string
+  variant_id: string
+  order: string
+  chip_label: string
+  chip_description: string
+  phase_id?: string
+  cswp39_zone?: string
+  module_ids?: string
+  workshop_ids?: string
+  status: string
+}
+
+/** Semicolon-separated list cell -> trimmed, non-empty items. */
+function splitSemi(value: string | undefined): string[] {
+  return (value ?? '')
+    .split(';')
+    .map((s) => s.trim())
+    .filter(Boolean)
+}
 
 interface ContentRow {
   role_id: string
@@ -54,6 +76,7 @@ interface ContentRow {
 
 const ROLES = ['executive', 'developer', 'architect', 'ops', 'researcher', 'curious'] as const
 const REQUIRED_GRID_CARDS = 3
+const REQUIRED_VARIANTS_PER_ROLE = 3
 
 // Slots every board must carry — everything except the two optional ones
 // (heroBadge, capstoneChip — absent for researcher by design) and footnote/
@@ -216,93 +239,164 @@ async function main() {
     return out
   }
 
-  // Only the `default` variant is rendered today. A non-default variant used
-  // to be parsed, token-expanded, and then silently DROPPED here — the CSV
-  // advertised a capability the pipeline did not have, so a maintainer could
-  // author a whole alternate board and see no error and no effect. Fail loudly
-  // until multi-variant rendering lands.
-  const unsupportedVariants = [...boards.keys()].filter((k) => !k.endsWith('::default')).sort()
-  if (unsupportedVariants.length > 0) {
+  // Variant registry — one row per (role, variant), carrying the chip copy and
+  // the grounding refs. It decides WHICH variants exist and in what order; the
+  // content CSV carries what each one SAYS.
+  const variantCsvPath = latestDatedCsv(join(ROOT, 'src/data'), ROLE_BOARD_VARIANTS_RE)
+  if (!variantCsvPath) throw new Error('No src/data/role_board_variants_*.csv found.')
+  const variantRows = (
+    Papa.parse<VariantRow>(readFileSync(variantCsvPath, 'utf8'), {
+      header: true,
+      skipEmptyLines: true,
+    }).data ?? []
+  ).filter((r) => r && r.role_id && (r.status ?? 'active') === 'active')
+
+  const variantsByRole = new Map<string, VariantRow[]>()
+  for (const r of variantRows) {
+    if (!variantsByRole.has(r.role_id)) variantsByRole.set(r.role_id, [])
+    variantsByRole.get(r.role_id)!.push(r)
+  }
+  for (const list of variantsByRole.values()) list.sort((a, b) => Number(a.order) - Number(b.order))
+
+  // Content and registry must agree in both directions. Before this, a
+  // non-default variant_id was parsed, token-expanded and then silently
+  // DROPPED — the CSV advertised multi-variant boards the generator could not
+  // render, so a maintainer could author a whole alternate board and see no
+  // error and no effect.
+  const contentKeys = new Set(boards.keys())
+  const registryKeys = new Set(variantRows.map((r) => `${r.role_id}::${r.variant_id}`))
+  const orphanContent = [...contentKeys].filter((k) => !registryKeys.has(k)).sort()
+  const orphanRegistry = [...registryKeys].filter((k) => !contentKeys.has(k)).sort()
+  if (orphanContent.length > 0) {
     throw new Error(
-      `${csvPath}: found ${unsupportedVariants.length} non-default variant(s) ` +
-        `(${unsupportedVariants.join(', ')}), which this generator cannot render yet. ` +
-        `Rendering more than one variant per role requires the multi-variant board ` +
-        `output; refusing to silently drop them.`
+      `${csvPath}: content rows for variant(s) with no active registry row: ` +
+        `${orphanContent.join(', ')} — refusing to silently drop them.`
+    )
+  }
+  if (orphanRegistry.length > 0) {
+    throw new Error(
+      `${variantCsvPath}: registry rows with no content rows: ${orphanRegistry.join(', ')}`
     )
   }
 
   const boardEntries: string[] = []
   for (const role of ROLES) {
-    const key = `${role}::default`
-    const slots = boards.get(key)
-    if (!slots) throw new Error(`No rows for ${key} — every role needs a "default" variant.`)
-    const ctx = key
-
-    for (const req of REQUIRED_SCALAR_SLOTS) requireScalar(slots, req, ctx)
-
-    const gridTitles = repeating(slots, 'grid_card_title')
-    const gridBodies = repeating(slots, 'grid_card_body')
-    if (gridTitles.length !== REQUIRED_GRID_CARDS || gridBodies.length !== REQUIRED_GRID_CARDS) {
+    const variants = variantsByRole.get(role) ?? []
+    if (variants.length !== REQUIRED_VARIANTS_PER_ROLE) {
       throw new Error(
-        `${ctx}: expected exactly ${REQUIRED_GRID_CARDS} grid_card_title/grid_card_body pairs, got ${gridTitles.length}/${gridBodies.length}`
+        `${variantCsvPath}: ${role} has ${variants.length} active variant(s), ` +
+          `expected ${REQUIRED_VARIANTS_PER_ROLE}`
       )
     }
-    // Paired by slot_index, not by position — see `byIndex`.
-    const labelByIndex = byIndex(slots, 'side_card_row_label')
-    const valueByIndex = byIndex(slots, 'side_card_row_value')
-    const rowIndices = [...labelByIndex.keys()].sort((a, b) => Number(a) - Number(b))
-    for (const idx of rowIndices) {
-      if (!valueByIndex.has(idx)) {
-        throw new Error(`${ctx}: side_card_row_label[${idx}] has no matching side_card_row_value`)
-      }
+    const orders = variants.map((v) => Number(v.order)).join(',')
+    const expectedOrders = Array.from({ length: REQUIRED_VARIANTS_PER_ROLE }, (_, i) => i + 1).join(
+      ','
+    )
+    if (orders !== expectedOrders) {
+      throw new Error(
+        `${variantCsvPath}: ${role}'s variant order is [${orders}], expected [${expectedOrders}]`
+      )
     }
-    for (const idx of valueByIndex.keys()) {
-      if (!labelByIndex.has(idx)) {
-        throw new Error(`${ctx}: side_card_row_value[${idx}] has no matching side_card_row_label`)
+
+    // The order-1 variant is the role's base: what renders before the visitor
+    // picks anything, and what the other two INHERIT track chips and capstone
+    // from. Only those two slots inherit, and only because they are bound 1:1
+    // by POSITION to the persona's own `essentials` module ids —
+    // PersonaBoardView links chip i to PERSONAS[role].essentials[i], so
+    // varying them per variant would silently break that link. Every other
+    // slot is authored explicitly per variant, so "what does this board say"
+    // is answerable from its own rows.
+    const baseSlots = boards.get(`${role}::${variants[0].variant_id}`)!
+
+    const variantEntries: string[] = []
+    for (const variant of variants) {
+      const key = `${role}::${variant.variant_id}`
+      const slots = boards.get(key)!
+      const ctx = key
+
+      for (const req of REQUIRED_SCALAR_SLOTS) requireScalar(slots, req, ctx)
+
+      const gridTitles = repeating(slots, 'grid_card_title')
+      const gridBodies = repeating(slots, 'grid_card_body')
+      if (gridTitles.length !== REQUIRED_GRID_CARDS || gridBodies.length !== REQUIRED_GRID_CARDS) {
+        throw new Error(
+          `${ctx}: expected exactly ${REQUIRED_GRID_CARDS} grid_card_title/grid_card_body pairs, got ${gridTitles.length}/${gridBodies.length}`
+        )
       }
+      // Paired by slot_index, not by position — see `byIndex`.
+      const labelByIndex = byIndex(slots, 'side_card_row_label')
+      const valueByIndex = byIndex(slots, 'side_card_row_value')
+      const rowIndices = [...labelByIndex.keys()].sort((a, b) => Number(a) - Number(b))
+      for (const idx of rowIndices) {
+        if (!valueByIndex.has(idx)) {
+          throw new Error(`${ctx}: side_card_row_label[${idx}] has no matching side_card_row_value`)
+        }
+      }
+      for (const idx of valueByIndex.keys()) {
+        if (!labelByIndex.has(idx)) {
+          throw new Error(`${ctx}: side_card_row_value[${idx}] has no matching side_card_row_label`)
+        }
+      }
+      const rowLabels = rowIndices.map((i) => labelByIndex.get(i)!)
+      const rowValues = rowIndices.map((i) => valueByIndex.get(i)!)
+
+      const heroBadgeText = scalar(slots, 'hero_badge_text')
+      const heroBadgeTone = scalar(slots, 'hero_badge_tone')
+      const sideCardFootnote = scalar(slots, 'side_card_footnote')
+      const sideCardEmptyState = scalar(slots, 'side_card_empty_state')
+      const trackNote = scalar(slots, 'track_note')
+      // The two inherited slots — see `baseSlots` above for why only these.
+      const trackChips = slots.has('track_chip')
+        ? repeating(slots, 'track_chip')
+        : repeating(baseSlots, 'track_chip')
+      const capstoneLabel =
+        scalar(slots, 'capstone_chip_label') ?? scalar(baseSlots, 'capstone_chip_label')
+
+      const obj = `    {
+      id: ${jsString(variant.variant_id)},
+      order: ${Number(variant.order)},
+      chipLabel: ${jsString(variant.chip_label)},
+      chipDescription: ${jsString(variant.chip_description)},
+      phaseId: ${jsString(variant.phase_id ?? '')},
+      cswp39Zone: ${jsString(variant.cswp39_zone ?? '')},
+      moduleIds: [${splitSemi(variant.module_ids).map(jsString).join(', ')}],
+      workshopIds: [${splitSemi(variant.workshop_ids).map(jsString).join(', ')}],
+      board: {
+        heroEyebrow: ${jsString(requireScalar(slots, 'hero_eyebrow', ctx))},
+        ${heroBadgeText !== undefined ? `heroBadge: { text: ${jsString(heroBadgeText)}, tone: ${jsString(heroBadgeTone ?? 'sourced')} as 'sourced' | 'illustrative' },` : ''}
+        headline: ${jsString(requireScalar(slots, 'headline', ctx))},
+        sub: ${jsString(requireScalar(slots, 'sub', ctx))},
+        ctaPrimary: ${jsString(requireScalar(slots, 'cta_primary_label', ctx))},
+        ctaPrimaryHref: ${jsString(requireScalar(slots, 'cta_primary_href', ctx))},
+        ctaSecondary: ${jsString(requireScalar(slots, 'cta_secondary_label', ctx))},
+        ctaSecondaryHref: ${jsString(requireScalar(slots, 'cta_secondary_href', ctx))},
+        proofChips: [${repeating(slots, 'proof_chip').map(jsString).join(', ')}],
+        sideCard: {
+          title: ${jsString(requireScalar(slots, 'side_card_title', ctx))},
+          tone: ${jsString(requireScalar(slots, 'side_card_tone', ctx))} as 'bad' | 'warn' | 'info' | 'accent',
+          provenance: ${jsString(requireScalar(slots, 'side_card_provenance', ctx))} as 'sourced' | 'illustrative',
+          rows: [${rowLabels.map((label, i) => `{ label: ${jsString(label)}, value: ${jsString(rowValues[i])} }`).join(', ')}],
+          punchline: ${jsString(requireScalar(slots, 'side_card_punchline', ctx))},
+          ${sideCardFootnote !== undefined ? `footnote: ${jsString(sideCardFootnote)},` : ''}
+          ${sideCardEmptyState !== undefined ? `emptyState: ${jsString(sideCardEmptyState)},` : ''}
+        },
+        gridTitle: ${jsString(requireScalar(slots, 'grid_title', ctx))},
+        gridSub: ${jsString(requireScalar(slots, 'grid_sub', ctx))},
+        gridCards: [${gridTitles.map((title, i) => `{ title: ${jsString(title)}, body: ${jsString(gridBodies[i])} }`).join(', ')}] as [
+          { title: string; body: string },
+          { title: string; body: string },
+          { title: string; body: string },
+        ],
+        trackTitle: ${jsString(requireScalar(slots, 'track_title', ctx))},
+        ${trackNote !== undefined ? `trackNote: ${jsString(trackNote)},` : ''}
+        trackChips: [${trackChips.map(jsString).join(', ')}],
+        ${capstoneLabel !== undefined ? `capstoneChip: { label: ${jsString(capstoneLabel)} },` : ''}
+      },
+    },`
+      variantEntries.push(obj)
     }
-    const rowLabels = rowIndices.map((i) => labelByIndex.get(i)!)
-    const rowValues = rowIndices.map((i) => valueByIndex.get(i)!)
 
-    const heroBadgeText = scalar(slots, 'hero_badge_text')
-    const heroBadgeTone = scalar(slots, 'hero_badge_tone')
-    const sideCardFootnote = scalar(slots, 'side_card_footnote')
-    const sideCardEmptyState = scalar(slots, 'side_card_empty_state')
-    const trackNote = scalar(slots, 'track_note')
-    const capstoneLabel = scalar(slots, 'capstone_chip_label')
-
-    const obj = `  ${role}: {
-    heroEyebrow: ${jsString(requireScalar(slots, 'hero_eyebrow', ctx))},
-    ${heroBadgeText !== undefined ? `heroBadge: { text: ${jsString(heroBadgeText)}, tone: ${jsString(heroBadgeTone ?? 'sourced')} as 'sourced' | 'illustrative' },` : ''}
-    headline: ${jsString(requireScalar(slots, 'headline', ctx))},
-    sub: ${jsString(requireScalar(slots, 'sub', ctx))},
-    ctaPrimary: ${jsString(requireScalar(slots, 'cta_primary_label', ctx))},
-    ctaPrimaryHref: ${jsString(requireScalar(slots, 'cta_primary_href', ctx))},
-    ctaSecondary: ${jsString(requireScalar(slots, 'cta_secondary_label', ctx))},
-    ctaSecondaryHref: ${jsString(requireScalar(slots, 'cta_secondary_href', ctx))},
-    proofChips: [${repeating(slots, 'proof_chip').map(jsString).join(', ')}],
-    sideCard: {
-      title: ${jsString(requireScalar(slots, 'side_card_title', ctx))},
-      tone: ${jsString(requireScalar(slots, 'side_card_tone', ctx))} as 'bad' | 'warn' | 'info' | 'accent',
-      provenance: ${jsString(requireScalar(slots, 'side_card_provenance', ctx))} as 'sourced' | 'illustrative',
-      rows: [${rowLabels.map((label, i) => `{ label: ${jsString(label)}, value: ${jsString(rowValues[i])} }`).join(', ')}],
-      punchline: ${jsString(requireScalar(slots, 'side_card_punchline', ctx))},
-      ${sideCardFootnote !== undefined ? `footnote: ${jsString(sideCardFootnote)},` : ''}
-      ${sideCardEmptyState !== undefined ? `emptyState: ${jsString(sideCardEmptyState)},` : ''}
-    },
-    gridTitle: ${jsString(requireScalar(slots, 'grid_title', ctx))},
-    gridSub: ${jsString(requireScalar(slots, 'grid_sub', ctx))},
-    gridCards: [${gridTitles.map((title, i) => `{ title: ${jsString(title)}, body: ${jsString(gridBodies[i])} }`).join(', ')}] as [
-      { title: string; body: string },
-      { title: string; body: string },
-      { title: string; body: string },
-    ],
-    trackTitle: ${jsString(requireScalar(slots, 'track_title', ctx))},
-    ${trackNote !== undefined ? `trackNote: ${jsString(trackNote)},` : ''}
-    trackChips: [${repeating(slots, 'track_chip').map(jsString).join(', ')}],
-    ${capstoneLabel !== undefined ? `capstoneChip: { label: ${jsString(capstoneLabel)} },` : ''}
-  },`
-    boardEntries.push(obj)
+    boardEntries.push(`  ${role}: [\n${variantEntries.join('\n')}\n  ],`)
   }
 
   const generated = `// SPDX-License-Identifier: GPL-3.0-only
@@ -311,12 +405,25 @@ async function main() {
  * Source: ${csvPath.replace(ROOT + '/', '')}
  * Regenerate: npm run generate:role-board-content
  */
-import type { PersonaJourneyBoard } from '../personaConfig'
+import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
 import type { PersonaId } from '../learningPersonas'
 
-export const PERSONA_JOURNEY_BOARD: Record<PersonaId, PersonaJourneyBoard> = {
+/** Every role's board options, in chip order (order 1 first). */
+export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[]> = {
 ${boardEntries.join('\n')}
 }
+
+/**
+ * The board a role opens on — its order-1 variant.
+ *
+ * Kept as a distinct export so every existing consumer
+ * (PersonaBoardView, CuriousMobileBoard, ResearcherFieldWatchCard, the drift
+ * guards) keeps working unchanged against "the role's board", and only code
+ * that genuinely cares about variants reaches for the map above.
+ */
+export const PERSONA_JOURNEY_BOARD: Record<PersonaId, PersonaJourneyBoard> = Object.fromEntries(
+  Object.entries(PERSONA_JOURNEY_BOARD_VARIANTS).map(([role, variants]) => [role, variants[0].board])
+) as Record<PersonaId, PersonaJourneyBoard>
 `
 
   // Format through Prettier before writing. Generation must be DETERMINISTIC:

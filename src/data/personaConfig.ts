@@ -1290,6 +1290,39 @@ export interface PersonaJourneyBoard {
   capstoneChip?: { label: string }
 }
 
+/**
+ * One of the three board options a role can be shown, with the grounding that
+ * justifies it existing.
+ *
+ * The three options per role are the top three use cases for that role in
+ * supporting a PQC migration, drawn from the Simulation's own phase vocabulary
+ * (`frameworkPhases.ts`) and cross-checked against `BC_ZONE_EMPHASIS_BY_PERSONA`.
+ * `curious` is the deliberate exception: that persona is not running a
+ * migration, so its three are entry points and carry no `phaseId`/`cswp39Zone`
+ * — forcing the phase axis onto it would invent a use case it does not have.
+ *
+ * `moduleIds` and `workshopIds` are not decoration. A priv-side validator
+ * asserts every workshop id is a real `workshopRegistry.tsx` entry and every
+ * module id sits on THAT ROLE's own `recommendedPath` — which is what makes
+ * "relevant for this role" a check rather than a claim.
+ */
+export interface RoleBoardVariant {
+  id: string
+  /** 1-based; order 1 is what the role opens on. */
+  order: number
+  /** Chip text in the switcher. */
+  chipLabel: string
+  /** One line of "what this option is for". */
+  chipDescription: string
+  /** `frameworkPhases.ts` phase id, or '' for the curious entry-point axis. */
+  phaseId: string
+  /** `cswp39ZoneData.ts` ZoneId, or '' for the curious entry-point axis. */
+  cswp39Zone: string
+  moduleIds: string[]
+  workshopIds: string[]
+  board: PersonaJourneyBoard
+}
+
 /* ──────────────────────────────────────────────────────────────────────────────
  * Persona-board copy helpers — 2026-08-01 dynamic-data remediation
  * (HOME-PAGE-DYNAMIC-DATA-REMEDIATION-PLAN-2026-08-01.md rev. 2). Every number
@@ -1554,4 +1587,42 @@ export function formatEssentialsVsFull(personaId: PersonaId): string {
  * `scripts/lib/roleBoardTokens.ts`'s token registry. They must stay exported
  * for that pipeline to keep working; do not remove them as unused.
  */
-export { PERSONA_JOURNEY_BOARD } from './generated/roleBoardContent.generated'
+export {
+  PERSONA_JOURNEY_BOARD,
+  PERSONA_JOURNEY_BOARD_VARIANTS,
+} from './generated/roleBoardContent.generated'
+
+import { PERSONA_JOURNEY_BOARD_VARIANTS as BOARD_VARIANTS } from './generated/roleBoardContent.generated'
+
+/**
+ * The board option to render for `personaId`, given a requested variant id
+ * that may be stale, hand-typed, or absent.
+ *
+ * Falls back to the role's order-1 variant rather than throwing: the id can
+ * arrive from a persisted store or a `?variant=` URL, neither of which stays
+ * trustworthy once a variant is renamed or retired.
+ *
+ * Exported so PersonaBoardView and LandingView resolve this the SAME way.
+ * They both need the answer — the board to draw, and whether the researcher's
+ * live field-watch card belongs on it — and two copies of the fallback rule
+ * would be free to disagree the moment one of them changed.
+ */
+export function resolveRoleBoardVariant(
+  personaId: PersonaId,
+  variantId: string | undefined
+): RoleBoardVariant {
+  // eslint-disable-next-line security/detect-object-injection -- personaId is the typed PersonaId union, not user input
+  const variants = BOARD_VARIANTS[personaId]
+  return variants.find((v) => v.id === variantId) ?? variants[0]
+}
+
+/**
+ * The one researcher variant whose side card is the live field watch.
+ *
+ * `ResearcherFieldWatchCard` reports what changed in the library corpus, which
+ * is the "trace every claim" option's subject — not the other two, which
+ * carry their own authored side cards (the reproducibility surface, and the
+ * CRQC consensus). Before this was scoped, the custom card replaced the side
+ * card on ALL THREE researcher boards, silently discarding two of them.
+ */
+export const RESEARCHER_FIELD_WATCH_VARIANT_ID = 'provenance'
