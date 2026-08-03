@@ -2603,8 +2603,36 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     // Reset slot init guard so the next Generate Certs / Start Daemon gets fresh slots.
     vpnRpcInitRef.current = false
     strongSwanEngine.destroy()
+
+    // Close the PKCS#11 sessions THIS panel opened. Previously Reset dropped
+    // only React state, so every re-run leaked another set of open sessions
+    // into the shared softhsmv3 module for the lifetime of the /playground
+    // route — the mode-change path below already did this, Reset never did.
+    //
+    // Deliberately NOT C_Finalize: the C++ module is a shared singleton
+    // (HsmContext, TokenSetupPanel, HybridSignatures and useHSM all hold it),
+    // so finalizing here would tear the token out from under the HSM Workshop
+    // whenever both are mounted. Whole-token teardown stays with
+    // PlaygroundProvider's clearSoftHSMCache() on route unmount, which is the
+    // only place that actually owns it.
+    void (async () => {
+      try {
+        const M = await getSoftHSMCppModule()
+        for (const hSess of vpnStateRef.current.sessions.keys()) {
+          try {
+            M._C_CloseSession(hSess)
+          } catch {
+            // Best-effort: a stale handle from a previous run is expected here.
+          }
+        }
+      } catch {
+        // Module never loaded (Reset before any run) — nothing to close.
+      }
+    })()
+    vpnStateRef.current.sessions.clear()
+    vpnSlotsRef.current = { init: 0, resp: 1 }
     // Don't re-init here — user must click "Start Daemon" to pass configs.
-  }, [vpnRpcInitRef])
+  }, [vpnRpcInitRef, vpnSlotsRef])
 
   // Provision RSA-3072 key pairs into softhsmv3 and build self-signed X.509 certs.
   // The private key is generated on the HSM and never exported — cert is signed via

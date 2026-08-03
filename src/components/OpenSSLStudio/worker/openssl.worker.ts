@@ -27,6 +27,7 @@ type WorkerMessage =
   | { type: 'FILE_UPLOAD'; name: string; data: Uint8Array; requestId?: string }
   | { type: 'DELETE_FILE'; name: string; requestId?: string }
   | { type: 'HSM_KEYGEN'; algorithm: string; keyId: string; requestId?: string }
+  | { type: 'HSM_LIST_OBJECTS'; requestId?: string }
   | {
       type: 'TLS_SIMULATE'
       clientConfig: string
@@ -1085,6 +1086,162 @@ var generateKeyInToken = (
 }
 
 /**
+ * Enumerate what is ACTUALLY resident on the token, via a real
+ * C_FindObjectsInit/C_FindObjects/C_FindObjectsFinal sweep plus a
+ * C_GetAttributeValue read per object.
+ *
+ * This exists because the Studio's key list was previously just React state
+ * it populated itself when IT created a key — so a key generated in another
+ * tab, restored from a snapshot, or left by an earlier session was invisible,
+ * and the list could claim keys the token no longer had. This asks the token.
+ *
+ * Reads CKA_CLASS / CKA_KEY_TYPE / CKA_LABEL only. Deliberately never reads
+ * CKA_VALUE: private key material is CKA_SENSITIVE and asking for it would
+ * (correctly) fail, but attempting it at all is the wrong habit to model in
+ * a teaching tool.
+ */
+var listTokenObjects = (
+  module: any,
+  requestId?: string
+): Array<{ handle: number; cls: number; keyType: number; label: string }> => {
+  var out: Array<{ handle: number; cls: number; keyType: number; label: string }> = []
+  if (
+    typeof module._C_FindObjectsInit !== 'function' ||
+    typeof module._C_FindObjects !== 'function' ||
+    typeof module._C_FindObjectsFinal !== 'function'
+  ) {
+    return out
+  }
+
+  var slot = firstSlot(module)
+  if (slot === null) return out
+
+  var sessP = module._malloc(4)
+  module.setValue(sessP, 0, 'i32')
+  var openRv = p11Call(
+    'C_OpenSession',
+    'slot=' + slot + ', flags=SERIAL|RW',
+    () => module._C_OpenSession(slot, CKF_SERIAL_SESSION | CKF_RW_SESSION, 0, 0, sessP),
+    requestId
+  )
+  if (openRv !== CKR_OK) {
+    module._free(sessP)
+    return out
+  }
+  var session = module.getValue(sessP, 'i32')
+  module._free(sessP)
+
+  var pinP = module._malloc(STUDIO_USER_PIN.length + 1)
+  module.stringToUTF8(STUDIO_USER_PIN, pinP, STUDIO_USER_PIN.length + 1)
+  // CKR_USER_ALREADY_LOGGED_IN (0x100) is fine — private objects need a login,
+  // but the session may already have one.
+  p11Call(
+    'C_Login',
+    'hSession=' + session + ', userType=CKU_USER',
+    () => module._C_Login(session, CKU_USER, pinP, STUDIO_USER_PIN.length),
+    requestId
+  )
+  module._free(pinP)
+
+  try {
+    // Null template = "every object", per PKCS#11 v3.2 §5.7.1.
+    var initRv = p11Call(
+      'C_FindObjectsInit',
+      'hSession=' + session + ', pTemplate=NULL (all objects)',
+      () => module._C_FindObjectsInit(session, 0, 0),
+      requestId
+    )
+    if (initRv !== CKR_OK) return out
+
+    var MAX = 64
+    var handlesP = module._malloc(MAX * 4)
+    var countP = module._malloc(4)
+    module.setValue(countP, 0, 'i32')
+    var findRv = p11Call(
+      'C_FindObjects',
+      'hSession=' + session + ', ulMaxObjectCount=' + MAX,
+      () => module._C_FindObjects(session, handlesP, MAX, countP),
+      requestId
+    )
+    var found = findRv === CKR_OK ? module.getValue(countP, 'i32') : 0
+    var handles: number[] = []
+    for (var i = 0; i < found; i++) handles.push(module.getValue(handlesP + i * 4, 'i32'))
+    module._free(handlesP)
+    module._free(countP)
+
+    p11Call(
+      'C_FindObjectsFinal',
+      'hSession=' + session,
+      () => module._C_FindObjectsFinal(session),
+      requestId
+    )
+
+    for (var h = 0; h < handles.length; h++) {
+      out.push({
+        handle: handles[h],
+        cls: readUlongAttr(module, session, handles[h], CKA_CLASS),
+        keyType: readUlongAttr(module, session, handles[h], CKA_KEY_TYPE),
+        label: readStringAttr(module, session, handles[h], CKA_LABEL),
+      })
+    }
+  } finally {
+    p11Call('C_Logout', 'hSession=' + session, () => module._C_Logout(session), requestId)
+    p11Call(
+      'C_CloseSession',
+      'hSession=' + session,
+      () => module._C_CloseSession(session),
+      requestId
+    )
+  }
+  return out
+}
+
+/** One CK_ULONG attribute, or -1 when the object doesn't carry it. */
+var readUlongAttr = (module: any, session: number, obj: number, attrType: number): number => {
+  var valP = module._malloc(4)
+  var tplP = module._malloc(12)
+  module.setValue(tplP, attrType, 'i32')
+  module.setValue(tplP + 4, valP, 'i32')
+  module.setValue(tplP + 8, 4, 'i32')
+  var rv = module._C_GetAttributeValue(session, obj, tplP, 1)
+  var v = rv === CKR_OK ? module.getValue(valP, 'i32') : -1
+  module._free(valP)
+  module._free(tplP)
+  return v
+}
+
+/**
+ * One string attribute. Uses the standard two-call idiom: length first
+ * (pValue=NULL), then the buffer — CKR_BUFFER_TOO_SMALL is not an error here.
+ */
+var readStringAttr = (module: any, session: number, obj: number, attrType: number): string => {
+  var tplP = module._malloc(12)
+  module.setValue(tplP, attrType, 'i32')
+  module.setValue(tplP + 4, 0, 'i32')
+  module.setValue(tplP + 8, 0, 'i32')
+  if (module._C_GetAttributeValue(session, obj, tplP, 1) !== CKR_OK) {
+    module._free(tplP)
+    return ''
+  }
+  var len = module.getValue(tplP + 8, 'i32')
+  if (len <= 0 || len > 4096) {
+    module._free(tplP)
+    return ''
+  }
+  var bufP = module._malloc(len)
+  module.setValue(tplP + 4, bufP, 'i32')
+  module.setValue(tplP + 8, len, 'i32')
+  var s = ''
+  if (module._C_GetAttributeValue(session, obj, tplP, 1) === CKR_OK) {
+    var bytes = module.HEAPU8.subarray(bufP, bufP + len)
+    for (var i = 0; i < len; i++) s += String.fromCharCode(bytes[i])
+  }
+  module._free(bufP)
+  module._free(tplP)
+  return s.replace(/\0+$/, '')
+}
+
+/**
  * Snapshot the engine via the malloc-based pull. ONLY for modules that have
  * NOT had `callMain` invoked — see `takeTokenSnapshot`'s doc comment.
  * Keeps the previous snapshot if the engine had nothing to give.
@@ -1848,6 +2005,36 @@ var generateCaRoot = async (
  * addresses it. Runs the token lifecycle first, then snapshots the engine so
  * the key survives into subsequent commands.
  */
+/**
+ * Ask the token what it actually holds and report it.
+ *
+ * Runs the same lifecycle as keygen (fresh module, restore snapshot, ensure
+ * token) so the sweep sees the persisted token rather than an empty fresh
+ * one — the whole point is to reflect reality, including keys this session
+ * never created.
+ */
+var listHsmObjects = async (requestId?: string) => {
+  try {
+    await loadOpenSSLScript('/wasm/openssl.js', requestId)
+    const module = await createOpenSSLInstance(requestId)
+    injectEntropy(module, requestId)
+    configureEnvironment(module, requestId)
+
+    const tokenErr = ensureHsmToken(module, requestId)
+    if (tokenErr) throw new Error(tokenErr)
+
+    const objects = listTokenObjects(module, requestId)
+    // The sweep opens/closes a session, so re-snapshot to keep the persisted
+    // state consistent with what the engine now believes.
+    saveHsmSnapshotDirectApi(module)
+
+    self.postMessage({ type: 'HSM_OBJECTS', objects, requestId })
+    self.postMessage({ type: 'DONE', requestId })
+  } catch (e: any) {
+    self.postMessage({ type: 'ERROR', error: e?.message ?? String(e), requestId })
+  }
+}
+
 var generateHsmKey = async (algorithm: string, keyId: string, requestId?: string) => {
   try {
     await loadOpenSSLScript('/wasm/openssl.js', requestId)
@@ -2064,6 +2251,8 @@ self.addEventListener('message', async (event: MessageEvent<WorkerMessage>) => {
         keyId: string
       }
       await generateHsmKey(algorithm, keyId, requestId)
+    } else if (type === 'HSM_LIST_OBJECTS') {
+      await listHsmObjects(requestId)
     } else if (type === 'SKEY_OPERATION') {
       const { opType, params } = event.data as any
       await executeSkeyOperation(opType, params, requestId)
