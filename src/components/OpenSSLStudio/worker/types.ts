@@ -51,6 +51,18 @@ export type WorkerMessage =
 
 export type WorkerResponse =
   | { type: 'LOG'; stream: 'stdout' | 'stderr'; message: string; requestId?: string }
+  | {
+      // One real PKCS#11 C_* call the worker made against the linked engine.
+      // Distinct from 'LOG', which carries openssl stdout/stderr plus the
+      // worker's own narration — that is prose, this is a call trace.
+      type: 'P11CALL'
+      fn: string
+      args: string
+      /** Raw CK_RV as returned by the engine (unsigned). */
+      rv: number
+      ms: number
+      requestId?: string
+    }
   | { type: 'FILE_CREATED'; name: string; data: Uint8Array; requestId?: string }
   | { type: 'READY'; requestId?: string }
   | { type: 'ERROR'; error: string; requestId?: string }

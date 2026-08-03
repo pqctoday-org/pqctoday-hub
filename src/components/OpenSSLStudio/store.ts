@@ -2,6 +2,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { useModuleStore } from '../../store/useModuleStore'
+import type { Pkcs11LogEntry } from '../../wasm/softhsm'
 
 export interface VirtualFile {
   name: string
@@ -47,6 +48,15 @@ interface OpenSSLStudioState {
   structuredLogs: StructuredLogEntry[]
   addStructuredLog: (entry: Omit<StructuredLogEntry, 'id' | 'timestamp'>) => void
   clearStructuredLogs: () => void
+
+  // Real PKCS#11 C_* calls the worker made against the linked engine. Shares
+  // the Pkcs11LogEntry shape with the HSM/VPN/SSH playgrounds so the same
+  // Pkcs11LogPanel renders them. Only JS-visible calls appear here — see
+  // p11Call() in worker/openssl.worker.ts for why provider-internal crypto
+  // cannot be traced.
+  pkcs11Log: Pkcs11LogEntry[]
+  addPkcs11LogEntry: (entry: Omit<Pkcs11LogEntry, 'id' | 'timestamp'>) => void
+  clearPkcs11Log: () => void
 
   // UI State
   activeTab: 'terminal' | 'logs'
@@ -159,6 +169,23 @@ export const useOpenSSLStore = create<OpenSSLStudioState>()(
         })),
       clearStructuredLogs: () => set({ structuredLogs: [] }),
 
+      pkcs11Log: [],
+      addPkcs11LogEntry: (entry) =>
+        set((state) => ({
+          // Appended (oldest first) because a PKCS#11 trace only reads
+          // correctly in call order — unlike structuredLogs above, which is
+          // newest-first. Capped for the same reason.
+          pkcs11Log: [
+            ...state.pkcs11Log,
+            {
+              id: state.pkcs11Log.length + 1,
+              timestamp: new Date().toLocaleTimeString(),
+              ...entry,
+            },
+          ].slice(-500),
+        })),
+      clearPkcs11Log: () => set({ pkcs11Log: [] }),
+
       activeTab: 'terminal',
       setActiveTab: (tab) => set({ activeTab: tab }),
 
@@ -188,6 +215,7 @@ export const useOpenSSLStore = create<OpenSSLStudioState>()(
           files: [],
           logs: [],
           structuredLogs: [],
+          pkcs11Log: [],
           command: '',
           isProcessing: false,
           isReady: false,
