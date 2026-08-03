@@ -47,7 +47,13 @@ describe('algorithmListParser — parses the real openssl list output', () => {
 
     expect(byKey.pkcs11, raw).toBeTruthy()
     expect(byKey.pkcs11.reportedStatus).toBe('active')
-    expect(byKey.pkcs11.buildInfo ?? '').toContain('SoftHSMv3')
+    // The bundled openssl.wasm's PKCS#11 engine was swapped from the C++
+    // SoftHSMv3 fork to the pure-Rust softhsmrustv3 (see the openssl-pkcs11
+    // entry in public/wasm/wasm-provenance.json) — it now self-reports
+    // "Built for softhsmrustv3 <version> (pure-Rust engine, no OpenSSL
+    // backend)". Match the engine name case-insensitively and don't pin the
+    // version, so a future bundle rebuild doesn't fail this on a version bump.
+    expect(byKey.pkcs11.buildInfo ?? '').toMatch(/softhsmrustv3/i)
   })
 
   it('parseKeyManagersSection finds ML-KEM/ML-DSA/SLH-DSA under @ default, and the pkcs11 duplicates', async () => {

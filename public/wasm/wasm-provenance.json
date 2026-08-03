@@ -42,9 +42,9 @@
       "sourceDirs": ["openssh-pkcs11"],
       "track": "tip",
       "status": "built",
-      "hsmCommit": "1c637d3a3916b08fe59445120d93f26dfd79d639",
-      "builtAt": "2026-07-10",
-      "_buildNote": "Re-stamped, not rebuilt: verified `git log 07cd2e0e1..1c637d3 -- openssh-pkcs11/` touches only CHANGELOG.md and STATUS.md (2 doc-only commits, zero source/behavior change). No emsdk/Emscripten toolchain is installed on this machine, so an actual rebuild wasn't attempted or needed \u2014 the existing binary is bit-for-bit what v0.14.0's source would produce."
+      "hsmCommit": "83867174b06a6eee579110bc50d9beb177c59dcc",
+      "builtAt": "2026-08-02",
+      "_buildNote": "Genuinely rebuilt 2026-08-02 from hsm main @ 8386717 (v0.20.2) via openssh-pkcs11/scripts/build-wasm.sh with emsdk 6.0.4, closing a 5-commit drift. Pulls in v0.20.0 (13bca12, SLH-DSA-SHA2-128s SSH auth runtime-verified end-to-end), the SLH-DSA backport (dcdbed8), and the v0.19.0 emsdk 6.0.4 / OpenSSL 3.6.3 toolchain fixes (e85b26d). Only the SHIPPED pair is staged \u2014 public/wasm/openssh-server.{js,wasm}; build-wasm.sh also emits openssh-client.{js,wasm} and copy-to-hub.sh would copy all four, but the hub has never tracked the client pair, so copying it manually keeps the diff faithful to what actually ships. Verified live in a real browser against this exact binary: e2e/ssh-pqc-simulator.spec.ts 25 passed / 1 flaky (the flaky one is a static copy assertion, `description advertises real softhsmv3 PKCS#11`, which passed on retry \u2014 dev-server cold-compile timing, not the bundle). Scope note from the 2026-08-02 audit: the SSH simulator's host-key dropdown offers only ssh-ed25519 and ssh-mldsa-44/65/87, so v0.20.0's SLH-DSA SSH auth is not reachable from this playground's UI today \u2014 the rebuild is correctness/provenance hygiene, and wiring an SLH-DSA host-key option is a separate product decision. Prior entry (1c637d3a, 2026-07-10): re-stamped rather than rebuilt, because `git log 07cd2e0e1..1c637d3 -- openssh-pkcs11/` touched only CHANGELOG.md and STATUS.md; that note also recorded 'no emsdk on this machine', which was wrong \u2014 emsdk lives at ../emsdk and only needs `source emsdk_env.sh`."
     },
     {
       "name": "strongswan",
