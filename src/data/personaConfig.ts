@@ -745,7 +745,29 @@ export const PERSONA_REPORT_CONFIG: Record<
     migrationToolkit: { state: 'collapsed' },
     recommendedActions: { state: 'open', maxItems: 5 },
   },
-  developer: {},
+  // WS4a (2026-08-02) — this was `{}`. Five personas carried real overrides and
+  // developer carried none, so an implementer got the no-persona report and the
+  // page said so out loud ("All N report sections, at their defaults"). The
+  // profile below leads with what an implementer acts on and demotes the
+  // board-framing sections rather than hiding them — a developer sometimes has
+  // to present upward, so nothing is removed, only ordered by usefulness.
+  developer: {
+    // The two an implementer opens first: what to replace, and the inventory of
+    // what they have. `cbom` is collapsed by default; for this persona it is
+    // the working document.
+    cbom: { state: 'open' },
+    discovery: { state: 'open' },
+    // Concrete integration surfaces.
+    migrationToolkit: { state: 'open' },
+    migrationRoadmap: { state: 'open' },
+    // Dependencies a developer cannot fix in their own code — needed, but not
+    // the first thing they read.
+    vendorRisk: { state: 'collapsed' },
+    // Board framing: demoted, never hidden.
+    executiveSummary: { state: 'collapsed' },
+    riskBreakdown: { state: 'collapsed' },
+    complianceImpact: { state: 'collapsed' },
+  },
   architect: {
     assessmentProfile: { state: 'open' },
     threatLandscape: { state: 'open' },

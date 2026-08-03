@@ -731,7 +731,13 @@ export const PlaygroundWorkshop = () => {
   // Local UI state.
   const [searchText, setSearchText] = useState('')
   const [difficulty, setDifficulty] = useState<DifficultyValue>('All')
-  const [runFilter, setRunFilter] = useState<RunValue>('all')
+  // WS6a-bis (2026-08-02): default to the browser catalogue. `WORKSHOP_TOOLS`
+  // includes 24 Docker sandbox scenarios (workshopRegistry.tsx pushes them in),
+  // so an 'all' default meant ~41% of the cards a visitor scrolled could not be
+  // executed in the browser at all — a discoverability tax on the 34 that can.
+  // The Sandbox/All chips are one click away and `hiddenSandboxInCategory`
+  // below keeps the hidden count visible, so breadth is never concealed.
+  const [runFilter, setRunFilter] = useState<RunValue>('browser')
   const [selectedTool, setSelectedTool] = useState<WorkshopTool | null>(null)
   const [paletteOpen, setPaletteOpen] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -936,10 +942,25 @@ export const PlaygroundWorkshop = () => {
   // removed from the grid, see `visibleTools` above).
   const lockedSandboxInCategory = useMemo(() => {
     if (runtimeOn || activeNav === 'overview' || activeNav === 'mytools') return 0
+    // Only meaningful while sandbox cards are actually rendered — when the run
+    // filter is 'browser' they are filtered out, and `hiddenSandboxInCategory`
+    // owns the messaging instead.
+    if (runFilter === 'browser') return 0
     return WORKSHOP_TOOLS.filter(
       (t) => !isEnvironmentTool(t.id) && t.sandbox && t.category === activeNav
     ).length
-  }, [runtimeOn, activeNav])
+  }, [runtimeOn, activeNav, runFilter])
+
+  // How many container scenarios the browser-default filter is holding back in
+  // this category. WS6a-bis's mitigation: the count is always visible and one
+  // click reveals them, so defaulting to the browser catalogue never hides the
+  // breadth of what the sandbox offers.
+  const hiddenSandboxInCategory = useMemo(() => {
+    if (runFilter !== 'browser' || activeNav === 'overview' || activeNav === 'mytools') return 0
+    return WORKSHOP_TOOLS.filter(
+      (t) => !isEnvironmentTool(t.id) && t.sandbox && t.category === activeNav
+    ).length
+  }, [runFilter, activeNav])
 
   const renderGrid = (tools: WorkshopTool[], showCategory?: boolean) => (
     <div className="mt-4 grid grid-cols-1 gap-3 xl:grid-cols-2">
@@ -1228,6 +1249,26 @@ export const PlaygroundWorkshop = () => {
               className="shrink-0 rounded-lg px-3 py-1.5 text-[11.5px] font-semibold"
             >
               Connect runtime
+            </Button>
+          </div>
+        )}
+
+        {hiddenSandboxInCategory > 0 && (
+          <div className="mt-4 flex items-center gap-3 rounded-xl border border-border bg-muted/40 p-3.5">
+            <span className="flex w-[30px] h-[30px] shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+              <Container className="w-4 h-4" aria-hidden="true" />
+            </span>
+            <p className="flex-1 text-[12px] leading-snug text-foreground/80">
+              Showing tools that run in your browser. {hiddenSandboxInCategory} Docker{' '}
+              {hiddenSandboxInCategory === 1 ? 'scenario' : 'scenarios'} in this category{' '}
+              {hiddenSandboxInCategory === 1 ? 'needs' : 'need'} an access-gated container.
+            </p>
+            <Button
+              variant="outline"
+              onClick={() => setRunFilter('all')}
+              className="shrink-0 rounded-lg px-3 py-1.5 text-[11.5px] font-semibold"
+            >
+              Show {hiddenSandboxInCategory === 1 ? 'it' : 'them'}
             </Button>
           </div>
         )}
