@@ -51,6 +51,7 @@ import {
 } from '@/wasm/openssh-real'
 import type { Pkcs11LogEntry } from '@/wasm/softhsm'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { useHsmContext } from './HsmContext'
 
 interface LogEntry {
@@ -64,7 +65,8 @@ function ts() {
 }
 
 export function SshSimulationPanel() {
-  const { moduleRef, hSessionRef, isReady, autoInit } = useHsmContext()
+  const { moduleRef, hSessionRef, isReady, autoInit, hsmKeys, removeHsmKey, clearHsmKeys } =
+    useHsmContext()
 
   const [phase, setPhase] = useState<
     'idle' | 'initializing' | 'running-classical' | 'running-pqc' | 'done' | 'error'
@@ -474,6 +476,19 @@ export function SshSimulationPanel() {
             defaultOpen={true}
             showBeginnerMode={pkcs11BeginnerMode}
             emptyMessage="No PKCS#11 calls yet — run a handshake to see activity."
+          />
+
+          {/* The call log shows what happened; this shows what now EXISTS on
+              the token as a result. The VPN simulator has had this for both
+              peers while the SSH simulator had no key view at all, even though
+              both generate keys through the same shared softhsmv3 module. */}
+          <HsmKeyInspector
+            keys={hsmKeys}
+            moduleRef={moduleRef}
+            hSessionRef={hSessionRef}
+            onRemoveKey={removeHsmKey}
+            onClear={clearHsmKeys}
+            title="SSH Simulator — HSM Key Registry"
           />
         </TabsContent>
 

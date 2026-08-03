@@ -25,6 +25,19 @@ export const ProviderArchitecture: React.FC = () => {
           </div>
         </div>
 
+        {/* Without this, the table reads as a description of what the browser
+            workshop executes. It isn't: the table documents the real Rust
+            provider crate, while the workshop is a JS reimplementation of the
+            same PKCS#11 primitives. Both drive real softhsmv3 crypto, so the
+            distinction is easy to miss and worth stating outright. */}
+        <p className="mt-4 rounded-md border border-border bg-muted/30 p-3 text-xs text-muted-foreground">
+          <strong className="text-foreground">What this table describes:</strong> the real{' '}
+          <code>openmls_pqctoday_crypto</code> Rust crate, which runs server-side. The workshop in
+          this module is a JavaScript reimplementation of the same PKCS#11 calls against the same
+          softhsmv3 engine — the crypto is genuinely HSM-backed either way, but the steps you run
+          here are not literally this crate executing.
+        </p>
+
         <div className="mt-5 overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="text-left text-muted-foreground border-b border-border">
