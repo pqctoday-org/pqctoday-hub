@@ -104,6 +104,34 @@ describe('pqctpm WASM loads and executes under vitest (WS0(b) guarantee)', () =>
     expect(algs).toContain(0x0023) // TPM_ALG_ECC
   })
 
+  // Pins what tpmBridge.ts's WASM_BUILD stamp claims about the SHIPPED binary:
+  // pqctoday-tpm's v185 errata fix (TPM_PT_REVISION 183->185, PS_REVISION
+  // 0x106->0x107, Errata v1 §2.1). A 2026-08-02 audit suspected the stamp was
+  // false because the fix's merge to pqctoday-tpm main (5e00859, 07-27)
+  // postdates this bundle's build date (07-25) — but the stamp names the
+  // BRANCH it was built from (fix/v185-errata-remediation-0724), which carried
+  // the fix before it merged. Probing the real binary settles it: the values
+  // are already correct. Asserted here so nobody has to re-derive that from
+  // dates again, and so a future rebuild that regresses them fails loudly.
+  it('GetCapability(TPM_PROPERTIES) reports the v185 errata revision values', () => {
+    const a: number[] = []
+    p16(a, 0x8001) // TPM_ST_NO_SESSIONS
+    p32(a, 0) // size (patched below)
+    p32(a, 0x17a) // TPM_CC_GetCapability
+    p32(a, 6) // TPM_CAP_TPM_PROPERTIES
+    p32(a, 0x100) // start at TPM_PT_FAMILY_INDICATOR
+    p32(a, 32)
+    patchSize(a)
+    const r = exec(new Uint8Array(a))
+    expect(g32(r, 6)).toBe(0) // TPM_RC_SUCCESS
+    // header(10) + moreData(1) + capability(4) + count(4) => entries at 19,
+    // each an 8-byte TPMS_TAGGED_PROPERTY { property(4), value(4) }.
+    const count = g32(r, 15)
+    const props = new Map<number, number>()
+    for (let i = 0; i < count; i++) props.set(g32(r, 19 + i * 8), g32(r, 23 + i * 8))
+    expect(props.get(0x102)).toBe(185) // TPM_PT_REVISION — TCG TPM 2.0 Library v1.85
+  })
+
   it('classical RSA-2048 CreatePrimary → TPM2_Sign works headless', () => {
     // Unrestricted RSA-2048 signing key under Owner (TpmTypes.h-verified constants)
     const a: number[] = []
