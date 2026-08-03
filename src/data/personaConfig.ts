@@ -1305,6 +1305,27 @@ export interface PersonaJourneyBoard {
  * business tool, a playground workshop, or one of each. Neither kind is
  * mandatory and neither is used by more than one board.
  *
+ * ALLOCATION PRIORITY (set 2026-08-02). No destination may serve two boards,
+ * so two boards wanting the same tool is a conflict that needs a rule rather
+ * than a coin toss. Resolve in this order:
+ *
+ *   1. DEVELOPER-SPECIFIC RESOURCES GO TO DEVELOPER. Tools whose audience is
+ *      someone writing code — OpenSSL Studio, the JWT workshop, the hybrid KEM
+ *      pipeline, the cert calculator, and the developer-facing business tools —
+ *      are developer's regardless of anything below.
+ *   2. Otherwise, first claim in this order wins:
+ *        curious > developer > ops > architect > researcher > executive
+ *      Curious leads because it is the entry persona: a first-time visitor gets
+ *      the single most legible tool, and if that board fails to land, the other
+ *      seventeen never get read. Researcher and executive rank last because
+ *      they have the most substitutes — the corpus and the business-tool shelf
+ *      both offer several equally good options for any given board.
+ *
+ * Worked example: curious/break and developer/pilot both wanted the TLS 1.3
+ * simulator. Rule 1 does not apply (a protocol demo is not developer-only), so
+ * rule 2 gives it to curious, and developer/pilot took the hybrid KEM pipeline
+ * — which is the more developer-specific tool anyway.
+ *
  * `moduleIds`, `workshopIds` and `businessToolIds` are not decoration. A priv-side validator
  * asserts every workshop id is a real `workshopRegistry.tsx` entry and every
  * module id sits on THAT ROLE's own `recommendedPath` — which is what makes
