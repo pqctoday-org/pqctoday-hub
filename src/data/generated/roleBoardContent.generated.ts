@@ -31,7 +31,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimary: 'Start — 8 questions, about 6 minutes',
         ctaPrimaryHref: '/assess',
         ctaSecondary: 'Draft the program charter',
-        ctaSecondaryHref: '/tools/program-charter',
+        ctaSecondaryHref: '/business/tools/program-charter',
         proofChips: [
           'Verified in your browser against NIST ACVP vectors',
           '789 sources, trust-tiered',
@@ -107,7 +107,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimary: 'See a finished example report',
         ctaPrimaryHref: '/report?example=1',
         ctaSecondary: 'Build the risk register',
-        ctaSecondaryHref: '/tools/risk-register',
+        ctaSecondaryHref: '/business/tools/risk-register',
         proofChips: [
           '789 sources, trust-tiered',
           'Regulatory data verified 16 Jul 2026',
@@ -180,7 +180,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         headline: 'Show a plan your regulator will accept.',
         sub: 'A sequenced roadmap with named owners, measurable KPIs and a policy draft — built from the same eight answers, so your plan and your risk position cannot quietly disagree.',
         ctaPrimary: 'Build the roadmap',
-        ctaPrimaryHref: '/tools/roadmap-builder',
+        ctaPrimaryHref: '/business/tools/roadmap-builder',
         ctaSecondary: 'Check what already binds you',
         ctaSecondaryHref: '/compliance',
         proofChips: [
@@ -256,7 +256,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimary: 'Run ML-KEM + X25519 now',
         ctaPrimaryHref: '/playground/hybrid-encrypt',
         ctaSecondary: 'Grade your crypto agility',
-        ctaSecondaryHref: '/tools/crypto-api-refactor-audit',
+        ctaSecondaryHref: '/business/tools/crypto-api-refactor-audit',
         proofChips: [
           'Real liboqs + SoftHSMv3 in your browser',
           'Verified against NIST ACVP vectors',
@@ -328,7 +328,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimary: 'Open OpenSSL Studio',
         ctaPrimaryHref: '/playground/openssl-studio',
         ctaSecondary: 'Build the CBOM',
-        ctaSecondaryHref: '/tools/crypto-cbom-builder',
+        ctaSecondaryHref: '/business/tools/crypto-cbom-builder',
         proofChips: [
           'Real liboqs + SoftHSMv3 in your browser',
           'Catalogue entries are proof-gated',
@@ -477,7 +477,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimary: 'Open the KMIP control plane',
         ctaPrimaryHref: '/playground/cacp',
         ctaSecondary: 'Choose your transition mode',
-        ctaSecondaryHref: '/tools/hybrid-transition-planner',
+        ctaSecondaryHref: '/business/tools/hybrid-transition-planner',
         proofChips: [
           'Real ML-KEM / ML-DSA / SLH-DSA, no server',
           'KMIP 3.0 conformance corpus replays live',
@@ -549,7 +549,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         headline: 'You cannot draw the to-be without the as-is.',
         sub: 'Every library, HSM, protocol and CA in the estate, inventoried before the target architecture exists. A CBOM is what makes the diagram arguable rather than aspirational.',
         ctaPrimary: 'Document the architecture',
-        ctaPrimaryHref: '/tools/crypto-architecture-diagram',
+        ctaPrimaryHref: '/business/tools/crypto-architecture-diagram',
         ctaSecondary: 'Build a certificate chain',
         ctaSecondaryHref: '/playground/pki-workshop',
         proofChips: [
@@ -627,7 +627,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimary: 'Wrap a key, KMS-style',
         ctaPrimaryHref: '/playground/envelope-encrypt',
         ctaSecondary: 'Plan the modernization',
-        ctaSecondaryHref: '/tools/infra-modernization-planner',
+        ctaSecondaryHref: '/business/tools/infra-modernization-planner',
         proofChips: [
           'Real PKCS#11 engine, in your browser',
           'Sizing from real FIPS 203/204 key sizes',
@@ -705,7 +705,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimary: 'Size your HSM fleet',
         ctaPrimaryHref: '/playground/hsm-capacity',
         ctaSecondary: 'Align to funded refreshes',
-        ctaSecondaryHref: '/tools/refresh-cycle-alignment',
+        ctaSecondaryHref: '/business/tools/refresh-cycle-alignment',
         proofChips: [
           'Sizing from real FIPS 203/204 key sizes',
           'Benchmarked through a real PKCS#11 engine',
@@ -784,7 +784,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimary: 'Run an IKEv2 hybrid handshake',
         ctaPrimaryHref: '/playground/vpn-sim',
         ctaSecondary: 'Write the playbook',
-        ctaSecondaryHref: '/tools/deployment-playbook',
+        ctaSecondaryHref: '/business/tools/deployment-playbook',
         proofChips: [
           'Real TLS 1.3 handshake, in your browser',
           'Hybrid groups X25519MLKEM768 and friends',
@@ -860,7 +860,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimary: 'Check vendor roadmaps',
         ctaPrimaryHref: '/migrate?tab=roadmaps',
         ctaSecondary: 'Score your vendors',
-        ctaSecondaryHref: '/tools/vendor-scorecard',
+        ctaSecondaryHref: '/business/tools/vendor-scorecard',
         proofChips: [
           'Vendor claims are proof-gated',
           'CNSA 2.0 mandate dates built in',
@@ -1087,7 +1087,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         headline: 'Argue with the threat model.',
         sub: 'CRQC arrival is a distribution, not a date. The consensus window, every source behind it, and the strongest published objections are all on file and all dated.',
         ctaPrimary: 'Plan a CRQC scenario',
-        ctaPrimaryHref: '/tools/crqc-scenario',
+        ctaPrimaryHref: '/business/tools/crqc-scenario',
         ctaSecondary: 'Read the threat economics',
         ctaSecondaryHref: '/threats',
         proofChips: [
@@ -1168,7 +1168,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimary: 'Watch a real handshake',
         ctaPrimaryHref: '/playground/tls-simulator',
         ctaSecondary: 'See what a breach costs',
-        ctaSecondaryHref: '/tools/breach-simulator',
+        ctaSecondaryHref: '/business/tools/breach-simulator',
         proofChips: [
           'Real cryptography, running here',
           'Plain English by default',
@@ -1242,7 +1242,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimary: 'Take the guided path',
         ctaPrimaryHref: '/learn',
         ctaSecondary: 'The cost of waiting',
-        ctaSecondaryHref: '/tools/cost-of-inaction',
+        ctaSecondaryHref: '/business/tools/cost-of-inaction',
         proofChips: [
           'Plain English by default',
           'Every term explained on hover',

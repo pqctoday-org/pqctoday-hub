@@ -182,6 +182,29 @@ export function extractAppRoutes(appSrc: string): Set<string> {
  * boards now lean on business tools as heavily as on playground workshops, so
  * the gate has to be able to see both.
  */
+export const BUSINESS_TOOL_PREFIX = '/business/tools/'
+
+/**
+ * Business tool hrefs must carry their real nesting.
+ *
+ * REGRESSION GUARD (2026-08-02). `resolvesToRealRoute` checks SEGMENT
+ * CONTAINMENT, and says so in its own doc comment: it would accept a segment
+ * pair that exists separately but is never nested together. That is exactly
+ * what happened — 14 board CTAs were written as `/tools/<id>`, every segment
+ * resolved ('tools' is declared, the id is a real business tool), the gate
+ * passed, and every one of them fell through to the catch-all route and
+ * rendered the HOME BOARD instead of the tool. Nothing errored; the visitor
+ * just silently got the wrong page. Business tools live under
+ * `/business/tools/:toolId`, so the prefix is checked explicitly rather than
+ * inferred from segments.
+ */
+export function businessToolHrefIsWellFormed(href: string, businessToolIds: Set<string>): boolean {
+  const path = href.split('?')[0]
+  const id = path.split('/').filter(Boolean).pop() ?? ''
+  if (!businessToolIds.has(id)) return true // not a business tool href
+  return path.startsWith(BUSINESS_TOOL_PREFIX)
+}
+
 export function extractBusinessToolIds(registrySrc: string): Set<string> {
   const ids = new Set<string>()
   for (const m of registrySrc.matchAll(/^\s*id:\s*'([a-z0-9-]+)',$/gm)) ids.add(m[1])
@@ -325,6 +348,19 @@ function main() {
       readFileSync(join(ROOT, 'src/components/BusinessCenter/businessToolsRegistry.tsx'), 'utf8')
     ),
   ])
+
+  const businessToolIds = extractBusinessToolIds(
+    readFileSync(join(ROOT, 'src/components/BusinessCenter/businessToolsRegistry.tsx'), 'utf8')
+  )
+  const malformed = boardHrefs.filter((h) => !businessToolHrefIsWellFormed(h, businessToolIds))
+  if (malformed.length > 0) {
+    console.error(
+      `✗ ${malformed.length} business-tool href(s) missing the ${BUSINESS_TOOL_PREFIX} prefix:\n` +
+        malformed.map((h) => `   ${h}`).join('\n') +
+        `\n  These resolve segment-wise but fall through to the catch-all route and render the home board.`
+    )
+    process.exit(1)
+  }
 
   const findings = auditCtas(boardHrefs, registry, routeSegments, toolIds, new Date())
   const blocking = findings.filter((f) => f.code !== 'ORPHAN_REGISTRY_ROW')

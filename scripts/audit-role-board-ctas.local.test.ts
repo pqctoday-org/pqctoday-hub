@@ -14,6 +14,7 @@ import { describe, it, expect } from 'vitest'
 import {
   auditCtas,
   extractBoardHrefs,
+  businessToolHrefIsWellFormed,
   extractAppRoutes,
   extractPlaygroundToolIds,
   resolvesToRealRoute,
@@ -219,5 +220,31 @@ describe('parseCtaRegistry', () => {
 describe('daysSince', () => {
   it('returns null for an unparseable date rather than throwing or coercing to 0', () => {
     expect(daysSince('not-a-date', NOW)).toBeNull()
+  })
+})
+
+/**
+ * REGRESSION (2026-08-02). 14 board CTAs were written as `/tools/<id>`. Every
+ * segment resolved — 'tools' is a declared route segment and the id is a real
+ * business tool — so the gate passed. All 14 fell through to the catch-all
+ * route and rendered the HOME BOARD instead of the tool: nothing errored, the
+ * visitor silently got the wrong page. Caught only by loading them in a
+ * browser and noticing all 14 returned byte-identical content.
+ */
+describe('businessToolHrefIsWellFormed', () => {
+  const ids = new Set(['program-charter', 'risk-register', 'roadmap-builder'])
+
+  it('rejects a business tool href missing the /business prefix — the shipped defect', () => {
+    expect(businessToolHrefIsWellFormed('/tools/program-charter', ids)).toBe(false)
+  })
+
+  it('accepts the real nested path', () => {
+    expect(businessToolHrefIsWellFormed('/business/tools/program-charter', ids)).toBe(true)
+  })
+
+  it('ignores hrefs that are not business tools at all', () => {
+    expect(businessToolHrefIsWellFormed('/playground/tls-simulator', ids)).toBe(true)
+    expect(businessToolHrefIsWellFormed('/migrate?tab=roadmaps', ids)).toBe(true)
+    expect(businessToolHrefIsWellFormed('/library', ids)).toBe(true)
   })
 })
