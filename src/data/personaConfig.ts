@@ -1425,8 +1425,26 @@ export const ML_DSA_65_SIGNATURE_ONLY = formatBytes(ML_DSA_65.signatureOrCiphert
  * The punchline is expressed as a START-BY YEAR rather than a countdown from
  * "now" deliberately: a `Date.now()`-dependent string would make the generated
  * board differ every day and turn the CSV-vs-generated drift gate permanently
- * red. `z - y` is stable, derived, and the more actionable number for the
+ * red. A fixed year is stable, derived, and the more actionable number for the
  * reader anyway.
+ *
+ * That start-by year is `z - x - y`, NOT `z - y`. This was wrong until
+ * 2026-08-02: it computed `z - y` (2033 - 5 = 2028), which drops x — the
+ * secrecy requirement — and so is not Mosca's inequality at all, merely
+ * "finish as the machine arrives". It also contradicted this app's other
+ * implementation of the same formula: SectorExposureHero.tsx computes
+ * `z - dataLife - MIGRATION_YEARS` and shows its working on screen
+ * ("Z 2033 − X 12 − Y 5"), so the two surfaces disagreed by 12 years on the
+ * same question from the same inputs. Finishing as the machine arrives
+ * protects nothing already encrypted under a 12-year requirement, which is
+ * why the old punchline had to append "or your 12-year secrets are already
+ * late" — a clause conceding the conclusion its own number denied.
+ *
+ * Whether that year is behind us is decided against `EXEC_MOSCA_AS_OF_YEAR`, a
+ * DECLARED constant rather than the wall clock, for the same drift-gate reason
+ * as above. It is NOT in FRESHNESS_CLAIMS — that registry requires a live
+ * source URL to re-verify against, and "what year is it" has none. A unit test
+ * asserts it stays within a year of the real clock instead.
  */
 
 /** Illustrative planning assumptions for the executive board's exposure card. */
@@ -1447,16 +1465,39 @@ export const EXEC_SECRECY_ROW = `${EXEC_EXPOSURE.secrecyYears} yrs`
 export const EXEC_MIGRATION_ROW = `${EXEC_EXPOSURE.migrationYears} yrs`
 
 /**
- * Mosca's inequality restated as a deadline: a migration taking `y` years must
- * BEGIN by `z - y` to finish before the threat arrives.
+ * Mosca's inequality as a deadline: data that must stay secret for `x` years
+ * against a threat arriving in `z`, via a migration taking `y` years, had to
+ * BEGIN by `z - x - y`. Migration must be COMPLETE by `z - x`, because
+ * anything encrypted after that date is still within its secrecy window when
+ * the machine arrives.
  */
-export const EXEC_MOSCA_START_BY_YEAR = CRQC.zEstimate - EXEC_EXPOSURE.migrationYears
+export const EXEC_MOSCA_START_BY_YEAR =
+  CRQC.zEstimate - EXEC_EXPOSURE.secrecyYears - EXEC_EXPOSURE.migrationYears
 
-/** e.g. "Start by 2028, or your 12-year secrets are already late." */
-export const EXEC_MOSCA_PUNCHLINE = `Start by ${EXEC_MOSCA_START_BY_YEAR}, or your ${EXEC_EXPOSURE.secrecyYears}-year secrets are already late.`
+/** The year migration had to be finished by — `z - x`. */
+export const EXEC_MOSCA_COMPLETE_BY_YEAR = CRQC.zEstimate - EXEC_EXPOSURE.secrecyYears
+
+/**
+ * Declared reference year for "is that deadline behind us". Not `Date.now()`:
+ * this string is baked into the generated board, so a clock-derived value
+ * would change it daily and turn the drift gate permanently red. The unit test
+ * in personaConfig.test.ts fails once this drifts a year behind the clock.
+ */
+export const EXEC_MOSCA_AS_OF_YEAR = 2026
+
+const EXEC_MOSCA_YEARS_LATE = EXEC_MOSCA_AS_OF_YEAR - EXEC_MOSCA_START_BY_YEAR
+
+/**
+ * e.g. "Your start-by year was 2016 — you are ten years past it." Reads as a
+ * plain future deadline when the year has not yet passed.
+ */
+export const EXEC_MOSCA_PUNCHLINE =
+  EXEC_MOSCA_YEARS_LATE > 0
+    ? `Your start-by year was ${EXEC_MOSCA_START_BY_YEAR} — you are ${toWordIfSmall(EXEC_MOSCA_YEARS_LATE)} years past it.`
+    : `Start by ${EXEC_MOSCA_START_BY_YEAR} to keep ${EXEC_MOSCA_COMPLETE_BY_YEAR} data safe.`
 
 /** Footnote describing the derivation, with the real source count. */
-export const EXEC_MOSCA_FOOTNOTE = `Mosca's inequality: a ${EXEC_EXPOSURE.migrationYears}-year migration must finish before the machine arrives, so it has to start by ${EXEC_MOSCA_START_BY_YEAR}. The ${CRQC.zEstimate} estimate is the median across ${CRQC_ESTIMATES.length} tracked sources; ${CRQC.qdayLow}–${CRQC.qdayHigh} is the consensus window, not a forecast.`
+export const EXEC_MOSCA_FOOTNOTE = `Mosca's inequality: Z ${CRQC.zEstimate} − X ${EXEC_EXPOSURE.secrecyYears} yrs − Y ${EXEC_EXPOSURE.migrationYears} yrs = ${EXEC_MOSCA_START_BY_YEAR}. A ${EXEC_EXPOSURE.migrationYears}-year migration had to finish by ${EXEC_MOSCA_COMPLETE_BY_YEAR}, because ${EXEC_EXPOSURE.secrecyYears}-year secrets encrypted after that are still confidential when the machine arrives — finishing as it arrives protects nothing already sent. The ${CRQC.zEstimate} estimate is the median across ${CRQC_ESTIMATES.length} tracked sources; ${CRQC.qdayLow}–${CRQC.qdayHigh} is the consensus window, not a forecast.`
 
 /**
  * ops sideCard's "150 ops/s · ~133× slower than ECDSA" — both figures already

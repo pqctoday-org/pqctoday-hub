@@ -47,9 +47,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             { label: 'Your migration takes', value: '5 yrs' },
             { label: 'Cryptanalytic quantum computer', value: '2033 (2030–2036)' },
           ],
-          punchline: 'Start by 2028, or your 12-year secrets are already late.',
+          punchline: 'Your start-by year was 2016 — you are ten years past it.',
           footnote:
-            "Mosca's inequality: a 5-year migration must finish before the machine arrives, so it has to start by 2028. The 2033 estimate is the median across 6 tracked sources; 2030–2036 is the consensus window, not a forecast.",
+            "Mosca's inequality: Z 2033 − X 12 yrs − Y 5 yrs = 2016. A 5-year migration had to finish by 2021, because 12-year secrets encrypted after that are still confidential when the machine arrives — finishing as it arrives protects nothing already sent. The 2033 estimate is the median across 6 tracked sources; 2030–2036 is the consensus window, not a forecast.",
         },
         gridTitle: 'What you walk out with',
         gridSub: 'Your own answers, not a sample estate',
@@ -1105,9 +1105,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             { label: 'Data must stay secret', value: '12 yrs' },
             { label: 'A migration takes', value: '5 yrs' },
           ],
-          punchline: 'Start by 2028, or your 12-year secrets are already late.',
+          punchline: 'Your start-by year was 2016 — you are ten years past it.',
           footnote:
-            "Mosca's inequality: a 5-year migration must finish before the machine arrives, so it has to start by 2028. The 2033 estimate is the median across 6 tracked sources; 2030–2036 is the consensus window, not a forecast.",
+            "Mosca's inequality: Z 2033 − X 12 yrs − Y 5 yrs = 2016. A 5-year migration had to finish by 2021, because 12-year secrets encrypted after that are still confidential when the machine arrives — finishing as it arrives protects nothing already sent. The 2033 estimate is the median across 6 tracked sources; 2030–2036 is the consensus window, not a forecast.",
         },
         gridTitle: 'What the workspace gives you',
         gridSub: 'The estimate and its dissent',
