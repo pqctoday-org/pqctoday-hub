@@ -52,6 +52,7 @@ interface VariantRow {
   cswp39_zone?: string
   module_ids?: string
   workshop_ids?: string
+  business_tool_ids?: string
   status: string
 }
 
@@ -361,6 +362,7 @@ async function main() {
       cswp39Zone: ${jsString(variant.cswp39_zone ?? '')},
       moduleIds: [${splitSemi(variant.module_ids).map(jsString).join(', ')}],
       workshopIds: [${splitSemi(variant.workshop_ids).map(jsString).join(', ')}],
+      businessToolIds: [${splitSemi(variant.business_tool_ids).map(jsString).join(', ')}],
       board: {
         heroEyebrow: ${jsString(requireScalar(slots, 'hero_eyebrow', ctx))},
         ${heroBadgeText !== undefined ? `heroBadge: { text: ${jsString(heroBadgeText)}, tone: ${jsString(heroBadgeTone ?? 'sourced')} as 'sourced' | 'illustrative' },` : ''}

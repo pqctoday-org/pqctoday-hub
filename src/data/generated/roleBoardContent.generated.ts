@@ -18,7 +18,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       phaseId: 'p0',
       cswp39Zone: 'governance',
       moduleIds: ['pqc-business-case', 'pqc-governance'],
-      workshopIds: ['hybrid-encrypt'],
+      workshopIds: [],
+      businessToolIds: ['program-charter'],
       board: {
         heroEyebrow: "Illustrative — this user's inputs",
         heroBadge: {
@@ -29,8 +30,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sub: 'Eight questions about your estate. You get a defensible risk position, the regulatory dates that already bind you under NIS2 and DORA, and a board pack you can present on Thursday.',
         ctaPrimary: 'Start — 8 questions, about 6 minutes',
         ctaPrimaryHref: '/assess',
-        ctaSecondary: 'Open the Command Center',
-        ctaSecondaryHref: '/business',
+        ctaSecondary: 'Draft the program charter',
+        ctaSecondaryHref: '/tools/program-charter',
         proofChips: [
           'Verified in your browser against NIST ACVP vectors',
           '789 sources, trust-tiered',
@@ -58,12 +59,12 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'The assessment turns 8 answers about your estate into a defensible risk position, with the regulatory dates that already bind you attached to it.',
           },
           {
-            title: 'The artifacts your board asks for',
-            body: 'The Command Center opens on Governance with Board Deck, ROI Model, Policy Draft and Audit Checklist — organised by CSWP.39 zone, not by file type.',
+            title: 'A drafted mandate',
+            body: 'The Program Charter tool drafts the Phase 0 mandate — sponsor sign-off, steering committee, the QRPM appointment and the governance model.',
           },
           {
-            title: 'What you are actually approving',
-            body: 'The Hybrid KEM workshop runs ML-KEM with X25519 and HKDF end to end, so the thing the mandate authorises is one click away, not an abstraction.',
+            title: 'Why the mandate comes first',
+            body: 'Phase 0 exists because a programme without a named sponsor and a standing committee stalls at the first budget review, whatever the inventory says.',
           },
         ] as [
           { title: string; body: string },
@@ -93,7 +94,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       phaseId: 'p3',
       cswp39Zone: 'risk-management',
       moduleIds: ['pqc-risk-management', 'data-asset-sensitivity'],
-      workshopIds: ['token-migration'],
+      workshopIds: [],
+      businessToolIds: ['risk-register'],
       board: {
         heroEyebrow: 'Executive / GRC · risk position · the dates that already bind you',
         heroBadge: {
@@ -104,8 +106,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sub: 'The same eight questions, scored. You get a risk position you can defend line by line, with each regulatory deadline attached to the finding it threatens rather than filed in an appendix.',
         ctaPrimary: 'See a finished example report',
         ctaPrimaryHref: '/report?example=1',
-        ctaSecondary: 'Read the threat economics',
-        ctaSecondaryHref: '/threats',
+        ctaSecondary: 'Build the risk register',
+        ctaSecondaryHref: '/tools/risk-register',
         proofChips: [
           '789 sources, trust-tiered',
           'Regulatory data verified 16 Jul 2026',
@@ -133,12 +135,12 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'The worked example renders a complete report under its own authored persona — you can read the output before committing to the assessment.',
           },
           {
-            title: 'The threat data, with its sources',
-            body: 'Threat Economics, the CRQC Capability Watch and the Z-estimate, each figure carrying the sources behind it.',
+            title: 'A register with owners on it',
+            body: 'The Risk Register Builder turns the score into named risks with impact, likelihood, an owner and a mitigation each — the form a risk committee accepts.',
           },
           {
-            title: 'Long-lived data, re-signed',
-            body: 'Multi-Algorithm Signing compares ML-DSA, ECDSA and RSA in a token migration workflow — the exposure this card is about, made concrete.',
+            title: 'Why a register, not just a score',
+            body: 'A number persuades a meeting once. A register with an owner against each risk is what survives the meeting and gets re-read next quarter.',
           },
         ] as [
           { title: string; body: string },
@@ -167,7 +169,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       phaseId: 'p4',
       cswp39Zone: 'governance',
       moduleIds: ['migration-program', 'compliance-strategy', 'pqc-governance'],
-      workshopIds: ['email-signing'],
+      workshopIds: [],
+      businessToolIds: ['roadmap-builder'],
       board: {
         heroEyebrow: 'Executive / GRC · sequenced plan · owners · KPIs',
         heroBadge: {
@@ -176,10 +179,10 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         },
         headline: 'Show a plan your regulator will accept.',
         sub: 'A sequenced roadmap with named owners, measurable KPIs and a policy draft — built from the same eight answers, so your plan and your risk position cannot quietly disagree.',
-        ctaPrimary: 'Check what already binds you',
-        ctaPrimaryHref: '/compliance',
-        ctaSecondary: 'See the published deadlines',
-        ctaSecondaryHref: '/timeline',
+        ctaPrimary: 'Build the roadmap',
+        ctaPrimaryHref: '/tools/roadmap-builder',
+        ctaSecondary: 'Check what already binds you',
+        ctaSecondaryHref: '/compliance',
         proofChips: [
           'Deadlines derived from the published timeline',
           'Regulatory data verified 16 Jul 2026',
@@ -203,16 +206,16 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         gridSub: 'A plan someone can be held to',
         gridCards: [
           {
+            title: 'A two-track roadmap',
+            body: "The Roadmap Builder sequences key-exchange/HNDL work alongside signatures and PKI across the framework's eight phases — a shape, not just a deadline.",
+          },
+          {
             title: 'What already binds you',
-            body: 'The compliance view lists the standardization and certification frameworks in force and what each one already requires.',
+            body: 'The compliance view lists the standardization and certification frameworks in force and what each one already requires of you.',
           },
           {
-            title: 'Dates you did not invent',
-            body: 'The published migration deadlines for your region, as issued — not a schedule of our choosing.',
-          },
-          {
-            title: 'A signature migration you can watch',
-            body: 'The S/MIME and CMS workshop signs and verifies with ML-DSA-44/65/87, SLH-DSA and RSA-PSS, on real OpenSSL 3.6 in the browser.',
+            title: 'Two tracks, not one list',
+            body: 'Harvest-now-decrypt-later work and signature/PKI work have different deadlines and different owners — a single ordered list hides that.',
           },
         ] as [
           { title: string; body: string },
@@ -244,6 +247,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       cswp39Zone: 'migration',
       moduleIds: ['tls-basics', 'hybrid-crypto'],
       workshopIds: ['tls-simulator'],
+      businessToolIds: ['crypto-api-refactor-audit'],
       board: {
         heroEyebrow: 'Developer · Node + Go services · TLS termination at the edge',
         heroBadge: { text: 'Americas · Technology', tone: 'sourced' as 'sourced' | 'illustrative' },
@@ -251,8 +255,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sub: 'Not a diagram. Real WASM crypto in this tab, with the PKCS#11 call log open and a plain-English column beside it. Then we tell you what to change in your stack.',
         ctaPrimary: 'Run a TLS 1.3 hybrid handshake',
         ctaPrimaryHref: '/playground/tls-simulator',
-        ctaSecondary: 'Compare the algorithms',
-        ctaSecondaryHref: '/algorithms',
+        ctaSecondary: 'Grade your crypto agility',
+        ctaSecondaryHref: '/tools/crypto-api-refactor-audit',
         proofChips: [
           'Real liboqs + SoftHSMv3 in your browser',
           'Verified against NIST ACVP vectors',
@@ -279,8 +283,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'Configure cipher suites, key-exchange groups and mTLS, then run the handshake — including X25519MLKEM768 and the other hybrid groups.',
           },
           {
-            title: 'The algorithms, compared',
-            body: "The algorithms view tracks each post-quantum algorithm's support across IETF protocols, so you can see what your stack can actually negotiate.",
+            title: 'A grade on your call sites',
+            body: 'The Crypto API Refactor Audit (CSWP.39 §4.1) grades how agile your current crypto call sites are, and what refactoring this pilot implies for them.',
           },
           {
             title: 'The negotiation, not the diagram',
@@ -315,6 +319,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       cswp39Zone: 'assets',
       moduleIds: ['cbom', 'sbom', 'crypto-registry'],
       workshopIds: ['openssl-studio'],
+      businessToolIds: ['crypto-cbom-builder'],
       board: {
         heroEyebrow: 'Developer / Engineer · CBOM before code changes',
         heroBadge: { text: 'Americas · Technology', tone: 'sourced' as 'sourced' | 'illustrative' },
@@ -322,8 +327,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sub: 'Most of your cryptography was chosen by a library default, not by you. A CBOM names what your services actually negotiate — start from the catalogue rather than from a grep.',
         ctaPrimary: 'Open OpenSSL Studio',
         ctaPrimaryHref: '/playground/openssl-studio',
-        ctaSecondary: 'Browse the product catalogue',
-        ctaSecondaryHref: '/migrate',
+        ctaSecondary: 'Build the CBOM',
+        ctaSecondaryHref: '/tools/crypto-cbom-builder',
         proofChips: [
           'Real liboqs + SoftHSMv3 in your browser',
           'Catalogue entries are proof-gated',
@@ -350,8 +355,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'OpenSSL Studio is OpenSSL 3.6.2 compiled to WASM — keygen, certificates, CSR, KEM, signing, KDF and encryption — with 11 guided lessons.',
           },
           {
-            title: 'The catalogue, scoped to your layers',
-            body: 'Your persona gives you Libraries, Cloud and Database; the product catalogue opens pre-filtered to the layers you actually own.',
+            title: 'The CBOM itself',
+            body: 'The CBOM Builder assembles a Crypto Bill of Materials from an SBOM, library posture or HSM inventory — the artifact an inventory pass is supposed to produce.',
           },
           {
             title: 'Inspect before you inventory',
@@ -385,7 +390,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       phaseId: 'p6',
       cswp39Zone: 'mitigation',
       moduleIds: ['crypto-dev-apis', 'pqc-testing-validation'],
-      workshopIds: ['api-security-jwt'],
+      workshopIds: ['api-security-jwt', 'cert-capacity'],
+      businessToolIds: [],
       board: {
         heroEyebrow: 'Developer / Engineer · sizes, budgets, and what overflows',
         heroBadge: { text: 'Americas · Technology', tone: 'sourced' as 'sourced' | 'illustrative' },
@@ -393,8 +399,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sub: 'An ML-DSA-65 signature is roughly fifty times an ECDSA one. Your token budget, your database column and your MTU all notice long before your cryptography does.',
         ctaPrimary: 'Sign a JWT with ML-DSA',
         ctaPrimaryHref: '/playground/api-security-jwt',
-        ctaSecondary: 'Sequence the work',
-        ctaSecondaryHref: '/migrate/workbench',
+        ctaSecondary: 'Size the certificate estate',
+        ctaSecondaryHref: '/playground/cert-capacity',
         proofChips: [
           'Sizes from FIPS 203/204, not estimates',
           'Benchmarked through a real PKCS#11 engine',
@@ -421,8 +427,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'The JWT workshop signs with ML-DSA-44/65/87, SLH-DSA and composite ML-DSA-65+Ed25519, so you can weigh each payload against your own header budget.',
           },
           {
-            title: 'The work, sequenced',
-            body: 'The Migration Workbench sequences a plan from what you already run, aligned to NIST IR 8547 (IPD) and CNSA 2.0. It does not import your inventory.',
+            title: 'The same question, at PKI scale',
+            body: 'The Cert Capacity Calculator models storage, bandwidth and CPU for migrating a PKI to ML-DSA, with adjustable certificate counts and renewal cadence.',
           },
           {
             title: 'Where the bytes land',
@@ -459,6 +465,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       cswp39Zone: 'governance',
       moduleIds: ['crypto-agility', 'crypto-mgmt-modernization'],
       workshopIds: ['cacp-kmip'],
+      businessToolIds: ['hybrid-transition-planner'],
       board: {
         heroEyebrow: 'Security architect · Multi-region PKI · 40k certificates',
         heroBadge: {
@@ -469,8 +476,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sub: 'A KMIP 3.0 control plane and a real PKCS#11 HSM, both in this tab. Create keys by business label, flip Classical → Hybrid → Full PQC, and watch the same request get allowed, denied, or auto-rekeyed.',
         ctaPrimary: 'Open the KMIP control plane',
         ctaPrimaryHref: '/playground/cacp',
-        ctaSecondary: 'Explore by topic',
-        ctaSecondaryHref: '/explore',
+        ctaSecondary: 'Choose your transition mode',
+        ctaSecondaryHref: '/tools/hybrid-transition-planner',
         proofChips: [
           'Real ML-KEM / ML-DSA / SLH-DSA, no server',
           'KMIP 3.0 conformance corpus replays live',
@@ -495,8 +502,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'KMIP 3.0 plus a SoftHSM Rust v3 HSM, both in WebAssembly. Load a crypto-agility policy and watch requests get allowed, denied or auto-rekeyed.',
           },
           {
-            title: 'A way in for everyone else',
-            body: 'The Explore view is the topic-first entry point you can hand to people who do not think in roles or protocols.',
+            title: 'A transition decision, per asset class',
+            body: 'The Hybrid Transition Planner (CSWP.39 §3.2.4) walks the decision tree between traditional+PQC, PQC+PQC and pure PQC.',
           },
           {
             title: 'Agility as a control, not a slogan',
@@ -531,7 +538,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       phaseId: 'p2',
       cswp39Zone: 'assets',
       moduleIds: ['cbom', 'sbom', 'crypto-registry'],
-      workshopIds: ['pki-workshop', 'hybrid-sigs'],
+      workshopIds: ['pki-workshop'],
+      businessToolIds: ['crypto-architecture-diagram'],
       board: {
         heroEyebrow: 'Security Architect · as-is before to-be',
         heroBadge: {
@@ -540,10 +548,10 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         },
         headline: 'You cannot draw the to-be without the as-is.',
         sub: 'Every library, HSM, protocol and CA in the estate, inventoried before the target architecture exists. A CBOM is what makes the diagram arguable rather than aspirational.',
-        ctaPrimary: 'Build a certificate chain',
-        ctaPrimaryHref: '/playground/pki-workshop',
-        ctaSecondary: 'Compare hybrid signature shapes',
-        ctaSecondaryHref: '/playground/hybrid-sigs',
+        ctaPrimary: 'Document the architecture',
+        ctaPrimaryHref: '/tools/crypto-architecture-diagram',
+        ctaSecondary: 'Build a certificate chain',
+        ctaSecondaryHref: '/playground/pki-workshop',
         proofChips: [
           'Catalogue entries are proof-gated',
           'KMIP 3.0 conformance corpus replays live',
@@ -566,16 +574,16 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         gridSub: 'The evidence under the diagram',
         gridCards: [
           {
-            title: 'A certificate chain you built',
-            body: 'The PKI workshop takes you through CSR, root CA, issuance, parsing and CRL by hand — the as-is you are documenting, constructed once.',
+            title: 'The as-is, written down',
+            body: 'The Crypto Architecture Diagram records apps, libraries, HSMs, protocols, key stores and CAs with their dependencies — the inventory in a form a review board reads.',
           },
           {
-            title: 'Hybrid shapes, side by side',
-            body: "Hybrid Signature Spectrums compares concatenation, nesting and Silithium across the non-separability spectrum, so 'hybrid' stops being one word.",
+            title: 'A chain you built yourself',
+            body: 'The PKI workshop walks CSR, root CA, issuance, parsing and CRL by hand, so what you are documenting is something you have actually constructed.',
           },
           {
-            title: 'Two workshops, one inventory',
-            body: 'Between the chain and the signature shapes you can name every construction your estate currently issues.',
+            title: 'Documented, then verified',
+            body: 'The diagram is the deliverable; the chain workshop is how you check that what you drew is what your CAs actually issue.',
           },
         ] as [
           { title: string; body: string },
@@ -607,6 +615,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       cswp39Zone: 'mitigation',
       moduleIds: ['hsm-pqc', 'kms-pqc'],
       workshopIds: ['envelope-encrypt'],
+      businessToolIds: ['infra-modernization-planner'],
       board: {
         heroEyebrow: 'Security Architect · where the keys live',
         heroBadge: {
@@ -617,8 +626,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sub: "HSM partitions, KMS policy and TPM-backed device identity all behave differently under ML-DSA. Size them before you commit to a date in someone else's plan.",
         ctaPrimary: 'Wrap a key, KMS-style',
         ctaPrimaryHref: '/playground/envelope-encrypt',
-        ctaSecondary: 'Open the PKCS#11 workbench',
-        ctaSecondaryHref: '/playground/hsm',
+        ctaSecondary: 'Plan the modernization',
+        ctaSecondaryHref: '/tools/infra-modernization-planner',
         proofChips: [
           'Real PKCS#11 engine, in your browser',
           'Sizing from real FIPS 203/204 key sizes',
@@ -645,8 +654,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'ML-KEM plus AES key wrap in the KMS envelope pattern — the shape most key stores will adopt, run before you commit to it.',
           },
           {
-            title: 'A real PKCS#11 surface',
-            body: 'The workbench drives SoftHSMv3 through actual PKCS#11 calls, with the C_* log open beside a plain-English column.',
+            title: 'A Phase 6 deliverable',
+            body: 'The Infrastructure Modernization Planner consolidates the PKI modernization plan and the HSM/KMS upgrade schedule into one document.',
           },
           {
             title: 'Where the keys live',
@@ -683,7 +692,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       phaseId: 'p6',
       cswp39Zone: 'mitigation',
       moduleIds: ['hsm-pqc', 'kms-pqc'],
-      workshopIds: ['hsm-capacity', 'cert-capacity'],
+      workshopIds: ['hsm-capacity'],
+      businessToolIds: ['refresh-cycle-alignment'],
       board: {
         heroEyebrow: 'IT Ops · 12k certs · 4 HSM partitions · next renewal window in 90 days',
         heroBadge: {
@@ -694,8 +704,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sub: 'Ten enterprise workflows, sized side by side: RSA-3072 and ECDSA P-256 today against ML-DSA-44/65/87. Storage, bandwidth, and CPU cores per workflow, with a totals row.',
         ctaPrimary: 'Size your HSM fleet',
         ctaPrimaryHref: '/playground/hsm-capacity',
-        ctaSecondary: 'Size the certificate estate',
-        ctaSecondaryHref: '/playground/cert-capacity',
+        ctaSecondary: 'Align to funded refreshes',
+        ctaSecondaryHref: '/tools/refresh-cycle-alignment',
         proofChips: [
           'Sizing from real FIPS 203/204 key sizes',
           'Benchmarked through a real PKCS#11 engine',
@@ -725,12 +735,12 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'Ten enterprise use cases compared classical against PQC, with per-algorithm tuning — storage, bandwidth and CPU per workflow.',
           },
           {
-            title: 'The certificate estate, sized',
-            body: 'The cert calculator models storage, bandwidth and CPU for migrating your PKI to ML-DSA, with adjustable counts and renewal cadence.',
+            title: 'Sizing turned into a schedule',
+            body: 'Refresh-Cycle Alignment maps PQC migration tasks onto infrastructure refresh cycles you have already funded.',
           },
           {
-            title: 'Two calculators, one budget',
-            body: 'Fleet and estate are separate bills, and this board is the only place they are sized against each other. Mitigation gateways carry mandatory sunset dates per CSWP.39 §4.6.',
+            title: 'Sizing that lands in a plan',
+            body: 'A capacity number only matters once it has a date attached, which is what the refresh-cycle alignment adds. Mitigation gateways carry mandatory sunset dates per CSWP.39 §4.6.',
           },
         ] as [
           { title: string; body: string },
@@ -761,7 +771,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       phaseId: 'p5',
       cswp39Zone: 'migration',
       moduleIds: ['vpn-ssh-pqc', 'tls-basics'],
-      workshopIds: ['vpn-sim', 'pqc-ssh-sim'],
+      workshopIds: ['vpn-sim'],
+      businessToolIds: ['deployment-playbook'],
       board: {
         heroEyebrow: 'IT Ops · rehearse before the change window',
         heroBadge: {
@@ -772,8 +783,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sub: 'Hybrid tunnels and hybrid certificates, end to end in this tab, so the first time you meet a fragmentation bug is not at 2am inside a change window.',
         ctaPrimary: 'Run an IKEv2 hybrid handshake',
         ctaPrimaryHref: '/playground/vpn-sim',
-        ctaSecondary: 'Run the SSH handshake',
-        ctaSecondaryHref: '/playground/pqc-ssh-sim',
+        ctaSecondary: 'Write the playbook',
+        ctaSecondaryHref: '/tools/deployment-playbook',
         proofChips: [
           'Real TLS 1.3 handshake, in your browser',
           'Hybrid groups X25519MLKEM768 and friends',
@@ -800,8 +811,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'The VPN simulator runs IKEv2 in WASM with PKCS#11 crypto routed through SoftHSMv3, and the live C_* calls open for inspection.',
           },
           {
-            title: 'The SSH path too',
-            body: 'OpenSSH 10.x in WASM: mlkem768x25519-sha256 key exchange with ssh-mldsa-65 host authentication.',
+            title: 'The rehearsal, written down',
+            body: 'The Deployment Playbook generates the rollout with rollback procedures and validation steps — for the night itself, not the tab.',
           },
           {
             title: 'Two protocols, not one',
@@ -836,7 +847,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       phaseId: 'p7',
       cswp39Zone: 'governance',
       moduleIds: ['sbom', 'crypto-registry', 'verification-closure'],
-      workshopIds: ['pki-enrollment'],
+      workshopIds: [],
+      businessToolIds: ['vendor-scorecard'],
       board: {
         heroEyebrow: 'IT Ops · your renewals depend on their roadmaps',
         heroBadge: {
@@ -847,8 +859,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sub: "Every certificate you renew this year ties you to a vendor's PQC schedule for its whole lifetime. Check theirs against yours before you sign, not after.",
         ctaPrimary: 'Check vendor roadmaps',
         ctaPrimaryHref: '/migrate?tab=roadmaps',
-        ctaSecondary: 'Try EST and CMP enrollment',
-        ctaSecondaryHref: '/playground/pki-enrollment',
+        ctaSecondary: 'Score your vendors',
+        ctaSecondaryHref: '/tools/vendor-scorecard',
         proofChips: [
           'Vendor claims are proof-gated',
           'CNSA 2.0 mandate dates built in',
@@ -875,8 +887,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: "Vendor PQC roadmaps quoted as issued rather than summarised, each linked to the vendor's own source or not shown at all.",
           },
           {
-            title: 'The protocols they must speak',
-            body: 'EST (RFC 7030) and CMP (RFC 4210/9810) against an in-WASM mock CA, issuing a real ML-DSA-65 key.',
+            title: 'Claims made comparable',
+            body: 'The Vendor Scorecard Builder turns roadmap claims into a comparable PQC-readiness assessment per supplier.',
           },
           {
             title: 'A date means nothing without enrollment',
@@ -913,7 +925,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       phaseId: 'p1',
       cswp39Zone: 'assets',
       moduleIds: ['standards-bodies', 'pqc-candidates'],
-      workshopIds: ['merkle-proof'],
+      workshopIds: [],
+      businessToolIds: [],
       board: {
         heroEyebrow: 'Researcher · unfiltered corpus · strict chronological · no gating',
         heroBadge: {
@@ -954,8 +967,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'Every logged correction to the compliance, vendor and migration data, with who reviewed it — the audit trail behind the catalogues.',
           },
           {
-            title: 'Provenance as a structure',
-            body: 'The Merkle workshop builds trees, generates inclusion proofs and verifies with tamper detection — how transparency logs make provenance checkable.',
+            title: 'Provenance you can re-check',
+            body: 'Both destinations are read-only records: the corpus with its tiers, and the log of every correction made to it. Nothing here asks you to trust a summary.',
           },
         ] as [
           { title: string; body: string },
@@ -987,6 +1000,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       cswp39Zone: 'risk-management',
       moduleIds: ['pqc-testing-validation', 'slh-dsa'],
       workshopIds: ['slh-dsa', 'entropy-test'],
+      businessToolIds: [],
       board: {
         heroEyebrow: 'Researcher / Academic · run it yourself · export the log',
         heroBadge: {
@@ -1023,11 +1037,11 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         gridCards: [
           {
             title: 'All 12 FIPS 205 parameter sets',
-            body: 'SLH-DSA sign and verify across every parameter set, pre-hash variants included, executed locally.',
+            body: 'SLH-DSA sign and verify across every parameter set, pre-hash variants included, executed locally in the browser.',
           },
           {
             title: 'Randomness, tested not asserted',
-            body: 'The NIST SP 800-90B suite — monobit, frequency and min-entropy — run against live output.',
+            body: 'The NIST SP 800-90B suite — monobit, frequency and min-entropy — run against live output rather than quoted from a datasheet.',
           },
           {
             title: 'Nothing here is recorded output',
@@ -1062,7 +1076,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       phaseId: 'p3',
       cswp39Zone: 'risk-management',
       moduleIds: ['quantum-threats', 'data-asset-sensitivity'],
-      workshopIds: ['rng-demo'],
+      workshopIds: [],
+      businessToolIds: ['crqc-scenario'],
       board: {
         heroEyebrow: 'Researcher / Academic · the estimate, its sources, and its objections',
         heroBadge: {
@@ -1071,10 +1086,10 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         },
         headline: 'Argue with the threat model.',
         sub: 'CRQC arrival is a distribution, not a date. The consensus window, every source behind it, and the strongest published objections are all on file and all dated.',
-        ctaPrimary: 'Inspect the DRBG output',
-        ctaPrimaryHref: '/playground/rng-demo',
-        ctaSecondary: 'See who is doing the work',
-        ctaSecondaryHref: '/leaders',
+        ctaPrimary: 'Plan a CRQC scenario',
+        ctaPrimaryHref: '/tools/crqc-scenario',
+        ctaSecondary: 'Read the threat economics',
+        ctaSecondaryHref: '/threats',
         proofChips: [
           'Counter-claims dataset · CVE snapshots',
           'Authoritative / High / Moderate / Low source tiers',
@@ -1098,12 +1113,12 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         gridSub: 'The estimate and its dissent',
         gridCards: [
           {
-            title: 'The generator, inspected',
-            body: 'Web Crypto and the OpenSSL DRBG generating live output with statistical analysis — the layer every key ultimately rests on.',
+            title: 'Scenarios, not a single date',
+            body: 'The CRQC Scenario Planner models cryptographically-relevant-quantum-computer arrival scenarios and what each one implies for your own horizon.',
           },
           {
-            title: 'The people behind the estimate',
-            body: 'The Community roster names who is doing this work, so a source is a person with a record rather than an anonymous citation.',
+            title: 'The threat data, with its sources',
+            body: 'Threat Economics, the CRQC Capability Watch and the Z-estimate, each figure carrying the sources behind it.',
           },
           {
             title: 'An estimate, not a date',
@@ -1141,6 +1156,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       cswp39Zone: '',
       moduleIds: ['pqc-101', 'quantum-threats'],
       workshopIds: ['hybrid-certs'],
+      businessToolIds: ['breach-simulator'],
       board: {
         heroEyebrow: 'No background needed · about 6 minutes · nothing to install',
         heroBadge: {
@@ -1151,8 +1167,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sub: 'The padlock in your browser relies on maths a quantum computer would undo. Watch it happen to a real connection in this tab, then decide how much further you want to go.',
         ctaPrimary: 'Build a hybrid certificate',
         ctaPrimaryHref: '/playground/hybrid-certs',
-        ctaSecondary: 'Read the 118 answers',
-        ctaSecondaryHref: '/faq',
+        ctaSecondary: 'See what a breach costs',
+        ctaSecondaryHref: '/tools/breach-simulator',
         proofChips: [
           'Real cryptography, running here',
           'Plain English by default',
@@ -1179,8 +1195,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'Generate and compare six X.509 hybrid certificate formats through a real PKCS#11 HSM, with genuine DER encoding.',
           },
           {
-            title: '118 answers, plain language',
-            body: 'The FAQ covers fundamentals, NIST standards, migration timelines and compliance, without assuming background.',
+            title: 'What it would actually cost',
+            body: 'The Breach Scenario Simulator compares classical against quantum-enabled breach cost, per event and as annual expected loss.',
           },
           {
             title: 'The hands-on version',
@@ -1213,7 +1229,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       phaseId: '',
       cswp39Zone: '',
       moduleIds: ['pqc-101'],
-      workshopIds: ['qrng-demo'],
+      workshopIds: [],
+      businessToolIds: ['cost-of-inaction'],
       board: {
         heroEyebrow: 'No background needed · about 30 seconds · nothing to install',
         heroBadge: {
@@ -1224,8 +1241,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sub: 'Someone can record encrypted traffic today and open it years later, once the right computer exists. That is the whole argument. Everything else is detail.',
         ctaPrimary: 'Take the guided path',
         ctaPrimaryHref: '/learn',
-        ctaSecondary: 'See how randomness is made',
-        ctaSecondaryHref: '/playground/qrng-demo',
+        ctaSecondary: 'The cost of waiting',
+        ctaSecondaryHref: '/tools/cost-of-inaction',
         proofChips: [
           'Plain English by default',
           'Every term explained on hover',
@@ -1252,8 +1269,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'The learning path is a single route through post-quantum cryptography, ordered for whichever role you pick.',
           },
           {
-            title: 'How randomness is made',
-            body: 'The QRNG demo SIMULATES quantum random-number patterns with CSPRNG statistical analysis — it runs in your browser and uses no quantum hardware.',
+            title: 'The cost of waiting',
+            body: 'The Cost of Inaction Analyzer models the discounted cost of delaying — breach exposure and harvest-now-decrypt-later residual among them.',
           },
           {
             title: 'Thirty seconds was the point',
@@ -1287,6 +1304,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       cswp39Zone: '',
       moduleIds: ['digital-assets', 'digital-id', 'healthcare-pqc'],
       workshopIds: ['digital-id', 'bitcoin-flow'],
+      businessToolIds: [],
       board: {
         heroEyebrow: 'No background needed · about 6 minutes · nothing to install',
         heroBadge: {

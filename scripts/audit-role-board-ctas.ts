@@ -172,6 +172,22 @@ export function extractAppRoutes(appSrc: string): Set<string> {
   return segments
 }
 
+/**
+ * Business tool ids, which resolve through BusinessToolRoute's `:toolId`
+ * (`/tools/:toolId`).
+ *
+ * ADDED 2026-08-02. The gate previously knew only about playground tools, so
+ * every `/tools/<id>` destination would have been reported UNRESOLVED_ROUTE —
+ * the 'tools' segment exists in App.tsx but the id segment does not. The role
+ * boards now lean on business tools as heavily as on playground workshops, so
+ * the gate has to be able to see both.
+ */
+export function extractBusinessToolIds(registrySrc: string): Set<string> {
+  const ids = new Set<string>()
+  for (const m of registrySrc.matchAll(/^\s*id:\s*'([a-z0-9-]+)',$/gm)) ids.add(m[1])
+  return ids
+}
+
 /** Playground tool ids, which resolve through PlaygroundToolRoute's `:toolId`. */
 export function extractPlaygroundToolIds(registrySrc: string): Set<string> {
   const ids = new Set<string>()
@@ -299,9 +315,16 @@ function main() {
     process.exit(1)
   }
   const routeSegments = extractAppRoutes(readFileSync(join(ROOT, 'src/App.tsx'), 'utf8'))
-  const toolIds = extractPlaygroundToolIds(
-    readFileSync(join(ROOT, 'src/components/Playground/workshopRegistry.tsx'), 'utf8')
-  )
+  // Both tool registries — the boards resolve into /playground/:toolId and
+  // /tools/:toolId alike.
+  const toolIds = new Set([
+    ...extractPlaygroundToolIds(
+      readFileSync(join(ROOT, 'src/components/Playground/workshopRegistry.tsx'), 'utf8')
+    ),
+    ...extractBusinessToolIds(
+      readFileSync(join(ROOT, 'src/components/BusinessCenter/businessToolsRegistry.tsx'), 'utf8')
+    ),
+  ])
 
   const findings = auditCtas(boardHrefs, registry, routeSegments, toolIds, new Date())
   const blocking = findings.filter((f) => f.code !== 'ORPHAN_REGISTRY_ROW')
