@@ -7,7 +7,7 @@ ops,capacity,sub,,"{Hsm_use_cases_count} enterprise workflows, sized side by sid
 ops,capacity,cta_primary_label,,Size your HSM fleet,active,,,2026-08-02,De-duplicated 2026-08-02: every board now points at its own destination — tls-simulator was on 6 boards and /migrate on 5.
 ops,capacity,cta_primary_href,,/playground/hsm-capacity,active,,,2026-08-02,De-duplicated 2026-08-02: every board now points at its own destination — tls-simulator was on 6 boards and /migrate on 5.
 ops,capacity,cta_secondary_label,,Align to funded refreshes,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
-ops,capacity,cta_secondary_href,,/tools/refresh-cycle-alignment,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
+ops,capacity,cta_secondary_href,,/business/tools/refresh-cycle-alignment,active,,,2026-08-02,"Path corrected 2026-08-02: business tools are nested under /business (/business/tools/:toolId). /tools/<id> fell through to the catch-all route and silently rendered the HOME BOARD — the destination resolved, so nothing failed, it just showed the wrong page. Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops."
 ops,capacity,proof_chip,0,Sizing from real FIPS 203/204 key sizes,active,,,2026-08-02,
 ops,capacity,proof_chip,1,Benchmarked through a real PKCS#11 engine,active,,,2026-08-02,
 ops,capacity,proof_chip,2,CNSA 2.0 mandate dates built in,active,,,2026-08-02,
@@ -49,7 +49,7 @@ executive,mandate,sub,,"Eight questions about your estate. You get a defensible 
 executive,mandate,cta_primary_label,,"Start — 8 questions, about 6 minutes",active,,,2026-08-02,De-duplicated 2026-08-02: every board now points at its own destination — tls-simulator was on 6 boards and /migrate on 5.
 executive,mandate,cta_primary_href,,/assess,active,,,2026-08-02,De-duplicated 2026-08-02: every board now points at its own destination — tls-simulator was on 6 boards and /migrate on 5.
 executive,mandate,cta_secondary_label,,Draft the program charter,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
-executive,mandate,cta_secondary_href,,/tools/program-charter,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
+executive,mandate,cta_secondary_href,,/business/tools/program-charter,active,,,2026-08-02,"Path corrected 2026-08-02: business tools are nested under /business (/business/tools/:toolId). /tools/<id> fell through to the catch-all route and silently rendered the HOME BOARD — the destination resolved, so nothing failed, it just showed the wrong page. Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops."
 executive,mandate,proof_chip,0,Verified in your browser against NIST ACVP vectors,active,,,2026-08-02,
 executive,mandate,proof_chip,1,"{library_active_count} sources, trust-tiered",active,,,2026-08-02,
 executive,mandate,proof_chip,2,{regulatory_verified_phrase},active,,,2026-08-02,
@@ -91,7 +91,7 @@ developer,pilot,sub,,"Not a diagram. ML-KEM and X25519 combined through a real H
 developer,pilot,cta_primary_label,,Run ML-KEM + X25519 now,active,,,2026-08-02,2026-08-02 priority ruling: curious takes the TLS simulator (the clearest 'watch it break' tool); developer keeps priority on developer-specific resources and moves to the hybrid KEM pipeline.
 developer,pilot,cta_primary_href,,/playground/hybrid-encrypt,active,,,2026-08-02,2026-08-02 priority ruling: curious takes the TLS simulator (the clearest 'watch it break' tool); developer keeps priority on developer-specific resources and moves to the hybrid KEM pipeline.
 developer,pilot,cta_secondary_label,,Grade your crypto agility,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
-developer,pilot,cta_secondary_href,,/tools/crypto-api-refactor-audit,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
+developer,pilot,cta_secondary_href,,/business/tools/crypto-api-refactor-audit,active,,,2026-08-02,"Path corrected 2026-08-02: business tools are nested under /business (/business/tools/:toolId). /tools/<id> fell through to the catch-all route and silently rendered the HOME BOARD — the destination resolved, so nothing failed, it just showed the wrong page. Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops."
 developer,pilot,proof_chip,0,Real liboqs + SoftHSMv3 in your browser,active,,,2026-08-02,
 developer,pilot,proof_chip,1,Verified against NIST ACVP vectors,active,,,2026-08-02,
 developer,pilot,proof_chip,2,"No signup, no key required",active,,,2026-08-02,
@@ -132,7 +132,7 @@ architect,controlplane,sub,,"A KMIP 3.0 control plane and a real PKCS#11 HSM, bo
 architect,controlplane,cta_primary_label,,Open the KMIP control plane,active,,,2026-08-02,De-duplicated 2026-08-02: every board now points at its own destination — tls-simulator was on 6 boards and /migrate on 5.
 architect,controlplane,cta_primary_href,,/playground/cacp,active,,,2026-08-02,De-duplicated 2026-08-02: every board now points at its own destination — tls-simulator was on 6 boards and /migrate on 5.
 architect,controlplane,cta_secondary_label,,Choose your transition mode,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
-architect,controlplane,cta_secondary_href,,/tools/hybrid-transition-planner,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
+architect,controlplane,cta_secondary_href,,/business/tools/hybrid-transition-planner,active,,,2026-08-02,"Path corrected 2026-08-02: business tools are nested under /business (/business/tools/:toolId). /tools/<id> fell through to the catch-all route and silently rendered the HOME BOARD — the destination resolved, so nothing failed, it just showed the wrong page. Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops."
 architect,controlplane,proof_chip,0,"Real ML-KEM / ML-DSA / SLH-DSA, no server",active,,,2026-08-02,
 architect,controlplane,proof_chip,1,KMIP 3.0 conformance corpus replays live,active,,,2026-08-02,
 architect,controlplane,proof_chip,2,All 66 KMIP operations documented,active,,,2026-08-02,
@@ -211,7 +211,7 @@ curious,break,sub,,"The padlock in your browser relies on maths a quantum comput
 curious,break,cta_primary_label,,Watch a real handshake,active,,,2026-08-02,2026-08-02 priority ruling: curious takes the TLS simulator (the clearest 'watch it break' tool); developer keeps priority on developer-specific resources and moves to the hybrid KEM pipeline.
 curious,break,cta_primary_href,,/playground/tls-simulator,active,,,2026-08-02,2026-08-02 priority ruling: curious takes the TLS simulator (the clearest 'watch it break' tool); developer keeps priority on developer-specific resources and moves to the hybrid KEM pipeline.
 curious,break,cta_secondary_label,,See what a breach costs,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
-curious,break,cta_secondary_href,,/tools/breach-simulator,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
+curious,break,cta_secondary_href,,/business/tools/breach-simulator,active,,,2026-08-02,"Path corrected 2026-08-02: business tools are nested under /business (/business/tools/:toolId). /tools/<id> fell through to the catch-all route and silently rendered the HOME BOARD — the destination resolved, so nothing failed, it just showed the wrong page. Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops."
 curious,break,proof_chip,0,"Real cryptography, running here",active,,,2026-08-02,
 curious,break,proof_chip,1,Plain English by default,active,,,2026-08-02,
 curious,break,proof_chip,2,Every term explained on hover,active,,,2026-08-02,
@@ -251,7 +251,7 @@ executive,risk,sub,,"The same eight questions, scored. You get a risk position y
 executive,risk,cta_primary_label,,See a finished example report,active,,,2026-08-02,De-duplicated 2026-08-02: every board now points at its own destination — tls-simulator was on 6 boards and /migrate on 5.
 executive,risk,cta_primary_href,,/report?example=1,active,,,2026-08-02,De-duplicated 2026-08-02: every board now points at its own destination — tls-simulator was on 6 boards and /migrate on 5.
 executive,risk,cta_secondary_label,,Build the risk register,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
-executive,risk,cta_secondary_href,,/tools/risk-register,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
+executive,risk,cta_secondary_href,,/business/tools/risk-register,active,,,2026-08-02,"Path corrected 2026-08-02: business tools are nested under /business (/business/tools/:toolId). /tools/<id> fell through to the catch-all route and silently rendered the HOME BOARD — the destination resolved, so nothing failed, it just showed the wrong page. Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops."
 executive,risk,proof_chip,0,"{library_active_count} sources, trust-tiered",active,,,2026-08-02,
 executive,risk,proof_chip,1,{regulatory_verified_phrase},active,,,2026-08-02,
 executive,risk,proof_chip,2,Organised around the NIST CSWP.39 zones,active,,,2026-08-02,
@@ -282,7 +282,7 @@ executive,roadmap,hero_badge_tone,,illustrative,active,,,2026-08-02,
 executive,roadmap,headline,,Show a plan your regulator will accept.,active,,,2026-08-02,
 executive,roadmap,sub,,"A sequenced roadmap with named owners, measurable KPIs and a policy draft — built from the same eight answers, so your plan and your risk position cannot quietly disagree.",active,,,2026-08-02,
 executive,roadmap,cta_primary_label,,Build the roadmap,active,,,2026-08-02,"Best-fit pairing, 2026-08-02: business tool or playground workshop chosen per use case and role rather than one of each by rule. No destination is used twice."
-executive,roadmap,cta_primary_href,,/tools/roadmap-builder,active,,,2026-08-02,"Best-fit pairing, 2026-08-02: business tool or playground workshop chosen per use case and role rather than one of each by rule. No destination is used twice."
+executive,roadmap,cta_primary_href,,/business/tools/roadmap-builder,active,,,2026-08-02,"Path corrected 2026-08-02: business tools are nested under /business (/business/tools/:toolId). /tools/<id> fell through to the catch-all route and silently rendered the HOME BOARD — the destination resolved, so nothing failed, it just showed the wrong page. Best-fit pairing, 2026-08-02: business tool or playground workshop chosen per use case and role rather than one of each by rule. No destination is used twice."
 executive,roadmap,cta_secondary_label,,Check what already binds you,active,,,2026-08-02,"Best-fit pairing, 2026-08-02: business tool or playground workshop chosen per use case and role rather than one of each by rule. No destination is used twice."
 executive,roadmap,cta_secondary_href,,/compliance,active,,,2026-08-02,"Best-fit pairing, 2026-08-02: business tool or playground workshop chosen per use case and role rather than one of each by rule. No destination is used twice."
 executive,roadmap,proof_chip,0,Deadlines derived from the published timeline,active,,,2026-08-02,
@@ -317,7 +317,7 @@ developer,inventory,sub,,"Most of your cryptography was chosen by a library defa
 developer,inventory,cta_primary_label,,Open OpenSSL Studio,active,,,2026-08-02,De-duplicated 2026-08-02: every board now points at its own destination — tls-simulator was on 6 boards and /migrate on 5.
 developer,inventory,cta_primary_href,,/playground/openssl-studio,active,,,2026-08-02,De-duplicated 2026-08-02: every board now points at its own destination — tls-simulator was on 6 boards and /migrate on 5.
 developer,inventory,cta_secondary_label,,Build the CBOM,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
-developer,inventory,cta_secondary_href,,/tools/crypto-cbom-builder,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
+developer,inventory,cta_secondary_href,,/business/tools/crypto-cbom-builder,active,,,2026-08-02,"Path corrected 2026-08-02: business tools are nested under /business (/business/tools/:toolId). /tools/<id> fell through to the catch-all route and silently rendered the HOME BOARD — the destination resolved, so nothing failed, it just showed the wrong page. Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops."
 developer,inventory,proof_chip,0,Real liboqs + SoftHSMv3 in your browser,active,,,2026-08-02,
 developer,inventory,proof_chip,1,Catalogue entries are proof-gated,active,,,2026-08-02,
 developer,inventory,proof_chip,2,"No signup, no key required",active,,,2026-08-02,
@@ -379,7 +379,7 @@ architect,inventory,hero_badge_tone,,sourced,active,,,2026-08-02,
 architect,inventory,headline,,You cannot draw the to-be without the as-is.,active,,,2026-08-02,
 architect,inventory,sub,,"Every library, HSM, protocol and CA in the estate, inventoried before the target architecture exists. A CBOM is what makes the diagram arguable rather than aspirational.",active,,,2026-08-02,
 architect,inventory,cta_primary_label,,Document the architecture,active,,,2026-08-02,"Best-fit pairing, 2026-08-02: business tool or playground workshop chosen per use case and role rather than one of each by rule. No destination is used twice."
-architect,inventory,cta_primary_href,,/tools/crypto-architecture-diagram,active,,,2026-08-02,"Best-fit pairing, 2026-08-02: business tool or playground workshop chosen per use case and role rather than one of each by rule. No destination is used twice."
+architect,inventory,cta_primary_href,,/business/tools/crypto-architecture-diagram,active,,,2026-08-02,"Path corrected 2026-08-02: business tools are nested under /business (/business/tools/:toolId). /tools/<id> fell through to the catch-all route and silently rendered the HOME BOARD — the destination resolved, so nothing failed, it just showed the wrong page. Best-fit pairing, 2026-08-02: business tool or playground workshop chosen per use case and role rather than one of each by rule. No destination is used twice."
 architect,inventory,cta_secondary_label,,Build a certificate chain,active,,,2026-08-02,"Best-fit pairing, 2026-08-02: business tool or playground workshop chosen per use case and role rather than one of each by rule. No destination is used twice."
 architect,inventory,cta_secondary_href,,/playground/pki-workshop,active,,,2026-08-02,"Best-fit pairing, 2026-08-02: business tool or playground workshop chosen per use case and role rather than one of each by rule. No destination is used twice."
 architect,inventory,proof_chip,0,Catalogue entries are proof-gated,active,,,2026-08-02,
@@ -413,7 +413,7 @@ architect,keystores,sub,,"HSM partitions, KMS policy and TPM-backed device ident
 architect,keystores,cta_primary_label,,"Wrap a key, KMS-style",active,,,2026-08-02,De-duplicated 2026-08-02: every board now points at its own destination — tls-simulator was on 6 boards and /migrate on 5.
 architect,keystores,cta_primary_href,,/playground/envelope-encrypt,active,,,2026-08-02,De-duplicated 2026-08-02: every board now points at its own destination — tls-simulator was on 6 boards and /migrate on 5.
 architect,keystores,cta_secondary_label,,Plan the modernization,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
-architect,keystores,cta_secondary_href,,/tools/infra-modernization-planner,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
+architect,keystores,cta_secondary_href,,/business/tools/infra-modernization-planner,active,,,2026-08-02,"Path corrected 2026-08-02: business tools are nested under /business (/business/tools/:toolId). /tools/<id> fell through to the catch-all route and silently rendered the HOME BOARD — the destination resolved, so nothing failed, it just showed the wrong page. Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops."
 architect,keystores,proof_chip,0,"Real PKCS#11 engine, in your browser",active,,,2026-08-02,
 architect,keystores,proof_chip,1,Sizing from real FIPS 203/204 key sizes,active,,,2026-08-02,
 architect,keystores,proof_chip,2,TPM 2.0 conformance checks run locally,active,,,2026-08-02,
@@ -445,7 +445,7 @@ ops,cutover,sub,,"Hybrid tunnels and hybrid certificates, end to end in this tab
 ops,cutover,cta_primary_label,,Run an IKEv2 hybrid handshake,active,,,2026-08-02,De-duplicated 2026-08-02: every board now points at its own destination — tls-simulator was on 6 boards and /migrate on 5.
 ops,cutover,cta_primary_href,,/playground/vpn-sim,active,,,2026-08-02,De-duplicated 2026-08-02: every board now points at its own destination — tls-simulator was on 6 boards and /migrate on 5.
 ops,cutover,cta_secondary_label,,Write the playbook,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
-ops,cutover,cta_secondary_href,,/tools/deployment-playbook,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
+ops,cutover,cta_secondary_href,,/business/tools/deployment-playbook,active,,,2026-08-02,"Path corrected 2026-08-02: business tools are nested under /business (/business/tools/:toolId). /tools/<id> fell through to the catch-all route and silently rendered the HOME BOARD — the destination resolved, so nothing failed, it just showed the wrong page. Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops."
 ops,cutover,proof_chip,0,"Real TLS 1.3 handshake, in your browser",active,,,2026-08-02,
 ops,cutover,proof_chip,1,Hybrid groups X25519MLKEM768 and friends,active,,,2026-08-02,
 ops,cutover,proof_chip,2,Log exportable,active,,,2026-08-02,
@@ -477,7 +477,7 @@ ops,suppliers,sub,,"Every certificate you renew this year ties you to a vendor's
 ops,suppliers,cta_primary_label,,Check vendor roadmaps,active,,,2026-08-02,De-duplicated 2026-08-02: every board now points at its own destination — tls-simulator was on 6 boards and /migrate on 5.
 ops,suppliers,cta_primary_href,,/migrate?tab=roadmaps,active,,,2026-08-02,De-duplicated 2026-08-02: every board now points at its own destination — tls-simulator was on 6 boards and /migrate on 5.
 ops,suppliers,cta_secondary_label,,Score your vendors,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
-ops,suppliers,cta_secondary_href,,/tools/vendor-scorecard,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
+ops,suppliers,cta_secondary_href,,/business/tools/vendor-scorecard,active,,,2026-08-02,"Path corrected 2026-08-02: business tools are nested under /business (/business/tools/:toolId). /tools/<id> fell through to the catch-all route and silently rendered the HOME BOARD — the destination resolved, so nothing failed, it just showed the wrong page. Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops."
 ops,suppliers,proof_chip,0,Vendor claims are proof-gated,active,,,2026-08-02,
 ops,suppliers,proof_chip,1,CNSA 2.0 mandate dates built in,active,,,2026-08-02,
 ops,suppliers,proof_chip,2,Every roadmap links to the vendor's own source,active,,,2026-08-02,
@@ -541,7 +541,7 @@ researcher,threatmodel,hero_badge_tone,,illustrative,active,,,2026-08-02,
 researcher,threatmodel,headline,,Argue with the threat model.,active,,,2026-08-02,
 researcher,threatmodel,sub,,"CRQC arrival is a distribution, not a date. The consensus window, every source behind it, and the strongest published objections are all on file and all dated.",active,,,2026-08-02,
 researcher,threatmodel,cta_primary_label,,Plan a CRQC scenario,active,,,2026-08-02,"Best-fit pairing, 2026-08-02: business tool or playground workshop chosen per use case and role rather than one of each by rule. No destination is used twice."
-researcher,threatmodel,cta_primary_href,,/tools/crqc-scenario,active,,,2026-08-02,"Best-fit pairing, 2026-08-02: business tool or playground workshop chosen per use case and role rather than one of each by rule. No destination is used twice."
+researcher,threatmodel,cta_primary_href,,/business/tools/crqc-scenario,active,,,2026-08-02,"Path corrected 2026-08-02: business tools are nested under /business (/business/tools/:toolId). /tools/<id> fell through to the catch-all route and silently rendered the HOME BOARD — the destination resolved, so nothing failed, it just showed the wrong page. Best-fit pairing, 2026-08-02: business tool or playground workshop chosen per use case and role rather than one of each by rule. No destination is used twice."
 researcher,threatmodel,cta_secondary_label,,Read the threat economics,active,,,2026-08-02,"Best-fit pairing, 2026-08-02: business tool or playground workshop chosen per use case and role rather than one of each by rule. No destination is used twice."
 researcher,threatmodel,cta_secondary_href,,/threats,active,,,2026-08-02,"Best-fit pairing, 2026-08-02: business tool or playground workshop chosen per use case and role rather than one of each by rule. No destination is used twice."
 researcher,threatmodel,proof_chip,0,Counter-claims dataset · CVE snapshots,active,,,2026-08-02,
@@ -577,7 +577,7 @@ curious,short,sub,,"Someone can record encrypted traffic today and open it years
 curious,short,cta_primary_label,,Take the guided path,active,,,2026-08-02,De-duplicated 2026-08-02: every board now points at its own destination — tls-simulator was on 6 boards and /migrate on 5.
 curious,short,cta_primary_href,,/learn,active,,,2026-08-02,De-duplicated 2026-08-02: every board now points at its own destination — tls-simulator was on 6 boards and /migrate on 5.
 curious,short,cta_secondary_label,,The cost of waiting,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
-curious,short,cta_secondary_href,,/tools/cost-of-inaction,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
+curious,short,cta_secondary_href,,/business/tools/cost-of-inaction,active,,,2026-08-02,"Path corrected 2026-08-02: business tools are nested under /business (/business/tools/:toolId). /tools/<id> fell through to the catch-all route and silently rendered the HOME BOARD — the destination resolved, so nothing failed, it just showed the wrong page. Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops."
 curious,short,proof_chip,0,Plain English by default,active,,,2026-08-02,
 curious,short,proof_chip,1,Every term explained on hover,active,,,2026-08-02,
 curious,short,proof_chip,2,Nothing to install,active,,,2026-08-02,
