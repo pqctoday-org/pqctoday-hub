@@ -1301,7 +1301,11 @@ export interface PersonaJourneyBoard {
  * migration, so its three are entry points and carry no `phaseId`/`cswp39Zone`
  * — forcing the phase axis onto it would invent a use case it does not have.
  *
- * `moduleIds` and `workshopIds` are not decoration. A priv-side validator
+ * A board carries whichever tools genuinely fit its use case and role — a
+ * business tool, a playground workshop, or one of each. Neither kind is
+ * mandatory and neither is used by more than one board.
+ *
+ * `moduleIds`, `workshopIds` and `businessToolIds` are not decoration. A priv-side validator
  * asserts every workshop id is a real `workshopRegistry.tsx` entry and every
  * module id sits on THAT ROLE's own `recommendedPath` — which is what makes
  * "relevant for this role" a check rather than a claim.
@@ -1319,7 +1323,10 @@ export interface RoleBoardVariant {
   /** `cswp39ZoneData.ts` ZoneId, or '' for the curious entry-point axis. */
   cswp39Zone: string
   moduleIds: string[]
+  /** Playground workshop ids this board links to (`/playground/:toolId`). */
   workshopIds: string[]
+  /** Business tool ids this board links to (`/tools/:toolId`). */
+  businessToolIds: string[]
   board: PersonaJourneyBoard
 }
 

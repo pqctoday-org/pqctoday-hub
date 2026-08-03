@@ -16,6 +16,10 @@ const TestFaq = () => <div>FAQ Page</div>
 // PERSONA_JOURNEY_BOARD.curious.ctaPrimaryHref actually is (not hardcoded),
 // so this test tracks the real data source instead of assuming its value.
 const TestCtaPrimaryDestination = () => <div>CTA Primary Destination Page</div>
+// Same treatment for the secondary. Hardcoding it broke twice on 2026-08-02 as
+// the boards were de-duplicated (/timeline -> /faq -> /tools/breach-simulator);
+// routing at the real configured href tracks the data instead of the guess.
+const TestCtaSecondaryDestination = () => <div>CTA Secondary Destination Page</div>
 
 function renderBoard(initialEntry = '/') {
   return render(
@@ -29,6 +33,10 @@ function renderBoard(initialEntry = '/') {
         <Route
           path={PERSONA_JOURNEY_BOARD.curious.ctaPrimaryHref}
           element={<TestCtaPrimaryDestination />}
+        />
+        <Route
+          path={PERSONA_JOURNEY_BOARD.curious.ctaSecondaryHref}
+          element={<TestCtaSecondaryDestination />}
         />
       </Routes>
     </MemoryRouter>
@@ -69,16 +77,13 @@ describe('CuriousMobileBoard', () => {
     })
 
     it('tapping "I have 30 seconds" navigates to the curious board\'s configured ctaSecondaryHref', () => {
-      // Routed via the shared '/faq' fixture above. Was '/timeline' until
-      // 2026-08-02, when the board-options work gave each of the 18 boards its
-      // own destination — /playground/tls-simulator had been on six boards and
-      // /migrate on five — and curious/break's secondary became the FAQ. The
-      // literal is asserted rather than just read from config, so a silent
-      // change to this persona's href still fails loudly here.
-      expect(PERSONA_JOURNEY_BOARD.curious.ctaSecondaryHref).toBe('/faq')
+      // Routed at whatever the curious board's real ctaSecondaryHref is, so this
+      // tracks the data rather than a literal. The href changed twice on
+      // 2026-08-02 (/timeline -> /faq -> /tools/breach-simulator) as the 18
+      // boards were given non-overlapping destinations.
       renderBoard()
       fireEvent.click(screen.getByRole('button', { name: 'I have 30 seconds' }))
-      expect(screen.getByText('FAQ Page')).toBeInTheDocument()
+      expect(screen.getByText('CTA Secondary Destination Page')).toBeInTheDocument()
     })
   })
 
